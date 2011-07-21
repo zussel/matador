@@ -1,0 +1,1 @@
+ADD_LIBRARY(oos object object_ptr object_store object_atomizer object_list object_proxy object_serializer byte_buffer)
