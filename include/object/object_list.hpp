@@ -410,6 +410,8 @@ public:
     optr->next_ = last_;
     last_->prev_ = elem;
   }
+  iterator erase(iterator i);
+  iterator erase(iterator first, iterator last);
 
 private:
   friend class object_store;
