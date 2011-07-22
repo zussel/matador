@@ -58,6 +58,22 @@ private:
   object_store &ostore_;
 };
 
+class object_deleter : public object_atomizer
+{
+public:
+  object_deleter(object_store &ostore) : ostore_(ostore) {}
+  virtual ~object_deleter() {}
+
+  virtual void read_object(const char* id, base_object_ptr &x)
+  {
+  }
+  virtual void read_object_list(const char* id, object_list_base &x)
+  {
+  }
+private:
+  object_store &ostore_;
+};
+
 object_store::prototype_node::prototype_node()
   : parent(NULL)
   , prev(NULL)
