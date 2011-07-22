@@ -24,8 +24,7 @@
 class byte_buffer
 {
 public:
-  //enum { BUF_SIZE = 1 << 14 };
-  enum { BUF_SIZE = 4 };
+  enum { BUF_SIZE = 1 << 14 };
   typedef std::tr1::array<char, BUF_SIZE> t_data_array;
   typedef t_data_array::size_type size_type;
 
