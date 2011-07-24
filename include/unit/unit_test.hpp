@@ -18,17 +18,62 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
+#include <tr1/functional>
+#include <list>
+#include <string>
+
 class unit_test
 {
 public:
-  virtual ~unit_test() {}
+  typedef std::tr1::function<void ()> test_func;
+
+  unit_test(const std::string &caption);
+  virtual ~unit_test();
   
   /**
    * Initializes a test unit
    */
   virtual void initialize() = 0;
-  virtual void execute() = 0;
   virtual void finalize() = 0;
+
+  std::string caption() const;
+
+  void execute();
+  void add_test(test_func test);
+
+  template < class T >
+  void assert_equal(T a, T b, const std::string &msg)
+  {
+    if (a != b) {
+      // throw exception
+      //throw unit_assert_exception(a, b, msg);
+    }
+  }
+  template < class T >
+  void assert_null(T *a, const std::string &msg)
+  {
+    if (a != 0) {
+      // throw exception
+      //throw unit_assert_null(a, msg);
+    }
+  }
+  template < class T >
+  void assert_not_null(T *a, const std::string &msg)
+  {
+    if (a == 0) {
+      // throw exception
+      //throw unit_assert_not_null(a, msg);
+    }
+  }
+  void assert_true(bool a, const std::string &msg);
+  void assert_false(bool a, const std::string &msg);
+  void warning();
+
+private:
+  std::string caption_;
+
+  typedef std::list<test_func> t_test_func_list;
+  t_test_func_list test_func_list_;
 };
 
 #endif /* UNIT_TEST_HPP */

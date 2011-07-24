@@ -1,5 +1,6 @@
 TESTDIRS = \
- object
+ object \
+ unit
 
 all:
 	for i in $(TESTDIRS); do make -C $$i; done

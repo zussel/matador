@@ -6,42 +6,34 @@ CXXLD = $(CXX)
 CXXFLAGS = -g -std=c++0x -Wall -I../../include
 # Linker flags go here. Currently there aren't any, but if we'll switch to
 # code optimization, we might add "-s" here to strip debug info and symbols.
-LDFLAGS = -L../../src/tools -L../../src/object
+LDFLAGS = -L../../src/tools -L../../src/unit
 # use this command to erase files.
 RM = /bin/rm -f
 # source
-SOURCE = \
- test_object.cpp \
- Album.cpp \
- Artist.cpp \
- Track.cpp
+SOURCES = \
+ test_unit.cpp
 
 # sources to compile
-test_object_PROG_OBJ = ${SOURCE:.cpp=.o}
+OBJECTS = ${SOURCES:.cpp=.o}
 
-PROG_OBJ = \
- $(test_object_PROG_OBJ)
-
-LIBS = -lobject -ltools
+# libraries to link
+LIBS = -ltools -lunit
 
 # program executable file name.
-test_object_PROG = test_object
-
-PROGS = \
- $(test_object_PROG)
+PROGRAM = test_unit
 
 # top-level rule, to compile everything.
-all: $(PROGS)
+all: $(PROGRAM)
 
 # rule for cleaning re-compilable files.
 clean:
-	$(RM) $(PROGS) $(PROG_OBJ) *~
+	$(RM) $(PROGRAM) $(OBJECTS) *~
 
 .PHONY: clean
 
 # rule to link the program
-$(test_object_PROG): $(test_object_PROG_OBJ)
-	$(CXXLD) $(LDFLAGS) $(test_object_PROG_OBJ) -o $(test_object_PROG) $(LIBS)
+$(PROGRAM): $(OBJECTS)
+	$(CXXLD) $(LDFLAGS) $(OBJECTS) -o $(PROGRAM) $(LIBS)
 
 # now comes a meta-rule for compiling any "C" source file.
 %.o: %.c

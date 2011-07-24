@@ -1,5 +1,7 @@
 SUBDIRS = \
- object
+ object \
+ tools \
+ unit
 
 all:
 	for i in $(SUBDIRS); do make -C $$i; done
