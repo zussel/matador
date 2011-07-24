@@ -19,7 +19,7 @@
 #define OBJECT_SERIALIZER_HPP
 
 #include "object/object_atomizer.hpp"
-#include "object/byte_buffer.hpp"
+#include "tools/byte_buffer.hpp"
 
 class object;
 
