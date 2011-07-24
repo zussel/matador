@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/byte_buffer.hpp"
+#include "tools/byte_buffer.hpp"
 
 #include <iostream>
 

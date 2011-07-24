@@ -11,22 +11,16 @@ LDFLAGS =
 RM = /bin/rm -f
 # source files
 SOURCE = \
- object_atomizer.cpp \
- object.cpp \
- object_list.cpp \
- object_proxy.cpp \
- object_ptr.cpp \
- object_serializer.cpp \
- object_store.cpp
+ byte_buffer.cpp
 
 # sources to compile
-LIB_OBJECT_OBJ = $(SOURCE:.cpp=.o)
+LIB_TOOLS_OBJ = $(SOURCE:.cpp=.o)
 
-OBJS = $(LIB_OBJECT_OBJ)
+OBJS = $(LIB_TOOLS_OBJ)
 
 # libs to build
-LIB_OBJECT = libobject.a
-LIBS = $(LIB_OBJECT)
+LIB_TOOLS = libtools.a
+LIBS = $(LIB_TOOLS)
 
 # top-level rule, to compile everything.
 all: $(LIBS)
@@ -37,9 +31,9 @@ clean:
 
 .PHONY: clean
 
-$(LIB_OBJECT): $(LIB_OBJECT_OBJ)
-	ar rc $(LIB_OBJECT) $(LIB_OBJECT_OBJ)
-	ranlib $(LIB_OBJECT)
+$(LIB_TOOLS): $(LIB_TOOLS_OBJ)
+	ar rc $(LIB_TOOLS) $(LIB_TOOLS_OBJ)
+	ranlib $(LIB_TOOLS)
 
 # now comes a meta-rule for compiling any "C" source file.
 %.o: %.c
