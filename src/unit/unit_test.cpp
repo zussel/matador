@@ -38,7 +38,11 @@ void unit_test::execute()
   while (first != last) {
     initialize();
     std::cout << "Executing sub test\n";
-    (*first++)();
+    try {
+      (*first++)();
+    } catch (unit_exception &ex) {
+      std::cout << ex.what() << std::endl;
+    }
     finalize();
   }
   // execute each test
@@ -53,7 +57,9 @@ void unit_test::assert_true(bool a, const std::string &msg)
 {
   if (!a) {
     // throw exception
-    //throw unit_assert_true(msg);
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is false: " << msg;
+      throw unit_exception(msgstr.str());
   }
 }
 
@@ -61,7 +67,9 @@ void unit_test::assert_false(bool a, const std::string &msg)
 {
   if (a) {
     // throw exception
-    //throw unit_assert_false(msg);
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is true: " << msg;
+      throw unit_exception(msgstr.str());
   }
 }
 

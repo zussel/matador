@@ -12,6 +12,7 @@ RM = /bin/rm -f
 # source files
 SOURCES = \
  test_suite.cpp \
+ unit_exception.cpp \
  unit_test.cpp
 
 # sources to compile

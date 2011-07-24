@@ -18,9 +18,12 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
+#include "unit/unit_exception.hpp"
+
 #include <tr1/functional>
 #include <list>
 #include <string>
+#include <sstream>
 
 class unit_test
 {
@@ -46,7 +49,19 @@ public:
   {
     if (a != b) {
       // throw exception
-      //throw unit_assert_exception(a, b, msg);
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+  template < class T >
+  void assert_not_equal(T a, T b, const std::string &msg)
+  {
+    if (a == b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
     }
   }
   template < class T >
@@ -54,7 +69,9 @@ public:
   {
     if (a != 0) {
       // throw exception
-      //throw unit_assert_null(a, msg);
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is not null: " << msg;
+      throw unit_exception(msgstr.str());
     }
   }
   template < class T >
@@ -62,7 +79,9 @@ public:
   {
     if (a == 0) {
       // throw exception
-      //throw unit_assert_not_null(a, msg);
+      std::stringstream msgstr;
+      msgstr << "FAILURE: value " << a << " is null: " << msg;
+      throw unit_exception(msgstr.str());
     }
   }
   void assert_true(bool a, const std::string &msg);
