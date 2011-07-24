@@ -33,9 +33,9 @@ public:
   
   void first_sub_test()
   {
-    assert_equal(1 == 1);
+    assert_equal(1, 1, "one is one");
     
-    assert_equal(1 == 0);
+    assert_equal(1, 0, "one is not zero");
   }
   void second_sub_test()
   {
