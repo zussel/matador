@@ -3,6 +3,10 @@
 #include "object/object_exception.hpp"
 #include "object/object_view.hpp"
 #include "object/object_serializer.hpp"
+
+#include "unit_test.hpp"
+#include "test_suite.hpp"
+
 #include "Track.hpp"
 #include "Album.hpp"
 #include "Artist.hpp"
@@ -58,6 +62,15 @@ private:
 };
 
 typedef object_ref_list_node<Track> AlbumTrack;
+
+class ObjectPrototypeTestUnit : public unit_test
+{
+public:
+  ObjectPrototypeTestUnit()
+    : unit_test("ObjectStore Prototype Test Unit")
+  {
+  }
+};
 
 bool test_1(object_store &ostore);
 bool test_2(object_store &ostore);
