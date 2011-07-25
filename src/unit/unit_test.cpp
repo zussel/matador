@@ -33,24 +33,31 @@ std::string unit_test::caption() const
 
 void unit_test::execute()
 {
-  t_test_func_list::iterator first = test_func_list_.begin();
-  t_test_func_list::iterator last = test_func_list_.end();
+  t_test_func_info_list::iterator first = test_func_info_list_.begin();
+  t_test_func_info_list::iterator last = test_func_info_list_.end();
   while (first != last) {
     initialize();
-    std::cout << "Executing sub test\n";
+    test_func_info &info = *first++;
+    std::cout << "Executing test [" << info.caption << "] ... ";
     try {
-      (*first++)();
+      info.func();
     } catch (unit_exception &ex) {
-      std::cout << ex.what() << std::endl;
+      info.succeeded = false;
+      info.message = ex.what();
     }
     finalize();
+    if (info.succeeded) {
+      std::cout << "succeeded\n";
+    } else {
+      std::cout << "failed: " << info.message << "\n";
+    }
   }
   // execute each test
 }
 
-void unit_test::add_test(test_func test)
+void unit_test::add_test(test_func test, const std::string &caption)
 {
-  test_func_list_.push_back(test);
+  test_func_info_list_.push_back(test_func_info(test, caption));
 }
 
 void unit_test::assert_true(bool a, const std::string &msg)

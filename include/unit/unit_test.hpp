@@ -42,7 +42,7 @@ public:
   std::string caption() const;
 
   void execute();
-  void add_test(test_func test);
+  void add_test(test_func test, const std::string &caption);
 
   template < class T >
   void assert_equal(T a, T b, const std::string &msg)
@@ -89,10 +89,21 @@ public:
   void warning();
 
 private:
+  typedef struct test_func_info_struct
+  {
+    test_func_info_struct(const test_func &f, const std::string &c)
+      : func(f), succeeded(true), caption(c)
+    {}
+    test_func func;
+    bool succeeded;
+    std::string caption;
+    std::string message;
+  } test_func_info;
+private:
   std::string caption_;
 
-  typedef std::list<test_func> t_test_func_list;
-  t_test_func_list test_func_list_;
+  typedef std::list<test_func_info> t_test_func_info_list;
+  t_test_func_info_list test_func_info_list_;
 };
 
 #endif /* UNIT_TEST_HPP */

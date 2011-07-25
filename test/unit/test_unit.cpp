@@ -25,9 +25,9 @@ class FirstTestUnit : public unit_test
 public:
   FirstTestUnit() : unit_test("First test unit")
   {
-    add_test(std::tr1::bind(&FirstTestUnit::first_sub_test, this));
-    add_test(std::tr1::bind(&FirstTestUnit::second_sub_test, this));
-    add_test(std::tr1::bind(&FirstTestUnit::third_sub_test, this));
+    add_test(std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
+    add_test(std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");
+    add_test(std::tr1::bind(&FirstTestUnit::third_sub_test, this), "sub third");
   }
   virtual ~FirstTestUnit() {}
   
@@ -57,13 +57,13 @@ class SecondTestUnit : public unit_test
 public:
   SecondTestUnit() : unit_test("Second test unit")
   {
+    add_test(std::tr1::bind(&SecondTestUnit::small_test, this), "sub small");
+    add_test(std::tr1::bind(&SecondTestUnit::big_test, this), "sub big");
   }
   virtual ~SecondTestUnit() {}
 
   void small_test()
   {
-    add_test(std::tr1::bind(&SecondTestUnit::small_test, this));
-    add_test(std::tr1::bind(&SecondTestUnit::big_test, this));
   }
   void big_test()
   {
