@@ -4,8 +4,8 @@
 #include "object/object_view.hpp"
 #include "object/object_serializer.hpp"
 
-#include "unit_test.hpp"
-#include "test_suite.hpp"
+#include "unit/unit_test.hpp"
+#include "unit/test_suite.hpp"
 
 #include "Track.hpp"
 #include "Album.hpp"
@@ -69,7 +69,18 @@ public:
   ObjectPrototypeTestUnit()
     : unit_test("ObjectStore Prototype Test Unit")
   {
+		add_test(std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   }
+  virtual ~ObjectPrototypeTestUnit() {}
+  
+  virtual void initialize() {}
+  virtual void finalize() {}
+  
+  void one_prototype()
+  {
+		object_store ostore;
+		ostore.insert_prototype(new object_producer<Artist>, "ARTIST");	
+	}
 };
 
 bool test_1(object_store &ostore);
@@ -80,6 +91,11 @@ bool test_4(object_store &ostore);
 int
 main(int argc, char *argv[])
 {
+	test_suite::instance()->register_unit(new ObjectPrototypeTestUnit());
+	
+	test_suite::instance()->run();
+
+	/*
 	object_store ostore;
 	
   try {
@@ -119,7 +135,7 @@ main(int argc, char *argv[])
     }
     // explicit write data to file
     db->write();
-  */
+  * /
   } catch (object_exception &) {
     // output exception message
   }
@@ -128,6 +144,7 @@ main(int argc, char *argv[])
 //  test_2(ostore);
 //  test_3(ostore);
   test_4(ostore);
+  */
 }
 
 bool test_1(object_store &ostore)

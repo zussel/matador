@@ -6,7 +6,7 @@ CXXLD = $(CXX)
 CXXFLAGS = -g -std=c++0x -Wall -I../../include
 # Linker flags go here. Currently there aren't any, but if we'll switch to
 # code optimization, we might add "-s" here to strip debug info and symbols.
-LDFLAGS = -L../../src/tools -L../../src/object
+LDFLAGS = -L../../src/tools -L../../src/object -L../../src/unit
 # use this command to erase files.
 RM = /bin/rm -f
 # source
@@ -22,7 +22,7 @@ test_object_PROG_OBJ = ${SOURCE:.cpp=.o}
 PROG_OBJ = \
  $(test_object_PROG_OBJ)
 
-LIBS = -lobject -ltools
+LIBS =  -lobject -ltools -lunit
 
 # program executable file name.
 test_object_PROG = test_object
