@@ -79,7 +79,19 @@ public:
   void one_prototype()
   {
 		object_store ostore;
-		ostore.insert_prototype(new object_producer<Artist>, "ARTIST");	
+		ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+    
+    object *o = ostore.create("ARTIST");
+    
+    assert_not_null(o, "couldn't create object of type <Artist>");
+    
+    Artist *a = dynamic_cast<Artist*>(o);
+    
+    assert_not_null(a, "couldn't cast object to Artist");
+    
+    delete a;
+    
+    ostore.remove_prototype("ARTIST");
 	}
 };
 
@@ -91,9 +103,9 @@ bool test_4(object_store &ostore);
 int
 main(int argc, char *argv[])
 {
-	test_suite::instance()->register_unit(new ObjectPrototypeTestUnit());
+  test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
 	
-	test_suite::instance()->run();
+	test_suite::instance().run();
 
 	/*
 	object_store ostore;
@@ -117,7 +129,7 @@ main(int argc, char *argv[])
     // show object hierarchy
 	  ostore.dump_prototypes(cout);
  
- /*   
+ / *   
     // create new transaction    
     transaction tr(db);
     try {
