@@ -34,7 +34,7 @@ public:
   typedef std::list<unit_test_ptr> t_unit_test_list;
 
 public:
-  ~test_suite() {}
+  virtual ~test_suite();
   
   void register_unit(unit_test *utest);
   void run();
