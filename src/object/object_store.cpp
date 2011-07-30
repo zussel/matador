@@ -117,6 +117,11 @@ object_store::prototype_node::~prototype_node()
 void
 object_store::prototype_node::clear()
 {
+  while (first && first->next != last) {
+    prototype_node *node = first->next;
+    remove(node);
+  }
+  // remove objects
 }
 
 bool
@@ -159,6 +164,13 @@ object_store::prototype_node::insert(prototype_node *child)
 void
 object_store::prototype_node::remove(prototype_node *child)
 {
+  // unlink node
+  child->prev->next = child->next;
+  child->next->prev = child->prev;
+  // clear objects
+  child->clear();
+  // delete node
+  delete child;
 }
 
 object_store::prototype_node* object_store::prototype_node::next_node() const
@@ -290,11 +302,9 @@ bool object_store::remove_prototype(const char *type)
     // now parent
     return false;
   }
-  // remove from tree (deletes subsequently all child nodes and objects
-  // they're containing 
+  // remove (and delete) from tree (deletes subsequently all child nodes
+  // and objects they're containing 
   i->second->parent->remove(i->second);
-  // delete node itself
-  delete i->second;
   // erase node from map
   prototype_node_map_.erase(i);
   return true;
