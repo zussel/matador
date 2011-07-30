@@ -97,6 +97,7 @@ public:
     bool empty() const;
     unsigned long size() const;
     void insert(prototype_node *child);
+    void remove(prototype_node *child);
 
     prototype_node* next_node() const;
     prototype_node* previous_node() const;

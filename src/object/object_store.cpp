@@ -103,6 +103,14 @@ object_store::prototype_node::prototype_node(object_base_producer *p, const char
 
 object_store::prototype_node::~prototype_node()
 {
+  while (first && first->next != last) {
+    prototype_node *node = first->next;
+    first->next = node->next;
+    node->next->prev = first;
+    delete node;
+  }
+  delete first;
+  delete last;
   delete producer;
 }
 
@@ -147,6 +155,11 @@ object_store::prototype_node::insert(prototype_node *child)
   // 3. last
   child->op_last = op_last;
 }    
+
+void
+object_store::prototype_node::remove(prototype_node *child)
+{
+}
 
 object_store::prototype_node* object_store::prototype_node::next_node() const
 {
@@ -230,6 +243,8 @@ object_store::object_store()
 object_store::~object_store()
 {
   delete root_;
+  delete first_;
+  delete last_;
 }
 
 bool
@@ -266,6 +281,22 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
 bool object_store::remove_prototype(const char *type)
 {
+  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
+  if (i == prototype_node_map_.end()) {
+    //throw new object_exception("couldn't find prototype");
+    return false;
+  }
+  if (!i->second->parent) {
+    // now parent
+    return false;
+  }
+  // remove from tree (deletes subsequently all child nodes and objects
+  // they're containing 
+  i->second->parent->remove(i->second);
+  // delete node itself
+  delete i->second;
+  // erase node from map
+  prototype_node_map_.erase(i);
   return true;
 }
 
