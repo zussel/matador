@@ -22,25 +22,19 @@ template < typename T >
 class singleton
 {
 public:
-  static T* instance ()
+  static T& instance ()
   {
-    if (!instance_) {
-      instance_ = new T;
-    }
+    static T instance_;
     return instance_;
   }
   virtual ~singleton ()
   {
-    instance_ = 0;
   }
-
-private:
-  static T* instance_;
 
 protected:
   singleton() { }
 };
 
-template < typename T > T* singleton<T>::instance_ = 0;
+//template < typename T > T* singleton<T>::instance_ = 0;
 
 #endif /* SINGLETON_HPP */
