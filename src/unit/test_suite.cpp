@@ -20,6 +20,11 @@ struct unit_executer : public std::unary_function<test_suite::unit_test_ptr, voi
   }
 };
 
+test_suite::~test_suite()
+{
+  unit_test_list_.clear();
+}
+
 void test_suite::run()
 {
   std::for_each(unit_test_list_.begin(), unit_test_list_.end(), unit_executer());
