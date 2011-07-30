@@ -42,7 +42,7 @@ public:
   std::string caption() const;
 
   void execute();
-  void add_test(test_func test, const std::string &caption);
+  void add_test(const test_func &test, const std::string &caption);
 
   template < class T >
   void assert_equal(T a, T b, const std::string &msg)
