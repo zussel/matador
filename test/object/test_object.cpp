@@ -92,6 +92,10 @@ public:
     delete a;
     
     ostore.remove_prototype("ARTIST");
+    
+    o = ostore.create("ARTIST");
+    
+    assert_null(o, "unexpected object creation");
 	}
 };
 
