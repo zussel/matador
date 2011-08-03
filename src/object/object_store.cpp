@@ -266,6 +266,13 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   prototype_node *node = root_;
   if (parent) {
     // parent type name is set search parent node
+    /*
+    t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+    if (i == prototype_node_map_.end()) {
+      return false;
+    }
+    prototype_node *node = i->second;
+    */
     node = find_prototype(node, equal_type(parent));
     if (!node) {
       // couldn't find parent, raise exception
@@ -389,6 +396,14 @@ object* object_store::insert_object(object *o)
     // throw exception
     return NULL;
   }
+  /*
+  // find prototype node
+  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+  if (i == prototype_node_map_.end()) {
+    return NULL;
+  }
+  prototype_node *node = i->second;
+  */
   // find prototype node of object
   prototype_node *node = find_prototype(root_, equal_classname(typeid(*o).name()));
   if (!node) {
@@ -451,7 +466,14 @@ object* object_store::insert_object(object *o)
 
 bool object_store::remove_object(object *o)
 {
+  /*
   // find prototype node
+  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+  if (i == prototype_node_map_.end()) {
+    return false;
+  }
+  prototype_node *node = i->second;
+  */
   prototype_node *node = find_prototype(root_, equal_classname(typeid(*o).name()));
   if (!node) {
     // raise exception
@@ -479,6 +501,7 @@ bool object_store::remove_object(object *o)
 
   // mark object proxy as deleted
   // set object in object_proxy to null
+  delete o->proxy_->obj;
   o->proxy_->obj = NULL;
   // return true
   return true;
