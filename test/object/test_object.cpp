@@ -70,6 +70,7 @@ public:
     : unit_test("ObjectStore Prototype Test Unit")
   {
 		add_test(std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
+		add_test(std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   }
   virtual ~ObjectPrototypeTestUnit() {}
   
@@ -97,6 +98,72 @@ public:
     
     assert_null(o, "unexpected object creation");
 	}
+  void prototype_hierachy()
+  {
+		object_store ostore;
+		ostore.insert_prototype(new object_producer<Track>, "TRACK");
+		ostore.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
+		ostore.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "TRACK");
+		ostore.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "TRACK");
+
+    object *o = ostore.create("AUDIOTRACK");
+    
+    assert_not_null(o, "couldn't create object of type <AudioTrack>");
+    
+    AudioTrack *a = dynamic_cast<AudioTrack*>(o);
+    
+    assert_not_null(a, "couldn't cast object to AudioTrack");
+    
+    delete a;
+    
+    ostore.remove_prototype("AUDIOTRACK");
+    
+    o = ostore.create("AUDIOTRACK");
+    
+    assert_null(o, "unexpected object creation");
+    
+    ostore.remove_prototype("TRACK");
+    
+    o = ostore.create("MEDIATRACK");
+    
+    assert_null(o, "unexpected object creation");
+  }
+};
+
+class ObjectStoreTestUnit : public unit_test
+{
+public:
+  ObjectStoreTestUnit()
+    : unit_test("ObjectStore Test Unit")
+  {
+		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
+  }
+  virtual ~ObjectStoreTestUnit() {}
+  
+  virtual void initialize() {}
+  virtual void finalize() {}
+  
+  void delete_one_object()
+  {
+    object_store ostore;
+		ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+    
+    object *o = ostore.create("ARTIST");
+    
+    assert_not_null(o, "couldn't create object of type <Artist>");
+    
+    Artist *a = dynamic_cast<Artist*>(o);
+    
+    assert_not_null(a, "couldn't cast object to Artist");
+    
+    typedef object_ptr<Artist> artist_ptr;
+    
+    artist_ptr artist = ostore.insert(a);
+    
+    assert_not_null(artist.get(), "artist object insertion failed");
+    
+    assert_true(ostore.remove(artist), "deletion of artist failed");
+  }
 };
 
 bool test_1(object_store &ostore);
@@ -108,6 +175,7 @@ int
 main(int argc, char *argv[])
 {
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
+  test_suite::instance().register_unit(new ObjectStoreTestUnit());
 	
 	test_suite::instance().run();
 
