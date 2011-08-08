@@ -39,6 +39,8 @@ public:
 	bool operator==(const base_object_ptr &x) const;
 	bool operator!=(const base_object_ptr &x) const;
 
+  virtual const char* type() const = 0;
+
 	void reset(object *o);
 
 	bool is_loaded() const;
@@ -75,6 +77,11 @@ public:
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
 	object_ptr(object* o) : base_object_ptr(o, false) {}
 
+  virtual const char* type() const
+  {
+    return typeid(T).name();
+  }
+
 	T* operator->() {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
@@ -110,6 +117,11 @@ public:
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
 	object_ref(object* o) : base_object_ptr(o, false) {}
+
+  virtual const char* type() const
+  {
+    return typeid(T).name();
+  }
 
 	T* operator->() {
 	  if (proxy_) {

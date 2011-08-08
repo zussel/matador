@@ -66,6 +66,9 @@ public:
 
   virtual void read_object(const char* id, base_object_ptr &x)
   {
+    if (!x.is_reference() && x.ptr()) {
+      ostore_.remove_object(x.ptr());
+    }
   }
   virtual void read_object_list(const char* id, object_list_base &x)
   {
@@ -252,11 +255,18 @@ object_store::object_store()
   root_->op_last->prev = root_->op_first;
 }
 
+void delete_object_proxy(object_proxy *op)
+{
+  delete op;
+}
+
 object_store::~object_store()
 {
   delete root_;
   delete first_;
   delete last_;
+  // delete all deleted object_proxys
+  std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
 }
 
 bool
@@ -315,6 +325,11 @@ bool object_store::remove_prototype(const char *type)
   // erase node from map
   prototype_node_map_.erase(i);
   return true;
+}
+
+void object_store::clear_prototypes()
+{
+  root_->clear();
 }
 
 int depth(object_store::prototype_node *node)
@@ -492,6 +507,9 @@ bool object_store::remove_object(object *o)
   // unlink object_proxy
   o->proxy_->remove();
 
+  // call object deleter for object
+  object_deleter deleter(*this);
+  o->read_from(&deleter);
   // notify observer
   std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
   // if object was last object in list of prototype node
@@ -501,8 +519,10 @@ bool object_store::remove_object(object *o)
 
   // mark object proxy as deleted
   // set object in object_proxy to null
-  delete o->proxy_->obj;
-  o->proxy_->obj = NULL;
+  object_proxy *op = o->proxy_;
+  delete o;
+  op->obj = NULL;
+  deleted_object_proxy_list_.push_back(op);
   // return true
   return true;
 }

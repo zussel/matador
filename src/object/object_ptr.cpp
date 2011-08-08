@@ -82,15 +82,12 @@ base_object_ptr::id() const {
 
 object*
 base_object_ptr::ptr() const {
-    return proxy_->obj;
+    return (proxy_ ? proxy_->obj : NULL);
 }
 
 object*
 base_object_ptr::lookup_object() {
-  if (proxy_) {
-    return proxy_->obj;
-  }
-  return NULL;
+    return (proxy_ ? proxy_->obj : NULL);
 }
 
 bool base_object_ptr::delete_object()

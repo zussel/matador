@@ -47,7 +47,7 @@ public:
 	void read_from(object_atomizer *reader)
   {
     object::read_from(reader);
-    object_ptr<T> optr(root_);
+    object_ref<T> optr(root_);
     reader->read_object("root", optr);
     optr.reset(prev_);
     reader->read_object("prev", optr);
@@ -57,9 +57,9 @@ public:
 	void write_to(object_atomizer *writer)
   {
     object::write_to(writer);
-    writer->write_object("root", object_ptr<T>(root_));
-    writer->write_object("prev", object_ptr<T>(prev_));
-    writer->write_object("next", object_ptr<T>(next_));
+    writer->write_object("root", object_ref<T>(root_));
+    writer->write_object("prev", object_ref<T>(prev_));
+    writer->write_object("next", object_ref<T>(next_));
   }
 
 private:

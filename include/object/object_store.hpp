@@ -145,6 +145,10 @@ public:
    * removes also the created objects from store
    */
   bool remove_prototype(const char *type);
+  /**
+   * Removes all inserted prototypes
+   */
+  void clear_prototypes();
 	
 	void dump_prototypes(std::ostream &out) const;
 	void dump_objects(std::ostream &out) const;
@@ -177,6 +181,7 @@ public:
 private:
   template < class T > friend class object_view;
   friend class object_creator;
+  friend class object_deleter;
 
 private:
 	object* insert_object(object *o);
@@ -216,6 +221,9 @@ private:
 
   object_proxy *first_;
   object_proxy *last_;
+  
+  typedef std::list<object_proxy*> t_object_proxy_list;
+  t_object_proxy_list deleted_object_proxy_list_;
 };
 
 class equal_classname : public std::unary_function<const object_store::prototype_node*, bool> {
