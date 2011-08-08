@@ -132,38 +132,122 @@ public:
 
 class ObjectStoreTestUnit : public unit_test
 {
+private:
+  class SimpleObject : public object
+  {
+  public:
+    SimpleObject() {}
+    SimpleObject(const std::string &n) : name_(n) {}
+    virtual ~SimpleObject() {}
+    
+    void read_from(object_atomizer *reader)
+    {
+      object::read_from(reader);
+      reader->read_string("name", name_);
+    }
+    void write_to(object_atomizer *writer)
+    {
+      object::write_to(writer);
+      writer->write_string("name", name_);
+    }
+
+    std::string name() const { return name_; }
+    void name(const std::string &n) { name_ = n; }
+
+  private:
+    std::string name_;
+  };
+  class ObjectWithSubObject : public object
+  {
+  public:
+    ObjectWithSubObject() {}
+    virtual ~ObjectWithSubObject() {}
+
+    void read_from(object_atomizer *reader)
+    {
+      object::read_from(reader);
+      reader->read_object("simple", simple_);
+    }
+    void write_to(object_atomizer *writer)
+    {
+      object::write_to(writer);
+      writer->write_object("simple", simple_);
+    }
+
+    object_ptr<SimpleObject> simple() const { return simple_; }
+    void simple(const object_ptr<SimpleObject> &s) { simple_ = s; }
+
+  private:
+    object_ptr<SimpleObject> simple_;
+  };
+
 public:
   ObjectStoreTestUnit()
     : unit_test("ObjectStore Test Unit")
   {
 		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
+		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
+		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
   }
   virtual ~ObjectStoreTestUnit() {}
   
-  virtual void initialize() {}
+  virtual void initialize()
+  {
+		ostore_.insert_prototype(new object_producer<SimpleObject>, "SIMPLE_OBJECT");
+		ostore_.insert_prototype(new object_producer<ObjectWithSubObject>, "OBJECT_WITH_SUB_OBJECT");
+  }
   virtual void finalize() {}
   
   void delete_one_object()
   {
-    object_store ostore;
-		ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+    object *o = ostore_.create("SIMPLE_OBJECT");
     
-    object *o = ostore.create("ARTIST");
+    assert_not_null(o, "couldn't create object of type <SimpleObject>");
     
-    assert_not_null(o, "couldn't create object of type <Artist>");
+    SimpleObject *a = dynamic_cast<SimpleObject*>(o);
     
-    Artist *a = dynamic_cast<Artist*>(o);
+    assert_not_null(a, "couldn't cast object to SimpleObject");
     
-    assert_not_null(a, "couldn't cast object to Artist");
+    typedef object_ptr<SimpleObject> simple_ptr;
     
-    typedef object_ptr<Artist> artist_ptr;
+    simple_ptr simple = ostore_.insert(a);
     
-    artist_ptr artist = ostore.insert(a);
+    assert_not_null(simple.get(), "simple object insertion failed");
     
-    assert_not_null(artist.get(), "artist object insertion failed");
-    
-    assert_true(ostore.remove(artist), "deletion of artist failed");
+    assert_true(ostore_.remove(simple), "deletion of simple failed");
   }
+  void delete_multiple_objects()
+  {
+    std::cout << std::endl;
+    SimpleObject *pso;
+    std::cout << "typeid (pso*)   : " << typeid(pso).name() << std::endl;
+    std::cout << "typeid (SimpleObject*)   : " << typeid(SimpleObject*).name() << std::endl;
+    std::cout << "typeid (SimpleObject)    : " << typeid(SimpleObject).name() << std::endl;
+    SimpleObject so;
+    std::cout << "typeid (SimpleObject  so): " << typeid(so).name() << std::endl;
+    std::cout << "typeid (SimpleObject *so): " << typeid(&so).name() << std::endl;
+  }
+  void delete_object_with_sub_object()
+  {
+    object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
+    
+    assert_not_null(o, "couldn't create object of type <ObjectWithSubObject>");
+    
+    ObjectWithSubObject *s = dynamic_cast<ObjectWithSubObject*>(o);
+    
+    assert_not_null(s, "couldn't cast object to ObjectWithSubObject");
+    
+    typedef object_ptr<ObjectWithSubObject> obj_with_sub_ptr;
+    
+    obj_with_sub_ptr ows = ostore_.insert(s);
+    
+    assert_not_null(ows.get(), "object with sub object insertion failed");
+    
+    assert_true(ostore_.remove(ows), "deletion of object with sub object failed");
+  }
+
+private:
+  object_store ostore_;
 };
 
 bool test_1(object_store &ostore);
