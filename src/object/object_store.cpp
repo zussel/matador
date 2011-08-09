@@ -111,39 +111,30 @@ bool
 object_store::insert_prototype(object_base_producer *producer, const char *type, const char *parent)
 {
   // set node to root node
-  prototype_node *node = root_;
+  prototype_node *parent_node;
   if (parent) {
     // parent type name is set search parent node
-    /*
-    t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
-    if (i == prototype_node_map_.end()) {
-      return false;
-    }
-    prototype_node *node = i->second;
-    */
-    node = find_prototype(node, equal_type(parent));
-    if (!node) {
-      // couldn't find parent, raise exception
+    t_prototype_node_map::iterator i = prototype_node_name_map_.find(parent);
+    if (i == prototype_node_name_map_.end()) {
       //throw new object_exception("couldn't find parent prototype");
       return false;
     }
+    parent_node = i->second;
   }
   // find prototype node 'type' starting from node
-  prototype_node *n = find_prototype(node, equal_type(type));
-  if (n) {
-    // prototype already exists, raise exception
+  t_prototype_node_map::iterator i = prototype_node_name_map_.find(type);
+  if (i != prototype_node_name_map_.end()) {
     //throw new object_exception("prototype already exists");
     return false;
-  } else {
-    // create new prototype node
-    n = new prototype_node(producer, type);
-    // append as child to parent prototype node
-    node->insert(n);
-    // store prototype in map
-    prototype_node_name_map_.insert(std::make_pair(type, n));
-    // return success
-    return true;
   }
+  prototype_node *node = new prototype_node(producer, type);
+  // append as child to parent prototype node
+  parent_node->insert(node);
+  // store prototype in map
+  prototype_node_name_map_.insert(std::make_pair(type, node));
+  prototype_node_type_map_.insert(std::make_pair(producer->classname(), node));
+  // return success
+  return true;
 }
 
 bool object_store::remove_prototype(const char *type)

@@ -184,7 +184,7 @@ private:
 private:
   prototype_node *root_;
   t_prototype_node_map prototype_node_name_map_;
-  t_prototype_node_map prototype_node_typeid_map_;
+  t_prototype_node_map prototype_node_type_map_;
   t_object_map object_map_;
   long id_;
   
