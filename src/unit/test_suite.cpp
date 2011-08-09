@@ -5,6 +5,8 @@
 #include <functional>
 #include <iostream>
 
+namespace oos {
+
 void test_suite::register_unit(unit_test *utest)
 {
   unit_test_list_.push_back(unit_test_ptr(utest));
@@ -28,4 +30,6 @@ test_suite::~test_suite()
 void test_suite::run()
 {
   std::for_each(unit_test_list_.begin(), unit_test_list_.end(), unit_executer());
+}
+
 }

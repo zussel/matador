@@ -25,6 +25,8 @@
 #endif
 #include <iostream>
 
+namespace oos {
+
 struct object_proxy;
 class object_store;
 class object_atomizer;
@@ -63,5 +65,7 @@ private:
 	long id_;
   object_proxy *proxy_;
 };
+
+}
 
 #endif /* OBJECT_HPP */

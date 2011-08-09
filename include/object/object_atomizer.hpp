@@ -20,6 +20,8 @@
 
 #include <string>
 
+namespace oos {
+
 class Date;
 class Time;
 class object_list_base;
@@ -58,5 +60,7 @@ public:
 	virtual void read_object(const char* id, base_object_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
 };
+
+}
 
 #endif /* OBJECTATOMIZER_HPP */

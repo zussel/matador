@@ -2,6 +2,8 @@
 
 #include "object/object_atomizer.hpp"
 
+using namespace oos;
+
 Artist::Artist()
 {}
 

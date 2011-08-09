@@ -27,11 +27,13 @@
 
 using std::tr1::placeholders::_1;
 
-class equal_type : public std::unary_function<const object_store::prototype_node*, bool> {
+namespace oos {
+
+class equal_type : public std::unary_function<const prototype_node*, bool> {
 public:
   explicit equal_type(const std::string &type) : type_(type) {}
 
-  bool operator() (const object_store::prototype_node *x) const {
+  bool operator() (const prototype_node *x) const {
     return x->type == type_;
   }
 private:
@@ -76,170 +78,6 @@ public:
 private:
   object_store &ostore_;
 };
-
-object_store::prototype_node::prototype_node()
-  : parent(NULL)
-  , prev(NULL)
-  , next(NULL)
-  , first(NULL)
-  , last(NULL)
-  , producer(NULL)
-  , depth(0)
-  , count(0)
-{
-}
-
-object_store::prototype_node::prototype_node(object_base_producer *p, const char *t)
-  : parent(NULL)
-  , prev(NULL)
-  , next(NULL)
-  , first(new prototype_node)
-  , last(new prototype_node)
-  , producer(p)
-  , depth(0)
-  , count(0)
-  , type(t)
-{
-  first->next = last;
-  last->prev = first;
-}
-
-object_store::prototype_node::~prototype_node()
-{
-  while (first && first->next != last) {
-    prototype_node *node = first->next;
-    first->next = node->next;
-    node->next->prev = first;
-    delete node;
-  }
-  delete first;
-  delete last;
-  delete producer;
-}
-
-void
-object_store::prototype_node::clear()
-{
-  while (first && first->next != last) {
-    prototype_node *node = first->next;
-    remove(node);
-  }
-  // remove objects
-}
-
-bool
-object_store::prototype_node::empty() const
-{
-  return op_first->next == op_last;
-}
-
-unsigned long
-object_store::prototype_node::size() const
-{
-  return count;
-}
-
-void
-object_store::prototype_node::insert(prototype_node *child)
-{
-  child->parent = this;
-  child->prev = last->prev;
-  child->next = last;
-  last->prev->next = child;
-  last->prev = child;
-  // set depth
-  child->depth = depth + 1;
-  // set object proxy pointer
-  // 1. first
-  if (op_first->next == op_last) {
-    // node hasn't any object (proxy)
-    child->op_first = op_first;
-  } else {
-    // node has some objects (proxy)
-    child->op_first = op_last->prev;
-  }
-  // 2. marker
-  child->op_marker = op_last;
-  // 3. last
-  child->op_last = op_last;
-}    
-
-void
-object_store::prototype_node::remove(prototype_node *child)
-{
-  // unlink node
-  child->prev->next = child->next;
-  child->next->prev = child->prev;
-  // clear objects
-  child->clear();
-  // delete node
-  delete child;
-}
-
-object_store::prototype_node* object_store::prototype_node::next_node() const
-{
-  // if we have a child, child is the next iterator to return
-  // (if we don't do iterate over the siblings)
-  if (first->next != last)
-    return first->next;
-  else {
-    // if there is no child, we check for sibling
-    // if there is a sibling, this is our next iterator to return
-    // if not, we go back to the parent
-    const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last) {
-      node = node->parent;
-    }
-    return node->next;
-  }
-}
-
-object_store::prototype_node* object_store::prototype_node::previous_node() const
-{
-  // if node has a previous sibling, we set it
-  // as our next iterator. then we check if there
-  // are last childs. if so, we set the last last
-  // child as our iterator
-  if (prev && prev->prev) {
-    const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last) {
-      node = node->last->prev;
-    }
-    return const_cast<prototype_node*>(node);
-    // if there is no previous sibling, our next iterator
-    // is the parent of the node
-  } else {
-    return parent;
-  }
-}
-
-std::ostream& operator <<(std::ostream &os, const object_store::prototype_node &pn)
-{
-  os << "node [" << &pn << "] depth [" << pn.depth << "] type [" << pn.type << "] class [" << pn.producer->classname() << "]";
-  if (pn.op_first->obj) {
-    os << " first [" << *pn.op_first->obj << "]";
-  } else {
-    os << " first [op: " << pn.op_first << "]";
-  }
-  if (pn.op_marker->obj) {
-    os << " marker [" << *pn.op_marker->obj << "]";
-  } else {
-    os << " marker [op: " << pn.op_marker << "]";
-  }
-  if (pn.op_last->obj) {
-    os << " last [" << *pn.op_last->obj << "]";
-  } else {
-    os << " last [op: " << pn.op_last << "]";
-  }
-  int i = 0;
-  object_proxy *iop = pn.op_first;
-  while (iop->next != pn.op_marker) {
-    ++i;
-    iop = iop->next;
-  }
-  os << " (# " << i << ")";
-  return os;
-}
 
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "OBJECT"))
@@ -302,7 +140,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     // append as child to parent prototype node
     node->insert(n);
     // store prototype in map
-    prototype_node_map_.insert(std::make_pair(type, n));
+    prototype_node_name_map_.insert(std::make_pair(type, n));
     // return success
     return true;
   }
@@ -310,8 +148,8 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
 bool object_store::remove_prototype(const char *type)
 {
-  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
-  if (i == prototype_node_map_.end()) {
+  t_prototype_node_map::iterator i = prototype_node_name_map_.find(type);
+  if (i == prototype_node_name_map_.end()) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
@@ -323,7 +161,7 @@ bool object_store::remove_prototype(const char *type)
   // and objects they're containing 
   i->second->parent->remove(i->second);
   // erase node from map
-  prototype_node_map_.erase(i);
+  prototype_node_name_map_.erase(i);
   return true;
 }
 
@@ -332,7 +170,7 @@ void object_store::clear_prototypes()
   root_->clear();
 }
 
-int depth(object_store::prototype_node *node)
+int depth(prototype_node *node)
 {
   int d = 0;
   while (node->parent) {
@@ -411,8 +249,8 @@ object* object_store::insert_object(object *o)
     // throw exception
     return NULL;
   }
-  /*
   // find prototype node
+  /*
   t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
   if (i == prototype_node_map_.end()) {
     return NULL;
@@ -535,7 +373,7 @@ bool object_store::insert_object_list(object_list_base &olb)
   return true;
 }
 
-bool is_child_of(object_store::prototype_node *start, object_store::prototype_node *node)
+bool is_child_of(prototype_node *start, prototype_node *node)
 {
   while (start->depth < node->depth) {
     node = node->parent;
@@ -543,10 +381,10 @@ bool is_child_of(object_store::prototype_node *start, object_store::prototype_no
   return node == start;
 }
 
-void object_store::adjust_left_marker(object_store::prototype_node *node, object_proxy *oproxy)
+void object_store::adjust_left_marker(prototype_node *node, object_proxy *oproxy)
 {
   // store start node
-  object_store::prototype_node *start = node;
+  prototype_node *start = node;
   // get previous node
   node = node->previous_node();
   while (node) {
@@ -575,10 +413,10 @@ void object_store::adjust_left_marker(object_store::prototype_node *node, object
   }
 }
 
-void object_store::adjust_right_marker(object_store::prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy)
+void object_store::adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy)
 {
   // store start node
-  object_store::prototype_node *start = node;
+  prototype_node *start = node;
   // get previous node
   node = node->next_node();
   bool first = true;
@@ -604,4 +442,6 @@ void object_store::adjust_right_marker(object_store::prototype_node *node, objec
     }
     node = node->next_node();
   }
+}
+
 }

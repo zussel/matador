@@ -2,6 +2,8 @@
 
 #include "object/object_atomizer.hpp"
 
+using namespace oos;
+
 Track::Track()
   : number_(0)
   , duration_(0)

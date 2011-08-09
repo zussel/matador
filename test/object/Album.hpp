@@ -9,27 +9,31 @@
 class Track;
 class Artist;
 
-class Album : public object
+namespace oos {
+  class object_atomizer;
+}
+
+class Album : public oos::object
 {
 public:
   Album();
   Album(const std::string &n);
-  Album(const std::string &n, const object_ptr<Artist> &a);
+  Album(const std::string &n, const oos::object_ptr<Artist> &a);
 	virtual ~Album();
 
-	virtual void read_from(object_atomizer *reader);
-	virtual void write_to(object_atomizer *writer) const;
+	virtual void read_from(oos::object_atomizer *reader);
+	virtual void write_to(oos::object_atomizer *writer) const;
 
 	void name(const std::string &n);
 	std::string name() const;
 	
-  void artist(const object_ptr<Artist> &a);
-  object_ref<Artist> artist() const;
+  void artist(const oos::object_ptr<Artist> &a);
+  oos::object_ref<Artist> artist() const;
 
-	typedef object_list<object_ref_list_node<Track> > TrackList;
+	typedef oos::object_list<oos::object_ref_list_node<Track> > TrackList;
 
-  void add(object_ptr<Track> track, bool overide_artist = true);
-  object_ref<Track> find(const std::string &name) const;
+  void add(oos::object_ref<Track> track, bool overide_artist = true);
+  oos::object_ref<Track> find(const std::string &name) const;
 
   typedef TrackList::iterator iterator;
 	typedef TrackList::const_iterator const_iterator;
@@ -48,7 +52,7 @@ public:
 */
 private:
 	std::string name_;
-  object_ref<Artist> artist_;
+  oos::object_ref<Artist> artist_;
 	TrackList track_list_;
 };
 

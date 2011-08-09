@@ -22,6 +22,8 @@
 #include "object/object_proxy.hpp"
 #include "object/object_ptr.hpp"
 
+namespace oos {
+
 template < class T >
 class object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
@@ -33,7 +35,7 @@ public:
   object_view_iterator()
     : node_(NULL)
   {}
-  object_view_iterator(object_store::prototype_node *node, object_proxy *current, object_proxy *last)
+  object_view_iterator(prototype_node *node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -110,7 +112,7 @@ public:
   }
 
 //private:
-  object_store::prototype_node *node_;
+  prototype_node *node_;
   object_proxy *current_;
   object_proxy *last_;
 };
@@ -126,7 +128,7 @@ public:
   const_object_view_iterator()
     : node_(NULL)
   {}
-  const_object_view_iterator(object_store::prototype_node *node, object_proxy *current, object_proxy *last)
+  const_object_view_iterator(prototype_node *node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -215,7 +217,7 @@ private:
   }
 
 private:
-  object_store::prototype_node *node_;
+  prototype_node *node_;
   object_proxy *current_;
   object_proxy *last_;
 };
@@ -277,7 +279,9 @@ public:
 private:
     object_store &ostore_;
     bool skip_siblings_;
-    object_store::prototype_node *node_;
+    prototype_node *node_;
 };
+
+}
 
 #endif /* OBJECTVIEW_HPP */

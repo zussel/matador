@@ -21,6 +21,8 @@
 #include <exception>
 #include <string>
 
+namespace oos {
+
 class unit_exception : public std::exception
 {
 public:
@@ -32,5 +34,7 @@ public:
 private:
   std::string what_;
 };
+
+}
 
 #endif /* UNIT_EXCEPTION_HPP */

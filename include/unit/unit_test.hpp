@@ -25,6 +25,8 @@
 #include <string>
 #include <sstream>
 
+namespace oos {
+
 class unit_test
 {
 public:
@@ -105,5 +107,7 @@ private:
   typedef std::list<test_func_info> t_test_func_info_list;
   t_test_func_info_list test_func_info_list_;
 };
+
+}
 
 #endif /* UNIT_TEST_HPP */

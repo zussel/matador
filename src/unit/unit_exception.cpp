@@ -17,6 +17,8 @@
 
 #include "unit/unit_exception.hpp"
 
+namespace oos {
+
 unit_exception::unit_exception(const std::string &msg) throw()
   : what_(msg)
 {}
@@ -27,4 +29,6 @@ unit_exception::~unit_exception() throw()
 const char* unit_exception::what() const throw()
 {
   return what_.c_str();
+}
+
 }

@@ -19,6 +19,8 @@
 
 #include <iostream>
 
+namespace oos {
+
 unit_test::unit_test(const std::string &caption)
  : caption_(caption)
 {}
@@ -84,4 +86,6 @@ void unit_test::assert_false(bool a, const std::string &msg)
 
 void unit_test::warning()
 {
+}
+
 }

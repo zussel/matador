@@ -18,6 +18,8 @@
 #ifndef SINGLETON_HPP
 #define SINGLETON_HPP
 
+namespace oos {
+
 template < typename T >
 class singleton
 {
@@ -34,6 +36,8 @@ public:
 protected:
   singleton() { }
 };
+
+}
 
 //template < typename T > T* singleton<T>::instance_ = 0;
 

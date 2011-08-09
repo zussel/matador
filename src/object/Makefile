@@ -17,7 +17,8 @@ SOURCE = \
  object_proxy.cpp \
  object_ptr.cpp \
  object_serializer.cpp \
- object_store.cpp
+ object_store.cpp \
+ prototype_node.cpp
 
 # sources to compile
 LIB_OBJECT_OBJ = $(SOURCE:.cpp=.o)

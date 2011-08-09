@@ -21,6 +21,8 @@
 #include <tr1/array>
 #include <list>
 
+namespace oos {
+
 class byte_buffer
 {
 public:
@@ -51,5 +53,7 @@ private:
   typedef std::list<buffer_chunk> t_chunk_list;
   t_chunk_list chunk_list_;
 };
+
+}
 
 #endif /* BYTE_BUFFER_HPP */

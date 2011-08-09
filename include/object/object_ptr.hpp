@@ -24,6 +24,8 @@
 #include <iostream>
 #include <typeinfo>
 
+namespace oos {
+
 class object;
 
 class base_object_ptr {
@@ -142,5 +144,7 @@ public:
     return NULL;
 	}
 };
+
+}
 
 #endif /* object_ptr_H */

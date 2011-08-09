@@ -9,17 +9,21 @@
 
 #include <string>
 
-class Track : public object
+namespace oos {
+  class object_atomizer;
+}
+
+class Track : public oos::object
 {
 public:
 	Track();
   Track(int numb, const std::string &t, unsigned long d);
-  Track(int numb, const std::string &t, unsigned long d, const object_ptr<Artist> &a);
-  Track(int numb, const std::string &t, unsigned long d, const object_ptr<Artist> &a, const object_ptr<Album> &am);
+  Track(int numb, const std::string &t, unsigned long d, const oos::object_ptr<Artist> &a);
+  Track(int numb, const std::string &t, unsigned long d, const oos::object_ptr<Artist> &a, const oos::object_ptr<Album> &am);
 	virtual ~Track();
 	
-	virtual void read_from(object_atomizer *reader);
-  virtual void write_to(object_atomizer *writer) const;
+	virtual void read_from(oos::object_atomizer *reader);
+  virtual void write_to(oos::object_atomizer *writer) const;
 
   void number(int numb);
   int number() const;
@@ -30,18 +34,18 @@ public:
   void duration(long d);
 	long duration() const;
 
-  void artist(const object_ref<Artist> &a);
-  object_ref<Artist> artist() const;
+  void artist(const oos::object_ref<Artist> &a);
+  oos::object_ref<Artist> artist() const;
 
-  void album(const object_ref<Album> &a);
-  object_ref<Album> album() const;
+  void album(const oos::object_ref<Album> &a);
+  oos::object_ref<Album> album() const;
 
 private:
   int number_;
 	std::string title_;
 	long duration_;
-  object_ref<Artist> artist_;
-  object_ref<Album> album_;
+  oos::object_ref<Artist> artist_;
+  oos::object_ref<Album> album_;
 };
 
 #endif /* TRACK_HPP */

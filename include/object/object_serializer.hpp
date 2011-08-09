@@ -21,6 +21,8 @@
 #include "object/object_atomizer.hpp"
 #include "tools/byte_buffer.hpp"
 
+namespace oos {
+
 class object;
 
 class object_serializer : public object_atomizer
@@ -63,5 +65,7 @@ public:
 private:
   byte_buffer buffer_;
 };
+
+}
 
 #endif /* OBJECT_SERIALIZER_HPP */

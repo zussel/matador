@@ -21,6 +21,8 @@
 #include <exception>
 #include <string>
 
+namespace oos {
+
 class object;
 
 class object_exception : public std::exception
@@ -40,5 +42,7 @@ private:
   std::string what_;
   object *obj_;
 };
+
+}
 
 #endif /* OBJECT_EXCEPTION_HPP */

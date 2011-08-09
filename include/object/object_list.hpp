@@ -34,6 +34,9 @@
  *    4 |   1  |  3  |  5   |    9 |
  *    5 |   1  |  4  |  0   |    0 |
  */
+ 
+namespace oos {
+
 template < class T > class object_list;
 template < class T > class object_list_iterator;
 template < class T > class const_object_list_iterator;
@@ -421,5 +424,7 @@ private:
   t_list_node *first_;
 	t_list_node *last_;
 };
+
+}
 
 #endif /* OBJECT_LIST_HPP */

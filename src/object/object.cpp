@@ -19,6 +19,8 @@
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
 
+namespace oos {
+
 object::object()
 	: id_(0)
   , proxy_(0)
@@ -79,4 +81,6 @@ std::ostream& operator <<(std::ostream &os, const object &o)
 {
   os << "object " << typeid(o).name() << " (" << &o << ") [" << o.id_ << "]";
   return os;
+}
+
 }

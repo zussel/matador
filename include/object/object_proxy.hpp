@@ -18,6 +18,8 @@
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
+namespace oos {
+
 class object;
 class object_store;
 
@@ -37,5 +39,7 @@ struct object_proxy {
   
   object_store *ostore;
 };
+
+}
 
 #endif /* OBJECT_PROXY_HPP */

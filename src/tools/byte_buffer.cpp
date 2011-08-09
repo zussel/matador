@@ -19,6 +19,8 @@
 
 #include <iostream>
 
+namespace oos {
+
 byte_buffer::byte_buffer()
 {
   chunk_list_.push_back(buffer_chunk());
@@ -98,4 +100,6 @@ void byte_buffer::clear()
 {
   chunk_list_.clear();
   chunk_list_.push_back(buffer_chunk());
+}
+
 }

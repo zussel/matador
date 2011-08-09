@@ -22,6 +22,8 @@
 #include "object/object_ptr.hpp"
 #include "object/object_proxy.hpp"
 
+#include "object/prototype_node.hpp"
+
 #ifdef WIN32
 #include <memory>
 #include <unordered_map>
@@ -34,6 +36,8 @@
 #include <string>
 #include <ostream>
 #include <list>
+
+namespace oos {
 
 class object_observer
 {
@@ -85,43 +89,10 @@ public:
   }
 };
 
+class prototype_node;
+
 class object_store
 {
-public:
-	struct prototype_node {
-    prototype_node();
-		prototype_node(object_base_producer *p, const char *t);
-    ~prototype_node();
-
-    void clear();
-    bool empty() const;
-    unsigned long size() const;
-    void insert(prototype_node *child);
-    void remove(prototype_node *child);
-
-    prototype_node* next_node() const;
-    prototype_node* previous_node() const;
-
-    friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
-
-    // tree links
-    prototype_node *parent;
-    prototype_node *prev;
-    prototype_node *next;
-    prototype_node *first;
-    prototype_node *last;
-
-    // data
-		object_base_producer *producer;
-		object_proxy *op_first;
-    object_proxy *op_marker;
-		object_proxy *op_last;
-
-    unsigned int depth;
-    unsigned long count;
-
-		std::string type;	
-	};
 private:
   typedef std::tr1::unordered_map<long, object*> t_object_map;
 	typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_node_map;
@@ -207,12 +178,13 @@ private:
     return find_prototype(root_, cmp);
   }
 
-  void adjust_left_marker(object_store::prototype_node *node, object_proxy *oproxy);
-  void adjust_right_marker(object_store::prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
+  void adjust_left_marker(prototype_node *node, object_proxy *oproxy);
+  void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
   prototype_node *root_;
-  t_prototype_node_map prototype_node_map_;
+  t_prototype_node_map prototype_node_name_map_;
+  t_prototype_node_map prototype_node_typeid_map_;
   t_object_map object_map_;
   long id_;
   
@@ -226,16 +198,17 @@ private:
   t_object_proxy_list deleted_object_proxy_list_;
 };
 
-class equal_classname : public std::unary_function<const object_store::prototype_node*, bool> {
+class equal_classname : public std::unary_function<const prototype_node*, bool> {
 public:
   explicit equal_classname(const std::string &classname) : classname_(classname) {}
 
-  bool operator() (const object_store::prototype_node *x) const {
+  bool operator() (const prototype_node *x) const {
     return x->producer->classname() == classname_;
   }
 private:
   const std::string &classname_;
 };
 
+}
 
 #endif /* OBJECTBAG_HPP */

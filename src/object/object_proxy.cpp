@@ -18,6 +18,8 @@
 #include "object/object_proxy.hpp"
 #include "object/object.hpp"
 
+namespace oos {
+
 object_proxy::object_proxy(object *o, object_store *os)
   : obj(o)
   , id((o ? o->id() : 0))
@@ -51,4 +53,6 @@ void object_proxy::insert(object_proxy* oproxy)
     prev->next = oproxy;
   }
   prev = oproxy;
+}
+
 }

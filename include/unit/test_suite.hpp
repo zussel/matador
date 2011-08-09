@@ -23,6 +23,8 @@
 #include <tr1/memory>
 #include <list>
 
+namespace oos {
+
 class unit_test;
 
 class test_suite : public singleton<test_suite>
@@ -42,5 +44,7 @@ public:
 private:
   t_unit_test_list unit_test_list_;
 };
+
+}
 
 #endif /* TEST_SUITE_HPP */

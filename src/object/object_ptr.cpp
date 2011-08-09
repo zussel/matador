@@ -21,6 +21,8 @@
 
 #include <iostream>
 
+namespace oos {
+
 base_object_ptr::base_object_ptr(bool is_ref)
   : id_(0)
   , proxy_(0)
@@ -101,4 +103,6 @@ bool base_object_ptr::delete_object()
 bool base_object_ptr::is_reference() const
 {
   return is_reference_;
+}
+
 }

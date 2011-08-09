@@ -17,6 +17,8 @@
 
 #include "object/object_atomizer.hpp"
 
+namespace oos {
+
 void object_atomizer::write_char(const char* id, char c)
 {
 }
@@ -119,4 +121,6 @@ void object_atomizer::read_object(const char* id, base_object_ptr &x)
 
 void object_atomizer::read_object_list(const char* id, object_list_base &x)
 {
+}
+
 }

@@ -17,6 +17,7 @@
 
 #include "object/object_list.hpp"
 
+namespace oos {
 /*
 object_list_base_element::~object_list_base_element()
 {}
@@ -37,3 +38,5 @@ void object_list_base_element::write_to(object_atomizer *writer)
   writer->write_object("next", next_);
 }
 */
+
+}

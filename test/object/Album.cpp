@@ -3,6 +3,7 @@
 #include "object/object_atomizer.hpp"
 
 using std::string;
+using namespace oos;
 
 Album::Album()
 {}
@@ -57,7 +58,7 @@ object_ref<Artist> Album::artist() const
   return artist_;
 }
 
-void Album::add(object_ptr<Track> track, bool override_artist)
+void Album::add(object_ref<Track> track, bool override_artist)
 {
   track_list_.push_back(new TrackList::t_list_node(track));
   if (override_artist) {

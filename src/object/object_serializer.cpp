@@ -20,6 +20,8 @@
 
 #include <string.h>
 
+namespace oos {
+
 object_serializer::object_serializer()
 {}
 
@@ -172,4 +174,6 @@ void object_serializer::read_object(const char* id, base_object_ptr &x)
 
 void object_serializer::read_object_list(const char* id, object_list_base &x)
 {
+}
+
 }
