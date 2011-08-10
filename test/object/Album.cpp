@@ -66,7 +66,7 @@ void Album::add(object_ref<Track> track, bool override_artist)
   }
 }
 
-object_ref<Track> Album::find(const std::string &name) const
+object_ref<Track> Album::find(const std::string &/*name*/) const
 {
   return object_ref<Track>();
 }
