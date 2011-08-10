@@ -51,6 +51,7 @@ public:
   {
     if (!x.is_reference()) {
       // create object
+      x.reset(ostore_.create(x.type()));
     }
   }
   virtual void read_object_list(const char*, object_list_base &x)
@@ -86,6 +87,8 @@ object_store::object_store()
   , first_(new object_proxy(NULL, this))
   , last_(new object_proxy(NULL, this))
 {
+  prototype_node_name_map_.insert(std::make_pair("OBJECT", root_));
+  prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_));
   // set marker for root element
   root_->op_first = first_;
   root_->op_marker = last_;
@@ -107,10 +110,11 @@ object_store::~object_store()
   // delete all deleted object_proxys
   std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
 
-  object_proxy *i = first_;
-  while (i->next != last_) {
-    i = i->next;
-    out << *i->obj << " (prev [" << i->prev->obj << "] next [" << i->next->obj << "])\n";
+  while (first_->next != last_) {
+    object_proxy *i = first_->next;
+    first_->next = i->next;
+    i->next->prev = first_;
+    delete i;
   }
 }
 
@@ -162,6 +166,11 @@ bool object_store::remove_prototype(const char *type)
 		return false;
 	}
   // remove (and delete) from tree (deletes subsequently all child nodes
+  // for each child call remove_prototype(child);
+  while (i->second->first->next != i->second->last) {
+    prototype_node *node = i->second->first->next;
+    remove_prototype(node->type.c_str());
+  }
   // and objects they're containing 
   i->second->parent->remove(i->second);
   // erase node from map
