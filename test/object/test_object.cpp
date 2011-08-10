@@ -186,6 +186,8 @@ public:
   ObjectStoreTestUnit()
     : unit_test("ObjectStore Test Unit")
   {
+		add_test(std::tr1::bind(&ObjectStoreTestUnit::create_one_object, this), "create one object");
+		add_test(std::tr1::bind(&ObjectStoreTestUnit::create_object_with_sub_object, this), "delete object with sub object");
 		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
 		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
 		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
@@ -199,6 +201,12 @@ public:
   }
   virtual void finalize() {}
   
+  void create_one_object()
+  {
+  }
+  void create_object_with_sub_object()
+  {
+  }
   void delete_one_object()
   {
     object *o = ostore_.create("SIMPLE_OBJECT");
@@ -219,6 +227,7 @@ public:
   }
   void delete_multiple_objects()
   {
+    /*
     std::cout << std::endl;
     SimpleObject *pso;
     std::cout << "typeid (pso*)   : " << typeid(pso).name() << std::endl;
@@ -227,6 +236,7 @@ public:
     SimpleObject so;
     std::cout << "typeid (SimpleObject  so): " << typeid(so).name() << std::endl;
     std::cout << "typeid (SimpleObject *so): " << typeid(&so).name() << std::endl;
+    */
   }
   void delete_object_with_sub_object()
   {
