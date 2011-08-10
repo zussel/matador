@@ -7,7 +7,7 @@
  * (at your option) any later version.
  *
  * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY {} without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -32,33 +32,33 @@ class object_atomizer /*: public Atomizer*/
 public:
 	virtual ~object_atomizer() {}
 
-	virtual void write_char(const char* id, char c);
-	virtual void write_float(const char* id, float f);
-	virtual void write_double(const char* id, double f);
-	virtual void write_int(const char* id, int i);
-	virtual void write_long(const char* id, long l);
-	virtual void write_unsigned(const char* id, unsigned u);
-	virtual void write_bool(const char* id, bool b);
-	virtual void write_charptr(const char* id, const char *c);
-	virtual void write_string(const char* id, const std::string &s);
-	virtual void write_date(const char* id, const Date &s);
-	virtual void write_time(const char* id, const Time &s);
-	virtual void write_object(const char* id, const base_object_ptr &x);
-	virtual void write_object_list(const char* id, const object_list_base &x);
+	virtual void write_char(const char*, char) {}
+	virtual void write_float(const char*, float) {}
+	virtual void write_double(const char*, double) {}
+	virtual void write_int(const char*, int) {}
+	virtual void write_long(const char*, long) {}
+	virtual void write_unsigned(const char*, unsigned) {}
+	virtual void write_bool(const char*, bool) {}
+	virtual void write_charptr(const char*, const char*) {}
+	virtual void write_string(const char*, const std::string&) {}
+	virtual void write_date(const char*, const Date&) {}
+	virtual void write_time(const char*, const Time&) {}
+	virtual void write_object(const char*, const base_object_ptr&) {}
+	virtual void write_object_list(const char*, const object_list_base&) {}
 
-	virtual void read_char(const char* id, char &c);
-	virtual void read_float(const char* id, float &f);
-	virtual void read_double(const char* id, double &f);
-	virtual void read_int(const char* id, int &i);
-	virtual void read_long(const char* id, long &l);
-	virtual void read_unsigned(const char* id, unsigned &u);
-	virtual void read_bool(const char* id, bool &b);
-	virtual void read_charptr(const char* id, char *&c);
-	virtual void read_string(const char* id, std::string &s);
-	virtual void read_date(const char* id, Date &s);
-	virtual void read_time(const char* id, Time &s);
-	virtual void read_object(const char* id, base_object_ptr &x);
-	virtual void read_object_list(const char* id, object_list_base &x);
+	virtual void read_char(const char*, char&) {}
+	virtual void read_float(const char*, float&) {}
+	virtual void read_double(const char*, double&) {}
+	virtual void read_int(const char*, int&) {}
+	virtual void read_long(const char*, long&) {}
+	virtual void read_unsigned(const char*, unsigned&) {}
+	virtual void read_bool(const char*, bool&) {}
+	virtual void read_charptr(const char*, char*&) {}
+	virtual void read_string(const char*, std::string&) {}
+	virtual void read_date(const char*, Date&) {}
+	virtual void read_time(const char*, Time&) {}
+	virtual void read_object(const char*, base_object_ptr&) {}
+	virtual void read_object_list(const char*, object_list_base&) {}
 };
 
 }

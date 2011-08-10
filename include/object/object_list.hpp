@@ -332,8 +332,8 @@ public:
   {}
 	virtual ~object_list_base() {}
 
-	void read_from(object_atomizer *reader) {}
-	void write_to(object_atomizer *writer) {}
+	void read_from(object_atomizer *) {}
+	void write_to(object_atomizer *) {}
 
 protected:
   friend class object_store;

@@ -46,13 +46,13 @@ public:
   object_creator(object_store &ostore) : ostore_(ostore) {}
   virtual ~object_creator() {}
 
-  virtual void read_object(const char* id, base_object_ptr &x)
+  virtual void read_object(const char*, base_object_ptr &x)
   {
     if (!x.is_reference()) {
       // create object
     }
   }
-  virtual void read_object_list(const char* id, object_list_base &x)
+  virtual void read_object_list(const char*, object_list_base &x)
   {
     ostore_.insert_object_list(x);
   }
@@ -66,13 +66,13 @@ public:
   object_deleter(object_store &ostore) : ostore_(ostore) {}
   virtual ~object_deleter() {}
 
-  virtual void read_object(const char* id, base_object_ptr &x)
+  virtual void read_object(const char*, base_object_ptr &x)
   {
     if (!x.is_reference() && x.ptr()) {
       ostore_.remove_object(x.ptr());
     }
   }
-  virtual void read_object_list(const char* id, object_list_base &x)
+  virtual void read_object_list(const char*, object_list_base &)
   {
   }
 private:
