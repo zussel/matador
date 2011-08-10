@@ -22,8 +22,6 @@
 #include "object/object_ptr.hpp"
 #include "object/object_proxy.hpp"
 
-#include "object/prototype_node.hpp"
-
 #ifdef WIN32
 #include <memory>
 #include <unordered_map>
@@ -160,24 +158,6 @@ private:
 	
   bool insert_object_list(object_list_base &olb);
 
-  // find prototype by compare object
-  template < class Pred >
-  prototype_node* find_prototype(prototype_node *root, Pred cmp) const {
-    prototype_node *i = root;
-    do {
-      if (cmp(i)) {
-        return i;
-      } else {
-        i = i->next_node();
-      }
-    } while (i && i != root);
-    return NULL;
-  }
-  template < class Pred >
-  prototype_node* find_prototype(Pred cmp) const {
-    return find_prototype(root_, cmp);
-  }
-
   void adjust_left_marker(prototype_node *node, object_proxy *oproxy);
   void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
 
@@ -196,17 +176,6 @@ private:
   
   typedef std::list<object_proxy*> t_object_proxy_list;
   t_object_proxy_list deleted_object_proxy_list_;
-};
-
-class equal_classname : public std::unary_function<const prototype_node*, bool> {
-public:
-  explicit equal_classname(const std::string &classname) : classname_(classname) {}
-
-  bool operator() (const prototype_node *x) const {
-    return x->producer->classname() == classname_;
-  }
-private:
-  const std::string &classname_;
 };
 
 }
