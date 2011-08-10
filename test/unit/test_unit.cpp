@@ -77,7 +77,7 @@ public:
   virtual void finalize() {}
 };
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char */*argv*/[])
 {
   test_suite::instance().register_unit(new FirstTestUnit());
   test_suite::instance().register_unit(new SecondTestUnit());

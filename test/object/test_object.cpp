@@ -257,7 +257,7 @@ bool test_3(object_store &ostore);
 bool test_4(object_store &ostore);
 
 int
-main(int argc, char *argv[])
+main(int /*argc*/, char */*argv*/[])
 {
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
   test_suite::instance().register_unit(new ObjectStoreTestUnit());
@@ -553,7 +553,7 @@ bool test_3(object_store &ostore)
   return true;
 }
 
-bool test_4(object_store &ostore)
+bool test_4(object_store &/*ostore*/)
 {
   Track *track = new Track(1, "Hallo Welt", 300);
   
