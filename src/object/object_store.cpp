@@ -18,6 +18,7 @@
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
 #include "object/object_list.hpp"
+#include "object/prototype_node.hpp"
 
 #include <tr1/functional>
 #include <memory>
@@ -105,6 +106,12 @@ object_store::~object_store()
   delete last_;
   // delete all deleted object_proxys
   std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
+
+  object_proxy *i = first_;
+  while (i->next != last_) {
+    i = i->next;
+    out << *i->obj << " (prev [" << i->prev->obj << "] next [" << i->next->obj << "])\n";
+  }
 }
 
 bool
@@ -148,11 +155,18 @@ bool object_store::remove_prototype(const char *type)
     // now parent
     return false;
   }
+  t_prototype_node_map::iterator j = prototype_node_type_map_.find(i->second->producer->classname());
+  if (j == prototype_node_type_map_.end()) {
+		// couldn't fnd prototype in type map
+		// throw exception
+		return false;
+	}
   // remove (and delete) from tree (deletes subsequently all child nodes
   // and objects they're containing 
   i->second->parent->remove(i->second);
   // erase node from map
   prototype_node_name_map_.erase(i);
+  prototype_node_type_map_.erase(j);
   return true;
 }
 
@@ -197,11 +211,12 @@ void object_store::dump_objects(std::ostream &out) const
 
 object* object_store::create(const char *type) const
 {
-  prototype_node *node = find_prototype(root_, equal_type(type));
-  if (!node) {
+  t_prototype_node_map::const_iterator i = prototype_node_name_map_.find(type);
+  if (i == prototype_node_name_map_.end()) {
+    //throw new object_exception("couldn't find prototype");
     return NULL;
   }
-  return node->producer->create();
+	return i->second->producer->create();
 }
 
 void object_store::mark_modified(object_proxy *oproxy)
@@ -241,20 +256,13 @@ object* object_store::insert_object(object *o)
     return NULL;
   }
   // find prototype node
-  /*
-  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
-  if (i == prototype_node_map_.end()) {
-    return NULL;
-  }
-  prototype_node *node = i->second;
-  */
-  // find prototype node of object
-  prototype_node *node = find_prototype(root_, equal_classname(typeid(*o).name()));
-  if (!node) {
+  t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
+  if (i == prototype_node_type_map_.end()) {
     // raise exception
     //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
     return NULL;
   }
+  prototype_node *node = i->second;
   // retrieve and set new unique number into object
   //object->id(UniqueProducer::instance().number("default"));
   o->id(++id_);
@@ -310,20 +318,14 @@ object* object_store::insert_object(object *o)
 
 bool object_store::remove_object(object *o)
 {
-  /*
   // find prototype node
-  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
-  if (i == prototype_node_map_.end()) {
-    return false;
-  }
-  prototype_node *node = i->second;
-  */
-  prototype_node *node = find_prototype(root_, equal_classname(typeid(*o).name()));
-  if (!node) {
+  t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
+  if (i == prototype_node_type_map_.end()) {
     // raise exception
     //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
     return false;
   }
+  prototype_node *node = i->second;
 
   if (o->proxy_ == node->op_first->next) {
     // adjust left marker
