@@ -20,6 +20,8 @@
 
 #include <tr1/functional>
 
+using namespace oos;
+
 class FirstTestUnit : public unit_test
 {
 public:
@@ -77,8 +79,8 @@ public:
 
 int main(int argc, char *argv[])
 {
-  test_suite::instance()->register_unit(new FirstTestUnit());
-  test_suite::instance()->register_unit(new SecondTestUnit());
+  test_suite::instance().register_unit(new FirstTestUnit());
+  test_suite::instance().register_unit(new SecondTestUnit());
   
-  test_suite::instance()->run();
+  test_suite::instance().run();
 }
