@@ -21,6 +21,7 @@
 #include "object/object_store.hpp"
 #include "object/object_proxy.hpp"
 #include "object/object_ptr.hpp"
+#include "object/prototype_node.hpp"
 
 namespace oos {
 
@@ -234,10 +235,11 @@ public:
     , skip_siblings_(skip_siblings)
     , node_(NULL)
   {
-    node_ = ostore_.find_prototype(equal_classname(typeid(T).name()));
-    if (!node_) {
+		object_store::t_prototype_node_map::iterator i = ostore_.prototype_node_type_map_.find(typeid(T).name());
+		if (i == ostore_.prototype_node_type_map_.end()) {
       // throw excpetion
     }
+    node_ = i->second;
   }
 
   iterator begin() {
