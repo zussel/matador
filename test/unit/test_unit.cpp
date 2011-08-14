@@ -27,9 +27,9 @@ class FirstTestUnit : public unit_test
 public:
   FirstTestUnit() : unit_test("First test unit")
   {
-    add_test(std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
-    add_test(std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");
-    add_test(std::tr1::bind(&FirstTestUnit::third_sub_test, this), "sub third");
+    add_test("sub1", std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
+    add_test("sub2", std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");
+    add_test("sub3", std::tr1::bind(&FirstTestUnit::third_sub_test, this), "sub third");
   }
   virtual ~FirstTestUnit() {}
   
@@ -59,8 +59,8 @@ class SecondTestUnit : public unit_test
 public:
   SecondTestUnit() : unit_test("Second test unit")
   {
-    add_test(std::tr1::bind(&SecondTestUnit::small_test, this), "sub small");
-    add_test(std::tr1::bind(&SecondTestUnit::big_test, this), "sub big");
+    add_test("small", std::tr1::bind(&SecondTestUnit::small_test, this), "sub small");
+    add_test("big", std::tr1::bind(&SecondTestUnit::big_test, this), "sub big");
   }
   virtual ~SecondTestUnit() {}
 
@@ -79,8 +79,8 @@ public:
 
 int main(int /*argc*/, char */*argv*/[])
 {
-  test_suite::instance().register_unit(new FirstTestUnit());
-  test_suite::instance().register_unit(new SecondTestUnit());
+  test_suite::instance().register_unit("first", new FirstTestUnit());
+  test_suite::instance().register_unit("second", new SecondTestUnit());
   
   test_suite::instance().run();
 }

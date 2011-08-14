@@ -27,7 +27,7 @@ unit_test::unit_test(const std::string &caption)
 
 unit_test::~unit_test()
 {
-  test_func_info_list_.clear();
+  test_func_info_map_.clear();
 }
 
 std::string unit_test::caption() const
@@ -37,11 +37,11 @@ std::string unit_test::caption() const
 
 void unit_test::execute()
 {
-  t_test_func_info_list::iterator first = test_func_info_list_.begin();
-  t_test_func_info_list::iterator last = test_func_info_list_.end();
+  t_test_func_info_map::iterator first = test_func_info_map_.begin();
+  t_test_func_info_map::iterator last = test_func_info_map_.end();
   while (first != last) {
     initialize();
-    test_func_info &info = *first++;
+    test_func_info &info = (first++)->second;
     std::cout << "Executing test [" << info.caption << "] ... ";
     try {
       info.func();
@@ -59,9 +59,9 @@ void unit_test::execute()
   // execute each test
 }
 
-void unit_test::add_test(const test_func &test, const std::string &caption)
+void unit_test::add_test(const std::string &name, const test_func &test, const std::string &caption)
 {
-  test_func_info_list_.push_back(test_func_info(test, caption));
+  test_func_info_map_.insert(std::make_pair(name, test_func_info(test, caption)));
 }
 
 void unit_test::assert_true(bool a, const std::string &msg)

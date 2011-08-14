@@ -7,29 +7,29 @@
 
 namespace oos {
 
-void test_suite::register_unit(unit_test *utest)
+void test_suite::register_unit(const std::string &name, unit_test *utest)
 {
-  unit_test_list_.push_back(unit_test_ptr(utest));
+  unit_test_map_.insert(std::make_pair(name, unit_test_ptr(utest)));
 }
 
 struct unit_executer : public std::unary_function<test_suite::unit_test_ptr, void>
 {
   unit_executer() {}
-  void operator()(const test_suite::unit_test_ptr &x)
+  void operator()(test_suite::value_type &x)
   {
-    std::cout << "Executing test unit [" << x->caption() << "]\n";
-    x->execute();
+    std::cout << "Executing test unit [" << x.second->caption() << "]\n";
+    x.second->execute();
   }
 };
 
 test_suite::~test_suite()
 {
-  unit_test_list_.clear();
+  unit_test_map_.clear();
 }
 
 void test_suite::run()
 {
-  std::for_each(unit_test_list_.begin(), unit_test_list_.end(), unit_executer());
+  std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_executer());
 }
 
 }

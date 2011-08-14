@@ -25,6 +25,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <algorithm>
+#include <stack>
 
 using std::tr1::placeholders::_1;
 
@@ -41,7 +42,16 @@ private:
   const std::string &type_;
 };
 
-class object_creator : public object_atomizer
+class object_actor : public object_atomizer
+{
+public:
+  virtual ~object_actor() {}
+  
+protected:
+  std::stack<object*> object_stack_;
+};
+
+class object_creator : public object_actor
 {
 public:
   object_creator(object_store &ostore) : ostore_(ostore) {}
@@ -52,6 +62,9 @@ public:
     if (!x.is_reference()) {
       // create object
       x.reset(ostore_.create(x.type()));
+      object_stack_.push(x.ptr());
+      x.ptr()->read_from(this);
+      object_stack_.pop();
     }
   }
   virtual void read_object_list(const char*, object_list_base &x)
@@ -62,7 +75,7 @@ private:
   object_store &ostore_;
 };
 
-class object_deleter : public object_atomizer
+class object_deleter : public object_actor
 {
 public:
   object_deleter(object_store &ostore) : ostore_(ostore) {}

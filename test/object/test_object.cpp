@@ -70,8 +70,8 @@ public:
   ObjectPrototypeTestUnit()
     : unit_test("ObjectStore Prototype Test Unit")
   {
-		add_test(std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
-		add_test(std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
+		add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
+		//add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   }
   virtual ~ObjectPrototypeTestUnit() {}
   
@@ -186,11 +186,11 @@ public:
   ObjectStoreTestUnit()
     : unit_test("ObjectStore Test Unit")
   {
-		add_test(std::tr1::bind(&ObjectStoreTestUnit::create_one_object, this), "create one object");
-		add_test(std::tr1::bind(&ObjectStoreTestUnit::create_object_with_sub_object, this), "delete object with sub object");
-		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
-		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
-		add_test(std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
+		add_test("create_one", std::tr1::bind(&ObjectStoreTestUnit::create_one_object, this), "create one object");
+		add_test("create_one_sub", std::tr1::bind(&ObjectStoreTestUnit::create_object_with_sub_object, this), "create object with sub object");
+		add_test("del_one", std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
+		add_test("del_multiple", std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
+		add_test("del_one_sub", std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
   }
   virtual ~ObjectStoreTestUnit() {}
   
@@ -269,8 +269,8 @@ bool test_4(object_store &ostore);
 int
 main(int /*argc*/, char */*argv*/[])
 {
-  test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
-  test_suite::instance().register_unit(new ObjectStoreTestUnit());
+  test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
+  //test_suite::instance().register_unit(new ObjectStoreTestUnit());
 	
 	test_suite::instance().run();
 

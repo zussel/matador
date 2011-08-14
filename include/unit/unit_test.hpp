@@ -21,7 +21,7 @@
 #include "unit/unit_exception.hpp"
 
 #include <tr1/functional>
-#include <list>
+#include <map>
 #include <string>
 #include <sstream>
 
@@ -44,7 +44,7 @@ public:
   std::string caption() const;
 
   void execute();
-  void add_test(const test_func &test, const std::string &caption);
+  void add_test(const std::string &name, const test_func &test, const std::string &caption);
 
   template < class T >
   void assert_equal(T a, T b, const std::string &msg)
@@ -104,8 +104,8 @@ private:
 private:
   std::string caption_;
 
-  typedef std::list<test_func_info> t_test_func_info_list;
-  t_test_func_info_list test_func_info_list_;
+  typedef std::map<std::string, test_func_info> t_test_func_info_map;
+  t_test_func_info_map test_func_info_map_;
 };
 
 }

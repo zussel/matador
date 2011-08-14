@@ -21,7 +21,8 @@
 #include "tools/singleton.hpp"
 
 #include <tr1/memory>
-#include <list>
+#include <map>
+#include <string>
 
 namespace oos {
 
@@ -33,16 +34,17 @@ class test_suite : public singleton<test_suite>
   
 public:
   typedef std::tr1::shared_ptr<unit_test> unit_test_ptr;
-  typedef std::list<unit_test_ptr> t_unit_test_list;
+  typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
+  typedef t_unit_test_map::value_type value_type;
 
 public:
   virtual ~test_suite();
   
-  void register_unit(unit_test *utest);
+  void register_unit(const std::string &name, unit_test *utest);
   void run();
 
 private:
-  t_unit_test_list unit_test_list_;
+  t_unit_test_map unit_test_map_;
 };
 
 }
