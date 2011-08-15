@@ -36,6 +36,8 @@ struct prototype_node {
   void insert(prototype_node *child);
   void remove(prototype_node *child);
 
+  void unlink();
+
   prototype_node* next_node() const;
   prototype_node* previous_node() const;
 

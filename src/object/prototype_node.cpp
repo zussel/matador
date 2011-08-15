@@ -65,6 +65,10 @@ prototype_node::clear()
 {
   while (first && first->next != last) {
     prototype_node *node = first->next;
+    // adjust marker if node isn't empty
+    if (!node->empty()) {
+      
+    }
     remove(node);
   }
   // remove objects
@@ -117,6 +121,10 @@ prototype_node::remove(prototype_node *child)
   child->clear();
   // delete node
   delete child;
+}
+
+void prototype_node::unlink()
+{
 }
 
 prototype_node* prototype_node::next_node() const
