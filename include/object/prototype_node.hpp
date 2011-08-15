@@ -39,6 +39,11 @@ struct prototype_node {
   prototype_node* next_node() const;
   prototype_node* previous_node() const;
 
+  bool is_child_of(const prototype_node *parent) const;
+
+  void adjust_left_marker(object_proxy *oproxy);
+  void adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy);
+
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   // tree links

@@ -156,6 +156,78 @@ prototype_node* prototype_node::previous_node() const
   }
 }
 
+bool prototype_node::is_child_of(const prototype_node *parent) const
+{
+  const prototype_node *node = this;
+  while (parent->depth < node->depth) {
+    node = node->parent;
+  }
+  return node == parent;
+}
+
+void prototype_node::adjust_left_marker(object_proxy *oproxy)
+{
+  // store start node
+  prototype_node *node = this;
+  // get previous node
+  node = node->previous_node();
+  while (node) {
+    bool do_break = node->op_first->next != oproxy;
+    /*
+    if (node->op_first->next == oproxy) {
+      std::cout << "before adjusting left node: " << *node << "\n";
+      node->op_last = oproxy;
+      node->op_marker = oproxy;
+      std::cout << "after adjusting left node: " << *node << "\n";
+    } else {
+    */
+      //std::cout << "break: before adjusting left node: " << *node << "\n";
+      node->op_marker = oproxy;
+      //if (start->parent != node || node->empty()) {
+      if (!is_child_of(node) || node->empty()) {
+        node->op_last = oproxy;
+      }
+      //std::cout << "break: after adjusting left node: " << *node << "\n";
+      /*break;
+    }*/
+      if (do_break) {
+        break;
+      }
+    node = node->previous_node();
+  }
+}
+
+void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = this;
+  // get previous node
+  node = node->next_node();
+  bool first = true;
+  while (node) {
+    if (node->op_first == old_proxy) {
+      //std::cout << "before adjusting right node: " << *node << "\n";
+      node->op_first = new_proxy;
+      //std::cout << "after adjusting right node: " << *node << "\n";
+    } else {
+      //std::cout << "break: before adjusting right node: " << *node << "\n";
+      node->op_first = new_proxy;
+      //std::cout << "break: after adjusting right node: " << *node << "\n";
+      break;
+    }
+    // check watermark
+    if (first) {
+      if (depth == node->depth && !node->empty()) {
+        break;
+      }
+      first = false;
+    } else if (depth <= node->depth && !node->empty()) {
+      break;
+    }
+    node = node->next_node();
+  }
+}
+
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
   os << "node [" << &pn << "] depth [" << pn.depth << "] type [" << pn.type << "] class [" << pn.producer->classname() << "]";

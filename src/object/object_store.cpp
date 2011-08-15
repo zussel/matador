@@ -307,7 +307,8 @@ object* object_store::insert_object(object *o)
       std::cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
     }*/
     node->op_marker->prev->insert(oproxy);
-    adjust_left_marker(node, oproxy);
+    node->adjust_left_marker(oproxy);
+    //adjust_left_marker(node, oproxy);
   } else /* if (node->count == 0) */ {
     // there is no object in subtree
     // insert as last; adjust "right" marker
@@ -317,8 +318,10 @@ object* object_store::insert_object(object *o)
       std::cout << "list is empty: inserting " << *o << " as last before [0]\n";
     }*/
     node->op_marker->insert(oproxy);
-    adjust_left_marker(node, oproxy);
-    adjust_right_marker(node, oproxy->prev, oproxy);
+    node->adjust_left_marker(oproxy);
+    node->adjust_right_marker(oproxy->prev, oproxy);
+//    adjust_left_marker(node, oproxy);
+//    adjust_right_marker(node, oproxy->prev, oproxy);
   }
   // create object
   object_creator oc(*this);
@@ -351,11 +354,13 @@ bool object_store::remove_object(object *o)
 
   if (o->proxy_ == node->op_first->next) {
     // adjust left marker
-    adjust_left_marker(node, node->op_first->next->next);
+    node->adjust_left_marker(node->op_first->next->next);
+    //adjust_left_marker(node, node->op_first->next->next);
   }
   if (o->proxy_ == node->op_marker->prev) {
     // adjust right marker
-    adjust_right_marker(node, o->proxy_, node->op_marker->prev->prev);
+    node->adjust_right_marker(o->proxy_, node->op_marker->prev->prev);
+    //adjust_right_marker(node, o->proxy_, node->op_marker->prev->prev);
   }
   // unlink object_proxy
   o->proxy_->remove();
@@ -387,13 +392,13 @@ bool object_store::insert_object_list(object_list_base &olb)
   insert_object(olb.last_obj_);
   return true;
 }
-
-bool is_child_of(prototype_node *start, prototype_node *node)
+/*
+bool is_child_of(prototype_node *parent, prototype_node *node)
 {
-  while (start->depth < node->depth) {
+  while (parent->depth < node->depth) {
     node = node->parent;
   }
-  return node == start;
+  return node == parent;
 }
 
 void object_store::adjust_left_marker(prototype_node *node, object_proxy *oproxy)
@@ -411,7 +416,7 @@ void object_store::adjust_left_marker(prototype_node *node, object_proxy *oproxy
       node->op_marker = oproxy;
       std::cout << "after adjusting left node: " << *node << "\n";
     } else {
-    */
+    * /
       //std::cout << "break: before adjusting left node: " << *node << "\n";
       node->op_marker = oproxy;
       //if (start->parent != node || node->empty()) {
@@ -420,7 +425,7 @@ void object_store::adjust_left_marker(prototype_node *node, object_proxy *oproxy
       }
       //std::cout << "break: after adjusting left node: " << *node << "\n";
       /*break;
-    }*/
+    }* /
       if (do_break) {
         break;
       }
@@ -458,5 +463,5 @@ void object_store::adjust_right_marker(prototype_node *node, object_proxy *old_p
     node = node->next_node();
   }
 }
-
+*/
 }

@@ -158,8 +158,8 @@ private:
 	
   bool insert_object_list(object_list_base &olb);
 
-  void adjust_left_marker(prototype_node *node, object_proxy *oproxy);
-  void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
+  //void adjust_left_marker(prototype_node *node, object_proxy *oproxy);
+  //void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
   prototype_node *root_;
