@@ -19,6 +19,7 @@
 #define PROTOTYPE_NODE_HPP
 
 #include <iostream>
+#include <memory>
 
 namespace oos {
 
@@ -30,20 +31,66 @@ struct prototype_node {
   prototype_node(object_base_producer *p, const char *t);
   ~prototype_node();
 
+  /**
+   * clear removes all object proxies really belonging to
+   * this node and deletes them and the holded object
+   */
   void clear();
-  bool empty(bool self) const;
-  unsigned long size() const;
-  void insert(prototype_node *child);
-  void remove(prototype_node *child);
 
+  /**
+   * Returns true if object proxy list is empty. If self is true, only
+   * list of own objects is checked. If self is false, complete list is
+   * checked.
+   */
+  bool empty(bool self) const;
+  
+  /**
+   * Returns the size of the object proxy list.
+   */
+  unsigned long size() const;
+  
+  /**
+   * Appends the given prototype node to the list of children.
+   */
+
+  void insert(prototype_node *child);
+    
+  /**
+   * Removes node and cildren nodes from list, clears all object
+   * and deletes all members.
+   */
+  void remove();
+
+  /**
+   * Unlinks node from list.
+   */
   void unlink();
 
+  /**
+   * Returns nodes successor node or NULL if node is last.
+   */
   prototype_node* next_node() const;
+  prototype_node* next_node(prototype_node *root) const;
+  
+  /**
+   * Return nodes predeccessor node or NULL if node is first.
+   */
   prototype_node* previous_node() const;
 
+  /**
+   * Returns true if node is child of given parent node.
+   */
   bool is_child_of(const prototype_node *parent) const;
 
+  /**
+   * Adjusts self and last marker of all predeccessor nodes with given
+   * object proxy.
+   */
   void adjust_left_marker(object_proxy *oproxy);
+  
+  /**
+   * Adjust first marker of all successor nodes with given object proxy.
+   */
   void adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy);
 
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
@@ -52,11 +99,11 @@ struct prototype_node {
   prototype_node *parent;
   prototype_node *prev;
   prototype_node *next;
-  prototype_node *first;
-  prototype_node *last;
+  std::auto_ptr<prototype_node> first;
+  std::auto_ptr<prototype_node> last;
 
   // data
-  object_base_producer *producer;
+  std::auto_ptr<object_base_producer> producer;
   object_proxy *op_first;
   object_proxy *op_marker;
   object_proxy *op_last;

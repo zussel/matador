@@ -43,40 +43,38 @@ prototype_node::prototype_node(object_base_producer *p, const char *t)
   , count(0)
   , type(t)
 {
-  first->next = last;
-  last->prev = first;
+  first->next = last.get();
+  last->prev = first.get();
 }
 
 prototype_node::~prototype_node()
 {
-  while (first && first->next != last) {
-    prototype_node *node = first->next;
-    first->next = node->next;
-    node->next->prev = first;
-    delete node;
-  }
-  delete first;
-  delete last;
-  delete producer;
 }
 
 void
 prototype_node::clear()
 {
-  if (!node->empty(true)) {
-    // point op first to last
-    // adjust marker
-    // delete unlinked proxies and objects
+  if (empty(true)) {
+    return;
   }
-  while (first && first->next != last) {
-    prototype_node *node = first->next;
-    // adjust marker if node isn't empty
-    if (!node->empty(tru)) {
-      
+  // remove object proxies until first and marker are left
+  object_proxy *old_first = op_first->next;
+  while (op_first->next != op_marker) {
+    object_proxy *op = op_first->next;
+    // remove object proxy from list
+    op->remove();
+    // delete object proxy and object
+    if (op->obj) {
+      delete op->obj;
     }
-    remove(node);
+    if (op != old_first) {
+      delete op;
+    }
   }
-  // remove objects
+  // adjust marker
+  adjust_left_marker(op_marker);
+  adjust_right_marker(old_first, op_first);
+  delete old_first;
 }
 
 bool
@@ -96,7 +94,7 @@ prototype_node::insert(prototype_node *child)
 {
   child->parent = this;
   child->prev = last->prev;
-  child->next = last;
+  child->next = last.get();
   last->prev->next = child;
   last->prev = child;
   // set depth
@@ -116,37 +114,65 @@ prototype_node::insert(prototype_node *child)
   child->op_last = op_last;
 }    
 
-void
-prototype_node::remove(prototype_node *child)
+void prototype_node::remove()
 {
-  // unlink node
-  child->prev->next = child->next;
-  child->next->prev = child->prev;
-  // clear objects
-  child->clear();
-  // delete node
-  delete child;
+  // delete all object proxies
+  clear();
+  // delete all cild nodes
+  while (first->next != last.get()) {
+    prototype_node *node = first->next;
+    node->remove();
+    delete node;
+  }
+  // unlink this node
+  unlink();
 }
 
 void prototype_node::unlink()
 {
+  // unlink node
+  prev->next = next;
+  next->prev = prev;
+  next = NULL;
+  prev = NULL;
 }
 
 prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first->next != last)
+  if (first->next != last.get())
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last) {
+    while (node->parent && node->next == node->parent->last.get()) {
       node = node->parent;
     }
     return node->next;
+  }
+}
+
+prototype_node* prototype_node::next_node(prototype_node *root) const
+{
+  // if we have a child, child is the next iterator to return
+  // (if we don't do iterate over the siblings)
+  if (first->next != last.get())
+    return first->next;
+  else {
+    // if there is no child, we check for sibling
+    // if there is a sibling, this is our next iterator to return
+    // if not, we go back to the parent
+    const prototype_node *node = this;
+    while (node->parent && node->next == node->parent->last.get()) {
+      node = node->parent;
+    }
+    if (node != root)
+      return node->next;
+    else
+      return NULL;
   }
 }
 
@@ -158,7 +184,7 @@ prototype_node* prototype_node::previous_node() const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last) {
+    while (node->last.get() && node->first->next != node->last.get()) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
@@ -197,7 +223,7 @@ void prototype_node::adjust_left_marker(object_proxy *oproxy)
       //std::cout << "break: before adjusting left node: " << *node << "\n";
       node->op_marker = oproxy;
       //if (start->parent != node || node->empty()) {
-      if (!is_child_of(node) || node->empty()) {
+      if (!is_child_of(node) || node->empty(false)) {
         node->op_last = oproxy;
       }
       //std::cout << "break: after adjusting left node: " << *node << "\n";
@@ -230,11 +256,11 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
     }
     // check watermark
     if (first) {
-      if (depth == node->depth && !node->empty()) {
+      if (depth == node->depth && !node->empty(false)) {
         break;
       }
       first = false;
-    } else if (depth <= node->depth && !node->empty()) {
+    } else if (depth <= node->depth && !node->empty(false)) {
       break;
     }
     node = node->next_node();

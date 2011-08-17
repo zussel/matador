@@ -117,7 +117,7 @@ public:
   /**
    * Removes all inserted prototypes
    */
-  void clear_prototypes();
+  void clear();
 	
 	void dump_prototypes(std::ostream &out) const;
 	void dump_objects(std::ostream &out) const;
@@ -162,7 +162,8 @@ private:
   //void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
-  prototype_node *root_;
+  std::auto_ptr<prototype_node> root_;
+ 
   t_prototype_node_map prototype_node_name_map_;
   t_prototype_node_map prototype_node_type_map_;
   t_object_map object_map_;

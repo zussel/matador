@@ -71,7 +71,7 @@ public:
     : unit_test("ObjectStore Prototype Test Unit")
   {
 		add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
-		//add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
+		add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   }
   virtual ~ObjectPrototypeTestUnit() {}
   
@@ -199,7 +199,10 @@ public:
 		ostore_.insert_prototype(new object_producer<SimpleObject>, "SIMPLE_OBJECT");
 		ostore_.insert_prototype(new object_producer<ObjectWithSubObject>, "OBJECT_WITH_SUB_OBJECT");
   }
-  virtual void finalize() {}
+  virtual void finalize()
+  {
+    ostore_.clear();
+  }
   
   void create_one_object()
   {
@@ -270,7 +273,7 @@ int
 main(int /*argc*/, char */*argv*/[])
 {
   test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
-  //test_suite::instance().register_unit(new ObjectStoreTestUnit());
+  test_suite::instance().register_unit("objects", new ObjectStoreTestUnit());
 	
 	test_suite::instance().run();
 

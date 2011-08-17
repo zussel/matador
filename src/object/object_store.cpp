@@ -100,8 +100,8 @@ object_store::object_store()
   , first_(new object_proxy(NULL, this))
   , last_(new object_proxy(NULL, this))
 {
-  prototype_node_name_map_.insert(std::make_pair("OBJECT", root_));
-  prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_));
+  prototype_node_name_map_.insert(std::make_pair("OBJECT", root_.get()));
+  prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
   // set marker for root element
   root_->op_first = first_;
   root_->op_marker = last_;
@@ -117,18 +117,10 @@ void delete_object_proxy(object_proxy *op)
 
 object_store::~object_store()
 {
-  delete root_;
   delete first_;
   delete last_;
   // delete all deleted object_proxys
   std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
-
-  while (first_->next != last_) {
-    object_proxy *i = first_->next;
-    first_->next = i->next;
-    i->next->prev = first_;
-    delete i;
-  }
 }
 
 bool
@@ -178,23 +170,44 @@ bool object_store::remove_prototype(const char *type)
 		// throw exception
 		return false;
 	}
+	
+	prototype_node *node = i->second->next_node(i->second);
+  while (node && node != i->second->last->prev) {
+		t_prototype_node_map::iterator ii = prototype_node_name_map_.find(node->type);
+		if (ii != prototype_node_name_map_.end()) {
+			prototype_node_name_map_.erase(ii);
+		}
+		t_prototype_node_map::iterator jj = prototype_node_type_map_.find(node->producer->classname());
+		if (jj != prototype_node_type_map_.end()) {
+			prototype_node_type_map_.erase(jj);
+		}
+		node = node->next_node();
+  }
+	/*
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
+  
   while (i->second->first->next != i->second->last) {
     prototype_node *node = i->second->first->next;
     remove_prototype(node->type.c_str());
   }
+  */
   // and objects they're containing 
-  i->second->parent->remove(i->second);
+  i->second->remove();
+  delete i->second;
   // erase node from map
   prototype_node_name_map_.erase(i);
   prototype_node_type_map_.erase(j);
   return true;
 }
 
-void object_store::clear_prototypes()
+void object_store::clear()
 {
-  root_->clear();
+  while (root_->first->next != root_->last.get()) {
+    prototype_node *node = root_->first->next;
+    node->remove();
+    delete node;
+  }  
 }
 
 int depth(prototype_node *node)
@@ -209,7 +222,7 @@ int depth(prototype_node *node)
 
 void object_store::dump_prototypes(std::ostream &out) const
 {
-  prototype_node *node = root_;
+  prototype_node *node = root_.get();
   out << "dumping prototype tree:\n";
   do {
     int d = depth(node);
