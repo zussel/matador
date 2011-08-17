@@ -31,7 +31,7 @@ struct prototype_node {
   ~prototype_node();
 
   void clear();
-  bool empty() const;
+  bool empty(bool self) const;
   unsigned long size() const;
   void insert(prototype_node *child);
   void remove(prototype_node *child);

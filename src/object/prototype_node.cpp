@@ -63,10 +63,15 @@ prototype_node::~prototype_node()
 void
 prototype_node::clear()
 {
+  if (!node->empty(true)) {
+    // point op first to last
+    // adjust marker
+    // delete unlinked proxies and objects
+  }
   while (first && first->next != last) {
     prototype_node *node = first->next;
     // adjust marker if node isn't empty
-    if (!node->empty()) {
+    if (!node->empty(tru)) {
       
     }
     remove(node);
@@ -75,9 +80,9 @@ prototype_node::clear()
 }
 
 bool
-prototype_node::empty() const
+prototype_node::empty(bool self) const
 {
-  return op_first->next == op_last;
+  return op_first->next == (self ? op_marker : op_last);
 }
 
 unsigned long
