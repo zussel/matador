@@ -65,15 +65,41 @@ oos::object_store ostore;
 
 // add a prototype of your object to let the object store
 // update the hierarchy tree and be able to create your object
+
 ostore.insert_prototype(new oos::object_producer<Artist>, "ARTIST");
 ostore.insert_prototype(new oos::object_producer<Track>, "TRACK");
 
 3. Add some of your objects
 
+// object_ptr is like a shared_ptr, you only work with your objects
+// as an object_ptr or object_ref. think hardly before accessing the raw
+// object. in almost all cases you don't need to.
+
 object_ptr<Artist> artist = ostore.insert(new Artist("AC/DC");
-ostore.insert(new Artist("Rolling Stones");
-ostore.insert(new Artist("Amy McDonald");
+
+// add some tracks for your artist
+ostore.insert(new Track("Thunderstruck", artist);
+ostore.insert(new Track("Back in black", artist);
+ostore.insert(new Track("Highway to hell", artist);
+
+// add some other artist and songs
+artist = ostore.insert(new Artist("Rolling Stones");
+// ...
+artist = ostore.insert(new Artist("Amy McDonald");
+// ...
 
 4. Access your objects creating a view
 
-oos::object_view<Artist> artist_view(&ostore);
+typedef oos::object_view<Artist> t_artist_view;
+t_artist_view artist_view(&ostore);
+
+// make a shortcut to the artist object pointer
+typedef oos::object_ptr<Artist> artist_ptr;
+
+for (t_artist_view::const_iterator i = artist_view.begin(); i != artist_view.end(); ++i)
+{
+  // get the artist
+  artist_ptr artist = i.optr();
+  // do some stuff with your artist
+}
+
