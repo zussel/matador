@@ -1,0 +1,79 @@
+Store all kind of objects in one container.
+
+That's how it works:
+
+1. Derive your classes from oos::object. Add your members and write proper read_from and write_to methods.
+
+class Artist : public oos::object
+{
+private:
+  // artists name
+  std::string name_;
+public:
+  // needed by factory
+  Artist() {}
+  // add your custom c'tors
+  Artist(const std::string &name) : name_(anme) {}
+  // virtual d'tor
+  virtual ~Artist() {}
+
+  // generic interface to access data
+  virtual write_to(oos::object_atomizer *oa) const
+  {
+    object::write_to(oa);
+    oa->write_string("name", name_);
+  }
+  virtual read_from(oos::object_atomizer *oa)
+  {
+    object::read_from(oa);
+    oa->read_string("name", name_);
+  }
+
+  // add access methods for your members
+  std::string name() const { return name_; }
+  void name(const std::string &n)
+  {
+    // call this to tell the object store
+    // that your object is about to change
+    // a member. never forget!
+    mark_modified();
+    name_ = n;
+  }
+};
+
+// create another class
+
+class Track : public oos::object
+{
+private:
+  std::string title_;
+  // add a reference to an artist
+  oos::object_ref<Artist> artist_;
+
+public:
+  // needed by factory
+  Track() {}
+  // add your custom c'tors
+  Track(const std::string &title, const oos::artist_ref<Artist> &artist)
+    : title_(title), artist_(artist)
+  {}
+};
+
+2. Create your object store and tell it about your object hierarchy
+
+oos::object_store ostore;
+
+// add a prototype of your object to let the object store
+// update the hierarchy tree and be able to create your object
+ostore.insert_prototype(new oos::object_producer<Artist>, "ARTIST");
+ostore.insert_prototype(new oos::object_producer<Track>, "TRACK");
+
+3. Add some of your objects
+
+object_ptr<Artist> artist = ostore.insert(new Artist("AC/DC");
+ostore.insert(new Artist("Rolling Stones");
+ostore.insert(new Artist("Amy McDonald");
+
+4. Access your objects creating a view
+
+oos::object_view<Artist> artist_view(&ostore);
