@@ -101,5 +101,6 @@ for (t_artist_view::const_iterator i = artist_view.begin(); i != artist_view.end
   // get the artist
   artist_ptr artist = i.optr();
   // do some stuff with your artist
+  std::cout << artist.name() << std::endl;
 }
 
