@@ -16,27 +16,6 @@
 using namespace std;
 using namespace oos;
 
-class MediaTrack : public Track
-{
-public:
-  MediaTrack() {}
-  virtual ~MediaTrack() {}
-};
-
-class AudioTrack : public MediaTrack
-{
-public:
-  AudioTrack() {}
-  virtual ~AudioTrack() {}
-};
-
-class VideoTrack : public MediaTrack
-{
-public:
-  VideoTrack() {}
-  virtual ~VideoTrack() {}
-};
-
 class Item : public object_list_node<Item>
 {
 public:
@@ -188,9 +167,9 @@ public:
   {
 		add_test("create_one", std::tr1::bind(&ObjectStoreTestUnit::create_one_object, this), "create one object");
 		add_test("create_one_sub", std::tr1::bind(&ObjectStoreTestUnit::create_object_with_sub_object, this), "create object with sub object");
-		//add_test("del_one", std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
-		//add_test("del_multiple", std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
-		//add_test("del_one_sub", std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
+		add_test("del_one", std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
+		add_test("del_multiple", std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
+		add_test("del_one_sub", std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
   }
   virtual ~ObjectStoreTestUnit() {}
   

@@ -48,4 +48,25 @@ private:
   oos::object_ref<Album> album_;
 };
 
+class MediaTrack : public Track
+{
+public:
+  MediaTrack() {}
+  virtual ~MediaTrack() {}
+};
+
+class AudioTrack : public MediaTrack
+{
+public:
+  AudioTrack() {}
+  virtual ~AudioTrack() {}
+};
+
+class VideoTrack : public MediaTrack
+{
+public:
+  VideoTrack() {}
+  virtual ~VideoTrack() {}
+};
+
 #endif /* TRACK_HPP */

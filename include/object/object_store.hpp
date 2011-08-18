@@ -145,8 +145,6 @@ public:
   void register_observer(object_observer *observer);
   void unregister_observer(object_observer *observer);
 
-  void cleanup();
-  
 private:
   template < class T > friend class object_view;
   friend class object_creator;

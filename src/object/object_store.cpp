@@ -170,7 +170,8 @@ bool object_store::remove_prototype(const char *type)
 		// throw exception
 		return false;
 	}
-	
+
+  /*
 	prototype_node *node = i->second->next_node(i->second);
   while (node && node != i->second->last->prev) {
 		t_prototype_node_map::iterator ii = prototype_node_name_map_.find(node->type);
@@ -183,19 +184,20 @@ bool object_store::remove_prototype(const char *type)
 		}
 		node = node->next_node();
   }
-	/*
+  */
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  
-  while (i->second->first->next != i->second->last) {
+  while (i->second->first->next != i->second->last.get()) {
     prototype_node *node = i->second->first->next;
     remove_prototype(node->type.c_str());
   }
-  */
   // and objects they're containing 
-  i->second->remove();
+  i->second->clear();
+  // unlink node
+  i->second->unlink();
+  // delete node
   delete i->second;
-  // erase node from map
+  // erase node from maps
   prototype_node_name_map_.erase(i);
   prototype_node_type_map_.erase(j);
   return true;
@@ -205,8 +207,8 @@ void object_store::clear()
 {
   while (root_->first->next != root_->last.get()) {
     prototype_node *node = root_->first->next;
-    node->remove();
-    delete node;
+    remove_prototype(node->type.c_str());
+    //delete node;
   }  
 }
 
@@ -275,14 +277,6 @@ void object_store::unregister_observer(object_observer *observer)
   }
 }
 
-void object_store::cleanup()
-{
-  // remove all object_proxy from object_proxy
-  // link list
-  // set object link to null
-  // erase object_proxy from to delete list
-}
-
 object* object_store::insert_object(object *o)
 {
   // find type in tree
@@ -321,7 +315,6 @@ object* object_store::insert_object(object *o)
     }*/
     node->op_marker->prev->insert(oproxy);
     node->adjust_left_marker(oproxy);
-    //adjust_left_marker(node, oproxy);
   } else /* if (node->count == 0) */ {
     // there is no object in subtree
     // insert as last; adjust "right" marker
@@ -333,8 +326,6 @@ object* object_store::insert_object(object *o)
     node->op_marker->insert(oproxy);
     node->adjust_left_marker(oproxy);
     node->adjust_right_marker(oproxy->prev, oproxy);
-//    adjust_left_marker(node, oproxy);
-//    adjust_right_marker(node, oproxy->prev, oproxy);
   }
   // create object
   object_creator oc(*this);
@@ -405,76 +396,5 @@ bool object_store::insert_object_list(object_list_base &olb)
   insert_object(olb.last_obj_);
   return true;
 }
-/*
-bool is_child_of(prototype_node *parent, prototype_node *node)
-{
-  while (parent->depth < node->depth) {
-    node = node->parent;
-  }
-  return node == parent;
-}
 
-void object_store::adjust_left_marker(prototype_node *node, object_proxy *oproxy)
-{
-  // store start node
-  prototype_node *start = node;
-  // get previous node
-  node = node->previous_node();
-  while (node) {
-    bool do_break = node->op_first->next != oproxy;
-    /*
-    if (node->op_first->next == oproxy) {
-      std::cout << "before adjusting left node: " << *node << "\n";
-      node->op_last = oproxy;
-      node->op_marker = oproxy;
-      std::cout << "after adjusting left node: " << *node << "\n";
-    } else {
-    * /
-      //std::cout << "break: before adjusting left node: " << *node << "\n";
-      node->op_marker = oproxy;
-      //if (start->parent != node || node->empty()) {
-      if (!is_child_of(node, start) || node->empty()) {
-        node->op_last = oproxy;
-      }
-      //std::cout << "break: after adjusting left node: " << *node << "\n";
-      /*break;
-    }* /
-      if (do_break) {
-        break;
-      }
-    node = node->previous_node();
-  }
-}
-
-void object_store::adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy)
-{
-  // store start node
-  prototype_node *start = node;
-  // get previous node
-  node = node->next_node();
-  bool first = true;
-  while (node) {
-    if (node->op_first == old_proxy) {
-      //std::cout << "before adjusting right node: " << *node << "\n";
-      node->op_first = new_proxy;
-      //std::cout << "after adjusting right node: " << *node << "\n";
-    } else {
-      //std::cout << "break: before adjusting right node: " << *node << "\n";
-      node->op_first = new_proxy;
-      //std::cout << "break: after adjusting right node: " << *node << "\n";
-      break;
-    }
-    // check watermark
-    if (first) {
-      if (start->depth == node->depth && !node->empty()) {
-        break;
-      }
-      first = false;
-    } else if (start->depth <= node->depth && !node->empty()) {
-      break;
-    }
-    node = node->next_node();
-  }
-}
-*/
 }
