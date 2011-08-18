@@ -70,7 +70,7 @@ template < class T >
 class object_ptr : public base_object_ptr
 {
 public:
-	object_ptr() : base_object_ptr(true) {}
+	object_ptr() : base_object_ptr(false) {}
 	//  object_ptr(const object_ptr &x) {}
 	template < class Y >
 	object_ptr(const object_ptr<Y> &x) {}
@@ -109,7 +109,7 @@ template < class T >
 class object_ref : public base_object_ptr
 {
 public:
-	object_ref() : base_object_ptr(false) {}
+	object_ref() : base_object_ptr(true) {}
 	//  object_ptr(const object_ptr &x) {}
 	template < class Y >
 	object_ref(const object_ref<Y> &x) {}

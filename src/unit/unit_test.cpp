@@ -64,28 +64,29 @@ void unit_test::add_test(const std::string &name, const test_func &test, const s
   test_func_info_map_.insert(std::make_pair(name, test_func_info(test, caption)));
 }
 
-void unit_test::assert_true(bool a, const std::string &msg)
+void unit_test::assert_true(bool a, const std::string &msg, int line, const char *file)
 {
   if (!a) {
     // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is false: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is false: " << msg;
       throw unit_exception(msgstr.str());
   }
 }
 
-void unit_test::assert_false(bool a, const std::string &msg)
+void unit_test::assert_false(bool a, const std::string &msg, int line, const char *file)
 {
   if (a) {
     // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is true: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is true: " << msg;
       throw unit_exception(msgstr.str());
   }
 }
 
-void unit_test::warning()
+void unit_test::warning(const std::string &msg, int line, const char *file)
 {
+  std::cout << "WARNING at " << file << ":" << line << ": " << msg;
 }
 
 }

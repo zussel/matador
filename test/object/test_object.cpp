@@ -64,11 +64,11 @@ public:
     
     object *o = ostore.create("ARTIST");
     
-    assert_not_null(o, "couldn't create object of type <Artist>");
+    ASSERT_NOT_NULL(o, "couldn't create object of type <Artist>");
     
     Artist *a = dynamic_cast<Artist*>(o);
     
-    assert_not_null(a, "couldn't cast object to Artist");
+    ASSERT_NOT_NULL(a, "couldn't cast object to Artist");
     
     delete a;
     
@@ -76,7 +76,7 @@ public:
     
     o = ostore.create("ARTIST");
     
-    assert_null(o, "unexpected object creation");
+    ASSERT_NULL(o, "unexpected object creation");
 	}
   void prototype_hierachy()
   {
@@ -88,11 +88,11 @@ public:
 
     object *o = ostore.create("AUDIOTRACK");
     
-    assert_not_null(o, "couldn't create object of type <AudioTrack>");
+    ASSERT_NOT_NULL(o, "couldn't create object of type <AudioTrack>");
     
     AudioTrack *a = dynamic_cast<AudioTrack*>(o);
     
-    assert_not_null(a, "couldn't cast object to AudioTrack");
+    ASSERT_NOT_NULL(a, "couldn't cast object to AudioTrack");
     
     delete a;
     
@@ -100,13 +100,13 @@ public:
     
     o = ostore.create("AUDIOTRACK");
     
-    assert_null(o, "unexpected object creation");
+    ASSERT_NULL(o, "unexpected object creation");
     
     ostore.remove_prototype("TRACK");
     
     o = ostore.create("MEDIATRACK");
     
-    assert_null(o, "unexpected object creation");
+    ASSERT_NULL(o, "unexpected object creation");
   }
 };
 
@@ -165,11 +165,9 @@ public:
   ObjectStoreTestUnit()
     : unit_test("ObjectStore Test Unit")
   {
-		add_test("create_one", std::tr1::bind(&ObjectStoreTestUnit::create_one_object, this), "create one object");
-		add_test("create_one_sub", std::tr1::bind(&ObjectStoreTestUnit::create_object_with_sub_object, this), "create object with sub object");
-		add_test("del_one", std::tr1::bind(&ObjectStoreTestUnit::delete_one_object, this), "delete one object");
-		add_test("del_multiple", std::tr1::bind(&ObjectStoreTestUnit::delete_multiple_objects, this), "delete multiple objects");
-		add_test("del_one_sub", std::tr1::bind(&ObjectStoreTestUnit::delete_object_with_sub_object, this), "delete object with sub object");
+		add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+		add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+		add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   }
   virtual ~ObjectStoreTestUnit() {}
   
@@ -183,31 +181,48 @@ public:
     ostore_.clear();
   }
   
-  void create_one_object()
-  {
-  }
-  void create_object_with_sub_object()
-  {
-  }
-  void delete_one_object()
+  void simple_object()
   {
     object *o = ostore_.create("SIMPLE_OBJECT");
     
-    assert_not_null(o, "couldn't create object of type <SimpleObject>");
+    ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
     
     SimpleObject *a = dynamic_cast<SimpleObject*>(o);
     
-    assert_not_null(a, "couldn't cast object to SimpleObject");
+    ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
     
     typedef object_ptr<SimpleObject> simple_ptr;
     
     simple_ptr simple = ostore_.insert(a);
     
-    assert_not_null(simple.get(), "simple object insertion failed");
+    ASSERT_NOT_NULL(simple.get(), "simple object insertion failed");
     
-    assert_true(ostore_.remove(simple), "deletion of simple failed");
+    ASSERT_TRUE(ostore_.remove(simple), "deletion of simple failed");
   }
-  void delete_multiple_objects()
+  void object_with_sub_object()
+  {
+    object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
+    
+    ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectWithSubObject>");
+    
+    ObjectWithSubObject *s = dynamic_cast<ObjectWithSubObject*>(o);
+    
+    ASSERT_NOT_NULL(s, "couldn't cast object to ObjectWithSubObject");
+    
+    typedef object_ptr<ObjectWithSubObject> obj_with_sub_ptr;
+    
+    obj_with_sub_ptr ows = ostore_.insert(s);
+    
+    ASSERT_NOT_NULL(ows.get(), "object with sub object insertion failed");
+    
+    // check if sub object exists
+    object_ptr<SimpleObject> simple = ows->simple();
+    
+    ASSERT_NOT_NULL(simple.get(), "simple sub object creation failed");
+    
+    ASSERT_TRUE(ostore_.remove(ows), "deletion of object with sub object failed");
+  }
+  void multiple_simple_objects()
   {
     /*
     std::cout << std::endl;
@@ -219,24 +234,6 @@ public:
     std::cout << "typeid (SimpleObject  so): " << typeid(so).name() << std::endl;
     std::cout << "typeid (SimpleObject *so): " << typeid(&so).name() << std::endl;
     */
-  }
-  void delete_object_with_sub_object()
-  {
-    object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
-    
-    assert_not_null(o, "couldn't create object of type <ObjectWithSubObject>");
-    
-    ObjectWithSubObject *s = dynamic_cast<ObjectWithSubObject*>(o);
-    
-    assert_not_null(s, "couldn't cast object to ObjectWithSubObject");
-    
-    typedef object_ptr<ObjectWithSubObject> obj_with_sub_ptr;
-    
-    obj_with_sub_ptr ows = ostore_.insert(s);
-    
-    assert_not_null(ows.get(), "object with sub object insertion failed");
-    
-    assert_true(ostore_.remove(ows), "deletion of object with sub object failed");
   }
 
 private:

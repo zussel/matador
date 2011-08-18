@@ -25,6 +25,13 @@
 #include <string>
 #include <sstream>
 
+#define ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
+#define ASSERT_NOT_EQUAL(a, b, msg) assert_not_equal(a, b, msg, __LINE__, __FILE__)
+#define ASSERT_FALSE(b, msg)        assert_false(b, msg, __LINE__, __FILE__)
+#define ASSERT_TRUE(b, msg)         assert_true(b, msg, __LINE__, __FILE__)
+#define ASSERT_NULL(o, msg)         assert_null(o, msg, __LINE__, __FILE__)
+#define ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
+#define WARNING(msg)                warning(msg, __LINE__, __FILE__)
 namespace oos {
 
 class unit_test
@@ -47,48 +54,48 @@ public:
   void add_test(const std::string &name, const test_func &test, const std::string &caption);
 
   template < class T >
-  void assert_equal(T a, T b, const std::string &msg)
+  void assert_equal(T a, T b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
       // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is not equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << msg;
       throw unit_exception(msgstr.str());
     }
   }
   template < class T >
-  void assert_not_equal(T a, T b, const std::string &msg)
+  void assert_not_equal(T a, T b, const std::string &msg, int line, const char *file)
   {
     if (a == b) {
       // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is equal " << b << ": " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
     }
   }
   template < class T >
-  void assert_null(T *a, const std::string &msg)
+  void assert_null(T *a, const std::string &msg, int line, const char *file)
   {
     if (a != 0) {
       // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is not null: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null: " << msg;
       throw unit_exception(msgstr.str());
     }
   }
   template < class T >
-  void assert_not_null(T *a, const std::string &msg)
+  void assert_not_null(T *a, const std::string &msg, int line, const char *file)
   {
     if (a == 0) {
       // throw exception
       std::stringstream msgstr;
-      msgstr << "FAILURE: value " << a << " is null: " << msg;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null: " << msg;
       throw unit_exception(msgstr.str());
     }
   }
-  void assert_true(bool a, const std::string &msg);
-  void assert_false(bool a, const std::string &msg);
-  void warning();
+  void assert_true(bool a, const std::string &msg, int line, const char *file);
+  void assert_false(bool a, const std::string &msg, int line, const char *file);
+  void warning(const std::string &msg, int line, const char *file);
 
 private:
   typedef struct test_func_info_struct

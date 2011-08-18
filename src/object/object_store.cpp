@@ -61,7 +61,9 @@ public:
   {
     if (!x.is_reference()) {
       // create object
-      x.reset(ostore_.create(x.type()));
+      object *o = ostore_.create(x.type());
+      ostore_.insert(o);
+      x.reset(o);
       object_stack_.push(x.ptr());
       x.ptr()->read_from(this);
       object_stack_.pop();
@@ -250,8 +252,12 @@ object* object_store::create(const char *type) const
 {
   t_prototype_node_map::const_iterator i = prototype_node_name_map_.find(type);
   if (i == prototype_node_name_map_.end()) {
-    //throw new object_exception("couldn't find prototype");
-    return NULL;
+    // try it with the type map
+    i = prototype_node_type_map_.find(type);
+    if (i == prototype_node_type_map_.end()) {
+      //throw new object_exception("couldn't find prototype");
+      return NULL;
+    }
   }
 	return i->second->producer->create();
 }
