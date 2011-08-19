@@ -31,6 +31,7 @@ struct object_proxy {
   
   void remove();
   void insert(object_proxy* oproxy);
+  void clear();
 
   object_proxy *prev;
   object_proxy *next;

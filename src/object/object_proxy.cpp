@@ -55,4 +55,13 @@ void object_proxy::insert(object_proxy* oproxy)
   prev = oproxy;
 }
 
+void object_proxy::clear()
+{
+  if (obj) {
+    delete obj;
+    obj = NULL;
+  }
+  ostore = NULL;
+}
+
 }

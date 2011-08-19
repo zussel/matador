@@ -64,9 +64,7 @@ prototype_node::clear()
     // remove object proxy from list
     op->remove();
     // delete object proxy and object
-    if (op->obj) {
-      delete op->obj;
-    }
+    op->clear();
     if (op != old_first) {
       delete op;
     }

@@ -165,8 +165,8 @@ public:
   ObjectStoreTestUnit()
     : unit_test("ObjectStore Test Unit")
   {
-		add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-		add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+		//add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+		//add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
 		add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   }
   virtual ~ObjectStoreTestUnit() {}
@@ -227,9 +227,12 @@ public:
     typedef object_ptr<SimpleObject> simple_ptr;
       
     // create 1000 objects
-    for (int i = 0; i < 1000; ++i) {
-      std::cout << "creating " << i << ". SimpleObject\n";
-      
+    std::cout << "\ncreating objects :";
+    for (int i = 0; i < 100000; ++i) {
+      if (i%1000 == 0) {
+        std::cout << " " << i;
+        std::cout.flush();
+      }
       object *o = ostore_.create("SIMPLE_OBJECT");
       
       ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
@@ -239,9 +242,11 @@ public:
       ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
       
       simple_ptr simple = ostore_.insert(a);
+      
+      //ostore_.remove(simple);
     }
+    std::cout << " done\n";
     
-    ostore_.remove_prototype("SIMPLE_OBJECT");
     /*
     std::cout << std::endl;
     SimpleObject *pso;
@@ -266,7 +271,7 @@ bool test_4(object_store &ostore);
 int
 main(int /*argc*/, char */*argv*/[])
 {
-  test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
+  //test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
   test_suite::instance().register_unit("objects", new ObjectStoreTestUnit());
 	
 	test_suite::instance().run();
