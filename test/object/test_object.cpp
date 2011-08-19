@@ -224,6 +224,24 @@ public:
   }
   void multiple_simple_objects()
   {
+    typedef object_ptr<SimpleObject> simple_ptr;
+      
+    // create 1000 objects
+    for (int i = 0; i < 1000; ++i) {
+      std::cout << "creating " << i << ". SimpleObject\n";
+      
+      object *o = ostore_.create("SIMPLE_OBJECT");
+      
+      ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
+      
+      SimpleObject *a = dynamic_cast<SimpleObject*>(o);
+      
+      ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
+      
+      simple_ptr simple = ostore_.insert(a);
+    }
+    
+    ostore_.remove_prototype("SIMPLE_OBJECT");
     /*
     std::cout << std::endl;
     SimpleObject *pso;

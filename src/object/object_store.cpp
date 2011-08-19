@@ -305,7 +305,7 @@ object* object_store::insert_object(object *o)
   // insert new element node
   object_proxy *oproxy = new object_proxy(o, this);
   
-  // check amount of object in subtree
+  // check count of object in subtree
   if (node->count >= 2) {
     // there are more than two objects (normal case)
     // insert before last last
