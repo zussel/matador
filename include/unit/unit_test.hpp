@@ -25,13 +25,15 @@
 #include <string>
 #include <sstream>
 
-#define ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
-#define ASSERT_NOT_EQUAL(a, b, msg) assert_not_equal(a, b, msg, __LINE__, __FILE__)
-#define ASSERT_FALSE(b, msg)        assert_false(b, msg, __LINE__, __FILE__)
-#define ASSERT_TRUE(b, msg)         assert_true(b, msg, __LINE__, __FILE__)
-#define ASSERT_NULL(o, msg)         assert_null(o, msg, __LINE__, __FILE__)
-#define ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
-#define WARNING(msg)                warning(msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NOT_EQUAL(a, b, msg) assert_not_equal(a, b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_FALSE(b, msg)        assert_false(b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_TRUE(b, msg)         assert_true(b, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NULL(o, msg)         assert_null(o, msg, __LINE__, __FILE__)
+#define UNIT_ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
+#define UNIT_WARN(msg)                   warn(msg, __LINE__, __FILE__)
+#define UNIT_INFO(msg)                   info(msg)
+
 namespace oos {
 
 class unit_test
@@ -51,6 +53,9 @@ public:
   std::string caption() const;
 
   void execute();
+  void execute(const std::string &test);
+  void list(std::ostream &out);
+
   void add_test(const std::string &name, const test_func &test, const std::string &caption);
 
   template < class T >
@@ -95,7 +100,8 @@ public:
   }
   void assert_true(bool a, const std::string &msg, int line, const char *file);
   void assert_false(bool a, const std::string &msg, int line, const char *file);
-  void warning(const std::string &msg, int line, const char *file);
+  void warn(const std::string &msg, int line, const char *file);
+  void info(const std::string &msg);
 
 private:
   typedef struct test_func_info_struct
@@ -108,6 +114,10 @@ private:
     std::string caption;
     std::string message;
   } test_func_info;
+
+private:
+  void execute(test_func_info &test_info);
+
 private:
   std::string caption_;
 

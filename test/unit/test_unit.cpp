@@ -35,14 +35,14 @@ public:
   
   void first_sub_test()
   {
-    ASSERT_EQUAL(1, 1, "one is one");
+    UNIT_ASSERT_EQUAL(1, 1, "one is one");
     
-    ASSERT_EQUAL(1, 0, "one is not zero");
+    UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
   }
   void second_sub_test()
   {
     // gives warning
-    WARNING("this is a test warning!");
+    UNIT_WARN("this is a test warning!");
   }
   void third_sub_test()
   {
@@ -77,10 +77,11 @@ public:
   virtual void finalize() {}
 };
 
-int main(int /*argc*/, char */*argv*/[])
+int main(int argc, char *argv[])
 {
   test_suite::instance().register_unit("first", new FirstTestUnit());
   test_suite::instance().register_unit("second", new SecondTestUnit());
   
+  test_suite::instance().init(argc, argv);
   test_suite::instance().run();
 }

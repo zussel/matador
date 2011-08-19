@@ -39,24 +39,31 @@ void unit_test::execute()
 {
   t_test_func_info_map::iterator first = test_func_info_map_.begin();
   t_test_func_info_map::iterator last = test_func_info_map_.end();
-  while (first != last) {
-    initialize();
-    test_func_info &info = (first++)->second;
-    std::cout << "Executing test [" << info.caption << "] ... ";
-    try {
-      info.func();
-    } catch (unit_exception &ex) {
-      info.succeeded = false;
-      info.message = ex.what();
-    }
-    finalize();
-    if (info.succeeded) {
-      std::cout << "succeeded\n";
-    } else {
-      std::cout << "failed: " << info.message << "\n";
-    }
-  }
   // execute each test
+  while (first != last) {
+    execute((first++)->second);
+  }
+}
+
+void unit_test::execute(const std::string &test)
+{
+  t_test_func_info_map::iterator i = test_func_info_map_.find(test);
+  if (i == test_func_info_map_.end()) {
+    std::cout << "couldn't find test [" << test << "] of unit [" << caption_ << "]\n";
+  } else {
+    execute(i->second);
+  }
+}
+
+void unit_test::list(std::ostream &out)
+{
+  t_test_func_info_map::iterator first = test_func_info_map_.begin();
+  t_test_func_info_map::iterator last = test_func_info_map_.end();
+  // list each test
+  while (first != last) {
+    out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
+    ++first;
+  }
 }
 
 void unit_test::add_test(const std::string &name, const test_func &test, const std::string &caption)
@@ -84,9 +91,32 @@ void unit_test::assert_false(bool a, const std::string &msg, int line, const cha
   }
 }
 
-void unit_test::warning(const std::string &msg, int line, const char *file)
+void unit_test::warn(const std::string &msg, int line, const char *file)
 {
   std::cout << "WARNING at " << file << ":" << line << ": " << msg;
+}
+
+void unit_test::info(const std::string &msg)
+{
+  std::cout << "INFO: " << msg;
+}
+
+void unit_test::execute(test_func_info &test_info)
+{
+    initialize();
+    std::cout << "Executing test [" << test_info.caption << "] ... ";
+    try {
+      test_info.func();
+    } catch (unit_exception &ex) {
+      test_info.succeeded = false;
+      test_info.message = ex.what();
+    }
+    finalize();
+    if (test_info.succeeded) {
+      std::cout << "succeeded\n";
+    } else {
+      std::cout << "failed: " << test_info.message << "\n";
+    }
 }
 
 }

@@ -31,7 +31,27 @@ class unit_test;
 class test_suite : public singleton<test_suite>
 {
   friend class singleton<test_suite>;
-  
+
+  typedef enum test_suite_cmd_enum
+  {
+    UNKNOWN = 0,
+    LIST,
+    EXECUTE
+  } test_suite_cmd;
+
+  typedef struct test_suite_args_struct
+  {
+    test_suite_args_struct()
+      : cmd(UNKNOWN), initialized(false)
+    {}
+    test_suite_cmd cmd;
+    bool initialized;
+    std::string unit;
+    std::string test;
+  } test_suite_args;
+
+  test_suite();
+
 public:
   typedef std::tr1::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
@@ -40,10 +60,19 @@ public:
 public:
   virtual ~test_suite();
   
+  void init(int argc, char *argv[]);
   void register_unit(const std::string &name, unit_test *utest);
+  // executes all test unit classes
+  // or what call to init has set up
+  // via command args
   void run();
+  // execures one test unit class
+  void run(const std::string &unit);
+  // execute one test of a test unit class
+  void run(const std::string &unit, const std::string &test);
 
 private:
+  test_suite_args args_;
   t_unit_test_map unit_test_map_;
 };
 
