@@ -364,6 +364,7 @@ bool object_store::remove_object(object *o)
 
   if (o->proxy_ == node->op_first->next) {
     // adjust left marker
+    //std::cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
     node->adjust_left_marker(node->op_first->next->next);
     //adjust_left_marker(node, node->op_first->next->next);
   }

@@ -56,6 +56,7 @@ ComplexObjectStoreTestUnit::initialize()
   ostore_.insert_prototype(new object_producer<Item>, "ITEM");
   ostore_.insert_prototype(new object_producer<Artist>, "ARTIST");
   ostore_.insert_prototype(new object_producer<Track>, "TRACK");
+  ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
   ostore_.insert_prototype(new object_producer<AlbumTrack>, "ALBUMTRACK");
   ostore_.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
   ostore_.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "MEDIATRACK");
@@ -222,14 +223,20 @@ ComplexObjectStoreTestUnit::item_list()
 {
   typedef object_list<Item> ItemList;
 
+  ostore_.dump_prototypes(std::cout);
   ItemList ilist;
   ostore_.insert(ilist);
 
+  /*
   ilist.push_back(new Item("Schrank"));
   ilist.push_back(new Item("Tisch"));
   ilist.push_back(new Item("Stuhl"));
   ilist.push_back(new Item("Bett"));
-  ilist.push_front(new Item("Teppich"));
+  */
+  //ilist.push_front(new Item("Teppich"));
+
+  ostore_.dump_objects(std::cout);
+  ostore_.dump_prototypes(std::cout);
 
   ItemList::const_iterator first = ilist.begin();
   ItemList::const_iterator last = ilist.end();

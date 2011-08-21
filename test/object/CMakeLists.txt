@@ -1,4 +1,4 @@
-SET (TEST_SOURCES test_object.cpp Album.cpp Artist.cpp Track.cpp ComplexObjectStoreTestUnit.cpp)
+SET (TEST_SOURCES test_object.cpp Album.cpp Artist.cpp Track.cpp ComplexObjectStoreTestUnit.cpp ObjectPrototypeTestUnit.cpp ObjectStoreTestUnit.cpp)
 
 ADD_EXECUTABLE(test_object ${TEST_SOURCES})
 

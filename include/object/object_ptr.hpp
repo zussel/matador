@@ -118,7 +118,7 @@ public:
 	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
-	object_ref(object* o) : base_object_ptr(o, false) {}
+	object_ref(object* o) : base_object_ptr(o, true) {}
 
   virtual const char* type() const
   {

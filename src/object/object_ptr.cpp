@@ -44,13 +44,13 @@ base_object_ptr::operator=(const base_object_ptr &x) {
 }
 
 base_object_ptr::base_object_ptr(object_proxy *op, bool is_ref)
-  : id_(0)
+  : id_(op->id)
   , proxy_(op)
   , is_reference_(is_ref)
 {}
 
 base_object_ptr::base_object_ptr(object *o, bool is_ref)
-  : id_(0)
+  : id_(o ? o->id_ : 0)
   , proxy_(o ? o->proxy_ : 0)
   , is_reference_(is_ref)
 {}

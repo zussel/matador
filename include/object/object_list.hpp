@@ -45,6 +45,11 @@ template < class T >
 class object_list_node : public object
 {
 public:
+  object_list_node()
+    : root_(NULL)
+    , prev_(NULL)
+    , next_(NULL)
+  {}
   virtual ~object_list_node() {}
 
 	void read_from(object_atomizer *reader)
