@@ -173,6 +173,8 @@ bool object_store::remove_prototype(const char *type)
 		return false;
 	}
 
+  std::cout << "removing prototye [" << type << "]\n";
+  std::cout.flush();
   /*
 	prototype_node *node = i->second->next_node(i->second);
   while (node && node != i->second->last->prev) {

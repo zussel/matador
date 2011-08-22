@@ -57,18 +57,24 @@ prototype_node::clear()
   if (empty(true)) {
     return;
   }
+  std::cout << "clearing all objects for prototype [" << type << "]\n";
+  std::cout.flush();
   // remove object proxies until first and marker are left
   object_proxy *old_first = op_first->next;
+  std::cout << "old first: " << *old_first << "\nbegin loop\n";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
+    std::cout << "op before: " << *op << "\n";
     // remove object proxy from list
     op->remove();
     // delete object proxy and object
     op->clear();
+    std::cout << "op after: " << *op << "\n";
     if (op != old_first) {
       delete op;
     }
   }
+  std::cout << "end loop\n";
   // adjust marker
   adjust_left_marker(op_marker);
   adjust_right_marker(old_first, op_first);
@@ -218,13 +224,15 @@ void prototype_node::adjust_left_marker(object_proxy *oproxy)
       std::cout << "after adjusting left node: " << *node << "\n";
     } else {
     */
-      //std::cout << "break: before adjusting left node: " << *node << "\n";
+      std::cout << "break: before adjusting left node: " << *node << "\n";
+      std::cout.flush();
       node->op_marker = oproxy;
       //if (start->parent != node || node->empty()) {
       if (!is_child_of(node) || node->empty(false)) {
         node->op_last = oproxy;
       }
-      //std::cout << "break: after adjusting left node: " << *node << "\n";
+      std::cout << "break: after adjusting left node: " << *node << "\n";
+      std::cout.flush();
       /*break;
     }*/
       if (do_break) {
@@ -243,13 +251,17 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
   bool first = true;
   while (node) {
     if (node->op_first == old_proxy) {
-      //std::cout << "before adjusting right node: " << *node << "\n";
+      std::cout << "before adjusting right node: " << *node << "\n";
+      std::cout.flush();
       node->op_first = new_proxy;
-      //std::cout << "after adjusting right node: " << *node << "\n";
+      std::cout << "after adjusting right node: " << *node << "\n";
+      std::cout.flush();
     } else {
-      //std::cout << "break: before adjusting right node: " << *node << "\n";
+      std::cout << "break: before adjusting right node: " << *node << "\n";
+      std::cout.flush();
       node->op_first = new_proxy;
-      //std::cout << "break: after adjusting right node: " << *node << "\n";
+      std::cout << "break: after adjusting right node: " << *node << "\n";
+      std::cout.flush();
       break;
     }
     // check watermark

@@ -53,14 +53,14 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
 void
 ComplexObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
+  //ostore_.insert_prototype(new object_producer<Item>, "ITEM");
   ostore_.insert_prototype(new object_producer<Artist>, "ARTIST");
   ostore_.insert_prototype(new object_producer<Track>, "TRACK");
-  ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
+  //ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
   ostore_.insert_prototype(new object_producer<AlbumTrack>, "ALBUMTRACK");
   ostore_.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
   ostore_.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "MEDIATRACK");
-  ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "MEDIATRACK");
+  //ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "MEDIATRACK");
 }
 
 void
@@ -223,9 +223,11 @@ ComplexObjectStoreTestUnit::item_list()
 {
   typedef object_list<Item> ItemList;
 
+  ostore_.insert(new Artist("AC/DC"));
+  ostore_.insert(new Artist("Genesis"));
   ostore_.dump_prototypes(std::cout);
   ItemList ilist;
-  ostore_.insert(ilist);
+  //ostore_.insert(ilist);
 
   /*
   ilist.push_back(new Item("Schrank"));
@@ -245,6 +247,8 @@ ComplexObjectStoreTestUnit::item_list()
     cout << "item name: " << first->name() << "\n";
     ++first;
   }
+  
+  ostore_.remove_prototype("ARTIST");
 }
 
 void

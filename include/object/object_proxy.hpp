@@ -18,6 +18,8 @@
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
+#include <ostream>
+
 namespace oos {
 
 class object;
@@ -29,6 +31,8 @@ struct object_proxy {
   object_proxy(object *o = 0, object_store *os = 0);
   ~object_proxy();
   
+  friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);
+
   void remove();
   void insert(object_proxy* oproxy);
   void clear();
