@@ -229,14 +229,23 @@ int depth(prototype_node *node)
 void object_store::dump_prototypes(std::ostream &out) const
 {
   prototype_node *node = root_.get();
-  out << "dumping prototype tree:\n";
+//  out << "dumping prototype tree:\n";
+  out << "digraph G {\n";
+  out << "\tgraph [fontsize=14]\n";
+	out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+	out << "\tedge [color=\"#0c0c0c\"]\n";
   do {
     int d = depth(node);
     for (int i = 0; i < d; ++i) out << " ";
-    out << *node << "\n";
+    out << *node;
     node = node->next_node();
   } while (node);
-  out << std::endl;
+  object_proxy *i = first_;
+  while (i != last_) {
+    out << "\t" << i << "[label=\"{" << i << "}\"]\n";
+    i = i->next;
+  }
+  out << "}" << std::endl;
 }
 
 void object_store::dump_objects(std::ostream &out) const

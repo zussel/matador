@@ -10,6 +10,7 @@
 #include "Artist.hpp"
 
 #include <iostream>
+#include <fstream>
 
 using namespace oos;
 using namespace std;
@@ -224,6 +225,11 @@ ComplexObjectStoreTestUnit::item_list()
   typedef object_list<Item> ItemList;
   typedef object_ptr<Artist> artist_ptr;
 
+  std::ofstream out;
+  out.open("itemlist0.dot");
+  ostore_.dump_objects(std::cout);
+  ostore_.dump_prototypes(out);
+  out.close();
   artist_ptr acdc = ostore_.insert(new Artist("AC/DC"));
   artist_ptr genesis = ostore_.insert(new Artist("Genesis"));
   ostore_.dump_prototypes(std::cout);
@@ -238,15 +244,22 @@ ComplexObjectStoreTestUnit::item_list()
   */
   //ilist.push_front(new Item("Teppich"));
 
+  out.open("itemlist1.dot");
   ostore_.dump_objects(std::cout);
-  ostore_.dump_prototypes(std::cout);
+//  ostore_.dump_prototypes(std::cout);
+  ostore_.dump_prototypes(out);
+  out.close();
 
   std::cout << "removing artist [" << genesis->name() << "] (" << genesis.get() << ")\n";
   ostore_.remove(genesis);
-  ostore_.dump_prototypes(std::cout);
+  out.open("itemlist2.dot");
+  ostore_.dump_prototypes(out);
+  out.close();
   std::cout << "removing artist [" << acdc->name() << "] (" << acdc.get() << ")\n";
   ostore_.remove(acdc);
-  ostore_.dump_prototypes(std::cout);
+  out.open("itemlist3.dot");
+  ostore_.dump_prototypes(out);
+  out.close();
 
   ItemList::const_iterator first = ilist.begin();
   ItemList::const_iterator last = ilist.end();

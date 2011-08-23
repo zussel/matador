@@ -282,6 +282,26 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
+  if (pn.parent) {
+    os << "\t" << pn.parent->type << " -> " << pn.type << "\n";
+  }
+  os << "\t" << pn.type << " [label=\"{" << pn.type;
+  os << "|{op_first|" << pn.op_first << "}";
+  os << "|{op_first:obj|" << pn.op_first->obj << "}";
+  os << "|{op_marker|" << pn.op_marker << "}";
+  os << "|{op_marker:obj|" << pn.op_marker->obj << "}";
+  os << "|{op_last|" << pn.op_last << "}";
+  os << "|{op_last:obj|" << pn.op_last->obj << "}";
+  // determine size
+  int i = 0;
+  object_proxy *iop = pn.op_first;
+  while (iop && iop->next != pn.op_marker) {
+    ++i;
+    iop = iop->next;
+  }
+  os << "|{size|" << i << "}";
+  os << "}\"]\n";
+  /*
   os << "node [" << &pn << "] depth [" << pn.depth << "] type [" << pn.type << "] class [" << pn.producer->classname() << "]";
   if (pn.op_first->obj) {
     os << " first [" << *pn.op_first->obj << "]";
@@ -305,6 +325,7 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     iop = iop->next;
   }
   os << " (# " << i << ")";
+  */
   return os;
 }
 
