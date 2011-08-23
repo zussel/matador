@@ -60,7 +60,11 @@ prototype_node::clear()
   std::cout << "clearing all objects for prototype [" << type << "]\n";
   std::cout.flush();
   // remove object proxies until first and marker are left
+  // adjust marker first
   object_proxy *old_first = op_first->next;
+  adjust_left_marker(op_marker);
+  adjust_right_marker(old_first, op_first);
+
   std::cout << "old first: " << *old_first << "\nbegin loop\n";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
@@ -75,9 +79,6 @@ prototype_node::clear()
     }
   }
   std::cout << "end loop\n";
-  // adjust marker
-  adjust_left_marker(op_marker);
-  adjust_right_marker(old_first, op_first);
   delete old_first;
 }
 
@@ -264,6 +265,7 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
       std::cout.flush();
       break;
     }
+    /*
     // check watermark
     if (first) {
       if (depth == node->depth && !node->empty(false)) {
@@ -273,6 +275,7 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
     } else if (depth <= node->depth && !node->empty(false)) {
       break;
     }
+    */
     node = node->next_node();
   }
 }

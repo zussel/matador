@@ -53,14 +53,14 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
 void
 ComplexObjectStoreTestUnit::initialize()
 {
-  //ostore_.insert_prototype(new object_producer<Item>, "ITEM");
+  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
   ostore_.insert_prototype(new object_producer<Artist>, "ARTIST");
   ostore_.insert_prototype(new object_producer<Track>, "TRACK");
-  //ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
+  ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
   ostore_.insert_prototype(new object_producer<AlbumTrack>, "ALBUMTRACK");
   ostore_.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
   ostore_.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "MEDIATRACK");
-  //ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "MEDIATRACK");
+  ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "MEDIATRACK");
 }
 
 void
@@ -222,9 +222,10 @@ void
 ComplexObjectStoreTestUnit::item_list()
 {
   typedef object_list<Item> ItemList;
+  typedef object_ptr<Artist> artist_ptr;
 
-  ostore_.insert(new Artist("AC/DC"));
-  ostore_.insert(new Artist("Genesis"));
+  artist_ptr acdc = ostore_.insert(new Artist("AC/DC"));
+  artist_ptr genesis = ostore_.insert(new Artist("Genesis"));
   ostore_.dump_prototypes(std::cout);
   ItemList ilist;
   //ostore_.insert(ilist);
@@ -238,6 +239,13 @@ ComplexObjectStoreTestUnit::item_list()
   //ilist.push_front(new Item("Teppich"));
 
   ostore_.dump_objects(std::cout);
+  ostore_.dump_prototypes(std::cout);
+
+  std::cout << "removing artist [" << genesis->name() << "] (" << genesis.get() << ")\n";
+  ostore_.remove(genesis);
+  ostore_.dump_prototypes(std::cout);
+  std::cout << "removing artist [" << acdc->name() << "] (" << acdc.get() << ")\n";
+  ostore_.remove(acdc);
   ostore_.dump_prototypes(std::cout);
 
   ItemList::const_iterator first = ilist.begin();
