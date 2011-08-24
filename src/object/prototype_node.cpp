@@ -209,7 +209,7 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
   return node == parent;
 }
 
-void prototype_node::adjust_left_marker(object_proxy *oproxy)
+void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy)
 {
   // store start node
   prototype_node *node = this;
