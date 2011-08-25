@@ -173,22 +173,6 @@ bool object_store::remove_prototype(const char *type)
 		return false;
 	}
 
-  std::cout << "removing prototye [" << type << "]\n";
-  std::cout.flush();
-  /*
-	prototype_node *node = i->second->next_node(i->second);
-  while (node && node != i->second->last->prev) {
-		t_prototype_node_map::iterator ii = prototype_node_name_map_.find(node->type);
-		if (ii != prototype_node_name_map_.end()) {
-			prototype_node_name_map_.erase(ii);
-		}
-		t_prototype_node_map::iterator jj = prototype_node_type_map_.find(node->producer->classname());
-		if (jj != prototype_node_type_map_.end()) {
-			prototype_node_type_map_.erase(jj);
-		}
-		node = node->next_node();
-  }
-  */
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   while (i->second->first->next != i->second->last.get()) {

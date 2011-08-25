@@ -57,32 +57,20 @@ prototype_node::clear()
   if (empty(true)) {
     return;
   }
-  std::cout << "clearing all objects for prototype [" << type << "]\n";
-  std::cout.flush();
   // remove object proxies until first and marker are left
   // adjust marker first
-//  object_proxy *old_first = op_first->next;
-//  std::cout << "old first: " << *op_first->next << "\n";
-//  std::cout << "old marker: " << *op_marker->prev << "\n";
   
   adjust_left_marker(op_first->next, op_marker);
   adjust_right_marker(op_marker->prev, op_first);
 
-  std::cout << "begin loop\n";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
-    std::cout << "op before: " << *op << "\n";
     // remove object proxy from list
     op->remove();
     // delete object proxy and object
     op->clear();
-    std::cout << "op after: " << *op << "\n";
     delete op;
   }
-  std::cout << "end loop\n";
-//  std::cout << "new first: " << *op_first->next << "\n";
-//  std::cout << "new marker: " << *op_marker->prev << "\n";
-//  delete old_first;
 }
 
 bool
@@ -229,32 +217,6 @@ void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *n
     if (node->depth >= depth && node->op_last == old_proxy) {
       node->op_last = new_proxy;
     }
-  
-  //  bool do_break = node->op_first->next != new_proxy;
-    /*
-    if (node->op_first->next == oproxy) {
-      std::cout << "before adjusting left node: " << *node << "\n";
-      node->op_last = oproxy;
-      node->op_marker = oproxy;
-      std::cout << "after adjusting left node: " << *node << "\n";
-    } else {
-    */
-    /*
-      std::cout << "break: before adjusting left node: " << *node << "\n";
-      std::cout.flush();
-      node->op_marker = new_proxy;
-      //if (start->parent != node || node->empty()) {
-      if (!is_child_of(node) || node->empty(false)) {
-        node->op_last = new_proxy;
-      }
-      std::cout << "break: after adjusting left node: " << *node << "\n";
-      std::cout.flush();
-      / *break;
-    }* /
-      if (do_break) {
-        break;
-      }
-      */
     node = node->previous_node();
   }
 }
@@ -270,33 +232,6 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
     if (node->op_first == old_proxy) {
       node->op_first = new_proxy;
     }
-    /*
-    if (node->op_first == old_proxy) {
-      std::cout << "before adjusting right node: " << *node << "\n";
-      std::cout.flush();
-      node->op_first = new_proxy;
-      std::cout << "after adjusting right node: " << *node << "\n";
-      std::cout.flush();
-    } else {
-      std::cout << "break: before adjusting right node: " << *node << "\n";
-      std::cout.flush();
-      node->op_first = new_proxy;
-      std::cout << "break: after adjusting right node: " << *node << "\n";
-      std::cout.flush();
-      break;
-    }
-    */
-    /*
-    // check watermark
-    if (first) {
-      if (depth == node->depth && !node->empty(false)) {
-        break;
-      }
-      first = false;
-    } else if (depth <= node->depth && !node->empty(false)) {
-      break;
-    }
-    */
     node = node->next_node();
   }
 }
@@ -319,31 +254,6 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   }
   os << "|{size|" << i << "}";
   os << "}\"]\n";
-  /*
-  os << "node [" << &pn << "] depth [" << pn.depth << "] type [" << pn.type << "] class [" << pn.producer->classname() << "]";
-  if (pn.op_first->obj) {
-    os << " first [" << *pn.op_first->obj << "]";
-  } else {
-    os << " first [op: " << pn.op_first << "]";
-  }
-  if (pn.op_marker->obj) {
-    os << " marker [" << *pn.op_marker->obj << "]";
-  } else {
-    os << " marker [op: " << pn.op_marker << "]";
-  }
-  if (pn.op_last->obj) {
-    os << " last [" << *pn.op_last->obj << "]";
-  } else {
-    os << " last [op: " << pn.op_last << "]";
-  }
-  int i = 0;
-  object_proxy *iop = pn.op_first;
-  while (iop->next != pn.op_marker) {
-    ++i;
-    iop = iop->next;
-  }
-  os << " (# " << i << ")";
-  */
   return os;
 }
 
