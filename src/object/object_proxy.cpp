@@ -66,7 +66,12 @@ void object_proxy::clear()
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "]";
+//  if (op) {
+    os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "]";
+/*  } else {
+    os << "proxy [0]\n";
+  }
+*/
   return os;
 }
 

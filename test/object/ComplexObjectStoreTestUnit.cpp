@@ -226,40 +226,43 @@ ComplexObjectStoreTestUnit::item_list()
   typedef object_ptr<Artist> artist_ptr;
 
   std::ofstream out;
-  out.open("itemlist0.dot");
   ostore_.dump_objects(std::cout);
+  /*
+  out.open("itemlist0.dot");
   ostore_.dump_prototypes(out);
   out.close();
-  artist_ptr acdc = ostore_.insert(new Artist("AC/DC"));
-  artist_ptr genesis = ostore_.insert(new Artist("Genesis"));
-  ostore_.dump_prototypes(std::cout);
+  */
   ItemList ilist;
-  //ostore_.insert(ilist);
+  ostore_.insert(ilist);
 
+  ostore_.dump_objects(std::cout);
   /*
+  out.open("itemlist1.dot");
+  ostore_.dump_prototypes(out);
+  out.close();
+  */
+
   ilist.push_back(new Item("Schrank"));
   ilist.push_back(new Item("Tisch"));
   ilist.push_back(new Item("Stuhl"));
   ilist.push_back(new Item("Bett"));
-  */
-  //ilist.push_front(new Item("Teppich"));
-
-  out.open("itemlist1.dot");
+  
   ostore_.dump_objects(std::cout);
-//  ostore_.dump_prototypes(std::cout);
-  ostore_.dump_prototypes(out);
-  out.close();
-
-  std::cout << "removing artist [" << genesis->name() << "] (" << genesis.get() << ")\n";
-  ostore_.remove(genesis);
+  /*
   out.open("itemlist2.dot");
   ostore_.dump_prototypes(out);
   out.close();
-  std::cout << "removing artist [" << acdc->name() << "] (" << acdc.get() << ")\n";
-  ostore_.remove(acdc);
+  */
+
+
+  ilist.push_front(new Item("Teppich"));
+
+  ostore_.dump_objects(std::cout);
+  /*
   out.open("itemlist3.dot");
   ostore_.dump_prototypes(out);
   out.close();
+  */
 
   ItemList::const_iterator first = ilist.begin();
   ItemList::const_iterator last = ilist.end();
@@ -269,7 +272,6 @@ ComplexObjectStoreTestUnit::item_list()
     ++first;
   }
   
-  ostore_.remove_prototype("ARTIST");
 }
 
 void
@@ -341,7 +343,9 @@ ComplexObjectStoreTestUnit::serializer()
   Track *track = new Track(1, "Hallo Welt", 300);
   
   object_serializer serializer;
-  
+ 
+  std::cout << std::endl;
+
   serializer.serialize(track);
   
   delete track;
@@ -351,4 +355,6 @@ ComplexObjectStoreTestUnit::serializer()
   serializer.deserialize(track);
 
   cout << "track title: " << track->title() << "\n";
+  
+  delete track;
 }

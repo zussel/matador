@@ -61,11 +61,14 @@ prototype_node::clear()
   std::cout.flush();
   // remove object proxies until first and marker are left
   // adjust marker first
-  object_proxy *old_first = op_first->next;
-  adjust_left_marker(op_marker);
-  adjust_right_marker(old_first, op_first);
+//  object_proxy *old_first = op_first->next;
+//  std::cout << "old first: " << *op_first->next << "\n";
+//  std::cout << "old marker: " << *op_marker->prev << "\n";
+  
+  adjust_left_marker(op_first->next, op_marker);
+  adjust_right_marker(op_marker->prev, op_first);
 
-  std::cout << "old first: " << *old_first << "\nbegin loop\n";
+  std::cout << "begin loop\n";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
     std::cout << "op before: " << *op << "\n";
@@ -74,12 +77,12 @@ prototype_node::clear()
     // delete object proxy and object
     op->clear();
     std::cout << "op after: " << *op << "\n";
-    if (op != old_first) {
-      delete op;
-    }
+    delete op;
   }
   std::cout << "end loop\n";
-  delete old_first;
+//  std::cout << "new first: " << *op_first->next << "\n";
+//  std::cout << "new marker: " << *op_marker->prev << "\n";
+//  delete old_first;
 }
 
 bool
@@ -209,6 +212,10 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
   return node == parent;
 }
 
+/*
+ * adjust the marker of all predeccessor nodes
+ * self and last marker
+ */
 void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy)
 {
   // store start node
@@ -216,7 +223,14 @@ void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *n
   // get previous node
   node = node->previous_node();
   while (node) {
-    bool do_break = node->op_first->next != oproxy;
+    if (node->op_marker == old_proxy) {
+      node->op_marker = new_proxy;
+    }
+    if (node->depth >= depth && node->op_last == old_proxy) {
+      node->op_last = new_proxy;
+    }
+  
+  //  bool do_break = node->op_first->next != new_proxy;
     /*
     if (node->op_first->next == oproxy) {
       std::cout << "before adjusting left node: " << *node << "\n";
@@ -225,20 +239,22 @@ void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *n
       std::cout << "after adjusting left node: " << *node << "\n";
     } else {
     */
+    /*
       std::cout << "break: before adjusting left node: " << *node << "\n";
       std::cout.flush();
-      node->op_marker = oproxy;
+      node->op_marker = new_proxy;
       //if (start->parent != node || node->empty()) {
       if (!is_child_of(node) || node->empty(false)) {
-        node->op_last = oproxy;
+        node->op_last = new_proxy;
       }
       std::cout << "break: after adjusting left node: " << *node << "\n";
       std::cout.flush();
-      /*break;
-    }*/
+      / *break;
+    }* /
       if (do_break) {
         break;
       }
+      */
     node = node->previous_node();
   }
 }
@@ -249,8 +265,12 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
   prototype_node *node = this;
   // get previous node
   node = node->next_node();
-  bool first = true;
+  //bool first = true;
   while (node) {
+    if (node->op_first == old_proxy) {
+      node->op_first = new_proxy;
+    }
+    /*
     if (node->op_first == old_proxy) {
       std::cout << "before adjusting right node: " << *node << "\n";
       std::cout.flush();
@@ -265,6 +285,7 @@ void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *
       std::cout.flush();
       break;
     }
+    */
     /*
     // check watermark
     if (first) {
@@ -287,11 +308,8 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   }
   os << "\t" << pn.type << " [label=\"{" << pn.type;
   os << "|{op_first|" << pn.op_first << "}";
-  os << "|{op_first:obj|" << pn.op_first->obj << "}";
   os << "|{op_marker|" << pn.op_marker << "}";
-  os << "|{op_marker:obj|" << pn.op_marker->obj << "}";
   os << "|{op_last|" << pn.op_last << "}";
-  os << "|{op_last:obj|" << pn.op_last->obj << "}";
   // determine size
   int i = 0;
   object_proxy *iop = pn.op_first;
