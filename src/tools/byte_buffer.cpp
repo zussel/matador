@@ -61,7 +61,7 @@ void byte_buffer::release(void *bytes, byte_buffer::size_type size)
   std::cout << "releasing " << size << " bytes from list (current size: " << this->size() << ") ... ";  
   char *ptr = (char*)bytes;
   size_type bytes_read = 0;
-  while (chunk_list_.front().used() <= size) {
+  while (!chunk_list_.empty() && chunk_list_.front().used() <= size) {
     buffer_chunk &chunk = chunk_list_.front();
     // available bytes are not enough
     // copy first part
@@ -89,6 +89,7 @@ void byte_buffer::release(void *bytes, byte_buffer::size_type size)
 
 byte_buffer::size_type byte_buffer::size() const
 {
+  return (chunk_list_.size() * BUF_SIZE) - chunk_list_.back().available() - chunk_list_.front().released();
   if (chunk_list_.size() == 1) {
     return BUF_SIZE - chunk_list_.front().available();
   } else {

@@ -46,6 +46,7 @@ private:
     buffer_chunk() : read_cursor(0), write_cursor(0) {}
     byte_buffer::size_type available() const { return data.size() - write_cursor; }
     byte_buffer::size_type used() const { return write_cursor - read_cursor; }
+    byte_buffer::size_type released() const { return read_cursor; }
     t_data_array data;
     byte_buffer::size_type read_cursor;
     byte_buffer::size_type write_cursor;
