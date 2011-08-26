@@ -24,7 +24,7 @@
 namespace oos {
 
 class object_base_producer;
-class object_proxy;
+struct object_proxy;
 
 struct prototype_node {
   prototype_node();

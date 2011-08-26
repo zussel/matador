@@ -20,8 +20,9 @@
 
 #include "unit/unit_exception.hpp"
 
-#include <tr1/functional>
+#include <functional>
 #include <map>
+
 #include <string>
 #include <sstream>
 

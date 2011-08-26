@@ -87,7 +87,7 @@ public:
   }
 };
 
-class prototype_node;
+struct prototype_node;
 
 class object_store
 {

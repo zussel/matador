@@ -18,7 +18,7 @@
 #ifndef BYTE_BUFFER_HPP
 #define BYTE_BUFFER_HPP
 
-#include <tr1/array>
+#include <array>
 #include <list>
 
 namespace oos {

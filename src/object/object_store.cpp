@@ -20,8 +20,14 @@
 #include "object/object_list.hpp"
 #include "object/prototype_node.hpp"
 
-#include <tr1/functional>
+#ifdef WIN32
+#include <functional>
 #include <memory>
+#else
+#include <tr1/functional>
+#include <tr1/memory>
+#endif
+
 #include <iostream>
 #include <typeinfo>
 #include <algorithm>

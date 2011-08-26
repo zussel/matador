@@ -20,7 +20,7 @@
 
 #include "tools/singleton.hpp"
 
-#include <tr1/memory>
+#include <memory>
 #include <map>
 #include <string>
 
