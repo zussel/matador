@@ -20,6 +20,7 @@
 #include "object/object.hpp"
 
 #include <iostream>
+#include <cassert>
 
 namespace oos {
 
@@ -33,13 +34,37 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
   : id_(x.id_)
   , proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-{}
+{
+  if (proxy_) {
+    if (is_reference_) {
+      proxy_->link_ref();
+    } else {
+//        proxy_->link_ptr();
+    }
+  }
+}
 
 base_object_ptr&
 base_object_ptr::operator=(const base_object_ptr &x) {
-  id_ = x.id_;
-  proxy_ = x.proxy_;
-  is_reference_ = x.is_reference_;
+  if (this != &x) {
+    if (proxy_) {
+      if (is_reference_) {
+        proxy_->unlink_ref();
+      } else {
+//        proxy_->unlink_ptr();
+      }
+    }
+    id_ = x.id_;
+    proxy_ = x.proxy_;
+    is_reference_ = x.is_reference_;
+    if (proxy_) {
+      if (is_reference_) {
+        proxy_->link_ref();
+      } else {
+//        proxy_->link_ptr();
+      }
+    }
+  }
   return *this;
 }
 
@@ -47,16 +72,41 @@ base_object_ptr::base_object_ptr(object_proxy *op, bool is_ref)
   : id_(op->id)
   , proxy_(op)
   , is_reference_(is_ref)
-{}
+{
+  if (proxy_) {
+    if (is_reference_) {
+      proxy_->link_ref();
+    } else {
+//        proxy_->link_ptr();
+    }
+  }
+}
 
 base_object_ptr::base_object_ptr(object *o, bool is_ref)
   : id_(o ? o->id_ : 0)
   , proxy_(o ? o->proxy_ : 0)
   , is_reference_(is_ref)
-{}
+{
+  if (o) {
+    assert(proxy_);
+    if (is_reference_) {
+      proxy_->link_ref();
+    } else {
+//        proxy_->link_ptr();
+    }
+  }
+}
 
 base_object_ptr::~base_object_ptr()
-{}
+{
+  if (proxy_) {
+    if (is_reference_) {
+      proxy_->unlink_ref();
+    } else {
+//        proxy_->unlink_ptr();
+    }
+  }
+}
 
 bool base_object_ptr::operator==(const base_object_ptr &x) const {
 	return x.proxy_ == proxy_;

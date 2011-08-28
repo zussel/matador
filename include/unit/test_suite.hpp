@@ -20,7 +20,12 @@
 
 #include "tools/singleton.hpp"
 
+#ifdef WIN32
 #include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 #include <map>
 #include <string>
 

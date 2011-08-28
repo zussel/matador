@@ -20,7 +20,12 @@
 
 #include "unit/unit_exception.hpp"
 
+#ifdef WIN32
 #include <functional>
+#else
+#include <tr1/functional>
+#endif
+
 #include <map>
 
 #include <string>

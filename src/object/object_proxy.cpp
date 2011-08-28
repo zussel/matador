@@ -23,8 +23,10 @@ namespace oos {
 object_proxy::object_proxy(object *o, object_store *os)
   : obj(o)
   , id((o ? o->id() : 0))
+  , ref_count(0)
   , ostore(os)
 {}
+
 object_proxy::~object_proxy()
 {
   if (obj) {
@@ -62,6 +64,16 @@ void object_proxy::clear()
     obj = NULL;
   }
   ostore = NULL;
+}
+
+void object_proxy::link_ref()
+{
+  ++ref_count;
+}
+
+void object_proxy::unlink_ref()
+{
+  --ref_count;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

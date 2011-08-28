@@ -37,11 +37,16 @@ struct object_proxy {
   void insert(object_proxy* oproxy);
   void clear();
 
+  void link_ref();
+  void unlink_ref();
+
   object_proxy *prev;
   object_proxy *next;
   object *obj;
   unsigned long id;
   
+  unsigned long ref_count;
+
   object_store *ostore;
 };
 

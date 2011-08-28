@@ -18,7 +18,12 @@
 #ifndef BYTE_BUFFER_HPP
 #define BYTE_BUFFER_HPP
 
+#ifdef WIN32
 #include <array>
+#else
+#include <tr1/array>
+#endif
+
 #include <list>
 
 namespace oos {
