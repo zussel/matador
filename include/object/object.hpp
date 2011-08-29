@@ -60,6 +60,7 @@ protected:
 
 private:
 	friend class object_store;
+  friend class object_deleter;
   friend class base_object_ptr;
 	
 	long id_;

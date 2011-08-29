@@ -32,6 +32,7 @@
 #include <typeinfo>
 #include <algorithm>
 #include <stack>
+#include <map>
 
 using std::tr1::placeholders::_1;
 
@@ -48,16 +49,7 @@ private:
   const std::string &type_;
 };
 
-class object_actor : public object_atomizer
-{
-public:
-  virtual ~object_actor() {}
-  
-protected:
-  std::stack<object*> object_stack_;
-};
-
-class object_creator : public object_actor
+class object_creator : public object_atomizer
 {
 public:
   object_creator(object_store &ostore) : ostore_(ostore) {}
@@ -80,18 +72,36 @@ public:
     ostore_.insert_object_list(x);
   }
 private:
+  std::stack<object*> object_stack_;
   object_store &ostore_;
 };
 
-class object_deleter : public object_actor
+class object_deleter : public object_atomizer
 {
 public:
   object_deleter(object_store &ostore) : ostore_(ostore) {}
   virtual ~object_deleter() {}
 
+  bool delete_object(object *obj)
+  {
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
+    if (ret.second) {
+      // proxy already in map
+    } else {
+    }
+    // start deletion process
+    obj->read_from(this);
+    return true;
+  }
+
   virtual void read_object(const char*, base_object_ptr &x)
   {
     if (!x.is_reference() && x.ptr()) {
+      std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
+      if (ret.second) {
+        // proxy already in map
+      } else {
+      }
       ostore_.remove_object(x.ptr());
     }
   }
@@ -99,6 +109,21 @@ public:
   {
   }
 private:
+  typedef struct t_object_count_struct
+  {
+    t_object_count_struct(object *o)
+      : obj(o)
+      , ref_count(o->proxy_->ref_count)
+      , ptr_count(0)
+    {}
+    object *obj;
+    unsigned long ref_count;
+    unsigned long ptr_count;
+  } t_object_count;
+
+private:
+  typedef std::map<unsigned long, t_object_count> t_object_count_map;
+  t_object_count_map object_count_map;
   object_store &ostore_;
 };
 
