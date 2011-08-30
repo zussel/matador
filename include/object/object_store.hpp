@@ -21,6 +21,7 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_proxy.hpp"
+#include "object/object_atomizer.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -34,6 +35,7 @@
 #include <string>
 #include <ostream>
 #include <list>
+#include <map>
 
 namespace oos {
 
@@ -87,6 +89,38 @@ public:
   }
 };
 
+
+class object_deleter : public object_atomizer
+{
+public:
+  object_deleter(object_store &ostore);
+  virtual ~object_deleter();
+
+  bool delete_object(object *obj);
+  void reset();
+
+  virtual void read_object(const char*, base_object_ptr &x);
+  virtual void read_object_list(const char*, object_list_base &);
+
+private:
+  typedef struct t_object_count_struct
+  {
+    t_object_count_struct(object *o)
+      : obj(o)
+      , ref_count(o->proxy_->ref_count)
+      , ptr_count(0)
+    {}
+    object *obj;
+    unsigned long ref_count;
+    unsigned long ptr_count;
+  } t_object_count;
+
+private:
+  typedef std::map<unsigned long, t_object_count> t_object_count_map;
+  t_object_count_map object_count_map;
+  object_store &ostore_;
+};
+
 struct prototype_node;
 
 class object_store
@@ -123,23 +157,33 @@ public:
 	void dump_objects(std::ostream &out) const;
 
 	object* create(const char *type) const;
-	template < class Y >
-	object_ptr<Y> insert(Y *o) {
+	
+  template < class Y >
+	object_ptr<Y> insert(Y *o)
+  {
 		return object_ptr<Y>(insert_object(o));
 	}
+  
   template < class Y >
-  void insert(object_list<Y> &ol) {
+  void insert(object_list<Y> &ol)
+  {
     // set object store
     insert_object_list(ol);
   }
+  
 	template < class Y >
-	bool remove(object_ptr<Y> o) {
+	bool remove(object_ptr<Y> o)
+  {
+    object_deleter_.reset();
 		return remove_object(o.get());
 	}
+  
   template < class InputIterator >
-  void insert(InputIterator first, InputIterator last) {
+  void insert(InputIterator first, InputIterator last)
+  {
    // std::iterator_traits<InputIterator>::value_type *o = *first;
   }
+  
   void mark_modified(object_proxy *oproxy);
 
   void register_observer(object_observer *observer);
@@ -175,6 +219,8 @@ private:
   
   typedef std::list<object_proxy*> t_object_proxy_list;
   t_object_proxy_list deleted_object_proxy_list_;
+
+  object_deleter object_deleter_;
 };
 
 }

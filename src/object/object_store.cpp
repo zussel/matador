@@ -16,7 +16,6 @@
  */
 
 #include "object/object_store.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/object_list.hpp"
 #include "object/prototype_node.hpp"
 
@@ -32,7 +31,6 @@
 #include <typeinfo>
 #include <algorithm>
 #include <stack>
-#include <map>
 
 using std::tr1::placeholders::_1;
 
@@ -76,62 +74,52 @@ private:
   object_store &ostore_;
 };
 
-class object_deleter : public object_atomizer
-{
-public:
-  object_deleter(object_store &ostore) : ostore_(ostore) {}
-  virtual ~object_deleter() {}
+object_deleter::object_deleter(object_store &ostore)
+  : ostore_(ostore)
+{}
 
-  bool delete_object(object *obj)
-  {
-    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
+object_deleter::~object_deleter()
+{}
+
+bool object_deleter::delete_object(object *obj)
+{
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
+  if (ret.second) {
+    // proxy already in map
+  } else {
+  }
+  // start deletion process
+  obj->read_from(this);
+  return true;
+}
+
+void object_deleter::reset()
+{
+  object_count_map.clear();
+}
+
+void object_deleter::read_object(const char*, base_object_ptr &x)
+{
+  if (!x.is_reference() && x.ptr()) {
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
     if (ret.second) {
       // proxy already in map
     } else {
     }
-    // start deletion process
-    obj->read_from(this);
-    return true;
+    ostore_.remove_object(x.ptr());
   }
+}
 
-  virtual void read_object(const char*, base_object_ptr &x)
-  {
-    if (!x.is_reference() && x.ptr()) {
-      std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
-      if (ret.second) {
-        // proxy already in map
-      } else {
-      }
-      ostore_.remove_object(x.ptr());
-    }
-  }
-  virtual void read_object_list(const char*, object_list_base &)
-  {
-  }
-private:
-  typedef struct t_object_count_struct
-  {
-    t_object_count_struct(object *o)
-      : obj(o)
-      , ref_count(o->proxy_->ref_count)
-      , ptr_count(0)
-    {}
-    object *obj;
-    unsigned long ref_count;
-    unsigned long ptr_count;
-  } t_object_count;
-
-private:
-  typedef std::map<unsigned long, t_object_count> t_object_count_map;
-  t_object_count_map object_count_map;
-  object_store &ostore_;
-};
+void object_deleter::read_object_list(const char*, object_list_base &)
+{
+}
 
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "OBJECT"))
   , id_(0)
   , first_(new object_proxy(NULL, this))
   , last_(new object_proxy(NULL, this))
+  , object_deleter_(*this)
 {
   prototype_node_name_map_.insert(std::make_pair("OBJECT", root_.get()));
   prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
@@ -410,8 +398,10 @@ bool object_store::remove_object(object *o)
   o->proxy_->remove();
 
   // call object deleter for object
-  object_deleter deleter(*this);
-  o->read_from(&deleter);
+  if (!object_deleter_.delete_object(o)) {
+    // throw new object_exception("couldn't delete object")
+    return false;
+  }
   // notify observer
   std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
   // if object was last object in list of prototype node
