@@ -39,7 +39,7 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
     if (is_reference_) {
       proxy_->link_ref();
     } else {
-//        proxy_->link_ptr();
+      proxy_->link_ptr();
     }
   }
 }
@@ -51,7 +51,7 @@ base_object_ptr::operator=(const base_object_ptr &x) {
       if (is_reference_) {
         proxy_->unlink_ref();
       } else {
-//        proxy_->unlink_ptr();
+        proxy_->unlink_ptr();
       }
     }
     id_ = x.id_;
@@ -61,7 +61,7 @@ base_object_ptr::operator=(const base_object_ptr &x) {
       if (is_reference_) {
         proxy_->link_ref();
       } else {
-//        proxy_->link_ptr();
+        proxy_->link_ptr();
       }
     }
   }
@@ -77,7 +77,7 @@ base_object_ptr::base_object_ptr(object_proxy *op, bool is_ref)
     if (is_reference_) {
       proxy_->link_ref();
     } else {
-//        proxy_->link_ptr();
+      proxy_->link_ptr();
     }
   }
 }
@@ -92,7 +92,7 @@ base_object_ptr::base_object_ptr(object *o, bool is_ref)
     if (is_reference_) {
       proxy_->link_ref();
     } else {
-//        proxy_->link_ptr();
+      proxy_->link_ptr();
     }
   }
 }
@@ -103,7 +103,7 @@ base_object_ptr::~base_object_ptr()
     if (is_reference_) {
       proxy_->unlink_ref();
     } else {
-//        proxy_->unlink_ptr();
+      proxy_->unlink_ptr();
     }
   }
 }
@@ -118,6 +118,13 @@ bool base_object_ptr::operator!=(const base_object_ptr &x) const {
 
 void
 base_object_ptr::reset(object *o) {
+  if (proxy_) {
+    if (is_reference_) {
+      proxy_->unlink_ref();
+    } else {
+      proxy_->unlink_ptr();
+    }
+  }
   proxy_ = (o ? o->proxy_ : 0);
   id_ = (proxy_ ? proxy_->id : 0);
 }
@@ -153,6 +160,18 @@ bool base_object_ptr::delete_object()
 bool base_object_ptr::is_reference() const
 {
   return is_reference_;
+}
+
+unsigned long
+base_object_ptr::ref_count() const
+{
+  return (!proxy_ ? 0 : proxy_->ref_count);
+}
+
+unsigned long
+base_object_ptr::ptr_count() const
+{
+  return (!proxy_ ? 0 : proxy_->ptr_count);
 }
 
 }

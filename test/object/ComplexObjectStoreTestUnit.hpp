@@ -18,6 +18,7 @@ public:
   void item_list();
   void album();
   void serializer();
+  void ref_ptr_counter();
 
 private:
   oos::object_store ostore_;

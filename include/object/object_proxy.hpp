@@ -40,12 +40,16 @@ struct object_proxy {
   void link_ref();
   void unlink_ref();
 
+  void link_ptr();
+  void unlink_ptr();
+
   object_proxy *prev;
   object_proxy *next;
   object *obj;
   unsigned long id;
   
   unsigned long ref_count;
+  unsigned long ptr_count;
 
   object_store *ostore;
 };

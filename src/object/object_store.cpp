@@ -81,37 +81,58 @@ object_deleter::object_deleter(object_store &ostore)
 object_deleter::~object_deleter()
 {}
 
-bool object_deleter::delete_object(object *obj)
-{
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
-  if (ret.second) {
-    // proxy already in map
-  } else {
-  }
-  // start deletion process
-  obj->read_from(this);
-  return true;
-}
-
-void object_deleter::reset()
+bool object_deleter::is_deletable(object *obj)
 {
   object_count_map.clear();
+  object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
+  // start collecting information
+  obj->read_from(this);
+  
+  // check the map
+  iterator first = object_count_map.begin();
+  iterator last = object_count_map.end();
+  while (first != last)
+  {
+    if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
+      ++first;
+    } else {
+      return false;
+    }
+  }
+  return true;
 }
 
 void object_deleter::read_object(const char*, base_object_ptr &x)
 {
-  if (!x.is_reference() && x.ptr()) {
-    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
-    if (ret.second) {
-      // proxy already in map
+  if (!x.ptr()) {
+    return;
+  }
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
+  if (ret.second) {
+    // proxy already in map
+    if (!x.is_reference()) {
+      --ret.first->second.ptr_count;
+      ostore_.remove_object(x.ptr());
     } else {
+      --ret.first->second.ref_count;
     }
-    ostore_.remove_object(x.ptr());
   }
 }
 
 void object_deleter::read_object_list(const char*, object_list_base &)
 {
+}
+
+object_deleter::iterator
+object_deleter::begin()
+{
+  return object_count_map.begin();
+}
+
+object_deleter::iterator
+object_deleter::end()
+{
+  return object_count_map.end();
 }
 
 object_store::object_store()
@@ -397,11 +418,6 @@ bool object_store::remove_object(object *o)
   // unlink object_proxy
   o->proxy_->remove();
 
-  // call object deleter for object
-  if (!object_deleter_.delete_object(o)) {
-    // throw new object_exception("couldn't delete object")
-    return false;
-  }
   // notify observer
   std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
   // if object was last object in list of prototype node

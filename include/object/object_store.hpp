@@ -92,31 +92,35 @@ public:
 
 class object_deleter : public object_atomizer
 {
-public:
-  object_deleter(object_store &ostore);
-  virtual ~object_deleter();
-
-  bool delete_object(object *obj);
-  void reset();
-
-  virtual void read_object(const char*, base_object_ptr &x);
-  virtual void read_object_list(const char*, object_list_base &);
-
 private:
   typedef struct t_object_count_struct
   {
     t_object_count_struct(object *o)
       : obj(o)
       , ref_count(o->proxy_->ref_count)
-      , ptr_count(0)
+      , ptr_count(o->proxy_->ptr_count)
     {}
     object *obj;
     unsigned long ref_count;
     unsigned long ptr_count;
   } t_object_count;
 
-private:
+public:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
+  typedef t_object_count_map::iterator iterator;
+
+  object_deleter(object_store &ostore);
+  virtual ~object_deleter();
+
+  bool is_deletable(object *obj);
+
+  virtual void read_object(const char*, base_object_ptr &x);
+  virtual void read_object_list(const char*, object_list_base &);
+
+  iterator begin();
+  iterator end();
+
+private:
   t_object_count_map object_count_map;
   object_store &ostore_;
 };
@@ -174,8 +178,17 @@ public:
 	template < class Y >
 	bool remove(object_ptr<Y> o)
   {
-    object_deleter_.reset();
-		return remove_object(o.get());
+    if (!object_deleter_.is_deletable(o.get())) {
+      return false;
+    }
+    
+    object_deleter::iterator first = object_deleter_.begin();
+    object_deleter::iterator last = object_deleter_.end();
+    
+    while (first != last) {
+      remove_object((first++)->second.obj);
+    }
+		return true;
 	}
   
   template < class InputIterator >

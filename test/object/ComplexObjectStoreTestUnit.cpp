@@ -49,6 +49,7 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   add_test("itemlist", std::tr1::bind(&ComplexObjectStoreTestUnit::item_list, this), "item list test");
   add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "first complex test");
   add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "first complex test");
+  add_test("ref_ptr_counter", std::tr1::bind(&ComplexObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
 }
 
 void
@@ -357,4 +358,36 @@ ComplexObjectStoreTestUnit::serializer()
   cout << "track title: " << track->title() << "\n";
   
   delete track;
+}
+
+void
+ComplexObjectStoreTestUnit::ref_ptr_counter()
+{
+  Artist *a = new Artist("AC/CD");
+  
+  typedef object_ptr<Artist> artist_ptr;
+  
+  artist_ptr artist = ostore_.insert(a);
+
+  cout << endl; 
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";
+  
+  artist_ptr a1 = artist;
+  artist_ptr a2 = artist;
+  
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";
+
+  typedef object_ref<Artist> artist_ref;
+  
+  artist_ref aref1 = a1;
+
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";
+
+  a1.reset();
+  
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";
 }

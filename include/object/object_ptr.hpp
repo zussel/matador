@@ -43,7 +43,7 @@ public:
 
   virtual const char* type() const = 0;
 
-	void reset(object *o);
+	void reset(object *o = 0);
 
 	bool is_loaded() const;
 
@@ -56,6 +56,9 @@ public:
   bool delete_object();
 
   bool is_reference() const;
+
+  unsigned long ref_count() const;
+  unsigned long ptr_count() const;
 
 protected:
 	friend class object_atomizer;
