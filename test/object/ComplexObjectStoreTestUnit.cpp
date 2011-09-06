@@ -414,6 +414,23 @@ ComplexObjectStoreTestUnit::delete_object()
   cout << "track ref count: " << track.ref_count() << "\n";
   cout << "track ptr count: " << track.ptr_count() << "\n";
   
+  typedef object_view<Artist> artist_view;
+  artist_view aview(ostore_);
+
+  artist_view::iterator afirst = aview.begin();
+  artist_view::iterator alast = aview.begin();
+  while (afirst != alast) {
+    cout << "track title: " << (afirst++)->name() << "\n";
+  }
+
+  if (!ostore_.remove(artist)) {
+    cout << "couldn't remove artist\n";
+  } else {
+    cout << "removed artist\n";
+  }  
+
+  cout << "artist view is" << (aview.empty() ? " " : " not ") << "empty\n";
+
   if (!ostore_.remove(track)) {
     cout << "couldn't remove track\n";
   } else {
@@ -425,4 +442,6 @@ ComplexObjectStoreTestUnit::delete_object()
   } else {
     cout << "removed artist\n";
   }  
+
+  cout << "artist view is" << (aview.empty() ? " " : " not ") << "empty\n";
 }

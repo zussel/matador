@@ -81,19 +81,25 @@ object_deleter::object_deleter(object_store &ostore)
 object_deleter::~object_deleter()
 {}
 
-bool object_deleter::is_deletable(object *obj)
+bool
+object_deleter::is_deletable(object *obj)
 {
   object_count_map.clear();
-  object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj)));
+  object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj, false)));
+
   // start collecting information
   obj->read_from(this);
   
-  // check the map
+  // check the reference and pointer counter of collected objects
   iterator first = object_count_map.begin();
   iterator last = object_count_map.end();
   while (first != last)
   {
-    if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
+    if (first->second.ignore) {
+      ++first;
+    } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
+      ++first;
+    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
       ++first;
     } else {
       return false;
@@ -107,7 +113,7 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
   if (!x.ptr()) {
     return;
   }
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr(), x.is_reference())));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
   if (!ret.second) {
     // proxy already in map
     if (!x.is_reference()) {
@@ -117,6 +123,8 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
     }
   }
   if (!x.is_reference()) {
+    ret.first->second.ignore = false;
+    x.ptr()->read_from(this);
     ostore_.remove_object(x.ptr());
   }
 }

@@ -95,16 +95,16 @@ class object_deleter : public object_atomizer
 private:
   typedef struct t_object_count_struct
   {
-    t_object_count_struct(object *o, bool is_ref)
+    t_object_count_struct(object *o, bool ignr = true)
       : obj(o)
       , ref_count(o->proxy_->ref_count)
       , ptr_count(o->proxy_->ptr_count)
-      , is_reference(is_ref)
+      , ignore(ignr)
     {}
     object *obj;
     unsigned long ref_count;
     unsigned long ptr_count;
-    bool is_reference;
+    bool ignore;
   } t_object_count;
 
 public:
@@ -178,8 +178,9 @@ public:
   }
   
 	template < class Y >
-	bool remove(object_ptr<Y> o)
+	bool remove(object_ptr<Y> &o)
   {
+    // check if object tree is deletable
     if (!object_deleter_.is_deletable(o.get())) {
       return false;
     }
@@ -188,7 +189,11 @@ public:
     object_deleter::iterator last = object_deleter_.end();
     
     while (first != last) {
-      remove_object((first++)->second.obj);
+      if (!first->second.ignore) {
+        remove_object((first++)->second.obj);
+      } else {
+        ++first;
+      }
     }
 		return true;
 	}
