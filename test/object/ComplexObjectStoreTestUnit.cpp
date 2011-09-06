@@ -50,6 +50,7 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "first complex test");
   add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "first complex test");
   add_test("ref_ptr_counter", std::tr1::bind(&ComplexObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+  add_test("delete_object", std::tr1::bind(&ComplexObjectStoreTestUnit::delete_object, this), "delete object");
 }
 
 void
@@ -390,4 +391,38 @@ ComplexObjectStoreTestUnit::ref_ptr_counter()
   
   cout << "artist ref count: " << artist.ref_count() << "\n";
   cout << "artist ptr count: " << artist.ptr_count() << "\n";
+}
+
+void
+ComplexObjectStoreTestUnit::delete_object()
+{
+  Artist *a = new Artist("AC/CD");
+  
+  typedef object_ptr<Artist> artist_ptr;
+  
+  artist_ptr artist = ostore_.insert(a);
+
+  Track *t = new Track(1, "Thunderstruck", 360, artist);
+  
+  typedef object_ptr<Track> track_ptr;
+  
+  track_ptr track = ostore_.insert(t);
+  
+  cout << std::endl;
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";
+  cout << "track ref count: " << track.ref_count() << "\n";
+  cout << "track ptr count: " << track.ptr_count() << "\n";
+  
+  if (!ostore_.remove(track)) {
+    cout << "couldn't remove track\n";
+  } else {
+    cout << "removed track\n";
+  }  
+  
+  if (!ostore_.remove(artist)) {
+    cout << "couldn't remove artist\n";
+  } else {
+    cout << "removed artist\n";
+  }  
 }

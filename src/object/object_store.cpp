@@ -107,15 +107,17 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
   if (!x.ptr()) {
     return;
   }
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr())));
-  if (ret.second) {
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.ptr()->id(), t_object_count(x.ptr(), x.is_reference())));
+  if (!ret.second) {
     // proxy already in map
     if (!x.is_reference()) {
       --ret.first->second.ptr_count;
-      ostore_.remove_object(x.ptr());
     } else {
       --ret.first->second.ref_count;
     }
+  }
+  if (!x.is_reference()) {
+    ostore_.remove_object(x.ptr());
   }
 }
 

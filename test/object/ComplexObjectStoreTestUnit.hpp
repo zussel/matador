@@ -19,6 +19,7 @@ public:
   void album();
   void serializer();
   void ref_ptr_counter();
+  void delete_object();
 
 private:
   oos::object_store ostore_;

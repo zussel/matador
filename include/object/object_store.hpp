@@ -95,14 +95,16 @@ class object_deleter : public object_atomizer
 private:
   typedef struct t_object_count_struct
   {
-    t_object_count_struct(object *o)
+    t_object_count_struct(object *o, bool is_ref)
       : obj(o)
       , ref_count(o->proxy_->ref_count)
       , ptr_count(o->proxy_->ptr_count)
+      , is_reference(is_ref)
     {}
     object *obj;
     unsigned long ref_count;
     unsigned long ptr_count;
+    bool is_reference;
   } t_object_count;
 
 public:
