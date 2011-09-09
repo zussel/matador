@@ -129,6 +129,12 @@ private:
 
 struct prototype_node;
 
+/**
+ * @class object_store
+ * @brief A class that stores all kind of objects.
+ * 
+ * 
+ */
 class object_store
 {
 private:
@@ -136,34 +142,61 @@ private:
 	typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_node_map;
 
 public:
-  /*
-   * Create an empty object store
+  /**
+   * Create an empty object store.
    */
 	object_store();
-  /*
-   * Destroys all objects in store
+
+  /**
+   * Destroys all prototypes, objects and observers in store.
    */
 	~object_store();
 	
-  /*
-   * Insert a new object prototype into the prototype tree.
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a producer and a unique type name. To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   * 
+   * @param producer The producer object produces a new object of a specific type.
+   * @param type     The unique name of the type.
+   * @param parent   The name of the parent type.
+   * @return Returns true if the prototype was inserted successfully.
    */
 	bool insert_prototype(object_base_producer *producer, const char *type, const char *parent = "OBJECT");
-  /*
-   * Removes an object prototype from the prototype tree and
-   * removes also the created objects from store
+
+  /**
+   * Removes an object prototype from the prototype tree. All children
+   * nodes and all objects are also removed.
+   * 
+   * @param type The name of the type to remove.
+   * @return Returns true if the type was found and successfully removed
    */
   bool remove_prototype(const char *type);
+
   /**
-   * Removes all inserted prototypes
+   * Removes all inserted prototypes and all inserted objects.
    */
   void clear();
 	
 	void dump_prototypes(std::ostream &out) const;
 	void dump_objects(std::ostream &out) const;
 
+  /**
+   * Creates an object of the given type name.
+   * 
+   * @param type Typename of the object to create.
+   * @return The created object on success or NULL if the type couldn't be found.
+   */
 	object* create(const char *type) const;
-	
+
+  /**
+   * Inserts an object of a specfic type. On successfull insertion
+   * an object_ptr element with the inserted object is returned.
+   * 
+   * @param o Object to be inserted.
+   * @return Inserted object contained by an object_ptr on success.
+   */
   template < class Y >
 	object_ptr<Y> insert(Y *o)
   {
