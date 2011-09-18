@@ -68,6 +68,12 @@ public:
   virtual void read_object_list(const char*, object_list_base &x)
   {
     ostore_.insert_object_list(x);
+    // set object store
+    x.ostore(&ostore_);
+    // set parent object (if available)
+    if (!object_stack_.empty()) {
+      x.parent_object(object_stack_.top());
+    }
   }
 private:
   std::stack<object*> object_stack_;

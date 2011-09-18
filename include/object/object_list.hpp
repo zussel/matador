@@ -342,11 +342,15 @@ public:
 
 protected:
   friend class object_store;
+  friend class object_creator;
 
+  object* parent_object() const { return parent_; }
   object_store* ostore() const { return ostore_; }
   object* first_obj() const { return first_obj_; }
   object* last_obj() const { return last_obj_; }
 
+  void parent_object(object *parent) { parent_ = parent; }
+  void ostore(object_store *os) { ostore_ = os; }
   void first_obj(object *f) { first_obj_ = f; }
   void last_obj(object *l) { last_obj_ = l; }
 
@@ -354,6 +358,7 @@ private:
   object *first_obj_;
   object *last_obj_;
   object_store *ostore_;
+  object *parent_;
 };
 
 template < class T >
@@ -426,6 +431,9 @@ private:
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
+  object_node_ptr first__;
+  object_node_ptr last__;
+  
   t_list_node *first_;
 	t_list_node *last_;
 };
