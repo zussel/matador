@@ -46,28 +46,38 @@ class object_list_node : public object
 {
 public:
   object_list_node()
+  /*
     : root_(NULL)
     , prev_(NULL)
     , next_(NULL)
+    */
   {}
   virtual ~object_list_node() {}
 
 	void read_from(object_atomizer *reader)
   {
     object::read_from(reader);
-    object_ref<T> optr(root_);
-    reader->read_object("root", optr);
-    optr.reset(prev_);
-    reader->read_object("prev", optr);
-    optr.reset(next_);
-    reader->read_object("next", optr);
+//    object_ref<T> optr(root_);
+//    reader->read_object("root", optr);
+    reader->read_object("root", root_);
+//    optr.reset(prev_);
+//    reader->read_object("prev", optr);
+    reader->read_object("prev", prev_);
+//    optr.reset(next_);
+//    reader->read_object("next", optr);
+    reader->read_object("next", next_);
   }
 	void write_to(object_atomizer *writer)
   {
     object::write_to(writer);
+    /*
     writer->write_object("root", object_ref<T>(root_));
     writer->write_object("prev", object_ref<T>(prev_));
     writer->write_object("next", object_ref<T>(next_));
+    */
+    writer->write_object("root", root));
+    writer->write_object("prev", prev_);
+    writer->write_object("next", next_);
   }
 
 private:
@@ -75,9 +85,15 @@ private:
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
+  object_ref<T> root_;
+  object_ptr<T> prev_;
+  object_ptr<T> next_;
+
+/*
   T* root_;
   T* prev_;
   T* next_;
+  */
 };
 
 template < class T >
