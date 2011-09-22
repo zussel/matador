@@ -67,13 +67,11 @@ public:
   }
   virtual void read_object_list(const char*, object_list_base &x)
   {
-    ostore_.insert_object_list(x);
-    // set object store
-    x.ostore(&ostore_);
     // set parent object (if available)
     if (!object_stack_.empty()) {
       x.parent_object(object_stack_.top());
     }
+    ostore_.insert_object_list(x);
   }
 private:
   std::stack<object*> object_stack_;
@@ -453,9 +451,7 @@ bool object_store::remove_object(object *o)
 
 bool object_store::insert_object_list(object_list_base &olb)
 {
-  olb.ostore_ = this;
-  insert_object(olb.first_obj_);
-  insert_object(olb.last_obj_);
+  olb.initialize(this);
   return true;
 }
 

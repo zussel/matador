@@ -61,7 +61,8 @@ object_ref<Artist> Album::artist() const
 void Album::add(object_ref<Track> track, bool override_artist)
 {
   TrackList::t_list_node *node = new TrackList::t_list_node(track);
-  track_list_.push_back(node);
+  object_ptr<TrackList::t_list_node> onode = track_list_.ostore()->insert(node);
+  track_list_.push_back(onode);
   if (override_artist) {
     track->artist(artist_);
   }

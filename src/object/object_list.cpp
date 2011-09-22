@@ -18,25 +18,16 @@
 #include "object/object_list.hpp"
 
 namespace oos {
-/*
-object_list_base_element::~object_list_base_element()
+
+object_list_base::object_list_base()
 {}
 
-void object_list_base_element::read_from(object_atomizer *reader)
-{
-  object::read_from(reader);
-  reader->read_object("root", root_);
-  reader->read_object("prev", prev_);
-  reader->read_object("next", next_);
-}
+object_list_base::~object_list_base()
+{}
 
-void object_list_base_element::write_to(object_atomizer *writer)
+void object_list_base::initialize(object_store *ostore)
 {
-  object::write_to(writer);
-  writer->write_object("root", root_);
-  writer->write_object("prev", prev_);
-  writer->write_object("next", next_);
+  ostore_ = ostore;
 }
-*/
 
 }

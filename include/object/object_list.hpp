@@ -45,13 +45,7 @@ template < class T >
 class object_list_node : public object
 {
 public:
-  object_list_node()
-  /*
-    : root_(NULL)
-    , prev_(NULL)
-    , next_(NULL)
-    */
-  {}
+  object_list_node() {}
   virtual ~object_list_node() {}
 
 	void read_from(object_atomizer *reader)
@@ -75,7 +69,7 @@ public:
     writer->write_object("prev", object_ref<T>(prev_));
     writer->write_object("next", object_ref<T>(next_));
     */
-    writer->write_object("root", root));
+    writer->write_object("root", root_);
     writer->write_object("prev", prev_);
     writer->write_object("next", next_);
   }
@@ -88,12 +82,6 @@ private:
   object_ref<T> root_;
   object_ptr<T> prev_;
   object_ptr<T> next_;
-
-/*
-  T* root_;
-  T* prev_;
-  T* next_;
-  */
 };
 
 template < class T >
@@ -347,32 +335,27 @@ private:
 class object_list_base
 {
 public:
-  object_list_base()
-    : first_obj_(NULL)
-    , last_obj_(NULL)
-  {}
-	virtual ~object_list_base() {}
+  object_list_base();
+	virtual ~object_list_base();
 
-	void read_from(object_atomizer *) {}
-	void write_to(object_atomizer *) {}
+	virtual void read_from(object_atomizer *) = 0;
+	virtual void write_to(object_atomizer *) const = 0;
+
+  object_store* ostore() const { return ostore_; }
 
 protected:
   friend class object_store;
   friend class object_creator;
 
-  object* parent_object() const { return parent_; }
-  object_store* ostore() const { return ostore_; }
-  object* first_obj() const { return first_obj_; }
-  object* last_obj() const { return last_obj_; }
+  virtual void initialize(object_store *ostore);
 
+  virtual object* first_object() const = 0;
+  virtual object* last_object() const = 0;
+
+  object* parent_object() const { return parent_; }
   void parent_object(object *parent) { parent_ = parent; }
-  void ostore(object_store *os) { ostore_ = os; }
-  void first_obj(object *f) { first_obj_ = f; }
-  void last_obj(object *l) { last_obj_ = l; }
 
 private:
-  object *first_obj_;
-  object *last_obj_;
   object_store *ostore_;
   object *parent_;
 };
@@ -384,33 +367,26 @@ public:
 	typedef T t_list_node;
 	typedef object_ptr<t_list_node> object_node_ptr;
 
-  object_list()
-    : first_(new T)
-    , last_(new T)
-  {
-    first_obj(first_);
-    last_obj(last_);
-    first_->root_ = first_;
-    first_->next_ = last_;
-    last_->root_ = first_;
-    last_->prev_ = first_;
-  }
+  object_list() {}
 	virtual ~object_list() {}
 
   typedef object_list_iterator<T> iterator;
   typedef const_object_list_iterator<T> const_iterator;
 
+	virtual void read_from(object_atomizer *) {}
+	virtual void write_to(object_atomizer *) const {}
+
   iterator begin() {
-    return ++iterator(first_, this);
+    return ++iterator(first_.ptr(), this);
   }
   const_iterator begin() const {
-    return ++const_iterator(first_, this);
+    return ++const_iterator(first_.ptr(), this);
   }
   iterator end() {
-    return iterator(last_, this);
+    return iterator(last_.ptr(), this);
   }
   const_iterator end() const {
-    return const_iterator(last_, this);
+    return const_iterator(last_.ptr(), this);
   }
   bool empty() const {
     return first_->next_ == last_->prev_;
@@ -419,39 +395,55 @@ public:
   {
     return std::distance(begin(), end());
   }
-  void push_front(T *elem) {
-    object_ptr<T> optr(elem);
-    if (ostore()) {
-        optr = ostore()->insert(elem);
-    }
-    optr->next_ = first_->next_;
+  void push_front(const object_ptr<T> &elem)
+  {
+    elem->next_ = first_->next_;
     first_->next_ = elem;
-    optr->prev_ = first_;
+    elem->prev_ = first_;
     first_->next_ = elem;
   }
-  void push_back(T *elem) {
-    object_ptr<T> optr(elem);
-    if (ostore()) {
-        optr = ostore()->insert(elem);
-    }
-    optr->prev_ = last_->prev_;
+  void push_back(const object_ptr<T> &elem)
+  {
+    elem->prev_ = last_->prev_;
     last_->prev_->next_ = elem;
-    optr->next_ = last_;
+    elem->next_ = last_;
     last_->prev_ = elem;
   }
   iterator erase(iterator i);
   iterator erase(iterator first, iterator last);
+
+protected:
+  virtual void initialize(object_store *os)
+  {
+    object_list_base::initialize(os);
+    
+    // create first and last element
+    first_ = ostore()->insert(new T);
+    last_ = ostore()->insert(new T);
+    // link object elements
+    first_->root_ = first_;
+    first_->next_ = last_;
+    last_->root_ = first_;
+    last_->prev_ = first_;
+  }
+
+  virtual object* first_object() const
+  {
+    return first_.ptr();
+  }
+
+  virtual object* last_object() const
+  {
+    return last_.ptr();
+  }
 
 private:
   friend class object_store;
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
-  object_node_ptr first__;
-  object_node_ptr last__;
-  
-  t_list_node *first_;
-	t_list_node *last_;
+  object_node_ptr first_;
+  object_node_ptr last_;
 };
 
 }
