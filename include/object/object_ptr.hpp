@@ -51,7 +51,7 @@ public:
 
 	object* ptr() const;
 
-	object* lookup_object();
+	object* lookup_object() const;
 
   bool delete_object();
 
@@ -80,26 +80,26 @@ public:
 	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
-	object_ptr(object* o) : base_object_ptr(o, false) {}
+	explicit object_ptr(object* o) : base_object_ptr(o, false) {}
 
   virtual const char* type() const
   {
     return typeid(T).name();
   }
 
-	T* operator->() {
+	T* operator->() const {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
 	  }
 	  return NULL;
 	}
-	T& operator*() {
+	T& operator*() const {
 		if (proxy_) {
       return *dynamic_cast<T*>(lookup_object());
  		}
     return NULL;
 	}
-	T* get() {
+	T* get() const {
 		if (proxy_) {
       return dynamic_cast<T*>(lookup_object());
  		}

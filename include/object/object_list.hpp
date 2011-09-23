@@ -147,16 +147,15 @@ class object_list_iterator : public std::iterator<std::bidirectional_iterator_ta
 public:
   typedef object_list_iterator<T> self;	
   typedef T* pointer;
-  typedef T value_type;
+  typedef object_ptr<T> value_type;
   typedef value_type& reference ;
   typedef object_list<T> list_type;
-  typedef pointer node_type;
 
   object_list_iterator()
     : node_(NULL)
     , list_(NULL)
   {}
-  object_list_iterator(node_type node, list_type *l)
+  object_list_iterator(value_type node, list_type *l)
     : node_(node)
     , list_(l)
   {}
@@ -205,7 +204,7 @@ public:
   }
 
   pointer operator->() const {
-    return node_->object_;
+    return node_.get();
   }
 
   value_type operator*() const {
@@ -231,7 +230,7 @@ private:
 private:
   friend class const_object_list_iterator<T>;
 
-  node_type node_;
+  value_type node_;
   list_type *list_;
 };
 
@@ -242,14 +241,13 @@ public:
   typedef object_ptr<T> value_type;
   typedef T* pointer;
   typedef value_type& reference ;
-  typedef const object_list<T> list_type;
-  typedef pointer node_type;
+  typedef object_list<T> list_type;
 
   const_object_list_iterator()
     : node_(NULL)
     , list_(NULL)
   {}
-  const_object_list_iterator(node_type node, list_type *l)
+  const_object_list_iterator(value_type node, const list_type *l)
     : node_(node)
     , list_(l)
   {}
@@ -304,7 +302,7 @@ public:
   }
 
   pointer operator->() const {
-    return node_;
+    return node_.get();
   }
 
   value_type operator*() const {
@@ -328,8 +326,8 @@ private:
   }
 
 private:
-  node_type node_;
-  list_type *list_;
+  value_type node_;
+  const list_type *list_;
 };
 
 class object_list_base
@@ -377,16 +375,16 @@ public:
 	virtual void write_to(object_atomizer *) const {}
 
   iterator begin() {
-    return ++iterator(first_.ptr(), this);
+    return ++iterator(first_, this);
   }
   const_iterator begin() const {
-    return ++const_iterator(first_.ptr(), this);
+    return ++const_iterator(first_, this);
   }
   iterator end() {
-    return iterator(last_.ptr(), this);
+    return iterator(last_, this);
   }
   const_iterator end() const {
-    return const_iterator(last_.ptr(), this);
+    return const_iterator(last_, this);
   }
   bool empty() const {
     return first_->next_ == last_->prev_;
@@ -395,20 +393,35 @@ public:
   {
     return std::distance(begin(), end());
   }
-  void push_front(const object_ptr<T> &elem)
+
+  //void push_front(object_ptr<T> elem)
+  virtual void push_front(T *elem)
   {
-    elem->next_ = first_->next_;
-    first_->next_ = elem;
-    elem->prev_ = first_;
-    first_->next_ = elem;
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      object_ptr<T> optr = ostore()->insert(elem);
+      optr->next_ = first_->next_;
+      first_->next_ = optr;
+      optr->prev_ = first_;
+      first_->next_ = optr;
+    }
   }
-  void push_back(const object_ptr<T> &elem)
+
+//  void push_back(object_ptr<T> elem)
+  virtual void push_back(T* elem)
   {
-    elem->prev_ = last_->prev_;
-    last_->prev_->next_ = elem;
-    elem->next_ = last_;
-    last_->prev_ = elem;
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      object_ptr<T> optr = ostore()->insert(elem);
+      optr->prev_ = last_->prev_;
+      last_->prev_->next_ = optr;
+      optr->next_ = last_;
+      last_->prev_ = optr;
+    }
   }
+
   iterator erase(iterator i);
   iterator erase(iterator first, iterator last);
 
@@ -444,6 +457,52 @@ private:
 
   object_node_ptr first_;
   object_node_ptr last_;
+};
+
+template < class T >
+class object_ptr_list : public object_list<object_ptr_list_node<T> >
+{
+public:
+  void push_front(const object_ptr<T> &optr)
+  {
+  }
+  void push_back(const object_ptr<T> &optr)
+  {
+  }
+
+private:
+  virtual void push_front(T *elem)
+  {
+    object_list<T>::push_front(elem);
+  }
+
+  virtual void push_back(T *elem)
+  {
+    object_list<T>::push_back(elem);
+  }
+};
+
+template < class T >
+class object_ref_list : public object_list<object_ref_list_node<T> >
+{
+public:
+  void push_front(const object_ref<T> &optr)
+  {
+  }
+  void push_back(const object_ref<T> &optr)
+  {
+  }
+
+private:
+  virtual void push_front(T *elem)
+  {
+    object_list<T>::push_front(elem);
+  }
+
+  virtual void push_back(T *elem)
+  {
+    object_list<T>::push_back(elem);
+  }
 };
 
 }

@@ -140,12 +140,14 @@ base_object_ptr::id() const {
 }
 
 object*
-base_object_ptr::ptr() const {
+base_object_ptr::ptr() const
+{
     return (proxy_ ? proxy_->obj : NULL);
 }
 
 object*
-base_object_ptr::lookup_object() {
+base_object_ptr::lookup_object() const
+{
     return (proxy_ ? proxy_->obj : NULL);
 }
 
