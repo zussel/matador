@@ -13,42 +13,54 @@
     </div>
     <div id="content">
       <h3 class="clear">Getting started</h3>
-<pre style='color:#000000;background:#f1f0f0;'><span style='color:#400000; font-weight:bold; '>class</span> Artist <span style='color:#806030; '>:</span> <span style='color:#400000; font-weight:bold; '>public</span> oos<span style='color:#806030; '>::</span>object
-<span style='color:#806030; '>{</span>
-<span style='color:#400000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#c34e00; '>// artists name</span>
-  <span style='color:#00dddd; '>std</span><span style='color:#806030; '>::</span><span style='color:#800040; '>string</span> name_<span style='color:#806030; '>;</span>
-<span style='color:#400000; font-weight:bold; '>public</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#c34e00; '>// needed by factory</span>
-  Artist<span style='color:#806030; '>(</span><span style='color:#806030; '>)</span> <span style='color:#806030; '>{</span><span style='color:#806030; '>}</span>
-  <span style='color:#c34e00; '>// add your custom c'tors</span>
-  Artist<span style='color:#806030; '>(</span><span style='color:#400000; font-weight:bold; '>const</span> <span style='color:#00dddd; '>std</span><span style='color:#806030; '>::</span><span style='color:#800040; '>string</span> <span style='color:#806030; '>&amp;</span>name<span style='color:#806030; '>)</span> <span style='color:#806030; '>:</span> name_<span style='color:#806030; '>(</span>anme<span style='color:#806030; '>)</span> <span style='color:#806030; '>{</span><span style='color:#806030; '>}</span>
-  <span style='color:#c34e00; '>// virtual d'tor</span>
-  <span style='color:#400000; font-weight:bold; '>virtual</span> <span style='color:#806030; '>~</span>Artist<span style='color:#806030; '>(</span><span style='color:#806030; '>)</span> <span style='color:#806030; '>{</span><span style='color:#806030; '>}</span>
+      <div class="width66 float_left">
+        <div class="gutter">
+          <p>Store all kind of objects in one container</p>
+          <p>1. Derive your classes from oos::object. Add your members and write proper read_from and write_to methods.</p>
+<pre style='color:#000000;background:#dddddd;'><span style='color:#800000; font-weight:bold; '>class</span> Artist <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
+<span style='color:#800080; '>{</span>
+<span style='color:#800000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
+  <span style='color:#696969; '>// artists name</span>
+  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> name_<span style='color:#800080; '>;</span>
+<span style='color:#800000; font-weight:bold; '>public</span><span style='color:#e34adc; '>:</span>
+  <span style='color:#696969; '>// needed by factory</span>
+  Artist<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
+  <span style='color:#696969; '>// add your custom c'tors</span>
+  Artist<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>name<span style='color:#808030; '>)</span> <span style='color:#800080; '>:</span> name_<span style='color:#808030; '>(</span>anme<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
+  <span style='color:#696969; '>// virtual d'tor</span>
+  <span style='color:#800000; font-weight:bold; '>virtual</span> <span style='color:#808030; '>~</span>Artist<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
 
-  <span style='color:#c34e00; '>// generic interface to access data</span>
-  <span style='color:#400000; font-weight:bold; '>virtual</span> write_to<span style='color:#806030; '>(</span>oos<span style='color:#806030; '>::</span>object_atomizer <span style='color:#806030; '>*</span>oa<span style='color:#806030; '>)</span> <span style='color:#400000; font-weight:bold; '>const</span>
-  <span style='color:#806030; '>{</span>
-    object<span style='color:#806030; '>::</span>write_to<span style='color:#806030; '>(</span>oa<span style='color:#806030; '>)</span><span style='color:#806030; '>;</span>
-    oa<span style='color:#806030; '>-</span><span style='color:#806030; '>></span>write_string<span style='color:#806030; '>(</span><span style='color:#800000; '>"</span><span style='color:#e60000; '>name</span><span style='color:#800000; '>"</span><span style='color:#806030; '>,</span> name_<span style='color:#806030; '>)</span><span style='color:#806030; '>;</span>
-  <span style='color:#806030; '>}</span>
-  <span style='color:#400000; font-weight:bold; '>virtual</span> read_from<span style='color:#806030; '>(</span>oos<span style='color:#806030; '>::</span>object_atomizer <span style='color:#806030; '>*</span>oa<span style='color:#806030; '>)</span>
-  <span style='color:#806030; '>{</span>
-    object<span style='color:#806030; '>::</span>read_from<span style='color:#806030; '>(</span>oa<span style='color:#806030; '>)</span><span style='color:#806030; '>;</span>
-    oa<span style='color:#806030; '>-</span><span style='color:#806030; '>></span>read_string<span style='color:#806030; '>(</span><span style='color:#800000; '>"</span><span style='color:#e60000; '>name</span><span style='color:#800000; '>"</span><span style='color:#806030; '>,</span> name_<span style='color:#806030; '>)</span><span style='color:#806030; '>;</span>
-  <span style='color:#806030; '>}</span>
+  <span style='color:#696969; '>// generic interface to access data</span>
+  <span style='color:#800000; font-weight:bold; '>virtual</span> write_to<span style='color:#808030; '>(</span>oos<span style='color:#800080; '>::</span>object_atomizer <span style='color:#808030; '>*</span>oa<span style='color:#808030; '>)</span> <span style='color:#800000; font-weight:bold; '>const</span>
+  <span style='color:#800080; '>{</span>
+    object<span style='color:#800080; '>::</span>write_to<span style='color:#808030; '>(</span>oa<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    oa<span style='color:#808030; '>-</span><span style='color:#808030; '>></span>write_string<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>name</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> name_<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+  <span style='color:#800080; '>}</span>
+  <span style='color:#800000; font-weight:bold; '>virtual</span> read_from<span style='color:#808030; '>(</span>oos<span style='color:#800080; '>::</span>object_atomizer <span style='color:#808030; '>*</span>oa<span style='color:#808030; '>)</span>
+  <span style='color:#800080; '>{</span>
+    object<span style='color:#800080; '>::</span>read_from<span style='color:#808030; '>(</span>oa<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    oa<span style='color:#808030; '>-</span><span style='color:#808030; '>></span>read_string<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>name</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> name_<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+  <span style='color:#800080; '>}</span>
 
-  <span style='color:#c34e00; '>// add access methods for your members</span>
-  <span style='color:#00dddd; '>std</span><span style='color:#806030; '>::</span><span style='color:#800040; '>string</span> name<span style='color:#806030; '>(</span><span style='color:#806030; '>)</span> <span style='color:#400000; font-weight:bold; '>const</span> <span style='color:#806030; '>{</span> <span style='color:#400000; font-weight:bold; '>return</span> name_<span style='color:#806030; '>;</span> <span style='color:#806030; '>}</span>
-  <span style='color:#400000; font-weight:bold; '>void</span> name<span style='color:#806030; '>(</span><span style='color:#400000; font-weight:bold; '>const</span> <span style='color:#00dddd; '>std</span><span style='color:#806030; '>::</span><span style='color:#800040; '>string</span> <span style='color:#806030; '>&amp;</span>n<span style='color:#806030; '>)</span>
-  <span style='color:#806030; '>{</span>
-    <span style='color:#c34e00; '>// call this to tell the object store</span>
-    <span style='color:#c34e00; '>// that your object is about to change</span>
-    <span style='color:#c34e00; '>// a member. never forget!</span>
-    mark_modified<span style='color:#806030; '>(</span><span style='color:#806030; '>)</span><span style='color:#806030; '>;</span>
-    name_ <span style='color:#806030; '>=</span> n<span style='color:#806030; '>;</span>
-  <span style='color:#806030; '>}</span>
-<span style='color:#806030; '>}</span><span style='color:#806030; '>;</span>
-</pre>    </div>
+  <span style='color:#696969; '>// add access methods for your members</span>
+  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> name<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800080; '>{</span> <span style='color:#800000; font-weight:bold; '>return</span> name_<span style='color:#800080; '>;</span> <span style='color:#800080; '>}</span>
+  <span style='color:#800000; font-weight:bold; '>void</span> name<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>n<span style='color:#808030; '>)</span>
+  <span style='color:#800080; '>{</span>
+    <span style='color:#696969; '>// call this to tell the object store</span>
+    <span style='color:#696969; '>// that your object is about to change</span>
+    <span style='color:#696969; '>// a member. never forget!</span>
+    mark_modified<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+    name_ <span style='color:#808030; '>=</span> n<span style='color:#800080; '>;</span>
+  <span style='color:#800080; '>}</span>
+<span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+</pre>
+        </div>
+      </div>
+      <div class="width33 float_right">
+        <div class="gutter">
+          <p>A simple introduction</p>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
