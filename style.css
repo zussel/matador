@@ -1,0 +1,90 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
+	color: #bbb;
+  background-color: #fff;
+}
+
+#wrapper
+{
+  width: 900px;
+  margin: 30px auto;
+}
+
+#header
+{
+  padding: 30px 0;
+  background-color: #333;
+  color: #ddd;
+  /*background: #fff url(palaeomatiker-green.png) top center no-repeat;*/
+}
+
+#header h1
+{
+  text-align: center;
+}
+
+#content
+{
+  width: 900px;
+  float: left;
+  clear: both;
+  margin: 20px 0;
+  color: #888;
+}
+
+#content h3
+{
+  padding-top: 10px;
+  background-color: #aaa;
+}
+
+#content p
+{
+  margin: 5px;
+  padding: 5px;
+  border: 1px dashed #ccc;
+}
+#footer
+{
+  padding: 30px 0;
+  background-color: #333;
+  color: #ddd;
+}
+
+.clear
+{
+  clear: both;
+}
+
+.float_left
+{
+  float: left;
+}
+
+.float_right
+{
+  float: right;
+}
+
+.width66
+{
+  width: 600px;
+}
+
+.width33
+{
+  width: 300px;
+}
+
+.width50
+{
+  width: 450px;
+}
+
+.width25
+{
+  width: 225px;
+}
