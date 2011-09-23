@@ -10,14 +10,14 @@
   <div id="wrapper">
     <div id="header">
       <h1>Open Object Store.</h1>
+      <h5>Store all kind of objects in one container</p>
     </div>
     <div id="content">
       <h3 class="clear">Getting started</h3>
       <div class="width66 float_left">
         <div class="gutter">
-          <p>Store all kind of objects in one container</p>
           <p>1. Derive your classes from oos::object. Add your members and write proper read_from and write_to methods.</p>
-<pre style='color:#000000;background:#dddddd;'><span style='color:#800000; font-weight:bold; '>class</span> Artist <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
+<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#800000; font-weight:bold; '>class</span> Artist <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
 <span style='color:#800080; '>{</span>
 <span style='color:#800000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
   <span style='color:#696969; '>// artists name</span>
@@ -41,7 +41,6 @@
     object<span style='color:#800080; '>::</span>read_from<span style='color:#808030; '>(</span>oa<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
     oa<span style='color:#808030; '>-</span><span style='color:#808030; '>></span>read_string<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>name</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> name_<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
   <span style='color:#800080; '>}</span>
-
   <span style='color:#696969; '>// add access methods for your members</span>
   <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> name<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800080; '>{</span> <span style='color:#800000; font-weight:bold; '>return</span> name_<span style='color:#800080; '>;</span> <span style='color:#800080; '>}</span>
   <span style='color:#800000; font-weight:bold; '>void</span> name<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>n<span style='color:#808030; '>)</span>
@@ -53,6 +52,65 @@
     name_ <span style='color:#808030; '>=</span> n<span style='color:#800080; '>;</span>
   <span style='color:#800080; '>}</span>
 <span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+
+<span style='color:#696969; '>// create another class</span>
+
+<span style='color:#800000; font-weight:bold; '>class</span> Track <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
+<span style='color:#800080; '>{</span>
+<span style='color:#800000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
+  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> title_<span style='color:#800080; '>;</span>
+  <span style='color:#696969; '>// add a reference to an artist</span>
+  oos<span style='color:#800080; '>::</span>object_ref<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist_<span style='color:#800080; '>;</span>
+<span style='color:#800000; font-weight:bold; '>public</span><span style='color:#e34adc; '>:</span>
+  <span style='color:#696969; '>// needed by factory</span>
+  Track<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
+  <span style='color:#696969; '>// add your custom c'tors</span>
+  Track<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>title<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>const</span> oos<span style='color:#800080; '>::</span>artist_ref<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> <span style='color:#808030; '>&amp;</span>artist<span style='color:#808030; '>)</span>
+    <span style='color:#800080; '>:</span> title_<span style='color:#808030; '>(</span>title<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> artist_<span style='color:#808030; '>(</span>artist<span style='color:#808030; '>)</span>
+  <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
+<span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
+</pre>
+          <p>2. Create your object store and tell it about your object hierarchy</p>
+<pre style='color:#000000;background:#eeeeee;margin:5px;'>oos<span style='color:#800080; '>::</span>object_store ostore<span style='color:#800080; '>;</span>
+
+<span style='color:#696969; '>// add a prototype of your object to let the object store</span>
+<span style='color:#696969; '>// update the hierarchy tree and be able to create your object</span>
+
+ostore<span style='color:#808030; '>.</span>insert_prototype<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> oos<span style='color:#800080; '>::</span>object_producer<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span><span style='color:#808030; '>,</span> <span style='color:#800000; '>"</span><span style='color:#0000e6; '>ARTIST</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+ostore<span style='color:#808030; '>.</span>insert_prototype<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> oos<span style='color:#800080; '>::</span>object_producer<span style='color:#800080; '>&lt;</span>Track<span style='color:#800080; '>></span><span style='color:#808030; '>,</span> <span style='color:#800000; '>"</span><span style='color:#0000e6; '>TRACK</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+</pre>
+          <p>3. Add some of your objects</p>
+<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#696969; '>// object_ptr is like a shared_ptr, you only work with your objects</span>
+<span style='color:#696969; '>// as an object_ptr or object_ref. think hardly before accessing the raw</span>
+<span style='color:#696969; '>// object. in almost all cases you don't need to.</span>
+
+object_ptr<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>AC/DC</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+
+<span style='color:#696969; '>// add some tracks for your artist</span>
+ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Thunderstruck</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Back in black</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Highway to hell</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+
+<span style='color:#696969; '>// add some other artist and songs</span>
+artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Rolling Stones</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+<span style='color:#696969; '>// ...</span>
+artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Amy McDonald</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+<span style='color:#696969; '>// ...</span>
+</pre>
+          <p>4. Access your objects creating a view</p>
+<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#800000; font-weight:bold; '>typedef</span> oos<span style='color:#800080; '>::</span>object_view<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> t_artist_view<span style='color:#800080; '>;</span>
+t_artist_view artist_view<span style='color:#808030; '>(</span><span style='color:#808030; '>&amp;</span>ostore<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+
+<span style='color:#696969; '>// make a shortcut to the artist object pointer</span>
+<span style='color:#800000; font-weight:bold; '>typedef</span> oos<span style='color:#800080; '>::</span>object_ptr<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist_ptr<span style='color:#800080; '>;</span>
+
+<span style='color:#800000; font-weight:bold; '>for</span> <span style='color:#808030; '>(</span>t_artist_view<span style='color:#800080; '>::</span><span style='color:#603000; '>const_iterator</span> i <span style='color:#808030; '>=</span> artist_view<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span> i <span style='color:#808030; '>!</span><span style='color:#808030; '>=</span> artist_view<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span> <span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>i<span style='color:#808030; '>)</span>
+<span style='color:#800080; '>{</span>
+  <span style='color:#696969; '>// get the artist</span>
+  artist_ptr artist <span style='color:#808030; '>=</span> i<span style='color:#808030; '>.</span>optr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+  <span style='color:#696969; '>// do some stuff with your artist</span>
+  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>cout</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>&lt;</span> artist<span style='color:#808030; '>.</span>name<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>&lt;</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span>endl<span style='color:#800080; '>;</span>
+<span style='color:#800080; '>}</span>
 </pre>
         </div>
       </div>
