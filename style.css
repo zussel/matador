@@ -23,6 +23,13 @@ body
 
 #header h1
 {
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+#header h5
+{
+  margin-top: 0;
   text-align: center;
 }
 
