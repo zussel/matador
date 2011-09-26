@@ -121,26 +121,26 @@ public:
 	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
-	object_ref(object* o) : base_object_ptr(o, true) {}
+	explicit object_ref(object* o) : base_object_ptr(o, true) {}
 
   virtual const char* type() const
   {
     return typeid(T).name();
   }
 
-	T* operator->() {
+	T* operator->() const {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
 	  }
 	  return NULL;
 	}
-	T& operator*() {
+	T& operator*() const {
 		if (proxy_) {
       return *dynamic_cast<T*>(lookup_object());
  		}
     return NULL;
 	}
-	T* get() {
+	T* get() const {
 		if (proxy_) {
       return dynamic_cast<T*>(lookup_object());
  		}

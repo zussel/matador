@@ -80,8 +80,8 @@ private:
   friend class const_object_list_iterator<T>;
 
   object_ref<T> root_;
-  object_ptr<T> prev_;
-  object_ptr<T> next_;
+  object_ref<T> prev_;
+  object_ref<T> next_;
 };
 
 template < class T >
@@ -147,7 +147,7 @@ class object_list_iterator : public std::iterator<std::bidirectional_iterator_ta
 public:
   typedef object_list_iterator<T> self;	
   typedef T* pointer;
-  typedef object_ptr<T> value_type;
+  typedef object_ref<T> value_type;
   typedef value_type& reference ;
   typedef object_list<T> list_type;
 
@@ -238,7 +238,7 @@ template < class T >
 class const_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
   typedef const_object_list_iterator<T> self;
-  typedef object_ptr<T> value_type;
+  typedef object_ref<T> value_type;
   typedef T* pointer;
   typedef value_type& reference ;
   typedef object_list<T> list_type;
@@ -306,10 +306,10 @@ public:
   }
 
   value_type operator*() const {
-    return this->optr();
+    return this->oref();
   }
 
-  object_ptr<T> optr() const {
+  object_ref<T> oref() const {
     return node_;
   }
 
