@@ -21,12 +21,29 @@
 #include <iostream>
 #include <memory>
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 namespace oos {
 
 class object_base_producer;
 struct object_proxy;
+struct prototype_node;
 
-struct prototype_node {
+EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<prototype_node>;
+EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<object_base_producer>;
+
+struct OOS_API prototype_node
+{
   prototype_node();
   prototype_node(object_base_producer *p, const char *t);
   ~prototype_node();

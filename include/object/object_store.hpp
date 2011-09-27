@@ -37,9 +37,19 @@
 #include <list>
 #include <map>
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+  #else
+    #define OOS_API __declspec(dllimport)
+  #endif
+#else
+  #define OOS_API
+#endif
+
 namespace oos {
 
-class object_observer
+class OOS_API object_observer
 {
 public:
   virtual ~object_observer() {}
@@ -52,7 +62,7 @@ public:
 template < class T > class object_list;
 class object_list_base;
 
-class object_base_producer {
+class OOS_API object_base_producer {
 public:
   virtual ~object_base_producer() {}
   virtual object* create() const = 0;
@@ -135,7 +145,7 @@ struct prototype_node;
  * 
  * 
  */
-class object_store
+class OOS_API object_store
 {
 private:
   typedef std::tr1::unordered_map<long, object*> t_object_map;
