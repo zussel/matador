@@ -19,5 +19,54 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 #  SET(CMAKE_BUILD_TYPE "Debug")
 #ENDIF()
 
-ADD_SUBDIRECTORY(src)
+SET(OBJECT_SOURCES
+  src/object/object.cpp
+  src/object/object_atomizer.cpp
+  src/object/object_ptr.cpp
+  src/object/object_store.cpp
+  src/object/object_list.cpp
+  src/object/object_proxy.cpp
+  src/object/object_serializer.cpp
+  src/object/prototype_node.cpp
+)
+
+SET(OBJECT_HEADER
+  include/object/object.hpp
+  include/object/object_atomizer.hpp
+  include/object/object_exception.hpp
+  include/object/object_ptr.hpp
+  include/object/object_store.hpp
+  include/object/object_list.hpp
+  include/object/object_view.hpp
+  include/object/object_proxy.hpp
+  include/object/object_serializer.hpp
+  include/object/prototype_node.hpp
+)
+
+SET(TOOLS_SOURCES
+  src/tools/byte_buffer.cpp
+)
+
+SET(TOOLS_HEADER
+  include/tools/byte_buffer.hpp
+)
+
+SET(UNIT_SOURCES
+  src/unit/test_suite.cpp
+  src/unit/unit_exception.cpp
+  src/unit/unit_test.cpp
+)
+
+SET(UNIT_HEADER
+  include/unit/test_suite.hpp
+  include/unit/unit_exception.hpp
+  include/unit/unit_test.hpp
+)
+
+ADD_LIBRARY(oos SHARED
+  ${OBJECT_SOURCES} ${OBJECT_HEADER}
+  ${TOOLS_SOURCES} ${TOOLS_HEADER}
+  ${UNIT_SOURCES} ${UNIT_HEADER}
+)
+
 ADD_SUBDIRECTORY(test)
