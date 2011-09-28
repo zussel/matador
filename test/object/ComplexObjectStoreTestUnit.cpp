@@ -285,36 +285,21 @@ ComplexObjectStoreTestUnit::album()
   artist_ptr artist = ostore_.insert(new Artist("Chris Huelsbeck"));
   album_ptr album = ostore_.insert(new Album("symphonic shades", artist));
   
-  track_ptr track = ostore_.insert(new Track(1, "Grand Monster Slam (Opening Fanfare)", 165));
-  album->add(track);
-  track = ostore_.insert(new Track(2, "X-Out (Main Theme)", 311));
-  album->add(track);
-  track = ostore_.insert(new Track(3, "Jim Power in Mutant Planet (Main Theme)", 337));
-  album->add(track);
-  track = ostore_.insert(new Track(4, "Tower of Babel", 279));
-  album->add(track);
-  track = ostore_.insert(new Track(5, "Turrican 3 - Payment Day (Piano Suite)", 318));
-  album->add(track);
-  track = ostore_.insert(new Track(6, "Gem'X (Main Theme)", 220));
-  album->add(track);
-  track = ostore_.insert(new Track(7, "Apidya II (Suite)", 325));
-  album->add(track);
-  track = ostore_.insert(new Track(8, "R-Type (Main Theme)", 318));
-  album->add(track);
-  track = ostore_.insert(new Track(9, "Licht am Ende des Tunnels (Suite)", 309));
-  album->add(track);
-  track = ostore_.insert(new Track(10, "The Great Giana Sisters (Suite)", 330));
-  album->add(track);
-  track = ostore_.insert(new Track(11, "Rony Barrak-Solo", 305));
-  album->add(track);
-  track = ostore_.insert(new Track(12, "Tunnel B1 (Suite)", 298));
-  album->add(track);
-  track = ostore_.insert(new Track(13, "Symphonic Shades", 288));
-  album->add(track);
-  track = ostore_.insert(new Track(14, "Karawane der Elefanten", 251));
-  album->add(track);
-  track = ostore_.insert(new Track(15, "Turrican II - The Final Fight (Renderings: Main Theme)", 552));
-  album->add(track);
+  album->add(new Track(1, "Grand Monster Slam (Opening Fanfare)", 165));
+  album->add(new Track(2, "X-Out (Main Theme)", 311));
+  album->add(new Track(3, "Jim Power in Mutant Planet (Main Theme)", 337));
+  album->add(new Track(4, "Tower of Babel", 279));
+  album->add(new Track(5, "Turrican 3 - Payment Day (Piano Suite)", 318));
+  album->add(new Track(6, "Gem'X (Main Theme)", 220));
+  album->add(new Track(7, "Apidya II (Suite)", 325));
+  album->add(new Track(8, "R-Type (Main Theme)", 318));
+  album->add(new Track(9, "Licht am Ende des Tunnels (Suite)", 309));
+  album->add(new Track(10, "The Great Giana Sisters (Suite)", 330));
+  album->add(new Track(11, "Rony Barrak-Solo", 305));
+  album->add(new Track(12, "Tunnel B1 (Suite)", 298));
+  album->add(new Track(13, "Symphonic Shades", 288));
+  album->add(new Track(14, "Karawane der Elefanten", 251));
+  album->add(new Track(15, "Turrican II - The Final Fight (Renderings: Main Theme)", 552));
   
   object_view<Track> trackview(ostore_, true);
 
@@ -391,6 +376,11 @@ ComplexObjectStoreTestUnit::ref_ptr_counter()
   
   cout << "artist ref count: " << artist.ref_count() << "\n";
   cout << "artist ptr count: " << artist.ptr_count() << "\n";
+  
+  a1 = aref1;
+
+  cout << "artist ref count: " << artist.ref_count() << "\n";
+  cout << "artist ptr count: " << artist.ptr_count() << "\n";  
 }
 
 void

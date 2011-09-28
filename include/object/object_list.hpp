@@ -147,7 +147,7 @@ class object_list_iterator : public std::iterator<std::bidirectional_iterator_ta
 public:
   typedef object_list_iterator<T> self;	
   typedef T* pointer;
-  typedef object_ref<T> value_type;
+  typedef object_ptr<T> value_type;
   typedef value_type& reference ;
   typedef object_list<T> list_type;
 
@@ -215,6 +215,10 @@ public:
     return node_;
   }
 
+  object_ref<T> oref() const {
+    return node_;
+  }
+
 private:
   void increment() {
     if (node_ != list_->last_) {
@@ -238,7 +242,7 @@ template < class T >
 class const_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
   typedef const_object_list_iterator<T> self;
-  typedef object_ref<T> value_type;
+  typedef object_ptr<T> value_type;
   typedef T* pointer;
   typedef value_type& reference ;
   typedef object_list<T> list_type;
@@ -310,6 +314,10 @@ public:
   }
 
   object_ref<T> oref() const {
+    return node_;
+  }
+
+  object_ptr<T> optr() const {
     return node_;
   }
 
@@ -463,22 +471,28 @@ template < class T >
 class object_ptr_list : public object_list<object_ptr_list_node<T> >
 {
 public:
+  typedef object_ptr_list_node<T> value_type;
+
   void push_front(const object_ptr<T> &optr)
   {
+    object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
+    push_front(node);
   }
   void push_back(const object_ptr<T> &optr)
   {
+    object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
+    push_front(node);
   }
 
 private:
-  virtual void push_front(T *elem)
+  virtual void push_front(value_type *elem)
   {
-    object_list<T>::push_front(elem);
+    object_list<value_type>::push_front(elem);
   }
 
-  virtual void push_back(T *elem)
+  virtual void push_back(value_type *elem)
   {
-    object_list<T>::push_back(elem);
+    object_list<value_type>::push_back(elem);
   }
 };
 
@@ -486,22 +500,28 @@ template < class T >
 class object_ref_list : public object_list<object_ref_list_node<T> >
 {
 public:
-  void push_front(const object_ref<T> &optr)
+  typedef object_ref_list_node<T> value_type;
+
+  void push_front(const object_ref<T> &oref)
   {
+    object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
+    push_front(node);
   }
-  void push_back(const object_ref<T> &optr)
+  void push_back(const object_ref<T> &oref)
   {
+    object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
+    push_back(node);
   }
 
 private:
-  virtual void push_front(T *elem)
+  virtual void push_front(value_type *elem)
   {
-    object_list<T>::push_front(elem);
+    object_list<value_type>::push_front(elem);
   }
 
-  virtual void push_back(T *elem)
+  virtual void push_back(value_type *elem)
   {
-    object_list<T>::push_back(elem);
+    object_list<value_type>::push_back(elem);
   }
 };
 

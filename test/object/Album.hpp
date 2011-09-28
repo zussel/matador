@@ -30,8 +30,10 @@ public:
   void artist(const oos::object_ptr<Artist> &a);
   oos::object_ref<Artist> artist() const;
 
-	typedef oos::object_list<oos::object_ref_list_node<Track> > TrackList;
+	typedef oos::object_ref_list<Track> TrackList;
+//	typedef oos::object_list<oos::object_ref_list_node<Track> > TrackList;
 
+  void add(Track *track, bool overide_artist = true);
   void add(oos::object_ref<Track> track, bool overide_artist = true);
   oos::object_ref<Track> find(const std::string &name) const;
 

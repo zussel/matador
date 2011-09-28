@@ -55,7 +55,7 @@ public:
 
   bool delete_object();
 
-  virtual bool is_reference() const = 0;
+  virtual bool is_reference() const;
 
   unsigned long ref_count() const;
   unsigned long ptr_count() const;
@@ -63,21 +63,26 @@ public:
 protected:
 	friend class object_atomizer;
   template < class T > friend class object_ref;
+  template < class T > friend class object_ptr;
 
 	long id_;
   object_proxy *proxy_;
   bool is_reference_;
 };
 
-template < class T, bool IS_REF >
+template < class T, bool IR >
 class object_wrapper : public base_object_ptr
 {
 public:
 	object_wrapper() : base_object_ptr(false) {}
-	template < class Y, bool IS_REF >
-	object_wrapper(const object_ptr<Y, IS_REF> &x) {}
-	template < class Y, bool IR >
-	object_wrapper& operator=(const object_wrapper<Y, IR> &x) { return *this; }
+	template < class Y >
+	object_wrapper(const object_wrapper<Y, true> &x) {}
+	template < class Y >
+	object_wrapper(const object_wrapper<Y, false> &x) {}
+	template < class Y >
+	object_wrapper& operator=(const object_wrapper<Y, true> &x) { return *this; }
+	template < class Y >
+	object_wrapper& operator=(const object_wrapper<Y, false> &x) { return *this; }
 	explicit object_wrapper(object* o) : base_object_ptr(o, false) {}
 
   virtual const char* type() const
@@ -103,14 +108,14 @@ public:
  		}
     return NULL;
 	}
-  virtual bool is_reference() const 
+  virtual bool is_reference() const
   {
-    return IS_REF;
+    return IR;
   }
 };
 
-template < class T > class object_ptr : public object_wrapper<T, false>;
-template < class T > class object_ref : public object_wrapper<T, true>;
+template < class T >
+class object_ref;
 
 template < class T >
 class object_ptr : public base_object_ptr
@@ -120,6 +125,8 @@ public:
 	//  object_ptr(const object_ptr &x) {}
 	template < class Y >
 	object_ptr(const object_ptr<Y> &x) {}
+	template < class Y >
+  object_ptr(const object_ref<Y> &x) : base_object_ptr(x.proxy_, false) {}
 	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }

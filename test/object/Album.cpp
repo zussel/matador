@@ -58,11 +58,20 @@ object_ref<Artist> Album::artist() const
   return artist_;
 }
 
+void Album::add(Track *track, bool overide_artist)
+{
+  if (!ostore()) {
+    // throw object_exception();
+  } else {
+    object_ref<Track> track_ref = ostore()->insert(track);
+    this->add(track_ref, overide_artist);
+  }
+}
+
 void Album::add(object_ref<Track> track, bool override_artist)
 {
-  TrackList::t_list_node *node = new TrackList::t_list_node(track);
-  //object_ptr<TrackList::t_list_node> onode = track_list_.ostore()->insert(node);
-  track_list_.push_back(node);
+//  TrackList::t_list_node *node = new TrackList::t_list_node(track);
+  track_list_.push_back(track);
   if (override_artist) {
     track->artist(artist_);
   }
