@@ -55,7 +55,7 @@ public:
 
   bool delete_object();
 
-  bool is_reference() const;
+  virtual bool is_reference() const = 0;
 
   unsigned long ref_count() const;
   unsigned long ptr_count() const;
@@ -68,6 +68,49 @@ protected:
   object_proxy *proxy_;
   bool is_reference_;
 };
+
+template < class T, bool IS_REF >
+class object_wrapper : public base_object_ptr
+{
+public:
+	object_wrapper() : base_object_ptr(false) {}
+	template < class Y, bool IS_REF >
+	object_wrapper(const object_ptr<Y, IS_REF> &x) {}
+	template < class Y, bool IR >
+	object_wrapper& operator=(const object_wrapper<Y, IR> &x) { return *this; }
+	explicit object_wrapper(object* o) : base_object_ptr(o, false) {}
+
+  virtual const char* type() const
+  {
+    return typeid(T).name();
+  }
+
+	T* operator->() const {
+	  if (proxy_) {
+	    return dynamic_cast<T*>(lookup_object());
+	  }
+	  return NULL;
+	}
+	T& operator*() const {
+		if (proxy_) {
+      return *dynamic_cast<T*>(lookup_object());
+ 		}
+    return NULL;
+	}
+	T* get() const {
+		if (proxy_) {
+      return dynamic_cast<T*>(lookup_object());
+ 		}
+    return NULL;
+	}
+  virtual bool is_reference() const 
+  {
+    return IS_REF;
+  }
+};
+
+template < class T > class object_ptr : public object_wrapper<T, false>;
+template < class T > class object_ref : public object_wrapper<T, true>;
 
 template < class T >
 class object_ptr : public base_object_ptr

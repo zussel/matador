@@ -31,16 +31,19 @@
   #endif
 #else
   #define OOS_API
+  #define EXPIMP_TEMPLATE
 #endif
 
 namespace oos {
 
 class object_base_producer;
 struct object_proxy;
-struct prototype_node;
 
+#ifdef WIN32
+struct prototype_node;
 EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<prototype_node>;
 EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<object_base_producer>;
+#endif
 
 struct OOS_API prototype_node
 {
