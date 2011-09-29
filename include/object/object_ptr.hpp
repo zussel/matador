@@ -15,8 +15,20 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef object_ptr_H
-#define object_ptr_H
+#ifndef OBJECT_PTR_H
+#define OBJECT_PTR_H
+
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
 
 #include "object/object_proxy.hpp"
 
@@ -28,7 +40,7 @@ namespace oos {
 
 class object;
 
-class base_object_ptr {
+class OOS_API base_object_ptr {
 protected:
 	explicit base_object_ptr(bool is_ref);
 	base_object_ptr(const base_object_ptr &x);
@@ -200,4 +212,4 @@ public:
 
 }
 
-#endif /* object_ptr_H */
+#endif /* OBJECT_PTR_H */

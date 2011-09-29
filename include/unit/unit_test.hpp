@@ -18,6 +18,19 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "unit/unit_exception.hpp"
 
 #ifdef WIN32
@@ -42,7 +55,7 @@
 
 namespace oos {
 
-class unit_test
+class OOS_API unit_test
 {
 public:
   typedef std::tr1::function<void ()> test_func;

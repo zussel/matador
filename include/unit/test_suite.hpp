@@ -18,6 +18,19 @@
 #ifndef TEST_SUITE_HPP
 #define TEST_SUITE_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "tools/singleton.hpp"
 
 #ifdef WIN32
@@ -33,7 +46,7 @@ namespace oos {
 
 class unit_test;
 
-class test_suite : public singleton<test_suite>
+class OOS_API test_suite : public singleton<test_suite>
 {
   friend class singleton<test_suite>;
 

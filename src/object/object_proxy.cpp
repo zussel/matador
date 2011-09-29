@@ -21,7 +21,9 @@
 namespace oos {
 
 object_proxy::object_proxy(object *o, object_store *os)
-  : obj(o)
+  : prev(NULL)
+  , next(NULL)
+  , obj(o)
   , id((o ? o->id() : 0))
   , ref_count(0)
   , ptr_count(0)

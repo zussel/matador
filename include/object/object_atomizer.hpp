@@ -18,6 +18,18 @@
 #ifndef OBJECTATOMIZER_HPP
 #define OBJECTATOMIZER_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include <string>
 
 namespace oos {
@@ -27,7 +39,7 @@ class Time;
 class object_list_base;
 class base_object_ptr;
 
-class object_atomizer /*: public Atomizer*/
+class OOS_API object_atomizer /*: public Atomizer*/
 {
 public:
 	virtual ~object_atomizer() {}

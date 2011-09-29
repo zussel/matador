@@ -29,6 +29,7 @@
     #define OOS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
+  #pragma warning(disable: 4251)
 #else
   #define OOS_API
   #define EXPIMP_TEMPLATE
@@ -38,12 +39,6 @@ namespace oos {
 
 class object_base_producer;
 struct object_proxy;
-
-#ifdef WIN32
-struct prototype_node;
-EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<prototype_node>;
-EXPIMP_TEMPLATE template class OOS_API std::auto_ptr<object_base_producer>;
-#endif
 
 struct OOS_API prototype_node
 {

@@ -18,6 +18,18 @@
 #ifndef OBJECT_SERIALIZER_HPP
 #define OBJECT_SERIALIZER_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 #include "tools/byte_buffer.hpp"
 
@@ -25,7 +37,7 @@ namespace oos {
 
 class object;
 
-class object_serializer : public object_atomizer
+class OOS_API object_serializer : public object_atomizer
 {
 public:
   object_serializer();

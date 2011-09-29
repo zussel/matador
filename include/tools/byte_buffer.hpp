@@ -19,6 +19,19 @@
 #define BYTE_BUFFER_HPP
 
 #ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
+#ifdef WIN32
 #include <array>
 #else
 #include <tr1/array>
@@ -28,7 +41,7 @@
 
 namespace oos {
 
-class byte_buffer
+class OOS_API byte_buffer
 {
 public:
   enum { BUF_SIZE = 1 << 14 };

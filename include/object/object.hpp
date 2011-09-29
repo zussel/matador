@@ -19,6 +19,18 @@
 #define OBJECT_HPP
 
 #ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
+#ifdef WIN32
 #include <memory>
 #else
 #include <tr1/memory>
@@ -31,7 +43,7 @@ struct object_proxy;
 class object_store;
 class object_atomizer;
 
-class object
+class OOS_API object
 {
 	// don't allow copying
 	object(const object&);
@@ -53,7 +65,7 @@ public:
 
   //bool delete_object();
 
-  friend std::ostream& operator <<(std::ostream &os, const object &o);
+  friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
 protected:
 	void mark_modified();

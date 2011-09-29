@@ -18,12 +18,24 @@
 #ifndef UNIT_EXCEPTION_HPP
 #define UNIT_EXCEPTION_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include <exception>
 #include <string>
 
 namespace oos {
 
-class unit_exception : public std::exception
+class OOS_API unit_exception : public std::exception
 {
 public:
   unit_exception(const std::string &msg) throw();

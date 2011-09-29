@@ -18,6 +18,18 @@
 #ifndef OBJECT_LIST_HPP
 #define OBJECT_LIST_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
@@ -51,24 +63,13 @@ public:
 	void read_from(object_atomizer *reader)
   {
     object::read_from(reader);
-//    object_ref<T> optr(root_);
-//    reader->read_object("root", optr);
     reader->read_object("root", root_);
-//    optr.reset(prev_);
-//    reader->read_object("prev", optr);
     reader->read_object("prev", prev_);
-//    optr.reset(next_);
-//    reader->read_object("next", optr);
     reader->read_object("next", next_);
   }
 	void write_to(object_atomizer *writer)
   {
     object::write_to(writer);
-    /*
-    writer->write_object("root", object_ref<T>(root_));
-    writer->write_object("prev", object_ref<T>(prev_));
-    writer->write_object("next", object_ref<T>(next_));
-    */
     writer->write_object("root", root_);
     writer->write_object("prev", prev_);
     writer->write_object("next", next_);
@@ -338,7 +339,7 @@ private:
   const list_type *list_;
 };
 
-class object_list_base
+class OOS_API object_list_base
 {
 public:
   object_list_base();

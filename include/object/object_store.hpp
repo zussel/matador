@@ -22,6 +22,7 @@
 #include "object/object_ptr.hpp"
 #include "object/object_proxy.hpp"
 #include "object/object_atomizer.hpp"
+#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -40,9 +41,12 @@
 #ifdef WIN32
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
   #else
     #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
   #endif
+  #pragma warning(disable: 4251)
 #else
   #define OOS_API
 #endif
@@ -99,8 +103,7 @@ public:
   }
 };
 
-
-class object_deleter : public object_atomizer
+class OOS_API object_deleter : public object_atomizer
 {
 private:
   typedef struct t_object_count_struct
@@ -117,8 +120,9 @@ private:
     bool ignore;
   } t_object_count;
 
-public:
+private:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
+public:
   typedef t_object_count_map::iterator iterator;
 
   object_deleter(object_store &ostore);
@@ -137,7 +141,7 @@ private:
   object_store &ostore_;
 };
 
-struct prototype_node;
+//struct prototype_node;
 
 /**
  * @class object_store
@@ -262,9 +266,6 @@ private:
 	bool remove_object(object *o);
 	
   bool insert_object_list(object_list_base &olb);
-
-  //void adjust_left_marker(prototype_node *node, object_proxy *oproxy);
-  //void adjust_right_marker(prototype_node *node, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
   std::auto_ptr<prototype_node> root_;
