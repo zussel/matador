@@ -20,12 +20,19 @@
 
 #include <ostream>
 
+#ifdef WIN32
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 namespace oos {
 
 class object;
 class object_store;
 
 struct object_proxy;
+typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;
 
 struct object_proxy {
   object_proxy(object *o = 0, object_store *os = 0);
@@ -42,6 +49,9 @@ struct object_proxy {
 
   void link_ptr();
   void unlink_ptr();
+
+  object_proxy_ptr prev_;
+  object_proxy_ptr next_;
 
   object_proxy *prev;
   object_proxy *next;

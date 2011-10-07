@@ -272,8 +272,7 @@ ComplexObjectStoreTestUnit::item_list()
   while (first != last) {
     cout << "item name: " << first->name() << "\n";
     ++first;
-  }
-  
+  }  
 }
 
 void
@@ -322,7 +321,7 @@ ComplexObjectStoreTestUnit::album()
     track_ref tref = (*afirst++)->oref();
     cout << "Track: " << tref->title() << " (Artist: " << tref->artist()->name() << ")\n";
   }
-}
+  }
 
 void
 ComplexObjectStoreTestUnit::serializer()

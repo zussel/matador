@@ -18,6 +18,8 @@
 #ifndef PROTOTYPE_NODE_HPP
 #define PROTOTYPE_NODE_HPP
 
+#include "object/object_proxy.hpp"
+
 #include <iostream>
 #include <memory>
 
@@ -119,6 +121,11 @@ struct OOS_API prototype_node
 
   // data
   std::auto_ptr<object_base_producer> producer;
+
+  object_proxy_ptr op_first_;
+  object_proxy_ptr op_marker_;
+  object_proxy_ptr op_last_;
+  
   object_proxy *op_first;
   object_proxy *op_marker;
   object_proxy *op_last;

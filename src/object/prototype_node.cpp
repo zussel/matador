@@ -63,13 +63,26 @@ prototype_node::clear()
   adjust_left_marker(op_first->next, op_marker);
   adjust_right_marker(op_marker->prev, op_first);
 
+  typedef std::list<object_proxy*> t_proxy_list;
+  t_proxy_list plist;
+  std::cout << "removing proxies of type [" << type << "]\n";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
     // remove object proxy from list
+    std::cout << "\tremove " << *op << "\n";
     op->remove();
     // delete object proxy and object
+    std::cout << "\tclear " << *op << "\n";
     op->clear();
+    plist.push_back(op);
+    /*
+    std::cout << "\tdelete " << *op << "\n";
     delete op;
+    */
+  }
+  while (!plist.empty()) {
+    delete plist.front();
+    plist.pop_front();
   }
 }
 

@@ -18,6 +18,8 @@
 #include "object/object_proxy.hpp"
 #include "object/object.hpp"
 
+#include <iostream>
+
 namespace oos {
 
 object_proxy::object_proxy(object *o, object_store *os)
@@ -33,7 +35,10 @@ object_proxy::object_proxy(object *o, object_store *os)
 object_proxy::~object_proxy()
 {
   if (obj) {
+    std::cout << "deleting proxy [" << this << "] with object [" << obj << "]\n";
     delete obj;
+  } else {
+    std::cout << "deleting proxy [" << this << "]\n";
   }
 }
 
@@ -71,22 +76,34 @@ void object_proxy::clear()
 
 void object_proxy::link_ref()
 {
-  ++ref_count;
+  if (obj) {
+    std::cout << "proxy [" << this << "] called link_ref()\n";
+    ++ref_count;
+  }
 }
 
 void object_proxy::unlink_ref()
 {
-  --ref_count;
+  if (obj) {
+    std::cout << "proxy [" << this << "] called unlink_ref()\n";
+    --ref_count;
+  }
 }
 
 void object_proxy::link_ptr()
 {
-  ++ptr_count;
+  if (obj) {
+    std::cout << "proxy [" << this << "] called link_ptr()\n";
+    ++ptr_count;
+  }
 }
 
 void object_proxy::unlink_ptr()
 {
-  --ptr_count;
+  if (obj) {
+    std::cout << "proxy [" << this << "] called unlink_ptr()\n";
+    --ptr_count;
+  }
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
