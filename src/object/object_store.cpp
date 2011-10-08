@@ -104,6 +104,7 @@ object_deleter::is_deletable(object *obj)
     } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
       ++first;
     } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
+//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 1) {
       ++first;
     } else {
       return false;

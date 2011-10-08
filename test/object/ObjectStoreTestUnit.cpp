@@ -69,6 +69,10 @@ ObjectStoreTestUnit::object_with_sub_object()
   
   UNIT_ASSERT_NOT_NULL(simple.get(), "simple sub object creation failed");
   
+  UNIT_ASSERT_FALSE(ostore_.remove(ows), "deletion of object with sub object unexpectedly succeeded");
+  // clear simple optr
+  simple.reset();
+  // try remove again
   UNIT_ASSERT_TRUE(ostore_.remove(ows), "deletion of object with sub object failed");
 }
 
@@ -79,8 +83,8 @@ ObjectStoreTestUnit::multiple_simple_objects()
     
   // create 1000 objects
   UNIT_INFO("\ncreating objects :");
-  for (int i = 0; i < 100000; ++i) {
-    if (i%1000 == 0) {
+  for (int i = 0; i < 1000000; ++i) {
+    if (i%10000 == 0) {
       std::cout << " " << i;
       std::cout.flush();
     }
