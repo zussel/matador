@@ -63,26 +63,18 @@ prototype_node::clear()
   adjust_left_marker(op_first->next, op_marker);
   adjust_right_marker(op_marker->prev, op_first);
 
-  typedef std::list<object_proxy*> t_proxy_list;
-  t_proxy_list plist;
-  std::cout << "removing proxies of type [" << type << "]\n";
+//  std::cout << "removing proxies of type [" << type << "]\n";
   while (op_first->next != op_marker) {
-    object_proxy *op = op_first->next;
+    object_proxy_ptr op = op_first->next;
     // remove object proxy from list
-    std::cout << "\tremove " << *op << "\n";
-    op->remove();
+//    std::cout << "\tremove " << *op << "\n";
+    op->unlink();
     // delete object proxy and object
-    std::cout << "\tclear " << *op << "\n";
+//    std::cout << "\tclear " << *op << "\n";
     op->clear();
-    plist.push_back(op);
-    /*
-    std::cout << "\tdelete " << *op << "\n";
-    delete op;
-    */
-  }
-  while (!plist.empty()) {
-    delete plist.front();
-    plist.pop_front();
+//    plist.push_back(op);
+//    std::cout << "\treset " << *op << "\n";
+    op.reset();
   }
 }
 
@@ -217,7 +209,7 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
  * adjust the marker of all predeccessor nodes
  * self and last marker
  */
-void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy)
+void prototype_node::adjust_left_marker(const object_proxy_ptr &old_proxy, const object_proxy_ptr &new_proxy)
 {
   // store start node
   prototype_node *node = this;
@@ -234,7 +226,7 @@ void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *n
   }
 }
 
-void prototype_node::adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy)
+void prototype_node::adjust_right_marker(const object_proxy_ptr &old_proxy, const object_proxy_ptr &new_proxy)
 {
   // store start node
   prototype_node *node = this;
@@ -260,7 +252,7 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   os << "|{op_last|" << pn.op_last << "}";
   // determine size
   int i = 0;
-  object_proxy *iop = pn.op_first;
+  object_proxy_ptr iop = pn.op_first;
   while (iop && iop->next != pn.op_marker) {
     ++i;
     iop = iop->next;

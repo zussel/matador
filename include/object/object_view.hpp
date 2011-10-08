@@ -36,7 +36,7 @@ public:
   object_view_iterator()
     : node_(NULL)
   {}
-  object_view_iterator(prototype_node *node, object_proxy *current, object_proxy *last)
+  object_view_iterator(prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -71,7 +71,7 @@ public:
   }
 
   self operator++(int) {
-    object_proxy *tmp = current_;
+    object_proxy_ptr tmp = current_;
     increment();
     return object_view_iterator(node_, tmp, last_);
   }
@@ -82,7 +82,7 @@ public:
   }
 
   self operator--(int) {
-    object_proxy *tmp = current_;
+    object_proxy_ptr tmp = current_;
     decrement();
     return object_view_iterator(node_, tmp, last_);
   }
@@ -114,8 +114,8 @@ public:
 
 //private:
   prototype_node *node_;
-  object_proxy *current_;
-  object_proxy *last_;
+  object_proxy_ptr current_;
+  object_proxy_ptr last_;
 };
 
 template < class T >
@@ -129,7 +129,7 @@ public:
   const_object_view_iterator()
     : node_(NULL)
   {}
-  const_object_view_iterator(prototype_node *node, object_proxy *current, object_proxy *last)
+  const_object_view_iterator(prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -176,7 +176,7 @@ public:
   }
 
   self operator++(int) {
-    object_proxy *tmp = current_;
+    object_proxy_ptr tmp = current_;
     increment();
     return const_object_view_iterator(node_, tmp, last_);
   }
@@ -187,7 +187,7 @@ public:
   }
 
   self operator--(int) {
-    object_proxy *tmp = current_;
+    object_proxy_ptr tmp = current_;
     decrement();
     return const_object_view_iterator(node_, tmp, last_);
   }
@@ -219,8 +219,8 @@ private:
 
 private:
   prototype_node *node_;
-  object_proxy *current_;
-  object_proxy *last_;
+  object_proxy_ptr current_;
+  object_proxy_ptr last_;
 };
 
 template < class T >

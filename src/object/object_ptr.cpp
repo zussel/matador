@@ -26,7 +26,6 @@ namespace oos {
 
 base_object_ptr::base_object_ptr(bool is_ref)
   : id_(0)
-  , proxy_(0)
   , is_reference_(is_ref)
 {}
 
@@ -68,7 +67,7 @@ base_object_ptr::operator=(const base_object_ptr &x) {
   return *this;
 }
 
-base_object_ptr::base_object_ptr(object_proxy *op, bool is_ref)
+base_object_ptr::base_object_ptr(const object_proxy_ptr &op, bool is_ref)
   : id_(op->id)
   , proxy_(op)
   , is_reference_(is_ref)
@@ -84,7 +83,7 @@ base_object_ptr::base_object_ptr(object_proxy *op, bool is_ref)
 
 base_object_ptr::base_object_ptr(object *o, bool is_ref)
   : id_(o ? o->id_ : 0)
-  , proxy_(o ? o->proxy_ : 0)
+  , proxy_(o->proxy_)
   , is_reference_(is_ref)
 {
   if (o) {
@@ -125,7 +124,9 @@ base_object_ptr::reset(object *o) {
       proxy_->unlink_ptr();
     }
   }
-  proxy_ = (o ? o->proxy_ : 0);
+  if (o) {
+    proxy_ = o->proxy_;
+  }
   id_ = (proxy_ ? proxy_->id : 0);
 }
 

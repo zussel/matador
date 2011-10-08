@@ -23,9 +23,7 @@
 namespace oos {
 
 object_proxy::object_proxy(object *o, object_store *os)
-  : prev(NULL)
-  , next(NULL)
-  , obj(o)
+  : obj(o)
   , id((o ? o->id() : 0))
   , ref_count(0)
   , ptr_count(0)
@@ -35,14 +33,14 @@ object_proxy::object_proxy(object *o, object_store *os)
 object_proxy::~object_proxy()
 {
   if (obj) {
-    std::cout << "deleting proxy [" << this << "] with object [" << obj << "]\n";
+//    std::cout << "deleting proxy [" << this << "] with object [" << obj << "]\n";
     delete obj;
   } else {
-    std::cout << "deleting proxy [" << this << "]\n";
+//    std::cout << "deleting proxy [" << this << "]\n";
   }
 }
 
-void object_proxy::remove()
+void object_proxy::unlink()
 {
   if (prev) {
     prev->next = next;
@@ -50,10 +48,11 @@ void object_proxy::remove()
   if (next) {
     next->prev = prev;
   }
-  prev = NULL;
-  next = NULL;
+  prev.reset();
+  next.reset();
 }
 
+/*
 void object_proxy::insert(object_proxy* oproxy)
 {
   // link oproxy before this node
@@ -64,7 +63,7 @@ void object_proxy::insert(object_proxy* oproxy)
   }
   prev = oproxy;
 }
-
+*/
 void object_proxy::clear()
 {
   if (obj) {
@@ -77,7 +76,7 @@ void object_proxy::clear()
 void object_proxy::link_ref()
 {
   if (obj) {
-    std::cout << "proxy [" << this << "] called link_ref()\n";
+//    std::cout << "proxy [" << this << "] called link_ref()\n";
     ++ref_count;
   }
 }
@@ -85,7 +84,7 @@ void object_proxy::link_ref()
 void object_proxy::unlink_ref()
 {
   if (obj) {
-    std::cout << "proxy [" << this << "] called unlink_ref()\n";
+//    std::cout << "proxy [" << this << "] called unlink_ref()\n";
     --ref_count;
   }
 }
@@ -93,7 +92,7 @@ void object_proxy::unlink_ref()
 void object_proxy::link_ptr()
 {
   if (obj) {
-    std::cout << "proxy [" << this << "] called link_ptr()\n";
+//    std::cout << "proxy [" << this << "] called link_ptr()\n";
     ++ptr_count;
   }
 }
@@ -101,7 +100,7 @@ void object_proxy::link_ptr()
 void object_proxy::unlink_ptr()
 {
   if (obj) {
-    std::cout << "proxy [" << this << "] called unlink_ptr()\n";
+//    std::cout << "proxy [" << this << "] called unlink_ptr()\n";
     --ptr_count;
   }
 }

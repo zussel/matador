@@ -251,7 +251,7 @@ public:
    // std::iterator_traits<InputIterator>::value_type *o = *first;
   }
   
-  void mark_modified(object_proxy *oproxy);
+  void mark_modified(const object_proxy_ptr &oproxy);
 
   void register_observer(object_observer *observer);
   void unregister_observer(object_observer *observer);
@@ -267,6 +267,9 @@ private:
 	
   bool insert_object_list(object_list_base &olb);
 
+  void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);
+  void unlink_proxy(const object_proxy_ptr &proxy);
+
 private:
   std::auto_ptr<prototype_node> root_;
  
@@ -278,10 +281,10 @@ private:
   typedef std::list<object_observer*> t_observer_list;
   t_observer_list observer_list_;
 
-  object_proxy *first_;
-  object_proxy *last_;
+  object_proxy_ptr first_;
+  object_proxy_ptr last_;
   
-  typedef std::list<object_proxy*> t_object_proxy_list;
+  typedef std::list<object_proxy_ptr> t_object_proxy_list;
   t_object_proxy_list deleted_object_proxy_list_;
 
   object_deleter object_deleter_;

@@ -46,7 +46,7 @@ protected:
 	base_object_ptr(const base_object_ptr &x);
 	base_object_ptr& operator=(const base_object_ptr &x);
 	base_object_ptr(object* o, bool is_ref);
-	base_object_ptr(object_proxy *op, bool is_ref);
+	base_object_ptr(const object_proxy_ptr &op, bool is_ref);
 	virtual ~base_object_ptr();
 
 public:
@@ -78,7 +78,7 @@ protected:
   template < class T > friend class object_ptr;
 
 	long id_;
-  object_proxy *proxy_;
+  object_proxy_ptr proxy_;
   bool is_reference_;
 };
 

@@ -47,8 +47,8 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
 {
   add_test("first", std::tr1::bind(&ComplexObjectStoreTestUnit::first, this), "first complex test");
   add_test("itemlist", std::tr1::bind(&ComplexObjectStoreTestUnit::item_list, this), "item list test");
-  add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "first complex test");
-  add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "first complex test");
+  add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "album test");
+  add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "serializer test");
   add_test("ref_ptr_counter", std::tr1::bind(&ComplexObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
   add_test("delete_object", std::tr1::bind(&ComplexObjectStoreTestUnit::delete_object, this), "delete object");
 }

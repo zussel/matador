@@ -40,8 +40,10 @@ struct object_proxy {
   
   friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
-  void remove();
+  void unlink();
+/*
   void insert(object_proxy* oproxy);
+*/
   void clear();
 
   void link_ref();
@@ -50,11 +52,9 @@ struct object_proxy {
   void link_ptr();
   void unlink_ptr();
 
-  object_proxy_ptr prev_;
-  object_proxy_ptr next_;
+  object_proxy_ptr prev;
+  object_proxy_ptr next;
 
-  object_proxy *prev;
-  object_proxy *next;
   object *obj;
   unsigned long id;
   

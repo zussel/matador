@@ -63,8 +63,6 @@ public:
   // returns the containing object store
   object_store* ostore() const;
 
-  //bool delete_object();
-
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
 protected:
@@ -76,7 +74,7 @@ private:
   friend class base_object_ptr;
 	
 	long id_;
-  object_proxy *proxy_;
+  std::tr1::shared_ptr<object_proxy> proxy_;
 };
 
 }
