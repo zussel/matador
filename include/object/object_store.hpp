@@ -179,6 +179,11 @@ public:
    */
 	bool insert_prototype(object_base_producer *producer, const char *type, const char *parent = "OBJECT");
 
+  template < class T >
+  bool insert_prototype(const char *type, const char *parent = "OBJECT")
+  {
+    return insert_prototype(new object_producer<T>, type, parent);
+  }
   /**
    * Removes an object prototype from the prototype tree. All children
    * nodes and all objects are also removed.

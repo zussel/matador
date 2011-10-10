@@ -33,7 +33,8 @@ void
 ObjectPrototypeTestUnit::one_prototype()
 {
   object_store ostore;
-  ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+//  ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+  ostore.insert_prototype<Artist>("ARTIST");
   
   object *o = ostore.create("ARTIST");
   
