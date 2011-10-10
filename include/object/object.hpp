@@ -26,6 +26,7 @@
     #define OOS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
+  #pragma warning(disable: 4251)
 #else
   #define OOS_API
 #endif

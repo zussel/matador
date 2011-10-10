@@ -53,8 +53,19 @@ template < class T > class object_list;
 template < class T > class object_list_iterator;
 template < class T > class const_object_list_iterator;
 
+class object_list_base_node : public object
+{
+public:
+  object_list_base_node() {}
+  virtual ~object_list_base_node() {}
+
+  virtual object_list_base_node *next_node() const = 0;
+  virtual object_list_base_node *prev_node() const = 0;
+  virtual object_list_base_node *root_node() const = 0;
+};
+
 template < class T >
-class object_list_node : public object
+class object_list_node : public object_list_base_node
 {
 public:
   object_list_node() {}
@@ -73,6 +84,21 @@ public:
     writer->write_object("root", root_);
     writer->write_object("prev", prev_);
     writer->write_object("next", next_);
+  }
+
+  virtual object_list_base_node *next_node() const
+  {
+    return next_.get();
+  }
+
+  virtual object_list_base_node *prev_node() const
+  {
+    return prev_.get();
+  }
+
+  virtual object_list_base_node *root_node() const
+  {
+    return root_.get();
   }
 
 private:
@@ -348,16 +374,21 @@ public:
 	virtual void read_from(object_atomizer *) = 0;
 	virtual void write_to(object_atomizer *) const = 0;
 
+  virtual bool empty() const = 0;
+  virtual void clear() = 0;
+  virtual size_t size() const = 0;
+
   object_store* ostore() const { return ostore_; }
 
 protected:
   friend class object_store;
   friend class object_creator;
+  friend class object_deleter;
 
   virtual void initialize(object_store *ostore);
 
-  virtual object* first_object() const = 0;
-  virtual object* last_object() const = 0;
+  virtual object_list_base_node* first_object() const = 0;
+  virtual object_list_base_node* last_object() const = 0;
 
   object* parent_object() const { return parent_; }
   void parent_object(object *parent) { parent_ = parent; }
@@ -395,10 +426,20 @@ public:
   const_iterator end() const {
     return const_iterator(last_, this);
   }
-  bool empty() const {
+  virtual bool empty() const {
     return first_->next_ == last_->prev_;
   }
-  size_t size() const
+  virtual void clear()
+  {
+    if (!ostore()) {
+      // if ostore isn't set
+      // do nothing (maybe list
+      // isn't inserted)
+      return;
+    }
+
+  }
+  virtual size_t size() const
   {
     return std::distance(begin(), end());
   }
@@ -449,14 +490,14 @@ protected:
     last_->prev_ = first_;
   }
 
-  virtual object* first_object() const
+  virtual object_list_base_node* first_object() const
   {
-    return first_.ptr();
+    return first_.get();
   }
 
-  virtual object* last_object() const
+  virtual object_list_base_node* last_object() const
   {
-    return last_.ptr();
+    return last_.get();
   }
 
 private:

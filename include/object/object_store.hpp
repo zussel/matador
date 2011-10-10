@@ -245,6 +245,12 @@ public:
 		return true;
 	}
   
+  template < class Y >
+  bool remove(object_list<Y> &ol)
+  {
+    return false;
+  }
+
   template < class InputIterator >
   void insert(InputIterator first, InputIterator last)
   {

@@ -130,12 +130,16 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
   if (!x.is_reference()) {
     ret.first->second.ignore = false;
     x.ptr()->read_from(this);
-//    ostore_.remove_object(x.ptr());
   }
 }
 
-void object_deleter::read_object_list(const char*, object_list_base &)
+void object_deleter::read_object_list(const char*, object_list_base &x)
 {
+  // remove all elements of list
+  //base_object_ptr first
+  while (x.first_object()->next_node() != x.last_object()->prev_node()) {
+  }
+
 }
 
 object_deleter::iterator

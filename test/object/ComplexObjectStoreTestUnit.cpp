@@ -326,12 +326,12 @@ ComplexObjectStoreTestUnit::album()
 void
 ComplexObjectStoreTestUnit::serializer()
 {
-  Track *track = new Track(1, "Hallo Welt", 300);
+  std::string title = "Hallo Welt";
+
+  Track *track = new Track(1, title, 300);
   
   object_serializer serializer;
  
-  std::cout << std::endl;
-
   serializer.serialize(track);
   
   delete track;
@@ -340,7 +340,7 @@ ComplexObjectStoreTestUnit::serializer()
   
   serializer.deserialize(track);
 
-  cout << "track title: " << track->title() << "\n";
+  UNIT_ASSERT_EQUAL(title, track->title(), "restored track title is not equal to the original title");
   
   delete track;
 }
