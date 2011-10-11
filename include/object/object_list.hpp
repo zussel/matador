@@ -515,19 +515,18 @@ public:
       return i;
     }
     // update predeccessor and successor
-    object_node_ptr node = i.optr();
+    object_node_ptr node = (i++).optr();
     node->prev()->next(node->next());
     node->next()->prev(node->prev());
-    node.reset();
     // delete node
-    if (!ostore()->remove(i.optr())) {
+    if (!ostore()->remove(node)) {
       std::cout << "couldn't remove node\n";
-      i.optr()->prev()->next(i.optr());
-      i.optr()->next()->prev(i.optr());
-      return i;
+      node->prev()->next(node);
+      node->next()->prev(node);
+      return iterator(node, this);
     }
     // return i's successor
-    return ++i;
+    return i;
   }
 
   iterator erase(iterator first, iterator last)

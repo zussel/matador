@@ -105,7 +105,8 @@ object_deleter::is_deletable(object *obj)
       ++first;
     } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
       ++first;
-    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
+    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
+//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
 //    } else if (first->second.ref_count == 0 && first->second.ptr_count == 1) {
       ++first;
     } else {
@@ -147,14 +148,14 @@ object_deleter::end()
 void object_deleter::check_object(object *o, bool is_ref)
 {
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(o->id(), t_object_count(o)));
-  if (!ret.second) {
+//  if (!ret.second) {
     // proxy already in map
     if (!is_ref) {
       --ret.first->second.ptr_count;
     } else {
       --ret.first->second.ref_count;
     }
-  }
+//  }
   if (!is_ref) {
     ret.first->second.ignore = false;
     o->read_from(this);

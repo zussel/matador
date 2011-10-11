@@ -58,19 +58,17 @@ base_object_ptr::operator=(const base_object_ptr &x)
         proxy_->unlink_ptr();
       }
     }
-    is_internal_ = false;
+//    is_internal_ = false;
     id_ = x.id_;
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
-    /*
-    if (proxy_) {
+    if (proxy_ && is_internal_) {
       if (is_reference_) {
         proxy_->link_ref();
       } else {
         proxy_->link_ptr();
       }
     }
-    */
   }
   return *this;
 }
@@ -141,9 +139,16 @@ base_object_ptr::reset(object *o)
       proxy_->unlink_ptr();
     }
   }
-  is_internal_ = false;
+//  is_internal_ = false;
   if (o) {
     proxy_ = o->proxy_;
+    if (proxy_ && is_internal_) {
+      if (is_reference_) {
+        proxy_->link_ref();
+      } else {
+        proxy_->link_ptr();
+      }
+    }
   }
   id_ = (proxy_ ? proxy_->id : 0);
 }

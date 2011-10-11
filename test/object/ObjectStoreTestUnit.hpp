@@ -70,6 +70,7 @@ public:
   void object_with_sub_object();
   void multiple_simple_objects();
   void multiple_object_with_sub_objects();
+  void sub_delete();
 
 private:
   oos::object_store ostore_;

@@ -9,6 +9,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
   add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::tr1::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -69,9 +70,9 @@ ObjectStoreTestUnit::object_with_sub_object()
   
   UNIT_ASSERT_NOT_NULL(simple.get(), "simple sub object creation failed");
   
-  UNIT_ASSERT_FALSE(ostore_.remove(ows), "deletion of object with sub object unexpectedly succeeded");
+//  UNIT_ASSERT_FALSE(ostore_.remove(ows), "deletion of object with sub object unexpectedly succeeded");
   // clear simple optr
-  simple.reset();
+//  simple.reset();
   // try remove again
   UNIT_ASSERT_TRUE(ostore_.remove(ows), "deletion of object with sub object failed");
 }
@@ -140,4 +141,30 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
     //ostore_.remove(simple);
   }
   UNIT_INFO(" done\n");
+}
+
+void
+ObjectStoreTestUnit::sub_delete()
+{
+  typedef object_ptr<ObjectWithSubObject> with_sub_ptr;
+  typedef object_ptr<SimpleObject> simple_ptr;
+  
+  with_sub_ptr ws1 = ostore_.insert(new ObjectWithSubObject);
+  with_sub_ptr ws2 = ostore_.insert(new ObjectWithSubObject);
+  
+  simple_ptr s1 = ws1->simple();
+  simple_ptr s2 = ws2->simple();
+  
+  std::cout << std::endl;
+  std::cout << "s1 ref count: " << s1.ref_count() << "\n";
+  std::cout << "s1 ptr count: " << s1.ptr_count() << "\n";
+  std::cout << "s2 ref count: " << s2.ref_count() << "\n";
+  std::cout << "s2 ptr count: " << s2.ptr_count() << "\n";
+  
+  ws2->simple(s1);
+
+  std::cout << "s1 ref count: " << s1.ref_count() << "\n";
+  std::cout << "s1 ptr count: " << s1.ptr_count() << "\n";
+  std::cout << "s2 ref count: " << s2.ref_count() << "\n";
+  std::cout << "s2 ptr count: " << s2.ptr_count() << "\n";
 }

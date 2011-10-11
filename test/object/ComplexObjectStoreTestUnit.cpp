@@ -279,6 +279,12 @@ ComplexObjectStoreTestUnit::item_list()
   i = ilist.erase(i);
   cout << "next item name: " << i->name() << "\n";
 
+  first = ilist.begin();
+  while (first != last) {
+    cout << "item name: " << first->name() << "\n";
+    ++first;
+  }
+
 }
 
 void
