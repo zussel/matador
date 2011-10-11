@@ -69,18 +69,21 @@ public:
   bool delete_object();
 
   virtual bool is_reference() const;
+  bool is_internal() const;
 
   unsigned long ref_count() const;
   unsigned long ptr_count() const;
 
 protected:
 	friend class object_atomizer;
+  friend class object_creator;
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
 	long id_;
   object_proxy_ptr proxy_;
   bool is_reference_;
+  bool is_internal_;
 };
 
 template < class T, bool IR >
@@ -168,7 +171,6 @@ public:
  		}
     return NULL;
 	}
-  //friend class object_ref;
 };
 
 template < class T >

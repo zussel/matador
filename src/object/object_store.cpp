@@ -55,6 +55,8 @@ public:
 
   virtual void read_object(const char*, base_object_ptr &x)
   {
+    // mark object pointer as internal
+    x.is_internal_ = true;
     if (!x.is_reference()) {
       // create object
       object *o = ostore_.create(x.type());
