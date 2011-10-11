@@ -225,7 +225,6 @@ void
 ComplexObjectStoreTestUnit::item_list()
 {
   typedef object_list<Item> ItemList;
-  typedef object_ptr<Artist> artist_ptr;
 
   std::ofstream out;
   ostore_.dump_objects(std::cout);
@@ -272,7 +271,14 @@ ComplexObjectStoreTestUnit::item_list()
   while (first != last) {
     cout << "item name: " << first->name() << "\n";
     ++first;
-  }  
+  }
+
+  // remove an item
+  ItemList::iterator i = ilist.begin();
+  cout << "item to remove: " << i->name() << "\n";
+  i = ilist.erase(i);
+  cout << "next item name: " << i->name() << "\n";
+
 }
 
 void

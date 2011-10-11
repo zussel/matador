@@ -47,6 +47,7 @@
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
 #else
   #define OOS_API
 #endif
@@ -122,6 +123,7 @@ private:
 
 private:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
+
 public:
   typedef t_object_count_map::iterator iterator;
 
@@ -135,6 +137,9 @@ public:
 
   iterator begin();
   iterator end();
+
+private:
+  void check_object(object *o, bool is_ref);
 
 private:
   t_object_count_map object_count_map;

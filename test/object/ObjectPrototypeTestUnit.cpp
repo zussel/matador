@@ -57,10 +57,10 @@ void
 ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
-  ostore.insert_prototype(new object_producer<Track>, "TRACK");
-  ostore.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
-  ostore.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "TRACK");
-  ostore.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "TRACK");
+  ostore.insert_prototype<Track>("TRACK");
+  ostore.insert_prototype<MediaTrack>("MEDIATRACK", "TRACK");
+  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", "TRACK");
+  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", "TRACK");
 
   object *o = ostore.create("AUDIOTRACK");
   

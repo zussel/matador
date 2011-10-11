@@ -101,6 +101,39 @@ public:
     return root_.get();
   }
 
+  void root(const object_ref<T> &r)
+  {
+    mark_modified();
+    root_ = r;
+  }
+
+  object_ref<T> root() const
+  {
+    return root_;
+  }
+
+  void prev(const object_ref<T> &p)
+  {
+    mark_modified();
+    prev_ = p;
+  }
+
+  object_ref<T> prev() const
+  {
+    return prev_;
+  }
+
+  void next(const object_ref<T> &n)
+  {
+    mark_modified();
+    next_ = n;
+  }
+
+  object_ref<T> next() const
+  {
+    return next_;
+  }
+
 private:
   friend class object_list<T>;
   friend class object_list_iterator<T>;
@@ -426,6 +459,7 @@ public:
   const_iterator end() const {
     return const_iterator(last_, this);
   }
+
   virtual bool empty() const {
     return first_->next_ == last_->prev_;
   }
@@ -437,7 +471,7 @@ public:
       // isn't inserted)
       return;
     }
-
+    // erase all nodes
   }
   virtual size_t size() const
   {
@@ -472,8 +506,33 @@ public:
     }
   }
 
-  iterator erase(iterator i);
-  iterator erase(iterator first, iterator last);
+  iterator erase(iterator i)
+  {
+    if (!ostore()) {
+      // if list is not in ostore
+      // throw exception
+      //throw object_exception();
+      return i;
+    }
+    // update predeccessor and successor
+    object_node_ptr node = i.optr();
+    node->prev()->next(node->next());
+    node->next()->prev(node->prev());
+    node.reset();
+    // delete node
+    if (!ostore()->remove(i.optr())) {
+      std::cout << "couldn't remove node\n";
+      i.optr()->prev()->next(i.optr());
+      i.optr()->next()->prev(i.optr());
+      return i;
+    }
+    // return i's successor
+    return ++i;
+  }
+
+  iterator erase(iterator first, iterator last)
+  {
+  }
 
 protected:
   virtual void initialize(object_store *os)
