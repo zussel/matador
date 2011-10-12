@@ -95,24 +95,22 @@ object_deleter::is_deletable(object *obj)
   // start collecting information
   obj->read_from(this);
   
-  // check the reference and pointer counter of collected objects
-  iterator first = object_count_map.begin();
-  iterator last = object_count_map.end();
-  while (first != last)
-  {
-    if (first->second.ignore) {
-      ++first;
-    } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
-      ++first;
-    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
-//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
-//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 1) {
-      ++first;
-    } else {
-      return false;
-    }
+  return check_object_count_map();
+}
+
+bool object_deleter::is_deletable(object_list_base &olist)
+{
+  object_count_map.clear();
+  object_list_base_node *node = olist.first_object();
+  while (node) {
+    object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
+
+    // start collecting information
+    node->read_from(this);
+    // get next node
+    node = node->next_node();
   }
-  return true;
+  return check_object_count_map();
 }
 
 void object_deleter::read_object(const char*, base_object_ptr &x)
@@ -159,6 +157,31 @@ void object_deleter::check_object(object *o, bool is_ref)
     ret.first->second.ignore = false;
     o->read_from(this);
   }
+}
+
+bool
+object_deleter::check_object_count_map() const
+{
+  // check the reference and pointer counter of collected objects
+  const_iterator first = object_count_map.begin();
+  const_iterator last = object_count_map.end();
+  while (first != last)
+  {
+    if (first->second.ignore) {
+      ++first;
+    } else if (!first->second.ignore && first->second.ref_count == 0 && first->second.ptr_count == 0) {
+//    } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
+      ++first;
+    } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
+//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
+//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
+//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 1) {
+      ++first;
+    } else {
+      return false;
+    }
+  }
+  return true;
 }
 
 object_store::object_store()

@@ -126,11 +126,13 @@ private:
 
 public:
   typedef t_object_count_map::iterator iterator;
+  typedef t_object_count_map::const_iterator const_iterator;
 
   object_deleter();
   virtual ~object_deleter();
 
   bool is_deletable(object *obj);
+  bool is_deletable(object_list_base &olist);
 
   virtual void read_object(const char*, base_object_ptr &x);
   virtual void read_object_list(const char*, object_list_base &);
@@ -140,6 +142,7 @@ public:
 
 private:
   void check_object(object *o, bool is_ref);
+  bool check_object_count_map() const;
 
 private:
   t_object_count_map object_count_map;
@@ -257,7 +260,23 @@ public:
   template < class Y >
   bool remove(object_list<Y> &ol)
   {
-    return false;
+    // check if object tree is deletable
+    if (!object_deleter_.is_deletable(ol)) {
+      return false;
+    }
+    /*
+    object_deleter::iterator first = object_deleter_.begin();
+    object_deleter::iterator last = object_deleter_.end();
+    
+    while (first != last) {
+      if (!first->second.ignore) {
+        remove_object((first++)->second.obj);
+      } else {
+        ++first;
+      }
+    }
+    */
+		return true;
   }
 
   template < class InputIterator >

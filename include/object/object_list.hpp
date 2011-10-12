@@ -465,13 +465,7 @@ public:
   }
   virtual void clear()
   {
-    if (!ostore()) {
-      // if ostore isn't set
-      // do nothing (maybe list
-      // isn't inserted)
-      return;
-    }
-    // erase all nodes
+    erase(begin(), end());
   }
   virtual size_t size() const
   {
@@ -531,6 +525,10 @@ public:
 
   iterator erase(iterator first, iterator last)
   {
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
   }
 
 protected:

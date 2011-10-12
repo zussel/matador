@@ -289,7 +289,22 @@ ComplexObjectStoreTestUnit::item_list()
     cout << "item name: " << first->name() << "\n";
     ++first;
   }
-
+  
+  // clear list
+  std::cout << "clear list\n";
+  ilist.clear();
+  first = ilist.begin();
+  while (first != last) {
+    cout << "item name: " << first->name() << "\n";
+    ++first;
+  }
+  
+  std::cout << "remove list from object store ... ";
+  if (ostore_.remove(ilist)) {
+    std::cout << "succeeded!\n";
+  } else {
+    std::cout << "failed!\n";
+  }
 }
 
 void
