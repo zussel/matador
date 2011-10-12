@@ -9,7 +9,7 @@ class ComplexObjectStoreTestUnit : public oos::unit_test
 {
 public:
   ComplexObjectStoreTestUnit();
-  virtual ~ComplexObjectStoreTestUnit() {}
+  virtual ~ComplexObjectStoreTestUnit();
   
   virtual void initialize();
   virtual void finalize();

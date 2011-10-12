@@ -127,7 +127,7 @@ private:
 public:
   typedef t_object_count_map::iterator iterator;
 
-  object_deleter(object_store &ostore);
+  object_deleter();
   virtual ~object_deleter();
 
   bool is_deletable(object *obj);
@@ -143,7 +143,6 @@ private:
 
 private:
   t_object_count_map object_count_map;
-  object_store &ostore_;
 };
 
 //struct prototype_node;

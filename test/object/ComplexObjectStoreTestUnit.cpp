@@ -53,6 +53,11 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   add_test("delete_object", std::tr1::bind(&ComplexObjectStoreTestUnit::delete_object, this), "delete object");
 }
 
+ComplexObjectStoreTestUnit::~ComplexObjectStoreTestUnit()
+{
+  ostore_.clear();
+}
+
 void
 ComplexObjectStoreTestUnit::initialize()
 {

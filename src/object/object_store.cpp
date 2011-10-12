@@ -80,8 +80,7 @@ private:
   object_store &ostore_;
 };
 
-object_deleter::object_deleter(object_store &ostore)
-  : ostore_(ostore)
+object_deleter::object_deleter()
 {}
 
 object_deleter::~object_deleter()
@@ -167,7 +166,6 @@ object_store::object_store()
   , id_(0)
   , first_(new object_proxy(NULL, this))
   , last_(new object_proxy(NULL, this))
-  , object_deleter_(*this)
 {
   prototype_node_name_map_.insert(std::make_pair("OBJECT", root_.get()));
   prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
@@ -179,15 +177,19 @@ object_store::object_store()
   root_->op_last->prev = root_->op_first;
 }
 
+/*
 void delete_object_proxy(object_proxy_ptr op)
 {
   op.reset();
 }
+*/
 
 object_store::~object_store()
 {
   // delete all deleted object_proxys
-  std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
+//  std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
+  root_->op_first->next.reset();
+  root_->op_last->prev.reset();
 }
 
 bool
@@ -458,7 +460,7 @@ bool object_store::remove_object(object *o)
   object_proxy_ptr op = o->proxy_;
   delete o;
   op->obj = NULL;
-  deleted_object_proxy_list_.push_back(op);
+//  deleted_object_proxy_list_.push_back(op);
   // return true
   return true;
 }
