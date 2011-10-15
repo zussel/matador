@@ -103,7 +103,19 @@ bool object_deleter::is_deletable(object_list_base &olist)
   object_count_map.clear();
   object_list_base_node *node = olist.first_object();
   while (node) {
-    object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
+    
+    /**********
+     * 
+     * object is already in list and will
+     * be ignored on deletion so set
+     * ignore flag to false because this
+     * node must be deleted
+     * 
+     **********/
+    if (!ret.second && ret.first->second.ignore) {
+      ret.first->second.ignore = false;
+    }
 
     // start collecting information
     node->read_from(this);
@@ -145,14 +157,11 @@ object_deleter::end()
 void object_deleter::check_object(object *o, bool is_ref)
 {
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(o->id(), t_object_count(o)));
-//  if (!ret.second) {
-    // proxy already in map
-    if (!is_ref) {
-      --ret.first->second.ptr_count;
-    } else {
-      --ret.first->second.ref_count;
-    }
-//  }
+  if (!is_ref) {
+    --ret.first->second.ptr_count;
+  } else {
+    --ret.first->second.ref_count;
+  }
   if (!is_ref) {
     ret.first->second.ignore = false;
     o->read_from(this);
@@ -487,10 +496,32 @@ bool object_store::remove_object(object *o)
   // return true
   return true;
 }
+bool object_store::remove_object_list(object_list_base &olb)
+{
+  /**************
+   * 
+   * remove all object from list
+   * and first and last sentinel
+   * 
+   **************/
+   /*
+  object_list_base_node *node = olb.first_object();
+  object_list_base_node *next;
+  while (node) {
+    next = node->next_node();
+    if (!remove_object(node)) {
+      // throw exception
+    }
+    node = next;
+  }
+  */
+  olb.uninstall();
+  return true;
+}
 
 bool object_store::insert_object_list(object_list_base &olb)
 {
-  olb.initialize(this);
+  olb.install(this);
   return true;
 }
 

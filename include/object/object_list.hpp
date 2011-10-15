@@ -418,7 +418,8 @@ protected:
   friend class object_creator;
   friend class object_deleter;
 
-  virtual void initialize(object_store *ostore);
+  virtual void install(object_store *ostore);
+  virtual void uninstall();
 
   virtual object_list_base_node* first_object() const = 0;
   virtual object_list_base_node* last_object() const = 0;
@@ -532,9 +533,9 @@ public:
   }
 
 protected:
-  virtual void initialize(object_store *os)
+  virtual void install(object_store *os)
   {
-    object_list_base::initialize(os);
+    object_list_base::install(os);
     
     // create first and last element
     first_ = ostore()->insert(new T);
@@ -544,6 +545,13 @@ protected:
     first_->next_ = last_;
     last_->root_ = first_;
     last_->prev_ = first_;
+  }
+
+  virtual void uninstall()
+  {
+    object_list_base::uninstall();
+    first_.reset();
+    last_.reset();
   }
 
   virtual object_list_base_node* first_object() const

@@ -25,9 +25,15 @@ object_list_base::object_list_base()
 object_list_base::~object_list_base()
 {}
 
-void object_list_base::initialize(object_store *ostore)
+void object_list_base::install(object_store *ostore)
 {
   ostore_ = ostore;
+}
+
+void object_list_base::uninstall()
+{
+    ostore_ = NULL;
+    parent_ = NULL;
 }
 
 }

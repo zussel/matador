@@ -198,7 +198,7 @@ ComplexObjectStoreTestUnit::first()
       cout << "Artist [" << *optr.get() << "]\n";
     }
   }
-  /*
+
   typedef object_view<Track> TrackView;
   const TrackView track_view(ostore_);
   
@@ -213,7 +213,7 @@ ComplexObjectStoreTestUnit::first()
     }
     object_ptr<Track> track1 = track_view.begin().optr();
     object_ptr<Track> track2 = track1;
-    track1->delete_object();
+//    track1->delete_object();
   }
   
   object_view<Album> album_view(ostore_);
@@ -223,7 +223,6 @@ ComplexObjectStoreTestUnit::first()
   } else {
     cout << "albums available!\n";
   }
-  */
 }
 
 void
@@ -299,12 +298,14 @@ ComplexObjectStoreTestUnit::item_list()
     ++first;
   }
   
+  ostore_.dump_objects(std::cout);
   std::cout << "remove list from object store ... ";
   if (ostore_.remove(ilist)) {
     std::cout << "succeeded!\n";
   } else {
     std::cout << "failed!\n";
   }
+  ostore_.dump_objects(std::cout);
 }
 
 void

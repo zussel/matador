@@ -264,7 +264,6 @@ public:
     if (!object_deleter_.is_deletable(ol)) {
       return false;
     }
-    /*
     object_deleter::iterator first = object_deleter_.begin();
     object_deleter::iterator last = object_deleter_.end();
     
@@ -275,8 +274,7 @@ public:
         ++first;
       }
     }
-    */
-		return true;
+    return remove_object_list(ol);
   }
 
   template < class InputIterator >
@@ -300,6 +298,7 @@ private:
 	bool remove_object(object *o);
 	
   bool insert_object_list(object_list_base &olb);
+  bool remove_object_list(object_list_base &olb);
 
   void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);
   void unlink_proxy(const object_proxy_ptr &proxy);
