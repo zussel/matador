@@ -49,7 +49,7 @@
  
 namespace oos {
 
-template < class T > class object_list;
+template < class T > class linked_object_list;
 template < class T > class object_list_iterator;
 template < class T > class const_object_list_iterator;
 
@@ -135,7 +135,7 @@ public:
   }
 
 private:
-  friend class object_list<T>;
+  friend class linked_object_list<T>;
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
@@ -209,7 +209,7 @@ public:
   typedef T* pointer;
   typedef object_ptr<T> value_type;
   typedef value_type& reference ;
-  typedef object_list<T> list_type;
+  typedef linked_object_list<T> list_type;
 
   object_list_iterator()
     : node_(NULL)
@@ -305,7 +305,7 @@ public:
   typedef object_ptr<T> value_type;
   typedef T* pointer;
   typedef value_type& reference ;
-  typedef object_list<T> list_type;
+  typedef linked_object_list<T> list_type;
 
   const_object_list_iterator()
     : node_(NULL)
@@ -436,11 +436,105 @@ template < class T >
 class object_list : public object_list_base
 {
 public:
+  typedef T value_type;
+  typedef object_ptr<value_type> value_type_ptr;
+  typedef std::list<value_type_ptr> t_list_type;
+  typedef t_list_type::iterator iterator;
+  typedef t_list_type::const_iterator const_iterator;
+  
+  object_list() {}
+  virtual ~object_list() {}
+  
+	virtual void read_from(object_atomizer *) {}
+	virtual void write_to(object_atomizer *) const {}
+
+  iterator begin() {
+    return object_list_.begin();
+  }
+  const_iterator begin() const {
+    return object_list_.begin();
+  }
+  iterator end() {
+    return object_list_.end();
+  }
+  const_iterator end() const {
+    return object_list_.end();
+  }
+
+  virtual bool empty() const {
+    return object_list_.empty();
+  }
+
+  virtual void clear()
+  {
+    erase(begin(), end());
+  }
+
+  virtual size_t size() const
+  {
+    return object_list_.size();
+  }
+
+  virtual void push_front(T *elem)
+  {
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ptr optr = ostore()->insert(elem);
+      object_list_.push_front(optr);
+    }
+  }
+
+  virtual void push_back(T* elem)
+  {
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ptr optr = ostore()->insert(elem);
+      object_list_.push_back(optr);
+    }
+  }
+
+  iterator erase(iterator i)
+  {
+    if (!ostore()) {
+      // if list is not in ostore
+      // throw exception
+      //throw object_exception();
+      return i;
+    }
+    // update predeccessor and successor
+    value_type_ptr optr = *i;
+    if (!ostore()->remove(optr)) {
+      // throw exception
+      return i;
+    } else {
+      // object was successfully deleted
+      return object_list_.erase(i);
+    }
+  }
+
+  iterator erase(iterator first, iterator last)
+  {
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
+  }
+
+private:
+  t_list_type object_list_;
+};
+
+template < class T >
+class linked_object_list : public object_list_base
+{
+public:
 	typedef T t_list_node;
 	typedef object_ptr<t_list_node> object_node_ptr;
 
-  object_list() {}
-	virtual ~object_list() {}
+  linked_object_list() {}
+	virtual ~linked_object_list() {}
 
   typedef object_list_iterator<T> iterator;
   typedef const_object_list_iterator<T> const_iterator;
@@ -574,7 +668,7 @@ private:
 };
 
 template < class T >
-class object_ptr_list : public object_list<object_ptr_list_node<T> >
+class linked_object_ptr_list : public linked_object_list<object_ptr_list_node<T> >
 {
 public:
   typedef object_ptr_list_node<T> value_type;
@@ -593,17 +687,17 @@ public:
 private:
   virtual void push_front(value_type *elem)
   {
-    object_list<value_type>::push_front(elem);
+    linked_object_list<value_type>::push_front(elem);
   }
 
   virtual void push_back(value_type *elem)
   {
-    object_list<value_type>::push_back(elem);
+    linked_object_list<value_type>::push_back(elem);
   }
 };
 
 template < class T >
-class object_ref_list : public object_list<object_ref_list_node<T> >
+class linked_object_ref_list : public linked_object_list<object_ref_list_node<T> >
 {
 public:
   typedef object_ref_list_node<T> value_type;
@@ -622,12 +716,12 @@ public:
 private:
   virtual void push_front(value_type *elem)
   {
-    object_list<value_type>::push_front(elem);
+    linked_object_list<value_type>::push_front(elem);
   }
 
   virtual void push_back(value_type *elem)
   {
-    object_list<value_type>::push_back(elem);
+    linked_object_list<value_type>::push_back(elem);
   }
 };
 

@@ -64,7 +64,7 @@ public:
   virtual void on_delete(object *o) = 0;
 };
 
-template < class T > class object_list;
+template < class T > class linked_object_list;
 class object_list_base;
 
 class OOS_API object_base_producer {
@@ -230,7 +230,7 @@ public:
 	}
   
   template < class Y >
-  void insert(object_list<Y> &ol)
+  void insert(linked_object_list<Y> &ol)
   {
     // set object store
     insert_object_list(ol);
@@ -258,7 +258,7 @@ public:
 	}
   
   template < class Y >
-  bool remove(object_list<Y> &ol)
+  bool remove(linked_object_list<Y> &ol)
   {
     // check if object tree is deletable
     if (!object_deleter_.is_deletable(ol)) {

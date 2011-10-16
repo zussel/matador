@@ -228,7 +228,7 @@ ComplexObjectStoreTestUnit::first()
 void
 ComplexObjectStoreTestUnit::item_list()
 {
-  typedef object_list<Item> ItemList;
+  typedef linked_object_list<Item> ItemList;
 
   std::ofstream out;
   ostore_.dump_objects(std::cout);
