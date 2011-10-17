@@ -73,7 +73,7 @@ public:
     if (!object_stack_.empty()) {
       x.parent_object(object_stack_.top());
     }
-    ostore_.insert_object_list(x);
+    ostore_.insert(x);
   }
 private:
   std::stack<object*> object_stack_;
@@ -384,7 +384,14 @@ void object_store::unregister_observer(object_observer *observer)
   }
 }
 
-object* object_store::insert_object(object *o)
+void
+object_store::insert(object_list_base &olb)
+{
+  olb.install(this);
+}
+
+object*
+object_store::insert_object(object *o)
 {
   // find type in tree
   if (!o) {
@@ -455,7 +462,8 @@ object* object_store::insert_object(object *o)
   return o;
 }
 
-bool object_store::remove_object(object *o)
+bool
+object_store::remove_object(object *o)
 {
   // find prototype node
   t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
@@ -496,7 +504,9 @@ bool object_store::remove_object(object *o)
   // return true
   return true;
 }
-bool object_store::remove_object_list(object_list_base &olb)
+
+bool
+object_store::remove(object_list_base &olb)
 {
   /**************
    * 
@@ -504,28 +514,26 @@ bool object_store::remove_object_list(object_list_base &olb)
    * and first and last sentinel
    * 
    **************/
-   /*
-  object_list_base_node *node = olb.first_object();
-  object_list_base_node *next;
-  while (node) {
-    next = node->next_node();
-    if (!remove_object(node)) {
-      // throw exception
-    }
-    node = next;
+  // check if object tree is deletable
+  if (!object_deleter_.is_deletable(olb)) {
+    return false;
   }
-  */
+  object_deleter::iterator first = object_deleter_.begin();
+  object_deleter::iterator last = object_deleter_.end();
+  
+  while (first != last) {
+    if (!first->second.ignore) {
+      remove_object((first++)->second.obj);
+    } else {
+      ++first;
+    }
+  }
   olb.uninstall();
   return true;
 }
 
-bool object_store::insert_object_list(object_list_base &olb)
-{
-  olb.install(this);
-  return true;
-}
-
-void object_store::link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &prev_proxy)
+void
+object_store::link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &prev_proxy)
 {
   // link oproxy before this node
   prev_proxy->prev = base->prev;
@@ -536,7 +544,8 @@ void object_store::link_proxy(const object_proxy_ptr &base, const object_proxy_p
   base->prev = prev_proxy;
 }
 
-void object_store::unlink_proxy(const object_proxy_ptr &proxy)
+void
+object_store::unlink_proxy(const object_proxy_ptr &proxy)
 {
   if (proxy->prev) {
     proxy->prev->next = proxy->next;

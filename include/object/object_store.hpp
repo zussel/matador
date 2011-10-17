@@ -228,14 +228,26 @@ public:
   {
 		return object_ptr<Y>(insert_object(o));
 	}
+
+  /**
+   * Inserts an object list into the object store. Subsequently the
+   * object list is initialized.
+   * 
+   * @param olb The object list to insert.
+   */
+  void insert(object_list_base &olb);
   
-  template < class Y >
-  void insert(linked_object_list<Y> &ol)
-  {
-    // set object store
-    insert_object_list(ol);
-  }
-  
+  /**
+   * Removes an object from the object store. After successfull
+   * removal the object is set to zero and isn't valid any more.
+   * 
+   * Before removal is done a reference and pointer counter check
+   * is done. If at least one counter is greater than zero the
+   * object can't be removed and false is returned.
+   * 
+   * @param o Object to remove.
+   * @return True on successful removal.
+   */
 	template < class Y >
 	bool remove(object_ptr<Y> &o)
   {
@@ -257,25 +269,15 @@ public:
 		return true;
 	}
   
-  template < class Y >
-  bool remove(linked_object_list<Y> &ol)
-  {
-    // check if object tree is deletable
-    if (!object_deleter_.is_deletable(ol)) {
-      return false;
-    }
-    object_deleter::iterator first = object_deleter_.begin();
-    object_deleter::iterator last = object_deleter_.end();
-    
-    while (first != last) {
-      if (!first->second.ignore) {
-        remove_object((first++)->second.obj);
-      } else {
-        ++first;
-      }
-    }
-    return remove_object_list(ol);
-  }
+  /**
+   * Removes an object list from object store. All elements of the
+   * list are removed from the store after a successfull reference and
+   * pointer counter check.
+   * 
+   * @param olb The object list to remove.
+   * @return True on successful object list removal.
+   */
+  bool remove(object_list_base &olb);
 
   template < class InputIterator >
   void insert(InputIterator first, InputIterator last)
@@ -297,9 +299,6 @@ private:
 	object* insert_object(object *o);
 	bool remove_object(object *o);
 	
-  bool insert_object_list(object_list_base &olb);
-  bool remove_object_list(object_list_base &olb);
-
   void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);
   void unlink_proxy(const object_proxy_ptr &proxy);
 

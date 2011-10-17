@@ -435,17 +435,17 @@ private:
 };
 
 template < class T >
-class object_list : public object_list_base
+class object_ptr_list : public object_list_base
 {
 public:
   typedef T value_type;
   typedef object_ptr<value_type> value_type_ptr;
-  typedef std::list<value_type_ptr> t_list_type;
-  typedef typename t_list_type::iterator iterator;
-  typedef typename t_list_type::const_iterator const_iterator;
+  typedef std::list<value_type_ptr> list_type_t;
+  typedef typename list_type_t::iterator iterator;
+  typedef typename list_type_t::const_iterator const_iterator;
   
-  object_list() {}
-  virtual ~object_list() {}
+  object_ptr_list() {}
+  virtual ~object_ptr_list() {}
   
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
@@ -525,7 +525,101 @@ public:
   }
 
 private:
-  t_list_type object_list_;
+  list_type_t object_list_;
+};
+
+template < class T >
+class object_ref_list : public object_list_base
+{
+public:
+  typedef T value_type;
+  typedef object_ref<value_type> value_type_ref;
+  typedef std::list<value_type_ref> list_type_t;
+  typedef typename list_type_t::iterator iterator;
+  typedef typename list_type_t::const_iterator const_iterator;
+  
+  object_ref_list() {}
+  virtual ~object_ref_list() {}
+  
+	virtual void read_from(object_atomizer *) {}
+	virtual void write_to(object_atomizer *) const {}
+
+  iterator begin() {
+    return object_list_.begin();
+  }
+  const_iterator begin() const {
+    return object_list_.begin();
+  }
+  iterator end() {
+    return object_list_.end();
+  }
+  const_iterator end() const {
+    return object_list_.end();
+  }
+
+  virtual bool empty() const {
+    return object_list_.empty();
+  }
+
+  virtual void clear()
+  {
+    erase(begin(), end());
+  }
+
+  virtual size_t size() const
+  {
+    return object_list_.size();
+  }
+
+  virtual void push_front(T *elem)
+  {
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ref optr = ostore()->insert(elem);
+      object_list_.push_front(optr);
+    }
+  }
+
+  virtual void push_back(T* elem)
+  {
+    if (!ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ref optr = ostore()->insert(elem);
+      object_list_.push_back(optr);
+    }
+  }
+
+  iterator erase(iterator i)
+  {
+    if (!ostore()) {
+      // if list is not in ostore
+      // throw exception
+      //throw object_exception();
+      return i;
+    }
+    // update predeccessor and successor
+    value_type_ref optr = *i;
+    if (!ostore()->remove(optr)) {
+      // throw exception
+      return i;
+    } else {
+      // object was successfully deleted
+      return object_list_.erase(i);
+    }
+  }
+
+  iterator erase(iterator first, iterator last)
+  {
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
+  }
+
+private:
+  list_type_t object_list_;
 };
 
 template < class T >
