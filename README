@@ -1,106 +1,16 @@
 Store all kind of objects in one container.
 
-That's how it works:
+Howto:
 
-1. Derive your classes from oos::object. Add your members and write proper read_from and write_to methods.
-
-class Artist : public oos::object
-{
-private:
-  // artists name
-  std::string name_;
-public:
-  // needed by factory
-  Artist() {}
-  // add your custom c'tors
-  Artist(const std::string &name) : name_(anme) {}
-  // virtual d'tor
-  virtual ~Artist() {}
-
-  // generic interface to access data
-  virtual write_to(oos::object_atomizer *oa) const
-  {
-    object::write_to(oa);
-    oa->write_string("name", name_);
-  }
-  virtual read_from(oos::object_atomizer *oa)
-  {
-    object::read_from(oa);
-    oa->read_string("name", name_);
-  }
-
-  // add access methods for your members
-  std::string name() const { return name_; }
-  void name(const std::string &n)
-  {
-    // call this to tell the object store
-    // that your object is about to change
-    // a member. never forget!
-    mark_modified();
-    name_ = n;
-  }
-};
-
-// create another class
-
-class Track : public oos::object
-{
-private:
-  std::string title_;
-  // add a reference to an artist
-  oos::object_ref<Artist> artist_;
-
-public:
-  // needed by factory
-  Track() {}
-  // add your custom c'tors
-  Track(const std::string &title, const oos::artist_ref<Artist> &artist)
-    : title_(title), artist_(artist)
-  {}
-};
-
-2. Create your object store and tell it about your object hierarchy
-
-oos::object_store ostore;
-
-// add a prototype of your object to let the object store
-// update the hierarchy tree and be able to create your object
-
-ostore.insert_prototype(new oos::object_producer<Artist>, "ARTIST");
-ostore.insert_prototype(new oos::object_producer<Track>, "TRACK");
-
-3. Add some of your objects
-
-// object_ptr is like a shared_ptr, you only work with your objects
-// as an object_ptr or object_ref. think hardly before accessing the raw
-// object. in almost all cases you don't need to.
-
-object_ptr<Artist> artist = ostore.insert(new Artist("AC/DC");
-
-// add some tracks for your artist
-ostore.insert(new Track("Thunderstruck", artist);
-ostore.insert(new Track("Back in black", artist);
-ostore.insert(new Track("Highway to hell", artist);
-
-// add some other artist and songs
-artist = ostore.insert(new Artist("Rolling Stones");
-// ...
-artist = ostore.insert(new Artist("Amy McDonald");
-// ...
-
-4. Access your objects creating a view
-
-typedef oos::object_view<Artist> t_artist_view;
-t_artist_view artist_view(&ostore);
-
-// make a shortcut to the artist object pointer
-typedef oos::object_ptr<Artist> artist_ptr;
-
-for (t_artist_view::const_iterator i = artist_view.begin(); i != artist_view.end(); ++i)
-{
-  // get the artist
-  artist_ptr artist = i.optr();
-  // do some stuff with your artist
-  std::cout << artist.name() << std::endl;
-}
-
+1. Goal for example:
+   A music store with artists, tracks and albums.
+2. Start with simple artist class
+   No object members.
+3. Add new class Track.
+   Class Track has an object_ref member of type Artist.
+4. Add new class Album.
+   Show how the object list class works. Album has a list of tracks.
+5. Add modify and deleted objects.
+   Show how to interact with your objects
+6. Make the data persistent
+   Use a database backend (hopefully sqlite)
