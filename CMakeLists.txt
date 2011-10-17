@@ -63,10 +63,19 @@ SET(UNIT_HEADER
   include/unit/unit_test.hpp
 )
 
+SET(DATABASE_SOURCES
+  src/database/database.cpp
+)
+
+SET(DATABASE_HEADER
+  include/database/database.hpp
+)
+
 ADD_LIBRARY(oos SHARED
   ${OBJECT_SOURCES} ${OBJECT_HEADER}
   ${TOOLS_SOURCES} ${TOOLS_HEADER}
   ${UNIT_SOURCES} ${UNIT_HEADER}
+  ${DATABASE_SOURCES} ${DATABASE_HEADER}
 )
 
 ADD_SUBDIRECTORY(test)

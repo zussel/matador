@@ -35,6 +35,8 @@
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
 
+#include <list>
+
 /*
  *   ObjectList layout example:
  * 
@@ -439,8 +441,8 @@ public:
   typedef T value_type;
   typedef object_ptr<value_type> value_type_ptr;
   typedef std::list<value_type_ptr> t_list_type;
-  typedef t_list_type::iterator iterator;
-  typedef t_list_type::const_iterator const_iterator;
+  typedef typename t_list_type::iterator iterator;
+  typedef typename t_list_type::const_iterator const_iterator;
   
   object_list() {}
   virtual ~object_list() {}

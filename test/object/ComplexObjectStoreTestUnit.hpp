@@ -15,7 +15,7 @@ public:
   virtual void finalize();
   
   void first();
-  void item_list();
+  void linked_item_list();
   void album();
   void serializer();
   void ref_ptr_counter();
