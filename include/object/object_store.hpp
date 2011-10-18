@@ -64,8 +64,8 @@ public:
   virtual void on_delete(object *o) = 0;
 };
 
-template < class T > class linked_object_list;
 class object_list_base;
+class object_list_base_node;
 
 class OOS_API object_base_producer {
 public:
@@ -142,6 +142,7 @@ public:
 
 private:
   void check_object(object *o, bool is_ref);
+  void check_object_list_node(object_list_base_node *node);
   bool check_object_count_map() const;
 
 private:

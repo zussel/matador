@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <stack>
 
-using std::tr1::placeholders::_1;
+using namespace std::tr1::placeholders;
 
 namespace oos {
 
@@ -101,18 +101,20 @@ object_deleter::is_deletable(object *obj)
 bool object_deleter::is_deletable(object_list_base &olist)
 {
   object_count_map.clear();
+  olist.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+  /*
   object_list_base_node *node = olist.first_object();
   while (node) {
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
     
-    /**********
+    / **********
      * 
      * object is already in list and will
      * be ignored on deletion so set
      * ignore flag to false because this
      * node must be deleted
      * 
-     **********/
+     ********** /
     if (!ret.second && ret.first->second.ignore) {
       ret.first->second.ignore = false;
     }
@@ -122,6 +124,7 @@ bool object_deleter::is_deletable(object_list_base &olist)
     // get next node
     node = node->next_node();
   }
+  */
   return check_object_count_map();
 }
 
@@ -135,11 +138,12 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
 
 void object_deleter::read_object_list(const char*, object_list_base &x)
 {
-  // remove all elements of list
-  //base_object_ptr first
+  /*
+  // check if all elements of list can be removed
   while (x.first_object()->next_node() != x.last_object()->prev_node()) {
     check_object(x.first_object()->next_node(), false);
   }
+  */
 }
 
 object_deleter::iterator
@@ -166,6 +170,27 @@ void object_deleter::check_object(object *o, bool is_ref)
     ret.first->second.ignore = false;
     o->read_from(this);
   }
+}
+
+void
+object_deleter::check_object_list_node(object_list_base_node *node)
+{
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
+  
+  /**********
+   * 
+   * object is already in list and will
+   * be ignored on deletion so set
+   * ignore flag to false because this
+   * node must be deleted
+   * 
+   **********/
+  if (!ret.second && ret.first->second.ignore) {
+    ret.first->second.ignore = false;
+  }
+
+  // start collecting information
+  node->read_from(this);
 }
 
 bool

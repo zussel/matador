@@ -35,7 +35,14 @@
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
 
+#ifdef WIN32
+#include <functional>
+#else
+#include <tr1/functional>
+#endif
+
 #include <list>
+#include <algorithm>
 
 /*
  *   ObjectList layout example:
@@ -403,6 +410,9 @@ private:
 class OOS_API object_list_base
 {
 public:
+  typedef std::tr1::function<void (object_list_base_node *)> node_func;
+
+public:
   object_list_base();
 	virtual ~object_list_base();
 
@@ -423,8 +433,12 @@ protected:
   virtual void install(object_store *ostore);
   virtual void uninstall();
 
+  /*
   virtual object_list_base_node* first_object() const = 0;
   virtual object_list_base_node* last_object() const = 0;
+  */
+
+  virtual void for_each(const node_func &nf) = 0;
 
   object* parent_object() const { return parent_; }
   void parent_object(object *parent) { parent_ = parent; }
@@ -477,7 +491,7 @@ public:
     return object_list_.size();
   }
 
-  virtual void push_front(T *elem, const base_object_ptr &o)
+  virtual void push_front(T *elem, object *)
   {
     if (!ostore()) {
       //throw object_exception();
@@ -489,7 +503,7 @@ public:
     }
   }
 
-  virtual void push_back(T* elem, const base_object_ptr &o)
+  virtual void push_back(T* elem, object *)
   {
     if (!ostore()) {
       //throw object_exception();
@@ -526,6 +540,12 @@ public:
       first = erase(first);
     }
     return first;
+  }
+
+protected:
+  virtual void for_each(const node_func &nf)
+  {
+    std::for_each(object_list_.begin(), object_list_.end(), nf);
   }
 
 private:
@@ -750,6 +770,7 @@ protected:
     last_.reset();
   }
 
+/*
   virtual object_list_base_node* first_object() const
   {
     return first_.get();
@@ -758,6 +779,16 @@ protected:
   virtual object_list_base_node* last_object() const
   {
     return last_.get();
+  }
+*/
+
+  virtual void for_each(const node_func &nf)
+  {
+    object_node_ptr node = first_;
+    while(node.get()) {
+      nf(node.get());
+      node = node->next();
+    }
   }
 
 private:
