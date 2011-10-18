@@ -15,38 +15,12 @@
 using namespace oos;
 using namespace std;
 
-class Item : public object_list_node<Item>
-{
-public:
-  Item() {}
-  Item(const std::string &name) : name_(name) {}
-  virtual ~Item() {}
-
-	void read_from(object_atomizer *reader)
-  {
-    object_list_node::read_from(reader);
-    reader->read_string("name", name_);
-  }
-	void write_to(object_atomizer *writer)
-  {
-    object_list_node::write_to(writer);
-    writer->write_string("name", name_);
-  }
-  
-  std::string name() const { return name_; }
-  void name(const std::string &n) { name_ = n; }
-
-private:
-  std::string name_;
-};
-
 typedef object_ref_list_node<Track> AlbumTrack;
 
 ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   : unit_test("complex objectstore")
 {
   add_test("first", std::tr1::bind(&ComplexObjectStoreTestUnit::first, this), "first complex test");
-  add_test("itemlist", std::tr1::bind(&ComplexObjectStoreTestUnit::linked_item_list, this), "linked item list test");
   add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "album test");
   add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "serializer test");
   add_test("ref_ptr_counter", std::tr1::bind(&ComplexObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
@@ -61,7 +35,6 @@ ComplexObjectStoreTestUnit::~ComplexObjectStoreTestUnit()
 void
 ComplexObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
   ostore_.insert_prototype(new object_producer<Artist>, "ARTIST");
   ostore_.insert_prototype(new object_producer<Track>, "TRACK");
   ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
@@ -223,89 +196,6 @@ ComplexObjectStoreTestUnit::first()
   } else {
     cout << "albums available!\n";
   }
-}
-
-void
-ComplexObjectStoreTestUnit::linked_item_list()
-{
-  typedef linked_object_list<Item> ItemList;
-
-  std::ofstream out;
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist0.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-  ItemList ilist;
-  ostore_.insert(ilist);
-
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist1.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-
-  ilist.push_back(new Item("Schrank"));
-  ilist.push_back(new Item("Tisch"));
-  ilist.push_back(new Item("Stuhl"));
-  ilist.push_back(new Item("Bett"));
-  
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist2.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-
-
-  ilist.push_front(new Item("Teppich"));
-
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist3.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-
-  ItemList::const_iterator first = ilist.begin();
-  ItemList::const_iterator last = ilist.end();
-
-  while (first != last) {
-    cout << "item name: " << first->name() << "\n";
-    ++first;
-  }
-
-  // remove an item
-  ItemList::iterator i = ilist.begin();
-  cout << "item to remove: " << i->name() << "\n";
-  i = ilist.erase(i);
-  cout << "next item name: " << i->name() << "\n";
-
-  first = ilist.begin();
-  while (first != last) {
-    cout << "item name: " << first->name() << "\n";
-    ++first;
-  }
-  
-  // clear list
-  std::cout << "clear list\n";
-  ilist.clear();
-  first = ilist.begin();
-  while (first != last) {
-    cout << "item name: " << first->name() << "\n";
-    ++first;
-  }
-  
-  ostore_.dump_objects(std::cout);
-  std::cout << "remove list from object store ... ";
-  if (ostore_.remove(ilist)) {
-    std::cout << "succeeded!\n";
-  } else {
-    std::cout << "failed!\n";
-  }
-  ostore_.dump_objects(std::cout);
 }
 
 void

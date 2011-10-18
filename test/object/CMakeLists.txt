@@ -12,6 +12,8 @@ SET (TEST_SOURCES
   ObjectPrototypeTestUnit.hpp
   ObjectStoreTestUnit.cpp
   ObjectStoreTestUnit.hpp
+  ObjectListTestUnit.cpp
+  ObjectListTestUnit.hpp
 )
 
 ADD_EXECUTABLE(test_object ${TEST_SOURCES})

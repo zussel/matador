@@ -477,22 +477,26 @@ public:
     return object_list_.size();
   }
 
-  virtual void push_front(T *elem)
+  virtual void push_front(T *elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
       value_type_ptr optr = ostore()->insert(elem);
+      // set link to list object
+      // ...
       object_list_.push_front(optr);
     }
   }
 
-  virtual void push_back(T* elem)
+  virtual void push_back(T* elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
       value_type_ptr optr = ostore()->insert(elem);
+      // set link to list object
+      // ...
       object_list_.push_back(optr);
     }
   }
@@ -571,23 +575,25 @@ public:
     return object_list_.size();
   }
 
-  virtual void push_front(T *elem)
+  virtual void push_front(const value_type_ref &elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      value_type_ref optr = ostore()->insert(elem);
-      object_list_.push_front(optr);
+      // set link to list object
+      // ...
+      object_list_.push_front(elem);
     }
   }
 
-  virtual void push_back(T* elem)
+  virtual void push_back(const value_type_ref &elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      value_type_ref optr = ostore()->insert(elem);
-      object_list_.push_back(optr);
+      // set link to list object
+      // ...
+      object_list_.push_back(elem);
     }
   }
 
