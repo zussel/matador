@@ -47,13 +47,13 @@
 /*
  *   ObjectList layout example:
  * 
- *   ID | ROOT |PREV | NEXT | data
- *   ---+------+-----+------+------+
- *    1 |   1  |  0  |  2   |    0 |
- *    2 |   1  |  1  |  3   |    7 |
- *    3 |   1  |  2  |  4   |    8 |
- *    4 |   1  |  3  |  5   |    9 |
- *    5 |   1  |  4  |  0   |    0 |
+ *   ID | FIRST | LAST |PREV | NEXT | data
+ *   ---+-------+------+-----+------+------+
+ *    1 |   1   |   5  |  0  |  2   |    0 |
+ *    2 |   1   |   5  |  1  |  3   |    7 |
+ *    3 |   1   |   5  |  2  |  4   |    8 |
+ *    4 |   1   |   5  |  3  |  5   |    9 |
+ *    5 |   1   |   5  |  4  |  0   |    0 |
  */
  
 namespace oos {
@@ -648,10 +648,12 @@ private:
   list_type_t object_list_;
 };
 
-template < class T >
+template < class T, class S, class G >
 class linked_object_list : public object_list_base
 {
 public:
+//  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
+//  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
 	typedef T t_list_node;
 	typedef object_ptr<t_list_node> object_node_ptr;
 
