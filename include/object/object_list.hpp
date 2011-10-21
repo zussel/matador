@@ -70,7 +70,17 @@ public:
 
   virtual object_list_base_node *next_node() const = 0;
   virtual object_list_base_node *prev_node() const = 0;
-  virtual object_list_base_node *root_node() const = 0;
+};
+
+template < class T >
+struct list_node_proxy
+{
+  list_node_proxy(T *nd, T *n, T *p)
+    : node(nd), next(n), prev(p)
+  {}
+  T *node;
+  T *next;
+  T *prev;
 };
 
 template < class T >
@@ -83,14 +93,16 @@ public:
 	void read_from(object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object("root", root_);
+    reader->read_object("first", first_);
+    reader->read_object("last", last_);
     reader->read_object("prev", prev_);
     reader->read_object("next", next_);
   }
 	void write_to(object_atomizer *writer)
   {
     object::write_to(writer);
-    writer->write_object("root", root_);
+    writer->write_object("first", first_);
+    writer->write_object("last", last_);
     writer->write_object("prev", prev_);
     writer->write_object("next", next_);
   }
@@ -105,20 +117,26 @@ public:
     return prev_.get();
   }
 
-  virtual object_list_base_node *root_node() const
-  {
-    return root_.get();
-  }
-
-  void root(const object_ref<T> &r)
+  void first(const object_ref<T> &f)
   {
     mark_modified();
-    root_ = r;
+    first_ = f;
   }
 
-  object_ref<T> root() const
+  object_ref<T> first() const
   {
-    return root_;
+    return first_;
+  }
+
+  void last(const object_ref<T> &l)
+  {
+    mark_modified();
+    last_ = l;
+  }
+
+  object_ref<T> last() const
+  {
+    return last_;
   }
 
   void prev(const object_ref<T> &p)
@@ -148,7 +166,8 @@ private:
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
-  object_ref<T> root_;
+  object_ref<T> first_;
+  object_ref<T> last_;
   object_ref<T> prev_;
   object_ref<T> next_;
 };
