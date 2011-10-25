@@ -34,7 +34,7 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
   : id_(x.id_)
   , proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-  , is_internal_(false)
+  , is_internal_(x.is_internal_)
 {
   /*
   if (proxy_) {
@@ -74,7 +74,7 @@ base_object_ptr::operator=(const base_object_ptr &x)
 }
 
 base_object_ptr::base_object_ptr(const object_proxy_ptr &op, bool is_ref)
-  : id_(op->id)
+  : id_(op ? op->id : 0)
   , proxy_(op)
   , is_reference_(is_ref)
   , is_internal_(false)

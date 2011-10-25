@@ -65,6 +65,9 @@ public:
       object_stack_.push(x.ptr());
       x.ptr()->read_from(this);
       object_stack_.pop();
+    } else if (x.proxy_) {
+      // count reference
+      x.proxy_->link_ref();
     }
   }
   virtual void read_object_list(const char*, object_list_base &x)
@@ -138,8 +141,9 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
 
 void object_deleter::read_object_list(const char*, object_list_base &x)
 {
-  /*
+  x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
   // check if all elements of list can be removed
+  /*
   while (x.first_object()->next_node() != x.last_object()->prev_node()) {
     check_object(x.first_object()->next_node(), false);
   }
@@ -173,7 +177,7 @@ void object_deleter::check_object(object *o, bool is_ref)
 }
 
 void
-object_deleter::check_object_list_node(object_list_base_node *node)
+object_deleter::check_object_list_node(object *node)
 {
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
   
@@ -244,7 +248,6 @@ void delete_object_proxy(object_proxy_ptr op)
 object_store::~object_store()
 {
   // delete all deleted object_proxys
-//  std::for_each(deleted_object_proxy_list_.begin(), deleted_object_proxy_list_.end(), delete_object_proxy);
   root_->op_first->next.reset();
   root_->op_last->prev.reset();
 }

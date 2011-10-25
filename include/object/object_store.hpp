@@ -142,7 +142,7 @@ public:
 
 private:
   void check_object(object *o, bool is_ref);
-  void check_object_list_node(object_list_base_node *node);
+  void check_object_list_node(object *node);
   bool check_object_count_map() const;
 
 private:

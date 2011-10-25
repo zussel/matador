@@ -429,7 +429,7 @@ private:
 class OOS_API object_list_base
 {
 public:
-  typedef std::tr1::function<void (object_list_base_node *)> node_func;
+  typedef std::tr1::function<void (object *)> node_func;
 
 public:
   object_list_base();
@@ -564,7 +564,11 @@ public:
 protected:
   virtual void for_each(const node_func &nf)
   {
-    std::for_each(object_list_.begin(), object_list_.end(), nf);
+    typename list_type_t::iterator first = object_list_.begin();
+    typename list_type_t::iterator last = object_list_.end();
+    while (first != last) {
+      nf((*first++).ptr());
+    }
   }
 
 private:
@@ -663,11 +667,21 @@ public:
     return first;
   }
 
+protected:
+  virtual void for_each(const node_func &nf)
+  {
+    typename list_type_t::iterator first = object_list_.begin();
+    typename list_type_t::iterator last = object_list_.end();
+    while (first != last) {
+      nf((*first++)->ptr());
+    }
+  }
+
 private:
   list_type_t object_list_;
 };
 
-template < class T, class S, class G >
+template < class T >
 class linked_object_list : public object_list_base
 {
 public:
@@ -755,7 +769,7 @@ public:
       std::cout << "couldn't remove node\n";
       node->prev()->next(node);
       node->next()->prev(node);
-      return iterator(node, this);
+      return ++iterator(node, this);
     }
     // return i's successor
     return i;
@@ -778,9 +792,11 @@ protected:
     first_ = ostore()->insert(new T);
     last_ = ostore()->insert(new T);
     // link object elements
-    first_->root_ = first_;
+    first_->first_ = first_;
+    first_->last_ = last_;
     first_->next_ = last_;
-    last_->root_ = first_;
+    last_->first_ = first_;
+    last_->last_ = last_;
     last_->prev_ = first_;
   }
 
