@@ -151,8 +151,6 @@ ObjectListTestUnit::test_linked_list()
 {
   typedef linked_object_list<LinkedItem> LinkedItemList;
 
-  std::ofstream out;
-  ostore_.dump_objects(std::cout);
   /*
   out.open("itemlist0.dot");
   ostore_.dump_prototypes(out);
@@ -160,6 +158,7 @@ ObjectListTestUnit::test_linked_list()
   */
   LinkedItemList linked_list;
   ostore_.insert(linked_list);
+  cout << "insert linked list\n";
 
   ostore_.dump_objects(std::cout);
   /*
@@ -168,6 +167,7 @@ ObjectListTestUnit::test_linked_list()
   out.close();
   */
 
+  cout << "add item to linked list\n";
   linked_list.push_back(new LinkedItem("Schrank"));
   linked_list.push_back(new LinkedItem("Tisch"));
   linked_list.push_back(new LinkedItem("Stuhl"));
@@ -180,7 +180,6 @@ ObjectListTestUnit::test_linked_list()
   out.close();
   */
 
-
   linked_list.push_front(new LinkedItem("Teppich"));
 
   ostore_.dump_objects(std::cout);
@@ -190,6 +189,8 @@ ObjectListTestUnit::test_linked_list()
   out.close();
   */
 
+  cout << "dump linked list\n";
+
   LinkedItemList::const_iterator first = linked_list.begin();
   LinkedItemList::const_iterator last = linked_list.end();
 
@@ -197,6 +198,7 @@ ObjectListTestUnit::test_linked_list()
     cout << "item name: " << first->name() << "\n";
     ++first;
   }
+  cout << "remove item from linked list\n";
 
   // remove an item
   LinkedItemList::iterator i = linked_list.begin();
@@ -204,6 +206,7 @@ ObjectListTestUnit::test_linked_list()
   i = linked_list.erase(i);
   cout << "next item name: " << i->name() << "\n";
 
+  cout << "dump linked list\n";
   first = linked_list.begin();
   while (first != last) {
     cout << "item name: " << first->name() << "\n";

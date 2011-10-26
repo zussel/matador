@@ -735,6 +735,8 @@ public:
       first_->next_ = optr;
       optr->prev_ = first_;
       first_->next_ = optr;
+      optr->first_ = first_;
+      optr->last_ = last_;
     }
   }
 
@@ -749,6 +751,8 @@ public:
       last_->prev_->next_ = optr;
       optr->next_ = last_;
       last_->prev_ = optr;
+      optr->first_ = first_;
+      optr->last_ = last_;
     }
   }
 
@@ -766,9 +770,10 @@ public:
     node->next()->prev(node->prev());
     // delete node
     if (!ostore()->remove(node)) {
-      std::cout << "couldn't remove node\n";
+//      std::cout << "couldn't remove node (proxy: " << *node->proxy().get() << ")\n";
       node->prev()->next(node);
       node->next()->prev(node);
+      // throw exception ?
       return ++iterator(node, this);
     }
     // return i's successor
@@ -806,18 +811,6 @@ protected:
     first_.reset();
     last_.reset();
   }
-
-/*
-  virtual object_list_base_node* first_object() const
-  {
-    return first_.get();
-  }
-
-  virtual object_list_base_node* last_object() const
-  {
-    return last_.get();
-  }
-*/
 
   virtual void for_each(const node_func &nf)
   {

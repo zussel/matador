@@ -66,6 +66,8 @@ public:
 
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
+  std::tr1::shared_ptr<object_proxy> proxy() const { return proxy_; }
+
 protected:
 	void mark_modified();
 

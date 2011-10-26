@@ -67,6 +67,7 @@ public:
       object_stack_.pop();
     } else if (x.proxy_) {
       // count reference
+      std::cout << "object creator [" << x.type() << "]\n";
       x.proxy_->link_ref();
     }
   }

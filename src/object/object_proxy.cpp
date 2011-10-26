@@ -76,7 +76,7 @@ void object_proxy::clear()
 void object_proxy::link_ref()
 {
   if (obj) {
-//    std::cout << "proxy [" << this << "] called link_ref()\n";
+//    std::cout << "proxy [" << this << "] called link_ref() value [" << ref_count + 1 << "]\n";
     ++ref_count;
   }
 }
@@ -84,7 +84,7 @@ void object_proxy::link_ref()
 void object_proxy::unlink_ref()
 {
   if (obj) {
-//    std::cout << "proxy [" << this << "] called unlink_ref()\n";
+//    std::cout << "proxy [" << this << "] called unlink_ref() value [" << ref_count - 1 << "]\n";
     --ref_count;
   }
 }
@@ -92,7 +92,7 @@ void object_proxy::unlink_ref()
 void object_proxy::link_ptr()
 {
   if (obj) {
-//    std::cout << "proxy [" << this << "] called link_ptr()\n";
+//    std::cout << "proxy [" << this << "] called link_ptr() value [" << ptr_count + 1 << "]\n";
     ++ptr_count;
   }
 }
@@ -100,7 +100,7 @@ void object_proxy::link_ptr()
 void object_proxy::unlink_ptr()
 {
   if (obj) {
-//    std::cout << "proxy [" << this << "] called unlink_ptr()\n";
+//    std::cout << "proxy [" << this << "] called unlink_ptr() value [" << ptr_count - 1 << "]\n";
     --ptr_count;
   }
 }
@@ -108,7 +108,7 @@ void object_proxy::unlink_ptr()
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
 //  if (op) {
-    os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "]";
+    os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "] refs [" << op.ref_count << "] ptrs [" << op.ptr_count << "]";
 /*  } else {
     os << "proxy [0]\n";
   }

@@ -274,9 +274,13 @@ ComplexObjectStoreTestUnit::ref_ptr_counter()
   Artist *a = new Artist("AC/CD");
   
   typedef object_ptr<Artist> artist_ptr;
+  typedef object_ptr<Album> album_ptr;
   
   artist_ptr artist = ostore_.insert(a);
+  
+  album_ptr album = ostore_.insert(new Album("Back in Black", artist));
 
+  
   cout << endl; 
   cout << "artist ref count: " << artist.ref_count() << "\n";
   cout << "artist ptr count: " << artist.ptr_count() << "\n";

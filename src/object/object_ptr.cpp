@@ -22,6 +22,8 @@
 #include <iostream>
 #include <cassert>
 
+using namespace std;
+
 namespace oos {
 
 base_object_ptr::base_object_ptr(bool is_ref)
@@ -36,20 +38,20 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
   , is_reference_(x.is_reference_)
   , is_internal_(x.is_internal_)
 {
-  /*
-  if (proxy_) {
+//  cout << "base object ptr COPY\n";
+  if (proxy_ && is_internal_) {
     if (is_reference_) {
       proxy_->link_ref();
     } else {
       proxy_->link_ptr();
     }
   }
-  */
 }
 
 base_object_ptr&
 base_object_ptr::operator=(const base_object_ptr &x)
 {
+//  cout << "base object ptr ASSIGN [" << x.type() << "]\n";
   if (this != &x) {
     if (proxy_ && is_internal_) {
       if (is_reference_) {
@@ -79,15 +81,7 @@ base_object_ptr::base_object_ptr(const object_proxy_ptr &op, bool is_ref)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
-  /*
-  if (proxy_) {
-    if (is_reference_) {
-      proxy_->link_ref();
-    } else {
-      proxy_->link_ptr();
-    }
-  }
-  */
+//  cout << "base object ptr CONSTRUCTOR [proxy=" << op.get() << ", is_ref=" << is_ref << "]\n";
 }
 
 base_object_ptr::base_object_ptr(object *o, bool is_ref)
@@ -96,20 +90,12 @@ base_object_ptr::base_object_ptr(object *o, bool is_ref)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
-  /*
-  if (o) {
-    assert(proxy_);
-    if (is_reference_) {
-      proxy_->link_ref();
-    } else {
-      proxy_->link_ptr();
-    }
-  }
-  */
+//  cout << "base object ptr CONSTRUCTOR [obj=" << o << ", is_ref=" << is_ref << "]\n";
 }
 
 base_object_ptr::~base_object_ptr()
 {
+//  cout << "base object ptr DESTRUCTOR\n";
   if (proxy_ && is_internal_) {
     if (is_reference_) {
       proxy_->unlink_ref();
@@ -132,6 +118,7 @@ bool base_object_ptr::operator!=(const base_object_ptr &x) const
 void
 base_object_ptr::reset(object *o)
 {
+//  cout << "base object ptr RESET [" << type() << "]\n";
   if (proxy_ && is_internal_) {
     if (is_reference_) {
       proxy_->unlink_ref();
