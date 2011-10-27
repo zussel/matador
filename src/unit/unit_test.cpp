@@ -115,7 +115,7 @@ void unit_test::execute(test_func_info &test_info)
     if (test_info.succeeded) {
       std::cout << "succeeded\n";
     } else {
-      std::cout << "failed: " << test_info.message << "\n";
+      std::cout << "failed\n\t" << test_info.message << "\n";
     }
 }
 
