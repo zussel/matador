@@ -36,9 +36,11 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
   : id_(x.id_)
   , proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-  , is_internal_(x.is_internal_)
+  , is_internal_(false)
+//  , is_internal_(x.is_internal_)
 {
 //  cout << "base object ptr COPY\n";
+  /*
   if (proxy_ && is_internal_) {
     if (is_reference_) {
       proxy_->link_ref();
@@ -46,6 +48,7 @@ base_object_ptr::base_object_ptr(const base_object_ptr &x)
       proxy_->link_ptr();
     }
   }
+  */
 }
 
 base_object_ptr&
