@@ -149,6 +149,32 @@ private:
   t_object_count_map object_count_map;
 };
 
+class OOS_API object_linker : public object_atomizer
+{
+public:
+  object_linker(const base_object_ptr &o, const std::string &name)
+    : object_(o)
+    , name_(name)
+    , linked_(false)
+  {}
+  virtual ~object_linker() {}
+  
+  virtual void read_object(const char *id, base_object_ptr &x)
+  {
+    if (id == name_) {
+      x.reset(object_.ptr());
+      linked_ = true;
+    }
+  }
+  
+  bool success() { return linked_; }
+
+private:
+  const base_object_ptr &object_;
+  std::string name_;
+  bool linked_;
+};
+
 //struct prototype_node;
 
 /**

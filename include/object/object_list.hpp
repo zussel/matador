@@ -477,7 +477,9 @@ public:
   typedef typename list_type_t::iterator iterator;
   typedef typename list_type_t::const_iterator const_iterator;
   
-  object_ptr_list() {}
+  object_ptr_list(const std::string &list_ref_name)
+    : list_name_(list_ref_name)
+  {}
   virtual ~object_ptr_list() {}
   
 	virtual void read_from(object_atomizer *) {}
@@ -510,27 +512,33 @@ public:
     return object_list_.size();
   }
 
-  virtual void push_front(T *elem, object *)
+  virtual void push_front(T *elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
       value_type_ptr optr = ostore()->insert(elem);
       // set link to list object
-      // ...
-      object_list_.push_front(optr);
+      if (!set_reference(optr, o)) {
+        // throw object_exception();
+      } else {
+        object_list_.push_front(optr);
+      }
     }
   }
 
-  virtual void push_back(T* elem, object *)
+  virtual void push_back(T* elem, const base_object_ptr &o)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
       value_type_ptr optr = ostore()->insert(elem);
       // set link to list object
-      // ...
-      object_list_.push_back(optr);
+      if (!set_reference(optr, o)) {
+        // throw object_exception();
+      } else {
+        object_list_.push_back(optr);
+      }
     }
   }
 
@@ -571,8 +579,16 @@ protected:
     }
   }
 
+  bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  {
+    object_linker ol(o, list_name_);
+    elem->read_from(&ol);
+    return ol.success();
+  }
+
 private:
   list_type_t object_list_;
+  std::string list_name_;
 };
 
 template < class T >
@@ -585,7 +601,9 @@ public:
   typedef typename list_type_t::iterator iterator;
   typedef typename list_type_t::const_iterator const_iterator;
   
-  object_ref_list() {}
+  object_ref_list(const std::string &ref_list_name)
+    : list_name_(ref_list_name)
+  {}
   virtual ~object_ref_list() {}
   
 	virtual void read_from(object_atomizer *) {}
@@ -624,8 +642,11 @@ public:
       //throw object_exception();
     } else {
       // set link to list object
-      // ...
-      object_list_.push_front(elem);
+      if (!set_reference(elem, o)) {
+        //throw object_exception();
+      } else {
+        object_list_.push_front(elem);
+      }
     }
   }
 
@@ -635,28 +656,25 @@ public:
       //throw object_exception();
     } else {
       // set link to list object
-      // ...
-      object_list_.push_back(elem);
+      if (!set_reference(elem, o)) {
+        //throw object_exception();
+      } else {
+        object_list_.push_back(elem);
+      }
     }
   }
 
   iterator erase(iterator i)
   {
-    if (!ostore()) {
-      // if list is not in ostore
-      // throw exception
-      //throw object_exception();
-      return i;
-    }
-    // update predeccessor and successor
-    value_type_ref optr = *i;
-    if (!ostore()->remove(optr)) {
-      // throw exception
-      return i;
-    } else {
-      // object was successfully deleted
-      return object_list_.erase(i);
-    }
+    /***************
+     * 
+     * object references can't be
+     * deleted from object store
+     * only delete them from lists
+     * internal object refenence list
+     * 
+     ***************/
+    return object_list_.erase(i);
   }
 
   iterator erase(iterator first, iterator last)
@@ -673,12 +691,20 @@ protected:
     typename list_type_t::iterator first = object_list_.begin();
     typename list_type_t::iterator last = object_list_.end();
     while (first != last) {
-      nf((*first++)->ptr());
+      nf((*first++).ptr());
     }
+  }
+  
+  bool set_reference(const value_type_ref &elem, const base_object_ptr &o)
+  {
+    object_linker ol(o, list_name_);
+    elem->read_from(&ol);
+    return ol.success();
   }
 
 private:
   list_type_t object_list_;
+  std::string list_name_;
 };
 
 template < class T >

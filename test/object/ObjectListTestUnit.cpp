@@ -1,15 +1,14 @@
 #include "ObjectListTestUnit.hpp"
 
 #include "object/object_list.hpp"
+#include "object/object_view.hpp"
 
 #include <fstream>
 
 using namespace oos;
 using namespace std;
 
-class ItemPtrList;
-class ItemRefList;
-
+template < class L >
 class Item : public object
 {
 public:
@@ -21,11 +20,13 @@ public:
   {
     object::read_from(reader);
     reader->read_string("name", name_);
+    reader->read_object("itemlist", list_);
   }
 	void write_to(object_atomizer *writer)
   {
     object::write_to(writer);
     writer->write_string("name", name_);
+    writer->write_object("itemlist", list_);
   }
   
   std::string name() const { return name_; }
@@ -35,8 +36,8 @@ public:
     name_ = n;
   }
 
-  object_ref<ItemPtrList> itemlist() const { return list_; }
-  void itemlist(const object_ref<ItemPtrList> &l)
+  object_ref<L> itemlist() const { return list_; }
+  void itemlist(const object_ref<L> &l)
   {
     mark_modified();
     list_ = l;
@@ -44,18 +45,23 @@ public:
 
 private:
   std::string name_;
-  object_ref<ItemPtrList> list_;
+  object_ref<L> list_;
 };
 
 class ItemPtrList : public object
 {
 public:
-  typedef object_ptr_list<Item> item_list_t;
-  typedef item_list_t::iterator iterator;
-  typedef item_list_t::const_iterator const_iterator;
+  typedef object_ptr_list<Item<ItemPtrList> > item_list_t;
+  typedef Item<ItemPtrList> value_type;
+  typedef ItemPtrList self;
+  typedef object_ref<self> self_ref;
+  typedef typename item_list_t::iterator iterator;
+  typedef typename item_list_t::const_iterator const_iterator;
 
 public:
-  ItemPtrList() {}
+  ItemPtrList()
+    : item_list_("itemlist")
+  {}
   virtual ~ItemPtrList() {}
 
 	void read_from(object_atomizer *reader)
@@ -69,8 +75,58 @@ public:
     writer->write_object_list("item_list", item_list_);
   }
   
-  void push_front(Item *i) { item_list_.push_front(i, this); }
-  void push_back(Item *i) { item_list_.push_back(i, this); }
+  void push_front(value_type *i) { item_list_.push_front(i, self_ref(this)); }
+  void push_back(value_type *i) { item_list_.push_back(i, self_ref(this)); }
+
+  iterator begin() { return item_list_.begin(); }
+  const_iterator begin() const { return item_list_.begin(); }
+
+  iterator end() { return item_list_.end(); }
+  const_iterator end() const { return item_list_.end(); }
+
+  bool empty() const { return item_list_.empty(); }
+  void clear() { item_list_.clear(); }
+
+private:
+  item_list_t item_list_;
+};
+
+class ItemRefList : public object
+{
+public:
+  typedef object_ref_list<Item<ItemRefList> > item_list_t;
+  typedef item_list_t::value_type value_type;
+  typedef item_list_t::value_type_ref value_type_ref;
+  typedef ItemRefList self;
+  typedef object_ref<self> self_ref;
+  typedef typename item_list_t::iterator iterator;
+  typedef typename item_list_t::const_iterator const_iterator;
+
+public:
+  ItemRefList()
+    : item_list_("itemlist")
+  {}
+  virtual ~ItemRefList() {}
+
+	void read_from(object_atomizer *reader)
+  {
+    object::read_from(reader);
+    reader->read_object_list("item_list", item_list_);
+  }
+	void write_to(object_atomizer *writer)
+  {
+    object::write_to(writer);
+    writer->write_object_list("item_list", item_list_);
+  }
+  
+  void push_front(const value_type_ref &i)
+  {
+    item_list_.push_front(i, self_ref(this));
+  }
+  void push_back(const value_type_ref &i)
+  {
+    item_list_.push_back(i, self_ref(this));
+  }
 
   iterator begin() { return item_list_.begin(); }
   const_iterator begin() const { return item_list_.begin(); }
@@ -126,7 +182,10 @@ ObjectListTestUnit::~ObjectListTestUnit()
 void
 ObjectListTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
+  ostore_.insert_prototype(new object_producer<Item<ItemRefList> >, "ITEM_REF");
+  ostore_.insert_prototype(new object_producer<Item<ItemPtrList> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<ItemRefList>, "ITEM_REF_LIST");
+  ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
   ostore_.insert_prototype(new object_producer<LinkedItem>, "LINKED_ITEM");
 }
 
@@ -139,11 +198,70 @@ ObjectListTestUnit::finalize()
 void
 ObjectListTestUnit::test_ref_list()
 {
+  typedef object_ptr<ItemRefList> itemlist_ptr;
+  typedef object_ptr<ItemRefList::value_type> item_ptr;
+  cout << "inserting 20 items\n";
+  for (int i = 0; i < 20; ++i) {
+    stringstream name;
+    name << "Item " << i+1;
+    item_ptr item = ostore_.insert(new ItemRefList::value_type(name.str()));
+    cout << "inserted item [" << item->name() << "]\n";
+  }
+  cout << "inserting item reference list\n";
+  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
+  cout << "item list [" << itemlist->id() << "]\n";
+  cout << "add every second item as reference to item list\n";
+  
+  typedef object_view<ItemRefList::value_type> item_view_t;
+  item_view_t item_view(ostore_);
+  item_view_t::iterator first = item_view.begin();
+  item_view_t::iterator last = item_view.end();
+  while (first != last) {
+    item_ptr i = (*first++);
+    if (i->id() % 2) {
+      cout << "adding item [" << i->name() << "(id: " << i->id() << ")]\n";
+      itemlist->push_back(i);
+    }
+  }
+  cout << "dumping items of item list\n";
+  
+  for (ItemRefList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+    cout << "item [" << i->get()->name() << "]\n";
+  }
+  
 }
 
 void
 ObjectListTestUnit::test_ptr_list()
 {
+  typedef object_ptr<ItemPtrList> itemlist_ptr;
+  typedef object_ptr<ItemPtrList::value_type> item_ptr;
+
+  cout << "inserting item pointer list\n";
+  itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+  cout << "item list [" << itemlist->id() << "]\n";
+
+  cout << "inserting 20 items\n";
+  for (int i = 0; i < 20; ++i) {
+    stringstream name;
+    name << "Item " << i+1;
+    itemlist->push_back(new ItemPtrList::value_type(name.str()));
+  }
+
+  cout << "items of list\n";
+  for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+    cout << "item [" << i->get()->name() << "]\n";
+  }
+  
+  cout << "items of view\n";
+  typedef object_view<ItemPtrList::value_type> item_view_t;
+  item_view_t item_view(ostore_);
+  item_view_t::iterator first = item_view.begin();
+  item_view_t::iterator last = item_view.end();
+  while (first != last) {
+    item_ptr i = (*first++);
+    cout << "item [" << i->name() << "(id: " << i->id() << ")]\n";
+  }
 }
 
 void
