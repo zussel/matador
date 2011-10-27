@@ -523,7 +523,7 @@ protected:
 
   bool set_reference(const value_type_wrapper &elem, const base_object_ptr &o)
   {
-    object_linker ol(o, list_name_);
+    object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
     return ol.success();
   }
@@ -811,7 +811,7 @@ protected:
 
   bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
   {
-    object_linker ol(o, list_name_);
+    object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
     return ol.success();
   }
