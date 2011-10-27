@@ -73,17 +73,6 @@ public:
 };
 
 template < class T >
-struct list_node_proxy
-{
-  list_node_proxy(T *nd, T *n, T *p)
-    : node(nd), next(n), prev(p)
-  {}
-  T *node;
-  T *next;
-  T *prev;
-};
-
-template < class T >
 class object_list_node : public object_list_base_node
 {
 public:
@@ -467,20 +456,20 @@ private:
   object *parent_;
 };
 
-template < class T >
-class object_ptr_list : public object_list_base
+template < typename T, class W >
+class object_list : public object_list_base
 {
 public:
   typedef T value_type;
-  typedef object_ptr<value_type> value_type_ptr;
-  typedef std::list<value_type_ptr> list_type_t;
-  typedef typename list_type_t::iterator iterator;
-  typedef typename list_type_t::const_iterator const_iterator;
-  
-  object_ptr_list(const std::string &list_ref_name)
+  typedef W value_type_wrapper;
+  typedef std::list<value_type_wrapper> list_type;
+  typedef typename list_type::iterator iterator;
+  typedef typename list_type::const_iterator const_iterator;
+
+  object_list(const std::string &list_ref_name)
     : list_name_(list_ref_name)
   {}
-  virtual ~object_ptr_list() {}
+  virtual ~object_list() {}
   
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
@@ -512,54 +501,7 @@ public:
     return object_list_.size();
   }
 
-  virtual void push_front(T *elem, const base_object_ptr &o)
-  {
-    if (!ostore()) {
-      //throw object_exception();
-    } else {
-      value_type_ptr optr = ostore()->insert(elem);
-      // set link to list object
-      if (!set_reference(optr, o)) {
-        // throw object_exception();
-      } else {
-        object_list_.push_front(optr);
-      }
-    }
-  }
-
-  virtual void push_back(T* elem, const base_object_ptr &o)
-  {
-    if (!ostore()) {
-      //throw object_exception();
-    } else {
-      value_type_ptr optr = ostore()->insert(elem);
-      // set link to list object
-      if (!set_reference(optr, o)) {
-        // throw object_exception();
-      } else {
-        object_list_.push_back(optr);
-      }
-    }
-  }
-
-  iterator erase(iterator i)
-  {
-    if (!ostore()) {
-      // if list is not in ostore
-      // throw exception
-      //throw object_exception();
-      return i;
-    }
-    // update predeccessor and successor
-    value_type_ptr optr = *i;
-    if (!ostore()->remove(optr)) {
-      // throw exception
-      return i;
-    } else {
-      // object was successfully deleted
-      return object_list_.erase(i);
-    }
-  }
+  virtual iterator erase(iterator i) = 0;
 
   iterator erase(iterator first, iterator last)
   {
@@ -572,94 +514,135 @@ public:
 protected:
   virtual void for_each(const node_func &nf)
   {
-    typename list_type_t::iterator first = object_list_.begin();
-    typename list_type_t::iterator last = object_list_.end();
+    iterator first = object_list_.begin();
+    iterator last = object_list_.end();
     while (first != last) {
       nf((*first++).ptr());
     }
   }
 
-  bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  bool set_reference(const value_type_wrapper &elem, const base_object_ptr &o)
   {
     object_linker ol(o, list_name_);
     elem->read_from(&ol);
     return ol.success();
   }
 
+  std::string list_name() const { return list_name_; }
+  void push_front(const value_type_wrapper &x) { object_list_.push_front(x); }
+  void push_back(const value_type_wrapper &x) { object_list_.push_back(x); }
+  iterator erase_i(iterator i) { return object_list_.erase(i); }
+  
+
 private:
-  list_type_t object_list_;
+  list_type object_list_;
   std::string list_name_;
 };
 
-template < class T >
-class object_ref_list : public object_list_base
+template < typename T >
+class object_ptr_list : public object_list<T, object_ptr<T> >
 {
 public:
-  typedef T value_type;
-  typedef object_ref<value_type> value_type_ref;
-  typedef std::list<value_type_ref> list_type_t;
-  typedef typename list_type_t::iterator iterator;
-  typedef typename list_type_t::const_iterator const_iterator;
-  
-  object_ref_list(const std::string &ref_list_name)
-    : list_name_(ref_list_name)
+  typedef object_list<T, object_ptr<T> > base_list;
+  typedef typename base_list::value_type value_type;
+  typedef typename base_list::value_type_wrapper value_type_ptr;
+  typedef typename base_list::iterator iterator;
+  typedef typename base_list::const_iterator const_iterator;
+
+  object_ptr_list(const std::string &list_ref_name)
+    : base_list(list_ref_name)
+  {}
+  virtual ~object_ptr_list() {}
+
+  virtual void push_front(T *elem, const base_object_ptr &o)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ptr optr = base_list::ostore()->insert(elem);
+      // set link to list object
+      if (!set_reference(optr, o)) {
+        // throw object_exception();
+      } else {
+        base_list::push_front(optr);
+      }
+    }
+  }
+
+  virtual void push_back(T* elem, const base_object_ptr &o)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      value_type_ptr optr = base_list::ostore()->insert(elem);
+      // set link to list object
+      if (!set_reference(optr, o)) {
+        // throw object_exception();
+      } else {
+        base_list::push_back(optr);
+      }
+    }
+  }
+
+  virtual iterator erase(iterator i)
+  {
+    if (!base_list::ostore()) {
+      // if list is not in ostore
+      // throw exception
+      //throw object_exception();
+      return i;
+    }
+    // update predeccessor and successor
+    value_type_ptr optr = *i;
+    if (!base_list::ostore()->remove(optr)) {
+      // throw exception
+      return i;
+    } else {
+      // object was successfully deleted
+      return base_list::erase_i(i);
+    }
+  }
+};
+
+template < typename T >
+class object_ref_list : public object_list<T, object_ref<T> >
+{
+public:
+  typedef object_list<T, object_ref<T> > base_list;
+  typedef typename base_list::value_type value_type;
+  typedef typename base_list::value_type_wrapper value_type_ref;
+  typedef typename base_list::iterator iterator;
+  typedef typename base_list::const_iterator const_iterator;
+
+  object_ref_list(const std::string &list_ref_name)
+    : base_list(list_ref_name)
   {}
   virtual ~object_ref_list() {}
-  
-	virtual void read_from(object_atomizer *) {}
-	virtual void write_to(object_atomizer *) const {}
-
-  iterator begin() {
-    return object_list_.begin();
-  }
-  const_iterator begin() const {
-    return object_list_.begin();
-  }
-  iterator end() {
-    return object_list_.end();
-  }
-  const_iterator end() const {
-    return object_list_.end();
-  }
-
-  virtual bool empty() const {
-    return object_list_.empty();
-  }
-
-  virtual void clear()
-  {
-    erase(begin(), end());
-  }
-
-  virtual size_t size() const
-  {
-    return object_list_.size();
-  }
 
   virtual void push_front(const value_type_ref &elem, const base_object_ptr &o)
   {
-    if (!ostore()) {
+    if (!base_list::ostore()) {
       //throw object_exception();
     } else {
       // set link to list object
       if (!set_reference(elem, o)) {
         //throw object_exception();
       } else {
-        object_list_.push_front(elem);
+        base_list::push_front(elem);
       }
     }
   }
 
   virtual void push_back(const value_type_ref &elem, const base_object_ptr &o)
   {
-    if (!ostore()) {
+    if (!base_list::ostore()) {
       //throw object_exception();
     } else {
       // set link to list object
       if (!set_reference(elem, o)) {
         //throw object_exception();
       } else {
-        object_list_.push_back(elem);
+        base_list::push_back(elem);
       }
     }
   }
@@ -674,37 +657,8 @@ public:
      * internal object refenence list
      * 
      ***************/
-    return object_list_.erase(i);
+    return base_list::erase_i(i);
   }
-
-  iterator erase(iterator first, iterator last)
-  {
-    while (first != last) {
-      first = erase(first);
-    }
-    return first;
-  }
-
-protected:
-  virtual void for_each(const node_func &nf)
-  {
-    typename list_type_t::iterator first = object_list_.begin();
-    typename list_type_t::iterator last = object_list_.end();
-    while (first != last) {
-      nf((*first++).ptr());
-    }
-  }
-  
-  bool set_reference(const value_type_ref &elem, const base_object_ptr &o)
-  {
-    object_linker ol(o, list_name_);
-    elem->read_from(&ol);
-    return ol.success();
-  }
-
-private:
-  list_type_t object_list_;
-  std::string list_name_;
 };
 
 template < class T >
@@ -878,27 +832,15 @@ class linked_object_ptr_list : public linked_object_list<object_ptr_list_node<T>
 {
 public:
   typedef object_ptr_list_node<T> value_type;
+  typedef linked_object_list<value_type> base_list;
 
   void push_front(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
-    object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
-    push_front(node, ref_list);
+    base_list::push_front(new value_type(optr), ref_list);
   }
   void push_back(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
-    object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
-    push_front(node, ref_list);
-  }
-
-private:
-  virtual void push_front(value_type *elem, const base_object_ptr &ref_list)
-  {
-    linked_object_list<value_type>::push_front(elem, ref_list);
-  }
-
-  virtual void push_back(value_type *elem, const base_object_ptr &ref_list)
-  {
-    linked_object_list<value_type>::push_back(elem, ref_list);
+    base_list::push_front(new value_type(optr), ref_list);
   }
 };
 
@@ -907,6 +849,7 @@ class linked_object_ref_list : public linked_object_list<object_ref_list_node<T>
 {
 public:
   typedef object_ref_list_node<T> value_type;
+  typedef linked_object_list<value_type> base_list;
 
   linked_object_ref_list(const std::string &list_ref_name)
     : linked_object_list<value_type>(list_ref_name)
@@ -915,24 +858,11 @@ public:
 
   void push_front(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
-    object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
-    push_front(node, ref_list);
+    base_list::push_front(new value_type(oref), ref_list);
   }
   void push_back(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
-    object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
-    push_back(node, ref_list);
-  }
-
-private:
-  virtual void push_front(value_type *elem, const base_object_ptr &ref_list)
-  {
-    linked_object_list<value_type>::push_front(elem, ref_list);
-  }
-
-  virtual void push_back(value_type *elem, const base_object_ptr &ref_list)
-  {
-    linked_object_list<value_type>::push_back(elem, ref_list);
+    base_list::push_back(new value_type(oref), ref_list);
   }
 };
 
