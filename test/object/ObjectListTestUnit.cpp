@@ -164,10 +164,18 @@ public:
   }
   
   std::string name() const { return name_; }
-  void name(const std::string &n) { name_ = n; }
+  void name(const std::string &n)
+  {
+    mark_modified();
+    name_ = n;
+  }
 
   object_ref<LinkedItemList> item_list() const { return item_list_; }
-  void item_list(const object_ref<LinkedItemList> &il) { item_list_ = il; }
+  void item_list(const object_ref<LinkedItemList> &il)
+  {
+    mark_modified();
+    item_list_ = il;
+  }
 
 private:
   std::string name_;
