@@ -713,10 +713,12 @@ class linked_object_list : public object_list_base
 public:
 //  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
-	typedef T t_list_node;
-	typedef object_ptr<t_list_node> object_node_ptr;
+	typedef T value_type;
+	typedef object_ptr<value_type> value_type_ptr;
 
-  linked_object_list() {}
+  linked_object_list(const std::string &list_ref_name)
+    : list_name_(list_ref_name)
+  {}
 	virtual ~linked_object_list() {}
 
   typedef object_list_iterator<T> iterator;
@@ -750,35 +752,41 @@ public:
     return std::distance(begin(), end());
   }
 
-  //void push_front(object_ptr<T> elem)
-  virtual void push_front(T *elem)
+  virtual void push_front(T *elem, const base_object_ptr &ref_list)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      object_ptr<T> optr = ostore()->insert(elem);
-      optr->next_ = first_->next_;
-      first_->next_ = optr;
-      optr->prev_ = first_;
-      first_->next_ = optr;
-      optr->first_ = first_;
-      optr->last_ = last_;
+      value_type_ptr optr = ostore()->insert(elem);
+      if (!set_reference(optr, ref_list)) {
+        // throw object_exception()
+      } else {
+        optr->next_ = first_->next_;
+        first_->next_ = optr;
+        optr->prev_ = first_;
+        first_->next_ = optr;
+        optr->first_ = first_;
+        optr->last_ = last_;
+      }
     }
   }
 
-//  void push_back(object_ptr<T> elem)
-  virtual void push_back(T* elem)
+  virtual void push_back(T* elem, const base_object_ptr &ref_list)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      object_ptr<T> optr = ostore()->insert(elem);
-      optr->prev_ = last_->prev_;
-      last_->prev_->next_ = optr;
-      optr->next_ = last_;
-      last_->prev_ = optr;
-      optr->first_ = first_;
-      optr->last_ = last_;
+      value_type_ptr optr = ostore()->insert(elem);
+      if (!set_reference(optr, ref_list)) {
+        // throw object_exception()
+      } else {
+        optr->prev_ = last_->prev_;
+        last_->prev_->next_ = optr;
+        optr->next_ = last_;
+        last_->prev_ = optr;
+        optr->first_ = first_;
+        optr->last_ = last_;
+      }
     }
   }
 
@@ -791,7 +799,7 @@ public:
       return i;
     }
     // update predeccessor and successor
-    object_node_ptr node = (i++).optr();
+    value_type_ptr node = (i++).optr();
     node->prev()->next(node->next());
     node->next()->prev(node->prev());
     // delete node
@@ -820,8 +828,8 @@ protected:
     object_list_base::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new T);
-    last_ = ostore()->insert(new T);
+    first_ = ostore()->insert(new value_type);
+    last_ = ostore()->insert(new value_type);
     // link object elements
     first_->first_ = first_;
     first_->last_ = last_;
@@ -840,11 +848,18 @@ protected:
 
   virtual void for_each(const node_func &nf)
   {
-    object_node_ptr node = first_;
+    value_type_ptr node = first_;
     while(node.get()) {
       nf(node.get());
       node = node->next();
     }
+  }
+
+  bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  {
+    object_linker ol(o, list_name_);
+    elem->read_from(&ol);
+    return ol.success();
   }
 
 private:
@@ -852,8 +867,10 @@ private:
   friend class object_list_iterator<T>;
   friend class const_object_list_iterator<T>;
 
-  object_node_ptr first_;
-  object_node_ptr last_;
+  std::string list_name_;
+
+  value_type_ptr first_;
+  value_type_ptr last_;
 };
 
 template < class T >
@@ -862,26 +879,26 @@ class linked_object_ptr_list : public linked_object_list<object_ptr_list_node<T>
 public:
   typedef object_ptr_list_node<T> value_type;
 
-  void push_front(const object_ptr<T> &optr)
+  void push_front(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
     object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
-    push_front(node);
+    push_front(node, ref_list);
   }
-  void push_back(const object_ptr<T> &optr)
+  void push_back(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
     object_ptr_list_node<T> *node = new object_ptr_list_node<T>(optr);
-    push_front(node);
+    push_front(node, ref_list);
   }
 
 private:
-  virtual void push_front(value_type *elem)
+  virtual void push_front(value_type *elem, const base_object_ptr &ref_list)
   {
-    linked_object_list<value_type>::push_front(elem);
+    linked_object_list<value_type>::push_front(elem, ref_list);
   }
 
-  virtual void push_back(value_type *elem)
+  virtual void push_back(value_type *elem, const base_object_ptr &ref_list)
   {
-    linked_object_list<value_type>::push_back(elem);
+    linked_object_list<value_type>::push_back(elem, ref_list);
   }
 };
 
@@ -891,26 +908,31 @@ class linked_object_ref_list : public linked_object_list<object_ref_list_node<T>
 public:
   typedef object_ref_list_node<T> value_type;
 
-  void push_front(const object_ref<T> &oref)
+  linked_object_ref_list(const std::string &list_ref_name)
+    : linked_object_list<value_type>(list_ref_name)
+  {}
+  virtual ~linked_object_ref_list() {}
+
+  void push_front(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
     object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
-    push_front(node);
+    push_front(node, ref_list);
   }
-  void push_back(const object_ref<T> &oref)
+  void push_back(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
     object_ref_list_node<T> *node = new object_ref_list_node<T>(oref);
-    push_back(node);
+    push_back(node, ref_list);
   }
 
 private:
-  virtual void push_front(value_type *elem)
+  virtual void push_front(value_type *elem, const base_object_ptr &ref_list)
   {
-    linked_object_list<value_type>::push_front(elem);
+    linked_object_list<value_type>::push_front(elem, ref_list);
   }
 
-  virtual void push_back(value_type *elem)
+  virtual void push_back(value_type *elem, const base_object_ptr &ref_list)
   {
-    linked_object_list<value_type>::push_back(elem);
+    linked_object_list<value_type>::push_back(elem, ref_list);
   }
 };
 
