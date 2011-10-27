@@ -6,15 +6,18 @@ using std::string;
 using namespace oos;
 
 Album::Album()
+  : track_list_("album")
 {}
 
 Album::Album(const std::string &n)
   : name_(n)
+  , track_list_("album")
 {}
 
 Album::Album(const std::string &n, const object_ptr<Artist> &a)
   : name_(n)
   , artist_(a)
+  , track_list_("album")
 {}
 
 Album::~Album()
@@ -71,7 +74,7 @@ void Album::add(Track *track, bool overide_artist)
 void Album::add(object_ref<Track> track, bool override_artist)
 {
 //  TrackList::t_list_node *node = new TrackList::t_list_node(track);
-  track_list_.push_back(track);
+  track_list_.push_back(track, self_ref(this));
   if (override_artist) {
     track->artist(artist_);
   }

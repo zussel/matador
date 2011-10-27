@@ -141,6 +141,8 @@ private:
   item_list_t item_list_;
 };
 
+class LinkedItemList;
+
 class LinkedItem : public object_list_node<LinkedItem>
 {
 public:
@@ -152,18 +154,79 @@ public:
   {
     object_list_node::read_from(reader);
     reader->read_string("name", name_);
+    reader->read_object("itemlist", item_list_);
   }
 	void write_to(object_atomizer *writer)
   {
     object_list_node::write_to(writer);
     writer->write_string("name", name_);
+    writer->write_object("itemlist", item_list_);
   }
   
   std::string name() const { return name_; }
   void name(const std::string &n) { name_ = n; }
 
+  object_ref<LinkedItemList> item_list() const { return item_list_; }
+  void item_list(const object_ref<LinkedItemList> &il) { item_list_ = il; }
+
 private:
   std::string name_;
+  object_ref<LinkedItemList> item_list_;
+};
+
+class LinkedItemList : public object
+{
+  typedef linked_object_list<LinkedItem> item_list_t;
+  typedef item_list_t::value_type value_type;
+  typedef object_ref<value_type> value_type_ref;
+  typedef LinkedItemList self;
+  typedef object_ref<self> self_ref;
+
+public:
+  typedef typename item_list_t::iterator iterator;
+  typedef typename item_list_t::const_iterator const_iterator;
+
+public:
+  LinkedItemList()
+    : item_list_("itemlist")
+  {}
+  virtual ~LinkedItemList() {}
+
+	void read_from(object_atomizer *reader)
+  {
+    object::read_from(reader);
+    reader->read_object_list("item_list", item_list_);
+  }
+	void write_to(object_atomizer *writer)
+  {
+    object::write_to(writer);
+    writer->write_object_list("item_list", item_list_);
+  }
+  
+  void push_front(value_type *i)
+  {
+    item_list_.push_front(i, self_ref(this));
+  }
+  void push_back(value_type *i)
+  {
+    item_list_.push_back(i, self_ref(this));
+  }
+
+  iterator begin() { return item_list_.begin(); }
+  const_iterator begin() const { return item_list_.begin(); }
+
+  iterator end() { return item_list_.end(); }
+  const_iterator end() const { return item_list_.end(); }
+
+  bool empty() const { return item_list_.empty(); }
+  void clear() { item_list_.clear(); }
+
+  iterator erase(iterator i)
+  {
+    return item_list_.erase(i);
+  }
+private:
+  item_list_t item_list_;
 };
 
 ObjectListTestUnit::ObjectListTestUnit()
@@ -187,6 +250,7 @@ ObjectListTestUnit::initialize()
   ostore_.insert_prototype(new object_producer<ItemRefList>, "ITEM_REF_LIST");
   ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
   ostore_.insert_prototype(new object_producer<LinkedItem>, "LINKED_ITEM");
+  ostore_.insert_prototype(new object_producer<LinkedItemList>, "LINKED_ITEM_LIST");
 }
 
 void
@@ -267,17 +331,16 @@ ObjectListTestUnit::test_ptr_list()
 void
 ObjectListTestUnit::test_linked_list()
 {
-  typedef linked_object_list<LinkedItem> LinkedItemList;
-
+  typedef object_ptr<LinkedItemList> itemlist_ptr;
+  cout << "inserting linked item list\n";
+  
+  itemlist_ptr itemlist = ostore_.insert(new LinkedItemList);
+  cout << "inserted linked item list (id: " << itemlist->id() << ")\n";
   /*
   out.open("itemlist0.dot");
   ostore_.dump_prototypes(out);
   out.close();
   */
-  LinkedItemList linked_list;
-  ostore_.insert(linked_list);
-  cout << "insert linked list\n";
-
   ostore_.dump_objects(std::cout);
   /*
   out.open("itemlist1.dot");
@@ -286,10 +349,10 @@ ObjectListTestUnit::test_linked_list()
   */
 
   cout << "add item to linked list\n";
-  linked_list.push_back(new LinkedItem("Schrank"));
-  linked_list.push_back(new LinkedItem("Tisch"));
-  linked_list.push_back(new LinkedItem("Stuhl"));
-  linked_list.push_back(new LinkedItem("Bett"));
+  itemlist->push_back(new LinkedItem("Schrank"));
+  itemlist->push_back(new LinkedItem("Tisch"));
+  itemlist->push_back(new LinkedItem("Stuhl"));
+  itemlist->push_back(new LinkedItem("Bett"));
   
   ostore_.dump_objects(std::cout);
   /*
@@ -298,7 +361,7 @@ ObjectListTestUnit::test_linked_list()
   out.close();
   */
 
-  linked_list.push_front(new LinkedItem("Teppich"));
+  itemlist->push_front(new LinkedItem("Teppich"));
 
   ostore_.dump_objects(std::cout);
   /*
@@ -309,8 +372,8 @@ ObjectListTestUnit::test_linked_list()
 
   cout << "dump linked list\n";
 
-  LinkedItemList::const_iterator first = linked_list.begin();
-  LinkedItemList::const_iterator last = linked_list.end();
+  LinkedItemList::const_iterator first = itemlist->begin();
+  LinkedItemList::const_iterator last = itemlist->end();
 
   while (first != last) {
     cout << "item name: " << first->name() << "\n";
@@ -319,13 +382,13 @@ ObjectListTestUnit::test_linked_list()
   cout << "remove item from linked list\n";
 
   // remove an item
-  LinkedItemList::iterator i = linked_list.begin();
+  LinkedItemList::iterator i = itemlist->begin();
   cout << "item to remove: " << i->name() << "\n";
-  i = linked_list.erase(i);
+  i = itemlist->erase(i);
   cout << "next item name: " << i->name() << "\n";
 
   cout << "dump linked list\n";
-  first = linked_list.begin();
+  first = itemlist->begin();
   while (first != last) {
     cout << "item name: " << first->name() << "\n";
     ++first;
@@ -333,8 +396,8 @@ ObjectListTestUnit::test_linked_list()
   
   // clear list
   std::cout << "clear list\n";
-  linked_list.clear();
-  first = linked_list.begin();
+  itemlist->clear();
+  first = itemlist->begin();
   while (first != last) {
     cout << "item name: " << first->name() << "\n";
     ++first;
@@ -342,7 +405,7 @@ ObjectListTestUnit::test_linked_list()
   
   ostore_.dump_objects(std::cout);
   std::cout << "remove list from object store ... ";
-  if (ostore_.remove(linked_list)) {
+  if (ostore_.remove(itemlist)) {
     std::cout << "succeeded!\n";
   } else {
     std::cout << "failed!\n";

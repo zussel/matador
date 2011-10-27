@@ -16,6 +16,8 @@ namespace oos {
 class Album : public oos::object
 {
 public:
+  typedef oos::object_ref<Album> self_ref;
+
   Album();
   Album(const std::string &n);
   Album(const std::string &n, const oos::object_ptr<Artist> &a);
@@ -31,8 +33,7 @@ public:
   oos::object_ref<Artist> artist() const;
 
 	typedef oos::linked_object_ref_list<Track> TrackList;
-//	typedef oos::object_list<oos::object_ref_list_node<Track> > TrackList;
-
+  
   void add(Track *track, bool overide_artist = true);
   void add(oos::object_ref<Track> track, bool overide_artist = true);
   oos::object_ref<Track> find(const std::string &name) const;
