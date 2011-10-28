@@ -166,11 +166,12 @@ public:
     return NULL;
 	}
 	T* get() const {
-		if (proxy_) {
-      return dynamic_cast<T*>(lookup_object());
- 		}
+    if (proxy_) {
+      T* t = dynamic_cast<T*>(lookup_object());
+      return t;
+    }
     return NULL;
-	}
+  }
 };
 
 template < class T >

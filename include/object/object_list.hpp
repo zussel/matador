@@ -167,19 +167,25 @@ class object_ptr_list_node : public object_list_node<object_ptr_list_node<T> >
 public:
   typedef T value_type;
 
-  object_ptr_list_node() {}
-  object_ptr_list_node(object_ptr<T> *optr) : object_(optr) {}
+  object_ptr_list_node() : name_("object") {}
+  object_ptr_list_node(const std::string &name)
+    : name_(name)
+  {}
+  object_ptr_list_node(object_ptr<T> optr, const std::string &name)
+    : object_(optr)
+    , name_(name)
+  {}
   virtual ~object_ptr_list_node() {}
 
 	void read_from(object_atomizer *reader)
   {
     object_list_node<object_ptr_list_node<T> >::read_from(reader);
-    reader->read_object("object", object_);
+    reader->read_object(name_.c_str(), object_);
   }
 	void write_to(object_atomizer *writer)
   {
     object_list_node<object_ptr_list_node<T> >::write_to(writer);
-    writer->write_string("object", object_);
+    writer->write_string(name_.c_str(), object_);
   }
 
   object_ptr<T> optr() const {
@@ -188,6 +194,7 @@ public:
 
 private:
   object_ptr<T> object_;
+  std::string name_;
 };
 
 template < class T >
@@ -196,19 +203,25 @@ class object_ref_list_node : public object_list_node<object_ref_list_node<T> >
 public:
   typedef T value_type;
 
-  object_ref_list_node() {}
-  object_ref_list_node(object_ref<T> oref) : object_(oref) {}
+  object_ref_list_node() : name_("object") {}
+  object_ref_list_node(const std::string &name)
+    : name_(name)
+  {}
+  object_ref_list_node(object_ref<T> oref, const std::string &name)
+    : object_(oref)
+    , name_(name)
+  {}
   virtual ~object_ref_list_node() {}
 
 	void read_from(object_atomizer *reader)
   {
     object_list_node<object_ref_list_node<T> >::read_from(reader);
-    reader->read_object("object", object_);
+    reader->read_object(name_.c_str(), object_);
   }
 	void write_to(object_atomizer *writer)
   {
     object_list_node<object_ref_list_node<T> >::write_to(writer);
-    writer->write_string("object", object_);
+    writer->write_string(name_.c_str(), object_);
   }
 
   object_ref<T> oref() const {
@@ -217,6 +230,7 @@ public:
 
 private:
   object_ref<T> object_;
+  std::string name_;
 };
 
 template < class T >
@@ -383,7 +397,8 @@ public:
   }
 
   pointer operator->() const {
-    return node_.get();
+    pointer p = node_.get();
+    return p;
   }
 
   value_type operator*() const {
@@ -782,8 +797,8 @@ protected:
     object_list_base::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new value_type);
-    last_ = ostore()->insert(new value_type);
+    first_ = ostore()->insert(new value_type(list_name_));
+    last_ = ostore()->insert(new value_type(list_name_));
     // link object elements
     first_->first_ = first_;
     first_->last_ = last_;
@@ -809,11 +824,16 @@ protected:
     }
   }
 
-  bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
     return ol.success();
+  }
+  
+  std::string list_name() const
+  {
+    return list_name_;
   }
 
 private:
@@ -832,15 +852,25 @@ class linked_object_ptr_list : public linked_object_list<object_ptr_list_node<T>
 {
 public:
   typedef object_ptr_list_node<T> value_type;
+  typedef object_ptr<value_type> value_type_ptr;
   typedef linked_object_list<value_type> base_list;
 
   void push_front(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
-    base_list::push_front(new value_type(optr), ref_list);
+    base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
   }
   void push_back(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
-    base_list::push_front(new value_type(optr), ref_list);
+    base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
+  }
+  
+protected:
+  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  {
+    object_ptr<T> optr = elem->optr();
+    object_linker ol(optr, o, base_list::list_name());
+    optr->read_from(&ol);
+    return ol.success();
   }
 };
 
@@ -849,6 +879,7 @@ class linked_object_ref_list : public linked_object_list<object_ref_list_node<T>
 {
 public:
   typedef object_ref_list_node<T> value_type;
+  typedef object_ptr<value_type> value_type_ptr;
   typedef linked_object_list<value_type> base_list;
 
   linked_object_ref_list(const std::string &list_ref_name)
@@ -858,11 +889,20 @@ public:
 
   void push_front(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
-    base_list::push_front(new value_type(oref), ref_list);
+    base_list::push_front(new value_type(oref, base_list::list_name()), ref_list);
   }
   void push_back(const object_ref<T> &oref, const base_object_ptr &ref_list)
   {
-    base_list::push_back(new value_type(oref), ref_list);
+    base_list::push_back(new value_type(oref, base_list::list_name()), ref_list);
+  }
+  
+protected:
+  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  {
+    object_ref<T> oref = elem->oref();
+    object_linker ol(oref, o, base_list::list_name());
+    oref->read_from(&ol);
+    return ol.success();
   }
 };
 

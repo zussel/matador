@@ -110,6 +110,11 @@ bool Album::empty() const
 	return track_list_.empty();
 }
 
+size_t Album::size() const
+{
+  return track_list_.size();
+}
+
 /*
 void Album::push_front(const ObjectPtr<Track> &track)
 {

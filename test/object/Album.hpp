@@ -48,6 +48,7 @@ public:
 	const_iterator end() const;
 	
   bool empty() const;
+  size_t size() const;
 
 /*
 	void push_front(const ObjectPtr<Track> &track);

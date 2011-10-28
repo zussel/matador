@@ -231,7 +231,7 @@ ComplexObjectStoreTestUnit::album()
   cout << "Show all tracks (excluding siblings):\n";
   while (first != last) {
     object_ptr<Track> optr = (*first++);
-    cout << "Track: " << optr->title() << "\n";
+    cout << "Track: " << optr->title() << "(id: " << optr->id() << ")\n";
   }
 
   Album::const_iterator afirst = album->begin();
@@ -239,12 +239,15 @@ ComplexObjectStoreTestUnit::album()
 
   typedef object_ref<Track> track_ref;
 
+  ostore_.dump_objects(cout);
+
+  cout << "Album has " << album->size() << " count of tracks\n";
   cout << "Show all tracks of album [" << album->name() << "]:\n";
   while (afirst != alast) {
     track_ref tref = (*afirst++)->oref();
     cout << "Track: " << tref->title() << " (Artist: " << tref->artist()->name() << ")\n";
   }
-  }
+}
 
 void
 ComplexObjectStoreTestUnit::serializer()
