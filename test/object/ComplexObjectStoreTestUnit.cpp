@@ -29,7 +29,6 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
 
 ComplexObjectStoreTestUnit::~ComplexObjectStoreTestUnit()
 {
-  ostore_.clear();
 }
 
 void

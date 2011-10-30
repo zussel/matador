@@ -33,5 +33,6 @@ std::string Artist::name() const
 
 void Artist::name(const std::string &n)
 {
+  mark_modified();
   name_ = n;
 }
