@@ -65,10 +65,12 @@ SET(UNIT_HEADER
 
 SET(DATABASE_SOURCES
   src/database/database.cpp
+  src/database/transaction.cpp
 )
 
 SET(DATABASE_HEADER
   include/database/database.hpp
+  include/database/transaction.hpp
 )
 
 ADD_LIBRARY(oos SHARED

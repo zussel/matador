@@ -407,7 +407,7 @@ void object_store::unregister_observer(object_observer *observer)
 {
   t_observer_list::iterator i = std::find(observer_list_.begin(), observer_list_.end(), observer);
   if (i != observer_list_.end()) {
-    delete *i;
+//    delete *i;
     observer_list_.erase(i);
   }
 }
