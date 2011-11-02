@@ -8,6 +8,21 @@ using namespace std;
 
 namespace oos {
 
+transaction_impl::~transaction_impl()
+{}
+
+void transaction_impl::visit(insert_action *a)
+{
+}
+
+void transaction_impl::visit(update_action *a)
+{
+}
+
+void transaction_impl::visit(delete_action *a)
+{
+}
+
 transaction::transaction_observer::transaction_observer(transaction &tr)
   : tr_(tr)
 {
@@ -66,6 +81,7 @@ transaction::transaction_observer::on_delete(object *o)
 transaction::transaction(database *db)
   : db_(db)
   , id_(0)
+  , impl_(db->create_transaction_impl())
 {}
 
 transaction::~transaction()

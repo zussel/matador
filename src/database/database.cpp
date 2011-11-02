@@ -1,16 +1,45 @@
 #include "database/database.hpp"
 #include "database/action.hpp"
+#include "database/transaction.hpp"
 
 #include "object/object_store.hpp"
 
 namespace oos {
 
-database::database(object_store &ostore, const std::string &dbstring)
-  : ostore_(ostore)
+database_impl::database_impl()
 {}
 
-database::~database()
+database_impl::~database_impl()
 {}
+
+void database_impl::visit(insert_action *a)
+{
+}
+
+void database_impl::visit(update_action *a)
+{
+}
+
+void database_impl::visit(delete_action *a)
+{
+}
+
+transaction_impl* database_impl::create_transaction_impl() const
+{
+  return new transaction_impl;
+}
+
+database::database(object_store &ostore, const std::string &/*dbstring*/)
+  : ostore_(ostore)
+{
+  impl_ = new database_impl;
+}
+
+
+database::~database()
+{
+  delete impl_;
+}
 
 void database::open()
 {
@@ -20,7 +49,7 @@ void database::close()
 {
 }
 
-query_result* database::query(const std::string &q)
+query_result* database::query(const std::string &)
 {
   return NULL;
 }
@@ -54,6 +83,11 @@ void
 database::execute_action(action *a)
 {
   a->accept(impl_);
+}
+
+transaction_impl* database::create_transaction_impl() const
+{
+  return impl_->create_transaction_impl();
 }
 
 }

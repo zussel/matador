@@ -2,6 +2,7 @@
 #define TRANSACTION_HPP
 
 #include "object/object_store.hpp"
+#include "database/action.hpp"
 
 #include <memory>
 #include <list>
@@ -9,7 +10,16 @@
 namespace oos {
 
 class database;
-class action;
+
+class transaction_impl : public action_visitor
+{
+public:
+  virtual ~transaction_impl();
+  
+  virtual void visit(insert_action *a);
+  virtual void visit(update_action *a);
+  virtual void visit(delete_action *a);  
+};
 
 class transaction
 {
@@ -53,6 +63,9 @@ private:
 private:
   database *db_;
   long id_;
+  
+  transaction_impl *impl_;
+
   std::auto_ptr<transaction_observer> tro_;
   
   typedef std::list<action*> action_list_t;

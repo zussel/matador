@@ -11,11 +11,19 @@ namespace oos {
 class object_store;
 class query_result;
 class transaction;
+class transaction_impl;
 
 class database_impl : public action_visitor
 {
 public:
-  virtual ~database_impl() {}
+  database_impl();
+  virtual ~database_impl();
+  
+  virtual void visit(insert_action *a);
+  virtual void visit(update_action *a);
+  virtual void visit(delete_action *a);  
+
+  virtual transaction_impl* create_transaction_impl() const;
 };
 
 class database
@@ -40,6 +48,7 @@ private:
   friend class transaction;
   
   void execute_action(action *a);
+  transaction_impl* create_transaction_impl() const;
 
 private:
   database_impl *impl_;
