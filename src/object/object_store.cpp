@@ -491,7 +491,7 @@ object_store::insert_object(object *o)
 }
 
 bool
-object_store::remove_object(object *o)
+object_store::remove_object(object *o, bool notify)
 {
   // find prototype node
   t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
@@ -516,20 +516,14 @@ object_store::remove_object(object *o)
   // unlink object_proxy
   unlink_proxy(o->proxy_);
 
-  // notify observer
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
-  // if object was last object in list of prototype node
-  // adjust prototype node last
-  // if object was last object (now empty)
-  // adjust prototype node first, marker and last
-
-  // mark object proxy as deleted
+  if (notify) {
+    // notify observer
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
+  }
   // set object in object_proxy to null
   object_proxy_ptr op = o->proxy_;
   delete o;
   op->obj = NULL;
-//  deleted_object_proxy_list_.push_back(op);
-  // return true
   return true;
 }
 
@@ -551,7 +545,7 @@ object_store::remove(object_list_base &olb)
   
   while (first != last) {
     if (!first->second.ignore) {
-      remove_object((first++)->second.obj);
+      remove_object((first++)->second.obj, true);
     } else {
       ++first;
     }

@@ -291,7 +291,7 @@ public:
     
     while (first != last) {
       if (!first->second.ignore) {
-        remove_object((first++)->second.obj);
+        remove_object((first++)->second.obj, true);
       } else {
         ++first;
       }
@@ -327,7 +327,7 @@ private:
 
 private:
 	object* insert_object(object *o);
-	bool remove_object(object *o);
+	bool remove_object(object *o, bool notify);
 	
   void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);
   void unlink_proxy(const object_proxy_ptr &proxy);
