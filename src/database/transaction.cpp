@@ -8,19 +8,54 @@ using namespace std;
 
 namespace oos {
 
-transaction_impl::~transaction_impl()
-{}
-
-void transaction_impl::visit(insert_action *a)
+bool transaction::backup_visitor::backup(action *act)
 {
+  act->accept(this);
+  return true;
 }
 
-void transaction_impl::visit(update_action *a)
+void transaction::backup_visitor::visit(insert_action *)
 {
+  // nothing to do
 }
 
-void transaction_impl::visit(delete_action *a)
+void transaction::backup_visitor::visit(update_action *a)
 {
+  // serialize object
+  serializer_.serialize(a->obj(), buffer_);
+}
+
+void transaction::backup_visitor::visit(delete_action *a)
+{
+  // serialize object
+  serializer_.serialize(a->obj(), buffer_);
+}
+
+bool transaction::restore_visitor::restore(action *act)
+{
+  act->accept(this);
+  return true;
+}
+
+void transaction::restore_visitor::visit(insert_action *)
+{
+  // remove object from object store
+//  ostore_.remove_object(a->obj(), false);
+}
+
+void transaction::restore_visitor::visit(update_action *a)
+{
+  // deserialize data from buffer into object
+  serializer_.deserialize(a->obj(), buffer_);
+}
+
+void transaction::restore_visitor::visit(delete_action *)
+{
+  // create object with id and deserialize
+  // data from buffer into object
+  // insert object
+  // ERROR: throw exception if id of object
+  //        isn't valid (in use)
 }
 
 transaction::transaction_observer::transaction_observer(transaction &tr)
@@ -81,7 +116,8 @@ transaction::transaction_observer::on_delete(object *o)
 transaction::transaction(database *db)
   : db_(db)
   , id_(0)
-  , impl_(db->create_transaction_impl())
+  , backup_visitor_(object_buffer_)
+  , restore_visitor_(object_buffer_, db->ostore())
 {}
 
 transaction::~transaction()
@@ -136,6 +172,19 @@ transaction::rollback()
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";
   } else {
+    /**************
+     *
+     * rollback transaction
+     * restore objects
+     * and finally pop transaction
+     *
+     **************/
+    iterator first = action_list_.begin();
+    iterator last = action_list_.end();
+    while (first != last) {
+      action *act = (*first++);
+      restore_visitor_.restore(act);
+    }
     db_->pop_transaction();
   }
 }
@@ -155,12 +204,8 @@ transaction::db() const
 void
 transaction::backup(action *a)
 {
+  backup_visitor_.backup(a);
   action_list_.push_back(a);
-}
-
-void
-transaction::restore(action *a)
-{
 }
 
 }

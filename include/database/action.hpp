@@ -24,17 +24,25 @@ public:
 class action
 {
 public:
-  action() {}
+  action(object *o)
+    : obj_(o)
+  {}
   virtual ~action() {}
   
   virtual void accept(action_visitor *av) = 0;
+
+  object* obj() { return obj_; }
+  const object* obj() const { return obj_; }
+
+private:
+  object *obj_;
 };
 
 class insert_action : public action
 {
 public:
   insert_action(object *o)
-    : obj(o)
+    : action(o)
   {}
   virtual ~insert_action() {}
   
@@ -43,15 +51,13 @@ public:
     av->visit(this);
   }
 
-private:
-  object *obj;
 };
 
 class update_action : public action
 {
 public:
   update_action(object *o)
-    : obj(o)
+    : action(o)
   {}
   virtual ~update_action() {}
   
@@ -59,16 +65,14 @@ public:
   {
     av->visit(this);
   }
-
-private:
-  object *obj;
 };
 
 class delete_action : public action
 {
 public:
   delete_action(object *o)
-    : id_(o ? o->id() : 0)
+    : action(NULL)
+    , id_(o ? o->id() : 0)
   {}
   virtual ~delete_action() {}
   

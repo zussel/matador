@@ -1,7 +1,9 @@
 #ifndef TRANSACTION_HPP
 #define TRANSACTION_HPP
 
+#include "tools/byte_buffer.hpp"
 #include "object/object_store.hpp"
+#include "object/object_serializer.hpp"
 #include "database/action.hpp"
 
 #include <memory>
@@ -10,16 +12,6 @@
 namespace oos {
 
 class database;
-
-class transaction_impl : public action_visitor
-{
-public:
-  virtual ~transaction_impl();
-  
-  virtual void visit(insert_action *a);
-  virtual void visit(update_action *a);
-  virtual void visit(delete_action *a);  
-};
 
 class transaction
 {
@@ -51,11 +43,50 @@ private:
     transaction &tr_;
   };
 
+  class backup_visitor : public action_visitor
+  {
+  public:
+    backup_visitor(byte_buffer &buffer)
+      : buffer_(buffer)
+    {}
+    virtual ~backup_visitor() {}
+
+    bool backup(action *act);
+
+    virtual void visit(insert_action *a);
+    virtual void visit(update_action *a);
+    virtual void visit(delete_action *a);  
+
+  private:
+    byte_buffer &buffer_;
+    object_serializer serializer_;
+  };
+
+  class restore_visitor : public action_visitor
+  {
+  public:
+    restore_visitor(byte_buffer &buffer, object_store &ostore)
+      : buffer_(buffer)
+      , ostore_(ostore)
+    {}
+    virtual ~restore_visitor() {}
+
+    bool restore(action *act);
+
+    virtual void visit(insert_action *a);
+    virtual void visit(update_action *a);
+    virtual void visit(delete_action *a);  
+
+  private:
+    byte_buffer &buffer_;
+    object_store &ostore_;
+    object_serializer serializer_;
+  };
+
 private:
   friend class transaction_observer;
   
   void backup(action *a);
-  void restore(action *a);
 
 private:
   static long id_counter;
@@ -64,14 +95,16 @@ private:
   database *db_;
   long id_;
   
-  transaction_impl *impl_;
-
   std::auto_ptr<transaction_observer> tro_;
   
   typedef std::list<action*> action_list_t;
   typedef action_list_t::iterator iterator;
   typedef action_list_t::const_iterator const_iterator;
   action_list_t action_list_;
+
+  byte_buffer object_buffer_;
+  backup_visitor backup_visitor_;
+  restore_visitor restore_visitor_;
 };
 
 }

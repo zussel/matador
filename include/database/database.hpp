@@ -22,8 +22,6 @@ public:
   virtual void visit(insert_action *a);
   virtual void visit(update_action *a);
   virtual void visit(delete_action *a);  
-
-  virtual transaction_impl* create_transaction_impl() const;
 };
 
 class database
@@ -48,7 +46,6 @@ private:
   friend class transaction;
   
   void execute_action(action *a);
-  transaction_impl* create_transaction_impl() const;
 
 private:
   database_impl *impl_;

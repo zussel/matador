@@ -12,21 +12,16 @@ database_impl::database_impl()
 database_impl::~database_impl()
 {}
 
-void database_impl::visit(insert_action *a)
+void database_impl::visit(insert_action *)
 {
 }
 
-void database_impl::visit(update_action *a)
+void database_impl::visit(update_action *)
 {
 }
 
-void database_impl::visit(delete_action *a)
+void database_impl::visit(delete_action *)
 {
-}
-
-transaction_impl* database_impl::create_transaction_impl() const
-{
-  return new transaction_impl;
 }
 
 database::database(object_store &ostore, const std::string &/*dbstring*/)
@@ -83,11 +78,6 @@ void
 database::execute_action(action *a)
 {
   a->accept(impl_);
-}
-
-transaction_impl* database::create_transaction_impl() const
-{
-  return impl_->create_transaction_impl();
 }
 
 }
