@@ -43,8 +43,8 @@ public:
   object_serializer();
   virtual ~object_serializer();
 
-  bool serialize(object *o);
-  bool deserialize(object *o);
+  bool serialize(const object *o, byte_buffer &buffer);
+  bool deserialize(object *o, byte_buffer &buffer);
 
 	virtual void write_char(const char* id, char c);
 	virtual void write_float(const char* id, float f);
@@ -75,7 +75,7 @@ public:
 	virtual void read_object_list(const char* id, object_list_base &x);
   
 private:
-  byte_buffer buffer_;
+  byte_buffer *buffer_;
 };
 
 }
