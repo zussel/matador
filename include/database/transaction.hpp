@@ -1,6 +1,19 @@
 #ifndef TRANSACTION_HPP
 #define TRANSACTION_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "tools/byte_buffer.hpp"
 #include "object/object_store.hpp"
 #include "object/object_serializer.hpp"
@@ -13,7 +26,7 @@ namespace oos {
 
 class database;
 
-class transaction
+class OOS_API transaction
 {
 public:
   transaction(database *db);
@@ -85,6 +98,7 @@ private:
 
 private:
   friend class transaction_observer;
+  friend class object_store;
   
   void backup(action *a);
 

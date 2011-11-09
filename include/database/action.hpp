@@ -1,6 +1,19 @@
 #ifndef ACTION_HPP
 #define ACTION_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "object/object.hpp"
 
 namespace oos {
@@ -11,7 +24,7 @@ class insert_action;
 class update_action;
 class delete_action;
 
-class action_visitor
+class OOS_API action_visitor
 {
 public:
   virtual ~action_visitor() {}
@@ -73,6 +86,7 @@ public:
   delete_action(object *o)
     : action(NULL)
     , id_(o ? o->id() : 0)
+    , type_(o ? o->object_type() : "")
   {}
   virtual ~delete_action() {}
   
@@ -82,9 +96,11 @@ public:
   }
 
   long id() const { return id_; }
+  std::string type() const { return type_; }
 
 private:
   long id_;
+  std::string type_;
 };
 
 }

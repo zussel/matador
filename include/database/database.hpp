@@ -1,6 +1,19 @@
 #ifndef DATABASE_HPP
 #define DATABASE_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "database/action.hpp"
 
 #include <string>
@@ -13,7 +26,7 @@ class query_result;
 class transaction;
 class transaction_impl;
 
-class database_impl : public action_visitor
+class OOS_API database_impl : public action_visitor
 {
 public:
   database_impl();
@@ -24,7 +37,7 @@ public:
   virtual void visit(delete_action *a);  
 };
 
-class database
+class OOS_API database
 {
 public:
   database(object_store &ostore, const std::string &dbstring);
