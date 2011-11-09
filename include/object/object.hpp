@@ -57,7 +57,7 @@ public:
 	virtual void read_from(object_atomizer *a);
 	virtual void write_to(object_atomizer *a) const;
 
-	const char* type() const;
+	const char* object_type() const;
 	long id() const;
 	void id(long oid);
 

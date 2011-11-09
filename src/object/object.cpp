@@ -40,9 +40,9 @@ void object::write_to(object_atomizer *a) const
 	a->write_long("id", id_);
 }
 
-const char* object::type() const
+const char* object::object_type() const
 {
-	return NULL;
+  return typeid(*this).name();
 }
 
 long object::id() const
@@ -59,13 +59,6 @@ object_store* object::ostore() const
 {
   return proxy_ ? proxy_->ostore : 0;
 }
-
-/*
-bool object::delete_object()
-{
-  return proxy_->ostore->remove(this);
-}
-*/
 
 void object::mark_modified()
 {

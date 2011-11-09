@@ -37,10 +37,10 @@ bool transaction::restore_visitor::restore(action *act)
   return true;
 }
 
-void transaction::restore_visitor::visit(insert_action *)
+void transaction::restore_visitor::visit(insert_action *a)
 {
   // remove object from object store
-//  ostore_.remove_object(a->obj(), false);
+  ostore_.remove_object(a->obj(), false);
 }
 
 void transaction::restore_visitor::visit(update_action *a)
@@ -49,11 +49,14 @@ void transaction::restore_visitor::visit(update_action *a)
   serializer_.deserialize(a->obj(), buffer_);
 }
 
-void transaction::restore_visitor::visit(delete_action *)
+void transaction::restore_visitor::visit(delete_action *a)
 {
   // create object with id and deserialize
+  object *o = ostore_.create(a->type().c_str());
   // data from buffer into object
+  serializer_.deserialize(o, buffer_);
   // insert object
+  object_ptr<object> optr = ostore_.insert(o);
   // ERROR: throw exception if id of object
   //        isn't valid (in use)
 }

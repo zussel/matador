@@ -324,6 +324,7 @@ private:
   template < class T > friend class object_view;
   friend class object_creator;
   friend class object_deleter;
+  friend class transaction;
 
 private:
 	object* insert_object(object *o);

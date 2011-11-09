@@ -55,8 +55,8 @@ public:
   typedef Item<ItemPtrList> value_type;
   typedef ItemPtrList self;
   typedef object_ref<self> self_ref;
-  typedef typename item_list_t::iterator iterator;
-  typedef typename item_list_t::const_iterator const_iterator;
+  typedef item_list_t::iterator iterator;
+  typedef item_list_t::const_iterator const_iterator;
 
 public:
   ItemPtrList()
@@ -99,8 +99,8 @@ public:
   typedef item_list_t::value_type_ref value_type_ref;
   typedef ItemRefList self;
   typedef object_ref<self> self_ref;
-  typedef typename item_list_t::iterator iterator;
-  typedef typename item_list_t::const_iterator const_iterator;
+  typedef item_list_t::iterator iterator;
+  typedef item_list_t::const_iterator const_iterator;
 
 public:
   ItemRefList()
@@ -191,8 +191,8 @@ class LinkedItemList : public object
   typedef object_ref<self> self_ref;
 
 public:
-  typedef typename item_list_t::iterator iterator;
-  typedef typename item_list_t::const_iterator const_iterator;
+  typedef item_list_t::iterator iterator;
+  typedef item_list_t::const_iterator const_iterator;
 
 public:
   LinkedItemList()
