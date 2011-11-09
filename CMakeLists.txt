@@ -69,6 +69,7 @@ SET(DATABASE_SOURCES
 )
 
 SET(DATABASE_HEADER
+  include/database/action.hpp
   include/database/database.hpp
   include/database/transaction.hpp
 )
