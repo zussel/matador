@@ -67,6 +67,20 @@ DatabaseTestUnit::basic()
     // modify object
     artist->name("Beatles");
     cout << "changed name of " << *artist << "\n";
+    
+    transaction tr2(db);
+    try {
+      // begin inner transaction
+      tr2.begin();
+      // change name again
+      artist->name("Van Halen");
+      cout << "changed name of " << *artist << "\n";
+      // rollback transaction
+      tr2.rollback();
+      cout << "after rollback name of " << *artist << "\n";
+    } catch (exception &) {
+      tr2.rollback();
+    }
     tr.rollback();
     cout << "after rollback name of " << *artist << "\n";
 

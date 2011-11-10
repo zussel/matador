@@ -99,6 +99,7 @@ private:
 private:
   friend class transaction_observer;
   friend class object_store;
+  friend class database;
   
   void backup(action *a);
 

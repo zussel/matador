@@ -70,12 +70,12 @@ void transaction::restore_visitor::visit(delete_action *a)
 transaction::transaction_observer::transaction_observer(transaction &tr)
   : tr_(tr)
 {
-  tr_.db()->ostore().register_observer(this);
+//  tr_.db()->ostore().register_observer(this);
 }
 
 transaction::transaction_observer::~transaction_observer()
 {
-  tr_.db()->ostore().unregister_observer(this);
+//  tr_.db()->ostore().unregister_observer(this);
 }
 
 void
@@ -128,7 +128,9 @@ transaction::transaction(database *db)
 {}
 
 transaction::~transaction()
-{}
+{
+  cout << "d'tor of transaction [" << id_ << "]\n";
+}
 
 long transaction::id_counter = 0;
 
@@ -141,9 +143,18 @@ transaction::id() const
 void
 transaction::begin()
 {
+  /**************
+   * 
+   * On begin transaction gets unique
+   * id. Transaction is pushed to dbs
+   * transactions stack. Previous transactions
+   * observer is beeing unregistered and
+   * this transactions observer is regsitered.
+   *
+   **************/
   id_ = ++transaction::id_counter;
-  db_->push_transaction(this);
   tro_.reset(new transaction_observer(*this));
+  db_->push_transaction(this);
   cout << "starting transaction [" << id_ << "]\n";
 }
 
