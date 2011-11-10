@@ -15,6 +15,7 @@ public:
   virtual void finalize();
 
   void basic();
+  void test();
 
 private:
   oos::object_store ostore_;

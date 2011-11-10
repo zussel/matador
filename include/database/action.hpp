@@ -84,7 +84,7 @@ class delete_action : public action
 {
 public:
   delete_action(object *o)
-    : action(NULL)
+    : action(o)
     , id_(o ? o->id() : 0)
     , type_(o ? o->object_type() : "")
   {}

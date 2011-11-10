@@ -59,40 +59,40 @@ private:
   class backup_visitor : public action_visitor
   {
   public:
-    backup_visitor(byte_buffer &buffer)
-      : buffer_(buffer)
+    backup_visitor()
+      : buffer_(NULL)
     {}
     virtual ~backup_visitor() {}
 
-    bool backup(action *act);
+    bool backup(action *act, byte_buffer *buffer);
 
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
     virtual void visit(delete_action *a);  
 
   private:
-    byte_buffer &buffer_;
+    byte_buffer *buffer_;
     object_serializer serializer_;
   };
 
   class restore_visitor : public action_visitor
   {
   public:
-    restore_visitor(byte_buffer &buffer, object_store &ostore)
-      : buffer_(buffer)
-      , ostore_(ostore)
+    restore_visitor()
+      : buffer_(NULL)
+      , ostore_(NULL)
     {}
     virtual ~restore_visitor() {}
 
-    bool restore(action *act);
+    bool restore(action *act, byte_buffer *buffer, object_store *ostore);
 
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
     virtual void visit(delete_action *a);  
 
   private:
-    byte_buffer &buffer_;
-    object_store &ostore_;
+    byte_buffer *buffer_;
+    object_store *ostore_;
     object_serializer serializer_;
   };
 

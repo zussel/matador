@@ -8,9 +8,11 @@ using namespace std;
 
 namespace oos {
 
-bool transaction::backup_visitor::backup(action *act)
+bool transaction::backup_visitor::backup(action *act, byte_buffer *buffer)
 {
+  buffer_ = buffer;
   act->accept(this);
+  buffer_ = NULL;
   return true;
 }
 
@@ -22,41 +24,45 @@ void transaction::backup_visitor::visit(insert_action *)
 void transaction::backup_visitor::visit(update_action *a)
 {
   // serialize object
-  serializer_.serialize(a->obj(), buffer_);
+  serializer_.serialize(a->obj(), *buffer_);
 }
 
 void transaction::backup_visitor::visit(delete_action *a)
 {
   // serialize object
-  serializer_.serialize(a->obj(), buffer_);
+  serializer_.serialize(a->obj(), *buffer_);
 }
 
-bool transaction::restore_visitor::restore(action *act)
+bool transaction::restore_visitor::restore(action *act, byte_buffer *buffer, object_store *ostore)
 {
+  ostore_ = ostore;
+  buffer_ = buffer;
   act->accept(this);
+  buffer_ = NULL;
+  ostore_ = NULL;
   return true;
 }
 
 void transaction::restore_visitor::visit(insert_action *a)
 {
   // remove object from object store
-  ostore_.remove_object(a->obj(), false);
+  ostore_->remove_object(a->obj(), false);
 }
 
 void transaction::restore_visitor::visit(update_action *a)
 {
   // deserialize data from buffer into object
-  serializer_.deserialize(a->obj(), buffer_);
+  serializer_.deserialize(a->obj(), *buffer_);
 }
 
 void transaction::restore_visitor::visit(delete_action *a)
 {
   // create object with id and deserialize
-  object *o = ostore_.create(a->type().c_str());
+  object *o = ostore_->create(a->type().c_str());
   // data from buffer into object
-  serializer_.deserialize(o, buffer_);
+  serializer_.deserialize(o, *buffer_);
   // insert object
-  object_ptr<object> optr = ostore_.insert(o);
+  object_ptr<object> optr = ostore_->insert(o);
   // ERROR: throw exception if id of object
   //        isn't valid (in use)
 }
@@ -119,8 +125,6 @@ transaction::transaction_observer::on_delete(object *o)
 transaction::transaction(database *db)
   : db_(db)
   , id_(0)
-  , backup_visitor_(object_buffer_)
-  , restore_visitor_(object_buffer_, db->ostore())
 {}
 
 transaction::~transaction()
@@ -164,6 +168,9 @@ transaction::commit()
     while (first != last) {
       db_->execute_action(*first++);
     }
+    // clear actions
+    action_list_.clear();
+    object_buffer_.clear();
   }
 }
 
@@ -186,8 +193,11 @@ transaction::rollback()
     iterator last = action_list_.end();
     while (first != last) {
       action *act = (*first++);
-      restore_visitor_.restore(act);
+      restore_visitor_.restore(act, &object_buffer_, &db_->ostore());
     }
+    // clear actions
+    action_list_.clear();
+    object_buffer_.clear();
     db_->pop_transaction();
   }
 }
@@ -207,7 +217,7 @@ transaction::db() const
 void
 transaction::backup(action *a)
 {
-  backup_visitor_.backup(a);
+  backup_visitor_.backup(a, &object_buffer_);
   action_list_.push_back(a);
 }
 

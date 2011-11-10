@@ -105,29 +105,6 @@ bool object_deleter::is_deletable(object_list_base &olist)
 {
   object_count_map.clear();
   olist.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
-  /*
-  object_list_base_node *node = olist.first_object();
-  while (node) {
-    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
-    
-    / **********
-     * 
-     * object is already in list and will
-     * be ignored on deletion so set
-     * ignore flag to false because this
-     * node must be deleted
-     * 
-     ********** /
-    if (!ret.second && ret.first->second.ignore) {
-      ret.first->second.ignore = false;
-    }
-
-    // start collecting information
-    node->read_from(this);
-    // get next node
-    node = node->next_node();
-  }
-  */
   return check_object_count_map();
 }
 
@@ -142,12 +119,6 @@ void object_deleter::read_object(const char*, base_object_ptr &x)
 void object_deleter::read_object_list(const char*, object_list_base &x)
 {
   x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
-  // check if all elements of list can be removed
-  /*
-  while (x.first_object()->next_node() != x.last_object()->prev_node()) {
-    check_object(x.first_object()->next_node(), false);
-  }
-  */
 }
 
 object_deleter::iterator
@@ -418,6 +389,11 @@ object_store::insert(object_list_base &olb)
   olb.install(this);
 }
 
+object* object_store::find_object(long id) const
+{
+  return NULL;
+}
+
 object*
 object_store::insert_object(object *o)
 {
@@ -436,7 +412,20 @@ object_store::insert_object(object *o)
   prototype_node *node = i->second;
   // retrieve and set new unique number into object
   //object->id(UniqueProducer::instance().number("default"));
-  o->id(++id_);
+  if (o->id() > 0) {
+    // object seems to have a valid id
+    // check if it is a unique id
+    if (find_object(o->id())) {
+      // throw object_exception
+      // or set new unique id???
+      o->id(++id_);
+    } else {
+      // nothing to do
+    }
+  } else {
+    // object gets new unique id
+    o->id(++id_);
+  }
 
   // insert new element node
   object_proxy_ptr oproxy(new object_proxy(o, this));
@@ -477,14 +466,10 @@ object_store::insert_object(object *o)
   o->read_from(&oc);
   // notify observer
   std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
-  // dump objects
-  //std::cout << std::endl;
-/*  dump_objects(std::cout);
-  std::cout << std::endl;*/
   // adjust size
   ++node->count;
-  // insert element into hash map
-  //  objectmap_[object->id()] = object;
+  // insert element into hash map for fast lookup
+  object_map_[o->id()] = o;
   // set this into persistent object
   o->proxy_ = oproxy;
   return o;
@@ -500,6 +485,13 @@ object_store::remove_object(object *o, bool notify)
     //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
     return false;
   }
+
+  if (object_map_.erase(o->id()) != 1) {
+    // couldn't remove object
+    // throw exception
+    return false;
+  }
+
   prototype_node *node = i->second;
 
   if (o->proxy_ == node->op_first->next) {
@@ -522,7 +514,11 @@ object_store::remove_object(object *o, bool notify)
   }
   // set object in object_proxy to null
   object_proxy_ptr op = o->proxy_;
+  // adjust object count for node
+  --node->count;
+  // delete node
   delete o;
+  // set node of proxy to NULL
   op->obj = NULL;
   return true;
 }

@@ -315,6 +315,19 @@ public:
    // std::iterator_traits<InputIterator>::value_type *o = *first;
   }
   
+  /**
+   * @brief Finds object with id
+   *
+   * Try to find the object with given id in
+   * object store. If object can#t be found
+   * NULL is returned.
+   *
+   * @param id ID of object to find
+   * @return On success it returns an object on failure null
+   *
+   */
+  object* find_object(long id) const;
+
   void mark_modified(const object_proxy_ptr &oproxy);
 
   void register_observer(object_observer *observer);

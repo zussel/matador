@@ -162,8 +162,9 @@ public:
 	T& operator*() const {
 		if (proxy_) {
       return *dynamic_cast<T*>(lookup_object());
- 		}
-    return NULL;
+    } else {
+      return *(T*)0;
+    }
 	}
 	T* get() const {
     if (proxy_) {

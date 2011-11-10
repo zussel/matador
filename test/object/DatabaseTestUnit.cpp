@@ -19,6 +19,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   : unit_test("database test unit")
 {
   add_test("basic", std::tr1::bind(&DatabaseTestUnit::basic, this), "basic database test");
+  add_test("test", std::tr1::bind(&DatabaseTestUnit::test, this), "simple test method");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -59,17 +60,31 @@ DatabaseTestUnit::basic()
     typedef object_ptr<Artist> artist_ptr;
     // insert new object
     artist_ptr artist = ostore_.insert(new Artist("AC/DC"));
+    cout << "inserted " << *artist << "\n";
+    tr.commit();
+
+    tr.begin();
     // modify object
     artist->name("Beatles");
+    cout << "changed name of " << *artist << "\n";
+    tr.rollback();
+    cout << "after rollback name of " << *artist << "\n";
+
+    tr.begin();
     // delete object
+    cout << "deleting " << *artist << "\n";
     ostore_.remove(artist);
 
     // show objects
     ostore_.dump_objects(cout);
 
-    // commit modifications
-    tr.commit();
+    tr.rollback();
+    cout << "after rollback \n";
+    ostore_.dump_objects(cout);
 
+    // commit modifications
+//    tr.commit();
+/*
     // begin transaction
     tr.begin();
     // insert new object
@@ -85,7 +100,8 @@ DatabaseTestUnit::basic()
 
     // commit modifications
     tr.commit();
-  } catch (exception &ex) {
+    */
+  } catch (exception &) {
     // error, abort transaction
     tr.rollback();
   }
@@ -94,4 +110,15 @@ DatabaseTestUnit::basic()
   // explicit write data to file
   //db->write();
   delete db;
+}
+
+void
+DatabaseTestUnit::test()
+{
+  std::cout << std::endl;
+  std::string str("hallo welt und alle anderen 12345678901234567890");
+  std::cout << "sizeof str: " << sizeof(str) << "\n";
+
+  std::tr1::shared_ptr<string> strp(new string("hallo welt und alle anderen 12345678901234567890"));
+  std::cout << "sizeof strp: " << sizeof(strp) << "\n";
 }
