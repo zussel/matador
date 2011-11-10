@@ -54,6 +54,15 @@
 
 namespace oos {
 
+/**
+ * @class object_observer
+ * @brief Base class for object observer classes
+ * 
+ * When interessted to observe insert, update and
+ * delete actions an observer class instance must be
+ * registered with object store.
+ * Use this class as base class for all observer classes.
+ */
 class OOS_API object_observer
 {
 public:
@@ -67,6 +76,16 @@ public:
 class object_list_base;
 class object_list_base_node;
 
+/**
+ * @class object_base_producer
+ * @brief Base class for object producer classes
+ * 
+ * When using the object_store to create object
+ * an instance of a class of this type is used to
+ * create the object.
+ * The interface provides a create and a classname
+ * method.
+ */
 class OOS_API object_base_producer {
 public:
   virtual ~object_base_producer() {}
@@ -76,7 +95,7 @@ public:
 
 /**
  * @class object_producer
- * @brief produces a new object of type T
+ * @brief Produces a new object of type T
  * 
  * These producers a placed in the object type tree and whenever
  * a new object of a certain type is requested, the appropiate
@@ -178,12 +197,18 @@ private:
   bool linked_;
 };
 
-//struct prototype_node;
-
 /**
  * @class object_store
  * @brief A class that stores all kind of objects.
  * 
+ * This class is the main container class for all
+ * objects. To manage the internal list of objects
+ * the store must know the object class hierarchy.
+ *
+ * Therefor an object prototype tree holds the object
+ * hierarchy representation including a producer class
+ * object of all known types.
+ *
  * 
  */
 class OOS_API object_store
@@ -328,9 +353,18 @@ public:
    */
   object* find_object(long id) const;
 
-  void mark_modified(const object_proxy_ptr &oproxy);
-
+  /**
+   * @brief Register an observer with the object store
+   *
+   * @param observer The object observer to register.
+   */
   void register_observer(object_observer *observer);
+
+  /**
+   * @brief Unregisters an observer from the object store
+   *
+   * @param observer The object observer to unregister.
+   */
   void unregister_observer(object_observer *observer);
 
 private:
@@ -338,8 +372,11 @@ private:
   friend class object_creator;
   friend class object_deleter;
   friend class transaction;
+  friend class object;
 
 private:
+  void mark_modified(const object_proxy_ptr &oproxy);
+
 	object* insert_object(object *o);
 	bool remove_object(object *o, bool notify);
 	
