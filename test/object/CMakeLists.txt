@@ -6,6 +6,10 @@ SET (TEST_SOURCES
   Artist.hpp
   Track.cpp
   Track.hpp
+  Car.cpp
+  Car.hpp
+  Engine.cpp
+  Engine.hpp
   ComplexObjectStoreTestUnit.cpp
   ComplexObjectStoreTestUnit.hpp
   ObjectPrototypeTestUnit.cpp
