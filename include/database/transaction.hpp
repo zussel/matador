@@ -66,11 +66,11 @@ private:
 
     bool backup(action *act, byte_buffer *buffer);
 
-    virtual void visit(create_action *a) {}
+    virtual void visit(create_action *) {}
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
     virtual void visit(delete_action *a);  
-    virtual void visit(drop_action *a) {}
+    virtual void visit(drop_action *) {}
 
   private:
     byte_buffer *buffer_;
@@ -88,11 +88,11 @@ private:
 
     bool restore(action *act, byte_buffer *buffer, object_store *ostore);
 
-    virtual void visit(create_action *a) {}
+    virtual void visit(create_action *) {}
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
     virtual void visit(delete_action *a);
-    virtual void visit(drop_action *a) {}
+    virtual void visit(drop_action *) {}
 
   private:
     byte_buffer *buffer_;

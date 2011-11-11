@@ -130,7 +130,6 @@ transaction::transaction(database *db)
 
 transaction::~transaction()
 {
-  cout << "d'tor of transaction [" << id_ << "]\n";
 }
 
 long transaction::id_counter = 0;

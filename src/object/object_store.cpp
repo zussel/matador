@@ -391,7 +391,12 @@ object_store::insert(object_list_base &olb)
 
 object* object_store::find_object(long id) const
 {
-  return NULL;
+  t_object_map::const_iterator i = object_map_.find(id);
+  if (i == object_map_.end()) {
+    return NULL;
+  } else {
+    return i->second;
+  }
 }
 
 object*

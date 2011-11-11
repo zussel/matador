@@ -32,11 +32,11 @@ public:
   database_impl();
   virtual ~database_impl();
   
-  virtual void visit(create_action *a) {}
+  virtual void visit(create_action *) {}
   virtual void visit(insert_action *a);
   virtual void visit(update_action *a);
   virtual void visit(delete_action *a);  
-  virtual void visit(drop_action *a) {}
+  virtual void visit(drop_action *) {}
 };
 
 class OOS_API database
