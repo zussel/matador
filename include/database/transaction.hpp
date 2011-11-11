@@ -66,9 +66,11 @@ private:
 
     bool backup(action *act, byte_buffer *buffer);
 
+    virtual void visit(create_action *a) {}
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
     virtual void visit(delete_action *a);  
+    virtual void visit(drop_action *a) {}
 
   private:
     byte_buffer *buffer_;
@@ -86,9 +88,11 @@ private:
 
     bool restore(action *act, byte_buffer *buffer, object_store *ostore);
 
+    virtual void visit(create_action *a) {}
     virtual void visit(insert_action *a);
     virtual void visit(update_action *a);
-    virtual void visit(delete_action *a);  
+    virtual void visit(delete_action *a);
+    virtual void visit(drop_action *a) {}
 
   private:
     byte_buffer *buffer_;
@@ -110,7 +114,7 @@ private:
   database *db_;
   long id_;
   
-  std::auto_ptr<transaction_observer> tro_;
+  std::auto_ptr<transaction_observer> transaction_observer_;
   
   typedef std::list<action*> action_list_t;
   typedef action_list_t::iterator iterator;

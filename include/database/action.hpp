@@ -20,18 +20,22 @@ namespace oos {
 
 //class object;
 
+class create_action;
 class insert_action;
 class update_action;
 class delete_action;
+class drop_action;
 
 class OOS_API action_visitor
 {
 public:
   virtual ~action_visitor() {}
   
+  virtual void visit(create_action *a) = 0;
   virtual void visit(insert_action *a) = 0;
   virtual void visit(update_action *a) = 0;
   virtual void visit(delete_action *a) = 0;
+  virtual void visit(drop_action *a) = 0;
 };
 
 class action
@@ -49,6 +53,15 @@ public:
 
 private:
   object *obj_;
+};
+
+class create_action : public action
+{
+public:
+  create_action()
+    : action(NULL)
+  {}
+  virtual ~create_action() {}
 };
 
 class insert_action : public action
@@ -101,6 +114,15 @@ public:
 private:
   long id_;
   std::string type_;
+};
+
+class drop_action : public action
+{
+public:
+  drop_action()
+    : action(NULL)
+  {}
+  virtual ~drop_action() {}
 };
 
 }

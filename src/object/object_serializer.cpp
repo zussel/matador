@@ -17,13 +17,16 @@
 
 #include "object/object_serializer.hpp"
 #include "object/object.hpp"
+#include "object/object_store.hpp"
+#include "object/object_ptr.hpp"
 
 #include <string.h>
 
 namespace oos {
 
 object_serializer::object_serializer()
-  : buffer_(NULL)
+  : ostore_(NULL)
+  , buffer_(NULL)
 {}
 
 object_serializer::~object_serializer()
@@ -37,11 +40,13 @@ bool object_serializer::serialize(const object *o, byte_buffer &buffer)
   return true;
 }
 
-bool object_serializer::deserialize(object *o, byte_buffer &buffer)
+bool object_serializer::deserialize(object *o, byte_buffer &buffer, object_store *ostore)
 {
+  ostore_ = ostore;
   buffer_ = &buffer;
   o->read_from(this);
   buffer_ = NULL;
+  ostore_ = NULL;
   return true;
 }
 
@@ -96,16 +101,11 @@ void object_serializer::write_string(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::write_date(const char*, const Date &)
+void object_serializer::write_object(const char*, const base_object_ptr &x)
 {
-}
-
-void object_serializer::write_time(const char*, const Time &)
-{
-}
-
-void object_serializer::write_object(const char*, const base_object_ptr &)
-{
+  // write type and id into buffer
+  write_long(NULL, x.id());
+  write_string(NULL, x.type());
 }
 
 void object_serializer::write_object_list(const char*, const object_list_base &)
@@ -164,16 +164,33 @@ void object_serializer::read_string(const char*, std::string &s)
   delete [] str;
 }
 
-void object_serializer::read_date(const char*, Date &)
+void object_serializer::read_object(const char*, base_object_ptr &x)
 {
-}
+  /***************
+   *
+   * extract id and type of object from buffer
+   * try to find object on object store
+   * if found check type if wrong type throw error
+   * else create object and set extracted id
+   * insert object into object store
+   *
+   ***************/
+  long id = 0;
+  read_long(NULL, id);
+  std::string type;
+  read_string(NULL, type);
 
-void object_serializer::read_time(const char*, Time &)
-{
-}
-
-void object_serializer::read_object(const char*, base_object_ptr &)
-{
+  object *o = ostore_->find_object(id);
+  if (o) {
+    if (o->object_type() == type) {
+    } else {
+    }
+  } else {
+    o = ostore_->create(type.c_str());
+    o->id_ = id;
+    ostore_->insert(o);
+    x.reset(o);
+  }
 }
 
 void object_serializer::read_object_list(const char*, object_list_base &)

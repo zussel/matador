@@ -52,7 +52,7 @@ void transaction::restore_visitor::visit(insert_action *a)
 void transaction::restore_visitor::visit(update_action *a)
 {
   // deserialize data from buffer into object
-  serializer_.deserialize(a->obj(), *buffer_);
+  serializer_.deserialize(a->obj(), *buffer_, ostore_);
 }
 
 void transaction::restore_visitor::visit(delete_action *a)
@@ -60,7 +60,7 @@ void transaction::restore_visitor::visit(delete_action *a)
   // create object with id and deserialize
   object *o = ostore_->create(a->type().c_str());
   // data from buffer into object
-  serializer_.deserialize(o, *buffer_);
+  serializer_.deserialize(o, *buffer_, ostore_);
   // insert object
   object_ptr<object> optr = ostore_->insert(o);
   // ERROR: throw exception if id of object
@@ -125,6 +125,7 @@ transaction::transaction_observer::on_delete(object *o)
 transaction::transaction(database *db)
   : db_(db)
   , id_(0)
+  , transaction_observer_(new transaction_observer(*this))
 {}
 
 transaction::~transaction()
@@ -153,7 +154,7 @@ transaction::begin()
    *
    **************/
   id_ = ++transaction::id_counter;
-  tro_.reset(new transaction_observer(*this));
+//  tro_.reset(new transaction_observer(*this));
   db_->push_transaction(this);
   cout << "starting transaction [" << id_ << "]\n";
 }
@@ -161,7 +162,7 @@ transaction::begin()
 void
 transaction::commit()
 {
-  tro_.reset();
+//  tro_.reset();
   if (!db_->current_transaction() || db_->current_transaction() != this) {
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
@@ -188,7 +189,7 @@ transaction::commit()
 void
 transaction::rollback()
 {
-  tro_.reset();
+//  tro_.reset();
   if (!db_->current_transaction() || db_->current_transaction() != this) {
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";

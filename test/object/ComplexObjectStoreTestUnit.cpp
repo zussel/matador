@@ -264,7 +264,7 @@ ComplexObjectStoreTestUnit::serializer()
   
   track = new Track();
   
-  serializer.deserialize(track, buffer);
+  serializer.deserialize(track, buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(title, track->title(), "restored track title is not equal to the original title");
   

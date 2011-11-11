@@ -53,8 +53,6 @@ public:
 	virtual void write_bool(const char*, bool) {}
 	virtual void write_charptr(const char*, const char*) {}
 	virtual void write_string(const char*, const std::string&) {}
-	virtual void write_date(const char*, const Date&) {}
-	virtual void write_time(const char*, const Time&) {}
 	virtual void write_object(const char*, const base_object_ptr&) {}
 	virtual void write_object_list(const char*, const object_list_base&) {}
 
@@ -67,8 +65,6 @@ public:
 	virtual void read_bool(const char*, bool&) {}
 	virtual void read_charptr(const char*, char*&) {}
 	virtual void read_string(const char*, std::string&) {}
-	virtual void read_date(const char*, Date&) {}
-	virtual void read_time(const char*, Time&) {}
 	virtual void read_object(const char*, base_object_ptr&) {}
 	virtual void read_object_list(const char*, object_list_base&) {}
 };

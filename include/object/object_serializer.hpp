@@ -36,6 +36,7 @@
 namespace oos {
 
 class object;
+class object_store;
 
 class OOS_API object_serializer : public object_atomizer
 {
@@ -44,7 +45,7 @@ public:
   virtual ~object_serializer();
 
   bool serialize(const object *o, byte_buffer &buffer);
-  bool deserialize(object *o, byte_buffer &buffer);
+  bool deserialize(object *o, byte_buffer &buffer, object_store *ostore);
 
 	virtual void write_char(const char* id, char c);
 	virtual void write_float(const char* id, float f);
@@ -55,8 +56,6 @@ public:
 	virtual void write_bool(const char* id, bool b);
 	virtual void write_charptr(const char* id, const char *c);
 	virtual void write_string(const char* id, const std::string &s);
-	virtual void write_date(const char* id, const Date &s);
-	virtual void write_time(const char* id, const Time &s);
 	virtual void write_object(const char* id, const base_object_ptr &x);
 	virtual void write_object_list(const char* id, const object_list_base &x);
 
@@ -69,12 +68,11 @@ public:
 	virtual void read_bool(const char* id, bool &b);
 	virtual void read_charptr(const char* id, char *&c);
 	virtual void read_string(const char* id, std::string &s);
-	virtual void read_date(const char* id, Date &s);
-	virtual void read_time(const char* id, Time &s);
 	virtual void read_object(const char* id, base_object_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
   
 private:
+  object_store *ostore_;
   byte_buffer *buffer_;
 };
 
