@@ -14,7 +14,8 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  void basic();
+  void simple();
+  void with_sub();
   void test();
 
 private:

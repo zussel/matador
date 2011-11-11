@@ -1,8 +1,7 @@
 #include "DatabaseTestUnit.hpp"
 
-#include "Track.hpp"
-#include "Album.hpp"
-#include "Artist.hpp"
+#include "Car.hpp"
+#include "Engine.hpp"
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
@@ -13,12 +12,11 @@
 using namespace oos;
 using namespace std;
 
-typedef object_ref_list_node<Track> AlbumTrack;
-
 DatabaseTestUnit::DatabaseTestUnit()
   : unit_test("database test unit")
 {
-  add_test("basic", std::tr1::bind(&DatabaseTestUnit::basic, this), "basic database test");
+  add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
+  add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("test", std::tr1::bind(&DatabaseTestUnit::test, this), "simple test method");
 }
 
@@ -28,10 +26,8 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Artist>, "ARTIST");
-  ostore_.insert_prototype(new object_producer<Track>, "TRACK");
-  ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
-  ostore_.insert_prototype(new object_producer<AlbumTrack>, "ALBUMTRACK");
+  ostore_.insert_prototype(new object_producer<Car>, "CAR");
+  ostore_.insert_prototype(new object_producer<Engine>, "ENGINE");
 }
 
 void
@@ -41,7 +37,7 @@ DatabaseTestUnit::finalize()
 }
 
 void
-DatabaseTestUnit::basic()
+DatabaseTestUnit::simple()
 {
   cout << endl;
   // create database and make object store known to the database
@@ -57,37 +53,37 @@ DatabaseTestUnit::basic()
     tr.begin();
 
     // ... do some object modifications
-    typedef object_ptr<Artist> artist_ptr;
+    typedef object_ptr<Engine> engine_ptr;
     // insert new object
-    artist_ptr artist = ostore_.insert(new Artist("AC/DC"));
-    cout << "inserted " << *artist << "\n";
+    engine_ptr engine = ostore_.insert(new Engine(70, 4, 1.4));
+    cout << "inserted " << *engine << "\n";
     tr.commit();
 
     tr.begin();
     // modify object
-    artist->name("Beatles");
-    cout << "changed name of " << *artist << "\n";
+    engine->power(120);
+    cout << "changed power of " << *engine << "\n";
     
     transaction tr2(db);
     try {
       // begin inner transaction
       tr2.begin();
       // change name again
-      artist->name("Van Halen");
-      cout << "changed name of " << *artist << "\n";
+      engine->power(170);
+      cout << "changed power of " << *engine << "\n";
       // rollback transaction
       tr2.rollback();
-      cout << "after rollback name of " << *artist << "\n";
+      cout << "after rollback " << *engine << "\n";
     } catch (exception &) {
       tr2.rollback();
     }
     tr.rollback();
-    cout << "after rollback name of " << *artist << "\n";
+    cout << "after rollback " << *engine << "\n";
 
     tr.begin();
     // delete object
-    cout << "deleting " << *artist << "\n";
-    ostore_.remove(artist);
+    cout << "deleting " << *engine << "\n";
+    ostore_.remove(engine);
 
     // show objects
     ostore_.dump_objects(cout);
@@ -115,6 +111,53 @@ DatabaseTestUnit::basic()
     // commit modifications
     tr.commit();
     */
+  } catch (exception &) {
+    // error, abort transaction
+    tr.rollback();
+  }
+  // close db
+  db->close();
+  // explicit write data to file
+  //db->write();
+  delete db;
+}
+
+void
+DatabaseTestUnit::with_sub()
+{
+  cout << endl;
+  // create database and make object store known to the database
+  database *db = new database(ostore_, "sqlite://");
+
+  // open db
+  db->open();
+
+  // create new transaction    
+  transaction tr(db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+    typedef object_ptr<Car> car_ptr;
+    typedef object_ptr<Engine> engine_ptr;
+    // insert new object
+    car_ptr car = ostore_.insert(new Car("VW", "Beetle"));    
+    engine_ptr engine = car->engine();
+    engine->power(120);
+    engine->cylinder(4);
+    engine->capacity(1.4);
+    cout << "inserted " << *car << " with " << *engine << endl;
+    tr.commit();
+    
+    tr.begin();
+    
+    cout << "removing " << *car << " ... ";
+    ostore_.remove(car);
+    cout << "done.\n";
+    tr.rollback();
+    
+    ostore_.dump_objects(cout);
+    
   } catch (exception &) {
     // error, abort transaction
     tr.rollback();
