@@ -41,17 +41,28 @@ public:
 class action
 {
 public:
-  action(object *o)
-    : obj_(o)
+  typedef enum {
+    CREATE = 0,
+    INSERT,
+    UPDATE,
+    DELETE,
+    DROP
+  } action_type;
+
+  action(action_type t, object *o)
+    : type_(t), obj_(o)
   {}
   virtual ~action() {}
   
   virtual void accept(action_visitor *av) = 0;
 
+  action_type type() const { return type_; }
+
   object* obj() { return obj_; }
   const object* obj() const { return obj_; }
 
 private:
+  action_type type_;
   object *obj_;
 };
 
@@ -59,7 +70,7 @@ class create_action : public action
 {
 public:
   create_action()
-    : action(NULL)
+    : action(action::CREATE, NULL)
   {}
   virtual ~create_action() {}
 };
@@ -68,7 +79,7 @@ class insert_action : public action
 {
 public:
   insert_action(object *o)
-    : action(o)
+    : action(action::INSERT, o)
   {}
   virtual ~insert_action() {}
   
@@ -83,7 +94,7 @@ class update_action : public action
 {
 public:
   update_action(object *o)
-    : action(o)
+    : action(action::UPDATE, o)
   {}
   virtual ~update_action() {}
   
@@ -97,7 +108,7 @@ class delete_action : public action
 {
 public:
   delete_action(object *o)
-    : action(o)
+    : action(action::DELETE, o)
     , id_(o ? o->id() : 0)
     , type_(o ? o->object_type() : "")
   {}
@@ -120,7 +131,7 @@ class drop_action : public action
 {
 public:
   drop_action()
-    : action(NULL)
+    : action(action::DROP, NULL)
   {}
   virtual ~drop_action() {}
 };
