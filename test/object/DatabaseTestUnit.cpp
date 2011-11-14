@@ -55,7 +55,7 @@ DatabaseTestUnit::simple()
     // ... do some object modifications
     typedef object_ptr<Engine> engine_ptr;
     // insert new object
-    engine_ptr engine = ostore_.insert(new Engine(70, 4, 1.4));
+    engine_ptr engine = ostore_.insert(new Engine(70, 4, 1.4f));
     cout << "inserted " << *engine << "\n";
     tr.commit();
 
@@ -127,7 +127,7 @@ DatabaseTestUnit::with_sub()
 {
   cout << endl;
   // create database and make object store known to the database
-  database *db = new database(ostore_, "sqlite://");
+  database *db = new database(ostore_, "oodb://");
 
   // open db
   db->open();
@@ -145,7 +145,7 @@ DatabaseTestUnit::with_sub()
     engine_ptr engine = car->engine();
     engine->power(120);
     engine->cylinder(4);
-    engine->capacity(1.4);
+    engine->capacity(1.4f);
     cout << "inserted " << *car << " with " << *engine << endl;
     tr.commit();
     
