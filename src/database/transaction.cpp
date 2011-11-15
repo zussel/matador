@@ -235,25 +235,29 @@ transaction::backup(action *a)
    * 
    *************/
   
-  action_map_t::iterator i = action_map_.find(a->obj()->id());
-  if (i == action_map_.end()) {
+  id_set_t::iterator i = id_set_.find(a->obj()->id());
+//  action_map_t::iterator i = action_map_.find(a->obj()->id());
+  if (i == id_set_.end()) {
     backup_visitor_.backup(a, &object_buffer_);
     action_list_.push_back(a);
-    action_map_.insert(std::make_pair(a->obj()->id(), a));
+    id_set_.insert(a->obj()->id());
   } else {
+    // find action with id in list
+    /*
     if (a->type() == action::INSERT && i->second->type() == action::DELETE) {
       // within this transaction inserted
       // object is also deleted
       // so we can remove insert and
       // delete action, because object
       // has never been existed
-      action_map_.erase(i);
+      id_set_.insert(a->obj()->id());
     } else if (a->type() == action::INSERT && i->second->type() == action::DELETE) {
       // updated object is also deleted
       // replace update action with delete
       // action
       
     }
+    */
   }
 }
 

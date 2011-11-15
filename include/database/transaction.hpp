@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <list>
+#include <set>
 
 namespace oos {
 
@@ -116,13 +117,13 @@ private:
   
   std::auto_ptr<transaction_observer> transaction_observer_;
   
-  typedef std::map<long, action*> action_map_t;
+  typedef std::set<long> id_set_t;
 
   typedef std::list<action*> action_list_t;
   typedef action_list_t::iterator iterator;
   typedef action_list_t::const_iterator const_iterator;
 
-  action_map_t action_map_;
+  id_set_t id_set_;
   action_list_t action_list_;
 
   byte_buffer object_buffer_;
