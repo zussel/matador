@@ -50,7 +50,7 @@ public:
   } action_type;
 
   action(action_type t, object *o)
-    : type_(t), obj_(o)
+    : type_(t), obj_(o), id_((o ? o->id() : 0))
   {}
   virtual ~action() {}
   
@@ -61,9 +61,12 @@ public:
   object* obj() { return obj_; }
   const object* obj() const { return obj_; }
 
+  long id() const { return id_; }
+
 private:
   action_type type_;
   object *obj_;
+  long id_;
 };
 
 class create_action : public action
@@ -87,7 +90,6 @@ public:
   {
     av->visit(this);
   }
-
 };
 
 class update_action : public action
@@ -109,7 +111,6 @@ class delete_action : public action
 public:
   delete_action(object *o)
     : action(action::DELETE, o)
-    , id_(o ? o->id() : 0)
     , type_(o ? o->object_type() : "")
   {}
   virtual ~delete_action() {}
@@ -119,11 +120,9 @@ public:
     av->visit(this);
   }
 
-  long id() const { return id_; }
   std::string type() const { return type_; }
 
 private:
-  long id_;
   std::string type_;
 };
 

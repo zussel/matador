@@ -236,28 +236,44 @@ transaction::backup(action *a)
    *************/
   
   id_set_t::iterator i = id_set_.find(a->obj()->id());
-//  action_map_t::iterator i = action_map_.find(a->obj()->id());
   if (i == id_set_.end()) {
+    cout << "couldn't find id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]: insert action\n";
     backup_visitor_.backup(a, &object_buffer_);
     action_list_.push_back(a);
     id_set_.insert(a->obj()->id());
   } else {
     // find action with id in list
-    /*
-    if (a->type() == action::INSERT && i->second->type() == action::DELETE) {
-      // within this transaction inserted
-      // object is also deleted
-      // so we can remove insert and
-      // delete action, because object
-      // has never been existed
-      id_set_.insert(a->obj()->id());
-    } else if (a->type() == action::INSERT && i->second->type() == action::DELETE) {
-      // updated object is also deleted
-      // replace update action with delete
-      // action
-      
+    cout << "found id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]\n";
+    iterator first = action_list_.begin();
+    iterator last = action_list_.end();
+    while (first != last) {
+      if ((*first)->obj()->id() == *i) {
+        break;
+      }
+      ++first;
     }
-    */
+    if (first == last) {
+      // couldn't find action
+      // error, throw exception
+      cout << "FATAL ERROR: couldn't find corresponding object in action list!\n";
+    } else {
+      if (a->type() == action::DELETE && (*first)->type() == action::INSERT) {
+        cout << "new action is delete, old action is insert: removing action\n";
+        // within this transaction inserted
+        // object is also deleted
+        // so we can remove insert and
+        // delete action, because object
+        // has never been existed
+        action_list_.erase(first);
+        id_set_.erase(i);
+      } else if (a->type() == action::DELETE && (*first)->type() == action::UPDATE) {
+        cout << "new action is delete, old action is update: replace action\n";
+        // updated object is also deleted
+        // replace update action with delete
+        // action
+        *first = a;
+      }
+    }
   }
 }
 
