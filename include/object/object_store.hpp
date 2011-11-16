@@ -281,7 +281,7 @@ public:
   template < class Y >
 	object_ptr<Y> insert(Y *o)
   {
-		return object_ptr<Y>(insert_object(o));
+		return object_ptr<Y>(insert_object(o, true));
 	}
 
   /**
@@ -377,7 +377,7 @@ private:
 private:
   void mark_modified(const object_proxy_ptr &oproxy);
 
-	object* insert_object(object *o);
+	object* insert_object(object *o, bool notify);
 	bool remove_object(object *o, bool notify);
 	
   void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);

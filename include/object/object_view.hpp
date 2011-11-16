@@ -274,6 +274,11 @@ public:
   bool empty() const {
     return node_->op_first->next == node_->op_last;
   }
+
+  size_t size() const {
+    return std::distance(begin(), end());
+  }
+
   void skip_siblings(bool skip) {
     skip_siblings_ = skip;
   }

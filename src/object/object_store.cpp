@@ -400,7 +400,7 @@ object* object_store::find_object(long id) const
 }
 
 object*
-object_store::insert_object(object *o)
+object_store::insert_object(object *o, bool notify)
 {
   // find type in tree
   if (!o) {
@@ -470,7 +470,9 @@ object_store::insert_object(object *o)
   object_creator oc(*this);
   o->read_from(&oc);
   // notify observer
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
+  if (notify) {
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
+  }
   // adjust size
   ++node->count;
   // insert element into hash map for fast lookup

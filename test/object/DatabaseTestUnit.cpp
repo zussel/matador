@@ -3,6 +3,8 @@
 #include "Car.hpp"
 #include "Engine.hpp"
 
+#include "object/object_view.hpp"
+
 #include "database/database.hpp"
 #include "database/transaction.hpp"
 
@@ -54,6 +56,7 @@ DatabaseTestUnit::simple()
 
     // ... do some object modifications
     typedef object_ptr<Engine> engine_ptr;
+    typedef object_view<Engine> engine_view;
     // insert new object
     engine_ptr engine = ostore_.insert(new Engine(70, 4, 1.4f));
     cout << "inserted " << *engine << "\n";
@@ -88,9 +91,17 @@ DatabaseTestUnit::simple()
     // show objects
     ostore_.dump_objects(cout);
 
+    cout << "starting rollback \n";
     tr.rollback();
+    cout << "finished rollback \n";
     cout << "after rollback \n";
-    ostore_.dump_objects(cout);
+    engine_view view(ostore_);
+    if (view.size() > 0) {
+      engine_view::iterator i = view.begin();
+      cout << "got " << *i.optr() << endl;
+    } else {
+      cout << "ERROR: no object in engine view!\n";
+    }
 
     // commit modifications
 //    tr.commit();
@@ -143,6 +154,7 @@ DatabaseTestUnit::with_sub()
     // insert new object
     car_ptr car = ostore_.insert(new Car("VW", "Beetle"));    
     engine_ptr engine = car->engine();
+    ostore_.dump_objects(cout);
     engine->power(120);
     engine->cylinder(4);
     engine->capacity(1.4f);
@@ -154,7 +166,10 @@ DatabaseTestUnit::with_sub()
     cout << "removing " << *car << " ... ";
     ostore_.remove(car);
     cout << "done.\n";
+    ostore_.dump_objects(cout);
+    cout << "starting rollback\n";
     tr.rollback();
+    cout << "finished rollback\n";
     
     ostore_.dump_objects(cout);
     
