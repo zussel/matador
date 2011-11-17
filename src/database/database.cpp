@@ -28,6 +28,11 @@ void database_impl::visit(delete_action *)
 {
 }
 
+transaction_impl* database_impl::create_transaction(transaction &tr) const
+{
+  return new transaction_impl(tr);
+}
+
 database::database(object_store &ostore, const std::string &/*dbstring*/)
   : ostore_(ostore)
 {
@@ -67,21 +72,21 @@ void database::push_transaction(transaction *tr)
 {
   if (!transaction_stack_.empty()) {
 //    cout << "unregister transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
-    ostore_.unregister_observer(transaction_stack_.top()->transaction_observer_.get());
+    ostore_.unregister_observer(transaction_stack_.top()->impl_);
   }
   transaction_stack_.push(tr);
 //  cout << "register transaction observer [" << tr->transaction_observer_.get() << "]\n";
-  ostore_.register_observer(tr->transaction_observer_.get());
+  ostore_.register_observer(tr->impl_);
 }
 
 void database::pop_transaction()
 {
 //  cout << "unregister transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
-  ostore_.unregister_observer(transaction_stack_.top()->transaction_observer_.get());
+  ostore_.unregister_observer(transaction_stack_.top()->impl_);
   transaction_stack_.pop();
   if (!transaction_stack_.empty()) {
 //    cout << "register transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
-    ostore_.register_observer(transaction_stack_.top()->transaction_observer_.get());
+    ostore_.register_observer(transaction_stack_.top()->impl_);
   }
 }
 

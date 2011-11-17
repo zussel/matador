@@ -37,6 +37,8 @@ public:
   virtual void visit(update_action *a);
   virtual void visit(delete_action *a);  
   virtual void visit(drop_action *) {}
+
+  transaction_impl* create_transaction(transaction &tr) const;
 };
 
 class OOS_API database

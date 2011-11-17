@@ -35,7 +35,9 @@ struct object_proxy;
 typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;
 
 struct object_proxy {
-  object_proxy(object *o = 0, object_store *os = 0);
+  explicit object_proxy(object_store *os);
+  object_proxy(long i, object_store *os);
+  object_proxy(object *o, object_store *os);
   ~object_proxy();
   
   friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);

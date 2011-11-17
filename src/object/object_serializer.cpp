@@ -188,7 +188,7 @@ void object_serializer::read_object(const char*, base_object_ptr &x)
   } else {
     o = ostore_->create(type.c_str());
     o->id_ = id;
-    ostore_->insert(o);
+    ostore_->insert_object(o, false);
     x.reset(o);
   }
 }

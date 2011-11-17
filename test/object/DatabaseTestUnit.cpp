@@ -52,7 +52,7 @@ DatabaseTestUnit::simple()
   transaction tr(db);
   try {
     // begin transaction
-    tr.begin();
+    tr.start();
 
     // ... do some object modifications
     typedef object_ptr<Engine> engine_ptr;
@@ -62,7 +62,7 @@ DatabaseTestUnit::simple()
     cout << "inserted " << *engine << "\n";
     tr.commit();
 
-    tr.begin();
+    tr.start();
     // modify object
     engine->power(120);
     cout << "changed power of " << *engine << "\n";
@@ -70,7 +70,7 @@ DatabaseTestUnit::simple()
     transaction tr2(db);
     try {
       // begin inner transaction
-      tr2.begin();
+      tr2.start();
       // change name again
       engine->power(170);
       cout << "changed power of " << *engine << "\n";
@@ -83,7 +83,7 @@ DatabaseTestUnit::simple()
     tr.rollback();
     cout << "after rollback " << *engine << "\n";
 
-    tr.begin();
+    tr.start();
     // delete object
     cout << "deleting " << *engine << "\n";
     ostore_.remove(engine);
@@ -137,6 +137,7 @@ void
 DatabaseTestUnit::with_sub()
 {
   cout << endl;
+  ostore_.dump_objects(cout);
   // create database and make object store known to the database
   database *db = new database(ostore_, "oodb://");
 
@@ -147,7 +148,7 @@ DatabaseTestUnit::with_sub()
   transaction tr(db);
   try {
     // begin transaction
-    tr.begin();
+    tr.start();
     // ... do some object modifications
     typedef object_ptr<Car> car_ptr;
     typedef object_ptr<Engine> engine_ptr;
@@ -161,7 +162,7 @@ DatabaseTestUnit::with_sub()
     cout << "inserted " << *car << " with " << *engine << endl;
     tr.commit();
     
-    tr.begin();
+    tr.start();
     
     cout << "removing " << *car << " ... ";
     ostore_.remove(car);
@@ -173,9 +174,11 @@ DatabaseTestUnit::with_sub()
     
     ostore_.dump_objects(cout);
     
-  } catch (exception &) {
+  } catch (exception &ex) {
     // error, abort transaction
+    cout << "caught exception: " << ex.what() << " (start rollback)\n";
     tr.rollback();
+    ostore_.dump_objects(cout);
   }
   // close db
   db->close();

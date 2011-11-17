@@ -8,6 +8,96 @@ using namespace std;
 
 namespace oos {
 
+transaction_impl::transaction_impl(transaction &tr)
+  : tr_(tr)
+{
+//  tr_.db()->ostore().register_observer(this);
+}
+
+transaction_impl::~transaction_impl()
+{
+//  tr_.db()->ostore().unregister_observer(this);
+}
+
+void
+transaction_impl::on_insert(object *o)
+{
+  cout << "inserting " << *o << endl;
+  /*****************
+   * 
+   * backup inserted object
+   * on rollback the object
+   * is removed from object
+   * store
+   * 
+   *****************/
+  tr_.backup(new insert_action(o));
+}
+
+void
+transaction_impl::on_update(object *o)
+{
+  cout << "updating " << *o << endl;
+  /*****************
+   * 
+   * backup updated object
+   * on rollback the object
+   * is restored to old values
+   * 
+   *****************/
+  tr_.backup(new update_action(o));
+}
+
+void
+transaction_impl::on_delete(object *o)
+{
+  cout << "deleting " << *o << endl;
+  /*****************
+   * 
+   * backup deleted object
+   * on rollback the object
+   * is restored into the
+   * object store
+   * 
+   *****************/
+  tr_.backup(new delete_action(o));
+}
+
+void transaction_impl::rollback()
+{
+  /**************
+   *
+   * rollback transaction
+   * restore objects
+   * and finally pop transaction
+   *
+   **************/
+  while (!tr_.empty()) {
+    transaction::iterator i = tr_.begin();
+    std::auto_ptr<action> a(*i);
+    tr_.erase(i);
+    tr_.restore(a.get());
+  }
+}
+
+void transaction_impl::commit()
+{
+  /****************
+   * 
+   * Pop transaction from stack
+   * and execute all actions
+   * change state to comitted
+   * 
+   ****************/
+  transaction::iterator first = tr_.begin();
+  transaction::iterator last = tr_.end();
+  while (first != last) {
+    ++first;
+    //tr_.db()->execute_action(*first++);
+    throw exception("dummy commit exception");
+  }
+}
+
 bool transaction::backup_visitor::backup(action *act, byte_buffer *buffer)
 {
   buffer_ = buffer;
@@ -57,75 +147,28 @@ void transaction::restore_visitor::visit(update_action *a)
 
 void transaction::restore_visitor::visit(delete_action *a)
 {
-  // create object with id and deserialize
-  object *o = ostore_->create(a->type().c_str());
-  // data from buffer into object
-  serializer_.deserialize(o, *buffer_, ostore_);
-  // insert object
-  ostore_->insert_object(o, false);
+  // check if there is an object with id in
+  // object store
+  object *o = ostore_->find_object(a->id());
+  if (!o) {
+    // create object with id and deserialize
+    o = ostore_->create(a->type().c_str());
+    // data from buffer into object
+    serializer_.deserialize(o, *buffer_, ostore_);
+    // insert object
+    ostore_->insert_object(o, false);
+  } else {
+    // data from buffer into object
+    serializer_.deserialize(o, *buffer_, ostore_);
+  }
   // ERROR: throw exception if id of object
   //        isn't valid (in use)
-}
-
-transaction::transaction_observer::transaction_observer(transaction &tr)
-  : tr_(tr)
-{
-//  tr_.db()->ostore().register_observer(this);
-}
-
-transaction::transaction_observer::~transaction_observer()
-{
-//  tr_.db()->ostore().unregister_observer(this);
-}
-
-void
-transaction::transaction_observer::on_insert(object *o)
-{
-  cout << "inserting " << *o << endl;
-  /*****************
-   * 
-   * backup inserted object
-   * on rollback the object
-   * is removed from object
-   * store
-   * 
-   *****************/
-  tr_.backup(new insert_action(o));
-}
-
-void
-transaction::transaction_observer::on_update(object *o)
-{
-  cout << "updating " << *o << endl;
-  /*****************
-   * 
-   * backup updated object
-   * on rollback the object
-   * is restored to old values
-   * 
-   *****************/
-  tr_.backup(new update_action(o));
-}
-
-void
-transaction::transaction_observer::on_delete(object *o)
-{
-  cout << "deleting " << *o << endl;
-  /*****************
-   * 
-   * backup deleted object
-   * on rollback the object
-   * is restored into the
-   * object store
-   * 
-   *****************/
-  tr_.backup(new delete_action(o));
 }
 
 transaction::transaction(database *db)
   : db_(db)
   , id_(0)
-  , transaction_observer_(new transaction_observer(*this))
+  , impl_(db->impl_->create_transaction(*this))
 {}
 
 transaction::~transaction()
@@ -141,7 +184,7 @@ transaction::id() const
 }
 
 void
-transaction::begin()
+transaction::start()
 {
   /**************
    * 
@@ -166,23 +209,12 @@ transaction::commit()
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
   } else {
-    /****************
-     * 
-     * Pop transaction from stack
-     * and execute all actions
-     * change state to comitted
-     * 
-     ****************/
-    db_->pop_transaction();
-    iterator first = action_list_.begin();
-    iterator last = action_list_.end();
-    while (first != last) {
-      db_->execute_action(*first++);
-    }
+    impl_->commit();
     // clear actions
     action_list_.clear();
     object_buffer_.clear();
     id_set_.clear();
+    db_->pop_transaction();
   }
 }
 
@@ -194,19 +226,8 @@ transaction::rollback()
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";
   } else {
-    /**************
-     *
-     * rollback transaction
-     * restore objects
-     * and finally pop transaction
-     *
-     **************/
-    iterator first = action_list_.begin();
-    iterator last = action_list_.end();
-    while (first != last) {
-      action *act = (*first++);
-      restore_visitor_.restore(act, &object_buffer_, &db_->ostore());
-    }
+    // call transaction implementations rollback
+    impl_->rollback();
     // clear actions
     action_list_.clear();
     object_buffer_.clear();
@@ -274,9 +295,51 @@ transaction::backup(action *a)
         // replace update action with delete
         // action
         *first = a;
+      } else {
+        cout << "TR (" << id_ << ") nothing todo\n";
       }
     }
   }
+}
+
+void transaction::restore(action *a)
+{
+  restore_visitor_.restore(a, &object_buffer_, &db_->ostore());
+}
+
+transaction::iterator transaction::begin()
+{
+  return action_list_.begin();
+}
+
+transaction::const_iterator transaction::begin() const
+{
+  return action_list_.begin();
+}
+
+transaction::iterator transaction::end()
+{
+  return action_list_.end();
+}
+
+transaction::const_iterator transaction::end() const
+{
+  return action_list_.end();
+}
+
+transaction::iterator transaction::erase(transaction::iterator i)
+{
+  return action_list_.erase(i);
+}
+
+bool transaction::empty() const
+{
+  return action_list_.empty();
+}
+
+size_t transaction::size() const
+{
+  return action_list_.size();
 }
 
 }

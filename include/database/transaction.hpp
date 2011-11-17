@@ -27,6 +27,23 @@ namespace oos {
 
 class database;
 
+class transaction_impl : public object_observer
+{
+public:
+  transaction_impl(transaction &tr);
+  virtual ~transaction_impl();
+
+  virtual void on_insert(object *o);
+  virtual void on_update(object *o);
+  virtual void on_delete(object *o);
+  
+  virtual void rollback();
+  virtual void commit();
+
+private:
+  transaction &tr_;
+};
+
 class OOS_API transaction
 {
 public:
@@ -35,7 +52,7 @@ public:
   
   long id() const;
 
-  void begin();
+  void start();
   void commit();
   void rollback();
 
@@ -43,20 +60,6 @@ public:
   const database* db() const;
 
 private:
-  class transaction_observer : public object_observer
-  {
-  public:
-    transaction_observer(transaction &tr);
-    virtual ~transaction_observer();
-
-    virtual void on_insert(object *o);
-    virtual void on_update(object *o);
-    virtual void on_delete(object *o);
-    
-  private:
-    transaction &tr_;
-  };
-
   class backup_visitor : public action_visitor
   {
   public:
@@ -102,11 +105,28 @@ private:
   };
 
 private:
-  friend class transaction_observer;
+  typedef std::set<long> id_set_t;
+
+  typedef std::list<action*> action_list_t;
+  typedef action_list_t::iterator iterator;
+  typedef action_list_t::const_iterator const_iterator;
+
+  friend class transaction_impl;
   friend class object_store;
   friend class database;
   
   void backup(action *a);
+  void restore(action *a);
+
+  iterator begin();
+  const_iterator begin() const;
+  iterator end();
+  const_iterator end() const;
+
+  iterator erase(iterator i);
+
+  bool empty() const;
+  size_t size() const;
 
 private:
   static long id_counter;
@@ -115,14 +135,8 @@ private:
   database *db_;
   long id_;
   
-  std::auto_ptr<transaction_observer> transaction_observer_;
+  transaction_impl *impl_;
   
-  typedef std::set<long> id_set_t;
-
-  typedef std::list<action*> action_list_t;
-  typedef action_list_t::iterator iterator;
-  typedef action_list_t::const_iterator const_iterator;
-
   id_set_t id_set_;
   action_list_t action_list_;
 

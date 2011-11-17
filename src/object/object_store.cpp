@@ -50,7 +50,10 @@ private:
 class object_creator : public object_atomizer
 {
 public:
-  object_creator(object_store &ostore) : ostore_(ostore) {}
+  object_creator(object_store &ostore, bool notify)
+    : ostore_(ostore)
+    , notify_(notify)
+  {}
   virtual ~object_creator() {}
 
   virtual void read_object(const char*, base_object_ptr &x)
@@ -58,10 +61,12 @@ public:
     // mark object pointer as internal
     x.is_internal_ = true;
     if (!x.is_reference()) {
-      // create object
-      object *o = ostore_.create(x.type());
-      ostore_.insert(o);
-      x.reset(o);
+      if (!x.ptr()) {
+        // create object
+        object *o = ostore_.create(x.type());
+        ostore_.insert_object(o, notify_);
+        x.reset(o);
+      }
       object_stack_.push(x.ptr());
       x.ptr()->read_from(this);
       object_stack_.pop();
@@ -81,6 +86,7 @@ public:
 private:
   std::stack<object*> object_stack_;
   object_store &ostore_;
+  bool notify_;
 };
 
 object_deleter::object_deleter()
@@ -196,8 +202,8 @@ object_deleter::check_object_count_map() const
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "OBJECT"))
   , id_(0)
-  , first_(new object_proxy(NULL, this))
-  , last_(new object_proxy(NULL, this))
+  , first_(new object_proxy(this))
+  , last_(new object_proxy(this))
 {
   prototype_node_name_map_.insert(std::make_pair("OBJECT", root_.get()));
   prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
@@ -467,7 +473,7 @@ object_store::insert_object(object *o, bool notify)
     node->adjust_right_marker(oproxy->prev, oproxy);
   }
   // create object
-  object_creator oc(*this);
+  object_creator oc(*this, notify);
   o->read_from(&oc);
   // notify observer
   if (notify) {

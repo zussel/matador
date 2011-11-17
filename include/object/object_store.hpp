@@ -371,6 +371,7 @@ private:
   template < class T > friend class object_view;
   friend class object_creator;
   friend class object_deleter;
+  friend class object_serializer;
   friend class transaction;
   friend class object;
 
@@ -397,9 +398,6 @@ private:
   object_proxy_ptr first_;
   object_proxy_ptr last_;
   
-  typedef std::list<object_proxy_ptr> t_object_proxy_list;
-  t_object_proxy_list deleted_object_proxy_list_;
-
   object_deleter object_deleter_;
 };
 
