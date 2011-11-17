@@ -92,9 +92,9 @@ void transaction_impl::commit()
   transaction::iterator first = tr_.begin();
   transaction::iterator last = tr_.end();
   while (first != last) {
-    ++first;
+    delete *first++;
     //tr_.db()->execute_action(*first++);
-    throw exception("dummy commit exception");
+    //throw exception();
   }
 }
 
@@ -173,6 +173,7 @@ transaction::transaction(database *db)
 
 transaction::~transaction()
 {
+  delete impl_;
 }
 
 long transaction::id_counter = 0;
@@ -297,6 +298,7 @@ transaction::backup(action *a)
         *first = a;
       } else {
         cout << "TR (" << id_ << ") nothing todo\n";
+        delete a;
       }
     }
   }

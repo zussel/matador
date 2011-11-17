@@ -10,6 +10,7 @@ SET (TEST_SOURCES
   Car.hpp
   Engine.cpp
   Engine.hpp
+  Item.hpp
   ComplexObjectStoreTestUnit.cpp
   ComplexObjectStoreTestUnit.hpp
   ObjectPrototypeTestUnit.cpp

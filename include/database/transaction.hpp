@@ -26,8 +26,9 @@
 namespace oos {
 
 class database;
+class transaction;
 
-class transaction_impl : public object_observer
+class OOS_API transaction_impl : public object_observer
 {
 public:
   transaction_impl(transaction &tr);

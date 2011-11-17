@@ -2,8 +2,10 @@
 
 #include "Car.hpp"
 #include "Engine.hpp"
+#include "Item.hpp"
 
 #include "object/object_view.hpp"
+#include "object/object_list.hpp"
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
@@ -19,6 +21,7 @@ DatabaseTestUnit::DatabaseTestUnit()
 {
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
   add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
+  add_test("with_list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
   add_test("test", std::tr1::bind(&DatabaseTestUnit::test, this), "simple test method");
 }
 
@@ -28,6 +31,9 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
+  ostore_.insert_prototype(new object_producer<Item<ItemPtrList> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
+
   ostore_.insert_prototype(new object_producer<Car>, "CAR");
   ostore_.insert_prototype(new object_producer<Engine>, "ENGINE");
 }
@@ -174,6 +180,80 @@ DatabaseTestUnit::with_sub()
     
     ostore_.dump_objects(cout);
     
+  } catch (exception &ex) {
+    // error, abort transaction
+    cout << "caught exception: " << ex.what() << " (start rollback)\n";
+    tr.rollback();
+    ostore_.dump_objects(cout);
+  }
+  // close db
+  db->close();
+  // explicit write data to file
+  //db->write();
+  delete db;
+}
+
+void
+DatabaseTestUnit::with_list()
+{
+  typedef object_ptr<ItemPtrList> itemlist_ptr;
+  typedef object_ptr<ItemPtrList::value_type> item_ptr;
+
+  cout << endl;
+  ostore_.dump_objects(cout);
+  // create database and make object store known to the database
+  database *db = new database(ostore_, "oodb://");
+
+  // open db
+  db->open();
+
+  // create new transaction    
+  transaction tr(db);
+  try {
+    // begin transaction
+    tr.start();
+    // ... do some object modifications
+    cout << "inserting item pointer list\n";
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    cout << "item list [" << itemlist->id() << "]\n";
+    tr.commit();
+    
+    tr.start();
+    cout << "inserting 20 items\n";
+    for (int i = 0; i < 20; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      itemlist->push_back(new ItemPtrList::value_type(name.str()));
+    }
+
+    cout << "items of list\n";
+    for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+      cout << "item [" << i->get()->name() << "]\n";
+    }
+    cout << "starting rollback\n";
+    tr.rollback();
+    cout << "finished rollback\n";
+    
+    ostore_.dump_objects(cout);
+    
+    tr.start();
+    cout << "inserting 20 items\n";
+    for (int i = 0; i < 20; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      itemlist->push_back(new ItemPtrList::value_type(name.str()));
+    }
+
+    cout << "items of list\n";
+    for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+      cout << "item [" << i->get()->name() << "]\n";
+    }
+
+    tr.commit();
+    cout << "commited\n";
+    
+    ostore_.dump_objects(cout);
+
   } catch (exception &ex) {
     // error, abort transaction
     cout << "caught exception: " << ex.what() << " (start rollback)\n";
