@@ -171,8 +171,8 @@ private:
 class OOS_API object_linker : public object_atomizer
 {
 public:
-  object_linker(const base_object_ptr &bo, const base_object_ptr &o, const std::string &name)
-    : base_object_(bo)
+  object_linker(object *elem, const base_object_ptr &o, const std::string &name)
+    : elem_(elem)
     , object_(o)
     , name_(name)
     , linked_(false)
@@ -182,7 +182,7 @@ public:
   virtual void read_object(const char *id, base_object_ptr &x)
   {
     if (id == name_) {
-      base_object_.ptr()->mark_modified();
+      elem_->mark_modified();
       x.reset(object_.ptr());
       linked_ = true;
     }
@@ -191,7 +191,7 @@ public:
   bool success() { return linked_; }
 
 private:
-  const base_object_ptr &base_object_;
+  object *elem_;
   const base_object_ptr &object_;
   std::string name_;
   bool linked_;

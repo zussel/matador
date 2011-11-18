@@ -455,11 +455,9 @@ protected:
 
   virtual void install(object_store *ostore);
   virtual void uninstall();
-
-  /*
-  virtual object_list_base_node* first_object() const = 0;
-  virtual object_list_base_node* last_object() const = 0;
-  */
+  
+  // mark modified object containig the list
+  void mark_modified(object *o);
 
   virtual void for_each(const node_func &nf) = 0;
 
@@ -475,6 +473,7 @@ template < typename T, class W >
 class object_list : public object_list_base
 {
 public:
+  typedef object_list_base base_list;
   typedef T value_type;
   typedef W value_type_wrapper;
   typedef std::list<value_type_wrapper> list_type;
@@ -536,7 +535,7 @@ protected:
     }
   }
 
-  bool set_reference(const value_type_wrapper &elem, const base_object_ptr &o)
+  bool set_reference(value_type *elem, const base_object_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
@@ -548,6 +547,11 @@ protected:
   void push_back(const value_type_wrapper &x) { object_list_.push_back(x); }
   iterator erase_i(iterator i) { return object_list_.erase(i); }
   
+  virtual void uninstall()
+  {
+    base_list::uninstall();
+    object_list_.clear();
+  }
 
 private:
   list_type object_list_;
@@ -574,13 +578,23 @@ public:
     if (!base_list::ostore()) {
       //throw object_exception();
     } else {
-      value_type_ptr optr = base_list::ostore()->insert(elem);
+      // mark list object as modified
+      mark_modified(o.ptr());
+      // set reference
+      if (!set_reference(elem, o)) {
+        // throw object_exception();
+      } else {
+        // insert new item object
+        value_type_ptr optr = base_list::ostore()->insert(elem);
+        // and call base list class push back
+        base_list::push_front(optr);
+      }/*
       // set link to list object
       if (!set_reference(optr, o)) {
         // throw object_exception();
       } else {
         base_list::push_front(optr);
-      }
+      }*/
     }
   }
 
@@ -589,13 +603,24 @@ public:
     if (!base_list::ostore()) {
       //throw object_exception();
     } else {
+      // mark list object as modified
+      mark_modified(o.ptr());
+      // set reference
+      if (!set_reference(elem, o)) {
+        // throw object_exception();
+      } else {
+        // insert new item object
+        value_type_ptr optr = base_list::ostore()->insert(elem);
+        // and call base list class push back
+        base_list::push_back(optr);
+      }/*
       value_type_ptr optr = base_list::ostore()->insert(elem);
       // set link to list object
       if (!set_reference(optr, o)) {
         // throw object_exception();
       } else {
         base_list::push_back(optr);
-      }
+      }*/
     }
   }
 
@@ -640,7 +665,7 @@ public:
       //throw object_exception();
     } else {
       // set link to list object
-      if (!set_reference(elem, o)) {
+      if (!set_reference(elem.get(), o)) {
         //throw object_exception();
       } else {
         base_list::push_front(elem);
@@ -654,7 +679,7 @@ public:
       //throw object_exception();
     } else {
       // set link to list object
-      if (!set_reference(elem, o)) {
+      if (!set_reference(elem.get(), o)) {
         //throw object_exception();
       } else {
         base_list::push_back(elem);
@@ -726,10 +751,10 @@ public:
     if (!ostore()) {
       //throw object_exception();
     } else {
-      value_type_ptr optr = ostore()->insert(elem);
-      if (!set_reference(optr, ref_list)) {
+      if (!set_reference(elem, ref_list)) {
         // throw object_exception()
       } else {
+        value_type_ptr optr = ostore()->insert(elem);
         optr->next_ = first_->next_;
         first_->next_ = optr;
         optr->prev_ = first_;
@@ -745,10 +770,10 @@ public:
     if (!ostore()) {
       //throw object_exception();
     } else {
-      value_type_ptr optr = ostore()->insert(elem);
-      if (!set_reference(optr, ref_list)) {
+      if (!set_reference(elem, ref_list)) {
         // throw object_exception()
       } else {
+        value_type_ptr optr = ostore()->insert(elem);
         optr->prev_ = last_->prev_;
         last_->prev_->next_ = optr;
         optr->next_ = last_;
@@ -824,7 +849,7 @@ protected:
     }
   }
 
-  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
@@ -899,7 +924,8 @@ public:
 protected:
   virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
   {
-    object_ref<T> oref = elem->oref();
+//    object_ref<T> oref = elem->oref();
+    object *oref = elem->oref().ptr();
     object_linker ol(oref, o, base_list::list_name());
     oref->read_from(&ol);
     return ol.success();

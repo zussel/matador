@@ -77,6 +77,7 @@ private:
   friend class object_deleter;
   friend class base_object_ptr;
   friend class object_serializer;
+  friend class object_list_base;
 	
 	long id_;
   std::tr1::shared_ptr<object_proxy> proxy_;

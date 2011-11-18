@@ -244,6 +244,7 @@ DatabaseTestUnit::with_list()
       itemlist->push_back(new ItemPtrList::value_type(name.str()));
     }
 
+    cout << "list has " << itemlist->size() << " items\n";
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
       cout << "item [" << i->get()->name() << "]\n";

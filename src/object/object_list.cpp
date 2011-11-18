@@ -16,6 +16,7 @@
  */
 
 #include "object/object_list.hpp"
+#include "object/object.hpp"
 
 namespace oos {
 
@@ -34,6 +35,11 @@ void object_list_base::uninstall()
 {
     ostore_ = NULL;
     parent_ = NULL;
+}
+
+void object_list_base::mark_modified(object *o)
+{
+  o->mark_modified();
 }
 
 }

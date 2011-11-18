@@ -84,6 +84,8 @@ public:
   bool empty() const { return item_list_.empty(); }
   void clear() { item_list_.clear(); }
 
+  size_t size() { return item_list_.size(); }
+
 private:
   item_list_t item_list_;
 };
