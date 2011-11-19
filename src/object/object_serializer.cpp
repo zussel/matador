@@ -19,8 +19,12 @@
 #include "object/object.hpp"
 #include "object/object_store.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_list.hpp"
 
 #include <string.h>
+
+using namespace std::tr1::placeholders;
+using namespace std;
 
 namespace oos {
 
@@ -108,8 +112,12 @@ void object_serializer::write_object(const char*, const base_object_ptr &x)
   write_string(NULL, x.type());
 }
 
-void object_serializer::write_object_list(const char*, const object_list_base &)
+void object_serializer::write_object_list(const char*, const object_list_base &x)
 {
+  // write number of items in list
+  // for each item write id and type
+  write_unsigned(NULL, x.size());
+  x.for_each(std::tr1::bind(&object_serializer::write_object_list_item, this, _1));
 }
 
 void object_serializer::read_char(const char*, char &c)
@@ -193,8 +201,26 @@ void object_serializer::read_object(const char*, base_object_ptr &x)
   }
 }
 
-void object_serializer::read_object_list(const char*, object_list_base &)
+void object_serializer::read_object_list(const char*, object_list_base &x)
 {
+  // get count of backuped list item
+  unsigned int s(0);
+  read_unsigned(NULL, s);
+  cout << "list items: " << s << "\n";
+  x.reset();
+  string type;
+  long id(0);
+  for (unsigned int i = 0; i < s; ++i) {
+    read_long(NULL, id);
+    read_string(NULL, type);
+    cout << "restoring list item [" << type << "] (id: " << id << ")\n";
+  }
+}
+
+void object_serializer::write_object_list_item(const object *o)
+{
+  write_long(NULL, o->id());
+  write_string(NULL, o->object_type());
 }
 
 }

@@ -72,6 +72,9 @@ public:
 	virtual void read_object_list(const char* id, object_list_base &x);
   
 private:
+  void write_object_list_item(const object *o);
+
+private:
   object_store *ostore_;
   byte_buffer *buffer_;
 };

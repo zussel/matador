@@ -230,9 +230,11 @@ DatabaseTestUnit::with_list()
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
       cout << "item [" << i->get()->name() << "]\n";
     }
+    cout << "list has " << itemlist->size() << " items\n";
     cout << "starting rollback\n";
     tr.rollback();
     cout << "finished rollback\n";
+    cout << "list has " << itemlist->size() << " items\n";
     
     ostore_.dump_objects(cout);
     
@@ -254,6 +256,22 @@ DatabaseTestUnit::with_list()
     cout << "commited\n";
     
     ostore_.dump_objects(cout);
+
+    tr.start();
+    
+    cout << "start clearing list\n";
+    itemlist->clear();
+    cout << "finished clearing list\n";
+
+    cout << "list has " << itemlist->size() << " items\n";
+    cout << "starting rollback\n";
+    tr.rollback();
+    cout << "finished rollback\n";
+    cout << "list has " << itemlist->size() << " items\n";
+    cout << "items of list\n";
+    for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+      cout << "item [" << i->get()->name() << "]\n";
+    }
 
   } catch (exception &ex) {
     // error, abort transaction

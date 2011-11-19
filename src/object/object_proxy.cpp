@@ -32,7 +32,7 @@ object_proxy::object_proxy(object_store *os)
 
 object_proxy::object_proxy(long i, object_store *os)
   : obj(NULL)
-  , id(id)
+  , id(i)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)

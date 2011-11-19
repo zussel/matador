@@ -20,11 +20,19 @@
 
 namespace oos {
 
-object_list_base::object_list_base()
+object_list_base::object_list_base(object *parent)
+  : parent_(parent)
 {}
 
 object_list_base::~object_list_base()
 {}
+
+void object_list_base::clear()
+{
+  if (parent_) {
+    parent_->mark_modified();
+  }
+}
 
 void object_list_base::install(object_store *ostore)
 {
@@ -34,7 +42,7 @@ void object_list_base::install(object_store *ostore)
 void object_list_base::uninstall()
 {
     ostore_ = NULL;
-    parent_ = NULL;
+//    parent_ = NULL;
 }
 
 void object_list_base::mark_modified(object *o)

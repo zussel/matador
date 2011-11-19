@@ -87,7 +87,7 @@ public:
     reader->read_object("prev", prev_);
     reader->read_object("next", next_);
   }
-	void write_to(object_atomizer *writer)
+	void write_to(object_atomizer *writer) const
   {
     object::write_to(writer);
     writer->write_object("first", first_);
@@ -182,7 +182,7 @@ public:
     object_list_node<object_ptr_list_node<T> >::read_from(reader);
     reader->read_object(name_.c_str(), object_);
   }
-	void write_to(object_atomizer *writer)
+	void write_to(object_atomizer *writer) const
   {
     object_list_node<object_ptr_list_node<T> >::write_to(writer);
     writer->write_string(name_.c_str(), object_);
@@ -218,10 +218,10 @@ public:
     object_list_node<object_ref_list_node<T> >::read_from(reader);
     reader->read_object(name_.c_str(), object_);
   }
-	void write_to(object_atomizer *writer)
+	void write_to(object_atomizer *writer) const
   {
     object_list_node<object_ref_list_node<T> >::write_to(writer);
-    writer->write_string(name_.c_str(), object_);
+    writer->write_object(name_.c_str(), object_);
   }
 
   object_ref<T> oref() const {
@@ -436,7 +436,7 @@ public:
   typedef std::tr1::function<void (object *)> node_func;
 
 public:
-  object_list_base();
+  object_list_base(object *parent);
 	virtual ~object_list_base();
 
 	virtual void read_from(object_atomizer *) = 0;
@@ -452,14 +452,17 @@ protected:
   friend class object_store;
   friend class object_creator;
   friend class object_deleter;
+  friend class object_serializer;
 
   virtual void install(object_store *ostore);
   virtual void uninstall();
   
+  virtual void reset() {}
+
   // mark modified object containig the list
   void mark_modified(object *o);
 
-  virtual void for_each(const node_func &nf) = 0;
+  virtual void for_each(const node_func &nf) const = 0;
 
   object* parent_object() const { return parent_; }
   void parent_object(object *parent) { parent_ = parent; }
@@ -480,8 +483,9 @@ public:
   typedef typename list_type::iterator iterator;
   typedef typename list_type::const_iterator const_iterator;
 
-  object_list(const std::string &list_ref_name)
-    : list_name_(list_ref_name)
+  object_list(object *parent, const std::string &list_ref_name)
+    : object_list_base(parent)
+    , list_name_(list_ref_name)
   {}
   virtual ~object_list() {}
   
@@ -507,6 +511,7 @@ public:
 
   virtual void clear()
   {
+    base_list::clear();
     erase(begin(), end());
   }
 
@@ -526,10 +531,10 @@ public:
   }
 
 protected:
-  virtual void for_each(const node_func &nf)
+  virtual void for_each(const node_func &nf) const
   {
-    iterator first = object_list_.begin();
-    iterator last = object_list_.end();
+    const_iterator first = object_list_.begin();
+    const_iterator last = object_list_.end();
     while (first != last) {
       nf((*first++).ptr());
     }
@@ -553,6 +558,11 @@ protected:
     object_list_.clear();
   }
 
+  virtual void reset()
+  {
+    object_list_.clear();
+  }
+
 private:
   list_type object_list_;
   std::string list_name_;
@@ -568,8 +578,8 @@ public:
   typedef typename base_list::iterator iterator;
   typedef typename base_list::const_iterator const_iterator;
 
-  object_ptr_list(const std::string &list_ref_name)
-    : base_list(list_ref_name)
+  object_ptr_list(object *parent, const std::string &list_ref_name)
+    : base_list(parent, list_ref_name)
   {}
   virtual ~object_ptr_list() {}
 
@@ -579,7 +589,7 @@ public:
       //throw object_exception();
     } else {
       // mark list object as modified
-      mark_modified(o.ptr());
+      base_list::mark_modified(o.ptr());
       // set reference
       if (!set_reference(elem, o)) {
         // throw object_exception();
@@ -604,7 +614,7 @@ public:
       //throw object_exception();
     } else {
       // mark list object as modified
-      mark_modified(o.ptr());
+      base_list::mark_modified(o.ptr());
       // set reference
       if (!set_reference(elem, o)) {
         // throw object_exception();
@@ -654,8 +664,8 @@ public:
   typedef typename base_list::iterator iterator;
   typedef typename base_list::const_iterator const_iterator;
 
-  object_ref_list(const std::string &list_ref_name)
-    : base_list(list_ref_name)
+  object_ref_list(object *parent, const std::string &list_ref_name)
+    : base_list(parent, list_ref_name)
   {}
   virtual ~object_ref_list() {}
 
@@ -707,11 +717,13 @@ class linked_object_list : public object_list_base
 public:
 //  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
+  typedef object_list_base base_list;
 	typedef T value_type;
 	typedef object_ptr<value_type> value_type_ptr;
 
-  linked_object_list(const std::string &list_ref_name)
-    : list_name_(list_ref_name)
+  linked_object_list(object *parent, const std::string &list_ref_name)
+    : object_list_base(parent)
+    , list_name_(list_ref_name)
   {}
 	virtual ~linked_object_list() {}
 
@@ -739,6 +751,7 @@ public:
   }
   virtual void clear()
   {
+    base_list::clear();
     erase(begin(), end());
   }
   virtual size_t size() const
@@ -840,7 +853,7 @@ protected:
     last_.reset();
   }
 
-  virtual void for_each(const node_func &nf)
+  virtual void for_each(const node_func &nf) const
   {
     value_type_ptr node = first_;
     while(node.get()) {
@@ -861,6 +874,17 @@ protected:
     return list_name_;
   }
 
+  virtual void reset()
+  {
+    // link object elements
+    first_->first_ = first_;
+    first_->last_ = last_;
+    first_->next_ = last_;
+    last_->first_ = first_;
+    last_->last_ = last_;
+    last_->prev_ = first_;
+  }
+
 private:
   friend class object_store;
   friend class object_list_iterator<T>;
@@ -879,6 +903,11 @@ public:
   typedef object_ptr_list_node<T> value_type;
   typedef object_ptr<value_type> value_type_ptr;
   typedef linked_object_list<value_type> base_list;
+
+  linked_object_ptr_list(object *parent, const std::string &list_ref_name)
+    : linked_object_list<value_type>(parent, list_ref_name)
+  {}
+  virtual ~linked_object_ptr_list() {}
 
   void push_front(const object_ptr<T> &optr, const base_object_ptr &ref_list)
   {
@@ -907,8 +936,8 @@ public:
   typedef object_ptr<value_type> value_type_ptr;
   typedef linked_object_list<value_type> base_list;
 
-  linked_object_ref_list(const std::string &list_ref_name)
-    : linked_object_list<value_type>(list_ref_name)
+  linked_object_ref_list(object *parent, const std::string &list_ref_name)
+    : linked_object_list<value_type>(parent, list_ref_name)
   {}
   virtual ~linked_object_ref_list() {}
 

@@ -6,18 +6,18 @@ using std::string;
 using namespace oos;
 
 Album::Album()
-  : track_list_("album")
+  : track_list_(this, "album")
 {}
 
 Album::Album(const std::string &n)
   : name_(n)
-  , track_list_("album")
+  , track_list_(this, "album")
 {}
 
 Album::Album(const std::string &n, const object_ptr<Artist> &a)
   : name_(n)
   , artist_(a)
-  , track_list_("album")
+  , track_list_(this, "album")
 {}
 
 Album::~Album()

@@ -19,7 +19,7 @@ public:
     reader->read_string("name", name_);
     reader->read_object("itemlist", list_);
   }
-	void write_to(oos::object_atomizer *writer)
+	void write_to(oos::object_atomizer *writer) const
   {
     oos::object::write_to(writer);
     writer->write_string("name", name_);
@@ -57,7 +57,7 @@ public:
 
 public:
   ItemPtrList()
-    : item_list_("itemlist")
+    : item_list_(this, "itemlist")
   {}
   virtual ~ItemPtrList() {}
 
@@ -66,7 +66,7 @@ public:
     object::read_from(reader);
     reader->read_object_list("item_list", item_list_);
   }
-	void write_to(oos::object_atomizer *writer)
+	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
     writer->write_object_list("item_list", item_list_);
@@ -103,7 +103,7 @@ public:
 
 public:
   ItemRefList()
-    : item_list_("itemlist")
+    : item_list_(this, "itemlist")
   {}
   virtual ~ItemRefList() {}
 
@@ -112,7 +112,7 @@ public:
     object::read_from(reader);
     reader->read_object_list("item_list", item_list_);
   }
-	void write_to(oos::object_atomizer *writer)
+	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
     writer->write_object_list("item_list", item_list_);
@@ -155,7 +155,7 @@ public:
     reader->read_string("name", name_);
     reader->read_object("itemlist", item_list_);
   }
-	void write_to(oos::object_atomizer *writer)
+	void write_to(oos::object_atomizer *writer) const
   {
     object_list_node::write_to(writer);
     writer->write_string("name", name_);
@@ -195,7 +195,7 @@ public:
 
 public:
   LinkedItemList()
-    : item_list_("itemlist")
+    : item_list_(this, "itemlist")
   {}
   virtual ~LinkedItemList() {}
 
@@ -204,7 +204,7 @@ public:
     object::read_from(reader);
     reader->read_object_list("item_list", item_list_);
   }
-	void write_to(oos::object_atomizer *writer)
+	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
     writer->write_object_list("item_list", item_list_);
