@@ -235,8 +235,8 @@ public:
     , skip_siblings_(skip_siblings)
     , node_(NULL)
   {
-		object_store::t_prototype_node_map::iterator i = ostore_.prototype_node_type_map_.find(typeid(T).name());
-		if (i == ostore_.prototype_node_type_map_.end()) {
+		object_store::t_prototype_node_map::iterator i = ostore_.prototype_node_map_.find(typeid(T).name());
+		if (i == ostore_.prototype_node_map_.end()) {
       // throw excpetion
     }
     node_ = i->second;

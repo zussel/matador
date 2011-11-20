@@ -214,7 +214,7 @@ private:
 class OOS_API object_store
 {
 private:
-  typedef std::tr1::unordered_map<long, object*> t_object_map;
+  typedef std::tr1::unordered_map<long, object_proxy_ptr> t_object_proxy_map;
 	typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_node_map;
 
 public:
@@ -341,19 +341,6 @@ public:
   }
   
   /**
-   * @brief Finds object with id
-   *
-   * Try to find the object with given id in
-   * object store. If object can#t be found
-   * NULL is returned.
-   *
-   * @param id ID of object to find
-   * @return On success it returns an object on failure null
-   *
-   */
-  object* find_object(long id) const;
-
-  /**
    * @brief Register an observer with the object store
    *
    * @param observer The object observer to register.
@@ -366,6 +353,47 @@ public:
    * @param observer The object observer to unregister.
    */
   void unregister_observer(object_observer *observer);
+
+  /**
+   * @Creates and inserts an object proxy object.
+   * 
+   * An object proxy object is created and inserted
+   * into the internal proxy hash map. The proxy won't
+   * be linked into the main object proxy list until
+   * it gets a valid object.
+   * 
+   * @param id Unique id of the object proxy.
+   * @return An object proxy object.
+   */
+   object_proxy_ptr create_proxy(long id);
+
+  /**
+   * @brief Finds object proxy with id
+   *
+   * Try to find the object proxy with given id in
+   * object stores proxy map. If object can't be found
+   * NULL is returned.
+   *
+   * @param id ID of object proxy to find
+   * @return On success it returns an object proxy on failure null
+   *
+   */
+  object_proxy_ptr find_proxy(long id) const;
+
+  /**
+   * @brief Inserts the proxy into a prototype list
+   * 
+   * @param node Prototype into which the proxy will be inserted.
+   * @param oproxy Object proxy to insert
+   */
+  void insert_proxy(prototype_node *node, object_proxy_ptr oproxy);
+
+  /**
+   * @brief Removes an object proxy from a prototype list
+   * 
+   * @param oproxy Object proxy to remove
+   */
+  void remove_proxy(prototype_node *node, object_proxy_ptr oproxy);
 
 private:
   template < class T > friend class object_view;
@@ -387,9 +415,8 @@ private:
 private:
   std::auto_ptr<prototype_node> root_;
  
-  t_prototype_node_map prototype_node_name_map_;
-  t_prototype_node_map prototype_node_type_map_;
-  t_object_map object_map_;
+  t_prototype_node_map prototype_node_map_;
+  t_object_proxy_map object_map_;
   long id_;
   
   typedef std::list<object_observer*> t_observer_list;

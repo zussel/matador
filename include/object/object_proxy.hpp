@@ -30,6 +30,7 @@ namespace oos {
 
 class object;
 class object_store;
+class prototype_node;
 
 struct object_proxy;
 typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;
@@ -43,9 +44,6 @@ struct object_proxy {
   friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
   void unlink();
-/*
-  void insert(object_proxy* oproxy);
-*/
   void clear();
 
   void link_ref();
@@ -53,6 +51,10 @@ struct object_proxy {
 
   void link_ptr();
   void unlink_ptr();
+
+  bool linked() const;
+
+  void reset(object *o);
 
   object_proxy_ptr prev;
   object_proxy_ptr next;
@@ -64,6 +66,7 @@ struct object_proxy {
   unsigned long ptr_count;
 
   object_store *ostore;
+  prototype_node *node;
 };
 
 }

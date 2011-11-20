@@ -149,7 +149,8 @@ void transaction::restore_visitor::visit(delete_action *a)
 {
   // check if there is an object with id in
   // object store
-  object *o = ostore_->find_object(a->id());
+  object_proxy_ptr oproxy = ostore_->find_proxy(a->id());
+  /*
   if (!o) {
     // create object with id and deserialize
     o = ostore_->create(a->type().c_str());
@@ -161,6 +162,7 @@ void transaction::restore_visitor::visit(delete_action *a)
     // data from buffer into object
     serializer_.deserialize(o, *buffer_, ostore_);
   }
+  */
   // ERROR: throw exception if id of object
   //        isn't valid (in use)
 }

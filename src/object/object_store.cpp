@@ -205,8 +205,8 @@ object_store::object_store()
   , first_(new object_proxy(this))
   , last_(new object_proxy(this))
 {
-  prototype_node_name_map_.insert(std::make_pair("OBJECT", root_.get()));
-  prototype_node_type_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
+  prototype_node_map_.insert(std::make_pair("OBJECT", root_.get()));
+  prototype_node_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
   // set marker for root element
   root_->op_first = first_;
   root_->op_marker = last_;
@@ -214,13 +214,6 @@ object_store::object_store()
   root_->op_first->next = root_->op_last;
   root_->op_last->prev = root_->op_first;
 }
-
-/*
-void delete_object_proxy(object_proxy_ptr op)
-{
-  op.reset();
-}
-*/
 
 object_store::~object_store()
 {
@@ -236,16 +229,16 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   prototype_node *parent_node;
   if (parent) {
     // parent type name is set search parent node
-    t_prototype_node_map::iterator i = prototype_node_name_map_.find(parent);
-    if (i == prototype_node_name_map_.end()) {
+    t_prototype_node_map::iterator i = prototype_node_map_.find(parent);
+    if (i == prototype_node_map_.end()) {
       //throw new object_exception("couldn't find parent prototype");
       return false;
     }
     parent_node = i->second;
   }
   // find prototype node 'type' starting from node
-  t_prototype_node_map::iterator i = prototype_node_name_map_.find(type);
-  if (i != prototype_node_name_map_.end()) {
+  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
+  if (i != prototype_node_map_.end()) {
     //throw new object_exception("prototype already exists");
     return false;
   }
@@ -253,25 +246,26 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   // append as child to parent prototype node
   parent_node->insert(node);
   // store prototype in map
-  prototype_node_name_map_.insert(std::make_pair(type, node));
-  prototype_node_type_map_.insert(std::make_pair(producer->classname(), node));
+  prototype_node_map_.insert(std::make_pair(type, node));
+  prototype_node_map_.insert(std::make_pair(producer->classname(), node));
   // return success
   return true;
 }
 
 bool object_store::remove_prototype(const char *type)
 {
-  t_prototype_node_map::iterator i = prototype_node_name_map_.find(type);
-  if (i == prototype_node_name_map_.end()) {
+  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
+  if (i == prototype_node_map_.end()) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
   if (!i->second->parent) {
-    // now parent
+    // throw new object_exception("prototype has no parent");
+    // no parent
     return false;
   }
-  t_prototype_node_map::iterator j = prototype_node_type_map_.find(i->second->producer->classname());
-  if (j == prototype_node_type_map_.end()) {
+  t_prototype_node_map::iterator j = prototype_node_map_.find(i->second->producer->classname());
+  if (j == prototype_node_map_.end()) {
 		// couldn't fnd prototype in type map
 		// throw exception
 		return false;
@@ -290,8 +284,8 @@ bool object_store::remove_prototype(const char *type)
   // delete node
   delete i->second;
   // erase node from maps
-  prototype_node_name_map_.erase(i);
-  prototype_node_type_map_.erase(j);
+  prototype_node_map_.erase(i);
+  prototype_node_map_.erase(j);
   return true;
 }
 
@@ -356,11 +350,11 @@ void object_store::dump_objects(std::ostream &out) const
 
 object* object_store::create(const char *type) const
 {
-  t_prototype_node_map::const_iterator i = prototype_node_name_map_.find(type);
-  if (i == prototype_node_name_map_.end()) {
-    // try it with the type map
-    i = prototype_node_type_map_.find(type);
-    if (i == prototype_node_type_map_.end()) {
+  t_prototype_node_map::const_iterator i = prototype_node_map_.find(type);
+  if (i == prototype_node_map_.end()) {
+    // try it with the type
+    i = prototype_node_map_.find(type);
+    if (i == prototype_node_map_.end()) {
       //throw new object_exception("couldn't find prototype");
       return NULL;
     }
@@ -395,16 +389,6 @@ object_store::insert(object_list_base &olb)
   olb.install(this);
 }
 
-object* object_store::find_object(long id) const
-{
-  t_object_map::const_iterator i = object_map_.find(id);
-  if (i == object_map_.end()) {
-    return NULL;
-  } else {
-    return i->second;
-  }
-}
-
 object*
 object_store::insert_object(object *o, bool notify)
 {
@@ -414,8 +398,8 @@ object_store::insert_object(object *o, bool notify)
     return NULL;
   }
   // find prototype node
-  t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
-  if (i == prototype_node_type_map_.end()) {
+  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+  if (i == prototype_node_map_.end()) {
     // raise exception
     //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
     return NULL;
@@ -423,55 +407,28 @@ object_store::insert_object(object *o, bool notify)
   prototype_node *node = i->second;
   // retrieve and set new unique number into object
   //object->id(UniqueProducer::instance().number("default"));
-  if (o->id() > 0) {
-    // object seems to have a valid id
-    // check if it is a unique id
-    if (find_object(o->id())) {
-      // throw object_exception
-      // or set new unique id???
-      o->id(++id_);
-    } else {
-      // nothing to do
+  object_proxy_ptr oproxy = find_proxy(o->id());
+  if (oproxy) {
+    if (oproxy->linked()) {
+      // an object exists in
+      // map.
+      // replace it with new object
+      // unlink it
+      // link it into new place in list
+      remove_proxy(oproxy->node, oproxy);
     }
+    oproxy->reset(o);
   } else {
     // object gets new unique id
-    o->id(++id_);
+    if (o->id() == 0) {
+      o->id(++id_);
+    }
+    oproxy = create_proxy(o->id());
   }
-
   // insert new element node
-  object_proxy_ptr oproxy(new object_proxy(o, this));
+//  object_proxy_ptr oproxy(new object_proxy(o, this));
   
-  // check count of object in subtree
-  if (node->count >= 2) {
-    // there are more than two objects (normal case)
-    // insert before last last
-    //std::cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
-    link_proxy(node->op_marker->prev, oproxy);
-//    node->op_marker->prev->insert(oproxy);
-  } else if (node->count == 1) {
-    // there is one object in subtree
-    // insert as first; adjust "left" marker
-    /*if (node->op_marker->prev->obj) {
-      std::cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
-    } else {
-      std::cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
-    }*/
-    link_proxy(node->op_marker->prev, oproxy);
-//    node->op_marker->prev->insert(oproxy);
-    node->adjust_left_marker(oproxy->next, oproxy);
-  } else /* if (node->count == 0) */ {
-    // there is no object in subtree
-    // insert as last; adjust "right" marker
-    /*if (node->op_marker->obj) {
-      std::cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
-    } else {
-      std::cout << "list is empty: inserting " << *o << " as last before [0]\n";
-    }*/
-    link_proxy(node->op_marker, oproxy);
-//    node->op_marker->insert(oproxy);
-    node->adjust_left_marker(oproxy->next, oproxy);
-    node->adjust_right_marker(oproxy->prev, oproxy);
-  }
+  insert_proxy(node, oproxy);
   // create object
   object_creator oc(*this, notify);
   o->read_from(&oc);
@@ -479,10 +436,8 @@ object_store::insert_object(object *o, bool notify)
   if (notify) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
   }
-  // adjust size
-  ++node->count;
   // insert element into hash map for fast lookup
-  object_map_[o->id()] = o;
+  object_map_[o->id()] = oproxy;
   // set this into persistent object
   o->proxy_ = oproxy;
   return o;
@@ -492,8 +447,8 @@ bool
 object_store::remove_object(object *o, bool notify)
 {
   // find prototype node
-  t_prototype_node_map::iterator i = prototype_node_type_map_.find(typeid(*o).name());
-  if (i == prototype_node_type_map_.end()) {
+  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+  if (i == prototype_node_map_.end()) {
     // raise exception
     //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
     return false;
@@ -505,21 +460,7 @@ object_store::remove_object(object *o, bool notify)
     return false;
   }
 
-  prototype_node *node = i->second;
-
-  if (o->proxy_ == node->op_first->next) {
-    // adjust left marker
-    //std::cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
-    node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
-    //adjust_left_marker(node, node->op_first->next->next);
-  }
-  if (o->proxy_ == node->op_marker->prev) {
-    // adjust right marker
-    node->adjust_right_marker(o->proxy_, node->op_marker->prev->prev);
-    //adjust_right_marker(node, o->proxy_, node->op_marker->prev->prev);
-  }
-  // unlink object_proxy
-  unlink_proxy(o->proxy_);
+  remove_proxy(i->second, o->proxy_);
 
   if (notify) {
     // notify observer
@@ -527,8 +468,6 @@ object_store::remove_object(object *o, bool notify)
   }
   // set object in object_proxy to null
   object_proxy_ptr op = o->proxy_;
-  // adjust object count for node
-  --node->count;
   // delete node
   delete o;
   // set node of proxy to NULL
@@ -586,6 +525,85 @@ object_store::unlink_proxy(const object_proxy_ptr &proxy)
   }
   proxy->prev.reset();
   proxy->next.reset();
+}
+
+object_proxy_ptr object_store::find_proxy(long id) const
+{
+  t_object_proxy_map::const_iterator i = object_map_.find(id);
+  if (i == object_map_.end()) {
+    return object_proxy_ptr();
+  } else {
+    return i->second;
+  }
+}
+
+object_proxy_ptr object_store::create_proxy(long id)
+{
+  std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair(id, object_proxy_ptr()));
+  if (ret.second == true) {
+    return object_proxy_ptr();
+  } else {
+    ret.first->second.reset(new object_proxy(id, this));
+    return ret.first->second;
+  }
+}
+
+void object_store::insert_proxy(prototype_node *node, object_proxy_ptr oproxy)
+{
+  // check count of object in subtree
+  if (node->count >= 2) {
+    // there are more than two objects (normal case)
+    // insert before last last
+    //std::cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
+    link_proxy(node->op_marker->prev, oproxy);
+//    node->op_marker->prev->insert(oproxy);
+  } else if (node->count == 1) {
+    // there is one object in subtree
+    // insert as first; adjust "left" marker
+    /*if (node->op_marker->prev->obj) {
+      std::cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
+    } else {
+      std::cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
+    }*/
+    link_proxy(node->op_marker->prev, oproxy);
+//    node->op_marker->prev->insert(oproxy);
+    node->adjust_left_marker(oproxy->next, oproxy);
+  } else /* if (node->count == 0) */ {
+    // there is no object in subtree
+    // insert as last; adjust "right" marker
+    /*if (node->op_marker->obj) {
+      std::cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
+    } else {
+      std::cout << "list is empty: inserting " << *o << " as last before [0]\n";
+    }*/
+    link_proxy(node->op_marker, oproxy);
+//    node->op_marker->insert(oproxy);
+    node->adjust_left_marker(oproxy->next, oproxy);
+    node->adjust_right_marker(oproxy->prev, oproxy);
+  }
+  // set prototype node
+  oproxy->node = node;
+  // adjust size
+  ++node->count;
+}
+
+void object_store::remove_proxy(prototype_node *node, object_proxy_ptr oproxy)
+{
+  if (oproxy == node->op_first->next) {
+    // adjust left marker
+    //std::cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
+    node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
+    //adjust_left_marker(node, node->op_first->next->next);
+  }
+  if (oproxy == node->op_marker->prev) {
+    // adjust right marker
+    node->adjust_right_marker(oproxy, node->op_marker->prev->prev);
+    //adjust_right_marker(node, o->proxy_, node->op_marker->prev->prev);
+  }
+  // unlink object_proxy
+  unlink_proxy(oproxy);
+  // adjust object count for node
+  --node->count;
 }
 
 }

@@ -28,6 +28,7 @@ object_proxy::object_proxy(object_store *os)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
+  , node(0)
 {}
 
 object_proxy::object_proxy(long i, object_store *os)
@@ -36,6 +37,7 @@ object_proxy::object_proxy(long i, object_store *os)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
+  , node(0)
 {}
 
 object_proxy::object_proxy(object *o, object_store *os)
@@ -44,6 +46,7 @@ object_proxy::object_proxy(object *o, object_store *os)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
+  , node(0)
 {}
 
 object_proxy::~object_proxy()
@@ -66,20 +69,9 @@ void object_proxy::unlink()
   }
   prev.reset();
   next.reset();
+  node = 0;
 }
 
-/*
-void object_proxy::insert(object_proxy* oproxy)
-{
-  // link oproxy before this node
-  oproxy->prev = prev;
-  oproxy->next = this;
-  if (prev) {
-    prev->next = oproxy;
-  }
-  prev = oproxy;
-}
-*/
 void object_proxy::clear()
 {
   if (obj) {
@@ -119,6 +111,20 @@ void object_proxy::unlink_ptr()
 //    std::cout << "proxy [" << this << "] called unlink_ptr() value [" << ptr_count - 1 << "]\n";
     --ptr_count;
   }
+}
+
+bool object_proxy::linked() const
+{
+  return node != 0;
+}
+
+void object_proxy::reset(object *o)
+{
+  ref_count = 0;
+  ptr_count = 0;
+  id = o->id();
+  obj = o;
+  node = 0;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
