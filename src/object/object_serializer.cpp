@@ -192,6 +192,7 @@ void object_serializer::read_object(const char*, base_object_ptr &x)
   if (!oproxy) {
     oproxy = ostore_->create_proxy(id);
   }
+  x.proxy_ = oproxy;
   /*
   if (o) {
     if (o->object_type() == type) {
@@ -219,6 +220,11 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
     read_long(NULL, id);
     read_string(NULL, type);
     cout << "restoring list item [" << type << "] (id: " << id << ")\n";
+    object_proxy_ptr oproxy = ostore_->find_proxy(id);
+    if (!oproxy) {
+      oproxy = ostore_->create_proxy(id);
+    }
+//    x.proxy_ = oproxy;
     /*
     object *o = ostore_->find_object(id);
     if (o) {

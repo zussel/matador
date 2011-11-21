@@ -36,7 +36,7 @@ public:
   object_view_iterator()
     : node_(NULL)
   {}
-  object_view_iterator(prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
+  object_view_iterator(const prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -113,7 +113,7 @@ public:
   }
 
 //private:
-  prototype_node *node_;
+  const prototype_node *node_;
   object_proxy_ptr current_;
   object_proxy_ptr last_;
 };
@@ -129,7 +129,7 @@ public:
   const_object_view_iterator()
     : node_(NULL)
   {}
-  const_object_view_iterator(prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
+  const_object_view_iterator(const prototype_node *node, const object_proxy_ptr &current, const object_proxy_ptr &last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -218,7 +218,7 @@ private:
   }
 
 private:
-  prototype_node *node_;
+  const prototype_node *node_;
   object_proxy_ptr current_;
   object_proxy_ptr last_;
 };
@@ -235,11 +235,10 @@ public:
     , skip_siblings_(skip_siblings)
     , node_(NULL)
   {
-		object_store::t_prototype_node_map::iterator i = ostore_.prototype_node_map_.find(typeid(T).name());
-		if (i == ostore_.prototype_node_map_.end()) {
+    node_ = ostore_.find_prototype(typeid(T).name());
+		if (!node_) {
       // throw excpetion
     }
-    node_ = i->second;
   }
 
   iterator begin() {
@@ -286,7 +285,7 @@ public:
 private:
     object_store &ostore_;
     bool skip_siblings_;
-    prototype_node *node_;
+    const prototype_node *node_;
 };
 
 }

@@ -30,7 +30,7 @@ namespace oos {
 
 class object;
 class object_store;
-class prototype_node;
+struct prototype_node;
 
 struct object_proxy;
 typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;

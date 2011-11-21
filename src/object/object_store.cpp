@@ -289,6 +289,16 @@ bool object_store::remove_prototype(const char *type)
   return true;
 }
 
+const prototype_node* object_store::find_prototype(const char *type) const
+{
+  t_prototype_node_map::const_iterator i = prototype_node_map_.find(type);
+  if (i == prototype_node_map_.end()) {
+    //throw new object_exception("couldn't find prototype");
+    return NULL;
+  }
+  return i->second;
+}
+
 void object_store::clear()
 {
   while (root_->first->next != root_->last.get()) {

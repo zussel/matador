@@ -77,6 +77,7 @@ public:
 protected:
 	friend class object_atomizer;
   friend class object_creator;
+  friend class object_serializer;
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 

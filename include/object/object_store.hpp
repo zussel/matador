@@ -256,6 +256,17 @@ public:
   bool remove_prototype(const char *type);
 
   /**
+   * @brief Finds prototype node.
+   *
+   * Finds and returns prototype node identified
+   * by the given name or classname (typeid)
+   *
+   * @param type Name or class name of the prototype
+   * @return Returns the valid prototype node or NULL on unknown type.
+   */
+  const prototype_node* find_prototype(const char *type) const;
+
+  /**
    * Removes all inserted prototypes and all inserted objects.
    */
   void clear();
@@ -396,7 +407,6 @@ public:
   void remove_proxy(prototype_node *node, object_proxy_ptr oproxy);
 
 private:
-  template < class T > friend class object_view;
   friend class object_creator;
   friend class object_deleter;
   friend class object_serializer;
