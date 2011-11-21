@@ -434,6 +434,11 @@ object_store::insert_object(object *o, bool notify)
       o->id(++id_);
     }
     oproxy = create_proxy(o->id());
+    oproxy->obj = o;
+    if (!oproxy) {
+      // throw exception
+      return 0;
+    }
   }
   // insert new element node
 //  object_proxy_ptr oproxy(new object_proxy(o, this));
@@ -551,10 +556,10 @@ object_proxy_ptr object_store::create_proxy(long id)
 {
   std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair(id, object_proxy_ptr()));
   if (ret.second == true) {
-    return object_proxy_ptr();
-  } else {
     ret.first->second.reset(new object_proxy(id, this));
     return ret.first->second;
+  } else {
+    return object_proxy_ptr();
   }
 }
 

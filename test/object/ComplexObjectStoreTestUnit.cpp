@@ -244,7 +244,8 @@ ComplexObjectStoreTestUnit::album()
   cout << "Show all tracks of album [" << album->name() << "]:\n";
   while (afirst != alast) {
     track_ref tref = (*afirst++)->oref();
-    cout << "Track: " << tref->title() << " (Artist: " << tref->artist()->name() << ")\n";
+//    cout << "Track: " << tref->title() << " (Artist: " << tref->artist()->name() << ")\n";
+    cout << "Track: " << tref->title() << "\n";
   }
 }
 
