@@ -17,6 +17,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object.hpp"
+#include "object/object_store.hpp"
 
 #include <iostream>
 
@@ -77,6 +78,9 @@ void object_proxy::clear()
   if (obj) {
     delete obj;
     obj = NULL;
+  }
+  if (ostore) {
+    ostore->delete_proxy(id);
   }
   ostore = NULL;
 }

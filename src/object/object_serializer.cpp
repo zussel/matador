@@ -193,18 +193,6 @@ void object_serializer::read_object(const char*, base_object_ptr &x)
     oproxy = ostore_->create_proxy(id);
   }
   x.proxy_ = oproxy;
-  /*
-  if (o) {
-    if (o->object_type() == type) {
-    } else {
-    }
-  } else {
-    o = ostore_->create(type.c_str());
-    o->id_ = id;
-    ostore_->insert_object(o, false);
-    x.reset(o);
-  }
-  */
 }
 
 void object_serializer::read_object_list(const char*, object_list_base &x)
@@ -224,6 +212,7 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
+    x.push_back(oproxy);
 //    x.proxy_ = oproxy;
     /*
     object *o = ostore_->find_object(id);

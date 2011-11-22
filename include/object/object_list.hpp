@@ -458,6 +458,8 @@ protected:
   virtual void uninstall();
   
   virtual void reset() {}
+  virtual void push_front(const object_proxy_ptr &proxy) {}
+  virtual void push_back(const object_proxy_ptr &proxy) {}
 
   // mark modified object containig the list
   void mark_modified(object *o);
@@ -561,6 +563,16 @@ protected:
   virtual void reset()
   {
     object_list_.clear();
+  }
+
+  virtual void push_front(const object_proxy_ptr &proxy)
+  {
+    object_list_.push_front(value_type_wrapper(proxy));
+  }
+
+  virtual void push_back(const object_proxy_ptr &proxy)
+  {
+    object_list_.push_back(value_type_wrapper(proxy));
   }
 
 private:
@@ -919,7 +931,7 @@ public:
   }
   
 protected:
-  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
   {
     object_ptr<T> optr = elem->optr();
     object_linker ol(optr, o, base_list::list_name());
@@ -951,7 +963,7 @@ public:
   }
   
 protected:
-  virtual bool set_reference(const value_type_ptr &elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
   {
 //    object_ref<T> oref = elem->oref();
     object *oref = elem->oref().ptr();

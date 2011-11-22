@@ -305,7 +305,12 @@ void object_store::clear()
     prototype_node *node = root_->first->next;
     remove_prototype(node->type.c_str());
     //delete node;
-  }  
+  }
+  std::cout << "size of object map: " << object_map_.size() << "\n";
+  std::cout << "clearing object map ... ";
+  object_map_.clear();
+  std::cout << "done.\n";
+  std::cout << "size of object map: " << object_map_.size() << "\n";
 }
 
 int depth(prototype_node *node)
@@ -560,6 +565,19 @@ object_proxy_ptr object_store::create_proxy(long id)
     return ret.first->second;
   } else {
     return object_proxy_ptr();
+  }
+}
+
+bool object_store::delete_proxy(long id)
+{
+  t_object_proxy_map::iterator i = object_map_.find(id);
+  if (i == object_map_.end()) {
+    return false;
+  } else if (i->second->linked()) {
+    return false;
+  } else {
+    object_map_.erase(i);
+    return true;
   }
 }
 

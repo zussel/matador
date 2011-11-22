@@ -139,15 +139,14 @@ class object_ptr : public base_object_ptr
 {
 public:
 	object_ptr() : base_object_ptr(false) {}
-	//  object_ptr(const object_ptr &x) {}
 	template < class Y >
 	object_ptr(const object_ptr<Y> &x) {}
 	template < class Y >
   object_ptr(const object_ref<Y> &x) : base_object_ptr(x.proxy_, false) {}
-	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
 	explicit object_ptr(object* o) : base_object_ptr(o, false) {}
+  explicit object_ptr(const object_proxy_ptr &proxy) : base_object_ptr(proxy, false) {}
 
   virtual const char* type() const
   {
@@ -190,6 +189,7 @@ public:
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
 	explicit object_ref(object* o) : base_object_ptr(o, true) {}
+  explicit object_ref(const object_proxy_ptr &proxy) : base_object_ptr(proxy, true) {}
 
   virtual const char* type() const
   {

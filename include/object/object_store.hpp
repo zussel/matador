@@ -376,7 +376,18 @@ public:
    * @param id Unique id of the object proxy.
    * @return An object proxy object.
    */
-   object_proxy_ptr create_proxy(long id);
+  object_proxy_ptr create_proxy(long id);
+
+  /**
+   * @brief Delete proxy from map
+   *
+   * Deletes the proxy with the given id
+   * from map.
+   *
+   * @param id Id of proxy to delete
+   * @return Returns true if deletion was successfully
+   */
+  bool delete_proxy(long id);
 
   /**
    * @brief Finds object proxy with id
