@@ -200,28 +200,17 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
   // get count of backuped list item
   unsigned int s(0);
   read_unsigned(NULL, s);
-  cout << "list items: " << s << "\n";
   x.reset();
   string type;
   long id(0);
   for (unsigned int i = 0; i < s; ++i) {
     read_long(NULL, id);
     read_string(NULL, type);
-    cout << "restoring list item [" << type << "] (id: " << id << ")\n";
     object_proxy_ptr oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
     x.push_back(oproxy);
-//    x.proxy_ = oproxy;
-    /*
-    object *o = ostore_->find_object(id);
-    if (o) {
-      cout << "found object\n";
-    } else {
-      cout << "must insert proxy\n";
-    }
-    */
   }
 }
 

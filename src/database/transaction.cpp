@@ -22,7 +22,7 @@ transaction_impl::~transaction_impl()
 void
 transaction_impl::on_insert(object *o)
 {
-  cout << "inserting " << *o << endl;
+//  cout << "inserting " << *o << endl;
   /*****************
    * 
    * backup inserted object
@@ -37,7 +37,7 @@ transaction_impl::on_insert(object *o)
 void
 transaction_impl::on_update(object *o)
 {
-  cout << "updating " << *o << endl;
+//  cout << "updating " << *o << endl;
   /*****************
    * 
    * backup updated object
@@ -51,7 +51,7 @@ transaction_impl::on_update(object *o)
 void
 transaction_impl::on_delete(object *o)
 {
-  cout << "deleting " << *o << endl;
+//  cout << "deleting " << *o << endl;
   /*****************
    * 
    * backup deleted object
@@ -150,19 +150,21 @@ void transaction::restore_visitor::visit(delete_action *a)
   // check if there is an object with id in
   // object store
   object_proxy_ptr oproxy = ostore_->find_proxy(a->id());
-  /*
-  if (!o) {
+  if (!oproxy) {
+    // create proxy
+    oproxy = ostore_->create_proxy(a->id());
+  }
+  if (!oproxy->obj) {
     // create object with id and deserialize
-    o = ostore_->create(a->type().c_str());
+    oproxy->obj = ostore_->create(a->type().c_str());
     // data from buffer into object
-    serializer_.deserialize(o, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
     // insert object
-    ostore_->insert_object(o, false);
+    ostore_->insert_object(oproxy->obj, false);
   } else {
     // data from buffer into object
-    serializer_.deserialize(o, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
   }
-  */
   // ERROR: throw exception if id of object
   //        isn't valid (in use)
 }
@@ -263,13 +265,13 @@ transaction::backup(action *a)
   
   id_set_t::iterator i = id_set_.find(a->obj()->id());
   if (i == id_set_.end()) {
-    cout << "TR (" << id_ << ") couldn't find id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]: inserting action\n";
+//    cout << "TR (" << id_ << ") couldn't find id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]: inserting action\n";
     backup_visitor_.backup(a, &object_buffer_);
     action_list_.push_back(a);
     id_set_.insert(a->obj()->id());
   } else {
     // find action with id in list
-    cout << "TR (" << id_ << ") found id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]\n";
+//    cout << "TR (" << id_ << ") found id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]\n";
     iterator first = action_list_.begin();
     iterator last = action_list_.end();
     while (first != last) {
@@ -281,10 +283,10 @@ transaction::backup(action *a)
     if (first == last) {
       // couldn't find action
       // error, throw exception
-      cout << "TR (" << id_ << ") FATAL ERROR: couldn't find corresponding object in action list!\n";
+//      cout << "TR (" << id_ << ") FATAL ERROR: couldn't find corresponding object in action list!\n";
     } else {
       if (a->type() == action::DELETE && (*first)->type() == action::INSERT) {
-        cout << "TR (" << id_ << ") new action is delete, old action is insert: removing action\n";
+//        cout << "TR (" << id_ << ") new action is delete, old action is insert: removing action\n";
         // within this transaction inserted
         // object is also deleted
         // so we can remove insert and
@@ -293,13 +295,13 @@ transaction::backup(action *a)
         action_list_.erase(first);
         id_set_.erase(i);
       } else if (a->type() == action::DELETE && (*first)->type() == action::UPDATE) {
-        cout << "TR (" << id_ << ") new action is delete, old action is update: replace action\n";
+//        cout << "TR (" << id_ << ") new action is delete, old action is update: replace action\n";
         // updated object is also deleted
         // replace update action with delete
         // action
         *first = a;
       } else {
-        cout << "TR (" << id_ << ") nothing todo\n";
+//        cout << "TR (" << id_ << ") nothing todo\n";
         delete a;
       }
     }

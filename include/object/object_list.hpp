@@ -458,8 +458,8 @@ protected:
   virtual void uninstall();
   
   virtual void reset() {}
-  virtual void push_front(const object_proxy_ptr &proxy) {}
-  virtual void push_back(const object_proxy_ptr &proxy) {}
+  virtual void push_front(const object_proxy_ptr &) {}
+  virtual void push_back(const object_proxy_ptr &) {}
 
   // mark modified object containig the list
   void mark_modified(object *o);

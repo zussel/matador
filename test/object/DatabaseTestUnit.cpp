@@ -239,8 +239,8 @@ DatabaseTestUnit::with_list()
     ostore_.dump_objects(cout);
     
     tr.start();
-    cout << "inserting 20 items\n";
-    for (int i = 0; i < 20; ++i) {
+    cout << "inserting 40 items\n";
+    for (int i = 0; i < 40; ++i) {
       stringstream name;
       name << "Item " << i+1;
       itemlist->push_back(new ItemPtrList::value_type(name.str()));
@@ -249,8 +249,9 @@ DatabaseTestUnit::with_list()
     cout << "list has " << itemlist->size() << " items\n";
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-      cout << "item [" << i->get()->name() << "]\n";
+      cout << "item [" << i->get()->name() << "] ";
     }
+    cout << endl;
 
     tr.commit();
     cout << "commited\n";
@@ -270,8 +271,9 @@ DatabaseTestUnit::with_list()
     cout << "list has " << itemlist->size() << " items\n";
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-      cout << "item [" << i->get()->name() << "]\n";
+      cout << "item [" << i->get()->name() << "] ";
     }
+    cout << endl;
 
   } catch (exception &ex) {
     // error, abort transaction
