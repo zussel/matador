@@ -25,21 +25,21 @@
 namespace oos {
 
 class object;
-class base_object_ptr;
+class object_base_ptr;
 
 class OOS_API object_linker : public object_atomizer
 {
 public:
-  object_linker(object *elem, const base_object_ptr &o, const std::string &name);
+  object_linker(object *elem, const object_base_ptr &o, const std::string &name);
   virtual ~object_linker();
   
-  virtual void read_object(const char *id, base_object_ptr &x);
+  virtual void read_object(const char *id, object_base_ptr &x);
   
   bool success() { return linked_; }
 
 private:
   object *elem_;
-  const base_object_ptr &object_;
+  const object_base_ptr &object_;
   std::string name_;
   bool linked_;
 };

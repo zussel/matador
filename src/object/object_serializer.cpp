@@ -105,7 +105,7 @@ void object_serializer::write_string(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::write_object(const char*, const base_object_ptr &x)
+void object_serializer::write_object(const char*, const object_base_ptr &x)
 {
   // write type and id into buffer
   write_long(NULL, x.id());
@@ -172,7 +172,7 @@ void object_serializer::read_string(const char*, std::string &s)
   delete [] str;
 }
 
-void object_serializer::read_object(const char*, base_object_ptr &x)
+void object_serializer::read_object(const char*, object_base_ptr &x)
 {
   /***************
    *

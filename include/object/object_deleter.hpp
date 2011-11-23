@@ -39,7 +39,7 @@ namespace oos {
 
 class object;
 class object_list_base;
-class base_object_ptr;
+class object_base_ptr;
 
 class OOS_API object_deleter : public object_atomizer
 {
@@ -67,7 +67,7 @@ public:
   bool is_deletable(object *obj);
   bool is_deletable(object_list_base &olist);
 
-  virtual void read_object(const char*, base_object_ptr &x);
+  virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &);
 
   iterator begin();

@@ -543,7 +543,7 @@ protected:
     }
   }
 
-  bool set_reference(value_type *elem, const base_object_ptr &o)
+  bool set_reference(value_type *elem, const object_base_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
@@ -596,7 +596,7 @@ public:
   {}
   virtual ~object_ptr_list() {}
 
-  virtual void push_front(T *elem, const base_object_ptr &o)
+  virtual void push_front(T *elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -621,7 +621,7 @@ public:
     }
   }
 
-  virtual void push_back(T* elem, const base_object_ptr &o)
+  virtual void push_back(T* elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -682,7 +682,7 @@ public:
   {}
   virtual ~object_ref_list() {}
 
-  virtual void push_front(const value_type_ref &elem, const base_object_ptr &o)
+  virtual void push_front(const value_type_ref &elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -696,7 +696,7 @@ public:
     }
   }
 
-  virtual void push_back(const value_type_ref &elem, const base_object_ptr &o)
+  virtual void push_back(const value_type_ref &elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -772,7 +772,7 @@ public:
     return std::distance(begin(), end());
   }
 
-  virtual void push_front(T *elem, const base_object_ptr &ref_list)
+  virtual void push_front(T *elem, const object_base_ptr &ref_list)
   {
     if (!ostore()) {
       //throw object_exception();
@@ -791,7 +791,7 @@ public:
     }
   }
 
-  virtual void push_back(T* elem, const base_object_ptr &ref_list)
+  virtual void push_back(T* elem, const object_base_ptr &ref_list)
   {
     if (!ostore()) {
       //throw object_exception();
@@ -875,7 +875,7 @@ protected:
     }
   }
 
-  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
     elem->read_from(&ol);
@@ -922,17 +922,17 @@ public:
   {}
   virtual ~linked_object_ptr_list() {}
 
-  void push_front(const object_ptr<T> &optr, const base_object_ptr &ref_list)
+  void push_front(const object_ptr<T> &optr, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
   }
-  void push_back(const object_ptr<T> &optr, const base_object_ptr &ref_list)
+  void push_back(const object_ptr<T> &optr, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
   }
   
 protected:
-  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
     object_ptr<T> optr = elem->optr();
     object_linker ol(optr, o, base_list::list_name());
@@ -954,17 +954,17 @@ public:
   {}
   virtual ~linked_object_ref_list() {}
 
-  void push_front(const object_ref<T> &oref, const base_object_ptr &ref_list)
+  void push_front(const object_ref<T> &oref, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(oref, base_list::list_name()), ref_list);
   }
-  void push_back(const object_ref<T> &oref, const base_object_ptr &ref_list)
+  void push_back(const object_ref<T> &oref, const object_base_ptr &ref_list)
   {
     base_list::push_back(new value_type(oref, base_list::list_name()), ref_list);
   }
   
 protected:
-  virtual bool set_reference(value_type *elem, const base_object_ptr &o)
+  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
 //    object_ref<T> oref = elem->oref();
     object *oref = elem->oref().ptr();

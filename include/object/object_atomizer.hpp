@@ -37,7 +37,7 @@ namespace oos {
 class Date;
 class Time;
 class object_list_base;
-class base_object_ptr;
+class object_base_ptr;
 
 class OOS_API object_atomizer /*: public Atomizer*/
 {
@@ -53,7 +53,7 @@ public:
 	virtual void write_bool(const char*, bool) {}
 	virtual void write_charptr(const char*, const char*) {}
 	virtual void write_string(const char*, const std::string&) {}
-	virtual void write_object(const char*, const base_object_ptr&) {}
+	virtual void write_object(const char*, const object_base_ptr&) {}
 	virtual void write_object_list(const char*, const object_list_base&) {}
 
 	virtual void read_char(const char*, char&) {}
@@ -65,7 +65,7 @@ public:
 	virtual void read_bool(const char*, bool&) {}
 	virtual void read_charptr(const char*, char*&) {}
 	virtual void read_string(const char*, std::string&) {}
-	virtual void read_object(const char*, base_object_ptr&) {}
+	virtual void read_object(const char*, object_base_ptr&) {}
 	virtual void read_object_list(const char*, object_list_base&) {}
 };
 

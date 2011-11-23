@@ -61,7 +61,7 @@ bool object_deleter::is_deletable(object_list_base &olist)
   return check_object_count_map();
 }
 
-void object_deleter::read_object(const char*, base_object_ptr &x)
+void object_deleter::read_object(const char*, object_base_ptr &x)
 {
   if (!x.ptr()) {
     return;

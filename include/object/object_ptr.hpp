@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECT_PTR_H
-#define OBJECT_PTR_H
+#ifndef OBJECT_PTR_HPP
+#define OBJECT_PTR_HPP
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -41,18 +41,18 @@ namespace oos {
 
 class object;
 
-class OOS_API base_object_ptr {
+class OOS_API object_base_ptr {
 protected:
-	explicit base_object_ptr(bool is_ref);
-	base_object_ptr(const base_object_ptr &x);
-	base_object_ptr& operator=(const base_object_ptr &x);
-	base_object_ptr(object* o, bool is_ref);
-	base_object_ptr(const object_proxy_ptr &op, bool is_ref);
-	virtual ~base_object_ptr();
+	explicit object_base_ptr(bool is_ref);
+	object_base_ptr(const object_base_ptr &x);
+	object_base_ptr& operator=(const object_base_ptr &x);
+	object_base_ptr(object* o, bool is_ref);
+	object_base_ptr(const object_proxy_ptr &op, bool is_ref);
+	virtual ~object_base_ptr();
 
 public:
-	bool operator==(const base_object_ptr &x) const;
-	bool operator!=(const base_object_ptr &x) const;
+	bool operator==(const object_base_ptr &x) const;
+	bool operator!=(const object_base_ptr &x) const;
 
   virtual const char* type() const = 0;
 
@@ -88,10 +88,10 @@ protected:
 };
 
 template < class T, bool IR >
-class object_wrapper : public base_object_ptr
+class object_wrapper : public object_base_ptr
 {
 public:
-	object_wrapper() : base_object_ptr(false) {}
+	object_wrapper() : object_base_ptr(false) {}
 	template < class Y >
 	object_wrapper(const object_wrapper<Y, true> &x) {}
 	template < class Y >
@@ -100,7 +100,7 @@ public:
 	object_wrapper& operator=(const object_wrapper<Y, true> &x) { return *this; }
 	template < class Y >
 	object_wrapper& operator=(const object_wrapper<Y, false> &x) { return *this; }
-	explicit object_wrapper(object* o) : base_object_ptr(o, false) {}
+	explicit object_wrapper(object* o) : object_base_ptr(o, false) {}
 
   virtual const char* type() const
   {
@@ -135,18 +135,18 @@ template < class T >
 class object_ref;
 
 template < class T >
-class object_ptr : public base_object_ptr
+class object_ptr : public object_base_ptr
 {
 public:
-	object_ptr() : base_object_ptr(false) {}
+	object_ptr() : object_base_ptr(false) {}
 	template < class Y >
 	object_ptr(const object_ptr<Y> &x) {}
 	template < class Y >
-  object_ptr(const object_ref<Y> &x) : base_object_ptr(x.proxy_, false) {}
+  object_ptr(const object_ref<Y> &x) : object_base_ptr(x.proxy_, false) {}
 	template < class Y >
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
-	explicit object_ptr(object* o) : base_object_ptr(o, false) {}
-  explicit object_ptr(const object_proxy_ptr &proxy) : base_object_ptr(proxy, false) {}
+	explicit object_ptr(object* o) : object_base_ptr(o, false) {}
+  explicit object_ptr(const object_proxy_ptr &proxy) : object_base_ptr(proxy, false) {}
 
   virtual const char* type() const
   {
@@ -176,20 +176,20 @@ public:
 };
 
 template < class T >
-class object_ref : public base_object_ptr
+class object_ref : public object_base_ptr
 {
 public:
-	object_ref() : base_object_ptr(true) {}
+	object_ref() : object_base_ptr(true) {}
 	//  object_ptr(const object_ptr &x) {}
 	template < class Y >
 	object_ref(const object_ref<Y> &x) {}
 	template < class Y >
-  object_ref(const object_ptr<Y> &x) : base_object_ptr(x.proxy_, true) {}
+  object_ref(const object_ptr<Y> &x) : object_base_ptr(x.proxy_, true) {}
 	//  object_ptr& operator=(const object_ptr &x) { return *this; }
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
-	explicit object_ref(object* o) : base_object_ptr(o, true) {}
-  explicit object_ref(const object_proxy_ptr &proxy) : base_object_ptr(proxy, true) {}
+	explicit object_ref(object* o) : object_base_ptr(o, true) {}
+  explicit object_ref(const object_proxy_ptr &proxy) : object_base_ptr(proxy, true) {}
 
   virtual const char* type() const
   {
@@ -218,4 +218,4 @@ public:
 
 }
 
-#endif /* OBJECT_PTR_H */
+#endif /* OBJECT_PTR_HPP */

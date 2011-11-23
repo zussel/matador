@@ -64,7 +64,7 @@ void object_atomizer::write_time(const char*, const Time &s)
 {
 }
 
-void object_atomizer::write_object(const char*, const base_object_ptr &x)
+void object_atomizer::write_object(const char*, const object_base_ptr &x)
 {
 }
 
@@ -116,7 +116,7 @@ void object_atomizer::read_time(const char*, Time &)
 {
 }
 
-void object_atomizer::read_object(const char*, base_object_ptr &)
+void object_atomizer::read_object(const char*, object_base_ptr &)
 {
 }
 

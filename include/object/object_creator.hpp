@@ -25,7 +25,7 @@
 namespace oos {
 
 class object_store;
-class base_object_ptr;
+class object_base_ptr;
 class object_list_base;
 class object;
 
@@ -35,7 +35,7 @@ public:
   object_creator(object_store &ostore, bool notify);
   virtual ~object_creator();
 
-  virtual void read_object(const char*, base_object_ptr &x);
+  virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &x);
 
 private:

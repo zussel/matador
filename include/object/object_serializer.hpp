@@ -56,7 +56,7 @@ public:
 	virtual void write_bool(const char* id, bool b);
 	virtual void write_charptr(const char* id, const char *c);
 	virtual void write_string(const char* id, const std::string &s);
-	virtual void write_object(const char* id, const base_object_ptr &x);
+	virtual void write_object(const char* id, const object_base_ptr &x);
 	virtual void write_object_list(const char* id, const object_list_base &x);
 
 	virtual void read_char(const char* id, char &c);
@@ -68,7 +68,7 @@ public:
 	virtual void read_bool(const char* id, bool &b);
 	virtual void read_charptr(const char* id, char *&c);
 	virtual void read_string(const char* id, std::string &s);
-	virtual void read_object(const char* id, base_object_ptr &x);
+	virtual void read_object(const char* id, object_base_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
   
 private:
