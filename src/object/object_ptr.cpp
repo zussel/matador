@@ -38,39 +38,49 @@ object_base_ptr::object_base_ptr(const object_base_ptr &x)
   , is_reference_(x.is_reference_)
   , is_internal_(false)
 {
+  if (proxy_) {
+    proxy_->add(this);
+  }
 }
 
 object_base_ptr&
 object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
-    if (proxy_ && is_internal_) {
-      if (is_reference_) {
-        proxy_->unlink_ref();
-      } else {
-        proxy_->unlink_ptr();
+    if (proxy_) {
+      if (is_internal_) {
+        if (is_reference_) {
+          proxy_->unlink_ref();
+        } else {
+          proxy_->unlink_ptr();
+        }
       }
+      proxy_->remove(this);
     }
     id_ = x.id_;
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
-    if (proxy_ && is_internal_) {
-      if (is_reference_) {
-        proxy_->link_ref();
-      } else {
-        proxy_->link_ptr();
+    if (proxy_) {
+      if (is_internal_) {
+        if (is_reference_) {
+          proxy_->link_ref();
+        } else {
+          proxy_->link_ptr();
+        }
       }
+      proxy_->add(this);
     }
   }
   return *this;
 }
 
-object_base_ptr::object_base_ptr(const object_proxy_ptr &op, bool is_ref)
+object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   : id_(op ? op->id : 0)
   , proxy_(op)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
+  proxy_->add(this);
 }
 
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
@@ -79,16 +89,22 @@ object_base_ptr::object_base_ptr(object *o, bool is_ref)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
+  if (proxy_) {
+    proxy_->add(this);
+  }
 }
 
 object_base_ptr::~object_base_ptr()
 {
-  if (proxy_ && is_internal_) {
-    if (is_reference_) {
-      proxy_->unlink_ref();
-    } else {
-      proxy_->unlink_ptr();
+  if (proxy_) {
+    if (is_internal_) {
+      if (is_reference_) {
+        proxy_->unlink_ref();
+      } else {
+        proxy_->unlink_ptr();
+      }
     }
+    proxy_->remove(this);
   }
 }
 
@@ -147,14 +163,6 @@ object*
 object_base_ptr::lookup_object() const
 {
     return (proxy_ ? proxy_->obj : NULL);
-}
-
-bool object_base_ptr::delete_object()
-{
-  if (!proxy_) {
-    return false;
-  }
-  return true;
 }
 
 bool object_base_ptr::is_reference() const

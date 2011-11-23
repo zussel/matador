@@ -45,6 +45,16 @@ struct object_proxy {
   
   friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
+  /**
+   * Link this object proxy before given
+   * object proxy prev.
+   * 
+   * @param prev New previous object proxy of this
+   */
+  void link(object_proxy *prev);
+  /**
+   * Unlink object proxy from list.
+   */
   void unlink();
   void clear();
 
@@ -61,8 +71,8 @@ struct object_proxy {
   void add(object_base_ptr *ptr);
   bool remove(object_base_ptr *ptr);
 
-  object_proxy_ptr prev;
-  object_proxy_ptr next;
+  object_proxy *prev;
+  object_proxy *next;
 
   object *obj;
   unsigned long id;

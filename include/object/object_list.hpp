@@ -459,8 +459,8 @@ protected:
   virtual void uninstall();
   
   virtual void reset() {}
-  virtual void push_front(const object_proxy_ptr &) {}
-  virtual void push_back(const object_proxy_ptr &) {}
+  virtual void push_front(object_proxy *) {}
+  virtual void push_back(object_proxy *) {}
 
   // mark modified object containig the list
   void mark_modified(object *o);
@@ -566,12 +566,12 @@ protected:
     object_list_.clear();
   }
 
-  virtual void push_front(const object_proxy_ptr &proxy)
+  virtual void push_front(object_proxy *proxy)
   {
     object_list_.push_front(value_type_wrapper(proxy));
   }
 
-  virtual void push_back(const object_proxy_ptr &proxy)
+  virtual void push_back(object_proxy *proxy)
   {
     object_list_.push_back(value_type_wrapper(proxy));
   }

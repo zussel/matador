@@ -239,8 +239,8 @@ DatabaseTestUnit::with_list()
     ostore_.dump_objects(cout);
     
     tr.start();
-    cout << "inserting 40 items\n";
-    for (int i = 0; i < 40; ++i) {
+    cout << "inserting 400 items\n";
+    for (int i = 0; i < 400; ++i) {
       stringstream name;
       name << "Item " << i+1;
       itemlist->push_back(new ItemPtrList::value_type(name.str()));

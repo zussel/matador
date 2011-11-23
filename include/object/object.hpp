@@ -31,11 +31,6 @@
   #define OOS_API
 #endif
 
-#ifdef WIN32
-#include <memory>
-#else
-#include <tr1/memory>
-#endif
 #include <iostream>
 
 namespace oos {
@@ -66,7 +61,7 @@ public:
 
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
-  std::tr1::shared_ptr<object_proxy> proxy() const { return proxy_; }
+  object_proxy* proxy() const { return proxy_; }
 
 protected:
 	void mark_modified();
@@ -80,7 +75,7 @@ private:
   friend class object_list_base;
 	
 	long id_;
-  std::tr1::shared_ptr<object_proxy> proxy_;
+  object_proxy *proxy_;
 };
 
 }

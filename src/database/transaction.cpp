@@ -166,7 +166,7 @@ void transaction::restore_visitor::visit(delete_action *a)
 {
   // check if there is an object with id in
   // object store
-  object_proxy_ptr oproxy = ostore_->find_proxy(a->id());
+  object_proxy *oproxy = ostore_->find_proxy(a->id());
   if (!oproxy) {
     // create proxy
     oproxy = ostore_->create_proxy(a->id());

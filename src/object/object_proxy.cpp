@@ -60,6 +60,17 @@ object_proxy::~object_proxy()
   }
 }
 
+void object_proxy::link(object_proxy *prev)
+{
+  // link oproxy before this node
+  prev = prev->prev;
+  next = prev;
+  if (prev->prev) {
+    prev->prev->next = this;
+  }
+  prev->prev = this;
+}
+
 void object_proxy::unlink()
 {
   if (prev) {
@@ -68,8 +79,8 @@ void object_proxy::unlink()
   if (next) {
     next->prev = prev;
   }
-  prev.reset();
-  next.reset();
+  prev = 0;
+  next = 0;
   node = 0;
 }
 

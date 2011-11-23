@@ -139,7 +139,7 @@ public:
 class OOS_API object_store
 {
 private:
-  typedef std::tr1::unordered_map<long, object_proxy_ptr> t_object_proxy_map;
+  typedef std::tr1::unordered_map<long, object_proxy*> t_object_proxy_map;
 	typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_node_map;
 
 public:
@@ -301,7 +301,7 @@ public:
    * @param id Unique id of the object proxy.
    * @return An object proxy object.
    */
-  object_proxy_ptr create_proxy(long id);
+  object_proxy *create_proxy(long id);
 
   /**
    * @brief Delete proxy from map
@@ -325,7 +325,7 @@ public:
    * @return On success it returns an object proxy on failure null
    *
    */
-  object_proxy_ptr find_proxy(long id) const;
+  object_proxy *find_proxy(long id) const;
 
   /**
    * @brief Inserts the proxy into a prototype list
@@ -333,14 +333,14 @@ public:
    * @param node Prototype into which the proxy will be inserted.
    * @param oproxy Object proxy to insert
    */
-  void insert_proxy(prototype_node *node, object_proxy_ptr oproxy);
+  void insert_proxy(prototype_node *node, object_proxy *oproxy);
 
   /**
    * @brief Removes an object proxy from a prototype list
    * 
    * @param oproxy Object proxy to remove
    */
-  void remove_proxy(prototype_node *node, object_proxy_ptr oproxy);
+  void remove_proxy(prototype_node *node, object_proxy *oproxy);
 
 private:
   friend class object_creator;
@@ -350,13 +350,13 @@ private:
   friend class object;
 
 private:
-  void mark_modified(const object_proxy_ptr &oproxy);
+  void mark_modified(object_proxy *oproxy);
 
 	object* insert_object(object *o, bool notify);
 	bool remove_object(object *o, bool notify);
 	
-  void link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &next);
-  void unlink_proxy(const object_proxy_ptr &proxy);
+  void link_proxy(object_proxy *base, object_proxy *next);
+  void unlink_proxy(object_proxy *proxy);
 
 private:
   std::auto_ptr<prototype_node> root_;
@@ -368,8 +368,8 @@ private:
   typedef std::list<object_observer*> t_observer_list;
   t_observer_list observer_list_;
 
-  object_proxy_ptr first_;
-  object_proxy_ptr last_;
+  object_proxy *first_;
+  object_proxy *last_;
   
   object_deleter object_deleter_;
 };

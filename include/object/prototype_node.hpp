@@ -103,12 +103,12 @@ struct OOS_API prototype_node
    * Adjusts self and last marker of all predeccessor nodes with given
    * object proxy.
    */
-  void adjust_left_marker(const object_proxy_ptr &old_proxy, const object_proxy_ptr &new_proxy);
+  void adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy);
   
   /**
    * Adjust first marker of all successor nodes with given object proxy.
    */
-  void adjust_right_marker(const object_proxy_ptr &old_proxy, const object_proxy_ptr &new_proxy);
+  void adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy);
 
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
@@ -122,9 +122,9 @@ struct OOS_API prototype_node
   // data
   std::auto_ptr<object_base_producer> producer;
 
-  object_proxy_ptr op_first;
-  object_proxy_ptr op_marker;
-  object_proxy_ptr op_last;
+  object_proxy *op_first;
+  object_proxy *op_marker;
+  object_proxy *op_last;
   
   unsigned int depth;
   unsigned long count;

@@ -188,7 +188,7 @@ void object_serializer::read_object(const char*, object_base_ptr &x)
   std::string type;
   read_string(NULL, type);
 
-  object_proxy_ptr oproxy = ostore_->find_proxy(id);
+  object_proxy *oproxy = ostore_->find_proxy(id);
   if (!oproxy) {
     oproxy = ostore_->create_proxy(id);
   }
@@ -206,7 +206,7 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
   for (unsigned int i = 0; i < s; ++i) {
     read_long(NULL, id);
     read_string(NULL, type);
-    object_proxy_ptr oproxy = ostore_->find_proxy(id);
+    object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }

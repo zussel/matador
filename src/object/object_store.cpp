@@ -67,8 +67,8 @@ object_store::object_store()
 object_store::~object_store()
 {
   // delete all deleted object_proxys
-  root_->op_first->next.reset();
-  root_->op_last->prev.reset();
+  delete root_->op_first->next;
+  delete root_->op_last->prev;
 }
 
 bool
@@ -200,7 +200,7 @@ void object_store::dump_objects(std::ostream &out) const
 {
   out << "dumping all objects\n";
 
-  object_proxy_ptr op = first_;
+  object_proxy *op = first_;
   while (op) {
     out << "[" << op << "] (";
     if (op->obj) {
@@ -226,7 +226,7 @@ object* object_store::create(const char *type) const
 	return i->second->producer->create();
 }
 
-void object_store::mark_modified(const object_proxy_ptr &oproxy)
+void object_store::mark_modified(object_proxy *oproxy)
 {
   std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_update, _1, oproxy->obj));
 }
@@ -271,7 +271,7 @@ object_store::insert_object(object *o, bool notify)
   prototype_node *node = i->second;
   // retrieve and set new unique number into object
   //object->id(UniqueProducer::instance().number("default"));
-  object_proxy_ptr oproxy = find_proxy(o->id());
+  object_proxy *oproxy = find_proxy(o->id());
   if (oproxy) {
     if (oproxy->linked()) {
       // an object exists in
@@ -295,7 +295,7 @@ object_store::insert_object(object *o, bool notify)
     }
   }
   // insert new element node
-//  object_proxy_ptr oproxy(new object_proxy(o, this));
+//  object_proxy *oproxy(new object_proxy(o, this));
   
   insert_proxy(node, oproxy);
   // create object
@@ -336,7 +336,7 @@ object_store::remove_object(object *o, bool notify)
     std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
   }
   // set object in object_proxy to null
-  object_proxy_ptr op = o->proxy_;
+  object_proxy *op = o->proxy_;
   // delete node
   delete o;
   // set node of proxy to NULL
@@ -372,7 +372,7 @@ object_store::remove(object_list_base &olb)
 }
 
 void
-object_store::link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &prev_proxy)
+object_store::link_proxy(object_proxy *base, object_proxy *prev_proxy)
 {
   // link oproxy before this node
   prev_proxy->prev = base->prev;
@@ -384,7 +384,7 @@ object_store::link_proxy(const object_proxy_ptr &base, const object_proxy_ptr &p
 }
 
 void
-object_store::unlink_proxy(const object_proxy_ptr &proxy)
+object_store::unlink_proxy(object_proxy *proxy)
 {
   if (proxy->prev) {
     proxy->prev->next = proxy->next;
@@ -392,28 +392,28 @@ object_store::unlink_proxy(const object_proxy_ptr &proxy)
   if (proxy->next) {
     proxy->next->prev = proxy->prev;
   }
-  proxy->prev.reset();
-  proxy->next.reset();
+  proxy->prev = NULL;
+  proxy->next = NULL;
 }
 
-object_proxy_ptr object_store::find_proxy(long id) const
+object_proxy* object_store::find_proxy(long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return object_proxy_ptr();
+    return NULL;
   } else {
     return i->second;
   }
 }
 
-object_proxy_ptr object_store::create_proxy(long id)
+object_proxy*object_store::create_proxy(long id)
 {
-  std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair(id, object_proxy_ptr()));
+  std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair<long, object_proxy*>(id, NULL));
   if (ret.second == true) {
-    ret.first->second.reset(new object_proxy(id, this));
+    ret.first->second = new object_proxy(id, this);
     return ret.first->second;
   } else {
-    return object_proxy_ptr();
+    return NULL;
   }
 }
 
@@ -430,14 +430,15 @@ bool object_store::delete_proxy(long id)
   }
 }
 
-void object_store::insert_proxy(prototype_node *node, object_proxy_ptr oproxy)
+void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
 {
   // check count of object in subtree
   if (node->count >= 2) {
     // there are more than two objects (normal case)
     // insert before last last
     //std::cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
-    link_proxy(node->op_marker->prev, oproxy);
+//    link_proxy(node->op_marker->prev, oproxy);
+    oproxy->link(node->op_marker->prev);
 //    node->op_marker->prev->insert(oproxy);
   } else if (node->count == 1) {
     // there is one object in subtree
@@ -447,7 +448,8 @@ void object_store::insert_proxy(prototype_node *node, object_proxy_ptr oproxy)
     } else {
       std::cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
     }*/
-    link_proxy(node->op_marker->prev, oproxy);
+//    link_proxy(node->op_marker->prev, oproxy);
+    oproxy->link(node->op_marker->prev);
 //    node->op_marker->prev->insert(oproxy);
     node->adjust_left_marker(oproxy->next, oproxy);
   } else /* if (node->count == 0) */ {
@@ -458,7 +460,8 @@ void object_store::insert_proxy(prototype_node *node, object_proxy_ptr oproxy)
     } else {
       std::cout << "list is empty: inserting " << *o << " as last before [0]\n";
     }*/
-    link_proxy(node->op_marker, oproxy);
+//    link_proxy(node->op_marker, oproxy);
+    oproxy->link(node->op_marker);
 //    node->op_marker->insert(oproxy);
     node->adjust_left_marker(oproxy->next, oproxy);
     node->adjust_right_marker(oproxy->prev, oproxy);
@@ -469,7 +472,7 @@ void object_store::insert_proxy(prototype_node *node, object_proxy_ptr oproxy)
   ++node->count;
 }
 
-void object_store::remove_proxy(prototype_node *node, object_proxy_ptr oproxy)
+void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
 {
   if (oproxy == node->op_first->next) {
     // adjust left marker

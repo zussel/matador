@@ -47,7 +47,7 @@ protected:
 	object_base_ptr(const object_base_ptr &x);
 	object_base_ptr& operator=(const object_base_ptr &x);
 	object_base_ptr(object* o, bool is_ref);
-	object_base_ptr(const object_proxy_ptr &op, bool is_ref);
+	object_base_ptr(object_proxy *op, bool is_ref);
 	virtual ~object_base_ptr();
 
 public:
@@ -66,8 +66,6 @@ public:
 
 	object* lookup_object() const;
 
-  bool delete_object();
-
   virtual bool is_reference() const;
   bool is_internal() const;
 
@@ -82,7 +80,7 @@ protected:
   template < class T > friend class object_ptr;
 
 	long id_;
-  object_proxy_ptr proxy_;
+  object_proxy *proxy_;
   bool is_reference_;
   bool is_internal_;
 };
@@ -146,7 +144,7 @@ public:
 	template < class Y >
 	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
 	explicit object_ptr(object* o) : object_base_ptr(o, false) {}
-  explicit object_ptr(const object_proxy_ptr &proxy) : object_base_ptr(proxy, false) {}
+  explicit object_ptr(object_proxy *proxy) : object_base_ptr(proxy, false) {}
 
   virtual const char* type() const
   {
@@ -189,7 +187,7 @@ public:
 	template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
 	explicit object_ref(object* o) : object_base_ptr(o, true) {}
-  explicit object_ref(const object_proxy_ptr &proxy) : object_base_ptr(proxy, true) {}
+  explicit object_ref(object_proxy *proxy) : object_base_ptr(proxy, true) {}
 
   virtual const char* type() const
   {
