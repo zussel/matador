@@ -21,7 +21,7 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_proxy.hpp"
-#include "object/object_atomizer.hpp"
+#include "object/object_deleter.hpp"
 #include "object/prototype_node.hpp"
 
 #ifdef WIN32
@@ -74,7 +74,6 @@ public:
 };
 
 class object_list_base;
-class object_list_base_node;
 
 /**
  * @class object_base_producer
@@ -121,80 +120,6 @@ public:
   virtual const char *classname() const {
     return typeid(T).name();
   }
-};
-
-class OOS_API object_deleter : public object_atomizer
-{
-private:
-  typedef struct t_object_count_struct
-  {
-    t_object_count_struct(object *o, bool ignr = true)
-      : obj(o)
-      , ref_count(o->proxy_->ref_count)
-      , ptr_count(o->proxy_->ptr_count)
-      , ignore(ignr)
-    {}
-    object *obj;
-    unsigned long ref_count;
-    unsigned long ptr_count;
-    bool ignore;
-  } t_object_count;
-
-private:
-  typedef std::map<unsigned long, t_object_count> t_object_count_map;
-
-public:
-  typedef t_object_count_map::iterator iterator;
-  typedef t_object_count_map::const_iterator const_iterator;
-
-  object_deleter();
-  virtual ~object_deleter();
-
-  bool is_deletable(object *obj);
-  bool is_deletable(object_list_base &olist);
-
-  virtual void read_object(const char*, base_object_ptr &x);
-  virtual void read_object_list(const char*, object_list_base &);
-
-  iterator begin();
-  iterator end();
-
-private:
-  void check_object(object *o, bool is_ref);
-  void check_object_list_node(object *node);
-  bool check_object_count_map() const;
-
-private:
-  t_object_count_map object_count_map;
-};
-
-class OOS_API object_linker : public object_atomizer
-{
-public:
-  object_linker(object *elem, const base_object_ptr &o, const std::string &name)
-    : elem_(elem)
-    , object_(o)
-    , name_(name)
-    , linked_(false)
-  {}
-  virtual ~object_linker() {}
-  
-  virtual void read_object(const char *id, base_object_ptr &x)
-  {
-    if (id == name_) {
-      elem_->mark_modified();
-      x.reset(object_.ptr());
-      linked_ = true;
-    }
-  }
-  
-  bool success() { return linked_; }
-
-private:
-  object *elem_;
-  const base_object_ptr &object_;
-  std::string name_;
-  bool linked_;
 };
 
 /**

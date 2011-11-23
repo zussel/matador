@@ -22,9 +22,12 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 SET(OBJECT_SOURCES
   src/object/object.cpp
   src/object/object_atomizer.cpp
+  src/object/object_creator.cpp
+  src/object/object_deleter.cpp
   src/object/object_ptr.cpp
   src/object/object_store.cpp
   src/object/object_list.cpp
+  src/object/object_linker.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
   src/object/prototype_node.cpp
@@ -33,10 +36,13 @@ SET(OBJECT_SOURCES
 SET(OBJECT_HEADER
   include/object/object.hpp
   include/object/object_atomizer.hpp
+  include/object/object_creator.hpp
+  include/object/object_deleter.hpp
   include/object/object_exception.hpp
   include/object/object_ptr.hpp
   include/object/object_store.hpp
   include/object/object_list.hpp
+  include/object/object_linker.hpp
   include/object/object_view.hpp
   include/object/object_proxy.hpp
   include/object/object_serializer.hpp

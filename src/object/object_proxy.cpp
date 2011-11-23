@@ -131,6 +131,16 @@ void object_proxy::reset(object *o)
   node = 0;
 }
 
+void object_proxy::add(base_object_ptr *ptr)
+{
+  ptr_set_.insert(ptr);
+}
+
+bool object_proxy::remove(base_object_ptr *ptr)
+{
+  return ptr_set_.erase(ptr) == 1;
+}
+
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
 //  if (op) {

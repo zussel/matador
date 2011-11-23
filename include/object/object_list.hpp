@@ -33,6 +33,7 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
+#include "object/object_linker.hpp"
 #include "object/object_atomizer.hpp"
 
 #ifdef WIN32

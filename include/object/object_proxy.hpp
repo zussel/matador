@@ -19,6 +19,7 @@
 #define OBJECT_PROXY_HPP
 
 #include <ostream>
+#include <set>
 
 #ifdef WIN32
 #include <memory>
@@ -30,6 +31,7 @@ namespace oos {
 
 class object;
 class object_store;
+class base_object_ptr;
 struct prototype_node;
 
 struct object_proxy;
@@ -56,6 +58,9 @@ struct object_proxy {
 
   void reset(object *o);
 
+  void add(base_object_ptr *ptr);
+  bool remove(base_object_ptr *ptr);
+
   object_proxy_ptr prev;
   object_proxy_ptr next;
 
@@ -67,6 +72,9 @@ struct object_proxy {
 
   object_store *ostore;
   prototype_node *node;
+
+  typedef std::set<base_object_ptr*> ptr_set_t;
+  ptr_set_t ptr_set_;
 };
 
 }
