@@ -24,7 +24,9 @@
 namespace oos {
 
 object_proxy::object_proxy(object_store *os)
-  : obj(NULL)
+  : prev(NULL)
+  , next(NULL)
+  , obj(NULL)
   , id(0)
   , ref_count(0)
   , ptr_count(0)
@@ -33,7 +35,9 @@ object_proxy::object_proxy(object_store *os)
 {}
 
 object_proxy::object_proxy(long i, object_store *os)
-  : obj(NULL)
+  : prev(NULL)
+  , next(NULL)
+  , obj(NULL)
   , id(i)
   , ref_count(0)
   , ptr_count(0)
@@ -42,7 +46,9 @@ object_proxy::object_proxy(long i, object_store *os)
 {}
 
 object_proxy::object_proxy(object *o, object_store *os)
-  : obj(o)
+  : prev(NULL)
+  , next(NULL)
+  , obj(o)
   , id((o ? o->id() : 0))
   , ref_count(0)
   , ptr_count(0)
@@ -53,22 +59,27 @@ object_proxy::object_proxy(object *o, object_store *os)
 object_proxy::~object_proxy()
 {
   if (obj) {
-//    std::cout << "deleting proxy [" << this << "] with object [" << obj << "]\n";
     delete obj;
-  } else {
-//    std::cout << "deleting proxy [" << this << "]\n";
+    obj = NULL;
+  }
+  if (ostore) {
+    ostore->delete_proxy(id);
+  }
+  ostore = NULL;
+  for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
+    (*i)->proxy_ = NULL;
   }
 }
 
-void object_proxy::link(object_proxy *prev)
+void object_proxy::link(object_proxy *successor)
 {
   // link oproxy before this node
-  prev = prev->prev;
-  next = prev;
-  if (prev->prev) {
-    prev->prev->next = this;
+  prev = successor->prev;
+  next = successor;
+  if (successor->prev) {
+    successor->prev->next = this;
   }
-  prev->prev = this;
+  successor->prev = this;
 }
 
 void object_proxy::unlink()
@@ -82,18 +93,6 @@ void object_proxy::unlink()
   prev = 0;
   next = 0;
   node = 0;
-}
-
-void object_proxy::clear()
-{
-  if (obj) {
-    delete obj;
-    obj = NULL;
-  }
-  if (ostore) {
-    ostore->delete_proxy(id);
-  }
-  ostore = NULL;
 }
 
 void object_proxy::link_ref()

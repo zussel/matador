@@ -23,6 +23,7 @@ namespace oos {
 
 object::object()
 	: id_(0)
+  , proxy_(0)
 {
 }
 

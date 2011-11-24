@@ -28,6 +28,7 @@ namespace oos {
 
 object_base_ptr::object_base_ptr(bool is_ref)
   : id_(0)
+  , proxy_(0)
   , is_reference_(is_ref)
   , is_internal_(false)
 {}

@@ -60,6 +60,7 @@ ComplexObjectStoreTestUnit::first()
   ostore_.insert(new Artist);
   ostore_.insert(new VideoTrack);
   // show object hierarchy
+  ostore_.dump_objects(cout);
 
 
   Track *track = NULL;

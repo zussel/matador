@@ -37,6 +37,11 @@ struct prototype_node;
 struct object_proxy;
 typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;
 
+/**
+ * @class object_proxy
+ * @brief Is a proxy between the object pointer and the object store
+ *
+ */
 struct object_proxy {
   explicit object_proxy(object_store *os);
   object_proxy(long i, object_store *os);
@@ -47,16 +52,15 @@ struct object_proxy {
 
   /**
    * Link this object proxy before given
-   * object proxy prev.
+   * object proxy next.
    * 
-   * @param prev New previous object proxy of this
+   * @param next New next object proxy of this
    */
-  void link(object_proxy *prev);
+  void link(object_proxy *successor);
   /**
    * Unlink object proxy from list.
    */
   void unlink();
-  void clear();
 
   void link_ref();
   void unlink_ref();

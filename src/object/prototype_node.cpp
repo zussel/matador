@@ -26,7 +26,9 @@ prototype_node::prototype_node()
   , next(NULL)
   , first(NULL)
   , last(NULL)
-  , producer(NULL)
+  , op_first(NULL)
+  , op_marker(NULL)
+  , op_last(NULL)
   , depth(0)
   , count(0)
 {
@@ -39,6 +41,9 @@ prototype_node::prototype_node(object_base_producer *p, const char *t)
   , first(new prototype_node)
   , last(new prototype_node)
   , producer(p)
+  , op_first(NULL)
+  , op_marker(NULL)
+  , op_last(NULL)
   , depth(0)
   , count(0)
   , type(t)
@@ -69,7 +74,6 @@ prototype_node::clear()
     // remove object proxy from list
     op->unlink();
     // delete object proxy and object
-    op->clear();
     delete op;
   }
 }

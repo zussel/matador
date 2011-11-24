@@ -67,8 +67,12 @@ object_store::object_store()
 object_store::~object_store()
 {
   // delete all deleted object_proxys
-  delete root_->op_first->next;
-  delete root_->op_last->prev;
+  if (root_->op_first->next) {
+//    delete root_->op_first->next;
+  }
+  if (root_->op_last->prev) {
+//    delete root_->op_last->prev;
+  }
 }
 
 bool
