@@ -81,7 +81,9 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
-  proxy_->add(this);
+  if (proxy_) {
+    proxy_->add(this);
+  }
 }
 
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
@@ -122,21 +124,27 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 void
 object_base_ptr::reset(object *o)
 {
-  if (proxy_ && is_internal_) {
-    if (is_reference_) {
-      proxy_->unlink_ref();
-    } else {
-      proxy_->unlink_ptr();
+  if (proxy_) {
+    if (is_internal_) {
+      if (is_reference_) {
+        proxy_->unlink_ref();
+      } else {
+        proxy_->unlink_ptr();
+      }
     }
+    proxy_->remove(this);
   }
   if (o) {
     proxy_ = o->proxy_;
-    if (proxy_ && is_internal_) {
-      if (is_reference_) {
-        proxy_->link_ref();
-      } else {
-        proxy_->link_ptr();
+    if (proxy_) {
+      if (is_internal_) {
+        if (is_reference_) {
+          proxy_->link_ref();
+        } else {
+          proxy_->link_ptr();
+        }
       }
+      proxy_->add(this);
     }
   }
   id_ = (proxy_ ? proxy_->id : 0);

@@ -66,6 +66,7 @@ object_store::object_store()
 
 object_store::~object_store()
 {
+  clear();
   // delete all deleted object_proxys
   if (root_->op_first->next) {
 //    delete root_->op_first->next;
@@ -73,6 +74,8 @@ object_store::~object_store()
   if (root_->op_last->prev) {
 //    delete root_->op_last->prev;
   }
+  delete first_;
+  delete last_;
 }
 
 bool
@@ -159,11 +162,11 @@ void object_store::clear()
     remove_prototype(node->type.c_str());
     //delete node;
   }
-  std::cout << "size of object map: " << object_map_.size() << "\n";
-  std::cout << "clearing object map ... ";
+//  std::cout << "size of object map: " << object_map_.size() << "\n";
+//  std::cout << "clearing object map ... ";
   object_map_.clear();
-  std::cout << "done.\n";
-  std::cout << "size of object map: " << object_map_.size() << "\n";
+//  std::cout << "done.\n";
+//  std::cout << "size of object map: " << object_map_.size() << "\n";
 }
 
 int depth(prototype_node *node)
@@ -342,9 +345,9 @@ object_store::remove_object(object *o, bool notify)
   // set object in object_proxy to null
   object_proxy *op = o->proxy_;
   // delete node
-  delete o;
+  delete op;
   // set node of proxy to NULL
-  op->obj = NULL;
+//  op->obj = NULL;
   return true;
 }
 
@@ -410,8 +413,11 @@ object_proxy* object_store::find_proxy(long id) const
   }
 }
 
-object_proxy*object_store::create_proxy(long id)
+object_proxy* object_store::create_proxy(long id)
 {
+  if (id == 0) {
+    return NULL;
+  }
   std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair<long, object_proxy*>(id, NULL));
   if (ret.second == true) {
     ret.first->second = new object_proxy(id, this);

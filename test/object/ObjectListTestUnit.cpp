@@ -157,7 +157,7 @@ ObjectListTestUnit::test_linked_list()
   LinkedItemList::const_iterator last = itemlist->end();
 
   while (first != last) {
-    cout << "item name: " << first->name() << "\n";
+    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
     ++first;
   }
   cout << "remove item from linked list\n";
@@ -168,10 +168,12 @@ ObjectListTestUnit::test_linked_list()
   i = itemlist->erase(i);
   cout << "next item name: " << i->name() << "\n";
 
+  ostore_.dump_objects(std::cout);
+
   cout << "dump linked list\n";
   first = itemlist->begin();
   while (first != last) {
-    cout << "item name: " << first->name() << "\n";
+    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
     ++first;
   }
   
@@ -180,7 +182,7 @@ ObjectListTestUnit::test_linked_list()
   itemlist->clear();
   first = itemlist->begin();
   while (first != last) {
-    cout << "item name: " << first->name() << "\n";
+    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
     ++first;
   }
   
