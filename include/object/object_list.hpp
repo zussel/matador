@@ -523,6 +523,11 @@ public:
     return object_list_.size();
   }
 
+  iterator insert(iterator pos, const value_type_wrapper &x)
+  {
+    return object_list_.insert(pos, x);
+  };
+
   virtual iterator erase(iterator i) = 0;
 
   iterator erase(iterator first, iterator last)
