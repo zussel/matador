@@ -429,6 +429,7 @@ object_proxy* object_store::create_proxy(long id)
 
 bool object_store::delete_proxy(long id)
 {
+  std::cout << id << " ";
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
     return false;

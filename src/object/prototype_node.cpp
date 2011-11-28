@@ -68,7 +68,7 @@ prototype_node::clear()
   adjust_left_marker(op_first->next, op_marker);
   adjust_right_marker(op_marker->prev, op_first);
 
-  std::cout << "removing proxies of type [" << type << "] (size: " << count << ")\n";
+  std::cout << "removing proxies of type [" << type << "] (size: " << count << ")\nids: ";
   while (op_first->next != op_marker) {
     object_proxy *op = op_first->next;
     // remove object proxy from list
@@ -76,6 +76,7 @@ prototype_node::clear()
     // delete object proxy and object
     delete op;
   }
+  std::cout << "done.\n";
 }
 
 bool
