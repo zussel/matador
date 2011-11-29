@@ -166,11 +166,24 @@ public:
    */
 	bool insert_prototype(object_base_producer *producer, const char *type, const char *parent = "OBJECT");
 
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a producer and a unique type name. To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given. The producer is automatically created via the template
+   * parameter.
+   * 
+   * @tparam T The type of the prototype node
+   * @param type     The unique name of the type.
+   * @param parent   The name of the parent type.
+   * @return Returns true if the prototype was inserted successfully.
+   */
   template < class T >
   bool insert_prototype(const char *type, const char *parent = "OBJECT")
   {
     return insert_prototype(new object_producer<T>, type, parent);
   }
+
   /**
    * Removes an object prototype from the prototype tree. All children
    * nodes and all objects are also removed.

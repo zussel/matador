@@ -1,0 +1,22 @@
+/**
+ * @htmlonly
+ * <div class="width_66" class="float_left">
+ * @endhtmlonly
+ * @mainpage My Personal Index Page
+ *
+ * @section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * @section install_sec Installation
+ *
+ * @subsection step1 Step 1: Opening the box
+ *
+ * @code
+ * int
+ * main()
+ * {
+ *   oos::object_store ostore;
+ * }
+ * @endcode
+ */
