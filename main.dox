@@ -13,9 +13,16 @@
  * @subsection step1 Step 1: Opening the box
  *
  * @code
+ * void foo(int i)
+ * {}
+ *
  * int
  * main()
  * {
+ *   int i = 9;
+ *   
+ *   foo(i);
+ *
  *   oos::object_store ostore;
  * }
  * @endcode

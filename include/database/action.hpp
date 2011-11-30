@@ -43,6 +43,15 @@ class update_action;
 class delete_action;
 class drop_action;
 
+/**
+ * @class action_visitor
+ * @brief The action_visitor class accepts all action types.
+ *
+ * The action_visitor class accepts all concrete action
+ * type classes. It implements the visitor pattern. To have
+ * a concrete visitor, a class must be derived from this
+ * class and implement all virtual method.
+ */
 class OOS_API action_visitor
 {
 public:
@@ -55,15 +64,36 @@ public:
   virtual void visit(drop_action *a) = 0;
 };
 
+/**
+ * @class action
+ * @brief Base class for all database relevant actions
+ *
+ * The action class is the base class for all database
+ * relevant actions like:
+ *  - create (table)
+ *  - insert
+ *  - update
+ *  - delete
+ *  - drop (table)
+ *
+ * All these actions are accepted via the action_visitor
+ * class, which implements the visitor pattern.
+ */
 class action
 {
 public:
+  /**
+   * @brief Action type enumeration
+   *
+   * The enumeration consists of all
+   * available action types.
+   */
   typedef enum {
-    CREATE = 0,
-    INSERT,
-    UPDATE,
-    DELETE,
-    DROP
+    CREATE = 0, /**<Enum type for create action. */
+    INSERT,     /**<Enum type for insert action. */
+    UPDATE,     /**<Enum type for update action. */
+    DELETE,     /**<Enum type for delete action. */
+    DROP        /**<Enum type for drop action. */
   } action_type;
 
   action(action_type t, object *o)

@@ -42,12 +42,30 @@
 #include <map>
 #include <string>
 
+/**
+ * @namespace oos
+ * @brief The Open Object Store namespace.
+ *
+ * This is the namespace where all OOS related classes,
+ * function and code should be put into.
+ */
 namespace oos {
 
 class unit_test;
 
+/**
+ * @class test_suite
+ * @brief The container for all unit tests.
+ * 
+ * The test_suite class is the container for all test_unit
+ * classes. It is a singleton, so only one instance exists.
+ * It can execute all test_units or a specific test_unit.
+ * It also provides function listing all test_unit classes
+ * and their tests.
+ */
 class OOS_API test_suite : public singleton<test_suite>
 {
+private:
   friend class singleton<test_suite>;
 
   typedef enum test_suite_cmd_enum
@@ -78,15 +96,58 @@ public:
 public:
   virtual ~test_suite();
   
+  /**
+   * @brief Initialize test_suite
+   *
+   * Reads, parses and initializes the
+   * test_suite.
+   *
+   * @param argc Number of arguments.
+   * @param argv List of arguments.
+   */
   void init(int argc, char *argv[]);
+
+  /**
+   * @brief Register a new test_unit object.
+   *
+   * Registers a new test_unit object identified
+   * by the given name.
+   *
+   * @param name Name of the test_unit.
+   * @param utest test_unit object.
+   */
   void register_unit(const std::string &name, unit_test *utest);
-  // executes all test unit classes
-  // or what call to init has set up
-  // via command args
+
+  /**
+   * @brief Executes the test_suite.
+   *
+   * Executes all test unit classes or the
+   * command given via init.
+   */
   void run();
-  // execures one test unit class
+
+  /**
+   * @brief Executes a specific test_unit.
+   *
+   * Executes the test_unit with the given name.
+   * If there is no test_unit object with such a
+   * name a message is diplayed.
+   *
+   * @param unit The name of the test_unit object to execute.
+   */
   void run(const std::string &unit);
-  // execute one test of a test unit class
+
+  /**
+   * @brief Executes a single test of a test_unit.
+   *
+   * Executes a single test of a test_unit object,
+   * identified by the name of the test and the name
+   * of the test_unit object.
+   * If test couldn't be found a message is displayed.
+   *
+   * @param unit Name of the test_unit object.
+   * @param test Name of the test to execute.
+   */
   void run(const std::string &unit, const std::string &test);
 
 private:
