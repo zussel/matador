@@ -34,26 +34,142 @@
 
 namespace oos {
 
-class Date;
-class Time;
 class object_list_base;
 class object_base_ptr;
 
+/**
+ * @class object_atomizer
+ * @brief Base class for all object atomizer
+ * 
+ * This class is the base class for all
+ * atomizer classes. It has interfaces to read
+ * and write data types (builtin and complex)
+ * identified by a name.
+ */
 class OOS_API object_atomizer /*: public Atomizer*/
 {
 public:
 	virtual ~object_atomizer() {}
 
+  /**
+   * @brief Write a single character to the atomizer.
+   * 
+   * Write a single character to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_char(const char*, char) {}
+
+  /**
+   * @brief Write a float to the atomizer.
+   * 
+   * Write a float to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_float(const char*, float) {}
+
+  /**
+   * @brief Write a double to the atomizer.
+   * 
+   * Write a double to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_double(const char*, double) {}
+
+  /**
+   * @brief Write a int to the atomizer.
+   * 
+   * Write a int to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_int(const char*, int) {}
+
+  /**
+   * @brief Write a long to the atomizer.
+   * 
+   * Write a long to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_long(const char*, long) {}
+
+  /**
+   * @brief Write a unsigned to the atomizer.
+   * 
+   * Write a unsigned to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_unsigned(const char*, unsigned) {}
+
+  /**
+   * @brief Write a bool to the atomizer.
+   * 
+   * Write a bool to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_bool(const char*, bool) {}
+
+  /**
+   * @brief Write a const char pointer to the atomizer.
+   * 
+   * Write a const char pointer to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_charptr(const char*, const char*) {}
+
+  /**
+   * @brief Write a std::string to the atomizer.
+   * 
+   * Write a std::string to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_string(const char*, const std::string&) {}
+
+  /**
+   * @brief Write a object_base_ptr to the atomizer.
+   * 
+   * Write a object_base_ptr to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_object(const char*, const object_base_ptr&) {}
+
+  /**
+   * @brief Write a object_list_base to the atomizer.
+   * 
+   * Write a object_list_base to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
 	virtual void write_object_list(const char*, const object_list_base&) {}
 
 	virtual void read_char(const char*, char&) {}

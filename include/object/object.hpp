@@ -39,6 +39,19 @@ struct object_proxy;
 class object_store;
 class object_atomizer;
 
+/**
+ * @class object
+ * @brief The base class for all objects.
+ * 
+ * The object class must be the base class
+ * of all classes inserted into the object_store.
+ * At least the object_store handles with objects
+ * of base type object. When iterating over a view
+ * these objects are casted to the concrete type.
+ * 
+ * The object is identified by a unique id, which is
+ * set by the object_store.
+ */
 class OOS_API object
 {
 	// don't allow copying
@@ -46,21 +59,89 @@ class OOS_API object
 	object& operator=(const object&);
 	
 public:
+  /**
+   * @brief Create a new object.
+   * 
+   * Creates a new object, which is not
+   * member of the object_store.
+   */
 	object();
+
+  /**
+   * Destroys the object.
+   */
 	virtual ~object();
 	
+  /**
+   * @brief Interface to read into object members
+   * 
+   * The read_from method is used to accept
+   * all members of an object. It is used
+   * to change them.
+   * 
+   * @param a An object of type object_atomizer to read the object member values from.
+   */
 	virtual void read_from(object_atomizer *a);
+
+  /**
+   * @brief Interface to write from object members
+   * 
+   * The write to method reads all object members
+   * and writes them to the given object_atomizer object.
+   *
+   * @param a An object of type object_atomizer to write the object member values to.
+   */
 	virtual void write_to(object_atomizer *a) const;
 
+  /**
+   * Returns the name of the object type
+   * 
+   * @return Name of the object type
+   */
 	const char* object_type() const;
+  
+  /**
+   * @brief Returns the unique identifier of the object.
+   * 
+   * This method returns the unique id of the object. These
+   * id is first set when the object is inserted into the
+   * object_store. On creation the value of the id is zero.
+   * 
+   * @return The unique id of the object.
+   */
 	long id() const;
+
+  /**
+   * @brief Sets the id of the object.
+   * 
+   * Sets the id of the object.
+   * 
+   * @param oid The new id of the object.
+   */
 	void id(long oid);
 
-  // returns the containing object store
+  /**
+   * @brief Returns the object store.
+   * 
+   * Returns the object_store into which
+   * this object was inserted. If this object
+   * wasn't inserted NULL is returned.
+   * 
+   * @return The object_store to which the object belongs.
+   */
   object_store* ostore() const;
 
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
+  /**
+   * @brief Returns the object_proxy of the object.
+   * 
+   * Returns the object_proxy of the object. If the
+   * object isn't inserted into a object_store NULL
+   * is returned.
+   * 
+   * @return The object_proxy of the object.
+   */
   object_proxy* proxy() const { return proxy_; }
 
 protected:

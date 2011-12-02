@@ -35,12 +35,33 @@
 
 namespace oos {
 
+/**
+ * @class unit_exception
+ * @brief Unit exception class thrown on a unit test assert definition
+ * 
+ * This unit_exception is thrown when an assert evaluates
+ * to false. This exception is caugt by the main test_suite
+ * object.
+ */
 class OOS_API unit_exception : public std::exception
 {
 public:
+  /**
+   * @brief Contructs a unit_exception
+   * 
+   * A object of type unit_exception with
+   * the given message is created.
+   * 
+   * @param msg Message of the exception.
+   */
   unit_exception(const std::string &msg) throw();
   virtual ~unit_exception() throw();
   
+  /**
+   * Returns the message of this exception.
+   * 
+   * @return The message of the exception.
+   */
   virtual const char* what() const throw();
 
 private:
