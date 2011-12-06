@@ -29,10 +29,31 @@ class object_base_ptr;
 class object_list_base;
 class object;
 
+/**
+ * @class object_creator
+ * @brief Creates objects and object_lists
+ * 
+ * When an object is inserted into the object store
+ * subsequently other object must be created and
+ * inserted into the object store.
+ * This class does these tasks.
+ */
 class object_creator : public object_atomizer
 {
 public:
+  /**
+   * @brief Creates an object_creator instance.
+   * 
+   * An object_creator instance ist created for a
+   * given object_store. The notify flag tells the
+   * object_creator wether the observers should be
+   * notified or not.
+   * 
+   * @param ostore The object_store.
+   * @param notify The flag wether the observers should be informed or not.
+   */
   object_creator(object_store &ostore, bool notify);
+
   virtual ~object_creator();
 
   virtual void read_object(const char*, object_base_ptr &x);
