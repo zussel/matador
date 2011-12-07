@@ -15,26 +15,24 @@ void test_suite::register_unit(const std::string &name, unit_test *utest)
   unit_test_map_.insert(std::make_pair(name, unit_test_ptr(utest)));
 }
 
-struct unit_executer : public std::unary_function<test_suite::unit_test_ptr, void>
-{
-  unit_executer() {}
-  void operator()(test_suite::value_type &x)
-  {
-    std::cout << "Executing test unit [" << x.second->caption() << "]\n";
-    x.second->execute();
-  }
-};
+test_suite::unit_executer::unit_executer()
+{}
 
-struct unit_lister : public std::unary_function<test_suite::unit_test_ptr, void>
+void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
-  unit_lister(std::ostream &o) : out(o) {}
-  void operator()(test_suite::value_type &x)
-  {
-    out << "Unit Test [" << x.first << "] has the following test:\n";
-    x.second->list(out);
-  }
-  std::ostream &out;
-};
+  std::cout << "Executing test unit [" << x.second->caption() << "]\n";
+  x.second->execute();
+}
+
+test_suite::unit_lister::unit_lister(std::ostream &o)
+  : out(o)
+{}
+
+void test_suite::unit_lister::operator()(test_suite::value_type &x)
+{
+  out << "Unit Test [" << x.first << "] has the following test:\n";
+  x.second->list(out);
+}
 
 test_suite::~test_suite()
 {

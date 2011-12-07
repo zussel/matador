@@ -19,6 +19,8 @@
 #include "database/database.hpp"
 #include "database/action.hpp"
 
+#include "object/object.hpp"
+
 #include <iostream>
 
 using namespace std;

@@ -147,6 +147,11 @@ namespace oos {
 class OOS_API unit_test
 {
 public:
+  /**
+   * @brief A shortcut for the test function object.
+   * 
+   * A shortcut for the test function object.
+   */
   typedef std::tr1::function<void ()> test_func;
 
   /**
@@ -188,12 +193,53 @@ public:
    */
   void execute();
 
+  /**
+   * @brief Executes a concrete test method.
+   * 
+   * A single test method with the given name
+   * is executed. If the test method couldn't
+   * a warning is displayed.
+   * 
+   * @param test Name of the test to execute.
+   */
   void execute(const std::string &test);
 
+  /**
+   * @brief List all tests.
+   * 
+   * All tests and their descriptions are printed
+   * to the given ostream.
+   */
   void list(std::ostream &out);
 
+  /**
+   * @brief Adds a test to the test_unit.
+   * 
+   * This method adds a new test function identified
+   * by the given name to the test_unit. Additionaly
+   * a short description must be given.
+   *
+   * @param name unique name of the test to store.
+   * @param test The test function object.
+   * @param caption A short description of the test.
+   */
   void add_test(const std::string &name, const test_func &test, const std::string &caption);
 
+  /**
+   * @brief Checks if a is equal b.
+   *
+   * If a is not equal b the test method throws
+   * a unit_exception with the given message. The
+   * exception is caught by the test_suite and the
+   * message is displayed.
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class T >
   void assert_equal(T a, T b, const std::string &msg, int line, const char *file)
   {
@@ -204,6 +250,22 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  /**
+   * @brief Checks if a is not equal b.
+   *
+   * If a is equal b the test method throws
+   * a unit_exception with the given message. The
+   * exception is caught by the test_suite and the
+   * message is displayed
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class T >
   void assert_not_equal(T a, T b, const std::string &msg, int line, const char *file)
   {
@@ -214,6 +276,21 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  /**
+   * @brief Checks if the pointer to a is NULL.
+   *
+   * If the pointer to isn't NULL the test method
+   * throws a unit_exception with the given message.
+   * The exception is caught by the test_suite the
+   * and message is displayed
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class T >
   void assert_null(T *a, const std::string &msg, int line, const char *file)
   {
@@ -224,6 +301,21 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  /**
+   * @brief Checks if the pointer to a is not NULL.
+   *
+   * If the pointer to is NULL the test method
+   * throws a unit_exception with the given message.
+   * The exception is caught by the test_suite the
+   * and message is displayed
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class T >
   void assert_not_null(T *a, const std::string &msg, int line, const char *file)
   {
@@ -234,9 +326,60 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  /**
+   * @brief Checks if a evaluates to true.
+   *
+   * If a doesn't evaluates to true the test method
+   * throws a unit_exception with the given message.
+   * The exception is caught by the test_suite and the
+   * message is displayed
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   void assert_true(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Checks if a evaluates to false.
+   *
+   * If a doesn't evaluates to false the test method
+   * throws a unit_exception with the given message.
+   * The exception is caught by the test_suite and the
+   * message is displayed
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   void assert_false(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Displays a warning.
+   *
+   * The test method displays a warning
+   * with the given message and the current
+   * file and line number information.
+   * 
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   void warn(const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Displays an informatkon.
+   *
+   * The test method displays an information
+   * with the given message.
+   * 
+   * @param msg The message to print if the check fails.
+   */
   void info(const std::string &msg);
 
 private:

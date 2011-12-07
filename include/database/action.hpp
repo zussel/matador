@@ -31,11 +31,11 @@
   #define OOS_API
 #endif
 
-#include "object/object.hpp"
+#include <string>
 
 namespace oos {
 
-//class object;
+class object;
 
 class create_action;
 class insert_action;
@@ -79,7 +79,7 @@ public:
  * All these actions are accepted via the action_visitor
  * class, which implements the visitor pattern.
  */
-class action
+class OOS_API action
 {
 public:
   /**
@@ -96,19 +96,17 @@ public:
     DROP        /**<Enum type for drop action. */
   } action_type;
 
-  action(action_type t, object *o)
-    : type_(t), obj_(o), id_((o ? o->id() : 0))
-  {}
-  virtual ~action() {}
+  action(action_type t, object *o);
+  virtual ~action();
   
   virtual void accept(action_visitor *av) = 0;
 
-  action_type type() const { return type_; }
+  action_type type() const;
 
-  object* obj() { return obj_; }
-  const object* obj() const { return obj_; }
+  object* obj();
+  const object* obj() const;
 
-  long id() const { return id_; }
+  long id() const;
 
 private:
   action_type type_;
@@ -116,6 +114,13 @@ private:
   long id_;
 };
 
+/**
+ * @class create_action
+ * @brief Action when creating a table.
+ * 
+ * This action is used when a table is
+ * created.
+ */
 class create_action : public action
 {
 public:
@@ -125,6 +130,13 @@ public:
   virtual ~create_action() {}
 };
 
+/**
+ * @class insert_action
+ * @brief Action when inserting an object.
+ * 
+ * This action is used when an objected
+ * is inserted into the database.
+ */
 class insert_action : public action
 {
 public:
@@ -139,6 +151,14 @@ public:
   }
 };
 
+
+/**
+ * @class update_action
+ * @brief Action when updating an object.
+ * 
+ * This action is used when an objected
+ * is updated on the database.
+ */
 class update_action : public action
 {
 public:
@@ -153,26 +173,34 @@ public:
   }
 };
 
-class delete_action : public action
+/**
+ * @class delete_action
+ * @brief Action when deleting an object.
+ * 
+ * This action is used when an objected
+ * is deleted from the database.
+ */
+class OOS_API delete_action : public action
 {
 public:
-  delete_action(object *o)
-    : action(action::DELETE, o)
-    , type_(o ? o->object_type() : "")
-  {}
-  virtual ~delete_action() {}
+  delete_action(object *o);
+  virtual ~delete_action();
   
-  virtual void accept(action_visitor *av)
-  {
-    av->visit(this);
-  }
+  virtual void accept(action_visitor *av);
 
-  std::string type() const { return type_; }
+  std::string type() const;
 
 private:
   std::string type_;
 };
 
+/**
+ * @class drop_action
+ * @brief Action when dropping a table.
+ * 
+ * This action is used when a table is
+ * dropped.
+ */
 class drop_action : public action
 {
 public:

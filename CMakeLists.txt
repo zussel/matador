@@ -70,6 +70,7 @@ SET(UNIT_HEADER
 )
 
 SET(DATABASE_SOURCES
+  src/database/action.cpp
   src/database/database.cpp
   src/database/transaction.cpp
 )

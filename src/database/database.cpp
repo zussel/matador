@@ -66,6 +66,10 @@ void database::open()
 {
 }
 
+void database::create()
+{
+}
+
 void database::close()
 {
 }

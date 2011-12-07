@@ -41,7 +41,7 @@ class object;
 class object_list_base;
 class object_base_ptr;
 
-class OOS_API object_deleter : public object_atomizer
+class object_deleter : public object_atomizer
 {
 private:
   typedef struct t_object_count_struct

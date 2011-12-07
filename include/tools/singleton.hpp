@@ -20,10 +20,30 @@
 
 namespace oos {
 
+/**
+ * @class singleton
+ * @brief Provides only one instance of a type.
+ * @tparam T The type of the singleton.
+ * 
+ * This class implements the singleton pattern.
+ * It ensures that only one instance of a class
+ * exists.
+ * @note The derived class must add a friend declaration
+ * for the concrete singleton type.
+ */
 template < typename T >
 class singleton
 {
 public:
+  /**
+   * @brief Access the instance of the class.
+   * 
+   * The static instance method provides
+   * the access to the one instance of the
+   * concrete class.
+   * 
+   * @return The one instance of the class.
+   */
   static T& instance ()
   {
     static T instance_;

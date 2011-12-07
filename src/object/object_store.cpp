@@ -15,9 +15,12 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "object/object.hpp"
+#include "object/object_proxy.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
 #include "object/object_creator.hpp"
+#include "object/object_deleter.hpp"
 #include "object/prototype_node.hpp"
 
 #ifdef WIN32
@@ -53,9 +56,10 @@ object_store::object_store()
   , id_(0)
   , first_(new object_proxy(this))
   , last_(new object_proxy(this))
+  , object_deleter_(new object_deleter)
 {
-  prototype_node_map_.insert(std::make_pair("OBJECT", root_.get()));
-  prototype_node_map_.insert(std::make_pair(root_->producer->classname(), root_.get()));
+  prototype_node_map_.insert(std::make_pair("OBJECT", root_));
+  prototype_node_map_.insert(std::make_pair(root_->producer->classname(), root_));
   // set marker for root element
   root_->op_first = first_;
   root_->op_marker = last_;
@@ -74,8 +78,10 @@ object_store::~object_store()
   if (root_->op_last->prev) {
 //    delete root_->op_last->prev;
   }
+  delete root_;
   delete first_;
   delete last_;
+  delete object_deleter_;
 }
 
 bool
@@ -181,7 +187,7 @@ int depth(prototype_node *node)
 
 void object_store::dump_prototypes(std::ostream &out) const
 {
-  prototype_node *node = root_.get();
+  prototype_node *node = root_;
 //  out << "dumping prototype tree:\n";
   out << "digraph G {\n";
   out << "\tgraph [fontsize=14]\n";
@@ -320,6 +326,26 @@ object_store::insert_object(object *o, bool notify)
 }
 
 bool
+object_store::remove(object *o)
+{
+  // check if object tree is deletable
+  if (!object_deleter_->is_deletable(o)) {
+    return false;
+  }
+  
+  object_deleter::iterator first = object_deleter_->begin();
+  object_deleter::iterator last = object_deleter_->end();
+  
+  while (first != last) {
+    if (!first->second.ignore) {
+      remove_object((first++)->second.obj, true);
+    } else {
+      ++first;
+    }
+  }
+	return true;
+}
+bool
 object_store::remove_object(object *o, bool notify)
 {
   // find prototype node
@@ -361,11 +387,11 @@ object_store::remove(object_list_base &olb)
    * 
    **************/
   // check if object tree is deletable
-  if (!object_deleter_.is_deletable(olb)) {
+  if (!object_deleter_->is_deletable(olb)) {
     return false;
   }
-  object_deleter::iterator first = object_deleter_.begin();
-  object_deleter::iterator last = object_deleter_.end();
+  object_deleter::iterator first = object_deleter_->begin();
+  object_deleter::iterator last = object_deleter_->end();
   
   while (first != last) {
     if (!first->second.ignore) {

@@ -43,33 +43,121 @@ class query_result;
 class transaction;
 class transaction_impl;
 
+/**
+ * @class database_impl
+ * @brief Base class for all database backends
+ * 
+ * This class must be the base class for database
+ * backends used with the object_store/database module.
+ * The database actions are implemented using the
+ * visitor pattern. So every action is accepted via
+ * a method which must be overwritten by the concrete
+ * database implementation.
+ */
 class OOS_API database_impl : public action_visitor
 {
 public:
   database_impl();
   virtual ~database_impl();
   
+  /**
+   * The interface for the create table action.
+   */
   virtual void visit(create_action *) {}
+
+  /**
+   * The interface for the insert action.
+   */
   virtual void visit(insert_action *a);
+
+  /**
+   * The interface for the update action.
+   */
   virtual void visit(update_action *a);
+
+  /**
+   * The interface for the delete action.
+   */
   virtual void visit(delete_action *a);  
+
+  /**
+   * The interface for the drop table action.
+   */
   virtual void visit(drop_action *) {}
 
   transaction_impl* create_transaction(transaction &tr) const;
 };
 
+/**
+ * @class database
+ * @brief Frontend class to make the objects persistent.
+ * 
+ * This class is the frontend to any database made
+ * available by a concrete database_impl implementation.
+ * All objects in the given object_store will be made
+ * persistent.
+ */
 class OOS_API database
 {
 public:
+  /**
+   * @brief Creates a database frontend for an object_store and a specific database.
+   * 
+   * This constructor creates a connection between an object_store
+   * and a specific database identified by a database connection
+   * string.
+   * 
+   * @param ostore The object_store to make persistent.
+   * @param dbstring The database connection string.
+   */
   database(object_store &ostore, const std::string &dbstring);
+
   ~database();
   
+  /**
+   * @brief Opens the database.
+   * 
+   * Opens the database. If database couldn't be opened
+   * an exception is thrown.
+   */
   void open();
+  
+  /**
+   * @brief Creates the database.
+   * 
+   * Try to create the database and all tables described
+   * in the object_store. If database already exists an
+   * exception is thrown.
+   * Once the database is created it is also opened.
+   */
+  void create();
+  
+  /**
+   * @brief Closes the database.
+   * 
+   * Closes the database.
+   */
   void close();
 
+  /**
+   * @brief Executes a database query.
+   * 
+   * Executes the given query on the database and
+   * return the result in a query_result object.
+   * 
+   * @param q The database query to execute.
+   * @return The result of the query.
+   */
   query_result* query(const std::string &q);
 
+  /**
+   * Returns the object_store.
+   */
   object_store& ostore();
+
+  /**
+   * Returns the object_store.
+   */
   const object_store& ostore() const;
 
   void push_transaction(transaction *tr);

@@ -87,6 +87,7 @@ protected:
   bool is_internal_;
 };
 
+/*
 template < class T, bool IR >
 class object_wrapper : public object_base_ptr
 {
@@ -130,6 +131,7 @@ public:
     return IR;
   }
 };
+*/
 
 template < class T >
 class object_ref;

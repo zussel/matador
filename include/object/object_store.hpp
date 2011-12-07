@@ -18,11 +18,7 @@
 #ifndef OBJECTBAG_HPP
 #define OBJECTBAG_HPP
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
-#include "object/object_proxy.hpp"
-#include "object/object_deleter.hpp"
-#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -53,6 +49,11 @@
 #endif
 
 namespace oos {
+
+class object;
+struct object_proxy;
+class object_deleter;
+struct prototype_node;
 
 /**
  * @class object_observer
@@ -255,22 +256,7 @@ public:
 	template < class Y >
 	bool remove(object_ptr<Y> &o)
   {
-    // check if object tree is deletable
-    if (!object_deleter_.is_deletable(o.get())) {
-      return false;
-    }
-    
-    object_deleter::iterator first = object_deleter_.begin();
-    object_deleter::iterator last = object_deleter_.end();
-    
-    while (first != last) {
-      if (!first->second.ignore) {
-        remove_object((first++)->second.obj, true);
-      } else {
-        ++first;
-      }
-    }
-		return true;
+    return remove(o.get());
 	}
   
   /**
@@ -304,7 +290,7 @@ public:
   void unregister_observer(object_observer *observer);
 
   /**
-   * @Creates and inserts an object proxy object.
+   * @brief Creates and inserts an object proxy object.
    * 
    * An object proxy object is created and inserted
    * into the internal proxy hash map. The proxy won't
@@ -350,7 +336,8 @@ public:
 
   /**
    * @brief Removes an object proxy from a prototype list
-   * 
+   *
+   * @param node Prototype from which the proxy will be removed.
    * @param oproxy Object proxy to remove
    */
   void remove_proxy(prototype_node *node, object_proxy *oproxy);
@@ -365,6 +352,7 @@ private:
 private:
   void mark_modified(object_proxy *oproxy);
 
+  bool remove(object *o);
 	object* insert_object(object *o, bool notify);
 	bool remove_object(object *o, bool notify);
 	
@@ -372,7 +360,7 @@ private:
   void unlink_proxy(object_proxy *proxy);
 
 private:
-  std::auto_ptr<prototype_node> root_;
+  prototype_node *root_;
  
   t_prototype_node_map prototype_node_map_;
   t_object_proxy_map object_map_;
@@ -384,7 +372,7 @@ private:
   object_proxy *first_;
   object_proxy *last_;
   
-  object_deleter object_deleter_;
+  object_deleter *object_deleter_;
 };
 
 }

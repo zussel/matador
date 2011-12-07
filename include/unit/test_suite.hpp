@@ -68,11 +68,17 @@ class OOS_API test_suite : public singleton<test_suite>
 private:
   friend class singleton<test_suite>;
 
+  /**
+   * @brief test_suite commands
+   * 
+   * This is an enumeration for
+   * all test_suite commands
+   */
   typedef enum test_suite_cmd_enum
   {
-    UNKNOWN = 0,
-    LIST,
-    EXECUTE
+    UNKNOWN = 0, /**<Enum type for an unknown test_suite command. */
+    LIST,        /**<Enum type for the list command. */
+    EXECUTE      /**<Enum type for the execute command. */
   } test_suite_cmd;
 
   typedef struct test_suite_args_struct
@@ -88,10 +94,22 @@ private:
 
   test_suite();
 
-public:
   typedef std::tr1::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
   typedef t_unit_test_map::value_type value_type;
+
+  struct unit_executer : public std::unary_function<unit_test_ptr, void>
+  {
+    unit_executer();
+    void operator()(test_suite::value_type &x);
+  };
+
+  struct unit_lister : public std::unary_function<unit_test_ptr, void>
+  {
+    unit_lister(std::ostream &o);
+    void operator()(test_suite::value_type &x);
+    std::ostream &out;
+  };
 
 public:
   virtual ~test_suite();

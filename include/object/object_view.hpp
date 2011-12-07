@@ -25,28 +25,64 @@
 
 namespace oos {
 
+template < class T > class const_object_view_iterator;
+
+/**
+ * @class object_view_iterator
+ * @brief Iterator class for an object_view
+ * @tparam T Object type of the iterator
+ * 
+ * This iterator is used by the object_view
+ * class.
+ */
 template < class T >
 class object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
-  typedef object_view_iterator<T> self;	
-  typedef object_ptr<T> value_type;
-  typedef T* pointer;
-  typedef value_type& reference ;
+  typedef object_view_iterator<T> self;	/**< Shortcut for this class. */
+  typedef object_ptr<T> value_type;     /**< Shortcut for the value type. */
+  typedef T* pointer;                   /**< Shortcut for the pointer type. */
+  typedef value_type& reference ;       /**< Shortcut for the reference type */
 
+  /**
+   * Creates an empty iterator
+   */
   object_view_iterator()
     : node_(NULL)
   {}
+  
+  /**
+   * @brief Creates a iterator for a concrete type.
+   * 
+   * This constructor creates an iterator for a concrete
+   * type and a concrete object.
+   * 
+   * @param node The prototype_node of the object_proxy
+   * @param current The object_proxy for the iterator
+   * @param last The last object_proxy for the iterator
+   */
   object_view_iterator(const prototype_node *node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
   {}
 
+  /**
+   * Copy from a given object_view_iterator.
+   * 
+   * @param x The object_view_iterator to copy from.
+   */
   object_view_iterator(const object_view_iterator &x)
     : node_(x.node_)
     , current_(x.current_)
     , last_(x.last_)
   {}
+
+  /**
+   * Assign from a given object_view_iterator.
+   * 
+   * @param x The object_view_iterator to assign from.
+   * @return The assigned object_view_iterator.
+   */
   object_view_iterator& operator=(const object_view_iterator &x)
   {
     node_ = x.node_;
@@ -57,50 +93,108 @@ public:
 
   ~object_view_iterator() {}
 
+  /**
+   * @brief Compares this with another iterators.
+   * 
+   * Compares this with another iterators. Returns true
+   * if the iterators current object_proxy are the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are the same.
+   */
   bool operator==(const object_view_iterator &i) const {
     return (current_ == i.current_);
   }
 
+  /**
+   * @brief Compares this with another iterators.
+   * 
+   * Compares this with another iterators. Returns true
+   * if the iterators current object_proxy are not the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are not the same.
+   */
   bool operator!=(const object_view_iterator &i) const {
     return (current_ != i.current_);
   }
 
+  /**
+   * Pre increments the iterator
+   * 
+   * @return Returns iterators successor.
+   */
   self& operator++() {
     increment();
     return *this;
   }
 
+  /**
+   * Post increments the iterator
+   * 
+   * @return Returns iterator before incrementing.
+   */
   self operator++(int) {
     object_proxy *tmp = current_;
     increment();
     return object_view_iterator(node_, tmp, last_);
   }
 
+  /**
+   * Pre increments the iterator
+   * 
+   * @return Returns iterators predeccessor.
+   */
   self& operator--() {
     decrement();
     return *this;
   }
 
+  /**
+   * Post decrements the iterator
+   * 
+   * @return Returns iterator before decrementing.
+   */
   self operator--(int) {
     object_proxy *tmp = current_;
     decrement();
     return object_view_iterator(node_, tmp, last_);
   }
 
-  pointer operator->() const {
+  /**
+   * Returns the pointer to the node.
+   * 
+   * @return The pointer to the node.
+   */
+  pointer operator->() const
+  {
     return static_cast<pointer>(current_->obj);
   }
 
-  value_type operator*() const { return this->optr(); }
-
-  object_ptr<T> optr() const {
-    if (current_->obj)
-      return object_ptr<T>(current_->obj);
-    else
-      return object_ptr<T>();
+  /**
+   * Returns the node.
+   * 
+   * @return The iterators underlaying node.
+   */
+  value_type operator*() const
+  {
+    return this->optr();
   }
 
-//private:
+  /**
+   * Returns the node as object_ptr.
+   * 
+   * @return The iterators underlaying node as object_ptr.
+   */
+  value_type optr() const
+  {
+    if (current_->obj)
+      return value_type(current_->obj);
+    else
+      return value_type();
+  }
+
+private:
   void increment() {
     if (current_ != last_) {
       current_ = current_->next;
@@ -112,39 +206,81 @@ public:
     }
   }
 
-//private:
+private:
+  friend class const_object_view_iterator<T>;
+
   const prototype_node *node_;
   object_proxy *current_;
   object_proxy *last_;
 };
 
+/**
+ * @class const_object_view_iterator
+ * @brief Iterator class for an object_view
+ * @tparam T Object type of the iterator
+ * 
+ * This iterator is used by the object_view
+ * class.
+ */
 template < class T >
 class const_object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
-  typedef const_object_view_iterator<T> self;
-  typedef object_ptr<T> value_type;
-  typedef T* pointer;
-  typedef value_type& reference ;
+  typedef const_object_view_iterator<T> self;	/**< Shortcut for this class. */
+  typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
+  typedef T* pointer;                         /**< Shortcut for the pointer type. */
+  typedef value_type& reference ;             /**< Shortcut for the reference type */
 
+  /**
+   * Creates an empty iterator
+   */
   const_object_view_iterator()
     : node_(NULL)
   {}
+
+  /**
+   * @brief Creates a iterator for a concrete type.
+   * 
+   * This constructor creates an iterator for a concrete
+   * type and a concrete object.
+   * 
+   * @param node The prototype_node of the object_proxy
+   * @param current The object_proxy for the iterator
+   * @param last The last object_proxy for the iterator
+   */
   const_object_view_iterator(const prototype_node *node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
   {}
 
+  /**
+   * Copy from a given const_object_view_iterator.
+   * 
+   * @param x The const_object_view_iterator to copy from.
+   */
   const_object_view_iterator(const const_object_view_iterator &x)
     : node_(x.node_)
     , current_(x.current_)
     , last_(x.last_)
   {}
+
+  /**
+   * Copy from a given object_view_iterator.
+   * 
+   * @param x The object_view_iterator to copy from.
+   */
   const_object_view_iterator(const object_view_iterator<T> &x)
     : node_(x.node_)
     , current_(x.current_)
     , last_(x.last_)
   {}
+
+  /**
+   * Assign from a given const_object_view_iterator.
+   * 
+   * @param x The const_object_view_iterator to assign from.
+   * @return The assigned const_object_view_iterator.
+   */
   const_object_view_iterator& operator=(const const_object_view_iterator &x)
   {
     node_ = x.node_;
@@ -152,6 +288,13 @@ public:
     last_ = x.last_;
     return *this;
   }
+
+  /**
+   * Assign from a given object_view_iterator.
+   * 
+   * @param x The object_view_iterator to assign from.
+   * @return The assigned const_object_view_iterator.
+   */
   const_object_view_iterator& operator=(const object_view_iterator<T> &x)
   {
     node_ = x.node_;
@@ -162,47 +305,104 @@ public:
 
   ~const_object_view_iterator() {}
 
+  /**
+   * @brief Compares this with another iterators.
+   * 
+   * Compares this with another iterators. Returns true
+   * if the iterators current object_proxy are the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are the same.
+   */
   bool operator==(const const_object_view_iterator &i) const {
     return (current_ == i.current_);
   }
 
+  /**
+   * @brief Compares this with another iterators.
+   * 
+   * Compares this with another iterators. Returns true
+   * if the iterators current object_proxy are not the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are not the same.
+   */
   bool operator!=(const const_object_view_iterator &i) const {
     return (current_ != i.current_);
   }
 
+  /**
+   * Pre increments the iterator
+   * 
+   * @return Returns iterators successor.
+   */
   self& operator++() {
     increment();
     return *this;
   }
 
+  /**
+   * Post increments the iterator
+   * 
+   * @return Returns iterator before incrementing.
+   */
   self operator++(int) {
     object_proxy *tmp = current_;
     increment();
     return const_object_view_iterator(node_, tmp, last_);
   }
 
+  /**
+   * Pre increments the iterator
+   * 
+   * @return Returns iterators predeccessor.
+   */
   self& operator--() {
     decrement();
     return *this;
   }
 
+  /**
+   * Post decrements the iterator
+   * 
+   * @return Returns iterator before decrementing.
+   */
   self operator--(int) {
     object_proxy *tmp = current_;
     decrement();
     return const_object_view_iterator(node_, tmp, last_);
   }
 
-  pointer operator->() const {
+  /**
+   * Returns the pointer to the node.
+   * 
+   * @return The pointer to the node.
+   */
+  pointer operator->() const
+  {
     return static_cast<pointer>(current_->obj);
   }
 
-  value_type operator*() const { return this->optr(); }
+  /**
+   * Returns the node.
+   * 
+   * @return The iterators underlaying node.
+   */
+  value_type operator*() const
+  {
+    return this->optr();
+  }
 
-  object_ptr<T> optr() const {
+  /**
+   * Returns the node as object_ptr.
+   * 
+   * @return The iterators underlaying node as object_ptr.
+   */
+  value_type optr() const {
     if (current_->obj)
-      return object_ptr<T>(current_->obj);
+      return value_type(current_->obj);
     else
-      return object_ptr<T>();
+      return value_type();
   }
 
 private:
@@ -223,13 +423,33 @@ private:
   object_proxy *last_;
 };
 
+/**
+ * @class object_view
+ * @brief Create a view for a concrete object type
+ * @tparam T The type of the object_view.
+ * 
+ * The object_view class creates a view over an object type.
+ * When creating it is possible to have the view only over
+ * the given type or over the complete subset of objects including
+ * child objects.
+ */
 template < class T >
 class object_view
 {
 public:
-  typedef object_view_iterator<T> iterator;
-  typedef const_object_view_iterator<T> const_iterator;
+  typedef object_view_iterator<T> iterator;             /**< Shortcut to the iterator type */
+  typedef const_object_view_iterator<T> const_iterator; /**< Shortcut to the const_iterator type */
 
+  /**
+   * @brief Creates an object_view.
+   * 
+   * Creates an object_view over the given template type
+   * T within the given object_store. When the skip_siblings
+   * flag is true, the view only has object of type T.
+   *
+   * @param ostore The object_store containing the objects.
+   * @param skip_siblings If true only objects of concrete type T are part of the view.
+   */
   object_view(object_store &ostore, bool skip_siblings = false)
     : ostore_(ostore)
     , skip_siblings_(skip_siblings)
@@ -241,6 +461,11 @@ public:
     }
   }
 
+  /**
+   * Return the begin of the object_view.
+   * 
+   * @return The begin iterator.
+   */
   iterator begin() {
     if (skip_siblings_) {
       return ++iterator(node_, node_->op_first, node_->op_marker);
@@ -248,6 +473,12 @@ public:
       return ++iterator(node_, node_->op_first, node_->op_last);
     }
   }
+
+  /**
+   * Return the begin of the object_view.
+   * 
+   * @return The begin iterator.
+   */
   const_iterator begin() const {
     if (skip_siblings_) {
       return ++const_iterator(node_, node_->op_first, node_->op_marker);
@@ -255,6 +486,12 @@ public:
       return ++const_iterator(node_, node_->op_first, node_->op_last);
     }
   }
+
+  /**
+   * Return the end of the object_view.
+   * 
+   * @return The end iterator.
+   */
   iterator end() {
     if (skip_siblings_) {
       return iterator(node_, node_->op_marker, node_->op_marker);
@@ -262,6 +499,12 @@ public:
       return iterator(node_, node_->op_last, node_->op_last);
     }
   }
+
+  /**
+   * Return the end of the object_view.
+   * 
+   * @return The end iterator.
+   */
   const_iterator end() const {
     if (skip_siblings_) {
       return const_iterator(node_, node_->op_marker, node_->op_marker);
@@ -270,14 +513,32 @@ public:
     }
   }
 
+  /**
+   * Returns true if the object_view is empty.
+   * 
+   * @return True if object_view is empty.
+   */
   bool empty() const {
     return node_->op_first->next == node_->op_last;
   }
 
+  /**
+   * Return the size of the object_view.
+   * 
+   * @return The size of the object_view.
+   */
   size_t size() const {
     return std::distance(begin(), end());
   }
-
+  
+  /**
+   * @brief Sets the skip siblings flag.
+   * 
+   * When set to true all objects which are
+   * not of the concrete type T are omitted.
+   *
+   * @param skip Skips siblings when true.
+   */
   void skip_siblings(bool skip) {
     skip_siblings_ = skip;
   }

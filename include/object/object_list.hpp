@@ -637,7 +637,7 @@ private:
 
 /**
  * @class const_object_list_iterator
- * @brief Iterator class for all linked lists.
+ * @brief Constant Iterator class for all linked lists.
  * @tparam T Containing list node type of the iterator.
  * 
  * This is the iterator class used by all linked
@@ -935,54 +935,125 @@ private:
   object *parent_;
 };
 
+/**
+ * @class object_list
+ * @brief An object list class.
+ * @tparam T The concrete object type.
+ * @tparam W The object pointer or reference class.
+ * 
+ * The object_list class is the base class for
+ * The object_ptr_list class and the object_ref_list
+ * class.
+ * It stores a wrapper (object_ptr or object_ref) object
+ * around the concrete object type inside a list.
+ * The class provides STL like behaviour and the order of
+ * the elements is not reliable.
+ */
 template < typename T, class W >
 class object_list : public object_list_base
 {
 public:
-  typedef object_list_base base_list;
-  typedef T value_type;
-  typedef W value_type_wrapper;
-  typedef std::list<value_type_wrapper> list_type;
-  typedef typename list_type::iterator iterator;
-  typedef typename list_type::const_iterator const_iterator;
+  typedef object_list_base base_list;                         /**< Shortcut for the object_base_list class. */
+  typedef T value_type;                                       /**< Shortcut for the value type. */
+  typedef W value_type_wrapper;                               /**< Shortcut for the wrapper class around the value type. */
+  typedef std::list<value_type_wrapper> list_type;            /**< Shortcut for the list class member. */
+  typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
+  typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
+  /**
+   * @brief Creates a new object_list.
+   * 
+   * A new object_list is created. The list is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given list_ref_name.
+   * 
+   * @param parent The containing list object.
+   * @param list_ref_name The name of the parent in the value type object.
+   */
   object_list(object *parent, const std::string &list_ref_name)
     : object_list_base(parent)
     , list_name_(list_ref_name)
   {}
+
   virtual ~object_list() {}
   
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
 
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
   iterator begin() {
     return object_list_.begin();
   }
+
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
   const_iterator begin() const {
     return object_list_.begin();
   }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
   iterator end() {
     return object_list_.end();
   }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
   const_iterator end() const {
     return object_list_.end();
   }
 
+  /**
+   * Returns true if the list is empty.
+   * 
+   * @return True if the list is empty.
+   */
   virtual bool empty() const {
     return object_list_.empty();
   }
 
+  /**
+   * Clears the list
+   */
   virtual void clear()
   {
     base_list::clear();
     erase(begin(), end());
   }
 
+  /**
+   * Returns the size of the list.
+   * 
+   * @return The size of the list.
+   */
   virtual size_t size() const
   {
     return object_list_.size();
   }
 
+  /**
+   * @brief Inserts a new element.
+   * 
+   * Insert a new element at a given iterator position.
+   * 
+   * @param pos The position where to insert.
+   * @param x The element to insert.
+   * @return The new position iterator.
+   */
   iterator insert(iterator pos, const value_type_wrapper &x)
   {
     return object_list_.insert(pos, x);
