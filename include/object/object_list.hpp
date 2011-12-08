@@ -1117,21 +1117,55 @@ private:
   std::string list_name_;
 };
 
+/**
+ * @class object_ptr_list
+ * @brief An object list class for object_ptr
+ * @tparam T The concrete object type.
+ * 
+ * This is a specialisation of the object_list class.
+ * It stores object_ptr in a list. The raw objects
+ * are inserted into the list and than subsequently
+ * inserted into the object_store. The reference link
+ * to the parent class is done automatically.
+ */
 template < typename T >
 class object_ptr_list : public object_list<T, object_ptr<T> >
 {
 public:
-  typedef object_list<T, object_ptr<T> > base_list;
-  typedef typename base_list::value_type value_type;
-  typedef typename base_list::value_type_wrapper value_type_ptr;
-  typedef typename base_list::iterator iterator;
-  typedef typename base_list::const_iterator const_iterator;
+  typedef object_list<T, object_ptr<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
+  typedef typename base_list::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
+  typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */
+  typedef typename base_list::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
 
+  /**
+   * @brief Creates an empty list.
+   * 
+   * A new object_ptr_list is created. The list is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given list_ref_name.
+   * 
+   * @param parent The containing list object.
+   * @param list_ref_name The name of the parent in the value type object.
+   */
   object_ptr_list(object *parent, const std::string &list_ref_name)
     : base_list(parent, list_ref_name)
   {}
+  
   virtual ~object_ptr_list() {}
 
+  /**
+   * @brief Push a new object to the front of the list.
+   * 
+   * An object not inserted into the object_store will
+   * be pushed front to the list and inserted to the
+   * object_store. Furthermore the reference link to the
+   * list object is done automatilcally.
+   *
+   * @param elem The element to be pushed front
+   * @param o The list containing object (parent)
+   */
   virtual void push_front(T *elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
@@ -1151,6 +1185,17 @@ public:
     }
   }
 
+  /**
+   * @brief Push a new object to the end of the list.
+   * 
+   * An object not inserted into the object_store will
+   * be pushed back to the list and inserted to the
+   * object_store. Furthermore the reference link to the
+   * list object is done automatilcally.
+   *
+   * @param elem The element to be pushed back
+   * @param o The list containing object (parent)
+   */
   virtual void push_back(T* elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
@@ -1170,6 +1215,17 @@ public:
     }
   }
 
+  /**
+   * @brief Erase the object at iterators position.
+   * 
+   * The object inside the iterator will first be
+   * removed from the object_store and second be erased
+   * from the list.
+   * The next iterator position is returned.
+   *
+   * @param i The object to be erased containing iterator.
+   * @return The next iterator position
+   */
   virtual iterator erase(iterator i)
   {
     if (!base_list::ostore()) {
@@ -1190,21 +1246,54 @@ public:
   }
 };
 
+/**
+ * @class object_ref_list
+ * @brief An object list class for object_ref
+ * @tparam T The concrete object type.
+ * 
+ * This is a specialisation of the object_list class.
+ * It stores object_ref in a list. The raw objects
+ * are inserted into the list and than subsequently
+ * inserted into the object_store. The reference link
+ * to the parent class is done automatically.
+ */
 template < typename T >
 class object_ref_list : public object_list<T, object_ref<T> >
 {
 public:
-  typedef object_list<T, object_ref<T> > base_list;
-  typedef typename base_list::value_type value_type;
-  typedef typename base_list::value_type_wrapper value_type_ref;
-  typedef typename base_list::iterator iterator;
-  typedef typename base_list::const_iterator const_iterator;
+  typedef object_list<T, object_ref<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
+  typedef typename base_list::value_type_wrapper value_type_ref; /**< Shortcut for the wrapper class around the value type. */
+  typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */
+  typedef typename base_list::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
 
+  /**
+   * @brief Creates an empty list.
+   * 
+   * A new object_ref_list is created. The list is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given list_ref_name.
+   * 
+   * @param parent The containing list object.
+   * @param list_ref_name The name of the parent in the value type object.
+   */
   object_ref_list(object *parent, const std::string &list_ref_name)
     : base_list(parent, list_ref_name)
   {}
+
   virtual ~object_ref_list() {}
 
+  /**
+   * @brief Push an existing object reference to the front of the list.
+   * 
+   * An object reference is pushed front to the list.
+   * Furthermore the reference link to the list object
+   * is done automatilcally.
+   *
+   * @param elem The element to be pushed front
+   * @param o The list containing object (parent)
+   */
   virtual void push_front(const value_type_ref &elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
@@ -1219,6 +1308,16 @@ public:
     }
   }
 
+  /**
+   * @brief Push an existing object reference to the end of the list.
+   * 
+   * An object reference is pushed back to the list.
+   * Furthermore the reference link to the list object
+   * is done automatilcally.
+   *
+   * @param elem The element to be pushed back
+   * @param o The list containing object (parent)
+   */
   virtual void push_back(const value_type_ref &elem, const object_base_ptr &o)
   {
     if (!base_list::ostore()) {
@@ -1233,6 +1332,16 @@ public:
     }
   }
 
+  /**
+   * @brief Erase the object at iterators position.
+   * 
+   * The object inside the iterator will first be erased
+   * from the list.
+   * The next iterator position is returned.
+   *
+   * @param i The object to be erased containing iterator.
+   * @return The next iterator position
+   */
   iterator erase(iterator i)
   {
     /***************
@@ -1247,54 +1356,131 @@ public:
   }
 };
 
+/**
+ * @class linked_object_list
+ * @brief An linked object list class.
+ * @tparam T The concrete object type.
+ * 
+ * The linked_object_list class stores object of
+ * type T where T must be derived from object_list_node.
+ * This base class contains the previous and next links as
+ * well as the first and last element of the linked list.
+ * Therefor the order of the elements is persistent and
+ * reliable.
+ */
 template < class T >
 class linked_object_list : public object_list_base
 {
 public:
 //  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
-  typedef object_list_base base_list;
-	typedef T value_type;
-	typedef object_ptr<value_type> value_type_ptr;
+  typedef object_list_base base_list;                   /**< Shortcut for the object_list class. */
+	typedef T value_type;                                 /**< Shortcut for the value type. */
+	typedef object_ptr<value_type> value_type_ptr;        /**< Shortcut for the value type pointer. */
+  typedef object_list_iterator<T> iterator;             /**< Shortcut for the list iterator. */
+  typedef const_object_list_iterator<T> const_iterator; /**< Shortcut for the list const iterator. */
 
+
+  /**
+   * @brief Creates an empty linked list.
+   * 
+   * A new linked_object_list is created. The list is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given list_ref_name.
+   * 
+   * @param parent The containing list object.
+   * @param list_ref_name The name of the parent in the value type object.
+   */
   linked_object_list(object *parent, const std::string &list_ref_name)
     : object_list_base(parent)
     , list_name_(list_ref_name)
   {}
-	virtual ~linked_object_list() {}
 
-  typedef object_list_iterator<T> iterator;
-  typedef const_object_list_iterator<T> const_iterator;
+	virtual ~linked_object_list() {}
 
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
 
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
   iterator begin() {
     return ++iterator(first_, this);
   }
+
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
   const_iterator begin() const {
     return ++const_iterator(first_, this);
   }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
   iterator end() {
     return iterator(last_, this);
   }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
   const_iterator end() const {
     return const_iterator(last_, this);
   }
 
+  /**
+   * Returns wether the list is empty or not.
+   * 
+   * @return True if list is empty.
+   */
   virtual bool empty() const {
     return first_->next_ == last_->prev_;
   }
+
+  /**
+   * @brief Clears the list.
+   * 
+   * All elements are removed from the list
+   * and also removed from the object_store.
+   */
   virtual void clear()
   {
     base_list::clear();
     erase(begin(), end());
   }
+
+  /**
+   * Return the size of the list.
+   * 
+   * @return The size of the list.
+   */
   virtual size_t size() const
   {
     return std::distance(begin(), end());
   }
 
+  /**
+   * @brief Push a new object to the front of the list.
+   * 
+   * An object not inserted into the object_store will
+   * be pushed front to the list and inserted to the
+   * object_store. Furthermore the reference link to the
+   * list object and the links between the surrounding nodes
+   * is done automatilcally.
+   *
+   * @param elem The element to be pushed front
+   * @param o The list containing object (parent)
+   */
   virtual void push_front(T *elem, const object_base_ptr &ref_list)
   {
     if (!ostore()) {
@@ -1314,6 +1500,18 @@ public:
     }
   }
 
+  /**
+   * @brief Push a new object to the end of the list.
+   * 
+   * An object not inserted into the object_store will
+   * be pushed back to the list and inserted to the
+   * object_store. Furthermore the reference link to the
+   * list object and the links between the surrounding nodes
+   * is done automatilcally.
+   *
+   * @param elem The element to be pushed back
+   * @param o The list containing object (parent)
+   */
   virtual void push_back(T* elem, const object_base_ptr &ref_list)
   {
     if (!ostore()) {
@@ -1333,6 +1531,17 @@ public:
     }
   }
 
+  /**
+   * @brief Erase the object at iterators position.
+   * 
+   * The object inside the iterator will first be
+   * removed from the object_store and second be unlinked
+   * and erased from the list.
+   * The next iterator position is returned.
+   *
+   * @param i The object to be erased containing iterator.
+   * @return The next iterator position
+   */
   iterator erase(iterator i)
   {
     if (!ostore()) {
