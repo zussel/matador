@@ -163,6 +163,47 @@ public:
   }
 
   /**
+   * Returns lists first node.
+   * 
+   * @return Lists first node.
+   */
+  object_ref<T> first() const
+  {
+    return first_;
+  }
+
+  /**
+   * Returns lists last node.
+   * 
+   * @return Lists last node.
+   */
+  object_ref<T> last() const
+  {
+    return last_;
+  }
+
+  /**
+   * Returns nodes previous node.
+   * 
+   * @return Nodes previous node.
+   */
+  object_ref<T> prev() const
+  {
+    return prev_;
+  }
+
+  /**
+   * Returns nodes next node.
+   * 
+   * @return Nodes next node.
+   */
+  object_ref<T> next() const
+  {
+    return next_;
+  }
+
+protected:
+  /**
    * Sets lists first node.
    * 
    * @param f Lists first node.
@@ -171,16 +212,6 @@ public:
   {
     mark_modified();
     first_ = f;
-  }
-
-  /**
-   * Returns lists first node.
-   * 
-   * @return Lists first node.
-   */
-  object_ref<T> first() const
-  {
-    return first_;
   }
 
   /**
@@ -195,16 +226,6 @@ public:
   }
 
   /**
-   * Returns lists last node.
-   * 
-   * @return Lists last node.
-   */
-  object_ref<T> last() const
-  {
-    return last_;
-  }
-
-  /**
    * Sets nodes previous node.
    * 
    * @param f Nodes previous node.
@@ -216,16 +237,6 @@ public:
   }
 
   /**
-   * Returns nodes previous node.
-   * 
-   * @return Nodes previous node.
-   */
-  object_ref<T> prev() const
-  {
-    return prev_;
-  }
-
-  /**
    * Sets nodes next node.
    * 
    * @param f Nodes next node.
@@ -234,16 +245,6 @@ public:
   {
     mark_modified();
     next_ = n;
-  }
-
-  /**
-   * Returns nodes next node.
-   * 
-   * @return Nodes next node.
-   */
-  object_ref<T> next() const
-  {
-    return next_;
   }
 
 private:
@@ -270,7 +271,7 @@ template < class T >
 class object_ptr_list_node : public object_list_node<object_ptr_list_node<T> >
 {
 public:
-  typedef T value_type;
+  typedef T value_type; /**< Shortcut for the nodes value type. */
 
   /**
    * @brief Creates a new object_ptr_list_node
@@ -365,7 +366,7 @@ template < class T >
 class object_ref_list_node : public object_list_node<object_ref_list_node<T> >
 {
 public:
-  typedef T value_type;
+  typedef T value_type; /**< Shortcut for the nodes value type. */
 
   /**
    * @brief Creates a new object_ref_list_node
@@ -458,11 +459,11 @@ private:
 template < class T >
 class object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
-  typedef object_list_iterator<T> self;	
-  typedef T* pointer;
-  typedef object_ptr<T> value_type;
-  typedef value_type& reference ;
-  typedef linked_object_list<T> list_type;
+  typedef object_list_iterator<T> self;	   /**< Shortcut for this iterator type. */
+  typedef T* pointer;                      /**< Shortcut for the pointer type. */
+  typedef object_ptr<T> value_type;        /**< Shortcut for the value type. */
+  typedef value_type& reference ;          /**< Shortcut for the reference to the value type. */
+  typedef linked_object_list<T> list_type; /**< Shortcut for the list type. */
 
   /**
    * Creates an empty iterator
@@ -647,11 +648,11 @@ private:
 template < class T >
 class const_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
-  typedef const_object_list_iterator<T> self;
-  typedef object_ptr<T> value_type;
-  typedef T* pointer;
-  typedef value_type& reference ;
-  typedef linked_object_list<T> list_type;
+  typedef const_object_list_iterator<T> self;	/**< Shortcut for this iterator type. */
+  typedef T* pointer;                         /**< Shortcut for the pointer type. */
+  typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
+  typedef value_type& reference;              /**< Shortcut for the reference to the value type. */
+  typedef linked_object_list<T> list_type;    /**< Shortcut for the list type. */
 
   /**
    * Creates an empty const_iterator
@@ -844,7 +845,7 @@ private:
 class OOS_API object_list_base
 {
 public:
-  typedef std::tr1::function<void (object *)> node_func;
+  typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
 
 public:
   /**
@@ -867,14 +868,14 @@ public:
    * 
    * @param ao The object_atomizer to read from.
    */
-	virtual void read_from(object_atomizer *ao) = 0;
+	//virtual void read_from(object_atomizer *ao) = 0;
 
   /**
    * Writes the data to the given object_atomizer.
    * 
    * @param ao The object_atomizer to write to.
    */
-	virtual void write_to(object_atomizer *ao) const = 0;
+	//virtual void write_to(object_atomizer *ao) const = 0;
 
   /**
    * Tell wether the list is empty or not.
@@ -915,20 +916,52 @@ protected:
   friend class object_deleter;
   friend class object_serializer;
 
-  virtual void install(object_store *ostore);
-  virtual void uninstall();
-  
-  virtual void reset() {}
-  virtual void push_front(object_proxy *) {}
-  virtual void push_back(object_proxy *) {}
+  /**
+   * @param 
+   */
+  virtual void push_front_proxy(object_proxy *) = 0;
+  virtual void push_back_proxy(object_proxy *) = 0;
 
   // mark modified object containig the list
   void mark_modified(object *o);
 
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
   virtual void for_each(const node_func &nf) const = 0;
 
+  /**
+   * Returns the list containing object.
+   *
+   * @return The list containing object.
+   */
   object* parent_object() const { return parent_; }
+
+  /**
+   * Sets the list containing object.
+   *
+   * @param parent The list containing object.
+   */
   void parent_object(object *parent) { parent_ = parent; }
+
+  /**
+   * Provides an interface which is called
+   * when inserting the list into the object_store.
+   */
+  virtual void install(object_store *ostore);
+
+  /**
+   * Provides an interface which is called
+   * when removing the list from the object_store.
+   */
+  virtual void uninstall();  
+
+private:
+  virtual void reset() {}
 
 private:
   object_store *ostore_;
@@ -978,8 +1011,10 @@ public:
 
   virtual ~object_list() {}
   
+  /*
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
+  */
 
   /**
    * Return the begin iterator of the list.
@@ -1059,8 +1094,27 @@ public:
     return object_list_.insert(pos, x);
   };
 
+  /**
+   * @brief Interface to erase an element
+   *
+   * This is the interface for derived object_list
+   * classes to implement thier erase element method.
+   *
+   * @param i The iterator to erase.
+   * @return Returns the next iterator.
+   */
   virtual iterator erase(iterator i) = 0;
 
+  /**
+   * @brief Erases a range defines by iterators
+   *
+   * Erase a range of elements from the list. The
+   * range is defined by a first and a last iterator.
+   * 
+   * @param first The first iterator of the range to erase.
+   * @param last The last iterator of the range to erase.
+   * @return Returns the next iterator.
+   */
   iterator erase(iterator first, iterator last)
   {
     while (first != last) {
@@ -1070,6 +1124,13 @@ public:
   }
 
 protected:
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
   virtual void for_each(const node_func &nf) const
   {
     const_iterator first = object_list_.begin();
@@ -1079,6 +1140,16 @@ protected:
     }
   }
 
+  /**
+   * @brief Sets the list reference into the child object.
+   *
+   * Sets the reference parent object into the given
+   * element object to the one to many relationship.
+   *
+   * @param elem Element to set the parent reference object in.
+   * @param o The parent list object to be set in the child element.
+   * @return True if the value could be set.
+   */
   bool set_reference(value_type *elem, const object_base_ptr &o)
   {
     object_linker ol(elem, o, list_name_);
@@ -1086,9 +1157,33 @@ protected:
     return ol.success();
   }
 
+  /**
+   * Return the name of the list parameter.
+   *
+   * @return The name of the list parameter.
+   */
   std::string list_name() const { return list_name_; }
+
+  /**
+   * Adds an element to the beginning of the list.
+   *
+   * @param x The element to be pushed front.
+   */
   void push_front(const value_type_wrapper &x) { object_list_.push_front(x); }
+
+  /**
+   * Adds an element to the end of the list.
+   *
+   * @param x The element to be pushed back.
+   */
   void push_back(const value_type_wrapper &x) { object_list_.push_back(x); }
+
+  /**
+   * Erases a single element from the list.
+   *
+   * @param i The element to remove.
+   * @return Returns the element at the following position.
+   */
   iterator erase_i(iterator i) { return object_list_.erase(i); }
   
   virtual void uninstall()
@@ -1097,17 +1192,18 @@ protected:
     object_list_.clear();
   }
 
+private:
   virtual void reset()
   {
     object_list_.clear();
   }
 
-  virtual void push_front(object_proxy *proxy)
+  virtual void push_front_proxy(object_proxy *proxy)
   {
     object_list_.push_front(value_type_wrapper(proxy));
   }
 
-  virtual void push_back(object_proxy *proxy)
+  virtual void push_back_proxy(object_proxy *proxy)
   {
     object_list_.push_back(value_type_wrapper(proxy));
   }
@@ -1399,8 +1495,10 @@ public:
 
 	virtual ~linked_object_list() {}
 
+  /*
 	virtual void read_from(object_atomizer *) {}
 	virtual void write_to(object_atomizer *) const {}
+  */
 
   /**
    * Return the begin iterator of the list.
@@ -1566,6 +1664,16 @@ public:
     return i;
   }
 
+  /**
+   * @brief Erases a range defines by iterators
+   *
+   * Erase a range of elements from the list. The
+   * range is defined by a first and a last iterator.
+   * 
+   * @param first The first iterator of the range to erase.
+   * @param last The last iterator of the range to erase.
+   * @return Returns the next iterator.
+   */
   iterator erase(iterator first, iterator last)
   {
     while (first != last) {
@@ -1575,6 +1683,53 @@ public:
   }
 
 protected:
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
+  virtual void for_each(const node_func &nf) const
+  {
+    value_type_ptr node = first_;
+    while(node.get()) {
+      nf(node.get());
+      node = node->next();
+    }
+  }
+
+  /**
+   * @brief Sets the list reference into the child object.
+   *
+   * Sets the reference parent object into the given
+   * element object to the one to many relationship.
+   *
+   * @param elem Element to set the parent reference object in.
+   * @param o The parent list object to be set in the child element.
+   * @return True if the value could be set.
+   */
+  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
+  {
+    object_linker ol(elem, o, list_name_);
+    elem->read_from(&ol);
+    return ol.success();
+  }
+  
+  /**
+   * Return the name of the list parameter.
+   *
+   * @return The name of the list parameter.
+   */
+  std::string list_name() const
+  {
+    return list_name_;
+  }
+
+private:
+  virtual void push_front_proxy(object_proxy *) {};
+  virtual void push_back_proxy(object_proxy *) {};
+
   virtual void install(object_store *os)
   {
     object_list_base::install(os);
@@ -1596,27 +1751,6 @@ protected:
     object_list_base::uninstall();
     first_.reset();
     last_.reset();
-  }
-
-  virtual void for_each(const node_func &nf) const
-  {
-    value_type_ptr node = first_;
-    while(node.get()) {
-      nf(node.get());
-      node = node->next();
-    }
-  }
-
-  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
-  {
-    object_linker ol(elem, o, list_name_);
-    elem->read_from(&ol);
-    return ol.success();
-  }
-  
-  std::string list_name() const
-  {
-    return list_name_;
   }
 
   virtual void reset()
@@ -1641,29 +1775,85 @@ private:
   value_type_ptr last_;
 };
 
+/**
+ * @class linked_object_ptr_list
+ * @brief An linked object list class for object_ptr.
+ * @tparam T The concrete object type.
+ * 
+ * The linked_object_ptr_list class stores object of
+ * type T. T is the only single element in teach node and
+ * is stored in an object_ptr.
+ * This base class contains the previous and next links as
+ * well as the first and last element of the linked list.
+ * Therefor the order of the elements is persistent and
+ * reliable.
+ */
 template < class T >
 class linked_object_ptr_list : public linked_object_list<object_ptr_list_node<T> >
 {
 public:
-  typedef object_ptr_list_node<T> value_type;
-  typedef object_ptr<value_type> value_type_ptr;
-  typedef linked_object_list<value_type> base_list;
+  typedef object_ptr_list_node<T> value_type;       /**< Shortcut for the value type */
+  typedef object_ptr<value_type> value_type_ptr;    /**< Shortcut for the value type pointer */
+  typedef linked_object_list<value_type> base_list; /**< Shortcut for the base list class */
 
+  /**
+   * @brief Creates an empty linked object ptr list.
+   *
+   * Creates an empty linked object ptr list. The list
+   * is part of the given parent object and each element
+   * in this has a reference to the parent within a parameter
+   * of the given name.
+   *
+   * @param parent The list containing object.
+   * @param list_ref_name The name of the reference list object in each node.
+   */
   linked_object_ptr_list(object *parent, const std::string &list_ref_name)
     : linked_object_list<value_type>(parent, list_ref_name)
   {}
+
   virtual ~linked_object_ptr_list() {}
 
+  /**
+   * @brief Insert an element at the beginning of the list.
+   *
+   * Insert an element at the beginning of the list. The
+   * reference link the object containing list is done
+   * automatically.
+   *
+   * @param optr The pointer object to be pushed front.
+   * @param ref_list The reference list object.
+   */
   void push_front(const object_ptr<T> &optr, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
   }
+
+  /**
+   * @brief Insert an element at the end of the list.
+   *
+   * Insert an element at the end of the list. The
+   * reference link to the object containing list is done
+   * automatically.
+   *
+   * @param optr The pointer object to be pushed back.
+   * @param ref_list The reference list object.
+   */
   void push_back(const object_ptr<T> &optr, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
   }
   
 protected:
+  /**
+   * @brief Sets the list reference into the child object.
+   *
+   * Sets the reference parent object into the given
+   * element object to the one to many relationship.
+   *
+   * @param elem Element to set the parent reference object in.
+   * @param o The parent list object to be set in the child element.
+   * @return True if the value could be set.
+   */
   virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
     object_ptr<T> optr = elem->optr();
@@ -1673,32 +1863,87 @@ protected:
   }
 };
 
+/**
+ * @class linked_object_ref_list
+ * @brief An linked object list class for object_ref.
+ * @tparam T The concrete object type.
+ * 
+ * The linked_object_ref_list class stores object of
+ * type T. T is the only single element in teach node and
+ * is stored in an object_ref.
+ * This base class contains the previous and next links as
+ * well as the first and last element of the linked list.
+ * Therefor the order of the elements is persistent and
+ * reliable.
+ */
 template < class T >
 class linked_object_ref_list : public linked_object_list<object_ref_list_node<T> >
 {
 public:
-  typedef object_ref_list_node<T> value_type;
-  typedef object_ptr<value_type> value_type_ptr;
-  typedef linked_object_list<value_type> base_list;
+  typedef object_ref_list_node<T> value_type;       /**< Shortcut for the value type */
+  typedef object_ptr<value_type> value_type_ptr;    /**< Shortcut for the value type pointer */
+  typedef linked_object_list<value_type> base_list; /**< Shortcut for the base list class */
 
+  /**
+   * @brief Creates an empty linked object ref list.
+   *
+   * Creates an empty linked object ref list. The list
+   * is part of the given parent object and each element
+   * in this has a reference to the parent within a parameter
+   * of the given name.
+   *
+   * @param parent The list containing object.
+   * @param list_ref_name The name of the reference list object in each node.
+   */
   linked_object_ref_list(object *parent, const std::string &list_ref_name)
     : linked_object_list<value_type>(parent, list_ref_name)
   {}
+
   virtual ~linked_object_ref_list() {}
 
+  /**
+   * @brief Insert an element at the beginning of the list.
+   *
+   * Insert an element at the beginning of the list. The
+   * reference link to the object containing list is done
+   * automatically.
+   *
+   * @param oref The reference object to be pushed front.
+   * @param ref_list The reference list object.
+   */
   void push_front(const object_ref<T> &oref, const object_base_ptr &ref_list)
   {
     base_list::push_front(new value_type(oref, base_list::list_name()), ref_list);
   }
+
+  /**
+   * @brief Insert an element at the end of the list.
+   *
+   * Insert an element at the end of the list. The
+   * reference link to the object containing list is done
+   * automatically.
+   *
+   * @param oref The reference object to be pushed back.
+   * @param ref_list The reference list object.
+   */
   void push_back(const object_ref<T> &oref, const object_base_ptr &ref_list)
   {
     base_list::push_back(new value_type(oref, base_list::list_name()), ref_list);
   }
   
 protected:
+  /**
+   * @brief Sets the list reference into the child object.
+   *
+   * Sets the reference parent object into the given
+   * element object to the one to many relationship.
+   *
+   * @param elem Element to set the parent reference object in.
+   * @param o The parent list object to be set in the child element.
+   * @return True if the value could be set.
+   */
   virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
-//    object_ref<T> oref = elem->oref();
     object *oref = elem->oref().ptr();
     object_linker ol(oref, o, base_list::list_name());
     oref->read_from(&ol);
