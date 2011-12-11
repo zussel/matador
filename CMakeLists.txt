@@ -42,6 +42,7 @@ SET(OBJECT_HEADER
   include/object/object_ptr.hpp
   include/object/object_store.hpp
   include/object/object_list.hpp
+  include/object/linked_object_list.hpp
   include/object/object_linker.hpp
   include/object/object_view.hpp
   include/object/object_proxy.hpp
