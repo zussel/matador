@@ -15,7 +15,7 @@
 using namespace oos;
 using namespace std;
 
-typedef object_ref_list_node<Track> AlbumTrack;
+typedef linked_object_ref_list_node<Track> AlbumTrack;
 
 ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   : unit_test("complex objectstore")

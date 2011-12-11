@@ -34,13 +34,13 @@ class object_store;
 class object_base_ptr;
 struct prototype_node;
 
-struct object_proxy;
-typedef std::tr1::shared_ptr<object_proxy> object_proxy_ptr;
-
 /**
  * @class object_proxy
- * @brief Is a proxy between the object pointer and the object store
+ * @brief A proxy between the object and the object_store
  *
+ * Is a proxy between the object and the object store. It stores
+ * the pointer to the object and the id. Once a new object
+ * is inserted into the 
  */
 struct object_proxy {
   explicit object_proxy(object_store *os);

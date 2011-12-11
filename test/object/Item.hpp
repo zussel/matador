@@ -3,6 +3,7 @@
 
 #include "object/object.hpp"
 #include "object/object_list.hpp"
+#include "object/linked_object_list.hpp"
 #include "object/object_atomizer.hpp"
 
 template < class L >
@@ -142,7 +143,7 @@ private:
 
 class LinkedItemList;
 
-class LinkedItem : public oos::object_list_node<LinkedItem>
+class LinkedItem : public oos::linked_object_list_node<LinkedItem>
 {
 public:
   LinkedItem() {}
@@ -151,13 +152,13 @@ public:
 
 	void read_from(oos::object_atomizer *reader)
   {
-    object_list_node::read_from(reader);
+    linked_object_list_node::read_from(reader);
     reader->read_string("name", name_);
     reader->read_object("itemlist", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
-    object_list_node::write_to(writer);
+    linked_object_list_node::write_to(writer);
     writer->write_string("name", name_);
     writer->write_object("itemlist", item_list_);
   }

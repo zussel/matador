@@ -60,7 +60,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_char(const char *id, char) {}
+	virtual void write_char(const char*, char) {}
 
   /**
    * @brief Write a float to the atomizer.
@@ -71,7 +71,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_float(const char *id, float) {}
+	virtual void write_float(const char*, float) {}
 
   /**
    * @brief Write a double to the atomizer.
@@ -82,7 +82,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_double(const char *id, double) {}
+	virtual void write_double(const char*, double) {}
 
   /**
    * @brief Write a int to the atomizer.
@@ -93,7 +93,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_int(const char *id, int) {}
+	virtual void write_int(const char*, int) {}
 
   /**
    * @brief Write a long to the atomizer.
@@ -104,7 +104,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_long(const char *id, long) {}
+	virtual void write_long(const char*, long) {}
 
   /**
    * @brief Write a unsigned to the atomizer.
@@ -115,7 +115,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_unsigned(const char *id, unsigned) {}
+	virtual void write_unsigned(const char*, unsigned) {}
 
   /**
    * @brief Write a bool to the atomizer.
@@ -126,7 +126,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_bool(const char *id, bool) {}
+	virtual void write_bool(const char*, bool) {}
 
   /**
    * @brief Write a const char pointer to the atomizer.
@@ -137,7 +137,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_charptr(const char *id, const char*) {}
+	virtual void write_charptr(const char*, const char*) {}
 
   /**
    * @brief Write a std::string to the atomizer.
@@ -148,7 +148,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_string(const char *id, const std::string&) {}
+	virtual void write_string(const char*, const std::string&) {}
 
   /**
    * @brief Write a object_base_ptr to the atomizer.
@@ -159,7 +159,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_object(const char *id, const object_base_ptr&) {}
+	virtual void write_object(const char*, const object_base_ptr&) {}
 
   /**
    * @brief Write a object_list_base to the atomizer.
@@ -170,7 +170,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_object_list(const char *id, const object_list_base&) {}
+	virtual void write_object_list(const char*, const object_list_base&) {}
 
   /**
    * @brief Read a single character from the atomizer.
@@ -181,7 +181,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_char(const char *id, char&) {}
+  virtual void read_char(const char*, char&) {}
 
   /**
    * @brief Read a float from the atomizer.
@@ -192,7 +192,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_float(const char *id, float&) {}
+  virtual void read_float(const char*, float&) {}
 
   /**
    * @brief Read a double from the atomizer.
@@ -203,7 +203,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_double(const char *id, double&) {}
+  virtual void read_double(const char*, double&) {}
 
   /**
    * @brief Read an integer from the atomizer.
@@ -214,7 +214,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_int(const char *id, int&) {}
+	virtual void read_int(const char*, int&) {}
 
   /**
    * @brief Read a long from the atomizer.
@@ -225,7 +225,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_long(const char *id, long&) {}
+	virtual void read_long(const char*, long&) {}
 
   /**
    * @brief Read an unsigned integer from the atomizer.
@@ -236,7 +236,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned(const char *id, unsigned&) {}
+	virtual void read_unsigned(const char*, unsigned&) {}
 
   /**
    * @brief Read a bool from the atomizer.
@@ -247,7 +247,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_bool(const char *id, bool&) {}
+	virtual void read_bool(const char*, bool&) {}
 
   /**
    * @brief Read a const char pointer from the atomizer.
@@ -258,7 +258,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_charptr(const char *id, char*&) {}
+	virtual void read_charptr(const char*, char*&) {}
 
   /**
    * @brief Read a std::string from the atomizer.
@@ -269,7 +269,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_string(const char *id, std::string&) {}
+	virtual void read_string(const char*, std::string&) {}
 
   /**
    * @brief Read an object_base_ptr from the atomizer.
@@ -280,7 +280,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object(const char *id, object_base_ptr&) {}
+	virtual void read_object(const char*, object_base_ptr&) {}
 
   /**
    * @brief Read an object_list_base from the atomizer.
@@ -291,7 +291,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object_list(const char *id, object_list_base&) {}
+	virtual void read_object_list(const char*, object_list_base&) {}
 };
 
 }

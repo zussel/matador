@@ -69,8 +69,34 @@ class OOS_API object_observer
 public:
   virtual ~object_observer() {}
   
+  /**
+   * @brief Called on object insertion.
+   * 
+   * Called when an object is inserted
+   * into the object_store.
+   * 
+   * @param o The inserted object.
+   */
   virtual void on_insert(object *o) = 0;
+  
+  /**
+   * @brief Called on object update.
+   * 
+   * Called when an object is updated
+   * in the object_store.
+   * 
+   * @param o The updated object.
+   */
   virtual void on_update(object *o) = 0;
+  
+  /**
+   * @brief Called on object deletion.
+   * 
+   * Called when an object is deleted
+   * from the object_store.
+   * 
+   * @param o The deleted object.
+   */
   virtual void on_delete(object *o) = 0;
 };
 
@@ -89,7 +115,23 @@ class object_list_base;
 class OOS_API object_base_producer {
 public:
   virtual ~object_base_producer() {}
+  
+  /**
+   * @brief Create a new object.
+   * 
+   * This method creates a new object
+   * and returns it.
+   * 
+   * @return The created object.
+   */
   virtual object* create() const = 0;
+
+  /**
+   * Returns the unique classname of the
+   * object prototype.
+   * 
+   * @return The classname of the object.
+   */
   virtual const char *classname() const = 0;
 };
 
@@ -109,6 +151,7 @@ public:
   virtual ~object_producer() {}
   /**
    * Creates and returns a new object of type T
+   * 
    * @return new object of type T
    */
   virtual object* create() const {
@@ -116,6 +159,7 @@ public:
   }
   /**
    * Returns the name of the class which is created
+   * 
    * @return the name of the produced class
    */
   virtual const char *classname() const {

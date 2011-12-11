@@ -2,7 +2,7 @@
 #define ALBUM_HPP
 
 #include "object/object.hpp"
-#include "object/object_list.hpp"
+#include "object/linked_object_list.hpp"
 
 #include <string>
 
@@ -17,7 +17,8 @@ class Album : public oos::object
 {
 public:
   typedef oos::object_ref<Album> self_ref;
-
+	typedef oos::linked_object_ref_list<Track> TrackList;
+  
   Album();
   Album(const std::string &n);
   Album(const std::string &n, const oos::object_ptr<Artist> &a);
@@ -32,8 +33,6 @@ public:
   void artist(const oos::object_ptr<Artist> &a);
   oos::object_ref<Artist> artist() const;
 
-	typedef oos::linked_object_ref_list<Track> TrackList;
-  
   void add(Track *track, bool overide_artist = true);
   void add(oos::object_ref<Track> track, bool overide_artist = true);
   oos::object_ref<Track> find(const std::string &name) const;
