@@ -56,7 +56,7 @@ public:
 
   virtual const char* type() const = 0;
 
-	void reset(object *o = 0);
+	void reset(const object *o = 0);
 
 	bool is_loaded() const;
 

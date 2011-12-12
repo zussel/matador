@@ -938,12 +938,12 @@ public:
    * @param elem The element to be pushed front
    * @param o The list containing object (parent)
    */
-  virtual void push_front(T *elem, const object_base_ptr &ref_list)
+  virtual void push_front(T *elem)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(elem, ref_list)) {
+      if (!set_reference(elem)) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -969,12 +969,12 @@ public:
    * @param elem The element to be pushed back
    * @param o The list containing object (parent)
    */
-  virtual void push_back(T* elem, const object_base_ptr &ref_list)
+  virtual void push_back(T* elem)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(elem, ref_list)) {
+      if (!set_reference(elem)) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -1068,9 +1068,9 @@ protected:
    * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
-  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
+  virtual bool set_reference(value_type *elem)
   {
-    object_linker ol(elem, o, list_name_);
+    object_linker ol(elem, parent_object(), list_name_);
     elem->read_from(&ol);
     return ol.success();
   }
@@ -1182,9 +1182,9 @@ public:
    * @param optr The pointer object to be pushed front.
    * @param ref_list The reference list object.
    */
-  void push_front(const object_ptr<T> &optr, const object_base_ptr &ref_list)
+  void push_front(const object_ptr<T> &optr)
   {
-    base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
+    base_list::push_front(new value_type(optr, base_list::list_name()));
   }
 
   /**
@@ -1197,9 +1197,9 @@ public:
    * @param optr The pointer object to be pushed back.
    * @param ref_list The reference list object.
    */
-  void push_back(const object_ptr<T> &optr, const object_base_ptr &ref_list)
+  void push_back(const object_ptr<T> &optr)
   {
-    base_list::push_front(new value_type(optr, base_list::list_name()), ref_list);
+    base_list::push_front(new value_type(optr, base_list::list_name()));
   }
   
 protected:
@@ -1215,10 +1215,7 @@ protected:
    */
   virtual bool set_reference(value_type *elem, const object_base_ptr &o)
   {
-    object_ptr<T> optr = elem->optr();
-    object_linker ol(optr, o, base_list::list_name());
-    optr->read_from(&ol);
-    return ol.success();
+    return base_list::set_reference(elem->optr().get());
   }
 };
 
@@ -1270,9 +1267,9 @@ public:
    * @param oref The reference object to be pushed front.
    * @param ref_list The reference list object.
    */
-  void push_front(const object_ref<T> &oref, const object_base_ptr &ref_list)
+  void push_front(const object_ref<T> &oref)
   {
-    base_list::push_front(new value_type(oref, base_list::list_name()), ref_list);
+    base_list::push_front(new value_type(oref, base_list::list_name()));
   }
 
   /**
@@ -1285,9 +1282,9 @@ public:
    * @param oref The reference object to be pushed back.
    * @param ref_list The reference list object.
    */
-  void push_back(const object_ref<T> &oref, const object_base_ptr &ref_list)
+  void push_back(const object_ref<T> &oref)
   {
-    base_list::push_back(new value_type(oref, base_list::list_name()), ref_list);
+    base_list::push_back(new value_type(oref, base_list::list_name()));
   }
   
 protected:
@@ -1301,12 +1298,9 @@ protected:
    * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
-  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
+  virtual bool set_reference(value_type *elem)
   {
-    object *oref = elem->oref().ptr();
-    object_linker ol(oref, o, base_list::list_name());
-    oref->read_from(&ol);
-    return ol.success();
+    return base_list::set_reference(elem->oref().ptr());
   }
 };
 

@@ -30,7 +30,7 @@ class object_base_ptr;
 class OOS_API object_linker : public object_atomizer
 {
 public:
-  object_linker(object *elem, const object_base_ptr &o, const std::string &name);
+  object_linker(object *elem, const object *parent, const std::string &name);
   virtual ~object_linker();
   
   virtual void read_object(const char *id, object_base_ptr &x);
@@ -39,7 +39,7 @@ public:
 
 private:
   object *elem_;
-  const object_base_ptr &object_;
+  const object *parent_;
   std::string name_;
   bool linked_;
 };

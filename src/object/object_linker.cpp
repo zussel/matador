@@ -21,9 +21,9 @@
 
 namespace oos {
 
-object_linker::object_linker(object *elem, const object_base_ptr &o, const std::string &name)
+object_linker::object_linker(object *elem, const object *parent, const std::string &name)
   : elem_(elem)
-  , object_(o)
+  , parent_(parent)
   , name_(name)
   , linked_(false)
 {}
@@ -34,7 +34,7 @@ void object_linker::read_object(const char *id, object_base_ptr &x)
 {
   if (id == name_) {
     elem_->mark_modified();
-    x.reset(object_.ptr());
+    x.reset(parent_);
     linked_ = true;
   }
 }

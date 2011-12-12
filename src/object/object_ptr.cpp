@@ -122,7 +122,7 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 }
 
 void
-object_base_ptr::reset(object *o)
+object_base_ptr::reset(const object *o)
 {
   if (proxy_) {
     if (is_internal_) {

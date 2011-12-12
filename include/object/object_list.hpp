@@ -297,19 +297,81 @@ public:
    */
   iterator insert(iterator pos, const value_type_wrapper &x)
   {
-    return object_list_.insert(pos, x);
+    if (!base_list::ostore()) {
+      //throw object_exception();
+      return pos;
+    } else {
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+        return pos;
+      } else {
+        // mark list object as modified
+        base_list::mark_modified(parent_object());
+        // insert new item object
+        return object_list_.insert(pos, x);
+      }
+    }
   };
+
+  /**
+   * Adds an element to the beginning of the list.
+   *
+   * @param x The element to be pushed front.
+   */
+  void push_front(const value_type_wrapper &x)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+      } else {
+        // mark list object as modified
+        base_list::mark_modified(parent_object());
+        // insert new item object
+        object_list_.push_front(x);
+      }
+    }
+  }
+
+  /**
+   * Adds an element to the end of the list.
+   *
+   * @param x The element to be pushed back.
+   */
+  void push_back(const value_type_wrapper &x)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+      } else {
+        // mark list object as modified
+        base_list::mark_modified(parent_object());
+        // insert new item object
+        object_list_.push_back(x);
+      }
+    }
+  }
 
   /**
    * @brief Interface to erase an element
    *
    * This is the interface for derived object_list
-   * classes to implement thier erase element method.
+   * classes to implement their erase element method.
+   * Erases a single element from the list.
    *
    * @param i The iterator to erase.
    * @return Returns the next iterator.
    */
-  virtual iterator erase(iterator i) = 0;
+  virtual iterator erase(iterator i)
+  {
+    return object_list_.erase(i);
+  }
 
   /**
    * @brief Erases a range defines by iterators
@@ -356,9 +418,9 @@ protected:
    * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
-  bool set_reference(value_type *elem, const object_base_ptr &o)
+  bool set_reference(value_type *elem)
   {
-    object_linker ol(elem, o, list_name_);
+    object_linker ol(elem, parent_object(), list_name_);
     elem->read_from(&ol);
     return ol.success();
   }
@@ -369,49 +431,6 @@ protected:
    * @return The name of the list parameter.
    */
   std::string list_name() const { return list_name_; }
-
-  /**
-   * Adds an element to the beginning of the list.
-   *
-   * @param x The element to be pushed front.
-   */
-  void push_front(const value_type_wrapper &x)
-  {
-    if (!base_list::ostore()) {
-      //throw object_exception();
-    } else {
-      // mark list object as modified
-      base_list::mark_modified(o.ptr());
-      // set reference
-      if (!set_reference(elem)) {
-        // throw object_exception();
-      } else {
-        // insert new item object
-        value_type_ptr optr = base_list::ostore()->insert(elem);
-        // and call base list class push back
-        base_list::push_front(optr);
-      }
-    }
-    object_list_.push_front(x);
-  }
-
-  /**
-   * Adds an element to the end of the list.
-   *
-   * @param x The element to be pushed back.
-   */
-  void push_back(const value_type_wrapper &x)
-  {
-    object_list_.push_back(x);
-  }
-
-  /**
-   * Erases a single element from the list.
-   *
-   * @param i The element to remove.
-   * @return Returns the element at the following position.
-   */
-  iterator erase_i(iterator i) { return object_list_.erase(i); }
   
   virtual void uninstall()
   {
@@ -489,17 +508,17 @@ public:
    * @param elem The element to be pushed front
    * @param o The list containing object (parent)
    */
-  virtual void push_front(T *elem, const object_base_ptr &o)
+  virtual void push_front(T *elem)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
     } else {
-      // mark list object as modified
-      base_list::mark_modified(o.ptr());
       // set reference
-      if (!set_reference(elem, o)) {
+      if (!set_reference(elem)) {
         // throw object_exception();
       } else {
+        // mark list object as modified
+        base_list::mark_modified(base_list::parent_object());
         // insert new item object
         value_type_ptr optr = base_list::ostore()->insert(elem);
         // and call base list class push back
@@ -519,17 +538,17 @@ public:
    * @param elem The element to be pushed back
    * @param o The list containing object (parent)
    */
-  virtual void push_back(T* elem, const object_base_ptr &o)
+  virtual void push_back(T* elem)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
     } else {
-      // mark list object as modified
-      base_list::mark_modified(o.ptr());
       // set reference
-      if (!set_reference(elem, o)) {
+      if (!set_reference(elem)) {
         // throw object_exception();
       } else {
+        // mark list object as modified
+        base_list::mark_modified(base_list::parent_object());
         // insert new item object
         value_type_ptr optr = base_list::ostore()->insert(elem);
         // and call base list class push back
@@ -564,7 +583,7 @@ public:
       return i;
     } else {
       // object was successfully deleted
-      return base_list::erase_i(i);
+      return base_list::erase(i);
     }
   }
 };
@@ -606,77 +625,6 @@ public:
   {}
 
   virtual ~object_ref_list() {}
-
-  /**
-   * @brief Push an existing object reference to the front of the list.
-   * 
-   * An object reference is pushed front to the list.
-   * Furthermore the reference link to the list object
-   * is done automatilcally.
-   *
-   * @param elem The element to be pushed front
-   * @param o The list containing object (parent)
-   */
-  virtual void push_front(const value_type_ref &elem, const object_base_ptr &o)
-  {
-    if (!base_list::ostore()) {
-      //throw object_exception();
-    } else {
-      // set link to list object
-      if (!set_reference(elem.get(), o)) {
-        //throw object_exception();
-      } else {
-        base_list::push_front(elem);
-      }
-    }
-  }
-
-  /**
-   * @brief Push an existing object reference to the end of the list.
-   * 
-   * An object reference is pushed back to the list.
-   * Furthermore the reference link to the list object
-   * is done automatilcally.
-   *
-   * @param elem The element to be pushed back
-   * @param o The list containing object (parent)
-   */
-  virtual void push_back(const value_type_ref &elem, const object_base_ptr &o)
-  {
-    if (!base_list::ostore()) {
-      //throw object_exception();
-    } else {
-      // set link to list object
-      if (!set_reference(elem.get(), o)) {
-        //throw object_exception();
-      } else {
-        base_list::push_back(elem);
-      }
-    }
-  }
-
-  /**
-   * @brief Erase the object at iterators position.
-   * 
-   * The object inside the iterator will first be erased
-   * from the list.
-   * The next iterator position is returned.
-   *
-   * @param i The object to be erased containing iterator.
-   * @return The next iterator position
-   */
-  iterator erase(iterator i)
-  {
-    /***************
-     * 
-     * object references can't be
-     * deleted from object store
-     * only delete them from lists
-     * internal object refenence list
-     * 
-     ***************/
-    return base_list::erase_i(i);
-  }
 };
 
 }
