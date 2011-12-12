@@ -222,11 +222,6 @@ public:
 
   virtual ~object_list() {}
   
-  /*
-	virtual void read_from(object_atomizer *) {}
-	virtual void write_to(object_atomizer *) const {}
-  */
-
   /**
    * Return the begin iterator of the list.
    * 
