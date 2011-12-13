@@ -57,10 +57,59 @@ class OOS_API action_visitor
 public:
   virtual ~action_visitor() {}
   
+  /**
+   * @brief Called with a create_action
+   * 
+   * When a new prototype is inserted into
+   * the object_store a new create_action
+   * with the prototype object is created.
+   * 
+   * @param a The create_action to visit.
+   */
   virtual void visit(create_action *a) = 0;
+  
+  /**
+   * @brief Called with a insert_action
+   * 
+   * When a new object inserted into the
+   * object_store a new insert_action with
+   * newly created object is created.
+   * 
+   * @param a The insert_action to visit.
+   */
   virtual void visit(insert_action *a) = 0;
+  
+  /**
+   * @brief Called with a update_action
+   * 
+   * When an object updated in the
+   * object_store a new update_action
+   * with modified object is created.
+   * 
+   * @param a The update_action to visit.
+   */
   virtual void visit(update_action *a) = 0;
+  
+  /**
+   * @brief Called with a delete_action
+   * 
+   * When an object deleted from the
+   * object_store a new delete_action
+   * with deleted object is created.
+   * 
+   * @param a The delete_action to visit.
+   */
   virtual void visit(delete_action *a) = 0;
+  
+  /**
+   * @brief Called with a drop_action
+   * 
+   * When a prototype is removed from
+   * the object_store a new drop_action
+   * with the prototype object is created.
+   * 
+   * @param a The drop_action to visit.
+   */
   virtual void visit(drop_action *a) = 0;
 };
 
@@ -96,16 +145,47 @@ public:
     DROP        /**<Enum type for drop action. */
   } action_type;
 
+  /**
+   * @brief Creates a new action.
+   * 
+   * Creates a new action of given type
+   * and for the given object. Object could
+   * be a real object (insert, update or
+   * delete action) or prototype object (for
+   * create and drop action)
+   * 
+   * @param t Type of action.
+   * @param o The object for the action.
+   */
   action(action_type t, object *o);
+
   virtual ~action();
   
+  /**
+   * Interface to accept the action.
+   * 
+   * @param av The action_visitor
+   */
   virtual void accept(action_visitor *av) = 0;
 
+  /**
+   * Return the type of the action
+   */
   action_type type() const;
 
+  /**
+   * The object of the action.
+   */
   object* obj();
+
+  /**
+   * The object of the action.
+   */
   const object* obj() const;
 
+  /**
+   * The id of the object of the action.
+   */
   long id() const;
 
 private:
@@ -140,6 +220,11 @@ public:
 class insert_action : public action
 {
 public:
+  /**
+   * Creates an insert_action.
+   * 
+   * @param o The inserted object.
+   */
   insert_action(object *o)
     : action(action::INSERT, o)
   {}
@@ -162,9 +247,15 @@ public:
 class update_action : public action
 {
 public:
+  /**
+   * Creates an update_action.
+   * 
+   * @param o The updated object.
+   */
   update_action(object *o)
     : action(action::UPDATE, o)
   {}
+
   virtual ~update_action() {}
   
   virtual void accept(action_visitor *av)
@@ -183,7 +274,13 @@ public:
 class OOS_API delete_action : public action
 {
 public:
+  /**
+   * Creates an delete_action.
+   * 
+   * @param o The deleted object.
+   */
   delete_action(object *o);
+
   virtual ~delete_action();
   
   virtual void accept(action_visitor *av);

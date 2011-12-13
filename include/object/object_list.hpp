@@ -529,7 +529,7 @@ public:
     }
   }
 
-  /**
+  / **
    * @brief Push a new object to the end of the list.
    * 
    * An object not inserted into the object_store will
@@ -559,7 +559,7 @@ public:
     }
   }
 
-  /**
+  / **
    * @brief Erase the object at iterators position.
    * 
    * The object inside the iterator will first be
