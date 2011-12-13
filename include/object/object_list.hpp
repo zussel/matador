@@ -509,7 +509,7 @@ public:
    *
    * @param elem The element to be pushed front
    * @param o The list containing object (parent)
-   */
+   * /
   virtual void push_front(T *elem)
   {
     if (!base_list::ostore()) {
@@ -539,7 +539,7 @@ public:
    *
    * @param elem The element to be pushed back
    * @param o The list containing object (parent)
-   */
+   * /
   virtual void push_back(T* elem)
   {
     if (!base_list::ostore()) {
@@ -569,7 +569,7 @@ public:
    *
    * @param i The object to be erased containing iterator.
    * @return The next iterator position
-   */
+   * /
   virtual iterator erase(iterator i)
   {
     if (!base_list::ostore()) {
@@ -587,7 +587,7 @@ public:
       // object was successfully deleted
       return base_list::erase(i);
     }
-  }
+  }*/
 };
 
 /**

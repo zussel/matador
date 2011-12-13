@@ -45,23 +45,86 @@ namespace oos {
 class database;
 class transaction;
 
+/**
+ * @class transaction_impl
+ * @brief The concrete transaction implementation
+ *
+ * This class implements depending on the concrete database
+ * implementation the transaction backend. It deals with
+ * how the transaction commit and rollback take place for a
+ * specific database.
+ * In most cases the default implementation fits all needs.
+ */
 class OOS_API transaction_impl : public object_observer
 {
 public:
+  /**
+   * Creates the transaction implementation
+   * for a transaction.
+   *
+   * @param tr The transaction.
+   */
   transaction_impl(transaction &tr);
+
   virtual ~transaction_impl();
 
+  /**
+   * Called when an object is inserted.
+   *
+   * @param o The inserted object.
+   */
   virtual void on_insert(object *o);
+
+  /**
+   * Called when an object is updated.
+   *
+   * @param o The updated object.
+   */
   virtual void on_update(object *o);
+
+  /**
+   * Called when an object is deleted.
+   *
+   * @param o The deleted object.
+   */
   virtual void on_delete(object *o);
   
+  /**
+   * @brief Called on transaction rollback
+   *
+   * This method is called when a rollback
+   * for a transaction takes place. All stored
+   * actions and their objects are restored
+   * to their backuped state.
+   */
   virtual void rollback();
+
+  /**
+   * @brief Called on transaction commit
+   *
+   * This method is called when a started
+   * transaction is commit to the underlaying
+   * database. All stored actions and their
+   * objects are written to the database.
+   */
   virtual void commit();
 
 private:
   transaction &tr_;
 };
 
+/**
+ * @class transaction
+ * @brief The transaction class
+ *
+ * This class provides transaction functionality
+ * for the object_store with a specific database.
+ * If the object_store uses a database backend this
+ * transaction class handles the commit and rollback
+ * behaviour of the database. On rollback it restores
+ * the stored data to the objects modified within
+ * the transaction.
+ */
 class OOS_API transaction
 {
 public:

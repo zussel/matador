@@ -49,8 +49,9 @@ private:
 class ItemPtrList : public oos::object
 {
 public:
-  typedef oos::object_ptr_list<Item<ItemPtrList> > item_list_t;
   typedef Item<ItemPtrList> value_type;
+  typedef oos::object_ptr_list<value_type> item_list_t;
+  typedef item_list_t::value_type_ptr value_type_ptr;
   typedef ItemPtrList self;
   typedef oos::object_ref<self> self_ref;
   typedef item_list_t::iterator iterator;
@@ -72,13 +73,13 @@ public:
     object::write_to(writer);
     writer->write_object_list("item_list", item_list_);
   }
-  
-  void push_front(value_type *i)
+
+  void push_front(const value_type_ptr &i)
   {
     item_list_.push_front(i);
   }
 
-  void push_back(value_type *i)
+  void push_back(const value_type_ptr &i)
   {
     item_list_.push_back(i);
   }

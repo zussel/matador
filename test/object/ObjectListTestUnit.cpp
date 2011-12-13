@@ -90,7 +90,8 @@ ObjectListTestUnit::test_ptr_list()
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
-    itemlist->push_back(new ItemPtrList::value_type(name.str()));
+    item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
+    itemlist->push_back(item);
   }
 
   cout << "items of list\n";
