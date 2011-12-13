@@ -73,8 +73,15 @@ public:
     writer->write_object_list("item_list", item_list_);
   }
   
-  void push_front(value_type *i) { item_list_.push_front(i, self_ref(this)); }
-  void push_back(value_type *i) { item_list_.push_back(i, self_ref(this)); }
+  void push_front(value_type *i)
+  {
+    item_list_.push_front(i);
+  }
+
+  void push_back(value_type *i)
+  {
+    item_list_.push_back(i);
+  }
 
   iterator begin() { return item_list_.begin(); }
   const_iterator begin() const { return item_list_.begin(); }
@@ -121,11 +128,11 @@ public:
   
   void push_front(const value_type_ref &i)
   {
-    item_list_.push_front(i, self_ref(this));
+    item_list_.push_front(i);
   }
   void push_back(const value_type_ref &i)
   {
-    item_list_.push_back(i, self_ref(this));
+    item_list_.push_back(i);
   }
 
   iterator begin() { return item_list_.begin(); }
@@ -213,11 +220,12 @@ public:
   
   void push_front(value_type *i)
   {
-    item_list_.push_front(i, self_ref(this));
+    item_list_.push_front(i);
   }
+
   void push_back(value_type *i)
   {
-    item_list_.push_back(i, self_ref(this));
+    item_list_.push_back(i);
   }
 
   iterator begin() { return item_list_.begin(); }

@@ -20,8 +20,9 @@
 
 namespace oos {
 
-object_list_base::object_list_base(object *parent)
+object_list_base::object_list_base(object *parent, const std::string &list_ref_name)
   : parent_(parent)
+  , list_name_(list_ref_name)
 {}
 
 object_list_base::~object_list_base()

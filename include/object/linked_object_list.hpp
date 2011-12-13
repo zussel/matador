@@ -848,8 +848,7 @@ public:
    * @param list_ref_name The name of the parent in the value type object.
    */
   linked_object_list(object *parent, const std::string &list_ref_name)
-    : object_list_base(parent)
-    , list_name_(list_ref_name)
+    : object_list_base(parent, list_ref_name)
   {}
 
 	virtual ~linked_object_list() {}
@@ -1058,33 +1057,6 @@ protected:
     }
   }
 
-  /**
-   * @brief Sets the list reference into the child object.
-   *
-   * Sets the reference parent object into the given
-   * element object to the one to many relationship.
-   *
-   * @param elem Element to set the parent reference object in.
-   * @param o The parent list object to be set in the child element.
-   * @return True if the value could be set.
-   */
-  virtual bool set_reference(value_type *elem)
-  {
-    object_linker ol(elem, parent_object(), list_name_);
-    elem->read_from(&ol);
-    return ol.success();
-  }
-  
-  /**
-   * Return the name of the list parameter.
-   *
-   * @return The name of the list parameter.
-   */
-  std::string list_name() const
-  {
-    return list_name_;
-  }
-
 private:
   virtual void push_front_proxy(object_proxy *) {};
   virtual void push_back_proxy(object_proxy *) {};
@@ -1094,8 +1066,8 @@ private:
     object_list_base::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new value_type(list_name_));
-    last_ = ostore()->insert(new value_type(list_name_));
+    first_ = ostore()->insert(new value_type(list_name()));
+    last_ = ostore()->insert(new value_type(list_name()));
     // link object elements
     first_->first_ = first_;
     first_->last_ = last_;
@@ -1127,8 +1099,6 @@ private:
   friend class object_store;
   friend class linked_object_list_iterator<T>;
   friend class const_linked_object_list_iterator<T>;
-
-  std::string list_name_;
 
   value_type_ptr first_;
   value_type_ptr last_;

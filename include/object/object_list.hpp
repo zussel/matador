@@ -70,7 +70,7 @@ public:
    * 
    * @param parent The parent object of this list.
    */
-  object_list_base(object *parent);
+  object_list_base(object *parent, const std::string &list_ref_name);
 
 	virtual ~object_list_base();
 
@@ -171,12 +171,40 @@ protected:
    */
   virtual void uninstall();  
 
+  /**
+   * @brief Sets the list reference into the child object.
+   *
+   * Sets the reference parent object into the given
+   * element object to the one to many relationship.
+   *
+   * @param elem Element to set the parent reference object in.
+   * @param o The parent list object to be set in the child element.
+   * @return True if the value could be set.
+   */
+  bool set_reference(object *elem)
+  {
+    object_linker ol(elem, parent_, list_name_);
+    elem->read_from(&ol);
+    return ol.success();
+  }
+
+  /**
+   * Return the name of the list parameter.
+   *
+   * @return The name of the list parameter.
+   */
+  std::string list_name() const
+  {
+    return list_name_;
+  }
+  
 private:
   virtual void reset() {}
 
 private:
   object_store *ostore_;
   object *parent_;
+  std::string list_name_;
 };
 
 /**
@@ -216,8 +244,7 @@ public:
    * @param list_ref_name The name of the parent in the value type object.
    */
   object_list(object *parent, const std::string &list_ref_name)
-    : object_list_base(parent)
-    , list_name_(list_ref_name)
+    : object_list_base(parent, list_ref_name)
   {}
 
   virtual ~object_list() {}
@@ -408,30 +435,6 @@ protected:
     }
   }
 
-  /**
-   * @brief Sets the list reference into the child object.
-   *
-   * Sets the reference parent object into the given
-   * element object to the one to many relationship.
-   *
-   * @param elem Element to set the parent reference object in.
-   * @param o The parent list object to be set in the child element.
-   * @return True if the value could be set.
-   */
-  bool set_reference(value_type *elem)
-  {
-    object_linker ol(elem, parent_object(), list_name_);
-    elem->read_from(&ol);
-    return ol.success();
-  }
-
-  /**
-   * Return the name of the list parameter.
-   *
-   * @return The name of the list parameter.
-   */
-  std::string list_name() const { return list_name_; }
-  
   virtual void uninstall()
   {
     base_list::uninstall();
@@ -456,7 +459,6 @@ private:
 
 private:
   list_type object_list_;
-  std::string list_name_;
 };
 
 /**
