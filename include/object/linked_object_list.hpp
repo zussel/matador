@@ -19,6 +19,8 @@
 #define LINKED_OBJECT_LIST_HPP
 
 #include "object/object_list.hpp"
+#include "object/object_atomizer.hpp"
+#include "object/object_linker.hpp"
 
 /*
  *   linked_object_list layout:
@@ -64,6 +66,32 @@ public:
    * @return The next list node
    */
   virtual linked_object_list_base_node *prev_node() const = 0;
+  
+  /**
+   * Link the reference node
+   * 
+   * @param r The reference object.
+   * @param n The name of the reference object parameter.
+   */
+  virtual bool link_reference(object *r, const std::string &n)
+  {
+    return link_reference(this, r, n);
+  }
+
+  /**
+   * Link the reference node
+   * 
+   * @param o The object to link a reference in.
+   * @param r The reference object.
+   * @param n The name of the reference object parameter.
+   */
+  virtual bool link_reference(object *o, object *r, const std::string &n)
+  {
+    std::cout << "linking " << *r << " into field " << n << " of " << *o << "\n";
+    object_linker ol(o, r, n);
+    o->read_from(&ol);
+    return ol.success();
+  }
 };
 
 /**
@@ -246,6 +274,7 @@ template < class T >
 class linked_object_ptr_list_node : public linked_object_list_node<linked_object_ptr_list_node<T> >
 {
 public:
+  typedef linked_object_list_node<linked_object_ptr_list_node<T> > base_node; /**< Shortcut to the base node */
   typedef T value_type; /**< Shortcut for the nodes value type. */
 
   /**
@@ -296,7 +325,7 @@ public:
    */
 	void read_from(object_atomizer *reader)
   {
-    linked_object_list_node<linked_object_ptr_list_node<T> >::read_from(reader);
+    base_node::read_from(reader);
     reader->read_object(name_.c_str(), object_);
   }
 
@@ -310,7 +339,7 @@ public:
    */
 	void write_to(object_atomizer *writer) const
   {
-    linked_object_list_node<linked_object_ptr_list_node<T> >::write_to(writer);
+    base_node::write_to(writer);
     writer->write_string(name_.c_str(), object_);
   }
 
@@ -321,6 +350,17 @@ public:
    */
   object_ptr<T> optr() const {
     return object_;
+  }
+
+  /**
+   * Link the reference node
+   * 
+   * @param r The reference object.
+   * @param n The name of the reference object parameter.
+   */
+  virtual bool link_reference(object *r, const std::string &n)
+  {
+    return base_node::link_reference(object_.ptr(), r, n);
   }
 
 private:
@@ -341,6 +381,7 @@ template < class T >
 class linked_object_ref_list_node : public linked_object_list_node<linked_object_ref_list_node<T> >
 {
 public:
+  typedef linked_object_list_node<linked_object_ref_list_node<T> > base_node; /**< Shortcut to the base node */
   typedef T value_type; /**< Shortcut for the nodes value type. */
 
   /**
@@ -416,6 +457,17 @@ public:
    */
   object_ref<T> oref() const {
     return object_;
+  }
+
+  /**
+   * Link the reference node
+   * 
+   * @param r The reference object.
+   * @param n The name of the reference object parameter.
+   */
+  virtual bool link_reference(object *r, const std::string &n)
+  {
+    return base_node::link_reference(object_.ptr(), r, n);
   }
 
 private:
@@ -941,7 +993,7 @@ public:
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(get_element_object(elem))) {
+      if (!elem->link_reference(base_list::parent_object(), base_list::list_name())) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -971,7 +1023,7 @@ public:
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(get_element_object(elem))) {
+      if (!elem->link_reference(base_list::parent_object(), base_list::list_name())) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -1055,19 +1107,6 @@ protected:
     }
   }
 
-  /**
-   * Return the element object where the parent
-   * object reference link must be made for
-   *
-   * The default is to return the element itself.
-   *
-   * @param elem The list node object.
-   * @return The object where the parent object must be linked in.
-   */
-  virtual object* get_element_object(value_type *elem) const
-  {
-    return elem;
-  }
 private:
   virtual void push_front_proxy(object_proxy *) {};
   virtual void push_back_proxy(object_proxy *) {};
@@ -1180,22 +1219,6 @@ public:
   {
     base_list::push_front(new value_type(optr, base_list::list_name()));
   }
-  
-protected:
-  /**
-   * @brief Sets the list reference into the child object.
-   *
-   * Sets the reference parent object into the given
-   * element object to the one to many relationship.
-   *
-   * @param elem Element to set the parent reference object in.
-   * @param o The parent list object to be set in the child element.
-   * @return True if the value could be set.
-   */
-  virtual object* get_element_object(value_type *elem)
-  {
-    return elem->optr().ptr();
-  }
 };
 
 /**
@@ -1262,21 +1285,6 @@ public:
   void push_back(const object_ref<T> &oref)
   {
     base_list::push_back(new value_type(oref, base_list::list_name()));
-  }
-  
-protected:
-  /**
-   * @brief Sets the list reference into the child object.
-   *
-   * Sets the reference parent object into the given
-   * element object to the one to many relationship.
-   *
-   * @param elem Element to set the parent reference object in.
-   * @return True if the value could be set.
-   */
-  virtual object* get_element_object(value_type *elem)
-  {
-    return elem->oref().ptr();
   }
 };
 
