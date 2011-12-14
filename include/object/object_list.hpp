@@ -33,8 +33,6 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object_linker.hpp"
-#include "object/object_atomizer.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -184,12 +182,7 @@ protected:
    * @param elem Element to set the parent reference object in.
    * @return True if the value could be set.
    */
-  bool set_reference(object *elem)
-  {
-    object_linker ol(elem, parent_, list_name_);
-    elem->read_from(&ol);
-    return ol.success();
-  }
+  bool set_reference(object *elem);
 
   /**
    * Return the name of the list parameter.

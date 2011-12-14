@@ -936,12 +936,12 @@ public:
    *
    * @param elem The element to be pushed front
    */
-  virtual void push_front(T *elem)
+  virtual void push_front(value_type *elem)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(elem)) {
+      if (!set_reference(get_element_object(elem))) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -966,12 +966,12 @@ public:
    *
    * @param elem The element to be pushed back
    */
-  virtual void push_back(T* elem)
+  virtual void push_back(value_type *elem)
   {
     if (!ostore()) {
       //throw object_exception();
     } else {
-      if (!set_reference(elem)) {
+      if (!set_reference(get_element_object(elem))) {
         // throw object_exception()
       } else {
         value_type_ptr optr = ostore()->insert(elem);
@@ -1055,6 +1055,19 @@ protected:
     }
   }
 
+  /**
+   * Return the element object where the parent
+   * object reference link must be made for
+   *
+   * The default is to return the element itself.
+   *
+   * @param elem The list node object.
+   * @return The object where the parent object must be linked in.
+   */
+  virtual object* get_element_object(value_type *elem) const
+  {
+    return elem;
+  }
 private:
   virtual void push_front_proxy(object_proxy *) {};
   virtual void push_back_proxy(object_proxy *) {};
@@ -1179,9 +1192,9 @@ protected:
    * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
-  virtual bool set_reference(value_type *elem, const object_base_ptr &o)
+  virtual object* get_element_object(value_type *elem)
   {
-    return base_list::set_reference(elem->optr().get());
+    return elem->optr().ptr();
   }
 };
 
@@ -1261,9 +1274,9 @@ protected:
    * @param elem Element to set the parent reference object in.
    * @return True if the value could be set.
    */
-  virtual bool set_reference(value_type *elem)
+  virtual object* get_element_object(value_type *elem)
   {
-    return base_list::set_reference(elem->oref().ptr());
+    return elem->oref().ptr();
   }
 };
 

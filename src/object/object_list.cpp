@@ -17,6 +17,9 @@
 
 #include "object/object_list.hpp"
 #include "object/object.hpp"
+#include "object/object_linker.hpp"
+
+#include <iostream>
 
 namespace oos {
 
@@ -49,6 +52,14 @@ void object_list_base::uninstall()
 void object_list_base::mark_modified(object *o)
 {
   o->mark_modified();
+}
+
+bool object_list_base::set_reference(object *elem)
+{
+  std::cout << "linking " << *parent_ << " into field " << list_name_ << " of " << *elem << "\n";
+  object_linker ol(elem, parent_, list_name_);
+  elem->read_from(&ol);
+  return ol.success();
 }
 
 }
