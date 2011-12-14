@@ -18,18 +18,20 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
-#ifdef WIN32
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  #ifdef WIN32
+    #ifdef oos_EXPORTS
+      #define OOS_API __declspec(dllexport)
+      #define EXPIMP_TEMPLATE
+    #else
+      #define OOS_API __declspec(dllimport)
+      #define EXPIMP_TEMPLATE extern
+    #endif
+    #pragma warning(disable: 4251)
   #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
+    #define OOS_API
   #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 #include "unit/unit_exception.hpp"
 
