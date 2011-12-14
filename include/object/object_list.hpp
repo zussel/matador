@@ -69,24 +69,11 @@ public:
    * for the parent object set automatically on insert.
    * 
    * @param parent The parent object of this list.
+   * @param list_ref_name The name of the list reference parameter.
    */
   object_list_base(object *parent, const std::string &list_ref_name);
 
 	virtual ~object_list_base();
-
-  /**
-   * Reads the data in from the given object_atomizer.
-   * 
-   * @param ao The object_atomizer to read from.
-   */
-	//virtual void read_from(object_atomizer *ao) = 0;
-
-  /**
-   * Writes the data to the given object_atomizer.
-   * 
-   * @param ao The object_atomizer to write to.
-   */
-	//virtual void write_to(object_atomizer *ao) const = 0;
 
   /**
    * Tell wether the list is empty or not.
@@ -128,12 +115,29 @@ protected:
   friend class object_serializer;
 
   /**
-   * @param 
+   * @brief Push front a object via its object_proxy.
+   *
+   * Push front a object via its object_proxy to the list.
+   *
+   * @param op The object_proxy containing the list element object.
    */
-  virtual void push_front_proxy(object_proxy *) = 0;
-  virtual void push_back_proxy(object_proxy *) = 0;
+  virtual void push_front_proxy(object_proxy *op) = 0;
 
-  // mark modified object containig the list
+  /**
+   * @brief Push back a object via its object_proxy.
+   *
+   * Push back a object via its object_proxy to the list.
+   *
+   * @param op The object_proxy containing the list element object.
+   */
+  virtual void push_back_proxy(object_proxy *op) = 0;
+
+  /**
+   * Mark the list containing object as modified
+   * in the object_store.
+   *
+   * @param o The object containig list
+   */
   void mark_modified(object *o);
 
   /**
@@ -178,7 +182,6 @@ protected:
    * element object to the one to many relationship.
    *
    * @param elem Element to set the parent reference object in.
-   * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
   bool set_reference(object *elem)

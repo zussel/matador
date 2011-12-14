@@ -41,6 +41,16 @@ class object;
 class object_list_base;
 class object_base_ptr;
 
+/**
+ * @class object_deleter
+ * @brief Checks if an object could be deleted
+ *
+ * This class checks wether a given object or a
+ * given object_list_base and their children objects
+ * could be deleted or not.
+ * If the check was successful, all the deletable object
+ * can be accepted via the iterators.
+ */
 class object_deleter : public object_atomizer
 {
 private:
@@ -58,22 +68,52 @@ private:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
 
 public:
-  typedef t_object_count_map::iterator iterator;
-  typedef t_object_count_map::const_iterator const_iterator;
+  typedef t_object_count_map::iterator iterator;             /**< Shortcut the object map iterator */
+  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the object map const_iterator */
 
+  /**
+   * Creates an instance of the object_deleter
+   */
   object_deleter();
+
   virtual ~object_deleter();
 
+  /**
+   * Checks wether the given object is deletable.
+   *
+   * @param obj The object to be checked.
+   * @return True if the object could be deleted.
+   */
   bool is_deletable(object *obj);
+
+  /**
+   * Checks wether the given object_list_base is deletable.
+   *
+   * @param olist The object_list_base to be checked.
+   * @return True if the object_list_base could be deleted.
+   */
   bool is_deletable(object_list_base &olist);
 
-  virtual void read_object(const char*, object_base_ptr &x);
-  virtual void read_object_list(const char*, object_list_base &);
-
+  /**
+   * @brief Returns the first deletable object.
+   *
+   * If the check was made and was successful this
+   * returns the first deletable object.
+   */
   iterator begin();
+
+  /**
+   * @brief Returns the first deletable object.
+   *
+   * If the check was made and was successful this
+   * returns the last deletable object.
+   */
   iterator end();
 
 private:
+  virtual void read_object(const char*, object_base_ptr &x);
+  virtual void read_object_list(const char*, object_list_base &);
+
   void check_object(object *o, bool is_ref);
   void check_object_list_node(object *node);
   bool check_object_count_map() const;

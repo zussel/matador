@@ -85,6 +85,11 @@ public:
    */
   virtual void visit(drop_action *) {}
 
+  /**
+   * Create the concrete transaction_impl.
+   *
+   * @return The concrete transaction_impl.
+   */
   transaction_impl* create_transaction(transaction &tr) const;
 };
 
@@ -160,13 +165,18 @@ public:
    */
   const object_store& ostore() const;
 
-  void push_transaction(transaction *tr);
-  void pop_transaction();
+  /**
+   * Return the current transaction from the stack.
+   *
+   * @return The current transaction.
+   */
   transaction* current_transaction() const;
 
 private:
   friend class transaction;
   
+  void push_transaction(transaction *tr);
+  void pop_transaction();
   void execute_action(action *a);
 
 private:

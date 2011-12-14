@@ -192,7 +192,7 @@ protected:
   /**
    * Sets lists last node.
    * 
-   * @param f Lists last node.
+   * @param l Lists last node.
    */
   void last(const object_ref<T> &l)
   {
@@ -203,7 +203,7 @@ protected:
   /**
    * Sets nodes previous node.
    * 
-   * @param f Nodes previous node.
+   * @param p Nodes previous node.
    */
   void prev(const object_ref<T> &p)
   {
@@ -214,7 +214,7 @@ protected:
   /**
    * Sets nodes next node.
    * 
-   * @param f Nodes next node.
+   * @param n Nodes next node.
    */
   void next(const object_ref<T> &n)
   {
@@ -306,7 +306,7 @@ public:
    * In addition to the base fields, the object_ptr is written
    * to the object_atomizer.
    * 
-   * @param reader The object_reader to write to.
+   * @param writer The object_reader to write to.
    */
 	void write_to(object_atomizer *writer) const
   {
@@ -371,7 +371,7 @@ public:
    * the parameter name for the object must be given.
    * Also the value object_ref will be set.
    * 
-   * @param optr The object_ref value for this node.
+   * @param oref The object_ref value for this node.
    * @param name Name of the parameter for object_atomizer.
    */
   linked_object_ref_list_node(object_ref<T> oref, const std::string &name)
@@ -401,7 +401,7 @@ public:
    * In addition to the base fields, the object_ref is written
    * to the object_atomizer.
    * 
-   * @param reader The object_reader to write to.
+   * @param writer The object_reader to write to.
    */
 	void write_to(object_atomizer *writer) const
   {
@@ -935,7 +935,6 @@ public:
    * is done automatilcally.
    *
    * @param elem The element to be pushed front
-   * @param o The list containing object (parent)
    */
   virtual void push_front(T *elem)
   {
@@ -966,7 +965,6 @@ public:
    * is done automatilcally.
    *
    * @param elem The element to be pushed back
-   * @param o The list containing object (parent)
    */
   virtual void push_back(T* elem)
   {
@@ -1150,7 +1148,6 @@ public:
    * automatically.
    *
    * @param optr The pointer object to be pushed front.
-   * @param ref_list The reference list object.
    */
   void push_front(const object_ptr<T> &optr)
   {
@@ -1165,7 +1162,6 @@ public:
    * automatically.
    *
    * @param optr The pointer object to be pushed back.
-   * @param ref_list The reference list object.
    */
   void push_back(const object_ptr<T> &optr)
   {
@@ -1235,7 +1231,6 @@ public:
    * automatically.
    *
    * @param oref The reference object to be pushed front.
-   * @param ref_list The reference list object.
    */
   void push_front(const object_ref<T> &oref)
   {
@@ -1250,7 +1245,6 @@ public:
    * automatically.
    *
    * @param oref The reference object to be pushed back.
-   * @param ref_list The reference list object.
    */
   void push_back(const object_ref<T> &oref)
   {
@@ -1265,7 +1259,6 @@ protected:
    * element object to the one to many relationship.
    *
    * @param elem Element to set the parent reference object in.
-   * @param o The parent list object to be set in the child element.
    * @return True if the value could be set.
    */
   virtual bool set_reference(value_type *elem)

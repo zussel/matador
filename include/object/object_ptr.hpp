@@ -330,13 +330,29 @@ public:
     return typeid(T).name();
   }
 
-  
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
 	T* operator->() const {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
 	  }
 	  return NULL;
 	}
+
+  /**
+   * @brief Return the reference to the object of type T.
+   *
+   * Return the reference to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The reference to the object of type T.
+   */
 	T& operator*() const {
 		if (proxy_) {
       return *dynamic_cast<T*>(lookup_object());
@@ -344,7 +360,16 @@ public:
       return *(T*)0;
     }
 	}
-	T* get() const {
+
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
+  T* get() const {
     if (proxy_) {
       T* t = dynamic_cast<T*>(lookup_object());
       return t;
@@ -353,39 +378,118 @@ public:
   }
 };
 
+/**
+ * @class object_ref
+ * @brief The object_ref holds a pointer to an object.
+ * @tparam T The type of the object.
+ * 
+ * The object_ref holds a pointer to an object. The
+ * object_ref is a wrapper class for the object class
+ * It has a reference count mechanism.
+ * The objects inserted into the object_store are returned
+ * as a object_ref and should be used through the
+ * object_ref class.
+ * A object_ref can't be deleted from the object_store.
+ */
 template < class T >
 class object_ref : public object_base_ptr
 {
 public:
+  /**
+   * Create an empty object_ref
+   */
 	object_ref() : object_base_ptr(true) {}
-	//  object_ptr(const object_ptr &x) {}
-	template < class Y >
+  
+  /**
+   * Copies object_ref
+   * 
+   * @tparam Y The type of the object_ref to copy
+   * @param x The object_ref to copy
+   */
+  template < class Y >
 	object_ref(const object_ref<Y> &x) {}
+  
+  /**
+   * Copies object_ptr
+   * 
+   * @tparam Y The type of the object_ptr to copy
+   * @param x The object_ptr to copy
+   */
 	template < class Y >
   object_ref(const object_ptr<Y> &x) : object_base_ptr(x.proxy_, true) {}
-	//  object_ptr& operator=(const object_ptr &x) { return *this; }
-	template < class Y >
+
+  /**
+   * Assign an object_ref
+   * 
+   * @tparam Y The type of the object_ref to assign.
+   * @param x The object_ref to assign from
+   * @return The assign object_ref
+   */
+  template < class Y >
 	object_ref& operator=(const object_ref<Y> &x) { return *this; }
-	explicit object_ref(object* o) : object_base_ptr(o, true) {}
+
+  /**
+   * Create an object_ref from an object
+   * 
+   * @param o The object.
+   */
+  explicit object_ref(object* o) : object_base_ptr(o, true) {}
+
+  /**
+   * Create an object_ref from an object_proxy
+   * 
+   * @param proxy The object.
+   */
   explicit object_ref(object_proxy *proxy) : object_base_ptr(proxy, true) {}
 
+  /**
+   * Return the type string of the object
+   * 
+   * @return The type string of the object.
+   */
   virtual const char* type() const
   {
     return typeid(T).name();
   }
 
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
 	T* operator->() const {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
 	  }
 	  return NULL;
 	}
+
+  /**
+   * @brief Return the reference to the object of type T.
+   *
+   * Return the reference to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The reference to the object of type T.
+   */
 	T& operator*() const {
 		if (proxy_) {
       return *dynamic_cast<T*>(lookup_object());
  		}
     return NULL;
 	}
+
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
 	T* get() const {
 		if (proxy_) {
       return dynamic_cast<T*>(lookup_object());

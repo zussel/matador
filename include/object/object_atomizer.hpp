@@ -46,12 +46,13 @@ class object_base_ptr;
  * and write data types (builtin and complex)
  * identified by a name.
  */
-class OOS_API object_atomizer /*: public Atomizer*/
+class OOS_API object_atomizer
 {
 public:
 	virtual ~object_atomizer() {}
 
   /**
+   * @fn virtual void write_char(const char *id, char x)
    * @brief Write a single character to the atomizer.
    * 
    * Write a single character to the atomizer
@@ -63,6 +64,7 @@ public:
 	virtual void write_char(const char*, char) {}
 
   /**
+   * @fn virtual void write_float(const char *id, float x)
    * @brief Write a float to the atomizer.
    * 
    * Write a float to the atomizer
@@ -74,6 +76,7 @@ public:
 	virtual void write_float(const char*, float) {}
 
   /**
+   * @fn virtual void write_double(const char *id, double x)
    * @brief Write a double to the atomizer.
    * 
    * Write a double to the atomizer
@@ -85,6 +88,7 @@ public:
 	virtual void write_double(const char*, double) {}
 
   /**
+   * @fn virtual void write_int(const char *id, int x)
    * @brief Write a int to the atomizer.
    * 
    * Write a int to the atomizer
@@ -96,6 +100,7 @@ public:
 	virtual void write_int(const char*, int) {}
 
   /**
+   * @fn virtual void write_long(const char *id, long x)
    * @brief Write a long to the atomizer.
    * 
    * Write a long to the atomizer
@@ -107,6 +112,7 @@ public:
 	virtual void write_long(const char*, long) {}
 
   /**
+   * @fn virtual void write_unsigned(const char *id, unsigned x)
    * @brief Write a unsigned to the atomizer.
    * 
    * Write a unsigned to the atomizer
@@ -118,6 +124,7 @@ public:
 	virtual void write_unsigned(const char*, unsigned) {}
 
   /**
+   * @fn virtual void write_bool(const char *id, bool x)
    * @brief Write a bool to the atomizer.
    * 
    * Write a bool to the atomizer
@@ -129,6 +136,7 @@ public:
 	virtual void write_bool(const char*, bool) {}
 
   /**
+   * @fn virtual void write_charptr(const char *id, const char *x)
    * @brief Write a const char pointer to the atomizer.
    * 
    * Write a const char pointer to the atomizer
@@ -140,6 +148,7 @@ public:
 	virtual void write_charptr(const char*, const char*) {}
 
   /**
+   * @fn virtual void write_string(const char *id, const std::string &x)
    * @brief Write a std::string to the atomizer.
    * 
    * Write a std::string to the atomizer
@@ -151,6 +160,7 @@ public:
 	virtual void write_string(const char*, const std::string&) {}
 
   /**
+   * @fn virtual void write_object(const char *id, const object_base_ptr &x)
    * @brief Write a object_base_ptr to the atomizer.
    * 
    * Write a object_base_ptr to the atomizer
@@ -162,6 +172,7 @@ public:
 	virtual void write_object(const char*, const object_base_ptr&) {}
 
   /**
+   * @fn virtual void write_object_list(const char *id, const object_list_base &x)
    * @brief Write a object_list_base to the atomizer.
    * 
    * Write a object_list_base to the atomizer
@@ -173,6 +184,7 @@ public:
 	virtual void write_object_list(const char*, const object_list_base&) {}
 
   /**
+   * @fn virtual void read_char(const char *id, char &x)
    * @brief Read a single character from the atomizer.
    * 
    * Read a single character from the atomizer
@@ -184,6 +196,7 @@ public:
   virtual void read_char(const char*, char&) {}
 
   /**
+   * @fn virtual void read_float(const char *id, float &x)
    * @brief Read a float from the atomizer.
    * 
    * Read a float from the atomizer
@@ -195,6 +208,7 @@ public:
   virtual void read_float(const char*, float&) {}
 
   /**
+   * @fn virtual void read_double(const char *id, double &x)
    * @brief Read a double from the atomizer.
    * 
    * Read a double from the atomizer
@@ -206,6 +220,7 @@ public:
   virtual void read_double(const char*, double&) {}
 
   /**
+   * @fn virtual void read_int(const char *id, int &x)
    * @brief Read an integer from the atomizer.
    * 
    * Read an integer from the atomizer
@@ -217,6 +232,7 @@ public:
 	virtual void read_int(const char*, int&) {}
 
   /**
+   * @fn virtual void read_long(const char *id, long &x)
    * @brief Read a long from the atomizer.
    * 
    * Read a long from the atomizer
@@ -228,6 +244,7 @@ public:
 	virtual void read_long(const char*, long&) {}
 
   /**
+   * @fn virtual void read_unsigned(const char *id, unsigned &x)
    * @brief Read an unsigned integer from the atomizer.
    * 
    * Read a unsigned integer from the atomizer
@@ -239,6 +256,7 @@ public:
 	virtual void read_unsigned(const char*, unsigned&) {}
 
   /**
+   * @fn virtual void read_bool(const char *id, bool &x)
    * @brief Read a bool from the atomizer.
    * 
    * Read a bool from the atomizer
@@ -250,6 +268,7 @@ public:
 	virtual void read_bool(const char*, bool&) {}
 
   /**
+   * @fn virtual void read_charptr(const char *id, char *&x)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -261,6 +280,7 @@ public:
 	virtual void read_charptr(const char*, char*&) {}
 
   /**
+   * @fn virtual void read_string(const char *id, std::string &x)
    * @brief Read a std::string from the atomizer.
    * 
    * Read a std::string from the atomizer
@@ -272,6 +292,7 @@ public:
 	virtual void read_string(const char*, std::string&) {}
 
   /**
+   * @fn virtual void read_object(const char *id, object_base_ptr &x)
    * @brief Read an object_base_ptr from the atomizer.
    * 
    * Read an object_base_ptr from the atomizer
@@ -283,6 +304,7 @@ public:
 	virtual void read_object(const char*, object_base_ptr&) {}
 
   /**
+   * @fn virtual void read_object_list(const char *id, object_list_base &x)
    * @brief Read an object_list_base from the atomizer.
    * 
    * Read an object_list_base from the atomizer

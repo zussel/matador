@@ -27,16 +27,39 @@ namespace oos {
 class object;
 class object_base_ptr;
 
+/**
+ * @class object_linker
+ * @brief Links a given object to another objects parameter
+ *
+ * A given object is linked to concrete parameter of
+ * another object identified by the given name. The
+ * application can check wether the link was created
+ * or not.
+ */
 class OOS_API object_linker : public object_atomizer
 {
 public:
+  /**
+   * Creates the object_linker
+   *
+   * @param elem The object where the link should be created.
+   * @param parent The object to be linked to.
+   * @param name The name of the parameter of the linked object.
+   */
   object_linker(object *elem, const object *parent, const std::string &name);
+
   virtual ~object_linker();
   
-  virtual void read_object(const char *id, object_base_ptr &x);
-  
+  /**
+   * Returns true if the link could be made.
+   *
+   * @return True if the link could be made.
+   */
   bool success() { return linked_; }
 
+private:
+  virtual void read_object(const char *id, object_base_ptr &x);
+  
 private:
   object *elem_;
   const object *parent_;

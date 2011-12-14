@@ -38,15 +38,48 @@ namespace oos {
 class object;
 class object_store;
 
+/**
+ * @class object_serializer
+ * @brief serialize objects to a given buffer.
+ *
+ * The object_serializer class serialize a given
+ * object to a given buffer or deserialize a given
+ * object from a given buffer.
+ * On deserialization the class doesn't take care
+ * of the correctness of the object and the current
+ * memory the buffer points to.
+ * The application is responsible for this correctness.
+ */
 class OOS_API object_serializer : public object_atomizer
 {
 public:
+  /**
+   * Creates an object_serializer
+   */
   object_serializer();
+
   virtual ~object_serializer();
 
+  /**
+   * Serialize the given object to the given buffer
+   *
+   * @param o The object to serialize.
+   * @param buffer The byte_buffer to serialize to.
+   * @return True on success.
+   */
   bool serialize(const object *o, byte_buffer &buffer);
+
+  /**
+   * Serialize the given object to the given buffer
+   *
+   * @param o The object to deserialize.
+   * @param buffer The byte_buffer to deserialize from.
+   * @param ostore The object_store where the object resides.
+   * @return True on success.
+   */
   bool deserialize(object *o, byte_buffer &buffer, object_store *ostore);
 
+private:
 	virtual void write_char(const char* id, char c);
 	virtual void write_float(const char* id, float f);
 	virtual void write_double(const char* id, double f);
@@ -71,7 +104,6 @@ public:
 	virtual void read_object(const char* id, object_base_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
   
-private:
   void write_object_list_item(const object *o);
 
 private:

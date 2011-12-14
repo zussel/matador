@@ -254,8 +254,19 @@ public:
    */
   void clear();
 	
+  /**
+   * Dump all prototypes to a given stream
+   *
+   * @param out The stream to the prototypes dump on.
+   */
 	void dump_prototypes(std::ostream &out) const;
-	void dump_objects(std::ostream &out) const;
+
+  /**
+   * Dump all object to a given stream
+   *
+   * @param out The stream to the objects dump on.
+   */
+  void dump_objects(std::ostream &out) const;
 
   /**
    * Creates an object of the given type name.
@@ -313,11 +324,13 @@ public:
    */
   bool remove(object_list_base &olb);
 
+  /*
   template < class InputIterator >
   void insert(InputIterator first, InputIterator last)
   {
    // std::iterator_traits<InputIterator>::value_type *o = *first;
   }
+  */
   
   /**
    * @brief Register an observer with the object store

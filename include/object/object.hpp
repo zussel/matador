@@ -131,6 +131,13 @@ public:
    */
   object_store* ostore() const;
 
+  /**
+   * Print the object to a given stream
+   *
+   * @param os The stream to write the object on.
+   * @param o The object to write
+   * @return The modified stream.
+   */
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
   /**
@@ -145,6 +152,14 @@ public:
   object_proxy* proxy() const { return proxy_; }
 
 protected:
+  /**
+   * @brief Marks this object as modified in its object_store
+   *
+   * Marks this object as modified in its object_store.
+   * This method must be called before modifing a derived
+   * object. Otherwise the object can't be restored on an
+   * error or rollback.
+   */
 	void mark_modified();
 
 private:

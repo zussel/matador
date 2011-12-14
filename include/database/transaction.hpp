@@ -128,16 +128,64 @@ private:
 class OOS_API transaction
 {
 public:
+  /**
+   * @brief Create a transaction
+   *
+   * A transaction for the given database
+   * is created. To begin the transaction
+   * start must be called.
+   *
+   * @param db The underlaying database.
+   */
   transaction(database *db);
+
   ~transaction();
   
+  /**
+   * Return the unique transaction id.
+   *
+   * @return The transaction id.
+   */
   long id() const;
 
+  /**
+   * @brief Start the transaction.
+   *
+   * Start the transaction. All object insertions,
+   * modifications and deletions are stored.
+   */
   void start();
+
+  /**
+   * @brief Commit the started transaction.
+   *
+   * Commit the started transaction. All object
+   * insertions, modifications and deletions are
+   * written to the database.
+   */
   void commit();
+
+  /**
+   * @brief Abort and rollback the started transaction.
+   *
+   * Abort and rollback the started transaction. All
+   * object insertions, modifications and deletions are
+   * rolled back in the object_store.
+   */
   void rollback();
 
+  /**
+   * Returns the underlaying pointer to the database.
+   *
+   * @return The pointer to the database.
+   */
   database* db();
+
+  /**
+   * Returns the underlaying pointer to the database.
+   *
+   * @return The pointer to the database.
+   */
   const database* db() const;
 
 private:

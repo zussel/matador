@@ -56,6 +56,7 @@ public:
 
   virtual ~object_creator();
 
+private:
   virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &x);
 

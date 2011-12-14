@@ -25,15 +25,35 @@ namespace oos {
 
 class object;
 
+/**
+ * @class object_exception
+ * @brief An object exception class
+ *
+ * This kind of exception is thrown, when 
+ * an object dealing error occurs.
+ */
 class object_exception : public std::exception
 {
 public:
+  /**
+   * Creates a object_exception
+   *
+   * @param what The message of the exception.
+   * @param o The object which triggered this exception.
+   */
   object_exception(const char *what, object *o)
     : what_(what)
     , obj_(o)
   {
   }
+
   virtual ~object_exception() throw() {}
+
+  /**
+   * Returns the message of the exception
+   *
+   * @return The message of this exception.
+   */
   virtual const char* what() const throw()
   {
     return what_.c_str();
