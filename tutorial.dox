@@ -1,10 +1,33 @@
 /**
- * @page Tutorial Getting started
- * Leading text.
- * @section sec An example section
- * This page contains the subsections \ref subsection1 and \ref subsection2.
- * @subsection subsection1 The first subsection
- * Text.
- * @subsection subsection2 The second subsection
- * More text.
+ * @page example
+ * @dontinclude Artist.hpp
+ *
+ * Include object.hpp
+ * @skipline object.hpp
+ *
+ * Create a class which is derived from oos::object.
+ * @skip class Artist
+ * @until {
+ *
+ * Add your private members for the class
+ * @skip private
+ * @until name_;
+ *
+ * Add your constructors including a default constructor
+ * @until ~Artist
+ *
+ * Add the serialization interface to read and write your members
+ * @skip read
+ * @until write
+ *
+ * Add access and modifier methods for your members
+ * @skip string
+ * @until void
+ *
+ * Add all methods you would like to have in your class. In this example
+ * its an std::ostream operator
+ * @skipline friend
+ *
+ * That's all for your header
+ * @line }
  */
