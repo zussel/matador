@@ -193,6 +193,7 @@ void object_serializer::read_object(const char*, object_base_ptr &x)
     oproxy = ostore_->create_proxy(id);
   }
   x.proxy_ = oproxy;
+  x.id_ = id;
 }
 
 void object_serializer::read_object_list(const char*, object_list_base &x)

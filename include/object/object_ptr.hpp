@@ -276,49 +276,57 @@ public:
   /**
    * Create an empty object_ptr
    */
-	object_ptr() : object_base_ptr(false) {}
+	object_ptr()
+    : object_base_ptr(false)
+  {}
   
   /**
    * Copies object_ptr
    * 
-   * @tparam Y The type of the object_ptr to copy
    * @param x The object_ptr to copy
    */
-	template < class Y >
-	object_ptr(const object_ptr<Y> &x) {}
+  object_ptr(const object_ptr &x)
+    : object_base_ptr(x.proxy_, false)
+  {}
 
   /**
    * Copies a object_ref
    * 
-   * @tparam Y The type of the object_ref to copy
    * @param x The object_ref to copy
    */
-	template < class Y >
-  object_ptr(const object_ref<Y> &x) : object_base_ptr(x.proxy_, false) {}
+  object_ptr(const object_ref<T> &x)
+    : object_base_ptr(x.proxy_, false)
+  {}
 
   /**
    * Assign an object_ptr
    * 
-   * @tparam Y The type of the object_ptr to assign.
    * @param x The object_ptr to assign from
    * @return The assign object_ptr
    */
-	template < class Y >
-	object_ptr& operator=(const object_ptr<Y> &x) { return *this; }
+	object_ptr& operator=(const object_ptr &x)
+  {
+    object_base_ptr::operator=(x);
+    return *this;
+  }
 
   /**
    * Create an object_ptr from an object
    * 
    * @param o The object.
    */
-	explicit object_ptr(object* o) : object_base_ptr(o, false) {}
+	explicit object_ptr(object* o)
+    : object_base_ptr(o, false)
+  {}
 
   /**
    * Create an object_ptr from an object_proxy
    * 
    * @param proxy The object_proxy.
    */
-  explicit object_ptr(object_proxy *proxy) : object_base_ptr(proxy, false) {}
+  explicit object_ptr(object_proxy *proxy)
+    : object_base_ptr(proxy, false)
+  {}
 
   /**
    * Return the type string of the object
@@ -398,35 +406,39 @@ public:
   /**
    * Create an empty object_ref
    */
-	object_ref() : object_base_ptr(true) {}
+	object_ref()
+    : object_base_ptr(true)
+  {}
   
   /**
    * Copies object_ref
    * 
-   * @tparam Y The type of the object_ref to copy
    * @param x The object_ref to copy
    */
-  template < class Y >
-	object_ref(const object_ref<Y> &x) {}
+  object_ref(const object_ref &x)
+    : object_base_ptr(x.proxy_, true)
+  {}
   
   /**
    * Copies object_ptr
    * 
-   * @tparam Y The type of the object_ptr to copy
    * @param x The object_ptr to copy
    */
-	template < class Y >
-  object_ref(const object_ptr<Y> &x) : object_base_ptr(x.proxy_, true) {}
+  object_ref(const object_ptr<T> &x)
+    : object_base_ptr(x.proxy_, true)
+  {}
 
   /**
    * Assign an object_ref
    * 
-   * @tparam Y The type of the object_ref to assign.
    * @param x The object_ref to assign from
    * @return The assign object_ref
    */
-  template < class Y >
-	object_ref& operator=(const object_ref<Y> &x) { return *this; }
+	object_ref& operator=(const object_ref &x)
+  {
+    object_base_ptr::operator=(x);
+    return *this;
+  }
 
   /**
    * Create an object_ref from an object

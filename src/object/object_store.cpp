@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <stack>
 
+using namespace std;
 using namespace std::tr1::placeholders;
 
 namespace oos {
@@ -168,11 +169,11 @@ void object_store::clear()
     remove_prototype(node->type.c_str());
     //delete node;
   }
-//  std::cout << "size of object map: " << object_map_.size() << "\n";
-//  std::cout << "clearing object map ... ";
+//  cout << "size of object map: " << object_map_.size() << "\n";
+//  cout << "clearing object map ... ";
   object_map_.clear();
-//  std::cout << "done.\n";
-//  std::cout << "size of object map: " << object_map_.size() << "\n";
+//  cout << "done.\n";
+//  cout << "size of object map: " << object_map_.size() << "\n";
 }
 
 int depth(prototype_node *node)
@@ -283,14 +284,12 @@ object_store::insert_object(object *o, bool notify)
   }
   prototype_node *node = i->second;
   // retrieve and set new unique number into object
-  //object->id(UniqueProducer::instance().number("default"));
   object_proxy *oproxy = find_proxy(o->id());
   if (oproxy) {
     if (oproxy->linked()) {
-      // an object exists in
-      // map.
+      // an object exists in map.
       // replace it with new object
-      // unlink it
+      // unlink it and
       // link it into new place in list
       remove_proxy(oproxy->node, oproxy);
     }
@@ -455,7 +454,6 @@ object_proxy* object_store::create_proxy(long id)
 
 bool object_store::delete_proxy(long id)
 {
-  std::cout << id << " ";
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
     return false;
@@ -473,7 +471,7 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
   if (node->count >= 2) {
     // there are more than two objects (normal case)
     // insert before last last
-    //std::cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
+    //cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
 //    link_proxy(node->op_marker->prev, oproxy);
     oproxy->link(node->op_marker->prev);
 //    node->op_marker->prev->insert(oproxy);
@@ -481,9 +479,9 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
     // there is one object in subtree
     // insert as first; adjust "left" marker
     /*if (node->op_marker->prev->obj) {
-      std::cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
+      cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
     } else {
-      std::cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
+      cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
     }*/
 //    link_proxy(node->op_marker->prev, oproxy);
     oproxy->link(node->op_marker->prev);
@@ -493,9 +491,9 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
     // there is no object in subtree
     // insert as last; adjust "right" marker
     /*if (node->op_marker->obj) {
-      std::cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
+      cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
     } else {
-      std::cout << "list is empty: inserting " << *o << " as last before [0]\n";
+      cout << "list is empty: inserting " << *o << " as last before [0]\n";
     }*/
 //    link_proxy(node->op_marker, oproxy);
     oproxy->link(node->op_marker);
@@ -513,7 +511,7 @@ void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
 {
   if (oproxy == node->op_first->next) {
     // adjust left marker
-    //std::cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
+    //cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
     node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
     //adjust_left_marker(node, node->op_first->next->next);
   }

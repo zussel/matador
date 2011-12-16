@@ -153,25 +153,25 @@ object_base_ptr::reset(const object *o)
 bool
 object_base_ptr::is_loaded() const
 {
-    return proxy_ != 0;
+  return (proxy_ && proxy_->obj);
 }
 
 long
 object_base_ptr::id() const
 {
-    return (proxy_ ? proxy_->id : id_);
+  return (proxy_ ? proxy_->id : id_);
 }
 
 object*
 object_base_ptr::ptr() const
 {
-    return (proxy_ ? proxy_->obj : NULL);
+  return (proxy_ ? proxy_->obj : NULL);
 }
 
 object*
 object_base_ptr::lookup_object() const
 {
-    return (proxy_ ? proxy_->obj : NULL);
+  return (proxy_ ? proxy_->obj : NULL);
 }
 
 bool object_base_ptr::is_reference() const
