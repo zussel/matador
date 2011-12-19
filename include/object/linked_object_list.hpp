@@ -18,9 +18,20 @@
 #ifndef LINKED_OBJECT_LIST_HPP
 #define LINKED_OBJECT_LIST_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object_list.hpp"
 #include "object/object_atomizer.hpp"
-#include "object/object_linker.hpp"
 
 /*
  *   linked_object_list layout:
@@ -47,10 +58,9 @@ template < class T > class const_linked_object_list_iterator;
  * This is the base list node class for all further
  * linked list type classes storing objects
  */
-class linked_object_list_base_node : public object
+class OOS_API linked_object_list_base_node : public object
 {
 public:
-  linked_object_list_base_node() {}
   virtual ~linked_object_list_base_node() {}
 
   /**
@@ -73,10 +83,7 @@ public:
    * @param r The reference object.
    * @param n The name of the reference object parameter.
    */
-  virtual bool link_reference(object *r, const std::string &n)
-  {
-    return link_reference(this, r, n);
-  }
+  virtual bool link_reference(object *r, const std::string &n);
 
   /**
    * Link the reference node
@@ -85,13 +92,7 @@ public:
    * @param r The reference object.
    * @param n The name of the reference object parameter.
    */
-  virtual bool link_reference(object *o, object *r, const std::string &n)
-  {
-    std::cout << "linking " << *r << " into field " << n << " of " << *o << "\n";
-    object_linker ol(o, r, n);
-    o->read_from(&ol);
-    return ol.success();
-  }
+  virtual bool link_reference(object *o, object *r, const std::string &n);
 };
 
 /**

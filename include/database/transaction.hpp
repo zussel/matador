@@ -31,10 +31,12 @@
   #define OOS_API
 #endif
 
-#include "tools/byte_buffer.hpp"
-#include "object/object_store.hpp"
 #include "object/object_serializer.hpp"
+#include "object/object_observer.hpp"
+
 #include "database/action.hpp"
+
+#include "tools/byte_buffer.hpp"
 
 #include <memory>
 #include <list>
@@ -44,6 +46,8 @@ namespace oos {
 
 class database;
 class transaction;
+class object_store;
+class byte_buffer;
 
 /**
  * @class transaction_impl

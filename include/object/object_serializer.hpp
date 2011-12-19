@@ -31,12 +31,12 @@
 #endif
 
 #include "object/object_atomizer.hpp"
-#include "tools/byte_buffer.hpp"
 
 namespace oos {
 
 class object;
 class object_store;
+class byte_buffer;
 
 /**
  * @class object_serializer

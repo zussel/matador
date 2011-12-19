@@ -5,6 +5,8 @@
 #include "object/object_view.hpp"
 #include "object/object_serializer.hpp"
 
+#include "tools/byte_buffer.hpp"
+
 #include "Track.hpp"
 #include "Album.hpp"
 #include "Artist.hpp"

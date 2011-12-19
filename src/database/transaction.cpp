@@ -17,8 +17,10 @@
 
 #include "database/transaction.hpp"
 #include "database/database.hpp"
-#include "database/action.hpp"
 
+#include "tools/byte_buffer.hpp"
+
+#include "object/object_store.hpp"
 #include "object/object.hpp"
 
 #include <iostream>

@@ -17,6 +17,7 @@
 
 #include "object/prototype_node.hpp"
 #include "object/object_store.hpp"
+#include "object/object_proxy.hpp"
 
 using namespace std;
 

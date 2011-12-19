@@ -18,6 +18,7 @@
 #include "object/object.hpp"
 #include "object/object_proxy.hpp"
 #include "object/object_store.hpp"
+#include "object/object_observer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"

@@ -21,6 +21,8 @@
 #include "object/object_ptr.hpp"
 #include "object/object_list.hpp"
 
+#include "tools/byte_buffer.hpp"
+
 #include <string.h>
 
 using namespace std::tr1::placeholders;

@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTBAG_HPP
-#define OBJECTBAG_HPP
+#ifndef OBJECT_STORE_HPP
+#define OBJECT_STORE_HPP
 
 #include "object/object_ptr.hpp"
 
@@ -28,11 +28,9 @@
 #include <tr1/unordered_map>
 #endif
 
-#include <typeinfo>
 #include <string>
 #include <ostream>
 #include <list>
-#include <map>
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -54,52 +52,7 @@ class object;
 struct object_proxy;
 class object_deleter;
 struct prototype_node;
-
-/**
- * @class object_observer
- * @brief Base class for object observer classes
- * 
- * When interessted to observe insert, update and
- * delete actions an observer class instance must be
- * registered with object store.
- * Use this class as base class for all observer classes.
- */
-class OOS_API object_observer
-{
-public:
-  virtual ~object_observer() {}
-  
-  /**
-   * @brief Called on object insertion.
-   * 
-   * Called when an object is inserted
-   * into the object_store.
-   * 
-   * @param o The inserted object.
-   */
-  virtual void on_insert(object *o) = 0;
-  
-  /**
-   * @brief Called on object update.
-   * 
-   * Called when an object is updated
-   * in the object_store.
-   * 
-   * @param o The updated object.
-   */
-  virtual void on_update(object *o) = 0;
-  
-  /**
-   * @brief Called on object deletion.
-   * 
-   * Called when an object is deleted
-   * from the object_store.
-   * 
-   * @param o The deleted object.
-   */
-  virtual void on_delete(object *o) = 0;
-};
-
+class object_observer;
 class object_list_base;
 
 /**
@@ -434,4 +387,4 @@ private:
 
 }
 
-#endif /* OBJECTBAG_HPP */
+#endif /* OBJECT_STORE_HPP */

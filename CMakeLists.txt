@@ -27,6 +27,7 @@ SET(OBJECT_SOURCES
   src/object/object_ptr.cpp
   src/object/object_store.cpp
   src/object/object_list.cpp
+  src/object/linked_object_list.cpp
   src/object/object_linker.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
@@ -48,6 +49,7 @@ SET(OBJECT_HEADER
   include/object/object_proxy.hpp
   include/object/object_serializer.hpp
   include/object/prototype_node.hpp
+  include/object/object_observer.hpp
 )
 
 SET(TOOLS_SOURCES
@@ -88,5 +90,25 @@ ADD_LIBRARY(oos SHARED
   ${UNIT_SOURCES} ${UNIT_HEADER}
   ${DATABASE_SOURCES} ${DATABASE_HEADER}
 )
+
+SET(SQLITE_DATABASE_SOURCES
+  src/database/sqlite/sqlite_database.cpp
+)
+
+SET(SQLITE_DATABASE_HEADER
+  include/database/sqlite/sqlite_database.hpp
+)
+
+ADD_LIBRARY(oos-sqlite SHARED
+  ${SQLITE_DATABASE_SOURCES} ${SQLITE_DATABASE_HEADER}
+)
+
+TARGET_LINK_LIBRARIES(oos-sqlite oos)
+
+# Group source files for IDE source explorers (e.g. Visual Studio)
+SOURCE_GROUP("object" FILES ${OBJECT_SOURCES} ${OBJECT_HEADER})
+SOURCE_GROUP("tools" FILES ${TOOLS_SOURCES} ${TOOLS_HEADER})
+SOURCE_GROUP("unit" FILES ${UNIT_SOURCES} ${UNIT_HEADER})
+SOURCE_GROUP("database" FILES ${DATABASE_SOURCES} ${DATABASE_HEADER})
 
 ADD_SUBDIRECTORY(test)

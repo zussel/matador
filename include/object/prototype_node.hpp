@@ -18,8 +18,6 @@
 #ifndef PROTOTYPE_NODE_HPP
 #define PROTOTYPE_NODE_HPP
 
-#include "object/object_proxy.hpp"
-
 #include <iostream>
 #include <memory>
 
