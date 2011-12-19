@@ -15,6 +15,14 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
+# Put the libaries and binaries that get built into directories at the
+# top of the build tree rather than in hard-to-find leaf
+# directories. This simplifies manual testing and the use of the build
+# tree rather than installed Boost libraries.
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 #IF (NOT CMAKE_BUILD_TYPE)
 #  SET(CMAKE_BUILD_TYPE "Debug")
 #ENDIF()
