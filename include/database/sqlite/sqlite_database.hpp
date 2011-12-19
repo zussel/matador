@@ -21,6 +21,13 @@ namespace oos {
   
 namespace sqlite {
   
+/**
+ * @class sqlite_database
+ * @brief The sqlite database backend
+ * 
+ * This class is the sqlite database backend
+ * class. It provides the sqlite version 3
+ */
 class OOS_SQLITE_API sqlite_database : public database_impl
 {
 public:

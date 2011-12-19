@@ -137,7 +137,7 @@ bool object_store::remove_prototype(const char *type)
 
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  while (i->second->first->next != i->second->last.get()) {
+  while (i->second->first->next != i->second->last) {
     prototype_node *node = i->second->first->next;
     remove_prototype(node->type.c_str());
   }
@@ -165,7 +165,7 @@ const prototype_node* object_store::find_prototype(const char *type) const
 
 void object_store::clear()
 {
-  while (root_->first->next != root_->last.get()) {
+  while (root_->first->next != root_->last) {
     prototype_node *node = root_->first->next;
     remove_prototype(node->type.c_str());
     //delete node;
@@ -444,12 +444,12 @@ object_proxy* object_store::create_proxy(long id)
   if (id == 0) {
     return NULL;
   }
-  std::pair<t_object_proxy_map::iterator, bool> ret = object_map_.insert(std::make_pair<long, object_proxy*>(id, NULL));
-  if (ret.second == true) {
-    ret.first->second = new object_proxy(id, this);
-    return ret.first->second;
+  
+  t_object_proxy_map::iterator i = object_map_.find(id);
+  if (i == object_map_.end()) {
+    return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
   } else {
-    return NULL;
+    return 0;
   }
 }
 

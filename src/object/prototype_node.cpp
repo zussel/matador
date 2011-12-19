@@ -24,39 +24,46 @@ using namespace std;
 namespace oos {
 
 prototype_node::prototype_node()
-  : parent(NULL)
-  , prev(NULL)
-  , next(NULL)
-  , first(NULL)
-  , last(NULL)
-  , op_first(NULL)
-  , op_marker(NULL)
-  , op_last(NULL)
+  : parent(0)
+  , prev(0)
+  , next(0)
+  , first(0)
+  , last(0)
+  , producer(0)
+  , op_first(0)
+  , op_marker(0)
+  , op_last(0)
   , depth(0)
   , count(0)
 {
 }
 
 prototype_node::prototype_node(object_base_producer *p, const char *t)
-  : parent(NULL)
-  , prev(NULL)
-  , next(NULL)
+  : parent(0)
+  , prev(0)
+  , next(0)
   , first(new prototype_node)
   , last(new prototype_node)
   , producer(p)
-  , op_first(NULL)
-  , op_marker(NULL)
-  , op_last(NULL)
+  , op_first(0)
+  , op_marker(0)
+  , op_last(0)
   , depth(0)
   , count(0)
   , type(t)
 {
-  first->next = last.get();
-  last->prev = first.get();
+  first->next = last;
+  last->prev = first;
 }
 
 prototype_node::~prototype_node()
 {
+  if (first) {
+    delete first;
+  }
+  if (last) {
+    delete last;
+  }
 }
 
 void
@@ -99,7 +106,7 @@ prototype_node::insert(prototype_node *child)
 {
   child->parent = this;
   child->prev = last->prev;
-  child->next = last.get();
+  child->next = last;
   last->prev->next = child;
   last->prev = child;
   // set depth
@@ -124,7 +131,7 @@ void prototype_node::remove()
   // delete all object proxies
   clear();
   // delete all cild nodes
-  while (first->next != last.get()) {
+  while (first->next != last) {
     prototype_node *node = first->next;
     node->remove();
     delete node;
@@ -138,22 +145,22 @@ void prototype_node::unlink()
   // unlink node
   prev->next = next;
   next->prev = prev;
-  next = NULL;
-  prev = NULL;
+  next = 0;
+  prev = 0;
 }
 
 prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first->next != last.get())
+  if (first->next != last)
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last.get()) {
+    while (node->parent && node->next == node->parent->last) {
       node = node->parent;
     }
     return node->next;
@@ -164,20 +171,20 @@ prototype_node* prototype_node::next_node(prototype_node *root) const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first->next != last.get())
+  if (first->next != last)
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last.get()) {
+    while (node->parent && node->next == node->parent->last) {
       node = node->parent;
     }
     if (node != root)
       return node->next;
     else
-      return NULL;
+      return 0;
   }
 }
 
@@ -189,7 +196,7 @@ prototype_node* prototype_node::previous_node() const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last.get() && node->first->next != node->last.get()) {
+    while (node->last && node->first->next != node->last) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);

@@ -173,11 +173,14 @@ struct OOS_API prototype_node
   prototype_node *parent;              /**< The parent node */
   prototype_node *prev;                /**< The previous node */
   prototype_node *next;                /**< The next node */
-  std::auto_ptr<prototype_node> first; /**< The first children node */
-  std::auto_ptr<prototype_node> last;  /**< The last children node */
+  prototype_node *first; /**< The first children node */
+  prototype_node *last;  /**< The last children node */
+//  std::auto_ptr<prototype_node> first; /**< The first children node */
+//  std::auto_ptr<prototype_node> last;  /**< The last children node */
 
   // data
-  std::auto_ptr<object_base_producer> producer; /**< The object producer */
+  object_base_producer *producer; /**< The object producer */
+//  std::auto_ptr<object_base_producer> producer; /**< The object producer */
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */

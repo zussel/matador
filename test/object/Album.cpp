@@ -73,7 +73,6 @@ void Album::add(Track *track, bool overide_artist)
 
 void Album::add(object_ref<Track> track, bool override_artist)
 {
-//  TrackList::t_list_node *node = new TrackList::t_list_node(track);
   track_list_.push_back(track);
   if (override_artist) {
     track->artist(artist_);
