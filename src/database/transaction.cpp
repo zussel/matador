@@ -31,14 +31,10 @@ namespace oos {
 
 transaction_impl::transaction_impl(transaction &tr)
   : tr_(tr)
-{
-//  tr_.db()->ostore().register_observer(this);
-}
+{}
 
 transaction_impl::~transaction_impl()
-{
-//  tr_.db()->ostore().unregister_observer(this);
-}
+{}
 
 void
 transaction_impl::on_insert(object *o)
@@ -113,9 +109,9 @@ void transaction_impl::commit()
   transaction::iterator first = tr_.begin();
   transaction::iterator last = tr_.end();
   while (first != last) {
-    delete *first++;
-    //tr_.db()->execute_action(*first++);
-    //throw exception();
+    (*first++)->accept(tr_.db_->impl_);
+//    delete *first++;
+//    tr_.db()->execute_action(*first++);
   }
 }
 

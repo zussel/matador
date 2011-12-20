@@ -53,6 +53,86 @@ private:
   const std::string &type_;
 };
 
+prototype_iterator::prototype_iterator()
+  : node_(NULL)
+{}
+
+prototype_iterator::prototype_iterator(prototype_node *node)
+  : node_(node)
+{}
+
+prototype_iterator::prototype_iterator(const prototype_iterator &x)
+  : node_(x.node_)
+{}
+
+prototype_iterator& prototype_iterator::operator=(const prototype_iterator &x)
+{
+  node_ = x.node_;
+  return *this;
+}
+
+prototype_iterator::~prototype_iterator()
+{}
+
+bool prototype_iterator::operator==(const prototype_iterator &i) const
+{
+  return (node_ == i.node_);
+}
+
+bool prototype_iterator::operator!=(const prototype_iterator &i) const
+{
+  return !operator==(i);
+}
+
+prototype_iterator::self& prototype_iterator::operator++()
+{
+  increment();
+  return *this;
+}
+
+prototype_iterator::self prototype_iterator::operator++(int)
+{
+  prototype_node *tmp = node_;
+  increment();
+  return prototype_iterator(node_);
+}
+
+prototype_iterator::self& prototype_iterator::operator--()
+{
+  decrement();
+  return *this;
+}
+
+prototype_iterator::self prototype_iterator::operator--(int)
+{
+  prototype_node *tmp = node_;
+  decrement();
+  return prototype_iterator(node_);
+}
+
+prototype_iterator::pointer prototype_iterator::operator->() const
+{
+  return node_;
+}
+
+prototype_iterator::reference prototype_iterator::operator*() const
+{
+  return *node_;
+}
+
+void prototype_iterator::increment()
+{
+  if (node_) {
+    node_ = node_->next_node();
+  }
+}
+void prototype_iterator::decrement()
+{
+  if (node_) {
+    node_ = node_->previous_node();
+  }
+}
+
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "OBJECT"))
   , id_(0)

@@ -13,8 +13,6 @@
 
 #include "database/database.hpp"
 
-//#include <sqlite3.h>
-
 struct sqlite3;
 
 namespace oos {

@@ -36,7 +36,8 @@ template < class T > class const_object_view_iterator;
  * class.
  */
 template < class T >
-class object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
+class object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
+{
 public:
   typedef object_view_iterator<T> self;	/**< Shortcut for this class. */
   typedef object_ptr<T> value_type;     /**< Shortcut for the value type. */
@@ -223,7 +224,8 @@ private:
  * class.
  */
 template < class T >
-class const_object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
+class const_object_view_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+{
 public:
   typedef const_object_view_iterator<T> self;	/**< Shortcut for this class. */
   typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */

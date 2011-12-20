@@ -174,10 +174,10 @@ public:
 
 private:
   friend class transaction;
+  friend class transaction_impl;
   
   void push_transaction(transaction *tr);
   void pop_transaction();
-  void execute_action(action *a);
 
 private:
   database_impl *impl_;

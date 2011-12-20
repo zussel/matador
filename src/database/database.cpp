@@ -53,7 +53,17 @@ transaction_impl* database_impl::create_transaction(transaction &tr) const
 database::database(object_store &ostore, const std::string &/*dbstring*/)
   : ostore_(ostore)
 {
+  // create new database implementation instance
   impl_ = new database_impl;
+  // initialize database: create prepared insert
+  // update and delete statements
+  /*
+  object_store::prototype_iterator first == ostore.first_prototype();
+  object_store::prototype_iterator last == ostore.last_prototype();
+  while (first != last) {
+    impl_->prepare(*first++);
+  }
+  */
 }
 
 
@@ -114,12 +124,6 @@ void database::pop_transaction()
 transaction* database::current_transaction() const
 {
   return (transaction_stack_.empty() ? 0 : transaction_stack_.top());
-}
-
-void
-database::execute_action(action *a)
-{
-  a->accept(impl_);
 }
 
 }
