@@ -64,7 +64,7 @@ private:
    */
 	virtual void write_char(const char *id, char x)
   {
-    sync<char>(id, x, value_, false);
+    sync<char>(id, x, value_);
   }
 
   /**
@@ -77,7 +77,7 @@ private:
    */
 	virtual void write_float(const char *id, float x)
   {
-    sync<float>(id, x, value_, false);
+    sync<float>(id, x, value_);
   }
 
   /**
@@ -90,7 +90,7 @@ private:
    */
 	virtual void write_double(const char *id, double x)
   {
-    sync<double>(id, x, value_, false);
+    sync<double>(id, x, value_);
   }
 
   /**
@@ -103,7 +103,7 @@ private:
    */
 	virtual void write_int(const char *id, int x)
   {
-    sync<int>(id, x, value_, false);
+    sync<int>(id, x, value_);
   }
 
   /**
@@ -116,7 +116,7 @@ private:
    */
 	virtual void write_long(const char *id, long x)
   {
-    sync<long>(id, x, value_, false);
+    sync<long>(id, x, value_);
   }
 
   /**
@@ -129,7 +129,7 @@ private:
    */
 	virtual void write_unsigned(const char *id, unsigned x)
   {
-    sync<unsigned>(id, x, value_, false);
+    sync<unsigned>(id, x, value_);
   }
 
   /**
@@ -142,7 +142,7 @@ private:
    */
 	virtual void write_bool(const char *id, bool x)
   {
-    sync<bool>(id, x, value_, false);
+    sync<bool>(id, x, value_);
   }
 
   /**
@@ -155,7 +155,7 @@ private:
    */
 	virtual void write_charptr(const char *id, const char* x)
   {
-    sync<const char*>(id, x, value_, false);
+    sync<const char*>(id, x, value_);
   }
 
   /**
@@ -168,7 +168,7 @@ private:
    */
 	virtual void write_string(const char *id, const std::string &x)
   {
-    sync<const std::string&>(id, x, value_, false);
+    sync<const std::string&>(id, x, value_);
   }
 
   /**
@@ -181,7 +181,7 @@ private:
    */
 	virtual void write_object(const char *id, const object_base_ptr &x)
   {
-    sync<const object_base_ptr&>(id, x, value_, false);
+    sync<const object_base_ptr&>(id, x, value_);
   }
 
   /**
@@ -192,7 +192,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_object_list(const char *id, const object_list_base &x)
+	virtual void write_object_list(const char *, const object_list_base &)
   {
   }
 
@@ -204,7 +204,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_object_vector(const char *id, const object_vector_base &x)
+	virtual void write_object_vector(const char *, const object_vector_base &)
   {
   }
 
@@ -220,7 +220,7 @@ private:
    */
   virtual void read_char(const char *id, char &x)
   {
-    sync<char>(id, x, value_, true);
+    sync<char>(id, x, value_);
   }
 
   /**
@@ -235,7 +235,7 @@ private:
    */
   virtual void read_float(const char *id, float &x)
   {
-    sync<float>(id, x, value_, true);
+    sync<float>(id, x, value_);
   }
 
   /**
@@ -250,7 +250,7 @@ private:
    */
   virtual void read_double(const char *id, double &x)
   {
-    sync<double>(id, x, value_, true);
+    sync<double>(id, x, value_);
   }
 
   /**
@@ -265,7 +265,7 @@ private:
    */
 	virtual void read_int(const char *id, int &x)
   {
-    sync<int>(id, x, value_, true);
+    sync<int>(id, x, value_);
   }
 
   /**
@@ -280,7 +280,7 @@ private:
    */
 	virtual void read_long(const char *id, long &x)
   {
-    sync<long>(id, x, value_, true);
+    sync<long>(id, x, value_);
   }
 
   /**
@@ -295,7 +295,7 @@ private:
    */
 	virtual void read_unsigned(const char *id, unsigned &x)
   {
-    sync<unsigned>(id, x, value_, true);
+    sync<unsigned>(id, x, value_);
   }
 
   /**
@@ -310,7 +310,7 @@ private:
    */
 	virtual void read_bool(const char *id, bool &x)
   {
-    sync<bool>(id, x, value_, true);
+    sync<bool>(id, x, value_);
   }
 
   /**
@@ -325,7 +325,7 @@ private:
    */
 	virtual void read_charptr(const char *id, char* &x)
   {
-    sync<char*>(id, x, value_, true);
+    sync<char*>(id, x, value_);
   }
 
   /**
@@ -340,7 +340,7 @@ private:
    */
 	virtual void read_string(const char *id, std::string &x)
   {
-    sync<const std::string&>(id, value_, x, true);
+    sync<const std::string&>(id, value_, x);
   }
 
   /**
@@ -355,7 +355,7 @@ private:
    */
 	virtual void read_object(const char *id, object_base_ptr &x)
   {
-    sync<object_base_ptr&>(id, x, value_, true);
+    sync<object_base_ptr&>(id, x, value_);
   }
 
   /**
@@ -368,7 +368,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object_list(const char *id, object_list_base &x)
+	virtual void read_object_list(const char *, object_list_base &)
   {
   }
 
@@ -382,18 +382,17 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object_vector(const char *id, object_vector_base &x)
+	virtual void read_object_vector(const char *, object_vector_base &)
   {
   }
 
   template < class Y >
-  void sync(const char*, Y master, T& slave, bool swap)
+  void sync(const char*, Y, T&)
   {
     succeeded_ = false;
   }
   
-  template <>
-  void sync(const char *id, const std::string &master, std::string &slave, bool swap)
+  void sync(const char *id, const std::string &master, std::string &slave)
   {
     if (id_ != id) {
       return;

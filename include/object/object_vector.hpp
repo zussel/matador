@@ -22,6 +22,12 @@
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 
+#ifdef WIN32
+#include <functional>
+#else
+#include <tr1/functional>
+#endif
+
 #include <vector>
 
 namespace oos {
