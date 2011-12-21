@@ -20,6 +20,7 @@
 #include "object/object_store.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_list.hpp"
+#include "object/object_vector.hpp"
 
 #include "tools/byte_buffer.hpp"
 
@@ -122,6 +123,16 @@ void object_serializer::write_object_list(const char*, const object_list_base &x
   x.for_each(std::tr1::bind(&object_serializer::write_object_list_item, this, _1));
 }
 
+void object_serializer::write_object_vector(const char*, const object_vector_base &x)
+{
+  /* write number of items in vector
+   * for each item write id, index and type
+   */
+  write_unsigned(NULL, x.size());
+  unsigned int index(0);
+  x.for_each(std::tr1::bind(&object_serializer::write_object_vector_item, this, _1, index));
+}
+
 void object_serializer::read_char(const char*, char &c)
 {
   buffer_->release(&c, sizeof(c));
@@ -217,9 +228,37 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
   }
 }
 
+void object_serializer::read_object_vector(const char*, object_vector_base &x)
+{
+  // get count of backuped list item
+  unsigned int s(0);
+  read_unsigned(NULL, s);
+  x.reset();
+  string type;
+  long id(0);
+  unsigned int index(0);
+  for (unsigned int i = 0; i < s; ++i) {
+    read_long(NULL, id);
+    read_unsigned(NULL, index);
+    read_string(NULL, type);
+    object_proxy *oproxy = ostore_->find_proxy(id);
+    if (!oproxy) {
+      oproxy = ostore_->create_proxy(id);
+    }
+    x.push_back_proxy(oproxy);
+  }
+}
+
 void object_serializer::write_object_list_item(const object *o)
 {
   write_long(NULL, o->id());
+  write_string(NULL, o->object_type());
+}
+
+void object_serializer::write_object_vector_item(const object *o, unsigned int &index)
+{
+  write_long(NULL, o->id());
+  write_unsigned(NULL, index++);
   write_string(NULL, o->object_type());
 }
 

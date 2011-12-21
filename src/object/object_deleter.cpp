@@ -18,6 +18,7 @@
 #include "object/object_deleter.hpp"
 #include "object/object.hpp"
 #include "object/object_list.hpp"
+#include "object/object_vector.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -61,6 +62,13 @@ bool object_deleter::is_deletable(object_list_base &olist)
   return check_object_count_map();
 }
 
+bool object_deleter::is_deletable(object_vector_base &ovector)
+{
+  object_count_map.clear();
+  ovector.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+  return check_object_count_map();
+}
+
 void object_deleter::read_object(const char*, object_base_ptr &x)
 {
   if (!x.ptr()) {
@@ -70,6 +78,11 @@ void object_deleter::read_object(const char*, object_base_ptr &x)
 }
 
 void object_deleter::read_object_list(const char*, object_list_base &x)
+{
+  x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+}
+
+void object_deleter::read_object_vector(const char*, object_vector_base &x)
 {
   x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
 }

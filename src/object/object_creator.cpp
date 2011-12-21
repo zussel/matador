@@ -18,6 +18,7 @@
 #include "object/object_creator.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
+#include "object/object_vector.hpp"
 
 namespace oos {
 
@@ -49,6 +50,15 @@ void object_creator::read_object(const char*, object_base_ptr &x)
 }
 
 void object_creator::read_object_list(const char*, object_list_base &x)
+{
+  // set parent object (if available)
+  if (!object_stack_.empty()) {
+    x.parent_object(object_stack_.top());
+  }
+  ostore_.insert(x);
+}
+
+void object_creator::read_object_vector(const char*, object_vector_base &x)
 {
   // set parent object (if available)
   if (!object_stack_.empty()) {

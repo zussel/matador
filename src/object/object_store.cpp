@@ -20,6 +20,7 @@
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
+#include "object/object_vector.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
 #include "object/prototype_node.hpp"
@@ -81,6 +82,7 @@ bool prototype_iterator::operator==(const prototype_iterator &i) const
 
 bool prototype_iterator::operator!=(const prototype_iterator &i) const
 {
+//  return (node_ != i.node_);
   return !operator==(i);
 }
 
@@ -94,7 +96,7 @@ prototype_iterator::self prototype_iterator::operator++(int)
 {
   prototype_node *tmp = node_;
   increment();
-  return prototype_iterator(node_);
+  return prototype_iterator(tmp);
 }
 
 prototype_iterator::self& prototype_iterator::operator--()
@@ -107,7 +109,7 @@ prototype_iterator::self prototype_iterator::operator--(int)
 {
   prototype_node *tmp = node_;
   decrement();
-  return prototype_iterator(node_);
+  return prototype_iterator(tmp);
 }
 
 prototype_iterator::pointer prototype_iterator::operator->() const
@@ -243,6 +245,16 @@ const prototype_node* object_store::find_prototype(const char *type) const
   return i->second;
 }
 
+prototype_iterator object_store::begin() const
+{
+  return prototype_iterator(root_);
+}
+
+prototype_iterator object_store::end() const
+{
+  return prototype_iterator(0);
+}
+
 void object_store::clear()
 {
   while (root_->first->next != root_->last) {
@@ -346,6 +358,12 @@ void
 object_store::insert(object_list_base &olb)
 {
   olb.install(this);
+}
+
+void
+object_store::insert(object_vector_base &ovb)
+{
+  ovb.install(this);
 }
 
 object*
@@ -481,6 +499,33 @@ object_store::remove(object_list_base &olb)
     }
   }
   olb.uninstall();
+  return true;
+}
+
+bool
+object_store::remove(object_vector_base &ovb)
+{
+  /**************
+   * 
+   * remove all object from list
+   * and first and last sentinel
+   * 
+   **************/
+  // check if object tree is deletable
+  if (!object_deleter_->is_deletable(ovb)) {
+    return false;
+  }
+  object_deleter::iterator first = object_deleter_->begin();
+  object_deleter::iterator last = object_deleter_->end();
+  
+  while (first != last) {
+    if (!first->second.ignore) {
+      remove_object((first++)->second.obj, true);
+    } else {
+      ++first;
+    }
+  }
+  ovb.uninstall();
   return true;
 }
 

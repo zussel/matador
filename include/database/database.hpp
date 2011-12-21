@@ -33,6 +33,8 @@
 
 #include "database/action.hpp"
 
+#include "object/object_ptr.hpp"
+
 #include <string>
 #include <stack>
 
@@ -145,6 +147,44 @@ public:
   void close();
 
   /**
+   * Load a concrete object of a specfic type
+   * and a given id from the database. If an object
+   * with the given id couldn't be found an empty
+   * object_ptr is returned
+   *
+   * @tparam T The type of the object.
+   * @param id The unique primary id of the object.
+   * @return The object defined by the given parameters.
+   */
+  template < class T >
+  object_ptr<T> load(int id)
+  {
+    return object_ptr<T>();
+  }
+
+  /**
+   * Load all objects of the given type
+   * from the database. If the operation
+   * succeeds true is returned.
+   *
+   * @return Returns true on successful loading.
+   */
+  template < class T >
+  bool load()
+  {
+    return true;
+  }
+
+  /**
+   * Load all in the object_store registered
+   * objects from the database. If the operation
+   * succeeds true is returned.
+   *
+   * @return Returns true on successful loading.
+   */
+  bool load();
+
+  /**
    * @brief Executes a database query.
    * 
    * Executes the given query on the database and
@@ -178,6 +218,8 @@ private:
   
   void push_transaction(transaction *tr);
   void pop_transaction();
+
+  object* load(const std::string &type, int id = 0);
 
 private:
   database_impl *impl_;

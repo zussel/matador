@@ -4,18 +4,21 @@
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
+#include "object/prototype_node.hpp"
 
 #include "Track.hpp"
 #include "Album.hpp"
 #include "Artist.hpp"
 
 using namespace oos;
+using namespace std;
 
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("ObjectStore Prototype Test Unit")
 {
   add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
+  add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
 }
 
 ObjectPrototypeTestUnit::~ObjectPrototypeTestUnit()
@@ -83,4 +86,22 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   o = ostore.create("MEDIATRACK");
   
   UNIT_ASSERT_NULL(o, "unexpected object creation");
+}
+
+void
+ObjectPrototypeTestUnit::prototype_traverse()
+{
+  object_store ostore;
+  ostore.insert_prototype<Track>("TRACK");
+  ostore.insert_prototype<MediaTrack>("MEDIATRACK", "TRACK");
+  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", "TRACK");
+  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", "TRACK");
+
+  cout << endl;
+
+  prototype_iterator first = ostore.begin();
+  prototype_iterator last = ostore.end();
+  while (first != last) {
+    cout << "prototype: " << (first++)->type << "\n";
+  }
 }

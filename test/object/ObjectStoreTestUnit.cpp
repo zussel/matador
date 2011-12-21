@@ -1,10 +1,13 @@
 #include "ObjectStoreTestUnit.hpp"
 
+#include "object/object_value.hpp"
+
 using namespace oos;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("ObjectStore Test Unit")
 {
+  add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
   add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
   add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
@@ -26,6 +29,22 @@ void
 ObjectStoreTestUnit::finalize()
 {
   ostore_.clear();
+}
+
+void
+ObjectStoreTestUnit::access_value()
+{
+  SimpleObject so("Godwanda");
+
+  std::string n;
+
+  object_value<std::string> ovalue;
+
+  n = ovalue.get(&so, "name");
+
+  ovalue.set(&so, "name", "Kambrium");
+
+  n = ovalue.get(&so, "name");
 }
 
 void

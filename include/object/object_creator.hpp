@@ -27,6 +27,7 @@ namespace oos {
 class object_store;
 class object_base_ptr;
 class object_list_base;
+class object_vector_base;
 class object;
 
 /**
@@ -59,6 +60,7 @@ public:
 private:
   virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &x);
+  virtual void read_object_vector(const char*, object_vector_base &x);
 
 private:
   std::stack<object*> object_stack_;

@@ -35,6 +35,7 @@ SET(OBJECT_SOURCES
   src/object/object_ptr.cpp
   src/object/object_store.cpp
   src/object/object_list.cpp
+  src/object/object_vector.cpp
   src/object/linked_object_list.cpp
   src/object/object_linker.cpp
   src/object/object_proxy.cpp
@@ -51,8 +52,10 @@ SET(OBJECT_HEADER
   include/object/object_ptr.hpp
   include/object/object_store.hpp
   include/object/object_list.hpp
+  include/object/object_vector.hpp
   include/object/linked_object_list.hpp
   include/object/object_linker.hpp
+  include/object/object_value.hpp
   include/object/object_view.hpp
   include/object/object_proxy.hpp
   include/object/object_serializer.hpp

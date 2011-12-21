@@ -84,6 +84,11 @@ void database::close()
 {
 }
 
+bool database::load()
+{
+  return true;
+}
+
 query_result* database::query(const std::string &)
 {
   return NULL;
@@ -119,6 +124,11 @@ void database::pop_transaction()
 //    cout << "register transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
     ostore_.register_observer(transaction_stack_.top()->impl_);
   }
+}
+
+object* database::load(const std::string &type, int id)
+{
+  return NULL;
 }
 
 transaction* database::current_transaction() const

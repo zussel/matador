@@ -54,6 +54,7 @@ class object_deleter;
 struct prototype_node;
 class object_observer;
 class object_list_base;
+class object_vector_base;
 
 /**
  * @class object_base_producer
@@ -324,6 +325,20 @@ public:
   const prototype_node* find_prototype(const char *type) const;
 
   /**
+   * Return the first prototype node.
+   *
+   * @return The first prototype node iterator.
+   */
+  prototype_iterator begin() const;
+
+  /**
+   * Return the last prototype node.
+   *
+   * @return The last prototype node iterator.
+   */
+  prototype_iterator end() const;
+
+  /**
    * Removes all inserted prototypes and all inserted objects.
    */
   void clear();
@@ -372,6 +387,14 @@ public:
   void insert(object_list_base &olb);
   
   /**
+   * Inserts an object vector into the object store. Subsequently the
+   * object vector is initialized.
+   * 
+   * @param olb The object vector to insert.
+   */
+  void insert(object_vector_base &ovb);
+  
+  /**
    * Removes an object from the object store. After successfull
    * removal the object is set to zero and isn't valid any more.
    * 
@@ -397,6 +420,16 @@ public:
    * @return True on successful object list removal.
    */
   bool remove(object_list_base &olb);
+
+  /**
+   * Removes an object vector from object store. All elements of the
+   * vector are removed from the store after a successfull reference and
+   * pointer counter check.
+   * 
+   * @param olb The object vector to remove.
+   * @return True on successful object vector removal.
+   */
+  bool remove(object_vector_base &ovb);
 
   /*
   template < class InputIterator >

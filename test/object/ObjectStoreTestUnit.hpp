@@ -23,7 +23,7 @@ private:
       object::read_from(reader);
       reader->read_string("name", name_);
     }
-    void write_to(oos::object_atomizer *writer)
+    void write_to(oos::object_atomizer *writer) const
     {
       object::write_to(writer);
       writer->write_string("name", name_);
@@ -66,6 +66,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
+  void access_value();
   void simple_object();
   void object_with_sub_object();
   void multiple_simple_objects();

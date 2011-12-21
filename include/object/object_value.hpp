@@ -15,186 +15,198 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTATOMIZER_HPP
-#define OBJECTATOMIZER_HPP
+#ifndef OBJECT_VALUE_HPP
+#define OBJECT_VALUE_HPP
 
-#ifdef WIN32
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-#else
-  #define OOS_API
-#endif
+#include "object/object_atomizer.hpp"
+#include "object/object_ptr.hpp"
+#include "object/object.hpp"
 
 #include <string>
 
 namespace oos {
 
-class object_list_base;
-class object_vector_base;
-class object_base_ptr;
-
-/**
- * @class object_atomizer
- * @brief Base class for all object atomizer
- * 
- * This class is the base class for all
- * atomizer classes. It has interfaces to read
- * and write data types (builtin and complex)
- * identified by a name.
- */
-class OOS_API object_atomizer
+template < class T >
+class object_value : public object_atomizer
 {
 public:
-	virtual ~object_atomizer() {}
+  object_value()
+    : succeeded_(false)
+  {}
+  virtual ~object_value() {}
 
+  void set(object *o, const char *id, T value)
+  {
+    value_ = value;
+    id_ = id;
+    o->read_from(this);
+  }
+
+  T get(const object *o, const char *id)
+  {
+    id_ = id;
+    o->write_to(this);
+    return value_;
+  }
+
+  bool succeeded() const
+  {
+    return succeeded;
+  }
+private:
   /**
-   * @fn virtual void write_char(const char *id, char x)
-   * @brief Write a single character to the atomizer.
+   * @brief Get character of object.
    * 
-   * Write a single character to the atomizer
-   * identified by a unique name.
+   * Get character identified by id of object .
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_char(const char*, char) {}
+	virtual void write_char(const char *id, char x)
+  {
+    sync<char>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_float(const char *id, float x)
-   * @brief Write a float to the atomizer.
+   * @brief Get float value of object.
    * 
-   * Write a float to the atomizer
-   * identified by a unique name.
+   * Get float value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_float(const char*, float) {}
+	virtual void write_float(const char *id, float x)
+  {
+    sync<float>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_double(const char *id, double x)
-   * @brief Write a double to the atomizer.
+   * @brief Get double value of object.
    * 
-   * Write a double to the atomizer
-   * identified by a unique name.
+   * Get double value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_double(const char*, double) {}
+	virtual void write_double(const char *id, double x)
+  {
+    sync<double>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_int(const char *id, int x)
-   * @brief Write a int to the atomizer.
+   * @brief Get int value of object.
    * 
-   * Write a int to the atomizer
-   * identified by a unique name.
+   * Get int value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_int(const char*, int) {}
+	virtual void write_int(const char *id, int x)
+  {
+    sync<int>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_long(const char *id, long x)
-   * @brief Write a long to the atomizer.
+   * @brief Get long value of object.
    * 
-   * Write a long to the atomizer
-   * identified by a unique name.
+   * Get long value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_long(const char*, long) {}
+	virtual void write_long(const char *id, long x)
+  {
+    sync<long>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_unsigned(const char *id, unsigned x)
-   * @brief Write a unsigned to the atomizer.
+   * @brief Get unsigned value of object.
    * 
-   * Write a unsigned to the atomizer
-   * identified by a unique name.
+   * Get unsigned value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_unsigned(const char*, unsigned) {}
+	virtual void write_unsigned(const char *id, unsigned x)
+  {
+    sync<unsigned>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_bool(const char *id, bool x)
-   * @brief Write a bool to the atomizer.
+   * @brief Get bool value of object.
    * 
-   * Write a bool to the atomizer
-   * identified by a unique name.
+   * Get bool value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_bool(const char*, bool) {}
+	virtual void write_bool(const char *id, bool x)
+  {
+    sync<bool>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_charptr(const char *id, const char *x)
-   * @brief Write a const char pointer to the atomizer.
+   * @brief Get const char pointer value of object.
    * 
-   * Write a const char pointer to the atomizer
-   * identified by a unique name.
+   * Get const char pointer value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_charptr(const char*, const char*) {}
+	virtual void write_charptr(const char *id, const char* x)
+  {
+    sync<const char*>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_string(const char *id, const std::string &x)
-   * @brief Write a std::string to the atomizer.
+   * @brief Get string value of object.
    * 
-   * Write a std::string to the atomizer
-   * identified by a unique name.
+   * Get string value identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_string(const char*, const std::string&) {}
+	virtual void write_string(const char *id, const std::string &x)
+  {
+    sync<const std::string&>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_object(const char *id, const object_base_ptr &x)
-   * @brief Write a object_base_ptr to the atomizer.
+   * @brief Get object_base_ptr of object.
    * 
-   * Write a object_base_ptr to the atomizer
-   * identified by a unique name.
+   * Get object_base_ptr identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_object(const char*, const object_base_ptr&) {}
+	virtual void write_object(const char *id, const object_base_ptr &x)
+  {
+    sync<const object_base_ptr&>(id, x, value_, false);
+  }
 
   /**
-   * @fn virtual void write_object_list(const char *id, const object_list_base &x)
-   * @brief Write a object_list_base to the atomizer.
+   * @brief Get object_list_base of object.
    * 
-   * Write a object_list_base to the atomizer
-   * identified by a unique name.
+   * Get object_list_base identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_object_list(const char*, const object_list_base&) {}
+	virtual void write_object_list(const char *id, const object_list_base &x)
+  {
+  }
 
   /**
-   * @fn virtual void write_object_vector(const char *id, const object_vector_base &x)
-   * @brief Write a object_list_base to the atomizer.
+   * @brief Get object_vector_base of object.
    * 
-   * Write a object_vector_base to the atomizer
-   * identified by a unique name.
+   * Get object_vector_base identified by id of object.
    * 
    * @param id Unique id of the data.
-   * @param x The data to read from.
+   * @param x The data to the value.
    */
-	virtual void write_object_vector(const char*, const object_vector_base&) {}
+	virtual void write_object_vector(const char *id, const object_vector_base &x)
+  {
+  }
 
   /**
    * @fn virtual void read_char(const char *id, char &x)
@@ -206,7 +218,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_char(const char*, char&) {}
+  virtual void read_char(const char *id, char &x)
+  {
+    sync<char>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_float(const char *id, float &x)
@@ -218,7 +233,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_float(const char*, float&) {}
+  virtual void read_float(const char *id, float &x)
+  {
+    sync<float>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_double(const char *id, double &x)
@@ -230,7 +248,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_double(const char*, double&) {}
+  virtual void read_double(const char *id, double &x)
+  {
+    sync<double>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_int(const char *id, int &x)
@@ -242,7 +263,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_int(const char*, int&) {}
+	virtual void read_int(const char *id, int &x)
+  {
+    sync<int>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_long(const char *id, long &x)
@@ -254,7 +278,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_long(const char*, long&) {}
+	virtual void read_long(const char *id, long &x)
+  {
+    sync<long>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_unsigned(const char *id, unsigned &x)
@@ -266,7 +293,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned(const char*, unsigned&) {}
+	virtual void read_unsigned(const char *id, unsigned &x)
+  {
+    sync<unsigned>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_bool(const char *id, bool &x)
@@ -278,7 +308,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_bool(const char*, bool&) {}
+	virtual void read_bool(const char *id, bool &x)
+  {
+    sync<bool>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_charptr(const char *id, char *&x)
@@ -290,7 +323,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_charptr(const char*, char*&) {}
+	virtual void read_charptr(const char *id, char* &x)
+  {
+    sync<char*>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_string(const char *id, std::string &x)
@@ -302,7 +338,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_string(const char*, std::string&) {}
+	virtual void read_string(const char *id, std::string &x)
+  {
+    sync<const std::string&>(id, value_, x, true);
+  }
 
   /**
    * @fn virtual void read_object(const char *id, object_base_ptr &x)
@@ -314,7 +353,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object(const char*, object_base_ptr&) {}
+	virtual void read_object(const char *id, object_base_ptr &x)
+  {
+    sync<object_base_ptr&>(id, x, value_, true);
+  }
 
   /**
    * @fn virtual void read_object_list(const char *id, object_list_base &x)
@@ -326,7 +368,9 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object_list(const char*, object_list_base&) {}
+	virtual void read_object_list(const char *id, object_list_base &x)
+  {
+  }
 
   /**
    * @fn virtual void read_object_vector(const char *id, object_vector_base &x)
@@ -338,9 +382,32 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object_vector(const char*, object_vector_base&) {}
+	virtual void read_object_vector(const char *id, object_vector_base &x)
+  {
+  }
+
+  template < class Y >
+  void sync(const char*, Y master, T& slave, bool swap)
+  {
+    succeeded_ = false;
+  }
+  
+  template <>
+  void sync(const char *id, const std::string &master, std::string &slave, bool swap)
+  {
+    if (id_ != id) {
+      return;
+    }
+    slave = master;
+    succeeded_ = true;
+  }
+  
+private:
+  T value_;
+  std::string id_;
+  bool succeeded_;
 };
 
 }
 
-#endif /* OBJECTATOMIZER_HPP */
+#endif /* OBJECT_VALUE_HPP */
