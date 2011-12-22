@@ -14,25 +14,43 @@ private:
   class SimpleObject : public oos::object
   {
   public:
-    SimpleObject() {}
-    SimpleObject(const std::string &n) : name_(n) {}
+    SimpleObject()
+      : number_(0)
+    {}
+    SimpleObject(const std::string &n)
+      : name_(n)
+      , number_(0)
+    {}
+    SimpleObject(int n)
+      : number_(n)
+    {}
+    SimpleObject(const std::string &n, int i)
+      : name_(n)
+      , number_(i)
+    {}
     virtual ~SimpleObject() {}
     
     void read_from(oos::object_atomizer *reader)
     {
       object::read_from(reader);
       reader->read_string("name", name_);
+      reader->read_int("number", number_);
     }
     void write_to(oos::object_atomizer *writer) const
     {
       object::write_to(writer);
       writer->write_string("name", name_);
+      writer->write_int("number", number_);
     }
+
+    int number() const { return number_; }
+    void number(int n) { number_ = n; }
 
     std::string name() const { return name_; }
     void name(const std::string &n) { name_ = n; }
 
   private:
+    int number_;
     std::string name_;
   };
   class ObjectWithSubObject : public oos::object
@@ -46,7 +64,7 @@ private:
       object::read_from(reader);
       reader->read_object("simple", simple_);
     }
-    void write_to(oos::object_atomizer *writer)
+    void write_to(oos::object_atomizer *writer) const
     {
       object::write_to(writer);
       writer->write_object("simple", simple_);

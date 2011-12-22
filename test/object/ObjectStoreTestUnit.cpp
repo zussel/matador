@@ -34,17 +34,45 @@ ObjectStoreTestUnit::finalize()
 void
 ObjectStoreTestUnit::access_value()
 {
-  SimpleObject so("Godwanda");
+  std::string str("Godwanda");
+  int numb = 42;
 
-  std::string n;
+  SimpleObject *so = new SimpleObject(str, numb);
 
-  object_value<std::string> ovalue;
+  int n;
 
-  n = ovalue.get(&so, "name");
+  UNIT_ASSERT_TRUE(retrieve_value(so, "number", n), "couldn't get integer value for field [number]");
+  UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
 
-  ovalue.set(&so, "name", "Kambrium");
+  numb = 13;
+  UNIT_ASSERT_TRUE(update_value(so, "number", numb), "couldn't set integer value for field [number]");
 
-  n = ovalue.get(&so, "name");
+  UNIT_ASSERT_TRUE(retrieve_value(so, "number", n), "couldn't get integer value for field [number]");
+  UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
+
+  std::string s;
+
+  UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
+  UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
+
+  str = "Kambrium";
+  UNIT_ASSERT_TRUE(update_value(so, "name", str), "couldn't set string value for field [name]");
+
+  UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
+  UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
+
+  typedef object_ptr<ObjectWithSubObject> owsub_ptr;
+  typedef object_ptr<SimpleObject> osmpl_ptr;
+
+  owsub_ptr owsub = ostore_.insert(new ObjectWithSubObject);
+  osmpl_ptr osmpl = ostore_.insert(so);
+
+  UNIT_ASSERT_TRUE(update_value(owsub, "simple", osmpl), "couldn't set object field [simple]");
+
+  osmpl.reset();
+
+  UNIT_ASSERT_TRUE(retrieve_value(owsub, "simple", osmpl), "couldn't get object field [simple]");
+  UNIT_ASSERT_EQUAL(osmpl.get(), so, "retrieved object isn't the expected");
 }
 
 void

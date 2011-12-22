@@ -390,7 +390,7 @@ public:
    * Inserts an object vector into the object store. Subsequently the
    * object vector is initialized.
    * 
-   * @param olb The object vector to insert.
+   * @param ovb The object vector to insert.
    */
   void insert(object_vector_base &ovb);
   
@@ -426,7 +426,7 @@ public:
    * vector are removed from the store after a successfull reference and
    * pointer counter check.
    * 
-   * @param olb The object vector to remove.
+   * @param ovb The object vector to remove.
    * @return True on successful object vector removal.
    */
   bool remove(object_vector_base &ovb);
