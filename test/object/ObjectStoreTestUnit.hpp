@@ -18,15 +18,15 @@ private:
       : number_(0)
     {}
     SimpleObject(const std::string &n)
-      : name_(n)
-      , number_(0)
+      : number_(0)
+      , name_(n)
     {}
     SimpleObject(int n)
       : number_(n)
     {}
     SimpleObject(const std::string &n, int i)
-      : name_(n)
-      , number_(i)
+      : number_(i)
+      , name_(n)
     {}
     virtual ~SimpleObject() {}
     

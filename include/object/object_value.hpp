@@ -22,6 +22,7 @@
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
 
+#include <cstring>
 #include <string>
 
 /**
@@ -38,6 +39,75 @@
  */
 
 namespace oos {
+
+template < class T >
+class object_value;
+
+
+namespace detail {
+  template < typename X, typename Y >
+  struct updater
+  {
+    void update(const char*, const char*, bool&, object_value<X>&, object*, X, Y&) {}
+  };
+  
+  template < typename T >
+  struct updater<T, T>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<T> &ov, object *o, T master, T &slave);
+  };
+
+  template < typename T >
+  struct updater<T*, object_base_ptr>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<T*> &ov, object *o, T *master, object_base_ptr &slave);
+  };
+
+  template < typename X, typename Y >
+  struct retriever
+  {
+    void retrieve(const char*, const char*, bool&, X, Y&) {}
+  };
+
+  template < typename X >
+  struct retriever<X, X>
+  {
+    void retrieve(const char *id, const char *f, bool &r, X master, X &slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master;
+      r = true;
+    }
+  };
+
+  template < typename X >
+  struct retriever<const X&, X>
+  {
+    void retrieve(const char *id, const char *f, bool &r, const X &master, X &slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master;
+      r = true;
+    }
+  };
+
+  template < typename X >
+  struct retriever<const object_base_ptr&, X*>
+  {
+    void retrieve(const char *id, const char *f, bool &r, const object_base_ptr& master, X *&slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master.ptr();
+      r = true;
+    }
+  };
+}
 
 /**
  * @class object_value
@@ -128,7 +198,8 @@ private:
    */
 	virtual void write_char(const char *id, char x)
   {
-    retrieve<char, T>(id, x, value_);
+    detail::retriever<char, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -141,7 +212,8 @@ private:
    */
 	virtual void write_float(const char *id, float x)
   {
-    retrieve<float, T>(id, x, value_);
+    detail::retriever<float, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -154,7 +226,8 @@ private:
    */
 	virtual void write_double(const char *id, double x)
   {
-    retrieve<double, T>(id, x, value_);
+    detail::retriever<double, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -167,7 +240,8 @@ private:
    */
 	virtual void write_int(const char *id, int x)
   {
-    retrieve<int, T>(id, x, value_);
+    detail::retriever<int, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -180,7 +254,8 @@ private:
    */
 	virtual void write_long(const char *id, long x)
   {
-    retrieve<long, T>(id, x, value_);
+    detail::retriever<long, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -193,7 +268,8 @@ private:
    */
 	virtual void write_unsigned(const char *id, unsigned x)
   {
-    retrieve<unsigned, T>(id, x, value_);
+    detail::retriever<unsigned, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -206,7 +282,8 @@ private:
    */
 	virtual void write_bool(const char *id, bool x)
   {
-    retrieve<bool, T>(id, x, value_);
+    detail::retriever<bool, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -219,7 +296,8 @@ private:
    */
 	virtual void write_charptr(const char *id, const char* x)
   {
-    retrieve<const char*, T>(id, x, value_);
+    detail::retriever<const char*, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -232,7 +310,8 @@ private:
    */
 	virtual void write_string(const char *id, const std::string &x)
   {
-    retrieve<const std::string&, T>(id, x, value_);
+    detail::retriever<const std::string&, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -245,7 +324,8 @@ private:
    */
 	virtual void write_object(const char *id, const object_base_ptr &x)
   {
-    retrieve<const object_base_ptr&, T>(id, x, value_);
+    detail::retriever<const object_base_ptr&, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
@@ -284,7 +364,8 @@ private:
    */
   virtual void read_char(const char *id, char &x)
   {
-    update<T, char>(id, object_, value_, x);
+    static detail::updater<T, char> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -299,7 +380,8 @@ private:
    */
   virtual void read_float(const char *id, float &x)
   {
-    update<T, float>(id, object_, value_, x);
+    static detail::updater<T, float> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -314,7 +396,8 @@ private:
    */
   virtual void read_double(const char *id, double &x)
   {
-    update<T, double>(id, object_, value_, x);
+    static detail::updater<T, double> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -329,7 +412,8 @@ private:
    */
 	virtual void read_int(const char *id, int &x)
   {
-    update<T, int>(id, object_, value_, x);
+    static detail::updater<T, int> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -344,7 +428,8 @@ private:
    */
 	virtual void read_long(const char *id, long &x)
   {
-    update<T, long>(id, object_, value_, x);
+    static detail::updater<T, long> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -359,7 +444,8 @@ private:
    */
 	virtual void read_unsigned(const char *id, unsigned &x)
   {
-    update<T, unsigned>(id, object_, value_, x);
+    static detail::updater<T, unsigned> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -374,7 +460,8 @@ private:
    */
 	virtual void read_bool(const char *id, bool &x)
   {
-    update<T, bool>(id, object_, value_, x);
+    static detail::updater<T, bool> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -389,7 +476,8 @@ private:
    */
 	virtual void read_charptr(const char *id, char* &x)
   {
-    update<T, char*>(id, object_, value_, x);
+    static detail::updater<T, char*> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -404,7 +492,8 @@ private:
    */
 	virtual void read_string(const char *id, std::string &x)
   {
-    update<const T&, std::string>(id, object_, value_, x);
+    static detail::updater<T, std::string> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -419,7 +508,8 @@ private:
    */
 	virtual void read_object(const char *id, object_base_ptr &x)
   {
-    update<T, object_base_ptr>(id, object_, value_, x);
+    static detail::updater<T, object_base_ptr> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
@@ -450,84 +540,12 @@ private:
   {
   }
 
-  template < class X, class Y >
-  void update(const char*, object*, X, Y&) {}
+private:
+  template < typename X, typename Y > friend class detail::updater;
 
-  template <>
-  void update<T, T>(const char *id, object *o, T master, T &slave)
+  void mark_modified(object *o)
   {
-    if (id_ != id) {
-      return;
-    }
     o->mark_modified();
-    slave = master;
-    succeeded_ = true;
-  }
-
-  template <>
-  void update<const T&, T>(const char *id, object *o, const T &master, T &slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    o->mark_modified();
-    slave = master;
-    succeeded_ = true;
-  }
-
-  template <>
-  void update<const T&, object_base_ptr>(const char *id, object *o, const T &master, object_base_ptr &slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    o->mark_modified();
-    slave.reset(master.ptr());
-    succeeded_ = true;
-  }
-
-  template <>
-  void update<object*, object_base_ptr>(const char *id, object *o, object *master, object_base_ptr &slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    o->mark_modified();
-    slave.reset(master);
-    succeeded_ = true;
-  }
-
-  template < class X, class Y >
-  void retrieve(const char*, X, Y&) {}
-  
-  template <>
-  void retrieve<T, T>(const char *id, T master, T &slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    slave = master;
-    succeeded_ = true;
-  }
-
-  template <>
-  void retrieve<const T&, T>(const char *id, const T& master, T &slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    slave = master;
-    succeeded_ = true;
-  }
-    
-  template <>
-  void retrieve<const object_base_ptr&, object*>(const char *id, const object_base_ptr& master, object *&slave)
-  {
-    if (id_ != id) {
-      return;
-    }
-    slave = master.ptr();
-    succeeded_ = true;
   }
     
 private:
@@ -536,6 +554,34 @@ private:
   object *object_;
   bool succeeded_;
 };
+
+namespace detail {
+
+template < typename T >
+void
+updater<T, T>::update(const char *id, const char *f, bool &r, object_value<T> &ov, object *o, T master, T &slave)
+{
+  if (strcmp(f, id) != 0) {
+    return;
+  }
+  ov.mark_modified(o);
+  slave = master;
+  r = true;
+}
+
+template < typename T >
+void
+updater<T*, object_base_ptr>::update(const char *id, const char *f, bool &r, object_value<T*> &ov, object *o, T *master, object_base_ptr &slave)
+{
+  if (strcmp(f, id) != 0) {
+    return;
+  }
+  ov.mark_modified(o);
+  slave.reset(master);
+  r = true;
+}
+
+}
 
 /**
  * @brief Updates parameter value of an object.
