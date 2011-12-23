@@ -541,7 +541,7 @@ private:
   }
 
 private:
-  template < typename X, typename Y > friend class detail::updater;
+  template < typename X, typename Y > friend struct detail::updater;
 
   void mark_modified(object *o)
   {
