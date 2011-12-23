@@ -64,6 +64,9 @@ prototype_node::~prototype_node()
   if (last) {
     delete last;
   }
+  if (producer) {
+    delete producer;
+  }
 }
 
 void

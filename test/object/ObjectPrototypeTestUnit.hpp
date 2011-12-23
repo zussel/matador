@@ -12,6 +12,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
+  void empty_store();
   void one_prototype();
   void prototype_hierachy();
   void prototype_traverse();

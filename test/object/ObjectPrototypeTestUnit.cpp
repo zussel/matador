@@ -16,6 +16,7 @@ using namespace std;
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("ObjectStore Prototype Test Unit")
 {
+  add_test("empty", std::tr1::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
   add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
@@ -31,6 +32,12 @@ ObjectPrototypeTestUnit::initialize()
 void
 ObjectPrototypeTestUnit::finalize()
 {}
+
+void
+ObjectPrototypeTestUnit::empty_store()
+{
+  object_store ostore;
+}
 
 void
 ObjectPrototypeTestUnit::one_prototype()

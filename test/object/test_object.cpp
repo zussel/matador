@@ -28,6 +28,6 @@ main(int argc, char *argv[])
   test_suite::instance().register_unit("complex", new ComplexObjectStoreTestUnit());
   test_suite::instance().register_unit("objectlist", new ObjectListTestUnit());
   test_suite::instance().register_unit("database", new DatabaseTestUnit());
-	
+
 	test_suite::instance().run();
 }

@@ -156,15 +156,17 @@ object_store::~object_store()
 {
   clear();
   // delete all deleted object_proxys
+  /*
   if (root_->op_first->next) {
-//    delete root_->op_first->next;
+    delete root_->op_first->next;
   }
   if (root_->op_last->prev) {
 //    delete root_->op_last->prev;
   }
-  delete root_;
-  delete first_;
+  */
   delete last_;
+  delete first_;
+  delete root_;
   delete object_deleter_;
 }
 
