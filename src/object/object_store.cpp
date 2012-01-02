@@ -136,7 +136,7 @@ void prototype_iterator::decrement()
 }
 
 object_store::object_store()
-  : root_(new prototype_node(new object_producer<object>, "OBJECT"))
+  : root_(new prototype_node(new object_producer<object>, "OBJECT", true))
   , id_(0)
   , first_(new object_proxy(this))
   , last_(new object_proxy(this))
@@ -171,7 +171,7 @@ object_store::~object_store()
 }
 
 bool
-object_store::insert_prototype(object_base_producer *producer, const char *type, const char *parent)
+object_store::insert_prototype(object_base_producer *producer, const char *type, bool abstract, const char *parent)
 {
   // set node to root node
   prototype_node *parent_node;
@@ -190,7 +190,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     //throw new object_exception("prototype already exists");
     return false;
   }
-  prototype_node *node = new prototype_node(producer, type);
+  prototype_node *node = new prototype_node(producer, type, abstract);
   // append as child to parent prototype node
   parent_node->insert(node);
   // store prototype in map

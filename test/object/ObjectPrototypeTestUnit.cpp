@@ -68,9 +68,9 @@ ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
   ostore.insert_prototype<Track>("TRACK");
-  ostore.insert_prototype<MediaTrack>("MEDIATRACK", "TRACK");
-  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", "TRACK");
-  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", "TRACK");
+  ostore.insert_prototype<MediaTrack>("MEDIATRACK", false, "TRACK");
+  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", false, "TRACK");
+  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", false, "TRACK");
 
   object *o = ostore.create("AUDIOTRACK");
   
@@ -100,9 +100,9 @@ ObjectPrototypeTestUnit::prototype_traverse()
 {
   object_store ostore;
   ostore.insert_prototype<Track>("TRACK");
-  ostore.insert_prototype<MediaTrack>("MEDIATRACK", "TRACK");
-  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", "TRACK");
-  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", "TRACK");
+  ostore.insert_prototype<MediaTrack>("MEDIATRACK", false, "TRACK");
+  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", false, "TRACK");
+  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", false, "TRACK");
 
   cout << endl;
 

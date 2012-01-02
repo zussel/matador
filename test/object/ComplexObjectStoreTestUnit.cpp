@@ -40,9 +40,9 @@ ComplexObjectStoreTestUnit::initialize()
   ostore_.insert_prototype(new object_producer<Track>, "TRACK");
   ostore_.insert_prototype(new object_producer<Album>, "ALBUM");
   ostore_.insert_prototype(new object_producer<AlbumTrack>, "ALBUMTRACK");
-  ostore_.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", "TRACK");
-  ostore_.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", "MEDIATRACK");
-  ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", "MEDIATRACK");
+  ostore_.insert_prototype(new object_producer<MediaTrack>, "MEDIATRACK", false, "TRACK");
+  ostore_.insert_prototype(new object_producer<AudioTrack>, "AUDIOTRACK", false, "MEDIATRACK");
+  ostore_.insert_prototype(new object_producer<VideoTrack>, "VIDEOTRACK", false, "MEDIATRACK");
 }
 
 void

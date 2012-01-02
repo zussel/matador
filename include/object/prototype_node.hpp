@@ -67,8 +67,9 @@ struct OOS_API prototype_node
    * 
    * @param p The object_base_producer.
    * @param t The type name of this node.
+   * @param a Tells the node if its prototype is abstract.
    */
-  prototype_node(object_base_producer *p, const char *t);
+  prototype_node(object_base_producer *p, const char *t, bool a = false);
 
   ~prototype_node();
 
@@ -187,6 +188,8 @@ struct OOS_API prototype_node
   unsigned long count; /**< The total count of elements. */
 
   std::string type;	   /**< The type name of the object */
+  
+  bool abstract;
 };
 
 }

@@ -19,7 +19,9 @@
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 
+#include "object/object.hpp"
 #include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
 
 #include <iostream>
 
@@ -78,6 +80,27 @@ void database::open()
 
 void database::create()
 {
+  /*****************
+   * 
+   * traverse over all prototypes
+   * create an object and the create 
+   * table statement
+   * 
+   *****************/
+//  statement_helper creator(std::tr1::bind());
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
+  while (first != last) {
+    object *o = (first++)->producer->create();
+    /*************************
+     * 
+     * statement to create
+     * CREATE TABLE IF NOT EXISTS
+     * o->object_type()
+     *  
+     *************************/
+    delete o;
+  }
 }
 
 void database::close()

@@ -9,6 +9,7 @@
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
+#include "database/statement_helper.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -19,6 +20,7 @@ using namespace std;
 DatabaseTestUnit::DatabaseTestUnit()
   : unit_test("database test unit")
 {
+  add_test("helper", std::tr1::bind(&DatabaseTestUnit::helper, this), "test statement helper");
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
   add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("with_list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
@@ -42,6 +44,49 @@ void
 DatabaseTestUnit::finalize()
 {
   ostore_.clear();
+}
+
+void
+DatabaseTestUnit::helper()
+{
+  statement_helper help;
+  
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
+  
+  cout << endl;
+
+  while (first != last) {
+    const prototype_node &node = (*first++);
+
+    if (node.abstract) {
+      continue;
+    }
+
+    object *o = node.producer->create();
+    
+    std::string stmt = help.create(o, node.type, statement_helper::CREATE);
+    cout << "statement: " << stmt << endl;
+    
+    stmt = help.create(o, node.type, statement_helper::SELECT);
+    cout << "statement: " << stmt << endl;
+    
+    stmt = help.create(o, node.type, statement_helper::INSERT);
+    cout << "statement: " << stmt << endl;
+    
+    stmt = help.create(o, node.type, statement_helper::UPDATE);
+    cout << "statement: " << stmt << endl;
+    
+    stmt = help.create(o, node.type, statement_helper::DELETE);
+    cout << "statement: " << stmt << endl;
+    
+    stmt = help.create(o, node.type, statement_helper::DROP);
+    cout << "statement: " << stmt << endl;
+    
+    cout << endl;
+
+    delete o;
+  }
 }
 
 void

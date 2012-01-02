@@ -35,10 +35,11 @@ prototype_node::prototype_node()
   , op_last(0)
   , depth(0)
   , count(0)
+  , abstract(false)
 {
 }
 
-prototype_node::prototype_node(object_base_producer *p, const char *t)
+prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
   : parent(0)
   , prev(0)
   , next(0)
@@ -51,6 +52,7 @@ prototype_node::prototype_node(object_base_producer *p, const char *t)
   , depth(0)
   , count(0)
   , type(t)
+  , abstract(a)
 {
   first->next = last;
   last->prev = first;

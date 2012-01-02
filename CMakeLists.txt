@@ -86,13 +86,19 @@ SET(UNIT_HEADER
 SET(DATABASE_SOURCES
   src/database/action.cpp
   src/database/database.cpp
+  src/database/inserter.cpp
+  src/database/updater.cpp
   src/database/transaction.cpp
+  src/database/statement_helper.cpp
 )
 
 SET(DATABASE_HEADER
   include/database/action.hpp
   include/database/database.hpp
+  include/database/inserter.hpp
+  include/database/updater.hpp
   include/database/transaction.hpp
+  include/database/statement_helper.hpp
 )
 
 ADD_LIBRARY(oos SHARED
@@ -104,10 +110,12 @@ ADD_LIBRARY(oos SHARED
 
 SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_database.cpp
+  src/database/sqlite/sqlite_statement.cpp
 )
 
 SET(SQLITE_DATABASE_HEADER
   include/database/sqlite/sqlite_database.hpp
+  include/database/sqlite/sqlite_statement.hpp
 )
 
 ADD_LIBRARY(oos-sqlite SHARED
