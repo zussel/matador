@@ -99,6 +99,9 @@ DatabaseTestUnit::simple()
   // open db
   db->open();
 
+  // load data
+  db->load();
+
   // create new transaction    
   transaction tr(db);
   try {

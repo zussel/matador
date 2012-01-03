@@ -18,6 +18,7 @@
 #include "database/database.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
+#include "database/reader.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -60,8 +61,8 @@ database::database(object_store &ostore, const std::string &/*dbstring*/)
   // initialize database: create prepared insert
   // update and delete statements
   /*
-  object_store::prototype_iterator first == ostore.first_prototype();
-  object_store::prototype_iterator last == ostore.last_prototype();
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
   while (first != last) {
     impl_->prepare(*first++);
   }
@@ -109,6 +110,20 @@ void database::close()
 
 bool database::load()
 {
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
+  while (first != last) {
+    const prototype_node &node = (*first++);
+    // create dummy object
+    object *o = node.producer->create();
+    reader rdr(*this, o, node.type);
+    while(rdr.read()) {
+      object *obj = node.producer->create();
+      obj->read_from(&rdr);
+      ostore_.insert(obj);
+    }
+    delete o;
+  }
   return true;
 }
 

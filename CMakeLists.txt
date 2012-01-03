@@ -88,7 +88,9 @@ SET(DATABASE_SOURCES
   src/database/database.cpp
   src/database/inserter.cpp
   src/database/updater.cpp
+  src/database/reader.cpp
   src/database/transaction.cpp
+  src/database/statement.cpp
   src/database/statement_helper.cpp
 )
 
@@ -97,7 +99,9 @@ SET(DATABASE_HEADER
   include/database/database.hpp
   include/database/inserter.hpp
   include/database/updater.hpp
+  include/database/reader.hpp
   include/database/transaction.hpp
+  include/database/statement.hpp
   include/database/statement_helper.hpp
 )
 

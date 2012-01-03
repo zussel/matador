@@ -18,6 +18,8 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
+#include "database/statement.hpp"
+
 #include <string>
 
 struct sqlite3_stmt;
@@ -28,7 +30,7 @@ namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement
+class sqlite_statement : public statement_impl
 {
 public:
   sqlite_statement(sqlite_database &db, const std::string &sql);
