@@ -35,7 +35,9 @@ struct sqlite3;
 namespace oos {
   
 namespace sqlite {
-  
+
+class sqlite_statement;
+
 /**
  * @class sqlite_database
  * @brief The sqlite database backend
@@ -77,6 +79,13 @@ public:
    * @return The concrete transaction_impl.
    */
   transaction_impl* create_transaction(transaction &tr) const;
+
+  /**
+   * Create a new sqlite statement
+   * 
+   * @return A new sqlite statement
+   */
+  sqlite_statement* create_statement(const std::string &sql);
 
   /**
    * Return the raw pointer to the sqlite3

@@ -16,6 +16,7 @@
  */
 
 #include "database/sqlite/sqlite_database.hpp"
+#include "database/sqlite/sqlite_statement.hpp"
 
 #include "database/transaction.hpp"
 
@@ -59,6 +60,11 @@ void sqlite_database::visit(delete_action *a)
 transaction_impl* sqlite_database::create_transaction(transaction &tr) const
 {
   return new transaction_impl(tr);
+}
+
+sqlite_statement* sqlite_database::create_statement(const std::string &sql)
+{
+  return new sqlite_statement(*this, sql);
 }
 
 sqlite3* sqlite_database::operator()()

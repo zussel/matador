@@ -7,7 +7,7 @@
  * (at your option) any later version.
  *
  * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY {} without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -15,25 +15,45 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/statement.hpp"
+#ifndef RESULT_HPP
+#define RESULT_HPP
+
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
 
 namespace oos {
 
-statement_impl::~statement_impl()
-{}
-
-statement::statement(database &db)
-{}
-
-statement::statement(database &db, const std::string &sql)
-{}
-
-statement::~statement()
-{}
-
-query_result* statement::execute()
+class OOS_API result_impl
 {
-  return 0;
-}
+public:
+  virtual ~result_impl();
+
+};
+
+/*
+class result_iterator : public std::iterator<std::output_iterator_tag, row>
+{
+};
+*/
+
+class OOS_API result
+{
+public:
+  result();
+  ~result();
+
+};
 
 }
+
+#endif /* RESULT_HPP */

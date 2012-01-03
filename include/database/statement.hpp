@@ -36,14 +36,18 @@
 namespace oos {
 
 class database;
+class query_result;
 
 class OOS_API statement_impl
 {
 public:
   virtual ~statement_impl();
 
+/*
   virtual void create() = 0;
   virtual void destroy() = 0;
+*/
+
 };
 
 class OOS_API statement
@@ -53,7 +57,7 @@ public:
   statement(database &db, const std::string &sql);
   ~statement();
 
-  result_ptr execute();
+  query_result* execute();
 };
 
 }

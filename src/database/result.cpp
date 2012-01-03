@@ -7,7 +7,7 @@
  * (at your option) any later version.
  *
  * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY {} without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -15,25 +15,17 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/statement.hpp"
+#include "database/result.hpp"
 
 namespace oos {
 
-statement_impl::~statement_impl()
+result_impl::~result_impl()
 {}
 
-statement::statement(database &db)
+result::result()
 {}
 
-statement::statement(database &db, const std::string &sql)
+result::~result()
 {}
-
-statement::~statement()
-{}
-
-query_result* statement::execute()
-{
-  return 0;
-}
 
 }
