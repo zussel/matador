@@ -128,7 +128,7 @@ bool database::load()
   return true;
 }
 
-query_result* database::query(const std::string &)
+result* database::query(const std::string &)
 {
   return NULL;
 }

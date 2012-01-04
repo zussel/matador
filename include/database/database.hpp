@@ -41,7 +41,7 @@
 namespace oos {
 
 class object_store;
-class query_result;
+class result;
 class transaction;
 class transaction_impl;
 
@@ -193,7 +193,7 @@ public:
    * @param q The database query to execute.
    * @return The result of the query.
    */
-  query_result* query(const std::string &q);
+  result* query(const std::string &q);
 
   /**
    * Returns the object_store.
