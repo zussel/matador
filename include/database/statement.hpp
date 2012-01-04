@@ -36,7 +36,8 @@
 namespace oos {
 
 class database;
-class query_result;
+class result;
+class row;
 
 class OOS_API statement_impl
 {
@@ -57,7 +58,9 @@ public:
   statement(database &db, const std::string &sql);
   ~statement();
 
-  query_result* execute();
+  result* execute();
+
+  row* step();
 };
 
 }

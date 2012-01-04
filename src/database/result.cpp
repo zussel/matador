@@ -16,16 +16,96 @@
  */
 
 #include "database/result.hpp"
+#include "database/statement.hpp"
 
 namespace oos {
 
 result_impl::~result_impl()
 {}
 
-result::result()
+result_iterator::result_iterator()
+  : res_(0)
+{}
+
+result_iterator::result_iterator(result *res)
+  : res_(res)
+{}
+
+result_iterator::result_iterator(const result_iterator &x)
+  : res_(x.res_)
+{}
+
+result_iterator& result_iterator::operator=(const result_iterator &x)
+{
+  res_ = x.res_;
+  return *this;
+}
+
+result_iterator::~result_iterator()
+{}
+
+result_iterator::self& result_iterator::operator++()
+{
+  if (res_ && !res_->step()) {
+    res_ = 0;
+  }
+  return *this;
+}
+
+result_iterator::self result_iterator::operator++(int)
+{
+  result_iterator tmp(*this);
+  ++(*this);
+  return tmp;
+}
+
+result_iterator::pointer result_iterator::operator->() const
+{
+  return &(operator *());
+}
+
+result_iterator::reference result_iterator::operator*() const
+{
+  return (*res_->current());
+}
+
+bool result_iterator::operator==(const self &x) const
+{
+  return true;
+}
+
+bool result_iterator::operator!=(const self &x) const
+{
+  return false;
+}
+
+result::result(statement *stmt)
+  : stmt_(stmt)
+  , current_(0)
 {}
 
 result::~result()
 {}
+
+bool result::step()
+{
+  current_ = stmt_->step();
+  return true;
+}
+
+row* result::current() const
+{
+  return 0;
+}
+
+result_iterator result::begin()
+{
+  return result_iterator(this);
+}
+
+result_iterator result::end()
+{
+  return result_iterator();
+}
 
 }

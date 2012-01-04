@@ -41,6 +41,9 @@ bool reader::read()
 
 void reader::read_char(const char *id, char &x)
 {
+  // get column with name "id" from row,
+  // convert value to char and assign value to x
+
 }
 
 void reader::read_float(const char *id, float &x)

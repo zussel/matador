@@ -91,6 +91,7 @@ SET(DATABASE_SOURCES
   src/database/reader.cpp
   src/database/transaction.cpp
   src/database/result.cpp
+  src/database/row.cpp
   src/database/statement.cpp
   src/database/statement_helper.cpp
 )
@@ -103,6 +104,7 @@ SET(DATABASE_HEADER
   include/database/reader.hpp
   include/database/transaction.hpp
   include/database/result.hpp
+  include/database/row.hpp
   include/database/statement.hpp
   include/database/statement_helper.hpp
 )

@@ -15,30 +15,17 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/statement.hpp"
+#include "database/row.hpp"
 
 namespace oos {
 
-statement_impl::~statement_impl()
+row_impl::~row_impl()
 {}
 
-statement::statement(database &db)
+row::row()
 {}
 
-statement::statement(database &db, const std::string &sql)
+row::~row()
 {}
-
-statement::~statement()
-{}
-
-result* statement::execute()
-{
-  return 0;
-}
-
-row* statement::step()
-{
-  return 0;
-}
 
 }

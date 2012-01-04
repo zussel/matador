@@ -121,6 +121,7 @@ bool database::load()
       object *obj = node.producer->create();
       obj->read_from(&rdr);
       ostore_.insert(obj);
+      // adjust id counter
     }
     delete o;
   }

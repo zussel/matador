@@ -15,30 +15,36 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/statement.hpp"
+#ifndef ROW_HPP
+#define ROW_HPP
+
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
 
 namespace oos {
 
-statement_impl::~statement_impl()
-{}
-
-statement::statement(database &db)
-{}
-
-statement::statement(database &db, const std::string &sql)
-{}
-
-statement::~statement()
-{}
-
-result* statement::execute()
+class OOS_API row_impl
 {
-  return 0;
-}
+public:
+  virtual ~row_impl();
+};
 
-row* statement::step()
+class OOS_API row
 {
-  return 0;
-}
+public:
+  row();
+  ~row();
+};
 
 }
+
+#endif /* ROW_HPP */
