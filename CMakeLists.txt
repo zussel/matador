@@ -13,7 +13,10 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CMAKE_CXX_FLAGS "-ggdb -Wextra -Wall -pedantic")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(
+	${PROJECT_SOURCE_DIR}/include
+	"C:/Programme/SQlite/include"
+)
 
 # Put the libaries and binaries that get built into directories at the
 # top of the build tree rather than in hard-to-find leaf
@@ -65,10 +68,13 @@ SET(OBJECT_HEADER
 
 SET(TOOLS_SOURCES
   src/tools/byte_buffer.cpp
+  src/tools/library.cpp
 )
 
 SET(TOOLS_HEADER
   include/tools/byte_buffer.hpp
+  include/tools/singleton.hpp
+  include/tools/library.hpp
 )
 
 SET(UNIT_SOURCES
