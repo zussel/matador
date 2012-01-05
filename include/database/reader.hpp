@@ -146,32 +146,14 @@ private:
    */
 	virtual void read_object(const char *id, object_base_ptr &x);
 
-  /**
-   * @brief Read an object_list_base from the atomizer.
-   * 
-   * Read an object_list_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_list(const char *id, object_list_base &x);
-
-  /**
-   * @brief Read an object_vector_base from the atomizer.
-   * 
-   * Read an object_vector_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_vector(const char *id, object_vector_base &x);
+private:
+  bool valid_column(const char *id, int i) const;
 
 private:
   database &db_;
-  statement stmt_;
-  result *result_;
+  statement_impl *stmt_;
+
+  int column_;
 };
 
 }

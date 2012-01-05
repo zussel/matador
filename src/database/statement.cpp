@@ -39,7 +39,14 @@ result* statement::execute(const std::string &sql)
 
 row* statement::step()
 {
-  return impl_->step();
+  if (impl_->step()) {
+    // valid row was recieved
+    // create new row and add column
+    // data
+    return 0;
+  } else {
+    return 0;
+  }
 }
 
 }

@@ -37,27 +37,20 @@ sqlite_statement::~sqlite_statement()
   finalize();
 }
 
-result* sqlite_statement::execute(const std::string &sql)
-{
-  return 0;
-}
-
-row* sqlite_statement::step()
+bool sqlite_statement::step()
 {
   int ret = sqlite3_step(stmt_);
   if (ret == SQLITE_ROW) {
     // retrieved new row
     // create row object
-    row *r = new row;
-    
-    return r;
+    return true;
   } else if (ret == SQLITE_DONE) {
     // no further row available
-    return 0;
+    return false;
   } else {
-    // error
+    // error, throw exception
   }
-  return 0;
+  return false;
 }
 
 int sqlite_statement::prepare(const std::string &sql)
@@ -83,6 +76,11 @@ int sqlite_statement::reset()
 int sqlite_statement::column_count() const
 {
   return sqlite3_column_count(stmt_);
+}
+
+const char* sqlite_statement::column_name(int i) const
+{
+  return sqlite3_column_name(stmt_, i);
 }
 
 const char* sqlite_statement::column_text(int i) const

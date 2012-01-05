@@ -36,18 +36,20 @@ public:
   sqlite_statement(sqlite_database &db);
   virtual ~sqlite_statement();
 
-  virtual result* execute(const std::string &sql);
-  virtual row* step();
+//  virtual result* execute(const std::string &sql);
 
-  int prepare(const std::string &sql);
+  virtual bool step();
+  virtual int prepare(const std::string &sql);
+  
   int finalize();
   int reset();
 
-  int column_count() const;
+  virtual int column_count() const;
+  virtual const char* column_name(int i) const;
 
-  const char* column_text(int i) const;
-  int column_int(int i) const;
-  double column_double(int i) const;
+  virtual const char* column_text(int i) const;
+  virtual int column_int(int i) const;
+  virtual double column_double(int i) const;
 
   int column_type(int i) const;
 

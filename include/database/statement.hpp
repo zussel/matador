@@ -44,14 +44,16 @@ class OOS_API statement_impl
 public:
   virtual ~statement_impl();
 
-  virtual result* execute(const std::string &sql) = 0;
-  virtual row* step() = 0;
-/*
-  virtual void create() = 0;
-  virtual void destroy() = 0;
-*/
+  virtual int prepare(const std::string &sql) = 0;
+//  virtual result* execute(const std::string &sql) = 0;
+  virtual bool step() = 0;
 
+  virtual int column_count() const = 0;
+  virtual const char* column_name(int i) const = 0;
 
+  virtual const char* column_text(int i) const = 0;
+  virtual int column_int(int i) const = 0;
+  virtual double column_double(int i) const = 0;
 };
 
 class OOS_API statement

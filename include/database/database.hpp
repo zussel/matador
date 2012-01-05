@@ -226,6 +226,10 @@ private:
   friend class transaction;
   friend class transaction_impl;
   friend class statement;
+  friend class reader;
+  friend class inserter;
+  friend class updater;
+  friend class deleter;
   
   void push_transaction(transaction *tr);
   void pop_transaction();

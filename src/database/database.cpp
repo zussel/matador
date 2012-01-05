@@ -25,6 +25,7 @@
 #include "object/prototype_node.hpp"
 
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -66,7 +67,7 @@ database::database(object_store &ostore, const std::string &dbstring)
     throw std::runtime_error("couldn't fínd library [" + db + "]");
   }
   // get create function
-  create_db fun = (create_db)db_lib_.function("create_database");
+  create_db fun = (create_db)(db_lib_.function("create_database"));
 
   // create concrete database implementation object
   impl_ = (*fun)("");
@@ -132,14 +133,12 @@ bool database::load()
     // create dummy object
     object *o = node.producer->create();
     reader rdr(*this, o, node.type);
-    /*
     while(rdr.read()) {
       object *obj = node.producer->create();
       obj->read_from(&rdr);
       ostore_.insert(obj);
       // adjust id counter
     }
-    */
     delete o;
   }
   return true;

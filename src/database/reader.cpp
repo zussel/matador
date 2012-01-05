@@ -16,19 +16,24 @@
  */
 
 #include "database/reader.hpp"
+#include "database/database.hpp"
 #include "database/statement_helper.hpp"
+
+#include <string.h>
 
 namespace oos {
 
 reader::reader(database &db, object *o, const std::string name)
   : db_(db)
-  , stmt_(db)
-  , result_(0)
+  , stmt_(0)
+  , column_(0)
 {
   statement_helper helper;
   std::string sql = helper.create(o, name, statement_helper::SELECT);
 
-  result_ = stmt_.execute(sql);
+  stmt_ = db.create_statement_impl();
+
+  stmt_->prepare(sql);
 }
 
 reader::~reader()
@@ -36,59 +41,99 @@ reader::~reader()
 
 bool reader::read()
 {
-
-  return true;
+  column_ = 0;
+  return stmt_->step();
 }
 
 void reader::read_char(const char *id, char &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
   // get column with name "id" from row,
   // convert value to char and assign value to x
-
+  x = (char)stmt_->column_int(column_++);
 }
 
 void reader::read_float(const char *id, float &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = (float)stmt_->column_double(column_++);
 }
 
 void reader::read_double(const char *id, double &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_double(column_++);
 }
 
 void reader::read_int(const char *id, int &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_int(column_++);
 }
 
 void reader::read_long(const char *id, long &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_int(column_++);
 }
 
 void reader::read_unsigned(const char *id, unsigned &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_int(column_++);
 }
 
 void reader::read_bool(const char *id, bool &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_int(column_++);
 }
 
 void reader::read_charptr(const char *id, char* &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  if (x) {
+    delete [] x;
+  }
+  x = strdup(stmt_->column_text(column_++));
 }
 
 void reader::read_string(const char *id, std::string &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_text(column_++);
 }
 
 void reader::read_object(const char *id, object_base_ptr &x)
 {
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  // set object id
 }
 
-void reader::read_object_list(const char *id, object_list_base &x)
+bool reader::valid_column(const char *id, int i) const
 {
-}
-
-void reader::read_object_vector(const char *id, object_vector_base &x)
-{
+  const char *name = stmt_->column_name(i);
+  return strcmp(name, id) == 0;
 }
 
 }
