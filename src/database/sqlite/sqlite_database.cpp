@@ -62,9 +62,9 @@ transaction_impl* sqlite_database::create_transaction(transaction &tr) const
   return new transaction_impl(tr);
 }
 
-sqlite_statement* sqlite_database::create_statement(const std::string &sql)
+statement_impl* sqlite_database::create_statement()
 {
-  return new sqlite_statement(*this, sql);
+  return new sqlite_statement(*this);
 }
 
 sqlite3* sqlite_database::operator()()
@@ -73,4 +73,17 @@ sqlite3* sqlite_database::operator()()
 }
 
 }
+}
+
+extern "C"
+{
+  OOS_SQLITE_API oos::database_impl* create_database(const char *db)
+  {
+    return new oos::sqlite::sqlite_database(db);
+  }
+
+  OOS_SQLITE_API void destroy_database(oos::database_impl *db)
+  {
+    delete db;
+  }
 }

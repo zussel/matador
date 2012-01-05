@@ -22,12 +22,13 @@ namespace oos {
 
 reader::reader(database &db, object *o, const std::string name)
   : db_(db)
+  , stmt_(db)
+  , result_(0)
 {
   statement_helper helper;
   std::string sql = helper.create(o, name, statement_helper::SELECT);
 
-  //statement stmt(db, sql);
-
+  result_ = stmt_.execute(sql);
 }
 
 reader::~reader()

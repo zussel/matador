@@ -302,7 +302,7 @@ transaction::backup(action *a)
       // error, throw exception
 //      cout << "TR (" << id_ << ") FATAL ERROR: couldn't find corresponding object in action list!\n";
     } else {
-      if (a->type() == action::DELETE && (*first)->type() == action::INSERT) {
+      if (a->type() == action::DEL && (*first)->type() == action::INSERT) {
 //        cout << "TR (" << id_ << ") new action is delete, old action is insert: removing action\n";
         // within this transaction inserted
         // object is also deleted
@@ -311,7 +311,7 @@ transaction::backup(action *a)
         // has never been existed
         action_list_.erase(first);
         id_set_.erase(i);
-      } else if (a->type() == action::DELETE && (*first)->type() == action::UPDATE) {
+      } else if (a->type() == action::DEL && (*first)->type() == action::UPDATE) {
 //        cout << "TR (" << id_ << ") new action is delete, old action is update: replace action\n";
         // updated object is also deleted
         // replace update action with delete

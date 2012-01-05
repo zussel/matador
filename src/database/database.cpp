@@ -53,13 +53,27 @@ transaction_impl* database_impl::create_transaction(transaction &tr) const
   return new transaction_impl(tr);
 }
 
-database::database(object_store &ostore, const std::string &/*dbstring*/)
+database::database(object_store &ostore, const std::string &dbstring)
   : ostore_(ostore)
 {
-  // create new database implementation instance
-  impl_ = new database_impl;
-  // initialize database: create prepared insert
-  // update and delete statements
+  // parse dbstring
+  std::string::size_type pos = dbstring.find(':');
+  std::string db = dbstring.substr(0, pos);
+
+  // load sqlite library
+  // create instance
+  if (!db_lib_.load("oos-" + db + ".dll")) {
+    throw std::runtime_error("couldn't fínd library [" + db + "]");
+  }
+  // get create function
+  create_db fun = (create_db)db_lib_.function("create_database");
+
+  // create concrete database implementation object
+  impl_ = (*fun)("");
+
+  // get destroy function
+  destroy_fun_ = (destroy_db)db_lib_.function("destroy_database");
+
   /*
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
@@ -72,7 +86,8 @@ database::database(object_store &ostore, const std::string &/*dbstring*/)
 
 database::~database()
 {
-  delete impl_;
+  // destroy database object
+  (*destroy_fun_)(impl_);
 }
 
 void database::open()
@@ -117,12 +132,14 @@ bool database::load()
     // create dummy object
     object *o = node.producer->create();
     reader rdr(*this, o, node.type);
+    /*
     while(rdr.read()) {
       object *obj = node.producer->create();
       obj->read_from(&rdr);
       ostore_.insert(obj);
       // adjust id counter
     }
+    */
     delete o;
   }
   return true;
@@ -168,6 +185,11 @@ void database::pop_transaction()
 object* database::load(const std::string &type, int id)
 {
   return NULL;
+}
+
+statement_impl* database::create_statement_impl() const
+{
+  return impl_->create_statement();
 }
 
 transaction* database::current_transaction() const

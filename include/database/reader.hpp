@@ -20,6 +20,8 @@
 
 #include "object/object_atomizer.hpp"
 
+#include "database/statement.hpp"
+
 namespace oos {
 
 class database;
@@ -168,6 +170,8 @@ private:
 
 private:
   database &db_;
+  statement stmt_;
+  result *result_;
 };
 
 }

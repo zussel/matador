@@ -77,7 +77,7 @@ DatabaseTestUnit::helper()
     stmt = help.create(o, node.type, statement_helper::UPDATE);
     cout << "statement: " << stmt << endl;
     
-    stmt = help.create(o, node.type, statement_helper::DELETE);
+    stmt = help.create(o, node.type, statement_helper::DEL);
     cout << "statement: " << stmt << endl;
     
     stmt = help.create(o, node.type, statement_helper::DROP);

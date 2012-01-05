@@ -16,6 +16,7 @@
  */
 
 #include "database/statement.hpp"
+#include "database/database.hpp"
 
 namespace oos {
 
@@ -23,22 +24,22 @@ statement_impl::~statement_impl()
 {}
 
 statement::statement(database &db)
-{}
-
-statement::statement(database &db, const std::string &sql)
-{}
+  : impl_(0)
+{
+  impl_ = db.create_statement_impl();
+}
 
 statement::~statement()
 {}
 
-result* statement::execute()
+result* statement::execute(const std::string &sql)
 {
   return 0;
 }
 
 row* statement::step()
 {
-  return 0;
+  return impl_->step();
 }
 
 }

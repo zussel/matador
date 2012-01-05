@@ -35,6 +35,8 @@
 
 #include "object/object_ptr.hpp"
 
+#include "tools/library.hpp"
+
 #include <string>
 #include <stack>
 
@@ -44,6 +46,7 @@ class object_store;
 class result;
 class transaction;
 class transaction_impl;
+class statement_impl;
 
 /**
  * @class database_impl
@@ -93,6 +96,13 @@ public:
    * @return The concrete transaction_impl.
    */
   transaction_impl* create_transaction(transaction &tr) const;
+
+  /**
+   * Create the concrete statement_impl.
+   *
+   * @return The concrete statement_impl.
+   */
+  virtual statement_impl* create_statement() = 0;
 };
 
 /**
@@ -215,14 +225,29 @@ public:
 private:
   friend class transaction;
   friend class transaction_impl;
+  friend class statement;
   
   void push_transaction(transaction *tr);
   void pop_transaction();
 
   object* load(const std::string &type, int id = 0);
 
+  /**
+   * Create a statement implementation
+   *
+   * @return A statement_impl object.
+   */
+  statement_impl* create_statement_impl() const;
+
+  typedef database_impl*(*create_db)(const char*);
+  typedef void (*destroy_db)(database_impl*);
+
 private:
   database_impl *impl_;
+
+  library db_lib_;
+
+  destroy_db destroy_fun_;
   
   object_store &ostore_;
 

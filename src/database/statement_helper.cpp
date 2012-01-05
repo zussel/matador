@@ -53,7 +53,7 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
     case UPDATE:
       statement_ << "UPDATE " << table_name << " SET ";
       break;
-    case DELETE:
+    case DEL:
       statement_ << "DELETE FROM " << table_name << ";";
       return statement_.str();
     case DROP:
@@ -89,7 +89,7 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
       stmt = stmt.substr(0, stmt.size() - 1);
       stmt += ";";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -115,7 +115,7 @@ void statement_helper::write_char(const char *id, char)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -140,7 +140,7 @@ void statement_helper::write_float(const char *id, float)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -165,7 +165,7 @@ void statement_helper::write_double(const char *id, double)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -190,7 +190,7 @@ void statement_helper::write_int(const char *id, int)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -219,7 +219,7 @@ void statement_helper::write_long(const char *id, long)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -244,7 +244,7 @@ void statement_helper::write_unsigned(const char *id, unsigned)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -269,7 +269,7 @@ void statement_helper::write_bool(const char *id, bool)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -294,7 +294,7 @@ void statement_helper::write_charptr(const char *id, const char*)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -319,7 +319,7 @@ void statement_helper::write_string(const char *id, const std::string&)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;
@@ -344,7 +344,7 @@ void statement_helper::write_object(const char *id, const object_base_ptr&)
     case UPDATE:
       statement_ << id << "=?,";
       break;
-    case DELETE:
+    case DEL:
       break;
     case DROP:
       break;

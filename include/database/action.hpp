@@ -141,7 +141,7 @@ public:
     CREATE = 0, /**<Enum type for create action. */
     INSERT,     /**<Enum type for insert action. */
     UPDATE,     /**<Enum type for update action. */
-    DELETE,     /**<Enum type for delete action. */
+    DEL,        /**<Enum type for delete action. */
     DROP        /**<Enum type for drop action. */
   } action_type;
 

@@ -18,45 +18,62 @@
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_database.hpp"
 
+#include "database/row.hpp"
+
 #include <sqlite3.h>
 
 namespace oos {
 
 namespace sqlite {
 
-sqlite_statement::sqlite_statement(sqlite_database &db, const std::string &sql)
+sqlite_statement::sqlite_statement(sqlite_database &db)
   : stmt_(0)
+  , db_(db)
 {
-  int ret = sqlite3_prepare_v2(db(), sql.c_str(), sql.size(), &stmt_, 0);
-  if (SQLITE_OK != ret) {
-//    throw error;
-  }
 }
 
 sqlite_statement::~sqlite_statement()
 {
-  sqlite3_finalize(stmt_);
+  finalize();
 }
 
-/*
+result* sqlite_statement::execute(const std::string &sql)
+{
+  return 0;
+}
+
+row* sqlite_statement::step()
+{
+  int ret = sqlite3_step(stmt_);
+  if (ret == SQLITE_ROW) {
+    // retrieved new row
+    // create row object
+    row *r = new row;
+    
+    return r;
+  } else if (ret == SQLITE_DONE) {
+    // no further row available
+    return 0;
+  } else {
+    // error
+  }
+  return 0;
+}
+
 int sqlite_statement::prepare(const std::string &sql)
 {
   finalize();
-  return sqlite3_prepare();
-}
-*/
-
-int sqlite_statement::step()
-{
-  return sqlite3_step(stmt_);
+  int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
+  if (SQLITE_OK != ret) {
+//    throw error;
+  }
+  return ret;
 }
 
-/*
 int sqlite_statement::finalize()
 {
   return sqlite3_finalize(stmt_);
 }
-*/
 
 int sqlite_statement::reset()
 {

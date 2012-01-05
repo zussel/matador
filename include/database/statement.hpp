@@ -44,10 +44,13 @@ class OOS_API statement_impl
 public:
   virtual ~statement_impl();
 
+  virtual result* execute(const std::string &sql) = 0;
+  virtual row* step() = 0;
 /*
   virtual void create() = 0;
   virtual void destroy() = 0;
 */
+
 
 };
 
@@ -58,9 +61,12 @@ public:
   statement(database &db, const std::string &sql);
   ~statement();
 
-  result* execute();
+  result* execute(const std::string &sql);
 
   row* step();
+
+private:
+  statement_impl *impl_;
 };
 
 }

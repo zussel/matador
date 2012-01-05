@@ -85,7 +85,7 @@ public:
    * 
    * @return A new sqlite statement
    */
-  sqlite_statement* create_statement(const std::string &sql);
+  virtual statement_impl* create_statement();
 
   /**
    * Return the raw pointer to the sqlite3
@@ -100,6 +100,13 @@ private:
 };
 
 }
+}
+
+extern "C"
+{
+  OOS_SQLITE_API oos::database_impl* create_database(const char *db);
+
+  OOS_SQLITE_API void destroy_database(oos::database_impl *db);
 }
 
 #endif /* SQLITE_DATABASE_HPP */

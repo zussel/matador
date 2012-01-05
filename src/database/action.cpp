@@ -51,7 +51,7 @@ long action::id() const
 }
 
 delete_action::delete_action(object *o)
-  : action(action::DELETE, o)
+  : action(action::DEL, o)
   , type_(o ? o->object_type() : "")
 {}
 

@@ -33,12 +33,14 @@ class sqlite_database;
 class sqlite_statement : public statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db, const std::string &sql);
+  sqlite_statement(sqlite_database &db);
   virtual ~sqlite_statement();
 
-//  int prepare(const std::string &sql);
-  int step();
-//  int finalize();
+  virtual result* execute(const std::string &sql);
+  virtual row* step();
+
+  int prepare(const std::string &sql);
+  int finalize();
   int reset();
 
   int column_count() const;
@@ -55,6 +57,7 @@ public:
 
 private:
   sqlite3_stmt *stmt_;
+  sqlite_database &db_;
 };
 
 }

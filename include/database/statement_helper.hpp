@@ -50,7 +50,7 @@ public:
     CREATE,
     INSERT,
     UPDATE,
-    DELETE,
+    DEL,
     DROP
   } t_type;
 
