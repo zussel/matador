@@ -70,6 +70,6 @@ private:
 #endif
 };
 
-};
+}
 
 #endif /* LIBRARY_HPP */
