@@ -73,17 +73,17 @@ public:
   /**
    * The interface for the insert action.
    */
-  virtual void visit(insert_action *a);
+  virtual void visit(insert_action *a) = 0;
 
   /**
    * The interface for the update action.
    */
-  virtual void visit(update_action *a);
+  virtual void visit(update_action *a) = 0;
 
   /**
    * The interface for the delete action.
    */
-  virtual void visit(delete_action *a);  
+  virtual void visit(delete_action *a) = 0;
 
   /**
    * The interface for the drop table action.

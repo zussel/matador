@@ -100,7 +100,7 @@ void reader::read_bool(const char *id, bool &x)
   if (!valid_column(id, column_)) {
     return;
   }
-  x = stmt_->column_int(column_++);
+  x = stmt_->column_int(column_++) != 0;
 }
 
 void reader::read_charptr(const char *id, char* &x)

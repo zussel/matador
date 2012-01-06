@@ -41,6 +41,7 @@
 #include <memory>
 #include <list>
 #include <set>
+#include <map>
 
 namespace oos {
 
@@ -59,7 +60,7 @@ class byte_buffer;
  * specific database.
  * In most cases the default implementation fits all needs.
  */
-class OOS_API transaction_impl : public object_observer
+class OOS_API transaction_impl
 {
 public:
   /**
@@ -71,27 +72,6 @@ public:
   transaction_impl(transaction &tr);
 
   virtual ~transaction_impl();
-
-  /**
-   * Called when an object is inserted.
-   *
-   * @param o The inserted object.
-   */
-  virtual void on_insert(object *o);
-
-  /**
-   * Called when an object is updated.
-   *
-   * @param o The updated object.
-   */
-  virtual void on_update(object *o);
-
-  /**
-   * Called when an object is deleted.
-   *
-   * @param o The deleted object.
-   */
-  virtual void on_delete(object *o);
   
   /**
    * @brief Called on transaction rollback
@@ -193,6 +173,21 @@ public:
   const database* db() const;
 
 private:
+  class transaction_observer : public object_observer
+  {
+  public:
+    transaction_observer(transaction &tr)
+      : tr_(tr)
+    {}
+    virtual ~transaction_observer() {}
+
+    virtual void on_insert(object *o);
+    virtual void on_update(object *o);
+    virtual void on_delete(object *o);
+  private:
+    transaction &tr_;
+  };
+
   class backup_visitor : public action_visitor
   {
   public:
@@ -244,10 +239,13 @@ private:
   typedef action_list_t::iterator iterator;
   typedef action_list_t::const_iterator const_iterator;
 
+  typedef std::map<std::string, action_list_t> insert_action_map_t;
+
   friend class transaction_impl;
   friend class object_store;
   friend class database;
   
+  void backup(insert_action *ia);
   void backup(action *a);
   void restore(action *a);
 
@@ -261,17 +259,25 @@ private:
   bool empty() const;
   size_t size() const;
 
+  bool has_id(long id) const;
+
+  const action* find_insert_action(object *o) const;
+  void erase_insert_action(action* a);
+
 private:
   static long id_counter;
 
 private:
   database *db_;
+  transaction_observer observer_;
   long id_;
   
   transaction_impl *impl_;
   
   id_set_t id_set_;
   action_list_t action_list_;
+
+  insert_action_map_t insert_action_map_;
 
   byte_buffer object_buffer_;
   backup_visitor backup_visitor_;
