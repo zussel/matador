@@ -19,6 +19,8 @@ SET (TEST_SOURCES
   ObjectStoreTestUnit.hpp
   ObjectListTestUnit.cpp
   ObjectListTestUnit.hpp
+  ObjectVectorTestUnit.cpp
+  ObjectVectorTestUnit.hpp
   DatabaseTestUnit.cpp
   DatabaseTestUnit.hpp
 )

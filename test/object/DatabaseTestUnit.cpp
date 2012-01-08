@@ -266,9 +266,11 @@ DatabaseTestUnit::with_list()
     cout << "item list [" << itemlist->id() << "]\n";
     tr.commit();
     
+    ostore_.dump_objects(cout);
+
     tr.start();
-    cout << "inserting 20 items\n";
-    for (int i = 0; i < 20; ++i) {
+    cout << "inserting 2 items\n";
+    for (int i = 0; i < 2; ++i) {
       stringstream name;
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
@@ -288,8 +290,8 @@ DatabaseTestUnit::with_list()
     ostore_.dump_objects(cout);
     
     tr.start();
-    cout << "inserting 400 items\n";
-    for (int i = 0; i < 400; ++i) {
+    cout << "inserting 4 items\n";
+    for (int i = 0; i < 4; ++i) {
       stringstream name;
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));

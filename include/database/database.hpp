@@ -68,27 +68,27 @@ public:
   /**
    * The interface for the create table action.
    */
-  virtual void visit(create_action *) {}
+  virtual void visit(create_action*) {}
 
   /**
    * The interface for the insert action.
    */
-  virtual void visit(insert_action *a) = 0;
+  virtual void visit(insert_action*) {};
 
   /**
    * The interface for the update action.
    */
-  virtual void visit(update_action *a) = 0;
+  virtual void visit(update_action*) {};
 
   /**
    * The interface for the delete action.
    */
-  virtual void visit(delete_action *a) = 0;
+  virtual void visit(delete_action*) {};
 
   /**
    * The interface for the drop table action.
    */
-  virtual void visit(drop_action *) {}
+  virtual void visit(drop_action*) {}
 
   /**
    * Create the concrete transaction_impl.
@@ -102,7 +102,7 @@ public:
    *
    * @return The concrete statement_impl.
    */
-  virtual statement_impl* create_statement() = 0;
+  virtual statement_impl* create_statement();
 };
 
 /**

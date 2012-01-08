@@ -24,6 +24,8 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
+#include "database/sqlite/sqlite_database.hpp"
+
 #include <iostream>
 #include <stdexcept>
 
@@ -42,16 +44,23 @@ transaction_impl* database_impl::create_transaction(transaction &tr) const
   return new transaction_impl(tr);
 }
 
+statement_impl* database_impl::create_statement()
+{
+  return 0;
+}
+
 database::database(object_store &ostore, const std::string &dbstring)
-  : ostore_(ostore)
+  : destroy_fun_(0)
+  , ostore_(ostore)
 {
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
   std::string db = dbstring.substr(0, pos);
 
+/*
   // load sqlite library
   // create instance
-  if (!db_lib_.load("oos-" + db + ".dll")) {
+  if (!db_lib_.load("liboos-sqlite.so")) {
     throw std::runtime_error("couldn't fínd library [" + db + "]");
   }
   // get create function
@@ -62,7 +71,8 @@ database::database(object_store &ostore, const std::string &dbstring)
 
   // get destroy function
   destroy_fun_ = (destroy_db)db_lib_.function("destroy_database");
-
+*/
+  impl_ = new database_impl;
   /*
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
@@ -75,8 +85,12 @@ database::database(object_store &ostore, const std::string &dbstring)
 
 database::~database()
 {
+  if (destroy_fun_) {
   // destroy database object
-  (*destroy_fun_)(impl_);
+    (*destroy_fun_)(impl_);
+  } else {
+    delete impl_;
+  }
 }
 
 void database::open()
@@ -114,6 +128,7 @@ void database::close()
 
 bool database::load()
 {
+  /*
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
@@ -129,6 +144,7 @@ bool database::load()
     }
     delete o;
   }
+  */
   return true;
 }
 

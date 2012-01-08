@@ -262,7 +262,9 @@ private:
   bool has_id(long id) const;
 
   const action* find_insert_action(object *o) const;
-  void erase_insert_action(action* a);
+  void erase_insert_action(const action* a);
+
+  iterator find_modify_action(object *o);
 
 private:
   static long id_counter;

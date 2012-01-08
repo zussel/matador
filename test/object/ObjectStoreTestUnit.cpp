@@ -131,8 +131,8 @@ ObjectStoreTestUnit::multiple_simple_objects()
     
   // create 1000 objects
   UNIT_INFO("\ncreating objects :");
-  for (int i = 0; i < 1000000; ++i) {
-    if (i%10000 == 0) {
+  for (int i = 0; i < 10000; ++i) {
+    if (i%100 == 0) {
       std::cout << " " << i;
       std::cout.flush();
     }
@@ -169,8 +169,8 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
     
   // create 1000 objects
   UNIT_INFO("\ncreating objects :");
-  for (int i = 0; i < 100000; ++i) {
-    if (i%1000 == 0) {
+  for (int i = 0; i < 1000; ++i) {
+    if (i%10 == 0) {
       std::cout << " " << i;
       std::cout.flush();
     }

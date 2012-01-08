@@ -43,8 +43,21 @@ void transaction_impl::rollback()
    * rollback transaction
    * restore objects
    * and finally pop transaction
+   * clear insert action map
    *
    **************/
+  
+  transaction::insert_action_map_t::iterator first = tr_.insert_action_map_.begin();
+  transaction::insert_action_map_t::iterator last = tr_.insert_action_map_.end();
+  while (first != last) {
+    while (!first->second.empty()) {
+      std::auto_ptr<action> a(first->second.front());
+      tr_.restore(a.get());
+      first->second.pop_front();
+    }
+    ++first;
+  }
+  tr_.insert_action_map_.clear();
   while (!tr_.empty()) {
     transaction::iterator i = tr_.begin();
     std::auto_ptr<action> a(*i);
@@ -62,6 +75,17 @@ void transaction_impl::commit()
    * change state to comitted
    * 
    ****************/
+  transaction::insert_action_map_t::iterator ifirst = tr_.insert_action_map_.begin();
+  transaction::insert_action_map_t::iterator ilast = tr_.insert_action_map_.end();
+  while (ifirst != ilast) {
+    while (!ifirst->second.empty()) {
+      std::auto_ptr<action> a(ifirst->second.front());
+      a->accept(tr_.db_->impl_);
+      ifirst->second.pop_front();
+    }
+    ++ifirst;
+  }
+  tr_.insert_action_map_.clear();
   transaction::iterator first = tr_.begin();
   transaction::iterator last = tr_.end();
   while (first != last) {
@@ -126,7 +150,24 @@ void transaction::transaction_observer::on_delete(object *o)
     // this object inserted
     // try to find out if it is an insert
     // or update action
-
+    transaction::iterator i = tr_.find_modify_action(o);
+    if (i != tr_.end()) {
+      // found modify action
+      delete *i;
+      *i = new delete_action(o);
+    } else {
+      const action* a = tr_.find_insert_action(o);
+      if (a) {
+        tr_.erase_insert_action(a);
+        tr_.id_set_.erase(o->id());
+      } else {
+        /***************
+         * 
+         * ERROR: this cannot happen!!!
+         * 
+         ***************/
+      }
+    }
   }
 }
 
@@ -307,13 +348,10 @@ transaction::backup(action *a)
    * 
    *************/
   
-  /*
-  actions_map_t::iterator ai = actions_map_.find(a->obj()->object_type());
-  if (ai == actions_map_.end()) {
-    ai = actions_map_.insert(std::make_pair(a->obj()->object_type(), actions())).first;
-  }
-  */
-
+  backup_visitor_.backup(a, &object_buffer_);
+  action_list_.push_back(a);
+  id_set_.insert(a->obj()->id());
+/*
   id_set_t::iterator i = id_set_.find(a->obj()->id());
   if (i == id_set_.end()) {
 //    cout << "TR (" << id_ << ") couldn't find id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]: inserting action\n";
@@ -357,6 +395,7 @@ transaction::backup(action *a)
       }
     }
   }
+  */
 }
 
 void transaction::restore(action *a)
@@ -420,8 +459,34 @@ const action* transaction::find_insert_action(object *o) const
   return 0;
 }
 
-void transaction::erase_insert_action(action* a)
+void transaction::erase_insert_action(const action* a)
 {
+  insert_action_map_t::iterator i = insert_action_map_.find(a->obj()->object_type());
+  if (i != insert_action_map_.end()) {
+    iterator first = i->second.begin();
+    iterator last = i->second.end();
+    while (first != last) {
+      if ((*first)->id() == a->obj()->id()) {
+        delete *first;
+        i->second.erase(first);
+        return;
+      }
+      ++first;
+    }
+  }
+}
+
+transaction::iterator transaction::find_modify_action(object *o)
+{
+  iterator first = action_list_.begin();
+  iterator last = action_list_.end();
+  while (first != last) {
+    if ((*first)->id() == o->id()) {
+      break;
+    }
+    ++first;
+  }
+  return first;
 }
 
 }

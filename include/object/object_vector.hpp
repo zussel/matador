@@ -445,6 +445,16 @@ private:
   vector_type object_vector_;
 };
 
+template < typename T >
+class object_ptr_vector : public object_vector<T, object_ptr<T> >
+{
+  typedef object_vector<T, object_ptr<T> > base_vector;            /**< Shortcut for the object_list class. */
+  typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
+  typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
+  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the list iterator. */
+  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
+};
+
 }
 
 #endif /* OBJECT_VECTOR_HPP */
