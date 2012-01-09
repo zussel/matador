@@ -19,7 +19,7 @@
 #include "database/database.hpp"
 #include "database/statement_helper.hpp"
 
-#include <string.h>
+#include <cstring>
 
 namespace oos {
 

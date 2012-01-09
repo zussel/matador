@@ -448,11 +448,55 @@ private:
 template < typename T >
 class object_ptr_vector : public object_vector<T, object_ptr<T> >
 {
-  typedef object_vector<T, object_ptr<T> > base_vector;            /**< Shortcut for the object_list class. */
+  typedef object_vector<T, object_ptr<T> > base_vector;            /**< Shortcut for the object_vector class. */
   typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
   typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
-  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the list iterator. */
-  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
+  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the vector iterator. */
+  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the vector const iterator. */
+
+  /**
+   * @brief Creates an empty vector.
+   * 
+   * A new object_ptr_vector is created. The vector is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given vector_name.
+   * 
+   * @param parent The containing vector object.
+   * @param vector_name The name of the parent in the value type object.
+   */
+  object_ptr_vector(object *parent, const std::string &vector_name)
+    : base_vector(parent, vector_name)
+  {}
+  
+  virtual ~object_ptr_vector() {}
+};
+
+template < typename T >
+class object_ref_vector : public object_vector<T, object_ref<T> >
+{
+  typedef object_vector<T, object_ref<T> > base_vector;            /**< Shortcut for the object_vector class. */
+  typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
+  typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
+  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the vector iterator. */
+  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the vector const iterator. */
+
+  /**
+   * @brief Creates an empty vector.
+   * 
+   * A new object_ref_list is created. The vector is part
+   * of the given parent object and therefor a reference
+   * to the parent object must be found inside the value
+   * type object with the given vector_name.
+   * 
+   * @param parent The containing vector object.
+   * @param vector_name The name of the parent in the value type object.
+   */
+  object_ref_vector(object *parent, const std::string &vector_name)
+    : base_list(parent, vector_name)
+  {}
+
+  virtual ~object_ref_vector() {}
 };
 
 }
