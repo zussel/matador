@@ -127,6 +127,7 @@ void reader::read_object(const char *id, object_base_ptr &x)
   if (!valid_column(id, column_)) {
     return;
   }
+  //x.repoint(...);
   // set object id
 }
 

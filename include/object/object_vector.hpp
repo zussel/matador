@@ -493,7 +493,7 @@ class object_ref_vector : public object_vector<T, object_ref<T> >
    * @param vector_name The name of the parent in the value type object.
    */
   object_ref_vector(object *parent, const std::string &vector_name)
-    : base_list(parent, vector_name)
+    : base_vector(parent, vector_name)
   {}
 
   virtual ~object_ref_vector() {}
