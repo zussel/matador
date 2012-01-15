@@ -94,7 +94,7 @@ DatabaseTestUnit::simple()
 {
   cout << endl;
   // create database and make object store known to the database
-  database *db = new database(ostore_, "sqlite://");
+  database *db = new database(ostore_, "sqlite://test.sqlite");
 
   // open db
   db->open();

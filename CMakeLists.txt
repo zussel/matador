@@ -18,6 +18,9 @@ INCLUDE_DIRECTORIES(
 	"C:/Programme/SQlite/include"
 )
 
+# add module path
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 # Put the libaries and binaries that get built into directories at the
 # top of the build tree rather than in hard-to-find leaf
 # directories. This simplifies manual testing and the use of the build
@@ -25,6 +28,8 @@ INCLUDE_DIRECTORIES(
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+FIND_PACKAGE(SQLite3 REQUIRED)
 
 #IF (NOT CMAKE_BUILD_TYPE)
 #  SET(CMAKE_BUILD_TYPE "Debug")
@@ -69,6 +74,7 @@ SET(OBJECT_HEADER
 SET(TOOLS_SOURCES
   src/tools/byte_buffer.cpp
   src/tools/library.cpp
+  src/tools/blob.cpp
 )
 
 SET(TOOLS_HEADER
@@ -136,7 +142,7 @@ ADD_LIBRARY(oos-sqlite SHARED
   ${SQLITE_DATABASE_SOURCES} ${SQLITE_DATABASE_HEADER}
 )
 
-TARGET_LINK_LIBRARIES(oos-sqlite oos)
+TARGET_LINK_LIBRARIES(oos-sqlite oos ${SQLITE3_LIBRARY})
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${OBJECT_SOURCES} ${OBJECT_HEADER})

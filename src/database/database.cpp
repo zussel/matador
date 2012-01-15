@@ -19,6 +19,7 @@
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 #include "database/reader.hpp"
+#include "database/statement_helper.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -55,31 +56,44 @@ database::database(object_store &ostore, const std::string &dbstring)
 {
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
-  std::string db = dbstring.substr(0, pos);
+  std::string db_type = dbstring.substr(0, pos);
+  std::string db = dbstring.substr(pos + 3);
 
-/*
   // load sqlite library
   // create instance
-  if (!db_lib_.load("liboos-sqlite.so")) {
-    throw std::runtime_error("couldn't fínd library [" + db + "]");
+  if (!db_lib_.load("liboos-sqlite")) {
+    throw std::runtime_error("couldn't fínd library [" + db_type + "]");
   }
   // get create function
   create_db fun = (create_db)(db_lib_.function("create_database"));
 
   // create concrete database implementation object
-  impl_ = (*fun)("");
+  impl_ = (*fun)(db.c_str());
 
   // get destroy function
   destroy_fun_ = (destroy_db)db_lib_.function("destroy_database");
-*/
-  impl_ = new database_impl;
-  /*
+
+  // if database is new create all tables
+  statement_helper helper;
+
+  statement_impl *stmt = impl_->create_statement();
+      
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
-    impl_->prepare(*first++);
+      const prototype_node &node = (*first++);
+      if (node.abstract) {
+        continue;
+      }
+      std::auto_ptr<object> o(node.producer->create());
+      
+      std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
+      
+      stmt->prepare(sql);
+      
+      stmt->step();
+//    impl_->prepare(*first++);
   }
-  */
 }
 
 
@@ -128,23 +142,20 @@ void database::close()
 
 bool database::load()
 {
-  /*
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
     const prototype_node &node = (*first++);
     // create dummy object
-    object *o = node.producer->create();
-    reader rdr(*this, o, node.type);
+    std::auto_ptr<object> o(node.producer->create());
+    reader rdr(*this, o.get(), node.type);
     while(rdr.read()) {
-      object *obj = node.producer->create();
+      std::auto_ptr<object> obj(node.producer->create());
       obj->read_from(&rdr);
-      ostore_.insert(obj);
+      ostore_.insert(obj.release());
       // adjust id counter
     }
-    delete o;
   }
-  */
   return true;
 }
 

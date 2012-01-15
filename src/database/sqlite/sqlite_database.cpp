@@ -20,7 +20,7 @@
 
 #include "database/transaction.hpp"
 
-#include <exception>
+#include <stdexcept>
 #include <sqlite3.h>
 
 namespace oos {
@@ -32,7 +32,7 @@ sqlite_database::sqlite_database(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &db_);
   if (ret != SQLITE_OK) {
-//    throw std::runtime_error("couldn't open database: " + db);
+    throw std::runtime_error("couldn't open database: " + db);
   }
 }
 

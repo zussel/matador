@@ -20,6 +20,7 @@
 
 #include "database/row.hpp"
 
+#include <stdexcept>
 #include <sqlite3.h>
 
 namespace oos {
@@ -49,6 +50,7 @@ bool sqlite_statement::step()
     return false;
   } else {
     // error, throw exception
+    throw std::runtime_error("error on calling sqlite3_step");
   }
   return false;
 }
@@ -58,7 +60,7 @@ int sqlite_statement::prepare(const std::string &sql)
   finalize();
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   if (SQLITE_OK != ret) {
-//    throw error;
+    throw std::runtime_error("error while preparing statement: " + sql);
   }
   return ret;
 }

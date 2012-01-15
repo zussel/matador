@@ -36,9 +36,9 @@ library::~library()
 bool library::load()
 {
 #ifdef WIN32
-  handle_ = LoadLibrary(lib_.c_str());
+  handle_ = LoadLibrary((lib_ + ".dll").c_str());
 #else
-  handle_ = dlopen(lib_.c_str(), RTLD_LAZY);
+  handle_ = dlopen((lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
     return false;
