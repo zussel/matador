@@ -21,20 +21,20 @@ void BlobTestUnit::create_blob()
 {
   cout << "\n";
 
-  blob<32> b;
+  blob b1;
   
   int val = 8;
-  b.assign(val);
-  b.assign(val);
+  b1.assign(val);
+  b1.assign(val);
 
-  cout << "size: " << b.size() << "\n";
-  cout << "max size: " << b.max_size() << "\n";
+  cout << "size: " << b1.size() << "\n";
+  cout << "capacity: " << b1.capacity() << "\n";
 
-  blob<0> b2;
+  blob b2;
   
   b2.assign(val);
   b2.assign(val);
 
   cout << "size: " << b2.size() << "\n";
-  cout << "max size: " << b2.max_size() << "\n";
+  cout << "capacity: " << b2.capacity() << "\n";
 }

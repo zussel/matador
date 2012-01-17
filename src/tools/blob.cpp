@@ -24,4 +24,9 @@ blob::size_type blob::capacity() const
   return capacity_;
 }
 
+const char* blob::data() const
+{
+  return data_;
+}
+
 }

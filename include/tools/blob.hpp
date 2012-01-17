@@ -31,12 +31,6 @@
   #define OOS_API
 #endif
 
-#ifdef WIN32
-#include <array>
-#else
-#include <tr1/array>
-#endif
-
 #include <cstring>
 
 namespace oos {
@@ -44,17 +38,13 @@ namespace oos {
 class blob
 {
 public:
-  typedef std::tr1::array<char, SIZE> t_data_array;
-  typedef typename t_data_array::size_type size_type;
-  typedef typename t_data_array::iterator iterator;
-  typedef typename t_data_array::const_iterator const_iterator;
+  typedef unsigned int size_type;
+  enum { CHUNK_SIZE = 1024 };
 
 public:
-  blob()
-    : size_(0)
-  {}
-  ~blob() {}
-
+  blob();
+  ~blob();
+  
   /**
    * @brief Assign data to blob.
    * 
@@ -67,87 +57,6 @@ public:
    * @param val The value to assign.
    * @return True if data could be assigned.
    */
-  template < typename T >
-  bool assign(const T &val)
-  {
-    if (sizeof(T) > SIZE) {
-      return false;
-    }
-    memcpy(data_.data(), &val, sizeof(T));
-    size_ = sizeof(T);
-    return false;
-  }
-
-  /**
-   * @brief Append data to blob.
-   * 
-   * Append data to blob. If data is to
-   * big for blob it isn't appended and
-   * false is returned.
-   * 
-   * @tparam T The type of the data.
-   * @param val The value to append.
-   * @return True if data could be appended.
-   */
-  template < typename T >
-  bool append(const T &val)
-  {
-    if (sizeof(T) > size_) {
-      return false;
-    }
-    return false;
-  }
-
-  size_type size() const
-  {
-    return size_;
-  }
-
-  size_type max_size() const
-  {
-    return data_.max_size();
-  }
-
-  iterator begin()
-  {
-    return data_.begin();
-  }
-  
-  const_iterator begin() const
-  {
-    return data_.begin();
-  }
-  
-  iterator end()
-  {
-    return data_.end();
-  }
-  
-  const_iterator end() const
-  {
-    return data_.end();
-  }
-  
-  bool empty() const
-  {
-    return data_.empty();
-  }
-
-private:
-  std::tr1::array<char, SIZE> data_;
-  size_type size_;
-};
-
-class blob
-{
-public:
-  typedef unsigned int size_type;
-  enum { CHUNK_SIZE = 1024 };
-
-public:
-  blob();
-  ~blob();
-  
   template < typename T >
   bool assign(const T &val)
   {
@@ -178,15 +87,11 @@ public:
     return false;
   }
 
-  size_type size() const
-  {
-    return size_;
-  }
+  size_type size() const;
 
-  size_type capacity() const
-  {
-    return capacity_;
-  }
+  size_type capacity() const;
+
+  const char* data() const;
 
 private:
   char *data_;

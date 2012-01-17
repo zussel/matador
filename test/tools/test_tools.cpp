@@ -19,6 +19,7 @@
 #include "unit/test_suite.hpp"
 
 #include "BlobTestUnit.hpp"
+#include "VarCharTestUnit.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -31,6 +32,7 @@ using namespace oos;
 int main(int argc, char *argv[])
 {
   test_suite::instance().register_unit("blob", new BlobTestUnit());
+  test_suite::instance().register_unit("varchar", new VarCharTestUnit());
   
   test_suite::instance().init(argc, argv);
   test_suite::instance().run();
