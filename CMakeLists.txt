@@ -29,7 +29,14 @@ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+
+MESSAGE(STATUS "Looking for SQLite3")
 FIND_PACKAGE(SQLite3 REQUIRED)
+IF(SQLITE3_FOUND)
+	MESSAGE(STATUS "Looking for SQLite3 - found")
+ELSE(SQLITE3_FOUND)
+	MESSAGE(FATAL_ERROR "Looking for SQLite3 - not found")
+ENDIF(SQLITE3_FOUND)
 
 #IF (NOT CMAKE_BUILD_TYPE)
 #  SET(CMAKE_BUILD_TYPE "Debug")
@@ -81,6 +88,8 @@ SET(TOOLS_HEADER
   include/tools/byte_buffer.hpp
   include/tools/singleton.hpp
   include/tools/library.hpp
+  include/tools/blob.hpp
+  include/tools/varchar.hpp
 )
 
 SET(UNIT_SOURCES

@@ -30,7 +30,7 @@ void VarCharTestUnit::create_varchar()
   
   cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
   
-  str8 += "Welt";
+  str8 += std::string("Welt");
 
   cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
 }

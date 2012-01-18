@@ -33,7 +33,7 @@
 #include <string>
 
 namespace oos {
-
+class varchar_base;
 class object_list_base;
 class object_vector_base;
 class object_base_ptr;
@@ -159,6 +159,18 @@ public:
    * @param x The data to read from.
    */
 	virtual void write_string(const char*, const std::string&) {}
+
+  /**
+   * @fn virtual void write_varchar(const char *id, const varchar_base &x)
+   * @brief Write a std::string to the atomizer.
+   * 
+   * Write a std::string to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+	virtual void write_varchar(const char*, const varchar_base&) {}
 
   /**
    * @fn virtual void write_object(const char *id, const object_base_ptr &x)

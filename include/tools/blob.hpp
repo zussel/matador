@@ -35,7 +35,7 @@
 
 namespace oos {
 
-class blob
+class OOS_API blob
 {
 public:
   typedef unsigned int size_type;

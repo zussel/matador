@@ -36,8 +36,15 @@
 
 namespace oos {
 
+class varchar_base
+{
+public:
+  varchar_base() {}
+  ~varchar_base() {}
+};
+
 template < unsigned int CAPACITY >
-class varchar
+class varchar : public varchar_base
 {
 public:
   typedef std::string::size_type size_type;
