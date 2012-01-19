@@ -164,7 +164,7 @@ public:
    * @fn virtual void write_varchar(const char *id, const varchar_base &x)
    * @brief Write a std::string to the atomizer.
    * 
-   * Write a std::string to the atomizer
+   * Write a varchar to the atomizer
    * identified by a unique name.
    * 
    * @param id Unique id of the data.
