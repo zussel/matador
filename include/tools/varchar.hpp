@@ -60,8 +60,6 @@ public:
 
   varchar& operator+=(const char *x);
 
-  operator std::string() const;
-  
   std::string str() const;
 
   size_type size() const;
@@ -107,6 +105,7 @@ public:
 
   tvarchar& operator=(const char *x)
   {
+    varchar::operator=(x);
     return *this;
   }
 };

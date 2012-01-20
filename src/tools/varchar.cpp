@@ -53,11 +53,6 @@ varchar& varchar::operator+=(const char *x)
   return *this;
 }
 
-operator varchar::std::string() const
-{
-  return data_;
-}
-
 std::string varchar::str() const
 {
   return data_;
@@ -73,7 +68,7 @@ varchar::size_type varchar::capacity() const
   return capacity_;
 }
 
-friend std::ostream& operator<<(std::ostream &out, const varchar &val)
+std::ostream& operator<<(std::ostream &out, const varchar &val)
 {
   out << val.str();
   return out;

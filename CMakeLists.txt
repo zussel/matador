@@ -82,6 +82,7 @@ SET(TOOLS_SOURCES
   src/tools/byte_buffer.cpp
   src/tools/library.cpp
   src/tools/blob.cpp
+  src/tools/varchar.cpp
 )
 
 SET(TOOLS_HEADER
