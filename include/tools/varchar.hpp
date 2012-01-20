@@ -36,107 +36,79 @@
 
 namespace oos {
 
-class varchar_base
-{
-public:
-  varchar_base() {}
-  ~varchar_base() {}
-};
-
-template < unsigned int CAPACITY >
-class varchar : public varchar_base
+class varchar
 {
 public:
   typedef std::string::size_type size_type;
+
 public:
-  varchar() {}
+  explicit varchar(size_type capacity);
 
-  explicit varchar(const char *str)
-    : data_(str)
+  varchar(const varchar &x);
+
+  varchar& operator=(const varchar &x);
+
+  varchar& operator=(const std::string &x);
+
+  varchar& operator=(const char *x);
+
+  ~varchar();
+  
+  varchar& operator+=(const varchar &x);
+
+  varchar& operator+=(const std::string &x);
+
+  varchar& operator+=(const char *x);
+
+  operator std::string() const;
+  
+  std::string str() const;
+
+  size_type size() const;
+
+  size_type capacity() const;
+
+  friend std::ostream& operator<<(std::ostream &out, const varchar &val);
+
+protected:
+  void ok(const std::string &x);
+
+protected:
+  size_type capacity_;
+  std::string data_;
+};
+
+template < unsigned int C >
+class tvarchar : public varchar
+{
+public:
+  tvarchar()
+    : varchar(C)
   {}
 
-  explicit varchar(const std::string &str)
-    : data_(str)
-  {}
-
-  varchar(const varchar &x)
-    : data_(x.data_)
-  {}
-
-  varchar& operator=(const varchar &x)
+  tvarchar(const tvarchar &x)
+    : varchar(C)
   {
+    data_ = x.data_;
+  }
+
+  tvarchar& operator=(const tvarchar &x)
+  {
+    
+    capacity_ = C;
     data_ = x.data_;
     return *this;
   }
 
-  varchar& operator=(const std::string &x)
+  tvarchar& operator=(const std::string &x)
   {
-    data_ = x;
     return *this;
   }
 
-  varchar& operator=(const char *x)
+  tvarchar& operator=(const char *x)
   {
-    data_.assign(x);
     return *this;
   }
-
-  ~varchar() {}
-  
-  varchar& operator+=(const varchar &x)
-  {
-    data_ += x.str();
-    return *this;
-  }
-
-  varchar& operator+=(const std::string &x)
-  {
-    data_ += x;
-    return *this;
-  }
-
-  varchar& operator+=(const char *x)
-  {
-    data_ += x;
-    return *this;
-  }
-
-  operator std::string() const
-  {
-    return data_;
-  }
-  
-  std::string str() const
-  {
-    return data_;
-  }
-
-  size_type size() const
-  {
-    return data_.size();
-  }
-
-  size_type capacity() const
-  {
-    return CAPACITY;
-  }
-
-  template < unsigned int C >
-  friend std::ostream& operator<<(std::ostream &out, const varchar<C> &val) {
-    out << val.str();
-    return out;
-  }
-
-private:
-  void ok(const std::string &x)
-  {
-    if (x.size() > CAPACITY) {
-      throw std::logic_error("string is to long");
-    }
-  }
-
-private:
-  std::string data_;
 };
 
 }

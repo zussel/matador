@@ -5,6 +5,7 @@
 #include <iostream>
 
 using oos::varchar;
+using oos::tvarchar;
 using std::cout;
 using std::endl;
 
@@ -22,7 +23,7 @@ VarCharTestUnit::~VarCharTestUnit()
 void VarCharTestUnit::create_varchar()
 {
   cout << endl;
-  varchar<8> str8;
+  tvarchar<8> str8;
   
   cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
   
