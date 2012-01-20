@@ -136,6 +136,17 @@ private:
 	virtual void read_string(const char *id, std::string &x);
 
   /**
+   * @brief Read a varchar from the atomizer.
+   * 
+   * Read a varchar from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void reader::read_varchar(const char *id, varchar_base &x);
+    
+  /**
    * @brief Read an object_base_ptr from the atomizer.
    * 
    * Read an object_base_ptr from the atomizer

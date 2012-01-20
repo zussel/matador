@@ -37,6 +37,7 @@ namespace oos {
 class object;
 class object_store;
 class byte_buffer;
+class varchar_base;
 
 /**
  * @class object_serializer
@@ -89,6 +90,7 @@ private:
 	virtual void write_bool(const char* id, bool b);
 	virtual void write_charptr(const char* id, const char *c);
 	virtual void write_string(const char* id, const std::string &s);
+  virtual void write_varchar(const char*, const varchar_base &s);
 	virtual void write_object(const char* id, const object_base_ptr &x);
 	virtual void write_object_list(const char* id, const object_list_base &x);
 	virtual void write_object_vector(const char* id, const object_vector_base &x);
@@ -102,7 +104,8 @@ private:
 	virtual void read_bool(const char* id, bool &b);
 	virtual void read_charptr(const char* id, char *&c);
 	virtual void read_string(const char* id, std::string &s);
-	virtual void read_object(const char* id, object_base_ptr &x);
+  virtual void read_varchar(const char*, varchar_base &s);
+  virtual void read_object(const char* id, object_base_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
 	virtual void read_object_vector(const char* id, object_vector_base &x);
   

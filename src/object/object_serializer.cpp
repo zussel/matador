@@ -23,6 +23,7 @@
 #include "object/object_vector.hpp"
 
 #include "tools/byte_buffer.hpp"
+#include "tools/varchar.hpp"
 
 #include <string.h>
 
@@ -108,6 +109,14 @@ void object_serializer::write_string(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
+void object_serializer::write_varchar(const char*, const varchar_base &s)
+{
+  size_t len = s.size();
+  
+  buffer_->append(&len, sizeof(len));
+  buffer_->append(s.str().c_str(), len);
+}
+
 void object_serializer::write_object(const char*, const object_base_ptr &x)
 {
   // write type and id into buffer
@@ -176,6 +185,16 @@ void object_serializer::read_charptr(const char*, char *&c)
 }
 
 void object_serializer::read_string(const char*, std::string &s)
+{
+  size_t len = 0;
+  buffer_->release(&len, sizeof(len));
+  char *str = new char[len];
+  buffer_->release(str, len);
+  s.assign(str, len);
+  delete [] str;
+}
+
+void object_serializer::read_varchar(const char*, varchar_base &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));

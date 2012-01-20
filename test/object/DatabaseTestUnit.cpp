@@ -94,16 +94,16 @@ DatabaseTestUnit::simple()
 {
   cout << endl;
   // create database and make object store known to the database
-  database *db = new database(ostore_, "sqlite://test.sqlite");
+  database db(ostore_, "sqlite://test.sqlite");
 
   // open db
-  db->open();
+  db.open();
 
   // load data
-  db->load();
+  db.load();
 
   // create new transaction    
-  transaction tr(db);
+  transaction tr(&db);
   try {
     // begin transaction
     tr.start();
@@ -121,7 +121,7 @@ DatabaseTestUnit::simple()
     engine->power(120);
     cout << "changed power of " << *engine << "\n";
     
-    transaction tr2(db);
+    transaction tr2(&db);
     try {
       // begin inner transaction
       tr2.start();
@@ -181,10 +181,9 @@ DatabaseTestUnit::simple()
     tr.rollback();
   }
   // close db
-  db->close();
+  db.close();
   // explicit write data to file
   //db->write();
-  delete db;
 }
 
 void

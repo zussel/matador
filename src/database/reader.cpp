@@ -19,6 +19,8 @@
 #include "database/database.hpp"
 #include "database/statement_helper.hpp"
 
+#include "tools/varchar.hpp"
+
 #include <cstring>
 
 namespace oos {
@@ -115,6 +117,14 @@ void reader::read_charptr(const char *id, char* &x)
 }
 
 void reader::read_string(const char *id, std::string &x)
+{
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_text(column_++);
+}
+
+void reader::read_varchar(const char *id, varchar_base &x)
 {
   if (!valid_column(id, column_)) {
     return;

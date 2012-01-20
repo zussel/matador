@@ -6,6 +6,8 @@
 #include "object/linked_object_list.hpp"
 #include "object/object_atomizer.hpp"
 
+#include "tools/varchar.hpp"
+
 template < class L >
 class Item : public oos::object
 {
@@ -17,17 +19,17 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     oos::object::read_from(reader);
-    reader->read_string("name", name_);
+    reader->read_varchar("name", name_);
     reader->read_object("itemlist", list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     oos::object::write_to(writer);
-    writer->write_string("name", name_);
+    writer->write_varchar("name", name_);
     writer->write_object("itemlist", list_);
   }
   
-  std::string name() const { return name_; }
+  std::string name() const { return name_.str(); }
   void name(const std::string &n)
   { 
     mark_modified();
@@ -42,7 +44,7 @@ public:
   }
 
 private:
-  std::string name_;
+  oos::varchar<32> name_;
   oos::object_ref<L> list_;
 };
 

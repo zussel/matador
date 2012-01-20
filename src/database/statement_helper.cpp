@@ -17,6 +17,8 @@
 
 #include "database/statement_helper.hpp"
 
+#include "tools/varchar.hpp"
+
 #include "object/object.hpp"
 
 #include <cstring>
@@ -309,6 +311,31 @@ void statement_helper::write_string(const char *id, const std::string&)
   switch (type_) {
     case CREATE:
       statement_ << id << " TEXT,";
+      break;
+    case SELECT:
+      statement_ << id << ",";
+      break;
+    case INSERT:
+      statement_ << id << ",";
+      break;
+    case UPDATE:
+      statement_ << id << "=?,";
+      break;
+    case DEL:
+      break;
+    case DROP:
+      break;
+    default:
+      break;
+  }
+}
+
+void statement_helper::write_varchar(const char *id, const varchar_base &x)
+{
+  ++param_count_;
+  switch (type_) {
+    case CREATE:
+      statement_ << id << " VARCHAR(" << x.capacity() << "),";
       break;
     case SELECT:
       statement_ << id << ",";

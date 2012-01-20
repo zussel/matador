@@ -166,6 +166,18 @@ private:
 	virtual void write_string(const char *id, const std::string &x);
 
   /**
+   * @fn virtual void write_varchar(const char *id, const varchar_base &x)
+   * @brief Write a std::string to the atomizer.
+   * 
+   * Write a varchar to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+	virtual void write_varchar(const char *id, const varchar_base &x);
+
+  /**
    * @fn virtual void write_object(const char *id, const object_base_ptr &x)
    * @brief Write a object_base_ptr to the atomizer.
    * 

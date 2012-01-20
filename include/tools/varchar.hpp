@@ -36,29 +36,31 @@
 
 namespace oos {
 
-class varchar
+class OOS_API varchar_base
 {
 public:
   typedef std::string::size_type size_type;
 
 public:
-  explicit varchar(size_type capacity);
+  explicit varchar_base(size_type capacity);
 
-  varchar(const varchar &x);
+  varchar_base(const varchar_base &x);
 
-  varchar& operator=(const varchar &x);
+  varchar_base& operator=(const varchar_base &x);
 
-  varchar& operator=(const std::string &x);
+  varchar_base& operator=(const std::string &x);
 
-  varchar& operator=(const char *x);
+  varchar_base& operator=(const char *x);
 
-  ~varchar();
+  ~varchar_base();
   
-  varchar& operator+=(const varchar &x);
+  varchar_base& operator+=(const varchar_base &x);
 
-  varchar& operator+=(const std::string &x);
+  varchar_base& operator+=(const std::string &x);
 
-  varchar& operator+=(const char *x);
+  varchar_base& operator+=(const char *x);
+
+  void assign(const char *s, size_t n);
 
   std::string str() const;
 
@@ -66,7 +68,7 @@ public:
 
   size_type capacity() const;
 
-  friend std::ostream& operator<<(std::ostream &out, const varchar &val);
+  friend OOS_API std::ostream& operator<<(std::ostream &out, const varchar_base &val);
 
 protected:
   void ok(const std::string &x);
@@ -77,20 +79,26 @@ protected:
 };
 
 template < unsigned int C >
-class tvarchar : public varchar
+class varchar : public varchar_base
 {
 public:
-  tvarchar()
-    : varchar(C)
+  varchar()
+    : varchar_base(C)
   {}
 
-  tvarchar(const tvarchar &x)
-    : varchar(C)
+  varchar(const varchar &x)
+    : varchar_base(C)
   {
     data_ = x.data_;
   }
 
-  tvarchar& operator=(const tvarchar &x)
+  varchar(const std::string &x)
+    : varchar_base(C)
+  {
+    data_ = x;
+  }
+
+  varchar& operator=(const varchar &x)
   {
     
     capacity_ = C;
@@ -98,14 +106,14 @@ public:
     return *this;
   }
 
-  tvarchar& operator=(const std::string &x)
+  varchar& operator=(const std::string &x)
   {
     return *this;
   }
 
-  tvarchar& operator=(const char *x)
+  varchar& operator=(const char *x)
   {
-    varchar::operator=(x);
+    varchar_base::operator=(x);
     return *this;
   }
 };

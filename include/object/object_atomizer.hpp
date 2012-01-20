@@ -33,7 +33,7 @@
 #include <string>
 
 namespace oos {
-class varchar;
+class varchar_base;
 class object_list_base;
 class object_vector_base;
 class object_base_ptr;
@@ -170,7 +170,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_varchar(const char*, const varchar&) {}
+	virtual void write_varchar(const char*, const varchar_base&) {}
 
   /**
    * @fn virtual void write_object(const char *id, const object_base_ptr &x)
@@ -326,7 +326,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_varchar(const char*, varchar&) {}
+	virtual void read_varchar(const char*, varchar_base&) {}
 
   /**
    * @fn virtual void read_object(const char *id, object_base_ptr &x)

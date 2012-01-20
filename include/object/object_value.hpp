@@ -22,6 +22,8 @@
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
 
+#include "tools/varchar.hpp"
+
 #include <cstring>
 #include <string>
 
@@ -315,6 +317,20 @@ private:
   }
 
   /**
+   * @brief Get varchar value of object.
+   * 
+   * Get varchar value identified by id of object.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to the value.
+   */
+	virtual void write_varchar(const char *id, const varchar_base &x)
+  {
+    detail::retriever<const varchar_base&, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
+  }
+
+  /**
    * @brief Get object_base_ptr of object.
    * 
    * Get object_base_ptr identified by id of object.
@@ -493,6 +509,21 @@ private:
 	virtual void read_string(const char *id, std::string &x)
   {
     static detail::updater<T, std::string> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
+  }
+
+  /**
+   * @brief Read a varchar from the atomizer.
+   * 
+   * Read a varchar from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_varchar(const char *id, varchar_base &x)
+  {
+    static detail::updater<T, varchar_base> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
