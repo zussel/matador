@@ -87,12 +87,29 @@ database::database(object_store &ostore, const std::string &dbstring)
       }
       std::auto_ptr<object> o(node.producer->create());
       
+      // create all tables in database
       std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       
       stmt->prepare(sql);
       
       stmt->step();
-//    impl_->prepare(*first++);
+      
+      statement_info info;
+      sql = helper.create(o.get(), node.type, statement_helper::INSERT);
+
+      info.insert = impl_->create_statement();
+      info.insert->prepare(sql);
+
+      sql = helper.create(o.get(), node.type, statement_helper::UPDATE);
+
+      info.update = impl_->create_statement();
+      info.update->prepare(sql);
+      sql = helper.create(o.get(), node.type, statement_helper::DEL);
+
+      info.remove = impl_->create_statement();
+      info.remove->prepare(sql);
+      
+      statement_info_map_.insert(std::make_pair(node.type, info));
   }
 }
 

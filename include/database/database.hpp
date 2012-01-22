@@ -39,6 +39,7 @@
 
 #include <string>
 #include <stack>
+#include <map>
 
 namespace oos {
 
@@ -246,6 +247,15 @@ private:
   typedef database_impl*(*create_db)(const char*);
   typedef void (*destroy_db)(database_impl*);
 
+  struct statement_info
+  {
+    statement_impl *insert;
+    statement_impl *update;
+    statement_impl *remove;
+  };
+  
+  typedef std::map<std::string, statement_info> statement_info_map_t;
+
 private:
   database_impl *impl_;
 
@@ -256,6 +266,8 @@ private:
   object_store &ostore_;
 
   std::stack<transaction*> transaction_stack_;
+  
+  statement_info_map_t statement_info_map_;
 };
 
 }

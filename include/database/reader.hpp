@@ -26,6 +26,7 @@ namespace oos {
 
 class database;
 class object;
+class varchar_base;
 
 class reader : public object_atomizer
 {
@@ -144,7 +145,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void reader::read_varchar(const char *id, varchar_base &x);
+  virtual void read_varchar(const char *id, varchar_base &x);
     
   /**
    * @brief Read an object_base_ptr from the atomizer.

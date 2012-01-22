@@ -22,11 +22,23 @@
 
 namespace oos {
 
+class database;
+class object;
+class statement_impl;
+
 class inserter : public object_atomizer
 {
 public:
-  inserter();
+  inserter(database &db);
   virtual ~inserter();
+
+  /**
+   * Insert the given object into
+   * the database.
+   * 
+   * @param o The object to insert.
+   */
+  void insert(object *o);
 
   /**
    * @brief Write a single character to the inserter.
@@ -160,6 +172,11 @@ public:
    * @param x The data to write to.
    */
 	virtual void write_object_vector(const char *id, const object_vector_base &x);
+  
+private:
+  database &db_;
+
+  statement_impl *stmt_;
 };
 
 }

@@ -16,11 +16,42 @@
  */
 
 #include "database/inserter.hpp"
+#include "database/database.hpp"
+
+#include "object/object.hpp"
 
 namespace oos {
 
+inserter::inserter(database &db)
+  : db_(db)
+{}
+
+inserter::~inserter()
+{}
+
+void inserter::insert(object *o)
+{
+  /******
+   * 
+   * Find statement in statement
+   * info map, bind parameters
+   * and execute it.
+   *
+   ******/
+  database::statement_info_map_t::iterator i = db_.statement_info_map_.find(o->object_type());
+  if (i == db_.statement_info_map_.end()) {
+    // error: couldn't find prepared statements for object
+  }
+  
+  stmt_ = i->second.insert;
+  
+  // bind parameter
+  o->read_from(this);
+}
+
 void inserter::write_char(const char *id, char x)
 {
+  
 }
 
 void inserter::write_float(const char *id, float x)

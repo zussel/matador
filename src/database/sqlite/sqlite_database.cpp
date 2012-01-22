@@ -44,7 +44,6 @@ sqlite_database::~sqlite_database()
 void sqlite_database::visit(insert_action *a)
 {
   // create insert statement
-
 }
 
 void sqlite_database::visit(update_action *a)
