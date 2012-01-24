@@ -57,10 +57,11 @@ bool sqlite_statement::step()
 
 int sqlite_statement::prepare(const std::string &sql)
 {
-  finalize();
+//  finalize();
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   if (SQLITE_OK != ret) {
-    throw std::runtime_error("error while preparing statement: " + sql);
+    std::string msg(sqlite3_errmsg(db_()));
+    throw std::runtime_error("error while preparing statement: " + sql + " " + msg);
   }
   return ret;
 }
@@ -115,9 +116,19 @@ int sqlite_statement::bind(int i, int value)
   return sqlite3_bind_int(stmt_, i, value);
 }
 
-int sqlite_statement::bind(int i, const std::string &value)
+int sqlite_statement::bind(int i, unsigned int value)
 {
-  return sqlite3_bind_text(stmt_, i, value.c_str(), value.size(), 0);
+  return sqlite3_bind_int(stmt_, i, value);
+}
+
+int sqlite_statement::bind(int i, const char *value)
+{
+  return sqlite3_bind_text(stmt_, i, value, -1, 0);
+}
+
+int sqlite_statement::bind_null(int i)
+{
+  return sqlite3_bind_null(stmt_, i);
 }
 
 }

@@ -17,6 +17,9 @@
 
 #include "database/inserter.hpp"
 #include "database/database.hpp"
+#include "database/statement.hpp"
+
+#include "tools/varchar.hpp"
 
 #include "object/object.hpp"
 
@@ -24,6 +27,8 @@ namespace oos {
 
 inserter::inserter(database &db)
   : db_(db)
+  , stmt_(0)
+  , column_(0)
 {}
 
 inserter::~inserter()
@@ -44,58 +49,85 @@ void inserter::insert(object *o)
   }
   
   stmt_ = i->second.insert;
-  
+
+  std::cerr << "start inserting object " << *o << "\n";
+  column_ = 0;
   // bind parameter
   o->read_from(this);
+
+  std::cout.flush();
+
+  stmt_->step();
 }
 
 void inserter::write_char(const char *id, char x)
 {
-  
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_float(const char *id, float x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_double(const char *id, double x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_int(const char *id, int x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_long(const char *id, long x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, (int)x);
 }
 
 void inserter::write_unsigned(const char *id, unsigned x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_bool(const char *id, bool x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_charptr(const char *id, const char *x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x);
 }
 
 void inserter::write_string(const char *id, const std::string &x)
 {
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x.c_str());
+}
+
+void inserter::write_varchar(const char *id, const varchar_base &x)
+{
+  std::cout << "bind value for column [" << id << "]\n";
+  stmt_->bind(++column_, x.str().c_str());
 }
 
 void inserter::write_object(const char *id, const object_base_ptr &x)
 {
-}
-
-void inserter::write_object_list(const char *id, const object_list_base &x)
-{
-}
-
-void inserter::write_object_vector(const char *id, const object_vector_base &x)
-{
+  std::cout << "bind value for column [" << id << "]\n";
+  if (x.ptr()) {
+    stmt_->bind(++column_, (int)x.id());
+  } else {
+    stmt_->bind_null(++column_);
+  }
 }
 
 }

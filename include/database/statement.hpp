@@ -54,6 +54,12 @@ public:
   virtual const char* column_text(int i) const = 0;
   virtual int column_int(int i) const = 0;
   virtual double column_double(int i) const = 0;
+
+  virtual int bind(int i, double value) = 0;
+  virtual int bind(int i, int value) = 0;
+  virtual int bind(int i, unsigned int value) = 0;
+  virtual int bind(int i, const char *value) = 0;
+  virtual int bind_null(int i) = 0;
 };
 
 class OOS_API statement

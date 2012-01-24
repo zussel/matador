@@ -81,7 +81,7 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
       break;
     case INSERT:
       stmt = stmt.substr(0, stmt.size() - 1);
-      stmt += ") (";
+      stmt += ") VALUES (";
       while (--param_count_) {
         stmt += "?, ";
       }

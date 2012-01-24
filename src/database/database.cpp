@@ -76,8 +76,6 @@ database::database(object_store &ostore, const std::string &dbstring)
   // if database is new create all tables
   statement_helper helper;
 
-  statement_impl *stmt = impl_->create_statement();
-      
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
@@ -89,6 +87,8 @@ database::database(object_store &ostore, const std::string &dbstring)
       
       // create all tables in database
       std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
+      
+      statement_impl *stmt = impl_->create_statement();
       
       stmt->prepare(sql);
       
@@ -163,6 +163,9 @@ bool database::load()
   prototype_iterator last = ostore_.end();
   while (first != last) {
     const prototype_node &node = (*first++);
+    if (node.abstract) {
+      continue;
+    }
     // create dummy object
     std::auto_ptr<object> o(node.producer->create());
     reader rdr(*this, o.get(), node.type);

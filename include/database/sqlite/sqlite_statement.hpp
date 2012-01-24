@@ -53,9 +53,11 @@ public:
 
   int column_type(int i) const;
 
-  int bind(int i, double value);
-  int bind(int i, int value);
-  int bind(int i, const std::string &value);
+  virtual int bind(int i, double value);
+  virtual int bind(int i, int value);
+  virtual int bind(int i, unsigned int value);
+  virtual int bind(int i, const char *value);
+  virtual int bind_null(int i);
 
 private:
   sqlite3_stmt *stmt_;

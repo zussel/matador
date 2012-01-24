@@ -121,7 +121,7 @@ public:
    *
    * @param db The underlaying database.
    */
-  transaction(database *db);
+  transaction(database &db);
 
   ~transaction();
   
@@ -163,14 +163,14 @@ public:
    *
    * @return The pointer to the database.
    */
-  database* db();
+  database& db();
 
   /**
    * Returns the underlaying pointer to the database.
    *
    * @return The pointer to the database.
    */
-  const database* db() const;
+  const database& db() const;
 
 private:
   class transaction_observer : public object_observer
@@ -270,7 +270,7 @@ private:
   static long id_counter;
 
 private:
-  database *db_;
+  database &db_;
   transaction_observer observer_;
   long id_;
   

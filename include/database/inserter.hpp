@@ -140,6 +140,17 @@ public:
 	virtual void write_string(const char *id, const std::string &x);
 
   /**
+   * @brief Write a varchar_base to the inserter.
+   * 
+   * Add the value of the column identified by the
+   * to the sql statement.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void write_varchar(const char *id, const varchar_base &x);
+
+  /**
    * @brief Write an object_base_ptr to the inserter.
    * 
    * Add the value of the column identified by the
@@ -151,32 +162,12 @@ public:
    */
 	virtual void write_object(const char *id, const object_base_ptr &x);
 
-  /**
-   * @brief Write an object list to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_object_list(const char *id, const object_list_base &x);
-
-  /**
-   * @brief Write a object vector to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_object_vector(const char *id, const object_vector_base &x);
-  
 private:
   database &db_;
 
   statement_impl *stmt_;
+  
+  int column_;
 };
 
 }

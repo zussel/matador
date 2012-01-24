@@ -103,7 +103,7 @@ DatabaseTestUnit::simple()
   db.load();
 
   // create new transaction    
-  transaction tr(&db);
+  transaction tr(db);
   try {
     // begin transaction
     tr.start();
@@ -121,7 +121,7 @@ DatabaseTestUnit::simple()
     engine->power(120);
     cout << "changed power of " << *engine << "\n";
     
-    transaction tr2(&db);
+    transaction tr2(db);
     try {
       // begin inner transaction
       tr2.start();
@@ -192,10 +192,10 @@ DatabaseTestUnit::with_sub()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database *db = new database(ostore_, "oodb://");
+  database db(ostore_, "oodb://");
 
   // open db
-  db->open();
+  db.open();
 
   // create new transaction    
   transaction tr(db);
@@ -234,10 +234,9 @@ DatabaseTestUnit::with_sub()
     ostore_.dump_objects(cout);
   }
   // close db
-  db->close();
+  db.close();
   // explicit write data to file
   //db->write();
-  delete db;
 }
 
 void
@@ -249,10 +248,10 @@ DatabaseTestUnit::with_list()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database *db = new database(ostore_, "oodb://");
+  database db(ostore_, "oodb://");
 
   // open db
-  db->open();
+  db.open();
 
   // create new transaction    
   transaction tr(db);
@@ -333,10 +332,9 @@ DatabaseTestUnit::with_list()
     ostore_.dump_objects(cout);
   }
   // close db
-  db->close();
+  db.close();
   // explicit write data to file
   //db->write();
-  delete db;
 }
 
 void

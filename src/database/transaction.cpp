@@ -17,6 +17,7 @@
 
 #include "database/transaction.hpp"
 #include "database/database.hpp"
+#include "database/inserter.hpp"
 
 #include "tools/byte_buffer.hpp"
 
@@ -78,9 +79,16 @@ void transaction_impl::commit()
   transaction::insert_action_map_t::iterator ifirst = tr_.insert_action_map_.begin();
   transaction::insert_action_map_t::iterator ilast = tr_.insert_action_map_.end();
   while (ifirst != ilast) {
+
+    inserter ins(tr_.db_);
+      
     while (!ifirst->second.empty()) {
       std::auto_ptr<action> a(ifirst->second.front());
-      a->accept(tr_.db_->impl_);
+      
+      
+      ins.insert(a->obj());
+      
+//      a->accept(tr_.db_.impl_);
       ifirst->second.pop_front();
     }
     ++ifirst;
@@ -89,7 +97,7 @@ void transaction_impl::commit()
   transaction::iterator first = tr_.begin();
   transaction::iterator last = tr_.end();
   while (first != last) {
-    (*first++)->accept(tr_.db_->impl_);
+    (*first++)->accept(tr_.db_.impl_);
 //    delete *first++;
 //    tr_.db()->execute_action(*first++);
   }
@@ -242,11 +250,11 @@ void transaction::restore_visitor::visit(delete_action *a)
   //        isn't valid (in use)
 }
 
-transaction::transaction(database *db)
+transaction::transaction(database &db)
   : db_(db)
   , observer_(*this)
   , id_(0)
-  , impl_(db->impl_->create_transaction(*this))
+  , impl_(db.impl_->create_transaction(*this))
 {}
 
 transaction::~transaction()
@@ -276,7 +284,7 @@ transaction::start()
    **************/
   id_ = ++transaction::id_counter;
 //  tro_.reset(new transaction_observer(*this));
-  db_->push_transaction(this);
+  db_.push_transaction(this);
   cout << "starting transaction [" << id_ << "]\n";
 }
 
@@ -284,7 +292,7 @@ void
 transaction::commit()
 {
 //  tro_.reset();
-  if (!db_->current_transaction() || db_->current_transaction() != this) {
+  if (!db_.current_transaction() || db_.current_transaction() != this) {
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
   } else {
@@ -293,7 +301,7 @@ transaction::commit()
     action_list_.clear();
     object_buffer_.clear();
     id_set_.clear();
-    db_->pop_transaction();
+    db_.pop_transaction();
   }
 }
 
@@ -301,7 +309,7 @@ void
 transaction::rollback()
 {
 //  tro_.reset();
-  if (!db_->current_transaction() || db_->current_transaction() != this) {
+  if (!db_.current_transaction() || db_.current_transaction() != this) {
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";
   } else {
@@ -311,17 +319,17 @@ transaction::rollback()
     action_list_.clear();
     object_buffer_.clear();
     id_set_.clear();
-    db_->pop_transaction();
+    db_.pop_transaction();
   }
 }
 
-database*
+database&
 transaction::db()
 {
   return db_;
 }
 
-const database*
+const database&
 transaction::db() const
 {
   return db_;
@@ -400,7 +408,7 @@ transaction::backup(action *a)
 
 void transaction::restore(action *a)
 {
-  restore_visitor_.restore(a, &object_buffer_, &db_->ostore());
+  restore_visitor_.restore(a, &object_buffer_, &db_.ostore());
 }
 
 transaction::iterator transaction::begin()
