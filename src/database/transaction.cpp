@@ -30,79 +30,6 @@ using namespace std;
 
 namespace oos {
 
-transaction_impl::transaction_impl(transaction &tr)
-  : tr_(tr)
-{}
-
-transaction_impl::~transaction_impl()
-{}
-
-void transaction_impl::rollback()
-{
-  /**************
-   *
-   * rollback transaction
-   * restore objects
-   * and finally pop transaction
-   * clear insert action map
-   *
-   **************/
-  
-  transaction::insert_action_map_t::iterator first = tr_.insert_action_map_.begin();
-  transaction::insert_action_map_t::iterator last = tr_.insert_action_map_.end();
-  while (first != last) {
-    while (!first->second.empty()) {
-      std::auto_ptr<action> a(first->second.front());
-      tr_.restore(a.get());
-      first->second.pop_front();
-    }
-    ++first;
-  }
-  tr_.insert_action_map_.clear();
-  while (!tr_.empty()) {
-    transaction::iterator i = tr_.begin();
-    std::auto_ptr<action> a(*i);
-    tr_.erase(i);
-    tr_.restore(a.get());
-  }
-}
-
-void transaction_impl::commit()
-{
-  /****************
-   * 
-   * Pop transaction from stack
-   * and execute all actions
-   * change state to comitted
-   * 
-   ****************/
-  transaction::insert_action_map_t::iterator ifirst = tr_.insert_action_map_.begin();
-  transaction::insert_action_map_t::iterator ilast = tr_.insert_action_map_.end();
-  while (ifirst != ilast) {
-
-    inserter ins(tr_.db_);
-      
-    while (!ifirst->second.empty()) {
-      std::auto_ptr<action> a(ifirst->second.front());
-      
-      
-      ins.insert(a->obj());
-      
-//      a->accept(tr_.db_.impl_);
-      ifirst->second.pop_front();
-    }
-    ++ifirst;
-  }
-  tr_.insert_action_map_.clear();
-  transaction::iterator first = tr_.begin();
-  transaction::iterator last = tr_.end();
-  while (first != last) {
-    (*first++)->accept(tr_.db_.impl_);
-//    delete *first++;
-//    tr_.db()->execute_action(*first++);
-  }
-}
-
 void transaction::transaction_observer::on_insert(object *o)
 {
 //  cout << "inserting " << *o << endl;
@@ -296,7 +223,7 @@ transaction::commit()
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
   } else {
-    impl_->commit();
+    impl_->commit(insert_action_map_, action_list_);
     // clear actions
     action_list_.clear();
     object_buffer_.clear();
@@ -313,6 +240,33 @@ transaction::rollback()
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";
   } else {
+    /**************
+     *
+     * rollback transaction
+     * restore objects
+     * and finally pop transaction
+     * clear insert action map
+     *
+     **************/
+  
+    insert_action_map_t::iterator first = insert_action_map_.begin();
+    insert_action_map_t::iterator last = insert_action_map_.end();
+    while (first != last) {
+      while (!first->second.empty()) {
+        std::auto_ptr<action> a(first->second.front());
+        restore(a.get());
+        first->second.pop_front();
+      }
+      ++first;
+    }
+    insert_action_map_.clear();
+    while (!empty()) {
+      iterator i = begin();
+      std::auto_ptr<action> a(*i);
+      erase(i);
+      restore(a.get());
+    }
+
     // call transaction implementations rollback
     impl_->rollback();
     // clear actions
@@ -495,6 +449,53 @@ transaction::iterator transaction::find_modify_action(object *o)
     ++first;
   }
   return first;
+}
+
+transaction_impl::transaction_impl(transaction &tr)
+  : tr_(tr)
+{}
+
+transaction_impl::~transaction_impl()
+{}
+
+void transaction_impl::commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions)
+{
+  /****************
+   * 
+   * Pop transaction from stack
+   * and execute all actions
+   * change state to comitted
+   * 
+   ****************/
+  transaction::insert_action_map_t::iterator ifirst = tr_.insert_action_map_.begin();
+  transaction::insert_action_map_t::iterator ilast = tr_.insert_action_map_.end();
+  while (ifirst != ilast) {
+
+    inserter ins(tr_.db_);
+      
+    while (!ifirst->second.empty()) {
+      std::auto_ptr<action> a(ifirst->second.front());
+      
+      
+      ins.insert(a->obj());
+      
+//      a->accept(tr_.db_.impl_);
+      ifirst->second.pop_front();
+    }
+    ++ifirst;
+  }
+  tr_.insert_action_map_.clear();
+  transaction::iterator first = tr_.begin();
+  transaction::iterator last = tr_.end();
+  while (first != last) {
+    (*first++)->accept(tr_.db_.impl_);
+//    delete *first++;
+//    tr_.db()->execute_action(*first++);
+  }
+}
+
+void transaction_impl::rollback()
+{
 }
 
 }

@@ -61,7 +61,7 @@ database::database(object_store &ostore, const std::string &dbstring)
 
   // load sqlite library
   // create instance
-  if (!db_lib_.load("liboos-sqlite")) {
+  if (!db_lib_.load("oos-sqlite")) {
     throw std::runtime_error("couldn't fínd library [" + db_type + "]");
   }
   // get create function
