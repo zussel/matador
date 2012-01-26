@@ -54,6 +54,10 @@ public:
 
   ~varchar_base();
   
+  bool operator==(const varchar_base &x) const;
+
+  bool operator!=(const varchar_base &x) const;
+
   varchar_base& operator+=(const varchar_base &x);
 
   varchar_base& operator+=(const std::string &x);
@@ -108,6 +112,7 @@ public:
 
   varchar& operator=(const std::string &x)
   {
+    data_ = x;
     return *this;
   }
 

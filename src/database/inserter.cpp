@@ -53,7 +53,7 @@ void inserter::insert(object *o)
   std::cerr << "start inserting object " << *o << "\n";
   column_ = 0;
   // bind parameter
-  o->read_from(this);
+  o->write_to(this);
 
   std::cout.flush();
 

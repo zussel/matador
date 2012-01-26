@@ -3,6 +3,8 @@
 
 #include "unit/unit_test.hpp"
 
+#include "tools/varchar.hpp"
+
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
@@ -33,25 +35,31 @@ private:
     void read_from(oos::object_atomizer *reader)
     {
       object::read_from(reader);
-      reader->read_string("name", name_);
       reader->read_int("number", number_);
+      reader->read_varchar("name", name_);
+      reader->read_string("text", text_);
     }
     void write_to(oos::object_atomizer *writer) const
     {
       object::write_to(writer);
-      writer->write_string("name", name_);
       writer->write_int("number", number_);
+      writer->write_varchar("name", name_);
+      writer->write_string("text", text_);
     }
 
     int number() const { return number_; }
     void number(int n) { number_ = n; }
 
-    std::string name() const { return name_; }
+    std::string name() const { return name_.str(); }
     void name(const std::string &n) { name_ = n; }
+
+    std::string text() const { return text_; }
+    void text(const std::string &t) { text_ = t; }
 
   private:
     int number_;
-    std::string name_;
+    oos::varchar<32> name_;
+    std::string text_;
   };
   class ObjectWithSubObject : public oos::object
   {

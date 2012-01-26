@@ -35,6 +35,16 @@ varchar_base& varchar_base::operator=(const char *x)
 varchar_base::~varchar_base()
 {}
 
+bool varchar_base::operator==(const varchar_base &x) const
+{
+  return data_ == x.data_;
+}
+
+bool varchar_base::operator!=(const varchar_base &x) const
+{
+  return !this->operator ==(x);
+}
+
 varchar_base& varchar_base::operator+=(const varchar_base &x)
 {
   data_ += x.str();

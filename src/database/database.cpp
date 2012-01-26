@@ -86,6 +86,7 @@ database::database(object_store &ostore, const std::string &dbstring)
       std::auto_ptr<object> o(node.producer->create());
       
       // create all tables in database
+//      std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       
       statement_impl *stmt = impl_->create_statement();
@@ -109,7 +110,7 @@ database::database(object_store &ostore, const std::string &dbstring)
       info.remove = impl_->create_statement();
       info.remove->prepare(sql);
       
-      statement_info_map_.insert(std::make_pair(node.type, info));
+      statement_info_map_.insert(std::make_pair(o->object_type(), info));
   }
 }
 
@@ -173,9 +174,14 @@ bool database::load()
       std::auto_ptr<object> obj(node.producer->create());
       obj->read_from(&rdr);
       ostore_.insert(obj.release());
-      // adjust id counter
     }
   }
+  /************
+   *
+   * init/adjust id counter
+   *
+   ************/
+  //ostore_.sequencer().init();
   return true;
 }
 

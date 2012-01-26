@@ -65,6 +65,30 @@ namespace detail {
     void update(const char *id, const char *f, bool &r, object_value<T*> &ov, object *o, T *master, object_base_ptr &slave);
   };
 
+  template < typename T >
+  struct updater<T, varchar_base&>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<T> &ov, object *o, T master, varchar_base &slave) {}
+  };
+
+  template < >
+  struct updater<std::string&, varchar_base&>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave);
+  };
+
+  template < unsigned int C >
+  struct updater<varchar<C>&, varchar_base&>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<varchar<C> > &ov, object *o, varchar<C> &master, varchar_base &slave);
+  };
+
+  template < >
+  struct updater<varchar_base&, varchar_base&>
+  {
+    void update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave);
+  };
+
   template < typename X, typename Y >
   struct retriever
   {
@@ -106,6 +130,51 @@ namespace detail {
         return;
       }
       slave = master.ptr();
+      r = true;
+    }
+  };
+
+  template < typename Y >
+  struct retriever<const varchar_base&, Y>
+  {
+    void retrieve(const char *id, const char *f, bool &r, const varchar_base& master, Y& slave) {}
+  };
+
+  template < >
+  struct retriever<const varchar_base&, std::string>
+  {
+    void retrieve(const char *id, const char *f, bool &r, const varchar_base& master, std::string& slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master.str();
+      r = true;
+    }
+  };
+
+  template < >
+  struct retriever<const varchar_base&, varchar_base>
+  {
+    void retrieve(const char *id, const char *f, bool &r, const varchar_base& master, varchar_base& slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master;
+      r = true;
+    }
+  };
+
+  template < unsigned int C >
+  struct retriever<const varchar_base&, varchar<C> >
+  {
+    void retrieve(const char *id, const char *f, bool &r, const varchar_base& master, varchar<C>& slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave = master.str();
       r = true;
     }
   };
@@ -609,6 +678,40 @@ updater<T*, object_base_ptr>::update(const char *id, const char *f, bool &r, obj
   }
   ov.mark_modified(o);
   slave.reset(master);
+  r = true;
+}
+
+void
+updater<varchar_base&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave)
+{
+  if (strcmp(f, id) != 0) {
+    return;
+  }
+  ov.mark_modified(o);
+  slave = master;
+  r = true;
+}
+
+void
+updater<std::string&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave)
+{
+  if (strcmp(f, id) != 0) {
+    return;
+  }
+  ov.mark_modified(o);
+  slave = master;
+  r = true;
+}
+
+template < unsigned int C >
+void
+updater<varchar<C>&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar<C> > &ov, object *o, varchar<C> &master, varchar_base &slave)
+{
+  if (strcmp(f, id) != 0) {
+    return;
+  }
+  ov.mark_modified(o);
+  slave = master;
   r = true;
 }
 

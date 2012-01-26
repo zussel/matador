@@ -193,6 +193,15 @@ public:
    */
   unsigned long ptr_count() const;
 
+  /**
+   * Prints the underlaying object
+   *
+   * @param out The output stream to write on.
+   * @param x The object pointer to print.
+   * @return The output stream.
+   */
+  friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
+
 private:
 	friend class object_atomizer;
   friend class object_creator;

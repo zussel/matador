@@ -197,4 +197,18 @@ object_base_ptr::ptr_count() const
   return (!proxy_ ? 0 : proxy_->ptr_count);
 }
 
+std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
+{
+  if (x.proxy_) {
+    if (x.proxy_->obj) {
+      out << *x.proxy_->obj;
+    } else {
+      out << "unload object [" << x.proxy_->id << "]";
+    }
+  } else {
+      out << "unknown object [" << x.id_ << "]";
+  }
+  return out;
+}
+
 }

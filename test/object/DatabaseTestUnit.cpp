@@ -96,9 +96,6 @@ DatabaseTestUnit::simple()
   // create database and make object store known to the database
   database db(ostore_, "sqlite://test.sqlite");
 
-  // open db
-  db.open();
-
   // load data
   db.load();
 

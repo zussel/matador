@@ -35,6 +35,8 @@ void
 ObjectStoreTestUnit::access_value()
 {
   std::string str("Godwanda");
+  varchar<32> vstr("Godwanda");
+
   int numb = 42;
 
   SimpleObject *so = new SimpleObject(str, numb);
@@ -52,8 +54,12 @@ ObjectStoreTestUnit::access_value()
 
   std::string s;
 
+  oos::varchar<32> vs;
+
+  UNIT_ASSERT_TRUE(retrieve_value(so, "name", vs), "couldn't get varchar value for field [name]");
   UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
   UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
+  UNIT_ASSERT_EQUAL(vs, vstr, "retrieved value of integer isn't " + vstr.str());
 
   str = "Kambrium";
   UNIT_ASSERT_TRUE(update_value(so, "name", str), "couldn't set string value for field [name]");
@@ -66,6 +72,8 @@ ObjectStoreTestUnit::access_value()
 
   owsub_ptr owsub = ostore_.insert(new ObjectWithSubObject);
   osmpl_ptr osmpl = ostore_.insert(so);
+
+  std::cout << "inserted simple object: " << osmpl << "\n";
 
   UNIT_ASSERT_TRUE(update_value(owsub, "simple", osmpl), "couldn't set object field [simple]");
 

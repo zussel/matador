@@ -408,8 +408,6 @@ object_store::insert_object(object *o, bool notify)
     }
   }
   // insert new element node
-//  object_proxy *oproxy(new object_proxy(o, this));
-  
   insert_proxy(node, oproxy);
   // create object
   object_creator oc(*this, notify);
@@ -420,6 +418,8 @@ object_store::insert_object(object *o, bool notify)
   }
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
+  // set corresponding prototype node
+  oproxy->node = node;
   // set this into persistent object
   o->proxy_ = oproxy;
   return o;
@@ -597,35 +597,41 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
 {
   // check count of object in subtree
   if (node->count >= 2) {
-    // there are more than two objects (normal case)
-    // insert before last last
+    /*************
+     *
+     * there are more than two objects (normal case)
+     * insert before last last
+     *
+     *************/
     //cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
-//    link_proxy(node->op_marker->prev, oproxy);
     oproxy->link(node->op_marker->prev);
-//    node->op_marker->prev->insert(oproxy);
   } else if (node->count == 1) {
-    // there is one object in subtree
-    // insert as first; adjust "left" marker
+    /*************
+     *
+     * there is one object in subtree
+     * insert as first; adjust "left" marker
+     *
+     *************/
     /*if (node->op_marker->prev->obj) {
       cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
     } else {
       cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
     }*/
-//    link_proxy(node->op_marker->prev, oproxy);
     oproxy->link(node->op_marker->prev);
-//    node->op_marker->prev->insert(oproxy);
     node->adjust_left_marker(oproxy->next, oproxy);
   } else /* if (node->count == 0) */ {
-    // there is no object in subtree
-    // insert as last; adjust "right" marker
+    /*************
+     *
+     * there is no object in subtree
+     * insert as last; adjust "right" marker
+     *
+     *************/
     /*if (node->op_marker->obj) {
       cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
     } else {
       cout << "list is empty: inserting " << *o << " as last before [0]\n";
     }*/
-//    link_proxy(node->op_marker, oproxy);
     oproxy->link(node->op_marker);
-//    node->op_marker->insert(oproxy);
     node->adjust_left_marker(oproxy->next, oproxy);
     node->adjust_right_marker(oproxy->prev, oproxy);
   }
