@@ -16,55 +16,37 @@
  */
 
 #include "database/updater.hpp"
+#include "database/database.hpp"
+#include "database/statement.hpp"
+
+#include "object/object.hpp"
 
 namespace oos {
 
-void updater::write_char(const char *id, char x)
-{
-}
+updater::updater(database &db)
+  : db_(db)
+{}
 
-void updater::write_float(const char *id, float x)
-{
-}
+updater::~updater()
+{}
 
-void updater::write_double(const char *id, double x)
+void updater::update(object *o)
 {
-}
+  /******
+   * 
+   * Find statement in statement
+   * info map, bind parameters
+   * and execute it.
+   *
+   ******/
+  database::statement_info_map_t::iterator i = db_.statement_info_map_.find(o->object_type());
+  if (i == db_.statement_info_map_.end()) {
+    // error: couldn't find prepared statements for object
+  }
+  
+  binder_.bind(i->second.update, o, true);
 
-void updater::write_int(const char *id, int x)
-{
-}
-
-void updater::write_long(const char *id, long x)
-{
-}
-
-void updater::write_unsigned(const char *id, unsigned x)
-{
-}
-
-void updater::write_bool(const char *id, bool x)
-{
-}
-
-void updater::write_charptr(const char *id, const char *x)
-{
-}
-
-void updater::write_string(const char *id, const std::string &x)
-{
-}
-
-void updater::write_object(const char *id, const object_base_ptr &x)
-{
-}
-
-void updater::write_object_list(const char *id, const object_list_base &x)
-{
-}
-
-void updater::write_object_vector(const char *id, const object_vector_base &x)
-{
+  i->second.update->step();
 }
 
 }

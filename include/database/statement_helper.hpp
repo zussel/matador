@@ -54,7 +54,7 @@ public:
     DROP
   } t_type;
 
-  std::string create(object *o, const std::string &table_name, t_type type);
+  std::string create(object *o, const std::string &table_name, t_type type, const std::string &where = "");
 
 private:
   /**

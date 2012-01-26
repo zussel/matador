@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UPDATER_HPP
-#define UPDATER_HPP
+#ifndef DELETER_HPP
+#define DELETER_HPP
 
 #include "database/statement_binder.hpp"
 
@@ -25,18 +25,19 @@ namespace oos {
 class database;
 class object;
 
-class updater
+class deleter
 {
 public:
-  updater(database &db);
-  virtual ~updater();
+  deleter(database &db);
+  ~deleter();
 
   /**
-   * Update the given object.
+   * Insert the given object into
+   * the database.
    * 
-   * @param o The object to update
+   * @param o The object to insert.
    */
-  void update(object *o);
+  void remove(object *o);
 
 private:
   database &db_;
@@ -46,4 +47,4 @@ private:
 
 }
 
-#endif /* UPDATER_HPP */
+#endif /* INSERTER_HPP */

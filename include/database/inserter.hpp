@@ -18,19 +18,18 @@
 #ifndef INSERTER_HPP
 #define INSERTER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "database/statement_binder.hpp"
 
 namespace oos {
 
 class database;
 class object;
-class statement_impl;
 
-class inserter : public object_atomizer
+class inserter
 {
 public:
   inserter(database &db);
-  virtual ~inserter();
+  ~inserter();
 
   /**
    * Insert the given object into
@@ -40,134 +39,10 @@ public:
    */
   void insert(object *o);
 
-  /**
-   * @brief Write a single character to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_char(const char *id, char x);
-
-  /**
-   * @brief Write a float to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_float(const char *id, float x);
-
-  /**
-   * @brief Write a double to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_double(const char *id, double x);
-
-  /**
-   * @brief Write a int to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_int(const char *id, int x);
-
-  /**
-   * @brief Write a long to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_long(const char *id, long x);
-
-  /**
-   * @brief Write an unsigned int to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_unsigned(const char *id, unsigned x);
-
-  /**
-   * @brief Write a bool to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_bool(const char *id, bool x);
-
-  /**
-   * @brief Write a const character string to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_charptr(const char *id, const char *x);
-
-  /**
-   * @brief Write a std::string to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_string(const char *id, const std::string &x);
-
-  /**
-   * @brief Write a varchar_base to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-  virtual void write_varchar(const char *id, const varchar_base &x);
-
-  /**
-   * @brief Write an object_base_ptr to the inserter.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement. In this case the id of the
-   * foreign object is written to the column.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void write_object(const char *id, const object_base_ptr &x);
-
 private:
   database &db_;
-
-  statement_impl *stmt_;
   
-  int column_;
+  statement_binder binder_;
 };
 
 }

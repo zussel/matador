@@ -15,35 +15,38 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UPDATER_HPP
-#define UPDATER_HPP
+#include "database/deleter.hpp"
+#include "database/database.hpp"
+#include "database/statement.hpp"
 
-#include "database/statement_binder.hpp"
+#include "object/object.hpp"
 
 namespace oos {
 
-class database;
-class object;
+deleter::deleter(database &db)
+  : db_(db)
+{}
 
-class updater
+deleter::~deleter()
+{}
+
+void deleter::remove(object *o)
 {
-public:
-  updater(database &db);
-  virtual ~updater();
-
-  /**
-   * Update the given object.
+  /******
    * 
-   * @param o The object to update
-   */
-  void update(object *o);
-
-private:
-  database &db_;
+   * Find statement in statement
+   * info map, bind parameters
+   * and execute it.
+   *
+   ******/
+  database::statement_info_map_t::iterator i = db_.statement_info_map_.find(o->object_type());
+  if (i == db_.statement_info_map_.end()) {
+    // error: couldn't find prepared statements for object
+  }
   
-  statement_binder binder_;
-};
+  binder_.bind(i->second.remove, o, true);
 
+  i->second.remove->step();
 }
 
-#endif /* UPDATER_HPP */
+}

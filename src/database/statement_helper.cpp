@@ -36,7 +36,7 @@ statement_helper::statement_helper()
 statement_helper::~statement_helper()
 {}
 
-std::string statement_helper::create(object *o, const std::string &table_name, statement_helper::t_type type)
+std::string statement_helper::create(object *o, const std::string &table_name, statement_helper::t_type type, const std::string &where)
 {
   type_ = type;
   object_ = o;
@@ -78,6 +78,10 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
       // remove last char (,)
       stmt = stmt.substr(0, stmt.size() - 1);
       stmt += " FROM " + table_name;
+      if (!where.empty()) {
+        stmt += " WHERE " + where;
+      }
+      stmt += ";";
       break;
     case INSERT:
       stmt = stmt.substr(0, stmt.size() - 1);
@@ -89,9 +93,16 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
       break;
     case UPDATE:
       stmt = stmt.substr(0, stmt.size() - 1);
+      if (!where.empty()) {
+        stmt += " WHERE " + where;
+      }
       stmt += ";";
       break;
     case DEL:
+      if (!where.empty()) {
+        stmt += " WHERE " + where;
+      }
+      stmt += ";";
       break;
     case DROP:
       break;

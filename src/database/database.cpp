@@ -86,7 +86,6 @@ database::database(object_store &ostore, const std::string &dbstring)
       std::auto_ptr<object> o(node.producer->create());
       
       // create all tables in database
-//      std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       
       statement_impl *stmt = impl_->create_statement();
@@ -101,11 +100,11 @@ database::database(object_store &ostore, const std::string &dbstring)
       info.insert = impl_->create_statement();
       info.insert->prepare(sql);
 
-      sql = helper.create(o.get(), node.type, statement_helper::UPDATE);
+      sql = helper.create(o.get(), node.type, statement_helper::UPDATE, "id=?");
 
       info.update = impl_->create_statement();
       info.update->prepare(sql);
-      sql = helper.create(o.get(), node.type, statement_helper::DEL);
+      sql = helper.create(o.get(), node.type, statement_helper::DEL, "id=?");
 
       info.remove = impl_->create_statement();
       info.remove->prepare(sql);
@@ -235,6 +234,25 @@ statement_impl* database::create_statement_impl() const
 transaction* database::current_transaction() const
 {
   return (transaction_stack_.empty() ? 0 : transaction_stack_.top());
+}
+
+database::statement_info::statement_info()
+  : insert(0)
+  , update(0)
+  , remove(0)
+{}
+
+database::statement_info::~statement_info()
+{
+  if (insert) {
+    delete insert;
+  }
+  if (update) {
+    delete update;
+  }
+  if (remove) {
+    delete remove;
+  }
 }
 
 }

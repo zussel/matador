@@ -40,6 +40,7 @@
 #include <string>
 #include <stack>
 #include <map>
+#include <memory>
 
 namespace oos {
 
@@ -249,6 +250,9 @@ private:
 
   struct statement_info
   {
+    statement_info();
+    ~statement_info();
+
     statement_impl *insert;
     statement_impl *update;
     statement_impl *remove;
