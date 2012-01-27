@@ -19,6 +19,8 @@
 #include "database/sqlite/sqlite_statement.hpp"
 
 #include "database/transaction.hpp"
+//#include "database/updater.hpp"
+//#include "database/deleter.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
@@ -48,6 +50,7 @@ void sqlite_database::visit(insert_action *a)
 
 void sqlite_database::visit(update_action *a)
 {
+//  updater update(
   // create update statement
 }
 

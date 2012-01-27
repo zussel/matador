@@ -226,6 +226,7 @@ transaction::commit()
     impl_->commit(insert_action_map_, action_list_);
     // clear actions
     action_list_.clear();
+    insert_action_map_.clear();
     object_buffer_.clear();
     id_set_.clear();
     db_.pop_transaction();
@@ -467,31 +468,40 @@ void transaction_impl::commit(const transaction::insert_action_map_t &insert_act
    * change state to comitted
    * 
    ****************/
-  transaction::insert_action_map_t::iterator ifirst = tr_.insert_action_map_.begin();
-  transaction::insert_action_map_t::iterator ilast = tr_.insert_action_map_.end();
+
+  // execute begin statement
+
+  transaction::insert_action_map_t::const_iterator ifirst = insert_actions.begin();
+  transaction::insert_action_map_t::const_iterator ilast = insert_actions.end();
   while (ifirst != ilast) {
 
     inserter ins(tr_.db_);
       
-    while (!ifirst->second.empty()) {
-      std::auto_ptr<action> a(ifirst->second.front());
+    transaction::const_iterator first = ifirst->second.begin();
+    transaction::const_iterator last = ifirst->second.end();
+    while (first != last) {
+//    while (!ifirst->second.empty()) {
+//      std::auto_ptr<action> a(ifirst->second.front());
+      std::auto_ptr<action> a(*first++);
       
       
       ins.insert(a->obj());
       
 //      a->accept(tr_.db_.impl_);
-      ifirst->second.pop_front();
+//      ifirst->second.pop_front();
     }
     ++ifirst;
   }
-  tr_.insert_action_map_.clear();
-  transaction::iterator first = tr_.begin();
-  transaction::iterator last = tr_.end();
+//  insert_actions.clear();
+  transaction::const_iterator first = modify_actions.begin();
+  transaction::const_iterator last = modify_actions.end();
   while (first != last) {
     (*first++)->accept(tr_.db_.impl_);
 //    delete *first++;
 //    tr_.db()->execute_action(*first++);
   }
+
+  // execute commit statement
 }
 
 void transaction_impl::rollback()

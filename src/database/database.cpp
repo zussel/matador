@@ -59,6 +59,24 @@ database::database(object_store &ostore, const std::string &dbstring)
   std::string db_type = dbstring.substr(0, pos);
   std::string db = dbstring.substr(pos + 3);
 
+  /* begin pseudo code * /
+
+  // get driver factory singleton
+  database_factory &df = database_factory::instance();
+  // try to create database implementation
+  impl_ = df.create(db_type);
+  if (!impl_) {
+    // create new driver producer
+    database_producer *dp = new database_producer(db_type);
+    // create database implementation
+    impl_ = dp->create();
+    // insert producer into factory
+    df.insert(db_type, dp);
+  }
+  impl_->open(db);
+
+  / * end pseudo code */
+
   // load sqlite library
   // create instance
   if (!db_lib_.load("oos-sqlite")) {

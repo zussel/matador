@@ -35,6 +35,8 @@ template < typename T >
 class singleton
 {
 public:
+  typedef T value_type;
+
   /**
    * @brief Access the instance of the class.
    * 
@@ -44,9 +46,9 @@ public:
    * 
    * @return The one instance of the class.
    */
-  static T& instance ()
+  static value_type& instance ()
   {
-    static T instance_;
+    static value_type instance_;
     return instance_;
   }
   virtual ~singleton ()

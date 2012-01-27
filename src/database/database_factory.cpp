@@ -15,27 +15,26 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unit/unit_test.hpp"
-#include "unit/test_suite.hpp"
+#include "database/database_factory.hpp"
 
-#include "BlobTestUnit.hpp"
-#include "VarCharTestUnit.hpp"
-#include "FactoryTestUnit.hpp"
+namespace oos {
 
-#ifdef WIN32
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
-
-using namespace oos;
-
-int main(int argc, char *argv[])
+database_producer::database_producer(const std::string &type)
 {
-  test_suite::instance().register_unit("blob", new BlobTestUnit());
-  test_suite::instance().register_unit("varchar", new VarCharTestUnit());
-  test_suite::instance().register_unit("factory", new FactoryTestUnit());
-  
-  test_suite::instance().init(argc, argv);
-  test_suite::instance().run();
+  // try to load dll
+  // store create and destroy functions
+}
+
+database_producer::~database_producer()
+{
+  // destroy all created database instances
+}
+
+database_impl* database_producer::create() const
+{
+  // on each call store the created database for later
+  // explicit destruction
+  return 0;
+}
+
 }

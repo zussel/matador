@@ -4,6 +4,8 @@ SET (TEST_SOURCES
   BlobTestUnit.cpp
   VarCharTestUnit.hpp
   VarCharTestUnit.cpp
+  FactoryTestUnit.hpp
+  FactoryTestUnit.cpp
 )
 
 ADD_EXECUTABLE(test_tools ${TEST_SOURCES})

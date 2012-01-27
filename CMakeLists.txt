@@ -91,6 +91,7 @@ SET(TOOLS_HEADER
   include/tools/library.hpp
   include/tools/blob.hpp
   include/tools/varchar.hpp
+  include/tools/factory.hpp
 )
 
 SET(UNIT_SOURCES
@@ -108,6 +109,7 @@ SET(UNIT_HEADER
 SET(DATABASE_SOURCES
   src/database/action.cpp
   src/database/database.cpp
+  src/database/database_factory.cpp
   src/database/inserter.cpp
   src/database/updater.cpp
   src/database/deleter.cpp
@@ -123,6 +125,7 @@ SET(DATABASE_SOURCES
 SET(DATABASE_HEADER
   include/database/action.hpp
   include/database/database.hpp
+  include/database/database_factory.hpp
   include/database/inserter.hpp
   include/database/updater.hpp
   include/database/deleter.hpp
