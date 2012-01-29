@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-#include "database/action.hpp"
-
 #include "object/object_ptr.hpp"
 
 #include "tools/library.hpp"
@@ -47,65 +45,8 @@ namespace oos {
 class object_store;
 class result;
 class transaction;
-class transaction_impl;
+class database_impl;
 class statement_impl;
-
-/**
- * @class database_impl
- * @brief Base class for all database backends
- * 
- * This class must be the base class for database
- * backends used with the object_store/database module.
- * The database actions are implemented using the
- * visitor pattern. So every action is accepted via
- * a method which must be overwritten by the concrete
- * database implementation.
- */
-class OOS_API database_impl : public action_visitor
-{
-public:
-  database_impl();
-  virtual ~database_impl();
-  
-  /**
-   * The interface for the create table action.
-   */
-  virtual void visit(create_action*) {}
-
-  /**
-   * The interface for the insert action.
-   */
-  virtual void visit(insert_action*) {};
-
-  /**
-   * The interface for the update action.
-   */
-  virtual void visit(update_action*) {};
-
-  /**
-   * The interface for the delete action.
-   */
-  virtual void visit(delete_action*) {};
-
-  /**
-   * The interface for the drop table action.
-   */
-  virtual void visit(drop_action*) {}
-
-  /**
-   * Create the concrete transaction_impl.
-   *
-   * @return The concrete transaction_impl.
-   */
-  transaction_impl* create_transaction(transaction &tr) const;
-
-  /**
-   * Create the concrete statement_impl.
-   *
-   * @return The concrete statement_impl.
-   */
-  virtual statement_impl* create_statement();
-};
 
 /**
  * @class database
@@ -245,9 +186,6 @@ private:
    */
   statement_impl* create_statement_impl() const;
 
-  typedef database_impl*(*create_db)(const char*);
-  typedef void (*destroy_db)(database_impl*);
-
   struct statement_info
   {
     statement_info();
@@ -263,10 +201,6 @@ private:
 private:
   database_impl *impl_;
 
-  library db_lib_;
-
-  destroy_db destroy_fun_;
-  
   object_store &ostore_;
 
   std::stack<transaction*> transaction_stack_;

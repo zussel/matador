@@ -16,6 +16,7 @@
  */
 
 #include "database/database.hpp"
+#include "database/database_factory.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 #include "database/reader.hpp"
@@ -34,62 +35,21 @@ using namespace std;
 
 namespace oos {
 
-database_impl::database_impl()
-{}
-
-database_impl::~database_impl()
-{}
-
-transaction_impl* database_impl::create_transaction(transaction &tr) const
-{
-  return new transaction_impl(tr);
-}
-
-statement_impl* database_impl::create_statement()
-{
-  return 0;
-}
-
 database::database(object_store &ostore, const std::string &dbstring)
-  : destroy_fun_(0)
-  , ostore_(ostore)
+  : ostore_(ostore)
 {
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
-  std::string db_type = dbstring.substr(0, pos);
+  std::string type = dbstring.substr(0, pos);
   std::string db = dbstring.substr(pos + 3);
-
-  /* begin pseudo code * /
 
   // get driver factory singleton
   database_factory &df = database_factory::instance();
+
   // try to create database implementation
-  impl_ = df.create(db_type);
-  if (!impl_) {
-    // create new driver producer
-    database_producer *dp = new database_producer(db_type);
-    // create database implementation
-    impl_ = dp->create();
-    // insert producer into factory
-    df.insert(db_type, dp);
-  }
+  impl_ = df.create(type);
+
   impl_->open(db);
-
-  / * end pseudo code */
-
-  // load sqlite library
-  // create instance
-  if (!db_lib_.load("oos-sqlite")) {
-    throw std::runtime_error("couldn't fínd library [" + db_type + "]");
-  }
-  // get create function
-  create_db fun = (create_db)(db_lib_.function("create_database"));
-
-  // create concrete database implementation object
-  impl_ = (*fun)(db.c_str());
-
-  // get destroy function
-  destroy_fun_ = (destroy_db)db_lib_.function("destroy_database");
 
   // if database is new create all tables
   statement_helper helper;
@@ -107,10 +67,9 @@ database::database(object_store &ostore, const std::string &dbstring)
       std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
       
       statement_impl *stmt = impl_->create_statement();
-      
       stmt->prepare(sql);
-      
       stmt->step();
+      
       
       statement_info info;
       sql = helper.create(o.get(), node.type, statement_helper::INSERT);
@@ -128,18 +87,19 @@ database::database(object_store &ostore, const std::string &dbstring)
       info.remove->prepare(sql);
       
       statement_info_map_.insert(std::make_pair(o->object_type(), info));
+      
+      /*
+      impl_->prepare_insert();
+      impl_->prepare_update();
+      impl_->prepare_delete();
+      impl_->prepare_select();
+      */
   }
 }
 
 
 database::~database()
 {
-  if (destroy_fun_) {
-  // destroy database object
-    (*destroy_fun_)(impl_);
-  } else {
-    delete impl_;
-  }
 }
 
 void database::open()

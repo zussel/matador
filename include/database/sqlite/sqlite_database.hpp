@@ -28,7 +28,7 @@
   #define OOS_SQLITE_API
 #endif
 
-#include "database/database.hpp"
+#include "database/database_impl.hpp"
 
 struct sqlite3;
 
@@ -48,9 +48,16 @@ class sqlite_statement;
 class OOS_SQLITE_API sqlite_database : public database_impl
 {
 public:
-  sqlite_database(const std::string &db);
+  sqlite_database();
   virtual ~sqlite_database();
   
+  virtual void open(const std::string &db);
+
+  /**
+   * Close the database
+   */
+  virtual void close();
+
   virtual void visit(create_action *) {}
 
   /**
@@ -104,7 +111,7 @@ private:
 
 extern "C"
 {
-  OOS_SQLITE_API oos::database_impl* create_database(const char *db);
+  OOS_SQLITE_API oos::database_impl* create_database();
 
   OOS_SQLITE_API void destroy_database(oos::database_impl *db);
 }

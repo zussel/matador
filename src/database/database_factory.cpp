@@ -16,25 +16,52 @@
  */
 
 #include "database/database_factory.hpp"
+#include "database/database.hpp"
+
+#include <stdexcept>
 
 namespace oos {
 
-database_producer::database_producer(const std::string &type)
+database_factory::database_factory()
+{}
+
+database_factory::~database_factory()
+{}
+
+database_impl* database_factory::create(const std::string &name)
 {
-  // try to load dll
-  // store create and destroy functions
+  factory_t::iterator i = factory_.find(name);
+  if (i != factory_.end()) {
+    return i->second->create();
+  } else {
+    factory_.insert(name, new database_producer(name));
+    return 0;
+  }
 }
 
-database_producer::~database_producer()
+database_factory::database_producer::database_producer(const std::string &name)
 {
-  // destroy all created database instances
+  // load oos driver library
+  // create instance
+  if (!loader_.load(name.c_str())) {
+    throw std::runtime_error("couldn't fínd library [" + name + "]");
+  }
+  // get create function
+  create_ = reinterpret_cast<create_func>(loader_.function("create_database"));
+  // get destroy function
+  destroy_ = reinterpret_cast<destroy_func>(loader_.function("destroy_database"));
 }
 
-database_impl* database_producer::create() const
+database_factory::database_producer::~database_producer()
+{
+  loader_.unload();
+}
+
+database_impl* database_factory::database_producer::create() const
 {
   // on each call store the created database for later
   // explicit destruction
-  return 0;
+  return (*create_)("");
 }
 
 }

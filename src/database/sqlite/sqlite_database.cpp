@@ -29,8 +29,18 @@ namespace oos {
   
 namespace sqlite {
   
-sqlite_database::sqlite_database(const std::string &db)
+sqlite_database::sqlite_database()
   : db_(0)
+{
+}
+
+sqlite_database::~sqlite_database()
+{
+  close();
+}
+
+
+void sqlite_database::open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &db_);
   if (ret != SQLITE_OK) {
@@ -38,7 +48,7 @@ sqlite_database::sqlite_database(const std::string &db)
   }
 }
 
-sqlite_database::~sqlite_database()
+void sqlite_database::close()
 {
   sqlite3_close(db_);
 }
@@ -79,9 +89,9 @@ sqlite3* sqlite_database::operator()()
 
 extern "C"
 {
-  OOS_SQLITE_API oos::database_impl* create_database(const char *db)
+  OOS_SQLITE_API oos::database_impl* create_database()
   {
-    return new oos::sqlite::sqlite_database(db);
+    return new oos::sqlite::sqlite_database();
   }
 
   OOS_SQLITE_API void destroy_database(oos::database_impl *db)

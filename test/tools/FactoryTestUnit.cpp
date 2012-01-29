@@ -79,10 +79,10 @@ void FactoryTestUnit::insert_items()
 
   std::cout << "size of factory before: " << vfac.size() << "\n";
 
-  vfac.register_type("plane", new vehicle_factory::default_producer<Plane>);
-  vfac.register_type("bike", new vehicle_factory::default_producer<Bike>);
-  vfac.register_type("car", new vehicle_factory::default_producer<Car>);
-  vfac.register_type("ship", new vehicle_factory::default_producer<Ship>);
+  vfac.insert("plane", new vehicle_factory::default_producer<Plane>);
+  vfac.insert("bike", new vehicle_factory::default_producer<Bike>);
+  vfac.insert("car", new vehicle_factory::default_producer<Car>);
+  vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
   std::cout << "size of factory after: " << vfac.size() << "\n";
 }
@@ -93,10 +93,10 @@ void FactoryTestUnit::produce_items()
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
-  vfac.register_type("plane", new vehicle_factory::default_producer<Plane>);
-  vfac.register_type("bike", new vehicle_factory::default_producer<Bike>);
-  vfac.register_type("car", new vehicle_factory::default_producer<Car>);
-  vfac.register_type("ship", new vehicle_factory::default_producer<Ship>);
+  vfac.insert("plane", new vehicle_factory::default_producer<Plane>);
+  vfac.insert("bike", new vehicle_factory::default_producer<Bike>);
+  vfac.insert("car", new vehicle_factory::default_producer<Car>);
+  vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
   std::cout << "producing a car ... ";
 
@@ -116,10 +116,10 @@ void FactoryTestUnit::list_items()
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
-  vfac.register_type("plane", new vehicle_factory::default_producer<Plane>);
-  vfac.register_type("bike", new vehicle_factory::default_producer<Bike>);
-  vfac.register_type("car", new vehicle_factory::default_producer<Car>);
-  vfac.register_type("ship", new vehicle_factory::default_producer<Ship>);
+  vfac.insert("plane", new vehicle_factory::default_producer<Plane>);
+  vfac.insert("bike", new vehicle_factory::default_producer<Bike>);
+  vfac.insert("car", new vehicle_factory::default_producer<Car>);
+  vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
   vehicle_factory::const_iterator first = vfac.begin();
   vehicle_factory::const_iterator last = vfac.end();
