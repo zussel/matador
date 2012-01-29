@@ -109,6 +109,7 @@ SET(UNIT_HEADER
 SET(DATABASE_SOURCES
   src/database/action.cpp
   src/database/database.cpp
+  src/database/database_impl.cpp
   src/database/database_factory.cpp
   src/database/inserter.cpp
   src/database/updater.cpp
@@ -125,6 +126,7 @@ SET(DATABASE_SOURCES
 SET(DATABASE_HEADER
   include/database/action.hpp
   include/database/database.hpp
+  include/database/database_impl.hpp
   include/database/database_factory.hpp
   include/database/inserter.hpp
   include/database/updater.hpp
