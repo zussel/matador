@@ -137,7 +137,6 @@ void prototype_iterator::decrement()
 
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "OBJECT", true))
-  , id_(0)
   , first_(new object_proxy(this))
   , last_(new object_proxy(this))
   , object_deleter_(new object_deleter)
@@ -155,15 +154,6 @@ object_store::object_store()
 object_store::~object_store()
 {
   clear();
-  // delete all deleted object_proxys
-  /*
-  if (root_->op_first->next) {
-    delete root_->op_first->next;
-  }
-  if (root_->op_last->prev) {
-//    delete root_->op_last->prev;
-  }
-  */
   delete last_;
   delete first_;
   delete root_;
@@ -262,13 +252,8 @@ void object_store::clear()
   while (root_->first->next != root_->last) {
     prototype_node *node = root_->first->next;
     remove_prototype(node->type.c_str());
-    //delete node;
   }
-//  cout << "size of object map: " << object_map_.size() << "\n";
-//  cout << "clearing object map ... ";
   object_map_.clear();
-//  cout << "done.\n";
-//  cout << "size of object map: " << object_map_.size() << "\n";
 }
 
 int depth(prototype_node *node)
@@ -295,13 +280,6 @@ void object_store::dump_prototypes(std::ostream &out) const
     out << *node;
     node = node->next_node();
   } while (node);
-  /*
-  object_proxy *i = first_;
-  while (i != last_) {
-    out << "\t" << i << "[label=\"{" << i << "}\"]\n";
-    i = i->next;
-  }
-  */
   out << "}" << std::endl;
 }
 
@@ -398,7 +376,9 @@ object_store::insert_object(object *o, bool notify)
   } else {
     // object gets new unique id
     if (o->id() == 0) {
-      o->id(++id_);
+      o->id(seq_.next());
+    } else {
+      seq_.update(o->id());
     }
     oproxy = create_proxy(o->id());
     oproxy->obj = o;

@@ -20,6 +20,8 @@
 
 #include "object/object_ptr.hpp"
 
+#include "tools/sequencer.hpp"
+
 #ifdef WIN32
 #include <memory>
 #include <unordered_map>
@@ -528,7 +530,9 @@ private:
  
   t_prototype_node_map prototype_node_map_;
   t_object_proxy_map object_map_;
-  long id_;
+
+  sequencer seq_;
+//  long id_;
   
   typedef std::list<object_observer*> t_observer_list;
   t_observer_list observer_list_;

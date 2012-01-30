@@ -71,6 +71,11 @@ database::database(object_store &ostore, const std::string &dbstring)
       // execute create statement
       stmt->step();
 
+      sql = helper.create(o.get(), node.type, statement_helper::SELECT);
+      stmt = impl_->create_statement();
+      stmt->prepare(sql);
+      impl_->store_statement(std::string(o->object_type()) + "_SELECT", database_impl::statement_impl_ptr(stmt));
+
       sql = helper.create(o.get(), node.type, statement_helper::INSERT);
       stmt = impl_->create_statement();
       stmt->prepare(sql);
@@ -137,7 +142,7 @@ bool database::load()
     }
     // create dummy object
     std::auto_ptr<object> o(node.producer->create());
-    reader rdr(*this, o.get(), node.type);
+    reader rdr(*this, o.get());
     while(rdr.read()) {
       std::auto_ptr<object> obj(node.producer->create());
       obj->read_from(&rdr);

@@ -37,8 +37,11 @@ database_impl* database_factory::create(const std::string &name, database *db)
     impl->initialize(db);
     return impl;
   } else {
-    factory_.insert(name, new database_producer(name));
-    return 0;
+    database_producer *producer = new database_producer(name);
+    factory_.insert(name, producer);
+    database_impl *impl = producer->create();
+    impl->initialize(db);
+    return impl;
   }
 }
 
@@ -46,7 +49,7 @@ database_factory::database_producer::database_producer(const std::string &name)
 {
   // load oos driver library
   // create instance
-  if (!loader_.load(name.c_str())) {
+  if (!loader_.load(("oos-"+name).c_str())) {
     throw std::runtime_error("couldn't fínd library [" + name + "]");
   }
   // get create function

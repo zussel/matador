@@ -21,6 +21,7 @@
 #include "object/object_atomizer.hpp"
 
 #include "database/statement.hpp"
+#include "database/database_impl.hpp"
 
 namespace oos {
 
@@ -31,7 +32,7 @@ class varchar_base;
 class reader : public object_atomizer
 {
 public:
-  explicit reader(database &db, object *o, const std::string name);
+  explicit reader(database &db, object *o);
   virtual ~reader();
 
   bool read();
@@ -163,8 +164,8 @@ private:
 
 private:
   database &db_;
-  statement_impl *stmt_;
 
+  database_impl::statement_impl_ptr stmt_;
   int column_;
 };
 

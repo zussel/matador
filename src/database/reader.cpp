@@ -19,23 +19,23 @@
 #include "database/database.hpp"
 #include "database/statement_helper.hpp"
 
+#include "object/object.hpp"
+
 #include "tools/varchar.hpp"
 
 #include <cstring>
 
 namespace oos {
 
-reader::reader(database &db, object *o, const std::string name)
+reader::reader(database &db, object *o)
   : db_(db)
-  , stmt_(0)
   , column_(0)
 {
-  statement_helper helper;
-  std::string sql = helper.create(o, name, statement_helper::SELECT);
-
-  stmt_ = db.create_statement_impl();
-
-  stmt_->prepare(sql);
+  stmt_ = db_.impl_->find_statement(std::string(o->object_type()) + "_SELECT");
+  if (!stmt_) {
+    // throw database_error("couldn't find statement");
+    // or create statement
+  }
 }
 
 reader::~reader()
