@@ -83,6 +83,7 @@ SET(TOOLS_SOURCES
   src/tools/library.cpp
   src/tools/blob.cpp
   src/tools/varchar.cpp
+  src/tools/sequencer.cpp
 )
 
 SET(TOOLS_HEADER
@@ -91,6 +92,7 @@ SET(TOOLS_HEADER
   include/tools/library.hpp
   include/tools/blob.hpp
   include/tools/varchar.hpp
+  include/tools/sequencer.hpp
   include/tools/factory.hpp
 )
 
