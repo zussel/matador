@@ -182,12 +182,10 @@ transaction::transaction(database &db)
   : db_(db)
   , observer_(*this)
   , id_(0)
-  , impl_(db.impl_->create_transaction(*this))
 {}
 
 transaction::~transaction()
 {
-  delete impl_;
 }
 
 long transaction::id_counter = 0;
@@ -224,7 +222,7 @@ transaction::commit()
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
   } else {
-    impl_->commit(insert_action_map_, action_list_);
+    db_.impl_->commit(insert_action_map_, action_list_);
     // clear actions
     action_list_.clear();
     insert_action_map_.clear();
@@ -268,9 +266,6 @@ transaction::rollback()
       erase(i);
       restore(a.get());
     }
-
-    // call transaction implementations rollback
-    impl_->rollback();
     // clear actions
     action_list_.clear();
     object_buffer_.clear();
@@ -451,62 +446,6 @@ transaction::iterator transaction::find_modify_action(object *o)
     ++first;
   }
   return first;
-}
-
-transaction_impl::transaction_impl(transaction &tr)
-  : tr_(tr)
-{}
-
-transaction_impl::~transaction_impl()
-{}
-
-void transaction_impl::commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions)
-{
-  /****************
-   * 
-   * Pop transaction from stack
-   * and execute all actions
-   * change state to comitted
-   * 
-   ****************/
-
-  // execute begin statement
-
-  transaction::insert_action_map_t::const_iterator ifirst = insert_actions.begin();
-  transaction::insert_action_map_t::const_iterator ilast = insert_actions.end();
-  while (ifirst != ilast) {
-
-    inserter ins(tr_.db_);
-      
-    transaction::const_iterator first = ifirst->second.begin();
-    transaction::const_iterator last = ifirst->second.end();
-    while (first != last) {
-//    while (!ifirst->second.empty()) {
-//      std::auto_ptr<action> a(ifirst->second.front());
-      std::auto_ptr<action> a(*first++);
-      
-      
-      ins.insert(a->obj());
-      
-//      a->accept(tr_.db_.impl_);
-//      ifirst->second.pop_front();
-    }
-    ++ifirst;
-  }
-//  insert_actions.clear();
-  transaction::const_iterator first = modify_actions.begin();
-  transaction::const_iterator last = modify_actions.end();
-  while (first != last) {
-    (*first++)->accept(tr_.db_.impl_);
-//    delete *first++;
-//    tr_.db()->execute_action(*first++);
-  }
-
-  // execute commit statement
-}
-
-void transaction_impl::rollback()
-{
 }
 
 }

@@ -186,26 +186,12 @@ private:
    */
   statement_impl* create_statement_impl() const;
 
-  struct statement_info
-  {
-    statement_info();
-    ~statement_info();
-
-    statement_impl *insert;
-    statement_impl *update;
-    statement_impl *remove;
-  };
-  
-  typedef std::map<std::string, statement_info> statement_info_map_t;
-
 private:
   database_impl *impl_;
 
   object_store &ostore_;
 
   std::stack<transaction*> transaction_stack_;
-  
-  statement_info_map_t statement_info_map_;
 };
 
 }

@@ -32,6 +32,7 @@
 #endif
 
 #include "database/action.hpp"
+#include "database/transaction.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -44,7 +45,7 @@
 namespace oos {
 
 class transaction;
-class transaction_impl;
+class database;
 class statement_impl;
 
 /**
@@ -103,13 +104,6 @@ public:
   virtual void visit(drop_action*) {}
 
   /**
-   * Create the concrete transaction_impl.
-   *
-   * @return The concrete transaction_impl.
-   */
-  transaction_impl* create_transaction(transaction &tr) const;
-
-  /**
    * Create the concrete statement_impl.
    *
    * @return The concrete statement_impl.
@@ -132,9 +126,29 @@ public:
    * @param id The id of the statement to find.
    * @return The requested statement.
    */
-  statement_impl_ptr statement(const std::string &id) const;
+  statement_impl_ptr find_statement(const std::string &id) const;
+
+  /**
+   * @brief Called on transaction commit
+   *
+   * This method is called when a started
+   * transaction is commit to the underlaying
+   * database. All stored actions and their
+   * objects are written to the database.
+   *
+   * @param insert_actions A map of insert action lists
+   * @param modify_actions A list of update and delete actions
+   */
+  virtual void commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions);
 
 private:
+  void initialize(database *db);
+
+private:
+  friend class database_factory;
+
+  database *db_;
+
   typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;
   
   statement_impl_map_t statement_impl_map_;

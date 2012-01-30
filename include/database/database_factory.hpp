@@ -27,6 +27,7 @@
 namespace oos {
 
 class database_impl;
+class database;
 
 class database_factory : public oos::singleton<database_factory>
 {
@@ -41,7 +42,7 @@ private:
 public:
   virtual ~database_factory();
 
-  database_impl* create(const std::string &name);
+  database_impl* create(const std::string &name, database *db);
 
 private:
   class database_producer : public factory_t::producer_base

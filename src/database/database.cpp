@@ -47,7 +47,7 @@ database::database(object_store &ostore, const std::string &dbstring)
   database_factory &df = database_factory::instance();
 
   // try to create database implementation
-  impl_ = df.create(type);
+  impl_ = df.create(type, this);
 
   impl_->open(db);
 
@@ -68,32 +68,23 @@ database::database(object_store &ostore, const std::string &dbstring)
       
       statement_impl *stmt = impl_->create_statement();
       stmt->prepare(sql);
+      // execute create statement
       stmt->step();
-      
-      
-      statement_info info;
-      sql = helper.create(o.get(), node.type, statement_helper::INSERT);
 
-      info.insert = impl_->create_statement();
-      info.insert->prepare(sql);
+      sql = helper.create(o.get(), node.type, statement_helper::INSERT);
+      stmt = impl_->create_statement();
+      stmt->prepare(sql);
+      impl_->store_statement(std::string(o->object_type()) + "_INSERT", database_impl::statement_impl_ptr(stmt));
 
       sql = helper.create(o.get(), node.type, statement_helper::UPDATE, "id=?");
+      stmt = impl_->create_statement();
+      stmt->prepare(sql);
+      impl_->store_statement(std::string(o->object_type()) + "_UPDATE", database_impl::statement_impl_ptr(stmt));
 
-      info.update = impl_->create_statement();
-      info.update->prepare(sql);
       sql = helper.create(o.get(), node.type, statement_helper::DEL, "id=?");
-
-      info.remove = impl_->create_statement();
-      info.remove->prepare(sql);
-      
-      statement_info_map_.insert(std::make_pair(o->object_type(), info));
-      
-      /*
-      impl_->prepare_insert();
-      impl_->prepare_update();
-      impl_->prepare_delete();
-      impl_->prepare_select();
-      */
+      stmt = impl_->create_statement();
+      stmt->prepare(sql);
+      impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
   }
 }
 
@@ -212,25 +203,6 @@ statement_impl* database::create_statement_impl() const
 transaction* database::current_transaction() const
 {
   return (transaction_stack_.empty() ? 0 : transaction_stack_.top());
-}
-
-database::statement_info::statement_info()
-  : insert(0)
-  , update(0)
-  , remove(0)
-{}
-
-database::statement_info::~statement_info()
-{
-  if (insert) {
-    delete insert;
-  }
-  if (update) {
-    delete update;
-  }
-  if (remove) {
-    delete remove;
-  }
 }
 
 }

@@ -17,6 +17,7 @@
 
 #include "database/inserter.hpp"
 #include "database/database.hpp"
+#include "database/database_impl.hpp"
 #include "database/statement.hpp"
 
 #include "object/object.hpp"
@@ -39,14 +40,13 @@ void inserter::insert(object *o)
    * and execute it.
    *
    ******/
-  database::statement_info_map_t::iterator i = db_.statement_info_map_.find(o->object_type());
-  if (i == db_.statement_info_map_.end()) {
-    // error: couldn't find prepared statements for object
+  database_impl::statement_impl_ptr stmt = db_.impl_->find_statement(std::string(o->object_type()) + "_INSERT");
+  if (!stmt) {
   }
   
-  binder_.bind(i->second.insert, o, false);
+  binder_.bind(stmt.get(), o, false);
 
-  i->second.insert->step();
+  stmt->step();
 }
 
 }

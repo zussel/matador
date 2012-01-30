@@ -81,13 +81,6 @@ public:
   virtual void visit(drop_action *) {}
 
   /**
-   * Create the concrete transaction_impl.
-   *
-   * @return The concrete transaction_impl.
-   */
-  transaction_impl* create_transaction(transaction &tr) const;
-
-  /**
    * Create a new sqlite statement
    * 
    * @return A new sqlite statement

@@ -19,8 +19,11 @@
 #include "database/sqlite/sqlite_statement.hpp"
 
 #include "database/transaction.hpp"
+#include "database/statement_binder.hpp"
 //#include "database/updater.hpp"
 //#include "database/deleter.hpp"
+
+#include "object/object.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
@@ -60,18 +63,20 @@ void sqlite_database::visit(insert_action *a)
 
 void sqlite_database::visit(update_action *a)
 {
-//  updater update(
-  // create update statement
+  statement_impl_ptr stmt = find_statement(std::string(a->obj()->object_type()) + "_UPDATE");
+  if (!stmt) {
+    // throw error
+  }
+  statement_binder binder;
 }
 
 void sqlite_database::visit(delete_action *a)
 {
-  // create delete statement
-}
-
-transaction_impl* sqlite_database::create_transaction(transaction &tr) const
-{
-  return new transaction_impl(tr);
+  statement_impl_ptr stmt = find_statement(std::string(a->obj()->object_type()) + "_DELETE");
+  if (!stmt) {
+    // throw error
+  }
+  statement_binder binder;
 }
 
 statement_impl* sqlite_database::create_statement()

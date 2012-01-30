@@ -18,6 +18,18 @@
 #ifndef STATEMENT_BINDER_HPP
 #define STATEMENT_BINDER_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 
 namespace oos {
@@ -25,7 +37,7 @@ namespace oos {
 class object;
 class statement_impl;
 
-class statement_binder : public object_atomizer
+class OOS_API statement_binder : public object_atomizer
 {
 public:
   statement_binder();

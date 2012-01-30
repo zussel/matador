@@ -17,6 +17,7 @@
 
 #include "database/database_factory.hpp"
 #include "database/database.hpp"
+#include "database/database_impl.hpp"
 
 #include <stdexcept>
 
@@ -28,11 +29,13 @@ database_factory::database_factory()
 database_factory::~database_factory()
 {}
 
-database_impl* database_factory::create(const std::string &name)
+database_impl* database_factory::create(const std::string &name, database *db)
 {
   factory_t::iterator i = factory_.find(name);
   if (i != factory_.end()) {
-    return i->second->create();
+    database_impl *impl = i->second->create();
+    impl->initialize(db);
+    return impl;
   } else {
     factory_.insert(name, new database_producer(name));
     return 0;
