@@ -18,15 +18,74 @@
 #ifndef SEQUENCER_HPP
 #define SEQUENCER_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
+#ifdef WIN32
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 namespace oos {
+
+class OOS_API sequencer_impl
+{
+public:
+  virtual ~sequencer_impl() {}
+  
+  virtual long init() = 0;
+
+  virtual long reset(long id) = 0;
+
+  virtual long next() = 0;
+  virtual long current() const = 0;
+
+  virtual long update(long id) = 0;
+};
+
+typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr;
+
+class default_sequencer : public sequencer_impl
+{
+public:
+  default_sequencer();
+  virtual ~default_sequencer();
+
+  virtual long init();
+
+  virtual long reset(long id);
+
+  virtual long next();
+  virtual long current() const;
+
+  virtual long update(long id);
+
+private:
+  long number_;
+};
 
 class sequencer
 {
 public:
-  sequencer();
+  sequencer(const sequencer_impl_ptr &impl = sequencer_impl_ptr(new default_sequencer));
   ~sequencer();
 
+  void exchange_sequencer(const sequencer_impl_ptr &impl);
+
   long init();
+
+  long reset(long id);
 
   long next();
   long current() const;
@@ -34,7 +93,7 @@ public:
   long update(long id);
 
 private:
-  long number_;
+  sequencer_impl_ptr impl_;
 };
 
 }

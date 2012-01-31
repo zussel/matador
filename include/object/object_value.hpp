@@ -137,7 +137,7 @@ namespace detail {
   template < typename Y >
   struct retriever<const varchar_base&, Y>
   {
-    void retrieve(const char *id, const char *f, bool &r, const varchar_base& master, Y& slave) {}
+    void retrieve(const char*, const char*, bool&, const varchar_base&, Y&) {}
   };
 
   template < >

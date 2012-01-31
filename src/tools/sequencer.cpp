@@ -19,35 +19,78 @@
 
 namespace oos {
 
-sequencer::sequencer()
+default_sequencer::default_sequencer()
   : number_(0)
+{}
+
+default_sequencer::~default_sequencer()
+{}
+
+long default_sequencer::init()
+{
+  return number_;
+}
+
+long default_sequencer::reset(long id)
+{
+  number_ = id;
+  return number_;
+}
+
+long default_sequencer::next()
+{
+  return ++number_;
+}
+
+long default_sequencer::current() const
+{
+  return number_;
+}
+
+long default_sequencer::update(long id)
+{
+  if (id > number_) {
+    number_ = id;
+  }
+  return number_;
+}
+
+sequencer::sequencer(const sequencer_impl_ptr &impl)
+  : impl_(impl)
 {
 }
 
 sequencer::~sequencer()
 {}
 
+void sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
+{
+  impl_ = impl;
+}
+
 long sequencer::init()
 {
-  return number_;
+  return impl_->init();
+}
+
+long sequencer::reset(long id)
+{
+  return impl_->reset(id);
 }
 
 long sequencer::next()
 {
-  return ++number_;
+  return impl_->next();
 }
 
 long sequencer::current() const
 {
-  return number_;
+  return impl_->current();
 }
 
 long sequencer::update(long id)
 {
-  if (id > number_) {
-    number_ = id;
-  }
-  return number_;
+  return impl_->update(id);
 }
 
 }

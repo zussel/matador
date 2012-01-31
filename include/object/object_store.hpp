@@ -508,6 +508,18 @@ public:
    */
   void remove_proxy(prototype_node *node, object_proxy *oproxy);
 
+  /**
+   * @brief Exchange the sequencer strategy.
+   * 
+   * Exchange the sequencer strategy of this object_store.
+   * The current sequencer is replaced by the new one and
+   * the current sequence is synced with the new sequencer
+   * sequence.
+   * 
+   * @param seq The new sequencer strategy object.
+   */
+  void exchange_sequencer(const sequencer_impl_ptr &seq);
+
 private:
   friend class object_creator;
   friend class object_deleter;
