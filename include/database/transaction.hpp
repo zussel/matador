@@ -62,7 +62,7 @@ class byte_buffer;
  * the stored data to the objects modified within
  * the transaction.
  */
-class OOS_API transaction
+class OOS_API transaction : public object_observer
 {
 public:
   typedef std::list<action*> action_list_t;
@@ -131,22 +131,11 @@ public:
    */
   const database& db() const;
 
+  virtual void on_insert(object *o);
+  virtual void on_update(object *o);
+  virtual void on_delete(object *o);
+
 private:
-  class transaction_observer : public object_observer
-  {
-  public:
-    transaction_observer(transaction &tr)
-      : tr_(tr)
-    {}
-    virtual ~transaction_observer() {}
-
-    virtual void on_insert(object *o);
-    virtual void on_update(object *o);
-    virtual void on_delete(object *o);
-  private:
-    transaction &tr_;
-  };
-
   class backup_visitor : public action_visitor
   {
   public:
@@ -194,23 +183,12 @@ private:
 private:
   typedef std::set<long> id_set_t;
 
-  friend class transaction_impl;
   friend class object_store;
   friend class database;
   
   void backup(insert_action *ia);
   void backup(action *a);
   void restore(action *a);
-
-  iterator begin();
-  const_iterator begin() const;
-  iterator end();
-  const_iterator end() const;
-
-  iterator erase(iterator i);
-
-  bool empty() const;
-  size_t size() const;
 
   bool has_id(long id) const;
 
@@ -224,7 +202,6 @@ private:
 
 private:
   database &db_;
-  transaction_observer observer_;
   long id_;
   
   id_set_t id_set_;

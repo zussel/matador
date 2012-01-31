@@ -31,12 +31,17 @@ database_impl::~database_impl()
 
 bool database_impl::store_statement(const std::string &id, database_impl::statement_impl_ptr stmt)
 {
-  return true;
+  return statement_impl_map_.insert(std::make_pair(id, stmt)).second;
 }
 
 database_impl::statement_impl_ptr database_impl::find_statement(const std::string &id) const
 {
-  return statement_impl_ptr();
+  statement_impl_map_t::const_iterator i = statement_impl_map_.find(id);
+  if (i != statement_impl_map_.end()) {
+    return i->second;
+  } else {
+    return statement_impl_ptr();
+  }
 }
 
 void database_impl::commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions)

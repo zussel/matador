@@ -31,7 +31,7 @@ using namespace std;
 
 namespace oos {
 
-void transaction::transaction_observer::on_insert(object *o)
+void transaction::on_insert(object *o)
 {
 //  cout << "inserting " << *o << endl;
   /*****************
@@ -42,14 +42,14 @@ void transaction::transaction_observer::on_insert(object *o)
    * store
    * 
    *****************/
-  if (!tr_.has_id(o->id())) {
-    tr_.backup(new insert_action(o));
+  if (!has_id(o->id())) {
+    backup(new insert_action(o));
   } else {
     // ERROR: an object with that id already exists
   }
 }
 
-void transaction::transaction_observer::on_update(object *o)
+void transaction::on_update(object *o)
 {
 //  cout << "updating " << *o << endl;
   /*****************
@@ -59,8 +59,8 @@ void transaction::transaction_observer::on_update(object *o)
    * is restored to old values
    * 
    *****************/
-  if (!tr_.has_id(o->id())) {
-    tr_.backup(new update_action(o));
+  if (!has_id(o->id())) {
+    backup(new update_action(o));
   } else {
     // An object with that id already exists
     // do nothing because the object is already
@@ -68,7 +68,7 @@ void transaction::transaction_observer::on_update(object *o)
   }
 }
 
-void transaction::transaction_observer::on_delete(object *o)
+void transaction::on_delete(object *o)
 {
 //  cout << "deleting " << *o << endl;
   /*****************
@@ -79,23 +79,23 @@ void transaction::transaction_observer::on_delete(object *o)
    * object store
    * 
    *****************/
-  if (!tr_.has_id(o->id())) {
-    tr_.backup(new delete_action(o));
+  if (!has_id(o->id())) {
+    backup(new delete_action(o));
   } else {
     // there is already an action for
     // this object inserted
     // try to find out if it is an insert
     // or update action
-    transaction::iterator i = tr_.find_modify_action(o);
-    if (i != tr_.end()) {
+    iterator i = find_modify_action(o);
+    if (i != action_list_.end()) {
       // found modify action
       delete *i;
       *i = new delete_action(o);
     } else {
-      const action* a = tr_.find_insert_action(o);
+      const action* a = find_insert_action(o);
       if (a) {
-        tr_.erase_insert_action(a);
-        tr_.id_set_.erase(o->id());
+        erase_insert_action(a);
+        id_set_.erase(o->id());
       } else {
         /***************
          * 
@@ -180,7 +180,6 @@ void transaction::restore_visitor::visit(delete_action *a)
 
 transaction::transaction(database &db)
   : db_(db)
-  , observer_(*this)
   , id_(0)
 {}
 
@@ -260,10 +259,10 @@ transaction::rollback()
       ++first;
     }
     insert_action_map_.clear();
-    while (!empty()) {
-      iterator i = begin();
+    while (!action_list_.empty()) {
+      iterator i = action_list_.begin();
       std::auto_ptr<action> a(*i);
-      erase(i);
+      action_list_.erase(i);
       restore(a.get());
     }
     // clear actions
@@ -360,41 +359,6 @@ transaction::backup(action *a)
 void transaction::restore(action *a)
 {
   restore_visitor_.restore(a, &object_buffer_, &db_.ostore());
-}
-
-transaction::iterator transaction::begin()
-{
-  return action_list_.begin();
-}
-
-transaction::const_iterator transaction::begin() const
-{
-  return action_list_.begin();
-}
-
-transaction::iterator transaction::end()
-{
-  return action_list_.end();
-}
-
-transaction::const_iterator transaction::end() const
-{
-  return action_list_.end();
-}
-
-transaction::iterator transaction::erase(transaction::iterator i)
-{
-  return action_list_.erase(i);
-}
-
-bool transaction::empty() const
-{
-  return action_list_.empty();
-}
-
-size_t transaction::size() const
-{
-  return action_list_.size();
 }
 
 bool transaction::has_id(long id) const
