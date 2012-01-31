@@ -196,7 +196,7 @@ transaction::id() const
 }
 
 void
-transaction::start()
+transaction::begin()
 {
   /**************
    * 
@@ -208,7 +208,6 @@ transaction::start()
    *
    **************/
   id_ = ++transaction::id_counter;
-//  tro_.reset(new transaction_observer(*this));
   db_.push_transaction(this);
   cout << "starting transaction [" << id_ << "]\n";
 }
@@ -216,7 +215,6 @@ transaction::start()
 void
 transaction::commit()
 {
-//  tro_.reset();
   if (!db_.current_transaction() || db_.current_transaction() != this) {
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
@@ -234,7 +232,6 @@ transaction::commit()
 void
 transaction::rollback()
 {
-//  tro_.reset();
   if (!db_.current_transaction() || db_.current_transaction() != this) {
     // throw db_exception();
     cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";

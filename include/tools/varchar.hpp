@@ -68,6 +68,8 @@ public:
 
   std::string str() const;
 
+  const char* c_str() const;
+
   size_type size() const;
 
   size_type capacity() const;

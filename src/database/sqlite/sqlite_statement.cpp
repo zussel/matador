@@ -50,6 +50,7 @@ bool sqlite_statement::step()
     return false;
   } else {
     // error, throw exception
+//    throw std::sqlite_error("error on calling sqlite3_step");
     throw std::runtime_error("error on calling sqlite3_step");
   }
   return false;

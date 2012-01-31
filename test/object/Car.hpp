@@ -4,13 +4,15 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 
+#include "tools/varchar.hpp"
+
 class Engine;
 
 class Car : public oos::object
 {
 public:
   Car();
-  Car(const std::string &brand, const std::string &type);
+  Car(const std::string &brand, const std::string &type, const std::string &desc);
   virtual ~Car();
   
   virtual void read_from(oos::object_atomizer *reader);
@@ -22,14 +24,18 @@ public:
   std::string type() const;
   void type(const std::string &t);
 
+  std::string description() const;
+  void description(const std::string &desc);
+
   oos::object_ptr<Engine> engine() const;
   void engine(const oos::object_ptr<Engine> &e);
-  
+ 
   friend std::ostream& operator <<(std::ostream &os, const Car &c);
 
 private:
-  std::string brand_;
-  std::string type_;
+  oos::varchar<32> brand_;
+  oos::varchar<32> type_;
+  std::string desc_;
   
   oos::object_ptr<Engine> engine_;
 };

@@ -106,7 +106,7 @@ void statement_binder::write_string(const char *id, const std::string &x)
 void statement_binder::write_varchar(const char *id, const varchar_base &x)
 {
   std::cout << "bind value for column [" << id << "]\n";
-  stmt_->bind(++column_, x.str().c_str());
+  stmt_->bind(++column_, x.c_str());
 }
 
 void statement_binder::write_object(const char *id, const object_base_ptr &x)

@@ -97,7 +97,7 @@ public:
    * Start the transaction. All object insertions,
    * modifications and deletions are stored.
    */
-  void start();
+  void begin();
 
   /**
    * @brief Commit the started transaction.

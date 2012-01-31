@@ -94,7 +94,7 @@ DatabaseTestUnit::simple()
 {
   cout << endl;
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://test.sqlite");
+  database db(ostore_, "sqlite://simple.sqlite");
 
   // load data
   db.load();
@@ -103,7 +103,7 @@ DatabaseTestUnit::simple()
   transaction tr(db);
   try {
     // begin transaction
-    tr.start();
+    tr.begin();
 
     // ... do some object modifications
     typedef object_ptr<Engine> engine_ptr;
@@ -113,7 +113,7 @@ DatabaseTestUnit::simple()
     cout << "inserted " << *engine << "\n";
     tr.commit();
 
-    tr.start();
+    tr.begin();
     // modify object
     engine->power(120);
     cout << "changed power of " << *engine << "\n";
@@ -121,7 +121,7 @@ DatabaseTestUnit::simple()
     transaction tr2(db);
     try {
       // begin inner transaction
-      tr2.start();
+      tr2.begin();
       // change name again
       engine->power(170);
       cout << "changed power of " << *engine << "\n";
@@ -134,7 +134,7 @@ DatabaseTestUnit::simple()
     tr.rollback();
     cout << "after rollback " << *engine << "\n";
 
-    tr.start();
+    tr.begin();
     // delete object
     cout << "deleting " << *engine << "\n";
     ostore_.remove(engine);
@@ -155,7 +155,7 @@ DatabaseTestUnit::simple()
     }
 
     // commit modifications
-//    tr.commit();
+    tr.commit();
 /*
     // begin transaction
     tr.begin();
@@ -189,21 +189,31 @@ DatabaseTestUnit::with_sub()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database db(ostore_, "oodb://");
+  database db(ostore_, "sqlite://with_sub.sqlite");
 
-  // open db
-  db.open();
+  // load data
+  /****************
+   *
+   * comment this statement and the following
+   * will happen if data exists:
+   * data won't be load
+   * a car object with id 1 is created
+   * and an exception on insert is thrown
+   * because there is already a car object
+   * with id 1
+   ****************/
+  db.load();
 
   // create new transaction    
   transaction tr(db);
   try {
     // begin transaction
-    tr.start();
+    tr.begin();
     // ... do some object modifications
     typedef object_ptr<Car> car_ptr;
     typedef object_ptr<Engine> engine_ptr;
     // insert new object
-    car_ptr car = ostore_.insert(new Car("VW", "Beetle"));    
+    car_ptr car = ostore_.insert(new Car("VW", "Beetle", "A small old car, looking like a beetle."));    
     engine_ptr engine = car->engine();
     ostore_.dump_objects(cout);
     engine->power(120);
@@ -212,7 +222,7 @@ DatabaseTestUnit::with_sub()
     cout << "inserted " << *car << " with " << *engine << endl;
     tr.commit();
     
-    tr.start();
+    tr.begin();
     
     cout << "removing " << *car << " ... ";
     ostore_.remove(car);
@@ -254,7 +264,7 @@ DatabaseTestUnit::with_list()
   transaction tr(db);
   try {
     // begin transaction
-    tr.start();
+    tr.begin();
     // ... do some object modifications
     cout << "inserting item pointer list\n";
     itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
@@ -263,7 +273,7 @@ DatabaseTestUnit::with_list()
     
     ostore_.dump_objects(cout);
 
-    tr.start();
+    tr.begin();
     cout << "inserting 2 items\n";
     for (int i = 0; i < 2; ++i) {
       stringstream name;
@@ -284,7 +294,7 @@ DatabaseTestUnit::with_list()
     
     ostore_.dump_objects(cout);
     
-    tr.start();
+    tr.begin();
     cout << "inserting 4 items\n";
     for (int i = 0; i < 4; ++i) {
       stringstream name;
@@ -305,7 +315,7 @@ DatabaseTestUnit::with_list()
     
     ostore_.dump_objects(cout);
 
-    tr.start();
+    tr.begin();
     
     cout << "start clearing list\n";
     itemlist->clear();
