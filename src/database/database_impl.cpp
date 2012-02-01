@@ -83,7 +83,8 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
     (*first++)->accept(this);
   }
 
-  // execute commit statement
+  // write sequence to db
+  // sequence_impl_->commit();
 }
 
 void database_impl::initialize(database *db)

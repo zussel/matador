@@ -130,6 +130,7 @@ SET(DATABASE_HEADER
   include/database/database.hpp
   include/database/database_impl.hpp
   include/database/database_factory.hpp
+  include/database/database_sequencer.hpp
   include/database/inserter.hpp
   include/database/updater.hpp
   include/database/deleter.hpp
@@ -152,11 +153,13 @@ ADD_LIBRARY(oos SHARED
 SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_database.cpp
   src/database/sqlite/sqlite_statement.cpp
+  src/database/sqlite/sqlite_sequencer.cpp
 )
 
 SET(SQLITE_DATABASE_HEADER
   include/database/sqlite/sqlite_database.hpp
   include/database/sqlite/sqlite_statement.hpp
+  include/database/sqlite/sqlite_sequencer.hpp
 )
 
 ADD_LIBRARY(oos-sqlite SHARED
