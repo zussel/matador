@@ -167,7 +167,6 @@ public:
 
 private:
   friend class transaction;
-  friend class transaction_impl;
   friend class statement;
   friend class reader;
   friend class inserter;
@@ -178,6 +177,9 @@ private:
   void pop_transaction();
 
   object* load(const std::string &type, int id = 0);
+
+  void commit(transaction &tr);
+  void rollback();
 
   /**
    * Create a statement implementation

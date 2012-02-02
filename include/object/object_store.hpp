@@ -515,10 +515,12 @@ public:
    * The current sequencer is replaced by the new one and
    * the current sequence is synced with the new sequencer
    * sequence.
+   * The old strategy is returned.
    * 
    * @param seq The new sequencer strategy object.
+   * @return The old sequencer startegy implementation.
    */
-  void exchange_sequencer(const sequencer_impl_ptr &seq);
+  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
 private:
   friend class object_creator;

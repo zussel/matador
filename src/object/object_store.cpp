@@ -640,9 +640,9 @@ void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
   --node->count;
 }
 
-void object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
+sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
 {
-  seq_.exchange_sequencer(seq);
+  return seq_.exchange_sequencer(seq);
 }
 
 }

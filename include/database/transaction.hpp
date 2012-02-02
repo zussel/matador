@@ -197,6 +197,8 @@ private:
 
   iterator find_modify_action(object *o);
 
+  void cleanup();
+
 private:
   static long id_counter;
 

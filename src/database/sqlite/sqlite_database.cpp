@@ -18,12 +18,12 @@
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_statement.hpp"
 
+#include "database/database.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_binder.hpp"
-//#include "database/updater.hpp"
-//#include "database/deleter.hpp"
 
 #include "object/object.hpp"
+#include "object/object_store.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
@@ -33,7 +33,8 @@ namespace oos {
 namespace sqlite {
   
 sqlite_database::sqlite_database()
-  : db_(0)
+  : database_impl(new sqlite_sequencer(this))
+  , db_(0)
 {
 }
 
@@ -49,10 +50,14 @@ void sqlite_database::open(const std::string &db)
   if (ret != SQLITE_OK) {
     throw std::runtime_error("couldn't open database: " + db);
   }
+
+  database_impl::open(db);
 }
 
 void sqlite_database::close()
 {
+  database_impl::close();
+
   sqlite3_close(db_);
 }
 

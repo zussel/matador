@@ -30,6 +30,8 @@
 
 #include "database/database_impl.hpp"
 
+#include "database/sqlite/sqlite_sequencer.hpp"
+
 struct sqlite3;
 
 namespace oos {
@@ -94,6 +96,8 @@ public:
    * @return The raw sqlite3 pointer.
    */
   sqlite3* operator()();
+
+protected:
 
 private:
   sqlite3 *db_;

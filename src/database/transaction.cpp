@@ -174,8 +174,6 @@ void transaction::restore_visitor::visit(delete_action *a)
     // data from buffer into object
     serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
   }
-  // ERROR: throw exception if id of object
-  //        isn't valid (in use)
 }
 
 transaction::transaction(database &db)
@@ -208,6 +206,7 @@ transaction::begin()
    *
    **************/
   id_ = ++transaction::id_counter;
+//  db_.begin(this);
   db_.push_transaction(this);
   cout << "starting transaction [" << id_ << "]\n";
 }
@@ -219,13 +218,10 @@ transaction::commit()
     // throw db_exception();
     cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
   } else {
-    db_.impl_->commit(insert_action_map_, action_list_);
+    // commit all transaction actions
+    db_.commit(*this);
     // clear actions
-    action_list_.clear();
-    insert_action_map_.clear();
-    object_buffer_.clear();
-    id_set_.clear();
-    db_.pop_transaction();
+    cleanup();
   }
 }
 
@@ -244,7 +240,7 @@ transaction::rollback()
      * clear insert action map
      *
      **************/
-  
+
     insert_action_map_t::iterator first = insert_action_map_.begin();
     insert_action_map_t::iterator last = insert_action_map_.end();
     while (first != last) {
@@ -262,11 +258,11 @@ transaction::rollback()
       action_list_.erase(i);
       restore(a.get());
     }
-    // clear actions
-    action_list_.clear();
-    object_buffer_.clear();
-    id_set_.clear();
-    db_.pop_transaction();
+
+    db_.rollback();
+
+    // clear container
+    cleanup();
   }
 }
 
@@ -302,55 +298,9 @@ transaction::backup(action *a)
    * id in action map
    * 
    *************/
-  
   backup_visitor_.backup(a, &object_buffer_);
   action_list_.push_back(a);
   id_set_.insert(a->obj()->id());
-/*
-  id_set_t::iterator i = id_set_.find(a->obj()->id());
-  if (i == id_set_.end()) {
-//    cout << "TR (" << id_ << ") couldn't find id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]: inserting action\n";
-    backup_visitor_.backup(a, &object_buffer_);
-    action_list_.push_back(a);
-    id_set_.insert(a->obj()->id());
-  } else {
-    // find action with id in list
-//    cout << "TR (" << id_ << ") found id [" << a->obj()->id() << "] of object [" << a->obj()->object_type() << "]\n";
-    iterator first = action_list_.begin();
-    iterator last = action_list_.end();
-    while (first != last) {
-      if ((*first)->obj()->id() == *i) {
-        break;
-      }
-      ++first;
-    }
-    if (first == last) {
-      // couldn't find action
-      // error, throw exception
-//      cout << "TR (" << id_ << ") FATAL ERROR: couldn't find corresponding object in action list!\n";
-    } else {
-      if (a->type() == action::DEL && (*first)->type() == action::INSERT) {
-//        cout << "TR (" << id_ << ") new action is delete, old action is insert: removing action\n";
-        // within this transaction inserted
-        // object is also deleted
-        // so we can remove insert and
-        // delete action, because object
-        // has never been existed
-        action_list_.erase(first);
-        id_set_.erase(i);
-      } else if (a->type() == action::DEL && (*first)->type() == action::UPDATE) {
-//        cout << "TR (" << id_ << ") new action is delete, old action is update: replace action\n";
-        // updated object is also deleted
-        // replace update action with delete
-        // action
-        *first = a;
-      } else {
-//        cout << "TR (" << id_ << ") nothing todo\n";
-        delete a;
-      }
-    }
-  }
-  */
 }
 
 void transaction::restore(action *a)
@@ -407,6 +357,15 @@ transaction::iterator transaction::find_modify_action(object *o)
     ++first;
   }
   return first;
+}
+
+void transaction::cleanup()
+{
+  action_list_.clear();
+  insert_action_map_.clear();
+  object_buffer_.clear();
+  id_set_.clear();
+  db_.pop_transaction();
 }
 
 }

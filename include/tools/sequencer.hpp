@@ -39,24 +39,67 @@
 
 namespace oos {
 
+/**
+ * @class sequencer_impl
+ * @brief Sequencer implementation interface
+ *
+ * This class provides the implementation
+ * interafce for the sequencer class.
+ */
 class OOS_API sequencer_impl
 {
 public:
   virtual ~sequencer_impl() {}
   
+  /**
+   * Initialize the sequencer implementation.
+   *
+   * @return The sequence number after init.
+   */
   virtual long init() = 0;
 
+  /**
+   * Resets the sequencer implementation to
+   * the new given number. The number is returned
+   * afterwards.
+   *
+   * @param id The new id of the sequencer.
+   * @return The new set id.
+   */
   virtual long reset(long id) = 0;
 
+  /**
+   * Get the next valid sequence id.
+   * The current id is incremented and
+   * returned.
+   *
+   * @return The next valid sequence id.
+   */
   virtual long next() = 0;
+
+  /**
+   * Returns the current sequence id without
+   * incrementing it.
+   *
+   * @return The current sequence id.
+   */
   virtual long current() const = 0;
 
+  /**
+   * Updates the given id with the current id
+   * of the sequencer. The current id is set to
+   * the given id if the given id is greater than
+   * the current id.
+   *
+   * @param id The id to update
+   * @return The new id.
+   */
   virtual long update(long id) = 0;
 };
 
 typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr;
 
-class default_sequencer : public sequencer_impl
+class OOS_API default_sequencer : public sequencer_impl
 {
 public:
   default_sequencer();
@@ -75,13 +118,21 @@ private:
   long number_;
 };
 
-class sequencer
+class OOS_API sequencer
 {
 public:
   sequencer(const sequencer_impl_ptr &impl = sequencer_impl_ptr(new default_sequencer));
   ~sequencer();
 
-  void exchange_sequencer(const sequencer_impl_ptr &impl);
+  /**
+   * Replace the current sequencer
+   * implementation with the new one
+   * and return the old implementation.
+   *
+   * @param impl The new sequencer implementation.
+   * @return The old sequencer implementation.
+   */
+  sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &impl);
 
   long init();
 

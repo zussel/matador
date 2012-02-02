@@ -32,17 +32,13 @@ database_factory::~database_factory()
 database_impl* database_factory::create(const std::string &name, database *db)
 {
   factory_t::iterator i = factory_.find(name);
-  if (i != factory_.end()) {
-    database_impl *impl = i->second->create();
-    impl->initialize(db);
-    return impl;
-  } else {
+  if (i == factory_.end()) {
     database_producer *producer = new database_producer(name);
-    factory_.insert(name, producer);
-    database_impl *impl = producer->create();
-    impl->initialize(db);
-    return impl;
+    i = factory_.insert(name, producer).first;
   }
+  database_impl *impl = i->second->create();
+  impl->initialize(db);
+  return impl;
 }
 
 database_factory::database_producer::database_producer(const std::string &name)

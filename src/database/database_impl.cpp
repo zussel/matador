@@ -15,19 +15,38 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "database/database.hpp"
 #include "database/database_impl.hpp"
+#include "database/database_sequencer.hpp"
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
 #include "database/statement_binder.hpp"
 
+#include "object/object_store.hpp"
+
 namespace oos {
 
-database_impl::database_impl()
+database_impl::database_impl(database_sequencer *seq)
   : db_(0)
+  , sequencer_(seq)
 {}
 
 database_impl::~database_impl()
 {}
+
+void database_impl::open(const std::string &db)
+{
+  sequencer_->create();
+  // setup sequencer
+  sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
+}
+
+void database_impl::close()
+{
+  if (sequencer_backup_) {
+    db()->ostore().exchange_sequencer(sequencer_backup_);
+  }
+}
 
 bool database_impl::store_statement(const std::string &id, database_impl::statement_impl_ptr stmt)
 {
@@ -84,7 +103,22 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
   }
 
   // write sequence to db
-  // sequence_impl_->commit();
+  sequencer_->commit();
+}
+
+void database_impl::rollback()
+{
+  sequencer_->rollback();
+}
+
+const database* database_impl::db() const
+{
+  return db_;
+}
+
+database* database_impl::db()
+{
+  return db_;
 }
 
 void database_impl::initialize(database *db)

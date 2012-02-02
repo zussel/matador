@@ -63,9 +63,11 @@ sequencer::sequencer(const sequencer_impl_ptr &impl)
 sequencer::~sequencer()
 {}
 
-void sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
+sequencer_impl_ptr sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
 {
+  sequencer_impl_ptr tmp = impl_;
   impl_ = impl;
+  return tmp;
 }
 
 long sequencer::init()

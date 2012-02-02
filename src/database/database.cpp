@@ -200,6 +200,16 @@ object* database::load(const std::string &type, int id)
   return NULL;
 }
 
+void database::commit(transaction &tr)
+{
+  impl_->commit(tr.insert_action_map_, tr.action_list_);
+}
+
+void database::rollback()
+{
+  impl_->rollback();
+}
+
 statement_impl* database::create_statement_impl() const
 {
   return impl_->create_statement();

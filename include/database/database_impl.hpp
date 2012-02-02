@@ -34,6 +34,8 @@
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 
+#include "tools/sequencer.hpp"
+
 #ifdef WIN32
 #include <memory>
 #else
@@ -47,6 +49,7 @@ namespace oos {
 class transaction;
 class database;
 class statement_impl;
+class database_sequencer;
 
 /**
  * @class database_impl
@@ -63,20 +66,23 @@ class OOS_API database_impl : public action_visitor
 {
 public:
   typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
+
+protected:
+  database_impl(database_sequencer *seq);
 
 public:
-  database_impl();
   virtual ~database_impl();
   
   /**
    * Open the database
    */
-  virtual void open(const std::string &db) = 0;
+  virtual void open(const std::string &db);
 
   /**
    * Close the database
    */
-  virtual void close() = 0;
+  virtual void close();
 
   /**
    * The interface for the create table action.
@@ -141,6 +147,13 @@ public:
    */
   virtual void commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions);
 
+  virtual void rollback();
+
+protected:
+  const database* db() const;
+
+  database* db();
+
 private:
   void initialize(database *db);
 
@@ -152,6 +165,9 @@ private:
   typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;
   
   statement_impl_map_t statement_impl_map_;
+
+  database_sequencer_ptr sequencer_;
+  sequencer_impl_ptr sequencer_backup_;
 };
 
 }
