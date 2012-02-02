@@ -146,6 +146,10 @@ DatabaseTestUnit::simple()
     tr.rollback();
     cout << "finished rollback \n";
     cout << "after rollback \n";
+
+    // show objects
+    ostore_.dump_objects(cout);
+
     engine_view view(ostore_);
     if (view.size() > 0) {
       engine_view::iterator i = view.begin();
@@ -154,8 +158,17 @@ DatabaseTestUnit::simple()
       cout << "ERROR: no object in engine view!\n";
     }
 
-    // commit modifications
+    cout << "number of engines: " << view.size() << "\n";
+
+    tr.begin();
+    // delete object
+    engine = *view.begin();
+    cout << "deleting " << *engine << " (id: " << engine->id() << ")\n";
+    ostore_.remove(engine);
+    
     tr.commit();
+
+    cout << "number of engines: " << view.size() << "\n";
 /*
     // begin transaction
     tr.begin();

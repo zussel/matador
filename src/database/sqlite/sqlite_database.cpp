@@ -77,7 +77,7 @@ void sqlite_database::visit(update_action *a)
 
 void sqlite_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->obj()->object_type()) + "_DELETE");
+  statement_impl_ptr stmt = find_statement(std::string(a->object_type()) + "_DELETE");
   if (!stmt) {
     // throw error
   }

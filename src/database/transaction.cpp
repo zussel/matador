@@ -165,7 +165,7 @@ void transaction::restore_visitor::visit(delete_action *a)
   }
   if (!oproxy->obj) {
     // create object with id and deserialize
-    oproxy->obj = ostore_->create(a->type().c_str());
+    oproxy->obj = ostore_->create(a->object_type().c_str());
     // data from buffer into object
     serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
     // insert object
@@ -216,7 +216,7 @@ transaction::commit()
 {
   if (!db_.current_transaction() || db_.current_transaction() != this) {
     // throw db_exception();
-    cout << "commit: transaction [" << id_ << "] isn't current transaction\n";
+    cout << "commit: transaction [" << id_ << "] isn't current transaction (" << db_.current_transaction() << ")\n";
   } else {
     // commit all transaction actions
     db_.commit(*this);

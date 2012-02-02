@@ -52,7 +52,7 @@ long action::id() const
 
 delete_action::delete_action(object *o)
   : action(action::DEL, o)
-  , type_(o ? o->object_type() : "")
+  , object_type_(o ? o->object_type() : "")
 {}
 
 delete_action::~delete_action()
@@ -63,9 +63,9 @@ void delete_action::accept(action_visitor *av)
   av->visit(this);
 }
 
-std::string delete_action::type() const
+std::string delete_action::object_type() const
 {
-  return type_;
+  return object_type_;
 }
 
 }

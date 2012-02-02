@@ -176,21 +176,21 @@ const object_store& database::ostore() const
 void database::push_transaction(transaction *tr)
 {
   if (!transaction_stack_.empty()) {
-//    cout << "unregister transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
+//    cout << "unregister transaction observer [" << transaction_stack_.top() << "]\n";
     ostore_.unregister_observer(transaction_stack_.top());
   }
   transaction_stack_.push(tr);
-//  cout << "register transaction observer [" << tr->transaction_observer_.get() << "]\n";
+//  cout << "register transaction observer [" << tr << "]\n";
   ostore_.register_observer(tr);
 }
 
 void database::pop_transaction()
 {
-//  cout << "unregister transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
+//  cout << "unregister transaction observer [" << transaction_stack_.top() << "]\n";
   ostore_.unregister_observer(transaction_stack_.top());
   transaction_stack_.pop();
   if (!transaction_stack_.empty()) {
-//    cout << "register transaction observer [" << transaction_stack_.top()->transaction_observer_.get() << "]\n";
+//    cout << "register transaction observer [" << transaction_stack_.top() << "]\n";
     ostore_.register_observer(transaction_stack_.top());
   }
 }

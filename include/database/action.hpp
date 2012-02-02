@@ -285,10 +285,10 @@ public:
   
   virtual void accept(action_visitor *av);
 
-  std::string type() const;
+  std::string object_type() const;
 
 private:
-  std::string type_;
+  std::string object_type_;
 };
 
 /**
