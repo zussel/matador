@@ -51,7 +51,8 @@ bool sqlite_statement::step()
   } else {
     // error, throw exception
 //    throw std::sqlite_error("error on calling sqlite3_step");
-    throw std::logic_error("error on calling sqlite3_step");
+    const char *msg = sqlite3_errmsg(db_());
+    throw std::logic_error(std::string("SQLite ERROR [sqlite3_step]: ") + msg);
   }
   return false;
 }

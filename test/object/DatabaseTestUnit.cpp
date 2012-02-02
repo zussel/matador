@@ -173,8 +173,9 @@ DatabaseTestUnit::simple()
     // commit modifications
     tr.commit();
     */
-  } catch (exception &) {
+  } catch (exception &ex) {
     // error, abort transaction
+    cout << ex.what() << endl;
     tr.rollback();
   }
   // close db

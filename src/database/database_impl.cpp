@@ -85,7 +85,8 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
     transaction::const_iterator first = ifirst->second.begin();
     transaction::const_iterator last = ifirst->second.end();
     while (first != last) {
-      std::auto_ptr<action> a(*first++);
+//      std::auto_ptr<action> a(*first++);
+      action *a(*first++);
       
       binder.bind(stmt.get(), a->obj(), false);
       
