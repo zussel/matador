@@ -237,8 +237,6 @@ DatabaseTestUnit::with_sub()
   }
   // close db
   db.close();
-  // explicit write data to file
-  //db->write();
 }
 
 void

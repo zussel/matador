@@ -360,8 +360,23 @@ transaction::iterator transaction::find_modify_action(object *o)
 
 void transaction::cleanup()
 {
-  action_list_.clear();
+  insert_action_map_t::iterator first = insert_action_map_.begin();
+  insert_action_map_t::iterator last = insert_action_map_.end();
+  while (first != last) {
+    while (!first->second.empty()) {
+      action *a(first->second.front());
+      delete a;
+      first->second.pop_front();
+    }
+    ++first;
+  }
   insert_action_map_.clear();
+  while (!action_list_.empty()) {
+    action *a = action_list_.front();
+    delete a;
+    action_list_.pop_front();
+  }
+
   object_buffer_.clear();
   id_set_.clear();
   db_.pop_transaction();

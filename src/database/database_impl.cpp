@@ -78,6 +78,8 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
    * 
    ****************/
 
+  // execute begin
+
   // execute begin statement
   statement_binder binder;
 

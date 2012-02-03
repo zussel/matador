@@ -49,6 +49,7 @@ namespace oos {
 class transaction;
 class database;
 class statement_impl;
+class result_impl;
 class database_sequencer;
 
 /**
@@ -83,6 +84,15 @@ public:
    * Close the database
    */
   virtual void close();
+
+  /**
+   * Execute a sql statement and return a result
+   * implementation.
+   *
+   * @param sql The sql statement to be executed.
+   * @return The corresponding result.
+   */
+  virtual result_impl* execute(const char *sql) = 0;
 
   /**
    * The interface for the create table action.

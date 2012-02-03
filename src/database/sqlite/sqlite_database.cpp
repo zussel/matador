@@ -23,10 +23,17 @@
 #include "database/statement_binder.hpp"
 
 #include "object/object.hpp"
-#include "object/object_store.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
+
+#ifdef WIN32
+#include <functional>
+#else
+#include <tr1/functional>
+#endif
+
+using namespace std::tr1::placeholders;
 
 namespace oos {
   
@@ -61,6 +68,15 @@ void sqlite_database::close()
   sqlite3_close(db_);
 }
 
+result_impl* sqlite_database::execute(const char *sql)
+{
+  typedef std::tr1::function<void(void*,int,char**,char**)> fun;
+
+//  char *errmsg;
+//  int ret = sqlite3_exec(db_, sql, &std::tr1::bind(&sqlite_database::parse_result, this, _1, _2, _3, _4), 0, &errmsg);
+  return 0;
+}
+
 void sqlite_database::visit(insert_action *a)
 {
   // create insert statement
@@ -92,6 +108,10 @@ statement_impl* sqlite_database::create_statement()
 sqlite3* sqlite_database::operator()()
 {
   return db_;
+}
+
+void sqlite_database::parse_result(void* param, int column_count, char** values, char** columns)
+{
 }
 
 }

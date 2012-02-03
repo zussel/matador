@@ -60,6 +60,15 @@ public:
    */
   virtual void close();
 
+  /**
+   * Execute a sql statement and return a result
+   * implementation.
+   *
+   * @param sql The sql statement to be executed.
+   * @return The corresponding result.
+   */
+  virtual result_impl* execute(const char *sql);
+
   virtual void visit(create_action *) {}
 
   /**
@@ -97,7 +106,8 @@ public:
    */
   sqlite3* operator()();
 
-protected:
+private:
+  void parse_result(void* param, int column_count, char** values, char** columns);
 
 private:
   sqlite3 *db_;
