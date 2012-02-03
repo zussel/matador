@@ -68,14 +68,17 @@ int sqlite_statement::prepare(const std::string &sql)
   return ret;
 }
 
+void sqlite_statement::reset(bool clear_bindings)
+{
+  sqlite3_reset(stmt_);
+  if (clear_bindings) {
+    sqlite3_clear_bindings(stmt_);
+  }
+}
+
 int sqlite_statement::finalize()
 {
   return sqlite3_finalize(stmt_);
-}
-
-int sqlite_statement::reset()
-{
-  return sqlite3_reset(stmt_);
 }
 
 int sqlite_statement::column_count() const

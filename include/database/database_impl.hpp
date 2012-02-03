@@ -134,6 +134,7 @@ public:
    */
   statement_impl_ptr find_statement(const std::string &id) const;
 
+  void begin();
   /**
    * @brief Called on transaction commit
    *

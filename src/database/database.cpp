@@ -200,6 +200,12 @@ object* database::load(const std::string &type, int id)
   return NULL;
 }
 
+void database::begin(transaction &tr)
+{
+  push_transaction(&tr);
+  impl_->begin();
+}
+
 void database::commit(transaction &tr)
 {
   impl_->commit(tr.insert_action_map_, tr.action_list_);

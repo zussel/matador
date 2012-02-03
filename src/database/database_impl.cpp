@@ -63,6 +63,11 @@ database_impl::statement_impl_ptr database_impl::find_statement(const std::strin
   }
 }
 
+void database_impl::begin()
+{
+  sequencer_->begin();
+}
+
 void database_impl::commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions)
 {
   /****************
@@ -91,6 +96,7 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
       binder.bind(stmt.get(), a->obj(), false);
       
       stmt->step();
+      stmt->reset(true);
 //      a->accept(tr_.db_.impl_);
 //      ifirst->second.pop_front();
     }

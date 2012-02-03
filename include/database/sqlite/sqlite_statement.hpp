@@ -40,9 +40,9 @@ public:
 
   virtual bool step();
   virtual int prepare(const std::string &sql);
+  virtual void reset(bool clear_bindings);
   
   int finalize();
-  int reset();
 
   virtual int column_count() const;
   virtual const char* column_name(int i) const;

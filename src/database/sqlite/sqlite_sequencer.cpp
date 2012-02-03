@@ -71,7 +71,7 @@ void sqlite_sequencer::commit()
   // write current sequence id of object store to db
   update_.bind(1, (int)current());
   update_.step();
-  update_.reset();
+  update_.reset(true);
   backup_ = 0;
 }
 

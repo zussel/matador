@@ -219,7 +219,7 @@ void statement_helper::write_long(const char *id, long)
     case CREATE:
       statement_ << id << " INTEGER";
       if (strcmp(id, "id") == 0) {
-        statement_ << " PRIMARY KEY";
+        statement_ << " PRIMARY KEY NOT NULL";
       }
       statement_ << ",";
       break;

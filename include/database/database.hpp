@@ -178,6 +178,7 @@ private:
 
   object* load(const std::string &type, int id = 0);
 
+  void begin(transaction &tr);
   void commit(transaction &tr);
   void rollback();
 

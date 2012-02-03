@@ -48,6 +48,8 @@ public:
 //  virtual result* execute(const std::string &sql) = 0;
   virtual bool step() = 0;
 
+  virtual void reset(bool clear_bindings) = 0;
+
   virtual int column_count() const = 0;
   virtual const char* column_name(int i) const = 0;
 

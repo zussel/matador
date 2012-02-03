@@ -169,23 +169,6 @@ DatabaseTestUnit::simple()
     tr.commit();
 
     cout << "number of engines: " << view.size() << "\n";
-/*
-    // begin transaction
-    tr.begin();
-    // insert new object
-    artist = ostore_.insert(new Artist("AC/DC"));
-    // modify object
-    artist->name("Beatles");
-    // delete object
-    ostore_.remove(artist);
-
-//    cout << artist->name() << endl;
-    // show objects
-    ostore_.dump_objects(cout);
-
-    // commit modifications
-    tr.commit();
-    */
   } catch (exception &ex) {
     // error, abort transaction
     cout << ex.what() << endl;
@@ -193,8 +176,6 @@ DatabaseTestUnit::simple()
   }
   // close db
   db.close();
-  // explicit write data to file
-  //db->write();
 }
 
 void
@@ -269,10 +250,10 @@ DatabaseTestUnit::with_list()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database db(ostore_, "oodb://");
+  database db(ostore_, "sqlite://with_list.sqlite");
 
-  // open db
-  db.open();
+  // load db
+  db.load();
 
   // create new transaction    
   transaction tr(db);

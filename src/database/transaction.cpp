@@ -206,8 +206,7 @@ transaction::begin()
    *
    **************/
   id_ = ++transaction::id_counter;
-//  db_.begin(this);
-  db_.push_transaction(this);
+  db_.begin(*this);
   cout << "starting transaction [" << id_ << "]\n";
 }
 
