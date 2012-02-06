@@ -17,6 +17,7 @@
 
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_statement.hpp"
+#include "database/sqlite/sqlite_result.hpp"
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
@@ -70,11 +71,10 @@ void sqlite_database::close()
 
 result_impl* sqlite_database::execute(const char *sql)
 {
-  typedef std::tr1::function<void(void*,int,char**,char**)> fun;
-
-//  char *errmsg;
-//  int ret = sqlite3_exec(db_, sql, &std::tr1::bind(&sqlite_database::parse_result, this, _1, _2, _3, _4), 0, &errmsg);
-  return 0;
+  sqlite_result *result = new sqlite_result;
+  char *errmsg;
+  int ret = sqlite3_exec(db_, sql, parse_result , result, &errmsg);
+  return result;
 }
 
 void sqlite_database::visit(insert_action *a)
@@ -110,8 +110,10 @@ sqlite3* sqlite_database::operator()()
   return db_;
 }
 
-void sqlite_database::parse_result(void* param, int column_count, char** values, char** columns)
+int sqlite_database::parse_result(void* param, int column_count, char** values, char** columns)
 {
+  sqlite_result *result = static_cast<sqlite_result*>(param);
+  return 0;
 }
 
 }
@@ -119,6 +121,7 @@ void sqlite_database::parse_result(void* param, int column_count, char** values,
 
 extern "C"
 {
+
   OOS_SQLITE_API oos::database_impl* create_database()
   {
     return new oos::sqlite::sqlite_database();

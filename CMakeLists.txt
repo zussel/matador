@@ -154,12 +154,14 @@ SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_database.cpp
   src/database/sqlite/sqlite_statement.cpp
   src/database/sqlite/sqlite_sequencer.cpp
+  src/database/sqlite/sqlite_result.cpp
 )
 
 SET(SQLITE_DATABASE_HEADER
   include/database/sqlite/sqlite_database.hpp
   include/database/sqlite/sqlite_statement.hpp
   include/database/sqlite/sqlite_sequencer.hpp
+  include/database/sqlite/sqlite_result.hpp
 )
 
 ADD_LIBRARY(oos-sqlite SHARED

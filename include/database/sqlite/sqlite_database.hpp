@@ -107,7 +107,7 @@ public:
   sqlite3* operator()();
 
 private:
-  void parse_result(void* param, int column_count, char** values, char** columns);
+  static int parse_result(void* param, int column_count, char** values, char** columns);
 
 private:
   sqlite3 *db_;
