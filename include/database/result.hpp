@@ -32,6 +32,7 @@
 #endif
 
 #include <iterator>
+#include <vector>
 
 namespace oos {
 
@@ -43,6 +44,10 @@ class OOS_API result_impl
 public:
   virtual ~result_impl();
 
+  void push_back(row *r);
+
+private:
+  std::vector<row*> rows_;
 };
 
 class result;

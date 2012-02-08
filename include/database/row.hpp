@@ -26,9 +26,14 @@
     #define OOS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
+  #pragma warning(disable: 4251)
 #else
   #define OOS_API
 #endif
+
+#include "database/value.hpp"
+
+#include <vector>
 
 namespace oos {
 
@@ -43,6 +48,35 @@ class OOS_API row
 public:
   row();
   ~row();
+
+  /**
+   * Add a new column value.
+   *
+   * @tparam T Type of the column value.
+   * @param val The column value.
+   */
+  template < class T >
+  void push_back(const T &val)
+  {
+    values_.push_back(value<T>(new T));
+  }
+
+  /**
+   * Get value of column position
+   *
+   * @tparam T Type of column
+   * @param pos Column index
+   * @return The value of the requested column.
+   */
+  template < class T >
+  T at(size_t pos) const
+  {
+    return values_->at(pos).get<T>();
+  }
+
+private:
+
+  std::vector<value_base> values_;
 };
 
 }

@@ -22,6 +22,7 @@
 #include "database/database.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_binder.hpp"
+#include "database/row.hpp"
 
 #include "object/object.hpp"
 
@@ -113,6 +114,21 @@ sqlite3* sqlite_database::operator()()
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** columns)
 {
   sqlite_result *result = static_cast<sqlite_result*>(param);
+
+  /********************
+   *
+   * a new row was retrived
+   * add a new row to the result
+   * and iterator over all columns
+   * adding each column value as
+   * string to the row
+   *
+   ********************/
+  std::auto_ptr<row> r(new row);
+  for (int i = 0; i < column_count; ++i) {
+    r->push_back(values[i]);
+  }
+  result->push_back(r.release());
   return 0;
 }
 

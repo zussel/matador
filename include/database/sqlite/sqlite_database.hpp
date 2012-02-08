@@ -24,6 +24,7 @@
   #else
     #define OOS_SQLITE_API __declspec(dllimport)
   #endif
+  #pragma warning(disable: 4355)
 #else
   #define OOS_SQLITE_API
 #endif

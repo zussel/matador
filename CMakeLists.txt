@@ -138,6 +138,7 @@ SET(DATABASE_HEADER
   include/database/transaction.hpp
   include/database/result.hpp
   include/database/row.hpp
+  include/database/value.hpp
   include/database/statement.hpp
   include/database/statement_helper.hpp
   include/database/statement_binder.hpp
