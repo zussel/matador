@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "database/result.hpp"
+
 #include <string>
 
 namespace oos {
@@ -71,12 +73,12 @@ public:
   statement(database &db, const std::string &sql);
   ~statement();
 
-  result* execute(const std::string &sql);
-
-  row* step();
+  result_ptr execute();
+  result_ptr execute(const std::string &sql);
 
 private:
   statement_impl *impl_;
+  std::string sql_;
 };
 
 }

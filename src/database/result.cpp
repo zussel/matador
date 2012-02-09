@@ -28,6 +28,16 @@ void result_impl::push_back(row *r)
   rows_.push_back(r);
 }
 
+bool result_impl::next()
+{
+  return false;
+}
+
+row* result_impl::current() const
+{
+  return 0;
+}
+
 result_iterator::result_iterator()
   : res_(0)
 {}
@@ -51,9 +61,10 @@ result_iterator::~result_iterator()
 
 result_iterator::self& result_iterator::operator++()
 {
-  if (res_ && !res_->step()) {
+  if (res_ && !res_->impl()->next()) {
     res_ = 0;
   }
+  res_->impl()->current();
   return *this;
 }
 
@@ -71,7 +82,8 @@ result_iterator::pointer result_iterator::operator->() const
 
 result_iterator::reference result_iterator::operator*() const
 {
-  return (*res_->current());
+  return (*res_->impl()->current());
+//  return (*res_->current());
 }
 
 bool result_iterator::operator==(const self &x) const
@@ -84,24 +96,13 @@ bool result_iterator::operator!=(const self &x) const
   return false;
 }
 
-result::result(statement *stmt)
-  : stmt_(stmt)
+result::result(result_impl *res)
+  : result_(res)
   , current_(0)
 {}
 
 result::~result()
 {}
-
-bool result::step()
-{
-  current_ = stmt_->step();
-  return true;
-}
-
-row* result::current() const
-{
-  return 0;
-}
 
 result_iterator result::begin()
 {
@@ -111,6 +112,16 @@ result_iterator result::begin()
 result_iterator result::end()
 {
   return result_iterator();
+}
+
+result_impl* result::impl()
+{
+  return result_;
+}
+
+const result_impl* result::impl() const
+{
+  return result_;
 }
 
 }

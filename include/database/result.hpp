@@ -34,6 +34,12 @@
 #include <iterator>
 #include <vector>
 
+#ifdef WIN32
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 namespace oos {
 
 class row;
@@ -45,6 +51,10 @@ public:
   virtual ~result_impl();
 
   void push_back(row *r);
+
+  virtual bool next();
+
+  virtual row* current() const;
 
 private:
   std::vector<row*> rows_;
@@ -84,25 +94,11 @@ private:
 
 class OOS_API result
 {
+protected:
+  explicit result(result_impl *res);
+
 public:
-  explicit result(statement *stmt);
   ~result();
-
-  /**
-   * Get next row of result. If no further
-   * row is available false is returned.
-   *
-   * @return True if another could be fetched.
-   */
-  bool step();
-
-  /**
-   * Return the current row of the result set.
-   * If now row is available 0 (null) is returned.
-   *
-   * @return The next row of the result set.
-   */
-  row* current() const;
 
   /**
    * Return the first row of the result set.
@@ -119,9 +115,18 @@ public:
   result_iterator end();
 
 private:
-  statement *stmt_;
+  friend class result_iterator;
+
+  result_impl* impl();
+
+  const result_impl* impl() const;
+
+private:
+  result_impl *result_;
   row *current_;
 };
+
+typedef std::tr1::shared_ptr<result> result_ptr;
 
 }
 

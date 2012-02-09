@@ -21,6 +21,7 @@
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
 #include "database/statement_binder.hpp"
+#include "database/result.hpp"
 
 #include "object/object_store.hpp"
 
@@ -80,6 +81,8 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
 
   // execute begin
 
+  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION"));
+
   // execute begin statement
   statement_binder binder;
 
@@ -113,6 +116,8 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
 
   // write sequence to db
   sequencer_->commit();
+
+  res.reset(execute("COMMIT TRANSACTION;"));
 }
 
 void database_impl::rollback()

@@ -29,24 +29,27 @@ statement::statement(database &db)
   impl_ = db.create_statement_impl();
 }
 
+statement::statement(database &db, const std::string &sql)
+  : impl_(0)
+  , sql_(sql)
+{
+  impl_ = db.create_statement_impl();
+}
+
 statement::~statement()
 {}
 
-result* statement::execute(const std::string &sql)
+result_ptr statement::execute()
 {
-  return 0;
+  impl_->prepare(sql_);
+
+  return result_ptr();
 }
 
-row* statement::step()
+result_ptr statement::execute(const std::string &sql)
 {
-  if (impl_->step()) {
-    // valid row was recieved
-    // create new row and add column
-    // data
-    return 0;
-  } else {
-    return 0;
-  }
+  sql_ = sql;
+  return execute();
 }
 
 }
