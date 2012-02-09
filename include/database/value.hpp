@@ -18,7 +18,12 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <stdexcept>
+
 namespace oos {
+
+template < class T >
+class value;
 
 class value_base
 {
@@ -28,7 +33,7 @@ public:
   template < class T >
   T get()
   {
-    value<T> *v = std::dynamic_cast<value<T>* >(this);
+    value<T> *v = dynamic_cast<value<T>* >(this);
     if (v) {
       return v->operator()();
     } else {
