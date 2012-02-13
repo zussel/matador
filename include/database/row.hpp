@@ -33,6 +33,7 @@
 
 #include "database/value.hpp"
 
+#include <cstddef>
 #include <vector>
 
 namespace oos {
@@ -71,7 +72,7 @@ public:
   template < class T >
   T at(size_t pos) const
   {
-    return values_->at(pos).get<T>();
+    return values_.at(pos).get<T>();
   }
 
 private:

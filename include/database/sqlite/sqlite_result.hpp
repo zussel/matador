@@ -31,6 +31,12 @@ public:
   virtual ~sqlite_result();
 };
 
+class sqlite_static_result : public sqlite_result
+{
+public:
+
+};
+
 }
 
 }
