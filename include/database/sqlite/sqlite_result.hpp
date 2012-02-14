@@ -20,21 +20,37 @@
 
 #include "database/result.hpp"
 
+#include <vector>
+
 namespace oos {
+
+class row;
 
 namespace sqlite {
 
 class sqlite_result : public result_impl
 {
 public:
-  sqlite_result();
   virtual ~sqlite_result();
 };
 
 class sqlite_static_result : public sqlite_result
 {
 public:
+  sqlite_static_result();
+  virtual ~sqlite_static_result();
 
+  virtual bool next();
+
+  virtual row* current() const;
+
+  void push_back(row *r);
+
+private:
+  typedef std::vector<row*> row_vector_t;
+  row_vector_t rows_;
+  row_vector_t::size_type pos_;
+  
 };
 
 }

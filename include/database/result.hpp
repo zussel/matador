@@ -32,7 +32,6 @@
 #endif
 
 #include <iterator>
-#include <vector>
 
 #ifdef WIN32
 #include <memory>
@@ -50,14 +49,9 @@ class OOS_API result_impl
 public:
   virtual ~result_impl();
 
-  void push_back(row *r);
+  virtual bool next() = 0;
 
-  virtual bool next();
-
-  virtual row* current() const;
-
-private:
-  std::vector<row*> rows_;
+  virtual row* current() const = 0;
 };
 
 class result;

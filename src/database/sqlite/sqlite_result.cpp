@@ -21,11 +21,30 @@ namespace oos {
 
 namespace sqlite {
 
-sqlite_result::sqlite_result()
-{}
-
 sqlite_result::~sqlite_result()
 {}
+
+sqlite_static_result::sqlite_static_result()
+  : pos_(0)
+{}
+
+sqlite_static_result::~sqlite_static_result()
+{}
+
+bool sqlite_static_result::next()
+{
+  return ++pos_ > rows_.size();
+}
+
+row* sqlite_static_result::current() const
+{
+  return rows_.at(pos_);
+}
+
+void sqlite_static_result::push_back(row *r)
+{
+  rows_.push_back(r);
+}
 
 }
 

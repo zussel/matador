@@ -23,11 +23,6 @@ namespace oos {
 result_impl::~result_impl()
 {}
 
-void result_impl::push_back(row *r)
-{
-  rows_.push_back(r);
-}
-
 bool result_impl::next()
 {
   return false;
