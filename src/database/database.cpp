@@ -21,6 +21,7 @@
 #include "database/transaction.hpp"
 #include "database/reader.hpp"
 #include "database/statement_helper.hpp"
+#include "database/statement_binder.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -208,7 +209,39 @@ void database::begin(transaction &tr)
 
 void database::commit(transaction &tr)
 {
-  impl_->commit(tr.insert_action_map_, tr.action_list_);
+  // execute begin statement
+  statement_binder binder;
+
+  transaction::insert_action_map_t::const_iterator ifirst = tr.insert_action_map_.begin();
+  transaction::insert_action_map_t::const_iterator ilast = tr.insert_action_map_.end();
+  while (ifirst != ilast) {
+
+    statement_impl_ptr stmt = find_statement(ifirst->first + "_INSERT");
+      
+    transaction::const_iterator first = ifirst->second.begin();
+    transaction::const_iterator last = ifirst->second.end();
+    while (first != last) {
+      action *a(*first++);
+      
+      binder.bind(stmt.get(), a->obj(), false);
+      
+      stmt->step();
+      stmt->reset(true);
+    }
+    ++ifirst;
+  }
+  transaction::const_iterator first = action_list_.begin();
+  transaction::const_iterator last = maction_list_.end();
+  while (first != last) {
+    (*first++)->accept(impl_);
+  }
+
+  // write sequence to db
+  sequencer_->commit();
+
+
+
+//  impl_->commit(tr.insert_action_map_, tr.action_list_);
 }
 
 void database::rollback()
