@@ -113,7 +113,11 @@ void reader::read_charptr(const char *id, char* &x)
   if (x) {
     delete [] x;
   }
-  x = strdup(stmt_->column_text(column_++));
+  const char *tmp = stmt_->column_text(column_++);
+  size_t len = strlen(tmp);
+  x = new char[len + 1];
+  strncpy(x, tmp, len);
+  x[len] = '\0';
 }
 
 void reader::read_string(const char *id, std::string &x)

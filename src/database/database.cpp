@@ -75,22 +75,22 @@ database::database(object_store &ostore, const std::string &dbstring)
       sql = helper.create(o.get(), node.type, statement_helper::SELECT);
       stmt = impl_->create_statement();
       stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_SELECT", database_impl::statement_impl_ptr(stmt));
+      store_statement(std::string(o->object_type()) + "_SELECT", database_impl::statement_impl_ptr(stmt));
 
       sql = helper.create(o.get(), node.type, statement_helper::INSERT);
       stmt = impl_->create_statement();
       stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_INSERT", database_impl::statement_impl_ptr(stmt));
+      store_statement(std::string(o->object_type()) + "_INSERT", database_impl::statement_impl_ptr(stmt));
 
       sql = helper.create(o.get(), node.type, statement_helper::UPDATE, "id=?");
       stmt = impl_->create_statement();
       stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_UPDATE", database_impl::statement_impl_ptr(stmt));
+      store_statement(std::string(o->object_type()) + "_UPDATE", database_impl::statement_impl_ptr(stmt));
 
       sql = helper.create(o.get(), node.type, statement_helper::DEL, "id=?");
       stmt = impl_->create_statement();
       stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
+      store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
   }
 }
 
@@ -209,6 +209,8 @@ void database::begin(transaction &tr)
 
 void database::commit(transaction &tr)
 {
+  impl_->begin();
+
   // execute begin statement
   statement_binder binder;
 
@@ -217,7 +219,7 @@ void database::commit(transaction &tr)
   while (ifirst != ilast) {
 
     statement_impl_ptr stmt = find_statement(ifirst->first + "_INSERT");
-      
+
     transaction::const_iterator first = ifirst->second.begin();
     transaction::const_iterator last = ifirst->second.end();
     while (first != last) {
@@ -230,16 +232,13 @@ void database::commit(transaction &tr)
     }
     ++ifirst;
   }
-  transaction::const_iterator first = action_list_.begin();
-  transaction::const_iterator last = maction_list_.end();
+  transaction::const_iterator first = tr.action_list_.begin();
+  transaction::const_iterator last = tr.action_list_.end();
   while (first != last) {
     (*first++)->accept(impl_);
   }
 
-  // write sequence to db
-  sequencer_->commit();
-
-
+  impl_->commit();
 
 //  impl_->commit(tr.insert_action_map_, tr.action_list_);
 }
@@ -252,6 +251,21 @@ void database::rollback()
 statement_impl* database::create_statement_impl() const
 {
   return impl_->create_statement();
+}
+
+bool database::store_statement(const std::string &id, database_impl::statement_impl_ptr stmt)
+{
+  return statement_impl_map_.insert(std::make_pair(id, stmt)).second;
+}
+
+database::statement_impl_ptr database::find_statement(const std::string &id) const
+{
+  statement_impl_map_t::const_iterator i = statement_impl_map_.find(id);
+  if (i != statement_impl_map_.end()) {
+    return i->second;
+  } else {
+    return statement_impl_ptr();
+  }
 }
 
 transaction* database::current_transaction() const

@@ -166,6 +166,9 @@ public:
   transaction* current_transaction() const;
 
 private:
+  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;  
+
   friend class transaction;
   friend class statement;
   friend class reader;
@@ -189,10 +192,30 @@ private:
    */
   statement_impl* create_statement_impl() const;
 
+  /**
+   * Store a prepared statement for
+   * later use.
+   * 
+   * @param id A unique id for the statement.
+   * @param stmt The prepared statement.
+   * @return True if the statement could be stored
+   */
+  bool store_statement(const std::string &id, statement_impl_ptr stmt);
+
+  /**
+   * Find and return a stored statement.
+   * 
+   * @param id The id of the statement to find.
+   * @return The requested statement.
+   */
+  statement_impl_ptr find_statement(const std::string &id) const;
+
 private:
   database_impl *impl_;
 
   object_store &ostore_;
+
+  statement_impl_map_t statement_impl_map_;
 
   std::stack<transaction*> transaction_stack_;
 };

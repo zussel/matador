@@ -157,6 +157,7 @@ public:
    * @param modify_actions A list of update and delete actions
    */
   virtual void commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions);
+  virtual void commit();
 
   virtual void rollback();
 

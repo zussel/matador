@@ -66,6 +66,8 @@ database_impl::statement_impl_ptr database_impl::find_statement(const std::strin
 
 void database_impl::begin()
 {
+  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION"));
+
   sequencer_->begin();
 }
 
@@ -118,6 +120,13 @@ void database_impl::commit(const transaction::insert_action_map_t &insert_action
   sequencer_->commit();
 
   res.reset(execute("COMMIT TRANSACTION;"));
+}
+
+void database_impl::commit()
+{
+  // write sequence to db
+  sequencer_->commit();
+  std::auto_ptr<result_impl> res(execute("COMMIT TRANSACTION;"));
 }
 
 void database_impl::rollback()
