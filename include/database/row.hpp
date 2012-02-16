@@ -59,7 +59,7 @@ public:
   template < class T >
   void push_back(const T &val)
   {
-    values_.push_back(value<T>(new T));
+    values_.push_back(value<T>(new T(val)));
   }
 
   /**

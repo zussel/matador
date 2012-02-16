@@ -72,10 +72,14 @@ void sqlite_database::close()
 
 result_impl* sqlite_database::execute(const char *sql)
 {
-  sqlite_result *result = new sqlite_static_result;
+  std::auto_ptr<sqlite_result> result(new sqlite_static_result);
   char *errmsg;
-  int ret = sqlite3_exec(db_, sql, parse_result , result, &errmsg);
-  return result;
+  int ret = sqlite3_exec(db_, sql, parse_result , result.get(), &errmsg);
+  if (ret != SQLITE_OK) {
+    //throw database_error(errmsg);
+    return 0;
+  }
+  return result.release();
 }
 
 void sqlite_database::visit(insert_action *a)
@@ -111,7 +115,7 @@ sqlite3* sqlite_database::operator()()
   return db_;
 }
 
-int sqlite_database::parse_result(void* param, int column_count, char** values, char** columns)
+int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
 {
   sqlite_static_result *result = static_cast<sqlite_static_result*>(param);
 

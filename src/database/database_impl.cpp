@@ -71,57 +71,6 @@ void database_impl::begin()
   sequencer_->begin();
 }
 
-void database_impl::commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions)
-{
-  /****************
-   * 
-   * Pop transaction from stack
-   * and execute all actions
-   * change state to comitted
-   * 
-   ****************/
-
-  // execute begin
-
-  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION"));
-
-  // execute begin statement
-  statement_binder binder;
-
-  transaction::insert_action_map_t::const_iterator ifirst = insert_actions.begin();
-  transaction::insert_action_map_t::const_iterator ilast = insert_actions.end();
-  while (ifirst != ilast) {
-
-    statement_impl_ptr stmt = find_statement(ifirst->first + "_INSERT");
-      
-    transaction::const_iterator first = ifirst->second.begin();
-    transaction::const_iterator last = ifirst->second.end();
-    while (first != last) {
-//      std::auto_ptr<action> a(*first++);
-      action *a(*first++);
-      
-      binder.bind(stmt.get(), a->obj(), false);
-      
-      stmt->step();
-      stmt->reset(true);
-//      a->accept(tr_.db_.impl_);
-//      ifirst->second.pop_front();
-    }
-    ++ifirst;
-  }
-//  insert_actions.clear();
-  transaction::const_iterator first = modify_actions.begin();
-  transaction::const_iterator last = modify_actions.end();
-  while (first != last) {
-    (*first++)->accept(this);
-  }
-
-  // write sequence to db
-  sequencer_->commit();
-
-  res.reset(execute("COMMIT TRANSACTION;"));
-}
-
 void database_impl::commit()
 {
   // write sequence to db

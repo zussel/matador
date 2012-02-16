@@ -152,11 +152,7 @@ public:
    * transaction is commit to the underlaying
    * database. All stored actions and their
    * objects are written to the database.
-   *
-   * @param insert_actions A map of insert action lists
-   * @param modify_actions A list of update and delete actions
    */
-  virtual void commit(const transaction::insert_action_map_t &insert_actions, const transaction::action_list_t &modify_actions);
   virtual void commit();
 
   virtual void rollback();

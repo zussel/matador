@@ -110,6 +110,7 @@ public:
 
 private:
   friend class result_iterator;
+  friend class database;
 
   result_impl* impl();
 

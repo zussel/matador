@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "database/result.hpp"
+
 #include "object/object_ptr.hpp"
 
 #include "tools/library.hpp"
@@ -143,10 +145,10 @@ public:
    * Executes the given query on the database and
    * return the result in a query_result object.
    * 
-   * @param q The database query to execute.
+   * @param sql The database query to execute.
    * @return The result of the query.
    */
-  result* query(const std::string &q);
+  result_ptr execute(const std::string &sql);
 
   /**
    * Returns the object_store.

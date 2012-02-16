@@ -159,9 +159,13 @@ bool database::load()
   return true;
 }
 
-result* database::query(const std::string &)
+result_ptr database::execute(const std::string &sql)
 {
-  return NULL;
+  try {
+    return result_ptr(new result(impl_->execute(sql.c_str())));
+  } catch (std::exception &ex) {
+    return result_ptr();
+  }
 }
 
 object_store& database::ostore()
