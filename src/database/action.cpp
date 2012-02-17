@@ -21,19 +21,13 @@
 namespace oos
 {
 
-action::action(action::action_type t, object *o)
-  : type_(t)
-  , obj_(o)
+action::action(object *o)
+  : obj_(o)
   , id_((o ? o->id() : 0))
 {}
 
 action::~action()
 {}
-
-action::action_type action::type() const
-{
-  return type_;
-}
 
 object* action::obj()
 {
@@ -51,7 +45,7 @@ long action::id() const
 }
 
 delete_action::delete_action(object *o)
-  : action(action::DEL, o)
+  : action(o)
   , object_type_(o ? o->object_type() : "")
 {}
 

@@ -131,19 +131,6 @@ public:
 class OOS_API action
 {
 public:
-  /**
-   * @brief Action type enumeration
-   *
-   * The enumeration consists of all
-   * available action types.
-   */
-  typedef enum {
-    CREATE = 0, /**<Enum type for create action. */
-    INSERT,     /**<Enum type for insert action. */
-    UPDATE,     /**<Enum type for update action. */
-    DEL,        /**<Enum type for delete action. */
-    DROP        /**<Enum type for drop action. */
-  } action_type;
 
   /**
    * @brief Creates a new action.
@@ -157,7 +144,7 @@ public:
    * @param t Type of action.
    * @param o The object for the action.
    */
-  action(action_type t, object *o);
+  explicit action(object *o);
 
   virtual ~action();
   
@@ -167,11 +154,6 @@ public:
    * @param av The action_visitor
    */
   virtual void accept(action_visitor *av) = 0;
-
-  /**
-   * Return the type of the action
-   */
-  action_type type() const;
 
   /**
    * The object of the action.
@@ -189,7 +171,6 @@ public:
   long id() const;
 
 private:
-  action_type type_;
   object *obj_;
   long id_;
 };
@@ -205,7 +186,7 @@ class create_action : public action
 {
 public:
   create_action()
-    : action(action::CREATE, NULL)
+    : action(NULL)
   {}
   virtual ~create_action() {}
 };
@@ -226,7 +207,7 @@ public:
    * @param o The inserted object.
    */
   insert_action(object *o)
-    : action(action::INSERT, o)
+    : action(o)
   {}
   virtual ~insert_action() {}
   
@@ -253,7 +234,7 @@ public:
    * @param o The updated object.
    */
   update_action(object *o)
-    : action(action::UPDATE, o)
+    : action(o)
   {}
 
   virtual ~update_action() {}
@@ -302,7 +283,7 @@ class drop_action : public action
 {
 public:
   drop_action()
-    : action(action::DROP, NULL)
+    : action(NULL)
   {}
   virtual ~drop_action() {}
 };
