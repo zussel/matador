@@ -201,12 +201,17 @@ public:
 class insert_action : public action
 {
 public:
+  typedef std::list<object*> object_list_t;
+  typedef object_list_t::iterator iterator;
+  typedef object_list_t::const_iterator const_iterator;
+
+public:
   /**
    * Creates an insert_action.
    * 
    * @param o The inserted object.
    */
-  insert_action(object *o)
+  insert_action()
     : action(o)
   {}
   virtual ~insert_action() {}
@@ -215,6 +220,22 @@ public:
   {
     av->visit(this);
   }
+
+  iterator begin();
+  const_iterator begin() const;
+  
+  iterator end();
+  const_iterator end() const;
+
+  bool empty() const;
+
+  iterator find(lond id);
+  const_iterator find(lond id) const;
+
+  void push_back(object *o);
+
+private:
+  object_list_t object_list_;
 };
 
 

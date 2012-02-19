@@ -33,6 +33,13 @@ namespace oos {
 
 void transaction::on_insert(object *o)
 {
+  
+  
+  /*****************
+   * 
+   * try to find action with 
+   *
+   *****************/
 //  cout << "inserting " << *o << endl;
   /*****************
    * 
