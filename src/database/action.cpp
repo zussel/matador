@@ -21,31 +21,74 @@
 namespace oos
 {
 
-action::action(object *o)
-  : obj_(o)
-  , id_((o ? o->id() : 0))
-{}
+insert_action::iterator insert_action::begin()
+{
+  return object_list_.begin();
+}
 
-action::~action()
-{}
+insert_action::const_iterator insert_action::begin() const
+{
+  return object_list_.begin();
+}
 
-object* action::obj()
+insert_action::iterator insert_action::end()
+{
+  return object_list_.end();
+}
+
+insert_action::const_iterator insert_action::end() const
+{
+  return object_list_.end();
+}
+
+bool insert_action::empty() const
+{
+  return object_list_.empty();
+}
+
+struct object_by_id : public std::unary_function<long, bool>
+{
+  object_by_id(long id)
+    : id_(id)
+  {}
+  bool operator()(const object *o) const
+  {
+    return (o && o->id() == id_);
+  }
+};
+
+insert_action::iterator insert_action::find(long id)
+{
+  return std::find(object_list_.begin(), object_list_.end(), object_by_id(id));
+}
+
+insert_action::const_iterator insert_action::find(lond id) const
+{
+  return std::find(object_list_.begin(), object_list_.end(), object_by_id(id));
+}
+
+void insert_action::push_back(object *o)
+{
+  object_list_.push_back(o);
+}
+
+insert_action::iterator insert_action::erase(insert_action::iterator i)
+{
+  return object_list_.erase(i);
+}
+
+object* update_action::obj()
 {
   return obj_;
 }
 
-const object* action::obj() const
+const object* update_action::obj() const
 {
   return obj_;
-}
-
-long action::id() const
-{
-  return id_;
 }
 
 delete_action::delete_action(object *o)
-  : action(o)
+  : id_(o ? o->id() : 0)
   , object_type_(o ? o->object_type() : "")
 {}
 
@@ -60,6 +103,11 @@ void delete_action::accept(action_visitor *av)
 std::string delete_action::object_type() const
 {
   return object_type_;
+}
+
+long delete_action::id() const
+{
+  return id_;
 }
 
 }

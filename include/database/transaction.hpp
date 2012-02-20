@@ -38,6 +38,12 @@
 
 #include "tools/byte_buffer.hpp"
 
+#ifdef WIN32
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
+
 #include <memory>
 #include <list>
 #include <set>
@@ -66,7 +72,6 @@ class OOS_API transaction : public object_observer
 {
 public:
   typedef std::list<action*> action_list_t;
-  typedef std::map<std::string, action_list_t> insert_action_map_t;
   typedef action_list_t::iterator iterator;
   typedef action_list_t::const_iterator const_iterator;
 
@@ -182,20 +187,15 @@ private:
 
 private:
   typedef std::set<long> id_set_t;
+  typedef std::tr1::unordered_map<long, iterator> id_iterator_map_t;
 
   friend class object_store;
   friend class database;
   
-  void backup(insert_action *ia);
   void backup(action *a);
   void restore(action *a);
 
   bool has_id(long id) const;
-
-  const action* find_insert_action(object *o) const;
-  void erase_insert_action(const action* a);
-
-  iterator find_modify_action(object *o);
 
   void cleanup();
 
@@ -206,10 +206,8 @@ private:
   database &db_;
   long id_;
   
-  id_set_t id_set_;
+  id_iterator_map_t id_map_;
   action_list_t action_list_;
-
-  insert_action_map_t insert_action_map_;
 
   byte_buffer object_buffer_;
   backup_visitor backup_visitor_;

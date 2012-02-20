@@ -32,6 +32,7 @@
 #endif
 
 #include <string>
+#include <list>
 
 namespace oos {
 
@@ -131,21 +132,6 @@ public:
 class OOS_API action
 {
 public:
-
-  /**
-   * @brief Creates a new action.
-   * 
-   * Creates a new action of given type
-   * and for the given object. Object could
-   * be a real object (insert, update or
-   * delete action) or prototype object (for
-   * create and drop action)
-   * 
-   * @param t Type of action.
-   * @param o The object for the action.
-   */
-  explicit action(object *o);
-
   virtual ~action();
   
   /**
@@ -155,24 +141,10 @@ public:
    */
   virtual void accept(action_visitor *av) = 0;
 
-  /**
-   * The object of the action.
-   */
-  object* obj();
-
-  /**
-   * The object of the action.
-   */
-  const object* obj() const;
-
-  /**
-   * The id of the object of the action.
-   */
-  long id() const;
+  //std::string type() const;
 
 private:
-  object *obj_;
-  long id_;
+  std::string type_;
 };
 
 /**
@@ -185,9 +157,7 @@ private:
 class create_action : public action
 {
 public:
-  create_action()
-    : action(NULL)
-  {}
+  create_action() {}
   virtual ~create_action() {}
 };
 
@@ -198,7 +168,7 @@ public:
  * This action is used when an objected
  * is inserted into the database.
  */
-class insert_action : public action
+class OOS_API insert_action : public action
 {
 public:
   typedef std::list<object*> object_list_t;
@@ -211,9 +181,7 @@ public:
    * 
    * @param o The inserted object.
    */
-  insert_action()
-    : action(o)
-  {}
+  insert_action() {}
   virtual ~insert_action() {}
   
   virtual void accept(action_visitor *av)
@@ -229,11 +197,12 @@ public:
 
   bool empty() const;
 
-  iterator find(lond id);
-  const_iterator find(lond id) const;
+  iterator find(long id);
+  const_iterator find(long id) const;
 
   void push_back(object *o);
 
+  iterator erase(iterator i);
 private:
   object_list_t object_list_;
 };
@@ -255,7 +224,7 @@ public:
    * @param o The updated object.
    */
   update_action(object *o)
-    : action(o)
+    : obj_(o)
   {}
 
   virtual ~update_action() {}
@@ -264,6 +233,19 @@ public:
   {
     av->visit(this);
   }
+
+  /**
+   * The object of the action.
+   */
+  object* obj();
+
+  /**
+   * The object of the action.
+   */
+  const object* obj() const;
+
+private:
+  object *obj_;
 };
 
 /**
@@ -289,8 +271,14 @@ public:
 
   std::string object_type() const;
 
+  /**
+   * The id of the object of the action.
+   */
+  long id() const;
+
 private:
   std::string object_type_;
+  long id_;
 };
 
 /**
@@ -303,9 +291,7 @@ private:
 class drop_action : public action
 {
 public:
-  drop_action()
-    : action(NULL)
-  {}
+  drop_action() {}
   virtual ~drop_action() {}
 };
 

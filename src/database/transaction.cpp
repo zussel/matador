@@ -31,6 +31,40 @@ using namespace std;
 
 namespace oos {
 
+class action_inserter : public action_visitor
+{
+public:
+  virtual ~action_inserter() {}
+
+  virtual void visit(create_action*) {}
+  virtual void visit(insert_action *a);
+  virtual void visit(update_action *a);
+  virtual void visit(delete_action *a);
+  virtual void visit(drop_action*a) {}
+};
+
+class action_remover : public action_visitor
+{
+public:
+  action_remover(transaction::action_list_t &action_list)
+    : action_list_(action_list)
+    , id_(0)
+  {}
+  virtual ~action_remover() {}
+
+  bool remove(transaction::action_list_t::iterator i, long id);
+
+  virtual void visit(create_action*) {}
+  virtual void visit(insert_action *a);
+  virtual void visit(update_action *a);
+  virtual void visit(delete_action *a);
+  virtual void visit(drop_action*) {}
+
+private:
+  transaction::action_list_t &action_list_;
+  long id_;
+};
+
 void transaction::on_insert(object *o)
 {
   
@@ -49,8 +83,15 @@ void transaction::on_insert(object *o)
    * store
    * 
    *****************/
+  if (id_map_.find(o->id()) == id_map_.end()) {
+    // find or create insert action and insert object
+    
+  } else {
+    // ERROR: an object with that id already exists
+  }
+
   if (!has_id(o->id())) {
-    backup(new insert_action(o));
+//    backup(new insert_action(o));
   } else {
     // ERROR: an object with that id already exists
   }
@@ -66,6 +107,15 @@ void transaction::on_update(object *o)
    * is restored to old values
    * 
    *****************/
+  if (id_map_.find(o->id()) == id_map_.end()) {
+    backup(new update_action(o));
+  } else {
+    // An object with that id already exists
+    // do nothing because the object is already
+    // backed up
+  }
+
+  /*
   if (!has_id(o->id())) {
     backup(new update_action(o));
   } else {
@@ -73,6 +123,7 @@ void transaction::on_update(object *o)
     // do nothing because the object is already
     // backed up
   }
+  */
 }
 
 void transaction::on_delete(object *o)
@@ -86,31 +137,13 @@ void transaction::on_delete(object *o)
    * object store
    * 
    *****************/
-  if (!has_id(o->id())) {
+
+  id_iterator_map_t::iterator i = id_map_.find(o->id());
+  if (i == id_map_.end()) {
     backup(new delete_action(o));
   } else {
-    // there is already an action for
-    // this object inserted
-    // try to find out if it is an insert
-    // or update action
-    iterator i = find_modify_action(o);
-    if (i != action_list_.end()) {
-      // found modify action
-      delete *i;
-      *i = new delete_action(o);
-    } else {
-      const action* a = find_insert_action(o);
-      if (a) {
-        erase_insert_action(a);
-        id_set_.erase(o->id());
-      } else {
-        /***************
-         * 
-         * ERROR: this cannot happen!!!
-         * 
-         ***************/
-      }
-    }
+    action_remover ar(action_list_);
+    ar.remove(i->second, o->id());
   }
 }
 
@@ -136,7 +169,7 @@ void transaction::backup_visitor::visit(update_action *a)
 void transaction::backup_visitor::visit(delete_action *a)
 {
   // serialize object
-  serializer_.serialize(a->obj(), *buffer_);
+  //serializer_.serialize(a->obj(), *buffer_);
 }
 
 bool transaction::restore_visitor::restore(action *act, byte_buffer *buffer, object_store *ostore)
@@ -152,7 +185,10 @@ bool transaction::restore_visitor::restore(action *act, byte_buffer *buffer, obj
 void transaction::restore_visitor::visit(insert_action *a)
 {
   // remove object from object store
-  ostore_->remove_object(a->obj(), false);
+  for (insert_action::iterator i = a->begin(); i != a->end(); ++i) {
+    ostore_->remove_object(*i, false);
+  }
+//  ostore_->remove_object(a->obj(), false);
 }
 
 void transaction::restore_visitor::visit(update_action *a)
@@ -284,17 +320,6 @@ transaction::db() const
   return db_;
 }
 
-void transaction::backup(insert_action *ia)
-{
-  id_set_.insert(ia->id());
-
-  insert_action_map_t::iterator i = insert_action_map_.find(ia->obj()->object_type());
-  if (i == insert_action_map_.end()) {
-    i = insert_action_map_.insert(std::make_pair(ia->obj()->object_type(), action_list_t())).first;
-  }
-  i->second.push_back(ia);
-}
-
 void
 transaction::backup(action *a)
 {
@@ -319,52 +344,6 @@ bool transaction::has_id(long id) const
   return id_set_.find(id) != id_set_.end();
 }
 
-const action* transaction::find_insert_action(object *o) const
-{
-  insert_action_map_t::const_iterator i = insert_action_map_.find(o->object_type());
-  if (i != insert_action_map_.end()) {
-    const_iterator first = i->second.begin();
-    const_iterator last = i->second.end();
-    while (first != last) {
-      if ((*first)->id() == o->id()) {
-        return *first;
-      }
-      ++first;
-    }
-  }
-  return 0;
-}
-
-void transaction::erase_insert_action(const action* a)
-{
-  insert_action_map_t::iterator i = insert_action_map_.find(a->obj()->object_type());
-  if (i != insert_action_map_.end()) {
-    iterator first = i->second.begin();
-    iterator last = i->second.end();
-    while (first != last) {
-      if ((*first)->id() == a->obj()->id()) {
-        delete *first;
-        i->second.erase(first);
-        return;
-      }
-      ++first;
-    }
-  }
-}
-
-transaction::iterator transaction::find_modify_action(object *o)
-{
-  iterator first = action_list_.begin();
-  iterator last = action_list_.end();
-  while (first != last) {
-    if ((*first)->id() == o->id()) {
-      break;
-    }
-    ++first;
-  }
-  return first;
-}
-
 void transaction::cleanup()
 {
   insert_action_map_t::iterator first = insert_action_map_.begin();
@@ -387,6 +366,36 @@ void transaction::cleanup()
   object_buffer_.clear();
   id_set_.clear();
   db_.pop_transaction();
+}
+
+bool action_remover::remove(transaction::action_list_t::iterator i, long id)
+{
+  id_ = id;
+  i->accept(this);
+  id_ = 0;
+}
+
+void action_remover::visit(insert_action *a)
+{
+  insert_action::iterator i = a->find(id_);
+  if (i != a->end()) {
+    a->erase(i);
+  }
+}
+
+void action_remover::visit(update_action *a)
+{
+  if (a->obj()->id() == id_) {
+    //action_list_
+  }
+}
+
+void action_remover::visit(delete_action *a)
+{
+  if (a->id() == id_) {
+    // ERROR: object was deleted twice
+    // throw exception
+  }
 }
 
 }
