@@ -77,6 +77,7 @@ result_impl* sqlite_database::execute(const char *sql)
   int ret = sqlite3_exec(db_, sql, parse_result , result.get(), &errmsg);
   if (ret != SQLITE_OK) {
     //throw database_error(errmsg);
+    sqlite3_free(errmsg);
     return 0;
   }
   return result.release();

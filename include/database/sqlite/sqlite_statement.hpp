@@ -55,6 +55,7 @@ public:
 
   virtual int bind(int i, double value);
   virtual int bind(int i, int value);
+  virtual int bind(int i, long value);
   virtual int bind(int i, unsigned int value);
   virtual int bind(int i, const char *value);
   virtual int bind_null(int i);

@@ -121,6 +121,11 @@ int sqlite_statement::bind(int i, int value)
   return sqlite3_bind_int(stmt_, i, value);
 }
 
+int sqlite_statement::bind(int i, long value)
+{
+  return sqlite3_bind_int(stmt_, i, value);
+}
+
 int sqlite_statement::bind(int i, unsigned int value)
 {
   return sqlite3_bind_int(stmt_, i, value);

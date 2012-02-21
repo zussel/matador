@@ -61,6 +61,7 @@ public:
 
   virtual int bind(int i, double value) = 0;
   virtual int bind(int i, int value) = 0;
+  virtual int bind(int i, long value) = 0;
   virtual int bind(int i, unsigned int value) = 0;
   virtual int bind(int i, const char *value) = 0;
   virtual int bind_null(int i) = 0;
