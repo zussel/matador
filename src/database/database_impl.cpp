@@ -66,7 +66,7 @@ database_impl::statement_impl_ptr database_impl::find_statement(const std::strin
 
 void database_impl::begin()
 {
-  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION"));
+  on_begin();
 
   sequencer_->begin();
 }
@@ -75,12 +75,15 @@ void database_impl::commit()
 {
   // write sequence to db
   sequencer_->commit();
-  std::auto_ptr<result_impl> res(execute("COMMIT TRANSACTION;"));
+
+  on_commit();
 }
 
 void database_impl::rollback()
 {
   sequencer_->rollback();
+
+  on_rollback();
 }
 
 const database* database_impl::db() const

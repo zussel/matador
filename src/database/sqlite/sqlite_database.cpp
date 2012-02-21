@@ -85,6 +85,19 @@ result_impl* sqlite_database::execute(const char *sql)
 void sqlite_database::visit(insert_action *a)
 {
   // create insert statement
+  statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
+  if (!stmt) {
+    // throw error
+  }
+  statement_binder binder;
+
+  insert_action::const_iterator first = a->begin();
+  insert_action::const_iterator last = a->end();
+  while (first != last) {
+    object *o = (*first++);
+    binder.bind(stmt.get(), o, false);
+    stmt->step();
+  }
 }
 
 void sqlite_database::visit(update_action *a)
@@ -94,6 +107,8 @@ void sqlite_database::visit(update_action *a)
     // throw error
   }
   statement_binder binder;
+  binder.bind(stmt.get(), a->obj(), true);
+  stmt->step();
 }
 
 void sqlite_database::visit(delete_action *a)
@@ -102,7 +117,8 @@ void sqlite_database::visit(delete_action *a)
   if (!stmt) {
     // throw error
   }
-  statement_binder binder;
+  stmt->bind(0, a->id());
+  stmt->step();
 }
 
 statement_impl* sqlite_database::create_statement()
@@ -113,6 +129,21 @@ statement_impl* sqlite_database::create_statement()
 sqlite3* sqlite_database::operator()()
 {
   return db_;
+}
+
+void sqlite_database::on_begin()
+{
+  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION;"));
+}
+
+void sqlite_database::on_commit()
+{
+  std::auto_ptr<result_impl> res(execute("COMMIT TRANSACTION;"));
+}
+
+void sqlite_database::on_rollback()
+{
+  std::auto_ptr<result_impl> res(execute("ROLLBACK TRANSACTION;"));
 }
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)

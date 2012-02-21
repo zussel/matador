@@ -118,6 +118,7 @@ SET(DATABASE_SOURCES
   src/database/deleter.cpp
   src/database/reader.cpp
   src/database/transaction.cpp
+  src/database/transaction_helper.cpp
   src/database/result.cpp
   src/database/row.cpp
   src/database/statement.cpp
@@ -136,6 +137,7 @@ SET(DATABASE_HEADER
   include/database/deleter.hpp
   include/database/reader.hpp
   include/database/transaction.hpp
+  include/database/transaction_helper.hpp
   include/database/result.hpp
   include/database/row.hpp
   include/database/value.hpp

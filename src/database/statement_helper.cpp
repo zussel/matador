@@ -56,8 +56,8 @@ std::string statement_helper::create(object *o, const std::string &table_name, s
       statement_ << "UPDATE " << table_name << " SET ";
       break;
     case DEL:
-      statement_ << "DELETE FROM " << table_name << ";";
-      return statement_.str();
+      statement_ << "DELETE FROM " << table_name;
+      break;
     case DROP:
       statement_ << "DROP TABLE " << table_name << ";";
       return statement_.str();

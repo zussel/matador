@@ -526,7 +526,8 @@ private:
   friend class object_creator;
   friend class object_deleter;
   friend class object_serializer;
-  friend class transaction;
+  friend class restore_visitor;
+//  friend class transaction;
   friend class object;
 
 private:

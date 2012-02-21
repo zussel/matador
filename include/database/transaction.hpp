@@ -31,10 +31,7 @@
   #define OOS_API
 #endif
 
-#include "object/object_serializer.hpp"
 #include "object/object_observer.hpp"
-
-#include "database/action.hpp"
 
 #include "tools/byte_buffer.hpp"
 
@@ -52,9 +49,9 @@
 namespace oos {
 
 class database;
-class transaction_impl;
 class object_store;
 class byte_buffer;
+class action;
 
 /**
  * @class transaction
@@ -141,61 +138,14 @@ public:
   virtual void on_delete(object *o);
 
 private:
-  class backup_visitor : public action_visitor
-  {
-  public:
-    backup_visitor()
-      : buffer_(NULL)
-    {}
-    virtual ~backup_visitor() {}
-
-    bool backup(action *act, byte_buffer *buffer);
-
-    virtual void visit(create_action *) {}
-    virtual void visit(insert_action *a);
-    virtual void visit(update_action *a);
-    virtual void visit(delete_action *a);  
-    virtual void visit(drop_action *) {}
-
-  private:
-    byte_buffer *buffer_;
-    object_serializer serializer_;
-  };
-
-  class restore_visitor : public action_visitor
-  {
-  public:
-    restore_visitor()
-      : buffer_(NULL)
-      , ostore_(NULL)
-    {}
-    virtual ~restore_visitor() {}
-
-    bool restore(action *act, byte_buffer *buffer, object_store *ostore);
-
-    virtual void visit(create_action *) {}
-    virtual void visit(insert_action *a);
-    virtual void visit(update_action *a);
-    virtual void visit(delete_action *a);
-    virtual void visit(drop_action *) {}
-
-  private:
-    byte_buffer *buffer_;
-    object_store *ostore_;
-    object_serializer serializer_;
-  };
-
-private:
   typedef std::set<long> id_set_t;
   typedef std::tr1::unordered_map<long, iterator> id_iterator_map_t;
 
   friend class object_store;
   friend class database;
   
-  void backup(action *a);
+  void backup(action *a, long id);
   void restore(action *a);
-
-  bool has_id(long id) const;
 
   void cleanup();
 
@@ -210,8 +160,6 @@ private:
   action_list_t action_list_;
 
   byte_buffer object_buffer_;
-  backup_visitor backup_visitor_;
-  restore_visitor restore_visitor_;
 };
 
 }

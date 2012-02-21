@@ -107,6 +107,11 @@ public:
    */
   sqlite3* operator()();
 
+protected:
+  virtual void on_begin();
+  virtual void on_commit();
+  virtual void on_rollback();
+
 private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 

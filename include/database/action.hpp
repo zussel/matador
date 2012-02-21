@@ -132,7 +132,7 @@ public:
 class OOS_API action
 {
 public:
-  virtual ~action();
+  virtual ~action() {}
   
   /**
    * Interface to accept the action.
@@ -140,11 +140,6 @@ public:
    * @param av The action_visitor
    */
   virtual void accept(action_visitor *av) = 0;
-
-  //std::string type() const;
-
-private:
-  std::string type_;
 };
 
 /**
@@ -179,15 +174,21 @@ public:
   /**
    * Creates an insert_action.
    * 
-   * @param o The inserted object.
+   * @param t The type of the expected objects
    */
-  insert_action() {}
-  virtual ~insert_action() {}
+  explicit insert_action(const std::string &t);
+
+  virtual ~insert_action();
   
-  virtual void accept(action_visitor *av)
-  {
-    av->visit(this);
-  }
+  virtual void accept(action_visitor *av);
+
+  /**
+   * Return the object type
+   * of the action.
+   *
+   * @return The object type of the action
+   */
+  std::string type() const;
 
   iterator begin();
   const_iterator begin() const;
@@ -204,6 +205,7 @@ public:
 
   iterator erase(iterator i);
 private:
+  std::string type_;
   object_list_t object_list_;
 };
 
@@ -215,7 +217,7 @@ private:
  * This action is used when an objected
  * is updated on the database.
  */
-class update_action : public action
+class OOS_API update_action : public action
 {
 public:
   /**

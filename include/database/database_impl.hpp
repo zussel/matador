@@ -145,6 +145,7 @@ public:
   statement_impl_ptr find_statement(const std::string &id) const;
 
   void begin();
+
   /**
    * @brief Called on transaction commit
    *
@@ -153,14 +154,18 @@ public:
    * database. All stored actions and their
    * objects are written to the database.
    */
-  virtual void commit();
+  void commit();
 
-  virtual void rollback();
+  void rollback();
 
 protected:
   const database* db() const;
 
   database* db();
+
+  virtual void on_begin() = 0;
+  virtual void on_commit() = 0;
+  virtual void on_rollback() = 0;
 
 private:
   void initialize(database *db);

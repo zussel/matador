@@ -23,6 +23,23 @@
 namespace oos
 {
 
+insert_action::insert_action(const std::string &t)
+  : type_(t)
+{}
+
+insert_action::~insert_action()
+{}
+
+void insert_action::accept(action_visitor *av)
+{
+  av->visit(this);
+}
+
+std::string insert_action::type() const
+{
+  return type_;
+}
+
 insert_action::iterator insert_action::begin()
 {
   return object_list_.begin();
