@@ -18,6 +18,8 @@
 #include "database/action.hpp"
 #include "object/object.hpp"
 
+#include <algorithm>
+
 namespace oos
 {
 
@@ -55,16 +57,18 @@ struct object_by_id : public std::unary_function<long, bool>
   {
     return (o && o->id() == id_);
   }
+  
+  long id_;
 };
 
 insert_action::iterator insert_action::find(long id)
 {
-  return std::find(object_list_.begin(), object_list_.end(), object_by_id(id));
+  return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
 }
 
-insert_action::const_iterator insert_action::find(lond id) const
+insert_action::const_iterator insert_action::find(long id) const
 {
-  return std::find(object_list_.begin(), object_list_.end(), object_by_id(id));
+  return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
 }
 
 void insert_action::push_back(object *o)
@@ -88,8 +92,9 @@ const object* update_action::obj() const
 }
 
 delete_action::delete_action(object *o)
-  : id_(o ? o->id() : 0)
-  , object_type_(o ? o->object_type() : "")
+  : object_type_(o ? o->object_type() : "")
+  , obj_(o)
+  , id_(o ? o->id() : 0)
 {}
 
 delete_action::~delete_action()
@@ -103,6 +108,16 @@ void delete_action::accept(action_visitor *av)
 std::string delete_action::object_type() const
 {
   return object_type_;
+}
+
+object* delete_action::obj()
+{
+  return obj_;
+}
+
+const object* delete_action::obj() const
+{
+  return obj_;
 }
 
 long delete_action::id() const

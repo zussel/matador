@@ -272,12 +272,23 @@ public:
   std::string object_type() const;
 
   /**
+   * The object of the action.
+   */
+  object* obj();
+
+  /**
+   * The object of the action.
+   */
+  const object* obj() const;
+
+  /**
    * The id of the object of the action.
    */
   long id() const;
 
 private:
   std::string object_type_;
+  object *obj_;
   long id_;
 };
 
