@@ -47,7 +47,12 @@ void transaction::on_insert(object *o)
   if (i == id_map_.end()) {
     // create insert action and insert object
     action_inserter ai(action_list_);
-    ai.insert(o);
+    iterator j = ai.insert(o);
+    if (j == action_list_.end()) {
+      // should not happen
+    } else {
+      id_map_.insert(std::make_pair(o->id(), j));
+    }
   } else {
     // ERROR: an object with that id already exists
     // throw error
@@ -195,7 +200,6 @@ transaction::backup(action *a, long id)
    *************/
   backup_visitor bv;
   bv.backup(a, &object_buffer_);
-  cout << "tr [" << id_ << "] backing up " << a << "\n";
   iterator i = action_list_.insert(action_list_.end(), a);
   id_map_.insert(std::make_pair(id, i));
 }
@@ -203,7 +207,6 @@ transaction::backup(action *a, long id)
 void transaction::restore(action *a)
 {
   restore_visitor rv;
-  cout << "tr [" << id_ << "] restoring " << a << "\n";
   rv.restore(a, &object_buffer_, &db_.ostore());
 }
 

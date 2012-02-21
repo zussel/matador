@@ -92,7 +92,7 @@ public:
   {}
   virtual ~action_inserter() {}
 
-  bool insert(object *o);
+  transaction::iterator insert(object *o);
 
   virtual void visit(create_action*) {}
   virtual void visit(insert_action *a);

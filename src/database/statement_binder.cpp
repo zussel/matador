@@ -51,67 +51,67 @@ void statement_binder::bind(statement_impl *stmt, object *o, bool bind_id)
 
 void statement_binder::write_char(const char *id, char x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_float(const char *id, float x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_double(const char *id, double x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_int(const char *id, int x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_long(const char *id, long x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, (int)x);
 }
 
 void statement_binder::write_unsigned(const char *id, unsigned x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_bool(const char *id, bool x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_charptr(const char *id, const char *x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
 void statement_binder::write_string(const char *id, const std::string &x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x.c_str());
 }
 
 void statement_binder::write_varchar(const char *id, const varchar_base &x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x.str() << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x.str() << ")\n";
   stmt_->bind(++column_, x.c_str());
 }
 
 void statement_binder::write_object(const char *id, const object_base_ptr &x)
 {
-  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
+//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   if (x.ptr()) {
     stmt_->bind(++column_, (int)x.id());
   } else {

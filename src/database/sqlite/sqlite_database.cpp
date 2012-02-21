@@ -97,6 +97,7 @@ void sqlite_database::visit(insert_action *a)
     object *o = (*first++);
     binder.bind(stmt.get(), o, false);
     stmt->step();
+    stmt->reset(true);
   }
 }
 
@@ -109,6 +110,7 @@ void sqlite_database::visit(update_action *a)
   statement_binder binder;
   binder.bind(stmt.get(), a->obj(), true);
   stmt->step();
+  stmt->reset(true);
 }
 
 void sqlite_database::visit(delete_action *a)
@@ -117,8 +119,9 @@ void sqlite_database::visit(delete_action *a)
   if (!stmt) {
     // throw error
   }
-  stmt->bind(0, a->id());
+  stmt->bind(1, a->id());
   stmt->step();
+  stmt->reset(true);
 }
 
 statement_impl* sqlite_database::create_statement()

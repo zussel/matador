@@ -93,21 +93,26 @@ void restore_visitor::visit(delete_action *a)
   }
 }
 
-bool action_inserter::insert(object *o)
+transaction::iterator action_inserter::insert(object *o)
 {
   obj_ = o;
   inserted_ = false;
   transaction::iterator first = action_list_.begin();
   transaction::iterator last = action_list_.end();
   while (first != last) {
-    (*first++)->accept(this);
+    (*first)->accept(this);
+    if (inserted_) {
+      return first;
+    } else {
+      ++first;
+    }
   }
   if (!inserted_) {
     insert_action *a = new insert_action(obj_->object_type());
     a->push_back(o);
-    action_list_.push_back(a);
+    return action_list_.insert(action_list_.end(), a);
   }
-  return true;
+  return last;
 }
 
 void action_inserter::visit(insert_action *a)
@@ -117,6 +122,7 @@ void action_inserter::visit(insert_action *a)
   // add object to action
   if (a->type() == obj_->object_type()) {
     a->push_back(obj_);
+    inserted_ = true;
   }
 }
 
