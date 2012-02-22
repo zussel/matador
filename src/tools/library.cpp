@@ -75,6 +75,7 @@ bool library::unload()
     if (!ret) {
       cout << "failed!\n";
     } else {
+      handle_ = 0;
       cout << "done.\n";
     }
   }
