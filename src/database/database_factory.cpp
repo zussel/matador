@@ -20,6 +20,9 @@
 #include "database/database_impl.hpp"
 
 #include <stdexcept>
+#include <iostream>
+
+using std::cout;
 
 namespace oos {
 
@@ -39,6 +42,18 @@ database_impl* database_factory::create(const std::string &name, database *db)
   database_impl *impl = i->second->create();
   impl->initialize(db);
   return impl;
+}
+
+bool database_factory::destroy(const std::string &name, database_impl* impl)
+{
+  factory_t::iterator i = factory_.find(name);
+  if (i == factory_.end()) {
+    // couldn't find database backend
+    return false;
+  }
+  database_producer *producer = static_cast<database_producer*>(i->second.get());
+  producer->destroy(impl);
+  return true;
 }
 
 database_factory::database_producer::database_producer(const std::string &name)
@@ -64,6 +79,12 @@ database_impl* database_factory::database_producer::create() const
   // on each call store the created database for later
   // explicit destruction
   return (*create_)("");
+}
+
+void database_factory::database_producer::destroy(database_factory::factory_t::value_type* val) const
+{
+  cout << "detroying database backend\n";
+  (*destroy_)(val);
 }
 
 }

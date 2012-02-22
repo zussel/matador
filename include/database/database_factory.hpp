@@ -43,6 +43,7 @@ public:
   virtual ~database_factory();
 
   database_impl* create(const std::string &name, database *db);
+  bool destroy(const std::string &name, database_impl* impl);
 
 private:
   class database_producer : public factory_t::producer_base
@@ -51,6 +52,7 @@ private:
     explicit database_producer(const std::string &name);
     virtual ~database_producer();
     virtual factory_t::value_type* create() const;
+    void destroy(factory_t::value_type* val) const;
 
   private:
     typedef database_impl*(*create_func)(const char*);

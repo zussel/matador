@@ -17,6 +17,10 @@
 
 #include "tools/library.hpp"
 
+#include <iostream>
+
+using std::cout;
+
 namespace oos {
 
 library::library()
@@ -35,14 +39,17 @@ library::~library()
 
 bool library::load()
 {
+  cout << "loading library [" << lib_ << "] ... ";
 #ifdef WIN32
   handle_ = LoadLibrary((lib_ + ".dll").c_str());
 #else
   handle_ = dlopen(std::string("lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
+    cout << "failed!\n";
     return false;
   }
+  cout << "done.\n";
   return true;
 }
 
@@ -57,14 +64,21 @@ bool library::load(const std::string &lib)
 
 bool library::unload()
 {
+  bool ret(true);
   if (handle_) {
+    cout << "unloading library [" << lib_ << "] ... ";
 #ifdef WIN32
-    return FreeLibrary(handle_) == TRUE;
+    ret = FreeLibrary(handle_) == TRUE;
 #else
-    return dlclose(handle_) == 0;
+    ret = dlclose(handle_) == 0;
 #endif
+    if (!ret) {
+      cout << "failed!\n";
+    } else {
+      cout << "done.\n";
+    }
   }
-  return true;
+  return ret;
 }
 
 func_ptr library::function(const std::string &f) const

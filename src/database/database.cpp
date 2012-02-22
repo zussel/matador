@@ -52,6 +52,7 @@ database::database(object_store &ostore, const std::string &dbstring)
 
   impl_->open(db);
 
+/*
   // if database is new create all tables
   statement_helper helper;
 
@@ -71,6 +72,7 @@ database::database(object_store &ostore, const std::string &dbstring)
       stmt->prepare(sql);
       // execute create statement
       stmt->step();
+      delete stmt;
 
       sql = helper.create(o.get(), node.type, statement_helper::SELECT);
       stmt = impl_->create_statement();
@@ -92,11 +94,16 @@ database::database(object_store &ostore, const std::string &dbstring)
       stmt->prepare(sql);
       impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
   }
+  */
 }
 
 
 database::~database()
 {
+  if (impl_) {
+    impl_->close();
+    database_factory::instance().destroy("sqlite", impl_);
+  }
 }
 
 void database::open()

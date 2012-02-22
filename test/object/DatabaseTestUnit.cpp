@@ -21,6 +21,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   : unit_test("database test unit")
 {
   add_test("helper", std::tr1::bind(&DatabaseTestUnit::helper, this), "test statement helper");
+  add_test("open", std::tr1::bind(&DatabaseTestUnit::open, this), "open database test");
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
   add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("with_list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
@@ -87,6 +88,14 @@ DatabaseTestUnit::helper()
 
     delete o;
   }
+}
+
+void
+DatabaseTestUnit::open()
+{
+  cout << endl;
+  // create database and make object store known to the database
+  database db(ostore_, "sqlite://open.sqlite");
 }
 
 void
