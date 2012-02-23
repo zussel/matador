@@ -53,6 +53,7 @@ SET(OBJECT_SOURCES
   src/object/object_vector.cpp
   src/object/linked_object_list.cpp
   src/object/object_linker.cpp
+  src/object/object_value.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
   src/object/prototype_node.cpp

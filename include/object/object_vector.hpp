@@ -21,6 +21,7 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
+#include "object/object_value.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -103,22 +104,13 @@ protected:
   friend class object_serializer;
 
   /**
-   * @brief Push front a object via its object_proxy.
+   * @brief Append a object via its object_proxy.
    *
-   * Push front a object via its object_proxy to the vector.
-   *
-   * @param op The object_proxy containing the list element object.
-   */
-  virtual void push_front_proxy(object_proxy *op) = 0;
-
-  /**
-   * @brief Push back a object via its object_proxy.
-   *
-   * Push back a object via its object_proxy to the vector.
+   * Append a object via its object_proxy to the vector.
    *
    * @param op The object_proxy containing the list element object.
    */
-  virtual void push_back_proxy(object_proxy *op) = 0;
+  virtual void append_proxy(object_proxy *op) = 0;
 
   /**
    * Mark the vector containing object as modified
@@ -359,7 +351,7 @@ public:
         // mark list object as modified
         base_vector::mark_modified(parent_object());
         // insert new item object
-        object_vector_.push_front(x);
+        object_vector_.insert(object_vector_.begin(), x);
       }
     }
   }
@@ -409,6 +401,28 @@ public:
   }
 
   /**
+   * Access the element at given position.
+   *
+   * @param pos The index of the requested element.
+   * @return The requested element.
+   */
+  value_type_wrapper at(size_type pos)
+  {
+    return object_vector_.at(pos);
+  }
+
+  /**
+   * Access the element at given position.
+   *
+   * @param pos The index of the requested element.
+   * @return The requested element.
+   */
+  const value_type_wrapper at(size_type pos) const
+  {
+    return object_vector_.at(pos);
+  }
+
+  /**
    * @brief Interface to erase an element
    *
    * This is the interface for derived object_list
@@ -420,7 +434,15 @@ public:
    */
   virtual iterator erase(iterator i)
   {
-    return object_vector_.erase(i);
+    iterator ret = object_vector_.erase(i);
+    // update index values of all successor elements
+    iterator j = ret;
+    while (j != object_vector_.end()) {
+      size_type index = j->get()->index();
+      update_value(j->get(), index_name().c_str(), (int)--index);
+      ++j;
+    }
+    return ret;
   }
 
   /**
@@ -441,6 +463,29 @@ public:
     return first;
   }
 
+protected:
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
+  virtual void for_each(const node_func &nf) const
+  {
+    const_iterator first = object_vector_.begin();
+    const_iterator last = object_vector_.end();
+    while (first != last) {
+      nf((*first++).ptr());
+    }
+  }
+
+private:
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    object_vector_.push_back(value_type_wrapper(proxy));
+  }
+
 private:
   vector_type object_vector_;
 };
@@ -448,6 +493,7 @@ private:
 template < typename T >
 class object_ptr_vector : public object_vector<T, object_ptr<T> >
 {
+public:
   typedef object_vector<T, object_ptr<T> > base_vector;            /**< Shortcut for the object_vector class. */
   typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
   typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
@@ -465,8 +511,8 @@ class object_ptr_vector : public object_vector<T, object_ptr<T> >
    * @param parent The containing vector object.
    * @param vector_name The name of the parent in the value type object.
    */
-  object_ptr_vector(object *parent, const std::string &vector_name)
-    : base_vector(parent, vector_name)
+  object_ptr_vector(object *parent, const std::string &vector_name, const std::string &index_name)
+    : base_vector(parent, vector_name, index_name)
   {}
   
   virtual ~object_ptr_vector() {}
@@ -492,8 +538,8 @@ class object_ref_vector : public object_vector<T, object_ref<T> >
    * @param parent The containing vector object.
    * @param vector_name The name of the parent in the value type object.
    */
-  object_ref_vector(object *parent, const std::string &vector_name)
-    : base_vector(parent, vector_name)
+  object_ref_vector(object *parent, const std::string &vector_name, const std::string &index_name)
+    : base_vector(parent, vector_name, index_name)
   {}
 
   virtual ~object_ref_vector() {}

@@ -18,6 +18,7 @@
 #include "object/object_vector.hpp"
 #include "object/object.hpp"
 #include "object/object_linker.hpp"
+#include "object/object_value.hpp"
 
 #include <iostream>
 
@@ -61,6 +62,9 @@ bool object_vector_base::set_reference(object *elem)
   std::cout << "linking " << *parent_ << " into field " << vector_name_ << " of " << *elem << "\n";
   object_linker ol(elem, parent_, vector_name_);
   elem->read_from(&ol);
+
+  update_value(elem, index_name_.c_str(), (int)size());
+
   return ol.success();
 }
 

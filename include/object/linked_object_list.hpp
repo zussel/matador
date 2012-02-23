@@ -1109,8 +1109,7 @@ protected:
   }
 
 private:
-  virtual void push_front_proxy(object_proxy *) {};
-  virtual void push_back_proxy(object_proxy *) {};
+  virtual void append_proxy(object_proxy *) {};
 
   virtual void install(object_store *os)
   {

@@ -49,10 +49,6 @@ public:
   bool empty() const;
   size_t size() const;
 
-/*
-	void push_front(const ObjectPtr<Track> &track);
-	void push_back(const ObjectPtr<Track> &track);
-*/
 private:
 	std::string name_;
   oos::object_ref<Artist> artist_;

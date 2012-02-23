@@ -113,22 +113,13 @@ protected:
   friend class object_serializer;
 
   /**
-   * @brief Push front a object via its object_proxy.
+   * @brief Append a object via its object_proxy.
    *
-   * Push front a object via its object_proxy to the list.
-   *
-   * @param op The object_proxy containing the list element object.
-   */
-  virtual void push_front_proxy(object_proxy *op) = 0;
-
-  /**
-   * @brief Push back a object via its object_proxy.
-   *
-   * Push back a object via its object_proxy to the list.
+   * Append a object via its object_proxy to the list.
    *
    * @param op The object_proxy containing the list element object.
    */
-  virtual void push_back_proxy(object_proxy *op) = 0;
+  virtual void append_proxy(object_proxy *op) = 0;
 
   /**
    * Mark the list containing object as modified
@@ -443,12 +434,7 @@ private:
     object_list_.clear();
   }
 
-  virtual void push_front_proxy(object_proxy *proxy)
-  {
-    object_list_.push_front(value_type_wrapper(proxy));
-  }
-
-  virtual void push_back_proxy(object_proxy *proxy)
+  virtual void append_proxy(object_proxy *proxy)
   {
     object_list_.push_back(value_type_wrapper(proxy));
   }

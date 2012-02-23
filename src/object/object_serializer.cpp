@@ -243,7 +243,7 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
-    x.push_back_proxy(oproxy);
+    x.append_proxy(oproxy);
   }
 }
 
@@ -264,7 +264,7 @@ void object_serializer::read_object_vector(const char*, object_vector_base &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
-    x.push_back_proxy(oproxy);
+    x.append_proxy(oproxy);
   }
 }
 

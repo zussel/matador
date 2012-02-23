@@ -18,6 +18,18 @@
 #ifndef OBJECT_VALUE_HPP
 #define OBJECT_VALUE_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
@@ -72,7 +84,7 @@ namespace detail {
   };
 
   template < >
-  struct updater<std::string&, varchar_base&>
+  struct OOS_API updater<std::string&, varchar_base&>
   {
     void update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave);
   };
@@ -84,7 +96,7 @@ namespace detail {
   };
 
   template < >
-  struct updater<varchar_base&, varchar_base&>
+  struct OOS_API updater<varchar_base&, varchar_base&>
   {
     void update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave);
   };
@@ -681,27 +693,13 @@ updater<T*, object_base_ptr>::update(const char *id, const char *f, bool &r, obj
   r = true;
 }
 
-void
-updater<varchar_base&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave)
-{
-  if (strcmp(f, id) != 0) {
-    return;
-  }
-  ov.mark_modified(o);
-  slave = master;
-  r = true;
-}
+/*
+void OOS_API
+updater<varchar_base&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave);
 
-void
-updater<std::string&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave)
-{
-  if (strcmp(f, id) != 0) {
-    return;
-  }
-  ov.mark_modified(o);
-  slave = master;
-  r = true;
-}
+void OOS_API
+updater<std::string&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave);
+*/
 
 template < unsigned int C >
 void

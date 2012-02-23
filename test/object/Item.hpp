@@ -3,6 +3,7 @@
 
 #include "object/object.hpp"
 #include "object/object_list.hpp"
+#include "object/object_vector.hpp"
 #include "object/linked_object_list.hpp"
 #include "object/object_atomizer.hpp"
 
@@ -13,27 +14,37 @@ class Item : public oos::object
 {
 public:
   Item() {}
-  Item(const std::string &name) : name_(name) {}
+  Item(const std::string &name) : name_(name), index_(0) {}
   virtual ~Item() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
     oos::object::read_from(reader);
     reader->read_varchar("name", name_);
+    reader->read_int("index", index_);
     reader->read_object("itemlist", list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     oos::object::write_to(writer);
     writer->write_varchar("name", name_);
+    writer->write_int("index", index_);
     writer->write_object("itemlist", list_);
   }
   
   std::string name() const { return name_.str(); }
   void name(const std::string &n)
   { 
+    //modify_value(name_, n);
     mark_modified();
     name_ = n;
+  }
+
+  int index() const { return index_; }
+  void index(int i)
+  { 
+    mark_modified();
+    index_ = i;
   }
 
   oos::object_ref<L> itemlist() const { return list_; }
@@ -45,6 +56,7 @@ public:
 
 private:
   oos::varchar<32> name_;
+  int index_;
   oos::object_ref<L> list_;
 };
 
@@ -246,6 +258,64 @@ public:
   }
 private:
   item_list_t item_list_;
+};
+
+class ItemPtrVector : public oos::object
+{
+public:
+  typedef Item<ItemPtrVector> value_type;
+  typedef oos::object_ptr_vector<value_type> item_vector_t;
+  typedef item_vector_t::value_type_ptr value_type_ptr;
+  typedef ItemPtrVector self;
+  typedef oos::object_ref<self> self_ref;
+  typedef item_vector_t::iterator iterator;
+  typedef item_vector_t::const_iterator const_iterator;
+
+public:
+  ItemPtrVector()
+    : item_vector_(this, "itemlist", "index")
+  {}
+  virtual ~ItemPtrVector() {}
+
+	void read_from(oos::object_atomizer *reader)
+  {
+    object::read_from(reader);
+    reader->read_object_vector("item_vector", item_vector_);
+  }
+	void write_to(oos::object_atomizer *writer) const
+  {
+    object::write_to(writer);
+    writer->write_object_vector("item_vector", item_vector_);
+  }
+
+  void push_front(const value_type_ptr &i)
+  {
+    item_vector_.push_front(i);
+  }
+
+  void push_back(const value_type_ptr &i)
+  {
+    item_vector_.push_back(i);
+  }
+
+  iterator begin() { return item_vector_.begin(); }
+  const_iterator begin() const { return item_vector_.begin(); }
+
+  iterator end() { return item_vector_.end(); }
+  const_iterator end() const { return item_vector_.end(); }
+
+  bool empty() const { return item_vector_.empty(); }
+  void clear() { item_vector_.clear(); }
+
+  iterator erase(iterator i)
+  {
+    return item_vector_.erase(i);
+  }
+
+  size_t size() { return item_vector_.size(); }
+
+private:
+  item_vector_t item_vector_;
 };
 
 #endif /* ITEM_HPP */

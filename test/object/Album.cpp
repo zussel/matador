@@ -113,15 +113,3 @@ size_t Album::size() const
 {
   return track_list_.size();
 }
-
-/*
-void Album::push_front(const ObjectPtr<Track> &track)
-{
-	track_list_.push_front(track);
-}
-
-void Album::push_back(const ObjectPtr<Track> &track)
-{
-	track_list_.push_back(track);
-}
-*/

@@ -11,6 +11,7 @@
 #include "ObjectPrototypeTestUnit.hpp"
 #include "ComplexObjectStoreTestUnit.hpp"
 #include "ObjectListTestUnit.hpp"
+#include "ObjectVectorTestUnit.hpp"
 #include "DatabaseTestUnit.hpp"
 
 #include <iostream>
@@ -27,6 +28,7 @@ main(int argc, char *argv[])
   test_suite::instance().register_unit("objects", new ObjectStoreTestUnit());
   test_suite::instance().register_unit("complex", new ComplexObjectStoreTestUnit());
   test_suite::instance().register_unit("objectlist", new ObjectListTestUnit());
+  test_suite::instance().register_unit("objectvector", new ObjectVectorTestUnit());
   test_suite::instance().register_unit("database", new DatabaseTestUnit());
 
 	test_suite::instance().run();
