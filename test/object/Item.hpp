@@ -21,14 +21,14 @@ public:
   {
     oos::object::read_from(reader);
     reader->read_varchar("name", name_);
-    reader->read_int("index", index_);
+    reader->read_int("itemindex", index_);
     reader->read_object("itemlist", list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     oos::object::write_to(writer);
     writer->write_varchar("name", name_);
-    writer->write_int("index", index_);
+    writer->write_int("itemindex", index_);
     writer->write_object("itemlist", list_);
   }
   
@@ -273,7 +273,7 @@ public:
 
 public:
   ItemPtrVector()
-    : item_vector_(this, "itemlist", "index")
+    : item_vector_(this, "itemlist", "itemindex")
   {}
   virtual ~ItemPtrVector() {}
 

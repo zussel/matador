@@ -51,7 +51,7 @@ class sqlite_statement;
 class OOS_SQLITE_API sqlite_database : public database_impl
 {
 public:
-  sqlite_database();
+  explicit sqlite_database(const std::string &conn);
   virtual ~sqlite_database();
   
   virtual void open(const std::string &db);
@@ -120,13 +120,7 @@ private:
 };
 
 }
-}
 
-extern "C"
-{
-  OOS_SQLITE_API oos::database_impl* create_database();
-
-  OOS_SQLITE_API void destroy_database(oos::database_impl *db);
 }
 
 #endif /* SQLITE_DATABASE_HPP */

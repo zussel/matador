@@ -52,57 +52,54 @@ database::database(object_store &ostore, const std::string &dbstring)
 
   impl_->open(db);
 
-/*
   // if database is new create all tables
   statement_helper helper;
 
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
-      const prototype_node &node = (*first++);
-      if (node.abstract) {
-        continue;
-      }
-      std::auto_ptr<object> o(node.producer->create());
-      
-      // create all tables in database
-      std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
-      
-      statement_impl *stmt = impl_->create_statement();
-      stmt->prepare(sql);
-      // execute create statement
-      stmt->step();
-      delete stmt;
+    const prototype_node &node = (*first++);
+    if (node.abstract) {
+      continue;
+    }
+    std::auto_ptr<object> o(node.producer->create());
+    
+    // create all tables in database
+    std::string sql = helper.create(o.get(), node.type, statement_helper::CREATE);
+    
+    statement_impl *stmt = impl_->create_statement();
+    stmt->prepare(sql);
+    // execute create statement
+    stmt->step();
+    delete stmt;
 
-      sql = helper.create(o.get(), node.type, statement_helper::SELECT);
-      stmt = impl_->create_statement();
-      stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_SELECT", database_impl::statement_impl_ptr(stmt));
+    sql = helper.create(o.get(), node.type, statement_helper::SELECT);
+    stmt = impl_->create_statement();
+    stmt->prepare(sql);
+    impl_->store_statement(std::string(o->object_type()) + "_SELECT", database_impl::statement_impl_ptr(stmt));
 
-      sql = helper.create(o.get(), node.type, statement_helper::INSERT);
-      stmt = impl_->create_statement();
-      stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_INSERT", database_impl::statement_impl_ptr(stmt));
+    sql = helper.create(o.get(), node.type, statement_helper::INSERT);
+    stmt = impl_->create_statement();
+    stmt->prepare(sql);
+    impl_->store_statement(std::string(o->object_type()) + "_INSERT", database_impl::statement_impl_ptr(stmt));
 
-      sql = helper.create(o.get(), node.type, statement_helper::UPDATE, "id=?");
-      stmt = impl_->create_statement();
-      stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_UPDATE", database_impl::statement_impl_ptr(stmt));
+    sql = helper.create(o.get(), node.type, statement_helper::UPDATE, "id=?");
+    stmt = impl_->create_statement();
+    stmt->prepare(sql);
+    impl_->store_statement(std::string(o->object_type()) + "_UPDATE", database_impl::statement_impl_ptr(stmt));
 
-      sql = helper.create(o.get(), node.type, statement_helper::DEL, "id=?");
-      stmt = impl_->create_statement();
-      stmt->prepare(sql);
-      impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
+    sql = helper.create(o.get(), node.type, statement_helper::DEL, "id=?");
+    stmt = impl_->create_statement();
+    stmt->prepare(sql);
+    impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
   }
-  */
 }
 
 
 database::~database()
 {
   if (impl_) {
-//    impl_->close();
-    database_factory::instance().destroy("sqlite", impl_);
+    impl_->close();
   }
 }
 

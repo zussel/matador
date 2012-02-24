@@ -41,7 +41,7 @@ namespace oos {
   
 namespace sqlite {
   
-sqlite_database::sqlite_database()
+sqlite_database::sqlite_database(const std::string &conn)
   : database_impl(new sqlite_sequencer(this))
   , db_(0)
 {
@@ -172,18 +172,5 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
 }
 
 }
-}
 
-extern "C"
-{
-
-  OOS_SQLITE_API oos::database_impl* create_database()
-  {
-    return new oos::sqlite::sqlite_database();
-  }
-
-  OOS_SQLITE_API void destroy_database(oos::database_impl *db)
-  {
-    delete db;
-  }
 }

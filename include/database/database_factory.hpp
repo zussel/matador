@@ -18,6 +18,18 @@
 #ifndef DATABASE_FACTORY_HPP
 #define DATABASE_FACTORY_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "tools/singleton.hpp"
 #include "tools/factory.hpp"
 #include "tools/library.hpp"
@@ -29,10 +41,36 @@ namespace oos {
 class database_impl;
 class database;
 
+class OOS_API database_producer
+{
+public:
+  virtual ~database_producer() {}
+
+  virtual database_impl* create(const std::string &conn) const = 0;
+};
+
 class database_factory : public oos::singleton<database_factory>
 {
 private:
-  typedef factory<std::string, database_impl> factory_t;
+  class database_loader
+  {
+  public:
+    database_loader(const std::string &name);
+    ~database_loader();
+
+    database_impl* create(const std::string &conn) const;
+
+  private:
+    typedef database_producer*(*get_producer)();
+
+  private:
+    std::string name_;
+    database_producer *producer_;
+    library loader_;
+  };
+
+private:
+  typedef std::map<std::string, database_loader*> factory_t;
 
 private:
   friend class singleton<database_factory>;
@@ -43,28 +81,7 @@ public:
   virtual ~database_factory();
 
   database_impl* create(const std::string &name, database *db);
-  bool destroy(const std::string &name, database_impl* impl);
-
-private:
-  class database_producer : public factory_t::producer_base
-  {
-  public:
-    explicit database_producer(const std::string &name);
-    virtual ~database_producer();
-    virtual factory_t::value_type* create() const;
-    void destroy(factory_t::value_type* val) const;
-
-  private:
-    typedef database_impl*(*create_func)(const char*);
-    typedef void (*destroy_func)(database_impl*);
-    
-  private:
-    create_func create_;
-    destroy_func destroy_;
-
-    library loader_;
-  };
-
+  
 private:
   factory_t factory_;
 };
