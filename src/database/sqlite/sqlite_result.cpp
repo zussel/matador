@@ -16,6 +16,7 @@
  */
 
 #include "database/sqlite/sqlite_result.hpp"
+#include "database/row.hpp"
 
 namespace oos {
 
@@ -29,7 +30,13 @@ sqlite_static_result::sqlite_static_result()
 {}
 
 sqlite_static_result::~sqlite_static_result()
-{}
+{
+  while (!rows_.empty()) {
+    row *r = rows_.back();
+    delete r;
+    rows_.pop_back();
+  }
+}
 
 bool sqlite_static_result::next()
 {

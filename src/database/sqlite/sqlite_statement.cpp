@@ -21,6 +21,7 @@
 #include "database/row.hpp"
 
 #include <stdexcept>
+#include <iostream>
 #include <sqlite3.h>
 
 namespace oos {
@@ -78,7 +79,13 @@ void sqlite_statement::reset(bool clear_bindings)
 
 int sqlite_statement::finalize()
 {
-  return sqlite3_finalize(stmt_);
+  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
+  int ret = sqlite3_finalize(stmt_);
+  if (ret != SQLITE_OK) {
+    std::string msg(sqlite3_errmsg(db_()));
+    throw std::runtime_error("error while preparing statement: " + msg);
+  }
+  return ret;
 }
 
 int sqlite_statement::column_count() const

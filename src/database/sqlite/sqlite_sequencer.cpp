@@ -18,6 +18,8 @@
 #include "database/sqlite/sqlite_sequencer.hpp"
 #include "database/sqlite/sqlite_database.hpp"
 
+#include "database/row.hpp"
+
 namespace oos {
 
 namespace sqlite {
@@ -41,10 +43,27 @@ void sqlite_sequencer::create()
    * - sequence (integer, not null)
    *
    **********/
+  std::auto_ptr<result_impl> res(db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);"));
+  
+  res.reset(db_->execute("SELECT sequence FROM oos_sequence WHERE name='object';"));
+  
+  if (res->next()) {
+    // element exists
+    row *r = res->current();
+    int id = r->at<int>(0);
+//    int id = stmt.column_int(0);
+    reset(id);
+  } else {
+    // no such element, insert one
+    res.reset(db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);"));
+  }
+  
+  /*
   sqlite_statement stmt(*db_);
   stmt.prepare("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
   stmt.step();
 
+  stmt.finalize();
   stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   if (stmt.step()) {
     // element exists
@@ -52,10 +71,12 @@ void sqlite_sequencer::create()
     reset(id);
   } else {
     // no such element, insert one
+    stmt.finalize();
     stmt.prepare("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
     stmt.step();
     reset(0);
   }
+  */
   // prepare update statement
   update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }

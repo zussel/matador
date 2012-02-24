@@ -28,6 +28,7 @@
 
 #include <stdexcept>
 #include <sqlite3.h>
+#include <iostream>
 
 #ifdef WIN32
 #include <functional>
@@ -67,6 +68,7 @@ void sqlite_database::close()
 {
   database_impl::close();
 
+  std::cout << "closing database 0x" << std::hex << db_ << "\n";
   sqlite3_close(db_);
 }
 

@@ -31,11 +31,11 @@ public:
   virtual ~value_base() {}
 
   template < class T >
-  T get()
+  T get() const
   {
-    value<T> *v = dynamic_cast<value<T>* >(this);
+    const value<T> *v = dynamic_cast<const value<T>* >(this);
     if (v) {
-      return v->operator()();
+      return v->get<T>();
     } else {
       throw std::bad_cast();
     }
@@ -56,7 +56,7 @@ public:
   virtual ~value() { delete value_; }
 
   template < class V >
-  V operator()()
+  V get() const
   {
     return *value_;
   }

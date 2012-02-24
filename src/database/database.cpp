@@ -99,7 +99,8 @@ database::database(object_store &ostore, const std::string &dbstring)
 database::~database()
 {
   if (impl_) {
-    impl_->close();
+//    impl_->close();
+    delete impl_;
   }
 }
 
