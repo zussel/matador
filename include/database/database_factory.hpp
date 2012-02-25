@@ -46,7 +46,7 @@ class OOS_API database_producer
 public:
   virtual ~database_producer() {}
 
-  virtual database_impl* create(const std::string &conn) const = 0;
+  virtual database_impl* create(database *db, const std::string &conn) const = 0;
 };
 
 class database_factory : public oos::singleton<database_factory>
@@ -58,7 +58,7 @@ private:
     database_loader(const std::string &name);
     ~database_loader();
 
-    database_impl* create(const std::string &conn) const;
+    database_impl* create(database *db, const std::string &conn) const;
 
   private:
     typedef database_producer*(*get_producer)();

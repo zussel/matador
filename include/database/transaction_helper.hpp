@@ -98,7 +98,7 @@ public:
   virtual void visit(insert_action *a);
   virtual void visit(update_action *a);
   virtual void visit(delete_action *a);
-  virtual void visit(drop_action*a) {}
+  virtual void visit(drop_action*) {}
 
 private:
   transaction::action_list_t &action_list_;

@@ -40,7 +40,7 @@ namespace sqlite {
   public:
     sqlite_producer();
 
-    virtual database_impl* create(const std::string &conn) const;
+    virtual database_impl* create(database *db, const std::string &conn) const;
   };
 }
 

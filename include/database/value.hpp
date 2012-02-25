@@ -31,9 +31,9 @@ public:
   virtual ~value_base() {}
 
   template < class T >
-  T get() const
+  T get()
   {
-    const value<T> *v = dynamic_cast<const value<T>* >(this);
+    value<T> *v = dynamic_cast<value<T>* >(this);
     if (v) {
       return v->get<T>();
     } else {
@@ -50,19 +50,19 @@ template < class T >
 class value : public value_base
 {
 public:
-  value(T *val)
+  value(const T &val)
     : value_(val)
   {}
-  virtual ~value() { delete value_; }
+  virtual ~value() { /*delete value_;*/ }
 
   template < class V >
-  V get() const
+  V get()
   {
-    return *value_;
+    return value_;
   }
 
 private:
-  T *value_;
+  T value_;
 };
 
 }

@@ -59,7 +59,7 @@ public:
   template < class T >
   void push_back(const T &val)
   {
-    values_.push_back(value<T>(new T(val)));
+    values_.push_back(value<T>(val));
   }
 
   /**
@@ -70,7 +70,7 @@ public:
    * @return The value of the requested column.
    */
   template < class T >
-  T at(size_t pos) const
+  T at(size_t pos)
   {
     return values_.at(pos).get<T>();
   }

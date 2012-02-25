@@ -26,7 +26,7 @@ sqlite_result::~sqlite_result()
 {}
 
 sqlite_static_result::sqlite_static_result()
-  : pos_(0)
+  : pos_(-1)
 {}
 
 sqlite_static_result::~sqlite_static_result()
@@ -40,7 +40,7 @@ sqlite_static_result::~sqlite_static_result()
 
 bool sqlite_static_result::next()
 {
-  return ++pos_ > rows_.size();
+  return ++pos_ < rows_.size();
 }
 
 row* sqlite_static_result::current() const

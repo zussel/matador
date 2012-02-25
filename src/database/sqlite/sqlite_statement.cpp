@@ -66,6 +66,7 @@ int sqlite_statement::prepare(const std::string &sql)
     std::string msg(sqlite3_errmsg(db_()));
     throw std::runtime_error("error while preparing statement: " + sql + " " + msg);
   }
+//  std::cout << "preparing statement 0x" << std::hex << stmt_ << " (" << sql << ")\n";
   return ret;
 }
 
@@ -79,12 +80,16 @@ void sqlite_statement::reset(bool clear_bindings)
 
 int sqlite_statement::finalize()
 {
-  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
+  if (!stmt_) {
+    return SQLITE_OK;
+  }
+//  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
   int ret = sqlite3_finalize(stmt_);
   if (ret != SQLITE_OK) {
     std::string msg(sqlite3_errmsg(db_()));
     throw std::runtime_error("error while preparing statement: " + msg);
   }
+  stmt_ = 0;
   return ret;
 }
 

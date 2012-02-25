@@ -51,7 +51,7 @@ class sqlite_statement;
 class OOS_SQLITE_API sqlite_database : public database_impl
 {
 public:
-  explicit sqlite_database(const std::string &conn);
+  explicit sqlite_database(database *db, const std::string &conn);
   virtual ~sqlite_database();
   
   virtual void open(const std::string &db);
@@ -68,7 +68,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The corresponding result.
    */
-  virtual result_impl* execute(const char *sql);
+  virtual bool execute(const char *sql, result_impl *res = 0);
 
   virtual void visit(create_action *) {}
 
@@ -91,6 +91,13 @@ public:
    * The interface for the drop table action.
    */
   virtual void visit(drop_action *) {}
+
+  /**
+   * Create a new sqlite result
+   * 
+   * @return A new sqlite result
+   */
+  virtual result_impl* create_result();
 
   /**
    * Create a new sqlite statement
@@ -116,7 +123,7 @@ private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
 private:
-  sqlite3 *db_;
+  sqlite3 *sqlite_db_;
 };
 
 }

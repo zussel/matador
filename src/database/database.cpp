@@ -167,7 +167,9 @@ bool database::load()
 result_ptr database::execute(const std::string &sql)
 {
   try {
-    return result_ptr(new result(impl_->execute(sql.c_str())));
+    result_impl *res = impl_->create_result();
+    impl_->execute(sql.c_str(), res);
+    return result_ptr(new result(res));
   } catch (std::exception &ex) {
     return result_ptr();
   }

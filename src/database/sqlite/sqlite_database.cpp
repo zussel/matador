@@ -42,9 +42,9 @@ namespace oos {
   
 namespace sqlite {
   
-sqlite_database::sqlite_database(const std::string &conn)
-  : database_impl(new sqlite_sequencer(this))
-  , db_(0)
+sqlite_database::sqlite_database(database *db, const std::string &conn)
+  : database_impl(db, new sqlite_sequencer(this))
+  , sqlite_db_(0)
 {
 }
 
@@ -56,7 +56,7 @@ sqlite_database::~sqlite_database()
 
 void sqlite_database::open(const std::string &db)
 {
-  int ret = sqlite3_open(db.c_str(), &db_);
+  int ret = sqlite3_open(db.c_str(), &sqlite_db_);
   if (ret != SQLITE_OK) {
     throw std::runtime_error("couldn't open database: " + db);
   }
@@ -68,21 +68,19 @@ void sqlite_database::close()
 {
   database_impl::close();
 
-  std::cout << "closing database 0x" << std::hex << db_ << "\n";
-  sqlite3_close(db_);
+  sqlite3_close(sqlite_db_);
 }
 
-result_impl* sqlite_database::execute(const char *sql)
+bool sqlite_database::execute(const char *sql, result_impl *res)
 {
-  std::auto_ptr<sqlite_result> result(new sqlite_static_result);
   char *errmsg;
-  int ret = sqlite3_exec(db_, sql, parse_result , result.get(), &errmsg);
+  int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res, &errmsg);
   if (ret != SQLITE_OK) {
     //throw database_error(errmsg);
     sqlite3_free(errmsg);
-    return 0;
+    return false;
   }
-  return result.release();
+  return true;
 }
 
 void sqlite_database::visit(insert_action *a)
@@ -127,6 +125,11 @@ void sqlite_database::visit(delete_action *a)
   stmt->reset(true);
 }
 
+result_impl* sqlite_database::create_result()
+{
+  return new sqlite_static_result;
+}
+
 statement_impl* sqlite_database::create_statement()
 {
   return new sqlite_statement(*this);
@@ -134,22 +137,22 @@ statement_impl* sqlite_database::create_statement()
 
 sqlite3* sqlite_database::operator()()
 {
-  return db_;
+  return sqlite_db_;
 }
 
 void sqlite_database::on_begin()
 {
-  std::auto_ptr<result_impl> res(execute("BEGIN TRANSACTION;"));
+  execute("BEGIN TRANSACTION;");
 }
 
 void sqlite_database::on_commit()
 {
-  std::auto_ptr<result_impl> res(execute("COMMIT TRANSACTION;"));
+  execute("COMMIT TRANSACTION;");
 }
 
 void sqlite_database::on_rollback()
 {
-  std::auto_ptr<result_impl> res(execute("ROLLBACK TRANSACTION;"));
+  execute("ROLLBACK TRANSACTION;");
 }
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
@@ -167,7 +170,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
    ********************/
   std::auto_ptr<row> r(new row);
   for (int i = 0; i < column_count; ++i) {
-    r->push_back(values[i]);
+    r->push_back(std::string(values[i]));
   }
   result->push_back(r.release());
   return 0;

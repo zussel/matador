@@ -27,8 +27,8 @@
 
 namespace oos {
 
-database_impl::database_impl(database_sequencer *seq)
-  : db_(0)
+database_impl::database_impl(database *db, database_sequencer *seq)
+  : db_(db)
   , sequencer_(seq)
 {}
 
@@ -47,6 +47,9 @@ void database_impl::close()
   if (sequencer_backup_) {
     db()->ostore().exchange_sequencer(sequencer_backup_);
   }
+  sequencer_->destroy();
+  
+  statement_impl_map_.clear();
 }
 
 bool database_impl::store_statement(const std::string &id, database_impl::statement_impl_ptr stmt)
@@ -94,11 +97,6 @@ const database* database_impl::db() const
 database* database_impl::db()
 {
   return db_;
-}
-
-void database_impl::initialize(database *db)
-{
-  db_ = db;
 }
 
 }

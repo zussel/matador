@@ -70,7 +70,7 @@ public:
   typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
 
 protected:
-  database_impl(database_sequencer *seq);
+  database_impl(database *db, database_sequencer *seq);
 
 public:
   virtual ~database_impl();
@@ -92,7 +92,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The corresponding result.
    */
-  virtual result_impl* execute(const char *sql) = 0;
+  virtual bool execute(const char *sql, result_impl *res = 0) = 0;
 
   /**
    * The interface for the create table action.
@@ -118,6 +118,13 @@ public:
    * The interface for the drop table action.
    */
   virtual void visit(drop_action*) {}
+
+  /**
+   * Create a new result object
+   * 
+   * @return New result implenation object.
+   */
+  virtual result_impl* create_result() = 0;
 
   /**
    * Create the concrete statement_impl.
@@ -166,9 +173,6 @@ protected:
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;
-
-private:
-  void initialize(database *db);
 
 private:
   friend class database_factory;

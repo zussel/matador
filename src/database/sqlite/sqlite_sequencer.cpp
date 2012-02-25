@@ -17,8 +17,12 @@
 
 #include "database/sqlite/sqlite_sequencer.hpp"
 #include "database/sqlite/sqlite_database.hpp"
+#include "database/sqlite/sqlite_result.hpp"
 
 #include "database/row.hpp"
+
+#include <iostream>
+#include <cstdlib>
 
 namespace oos {
 
@@ -43,21 +47,20 @@ void sqlite_sequencer::create()
    * - sequence (integer, not null)
    *
    **********/
-  std::auto_ptr<result_impl> res(db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);"));
+  db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
   
-  res.reset(db_->execute("SELECT sequence FROM oos_sequence WHERE name='object';"));
+  sqlite_statement stmt(*db_);
+  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   
-  if (res->next()) {
-    // element exists
-    row *r = res->current();
-    int id = r->at<int>(0);
-//    int id = stmt.column_int(0);
+  if (stmt.step()) {
+    int id = stmt.column_int(1);
     reset(id);
   } else {
     // no such element, insert one
-    res.reset(db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);"));
+    db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
-  
+  stmt.finalize();
+
   /*
   sqlite_statement stmt(*db_);
   stmt.prepare("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
@@ -105,6 +108,11 @@ void sqlite_sequencer::rollback()
 void sqlite_sequencer::drop()
 {
   // drop table (do we need this)
+}
+
+void sqlite_sequencer::destroy()
+{
+  update_.finalize();
 }
 
 }

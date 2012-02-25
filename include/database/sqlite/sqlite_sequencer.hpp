@@ -38,6 +38,7 @@ public:
   virtual void commit();
   virtual void rollback();
   virtual void drop();
+  virtual void destroy();
 
 private:
   sqlite_database *db_;

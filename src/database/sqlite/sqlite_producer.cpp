@@ -25,9 +25,9 @@ namespace sqlite {
 sqlite_producer::sqlite_producer()
 {}
 
-database_impl* sqlite_producer::create(const std::string &conn) const
+database_impl* sqlite_producer::create(database *db, const std::string &conn) const
 {
-  return new sqlite_database(conn);
+  return new sqlite_database(db, conn);
 }
 
 }
