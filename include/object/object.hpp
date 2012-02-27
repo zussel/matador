@@ -140,7 +140,17 @@ public:
   template < class T >
   bool set(const std::string &name, const T &val)
   {
-    return true;
+    return update_value(this, name.c_str(), val);
+  }
+
+  /**
+   * 
+   * 
+   */
+  template < class T >
+  bool get(const std::string &name, T &val)
+  {
+    return retrieve_value(this, name.c_str(), val);
   }
 
   /**
