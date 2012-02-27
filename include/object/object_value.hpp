@@ -32,7 +32,6 @@
 
 #include "object/object_atomizer.hpp"
 #include "object/object_ptr.hpp"
-#include "object/object.hpp"
 
 #include "tools/varchar.hpp"
 
@@ -192,6 +191,19 @@ namespace detail {
   };
 }
 
+class object_value_base : public object_atomizer
+{
+public:
+  virtual ~object_value_base();
+  
+protected:
+  template < typename X, typename Y > friend struct detail::updater;
+
+  void retrieve(object *o);
+  void update(const object *o);
+  void mark_modified(object *o);
+};
+
 /**
  * @class object_value
  * @brief Update and retrieve values of an object.
@@ -204,7 +216,7 @@ namespace detail {
  * of each and every object_store object.
  */
 template < class T >
-class object_value : public object_atomizer
+class object_value : public object_value_base
 {
 public:
   /**
@@ -235,7 +247,7 @@ public:
     id_ = id;
     object_ = o;
     succeeded_ = false;
-    o->read_from(this);
+    retrieve(o);
     object_ = 0;
   }
 
@@ -255,7 +267,7 @@ public:
   {
     id_ = id;
     succeeded_ = false;
-    o->write_to(this);
+    update(o);
     return value_;
   }
 
@@ -653,14 +665,6 @@ private:
   }
 
 private:
-  template < typename X, typename Y > friend struct detail::updater;
-
-  void mark_modified(object *o)
-  {
-    o->mark_modified();
-  }
-    
-private:
   T value_;
   std::string id_;
   object *object_;
@@ -668,6 +672,8 @@ private:
 };
 
 namespace detail {
+
+void mark_modified(object *o);
 
 template < typename T >
 void

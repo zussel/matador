@@ -192,8 +192,7 @@ private:
   friend class object_serializer;
   friend class object_list_base;
   friend class object_vector_base;
-  template < class T >
-  friend class object_value;
+  friend class object_value_base;
 	
 	long id_;
   object_proxy *proxy_;
