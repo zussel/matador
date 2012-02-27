@@ -545,6 +545,32 @@ public:
     skip_siblings_ = skip;
   }
 
+
+  /*
+  template < class R >
+  struct getter
+  {
+  };
+
+  
+  typedef std::tr1::function<R ()> getter;
+
+  */
+
+  template < class R >
+  iterator find_if(R (T::*m)() const, const R &val)
+  {
+    iterator first = begin();
+    iterator last = end();
+    while (first != last) {
+      object_ptr<T> optr = first.optr();
+      if ((*optr.get().*m)() == val) {
+        break;
+      }
+      ++first;
+    }
+    return first;
+  }
 private:
     object_store &ostore_;
     bool skip_siblings_;
