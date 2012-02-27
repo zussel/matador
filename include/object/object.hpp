@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "object/object_value.hpp"
+
 #include <iostream>
 
 namespace oos {
@@ -130,6 +132,16 @@ public:
    * @return The object_store to which the object belongs.
    */
   object_store* ostore() const;
+
+  /**
+   * 
+   * 
+   */
+  template < class T >
+  bool set(const std::string &name, const T &val)
+  {
+    return true;
+  }
 
   /**
    * Print the object to a given stream
