@@ -142,6 +142,7 @@ transaction::commit()
   } else {
     // commit all transaction actions
     db_.commit(*this);
+    cout << "commited transaction [" << id_ << "]\n";
     // clear actions
     cleanup();
   }
@@ -172,6 +173,7 @@ transaction::rollback()
 
     db_.rollback();
 
+    cout << "rolled transaction [" << id_ << "]\n";
     // clear container
     cleanup();
   }
