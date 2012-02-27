@@ -438,9 +438,15 @@ public:
     // update index values of all successor elements
     iterator j = ret;
     while (j != object_vector_.end()) {
-      size_type index = j->get()->index();
-      update_value(j->get(), index_name().c_str(), (int)--index);
-      ++j;
+      size_type index = 0;
+      if (!(*j)->get(index_name(), index)) {
+        // error: throw exception
+      } else if (!(*j)->set(index_name(), (int)--index)) {
+        // error: throw exception
+      } else {
+        // success
+        ++j;
+      }
     }
     return ret;
   }
