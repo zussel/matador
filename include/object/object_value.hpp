@@ -191,7 +191,7 @@ namespace detail {
   };
 }
 
-class object_value_base : public object_atomizer
+class OOS_API object_value_base : public object_atomizer
 {
 public:
   virtual ~object_value_base();

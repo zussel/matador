@@ -37,7 +37,7 @@ void statement_binder::bind(statement_impl *stmt, object *o, bool bind_id)
 {
   stmt_ = stmt;
 
-  std::cerr << "start binding object values of object " << *o << "\n";
+//  std::cerr << "start binding object values of object " << *o << "\n";
   column_ = 0;
   // bind parameter
   o->write_to(this);
