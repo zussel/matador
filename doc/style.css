@@ -1,0 +1,191 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
+  font-size: 85%;
+	color: #555;
+  background-color: #eee8d5;
+}
+
+#wrapper
+{
+  width: 900px;
+  margin: 0px auto;
+}
+
+#header
+{
+  width: 100%;
+  margin: 0 0;
+  padding: 0 0;
+  color: #ddd;
+  height: 160px;
+  background-color: #303030;
+  background-image: url(banner.jpg);
+}
+
+#header h1
+{
+  text-align: center;
+}
+
+#header ul
+{
+  float: right;
+  margin: 30px 20px 0 0;
+  list-style: none;
+  padding: 0;
+  background-color: #303030;
+}
+
+#header ul li
+{
+  float: left;
+  padding: 6px 5px 6px 5px;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #202020;
+}
+
+#header ul li a
+{
+  text-decoration: none;
+  font-weight: bolder;
+  color: #e7e620;
+}
+
+#header ul li:hover
+{
+  background-color: #909090;
+  /*
+  text-decoration: none;
+  color: #e7e620;
+  */
+}
+
+#content
+{
+  width: 880px;
+  float: left;
+  clear: both;
+  margin: 0 0;
+  padding: 20px 10px;
+  color: #555;
+  background-color: #fdf6e3;
+}
+
+#content ul
+{
+  float: left;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  background-color: #303030;
+}
+
+#content ul li
+{
+  float: left;
+  padding: 6px 5px 6px 5px;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #202020;
+}
+
+#content ul li a
+{
+  text-decoration: none;
+  font-weight: bolder;
+  color: #e7e620;
+}
+
+#content ul li:hover
+{
+  background-color: #909090;
+  /*
+  text-decoration: none;
+  color: #e7e620;
+  */
+}
+
+#content h3
+{
+  /* top right bottom left */
+  padding: 10px 5px 0 0;
+  /*background-color: #eee;*/
+  font-family: Courier, Monospace;
+  font-size: 150%;
+  font-weight: bolder;
+  color: darkgreen;
+}
+
+#content p
+{
+  /*margin: 5px;
+  padding: 5px;*/
+  /*border: 1px dashed #ccc*/;
+  text-align: justify;
+}
+
+#content pre
+{
+  border-left: solid #eee8d5 10px;
+  /*margin: 20px;*/
+}
+
+#content pre code
+{
+  font-size: 120%;
+  font-weight: bolder;
+}
+
+#footer
+{
+  padding: 30px 0;
+  background-color: #073642;
+  color: #ddd;
+}
+
+.clear
+{
+  clear: both;
+}
+
+.float_left
+{
+  float: left;
+}
+
+.float_right
+{
+  float: right;
+}
+
+.width100
+{
+  width: 900px;
+}
+
+.width66
+{
+  width: 600px;
+}
+
+.width33
+{
+  width: 300px;
+}
+
+.width50
+{
+  width: 450px;
+}
+
+.width75
+{
+  width: 675px;
+}
+
+.width25
+{
+  width: 225px;
+}
