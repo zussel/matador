@@ -76,6 +76,7 @@ body
 
 #content ul
 {
+  width: 100%;
   float: left;
   margin: 0;
   list-style: none;
@@ -145,6 +146,12 @@ body
   color: #ddd;
 }
 
+.tabs,
+.tabs2,
+.tabs3,
+.tabs4,
+.contents,
+.header,
 .clear
 {
   clear: both;
