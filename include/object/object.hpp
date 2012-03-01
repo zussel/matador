@@ -134,8 +134,14 @@ public:
   object_store* ostore() const;
 
   /**
+   * Sets a value of a member identified by
+   * the given name. If the operation succeeds
+   * true is returned.
    * 
-   * 
+   * @tparam T     The type of the value to set.
+   * @param name   The name of the member variable.
+   * @param val    The new value for the member.
+   * @return       True if the operation succeeds.
    */
   template < class T >
   bool set(const std::string &name, const T &val)
@@ -144,8 +150,14 @@ public:
   }
 
   /**
+   * Gets the value of a member identified by
+   * the given name. If the operation succeeds
+   * true is returned.
    * 
-   * 
+   * @tparam T     The type of the value to retrieve.
+   * @param name   The name of the member variable.
+   * @param val    The reference where the value is assigned to.
+   * @return       True if the operation succeeds.
    */
   template < class T >
   bool get(const std::string &name, T &val)

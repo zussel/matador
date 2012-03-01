@@ -35,6 +35,7 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
 class OOS_API blob
 {
 public:
@@ -98,7 +99,7 @@ private:
   size_type size_;
   size_type capacity_;
 };
-
+/// @endcond
 }
 
 #endif /* BLOB_HPP */

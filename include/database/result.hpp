@@ -44,6 +44,7 @@ namespace oos {
 class row;
 class statement;
 
+/// @cond OOS_DEV
 class OOS_API result_impl
 {
 public:
@@ -122,6 +123,8 @@ private:
 };
 
 typedef std::tr1::shared_ptr<result> result_ptr;
+
+/// @endcond
 
 }
 

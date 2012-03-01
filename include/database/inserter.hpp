@@ -25,6 +25,7 @@ namespace oos {
 class database;
 class object;
 
+/// @cond OOS_DEV
 class inserter
 {
 public:
@@ -44,6 +45,7 @@ private:
   
   statement_binder binder_;
 };
+/// @endcond
 
 }
 

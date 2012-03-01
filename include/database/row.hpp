@@ -38,6 +38,7 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
 class OOS_API row_impl
 {
 public:
@@ -79,6 +80,7 @@ private:
 
   std::vector<value_base> values_;
 };
+/// @endcond
 
 }
 

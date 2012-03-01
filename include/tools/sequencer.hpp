@@ -40,6 +40,7 @@
 namespace oos {
 
 /**
+ * @cond OOS_DEV
  * @class sequencer_impl
  * @brief Sequencer implementation interface
  *
@@ -96,9 +97,14 @@ public:
    */
   virtual long update(long id) = 0;
 };
+/// @endcond
 
 typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr;
 
+/**
+ * @cond OOS_DEV
+ * @class default_sequencer
+ */
 class OOS_API default_sequencer : public sequencer_impl
 {
 public:
@@ -117,6 +123,7 @@ public:
 private:
   long number_;
 };
+/// @endcond
 
 class OOS_API sequencer
 {

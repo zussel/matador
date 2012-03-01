@@ -36,6 +36,7 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
 class OOS_API varchar_base
 {
 public:
@@ -83,27 +84,62 @@ protected:
   size_type capacity_;
   std::string data_;
 };
+/// @endcond
 
+/**
+ * @tparam C The capacity of the varchar.
+ * @class varchar
+ * @brief A simple varchar class.
+ *
+ * This class provides string class with the 
+ * SQL VARCHAR type in mind. The capacity of
+ * the string is given within the template
+ * parameter of type unsigned int.
+ * The real string is represented internaly
+ * by a std::string.
+ */
 template < unsigned int C >
 class varchar : public varchar_base
 {
 public:
+  /**
+   * Creates an empty varchar
+   * with the given capacity
+   */
   varchar()
     : varchar_base(C)
   {}
 
+  /**
+   * Copies the string data
+   * from the given varchar.
+   *
+   * @param x The varchar to copy.
+   */
   varchar(const varchar &x)
     : varchar_base(C)
   {
     data_ = x.data_;
   }
 
+  /**
+   * Initializes the varchar with the
+   * given string.
+   *
+   * @param x The string value to set.
+   */
   varchar(const std::string &x)
     : varchar_base(C)
   {
     data_ = x;
   }
 
+  /**
+   * Assigns a varchar.
+   *
+   * @param x The varchar to assign.
+   * @return Returns a reference to this class.
+   */
   varchar& operator=(const varchar &x)
   {
     
@@ -112,12 +148,24 @@ public:
     return *this;
   }
 
+  /**
+   * Assigns a string to the varchar
+   *
+   * @param x The string to assign.
+   * @return Returns a reference to this class.
+   */
   varchar& operator=(const std::string &x)
   {
     data_ = x;
     return *this;
   }
 
+  /**
+   * Assigns a character array to the varchar
+   *
+   * @param x The character array to assign.
+   * @return Returns a reference to this class.
+   */
   varchar& operator=(const char *x)
   {
     varchar_base::operator=(x);

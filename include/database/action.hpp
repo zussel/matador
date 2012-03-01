@@ -44,6 +44,7 @@ class update_action;
 class delete_action;
 class drop_action;
 
+/// @cond OOS_DEV
 /**
  * @class action_visitor
  * @brief The action_visitor class accepts all action types.
@@ -308,6 +309,7 @@ public:
   virtual ~drop_action() {}
 };
 
+/// @endcond
 }
 
 #endif /* ACTION_HPP */

@@ -40,6 +40,7 @@ class byte_buffer;
 class varchar_base;
 
 /**
+ * @cond OOS_DEV
  * @class object_serializer
  * @brief serialize objects to a given buffer.
  *
@@ -116,7 +117,7 @@ private:
   object_store *ostore_;
   byte_buffer *buffer_;
 };
-
+/// @endcond
 }
 
 #endif /* OBJECT_SERIALIZER_HPP */

@@ -38,6 +38,7 @@ namespace oos {
 
 class object;
 
+/// @cond OOS_DEV
 class OOS_API statement_helper : public object_atomizer
 {
 public:
@@ -195,7 +196,7 @@ private:
   std::stringstream statement_;
   int param_count_;
 };
-
+/// @endcond
 }
 
 #endif /* STATEMENT_HELPER_HPP */

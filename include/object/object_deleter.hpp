@@ -42,6 +42,7 @@ class object_list_base;
 class object_base_ptr;
 
 /**
+ * @cond OOS_DEV
  * @class object_deleter
  * @brief Checks if an object could be deleted
  *
@@ -130,7 +131,7 @@ private:
 private:
   t_object_count_map object_count_map;
 };
-
+/// @endcond
 }
 
 #endif /* OBJECT_DELETER_HPP */

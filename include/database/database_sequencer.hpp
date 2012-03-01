@@ -35,6 +35,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class database_sequencer : public default_sequencer
 {
 public:
@@ -51,6 +53,7 @@ public:
   virtual void drop() = 0;
   virtual void destroy() = 0;
 };
+/// @endcond
 
 }
 

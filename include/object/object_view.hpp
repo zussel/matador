@@ -27,6 +27,7 @@ namespace oos {
 
 template < class T > class const_object_view_iterator;
 
+/// @cond OOS_DEV
 /**
  * @class object_view_iterator
  * @brief Iterator class for an object_view
@@ -424,6 +425,7 @@ private:
   object_proxy *current_;
   object_proxy *last_;
 };
+/// @endcond
 
 /**
  * @class object_view
@@ -545,20 +547,16 @@ public:
     skip_siblings_ = skip;
   }
 
-
-  /*
+  /**
+   * Find object which matches the given condition
+   *
+   * @tparam R return type of the member function
+   * @param m The member function to compare with
+   * @param val The constant value to compare with
+   * @return The first iterator with the object matching the condition.
+   */
   template < class R >
-  struct getter
-  {
-  };
-
-  
-  typedef std::tr1::function<R ()> getter;
-
-  */
-
-  template < class R >
-  iterator find_if(R (T::*m)() const, const R &val)
+  iterator find_if(R (T::*m)() const, const R &val) const
   {
     iterator first = begin();
     iterator last = end();

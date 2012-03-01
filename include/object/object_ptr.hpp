@@ -42,6 +42,7 @@ namespace oos {
 class object;
 
 /**
+ * @cond OOS_DEV
  * @class object_base_ptr
  * @brief Base class for the object pointer and reference class
  * 
@@ -216,6 +217,7 @@ private:
   bool is_reference_;
   bool is_internal_;
 };
+/// @endcond
 
 /*
 template < class T, bool IR >

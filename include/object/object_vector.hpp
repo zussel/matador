@@ -34,6 +34,7 @@
 namespace oos {
 
 /**
+ * @cond OOS_DEV
  * @class object_vector_base
  * @brief Base class of all list types
  * 
@@ -195,8 +196,10 @@ private:
   std::string vector_name_;
   std::string index_name_;
 };
+/// @endcond
 
 /**
+ * @cond OOS_DEV
  * @class object_vector
  * @brief An object vector class.
  * @tparam T The concrete object type.
@@ -495,6 +498,7 @@ private:
 private:
   vector_type object_vector_;
 };
+/// @endcond
 
 template < typename T >
 class object_ptr_vector : public object_vector<T, object_ptr<T> >

@@ -41,6 +41,8 @@ namespace oos {
 class database_impl;
 class database;
 
+/// @cond OOS_DEV
+
 class OOS_API database_producer
 {
 public:
@@ -85,7 +87,7 @@ public:
 private:
   factory_t factory_;
 };
-
+/// @endcond
 }
 
 #endif /* DATABASE_FACTORY_HPP */

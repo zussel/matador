@@ -31,6 +31,7 @@ class object_vector_base;
 class object;
 
 /**
+ * @cond OOS_DEV
  * @class object_creator
  * @brief Creates objects and object_lists
  * 
@@ -67,6 +68,7 @@ private:
   object_store &ostore_;
   bool notify_;
 };
+/// @endcond
 
 }
 

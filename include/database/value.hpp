@@ -25,6 +25,8 @@ namespace oos {
 template < class T >
 class value;
 
+/// @cond OOS_DEV
+
 class value_base
 {
 public:
@@ -64,6 +66,7 @@ public:
 private:
   T value_;
 };
+/// @endcond
 
 }
 

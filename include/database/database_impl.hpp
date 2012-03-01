@@ -52,6 +52,7 @@ class statement_impl;
 class result_impl;
 class database_sequencer;
 
+/// @cond OOS_DEV
 /**
  * @class database_impl
  * @brief Base class for all database backends
@@ -186,6 +187,7 @@ private:
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;
 };
+/// @endcond
 
 }
 

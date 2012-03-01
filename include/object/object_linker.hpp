@@ -28,6 +28,7 @@ class object;
 class object_base_ptr;
 
 /**
+ * @cond OOS_DEV
  * @class object_linker
  * @brief Links a given object to another objects parameter
  *
@@ -66,6 +67,7 @@ private:
   std::string name_;
   bool linked_;
 };
+/// @endcond
 
 }
 

@@ -56,6 +56,7 @@ namespace oos {
 template < class T >
 class object_value;
 
+/// @cond OOS_DEV
 
 namespace detail {
   template < typename X, typename Y >
@@ -190,7 +191,9 @@ namespace detail {
     }
   };
 }
+/// @endcond
 
+/// @cond OOS_DEV
 class OOS_API object_value_base : public object_atomizer
 {
 public:
@@ -203,6 +206,7 @@ protected:
   void update(const object *o);
   void mark_modified(object *o);
 };
+/// @endcond
 
 /**
  * @class object_value

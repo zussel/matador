@@ -41,6 +41,7 @@ class database;
 class result;
 class row;
 
+/// @cond OOS_DEV
 class OOS_API statement_impl
 {
 public:
@@ -81,6 +82,7 @@ private:
   statement_impl *impl_;
   std::string sql_;
 };
+/// @endcond
 
 }
 

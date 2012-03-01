@@ -92,6 +92,7 @@ public:
 };
 
 /**
+ * @cond OOS_DEV
  * @class prototype_iterator
  * @brief An iterator for traversing the prototypes
  *
@@ -211,6 +212,7 @@ private:
 private:
   prototype_node *node_;
 };
+/// @endcond
 
 /**
  * @class object_producer
@@ -283,8 +285,9 @@ public:
    * 
    * @param producer The producer object produces a new object of a specific type.
    * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers object is treated as an abstract node.
    * @param parent   The name of the parent type.
-   * @return Returns true if the prototype was inserted successfully.
+   * @return         Returns true if the prototype was inserted successfully.
    */
 	bool insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "OBJECT");
 
@@ -295,10 +298,11 @@ public:
    * node is also given. The producer is automatically created via the template
    * parameter.
    * 
-   * @tparam T The type of the prototype node
+   * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers object is treated as an abstract node.
    * @param parent   The name of the parent type.
-   * @return Returns true if the prototype was inserted successfully.
+   * @return         Returns true if the prototype was inserted successfully.
    */
   template < class T >
   bool insert_prototype(const char *type, bool abstract = false, const char *parent = "OBJECT")

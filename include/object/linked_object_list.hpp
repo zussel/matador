@@ -52,6 +52,7 @@ template < class T > class linked_object_list_iterator;
 template < class T > class const_linked_object_list_iterator;
 
 /**
+ * @cond OOS_DEV
  * @class linked_object_list_base_node
  * @brief Base list node class for all linked list types
  * 
@@ -94,8 +95,10 @@ public:
    */
   virtual bool link_reference(object *o, object *r, const std::string &n);
 };
+///@endcond
 
 /**
+ * @cond OOS_DEV
  * @class linked_object_list_node
  * @brief List node class for linked list
  * @tparam T List node type.
@@ -261,8 +264,10 @@ private:
   object_ref<T> prev_;
   object_ref<T> next_;
 };
+/// @endcond
 
 /**
+ * @cond OOS_DEV
  * @class linked_object_ptr_list_node
  * @brief Node type for linked lists with an object_ptr as value.
  * @tparam T The object type of the object_ptr class.
@@ -368,8 +373,10 @@ private:
   object_ptr<T> object_;
   std::string name_;
 };
+/// @endcond
 
 /**
+ * @cond OOS_DEV
  * @class linked_object_ref_list_node
  * @brief Node type for linked lists with an object_ref as value.
  * @tparam T The object type of the object_ref class.
@@ -475,7 +482,9 @@ private:
   object_ref<T> object_;
   std::string name_;
 };
+/// @endcond
 
+/// @cond OOS_DEV
 /**
  * @class linked_object_list_iterator
  * @brief Iterator class for all linked lists.
@@ -1153,6 +1162,7 @@ private:
   value_type_ptr first_;
   value_type_ptr last_;
 };
+/// @endcond
 
 /**
  * @class linked_object_ptr_list

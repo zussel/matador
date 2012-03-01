@@ -45,6 +45,8 @@ body
   padding: 6px 5px 6px 5px;
   border-left: 1px solid #404040;
   border-right: 1px solid #202020;
+  font-weight: bolder;
+  color: #cb4b16;
 }
 
 #header ul li a
@@ -65,16 +67,19 @@ body
 
 #content
 {
-  width: 880px;
+  width: 900px;
   float: left;
   clear: both;
   margin: 0 0;
-  padding: 20px 10px;
+  padding: 20px 0;
   color: #555;
   background-color: #fdf6e3;
 }
 
-#content ul
+#navrow1 ul,
+#navrow2 ul,
+#navrow3 ul,
+#navrow4 ul
 {
   width: 100%;
   float: left;
@@ -84,24 +89,36 @@ body
   background-color: #303030;
 }
 
-#content ul li
+#navrow1 ul li,
+#navrow2 ul li,
+#navrow3 ul li,
+#navrow4 ul li
 {
   float: left;
+  margin: 3px;
   padding: 6px 5px 6px 5px;
   border-left: 1px solid #404040;
+  border-top: 1px solid #404040;
   border-right: 1px solid #202020;
+  border-bottom: 1px solid #202020;
 }
 
-#content ul li a
+#navrow1 ul li a,
+#navrow2 ul li a,
+#navrow3 ul li a,
+#navrow4 ul li a
 {
   text-decoration: none;
   font-weight: bolder;
   color: #e7e620;
 }
 
-#content ul li:hover
+#navrow1 ul li:hover,
+#navrow2 ul li:hover,
+#navrow3 ul li:hover,
+#navrow4 ul li:hover
 {
-  background-color: #909090;
+  background-color: #707070;
   /*
   text-decoration: none;
   color: #e7e620;
@@ -129,7 +146,10 @@ body
 
 #content pre
 {
+  margin-left: 10px;
   border-left: solid #eee8d5 10px;
+  border-top: solid #eee8d5 2px;
+  border-bottom: solid #eee8d5 2px;
   /*margin: 20px;*/
 }
 
@@ -195,4 +215,15 @@ body
 .width25
 {
   width: 225px;
+}
+
+.memitem
+{
+  background-color: #eee8d5;
+}
+
+.memname
+{
+  font-family: Courier, Monospace;
+  color: #268bd2;
 }

@@ -29,6 +29,7 @@ class database;
 class object;
 class varchar_base;
 
+/// @cond OOS_DEV
 class reader : public object_atomizer
 {
 public:
@@ -168,6 +169,7 @@ private:
   database_impl::statement_impl_ptr stmt_;
   int column_;
 };
+/// @endcond
 
 }
 

@@ -38,6 +38,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class backup_visitor : public action_visitor
 {
 public:
@@ -129,6 +131,7 @@ private:
   object *obj_;
   long id_;
 };
+/// @endcond
 
 }
 

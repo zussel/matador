@@ -46,6 +46,7 @@
 namespace oos {
 
 /**
+ * @cond OOS_DEV
  * @class object_list_base
  * @brief Base class of all list types
  * 
@@ -193,8 +194,10 @@ private:
   object *parent_;
   std::string list_name_;
 };
+/// @endcond
 
 /**
+ * @cond OOS_DEV
  * @class object_list
  * @brief An object list class.
  * @tparam T The concrete object type.
@@ -442,6 +445,7 @@ private:
 private:
   list_type object_list_;
 };
+/// @endcond
 
 /**
  * @class object_ptr_list

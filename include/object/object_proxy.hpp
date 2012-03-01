@@ -35,6 +35,7 @@ class object_base_ptr;
 struct prototype_node;
 
 /**
+ * @cond OOS_DEV
  * @class object_proxy
  * @brief A proxy between the object and the object_store
  *
@@ -191,7 +192,7 @@ struct object_proxy {
   typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */
 };
-
+/// @endcond
 }
 
 #endif /* OBJECT_PROXY_HPP */
