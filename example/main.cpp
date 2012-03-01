@@ -12,7 +12,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include <errno.h>
+#include <limits.h>
 
 using namespace oos;
 
@@ -268,11 +270,12 @@ bool extract_string(const std::string &item, std::string &val)
 bool extract_integer(const std::string &item, int &val)
 {
   char *ptr;
-  val = (int)strtol(item.c_str(), &ptr, 10);
+  long ret = strtol(item.c_str(), &ptr, 10);
 
-  if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE) {
+  if ((ret == LONG_MAX || ret == LONG_MIN) && errno == ERANGE) {
     return false;
   }
+  val = (int)ret;
   return true;
 }
 

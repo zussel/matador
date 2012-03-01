@@ -36,7 +36,7 @@ body
   margin: 30px 20px 0 0;
   list-style: none;
   padding: 0;
-  background-color: #303030;
+  background-color: #073642;
 }
 
 #header ul li
@@ -86,7 +86,7 @@ body
   margin: 0;
   list-style: none;
   padding: 0;
-  background-color: #303030;
+  background-color: #002b36;
 }
 
 #navrow1 ul li,

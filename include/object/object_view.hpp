@@ -556,7 +556,30 @@ public:
    * @return The first iterator with the object matching the condition.
    */
   template < class R >
-  iterator find_if(R (T::*m)() const, const R &val) const
+  const_iterator find_if(R (T::*m)() const, const R &val) const
+  {
+    const_iterator first = begin();
+    const_iterator last = end();
+    while (first != last) {
+      object_ptr<T> optr = first.optr();
+      if ((*optr.get().*m)() == val) {
+        break;
+      }
+      ++first;
+    }
+    return first;
+  }
+
+  /**
+   * Find object which matches the given condition
+   *
+   * @tparam R return type of the member function
+   * @param m The member function to compare with
+   * @param val The constant value to compare with
+   * @return The first iterator with the object matching the condition.
+   */
+  template < class R >
+  iterator find_if(R (T::*m)() const, const R &val)
   {
     iterator first = begin();
     iterator last = end();
