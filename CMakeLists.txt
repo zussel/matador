@@ -77,6 +77,7 @@ SET(OBJECT_HEADER
   include/object/object_serializer.hpp
   include/object/prototype_node.hpp
   include/object/object_observer.hpp
+  include/object/object_expression.hpp
 )
 
 SET(TOOLS_SOURCES
