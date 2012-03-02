@@ -92,6 +92,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
+  void expression_test();
   void access_value();
   void simple_object();
   void object_with_sub_object();

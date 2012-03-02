@@ -43,8 +43,6 @@ body
 {
   float: left;
   padding: 6px 5px 6px 5px;
-  border-left: 1px solid #404040;
-  border-right: 1px solid #202020;
   font-weight: bolder;
   color: #cb4b16;
 }
@@ -53,12 +51,13 @@ body
 {
   text-decoration: none;
   font-weight: bolder;
+/*  color: #b58900;*/
   color: #e7e620;
 }
 
 #header ul li:hover
 {
-  background-color: #909090;
+  background-color: #839496;
   /*
   text-decoration: none;
   color: #e7e620;
@@ -71,7 +70,7 @@ body
   float: left;
   clear: both;
   margin: 0 0;
-  padding: 20px 0;
+  padding: 0 0;
   color: #555;
   background-color: #fdf6e3;
 }
@@ -128,18 +127,23 @@ body
 #content h3
 {
   /* top right bottom left */
-  padding: 10px 5px 0 0;
+  margin: 5px 10px;
+  /*padding: 10px 5px 0 0;*/
   /*background-color: #eee;*/
-  font-family: Courier, Monospace;
+  /*font-family: Courier, Monospace;
   font-size: 150%;
-  font-weight: bolder;
-  color: darkgreen;
+  font-weight: bolder;*/
+}
+
+#content h2
+{
+  margin: 5px 10px;
 }
 
 #content p
 {
-  /*margin: 5px;
-  padding: 5px;*/
+  margin: 10px;
+/*  padding: 5px;*/
   /*border: 1px dashed #ccc*/;
   text-align: justify;
 }
@@ -147,6 +151,7 @@ body
 #content pre
 {
   margin-left: 10px;
+  margin-right: 10px;
   border-left: solid #eee8d5 10px;
   border-top: solid #eee8d5 2px;
   border-bottom: solid #eee8d5 2px;
@@ -219,6 +224,7 @@ body
 
 .memitem
 {
+  margin: 0 10px;
   background-color: #eee8d5;
 }
 

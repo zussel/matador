@@ -68,9 +68,9 @@ class action;
 class OOS_API transaction : public object_observer
 {
 public:
-  typedef std::list<action*> action_list_t;
-  typedef action_list_t::iterator iterator;
-  typedef action_list_t::const_iterator const_iterator;
+  typedef std::list<action*> action_list_t;             /**< Shortcut for the action list class type. */
+  typedef action_list_t::iterator iterator;             /**< Shortcut for the action list iterator. */
+  typedef action_list_t::const_iterator const_iterator; /**< Shortcut for the action list const iterator. */
 
 public:
   /**

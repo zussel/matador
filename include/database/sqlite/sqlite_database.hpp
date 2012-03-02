@@ -57,6 +57,13 @@ public:
   virtual void open(const std::string &db);
 
   /**
+   * Returns true if the database is open
+   *
+   * @return True on open database connection.
+   */
+  virtual bool is_open() const;
+
+  /**
    * Close the database
    */
   virtual void close();

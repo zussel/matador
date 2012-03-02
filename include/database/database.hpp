@@ -131,9 +131,13 @@ public:
   }
 
   /**
-   * Load all in the object_store registered
+   * @brief Load all objects from the database.
+   *
+   * Load all data into the object_store registered
    * objects from the database. If the operation
    * succeeds true is returned.
+   * If a table layoput doesn't match to the corresponding
+   * objects layout an excpetion is thrown.
    *
    * @return Returns true on successful loading.
    */

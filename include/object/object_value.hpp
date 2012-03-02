@@ -675,6 +675,8 @@ private:
   bool succeeded_;
 };
 
+/// @cond OOS_DEV
+
 namespace detail {
 
 void mark_modified(object *o);
@@ -703,14 +705,6 @@ updater<T*, object_base_ptr>::update(const char *id, const char *f, bool &r, obj
   r = true;
 }
 
-/*
-void OOS_API
-updater<varchar_base&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar_base> &ov, object *o, varchar_base &master, varchar_base &slave);
-
-void OOS_API
-updater<std::string&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave);
-*/
-
 template < unsigned int C >
 void
 updater<varchar<C>&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<varchar<C> > &ov, object *o, varchar<C> &master, varchar_base &slave)
@@ -724,6 +718,8 @@ updater<varchar<C>&, varchar_base&>::update(const char *id, const char *f, bool 
 }
 
 }
+
+/// @endcond
 
 /**
  * @brief Updates parameter value of an object.

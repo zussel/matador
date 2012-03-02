@@ -189,7 +189,7 @@ struct OOS_API prototype_node
 
   std::string type;	   /**< The type name of the object */
   
-  bool abstract;
+  bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
 };
 
 }

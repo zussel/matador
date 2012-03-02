@@ -42,6 +42,7 @@
 namespace oos {
 
 /**
+ * @cond OOS_DEV
  * @class byte_buffer
  * @brief A buffer for bytes.
  * 
@@ -118,6 +119,7 @@ private:
   typedef std::list<buffer_chunk> t_chunk_list;
   t_chunk_list chunk_list_;
 };
+/// @endcond
 
 }
 

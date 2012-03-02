@@ -64,11 +64,18 @@ void sqlite_database::open(const std::string &db)
   database_impl::open(db);
 }
 
+bool sqlite_database::is_open() const
+{
+  return sqlite_db_ != 0;
+}
+
 void sqlite_database::close()
 {
   database_impl::close();
 
   sqlite3_close(sqlite_db_);
+
+  sqlite_db_ = 0;
 }
 
 bool sqlite_database::execute(const char *sql, result_impl *res)

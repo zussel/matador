@@ -1,8 +1,8 @@
 /**
  * @htmlonly
- * <div class="width_66" class="float_left">
+ * <!--div class="width_66" class="float_left"-->
  * @endhtmlonly
- * @mainpage My Personal Index Page
+ * @mainpage
  *
  * @section intro_sec Introduction
  *

@@ -1,12 +1,14 @@
 #include "ObjectStoreTestUnit.hpp"
 
 #include "object/object_value.hpp"
+#include "object/object_expression.hpp"
 
 using namespace oos;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("ObjectStore Test Unit")
 {
+  add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
   add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
@@ -29,6 +31,29 @@ void
 ObjectStoreTestUnit::finalize()
 {
   ostore_.clear();
+}
+
+template < class Pred >
+bool evaluate(Pred p, object *o)
+{
+  return p.eval(o);
+}
+
+
+template < class T, class P, class O >
+binary_expression<T, std::less<T> > operator<(const variable<T, O> &l, T r)
+{
+  return new binary_expression<T, std::less<T> >(l, constant<T>(r));
+}
+
+void
+ObjectStoreTestUnit::expression_test()
+{
+  constant<int> c = 7;
+
+  SimpleObject *simple = new SimpleObject("hallo", 7);
+
+  evaluate(&SimpleObject::number < 7, simple);
 }
 
 void

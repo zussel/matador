@@ -78,6 +78,8 @@ public:
   
   /**
    * Open the database
+   *
+   * @param db The database connection string.
    */
   virtual void open(const std::string &db);
 
@@ -85,6 +87,13 @@ public:
    * Close the database
    */
   virtual void close();
+
+  /**
+   * Returns true if the database is open
+   *
+   * @return True on open database connection.
+   */
+  virtual bool is_open() const = 0;
 
   /**
    * Execute a sql statement and return a result

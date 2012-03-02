@@ -35,7 +35,7 @@ template < typename T >
 class singleton
 {
 public:
-  typedef T value_type;
+  typedef T value_type; /**< Shortcut for the singletons type */
 
   /**
    * @brief Access the instance of the class.

@@ -125,9 +125,30 @@ private:
 };
 /// @endcond
 
+/**
+ * @class sequencer
+ * @brief Interface to create and get unique
+ *        sequence numbers
+ *
+ * This class provides an interface to create, get
+ * and manage unique sequence numbers. Because it
+ * is just an interface the underlaying sequencer
+ * implementation is used to do the real work implementing
+ * the sequencers strategy.
+ */
 class OOS_API sequencer
 {
 public:
+  /**
+   * @brief Creates a new sequencer.
+   *
+   * This constructor creates a new sequencer.
+   * If no implementation object is given, a
+   * default implementation object is used.
+   *
+   * @param impl The sequence implementation object
+   *             implementing the sequence strategy.
+   */
   sequencer(const sequencer_impl_ptr &impl = sequencer_impl_ptr(new default_sequencer));
   ~sequencer();
 
@@ -141,13 +162,44 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &impl);
 
+  /**
+   * Initializes the sequencer
+   * and return the current number.
+   *
+   * @return The current sequence number.
+   */
   long init();
 
+  /**
+   * Resets the sequencers sequence
+   * id to the given value.
+   *
+   * @param id The new sequence number.
+   * @return The current sequence number.
+   */
   long reset(long id);
 
+  /**
+   * Returns the next valid sequence number.
+   *
+   * @return The next sequence number.
+   */
   long next();
+
+  /**
+   * Returns the current sequence number.
+   *
+   * @return The current sequence number.
+   */
   long current() const;
 
+  /**
+   * Updates the sequence number
+   * to the given value.
+   *
+   * @param id The value to update.
+   * @return The new current sequence value.
+   */
   long update(long id);
 
 private:

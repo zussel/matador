@@ -317,7 +317,7 @@ public:
 	virtual void read_string(const char*, std::string&) {}
 
   /**
-   * @fn virtual void read_varchar(const char *id, varchar &x)
+   * @fn virtual void read_varchar(const char *id, varchar_base &x)
    * @brief Read a varchar from the atomizer.
    * 
    * Read a varchar from the atomizer

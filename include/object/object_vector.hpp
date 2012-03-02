@@ -500,6 +500,17 @@ private:
 };
 /// @endcond
 
+/**
+ * @class object_ptr_vector
+ * @brief An object vector class for object_ptr
+ * @tparam T The concrete object type.
+ * 
+ * This is a specialisation of the object_vector class.
+ * It stores object_ptr in a vector. The raw objects
+ * are inserted into the vector and than subsequently
+ * inserted into the object_store. The reference link
+ * to the parent class is done automatically.
+ */
 template < typename T >
 class object_ptr_vector : public object_vector<T, object_ptr<T> >
 {
@@ -520,6 +531,7 @@ public:
    * 
    * @param parent The containing vector object.
    * @param vector_name The name of the parent in the value type object.
+   * @param index_name The name of the index field.
    */
   object_ptr_vector(object *parent, const std::string &vector_name, const std::string &index_name)
     : base_vector(parent, vector_name, index_name)
@@ -528,6 +540,17 @@ public:
   virtual ~object_ptr_vector() {}
 };
 
+/**
+ * @class object_ref_vector
+ * @brief An object vector class for object_ref
+ * @tparam T The concrete object type.
+ * 
+ * This is a specialisation of the object_vector class.
+ * It stores object_ref in a vector. The raw objects
+ * are inserted into the vector and than subsequently
+ * inserted into the object_store. The reference link
+ * to the parent class is done automatically.
+ */
 template < typename T >
 class object_ref_vector : public object_vector<T, object_ref<T> >
 {
@@ -547,6 +570,7 @@ class object_ref_vector : public object_vector<T, object_ref<T> >
    * 
    * @param parent The containing vector object.
    * @param vector_name The name of the parent in the value type object.
+   * @param index_name The name of the index field.
    */
   object_ref_vector(object *parent, const std::string &vector_name, const std::string &index_name)
     : base_vector(parent, vector_name, index_name)
