@@ -2,6 +2,9 @@
 
 #include "object/object_value.hpp"
 #include "object/object_expression.hpp"
+#include "object/object_view.hpp"
+
+#include <algorithm>
 
 using namespace oos;
 
@@ -33,27 +36,23 @@ ObjectStoreTestUnit::finalize()
   ostore_.clear();
 }
 
-template < class Pred >
-bool evaluate(Pred p, object *o)
-{
-  return p.eval(o);
-}
-
-
-template < class T, class P, class O >
-binary_expression<T, std::less<T> > operator<(const variable<T, O> &l, T r)
-{
-  return new binary_expression<T, std::less<T> >(l, constant<T>(r));
-}
-
 void
 ObjectStoreTestUnit::expression_test()
 {
-  constant<int> c = 7;
+  for (int i = 0; i < 10; ++i) {
+    ostore_.insert(new SimpleObject("Simple", i));
+  }
 
-  SimpleObject *simple = new SimpleObject("hallo", 7);
-
-  evaluate(&SimpleObject::number < 7, simple);
+  variable<int, SimpleObject> x(&SimpleObject::number);
+  object_view<SimpleObject> oview(ostore_);
+  
+  object_view<SimpleObject>::iterator j = std::find_if(oview.begin(), oview.end(), x > 6 || x < 4);
+  
+  if (j != oview.end()) {
+    std::cout << "found simple object [" << (*j)->id() << "] with number " << (*j)->number() << "\n";
+  } else {
+    std::cout << "nothing fouond\n";
+  }
 }
 
 void
