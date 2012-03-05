@@ -44,10 +44,19 @@ ObjectStoreTestUnit::expression_test()
   }
 
   variable<int, SimpleObject> x(&SimpleObject::number);
+  variable<std::string, SimpleObject> y(&SimpleObject::name);
+
   object_view<SimpleObject> oview(ostore_);
   
-  object_view<SimpleObject>::iterator j = std::find_if(oview.begin(), oview.end(), x > 6 || x < 4);
-  
+  object_view<SimpleObject>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
+  j = std::find_if(oview.begin(), oview.end(), x > 6);
+  j = std::find_if(oview.begin(), oview.end(), x < 6);
+  j = std::find_if(oview.begin(), oview.end(), x == 6);
+  j = std::find_if(oview.begin(), oview.end(), 6 == x);
+  j = std::find_if(oview.begin(), oview.end(), (6 == x) || (x < 4));
+  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
+  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y != "Simple"));
+
   if (j != oview.end()) {
     std::cout << "found simple object [" << (*j)->id() << "] with number " << (*j)->number() << "\n";
   } else {
