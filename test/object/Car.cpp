@@ -43,9 +43,7 @@ std::string Car::brand() const
 
 void Car::brand(const std::string &b)
 {
-//  modify(brand_, b);
-  mark_modified();
-  brand_ = b;
+  modify(brand_, b);
 }
 
 std::string Car::type() const

@@ -166,6 +166,25 @@ public:
   }
 
   /**
+   * Modify the attribute be assigning
+   * the new given value to attributes
+   * reference
+   *
+   */
+  template < class T >
+  void modify(T &attr, const T &val)
+  {
+    mark_modified();
+    attr = val;
+  }
+
+  void modify(varchar_base &attr, const std::string &val)
+  {
+    mark_modified();
+    attr = val;
+  }
+
+  /**
    * Print the object to a given stream
    *
    * @param os The stream to write the object on.
