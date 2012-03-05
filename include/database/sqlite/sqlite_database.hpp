@@ -40,6 +40,7 @@ namespace oos {
 namespace sqlite {
 
 class sqlite_statement;
+class prototype_node;
 
 /**
  * @class sqlite_database
@@ -67,6 +68,14 @@ public:
    * Close the database
    */
   virtual void close();
+
+  /**
+   * load a specific table based on
+   * a prototype node
+   *
+   * @param node The node representing the table to read
+   */
+  virtual void load(const prototype_node &node);
 
   /**
    * Execute a sql statement and return a result

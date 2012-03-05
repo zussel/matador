@@ -126,6 +126,7 @@ SET(DATABASE_SOURCES
   src/database/statement.cpp
   src/database/statement_helper.cpp
   src/database/statement_binder.cpp
+  src/database/statement_serializer.cpp
 )
 
 SET(DATABASE_HEADER
@@ -146,6 +147,7 @@ SET(DATABASE_HEADER
   include/database/statement.hpp
   include/database/statement_helper.hpp
   include/database/statement_binder.hpp
+  include/database/statement_serializer.hpp
 )
 
 ADD_LIBRARY(oos SHARED

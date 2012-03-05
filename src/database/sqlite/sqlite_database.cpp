@@ -78,6 +78,10 @@ void sqlite_database::close()
   sqlite_db_ = 0;
 }
 
+void sqlite_database::load(const prototype_node &node)
+{
+}
+
 bool sqlite_database::execute(const char *sql, result_impl *res)
 {
   char *errmsg;
