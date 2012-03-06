@@ -18,13 +18,18 @@
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_result.hpp"
+#include "database/sqlite/sqlite_types.hpp"
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
+#include "database/statement_creator.hpp"
 #include "database/statement_binder.hpp"
+#include "database/statement_serializer.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
+#include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
@@ -80,6 +85,15 @@ void sqlite_database::close()
 
 void sqlite_database::load(const prototype_node &node)
 {
+  select_statement_creator<sqlite_types> creator;
+
+  object *o = node.producer->create();
+
+  statement_impl *stmt = creator.create(this, o, node.type, "");
+
+//  statement_serializer ss;
+  while (stmt->step()) {
+  }
 }
 
 bool sqlite_database::execute(const char *sql, result_impl *res)

@@ -37,10 +37,11 @@ struct sqlite3;
 
 namespace oos {
   
+struct prototype_node;
+
 namespace sqlite {
 
 class sqlite_statement;
-class prototype_node;
 
 /**
  * @class sqlite_database
