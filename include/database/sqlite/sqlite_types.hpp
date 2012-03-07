@@ -20,8 +20,6 @@
 
 #include "database/sqlite/sqlite_statement.hpp"
 
-#include <type_traits>
-
 namespace oos {
 
 class varchar_base;

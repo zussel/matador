@@ -53,7 +53,7 @@ protected:
     statement_ << cmd << " ";
   }
 
-  std::stringstream& stream() { return statement_; }
+  std::stringstream& statement_stream() { return statement_; }
 
 private:
   std::stringstream statement_;
@@ -113,10 +113,10 @@ public:
 
     o->write_to(this);
 
-    stream() << ");";
+    this->statement_stream() << ");";
 
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 
@@ -124,16 +124,16 @@ private:
   virtual void write_field(const char *id, const char *type)
   {
     if (!first_) {
-      stream() << ", ";
+      this->statement_stream() << ", ";
     } else {
       first_ = false;
     }
-    stream() << id << " " << type;
+    this->statement_stream() << id << " " << type;
   }
   virtual void write_pk_field(const char *id, const char *type)
   {
     write_pk_field(id, type);
-    stream() << " " << T::primary_key_prefix();
+    this->statement_stream() << " " << T::primary_key_prefix();
   }
 
 private:
@@ -156,13 +156,13 @@ public:
 
     o->write_to(this);
 
-    stream() << " FROM " << table_name;
+    this->statement_stream() << " FROM " << table_name;
     if (!where_clause.empty()) {
-      stream() << " WHERE " << where_clause;
+      this->statement_stream() << " WHERE " << where_clause;
     }
-    stream() << ";";
+    this->statement_stream() << ";";
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 
@@ -170,11 +170,11 @@ private:
   virtual void write_field(const char *id, const char *type)
   {
     if (!first_) {
-      stream() << ", ";
+      this->statement_stream() << ", ";
     } else {
       first_ = false;
     }
-    stream() << id;
+    this->statement_stream() << id;
   }
   
   virtual void begin(const char *cmd)
@@ -202,9 +202,9 @@ public:
 
     o->write_to(this);
 
-    stream() << ") VALUES (" << value_stream_.str() << ");";
+    this->statement_stream() << ") VALUES (" << value_stream_.str() << ");";
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 
@@ -212,12 +212,12 @@ private:
   virtual void write_field(const char *id, const char *type)
   {
     if (!first_) {
-      stream() << ", ";
+      this->statement_stream() << ", ";
       value_stream_ << ", ";
     } else {
       first_ = false;
     }
-    stream() << id;
+    this->statement_stream() << id;
     value_stream_ << "?";
   }
   
@@ -248,9 +248,12 @@ public:
 
     o->write_to(this);
 
-    stream() << ") VALUES (" << value_stream_.str() << ");";
+    if (!where_clause.empty()) {
+      this->statement_stream() << " WHERE " << where_clause;
+    }
+    this->statement_stream() << ";";
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 
@@ -258,16 +261,15 @@ private:
   virtual void write_field(const char *id, const char *type)
   {
     if (!first_) {
-      stream() << ", ";
+      this->statement_stream() << ", ";
     } else {
       first_ = false;
     }
-    stream() << id << "=?";
+    this->statement_stream() << id << "=?";
   }
 
   virtual void begin(const char *cmd)
   {
-    value_stream_.str("");
     base_creator::begin(cmd);
   }
 
@@ -287,12 +289,12 @@ public:
     begin(T::delete_postfix(table_name));
 
     if (!where_clause.empty()) {
-      stream() << " WHERE " << where_clause;
+      this->statement_stream() << " WHERE " << where_clause;
     }
 
-    stream() << ";";
+    this->statement_stream() << ";";
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 };
@@ -309,7 +311,7 @@ public:
     begin(T::drop_postfix(table_name));
 
     statement_impl *stmt = db->create_statement();
-    stmt->prepare(stream().str());
+    stmt->prepare(this->statement_stream().str());
     return stmt;
   }
 };

@@ -89,6 +89,7 @@ void sqlite_database::create(const prototype_node &node)
 
   std::auto_ptr<object> o(node.producer->create());
   statement_impl *stmt = creator.create(this, o.get(), node.type, "");
+  stmt->step();
 }
 
 void sqlite_database::load(const prototype_node &node)
