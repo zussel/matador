@@ -20,53 +20,47 @@
 
 #include "database/sqlite/sqlite_statement.hpp"
 
-#include <tr1/type_traits>
+#include <type_traits>
 
 namespace oos {
 
+class varchar_base;
+class object_base_ptr;
+
 namespace sqlite {
 
-template <class T, class Enabled = void> 
-struct type_traits
-{ 
-    inline static char const * const type_string() { return "Default"; } 
-}; 
-
 template <class T> 
-struct type_traits<T, typename std::tr1::enable_if<std::is_floating_point<T>::value >::type>
-{ 
-    inline static char const * const type_string() { return "REAL"; } 
-}; 
+struct type_traits; 
 
-template <class T> 
-struct type_traits<T, typename std::tr1::enable_if<std::is_integral<T>::value >::type>
-{ 
-    inline static char const * const type_string() { return "INTEGER"; } 
-};
+template <> struct type_traits<char> { inline static char const * const type_string() { return "INTEGER"; } }; 
+template <> struct type_traits<int> { inline static char const * const type_string() { return "INTEGER"; } };
+template <> struct type_traits<long> { inline static char const * const type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned> { inline static char const * const type_string() { return "INTEGER"; } };
+template <> struct type_traits<bool> { inline static char const * const type_string() { return "INTEGER"; } };
+template <> struct type_traits<float> { inline static char const * const type_string() { return "REAL"; } };
+template <> struct type_traits<double> { inline static char const * const type_string() { return "REAL"; } };
+template <> struct type_traits<varchar_base> { inline static char const * const type_string() { return "VARCHAR"; } };
+template <> struct type_traits<const char*> { inline static char const * const type_string() { return "TEXT"; } };
+template <> struct type_traits<std::string> { inline static char const * const type_string() { return "TEXT"; } };
+template <> struct type_traits<object_base_ptr> { inline static char const * const type_string() { return "INTEGER"; } };
 
 class sqlite_types
 {
 public:
+  static const char *create_postfix(const std::string &table) { return ("CREATE TABLE " + table + " (").c_str(); }
   static const char *select_postfix() { return "SELECT"; }
+  static const char *insert_postfix(const std::string &table) { return ("INSERT " + table + " (").c_str(); }
+  static const char *update_postfix(const std::string &table) { return ("UPDATE" + table + " SET ").c_str(); }
+  static const char *delete_postfix(const std::string &table) { return ("DELETE FROM " + table).c_str(); }
+  static const char *drop_postfix(const std::string &table) { return ("DROP TABLE " + table + ";").c_str(); }
+
+  static const char *primary_key_prefix() { return "PRIMARY KEY NOT NULL"; }
 
   template < class T >
-  const char* type_string() const
+  const char* type_string(const T &x) const
   {
     return type_traits<T>::type_string();
   }
-
-  static const char *char_type_string() { return "INTEGER"; }
-  static const char *float_type_string() { return "REAL"; }
-  static const char *double_type_string() { return "REAL"; }
-  static const char *int_type_string() { return "INTEGER"; }
-  static const char *long_type_string() { return "INTEGER"; }
-  static const char *unsigned_int_type_string() { return "INTEGER"; }
-  static const char *bool_type_string() { return "INTEGER"; }
-  static const char *char_ptr_type_string() { return "TEXT"; }
-  static const char *string_type_string() { return "TEXT"; }
-  static const char *varchar_type_string() { return "VARCHAR"; }
-  static const char *object_type_string() { return "INTEGER"; }
-  static const char *primary_key_prefix() { return "PRIMARY KEY NOT NULL"; }
 };
 
 }

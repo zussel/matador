@@ -51,6 +51,7 @@ class database;
 class statement_impl;
 class result_impl;
 class database_sequencer;
+struct prototype_node;
 
 /// @cond OOS_DEV
 /**
@@ -94,6 +95,21 @@ public:
    * @return True on open database connection.
    */
   virtual bool is_open() const = 0;
+
+  /**
+   * Create a table from the given object.
+   *
+   * @param o The object providing the table layout.
+   */
+  virtual void create(const prototype_node &node) = 0;
+
+  /**
+   * load a specific table based on
+   * a prototype node
+   *
+   * @param node The node representing the table to read
+   */
+  virtual void load(const prototype_node &node) = 0;
 
   /**
    * Execute a sql statement and return a result

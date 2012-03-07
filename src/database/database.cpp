@@ -121,15 +121,7 @@ void database::create()
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
-    object *o = (first++)->producer->create();
-    /*************************
-     * 
-     * statement to create
-     * CREATE TABLE IF NOT EXISTS
-     * o->object_type()
-     *  
-     *************************/
-    delete o;
+    impl_->create((*first++));
   }
 }
 
@@ -146,7 +138,9 @@ bool database::load()
     if (node.abstract) {
       continue;
     }
+    impl_->load(node);
     // create dummy object
+    /*
     std::auto_ptr<object> o(node.producer->create());
     reader rdr(*this, o.get());
     while(rdr.read()) {
@@ -154,6 +148,7 @@ bool database::load()
       obj->read_from(&rdr);
       ostore_.insert(obj.release());
     }
+    */
   }
   /************
    *

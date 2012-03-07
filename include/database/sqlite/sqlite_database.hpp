@@ -71,6 +71,13 @@ public:
   virtual void close();
 
   /**
+   * Create a sqlite table from the given object.
+   *
+   * @param o The object providing the table layout.
+   */
+  virtual void create(const prototype_node &node);
+
+  /**
    * load a specific table based on
    * a prototype node
    *

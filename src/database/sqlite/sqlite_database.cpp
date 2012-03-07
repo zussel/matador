@@ -83,6 +83,14 @@ void sqlite_database::close()
   sqlite_db_ = 0;
 }
 
+void sqlite_database::create(const prototype_node &node)
+{
+  create_statement_creator<sqlite_types> creator;
+
+  std::auto_ptr<object> o(node.producer->create());
+  statement_impl *stmt = creator.create(this, o.get(), node.type, "");
+}
+
 void sqlite_database::load(const prototype_node &node)
 {
   select_statement_creator<sqlite_types> creator;
