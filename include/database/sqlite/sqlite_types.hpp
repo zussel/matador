@@ -20,14 +20,41 @@
 
 #include "database/sqlite/sqlite_statement.hpp"
 
+#include <tr1/type_traits>
+
 namespace oos {
 
 namespace sqlite {
+
+template <class T, class Enabled = void> 
+struct type_traits
+{ 
+    inline static char const * const type_string() { return "Default"; } 
+}; 
+
+template <class T> 
+struct type_traits<T, typename std::tr1::enable_if<std::is_floating_point<T>::value >::type>
+{ 
+    inline static char const * const type_string() { return "REAL"; } 
+}; 
+
+template <class T> 
+struct type_traits<T, typename std::tr1::enable_if<std::is_integral<T>::value >::type>
+{ 
+    inline static char const * const type_string() { return "INTEGER"; } 
+};
 
 class sqlite_types
 {
 public:
   static const char *select_postfix() { return "SELECT"; }
+
+  template < class T >
+  const char* type_string() const
+  {
+    return type_traits<T>::type_string();
+  }
+
   static const char *char_type_string() { return "INTEGER"; }
   static const char *float_type_string() { return "REAL"; }
   static const char *double_type_string() { return "REAL"; }

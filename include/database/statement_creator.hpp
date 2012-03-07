@@ -71,7 +71,10 @@ public:
 
 private:
   virtual void write_char(const char *id, char x) { write(id, T::char_type_string()); }
-	virtual void write_float(const char *id, float x) { write(id, T::float_type_string()); }
+	virtual void write_float(const char *id, float x)
+  {
+    write(id, T::type_string<float>());
+  }
 	virtual void write_double(const char *id, double x) { write(id, T::double_type_string()); }
 	virtual void write_int(const char *id, int x) { write(id, T::int_type_string()); }
 	virtual void write_long(const char *id, long x)
