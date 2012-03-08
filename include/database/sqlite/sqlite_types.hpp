@@ -30,17 +30,17 @@ namespace sqlite {
 template <class T> 
 struct type_traits; 
 
-template <> struct type_traits<char> { inline static char const * const type_string() { return "INTEGER"; } }; 
-template <> struct type_traits<int> { inline static char const * const type_string() { return "INTEGER"; } };
-template <> struct type_traits<long> { inline static char const * const type_string() { return "INTEGER"; } };
-template <> struct type_traits<unsigned> { inline static char const * const type_string() { return "INTEGER"; } };
-template <> struct type_traits<bool> { inline static char const * const type_string() { return "INTEGER"; } };
-template <> struct type_traits<float> { inline static char const * const type_string() { return "REAL"; } };
-template <> struct type_traits<double> { inline static char const * const type_string() { return "REAL"; } };
-template <> struct type_traits<varchar_base> { inline static char const * const type_string() { return "VARCHAR"; } };
-template <> struct type_traits<const char*> { inline static char const * const type_string() { return "TEXT"; } };
-template <> struct type_traits<std::string> { inline static char const * const type_string() { return "TEXT"; } };
-template <> struct type_traits<object_base_ptr> { inline static char const * const type_string() { return "INTEGER"; } };
+template <> struct type_traits<char> { inline static const char* type_string() { return "INTEGER"; } }; 
+template <> struct type_traits<int> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<long> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<bool> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<float> { inline static const char* type_string() { return "REAL"; } };
+template <> struct type_traits<double> { inline static const char* type_string() { return "REAL"; } };
+template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };
+template <> struct type_traits<const char*> { inline static const char* type_string() { return "TEXT"; } };
+template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
+template <> struct type_traits<object_base_ptr> { inline static const char* type_string() { return "INTEGER"; } };
 
 class sqlite_types
 {
@@ -55,7 +55,7 @@ public:
   static const char *primary_key_prefix() { return "PRIMARY KEY NOT NULL"; }
 
   template < class T >
-  const char* type_string(const T &x) const
+  const char* type_string(const T&) const
   {
     return type_traits<T>::type_string();
   }
