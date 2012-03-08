@@ -21,7 +21,6 @@
 #include "database/transaction.hpp"
 #include "database/reader.hpp"
 #include "database/statement_helper.hpp"
-#include "database/statement_binder.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -41,16 +40,16 @@ database::database(object_store &ostore, const std::string &dbstring)
 {
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
-  std::string type = dbstring.substr(0, pos);
-  std::string db = dbstring.substr(pos + 3);
+  type_ = dbstring.substr(0, pos);
+  connection_ = dbstring.substr(pos + 3);
 
   // get driver factory singleton
   database_factory &df = database_factory::instance();
 
   // try to create database implementation
-  impl_ = df.create(type, this);
+  impl_ = df.create(type_, this);
 
-  impl_->open(db);
+  impl_->open(connection_);
 
   // if database is new create all tables
   statement_helper helper;
@@ -99,13 +98,13 @@ database::database(object_store &ostore, const std::string &dbstring)
 database::~database()
 {
   if (impl_) {
-//    impl_->close();
     delete impl_;
   }
 }
 
 void database::open()
 {
+  impl_->open(connection_);
 }
 
 void database::create()
@@ -127,6 +126,7 @@ void database::create()
 
 void database::close()
 {
+  impl_->close();
 }
 
 bool database::load()
@@ -139,16 +139,6 @@ bool database::load()
       continue;
     }
     impl_->load(node);
-    // create dummy object
-    /*
-    std::auto_ptr<object> o(node.producer->create());
-    reader rdr(*this, o.get());
-    while(rdr.read()) {
-      std::auto_ptr<object> obj(node.producer->create());
-      obj->read_from(&rdr);
-      ostore_.insert(obj.release());
-    }
-    */
   }
   /************
    *
@@ -217,9 +207,6 @@ void database::commit(transaction &tr)
 {
   try {
     impl_->begin();
-
-    // execute begin statement
-    statement_binder binder;
 
     transaction::const_iterator first = tr.action_list_.begin();
     transaction::const_iterator last = tr.action_list_.end();

@@ -18,18 +18,34 @@
 #ifndef STATEMENT_SERIALIZER_HPP
 #define STATEMENT_SERIALIZER_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+#else
+  #define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 
 namespace oos {
 
 class statement_impl;
+class object;
 
-class statement_serializer : public object_atomizer
+class OOS_API statement_serializer : public object_atomizer
 {
 public:
   statement_serializer();
   virtual ~statement_serializer();
-  
+
+  void bind(statement_impl *stmt, object *o, bool bind_id);
+  void read(statement_impl *stmt, object *o);
+
 private:
   /**
    * @brief Read a single character from the atomizer.

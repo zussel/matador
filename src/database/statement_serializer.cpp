@@ -31,12 +31,10 @@ statement_serializer::statement_serializer()
 statement_serializer::~statement_serializer()
 {}
 
-/*
 void statement_serializer::bind(statement_impl *stmt, object *o, bool bind_id)
 {
   stmt_ = stmt;
 
-//  std::cerr << "start binding object values of object " << *o << "\n";
   column_ = 0;
   // bind parameter
   o->write_to(this);
@@ -44,10 +42,16 @@ void statement_serializer::bind(statement_impl *stmt, object *o, bool bind_id)
   if (bind_id) {
     stmt_->bind(++column_, (int)o->id());
   }
-
-  std::cout.flush();
 }
-*/
+
+void statement_serializer::read(statement_impl *stmt, object *o)
+{
+  stmt_ = stmt;
+
+  column_ = 0;
+
+  o->read_from(this);
+}
 
 void statement_serializer::read_char(const char *id, char &x)
 {

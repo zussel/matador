@@ -61,12 +61,15 @@ sqlite_database::~sqlite_database()
 
 void sqlite_database::open(const std::string &db)
 {
-  int ret = sqlite3_open(db.c_str(), &sqlite_db_);
-  if (ret != SQLITE_OK) {
-    throw std::runtime_error("couldn't open database: " + db);
+  if (is_open()) {
+    return;
+  } else {
+    int ret = sqlite3_open(db.c_str(), &sqlite_db_);
+    if (ret != SQLITE_OK) {
+      throw std::runtime_error("couldn't open database: " + db);
+    }
+    database_impl::open(db);
   }
-
-  database_impl::open(db);
 }
 
 bool sqlite_database::is_open() const
@@ -76,11 +79,15 @@ bool sqlite_database::is_open() const
 
 void sqlite_database::close()
 {
-  database_impl::close();
+  if (!is_open()) {
+    return;
+  } else {
+    database_impl::close();
 
-  sqlite3_close(sqlite_db_);
+    sqlite3_close(sqlite_db_);
 
-  sqlite_db_ = 0;
+    sqlite_db_ = 0;
+  }
 }
 
 void sqlite_database::create(const prototype_node &node)
@@ -88,20 +95,27 @@ void sqlite_database::create(const prototype_node &node)
   create_statement_creator<sqlite_types> creator;
 
   std::auto_ptr<object> o(node.producer->create());
-  statement_impl *stmt = creator.create(this, o.get(), node.type, "");
-  stmt->step();
+  std::string sql = creator.create(o.get(), node.type, "");
+
+  execute(sql.c_str());
 }
 
 void sqlite_database::load(const prototype_node &node)
 {
   select_statement_creator<sqlite_types> creator;
 
-  object *o = node.producer->create();
+  std::auto_ptr<object> o(node.producer->create());
 
-  statement_impl *stmt = creator.create(this, o, node.type, "");
+  std::string sql = creator.create(o.get(), node.type, "");
 
-//  statement_serializer ss;
+  statement_impl *stmt = create_statement();
+  stmt->prepare(sql);
+
+  statement_serializer ss;
   while (stmt->step()) {
+    o.reset(node.producer->create());
+    ss.read(stmt, o.get());
+    db()->ostore().insert(o.release());
   }
 }
 

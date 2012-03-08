@@ -20,7 +20,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
-#include "database/statement_binder.hpp"
 #include "database/result.hpp"
 
 #include "object/object_store.hpp"

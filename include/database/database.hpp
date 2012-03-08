@@ -196,6 +196,9 @@ private:
   statement_impl* create_statement_impl() const;
 
 private:
+  std::string type_;
+  std::string connection_;
+
   database_impl *impl_;
 
   object_store &ostore_;

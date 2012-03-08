@@ -30,9 +30,6 @@
   #define OOS_API
 #endif
 
-//#include "database/database_impl.hpp"
-#include "database/statement.hpp"
-
 #include "object/object.hpp"
 
 #include <sstream>
@@ -44,7 +41,7 @@ class statement_creator
 public:
   virtual ~statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause) = 0;
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause) = 0;
 
 protected:
   virtual void begin(const char *cmd)
@@ -107,7 +104,7 @@ public:
   create_statement_creator() {}
   virtual ~create_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::create_postfix(table_name));
 
@@ -115,9 +112,7 @@ public:
 
     this->statement_stream() << ");";
 
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+    return this->statement_stream().str();
   }
 
 private:
@@ -150,7 +145,7 @@ public:
   select_statement_creator() {}
   virtual ~select_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::select_postfix());
 
@@ -161,9 +156,8 @@ public:
       this->statement_stream() << " WHERE " << where_clause;
     }
     this->statement_stream() << ";";
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+
+    return this->statement_stream().str();
   }
 
 private:
@@ -196,16 +190,15 @@ public:
   insert_statement_creator() {}
   virtual ~insert_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::insert_postfix(table_name));
 
     o->write_to(this);
 
     this->statement_stream() << ") VALUES (" << value_stream_.str() << ");";
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+
+    return this->statement_stream().str();
   }
 
 private:
@@ -242,7 +235,7 @@ public:
   update_statement_creator() {}
   virtual ~update_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::update_postfix(table_name));
 
@@ -252,9 +245,8 @@ public:
       this->statement_stream() << " WHERE " << where_clause;
     }
     this->statement_stream() << ";";
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+
+    return this->statement_stream().str();
   }
 
 private:
@@ -284,7 +276,7 @@ public:
   delete_statement_creator() {}
   virtual ~delete_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::delete_postfix(table_name));
 
@@ -293,9 +285,8 @@ public:
     }
 
     this->statement_stream() << ";";
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+
+    return this->statement_stream().str();
   }
 };
 
@@ -306,13 +297,11 @@ public:
   drop_statement_creator() {}
   virtual ~drop_statement_creator() {}
 
-  virtual statement_impl* create(database_impl *db, object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::drop_postfix(table_name));
 
-    statement_impl *stmt = db->create_statement();
-    stmt->prepare(this->statement_stream().str());
-    return stmt;
+    return this->statement_stream().str();
   }
 };
 
