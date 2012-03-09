@@ -53,7 +53,7 @@ class sqlite_statement;
 class OOS_SQLITE_API sqlite_database : public database_impl
 {
 public:
-  explicit sqlite_database(database *db, const std::string &conn);
+  explicit sqlite_database(database *db);
   virtual ~sqlite_database();
   
   virtual void open(const std::string &db);

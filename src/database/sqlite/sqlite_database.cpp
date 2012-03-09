@@ -47,7 +47,7 @@ namespace oos {
   
 namespace sqlite {
   
-sqlite_database::sqlite_database(database *db, const std::string &conn)
+sqlite_database::sqlite_database(database *db)
   : database_impl(db, new sqlite_sequencer(this))
   , sqlite_db_(0)
 {

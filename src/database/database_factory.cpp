@@ -43,7 +43,7 @@ database_impl* database_factory::create(const std::string &name, database *db)
     database_loader *loader = new database_loader(name);
     i = factory_.insert(std::make_pair(name, loader)).first;
   }
-  return i->second->create(db, "");
+  return i->second->create(db);
 }
 
 database_factory::database_loader::database_loader(const std::string &name)
@@ -64,11 +64,11 @@ database_factory::database_loader::~database_loader()
 //  loader_.unload();
 }
 
-database_impl* database_factory::database_loader::create(database *db, const std::string &conn) const
+database_impl* database_factory::database_loader::create(database *db) const
 {
   // on each call store the created database for later
   // explicit destruction
-  return producer_->create(db, conn);
+  return producer_->create(db);
 }
 
 }
