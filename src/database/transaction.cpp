@@ -19,7 +19,6 @@
 #include "database/transaction_helper.hpp"
 #include "database/database.hpp"
 #include "database/database_impl.hpp"
-#include "database/inserter.hpp"
 
 #include "tools/byte_buffer.hpp"
 

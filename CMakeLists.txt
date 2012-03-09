@@ -115,10 +115,6 @@ SET(DATABASE_SOURCES
   src/database/database.cpp
   src/database/database_impl.cpp
   src/database/database_factory.cpp
-  src/database/inserter.cpp
-  src/database/updater.cpp
-  src/database/deleter.cpp
-  src/database/reader.cpp
   src/database/transaction.cpp
   src/database/transaction_helper.cpp
   src/database/result.cpp
@@ -126,7 +122,6 @@ SET(DATABASE_SOURCES
   src/database/statement.cpp
   src/database/statement_creator.cpp
   src/database/statement_helper.cpp
-  src/database/statement_binder.cpp
   src/database/statement_serializer.cpp
 )
 
@@ -136,10 +131,6 @@ SET(DATABASE_HEADER
   include/database/database_impl.hpp
   include/database/database_factory.hpp
   include/database/database_sequencer.hpp
-  include/database/inserter.hpp
-  include/database/updater.hpp
-  include/database/deleter.hpp
-  include/database/reader.hpp
   include/database/transaction.hpp
   include/database/transaction_helper.hpp
   include/database/result.hpp
@@ -148,7 +139,6 @@ SET(DATABASE_HEADER
   include/database/statement.hpp
   include/database/statement_creator.hpp
   include/database/statement_helper.hpp
-  include/database/statement_binder.hpp
   include/database/statement_serializer.hpp
 )
 

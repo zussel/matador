@@ -23,7 +23,6 @@
 #include "database/database.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_creator.hpp"
-#include "database/statement_binder.hpp"
 #include "database/statement_serializer.hpp"
 #include "database/row.hpp"
 
@@ -138,13 +137,13 @@ void sqlite_database::visit(insert_action *a)
   if (!stmt) {
     // throw error
   }
-  statement_binder binder;
+  statement_serializer ss;
 
   insert_action::const_iterator first = a->begin();
   insert_action::const_iterator last = a->end();
   while (first != last) {
     object *o = (*first++);
-    binder.bind(stmt.get(), o, false);
+    ss.bind(stmt.get(), o, false);
     stmt->step();
     stmt->reset(true);
   }
@@ -156,8 +155,8 @@ void sqlite_database::visit(update_action *a)
   if (!stmt) {
     // throw error
   }
-  statement_binder binder;
-  binder.bind(stmt.get(), a->obj(), true);
+  statement_serializer ss;
+  ss.bind(stmt.get(), a->obj(), true);
   stmt->step();
   stmt->reset(true);
 }
