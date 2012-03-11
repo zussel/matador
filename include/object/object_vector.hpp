@@ -442,7 +442,7 @@ public:
     iterator j = ret;
     while (j != object_vector_.end()) {
       size_type index = 0;
-      if (!(*j)->get(index_name(), index)) {
+      if (!(*j)->get(index_name(), (int&)index)) {
         // error: throw exception
       } else if (!(*j)->set(index_name(), (int)--index)) {
         // error: throw exception
