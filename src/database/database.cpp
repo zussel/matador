@@ -50,6 +50,7 @@ database::database(object_store &ostore, const std::string &dbstring)
 
   impl_->open(connection_);
 
+  /*
   // if database is new create all tables
   statement_helper helper;
 
@@ -91,6 +92,7 @@ database::database(object_store &ostore, const std::string &dbstring)
     stmt->prepare(sql);
     impl_->store_statement(std::string(o->object_type()) + "_DELETE", database_impl::statement_impl_ptr(stmt));
   }
+  */
 }
 
 

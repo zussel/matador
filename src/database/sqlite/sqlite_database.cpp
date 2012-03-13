@@ -101,19 +101,25 @@ void sqlite_database::create(const prototype_node &node)
 
 void sqlite_database::load(const prototype_node &node)
 {
-  select_statement_creator<sqlite_types> creator;
-
+  // create dummy object
   std::auto_ptr<object> o(node.producer->create());
+  // try to find select statement statement
+  statement_impl_ptr stmt = find_statement(std::string(o->object_type()) + "_INSERT");
+  if (!stmt) {
+    select_statement_creator<sqlite_types> creator;
 
-  std::string sql = creator.create(o.get(), node.type, "");
+    std::string sql = creator.create(o.get(), node.type, "");
 
-  statement_impl *stmt = create_statement();
-  stmt->prepare(sql);
+    stmt.reset(create_statement());
+    stmt->prepare(sql);
+    
+    store_statement(std::string(o->object_type()) + "_SELECT", stmt);
+  }
 
   statement_serializer ss;
   while (stmt->step()) {
     o.reset(node.producer->create());
-    ss.read(stmt, o.get());
+    ss.read(stmt.get(), o.get());
     db()->ostore().insert(o.release());
   }
 }
@@ -135,7 +141,21 @@ void sqlite_database::visit(insert_action *a)
   // create insert statement
   statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
   if (!stmt) {
-    // throw error
+    // create statement
+    insert_statement_creator<sqlite_types> creator;
+
+    if (a->empty()) {
+      return;
+    }
+    
+    insert_action::const_iterator i = a->begin();
+    
+    std::string sql = creator.create(*i, a->type(), "");
+
+    stmt.reset(create_statement());
+    stmt->prepare(sql);
+    
+    store_statement(std::string(a->type()) + "_INSERT", stmt);    
   }
   statement_serializer ss;
 
@@ -153,8 +173,17 @@ void sqlite_database::visit(update_action *a)
 {
   statement_impl_ptr stmt = find_statement(std::string(a->obj()->object_type()) + "_UPDATE");
   if (!stmt) {
-    // throw error
+    // create statement
+    update_statement_creator<sqlite_types> creator;
+
+    std::string sql = creator.create(a->obj(), a->type(), "id=?");
+
+    stmt.reset(create_statement());
+    stmt->prepare(sql);
+    
+    store_statement(std::string(a->type()) + "_UPDATE", stmt);    
   }
+
   statement_serializer ss;
   ss.bind(stmt.get(), a->obj(), true);
   stmt->step();
@@ -163,10 +192,19 @@ void sqlite_database::visit(update_action *a)
 
 void sqlite_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->object_type()) + "_DELETE");
+  statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_DELETE");
   if (!stmt) {
-    // throw error
+    // create statement
+    delete_statement_creator<sqlite_types> creator;
+
+    std::string sql = creator.create(0, a->type(), "id=?");
+
+    stmt.reset(create_statement());
+    stmt->prepare(sql);
+    
+    store_statement(std::string(a->type()) + "_UPDATE", stmt);    
   }
+
   stmt->bind(1, a->id());
   stmt->step();
   stmt->reset(true);
