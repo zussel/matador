@@ -104,7 +104,7 @@ void sqlite_database::load(const prototype_node &node)
   // create dummy object
   std::auto_ptr<object> o(node.producer->create());
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(std::string(o->object_type()) + "_INSERT");
+  statement_impl_ptr stmt = find_statement(std::string(o->classname()) + "_INSERT");
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
 
@@ -113,7 +113,7 @@ void sqlite_database::load(const prototype_node &node)
     stmt.reset(create_statement());
     stmt->prepare(sql);
     
-    store_statement(std::string(o->object_type()) + "_SELECT", stmt);
+    store_statement(std::string(o->classname()) + "_SELECT", stmt);
   }
 
   statement_serializer ss;
@@ -171,17 +171,17 @@ void sqlite_database::visit(insert_action *a)
 
 void sqlite_database::visit(update_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->obj()->object_type()) + "_UPDATE");
+  statement_impl_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
   if (!stmt) {
     // create statement
     update_statement_creator<sqlite_types> creator;
 
-    std::string sql = creator.create(a->obj(), a->type(), "id=?");
+    std::string sql = creator.create(a->obj(), a->obj()->classname(), "id=?");
 
     stmt.reset(create_statement());
     stmt->prepare(sql);
     
-    store_statement(std::string(a->type()) + "_UPDATE", stmt);    
+    store_statement(std::string(a->obj()->classname()) + "_UPDATE", stmt);    
   }
 
   statement_serializer ss;
@@ -192,17 +192,17 @@ void sqlite_database::visit(update_action *a)
 
 void sqlite_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_DELETE");
+  statement_impl_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_DELETE");
   if (!stmt) {
     // create statement
     delete_statement_creator<sqlite_types> creator;
 
-    std::string sql = creator.create(0, a->type(), "id=?");
+    std::string sql = creator.create(0, a->obj()->classname(), "id=?");
 
     stmt.reset(create_statement());
     stmt->prepare(sql);
     
-    store_statement(std::string(a->type()) + "_UPDATE", stmt);    
+    store_statement(std::string(a->obj()->classname()) + "_UPDATE", stmt);    
   }
 
   stmt->bind(1, a->id());

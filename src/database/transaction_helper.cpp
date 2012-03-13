@@ -108,7 +108,7 @@ transaction::iterator action_inserter::insert(object *o)
     }
   }
   if (!inserted_) {
-    insert_action *a = new insert_action(obj_->object_type());
+    insert_action *a = new insert_action(obj_->classname());
     a->push_back(o);
     return action_list_.insert(action_list_.end(), a);
   }
@@ -120,19 +120,19 @@ void action_inserter::visit(insert_action *a)
   // check (object) type of insert action
   // if type is equal to objects type
   // add object to action
-  if (a->type() == obj_->object_type()) {
+  if (a->type() == obj_->classname()) {
     a->push_back(obj_);
     inserted_ = true;
   }
 }
 
-void action_inserter::visit(update_action *a)
+void action_inserter::visit(update_action *)
 {
   // error: object can't be updated before
   // it is inserted, throw error
 }
 
-void action_inserter::visit(delete_action *a)
+void action_inserter::visit(delete_action *)
 {
   // error: object can't be deleted before
   // it is inserted, throw error

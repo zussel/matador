@@ -104,7 +104,7 @@ public:
   create_statement_creator() {}
   virtual ~create_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string&)
   {
     begin(T::create_postfix(table_name));
 
@@ -161,7 +161,7 @@ public:
   }
 
 private:
-  virtual void write_field(const char *id, const char *type)
+  virtual void write_field(const char *id, const char *)
   {
     if (!first_) {
       this->statement_stream() << ", ";
@@ -181,7 +181,7 @@ private:
 };
 
 template < class T >
-class insert_statement_creator : public statement_creator
+class insert_statement_creator : public statement_field_creator<T>
 {
 public:
   typedef statement_field_creator<T> base_creator;
@@ -190,7 +190,7 @@ public:
   insert_statement_creator() {}
   virtual ~insert_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const std::string &table_name, const std::string&)
   {
     begin(T::insert_postfix(table_name));
 
@@ -202,7 +202,7 @@ public:
   }
 
 private:
-  virtual void write_field(const char *id, const char *type)
+  virtual void write_field(const char *id, const char *)
   {
     if (!first_) {
       this->statement_stream() << ", ";
@@ -226,7 +226,7 @@ private:
 };
 
 template < class T >
-class update_statement_creator : public statement_creator
+class update_statement_creator : public statement_field_creator<T>
 {
 public:
   typedef statement_field_creator<T> base_creator;
@@ -250,7 +250,7 @@ public:
   }
 
 private:
-  virtual void write_field(const char *id, const char *type)
+  virtual void write_field(const char *id, const char *)
   {
     if (!first_) {
       this->statement_stream() << ", ";
@@ -276,7 +276,7 @@ public:
   delete_statement_creator() {}
   virtual ~delete_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *, const std::string &table_name, const std::string &where_clause)
   {
     begin(T::delete_postfix(table_name));
 

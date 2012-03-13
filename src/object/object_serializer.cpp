@@ -271,14 +271,14 @@ void object_serializer::read_object_vector(const char*, object_vector_base &x)
 void object_serializer::write_object_list_item(const object *o)
 {
   write_long(NULL, o->id());
-  write_string(NULL, o->object_type());
+  write_string(NULL, o->classname());
 }
 
 void object_serializer::write_object_vector_item(const object *o, unsigned int &index)
 {
   write_long(NULL, o->id());
   write_unsigned(NULL, index++);
-  write_string(NULL, o->object_type());
+  write_string(NULL, o->classname());
 }
 
 }

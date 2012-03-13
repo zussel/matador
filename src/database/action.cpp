@@ -109,7 +109,7 @@ const object* update_action::obj() const
 }
 
 delete_action::delete_action(object *o)
-  : object_type_(o ? o->object_type() : "")
+  : object_type_(o ? o->classname() : "")
   , obj_(o)
   , id_(o ? o->id() : 0)
 {}

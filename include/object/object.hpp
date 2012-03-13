@@ -96,11 +96,11 @@ public:
 	virtual void write_to(object_atomizer *a) const;
 
   /**
-   * Returns the name of the object type
+   * Returns the classname of the object
    * 
    * @return Name of the object type
    */
-	const char* object_type() const;
+	const char* classname() const;
   
   /**
    * @brief Returns the unique identifier of the object.

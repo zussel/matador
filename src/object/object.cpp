@@ -18,6 +18,7 @@
 #include "object/object.hpp"
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
+#include "object/prototype_node.hpp"
 
 namespace oos {
 
@@ -41,9 +42,13 @@ void object::write_to(object_atomizer *a) const
 	a->write_long("id", id_);
 }
 
-const char* object::object_type() const
+const char* object::classname() const
 {
-  return typeid(*this).name();
+  if (proxy_ && proxy_->node) {
+    return proxy_->node->type.c_str();
+  } else {
+    return 0;
+  }
 }
 
 long object::id() const
