@@ -46,8 +46,8 @@ class sqlite_types
 {
 public:
   static const char *create_postfix(const std::string &table) { return ("CREATE TABLE " + table + " (").c_str(); }
-  static const char *select_postfix() { return "SELECT"; }
-  static const char *insert_postfix(const std::string &table) { return ("INSERT " + table + " (").c_str(); }
+  static const char *select_postfix() { return "SELECT "; }
+  static const char *insert_postfix(const std::string &table) { return ("INSERT INTO " + table + " (").c_str(); }
   static const char *update_postfix(const std::string &table) { return ("UPDATE" + table + " SET ").c_str(); }
   static const char *delete_postfix(const std::string &table) { return ("DELETE FROM " + table).c_str(); }
   static const char *drop_postfix(const std::string &table) { return ("DROP TABLE " + table + ";").c_str(); }

@@ -66,11 +66,14 @@ database_impl::statement_impl_ptr database_impl::find_statement(const std::strin
   }
 }
 
+void database_impl::prepare()
+{
+  sequencer_->begin();
+}
+
 void database_impl::begin()
 {
   on_begin();
-
-  sequencer_->begin();
 }
 
 void database_impl::commit()

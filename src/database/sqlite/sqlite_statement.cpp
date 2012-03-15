@@ -71,6 +71,7 @@ int sqlite_statement::prepare(const std::string &sql)
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   if (SQLITE_OK != ret) {
     std::string msg(sqlite3_errmsg(db_()));
+    std::cout << "error while preparing statement: " << sql << " " << msg << "\n";
     throw std::runtime_error("error while preparing statement: " + sql + " " + msg);
   }
 //  std::cout << "preparing statement 0x" << std::hex << stmt_ << " (" << sql << ")\n";

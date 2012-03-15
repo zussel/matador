@@ -177,6 +177,24 @@ public:
    */
   statement_impl_ptr find_statement(const std::string &id) const;
 
+  /**
+   * @brief Prepares the beginning of a transaction
+   * 
+   * Prepares the begin of the transaction
+   * in database and object store. Calls
+   * begin() on sequencer, which backups
+   * object stores current ids.
+   */
+  void prepare();
+
+  /**
+   * @brief Marks the beginning of the real transaction.
+   * 
+   * This method is called when the real database
+   * transaction are about to begin and a BEGIN
+   * TRANSACTION kind of statement is executed on
+   * the database.
+   */
   void begin();
 
   /**
@@ -189,6 +207,14 @@ public:
    */
   void commit();
 
+  /**
+   * @brief Rolls back the current transaction
+   * 
+   * When called the current transaction is
+   * rolled back on database and subsequently
+   * in object store. All transient data is
+   * restored.
+   */
   void rollback();
 
 protected:

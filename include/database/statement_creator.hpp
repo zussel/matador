@@ -47,7 +47,7 @@ protected:
   virtual void begin(const char *cmd)
   {
     statement_.str("");
-    statement_ << cmd << " ";
+    statement_ << cmd;
   }
 
   std::stringstream& statement_stream() { return statement_; }
