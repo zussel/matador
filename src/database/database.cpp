@@ -121,7 +121,11 @@ void database::create()
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
-    impl_->create((*first++));
+    const prototype_node &node = (*first++);
+    if (node.abstract) {
+      continue;
+    }
+    impl_->create(node);
   }
 }
 

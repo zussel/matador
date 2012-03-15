@@ -45,10 +45,12 @@ class row;
 class OOS_API statement_impl
 {
 public:
+  // auto prepare
+//  explicit statement_impl(const std::string &sql);
   virtual ~statement_impl();
 
-  virtual int prepare(const std::string &sql) = 0;
-//  virtual result* execute(const std::string &sql) = 0;
+  virtual int prepare(const std::string &sql);
+
   virtual bool step() = 0;
 
   virtual void reset(bool clear_bindings) = 0;
@@ -66,6 +68,11 @@ public:
   virtual int bind(int i, unsigned int value) = 0;
   virtual int bind(int i, const char *value) = 0;
   virtual int bind_null(int i) = 0;
+  
+  std::string sql() const;
+
+private:
+  std::string sql_;
 };
 
 class OOS_API statement

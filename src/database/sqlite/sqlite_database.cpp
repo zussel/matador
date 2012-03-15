@@ -104,7 +104,7 @@ void sqlite_database::load(const prototype_node &node)
   // create dummy object
   std::auto_ptr<object> o(node.producer->create());
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(std::string(o->classname()) + "_INSERT");
+  statement_impl_ptr stmt = find_statement(node.type + "_INSERT");
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
 
@@ -113,7 +113,7 @@ void sqlite_database::load(const prototype_node &node)
     stmt.reset(create_statement());
     stmt->prepare(sql);
     
-    store_statement(std::string(o->classname()) + "_SELECT", stmt);
+    store_statement(node.type + "_SELECT", stmt);
   }
 
   statement_serializer ss;
@@ -126,6 +126,9 @@ void sqlite_database::load(const prototype_node &node)
 
 bool sqlite_database::execute(const char *sql, result_impl *res)
 {
+
+  std::cerr << "executing " << sql << "\n";
+
   char *errmsg;
   int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res, &errmsg);
   if (ret != SQLITE_OK) {

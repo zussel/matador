@@ -23,6 +23,16 @@ namespace oos {
 statement_impl::~statement_impl()
 {}
 
+int statement_impl::prepare(const std::string &sql)
+{
+  sql_ = sql;
+}
+
+std::string statement_impl::sql() const
+{
+  return sql_;
+}
+
 statement::statement(database &db)
   : impl_(0)
 {

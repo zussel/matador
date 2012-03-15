@@ -41,6 +41,9 @@ sqlite_statement::~sqlite_statement()
 
 bool sqlite_statement::step()
 {
+
+  std::cerr << "executing " << sql() << "\n";
+
   int ret = sqlite3_step(stmt_);
   if (ret == SQLITE_ROW) {
     // retrieved new row
@@ -60,7 +63,11 @@ bool sqlite_statement::step()
 
 int sqlite_statement::prepare(const std::string &sql)
 {
-//  finalize();
+  // destroy statement
+  finalize();
+  // set new sql statement
+  statement_impl::prepare(sql);
+  // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   if (SQLITE_OK != ret) {
     std::string msg(sqlite3_errmsg(db_()));

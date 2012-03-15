@@ -44,6 +44,8 @@ main(int argc, char *argv[])
   // create and open db
   database db(ostore, "sqlite://mdb.sqlite");
 
+  // create db
+  db.create();
   // load db
   db.load();
 

@@ -392,16 +392,17 @@ object_store::insert_object(object *o, bool notify)
   // create object
   object_creator oc(*this, notify);
   o->read_from(&oc);
+  // set corresponding prototype node
+  oproxy->node = node;
+  // set this into persistent object
+  o->proxy_ = oproxy;
   // notify observer
   if (notify) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
   }
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
-  // set corresponding prototype node
-  oproxy->node = node;
-  // set this into persistent object
-  o->proxy_ = oproxy;
+  // return new object
   return o;
 }
 

@@ -101,7 +101,9 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  create_statement_creator() {}
+  create_statement_creator()
+    : first_(true)
+  {}
   virtual ~create_statement_creator() {}
 
   virtual std::string create(object *o, const std::string &table_name, const std::string&)
@@ -127,7 +129,7 @@ private:
   }
   virtual void write_pk_field(const char *id, const char *type)
   {
-    write_pk_field(id, type);
+    base_creator::write_pk_field(id, type);
     this->statement_stream() << " " << T::primary_key_prefix();
   }
 
@@ -142,7 +144,9 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  select_statement_creator() {}
+  select_statement_creator()
+    : first_(true)
+  {}
   virtual ~select_statement_creator() {}
 
   virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
@@ -187,7 +191,9 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  insert_statement_creator() {}
+  insert_statement_creator()
+    : first_(true)
+  {}
   virtual ~insert_statement_creator() {}
 
   virtual std::string create(object *o, const std::string &table_name, const std::string&)
@@ -232,7 +238,9 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  update_statement_creator() {}
+  update_statement_creator()
+    : first_(true)
+  {}
   virtual ~update_statement_creator() {}
 
   virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
