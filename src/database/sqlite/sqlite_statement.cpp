@@ -61,7 +61,7 @@ bool sqlite_statement::step()
   return false;
 }
 
-int sqlite_statement::prepare(const std::string &sql)
+void sqlite_statement::prepare(const std::string &sql)
 {
   // destroy statement
   finalize();
@@ -74,8 +74,6 @@ int sqlite_statement::prepare(const std::string &sql)
     std::cout << "error while preparing statement: " << sql << " " << msg << "\n";
     throw std::runtime_error("error while preparing statement: " + sql + " " + msg);
   }
-//  std::cout << "preparing statement 0x" << std::hex << stmt_ << " (" << sql << ")\n";
-  return ret;
 }
 
 void sqlite_statement::reset(bool clear_bindings)

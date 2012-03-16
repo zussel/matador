@@ -166,20 +166,15 @@ void database::begin(transaction &tr)
 
 void database::commit(transaction &tr)
 {
-  try {
-    impl_->begin();
+  impl_->begin();
 
-    transaction::const_iterator first = tr.action_list_.begin();
-    transaction::const_iterator last = tr.action_list_.end();
-    while (first != last) {
-      (*first++)->accept(impl_);
-    }
-
-    impl_->commit();
-  } catch (std::exception &ex) {
-    impl_->rollback();
-    throw ex;
+  transaction::const_iterator first = tr.action_list_.begin();
+  transaction::const_iterator last = tr.action_list_.end();
+  while (first != last) {
+    (*first++)->accept(impl_);
   }
+
+  impl_->commit();
 }
 
 void database::rollback()

@@ -49,7 +49,7 @@ public:
 //  explicit statement_impl(const std::string &sql);
   virtual ~statement_impl();
 
-  virtual int prepare(const std::string &sql);
+  virtual void prepare(const std::string &sql);
 
   virtual bool step() = 0;
 

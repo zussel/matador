@@ -23,7 +23,7 @@ namespace oos {
 statement_impl::~statement_impl()
 {}
 
-int statement_impl::prepare(const std::string &sql)
+void statement_impl::prepare(const std::string &sql)
 {
   sql_ = sql;
 }
