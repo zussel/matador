@@ -114,6 +114,7 @@ SET(DATABASE_SOURCES
   src/database/action.cpp
   src/database/database.cpp
   src/database/database_impl.cpp
+  src/database/database_exception.cpp
   src/database/database_factory.cpp
   src/database/transaction.cpp
   src/database/transaction_helper.cpp
@@ -129,6 +130,7 @@ SET(DATABASE_HEADER
   include/database/action.hpp
   include/database/database.hpp
   include/database/database_impl.hpp
+  include/database/database_exception.hpp
   include/database/database_factory.hpp
   include/database/database_sequencer.hpp
   include/database/transaction.hpp
@@ -151,6 +153,7 @@ ADD_LIBRARY(oos SHARED
 
 SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_database.cpp
+  src/database/sqlite/sqlite_exception.cpp
   src/database/sqlite/sqlite_statement.cpp
   src/database/sqlite/sqlite_sequencer.cpp
   src/database/sqlite/sqlite_result.cpp
@@ -159,6 +162,7 @@ SET(SQLITE_DATABASE_SOURCES
 
 SET(SQLITE_DATABASE_HEADER
   include/database/sqlite/sqlite_database.hpp
+  include/database/sqlite/sqlite_exception.hpp
   include/database/sqlite/sqlite_statement.hpp
   include/database/sqlite/sqlite_sequencer.hpp
   include/database/sqlite/sqlite_result.hpp
