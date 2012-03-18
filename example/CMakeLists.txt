@@ -5,6 +5,7 @@ SET (EXAMPLE_SOURCES
   Artist.hpp
   Track.cpp
   Track.hpp
+  TrackAlbumRelation.hpp
   main.cpp
 )
 
