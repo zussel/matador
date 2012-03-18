@@ -19,6 +19,7 @@
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_result.hpp"
 #include "database/sqlite/sqlite_types.hpp"
+#include "database/sqlite/sqlite_exception.hpp"
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
@@ -65,7 +66,7 @@ void sqlite_database::open(const std::string &db)
   } else {
     int ret = sqlite3_open(db.c_str(), &sqlite_db_);
     if (ret != SQLITE_OK) {
-      throw std::runtime_error("couldn't open database: " + db);
+      throw sqlite_exception("couldn't open database: " + db);
     }
     database_impl::open(db);
   }
@@ -124,7 +125,7 @@ void sqlite_database::load(const prototype_node &node)
   }
 }
 
-bool sqlite_database::execute(const char *sql, result_impl *res)
+void sqlite_database::execute(const char *sql, result_impl *res)
 {
 
   std::cerr << "executing " << sql << "\n";
@@ -132,11 +133,10 @@ bool sqlite_database::execute(const char *sql, result_impl *res)
   char *errmsg;
   int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res, &errmsg);
   if (ret != SQLITE_OK) {
-    //throw database_error(errmsg);
+    std::string error(errmsg);
     sqlite3_free(errmsg);
-    return false;
+    throw sqlite_exception(error);
   }
-  return true;
 }
 
 void sqlite_database::visit(insert_action *a)

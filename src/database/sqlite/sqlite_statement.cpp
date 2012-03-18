@@ -17,16 +17,28 @@
 
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_database.hpp"
+#include "database/sqlite/sqlite_exception.hpp"
 
 #include "database/row.hpp"
 
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include <sqlite3.h>
 
 namespace oos {
 
 namespace sqlite {
+
+void throw_error(int ec, sqlite3 *db, const std::string &source)
+{
+  if (ec == SQLITE_OK) {
+    return;
+  }
+  std::stringstream msg;
+  msg << source << ": " << sqlite3_errmsg(db);
+  throw sqlite_exception(msg.str()); 
+}
 
 sqlite_statement::sqlite_statement(sqlite_database &db)
   : stmt_(0)
@@ -54,9 +66,8 @@ bool sqlite_statement::step()
     return false;
   } else {
     // error, throw exception
-//    throw std::sqlite_error("error on calling sqlite3_step");
     const char *msg = sqlite3_errmsg(db_());
-    throw std::logic_error(std::string("SQLite ERROR [sqlite3_step]: ") + msg);
+    throw sqlite_exception(std::string("sqlite3_step: ") + msg);
   }
   return false;
 }
@@ -69,11 +80,14 @@ void sqlite_statement::prepare(const std::string &sql)
   statement_impl::prepare(sql);
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
+  throw_error(ret, db_(), "sqlite3_prepare_v2");
+  /*
   if (SQLITE_OK != ret) {
     std::string msg(sqlite3_errmsg(db_()));
     std::cout << "error while preparing statement: " << sql << " " << msg << "\n";
-    throw std::runtime_error("error while preparing statement: " + sql + " " + msg);
+    throw sqlite_exception("sqlite3_prepare_v2: " + sql + " " + msg);
   }
+  */
 }
 
 void sqlite_statement::reset(bool clear_bindings)
@@ -91,10 +105,13 @@ int sqlite_statement::finalize()
   }
 //  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
   int ret = sqlite3_finalize(stmt_);
+  throw_error(ret, db_(), "sqlite3_finalize");
+  /*
   if (ret != SQLITE_OK) {
     std::string msg(sqlite3_errmsg(db_()));
-    throw std::runtime_error("error while preparing statement: " + msg);
+    throw sqlite_exception("sqlite3_finalize: " + msg);
   }
+  */
   stmt_ = 0;
   return ret;
 }
@@ -131,32 +148,44 @@ int sqlite_statement::column_type(int i) const
 
 int sqlite_statement::bind(int i, double value)
 {
-  return sqlite3_bind_double(stmt_, i, value);
+  int ret = sqlite3_bind_double(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_double");
+  return ret;
 }
 
 int sqlite_statement::bind(int i, int value)
 {
-  return sqlite3_bind_int(stmt_, i, value);
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
+  return ret;
 }
 
 int sqlite_statement::bind(int i, long value)
 {
-  return sqlite3_bind_int(stmt_, i, value);
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
+  return ret;
 }
 
 int sqlite_statement::bind(int i, unsigned int value)
 {
-  return sqlite3_bind_int(stmt_, i, value);
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
+  return ret;
 }
 
 int sqlite_statement::bind(int i, const char *value)
 {
-  return sqlite3_bind_text(stmt_, i, value, -1, 0);
+  int ret = sqlite3_bind_text(stmt_, i, value, -1, 0);
+  throw_error(ret, db_(), "sqlite3_bind_text");
+  return ret;
 }
 
 int sqlite_statement::bind_null(int i)
 {
-  return sqlite3_bind_null(stmt_, i);
+  int ret = sqlite3_bind_null(stmt_, i);
+  throw_error(ret, db_(), "sqlite3_bind_null");
+  return ret;
 }
 
 }

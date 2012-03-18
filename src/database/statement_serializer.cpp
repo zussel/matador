@@ -157,69 +157,58 @@ bool statement_serializer::valid_column(const char *id, int i) const
   return strcmp(name, id) == 0;
 }
 
-void statement_serializer::write_char(const char *id, char x)
+void statement_serializer::write_char(const char*, char x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_float(const char *id, float x)
+void statement_serializer::write_float(const char*, float x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_double(const char *id, double x)
+void statement_serializer::write_double(const char*, double x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_int(const char *id, int x)
+void statement_serializer::write_int(const char*, int x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_long(const char *id, long x)
+void statement_serializer::write_long(const char*, long x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, (int)x);
 }
 
-void statement_serializer::write_unsigned(const char *id, unsigned x)
+void statement_serializer::write_unsigned(const char*, unsigned x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_bool(const char *id, bool x)
+void statement_serializer::write_bool(const char*, bool x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_charptr(const char *id, const char *x)
+void statement_serializer::write_charptr(const char*, const char *x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_string(const char *id, const std::string &x)
+void statement_serializer::write_string(const char*, const std::string &x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   stmt_->bind(++column_, x.c_str());
 }
 
-void statement_serializer::write_varchar(const char *id, const varchar_base &x)
+void statement_serializer::write_varchar(const char*, const varchar_base &x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x.str() << ")\n";
   stmt_->bind(++column_, x.c_str());
 }
 
-void statement_serializer::write_object(const char *id, const object_base_ptr &x)
+void statement_serializer::write_object(const char*, const object_base_ptr &x)
 {
-//  std::cout << "bind value for column [" << id << "] (value: " << x << ")\n";
   if (x.ptr()) {
     stmt_->bind(++column_, (int)x.id());
   } else {

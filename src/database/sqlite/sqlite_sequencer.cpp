@@ -60,26 +60,6 @@ void sqlite_sequencer::create()
     db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
   stmt.finalize();
-
-  /*
-  sqlite_statement stmt(*db_);
-  stmt.prepare("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
-  stmt.step();
-
-  stmt.finalize();
-  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
-  if (stmt.step()) {
-    // element exists
-    int id = stmt.column_int(0);
-    reset(id);
-  } else {
-    // no such element, insert one
-    stmt.finalize();
-    stmt.prepare("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
-    stmt.step();
-    reset(0);
-  }
-  */
   // prepare update statement
   update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }
@@ -108,6 +88,7 @@ void sqlite_sequencer::rollback()
 void sqlite_sequencer::drop()
 {
   // drop table (do we need this)
+  db_->execute("DROP TABLE oos_sequence;");
 }
 
 void sqlite_sequencer::destroy()

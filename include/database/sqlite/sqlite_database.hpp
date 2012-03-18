@@ -87,12 +87,11 @@ public:
 
   /**
    * Execute a sql statement and return a result
-   * implementation.
+   * implementation via pointer.
    *
    * @param sql The sql statement to be executed.
-   * @return The corresponding result.
    */
-  virtual bool execute(const char *sql, result_impl *res = 0);
+  virtual void execute(const char *sql, result_impl *res = 0);
 
   virtual void visit(create_action *) {}
 
