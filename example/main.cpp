@@ -40,6 +40,7 @@ main(int argc, char *argv[])
   ostore.insert_prototype<Artist>("artist");
   ostore.insert_prototype<Album>("album");
   ostore.insert_prototype<Track>("track");
+  ostore.insert_prototype<TrackAlbumRelation>("track_album");
 
   // create and open db
   database db(ostore, "sqlite://mdb.sqlite");
@@ -93,6 +94,7 @@ read_music_data(database &db, const char *fname)
 
   object_ptr<Artist> artist;
   object_ptr<Album> album;
+  object_ptr<Track> track;
 
   transaction tr(db);
   try {
@@ -124,7 +126,7 @@ read_music_data(database &db, const char *fname)
         case DATA_ALBUM:
         case DATA_TRACK:
           if (line_is("TRACK", line, pos)) {
-            parse_track(db.ostore(), album, line, pos);
+            track = parse_track(db.ostore(), album, line, pos);
             data_type = DATA_TRACK;
           } else if (line_is("ALBUMEND", line, pos)) {
             // end artist section
@@ -245,7 +247,9 @@ object_ptr<Track> parse_track(object_store &ostore, const object_ptr<Album> &alb
     std::cout << "track [" << name << "] already exists!\n";
     return object_ptr<Track>();
   } else {
-    return ostore.insert(new Track(number, name, (long)duration, album->artist(), album));
+    object_ptr<Track> track = ostore.insert(new Track(name, (long)duration, album->artist()));
+    album->add(number, track);
+    return track;
   }
 }
 

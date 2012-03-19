@@ -45,7 +45,12 @@ template <> struct type_traits<object_base_ptr> { inline static const char* type
 class sqlite_types
 {
 public:
-  static const char *create_postfix(const std::string &table) { return ("CREATE TABLE " + table + " (").c_str(); }
+  static std::string create_postfix(const std::string &table) {
+    std::string str("CREATE TABLE " + table);
+    str += " (";
+    return str;
+//    return ("CREATE TABLE " + table + " (").c_str();
+  }
   static const char *select_postfix() { return "SELECT "; }
   static const char *insert_postfix(const std::string &table) { return ("INSERT INTO " + table + " (").c_str(); }
   static const char *update_postfix(const std::string &table) { return ("UPDATE" + table + " SET ").c_str(); }

@@ -6,6 +6,7 @@ SET (EXAMPLE_SOURCES
   Track.cpp
   Track.hpp
   TrackAlbumRelation.hpp
+  TrackAlbumRelation.cpp
   main.cpp
 )
 

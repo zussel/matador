@@ -43,7 +43,7 @@ namespace oos {
  * This kind of exception is thrown, when 
  * an object dealing error occurs.
  */
-class database_exception : public std::exception
+class OOS_API database_exception : public std::exception
 {
 public:
   /**

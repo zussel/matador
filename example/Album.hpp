@@ -1,6 +1,8 @@
 #ifndef ALBUM_HPP
 #define ALBUM_HPP
 
+#include "TrackAlbumRelation.hpp"
+
 #include "object/object.hpp"
 #include "object/object_vector.hpp"
 
@@ -17,9 +19,9 @@ class Album : public oos::object
 {
 public:
   typedef oos::object_ref<Album> self_ref;
-	typedef oos::object_ptr_vector<Track> track_vector_t;
-  typedef track_vector_t::iterator iterator;
-	typedef track_vector_t::const_iterator const_iterator;
+	typedef oos::object_ptr_vector<TrackAlbumRelation> track_album_vector_t;
+  typedef track_album_vector_t::iterator iterator;
+	typedef track_album_vector_t::const_iterator const_iterator;
   
   Album();
   Album(const std::string &n);
@@ -38,11 +40,10 @@ public:
   void artist(const oos::object_ptr<Artist> &a);
   oos::object_ref<Artist> artist() const;
 
-  void add(Track *track, bool overide_artist = true);
-  void add(oos::object_ref<Track> track, bool overide_artist = true);
+  void add(int index, const oos::object_ref<Track> &track, bool overide_artist = true);
   oos::object_ref<Track> find(const std::string &name) const;
 
-  oos::object_ptr<Track> operator[](track_vector_t::size_type n);
+  oos::object_ref<Track> operator[](track_album_vector_t::size_type n);
 
 	iterator begin();
 	iterator end();
@@ -57,7 +58,7 @@ private:
 	std::string name_;
   int year_;
   oos::object_ref<Artist> artist_;
-	track_vector_t track_vector_;
+	track_album_vector_t track_album_vector_;
 };
 
 #endif /* ALBUM_HPP */

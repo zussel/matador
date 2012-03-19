@@ -108,7 +108,7 @@ public:
 
   virtual std::string create(object *o, const std::string &table_name, const std::string&)
   {
-    begin(T::create_postfix(table_name));
+    begin(T::create_postfix(table_name).c_str());
 
     o->write_to(this);
 
