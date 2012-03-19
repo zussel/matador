@@ -41,14 +41,12 @@ class statement_creator
 public:
   virtual ~statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause) = 0;
+  virtual std::string create(object *o, const char *table_name, const char *where_clause) = 0;
 
 protected:
-  virtual void begin(const char *cmd)
-  {
-    statement_.str("");
-    statement_ << cmd;
-  }
+  virtual void begin(const char *table_name) = 0;
+  virtual bool step() { return false; }
+  virtual void end(const char *table_name, const char *where_clause) = 0;
 
   std::stringstream& statement_stream() { return statement_; }
 
@@ -60,6 +58,7 @@ template < class T >
 class statement_field_creator : public statement_creator, public object_atomizer
 {
 public:
+  statement_field_creator() : first_(true) {}
   virtual ~statement_field_creator() {}
 
 protected:
@@ -69,6 +68,11 @@ protected:
   virtual void write_pk_field(const char *id, const char *type) { write_field(id, type); }
 
   const type_provider& types() const { return types_; }
+
+  virtual void begin(const char *) { first_ = true; }
+
+  bool is_first() const { return first_; }
+  void first(bool f) { first_ = f; }
 
 private:
   virtual void write_char(const char *id, char x) { write_field(id, types_.type_string(x)); }
@@ -92,6 +96,7 @@ private:
 
 private:
   type_provider types_;
+  bool first_;
 };
 
 template < class T >
@@ -101,40 +106,48 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  create_statement_creator()
-    : first_(true)
-  {}
+  create_statement_creator() {}
   virtual ~create_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string&)
+  virtual std::string create(object *o, const char *table_name, const char*)
   {
-    begin(T::create_postfix(table_name).c_str());
+    begin(table_name);
 
     o->write_to(this);
 
-    this->statement_stream() << ");";
+    end(table_name, 0);
 
     return this->statement_stream().str();
+  }
+
+protected:
+  virtual void begin(const char *table_name)
+  {
+    base_creator::begin(table_name);
+    this->statement_stream() << T::create_postfix() << " " << table_name << " (";
+  }
+
+  virtual void end(const char *, const char *)
+  {
+    this->statement_stream() << ");";
   }
 
 private:
   virtual void write_field(const char *id, const char *type)
   {
-    if (!first_) {
+    if (!this->is_first()) {
       this->statement_stream() << ", ";
     } else {
-      first_ = false;
+      this->first(false);
     }
     this->statement_stream() << id << " " << type;
   }
+
   virtual void write_pk_field(const char *id, const char *type)
   {
     base_creator::write_pk_field(id, type);
     this->statement_stream() << " " << T::primary_key_prefix();
   }
-
-private:
-  bool first_;
 };
 
 template < class T >
@@ -144,44 +157,46 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  select_statement_creator()
-    : first_(true)
-  {}
+  select_statement_creator() {}
   virtual ~select_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const char *table_name, const char *where_clause)
   {
-    begin(T::select_postfix());
+    begin(table_name);
 
     o->write_to(this);
 
+    end(table_name, where_clause);
+
+    return this->statement_stream().str();
+  }
+
+protected:
+  virtual void begin(const char *table_name)
+  {
+    base_creator::begin(table_name);
+    this->statement_stream() << T::select_postfix() << " ";
+  }
+
+  virtual void end(const char *table_name, const char *where_clause)
+  {
     this->statement_stream() << " FROM " << table_name;
-    if (!where_clause.empty()) {
+    if (where_clause) {
       this->statement_stream() << " WHERE " << where_clause;
     }
     this->statement_stream() << ";";
-
-    return this->statement_stream().str();
   }
 
 private:
   virtual void write_field(const char *id, const char *)
   {
-    if (!first_) {
+    if (!this->is_first()) {
       this->statement_stream() << ", ";
     } else {
-      first_ = false;
+      this->first(false);
     }
     this->statement_stream() << id;
   }
-  
-  virtual void begin(const char *cmd)
-  {
-    first_ = true;
-    base_creator::begin(cmd);
-  }
-private:
-  bool first_;
 };
 
 template < class T >
@@ -192,17 +207,19 @@ public:
 
 public:
   insert_statement_creator()
-    : first_(true)
+    : second_(false)
   {}
   virtual ~insert_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string&)
+  virtual std::string create(object *o, const char *table_name, const char*)
   {
-    begin(T::insert_postfix(table_name));
+    begin(table_name);
 
-    o->write_to(this);
+    do {
+      o->write_to(this);
+    } while (step());
 
-    this->statement_stream() << ") VALUES (" << value_stream_.str() << ");";
+    end(table_name, 0);
 
     return this->statement_stream().str();
   }
@@ -210,25 +227,45 @@ public:
 private:
   virtual void write_field(const char *id, const char *)
   {
-    if (!first_) {
+    if (!this->is_first()) {
       this->statement_stream() << ", ";
-      value_stream_ << ", ";
     } else {
-      first_ = false;
+      this->first(false);
     }
-    this->statement_stream() << id;
-    value_stream_ << "?";
+    if (!second_) {
+      this->statement_stream() << id;
+    } else {
+      this->statement_stream() << "?";
+    }
   }
   
-  virtual void begin(const char *cmd)
+  virtual void begin(const char *table_name)
   {
-    value_stream_.str("");
-    base_creator::begin(cmd);
+    base_creator::begin(table_name);
+    second_ = false;
+    this->statement_stream() << T::insert_postfix() << " " << table_name << " (";
+  }
+
+  virtual bool step()
+  {
+    if (!second_) {
+      this->statement_stream() << ") VALUES (";
+      second_ = true;
+      return second_;
+    } else {
+      return !second_;
+    }
+    
+  }
+
+  virtual void end(const char *, const char *)
+  {
+    second_ = false;
+    this->statement_stream() << ");";
   }
 
 private:
-  bool first_;
-  std::stringstream value_stream_;
+  bool second_;
 };
 
 template < class T >
@@ -238,21 +275,16 @@ public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  update_statement_creator()
-    : first_(true)
-  {}
+  update_statement_creator() {}
   virtual ~update_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const char *table_name, const char *where_clause)
   {
-    begin(T::update_postfix(table_name));
+    begin(table_name);
 
     o->write_to(this);
 
-    if (!where_clause.empty()) {
-      this->statement_stream() << " WHERE " << where_clause;
-    }
-    this->statement_stream() << ";";
+    end(table_name, where_clause);
 
     return this->statement_stream().str();
   }
@@ -260,21 +292,27 @@ public:
 private:
   virtual void write_field(const char *id, const char *)
   {
-    if (!first_) {
+    if (!this->is_first()) {
       this->statement_stream() << ", ";
     } else {
-      first_ = false;
+      this->first(false);
     }
     this->statement_stream() << id << "=?";
   }
 
-  virtual void begin(const char *cmd)
+  virtual void begin(const char *table_name)
   {
-    base_creator::begin(cmd);
+    base_creator::begin(table_name);
+    this->statement_stream() << T::update_postfix() << " " << table_name << " SET ";
   }
-
-private:
-  bool first_;
+  
+  virtual void end(const char *, const char *where_clause)
+  {
+    if (where_clause) {
+      this->statement_stream() << " WHERE " << where_clause;
+    }
+    this->statement_stream() << ";";
+  }
 };
 
 template < class T >
@@ -284,17 +322,26 @@ public:
   delete_statement_creator() {}
   virtual ~delete_statement_creator() {}
 
-  virtual std::string create(object *, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *, const char *table_name, const char *where_clause)
   {
-    begin(T::delete_postfix(table_name));
+    begin(table_name);
 
-    if (!where_clause.empty()) {
+    end(table_name, where_clause);
+    return this->statement_stream().str();
+  }
+  
+protected:
+  virtual void begin(const char *table_name)
+  {
+    this->statement_stream() << T::delete_postfix() << " " << table_name << " ";
+  }
+
+  virtual void end(const char *, const char *where_clause)
+  {
+    if (where_clause) {
       this->statement_stream() << " WHERE " << where_clause;
     }
-
     this->statement_stream() << ";";
-
-    return this->statement_stream().str();
   }
 };
 
@@ -305,11 +352,24 @@ public:
   drop_statement_creator() {}
   virtual ~drop_statement_creator() {}
 
-  virtual std::string create(object *o, const std::string &table_name, const std::string &where_clause)
+  virtual std::string create(object *o, const char *table_name, const char*)
   {
-    begin(T::drop_postfix(table_name));
+    begin(table_name);
+    
+    end(table_name, 0);
 
     return this->statement_stream().str();
+  }
+
+protected:
+  virtual void begin(const char *table_name)
+  {
+    this->statement_stream() << T::drop_postfix() << " " << table_name;
+  }
+
+  virtual void end(const char *table_name, const char *where_clause)
+  {
+    this->statement_stream() << ";";
   }
 };
 

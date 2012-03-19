@@ -95,7 +95,7 @@ void sqlite_database::create(const prototype_node &node)
   create_statement_creator<sqlite_types> creator;
 
   std::auto_ptr<object> o(node.producer->create());
-  std::string sql = creator.create(o.get(), node.type, "");
+  std::string sql = creator.create(o.get(), node.type.c_str(), "");
 
   execute(sql.c_str());
 }
@@ -109,7 +109,7 @@ void sqlite_database::load(const prototype_node &node)
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
 
-    std::string sql = creator.create(o.get(), node.type, "");
+    std::string sql = creator.create(o.get(), node.type.c_str(), "");
 
     stmt.reset(create_statement());
     stmt->prepare(sql);
@@ -153,7 +153,7 @@ void sqlite_database::visit(insert_action *a)
     
     insert_action::const_iterator i = a->begin();
     
-    std::string sql = creator.create(*i, a->type(), "");
+    std::string sql = creator.create(*i, a->type().c_str(), "");
 
     stmt.reset(create_statement());
     stmt->prepare(sql);
