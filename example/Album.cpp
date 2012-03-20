@@ -15,8 +15,9 @@ Album::Album(const std::string &n)
   , track_album_vector_(this, "album", "track_index")
 {}
 
-Album::Album(const std::string &n, const object_ptr<Artist> &a)
+Album::Album(const std::string &n, int year, const object_ptr<Artist> &a)
   : name_(n)
+  , year_(year)
   , artist_(a)
   , track_album_vector_(this, "album", "track_index")
 {}

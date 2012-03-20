@@ -212,7 +212,7 @@ object_ptr<Album> parse_album(object_store &ostore, const object_ptr<Artist> &ar
     std::cout << "album [" << name << "] already exists!\n";
     return object_ptr<Album>();
   } else {
-    return ostore.insert(new Album(name, artist));
+    return ostore.insert(new Album(name, year, artist));
   }
 }
 

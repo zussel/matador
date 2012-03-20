@@ -251,6 +251,7 @@ private:
     if (!second_) {
       this->statement_stream() << ") VALUES (";
       second_ = true;
+      this->first(true);
       return second_;
     } else {
       return !second_;

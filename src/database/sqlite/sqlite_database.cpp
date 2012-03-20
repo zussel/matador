@@ -109,7 +109,7 @@ void sqlite_database::load(const prototype_node &node)
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
 
-    std::string sql = creator.create(o.get(), node.type.c_str(), "");
+    std::string sql = creator.create(o.get(), node.type.c_str(), 0);
 
     stmt.reset(create_statement());
     stmt->prepare(sql);

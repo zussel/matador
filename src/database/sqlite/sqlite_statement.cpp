@@ -30,13 +30,13 @@ namespace oos {
 
 namespace sqlite {
 
-void throw_error(int ec, sqlite3 *db, const std::string &source)
+void throw_error(int ec, sqlite3 *db, const std::string &source, const std::string &sql = "")
 {
   if (ec == SQLITE_OK) {
     return;
   }
   std::stringstream msg;
-  msg << source << ": " << sqlite3_errmsg(db);
+  msg << source << ": " << sqlite3_errmsg(db) << "(" << sql << ")";
   throw sqlite_exception(msg.str()); 
 }
 
@@ -80,7 +80,7 @@ void sqlite_statement::prepare(const std::string &sql)
   statement_impl::prepare(sql);
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2");
+  throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
   /*
   if (SQLITE_OK != ret) {
     std::string msg(sqlite3_errmsg(db_()));

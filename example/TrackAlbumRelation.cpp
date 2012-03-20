@@ -8,7 +8,7 @@ TrackAlbumRelation::TrackAlbumRelation()
 {}
 
 TrackAlbumRelation::TrackAlbumRelation(int index, const oos::object_ref<Track> &track, const oos::object_ref<Album> &album)
-  : track_index_(0)
+  : track_index_(index)
   , track_(track)
   , album_(album)
 {}

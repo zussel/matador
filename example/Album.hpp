@@ -25,7 +25,7 @@ public:
   
   Album();
   Album(const std::string &n);
-  Album(const std::string &n, const oos::object_ptr<Artist> &a);
+  Album(const std::string &n, int year, const oos::object_ptr<Artist> &a);
 	virtual ~Album();
 
 	virtual void read_from(oos::object_atomizer *reader);
