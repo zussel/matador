@@ -134,6 +134,8 @@
 
 namespace oos {
 
+class varchar_base;
+
 /**
  * @class unit_test
  * @brief A unit_test consists of serveral tests.
@@ -252,6 +254,8 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  void assert_equal(const varchar_base &a, const varchar_base &b, const std::string &msg, int line, const char *file);
 
   /**
    * @brief Checks if a is not equal b.

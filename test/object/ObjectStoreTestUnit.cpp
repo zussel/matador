@@ -64,7 +64,7 @@ ObjectStoreTestUnit::expression_test()
   j = std::find_if(oview.begin(), oview.end(), 6 == x);
   j = std::find_if(oview.begin(), oview.end(), (6 == x) || (x < 4));
   j = std::find_if(oview.begin(), oview.end(), y == "Simple");
-  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y != "Simple"));
+  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "Simple"));
 
   if (j != oview.end()) {
     std::cout << "found simple object [" << (*j)->id() << "] with number " << (*j)->number() << "\n";
@@ -77,7 +77,7 @@ void
 ObjectStoreTestUnit::serializer()
 {  
   char c = 'c';
-  float f = 1.55;
+  float f = 1.55f;
   double d = 123.55789;
   int i = -98765;
   long l = -1234567890;

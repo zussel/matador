@@ -113,6 +113,12 @@ struct expression_traits<const char*>
   typedef constant<std::string> expression_type;
 };
 
+template <>
+struct expression_traits<const object_base_ptr&>
+{
+  typedef constant<const object_base_ptr&> expression_type;
+};
+
 template < class L, class OP >
 class unary_expression
 {
@@ -262,7 +268,7 @@ binary_expression<T, variable<T, O>, std::equal_to<T> > operator==(const T &l, c
 // not equal
 
 template < class T >
-binary_expression<T, T, std::not_equal_to<T> > operator!=(const T &l, const T &r)
+binary_expression<T, T, std::not_equal_to<T> > operator!=(const constant<T> &l, const constant<T> &r)
 {
   return binary_expression<T, T, std::not_equal_to<T> >(l, r);
 }

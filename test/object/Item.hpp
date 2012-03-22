@@ -12,8 +12,8 @@
 class AllBase : public oos::object
 {
 public:
-  AllBase();
-  virtual ~AllBase();
+  AllBase() {}
+  virtual ~AllBase() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
@@ -100,23 +100,19 @@ public:
   std::string name() const { return name_.str(); }
   void name(const std::string &n)
   { 
-    //modify_value(name_, n);
-    mark_modified();
-    name_ = n;
+    modify(name_, n);
   }
 
   int index() const { return index_; }
   void index(int i)
   { 
-    mark_modified();
-    index_ = i;
+    modify(index_, i);
   }
 
   oos::object_ref<L> itemlist() const { return list_; }
   void itemlist(const oos::object_ref<L> &l)
   {
-    mark_modified();
-    list_ = l;
+    modify(list_, l);
   }
 
 private:

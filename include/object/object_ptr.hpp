@@ -219,52 +219,6 @@ private:
 };
 /// @endcond
 
-/*
-template < class T, bool IR >
-class object_wrapper : public object_base_ptr
-{
-public:
-	object_wrapper() : object_base_ptr(false) {}
-	template < class Y >
-	object_wrapper(const object_wrapper<Y, true> &x) {}
-	template < class Y >
-	object_wrapper(const object_wrapper<Y, false> &x) {}
-	template < class Y >
-	object_wrapper& operator=(const object_wrapper<Y, true> &x) { return *this; }
-	template < class Y >
-	object_wrapper& operator=(const object_wrapper<Y, false> &x) { return *this; }
-	explicit object_wrapper(object* o) : object_base_ptr(o, false) {}
-
-  virtual const char* type() const
-  {
-    return typeid(T).name();
-  }
-
-	T* operator->() const {
-	  if (proxy_) {
-	    return dynamic_cast<T*>(lookup_object());
-	  }
-	  return NULL;
-	}
-	T& operator*() const {
-		if (proxy_) {
-      return *dynamic_cast<T*>(lookup_object());
- 		}
-    return NULL;
-	}
-	T* get() const {
-		if (proxy_) {
-      return dynamic_cast<T*>(lookup_object());
- 		}
-    return NULL;
-	}
-  virtual bool is_reference() const
-  {
-    return IR;
-  }
-};
-*/
-
 template < class T >
 class object_ref;
 
@@ -449,6 +403,11 @@ public:
   {
     object_base_ptr::operator=(x);
     return *this;
+  }
+
+  bool operator==(const object_ref &x) const
+  {
+    return object_base_ptr::operator ==(x);
   }
 
   /**
