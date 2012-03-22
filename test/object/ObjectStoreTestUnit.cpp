@@ -191,8 +191,8 @@ ObjectStoreTestUnit::access_value()
 
   UNIT_ASSERT_TRUE(retrieve_value(so, "name", vs), "couldn't get varchar value for field [name]");
   UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
-  UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
-  UNIT_ASSERT_EQUAL(vs, vstr, "retrieved value of integer isn't " + vstr.str());
+  UNIT_ASSERT_EQUAL(s, str, "retrieved value of string isn't " + str);
+  UNIT_ASSERT_EQUAL(vs, vstr, "retrieved value of varchar isn't " + vstr.str());
 
   str = "Kambrium";
   UNIT_ASSERT_TRUE(update_value(so, "name", str), "couldn't set string value for field [name]");

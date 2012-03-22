@@ -96,6 +96,12 @@ struct expression_traits<int>
 };
 
 template <>
+struct expression_traits<bool>
+{
+  typedef constant<bool> expression_type;
+};
+
+template <>
 struct expression_traits<double>
 {
   typedef constant<double> expression_type;
@@ -293,24 +299,29 @@ binary_expression<T, variable<T, O>, std::not_equal_to<T> > operator!=(const T &
 
 // logical
 
-template < class L, class R >
-binary_expression<L, R, std::logical_or<bool> > operator||(const L &l, const R &r)
+template < class L1, class R1, class OP1, class L2, class R2, class OP2 >
+binary_expression<binary_expression<L1, R1, OP1>, 
+                  binary_expression<L2, R2, OP2>,
+                  std::logical_or<bool> > operator||(const binary_expression<L1, R1, OP1> &l,
+                                                     const binary_expression<L2, R2, OP2> &r)
 {
-  return binary_expression<L, R, std::logical_or<bool> >(l, r);
+  return binary_expression<binary_expression<L1, R1, OP1>, binary_expression<L2, R2, OP2>, std::logical_or<bool> >(l, r);
 }
 
-template < class L, class R >
-binary_expression<L, R, std::logical_and<bool> > operator&&(const L &l, const R &r)
+template < class L1, class R1, class OP1, class L2, class R2, class OP2 >
+binary_expression<binary_expression<L1, R1, OP1>, 
+                  binary_expression<L2, R2, OP2>,
+                  std::logical_and<bool> > operator&&(const binary_expression<L1, R1, OP1> &l,
+                                                      const binary_expression<L2, R2, OP2> &r)
 {
-  return binary_expression<L, R, std::logical_and<bool> >(l, r);
+  return binary_expression<binary_expression<L1, R1, OP1>, binary_expression<L2, R2, OP2>, std::logical_and<bool> >(l, r);
 }
-/*
-template < class L >
-unary_expression<L, std::logical_not<bool> > operator!(const L &l)
+
+template < class L, class R, class OP >
+unary_expression<binary_expression<L, R, OP>, std::logical_not<bool> > operator!(const binary_expression<L, R, OP> &l)
 {
-  return unary_expression<L, std::logical_not<bool> >(l);
+  return unary_expression<binary_expression<L, R, OP>, std::logical_not<bool> >(l);
 }
-*/
 
 /// @endcond
 
