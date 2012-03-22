@@ -5,13 +5,21 @@ body
 	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
   font-size: 85%;
 	color: #555;
-  background-color: #eee8d5;
+/*  background-color: #eee8d5;*/
+/*  background-color: #ffffff;*/
 }
 
 #wrapper
 {
   width: 900px;
   margin: 0px auto;
+}
+
+#header_wrapper
+{
+  width: 900px;
+  margin: 0px auto;
+  background-color: #073642;
 }
 
 #header
@@ -72,7 +80,8 @@ body
   margin: 0 0;
   padding: 0 0;
   color: #555;
-  background-color: #fdf6e3;
+/*  background-color: #fdf6e3;*/
+  background-color: #ffffff;
 }
 
 #navrow1 ul,
@@ -137,7 +146,7 @@ body
 
 #content h2
 {
-  margin: 5px 10px;
+  margin: 20px 10px;
 }
 
 #content p
@@ -146,6 +155,7 @@ body
 /*  padding: 5px;*/
   /*border: 1px dashed #ccc*/;
   text-align: justify;
+  line-height:1.4em;
 }
 
 #content pre
