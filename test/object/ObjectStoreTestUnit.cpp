@@ -1,18 +1,26 @@
 #include "ObjectStoreTestUnit.hpp"
+#include "Item.hpp"
 
 #include "object/object_value.hpp"
 #include "object/object_expression.hpp"
+#include "object/object_serializer.hpp"
 #include "object/object_view.hpp"
 
+#include "tools/byte_buffer.hpp"
+
 #include <algorithm>
+#include <iostream>
 
 using namespace oos;
+using namespace std;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("ObjectStore Test Unit")
 {
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
+  add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
+  add_test("ref_ptr_counter", std::tr1::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
   add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
   add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
@@ -26,6 +34,7 @@ ObjectStoreTestUnit::~ObjectStoreTestUnit()
 void
 ObjectStoreTestUnit::initialize()
 {
+  ostore_.insert_prototype(new object_producer<AllBase>, "ALL_BASE");
   ostore_.insert_prototype(new object_producer<SimpleObject>, "SIMPLE_OBJECT");
   ostore_.insert_prototype(new object_producer<ObjectWithSubObject>, "OBJECT_WITH_SUB_OBJECT");
 }
@@ -62,6 +71,97 @@ ObjectStoreTestUnit::expression_test()
   } else {
     std::cout << "nothing fouond\n";
   }
+}
+
+void
+ObjectStoreTestUnit::serializer()
+{  
+  char c = 'c';
+  float f = 1.55;
+  double d = 123.55789;
+  int i = -98765;
+  long l = -1234567890;
+  unsigned u = 4567890;
+  bool b = true;
+  std::string title = "Hallo Welt";
+  oos::varchar<64> str("The answer is 42");
+
+  AllBase *all = new AllBase();
+  
+  all->set_char(c);
+  all->set_float(f);
+  all->set_double(d);
+  all->set_int(i);
+  all->set_long(l);
+  all->set_unsigned(u);
+  all->set_bool(b);
+  all->set_string(title);
+  all->set_varchar(str);
+  
+  object_serializer serializer;
+ 
+  byte_buffer buffer;
+  serializer.serialize(all, buffer);
+  
+  delete all;
+  
+  all = new AllBase();
+  
+  serializer.deserialize(all, buffer, &ostore_);
+
+  UNIT_ASSERT_EQUAL(c, all->get_char(), "restored character is not equal to the original character");
+  UNIT_ASSERT_EQUAL(f, all->get_float(), "restored float is not equal to the original float");
+  UNIT_ASSERT_EQUAL(d, all->get_double(), "restored double is not equal to the original double");
+  UNIT_ASSERT_EQUAL(i, all->get_int(), "restored int is not equal to the original int");
+  UNIT_ASSERT_EQUAL(l, all->get_long(), "restored long is not equal to the original long");
+  UNIT_ASSERT_EQUAL(u, all->get_unsigned(), "restored unsigned is not equal to the original unsigned");
+  UNIT_ASSERT_EQUAL(b, all->get_bool(), "restored bool is not equal to the original bool");
+  UNIT_ASSERT_EQUAL(title, all->get_string(), "restored string is not equal to the original string");
+  UNIT_ASSERT_EQUAL(str, all->get_varchar(), "restored varchar is not equal to the original varchar");
+  
+  delete all;
+}
+
+void
+ObjectStoreTestUnit::ref_ptr_counter()
+{
+  SimpleObject *so = new SimpleObject("Simple", 7);
+  
+  typedef object_ptr<SimpleObject> simple_ptr;
+  typedef object_ptr<ObjectWithSubObject> withsub_ptr;
+  
+  simple_ptr simple = ostore_.insert(so);
+  
+  withsub_ptr withsub = ostore_.insert(new ObjectWithSubObject());
+  withsub->simple(simple);
+
+  
+  cout << endl; 
+  cout << "simple ref count: " << simple.ref_count() << "\n";
+  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  
+  simple_ptr a1 = simple;
+  simple_ptr a2 = simple;
+  
+  cout << "simple ref count: " << simple.ref_count() << "\n";
+  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+
+  typedef object_ref<SimpleObject> simple_ref;
+  
+  simple_ref aref1 = a1;
+
+  cout << "simple ref count: " << simple.ref_count() << "\n";
+  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+
+  a1.reset();
+  
+  cout << "simple ref count: " << simple.ref_count() << "\n";
+  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  
+  a1 = aref1;
+
+  cout << "simple ref count: " << simple.ref_count() << "\n";
+  cout << "simple ptr count: " << simple.ptr_count() << "\n";  
 }
 
 void

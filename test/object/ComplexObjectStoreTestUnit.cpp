@@ -3,9 +3,6 @@
 #include "object/object_ptr.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_view.hpp"
-#include "object/object_serializer.hpp"
-
-#include "tools/byte_buffer.hpp"
 
 #include "Track.hpp"
 #include "Album.hpp"
@@ -23,9 +20,6 @@ ComplexObjectStoreTestUnit::ComplexObjectStoreTestUnit()
   : unit_test("complex objectstore")
 {
   add_test("first", std::tr1::bind(&ComplexObjectStoreTestUnit::first, this), "first complex test");
-  add_test("album", std::tr1::bind(&ComplexObjectStoreTestUnit::album, this), "album test");
-  add_test("serializer", std::tr1::bind(&ComplexObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::tr1::bind(&ComplexObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
   add_test("delete_object", std::tr1::bind(&ComplexObjectStoreTestUnit::delete_object, this), "delete object");
 }
 
@@ -198,121 +192,6 @@ ComplexObjectStoreTestUnit::first()
   } else {
     cout << "albums available!\n";
   }
-}
-
-void
-ComplexObjectStoreTestUnit::album()
-{
-  typedef object_ptr<Artist> artist_ptr;
-  typedef object_ptr<Track> track_ptr;
-  typedef object_ptr<Album> album_ptr;
-  artist_ptr artist = ostore_.insert(new Artist("Chris Huelsbeck"));
-  album_ptr album = ostore_.insert(new Album("symphonic shades", artist));
-  
-  album->add(new Track(1, "Grand Monster Slam (Opening Fanfare)", 165));
-  album->add(new Track(2, "X-Out (Main Theme)", 311));
-  album->add(new Track(3, "Jim Power in Mutant Planet (Main Theme)", 337));
-  album->add(new Track(4, "Tower of Babel", 279));
-  album->add(new Track(5, "Turrican 3 - Payment Day (Piano Suite)", 318));
-  album->add(new Track(6, "Gem'X (Main Theme)", 220));
-  album->add(new Track(7, "Apidya II (Suite)", 325));
-  album->add(new Track(8, "R-Type (Main Theme)", 318));
-  album->add(new Track(9, "Licht am Ende des Tunnels (Suite)", 309));
-  album->add(new Track(10, "The Great Giana Sisters (Suite)", 330));
-  album->add(new Track(11, "Rony Barrak-Solo", 305));
-  album->add(new Track(12, "Tunnel B1 (Suite)", 298));
-  album->add(new Track(13, "Symphonic Shades", 288));
-  album->add(new Track(14, "Karawane der Elefanten", 251));
-  album->add(new Track(15, "Turrican II - The Final Fight (Renderings: Main Theme)", 552));
-  
-  object_view<Track> trackview(ostore_, true);
-
-  object_view<Track>::const_iterator first = trackview.begin();
-  object_view<Track>::const_iterator last = trackview.end();
-
-  cout << "Show all tracks (excluding siblings):\n";
-  while (first != last) {
-    object_ptr<Track> optr = (*first++);
-    cout << "Track: " << optr->title() << "(id: " << optr->id() << ")\n";
-  }
-
-  Album::const_iterator afirst = album->begin();
-  Album::const_iterator alast = album->end();
-
-  typedef object_ref<Track> track_ref;
-
-  ostore_.dump_objects(cout);
-
-  cout << "Album has " << album->size() << " count of tracks\n";
-  cout << "Show all tracks of album [" << album->name() << "]:\n";
-  while (afirst != alast) {
-    track_ref tref = (*afirst++)->oref();
-    cout << "Track: [" << tref->number() << "] " << tref->title() << " (Artist: " << tref->artist()->name() << ")\n";
-  }
-}
-
-void
-ComplexObjectStoreTestUnit::serializer()
-{
-  std::string title = "Hallo Welt";
-
-  Track *track = new Track(1, title, 300);
-  
-  object_serializer serializer;
- 
-  byte_buffer buffer;
-  serializer.serialize(track, buffer);
-  
-  delete track;
-  
-  track = new Track();
-  
-  serializer.deserialize(track, buffer, &ostore_);
-
-  UNIT_ASSERT_EQUAL(title, track->title(), "restored track title is not equal to the original title");
-  
-  delete track;
-}
-
-void
-ComplexObjectStoreTestUnit::ref_ptr_counter()
-{
-  Artist *a = new Artist("AC/CD");
-  
-  typedef object_ptr<Artist> artist_ptr;
-  typedef object_ptr<Album> album_ptr;
-  
-  artist_ptr artist = ostore_.insert(a);
-  
-  album_ptr album = ostore_.insert(new Album("Back in Black", artist));
-
-  
-  cout << endl; 
-  cout << "artist ref count: " << artist.ref_count() << "\n";
-  cout << "artist ptr count: " << artist.ptr_count() << "\n";
-  
-  artist_ptr a1 = artist;
-  artist_ptr a2 = artist;
-  
-  cout << "artist ref count: " << artist.ref_count() << "\n";
-  cout << "artist ptr count: " << artist.ptr_count() << "\n";
-
-  typedef object_ref<Artist> artist_ref;
-  
-  artist_ref aref1 = a1;
-
-  cout << "artist ref count: " << artist.ref_count() << "\n";
-  cout << "artist ptr count: " << artist.ptr_count() << "\n";
-
-  a1.reset();
-  
-  cout << "artist ref count: " << artist.ref_count() << "\n";
-  cout << "artist ptr count: " << artist.ptr_count() << "\n";
-  
-  a1 = aref1;
-
-  cout << "artist ref count: " << artist.ref_count() << "\n";
-  cout << "artist ptr count: " << artist.ptr_count() << "\n";  
 }
 
 void

@@ -184,6 +184,12 @@ public:
     attr = val;
   }
 
+  void modify(varchar_base &attr, const varchar_base &val)
+  {
+    mark_modified();
+    attr = val;
+  }
+
   /**
    * Print the object to a given stream
    *

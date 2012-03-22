@@ -9,6 +9,71 @@
 
 #include "tools/varchar.hpp"
 
+class AllBase : public oos::object
+{
+public:
+  AllBase();
+  virtual ~AllBase();
+
+	void read_from(oos::object_atomizer *reader)
+  {
+    oos::object::read_from(reader);
+    reader->read_char("val_char", char_);
+    reader->read_float("val_float", float_);
+    reader->read_double("val_double", double_);
+    reader->read_int("val_int", int_);
+    reader->read_long("val_long", long_);
+    reader->read_unsigned("val_unsigned", unsigned_);
+    reader->read_bool("val_bool", bool_);
+    reader->read_string("val_string", string_);
+    reader->read_varchar("val_varchar", varchar_);
+  }
+	void write_to(oos::object_atomizer *writer) const
+  {
+    oos::object::write_to(writer);
+    writer->write_char("val_char", char_);
+    writer->write_float("val_float", float_);
+    writer->write_double("val_double", double_);
+    writer->write_int("val_int", int_);
+    writer->write_long("val_long", long_);
+    writer->write_unsigned("val_unsigned", unsigned_);
+    writer->write_bool("val_bool", bool_);
+    writer->write_string("val_string", string_);
+    writer->write_varchar("val_varchar", varchar_);
+  }
+
+  void set_char(char x) { modify(char_, x); }
+  void set_float(float x) { modify(float_, x); }
+  void set_double(double x) { modify(double_, x); }
+  void set_int(int x) { modify(int_, x); }
+  void set_long(long x) { modify(long_, x); }
+  void set_unsigned(unsigned x) { modify(unsigned_, x); }
+  void set_bool(bool x) { modify(bool_, x); }
+  void set_string(const std::string &x) { modify(string_, x); }
+  void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
+
+  char get_char() const { return char_; }
+  float get_float() const { return float_; }
+  double get_double() const { return double_; }
+  int get_int() const { return int_; }
+  long get_long() const { return long_; }
+  unsigned get_unsigned() const { return unsigned_; }
+  bool get_bool() const { return bool_; }
+  std::string get_string() const { return string_; }
+  oos::varchar_base get_varchar() const { return varchar_; }
+
+private:
+  char char_;
+  float float_;
+  double double_;
+  int int_;
+  long long_;
+  unsigned unsigned_;
+  bool bool_;
+  std::string string_;
+  oos::varchar<64> varchar_;
+};
+
 template < class L >
 class Item : public oos::object
 {

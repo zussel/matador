@@ -94,6 +94,8 @@ public:
   
   void expression_test();
   void access_value();
+  void serializer();
+  void ref_ptr_counter();
   void simple_object();
   void object_with_sub_object();
   void multiple_simple_objects();
