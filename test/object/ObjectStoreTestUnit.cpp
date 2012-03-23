@@ -48,6 +48,8 @@ ObjectStoreTestUnit::finalize()
 void
 ObjectStoreTestUnit::expression_test()
 {
+  typedef object_ptr<SimpleObject> simple_ptr;
+
   for (int i = 0; i < 10; ++i) {
     ostore_.insert(new SimpleObject("Simple", i));
   }
@@ -206,7 +208,7 @@ ObjectStoreTestUnit::access_value()
   owsub_ptr owsub = ostore_.insert(new ObjectWithSubObject);
   osmpl_ptr osmpl = ostore_.insert(so);
 
-  std::cout << "inserted simple object: " << osmpl << "\n";
+//  std::cout << "inserted simple object: " << osmpl << "\n";
 
   UNIT_ASSERT_TRUE(update_value(owsub, "simple", osmpl), "couldn't set object field [simple]");
 
@@ -269,14 +271,10 @@ void
 ObjectStoreTestUnit::multiple_simple_objects()
 {
   typedef object_ptr<SimpleObject> simple_ptr;
-    
+
+  size_t elem_size = 10000;
   // create 1000 objects
-  UNIT_INFO("\ncreating objects :");
-  for (int i = 0; i < 10000; ++i) {
-    if (i%100 == 0) {
-      std::cout << " " << i;
-      std::cout.flush();
-    }
+  for (size_t i = 0; i < elem_size; ++i) {
     object *o = ostore_.create("SIMPLE_OBJECT");
     
     UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
@@ -286,21 +284,12 @@ ObjectStoreTestUnit::multiple_simple_objects()
     UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
     
     simple_ptr simple = ostore_.insert(a);
-    
-    //ostore_.remove(simple);
   }
-  UNIT_INFO(" done\n");
-  
-  /*
-  std::cout << std::endl;
-  SimpleObject *pso;
-  std::cout << "typeid (pso*)   : " << typeid(pso).name() << std::endl;
-  std::cout << "typeid (SimpleObject*)   : " << typeid(SimpleObject*).name() << std::endl;
-  std::cout << "typeid (SimpleObject)    : " << typeid(SimpleObject).name() << std::endl;
-  SimpleObject so;
-  std::cout << "typeid (SimpleObject  so): " << typeid(so).name() << std::endl;
-  std::cout << "typeid (SimpleObject *so): " << typeid(&so).name() << std::endl;
-  */
+
+  typedef object_view<SimpleObject> simple_view_t;
+  simple_view_t simple_view(ostore_);
+
+  UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10000");
 }
 
 void
@@ -309,13 +298,8 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   typedef object_ptr<ObjectWithSubObject> ows_ptr;
     
   // create 1000 objects
-  UNIT_INFO("\ncreating objects :");
-  for (int i = 0; i < 1000; ++i) {
-    if (i%10 == 0) {
-      std::cout << " " << i;
-      std::cout.flush();
-    }
-
+  size_t elem_size = 1000;
+  for (size_t i = 0; i < elem_size; ++i) {
     object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
     
     UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectWithSubObject>");
@@ -325,10 +309,12 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
     UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ObjectWithSubObject");
     
     ows_ptr ows = ostore_.insert(a);
-    
-    //ostore_.remove(simple);
   }
-  UNIT_INFO(" done\n");
+
+  typedef object_view<ObjectWithSubObject> withsub_view_t;
+  withsub_view_t withsub_view(ostore_);
+
+  UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10000");
 }
 
 void

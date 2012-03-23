@@ -28,6 +28,7 @@ namespace oos {
 
 database_impl::database_impl(database *db, database_sequencer *seq)
   : db_(db)
+  , commiting_(false)
   , sequencer_(seq)
 {}
 
@@ -74,6 +75,7 @@ void database_impl::prepare()
 void database_impl::begin()
 {
   on_begin();
+  commiting_ = true;
 }
 
 void database_impl::commit()
@@ -82,13 +84,18 @@ void database_impl::commit()
   sequencer_->commit();
 
   on_commit();
+
+  commiting_ = false;
 }
 
 void database_impl::rollback()
 {
   sequencer_->rollback();
 
-  on_rollback();
+  if (commiting_) {
+    on_rollback();
+    commiting_ = false;
+  }
 }
 
 const database* database_impl::db() const

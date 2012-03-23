@@ -62,7 +62,10 @@ namespace detail {
   template < typename X, typename Y >
   struct updater
   {
-    void update(const char*, const char*, bool&, object_value<X>&, object*, X, Y&) {}
+    void update(const char*, const char*, bool&, object_value<X>&, object*, X x, Y &y)
+    {
+      int i = 9;
+    }
   };
   
   template < typename T >
@@ -84,9 +87,9 @@ namespace detail {
   };
 
   template < >
-  struct OOS_API updater<std::string&, varchar_base&>
+  struct OOS_API updater<std::string, varchar_base>
   {
-    void update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave);
+    void update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, const std::string &master, varchar_base &slave);
   };
 
   template < unsigned int C >
@@ -202,8 +205,8 @@ public:
 protected:
   template < typename X, typename Y > friend struct detail::updater;
 
-  void retrieve(object *o);
-  void update(const object *o);
+  void retrieve(const object *o);
+  void update(object *o);
   void mark_modified(object *o);
 };
 /// @endcond
@@ -251,7 +254,8 @@ public:
     id_ = id;
     object_ = o;
     succeeded_ = false;
-    retrieve(o);
+    update(o);
+//    retrieve(o);
     object_ = 0;
   }
 
@@ -271,7 +275,8 @@ public:
   {
     id_ = id;
     succeeded_ = false;
-    update(o);
+//    update(o);
+    retrieve(o);
     return value_;
   }
 

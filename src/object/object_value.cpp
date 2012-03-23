@@ -23,14 +23,14 @@ namespace oos {
 object_value_base::~object_value_base()
 {}
 
-void object_value_base::retrieve(object *o)
-{
-  o->read_from(this);
-}
-
-void object_value_base::update(const object *o)
+void object_value_base::retrieve(const object *o)
 {
   o->write_to(this);
+}
+
+void object_value_base::update(object *o)
+{
+  o->read_from(this);
 }
 
 void object_value_base::mark_modified(object *o)
@@ -52,7 +52,7 @@ updater<varchar_base&, varchar_base&>::update(const char *id, const char *f, boo
 }
 
 void
-updater<std::string&, varchar_base&>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, std::string &master, varchar_base &slave)
+updater<std::string, varchar_base>::update(const char *id, const char *f, bool &r, object_value<std::string> &ov, object *o, const std::string &master, varchar_base &slave)
 {
   if (strcmp(f, id) != 0) {
     return;

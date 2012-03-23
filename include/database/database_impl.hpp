@@ -229,6 +229,7 @@ private:
   friend class database_factory;
 
   database *db_;
+  bool commiting_;
 
   typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;
   

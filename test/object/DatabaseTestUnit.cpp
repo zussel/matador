@@ -106,6 +106,9 @@ DatabaseTestUnit::simple()
   database db(ostore_, "sqlite://simple.sqlite");
 
   // load data
+  db.create();
+
+  // load data
   db.load();
 
   // create new transaction    
@@ -196,6 +199,9 @@ DatabaseTestUnit::with_sub()
   database db(ostore_, "sqlite://with_sub.sqlite");
 
   // load data
+  db.create();
+
+  // load data
   /****************
    *
    * comment this statement and the following
@@ -258,6 +264,9 @@ DatabaseTestUnit::with_list()
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
   database db(ostore_, "sqlite://with_list.sqlite");
+
+  // load data
+  db.create();
 
   // load db
   db.load();

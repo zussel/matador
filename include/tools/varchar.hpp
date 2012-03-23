@@ -176,13 +176,13 @@ public:
 template < unsigned int C >
 bool operator==(const varchar<C> &l, const varchar<C> &r)
 {
-  return l.c_str() == r.c_str();
+  return l.str() == r.str();
 }
 
 template < unsigned int C >
 bool operator!=(const varchar<C> &l, const varchar<C> &r)
 {
-  return l.c_str() != r.c_str();
+  return l.str() != r.str();
 }
 
 
