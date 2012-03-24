@@ -14,7 +14,6 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  void helper();
   void open();
   void simple();
   void with_sub();

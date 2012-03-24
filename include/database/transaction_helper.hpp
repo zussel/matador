@@ -44,11 +44,12 @@ class backup_visitor : public action_visitor
 {
 public:
   backup_visitor()
-    : buffer_(NULL)
+    : buffer_(0)
+    , object_(0)
   {}
   virtual ~backup_visitor() {}
 
-  bool backup(action *act, byte_buffer *buffer);
+  bool backup(action *act, const object *o, byte_buffer *buffer);
 
   virtual void visit(create_action *) {}
   virtual void visit(insert_action *a);
@@ -58,6 +59,7 @@ public:
 
 private:
   byte_buffer *buffer_;
+  const object *object_;
   object_serializer serializer_;
 };
 

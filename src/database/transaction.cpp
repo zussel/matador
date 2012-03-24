@@ -69,7 +69,7 @@ void transaction::on_update(object *o)
    * 
    *****************/
   if (id_map_.find(o->id()) == id_map_.end()) {
-    backup(new update_action(o), o->id());
+    backup(new update_action(o), o);
   } else {
     // An object with that id already exists
     // do nothing because the object is already
@@ -91,7 +91,7 @@ void transaction::on_delete(object *o)
 
   id_iterator_map_t::iterator i = id_map_.find(o->id());
   if (i == id_map_.end()) {
-    backup(new delete_action(o), o->id());
+    backup(new delete_action(o->classname(), o->id()), o);
   } else {
     action_remover ar(action_list_);
     ar.remove(i->second, o);
@@ -191,7 +191,7 @@ transaction::db() const
 }
 
 void
-transaction::backup(action *a, long id)
+transaction::backup(action *a, const object *o)
 {
   /*************
    * 
@@ -200,9 +200,9 @@ transaction::backup(action *a, long id)
    * 
    *************/
   backup_visitor bv;
-  bv.backup(a, &object_buffer_);
+  bv.backup(a, o, &object_buffer_);
   iterator i = action_list_.insert(action_list_.end(), a);
-  id_map_.insert(std::make_pair(id, i));
+  id_map_.insert(std::make_pair(o->id(), i));
 }
 
 void transaction::restore(action *a)

@@ -108,10 +108,9 @@ const object* update_action::obj() const
   return obj_;
 }
 
-delete_action::delete_action(object *o)
-  : object_type_(o ? o->classname() : "")
-  , obj_(o)
-  , id_(o ? o->id() : 0)
+delete_action::delete_action(const char *classname, long id)
+  : classname_(classname)
+  , id_(id)
 {}
 
 delete_action::~delete_action()
@@ -122,19 +121,9 @@ void delete_action::accept(action_visitor *av)
   av->visit(this);
 }
 
-std::string delete_action::object_type() const
+const char* delete_action::classname() const
 {
-  return object_type_;
-}
-
-object* delete_action::obj()
-{
-  return obj_;
-}
-
-const object* delete_action::obj() const
-{
-  return obj_;
+  return classname_.c_str();
 }
 
 long delete_action::id() const

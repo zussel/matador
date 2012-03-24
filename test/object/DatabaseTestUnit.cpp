@@ -9,10 +9,10 @@
 
 #include "database/database.hpp"
 #include "database/transaction.hpp"
-#include "database/statement_helper.hpp"
 
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 
 using namespace oos;
 using namespace std;
@@ -20,7 +20,6 @@ using namespace std;
 DatabaseTestUnit::DatabaseTestUnit()
   : unit_test("database test unit")
 {
-  add_test("helper", std::tr1::bind(&DatabaseTestUnit::helper, this), "test statement helper");
   add_test("open", std::tr1::bind(&DatabaseTestUnit::open, this), "open database test");
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
   add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
@@ -39,55 +38,18 @@ DatabaseTestUnit::initialize()
 
   ostore_.insert_prototype(new object_producer<Car>, "CAR");
   ostore_.insert_prototype(new object_producer<Engine>, "ENGINE");
+
+  // delete db
+  std::remove("test.sqlite");
 }
 
 void
 DatabaseTestUnit::finalize()
 {
   ostore_.clear();
-}
 
-void
-DatabaseTestUnit::helper()
-{
-  statement_helper help;
-  
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-  
-  cout << endl;
-
-  while (first != last) {
-    const prototype_node &node = (*first++);
-
-    if (node.abstract) {
-      continue;
-    }
-
-    object *o = node.producer->create();
-    
-    std::string stmt = help.create(o, node.type, statement_helper::CREATE);
-    cout << "statement: " << stmt << endl;
-    
-    stmt = help.create(o, node.type, statement_helper::SELECT);
-    cout << "statement: " << stmt << endl;
-    
-    stmt = help.create(o, node.type, statement_helper::INSERT);
-    cout << "statement: " << stmt << endl;
-    
-    stmt = help.create(o, node.type, statement_helper::UPDATE);
-    cout << "statement: " << stmt << endl;
-    
-    stmt = help.create(o, node.type, statement_helper::DEL);
-    cout << "statement: " << stmt << endl;
-    
-    stmt = help.create(o, node.type, statement_helper::DROP);
-    cout << "statement: " << stmt << endl;
-    
-    cout << endl;
-
-    delete o;
-  }
+  // delete db
+  std::remove("test.sqlite");
 }
 
 void
@@ -95,7 +57,7 @@ DatabaseTestUnit::open()
 {
   cout << endl;
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://open.sqlite");
+  database db(ostore_, "sqlite://test.sqlite");
 }
 
 void
@@ -103,7 +65,7 @@ DatabaseTestUnit::simple()
 {
   cout << endl;
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://simple.sqlite");
+  database db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -196,7 +158,7 @@ DatabaseTestUnit::with_sub()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://with_sub.sqlite");
+  database db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -263,7 +225,7 @@ DatabaseTestUnit::with_list()
   cout << endl;
   ostore_.dump_objects(cout);
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://with_list.sqlite");
+  database db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();

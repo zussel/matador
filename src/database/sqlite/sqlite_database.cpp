@@ -195,17 +195,17 @@ void sqlite_database::visit(update_action *a)
 
 void sqlite_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_DELETE");
+  statement_impl_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
   if (!stmt) {
     // create statement
     delete_statement_creator<sqlite_types> creator;
 
-    std::string sql = creator.create(0, a->obj()->classname(), "id=?");
+    std::string sql = creator.create(0, a->classname(), "id=?");
 
     stmt.reset(create_statement());
     stmt->prepare(sql);
     
-    store_statement(std::string(a->obj()->classname()) + "_UPDATE", stmt);    
+    store_statement(std::string(a->classname()) + "_UPDATE", stmt);    
   }
 
   stmt->bind(1, a->id());

@@ -19,7 +19,6 @@
 #include "database/database_factory.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
-#include "database/statement_helper.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"

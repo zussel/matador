@@ -62,10 +62,7 @@ namespace detail {
   template < typename X, typename Y >
   struct updater
   {
-    void update(const char*, const char*, bool&, object_value<X>&, object*, X x, Y &y)
-    {
-      int i = 9;
-    }
+    void update(const char*, const char*, bool&, object_value<X>&, object*, X, Y&) {}
   };
   
   template < typename T >

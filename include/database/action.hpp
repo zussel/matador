@@ -266,32 +266,29 @@ public:
    * 
    * @param o The deleted object.
    */
-  delete_action(object *o);
+  delete_action(const char *classname, long id);
 
   virtual ~delete_action();
   
   virtual void accept(action_visitor *av);
 
-  std::string object_type() const;
-
   /**
-   * The object of the action.
+   * Return the class name of the
+   * object.
+   * 
+   * @return The class name.
    */
-  object* obj();
-
-  /**
-   * The object of the action.
-   */
-  const object* obj() const;
+  const char* classname() const;
 
   /**
    * The id of the object of the action.
+   * 
+   * @return The id of the deleted object.
    */
   long id() const;
 
 private:
-  std::string object_type_;
-  object *obj_;
+  std::string classname_;
   long id_;
 };
 

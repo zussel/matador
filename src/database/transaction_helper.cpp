@@ -22,10 +22,12 @@
 
 namespace oos {
 
-bool backup_visitor::backup(action *act, byte_buffer *buffer)
+bool backup_visitor::backup(action *act, const object *o, byte_buffer *buffer)
 {
   buffer_ = buffer;
+  object_ = o;
   act->accept(this);
+  object_ = 0;
   buffer_ = NULL;
   return true;
 }
@@ -38,13 +40,13 @@ void backup_visitor::visit(insert_action *)
 void backup_visitor::visit(update_action *a)
 {
   // serialize object
-  serializer_.serialize(a->obj(), *buffer_);
+  serializer_.serialize(object_, *buffer_);
 }
 
 void backup_visitor::visit(delete_action *a)
 {
   // serialize object
-  serializer_.serialize(a->obj(), *buffer_);
+  serializer_.serialize(object_, *buffer_);
 }
 
 bool restore_visitor::restore(action *act, byte_buffer *buffer, object_store *ostore)
@@ -82,7 +84,7 @@ void restore_visitor::visit(delete_action *a)
   }
   if (!oproxy->obj) {
     // create object with id and deserialize
-    oproxy->obj = ostore_->create(a->object_type().c_str());
+    oproxy->obj = ostore_->create(a->classname());
     // data from buffer into object
     serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
     // insert object
@@ -178,7 +180,7 @@ void action_remover::visit(update_action *a)
    *
    ***********/
   if (a->obj()->id() == id_) {
-    *iter_ = new delete_action(a->obj());
+    *iter_ = new delete_action(obj_->classname(), obj_->id());
     delete a;
   }
 }

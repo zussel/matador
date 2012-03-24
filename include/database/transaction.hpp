@@ -144,7 +144,7 @@ private:
   friend class object_store;
   friend class database;
   
-  void backup(action *a, long id);
+  void backup(action *a, const object *o);
   void restore(action *a);
 
   void cleanup();
