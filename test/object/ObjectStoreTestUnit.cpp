@@ -59,6 +59,16 @@ ObjectStoreTestUnit::expression_test()
 
   object_view<SimpleObject> oview(ostore_);
   
+  
+  object_view<SimpleObject>::iterator first = oview.begin();
+  object_view<SimpleObject>::iterator last = oview.end();
+  while (first != last) {
+    simple_ptr s(*first++);
+    if ((x >= 3 && x <= 7 && x != 5)(s)) {
+      std::cout << "found simple object [" << s->id() << "] with number " << s->number() << "\n";
+    }
+  }
+  
   object_view<SimpleObject>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   j = std::find_if(oview.begin(), oview.end(), x > 6);
   j = std::find_if(oview.begin(), oview.end(), x < 6);

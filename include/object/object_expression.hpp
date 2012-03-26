@@ -125,6 +125,7 @@ struct expression_traits<const object_base_ptr&>
   typedef constant<const object_base_ptr&> expression_type;
 };
 
+
 template < class L, class OP >
 class unary_expression
 {
@@ -167,12 +168,6 @@ private:
 
 // greater
 
-template < class T >
-binary_expression<T, T, std::greater<T> > operator>(const T &l, const T &r)
-{
-  return binary_expression<T, T, std::greater<T> >(l, r);
-}
-
 template < class T, class O >
 binary_expression<variable<T, O>, T, std::greater<T> > operator>(const variable<T, O> &l, const T &r)
 {
@@ -187,31 +182,19 @@ binary_expression<T, variable<T, O>, std::greater<T> > operator>(const T &l, con
 
 // greater equal
 
-template < class T >
-binary_expression<T, T, std::greater_equal<T> > operator>=(const constant<T> &l, const constant<T> &r)
-{
-  return binary_expression<T, T, std::greater_equal<T> >(l, r);
-}
-
 template < class T, class O >
-binary_expression<variable<T, O>, T, std::greater_equal<T> > operator>=(const variable<T, O> &l, const constant<T> &r)
+binary_expression<variable<T, O>, T, std::greater_equal<T> > operator>=(const variable<T, O> &l, const T &r)
 {
   return binary_expression<variable<T, O>, T, std::greater_equal<T> >(l, r);
 }
 
 template < class T, class O >
-binary_expression<T, variable<T, O>, std::greater_equal<T> > operator>=(const constant<T> &l, const variable<T, O> &r)
+binary_expression<T, variable<T, O>, std::greater_equal<T> > operator>=(const T &l, const variable<T, O> &r)
 {
   return binary_expression<T, variable<T, O>, std::greater_equal<T> >(l, r);
 }
 
 // less
-
-template < class T >
-binary_expression<T, T, std::less<T> > operator<(const T &l, const T &r)
-{
-  return binary_expression<T, T, std::less<T> >(l, r);
-}
 
 template < class T, class O >
 binary_expression<variable<T, O>, T, std::less<T> > operator<(const variable<T, O> &l, const T &r)
@@ -227,12 +210,6 @@ binary_expression<T, variable<T, O>, std::less<T> > operator<(const T &l, const 
 
 // less equal
 
-template < class T >
-binary_expression<T, T, std::less_equal<T> > operator<=(const T &l, const T &r)
-{
-  return binary_expression<T, T, std::less_equal<T> >(l, r);
-}
-
 template < class T, class O >
 binary_expression<variable<T, O>, T, std::less_equal<T> > operator<=(const variable<T, O> &l, const T &r)
 {
@@ -246,12 +223,6 @@ binary_expression<T, variable<T, O>, std::less_equal<T> > operator<=(const T &l,
 }
 
 // equal
-
-template < class T >
-binary_expression<T, T, std::equal_to<T> > operator==(const T &l, const T &r)
-{
-  return binary_expression<T, T, std::equal_to<T> >(l, r);
-}
 
 template < class T, class O >
 binary_expression<variable<T, O>, T, std::equal_to<T> > operator==(const variable<T, O> &l, const T &r)
@@ -273,14 +244,8 @@ binary_expression<T, variable<T, O>, std::equal_to<T> > operator==(const T &l, c
 
 // not equal
 
-template < class T >
-binary_expression<T, T, std::not_equal_to<T> > operator!=(const constant<T> &l, const constant<T> &r)
-{
-  return binary_expression<T, T, std::not_equal_to<T> >(l, r);
-}
-
 template < class T, class O >
-binary_expression<variable<T, O>, T, std::not_equal_to<T> > operator!=(const variable<T, O> &l, const constant<T> &r)
+binary_expression<variable<T, O>, T, std::not_equal_to<T> > operator!=(const variable<T, O> &l, const T &r)
 {
   return binary_expression<variable<T, O>, T, std::not_equal_to<T> >(l, r);
 }
@@ -292,7 +257,7 @@ binary_expression<variable<std::string, O>, const char*, std::not_equal_to<std::
 }
 
 template < class T, class O >
-binary_expression<T, variable<T, O>, std::not_equal_to<T> > operator!=(const constant<T> &l, const variable<T, O> &r)
+binary_expression<T, variable<T, O>, std::not_equal_to<T> > operator!=(const T &l, const variable<T, O> &r)
 {
   return binary_expression<T, variable<T, O>, std::not_equal_to<T> >(l, r);
 }

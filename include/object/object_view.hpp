@@ -28,6 +28,7 @@ namespace oos {
 template < class T > class const_object_view_iterator;
 
 /// @cond OOS_DEV
+
 /**
  * @class object_view_iterator
  * @brief Iterator class for an object_view
