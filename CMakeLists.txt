@@ -89,6 +89,7 @@ SET(TOOLS_SOURCES
 )
 
 SET(TOOLS_HEADER
+  include/tools/algorithm.hpp
   include/tools/byte_buffer.hpp
   include/tools/singleton.hpp
   include/tools/library.hpp

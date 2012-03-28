@@ -7,6 +7,7 @@
 #include "object/object_view.hpp"
 
 #include "tools/byte_buffer.hpp"
+#include "tools/algorithm.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -25,7 +26,9 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
   add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::tr1::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("delete", std::tr1::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
   add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
+  add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -34,7 +37,8 @@ ObjectStoreTestUnit::~ObjectStoreTestUnit()
 void
 ObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<AllBase>, "ALL_BASE");
+  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
+  ostore_.insert_prototype(new object_producer<ObjectItem<Item> >, "OBJECT_ITEM");
   ostore_.insert_prototype(new object_producer<SimpleObject>, "SIMPLE_OBJECT");
   ostore_.insert_prototype(new object_producer<ObjectWithSubObject>, "OBJECT_WITH_SUB_OBJECT");
 }
@@ -45,31 +49,43 @@ ObjectStoreTestUnit::finalize()
   ostore_.clear();
 }
 
+struct item_counter : public std::unary_function<const object_ptr<Item>&, void>
+{
+  item_counter(int &c) : count(c) {}
+  
+  void operator ()(const object_ptr<Item> &) { ++count; }
+  int &count;
+};
+
 void
 ObjectStoreTestUnit::expression_test()
 {
-  typedef object_ptr<SimpleObject> simple_ptr;
+  typedef object_ptr<Item> item_ptr;
 
   for (int i = 0; i < 10; ++i) {
-    ostore_.insert(new SimpleObject("Simple", i));
+    ostore_.insert(new Item("Simple", i));
   }
 
-  variable<int, SimpleObject> x(&SimpleObject::number);
-  variable<std::string, SimpleObject> y(&SimpleObject::name);
+  variable<int, Item> x(&Item::get_int);
+  variable<std::string, Item> y(&Item::get_string);
 
-  object_view<SimpleObject> oview(ostore_);
+  object_view<Item> oview(ostore_);
   
+  int count(0);
+  for_each_if(oview.begin(), oview.end(), x >= 3 && x <= 7 && x != 5, item_counter(count));
   
-  object_view<SimpleObject>::iterator first = oview.begin();
-  object_view<SimpleObject>::iterator last = oview.end();
+  cout << "found " << count << " objects\n";
+
+  object_view<Item>::const_iterator first = oview.begin();
+  object_view<Item>::const_iterator last = oview.end();
   while (first != last) {
-    simple_ptr s(*first++);
+    item_ptr s(*first++);
     if ((x >= 3 && x <= 7 && x != 5)(s)) {
-      std::cout << "found simple object [" << s->id() << "] with number " << s->number() << "\n";
+      std::cout << "found item object [" << s->id() << "] with number " << s->get_int() << "\n";
     }
   }
   
-  object_view<SimpleObject>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
+  object_view<Item>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   j = std::find_if(oview.begin(), oview.end(), x > 6);
   j = std::find_if(oview.begin(), oview.end(), x < 6);
   j = std::find_if(oview.begin(), oview.end(), x == 6);
@@ -79,7 +95,7 @@ ObjectStoreTestUnit::expression_test()
   j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "Simple"));
 
   if (j != oview.end()) {
-    std::cout << "found simple object [" << (*j)->id() << "] with number " << (*j)->number() << "\n";
+    std::cout << "found item object [" << (*j)->id() << "] with number " << (*j)->get_int() << "\n";
   } else {
     std::cout << "nothing fouond\n";
   }
@@ -98,82 +114,82 @@ ObjectStoreTestUnit::serializer()
   std::string title = "Hallo Welt";
   oos::varchar<64> str("The answer is 42");
 
-  AllBase *all = new AllBase();
+  Item *item = new Item();
   
-  all->set_char(c);
-  all->set_float(f);
-  all->set_double(d);
-  all->set_int(i);
-  all->set_long(l);
-  all->set_unsigned(u);
-  all->set_bool(b);
-  all->set_string(title);
-  all->set_varchar(str);
+  item->set_char(c);
+  item->set_float(f);
+  item->set_double(d);
+  item->set_int(i);
+  item->set_long(l);
+  item->set_unsigned(u);
+  item->set_bool(b);
+  item->set_string(title);
+  item->set_varchar(str);
   
   object_serializer serializer;
  
   byte_buffer buffer;
-  serializer.serialize(all, buffer);
+  serializer.serialize(item, buffer);
   
-  delete all;
+  delete item;
   
-  all = new AllBase();
+  item = new Item();
   
-  serializer.deserialize(all, buffer, &ostore_);
+  serializer.deserialize(item, buffer, &ostore_);
 
-  UNIT_ASSERT_EQUAL(c, all->get_char(), "restored character is not equal to the original character");
-  UNIT_ASSERT_EQUAL(f, all->get_float(), "restored float is not equal to the original float");
-  UNIT_ASSERT_EQUAL(d, all->get_double(), "restored double is not equal to the original double");
-  UNIT_ASSERT_EQUAL(i, all->get_int(), "restored int is not equal to the original int");
-  UNIT_ASSERT_EQUAL(l, all->get_long(), "restored long is not equal to the original long");
-  UNIT_ASSERT_EQUAL(u, all->get_unsigned(), "restored unsigned is not equal to the original unsigned");
-  UNIT_ASSERT_EQUAL(b, all->get_bool(), "restored bool is not equal to the original bool");
-  UNIT_ASSERT_EQUAL(title, all->get_string(), "restored string is not equal to the original string");
-  UNIT_ASSERT_EQUAL(str, all->get_varchar(), "restored varchar is not equal to the original varchar");
+  UNIT_ASSERT_EQUAL(c, item->get_char(), "restored character is not equal to the original character");
+  UNIT_ASSERT_EQUAL(f, item->get_float(), "restored float is not equal to the original float");
+  UNIT_ASSERT_EQUAL(d, item->get_double(), "restored double is not equal to the original double");
+  UNIT_ASSERT_EQUAL(i, item->get_int(), "restored int is not equal to the original int");
+  UNIT_ASSERT_EQUAL(l, item->get_long(), "restored long is not equal to the original long");
+  UNIT_ASSERT_EQUAL(u, item->get_unsigned(), "restored unsigned is not equal to the original unsigned");
+  UNIT_ASSERT_EQUAL(b, item->get_bool(), "restored bool is not equal to the original bool");
+  UNIT_ASSERT_EQUAL(title, item->get_string(), "restored string is not equal to the original string");
+  UNIT_ASSERT_EQUAL(str, item->get_varchar(), "restored varchar is not equal to the original varchar");
   
-  delete all;
+  delete item;
 }
 
 void
 ObjectStoreTestUnit::ref_ptr_counter()
 {
-  SimpleObject *so = new SimpleObject("Simple", 7);
+  Item *i = new Item("Item", 7);
   
-  typedef object_ptr<SimpleObject> simple_ptr;
-  typedef object_ptr<ObjectWithSubObject> withsub_ptr;
+  typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   
-  simple_ptr simple = ostore_.insert(so);
+  item_ptr item = ostore_.insert(i);
   
-  withsub_ptr withsub = ostore_.insert(new ObjectWithSubObject());
-  withsub->simple(simple);
+  object_item_ptr object_item = ostore_.insert(new ObjectItem<Item>());
+  object_item->ptr(item);
 
   
   cout << endl; 
-  cout << "simple ref count: " << simple.ref_count() << "\n";
-  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  cout << "item ref count: " << item.ref_count() << "\n";
+  cout << "item ptr count: " << item.ptr_count() << "\n";
   
-  simple_ptr a1 = simple;
-  simple_ptr a2 = simple;
+  item_ptr a1 = item;
+  item_ptr a2 = item;
   
-  cout << "simple ref count: " << simple.ref_count() << "\n";
-  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  cout << "item ref count: " << item.ref_count() << "\n";
+  cout << "item ptr count: " << item.ptr_count() << "\n";
 
-  typedef object_ref<SimpleObject> simple_ref;
+  typedef object_ref<Item> item_ref;
   
-  simple_ref aref1 = a1;
+  item_ref aref1 = a1;
 
-  cout << "simple ref count: " << simple.ref_count() << "\n";
-  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  cout << "item ref count: " << item.ref_count() << "\n";
+  cout << "item ptr count: " << item.ptr_count() << "\n";
 
   a1.reset();
   
-  cout << "simple ref count: " << simple.ref_count() << "\n";
-  cout << "simple ptr count: " << simple.ptr_count() << "\n";
+  cout << "item ref count: " << item.ref_count() << "\n";
+  cout << "item ptr count: " << item.ptr_count() << "\n";
   
   a1 = aref1;
 
-  cout << "simple ref count: " << simple.ref_count() << "\n";
-  cout << "simple ptr count: " << simple.ptr_count() << "\n";  
+  cout << "item ref count: " << item.ref_count() << "\n";
+  cout << "item ptr count: " << item.ptr_count() << "\n";  
 }
 
 void
@@ -328,6 +344,36 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
 }
 
 void
+ObjectStoreTestUnit::delete_object()
+{
+  typedef ObjectItem<Item> TestItem;
+  typedef object_ptr<TestItem> test_item_ptr;
+  typedef object_ptr<Item> item_ptr;
+
+  
+  item_ptr item = ostore_.insert(new Item("item 1"));
+
+  TestItem *ti = new TestItem;
+  ti->ref(item);
+  
+  test_item_ptr testitem = ostore_.insert(ti);
+
+  UNIT_ASSERT_EQUAL(item.ref_count(), (unsigned long)1, "reference count for item should be 1 (one)");
+  UNIT_ASSERT_EQUAL(item.ptr_count(), (unsigned long)0, "reference count for item should be 0 (zero)");
+  UNIT_ASSERT_EQUAL(testitem.ref_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
+  UNIT_ASSERT_EQUAL(testitem.ptr_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
+  
+  typedef object_view<Item> item_view_t;
+  item_view_t item_view(ostore_);
+
+  UNIT_ASSERT_FALSE(ostore_.remove(item), "item shouldn't be removable because ref count is one");
+
+  UNIT_ASSERT_TRUE(ostore_.remove(testitem), "test item must be removable");
+  
+  UNIT_ASSERT_TRUE(ostore_.remove(item), "item must be removable");
+}
+
+void
 ObjectStoreTestUnit::sub_delete()
 {
   typedef object_ptr<ObjectWithSubObject> with_sub_ptr;
@@ -351,4 +397,76 @@ ObjectStoreTestUnit::sub_delete()
   std::cout << "s1 ptr count: " << s1.ptr_count() << "\n";
   std::cout << "s2 ref count: " << s2.ref_count() << "\n";
   std::cout << "s2 ptr count: " << s2.ptr_count() << "\n";
+}
+
+void
+ObjectStoreTestUnit::hierarchy()
+{
+  ostore_.insert_prototype<ItemA>("ITEM_A", "false", "ITEM");
+  ostore_.insert_prototype<ItemB>("ITEM_B", "false", "ITEM");
+  ostore_.insert_prototype<ItemC>("ITEM_C", "false", "ITEM");
+  
+  /* Insert 5 object of each item
+   * object type
+   */
+  cout << endl;
+
+  Item *itm;
+  for (int i = 0; i < 5; ++i) {
+    std::stringstream str;
+    str << "item " << i;
+    ostore_.insert(new Item(str.str()));
+    str.str("");
+    str << "item a " << i;
+    itm = new ItemA;
+    itm->set_string(str.str());
+    ostore_.insert(itm);
+    str.str("");
+    str << "item b " << i;
+    itm = new ItemB;
+    itm->set_string(str.str());
+    ostore_.insert(itm);
+    str.str("");
+    str << "item c " << i;
+    itm = new ItemC;
+    itm->set_string(str.str());
+    ostore_.insert(itm);
+  }
+  
+  typedef object_view<Item> item_view_t;
+  typedef object_ptr<Item> item_ptr;
+
+  item_view_t item_view(ostore_);
+
+  cout << "list all items with sub items\n";
+
+  cout << "size of view: " << item_view.size() << "\n";
+  
+  item_view_t::const_iterator first = item_view.begin();
+  item_view_t::const_iterator last = item_view.end();
+  
+  while (first != last) {
+    item_ptr item = (*first++);
+    
+    cout << "Item [" << item->get_string() << "] (" << item->id() << ")\n";
+  }
+
+  item_view.skip_siblings(true);
+
+  cout << "list all items without sub items\n";
+
+  cout << "size of view: " << item_view.size() << "\n";
+  
+  first = item_view.begin();
+  last = item_view.end();
+  
+  while (first != last) {
+    item_ptr item = (*first++);
+    
+    cout << "Item [" << item->get_string() << "] (" << item->id() << ")\n";
+  }
+  
+  // Todo: check deletion
+  
+  // Todo: check sub item view (a,b,c)
 }

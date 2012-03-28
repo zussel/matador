@@ -1,18 +1,10 @@
 SET (TEST_SOURCES
   test_object.cpp
-  Album.cpp
-  Album.hpp
-  Artist.cpp
-  Artist.hpp
-  Track.cpp
-  Track.hpp
   Car.cpp
   Car.hpp
   Engine.cpp
   Engine.hpp
   Item.hpp
-  ComplexObjectStoreTestUnit.cpp
-  ComplexObjectStoreTestUnit.hpp
   ObjectPrototypeTestUnit.cpp
   ObjectPrototypeTestUnit.hpp
   ObjectStoreTestUnit.cpp

@@ -33,7 +33,7 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item<ItemPtrList> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrList> >, "ITEM_PTR");
   ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
 
   ostore_.insert_prototype(new object_producer<Car>, "CAR");
@@ -47,9 +47,6 @@ void
 DatabaseTestUnit::finalize()
 {
   ostore_.clear();
-
-  // delete db
-  std::remove("test.sqlite");
 }
 
 void
@@ -257,7 +254,7 @@ DatabaseTestUnit::with_list()
 
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-      cout << "item [" << i->get()->name() << "]\n";
+      cout << "item [" << i->get()->get_string() << "]\n";
     }
     cout << "list has " << itemlist->size() << " items\n";
     cout << "starting rollback\n";
@@ -279,7 +276,7 @@ DatabaseTestUnit::with_list()
     cout << "list has " << itemlist->size() << " items\n";
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-      cout << "item [" << i->get()->name() << "] ";
+      cout << "item [" << i->get()->get_string() << "] ";
     }
     cout << endl;
 
@@ -301,7 +298,7 @@ DatabaseTestUnit::with_list()
     cout << "list has " << itemlist->size() << " items\n";
     cout << "items of list\n";
     for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-      cout << "item [" << i->get()->name() << "] ";
+      cout << "item [" << i->get()->get_string() << "] ";
     }
     cout << endl;
 

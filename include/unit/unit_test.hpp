@@ -76,6 +76,16 @@
 #define UNIT_ASSERT_NOT_EQUAL(a, b, msg) assert_not_equal(a, b, msg, __LINE__, __FILE__)
 
 /**
+ * @brief Checks if a is greater b.
+ *
+ * If a is not greater b the test method throws
+ * a unit_exception with the given message. The
+ * exception is caught by the test_suite the
+ * message is displayed
+ */
+#define UNIT_ASSERT_GREATER(a, b, msg)     assert_greater(a, b, msg, __LINE__, __FILE__)
+
+/**
  * @brief Checks if a evaluates to false.
  *
  * If a doesn't evaluates to false the test method
@@ -279,6 +289,32 @@ public:
       // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  /**
+   * @brief Checks if a is greater b.
+   *
+   * If a is not greater b the test method throws
+   * a unit_exception with the given message. The
+   * exception is caught by the test_suite and the
+   * message is displayed.
+   * 
+   * @tparam T The type of the objects to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  template < class T >
+  void assert_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  {
+    if (a <= b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << msg;
       throw unit_exception(msgstr.str());
     }
   }

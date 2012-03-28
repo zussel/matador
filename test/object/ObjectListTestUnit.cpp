@@ -26,8 +26,8 @@ ObjectListTestUnit::~ObjectListTestUnit()
 void
 ObjectListTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item<ItemRefList> >, "ITEM_REF");
-  ostore_.insert_prototype(new object_producer<Item<ItemPtrList> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<ContainerItem<ItemRefList> >, "ITEM_REF");
+  ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrList> >, "ITEM_PTR");
   ostore_.insert_prototype(new object_producer<ItemRefList>, "ITEM_REF_LIST");
   ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
   ostore_.insert_prototype(new object_producer<LinkedItem>, "LINKED_ITEM");
@@ -50,7 +50,7 @@ ObjectListTestUnit::test_ref_list()
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new ItemRefList::value_type(name.str()));
-    cout << "inserted item [" << item->name() << "]\n";
+    cout << "inserted item [" << item->get_string() << "]\n";
   }
   cout << "inserting item reference list\n";
   itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
@@ -64,14 +64,14 @@ ObjectListTestUnit::test_ref_list()
   while (first != last) {
     item_ptr i = (*first++);
     if (i->id() % 2) {
-      cout << "adding item [" << i->name() << "(id: " << i->id() << ")]\n";
+      cout << "adding item [" << i->get_string() << "(id: " << i->id() << ")]\n";
       itemlist->push_back(i);
     }
   }
   cout << "dumping items of item list\n";
   
   for (ItemRefList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-    cout << "item [" << i->get()->name() << "]\n";
+    cout << "item [" << i->get()->get_string() << "]\n";
   }
   
 }
@@ -96,7 +96,7 @@ ObjectListTestUnit::test_ptr_list()
 
   cout << "items of list\n";
   for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-    cout << "item [" << i->get()->name() << "]\n";
+    cout << "item [" << i->get()->get_string() << "]\n";
   }
   
   cout << "items of view\n";
@@ -106,7 +106,7 @@ ObjectListTestUnit::test_ptr_list()
   item_view_t::iterator last = item_view.end();
   while (first != last) {
     item_ptr i = (*first++);
-    cout << "item [" << i->name() << "(id: " << i->id() << ")]\n";
+    cout << "item [" << i->get_string() << "(id: " << i->id() << ")]\n";
   }
 }
 

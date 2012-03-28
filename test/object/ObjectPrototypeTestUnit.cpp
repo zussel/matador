@@ -6,9 +6,7 @@
 #include "object/object_atomizer.hpp"
 #include "object/prototype_node.hpp"
 
-#include "Track.hpp"
-#include "Album.hpp"
-#include "Artist.hpp"
+#include "Item.hpp"
 
 using namespace oos;
 using namespace std;
@@ -44,21 +42,21 @@ ObjectPrototypeTestUnit::one_prototype()
 {
   object_store ostore;
 //  ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
-  ostore.insert_prototype<Artist>("ARTIST");
+  ostore.insert_prototype<Item>("ITEM");
   
-  object *o = ostore.create("ARTIST");
+  object *o = ostore.create("ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Artist>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Item>");
   
-  Artist *a = dynamic_cast<Artist*>(o);
+  Item *i = dynamic_cast<Item*>(o);
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Artist");
+  UNIT_ASSERT_NOT_NULL(i, "couldn't cast object to Item");
   
-  delete a;
+  delete i;
   
-  ostore.remove_prototype("ARTIST");
+  ostore.remove_prototype("ITEM");
   
-  o = ostore.create("ARTIST");
+  o = ostore.create("ITEM");
   
   UNIT_ASSERT_NULL(o, "unexpected object creation");
 }
@@ -67,30 +65,30 @@ void
 ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
-  ostore.insert_prototype<Track>("TRACK");
-  ostore.insert_prototype<MediaTrack>("MEDIATRACK", false, "TRACK");
-  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", false, "TRACK");
-  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", false, "TRACK");
+  ostore.insert_prototype<Item>("ITEM");
+  ostore.insert_prototype<ItemA>("ITEM_A", false, "ITEM");
+  ostore.insert_prototype<ItemB>("ITEM_B", false, "ITEM");
+  ostore.insert_prototype<ItemC>("ITEM_C", false, "ITEM");
 
-  object *o = ostore.create("AUDIOTRACK");
+  object *o = ostore.create("ITEM_B");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <AudioTrack>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ItemB>");
   
-  AudioTrack *a = dynamic_cast<AudioTrack*>(o);
+  ItemB *a = dynamic_cast<ItemB*>(o);
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to AudioTrack");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ItemB");
   
   delete a;
   
-  ostore.remove_prototype("AUDIOTRACK");
+  ostore.remove_prototype("ITEM_B");
   
-  o = ostore.create("AUDIOTRACK");
+  o = ostore.create("ITEM_B");
   
   UNIT_ASSERT_NULL(o, "unexpected object creation");
   
-  ostore.remove_prototype("TRACK");
+  ostore.remove_prototype("ITEM");
   
-  o = ostore.create("MEDIATRACK");
+  o = ostore.create("ITEM_C");
   
   UNIT_ASSERT_NULL(o, "unexpected object creation");
 }
@@ -99,16 +97,22 @@ void
 ObjectPrototypeTestUnit::prototype_traverse()
 {
   object_store ostore;
-  ostore.insert_prototype<Track>("TRACK");
-  ostore.insert_prototype<MediaTrack>("MEDIATRACK", false, "TRACK");
-  ostore.insert_prototype<AudioTrack>("AUDIOTRACK", false, "TRACK");
-  ostore.insert_prototype<VideoTrack>("VIDEOTRACK", false, "TRACK");
-
-  cout << endl;
+  ostore.insert_prototype<Item>("ITEM");
+  ostore.insert_prototype<ItemA>("ITEM_A", false, "ITEM");
+  ostore.insert_prototype<ItemB>("ITEM_B", false, "ITEM");
+  ostore.insert_prototype<ItemC>("ITEM_C", false, "ITEM");
 
   prototype_iterator first = ostore.begin();
   prototype_iterator last = ostore.end();
+  int count(0);
+
   while (first != last) {
-    cout << "prototype: " << (first++)->type << "\n";
+    if (count > 5) {
+      UNIT_ASSERT_GREATER(count, 5, "prototype count isn't valid");
+    }
+    ++first;
+    ++count;
   }
+  
+  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 4");
 }

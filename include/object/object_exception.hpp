@@ -41,9 +41,8 @@ public:
    * @param what The message of the exception.
    * @param o The object which triggered this exception.
    */
-  object_exception(const char *what, object *o)
+  object_exception(const char *what)
     : what_(what)
-    , obj_(o)
   {
   }
 

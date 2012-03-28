@@ -9,11 +9,18 @@
 
 #include "tools/varchar.hpp"
 
-class AllBase : public oos::object
+class Item : public oos::object
 {
 public:
-  AllBase() {}
-  virtual ~AllBase() {}
+  Item() {}
+  explicit Item(const std::string &str)
+    : string_(str)
+  {}
+  Item(const std::string &str, int i)
+    : int_(i)
+    , string_(str)
+  {}
+  virtual ~Item() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
@@ -74,57 +81,85 @@ private:
   oos::varchar<64> varchar_;
 };
 
-template < class L >
-class Item : public oos::object
+class ItemA : public Item {};
+class ItemB : public Item {};
+class ItemC : public Item {};
+
+template < class T >
+class ObjectItem : public Item
 {
 public:
-  Item() {}
-  Item(const std::string &name) : name_(name), index_(0) {}
-  virtual ~Item() {}
+  typedef oos::object_ptr<T> value_ptr;
+  typedef oos::object_ref<T> value_ref;
+
+  ObjectItem() {}
+  virtual ~ObjectItem() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
-    oos::object::read_from(reader);
-    reader->read_varchar("name", name_);
-    reader->read_int("itemindex", index_);
-    reader->read_object("itemlist", list_);
+    Item::read_from(reader);
+    reader->read_object("ref", ref_);
+    reader->read_object("ptr", ptr_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
-    oos::object::write_to(writer);
-    writer->write_varchar("name", name_);
-    writer->write_int("itemindex", index_);
-    writer->write_object("itemlist", list_);
-  }
-  
-  std::string name() const { return name_.str(); }
-  void name(const std::string &n)
-  { 
-    modify(name_, n);
+    Item::write_to(writer);
+    writer->write_object("ref", ref_);
+    writer->write_object("ptr", ptr_);
   }
 
-  int index() const { return index_; }
-  void index(int i)
-  { 
-    modify(index_, i);
-  }
+  void ref(const value_ref &r) { modify(ref_, r); }
+  void ptr(const value_ptr &p) { modify(ptr_, p); }
 
-  oos::object_ref<L> itemlist() const { return list_; }
-  void itemlist(const oos::object_ref<L> &l)
-  {
-    modify(list_, l);
-  }
+  value_ref ref() const { return ref_; }
+  value_ptr ptr() const { return ptr_; }
 
 private:
-  oos::varchar<32> name_;
+  value_ref ref_;
+  value_ptr ptr_;
+};
+
+template < class C >
+class ContainerItem : public Item
+{
+public:
+  typedef oos::object_ref<C> container_ref;
+
+  ContainerItem() {}
+  ContainerItem(const std::string &name)
+    : Item(name)
+    , index_(0)
+  {}
+  virtual ~ContainerItem() {}
+
+	void read_from(oos::object_atomizer *reader)
+  {
+    Item::read_from(reader);
+    reader->read_int("item_index", index_);
+    reader->read_object("container", container_);
+  }
+	void write_to(oos::object_atomizer *writer) const
+  {
+    Item::write_to(writer);
+    writer->write_int("item_index", index_);
+    writer->write_object("container", container_);
+  }
+  
+  int index() const { return index_; }
+  void index(int i) { modify(index_, i); }
+
+  container_ref container() const { return container_; }
+  void container(const container_ref &l) { modify(container_, l); }
+
+private:
   int index_;
-  oos::object_ref<L> list_;
+  container_ref container_;
 };
 
 class ItemPtrList : public oos::object
 {
 public:
-  typedef Item<ItemPtrList> value_type;
+  typedef ContainerItem<ItemPtrList> value_type;
   typedef oos::object_ptr_list<value_type> item_list_t;
   typedef item_list_t::value_type_ptr value_type_ptr;
   typedef ItemPtrList self;
@@ -134,7 +169,7 @@ public:
 
 public:
   ItemPtrList()
-    : item_list_(this, "itemlist")
+    : item_list_(this, "container")
   {}
   virtual ~ItemPtrList() {}
 
@@ -177,7 +212,8 @@ private:
 class ItemRefList : public oos::object
 {
 public:
-  typedef oos::object_ref_list<Item<ItemRefList> > item_list_t;
+  typedef ContainerItem<ItemRefList> item_type;
+  typedef oos::object_ref_list<item_type> item_list_t;
   typedef item_list_t::value_type value_type;
   typedef item_list_t::value_type_ref value_type_ref;
   typedef ItemRefList self;
@@ -187,7 +223,7 @@ public:
 
 public:
   ItemRefList()
-    : item_list_(this, "itemlist")
+    : item_list_(this, "container")
   {}
   virtual ~ItemRefList() {}
 
@@ -324,7 +360,7 @@ private:
 class ItemPtrVector : public oos::object
 {
 public:
-  typedef Item<ItemPtrVector> value_type;
+  typedef ContainerItem<ItemPtrVector> value_type;
   typedef oos::object_ptr_vector<value_type> item_vector_t;
   typedef item_vector_t::value_type_ptr value_type_ptr;
   typedef ItemPtrVector self;
@@ -334,7 +370,7 @@ public:
 
 public:
   ItemPtrVector()
-    : item_vector_(this, "itemlist", "itemindex")
+    : item_vector_(this, "container", "item_index")
   {}
   virtual ~ItemPtrVector() {}
 

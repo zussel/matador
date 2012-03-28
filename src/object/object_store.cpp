@@ -23,6 +23,7 @@
 #include "object/object_vector.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
+#include "object/object_exception.hpp"
 #include "object/prototype_node.hpp"
 
 #ifdef WIN32
@@ -358,8 +359,8 @@ object_store::insert_object(object *o, bool notify)
   t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
   if (i == prototype_node_map_.end()) {
     // raise exception
-    //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
-    return NULL;
+    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
+    throw new object_exception(msg.c_str());
   }
   prototype_node *node = i->second;
   // retrieve and set new unique number into object

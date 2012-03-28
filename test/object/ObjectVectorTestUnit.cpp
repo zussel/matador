@@ -21,7 +21,7 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 
 void ObjectVectorTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item<ItemPtrVector> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrVector> >, "ITEM_PTR");
   ostore_.insert_prototype(new object_producer<ItemPtrVector>, "ITEM_PTR_VECTOR");
 }
 
@@ -52,17 +52,17 @@ void ObjectVectorTestUnit::test_ptr_vector()
 
   cout << "items of vector\n";
   for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "removing item [" << i->get()->name() << "] (index: " << i->get()->index() << ")\n";
+    cout << "removing item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
   }
 
   ItemPtrVector::iterator i = itemvector->begin() + 4;
 
-  cout << "item [" << i->get()->name() << "] (index: " << i->get()->index() << ")\n";
+  cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
   i = itemvector->erase(i);
 
   cout << "items of vector\n";
   for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "item [" << i->get()->name() << "] (index: " << i->get()->index() << ")\n";
+    cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
   }
 
 }
