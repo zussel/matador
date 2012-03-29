@@ -219,6 +219,7 @@ public:
   typedef T value_type;                                       /**< Shortcut for the value type. */
   typedef W value_type_wrapper;                               /**< Shortcut for the wrapper class around the value type. */
   typedef std::list<value_type_wrapper> list_type;            /**< Shortcut for the list class member. */
+  typedef typename list_type::size_type size_type;                     /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
@@ -298,7 +299,7 @@ public:
    * 
    * @return The size of the list.
    */
-  virtual size_t size() const
+  virtual size_type size() const
   {
     return object_list_.size();
   }
@@ -463,6 +464,7 @@ class object_ptr_list : public object_list<T, object_ptr<T> >
 {
 public:
   typedef object_list<T, object_ptr<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::size_type size_type;                        /**< Shortcut for size type- */
   typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
   typedef typename base_list::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
   typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */
@@ -502,6 +504,7 @@ class object_ref_list : public object_list<T, object_ref<T> >
 {
 public:
   typedef object_list<T, object_ref<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::size_type size_type;                        /**< Shortcut for size type- */
   typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
   typedef typename base_list::value_type_wrapper value_type_ref; /**< Shortcut for the wrapper class around the value type. */
   typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */

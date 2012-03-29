@@ -73,9 +73,10 @@ ObjectStoreTestUnit::expression_test()
   
   int count(0);
   for_each_if(oview.begin(), oview.end(), x >= 3 && x <= 7 && x != 5, item_counter(count));
-  
-  cout << "found " << count << " objects\n";
 
+  UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
+
+  /*
   object_view<Item>::const_iterator first = oview.begin();
   object_view<Item>::const_iterator last = oview.end();
   while (first != last) {
@@ -84,21 +85,32 @@ ObjectStoreTestUnit::expression_test()
       std::cout << "found item object [" << s->id() << "] with number " << s->get_int() << "\n";
     }
   }
+  */
   
   object_view<Item>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
-  j = std::find_if(oview.begin(), oview.end(), x > 6);
-  j = std::find_if(oview.begin(), oview.end(), x < 6);
-  j = std::find_if(oview.begin(), oview.end(), x == 6);
-  j = std::find_if(oview.begin(), oview.end(), 6 == x);
-  j = std::find_if(oview.begin(), oview.end(), (6 == x) || (x < 4));
-  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
-  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "Simple"));
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
 
-  if (j != oview.end()) {
-    std::cout << "found item object [" << (*j)->id() << "] with number " << (*j)->get_int() << "\n";
-  } else {
-    std::cout << "nothing fouond\n";
-  }
+  j = std::find_if(oview.begin(), oview.end(), x > 6);
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
+
+  j = std::find_if(oview.begin(), oview.end(), x < 6);
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
+
+  j = std::find_if(oview.begin(), oview.end(), x == 6);
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 6, "couldn't find item 6");
+
+  j = std::find_if(oview.begin(), oview.end(), 6 == x);
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 6, "couldn't find item 6");
+
+  j = std::find_if(oview.begin(), oview.end(), (6 == x) || (x < 4));
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
+
+  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
+  UNIT_ASSERT_EQUAL((*j)->get_string(), "Simple", "couldn't find item 'Simple'");
+
+  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "Simple"));
+  UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
+  UNIT_ASSERT_EQUAL((*j)->get_string(), "Simple", "couldn't find item 'Simple'");
 }
 
 void
@@ -160,36 +172,63 @@ ObjectStoreTestUnit::ref_ptr_counter()
   
   item_ptr item = ostore_.insert(i);
   
-  object_item_ptr object_item = ostore_.insert(new ObjectItem<Item>());
-  object_item->ptr(item);
+  object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
+  object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
+  object_item_1->ptr(item);
 
   
-  cout << endl; 
-  cout << "item ref count: " << item.ref_count() << "\n";
-  cout << "item ptr count: " << item.ptr_count() << "\n";
-  
+  unsigned long val = 0;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+
   item_ptr a1 = item;
   item_ptr a2 = item;
   
-  cout << "item ref count: " << item.ref_count() << "\n";
-  cout << "item ptr count: " << item.ptr_count() << "\n";
+  val = 0;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
   typedef object_ref<Item> item_ref;
   
   item_ref aref1 = a1;
 
-  cout << "item ref count: " << item.ref_count() << "\n";
-  cout << "item ptr count: " << item.ptr_count() << "\n";
+  val = 0;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
-  a1.reset();
-  
-  cout << "item ref count: " << item.ref_count() << "\n";
-  cout << "item ptr count: " << item.ptr_count() << "\n";
-  
-  a1 = aref1;
+  object_item_1->ref(a1);
 
-  cout << "item ref count: " << item.ref_count() << "\n";
-  cout << "item ptr count: " << item.ptr_count() << "\n";  
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  
+  a1 = object_item_2->ptr();
+
+  val = 0;
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be null");
+  val = 1;
+  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be one");
+
+  object_item_2->ptr(item);
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  val = 2;
+  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
+  val = 0;
+  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be null");
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
+
+  object_item_2->ref(item);
+  val = 2;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be two");
+
+  object_item_2->ref(a1);
+  val = 1;
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
 }
 
 void
@@ -376,27 +415,6 @@ ObjectStoreTestUnit::delete_object()
 void
 ObjectStoreTestUnit::sub_delete()
 {
-  typedef object_ptr<ObjectWithSubObject> with_sub_ptr;
-  typedef object_ptr<SimpleObject> simple_ptr;
-  
-  with_sub_ptr ws1 = ostore_.insert(new ObjectWithSubObject);
-  with_sub_ptr ws2 = ostore_.insert(new ObjectWithSubObject);
-  
-  simple_ptr s1 = ws1->simple();
-  simple_ptr s2 = ws2->simple();
-  
-  std::cout << std::endl;
-  std::cout << "s1 ref count: " << s1.ref_count() << "\n";
-  std::cout << "s1 ptr count: " << s1.ptr_count() << "\n";
-  std::cout << "s2 ref count: " << s2.ref_count() << "\n";
-  std::cout << "s2 ptr count: " << s2.ptr_count() << "\n";
-  
-  ws2->simple(s1);
-
-  std::cout << "s1 ref count: " << s1.ref_count() << "\n";
-  std::cout << "s1 ptr count: " << s1.ptr_count() << "\n";
-  std::cout << "s2 ref count: " << s2.ref_count() << "\n";
-  std::cout << "s2 ptr count: " << s2.ptr_count() << "\n";
 }
 
 void
@@ -409,7 +427,6 @@ ObjectStoreTestUnit::hierarchy()
   /* Insert 5 object of each item
    * object type
    */
-  cout << endl;
 
   Item *itm;
   for (int i = 0; i < 5; ++i) {
@@ -438,35 +455,63 @@ ObjectStoreTestUnit::hierarchy()
 
   item_view_t item_view(ostore_);
 
-  cout << "list all items with sub items\n";
+  /************************************
+   * 
+   * list all items with sub items
+   *
+   ************************************/
 
-  cout << "size of view: " << item_view.size() << "\n";
+  size_t max = 20;
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
   
   item_view_t::const_iterator first = item_view.begin();
   item_view_t::const_iterator last = item_view.end();
-  
+
+  int count = 0;
   while (first != last) {
-    item_ptr item = (*first++);
-    
-    cout << "Item [" << item->get_string() << "] (" << item->id() << ")\n";
+    UNIT_ASSERT_LESS(count, 20, "item view count isn't valid");
+    ++first;
+    ++count;
   }
 
   item_view.skip_siblings(true);
 
-  cout << "list all items without sub items\n";
+  /************************************
+   * 
+   * list all items without sub items
+   *
+   ************************************/
 
-  cout << "size of view: " << item_view.size() << "\n";
+  max = 5;
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
   
   first = item_view.begin();
   last = item_view.end();
   
+  count = 0;
   while (first != last) {
-    item_ptr item = (*first++);
-    
-    cout << "Item [" << item->get_string() << "] (" << item->id() << ")\n";
+    UNIT_ASSERT_LESS(count, 5, "item view count isn't valid");
+    ++first;
+    ++count;
   }
   
   // Todo: check deletion
   
   // Todo: check sub item view (a,b,c)
+  typedef object_view<ItemA> item_a_view_t;
+  typedef object_ptr<ItemA> item_a_ptr;
+
+  item_a_view_t item_a_view(ostore_);
+
+  UNIT_ASSERT_EQUAL(item_a_view.size(), max, "expected item_a view size isn't 15");
+  
+  item_a_view_t::const_iterator afirst = item_a_view.begin();
+  item_a_view_t::const_iterator alast = item_a_view.end();
+
+  count = 0;
+  while (afirst != alast) {
+    UNIT_ASSERT_LESS(count, 5, "item_a view count isn't valid");
+    ++afirst;
+    ++count;
+  }
 }

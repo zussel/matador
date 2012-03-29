@@ -78,7 +78,17 @@ void unit_test::assert_equal(const varchar_base &a, const varchar_base &b, const
   if (a != b) {
     // throw exception
     std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << msg;
+    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    throw unit_exception(msgstr.str());
+  }
+}
+
+void unit_test::assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
+{
+  if (a != b) {
+    // throw exception
+    std::stringstream msgstr;
+    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
     throw unit_exception(msgstr.str());
   }
 }

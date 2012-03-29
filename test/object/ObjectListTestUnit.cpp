@@ -45,35 +45,46 @@ ObjectListTestUnit::test_ref_list()
 {
   typedef object_ptr<ItemRefList> itemlist_ptr;
   typedef object_ptr<ItemRefList::value_type> item_ptr;
-  cout << "inserting 20 items\n";
+
+  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
+
+  ItemRefList::size_type val = 0;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
+
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new ItemRefList::value_type(name.str()));
-    cout << "inserted item [" << item->get_string() << "]\n";
-  }
-  cout << "inserting item reference list\n";
-  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
-  cout << "item list [" << itemlist->id() << "]\n";
-  cout << "add every second item as reference to item list\n";
-  
-  typedef object_view<ItemRefList::value_type> item_view_t;
-  item_view_t item_view(ostore_);
-  item_view_t::iterator first = item_view.begin();
-  item_view_t::iterator last = item_view.end();
-  while (first != last) {
-    item_ptr i = (*first++);
-    if (i->id() % 2) {
-      cout << "adding item [" << i->get_string() << "(id: " << i->id() << ")]\n";
-      itemlist->push_back(i);
+    if (i % 2) {
+      itemlist->push_back(item);
     }
   }
-  cout << "dumping items of item list\n";
-  
-  for (ItemRefList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-    cout << "item [" << i->get()->get_string() << "]\n";
+
+  val = 10;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
+
+  typedef object_view<ItemRefList::value_type> item_view_t;
+  item_view_t item_view(ostore_);
+
+  val = 20;
+  UNIT_ASSERT_EQUAL(item_view.size(), val, "item view has invalid size");
+
+
+  item_view_t::iterator first = item_view.begin();
+  item_view_t::iterator last = item_view.end();
+
+  int count = 0;
+  while (first != last) {
+    UNIT_ASSERT_LESS(count, 20, "item view count isn't valid");
+    ++first;
+    ++count;
   }
   
+  count = 0;
+  for (ItemRefList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+    UNIT_ASSERT_LESS(count, 10, "item list count isn't valid");
+    ++count;
+  }  
 }
 
 void
@@ -82,31 +93,44 @@ ObjectListTestUnit::test_ptr_list()
   typedef object_ptr<ItemPtrList> itemlist_ptr;
   typedef object_ptr<ItemPtrList::value_type> item_ptr;
 
-  cout << "inserting item pointer list\n";
   itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
-  cout << "item list [" << itemlist->id() << "]\n";
 
-  cout << "inserting 20 items\n";
+  ItemPtrList::size_type val = 0;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
+
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
-    itemlist->push_back(item);
+    if (i % 2) {
+      itemlist->push_back(item);
+    }
   }
 
-  cout << "items of list\n";
-  for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-    cout << "item [" << i->get()->get_string() << "]\n";
-  }
-  
-  cout << "items of view\n";
+  val = 10;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
+
   typedef object_view<ItemPtrList::value_type> item_view_t;
   item_view_t item_view(ostore_);
+
+  val = 20;
+  UNIT_ASSERT_EQUAL(item_view.size(), val, "item view has invalid size");
+
+
   item_view_t::iterator first = item_view.begin();
   item_view_t::iterator last = item_view.end();
+
+  int count = 0;
   while (first != last) {
-    item_ptr i = (*first++);
-    cout << "item [" << i->get_string() << "(id: " << i->id() << ")]\n";
+    UNIT_ASSERT_LESS(count, 20, "item view count isn't valid");
+    ++first;
+    ++count;
+  }
+  
+  count = 0;
+  for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+    UNIT_ASSERT_LESS(count, 10, "item list count isn't valid");
+    ++count;
   }
 }
 
@@ -114,45 +138,24 @@ void
 ObjectListTestUnit::test_linked_list()
 {
   typedef object_ptr<LinkedItemList> itemlist_ptr;
-  cout << "inserting linked item list\n";
   
   itemlist_ptr itemlist = ostore_.insert(new LinkedItemList);
-  cout << "inserted linked item list (id: " << itemlist->id() << ")\n";
-  /*
-  out.open("itemlist0.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist1.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
 
-  cout << "add item to linked list\n";
+  LinkedItemList::size_type val = 0;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list is not empty");
+
   itemlist->push_back(new LinkedItem("Schrank"));
   itemlist->push_back(new LinkedItem("Tisch"));
   itemlist->push_back(new LinkedItem("Stuhl"));
   itemlist->push_back(new LinkedItem("Bett"));
-  
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist2.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
+
+  val = 4;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list size is invalid");
 
   itemlist->push_front(new LinkedItem("Teppich"));
 
-  ostore_.dump_objects(std::cout);
-  /*
-  out.open("itemlist3.dot");
-  ostore_.dump_prototypes(out);
-  out.close();
-  */
-
-  cout << "dump linked list\n";
+  val = 5;
+  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list size is invalid");
 
   LinkedItemList::const_iterator first = itemlist->begin();
   LinkedItemList::const_iterator last = itemlist->end();

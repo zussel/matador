@@ -161,6 +161,7 @@ class ItemPtrList : public oos::object
 public:
   typedef ContainerItem<ItemPtrList> value_type;
   typedef oos::object_ptr_list<value_type> item_list_t;
+  typedef item_list_t::size_type size_type;
   typedef item_list_t::value_type_ptr value_type_ptr;
   typedef ItemPtrList self;
   typedef oos::object_ref<self> self_ref;
@@ -214,6 +215,7 @@ class ItemRefList : public oos::object
 public:
   typedef ContainerItem<ItemRefList> item_type;
   typedef oos::object_ref_list<item_type> item_list_t;
+  typedef item_list_t::size_type size_type;
   typedef item_list_t::value_type value_type;
   typedef item_list_t::value_type_ref value_type_ref;
   typedef ItemRefList self;
@@ -255,6 +257,8 @@ public:
 
   bool empty() const { return item_list_.empty(); }
   void clear() { item_list_.clear(); }
+  
+  size_type size() const { return item_list_.size(); }
 
 private:
   item_list_t item_list_;
@@ -312,6 +316,7 @@ class LinkedItemList : public oos::object
 public:
   typedef item_list_t::iterator iterator;
   typedef item_list_t::const_iterator const_iterator;
+  typedef item_list_t::size_type size_type;
 
 public:
   LinkedItemList()
@@ -348,6 +353,8 @@ public:
 
   bool empty() const { return item_list_.empty(); }
   void clear() { item_list_.clear(); }
+
+  size_type size() const { return item_list_.size(); }
 
   iterator erase(iterator i)
   {

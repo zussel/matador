@@ -893,6 +893,7 @@ public:
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
   typedef object_list_base base_list;                   /**< Shortcut for the object_list class. */
 	typedef T value_type;                                 /**< Shortcut for the value type. */
+  typedef size_t size_type;                             /**< Shortcut for size type. */
 	typedef object_ptr<value_type> value_type_ptr;        /**< Shortcut for the value type pointer. */
   typedef linked_object_list_iterator<T> iterator;             /**< Shortcut for the list iterator. */
   typedef const_linked_object_list_iterator<T> const_iterator; /**< Shortcut for the list const iterator. */

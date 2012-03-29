@@ -107,9 +107,7 @@ ObjectPrototypeTestUnit::prototype_traverse()
   int count(0);
 
   while (first != last) {
-    if (count > 5) {
-      UNIT_ASSERT_GREATER(count, 5, "prototype count isn't valid");
-    }
+    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
     ++first;
     ++count;
   }
