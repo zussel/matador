@@ -39,8 +39,6 @@ ObjectStoreTestUnit::initialize()
 {
   ostore_.insert_prototype(new object_producer<Item>, "ITEM");
   ostore_.insert_prototype(new object_producer<ObjectItem<Item> >, "OBJECT_ITEM");
-  ostore_.insert_prototype(new object_producer<SimpleObject>, "SIMPLE_OBJECT");
-  ostore_.insert_prototype(new object_producer<ObjectWithSubObject>, "OBJECT_WITH_SUB_OBJECT");
 }
 
 void
@@ -239,119 +237,116 @@ ObjectStoreTestUnit::access_value()
 
   int numb = 42;
 
-  SimpleObject *so = new SimpleObject(str, numb);
+  Item *i = new Item(str, numb);
+  i->set_varchar(vstr);
 
   int n;
 
-  UNIT_ASSERT_TRUE(retrieve_value(so, "number", n), "couldn't get integer value for field [number]");
+  UNIT_ASSERT_TRUE(retrieve_value(i, "val_int", n), "couldn't get integer value for field [number]");
   UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
 
   numb = 13;
-  UNIT_ASSERT_TRUE(update_value(so, "number", numb), "couldn't set integer value for field [number]");
+  UNIT_ASSERT_TRUE(update_value(i, "val_int", numb), "couldn't set integer value for field [number]");
 
-  UNIT_ASSERT_TRUE(retrieve_value(so, "number", n), "couldn't get integer value for field [number]");
+  UNIT_ASSERT_TRUE(retrieve_value(i, "val_int", n), "couldn't get integer value for field [number]");
   UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
 
   std::string s;
 
   oos::varchar<32> vs;
 
-  UNIT_ASSERT_TRUE(retrieve_value(so, "name", vs), "couldn't get varchar value for field [name]");
-  UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
+  UNIT_ASSERT_TRUE(retrieve_value(i, "val_varchar", vs), "couldn't get varchar value for field [name]");
+  UNIT_ASSERT_TRUE(retrieve_value(i, "val_string", s), "couldn't get string value for field [name]");
   UNIT_ASSERT_EQUAL(s, str, "retrieved value of string isn't " + str);
   UNIT_ASSERT_EQUAL(vs, vstr, "retrieved value of varchar isn't " + vstr.str());
 
   str = "Kambrium";
-  UNIT_ASSERT_TRUE(update_value(so, "name", str), "couldn't set string value for field [name]");
+  UNIT_ASSERT_TRUE(update_value(i, "val_string", str), "couldn't set string value for field [name]");
 
-  UNIT_ASSERT_TRUE(retrieve_value(so, "name", s), "couldn't get string value for field [name]");
+  UNIT_ASSERT_TRUE(retrieve_value(i, "val_string", s), "couldn't get string value for field [name]");
   UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
 
-  typedef object_ptr<ObjectWithSubObject> owsub_ptr;
-  typedef object_ptr<SimpleObject> osmpl_ptr;
+  typedef object_ptr<ObjectItem<Item> > owsub_ptr;
+  typedef object_ptr<Item> osmpl_ptr;
 
-  owsub_ptr owsub = ostore_.insert(new ObjectWithSubObject);
-  osmpl_ptr osmpl = ostore_.insert(so);
+  owsub_ptr owsub = ostore_.insert(new ObjectItem<Item>);
+  osmpl_ptr osmpl = ostore_.insert(i);
 
 //  std::cout << "inserted simple object: " << osmpl << "\n";
 
-  UNIT_ASSERT_TRUE(update_value(owsub, "simple", osmpl), "couldn't set object field [simple]");
+  UNIT_ASSERT_TRUE(update_value(owsub, "ptr", osmpl), "couldn't set object field [simple]");
 
   osmpl.reset();
 
-  UNIT_ASSERT_TRUE(retrieve_value(owsub, "simple", osmpl), "couldn't get object field [simple]");
-  UNIT_ASSERT_EQUAL(osmpl.get(), so, "retrieved object isn't the expected");
+  UNIT_ASSERT_TRUE(retrieve_value(owsub, "ptr", osmpl), "couldn't get object field [simple]");
+  UNIT_ASSERT_EQUAL(osmpl.get(), i, "retrieved object isn't the expected");
 }
 
 void
 ObjectStoreTestUnit::simple_object()
 {
-  object *o = ostore_.create("SIMPLE_OBJECT");
+  object *o = ostore_.create("ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ITEM>");
   
-  SimpleObject *a = dynamic_cast<SimpleObject*>(o);
+  Item *a = dynamic_cast<Item*>(o);
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
   
-  typedef object_ptr<SimpleObject> simple_ptr;
+  typedef object_ptr<Item> item_ptr;
   
-  simple_ptr simple = ostore_.insert(a);
+  item_ptr simple = ostore_.insert(a);
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "simple object insertion failed");
+  UNIT_ASSERT_NOT_NULL(simple.get(), "item object insertion failed");
   
-  UNIT_ASSERT_TRUE(ostore_.remove(simple), "deletion of simple failed");
+  UNIT_ASSERT_TRUE(ostore_.remove(simple), "deletion of item object failed");
 }
 
 void
 ObjectStoreTestUnit::object_with_sub_object()
 {
-  object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
+  object *o = ostore_.create("OBJECT_ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectWithSubObject>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem>");
   
-  ObjectWithSubObject *s = dynamic_cast<ObjectWithSubObject*>(o);
+  ObjectItem<Item> *s = dynamic_cast<ObjectItem<Item>*>(o);
   
-  UNIT_ASSERT_NOT_NULL(s, "couldn't cast object to ObjectWithSubObject");
+  UNIT_ASSERT_NOT_NULL(s, "couldn't cast object to ObjectItem<Item>");
   
-  typedef object_ptr<ObjectWithSubObject> obj_with_sub_ptr;
+  typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
   
-  obj_with_sub_ptr ows = ostore_.insert(s);
+  obj_item_ptr ows = ostore_.insert(s);
   
-  UNIT_ASSERT_NOT_NULL(ows.get(), "object with sub object insertion failed");
+  UNIT_ASSERT_NOT_NULL(ows.get(), "object item object insertion failed");
   
   // check if sub object exists
-  object_ptr<SimpleObject> simple = ows->simple();
+  object_ptr<Item> simple = ows->ptr();
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "simple sub object creation failed");
+  UNIT_ASSERT_NOT_NULL(simple.get(), "item object creation failed");
   
-//  UNIT_ASSERT_FALSE(ostore_.remove(ows), "deletion of object with sub object unexpectedly succeeded");
-  // clear simple optr
-//  simple.reset();
-  // try remove again
-  UNIT_ASSERT_TRUE(ostore_.remove(ows), "deletion of object with sub object failed");
+  UNIT_ASSERT_TRUE(ostore_.remove(ows), "deletion of object item failed");
 }
 
 void
 ObjectStoreTestUnit::multiple_simple_objects()
 {
-  typedef object_ptr<SimpleObject> simple_ptr;
+  typedef object_ptr<Item> item_ptr;
 
   size_t elem_size = 10000;
   // create 1000 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("SIMPLE_OBJECT");
+    object *o = ostore_.create("ITEM");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <SimpleObject>");
+    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Item>");
     
-    SimpleObject *a = dynamic_cast<SimpleObject*>(o);
+    Item *a = dynamic_cast<Item*>(o);
     
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to SimpleObject");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
     
-    simple_ptr simple = ostore_.insert(a);
+    item_ptr simple = ostore_.insert(a);
   }
 
-  typedef object_view<SimpleObject> simple_view_t;
+  typedef object_view<Item> simple_view_t;
   simple_view_t simple_view(ostore_);
 
   UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10000");
@@ -360,23 +355,23 @@ ObjectStoreTestUnit::multiple_simple_objects()
 void
 ObjectStoreTestUnit::multiple_object_with_sub_objects()
 {
-  typedef object_ptr<ObjectWithSubObject> ows_ptr;
+  typedef object_ptr<ObjectItem<Item> > ows_ptr;
     
   // create 1000 objects
   size_t elem_size = 1000;
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("OBJECT_WITH_SUB_OBJECT");
+    object *o = ostore_.create("OBJECT_ITEM");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectWithSubObject>");
+    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem<Item> >");
     
-    ObjectWithSubObject *a = dynamic_cast<ObjectWithSubObject*>(o);
+    ObjectItem<Item>  *a = dynamic_cast<ObjectItem<Item> *>(o);
     
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ObjectWithSubObject");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ObjectItem<Item> ");
     
     ows_ptr ows = ostore_.insert(a);
   }
 
-  typedef object_view<ObjectWithSubObject> withsub_view_t;
+  typedef object_view<ObjectItem<Item> > withsub_view_t;
   withsub_view_t withsub_view(ostore_);
 
   UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10000");

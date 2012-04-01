@@ -33,8 +33,7 @@ std::string Artist::name() const
 
 void Artist::name(const std::string &n)
 {
-  mark_modified();
-  name_ = n;
+  modify(name_, n);
 }
 
 std::ostream& operator <<(std::ostream &os, const Artist &a)

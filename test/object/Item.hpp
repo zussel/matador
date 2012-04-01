@@ -369,6 +369,7 @@ class ItemPtrVector : public oos::object
 public:
   typedef ContainerItem<ItemPtrVector> value_type;
   typedef oos::object_ptr_vector<value_type> item_vector_t;
+  typedef item_vector_t::size_type size_type;
   typedef item_vector_t::value_type_ptr value_type_ptr;
   typedef ItemPtrVector self;
   typedef oos::object_ref<self> self_ref;

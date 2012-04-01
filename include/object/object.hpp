@@ -178,6 +178,13 @@ public:
     attr = val;
   }
 
+  template < class T >
+  void modify(oos::object_ref<T> &attr, const oos::object_ptr<T> &val)
+  {
+    mark_modified();
+    attr = val;
+  }
+
   void modify(varchar_base &attr, const std::string &val)
   {
     mark_modified();

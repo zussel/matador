@@ -45,8 +45,7 @@ void Album::write_to(object_atomizer *writer) const
 
 void Album::name(const std::string &n)
 {
-	mark_modified();
-	name_ = n;
+	modify(name_, n);
 }
 
 string Album::name() const
@@ -56,8 +55,7 @@ string Album::name() const
 
 void Album::year(int y)
 {
-  mark_modified();
-  year_ = y;
+  modify(year_, y);
 }
 
 int Album::year() const
@@ -67,8 +65,7 @@ int Album::year() const
 
 void Album::artist(const object_ptr<Artist> &a)
 {
-  mark_modified();
-  artist_ = a;
+  modify(artist_, a);
 }
 
 object_ref<Artist> Album::artist() const

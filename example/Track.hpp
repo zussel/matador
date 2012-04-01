@@ -17,7 +17,6 @@ class Track : public oos::object
 {
 public:
 	Track();
-  Track(const std::string &t, unsigned long d);
   Track(const std::string &t, unsigned long d, const oos::object_ptr<Artist> &a);
 	virtual ~Track();
 	

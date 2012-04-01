@@ -38,11 +38,11 @@ void ObjectVectorTestUnit::test_ptr_vector()
   typedef object_ptr<ItemPtrVector> itemvector_ptr;
   typedef object_ptr<ItemPtrVector::value_type> item_ptr;
 
-  cout << "inserting item pointer vector\n";
   itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
-  cout << "item list [" << itemvector->id() << "]\n";
 
-  cout << "inserting 20 items\n";
+  ItemPtrVector::size_type val = 0;
+  UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
+
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
@@ -50,19 +50,21 @@ void ObjectVectorTestUnit::test_ptr_vector()
     itemvector->push_back(item);
   }
 
-  cout << "items of vector\n";
-  for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "removing item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
-  }
+  val = 20;
+  UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector has invalid size");
 
   ItemPtrVector::iterator i = itemvector->begin() + 4;
 
-  cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
-  i = itemvector->erase(i);
+  int ival = 4;
+  UNIT_ASSERT_EQUAL((*i)->index(), ival, "item is invalid");
 
+  i = itemvector->erase(i);
+  UNIT_ASSERT_EQUAL((*i)->index(), ival, "item is invalid");
+
+/*
   cout << "items of vector\n";
   for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
     cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
   }
-
+*/
 }

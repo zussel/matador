@@ -37,13 +37,13 @@ void backup_visitor::visit(insert_action *)
   // nothing to do
 }
 
-void backup_visitor::visit(update_action *a)
+void backup_visitor::visit(update_action*)
 {
   // serialize object
   serializer_.serialize(object_, *buffer_);
 }
 
-void backup_visitor::visit(delete_action *a)
+void backup_visitor::visit(delete_action*)
 {
   // serialize object
   serializer_.serialize(object_, *buffer_);

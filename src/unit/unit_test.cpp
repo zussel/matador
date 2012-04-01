@@ -20,6 +20,7 @@
 #include "tools/varchar.hpp"
 
 #include <iostream>
+#include <iomanip>
 
 namespace oos {
 
@@ -126,7 +127,7 @@ void unit_test::info(const std::string &msg)
 void unit_test::execute(test_func_info &test_info)
 {
     initialize();
-    std::cout << "Executing test [" << test_info.caption << "] ... ";
+    std::cout << "Executing test [" << std::left << std::setw(70) << test_info.caption << "] ... ";
     try {
       test_info.func();
     } catch (unit_exception &ex) {

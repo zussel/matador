@@ -59,7 +59,6 @@ void object_vector_base::mark_modified(object *o)
 
 bool object_vector_base::set_reference(object *elem)
 {
-  std::cout << "linking " << *parent_ << " into field " << vector_name_ << " of " << *elem << "\n";
   object_linker ol(elem, parent_, vector_name_);
   elem->read_from(&ol);
 

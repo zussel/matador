@@ -54,7 +54,7 @@ sqlite_statement::~sqlite_statement()
 bool sqlite_statement::step()
 {
 
-  std::cerr << "executing " << sql() << "\n";
+//  std::cerr << "executing " << sql() << "\n";
 
   int ret = sqlite3_step(stmt_);
   if (ret == SQLITE_ROW) {

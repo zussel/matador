@@ -8,11 +8,6 @@ Track::Track()
   : duration_(0)
 {}
 
-Track::Track(const std::string &t, unsigned long d)
-  : title_(t)
-  , duration_(d)
-{}
-
 Track::Track(const std::string &t, unsigned long d, const object_ptr<Artist> &a)
   : title_(t)
   , duration_(d)
@@ -40,7 +35,7 @@ void Track::write_to(object_atomizer *writer) const
 
 void Track::title(const std::string &t)
 {
-  title_ = t;
+  modify(title_, t);
 }
 
 std::string Track::title() const
@@ -50,7 +45,7 @@ std::string Track::title() const
 
 void Track::duration(long d)
 {
-  duration_ = d;
+  modify(duration_, d);
 }
 
 long Track::duration() const
@@ -60,8 +55,7 @@ long Track::duration() const
 
 void Track::artist(const object_ref<Artist> &a)
 {
-  mark_modified();
-  artist_ = a;
+  modify(artist_, a);
 }
 
 object_ref<Artist> Track::artist() const
