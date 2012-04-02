@@ -123,6 +123,13 @@ public:
   value_ref ref() const { return ref_; }
   value_ptr ptr() const { return ptr_; }
 
+  template < class I >
+  friend std::ostream& operator <<(std::ostream &os, const ObjectItem<I> &i)
+  {
+    os << "ObjectItem [" << i.get_string() << "] (" << i.get_int() << ")";
+    return os;
+  }
+
 private:
   value_ref ref_;
   value_ptr ptr_;

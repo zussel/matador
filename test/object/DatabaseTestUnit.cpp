@@ -1,7 +1,5 @@
 #include "DatabaseTestUnit.hpp"
 
-#include "Car.hpp"
-#include "Engine.hpp"
 #include "Item.hpp"
 
 #include "object/object_view.hpp"
@@ -34,10 +32,9 @@ void
 DatabaseTestUnit::initialize()
 {
   ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrList> >, "ITEM_PTR");
+  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
+  ostore_.insert_prototype(new object_producer<ObjectItem<Item> >, "OBJECT_ITEM");
   ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
-
-  ostore_.insert_prototype(new object_producer<Car>, "CAR");
-  ostore_.insert_prototype(new object_producer<Engine>, "ENGINE");
 
   // delete db
   std::remove("test.sqlite");
@@ -56,7 +53,11 @@ DatabaseTestUnit::open()
   // create database and make object store known to the database
   database db(ostore_, "sqlite://test.sqlite");
 
-  UNIT_ASSERT_TRUE(db.is_open(), "couldn't database open database");
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
+  
+  db.close();
+
+  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
 }
 
 void
@@ -181,22 +182,22 @@ DatabaseTestUnit::with_sub()
     // begin transaction
     tr.begin();
     // ... do some object modifications
-    typedef object_ptr<ObjectItem<Item> > object_item_ptr;
-    typedef object_ptr<Item> Item_ptr;
+    typedef ObjectItem<Item> object_item_t;
+    typedef object_ptr<object_item_t> object_item_ptr;
+    typedef object_ptr<Item> item_ptr;
     // insert new object
-    car_ptr car = ostore_.insert(new Car("VW", "Beetle", "A small old car, looking like a beetle."));    
-    engine_ptr engine = car->engine();
+    object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));    
+    item_ptr item = object_item->ptr();
     ostore_.dump_objects(cout);
-    engine->power(120);
-    engine->cylinder(4);
-    engine->capacity(1.4f);
-    cout << "inserted " << *car << " with " << *engine << endl;
+    item->set_int(120);
+    item->set_string("Bar");
+    cout << "inserted " << *object_item << " with " << *item << endl;
     tr.commit();
     
     tr.begin();
     
-    cout << "removing " << *car << " ... ";
-    ostore_.remove(car);
+    cout << "removing " << *object_item << " ... ";
+    ostore_.remove(object_item);
     cout << "done.\n";
     ostore_.dump_objects(cout);
     cout << "starting rollback\n";

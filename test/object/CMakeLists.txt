@@ -1,9 +1,5 @@
 SET (TEST_SOURCES
   test_object.cpp
-  Car.cpp
-  Car.hpp
-  Engine.cpp
-  Engine.hpp
   Item.hpp
   ObjectPrototypeTestUnit.cpp
   ObjectPrototypeTestUnit.hpp
