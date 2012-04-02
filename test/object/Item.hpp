@@ -69,6 +69,12 @@ public:
   std::string get_string() const { return string_; }
   oos::varchar_base get_varchar() const { return varchar_; }
 
+  friend std::ostream& operator <<(std::ostream &os, const Item &i)
+  {
+    os << "Item [" << i.get_string() << "] (" << i.get_int() << ")";
+    return os;
+  }
+
 private:
   char char_;
   float float_;
@@ -93,6 +99,9 @@ public:
   typedef oos::object_ref<T> value_ref;
 
   ObjectItem() {}
+  ObjectItem(const std::string &n, int i)
+    : Item(n, i)
+  {}
   virtual ~ObjectItem() {}
 
 	void read_from(oos::object_atomizer *reader)

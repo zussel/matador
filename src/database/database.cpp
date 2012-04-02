@@ -63,6 +63,11 @@ void database::open()
   impl_->open(connection_);
 }
 
+bool database::is_open() const
+{
+  return impl_->is_open();
+}
+
 void database::create()
 {
   /*****************

@@ -22,9 +22,9 @@ DatabaseTestUnit::DatabaseTestUnit()
 {
   add_test("open", std::tr1::bind(&DatabaseTestUnit::open, this), "open database test");
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
-  add_test("with_sub", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
-  add_test("with_list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
-  add_test("test", std::tr1::bind(&DatabaseTestUnit::test, this), "simple test method");
+  add_test("complex", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
+  add_test("list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
+  add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -55,6 +55,8 @@ DatabaseTestUnit::open()
   cout << endl;
   // create database and make object store known to the database
   database db(ostore_, "sqlite://test.sqlite");
+
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't database open database");
 }
 
 void
@@ -77,38 +79,38 @@ DatabaseTestUnit::simple()
     tr.begin();
 
     // ... do some object modifications
-    typedef object_ptr<Engine> engine_ptr;
-    typedef object_view<Engine> engine_view;
+    typedef object_ptr<Item> item_ptr;
+    typedef object_view<Item> item_view;
     // insert new object
-    engine_ptr engine = ostore_.insert(new Engine(70, 4, 1.4f));
-    cout << "inserted " << *engine << "\n";
+    item_ptr item = ostore_.insert(new Item("Hello World", 70));
+    cout << "inserted " << *item << "\n";
     tr.commit();
 
     tr.begin();
     // modify object
-    engine->power(120);
-    cout << "changed power of " << *engine << "\n";
+    item->set_int(120);
+    cout << "changed int value of " << *item << "\n";
     
     transaction tr2(db);
     try {
       // begin inner transaction
       tr2.begin();
       // change name again
-      engine->power(170);
-      cout << "changed power of " << *engine << "\n";
+      item->set_int(170);
+      cout << "changed int value of " << *item << "\n";
       // rollback transaction
       tr2.rollback();
-      cout << "after rollback " << *engine << "\n";
+      cout << "after rollback " << *item << "\n";
     } catch (exception &) {
       tr2.rollback();
     }
     tr.rollback();
-    cout << "after rollback " << *engine << "\n";
+    cout << "after rollback " << *item << "\n";
 
     tr.begin();
     // delete object
-    cout << "deleting " << *engine << "\n";
-    ostore_.remove(engine);
+    cout << "deleting " << *item << "\n";
+    ostore_.remove(item);
 
     // show objects
     ostore_.dump_objects(cout);
@@ -121,25 +123,25 @@ DatabaseTestUnit::simple()
     // show objects
     ostore_.dump_objects(cout);
 
-    engine_view view(ostore_);
+    item_view view(ostore_);
     if (view.size() > 0) {
-      engine_view::iterator i = view.begin();
+      item_view::iterator i = view.begin();
       cout << "got " << *i.optr() << endl;
     } else {
       cout << "ERROR: no object in engine view!\n";
     }
 
-    cout << "number of engines: " << view.size() << "\n";
+    cout << "number of items: " << view.size() << "\n";
 
     tr.begin();
     // delete object
-    engine = *view.begin();
-    cout << "deleting " << *engine << " (id: " << engine->id() << ")\n";
-    ostore_.remove(engine);
+    item = *view.begin();
+    cout << "deleting " << *item << " (id: " << item->id() << ")\n";
+    ostore_.remove(item);
     
     tr.commit();
 
-    cout << "number of engines: " << view.size() << "\n";
+    cout << "number of items: " << view.size() << "\n";
   } catch (exception &ex) {
     // error, abort transaction
     cout << ex.what() << endl;
@@ -179,8 +181,8 @@ DatabaseTestUnit::with_sub()
     // begin transaction
     tr.begin();
     // ... do some object modifications
-    typedef object_ptr<Car> car_ptr;
-    typedef object_ptr<Engine> engine_ptr;
+    typedef object_ptr<ObjectItem<Item> > object_item_ptr;
+    typedef object_ptr<Item> Item_ptr;
     // insert new object
     car_ptr car = ostore_.insert(new Car("VW", "Beetle", "A small old car, looking like a beetle."));    
     engine_ptr engine = car->engine();
@@ -315,12 +317,6 @@ DatabaseTestUnit::with_list()
 }
 
 void
-DatabaseTestUnit::test()
+DatabaseTestUnit::with_vector()
 {
-  std::cout << std::endl;
-  std::string str("hallo welt und alle anderen 12345678901234567890");
-  std::cout << "sizeof str: " << sizeof(str) << "\n";
-
-  std::tr1::shared_ptr<string> strp(new string("hallo welt und alle anderen 12345678901234567890"));
-  std::cout << "sizeof strp: " << sizeof(strp) << "\n";
 }

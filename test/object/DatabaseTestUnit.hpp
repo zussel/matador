@@ -18,7 +18,7 @@ public:
   void simple();
   void with_sub();
   void with_list();
-  void test();
+  void with_vector();
 
 private:
   oos::object_store ostore_;

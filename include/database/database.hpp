@@ -85,6 +85,15 @@ public:
   void open();
   
   /**
+   * @brief Returns true if database is open.
+   *
+   * Returns true if database is open
+   *
+   * @return True on open database.
+   */
+  bool is_open() const;
+
+  /**
    * @brief Creates the database.
    * 
    * Try to create the database and all tables described
