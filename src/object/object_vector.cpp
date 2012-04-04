@@ -17,7 +17,6 @@
 
 #include "object/object_vector.hpp"
 #include "object/object.hpp"
-#include "object/object_linker.hpp"
 #include "object/object_value.hpp"
 
 #include <iostream>
@@ -59,12 +58,11 @@ void object_vector_base::mark_modified(object *o)
 
 bool object_vector_base::set_reference(object *elem)
 {
-  object_linker ol(elem, parent_, vector_name_);
-  elem->read_from(&ol);
-
-  update_value(elem, index_name_.c_str(), (int)size());
-
-  return ol.success();
+  if (elem->set(vector_name_, parent_)) {
+    return elem->set(index_name_, (int)size());
+  } else {
+    return false;
+  }
 }
 
 }

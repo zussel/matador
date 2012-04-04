@@ -17,7 +17,6 @@
 
 #include "object/object_list.hpp"
 #include "object/object.hpp"
-#include "object/object_linker.hpp"
 
 #include <iostream>
 
@@ -45,7 +44,7 @@ void object_list_base::install(object_store *ostore)
 
 void object_list_base::uninstall()
 {
-    ostore_ = NULL;
+    ostore_ = 0;
 //    parent_ = NULL;
 }
 
@@ -56,9 +55,7 @@ void object_list_base::mark_modified(object *o)
 
 bool object_list_base::set_reference(object *elem)
 {
-  object_linker ol(elem, parent_, list_name_);
-  elem->read_from(&ol);
-  return ol.success();
+  return elem->set(list_name_, parent_);
 }
 
 }

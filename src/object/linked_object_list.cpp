@@ -16,7 +16,6 @@
  */
 
 #include "object/linked_object_list.hpp"
-#include "object/object_linker.hpp"
 
 namespace oos {
 
@@ -27,10 +26,7 @@ bool linked_object_list_base_node::link_reference(object *r, const std::string &
 
 bool linked_object_list_base_node::link_reference(object *o, object *r, const std::string &n)
 {
-  std::cout << "linking " << *r << " into field " << n << " of " << *o << "\n";
-  object_linker ol(o, r, n);
-  o->read_from(&ol);
-  return ol.success();
+  return o->set(n, o);
 }
 
 }
