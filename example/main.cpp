@@ -65,7 +65,16 @@ main(int argc, char *argv[])
 
   // 
   // run command server
-  // server.run();
+  /*
+  server app(ostore);
+  server.insert_command<import_command>("import");
+  server.insert_command<export_command>("export");
+  server.insert_command<insert_command>("insert");
+  server.insert_command<update_command>("update");
+  server.insert_command<delete_command>("delete");
+  server.insert_command<select_command>("select");
+  app.run();
+  */
 
   // read in data from file
   read_music_data(db, "musicdata.txt");
