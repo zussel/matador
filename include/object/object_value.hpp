@@ -332,6 +332,20 @@ private:
   }
 
   /**
+   * @brief Get short value of object.
+   * 
+   * Get short value identified by id of object.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to the value.
+   */
+	virtual void write_short(const char *id, short x)
+  {
+    detail::retriever<int, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
+  }
+
+  /**
    * @brief Get int value of object.
    * 
    * Get int value identified by id of object.
@@ -360,16 +374,44 @@ private:
   }
 
   /**
-   * @brief Get unsigned value of object.
+   * @brief Get unsigned short value of object.
    * 
-   * Get unsigned value identified by id of object.
+   * Get unsigned short value identified by id of object.
    * 
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_unsigned(const char *id, unsigned x)
+	virtual void write_unsigned_short(const char *id, unsigned short x)
   {
-    detail::retriever<unsigned, T> r;
+    detail::retriever<unsigned short, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
+  }
+
+  /**
+   * @brief Get unsigned int value of object.
+   * 
+   * Get unsigned int value identified by id of object.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to the value.
+   */
+  virtual void write_unsigned_int(const char *id, unsigned int x)
+  {
+    detail::retriever<unsigned int, T> r;
+    r.retrieve(id, id_.c_str(), succeeded_, x, value_);
+  }
+
+  /**
+   * @brief Get unsigned long value of object.
+   * 
+   * Get unsigned long value identified by id of object.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to the value.
+   */
+	virtual void write_unsigned_long(const char *id, unsigned long x)
+  {
+    detail::retriever<unsigned long, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
@@ -516,7 +558,21 @@ private:
   }
 
   /**
-   * @fn virtual void read_int(const char *id, int &x)
+   * @brief Read an short from the atomizer.
+   * 
+   * Read an short from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_short(const char *id, short &x)
+  {
+    static detail::updater<T, short> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
+  }
+
+  /**
    * @brief Read an integer from the atomizer.
    * 
    * Read an integer from the atomizer
@@ -532,7 +588,6 @@ private:
   }
 
   /**
-   * @fn virtual void read_long(const char *id, long &x)
    * @brief Read a long from the atomizer.
    * 
    * Read a long from the atomizer
@@ -548,18 +603,47 @@ private:
   }
 
   /**
-   * @fn virtual void read_unsigned(const char *id, unsigned &x)
-   * @brief Read an unsigned integer from the atomizer.
+   * @brief Read an unsigned short from the atomizer.
    * 
-   * Read a unsigned integer from the atomizer
+   * Read a unsigned short from the atomizer
    * identified by a unique name.
    * 
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned(const char *id, unsigned &x)
+	virtual void read_unsigned_short(const char *id, unsigned short &x)
   {
-    static detail::updater<T, unsigned> u;
+    static detail::updater<T, unsigned short> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
+  }
+
+  /**
+   * @brief Read an unsigned int from the atomizer.
+   * 
+   * Read a unsigned int from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_unsigned_int(const char *id, unsigned int &x)
+  {
+    static detail::updater<T, unsigned int> u;
+    u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
+  }
+
+  /**
+   * @brief Read an unsigned long from the atomizer.
+   * 
+   * Read a unsigned long from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_unsigned_long(const char *id, unsigned long &x)
+  {
+    static detail::updater<T, unsigned long> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 

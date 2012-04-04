@@ -73,6 +73,11 @@ void object_serializer::write_double(const char*, double f)
   buffer_->append(&f, sizeof(f));
 }
 
+void object_serializer::write_short(const char*, short x)
+{
+  buffer_->append(&x, sizeof(x));
+}
+
 void object_serializer::write_int(const char*, int i)
 {
   buffer_->append(&i, sizeof(i));
@@ -83,9 +88,19 @@ void object_serializer::write_long(const char*, long l)
   buffer_->append(&l, sizeof(l));
 }
 
-void object_serializer::write_unsigned(const char*, unsigned u)
+void object_serializer::write_unsigned_short(const char*, unsigned short x)
 {
-  buffer_->append(&u, sizeof(u));
+  buffer_->append(&x, sizeof(x));
+}
+
+void object_serializer::write_unsigned_int(const char*, unsigned int x)
+{
+  buffer_->append(&x, sizeof(x));
+}
+
+void object_serializer::write_unsigned_long(const char*, unsigned long x)
+{
+  buffer_->append(&x, sizeof(x));
 }
 
 void object_serializer::write_bool(const char*, bool b)
@@ -128,7 +143,7 @@ void object_serializer::write_object_list(const char*, const object_list_base &x
 {
   // write number of items in list
   // for each item write id and type
-  write_unsigned(NULL, x.size());
+  write_unsigned_int(0, x.size());
   x.for_each(std::tr1::bind(&object_serializer::write_object_list_item, this, _1));
 }
 
@@ -137,7 +152,7 @@ void object_serializer::write_object_vector(const char*, const object_vector_bas
   /* write number of items in vector
    * for each item write id, index and type
    */
-  write_unsigned(NULL, x.size());
+  write_unsigned_int(0, x.size());
   unsigned int index(0);
   x.for_each(std::tr1::bind(&object_serializer::write_object_vector_item, this, _1, index));
 }
@@ -157,6 +172,11 @@ void object_serializer::read_double(const char*, double &f)
   buffer_->release(&f, sizeof(f));
 }
 
+void object_serializer::read_short(const char*, short &x)
+{
+  buffer_->release(&x, sizeof(x));
+}
+
 void object_serializer::read_int(const char*, int &i)
 {
   buffer_->release(&i, sizeof(i));
@@ -167,9 +187,19 @@ void object_serializer::read_long(const char*, long &l)
   buffer_->release(&l, sizeof(l));
 }
 
-void object_serializer::read_unsigned(const char*, unsigned &u)
+void object_serializer::read_unsigned_short(const char*, unsigned short &x)
 {
-  buffer_->release(&u, sizeof(u));
+  buffer_->release(&x, sizeof(x));
+}
+
+void object_serializer::read_unsigned_int(const char*, unsigned int &x)
+{
+  buffer_->release(&x, sizeof(x));
+}
+
+void object_serializer::read_unsigned_long(const char*, unsigned long &x)
+{
+  buffer_->release(&x, sizeof(x));
 }
 
 void object_serializer::read_bool(const char*, bool &b)
@@ -216,9 +246,9 @@ void object_serializer::read_object(const char*, object_base_ptr &x)
    *
    ***************/
   long id = 0;
-  read_long(NULL, id);
+  read_long(0, id);
   std::string type;
-  read_string(NULL, type);
+  read_string(0, type);
 
   object_proxy *oproxy = ostore_->find_proxy(id);
   if (!oproxy) {
@@ -232,13 +262,13 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
 {
   // get count of backuped list item
   unsigned int s(0);
-  read_unsigned(NULL, s);
+  read_unsigned_int(0, s);
   x.reset();
   string type;
   long id(0);
   for (unsigned int i = 0; i < s; ++i) {
-    read_long(NULL, id);
-    read_string(NULL, type);
+    read_long(0, id);
+    read_string(0, type);
     object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
@@ -251,15 +281,15 @@ void object_serializer::read_object_vector(const char*, object_vector_base &x)
 {
   // get count of backuped list item
   unsigned int s(0);
-  read_unsigned(NULL, s);
+  read_unsigned_int(0, s);
   x.reset();
   string type;
   long id(0);
   unsigned int index(0);
   for (unsigned int i = 0; i < s; ++i) {
-    read_long(NULL, id);
-    read_unsigned(NULL, index);
-    read_string(NULL, type);
+    read_long(0, id);
+    read_unsigned_int(0, index);
+    read_string(0, type);
     object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
@@ -270,15 +300,15 @@ void object_serializer::read_object_vector(const char*, object_vector_base &x)
 
 void object_serializer::write_object_list_item(const object *o)
 {
-  write_long(NULL, o->id());
-  write_string(NULL, o->classname());
+  write_long(0, o->id());
+  write_string(0, o->classname());
 }
 
 void object_serializer::write_object_vector_item(const object *o, unsigned int &index)
 {
-  write_long(NULL, o->id());
-  write_unsigned(NULL, index++);
-  write_string(NULL, o->classname());
+  write_long(0, o->id());
+  write_unsigned_int(0, index++);
+  write_string(0, o->classname());
 }
 
 }

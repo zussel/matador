@@ -85,9 +85,12 @@ private:
 	virtual void write_char(const char* id, char c);
 	virtual void write_float(const char* id, float f);
 	virtual void write_double(const char* id, double f);
+	virtual void write_short(const char* id, short x);
 	virtual void write_int(const char* id, int i);
 	virtual void write_long(const char* id, long l);
-	virtual void write_unsigned(const char* id, unsigned u);
+	virtual void write_unsigned_short(const char* id, unsigned short x);
+	virtual void write_unsigned_int(const char* id, unsigned int x);
+	virtual void write_unsigned_long(const char* id, unsigned long x);
 	virtual void write_bool(const char* id, bool b);
 	virtual void write_charptr(const char* id, const char *c);
 	virtual void write_string(const char* id, const std::string &s);
@@ -99,9 +102,12 @@ private:
 	virtual void read_char(const char* id, char &c);
 	virtual void read_float(const char* id, float &f);
 	virtual void read_double(const char* id, double &f);
+	virtual void read_short(const char* id, short &i);
 	virtual void read_int(const char* id, int &i);
 	virtual void read_long(const char* id, long &l);
-	virtual void read_unsigned(const char* id, unsigned &u);
+	virtual void read_unsigned_short(const char* id, unsigned short &x);
+	virtual void read_unsigned_int(const char* id, unsigned int &x);
+	virtual void read_unsigned_long(const char* id, unsigned long &x);
 	virtual void read_bool(const char* id, bool &b);
 	virtual void read_charptr(const char* id, char *&c);
 	virtual void read_string(const char* id, std::string &s);

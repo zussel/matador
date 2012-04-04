@@ -28,9 +28,12 @@ public:
     reader->read_char("val_char", char_);
     reader->read_float("val_float", float_);
     reader->read_double("val_double", double_);
+    reader->read_short("val_short", short_);
     reader->read_int("val_int", int_);
     reader->read_long("val_long", long_);
-    reader->read_unsigned("val_unsigned", unsigned_);
+    reader->read_unsigned_short("val_unsigned_short", unsigned_short_);
+    reader->read_unsigned_int("val_unsigned_int", unsigned_int_);
+    reader->read_unsigned_long("val_unsigned_long", unsigned_long_);
     reader->read_bool("val_bool", bool_);
     reader->read_string("val_string", string_);
     reader->read_varchar("val_varchar", varchar_);
@@ -41,9 +44,12 @@ public:
     writer->write_char("val_char", char_);
     writer->write_float("val_float", float_);
     writer->write_double("val_double", double_);
+    writer->write_short("val_short", short_);
     writer->write_int("val_int", int_);
     writer->write_long("val_long", long_);
-    writer->write_unsigned("val_unsigned", unsigned_);
+    writer->write_unsigned_short("val_unsigned_short", unsigned_short_);
+    writer->write_unsigned_int("val_unsigned_int", unsigned_int_);
+    writer->write_unsigned_long("val_unsigned_long", unsigned_long_);
     writer->write_bool("val_bool", bool_);
     writer->write_string("val_string", string_);
     writer->write_varchar("val_varchar", varchar_);
@@ -52,9 +58,12 @@ public:
   void set_char(char x) { modify(char_, x); }
   void set_float(float x) { modify(float_, x); }
   void set_double(double x) { modify(double_, x); }
+  void set_short(short x) { modify(short_, x); }
   void set_int(int x) { modify(int_, x); }
   void set_long(long x) { modify(long_, x); }
-  void set_unsigned(unsigned x) { modify(unsigned_, x); }
+  void set_unsigned_short(unsigned short x) { modify(unsigned_short_, x); }
+  void set_unsigned_int(unsigned int x) { modify(unsigned_int_, x); }
+  void set_unsigned_long(unsigned long x) { modify(unsigned_long_, x); }
   void set_bool(bool x) { modify(bool_, x); }
   void set_string(const std::string &x) { modify(string_, x); }
   void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
@@ -62,9 +71,12 @@ public:
   char get_char() const { return char_; }
   float get_float() const { return float_; }
   double get_double() const { return double_; }
+  short get_short() const { return short_; }
   int get_int() const { return int_; }
   long get_long() const { return long_; }
-  unsigned get_unsigned() const { return unsigned_; }
+  unsigned short get_unsigned_short() const { return unsigned_short_; }
+  unsigned int get_unsigned_int() const { return unsigned_int_; }
+  unsigned long get_unsigned_long() const { return unsigned_long_; }
   bool get_bool() const { return bool_; }
   std::string get_string() const { return string_; }
   oos::varchar_base get_varchar() const { return varchar_; }
@@ -79,9 +91,12 @@ private:
   char char_;
   float float_;
   double double_;
+  short short_;
   int int_;
   long long_;
-  unsigned unsigned_;
+  unsigned short unsigned_short_;
+  unsigned int unsigned_int_;
+  unsigned long unsigned_long_;
   bool bool_;
   std::string string_;
   oos::varchar<64> varchar_;

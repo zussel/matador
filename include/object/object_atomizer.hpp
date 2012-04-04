@@ -89,6 +89,18 @@ public:
 	virtual void write_double(const char*, double) {}
 
   /**
+   * @fn virtual void write_short(const char *id, short x)
+   * @brief Write a short to the atomizer.
+   * 
+   * Write a short to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write_short(const char*, short) {}
+
+  /**
    * @fn virtual void write_int(const char *id, int x)
    * @brief Write a int to the atomizer.
    * 
@@ -113,16 +125,40 @@ public:
 	virtual void write_long(const char*, long) {}
 
   /**
-   * @fn virtual void write_unsigned(const char *id, unsigned x)
-   * @brief Write a unsigned to the atomizer.
+   * @fn virtual void write_unsigned_short(const char *id, unsigned short x)
+   * @brief Write a unsigned short to the atomizer.
    * 
-   * Write a unsigned to the atomizer
+   * Write a unsigned short to the atomizer
    * identified by a unique name.
    * 
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_unsigned(const char*, unsigned) {}
+  virtual void write_unsigned_short(const char*, unsigned short) {}
+
+  /**
+   * @fn virtual void write_unsigned_int(const char *id, unsigned int x)
+   * @brief Write a unsigned to the atomizer.
+   * 
+   * Write a unsigned int to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write_unsigned_int(const char*, unsigned int) {}
+
+  /**
+   * @fn virtual void write_unsigned_long(const char *id, unsigned long x)
+   * @brief Write a unsigned long to the atomizer.
+   * 
+   * Write a unsigned long to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write_unsigned_long(const char*, unsigned long) {}
 
   /**
    * @fn virtual void write_bool(const char *id, bool x)
@@ -245,6 +281,18 @@ public:
   virtual void read_double(const char*, double&) {}
 
   /**
+   * @fn virtual void read_short(const char *id, short &x)
+   * @brief Read an short from the atomizer.
+   * 
+   * Read an short from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read_short(const char*, short&) {}
+
+  /**
    * @fn virtual void read_int(const char *id, int &x)
    * @brief Read an integer from the atomizer.
    * 
@@ -269,7 +317,19 @@ public:
 	virtual void read_long(const char*, long&) {}
 
   /**
-   * @fn virtual void read_unsigned(const char *id, unsigned &x)
+   * @fn virtual void read_unsigned_short(const char *id, unsigned short &x)
+   * @brief Read an unsigned short from the atomizer.
+   * 
+   * Read a unsigned short from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read_unsigned_short(const char*, unsigned short&) {}
+
+  /**
+   * @fn virtual void read_unsigned_int(const char *id, unsigned int &x)
    * @brief Read an unsigned integer from the atomizer.
    * 
    * Read a unsigned integer from the atomizer
@@ -278,7 +338,19 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned(const char*, unsigned&) {}
+  virtual void read_unsigned_int(const char*, unsigned int&) {}
+
+  /**
+   * @fn virtual void read_unsigned_long(const char *id, unsigned long &x)
+   * @brief Read an unsigned long from the atomizer.
+   * 
+   * Read a unsigned long from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read_unsigned_long(const char*, unsigned long&) {}
 
   /**
    * @fn virtual void read_bool(const char *id, bool &x)

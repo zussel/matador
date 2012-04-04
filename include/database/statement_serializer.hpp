@@ -81,6 +81,17 @@ private:
   virtual void read_double(const char *id, double &x);
 
   /**
+   * @brief Read a short from the atomizer.
+   * 
+   * Read a short from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_short(const char *id, short &x);
+
+  /**
    * @brief Read an integer from the atomizer.
    * 
    * Read an integer from the atomizer
@@ -103,6 +114,17 @@ private:
 	virtual void read_long(const char *id, long &x);
 
   /**
+   * @brief Read an unsigned short from the atomizer.
+   * 
+   * Read a unsigned short from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_unsigned_short(const char *id, unsigned short &x);
+
+  /**
    * @brief Read an unsigned integer from the atomizer.
    * 
    * Read a unsigned integer from the atomizer
@@ -111,7 +133,18 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned(const char *id, unsigned &x);
+	virtual void read_unsigned_int(const char *id, unsigned int &x);
+
+  /**
+   * @brief Read an unsigned long from the atomizer.
+   * 
+   * Read a unsigned long from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void read_unsigned_long(const char *id, unsigned long &x);
 
   /**
    * @brief Read a bool from the atomizer.
@@ -202,6 +235,17 @@ private:
 	virtual void write_double(const char *id, double x);
 
   /**
+   * @brief Write a short to the binder.
+   * 
+   * Add the value of the column identified by the
+   * to the sql statement.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void write_short(const char *id, short x);
+
+  /**
    * @brief Write a int to the binder.
    * 
    * Add the value of the column identified by the
@@ -224,6 +268,17 @@ private:
 	virtual void write_long(const char *id, long x);
 
   /**
+   * @brief Write an unsigned short to the binder.
+   * 
+   * Add the value of the column identified by the
+   * to the sql statement.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void write_unsigned_short(const char *id, unsigned short x);
+
+  /**
    * @brief Write an unsigned int to the binder.
    * 
    * Add the value of the column identified by the
@@ -232,7 +287,18 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_unsigned(const char *id, unsigned x);
+	virtual void write_unsigned_int(const char *id, unsigned int x);
+
+  /**
+   * @brief Write an unsigned long to the binder.
+   * 
+   * Add the value of the column identified by the
+   * to the sql statement.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	virtual void write_unsigned_long(const char *id, unsigned long x);
 
   /**
    * @brief Write a bool to the binder.

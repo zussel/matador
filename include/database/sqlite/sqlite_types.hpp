@@ -31,9 +31,12 @@ template <class T>
 struct type_traits; 
 
 template <> struct type_traits<char> { inline static const char* type_string() { return "INTEGER"; } }; 
+template <> struct type_traits<short> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<int> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<long> { inline static const char* type_string() { return "INTEGER"; } };
-template <> struct type_traits<unsigned> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<bool> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<float> { inline static const char* type_string() { return "REAL"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "REAL"; } };
