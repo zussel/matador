@@ -230,7 +230,6 @@ protected:
 
 private:
 	friend class object_store;
-  friend class object_linker;
   friend class object_deleter;
   friend class object_base_ptr;
   friend class object_serializer;
