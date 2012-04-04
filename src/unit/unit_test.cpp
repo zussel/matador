@@ -114,6 +114,13 @@ void unit_test::assert_false(bool a, const std::string &msg, int line, const cha
   }
 }
 
+void unit_test::error(const std::string &msg, int line, const char *file)
+{
+  std::stringstream msgstr;
+  msgstr << "FAILURE at " << file << ":" << line << ": " << msg;
+  throw unit_exception(msgstr.str());
+}
+
 void unit_test::warn(const std::string &msg, int line, const char *file)
 {
   std::cout << "WARNING at " << file << ":" << line << ": " << msg;
