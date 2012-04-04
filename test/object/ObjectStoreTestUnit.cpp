@@ -29,6 +29,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("delete", std::tr1::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
   add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
   add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
+  add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -132,7 +133,7 @@ ObjectStoreTestUnit::serializer()
   item->set_char(c);
   item->set_float(f);
   item->set_double(d);
-  item->set_int(s);
+  item->set_short(s);
   item->set_int(i);
   item->set_long(l);
   item->set_unsigned_short(us);
@@ -156,7 +157,7 @@ ObjectStoreTestUnit::serializer()
   UNIT_ASSERT_EQUAL(c, item->get_char(), "restored character is not equal to the original character");
   UNIT_ASSERT_EQUAL(f, item->get_float(), "restored float is not equal to the original float");
   UNIT_ASSERT_EQUAL(d, item->get_double(), "restored double is not equal to the original double");
-  UNIT_ASSERT_EQUAL(s, item->get_short(), "restored short is not equal to the original int");
+  UNIT_ASSERT_EQUAL(s, item->get_short(), "restored short is not equal to the original short");
   UNIT_ASSERT_EQUAL(i, item->get_int(), "restored int is not equal to the original int");
   UNIT_ASSERT_EQUAL(l, item->get_long(), "restored long is not equal to the original long");
   UNIT_ASSERT_EQUAL(us, item->get_unsigned_short(), "restored unsigned short is not equal to the original unsigned");
@@ -518,4 +519,30 @@ ObjectStoreTestUnit::hierarchy()
     ++afirst;
     ++count;
   }
+}
+
+void
+ObjectStoreTestUnit::view_test()
+{
+  for (int i = 0; i < 10; ++i) {
+    std::stringstream str;
+    str << "Item " << i+1;
+    ostore_.insert(new Item(str.str(), i+1));
+  }
+
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> item_view_t;
+
+  item_view_t iview(ostore_);
+
+  UNIT_ASSERT_EQUAL(iview.size(), 10, "invalid item view size");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view is not empty");
+
+  item_ptr item = iview.front();
+
+  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+
+  item = iview.back();
+  
+  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
 }

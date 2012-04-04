@@ -141,63 +141,38 @@ ObjectListTestUnit::test_linked_list()
   
   itemlist_ptr itemlist = ostore_.insert(new LinkedItemList);
 
-  LinkedItemList::size_type val = 0;
-  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list is not empty");
+  UNIT_ASSERT_EQUAL(itemlist->size(), 0, "linked list is not empty");
+  UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
   itemlist->push_back(new LinkedItem("Schrank"));
   itemlist->push_back(new LinkedItem("Tisch"));
   itemlist->push_back(new LinkedItem("Stuhl"));
   itemlist->push_back(new LinkedItem("Bett"));
 
-  val = 4;
-  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list size is invalid");
+  UNIT_ASSERT_FALSE(itemlist->empty(), "linked item list couldn't be empty");
+  UNIT_ASSERT_EQUAL(itemlist->size(), 4, "linked list size is invalid");
 
   itemlist->push_front(new LinkedItem("Teppich"));
 
-  val = 5;
-  UNIT_ASSERT_EQUAL(itemlist->size(), val, "linked list size is invalid");
-
-  LinkedItemList::const_iterator first = itemlist->begin();
-  LinkedItemList::const_iterator last = itemlist->end();
-
-  while (first != last) {
-    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
-    ++first;
-  }
-  cout << "remove item from linked list\n";
+  UNIT_ASSERT_EQUAL(itemlist->size(), 5, "linked list size is invalid");
 
   // remove an item
   LinkedItemList::iterator i = itemlist->begin();
-  cout << "item to remove: " << i->name() << "\n";
+
+  long id_val = (*i)->id();
+
   i = itemlist->erase(i);
-  cout << "next item name: " << i->name() << "\n";
 
-  ostore_.dump_objects(std::cout);
-
-  cout << "dump linked list\n";
-  first = itemlist->begin();
-  while (first != last) {
-    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
-    ++first;
-  }
+  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
+  UNIT_ASSERT_EQUAL(itemlist->size(), 4, "linked list size is invalid");
   
   // clear list
-  std::cout << "clear list\n";
   itemlist->clear();
-  first = itemlist->begin();
-  while (first != last) {
-    cout << "item name: " << first->name() << " (id: " << first->id() << ")\n";
-    ++first;
-  }
-  
-  ostore_.dump_objects(std::cout);
-  std::cout << "remove list from object store ... ";
-  if (ostore_.remove(itemlist)) {
-    std::cout << "succeeded!\n";
-  } else {
-    std::cout << "failed!\n";
-  }
-  ostore_.dump_objects(std::cout);
+
+  UNIT_ASSERT_EQUAL(itemlist->size(), 0, "linked list is not empty");
+  UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
+
+  UNIT_ASSERT_TRUE(ostore_.remove(itemlist), "couldn't remove linked item list");
 }
 
 void
