@@ -963,7 +963,7 @@ public:
    * @return True if list is empty.
    */
   virtual bool empty() const {
-    return first_->next_ == last_->prev_;
+    return first_->next_ == last_;
   }
 
   /**
