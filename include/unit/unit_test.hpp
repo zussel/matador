@@ -136,13 +136,27 @@
 #define UNIT_ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
 
 /**
+ * @brief Throws an error.
+ *
+ * The test method throws an exception
+ * with the given error message and the current
+ * file and line number information.
+ */
+#define UNIT_ERROR(msg)                  error(msg, __LINE__, __FILE__)
+
+/**
  * @brief Displays a warning.
  *
  * The test method displays a warning
  * with the given message and the current
  * file and line number information.
  */
-#define UNIT_WARN(msg)                   warn(msg, __LINE__, __FILE__)
+#define UNIT_WARN(msg)                   \
+  do {                                   \
+    std::stringstream warn_stream;       \
+    warn_stream << msg;                  \
+    warn(warn_stream.str(), __LINE__, __FILE__); \
+  } while (false)
 
 /**
  * @brief Displays an informatkon.
@@ -265,7 +279,18 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_equal(T a, T b, const std::string &msg, int line, const char *file)
+  void assert_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  {
+    if (a != b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  template < class X, class Y >
+  void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
       // throw exception
@@ -294,7 +319,7 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_not_equal(T a, T b, const std::string &msg, int line, const char *file)
+  void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
     if (a == b) {
       // throw exception
@@ -330,6 +355,16 @@ public:
     }
   }
 
+  template < class X, class Y >
+  void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  {
+    if (a <= b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   /**
    * @brief Checks if a is less b.
    *
@@ -371,7 +406,7 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_null(T *a, const std::string &msg, int line, const char *file)
+  void assert_null(const T *a, const std::string &msg, int line, const char *file)
   {
     if (a != 0) {
       // throw exception
@@ -396,7 +431,7 @@ public:
    * @param file The file where this check can be found.
    */
   template < class T >
-  void assert_not_null(T *a, const std::string &msg, int line, const char *file)
+  void assert_not_null(const T *a, const std::string &msg, int line, const char *file)
   {
     if (a == 0) {
       // throw exception
@@ -437,6 +472,19 @@ public:
    * @param file The file where this check can be found.
    */
   void assert_false(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Throws an error.
+   *
+   * The test method throws an exception
+   * with the given error message and the current
+   * file and line number information.
+   * 
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  void error(const std::string &msg, int line, const char *file);
 
   /**
    * @brief Displays a warning.
