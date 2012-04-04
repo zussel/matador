@@ -21,6 +21,7 @@
 #include "object/object_store.hpp"
 #include "object/object_proxy.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_exception.hpp"
 #include "object/prototype_node.hpp"
 
 namespace oos {
@@ -444,6 +445,7 @@ class object_view
 public:
   typedef object_view_iterator<T> iterator;             /**< Shortcut to the iterator type */
   typedef const_object_view_iterator<T> const_iterator; /**< Shortcut to the const_iterator type */
+  typedef object_ptr<T> object_pointer;                 /**< Shortcut to object pointer */
 
   /**
    * @brief Creates an object_view.
@@ -462,7 +464,9 @@ public:
   {
     node_ = ostore_.find_prototype(typeid(T).name());
 		if (!node_) {
-      // throw excpetion
+      std::stringstream str;
+      str << "couldn't find object type [" << typeid(T).name() << "]";
+      throw object_exception(str.str().c_str());
     }
   }
 
@@ -516,6 +520,16 @@ public:
     } else {
       return const_iterator(node_, node_->op_last, node_->op_last);
     }
+  }
+
+  object_pointer front() const
+  {
+    return (*begin());
+  }
+
+  object_pointer back() const
+  {
+    return (*(--end()));
   }
 
   /**
