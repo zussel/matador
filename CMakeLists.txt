@@ -44,7 +44,6 @@ ENDIF(SQLITE3_FOUND)
 
 SET(OBJECT_SOURCES
   src/object/object.cpp
-  src/object/object_atomizer.cpp
   src/object/object_creator.cpp
   src/object/object_deleter.cpp
   src/object/object_ptr.cpp
@@ -52,7 +51,6 @@ SET(OBJECT_SOURCES
   src/object/object_list.cpp
   src/object/object_vector.cpp
   src/object/linked_object_list.cpp
-  src/object/object_linker.cpp
   src/object/object_value.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
@@ -70,7 +68,6 @@ SET(OBJECT_HEADER
   include/object/object_list.hpp
   include/object/object_vector.hpp
   include/object/linked_object_list.hpp
-  include/object/object_linker.hpp
   include/object/object_value.hpp
   include/object/object_view.hpp
   include/object/object_proxy.hpp
