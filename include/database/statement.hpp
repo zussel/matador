@@ -37,7 +37,7 @@
 
 namespace oos {
 
-class database;
+class session;
 class result;
 class row;
 
@@ -78,8 +78,8 @@ private:
 class OOS_API statement
 {
 public:
-  explicit statement(database &db);
-  statement(database &db, const std::string &sql);
+  explicit statement(session &db);
+  statement(session &db, const std::string &sql);
   ~statement();
 
   result_ptr execute();

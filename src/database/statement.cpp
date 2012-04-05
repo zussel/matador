@@ -16,7 +16,7 @@
  */
 
 #include "database/statement.hpp"
-#include "database/database.hpp"
+#include "database/session.hpp"
 
 namespace oos {
 
@@ -33,13 +33,13 @@ std::string statement_impl::sql() const
   return sql_;
 }
 
-statement::statement(database &db)
+statement::statement(session &db)
   : impl_(0)
 {
   impl_ = db.create_statement_impl();
 }
 
-statement::statement(database &db, const std::string &sql)
+statement::statement(session &db, const std::string &sql)
   : impl_(0)
   , sql_(sql)
 {

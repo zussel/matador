@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_HPP
-#define DATABASE_HPP
+#ifndef DATABASE_IMPL_HPP
+#define DATABASE_IMPL_HPP
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -31,190 +31,215 @@
   #define OOS_API
 #endif
 
-#include "database/result.hpp"
+#include "database/action.hpp"
+#include "database/transaction.hpp"
 
-#include "object/object_ptr.hpp"
+#include "tools/sequencer.hpp"
 
-#include "tools/library.hpp"
-
-#include <string>
-#include <stack>
-#include <map>
+#ifdef WIN32
 #include <memory>
+#else
+#include <tr1/memory>
+#endif
+
+#include <map>
 
 namespace oos {
 
-class object_store;
-class result;
 class transaction;
-class database_impl;
+class session;
 class statement_impl;
+class result_impl;
+class database_sequencer;
+struct prototype_node;
 
+/// @cond OOS_DEV
 /**
  * @class database
- * @brief Frontend class to make the objects persistent.
+ * @brief Base class for all database backends
  * 
- * This class is the frontend to any database made
- * available by a concrete database_impl implementation.
- * All objects in the given object_store will be made
- * persistent.
+ * This class must be the base class for database
+ * backends used with the object_store/database module.
+ * The database actions are implemented using the
+ * visitor pattern. So every action is accepted via
+ * a method which must be overwritten by the concrete
+ * database implementation.
  */
-class OOS_API database
+class OOS_API database : public action_visitor
 {
 public:
-  /**
-   * @brief Creates a database frontend for an object_store and a specific database.
-   * 
-   * This constructor creates a connection between an object_store
-   * and a specific database identified by a database connection
-   * string.
-   * 
-   * @param ostore The object_store to make persistent.
-   * @param dbstring The database connection string.
-   */
-  database(object_store &ostore, const std::string &dbstring);
+  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
 
-  ~database();
+protected:
+  database(session *db, database_sequencer *seq);
+
+public:
+  virtual ~database();
   
   /**
-   * @brief Opens the database.
+   * Open the database
+   *
+   * @param db The database connection string.
+   */
+  virtual void open(const std::string &db);
+
+  /**
+   * Close the database
+   */
+  virtual void close();
+
+  /**
+   * Returns true if the database is open
+   *
+   * @return True on open database connection.
+   */
+  virtual bool is_open() const = 0;
+
+  /**
+   * Create a table from the given object.
+   *
+   * @param o The object providing the table layout.
+   */
+  virtual void create(const prototype_node &node) = 0;
+
+  /**
+   * load a specific table based on
+   * a prototype node
+   *
+   * @param node The node representing the table to read
+   */
+  virtual void load(const prototype_node &node) = 0;
+
+  /**
+   * Execute a sql statement and return a result
+   * implementation via pointer.
+   *
+   * @param sql The sql statement to be executed.
+   */
+  virtual void execute(const char *sql, result_impl *res = 0) = 0;
+
+  /**
+   * The interface for the create table action.
+   */
+  virtual void visit(create_action*) {}
+
+  /**
+   * The interface for the insert action.
+   */
+  virtual void visit(insert_action*) = 0;
+
+  /**
+   * The interface for the update action.
+   */
+  virtual void visit(update_action*) = 0;
+
+  /**
+   * The interface for the delete action.
+   */
+  virtual void visit(delete_action*) = 0;
+
+  /**
+   * The interface for the drop table action.
+   */
+  virtual void visit(drop_action*) {}
+
+  /**
+   * Create a new result object
    * 
-   * Opens the database. If database couldn't be opened
-   * an exception is thrown.
+   * @return New result implenation object.
    */
-  void open();
-  
-  /**
-   * @brief Returns true if database is open.
-   *
-   * Returns true if database is open
-   *
-   * @return True on open database.
-   */
-  bool is_open() const;
+  virtual result_impl* create_result() = 0;
 
   /**
-   * @brief Creates the database.
+   * Create the concrete statement_impl.
+   *
+   * @return The concrete statement_impl.
+   */
+  virtual statement_impl* create_statement() = 0;
+
+  /**
+   * Store a prepared statement for
+   * later use.
    * 
-   * Try to create the database and all tables described
-   * in the object_store. If database already exists an
-   * exception is thrown.
-   * Once the database is created it is also opened.
+   * @param id A unique id for the statement.
+   * @param stmt The prepared statement.
+   * @return True if the statement could be stored
    */
-  void create();
-  
+  bool store_statement(const std::string &id, statement_impl_ptr stmt);
+
   /**
-   * @brief Closes the database.
+   * Find and return a stored statement.
    * 
-   * Closes the database.
+   * @param id The id of the statement to find.
+   * @return The requested statement.
    */
-  void close();
+  statement_impl_ptr find_statement(const std::string &id) const;
 
   /**
-   * Load a concrete object of a specfic type
-   * and a given id from the database. If an object
-   * with the given id couldn't be found an empty
-   * object_ptr is returned
-   *
-   * @tparam T The type of the object.
-   * @param id The unique primary id of the object.
-   * @return The object defined by the given parameters.
-   */
-  template < class T >
-  object_ptr<T> load(int id)
-  {
-    return object_ptr<T>();
-  }
-
-  /**
-   * Load all objects of the given type
-   * from the database. If the operation
-   * succeeds true is returned.
-   *
-   * @return Returns true on successful loading.
-   */
-  template < class T >
-  bool load()
-  {
-    return true;
-  }
-
-  /**
-   * @brief Load all objects from the database.
-   *
-   * Load all data into the object_store registered
-   * objects from the database. If the operation
-   * succeeds true is returned.
-   * If a table layoput doesn't match to the corresponding
-   * objects layout an excpetion is thrown.
-   *
-   * @return Returns true on successful loading.
-   */
-  bool load();
-
-  /**
-   * @brief Executes a database query.
+   * @brief Prepares the beginning of a transaction
    * 
-   * Executes the given query on the database and
-   * return the result in a query_result object.
+   * Prepares the begin of the transaction
+   * in database and object store. Calls
+   * begin() on sequencer, which backups
+   * object stores current ids.
+   */
+  void prepare();
+
+  /**
+   * @brief Marks the beginning of the real transaction.
    * 
-   * @param sql The database query to execute.
-   * @return The result of the query.
+   * This method is called when the real database
+   * transaction are about to begin and a BEGIN
+   * TRANSACTION kind of statement is executed on
+   * the database.
    */
-  result_ptr execute(const std::string &sql);
+  void begin();
 
   /**
-   * Returns the object_store.
-   */
-  object_store& ostore();
-
-  /**
-   * Returns the object_store.
-   */
-  const object_store& ostore() const;
-
-  /**
-   * Return the current transaction from the stack.
+   * @brief Called on transaction commit
    *
-   * @return The current transaction.
+   * This method is called when a started
+   * transaction is commit to the underlaying
+   * database. All stored actions and their
+   * objects are written to the database.
    */
-  transaction* current_transaction() const;
+  void commit();
 
-private:
-  friend class transaction;
-  friend class statement;
-  friend class reader;
-  friend class inserter;
-  friend class updater;
-  friend class deleter;
-  
-  void push_transaction(transaction *tr);
-  void pop_transaction();
-
-  object* load(const std::string &type, int id = 0);
-
-  void begin(transaction &tr);
-  void commit(transaction &tr);
+  /**
+   * @brief Rolls back the current transaction
+   * 
+   * When called the current transaction is
+   * rolled back on database and subsequently
+   * in object store. All transient data is
+   * restored.
+   */
   void rollback();
 
-  /**
-   * Create a statement implementation
-   *
-   * @return A statement_impl object.
-   */
-  statement_impl* create_statement_impl() const;
+protected:
+  const session* db() const;
+
+  session* db();
+
+  virtual void on_begin() = 0;
+  virtual void on_commit() = 0;
+  virtual void on_rollback() = 0;
 
 private:
-  std::string type_;
-  std::string connection_;
+  friend class database_factory;
 
-  database_impl *impl_;
+  session *db_;
+  bool commiting_;
 
-  object_store &ostore_;
+  typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;
+  
+  statement_impl_map_t statement_impl_map_;
 
-  std::stack<transaction*> transaction_stack_;
+  database_sequencer_ptr sequencer_;
+  sequencer_impl_ptr sequencer_backup_;
 };
+/// @endcond
 
 }
 
-#endif /* DATABASE_HPP */
+#endif /* DATABASE_IMPL_HPP */

@@ -48,7 +48,7 @@
 
 namespace oos {
 
-class database;
+class session;
 class object_store;
 class byte_buffer;
 class action;
@@ -82,7 +82,7 @@ public:
    *
    * @param db The underlaying database.
    */
-  transaction(database &db);
+  transaction(session &db);
 
   ~transaction();
   
@@ -124,14 +124,14 @@ public:
    *
    * @return The pointer to the database.
    */
-  database& db();
+  session& db();
 
   /**
    * Returns the underlaying pointer to the database.
    *
    * @return The pointer to the database.
    */
-  const database& db() const;
+  const session& db() const;
 
   virtual void on_insert(object *o);
   virtual void on_update(object *o);
@@ -142,7 +142,7 @@ private:
   typedef std::tr1::unordered_map<long, iterator> id_iterator_map_t;
 
   friend class object_store;
-  friend class database;
+  friend class session;
   
   void backup(action *a, const object *o);
   void restore(action *a);
@@ -153,7 +153,7 @@ private:
   static long id_counter;
 
 private:
-  database &db_;
+  session &db_;
   long id_;
   
   id_iterator_map_t id_map_;

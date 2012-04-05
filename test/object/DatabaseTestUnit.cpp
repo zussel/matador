@@ -5,7 +5,7 @@
 #include "object/object_view.hpp"
 #include "object/object_list.hpp"
 
-#include "database/database.hpp"
+#include "database/session.hpp"
 #include "database/transaction.hpp"
 #include "database/database_exception.hpp"
 
@@ -51,7 +51,7 @@ void
 DatabaseTestUnit::open()
 {
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_, "sqlite://test.sqlite");
 
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
@@ -64,7 +64,7 @@ void
 DatabaseTestUnit::simple()
 {
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -147,7 +147,7 @@ void
 DatabaseTestUnit::with_sub()
 {
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -228,7 +228,7 @@ DatabaseTestUnit::with_list()
   typedef object_ptr<ItemPtrList::value_type> item_ptr;
 
   // create database and make object store known to the database
-  database db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();

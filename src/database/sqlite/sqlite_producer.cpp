@@ -25,7 +25,7 @@ namespace sqlite {
 sqlite_producer::sqlite_producer()
 {}
 
-database_impl* sqlite_producer::create(database *db) const
+database* sqlite_producer::create(session *db) const
 {
   return new sqlite_database(db);
 }

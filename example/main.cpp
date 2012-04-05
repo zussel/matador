@@ -5,7 +5,7 @@
 #include "object/object_store.hpp"
 #include "object/object_view.hpp"
 
-#include "database/database.hpp"
+#include "database/session.hpp"
 #include "database/transaction.hpp"
 
 #include <vector>
@@ -18,7 +18,7 @@
 
 using namespace oos;
 
-bool read_music_data(database &db, const char *fname);
+bool read_music_data(session &db, const char *fname);
 bool line_is(const char *token, const std::string &line, size_t &pos);
 object_ptr<Artist> parse_artist(object_store &ostore, const std::string &line, size_t pos);
 object_ptr<Album> parse_album(object_store &ostore, const object_ptr<Artist> &artist, const std::string &line, size_t pos);
@@ -43,7 +43,7 @@ main(int argc, char *argv[])
   ostore.insert_prototype<TrackAlbumRelation>("track_album");
 
   // create and open db
-  database db(ostore, "sqlite://mdb.sqlite");
+  session db(ostore, "sqlite://mdb.sqlite");
 
   // create db
   db.create();
@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 }
 
 bool
-read_music_data(database &db, const char *fname)
+read_music_data(session &db, const char *fname)
 {
   std::ifstream fin(fname);
 

@@ -29,7 +29,7 @@
   #define OOS_SQLITE_API
 #endif
 
-#include "database/database_impl.hpp"
+#include "database/database.hpp"
 
 #include "database/sqlite/sqlite_sequencer.hpp"
 
@@ -50,10 +50,10 @@ class sqlite_statement;
  * This class is the sqlite database backend
  * class. It provides the sqlite version 3
  */
-class OOS_SQLITE_API sqlite_database : public database_impl
+class OOS_SQLITE_API sqlite_database : public database
 {
 public:
-  explicit sqlite_database(database *db);
+  explicit sqlite_database(session *db);
   virtual ~sqlite_database();
   
   virtual void open(const std::string &db);

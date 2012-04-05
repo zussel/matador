@@ -15,181 +15,97 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "database/session.hpp"
 #include "database/database.hpp"
-#include "database/database_factory.hpp"
-#include "database/action.hpp"
+#include "database/database_sequencer.hpp"
 #include "database/transaction.hpp"
+#include "database/statement.hpp"
+#include "database/result.hpp"
 
-#include "object/object.hpp"
 #include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
-
-#include "database/sqlite/sqlite_database.hpp"
-
-#include <iostream>
-#include <stdexcept>
-
-using namespace std;
 
 namespace oos {
 
-database::database(object_store &ostore, const std::string &dbstring)
-  : ostore_(ostore)
-{
-  // parse dbstring
-  std::string::size_type pos = dbstring.find(':');
-  type_ = dbstring.substr(0, pos);
-  connection_ = dbstring.substr(pos + 3);
-
-  // get driver factory singleton
-  database_factory &df = database_factory::instance();
-
-  // try to create database implementation
-  impl_ = df.create(type_, this);
-
-  impl_->open(connection_);
-}
-
+database::database(session *db, database_sequencer *seq)
+  : db_(db)
+  , commiting_(false)
+  , sequencer_(seq)
+{}
 
 database::~database()
-{
-  if (impl_) {
-    delete impl_;
-  }
-}
+{}
 
-void database::open()
+void database::open(const std::string &db)
 {
-  impl_->open(connection_);
-}
-
-bool database::is_open() const
-{
-  return impl_->is_open();
-}
-
-void database::create()
-{
-  /*****************
-   * 
-   * traverse over all prototypes
-   * create an object and the create 
-   * table statement
-   * 
-   *****************/
-//  statement_helper creator(std::tr1::bind());
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-  while (first != last) {
-    const prototype_node &node = (*first++);
-    if (node.abstract) {
-      continue;
-    }
-    impl_->create(node);
-  }
+  sequencer_->create();
+  // setup sequencer
+  sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
 }
 
 void database::close()
 {
-  impl_->close();
-}
-
-bool database::load()
-{
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-  while (first != last) {
-    const prototype_node &node = (*first++);
-    if (node.abstract) {
-      continue;
-    }
-    impl_->load(node);
+  if (sequencer_backup_) {
+    db()->ostore().exchange_sequencer(sequencer_backup_);
   }
-  /************
-   *
-   * init/adjust id counter
-   *
-   ************/
-  //ostore_.sequencer().init();
-  return true;
+  sequencer_->destroy();
+  
+  statement_impl_map_.clear();
 }
 
-result_ptr database::execute(const std::string &sql)
+bool database::store_statement(const std::string &id, database::statement_impl_ptr stmt)
 {
-  result_impl *res = impl_->create_result();
-  impl_->execute(sql.c_str(), res);
-  return result_ptr(new result(res));
+  return statement_impl_map_.insert(std::make_pair(id, stmt)).second;
 }
 
-object_store& database::ostore()
+database::statement_impl_ptr database::find_statement(const std::string &id) const
 {
-  return ostore_;
-}
-
-const object_store& database::ostore() const
-{
-  return ostore_;
-}
-
-void database::push_transaction(transaction *tr)
-{
-  if (!transaction_stack_.empty()) {
-//    cout << "unregister transaction observer [" << transaction_stack_.top() << "]\n";
-    ostore_.unregister_observer(transaction_stack_.top());
-  }
-  transaction_stack_.push(tr);
-//  cout << "register transaction observer [" << tr << "]\n";
-  ostore_.register_observer(tr);
-}
-
-void database::pop_transaction()
-{
-//  cout << "unregister transaction observer [" << transaction_stack_.top() << "]\n";
-  ostore_.unregister_observer(transaction_stack_.top());
-  transaction_stack_.pop();
-  if (!transaction_stack_.empty()) {
-//    cout << "register transaction observer [" << transaction_stack_.top() << "]\n";
-    ostore_.register_observer(transaction_stack_.top());
+  statement_impl_map_t::const_iterator i = statement_impl_map_.find(id);
+  if (i != statement_impl_map_.end()) {
+    return i->second;
+  } else {
+    return statement_impl_ptr();
   }
 }
 
-object* database::load(const std::string &type, int id)
+void database::prepare()
 {
-  return NULL;
+  sequencer_->begin();
 }
 
-void database::begin(transaction &tr)
+void database::begin()
 {
-  push_transaction(&tr);
-  impl_->prepare();
+  on_begin();
+  commiting_ = true;
 }
 
-void database::commit(transaction &tr)
+void database::commit()
 {
-  impl_->begin();
+  // write sequence to db
+  sequencer_->commit();
 
-  transaction::const_iterator first = tr.action_list_.begin();
-  transaction::const_iterator last = tr.action_list_.end();
-  while (first != last) {
-    (*first++)->accept(impl_);
-  }
+  on_commit();
 
-  impl_->commit();
+  commiting_ = false;
 }
 
 void database::rollback()
 {
-  impl_->rollback();
+  sequencer_->rollback();
+
+  if (commiting_) {
+    on_rollback();
+    commiting_ = false;
+  }
 }
 
-statement_impl* database::create_statement_impl() const
+const session* database::db() const
 {
-  return impl_->create_statement();
+  return db_;
 }
 
-transaction* database::current_transaction() const
+session* database::db()
 {
-  return (transaction_stack_.empty() ? 0 : transaction_stack_.top());
+  return db_;
 }
 
 }

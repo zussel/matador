@@ -38,8 +38,8 @@
 
 namespace oos {
 
-class database_impl;
 class database;
+class session;
 
 /// @cond OOS_DEV
 
@@ -48,7 +48,7 @@ class OOS_API database_producer
 public:
   virtual ~database_producer() {}
 
-  virtual database_impl* create(database *db) const = 0;
+  virtual database* create(session *db) const = 0;
 };
 
 class database_factory : public oos::singleton<database_factory>
@@ -60,7 +60,7 @@ private:
     database_loader(const std::string &name);
     ~database_loader();
 
-    database_impl* create(database *db) const;
+    database* create(session *db) const;
 
   private:
     typedef database_producer*(*get_producer)();
@@ -82,7 +82,7 @@ private:
 public:
   virtual ~database_factory();
 
-  database_impl* create(const std::string &name, database *db);
+  database* create(const std::string &name, session *db);
   
 private:
   factory_t factory_;

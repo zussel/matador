@@ -17,8 +17,8 @@
 
 #include "database/transaction.hpp"
 #include "database/transaction_helper.hpp"
+#include "database/session.hpp"
 #include "database/database.hpp"
-#include "database/database_impl.hpp"
 #include "database/database_exception.hpp"
 
 #include "tools/byte_buffer.hpp"
@@ -99,7 +99,7 @@ void transaction::on_delete(object *o)
   }
 }
 
-transaction::transaction(database &db)
+transaction::transaction(session &db)
   : db_(db)
   , id_(0)
 {}
@@ -181,13 +181,13 @@ transaction::rollback()
   }
 }
 
-database&
+session&
 transaction::db()
 {
   return db_;
 }
 
-const database&
+const session&
 transaction::db() const
 {
   return db_;

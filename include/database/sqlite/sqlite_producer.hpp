@@ -40,7 +40,7 @@ namespace sqlite {
   public:
     sqlite_producer();
 
-    virtual database_impl* create(database *db) const;
+    virtual database* create(session *db) const;
   };
 }
 

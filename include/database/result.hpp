@@ -111,7 +111,7 @@ public:
 
 private:
   friend class result_iterator;
-  friend class database;
+  friend class session;
 
   result_impl* impl();
 

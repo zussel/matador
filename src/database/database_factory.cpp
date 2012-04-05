@@ -16,8 +16,8 @@
  */
 
 #include "database/database_factory.hpp"
+#include "database/session.hpp"
 #include "database/database.hpp"
-#include "database/database_impl.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -36,7 +36,7 @@ database_factory::~database_factory()
   }
 }
 
-database_impl* database_factory::create(const std::string &name, database *db)
+database* database_factory::create(const std::string &name, session *db)
 {
   factory_t::iterator i = factory_.find(name);
   if (i == factory_.end()) {
@@ -64,7 +64,7 @@ database_factory::database_loader::~database_loader()
 //  loader_.unload();
 }
 
-database_impl* database_factory::database_loader::create(database *db) const
+database* database_factory::database_loader::create(session *db) const
 {
   // on each call store the created database for later
   // explicit destruction

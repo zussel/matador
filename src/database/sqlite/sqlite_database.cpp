@@ -21,7 +21,7 @@
 #include "database/sqlite/sqlite_types.hpp"
 #include "database/sqlite/sqlite_exception.hpp"
 
-#include "database/database.hpp"
+#include "database/session.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_creator.hpp"
 #include "database/statement_serializer.hpp"
@@ -47,8 +47,8 @@ namespace oos {
   
 namespace sqlite {
   
-sqlite_database::sqlite_database(database *db)
-  : database_impl(db, new sqlite_sequencer(this))
+sqlite_database::sqlite_database(session *db)
+  : database(db, new sqlite_sequencer(this))
   , sqlite_db_(0)
 {
 }
@@ -68,7 +68,7 @@ void sqlite_database::open(const std::string &db)
     if (ret != SQLITE_OK) {
       throw sqlite_exception("couldn't open database: " + db);
     }
-    database_impl::open(db);
+    database::open(db);
   }
 }
 
@@ -82,7 +82,7 @@ void sqlite_database::close()
   if (!is_open()) {
     return;
   } else {
-    database_impl::close();
+    database::close();
 
     sqlite3_close(sqlite_db_);
 

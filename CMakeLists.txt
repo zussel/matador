@@ -110,8 +110,8 @@ SET(UNIT_HEADER
 
 SET(DATABASE_SOURCES
   src/database/action.cpp
+  src/database/session.cpp
   src/database/database.cpp
-  src/database/database_impl.cpp
   src/database/database_exception.cpp
   src/database/database_factory.cpp
   src/database/transaction.cpp
@@ -125,8 +125,8 @@ SET(DATABASE_SOURCES
 
 SET(DATABASE_HEADER
   include/database/action.hpp
+  include/database/session.hpp
   include/database/database.hpp
-  include/database/database_impl.hpp
   include/database/database_exception.hpp
   include/database/database_factory.hpp
   include/database/database_sequencer.hpp
