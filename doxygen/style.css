@@ -4,7 +4,8 @@ body
 	padding: 0;
 	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
 	color: #eee;
-  background-color: #909090;
+	/*background-color: #909090;*/
+	background-color: #d6d6d6;
 }
 
 #wrapper

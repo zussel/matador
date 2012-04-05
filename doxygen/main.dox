@@ -6,24 +6,96 @@
  *
  * @section intro_sec Introduction
  *
- * This is the introduction.
+ * The following documentation will give you an overview over
+ * the Open Object Store API. It will show you all main components
+ * of the software so that you can start building your own application
+ * with it.
  *
- * @section install_sec Installation
+ * OOS provides one container for all your objects. It let you access
+ * and filter your objects. Relation between object are tracked automatically.
+ * And with sessions and transactions you can persist your data.
  *
- * @subsection step1 Step 1: Opening the box
+ * All classes are inside the namespace oos. I tryed to give the library the
+ * look and feel of the STL so that it can interact with it easily.
+ *
+ * Now lets start...
+ *
+ * @section create_objects_sec Creating objects
+ *
+ * There are a handful of rules you have to follow to intergrate your object
+ * classes in OOS.
+ *
+ * @subsection step1 Step 1: Derive your class from oos::object.
+ *
+ * All your class or base classes must be derived from oos::object
+ * and must have a default constructor.
  *
  * @code
- * void foo(int i)
- * {}
- *
- * int
- * main()
+ * // Our first object based class
+ * 
+ * class person : public oos::object
  * {
- *   int i = 9;
- *   
- *   foo(i);
+ *   std::string name_;
  *
- *   oos::object_store ostore;
+ * public:
+ *   person();
+ *   virtual ~person();
+ * };
+ * @endcode
+ *
+ * @subsection step2 Step 2: Provide propper acces methods.
+ *
+ * Write correct access (get/set) methods for all your member attributes.
+ * It is import when modifying an attribute to use the oos::object::modify()
+ * method. It tells the oos::object_store and the oos::object_observer objects
+ * that an object is modified.
+ *
+ * @code
+ * void person::name(const std::string &n)
+ * {
+ *   modify(name_, n);
+ * }
+ *
+ * std::string name() const
+ * {
+ *   return name_;
  * }
  * @endcode
+ *
+ * @subsection step3 Step 3: Make the class serializable.
+ *
+ * To make the class serializable you have to add and implement
+ * the two methods oos::object::read_from() and oos::object::write_to().
+ *
+ * @code
+ * void person::read_from(oos::object_atomizer *oa)
+ * {
+ *   object::read_from(oa);
+ *   oa->read_string("name", name_);
+ * }
+ *
+ * void person::write_to(oos::object_atomizer *oa) const
+ * {
+ *   object::write_to(oa);
+ *   oa->write_string("name", name_);
+ * }
+ * @endcode
+ *
+ * @section object_store_sec The Object Store
+ *
+ * @subsection prototypes Setup the object hierarchy
+ *
+ * @subsection objects Add or remove objects
+ *
+ * @section object_view_sec Open a view
+ *
+ * @section object_relations_sec Object Releations
+ *
+ * @subsection one_to_one One to one relations
+ *
+ * @subsection one_to_many One to one relations
+ *
+ * @section object_expression_sec Object Expressions
+ *
+ * @section database_sec Persist Objects
  */

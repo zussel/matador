@@ -51,7 +51,7 @@ class database;
 class statement_impl;
 
 /**
- * @class database
+ * @class session
  * @brief Frontend class to make the objects persistent.
  * 
  * This class is the frontend to any database made
