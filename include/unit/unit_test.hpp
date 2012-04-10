@@ -300,9 +300,6 @@ public:
     }
   }
 
-  void assert_equal(const varchar_base &a, const varchar_base &b, const std::string &msg, int line, const char *file);
-  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file);
-
   /**
    * @brief Checks if a is not equal b.
    *

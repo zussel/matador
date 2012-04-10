@@ -74,26 +74,6 @@ void unit_test::add_test(const std::string &name, const test_func &test, const s
   test_func_info_map_.insert(std::make_pair(name, test_func_info(test, caption)));
 }
 
-void unit_test::assert_equal(const varchar_base &a, const varchar_base &b, const std::string &msg, int line, const char *file)
-{
-  if (a != b) {
-    // throw exception
-    std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    throw unit_exception(msgstr.str());
-  }
-}
-
-void unit_test::assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
-{
-  if (a != b) {
-    // throw exception
-    std::stringstream msgstr;
-    msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-    throw unit_exception(msgstr.str());
-  }
-}
-
 void unit_test::assert_true(bool a, const std::string &msg, int line, const char *file)
 {
   if (!a) {
