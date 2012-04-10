@@ -128,7 +128,8 @@ body
 {
   margin: 10px 30px;
   text-align: justify;
-  line-height:1.4em;
+  line-height:1.6em;
+  font-size: 120%;
 }
 
 #content pre

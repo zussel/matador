@@ -24,6 +24,8 @@
 #include "object/object_exception.hpp"
 #include "object/prototype_node.hpp"
 
+#include <sstream>
+
 namespace oos {
 
 template < class T > class const_object_view_iterator;

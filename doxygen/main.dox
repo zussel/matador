@@ -139,6 +139,24 @@
  * 
  * @subsection modify_objects Modify objects
  *
+ * Now that we have some objects inserted we may want
+ * to modify them. The important thing here is that you
+ * don't deal with raw pointer to your object when try
+ * to modify it. You always have a pointer object wrapped
+ * around the object (like shared_ptr).
+ * Here it is called oos::object_ptr. So how do you get
+ * such a oos::object_ptr?
+ * The oos::object_store for example returns such an wrapper
+ * object when you insert a new object. Once you received
+ * the oos::object_ptr you can change your object.
+ * 
+ * @code
+ * oos::object_ptr<Truck> truck = ostore.insert(new Truck("MAN");
+ * 
+ * truck->weight(2.5);
+ * truck->color("red");
+ * @endcode
+ * 
  * @subsection remove_objects Remove objects
  *
  * @section object_view_sec Open a view
