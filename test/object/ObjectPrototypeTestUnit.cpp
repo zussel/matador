@@ -66,9 +66,9 @@ ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
   ostore.insert_prototype<Item>("ITEM");
-  ostore.insert_prototype<ItemA>("ITEM_A", false, "ITEM");
-  ostore.insert_prototype<ItemB>("ITEM_B", false, "ITEM");
-  ostore.insert_prototype<ItemC>("ITEM_C", false, "ITEM");
+  ostore.insert_prototype<ItemA, Item>("ITEM_A");
+  ostore.insert_prototype<ItemB, Item>("ITEM_B");
+  ostore.insert_prototype<ItemC, Item>("ITEM_C");
 
   object *o = ostore.create("ITEM_B");
   
@@ -98,9 +98,9 @@ ObjectPrototypeTestUnit::prototype_traverse()
 {
   object_store ostore;
   ostore.insert_prototype<Item>("ITEM");
-  ostore.insert_prototype<ItemA>("ITEM_A", false, "ITEM");
-  ostore.insert_prototype<ItemB>("ITEM_B", false, "ITEM");
-  ostore.insert_prototype<ItemC>("ITEM_C", false, "ITEM");
+  ostore.insert_prototype<ItemA, Item>("ITEM_A");
+  ostore.insert_prototype<ItemB, Item>("ITEM_B");
+  ostore.insert_prototype<ItemC, Item>("ITEM_C");
 
   prototype_iterator first = ostore.begin();
   prototype_iterator last = ostore.end();

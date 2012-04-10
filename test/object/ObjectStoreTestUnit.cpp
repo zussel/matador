@@ -425,9 +425,9 @@ ObjectStoreTestUnit::sub_delete()
 void
 ObjectStoreTestUnit::hierarchy()
 {
-  ostore_.insert_prototype<ItemA>("ITEM_A", "false", "ITEM");
-  ostore_.insert_prototype<ItemB>("ITEM_B", "false", "ITEM");
-  ostore_.insert_prototype<ItemC>("ITEM_C", "false", "ITEM");
+  ostore_.insert_prototype<ItemA, Item>("ITEM_A");
+  ostore_.insert_prototype<ItemB, Item>("ITEM_B");
+  ostore_.insert_prototype<ItemC, Item>("ITEM_C");
   
   /* Insert 5 object of each item
    * object type
@@ -535,8 +535,8 @@ ObjectStoreTestUnit::view_test()
 
   item_view_t iview(ostore_);
 
-  UNIT_ASSERT_EQUAL(iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE(iview.empty(), "item view is not empty");
+  UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
+  UNIT_ASSERT_FALSE((int)iview.empty(), "item view is not empty");
 
   item_ptr item = iview.front();
 

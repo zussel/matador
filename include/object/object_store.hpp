@@ -289,7 +289,7 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns true if the prototype was inserted successfully.
    */
-	bool insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "OBJECT");
+	bool insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -304,10 +304,10 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns true if the prototype was inserted successfully.
    */
-  template < class T >
-  bool insert_prototype(const char *type, bool abstract = false, const char *parent = "OBJECT")
+  template < class T, class S = object >
+  bool insert_prototype(const char *type, bool abstract = false)
   {
-    return insert_prototype(new object_producer<T>, type, abstract, parent);
+    return insert_prototype(new object_producer<T>, type, abstract, typeid(S).name());
   }
 
   /**
