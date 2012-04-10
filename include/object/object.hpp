@@ -166,10 +166,13 @@ public:
   }
 
   /**
-   * Modify the attribute be assigning
+   * Modify the attribute assigning
    * the new given value to attributes
-   * reference
+   * reference.
    *
+   * @tparam T Type of attribute to change.
+   * @param attr Refernce to attribute to change.
+   * @param val New value for attribute.
    */
   template < class T >
   void modify(T &attr, const T &val)
@@ -178,6 +181,14 @@ public:
     attr = val;
   }
 
+  /**
+   * Modify an object_ptr attribute assigning
+   * the new given value to attributes reference.
+   *
+   * @tparam T Type of object_ptr to change.
+   * @param attr Refernce to object_ptr to change.
+   * @param val New value for object_ptr.
+   */
   template < class T >
   void modify(oos::object_ref<T> &attr, const oos::object_ptr<T> &val)
   {
@@ -185,12 +196,26 @@ public:
     attr = val;
   }
 
+  /**
+   * Modify a varchar_base attribute assigning
+   * the new given value to attributes reference.
+   *
+   * @param attr Refernce to varchar_base to change.
+   * @param val New value for varchar_base.
+   */
   void modify(varchar_base &attr, const std::string &val)
   {
     mark_modified();
     attr = val;
   }
 
+  /**
+   * Modify a varchar_base attribute assigning
+   * the new given value to attributes reference.
+   *
+   * @param attr Refernce to varchar_base to change.
+   * @param val New value for varchar_base.
+   */
   void modify(varchar_base &attr, const varchar_base &val)
   {
     mark_modified();
@@ -206,6 +231,7 @@ public:
    */
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
 
+protected:
   /**
    * @brief Returns the object_proxy of the object.
    * 
@@ -217,7 +243,6 @@ public:
    */
   object_proxy* proxy() const { return proxy_; }
 
-protected:
   /**
    * @brief Marks this object as modified in its object_store
    *

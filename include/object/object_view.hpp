@@ -522,11 +522,23 @@ public:
     }
   }
 
+  /**
+   * Return the very first object_ptr
+   * of the object_view.
+   *
+   * @return The first object_ptr of the view.
+   */
   object_pointer front() const
   {
     return (*begin());
   }
 
+  /**
+   * Return the very last object_ptr
+   * of the object_view.
+   *
+   * @return The last object_ptr of the view.
+   */
   object_pointer back() const
   {
     return (*(--end()));

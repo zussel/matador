@@ -37,7 +37,7 @@
 namespace oos {
 
 /**
- * @class object_exception
+ * @class database_exception
  * @brief An object exception class
  *
  * This kind of exception is thrown, when 

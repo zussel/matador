@@ -37,6 +37,8 @@ namespace oos {
 class statement_impl;
 class object;
 
+/// @cond OOS_DEV
+
 class OOS_API statement_serializer : public object_atomizer
 {
 public:
@@ -364,6 +366,8 @@ private:
   
   int column_;
 };
+
+/// @endcond
 
 }
 

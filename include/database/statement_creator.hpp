@@ -36,6 +36,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class statement_creator
 {
 public:
@@ -377,6 +379,7 @@ protected:
   }
 };
 
+/// @endcond
 }
 
 #endif /* STATEMENT_CREATOR_HPP */

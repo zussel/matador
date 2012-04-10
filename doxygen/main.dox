@@ -17,13 +17,27 @@
  *
  * All classes are inside the namespace oos. I tryed to give the library the
  * look and feel of the STL so that it can interact with it easily.
+ * 
+ * As you will learn there is a base object (oos::object) for all your objects. This
+ * object provide some methods and functionality importand to the oos::object_store.
+ *
+ * - <b>unique id</b>: Each object gets a unique id independent of its type. That means there
+ * is a global id counter integrated in the oos::object_store. This id is used as the
+ * primary key.
+ *
+ * - <b>modify method</b>: When modifying an object attribute you have to use oos::object::modify
+ * so that the oos::object_store can keep track of the change made to an object.
+ *
+ * - <b>provide serialize methods</b>: You have to overwrite the serialize methods oos::object::read_from
+ * and oos::object::write_to to give the oos::object_store the opportunity to know, read
+ * and write all attributes.
  *
  * Now lets start...
  *
  * @section create_objects_sec Creating objects
  *
- * There are a handful of rules you have to follow to intergrate your object
- * classes in OOS.
+ * As mentioned above there are a handful of rules you have to follow while
+ * intergrating your object classes into OOS.
  *
  * @subsection step1 Step 1: Derive your class from oos::object.
  *
@@ -83,9 +97,49 @@
  *
  * @section object_store_sec The Object Store
  *
+ * Now that you've written your object classes before you
+ * can insert them into the oos::object_store you have to make sure
+ * that the oos::object_store know these object types. Therefor you
+ * have to add the hierarchy of your objects.
+ *
  * @subsection prototypes Setup the object hierarchy
  *
- * @subsection objects Add or remove objects
+ * Assume we have a base class Vehicle and derived from this classes
+ * Truck, Car and Bike. Now lets make this hierarchy known
+ * to the oos::object_store:
+ *
+ * @code
+ * oos::object_store ostore;
+ * ostore.insert_prototype<Vehicle>("vehicle", true);
+ * ostore.insert_prototype<Truck>("truck", false, "vehicle");
+ * ostore.insert_prototype<Car>("car", false, "vehicle");
+ * ostore.insert_prototype<Bike>("bike", false, "vehicle");
+ * @endcode
+ *
+ * As you can see it is quite simple to add the hierarchy to
+ * the oos::object_store.
+ * Via the template parameter you tell which type you want to add.
+ * With the first paramter you give your type a name. The second parameter
+ * is a flag telling the oos::object_store that this type is abstract
+ * and you can't add objects of this type to the oos::object_store.
+ * Finally the last (third) parameter tells the oos::object_store about
+ * the objects parent type. When this name isn't given the parent class
+ * will be the oos::object type.
+ *
+ * @subsection add_objects Add objects
+ *
+ * Now that we've setup up our hierarchy we can add new objects to
+ * the oos::object_store.
+ *
+ * @code
+ * ostore.insert(new Truck("MAN");
+ * ostore.insert(new Car("VW Beetle");
+ * ostore.insert(new Bike("Honda");
+ * @endcode
+ * 
+ * @subsection modify_objects Modify objects
+ *
+ * @subsection remove_objects Remove objects
  *
  * @section object_view_sec Open a view
  *

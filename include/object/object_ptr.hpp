@@ -405,6 +405,15 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Check on equal.
+   *
+   * Check if this object_ref is equal to
+   * the given one.
+   *
+   * @param x The object_ref to compare with.
+   * @return True if the object_ref are equal.
+   */
   bool operator==(const object_ref &x) const
   {
     return object_base_ptr::operator ==(x);

@@ -116,31 +116,30 @@ body
 #content h3
 {
   /* top right bottom left */
-  margin: 5px 10px;
+  margin: 5px 30px;
 }
 
 #content h2
 {
-  margin: 20px 10px;
+  margin: 20px 30px;
 }
 
 #content p
 {
-  margin: 10px;
+  margin: 10px 30px;
   text-align: justify;
   line-height:1.4em;
 }
 
 #content pre
 {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 0 30px;
 }
 
 #content pre code
 {
   font-size: 110%;
-  font-weight: bolder;
+  /*font-weight: bolder;*/
 }
 
 #content pre code
@@ -210,7 +209,7 @@ body
 
 .memitem
 {
-  margin: 0 10px;
+  margin: 0 30px;
   background-color: #eee8d5;
 }
 
@@ -224,12 +223,13 @@ body
 {
 	font-size: 170%;
 	font-weight: 900;
-	margin: 20px 10px;
+	margin: 0 30px;
+	padding: 20px 0 10px 0;
 }
 
 .fragment
 {
-	margin: 10px;
+	margin: 30px;
 	background-color: #eee;
 }
 
