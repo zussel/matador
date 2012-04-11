@@ -137,12 +137,12 @@ void prototype_iterator::decrement()
 }
 
 object_store::object_store()
-  : root_(new prototype_node(new object_producer<object>, "OBJECT", true))
+  : root_(new prototype_node(new object_producer<object>, "object", true))
   , first_(new object_proxy(this))
   , last_(new object_proxy(this))
   , object_deleter_(new object_deleter)
 {
-  prototype_node_map_.insert(std::make_pair("OBJECT", root_));
+  prototype_node_map_.insert(std::make_pair("object", root_));
   prototype_node_map_.insert(std::make_pair(root_->producer->classname(), root_));
   // set marker for root element
   root_->op_first = first_;
