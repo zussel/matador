@@ -35,21 +35,27 @@
 {
 <span class="keyword">private</span>:
   <span class="built_in">std</span>::<span class="built_in">string</span> name_;
+  <span class="built_in">int</span> age_;
 
 <span class="keyword">public</span>:
-  person(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n) : name_(n) {}
+  person() : age_(0) {}
+  person(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n, <span class="built_in">int</span> a)
+    : name_(n), age_(a)
+  {}
   <span class="keyword">virtual</span> ~person() {}
   
-  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *oa)
+  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *a)
   {
-    oos::object::read_from(oa);
-    oa-&gt;read_string(<span class="string">"name"</span>, name_);
+    oos::object::read_from(a);
+    a-&gt;read_string(<span class="string">"name"</span>, name_);
+    a-&gt;read_int(<span class="string">"age"</span>, age_);
   }
 
-  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *oa) <span class="keyword">const</span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *a) <span class="keyword">const</span>
   {
-    oos::object::write_to(oa);
-    oa-&gt;write_string(<span class="string">"name"</span>, name_);
+    oos::object::write_to(a);
+    a-&gt;write_string(<span class="string">"name"</span>, name_);
+    a-&gt;write_int(<span class="string">"age"</span>, age_);
   }
 
   <span class="keyword">void</span> name(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n)
@@ -57,16 +63,19 @@
     modify(name_, n);
   }
 
-  <span class="built_in">std</span>::<span class="built_in">string</span> name() <span class="keyword">const</span>
+  <span class="keyword">void</span> age(<span class="built_in">int</span> a)
   {
-    <span class="keyword">return</span> name_;
+    modify(age_, a);
   }
+
+  <span class="built_in">std</span>::<span class="built_in">string</span> name() <span class="keyword">const</span> { <span class="keyword">return</span> name_; }
+  <span class="built_in">int</span> age() <span class="keyword">const</span> { <span class="keyword">return</span> age_; }
 };</code></pre>
+        </div>
+        <div class="width50 float_right">
         <p>2. Make your class type known to your object store</p>
 <pre><code class="cpp">object_store ostore;
 ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);</code></pre>
-        </div>
-        <div class="width50 float_right">
         <p>3. Create a new session start a new transaction and insert your objects.</p>
 <pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
 

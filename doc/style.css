@@ -140,6 +140,7 @@ body
 #content pre code
 {
   font-size: 110%;
+  border: 1px solid #ccc;
   /*font-weight: bolder;*/
 }
 
@@ -231,7 +232,13 @@ body
 .fragment
 {
 	margin: 30px;
+	padding: 5px;
 	background-color: #eee;
+}
+
+.fragment
+{
+	font-size: 120%;
 }
 
 pre .keywordtype {
