@@ -22,8 +22,8 @@
  * object provide some methods and functionality importand to the oos::object_store.
  *
  * - <b>unique id</b>: Each object gets a unique id independent of its type. That means there
- * is a global id counter integrated in the oos::object_store. This id is used as the
- * primary key.
+ * is a global id counter integrated in the oos::object_store to identify each object. This id
+ * is used as the primary key.
  *
  * - <b>modify method</b>: When modifying an object attribute you have to use oos::object::modify
  * so that the oos::object_store can keep track of the change made to an object.
@@ -60,7 +60,7 @@
  * @subsection step2 Step 2: Provide propper acces methods.
  *
  * Write correct access (get/set) methods for all your member attributes.
- * It is import when modifying an attribute to use the oos::object::modify()
+ * It is important when modifying an attribute to use the oos::object::modify()
  * method. It tells the oos::object_store and the oos::object_observer objects
  * that an object is modified.
  *
@@ -79,7 +79,7 @@
  * @subsection step3 Step 3: Make the class serializable.
  *
  * To make the class serializable you have to add and implement
- * the two methods oos::object::read_from() and oos::object::write_to().
+ * the methods oos::object::read_from() and oos::object::write_to().
  *
  * @code
  * void person::read_from(oos::object_atomizer *oa)
@@ -111,9 +111,9 @@
  * @code
  * oos::object_store ostore;
  * ostore.insert_prototype<Vehicle>("vehicle", true);
- * ostore.insert_prototype<Truck>("truck", false, "vehicle");
- * ostore.insert_prototype<Car>("car", false, "vehicle");
- * ostore.insert_prototype<Bike>("bike", false, "vehicle");
+ * ostore.insert_prototype<Truck, Vehicle>("truck");
+ * ostore.insert_prototype<Car, Vehicle>("car");
+ * ostore.insert_prototype<Bike, Vehicle>("bike");
  * @endcode
  *
  * As you can see it is quite simple to add the hierarchy to
@@ -146,9 +146,10 @@
  * around the object (like shared_ptr).
  * Here it is called oos::object_ptr. So how do you get
  * such a oos::object_ptr?
- * The oos::object_store for example returns such an wrapper
+ * The oos::object_store for example returns an oos::object_ptr
  * object when you insert a new object. Once you received
- * the oos::object_ptr you can change your object.
+ * the oos::object_ptr you can change your object by using it
+ * like usual pointer.
  * 
  * @code
  * oos::object_ptr<Truck> truck = ostore.insert(new Truck("MAN");
@@ -159,13 +160,13 @@
  * 
  * @subsection remove_objects Remove objects
  *
- * @section object_view_sec Open a view
- *
  * @section object_relations_sec Object Releations
  *
  * @subsection one_to_one One to one relations
  *
  * @subsection one_to_many One to one relations
+ *
+ * @section object_view_sec Open a view
  *
  * @section object_expression_sec Object Expressions
  *
