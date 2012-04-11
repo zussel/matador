@@ -24,41 +24,7 @@
 #include <tr1/functional>
 #endif
 
-using namespace oos;
-
-class FirstTestUnit : public unit_test
-{
-public:
-  FirstTestUnit() : unit_test("First test unit")
-  {
-    add_test("sub1", std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
-    add_test("sub2", std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");
-    add_test("sub3", std::tr1::bind(&FirstTestUnit::third_sub_test, this), "sub third");
-  }
-  virtual ~FirstTestUnit() {}
-  
-  void first_sub_test()
-  {
-    UNIT_ASSERT_EQUAL(1, 1, "one is one");
-    
-    UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
-  }
-  void second_sub_test()
-  {
-    // gives warning
-    UNIT_WARN("this is a test warning!");
-  }
-  void third_sub_test()
-  {
-  }
-  /**
-   * Initializes a test unit
-   */
-  virtual void initialize() {}
-  virtual void finalize() {}
-};
-
-class SecondTestUnit : public unit_test
+class SecondTestUnit : public oos::unit_test
 {
 public:
   SecondTestUnit() : unit_test("Second test unit")
@@ -80,12 +46,3 @@ public:
   virtual void initialize() {}
   virtual void finalize() {}
 };
-
-int main(int argc, char *argv[])
-{
-  test_suite::instance().register_unit("first", new FirstTestUnit());
-  test_suite::instance().register_unit("second", new SecondTestUnit());
-  
-  test_suite::instance().init(argc, argv);
-  test_suite::instance().run();
-}

@@ -15,27 +15,39 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unit/unit_test.hpp"
+#include "unit/FirstTestUnit.hpp"
+#include "unit/SecondTestUnit.hpp"
+
+#include "tools/BlobTestUnit.hpp"
+#include "tools/VarCharTestUnit.hpp"
+#include "tools/FactoryTestUnit.hpp"
+
+#include "object/ObjectStoreTestUnit.hpp"
+#include "object/ObjectPrototypeTestUnit.hpp"
+#include "object/ObjectListTestUnit.hpp"
+#include "object/ObjectVectorTestUnit.hpp"
+#include "object/DatabaseTestUnit.hpp"
+
 #include "unit/test_suite.hpp"
-
-#include "BlobTestUnit.hpp"
-#include "VarCharTestUnit.hpp"
-#include "FactoryTestUnit.hpp"
-
-#ifdef WIN32
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 using namespace oos;
 
 int main(int argc, char *argv[])
 {
+  test_suite::instance().init(argc, argv);
+
+  test_suite::instance().register_unit("first", new FirstTestUnit());
+  test_suite::instance().register_unit("second", new SecondTestUnit());
+
   test_suite::instance().register_unit("blob", new BlobTestUnit());
   test_suite::instance().register_unit("varchar", new VarCharTestUnit());
   test_suite::instance().register_unit("factory", new FactoryTestUnit());
-  
-  test_suite::instance().init(argc, argv);
+
+  test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
+  test_suite::instance().register_unit("objectstore", new ObjectStoreTestUnit());
+  test_suite::instance().register_unit("objectlist", new ObjectListTestUnit());
+  test_suite::instance().register_unit("objectvector", new ObjectVectorTestUnit());
+  test_suite::instance().register_unit("database", new DatabaseTestUnit());
+
   test_suite::instance().run();
 }
