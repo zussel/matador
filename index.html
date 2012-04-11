@@ -1,124 +1,122 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
 <html lang="de"> 
   <head> 
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"> 
-    <title>Open Object Store</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/> 
+    <title>Open Object Store</title> 
+	<link rel="stylesheet" type="text/css" href="style.css" />
+    <!--link rel="stylesheet" type="text/css" href="vs.css"/-->
+    <link rel="stylesheet" type="text/css" href="solarized_light.css"/>
   </head> 
-<body>
-  <div id="wrapper">
-    <div id="header">
-      <h1>Open Object Store.</h1>
-      <h5>Store all kind of objects in one container</p>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <ul>
+          <li>Home</li>
+          <li><a href="api/index.html">Documention</a></li>
+          <li><a href="download.html">Download</a></li>
+          <li><a href="tutorial.html">Tutorial</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div id="content">
+        <h2>OOS: The Open Object Store</h2>
+        <div class="width66 float_left">
+          <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All is done for you automagically. It gives the user both one container for all objects and the persistence backend functionality.</p>
+          <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
+        </div>
+        <div class="width33 float_right">
+            <p>Download Version 0.1 here.</p>
+        </div>
+        <div class="clear"></div>
+        <div class="width50 float_left">
+        <p>1. Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
+<pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
+{
+<span class="keyword">private</span>:
+  <span class="built_in">std</span>::<span class="built_in">string</span> name_;
+  <span class="built_in">int</span> age_;
+
+<span class="keyword">public</span>:
+  person() : age_(0) {}
+  person(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n, <span class="built_in">int</span> a)
+    : name_(n), age_(a)
+  {}
+  <span class="keyword">virtual</span> ~person() {}
+  
+  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *oa)
+  {
+    oos::object::read_from(oa);
+    oa-&gt;read_string(<span class="string">"name"</span>, name_);
+    oa-&gt;read_int(<span class="string">"age"</span>, age_);
+  }
+
+  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *oa) <span class="keyword">const</span>
+  {
+    oos::object::write_to(oa);
+    oa-&gt;write_string(<span class="string">"name"</span>, name_);
+    oa-&gt;write_int(<span class="string">"age"</span>, age_);
+  }
+
+  <span class="keyword">void</span> name(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n)
+  {
+    modify(name_, n);
+  }
+
+  <span class="keyword">void</span> age(<span class="built_in">int</span> a)
+  {
+    modify(age_, a);
+  }
+
+  <span class="built_in">std</span>::<span class="built_in">string</span> name() <span class="keyword">const</span> { <span class="keyword">return</span> name_; }
+  <span class="built_in">int</span> age() <span class="keyword">const</span> { <span class="keyword">return</span> age_; }
+};</code></pre>
+        </div>
+        <div class="width50 float_right">
+        <p>2. Make your class type known to your object store</p>
+<pre><code class="cpp">object_store ostore;
+ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);</code></pre>
+        <p>3. Create a new session start a new transaction and insert your objects.</p>
+<pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
+
+db.create();
+
+transaction tr(db);
+
+<span class="keyword">try</span> {  
+    tr.begin();
+
+    ostore.insert(<span class="keyword">new</span> person(<span class="string">"George"</span>));
+    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Jane"</span>));
+    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Tim"</span>));
+    ostore.insert(<span class="keyword">new</span> person(<span class="string">"Walter"</span>));
+
+    tr.commit();
+} <span class="keyword">catch</span> (exception&amp;) {
+    <span class="comment">// do your cleanup here</span>
+    tr.rollback();
+}</code></pre>
+        <p>4. To access your objects open a view.</p>
+<pre><code class="cpp"><span class="keyword">typedef</span> object_ptr&lt;person&gt; person_ptr;
+<span class="keyword">typedef</span> object_view&lt;person&gt; person_view_t;
+
+person_view_t oview(ostore);
+
+person_view_t::iterator i = oview.begin();
+person_view_t::iterator last = oview.end();
+<span class="keyword">for</span> (; i != last; ++i) {
+    person_ptr p = *i;
+    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"person: "</span> &lt;&lt; p-&gt;name() &lt;&lt; <span class="string">"\n"</span>;
+}
+</code></pre>
+      </div>
+      <div class="width100 float_left">
+        <p>As you can see, the class is only derived from oos::object and two serialize methods are added. Thats it! The following code snippet shows how we can creete a database and use a transaction to persist some objects. But first the class person must be made known to the object store.</p>
+      </div>
     </div>
-    <div id="content">
-      <h3 class="clear">Getting started</h3>
-      <div class="width66 float_left">
-        <div class="gutter">
-          <p>1. Derive your classes from oos::object. Add your members and write proper read_from and write_to methods.</p>
-<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#800000; font-weight:bold; '>class</span> Artist <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
-<span style='color:#800080; '>{</span>
-<span style='color:#800000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#696969; '>// artists name</span>
-  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> name_<span style='color:#800080; '>;</span>
-<span style='color:#800000; font-weight:bold; '>public</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#696969; '>// needed by factory</span>
-  Artist<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
-  <span style='color:#696969; '>// add your custom c'tors</span>
-  Artist<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>name<span style='color:#808030; '>)</span> <span style='color:#800080; '>:</span> name_<span style='color:#808030; '>(</span>anme<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
-  <span style='color:#696969; '>// virtual d'tor</span>
-  <span style='color:#800000; font-weight:bold; '>virtual</span> <span style='color:#808030; '>~</span>Artist<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
-
-  <span style='color:#696969; '>// generic interface to access data</span>
-  <span style='color:#800000; font-weight:bold; '>virtual</span> write_to<span style='color:#808030; '>(</span>oos<span style='color:#800080; '>::</span>object_atomizer <span style='color:#808030; '>*</span>oa<span style='color:#808030; '>)</span> <span style='color:#800000; font-weight:bold; '>const</span>
-  <span style='color:#800080; '>{</span>
-    object<span style='color:#800080; '>::</span>write_to<span style='color:#808030; '>(</span>oa<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-    oa<span style='color:#808030; '>-</span><span style='color:#808030; '>></span>write_string<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>name</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> name_<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-  <span style='color:#800080; '>}</span>
-  <span style='color:#800000; font-weight:bold; '>virtual</span> read_from<span style='color:#808030; '>(</span>oos<span style='color:#800080; '>::</span>object_atomizer <span style='color:#808030; '>*</span>oa<span style='color:#808030; '>)</span>
-  <span style='color:#800080; '>{</span>
-    object<span style='color:#800080; '>::</span>read_from<span style='color:#808030; '>(</span>oa<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-    oa<span style='color:#808030; '>-</span><span style='color:#808030; '>></span>read_string<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>name</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> name_<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-  <span style='color:#800080; '>}</span>
-  <span style='color:#696969; '>// add access methods for your members</span>
-  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> name<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800080; '>{</span> <span style='color:#800000; font-weight:bold; '>return</span> name_<span style='color:#800080; '>;</span> <span style='color:#800080; '>}</span>
-  <span style='color:#800000; font-weight:bold; '>void</span> name<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>n<span style='color:#808030; '>)</span>
-  <span style='color:#800080; '>{</span>
-    <span style='color:#696969; '>// call this to tell the object store</span>
-    <span style='color:#696969; '>// that your object is about to change</span>
-    <span style='color:#696969; '>// a member. never forget!</span>
-    mark_modified<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-    name_ <span style='color:#808030; '>=</span> n<span style='color:#800080; '>;</span>
-  <span style='color:#800080; '>}</span>
-<span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
-
-<span style='color:#696969; '>// create another class</span>
-
-<span style='color:#800000; font-weight:bold; '>class</span> Track <span style='color:#800080; '>:</span> <span style='color:#800000; font-weight:bold; '>public</span> oos<span style='color:#800080; '>::</span>object
-<span style='color:#800080; '>{</span>
-<span style='color:#800000; font-weight:bold; '>private</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> title_<span style='color:#800080; '>;</span>
-  <span style='color:#696969; '>// add a reference to an artist</span>
-  oos<span style='color:#800080; '>::</span>object_ref<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist_<span style='color:#800080; '>;</span>
-<span style='color:#800000; font-weight:bold; '>public</span><span style='color:#e34adc; '>:</span>
-  <span style='color:#696969; '>// needed by factory</span>
-  Track<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
-  <span style='color:#696969; '>// add your custom c'tors</span>
-  Track<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>string</span> <span style='color:#808030; '>&amp;</span>title<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>const</span> oos<span style='color:#800080; '>::</span>artist_ref<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> <span style='color:#808030; '>&amp;</span>artist<span style='color:#808030; '>)</span>
-    <span style='color:#800080; '>:</span> title_<span style='color:#808030; '>(</span>title<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> artist_<span style='color:#808030; '>(</span>artist<span style='color:#808030; '>)</span>
-  <span style='color:#800080; '>{</span><span style='color:#800080; '>}</span>
-<span style='color:#800080; '>}</span><span style='color:#800080; '>;</span>
-</pre>
-          <p>2. Create your object store and tell it about your object hierarchy</p>
-<pre style='color:#000000;background:#eeeeee;margin:5px;'>oos<span style='color:#800080; '>::</span>object_store ostore<span style='color:#800080; '>;</span>
-
-<span style='color:#696969; '>// add a prototype of your object to let the object store</span>
-<span style='color:#696969; '>// update the hierarchy tree and be able to create your object</span>
-
-ostore<span style='color:#808030; '>.</span>insert_prototype<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> oos<span style='color:#800080; '>::</span>object_producer<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span><span style='color:#808030; '>,</span> <span style='color:#800000; '>"</span><span style='color:#0000e6; '>ARTIST</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-ostore<span style='color:#808030; '>.</span>insert_prototype<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> oos<span style='color:#800080; '>::</span>object_producer<span style='color:#800080; '>&lt;</span>Track<span style='color:#800080; '>></span><span style='color:#808030; '>,</span> <span style='color:#800000; '>"</span><span style='color:#0000e6; '>TRACK</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-</pre>
-          <p>3. Add some of your objects</p>
-<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#696969; '>// object_ptr is like a shared_ptr, you only work with your objects</span>
-<span style='color:#696969; '>// as an object_ptr or object_ref. think hardly before accessing the raw</span>
-<span style='color:#696969; '>// object. in almost all cases you don't need to.</span>
-
-object_ptr<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>AC/DC</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-
-<span style='color:#696969; '>// add some tracks for your artist</span>
-ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Thunderstruck</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Back in black</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Track<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Highway to hell</span><span style='color:#800000; '>"</span><span style='color:#808030; '>,</span> artist<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-
-<span style='color:#696969; '>// add some other artist and songs</span>
-artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Rolling Stones</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-<span style='color:#696969; '>// ...</span>
-artist <span style='color:#808030; '>=</span> ostore<span style='color:#808030; '>.</span>insert<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>new</span> Artist<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>Amy McDonald</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-<span style='color:#696969; '>// ...</span>
-</pre>
-          <p>4. Access your objects creating a view</p>
-<pre style='color:#000000;background:#eeeeee;margin:5px;'><span style='color:#800000; font-weight:bold; '>typedef</span> oos<span style='color:#800080; '>::</span>object_view<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> t_artist_view<span style='color:#800080; '>;</span>
-t_artist_view artist_view<span style='color:#808030; '>(</span><span style='color:#808030; '>&amp;</span>ostore<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-
-<span style='color:#696969; '>// make a shortcut to the artist object pointer</span>
-<span style='color:#800000; font-weight:bold; '>typedef</span> oos<span style='color:#800080; '>::</span>object_ptr<span style='color:#800080; '>&lt;</span>Artist<span style='color:#800080; '>></span> artist_ptr<span style='color:#800080; '>;</span>
-
-<span style='color:#800000; font-weight:bold; '>for</span> <span style='color:#808030; '>(</span>t_artist_view<span style='color:#800080; '>::</span><span style='color:#603000; '>const_iterator</span> i <span style='color:#808030; '>=</span> artist_view<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span> i <span style='color:#808030; '>!</span><span style='color:#808030; '>=</span> artist_view<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span> <span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>i<span style='color:#808030; '>)</span>
-<span style='color:#800080; '>{</span>
-  <span style='color:#696969; '>// get the artist</span>
-  artist_ptr artist <span style='color:#808030; '>=</span> i<span style='color:#808030; '>.</span>optr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
-  <span style='color:#696969; '>// do some stuff with your artist</span>
-  <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>cout</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>&lt;</span> artist<span style='color:#808030; '>.</span>name<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>&lt;</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span>endl<span style='color:#800080; '>;</span>
-<span style='color:#800080; '>}</span>
-</pre>
-        </div>
-      </div>
-      <div class="width33 float_right">
-        <div class="gutter">
-          <p>A simple introduction</p>
-        </div>
-      </div>
+    <div id="footer">
+Infos.
     </div>
   </div>
-</body>
+  </body>
+</html>
