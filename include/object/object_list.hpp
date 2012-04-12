@@ -33,6 +33,7 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
+#include "object/object_container.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -211,15 +212,14 @@ private:
  * The class provides STL like behaviour and the order of
  * the elements is not reliable.
  */
-template < typename T, class W >
+template < typename T >
 class object_list : public object_list_base
 {
 public:
   typedef object_list_base base_list;                         /**< Shortcut for the object_base_list class. */
-  typedef T value_type;                                       /**< Shortcut for the value type. */
-  typedef W value_type_wrapper;                               /**< Shortcut for the wrapper class around the value type. */
-  typedef std::list<value_type_wrapper> list_type;            /**< Shortcut for the list class member. */
-  typedef typename list_type::size_type size_type;                     /**< Shortcut for size type. */
+  typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
+  typedef std::list<value_type> list_type;                    /**< Shortcut for the list class member. */
+  typedef typename list_type::size_type size_type;            /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
@@ -313,7 +313,7 @@ public:
    * @param x The element to insert.
    * @return The new position iterator.
    */
-  iterator insert(iterator pos, const value_type_wrapper &x)
+  iterator insert(iterator pos, const value_type &x)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -337,7 +337,7 @@ public:
    *
    * @param x The element to be pushed front.
    */
-  void push_front(const value_type_wrapper &x)
+  void push_front(const value_type &x)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -359,7 +359,7 @@ public:
    *
    * @param x The element to be pushed back.
    */
-  void push_back(const value_type_wrapper &x)
+  void push_back(const value_type &x)
   {
     if (!base_list::ostore()) {
       //throw object_exception();
@@ -440,7 +440,7 @@ private:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-    object_list_.push_back(value_type_wrapper(proxy));
+    object_list_.push_back(value_type(proxy));
   }
 
 private:
@@ -460,13 +460,12 @@ private:
  * to the parent class is done automatically.
  */
 template < typename T >
-class object_ptr_list : public object_list<T, object_ptr<T> >
+class object_ptr_list : public object_list<object_ptr<T> >
 {
 public:
-  typedef object_list<T, object_ptr<T> > base_list;              /**< Shortcut for the object_list class. */
-  typedef typename base_list::size_type size_type;                        /**< Shortcut for size type- */
+  typedef object_list<object_ptr<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::size_type size_type;               /**< Shortcut for size type- */
   typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
-  typedef typename base_list::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
   typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */
   typedef typename base_list::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
 
@@ -500,13 +499,12 @@ public:
  * to the parent class is done automatically.
  */
 template < typename T >
-class object_ref_list : public object_list<T, object_ref<T> >
+class object_ref_list : public object_list<object_ref<T> >
 {
 public:
-  typedef object_list<T, object_ref<T> > base_list;              /**< Shortcut for the object_list class. */
-  typedef typename base_list::size_type size_type;                        /**< Shortcut for size type- */
+  typedef object_list<object_ref<T> > base_list;              /**< Shortcut for the object_list class. */
+  typedef typename base_list::size_type size_type;               /**< Shortcut for size type- */
   typedef typename base_list::value_type value_type;             /**< Shortcut for the value type. */
-  typedef typename base_list::value_type_wrapper value_type_ref; /**< Shortcut for the wrapper class around the value type. */
   typedef typename base_list::iterator iterator;                 /**< Shortcut for the list iterator. */
   typedef typename base_list::const_iterator const_iterator;     /**< Shortcut for the list const iterator. */
 
@@ -526,6 +524,236 @@ public:
   {}
 
   virtual ~object_ref_list() {}
+};
+
+template < class S, class T >
+class object_list_2 : public object_container
+{
+  typedef object_list_2<S, T> self;
+  typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
+  typedef container_item<value_type, self> item_type;
+  typedef object_ptr<item_type> item_ptr;
+  typedef std::list<item_ptr> list_type;                      /**< Shortcut for the list class member. */
+  typedef typename list_type::size_type size_type;            /**< Shortcut for size type. */
+  typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
+  typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
+
+
+  explicit object_list_2(S *parent)
+    : object_container()
+  {}
+
+  virtual ~object_list_2() {}
+  
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
+  iterator begin() {
+    return object_list_.begin();
+  }
+
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
+  const_iterator begin() const {
+    return object_list_.begin();
+  }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
+  iterator end() {
+    return object_list_.end();
+  }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
+  const_iterator end() const {
+    return object_list_.end();
+  }
+
+  /**
+   * Returns true if the list is empty.
+   * 
+   * @return True if the list is empty.
+   */
+  virtual bool empty() const {
+    return object_list_.empty();
+  }
+
+  /**
+   * Clears the list
+   */
+  virtual void clear()
+  {
+    erase(begin(), end());
+  }
+
+  /**
+   * Returns the size of the list.
+   * 
+   * @return The size of the list.
+   */
+  virtual size_type size() const
+  {
+    return object_list_.size();
+  }
+
+  /**
+   * @brief Inserts a new element.
+   * 
+   * Insert a new element at a given iterator position.
+   * 
+   * @param pos The position where to insert.
+   * @param x The element to insert.
+   * @return The new position iterator.
+   */
+  iterator insert(iterator pos, const value_type &x)
+  {
+    if (!object_container::ostore()) {
+      //throw object_exception();
+      return pos;
+    } else {
+      // create and insert new item
+      item_ptr item = ostore()->insert(new item_type(object_ref<self>(this), x));
+      /*
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+        return pos;
+      } else {
+      */
+        // mark list object as modified
+      base_list::mark_modified(parent_object());
+//        item_type *item = new 
+        // insert new item object
+      return object_list_.insert(pos, item);
+//      }
+    }
+  };
+
+  /**
+   * Adds an element to the beginning of the list.
+   *
+   * @param x The element to be pushed front.
+   */
+  void push_front(const value_type &x)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+      } else {
+        // mark list object as modified
+        base_list::mark_modified(parent_object());
+        // insert new item object
+        object_list_.push_front(x);
+      }
+    }
+  }
+
+  /**
+   * Adds an element to the end of the list.
+   *
+   * @param x The element to be pushed back.
+   */
+  void push_back(const value_type &x)
+  {
+    if (!base_list::ostore()) {
+      //throw object_exception();
+    } else {
+      // set reference
+      if (!set_reference(x.get())) {
+        // throw object_exception();
+      } else {
+        // mark list object as modified
+        base_list::mark_modified(parent_object());
+        // insert new item object
+        object_list_.push_back(x);
+      }
+    }
+  }
+
+  /**
+   * @brief Interface to erase an element
+   *
+   * This is the interface for derived object_list
+   * classes to implement their erase element method.
+   * Erases a single element from the list.
+   *
+   * @param i The iterator to erase.
+   * @return Returns the next iterator.
+   */
+  virtual iterator erase(iterator i)
+  {
+    return object_list_.erase(i);
+  }
+
+  /**
+   * @brief Erases a range defines by iterators
+   *
+   * Erase a range of elements from the list. The
+   * range is defined by a first and a last iterator.
+   * 
+   * @param first The first iterator of the range to erase.
+   * @param last The last iterator of the range to erase.
+   * @return Returns the next iterator.
+   */
+  iterator erase(iterator first, iterator last)
+  {
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
+  }
+
+protected:
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
+  virtual void for_each(const node_func &nf) const
+  {
+    const_iterator first = object_list_.begin();
+    const_iterator last = object_list_.end();
+    while (first != last) {
+      nf((*first++).ptr());
+    }
+  }
+
+  virtual void uninstall()
+  {
+    base_list::uninstall();
+    object_list_.clear();
+  }
+
+private:
+  virtual void reset()
+  {
+    object_list_.clear();
+  }
+
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    object_list_.push_back(value_type(proxy));
+  }
+
+private:
+  list_type object_list_;
 };
 
 }
