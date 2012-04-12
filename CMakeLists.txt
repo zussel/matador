@@ -50,6 +50,7 @@ SET(OBJECT_SOURCES
   src/object/object_store.cpp
   src/object/object_list.cpp
   src/object/object_vector.cpp
+  src/object/object_container.cpp
   src/object/linked_object_list.cpp
   src/object/object_value.cpp
   src/object/object_proxy.cpp
@@ -60,11 +61,13 @@ SET(OBJECT_SOURCES
 SET(OBJECT_HEADER
   include/object/object.hpp
   include/object/object_atomizer.hpp
+  include/object/object_atomizable.hpp
   include/object/object_creator.hpp
   include/object/object_deleter.hpp
   include/object/object_exception.hpp
   include/object/object_ptr.hpp
   include/object/object_store.hpp
+  include/object/object_container.hpp
   include/object/object_list.hpp
   include/object/object_vector.hpp
   include/object/linked_object_list.hpp
