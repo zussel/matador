@@ -57,7 +57,7 @@ struct prototype_node;
 class object_observer;
 class object_list_base;
 class object_vector_base;
-
+class object_container;
 /**
  * @class object_base_producer
  * @brief Base class for object producer classes
@@ -419,6 +419,14 @@ public:
   void insert(object_vector_base &ovb);
   
   /**
+   * Inserts an object_container into the object store. Subsequently the
+   * object_container is initialized.
+   * 
+   * @param oc The object_container to insert.
+   */
+  void insert(object_container &oc);
+  
+  /**
    * Removes an object from the object store. After successfull
    * removal the object is set to zero and isn't valid any more.
    * 
@@ -454,6 +462,16 @@ public:
    * @return True on successful object vector removal.
    */
   bool remove(object_vector_base &ovb);
+
+  /**
+   * Removes an object_container from object store. All elements of the
+   * container are removed from the store after a successfull reference and
+   * pointer counter check.
+   * 
+   * @param ovb The object vector to remove.
+   * @return True on successful object vector removal.
+   */
+  bool remove(object_container &oc);
 
   /*
   template < class InputIterator >

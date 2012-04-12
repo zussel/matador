@@ -104,6 +104,14 @@ public:
   bool is_deletable(object_vector_base &ovector);
 
   /**
+   * Checks wether the given object_container is deletable.
+   *
+   * @param ovector The object_container to be checked.
+   * @return True if the object_container could be deleted.
+   */
+  bool is_deletable(object_container &oc);
+
+  /**
    * @brief Returns the first deletable object.
    *
    * If the check was made and was successful this
@@ -123,6 +131,7 @@ private:
   virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &x);
   virtual void read_object_vector(const char*, object_vector_base &x);
+  virtual void read_object_container(const char*, object_container &x);
 
   void check_object(object *o, bool is_ref);
   void check_object_list_node(object *node);

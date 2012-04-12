@@ -44,7 +44,7 @@ void
 ObjectListTestUnit::test_ref_list()
 {
   typedef object_ptr<ItemRefList> itemlist_ptr;
-  typedef object_ptr<ItemRefList::value_type> item_ptr;
+  typedef ItemRefList::value_type item_ptr;
 
   itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
 
@@ -54,7 +54,7 @@ ObjectListTestUnit::test_ref_list()
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
-    item_ptr item = ostore_.insert(new ItemRefList::value_type(name.str()));
+    item_ptr item = ostore_.insert(new ItemRefList::item_type(name.str()));
     if (i % 2) {
       itemlist->push_back(item);
     }
@@ -63,7 +63,7 @@ ObjectListTestUnit::test_ref_list()
   val = 10;
   UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
 
-  typedef object_view<ItemRefList::value_type> item_view_t;
+  typedef object_view<ItemRefList::item_type> item_view_t;
   item_view_t item_view(ostore_);
 
   val = 20;

@@ -98,6 +98,7 @@ private:
 	virtual void write_object(const char* id, const object_base_ptr &x);
 	virtual void write_object_list(const char* id, const object_list_base &x);
 	virtual void write_object_vector(const char* id, const object_vector_base &x);
+	virtual void write_object_container(const char* id, const object_container &x);
 
 	virtual void read_char(const char* id, char &c);
 	virtual void read_float(const char* id, float &f);
@@ -115,6 +116,7 @@ private:
   virtual void read_object(const char* id, object_base_ptr &x);
 	virtual void read_object_list(const char* id, object_list_base &x);
 	virtual void read_object_vector(const char* id, object_vector_base &x);
+	virtual void read_object_container(const char* id, object_container &x);
   
   void write_object_list_item(const object *o);
   void write_object_vector_item(const object *o, unsigned int &index);

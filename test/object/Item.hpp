@@ -193,7 +193,7 @@ public:
   typedef ContainerItem<ItemPtrList> value_type;
   typedef oos::object_ptr_list<value_type> item_list_t;
   typedef item_list_t::size_type size_type;
-  typedef item_list_t::value_type_ptr value_type_ptr;
+  typedef item_list_t::value_type value_type_ptr;
   typedef ItemPtrList self;
   typedef oos::object_ref<self> self_ref;
   typedef item_list_t::iterator iterator;
@@ -248,7 +248,6 @@ public:
   typedef oos::object_ref_list<item_type> item_list_t;
   typedef item_list_t::size_type size_type;
   typedef item_list_t::value_type value_type;
-  typedef item_list_t::value_type_ref value_type_ref;
   typedef ItemRefList self;
   typedef oos::object_ref<self> self_ref;
   typedef item_list_t::iterator iterator;
@@ -271,11 +270,11 @@ public:
     writer->write_object_list("item_list", item_list_);
   }
   
-  void push_front(const value_type_ref &i)
+  void push_front(const value_type &i)
   {
     item_list_.push_front(i);
   }
-  void push_back(const value_type_ref &i)
+  void push_back(const value_type &i)
   {
     item_list_.push_back(i);
   }

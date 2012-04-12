@@ -62,6 +62,7 @@ private:
   virtual void read_object(const char*, object_base_ptr &x);
   virtual void read_object_list(const char*, object_list_base &x);
   virtual void read_object_vector(const char*, object_vector_base &x);
+  virtual void read_object_container(const char*, object_container &x);
 
 private:
   std::stack<object*> object_stack_;

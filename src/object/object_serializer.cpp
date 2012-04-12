@@ -21,6 +21,7 @@
 #include "object/object_ptr.hpp"
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
+#include "object/object_container.hpp"
 
 #include "tools/byte_buffer.hpp"
 #include "tools/varchar.hpp"
@@ -157,6 +158,11 @@ void object_serializer::write_object_vector(const char*, const object_vector_bas
   x.for_each(std::tr1::bind(&object_serializer::write_object_vector_item, this, _1, index));
 }
 
+void object_serializer::write_object_container(const char* id, const object_container &x)
+{
+  x.write_to(this);
+}
+
 void object_serializer::read_char(const char*, char &c)
 {
   buffer_->release(&c, sizeof(c));
@@ -278,6 +284,27 @@ void object_serializer::read_object_list(const char*, object_list_base &x)
 }
 
 void object_serializer::read_object_vector(const char*, object_vector_base &x)
+{
+  // get count of backuped list item
+  unsigned int s(0);
+  read_unsigned_int(0, s);
+  x.reset();
+  string type;
+  long id(0);
+  unsigned int index(0);
+  for (unsigned int i = 0; i < s; ++i) {
+    read_long(0, id);
+    read_unsigned_int(0, index);
+    read_string(0, type);
+    object_proxy *oproxy = ostore_->find_proxy(id);
+    if (!oproxy) {
+      oproxy = ostore_->create_proxy(id);
+    }
+    x.append_proxy(oproxy);
+  }
+}
+
+void object_serializer::read_object_container(const char*, object_container &x)
 {
   // get count of backuped list item
   unsigned int s(0);

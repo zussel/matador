@@ -21,6 +21,7 @@
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
+#include "object/object_container.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
@@ -347,6 +348,11 @@ object_store::insert(object_vector_base &ovb)
   ovb.install(this);
 }
 
+void object_store::insert(object_container &oc)
+{
+  oc.install(this);
+}
+
 object*
 object_store::insert_object(object *o, bool notify)
 {
@@ -510,6 +516,33 @@ object_store::remove(object_vector_base &ovb)
     }
   }
   ovb.uninstall();
+  return true;
+}
+
+bool
+object_store::remove(object_container &oc)
+{
+  /**************
+   * 
+   * remove all objects from container
+   * and first and last sentinel
+   * 
+   **************/
+  // check if object tree is deletable
+  if (!object_deleter_->is_deletable(oc)) {
+    return false;
+  }
+  object_deleter::iterator first = object_deleter_->begin();
+  object_deleter::iterator last = object_deleter_->end();
+  
+  while (first != last) {
+    if (!first->second.ignore) {
+      remove_object((first++)->second.obj, true);
+    } else {
+      ++first;
+    }
+  }
+  oc.uninstall();
   return true;
 }
 

@@ -36,6 +36,7 @@ namespace oos {
 class varchar_base;
 class object_list_base;
 class object_vector_base;
+class object_container;
 class object_base_ptr;
 
 /**
@@ -245,6 +246,18 @@ public:
 	virtual void write_object_vector(const char*, const object_vector_base&) {}
 
   /**
+   * @fn virtual void write_object_container(const char *id, const object_container &x)
+   * @brief Write a object_container to the atomizer.
+   * 
+   * Write a object_container to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write_object_container(const char*, const object_container&) {}
+
+  /**
    * @fn virtual void read_char(const char *id, char &x)
    * @brief Read a single character from the atomizer.
    * 
@@ -435,6 +448,18 @@ public:
    * @param x The data to write to.
    */
 	virtual void read_object_vector(const char*, object_vector_base&) {}
+
+  /**
+   * @fn virtual void read_object_container(const char *id, object_container &x)
+   * @brief Read an object_container from the atomizer.
+   * 
+   * Read an object_container from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read_object_container(const char*, object_container&) {}
 };
 
 }
