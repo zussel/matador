@@ -32,6 +32,7 @@
 #endif
 
 #include "object/object_value.hpp"
+#include "object/object_atomizable.hpp"
 
 #include <iostream>
 
@@ -39,7 +40,7 @@ namespace oos {
 
 struct object_proxy;
 class object_store;
-class object_atomizer;
+//class object_atomizer;
 
 /**
  * @class object
@@ -54,7 +55,7 @@ class object_atomizer;
  * The object is identified by a unique id, which is
  * set by the object_store.
  */
-class OOS_API object
+class OOS_API object : public object_atomizable
 {
 	// don't allow copying
 	object(const object&);
