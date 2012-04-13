@@ -160,7 +160,7 @@ void object_serializer::write_object_vector(const char*, const object_vector_bas
 
 void object_serializer::write_object_container(const char* id, const object_container &x)
 {
-  x.write_to(this);
+//  x.write_to(this);
 }
 
 void object_serializer::read_char(const char*, char &c)

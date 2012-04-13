@@ -19,7 +19,6 @@
 #define OBJECT_CONTAINER_HPP
 
 #include "object/object.hpp"
-#include "object/object_atomizer.hpp"
 
 namespace oos {
 
@@ -91,7 +90,7 @@ private:
  * 
  * This is the base class of all container types.
  */
-class OOS_API object_container : public object_atomizable
+class OOS_API object_container
 {
 public:
   typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
@@ -105,9 +104,6 @@ public:
   object_container();
 
 	virtual ~object_container();
-
-  virtual void read_from(object_atomizer *oa) = 0;
-  virtual void write_to(object_atomizer *oa) const = 0;
 
   /**
    * Tell wether the list is empty or not.
@@ -186,6 +182,8 @@ protected:
    */
   virtual void uninstall();  
   
+  virtual void parent(object *p) = 0;
+
 private:
   virtual void reset() {}
 

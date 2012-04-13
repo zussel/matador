@@ -34,6 +34,7 @@
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
+#include "object/object_exception.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -540,7 +541,7 @@ class object_list_2 : public object_container
 
 
   explicit object_list_2(S *parent)
-    : object_container()
+    : parent_(parent)
   {}
 
   virtual ~object_list_2() {}
@@ -620,8 +621,7 @@ class object_list_2 : public object_container
   iterator insert(iterator pos, const value_type &x)
   {
     if (!object_container::ostore()) {
-      //throw object_exception();
-      return pos;
+      throw object_exception("invalid object_store pointer");
     } else {
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type(object_ref<self>(this), x));
@@ -648,19 +648,7 @@ class object_list_2 : public object_container
    */
   void push_front(const value_type &x)
   {
-    if (!base_list::ostore()) {
-      //throw object_exception();
-    } else {
-      // set reference
-      if (!set_reference(x.get())) {
-        // throw object_exception();
-      } else {
-        // mark list object as modified
-        base_list::mark_modified(parent_object());
-        // insert new item object
-        object_list_.push_front(x);
-      }
-    }
+    insert(begin(), x);
   }
 
   /**
@@ -670,19 +658,7 @@ class object_list_2 : public object_container
    */
   void push_back(const value_type &x)
   {
-    if (!base_list::ostore()) {
-      //throw object_exception();
-    } else {
-      // set reference
-      if (!set_reference(x.get())) {
-        // throw object_exception();
-      } else {
-        // mark list object as modified
-        base_list::mark_modified(parent_object());
-        // insert new item object
-        object_list_.push_back(x);
-      }
-    }
+    insert(end(), x);
   }
 
   /**
@@ -741,6 +717,15 @@ protected:
     object_list_.clear();
   }
 
+  virtual void parent(object *p)
+  {
+    S *temp = dynamic_cast<S*>(p);
+    if (!temp) {
+      throw object_exception("couldn't cast object to concrete type");
+    }
+    parent_ = temp;
+  }
+
 private:
   virtual void reset()
   {
@@ -749,11 +734,13 @@ private:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-    object_list_.push_back(value_type(proxy));
+//    object_list_.push_back(value_type(proxy));
   }
 
 private:
   list_type object_list_;
+
+  S *parent_;
 };
 
 }
