@@ -530,9 +530,11 @@ public:
 template < class S, class T >
 class object_list_2 : public object_container
 {
+public:
   typedef object_list_2<S, T> self;
   typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
-  typedef container_item<value_type, self> item_type;
+  typedef S container_type;
+  typedef container_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
   typedef std::list<item_ptr> list_type;                      /**< Shortcut for the list class member. */
   typedef typename list_type::size_type size_type;            /**< Shortcut for size type. */
@@ -624,7 +626,7 @@ class object_list_2 : public object_container
       throw object_exception("invalid object_store pointer");
     } else {
       // create and insert new item
-      item_ptr item = ostore()->insert(new item_type(object_ref<self>(this), x));
+      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), x));
       /*
       // set reference
       if (!set_reference(x.get())) {
@@ -633,7 +635,7 @@ class object_list_2 : public object_container
       } else {
       */
         // mark list object as modified
-      base_list::mark_modified(parent_object());
+      mark_modified(parent_);
 //        item_type *item = new 
         // insert new item object
       return object_list_.insert(pos, item);
@@ -713,7 +715,7 @@ protected:
 
   virtual void uninstall()
   {
-    base_list::uninstall();
+    object_container::uninstall();
     object_list_.clear();
   }
 
@@ -734,7 +736,7 @@ private:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-//    object_list_.push_back(value_type(proxy));
+    object_list_.push_back(item_ptr(proxy));
   }
 
 private:

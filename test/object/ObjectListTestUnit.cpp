@@ -13,6 +13,7 @@ using namespace std;
 ObjectListTestUnit::ObjectListTestUnit()
   : unit_test("object list")
 {
+  add_test("list", std::tr1::bind(&ObjectListTestUnit::test_list, this), "test new list");
   add_test("ref_list", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
   add_test("ptr_list", std::tr1::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
   add_test("linked_list", std::tr1::bind(&ObjectListTestUnit::test_linked_list, this), "test linked object list");
@@ -38,6 +39,57 @@ void
 ObjectListTestUnit::finalize()
 {
   ostore_.clear();
+}
+
+void
+ObjectListTestUnit::test_list()
+{
+  ostore_.insert_prototype<book>("book");
+  ostore_.insert_prototype<book_list>("book_list");
+  ostore_.insert_prototype<book_list::item_type>("book_item");
+  
+  typedef object_ptr<book> book_ptr;
+  typedef object_ptr<book_list> book_list_ptr;
+
+  book_list_ptr bl = ostore_.insert(new book_list);
+
+  book_list::size_type val = 0;
+  UNIT_ASSERT_EQUAL(bl->size(), val, "book list size is not zero");
+  UNIT_ASSERT_TRUE(bl->empty(), "book list is not empty");
+  
+  book_ptr b = ostore_.insert(new book("Limit", "4711"));
+  bl->add(b);
+  b = ostore_.insert(new book("Verblendung", "0815"));
+  bl->add(b);
+  b = ostore_.insert(new book("Verdammnis", "0816"));
+  bl->add(b);
+  b = ostore_.insert(new book("Vergebung", "0817"));
+  bl->add(b);
+
+  val = 4;
+  UNIT_ASSERT_EQUAL(bl->size(), val, "book list size is not four (4)");
+  UNIT_ASSERT_FALSE(bl->empty(), "book list is empty");
+
+  book_list::iterator first = bl->begin();
+  book_list::iterator last = bl->end();
+  int count = 0;
+  while (first != last) {
+    UNIT_ASSERT_LESS(count, 4, "book item count isn't valid");
+    ++first;
+    ++count;
+  }
+  
+  first = bl->begin();
+
+  first = bl->erase(first);
+
+  count = 0;
+  while (first != last) {
+    UNIT_ASSERT_LESS(count, 3, "book item count isn't valid");
+    ++first;
+    ++count;
+  }
+  
 }
 
 void
@@ -141,7 +193,7 @@ ObjectListTestUnit::test_linked_list()
   
   itemlist_ptr itemlist = ostore_.insert(new LinkedItemList);
 
-  UNIT_ASSERT_EQUAL(itemlist->size(), 0, "linked list is not empty");
+  UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
   itemlist->push_back(new LinkedItem("Schrank"));
@@ -150,11 +202,11 @@ ObjectListTestUnit::test_linked_list()
   itemlist->push_back(new LinkedItem("Bett"));
 
   UNIT_ASSERT_FALSE(itemlist->empty(), "linked item list couldn't be empty");
-  UNIT_ASSERT_EQUAL(itemlist->size(), 4, "linked list size is invalid");
+  UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "linked list size is invalid");
 
   itemlist->push_front(new LinkedItem("Teppich"));
 
-  UNIT_ASSERT_EQUAL(itemlist->size(), 5, "linked list size is invalid");
+  UNIT_ASSERT_EQUAL((int)itemlist->size(), 5, "linked list size is invalid");
 
   // remove an item
   LinkedItemList::iterator i = itemlist->begin();
@@ -164,12 +216,12 @@ ObjectListTestUnit::test_linked_list()
   i = itemlist->erase(i);
 
   UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
-  UNIT_ASSERT_EQUAL(itemlist->size(), 4, "linked list size is invalid");
+  UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "linked list size is invalid");
   
   // clear list
   itemlist->clear();
 
-  UNIT_ASSERT_EQUAL(itemlist->size(), 0, "linked list is not empty");
+  UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
   UNIT_ASSERT_TRUE(ostore_.remove(itemlist), "couldn't remove linked item list");

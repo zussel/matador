@@ -20,6 +20,12 @@
 
 #include "object/object.hpp"
 
+#ifdef WIN32
+#include <functional>
+#else
+#include <tr1/functional>
+#endif
+
 namespace oos {
 
 template < class T, class C >

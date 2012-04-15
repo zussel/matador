@@ -120,7 +120,7 @@ DatabaseTestUnit::simple()
     item_view view(ostore_);
 
     UNIT_ASSERT_FALSE(view.empty(), "item view is empty");
-    UNIT_ASSERT_EQUAL(view.size(), 1, "more than one item in view");
+    UNIT_ASSERT_EQUAL((int)view.size(), 1, "more than one item in view");
 
     item = view.front();
 
@@ -262,12 +262,12 @@ DatabaseTestUnit::with_list()
     }
 
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL(itemlist->size(), 2, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
 
     tr.rollback();
 
     UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-    UNIT_ASSERT_EQUAL(itemlist->size(), 0, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "invalid item list size");
 
     tr.begin();
 
@@ -282,12 +282,12 @@ DatabaseTestUnit::with_list()
     }
 
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL(itemlist->size(), 4, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
 
     tr.commit();
     
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL(itemlist->size(), 4, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
 
     tr.begin();
     
@@ -298,7 +298,7 @@ DatabaseTestUnit::with_list()
     tr.rollback();
 
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL(itemlist->size(), 4, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
 
   } catch (database_exception &ex) {
     // error, abort transaction

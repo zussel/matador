@@ -453,4 +453,81 @@ private:
   item_vector_t item_vector_;
 };
 
+class book : public oos::object
+{
+private:
+  std::string title_;
+  std::string isbn_;
+
+public:
+  book() {}
+  book(const std::string &title, const std::string &isbn)
+    : title_(title)
+    , isbn_(isbn)
+  {}
+  virtual ~book() {}
+  
+  virtual void read_from(oos::object_atomizer *oa)
+  {
+    oos::object::read_from(oa);
+    oa->read_string("title", title_);
+    oa->read_string("isbn", isbn_);
+  }
+  virtual void write_to(oos::object_atomizer *oa) const
+  {
+    oos::object::write_to(oa);
+    oa->write_string("title", title_);
+    oa->write_string("isbn", isbn_);
+  }
+  
+  std::string title() const { return title_; }
+  std::string isbn() const { return isbn_; }
+};
+
+class book_list : public oos::object
+{
+public:
+  typedef oos::object_list_2<book_list, oos::object_ref<book> > book_list_t;
+  typedef book_list_t::item_type item_type;
+  typedef book_list_t::item_ptr item_ptr;
+  typedef book_list_t::size_type size_type;
+  typedef book_list_t::iterator iterator;
+  typedef book_list_t::const_iterator const_iterator;
+  
+  book_list()
+    : book_list_(this)
+  {}
+  virtual ~book_list() {}
+
+  virtual void read_from(oos::object_atomizer *oa)
+  {
+    oos::object::read_from(oa);
+    oa->read_object_container("book_list", book_list_);
+  }
+  virtual void write_to(oos::object_atomizer *oa) const
+  {
+    oos::object::write_to(oa);
+    oa->write_object_container("book_list", book_list_);
+  }
+
+  void add(const oos::object_ref<book> &b)
+  {
+    book_list_.push_back(b);
+  }
+
+  iterator begin() { return book_list_.begin(); }
+  const_iterator begin() const { return book_list_.begin(); }
+
+  iterator end() { return book_list_.end(); }
+  const_iterator end() const { return book_list_.end(); }
+
+  iterator erase(iterator i) { return book_list_.erase(i); }
+
+  size_type size() const { return book_list_.size(); }
+  bool empty() const { return book_list_.empty(); }
+  
+private:
+  book_list_t book_list_;
+};
+
 #endif /* ITEM_HPP */
