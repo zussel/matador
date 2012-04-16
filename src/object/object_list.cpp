@@ -22,40 +22,4 @@
 
 namespace oos {
 
-object_list_base::object_list_base(object *parent, const std::string &list_ref_name)
-  : parent_(parent)
-  , list_name_(list_ref_name)
-{}
-
-object_list_base::~object_list_base()
-{}
-
-void object_list_base::clear()
-{
-  if (parent_) {
-    parent_->mark_modified();
-  }
-}
-
-void object_list_base::install(object_store *ostore)
-{
-  ostore_ = ostore;
-}
-
-void object_list_base::uninstall()
-{
-    ostore_ = 0;
-//    parent_ = NULL;
-}
-
-void object_list_base::mark_modified(object *o)
-{
-  o->mark_modified();
-}
-
-bool object_list_base::set_reference(object *elem)
-{
-  return elem->set(list_name_, parent_);
-}
-
 }

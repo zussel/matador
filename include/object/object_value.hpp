@@ -486,42 +486,6 @@ private:
   }
 
   /**
-   * @brief Get object_list_base of object.
-   * 
-   * Get object_list_base identified by id of object.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to the value.
-   */
-	virtual void write_object_list(const char *, const object_list_base &)
-  {
-  }
-
-  /**
-   * @brief Get object_vector_base of object.
-   * 
-   * Get object_vector_base identified by id of object.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to the value.
-   */
-	virtual void write_object_vector(const char *, const object_vector_base &)
-  {
-  }
-
-  /**
-   * @brief Get object_container of object.
-   * 
-   * Get object_container identified by id of object.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to the value.
-   */
-  virtual void write_object_container(const char *, const object_container &)
-  {
-  }
-
-  /**
    * @fn virtual void read_char(const char *id, char &x)
    * @brief Read a single character from the atomizer.
    * 
@@ -736,48 +700,6 @@ private:
   {
     static detail::updater<T, object_base_ptr> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
-  }
-
-  /**
-   * @fn virtual void read_object_list(const char *id, object_list_base &x)
-   * @brief Read an object_list_base from the atomizer.
-   * 
-   * Read an object_list_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_list(const char *, object_list_base &)
-  {
-  }
-
-  /**
-   * @fn virtual void read_object_vector(const char *id, object_vector_base &x)
-   * @brief Read an object_vector_base from the atomizer.
-   * 
-   * Read an object_vector_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_vector(const char *, object_vector_base &)
-  {
-  }
-
-  /**
-   * @fn virtual void read_object_container(const char *id, object_container &x)
-   * @brief Read an object_container from the atomizer.
-   * 
-   * Read an object_container from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-  virtual void read_object_container(const char *, object_container &)
-  {
   }
 
 private:

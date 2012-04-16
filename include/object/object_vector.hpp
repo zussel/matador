@@ -33,169 +33,73 @@
 
 namespace oos {
 
-/**
- * @cond OOS_DEV
- * @class object_vector_base
- * @brief Base class of all list types
- * 
- * This is the base class of all list types.
- */
-class OOS_API object_vector_base
+///@cond OOS_DEV
+template < class T, class C >
+class container_item : public oos::object
 {
 public:
-  typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
+  typedef oos::object_ref<C> container_ref;
+  typedef T value_type;
+  typedef unsigned int size_type;
 
-public:
-  /**
-   * @brief Creates an empty object_vector_base object.
-   * 
-   * The constructor creates an empty object_vector_base
-   * object which is part of the given parent object. This
-   * means that the parent object contains this vector and
-   * each node object must have a reference field/parameter
-   * for the parent object set automatically on insert. Also
-   * the index of the element is stored into a parameter field
-   * with the given name.
-   * 
-   * @param parent The parent object of this vector.
-   * @param vector_name The name of the vector reference parameter.
-   * @param index_name The name of the index parameter.
-   */
-  object_vector_base(object *parent, const std::string &vector_name, const std::string &index_name);
+  container_item() : index_(0) {}
+  explicit container_item(const container_ref &c)
+    : container_(c)
+    , index_(0)
+  {}
+  container_item(const container_ref &c, const value_type &v)
+    : container_(c)
+    , index(0)
+    , value_(v)
+  {}
+  container_item(const container_ref &c, size_type i, const value_type &v)
+    : container_(c)
+    , index(i)
+    , value_(v)
+  {}
+  virtual ~container_item() {}
 
-	virtual ~object_vector_base();
-
-  /**
-   * Tell wether the vector is empty or not.
-   * 
-   * @return Returns true if the vector is empty.
-   */
-  virtual bool empty() const = 0;
-
-  /**
-   * @brief Clears the vector.
-   * 
-   * Removes every element from the vector and
-   * subsequently from the object_store.
-   */
-  virtual void clear() = 0;
-  
-  /**
-   * Returns the size of the vector.
-   * 
-   * @return The size of the vector.
-   */
-  virtual size_t size() const = 0;
-
-  /**
-   * @brief Returns the containing object_store.
-   * 
-   * Returns the containing object_store. If the vector
-   * isn't inserted into an object_store NULL is
-   * returned.
-   * 
-   * @return The containing object_store.
-   */
-  object_store* ostore() const { return ostore_; }
-
-protected:
-  friend class object_store;
-  friend class object_creator;
-  friend class object_deleter;
-  friend class object_serializer;
-
-  /**
-   * @brief Append a object via its object_proxy.
-   *
-   * Append a object via its object_proxy to the vector.
-   *
-   * @param op The object_proxy containing the list element object.
-   */
-  virtual void append_proxy(object_proxy *op) = 0;
-
-  /**
-   * Mark the vector containing object as modified
-   * in the object_store.
-   *
-   * @param o The object containig vector
-   */
-  void mark_modified(object *o);
-
-  /**
-   * @brief Executes the given function object for all elements.
-   *
-   * Executes the given function object for all elements.
-   *
-   * @param nf Function object used to be executed on each element.
-   */
-  virtual void for_each(const node_func &nf) const = 0;
-
-  /**
-   * Returns the vector containing object.
-   *
-   * @return The vector containing object.
-   */
-  object* parent_object() const { return parent_; }
-
-  /**
-   * Sets the vector containing object.
-   *
-   * @param parent The vector containing object.
-   */
-  void parent_object(object *parent) { parent_ = parent; }
-
-  /**
-   * Provides an interface which is called
-   * when inserting the vector into the object_store.
-   */
-  virtual void install(object_store *ostore);
-
-  /**
-   * Provides an interface which is called
-   * when removing the vector from the object_store.
-   */
-  virtual void uninstall();  
-
-  /**
-   * @brief Sets the vector reference into the child object.
-   *
-   * Sets the reference parent object into the given
-   * element object to the one to many relationship.
-   *
-   * @param elem Element to set the parent reference object in.
-   * @return True if the value could be set.
-   */
-  bool set_reference(object *elem);
-
-  /**
-   * Return the name of the vector parameter.
-   *
-   * @return The name of the vector parameter.
-   */
-  std::string list_name() const
+  virtual void read_from(oos::object_atomizer *oa)
   {
-    return vector_name_;
+    oos::object::read_from(oa);
+    oa->read_object("container", container_);
+    oa->read_unsigned_int("index", index_);
+//    read(oa, "value", value_);
+  }
+  virtual void write_to(oos::object_atomizer *oa) const
+  {
+    oos::object::write_to(oa);
+    oa->write_object("container", container_);
+    oa->write_unsigned_int("index", index_);
+//    write(oa, "value", value_);
   }
 
-  /**
-   * Return the name of the index parameter.
-   *
-   * @return The name of the index parameter.
-   */
-  std::string index_name() const
+  container_ref container() const
   {
-    return index_name_;
+    return container_;
   }
-  
-private:
-  virtual void reset() {}
+
+  size_type size() const
+  {
+    return index_;
+  }
+
+  value_type value() const
+  {
+    return value_;
+  }
+
+  void value(const value_type &v)
+  {
+    modify(value_, v);
+  }
 
 private:
-  object_store *ostore_;
-  object *parent_;
-  std::string vector_name_;
-  std::string index_name_;
+  container_ref container_;
+  size_type index_;
+  value_type value_;
 };
+
 /// @endcond
 
 /**
@@ -213,14 +117,16 @@ private:
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < typename T, class W >
-class object_vector : public object_vector_base
+template < typename S, class T >
+class object_vector : public object_container
 {
 public:
-  typedef object_vector_base base_vector;                      /**< Shortcut for the object_base_vector class. */
+  typedef object_vector<S, T> self;                            /**< Shortcut for self. */
   typedef T value_type;                                        /**< Shortcut for the value type. */
-  typedef W value_type_wrapper;                                /**< Shortcut for the wrapper class around the value type. */
-  typedef std::vector<value_type_wrapper> vector_type;         /**< Shortcut for the vector class member. */
+  typedef S container_type;
+  typedef container_item<value_type, container_type> item_type;
+  typedef object_ptr<item_type> item_ptr;
+  typedef std::vector<item_ptr> vector_type;         /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;             /**< Shortcut for the vector iterator. */
   typedef typename vector_type::const_iterator const_iterator; /**< Shortcut for the vector const iterator. */
   typedef typename vector_type::size_type size_type;           /**< Shortcut for the size type. */
@@ -235,12 +141,11 @@ public:
    * of the element is stored within the element. Therefor
    * the name of the index parameter must be given.
    * 
+   * @tparam T Parent object type.
    * @param parent The containing vector object.
-   * @param vector_name The name of the parent in the value type object.
-   * @param index_name The name of the index parameter.
    */
-  object_vector(object *parent, const std::string &vector_name, const std::string &index_name)
-    : object_vector_base(parent, vector_name, index_name)
+  object_vector(S *parent)
+    : parent_(parent)
   {}
 
   virtual ~object_vector() {}
@@ -295,7 +200,6 @@ public:
    */
   virtual void clear()
   {
-    base_vector::clear();
     erase(begin(), end());
   }
 
@@ -318,67 +222,28 @@ public:
    * @param x The element to insert.
    * @return The new position iterator.
    */
-  iterator insert(iterator pos, const value_type_wrapper &x)
+  iterator insert(iterator pos, const value_type &x)
   {
-    if (!base_vector::ostore()) {
-      //throw object_exception();
-      return pos;
+    if (!object_container::ostore()) {
+      throw object_exception("invalid object_store pointer");
     } else {
-      // set reference
-      if (!set_reference(x.get())) {
-        // throw object_exception();
-        return pos;
-      } else {
-        // mark list object as modified
-        base_vector::mark_modified(parent_object());
-        // insert new item object
-        return object_vector_.insert(pos, x);
-      }
+      // create and insert new item
+      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), x));
+      // mark list object as modified
+      mark_modified(parent_);
+      // insert new item object
+      return object_vector_.insert(pos, item);
     }
   };
-
-  /**
-   * Adds an element to the beginning of the list.
-   *
-   * @param x The element to be pushed front.
-   */
-  void push_front(const value_type_wrapper &x)
-  {
-    if (!base_vector::ostore()) {
-      //throw object_exception();
-    } else {
-      // set reference
-      if (!set_reference(x.get())) {
-        // throw object_exception();
-      } else {
-        // mark list object as modified
-        base_vector::mark_modified(parent_object());
-        // insert new item object
-        object_vector_.insert(object_vector_.begin(), x);
-      }
-    }
-  }
 
   /**
    * Adds an element to the end of the list.
    *
    * @param x The element to be pushed back.
    */
-  void push_back(const value_type_wrapper &x)
+  void push_back(const value_type &x)
   {
-    if (!base_vector::ostore()) {
-      //throw object_exception();
-    } else {
-      // set reference
-      if (!set_reference(x.get())) {
-        // throw object_exception();
-      } else {
-        // mark list object as modified
-        base_vector::mark_modified(parent_object());
-        // insert new item object
-        object_vector_.push_back(x);
-      }
-    }
+    insert(end(), x);
   }
 
   /**
@@ -387,9 +252,9 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  value_type_wrapper operator[](size_type pos)
+  value_type operator[](size_type pos)
   {
-    return object_vector_[pos];
+    return object_vector_[pos]->value();
   }
 
   /**
@@ -398,9 +263,9 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  const value_type_wrapper operator[](size_type pos) const
+  const value_type operator[](size_type pos) const
   {
-    return object_vector_[pos];
+    return object_vector_[pos]->value();
   }
 
   /**
@@ -409,9 +274,9 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  value_type_wrapper at(size_type pos)
+  value_type at(size_type pos)
   {
-    return object_vector_.at(pos);
+    return object_vector_.at(pos)->value();
   }
 
   /**
@@ -420,9 +285,9 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  const value_type_wrapper at(size_type pos) const
+  const value_type at(size_type pos) const
   {
-    return object_vector_.at(pos);
+    return object_vector_.at(pos)->value();
   }
 
   /**
@@ -497,86 +362,6 @@ private:
 
 private:
   vector_type object_vector_;
-};
-/// @endcond
-
-/**
- * @class object_ptr_vector
- * @brief An object vector class for object_ptr
- * @tparam T The concrete object type.
- * 
- * This is a specialisation of the object_vector class.
- * It stores object_ptr in a vector. The raw objects
- * are inserted into the vector and than subsequently
- * inserted into the object_store. The reference link
- * to the parent class is done automatically.
- */
-template < typename T >
-class object_ptr_vector : public object_vector<T, object_ptr<T> >
-{
-public:
-  typedef object_vector<T, object_ptr<T> > base_vector;            /**< Shortcut for the object_vector class. */
-  typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
-  typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
-  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the vector iterator. */
-  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the vector const iterator. */
-
-  /**
-   * @brief Creates an empty vector.
-   * 
-   * A new object_ptr_vector is created. The vector is part
-   * of the given parent object and therefor a reference
-   * to the parent object must be found inside the value
-   * type object with the given vector_name.
-   * 
-   * @param parent The containing vector object.
-   * @param vector_name The name of the parent in the value type object.
-   * @param index_name The name of the index field.
-   */
-  object_ptr_vector(object *parent, const std::string &vector_name, const std::string &index_name)
-    : base_vector(parent, vector_name, index_name)
-  {}
-  
-  virtual ~object_ptr_vector() {}
-};
-
-/**
- * @class object_ref_vector
- * @brief An object vector class for object_ref
- * @tparam T The concrete object type.
- * 
- * This is a specialisation of the object_vector class.
- * It stores object_ref in a vector. The raw objects
- * are inserted into the vector and than subsequently
- * inserted into the object_store. The reference link
- * to the parent class is done automatically.
- */
-template < typename T >
-class object_ref_vector : public object_vector<T, object_ref<T> >
-{
-  typedef object_vector<T, object_ref<T> > base_vector;            /**< Shortcut for the object_vector class. */
-  typedef typename base_vector::value_type value_type;             /**< Shortcut for the value type. */
-  typedef typename base_vector::value_type_wrapper value_type_ptr; /**< Shortcut for the wrapper class around the value type. */
-  typedef typename base_vector::iterator iterator;                 /**< Shortcut for the vector iterator. */
-  typedef typename base_vector::const_iterator const_iterator;     /**< Shortcut for the vector const iterator. */
-
-  /**
-   * @brief Creates an empty vector.
-   * 
-   * A new object_ref_list is created. The vector is part
-   * of the given parent object and therefor a reference
-   * to the parent object must be found inside the value
-   * type object with the given vector_name.
-   * 
-   * @param parent The containing vector object.
-   * @param vector_name The name of the parent in the value type object.
-   * @param index_name The name of the index field.
-   */
-  object_ref_vector(object *parent, const std::string &vector_name, const std::string &index_name)
-    : base_vector(parent, vector_name, index_name)
-  {}
-
-  virtual ~object_ref_vector() {}
 };
 
 }

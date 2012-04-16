@@ -59,7 +59,7 @@ object_deleter::is_deletable(object *obj)
 bool object_deleter::is_deletable(object_list_base &olist)
 {
   object_count_map.clear();
-  olist.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+//  olist.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
   return check_object_count_map();
 }
 
@@ -87,7 +87,7 @@ void object_deleter::read_object(const char*, object_base_ptr &x)
 
 void object_deleter::read_object_list(const char*, object_list_base &x)
 {
-  x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+//  x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
 }
 
 void object_deleter::read_object_vector(const char*, object_vector_base &x)

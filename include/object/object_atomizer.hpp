@@ -34,7 +34,6 @@
 
 namespace oos {
 class varchar_base;
-class object_list_base;
 class object_vector_base;
 class object_container;
 class object_base_ptr;
@@ -222,30 +221,6 @@ public:
 	virtual void write_object(const char*, const object_base_ptr&) {}
 
   /**
-   * @fn virtual void write_object_list(const char *id, const object_list_base &x)
-   * @brief Write a object_list_base to the atomizer.
-   * 
-   * Write a object_list_base to the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to read from.
-   */
-	virtual void write_object_list(const char*, const object_list_base&) {}
-
-  /**
-   * @fn virtual void write_object_vector(const char *id, const object_vector_base &x)
-   * @brief Write a object_list_base to the atomizer.
-   * 
-   * Write a object_vector_base to the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to read from.
-   */
-	virtual void write_object_vector(const char*, const object_vector_base&) {}
-
-  /**
    * @fn virtual void write_object_container(const char *id, const object_container &x)
    * @brief Write a object_container to the atomizer.
    * 
@@ -424,30 +399,6 @@ public:
    * @param x The data to write to.
    */
 	virtual void read_object(const char*, object_base_ptr&) {}
-
-  /**
-   * @fn virtual void read_object_list(const char *id, object_list_base &x)
-   * @brief Read an object_list_base from the atomizer.
-   * 
-   * Read an object_list_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_list(const char*, object_list_base&) {}
-
-  /**
-   * @fn virtual void read_object_vector(const char *id, object_vector_base &x)
-   * @brief Read an object_vector_base from the atomizer.
-   * 
-   * Read an object_vector_base from the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	virtual void read_object_vector(const char*, object_vector_base&) {}
 
   /**
    * @fn virtual void read_object_container(const char *id, object_container &x)

@@ -31,7 +31,7 @@ object_store* object_container::ostore() const
 
 void object_container::mark_modified(object *o)
 {
-  //o->mark_modified();
+  o->mark_modified();
 }
 
 void object_container::install(object_store *ostore)

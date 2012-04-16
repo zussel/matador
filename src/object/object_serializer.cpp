@@ -158,9 +158,12 @@ void object_serializer::write_object_vector(const char*, const object_vector_bas
   x.for_each(std::tr1::bind(&object_serializer::write_object_vector_item, this, _1, index));
 }
 
-void object_serializer::write_object_container(const char* id, const object_container &x)
+void object_serializer::write_object_container(const char*, const object_container &x)
 {
-//  x.write_to(this);
+  // write number of items in list
+  // for each item write id and type
+  write_unsigned_int(0, x.size());
+  x.for_each(std::tr1::bind(&object_serializer::write_object_container_item, this, _1));  
 }
 
 void object_serializer::read_char(const char*, char &c)
@@ -312,10 +315,8 @@ void object_serializer::read_object_container(const char*, object_container &x)
   x.reset();
   string type;
   long id(0);
-  unsigned int index(0);
   for (unsigned int i = 0; i < s; ++i) {
     read_long(0, id);
-    read_unsigned_int(0, index);
     read_string(0, type);
     object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
@@ -326,6 +327,12 @@ void object_serializer::read_object_container(const char*, object_container &x)
 }
 
 void object_serializer::write_object_list_item(const object *o)
+{
+  write_long(0, o->id());
+  write_string(0, o->classname());
+}
+
+void object_serializer::write_object_container_item(const object *o)
 {
   write_long(0, o->id());
   write_string(0, o->classname());

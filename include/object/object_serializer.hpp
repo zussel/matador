@@ -119,6 +119,7 @@ private:
 	virtual void read_object_container(const char* id, object_container &x);
   
   void write_object_list_item(const object *o);
+  void write_object_container_item(const object *o);
   void write_object_vector_item(const object *o, unsigned int &index);
 
 private:

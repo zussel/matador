@@ -26,7 +26,7 @@ bool linked_object_list_base_node::link_reference(object *r, const std::string &
 
 bool linked_object_list_base_node::link_reference(object *o, object *r, const std::string &n)
 {
-  return o->set(n, o);
+  return o->set(n, r);
 }
 
 }

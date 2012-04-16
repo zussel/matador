@@ -4,6 +4,9 @@
 
 #include "object/object_list.hpp"
 #include "object/object_view.hpp"
+#include "object/object_serializer.hpp"
+
+#include "tools/byte_buffer.hpp"
 
 #include <fstream>
 
@@ -89,7 +92,17 @@ ObjectListTestUnit::test_list()
     ++first;
     ++count;
   }
+
+  object_serializer serializer;
   
+  byte_buffer buffer;
+  serializer.serialize(bl.get(), buffer);
+  
+  book_list *bl2 = new book_list;
+  
+  serializer.deserialize(bl2, buffer, &ostore_);
+  
+  delete bl2;
 }
 
 void

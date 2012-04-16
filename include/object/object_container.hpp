@@ -28,67 +28,6 @@
 
 namespace oos {
 
-template < class T, class C >
-class container_item : public oos::object
-{
-public:
-  typedef oos::object_ref<C> container_ref;
-  typedef T value_type;
-  typedef unsigned int size_type;
-
-  container_item() {}
-  explicit container_item(const container_ref &c)
-    : container_(c)
-    , index_(0)
-  {}
-  container_item(const container_ref &c, const value_type &v)
-    : container_(c)
-    , index_(0)
-    , value_(v)
-  {}
-  virtual ~container_item() {}
-
-  virtual void read_from(oos::object_atomizer *oa)
-  {
-    oos::object::read_from(oa);
-    oa->read_object("container", container_);
-    oa->read_unsigned_int("item_index", index_);
-//    read(oa, "value", value_);
-  }
-  virtual void write_to(oos::object_atomizer *oa) const
-  {
-    oos::object::write_to(oa);
-    oa->write_object("container", container_);
-    oa->write_unsigned_int("item_index", index_);
-//    write(oa, "value", value_);
-  }
-
-  container_ref container() const
-  {
-    return container_;
-  }
-
-  size_type index() const
-  {
-    return index_;
-  }
-
-  value_type value() const
-  {
-    return value_;
-  }
-
-  void value(const value_type &v)
-  {
-    modify(value_, v);
-  }
-
-private:
-  container_ref container_;
-  size_type index_;
-  value_type value_;
-};
-
 /**
  * @cond OOS_DEV
  * @class object_container

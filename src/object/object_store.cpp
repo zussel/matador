@@ -339,7 +339,7 @@ void object_store::unregister_observer(object_observer *observer)
 void
 object_store::insert(object_list_base &olb)
 {
-  olb.install(this);
+//  olb.install(this);
 }
 
 void
@@ -488,7 +488,7 @@ object_store::remove(object_list_base &olb)
       ++first;
     }
   }
-  olb.uninstall();
+//  olb.uninstall();
   return true;
 }
 
