@@ -22,6 +22,8 @@
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_value.hpp"
+#include "object/object_container.hpp"
+#include "object/object_exception.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -35,42 +37,42 @@ namespace oos {
 
 ///@cond OOS_DEV
 template < class T, class C >
-class container_item : public oos::object
+class object_vector_item : public oos::object
 {
 public:
   typedef oos::object_ref<C> container_ref;
   typedef T value_type;
   typedef unsigned int size_type;
 
-  container_item() : index_(0) {}
-  explicit container_item(const container_ref &c)
+  object_vector_item() : index_(0) {}
+  explicit object_vector_item(const container_ref &c)
     : container_(c)
     , index_(0)
   {}
-  container_item(const container_ref &c, const value_type &v)
+  object_vector_item(const container_ref &c, const value_type &v)
     : container_(c)
-    , index(0)
+    , index_(0)
     , value_(v)
   {}
-  container_item(const container_ref &c, size_type i, const value_type &v)
+  object_vector_item(const container_ref &c, size_type i, const value_type &v)
     : container_(c)
-    , index(i)
+    , index_(i)
     , value_(v)
   {}
-  virtual ~container_item() {}
+  virtual ~object_vector_item() {}
 
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
     oa->read_object("container", container_);
-    oa->read_unsigned_int("index", index_);
+    oa->read_unsigned_int("item_index", index_);
 //    read(oa, "value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
     oa->write_object("container", container_);
-    oa->write_unsigned_int("index", index_);
+    oa->write_unsigned_int("item_index", index_);
 //    write(oa, "value", value_);
   }
 
@@ -124,7 +126,7 @@ public:
   typedef object_vector<S, T> self;                            /**< Shortcut for self. */
   typedef T value_type;                                        /**< Shortcut for the value type. */
   typedef S container_type;
-  typedef container_item<value_type, container_type> item_type;
+  typedef object_vector_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
   typedef std::vector<item_ptr> vector_type;         /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;             /**< Shortcut for the vector iterator. */
@@ -228,7 +230,7 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // determine index
-      item_type::size_type index = 0;
+      typename item_type::size_type index = 0;
       iterator first = begin();
       iterator last = end();
       if (pos != last && pos != first) {
@@ -322,9 +324,9 @@ public:
     iterator j = ret;
     while (j != object_vector_.end()) {
       size_type index = 0;
-      if (!(*j)->get(index_name(), (int&)index)) {
+      if (!(*j)->get("item_index", index)) {
         // error: throw exception
-      } else if (!(*j)->set(index_name(), (int)--index)) {
+      } else if (!(*j)->set("item_index", --index)) {
         // error: throw exception
       } else {
         // success
@@ -376,6 +378,7 @@ private:
   }
 
 private:
+  S *parent_;
   vector_type object_vector_;
 };
 

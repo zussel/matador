@@ -39,6 +39,7 @@ class OOS_API object_container
 {
 public:
   typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
+  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
 
 public:
   /**
@@ -70,7 +71,7 @@ public:
    * 
    * @return The size of the list.
    */
-  virtual size_t size() const = 0;
+  virtual size_type size() const = 0;
 
   /**
    * @brief Returns the containing object_store.

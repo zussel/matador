@@ -190,10 +190,9 @@ private:
 class ItemPtrList : public oos::object
 {
 public:
-  typedef ContainerItem<ItemPtrList> value_type;
-  typedef oos::object_ptr_list<value_type> item_list_t;
+  typedef oos::object_ptr<Item> value_type;
+  typedef oos::object_list<ItemPtrList, value_type> item_list_t;
   typedef item_list_t::size_type size_type;
-  typedef item_list_t::value_type value_type_ptr;
   typedef ItemPtrList self;
   typedef oos::object_ref<self> self_ref;
   typedef item_list_t::iterator iterator;
@@ -201,27 +200,27 @@ public:
 
 public:
   ItemPtrList()
-    : item_list_(this, "container")
+    : item_list_(this)
   {}
   virtual ~ItemPtrList() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_list("item_list", item_list_);
+    reader->read_object_container("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_list("item_list", item_list_);
+    writer->write_object_container("item_list", item_list_);
   }
 
-  void push_front(const value_type_ptr &i)
+  void push_front(const value_type &i)
   {
     item_list_.push_front(i);
   }
 
-  void push_back(const value_type_ptr &i)
+  void push_back(const value_type &i)
   {
     item_list_.push_back(i);
   }
@@ -244,10 +243,9 @@ private:
 class ItemRefList : public oos::object
 {
 public:
-  typedef ContainerItem<ItemRefList> item_type;
-  typedef oos::object_ref_list<item_type> item_list_t;
+  typedef oos::object_ref<Item> value_type;
+  typedef oos::object_list<ItemRefList, value_type> item_list_t;
   typedef item_list_t::size_type size_type;
-  typedef item_list_t::value_type value_type;
   typedef ItemRefList self;
   typedef oos::object_ref<self> self_ref;
   typedef item_list_t::iterator iterator;
@@ -255,19 +253,19 @@ public:
 
 public:
   ItemRefList()
-    : item_list_(this, "container")
+    : item_list_(this)
   {}
   virtual ~ItemRefList() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_list("item_list", item_list_);
+    reader->read_object_container("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_list("item_list", item_list_);
+    writer->write_object_container("item_list", item_list_);
   }
   
   void push_front(const value_type &i)
@@ -294,6 +292,7 @@ private:
   item_list_t item_list_;
 };
 
+/*
 class LinkedItemList;
 
 class LinkedItem : public oos::linked_object_list_node<LinkedItem>
@@ -334,12 +333,11 @@ private:
   std::string name_;
   oos::object_ref<LinkedItemList> item_list_;
 };
-
+*/
 class LinkedItemList : public oos::object
 {
-  typedef oos::linked_object_list<LinkedItem> item_list_t;
-  typedef item_list_t::value_type value_type;
-  typedef oos::object_ref<value_type> value_type_ref;
+  typedef oos::object_ptr<Item> value_type;
+  typedef oos::linked_object_list<LinkedItemList, value_type> item_list_t;
   typedef LinkedItemList self;
   typedef oos::object_ref<self> self_ref;
 
@@ -350,27 +348,27 @@ public:
 
 public:
   LinkedItemList()
-    : item_list_(this, "itemlist")
+    : item_list_(this)
   {}
   virtual ~LinkedItemList() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_list("item_list", item_list_);
+    reader->read_object_container("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_list("item_list", item_list_);
+    writer->write_object_container("item_list", item_list_);
   }
   
-  void push_front(value_type *i)
+  void push_front(const value_type &i)
   {
     item_list_.push_front(i);
   }
 
-  void push_back(value_type *i)
+  void push_back(const value_type &i)
   {
     item_list_.push_back(i);
   }

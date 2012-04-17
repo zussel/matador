@@ -55,8 +55,6 @@ struct object_proxy;
 class object_deleter;
 struct prototype_node;
 class object_observer;
-class object_list_base;
-class object_vector_base;
 class object_container;
 /**
  * @class object_base_producer
@@ -401,22 +399,6 @@ public:
   {
 		return object_ptr<Y>(insert_object(o, true));
 	}
-
-  /**
-   * Inserts an object list into the object store. Subsequently the
-   * object list is initialized.
-   * 
-   * @param olb The object list to insert.
-   */
-  void insert(object_list_base &olb);
-  
-  /**
-   * Inserts an object vector into the object store. Subsequently the
-   * object vector is initialized.
-   * 
-   * @param ovb The object vector to insert.
-   */
-  void insert(object_vector_base &ovb);
   
   /**
    * Inserts an object_container into the object store. Subsequently the
@@ -443,26 +425,6 @@ public:
     return remove(o.get());
 	}
   
-  /**
-   * Removes an object list from object store. All elements of the
-   * list are removed from the store after a successfull reference and
-   * pointer counter check.
-   * 
-   * @param olb The object list to remove.
-   * @return True on successful object list removal.
-   */
-  bool remove(object_list_base &olb);
-
-  /**
-   * Removes an object vector from object store. All elements of the
-   * vector are removed from the store after a successfull reference and
-   * pointer counter check.
-   * 
-   * @param ovb The object vector to remove.
-   * @return True on successful object vector removal.
-   */
-  bool remove(object_vector_base &ovb);
-
   /**
    * Removes an object_container from object store. All elements of the
    * container are removed from the store after a successfull reference and

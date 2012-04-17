@@ -336,18 +336,6 @@ void object_store::unregister_observer(object_observer *observer)
   }
 }
 
-void
-object_store::insert(object_list_base &olb)
-{
-//  olb.install(this);
-}
-
-void
-object_store::insert(object_vector_base &ovb)
-{
-  ovb.install(this);
-}
-
 void object_store::insert(object_container &oc)
 {
   oc.install(this);
@@ -462,60 +450,6 @@ object_store::remove_object(object *o, bool notify)
   delete op;
   // set node of proxy to NULL
 //  op->obj = NULL;
-  return true;
-}
-
-bool
-object_store::remove(object_list_base &olb)
-{
-  /**************
-   * 
-   * remove all object from list
-   * and first and last sentinel
-   * 
-   **************/
-  // check if object tree is deletable
-  if (!object_deleter_->is_deletable(olb)) {
-    return false;
-  }
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
-    } else {
-      ++first;
-    }
-  }
-//  olb.uninstall();
-  return true;
-}
-
-bool
-object_store::remove(object_vector_base &ovb)
-{
-  /**************
-   * 
-   * remove all object from list
-   * and first and last sentinel
-   * 
-   **************/
-  // check if object tree is deletable
-  if (!object_deleter_->is_deletable(ovb)) {
-    return false;
-  }
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
-    } else {
-      ++first;
-    }
-  }
-  ovb.uninstall();
   return true;
 }
 

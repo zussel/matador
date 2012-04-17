@@ -38,7 +38,6 @@
 namespace oos {
 
 class object;
-class object_list_base;
 class object_base_ptr;
 
 /**
@@ -88,22 +87,6 @@ public:
   bool is_deletable(object *obj);
 
   /**
-   * Checks wether the given object_list_base is deletable.
-   *
-   * @param olist The object_list_base to be checked.
-   * @return True if the object_list_base could be deleted.
-   */
-  bool is_deletable(object_list_base &olist);
-
-  /**
-   * Checks wether the given object_vector_base is deletable.
-   *
-   * @param ovector The object_vector_base to be checked.
-   * @return True if the object_vector_base could be deleted.
-   */
-  bool is_deletable(object_vector_base &ovector);
-
-  /**
    * Checks wether the given object_container is deletable.
    *
    * @param ovector The object_container to be checked.
@@ -129,8 +112,6 @@ public:
 
 private:
   virtual void read_object(const char*, object_base_ptr &x);
-  virtual void read_object_list(const char*, object_list_base &x);
-  virtual void read_object_vector(const char*, object_vector_base &x);
   virtual void read_object_container(const char*, object_container &x);
 
   void check_object(object *o, bool is_ref);

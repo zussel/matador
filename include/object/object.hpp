@@ -259,8 +259,6 @@ private:
   friend class object_deleter;
   friend class object_base_ptr;
   friend class object_serializer;
-  friend class object_list_base;
-  friend class object_vector_base;
   friend class object_container;
   friend class object_value_base;
 	

@@ -32,6 +32,7 @@
 
 #include "object/object_list.hpp"
 #include "object/object_atomizer.hpp"
+#include "object/object_container.hpp"
 
 /*
  *   linked_object_list layout:
@@ -50,24 +51,24 @@ namespace oos {
 ///@cond OOS_DEV
 
 template < class T, class C >
-class linked_container_item : public oos::object
+class linked_object_list_item : public oos::object
 {
 public:
   typedef oos::object_ref<C> container_ref;
-  typedef linked_container_item<T, C> self;
+  typedef linked_object_list_item<T, C> self;
   typedef object_ref<self> self_ref;
   typedef T value_type;
   typedef unsigned int size_type;
 
-  container_item() {}
-  explicit container_item(const container_ref &c)
+  linked_object_list_item() {}
+  explicit linked_object_list_item(const container_ref &c)
     : container_(c)
   {}
-  container_item(const container_ref &c, const value_type &v)
+  linked_object_list_item(const container_ref &c, const value_type &v)
     : container_(c)
     , value_(v)
   {}
-  virtual ~container_item() {}
+  virtual ~linked_object_list_item() {}
 
   virtual void read_from(oos::object_atomizer *oa)
   {
@@ -114,9 +115,9 @@ private:
   value_type value_;
 };
 
-template < class T > class linked_object_list;
-template < class T > class linked_object_list_iterator;
-template < class T > class const_linked_object_list_iterator;
+template < class S, class T > class linked_object_list;
+template < class S, class T > class linked_object_list_iterator;
+template < class S, class T > class const_linked_object_list_iterator;
 
 /**
  * @cond OOS_DEV
@@ -164,393 +165,6 @@ public:
 };
 ///@endcond
 
-/**
- * @cond OOS_DEV
- * @class linked_object_list_node
- * @brief List node class for linked list
- * @tparam T List node type.
- * 
- * This class represents the list node class
- * for the linked list. It contains already
- * fields for next and preivious nodes as well
- * as fields for the first and last list node.
- */
-template < class T >
-class linked_object_list_node : public linked_object_list_base_node
-{
-public:
-  linked_object_list_node() {}
-  virtual ~linked_object_list_node() {}
-
-  /**
-   * @brief Reads the data from the object_atomizer
-   * 
-   * All data next, previous, first and last node
-   * is read in from the given object_atomizer.
-   * 
-   * @param reader The object_atomizer object to read from.
-   */
-	void read_from(object_atomizer *reader)
-  {
-    object::read_from(reader);
-    reader->read_object("first", first_);
-    reader->read_object("last", last_);
-    reader->read_object("prev", prev_);
-    reader->read_object("next", next_);
-  }
-
-  /**
-   * @brief Writes the data to the object_atomizer
-   * 
-   * All data next, previous, first and last node
-   * is written to the given object_atomizer.
-   * 
-   * @param writer The object_atomizer object to write to.
-   */
-	void write_to(object_atomizer *writer) const
-  {
-    object::write_to(writer);
-    writer->write_object("first", first_);
-    writer->write_object("last", last_);
-    writer->write_object("prev", prev_);
-    writer->write_object("next", next_);
-  }
-
-  /**
-   * Returns nodes next node as linked_object_list_base_node.
-   * 
-   * @return Nodes next node.
-   */
-  virtual linked_object_list_base_node *next_node() const
-  {
-    return next_.get();
-  }
-
-  /**
-   * Returns nodes previous node as linked_object_list_base_node.
-   * 
-   * @return Nodes previous node.
-   */
-  virtual linked_object_list_base_node *prev_node() const
-  {
-    return prev_.get();
-  }
-
-  /**
-   * Returns lists first node.
-   * 
-   * @return Lists first node.
-   */
-  object_ref<T> first() const
-  {
-    return first_;
-  }
-
-  /**
-   * Returns lists last node.
-   * 
-   * @return Lists last node.
-   */
-  object_ref<T> last() const
-  {
-    return last_;
-  }
-
-  /**
-   * Returns nodes previous node.
-   * 
-   * @return Nodes previous node.
-   */
-  object_ref<T> prev() const
-  {
-    return prev_;
-  }
-
-  /**
-   * Returns nodes next node.
-   * 
-   * @return Nodes next node.
-   */
-  object_ref<T> next() const
-  {
-    return next_;
-  }
-
-protected:
-  /**
-   * Sets lists first node.
-   * 
-   * @param f Lists first node.
-   */
-  void first(const object_ref<T> &f)
-  {
-    mark_modified();
-    first_ = f;
-  }
-
-  /**
-   * Sets lists last node.
-   * 
-   * @param l Lists last node.
-   */
-  void last(const object_ref<T> &l)
-  {
-    mark_modified();
-    last_ = l;
-  }
-
-  /**
-   * Sets nodes previous node.
-   * 
-   * @param p Nodes previous node.
-   */
-  void prev(const object_ref<T> &p)
-  {
-    mark_modified();
-    prev_ = p;
-  }
-
-  /**
-   * Sets nodes next node.
-   * 
-   * @param n Nodes next node.
-   */
-  void next(const object_ref<T> &n)
-  {
-    mark_modified();
-    next_ = n;
-  }
-
-private:
-  friend class linked_object_list<T>;
-  friend class linked_object_list_iterator<T>;
-  friend class const_linked_object_list_iterator<T>;
-
-  object_ref<T> first_;
-  object_ref<T> last_;
-  object_ref<T> prev_;
-  object_ref<T> next_;
-};
-/// @endcond
-
-/**
- * @cond OOS_DEV
- * @class linked_object_ptr_list_node
- * @brief Node type for linked lists with an object_ptr as value.
- * @tparam T The object type of the object_ptr class.
- * 
- * This node class is specialization for the linked_object_list_node class
- * for linked object lists. It contains only an object_ptr and wraps
- * it with direct accessors.
- */
-template < class T >
-class linked_object_ptr_list_node : public linked_object_list_node<linked_object_ptr_list_node<T> >
-{
-public:
-  typedef linked_object_list_node<linked_object_ptr_list_node<T> > base_node; /**< Shortcut to the base node */
-  typedef T value_type; /**< Shortcut for the nodes value type. */
-
-  /**
-   * @brief Creates a new linked_object_ptr_list_node
-   *
-   * Creates a new linked list node for object_ptr
-   * the default parameter name for the object is
-   * "object".
-   */
-  linked_object_ptr_list_node() : name_("object") {}
-
-  /**
-   * @brief Creates a new linked_object_ptr_list_node
-   *
-   * Creates a new linked list node for object_ptr
-   * the parameter name for the object must be given.
-   * 
-   * @param name Name of the parameter for object_atomizer.
-   */
-  linked_object_ptr_list_node(const std::string &name)
-    : name_(name)
-  {}
-
-  /**
-   * @brief Creates a new linked_object_ptr_list_node
-   *
-   * Creates a new linked list node for object_ptr
-   * the parameter name for the object must be given.
-   * Also the value object_ptr will be set.
-   * 
-   * @param optr The object value for this node.
-   * @param name Name of the parameter for object_atomizer.
-   */
-  linked_object_ptr_list_node(object_ptr<T> optr, const std::string &name)
-    : object_(optr)
-    , name_(name)
-  {}
-
-  virtual ~linked_object_ptr_list_node() {}
-
-  /**
-   * @brief Reads the data from the object_atomizer.
-   * 
-   * In addition to the base fields, the object_ptr is read
-   * from the object_atomizer.
-   * 
-   * @param reader The object_reader to read from.
-   */
-	void read_from(object_atomizer *reader)
-  {
-    base_node::read_from(reader);
-    reader->read_object(name_.c_str(), object_);
-  }
-
-  /**
-   * @brief Writes the data to the object_atomizer.
-   * 
-   * In addition to the base fields, the object_ptr is written
-   * to the object_atomizer.
-   * 
-   * @param writer The object_reader to write to.
-   */
-	void write_to(object_atomizer *writer) const
-  {
-    base_node::write_to(writer);
-    writer->write_string(name_.c_str(), object_);
-  }
-
-  /**
-   * Returns the object value.
-   * 
-   * @return The object_ptr value.
-   */
-  object_ptr<T> optr() const {
-    return object_;
-  }
-
-  /**
-   * Link the reference node
-   * 
-   * @param r The reference object.
-   * @param n The name of the reference object parameter.
-   */
-  virtual bool link_reference(object *r, const std::string &n)
-  {
-    return base_node::link_reference(object_.ptr(), r, n);
-  }
-
-private:
-  object_ptr<T> object_;
-  std::string name_;
-};
-/// @endcond
-
-/**
- * @cond OOS_DEV
- * @class linked_object_ref_list_node
- * @brief Node type for linked lists with an object_ref as value.
- * @tparam T The object type of the object_ref class.
- * 
- * This node class is specialization for the linked_object_list_node class
- * for linked object lists. It contains only an object_ref and wraps
- * it with direct accessors.
- */
-template < class T >
-class linked_object_ref_list_node : public linked_object_list_node<linked_object_ref_list_node<T> >
-{
-public:
-  typedef linked_object_list_node<linked_object_ref_list_node<T> > base_node; /**< Shortcut to the base node */
-  typedef T value_type; /**< Shortcut for the nodes value type. */
-
-  /**
-   * @brief Creates a new linked_object_ref_list_node
-   *
-   * Creates a new linked list node for object_ref
-   * the default parameter name for the object is
-   * "object".
-   */
-  linked_object_ref_list_node() : name_("object") {}
-
-  /**
-   * @brief Creates a new linked_object_ref_list_node
-   *
-   * Creates a new linked list node for object_ref
-   * the parameter name for the object must be given.
-   * 
-   * @param name Name of the parameter for object_atomizer.
-   */
-  linked_object_ref_list_node(const std::string &name)
-    : name_(name)
-  {}
-
-  /**
-   * @brief Creates a new linked_object_ref_list_node
-   *
-   * Creates a new linked list node for object_ref
-   * the parameter name for the object must be given.
-   * Also the value object_ref will be set.
-   * 
-   * @param oref The object_ref value for this node.
-   * @param name Name of the parameter for object_atomizer.
-   */
-  linked_object_ref_list_node(object_ref<T> oref, const std::string &name)
-    : object_(oref)
-    , name_(name)
-  {}
-
-  virtual ~linked_object_ref_list_node() {}
-
-  /**
-   * @brief Reads the data from the object_atomizer.
-   * 
-   * In addition to the base fields, the object_ref is read
-   * from the object_atomizer.
-   * 
-   * @param reader The object_reader to read from.
-   */
-	void read_from(object_atomizer *reader)
-  {
-    linked_object_list_node<linked_object_ref_list_node<T> >::read_from(reader);
-    reader->read_object(name_.c_str(), object_);
-  }
-
-  /**
-   * @brief Writes the data to the object_atomizer.
-   * 
-   * In addition to the base fields, the object_ref is written
-   * to the object_atomizer.
-   * 
-   * @param writer The object_reader to write to.
-   */
-	void write_to(object_atomizer *writer) const
-  {
-    linked_object_list_node<linked_object_ref_list_node<T> >::write_to(writer);
-    writer->write_object(name_.c_str(), object_);
-  }
-
-  /**
-   * Returns the object value.
-   * 
-   * @return The object_ref value.
-   */
-  object_ref<T> oref() const {
-    return object_;
-  }
-
-  /**
-   * Link the reference node
-   * 
-   * @param r The reference object.
-   * @param n The name of the reference object parameter.
-   */
-  virtual bool link_reference(object *r, const std::string &n)
-  {
-    return base_node::link_reference(object_.ptr(), r, n);
-  }
-
-private:
-  object_ref<T> object_;
-  std::string name_;
-};
-/// @endcond
-
 /// @cond OOS_DEV
 /**
  * @class linked_object_list_iterator
@@ -560,21 +174,21 @@ private:
  * This is the iterator class used by all linked
  * list types.
  */
-template < class T >
+template < class S, class T >
 class linked_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
-  typedef linked_object_list_iterator<T> self;	   /**< Shortcut for this iterator type. */
+  typedef linked_object_list_iterator<S, T> self;	   /**< Shortcut for this iterator type. */
   typedef T* pointer;                      /**< Shortcut for the pointer type. */
   typedef object_ptr<T> value_type;        /**< Shortcut for the value type. */
   typedef value_type& reference ;          /**< Shortcut for the reference to the value type. */
-  typedef linked_object_list<T> list_type; /**< Shortcut for the list type. */
+  typedef linked_object_list<S, T> list_type; /**< Shortcut for the list type. */
 
   /**
    * Creates an empty iterator
    */
   linked_object_list_iterator()
-    : node_(NULL)
-    , list_(NULL)
+    : node_(0)
+    , list_(0)
   {}
   
   /**
@@ -734,7 +348,7 @@ private:
   }
 
 private:
-  friend class const_linked_object_list_iterator<T>;
+  friend class const_linked_object_list_iterator<S, T>;
 
   value_type node_;
   list_type *list_;
@@ -749,21 +363,21 @@ private:
  * list types. The containing object is treated
  * as a constant.
  */
-template < class T >
+template < class S, class T >
 class const_linked_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
-  typedef const_linked_object_list_iterator<T> self;	/**< Shortcut for this iterator type. */
+  typedef const_linked_object_list_iterator<S, T> self;	/**< Shortcut for this iterator type. */
   typedef T* pointer;                         /**< Shortcut for the pointer type. */
   typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
   typedef value_type& reference;              /**< Shortcut for the reference to the value type. */
-  typedef linked_object_list<T> list_type;    /**< Shortcut for the list type. */
+  typedef linked_object_list<S, T> list_type;    /**< Shortcut for the list type. */
 
   /**
    * Creates an empty const_iterator
    */
   const_linked_object_list_iterator()
-    : node_(NULL)
-    , list_(NULL)
+    : node_(0)
+    , list_(0)
   {}
 
   /**
@@ -785,7 +399,7 @@ public:
    * 
    * @param x The iterator to copy from.
    */
-  const_linked_object_list_iterator(const linked_object_list_iterator<T> &x)
+  const_linked_object_list_iterator(const linked_object_list_iterator<S, T> &x)
     : node_(x.node_)
     , list_(x.list_)
   {}
@@ -795,7 +409,7 @@ public:
    * 
    * @param x The iterator to assign from.
    */
-  const_linked_object_list_iterator& operator=(const linked_object_list_iterator<T> &x)
+  const_linked_object_list_iterator& operator=(const linked_object_list_iterator<S, T> &x)
   {
     node_ = x.node_;
     list_ = x.list_;
@@ -963,11 +577,11 @@ public:
   typedef linked_object_list<S, T> self;
   typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
   typedef S container_type;
-  typedef linked_container_item<value_type, container_type> item_type;
+  typedef linked_object_list_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
-  typedef unsigned int size_type;                             /**< Shortcut for size type. */
-  typedef linked_object_list_iterator<T> iterator;             /**< Shortcut for the list iterator. */
-  typedef const_linked_object_list_iterator<T> const_iterator; /**< Shortcut for the list const iterator. */
+  typedef object_container::size_type size_type;                             /**< Shortcut for size type. */
+  typedef linked_object_list_iterator<S, T> iterator;             /**< Shortcut for the list iterator. */
+  typedef const_linked_object_list_iterator<S, T> const_iterator; /**< Shortcut for the list const iterator. */
 
 
   /**
@@ -1121,7 +735,6 @@ public:
   virtual void push_back(const value_type &elem)
   {
     insert(end(), elem);
-    }
   }
 
   /**
@@ -1144,7 +757,7 @@ public:
       return i;
     }
     // update predeccessor and successor
-    value_type_ptr node = (i++).optr();
+    value_type node = (i++).optr();
     node->prev()->next(node->next());
     node->next()->prev(node->prev());
     // delete node
@@ -1187,11 +800,16 @@ protected:
    */
   virtual void for_each(const node_func &nf) const
   {
-    value_type_ptr node = first_;
+    value_type node = first_;
     while(node.get()) {
       nf(node.get());
       node = node->next();
     }
+  }
+
+  virtual void parent(object *p)
+  {
+    return parent_;
   }
 
 private:
@@ -1199,11 +817,11 @@ private:
 
   virtual void install(object_store *os)
   {
-    object_list_base::install(os);
+    object_container::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new value_type(list_name()));
-    last_ = ostore()->insert(new value_type(list_name()));
+    first_ = ostore()->insert(new value_type(self_ref(this)));
+    last_ = ostore()->insert(new value_type(self_ref(this)));
     // link object elements
     first_->first_ = first_;
     first_->last_ = last_;
@@ -1215,7 +833,7 @@ private:
 
   virtual void uninstall()
   {
-    object_list_base::uninstall();
+    object_container::uninstall();
     first_.reset();
     last_.reset();
   }
@@ -1233,8 +851,10 @@ private:
 
 private:
   friend class object_store;
-  friend class linked_object_list_iterator<T>;
-  friend class const_linked_object_list_iterator<T>;
+  friend class linked_object_list_iterator<S, T>;
+  friend class const_linked_object_list_iterator<S, T>;
+
+  S *parent_;
 
   item_ptr first_;
   item_ptr last_;

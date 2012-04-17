@@ -23,46 +23,4 @@
 
 namespace oos {
 
-object_vector_base::object_vector_base(object *parent,
-                                       const std::string &vector_name,
-                                       const std::string &index_name)
-  : parent_(parent)
-  , vector_name_(vector_name)
-  , index_name_(index_name)
-{}
-
-object_vector_base::~object_vector_base()
-{}
-
-void object_vector_base::clear()
-{
-  if (parent_) {
-    parent_->mark_modified();
-  }
-}
-
-void object_vector_base::install(object_store *ostore)
-{
-  ostore_ = ostore;
-}
-
-void object_vector_base::uninstall()
-{
-    ostore_ = NULL;
-}
-
-void object_vector_base::mark_modified(object *o)
-{
-  o->mark_modified();
-}
-
-bool object_vector_base::set_reference(object *elem)
-{
-  if (elem->set(vector_name_, parent_)) {
-    return elem->set(index_name_, (int)size());
-  } else {
-    return false;
-  }
-}
-
 }
