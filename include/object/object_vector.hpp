@@ -227,12 +227,27 @@ public:
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
+      // determine index
+      item_type::size_type index = 0;
+      iterator first = begin();
+      iterator last = end();
+      if (pos != last && pos != first) {
+        --(first = pos);
+        index = (*first)->index();
+      }
       // create and insert new item
-      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), x));
+      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), index, x));
       // mark list object as modified
       mark_modified(parent_);
       // insert new item object
-      return object_vector_.insert(pos, item);
+      pos = object_vector_.insert(pos, item);
+      ++(first = pos);
+      // adjust indices of successor items
+      while (first != last) {
+        item = (*first++);
+        item->index(++index);
+      }
+      return pos;
     }
   };
 
@@ -357,7 +372,7 @@ protected:
 private:
   virtual void append_proxy(object_proxy *proxy)
   {
-    object_vector_.push_back(value_type_wrapper(proxy));
+    object_vector_.push_back(value_type(proxy));
   }
 
 private:

@@ -47,6 +47,73 @@
  
 namespace oos {
 
+///@cond OOS_DEV
+
+template < class T, class C >
+class linked_container_item : public oos::object
+{
+public:
+  typedef oos::object_ref<C> container_ref;
+  typedef linked_container_item<T, C> self;
+  typedef object_ref<self> self_ref;
+  typedef T value_type;
+  typedef unsigned int size_type;
+
+  container_item() {}
+  explicit container_item(const container_ref &c)
+    : container_(c)
+  {}
+  container_item(const container_ref &c, const value_type &v)
+    : container_(c)
+    , value_(v)
+  {}
+  virtual ~container_item() {}
+
+  virtual void read_from(oos::object_atomizer *oa)
+  {
+    oos::object::read_from(oa);
+    oa->read_object("first", first_);
+    oa->read_object("last", last_);
+    oa->read_object("prev", prev_);
+    oa->read_object("next", next_);
+    oa->read_object("container", container_);
+//    read(oa, "value", value_);
+  }
+  virtual void write_to(oos::object_atomizer *oa) const
+  {
+    oos::object::write_to(oa);
+    oa->write_object("first", first_);
+    oa->write_object("last", last_);
+    oa->write_object("prev", prev_);
+    oa->write_object("next", next_);
+    oa->write_object("container", container_);
+//    write(oa, "value", value_);
+  }
+
+  container_ref container() const
+  {
+    return container_;
+  }
+
+  value_type value() const
+  {
+    return value_;
+  }
+
+  void value(const value_type &v)
+  {
+    modify(value_, v);
+  }
+
+private:
+  self_ref first_;
+  self_ref last_;
+  self_ref prev_;
+  self_ref next_;
+  container_ref container_;
+  value_type value_;
+};
+
 template < class T > class linked_object_list;
 template < class T > class linked_object_list_iterator;
 template < class T > class const_linked_object_list_iterator;
@@ -873,6 +940,8 @@ private:
   const list_type *list_;
 };
 
+/// @endcond
+
 /**
  * @class linked_object_list
  * @brief An linked object list class.
@@ -885,16 +954,18 @@ private:
  * Therefor the order of the elements is persistent and
  * reliable.
  */
-template < class T >
-class linked_object_list : public object_list_base
+template < class S, class T >
+class linked_object_list : public object_container
 {
 public:
 //  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
-  typedef object_list_base base_list;                   /**< Shortcut for the object_list class. */
-	typedef T value_type;                                 /**< Shortcut for the value type. */
-  typedef size_t size_type;                             /**< Shortcut for size type. */
-	typedef object_ptr<value_type> value_type_ptr;        /**< Shortcut for the value type pointer. */
+  typedef linked_object_list<S, T> self;
+  typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
+  typedef S container_type;
+  typedef linked_container_item<value_type, container_type> item_type;
+  typedef object_ptr<item_type> item_ptr;
+  typedef unsigned int size_type;                             /**< Shortcut for size type. */
   typedef linked_object_list_iterator<T> iterator;             /**< Shortcut for the list iterator. */
   typedef const_linked_object_list_iterator<T> const_iterator; /**< Shortcut for the list const iterator. */
 
@@ -910,8 +981,8 @@ public:
    * @param parent The containing list object.
    * @param list_ref_name The name of the parent in the value type object.
    */
-  linked_object_list(object *parent, const std::string &list_ref_name)
-    : object_list_base(parent, list_ref_name)
+  linked_object_list(S *parent)
+    : parent_(parent)
   {}
 
 	virtual ~linked_object_list() {}
@@ -974,7 +1045,6 @@ public:
    */
   virtual void clear()
   {
-    base_list::clear();
     erase(begin(), end());
   }
 
@@ -983,7 +1053,7 @@ public:
    * 
    * @return The size of the list.
    */
-  virtual size_t size() const
+  virtual size_type size() const
   {
     return std::distance(begin(), end());
   }
@@ -999,11 +1069,12 @@ public:
    *
    * @param elem The element to be pushed front
    */
-  virtual void push_front(value_type *elem)
+  virtual void insert(iterator pos, const value_type &elem)
   {
-    if (!ostore()) {
-      //throw object_exception();
+    if (!object_container::ostore()) {
+      throw object_exception("invalid object_store pointer");
     } else {
+      /*
       if (!elem->link_reference(base_list::parent_object(), base_list::list_name())) {
         // throw object_exception()
       } else {
@@ -1015,7 +1086,25 @@ public:
         optr->first_ = first_;
         optr->last_ = last_;
       }
+      */
     }
+  }
+
+
+  /**
+   * @brief Push a new object to the front of the list.
+   * 
+   * An object not inserted into the object_store will
+   * be pushed front to the list and inserted to the
+   * object_store. Furthermore the reference link to the
+   * list object and the links between the surrounding nodes
+   * is done automatilcally.
+   *
+   * @param elem The element to be pushed front
+   */
+  virtual void push_front(const value_type &elem)
+  {
+    insert(begin(), elem);
   }
 
   /**
@@ -1029,22 +1118,9 @@ public:
    *
    * @param elem The element to be pushed back
    */
-  virtual void push_back(value_type *elem)
+  virtual void push_back(const value_type &elem)
   {
-    if (!ostore()) {
-      //throw object_exception();
-    } else {
-      if (!elem->link_reference(base_list::parent_object(), base_list::list_name())) {
-        // throw object_exception()
-      } else {
-        value_type_ptr optr = ostore()->insert(elem);
-        optr->prev_ = last_->prev_;
-        last_->prev_->next_ = optr;
-        optr->next_ = last_;
-        last_->prev_ = optr;
-        optr->first_ = first_;
-        optr->last_ = last_;
-      }
+    insert(end(), elem);
     }
   }
 
@@ -1160,143 +1236,8 @@ private:
   friend class linked_object_list_iterator<T>;
   friend class const_linked_object_list_iterator<T>;
 
-  value_type_ptr first_;
-  value_type_ptr last_;
-};
-/// @endcond
-
-/**
- * @class linked_object_ptr_list
- * @brief An linked object list class for object_ptr.
- * @tparam T The concrete object type.
- * 
- * The linked_object_ptr_list class stores object of
- * type T. T is the only single element in teach node and
- * is stored in an object_ptr.
- * This base class contains the previous and next links as
- * well as the first and last element of the linked list.
- * Therefor the order of the elements is persistent and
- * reliable.
- */
-template < class T >
-class linked_object_ptr_list : public linked_object_list<linked_object_ptr_list_node<T> >
-{
-public:
-  typedef linked_object_ptr_list_node<T> value_type;       /**< Shortcut for the value type */
-  typedef object_ptr<value_type> value_type_ptr;    /**< Shortcut for the value type pointer */
-  typedef linked_object_list<value_type> base_list; /**< Shortcut for the base list class */
-
-  /**
-   * @brief Creates an empty linked object ptr list.
-   *
-   * Creates an empty linked object ptr list. The list
-   * is part of the given parent object and each element
-   * in this has a reference to the parent within a parameter
-   * of the given name.
-   *
-   * @param parent The list containing object.
-   * @param list_ref_name The name of the reference list object in each node.
-   */
-  linked_object_ptr_list(object *parent, const std::string &list_ref_name)
-    : linked_object_list<value_type>(parent, list_ref_name)
-  {}
-
-  virtual ~linked_object_ptr_list() {}
-
-  /**
-   * @brief Insert an element at the beginning of the list.
-   *
-   * Insert an element at the beginning of the list. The
-   * reference link the object containing list is done
-   * automatically.
-   *
-   * @param optr The pointer object to be pushed front.
-   */
-  void push_front(const object_ptr<T> &optr)
-  {
-    base_list::push_front(new value_type(optr, base_list::list_name()));
-  }
-
-  /**
-   * @brief Insert an element at the end of the list.
-   *
-   * Insert an element at the end of the list. The
-   * reference link to the object containing list is done
-   * automatically.
-   *
-   * @param optr The pointer object to be pushed back.
-   */
-  void push_back(const object_ptr<T> &optr)
-  {
-    base_list::push_front(new value_type(optr, base_list::list_name()));
-  }
-};
-
-/**
- * @class linked_object_ref_list
- * @brief An linked object list class for object_ref.
- * @tparam T The concrete object type.
- * 
- * The linked_object_ref_list class stores object of
- * type T. T is the only single element in teach node and
- * is stored in an object_ref.
- * This base class contains the previous and next links as
- * well as the first and last element of the linked list.
- * Therefor the order of the elements is persistent and
- * reliable.
- */
-template < class T >
-class linked_object_ref_list : public linked_object_list<linked_object_ref_list_node<T> >
-{
-public:
-  typedef linked_object_ref_list_node<T> value_type;       /**< Shortcut for the value type */
-  typedef object_ptr<value_type> value_type_ptr;    /**< Shortcut for the value type pointer */
-  typedef linked_object_list<value_type> base_list; /**< Shortcut for the base list class */
-
-  /**
-   * @brief Creates an empty linked object ref list.
-   *
-   * Creates an empty linked object ref list. The list
-   * is part of the given parent object and each element
-   * in this has a reference to the parent within a parameter
-   * of the given name.
-   *
-   * @param parent The list containing object.
-   * @param list_ref_name The name of the reference list object in each node.
-   */
-  linked_object_ref_list(object *parent, const std::string &list_ref_name)
-    : linked_object_list<value_type>(parent, list_ref_name)
-  {}
-
-  virtual ~linked_object_ref_list() {}
-
-  /**
-   * @brief Insert an element at the beginning of the list.
-   *
-   * Insert an element at the beginning of the list. The
-   * reference link to the object containing list is done
-   * automatically.
-   *
-   * @param oref The reference object to be pushed front.
-   */
-  void push_front(const object_ref<T> &oref)
-  {
-    base_list::push_front(new value_type(oref, base_list::list_name()));
-  }
-
-  /**
-   * @brief Insert an element at the end of the list.
-   *
-   * Insert an element at the end of the list. The
-   * reference link to the object containing list is done
-   * automatically.
-   *
-   * @param oref The reference object to be pushed back.
-   */
-  void push_back(const object_ref<T> &oref)
-  {
-    base_list::push_back(new value_type(oref, base_list::list_name()));
-  }
+  item_ptr first_;
+  item_ptr last_;
 };
 
 }
