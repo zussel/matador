@@ -98,7 +98,7 @@ public:
   typedef container_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
   typedef std::list<item_ptr> list_type;                      /**< Shortcut for the list class member. */
-  typedef typename list_type::size_type size_type;            /**< Shortcut for size type. */
+  typedef typename object_container::size_type size_type;            /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 

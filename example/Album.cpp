@@ -7,19 +7,19 @@ using std::string;
 using namespace oos;
 
 Album::Album()
-  : track_album_vector_(this, "album", "track_index")
+  : track_album_vector_(this)
 {}
 
 Album::Album(const std::string &n)
   : name_(n)
-  , track_album_vector_(this, "album", "track_index")
+  , track_album_vector_(this)
 {}
 
 Album::Album(const std::string &n, int year, const object_ptr<Artist> &a)
   : name_(n)
   , year_(year)
   , artist_(a)
-  , track_album_vector_(this, "album", "track_index")
+  , track_album_vector_(this)
 {}
 
 Album::~Album()
@@ -31,7 +31,7 @@ void Album::read_from(object_atomizer *reader)
 	reader->read_string("name", name_);
 	reader->read_int("year", year_);
   reader->read_object("artist", artist_);
-  reader->read_object_vector("track_album_vector", track_album_vector_);
+  reader->read_object_container("track_album_rel", track_album_vector_);
 }
 
 void Album::write_to(object_atomizer *writer) const
@@ -40,7 +40,7 @@ void Album::write_to(object_atomizer *writer) const
 	writer->write_string("name", name_);
 	writer->write_int("year", year_);
   writer->write_object("artist", artist_);
-  writer->write_object_vector("track_album_vector", track_album_vector_);
+  writer->write_object_container("track_album_rel", track_album_vector_);
 }
 
 void Album::name(const std::string &n)
@@ -78,8 +78,8 @@ void Album::add(int index, const object_ref<Track> &track, bool override_artist)
   if (!ostore()) {
     // throw object_exception();
   } else {
-    object_ptr<TrackAlbumRelation> rel = ostore()->insert(new TrackAlbumRelation(index, track, object_ref<Album>(this)));
-    track_album_vector_.push_back(rel);
+//    object_ptr<TrackAlbumRelation> rel = ostore()->insert(new TrackAlbumRelation(index, track, object_ref<Album>(this)));
+    track_album_vector_.push_back(track);
     if (override_artist) {
       track->artist(artist_);
     }
@@ -93,7 +93,7 @@ object_ref<Track> Album::find(const std::string &/*name*/) const
 
 oos::object_ref<Track> Album::operator[](track_album_vector_t::size_type n)
 {
-  return track_album_vector_[n]->track();
+  return track_album_vector_[n];
 }
 
 Album::iterator Album::begin()

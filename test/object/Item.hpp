@@ -190,6 +190,7 @@ private:
 class ItemPtrList : public oos::object
 {
 public:
+  typedef Item item_type;
   typedef oos::object_ptr<Item> value_type;
   typedef oos::object_list<ItemPtrList, value_type> item_list_t;
   typedef item_list_t::size_type size_type;
@@ -395,10 +396,9 @@ private:
 class ItemPtrVector : public oos::object
 {
 public:
-  typedef ContainerItem<ItemPtrVector> value_type;
-  typedef oos::object_ptr_vector<value_type> item_vector_t;
+  typedef oos::object_ptr<Item> value_type;
+  typedef oos::object_vector<ItemPtrVector, value_type> item_vector_t;
   typedef item_vector_t::size_type size_type;
-  typedef item_vector_t::value_type_ptr value_type_ptr;
   typedef ItemPtrVector self;
   typedef oos::object_ref<self> self_ref;
   typedef item_vector_t::iterator iterator;
@@ -406,27 +406,22 @@ public:
 
 public:
   ItemPtrVector()
-    : item_vector_(this, "container", "item_index")
+    : item_vector_(this)
   {}
   virtual ~ItemPtrVector() {}
 
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_vector("item_vector", item_vector_);
+    reader->read_object_container("item_vector", item_vector_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_vector("item_vector", item_vector_);
+    writer->write_object_container("item_vector", item_vector_);
   }
 
-  void push_front(const value_type_ptr &i)
-  {
-    item_vector_.push_front(i);
-  }
-
-  void push_back(const value_type_ptr &i)
+  void push_back(const value_type &i)
   {
     item_vector_.push_back(i);
   }
@@ -445,7 +440,7 @@ public:
     return item_vector_.erase(i);
   }
 
-  size_t size() { return item_vector_.size(); }
+  size_type size() { return item_vector_.size(); }
 
 private:
   item_vector_t item_vector_;
@@ -485,7 +480,7 @@ public:
 class book_list : public oos::object
 {
 public:
-  typedef oos::object_list_2<book_list, oos::object_ref<book> > book_list_t;
+  typedef oos::object_list<book_list, oos::object_ref<book> > book_list_t;
   typedef book_list_t::item_type item_type;
   typedef book_list_t::item_ptr item_ptr;
   typedef book_list_t::size_type size_type;

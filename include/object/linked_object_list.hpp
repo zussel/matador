@@ -809,7 +809,11 @@ protected:
 
   virtual void parent(object *p)
   {
-    return parent_;
+    S *temp = dynamic_cast<S*>(p);
+    if (!temp) {
+      throw object_exception("couldn't cast object to concrete type");
+    }
+    parent_ = temp;
   }
 
 private:

@@ -46,7 +46,7 @@ void ObjectVectorTestUnit::test_ptr_vector()
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
-    item_ptr item = ostore_.insert(new ItemPtrVector::value_type(name.str()));
+    item_ptr item = ostore_.insert(new Item(name.str()));
     itemvector->push_back(item);
   }
 

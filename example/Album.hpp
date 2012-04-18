@@ -19,7 +19,9 @@ class Album : public oos::object
 {
 public:
   typedef oos::object_ref<Album> self_ref;
-	typedef oos::object_ptr_vector<TrackAlbumRelation> track_album_vector_t;
+  typedef oos::object_ref<Track> track_ref;
+  typedef oos::object_vector<Album, track_ref> track_album_vector_t;
+//	typedef oos::object_ptr_vector<TrackAlbumRelation> track_album_vector_t;
   typedef track_album_vector_t::iterator iterator;
 	typedef track_album_vector_t::const_iterator const_iterator;
   

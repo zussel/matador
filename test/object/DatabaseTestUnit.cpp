@@ -225,7 +225,7 @@ void
 DatabaseTestUnit::with_list()
 {
   typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef object_ptr<ItemPtrList::value_type> item_ptr;
+  typedef ItemPtrList::value_type item_ptr;
 
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
@@ -254,7 +254,7 @@ DatabaseTestUnit::with_list()
     for (int i = 0; i < 2; ++i) {
       stringstream name;
       name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
+      item_ptr item = ostore_.insert(new Item(name.str()));
 
       UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
 
@@ -274,7 +274,7 @@ DatabaseTestUnit::with_list()
     for (int i = 0; i < 4; ++i) {
       stringstream name;
       name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
+      item_ptr item = ostore_.insert(new Item(name.str()));
 
       UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
 

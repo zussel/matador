@@ -81,9 +81,14 @@ public:
     return container_;
   }
 
-  size_type size() const
+  size_type index() const
   {
     return index_;
+  }
+
+  void index(size_type i) const
+  {
+    modify(index_, i);
   }
 
   value_type value() const
@@ -131,7 +136,7 @@ public:
   typedef std::vector<item_ptr> vector_type;         /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;             /**< Shortcut for the vector iterator. */
   typedef typename vector_type::const_iterator const_iterator; /**< Shortcut for the vector const iterator. */
-  typedef typename vector_type::size_type size_type;           /**< Shortcut for the size type. */
+  typedef typename object_container::size_type size_type;           /**< Shortcut for the size type. */
 
   /**
    * @brief Creates a new object_vector.
@@ -371,10 +376,19 @@ protected:
     }
   }
 
+  virtual void parent(object *p)
+  {
+    S *temp = dynamic_cast<S*>(p);
+    if (!temp) {
+      throw object_exception("couldn't cast object to concrete type");
+    }
+    parent_ = temp;
+  }
+
 private:
   virtual void append_proxy(object_proxy *proxy)
   {
-    object_vector_.push_back(value_type(proxy));
+    object_vector_.push_back(item_ptr(proxy));
   }
 
 private:
