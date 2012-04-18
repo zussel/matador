@@ -371,6 +371,8 @@ public:
   typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
   typedef value_type& reference;              /**< Shortcut for the reference to the value type. */
   typedef linked_object_list<S, T> list_type;    /**< Shortcut for the list type. */
+  typedef list_type::item_type item_type;
+  typedef list_type::item_ptr item_ptr;
 
   /**
    * Creates an empty const_iterator
@@ -389,7 +391,7 @@ public:
    * @param node The linked list node.
    * @param l The pointer to the list.
    */
-  const_linked_object_list_iterator(value_type node, const list_type *l)
+  const_linked_object_list_iterator(const item_ptr &node, const list_type *l)
     : node_(node)
     , list_(l)
   {}
@@ -550,7 +552,7 @@ private:
   }
 
 private:
-  value_type node_;
+  item_ptr node_;
   const list_type *list_;
 };
 
