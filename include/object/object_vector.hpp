@@ -86,7 +86,7 @@ public:
     return index_;
   }
 
-  void index(size_type i) const
+  void index(size_type i)
   {
     modify(index_, i);
   }

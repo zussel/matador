@@ -106,7 +106,29 @@ public:
     modify(value_, v);
   }
 
+  self_ref first() const
+  {
+    return first_;
+  }
+
+  self_ref last() const
+  {
+    return last_;
+  }
+
+  self_ref prev() const
+  {
+    return prev_;
+  }
+
+  self_ref next() const
+  {
+    return next_;
+  }
+
 private:
+  template < class V, class S > friend class linked_object_list;
+
   self_ref first_;
   self_ref last_;
   self_ref prev_;
@@ -116,54 +138,8 @@ private:
 };
 
 template < class S, class T > class linked_object_list;
-template < class S, class T > class linked_object_list_iterator;
-template < class S, class T > class const_linked_object_list_iterator;
-
-/**
- * @cond OOS_DEV
- * @class linked_object_list_base_node
- * @brief Base list node class for all linked list types
- * 
- * This is the base list node class for all further
- * linked list type classes storing objects
- */
-class OOS_API linked_object_list_base_node : public object
-{
-public:
-  virtual ~linked_object_list_base_node() {}
-
-  /**
-   * Returns list nodes previous list node
-   * 
-   * @return The previous list node
-   */
-  virtual linked_object_list_base_node *next_node() const = 0;
-
-  /**
-   * Returns list nodes next list node
-   * 
-   * @return The next list node
-   */
-  virtual linked_object_list_base_node *prev_node() const = 0;
-  
-  /**
-   * Link the reference node
-   * 
-   * @param r The reference object.
-   * @param n The name of the reference object parameter.
-   */
-  virtual bool link_reference(object *r, const std::string &n);
-
-  /**
-   * Link the reference node
-   * 
-   * @param o The object to link a reference in.
-   * @param r The reference object.
-   * @param n The name of the reference object parameter.
-   */
-  virtual bool link_reference(object *o, object *r, const std::string &n);
-};
-///@endcond
+template < class T > class linked_object_list_iterator;
+template < class T > class const_linked_object_list_iterator;
 
 /// @cond OOS_DEV
 /**
@@ -174,21 +150,19 @@ public:
  * This is the iterator class used by all linked
  * list types.
  */
-template < class S, class T >
+template < class T >
 class linked_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 public:
-  typedef linked_object_list_iterator<S, T> self;	   /**< Shortcut for this iterator type. */
+  typedef linked_object_list_iterator<T> self;	   /**< Shortcut for this iterator type. */
   typedef T* pointer;                      /**< Shortcut for the pointer type. */
   typedef object_ptr<T> value_type;        /**< Shortcut for the value type. */
   typedef value_type& reference ;          /**< Shortcut for the reference to the value type. */
-  typedef linked_object_list<S, T> list_type; /**< Shortcut for the list type. */
 
   /**
    * Creates an empty iterator
    */
   linked_object_list_iterator()
     : node_(0)
-    , list_(0)
   {}
   
   /**
@@ -198,11 +172,9 @@ public:
    * list node in a given list.
    * 
    * @param node The linked list node.
-   * @param l The pointer to the list.
    */
-  linked_object_list_iterator(const value_type &node, list_type *l)
+  linked_object_list_iterator(const value_type &node)
     : node_(node)
-    , list_(l)
   {}
 
   /**
@@ -212,7 +184,6 @@ public:
    */
   linked_object_list_iterator(const linked_object_list_iterator &x)
     : node_(x.node_)
-    , list_(x.list_)
   {}
 
   /**
@@ -223,7 +194,6 @@ public:
   linked_object_list_iterator& operator=(const linked_object_list_iterator &x)
   {
     node_ = x.node_;
-    list_ = x.list_;
     return *this;
   }
 
@@ -337,21 +307,20 @@ public:
 
 private:
   void increment() {
-    if (node_ != list_->last_) {
-      node_ = node_->next_;
+    if (node_ != node_->last()) {
+      node_ = node_->next();
     }
   }
   void decrement() {
-    if (node_ != list_->last_) {
-      node_ = node_->prev_;
+    if (node_ != node_->first()) {
+      node_ = node_->prev();
     }
   }
 
 private:
-  friend class const_linked_object_list_iterator<S, T>;
+  friend class const_linked_object_list_iterator<T>;
 
   value_type node_;
-  list_type *list_;
 };
 
 /**
@@ -363,23 +332,19 @@ private:
  * list types. The containing object is treated
  * as a constant.
  */
-template < class S, class T >
+template < class T >
 class const_linked_object_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
 public:
-  typedef const_linked_object_list_iterator<S, T> self;	/**< Shortcut for this iterator type. */
+  typedef const_linked_object_list_iterator<T> self;	/**< Shortcut for this iterator type. */
   typedef T* pointer;                         /**< Shortcut for the pointer type. */
   typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
   typedef value_type& reference;              /**< Shortcut for the reference to the value type. */
-  typedef linked_object_list<S, T> list_type;    /**< Shortcut for the list type. */
-  typedef list_type::item_type item_type;
-  typedef list_type::item_ptr item_ptr;
 
   /**
    * Creates an empty const_iterator
    */
   const_linked_object_list_iterator()
     : node_(0)
-    , list_(0)
   {}
 
   /**
@@ -389,11 +354,9 @@ public:
    * list node in a given list.
    * 
    * @param node The linked list node.
-   * @param l The pointer to the list.
    */
-  const_linked_object_list_iterator(const item_ptr &node, const list_type *l)
+  const_linked_object_list_iterator(const value_type &node)
     : node_(node)
-    , list_(l)
   {}
 
   /**
@@ -401,9 +364,8 @@ public:
    * 
    * @param x The iterator to copy from.
    */
-  const_linked_object_list_iterator(const linked_object_list_iterator<S, T> &x)
+  const_linked_object_list_iterator(const linked_object_list_iterator<T> &x)
     : node_(x.node_)
-    , list_(x.list_)
   {}
 
   /**
@@ -411,10 +373,9 @@ public:
    * 
    * @param x The iterator to assign from.
    */
-  const_linked_object_list_iterator& operator=(const linked_object_list_iterator<S, T> &x)
+  const_linked_object_list_iterator& operator=(const linked_object_list_iterator<T> &x)
   {
     node_ = x.node_;
-    list_ = x.list_;
     return *this;
   }
 
@@ -426,7 +387,6 @@ public:
   const_linked_object_list_iterator& operator=(const const_linked_object_list_iterator &x)
   {
     node_ = x.node_;
-    list_ = x.list_;
     return *this;
   }
 
@@ -541,19 +501,18 @@ public:
 
 private:
   void increment() {
-    if (node_ != list_->last_) {
-      node_ = node_->next_;
+    if (node_ != node_->last()) {
+      node_ = node_->next();
     }
   }
   void decrement() {
-    if (node_ != list_->last_) {
-      node_ = node_->prev_;
+    if (node_ != node_->first()) {
+      node_ = node_->prev();
     }
   }
 
 private:
-  item_ptr node_;
-  const list_type *list_;
+  value_type node_;
 };
 
 /// @endcond
@@ -582,8 +541,10 @@ public:
   typedef linked_object_list_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
   typedef object_container::size_type size_type;                             /**< Shortcut for size type. */
-  typedef linked_object_list_iterator<S, T> iterator;             /**< Shortcut for the list iterator. */
-  typedef const_linked_object_list_iterator<S, T> const_iterator; /**< Shortcut for the list const iterator. */
+//  typedef linked_object_list_iterator<S, T> iterator;             /**< Shortcut for the list iterator. */
+//  typedef const_linked_object_list_iterator<S, T> const_iterator; /**< Shortcut for the list const iterator. */
+  typedef linked_object_list_iterator<item_type> iterator;             /**< Shortcut for the list iterator. */
+  typedef const_linked_object_list_iterator<item_type> const_iterator; /**< Shortcut for the list const iterator. */
 
 
   /**
@@ -614,7 +575,7 @@ public:
    * @return The begin iterator.
    */
   iterator begin() {
-    return ++iterator(first_, this);
+    return ++iterator(first_);
   }
 
   /**
@@ -623,7 +584,7 @@ public:
    * @return The begin iterator.
    */
   const_iterator begin() const {
-    return ++const_iterator(first_, this);
+    return ++const_iterator(first_);
   }
 
   /**
@@ -632,7 +593,7 @@ public:
    * @return The end iterator.
    */
   iterator end() {
-    return iterator(last_, this);
+    return iterator(last_);
   }
 
   /**
@@ -641,7 +602,7 @@ public:
    * @return The end iterator.
    */
   const_iterator end() const {
-    return const_iterator(last_, this);
+    return const_iterator(last_);
   }
 
   /**
@@ -759,16 +720,16 @@ public:
       return i;
     }
     // update predeccessor and successor
-    value_type node = (i++).optr();
-    node->prev()->next(node->next());
-    node->next()->prev(node->prev());
+    item_ptr node = (*i++);
+    node->prev_->next_ = node->next_;
+    node->next_->prev_ = node->prev_;
     // delete node
     if (!ostore()->remove(node)) {
 //      std::cout << "couldn't remove node (proxy: " << *node->proxy().get() << ")\n";
-      node->prev()->next(node);
-      node->next()->prev(node);
+      node->prev_->next_ = node;
+      node->next_->prev_ = node;
       // throw exception ?
-      return ++iterator(node, this);
+      return ++iterator(node);
     }
     // return i's successor
     return i;
@@ -802,7 +763,7 @@ protected:
    */
   virtual void for_each(const node_func &nf) const
   {
-    value_type node = first_;
+    item_ptr node = first_;
     while(node.get()) {
       nf(node.get());
       node = node->next();
@@ -826,8 +787,8 @@ private:
     object_container::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new value_type(self_ref(this)));
-    last_ = ostore()->insert(new value_type(self_ref(this)));
+    first_ = ostore()->insert(new item_type(oos::object_ref<S>(parent_)));
+    last_ = ostore()->insert(new item_type(oos::object_ref<S>(parent_)));
     // link object elements
     first_->first_ = first_;
     first_->last_ = last_;
@@ -857,8 +818,8 @@ private:
 
 private:
   friend class object_store;
-  friend class linked_object_list_iterator<S, T>;
-  friend class const_linked_object_list_iterator<S, T>;
+  friend class linked_object_list_iterator<T>;
+  friend class const_linked_object_list_iterator<T>;
 
   S *parent_;
 

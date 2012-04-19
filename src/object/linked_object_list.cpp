@@ -19,14 +19,4 @@
 
 namespace oos {
 
-bool linked_object_list_base_node::link_reference(object *r, const std::string &n)
-{
-  return link_reference(this, r, n);
-}
-
-bool linked_object_list_base_node::link_reference(object *o, object *r, const std::string &n)
-{
-  return o->set(n, r);
-}
-
 }
