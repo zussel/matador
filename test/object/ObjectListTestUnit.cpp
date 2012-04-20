@@ -129,7 +129,7 @@ ObjectListTestUnit::test_ref_list()
   val = 10;
   UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
 
-  typedef object_view<ItemRefList::item_type> item_view_t;
+  typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
 
   val = 20;
@@ -176,7 +176,7 @@ ObjectListTestUnit::test_ptr_list()
   val = 10;
   UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
 
-  typedef object_view<ItemPtrList::value_type> item_view_t;
+  typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
 
   val = 20;

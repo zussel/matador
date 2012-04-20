@@ -634,7 +634,7 @@ public:
   }
 
   /**
-   * @brief Push a new object to the front of the list.
+   * @brief Insert a new object before the given iterator.
    * 
    * An object not inserted into the object_store will
    * be pushed front to the list and inserted to the
@@ -649,19 +649,23 @@ public:
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      /*
-      if (!elem->link_reference(base_list::parent_object(), base_list::list_name())) {
-        // throw object_exception()
-      } else {
-        value_type_ptr optr = ostore()->insert(elem);
-        optr->next_ = first_->next_;
-        first_->next_ = optr;
-        optr->prev_ = first_;
-        first_->next_ = optr;
-        optr->first_ = first_;
-        optr->last_ = last_;
-      }
-      */
+      // create and insert new item
+      item_ptr item = ostore()->insert(new item_type);
+      item->container_.reset(parent_);
+      item->value_ = elem;
+      // mark list object as modified
+      mark_modified(parent_);
+
+      // link new item before given iterator position
+      item_ptr node = pos.optr();
+
+      item->first_ = first_;
+      item->last_ = last_;
+      item->next_ = node;
+      item->prev_ = node->prev();
+
+      item->prev()->next_ = item;
+      node->prev_ = item;
     }
   }
 
@@ -723,7 +727,7 @@ public:
     node->next_->prev_ = node->prev_;
     // delete node
     if (!ostore()->remove(node)) {
-//      std::cout << "couldn't remove node (proxy: " << *node->proxy().get() << ")\n";
+      std::cout << "couldn't remove node (proxy: " << *node->proxy() << ")\n";
       node->prev_->next_ = node;
       node->next_->prev_ = node;
       // throw exception ?
