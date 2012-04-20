@@ -73,22 +73,22 @@ public:
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read_object("first", first_);
-    oa->read_object("last", last_);
-    oa->read_object("prev", prev_);
-    oa->read_object("next", next_);
-    oa->read_object("container", container_);
-//    read(oa, "value", value_);
+    oa->read("first", first_);
+    oa->read("last", last_);
+    oa->read("prev", prev_);
+    oa->read("next", next_);
+    oa->read("container", container_);
+    oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write_object("first", first_);
-    oa->write_object("last", last_);
-    oa->write_object("prev", prev_);
-    oa->write_object("next", next_);
-    oa->write_object("container", container_);
-//    write(oa, "value", value_);
+    oa->write("first", first_);
+    oa->write("last", last_);
+    oa->write("prev", prev_);
+    oa->write("next", next_);
+    oa->write("container", container_);
+    oa->write("value", value_);
   }
 
   container_ref container() const
@@ -541,8 +541,6 @@ public:
   typedef linked_object_list_item<value_type, container_type> item_type;
   typedef object_ptr<item_type> item_ptr;
   typedef object_container::size_type size_type;                             /**< Shortcut for size type. */
-//  typedef linked_object_list_iterator<S, T> iterator;             /**< Shortcut for the list iterator. */
-//  typedef const_linked_object_list_iterator<S, T> const_iterator; /**< Shortcut for the list const iterator. */
   typedef linked_object_list_iterator<item_type> iterator;             /**< Shortcut for the list iterator. */
   typedef const_linked_object_list_iterator<item_type> const_iterator; /**< Shortcut for the list const iterator. */
 

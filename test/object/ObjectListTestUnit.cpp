@@ -30,12 +30,13 @@ ObjectListTestUnit::~ObjectListTestUnit()
 void
 ObjectListTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<ContainerItem<ItemRefList> >, "ITEM_REF");
-  ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrList> >, "ITEM_PTR");
-  ostore_.insert_prototype(new object_producer<ItemRefList>, "ITEM_REF_LIST");
-  ostore_.insert_prototype(new object_producer<ItemPtrList>, "ITEM_PTR_LIST");
-  ostore_.insert_prototype(new object_producer<LinkedItem>, "LINKED_ITEM");
-  ostore_.insert_prototype(new object_producer<LinkedItemList>, "LINKED_ITEM_LIST");
+  ostore_.insert_prototype<Item>("ITEM");
+  ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
+  ostore_.insert_prototype<ItemRefList::item_type>("ITEM_REF");
+  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
+  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
+  ostore_.insert_prototype<LinkedItemList>("LINKED_ITEM_LIST");
+  ostore_.insert_prototype<LinkedItemList::item_type>("LINKED_ITEM");
 }
 
 void
@@ -119,7 +120,7 @@ ObjectListTestUnit::test_ref_list()
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
-    item_ptr item = ostore_.insert(new ItemRefList::item_type(name.str()));
+    item_ptr item = ostore_.insert(new Item(name.str()));
     if (i % 2) {
       itemlist->push_back(item);
     }
@@ -156,7 +157,7 @@ void
 ObjectListTestUnit::test_ptr_list()
 {
   typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef object_ptr<ItemPtrList::value_type> item_ptr;
+  typedef ItemPtrList::value_type item_ptr;
 
   itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
 
@@ -166,7 +167,7 @@ ObjectListTestUnit::test_ptr_list()
   for (int i = 0; i < 20; ++i) {
     stringstream name;
     name << "Item " << i+1;
-    item_ptr item = ostore_.insert(new ItemPtrList::value_type(name.str()));
+    item_ptr item = ostore_.insert(new Item(name.str()));
     if (i % 2) {
       itemlist->push_back(item);
     }
@@ -203,21 +204,27 @@ void
 ObjectListTestUnit::test_linked_list()
 {
   typedef object_ptr<LinkedItemList> itemlist_ptr;
+  typedef LinkedItemList::value_type item_ptr;
   
   itemlist_ptr itemlist = ostore_.insert(new LinkedItemList);
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
-  itemlist->push_back(new LinkedItem("Schrank"));
-  itemlist->push_back(new LinkedItem("Tisch"));
-  itemlist->push_back(new LinkedItem("Stuhl"));
-  itemlist->push_back(new LinkedItem("Bett"));
+  item_ptr item = ostore_.insert(new Item("Schrank"));
+  itemlist->push_back(item);
+  item = ostore_.insert(new Item("Tisch"));
+  itemlist->push_back(item);
+  item = ostore_.insert(new Item("Stuhl"));
+  itemlist->push_back(item);
+  item = ostore_.insert(new Item("Bett"));
+  itemlist->push_back(item);
 
   UNIT_ASSERT_FALSE(itemlist->empty(), "linked item list couldn't be empty");
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "linked list size is invalid");
 
-  itemlist->push_front(new LinkedItem("Teppich"));
+  item = ostore_.insert(new Item("Teppich"));
+  itemlist->push_front(item);
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 5, "linked list size is invalid");
 

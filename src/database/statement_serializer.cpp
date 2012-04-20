@@ -53,7 +53,7 @@ void statement_serializer::read(statement_impl *stmt, object *o)
   o->read_from(this);
 }
 
-void statement_serializer::read_char(const char *id, char &x)
+void statement_serializer::read(const char *id, char &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -63,7 +63,7 @@ void statement_serializer::read_char(const char *id, char &x)
   x = (char)stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_float(const char *id, float &x)
+void statement_serializer::read(const char *id, float &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -71,7 +71,7 @@ void statement_serializer::read_float(const char *id, float &x)
   x = (float)stmt_->column_double(column_++);
 }
 
-void statement_serializer::read_double(const char *id, double &x)
+void statement_serializer::read(const char *id, double &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -79,7 +79,7 @@ void statement_serializer::read_double(const char *id, double &x)
   x = stmt_->column_double(column_++);
 }
 
-void statement_serializer::read_short(const char *id, short &x)
+void statement_serializer::read(const char *id, short &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -87,7 +87,7 @@ void statement_serializer::read_short(const char *id, short &x)
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_int(const char *id, int &x)
+void statement_serializer::read(const char *id, int &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -95,7 +95,7 @@ void statement_serializer::read_int(const char *id, int &x)
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_long(const char *id, long &x)
+void statement_serializer::read(const char *id, long &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -103,7 +103,7 @@ void statement_serializer::read_long(const char *id, long &x)
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_unsigned_short(const char *id, unsigned short &x)
+void statement_serializer::read(const char *id, unsigned short &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -111,7 +111,7 @@ void statement_serializer::read_unsigned_short(const char *id, unsigned short &x
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_unsigned_int(const char *id, unsigned int &x)
+void statement_serializer::read(const char *id, unsigned int &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -119,7 +119,7 @@ void statement_serializer::read_unsigned_int(const char *id, unsigned int &x)
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_unsigned_long(const char *id, unsigned long &x)
+void statement_serializer::read(const char *id, unsigned long &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -127,7 +127,7 @@ void statement_serializer::read_unsigned_long(const char *id, unsigned long &x)
   x = stmt_->column_int(column_++);
 }
 
-void statement_serializer::read_bool(const char *id, bool &x)
+void statement_serializer::read(const char *id, bool &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -135,7 +135,7 @@ void statement_serializer::read_bool(const char *id, bool &x)
   x = stmt_->column_int(column_++) != 0;
 }
 
-void statement_serializer::read_charptr(const char *id, char* &x)
+void statement_serializer::read(const char *id, char* &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -150,7 +150,7 @@ void statement_serializer::read_charptr(const char *id, char* &x)
   x[len] = '\0';
 }
 
-void statement_serializer::read_string(const char *id, std::string &x)
+void statement_serializer::read(const char *id, std::string &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -158,7 +158,7 @@ void statement_serializer::read_string(const char *id, std::string &x)
   x = stmt_->column_text(column_++);
 }
 
-void statement_serializer::read_varchar(const char *id, varchar_base &x)
+void statement_serializer::read(const char *id, varchar_base &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -166,7 +166,7 @@ void statement_serializer::read_varchar(const char *id, varchar_base &x)
   x = stmt_->column_text(column_++);
 }
 
-void statement_serializer::read_object(const char *id, object_base_ptr &x)
+void statement_serializer::read(const char *id, object_base_ptr &x)
 {
   if (!valid_column(id, column_)) {
     return;
@@ -181,72 +181,72 @@ bool statement_serializer::valid_column(const char *id, int i) const
   return strcmp(name, id) == 0;
 }
 
-void statement_serializer::write_char(const char*, char x)
+void statement_serializer::write(const char*, char x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_float(const char*, float x)
+void statement_serializer::write(const char*, float x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_double(const char*, double x)
+void statement_serializer::write(const char*, double x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_short(const char*, short x)
+void statement_serializer::write(const char*, short x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_int(const char*, int x)
+void statement_serializer::write(const char*, int x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_long(const char*, long x)
+void statement_serializer::write(const char*, long x)
 {
   stmt_->bind(++column_, (int)x);
 }
 
-void statement_serializer::write_unsigned_short(const char*, unsigned short x)
+void statement_serializer::write(const char*, unsigned short x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_unsigned_int(const char*, unsigned int x)
+void statement_serializer::write(const char*, unsigned int x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_unsigned_long(const char*, unsigned long x)
+void statement_serializer::write(const char*, unsigned long x)
 {
   stmt_->bind(++column_, (unsigned int)x);
 }
 
-void statement_serializer::write_bool(const char*, bool x)
+void statement_serializer::write(const char*, bool x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_charptr(const char*, const char *x)
+void statement_serializer::write(const char*, const char *x)
 {
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write_string(const char*, const std::string &x)
+void statement_serializer::write(const char*, const std::string &x)
 {
   stmt_->bind(++column_, x.c_str());
 }
 
-void statement_serializer::write_varchar(const char*, const varchar_base &x)
+void statement_serializer::write(const char*, const varchar_base &x)
 {
   stmt_->bind(++column_, x.c_str());
 }
 
-void statement_serializer::write_object(const char*, const object_base_ptr &x)
+void statement_serializer::write(const char*, const object_base_ptr &x)
 {
   if (x.ptr()) {
     stmt_->bind(++column_, (int)x.id());

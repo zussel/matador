@@ -297,7 +297,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_char(const char *id, char x)
+	virtual void write(const char *id, char x)
   {
     detail::retriever<char, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -311,7 +311,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_float(const char *id, float x)
+	virtual void write(const char *id, float x)
   {
     detail::retriever<float, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -325,7 +325,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_double(const char *id, double x)
+	virtual void write(const char *id, double x)
   {
     detail::retriever<double, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -339,7 +339,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_short(const char *id, short x)
+	virtual void write(const char *id, short x)
   {
     detail::retriever<int, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -353,7 +353,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_int(const char *id, int x)
+	virtual void write(const char *id, int x)
   {
     detail::retriever<int, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -367,7 +367,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_long(const char *id, long x)
+	virtual void write(const char *id, long x)
   {
     detail::retriever<long, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -381,7 +381,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_unsigned_short(const char *id, unsigned short x)
+	virtual void write(const char *id, unsigned short x)
   {
     detail::retriever<unsigned short, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -395,7 +395,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-  virtual void write_unsigned_int(const char *id, unsigned int x)
+  virtual void write(const char *id, unsigned int x)
   {
     detail::retriever<unsigned int, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -409,7 +409,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_unsigned_long(const char *id, unsigned long x)
+	virtual void write(const char *id, unsigned long x)
   {
     detail::retriever<unsigned long, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -423,7 +423,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_bool(const char *id, bool x)
+	virtual void write(const char *id, bool x)
   {
     detail::retriever<bool, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -437,7 +437,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_charptr(const char *id, const char* x)
+	virtual void write(const char *id, const char* x)
   {
     detail::retriever<const char*, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -451,7 +451,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_string(const char *id, const std::string &x)
+	virtual void write(const char *id, const std::string &x)
   {
     detail::retriever<const std::string&, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -465,7 +465,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_varchar(const char *id, const varchar_base &x)
+	virtual void write(const char *id, const varchar_base &x)
   {
     detail::retriever<const varchar_base&, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
@@ -479,14 +479,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to the value.
    */
-	virtual void write_object(const char *id, const object_base_ptr &x)
+	virtual void write(const char *id, const object_base_ptr &x)
   {
     detail::retriever<const object_base_ptr&, T> r;
     r.retrieve(id, id_.c_str(), succeeded_, x, value_);
   }
 
   /**
-   * @fn virtual void read_char(const char *id, char &x)
+   * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.
    * 
    * Read a single character from the atomizer
@@ -495,14 +495,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_char(const char *id, char &x)
+  virtual void read(const char *id, char &x)
   {
     static detail::updater<T, char> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_float(const char *id, float &x)
+   * @fn virtual void read(const char *id, float &x)
    * @brief Read a float from the atomizer.
    * 
    * Read a float from the atomizer
@@ -511,14 +511,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_float(const char *id, float &x)
+  virtual void read(const char *id, float &x)
   {
     static detail::updater<T, float> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_double(const char *id, double &x)
+   * @fn virtual void read(const char *id, double &x)
    * @brief Read a double from the atomizer.
    * 
    * Read a double from the atomizer
@@ -527,7 +527,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_double(const char *id, double &x)
+  virtual void read(const char *id, double &x)
   {
     static detail::updater<T, double> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -542,7 +542,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_short(const char *id, short &x)
+	virtual void read(const char *id, short &x)
   {
     static detail::updater<T, short> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -557,7 +557,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_int(const char *id, int &x)
+	virtual void read(const char *id, int &x)
   {
     static detail::updater<T, int> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -572,7 +572,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_long(const char *id, long &x)
+	virtual void read(const char *id, long &x)
   {
     static detail::updater<T, long> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -587,7 +587,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_short(const char *id, unsigned short &x)
+	virtual void read(const char *id, unsigned short &x)
   {
     static detail::updater<T, unsigned short> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -602,7 +602,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_int(const char *id, unsigned int &x)
+	virtual void read(const char *id, unsigned int &x)
   {
     static detail::updater<T, unsigned int> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -617,14 +617,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_long(const char *id, unsigned long &x)
+	virtual void read(const char *id, unsigned long &x)
   {
     static detail::updater<T, unsigned long> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_bool(const char *id, bool &x)
+   * @fn virtual void read(const char *id, bool &x)
    * @brief Read a bool from the atomizer.
    * 
    * Read a bool from the atomizer
@@ -633,14 +633,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_bool(const char *id, bool &x)
+	virtual void read(const char *id, bool &x)
   {
     static detail::updater<T, bool> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_charptr(const char *id, char *&x)
+   * @fn virtual void read(const char *id, char *&x)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -649,14 +649,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_charptr(const char *id, char* &x)
+	virtual void read(const char *id, char* &x)
   {
     static detail::updater<T, char*> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_string(const char *id, std::string &x)
+   * @fn virtual void read(const char *id, std::string &x)
    * @brief Read a std::string from the atomizer.
    * 
    * Read a std::string from the atomizer
@@ -665,7 +665,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_string(const char *id, std::string &x)
+	virtual void read(const char *id, std::string &x)
   {
     static detail::updater<T, std::string> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
@@ -680,14 +680,14 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_varchar(const char *id, varchar_base &x)
+	virtual void read(const char *id, varchar_base &x)
   {
     static detail::updater<T, varchar_base> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);
   }
 
   /**
-   * @fn virtual void read_object(const char *id, object_base_ptr &x)
+   * @fn virtual void read(const char *id, object_base_ptr &x)
    * @brief Read an object_base_ptr from the atomizer.
    * 
    * Read an object_base_ptr from the atomizer
@@ -696,7 +696,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object(const char *id, object_base_ptr &x)
+	virtual void read(const char *id, object_base_ptr &x)
   {
     static detail::updater<T, object_base_ptr> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);

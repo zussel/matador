@@ -58,7 +58,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_char(const char *id, char &x);
+  virtual void read(const char *id, char &x);
 
   /**
    * @brief Read a float from the atomizer.
@@ -69,7 +69,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_float(const char *id, float &x);
+  virtual void read(const char *id, float &x);
 
   /**
    * @brief Read a double from the atomizer.
@@ -80,7 +80,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_double(const char *id, double &x);
+  virtual void read(const char *id, double &x);
 
   /**
    * @brief Read a short from the atomizer.
@@ -91,7 +91,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_short(const char *id, short &x);
+	virtual void read(const char *id, short &x);
 
   /**
    * @brief Read an integer from the atomizer.
@@ -102,7 +102,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_int(const char *id, int &x);
+	virtual void read(const char *id, int &x);
 
   /**
    * @brief Read a long from the atomizer.
@@ -113,7 +113,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_long(const char *id, long &x);
+	virtual void read(const char *id, long &x);
 
   /**
    * @brief Read an unsigned short from the atomizer.
@@ -124,7 +124,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_short(const char *id, unsigned short &x);
+	virtual void read(const char *id, unsigned short &x);
 
   /**
    * @brief Read an unsigned integer from the atomizer.
@@ -135,7 +135,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_int(const char *id, unsigned int &x);
+	virtual void read(const char *id, unsigned int &x);
 
   /**
    * @brief Read an unsigned long from the atomizer.
@@ -146,7 +146,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_unsigned_long(const char *id, unsigned long &x);
+	virtual void read(const char *id, unsigned long &x);
 
   /**
    * @brief Read a bool from the atomizer.
@@ -157,7 +157,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_bool(const char *id, bool &x);
+	virtual void read(const char *id, bool &x);
 
   /**
    * @brief Read a const char pointer from the atomizer.
@@ -168,7 +168,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_charptr(const char *id, char* &x);
+	virtual void read(const char *id, char* &x);
 
   /**
    * @brief Read a std::string from the atomizer.
@@ -179,7 +179,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_string(const char *id, std::string &x);
+	virtual void read(const char *id, std::string &x);
 
   /**
    * @brief Read a varchar from the atomizer.
@@ -190,7 +190,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_varchar(const char *id, varchar_base &x);
+  virtual void read(const char *id, varchar_base &x);
     
   /**
    * @brief Read an object_base_ptr from the atomizer.
@@ -201,7 +201,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object(const char *id, object_base_ptr &x);
+	virtual void read(const char *id, object_base_ptr &x);
 
   /**
    * @brief Write a single character to the binder.
@@ -212,7 +212,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_char(const char *id, char x);
+	virtual void write(const char *id, char x);
 
   /**
    * @brief Write a float to the binder.
@@ -223,7 +223,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_float(const char *id, float x);
+	virtual void write(const char *id, float x);
 
   /**
    * @brief Write a double to the binder.
@@ -234,7 +234,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_double(const char *id, double x);
+	virtual void write(const char *id, double x);
 
   /**
    * @brief Write a short to the binder.
@@ -245,7 +245,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_short(const char *id, short x);
+	virtual void write(const char *id, short x);
 
   /**
    * @brief Write a int to the binder.
@@ -256,7 +256,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_int(const char *id, int x);
+	virtual void write(const char *id, int x);
 
   /**
    * @brief Write a long to the binder.
@@ -267,7 +267,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_long(const char *id, long x);
+	virtual void write(const char *id, long x);
 
   /**
    * @brief Write an unsigned short to the binder.
@@ -278,7 +278,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_unsigned_short(const char *id, unsigned short x);
+	virtual void write(const char *id, unsigned short x);
 
   /**
    * @brief Write an unsigned int to the binder.
@@ -289,7 +289,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_unsigned_int(const char *id, unsigned int x);
+	virtual void write(const char *id, unsigned int x);
 
   /**
    * @brief Write an unsigned long to the binder.
@@ -300,7 +300,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_unsigned_long(const char *id, unsigned long x);
+	virtual void write(const char *id, unsigned long x);
 
   /**
    * @brief Write a bool to the binder.
@@ -311,7 +311,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_bool(const char *id, bool x);
+	virtual void write(const char *id, bool x);
 
   /**
    * @brief Write a const character string to the binder.
@@ -322,7 +322,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_charptr(const char *id, const char *x);
+	virtual void write(const char *id, const char *x);
 
   /**
    * @brief Write a std::string to the binder.
@@ -333,7 +333,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_string(const char *id, const std::string &x);
+	virtual void write(const char *id, const std::string &x);
 
   /**
    * @brief Write a varchar_base to the binder.
@@ -344,7 +344,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void write_varchar(const char *id, const varchar_base &x);
+  virtual void write(const char *id, const varchar_base &x);
 
   /**
    * @brief Write an object_base_ptr to the binder.
@@ -356,7 +356,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void write_object(const char *id, const object_base_ptr &x);
+	virtual void write(const char *id, const object_base_ptr &x);
 
 private:
   bool valid_column(const char *id, int i) const;

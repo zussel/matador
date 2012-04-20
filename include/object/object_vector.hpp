@@ -64,16 +64,16 @@ public:
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read_object("container", container_);
-    oa->read_unsigned_int("item_index", index_);
-//    read(oa, "value", value_);
+    oa->read("container", container_);
+    oa->read("item_index", index_);
+    oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write_object("container", container_);
-    oa->write_unsigned_int("item_index", index_);
-//    write(oa, "value", value_);
+    oa->write("container", container_);
+    oa->write("item_index", index_);
+    oa->write("value", value_);
   }
 
   container_ref container() const

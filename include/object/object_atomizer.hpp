@@ -53,7 +53,7 @@ public:
 	virtual ~object_atomizer() {}
 
   /**
-   * @fn virtual void write_char(const char *id, char x)
+   * @fn virtual void write(const char *id, char x)
    * @brief Write a single character to the atomizer.
    * 
    * Write a single character to the atomizer
@@ -62,10 +62,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_char(const char*, char) {}
+	virtual void write(const char*, char) {}
 
   /**
-   * @fn virtual void write_float(const char *id, float x)
+   * @fn virtual void write(const char *id, float x)
    * @brief Write a float to the atomizer.
    * 
    * Write a float to the atomizer
@@ -74,10 +74,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_float(const char*, float) {}
+	virtual void write(const char*, float) {}
 
   /**
-   * @fn virtual void write_double(const char *id, double x)
+   * @fn virtual void write(const char *id, double x)
    * @brief Write a double to the atomizer.
    * 
    * Write a double to the atomizer
@@ -86,10 +86,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_double(const char*, double) {}
+	virtual void write(const char*, double) {}
 
   /**
-   * @fn virtual void write_short(const char *id, short x)
+   * @fn virtual void write(const char *id, short x)
    * @brief Write a short to the atomizer.
    * 
    * Write a short to the atomizer
@@ -98,10 +98,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write_short(const char*, short) {}
+  virtual void write(const char*, short) {}
 
   /**
-   * @fn virtual void write_int(const char *id, int x)
+   * @fn virtual void write(const char *id, int x)
    * @brief Write a int to the atomizer.
    * 
    * Write a int to the atomizer
@@ -110,10 +110,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_int(const char*, int) {}
+	virtual void write(const char*, int) {}
 
   /**
-   * @fn virtual void write_long(const char *id, long x)
+   * @fn virtual void write(const char *id, long x)
    * @brief Write a long to the atomizer.
    * 
    * Write a long to the atomizer
@@ -122,10 +122,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_long(const char*, long) {}
+	virtual void write(const char*, long) {}
 
   /**
-   * @fn virtual void write_unsigned_short(const char *id, unsigned short x)
+   * @fn virtual void write(const char *id, unsigned short x)
    * @brief Write a unsigned short to the atomizer.
    * 
    * Write a unsigned short to the atomizer
@@ -134,10 +134,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write_unsigned_short(const char*, unsigned short) {}
+  virtual void write(const char*, unsigned short) {}
 
   /**
-   * @fn virtual void write_unsigned_int(const char *id, unsigned int x)
+   * @fn virtual void write(const char *id, unsigned int x)
    * @brief Write a unsigned to the atomizer.
    * 
    * Write a unsigned int to the atomizer
@@ -146,10 +146,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write_unsigned_int(const char*, unsigned int) {}
+  virtual void write(const char*, unsigned int) {}
 
   /**
-   * @fn virtual void write_unsigned_long(const char *id, unsigned long x)
+   * @fn virtual void write(const char *id, unsigned long x)
    * @brief Write a unsigned long to the atomizer.
    * 
    * Write a unsigned long to the atomizer
@@ -158,10 +158,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write_unsigned_long(const char*, unsigned long) {}
+  virtual void write(const char*, unsigned long) {}
 
   /**
-   * @fn virtual void write_bool(const char *id, bool x)
+   * @fn virtual void write(const char *id, bool x)
    * @brief Write a bool to the atomizer.
    * 
    * Write a bool to the atomizer
@@ -170,10 +170,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_bool(const char*, bool) {}
+	virtual void write(const char*, bool) {}
 
   /**
-   * @fn virtual void write_charptr(const char *id, const char *x)
+   * @fn virtual void write(const char *id, const char *x)
    * @brief Write a const char pointer to the atomizer.
    * 
    * Write a const char pointer to the atomizer
@@ -182,10 +182,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_charptr(const char*, const char*) {}
+	virtual void write(const char*, const char*) {}
 
   /**
-   * @fn virtual void write_string(const char *id, const std::string &x)
+   * @fn virtual void write(const char *id, const std::string &x)
    * @brief Write a std::string to the atomizer.
    * 
    * Write a std::string to the atomizer
@@ -194,10 +194,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_string(const char*, const std::string&) {}
+	virtual void write(const char*, const std::string&) {}
 
   /**
-   * @fn virtual void write_varchar(const char *id, const varchar_base &x)
+   * @fn virtual void write(const char *id, const varchar_base &x)
    * @brief Write a std::string to the atomizer.
    * 
    * Write a varchar to the atomizer
@@ -206,10 +206,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_varchar(const char*, const varchar_base&) {}
+	virtual void write(const char*, const varchar_base&) {}
 
   /**
-   * @fn virtual void write_object(const char *id, const object_base_ptr &x)
+   * @fn virtual void write(const char *id, const object_base_ptr &x)
    * @brief Write a object_base_ptr to the atomizer.
    * 
    * Write a object_base_ptr to the atomizer
@@ -218,10 +218,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write_object(const char*, const object_base_ptr&) {}
+	virtual void write(const char*, const object_base_ptr&) {}
 
   /**
-   * @fn virtual void write_object_container(const char *id, const object_container &x)
+   * @fn virtual void write(const char *id, const object_container &x)
    * @brief Write a object_container to the atomizer.
    * 
    * Write a object_container to the atomizer
@@ -230,10 +230,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write_object_container(const char*, const object_container&) {}
+  virtual void write(const char*, const object_container&) {}
 
   /**
-   * @fn virtual void read_char(const char *id, char &x)
+   * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.
    * 
    * Read a single character from the atomizer
@@ -242,10 +242,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_char(const char*, char&) {}
+  virtual void read(const char*, char&) {}
 
   /**
-   * @fn virtual void read_float(const char *id, float &x)
+   * @fn virtual void read(const char *id, float &x)
    * @brief Read a float from the atomizer.
    * 
    * Read a float from the atomizer
@@ -254,10 +254,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_float(const char*, float&) {}
+  virtual void read(const char*, float&) {}
 
   /**
-   * @fn virtual void read_double(const char *id, double &x)
+   * @fn virtual void read(const char *id, double &x)
    * @brief Read a double from the atomizer.
    * 
    * Read a double from the atomizer
@@ -266,10 +266,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_double(const char*, double&) {}
+  virtual void read(const char*, double&) {}
 
   /**
-   * @fn virtual void read_short(const char *id, short &x)
+   * @fn virtual void read(const char *id, short &x)
    * @brief Read an short from the atomizer.
    * 
    * Read an short from the atomizer
@@ -278,10 +278,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_short(const char*, short&) {}
+  virtual void read(const char*, short&) {}
 
   /**
-   * @fn virtual void read_int(const char *id, int &x)
+   * @fn virtual void read(const char *id, int &x)
    * @brief Read an integer from the atomizer.
    * 
    * Read an integer from the atomizer
@@ -290,10 +290,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_int(const char*, int&) {}
+	virtual void read(const char*, int&) {}
 
   /**
-   * @fn virtual void read_long(const char *id, long &x)
+   * @fn virtual void read(const char *id, long &x)
    * @brief Read a long from the atomizer.
    * 
    * Read a long from the atomizer
@@ -302,10 +302,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_long(const char*, long&) {}
+	virtual void read(const char*, long&) {}
 
   /**
-   * @fn virtual void read_unsigned_short(const char *id, unsigned short &x)
+   * @fn virtual void read(const char *id, unsigned short &x)
    * @brief Read an unsigned short from the atomizer.
    * 
    * Read a unsigned short from the atomizer
@@ -314,10 +314,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_unsigned_short(const char*, unsigned short&) {}
+  virtual void read(const char*, unsigned short&) {}
 
   /**
-   * @fn virtual void read_unsigned_int(const char *id, unsigned int &x)
+   * @fn virtual void read(const char *id, unsigned int &x)
    * @brief Read an unsigned integer from the atomizer.
    * 
    * Read a unsigned integer from the atomizer
@@ -326,10 +326,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_unsigned_int(const char*, unsigned int&) {}
+  virtual void read(const char*, unsigned int&) {}
 
   /**
-   * @fn virtual void read_unsigned_long(const char *id, unsigned long &x)
+   * @fn virtual void read(const char *id, unsigned long &x)
    * @brief Read an unsigned long from the atomizer.
    * 
    * Read a unsigned long from the atomizer
@@ -338,10 +338,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_unsigned_long(const char*, unsigned long&) {}
+  virtual void read(const char*, unsigned long&) {}
 
   /**
-   * @fn virtual void read_bool(const char *id, bool &x)
+   * @fn virtual void read(const char *id, bool &x)
    * @brief Read a bool from the atomizer.
    * 
    * Read a bool from the atomizer
@@ -350,10 +350,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_bool(const char*, bool&) {}
+	virtual void read(const char*, bool&) {}
 
   /**
-   * @fn virtual void read_charptr(const char *id, char *&x)
+   * @fn virtual void read(const char *id, char *&x)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -362,10 +362,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_charptr(const char*, char*&) {}
+	virtual void read(const char*, char*&) {}
 
   /**
-   * @fn virtual void read_string(const char *id, std::string &x)
+   * @fn virtual void read(const char *id, std::string &x)
    * @brief Read a std::string from the atomizer.
    * 
    * Read a std::string from the atomizer
@@ -374,10 +374,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_string(const char*, std::string&) {}
+	virtual void read(const char*, std::string&) {}
 
   /**
-   * @fn virtual void read_varchar(const char *id, varchar_base &x)
+   * @fn virtual void read(const char *id, varchar_base &x)
    * @brief Read a varchar from the atomizer.
    * 
    * Read a varchar from the atomizer
@@ -386,10 +386,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_varchar(const char*, varchar_base&) {}
+	virtual void read(const char*, varchar_base&) {}
 
   /**
-   * @fn virtual void read_object(const char *id, object_base_ptr &x)
+   * @fn virtual void read(const char *id, object_base_ptr &x)
    * @brief Read an object_base_ptr from the atomizer.
    * 
    * Read an object_base_ptr from the atomizer
@@ -398,10 +398,10 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read_object(const char*, object_base_ptr&) {}
+	virtual void read(const char*, object_base_ptr&) {}
 
   /**
-   * @fn virtual void read_object_container(const char *id, object_container &x)
+   * @fn virtual void read(const char *id, object_container &x)
    * @brief Read an object_container from the atomizer.
    * 
    * Read an object_container from the atomizer
@@ -410,7 +410,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read_object_container(const char*, object_container&) {}
+  virtual void read(const char*, object_container&) {}
 };
 
 }

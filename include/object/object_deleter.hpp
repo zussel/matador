@@ -111,8 +111,8 @@ public:
   iterator end();
 
 private:
-  virtual void read_object(const char*, object_base_ptr &x);
-  virtual void read_object_container(const char*, object_container &x);
+  virtual void read(const char*, object_base_ptr &x);
+  virtual void read(const char*, object_container &x);
 
   void check_object(object *o, bool is_ref);
   void check_object_list_node(object *node);

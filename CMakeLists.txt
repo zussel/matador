@@ -48,10 +48,6 @@ SET(OBJECT_SOURCES
   src/object/object_deleter.cpp
   src/object/object_ptr.cpp
   src/object/object_store.cpp
-  src/object/object_list.cpp
-  src/object/object_vector.cpp
-  src/object/object_container.cpp
-  src/object/linked_object_list.cpp
   src/object/object_value.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp

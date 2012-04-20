@@ -47,9 +47,11 @@ public:
    * 
    * The constructor creates an empty object_container.
    */
-  object_container();
+  object_container()
+    : ostore_(0)
+  {}
 
-	virtual ~object_container();
+  virtual ~object_container() {}
 
   /**
    * Tell wether the list is empty or not.
@@ -82,7 +84,10 @@ public:
    * 
    * @return The containing object_store.
    */
-  object_store* ostore() const;
+  object_store* ostore() const
+  {
+    return ostore_;
+  }
 
 protected:
   friend class object_store;
@@ -105,7 +110,10 @@ protected:
    *
    * @param o The object containig list
    */
-  void mark_modified(object *o);
+  void mark_modified(object *o)
+  {
+    o->mark_modified();
+  }
 
   /**
    * @brief Executes the given function object for all elements.
@@ -120,13 +128,19 @@ protected:
    * Provides an interface which is called
    * when inserting the list into the object_store.
    */
-  virtual void install(object_store *ostore);
+  virtual void install(object_store *ostore)
+  {
+    ostore_ = ostore;
+  }
 
   /**
    * Provides an interface which is called
    * when removing the list from the object_store.
    */
-  virtual void uninstall();  
+  virtual void uninstall()
+  {
+    ostore_ = 0;
+  }
   
   virtual void parent(object *p) = 0;
 

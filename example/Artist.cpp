@@ -17,13 +17,13 @@ Artist::~Artist()
 void Artist::read_from(object_atomizer *reader)
 {
 	object::read_from(reader);
-  reader->read_string("name", name_);
+  reader->read("name", name_);
 }
 
 void Artist::write_to(object_atomizer *writer) const
 {
 	object::write_to(writer);
-  writer->write_string("name", name_);
+  writer->write("name", name_);
 }
 
 std::string Artist::name() const

@@ -25,34 +25,34 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     oos::object::read_from(reader);
-    reader->read_char("val_char", char_);
-    reader->read_float("val_float", float_);
-    reader->read_double("val_double", double_);
-    reader->read_short("val_short", short_);
-    reader->read_int("val_int", int_);
-    reader->read_long("val_long", long_);
-    reader->read_unsigned_short("val_unsigned_short", unsigned_short_);
-    reader->read_unsigned_int("val_unsigned_int", unsigned_int_);
-    reader->read_unsigned_long("val_unsigned_long", unsigned_long_);
-    reader->read_bool("val_bool", bool_);
-    reader->read_string("val_string", string_);
-    reader->read_varchar("val_varchar", varchar_);
+    reader->read("val_char", char_);
+    reader->read("val_float", float_);
+    reader->read("val_double", double_);
+    reader->read("val_short", short_);
+    reader->read("val_int", int_);
+    reader->read("val_long", long_);
+    reader->read("val_unsigned_short", unsigned_short_);
+    reader->read("val_unsigned_int", unsigned_int_);
+    reader->read("val_unsigned_long", unsigned_long_);
+    reader->read("val_bool", bool_);
+    reader->read("val_string", string_);
+    reader->read("val_varchar", varchar_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     oos::object::write_to(writer);
-    writer->write_char("val_char", char_);
-    writer->write_float("val_float", float_);
-    writer->write_double("val_double", double_);
-    writer->write_short("val_short", short_);
-    writer->write_int("val_int", int_);
-    writer->write_long("val_long", long_);
-    writer->write_unsigned_short("val_unsigned_short", unsigned_short_);
-    writer->write_unsigned_int("val_unsigned_int", unsigned_int_);
-    writer->write_unsigned_long("val_unsigned_long", unsigned_long_);
-    writer->write_bool("val_bool", bool_);
-    writer->write_string("val_string", string_);
-    writer->write_varchar("val_varchar", varchar_);
+    writer->write("val_char", char_);
+    writer->write("val_float", float_);
+    writer->write("val_double", double_);
+    writer->write("val_short", short_);
+    writer->write("val_int", int_);
+    writer->write("val_long", long_);
+    writer->write("val_unsigned_short", unsigned_short_);
+    writer->write("val_unsigned_int", unsigned_int_);
+    writer->write("val_unsigned_long", unsigned_long_);
+    writer->write("val_bool", bool_);
+    writer->write("val_string", string_);
+    writer->write("val_varchar", varchar_);
   }
 
   void set_char(char x) { modify(char_, x); }
@@ -122,14 +122,14 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     Item::read_from(reader);
-    reader->read_object("ref", ref_);
-    reader->read_object("ptr", ptr_);
+    reader->read("ref", ref_);
+    reader->read("ptr", ptr_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     Item::write_to(writer);
-    writer->write_object("ref", ref_);
-    writer->write_object("ptr", ptr_);
+    writer->write("ref", ref_);
+    writer->write("ptr", ptr_);
   }
 
   void ref(const value_ref &r) { modify(ref_, r); }
@@ -150,6 +150,7 @@ private:
   value_ptr ptr_;
 };
 
+/*
 template < class C >
 class ContainerItem : public Item
 {
@@ -166,14 +167,14 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     Item::read_from(reader);
-    reader->read_int("item_index", index_);
-    reader->read_object("container", container_);
+    reader->read("item_index", index_);
+    reader->read("container", container_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     Item::write_to(writer);
-    writer->write_int("item_index", index_);
-    writer->write_object("container", container_);
+    writer->write("item_index", index_);
+    writer->write("container", container_);
   }
   
   int index() const { return index_; }
@@ -186,13 +187,15 @@ private:
   int index_;
   container_ref container_;
 };
+*/
 
 class ItemPtrList : public oos::object
 {
 public:
-  typedef Item item_type;
   typedef oos::object_ptr<Item> value_type;
   typedef oos::object_list<ItemPtrList, value_type> item_list_t;
+  typedef item_list_t::item_type item_type;
+  typedef item_list_t::item_type item_ptr;
   typedef item_list_t::size_type size_type;
   typedef ItemPtrList self;
   typedef oos::object_ref<self> self_ref;
@@ -208,12 +211,12 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_container("item_list", item_list_);
+    reader->read("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_container("item_list", item_list_);
+    writer->write("item_list", item_list_);
   }
 
   void push_front(const value_type &i)
@@ -246,6 +249,8 @@ class ItemRefList : public oos::object
 public:
   typedef oos::object_ref<Item> value_type;
   typedef oos::object_list<ItemRefList, value_type> item_list_t;
+  typedef item_list_t::item_type item_type;
+  typedef item_list_t::item_type item_ptr;
   typedef item_list_t::size_type size_type;
   typedef ItemRefList self;
   typedef oos::object_ref<self> self_ref;
@@ -261,12 +266,12 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_container("item_list", item_list_);
+    reader->read("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_container("item_list", item_list_);
+    writer->write("item_list", item_list_);
   }
   
   void push_front(const value_type &i)
@@ -306,14 +311,14 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     linked_object_list_node::read_from(reader);
-    reader->read_string("name", name_);
-    reader->read_object("itemlist", item_list_);
+    reader->read("name", name_);
+    reader->read("itemlist", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     linked_object_list_node::write_to(writer);
-    writer->write_string("name", name_);
-    writer->write_object("itemlist", item_list_);
+    writer->write("name", name_);
+    writer->write("itemlist", item_list_);
   }
   
   std::string name() const { return name_; }
@@ -337,13 +342,14 @@ private:
 */
 class LinkedItemList : public oos::object
 {
+public:
   typedef oos::object_ptr<Item> value_type;
   typedef oos::linked_object_list<LinkedItemList, value_type> item_list_t;
   typedef LinkedItemList self;
   typedef oos::object_ref<self> self_ref;
-
-public:
   typedef item_list_t::iterator iterator;
+  typedef item_list_t::item_type item_type;
+  typedef item_list_t::item_ptr item_ptr;
   typedef item_list_t::const_iterator const_iterator;
   typedef item_list_t::size_type size_type;
 
@@ -356,12 +362,12 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_container("item_list", item_list_);
+    reader->read("item_list", item_list_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_container("item_list", item_list_);
+    writer->write("item_list", item_list_);
   }
   
   void push_front(const value_type &i)
@@ -398,6 +404,8 @@ class ItemPtrVector : public oos::object
 public:
   typedef oos::object_ptr<Item> value_type;
   typedef oos::object_vector<ItemPtrVector, value_type> item_vector_t;
+  typedef item_vector_t::item_type item_type;
+  typedef item_vector_t::item_ptr item_ptr;
   typedef item_vector_t::size_type size_type;
   typedef ItemPtrVector self;
   typedef oos::object_ref<self> self_ref;
@@ -413,12 +421,12 @@ public:
 	void read_from(oos::object_atomizer *reader)
   {
     object::read_from(reader);
-    reader->read_object_container("item_vector", item_vector_);
+    reader->read("item_vector", item_vector_);
   }
 	void write_to(oos::object_atomizer *writer) const
   {
     object::write_to(writer);
-    writer->write_object_container("item_vector", item_vector_);
+    writer->write("item_vector", item_vector_);
   }
 
   void push_back(const value_type &i)
@@ -463,14 +471,14 @@ public:
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read_string("title", title_);
-    oa->read_string("isbn", isbn_);
+    oa->read("title", title_);
+    oa->read("isbn", isbn_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write_string("title", title_);
-    oa->write_string("isbn", isbn_);
+    oa->write("title", title_);
+    oa->write("isbn", isbn_);
   }
   
   std::string title() const { return title_; }
@@ -495,12 +503,12 @@ public:
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read_object_container("book_list", book_list_);
+    oa->read("book_list", book_list_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write_object_container("book_list", book_list_);
+    oa->write("book_list", book_list_);
   }
 
   void add(const oos::object_ref<book> &b)

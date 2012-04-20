@@ -29,7 +29,7 @@ object_creator::object_creator(object_store &ostore, bool notify)
 
 object_creator::~object_creator() {}
 
-void object_creator::read_object(const char*, object_base_ptr &x)
+void object_creator::read(const char*, object_base_ptr &x)
 {
   // mark object pointer as internal
   x.is_internal_ = true;
@@ -49,7 +49,7 @@ void object_creator::read_object(const char*, object_base_ptr &x)
   }
 }
 
-void object_creator::read_object_container(const char*, object_container &x)
+void object_creator::read(const char*, object_container &x)
 {
   // set parent object (if available)
   if (!object_stack_.empty()) {

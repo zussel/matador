@@ -57,8 +57,8 @@ public:
   virtual ~object_creator();
 
 private:
-  virtual void read_object(const char*, object_base_ptr &x);
-  virtual void read_object_container(const char*, object_container &x);
+  virtual void read(const char*, object_base_ptr &x);
+  virtual void read(const char*, object_container &x);
 
 private:
   std::stack<object*> object_stack_;

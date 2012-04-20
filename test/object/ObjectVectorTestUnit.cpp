@@ -21,8 +21,9 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 
 void ObjectVectorTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<ContainerItem<ItemPtrVector> >, "ITEM_PTR");
-  ostore_.insert_prototype(new object_producer<ItemPtrVector>, "ITEM_PTR_VECTOR");
+  ostore_.insert_prototype<Item>("ITEM");
+  ostore_.insert_prototype<ItemPtrVector>("ITEM_PTR_VECTOR");
+  ostore_.insert_prototype<ItemPtrVector::item_type>("ITEM_PTR");
 }
 
 void ObjectVectorTestUnit::finalize()
@@ -36,7 +37,7 @@ void ObjectVectorTestUnit::test_ref_vector()
 void ObjectVectorTestUnit::test_ptr_vector()
 {
   typedef object_ptr<ItemPtrVector> itemvector_ptr;
-  typedef object_ptr<ItemPtrVector::value_type> item_ptr;
+  typedef ItemPtrVector::value_type item_ptr;
 
   itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
 

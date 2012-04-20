@@ -77,12 +77,12 @@ protected:
   void first(bool f) { first_ = f; }
 
 private:
-  virtual void write_char(const char *id, char x) { write_field(id, types_.type_string(x)); }
-	virtual void write_float(const char *id, float x) { write_field(id, types_.type_string(x)); }
-	virtual void write_double(const char *id, double x) { write_field(id, types_.type_string(x)); }
-	virtual void write_short(const char *id, short x) { write_field(id, types_.type_string(x)); }
-	virtual void write_int(const char *id, int x) { write_field(id, types_.type_string(x)); }
-	virtual void write_long(const char *id, long x)
+  virtual void write(const char *id, char x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, float x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, double x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, short x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, int x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, long x)
   {
     if (strcmp(id, "id") == 0) {
       write_pk_field(id, types_.type_string(x));
@@ -90,14 +90,14 @@ private:
       write_field(id, types_.type_string(x));
     }
   }
-	virtual void write_unsigned_short(const char *id, unsigned short x) { write_field(id, types_.type_string(x)); }
-	virtual void write_unsigned_int(const char *id, unsigned int x) { write_field(id, types_.type_string(x)); }
-	virtual void write_unsigned_long(const char *id, unsigned long x) { write_field(id, types_.type_string(x)); }
-	virtual void write_bool(const char *id, bool x) { write_field(id, types_.type_string(x)); }
-	virtual void write_charptr(const char *id, const char *x) { write_field(id, types_.type_string(x)); }
-	virtual void write_string(const char *id, const std::string &x) { write_field(id, types_.type_string(x)); }
-	virtual void write_varchar(const char *id, const varchar_base &x) { write_field(id, types_.type_string(x)); }
-	virtual void write_object(const char *id, const object_base_ptr &x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, unsigned short x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, unsigned int x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, unsigned long x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, bool x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, const char *x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, const std::string &x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, const varchar_base &x) { write_field(id, types_.type_string(x)); }
+	virtual void write(const char *id, const object_base_ptr &x) { write_field(id, types_.type_string(x)); }
 
 private:
   type_provider types_;

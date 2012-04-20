@@ -19,17 +19,17 @@ TrackAlbumRelation::~TrackAlbumRelation()
 void TrackAlbumRelation::read_from(oos::object_atomizer *oa)
 {
 	object::read_from(oa);
-  oa->read_int("track_index", track_index_);
-  oa->read_object("track", track_);
-  oa->read_object("album", album_);
+  oa->read("track_index", track_index_);
+  oa->read("track", track_);
+  oa->read("album", album_);
 }
 
 void TrackAlbumRelation::write_to(oos::object_atomizer *oa) const
 {
 	object::write_to(oa);
-  oa->write_int("track_index", track_index_);
-  oa->write_object("track", track_);
-  oa->write_object("album", album_);
+  oa->write("track_index", track_index_);
+  oa->write("track", track_);
+  oa->write("album", album_);
 }
 
 int TrackAlbumRelation::index() const

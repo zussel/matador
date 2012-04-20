@@ -28,19 +28,19 @@ Album::~Album()
 void Album::read_from(object_atomizer *reader)
 {
 	object::read_from(reader);
-	reader->read_string("name", name_);
-	reader->read_int("year", year_);
-  reader->read_object("artist", artist_);
-  reader->read_object_container("track_album_rel", track_album_vector_);
+	reader->read("name", name_);
+	reader->read("year", year_);
+  reader->read("artist", artist_);
+  reader->read("track_album_rel", track_album_vector_);
 }
 
 void Album::write_to(object_atomizer *writer) const
 {
 	object::write_to(writer);
-	writer->write_string("name", name_);
-	writer->write_int("year", year_);
-  writer->write_object("artist", artist_);
-  writer->write_object_container("track_album_rel", track_album_vector_);
+	writer->write("name", name_);
+	writer->write("year", year_);
+  writer->write("artist", artist_);
+  writer->write("track_album_rel", track_album_vector_);
 }
 
 void Album::name(const std::string &n)

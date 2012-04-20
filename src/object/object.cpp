@@ -34,12 +34,12 @@ object::~object()
 
 void object::read_from(object_atomizer *a)
 {
-	a->read_long("id", id_);
+	a->read("id", id_);
 }
 
 void object::write_to(object_atomizer *a) const
 {
-	a->write_long("id", id_);
+	a->write("id", id_);
 }
 
 const char* object::classname() const

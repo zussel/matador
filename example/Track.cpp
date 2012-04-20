@@ -20,17 +20,17 @@ Track::~Track()
 void Track::read_from(object_atomizer *reader)
 {
 	object::read_from(reader);
-  reader->read_string("title", title_);
-  reader->read_long("duration", duration_);
-  reader->read_object("artist", artist_);
+  reader->read("title", title_);
+  reader->read("duration", duration_);
+  reader->read("artist", artist_);
 }
 
 void Track::write_to(object_atomizer *writer) const
 {
 	object::write_to(writer);
-  writer->write_string("title", title_);
-  writer->write_long("duration", duration_);
-  writer->write_object("artist", artist_);
+  writer->write("title", title_);
+  writer->write("duration", duration_);
+  writer->write("artist", artist_);
 }
 
 void Track::title(const std::string &t)

@@ -58,14 +58,14 @@ public:
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read_object("container", container_);
-//    read(oa, "value", value_);
+    oa->read("container", container_);
+    oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write_object("container", container_);
-//    write(oa, "value", value_);
+    oa->write("container", container_);
+    oa->write("value", value_);
   }
 
   container_ref container() const
