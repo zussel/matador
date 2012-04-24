@@ -727,7 +727,7 @@ public:
     node->next_->prev_ = node->prev_;
     // delete node
     if (!ostore()->remove(node)) {
-      std::cout << "couldn't remove node (proxy: " << *node->proxy() << ")\n";
+//      std::cout << "couldn't remove node (proxy: " << *node->proxy() << ")\n";
       node->prev_->next_ = node;
       node->next_->prev_ = node;
       // throw exception ?

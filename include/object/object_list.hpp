@@ -235,8 +235,9 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       item_ptr item = *i;
+      mark_modified(parent_);
       if (!ostore()->remove(item)) {
-        std::cout << "couldn't remove node (proxy: " << *item->proxy() << ")\n";
+//        std::cout << "couldn't remove node (proxy: " << *item->proxy() << ")\n";
         return i;
       } else {
         return object_list_.erase(i);
