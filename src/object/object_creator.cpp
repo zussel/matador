@@ -53,7 +53,7 @@ void object_creator::read(const char*, object_container &x)
 {
   // set parent object (if available)
   if (!object_stack_.empty()) {
-//    x.parent_object(object_stack_.top());
+    x.parent(object_stack_.top());
   }
   ostore_.insert(x);
 }
