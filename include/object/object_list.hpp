@@ -84,6 +84,8 @@ public:
   }
 
 private:
+  template < class V, class S > friend class object_list;
+
   container_ref container_;
   value_type value_;
 };
@@ -187,7 +189,9 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // create and insert new item
-      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), x));
+      item_ptr item = ostore()->insert(new item_type);
+      item->container_.reset(parent_);
+      item->value_ = x;
       // mark list object as modified
       mark_modified(parent_);
       // insert new item object
@@ -227,7 +231,17 @@ public:
    */
   virtual iterator erase(iterator i)
   {
-    return object_list_.erase(i);
+    if (!ostore()) {
+      throw object_exception("invalid object_store pointer");
+    } else {
+      item_ptr item = *i;
+      if (!ostore()->remove(item)) {
+        std::cout << "couldn't remove node (proxy: " << *item->proxy() << ")\n";
+        return i;
+      } else {
+        return object_list_.erase(i);
+      }
+    }
   }
 
   /**
