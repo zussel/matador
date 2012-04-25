@@ -53,6 +53,24 @@ public:
   virtual void drop() = 0;
   virtual void destroy() = 0;
 };
+
+class dummy_database_sequencer : public database_sequencer
+{
+public:
+  dummy_database_sequencer() : backup_(0) {}
+  virtual ~dummy_database_sequencer() {}
+
+  virtual void create() {}
+  virtual void begin() { backup_ = current(); }
+  virtual void commit() {backup_ = 0; }
+  virtual void rollback() { reset(backup_); }
+  virtual void drop() {}
+  virtual void destroy() {}
+
+private:
+  long backup_;
+};
+
 /// @endcond
 
 }

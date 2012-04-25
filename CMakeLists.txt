@@ -113,6 +113,7 @@ SET(DATABASE_SOURCES
   src/database/database.cpp
   src/database/database_exception.cpp
   src/database/database_factory.cpp
+  src/database/memory_database.cpp
   src/database/transaction.cpp
   src/database/transaction_helper.cpp
   src/database/result.cpp
@@ -128,6 +129,7 @@ SET(DATABASE_HEADER
   include/database/database.hpp
   include/database/database_exception.hpp
   include/database/database_factory.hpp
+  include/database/memory_database.hpp
   include/database/database_sequencer.hpp
   include/database/transaction.hpp
   include/database/transaction_helper.hpp
