@@ -79,6 +79,7 @@ public:
 
 protected:
   void ok(const std::string &x);
+  void trim();
 
 protected:
   size_type capacity_;

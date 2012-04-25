@@ -64,32 +64,36 @@ FactoryTestUnit::~FactoryTestUnit()
 
 void FactoryTestUnit::create_factory()
 {
-  cout << endl;
-  typedef factory<std::string, Vehicle> vehicle_factory;
-  vehicle_factory vfac;
+  typedef factory<std::string, Vehicle> vehicle_factory_t;
+  vehicle_factory_t *vfac = new vehicle_factory_t;
 
-  cout << "factory created\n";
+  UNIT_ASSERT_NOT_NULL(vfac, "factory pointer must be valid");
+  UNIT_ASSERT_TRUE(vfac->empty(), "factory should be empty");
+  UNIT_ASSERT_EQUAL((int)vfac->size(), 0, "size of factory must be zero");
+  
+  delete vfac;
 }
 
 void FactoryTestUnit::insert_items()
 {
-  cout << endl;
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
-  std::cout << "size of factory before: " << vfac.size() << "\n";
+  UNIT_ASSERT_TRUE(vfac.empty(), "factory should be empty");
+  UNIT_ASSERT_EQUAL((int)vfac.size(), 0, "size of factory must be zero");
+
 
   vfac.insert("plane", new vehicle_factory::default_producer<Plane>);
   vfac.insert("bike", new vehicle_factory::default_producer<Bike>);
   vfac.insert("car", new vehicle_factory::default_producer<Car>);
   vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
-  std::cout << "size of factory after: " << vfac.size() << "\n";
+  UNIT_ASSERT_FALSE(vfac.empty(), "factory must not be empty");
+  UNIT_ASSERT_EQUAL((int)vfac.size(), 4, "size of factory must be four");
 }
 
 void FactoryTestUnit::produce_items()
 {
-  cout << endl;
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
@@ -98,21 +102,14 @@ void FactoryTestUnit::produce_items()
   vfac.insert("car", new vehicle_factory::default_producer<Car>);
   vfac.insert("ship", new vehicle_factory::default_producer<Ship>);
 
-  std::cout << "producing a car ... ";
-
   Vehicle *vec = vfac.create("car");
 
-  if (vec) {
-    std::cout << "success [type: " << vec->type() << "]\n";
-    delete vec;
-  } else {
-    std::cout << "failed [null]\n";
-  }
+  UNIT_ASSERT_NOT_NULL(vec, "produced item must not be zero");
+  UNIT_ASSERT_EQUAL(vec->type(), "car", "invalid produced item");
 }
 
 void FactoryTestUnit::list_items()
 {
-  cout << endl;
   typedef factory<std::string, Vehicle> vehicle_factory;
   vehicle_factory vfac;
 
@@ -124,7 +121,9 @@ void FactoryTestUnit::list_items()
   vehicle_factory::const_iterator first = vfac.begin();
   vehicle_factory::const_iterator last = vfac.end();
 
+  /*
   while (first != last) {
     std::cout << "producer of type [" << (first++)->first << "]\n";
   }
+  */
 }

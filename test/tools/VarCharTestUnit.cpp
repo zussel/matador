@@ -21,18 +21,20 @@ VarCharTestUnit::~VarCharTestUnit()
 
 void VarCharTestUnit::create_varchar()
 {
-  cout << endl;
   varchar<8> str8;
   
-  cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
+  UNIT_ASSERT_EQUAL((int)str8.capacity(), 8, "invalid capacity of varchar");
+  UNIT_ASSERT_EQUAL((int)str8.size(), 0, "size of varchar must be zero");
   
   str8 = "Hallo";
   
-  cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
+  UNIT_ASSERT_EQUAL((int)str8.capacity(), 8, "invalid capacity of varchar");
+  UNIT_ASSERT_EQUAL((int)str8.size(), 5, "size of varchar must be zero");
   
   str8 += std::string("Welt");
 
-  cout << "varchar<" << str8.capacity() << "/" << str8.size() << "> = [" << str8 << "]\n";
+  UNIT_ASSERT_EQUAL((int)str8.capacity(), 8, "invalid capacity of varchar");
+  UNIT_ASSERT_EQUAL((int)str8.size(), 8, "size of varchar must be zero");
 }
 
 void VarCharTestUnit::copy_varchar()

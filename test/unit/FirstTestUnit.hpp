@@ -17,6 +17,7 @@
 
 #include "unit/unit_test.hpp"
 #include "unit/test_suite.hpp"
+#include "unit/unit_exception.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -39,12 +40,16 @@ public:
   {
     UNIT_ASSERT_EQUAL(1, 1, "one is one");
     
-    UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
+    try {
+      UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
+    } catch (oos::unit_exception &ex) {
+      UNIT_ASSERT_TRUE(true, "could not happen");
+    }
   }
   void second_sub_test()
   {
     // gives warning
-    UNIT_WARN("this is a test warning!");
+    //UNIT_WARN("this is a test warning!");
   }
   void third_sub_test()
   {

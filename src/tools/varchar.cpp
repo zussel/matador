@@ -20,15 +20,16 @@ varchar_base& varchar_base::operator=(const varchar_base &x)
 
 varchar_base& varchar_base::operator=(const std::string &x)
 {
-  ok(x);
   data_ = x;
+  trim();
   return *this;
 }
 
 varchar_base& varchar_base::operator=(const char *x)
 {
-  ok(x);
+//  ok(x);
   data_.assign(x);
+  trim();
   return *this;
 }
 
@@ -48,24 +49,28 @@ bool varchar_base::operator!=(const varchar_base &x) const
 varchar_base& varchar_base::operator+=(const varchar_base &x)
 {
   data_ += x.str();
+  trim();
   return *this;
 }
 
 varchar_base& varchar_base::operator+=(const std::string &x)
 {
   data_ += x;
+  trim();
   return *this;
 }
 
 varchar_base& varchar_base::operator+=(const char *x)
 {
   data_ += x;
+  trim();
   return *this;
 }
 
 void varchar_base::assign(const char *s, size_t n)
 {
   data_.assign(s, n);
+  trim();
 }
 
 std::string varchar_base::str() const
@@ -99,6 +104,11 @@ void varchar_base::ok(const std::string &x)
   if (x.size() > capacity_) {
     throw std::logic_error("string is to long");
   }
+}
+
+void varchar_base::trim()
+{
+  data_.resize(std::min(capacity_, data_.size()));
 }
 
 }

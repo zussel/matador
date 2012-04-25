@@ -19,6 +19,7 @@ BlobTestUnit::~BlobTestUnit()
 
 void BlobTestUnit::create_blob()
 {
+  /*
   cout << "\n";
 
   blob b1;
@@ -37,4 +38,5 @@ void BlobTestUnit::create_blob()
 
   cout << "size: " << b2.size() << "\n";
   cout << "capacity: " << b2.capacity() << "\n";
+  */
 }
