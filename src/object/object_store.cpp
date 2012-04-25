@@ -36,6 +36,7 @@
 #endif
 
 #include <iostream>
+#include <iomanip>
 #include <typeinfo>
 #include <algorithm>
 #include <stack>
@@ -376,11 +377,11 @@ object_store::insert_object(object *o, bool notify)
       seq_.update(o->id());
     }
     oproxy = create_proxy(o->id());
-    oproxy->obj = o;
     if (!oproxy) {
       // throw exception
-      return 0;
+      throw object_exception("couldn't create object proxy");
     }
+    oproxy->obj = o;
   }
   // insert new element node
   insert_proxy(node, oproxy);
@@ -398,6 +399,7 @@ object_store::insert_object(object *o, bool notify)
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
   // return new object
+  //std::cout << "created object (" << std::right << std::setfill(' ') << std::setw(4) << o->id() << ") of type [" << o->classname() << "] proxy " << *oproxy << "\n";
   return o;
 }
 
@@ -449,7 +451,6 @@ object_store::remove_object(object *o, bool notify)
   // delete node
   delete op;
   // set node of proxy to NULL
-//  op->obj = NULL;
   return true;
 }
 

@@ -228,7 +228,8 @@ DatabaseTestUnit::with_list()
   typedef ItemPtrList::value_type item_ptr;
 
   // create database and make object store known to the database
-  session db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_);
+//  session db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -271,7 +272,7 @@ DatabaseTestUnit::with_list()
 
     tr.begin();
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 2; ++i) {
       stringstream name;
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new Item(name.str()));
@@ -282,13 +283,12 @@ DatabaseTestUnit::with_list()
     }
 
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
 
     tr.commit();
     
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
-
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
     tr.begin();
     
     itemlist->clear();
@@ -298,7 +298,7 @@ DatabaseTestUnit::with_list()
     tr.rollback();
 
     UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "invalid item list size");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
 
   } catch (database_exception &ex) {
     // error, abort transaction

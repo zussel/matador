@@ -18,6 +18,19 @@
 #ifndef OBJECT_PROXY_HPP
 #define OBJECT_PROXY_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include <ostream>
 #include <set>
 
@@ -86,7 +99,7 @@ struct object_proxy {
    * @param op The object_proxy to print
    * @return The modified stream.
    */
-  friend std::ostream& operator <<(std::ostream &os, const object_proxy &op);
+  friend OOS_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
   /**
    * Link this object proxy before given

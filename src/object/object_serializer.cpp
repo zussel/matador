@@ -241,12 +241,16 @@ void object_serializer::read(const char*, object_base_ptr &x)
   std::string type;
   read(0, type);
 
-  object_proxy *oproxy = ostore_->find_proxy(id);
-  if (!oproxy) {
-    oproxy = ostore_->create_proxy(id);
+  if (id > 0) {
+    object_proxy *oproxy = ostore_->find_proxy(id);
+    if (!oproxy) {
+      oproxy = ostore_->create_proxy(id);
+    }
+    x.reset(oproxy->obj);
+  } else {
+    x.proxy_ = 0;
+    x.id_ = id;
   }
-  x.proxy_ = oproxy;
-  x.id_ = id;
 }
 
 void object_serializer::read(const char*, object_container &x)
