@@ -72,7 +72,7 @@ public:
    * @param ostore The object_store to make persistent.
    * @param dbstring The database connection string.
    */
-  session(object_store &ostore, const std::string &dbstring);
+  session(object_store &ostore, const std::string &dbstring = "memory://");
 
   ~session();
   
