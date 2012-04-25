@@ -248,11 +248,11 @@ public:
       mark_modified(parent_);
       // insert new item object
       pos = object_vector_.insert(pos, item);
-      ++(first = pos);
+      first = pos;
       // adjust indices of successor items
-      while (first != last) {
-        item = (*first++);
-        item->index(++index);
+      last = end();
+      while (++first != last) {
+        (*first)->index(++index);
       }
       return pos;
     }

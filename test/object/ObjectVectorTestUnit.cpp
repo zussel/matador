@@ -54,13 +54,17 @@ void ObjectVectorTestUnit::test_ptr_vector()
   val = 20;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector has invalid size");
 
-  ItemPtrVector::iterator i = itemvector->begin() + 4;
+  ItemPtrVector::iterator i = itemvector->begin();
 
-  int ival = 4;
-  UNIT_ASSERT_EQUAL((*i)->index(), ival, "item is invalid");
+  int ival = 0;
+  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+
+  i += 4;
+  ival = 4;
+  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
 
   i = itemvector->erase(i);
-  UNIT_ASSERT_EQUAL((*i)->index(), ival, "item is invalid");
+  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
 
 /*
   cout << "items of vector\n";
