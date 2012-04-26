@@ -42,7 +42,7 @@ class object_vector_item : public oos::object
 public:
   typedef oos::object_ref<C> container_ref;
   typedef T value_type;
-  typedef unsigned int size_type;
+  typedef unsigned long size_type;
 
   object_vector_item() : index_(0) {}
   explicit object_vector_item(const container_ref &c)
@@ -235,12 +235,10 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // determine index
-      typename item_type::size_type index = 0;
-      iterator first = begin();
-      iterator last = end();
-      if (pos != last && pos != first) {
-        --(first = pos);
-        index = (*first)->index();
+      iterator last = object_vector_.end();
+      typename item_type::size_type index = object_vector_.size();
+      if (index && pos != last) {
+        index = (*pos)->index();
       }
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), index, x));
@@ -248,9 +246,9 @@ public:
       mark_modified(parent_);
       // insert new item object
       pos = object_vector_.insert(pos, item);
-      first = pos;
+      iterator first = pos;
       // adjust indices of successor items
-      last = end();
+      last = object_vector_.end();
       while (++first != last) {
         (*first)->index(++index);
       }
@@ -330,11 +328,10 @@ public:
     while (j != object_vector_.end()) {
       size_type index = 0;
       if (!(*j)->get("item_index", index)) {
-        // error: throw exception
+        throw object_exception("couldn't get object vector index item");
       } else if (!(*j)->set("item_index", --index)) {
-        // error: throw exception
+        throw object_exception("couldn't set object vector index item");
       } else {
-        // success
         ++j;
       }
     }
