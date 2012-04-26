@@ -38,9 +38,9 @@ main(int argc, char *argv[])
 
   // setup object hierarchy
   ostore.insert_prototype<Artist>("artist");
-  ostore.insert_prototype<Album>("album");
   ostore.insert_prototype<Track>("track");
-  ostore.insert_prototype<TrackAlbumRelation>("track_album");
+  ostore.insert_prototype<Album>("album");
+  ostore.insert_prototype<Album::track_album_vector_t::item_type>("track_album_rel");
 
   // create and open db
   session db(ostore, "sqlite://mdb.sqlite");
