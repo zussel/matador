@@ -106,6 +106,8 @@ void FactoryTestUnit::produce_items()
 
   UNIT_ASSERT_NOT_NULL(vec, "produced item must not be zero");
   UNIT_ASSERT_EQUAL(vec->type(), "car", "invalid produced item");
+  
+  delete vec;
 }
 
 void FactoryTestUnit::list_items()
