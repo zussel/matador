@@ -1,6 +1,5 @@
 #include "Album.hpp"
 #include "Track.hpp"
-#include "TrackAlbumRelation.hpp"
 #include "object/object_atomizer.hpp"
 
 using std::string;

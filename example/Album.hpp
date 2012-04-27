@@ -1,8 +1,6 @@
 #ifndef ALBUM_HPP
 #define ALBUM_HPP
 
-#include "TrackAlbumRelation.hpp"
-
 #include "object/object.hpp"
 #include "object/object_vector.hpp"
 
