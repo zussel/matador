@@ -19,6 +19,7 @@ public:
   void with_sub();
   void with_list();
   void with_vector();
+  void reload();
 
 private:
   oos::object_store ostore_;

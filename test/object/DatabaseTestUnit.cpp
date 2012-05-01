@@ -24,6 +24,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   add_test("complex", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
+  add_test("reload", std::tr1::bind(&DatabaseTestUnit::reload, this), "reload database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -316,4 +317,73 @@ DatabaseTestUnit::with_list()
 void
 DatabaseTestUnit::with_vector()
 {
+}
+
+void
+DatabaseTestUnit::reload()
+{
+  // create database and make object store known to the database
+  session db(ostore_, "sqlite://test.sqlite");
+
+  // load data
+  db.create();
+
+  // load data
+  db.load();
+
+  // create new transaction    
+  transaction tr(db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+    typedef ObjectItem<Item> object_item_t;
+    typedef object_ptr<object_item_t> object_item_ptr;
+    typedef object_ptr<Item> item_ptr;
+    // insert new object
+    object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
+
+    UNIT_ASSERT_GREATER(object_item->id(), 0, "invalid object item");
+
+    item_ptr item = object_item->ptr();
+
+    UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+
+    item->set_int(120);
+    item->set_string("Bar");
+
+    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+
+    tr.commit();
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db.close();
+  
+  db.open();
+  
+  // load data
+  db.load();
+
+  try {
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db.close();
+    
 }
