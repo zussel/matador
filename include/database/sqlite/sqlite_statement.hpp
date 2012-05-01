@@ -60,6 +60,9 @@ public:
   virtual int bind(int i, const char *value);
   virtual int bind_null(int i);
 
+  virtual database& db();
+  virtual const database& db() const;
+
 private:
   sqlite3_stmt *stmt_;
   sqlite_database &db_;

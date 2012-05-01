@@ -188,6 +188,16 @@ int sqlite_statement::bind_null(int i)
   return ret;
 }
 
+database& sqlite_statement::db()
+{
+  return db_;
+}
+
+const database& sqlite_statement::db() const
+{
+  return db_;
+}
+
 }
 
 }

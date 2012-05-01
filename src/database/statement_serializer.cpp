@@ -17,11 +17,14 @@
 
 #include "database/statement_serializer.hpp"
 #include "database/statement.hpp"
+#include "database/database.hpp"
+#include "database/session.hpp"
 
 #include "tools/varchar.hpp"
 
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
+#include "object/object_store.hpp"
 
 namespace oos {
 
@@ -171,6 +174,19 @@ void statement_serializer::read(const char *id, object_base_ptr &x)
   if (!valid_column(id, column_)) {
     return;
   }
+  long oid = 0;
+  oid = stmt_->column_int(column_++);
+  
+  if (oid == 0) {
+    return;
+  }
+  
+  object_proxy *oproxy = stmt_->db().db()->ostore().find_proxy(oid);
+
+  if (!oproxy) {
+    oproxy = stmt_->db().db()->ostore().create_proxy(oid);
+  }
+  x.reset(oproxy->obj);
   //x.repoint(...);
   // set object id
 }

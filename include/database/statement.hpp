@@ -40,6 +40,7 @@ namespace oos {
 class session;
 class result;
 class row;
+class database;
 
 /// @cond OOS_DEV
 class OOS_API statement_impl
@@ -70,6 +71,9 @@ public:
   virtual int bind_null(int i) = 0;
   
   std::string sql() const;
+
+  virtual database& db() = 0;
+  virtual const database& db() const = 0;
 
 private:
   std::string sql_;
