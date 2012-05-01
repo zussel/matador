@@ -364,7 +364,15 @@ public:
    * Removes all inserted prototypes and all inserted objects.
    */
   void clear();
-	
+
+  /**
+   * Returns true if the object_store
+   * conatins no elements (objects)
+   * 
+   * @return True on empty object_store.
+   */
+  bool empty() const;
+
   /**
    * Dump all prototypes to a given stream
    *

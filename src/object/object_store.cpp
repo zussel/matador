@@ -259,6 +259,11 @@ void object_store::clear()
   object_map_.clear();
 }
 
+bool object_store::empty() const
+{
+  return first_->next == last_;
+}
+
 int depth(prototype_node *node)
 {
   int d = 0;
