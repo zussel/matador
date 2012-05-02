@@ -91,6 +91,7 @@ prototype_node::clear()
     // delete object proxy and object
     delete op;
   }
+  count = 0;
 //  cout << "done.\n";
 }
 

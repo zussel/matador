@@ -156,7 +156,7 @@ object_store::object_store()
 
 object_store::~object_store()
 {
-  clear();
+  clear(true);
   delete last_;
   delete first_;
   delete root_;

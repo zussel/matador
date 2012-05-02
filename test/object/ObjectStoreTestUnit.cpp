@@ -46,7 +46,7 @@ ObjectStoreTestUnit::initialize()
 void
 ObjectStoreTestUnit::finalize()
 {
-  ostore_.clear();
+  ostore_.clear(true);
 }
 
 struct item_counter : public std::unary_function<const object_ptr<Item>&, void>
