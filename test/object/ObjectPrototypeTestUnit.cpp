@@ -54,7 +54,7 @@ ObjectPrototypeTestUnit::one_prototype()
   
   delete i;
   
-  ostore.remove_prototype("ITEM");
+  ostore.remove_prototype("ITEM", true);
   
   o = ostore.create("ITEM");
   
@@ -80,13 +80,13 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   
   delete a;
   
-  ostore.remove_prototype("ITEM_B");
+  ostore.remove_prototype("ITEM_B", true);
   
   o = ostore.create("ITEM_B");
   
   UNIT_ASSERT_NULL(o, "unexpected object creation");
   
-  ostore.remove_prototype("ITEM");
+  ostore.remove_prototype("ITEM", true);
   
   o = ostore.create("ITEM_C");
   

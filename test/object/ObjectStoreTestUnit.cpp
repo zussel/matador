@@ -30,6 +30,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
   add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
+  add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -545,4 +546,40 @@ ObjectStoreTestUnit::view_test()
   item = iview.back();
   
   UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+}
+
+void
+ObjectStoreTestUnit::clear_test()
+{
+  for (int i = 0; i < 10; ++i) {
+    std::stringstream str;
+    str << "Item " << i+1;
+    ostore_.insert(new Item(str.str(), i+1));
+  }
+
+  typedef object_view<Item> item_view_t;
+
+  item_view_t iview(ostore_);
+
+  UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
+  UNIT_ASSERT_FALSE((int)iview.empty(), "item view shouldn't be empty");
+  UNIT_ASSERT_FALSE((int)ostore_.empty(), "object store shouldn't be empty");
+
+  ostore_.clear();
+
+  UNIT_ASSERT_TRUE((int)ostore_.empty(), "object store must be empty");
+  UNIT_ASSERT_EQUAL((int)iview.size(), 0, "invalid item view size");
+  UNIT_ASSERT_TRUE((int)iview.empty(), "item view must be empty");
+
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
+
+  UNIT_ASSERT_FALSE(first == last, "prototype iterator shouldn't be the same");
+
+  ostore_.clear(true);
+
+  first = ostore_.begin();
+  last = ostore_.end();
+
+  UNIT_ASSERT_TRUE(++first == last, "prototype iterator must be the same");
 }

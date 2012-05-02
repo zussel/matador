@@ -193,7 +193,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   return true;
 }
 
-bool object_store::remove_prototype(const char *type)
+bool object_store::remove_prototype(const char *type, bool full)
 {
   t_prototype_node_map::iterator i = prototype_node_map_.find(type);
   if (i == prototype_node_map_.end()) {
@@ -216,17 +216,21 @@ bool object_store::remove_prototype(const char *type)
   // for each child call remove_prototype(child);
   while (i->second->first->next != i->second->last) {
     prototype_node *node = i->second->first->next;
-    remove_prototype(node->type.c_str());
+    remove_prototype(node->type.c_str(), full);
   }
   // and objects they're containing 
   i->second->clear();
-  // unlink node
-  i->second->unlink();
-  // delete node
-  delete i->second;
-  // erase node from maps
-  prototype_node_map_.erase(i);
-  prototype_node_map_.erase(j);
+  // if full flag is set
+  // delete prototype node as well
+  if (full) {
+    // unlink node
+    i->second->unlink();
+    // delete node
+    delete i->second;
+    // erase node from maps
+    prototype_node_map_.erase(i);
+    prototype_node_map_.erase(j);
+  }
   return true;
 }
 
@@ -250,12 +254,25 @@ prototype_iterator object_store::end() const
   return prototype_iterator(0);
 }
 
-void object_store::clear()
+void object_store::clear(bool full)
 {
-  while (root_->first->next != root_->last) {
-    prototype_node *node = root_->first->next;
-    remove_prototype(node->type.c_str());
+  prototype_iterator first = begin();
+  prototype_iterator last = end();
+
+  prototype_node *next = root_->next_node();
+  prototype_node *node = next;
+
+  while (next) {
+    next = node->next_node();
+    remove_prototype(node->type.c_str(), full);
+    node = next;
   }
+  /*
+  while (node != root_->last) {
+    prototype_node *node = root_->first->next;
+    remove_prototype(node->type.c_str(), full);
+  }
+  */
   object_map_.clear();
 }
 

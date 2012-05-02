@@ -331,9 +331,10 @@ public:
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
+   * @param full If set, also the prototype node itself is removed.
    * @return Returns true if the type was found and successfully removed
    */
-  bool remove_prototype(const char *type);
+  bool remove_prototype(const char *type, bool full);
 
   /**
    * @brief Finds prototype node.
@@ -363,7 +364,7 @@ public:
   /**
    * Removes all inserted prototypes and all inserted objects.
    */
-  void clear();
+  void clear(bool full = false);
 
   /**
    * Returns true if the object_store

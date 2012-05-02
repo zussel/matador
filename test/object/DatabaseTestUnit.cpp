@@ -367,7 +367,10 @@ DatabaseTestUnit::reload()
   }
   // close db
   db.close();
-  
+
+  // clear object store
+  ostore_.clear();
+
   db.open();
   
   // load data

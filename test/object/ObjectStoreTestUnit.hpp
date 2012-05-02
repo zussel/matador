@@ -31,6 +31,7 @@ public:
   void sub_delete();
   void hierarchy();
   void view_test();
+  void clear_test();
 
 private:
   oos::object_store ostore_;
