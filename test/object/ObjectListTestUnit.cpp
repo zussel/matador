@@ -48,7 +48,7 @@ ObjectListTestUnit::initialize()
 void
 ObjectListTestUnit::finalize()
 {
-  ostore_.clear();
+  ostore_.clear(true);
 }
 
 void
