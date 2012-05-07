@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
   test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
   test_suite::instance().register_unit("store", new ObjectStoreTestUnit());
-  test_suite::instance().register_unit("list", new ObjectListTestUnit());
+  test_suite::instance().register_unit("olist", new ObjectListTestUnit());
   test_suite::instance().register_unit("vector", new ObjectVectorTestUnit());
   test_suite::instance().register_unit("database", new DatabaseTestUnit());
 
