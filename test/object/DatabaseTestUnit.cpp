@@ -331,8 +331,6 @@ DatabaseTestUnit::reload()
   // load data
   db.load();
 
-  ostore_.dump_objects(cout);
-
   // create new transaction    
   transaction tr(db);
   try {
@@ -370,19 +368,13 @@ DatabaseTestUnit::reload()
   // close db
   db.close();
 
-  ostore_.dump_objects(cout);
-
   // clear object store
   ostore_.clear();
-
-  ostore_.dump_objects(cout);
 
   db.open();
   
   // load data
   db.load();
-
-  ostore_.dump_objects(cout);
 
   try {
   } catch (database_exception &ex) {
