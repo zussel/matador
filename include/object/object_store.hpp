@@ -327,6 +327,17 @@ public:
   }
 
   /**
+   * Clears a prototype node. All objects will be deleted. If
+   * the recursive flag is set all objects from the children nodea
+   * will be deleted as well.
+   * 
+   * @param type The name of the type to remove.
+   * @param recursive If set, also the object in children nodes are deleted.
+   * @return Returns true if the type was found and successfully cleared.
+   */
+  bool clear_prototype(const char *type, bool recursive);
+
+  /**
    * Removes an object prototype from the prototype tree. All children
    * nodes and all objects are also removed.
    * 
@@ -334,7 +345,7 @@ public:
    * @param full If set, also the prototype node itself is removed.
    * @return Returns true if the type was found and successfully removed
    */
-  bool remove_prototype(const char *type, bool full);
+  bool remove_prototype(const char *type);
 
   /**
    * @brief Finds prototype node.

@@ -193,16 +193,35 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   return true;
 }
 
-bool object_store::remove_prototype(const char *type, bool full)
+bool object_store::clear_prototype(const char *type, bool recursive)
 {
+  // find node of given type
   t_prototype_node_map::iterator i = prototype_node_map_.find(type);
   if (i == prototype_node_map_.end()) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
-  if (!i->second->parent) {
-    // throw new object_exception("prototype has no parent");
-    // no parent
+
+  if (recursive) {
+    // clear all objects from child nodes
+    // for each child call clear_prototype(child, recursive);
+    prototype_node *node = i->second->next_node(i->second->parent);
+    while (node) {
+      clear_prototype(node->type.c_str(), recursive);
+      node = node->next_node();
+    }
+  }
+
+  i->second->clear();
+
+  return true;
+}
+
+bool object_store::remove_prototype(const char *type)
+{
+  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
+  if (i == prototype_node_map_.end()) {
+    //throw new object_exception("couldn't find prototype");
     return false;
   }
   t_prototype_node_map::iterator j = prototype_node_map_.find(i->second->producer->classname());
@@ -215,22 +234,19 @@ bool object_store::remove_prototype(const char *type, bool full)
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   while (i->second->first->next != i->second->last) {
-    prototype_node *node = i->second->first->next;
-    remove_prototype(node->type.c_str(), full);
+    remove_prototype(i->second->first->next->type.c_str());
   }
   // and objects they're containing 
   i->second->clear();
-  // if full flag is set
   // delete prototype node as well
-  if (full) {
-    // unlink node
-    i->second->unlink();
-    // delete node
-    delete i->second;
-    // erase node from maps
-    prototype_node_map_.erase(i);
-    prototype_node_map_.erase(j);
-  }
+  // unlink node
+  i->second->unlink();
+  // delete node
+  delete i->second;
+  // erase node from maps
+  prototype_node_map_.erase(i);
+  prototype_node_map_.erase(j);
+
   return true;
 }
 
@@ -256,23 +272,15 @@ prototype_iterator object_store::end() const
 
 void object_store::clear(bool full)
 {
-  prototype_iterator first = begin();
-  prototype_iterator last = end();
-
-  prototype_node *next = root_->next_node();
-  prototype_node *node = next;
-
-  while (next) {
-    next = node->next_node();
-    remove_prototype(node->type.c_str(), full);
-    node = next;
+  if (full) {
+    // clear objects and prototypes
+    while (root_->first->next != root_->last) {
+      remove_prototype(root_->first->next->type.c_str());
+    }
+  } else {
+    // only delete objects
+    clear_prototype(root_->type.c_str(), full);
   }
-  /*
-  while (node != root_->last) {
-    prototype_node *node = root_->first->next;
-    remove_prototype(node->type.c_str(), full);
-  }
-  */
   object_map_.clear();
 }
 
