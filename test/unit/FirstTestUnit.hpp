@@ -42,7 +42,7 @@ public:
     
     try {
       UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
-    } catch (oos::unit_exception &ex) {
+    } catch (oos::unit_exception &) {
       UNIT_ASSERT_TRUE(true, "could not happen");
     }
   }
