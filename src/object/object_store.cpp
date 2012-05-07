@@ -279,7 +279,7 @@ void object_store::clear(bool full)
     }
   } else {
     // only delete objects
-    clear_prototype(root_->type.c_str(), full);
+    clear_prototype(root_->type.c_str(), true);
   }
   object_map_.clear();
 }
