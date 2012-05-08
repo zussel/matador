@@ -59,7 +59,11 @@ session::session(object_store &ostore, const std::string &dbstring)
 session::~session()
 {
   if (impl_) {
-    delete impl_;
+    if (type_ == "memory") {
+      delete impl_;
+    } else {
+      database_factory::instance().destroy(type_, impl_);
+    }
   }
 }
 

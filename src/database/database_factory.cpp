@@ -31,11 +31,77 @@ database_factory::database_factory()
 
 database_factory::~database_factory()
 {
+  /*
   for (factory_t::iterator i = factory_.begin(); i != factory_.end(); ++i) {
     delete i->second;
   }
+  */
 }
 
+database* database_factory::create(const std::string &name, session *db)
+{
+  factory_t::iterator i = factory_.find(name);
+  if (i == factory_.end()) {
+    database_producer *producer = new database_producer(name);
+    i = factory_.insert(name, producer).first;
+  }
+  database_producer *producer = static_cast<database_producer*>(i->second.get());
+  return producer->create(db);
+}
+
+bool database_factory::destroy(const std::string &name, database* impl)
+{
+  factory_t::iterator i = factory_.find(name);
+  if (i == factory_.end()) {
+    // couldn't find database backend
+    return false;
+  }
+  database_producer *producer = static_cast<database_producer*>(i->second.get());
+  producer->destroy(impl);
+  return true;
+}
+
+database_factory::database_producer::database_producer(const std::string &name)
+  : db_(0)
+{
+  // load oos driver library
+  // create instance
+  if (!loader_.load(("oos-"+name).c_str())) {
+    throw std::runtime_error("couldn't fínd library [" + name + "]");
+  }
+  // get create function
+  create_ = reinterpret_cast<create_func>(loader_.function("create_database"));
+  // get destroy function
+  destroy_ = reinterpret_cast<destroy_func>(loader_.function("destroy_database"));
+}
+
+database_factory::database_producer::~database_producer()
+{
+  loader_.unload();
+}
+
+database* database_factory::database_producer::create(session *db)
+{
+  db_ = db;
+  database *impl = this->create();
+  db_ = 0;
+  return impl;
+}
+
+database* database_factory::database_producer::create() const
+{
+  // on each call store the created database for later
+  // explicit destruction
+  return (*create_)(db_);
+}
+
+void database_factory::database_producer::destroy(database_factory::factory_t::value_type* val) const
+{
+//  cout << "detroying database backend\n";
+  (*destroy_)(val);
+}
+
+/*
 database* database_factory::create(const std::string &name, session *db)
 {
   factory_t::iterator i = factory_.find(name);
@@ -70,5 +136,5 @@ database* database_factory::database_loader::create(session *db) const
   // explicit destruction
   return producer_->create(db);
 }
-
+*/
 }

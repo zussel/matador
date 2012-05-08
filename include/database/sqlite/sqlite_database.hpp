@@ -153,4 +153,11 @@ private:
 
 }
 
+extern "C"
+{
+  OOS_SQLITE_API oos::database* create_database(oos::session *ses);
+
+  OOS_SQLITE_API void destroy_database(oos::database *db);
+}
+
 #endif /* SQLITE_DATABASE_HPP */

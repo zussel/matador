@@ -267,3 +267,16 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
 }
 
 }
+
+extern "C"
+{
+  OOS_SQLITE_API oos::database* create_database(oos::session *ses)
+  {
+    return new oos::sqlite::sqlite_database(ses);
+  }
+
+  OOS_SQLITE_API void destroy_database(oos::database *db)
+  {
+    delete db;
+  }
+}

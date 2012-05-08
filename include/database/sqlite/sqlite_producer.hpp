@@ -34,22 +34,22 @@
 namespace oos {
 
 namespace sqlite {
-
+/*
   class sqlite_producer : public database_producer
   {
   public:
     sqlite_producer();
 
     virtual database* create(session *db) const;
-  };
+  };*/
 }
 
 }
-
+/*
 extern "C"
 {
   OOS_SQLITE_API const oos::database_producer* get_producer();
 }
-
+*/
 
 #endif /* SQLITE_PRODUCER_HPP */

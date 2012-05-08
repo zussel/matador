@@ -21,7 +21,7 @@
 namespace oos {
 
 namespace sqlite {
-
+/*
 sqlite_producer::sqlite_producer()
 {}
 
@@ -29,17 +29,19 @@ database* sqlite_producer::create(session *db) const
 {
   return new sqlite_database(db);
 }
-
+*/
 }
 
 }
 
-const oos::sqlite::sqlite_producer producer;
-
+//const oos::sqlite::sqlite_producer producer;
+/*
 extern "C"
 {
   OOS_SQLITE_API const oos::database_producer* get_producer()
   {
-    return &producer;
+    //return &producer;
+    return 0;
   }
 }
+*/

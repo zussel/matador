@@ -42,7 +42,7 @@ class database;
 class session;
 
 /// @cond OOS_DEV
-
+/*
 class OOS_API database_producer
 {
 public:
@@ -50,10 +50,14 @@ public:
 
   virtual database* create(session *db) const = 0;
 };
-
+*/
 class database_factory : public oos::singleton<database_factory>
 {
 private:
+  typedef factory<std::string, database> factory_t;
+  
+private:
+  /*
   class database_loader
   {
   public:
@@ -73,7 +77,7 @@ private:
 
 private:
   typedef std::map<std::string, database_loader*> factory_t;
-
+*/
 private:
   friend class singleton<database_factory>;
 
@@ -83,7 +87,31 @@ public:
   virtual ~database_factory();
 
   database* create(const std::string &name, session *db);
+  bool destroy(const std::string &name, database* impl);
   
+private:
+private:
+  class database_producer : public factory_t::producer_base
+  {
+  public:
+    explicit database_producer(const std::string &name);
+    virtual ~database_producer();
+    virtual factory_t::value_type* create() const;
+    factory_t::value_type* create(session *db);
+    void destroy(factory_t::value_type* val) const;
+
+  private:
+    typedef database*(*create_func)(session*);
+    typedef void (*destroy_func)(database*);
+    
+  private:
+    create_func create_;
+    destroy_func destroy_;
+
+    library loader_;
+    session *db_;
+  };
+
 private:
   factory_t factory_;
 };
