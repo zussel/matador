@@ -51,18 +51,29 @@ void test_suite::init(int argc, char *argv[])
   if (arg == "list") {
     // list all test units
     args_.cmd = LIST;
-  } else {
-    args_.cmd = EXECUTE;
-    size_t pos = arg.find(':');
-    
-    if (pos == std::string::npos) {
-      // execute all test of a unit class
-      args_.unit = arg;
-    } else {
-      // extract unit and test name
-      args_.unit = arg.substr(0, pos);
-      args_.test = arg.substr(pos+1);
+  } else if (arg == "exec") {
+    if (argc < 3) {
+      return;
     }
+
+    args_.cmd = EXECUTE;
+
+    std::string val(argv[2]);
+    if (val == "all") {
+    } else {
+      size_t pos = val.find(':');
+      
+      if (pos == std::string::npos) {
+        // execute all test of a unit class
+        args_.unit = val;
+      } else {
+        // extract unit and test name
+        args_.unit = val.substr(0, pos);
+        args_.test = val.substr(pos+1);
+      }
+    }
+  } else {
+    return;
   }
   args_.initialized = true;
 }
@@ -87,7 +98,7 @@ void test_suite::run()
         break;
       }
   } else {
-    std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_executer());
+    std::cout << "usage: test_oos [list]|[exec <val>]\n";
   }
 }
 

@@ -16,12 +16,12 @@ using namespace std;
 ObjectListTestUnit::ObjectListTestUnit()
   : unit_test("object list")
 {
-  add_test("list", std::tr1::bind(&ObjectListTestUnit::test_list, this), "test new list");
-  add_test("ref_list", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
-  add_test("ptr_list", std::tr1::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
-  add_test("linked_int_list", std::tr1::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
-  add_test("linked_ref_list", std::tr1::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
-  add_test("linked_ptr_list", std::tr1::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
+  add_test("int", std::tr1::bind(&ObjectListTestUnit::test_list, this), "test object list with integers");
+  add_test("ref", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
+  add_test("ptr", std::tr1::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
+  add_test("linked_int", std::tr1::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
+  add_test("linked_ref", std::tr1::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
+  add_test("linked_ptr", std::tr1::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
 }
 
 ObjectListTestUnit::~ObjectListTestUnit()
