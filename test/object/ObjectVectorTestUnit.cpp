@@ -67,13 +67,17 @@ void ObjectVectorTestUnit::test_ref_vector()
 
   i = itemvector->erase(i);
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
 
-/*
-  cout << "items of vector\n";
-  for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
-  }
-*/
+  i = itemvector->erase(i, itemvector->end());
+
+  UNIT_ASSERT_TRUE(i == itemvector->end(), "iterator isn't expected end iterator");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 4, "itemvector size isn't valid");
+
+  itemvector->clear();
+
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
+  UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
 
 void ObjectVectorTestUnit::test_int_vector()
@@ -103,13 +107,17 @@ void ObjectVectorTestUnit::test_int_vector()
 
   i = itemvector->erase(i);
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
 
-/*
-  cout << "items of vector\n";
-  for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
-  }
-*/
+  i = itemvector->erase(i, itemvector->end());
+
+  UNIT_ASSERT_TRUE(i == itemvector->end(), "iterator isn't expected end iterator");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 4, "itemvector size isn't valid");
+
+  itemvector->clear();
+
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
+  UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
 
 void ObjectVectorTestUnit::test_ptr_vector()
@@ -143,11 +151,15 @@ void ObjectVectorTestUnit::test_ptr_vector()
 
   i = itemvector->erase(i);
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
 
-/*
-  cout << "items of vector\n";
-  for (ItemPtrVector::const_iterator i = itemvector->begin(); i != itemvector->end(); ++i) {
-    cout << "item [" << i->get()->get_string() << "] (index: " << i->get()->index() << ")\n";
-  }
-*/
+  i = itemvector->erase(i, itemvector->end());
+
+  UNIT_ASSERT_TRUE(i == itemvector->end(), "iterator isn't expected end iterator");
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 4, "itemvector size isn't valid");
+
+  itemvector->clear();
+
+  UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
+  UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
