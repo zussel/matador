@@ -35,12 +35,33 @@ namespace oos {
 
 class object_atomizer;
 
+/**
+ * @class object_atomizable
+ * @brief Base class for all serializable objects
+ *
+ * This class provides an interface to serialize
+ * and deserialize an object. It is used with
+ * an instance of a concrete object_atomizer class.
+ */
 class OOS_API object_atomizable
 {
 public:
   virtual ~object_atomizable() {}
 
+  /**
+   * Deserializes an object from the given
+   * object_atomizer object.
+   *
+   * @param oa The object_atomizer to deserialize from.
+   */
   virtual void read_from(object_atomizer *oa) = 0;
+
+  /**
+   * Serializes an object to the given
+   * object_atomizer object.
+   *
+   * @param oa The object_atomizer to serialize to.
+   */
   virtual void write_to(object_atomizer *oa) const = 0;
 };
 

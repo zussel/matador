@@ -239,6 +239,7 @@ private:
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;
 };
+
 /// @endcond
 
 }

@@ -23,49 +23,4 @@ memory_database::memory_database(session *db)
   : database(db, new dummy_database_sequencer)
 {}
 
-memory_database::~memory_database()
-{}
-
-bool memory_database::is_open() const
-{
-  return true;
-}
-
-void memory_database::create(const prototype_node &node)
-{}
-
-void memory_database::load(const prototype_node &node)
-{}
-
-void memory_database::execute(const char *sql, result_impl *res)
-{}
-
-void memory_database::visit(insert_action*)
-{}
-
-void memory_database::visit(update_action*)
-{}
-
-void memory_database::visit(delete_action*)
-{}
-
-result_impl* memory_database::create_result()
-{
-  return 0;
-}
-
-statement_impl* memory_database::create_statement()
-{
-  return 0;
-}
-
-void memory_database::on_begin()
-{}
-
-void memory_database::on_commit()
-{}
-
-void memory_database::on_rollback()
-{}
-
 }

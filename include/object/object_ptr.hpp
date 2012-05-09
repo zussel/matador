@@ -42,7 +42,6 @@ namespace oos {
 class object;
 
 /**
- * @cond OOS_DEV
  * @class object_base_ptr
  * @brief Base class for the object pointer and reference class
  * 
@@ -50,7 +49,8 @@ class object;
  * and reference class. The class holds the proxy
  * of the object and the id of the object.
  */
-class OOS_API object_base_ptr {
+class OOS_API object_base_ptr
+{
 protected:
   /**
    * @brief Creates and empty base pointer.
@@ -217,7 +217,6 @@ private:
   bool is_reference_;
   bool is_internal_;
 };
-/// @endcond
 
 template < class T >
 class object_ref;

@@ -90,21 +90,40 @@ private:
   value_type value_;
 };
 
+/// @endcond
+
+/**
+ * @class object_list
+ * @brief An object list class.
+ * @tparam S The type of the parent object.
+ * @tparam T The value of the list.
+ * 
+ * The object_list class implements a list which
+ * can hold any type of object from builtin types as
+ * int, float to object_ptr or object_ref elements.
+ * The class provides STL like behaviour and the order of
+ * the elements is reliable.
+ */
 template < class S, class T >
 class object_list : public object_container
 {
 public:
-  typedef object_list<S, T> self;
-  typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
-  typedef S container_type;
-  typedef container_item<value_type, container_type> item_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef std::list<item_ptr> list_type;                      /**< Shortcut for the list class member. */
-  typedef typename object_container::size_type size_type;            /**< Shortcut for size type. */
-  typedef typename list_type::iterator iterator;              /**< Shortcut for the list iterator. */
-  typedef typename list_type::const_iterator const_iterator;  /**< Shortcut for the list const iterator. */
+  typedef T value_type;                                         /**< Shortcut for the value type. */
+  typedef S container_type;                                     /**< Shortcut for the container type. */
+  typedef container_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
+  typedef object_ptr<item_type> item_ptr;                       /**< Shortcut for the container item pointer. */
+  typedef std::list<item_ptr> list_type;                        /**< Shortcut for the list class member. */
+  typedef typename object_container::size_type size_type;       /**< Shortcut for size type. */
+  typedef typename list_type::iterator iterator;                /**< Shortcut for the list iterator. */
+  typedef typename list_type::const_iterator const_iterator;    /**< Shortcut for the list const iterator. */
 
 
+  /**
+   * Create an empty object list
+   * with the given parent object.
+   *
+   * @param parent The parent object of the list.
+   */
   explicit object_list(S *parent)
     : parent_(parent)
   {}
@@ -282,12 +301,20 @@ protected:
     }
   }
 
+  /**
+   * Resets the object_store and clears the list.
+   */
   virtual void uninstall()
   {
     object_container::uninstall();
     object_list_.clear();
   }
 
+  /**
+   * Sets the parent for the list
+   *
+   * @param p The parent object of the list.
+   */
   virtual void parent(object *p)
   {
     S *temp = dynamic_cast<S*>(p);

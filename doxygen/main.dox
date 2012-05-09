@@ -1,6 +1,6 @@
 /**
  * @htmlonly
- * <!--div class="width_66" class="float_left"-->
+ * <div class="width75 float_left">
  * @endhtmlonly
  * @mainpage
  *
@@ -34,7 +34,7 @@
  *
  * Now lets start...
  *
- * @section create_objects_sec Creating objects
+ * @section objects_sec Objects
  *
  * As mentioned above there are a handful of rules you have to follow while
  * intergrating your object classes into OOS.
@@ -85,13 +85,13 @@
  * void person::read_from(oos::object_atomizer *oa)
  * {
  *   object::read_from(oa);
- *   oa->read_string("name", name_);
+ *   oa->read("name", name_);
  * }
  *
  * void person::write_to(oos::object_atomizer *oa) const
  * {
  *   object::write_to(oa);
- *   oa->write_string("name", name_);
+ *   oa->write("name", name_);
  * }
  * @endcode
  *
@@ -152,23 +152,170 @@
  * like usual pointer.
  * 
  * @code
- * oos::object_ptr<Truck> truck = ostore.insert(new Truck("MAN");
+ * typedef oos::object_ptr<Truck> truck_ptr;
+ * truck_ptr truck = ostore.insert(new Truck("MAN"));
  * 
  * truck->weight(2.5);
  * truck->color("red");
  * @endcode
  * 
  * @subsection remove_objects Remove objects
+ * Once we have an object_ptr object we can easily delete this
+ * object from the object_store by calling oos::object_store::remove()
+ *
+ * @code
+ * typedef oos::object_ptr<Truck> truck_ptr;
+ * truck_ptr truck = ostore.insert(new Truck("MAN"));
+ * 
+ * if (ostore.remove(truck)) {
+ *   // successfully removed object
+ * } else {
+ *   // object removal failed
+ * }
+ * @endcode
+ *
+ * When removing an object internally a check is done if
+ * the object (and subsequently all connected objects) can be
+ * removed. This test is done by checking the pointer and reference
+ * count of each concerning object. If the test succeeds the object
+ * is removed and true is returned. If the test fails false is
+ * returned.
  *
  * @section object_relations_sec Object Releations
  *
+ * When it comes to object relations you can use one to one and
+ * one to many relations in a straight forward way.
+ *
  * @subsection one_to_one One to one relations
  *
- * @subsection one_to_many One to one relations
+ * @code
+ * class address
+ * {
+ * public:
+ * private:
+ *   std::string street_;
+ *   std::string city_;
+ * };
+ * @endcode
+ *
+ * @code
+ * class person
+ * {
+ * public:
+ *   //...
+ *
+ * private:
+ *   oos::object_ptr<address> address_;
+ * };
+ * @endcode
+ *
+ * @subsection one_to_many One to many relations
+ *
+ * @code
+ * class person
+ * {
+ * public:
+ *   typedef oos::object_ref<person> person_ref;
+ *   typedef oos::object_list<person_ref> person_list_t;
+ *   typedef person_list_t::iterator iterator;
+ *   typedef person_list_t::const_iterator const_iterator;
+ *
+ *   // c'tor for person
+ *   person(const std::string &name)
+ *     : name_(name)
+ *     , friends_(this)
+ *   {}
+ *
+ *   std::string name() const { return name_; }
+ *
+ *   void add_friend(const person_ref &p)
+ *   {
+ *     friends_.push_back(p);
+ *   }
+ *
+ *   iterator begin() { return friends_.begin(); }
+ *   iterator end() { return friends_.end(); }
+ *
+ * private:
+ *   std::string name_;
+ *   person_list_t friends_;
+ * };
+ * @endcode
+ *
+ * Access the list
+ * @code
+ * typedef oos::object_ptr<person> person_ptr;
+ *
+ * // create a new person
+ * person_ptr p = ostore.insert(new person("joe"));
+ *
+ * // add some friends
+ * p->add_friend(ostore.insert(new person("walter")));
+ * p->add_friend(ostore.insert(new person("helen")));
+ * p->add_friend(ostore.insert(new person("tim")));
+ *
+ * // access all friends
+ * person::iterator i = p->begin();
+ * for (i; i != p->end(); ++i) {
+ *   std::cout << i->value()->name() << std::endl;
+ * }
+ * @endcode
  *
  * @section object_view_sec Open a view
+ *
+ * @code
+ * // add some friends
+ * ostore.insert(new person("joe"))
+ * ostore.insert(new person("walter"));
+ * ostore.insert(new person("helen"));
+ * ostore.insert(new person("tim"));
+ *
+ * typedef oos::object_view<person> person_view_t;
+ * 
+ * person_view_t pview(ostore);
+ *
+ * person_view_t::iterator i = pview.begin();
+ * for (i; i != pview.end(); ++i) {
+ *   std::cout << i->name() << std::endl;
+ * }
+ * @endcode
+ *
+ * @code
+ * class student : public person { //... };
+ * class employee : public person { //... };
+ *
+ * oos::object_store ostore;
+ * ostore.insert_prototype<person>("person");
+ * ostore.insert_prototype<student, person>("student");
+ * ostore.insert_prototype<employee, person>("employee");
+ *
+ * typedef oos::object_view<person> person_view_t;
+ * 
+ * person_view_t pview(ostore);
+ *
+ * person_view_t::iterator i = pview.begin();
+ * for (i; i != pview.end(); ++i) {
+ *   std::cout << i->name() << std::endl;
+ * }
+ * @endcode
  *
  * @section object_expression_sec Object Expressions
  *
  * @section database_sec Persist Objects
+ *
+ * @htmlonly
+ * </div>
+ * <div class="width25 float_right">
+ * @endhtmlonly
+ * <b>Table of content</b> @n
+ * @ref intro_sec @n
+ * @ref objects_sec @n
+ * @ref object_store_sec @n
+ * @ref object_relations_sec @n
+ * @ref object_view_sec @n
+ * @ref object_expression_sec @n
+ * @ref database_sec @n
+ * @htmlonly
+ * </div>
+ * @endhtmlonly
  */

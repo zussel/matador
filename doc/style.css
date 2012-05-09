@@ -3,9 +3,10 @@ body
 	margin: 0;
 	padding: 0;
 	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
-	font-size: 85%;
+	font-size: 100%;
 	color: #555;
 	background-color: #e6e6e6;
+  line-height:1.6em;
 }
 
 #wrapper
@@ -128,8 +129,8 @@ body
 {
   margin: 10px 30px;
   text-align: justify;
-  line-height:1.6em;
-  font-size: 120%;
+  /*line-height:1.6em;*/
+  /*font-size: 120%;*/
 }
 
 #content pre
@@ -238,7 +239,7 @@ body
 
 .fragment
 {
-	font-size: 120%;
+	font-size: 110%;
 }
 
 pre .keywordtype {

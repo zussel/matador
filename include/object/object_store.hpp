@@ -342,7 +342,6 @@ public:
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
-   * @param full If set, also the prototype node itself is removed.
    * @return Returns true if the type was found and successfully removed
    */
   bool remove_prototype(const char *type);
@@ -450,7 +449,7 @@ public:
    * container are removed from the store after a successfull reference and
    * pointer counter check.
    * 
-   * @param ovb The object vector to remove.
+   * @param oc The object vector to remove.
    * @return True on successful object vector removal.
    */
   bool remove(object_container &oc);

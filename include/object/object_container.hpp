@@ -142,6 +142,12 @@ protected:
     ostore_ = 0;
   }
   
+  /**
+   * Sets the parent for the
+   * concrete container
+   *
+   * @param p The parent object of the container.
+   */
   virtual void parent(object *p) = 0;
 
 private:

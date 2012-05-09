@@ -141,7 +141,6 @@ template < class S, class T > class linked_object_list;
 template < class T > class linked_object_list_iterator;
 template < class T > class const_linked_object_list_iterator;
 
-/// @cond OOS_DEV
 /**
  * @class linked_object_list_iterator
  * @brief Iterator class for all linked lists.
@@ -520,6 +519,7 @@ private:
 /**
  * @class linked_object_list
  * @brief An linked object list class.
+ * @tparam S The type of the parent object.
  * @tparam T The concrete object type.
  * 
  * The linked_object_list class stores object of
@@ -535,14 +535,13 @@ class linked_object_list : public object_container
 public:
 //  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
 //  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
-  typedef linked_object_list<S, T> self;
-  typedef T value_type;                                       /**< Shortcut for the wrapper class around the value type. */
-  typedef S container_type;
-  typedef linked_object_list_item<value_type, container_type> item_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef object_container::size_type size_type;                             /**< Shortcut for size type. */
-  typedef linked_object_list_iterator<item_type> iterator;             /**< Shortcut for the list iterator. */
-  typedef const_linked_object_list_iterator<item_type> const_iterator; /**< Shortcut for the list const iterator. */
+  typedef T value_type;                                                  /**< Shortcut for the value type. */
+  typedef S container_type;                                              /**< Shortcut for the container type. */
+  typedef linked_object_list_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
+  typedef object_ptr<item_type> item_ptr;                                /**< Shortcut for the container item pointer. */
+  typedef object_container::size_type size_type;                         /**< Shortcut for size type. */
+  typedef linked_object_list_iterator<item_type> iterator;               /**< Shortcut for the list iterator. */
+  typedef const_linked_object_list_iterator<item_type> const_iterator;   /**< Shortcut for the list const iterator. */
 
 
   /**
@@ -554,7 +553,6 @@ public:
    * type object with the given list_ref_name.
    * 
    * @param parent The containing list object.
-   * @param list_ref_name The name of the parent in the value type object.
    */
   linked_object_list(S *parent)
     : parent_(parent)
@@ -642,7 +640,8 @@ public:
    * list object and the links between the surrounding nodes
    * is done automatilcally.
    *
-   * @param elem The element to be pushed front
+   * @param pos The position where to insert the new elemetnt.
+   * @param elem The element to be inserted.
    */
   virtual void insert(iterator pos, const value_type &elem)
   {
@@ -772,6 +771,11 @@ protected:
     }
   }
 
+  /**
+   * Sets the parent for the linked list
+   *
+   * @param p The parent object of the linked list.
+   */
   virtual void parent(object *p)
   {
     S *temp = dynamic_cast<S*>(p);

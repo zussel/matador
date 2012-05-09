@@ -110,17 +110,14 @@ private:
 /// @endcond
 
 /**
- * @cond OOS_DEV
  * @class object_vector
  * @brief An object vector class.
- * @tparam T The concrete object type.
- * @tparam W The object pointer or reference class.
+ * @tparam S The type of the parent object.
+ * @tparam T The value of the vector.
  * 
- * The object_vector class is the base class for
- * The object_ptr_vector class and the object_ref_vector
- * class.
- * It stores a wrapper (object_ptr or object_ref) object
- * around the concrete object type inside a vector.
+ * The object_vector class implements a vector which
+ * can hold any type of object from builtin types as
+ * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
@@ -128,14 +125,13 @@ template < typename S, class T >
 class object_vector : public object_container
 {
 public:
-  typedef object_vector<S, T> self;                            /**< Shortcut for self. */
-  typedef T value_type;                                        /**< Shortcut for the value type. */
-  typedef S container_type;
-  typedef object_vector_item<value_type, container_type> item_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef std::vector<item_ptr> vector_type;         /**< Shortcut for the vector class member. */
-  typedef typename vector_type::iterator iterator;             /**< Shortcut for the vector iterator. */
-  typedef typename vector_type::const_iterator const_iterator; /**< Shortcut for the vector const iterator. */
+  typedef T value_type;                                             /**< Shortcut for the value type. */
+  typedef S container_type;                                         /**< Shortcut for the container type. */
+  typedef object_vector_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
+  typedef object_ptr<item_type> item_ptr;                           /**< Shortcut for the container item pointer. */
+  typedef std::vector<item_ptr> vector_type;                        /**< Shortcut for the vector class member. */
+  typedef typename vector_type::iterator iterator;                  /**< Shortcut for the vector iterator. */
+  typedef typename vector_type::const_iterator const_iterator;      /**< Shortcut for the vector const iterator. */
   typedef typename object_container::size_type size_type;           /**< Shortcut for the size type. */
 
   /**
@@ -365,6 +361,20 @@ protected:
     }
   }
 
+  /**
+   * Resets the object_store and clears the vector.
+   */
+  virtual void uninstall()
+  {
+    object_container::uninstall();
+    object_vector_.clear();
+  }
+
+  /**
+   * Sets the parent for the vector
+   *
+   * @param p The parent object of the vector.
+   */
   virtual void parent(object *p)
   {
     S *temp = dynamic_cast<S*>(p);

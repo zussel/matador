@@ -18,6 +18,7 @@
 #ifndef MEMORY_DATABASE_HPP
 #define MEMORY_DATABASE_HPP
 
+/*
 #ifdef WIN32
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
@@ -28,36 +29,46 @@
 #else
   #define OOS_API
 #endif
-
+*/
 #include "database/database.hpp"
 
 namespace oos {
 
-class OOS_API memory_database : public database
+/// @cond OOS_DEV
+
+class /*OOS_API */memory_database : public database
 {
 public:
+  /**
+   * Creates an in memory database within the
+   * given session.
+   *
+   * @param db The corresponding session for the database.
+   */
   explicit memory_database(session *db);
-  virtual ~memory_database();
+  virtual ~memory_database() {}
 
-  virtual bool is_open() const;
-  virtual void create(const prototype_node &node);
+  virtual bool is_open() const { return true; }
+  virtual void create(const prototype_node &node) {}
 
-  virtual void load(const prototype_node &node);
+  virtual void load(const prototype_node &node) {}
 
-  virtual void execute(const char *sql, result_impl *res = 0);
+  virtual void execute(const char *sql, result_impl *res = 0) {}
 
-  virtual void visit(insert_action*);
-  virtual void visit(update_action*);
-  virtual void visit(delete_action*);
+  virtual void visit(insert_action*) {}
+  virtual void visit(update_action*) {}
+  virtual void visit(delete_action*) {}
 
-  virtual result_impl* create_result();
-  virtual statement_impl* create_statement();
+  virtual result_impl* create_result() { return 0; }
+  virtual statement_impl* create_statement() { return 0; }
 
 private:
-  virtual void on_begin();
-  virtual void on_commit();
-  virtual void on_rollback();
+  virtual void on_begin() {}
+  virtual void on_commit() {}
+  virtual void on_rollback() {}
 };
+
+/// @endcond
 
 }
 
