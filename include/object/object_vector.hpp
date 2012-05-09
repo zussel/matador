@@ -324,17 +324,8 @@ public:
   {
     iterator ret = object_vector_.erase(i);
     // update index values of all successor elements
-    iterator j = ret;
-    while (j != object_vector_.end()) {
-      size_type index = 0;
-      if (!(*j)->get("item_index", index)) {
-        throw object_exception("couldn't get object vector index item");
-      } else if (!(*j)->set("item_index", --index)) {
-        throw object_exception("couldn't set object vector index item");
-      } else {
-        ++j;
-      }
-    }
+    adjust_index(ret);
+
     return ret;
   }
 
@@ -350,10 +341,11 @@ public:
    */
   iterator erase(iterator first, iterator last)
   {
-    while (first != last) {
-      first = erase(first);
-    }
-    return first;
+    iterator ret = object_vector_.erase(first, last);
+    // adjust index
+    adjust_index(ret);
+
+    return ret;
   }
 
 protected:
@@ -386,6 +378,20 @@ private:
   virtual void append_proxy(object_proxy *proxy)
   {
     object_vector_.push_back(item_ptr(proxy));
+  }
+
+  void adjust_index(iterator i)
+  {
+    while (i != object_vector_.end()) {
+      size_type index = 0;
+      if (!(*i)->get("item_index", index)) {
+        throw object_exception("couldn't get object vector index item");
+      } else if (!(*i)->set("item_index", --index)) {
+        throw object_exception("couldn't set object vector index item");
+      } else {
+        ++i;
+      }
+    }
   }
 
 private:
