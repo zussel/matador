@@ -154,7 +154,6 @@ SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_statement.cpp
   src/database/sqlite/sqlite_sequencer.cpp
   src/database/sqlite/sqlite_result.cpp
-  src/database/sqlite/sqlite_producer.cpp
 )
 
 SET(SQLITE_DATABASE_HEADER
@@ -163,7 +162,6 @@ SET(SQLITE_DATABASE_HEADER
   include/database/sqlite/sqlite_statement.hpp
   include/database/sqlite/sqlite_sequencer.hpp
   include/database/sqlite/sqlite_result.hpp
-  include/database/sqlite/sqlite_producer.hpp
   include/database/sqlite/sqlite_types.hpp
 )
 
