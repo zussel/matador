@@ -16,7 +16,7 @@ using namespace std;
 ObjectListTestUnit::ObjectListTestUnit()
   : unit_test("object list")
 {
-  add_test("int", std::tr1::bind(&ObjectListTestUnit::test_list, this), "test object list with integers");
+  add_test("int", std::tr1::bind(&ObjectListTestUnit::test_int_list, this), "test object list with integers");
   add_test("ref", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
   add_test("ptr", std::tr1::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
   add_test("linked_int", std::tr1::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
@@ -52,7 +52,7 @@ ObjectListTestUnit::finalize()
 }
 
 void
-ObjectListTestUnit::test_list()
+ObjectListTestUnit::test_int_list()
 {
   typedef object_ptr<IntList> intlist_ptr;
 

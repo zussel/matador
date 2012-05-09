@@ -318,6 +318,11 @@ public:
     return vector_.erase(i);
   }
 
+  iterator erase(iterator first, iterator last)
+  {
+    return vector_.erase(first, last);
+  }
+
   size_type size() { return vector_.size(); }
 
 private:

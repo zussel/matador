@@ -14,7 +14,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  void test_list();
+  void test_int_list();
   void test_ref_list();
   void test_ptr_list();
   void test_linked_int_list();
