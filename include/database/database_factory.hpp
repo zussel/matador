@@ -42,42 +42,11 @@ class database;
 class session;
 
 /// @cond OOS_DEV
-/*
-class OOS_API database_producer
-{
-public:
-  virtual ~database_producer() {}
-
-  virtual database* create(session *db) const = 0;
-};
-*/
 class database_factory : public oos::singleton<database_factory>
 {
 private:
   typedef factory<std::string, database> factory_t;
   
-private:
-  /*
-  class database_loader
-  {
-  public:
-    database_loader(const std::string &name);
-    ~database_loader();
-
-    database* create(session *db) const;
-
-  private:
-    typedef database_producer*(*get_producer)();
-
-  private:
-    std::string name_;
-    database_producer *producer_;
-    library loader_;
-  };
-
-private:
-  typedef std::map<std::string, database_loader*> factory_t;
-*/
 private:
   friend class singleton<database_factory>;
 

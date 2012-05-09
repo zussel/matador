@@ -30,13 +30,7 @@ database_factory::database_factory()
 {}
 
 database_factory::~database_factory()
-{
-  /*
-  for (factory_t::iterator i = factory_.begin(); i != factory_.end(); ++i) {
-    delete i->second;
-  }
-  */
-}
+{}
 
 database* database_factory::create(const std::string &name, session *db)
 {
@@ -97,44 +91,7 @@ database* database_factory::database_producer::create() const
 
 void database_factory::database_producer::destroy(database_factory::factory_t::value_type* val) const
 {
-//  cout << "detroying database backend\n";
   (*destroy_)(val);
 }
 
-/*
-database* database_factory::create(const std::string &name, session *db)
-{
-  factory_t::iterator i = factory_.find(name);
-  if (i == factory_.end()) {
-    database_loader *loader = new database_loader(name);
-    i = factory_.insert(std::make_pair(name, loader)).first;
-  }
-  return i->second->create(db);
-}
-
-database_factory::database_loader::database_loader(const std::string &name)
-{
-  // load oos driver library
-  // create instance
-  if (!loader_.load(("oos-"+name).c_str())) {
-    throw std::runtime_error("couldn't fínd library [" + name + "]");
-  }
-
-  // get producer
-  get_producer prod_func = reinterpret_cast<get_producer>(loader_.function("get_producer"));
-  producer_ = (*prod_func)();
-}
-
-database_factory::database_loader::~database_loader()
-{
-//  loader_.unload();
-}
-
-database* database_factory::database_loader::create(session *db) const
-{
-  // on each call store the created database for later
-  // explicit destruction
-  return producer_->create(db);
-}
-*/
 }
