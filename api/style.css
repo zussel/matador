@@ -3,24 +3,36 @@ body
 	margin: 0;
 	padding: 0;
 	font-family: Arial, Verdana, "Lucida Grande", sans-serif;
-	color: #eee;
-  background-color: #909090;
+	font-size: 100%;
+	color: #aaa;
+/*	color: #555;*/
+/*	background-color: #e6e6e6;*/
+/*	background-color: #4a4747;*/
+	background-color: #222;
+  line-height:1.6em;
+}
+
+a
+{
+color: #3fa6e7;
 }
 
 #wrapper
 {
-  width: 900px;
-  margin: 40px auto;
+/*	width: 900px;*/
+	width: 790px;
+	margin: 0 auto;
 }
 
 #header
 {
-  float: left;
-  margin: 0 0;
+  margin: 10px auto;
+  width: 100%;
   padding: 0 0;
   color: #ddd;
-  height: 160px;
-  background-color: #303030;
+/*  height: 160px;*/
+/*  background-color: #303030;*/
+  /*background-image: url(banner.jpg);*/
 }
 
 #header h1
@@ -28,74 +40,163 @@ body
   text-align: center;
 }
 
-#content ul
+#header ul
+{
+  float: right;
+  margin: 30px 20px 0 0;
+  list-style: none;
+  padding: 0;
+/*  background-color: #d6d6d6;*/
+}
+
+#header ul li
+{
+  float: left;
+  padding: 6px 5px 6px 5px;
+  font-weight: bolder;
+  color: #cb4b16;
+}
+
+#header ul li a
+{
+  text-decoration: none;
+  font-weight: bolder;
+  color: #3fa6e7;
+}
+
+#header ul li:hover
+{
+  background-color: #e6e6e6;
+}
+
+#logo
+{
+  width: 100%;
+  float: left;
+  border: 2px solid #aaa;
+  margin: 10px 0;
+}
+
+#logo table tr td.oos
+{
+/*  float: left;*/
+  padding: 40px 5px;
+  font-family: sans-serif;
+	font-size: 600%;
+	font-weight: 900;
+	color: #222;
+	background-color: #aaa;
+}
+
+#logo table tr td.tagline
+{
+  vertical-align: bottom;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  font-family: sans-serif;
+  font-size: 150%;
+	color: #aaa;
+}
+
+#content
+{
+  width: 100%;
+/*  margin: 0 auto;*/
+  margin: 0 0 0 10px;
+  padding: 0 0;
+/*  background-color: #f6f6f6;*/
+  float: left;
+}
+
+#navrow1 ul,
+#navrow2 ul,
+#navrow3 ul,
+#navrow4 ul
 {
   width: 100%;
   float: left;
   margin: 0;
   list-style: none;
   padding: 0;
-  background-color: #303030;
+  /*background-color: #d6d6d6;*/
 }
 
-#content ul li
+#navrow1 ul li,
+#navrow2 ul li,
+#navrow3 ul li,
+#navrow4 ul li
 {
   float: left;
-  padding: 6px 5px 10px 5px;
-  border-left: 1px solid #404040;
-  border-right: 1px solid #202020;
+/*  margin: 3px;*/
+  padding: 6px 10px 6px 0px;
 }
 
-#content ul li a
+#navrow1 ul li a,
+#navrow2 ul li a,
+#navrow3 ul li a,
+#navrow4 ul li a
 {
   text-decoration: none;
-  color: #e7e620;
+  font-weight: bolder;
+  /*color: #3fa6e7;*/
 }
 
-#content ul li:hover
+#navrow1 ul li:hover,
+#navrow2 ul li:hover,
+#navrow3 ul li:hover,
+#navrow4 ul li:hover
 {
-  background-color: #909090;
+  /*background-color: #e6e6e6;*/
   /*
   text-decoration: none;
   color: #e7e620;
   */
 }
 
-#content
-{
-  width: 900px;
-  float: left;
-  clear: both;
-  margin: 0 0;
-  color: #555;
-  background-color: #eee;
-}
-
 #content h3
 {
   /* top right bottom left */
-  padding: 10px 5px 0 5px;
-  /*background-color: #eee;*/
-  font-family: Courier, Monospace;
-  font-size: 150%;
-  font-weight: bolder;
-  color: darkgreen;
+  margin: 5px 0;
+}
+
+#content h2
+{
+  margin: 20px 0;
 }
 
 #content p
 {
-  margin: 5px;
-  padding: 5px;
-  /*border: 1px dashed #ccc*/;
+  margin: 10px 0;
   text-align: justify;
-}
-#footer
-{
-  padding: 30px 0;
-  background-color: #333;
-  color: #ddd;
+  /*line-height:1.6em;*/
+  /*font-size: 120%;*/
 }
 
+#content pre
+{
+  margin: 0 50px;
+}
+
+#content pre code
+{
+  font-size: 110%;
+  line-height: 100%;
+}
+
+#footer
+{
+  border-top: 2px solid #aaa;
+  float: left;
+  width: 100%;
+  padding: 30px 0;
+}
+
+.tabs,
+.tabs2,
+.tabs3,
+.tabs4,
+.contents,
+.header,
 .clear
 {
   clear: both;
@@ -113,25 +214,74 @@ body
 
 .width100
 {
-  width: 900px;
+/*  width: 900px;*/
+  width: 780px;
 }
 
 .width66
 {
-  width: 600px;
+/*  width: 600px;*/
+  width: 520px;
 }
 
 .width33
 {
-  width: 300px;
+/*  width: 300px;*/
+  width: 260px;
 }
 
 .width50
 {
-  width: 450px;
+/*  width: 450px;*/
+  width: 390px;
+}
+
+.width75
+{
+/*  width: 675px;*/
+  width: 585px;
 }
 
 .width25
 {
-  width: 225px;
+/*  width: 225px;*/
+  width: 195px;
+}
+
+.memitem
+{
+  margin: 0 30px;
+  background-color: #eee8d5;
+}
+
+.memname
+{
+  font-family: Courier, Monospace;
+  color: #268bd2;
+}
+
+.title
+{
+	font-size: 170%;
+	font-weight: 900;
+	margin: 0;
+	padding: 20px 0 10px 0;
+}
+
+.fragment
+{
+	margin: 30px;
+	padding: 5px;
+/*	background-color: #eee;*/
+  line-height: 100%;
+	font-size: 105%;
+}
+
+pre .keywordtype {
+  color: #859900;
+}
+
+pre .stringliteral
+{
+  color: #ffcc33;
 }

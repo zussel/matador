@@ -6,7 +6,8 @@
     <title>Open Object Store</title> 
 	<link rel="stylesheet" type="text/css" href="style.css" />
     <!--link rel="stylesheet" type="text/css" href="vs.css"/-->
-    <link rel="stylesheet" type="text/css" href="solarized_light.css"/>
+    <!--link rel="stylesheet" type="text/css" href="solarized_light.css"/-->
+    <link rel="stylesheet" type="text/css" href="arta.css"/>
   </head> 
   <body>
     <div id="wrapper">
@@ -18,19 +19,28 @@
           <li><a href="tutorial.html">Tutorial</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
+        <div id="logo">
+          <table cellspacing="0">
+            <tr>
+              <td class="oos">OOS</td>
+              <td class="tagline">Store all your objects in one container.</td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div id="content">
-        <h2>OOS: The Open Object Store</h2>
-        <div class="width66 float_left">
-          <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All is done for you automagically. It gives the user both one container for all objects and the persistence backend functionality.</p>
-          <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
+        <h2>The Open Object Store</h2>
+        <div class="width75 float_left">
+          <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides two things the ORM funcionality and a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All is done for you automagically. It gives the user both one container for all objects and the persistence backend functionality.</p>
+          <h2>Getting started</h2>
         </div>
-        <div class="width33 float_right">
-            <p>Download Version 0.1 here.</p>
+        <div class="width25 float_right">
+            <p>Download Version 0.1.0</p>
         </div>
         <div class="clear"></div>
-        <div class="width50 float_left">
-        <p>1. Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
+        <div class="width75 float_left">
+          <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
+          <p>1. Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
 <pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
 {
 <span class="keyword">private</span>:
@@ -38,24 +48,22 @@
   <span class="built_in">int</span> age_;
 
 <span class="keyword">public</span>:
-  person() : age_(0) {}
-  person(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n, <span class="built_in">int</span> a)
-    : name_(n), age_(a)
+  person() {}
+  person(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n)
+    : name_(n)
   {}
   <span class="keyword">virtual</span> ~person() {}
   
-  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *oa)
+  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *a)
   {
-    oos::object::read_from(oa);
-    oa-&gt;read_string(<span class="string">"name"</span>, name_);
-    oa-&gt;read_int(<span class="string">"age"</span>, age_);
+    oos::object::read_from(a);
+    a-&gt;read(<span class="string">"name"</span>, name_);
   }
 
-  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *oa) <span class="keyword">const</span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *a) <span class="keyword">const</span>
   {
-    oos::object::write_to(oa);
-    oa-&gt;write_string(<span class="string">"name"</span>, name_);
-    oa-&gt;write_int(<span class="string">"age"</span>, age_);
+    oos::object::write_to(a);
+    a-&gt;write(<span class="string">"name"</span>, name_);
   }
 
   <span class="keyword">void</span> name(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n)
@@ -63,16 +71,11 @@
     modify(name_, n);
   }
 
-  <span class="keyword">void</span> age(<span class="built_in">int</span> a)
+  <span class="built_in">std</span>::<span class="built_in">string</span> name() <span class="keyword">const</span>
   {
-    modify(age_, a);
+    <span class="keyword">return</span> name_;
   }
-
-  <span class="built_in">std</span>::<span class="built_in">string</span> name() <span class="keyword">const</span> { <span class="keyword">return</span> name_; }
-  <span class="built_in">int</span> age() <span class="keyword">const</span> { <span class="keyword">return</span> age_; }
 };</code></pre>
-        </div>
-        <div class="width50 float_right">
         <p>2. Make your class type known to your object store</p>
 <pre><code class="cpp">object_store ostore;
 ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);</code></pre>
@@ -110,13 +113,11 @@ person_view_t::iterator last = oview.end();
 }
 </code></pre>
       </div>
-      <div class="width100 float_left">
+      <div class="width75 float_left">
         <p>As you can see, the class is only derived from oos::object and two serialize methods are added. Thats it! The following code snippet shows how we can creete a database and use a transaction to persist some objects. But first the class person must be made known to the object store.</p>
       </div>
     </div>
-    <div id="footer">
-Infos.
-    </div>
+    <div id="footer">Infos.</div>
   </div>
   </body>
 </html>
