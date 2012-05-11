@@ -308,13 +308,15 @@
  * <div class="width25 float_right">
  * @endhtmlonly
  * <b>Table of content</b> @n
- * @ref intro_sec @n
- * @ref objects_sec @n
- * @ref object_store_sec @n
- * @ref object_relations_sec @n
- * @ref object_view_sec @n
- * @ref object_expression_sec @n
- * @ref database_sec @n
+ * <ul>
+ *   <li>@ref intro_sec</li>
+ *   <li>@ref objects_sec</li>
+ *   <li>@ref object_store_sec</li>
+ *   <li>@ref object_relations_sec</li>
+ *   <li>@ref object_view_sec</li>
+ *   <li>@ref object_expression_sec</li>
+ *   <li>@ref database_sec</li>
+ * </ul>
  * @htmlonly
  * </div>
  * @endhtmlonly

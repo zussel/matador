@@ -84,7 +84,8 @@ pre .lisp .title,
 pre .winutils,
 pre .tex .command
 {
-  color: #9d2e2c;
+/*  color: #9d2e2c;*/
+  color: #cb4b16;
 /*  color: #6644aa;*/
 }
 

@@ -13,7 +13,7 @@
     <div id="wrapper">
       <div id="header">
         <ul>
-          <li>Home</li>
+          <li class="selected">Home</li>
           <li><a href="api/index.html">Documention</a></li>
           <li><a href="download.html">Download</a></li>
           <li><a href="tutorial.html">Tutorial</a></li>
@@ -32,13 +32,22 @@
         <h2>The Open Object Store</h2>
         <div class="width75 float_left">
           <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides two things the ORM funcionality and a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All is done for you automagically. It gives the user both one container for all objects and the persistence backend functionality.</p>
-          <h2>Getting started</h2>
+          <h2>Features</h2>
+          <ul>
+            <li>Encapsulates all Database/SQL stuff</li>
+            <li>Provides one container as the central point to store your objects</li>
+            <li>Clean and straight forward design</li>
+            <li>STL style</li>
+            <li>Easy to use</li>
+            <li>Transactions</li>
+          </ul>
         </div>
         <div class="width25 float_right">
             <p>Download Version 0.1.0</p>
         </div>
         <div class="clear"></div>
         <div class="width75 float_left">
+          <h2>Getting started</h2>
           <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
           <p>1. Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
 <pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
