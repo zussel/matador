@@ -380,7 +380,52 @@
  * }
  * @endcode
  *
- * @section object_expression_sec Object Expressions
+ * @section expression_sec Find and Filter Objects
+ *
+ * When working with an oos::object_view you may want to find
+ * a certain object or you want to apply a function only for
+ * some of the objects in the view.
+ *
+ * To achieve this we can use the oos::object_view::find_if method
+ * or we can use the global for_each_if function. But how can we
+ * define or filter criterium?
+ *
+ * @code
+ * // add some friends
+ * ostore.insert(new person("joe", 45))
+ * ostore.insert(new person("walter", 56));
+ * ostore.insert(new person("helen", 37));
+ * ostore.insert(new person("tim", 14));
+ * ostore.insert(new person("linda", 25));
+ * ostore.insert(new person("lea", 30));
+ * ostore.insert(new person("georg", 42));
+ * @endcode
+ *
+ * @code
+ * // find the person of age 25
+ * typedef oos::object_view<person> person_view_t;
+ * typedef person_view_t::iterator iterator;
+ * 
+ * person_view_t pview(ostore);
+ *  
+ * iterator pview.find_if(&person::age, 25);
+ * @endcode
+ *
+ * @code
+ * // print all persons with age between 20 and 60 years
+ * void find_between_40_and_60(const person_ptr &p)
+ * {
+ *   std::cout << p->name() << " is between 40 and 60.\n";
+ * }
+ *
+ * // declare a variable/literal for the age
+ * variable<int, person> x(&person::age);
+ *
+ * // use the for_each_if function
+ * for_each_if(pview.begin(), pview.end(),
+ *             x > 20 && x < 60,
+ *             find_between_40_and_60);
+ * @endcode
  *
  * @section database_sec Persist Objects
  *
@@ -395,7 +440,7 @@
  *   <li>@ref object_store_sec</li>
  *   <li>@ref object_relations_sec</li>
  *   <li>@ref object_view_sec</li>
- *   <li>@ref object_expression_sec</li>
+ *   <li>@ref expression_sec</li>
  *   <li>@ref database_sec</li>
  * </ul>
  * @htmlonly
