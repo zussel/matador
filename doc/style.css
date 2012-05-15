@@ -187,8 +187,9 @@ color: #3fa6e7;
 
 #content pre code
 {
-  font-size: 110%;
-  line-height: 100%;
+  font-size: 115%;
+  /*font-weight: bold;*/
+  line-height: 95%;
 }
 
 #footer
@@ -324,6 +325,11 @@ table.memberdecls
 .memdoc
 {
   padding: 5px;
+}
+
+pre
+{
+  /*font-family: courier, monospace;*/
 }
 
 pre .comment

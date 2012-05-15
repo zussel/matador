@@ -188,18 +188,28 @@
  *
  * @subsection one_to_one One to one relations
  *
+ * In this example we have two object types an address class
+ * and a person class.
+ * 
  * @code
- * class address
+ * class address : public oos::object
  * {
  * public:
+ *   //...
+ * 
  * private:
  *   std::string street_;
  *   std::string city_;
  * };
  * @endcode
  *
+ * Each person class should have an address, so we add an
+ * oos::object_ptr of type address to the members. That's
+ * it. Now we have a one to one relationship beetween two
+ * classes.
+ *
  * @code
- * class person
+ * class person : public oos::object
  * {
  * public:
  *   //...
@@ -209,30 +219,66 @@
  * };
  * @endcode
  *
+ * With this kind of relationship we have a hard linked
+ * relationship. Which means if we remove the person from
+ * our store the address object is removed as well.
+ * 
+ * In case we want to keep the address object we can use
+ * a oos::object_ref of type adress instead of object_ptr.
+ * 
+ * @code
+ * class person : public oos::object
+ * {
+ * private:
+ *   oos::object_ref<address> address_;
+ * };
+ * @endcode
+ *
+ * With object_ref we have a soft link to the address inside
+ * our person class and it won't be removed on a person removal.
+ * We must explicitly remove the address.
+ *
  * @subsection one_to_many One to many relations
+ *
+ * When it comes to one to many releationships it is also
+ * quiet easy. OOS comes with three types of container
+ * classes which can be used to setup one to many relationships.
+ * Because these classes are designed in the same way as
+ * the STL classes we can use them in the same way plus the
+ * benefit of the relationship.
+ * 
+ * Our handy person class needs a list of friends which are also
+ * of type person. And because we want this list with soft linked
+ * person we use object_ref as the type of the list.
  *
  * @code
  * class person
  * {
  * public:
+ *   // the value type of the list
  *   typedef oos::object_ref<person> person_ref;
+ *   // the list definition
  *   typedef oos::object_list<person_ref> person_list_t;
+ *   // shortcuts to the iterators
  *   typedef person_list_t::iterator iterator;
  *   typedef person_list_t::const_iterator const_iterator;
  *
  *   // c'tor for person
  *   person(const std::string &name)
  *     : name_(name)
- *     , friends_(this)
+ *     // the list need the person to handle the relationship
+ *     , friends_(this) 
  *   {}
  *
  *   std::string name() const { return name_; }
  *
+ *   // add a friend to persons friend list
  *   void add_friend(const person_ref &p)
  *   {
  *     friends_.push_back(p);
  *   }
  *
+ *   // STL like iterators
  *   iterator begin() { return friends_.begin(); }
  *   iterator end() { return friends_.end(); }
  *
@@ -242,7 +288,12 @@
  * };
  * @endcode
  *
- * Access the list
+ * Why declare a list if we don't use it? Next is an example howto
+ * to use our persons friend list.
+ *
+ * We insert a new person into the object_store. Than we insert and
+ * immediatily add some persons as friends to our first person.
+ *
  * @code
  * typedef oos::object_ptr<person> person_ptr;
  *
@@ -253,7 +304,12 @@
  * p->add_friend(ostore.insert(new person("walter")));
  * p->add_friend(ostore.insert(new person("helen")));
  * p->add_friend(ostore.insert(new person("tim")));
+ * @endcode
  *
+ * Now we can simply iterate over the list like we used to
+ * do it with all STL containers. Period.
+ *
+ * @code
  * // access all friends
  * person::iterator i = p->begin();
  * for (i; i != p->end(); ++i) {
@@ -263,13 +319,28 @@
  *
  * @section object_view_sec Open a view
  *
+ * In most cases we want to iterate over all objects of a certain
+ * type. How can we achieve this? We open a view for the type we want
+ * to inspect.
+ *
+ * Again we use our little person class and insert some persons into
+ * our store.
+ * 
  * @code
  * // add some friends
  * ostore.insert(new person("joe"))
  * ostore.insert(new person("walter"));
  * ostore.insert(new person("helen"));
  * ostore.insert(new person("tim"));
+ * @endcode
  *
+ * Than we create a view with the oos::object_view class. This class
+ * takes as the template parameter the desired class type. Then we can
+ * use the view like a STL list containing oos::object_ptr of our
+ * desired type.
+ *
+ * @code
+ * // shortcut to the person view
  * typedef oos::object_view<person> person_view_t;
  * 
  * person_view_t pview(ostore);
@@ -279,6 +350,16 @@
  *   std::cout << i->name() << std::endl;
  * }
  * @endcode
+ *
+ * But this class can to somethig more for us. If we have a hierarchy
+ * of classes, we can create a view of the base type and easily iterate
+ * overall sub-types.
+ * 
+ * Look at the next example. We have a hierachy with the person class
+ * as base class and inherited from that we have classes student and
+ * employee.
+ * And again we create a view of type person to access all objects of
+ * type person including sub-types student and employee.
  *
  * @code
  * class student : public person { //... };
