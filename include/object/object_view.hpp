@@ -25,6 +25,7 @@
 #include "object/prototype_node.hpp"
 
 #include <sstream>
+#include <algorithm>
 
 namespace oos {
 
@@ -579,48 +580,29 @@ public:
   /**
    * Find object which matches the given condition
    *
-   * @tparam R return type of the member function
-   * @param m The member function to compare with
-   * @param val The constant value to compare with
+   * @tparam Predicate The type for the find predicate
+   * @param pred The find predicate
    * @return The first iterator with the object matching the condition.
    */
-  template < class R >
-  const_iterator find_if(R (T::*m)() const, const R &val) const
+  template < class Predicate >
+  const_iterator find_if(Predicate pred) const
   {
-    const_iterator first = begin();
-    const_iterator last = end();
-    while (first != last) {
-      object_ptr<T> optr = first.optr();
-      if ((*optr.get().*m)() == val) {
-        break;
-      }
-      ++first;
-    }
-    return first;
+    return std::find_if(begin(), end(), pred);
   }
 
   /**
    * Find object which matches the given condition
    *
-   * @tparam R return type of the member function
-   * @param m The member function to compare with
-   * @param val The constant value to compare with
+   * @tparam Predicate The type for the find predicate
+   * @param pred The find predicate
    * @return The first iterator with the object matching the condition.
    */
-  template < class R >
-  iterator find_if(R (T::*m)() const, const R &val)
+  template < class Predicate >
+  iterator find_if(Predicate pred)
   {
-    iterator first = begin();
-    iterator last = end();
-    while (first != last) {
-      object_ptr<T> optr = first.optr();
-      if ((*optr.get().*m)() == val) {
-        break;
-      }
-      ++first;
-    }
-    return first;
+    return std::find_if(begin(), end(), pred);
   }
+
 private:
     object_store &ostore_;
     bool skip_siblings_;

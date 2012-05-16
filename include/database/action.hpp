@@ -45,6 +45,7 @@ class delete_action;
 class drop_action;
 
 /// @cond OOS_DEV
+
 /**
  * @class action_visitor
  * @brief The action_visitor class accepts all action types.
@@ -60,6 +61,7 @@ public:
   virtual ~action_visitor() {}
   
   /**
+   * @internal
    * @brief Called with a create_action
    * 
    * When a new prototype is inserted into
@@ -116,6 +118,7 @@ public:
 };
 
 /**
+ * @internal
  * @class action
  * @brief Base class for all database relevant actions
  *
@@ -144,6 +147,7 @@ public:
 };
 
 /**
+ * @internal
  * @class create_action
  * @brief Action when creating a table.
  * 
@@ -158,6 +162,7 @@ public:
 };
 
 /**
+ * @internal
  * @class insert_action
  * @brief Action when inserting an object.
  * 
@@ -212,6 +217,7 @@ private:
 
 
 /**
+ * @internal
  * @class update_action
  * @brief Action when updating an object.
  * 
@@ -252,6 +258,7 @@ private:
 };
 
 /**
+ * @internal
  * @class delete_action
  * @brief Action when deleting an object.
  * 
@@ -264,7 +271,8 @@ public:
   /**
    * Creates an delete_action.
    * 
-   * @param o The deleted object.
+   * @param classname The object type name.
+   * @param id The id of the deleted object.
    */
   delete_action(const char *classname, long id);
 
@@ -293,6 +301,7 @@ private:
 };
 
 /**
+ * @internal
  * @class drop_action
  * @brief Action when dropping a table.
  * 
@@ -307,6 +316,7 @@ public:
 };
 
 /// @endcond
+
 }
 
 #endif /* ACTION_HPP */

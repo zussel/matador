@@ -41,6 +41,7 @@ namespace oos {
  * @param last The final iterator containing the ending position for the range.
  * @param pred The predicate called with each element
  * @param f The function called with each element which returned true with the predicate.
+ * @return The called function.
  */
 template< class InputIterator, class Function, class Predicate >
 Function for_each_if(InputIterator first, InputIterator last, Predicate pred, Function f)
@@ -65,6 +66,7 @@ Function for_each_if(InputIterator first, InputIterator last, Predicate pred, Fu
  * @param last The final iterator containing the ending position for the range.
  * @param value The value to compare with.
  * @param f The function called with each element which is equal to the value.
+ * @return The called function.
  */
 template< class InputIterator, class Function, class T>
 Function for_each_equal(InputIterator first, InputIterator last, const T& value, Function f)

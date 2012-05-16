@@ -111,6 +111,8 @@ public:
   void close();
 
   /**
+   * @cond OOS_DEV
+   *
    * Load a concrete object of a specfic type
    * and a given id from the database. If an object
    * with the given id couldn't be found an empty
@@ -138,6 +140,7 @@ public:
   {
     return true;
   }
+  /// @endcond
 
   /**
    * @brief Load all objects from the database.

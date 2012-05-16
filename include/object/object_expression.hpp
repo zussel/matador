@@ -30,8 +30,6 @@
   #define OOS_API
 #endif
 
-//#include "tools/varchar.hpp"
-
 #include "object/object_ptr.hpp"
 
 #include <string>
@@ -60,14 +58,40 @@ private:
   T constant_;
 };
 
+/// @endcond OOS_DEV
+
+/**
+ * @class variable
+ * @tparam T Type of the variable.
+ * @tparam O Object class of the variable
+ * @brief Holds the member function of an object as a variable.
+ *
+ * This class holds a member function of an object
+ * and lets it be used as a variable. Wit the operator()()
+ * one can call the member function.
+ */
 template < class T, class O >
 class variable
 {
 public:
-  typedef T (O::*memfun)() const;
+  typedef T (O::*memfun)() const; /**< Shortcut for the member function. */
+
+  /**
+   * Creates a variable with the given member function
+   *
+   * @param m The member function to call.
+   */
   variable(memfun m)
     : m_(m)
   {}
+
+  /**
+   * Member function call operator. Along with the given
+   * object the member function is called.
+   *
+   * @param optr The object of which the member function is called.
+   * @return Returns the value of the member function.
+   */
   T operator()(const object_base_ptr &optr) const
   {
     return get(optr.ptr());
@@ -82,6 +106,8 @@ private:
 private:
   memfun m_;
 };
+
+/// @cond OOS_DEV
 
 template < class E >
 struct expression_traits

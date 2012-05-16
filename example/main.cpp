@@ -4,6 +4,7 @@
 
 #include "object/object_store.hpp"
 #include "object/object_view.hpp"
+#include "object/object_expression.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"
@@ -185,7 +186,9 @@ object_ptr<Artist> parse_artist(object_store &ostore, const std::string &line, s
   }
 
   object_view<Artist> oview(ostore);
-  if (oview.find_if(&Artist::name, name) != oview.end()) {
+  variable<std::string, Artist> x(&Artist::name);
+  if (oview.find_if(x == name) != oview.end()) {
+//  if (oview.find_if(&Artist::name, name) != oview.end()) {
     // artist already exists
     std::cout << "artist [" << name << "] already exists!\n";
     return object_ptr<Artist>();
@@ -216,7 +219,8 @@ object_ptr<Album> parse_album(object_store &ostore, const object_ptr<Artist> &ar
   }
 
   object_view<Album> oview(ostore);
-  if (oview.find_if(&Album::name, name) != oview.end()) {
+  variable<std::string, Album> x(&Album::name);
+  if (oview.find_if(x == name) != oview.end()) {
     // artist already exists
     std::cout << "album [" << name << "] already exists!\n";
     return object_ptr<Album>();
@@ -251,7 +255,8 @@ object_ptr<Track> parse_track(object_store &ostore, const object_ptr<Album> &alb
   }
 
   object_view<Track> oview(ostore);
-  if (oview.find_if(&Track::title, name) != oview.end()) {
+  variable<std::string, Track> x(&Track::title);
+  if (oview.find_if(x == name) != oview.end()) {
     // artist already exists
     std::cout << "track [" << name << "] already exists!\n";
     return object_ptr<Track>();
