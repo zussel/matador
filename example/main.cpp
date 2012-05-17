@@ -55,6 +55,8 @@ main(int argc, char *argv[])
    *
    * setup command server
    * with following commands:
+   * - create
+   * - clear
    * - import
    * - export
    * - list [artist,album,track]
