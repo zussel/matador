@@ -19,8 +19,11 @@ public:
   typedef oos::object_ref<Album> self_ref;
   typedef oos::object_ref<Track> track_ref;
   typedef oos::object_vector<Album, track_ref> track_album_vector_t;
+  typedef track_album_vector_t::item_type item_type;
+  typedef track_album_vector_t::value_type value_type;
   typedef track_album_vector_t::iterator iterator;
 	typedef track_album_vector_t::const_iterator const_iterator;
+  typedef track_album_vector_t::size_type size_type;
   
   Album();
   Album(const std::string &n);
@@ -39,10 +42,10 @@ public:
   void artist(const oos::object_ptr<Artist> &a);
   oos::object_ref<Artist> artist() const;
 
-  void add(int index, const oos::object_ref<Track> &track, bool overide_artist = true);
-  oos::object_ref<Track> find(const std::string &name) const;
+  void add(int index, const track_ref &track, bool overide_artist = true);
+  const_iterator find(const std::string &title) const;
 
-  oos::object_ref<Track> operator[](track_album_vector_t::size_type n);
+  track_ref operator[](track_album_vector_t::size_type n);
 
 	iterator begin();
 	iterator end();

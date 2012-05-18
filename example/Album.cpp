@@ -1,6 +1,8 @@
 #include "Album.hpp"
 #include "Track.hpp"
+
 #include "object/object_atomizer.hpp"
+#include "object/object_expression.hpp"
 
 using std::string;
 using namespace oos;
@@ -72,25 +74,22 @@ object_ref<Artist> Album::artist() const
   return artist_;
 }
 
-void Album::add(int index, const object_ref<Track> &track, bool override_artist)
+void Album::add(int index, const track_ref &track, bool override_artist)
 {
-  if (!ostore()) {
-    // throw object_exception();
-  } else {
-//    object_ptr<TrackAlbumRelation> rel = ostore()->insert(new TrackAlbumRelation(index, track, object_ref<Album>(this)));
-    track_album_vector_.push_back(track);
-    if (override_artist) {
-      track->artist(artist_);
-    }
+  track_album_vector_.push_back(track);
+  if (override_artist) {
+    track->artist(artist_);
   }
 }
 
-object_ref<Track> Album::find(const std::string &/*name*/) const
+Album::const_iterator Album::find(const std::string &title) const
 {
-  return object_ref<Track>();
+  variable<std::string, Track> y(&Track::title);
+  variable<value_type, item_type> x(&item_type::value);
+  return std::find_if(track_album_vector_.begin(), track_album_vector_.end(), y == title);
 }
 
-oos::object_ref<Track> Album::operator[](track_album_vector_t::size_type n)
+Album::track_ref Album::operator[](track_album_vector_t::size_type n)
 {
   return track_album_vector_[n];
 }

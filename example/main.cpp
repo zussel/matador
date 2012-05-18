@@ -41,7 +41,8 @@ main(int argc, char *argv[])
   ostore.insert_prototype<Artist>("artist");
   ostore.insert_prototype<Track>("track");
   ostore.insert_prototype<Album>("album");
-  ostore.insert_prototype<Album::track_album_vector_t::item_type>("track_album_rel");
+  ostore.insert_prototype<Album::item_type>("track_album_rel");
+  ostore.insert_prototype<Artist::item_type>("album_artist_rel");
 
   // create and open db
   session db(ostore, "sqlite://mdb.sqlite");
@@ -227,7 +228,9 @@ object_ptr<Album> parse_album(object_store &ostore, const object_ptr<Artist> &ar
     std::cout << "album [" << name << "] already exists!\n";
     return object_ptr<Album>();
   } else {
-    return ostore.insert(new Album(name, year, artist));
+    object_ptr<Album> album = ostore.insert(new Album(name, year, artist));
+    artist->add(album);
+    return album;
   }
 }
 
