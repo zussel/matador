@@ -59,6 +59,60 @@ private:
 };
 
 /// @endcond OOS_DEV
+/*
+template < typename R, typename O >
+class literal
+{
+public:
+  typedef R (O::*func_type)() const; / **< Shortcut for the member function. * /
+
+  literal(func_type f)
+    : func_(f)
+  {}
+
+  R operator()(const object_base_ptr &o)
+  {
+    return get(optr.ptr());
+  }
+
+private:
+  R get(const object *o) const
+  {
+    const O *obj = static_cast<const O*>(o);
+    return (*obj.*func_)();
+  }
+
+private:
+  func_type func_;
+};
+
+template < typename R, typename O, typedef OR, typename S >
+class literal
+{
+public:
+  typedef R (O::*func_type)() const;         / **< Shortcut for the member function. * /
+  typedef OR (S::*object_func_type)() const; / **< Shortcut for the member function. * /
+
+  literal(func_type f)
+    : func_(f)
+  {}
+
+  R operator()(const object_base_ptr &o)
+  {
+    return get(optr.ptr());
+  }
+
+private:
+  R get(const object *o) const
+  {
+    const O *obj = static_cast<const O*>(o);
+    return (*obj.*func_)();
+  }
+
+private:
+  func_type func_;
+};
+*/
 
 /**
  * @class variable
@@ -92,6 +146,18 @@ public:
    * @param optr The object of which the member function is called.
    * @return Returns the value of the member function.
    */
+  /*
+  T operator()(const object_ptr<O> &o) const
+  {
+    return (*o.get().*m_)();
+  }
+
+  T operator()(const object_ref<O> &o) const
+  {
+    return (*o.get().*m_)();
+  }
+  */
+
   T operator()(const object_base_ptr &optr) const
   {
     return get(optr.ptr());
