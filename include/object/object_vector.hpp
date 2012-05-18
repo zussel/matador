@@ -36,49 +36,38 @@
 namespace oos {
 
 ///@cond OOS_DEV
-template < class T, class C >
-class object_vector_item : public oos::object
-{
-public:
-  typedef oos::object_ref<C> container_ref;
-  typedef T value_type;
-  typedef unsigned long size_type;
 
+template < class T, class C >
+class object_vector_item : public container_item<T, C>
+{
+private:
+  typedef container_item<T, C> base_item;
+
+public:
   object_vector_item() : index_(0) {}
   explicit object_vector_item(const container_ref &c)
-    : container_(c)
+    : base_item(c)
     , index_(0)
   {}
   object_vector_item(const container_ref &c, const value_type &v)
-    : container_(c)
+    : base_item(c, v)
     , index_(0)
-    , value_(v)
   {}
   object_vector_item(const container_ref &c, size_type i, const value_type &v)
-    : container_(c)
+    : base_item(c, v)
     , index_(i)
-    , value_(v)
   {}
   virtual ~object_vector_item() {}
 
   virtual void read_from(oos::object_atomizer *oa)
   {
-    oos::object::read_from(oa);
-    oa->read("container", container_);
+    base_item::read_from(oa);
     oa->read("item_index", index_);
-    oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
-    oos::object::write_to(oa);
-    oa->write("container", container_);
+    base_item::write_to(oa);
     oa->write("item_index", index_);
-    oa->write("value", value_);
-  }
-
-  container_ref container() const
-  {
-    return container_;
   }
 
   size_type index() const
@@ -91,20 +80,8 @@ public:
     modify(index_, i);
   }
 
-  value_type value() const
-  {
-    return value_;
-  }
-
-  void value(const value_type &v)
-  {
-    modify(value_, v);
-  }
-
 private:
-  container_ref container_;
   size_type index_;
-  value_type value_;
 };
 
 /// @endcond

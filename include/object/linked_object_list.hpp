@@ -51,59 +51,39 @@ namespace oos {
 ///@cond OOS_DEV
 
 template < class T, class C >
-class linked_object_list_item : public oos::object
+class linked_object_list_item : public container_item<T, C>
 {
+private:
+  typedef container_item<T, C> base_item;
+
 public:
-  typedef oos::object_ref<C> container_ref;
   typedef linked_object_list_item<T, C> self;
   typedef object_ref<self> self_ref;
-  typedef T value_type;
-  typedef unsigned int size_type;
 
   linked_object_list_item() {}
   explicit linked_object_list_item(const container_ref &c)
-    : container_(c)
+    : base_item(c)
   {}
   linked_object_list_item(const container_ref &c, const value_type &v)
-    : container_(c)
-    , value_(v)
+    : base_item(c, v)
   {}
   virtual ~linked_object_list_item() {}
 
   virtual void read_from(oos::object_atomizer *oa)
   {
-    oos::object::read_from(oa);
+    base_item::read_from(oa);
     oa->read("first", first_);
     oa->read("last", last_);
     oa->read("prev", prev_);
     oa->read("next", next_);
-    oa->read("container", container_);
-    oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
-    oos::object::write_to(oa);
+    base_item::write_to(oa);
     oa->write("first", first_);
     oa->write("last", last_);
     oa->write("prev", prev_);
     oa->write("next", next_);
-    oa->write("container", container_);
-    oa->write("value", value_);
-  }
-
-  container_ref container() const
-  {
-    return container_;
-  }
-
-  value_type value() const
-  {
-    return value_;
-  }
-
-  void value(const value_type &v)
-  {
-    modify(value_, v);
   }
 
   self_ref first() const
@@ -133,8 +113,6 @@ private:
   self_ref last_;
   self_ref prev_;
   self_ref next_;
-  container_ref container_;
-  value_type value_;
 };
 
 template < class S, class T > class linked_object_list;
@@ -607,7 +585,7 @@ public:
    * @return True if list is empty.
    */
   virtual bool empty() const {
-    return first_->next_ == last_;
+    return first_->next() == last_;
   }
 
   /**
@@ -650,8 +628,8 @@ public:
     } else {
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type);
-      item->container_.reset(parent_);
-      item->value_ = elem;
+      item->container().reset(parent_);
+      item->value(elem);
       // mark list object as modified
       mark_modified(parent_);
 

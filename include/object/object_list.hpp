@@ -35,63 +35,6 @@
 
 namespace oos {
 
-///@cond OOS_DEV
-
-template < class T, class C >
-class container_item : public oos::object
-{
-public:
-  typedef oos::object_ref<C> container_ref;
-  typedef T value_type;
-  typedef unsigned int size_type;
-
-  container_item() {}
-  explicit container_item(const container_ref &c)
-    : container_(c)
-  {}
-  container_item(const container_ref &c, const value_type &v)
-    : container_(c)
-    , value_(v)
-  {}
-  virtual ~container_item() {}
-
-  virtual void read_from(oos::object_atomizer *oa)
-  {
-    oos::object::read_from(oa);
-    oa->read("container", container_);
-    oa->read("value", value_);
-  }
-  virtual void write_to(oos::object_atomizer *oa) const
-  {
-    oos::object::write_to(oa);
-    oa->write("container", container_);
-    oa->write("value", value_);
-  }
-
-  container_ref container() const
-  {
-    return container_;
-  }
-
-  value_type value() const
-  {
-    return value_;
-  }
-
-  void value(const value_type &v)
-  {
-    modify(value_, v);
-  }
-
-private:
-  template < class V, class S > friend class object_list;
-
-  container_ref container_;
-  value_type value_;
-};
-
-/// @endcond
-
 /**
  * @class object_list
  * @brief An object list class.
@@ -258,7 +201,6 @@ public:
       item_ptr item = *i;
       mark_modified(parent_);
       if (!ostore()->remove(item)) {
-        std::cout << "couldn't remove node (proxy: " << *item->proxy() << ")\n";
         return end();
       } else {
         return object_list_.erase(i);
