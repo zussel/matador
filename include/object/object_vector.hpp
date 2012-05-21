@@ -44,6 +44,11 @@ private:
   typedef container_item<T, C> base_item;
 
 public:
+  typedef typename base_item::container_ref container_ref;
+  typedef typename base_item::value_type value_type;
+  typedef typename base_item::size_type size_type;
+
+public:
   object_vector_item() : index_(0) {}
   explicit object_vector_item(const container_ref &c)
     : base_item(c)
