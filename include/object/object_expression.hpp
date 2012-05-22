@@ -128,6 +128,7 @@ template < class T, class O >
 class variable
 {
 public:
+  typedef O expression_type;
   typedef T (O::*memfun)() const; /**< Shortcut for the member function. */
 
   /**
@@ -139,22 +140,10 @@ public:
     : m_(m)
   {}
 
-  /**
-   * Member function call operator. Along with the given
-   * object the member function is called.
-   *
-   * @param optr The object of which the member function is called.
-   * @return Returns the value of the member function.
-   */
   /*
-  T operator()(const object_ptr<O> &o) const
+  T operator()(const expression_type *o) const
   {
-    return (*o.get().*m_)();
-  }
-
-  T operator()(const object_ref<O> &o) const
-  {
-    return (*o.get().*m_)();
+    return (*o.*m_)();
   }
   */
 
@@ -227,6 +216,8 @@ public:
     , op_(op)
   {}
 
+
+//  bool operator()(const L::expression_type *o) const
   bool operator()(const object_base_ptr &o) const
   {
     return op_(left_(o));
@@ -247,6 +238,7 @@ public:
     , op_(op)
   {}
 
+//  bool operator()(const L::expression_type *o) const
   bool operator()(const object_base_ptr &o) const
   {
    return op_(left_(o), right_(o));
