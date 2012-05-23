@@ -2,7 +2,7 @@
 #include "Album.hpp"
 
 #include "object/object_atomizer.hpp"
-#include "object/object_expression.hpp"
+//#include "object/object_expression.hpp"
 
 using namespace oos;
 
@@ -51,8 +51,11 @@ void Artist::add(const Artist::album_ref &album)
 
 Artist::const_iterator Artist::find(const std::string &name) const
 {
+  /*
   variable<std::string, Album> x(&Album::name);
   return std::find_if(album_artist_list_.begin(), album_artist_list_.end(), x == name);
+  */
+  return begin();
 }
 
 Artist::iterator Artist::begin()

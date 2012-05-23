@@ -39,8 +39,10 @@ ObjectStoreTestUnit::~ObjectStoreTestUnit()
 void
 ObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype(new object_producer<Item>, "ITEM");
-  ostore_.insert_prototype(new object_producer<ObjectItem<Item> >, "OBJECT_ITEM");
+  ostore_.insert_prototype<Item>("ITEM");
+  ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
+  ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
+  ostore_.insert_prototype<ItemRefList::item_type>("ITEM_REF");
 }
 
 void
@@ -61,9 +63,13 @@ void
 ObjectStoreTestUnit::expression_test()
 {
   typedef object_ptr<Item> item_ptr;
+  typedef object_ptr<ItemRefList> itemlist_ptr;
+  typedef ItemRefList::value_type item_type;
+
+  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
 
   for (int i = 0; i < 10; ++i) {
-    ostore_.insert(new Item("Simple", i));
+    itemlist->push_back(ostore_.insert(new Item("Simple", i)));
   }
 
   variable<int, Item> x(&Item::get_int);
@@ -86,7 +92,14 @@ ObjectStoreTestUnit::expression_test()
     }
   }
   */
-  
+
+  /*
+  typedef ItemRefList::item_type ItemType;
+  var<int, Item, &Item::get_int, ItemType, &ItemType::value> y;
+  ItemRefList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), y == 4);
+  UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
+  */
+
   object_view<Item>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
 

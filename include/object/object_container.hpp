@@ -28,41 +28,28 @@
 
 namespace oos {
 
-template < class T, class C >
-class container_item : public object
+template < class T >
+class value_item : public object
 {
 public:
-  typedef oos::object_ref<C> container_ref;
-  typedef C container_type;
   typedef T value_type;
-  typedef typename container_type::size_type size_type;
 
-  container_item() {}
-  explicit container_item(const container_ref &c)
-    : container_(c)
+public:
+  value_item() {}
+  value_item(const value_type &v)
+    : value_(v)
   {}
-  container_item(const container_ref &c, const value_type &v)
-    : container_(c)
-    , value_(v)
-  {}
-  virtual ~container_item() {}
+  virtual ~value_item() {}
 
   virtual void read_from(oos::object_atomizer *oa)
   {
     oos::object::read_from(oa);
-    oa->read("container", container_);
     oa->read("value", value_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
     oos::object::write_to(oa);
-    oa->write("container", container_);
     oa->write("value", value_);
-  }
-
-  container_ref container() const
-  {
-    return container_;
   }
 
   value_type value() const
@@ -76,8 +63,46 @@ public:
   }
 
 private:
-  container_ref container_;
   value_type value_;
+};
+
+template < class T, class C >
+class container_item : public value_item<T>
+{
+public:
+  typedef oos::object_ref<C> container_ref;
+  typedef C container_type;
+  typedef T value_type;
+  typedef typename container_type::size_type size_type;
+
+  container_item() {}
+  explicit container_item(const container_ref &c)
+    : container_(c)
+  {}
+  container_item(const container_ref &c, const value_type &v)
+    : value_item<value_type>(v)
+    , container_(c)
+  {}
+  virtual ~container_item() {}
+
+  virtual void read_from(oos::object_atomizer *oa)
+  {
+    value_item::read_from(oa);
+    oa->read("container", container_);
+  }
+  virtual void write_to(oos::object_atomizer *oa) const
+  {
+    value_item::write_to(oa);
+    oa->write("container", container_);
+  }
+
+  container_ref container() const
+  {
+    return container_;
+  }
+
+private:
+  container_ref container_;
 };
 
 /**
