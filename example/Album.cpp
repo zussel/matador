@@ -74,7 +74,7 @@ object_ref<Artist> Album::artist() const
   return artist_;
 }
 
-void Album::add(int index, const track_ref &track, bool override_artist)
+void Album::add(int /*index*/, const track_ref &track, bool override_artist)
 {
   track_album_vector_.push_back(track);
   if (override_artist) {
