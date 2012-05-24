@@ -135,7 +135,7 @@ class linked_object_list_iterator : public std::iterator<std::bidirectional_iter
 public:
   typedef linked_object_list_iterator<T> self;	   /**< Shortcut for this iterator type. */
   typedef T* pointer;                      /**< Shortcut for the pointer type. */
-  typedef object_ptr<T> value_type;        /**< Shortcut for the value type. */
+  typedef object_ref<T> value_type;        /**< Shortcut for the value type. */
   typedef value_type& reference ;          /**< Shortcut for the reference to the value type. */
 
   /**
@@ -317,7 +317,7 @@ class const_linked_object_list_iterator : public std::iterator<std::bidirectiona
 public:
   typedef const_linked_object_list_iterator<T> self;	/**< Shortcut for this iterator type. */
   typedef T* pointer;                         /**< Shortcut for the pointer type. */
-  typedef object_ptr<T> value_type;           /**< Shortcut for the value type. */
+  typedef object_ref<T> value_type;           /**< Shortcut for the value type. */
   typedef value_type& reference;              /**< Shortcut for the reference to the value type. */
 
   /**
@@ -520,6 +520,7 @@ public:
   typedef S container_type;                                              /**< Shortcut for the container type. */
   typedef linked_object_list_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
   typedef object_ptr<item_type> item_ptr;                                /**< Shortcut for the container item pointer. */
+  typedef object_ref<item_type> item_ref;                                /**< Shortcut for the container item reference. */
   typedef object_container::size_type size_type;                         /**< Shortcut for size type. */
   typedef linked_object_list_iterator<item_type> iterator;               /**< Shortcut for the list iterator. */
   typedef const_linked_object_list_iterator<item_type> const_iterator;   /**< Shortcut for the list const iterator. */
@@ -745,7 +746,7 @@ protected:
    */
   virtual void for_each(const node_func &nf) const
   {
-    item_ptr node = first_;
+    item_ref node = first_;
     while(node.get()) {
       nf(node.get());
       node = node->next();
