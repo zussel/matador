@@ -304,7 +304,7 @@ binary_expression<variable<T, O>, T, std::equal_to<T>, O > operator==(const vari
 template < class T, class O, class V >
 binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type > operator==(const variable<T, O, V> &l, const T &r)
 {
-  return binary_expression<variable<T, O, V>, T, std::equal_to<T>, V::object_type >(l, r);
+  return binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type >(l, r);
 }
 
 template < class O >

@@ -87,12 +87,12 @@ public:
 
   virtual void read_from(oos::object_atomizer *oa)
   {
-    value_item::read_from(oa);
+    value_item<T>::read_from(oa);
     oa->read("container", container_);
   }
   virtual void write_to(oos::object_atomizer *oa) const
   {
-    value_item::write_to(oa);
+    value_item<T>::write_to(oa);
     oa->write("container", container_);
   }
 
