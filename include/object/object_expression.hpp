@@ -38,8 +38,6 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class object_base_ptr;
-
 template < class T >
 class constant
 {
@@ -59,82 +57,31 @@ private:
 };
 
 /// @endcond OOS_DEV
-/*
-template < typename R, typename O >
-class literal
-{
-public:
-  typedef R (O::*func_type)() const; / **< Shortcut for the member function. * /
-
-  literal(func_type f)
-    : func_(f)
-  {}
-
-  R operator()(const object_base_ptr &o)
-  {
-    return get(optr.ptr());
-  }
-
-private:
-  R get(const object *o) const
-  {
-    const O *obj = static_cast<const O*>(o);
-    return (*obj.*func_)();
-  }
-
-private:
-  func_type func_;
-};
-
-template < typename R, typename O, typedef OR, typename S >
-class literal
-{
-public:
-  typedef R (O::*func_type)() const;         / **< Shortcut for the member function. * /
-  typedef OR (S::*object_func_type)() const; / **< Shortcut for the member function. * /
-
-  literal(func_type f)
-    : func_(f)
-  {}
-
-  R operator()(const object_base_ptr &o)
-  {
-    return get(optr.ptr());
-  }
-
-private:
-  R get(const object *o) const
-  {
-    const O *obj = static_cast<const O*>(o);
-    return (*obj.*func_)();
-  }
-
-private:
-  func_type func_;
-};
-*/
-/*
 class null_var {};
 
-template < class R, class O, typename... T >
+template < class R, class O, class S1 = null_var >
 class variable
 {
-  typedef variable
-};
-
-template < class R, class O >
-class variable<R, O>
-{
 public:
-  typedef null_var super;
-};
+  typedef S1 object_type;
+  typedef object_ptr<O> (object_type::*superfunc_type)() const;
+  typedef R (O::*memfunc_type)() const;
 
-template < class R, class O, class SR, class OR, typename... T >
-class variable<R, O, SR, OR, T...>
-{
-  typedef variable<
+  variable(memfunc_type m, superfunc_type s)
+    : s_(s)
+    , m_(m)
+  {}
+
+  R operator()(const object_ptr<object_type> &o) const
+  {
+    return ((o.get()->*s_)().get()->*m_)();
+//    return m_((o->*s_)());
+  }
+
+private:
+  superfunc_type s_;
+  memfunc_type m_;
 };
-*/
 
 /**
  * @class variable
@@ -147,7 +94,7 @@ class variable<R, O, SR, OR, T...>
  * one can call the member function.
  */
 template < class R, class O >
-class variable
+class variable<R, O, null_var>
 {
 public:
   typedef O object_type;
@@ -325,6 +272,12 @@ template < class T, class O >
 binary_expression<variable<T, O>, T, std::equal_to<T>, O > operator==(const variable<T, O> &l, const T &r)
 {
   return binary_expression<variable<T, O>, T, std::equal_to<T>, O >(l, r);
+}
+
+template < class T, class O, class S >
+binary_expression<variable<T, O, S>, T, std::equal_to<T>, S > operator==(const variable<T, O, S> &l, const T &r)
+{
+  return binary_expression<variable<T, O, S>, T, std::equal_to<T>, S >(l, r);
 }
 
 template < class O >
