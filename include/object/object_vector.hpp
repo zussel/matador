@@ -82,7 +82,7 @@ public:
 
   void index(size_type i)
   {
-    modify(index_, i);
+    base_item::modify(index_, i);
   }
 
 private:
