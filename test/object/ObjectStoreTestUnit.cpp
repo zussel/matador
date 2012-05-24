@@ -82,19 +82,13 @@ ObjectStoreTestUnit::expression_test()
 
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
-  /*
-  object_view<Item>::const_iterator first = oview.begin();
-  object_view<Item>::const_iterator last = oview.end();
-  while (first != last) {
-    item_ptr s(*first++);
-    if ((x >= 3 && x <= 7 && x != 5)(s)) {
-      std::cout << "found item object [" << s->id() << "] with number " << s->get_int() << "\n";
-    }
-  }
-  */
 
   typedef ItemPtrList::item_type ItemType;
-  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);
+
+  typedef variable<ItemPtrList::value_type, ItemType> item_var_t;
+  variable<int, Item, item_var_t> z(&Item::get_int, item_var_t(&ItemType::value));
+
+//  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);
   ItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 

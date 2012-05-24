@@ -2,7 +2,7 @@
 #include "Track.hpp"
 
 #include "object/object_atomizer.hpp"
-//#include "object/object_expression.hpp"
+#include "object/object_expression.hpp"
 
 using std::string;
 using namespace oos;
@@ -84,12 +84,17 @@ void Album::add(int index, const track_ref &track, bool override_artist)
 
 Album::const_iterator Album::find(const std::string &title) const
 {
+  typedef variable<value_type, item_type> item_var_t;
+
+  variable<std::string, Track, item_var_t> x(&Track::title, item_var_t(&item_type::value));
+
+  return std::find_if(track_album_vector_.begin(), track_album_vector_.end(), x == title);
   /*
   variable<std::string, Track> y(&Track::title);
   variable<value_type, item_type> x(&item_type::value);
   return std::find_if(track_album_vector_.begin(), track_album_vector_.end(), y == title);
   */
-  return begin();
+//  return begin();
 }
 
 Album::track_ref Album::operator[](track_album_vector_t::size_type n)

@@ -52,6 +52,12 @@ public:
     return constant_;
   }
 
+  template < class O >
+  T operator()(const object_ref<O>&) const
+  {
+    return constant_;
+  }
+
 private:
   T constant_;
 };
@@ -59,27 +65,33 @@ private:
 /// @endcond OOS_DEV
 class null_var {};
 
-template < class R, class O, class S1 = null_var >
+template < class R, class O, class V = null_var >
 class variable
 {
 public:
-  typedef S1 object_type;
-  typedef object_ptr<O> (object_type::*superfunc_type)() const;
-  typedef R (O::*memfunc_type)() const;
+  typedef V var_type;
+  typedef typename V::object_type super_type;
+  typedef O object_type;
+  typedef R return_type;
+  typedef return_type (object_type::*memfunc_type)() const;
 
-  variable(memfunc_type m, superfunc_type s)
-    : s_(s)
+  variable(memfunc_type m, const var_type &v)
+    : v_(v)
     , m_(m)
   {}
 
-  R operator()(const object_ptr<object_type> &o) const
+  return_type operator()(const object_ptr<super_type> &o) const
   {
-    return ((o.get()->*s_)().get()->*m_)();
-//    return m_((o->*s_)());
+    return (v_(o).get()->*m_)();
+  }
+
+  return_type operator()(const object_ref<super_type> &o) const
+  {
+    return (v_(o).get()->*m_)();
   }
 
 private:
-  superfunc_type s_;
+  var_type v_;
   memfunc_type m_;
 };
 
@@ -98,8 +110,8 @@ class variable<R, O, null_var>
 {
 public:
   typedef O object_type;
-
-  typedef R (O::*memfun)() const; /**< Shortcut for the member function. */
+  typedef R return_type;
+  typedef return_type (object_type::*memfun)() const; /**< Shortcut for the member function. */
 
   /**
    * Creates a variable with the given member function
@@ -110,7 +122,12 @@ public:
     : m_(m)
   {}
 
-  R operator()(const object_ptr<object_type> &o) const
+  return_type operator()(const object_ptr<object_type> &o) const
+  {
+    return (*o.get().*m_)();
+  }
+
+  return_type operator()(const object_ref<object_type> &o) const
   {
     return (*o.get().*m_)();
   }
@@ -182,6 +199,11 @@ public:
     return op_(left_(o));
   }
 
+  bool operator()(const object_ref<O> &o) const
+  {
+    return op_(left_(o));
+  }
+
 private:
   typename expression_traits<L>::expression_type left_;
   OP op_;
@@ -200,6 +222,11 @@ public:
   {}
 
   bool operator()(const object_ptr<O> &o) const
+  {
+    return op_(left_(o), right_(o));
+  }
+
+  bool operator()(const object_ref<O> &o) const
   {
     return op_(left_(o), right_(o));
   }
@@ -274,10 +301,10 @@ binary_expression<variable<T, O>, T, std::equal_to<T>, O > operator==(const vari
   return binary_expression<variable<T, O>, T, std::equal_to<T>, O >(l, r);
 }
 
-template < class T, class O, class S >
-binary_expression<variable<T, O, S>, T, std::equal_to<T>, S > operator==(const variable<T, O, S> &l, const T &r)
+template < class T, class O, class V >
+binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type > operator==(const variable<T, O, V> &l, const T &r)
 {
-  return binary_expression<variable<T, O, S>, T, std::equal_to<T>, S >(l, r);
+  return binary_expression<variable<T, O, V>, T, std::equal_to<T>, V::object_type >(l, r);
 }
 
 template < class O >

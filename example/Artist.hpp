@@ -18,6 +18,7 @@ public:
   typedef oos::object_ref<Album> album_ref;
   typedef oos::object_list<Artist, album_ref> album_artist_list_t;
   typedef album_artist_list_t::item_type item_type;
+  typedef album_artist_list_t::value_type value_type;
   typedef album_artist_list_t::size_type size_type;
   typedef album_artist_list_t::iterator iterator;
 	typedef album_artist_list_t::const_iterator const_iterator;
