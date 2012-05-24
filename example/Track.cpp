@@ -8,7 +8,7 @@ Track::Track()
   : duration_(0)
 {}
 
-Track::Track(const std::string &t, unsigned long d, const object_ptr<Artist> &a)
+Track::Track(const std::string &t, unsigned long d, const object_ref<Artist> &a)
   : title_(t)
   , duration_(d)
   , artist_(a)

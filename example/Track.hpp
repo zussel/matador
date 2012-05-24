@@ -17,7 +17,7 @@ class Track : public oos::object
 {
 public:
 	Track();
-  Track(const std::string &t, unsigned long d, const oos::object_ptr<Artist> &a);
+  Track(const std::string &t, unsigned long d, const oos::object_ref<Artist> &a);
 	virtual ~Track();
 	
 	virtual void read_from(oos::object_atomizer *reader);
