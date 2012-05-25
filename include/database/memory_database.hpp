@@ -50,6 +50,7 @@ public:
 
   virtual bool is_open() const { return true; }
   virtual void create(const prototype_node &node) {}
+  virtual void drop(const prototype_node &node) {}
 
   virtual void load(const prototype_node &node) {}
 

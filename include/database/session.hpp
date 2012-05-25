@@ -104,6 +104,15 @@ public:
   void create();
   
   /**
+   * @brief Drops all tables.
+   *
+   * When called all tables of the
+   * database are dropped and all data
+   * is lost.
+   */
+  void drop();
+
+  /**
    * @brief Closes the database.
    * 
    * Closes the database.

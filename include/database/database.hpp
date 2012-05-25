@@ -104,6 +104,14 @@ public:
   virtual void create(const prototype_node &node) = 0;
 
   /**
+   * Drops table defined by the given
+   * prototype_node from the database.
+   *
+   * @param o The object providing the table layout.
+   */
+  virtual void drop(const prototype_node &node) = 0;
+
+  /**
    * load a specific table based on
    * a prototype node
    *

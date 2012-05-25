@@ -78,6 +78,14 @@ public:
   virtual void create(const prototype_node &node);
 
   /**
+   * Drops table defined by the given
+   * prototype_node from the sqlite database.
+   *
+   * @param o The object providing the table layout.
+   */
+  virtual void drop(const prototype_node &node);
+
+  /**
    * load a specific table based on
    * a prototype node
    *

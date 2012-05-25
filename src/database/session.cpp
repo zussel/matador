@@ -86,7 +86,6 @@ void session::create()
    * table statement
    * 
    *****************/
-//  statement_helper creator(std::tr1::bind());
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
@@ -95,6 +94,19 @@ void session::create()
       continue;
     }
     impl_->create(node);
+  }
+}
+
+void session::drop()
+{
+  prototype_iterator first = ostore_.begin();
+  prototype_iterator last = ostore_.end();
+  while (first != last) {
+    const prototype_node &node = (*first++);
+    if (node.abstract) {
+      continue;
+    }
+    impl_->drop(node);
   }
 }
 

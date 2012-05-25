@@ -100,12 +100,23 @@ void sqlite_database::create(const prototype_node &node)
   execute(sql.c_str());
 }
 
+void sqlite_database::drop(const prototype_node &node)
+{
+  drop_statement_creator<sqlite_types> creator;
+
+  std::auto_ptr<object> o(node.producer->create());
+
+  std::string sql = creator.create(o.get(), node.type.c_str(), "");
+
+  execute(sql.c_str());
+}
+
 void sqlite_database::load(const prototype_node &node)
 {
   // create dummy object
   std::auto_ptr<object> o(node.producer->create());
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(node.type + "_INSERT");
+  statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
 
