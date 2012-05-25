@@ -93,6 +93,7 @@ SET(TOOLS_HEADER
   include/tools/varchar.hpp
   include/tools/sequencer.hpp
   include/tools/factory.hpp
+  include/tools/string.hpp
 )
 
 SET(UNIT_SOURCES
