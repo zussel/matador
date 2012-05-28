@@ -108,6 +108,7 @@ void session::drop()
     }
     impl_->drop(node);
   }
+  impl_->drop();
 }
 
 void session::close()
@@ -174,9 +175,9 @@ void session::pop_transaction()
   }
 }
 
-object* session::load(const std::string &type, int id)
+object* session::load(const std::string &/*type*/, int /*id*/)
 {
-  return NULL;
+  return 0;
 }
 
 void session::begin(transaction &tr)

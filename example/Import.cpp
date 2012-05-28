@@ -59,10 +59,6 @@ void Import::execute(session &db, const std::vector<std::string> &args)
 
     data_type_t data_type = DATA_NONE;
 
-    object_ptr<Artist> artist;
-    object_ptr<Album> album;
-    object_ptr<Track> track;
-
     transaction tr(db);
     try {
       tr.begin();
@@ -81,7 +77,7 @@ void Import::execute(session &db, const std::vector<std::string> &args)
             break;
           case DATA_ARTIST:
             if (line_is("ALBUM", line, pos)) {
-              parse(db.ostore(), artist, line, pos);
+              parse(db.ostore(), artist_, line, pos);
               data_type = DATA_TRACK;
             } else if (line_is("ARTISTEND", line, pos)) {
               // end artist section
@@ -93,7 +89,7 @@ void Import::execute(session &db, const std::vector<std::string> &args)
           case DATA_ALBUM:
           case DATA_TRACK:
             if (line_is("TRACK", line, pos)) {
-              parse(db.ostore(), album, line, pos);
+              parse(db.ostore(), album_, line, pos);
               data_type = DATA_TRACK;
             } else if (line_is("ALBUMEND", line, pos)) {
               // end artist section

@@ -30,6 +30,9 @@ void List::execute(oos::session &db, const std::vector<std::string> &args)
 
     db.load();
 
+    //TablePrinter printer;
+    
+    
     if (args[0] == "artist") {
       TablePrinter<Artist> printer;
       printer.print(cout);

@@ -358,7 +358,7 @@ public:
   drop_statement_creator() {}
   virtual ~drop_statement_creator() {}
 
-  virtual std::string create(object *o, const char *table_name, const char*)
+  virtual std::string create(object *, const char *table_name, const char*)
   {
     begin(table_name);
     
@@ -373,7 +373,7 @@ protected:
     this->statement_stream() << T::drop_postfix() << " " << table_name;
   }
 
-  virtual void end(const char *table_name, const char *where_clause)
+  virtual void end(const char */*table_name*/, const char */*where_clause*/)
   {
     this->statement_stream() << ";";
   }

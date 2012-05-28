@@ -35,7 +35,7 @@ database::database(session *db, database_sequencer *seq)
 database::~database()
 {}
 
-void database::open(const std::string &db)
+void database::open(const std::string&)
 {
   sequencer_->create();
   // setup sequencer
@@ -50,6 +50,11 @@ void database::close()
   sequencer_->destroy();
   
   statement_impl_map_.clear();
+}
+
+void database::drop()
+{
+  sequencer_->drop();
 }
 
 bool database::store_statement(const std::string &id, database::statement_impl_ptr stmt)

@@ -81,12 +81,12 @@ result_iterator::reference result_iterator::operator*() const
 //  return (*res_->current());
 }
 
-bool result_iterator::operator==(const self &x) const
+bool result_iterator::operator==(const self &) const
 {
   return true;
 }
 
-bool result_iterator::operator!=(const self &x) const
+bool result_iterator::operator!=(const self &) const
 {
   return false;
 }

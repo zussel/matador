@@ -49,12 +49,12 @@ public:
   virtual ~memory_database() {}
 
   virtual bool is_open() const { return true; }
-  virtual void create(const prototype_node &node) {}
-  virtual void drop(const prototype_node &node) {}
+  virtual void create(const prototype_node&) {}
+  virtual void drop(const prototype_node&) {}
 
-  virtual void load(const prototype_node &node) {}
+  virtual void load(const prototype_node&) {}
 
-  virtual void execute(const char *sql, result_impl *res = 0) {}
+  virtual void execute(const char*, result_impl*) {}
 
   virtual void visit(insert_action*) {}
   virtual void visit(update_action*) {}

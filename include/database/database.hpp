@@ -111,6 +111,7 @@ public:
    */
   virtual void drop(const prototype_node &node) = 0;
 
+  virtual void drop();
   /**
    * load a specific table based on
    * a prototype node
