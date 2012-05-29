@@ -460,7 +460,7 @@ public:
    * @param ostore The object_store containing the objects.
    * @param skip_siblings If true only objects of concrete type T are part of the view.
    */
-  object_view(object_store &ostore, bool skip_siblings = false)
+  object_view(const object_store &ostore, bool skip_siblings = false)
     : ostore_(ostore)
     , skip_siblings_(skip_siblings)
     , node_(NULL)
@@ -603,8 +603,18 @@ public:
     return std::find_if(begin(), end(), pred);
   }
 
+  /**
+   * Return the underlaying prototype node
+   *
+   * @return The underlaying prototype node.
+   */
+  const prototype_node* node() const
+  {
+    return node_;
+  }
+
 private:
-    object_store &ostore_;
+    const object_store &ostore_;
     bool skip_siblings_;
     const prototype_node *node_;
 };

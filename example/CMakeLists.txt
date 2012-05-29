@@ -9,6 +9,7 @@ SET (EXAMPLE_SOURCES
   List.hpp
   List.cpp
   TablePrinter.hpp
+  TablePrinter.cpp
   Album.cpp
   Album.hpp
   Artist.cpp

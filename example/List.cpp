@@ -30,18 +30,15 @@ void List::execute(oos::session &db, const std::vector<std::string> &args)
 
     db.load();
 
-    //TablePrinter printer;
+    TablePrinter printer(db.ostore());
     
     
     if (args[0] == "artist") {
-      TablePrinter<Artist> printer;
-      printer.print(cout);
+      printer.print<Artist>(cout);
     } else if (args[0] == "album") {
-      TablePrinter<Album> printer;
-      printer.print(cout);
+      printer.print<Album>(cout);
     } else if (args[0] == "track") {
-      TablePrinter<Track> printer;
-      printer.print(cout);
+      printer.print<Track>(cout);
     } else {
       throw std::logic_error("invalid list type");
     }
