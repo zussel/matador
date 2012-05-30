@@ -32,7 +32,6 @@ void List::execute(oos::session &db, const std::vector<std::string> &args)
 
     TablePrinter printer(db.ostore());
     
-    
     if (args[0] == "artist") {
       printer.print<Artist>(cout);
     } else if (args[0] == "album") {

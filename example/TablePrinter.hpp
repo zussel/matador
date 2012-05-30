@@ -5,6 +5,17 @@
 #include "object/object_view.hpp"
 #include "object/object_store.hpp"
 
+#include <vector>
+#include <sstream>
+
+#ifdef WIN32
+#include <functional>
+#else
+#include <tr1/functional>
+#endif
+
+using namespace std::tr1::placeholders;
+
 namespace oos {
   class varchar_base;
   class object_base_ptr;
@@ -26,16 +37,30 @@ public:
   template < class T >
   void print(std::ostream &out)
   {
-    oos::object_view<T> oview(ostore_);
+    typedef oos::object_view<T> oview_t;
+    oview_t oview(ostore_);
     // print header
-    print_header(oview.node());
+    print_header(out, oview.node());
     // print row
+    state_ = ELEMENT;
+
+    oview_t::const_iterator first = oview.begin();
+    oview_t::const_iterator last = oview.end();
+
+    ostore_.dump_objects(out);
+
+    while (first != last) {
+      object_ptr<T> optr = *first++;
+      print_element(out, optr);
+    }
+//    for_each(oview.begin(), oview.end(), std::tr1::bind(&TablePrinter::print_element, this, std::tr1::ref(out), _1));
     // print footer
 
   }
 
 private:
-  void print_header(const oos::prototype_node *node);
+  void print_header(std::ostream &out, const oos::prototype_node *node);
+  void print_element(std::ostream &out, const oos::object_base_ptr &optr);
 
   unsigned int column_width(const char *id, unsigned int min) const;
 
@@ -57,7 +82,11 @@ private:
 private:
   const oos::object_store &ostore_;
   state_t state_;
-  unsigned int width_;
+  typedef std::pair<std::string, unsigned int> column_info_t;
+  typedef std::vector<column_info_t> column_info_vector_t;
+  column_info_vector_t column_info_vector_;
+
+  std::stringstream line_;
 };
 
 #endif /* TABLEPRINTER_HPP */
