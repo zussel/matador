@@ -1,6 +1,8 @@
 #ifndef TABLEPRINTER_HPP
 #define TABLEPRINTER_HPP
 
+#include "Artist.hpp"
+
 #include "object/object_atomizer.hpp"
 #include "object/object_view.hpp"
 #include "object/object_store.hpp"
@@ -47,10 +49,9 @@ public:
     oview_t::const_iterator first = oview.begin();
     oview_t::const_iterator last = oview.end();
 
-    ostore_.dump_objects(out);
-
     while (first != last) {
       object_ptr<T> optr = *first++;
+//      out << "artist: " << optr->id() << "\n";
       print_element(out, optr);
     }
 //    for_each(oview.begin(), oview.end(), std::tr1::bind(&TablePrinter::print_element, this, std::tr1::ref(out), _1));

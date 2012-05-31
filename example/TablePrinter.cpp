@@ -12,6 +12,7 @@ using namespace oos;
 using std::setw;
 using std::setfill;
 using std::left;
+using std::right;
 
 TablePrinter::TablePrinter(const oos::object_store &ostore)
   : ostore_(ostore)
@@ -42,10 +43,10 @@ void TablePrinter::print_header(std::ostream &out, const prototype_node *node)
     const column_info_t &info = *first++;
     width += info.second + 1;
     column_header << setfill('-') << setw(info.second) << "-" << "+";
-    column_names << setfill(' ') << setw(info.second) << left << info.first << "|";
+    column_names << " " << setfill(' ') << setw(info.second-1) << left << info.first << "|";
   }
   out << "+" << setfill('-') << setw(width-1) << "-" << "+\n";
-  table_header << setfill(' ') << setw(width-1) << left << node->type << "|";
+  table_header << " " << setfill(' ') << setw(width-2) << left << node->type << "|";
   out << table_header.str() << "\n" << column_header.str() << "\n" << column_names.str() << "\n" << column_header.str() << "\n";
 }
 
@@ -139,7 +140,7 @@ void TablePrinter::write(const char *id, long x)
       column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
       break;
     case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
+      line_ << setfill(' ') << setw(12) << right << x << " |";
       break;
     case FOOTER:
       break;
@@ -209,7 +210,7 @@ void TablePrinter::write(const char *id, const char *x)
       column_info_vector_.push_back(column_info_t(id, column_width(id, 20)));
       break;
     case ELEMENT:
-      line_ << setfill(' ') << setw(20) << x << " |";
+      line_ << " " << setfill(' ') << setw(21) << left << x << " |";
       break;
     case FOOTER:
       break;
@@ -220,10 +221,10 @@ void TablePrinter::write(const char *id, const std::string &x)
 {
   switch (state_) {
     case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 20)));
+      column_info_vector_.push_back(column_info_t(id, column_width(id, 40)));
       break;
     case ELEMENT:
-      line_ << setfill(' ') << setw(20) << x.substr(20) << " |";
+      line_ << " " << setfill(' ') << setw(41) << left << x.substr(0, 40) << " |";
       break;
     case FOOTER:
       break;
@@ -237,7 +238,7 @@ void TablePrinter::write(const char *id, const oos::varchar_base &x)
       column_info_vector_.push_back(column_info_t(id, column_width(id, x.capacity())));
       break;
     case ELEMENT:
-      line_ << setfill(' ') << setw(x.capacity()) << x.str() << " |";
+      line_ << " " << setfill(' ') << setw(x.capacity() + 1) << left << x.str() << " |";
       break;
     case FOOTER:
       break;
@@ -251,7 +252,7 @@ void TablePrinter::write(const char *id, const oos::object_base_ptr &x)
       column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
       break;
     case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
+      line_ << " " << setfill(' ') << setw(11) << right << x.id() << " |";
       break;
     case FOOTER:
       break;

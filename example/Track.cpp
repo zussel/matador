@@ -40,7 +40,7 @@ void Track::title(const std::string &t)
 
 std::string Track::title() const
 {
-	return title_;
+	return title_.str();
 }
 
 void Track::duration(long d)

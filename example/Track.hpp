@@ -4,6 +4,8 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 
+#include "tools/varchar.hpp"
+
 #include "Artist.hpp"
 #include "Album.hpp"
 
@@ -33,7 +35,7 @@ public:
   oos::object_ref<Artist> artist() const;
 
 private:
-	std::string title_;
+  oos::varchar<64> title_;
 	long duration_;
   oos::object_ref<Artist> artist_;
 };

@@ -34,7 +34,7 @@ void Artist::write_to(object_atomizer *writer) const
 
 std::string Artist::name() const
 {
-  return name_;
+  return name_.str();
 }
 
 void Artist::name(const std::string &n)

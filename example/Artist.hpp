@@ -4,6 +4,8 @@
 #include "object/object.hpp"
 #include "object/object_list.hpp"
 
+#include "tools/varchar.hpp"
+
 #include <string>
 
 class Album;
@@ -49,7 +51,7 @@ public:
   friend std::ostream& operator <<(std::ostream &os, const Artist &a);
 
 private:
-  std::string name_;
+  oos::varchar<64> name_;
   album_artist_list_t album_artist_list_;
 };
 
