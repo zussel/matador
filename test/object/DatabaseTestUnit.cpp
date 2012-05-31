@@ -322,6 +322,11 @@ DatabaseTestUnit::with_vector()
 void
 DatabaseTestUnit::reload()
 {
+  typedef ObjectItem<Item> object_item_t;
+  typedef object_ptr<object_item_t> object_item_ptr;
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<object_item_t> oview_t;
+
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
 
@@ -337,9 +342,6 @@ DatabaseTestUnit::reload()
     // begin transaction
     tr.begin();
     // ... do some object modifications
-    typedef ObjectItem<Item> object_item_t;
-    typedef object_ptr<object_item_t> object_item_ptr;
-    typedef object_ptr<Item> item_ptr;
     // insert new object
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
 
@@ -354,6 +356,10 @@ DatabaseTestUnit::reload()
 
     UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
     UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+
+    oview_t oview(ostore_);
+
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
 
     tr.commit();
   } catch (database_exception &ex) {
@@ -377,6 +383,9 @@ DatabaseTestUnit::reload()
   db.load();
 
   try {
+    oview_t oview(ostore_);
+
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
