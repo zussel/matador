@@ -64,7 +64,7 @@ private:
   void print_header(std::ostream &out, const oos::prototype_node *node);
   void print_element(std::ostream &out, const oos::object_base_ptr &optr);
 
-  unsigned int column_width(const char *id, unsigned long min) const;
+  unsigned int column_width(const char *id, size_t min) const;
 
   virtual void write(const char *id, char x);
 	virtual void write(const char *id, float x);

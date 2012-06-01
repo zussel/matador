@@ -2,6 +2,7 @@
 #include "Album.hpp"
 #include "Track.hpp"
 
+#include "Add.hpp"
 #include "Create.hpp"
 #include "Clear.hpp"
 #include "Import.hpp"
@@ -43,6 +44,7 @@ main(int argc, char *argv[])
    * - update [artist,album,track]
    *
    *********************/
+  cfactory.insert("add", new command_factory_t::default_producer<Add>);
   cfactory.insert("create", new command_factory_t::default_producer<Create>);
   cfactory.insert("clear", new command_factory_t::default_producer<Clear>);
   cfactory.insert("import", new command_factory_t::default_producer<Import>);
@@ -60,7 +62,6 @@ main(int argc, char *argv[])
 
   // create and open db
   session db(ostore, "sqlite://mdb.sqlite");
-
 
   Command *cmd = cfactory.create(argv[1]);
 

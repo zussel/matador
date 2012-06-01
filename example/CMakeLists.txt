@@ -1,4 +1,6 @@
 SET (EXAMPLE_SOURCES
+  Add.hpp
+  Add.cpp
   Command.hpp
   Create.hpp
   Create.cpp
