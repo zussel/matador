@@ -4,6 +4,7 @@
 #include "Artist.hpp"
 
 #include "object/object_atomizer.hpp"
+#include "object/object_ptr.hpp"
 #include "object/object_view.hpp"
 #include "object/object_store.hpp"
 
@@ -46,11 +47,11 @@ public:
     // print row
     state_ = ELEMENT;
 
-    oview_t::const_iterator first = oview.begin();
-    oview_t::const_iterator last = oview.end();
+    typename oview_t::const_iterator first = oview.begin();
+    typename oview_t::const_iterator last = oview.end();
 
     while (first != last) {
-      object_ptr<T> optr = *first++;
+      oos::object_ptr<T> optr = *first++;
 //      out << "artist: " << optr->id() << "\n";
       print_element(out, optr);
     }
@@ -63,7 +64,7 @@ private:
   void print_header(std::ostream &out, const oos::prototype_node *node);
   void print_element(std::ostream &out, const oos::object_base_ptr &optr);
 
-  unsigned int column_width(const char *id, unsigned int min) const;
+  unsigned int column_width(const char *id, unsigned long min) const;
 
   virtual void write(const char *id, char x);
 	virtual void write(const char *id, float x);

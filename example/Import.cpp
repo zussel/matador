@@ -146,7 +146,7 @@ bool extract_integer(const std::string &item, int &val)
 
 bool extract_time(const std::string &line, time_t &val)
 {
-  long min=0, sec=0;
+  int min=0, sec=0;
   sscanf(line.c_str(), " \"%d:%2d\"]", &min, &sec);
   val = sec + 60*min;
   return true;

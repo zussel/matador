@@ -11,8 +11,8 @@ Artist::Artist()
 {}
 
 Artist::Artist(const std::string &n)
-  : album_artist_list_(this)
-  , name_(n)
+  : name_(n)
+  , album_artist_list_(this)
 {}
 
 Artist::~Artist()

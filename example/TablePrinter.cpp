@@ -1,7 +1,6 @@
 #include "TablePrinter.hpp"
 
 #include "object/object.hpp"
-#include "object/object_ptr.hpp"
 #include "tools/varchar.hpp"
 
 #include <numeric>
@@ -58,7 +57,7 @@ void TablePrinter::print_element(std::ostream &out, const oos::object_base_ptr &
   out << line_.str() << "\n";
 }
 
-unsigned int TablePrinter::column_width(const char *id, unsigned int min) const
+unsigned int TablePrinter::column_width(const char *id, unsigned long min) const
 {
   return 2 + std::max(strlen(id), min) + 1;
 }
