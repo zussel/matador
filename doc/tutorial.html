@@ -43,8 +43,12 @@
           <h2>Schema Design</h2>
           <p>We will have three main object types: Artist, Album and Track. Furthermore the artist needs a list of albums and each album needs am array of tracks. So that we defined our types we can fill 'em with their attributes. This will lead us to the following table layout:</p>
           <table>
+            <caption>artist</caption>
             <tr>
-              <th colspan="4">artist</th>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
             </tr>
             <tr>
               <td>PK</td>
@@ -60,8 +64,12 @@
             </tr>
           </table>
           <table>
+            <caption>track</caption>
             <tr>
-              <th colspan="3">track</th>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
             </tr>
             <tr>
               <td>PK</td>
@@ -89,8 +97,12 @@
             </tr>
           </table>
           <table>
+            <caption>album</caption>
             <tr>
-              <th colspan="3">album</th>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
             </tr>
             <tr>
               <td>PK</td>
@@ -119,8 +131,12 @@
           </table>
           <p>These are the main object types. Now we need to helper object types. The first carries the track to album releation and the second arries the album to artist releation. Because we will use a list and a vector in the artist and album objects these object types will be auto-generated. But we will come to this later. First the layout:</p>
           <table>
+            <caption>track_album_rel</caption>
             <tr>
-              <th colspan="4">track_album_rel</th>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
             </tr>
             <tr>
               <td>PK</td>
@@ -148,8 +164,12 @@
             </tr>
           </table>
           <table>
+            <caption>album_artist_rel</caption>
             <tr>
-              <th colspan="4">album_artist_rel</th>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
             </tr>
             <tr>
               <td>PK</td>

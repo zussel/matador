@@ -192,6 +192,19 @@ color: #3fa6e7;
   line-height: 95%;
 }
 
+#content table
+{
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #aaa;
+}
+
+#content table tr td,
+#content table tr th
+{
+  border: 1px solid #aaa;
+}
+
 #footer
 {
   border-top: 2px solid #aaa;
