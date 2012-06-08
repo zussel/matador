@@ -28,8 +28,11 @@ void Add::execute(oos::session &db, const std::vector<std::string> &args)
     //db.load();
 
     // add artist name="Yellow"
-    // add track album=1 title="Yadada" duration=300
-    // add album artist=5 name="Blue" year=1999
+    // e.g. new artist with id 5
+    // add album name="Blue" year=1999 artist=5
+    // e.g. new album with id 1 of artist 5
+    // add track album=1 title="Yadada" duration=300 artist=5
+    // e.g. new track with id 7, album 1 and artist 5
 
     // find prototype by name
     // check fields
