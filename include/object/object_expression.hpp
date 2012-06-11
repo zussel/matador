@@ -301,10 +301,22 @@ binary_expression<variable<T, O>, T, std::equal_to<T>, O > operator==(const vari
   return binary_expression<variable<T, O>, T, std::equal_to<T>, O >(l, r);
 }
 
+template < class T, class O >
+binary_expression<T, variable<T, O>, std::equal_to<T>, O > operator==(const T &l, const variable<T, O> &r)
+{
+  return binary_expression<T, variable<T, O>, std::equal_to<T>, O >(l, r);
+}
+
 template < class T, class O, class V >
 binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type > operator==(const variable<T, O, V> &l, const T &r)
 {
   return binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type >(l, r);
+}
+
+template < class T, class O, class V >
+binary_expression<T, variable<T, O, V>, std::equal_to<T>, typename V::object_type > operator==(const T &l, const variable<T, O, V> &r)
+{
+  return binary_expression<T, variable<T, O, V>, std::equal_to<T>, typename V::object_type >(l, r);
 }
 
 template < class O >
@@ -313,10 +325,10 @@ binary_expression<variable<std::string, O>, const char*, std::equal_to<std::stri
   return binary_expression<variable<std::string, O>, const char*, std::equal_to<std::string>, O >(l, r);
 }
 
-template < class T, class O >
-binary_expression<T, variable<T, O>, std::equal_to<T>, O > operator==(const T &l, const variable<T, O> &r)
+template < class O >
+binary_expression<const char*, variable<std::string, O>, std::equal_to<std::string>, O > operator==(const char *t, const variable<std::string, O> &r)
 {
-  return binary_expression<T, variable<T, O>, std::equal_to<T>, O >(l, r);
+  return binary_expression<const char*, variable<std::string, O>, std::equal_to<std::string>, O >(l, r);
 }
 
 // not equal
