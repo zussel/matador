@@ -29,9 +29,29 @@ void List::execute(oos::session &db, const std::vector<std::string> &args)
     }
 
     db.load();
-
+    
+    /*
+     * usage:
+     * mdb list track artist=1
+     * mdb list track duration>200
+     * mdb list artist name="Genesis"
+     * mdb list album name="xxxx"
+     */
     TablePrinter printer(db.ostore());
     
+    if (args.size() == 2) {
+      printer.print(args[0], args[1]);
+    } else {
+      printer.print(args[0]);
+    }
+
+    /*
+    generic_view gview(db.ostore(), "artist");
+    
+    generic_view::iterator first = gview.begin();
+    generic_view::iterator last = gview.end();
+    */
+
     if (args[0] == "artist") {
       printer.print<Artist>(cout);
     } else if (args[0] == "album") {

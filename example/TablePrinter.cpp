@@ -21,6 +21,17 @@ TablePrinter::TablePrinter(const oos::object_store &ostore)
 TablePrinter::~TablePrinter()
 {}
 
+void TablePrinter::print(const std::string &type, const std::string &filter)
+{
+  const prototype_node *node = ostore_.find_prototype(type.c_str());
+
+  if (!node) {
+    throw std::logic_error("invalid list type");
+  }
+  
+  
+}
+
 void TablePrinter::print_header(std::ostream &out, const prototype_node *node)
 {
   state_ = HEADER;

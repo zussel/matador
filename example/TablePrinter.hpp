@@ -28,14 +28,18 @@ class TablePrinter : public oos::object_atomizer
 {
 private:
   enum state_t {
-    HEADER = 0,
-    ELEMENT,
-    FOOTER
+    HEADER_SEPARATOR = 0,
+    TABLE_HEADER,
+    COLUMN_HEADER,
+    COLUMN_SEPARATOR,
+    ITEM_ROW
   };
 
 public:
   explicit TablePrinter(const oos::object_store &ostore);
   virtual ~TablePrinter();
+
+  void print(const std::string &type, const std::string &filter);
 
   template < class T >
   void print(std::ostream &out)
