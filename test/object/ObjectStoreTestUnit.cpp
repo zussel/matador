@@ -36,6 +36,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
 {}
 
+typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
+
 void
 ObjectStoreTestUnit::initialize()
 {
@@ -43,6 +45,8 @@ ObjectStoreTestUnit::initialize()
   ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
   ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
   ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
+  ostore_.insert_prototype<ObjectItemPtrList>("OBJECT_ITEM_PTR_LIST");
+  ostore_.insert_prototype<ObjectItemPtrList::item_type>("OBJECT_ITEM_PTR");
 }
 
 void
@@ -51,31 +55,37 @@ ObjectStoreTestUnit::finalize()
   ostore_.clear(true);
 }
 
-struct item_counter : public std::unary_function<const object_ptr<Item>&, void>
+struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Item> >&, void>
 {
   item_counter(int &c) : count(c) {}
   
-  void operator ()(const object_ptr<Item> &) { ++count; }
+  void operator ()(const object_ptr<ObjectItem<Item> > &) { ++count; }
   int &count;
 };
 
 void
 ObjectStoreTestUnit::expression_test()
 {
+  typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
-  typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef ItemPtrList::value_type item_type;
+  typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
+  typedef ObjectItemPtrList::value_type item_type;
 
-  itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList);
 
+  item_ptr ii;
   for (int i = 0; i < 10; ++i) {
-    itemlist->push_back(ostore_.insert(new Item("Simple", i)));
+    object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
+    ii = ostore_.insert(new Item("Item", i));
+    oi->ptr(ii);
+    itemlist->push_back(oi);
   }
 
-  variable<int, Item> x(&Item::get_int);
-  variable<std::string, Item> y(&Item::get_string);
+  variable<int, ObjectItem<Item> > x(&ObjectItem<Item>::get_int);
+  variable<std::string, ObjectItem<Item> > y(&ObjectItem<Item>::get_string);
+  variable<object_ptr<Item>, ObjectItem<Item> > u(&ObjectItem<Item>::ptr);
 
-  object_view<Item> oview(ostore_);
+  object_view<ObjectItem<Item> > oview(ostore_);
   
   int count(0);
   for_each_if(oview.begin(), oview.end(), x >= 3 && x <= 7 && x != 5, item_counter(count));
@@ -83,16 +93,16 @@ ObjectStoreTestUnit::expression_test()
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
 
-  typedef ItemPtrList::item_type ItemType;
+  typedef ObjectItemPtrList::item_type ObjectItemType;
 
-  typedef variable<ItemPtrList::value_type, ItemType> item_var_t;
-  variable<int, Item, item_var_t> z(&Item::get_int, item_var_t(&ItemType::value));
+  typedef variable<ObjectItemPtrList::value_type, ObjectItemType> item_var_t;
+  variable<int, ObjectItem<Item>, item_var_t> z(&ObjectItem<Item>::get_int, item_var_t(&ObjectItemType::value));
 
 //  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);
-  ItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+  ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 
-  object_view<Item>::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
+  object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
 
   j = std::find_if(oview.begin(), oview.end(), x > 6);
@@ -110,12 +120,17 @@ ObjectStoreTestUnit::expression_test()
   j = std::find_if(oview.begin(), oview.end(), (6 == x) || (x < 4));
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
 
-  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
-  UNIT_ASSERT_EQUAL((*j)->get_string(), "Simple", "couldn't find item 'Simple'");
+  j = std::find_if(oview.begin(), oview.end(), u == ii);
+  UNIT_ASSERT_EQUAL((*j)->ptr(), ii, "couldn't find item 10");
 
-  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "Simple"));
+// leads to a crash!!!
+//  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
+  j = std::find_if(oview.begin(), oview.end(), y == "ObjectItem");
+  UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
+
+  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "ObjectItem"));
   UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
-  UNIT_ASSERT_EQUAL((*j)->get_string(), "Simple", "couldn't find item 'Simple'");
+  UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }
 
 void
