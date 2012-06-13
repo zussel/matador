@@ -433,6 +433,197 @@ private:
 /// @endcond
 
 /**
+ *
+ * @class generic_view
+ * @brief Creates a generic view of a concrete object type
+ *
+ * The generic_view class creates a generic view over an object type
+ * without casting the object to the concrete type. The class deals
+ * with the base class oos::object.
+ * When creating it is possible to have the view only over
+ * the given type or over the complete subset of objects including
+ * child objects.
+ */
+
+class generic_view
+{
+public:
+  typedef object_view_iterator<object> iterator;             /**< Shortcut to the iterator type */
+  typedef const_object_view_iterator<object> const_iterator; /**< Shortcut to the const_iterator type */
+  typedef object_ptr<object> object_pointer;                 /**< Shortcut to object pointer */
+
+  /**
+   * @brief Creates an generic_view.
+   * 
+   * Creates an generic_view over the given object type provided
+   * by the type string within the given object_store. When the
+   * skip_siblings flag is true, the view only has object of the given
+   * type.
+   *
+   * @param type The type of the object.
+   * @param ostore The object_store containing the objects.
+   * @param skip_siblings If true only objects of the concrete type are part of the view.
+   */
+  generic_view(const std::string &type, const object_store &ostore, bool skip_siblings = false)
+    : ostore_(ostore)
+    , skip_siblings_(skip_siblings)
+    , node_(NULL)
+  {
+    node_ = ostore_.find_prototype(type.c_str());
+		if (!node_) {
+      std::stringstream str;
+      str << "couldn't find object type [" << type << "]";
+      throw object_exception(str.str().c_str());
+    }
+  }
+
+  /**
+   * Return the begin of the generic_view.
+   * 
+   * @return The begin iterator.
+   */
+  iterator begin() {
+    if (skip_siblings_) {
+      return ++iterator(node_, node_->op_first, node_->op_marker);
+    } else {
+      return ++iterator(node_, node_->op_first, node_->op_last);
+    }
+  }
+
+  /**
+   * Return the begin of the generic_view.
+   * 
+   * @return The begin iterator.
+   */
+  const_iterator begin() const {
+    if (skip_siblings_) {
+      return ++const_iterator(node_, node_->op_first, node_->op_marker);
+    } else {
+      return ++const_iterator(node_, node_->op_first, node_->op_last);
+    }
+  }
+
+  /**
+   * Return the end of the generic_view.
+   * 
+   * @return The end iterator.
+   */
+  iterator end() {
+    if (skip_siblings_) {
+      return iterator(node_, node_->op_marker, node_->op_marker);
+    } else {
+      return iterator(node_, node_->op_last, node_->op_last);
+    }
+  }
+
+  /**
+   * Return the end of the generic_view.
+   * 
+   * @return The end iterator.
+   */
+  const_iterator end() const {
+    if (skip_siblings_) {
+      return const_iterator(node_, node_->op_marker, node_->op_marker);
+    } else {
+      return const_iterator(node_, node_->op_last, node_->op_last);
+    }
+  }
+
+  /**
+   * Return the very first object_ptr
+   * of the generic_view.
+   *
+   * @return The first object_ptr of the view.
+   */
+  object_pointer front() const
+  {
+    return (*begin());
+  }
+
+  /**
+   * Return the very last object_ptr
+   * of the generic_view.
+   *
+   * @return The last object_ptr of the view.
+   */
+  object_pointer back() const
+  {
+    return (*(--end()));
+  }
+
+  /**
+   * Returns true if the generic_view is empty.
+   * 
+   * @return True if object_view is empty.
+   */
+  bool empty() const {
+    return node_->op_first->next == node_->op_last;
+  }
+
+  /**
+   * Return the size of the generic_view.
+   * 
+   * @return The size of the generic_view.
+   */
+  size_t size() const {
+    return std::distance(begin(), end());
+  }
+  
+  /**
+   * @brief Sets the skip siblings flag.
+   * 
+   * When set to true all objects which are
+   * not of the concrete type are omitted.
+   *
+   * @param skip Skips siblings when true.
+   */
+  void skip_siblings(bool skip) {
+    skip_siblings_ = skip;
+  }
+
+  /**
+   * Find object which matches the given condition
+   *
+   * @tparam Predicate The type for the find predicate
+   * @param pred The find predicate
+   * @return The first iterator with the object matching the condition.
+   */
+  template < class Predicate >
+  const_iterator find_if(Predicate pred) const
+  {
+    return std::find_if(begin(), end(), pred);
+  }
+
+  /**
+   * Find object which matches the given condition
+   *
+   * @tparam Predicate The type for the find predicate
+   * @param pred The find predicate
+   * @return The first iterator with the object matching the condition.
+   */
+  template < class Predicate >
+  iterator find_if(Predicate pred)
+  {
+    return std::find_if(begin(), end(), pred);
+  }
+
+  /**
+   * Return the underlaying prototype node
+   *
+   * @return The underlaying prototype node.
+   */
+  const prototype_node* node() const
+  {
+    return node_;
+  }
+
+private:
+    const object_store &ostore_;
+    bool skip_siblings_;
+    const prototype_node *node_;
+};
+
+/**
  * @class object_view
  * @brief Create a view for a concrete object type
  * @tparam T The type of the object_view.
