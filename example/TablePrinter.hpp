@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <sstream>
+#include <iomanip>
 
 #ifdef WIN32
 #include <functional>
@@ -18,6 +19,7 @@
 #endif
 
 using namespace std::tr1::placeholders;
+using namespace std;
 
 namespace oos {
   class varchar_base;
