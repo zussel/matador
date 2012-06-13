@@ -28,8 +28,7 @@ class TablePrinter : public oos::object_atomizer
 {
 private:
   enum state_t {
-    HEADER_SEPARATOR = 0,
-    TABLE_HEADER,
+    INITIALIZE = 0,
     COLUMN_HEADER,
     COLUMN_SEPARATOR,
     ITEM_ROW
@@ -39,36 +38,32 @@ public:
   explicit TablePrinter(const oos::object_store &ostore);
   virtual ~TablePrinter();
 
-  void print(const std::string &type, const std::string &filter);
-
-  template < class T >
-  void print(std::ostream &out)
-  {
-    typedef oos::object_view<T> oview_t;
-    oview_t oview(ostore_);
-    // print header
-    print_header(out, oview.node());
-    // print row
-    state_ = ELEMENT;
-
-    typename oview_t::const_iterator first = oview.begin();
-    typename oview_t::const_iterator last = oview.end();
-
-    while (first != last) {
-      oos::object_ptr<T> optr = *first++;
-//      out << "artist: " << optr->id() << "\n";
-      print_element(out, optr);
-    }
-//    for_each(oview.begin(), oview.end(), std::tr1::bind(&TablePrinter::print_element, this, std::tr1::ref(out), _1));
-    // print footer
-
-  }
+  void print(std::ostream &out, const std::string &type, const std::string &filter);
 
 private:
-  void print_header(std::ostream &out, const oos::prototype_node *node);
-  void print_element(std::ostream &out, const oos::object_base_ptr &optr);
-
   unsigned int column_width(const char *id, size_t min) const;
+
+  void print_line(std::ostream &out, state_t state, const oos::object *o, const char *prefix);
+
+  template < class T >
+  void write_column(const char *id, T x, unsigned int width)
+  {
+    switch (state_) {
+      case INITIALIZE:
+        column_info_vector_.push_back(column_info_t(id, column_width(id, width)));
+        width_ += column_info_vector_.back().second;
+        break;
+      case COLUMN_HEADER:
+        line_ << " " << setfill(' ') << setw(width-1) << left << id << " |";
+        break;
+      case COLUMN_SEPARATOR:
+        line_ << setfill('-') << setw(width+2) << right << "+";
+        break;
+      case ITEM_ROW:
+        line_ << setfill(' ') << setw(width) << right << x << " |";
+        break;
+    }
+  }
 
   virtual void write(const char *id, char x);
 	virtual void write(const char *id, float x);
@@ -88,6 +83,7 @@ private:
 private:
   const oos::object_store &ostore_;
   state_t state_;
+  unsigned int width_;
   typedef std::pair<std::string, unsigned int> column_info_t;
   typedef std::vector<column_info_t> column_info_vector_t;
   column_info_vector_t column_info_vector_;

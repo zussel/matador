@@ -15,57 +15,63 @@ using std::right;
 
 TablePrinter::TablePrinter(const oos::object_store &ostore)
   : ostore_(ostore)
-  , state_(HEADER)
+  , state_(INITIALIZE)
+  , width_(0)
 {}
 
 TablePrinter::~TablePrinter()
 {}
 
-void TablePrinter::print(const std::string &type, const std::string &filter)
+void TablePrinter::print(std::ostream &out, const std::string &type, const std::string &filter)
 {
-  const prototype_node *node = ostore_.find_prototype(type.c_str());
-
-  if (!node) {
-    throw std::logic_error("invalid list type");
-  }
+  generic_view gview(type, ostore_);
   
-  
-}
+  generic_view::iterator first = gview.begin();
+  generic_view::iterator last = gview.end();
 
-void TablePrinter::print_header(std::ostream &out, const prototype_node *node)
-{
-  state_ = HEADER;
-  /* determine width for all columns
+  /*
+   * create a temporary object
    */
-  column_info_vector_.clear();
-  object *o = node->producer->create();
-  o->write_to(this);
-  delete o;
-  // print header
-  std::stringstream table_header, column_header, column_names;
-  table_header << "|";
-  column_header << "+";
-  column_names << "|";
-  column_info_vector_t::const_iterator first = column_info_vector_.begin();
-  column_info_vector_t::const_iterator last = column_info_vector_.end();
-  unsigned int width(0);
-  while (first != last) {
-    const column_info_t &info = *first++;
-    width += info.second + 1;
-    column_header << setfill('-') << setw(info.second) << "-" << "+";
-    column_names << " " << setfill(' ') << setw(info.second-1) << left << info.first << "|";
+  object *o = ostore_.create(type.c_str());
+  if (!o) {
+    throw std::logic_error("unknow object type [" + type + "] to create");
   }
-  out << "+" << setfill('-') << setw(width-1) << "-" << "+\n";
-  table_header << " " << setfill(' ') << setw(width-2) << left << node->type << "|";
-  out << table_header.str() << "\n" << column_header.str() << "\n" << column_names.str() << "\n" << column_header.str() << "\n";
+  /*
+   * print first header line
+   * and initialize column width vector
+   */
+  width_ = 0;
+  state_ = INITIALIZE;
+  o->write_to(this);
+  out << "+" << setfill('-') << setw(width_) << "-+" << "\n";
+  out << "| " << setfill(' ') << setw(width_-2) << left << type.c_str() << "|\n";
+
+  print_line(out, COLUMN_SEPARATOR, o, "+");
+  print_line(out, COLUMN_HEADER, o, "|");
+  print_line(out, COLUMN_SEPARATOR, o, "+");
+
+  /*
+   * print items
+   */
+  while (first != last) {
+    generic_view::object_pointer optr = *first++;
+    print_line(out, ITEM_ROW, optr.get(), "|");
+  }
+
+  /*
+   * print column separator
+   */
+  print_line(out, COLUMN_SEPARATOR, o, "+");
+
+  delete o;
 }
 
-void TablePrinter::print_element(std::ostream &out, const oos::object_base_ptr &optr)
+void TablePrinter::print_line(std::ostream &out, state_t state, const object *o, const char *prefix)
 {
+  state_ = state;
   line_.str("");
-  out << "|";
-  optr.ptr()->write_to(this);
-  out << line_.str() << "\n";
+  o->write_to(this);
+  out << prefix << line_.str() << "\n";
 }
 
 unsigned int TablePrinter::column_width(const char *id, size_t min) const
@@ -75,154 +81,69 @@ unsigned int TablePrinter::column_width(const char *id, size_t min) const
 
 void TablePrinter::write(const char *id, char x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 3)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(3) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 3);
 }
 
 void TablePrinter::write(const char *id, float x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, double x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 14)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(14) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 14);
 }
 
 void TablePrinter::write(const char *id, short x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 5)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(5) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 5);
 }
 
 void TablePrinter::write(const char *id, int x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, long x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(12) << right << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, unsigned short x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, unsigned int x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, unsigned long x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(10) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 10);
 }
 
 void TablePrinter::write(const char *id, bool x)
 {
-  switch (state_) {
-    case HEADER:
-      column_info_vector_.push_back(column_info_t(id, column_width(id, 1)));
-      break;
-    case ELEMENT:
-      line_ << setfill(' ') << setw(1) << x << " |";
-      break;
-    case FOOTER:
-      break;
-  }
+  write_column(id, x, 1);
 }
 
 void TablePrinter::write(const char *id, const char *x)
 {
   switch (state_) {
-    case HEADER:
+    case INITIALIZE:
       column_info_vector_.push_back(column_info_t(id, column_width(id, 20)));
+      width_ += column_info_vector_.back().second;
       break;
-    case ELEMENT:
+    case COLUMN_HEADER:
+      line_ << " " << setfill(' ') << setw(21) << left << id << " |";
+      break;
+    case COLUMN_SEPARATOR:
+      line_ << setfill('-') << setw(24) << right << "+";
+      break;
+    case ITEM_ROW:
       line_ << " " << setfill(' ') << setw(21) << left << x << " |";
-      break;
-    case FOOTER:
       break;
   }
 }
@@ -230,13 +151,18 @@ void TablePrinter::write(const char *id, const char *x)
 void TablePrinter::write(const char *id, const std::string &x)
 {
   switch (state_) {
-    case HEADER:
+    case INITIALIZE:
       column_info_vector_.push_back(column_info_t(id, column_width(id, 40)));
+      width_ += column_info_vector_.back().second;
       break;
-    case ELEMENT:
+    case COLUMN_HEADER:
+      line_ << " " << setfill(' ') << setw(41) << left << id << " |";
+      break;
+    case COLUMN_SEPARATOR:
+      line_ << setfill('-') << setw(44) << right << "+";
+      break;
+    case ITEM_ROW:
       line_ << " " << setfill(' ') << setw(41) << left << x.substr(0, 40) << " |";
-      break;
-    case FOOTER:
       break;
   }
 }
@@ -244,13 +170,18 @@ void TablePrinter::write(const char *id, const std::string &x)
 void TablePrinter::write(const char *id, const oos::varchar_base &x)
 {
   switch (state_) {
-    case HEADER:
+    case INITIALIZE:
       column_info_vector_.push_back(column_info_t(id, column_width(id, x.capacity())));
+      width_ += column_info_vector_.back().second;
       break;
-    case ELEMENT:
+    case COLUMN_HEADER:
+      line_ << " " << setfill(' ') << setw(x.capacity() + 1) << left << id << " |";
+      break;
+    case COLUMN_SEPARATOR:
+      line_ << setfill('-') << setw(x.capacity() + 4) << right << "+";
+      break;
+    case ITEM_ROW:
       line_ << " " << setfill(' ') << setw(x.capacity() + 1) << left << x.str() << " |";
-      break;
-    case FOOTER:
       break;
   }
 }
@@ -258,13 +189,18 @@ void TablePrinter::write(const char *id, const oos::varchar_base &x)
 void TablePrinter::write(const char *id, const oos::object_base_ptr &x)
 {
   switch (state_) {
-    case HEADER:
+    case INITIALIZE:
       column_info_vector_.push_back(column_info_t(id, column_width(id, 10)));
+      width_ += column_info_vector_.back().second;
       break;
-    case ELEMENT:
+    case COLUMN_HEADER:
+      line_ << " " << setfill(' ') << setw(11) << left << id << " |";
+      break;
+    case COLUMN_SEPARATOR:
+      line_ << setfill('-') << setw(14) << right << "+";
+      break;
+    case ITEM_ROW:
       line_ << " " << setfill(' ') << setw(11) << right << x.id() << " |";
-      break;
-    case FOOTER:
       break;
   }
 }

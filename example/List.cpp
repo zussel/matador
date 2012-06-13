@@ -40,26 +40,9 @@ void List::execute(oos::session &db, const std::vector<std::string> &args)
     TablePrinter printer(db.ostore());
     
     if (args.size() == 2) {
-      printer.print(args[0], args[1]);
+      printer.print(cout, args[0], args[1]);
     } else {
-      printer.print(args[0]);
-    }
-
-    /*
-    generic_view gview(db.ostore(), "artist");
-    
-    generic_view::iterator first = gview.begin();
-    generic_view::iterator last = gview.end();
-    */
-
-    if (args[0] == "artist") {
-      printer.print<Artist>(cout);
-    } else if (args[0] == "album") {
-      printer.print<Album>(cout);
-    } else if (args[0] == "track") {
-      printer.print<Track>(cout);
-    } else {
-      throw std::logic_error("invalid list type");
+      printer.print(cout, args[0], "");
     }
   }
 }
