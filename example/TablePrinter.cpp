@@ -22,6 +22,17 @@ TablePrinter::TablePrinter(const oos::object_store &ostore)
 TablePrinter::~TablePrinter()
 {}
 
+/*
+template < class T >
+void compare(const object *o, const std::string &name, const std::string &val)
+{
+  T a;
+  o->get(str, b);
+
+  T b = strtol(val.c_str(), NULL, 10);
+}
+*/
+
 void TablePrinter::print(std::ostream &out, const std::string &type, const std::string &filter)
 {
   generic_view gview(type, ostore_);

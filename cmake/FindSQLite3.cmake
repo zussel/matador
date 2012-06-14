@@ -3,7 +3,6 @@
 #  SQLITE3_FOUND - System has SQLite3
 #  SQLITE3_INCLUDE_DIR - The SQLite3 include directories
 #  SQLITE3_LIBRARY - The libraries needed to use SQLite3
-#  SQLITE3_DEFINITION - Compiler switches required for using SQLite3
 
 IF (WIN32)
 	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
@@ -11,17 +10,12 @@ IF (WIN32)
 		DOC "The directory where sqlite3.h resides"
 	)
 
-	MESSAGE(STATUS ${SQLITE3_INCLUDE_DIR})
-
 	FIND_LIBRARY( SQLITE3_LIBRARY
 		NAMES sqlite3
 		PATHS
 		$ENV{PROGRAMFILES}/SQLite/lib
 		DOC "The SQLite3 library"
 	)
-
-	MESSAGE(STATUS ${SQLITE3_LIBRARY})
-
 ELSE (WIN32)
 	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
 		/usr/include

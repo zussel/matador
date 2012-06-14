@@ -373,7 +373,7 @@ protected:
     this->statement_stream() << T::drop_postfix() << " " << table_name;
   }
 
-  virtual void end(const char */*table_name*/, const char */*where_clause*/)
+  virtual void end(const char * /*table_name*/, const char * /*where_clause*/)
   {
     this->statement_stream() << ";";
   }
