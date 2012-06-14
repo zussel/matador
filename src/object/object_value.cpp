@@ -23,16 +23,6 @@ namespace oos {
 object_value_base::~object_value_base()
 {}
 
-void object_value_base::retrieve(const object *o)
-{
-  o->write_to(this);
-}
-
-void object_value_base::update(object *o)
-{
-  o->read_from(this);
-}
-
 void object_value_base::mark_modified(object *o)
 {
   o->mark_modified();

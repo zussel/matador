@@ -202,8 +202,6 @@ public:
 protected:
   template < typename X, typename Y > friend struct detail::updater;
 
-  void retrieve(const object *o);
-  void update(object *o);
   void mark_modified(object *o);
 };
 /// @endcond
@@ -251,8 +249,7 @@ public:
     id_ = id;
     object_ = o;
     succeeded_ = false;
-    update(o);
-//    retrieve(o);
+    o->read_from(this);
     object_ = 0;
   }
 
@@ -272,8 +269,7 @@ public:
   {
     id_ = id;
     succeeded_ = false;
-//    update(o);
-    retrieve(o);
+    o->write_to(this);
     return value_;
   }
 
@@ -712,8 +708,6 @@ private:
 /// @cond OOS_DEV
 
 namespace detail {
-
-void mark_modified(object *o);
 
 template < typename T >
 void
