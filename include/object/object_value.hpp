@@ -146,6 +146,19 @@ namespace detail {
     }
   };
 
+  template < class T >
+  struct retriever<const object_base_ptr&, object_ptr<T> >
+  {
+    void retrieve(const char *id, const char *f, bool &r, const object_base_ptr& master, object_ptr<T> &slave)
+    {
+      if (strcmp(id, f) != 0) {
+        return;
+      }
+      slave.reset(master.ptr());
+      r = true;
+    }
+  };
+
   template < typename Y >
   struct retriever<const varchar_base&, Y>
   {

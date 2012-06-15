@@ -12,6 +12,7 @@ using std::setw;
 using std::setfill;
 using std::left;
 using std::right;
+using std::string;
 
 TablePrinter::TablePrinter(const oos::object_store &ostore)
   : ostore_(ostore)
@@ -22,23 +23,31 @@ TablePrinter::TablePrinter(const oos::object_store &ostore)
 TablePrinter::~TablePrinter()
 {}
 
-/*
-template < class T >
-void compare(const object *o, const std::string &name, const std::string &val)
-{
-  T a;
-  o->get(str, b);
-
-  T b = strtol(val.c_str(), NULL, 10);
-}
-*/
-
 void TablePrinter::print(std::ostream &out, const std::string &type, const std::string &filter)
 {
   generic_view gview(type, ostore_);
   
   generic_view::iterator first = gview.begin();
   generic_view::iterator last = gview.end();
+
+  /*
+   * filter must be in the following format
+   * <name>=<id>
+   * where <name> is the name of an object_base_ptr field
+   * and <id> is the id of the object
+   *
+   * parse filter
+   */
+  std::string attr;
+  long id(0);
+  if (!filter.empty()) {
+    string::size_type pos = filter.find('=');
+    if (pos != string::npos) {
+      attr = filter.substr(0, pos);
+      char *end;
+      id = strtol(filter.substr(pos+1).c_str(), &end, 10);
+    }
+  }
 
   /*
    * create a temporary object
@@ -66,7 +75,14 @@ void TablePrinter::print(std::ostream &out, const std::string &type, const std::
    */
   while (first != last) {
     generic_view::object_pointer optr = *first++;
-    print_line(out, ITEM_ROW, optr.get(), "|");
+    if (!attr.empty()) {
+      object_ptr<object> oo;
+      if (optr->get(attr, oo) && oo.get() && oo->id() == id) {
+        print_line(out, ITEM_ROW, optr.get(), "|");
+      }
+    } else {
+      print_line(out, ITEM_ROW, optr.get(), "|");
+    }
   }
 
   /*
