@@ -96,6 +96,7 @@ SET(TOOLS_INSTALL_HEADER
   include/tools/sequencer.hpp
   include/tools/factory.hpp
   include/tools/string.hpp
+  include/tools/convert.hpp
 )
 
 SET(UNIT_SOURCES

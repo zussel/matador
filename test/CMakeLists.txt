@@ -1,6 +1,8 @@
 SET (TEST_TOOLS_SOURCES
   tools/BlobTestUnit.hpp
   tools/BlobTestUnit.cpp
+  tools/ConvertTestUnit.hpp
+  tools/ConvertTestUnit.cpp
   tools/VarCharTestUnit.hpp
   tools/VarCharTestUnit.cpp
   tools/FactoryTestUnit.hpp

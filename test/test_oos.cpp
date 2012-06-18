@@ -18,6 +18,7 @@
 #include "unit/FirstTestUnit.hpp"
 #include "unit/SecondTestUnit.hpp"
 
+#include "tools/ConvertTestUnit.hpp"
 #include "tools/BlobTestUnit.hpp"
 #include "tools/VarCharTestUnit.hpp"
 #include "tools/FactoryTestUnit.hpp"
@@ -39,6 +40,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit("first", new FirstTestUnit());
   test_suite::instance().register_unit("second", new SecondTestUnit());
 
+  test_suite::instance().register_unit("convert", new ConvertTestUnit());
   test_suite::instance().register_unit("blob", new BlobTestUnit());
   test_suite::instance().register_unit("varchar", new VarCharTestUnit());
   test_suite::instance().register_unit("factory", new FactoryTestUnit());
