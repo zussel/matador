@@ -37,11 +37,35 @@ convert(const T &from, U &to)
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename std::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename std::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename std::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename std::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
+{
+  to = from;
+  std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename std::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename std::enable_if<std::is_floating_point<T>::value >::type* = 0,
+        typename std::enable_if<std::is_floating_point<T>::value >::type* = 0,
+        typename std::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
+{
+  to = from;
+  std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
+}
+
 template < class T >
 typename std::enable_if<std::is_integral<T>::value >::type
 convert(const char *from, T &to, typename std::enable_if<std::is_signed<T>::value >::type* = 0)
 {
-  to = (T)std::strtol(from, 0, 10);
+  to = static_cast<T>(std::strtol(from, 0, 10));
   std::cout << "long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
@@ -49,7 +73,7 @@ template < class T >
 typename std::enable_if<std::is_integral<T>::value >::type
 convert(const char *from, T &to, typename std::enable_if<std::is_unsigned<T>::value >::type* = 0)
 {
-  to = (T)std::strtoul(from, 0, 10);
+  to = static_cast<T>(std::strtoul(from, 0, 10));
   std::cout << "unsigned long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
@@ -57,8 +81,14 @@ template < typename T >
 typename std::enable_if<std::is_floating_point<T>::value >::type
 convert(const char *from, T &to)
 {
-  to = (T)std::strtod(from, 0);
+  to = static_cast<T>(std::strtod(from, 0));
   std::cout << "double (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
+}
+
+void
+convert(const std::string &from, std::string &to)
+{
+  to = from;
 }
 
 template < typename T >
@@ -66,6 +96,13 @@ void
 convert(const std::string &from, T &to)
 {
   convert(from.c_str(), to);
+}
+
+template < unsigned int S1, unsigned int S2 >
+void
+convert(const varchar<S1> &from, varchar<S2> &to)
+{
+  to = from;
 }
 
 template < unsigned int S, typename T >
