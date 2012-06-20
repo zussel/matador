@@ -106,6 +106,7 @@ SET(TOOLS_INSTALL_HEADER
   include/tools/factory.hpp
   include/tools/string.hpp
   include/tools/convert.hpp
+  include/tools/enable_if.hpp
 )
 
 SET(UNIT_SOURCES
