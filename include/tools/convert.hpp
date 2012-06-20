@@ -21,7 +21,7 @@
 #include "tools/varchar.hpp"
 
 #include <type_traits>
-
+#include <cstdlib>
 #include <iostream>
 
 namespace oos {
@@ -30,21 +30,35 @@ class varchar_base;
 class object_base_ptr;
 
 template < typename T, typename U >
-void
-convert(const T &from, U &to);
-
-template < typename T >
-typename std::enable_if<std::is_integral<T>::value >::type
-convert(const char *from, T &to)
+typename std::enable_if<std::is_same<T, U>::value >::type
+convert(const T &from, U &to)
 {
-  std::cout << "int\n";
+  to = from;
+  std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
+}
+
+template < class T >
+typename std::enable_if<std::is_integral<T>::value >::type
+convert(const char *from, T &to, typename std::enable_if<std::is_signed<T>::value >::type* = 0)
+{
+  to = (T)std::strtol(from, 0, 10);
+  std::cout << "long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
+}
+
+template < class T >
+typename std::enable_if<std::is_integral<T>::value >::type
+convert(const char *from, T &to, typename std::enable_if<std::is_unsigned<T>::value >::type* = 0)
+{
+  to = (T)std::strtoul(from, 0, 10);
+  std::cout << "unsigned long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
 template < typename T >
 typename std::enable_if<std::is_floating_point<T>::value >::type
 convert(const char *from, T &to)
 {
-  std::cout << "float\n";
+  to = (T)std::strtod(from, 0);
+  std::cout << "double (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
 template < typename T >
