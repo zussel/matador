@@ -147,6 +147,10 @@ public:
   template < class T >
   bool set(const std::string &name, const T &val)
   {
+    /*
+     * attribute_writer<T> writer(name, val);
+     * write_to(&writer);
+     */
     return update_value(this, name.c_str(), val);
   }
 
@@ -163,6 +167,10 @@ public:
   template < class T >
   bool get(const std::string &name, T &val)
   {
+    /*
+     * attribute_reader<T> reader(name, val);
+     * read_from(&reader);
+     */
     return retrieve_value(this, name.c_str(), val);
   }
 
