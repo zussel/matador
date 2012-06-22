@@ -19,6 +19,7 @@
 #define CONVERT_HPP
 
 #include "tools/varchar.hpp"
+#include "tools/enable_if.hpp"
 
 #include <type_traits>
 #include <cstdlib>
@@ -29,8 +30,98 @@ namespace oos {
 class varchar_base;
 class object_base_ptr;
 
+class convert2
+{
+private:
+  convert2();
+  convert2(const convert2&);
+  convert2& operator=(const convert2&);
+  ~convert2();
+
+public:
+  template < class T >
+  static T to_value(const std::string &str)
+  {
+    return convert::to_value(str.c_str());
+  }
+
+  template < class T >
+  static T to_value(const varchar_base &str)
+  {
+    return convert::to_value(str.c_str());
+  }
+
+  template < class T >
+  static T to_value(const char *str);
+
+  static bool to_value(const char *str)
+  {
+    return std::strtol(str, 0, 10) > 0;
+  }
+
+  template < class T >
+  static T to_value(const char *str,
+                  typename oos::enable_if<!std::tr1::is_integral<T>::value >::type* = 0,
+                  typename oos::enable_if<!std::tr1::is_signed<T>::value >::type* = 0)
+  {
+    return static_cast<T>(std::strtol(str, 0, 10));
+  }
+
+  template < class T >
+  static T to_value(const char *str,
+                  typename oos::enable_if<!std::tr1::is_integral<T>::value >::type* = 0,
+                  typename oos::enable_if<!std::tr1::is_unsigned<T>::value >::type* = 0)
+  {
+    return static_cast<T>(std::strtoul(str, 0, 10));
+  }
+
+  template < class T >
+  static T to_value(const char *str,
+                   typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+  {
+    return static_cast<T>(std::strtod(str, 0, 10));
+  }
+
+  template < class T >
+  std::string to_string(const T &value);
+
+  std::string to_string(const bool &value)
+  {
+    return (value ? "true" : "false");
+  }
+
+  template < class T >
+  std::string to_string(const T &value,
+                        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+                        typename oos::enable_if<!std::tr1::is_signed<T>::value >::type* = 0)
+  {
+    char buf[256];
+    sprintf(buf, "%d", value);
+    return buf;
+  }
+
+  template < class T >
+  std::string to_string(const T &value,
+                        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+                        typename oos::enable_if<!std::tr1::is_unsigned<T>::value >::type* = 0)
+  {
+    char buf[256];
+    sprintf(buf, "%u", value);
+    return buf;
+  }
+
+  template < class T >
+  std::string to_string(const T &value,
+                        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+  {
+    char buf[256];
+    sprintf(buf, "%f", value);
+    return buf;
+  }
+};
+
 template < typename T, typename U >
-typename std::enable_if<std::is_same<T, U>::value >::type
+typename oos::enable_if<std::tr1::is_same<T, U>::value >::type
 convert(const T &from, U &to)
 {
   to = from;
@@ -40,10 +131,10 @@ convert(const T &from, U &to)
 template < typename T, typename U >
 void
 convert(const T &from, U &to,
-        typename std::enable_if<!std::is_same<T, U>::value >::type* = 0,
-        typename std::enable_if<std::is_integral<T>::value >::type* = 0,
-        typename std::enable_if<std::is_integral<T>::value >::type* = 0,
-        typename std::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
+        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
 {
   to = from;
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
@@ -52,33 +143,39 @@ convert(const T &from, U &to,
 template < typename T, typename U >
 void
 convert(const T &from, U &to,
-        typename std::enable_if<!std::is_same<T, U>::value >::type* = 0,
-        typename std::enable_if<std::is_floating_point<T>::value >::type* = 0,
-        typename std::enable_if<std::is_floating_point<T>::value >::type* = 0,
-        typename std::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
+        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) <= sizeof(U)>::type* = 0)
 {
   to = from;
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
+void
+convert(const char *from, bool &to)
+{
+  to = std::strtol(from, 0, 10) > 0;
+}
+
 template < class T >
-typename std::enable_if<std::is_integral<T>::value >::type
-convert(const char *from, T &to, typename std::enable_if<std::is_signed<T>::value >::type* = 0)
+typename oos::enable_if<std::tr1::is_integral<T>::value >::type
+convert(const char *from, T &to, typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
 {
   to = static_cast<T>(std::strtol(from, 0, 10));
   std::cout << "long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
 template < class T >
-typename std::enable_if<std::is_integral<T>::value >::type
-convert(const char *from, T &to, typename std::enable_if<std::is_unsigned<T>::value >::type* = 0)
+typename oos::enable_if<std::tr1::is_integral<T>::value >::type
+convert(const char *from, T &to, typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0)
 {
   to = static_cast<T>(std::strtoul(from, 0, 10));
   std::cout << "unsigned long (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
 template < typename T >
-typename std::enable_if<std::is_floating_point<T>::value >::type
+typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type
 convert(const char *from, T &to)
 {
   to = static_cast<T>(std::strtod(from, 0));

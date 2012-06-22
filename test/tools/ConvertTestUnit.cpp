@@ -22,6 +22,10 @@ ConvertTestUnit::~ConvertTestUnit()
 
 void ConvertTestUnit::convert_test()
 {
+  double dd = convert2::to_value("4.5");
+
+  long ll = convert2::to_value("4.5");
+
   double d(0.0);
   float f(13.0);
   int i1(0), i2(3);
@@ -48,4 +52,5 @@ void ConvertTestUnit::convert_test()
   convert(f, d);
   convert(b1str, str);
   convert(dvar1, dvar2);
+  convert(dstr, l1);
 }
