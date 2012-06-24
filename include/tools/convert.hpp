@@ -42,13 +42,13 @@ public:
   template < class T >
   static T to_value(const std::string &str)
   {
-    return convert::to_value(str.c_str());
+    return convert2::to_value(str.c_str());
   }
 
   template < class T >
   static T to_value(const varchar_base &str)
   {
-    return convert::to_value(str.c_str());
+    return convert2::to_value(str.c_str());
   }
 
   template < class T >
@@ -79,7 +79,7 @@ public:
   static T to_value(const char *str,
                    typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
   {
-    return static_cast<T>(std::strtod(str, 0, 10));
+    return static_cast<T>(std::strtod(str, 0));
   }
 
   template < class T >
@@ -151,13 +151,13 @@ convert(const T &from, U &to,
   to = from;
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
-
+/*
 void
 convert(const char *from, bool &to)
 {
   to = std::strtol(from, 0, 10) > 0;
 }
-
+*/
 template < class T >
 typename oos::enable_if<std::tr1::is_integral<T>::value >::type
 convert(const char *from, T &to, typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
@@ -181,13 +181,13 @@ convert(const char *from, T &to)
   to = static_cast<T>(std::strtod(from, 0));
   std::cout << "double (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
-
+/*
 void
 convert(const std::string &from, std::string &to)
 {
   to = from;
 }
-
+*/
 template < typename T >
 void
 convert(const std::string &from, T &to)
