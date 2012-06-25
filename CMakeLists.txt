@@ -70,6 +70,7 @@ SET(OBJECT_HEADER
 )
 
 SET(OBJECT_INSTALL_HEADER
+  include/object/attribute_serializer.hpp
   include/object/object.hpp
   include/object/object_atomizer.hpp
   include/object/object_atomizable.hpp
