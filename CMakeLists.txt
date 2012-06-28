@@ -60,6 +60,7 @@ SET(OBJECT_SOURCES
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
   src/object/prototype_node.cpp
+  src/object/attribute_serializer.cpp
 )
 
 SET(OBJECT_HEADER
@@ -86,6 +87,7 @@ SET(OBJECT_INSTALL_HEADER
   include/object/prototype_node.hpp
   include/object/object_observer.hpp
   include/object/object_expression.hpp
+  include/object/attribute_serializer.hpp
 )
 
 SET(TOOLS_SOURCES
