@@ -378,9 +378,10 @@ private:
       size_type index = 0;
       if (!(*i)->get("item_index", index)) {
         throw object_exception("couldn't get object vector index item");
-      } else if (!(*i)->set("item_index", --index)) {
-        throw object_exception("couldn't set object vector index item");
+//      } else if (!(*i)->set("item_index", --index)) {
+//        throw object_exception("couldn't set object vector index item");
       } else {
+        (*i)->index(--index);
         ++i;
       }
     }

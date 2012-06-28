@@ -151,13 +151,15 @@ convert(const T &from, U &to,
   to = from;
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
-/*
-void
-convert(const char *from, bool &to)
+
+template < class T >
+typename oos::enable_if<std::tr1::is_same<T, bool>::value >::type
+convert(const char *from, T &to)
 {
   to = std::strtol(from, 0, 10) > 0;
+  std::cout << "bool (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
-*/
+
 template < class T >
 typename oos::enable_if<std::tr1::is_integral<T>::value >::type
 convert(const char *from, T &to, typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
@@ -181,15 +183,9 @@ convert(const char *from, T &to)
   to = static_cast<T>(std::strtod(from, 0));
   std::cout << "double (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
-/*
-void
-convert(const std::string &from, std::string &to)
-{
-  to = from;
-}
-*/
+
 template < typename T >
-void
+typename oos::enable_if<!std::tr1::is_same<T, std::string>::value >::type
 convert(const std::string &from, T &to)
 {
   convert(from.c_str(), to);
