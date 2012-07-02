@@ -9,13 +9,14 @@ public:
   ConvertTestUnit();
   virtual ~ConvertTestUnit();
   
-  void convert_test();
-
   /**
    * Initializes a test unit
    */
   virtual void initialize() {}
   virtual void finalize() {}
+
+  void convert_test();
+
 };
 
 #endif /* CONVERTTESTUNIT_HPP */

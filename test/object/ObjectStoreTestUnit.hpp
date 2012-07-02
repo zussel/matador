@@ -21,6 +21,8 @@ public:
   
   void expression_test();
   void access_value();
+  void set_test();
+  void get_test();
   void serializer();
   void ref_ptr_counter();
   void simple_object();

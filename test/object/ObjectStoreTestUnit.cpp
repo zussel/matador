@@ -20,6 +20,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 {
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
+  add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
+  add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
   add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
   add_test("ref_ptr_counter", std::tr1::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
   add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
@@ -313,6 +315,21 @@ ObjectStoreTestUnit::access_value()
 
   UNIT_ASSERT_TRUE(retrieve_value(owsub, "ptr", osmpl), "couldn't get object field [simple]");
   UNIT_ASSERT_EQUAL(osmpl.get(), i, "retrieved object isn't the expected");
+}
+
+void
+ObjectStoreTestUnit::set_test()
+{
+  Item *i = new Item("item", 4711);
+  
+  i->set("val_int", "1");
+
+  delete i;
+}
+
+void
+ObjectStoreTestUnit::get_test()
+{
 }
 
 void

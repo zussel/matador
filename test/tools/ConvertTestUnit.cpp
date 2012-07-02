@@ -22,12 +22,18 @@ ConvertTestUnit::~ConvertTestUnit()
 
 void ConvertTestUnit::convert_test()
 {
-  double dd = convert2::to_value("4.5");
+  double dd(0.0);
+  
+  convert("5.367", dd);
+  
+  UNIT_ASSERT_EQUAL(dd, 5.367, "unexpected value");
 
-  long ll = convert2::to_value("4.5");
+  float f(0.0);
+  
+  convert("47.11", f);
+  
+  UNIT_ASSERT_EQUAL(f, 47.11f, "unexpected value");
 
-  double d(0.0);
-  float f(13.0);
   int i1(0), i2(3);
   long l1(0);
   short s1(0);
@@ -42,14 +48,15 @@ void ConvertTestUnit::convert_test()
   varchar<12> dvar1("18.7");
   varchar<12> dvar2("8.2");
 
-  convert(dvar1, d);
-  convert(dstr, d);
+  convert(dvar1, dd);
+  convert(dstr, dd);
   convert(istr, i1);
   convert(i2, i1);
   convert(b2str, b);
   convert(i2, l1);
+  convert("47.11", dd);
 //  convert(l1, s1);
-  convert(f, d);
+  convert(f, dd);
   convert(b1str, str);
   convert(dvar1, dvar2);
   convert(dstr, l1);
