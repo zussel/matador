@@ -142,7 +142,7 @@
  * with the given error message and the current
  * file and line number information.
  */
-#define UNIT_ERROR(msg)                  error(msg, __LINE__, __FILE__)
+#define UNIT_FAIL(msg)                   error(msg, __LINE__, __FILE__)
 
 /**
  * @brief Displays a warning.

@@ -24,20 +24,40 @@
 #include <type_traits>
 #include <cstdlib>
 #include <iostream>
+#include <typeinfo>
 
 namespace oos {
 
 class varchar_base;
-class object_base_ptr;
 
 template < typename T, typename U >
-typename oos::enable_if<std::tr1::is_same<T, U>::value >::type
-convert(const T &from, U &to)
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<std::tr1::is_same<char, T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0)
+{
+  std::cout << "cast: char to integral\n";
+//  throw std::bad_cast(/*"bad cast: couldn't convert"*/);
+}
+
+template < typename T, typename U >
+void
+convert(const T&, U&)
+{
+  std::cout << "bad cast: couldn't convert\n";
+  throw std::bad_cast(/*"bad cast: couldn't convert"*/);
+}
+
+template < typename T >
+void
+convert(const T &from, T &to)
 {
   to = from;
   std::cout << "same (sizeof(to): " << sizeof(T) << ") value: " << to << "\n";
 }
 
+/*
 template < typename T, typename U >
 void
 convert(const T &from, U &to,
@@ -115,6 +135,7 @@ convert(const varchar<S> &from, T &to)
   convert(from.str().c_str(), to);
 }
 
+*/
 }
 
 #endif /* CONVERT_HPP */
