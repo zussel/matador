@@ -24,6 +24,24 @@ convert(const T &from, bool &to,
   to = from > 0;
 }
 
+template < typename T >
+void
+convert(const T &from, char *to,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<T, char>::value >::type* = 0)
+{
+  sprintf(to, "%d", from);
+}
+
+template < typename T >
+void
+convert(const T &from, char *to,
+        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<T, char>::value >::type* = 0)
+{
+  sprintf(to, "%f", from);
+}
+
 template < typename T, typename U >
 void
 convert(const T &from, U &to,
@@ -37,7 +55,7 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T &from, U &to,
+convert(const T&, U&,
         typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
@@ -50,14 +68,14 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 typename oos::enable_if<!std::tr1::is_convertible<T, U>::value >::type
-convert(const T &from, U &to)
+convert(const T&, U&)
 {
   throw std::bad_cast();
 }
 
 template < typename T, typename U >
 void
-convert(const T &from, U &to,
+convert(const T&, U&,
         typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
         typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0)
 {
@@ -87,7 +105,7 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T &from, U &to,
+convert(const T&, U&,
         typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
@@ -101,7 +119,7 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T &from, U &to,
+convert(const T&, U&,
         typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
@@ -144,9 +162,15 @@ convert(const T &from, U &to,
 }
 
 void
-convert(const char *from, char &to)
+convert(const char*, char&)
 {
   throw std::bad_cast();
+}
+
+void
+convert(const char *from, std::string &to)
+{
+  to.assign(from);
 }
 
 template < typename T >
@@ -182,6 +206,16 @@ ConvertTestUnit::~ConvertTestUnit()
   try { \
     from a(in); \
     to b; \
+    convert(a, b); \
+    UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
+  } catch (std::bad_cast &) { \
+    UNIT_FAIL("convert must not fail"); \
+  }
+
+#define CONVERT_ARRAY_EXPECT_SUCCESS(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b[256]; \
     convert(a, b); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
@@ -332,22 +366,24 @@ ConvertTestUnit::convert_to_unsigned_long()
 void
 ConvertTestUnit::convert_to_const_char_pointer()
 {
-  UNIT_FAIL("not implemented");
+  CONVERT_ARRAY_EXPECT_SUCCESS(char, char, 'c', "c");
+  CONVERT_ARRAY_EXPECT_SUCCESS(bool, char, 1, "1");
+  CONVERT_ARRAY_EXPECT_SUCCESS(short, char, -4711, "-4711");
+  CONVERT_ARRAY_EXPECT_SUCCESS(int, char, -99, "-99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(long, char, -99, "-99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(unsigned short, char, 99, "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(unsigned int, char, 99, "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(unsigned long, char, 99, "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(float, char, -99.34f, "99.34");
+  CONVERT_ARRAY_EXPECT_SUCCESS(double, char, -99.34f, "99.34");
+  CONVERT_ARRAY_EXPECT_SUCCESS(const char*, char, "99", "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(std::string, char, "99", "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(varchar<8>, char, "99", "99");
 }
 
 void
 ConvertTestUnit::convert_to_string()
 {
-  /*
-  try {
-    char a('c');
-    std::string b("c");
-    convert(a, b);
-    UNIT_ASSERT_EQUAL(b, "c", "convert failed: values are not equal");
-  } catch (std::bad_cast &) {
-    UNIT_FAIL("convert must not fail");
-  }
-  */
   CONVERT_EXPECT_SUCCESS(char, std::string, 'c', "c");
   CONVERT_EXPECT_SUCCESS(bool, std::string, 1, "1");
   CONVERT_EXPECT_SUCCESS(short, std::string, -4711, "-4711");
@@ -358,7 +394,7 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_SUCCESS(unsigned long, std::string, 99, "99");
   CONVERT_EXPECT_SUCCESS(float, std::string, -99.34f, "99.34");
   CONVERT_EXPECT_SUCCESS(double, std::string, -99.34f, "99.34");
-//  CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
+  CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
   CONVERT_EXPECT_SUCCESS(std::string, std::string, "99", "99");
   CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
 }

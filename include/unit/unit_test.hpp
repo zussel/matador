@@ -43,6 +43,7 @@
 
 #include <map>
 
+#include <cstring>
 #include <string>
 #include <sstream>
 
@@ -282,6 +283,16 @@ public:
   void assert_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    if (strcmp(a, b) != 0) {
       // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
