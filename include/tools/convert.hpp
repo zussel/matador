@@ -43,9 +43,9 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T&, U&)
+convert(const T &from, U &to)
 {
-  std::cout << "bad cast: couldn't convert\n";
+  std::cout << "bad cast: couldn't convert [" << from << "] to [" << to << "]\n";
   throw std::bad_cast(/*"bad cast: couldn't convert"*/);
 }
 

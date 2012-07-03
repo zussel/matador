@@ -15,26 +15,35 @@ public:
   virtual void initialize() {}
   virtual void finalize() {}
 
-  void convert_test();
-
   /**
    * convert from one data type to another
    * with the following data types
    *
    *  1. char
-   *  2. short
-   *  3. int
-   *  4. long
-   *  5. unsigned short
-   *  6. unsigned int
-   *  7. unsigned long
-   *  8. float
-   *  9. double
-   * 10. const char*
-   * 11. std::string
-   * 12. oos::varchar_base
+   *  2. bool
+   *  3. short
+   *  4. int
+   *  5. long
+   *  6. unsigned short
+   *  7. unsigned int
+   *  8. unsigned long
+   *  9. float
+   * 10. double
+   * 11. const char*
+   * 12. std::string
+   * 13. oos::varchar_base
    */
   void convert_to_char();
+  void convert_to_bool();
+  void convert_to_short();
+  void convert_to_int();
+  void convert_to_long();
+  void convert_to_unsigned_short();
+  void convert_to_unsigned_int();
+  void convert_to_unsigned_long();
+  void convert_to_const_char_pointer();
+  void convert_to_string();
+  void convert_to_varchar();
 };
 
 #endif /* CONVERTTESTUNIT_HPP */

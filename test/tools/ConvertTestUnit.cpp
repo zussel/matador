@@ -1,8 +1,12 @@
 #include "ConvertTestUnit.hpp"
 
-#include "tools/convert.hpp"
+//#include "tools/convert.hpp"
 #include "tools/varchar.hpp"
 
+#include "tools/enable_if.hpp"
+
+#include <type_traits>
+#include <typeinfo>
 #include <iostream>
 #include <string>
 
@@ -11,185 +15,356 @@ using namespace oos;
 using std::cout;
 using std::string;
 
+template < typename T >
+void
+convert(const T &from, bool &to,
+        typename oos::enable_if<!std::tr1::is_same<char, T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_fundamental<T>::value >::type* = 0)
+{
+  to = from > 0;
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) < sizeof(U)>::type* = 0)
+{
+  to = from;
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<!(sizeof(T) <= sizeof(U))>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+typename oos::enable_if<!std::tr1::is_convertible<T, U>::value >::type
+convert(const T &from, U &to)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<std::tr1::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<char, T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0)
+{
+  to = static_cast<U>(from);
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_convertible<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) == sizeof(U)>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_convertible<T, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) == sizeof(U)>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) == sizeof(U)>::type* = 0)
+{
+  to = from;
+}
+
+template < typename T, typename U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<!std::tr1::is_same<U, T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<char, U>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<bool, U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<sizeof(T) == sizeof(U)>::type* = 0)
+{
+  to = from;
+}
+
+void
+convert(const char *from, char &to)
+{
+  throw std::bad_cast();
+}
+
+template < typename T >
+void
+convert(const T &from, T &to)
+{
+  to = from;
+}
+
 ConvertTestUnit::ConvertTestUnit()
   : unit_test("convert test unit")
 {
-//  add_test("convert", std::tr1::bind(&ConvertTestUnit::convert_test, this), "convert test");
   add_test("to_char", std::tr1::bind(&ConvertTestUnit::convert_to_char, this), "convert to char test");
+  add_test("to_bool", std::tr1::bind(&ConvertTestUnit::convert_to_bool, this), "convert to bool test");
+  add_test("to_short", std::tr1::bind(&ConvertTestUnit::convert_to_short, this), "convert to short test");
+  add_test("to_int", std::tr1::bind(&ConvertTestUnit::convert_to_int, this), "convert to int test");
+  add_test("to_long", std::tr1::bind(&ConvertTestUnit::convert_to_long, this), "convert to long test");
+  add_test("to_unsigned_short", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_short, this), "convert to unsigned short test");
+  add_test("to_unsigned_int", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_int, this), "convert to unsigned int test");
+  add_test("to_unsigned_long", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_long, this), "convert to unsigned long test");
+  add_test("to_const_char_pointer", std::tr1::bind(&ConvertTestUnit::convert_to_const_char_pointer, this), "convert to const char pointer test");
+  add_test("to_string", std::tr1::bind(&ConvertTestUnit::convert_to_string, this), "convert to string test");
+  add_test("to_varchar", std::tr1::bind(&ConvertTestUnit::convert_to_varchar, this), "convert to varchar test");
 }
 
 ConvertTestUnit::~ConvertTestUnit()
 {}
 
-void ConvertTestUnit::convert_test()
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+#define CONVERT_EXPECT_SUCCESS(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b; \
+    convert(a, b); \
+    UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
+  } catch (std::bad_cast &) { \
+    UNIT_FAIL("convert must not fail"); \
+  }
+
+#define CONVERT_EXPECT_FAIL(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b; \
+    convert(a, b); \
+    UNIT_FAIL("convert must not fail"); \
+  } catch (std::bad_cast &) { \
+  }
+
+void
+ConvertTestUnit::convert_to_bool()
 {
-  double dd(0.0);
-  
-  convert("5.367", dd);
-  
-  UNIT_ASSERT_EQUAL(dd, 5.367, "unexpected value");
-
-  float f(0.0);
-  
-  convert("47.11", f);
-  
-  UNIT_ASSERT_EQUAL(f, 47.11f, "unexpected value");
-
-  int i1(0), i2(3);
-  long l1(0);
-  short s1(0);
-  bool b(true);
-  std::string str;
-  
-  std::string dstr("5.3");
-  std::string istr("7");
-  std::string b1str("true");
-  std::string b2str("0");
-
-  varchar<12> dvar1("18.7");
-  varchar<12> dvar2("8.2");
-
-  convert(dvar1, dd);
-  convert(dstr, dd);
-  convert(istr, i1);
-  convert(i2, i1);
-  convert(b2str, b);
-  convert(i2, l1);
-  convert("47.11", dd);
-//  convert(l1, s1);
-  convert(f, dd);
-  convert(b1str, str);
-  convert(dvar1, dvar2);
-  convert(dstr, l1);
+  UNIT_FAIL("not implemented");
 }
 
 void
 ConvertTestUnit::convert_to_char()
 {
-  /*
-   * valid convertions from:
-   * char
-   * short
-   * int
-   * long
-   * unsigned short
-   * unsigned int
-   * unsigned long
-   */
+  CONVERT_EXPECT_SUCCESS(char, char, 'c', 'c');
+  CONVERT_EXPECT_SUCCESS(bool, char, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, char, 99, 99);
+  CONVERT_EXPECT_SUCCESS(int, char, 99, 99);
+  CONVERT_EXPECT_SUCCESS(long, char, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, char, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned int, char, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned long, char, 99, 99);
+  CONVERT_EXPECT_FAIL(float, char, 99, 99);
+  CONVERT_EXPECT_FAIL(double, char, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, char, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, char, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, char, "99", 99);
+}
 
-  std::cout << "\n";
+void
+ConvertTestUnit::convert_to_short()
+{
+  CONVERT_EXPECT_SUCCESS(char, short, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, short, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, short, 4711, 4711);
+  CONVERT_EXPECT_FAIL(int, short, 99, 99);
+  CONVERT_EXPECT_FAIL(long, short, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned short, short, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned int, short, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned long, short, 99, 99);
+  CONVERT_EXPECT_FAIL(float, short, 99, 99);
+  CONVERT_EXPECT_FAIL(double, short, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, short, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, short, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, short, "99", 99);
+}
 
-  cout << "std::tr1::is_integral<char>::value: " << std::tr1::is_integral<char>::value << "\n";
-  cout << "std::tr1::is_integral<short>::value: " << std::tr1::is_integral<short>::value << "\n";
-  cout << "std::tr1::is_integral<int>::value: " << std::tr1::is_integral<int>::value << "\n";
-  cout << "std::tr1::is_integral<long>::value: " << std::tr1::is_integral<long>::value << "\n";
+void
+ConvertTestUnit::convert_to_int()
+{
+  CONVERT_EXPECT_SUCCESS(char, int, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, int, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, int, 4711, 4711);
+  CONVERT_EXPECT_SUCCESS(int, int, 99, 99);
+  CONVERT_EXPECT_SUCCESS(long, int, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, int, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned int, int, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned long, int, 99, 99);
+  CONVERT_EXPECT_FAIL(float, int, 99, 99);
+  CONVERT_EXPECT_FAIL(double, int, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, int, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, int, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, int, "99", 99);
+}
 
-  char to(0);
-  char c = 'c';
+void
+ConvertTestUnit::convert_to_long()
+{
+  CONVERT_EXPECT_SUCCESS(char, long, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, long, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, long, 4711, 4711);
+  CONVERT_EXPECT_SUCCESS(int, long, 99, 99);
+  CONVERT_EXPECT_SUCCESS(long, long, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, long, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned int, long, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned long, long, 99, 99);
+  CONVERT_EXPECT_FAIL(float, long, 99, 99);
+  CONVERT_EXPECT_FAIL(double, long, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, long, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, long, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, long, "99", 99);
+}
+
+void
+ConvertTestUnit::convert_to_unsigned_short()
+{
+  CONVERT_EXPECT_SUCCESS(char, unsigned short, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, unsigned short, true, 1);
+  CONVERT_EXPECT_FAIL(short, unsigned short, 4711, 4711);
+  CONVERT_EXPECT_FAIL(int, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(long, unsigned short, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned int, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(unsigned long, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(float, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(double, unsigned short, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, unsigned short, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, unsigned short, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, unsigned short, "99", 99);
+}
+
+void
+ConvertTestUnit::convert_to_unsigned_int()
+{
+  CONVERT_EXPECT_SUCCESS(char, unsigned int, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, unsigned int, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, unsigned int, 4711, 4711);
+  CONVERT_EXPECT_FAIL(int, unsigned int, 99, 99);
+  CONVERT_EXPECT_FAIL(long, unsigned int, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, unsigned int, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned int, unsigned int, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned long, unsigned int, 99, 99);
+  CONVERT_EXPECT_FAIL(float, unsigned int, 99, 99);
+  CONVERT_EXPECT_FAIL(double, unsigned int, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, unsigned int, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, unsigned int, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, unsigned int, "99", 99);
+}
+
+void
+ConvertTestUnit::convert_to_unsigned_long()
+{
+  CONVERT_EXPECT_SUCCESS(char, unsigned long, 'c', 99);
+  CONVERT_EXPECT_SUCCESS(bool, unsigned long, true, 1);
+  CONVERT_EXPECT_SUCCESS(short, unsigned long, 4711, 4711);
+  CONVERT_EXPECT_FAIL(int, unsigned long, 99, 99);
+  CONVERT_EXPECT_FAIL(long, unsigned long, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned short, unsigned long, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned int, unsigned long, 99, 99);
+  CONVERT_EXPECT_SUCCESS(unsigned long, unsigned long, 99, 99);
+  CONVERT_EXPECT_FAIL(float, unsigned long, 99, 99);
+  CONVERT_EXPECT_FAIL(double, unsigned long, 99, 99);
+  CONVERT_EXPECT_FAIL(const char*, unsigned long, "99", 99);
+  CONVERT_EXPECT_FAIL(std::string, unsigned long, "99", 99);
+  CONVERT_EXPECT_FAIL(varchar<8>, unsigned long, "99", 99);
+}
+
+void
+ConvertTestUnit::convert_to_const_char_pointer()
+{
+  UNIT_FAIL("not implemented");
+}
+
+void
+ConvertTestUnit::convert_to_string()
+{
   /*
-   * char to char
-   */
-  {
-    convert(c, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * short to char
-   */
-  {
-    to = (char)0;
-    short from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * int to char
-   */
-  {
-    to = (char)0;
-    int from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * long to char
-   */
-  {
-    to = (char)0;
-    long from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * unsigned short to char
-   */
-  {
-    to = (char)0;
-    unsigned short from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * unsigned int to char
-   */
-  {
-    to = (char)0;
-    unsigned int from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  /*
-   * unsigned long to char
-   */
-  {
-    to = (char)0;
-    unsigned long from = 99;
-    convert(from, to);
-    UNIT_ASSERT_EQUAL(to, c, "converted character isn't the expected one");
-  }
-  
   try {
-    to = (char)0;
-    float from = 99;
-    convert(from, to);
-    UNIT_FAIL("shouldn't convert float to char");
-  } catch (std::bad_cast &ex) {
-    // test succeeded
+    char a('c');
+    std::string b("c");
+    convert(a, b);
+    UNIT_ASSERT_EQUAL(b, "c", "convert failed: values are not equal");
+  } catch (std::bad_cast &) {
+    UNIT_FAIL("convert must not fail");
   }
-  
-  try {
-    to = (char)0;
-    double from = 99;
-    convert(from, to);
-    UNIT_FAIL("shouldn't convert double to char");
-  } catch (std::bad_cast &ex) {
-    // test succeeded
-  }
-  
-  try {
-    to = (char)0;
-    const char* from = "99";
-    convert(from, to);
-    UNIT_FAIL("shouldn't convert const char* to char");
-  } catch (std::bad_cast &ex) {
-    // test succeeded
-  }
-  
-  try {
-    to = (char)0;
-    std::string from("99");
-    convert(from, to);
-    UNIT_FAIL("shouldn't convert std::string to char");
-  } catch (std::bad_cast &ex) {
-    // test succeeded
-  }
-  
-  try {
-    to = (char)0;
-    varchar<8> from("99");
-    convert(from, to);
-    UNIT_FAIL("shouldn't convert varchar_base to char");
-  } catch (std::bad_cast &ex) {
-    // test succeeded
-  }
+  */
+  CONVERT_EXPECT_SUCCESS(char, std::string, 'c', "c");
+  CONVERT_EXPECT_SUCCESS(bool, std::string, 1, "1");
+  CONVERT_EXPECT_SUCCESS(short, std::string, -4711, "-4711");
+  CONVERT_EXPECT_SUCCESS(int, std::string, -99, "-99");
+  CONVERT_EXPECT_SUCCESS(long, std::string, -99, "-99");
+  CONVERT_EXPECT_SUCCESS(unsigned short, std::string, 99, "99");
+  CONVERT_EXPECT_SUCCESS(unsigned int, std::string, 99, "99");
+  CONVERT_EXPECT_SUCCESS(unsigned long, std::string, 99, "99");
+  CONVERT_EXPECT_SUCCESS(float, std::string, -99.34f, "99.34");
+  CONVERT_EXPECT_SUCCESS(double, std::string, -99.34f, "99.34");
+//  CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
+  CONVERT_EXPECT_SUCCESS(std::string, std::string, "99", "99");
+  CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
+}
+
+void
+ConvertTestUnit::convert_to_varchar()
+{
+  UNIT_FAIL("not implemented");
 }
