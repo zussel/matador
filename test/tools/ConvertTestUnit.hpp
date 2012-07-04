@@ -41,7 +41,9 @@ public:
   void convert_to_unsigned_short();
   void convert_to_unsigned_int();
   void convert_to_unsigned_long();
-  void convert_to_const_char_pointer();
+  void convert_to_float();
+  void convert_to_double();
+  void convert_to_char_pointer();
   void convert_to_string();
   void convert_to_varchar();
 };

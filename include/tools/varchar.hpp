@@ -174,18 +174,29 @@ public:
   }
 };
 
-template < unsigned int C >
-bool operator==(const varchar<C> &l, const varchar<C> &r)
+template < unsigned int C1, unsigned int C2 >
+bool operator==(const varchar<C1> &l, const varchar<C2> &r)
 {
   return l.str() == r.str();
 }
 
 template < unsigned int C >
-bool operator!=(const varchar<C> &l, const varchar<C> &r)
+bool operator==(const varchar<C> &l, const char *r)
+{
+  return l.str() == r;
+}
+
+template < unsigned int C1, unsigned int C2 >
+bool operator!=(const varchar<C1> &l, const varchar<C2> &r)
 {
   return l.str() != r.str();
 }
 
+template < unsigned int C >
+bool operator!=(const varchar<C> &l, const char *r)
+{
+  return l.str() != r;
+}
 
 }
 
