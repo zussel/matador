@@ -35,6 +35,8 @@
 
 #include "unit/unit_exception.hpp"
 
+#include "tools/enable_if.hpp"
+
 #ifdef WIN32
 #include <functional>
 #else
@@ -46,6 +48,7 @@
 #include <cstring>
 #include <string>
 #include <sstream>
+#include <type_traits>
 
 /**
  * @file unit_test.hpp
@@ -290,7 +293,8 @@ public:
     }
   }
 
-  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
+  void
+  assert_equal(const char a[], const char b[], const std::string &msg, int line, const char *file)
   {
     if (strcmp(a, b) != 0) {
       // throw exception

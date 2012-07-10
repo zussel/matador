@@ -136,6 +136,18 @@ public:
   }
 
   /**
+   * Initializes the varchar with the
+   * given string.
+   *
+   * @param x The string value to set.
+   */
+  varchar(const char *x)
+    : varchar_base(C)
+  {
+    data_ = x;
+  }
+
+  /**
    * Assigns a varchar.
    *
    * @param x The varchar to assign.

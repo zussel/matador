@@ -53,7 +53,7 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T &from, const U &to,
+convert(const T&, const U&,
         typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
         typename oos::enable_if<!std::tr1::is_same<char, T>::value >::type* = 0,
         typename oos::enable_if<std::tr1::is_floating_point<U>::value >::type* = 0)
@@ -74,7 +74,7 @@ convert(const T &from, U &to,
 
 template < typename T, typename U >
 void
-convert(const T &from, U &to,
+convert(const T&, U&,
         typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
         typename oos::enable_if<std::tr1::is_floating_point<U>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) <= sizeof(U))>::type* = 0,
@@ -108,13 +108,22 @@ convert(const char &from, char *to)
   to[0] = from;
   to[1] = '\0';
 }
-
+/*
 template < typename T >
 typename oos::enable_if<!std::tr1::is_same<T, std::string>::value >::type
 convert(const T &from, std::string &to)
 {
   char buf[256];
   convert(from, buf);
+  to.assign(buf);
+}
+*/
+//template < unsigned int S >
+void
+convert(const varchar_base &from, std::string &to)
+{
+  char buf[256];
+  convert(from.c_str(), buf);
   to.assign(buf);
 }
 
@@ -126,7 +135,7 @@ convert(const char *from, char *to)
 }
 
 void
-convert(const char *from, bool &to)
+convert(const char*, bool&)
 {
   throw std::bad_cast();
 }
@@ -144,9 +153,9 @@ convert(const std::string &from, varchar<S> &to)
   to = from;
 }
 
-template < unsigned int S >
+//template < unsigned int S >
 void
-convert(const varchar<S> &from, char *to)
+convert(const varchar_base &from, char *to)
 {
   convert(from.c_str(), to);
 }
@@ -588,6 +597,15 @@ ConvertTestUnit::convert_to_double()
 void
 ConvertTestUnit::convert_to_char_pointer()
 {
+  try {
+    char a = 'c';
+    char b[256];
+    convert(a, b);
+    UNIT_ASSERT_EQUAL(b, "c", "convert failed: values are not equal");
+  } catch (std::bad_cast &) {
+    UNIT_FAIL("convert must not fail");
+  }
+
   CONVERT_ARRAY_EXPECT_SUCCESS(char, char, 'c', "c");
   CONVERT_ARRAY_EXPECT_SUCCESS(bool, char, true, "true");
   CONVERT_ARRAY_EXPECT_SUCCESS(short, char, -4711, "-4711");
