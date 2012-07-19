@@ -73,6 +73,11 @@ void varchar_base::assign(const char *s, size_t n)
   trim();
 }
 
+void varchar_base::assign(const char *s)
+{
+  data_.assign(s);
+}
+
 std::string varchar_base::str() const
 {
   return data_;

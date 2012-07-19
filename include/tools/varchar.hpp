@@ -67,6 +67,8 @@ public:
 
   void assign(const char *s, size_t n);
 
+  void assign(const char *s);
+
   std::string str() const;
 
   const char* c_str() const;
