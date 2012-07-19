@@ -381,15 +381,6 @@ convert(const oos::varchar_base &from, std::string &to)
   to = from.str();
 }
 
-template < class T >
-void
-convert(const T &from, oos::varchar_base &to)
-{
-  char buf[256];
-  convert(from, buf, 256);
-  to.assign(buf);
-}
-
 /***********************************
  * 
  * Convert from
@@ -776,6 +767,24 @@ convert(const char *from, std::string &to)
 
 /***********************************************
  * 
+ * Convert from
+ *   const char*
+ * to
+ *   bool
+ *
+ ***********************************************/
+void
+convert(const char *from, bool &to)
+{
+  char *ptr;
+  to = strtol(from, &ptr, 10) > 0;
+  if (errno == ERANGE || (to == 0 && ptr == from)) {
+    throw std::bad_cast();
+  }
+}
+
+/***********************************************
+ * 
  * Convert from 
  *   string
  * to
@@ -825,7 +834,7 @@ convert(const oos::varchar_base &from, char *to, size_t num)
 void
 convert(const char &from, char *to, size_t num)
 {
-  _snprintf(to, num, "%c", from);
+  snprintf(to, num, "%c", from);
 }
 
 /***********************************************
@@ -844,7 +853,7 @@ convert(const T &from, char *to, size_t num,
         typename oos::enable_if<!std::tr1::is_same<T, char>::value >::type* = 0)
 {
 //  cout << "signed integral > char* (" << typeid(T).name() << ")\n";
-  _snprintf(to, num, "%d", from);
+  snprintf(to, num, "%d", from);
 }
 
 /***********************************************
@@ -859,10 +868,11 @@ template < class T >
 void
 convert(const T &from, char *to, size_t num,
         typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0)
+        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<!std::tr1::is_same<T, unsigned char>::value >::type* = 0)
 {
 //  cout << "unsigned integral > char* (" << typeid(T).name() << ")\n";
-  _snprintf(to, num, "%d", from);
+  snprintf(to, num, "%d", from);
 }
 
 /***********************************************
@@ -887,14 +897,13 @@ convert(const T &from, char *to, size_t num,
  * Convert from
  *   string
  * to
- *   signed integral
+ *   arithmetic
  *
  ***********************************/
 template < class T >
 void
 convert(const std::string &from, T &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
+        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0)
 {
 //  cout << "string > signed integral (" << typeid(T).name() << ")\n";
   convert(from.c_str(), to);
@@ -903,42 +912,7 @@ convert(const std::string &from, T &to,
 /***********************************
  * 
  * Convert from
- *   string
- * to
- *   unsigned integral
- *
- ***********************************/
-template < class T >
-void
-convert(const std::string &from, T &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0)
-{
-//  cout << "string > unsigned integral (" << typeid(T).name() << ")\n";
-  convert(from.c_str(), to);
-}
-
-/***********************************
- * 
- * Convert from
- *   string
- * to
- *   floating point
- *
- ***********************************/
-template < class T >
-void
-convert(const std::string &from, T &to,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
-{
-//  cout << "string > floating point (" << typeid(T).name() << ")\n";
-  convert(from.c_str(), to);
-}
-
-/***********************************
- * 
- * Convert from
- *   signed integral
+ *   arithmetic
  * to
  *   string
  *
@@ -946,8 +920,7 @@ convert(const std::string &from, T &to,
 template < class T >
 void
 convert(const T &from, std::string &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
+        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0)
 {
 //  cout << "signed integral > string (" << typeid(T).name() << ")\n";
   char buf[256];
@@ -958,18 +931,15 @@ convert(const T &from, std::string &to,
 /***********************************
  * 
  * Convert from
- *   unsigned integral
+ *   arithmetic
  * to
- *   string
+ *   varchar
  *
  ***********************************/
 template < class T >
-void
-convert(const T &from, std::string &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0)
+typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type
+convert(const T &from, oos::varchar_base &to)
 {
-//  cout << "unsigned integral > string (" << typeid(T).name() << ")\n";
   char buf[256];
   convert(from, buf, 256);
   to.assign(buf);
@@ -978,20 +948,29 @@ convert(const T &from, std::string &to,
 /***********************************
  * 
  * Convert from
- *   floating point
+ *   const char*
  * to
- *   string
+ *   varchar
  *
  ***********************************/
-template < class T >
 void
-convert(const T &from, std::string &to,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+convert(const char *from, oos::varchar_base &to)
 {
-//  cout << "floating point > string (" << typeid(T).name() << ")\n";
-  char buf[256];
-  convert(from, buf, 256);
-  to.assign(buf);
+  to.assign(from);
+}
+
+/***********************************
+ * 
+ * Convert from
+ *   string
+ * to
+ *   varchar
+ *
+ ***********************************/
+void
+convert(const std::string &from, oos::varchar_base &to)
+{
+  to = from;
 }
 
 /***********************************
@@ -1023,6 +1002,12 @@ void
 convert(const T &from, T &to)
 {
 //  cout << "same (" << typeid(T).name() << " > " << typeid(T).name() << ")\n";
+  to = from;
+}
+
+void
+convert(const oos::varchar_base &from, oos::varchar_base &to)
+{
   to = from;
 }
 
