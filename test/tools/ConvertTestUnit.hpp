@@ -38,6 +38,7 @@ public:
   void convert_to_short();
   void convert_to_int();
   void convert_to_long();
+  void convert_to_unsigned_char();
   void convert_to_unsigned_short();
   void convert_to_unsigned_int();
   void convert_to_unsigned_long();
