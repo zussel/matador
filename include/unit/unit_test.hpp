@@ -293,8 +293,9 @@ public:
     }
   }
 
+  template < int N1, int N2 >
   void
-  assert_equal(const char a[], const char b[], const std::string &msg, int line, const char *file)
+  assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
   {
     if (strcmp(a, b) != 0) {
       // throw exception

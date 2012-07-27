@@ -1,7 +1,7 @@
 #include "ConvertTestUnit.hpp"
 
 //#include "tools/convert.hpp"
-#include "tools/varchar.hpp"
+//#include "tools/varchar.hpp"
 
 #include "tools/enable_if.hpp"
 
@@ -32,15 +32,15 @@ using std::string;
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "SUCCEEDED: not same, signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "SUCCEEDED: not same, signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   to = from;
 }
 
@@ -57,15 +57,15 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<U, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<U, bool>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "SUCCEEDED: not same, unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "SUCCEEDED: not same, unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   to = from;
 }
 
@@ -82,15 +82,15 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<U, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<U, bool>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "FAILED: not convertible, not same, signed > unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, signed > unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -107,15 +107,15 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0,
         typename oos::enable_if<(sizeof(T) < sizeof(U))>::type* = 0)
 {
-//  cout << "SUCCEEDED: not same, unsigned > signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "SUCCEEDED: not same, unsigned > signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   to = from;
 }
 
@@ -132,15 +132,15 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "FAILED: not convertible, not same, signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -157,15 +157,15 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<U, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<U, bool>::value >::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "FAILED: not convertible, not same, unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -182,15 +182,15 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<U, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<U, bool>::value >::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "FAILED: not convertible, not same, signed > unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, signed > unsigned (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -207,15 +207,15 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, U>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) < sizeof(U))>::type* = 0)
 {
-//  cout << "FAILED: not convertible, not same, unsigned > signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, unsigned > signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -232,11 +232,11 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_floating_point<U>::value >::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "SUCCEEDED: not same, floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "SUCCEEDED: not same, floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   to = static_cast<T>(from);
 }
 
@@ -253,11 +253,11 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<U>::value >::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_floating_point<U>::value >::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-//  cout << "FAILED: not convertible, not same, floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, not same, floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -272,10 +272,10 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<U>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_floating_point<U>::value >::type* = 0)
 {
-//  cout << "FAILED: not convertible, integral > floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, integral > floating point (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -290,10 +290,10 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<U>::value >::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<U>::value >::type* = 0)
 {
-//  cout << "FAILED: not convertible, floating point > integral (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
+  // cout << "FAILED: not convertible, floating point > integral (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   throw std::bad_cast();
 }
 
@@ -308,16 +308,16 @@ convert(const T &, U &,
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtol(from, &ptr, 10));
   if (errno == ERANGE || (to == 0 && ptr == from)) {
-  //  cout << "FAILED: const char* > signed integral (" << typeid(T).name() << ")\n";
+    // cout << "FAILED: const char* > signed integral (" << typeid(T).name() << ")\n";
     throw std::bad_cast();
   } else {
-  //  cout << "SUCCEEDED: const char* > signed integral (" << typeid(T).name() << ")\n";
+    // cout << "SUCCEEDED: const char* > signed integral (" << typeid(T).name() << ")\n";
   }
 }
 
@@ -334,7 +334,7 @@ convert(const char *from, bool &to)
 {
   char *ptr;
   to = strtoul(from, &ptr, 10) > 0;
-//  cout << "SUCCEEDED: const char* > bool\n";
+  // cout << "SUCCEEDED: const char* > bool\n";
 }
 
 /***********************************************
@@ -348,17 +348,17 @@ convert(const char *from, bool &to)
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtoul(from, &ptr, 10));
   if (errno == ERANGE || (to == 0 && ptr == from)) {
-  //  cout << "FAILED: const char* > unsigned integral (" << typeid(T).name() << ")\n";
+    // cout << "FAILED: const char* > unsigned integral (" << typeid(T).name() << ")\n";
     throw std::bad_cast();
   } else {
-  //  cout << "SUCCEEDED: const char* > unsigned integral (" << typeid(T).name() << ")\n";
+    // cout << "SUCCEEDED: const char* > unsigned integral (" << typeid(T).name() << ")\n";
   }
 }
 
@@ -373,15 +373,15 @@ convert(const char *from, T &to,
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtod(from, &ptr));
   if (errno == ERANGE || (to == 0 && ptr == from)) {
-  //  cout << "FAILED: const char* > floating point (" << typeid(T).name() << ")\n";
+    // cout << "FAILED: const char* > floating point (" << typeid(T).name() << ")\n";
     throw std::bad_cast();
   } else {
-  //  cout << "SUCCEEDED: const char* > floating point (" << typeid(T).name() << ")\n";
+    // cout << "SUCCEEDED: const char* > floating point (" << typeid(T).name() << ")\n";
   }
 }
 
@@ -396,7 +396,7 @@ convert(const char *from, T &to,
 void
 convert(const char *from, std::string &to)
 {
-//  cout << "SUCCEEDED: const char* > string\n";
+  // cout << "SUCCEEDED: const char* > string\n";
   to.assign(from);
 }
 
@@ -408,13 +408,14 @@ convert(const char *from, std::string &to)
  *   string
  *
  ***********************************************/
+ /*
 void
 convert(const oos::varchar_base &from, std::string &to)
 {
-//  cout << "SUCCEEDED: const char* > string\n";
+  // cout << "SUCCEEDED: const char* > string\n";
   to = from.str();
 }
-
+*/
 /***********************************************
  * 
  * Convert from
@@ -423,13 +424,14 @@ convert(const oos::varchar_base &from, std::string &to)
  *   varchar
  *
  ***********************************************/
+/*
 void
 convert(const std::string &from, oos::varchar_base &to)
 {
-//  cout << "SUCCEEDED: string > varchar\n";
+  // cout << "SUCCEEDED: string > varchar\n";
   to = from;
 }
-
+*/
 /***********************************************
  * 
  * Convert from
@@ -438,13 +440,14 @@ convert(const std::string &from, oos::varchar_base &to)
  *   varchar
  *
  ***********************************************/
+/*
 void
 convert(const char *from, oos::varchar_base &to)
 {
-//  cout << "SUCCEEDED: const char* > varchar\n";
+  // cout << "SUCCEEDED: const char* > varchar\n";
   to.assign(from);
 }
-
+*/
 /***********************************************
  * 
  * Convert from 
@@ -463,9 +466,9 @@ convert(const std::string &from, char *to, size_t num)
     strncpy(to, from.c_str(), from.size());
 #endif
     to[from.size()] = '\0';
-  //  cout << "SUCCEEDED: string > char*\n";
+    // cout << "SUCCEEDED: string > char*\n";
   } else {
-  //  cout << "FAILED: string > char*\n";
+    // cout << "FAILED: string > char*\n";
     throw std::bad_cast();
   }
 }
@@ -478,6 +481,7 @@ convert(const std::string &from, char *to, size_t num)
  *   char*
  *
  ***********************************************/
+/*
 void
 convert(const oos::varchar_base &from, char *to, size_t num)
 {
@@ -488,13 +492,13 @@ convert(const oos::varchar_base &from, char *to, size_t num)
     strncpy(to, from.c_str(), from.size());
 #endif
     to[from.size()] = '\0';
-  //  cout << "SUCCEEDED: string > char*\n";
+    cout << "SUCCEEDED: string > char*\n";
   } else {
-  //  cout << "FAILED: string > char*\n";
+    cout << "FAILED: string > char*\n";
     throw std::bad_cast();
   }
 }
-
+*/
 /***********************************************
  * 
  * Convert from 
@@ -506,7 +510,7 @@ convert(const oos::varchar_base &from, char *to, size_t num)
 void
 convert(const char &from, char *to, size_t num)
 {
-//  cout << "SUCCEEDED: char > char*\n";
+  // cout << "SUCCEEDED: char > char*\n";
 #ifdef WIN32
   _snprintf_s(to, num, num, "%c", from);
 #else
@@ -525,11 +529,11 @@ convert(const char &from, char *to, size_t num)
 template < class T >
 void
 convert(const T &from, char *to, size_t num,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, char>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, char>::value >::type* = 0)
 {
-//  cout << "SUCCEEDED: signed integral > char* (" << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: signed integral > char* (" << typeid(T).name() << ")\n";
 #ifdef WIN32
   _snprintf_s(to, num, num, "%d", from);
 #else
@@ -548,11 +552,11 @@ convert(const T &from, char *to, size_t num,
 template < class T >
 void
 convert(const T &from, char *to, size_t num,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<std::tr1::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, char>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, char>::value >::type* = 0)
 {
-//  cout << "SUCCEEDED: unsigned integral > char* (" << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: unsigned integral > char* (" << typeid(T).name() << ")\n";
 #ifdef WIN32
   _snprintf_s(to, num, num, "%d", from);
 #else
@@ -571,9 +575,9 @@ convert(const T &from, char *to, size_t num,
 template < class T >
 void
 convert(const T &from, char *to, size_t num, int precision,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0)
 {
-//  cout << "SUCCEEDED: floating point > char* (" << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: floating point > char* (" << typeid(T).name() << ")\n";
   char buf[32];
 #ifdef WIN32
   _snprintf_s(buf, 32, 32, "%%0.%df", precision);
@@ -595,9 +599,9 @@ convert(const T &from, char *to, size_t num, int precision,
 template < class T >
 void
 convert(const std::string &from, T &to,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: string > arithmetic (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: string > arithmetic (" << typeid(T).name() << ")\n";
   convert(from.c_str(), to);
 }
 
@@ -612,9 +616,9 @@ convert(const std::string &from, T &to,
 template < class T >
 void
 convert(const T &from, std::string &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: integral > string (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: integral > string (" << typeid(T).name() << ")\n";
   char buf[256];
   convert(from, buf, 256);
   to.assign(buf);
@@ -631,9 +635,9 @@ convert(const T &from, std::string &to,
 template < class T >
 void
 convert(const T &from, std::string &to, int precision,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: floating point > string (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: floating point > string (" << typeid(T).name() << ")\n";
   char buf[256];
   convert(from, buf, 256, precision);
   to.assign(buf);
@@ -647,15 +651,16 @@ convert(const T &from, std::string &to, int precision,
  *   arithmetic
  *
  ***********************************/
+/*
 template < class T >
 void
 convert(const oos::varchar_base &from, T &to,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: string > arithmetic (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: string > arithmetic (" << typeid(T).name() << ")\n";
   convert(from.c_str(), to);
 }
-
+*/
 /***********************************
  * 
  * Convert from
@@ -664,17 +669,18 @@ convert(const oos::varchar_base &from, T &to,
  *   varchar
  *
  ***********************************/
+/*
 template < class T >
 void
 convert(const T &from, oos::varchar_base &to,
-        typename oos::enable_if<std::tr1::is_integral<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: integral > varchar (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: integral > varchar (" << typeid(T).name() << ")\n";
   char buf[256];
   convert(from, buf, 256);
   to.assign(buf);
 }
-
+*/
 /***********************************
  * 
  * Convert from
@@ -683,17 +689,18 @@ convert(const T &from, oos::varchar_base &to,
  *   varchar
  *
  ***********************************/
+/*
 template < class T >
 void
 convert(const T &from, oos::varchar_base &to, int precision,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value >::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value >::type* = 0)
 {
-//  cout << "DELEGATED: floating point > varchar (" << typeid(T).name() << ")\n";
+  // cout << "DELEGATED: floating point > varchar (" << typeid(T).name() << ")\n";
   char buf[256];
   convert(from, buf, 256, precision);
   to.assign(buf);
 }
-
+*/
 /***********************************
  * 
  * Convert from
@@ -702,12 +709,13 @@ convert(const T &from, oos::varchar_base &to, int precision,
  *   varchar
  *
  ***********************************/
+/*
 void
 convert(const oos::varchar_base &from, oos::varchar_base &to)
 {
   to = from;
 }
-
+*/
 /***********************************
  * 
  * Convert from
@@ -720,10 +728,10 @@ convert(const oos::varchar_base &from, oos::varchar_base &to)
 template < class T >
 void
 convert(const bool &from, T &to,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0)
 {
-//  cout << "SUCCEEDED: bool > arithmetic (" << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: bool > arithmetic (" << typeid(T).name() << ")\n";
   to = from;
 }
 
@@ -739,10 +747,10 @@ convert(const bool &from, T &to,
 template < class T >
 void
 convert(const T &from, bool &to,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value >::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, bool>::value >::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0)
 {
-//  cout << "SUCCEEDED: arithmetic > bool (" << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: arithmetic > bool (" << typeid(T).name() << ")\n";
   to = from > 1;
 }
 
@@ -755,7 +763,7 @@ template < class T >
 void
 convert(const T &from, T &to)
 {
-//  cout << "SUCCEEDED: same (" << typeid(T).name() << " > " << typeid(T).name() << ")\n";
+  // cout << "SUCCEEDED: same (" << typeid(T).name() << " > " << typeid(T).name() << ")\n";
   to = from;
 }
 
@@ -855,16 +863,17 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_SUCCESS(std::string, bool, "99", true);
   CONVERT_EXPECT_SUCCESS(std::string, bool, "hello", false);
   // TODO: add varchar converts
-  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "99", true);
-  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "hello", false);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "99", true);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "hello", false);
 }
 
 void
 ConvertTestUnit::convert_to_char()
 {
   CONVERT_EXPECT_SUCCESS(char, char, 'c', 'c');
-//  CONVERT_EXPECT_SUCCESS(bool, char, true, 1);
-  
+  CONVERT_EXPECT_SUCCESS(bool, char, true, 1);
+
+/*  
   cout << "\n";
   cout << "sizeof(char): " << sizeof(char) << "\n";
   cout << "sizeof(short): " << sizeof(short) << "\n";
@@ -879,8 +888,7 @@ ConvertTestUnit::convert_to_char()
   cout << std::boolalpha << "std::tr1::is_integral<unsigned char>: " << std::tr1::is_integral<unsigned char>::value << "\n";
   cout << std::boolalpha << "std::tr1::is_signed<unsigned char>: " << std::tr1::is_signed<unsigned char>::value << "\n";
   cout << std::boolalpha << "std::tr1::is_unsigned<unsigned char>: " << std::tr1::is_unsigned<unsigned char>::value << "\n";
-
-/*
+*/
   CONVERT_EXPECT_FAIL(short, char, 99, 99);
   CONVERT_EXPECT_FAIL(int, char, 99, 99);
   CONVERT_EXPECT_FAIL(long, char, 99, 99);
@@ -888,14 +896,13 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAIL(unsigned short, char, 99, 99);
   CONVERT_EXPECT_FAIL(unsigned int, char, 99, 99);
   CONVERT_EXPECT_FAIL(unsigned long, char, 99, 99);
-  */
   CONVERT_EXPECT_FAIL(float, char, 99, 99);
   CONVERT_EXPECT_FAIL(double, char, 99, 99);
   // TODO: add more tests
   CONVERT_EXPECT_SUCCESS(const char*, char, "99", 99);
   CONVERT_EXPECT_SUCCESS(std::string, char, "99", 99);
   // TODO: add varchar converts
-  CONVERT_EXPECT_SUCCESS(varchar<8>, char, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, char, "99", 99);
 }
 
 void
@@ -918,7 +925,7 @@ ConvertTestUnit::convert_to_short()
   CONVERT_EXPECT_SUCCESS(std::string, short, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, short, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, short, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, short, "99", 99);
 }
 
 void
@@ -942,7 +949,7 @@ ConvertTestUnit::convert_to_int()
   CONVERT_EXPECT_SUCCESS(std::string, int, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, int, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, int, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, int, "99", 99);
 }
 
 void
@@ -965,7 +972,7 @@ ConvertTestUnit::convert_to_long()
   CONVERT_EXPECT_SUCCESS(std::string, long, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, long, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, long, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, long, "99", 99);
 }
 
 void
@@ -988,7 +995,7 @@ ConvertTestUnit::convert_to_unsigned_char()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned char, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned char, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
 }
 
 void
@@ -1011,7 +1018,7 @@ ConvertTestUnit::convert_to_unsigned_short()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned short, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned short, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
 }
 
 void
@@ -1035,7 +1042,7 @@ ConvertTestUnit::convert_to_unsigned_int()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned int, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned int, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned int, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned int, "99", 99);
 }
 
 void
@@ -1058,7 +1065,7 @@ ConvertTestUnit::convert_to_unsigned_long()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned long, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned long, "fail", 99);
   // TODO: better conversion; adapt varchar
-  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned long, "99", 99);
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned long, "99", 99);
 }
 
 void
@@ -1079,7 +1086,8 @@ ConvertTestUnit::convert_to_float()
   CONVERT_EXPECT_SUCCESS(const char*, float, "99.45", 99.45f);
   CONVERT_EXPECT_FAIL(const char*, float, "fail", 99);
   CONVERT_EXPECT_SUCCESS(std::string, float, "99.45", 99.45f);
-  CONVERT_EXPECT_SUCCESS(varchar<8>, float, "99.45", 99.45f);
+  // TODO: better conversion; adapt varchar
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, float, "99.45", 99.45f);
 }
 
 void
@@ -1101,7 +1109,8 @@ ConvertTestUnit::convert_to_double()
   CONVERT_EXPECT_SUCCESS(const char*, double, "99.45", 99.45);
   CONVERT_EXPECT_FAIL(const char*, double, "fail", 99);
   CONVERT_EXPECT_SUCCESS(std::string, double, "99.45", 99.45);
-  CONVERT_EXPECT_SUCCESS(varchar<8>, double, "99.45", 99.45);
+  // TODO: better conversion; adapt varchar
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, double, "99.45", 99.45);
 }
 
 void
@@ -1122,7 +1131,7 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_ARRAY_EXPECT_SUCCESS(const char*, char, "99", "99");
   CONVERT_ARRAY_EXPECT_SUCCESS(std::string, char, "99", "99");
   // TODO: add varchar converts
-  CONVERT_ARRAY_EXPECT_SUCCESS(varchar<8>, char, "99", "99");
+//  CONVERT_ARRAY_EXPECT_SUCCESS(varchar<8>, char, "99", "99");
 }
 
 void
@@ -1143,12 +1152,13 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
   CONVERT_EXPECT_SUCCESS(std::string, std::string, "99", "99");
   // TODO: add varchar converts
-  CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
+//  CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
 }
 
 void
 ConvertTestUnit::convert_to_varchar()
 {
+  /*
   CONVERT_EXPECT_SUCCESS(char, varchar<64>, 'c', "c");
   // TODO: check on 1,true,on
 //  CONVERT_EXPECT_SUCCESS(bool, varchar<64>, false, "false");
@@ -1165,4 +1175,5 @@ ConvertTestUnit::convert_to_varchar()
   CONVERT_EXPECT_SUCCESS(std::string, varchar<64>, "99", "99");
   // TODO: add varchar conversions
   CONVERT_EXPECT_SUCCESS(varchar<8>, varchar<64>, "99", "99");
+  */
 }
