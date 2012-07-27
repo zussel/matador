@@ -423,14 +423,12 @@ convert(const char *from, std::string &to)
  *   string
  *
  ***********************************************/
- /*
 void
 convert(const oos::varchar_base &from, std::string &to)
 {
   // cout << "SUCCEEDED: const char* > string\n";
   to = from.str();
 }
-*/
 
 /***********************************************
  * 
@@ -465,7 +463,6 @@ convert(const std::string &from, char *to, size_t num)
  *   char*
  *
  ***********************************************/
-/*
 void
 convert(const oos::varchar_base &from, char *to, size_t num)
 {
@@ -476,13 +473,13 @@ convert(const oos::varchar_base &from, char *to, size_t num)
     strncpy(to, from.c_str(), from.size());
 #endif
     to[from.size()] = '\0';
-    cout << "SUCCEEDED: string > char*\n";
+    // cout << "SUCCEEDED: varchar > char*\n";
   } else {
-    cout << "FAILED: string > char*\n";
+    // cout << "FAILED: varchar > char*\n";
     throw std::bad_cast();
   }
 }
-*/
+
 /***********************************************
  * 
  * Convert from 
@@ -635,7 +632,6 @@ convert(const T &from, std::string &to, int precision,
  *   arithmetic
  *
  ***********************************/
-/*
 template < class T >
 void
 convert(const oos::varchar_base &from, T &to,
@@ -644,7 +640,6 @@ convert(const oos::varchar_base &from, T &to,
   // cout << "DELEGATED: string > arithmetic (" << typeid(T).name() << ")\n";
   convert(from.c_str(), to);
 }
-*/
 
 /***********************************
  * 
@@ -875,8 +870,8 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_SUCCESS(std::string, bool, "99", true);
   CONVERT_EXPECT_SUCCESS(std::string, bool, "hello", false);
   // TODO: add varchar converts
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "99", true);
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "hello", false);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "99", true);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "hello", false);
 }
 
 void
@@ -897,7 +892,7 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_SUCCESS(const char*, char, "99", 99);
   CONVERT_EXPECT_SUCCESS(std::string, char, "99", 99);
   // TODO: add varchar converts
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, char, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, char, "99", 99);
 }
 
 void
@@ -920,7 +915,7 @@ ConvertTestUnit::convert_to_short()
   CONVERT_EXPECT_SUCCESS(std::string, short, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, short, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, short, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, short, "99", 99);
 }
 
 void
@@ -944,7 +939,7 @@ ConvertTestUnit::convert_to_int()
   CONVERT_EXPECT_SUCCESS(std::string, int, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, int, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, int, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, int, "99", 99);
 }
 
 void
@@ -967,7 +962,7 @@ ConvertTestUnit::convert_to_long()
   CONVERT_EXPECT_SUCCESS(std::string, long, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, long, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, long, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, long, "99", 99);
 }
 
 void
@@ -990,7 +985,7 @@ ConvertTestUnit::convert_to_unsigned_char()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned char, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned char, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
 }
 
 void
@@ -1013,7 +1008,7 @@ ConvertTestUnit::convert_to_unsigned_short()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned short, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned short, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned short, "99", 99);
 }
 
 void
@@ -1037,7 +1032,7 @@ ConvertTestUnit::convert_to_unsigned_int()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned int, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned int, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned int, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned int, "99", 99);
 }
 
 void
@@ -1060,7 +1055,7 @@ ConvertTestUnit::convert_to_unsigned_long()
   CONVERT_EXPECT_SUCCESS(std::string, unsigned long, "99", 99);
   CONVERT_EXPECT_FAIL(std::string, unsigned long, "fail", 99);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned long, "99", 99);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, unsigned long, "99", 99);
 }
 
 void
@@ -1082,7 +1077,7 @@ ConvertTestUnit::convert_to_float()
   CONVERT_EXPECT_FAIL(const char*, float, "fail", 99);
   CONVERT_EXPECT_SUCCESS(std::string, float, "99.45", 99.45f);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, float, "99.45", 99.45f);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, float, "99.45", 99.45f);
 }
 
 void
@@ -1105,7 +1100,7 @@ ConvertTestUnit::convert_to_double()
   CONVERT_EXPECT_FAIL(const char*, double, "fail", 99);
   CONVERT_EXPECT_SUCCESS(std::string, double, "99.45", 99.45);
   // TODO: better conversion; adapt varchar
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, double, "99.45", 99.45);
+  CONVERT_EXPECT_SUCCESS(varchar<8>, double, "99.45", 99.45);
 }
 
 void
@@ -1126,7 +1121,7 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_ARRAY_EXPECT_SUCCESS(const char*, char, "99", "99");
   CONVERT_ARRAY_EXPECT_SUCCESS(std::string, char, "99", "99");
   // TODO: add varchar converts
-//  CONVERT_ARRAY_EXPECT_SUCCESS(varchar<8>, char, "99", "99");
+  CONVERT_ARRAY_EXPECT_SUCCESS(varchar<8>, char, "99", "99");
 }
 
 void
@@ -1147,7 +1142,7 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
   CONVERT_EXPECT_SUCCESS(std::string, std::string, "99", "99");
   // TODO: add varchar converts
-//  CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
+  CONVERT_EXPECT_SUCCESS(varchar<8>, std::string, "99", "99");
 }
 
 void
