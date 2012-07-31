@@ -5,6 +5,7 @@
 
 #include <numeric>
 #include <iomanip>
+#include <cstring>
 
 using namespace oos;
 

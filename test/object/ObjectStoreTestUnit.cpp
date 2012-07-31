@@ -322,7 +322,8 @@ ObjectStoreTestUnit::set_test()
 {
   Item *i = new Item("item", 4711);
   
-  i->set("val_int", "1");
+  std::string one("1");
+  i->set("val_int", one);
 
   delete i;
 }

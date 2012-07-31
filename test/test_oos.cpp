@@ -29,6 +29,8 @@
 #include "object/ObjectVectorTestUnit.hpp"
 #include "object/DatabaseTestUnit.hpp"
 
+#include "json/JsonTestUnit.hpp"
+
 #include "unit/test_suite.hpp"
 
 using namespace oos;
@@ -50,6 +52,8 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit("list", new ObjectListTestUnit());
   test_suite::instance().register_unit("vector", new ObjectVectorTestUnit());
   test_suite::instance().register_unit("database", new DatabaseTestUnit());
+
+  test_suite::instance().register_unit("json", new JsonTestUnit());
 
   test_suite::instance().run();
 }

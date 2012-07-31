@@ -33,6 +33,7 @@
 #include "object/object.hpp"
 
 #include <sstream>
+#include <cstring>
 
 namespace oos {
 

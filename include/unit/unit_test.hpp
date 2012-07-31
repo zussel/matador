@@ -50,6 +50,12 @@
 #include <sstream>
 #include <type_traits>
 
+#ifdef WIN32
+#define CPP11_TYPE_TRAITS_NS std::tr1
+#else
+#define CPP11_TYPE_TRAITS_NS std
+#endif
+
 /**
  * @file unit_test.hpp
  * @brief Contains the unit_test class an global unit defines

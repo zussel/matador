@@ -26,6 +26,8 @@
 #include "object/object.hpp"
 #include "object/object_store.hpp"
 
+#include <cstring>
+
 namespace oos {
 
 statement_serializer::statement_serializer()

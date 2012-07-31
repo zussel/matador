@@ -59,6 +59,7 @@ SET(OBJECT_SOURCES
   src/object/object_value.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
+  src/object/object_convert.cpp
   src/object/prototype_node.cpp
   src/object/attribute_serializer.cpp
 )
@@ -78,6 +79,7 @@ SET(OBJECT_INSTALL_HEADER
   include/object/object_ptr.hpp
   include/object/object_store.hpp
   include/object/object_container.hpp
+  include/object/object_convert.hpp
   include/object/object_list.hpp
   include/object/object_vector.hpp
   include/object/linked_object_list.hpp
@@ -96,6 +98,7 @@ SET(TOOLS_SOURCES
   src/tools/blob.cpp
   src/tools/varchar.cpp
   src/tools/sequencer.cpp
+  src/tools/convert.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
@@ -110,6 +113,20 @@ SET(TOOLS_INSTALL_HEADER
   include/tools/string.hpp
   include/tools/convert.hpp
   include/tools/enable_if.hpp
+)
+
+SET(JSON_SOURCE
+  src/json/json_value.cpp
+  src/json/json_object.cpp
+  src/json/json_string.cpp
+  src/json/json_bool.cpp
+)
+
+SET(JSON_INSTALL_HEADER
+  include/json/json_value.hpp
+  include/json/json_object.hpp
+  include/json/json_string.hpp
+  include/json/json_bool.hpp
 )
 
 SET(UNIT_SOURCES
@@ -164,6 +181,7 @@ SET(DATABASE_INSTALL_HEADER
 ADD_LIBRARY(oos SHARED
   ${OBJECT_SOURCES} ${OBJECT_HEADER} ${OBJECT_INSTALL_HEADER}
   ${TOOLS_SOURCES} ${TOOLS_INSTALL_HEADER}
+  ${JSON_SOURCE} ${JSON_INSTALL_HEADER}
   ${UNIT_SOURCES} ${UNIT_HEADER}
   ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER}
 )
@@ -194,6 +212,7 @@ TARGET_LINK_LIBRARIES(oos-sqlite oos ${SQLITE3_LIBRARY})
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${OBJECT_SOURCES} ${OBJECT_HEADER} ${OBJECT_INSTALL_HEADER})
 SOURCE_GROUP("tools" FILES ${TOOLS_SOURCES} ${TOOLS_INSTALL_HEADER})
+SOURCE_GROUP("json" FILES ${JSON_SOURCE} ${JSON_INSTALL_HEADER})
 SOURCE_GROUP("unit" FILES ${UNIT_SOURCES} ${UNIT_HEADER})
 SOURCE_GROUP("database" FILES ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 

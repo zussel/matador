@@ -31,7 +31,7 @@
   #define OOS_API
 #endif
 
-#include "object/object_value.hpp"
+//#include "object/object_value.hpp"
 #include "object/object_atomizable.hpp"
 #include "object/attribute_serializer.hpp"
 
@@ -41,6 +41,10 @@ namespace oos {
 
 struct object_proxy;
 class object_store;
+
+template < class T > class object_ref;
+template < class T > class object_ptr;
+
 //class object_atomizer;
 
 /**
@@ -151,7 +155,7 @@ public:
     attribute_reader<T> reader(name, val);
     read_from(&reader);
     return reader.success();
-    //return update_value(this, name.c_str(), val);
+//    return update_value(this, name.c_str(), val);
   }
 
   /**
@@ -167,11 +171,10 @@ public:
   template < class T >
   bool get(const std::string &name, T &val)
   {
-    /*
-     * attribute_writer<T> writer(name, val);
-     * write_to(&writer);
-     */
-    return retrieve_value(this, name.c_str(), val);
+    attribute_writer<T> writer(name, val);
+    write_to(&writer);
+    return writer.success();
+//    return retrieve_value(this, name.c_str(), val);
   }
 
   /**
