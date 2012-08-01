@@ -120,6 +120,10 @@ SET(JSON_SOURCE
   src/json/json_object.cpp
   src/json/json_string.cpp
   src/json/json_bool.cpp
+  src/json/json_null.cpp
+  src/json/json_number.cpp
+  src/json/json_array.cpp
+  src/json/json_exception.cpp
 )
 
 SET(JSON_INSTALL_HEADER
@@ -127,6 +131,10 @@ SET(JSON_INSTALL_HEADER
   include/json/json_object.hpp
   include/json/json_string.hpp
   include/json/json_bool.hpp
+  include/json/json_null.hpp
+  include/json/json_number.hpp
+  include/json/json_array.hpp
+  include/json/json_exception.hpp
 )
 
 SET(UNIT_SOURCES

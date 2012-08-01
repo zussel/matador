@@ -2,6 +2,8 @@
 #include "json/json_object.hpp"
 #include "json/json_string.hpp"
 #include "json/json_bool.hpp"
+#include "json/json_null.hpp"
+#include "json/json_array.hpp"
 
 #include <iostream>
 
@@ -22,8 +24,7 @@ json_value* json_value::create(std::istream &in)
     case '{':
       return new json_object;
     case '[':
-      //return new json_array;
-      return 0;
+      return new json_array;
     case '"':
       return new json_string;
     case '-':
@@ -43,8 +44,7 @@ json_value* json_value::create(std::istream &in)
     case 'f':
       return new json_bool;
     case 'n':
-      //return new json_null;
-      return 0;
+      return new json_null;
   }
   return 0;
 }

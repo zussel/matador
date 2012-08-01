@@ -147,7 +147,11 @@ bool extract_integer(const std::string &item, int &val)
 bool extract_time(const std::string &line, time_t &val)
 {
   int min=0, sec=0;
+#ifdef WIN32
+  sscanf_s(line.c_str(), " \"%d:%2d\"]", &min, &sec);
+#else
   sscanf(line.c_str(), " \"%d:%2d\"]", &min, &sec);
+#endif
   val = sec + 60*min;
   return true;
 }

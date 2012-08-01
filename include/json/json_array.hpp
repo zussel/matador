@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECT_CONVERT_HPP
-#define OBJECT_CONVERT_HPP
+#ifndef JSON_ARRAY_HPP
+#define JSON_ARRAY_HPP
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -31,54 +31,41 @@
   #define OOS_API
 #endif
 
-#include "object/object.hpp"
-#include "object/object_ptr.hpp"
+#include "json/json_value.hpp"
 
+#include <vector>
 #include <iostream>
-#include <typeinfo>
 
 namespace oos {
 
-template < class T >
-void
-convert(const object_ptr<T> &from, object_ptr<T> &to)
+class OOS_API json_array : public json_value
 {
-  std::cout << "1 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
+public:
+  typedef std::vector<json_value*> t_value_vector;
+  typedef t_value_vector::const_iterator const_iterator;
+  typedef t_value_vector::iterator iterator;
+  typedef t_value_vector::size_type size_type;
 
-OOS_API void convert(const object_base_ptr &from, object_ptr<object> &to);
+public:
+  json_array();
+  virtual ~json_array();
 
-template < class T >
-void
-convert(const object_ref<T> &from, object_ptr<T> &to)
-{
-  std::cout << "2 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
+  virtual bool parse(std::istream &in);
+  virtual void print(std::ostream &out) const;
 
-template < class T >
-void
-convert(const object_ptr<T> &from, object_ref<T> &to)
-{
-  std::cout << "3 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
+  iterator begin();
+  const_iterator begin() const;
 
-template < class T >
-void
-convert(const T &from, object_base_ptr &to)
-{
-  std::cout << "4 typeid: " << typeid(T).name() << "\n";
-}
+  iterator end();
+  const_iterator end() const;
 
-template < class T >
-void
-convert(const object_base_ptr &from, T &to)
-{
-  std::cout << "5 typeid: " << typeid(T).name() << "\n";
-}
+  size_type size() const;
+  bool empty() const;
+
+private:
+  t_value_vector value_vector_;
+};
 
 }
 
-#endif /* OBJECT_CONVERT_HPP */
+#endif /* JSON_ARRAY_HPP */

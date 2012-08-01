@@ -151,7 +151,11 @@ void statement_serializer::read(const char *id, char* &x)
   const char *tmp = stmt_->column_text(column_++);
   size_t len = strlen(tmp);
   x = new char[len + 1];
+#ifdef WIN32
+  strncpy_s(x, len, tmp, len);
+#else
   strncpy(x, tmp, len);
+#endif
   x[len] = '\0';
 }
 

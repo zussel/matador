@@ -18,6 +18,19 @@
 #ifndef CONVERT_HPP
 #define CONVERT_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "tools/varchar.hpp"
 #include "tools/enable_if.hpp"
 
@@ -344,8 +357,7 @@ convert(const char *from, T &to,
  *   bool
  *
  ***********************************************/
-void
-convert(const char *from, bool &to);
+OOS_API void convert(const char *from, bool &to);
 
 /***********************************************
  * 
@@ -403,8 +415,7 @@ convert(const char *from, T &to,
  *   string
  *
  ***********************************************/
-void
-convert(const char *from, std::string &to);
+OOS_API void convert(const char *from, std::string &to);
 
 /***********************************************
  * 
@@ -414,8 +425,7 @@ convert(const char *from, std::string &to);
  *   string
  *
  ***********************************************/
-void
-convert(const oos::varchar_base &from, std::string &to);
+OOS_API void convert(const oos::varchar_base &from, std::string &to);
 
 /***********************************************
  * 
@@ -425,8 +435,7 @@ convert(const oos::varchar_base &from, std::string &to);
  *   char*
  *
  ***********************************************/
-void
-convert(const std::string &from, char *to, size_t num);
+OOS_API void convert(const std::string &from, char *to, size_t num);
 
 /***********************************************
  * 
@@ -436,8 +445,7 @@ convert(const std::string &from, char *to, size_t num);
  *   char*
  *
  ***********************************************/
-void
-convert(const oos::varchar_base &from, char *to, size_t num);
+OOS_API void convert(const oos::varchar_base &from, char *to, size_t num);
 
 /***********************************************
  * 
@@ -447,8 +455,7 @@ convert(const oos::varchar_base &from, char *to, size_t num);
  *   char*
  *
  ***********************************************/
-void
-convert(const char &from, char *to, size_t num);
+OOS_API void convert(const char &from, char *to, size_t num);
 
 /***********************************************
  * 
@@ -651,8 +658,7 @@ convert(const T &from, T &to)
  *   varchar
  *
  ***********************************************/
-void
-convert(const std::string &from, oos::varchar_base &to);
+OOS_API void convert(const std::string &from, oos::varchar_base &to);
 
 /***********************************************
  * 
@@ -662,8 +668,7 @@ convert(const std::string &from, oos::varchar_base &to);
  *   varchar
  *
  ***********************************************/
-void
-convert(const char *from, oos::varchar_base &to);
+OOS_API void convert(const char *from, oos::varchar_base &to);
 
 /***********************************
  * 
@@ -711,8 +716,7 @@ convert(const T &from, oos::varchar_base &to, int precision,
  *   varchar
  *
  ***********************************/
-void
-convert(const oos::varchar_base &from, oos::varchar_base &to);
+OOS_API void convert(const oos::varchar_base &from, oos::varchar_base &to);
 
 }
 

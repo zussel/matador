@@ -21,7 +21,7 @@ JsonTestUnit::~JsonTestUnit()
 
 void JsonTestUnit::simple_test()
 {
-  string str("           {      \"text\" :       \"hello world!\",     \"bool\" : false            }");
+  string str("           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, \"false\" ]      }");
   
   string result("{ \"bool\" : false, \"text\" : \"hello world!\" }");
   istringstream sin(str);
