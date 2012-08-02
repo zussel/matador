@@ -54,6 +54,8 @@ bool json_bool::parse(std::istream &in)
       }
       c = in.get();
     }
+    // TODO: better while loop
+    in.putback(c);
     value_ = false;
   }
   return true;

@@ -10,6 +10,9 @@ json_array::~json_array()
 
 bool json_array::parse(std::istream &in)
 {
+  // skip white
+  in >> std::ws;
+
   char c(0);
   
   c = in.get();
@@ -20,7 +23,7 @@ bool json_array::parse(std::istream &in)
   
   c = in.get();
   if (in.good() && c == ']') {
-    // empty object
+    // empty array
     return true;
   }
   
