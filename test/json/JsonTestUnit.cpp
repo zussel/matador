@@ -23,7 +23,7 @@ void JsonTestUnit::simple_test()
 {
   string str("           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false ]      }");
   
-  string result("{ \"bool\" : false, \"text\" : \"hello world!\" }");
+  string result("{ \"array\" : [ null, false ], \"bool\" : false, \"text\" : \"hello world!\" }");
   istringstream sin(str);
 
   json_object obj;
@@ -33,7 +33,5 @@ void JsonTestUnit::simple_test()
   stringstream out;
   out << obj;
   
-  cout << obj << "\n";
-
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 }

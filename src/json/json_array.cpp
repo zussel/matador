@@ -65,7 +65,7 @@ void json_array::print(std::ostream &out) const
   t_value_vector::const_iterator last = value_vector_.end();
 
   while (first != last) {
-    out << *first;
+    out << *(*first);
     if (++first != last) {
       out << ", ";
     }

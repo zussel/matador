@@ -22,17 +22,17 @@ bool json_null::parse(std::istream &in)
     return false;
   }
 
-  int i = 0;
+  int i = 1;
   if (c == 'n') {
     // check for "null"
     while (in && i < 4) {
+      c = in.get();
       if (!in.good()) {
         return false;
       }
       if (json_null::null_string[i++] != c) {
         return false;
       }
-      c = in.get();
     }
   } else {
     return false;

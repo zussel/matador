@@ -28,34 +28,32 @@ bool json_bool::parse(std::istream &in)
     return false;
   }
 
-  int i = 0;
+  int i = 1;
   if (c == 't') {
     // check for "true"
     while (in && i < 4) {
+      c = in.get();
       if (!in.good()) {
         return false;
       }
       if (json_bool::true_string[i++] != c) {
         return false;
       }
-      c = in.get();
     }
     value_ = true;
 
   } else if (c == 'f') {
-    // check for "true"
-    // check for "true"
+    // check for "false"
     while (in && i < 5) {
+      c = in.get();
       if (!in.good()) {
         return false;
       }
       if (json_bool::false_string[i++] != c) {
         return false;
       }
-      c = in.get();
     }
     // TODO: better while loop
-    in.putback(c);
     value_ = false;
   }
   return true;
