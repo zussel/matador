@@ -133,6 +133,11 @@ bool json_object::contains(const std::string &k)
   return string_value_map_.count(json_string(k)) > 0;
 }
 
+json_value* json_object::operator[](const std::string &key)
+{
+  return string_value_map_[json_string(key)];
+}
+
 const json_value* json_object::value(const std::string &key) const
 {
   t_string_value_map::const_iterator i = string_value_map_.find(json_string(key));

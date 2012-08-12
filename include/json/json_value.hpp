@@ -49,6 +49,37 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_value &value);
 };
 
+/*
+class OOS_API json_value
+{
+public:
+  json_value();
+  json_value(const json_value &x);
+  json_value(const json_object &x);
+  json_value(const json_array &x);
+  json_value(const json_number &x);
+  json_value(const json_string &x);
+  json_value(const json_bool &x);
+  json_value(const json_null &x);
+  ~json_value();
+  
+  json_value& operator[](const std::string &key);
+  json_value& operator[](size_t index);
+
+  template < class T >
+  T get() const
+  {
+    
+  }
+
+  class json_type
+  {
+  };
+
+private:
+  json_type *type_;
+};
+*/
 }
 
 #endif /* JSON_VALUE_HPP */

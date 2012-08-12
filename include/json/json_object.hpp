@@ -61,6 +61,8 @@ public:
 
   bool contains(const std::string &k);
 
+  json_value* operator[](const std::string &key);
+
   const json_value* value(const std::string &key) const;
   json_value* value(const std::string &key);
   void insert(const json_string &key, json_value *val);

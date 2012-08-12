@@ -10,7 +10,10 @@ public:
   ~JsonTestUnit();
   
   void simple_test();
-
+  void string_test();
+  void number_test();
+  void create_test();
+  void access_test();
   /**
    * Initializes a test unit
    */

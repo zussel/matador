@@ -3,6 +3,7 @@
 #include "json/json_string.hpp"
 #include "json/json_bool.hpp"
 #include "json/json_null.hpp"
+#include "json/json_number.hpp"
 #include "json/json_array.hpp"
 
 #include <iostream>
@@ -38,8 +39,7 @@ json_value* json_value::create(std::istream &in)
     case '7':
     case '8':
     case '9':
-      //return new json_number;
-      return 0;
+      return new json_number;
     case 't':
     case 'f':
       return new json_bool;
