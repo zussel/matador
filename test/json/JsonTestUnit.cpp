@@ -19,6 +19,8 @@ JsonTestUnit::JsonTestUnit()
   add_test("simple", std::tr1::bind(&JsonTestUnit::simple_test, this), "simple json test");
   add_test("string", std::tr1::bind(&JsonTestUnit::string_test, this), "string json test");
   add_test("number", std::tr1::bind(&JsonTestUnit::number_test, this), "number json test");
+  add_test("create", std::tr1::bind(&JsonTestUnit::create_test, this), "create json test");
+  add_test("access", std::tr1::bind(&JsonTestUnit::access_test, this), "access json test");
 }
 
 JsonTestUnit::~JsonTestUnit()
@@ -40,7 +42,7 @@ void JsonTestUnit::simple_test()
   stringstream out;
   out << obj;
   
-  cout << "\n" << obj << "\n";
+  //cout << "\n" << obj << "\n";
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 }
@@ -58,7 +60,7 @@ void JsonTestUnit::string_test()
   stringstream out;
   out << obj;
   
-  cout << "\n" << obj << "\n";
+  //cout << "\n" << obj << "\n";
   
 }
 
