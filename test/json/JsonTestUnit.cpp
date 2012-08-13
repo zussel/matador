@@ -42,7 +42,7 @@ void JsonTestUnit::simple_test()
   stringstream out;
   out << obj;
   
-  //cout << "\n" << obj << "\n";
+  cout << "\n" << obj << "\n";
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 }

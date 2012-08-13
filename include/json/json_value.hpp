@@ -113,7 +113,7 @@ private:
   };
 
 private:
-  std::tr1::shared_ptr<placeholder> ptr;
+  std::shared_ptr<placeholder> ptr;
 };
 
 }

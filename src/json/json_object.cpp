@@ -119,7 +119,6 @@ void json_object::print(std::ostream &out) const
   t_string_value_map::const_iterator first = string_value_map_.begin();
   t_string_value_map::const_iterator last = string_value_map_.end();
 
-  t_string_value_map::value_type val;
   while (first != last) {
     out << first->first << " : " << first->second;
     if (++first != last) {

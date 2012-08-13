@@ -71,9 +71,9 @@ public:
   json_value& operator[](const std::string &key);
   void insert(const json_string &key, const json_value &value);
 
-  json_value& operator[](size_t index) { throw std::logic_error("json_object has no index access operator"); }
-  const json_value& operator[](size_t index) const { throw std::logic_error("json_object has no index access operator"); }
-  void push_back(const json_value &x) { throw std::logic_error("json_object has no push_back method"); }
+  json_value& operator[](size_t ) { throw std::logic_error("json_object has no index access operator"); }
+  const json_value& operator[](size_t ) const { throw std::logic_error("json_object has no index access operator"); }
+  void push_back(const json_value &) { throw std::logic_error("json_object has no push_back method"); }
 
 private:
   t_string_value_map string_value_map_;

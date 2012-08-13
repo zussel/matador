@@ -37,6 +37,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <stdexcept>
 
 namespace oos {
 
@@ -60,10 +61,13 @@ public:
   double value() const;
   void value(double val);
 
-  json_value& operator[](const std::string &key) { throw std::logic_error("json_number has no key access operator"); }
-  json_value& operator[](size_t index) { throw std::logic_error("json_number has no index access operator"); }
-  const json_value& operator[](size_t index) const { throw std::logic_error("json_number has no index access operator"); }
-  void push_back(const json_value &x) { throw std::logic_error("json_number has no push_back method"); }
+  json_value& operator[](const std::string &) { throw std::logic_error("json_number has no key access operator"); }
+  json_value& operator[](size_t ) { throw std::logic_error("json_number has no index access operator"); }
+  const json_value& operator[](size_t ) const { throw std::logic_error("json_number has no index access operator"); }
+  void push_back(const json_value &) { throw std::logic_error("json_number has no push_back method"); }
+
+  friend OOS_API std::istream& operator>>(std::istream &str, json_number &value);
+  friend OOS_API std::ostream& operator<<(std::ostream &str, const json_number &value);
 
 private:
   double value_;

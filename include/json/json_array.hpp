@@ -35,6 +35,7 @@
 
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 
 namespace oos {
 
@@ -65,7 +66,7 @@ public:
   size_type size() const;
   bool empty() const;
 
-  json_value& operator[](const std::string &key) { throw std::logic_error("json_array has no key access operator"); }
+  json_value& operator[](const std::string &) { throw std::logic_error("json_array has no key access operator"); }
   json_value& operator[](size_t index) { return value_vector_[index]; }
   const json_value& operator[](size_t index) const { return value_vector_[index]; }
   void push_back(const json_value &x) { value_vector_.push_back(x); }

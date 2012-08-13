@@ -92,4 +92,16 @@ void json_number::value(double val)
   value_ = val;
 }
 
+std::istream& operator>>(std::istream &str, json_number &value)
+{
+  value.parse(str);
+  return str;
+}
+
+std::ostream& operator<<(std::ostream &str, const json_number &value)
+{
+  value.print(str);
+  return str;
+}
+
 }
