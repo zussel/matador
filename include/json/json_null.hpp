@@ -37,7 +37,7 @@
 
 namespace oos {
 
-class OOS_API json_null : public json_value
+class OOS_API json_null
 {
 public:
   json_null(void);
@@ -45,6 +45,11 @@ public:
 
   virtual bool parse(std::istream &in);
   virtual void print(std::ostream &out) const;
+
+  json_value& operator[](const std::string &key) { throw std::logic_error("json_null has no key access operator"); }
+  json_value& operator[](size_t index) { throw std::logic_error("json_null has no index access operator"); }
+  const json_value& operator[](size_t index) const { throw std::logic_error("json_null has no index access operator"); }
+  void push_back(const json_value &x) { throw std::logic_error("json_null has no push_back method"); }
 
 private:
   static const char *null_string;

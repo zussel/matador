@@ -3,6 +3,8 @@
 #include "json/json_object.hpp"
 #include "json/json_number.hpp"
 #include "json/json_bool.hpp"
+#include "json/json_array.hpp"
+#include "json/json_null.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -31,14 +33,14 @@ void JsonTestUnit::simple_test()
   string result("{ \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"text\" : \"hello world!\" }");
   istringstream sin(str);
 
-  json_object obj;
+  json_value obj;
 
   sin >> obj;
 
   stringstream out;
   out << obj;
   
-//  cout << "\n" << obj << "\n";
+  cout << "\n" << obj << "\n";
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 }
@@ -49,7 +51,7 @@ void JsonTestUnit::string_test()
   
   istringstream sin(str);
 
-  json_object obj;
+  json_value obj;
 
   sin >> obj;
 
@@ -68,7 +70,7 @@ void JsonTestUnit::number_test()
     
     istringstream sin(str);
     
-    json_object obj;
+    json_value obj;
     
     sin >> obj;
     
@@ -82,24 +84,42 @@ void JsonTestUnit::number_test()
 
 void JsonTestUnit::create_test()
 {
-  /*
-  json_value root(new json_object);
+  json_value root;
   
   root["number"] = 5.45;
-  root["array"] = json_array();
+  root["array"] = json_array(4);
   root["array"][0] = "hello world";
   root["array"][1] = false;
   root["array"][2] = true;
   root["array"][3] = json_null();
-  */
 }
 
 void JsonTestUnit::access_test()
 {
+  json_value root;
+  
+  root["number"] = 5.45;
+  root["array"] = json_array(4);
+  root["array"][0] = "hello world";
+  root["array"][1] = false;
+  root["array"][2] = true;
+  root["array"][3] = json_null();
+
   /*
   if (root["number"].get<long>() == 5000) {
   }
   
   std::string value = root["array"][0].get<string>();
   */
+
+  json_object obj = root;
+  json_number numb = root["number"];
+  json_array ary = root["array"];
+
+  json_array::const_iterator first = ary.begin();
+  json_array::const_iterator last = ary.end();
+
+  while (first != last) {
+    ++first;
+  }
 }

@@ -38,13 +38,16 @@
 
 namespace oos {
 
-class OOS_API json_string : public json_value
+class OOS_API json_string
 {
 public:
   json_string();
-  explicit json_string(const std::string &val);
+  json_string(const std::string &val);
+  json_string(const json_value &x);
+  json_string(const char *val);
   json_string(const json_string &x);
   json_string& operator=(const json_string &x);
+  json_string& operator=(const json_value &x);
   json_string& operator=(const std::string &x);
   virtual ~json_string();
  
@@ -57,6 +60,11 @@ public:
   void value(const std::string &val);
 
   void push_back(char c);
+
+  json_value& operator[](const std::string &key) { throw std::logic_error("json_string has no key access operator"); }
+  json_value& operator[](size_t index) { throw std::logic_error("json_string has no index access operator"); }
+  const json_value& operator[](size_t index) const { throw std::logic_error("json_string has no index access operator"); }
+  void push_back(const json_value &x) { throw std::logic_error("json_string has no push_back method"); }
 
 private:
   std::string value_;

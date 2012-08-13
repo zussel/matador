@@ -38,17 +38,20 @@
 
 namespace oos {
 
-class OOS_API json_array : public json_value
+class OOS_API json_array
 {
 public:
-  typedef std::vector<json_value*> t_value_vector;
+  typedef std::vector<json_value> t_value_vector;
   typedef t_value_vector::const_iterator const_iterator;
   typedef t_value_vector::iterator iterator;
   typedef t_value_vector::size_type size_type;
 
 public:
   json_array();
-  virtual ~json_array();
+  explicit json_array(size_t size);
+  json_array(const json_value &x);
+  json_array& operator=(const json_value &x);
+  ~json_array();
 
   virtual bool parse(std::istream &in);
   virtual void print(std::ostream &out) const;
@@ -61,6 +64,11 @@ public:
 
   size_type size() const;
   bool empty() const;
+
+  json_value& operator[](const std::string &key) { throw std::logic_error("json_array has no key access operator"); }
+  json_value& operator[](size_t index) { return value_vector_[index]; }
+  const json_value& operator[](size_t index) const { return value_vector_[index]; }
+  void push_back(const json_value &x) { value_vector_.push_back(x); }
 
 private:
   t_value_vector value_vector_;

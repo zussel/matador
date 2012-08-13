@@ -8,10 +8,29 @@ namespace oos {
 json_object::json_object()
 {}
 
-json_object::~json_object()
+json_object::json_object(const json_value &x)
 {
-  clear();
+  const json_object *o = x.value_type<json_object>();
+  if (o) {
+    string_value_map_.insert(o->begin(), o->end());
+  } else {
+    throw std::logic_error("json_value isn't of type json_object");
+  }
 }
+
+json_object& json_object::operator=(const json_value &x)
+{
+  const json_object *o = x.value_type<json_object>();
+  if (o) {
+    string_value_map_.insert(o->begin(), o->end());
+  } else {
+    throw std::logic_error("json_value isn't of type json_object");
+  }
+  return *this;
+}
+
+json_object::~json_object()
+{}
 
 bool json_object::parse(std::istream &in)
 {
@@ -64,14 +83,17 @@ bool json_object::parse(std::istream &in)
     // skip ws
     in >> std::ws;
 
-    // create value
-    json_value *val = json_value::create(in);
+    try {
+      // create value
+      json_value val(json_value::create(in));
 
-    if (val) {
-      in >> *val;
+      in >> val;
+
+      insert(key, val);
+    } catch (std::logic_error &ex) {
+      std::cout << "json parse error: " << ex.what() << "\n";
+      return false;
     }
-
-    insert(key, val);
 
     // skip white
     in >> std::ws;
@@ -97,8 +119,9 @@ void json_object::print(std::ostream &out) const
   t_string_value_map::const_iterator first = string_value_map_.begin();
   t_string_value_map::const_iterator last = string_value_map_.end();
 
+  t_string_value_map::value_type val;
   while (first != last) {
-    out << first->first << " : " << *(first->second);
+    out << first->first << " : " << first->second;
     if (++first != last) {
       out << ", ";
     }
@@ -107,14 +130,8 @@ void json_object::print(std::ostream &out) const
   out << " }";
 }
 
-void delete_json_value(json_object::t_string_value_map::value_type &val)
-{
-  delete val.second;
-}
-
 void json_object::clear()
 {
-  std::for_each(string_value_map_.begin(), string_value_map_.end(), delete_json_value);
   string_value_map_.clear();
 }
 
@@ -128,37 +145,37 @@ json_object::size_type json_object::size() const
   return string_value_map_.size();
 }
 
+json_object::iterator json_object::begin()
+{
+  return string_value_map_.begin();
+}
+
+json_object::const_iterator json_object::begin() const
+{
+  return string_value_map_.begin();
+}
+
+json_object::iterator json_object::end()
+{
+  return string_value_map_.end();
+}
+
+json_object::const_iterator json_object::end() const
+{
+  return string_value_map_.end();
+}
+
 bool json_object::contains(const std::string &k)
 {
   return string_value_map_.count(json_string(k)) > 0;
 }
 
-json_value* json_object::operator[](const std::string &key)
+json_value& json_object::operator[](const std::string &key)
 {
-  return string_value_map_[json_string(key)];
+  return string_value_map_[key];
 }
 
-const json_value* json_object::value(const std::string &key) const
-{
-  t_string_value_map::const_iterator i = string_value_map_.find(json_string(key));
-  if (i != string_value_map_.end()) {
-    return i->second;
-  } else {
-    return 0;
-  }
-}
-
-json_value* json_object::value(const std::string &key)
-{
-  t_string_value_map::iterator i = string_value_map_.find(json_string(key));
-  if (i != string_value_map_.end()) {
-    return i->second;
-  } else {
-    return 0;
-  }
-}
-
-void json_object::insert(const json_string &key, json_value *val)
+void json_object::insert(const json_string &key, const json_value &val)
 {
   string_value_map_.insert(std::make_pair(key, val));
 }

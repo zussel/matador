@@ -15,13 +15,13 @@ json_number::json_number(const json_number &x)
   : value_(x.value_)
 {}
 
-json_number::json_number(const json_value *x)
+json_number::json_number(const json_value &x)
 {
-  const json_number *n = dynamic_cast<const json_number*>(x);
-  if (!n) {
-    throw std::logic_error("json_value isn't of type json_number");
+  const json_number *n = x.value_type<json_number>();
+  if (n) {
+    value_ = n->value();
   } else {
-    value_ = n->value_;
+    throw std::logic_error("json_value isn't of type json_number");
   }
 }
 
@@ -37,11 +37,13 @@ json_number& json_number::operator=(double x)
   return *this;
 }
 
-json_number& json_number::operator=(json_value *x)
+json_number& json_number::operator=(const json_value &x)
 {
-  const json_number *n = dynamic_cast<const json_number*>(x);
-  
+  const json_number *n = x.value_type<json_number>();
   if (n) {
+    value_ = n->value();
+  } else {
+    throw std::logic_error("json_value isn't of type json_number");
   }
   return *this;
 }

@@ -40,16 +40,16 @@
 
 namespace oos {
 
-class OOS_API json_number : public json_value
+class OOS_API json_number
 {
 public:
   json_number();
-  explicit json_number(double val);
+  json_number(double val);
   json_number(const json_number &x);
-  json_number(const json_value *x);
+  json_number(const json_value &x);
   json_number& operator=(const json_number &x);
   json_number& operator=(double val);
-  json_number& operator=(json_value *x);
+  json_number& operator=(const json_value &x);
   virtual ~json_number();
 
   bool operator<(const json_number &x) const;
@@ -59,6 +59,11 @@ public:
 
   double value() const;
   void value(double val);
+
+  json_value& operator[](const std::string &key) { throw std::logic_error("json_number has no key access operator"); }
+  json_value& operator[](size_t index) { throw std::logic_error("json_number has no index access operator"); }
+  const json_value& operator[](size_t index) const { throw std::logic_error("json_number has no index access operator"); }
+  void push_back(const json_value &x) { throw std::logic_error("json_number has no push_back method"); }
 
 private:
   double value_;
