@@ -125,8 +125,7 @@ json_value json_value::create(std::istream &in)
     case 'f':
       return json_value(json_bool());
     case 'n':
-      //return new json_null;
-      throw std::logic_error("json_null not yet implemented");
+      return json_value(json_null());
     default:
       throw std::logic_error("unknown json type");
   }
