@@ -11,60 +11,72 @@
 namespace oos {
 
 json_value::json_value()
-  : ptr(new type<json_object>(json_object()))
+  : type_(new json_null)
 {}
 
 json_value::json_value(const json_value &x)
-  : ptr(x.ptr)
+  : type_(x.type_)
 {
 }
 
-json_value::json_value(const json_object &x)
-  : ptr(new type<json_object>(x))
+json_value::json_value(json_type *x)
+  : type_(x)
 {
 }
-
-json_value::json_value(const json_bool &x)
-  : ptr(new type<json_bool>(x))
-{
-}
-
-json_value::json_value(const json_string &x)
-  : ptr(new type<json_string>(x))
-{
-}
-
-json_value::json_value(const json_array &x)
-  : ptr(new type<json_array>(x))
-{}
-
-json_value::json_value(const json_number &x)
-  : ptr(new type<json_number>(x))
-{}
-
-json_value::json_value(const json_null &x)
-  : ptr(new type<json_null>(x))
-{}
 
 json_value::json_value(const std::string &x)
-  : ptr(new type<json_string>(x))
-{
-}
+  : type_(new json_string(x))
+{}
 
 json_value::json_value(const char *x)
-  : ptr(new type<json_string>(x))
-{
-}
+  : type_(new json_string(x))
+{}
+
+json_value::json_value(int x)
+  : type_(new json_number(x))
+{}
+
+json_value::json_value(double x)
+  : type_(new json_number(x))
+{}
+
+json_value::json_value(bool x)
+  : type_(new json_bool(x))
+{}
 
 json_value& json_value::operator=(const json_value &x)
 {
-  ptr = x.ptr;
+  type_ = x.type_;
+  return *this;
+}
+
+json_value& json_value::operator=(json_type *x)
+{
+  type_.reset(x);
+  return *this;
+}
+
+json_value& json_value::operator=(const std::string &x)
+{
+  type_.reset(new json_string(x));
+  return *this;
+}
+
+json_value& json_value::operator=(const char *x)
+{
+  type_.reset(new json_string(x));
   return *this;
 }
 
 json_value& json_value::operator=(double x)
 {
-  ptr.reset(new type<json_number>(x));
+  type_.reset(new json_number(x));
+  return *this;
+}
+
+json_value& json_value::operator=(bool x)
+{
+  type_.reset(new json_bool(x));
   return *this;
 }
 
@@ -73,22 +85,22 @@ json_value::~json_value()
 
 json_value& json_value::operator[](const std::string &key)
 {
-  return ptr->operator [](key);
+  return type_->operator [](key);
 }
 
 json_value& json_value::operator[](size_t index)
 {
-  return ptr->operator [](index);
+  return type_->operator [](index);
 }
 
 const json_value& json_value::operator[](size_t index) const
 {
-  return ptr->operator [](index);
+  return type_->operator [](index);
 }
 
 void json_value::push_back(const json_value &x)
 {
-  ptr->push_back(x);
+  type_->push_back(x);
 }
 
 json_value json_value::create(std::istream &in)
@@ -104,11 +116,11 @@ json_value json_value::create(std::istream &in)
 
   switch (c) {
     case '{':
-      return json_value(json_object());
+      return json_value(new json_object);
     case '[':
-      return json_value(json_array());
+      return json_value(new json_array);
     case '"':
-      return json_value(json_string());
+      return json_value(new json_string);
     case '-':
     case '0':
     case '1':
@@ -120,12 +132,12 @@ json_value json_value::create(std::istream &in)
     case '7':
     case '8':
     case '9':
-      return json_value(json_number());
+      return json_value(new json_number);
     case 't':
     case 'f':
-      return json_value(json_bool());
+      return json_value(new json_bool);
     case 'n':
-      return json_value(json_null());
+      return json_value(new json_null);
     default:
       throw std::logic_error("unknown json type");
   }
@@ -133,13 +145,13 @@ json_value json_value::create(std::istream &in)
 
 std::istream& operator>>(std::istream &str, json_value &value)
 {
-  value.ptr->parse(str);
+  value.type_->parse(str);
   return str;
 }
 
 std::ostream& operator<<(std::ostream &str, const json_value &value)
 {
-  value.ptr->print(str);
+  value.type_->print(str);
   return str;
 }
 

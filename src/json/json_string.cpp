@@ -5,21 +5,26 @@
 namespace oos {
 
 json_string::json_string()
+  : json_type("json_string")
 {}
 
 json_string::json_string(const std::string &val)
-  : value_(val)
+  : json_type("json_string")
+  , value_(val)
 {}
 
 json_string::json_string(const char *val)
-  : value_(val)
+  : json_type("json_string")
+  , value_(val)
 {}
 
 json_string::json_string(const json_string &x)
-  : value_(x.value_)
+  : json_type("json_string")
+  , value_(x.value_)
 {}
 
 json_string::json_string(const json_value &x)
+  : json_type("json_string")
 {
   const json_string *s = x.value_type<json_string>();
   if (s) {
@@ -111,18 +116,6 @@ void json_string::value(const std::string &val)
 void json_string::push_back(char c)
 {
   value_.push_back(c);
-}
-
-std::istream& operator>>(std::istream &str, json_string &value)
-{
-  value.parse(str);
-  return str;
-}
-
-std::ostream& operator<<(std::ostream &str, const json_string &value)
-{
-  value.print(str);
-  return str;
 }
 
 }

@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JSON_NULL_HPP
-#define JSON_NULL_HPP
+#ifndef JSON_TYPE_HPP
+#define JSON_TYPE_HPP
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -31,27 +31,40 @@
   #define OOS_API
 #endif
 
-#include "json/json_type.hpp"
-#include "json/json_value.hpp"
-
-#include <iostream>
-#include <stdexcept>
+#include <string>
 
 namespace oos {
 
-class OOS_API json_null : public json_type
-{
-public:
-  json_null(void);
-  virtual ~json_null(void);
+class json_value;
 
-  virtual bool parse(std::istream &in);
-  virtual void print(std::ostream &out) const;
+class OOS_API json_type
+{
+protected:
+  explicit json_type(const std::string &name);
+
+public:
+  virtual ~json_type();
+
+  virtual bool parse(std::istream &in) = 0;
+  virtual void print(std::ostream &out) const = 0;
+
+  virtual json_value& operator[](const std::string &key);
+  virtual json_value& operator[](size_t index);
+  virtual const json_value& operator[](size_t index) const;
+  virtual void push_back(const json_value &x);
+
+  std::string type() const;
+
+  friend OOS_API std::istream& operator>>(std::istream &str, json_type &value);
+  friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
+
+protected:
+  void type(const std::string &type);
 
 private:
-  static const char *null_string;
+  std::string type_;
 };
 
 }
 
-#endif /* JSON_NULL_HPP */
+#endif /* JSON_TYPE_HPP */

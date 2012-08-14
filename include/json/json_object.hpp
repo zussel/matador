@@ -31,6 +31,7 @@
   #define OOS_API
 #endif
 
+#include "json/json_type.hpp"
 #include "json/json_value.hpp"
 #include "json/json_string.hpp"
 
@@ -40,7 +41,7 @@
 
 namespace oos {
 
-class OOS_API json_object
+  class OOS_API json_object : public json_type
 {
 public:
   typedef std::map<json_string, json_value> t_string_value_map;
@@ -68,12 +69,9 @@ public:
   const_iterator end() const;
 
   bool contains(const std::string &key);
-  json_value& operator[](const std::string &key);
   void insert(const json_string &key, const json_value &value);
 
-  json_value& operator[](size_t ) { throw std::logic_error("json_object has no index access operator"); }
-  const json_value& operator[](size_t ) const { throw std::logic_error("json_object has no index access operator"); }
-  void push_back(const json_value &) { throw std::logic_error("json_object has no push_back method"); }
+  virtual json_value& operator[](const std::string &key);
 
 private:
   t_string_value_map string_value_map_;

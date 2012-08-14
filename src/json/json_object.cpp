@@ -6,9 +6,11 @@
 namespace oos {
 
 json_object::json_object()
+  : json_type("json_object")
 {}
 
 json_object::json_object(const json_value &x)
+  : json_type("json_object")
 {
   const json_object *o = x.value_type<json_object>();
   if (o) {

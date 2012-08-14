@@ -6,11 +6,13 @@ const char *json_bool::true_string = "true";
 const char *json_bool::false_string = "false";
 
 json_bool::json_bool(void)
-  : value_(true)
+  : json_type("json_bool")
+  , value_(true)
 {}
 
 json_bool::json_bool(bool val)
-  : value_(val)
+  : json_type("json_bool")
+  , value_(val)
 {}
 
 json_bool::~json_bool(void)

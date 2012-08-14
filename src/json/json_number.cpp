@@ -5,17 +5,22 @@
 namespace oos {
 
 json_number::json_number()
+  : json_type("json_number")
+  , value_(0.0)
 {}
 
 json_number::json_number(double val)
-  : value_(val)
+  : json_type("json_number")
+  , value_(val)
 {}
 
 json_number::json_number(const json_number &x)
-  : value_(x.value_)
+  : json_type("json_number")
+  , value_(x.value_)
 {}
 
 json_number::json_number(const json_value &x)
+  : json_type("json_number")
 {
   const json_number *n = x.value_type<json_number>();
   if (n) {
@@ -90,18 +95,6 @@ double json_number::value() const
 void json_number::value(double val)
 {
   value_ = val;
-}
-
-std::istream& operator>>(std::istream &str, json_number &value)
-{
-  value.parse(str);
-  return str;
-}
-
-std::ostream& operator<<(std::ostream &str, const json_number &value)
-{
-  value.print(str);
-  return str;
 }
 
 }

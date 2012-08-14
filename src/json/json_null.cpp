@@ -5,6 +5,7 @@ namespace oos {
 const char *json_null::null_string = "null";
 
 json_null::json_null(void)
+  : json_type("json_null")
 {}
 
 json_null::~json_null(void)

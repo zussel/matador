@@ -15,43 +15,15 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JSON_NULL_HPP
-#define JSON_NULL_HPP
+#ifndef JSON_HPP
+#define JSON_HPP
 
-#ifdef WIN32
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
-
-#include "json/json_type.hpp"
 #include "json/json_value.hpp"
+#include "json/json_object.hpp"
+#include "json/json_array.hpp"
+#include "json/json_string.hpp"
+#include "json/json_number.hpp"
+#include "json/json_bool.hpp"
+#include "json/json_null.hpp"
 
-#include <iostream>
-#include <stdexcept>
-
-namespace oos {
-
-class OOS_API json_null : public json_type
-{
-public:
-  json_null(void);
-  virtual ~json_null(void);
-
-  virtual bool parse(std::istream &in);
-  virtual void print(std::ostream &out) const;
-
-private:
-  static const char *null_string;
-};
-
-}
-
-#endif /* JSON_NULL_HPP */
+#endif /* JSON_HPP */

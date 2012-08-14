@@ -116,6 +116,7 @@ SET(TOOLS_INSTALL_HEADER
 )
 
 SET(JSON_SOURCE
+  src/json/json_type.cpp
   src/json/json_value.cpp
   src/json/json_object.cpp
   src/json/json_string.cpp
@@ -127,6 +128,8 @@ SET(JSON_SOURCE
 )
 
 SET(JSON_INSTALL_HEADER
+  include/json/json.hpp
+  include/json/json_type.hpp
   include/json/json_value.hpp
   include/json/json_object.hpp
   include/json/json_string.hpp

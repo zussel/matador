@@ -31,6 +31,7 @@
   #define OOS_API
 #endif
 
+#include "json/json_type.hpp"
 #include "json/json_value.hpp"
 
 #include <vector>
@@ -39,7 +40,7 @@
 
 namespace oos {
 
-class OOS_API json_array
+  class OOS_API json_array : public json_type
 {
 public:
   typedef std::vector<json_value> t_value_vector;
@@ -66,10 +67,9 @@ public:
   size_type size() const;
   bool empty() const;
 
-  json_value& operator[](const std::string &) { throw std::logic_error("json_array has no key access operator"); }
-  json_value& operator[](size_t index) { return value_vector_[index]; }
-  const json_value& operator[](size_t index) const { return value_vector_[index]; }
-  void push_back(const json_value &x) { value_vector_.push_back(x); }
+  virtual json_value& operator[](size_t index) { return value_vector_[index]; }
+  virtual const json_value& operator[](size_t index) const { return value_vector_[index]; }
+  virtual void push_back(const json_value &x) { value_vector_.push_back(x); }
 
 private:
   t_value_vector value_vector_;

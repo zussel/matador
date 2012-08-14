@@ -1,16 +1,18 @@
 #include "json/json_array.hpp"
-#include "json/json_null.hpp"
 
 namespace oos {
 
 json_array::json_array()
+  : json_type("json_array")
 {}
 
 json_array::json_array(size_t size)
-  : value_vector_(size, json_null())
+  : json_type("json_array")
+  , value_vector_(size, json_value())
 {}
 
 json_array::json_array(const json_value &x)
+  : json_type("json_array")
 {
   const json_array *a = x.value_type<json_array>();
   if (a) {

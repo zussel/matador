@@ -31,6 +31,7 @@
   #define OOS_API
 #endif
 
+#include "json/json_type.hpp"
 #include "json/json_value.hpp"
 
 #include <iostream>
@@ -38,11 +39,11 @@
 
 namespace oos {
 
-class OOS_API json_bool
+  class OOS_API json_bool : public json_type
 {
 public:
   json_bool(void);
-  explicit json_bool(bool val);
+  json_bool(bool val);
   virtual ~json_bool(void);
 
   virtual bool parse(std::istream &in);
@@ -50,11 +51,6 @@ public:
 
   bool value() const;
   void value(bool val);
-
-  json_value& operator[](const std::string &) { throw std::logic_error("json_bool has no key access operator"); }
-  json_value& operator[](size_t ) { throw std::logic_error("json_bool has no index access operator"); }
-  const json_value& operator[](size_t ) const { throw std::logic_error("json_bool has no index access operator"); }
-  void push_back(const json_value &) { throw std::logic_error("json_bool has no push_back method"); }
 
 private:
   static const char *true_string;
