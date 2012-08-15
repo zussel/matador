@@ -19,6 +19,7 @@
 #define GENERIC_JSON_PARSER_HPP
 
 #include <iostream>
+#include <stdexcept>
 
 namespace oos {
 
@@ -68,7 +69,7 @@ generic_json_parser<T>::parse(std::istream &in)
   char c = in.peek();
 
   if (!in.good()) {
-    // Todo: throw a json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("invalid stream");
   }
 
@@ -80,7 +81,7 @@ generic_json_parser<T>::parse(std::istream &in)
       parse_json_array(in);
       break;
     default:
-      // Todo: throw a json_error instead
+      // TODO: throw json_error instead
       throw std::logic_error("root must be either array '[]' or object '{}'");
   }
 
@@ -89,6 +90,7 @@ generic_json_parser<T>::parse(std::istream &in)
 
   // no characters after closing parenthesis are aloud
   if (!in.eof()) {
+    // TODO: throw json_error instead
     throw std::logic_error("no characters are allowed after closed root node");
   }
 }
@@ -115,7 +117,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
   c = in.get();
   if (in.good() && c != '{') {
     in.putback(c);
-    // Todo: throw json_error
+    // TODO: throw json_error instead
     throw std::logic_error("character isn't object opening bracket");
   }
 
@@ -150,7 +152,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
     // read colon
     c = in.get();
     if (in.good() && c != ':') {
-      // Todo: throw json_error
+      // TODO: throw json_error instead
       throw std::logic_error("character isn't colon");
     }
 
@@ -163,6 +165,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
   } while (in && in.good() && c == ',');
 
   if (c != '}') {
+    // TODO: throw json_error instead
     throw std::logic_error("not a valid object closing bracket");
   }
 
@@ -184,6 +187,7 @@ generic_json_parser<T>::parse_json_array(std::istream &in)
   c = in.get();
   if (in.good() && c != '[') {
     in.putback(c);
+    // TODO: throw json_error instead
     throw std::logic_error("not an array");
   }
   
@@ -213,6 +217,7 @@ generic_json_parser<T>::parse_json_array(std::istream &in)
   } while (in && in.good() && c == ',');
 
   if (c != ']') {
+    // TODO: throw json_error instead
     throw std::logic_error("not a valid array closing bracket");
   }
 
@@ -232,7 +237,7 @@ generic_json_parser<T>::parse_json_string(std::istream &in)
     // invalid key
     in.putback(' ');
     in.putback(c);
-    // Todo: throw json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("invalid json character");
   }
 
@@ -280,13 +285,13 @@ generic_json_parser<T>::parse_json_string(std::istream &in)
             if (isxdigit(c)) {
               value.push_back(c);
             } else {
-              // Todo: throw json_error instead
+              // TODO: throw json_error instead
               throw std::logic_error("invalid json character");
             }
           }
           break;
         default:
-          // Todo: throw json_error instead
+          // TODO: throw json_error instead
           throw std::logic_error("invalid json character");
       }
     } else {
@@ -315,7 +320,7 @@ generic_json_parser<T>::parse_json_number(std::istream &in)
     case '}':
       break;
     default:
-      // Todo: throw json_error instead
+      // TODO: throw json_error instead
       throw std::logic_error("invalid json character");
   }
   return value;
@@ -332,7 +337,7 @@ generic_json_parser<T>::parse_json_bool(std::istream &in)
   char c = in.get();
 
   if (!in.good()) {
-    // Todo: throw json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("input stream isn't good");
   }
 
@@ -342,11 +347,11 @@ generic_json_parser<T>::parse_json_bool(std::istream &in)
     while (in && i < 4) {
       c = in.get();
       if (!in.good()) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("input stream isn't good");
       }
       if (generic_json_parser<T>::true_string[i++] != c) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("invalid bool character");
       }
     }
@@ -357,17 +362,17 @@ generic_json_parser<T>::parse_json_bool(std::istream &in)
     while (in && i < 5) {
       c = in.get();
       if (!in.good()) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("input stream isn't good");
       }
       if (generic_json_parser<T>::false_string[i++] != c) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("invalid bool character");
       }
     }
     return false;
   } else {
-    // Todo: throw json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("invalid bool character");
   }
 }
@@ -383,7 +388,7 @@ generic_json_parser<T>::parse_json_null(std::istream &in)
   char c = in.get();
 
   if (!in.good()) {
-    // Todo: throw json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("input stream isn't good");
   }
 
@@ -393,16 +398,16 @@ generic_json_parser<T>::parse_json_null(std::istream &in)
     while (in && i < 4) {
       c = in.get();
       if (!in.good()) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("input stream isn't good");
       }
       if (generic_json_parser<T>::null_string[i++] != c) {
-        // Todo: throw json_error instead
+        // TODO: throw json_error instead
         throw std::logic_error("invalid bool character");
       }
     }
   } else {
-    // Todo: throw json_error instead
+    // TODO: throw json_error instead
     throw std::logic_error("invalid bool character");
   }
 }
@@ -453,6 +458,7 @@ generic_json_parser<T>::parse_json_value(std::istream &in)
       handler_->on_null();
       break;
     default:
+      // TODO: throw json_error instead
       throw std::logic_error("unknown json type");
   }
 }
