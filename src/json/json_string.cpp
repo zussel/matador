@@ -91,6 +91,45 @@ bool json_string::parse(std::istream &in)
     if (c == '"') {
       // read closing double quote
       break;
+    } else if (c == '\\') {
+      c = in.get();
+      switch (c) {
+        case '"':
+        case '\\':
+        case '/':
+          value_.push_back(c);
+          break;
+        case 'b':
+          value_.push_back('\b');
+          break;
+        case 'f':
+          value_.push_back('\f');
+          break;
+        case 'n':
+          value_.push_back('\n');
+          break;
+        case 'r':
+          value_.push_back('\r');
+          break;
+        case 't':
+          value_.push_back('\t');
+          break;
+        case 'u':
+          // read four more hex digits
+          value_.push_back('\\');
+          value_.push_back('u');
+          for (int i = 0; i < 4; ++i) {
+            c = in.get();
+            if (isxdigit(c)) {
+              value_.push_back(c);
+            } else {
+              return false;
+            }
+          }
+          break;
+        default:
+          return false;
+      }
     } else {
       value_.push_back(c);
     }

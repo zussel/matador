@@ -125,6 +125,7 @@ SET(JSON_SOURCE
   src/json/json_number.cpp
   src/json/json_array.cpp
   src/json/json_exception.cpp
+  src/json/json_parser.cpp
 )
 
 SET(JSON_INSTALL_HEADER
@@ -138,6 +139,8 @@ SET(JSON_INSTALL_HEADER
   include/json/json_number.hpp
   include/json/json_array.hpp
   include/json/json_exception.hpp
+  include/json/json_parser.hpp
+  include/json/generic_json_parser.hpp
 )
 
 SET(UNIT_SOURCES
