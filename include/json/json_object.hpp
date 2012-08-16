@@ -73,6 +73,8 @@ public:
 
   virtual json_value& operator[](const std::string &key);
 
+  friend OOS_API std::istream& operator>>(std::istream &str, json_object &obj);
+
 private:
   t_string_value_map string_value_map_;
 };

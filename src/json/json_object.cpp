@@ -36,6 +36,11 @@ json_object::~json_object()
 
 bool json_object::parse(std::istream &in)
 {
+
+  json_type::parser.parse(in);
+
+    return true;
+
   in >> std::ws;
 
   /*
@@ -179,6 +184,12 @@ json_value& json_object::operator[](const std::string &key)
 void json_object::insert(const json_string &key, const json_value &val)
 {
   string_value_map_.insert(std::make_pair(key, val));
+}
+
+std::istream& operator>>(std::istream &str, json_object &obj)
+{
+  obj = json_type::parser.parse(str);
+  return str;
 }
 
 }

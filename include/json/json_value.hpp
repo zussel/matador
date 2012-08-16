@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-#include "json/json_type.hpp"
-
 #include <istream>
 #ifdef WIN32
 #include <memory>
@@ -48,6 +46,7 @@ class json_string;
 class json_array;
 class json_number;
 class json_null;
+class json_type;
 
 class OOS_API json_value
 {

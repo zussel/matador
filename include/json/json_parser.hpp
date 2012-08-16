@@ -32,6 +32,11 @@
 #endif
 
 #include "json/generic_json_parser.hpp"
+#include "json/json_value.hpp"
+
+#include <iostream>
+#include <string>
+#include <stack>
 
 namespace oos {
 
@@ -40,6 +45,10 @@ class OOS_API json_parser : public generic_json_parser<json_parser>
 public:
   json_parser();
   virtual ~json_parser();
+
+  json_value parse(std::istream &in);
+  json_value parse(const char *str);
+  json_value parse(std::string &str);
 
   void on_begin_object();
   void on_object_key(const std::string &key);
@@ -52,6 +61,18 @@ public:
   void on_number(double value);
   void on_bool(bool value);
   void on_null();
+
+private:
+  json_value value_;
+
+  std::string key_;
+  /*
+   * the boolean value indicates wether the
+   * value is an object (true) or an array
+   * (false)
+   */
+  typedef std::pair<bool, json_value> state_value_pair_t;
+  std::stack<state_value_pair_t> state_stack_;
 };
 
 }

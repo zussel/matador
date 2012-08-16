@@ -14,6 +14,7 @@ public:
   void number_test();
   void create_test();
   void access_test();
+  void parser_test();
   /**
    * Initializes a test unit
    */

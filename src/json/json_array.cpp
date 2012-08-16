@@ -136,4 +136,10 @@ bool json_array::empty() const
   return value_vector_.empty();
 }
 
+std::istream& operator>>(std::istream &str, json_array &ary)
+{
+  ary = json_type::parser.parse(str);
+  return str;
+}
+
 }

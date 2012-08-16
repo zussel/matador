@@ -1,11 +1,6 @@
 #include "JsonTestUnit.hpp"
 
-#include "json/json_object.hpp"
-#include "json/json_number.hpp"
-#include "json/json_bool.hpp"
-#include "json/json_array.hpp"
-#include "json/json_null.hpp"
-#include "json/json_bool.hpp"
+#include "json/json.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -22,6 +17,7 @@ JsonTestUnit::JsonTestUnit()
   add_test("number", std::tr1::bind(&JsonTestUnit::number_test, this), "number json test");
   add_test("create", std::tr1::bind(&JsonTestUnit::create_test, this), "create json test");
   add_test("access", std::tr1::bind(&JsonTestUnit::access_test, this), "access json test");
+  add_test("parser", std::tr1::bind(&JsonTestUnit::parser_test, this), "parser json test");
 }
 
 JsonTestUnit::~JsonTestUnit()
@@ -141,4 +137,18 @@ void JsonTestUnit::access_test()
   while (first != last) {
     ++first;
   }
+}
+
+void JsonTestUnit::parser_test()
+{
+  json_parser parser;
+
+  json_value v = parser.parse("           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ], \"object\" :      { \"found\": true}      }");
+
+  string result("{ \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"object\" : { \"found\" : true }, \"text\" : \"hello world!\" }");
+
+  stringstream out;
+  out << v;
+  
+  UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 }

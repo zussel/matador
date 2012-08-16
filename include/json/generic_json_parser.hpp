@@ -26,17 +26,14 @@ namespace oos {
 template < class T >
 class generic_json_parser
 {
-private:
-  generic_json_parser(const generic_json_parser &);
-  generic_json_parser& operator=(const generic_json_parser &);
-
 protected:
   generic_json_parser(T *h) : handler_(h) {}
 
 public:
   virtual ~generic_json_parser() {}
 
-  void parse(std::istream &in);
+protected:
+  void parse_json(std::istream &in);
 
 private:
   void parse_json_object(std::istream &in);
@@ -61,7 +58,7 @@ template < class T > const char *generic_json_parser<T>::false_string = "false";
 
 template < class T >
 void
-generic_json_parser<T>::parse(std::istream &in)
+generic_json_parser<T>::parse_json(std::istream &in)
 {
   // eat whitespace
   in >> std::ws;

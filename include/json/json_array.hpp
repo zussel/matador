@@ -71,6 +71,8 @@ public:
   virtual const json_value& operator[](size_t index) const { return value_vector_[index]; }
   virtual void push_back(const json_value &x) { value_vector_.push_back(x); }
 
+  friend OOS_API std::istream& operator>>(std::istream &str, json_array &ary);
+
 private:
   t_value_vector value_vector_;
 };

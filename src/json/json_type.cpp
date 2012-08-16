@@ -4,6 +4,8 @@
 
 namespace oos {
 
+json_parser json_type::parser = json_parser();
+
 json_type::json_type(const std::string &name)
   : type_(name)
 {}
@@ -41,11 +43,13 @@ void json_type::type(const std::string &type)
   type_ = type;
 }
 
+/*
 std::istream& operator>>(std::istream &str, json_type &value)
 {
   value.parse(str);
   return str;
 }
+*/
 
 std::ostream& operator<<(std::ostream &str, const json_type &value)
 {

@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "json/json_parser.hpp"
+
 #include <string>
 
 namespace oos {
@@ -55,11 +57,16 @@ public:
 
   std::string type() const;
 
+  /*
   friend OOS_API std::istream& operator>>(std::istream &str, json_type &value);
+  */
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
 
 protected:
   void type(const std::string &type);
+
+protected:
+  static json_parser parser;
 
 private:
   std::string type_;

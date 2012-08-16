@@ -25,5 +25,6 @@
 #include "json/json_number.hpp"
 #include "json/json_bool.hpp"
 #include "json/json_null.hpp"
+#include "json/json_parser.hpp"
 
 #endif /* JSON_HPP */
