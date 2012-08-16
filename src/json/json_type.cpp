@@ -13,22 +13,22 @@ json_type::json_type(const std::string &name)
 json_type::~json_type()
 {}
 
-json_value& json_type::operator[](const std::string &key)
+json_value& json_type::operator[](const std::string &)
 {
   throw std::logic_error(type_ + " has no key access operator");
 }
 
-json_value& json_type::operator[](size_t index)
+json_value& json_type::operator[](size_t )
 {
   throw std::logic_error(type_ + " has no index access operator");
 }
 
-const json_value& json_type::operator[](size_t index) const
+const json_value& json_type::operator[](size_t ) const
 {
   throw std::logic_error(type_ + " has no index access operator");
 }
 
-void json_type::push_back(const json_value &x)
+void json_type::push_back(const json_value &)
 {
   throw std::logic_error(type_ + " has no push_back method");
 }
