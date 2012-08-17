@@ -1,3 +1,4 @@
+
 [file_prefs]
 final_new_line=true
 ensure_convert_new_lines=false
@@ -23,12 +24,7 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=4
-FILE_NAME_0=1210;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fjson%2Fjson_string.cpp;0;2
-FILE_NAME_1=2725;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2Fjson%2FJsonTestUnit.cpp;0;2
-FILE_NAME_2=9745;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fjson%2Fgeneric_json_parser.hpp;0;2
-FILE_NAME_3=197;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fjson%2Fjson_parser.cpp;0;2
-FILE_NAME_4=1481;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fjson%2Fjson_parser.hpp;0;2
+current_page=-1
 
 [VTE]
 last_dir=/home/sascha/development/oos/build/bin

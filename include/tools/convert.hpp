@@ -39,34 +39,49 @@
 #include <iostream>
 #include <typeinfo>
 
+/// @cond OOS_DEV
+
 #ifdef WIN32
 #define CPP11_TYPE_TRAITS_NS std::tr1
 #else
 #define CPP11_TYPE_TRAITS_NS std
 #endif
 
+/// @endcond OOS_DEV
+
+/**
+ * @file convert.hpp
+ * @brief Contains convert functions.
+ * 
+ * This file contains convert functions for all
+ * buitin types and oos types oos::varchar_base
+ * and oos::object_base_ptr.
+ */
+
 namespace oos {
 
-/*******************************************
- * 
- * Convert from
- *    signed integral T
- * to
- *    signed integral U
- * where
- *    size of T is smaller than size of U
+/**
+ * fn virtual void convert(const T &from, U &to)
  *
- *******************************************/
+ * Convert from signed integral to signed
+ * integral which are not of the same type
+ * and size of T is smaller than size of U.
+ *
+ * @tparam T Signed integral type.
+ * @tparam U Signed integral type.
+ * @param from Value to convert from.
+ * @param from Value to convert to.
+ */
 template < class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &from, U &to /** @cond OOS_DEV */,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<U>::value >::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_signed<T>::value >::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_signed<U>::value >::type* = 0,
         typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, U>::value >::type* = 0,
         typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value >::type* = 0,
-        typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
+        typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0/** @endcond OOS_DEV */)
 {
   // cout << "SUCCEEDED: not same, signed (" << typeid(T).name() << " > " << typeid(U).name() << ")\n";
   to = from;
