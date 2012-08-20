@@ -64,12 +64,12 @@ public:
   iterator end();
   const_iterator end() const;
 
-  size_type size() const;
   bool empty() const;
 
   virtual json_value& operator[](size_t index) { return value_vector_[index]; }
   virtual const json_value& operator[](size_t index) const { return value_vector_[index]; }
   virtual void push_back(const json_value &x) { value_vector_.push_back(x); }
+  virtual size_t size() const { return value_vector_.size(); }
 
   friend OOS_API std::istream& operator>>(std::istream &str, json_array &ary);
 

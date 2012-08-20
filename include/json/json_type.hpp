@@ -54,8 +54,10 @@ public:
   virtual json_value& operator[](size_t index);
   virtual const json_value& operator[](size_t index) const;
   virtual void push_back(const json_value &x);
+  virtual size_t size() const;
 
   std::string type() const;
+  
 
   /*
   friend OOS_API std::istream& operator>>(std::istream &str, json_type &value);

@@ -43,6 +43,11 @@ void json_type::type(const std::string &type)
   type_ = type;
 }
 
+size_t json_type::size() const
+{
+  throw std::logic_error(type_ + " has no size method");
+}
+
 /*
 std::istream& operator>>(std::istream &str, json_type &value)
 {

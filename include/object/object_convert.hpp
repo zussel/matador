@@ -67,14 +67,14 @@ convert(const object_ptr<T> &from, object_ref<T> &to)
 
 template < class T >
 void
-convert(const T &from, object_base_ptr &to)
+convert(const T &, object_base_ptr &)
 {
   std::cout << "4 typeid: " << typeid(T).name() << "\n";
 }
 
 template < class T >
 void
-convert(const object_base_ptr &from, T &to)
+convert(const object_base_ptr &, T &)
 {
   std::cout << "5 typeid: " << typeid(T).name() << "\n";
 }

@@ -146,11 +146,6 @@ bool json_object::empty() const
   return string_value_map_.empty();
 }
 
-json_object::size_type json_object::size() const
-{
-  return string_value_map_.size();
-}
-
 json_object::iterator json_object::begin()
 {
   return string_value_map_.begin();

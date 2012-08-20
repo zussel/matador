@@ -126,11 +126,6 @@ json_array::const_iterator json_array::end() const
   return value_vector_.end();
 }
 
-json_array::size_type json_array::size() const
-{
-  return value_vector_.size();
-}
-
 bool json_array::empty() const
 {
   return value_vector_.empty();

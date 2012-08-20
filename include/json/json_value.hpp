@@ -71,6 +71,7 @@ public:
   json_value& operator[](size_t index);
   const json_value& operator[](size_t index) const;
   void push_back(const json_value &x);
+  size_t size() const;
 
   static json_value create(std::istream &in);
 

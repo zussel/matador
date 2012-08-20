@@ -103,6 +103,11 @@ void json_value::push_back(const json_value &x)
   type_->push_back(x);
 }
 
+size_t json_value::size() const
+{
+  return type_->size();
+}
+
 json_value json_value::create(std::istream &in)
 {
   // eat whitespace

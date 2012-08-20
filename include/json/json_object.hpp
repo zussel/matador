@@ -60,7 +60,6 @@ public:
 
   void clear();
   bool empty() const;
-  size_type size() const;
 
   iterator begin();
   const_iterator begin() const;
@@ -72,6 +71,7 @@ public:
   void insert(const json_string &key, const json_value &value);
 
   virtual json_value& operator[](const std::string &key);
+  virtual size_t size() const { return string_value_map_.size(); }
 
   friend OOS_API std::istream& operator>>(std::istream &str, json_object &obj);
 
