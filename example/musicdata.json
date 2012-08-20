@@ -1,213 +1,210 @@
-{
-  "artist" :
-  [
-    {
-      "name" : "Genesis"
-      "album" :
-      [
-        {
-          "name" : "A Trick of the Tail",
-          "year" : 1976,
-          "tracks" :
-          [
-            {
-              "item_index" : 1,
-              "title" : "Dance on a Volcano",
-              "duration" : "5:55"
-            },
-            {
-              "item_index" : 2,
-              "title" : "Entangled",
-              "duration" : "6:27"
-            },
-            {
-              "item_index" : 3,
-              "title" : "Squonk",
-              "duration" : "6:30"
-            },
-            {
-              "item_index" : 4,
-              "title" : "Mad Man Moon",
-              "duration" : "7:36"
-            },
-            {
-              "item_index" : 5
-              "title" : "Robbery, Assault and Battery",
-              "duration" : "6:17"
-            },
-            {
-              "item_index" : 6,
-              "title" : "Ripples...",
-              "duration" : "8:06"
-            },
-            {
-              "item_index" : 7,
-              "title" : "A Trick of the Tail",
-              "duration" : "4:35"
-            },
-            {
-              "item_index" : 8,
-              "title" : "Los Endos",
-              "duration" : "5:46"
-            }
-          ]
-        },
-        {
-          "name" : "Duke",
-          "year" : 1980,
-          "tracks" :
-          [
-            {
-              "item_index" : 1,
-              "title" : "Behind the Lines",
-              "duration" : "5:30"
-            },
-            {
-              "item_index" : 2,
-              "title" : "Duchess",
-              "duration" : "6:25"
-            },
-            {
-              "item_index" : 3,
-              "title" : "Guide Vocal",
-              "duration" : "1:35"
-            },
-            {
-              "item_index" : 4,
-              "title" : "Man of Our Times",
-              "duration" : "5:36"
-            },
-            {
-              "item_index" : 5
-              "title" : "Misunderstanding",
-              "duration" : "3:15"
-            },
-            {
-              "item_index" : 6,
-              "title" : "Heathaze",
-              "duration" : "5:01"
-            },
-            {
-              "item_index" : 7,
-              "title" : "Turn It On Again",
-              "duration" : "5:31"
-            },
-            {
-              "item_index" : 8,
-              "title" : "Alone Tonight",
-              "duration" : "3:58"
-            },
-            {
-              "item_index" : 9,
-              "title" : "Cul-de-sac",
-              "duration" : "5:06"
-            },
-            {
-              "item_index" : 10,
-              "title" : "Please Don't Ask",
-              "duration" : "4:03"
-            },
-            {
-              "item_index" : 11,
-              "title" : "Duke's Travels",
-              "duration" : "8:39"
-            },
-            {
-              "item_index" : 12,
-              "title" : "Duke's End",
-              "duration" : "2:07"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name" : "Chris Huelsbeck",
-      "album" :
-      [
-        {
-          "name" : "Symphonic Shades",
-          "year" : "2008",
-          "tracks" :
-          [
-            {
-              "item_index" : 1,
-              "title" : "Grand Monster Slam (Opening Fanfare)",
-              "duration" : "2:47"
-            },
-            {
-              "item_index" : 2,
-              "title" : "X-Out (Main Theme)",
-              "duration" : "5:12"
-            },
-            {
-              "item_index" : 3,
-              "title" : "Jim Power in Mutant Planet (Main Theme)",
-              "duration" : "5:38"
-            },
-            {
-              "item_index" : 4,
-              "title" : "Tower of Babel",
-              "duration" : "4:41"
-            },
-            {
-              "item_index" : 5
-              "title" : "Turrican 3 - Payment Day (Piano Suite)",
-              "duration" : "5:19"
-            },
-            {
-              "item_index" : 6,
-              "title" : "Gem'X (Main Theme)",
-              "duration" : "3:42"
-            },
-            {
-              "item_index" : 7,
-              "title" : "Apidya II (Suite)",
-              "duration" : "5:27"
-            },
-            {
-              "item_index" : 8,
-              "title" : "R-Type (Main Theme)",
-              "duration" : "5:19"
-            },
-            {
-              "item_index" : 9,
-              "title" : "Licht Am Ende Des Tunnels (Suite)",
-              "duration" : "5:11"
-            },
-            {
-              "item_index" : 10,
-              "title" : "The Great Giana Sisters (Suite)",
-              "duration" : "5:32"
-            },
-            {
-              "item_index" : 11,
-              "title" : "Rony Barrak - Solo Rony Barrak",
-              "duration" : "3:04"
-            },
-            {
-              "item_index" : 12,
-              "title" : "Tunnel B1 (Suite)",
-              "duration" : "5:00"
-            },
-            {
-              "item_index" : 13,
-              "title" : "Symphonic Shades",
-              "duration" : "4:14"
-            },
-            {
-              "item_index" : 14,
-              "title" : "Karawane Der Elefanten",
-              "duration" : "4:13"
-            },
-            {
-              "item_index" : 15,
-              "title" : "Turrican II - The Final Fight (Renderings: Main Theme)",
-              "duration" : "9:08"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "name" : "Genesis"
+    "album" :
+    [
+      {
+        "name" : "A Trick of the Tail",
+        "year" : 1976,
+        "tracks" :
+        [
+          {
+            "item_index" : 1,
+            "title" : "Dance on a Volcano",
+            "duration" : "5:55"
+          },
+          {
+            "item_index" : 2,
+            "title" : "Entangled",
+            "duration" : "6:27"
+          },
+          {
+            "item_index" : 3,
+            "title" : "Squonk",
+            "duration" : "6:30"
+          },
+          {
+            "item_index" : 4,
+            "title" : "Mad Man Moon",
+            "duration" : "7:36"
+          },
+          {
+            "item_index" : 5
+            "title" : "Robbery, Assault and Battery",
+            "duration" : "6:17"
+          },
+          {
+            "item_index" : 6,
+            "title" : "Ripples...",
+            "duration" : "8:06"
+          },
+          {
+            "item_index" : 7,
+            "title" : "A Trick of the Tail",
+            "duration" : "4:35"
+          },
+          {
+            "item_index" : 8,
+            "title" : "Los Endos",
+            "duration" : "5:46"
+          }
+        ]
+      },
+      {
+        "name" : "Duke",
+        "year" : 1980,
+        "tracks" :
+        [
+          {
+            "item_index" : 1,
+            "title" : "Behind the Lines",
+            "duration" : "5:30"
+          },
+          {
+            "item_index" : 2,
+            "title" : "Duchess",
+            "duration" : "6:25"
+          },
+          {
+            "item_index" : 3,
+            "title" : "Guide Vocal",
+            "duration" : "1:35"
+          },
+          {
+            "item_index" : 4,
+            "title" : "Man of Our Times",
+            "duration" : "5:36"
+          },
+          {
+            "item_index" : 5
+            "title" : "Misunderstanding",
+            "duration" : "3:15"
+          },
+          {
+            "item_index" : 6,
+            "title" : "Heathaze",
+            "duration" : "5:01"
+          },
+          {
+            "item_index" : 7,
+            "title" : "Turn It On Again",
+            "duration" : "5:31"
+          },
+          {
+            "item_index" : 8,
+            "title" : "Alone Tonight",
+            "duration" : "3:58"
+          },
+          {
+            "item_index" : 9,
+            "title" : "Cul-de-sac",
+            "duration" : "5:06"
+          },
+          {
+            "item_index" : 10,
+            "title" : "Please Don't Ask",
+            "duration" : "4:03"
+          },
+          {
+            "item_index" : 11,
+            "title" : "Duke's Travels",
+            "duration" : "8:39"
+          },
+          {
+            "item_index" : 12,
+            "title" : "Duke's End",
+            "duration" : "2:07"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name" : "Chris Huelsbeck",
+    "album" :
+    [
+      {
+        "name" : "Symphonic Shades",
+        "year" : "2008",
+        "tracks" :
+        [
+          {
+            "item_index" : 1,
+            "title" : "Grand Monster Slam (Opening Fanfare)",
+            "duration" : "2:47"
+          },
+          {
+            "item_index" : 2,
+            "title" : "X-Out (Main Theme)",
+            "duration" : "5:12"
+          },
+          {
+            "item_index" : 3,
+            "title" : "Jim Power in Mutant Planet (Main Theme)",
+            "duration" : "5:38"
+          },
+          {
+            "item_index" : 4,
+            "title" : "Tower of Babel",
+            "duration" : "4:41"
+          },
+          {
+            "item_index" : 5
+            "title" : "Turrican 3 - Payment Day (Piano Suite)",
+            "duration" : "5:19"
+          },
+          {
+            "item_index" : 6,
+            "title" : "Gem'X (Main Theme)",
+            "duration" : "3:42"
+          },
+          {
+            "item_index" : 7,
+            "title" : "Apidya II (Suite)",
+            "duration" : "5:27"
+          },
+          {
+            "item_index" : 8,
+            "title" : "R-Type (Main Theme)",
+            "duration" : "5:19"
+          },
+          {
+            "item_index" : 9,
+            "title" : "Licht Am Ende Des Tunnels (Suite)",
+            "duration" : "5:11"
+          },
+          {
+            "item_index" : 10,
+            "title" : "The Great Giana Sisters (Suite)",
+            "duration" : "5:32"
+          },
+          {
+            "item_index" : 11,
+            "title" : "Rony Barrak - Solo Rony Barrak",
+            "duration" : "3:04"
+          },
+          {
+            "item_index" : 12,
+            "title" : "Tunnel B1 (Suite)",
+            "duration" : "5:00"
+          },
+          {
+            "item_index" : 13,
+            "title" : "Symphonic Shades",
+            "duration" : "4:14"
+          },
+          {
+            "item_index" : 14,
+            "title" : "Karawane Der Elefanten",
+            "duration" : "4:13"
+          },
+          {
+            "item_index" : 15,
+            "title" : "Turrican II - The Final Fight (Renderings: Main Theme)",
+            "duration" : "9:08"
+          }
+        ]
+      }
+    ]
+  }
+]

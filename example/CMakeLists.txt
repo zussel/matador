@@ -18,6 +18,8 @@ SET (EXAMPLE_SOURCES
   Artist.hpp
   Track.cpp
   Track.hpp
+  JsonImporter.hpp
+  JsonImporter.cpp
   main.cpp
 )
 
