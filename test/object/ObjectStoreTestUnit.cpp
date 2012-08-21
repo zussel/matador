@@ -33,6 +33,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
+  add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -622,4 +623,36 @@ ObjectStoreTestUnit::clear_test()
   last = ostore_.end();
 
   UNIT_ASSERT_TRUE(++first == last, "prototype iterator must be the same");
+}
+
+void
+ObjectStoreTestUnit::generic_test()
+{
+  char c = 'c';
+  float f = 1.55f;
+  double d = 123.55789;
+  short s = -42;
+  int i = -98765;
+  long l = -1234567890;
+  unsigned short us = 45;
+  unsigned int ui = 4567890;
+  unsigned long ul = 987654321;
+  bool b = true;
+  std::string title = "Hallo Welt";
+  oos::varchar<64> str("The answer is 42");
+
+  Item *item = new Item();
+  
+  item->set("val_char", c);
+  item->set("val_float", f);
+  item->set("val_double", d);
+  item->set("val_short", s);
+  item->set("val_int", i);
+  item->set("val_long", l);
+  item->set("val_unsigned_short", us);
+  item->set("val_unsigned_int", ui);
+  item->set("val_unsigned_long", ul);
+  item->set("val_bool", b);
+  item->set("val_string", title);
+  item->set("val_varchar", str);
 }

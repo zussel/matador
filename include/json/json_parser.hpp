@@ -40,16 +40,60 @@
 
 namespace oos {
 
+/**
+ * @class json_parser
+ * @brief Parse a json formatted stream or string
+ *
+ * This class parse a given input stream or string
+ * into a json object representation.
+ * The result will be a oos::json_value object.
+ */
 class OOS_API json_parser : public generic_json_parser<json_parser>
 {
 public:
+  /**
+   * Creates a new json_parser instance
+   */
   json_parser();
   virtual ~json_parser();
 
+  /**
+   * @brief parse an input stream.
+   *
+   * Parses an input stream and returns 
+   * a json_value object representing
+   * the json structure.
+   *
+   * @param in The json input stream.
+   * @return A json_value structure.
+   */
   json_value parse(std::istream &in);
+
+  /**
+   * @brief parse a const character string.
+   *
+   * Parses a const character string and
+   * returns a json_value object representing
+   * the json structure.
+   *
+   * @param in The json const character string.
+   * @return A json_value structure.
+   */
   json_value parse(const char *str);
+
+  /**
+   * @brief parse a std::string.
+   *
+   * Parses a std::string and
+   * returns a json_value object representing
+   * the json structure.
+   *
+   * @param in The json std::string.
+   * @return A json_value structure.
+   */
   json_value parse(std::string &str);
 
+  /// @cond OOS_DEV //
   void on_begin_object();
   void on_object_key(const std::string &key);
   void on_end_object();
@@ -61,6 +105,7 @@ public:
   void on_number(double value);
   void on_bool(bool value);
   void on_null();
+  /// @endcond OOS_DEV //
 
 private:
   json_value value_;

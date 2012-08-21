@@ -3,6 +3,8 @@
 
 #include "json/generic_json_parser.hpp"
 
+#include "object/object_ptr.hpp"
+
 namespace oos {
   class session;
   class object;
@@ -43,7 +45,7 @@ private:
 
   std::string key_;
 
-  oos::object *obj_;
+  oos::object_ptr<oos::object> obj_;
 };
 
 

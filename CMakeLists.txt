@@ -255,19 +255,31 @@ INSTALL(
 
 INSTALL(
 	FILES ${OBJECT_INSTALL_HEADER}
-	DESTINATION include/object
+	DESTINATION include/oos/object
 	COMPONENT headers
 )
 
 INSTALL(
 	FILES ${DATABASE_INSTALL_HEADER}
-	DESTINATION include/database
+	DESTINATION include/oos/database
 	COMPONENT headers
 )
 
 INSTALL(
 	FILES ${TOOLS_INSTALL_HEADER}
-	DESTINATION include/tools
+	DESTINATION include/oos/tools
+	COMPONENT headers
+)
+
+INSTALL(
+	FILES ${JSON_INSTALL_HEADER}
+	DESTINATION include/oos/json
+	COMPONENT headers
+)
+
+INSTALL(
+	FILES ${UNIT_HEADER}
+	DESTINATION include/oos/unit
 	COMPONENT headers
 )
 

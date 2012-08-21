@@ -34,6 +34,7 @@ public:
   void hierarchy();
   void view_test();
   void clear_test();
+  void generic_test();
 
 private:
   oos::object_store ostore_;

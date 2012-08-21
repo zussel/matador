@@ -23,16 +23,40 @@
 
 namespace oos {
 
+/**
+ * @class generic_json_parser
+ * @tparam T The concrete parser class
+ *
+ * @brief An generic json parser base class
+ *
+ * This class implements a generic json
+ * parser base class. It parses an json
+ * input stream and for each json value type
+ * a method of parser class T is called.
+ * The parser class decides what it will do
+ * with the given information.
+ */
 template < class T >
 class generic_json_parser
 {
 protected:
+  /**
+   * @brief 
+   */
   generic_json_parser(T *h) : handler_(h) {}
 
 public:
   virtual ~generic_json_parser() {}
 
 protected:
+  /**
+   * @brief Parse the json input stream.
+   *
+   * Parse the json input stream and call
+   * the appropiate callbacks interally.
+   *
+   * @param in The json input stream
+   */
   void parse_json(std::istream &in);
 
 private:

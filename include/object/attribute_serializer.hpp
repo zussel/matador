@@ -21,7 +21,7 @@
 #include "object/object_atomizer.hpp"
 
 #include "tools/convert.hpp"
-#include "object/object_convert.hpp"
+//#include "object/object_convert.hpp"
 
 namespace oos {
 
@@ -332,7 +332,7 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from_, to);
+//    convert(from_, to);
     success_ = true;
   }
 
@@ -649,7 +649,7 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from, to_);
+//    convert(from, to_);
     success_ = true;
   }
 private:
