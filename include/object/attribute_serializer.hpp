@@ -21,7 +21,19 @@
 #include "object/object_atomizer.hpp"
 
 #include "tools/convert.hpp"
-//#include "object/object_convert.hpp"
+#include "object/object_convert.hpp"
+
+#include <type_traits>
+
+/// @cond OOS_DEV
+
+#ifdef WIN32
+#define CPP11_TYPE_TRAITS_NS std::tr1
+#else
+#define CPP11_TYPE_TRAITS_NS std
+#endif
+
+/// @endcond OOS_DEV
 
 namespace oos {
 
@@ -294,7 +306,11 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from_, to);
+//    if (CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value) {
+//      convert(from_, to, 2);
+//    } else {
+      convert(from_, to);
+//    }
     success_ = true;
   }
 
@@ -332,7 +348,7 @@ public:
     if (id_ != id) {
       return;
     }
-//    convert(from_, to);
+    convert(from_, to);
     success_ = true;
   }
 
@@ -649,7 +665,7 @@ public:
     if (id_ != id) {
       return;
     }
-//    convert(from, to_);
+    convert(from, to_);
     success_ = true;
   }
 private:

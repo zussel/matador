@@ -16,6 +16,43 @@ using namespace oos;
 using std::cout;
 using std::string;
 
+#ifdef WIN32
+#define CPP11_TYPE_TRAITS_NS std::tr1
+#else
+#define CPP11_TYPE_TRAITS_NS std
+#endif
+
+template < class T >
+void
+convert(const T &from, char *to, size_t num,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
+{
+   cout << "SUCCEEDED: floating point > char* (" << typeid(T).name() << ")\n";
+   convert(from, to, num, 2);
+}
+
+template < class T >
+void
+convert(const T &from, std::string &to,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
+{
+  cout << "DELEGATED: floating point > string (" << typeid(T).name() << ")\n";
+  char buf[256];
+  convert(from, buf, 256);
+  to.assign(buf);
+}
+
+template < class T >
+void
+convert(const T &from, oos::varchar_base &to,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
+{
+  // cout << "DELEGATED: floating point > varchar (" << typeid(T).name() << ")\n";
+  char buf[256];
+  convert(from, buf, 256);
+  to.assign(buf);
+}
+
 ConvertTestUnit::ConvertTestUnit()
   : unit_test("convert test unit")
 {
@@ -390,6 +427,7 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_SUCCESS(unsigned long, std::string, 99, "99");
   CONVERT_EXPECT_SUCCESS_FLOAT(float, std::string, -99.34f, "-99.34", 2);
   CONVERT_EXPECT_SUCCESS_FLOAT(double, std::string, -99.34f, "-99.34", 2);
+  CONVERT_EXPECT_SUCCESS(double, std::string, -99.34f, "-99.34");
   CONVERT_EXPECT_SUCCESS(const char*, std::string, "99", "99");
   CONVERT_EXPECT_SUCCESS(std::string, std::string, "99", "99");
   // TODO: add varchar converts
