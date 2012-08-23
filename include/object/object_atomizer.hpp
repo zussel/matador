@@ -353,7 +353,7 @@ public:
 	virtual void read(const char*, bool&) {}
 
   /**
-   * @fn virtual void read(const char *id, char *&x)
+   * @fn virtual void read(const char *id, char *x)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -362,7 +362,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, char*&) {}
+	virtual void read(const char*, char*) {}
 
   /**
    * @fn virtual void read(const char *id, std::string &x)

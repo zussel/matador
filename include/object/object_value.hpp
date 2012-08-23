@@ -651,7 +651,7 @@ private:
   }
 
   /**
-   * @fn virtual void read(const char *id, char *&x)
+   * @fn virtual void read(const char *id, char *x)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -660,7 +660,7 @@ private:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char *id, char* &x)
+	virtual void read(const char *id, char *x)
   {
     static detail::updater<T, char*> u;
     u.update(id, id_.c_str(), succeeded_, *this, object_, value_, x);

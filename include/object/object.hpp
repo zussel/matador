@@ -193,6 +193,11 @@ public:
     attr = val;
   }
 
+  void modify(char *attr, const char *val)
+  {
+    strcpy(attr, val);
+  }
+
   /**
    * Modify an object_ptr attribute assigning
    * the new given value to attributes reference.

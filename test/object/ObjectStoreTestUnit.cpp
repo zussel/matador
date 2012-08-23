@@ -638,6 +638,7 @@ ObjectStoreTestUnit::generic_test()
   unsigned int ui = 4567890;
   unsigned long ul = 987654321;
   bool b = true;
+  const char *cstr("baba");
   std::string title = "Hallo Welt";
   oos::varchar<64> str("The answer is 42");
 
@@ -653,6 +654,7 @@ ObjectStoreTestUnit::generic_test()
   item->set("val_unsigned_int", ui);
   item->set("val_unsigned_long", ul);
   item->set("val_bool", b);
+  item->set("val_cstr", cstr);
   item->set("val_string", title);
   item->set("val_varchar", str);
 }

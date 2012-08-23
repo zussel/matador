@@ -273,7 +273,7 @@ public:
   }
 
   /**
-   * @fn virtual void read(const char *id, char *&to)
+   * @fn virtual void read(const char *id, char *to)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -282,7 +282,7 @@ public:
    * @param id Unique id of the data.
    * @param to The data to write to.
    */
-	virtual void read(const char *id, char *&to)
+	virtual void read(const char *id, char *to)
   {
     if (id_ != id) {
       return;

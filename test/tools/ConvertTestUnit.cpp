@@ -406,6 +406,7 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_ARRAY_EXPECT_SUCCESS(unsigned long, char, 99, "99");
   CONVERT_ARRAY_EXPECT_SUCCESS_FLOAT(float, char, -99.34f, "-99.34", 2);
   CONVERT_ARRAY_EXPECT_SUCCESS_FLOAT(double, char, -99.34f, "-99.34", 2);
+  CONVERT_ARRAY_EXPECT_SUCCESS(double, const char*, -99.34f, "-99.34");
   CONVERT_ARRAY_EXPECT_SUCCESS(const char*, char, "99", "99");
   CONVERT_ARRAY_EXPECT_SUCCESS(std::string, char, "99", "99");
   // TODO: add varchar converts

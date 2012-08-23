@@ -35,6 +35,7 @@ public:
     reader->read("val_unsigned_int", unsigned_int_);
     reader->read("val_unsigned_long", unsigned_long_);
     reader->read("val_bool", bool_);
+    reader->read("val_cstr", cstr_);
     reader->read("val_string", string_);
     reader->read("val_varchar", varchar_);
   }
@@ -51,6 +52,7 @@ public:
     writer->write("val_unsigned_int", unsigned_int_);
     writer->write("val_unsigned_long", unsigned_long_);
     writer->write("val_bool", bool_);
+    writer->write("val_cstr", cstr_);
     writer->write("val_string", string_);
     writer->write("val_varchar", varchar_);
   }
@@ -65,6 +67,7 @@ public:
   void set_unsigned_int(unsigned int x) { modify(unsigned_int_, x); }
   void set_unsigned_long(unsigned long x) { modify(unsigned_long_, x); }
   void set_bool(bool x) { modify(bool_, x); }
+  void set_cstr(const char *x) { modify(cstr_, x); }
   void set_string(const std::string &x) { modify(string_, x); }
   void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
 
@@ -78,6 +81,7 @@ public:
   unsigned int get_unsigned_int() const { return unsigned_int_; }
   unsigned long get_unsigned_long() const { return unsigned_long_; }
   bool get_bool() const { return bool_; }
+  const char* get_cstr() const { return cstr_; }
   std::string get_string() const { return string_; }
   oos::varchar_base get_varchar() const { return varchar_; }
 
@@ -88,6 +92,8 @@ public:
   }
 
 private:
+  enum { CSTR_LEN=256 };
+
   char char_;
   float float_;
   double double_;
@@ -98,6 +104,7 @@ private:
   unsigned int unsigned_int_;
   unsigned long unsigned_long_;
   bool bool_;
+  char cstr_[CSTR_LEN];
   std::string string_;
   oos::varchar<64> varchar_;
 };
