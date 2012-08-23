@@ -35,6 +35,7 @@
 #include "object/object_atomizable.hpp"
 #include "object/attribute_serializer.hpp"
 
+#include <cstring>
 #include <iostream>
 
 namespace oos {
