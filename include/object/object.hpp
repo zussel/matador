@@ -37,6 +37,17 @@
 
 #include <cstring>
 #include <iostream>
+#include <type_traits>
+
+/// @cond OOS_DEV
+
+#ifdef WIN32
+#define CPP11_TYPE_TRAITS_NS std::tr1
+#else
+#define CPP11_TYPE_TRAITS_NS std
+#endif
+
+/// @endcond OOS_DEV
 
 namespace oos {
 
@@ -151,13 +162,26 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool set(const std::string &name, const T &val)
+  bool set(const std::string &name, const T &val,
+           typename oos::enable_if<!(CPP11_TYPE_TRAITS_NS::is_same<T, char>::value &&
+                                     CPP11_TYPE_TRAITS_NS::is_pointer<T>::value)>::type* = 0)
   {
     attribute_reader<T> reader(name, val);
     read_from(&reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
   }
+
+  /*
+  template < class T >
+  bool set(const std::string &name, const char *val, int size)
+  {
+    attribute_reader<T> reader(name, val);
+    read_from(&reader);
+    return reader.success();
+//    return update_value(this, name.c_str(), val);
+  }
+  */
 
   /**
    * Gets the value of a member identified by

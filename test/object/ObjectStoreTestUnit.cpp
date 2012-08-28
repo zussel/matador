@@ -645,8 +645,8 @@ ObjectStoreTestUnit::generic_test()
   Item *item = new Item();
   
   item->set("val_char", c);
-//  item->set("val_float", f);
-//  item->set("val_double", d);
+  item->set("val_float", f);
+  item->set("val_double", d);
   item->set("val_short", s);
   item->set("val_int", i);
   item->set("val_long", l);

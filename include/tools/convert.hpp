@@ -528,7 +528,7 @@ convert(const T &from, char *to, size_t num,
  ***********************************************/
 template < class T >
 void
-convert(const T &from, char *to, size_t num, int precision,
+convert(const T &from, char *to, size_t num, int precision = 2,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
 {
   // cout << "SUCCEEDED: floating point > char* (" << typeid(T).name() << ")\n";
@@ -588,7 +588,7 @@ convert(const T &from, std::string &to,
  ***********************************/
 template < class T >
 void
-convert(const T &from, std::string &to, int precision,
+convert(const T &from, std::string &to, int precision = 2,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
 {
   // cout << "DELEGATED: floating point > string (" << typeid(T).name() << ")\n";
@@ -714,7 +714,7 @@ convert(const T &from, oos::varchar_base &to,
  ***********************************/
 template < class T >
 void
-convert(const T &from, oos::varchar_base &to, int precision,
+convert(const T &from, oos::varchar_base &to, int precision = 2,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
 {
   // cout << "DELEGATED: floating point > varchar (" << typeid(T).name() << ")\n";

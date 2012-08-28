@@ -22,6 +22,7 @@ using std::string;
 #define CPP11_TYPE_TRAITS_NS std
 #endif
 
+/*
 template < class T >
 void
 convert(const T &from, char *to, size_t num,
@@ -52,6 +53,7 @@ convert(const T &from, oos::varchar_base &to,
   convert(from, buf, 256);
   to.assign(buf);
 }
+*/
 
 ConvertTestUnit::ConvertTestUnit()
   : unit_test("convert test unit")
