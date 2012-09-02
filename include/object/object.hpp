@@ -162,9 +162,12 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool set(const std::string &name, const T &val,
-           typename oos::enable_if<!(CPP11_TYPE_TRAITS_NS::is_same<T, char>::value &&
-                                     CPP11_TYPE_TRAITS_NS::is_pointer<T>::value)>::type* = 0)
+  bool set(const std::string &name, T val,
+           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
   {
     attribute_reader<T> reader(name, val);
     read_from(&reader);
@@ -172,17 +175,36 @@ public:
 //    return update_value(this, name.c_str(), val);
   }
 
-  /*
   template < class T >
-  bool set(const std::string &name, const char *val, int size)
+  bool set(const std::string &name, T val,
+           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                    (CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value ||
+                                     CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value))>::type* = 0)
   {
     attribute_reader<T> reader(name, val);
     read_from(&reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
   }
-  */
 
+  template < class T >
+  bool set(const std::string &name, const T &val, int,
+           typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+  {
+    attribute_reader<const char*> reader(name, val);
+    read_from(&reader);
+    return reader.success();
+  }
+
+  bool set(const std::string &name, const char *val, int )
+  {
+    attribute_reader<const char*> reader(name, val);
+    read_from(&reader);
+    return reader.success();
+//    return update_value(this, name.c_str(), val);
+  }
   /**
    * Gets the value of a member identified by
    * the given name. If the operation succeeds

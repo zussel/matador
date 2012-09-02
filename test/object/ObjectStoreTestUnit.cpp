@@ -654,7 +654,12 @@ ObjectStoreTestUnit::generic_test()
   item->set("val_unsigned_int", ui);
   item->set("val_unsigned_long", ul);
   item->set("val_bool", b);
-  item->set("val_cstr", cstr);
+  item->set("val_cstr", cstr, strlen(cstr));
   item->set("val_string", title);
   item->set("val_varchar", str);
+  
+  /* get float value into string
+   * with precision 2
+   */
+  item->get("val_float", str, 2);
 }

@@ -105,7 +105,7 @@ void JsonImporter::on_string(const std::string &value)
 
 void JsonImporter::on_number(double value)
 {
-//  obj_->set(key_, value);
+  obj_->set(key_, value);
 }
 
 void JsonImporter::on_bool(bool value)
