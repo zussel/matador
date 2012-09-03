@@ -32,14 +32,14 @@ object::~object()
 {
 }
 
-void object::read_from(object_atomizer *a)
+void object::read_from(object_reader *reader)
 {
-	a->read("id", id_);
+	reader->read("id", id_);
 }
 
-void object::write_to(object_atomizer *a) const
+void object::write_to(object_writer *writer) const
 {
-	a->write("id", id_);
+	writer->write("id", id_);
 }
 
 const char* object::classname() const

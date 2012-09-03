@@ -72,21 +72,21 @@ public:
   {}
   virtual ~linked_object_list_item() {}
 
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    base_item::read_from(oa);
-    oa->read("first", first_);
-    oa->read("last", last_);
-    oa->read("prev", prev_);
-    oa->read("next", next_);
+    base_item::read_from(reader);
+    reader->read("first", first_);
+    reader->read("last", last_);
+    reader->read("prev", prev_);
+    reader->read("next", next_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    base_item::write_to(oa);
-    oa->write("first", first_);
-    oa->write("last", last_);
-    oa->write("prev", prev_);
-    oa->write("next", next_);
+    base_item::write_to(writer);
+    writer->write("first", first_);
+    writer->write("last", last_);
+    writer->write("prev", prev_);
+    writer->write("next", next_);
   }
 
   self_ref first() const

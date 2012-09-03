@@ -22,8 +22,8 @@ public:
   Track(const std::string &t, unsigned long d, const oos::object_ref<Artist> &a);
 	virtual ~Track();
 	
-	virtual void read_from(oos::object_atomizer *reader);
-  virtual void write_to(oos::object_atomizer *writer) const;
+  virtual void read_from(oos::object_reader *reader);
+  virtual void write_to(oos::object_writer *writer) const;
 
   void title(const std::string &t);
 	std::string title() const;

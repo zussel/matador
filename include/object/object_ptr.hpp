@@ -204,7 +204,8 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
 
 private:
-	friend class object_atomizer;
+	friend class object_reader;
+	friend class object_writer;
   friend class object_creator;
   friend class object_serializer;
   friend struct object_proxy;

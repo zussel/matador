@@ -101,7 +101,7 @@ public:
    * 
    * @param a An object of type object_atomizer to read the object member values from.
    */
-	virtual void read_from(object_atomizer *a);
+	virtual void read_from(object_reader *reader);
 
   /**
    * @brief Interface to write from object members
@@ -111,7 +111,7 @@ public:
    *
    * @param a An object of type object_atomizer to write the object member values to.
    */
-	virtual void write_to(object_atomizer *a) const;
+	virtual void write_to(object_writer *writer) const;
 
   /**
    * Returns the classname of the object
@@ -231,6 +231,9 @@ public:
 
   void modify(char *attr, int max_size, const char *val, int size)
   {
+    if (max_size < size) {
+      throw std::logic_error("not enough character size");
+    }
 #ifdef WIN32
     strcpy_s(attr, max_size, val);
 #else

@@ -33,7 +33,8 @@
 
 namespace oos {
 
-class object_atomizer;
+class object_writer;
+class object_reader;
 
 /**
  * @class object_atomizable
@@ -54,7 +55,7 @@ public:
    *
    * @param oa The object_atomizer to deserialize from.
    */
-  virtual void read_from(object_atomizer *oa) = 0;
+  virtual void read_from(object_reader *) = 0;
 
   /**
    * Serializes an object to the given
@@ -62,7 +63,7 @@ public:
    *
    * @param oa The object_atomizer to serialize to.
    */
-  virtual void write_to(object_atomizer *oa) const = 0;
+  virtual void write_to(object_writer *) const = 0;
 };
 
 }

@@ -207,7 +207,7 @@ namespace detail {
 /// @endcond
 
 /// @cond OOS_DEV
-class OOS_API object_value_base : public object_atomizer
+class OOS_API object_value_base : public object_reader, public object_writer
 {
 public:
   virtual ~object_value_base();

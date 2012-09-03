@@ -18,14 +18,14 @@ Artist::Artist(const std::string &n)
 Artist::~Artist()
 {}
 
-void Artist::read_from(object_atomizer *reader)
+void Artist::read_from(object_reader *reader)
 {
 	object::read_from(reader);
   reader->read("name", name_);
   reader->read("album_artist_rel", album_artist_list_);
 }
 
-void Artist::write_to(object_atomizer *writer) const
+void Artist::write_to(object_writer *writer) const
 {
 	object::write_to(writer);
   writer->write("name", name_);

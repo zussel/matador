@@ -26,7 +26,7 @@ Album::Album(const std::string &n, int year, const object_ptr<Artist> &a)
 Album::~Album()
 {}
 
-void Album::read_from(object_atomizer *reader)
+void Album::read_from(object_reader *reader)
 {
 	object::read_from(reader);
 	reader->read("name", name_);
@@ -35,7 +35,7 @@ void Album::read_from(object_atomizer *reader)
   reader->read("track_album_rel", track_album_vector_);
 }
 
-void Album::write_to(object_atomizer *writer) const
+void Album::write_to(object_writer *writer) const
 {
 	object::write_to(writer);
 	writer->write("name", name_);

@@ -48,7 +48,7 @@ namespace oos {
  * be convertible into the objects attribute.
  */
 template < class T >
-class attribute_reader : public object_atomizer
+class attribute_reader : public object_reader
 {
 public:
   /**
@@ -369,7 +369,7 @@ private:
  * be convertible from the objects attribute.
  */
 template < class T >
-class attribute_writer : public object_atomizer
+class attribute_writer : public object_writer
 {
 public:
   /**

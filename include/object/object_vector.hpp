@@ -64,15 +64,15 @@ public:
   {}
   virtual ~object_vector_item() {}
 
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    base_item::read_from(oa);
-    oa->read("item_index", index_);
+    base_item::read_from(reader);
+    reader->read("item_index", index_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    base_item::write_to(oa);
-    oa->write("item_index", index_);
+    base_item::write_to(writer);
+    writer->write("item_index", index_);
   }
 
   size_type index() const

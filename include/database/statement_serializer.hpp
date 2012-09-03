@@ -39,7 +39,7 @@ class object;
 
 /// @cond OOS_DEV
 
-class OOS_API statement_serializer : public object_atomizer
+class OOS_API statement_serializer : public object_reader, public object_writer
 {
 public:
   statement_serializer();

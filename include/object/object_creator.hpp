@@ -38,7 +38,7 @@ class object;
  * inserted into the object store.
  * This class does these tasks.
  */
-class object_creator : public object_atomizer
+class object_creator : public object_reader
 {
 public:
   /**

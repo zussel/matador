@@ -58,7 +58,7 @@ private:
 };
 
 template < class T >
-class statement_field_creator : public statement_creator, public object_atomizer
+class statement_field_creator : public statement_creator, public object_writer
 {
 public:
   statement_field_creator() : first_(true) {}

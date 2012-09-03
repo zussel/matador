@@ -52,7 +52,7 @@ class varchar_base;
  * memory the buffer points to.
  * The application is responsible for this correctness.
  */
-class OOS_API object_serializer : public object_atomizer
+class OOS_API object_serializer : public object_reader, public object_writer
 {
 public:
   /**

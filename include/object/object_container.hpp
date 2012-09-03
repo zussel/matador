@@ -41,15 +41,15 @@ public:
   {}
   virtual ~value_item() {}
 
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    oos::object::read_from(oa);
-    oa->read("value", value_);
+    oos::object::read_from(reader);
+    reader->read("value", value_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    oos::object::write_to(oa);
-    oa->write("value", value_);
+    oos::object::write_to(writer);
+    writer->write("value", value_);
   }
 
   value_type value() const
@@ -85,15 +85,15 @@ public:
   {}
   virtual ~container_item() {}
 
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    value_item<T>::read_from(oa);
-    oa->read("container", container_);
+    value_item<T>::read_from(reader);
+    reader->read("container", container_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    value_item<T>::write_to(oa);
-    oa->write("container", container_);
+    value_item<T>::write_to(writer);
+    writer->write("container", container_);
   }
 
   container_ref container() const

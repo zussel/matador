@@ -39,18 +39,18 @@ class object_container;
 class object_base_ptr;
 
 /**
- * @class object_atomizer
- * @brief Base class for all object atomizer
+ * @class object_writer
+ * @brief Base class for all object writer
  * 
  * This class is the base class for all
- * atomizer classes. It has interfaces to read
- * and write data types (builtin and complex)
+ * atomizer classes. It has interfaces to 
+ * write data types (builtin and complex)
  * identified by a name.
  */
-class OOS_API object_atomizer
+class OOS_API object_writer
 {
 public:
-	virtual ~object_atomizer() {}
+	virtual ~object_writer() {}
 
   /**
    * @fn virtual void write(const char *id, char x)
@@ -232,7 +232,12 @@ public:
    * @param x The data to read from.
    */
   virtual void write(const char*, const object_container&) {}
+};
 
+class OOS_API object_reader
+{
+public:
+  virtual ~object_reader() {}
   /**
    * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.

@@ -30,8 +30,8 @@ public:
   Artist(const std::string &n);
   virtual ~Artist();
 
-  void read_from(oos::object_atomizer *reader);
-  void write_to(oos::object_atomizer *writer) const;
+  void read_from(oos::object_reader *reader);
+  void write_to(oos::object_writer *writer) const;
 
   std::string name() const;
   void name(const std::string &n);

@@ -22,7 +22,7 @@ public:
   {}
   virtual ~Item() {}
 
-	void read_from(oos::object_atomizer *reader)
+  virtual void read_from(oos::object_reader *reader)
   {
     oos::object::read_from(reader);
     reader->read("val_char", char_);
@@ -39,7 +39,7 @@ public:
     reader->read("val_string", string_);
     reader->read("val_varchar", varchar_);
   }
-	void write_to(oos::object_atomizer *writer) const
+	void write_to(oos::object_writer *writer) const
   {
     oos::object::write_to(writer);
     writer->write("val_char", char_);
@@ -126,13 +126,13 @@ public:
   {}
   virtual ~ObjectItem() {}
 
-	void read_from(oos::object_atomizer *reader)
+	void read_from(oos::object_reader *reader)
   {
     Item::read_from(reader);
     reader->read("ref", ref_);
     reader->read("ptr", ptr_);
   }
-	void write_to(oos::object_atomizer *writer) const
+	void write_to(oos::object_writer *writer) const
   {
     Item::write_to(writer);
     writer->write("ref", ref_);
@@ -175,12 +175,12 @@ public:
   {}
   virtual ~List() {}
 
-	void read_from(oos::object_atomizer *reader)
+  virtual void read_from(oos::object_reader *reader)
   {
     object::read_from(reader);
     reader->read("list", list_);
   }
-	void write_to(oos::object_atomizer *writer) const
+  virtual void write_to(oos::object_writer *writer) const
   {
     object::write_to(writer);
     writer->write("list", list_);
@@ -233,12 +233,12 @@ public:
   {}
   virtual ~LinkedList() {}
 
-	void read_from(oos::object_atomizer *reader)
+  virtual void read_from(oos::object_reader *reader)
   {
     object::read_from(reader);
     reader->read("item_list", item_list_);
   }
-	void write_to(oos::object_atomizer *writer) const
+  virtual void write_to(oos::object_writer *writer) const
   {
     object::write_to(writer);
     writer->write("item_list", item_list_);
@@ -295,12 +295,12 @@ public:
   {}
   virtual ~Vector() {}
 
-	void read_from(oos::object_atomizer *reader)
+  virtual void read_from(oos::object_reader *reader)
   {
     object::read_from(reader);
     reader->read("item_vector", vector_);
   }
-	void write_to(oos::object_atomizer *writer) const
+  virtual void write_to(oos::object_writer *writer) const
   {
     object::write_to(writer);
     writer->write("item_vector", vector_);
@@ -354,17 +354,17 @@ public:
   {}
   virtual ~book() {}
   
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    oos::object::read_from(oa);
-    oa->read("title", title_);
-    oa->read("isbn", isbn_);
+    oos::object::read_from(reader);
+    reader->read("title", title_);
+    reader->read("isbn", isbn_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    oos::object::write_to(oa);
-    oa->write("title", title_);
-    oa->write("isbn", isbn_);
+    oos::object::write_to(writer);
+    writer->write("title", title_);
+    writer->write("isbn", isbn_);
   }
   
   std::string title() const { return title_; }
@@ -387,15 +387,15 @@ public:
   {}
   virtual ~book_list() {}
 
-  virtual void read_from(oos::object_atomizer *oa)
+  virtual void read_from(oos::object_reader *reader)
   {
-    oos::object::read_from(oa);
-    oa->read("book_list", book_list_);
+    oos::object::read_from(reader);
+    reader->read("book_list", book_list_);
   }
-  virtual void write_to(oos::object_atomizer *oa) const
+  virtual void write_to(oos::object_writer *writer) const
   {
-    oos::object::write_to(oa);
-    oa->write("book_list", book_list_);
+    oos::object::write_to(writer);
+    writer->write("book_list", book_list_);
   }
 
   void add(const book_ref &b)

@@ -26,7 +26,7 @@ namespace oos {
   class object_base_ptr;
 }
 
-class TablePrinter : public oos::object_atomizer
+class TablePrinter : public oos::object_writer
 {
 private:
   enum state_t {

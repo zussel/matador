@@ -17,7 +17,7 @@ Track::Track(const std::string &t, unsigned long d, const object_ref<Artist> &a)
 Track::~Track()
 {}
 
-void Track::read_from(object_atomizer *reader)
+void Track::read_from(object_reader *reader)
 {
 	object::read_from(reader);
   reader->read("title", title_);
@@ -25,7 +25,7 @@ void Track::read_from(object_atomizer *reader)
   reader->read("artist", artist_);
 }
 
-void Track::write_to(object_atomizer *writer) const
+void Track::write_to(object_writer *writer) const
 {
 	object::write_to(writer);
   writer->write("title", title_);

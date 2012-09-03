@@ -30,8 +30,8 @@ public:
   Album(const std::string &n, int year, const oos::object_ptr<Artist> &a);
 	virtual ~Album();
 
-	virtual void read_from(oos::object_atomizer *reader);
-	virtual void write_to(oos::object_atomizer *writer) const;
+	virtual void read_from(oos::object_reader *reader);
+	virtual void write_to(oos::object_writer *writer) const;
 
 	void name(const std::string &n);
 	std::string name() const;

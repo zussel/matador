@@ -51,7 +51,7 @@ class object_base_ptr;
  * If the check was successful, all the deletable object
  * can be accepted via the iterators.
  */
-class object_deleter : public object_atomizer
+class object_deleter : public object_reader
 {
 private:
   typedef struct t_object_count_struct
