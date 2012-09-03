@@ -35,7 +35,7 @@ public:
     reader->read("val_unsigned_int", unsigned_int_);
     reader->read("val_unsigned_long", unsigned_long_);
     reader->read("val_bool", bool_);
-    reader->read("val_cstr", cstr_);
+    reader->read("val_cstr", cstr_, CSTR_LEN);
     reader->read("val_string", string_);
     reader->read("val_varchar", varchar_);
   }
@@ -52,7 +52,7 @@ public:
     writer->write("val_unsigned_int", unsigned_int_);
     writer->write("val_unsigned_long", unsigned_long_);
     writer->write("val_bool", bool_);
-    writer->write("val_cstr", cstr_);
+    writer->write("val_cstr", cstr_, CSTR_LEN);
     writer->write("val_string", string_);
     writer->write("val_varchar", varchar_);
   }
@@ -67,7 +67,7 @@ public:
   void set_unsigned_int(unsigned int x) { modify(unsigned_int_, x); }
   void set_unsigned_long(unsigned long x) { modify(unsigned_long_, x); }
   void set_bool(bool x) { modify(bool_, x); }
-  void set_cstr(const char *x) { modify(cstr_, x); }
+  void set_cstr(const char *x, int size) { modify(cstr_, CSTR_LEN, x, size); }
   void set_string(const std::string &x) { modify(string_, x); }
   void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
 

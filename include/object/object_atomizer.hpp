@@ -173,7 +173,7 @@ public:
 	virtual void write(const char*, bool) {}
 
   /**
-   * @fn virtual void write(const char *id, const char *x)
+   * @fn virtual void write(const char *id, const char *x, int max_size)
    * @brief Write a const char pointer to the atomizer.
    * 
    * Write a const char pointer to the atomizer
@@ -181,8 +181,9 @@ public:
    * 
    * @param id Unique id of the data.
    * @param x The data to read from.
+   * @param max_size Maximum size of the character array
    */
-	virtual void write(const char*, const char*) {}
+	virtual void write(const char*, const char*, int) {}
 
   /**
    * @fn virtual void write(const char *id, const std::string &x)
@@ -353,7 +354,7 @@ public:
 	virtual void read(const char*, bool&) {}
 
   /**
-   * @fn virtual void read(const char *id, char *x)
+   * @fn virtual void read(const char *id, char *x, int max_size)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -361,8 +362,9 @@ public:
    * 
    * @param id Unique id of the data.
    * @param x The data to write to.
+   * @param max_size Maximum size of the character array
    */
-	virtual void read(const char*, char*) {}
+	virtual void read(const char*, char*, int) {}
 
   /**
    * @fn virtual void read(const char *id, std::string &x)

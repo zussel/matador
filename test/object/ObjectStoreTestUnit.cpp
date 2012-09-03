@@ -662,4 +662,5 @@ ObjectStoreTestUnit::generic_test()
    * with precision 2
    */
   item->get("val_float", str, 2);
+  item->get("val_int", str);
 }

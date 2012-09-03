@@ -273,7 +273,7 @@ public:
   }
 
   /**
-   * @fn virtual void read(const char *id, char *to)
+   * @fn virtual void read(const char *id, char *to,)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -282,12 +282,12 @@ public:
    * @param id Unique id of the data.
    * @param to The data to write to.
    */
-	virtual void read(const char *id, char *to)
+	virtual void read(const char *id, char *to, int max_size)
   {
     if (id_ != id) {
       return;
     }
-    convert(from_, to, 1);
+    convert(from_, to, max_size);
     success_ = true;
   }
 
@@ -603,7 +603,7 @@ public:
    * @param id Unique id of the data.
    * @param from The data to write to.
    */
-	virtual void write(const char *id, const char* from)
+	virtual void write(const char *id, const char* from, int max_size)
   {
     if (id_ != id) {
       return;

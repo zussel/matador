@@ -164,7 +164,6 @@ public:
   template < class T >
   bool set(const std::string &name, T val,
            typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
@@ -179,7 +178,6 @@ public:
   bool set(const std::string &name, T val,
            typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
                                     (CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value ||
                                      CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value))>::type* = 0)
   {
@@ -187,15 +185,6 @@ public:
     read_from(&reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
-  }
-
-  template < class T >
-  bool set(const std::string &name, const T &val, int,
-           typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
-  {
-    attribute_reader<const char*> reader(name, val);
-    read_from(&reader);
-    return reader.success();
   }
 
   bool set(const std::string &name, const char *val, int )
@@ -216,7 +205,7 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool get(const std::string &name, T &val)
+  bool get(const std::string &name, T &val, int precision = 2)
   {
     attribute_writer<T> writer(name, val);
     write_to(&writer);
@@ -240,9 +229,13 @@ public:
     attr = val;
   }
 
-  void modify(char *attr, const char *val)
+  void modify(char *attr, int max_size, const char *val, int size)
   {
+#ifdef WIN32
+    strcpy_s(attr, max_size, val);
+#else
     strcpy(attr, val);
+#endif
   }
 
   /**
