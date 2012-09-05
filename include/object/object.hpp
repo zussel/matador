@@ -205,7 +205,20 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool get(const std::string &name, T &val, int precision = 2)
+  bool get(const std::string &name, T &val, int precision = 2,
+           typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
+                                    CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
+  {
+    attribute_writer<T> writer(name, val);
+    write_to(&writer);
+    return writer.success();
+//    return retrieve_value(this, name.c_str(), val);
+  }
+
+  template < class T >
+  bool get(const std::string &name, T &val,
+           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
   {
     attribute_writer<T> writer(name, val);
     write_to(&writer);

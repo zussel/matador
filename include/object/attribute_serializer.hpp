@@ -282,12 +282,12 @@ public:
    * @param id Unique id of the data.
    * @param to The data to write to.
    */
-	virtual void read(const char *id, char *to, int max_size)
+	virtual void read(const char *id, char *to, int size)
   {
     if (id_ != id) {
       return;
     }
-    convert(from_, to, max_size);
+    convert(from_, to, size);
     success_ = true;
   }
 
@@ -356,6 +356,10 @@ private:
   std::string id_;
   const T &from_;
   bool success_;
+
+  size_t from_size;
+  size_t to_size;
+  int precision;
 };
 
 /**
@@ -603,7 +607,7 @@ public:
    * @param id Unique id of the data.
    * @param from The data to write to.
    */
-	virtual void write(const char *id, const char* from, int max_size)
+	virtual void write(const char *id, const char* from, int size)
   {
     if (id_ != id) {
       return;

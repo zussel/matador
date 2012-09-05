@@ -662,5 +662,13 @@ ObjectStoreTestUnit::generic_test()
    * with precision 2
    */
   item->get("val_float", str, 2);
+  UNIT_ASSERT_EQUAL(str, "1.55", "float string is invalid");
+
   item->get("val_int", str);
+  UNIT_ASSERT_EQUAL(str, "-98765", "float string is invalid");
+  
+  item->get("val_double", str, 3);
+  UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
+
+  delete item;
 }
