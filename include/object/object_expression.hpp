@@ -105,6 +105,16 @@ private:
  * and lets it be used as a variable. Wit the operator()()
  * one can call the member function.
  */
+/*
+template < class R >
+class variable<R>
+{
+public:
+  typedef R return_type;
+
+  virtual return_type operator()(const object_base_ptr &) const = 0;
+};
+*/
 template < class R, class O >
 class variable<R, O, null_var>
 {
@@ -132,6 +142,12 @@ public:
     return (*o.get().*m_)();
   }
 
+  /*
+  virtual return_type operator()(const object_base_ptr &o) const
+  {
+    return *o.ptr().*m_)();
+  }
+  */
 private:
   memfun m_;
 };

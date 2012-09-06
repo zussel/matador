@@ -50,6 +50,7 @@ void ObjectVectorTestUnit::test_ref_vector()
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new Item(name.str()));
+    item->set("val_float", 3.4f);
     itemvector->push_back(item);
   }
 
@@ -64,6 +65,9 @@ void ObjectVectorTestUnit::test_ref_vector()
   i += 4;
   ival = 4;
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+
+  std::string str;
+  (*i)->value()->get("val_float", str, 2);
 
   i = itemvector->erase(i);
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");

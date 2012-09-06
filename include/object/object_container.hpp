@@ -73,6 +73,7 @@ public:
   typedef oos::object_ref<C> container_ref;
   typedef C container_type;
   typedef T value_type;
+//  typedef unsigned long size_type;
   typedef typename container_type::size_type size_type;
 
   container_item() {}

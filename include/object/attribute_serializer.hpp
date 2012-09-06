@@ -23,6 +23,7 @@
 #include "tools/convert.hpp"
 #include "object/object_convert.hpp"
 
+#include <stdexcept>
 #include <type_traits>
 
 /// @cond OOS_DEV
@@ -386,12 +387,22 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, T &to)
+  attribute_writer(const std::string &id, T &to, int precision)
     : id_(id)
     , to_(to)
     , success_(false)
+    , precision_(precision)
+    , size_(0)
   {}
-  
+   
+  attribute_writer(const std::string &id, T &to, int size, int precision)
+    : id_(id)
+    , to_(to)
+    , success_(false)
+    , precision_(precision)
+    , size_(size)
+  {}
+   
   virtual ~attribute_writer() {}
 
   /**
@@ -441,7 +452,14 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from, to_);
+    if (CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
+        CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value) {
+      convert(from, to_, precision_);
+    } else if (CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value) {
+      convert(from, to_, size_, precision_);
+    } else {
+      convert(from, to_);
+    }
     success_ = true;
   }
 
@@ -460,7 +478,14 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from, to_);
+    if (CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
+        CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value) {
+      convert(from, to_, precision_);
+    } else if (CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value) {
+      convert(from, to_, size_, precision_);
+    } else {
+      convert(from, to_);
+    }
     success_ = true;
   }
 
@@ -676,6 +701,8 @@ private:
   std::string id_;
   T &to_;
   bool success_;
+  int precision_;
+  int size_;
 };
 
 }

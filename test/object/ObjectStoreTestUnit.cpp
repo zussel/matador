@@ -101,6 +101,7 @@ ObjectStoreTestUnit::expression_test()
   typedef variable<ObjectItemPtrList::value_type, ObjectItemType> item_var_t;
   variable<int, ObjectItem<Item>, item_var_t> z(&ObjectItem<Item>::get_int, item_var_t(&ObjectItemType::value));
 
+//  variable<int> x = make_var(
 //  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);
   ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");

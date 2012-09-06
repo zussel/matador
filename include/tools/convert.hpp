@@ -542,6 +542,15 @@ convert(const T &from, char *to, size_t num, int precision = 2,
 #endif
 }
 
+template < class T, class U >
+void
+convert(const T &from, U &to, size_t num, int precision,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_same<U, char*>::value)>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
 /***********************************
  * 
  * Convert from
@@ -721,6 +730,16 @@ convert(const T &from, oos::varchar_base &to, int precision = 2,
   char buf[256];
   convert(from, buf, 256, precision);
   to.assign(buf);
+}
+
+template < class T, class U >
+void
+convert(const T &from, U &to, int precision,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value)>::type* = 0)
+{
+  throw std::bad_cast();
 }
 
 /***********************************
