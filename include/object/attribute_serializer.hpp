@@ -632,7 +632,7 @@ public:
    * @param id Unique id of the data.
    * @param from The data to write to.
    */
-	virtual void write(const char *id, const char* from, int size)
+	virtual void write(const char *id, const char* from, int)
   {
     if (id_ != id) {
       return;

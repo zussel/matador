@@ -86,6 +86,13 @@ convert(const char *from, oos::varchar_base &to)
 }
 
 void
+convert(const char *from, oos::varchar_base &to, int)
+{
+  // cout << "SUCCEEDED: const char* > varchar\n";
+  to.assign(from);
+}
+
+void
 convert(const oos::varchar_base &from, oos::varchar_base &to)
 {
   to = from;

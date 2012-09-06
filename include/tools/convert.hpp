@@ -49,6 +49,21 @@
 
 /// @endcond OOS_DEV
 
+/*
+ * void convert(const T &from, U &to);
+ * 
+ * void convert(const float/double &from, string &to, int precision);
+ * void convert(const float/double &from, varchar &to, int precision);
+ * void convert(const float/double &from, T &to, int precision) -> (T, U)
+ * 
+ * void convert(const float/double &from, char *to, int size, int precision);
+ * void convert(const float/double &from, char *to, int size, int precision);
+ * void convert(const float/double &from, T &to, int size, int precision) -> (T, U)
+ * 
+ * void convert(const T &from, char *to, int size);
+ * void convert(const T &from, U &to, int size) -> (T, U)
+ */
+
 /**
  * @file convert.hpp
  * @brief Contains convert functions.
@@ -544,11 +559,12 @@ convert(const T &from, char *to, size_t num, int precision = 2,
 
 template < class T, class U >
 void
-convert(const T &from, U &to, size_t num, int precision,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                                 !CPP11_TYPE_TRAITS_NS::is_same<U, char*>::value)>::type* = 0)
+convert(const T &from, U &to, size_t, int,
+        typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<U, char*>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value)>::type* = 0)
 {
-  throw std::bad_cast();
+  convert(from, to);
 }
 
 /***********************************
@@ -693,6 +709,7 @@ OOS_API void convert(const std::string &from, oos::varchar_base &to);
  *
  ***********************************************/
 OOS_API void convert(const char *from, oos::varchar_base &to);
+OOS_API void convert(const char *from, oos::varchar_base &to, int);
 
 /***********************************
  * 
@@ -732,14 +749,23 @@ convert(const T &from, oos::varchar_base &to, int precision = 2,
   to.assign(buf);
 }
 
+template < class T >
+void
+convert(const T &, char *, int,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+{
+  throw std::logic_error("invalid convert");
+}
+
 template < class T, class U >
 void
-convert(const T &from, U &to, int precision,
+convert(const T &from, U &to, int,
         typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                 !CPP11_TYPE_TRAITS_NS::is_same<U,char*>::value &&
                                  !CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value &&
                                  !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value)>::type* = 0)
 {
-  throw std::bad_cast();
+  convert(from, to);
 }
 
 /***********************************
