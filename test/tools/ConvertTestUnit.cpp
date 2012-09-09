@@ -22,39 +22,6 @@ using std::string;
 #define CPP11_TYPE_TRAITS_NS std
 #endif
 
-/*
-template < class T >
-void
-convert(const T &from, char *to, size_t num,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
-{
-   cout << "SUCCEEDED: floating point > char* (" << typeid(T).name() << ")\n";
-   convert(from, to, num, 2);
-}
-
-template < class T >
-void
-convert(const T &from, std::string &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
-{
-  cout << "DELEGATED: floating point > string (" << typeid(T).name() << ")\n";
-  char buf[256];
-  convert(from, buf, 256);
-  to.assign(buf);
-}
-
-template < class T >
-void
-convert(const T &from, oos::varchar_base &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
-{
-  // cout << "DELEGATED: floating point > varchar (" << typeid(T).name() << ")\n";
-  char buf[256];
-  convert(from, buf, 256);
-  to.assign(buf);
-}
-*/
-
 ConvertTestUnit::ConvertTestUnit()
   : unit_test("convert test unit")
 {
@@ -129,10 +96,23 @@ ConvertTestUnit::~ConvertTestUnit()
   } catch (std::bad_cast &) { \
   }
 
+#define CONVERT_WITH_SIZE_EXPECT_FAIL(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b; \
+    size_t s(0); \
+    convert(a, b, s); \
+    UNIT_FAIL("convert must not fail"); \
+  } catch (std::bad_cast &) { \
+  }
+
 void
 ConvertTestUnit::convert_to_bool()
 {
   CONVERT_EXPECT_SUCCESS(char, bool, 'c', true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(char, bool, 'c', true);
+//  CONVERT_WITH_PRECISION_EXPECT_FAIL(char, bool);
+//  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(char, bool);
   CONVERT_EXPECT_SUCCESS(bool, bool, true, true);
   CONVERT_EXPECT_SUCCESS(short, bool, 99, true);
   CONVERT_EXPECT_SUCCESS(int, bool, 99, true);
