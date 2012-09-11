@@ -106,30 +106,112 @@ ConvertTestUnit::~ConvertTestUnit()
   } catch (std::bad_cast &) { \
   }
 
+#define CONVERT_WITH_PRECISION_EXPECT_FAIL(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b; \
+    int p(0); \
+    convert(a, b, p); \
+    UNIT_FAIL("convert must not fail"); \
+  } catch (std::bad_cast &) { \
+  }
+
+#define CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(from, to, in, out) \
+  try { \
+    from a(in); \
+    to b; \
+    size_t s(0); \
+    int p(0); \
+    convert(a, b, s, p); \
+    UNIT_FAIL("convert must not fail"); \
+  } catch (std::bad_cast &) { \
+  }
+
+template < class T, class U >
+void
+convert(const T &, U &, size_t,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<U, char*>::value >::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value >::type* = 0)
+{
+  throw std::bad_cast();
+}
+
 void
 ConvertTestUnit::convert_to_bool()
 {
   CONVERT_EXPECT_SUCCESS(char, bool, 'c', true);
   CONVERT_WITH_SIZE_EXPECT_FAIL(char, bool, 'c', true);
-//  CONVERT_WITH_PRECISION_EXPECT_FAIL(char, bool);
-//  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(char, bool);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(char, bool, 'c', true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(char, bool, 'c', true);
+
   CONVERT_EXPECT_SUCCESS(bool, bool, true, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(bool, bool, true, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(bool, bool, true, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(bool, bool, true, true);
+
   CONVERT_EXPECT_SUCCESS(short, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(short, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(short, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(short, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(int, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(int, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(int, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(int, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(long, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(long, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(long, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(long, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(unsigned char, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(unsigned char, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(unsigned char, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(unsigned char, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(unsigned short, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(unsigned short, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(unsigned short, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(unsigned short, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(unsigned int, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(unsigned int, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(unsigned int, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(unsigned int, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(unsigned long, bool, 99, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(unsigned long, bool, 99, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(unsigned long, bool, 99, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(unsigned long, bool, 99, true);
+
   CONVERT_EXPECT_SUCCESS(float, bool, 99.45f, true);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(float, bool, 99.45f, true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(float, bool, 99.45f, true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(float, bool, 99.45f, true);
+
   CONVERT_EXPECT_SUCCESS(double, bool, 0.0f, false);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(double, bool, 0.0f, false);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(double, bool, 0.0f, false);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(double, bool, 0.0f, false);
+
   CONVERT_EXPECT_SUCCESS(const char*, bool, "99", true);
   CONVERT_EXPECT_SUCCESS(const char*, bool, "hello", false);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(const char*, bool, "99", true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(const char*, bool, "99", true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(const char*, bool, "99", true);
+
   CONVERT_EXPECT_SUCCESS(std::string, bool, "99", true);
   CONVERT_EXPECT_SUCCESS(std::string, bool, "hello", false);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(std::string, bool, "99", true);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(std::string, bool, "99", true);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(std::string, bool, "99", true);
+
   // TODO: add varchar converts
   CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "99", true);
   CONVERT_EXPECT_SUCCESS(varchar<8>, bool, "hello", false);
+  CONVERT_WITH_SIZE_EXPECT_FAIL(varchar<8>, bool, "hello", false);
+  CONVERT_WITH_PRECISION_EXPECT_FAIL(varchar<8>, bool, "hello", false);
+  CONVERT_WITH_SIZE_AND_PRECISION_EXPECT_FAIL(varchar<8>, bool, "hello", false);
 }
 
 void

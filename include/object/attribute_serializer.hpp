@@ -452,14 +452,15 @@ public:
     if (id_ != id) {
       return;
     }
+    /*
     if (CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
         CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value) {
       convert(from, to_, precision_);
     } else if (CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value) {
       convert(from, to_, size_, precision_);
-    } else {
+    } else {*/
       convert(from, to_);
-    }
+    //}
     success_ = true;
   }
 
@@ -477,15 +478,15 @@ public:
   {
     if (id_ != id) {
       return;
-    }
+    }/*
     if (CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
         CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value) {
       convert(from, to_, precision_);
     } else if (CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value) {
       convert(from, to_, size_, precision_);
-    } else {
+    } else {*/
       convert(from, to_);
-    }
+    //}
     success_ = true;
   }
 

@@ -559,12 +559,12 @@ convert(const T &from, char *to, size_t num, int precision = 2,
 
 template < class T, class U >
 void
-convert(const T &from, U &to, size_t, int,
+convert(const T &, U &, size_t, int,
         typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<U, char*>::value &&
                                  !CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value &&
                                  !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value)>::type* = 0)
 {
-  convert(from, to);
+  throw std::bad_cast();
 }
 
 /***********************************
