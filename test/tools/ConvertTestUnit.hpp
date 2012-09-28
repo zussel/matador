@@ -47,6 +47,34 @@ public:
   void convert_to_char_pointer();
   void convert_to_string();
   void convert_to_varchar();
+
+private:
+  /*
+  template < class T, class U >
+  void convert_expect_success(const T& in, U &out)
+  {
+  }
+  template < class T, class U >
+  void convert_expect_success(const T& in, U &out, int size)
+  {
+  }
+  template < class T, class U >
+  void convert_expect_success(const T& in, U &out, int size, int precision)
+  {
+  }
+  template < class T, class U >
+  void convert_expect_failure(const T& in, U &out)
+  {
+  }
+  template < class T, class U >
+  void convert_expect_failure(const T& in, U &out, int size)
+  {
+  }
+  template < class T, class U >
+  void convert_expect_failure(const T& in, U &out, int size, int precision)
+  {
+  }
+  */
 };
 
 #endif /* CONVERTTESTUNIT_HPP */
