@@ -42,15 +42,15 @@ template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<CP == convert_fitting || CP == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_signed<U>::value) ||
-                                (std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_unsigned<U>::value) ||
-                                (std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to integral (fitting/weak,  less, " << from << " -> " << to << ")\n";
@@ -60,18 +60,19 @@ template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_signed<U>::value) ||
-                                (std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_unsigned<U>::value) ||
-                                (std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to integral (strict,        less, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -87,16 +88,16 @@ convert(const T &from, U &to,
 template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CP == convert_fitting || CP == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_signed<U>::value) ||
-                                (std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_unsigned<U>::value) ||
-                                (std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<CP == convert_weak>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to integral (fitting/weak, greater equal, " << from << " -> " << to << ")\n";
@@ -105,19 +106,20 @@ convert(const T &from, U &to,
 template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_signed<U>::value) ||
-                                (std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_unsigned<U>::value) ||
-                                (std::tr1::is_signed<T>::value &&
-                                 std::tr1::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value) ||
+                                (CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to integral (strict,       greater equal, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*
@@ -130,27 +132,28 @@ convert(const T &from, U &to,
  */
 template < int P, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<P == convert_fitting || P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "failed integral less unsigned fitting\n";
+  throw std::bad_cast();
 }
 
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral less unsigned weak\n";
@@ -167,27 +170,28 @@ convert(const T &from, U &to,
  */
 template < int P, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<P == convert_fitting || P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "failed integral greater unsigned fitting\n";
+  throw std::bad_cast();
 }
 
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::tr1::is_unsigned<T>::value &&
-                                 std::tr1::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral greater unsigned weak\n";
@@ -208,21 +212,23 @@ template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_weak || P == convert_fitting>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to floating (strict,        less, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -239,21 +245,23 @@ template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to floating (weak,         greater, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_fitting || P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to floating (fitting/strict,  greater, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -270,21 +278,23 @@ template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_weak || P == convert_fitting>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
         typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to floating (strict,        less, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -300,22 +310,24 @@ convert(const T &from, U &to,
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_weak || P == convert_fitting>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<P == convert_weak>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to floating (fitting/weak,  greater, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
-template < int P, class T, class U >
+template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<T>::value &&
-                                std::tr1::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "integral to floating (strict,        greater, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -331,24 +343,26 @@ convert(const T &from, U &to,
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_weak || P == convert_fitting>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<P == convert_weak>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to integral (weak/fitting,  less, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
-template < int P, class T, class U >
+template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to integral (strict,        less, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*******************************************
@@ -364,24 +378,26 @@ convert(const T &from, U &to,
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_weak || P == convert_fitting>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<P == convert_weak>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to integral (weak/fitting,  greater, " << from << " -> " << to << ")\n";
+  to = (U)from;
 }
-template < int P, class T, class U >
+template < int CP, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value &&
-                                std::tr1::is_integral<U>::value &&
-                                !std::tr1::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   cout << "floating to integral (strict,        greater, " << from << " -> " << to << ")\n";
+  throw std::bad_cast();
 }
 
 /*****************
@@ -395,18 +411,18 @@ template < int P, class T >
 void
 convert(bool from, T &to,
         typename oos::enable_if<P == convert_fitting || P == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value &&
-                                !std::tr1::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
 {
   to = (from ? 1 : 0);
 }
 
 template < int P, class T >
 void
-convert(bool from, T &to,
+convert(bool , T &,
         typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value &&
-                                !std::tr1::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -422,18 +438,18 @@ template < int P, class T >
 void
 convert(const T &from, bool &to,
         typename oos::enable_if<P == convert_fitting || P == convert_weak>::type* = 0,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value &&
-                                !std::tr1::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
 {
   to = from > 0;
 }
 
 template < int P, class T >
 void
-convert(const T &from, bool &to,
+convert(const T &, bool &,
         typename oos::enable_if<P == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_arithmetic<T>::value &&
-                                !std::tr1::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -465,9 +481,9 @@ convert(const T &from, char *to, S size, P precision,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
   cout << "convert (T,char*,S,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ", precision: "<< precision << ")\n";
 }
@@ -484,8 +500,8 @@ convert(const T &from, char *to, S size,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
-        typename oos::enable_if<!std::tr1::is_floating_point<T>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   cout << "convert (T,char*,S) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ")\n";
 }
@@ -502,44 +518,44 @@ convert(const T &from, std::string &to, P precision,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_floating_point<T>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
   cout << "convert (T,string,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", precision: " << precision << ")\n";
 }
 
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<(CP == convert_weak ||
                                  CP == convert_fitting ||
                                  CP == convert_strict)>::type* = 0,
-        typename oos::enable_if<(!std::tr1::is_arithmetic<T>::value ||
-                                 !std::tr1::is_arithmetic<U>::value)>::type* = 0,
-        typename oos::enable_if<!std::tr1::is_same<T, U>::value>::type* = 0)
+        typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value ||
+                                 !CPP11_TYPE_TRAITS_NS::is_arithmetic<U>::value)>::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
 
 template < int CP, class T, class U, class S >
 void
-convert(const T &from, U &to, S size,
+convert(const T &, U &, S ,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
 
 template < int CP, class T, class U, class S, class P >
 void
-convert(const T &from, U &to, S size, P precision,
+convert(const T &, U &, S , P ,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -554,7 +570,7 @@ convert(const T &from, U &to)
 template < class T, class U, class S >
 void
 convert(const T &from, U &to, S size,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   convert<convert_fitting>(from, to, size);
 }
@@ -562,8 +578,8 @@ convert(const T &from, U &to, S size,
 template < class T, class U, class S, class P >
 void
 convert(const T &from, U &to, S size, P precision,
-        typename oos::enable_if<std::tr1::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<std::tr1::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
   convert<convert_fitting>(from, to, size, precision);
 }
@@ -597,7 +613,7 @@ ConvertTestUnit::~ConvertTestUnit()
     convert<policy>(a, b); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
-    UNIT_FAIL("convert must not fail"); \
+    UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
 #define CONVERT_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
@@ -607,7 +623,7 @@ ConvertTestUnit::~ConvertTestUnit()
     convert<policy>(a, b, size); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
-    UNIT_FAIL("convert must not fail"); \
+    UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
 #define CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(from, in, to, out, size, precision, policy) \
@@ -617,7 +633,7 @@ ConvertTestUnit::~ConvertTestUnit()
     convert<policy>(a, b, size, precision); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
-    UNIT_FAIL("convert must not fail"); \
+    UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 /*
 #define CONVERT_EXPECT_SUCCESS_FLOAT(from, to, in, out, precision) \
@@ -810,6 +826,7 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, bool, true, 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, bool, true, 256, 3, convert_weak);
 
+/*
   CONVERT_EXPECT_FAILURE               (const char*, "99", bool, true, convert_strict);
   CONVERT_EXPECT_SUCCESS               (const char*, "99", bool, true, convert_fitting);
   CONVERT_EXPECT_SUCCESS               (const char*, "hello", bool, false, convert_weak);
@@ -845,11 +862,160 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", bool, true, 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", bool, true, 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", bool, true, 256, 3, convert_weak);
+  */
 }
 
 void
 ConvertTestUnit::convert_to_char()
 {
+  CONVERT_EXPECT_FAILURE               (bool, true, char, 1, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (bool, true, char, 1, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (bool, true, char, 1, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, 1, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, 1, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, 1, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, 1, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, 1, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, 1, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (short, -99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (short, -99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (short, -99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (int, -99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (int, -99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (int, -99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (long, -99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (long, -99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (long, -99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned char, 'c', char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned short, 99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned int, 99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned long, 99, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (float, 99.34567f, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (double, 99.34567f, char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, char, 'c', 256, 3, convert_weak);
+
+/*
+  CONVERT_EXPECT_FAILURE               (const char*, "99", char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (string, "99", char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (string, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_SUCCESS               (string, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", char, 'c', 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (varchar<16>, "99", char, 'c', convert_strict);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", char, 'c', convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", char, 'c', 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", char, 'c', 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", char, 'c', 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", char, 'c', 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", char, 'c', 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", char, 'c', 256, 3, convert_weak);
+  */
+
   /*
   CONVERT_EXPECT_SUCCESS(char, char, 'c', 'c');
   CONVERT_EXPECT_SUCCESS(bool, char, true, 1);
@@ -873,6 +1039,153 @@ ConvertTestUnit::convert_to_char()
 void
 ConvertTestUnit::convert_to_short()
 {
+  CONVERT_EXPECT_FAILURE               (bool, true, short, 1, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (bool, true, short, 1, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (bool, true, short, 1, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, short, 1, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, short, 1, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, short, 1, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, short, 1, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, short, 1, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, short, 1, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (char, 'c', short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (short, -99, short, -99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (short, -99, short, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (short, -99, short, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, short, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, short, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, short, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, short, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, short, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, short, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (int, -99, short, -99, convert_strict);
+  CONVERT_EXPECT_FAILURE               (int, -99, short, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (int, -99, short, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, short, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, short, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, short, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, short, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, short, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, short, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (long, -99, short, -99, convert_strict);
+  CONVERT_EXPECT_FAILURE               (long, -99, short, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (long, -99, short, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, short, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, short, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, short, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, short, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, short, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, short, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned char, 'c', short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned short, 99, short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned int, 99, short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned long, 99, short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (float, 99.34567f, short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (double, 99.34567f, short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, short, 99, 256, 3, convert_weak);
+
+/*
+  CONVERT_EXPECT_FAILURE               (const char*, "99", short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (string, "99", short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (string, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (string, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", short, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (varchar<16>, "99", short, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", short, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", short, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", short, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", short, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", short, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", short, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", short, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", short, 99, 256, 3, convert_weak);
+  */
   /*
   CONVERT_EXPECT_SUCCESS(char, short, 'c', 99);
   CONVERT_EXPECT_SUCCESS(bool, short, true, 1);
@@ -898,6 +1211,153 @@ ConvertTestUnit::convert_to_short()
 void
 ConvertTestUnit::convert_to_int()
 {
+  CONVERT_EXPECT_FAILURE               (bool, true, int, 1, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (bool, true, int, 1, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (bool, true, int, 1, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, int, 1, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, int, 1, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, int, 1, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, int, 1, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, int, 1, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, int, 1, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (char, 'c', int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (char, 'c', int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (short, -99, int, -99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (short, -99, int, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (short, -99, int, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, int, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, int, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, int, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, int, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, int, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, -99, int, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_SUCCESS               (int, -99, int, -99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (int, -99, int, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (int, -99, int, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, int, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, int, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, int, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, int, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, int, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, -99, int, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (long, -99, int, -99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (long, -99, int, -99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (long, -99, int, -99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, int, -99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, int, -99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, int, -99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, int, -99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, int, -99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, int, -99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned char, 'c', int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned short, 99, int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned short, 99, int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned int, 99, int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned int, 99, int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (unsigned long, 99, int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (unsigned long, 99, int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (float, 99.34567f, int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (float, 99.34567f, int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.34567f, int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.34567f, int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (double, 99.34567f, int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (double, 99.34567f, int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.34567f, int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.34567f, int, 99, 256, 3, convert_weak);
+
+/*
+  CONVERT_EXPECT_FAILURE               (const char*, "99", int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (const char*, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (const char*, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (string, "99", int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (string, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (string, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (string, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", int, 99, 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (varchar<16>, "99", int, 99, convert_strict);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "99", int, 99, convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (varchar<16>, "hello", int, 99, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", int, 99, 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", int, 99, 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", int, 99, 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", int, 99, 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", int, 99, 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", int, 99, 256, 3, convert_weak);
+  */
   /*
   CONVERT_EXPECT_SUCCESS(char, int, 'c', 99);
   CONVERT_EXPECT_SUCCESS(bool, int, true, 1);
