@@ -54,12 +54,12 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to integral (fitting/weak,  less, " << from << " -> " << to << ")\n";
+//  cout << "integral to integral (fitting/weak,  less, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
@@ -73,7 +73,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to integral (strict,        less, " << from << " -> " << to << ")\n";
+//  cout << "integral to integral (strict,        less, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -103,12 +103,12 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to integral (fitting/weak, greater equal, " << from << " -> " << to << ")\n";
+//  cout << "integral to integral (fitting/weak, greater equal, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
@@ -122,7 +122,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to integral (strict,       greater equal, " << from << " -> " << to << ")\n";
+//  cout << "integral to integral (strict,       greater equal, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -146,7 +146,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) <= sizeof(U))>::type* = 0)
 {
-  cout << "integral less unsigned weak\n";
+//  cout << "integral less unsigned weak\n";
   to = from;
 }
 
@@ -162,7 +162,7 @@ convert(const T &, U &,
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) <= sizeof(U))>::type* = 0)
 {
-  cout << "failed integral less unsigned fitting\n";
+//  cout << "failed integral less unsigned fitting\n";
   throw std::bad_cast();
 }
 
@@ -186,7 +186,7 @@ convert(const T &, U &,
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "failed integral greater unsigned fitting\n";
+//  cout << "failed integral greater unsigned fitting\n";
   throw std::bad_cast();
 }
 
@@ -202,7 +202,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral greater unsigned weak\n";
+//  cout << "integral greater unsigned weak\n";
   to = (U)from;
 }
 
@@ -224,7 +224,7 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
+//  cout << "floating to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int P, class T, class U >
@@ -235,7 +235,7 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to floating (strict,        less, " << from << " -> " << to << ")\n";
+//  cout << "floating to floating (strict,        less, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -257,18 +257,18 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to floating (weak,         greater, " << from << " -> " << to << ")\n";
+//  cout << "floating to floating (weak,         greater, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int P, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<P == convert_fitting || P == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to floating (fitting/strict,  greater, " << from << " -> " << to << ")\n";
+//  cout << "floating to floating (fitting/strict,  greater, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -291,19 +291,19 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
+//  cout << "integral to floating (fitting/weak,  less, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int P, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<P == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to floating (strict,        less, " << from << " -> " << to << ")\n";
+//  cout << "integral to floating (strict,        less, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -326,19 +326,19 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to floating (fitting/weak,  greater, " << from << " -> " << to << ")\n";
+//  cout << "integral to floating (fitting/weak,  greater, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "integral to floating (strict,        greater, " << from << " -> " << to << ")\n";
+//  cout << "integral to floating (strict,        greater, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -361,19 +361,19 @@ convert(const T &from, U &to,
                                 !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to integral (weak/fitting,  less, " << from << " -> " << to << ")\n";
+//  cout << "floating to integral (weak/fitting,  less, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to integral (strict,        less, " << from << " -> " << to << ")\n";
+//  cout << "floating to integral (strict,        less, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -396,19 +396,19 @@ convert(const T &from, U &to,
                                 !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to integral (weak/fitting,  greater, " << from << " -> " << to << ")\n";
+//  cout << "floating to integral (weak/fitting,  greater, " << from << " -> " << to << ")\n";
   to = (U)from;
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<CP == convert_fitting || CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  cout << "floating to integral (strict,        greater, " << from << " -> " << to << ")\n";
+//  cout << "floating to integral (strict,        greater, " << from << " -> " << to << ")\n";
   throw std::bad_cast();
 }
 
@@ -507,7 +507,8 @@ convert(const T &from, char *to, S size, P precision,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
-  cout << "convert (T,char*,S,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ", precision: "<< precision << ")\n";
+//  cout << "convert (T,char*,S,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ", precision: "<< precision << ")\n";
+  throw std::bad_cast();
 }
 
 /*
@@ -525,7 +526,8 @@ convert(const T &from, char *to, S size,
         typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
-  cout << "convert (T,char*,S) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ")\n";
+//  cout << "convert (T,char*,S) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", size: " << size << ")\n";
+  throw std::bad_cast();
 }
 
 /*
@@ -536,14 +538,15 @@ convert(const T &from, char *to, S size,
  */
 template < int CP, class T, class P >
 void
-convert(const T &from, std::string &to, P precision,
+convert(const T &, std::string &, P ,
         typename oos::enable_if<CP == convert_weak ||
                                 CP == convert_fitting ||
                                 CP == convert_strict>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
-  cout << "convert (T,string,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", precision: " << precision << ")\n";
+//  cout << "convert (T,string,P) fallback (with CP: " << CP << " T: " << typeid(T).name() << ", precision: " << precision << ")\n";
+  throw std::bad_cast();
 }
 
 /*
@@ -568,7 +571,7 @@ convert(const char *from, T &to,
 
 template < int CP, class T >
 void
-convert(const char *from, T &to,
+convert(const char *, T &,
         typename oos::enable_if<(CP == convert_strict)>::type* = 0,
         typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_integral<T>::value ||
                                  CPP11_TYPE_TRAITS_NS::is_signed<T>::value)>::type* = 0)
