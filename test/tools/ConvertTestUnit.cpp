@@ -522,8 +522,7 @@ void
 convert(bool from, T &to,
         typename oos::enable_if<P == convert_fitting || P == convert_weak>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value>::type* = 0)
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
 {
   to = (from ? 1 : 0);
 }
@@ -597,6 +596,82 @@ convert(const T &from, U &to,
                                 CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
 {
   to = from;
+}
+
+/*
+ * from
+ *   bool
+ * to
+ *   char array
+ */
+template < int CP, class S >
+void
+convert(bool from, char *to, S size,
+        typename oos::enable_if<CP == convert_weak ||
+                                CP == convert_fitting>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+#ifdef WIN32
+  _snprintf_s(to, size, size, (from ? "true" : "false"));
+#else
+  snprintf(to, size, (from ? "true" : "false"));
+#endif
+}
+template < int CP, class S >
+void
+convert(bool , char *, S ,
+        typename oos::enable_if<CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+/*
+ * from
+ *   integral
+ * to
+ *   char array
+ */
+template < int CP, class T, class S >
+void
+convert(const T &from, char *to, S size,
+        typename oos::enable_if<CP == convert_weak ||
+                                CP == convert_fitting>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+#ifdef WIN32
+  _snprintf_s(to, size, size, "%d", from);
+#else
+  snprintf(to, size, "%lu", (long unsigned int)from);
+#endif
+}
+template < int CP, class T, class S >
+void
+convert(const T &from, char *to, S size,
+        typename oos::enable_if<CP == convert_weak ||
+                                CP == convert_fitting>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+#ifdef WIN32
+  _snprintf_s(to, size, size, "%d", from);
+#else
+  snprintf(to, size, "%ld", (long unsigned int)from);
+#endif
+}
+template < int CP, class T, class S >
+void
+convert(T , char *, S ,
+        typename oos::enable_if<CP == convert_strict>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+  throw std::bad_cast();
 }
 
 /*
@@ -801,6 +876,17 @@ convert(const T &, U &,
   throw std::bad_cast();
 }
 */
+
+template < int CP, class T >
+void
+convert(const T&, char*,
+        typename oos::enable_if<CP == convert_weak ||
+                                CP == convert_fitting ||
+                                CP == convert_strict>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
 template < int CP, class T, class U, class S >
 void
 convert(const T &, U &, S ,
@@ -934,6 +1020,15 @@ ConvertTestUnit::~ConvertTestUnit()
   try { \
     from a(in); \
     to b; \
+    convert<policy>(a, b); \
+    UNIT_FAIL("convertion "#from" to "#to" must fail"); \
+  } catch (std::bad_cast &) { \
+  }
+
+#define CONVERT_TO_PTR_EXPECT_FAILURE(from, in, to, out, policy) \
+  try { \
+    from a(in); \
+    to b(0); \
     convert<policy>(a, b); \
     UNIT_FAIL("convertion "#from" to "#to" must fail"); \
   } catch (std::bad_cast &) { \
@@ -2906,9 +3001,9 @@ void
 ConvertTestUnit::convert_to_char_pointer()
 {
 
-  CONVERT_EXPECT_FAILURE               (bool, true, char, "true", convert_strict);
-  CONVERT_EXPECT_FAILURE               (bool, true, char, "true", convert_fitting);
-  CONVERT_EXPECT_FAILURE               (bool, true, char, "true", convert_weak);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_strict);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_fitting);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, "true", 256, convert_strict);
   CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_fitting);
   CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_weak);
