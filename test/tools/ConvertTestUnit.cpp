@@ -647,6 +647,25 @@ convert(const T &from, char *to, S size,
   snprintf(to, size, "%lu", (long unsigned int)from);
 #endif
 }
+/*
+ * from
+ *   integral
+ * to
+ *   char array
+ */
+template < int CP, class S >
+void
+convert(char from, char *to, S size,
+        typename oos::enable_if<CP == convert_weak ||
+                                CP == convert_fitting>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+#ifdef WIN32
+  _snprintf_s(to, size, size, "%c", from);
+#else
+  snprintf(to, size, "%c", from);
+#endif
+}
 template < int CP, class T, class S >
 void
 convert(const T &from, char *to, S size,
@@ -654,6 +673,7 @@ convert(const T &from, char *to, S size,
                                 CP == convert_fitting>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value >::type* = 0,
         typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
@@ -3004,12 +3024,34 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_strict);
   CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (bool, true, char*, "true", convert_weak);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (bool, false, char*, "false", convert_fitting);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (bool, false, char*, "false", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, "true", 256, convert_strict);
   CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_fitting);
   CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_weak);
+
+  CONVERT_TO_PTR_EXPECT_FAILURE        (char, 'c', char*, "c", convert_strict);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (char, 'c', char*, "c", convert_fitting);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (char, 'c', char*, "c", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', char, "c", 256, convert_strict);
+  CONVERT_EXPECT_SUCCESS_SIZE          (char, 'c', char, "c", 256, convert_fitting);
+  CONVERT_EXPECT_SUCCESS_SIZE          (char, 'c', char, "c", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_weak);
+
+  CONVERT_TO_PTR_EXPECT_FAILURE        (short, 99, char*, "99", convert_strict);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (short, 99, char*, "99", convert_fitting);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (short, 99, char*, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, 99, char, "99", 256, convert_strict);
+  CONVERT_EXPECT_SUCCESS_SIZE          (short, 99, char, "99", 256, convert_fitting);
+  CONVERT_EXPECT_SUCCESS_SIZE          (short, 99, char, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_weak);
 
   /*
   CONVERT_ARRAY_EXPECT_SUCCESS(char, char, 'c', "c");
