@@ -658,7 +658,7 @@ convert(const T &, char *, S ,
 template < int CP, class T, class U, class P >
 void
 convert(const T &from, U &to, P precision,
-        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
                                 CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
@@ -671,10 +671,40 @@ convert(const T &from, U &to, P precision,
 
 /*
  * from
+ *   integral
+ * to
+ *   string/varchar
+ */
+template < int CP, class T, class U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
+                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type* = 0)
+{
+  char buf[256];
+  convert(from, buf, 256);
+  to.assign(buf);
+}
+template < int CP, class T, class U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
+                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * from
  *   T
  * to
  *   string
  */
+/*
 template < int CP, class T, class U, class P >
 void
 convert(const T &from, U &to, P precision,
@@ -688,7 +718,7 @@ convert(const T &from, U &to, P precision,
   convert(from, buf, 256);
   to.assign(buf);
 }
-
+*/
 /*
  * from
  *   const char array
@@ -792,6 +822,9 @@ template < int CP, class T, class U, class S >
 void
 convert(const T &, U &, S ,
         typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0,
+        typename oos::enable_if<!((CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
+                                   CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value) &&
+                                  CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value)>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   throw std::bad_cast();
@@ -863,10 +896,20 @@ ConvertTestUnit::~ConvertTestUnit()
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
-#define CONVERT_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
+#define CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
   try { \
     from a(in); \
     to b[size]; \
+    convert<policy>(a, b, size); \
+    UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
+  } catch (std::bad_cast &) { \
+    UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
+  }
+
+#define CONVERT_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
+  try { \
+    from a(in); \
+    to b; \
     convert<policy>(a, b, size); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
@@ -2871,8 +2914,8 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (bool, false, char*, "false", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (bool, false, char*, "false", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (bool, true, char, "true", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (bool, true, char, "true", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (bool, true, char, "true", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (bool, true, char, "true", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, "true", 256, 3, convert_weak);
@@ -2881,8 +2924,8 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (char, 'c', char*, "c", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (char, 'c', char*, "c", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', char, "c", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (char, 'c', char, "c", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (char, 'c', char, "c", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (char, 'c', char, "c", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (char, 'c', char, "c", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, "c", 256, 3, convert_weak);
@@ -2891,10 +2934,10 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (short, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (short, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (short, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (short, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (short, 99, char, "99", 256, convert_weak);
-  CONVERT_EXPECT_SUCCESS_SIZE          (short, -99, char, "-99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (short, -99, char, "-99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (short, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (short, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (short, -99, char, "-99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (short, -99, char, "-99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, char, "99", 256, 3, convert_weak);
@@ -2903,10 +2946,10 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (int, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (int, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (int, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (int, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (int, 99, char, "99", 256, convert_weak);
-  CONVERT_EXPECT_SUCCESS_SIZE          (int, -99, char, "-99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (int, -99, char, "-99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (int, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (int, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (int, -99, char, "-99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (int, -99, char, "-99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, char, "99", 256, 3, convert_weak);
@@ -2915,10 +2958,10 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (long, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (long, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (long, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (long, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (long, 99, char, "99", 256, convert_weak);
-  CONVERT_EXPECT_SUCCESS_SIZE          (long, -99, char, "-99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (long, -99, char, "-99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (long, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (long, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (long, -99, char, "-99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (long, -99, char, "-99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, char, "99", 256, 3, convert_weak);
@@ -2927,8 +2970,8 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned char, 'c', char*, "c", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned char, 'c', char*, "c", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, "c", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned char, 'c', char, "c", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned char, 'c', char, "c", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned char, 'c', char, "c", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned char, 'c', char, "c", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, "c", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, "c", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', char, "c", 256, 3, convert_weak);
@@ -2937,8 +2980,8 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned short, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned short, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned short, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned short, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned short, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned short, 99, char, "99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, char, "99", 256, 3, convert_weak);
@@ -2947,8 +2990,8 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned int, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned int, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned int, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned int, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned int, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned int, 99, char, "99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, char, "99", 256, 3, convert_weak);
@@ -2957,18 +3000,18 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned long, 99, char*, "99", convert_fitting);
   CONVERT_TO_PTR_EXPECT_FAILURE        (unsigned long, 99, char*, "99", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, char, "99", 256, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned long, 99, char, "99", 256, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (unsigned long, 99, char, "99", 256, convert_weak);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned long, 99, char, "99", 256, convert_fitting);
+  CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE (unsigned long, 99, char, "99", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, "99", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, char, "99", 256, 3, convert_weak);
 
-  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567, char*, "99.457", convert_strict);
-  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567, char*, "99.457", convert_fitting);
-  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567, char*, "99.457", convert_weak);
-  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567, char, "99.457", 256, convert_strict);
-  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567, char, "99.457", 256, convert_fitting);
-  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567, char, "99.457", 256, convert_weak);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567f, char*, "99.457", convert_strict);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567f, char*, "99.457", convert_fitting);
+  CONVERT_TO_PTR_EXPECT_FAILURE        (float, 99.4567f, char*, "99.457", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567f, char, "99.457", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567f, char, "99.457", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567f, char, "99.457", 256, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, char, "99.457", 256, 3, convert_strict);
   CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(float, 99.4567f, char, "99.457", 256, 3, convert_fitting);
   CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(float, 99.4567f, char, "99.457", 256, 3, convert_weak);
@@ -3105,19 +3148,19 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, std::string, "99", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, std::string, "99", 256, 3, convert_weak);
 
-  CONVERT_EXPECT_FAILURE               (float, 99.4567, std::string, "99.457", convert_strict);
-  CONVERT_EXPECT_FAILURE               (float, 99.4567, std::string, "99.457", convert_fitting);
-  CONVERT_EXPECT_FAILURE               (float, 99.4567, std::string, "99.457", convert_weak);
-  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567, std::string, "99.457", 3, convert_strict);
-  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567, std::string, "99.457", 3, convert_fitting);
-  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567, std::string, "99.457", 3, convert_weak);
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, std::string, "99.457", convert_strict);
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, std::string, "99.457", convert_fitting);
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, std::string, "99.457", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567f, std::string, "99.457", 3, convert_strict);
+  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567f, std::string, "99.457", 3, convert_fitting);
+  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567f, std::string, "99.457", 3, convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, std::string, "99.457", 256, 3, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, std::string, "99.457", 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, std::string, "99.457", 256, 3, convert_weak);
 
-  CONVERT_EXPECT_FAILURE        (double, 99.4567, std::string, "99.457", convert_strict);
-  CONVERT_EXPECT_FAILURE        (double, 99.4567, std::string, "99.457", convert_fitting);
-  CONVERT_EXPECT_FAILURE        (double, 99.4567, std::string, "99.457", convert_weak);
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, std::string, "99.457", convert_strict);
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, std::string, "99.457", convert_fitting);
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, std::string, "99.457", convert_weak);
   CONVERT_EXPECT_FAILURE_SIZE          (double, 99.4567, std::string, "99.457", 3, convert_strict);
   CONVERT_EXPECT_SUCCESS_SIZE          (double, 99.4567, std::string, "99.457", 3, convert_fitting);
   CONVERT_EXPECT_SUCCESS_SIZE          (double, 99.4567, std::string, "99.457", 3, convert_weak);
