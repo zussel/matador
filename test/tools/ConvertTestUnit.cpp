@@ -665,8 +665,20 @@ convert(const T &from, U &to, P precision,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
 {
   char buf[256];
-  convert(from, buf, 256, precision);
+  convert<CP>(from, buf, 256, precision);
   to.assign(buf);
+}
+
+template < int CP, class T, class U, class P >
+void
+convert(const T &, U &, P ,
+        typename oos::enable_if<((CP & convert_strict) > 0)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
+                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
+{
+  throw std::bad_cast();
 }
 
 /*
@@ -684,12 +696,12 @@ convert(const T &from, U &to,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type* = 0)
 {
   char buf[256];
-  convert(from, buf, 256);
+  convert<CP>(from, buf, 256);
   to.assign(buf);
 }
 template < int CP, class T, class U >
 void
-convert(const T &from, U &to,
+convert(const T &, U &,
         typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
                                 CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
@@ -3191,6 +3203,123 @@ ConvertTestUnit::convert_to_string()
 void
 ConvertTestUnit::convert_to_varchar()
 {
+  CONVERT_EXPECT_FAILURE               (bool, true, varchar<64>, "true", convert_strict);
+  CONVERT_EXPECT_SUCCESS               (bool, true, varchar<64>, "true", convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (bool, true, varchar<64>, "true", convert_weak);
+  CONVERT_EXPECT_SUCCESS               (bool, false, varchar<64>, "false", convert_fitting);
+  CONVERT_EXPECT_SUCCESS               (bool, false, varchar<64>, "false", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, varchar<64>, "true", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, varchar<64>, "true", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (bool, true, varchar<64>, "true", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, varchar<64>, "true", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, varchar<64>, "true", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, varchar<64>, "true", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (char, 'c', varchar<64>, "c", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (char, 'c', varchar<64>, "c", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (char, 'c', varchar<64>, "c", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', varchar<64>, "c", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', varchar<64>, "c", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (char, 'c', varchar<64>, "c", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', varchar<64>, "c", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', varchar<64>, "c", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', varchar<64>, "c", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (short, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (short, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (short, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, varchar<64>, "-99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (short, -99, varchar<64>, "-99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (int, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (int, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (int, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, varchar<64>, "-99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (int, -99, varchar<64>, "-99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (long, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (long, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (long, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, varchar<64>, "-99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (long, -99, varchar<64>, "-99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (unsigned char, 'c', varchar<64>, "c", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (unsigned char, 'c', varchar<64>, "c", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (unsigned char, 'c', varchar<64>, "c", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', varchar<64>, "c", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', varchar<64>, "c", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', varchar<64>, "c", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', varchar<64>, "c", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', varchar<64>, "c", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 'c', varchar<64>, "c", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (unsigned short, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (unsigned short, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (unsigned short, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned short, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (unsigned int, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (unsigned int, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (unsigned int, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned int, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE        (unsigned long, 99, varchar<64>, "99", convert_strict);
+  CONVERT_EXPECT_SUCCESS        (unsigned long, 99, varchar<64>, "99", convert_fitting);
+  CONVERT_EXPECT_SUCCESS        (unsigned long, 99, varchar<64>, "99", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, varchar<64>, "99", 256, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, varchar<64>, "99", 256, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE          (unsigned long, 99, varchar<64>, "99", 256, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, varchar<64>, "99", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, varchar<64>, "99", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 99, varchar<64>, "99", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, varchar<64>, "99.457", convert_strict);
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, varchar<64>, "99.457", convert_fitting);
+  CONVERT_EXPECT_FAILURE               (float, 99.4567f, varchar<64>, "99.457", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (float, 99.4567f, varchar<64>, "99.457", 3, convert_strict);
+  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567f, varchar<64>, "99.457", 3, convert_fitting);
+  CONVERT_EXPECT_SUCCESS_SIZE          (float, 99.4567f, varchar<64>, "99.457", 3, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, varchar<64>, "99.457", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, varchar<64>, "99.457", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 99.4567f, varchar<64>, "99.457", 256, 3, convert_weak);
+
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, varchar<64>, "99.457", convert_strict);
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, varchar<64>, "99.457", convert_fitting);
+  CONVERT_EXPECT_FAILURE               (double, 99.4567, varchar<64>, "99.457", convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE          (double, 99.4567, varchar<64>, "99.457", 3, convert_strict);
+  CONVERT_EXPECT_SUCCESS_SIZE          (double, 99.4567, varchar<64>, "99.457", 3, convert_fitting);
+  CONVERT_EXPECT_SUCCESS_SIZE          (double, 99.4567, varchar<64>, "99.457", 3, convert_weak);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.4567, varchar<64>, "99.457", 256, 3, convert_strict);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.4567, varchar<64>, "99.457", 256, 3, convert_fitting);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 99.4567, varchar<64>, "99.457", 256, 3, convert_weak);
   /*
   CONVERT_EXPECT_SUCCESS(char, varchar<64>, 'c', "c");
   // TODO: check on 1,true,on
