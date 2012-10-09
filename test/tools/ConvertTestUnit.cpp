@@ -900,14 +900,14 @@ ConvertTestUnit::ConvertTestUnit()
 ConvertTestUnit::~ConvertTestUnit()
 {}
 
-#define CONVERT_NUMERIC_EXPECT_SUCCESS(T, U, policy, boundary) \
+#define CONVERT_NUMERIC_EXPECT_SUCCESS(FROM, TO, policy, boundary) \
   try { \
-    T from(std::numeric_limits<T>::##boundary()); \
-    U to; \
+    FROM from(std::numeric_limits<FROM>::boundary()); \
+    TO to; \
     convert<policy>(from, to); \
-    UNIT_ASSERT_EQUAL(to, std::numeric_limits<T>::##boundary(), "convert failed: "#boundary" values are not equal"); \
+    UNIT_ASSERT_EQUAL(to, std::numeric_limits<FROM>::boundary(), "convert failed: "#boundary" values are not equal"); \
   } catch (std::bad_cast &) { \
-    UNIT_FAIL("convertion from "#T" to "#U" "#boundary" values must not fail"); \
+    UNIT_FAIL("convertion from "#FROM" to "#TO" "#boundary" values must not fail"); \
   }
 
 #define CONVERT_EXPECT_SUCCESS(from, in, to, out, policy) \
@@ -950,12 +950,12 @@ ConvertTestUnit::~ConvertTestUnit()
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
-#define CONVERT_NUMERIC_EXPECT_FAILURE(T, U, policy, boundary) \
+#define CONVERT_NUMERIC_EXPECT_FAILURE(FROM, TO, policy, boundary) \
   try { \
-    T from(std::numeric_limits<T>::##boundary()); \
-    U to; \
+    FROM from(std::numeric_limits<FROM>::boundary()); \
+    TO to; \
     convert<policy>(from, to); \
-    UNIT_FAIL("convertion from "#T" to "#U" "#boundary" values must fail"); \
+    UNIT_FAIL("convertion from "#FROM" to "#TO" "#boundary" values must fail"); \
   } catch (std::bad_cast &) { \
   }
 
