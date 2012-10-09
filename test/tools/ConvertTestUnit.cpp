@@ -6,6 +6,7 @@
 #include "tools/enable_if.hpp"
 
 #include <type_traits>
+#include <limits>
 #include <typeinfo>
 #include <iostream>
 #include <string>
@@ -222,16 +223,31 @@ convert(const T &, U &,
 template < int P, class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<((P & convert_fitting_weak) > 0)>::type* = 0,
+        typename oos::enable_if<((P & convert_fitting) > 0)>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0,
         typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
-        typename oos::enable_if<(sizeof(T) <= sizeof(U))>::type* = 0)
+        typename oos::enable_if<(sizeof(T) < sizeof(U))>::type* = 0)
 {
   to = from;
+}
+template < int P, class T, class U >
+void
+convert(const T &from, U &to,
+        typename oos::enable_if<((P & convert_weak) > 0)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0,
+        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
+                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0)
+{
+  to = static_cast<U>(from);
 }
 /*
  * from
@@ -248,27 +264,13 @@ convert(const T &, U &,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0,
         typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
                                  CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
-        typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
+        typename oos::enable_if<!(sizeof(T) < sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
-}
-
-template < int P, class T, class U >
-void
-convert(const T &from, U &to,
-        typename oos::enable_if<P == convert_weak>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
-        typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
-{
-  to = (U)from;
 }
 
 /*******************************************
@@ -898,6 +900,16 @@ ConvertTestUnit::ConvertTestUnit()
 ConvertTestUnit::~ConvertTestUnit()
 {}
 
+#define CONVERT_NUMERIC_EXPECT_SUCCESS(T, U, policy, boundary) \
+  try { \
+    T from(std::numeric_limits<T>::##boundary()); \
+    U to; \
+    convert<policy>(from, to); \
+    UNIT_ASSERT_EQUAL(to, std::numeric_limits<T>::##boundary(), "convert failed: "#boundary" values are not equal"); \
+  } catch (std::bad_cast &) { \
+    UNIT_FAIL("convertion from "#T" to "#U" "#boundary" values must not fail"); \
+  }
+
 #define CONVERT_EXPECT_SUCCESS(from, in, to, out, policy) \
   try { \
     from a(in); \
@@ -936,6 +948,15 @@ ConvertTestUnit::~ConvertTestUnit()
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
+  }
+
+#define CONVERT_NUMERIC_EXPECT_FAILURE(T, U, policy, boundary) \
+  try { \
+    T from(std::numeric_limits<T>::##boundary()); \
+    U to; \
+    convert<policy>(from, to); \
+    UNIT_FAIL("convertion from "#T" to "#U" "#boundary" values must fail"); \
+  } catch (std::bad_cast &) { \
   }
 
 #define CONVERT_EXPECT_FAILURE(from, in, to, out, policy) \
@@ -1161,6 +1182,12 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, 1, 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, char, 1, 256, 3, convert_weak);
 
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_strict, min);
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_strict, max);
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_fitting, min);
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_fitting, max);
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_weak, min);
+  CONVERT_NUMERIC_EXPECT_SUCCESS       (char, char, convert_weak, max);
   CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_strict);
   CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_fitting);
   CONVERT_EXPECT_SUCCESS               (char, 'c', char, 'c', convert_weak);
@@ -1171,9 +1198,20 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, 'c', 256, 3, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 'c', char, 'c', 256, 3, convert_weak);
 
+  /* OLD */
   CONVERT_EXPECT_FAILURE               (short, -99, char, -99, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE       (short, char, convert_strict, max);
+  CONVERT_NUMERIC_EXPECT_FAILURE       (short, char, convert_strict, min);
+  /* OLD */
   CONVERT_EXPECT_FAILURE               (short, -99, char, -99, convert_fitting);
-  CONVERT_EXPECT_SUCCESS               (short, -99, char, -99, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE       (short, char, convert_fitting, max);
+  CONVERT_NUMERIC_EXPECT_FAILURE       (short, char, convert_fitting, min);
+
+  CONVERT_EXPECT_SUCCESS               (short, std::numeric_limits<short>::min(), char, 0, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (short, std::numeric_limits<char>::min(), char, std::numeric_limits<char>::min(), convert_weak);
+  CONVERT_EXPECT_SUCCESS               (short, std::numeric_limits<short>::max(), char, -1, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (short, std::numeric_limits<char>::max(), char, std::numeric_limits<char>::max(), convert_weak);
+
   CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, -99, 256, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, -99, 256, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE          (short, -99, char, -99, 256, convert_weak);
@@ -1183,7 +1221,12 @@ ConvertTestUnit::convert_to_char()
 
   CONVERT_EXPECT_FAILURE               (int, -99, char, -99, convert_strict);
   CONVERT_EXPECT_FAILURE               (int, -99, char, -99, convert_fitting);
-  CONVERT_EXPECT_SUCCESS               (int, -99, char, -99, convert_weak);
+
+  CONVERT_EXPECT_SUCCESS               (int, std::numeric_limits<int>::min(), char, 0, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (int, std::numeric_limits<char>::min(), char, std::numeric_limits<char>::min(), convert_weak);
+  CONVERT_EXPECT_SUCCESS               (int, std::numeric_limits<int>::max(), char, -1, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (int, std::numeric_limits<char>::max(), char, std::numeric_limits<char>::max(), convert_weak);
+
   CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, -99, 256, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, -99, 256, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE          (int, -99, char, -99, 256, convert_weak);
@@ -1193,7 +1236,12 @@ ConvertTestUnit::convert_to_char()
 
   CONVERT_EXPECT_FAILURE               (long, -99, char, -99, convert_strict);
   CONVERT_EXPECT_FAILURE               (long, -99, char, -99, convert_fitting);
-  CONVERT_EXPECT_SUCCESS               (long, -99, char, -99, convert_weak);
+
+  CONVERT_EXPECT_SUCCESS               (long, std::numeric_limits<long>::min(), char, 0, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (long, std::numeric_limits<char>::min(), char, std::numeric_limits<char>::min(), convert_weak);
+  CONVERT_EXPECT_SUCCESS               (long, std::numeric_limits<long>::max(), char, -1, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (long, std::numeric_limits<char>::max(), char, std::numeric_limits<char>::max(), convert_weak);
+
   CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, -99, 256, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, -99, 256, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE          (long, -99, char, -99, 256, convert_weak);
@@ -1202,9 +1250,14 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, -99, char, -99, 256, 3, convert_weak);
 
   CONVERT_EXPECT_FAILURE               (unsigned char, 'c', char, 'c', convert_strict);
-  // Todo: must fail!
-  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', char, 'c', convert_fitting);
-  CONVERT_EXPECT_SUCCESS               (unsigned char, 'c', char, 'c', convert_weak);
+  CONVERT_EXPECT_FAILURE               (unsigned char, 'c', char, 'c', convert_fitting);
+  CONVERT_EXPECT_FAILURE               (unsigned char, std::numeric_limits<unsigned char>::min(), char, 0, convert_fitting);
+
+  CONVERT_EXPECT_SUCCESS               (unsigned char, std::numeric_limits<unsigned char>::min(), char, 0, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, std::numeric_limits<char>::min(), char, std::numeric_limits<char>::min(), convert_weak);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, std::numeric_limits<unsigned char>::max(), char, -1, convert_weak);
+  CONVERT_EXPECT_SUCCESS               (unsigned char, std::numeric_limits<char>::max(), char, std::numeric_limits<char>::max(), convert_weak);
+
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_strict);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_fitting);
   CONVERT_EXPECT_FAILURE_SIZE          (unsigned char, 'c', char, 'c', 256, convert_weak);
