@@ -1172,6 +1172,137 @@ ConvertTestUnit::convert_to_bool()
 void
 ConvertTestUnit::convert_to_char()
 {
+  CONVERT_NUMERIC_EXPECT_FAILURE               (bool, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (bool, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (bool, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (bool, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (bool, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (bool, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (bool, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (bool, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (bool, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(bool, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(bool, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(bool, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (char, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (char, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (char, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (char, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(char, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(char, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(char, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (short, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (short, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (short, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (short, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (short, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (short, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (short, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (short, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (short, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (short, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (short, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(short, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(short, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(short, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (int, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (int, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (int, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (int, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (int, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (int, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (int, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (int, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (int, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (int, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (int, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(int, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(int, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(int, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (long, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (long, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (long, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (long, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(long, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(long, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(long, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned char, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned char, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned char, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned char, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned char, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned char, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned char, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned char, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned char, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned char, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned char, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned short, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned short, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned short, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned short, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned short, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned short, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned short, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned short, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned short, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned short, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned short, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned int, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned int, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned int, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned int, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned int, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned int, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned int, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned int, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned int, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned int, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned int, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, char, min, 256, 3, convert_weak);
+
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, char, min, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, char, max, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, char, min, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, char, max, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned long, char, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned long, char, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned long, char, min,  0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned long, char, max, -1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned long, char, min, 256, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned long, char, min, 256, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (unsigned long, char, min, 256, convert_weak);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, char, min, 256, 3, convert_strict);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, char, min, 256, 3, convert_fitting);
+  CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, char, min, 256, 3, convert_weak);
+
   CONVERT_EXPECT_FAILURE               (bool, true, char, 1, convert_strict);
   CONVERT_EXPECT_SUCCESS               (bool, true, char, 1, convert_fitting);
   CONVERT_EXPECT_SUCCESS               (bool, true, char, 1, convert_weak);
