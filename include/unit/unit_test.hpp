@@ -288,6 +288,7 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
+  /*
   template < class T >
   void assert_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
@@ -298,7 +299,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-
+  */
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
@@ -313,6 +314,29 @@ public:
 
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  {
+    if (a != b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  template < class X >
+  void assert_equal(const X &a, const bool &b, const std::string &msg, int line, const char *file)
+  {
+    bool cmp = a > 0;
+    if (cmp != b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  template <>
+  void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
       // throw exception

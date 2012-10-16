@@ -951,7 +951,7 @@ ConvertTestUnit::~ConvertTestUnit()
     FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
     TO to; \
     convert<POLICY>(from, to); \
-    UNIT_ASSERT_EQUAL(to, RESULT, "convert failed: "#BOUNDARY" values are not equal"); \
+    UNIT_ASSERT_EQUAL(to, (TO)RESULT, "convert failed: "#BOUNDARY" values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
   }

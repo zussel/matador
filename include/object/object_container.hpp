@@ -52,6 +52,20 @@ public:
     writer->write("value", value_);
   }
 
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("value", value_);
+  }
+
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("value", value_);
+  }
+
   value_type value() const
   {
     return value_;

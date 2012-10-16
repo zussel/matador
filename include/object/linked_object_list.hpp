@@ -89,6 +89,26 @@ public:
     writer->write("next", next_);
   }
 
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    base_item::deserialize(deserializer);
+    deserializer.read("first", first_);
+    deserializer.read("last", last_);
+    deserializer.read("prev", prev_);
+    deserializer.read("next", next_);
+  }
+
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    base_item::serialize(writer);
+    serializer.write("first", first_);
+    serializer.write("last", last_);
+    serializer.write("prev", prev_);
+    serializer.write("next", next_);
+  }
+
   self_ref first() const
   {
     return first_;

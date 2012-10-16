@@ -103,6 +103,18 @@ public:
    */
 	virtual void read_from(object_reader *reader);
 
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    deserializer.read("id", id_);
+  }
+
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    serializer.write("id", id_);
+  }
+
   /**
    * @brief Interface to write from object members
    * 

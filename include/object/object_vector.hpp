@@ -75,6 +75,19 @@ public:
     writer->write("item_index", index_);
   }
 
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    base_item::deserialize(deserializer);
+    deserializer.read("item_index", index_);
+  }
+  template < class S >
+  void serialize(S &serializer)
+  {
+    base_item::serialize(serializer);
+    serializer.write("item_index", index_);
+  }
+
   size_type index() const
   {
     return index_;
