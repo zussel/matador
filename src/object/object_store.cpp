@@ -417,7 +417,7 @@ object_store::insert_object(object *o, bool notify)
   insert_proxy(node, oproxy);
   // create object
   object_creator oc(*this, notify);
-  o->read_from(&oc);
+  o->deserialize(oc);
   // set corresponding prototype node
   oproxy->node = node;
   // set this into persistent object

@@ -63,7 +63,7 @@ void TablePrinter::print(std::ostream &out, const std::string &type, const std::
    */
   width_ = 0;
   state_ = INITIALIZE;
-  o->write_to(this);
+  o->serialize(*this);
   out << "+" << setfill('-') << setw(width_) << "-+" << "\n";
   out << "| " << setfill(' ') << setw(width_-2) << left << type.c_str() << "|\n";
 
@@ -98,7 +98,7 @@ void TablePrinter::print_line(std::ostream &out, state_t state, const object *o,
 {
   state_ = state;
   line_.str("");
-  o->write_to(this);
+  o->serialize(*this);
   out << prefix << line_.str() << "\n";
 }
 

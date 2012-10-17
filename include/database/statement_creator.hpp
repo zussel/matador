@@ -58,7 +58,7 @@ private:
 };
 
 template < class T >
-class statement_field_creator : public statement_creator, public object_writer
+class statement_field_creator : public statement_creator
 {
 public:
   statement_field_creator() : first_(true) {}
@@ -77,13 +77,13 @@ protected:
   bool is_first() const { return first_; }
   void first(bool f) { first_ = f; }
 
-private:
-  virtual void write(const char *id, char x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, float x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, double x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, short x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, int x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, long x)
+public:
+  template < class T >
+  void write(const char *id, const T &x)
+  {
+    write_field(id, types_.type_string(x));
+  }
+	void write(const char *id, long x)
   {
     if (strcmp(id, "id") == 0) {
       write_pk_field(id, types_.type_string(x));
@@ -91,14 +91,6 @@ private:
       write_field(id, types_.type_string(x));
     }
   }
-	virtual void write(const char *id, unsigned short x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, unsigned int x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, unsigned long x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, bool x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, const char *x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, const std::string &x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, const varchar_base &x) { write_field(id, types_.type_string(x)); }
-	virtual void write(const char *id, const object_base_ptr &x) { write_field(id, types_.type_string(x)); }
 
 private:
   type_provider types_;
@@ -119,7 +111,7 @@ public:
   {
     begin(table_name);
 
-    o->write_to(this);
+    o->serialize(*this);
 
     end(table_name, 0);
 
@@ -170,7 +162,7 @@ public:
   {
     begin(table_name);
 
-    o->write_to(this);
+    o->serialize(*this);
 
     end(table_name, where_clause);
 
@@ -222,7 +214,7 @@ public:
     begin(table_name);
 
     do {
-      o->write_to(this);
+      o->serialize(*this);
     } while (step());
 
     end(table_name, 0);
@@ -289,7 +281,7 @@ public:
   {
     begin(table_name);
 
-    o->write_to(this);
+    o->serialize(*this);
 
     end(table_name, where_clause);
 

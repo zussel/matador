@@ -18,8 +18,6 @@
 #ifndef OBJECT_CREATOR_HPP
 #define OBJECT_CREATOR_HPP
 
-#include "object/object_atomizer.hpp"
-
 #include <stack>
 
 namespace oos {
@@ -27,6 +25,7 @@ namespace oos {
 class object_store;
 class object_base_ptr;
 class object;
+class object_container;
 
 /**
  * @cond OOS_DEV
@@ -38,7 +37,7 @@ class object;
  * inserted into the object store.
  * This class does these tasks.
  */
-class object_creator : public object_reader
+class object_creator
 {
 public:
   /**
@@ -56,9 +55,11 @@ public:
 
   virtual ~object_creator();
 
-private:
-  virtual void read(const char*, object_base_ptr &x);
-  virtual void read(const char*, object_container &x);
+  template < class T >
+  void read(const char*, const T&) {}
+
+  void read(const char*, object_base_ptr &x);
+  void read(const char*, object_container &x);
 
 private:
   std::stack<object*> object_stack_;

@@ -44,7 +44,7 @@ void object_creator::read(const char*, object_base_ptr &x)
       x.proxy_->link_ptr();
     }
     object_stack_.push(x.ptr());
-    x.ptr()->read_from(this);
+    x.ptr()->deserialize(*this);
     object_stack_.pop();
   } else if (x.proxy_) {
     // count reference

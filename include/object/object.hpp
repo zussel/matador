@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-//#include "object/object_value.hpp"
-#include "object/object_atomizable.hpp"
 #include "object/attribute_serializer.hpp"
 
 #include <cstring>
@@ -56,8 +54,6 @@ class object_store;
 
 template < class T > class object_ref;
 template < class T > class object_ptr;
-
-//class object_atomizer;
 
 /**
  * @class object
@@ -92,17 +88,6 @@ public:
    */
 	virtual ~object();
 	
-  /**
-   * @brief Interface to read into object members
-   * 
-   * The read_from method is used to accept
-   * all members of an object. It is used
-   * to change them.
-   * 
-   * @param a An object of type object_atomizer to read the object member values from.
-   */
-//	virtual void read_from(object_reader *reader);
-
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -114,16 +99,6 @@ public:
   {
     serializer.write("id", id_);
   }
-
-  /**
-   * @brief Interface to write from object members
-   * 
-   * The write to method reads all object members
-   * and writes them to the given object_atomizer object.
-   *
-   * @param a An object of type object_atomizer to write the object member values to.
-   */
-//	virtual void write_to(object_writer *writer) const;
 
   /**
    * Returns the classname of the object
@@ -177,24 +152,24 @@ public:
   bool set(const std::string &name, T val,
            typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value &&
+                                    !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
   {
     attribute_reader<T> reader(name, val);
-    read_from(&reader);
+    deserialize(reader);
+//    read_from(&reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
   }
 
+  // varchar and string
   template < class T >
   bool set(const std::string &name, T val,
-           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
-                                    (CPP11_TYPE_TRAITS_NS::is_same<T, varchar_base>::value ||
-                                     CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value))>::type* = 0)
+           typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value ||
+                                    CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
   {
     attribute_reader<T> reader(name, val);
-    read_from(&reader);
+    deserialize(reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
   }
@@ -202,7 +177,7 @@ public:
   bool set(const std::string &name, const char *val, int )
   {
     attribute_reader<const char*> reader(name, val);
-    read_from(&reader);
+    deserialize(reader);
     return reader.success();
 //    return update_value(this, name.c_str(), val);
   }
@@ -222,7 +197,7 @@ public:
                                     CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
   {
     attribute_writer<T> writer(name, val, precision);
-    write_to(&writer);
+    serialize(writer);
     return writer.success();
 //    return retrieve_value(this, name.c_str(), val);
   }
@@ -242,7 +217,7 @@ public:
                                     !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
   {
     attribute_writer<T> writer(name, val, 2);
-    write_to(&writer);
+    serialize(writer);
     return writer.success();
 //    return retrieve_value(this, name.c_str(), val);
   }

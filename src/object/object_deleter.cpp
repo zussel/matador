@@ -51,7 +51,7 @@ object_deleter::is_deletable(object *obj)
   object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj, false)));
 
   // start collecting information
-  obj->read_from(this);
+  obj->deserialize(*this);
   
   return check_object_count_map();
 }
@@ -98,7 +98,7 @@ void object_deleter::check_object(object *o, bool is_ref)
   }
   if (!is_ref) {
     ret.first->second.ignore = false;
-    o->read_from(this);
+    o->deserialize(*this);
   }
 }
 
@@ -120,7 +120,7 @@ object_deleter::check_object_list_node(object *node)
   }
 
   // start collecting information
-  node->read_from(this);
+  node->deserialize(*this);
 }
 
 bool

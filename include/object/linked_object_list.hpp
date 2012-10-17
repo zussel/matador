@@ -31,7 +31,6 @@
 #endif
 
 #include "object/object_list.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/object_container.hpp"
 
 /*
@@ -71,24 +70,7 @@ public:
     : base_item(c, v)
   {}
   virtual ~linked_object_list_item() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    base_item::read_from(reader);
-    reader->read("first", first_);
-    reader->read("last", last_);
-    reader->read("prev", prev_);
-    reader->read("next", next_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    base_item::write_to(writer);
-    writer->write("first", first_);
-    writer->write("last", last_);
-    writer->write("prev", prev_);
-    writer->write("next", next_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {

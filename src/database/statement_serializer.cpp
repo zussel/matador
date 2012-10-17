@@ -42,7 +42,8 @@ void statement_serializer::bind(statement_impl *stmt, object *o, bool bind_id)
 
   column_ = 0;
   // bind parameter
-  o->write_to(this);
+//  o->write_to(this);
+  o->serialize(*this);
 
   if (bind_id) {
     stmt_->bind(++column_, (int)o->id());
@@ -55,7 +56,8 @@ void statement_serializer::read(statement_impl *stmt, object *o)
 
   column_ = 0;
 
-  o->read_from(this);
+//  o->read_from(this);
+  o->deserialize(*this);
 }
 
 void statement_serializer::read(const char *id, char &x)

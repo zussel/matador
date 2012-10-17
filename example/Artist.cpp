@@ -1,7 +1,6 @@
 #include "Artist.hpp"
 #include "Album.hpp"
 
-#include "object/object_atomizer.hpp"
 #include "object/object_expression.hpp"
 
 using namespace oos;

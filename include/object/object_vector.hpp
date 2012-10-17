@@ -21,7 +21,6 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object_value.hpp"
 #include "object/object_container.hpp"
 #include "object/object_exception.hpp"
 
@@ -63,18 +62,7 @@ public:
     , index_(i)
   {}
   virtual ~object_vector_item() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    base_item::read_from(reader);
-    reader->read("item_index", index_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    base_item::write_to(writer);
-    writer->write("item_index", index_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {

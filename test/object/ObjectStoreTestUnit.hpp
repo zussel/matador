@@ -8,7 +8,6 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object_atomizer.hpp"
 
 class ObjectStoreTestUnit : public oos::unit_test
 {

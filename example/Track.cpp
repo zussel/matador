@@ -1,7 +1,5 @@
 #include "Track.hpp"
 
-#include "object/object_atomizer.hpp"
-
 using namespace oos;
 
 Track::Track()

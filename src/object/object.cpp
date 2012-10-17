@@ -17,7 +17,6 @@
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/prototype_node.hpp"
 
 namespace oos {
@@ -31,17 +30,7 @@ object::object()
 object::~object()
 {
 }
-/*
-void object::read_from(object_reader *reader)
-{
-	reader->read("id", id_);
-}
 
-void object::write_to(object_writer *writer) const
-{
-	writer->write("id", id_);
-}
-*/
 const char* object::classname() const
 {
   if (proxy_ && proxy_->node) {

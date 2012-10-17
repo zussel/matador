@@ -1,7 +1,7 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "Item.hpp"
 
-#include "object/object_value.hpp"
+//#include "object/object_value.hpp"
 #include "object/object_expression.hpp"
 #include "object/object_serializer.hpp"
 #include "object/object_view.hpp"
@@ -19,7 +19,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("ObjectStore Test Unit")
 {
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
+//  add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
   add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
   add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
@@ -266,6 +266,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
   UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
 }
 
+/*
 void
 ObjectStoreTestUnit::access_value()
 {
@@ -318,6 +319,7 @@ ObjectStoreTestUnit::access_value()
   UNIT_ASSERT_TRUE(retrieve_value(owsub, "ptr", osmpl), "couldn't get object field [simple]");
   UNIT_ASSERT_EQUAL(osmpl.get(), i, "retrieved object isn't the expected");
 }
+*/
 
 void
 ObjectStoreTestUnit::set_test()

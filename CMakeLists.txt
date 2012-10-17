@@ -56,7 +56,6 @@ SET(OBJECT_SOURCES
   src/object/object_deleter.cpp
   src/object/object_ptr.cpp
   src/object/object_store.cpp
-  src/object/object_value.cpp
   src/object/object_proxy.cpp
   src/object/object_serializer.cpp
   src/object/object_convert.cpp
@@ -73,8 +72,6 @@ SET(OBJECT_HEADER
 SET(OBJECT_INSTALL_HEADER
   include/object/attribute_serializer.hpp
   include/object/object.hpp
-  include/object/object_atomizer.hpp
-  include/object/object_atomizable.hpp
   include/object/object_exception.hpp
   include/object/object_ptr.hpp
   include/object/object_store.hpp
@@ -83,7 +80,6 @@ SET(OBJECT_INSTALL_HEADER
   include/object/object_list.hpp
   include/object/object_vector.hpp
   include/object/linked_object_list.hpp
-  include/object/object_value.hpp
   include/object/object_view.hpp
   include/object/object_proxy.hpp
   include/object/prototype_node.hpp

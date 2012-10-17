@@ -3,7 +3,6 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/prototype_node.hpp"
 
 #include "Item.hpp"

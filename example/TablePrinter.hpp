@@ -3,7 +3,6 @@
 
 #include "Artist.hpp"
 
-#include "object/object_atomizer.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_view.hpp"
 #include "object/object_store.hpp"
@@ -26,7 +25,7 @@ namespace oos {
   class object_base_ptr;
 }
 
-class TablePrinter : public oos::object_writer
+class TablePrinter
 {
 private:
   enum state_t {
@@ -67,6 +66,7 @@ private:
     }
   }
 
+public:
   virtual void write(const char *id, char x);
 	virtual void write(const char *id, float x);
 	virtual void write(const char *id, double x);

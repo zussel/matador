@@ -44,7 +44,8 @@ object_serializer::~object_serializer()
 bool object_serializer::serialize(const object *o, byte_buffer &buffer)
 {
   buffer_ = &buffer;
-  o->write_to(this);
+//  o->write_to(this);
+  o->serialize(*this);
   buffer_ = NULL;
   return true;
 }
@@ -53,60 +54,11 @@ bool object_serializer::deserialize(object *o, byte_buffer &buffer, object_store
 {
   ostore_ = ostore;
   buffer_ = &buffer;
-  o->read_from(this);
+//  o->read_from(this);
+  o->deserialize(*this);
   buffer_ = NULL;
   ostore_ = NULL;
   return true;
-}
-
-void object_serializer::write(const char*, char c)
-{
-  buffer_->append(&c, sizeof(c));
-}
-
-void object_serializer::write(const char*, float f)
-{
-  buffer_->append(&f, sizeof(f));
-}
-
-void object_serializer::write(const char*, double f)
-{
-  buffer_->append(&f, sizeof(f));
-}
-
-void object_serializer::write(const char*, short x)
-{
-  buffer_->append(&x, sizeof(x));
-}
-
-void object_serializer::write(const char*, int i)
-{
-  buffer_->append(&i, sizeof(i));
-}
-
-void object_serializer::write(const char*, long l)
-{
-  buffer_->append(&l, sizeof(l));
-}
-
-void object_serializer::write(const char*, unsigned short x)
-{
-  buffer_->append(&x, sizeof(x));
-}
-
-void object_serializer::write(const char*, unsigned int x)
-{
-  buffer_->append(&x, sizeof(x));
-}
-
-void object_serializer::write(const char*, unsigned long x)
-{
-  buffer_->append(&x, sizeof(x));
-}
-
-void object_serializer::write(const char*, bool b)
-{
-  buffer_->append(&b, sizeof(b));
 }
 
 void object_serializer::write(const char*, const char *c)
@@ -146,56 +98,6 @@ void object_serializer::write(const char*, const object_container &x)
   // for each item write id and type
   write(0, x.size());
   x.for_each(std::tr1::bind(&object_serializer::write_object_container_item, this, _1));  
-}
-
-void object_serializer::read(const char*, char &c)
-{
-  buffer_->release(&c, sizeof(c));
-}
-
-void object_serializer::read(const char*, float &f)
-{
-  buffer_->release(&f, sizeof(f));
-}
-
-void object_serializer::read(const char*, double &f)
-{
-  buffer_->release(&f, sizeof(f));
-}
-
-void object_serializer::read(const char*, short &x)
-{
-  buffer_->release(&x, sizeof(x));
-}
-
-void object_serializer::read(const char*, int &i)
-{
-  buffer_->release(&i, sizeof(i));
-}
-
-void object_serializer::read(const char*, long &l)
-{
-  buffer_->release(&l, sizeof(l));
-}
-
-void object_serializer::read(const char*, unsigned short &x)
-{
-  buffer_->release(&x, sizeof(x));
-}
-
-void object_serializer::read(const char*, unsigned int &x)
-{
-  buffer_->release(&x, sizeof(x));
-}
-
-void object_serializer::read(const char*, unsigned long &x)
-{
-  buffer_->release(&x, sizeof(x));
-}
-
-void object_serializer::read(const char*, bool &b)
-{
-  buffer_->release(&b, sizeof(b));
 }
 
 void object_serializer::read(const char*, char *&c)

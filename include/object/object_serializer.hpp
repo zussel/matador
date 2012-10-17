@@ -30,14 +30,16 @@
   #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
+#include <string>
 
 namespace oos {
 
 class object;
+class object_base_ptr;
 class object_store;
 class byte_buffer;
 class varchar_base;
+class object_container;
 
 /**
  * @cond OOS_DEV
@@ -52,7 +54,7 @@ class varchar_base;
  * memory the buffer points to.
  * The application is responsible for this correctness.
  */
-class OOS_API object_serializer : public object_reader, public object_writer
+class OOS_API object_serializer
 {
 public:
   /**
@@ -81,38 +83,30 @@ public:
    */
   bool deserialize(object *o, byte_buffer &buffer, object_store *ostore);
 
-private:
-	virtual void write(const char* id, char c);
-	virtual void write(const char* id, float f);
-	virtual void write(const char* id, double f);
-	virtual void write(const char* id, short x);
-	virtual void write(const char* id, int i);
-	virtual void write(const char* id, long l);
-	virtual void write(const char* id, unsigned short x);
-	virtual void write(const char* id, unsigned int x);
-	virtual void write(const char* id, unsigned long x);
-	virtual void write(const char* id, bool b);
-	virtual void write(const char* id, const char *c);
-	virtual void write(const char* id, const std::string &s);
-  virtual void write(const char*, const varchar_base &s);
-	virtual void write(const char* id, const object_base_ptr &x);
-	virtual void write(const char* id, const object_container &x);
+public:
+  template < class T >
+  void write(const char*, const T &x)
+  {
+    buffer_->append(&x, sizeof(x));
+  }
 
-	virtual void read(const char* id, char &c);
-	virtual void read(const char* id, float &f);
-	virtual void read(const char* id, double &f);
-	virtual void read(const char* id, short &i);
-	virtual void read(const char* id, int &i);
-	virtual void read(const char* id, long &l);
-	virtual void read(const char* id, unsigned short &x);
-	virtual void read(const char* id, unsigned int &x);
-	virtual void read(const char* id, unsigned long &x);
-	virtual void read(const char* id, bool &b);
-	virtual void read(const char* id, char *&c);
-	virtual void read(const char* id, std::string &s);
-  virtual void read(const char*, varchar_base &s);
-  virtual void read(const char* id, object_base_ptr &x);
-	virtual void read(const char* id, object_container &x);
+	void write(const char* id, const char *c);
+	void write(const char* id, const std::string &s);
+  void write(const char*, const varchar_base &s);
+	void write(const char* id, const object_base_ptr &x);
+	void write(const char* id, const object_container &x);
+
+  template < class T >
+  void read(const char*, T &x)
+  {
+    buffer_->release(&x, sizeof(x));
+  }
+
+	void read(const char* id, char *&c);
+	void read(const char* id, std::string &s);
+  void read(const char*, varchar_base &s);
+  void read(const char* id, object_base_ptr &x);
+	void read(const char* id, object_container &x);
   
   void write_object_list_item(const object *o);
   void write_object_container_item(const object *o);

@@ -5,7 +5,6 @@
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
 #include "object/linked_object_list.hpp"
-#include "object/object_atomizer.hpp"
 
 #include "tools/varchar.hpp"
 
@@ -21,41 +20,6 @@ public:
     , string_(str)
   {}
   virtual ~Item() {}
-
-  virtual void read_from(oos::object_reader *reader)
-  {
-    oos::object::read_from(reader);
-    reader->read("val_char", char_);
-    reader->read("val_float", float_);
-    reader->read("val_double", double_);
-    reader->read("val_short", short_);
-    reader->read("val_int", int_);
-    reader->read("val_long", long_);
-    reader->read("val_unsigned_short", unsigned_short_);
-    reader->read("val_unsigned_int", unsigned_int_);
-    reader->read("val_unsigned_long", unsigned_long_);
-    reader->read("val_bool", bool_);
-    reader->read("val_cstr", cstr_, CSTR_LEN);
-    reader->read("val_string", string_);
-    reader->read("val_varchar", varchar_);
-  }
-	void write_to(oos::object_writer *writer) const
-  {
-    oos::object::write_to(writer);
-    writer->write("val_char", char_);
-    writer->write("val_float", float_);
-    writer->write("val_double", double_);
-    writer->write("val_short", short_);
-    writer->write("val_int", int_);
-    writer->write("val_long", long_);
-    writer->write("val_unsigned_short", unsigned_short_);
-    writer->write("val_unsigned_int", unsigned_int_);
-    writer->write("val_unsigned_long", unsigned_long_);
-    writer->write("val_bool", bool_);
-    writer->write("val_cstr", cstr_, CSTR_LEN);
-    writer->write("val_string", string_);
-    writer->write("val_varchar", varchar_);
-  }
 
   template < class S >
   void deserialize(S &deserializer)
@@ -162,20 +126,7 @@ public:
     : Item(n, i)
   {}
   virtual ~ObjectItem() {}
-  /*
-	void read_from(oos::object_reader *reader)
-  {
-    Item::read_from(reader);
-    reader->read("ref", ref_);
-    reader->read("ptr", ptr_);
-  }
-	void write_to(oos::object_writer *writer) const
-  {
-    Item::write_to(writer);
-    writer->write("ref", ref_);
-    writer->write("ptr", ptr_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -226,18 +177,7 @@ public:
     : list_(this)
   {}
   virtual ~List() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    object::read_from(reader);
-    reader->read("list", list_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    object::write_to(writer);
-    writer->write("list", list_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -297,18 +237,7 @@ public:
     : item_list_(this)
   {}
   virtual ~LinkedList() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    object::read_from(reader);
-    reader->read("item_list", item_list_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    object::write_to(writer);
-    writer->write("item_list", item_list_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -372,18 +301,7 @@ public:
     : vector_(this)
   {}
   virtual ~Vector() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    object::read_from(reader);
-    reader->read("item_vector", vector_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    object::write_to(writer);
-    writer->write("item_vector", vector_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -446,22 +364,7 @@ public:
     , author_(author)
   {}
   virtual ~book() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    oos::object::read_from(reader);
-    reader->read("title", title_);
-    reader->read("isbn", isbn_);
-    reader->read("author", author_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    oos::object::write_to(writer);
-    writer->write("title", title_);
-    writer->write("isbn", isbn_);
-    writer->write("author", author_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -499,18 +402,7 @@ public:
     : book_list_(this)
   {}
   virtual ~book_list() {}
-  /*
-  virtual void read_from(oos::object_reader *reader)
-  {
-    oos::object::read_from(reader);
-    reader->read("book_list", book_list_);
-  }
-  virtual void write_to(oos::object_writer *writer) const
-  {
-    oos::object::write_to(writer);
-    writer->write("book_list", book_list_);
-  }
-  */
+
   template < class S >
   void deserialize(S &deserializer)
   {

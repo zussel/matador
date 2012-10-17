@@ -3,7 +3,7 @@
 #include <cstring>
 
 namespace oos {
-
+/*
 void
 convert(const char *from, bool &to)
 {
@@ -97,5 +97,5 @@ convert(const oos::varchar_base &from, oos::varchar_base &to)
 {
   to = from;
 }
-
+*/
 }
