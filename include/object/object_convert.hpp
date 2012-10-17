@@ -34,11 +34,40 @@
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 
+#include "tools/convert.hpp"
+
 #include <iostream>
 #include <typeinfo>
 
 namespace oos {
 
+template < int CP, class T, class U >
+void
+convert(const object_ptr<T> &from, object_ptr<U> &to,
+        typename oos::enable_if<CP == convert_all &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < int CP, class T, class U >
+void
+convert(const T &from, object_ptr<U> &to,
+        typename oos::enable_if<CP == convert_all &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < int CP >
+void
+convert(const long &, object_ptr<object> &,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  std::cout << "converting id to object_ptr\n";
+}
+
+/*
 template < class T >
 void
 convert(const object_ptr<T> &from, object_ptr<T> &to)
@@ -64,14 +93,16 @@ convert(const object_ptr<T> &from, object_ref<T> &to)
   std::cout << "3 typeid: " << typeid(T).name() << "\n";
   to = from;
 }
-
+*/
+/*
 template < class T >
 void
 convert(const T &, object_base_ptr &)
 {
   std::cout << "4 typeid: " << typeid(T).name() << "\n";
 }
-
+*/
+/*
 template < class T >
 void
 convert(const object_base_ptr &, T &)
@@ -79,6 +110,12 @@ convert(const object_base_ptr &, T &)
   std::cout << "5 typeid: " << typeid(T).name() << "\n";
 }
 
+void
+convert(const long &, object_ptr<object> &)
+{
+  std::cout << "6 typeid: object_ptr<object>\n";
+}
+*/
 }
 
 #endif /* OBJECT_CONVERT_HPP */

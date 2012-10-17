@@ -30,6 +30,8 @@
   #define OOS_API
 #endif
 
+#include "tools/byte_buffer.hpp"
+
 #include <string>
 
 namespace oos {

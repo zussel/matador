@@ -1,6 +1,7 @@
 #include "TablePrinter.hpp"
 
 #include "object/object.hpp"
+#include "object/object_convert.hpp"
 #include "tools/varchar.hpp"
 
 #include <numeric>

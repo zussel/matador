@@ -20,6 +20,7 @@
 
 #include "tools/convert.hpp"
 #include "object/object_convert.hpp"
+#include "object/object_ptr.hpp"
 
 #include <stdexcept>
 #include <type_traits>
@@ -37,7 +38,22 @@
 namespace oos {
 
 class object_base_ptr;
-
+/*
+template < int CP >
+void
+convert(const long &from, object_ptr<object> &to,
+        typename oos::enable_if<CP == convert_strict>::type* = 0)
+{
+  throw std::bad_cast();
+}
+template < int CP >
+void
+convert(const long &, object_ptr<object> &,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  std::cout << "converting id to object_ptr\n";
+}
+*/
 /**
  * @tparam T The type of the attribute to set.
  * @class attribute_reader
@@ -83,8 +99,8 @@ public:
     return success_;
   }
 
-  template < class T >
-  void read(const char *id, T &to)
+  template < class V >
+  void read(const char *id, V &to)
   {
     if (id_ != id) {
       return;
@@ -158,8 +174,8 @@ public:
     return success_;
   }
 
-  template < class T >
-  void write(const char *id, const T &from)
+  template < class V >
+  void write(const char *id, const V &from)
   {
     if (id_ != id) {
       return;
@@ -167,6 +183,18 @@ public:
     convert(from, to_);
     success_ = true;
   }
+
+  /*
+  template < class V >
+  void write(const char *id, const object_ptr<V> &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+//    convert(from, to_);
+    success_ = true;
+  }
+  */
 
 private:
   std::string id_;

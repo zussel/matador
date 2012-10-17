@@ -78,8 +78,8 @@ protected:
   void first(bool f) { first_ = f; }
 
 public:
-  template < class T >
-  void write(const char *id, const T &x)
+  template < class V >
+  void write(const char *id, const V &x)
   {
     write_field(id, types_.type_string(x));
   }

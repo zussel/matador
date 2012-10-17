@@ -33,6 +33,9 @@
 
 #include "object/attribute_serializer.hpp"
 
+#include "tools/enable_if.hpp"
+#include "tools/varchar.hpp"
+
 #include <cstring>
 #include <iostream>
 #include <type_traits>
