@@ -16,7 +16,7 @@ Track::Track(const std::string &t, unsigned long d, const object_ref<Artist> &a)
 
 Track::~Track()
 {}
-
+/*
 void Track::read_from(object_reader *reader)
 {
 	object::read_from(reader);
@@ -32,7 +32,7 @@ void Track::write_to(object_writer *writer) const
   writer->write("duration", duration_);
   writer->write("artist", artist_);
 }
-
+*/
 void Track::title(const std::string &t)
 {
   modify(title_, t);

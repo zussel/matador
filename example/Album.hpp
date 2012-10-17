@@ -30,8 +30,27 @@ public:
   Album(const std::string &n, int year, const oos::object_ptr<Artist> &a);
 	virtual ~Album();
 
-	virtual void read_from(oos::object_reader *reader);
-	virtual void write_to(oos::object_writer *writer) const;
+//	virtual void read_from(oos::object_reader *reader);
+//	virtual void write_to(oos::object_writer *writer) const;
+
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+    deserializer.read("year", year_);
+    deserializer.read("artist", artist_);
+    deserializer.read("track_album_rel", track_album_vector_);
+  }
+  template < class S >
+  void serialize(S &serializer)
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+    serializer.write("year", year_);
+    serializer.write("artist", artist_);
+    serializer.write("track_album_rel", track_album_vector_);
+  }
 
 	void name(const std::string &n);
 	std::string name() const;

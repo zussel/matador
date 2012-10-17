@@ -31,7 +31,7 @@ object::object()
 object::~object()
 {
 }
-
+/*
 void object::read_from(object_reader *reader)
 {
 	reader->read("id", id_);
@@ -41,7 +41,7 @@ void object::write_to(object_writer *writer) const
 {
 	writer->write("id", id_);
 }
-
+*/
 const char* object::classname() const
 {
   if (proxy_ && proxy_->node) {

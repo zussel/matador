@@ -63,7 +63,7 @@ public:
     , index_(i)
   {}
   virtual ~object_vector_item() {}
-
+  /*
   virtual void read_from(oos::object_reader *reader)
   {
     base_item::read_from(reader);
@@ -74,7 +74,7 @@ public:
     base_item::write_to(writer);
     writer->write("item_index", index_);
   }
-
+  */
   template < class S >
   void deserialize(S &deserializer)
   {

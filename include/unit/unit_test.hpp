@@ -335,7 +335,6 @@ public:
     }
   }
 
-  template <>
   void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {

@@ -30,8 +30,23 @@ public:
   Artist(const std::string &n);
   virtual ~Artist();
 
-  void read_from(oos::object_reader *reader);
-  void write_to(oos::object_writer *writer) const;
+//  void read_from(oos::object_reader *reader);
+//  void write_to(oos::object_writer *writer) const;
+
+  template < class S >
+  void deserialize(S &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+    deserializer.read("album_artist_rel", album_artist_list_);
+  }
+  template < class S >
+  void serialize(S &serializer)
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+    serializer.write("album_artist_rel", album_artist_list_);
+  }
 
   std::string name() const;
   void name(const std::string &n);

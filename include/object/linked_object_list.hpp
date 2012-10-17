@@ -71,7 +71,7 @@ public:
     : base_item(c, v)
   {}
   virtual ~linked_object_list_item() {}
-
+  /*
   virtual void read_from(oos::object_reader *reader)
   {
     base_item::read_from(reader);
@@ -88,7 +88,7 @@ public:
     writer->write("prev", prev_);
     writer->write("next", next_);
   }
-
+  */
   template < class S >
   void deserialize(S &deserializer)
   {
@@ -102,7 +102,7 @@ public:
   template < class S >
   void serialize(S &serializer) const
   {
-    base_item::serialize(writer);
+    base_item::serialize(serializer);
     serializer.write("first", first_);
     serializer.write("last", last_);
     serializer.write("prev", prev_);

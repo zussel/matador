@@ -17,7 +17,7 @@ Artist::Artist(const std::string &n)
 
 Artist::~Artist()
 {}
-
+/*
 void Artist::read_from(object_reader *reader)
 {
 	object::read_from(reader);
@@ -31,7 +31,7 @@ void Artist::write_to(object_writer *writer) const
   writer->write("name", name_);
   writer->write("album_artist_rel", album_artist_list_);
 }
-
+*/
 std::string Artist::name() const
 {
   return name_.str();

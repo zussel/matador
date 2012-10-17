@@ -72,7 +72,7 @@ template < class T > class object_ptr;
  * The object is identified by a unique id, which is
  * set by the object_store.
  */
-class OOS_API object : public object_atomizable
+class OOS_API object/* : public object_atomizable*/
 {
 	// don't allow copying
 	object(const object&);
@@ -101,7 +101,7 @@ public:
    * 
    * @param a An object of type object_atomizer to read the object member values from.
    */
-	virtual void read_from(object_reader *reader);
+//	virtual void read_from(object_reader *reader);
 
   template < class S >
   void deserialize(S &deserializer)
@@ -123,7 +123,7 @@ public:
    *
    * @param a An object of type object_atomizer to write the object member values to.
    */
-	virtual void write_to(object_writer *writer) const;
+//	virtual void write_to(object_writer *writer) const;
 
   /**
    * Returns the classname of the object
