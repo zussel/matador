@@ -92,13 +92,13 @@ public:
 	virtual ~object();
 	
   template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(S &deserializer)
   {
     deserializer.read("id", id_);
   }
 
   template < class S >
-  void serialize(S &serializer) const
+  virtual void serialize(S &serializer) const
   {
     serializer.write("id", id_);
   }
