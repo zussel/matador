@@ -41,15 +41,13 @@ public:
   {}
   virtual ~value_item() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("value", value_);
   }
 
-  template < class S >
-  void serialize(S &serializer) const
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("value", value_);
@@ -89,14 +87,12 @@ public:
   {}
   virtual ~container_item() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     value_item<T>::deserialize(deserializer);
     deserializer.read("container", container_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     value_item<T>::serialize(serializer);
     serializer.write("container", container_);

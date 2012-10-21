@@ -63,14 +63,12 @@ public:
   {}
   virtual ~object_vector_item() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     base_item::deserialize(deserializer);
     deserializer.read("item_index", index_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     base_item::serialize(serializer);
     serializer.write("item_index", index_);

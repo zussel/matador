@@ -71,8 +71,7 @@ public:
   {}
   virtual ~linked_object_list_item() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     base_item::deserialize(deserializer);
     deserializer.read("first", first_);
@@ -81,8 +80,7 @@ public:
     deserializer.read("next", next_);
   }
 
-  template < class S >
-  void serialize(S &serializer) const
+  virtual void serialize(object_writer &serializer) const
   {
     base_item::serialize(serializer);
     serializer.write("first", first_);

@@ -33,8 +33,7 @@ public:
 //	virtual void read_from(oos::object_reader *reader);
 //	virtual void write_to(oos::object_writer *writer) const;
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("name", name_);
@@ -42,8 +41,7 @@ public:
     deserializer.read("artist", artist_);
     deserializer.read("track_album_rel", track_album_vector_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("name", name_);

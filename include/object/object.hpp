@@ -32,6 +32,8 @@
 #endif
 
 #include "object/attribute_serializer.hpp"
+#include "object/object_atomizer.hpp"
+#include "object/object_atomizable.hpp"
 
 #include "tools/enable_if.hpp"
 #include "tools/varchar.hpp"
@@ -71,7 +73,7 @@ template < class T > class object_ptr;
  * The object is identified by a unique id, which is
  * set by the object_store.
  */
-class OOS_API object/* : public object_atomizable*/
+class OOS_API object : public object_atomizable
 {
 	// don't allow copying
 	object(const object&);
@@ -91,14 +93,12 @@ public:
    */
 	virtual ~object();
 	
-  template < class S >
-  virtual void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     deserializer.read("id", id_);
   }
 
-  template < class S >
-  virtual void serialize(S &serializer) const
+  virtual void serialize(object_writer &serializer) const
   {
     serializer.write("id", id_);
   }
@@ -179,9 +179,12 @@ public:
 
   bool set(const std::string &name, const char *val, int )
   {
+    /*
     attribute_reader<const char*> reader(name, val);
     deserialize(reader);
     return reader.success();
+    */
+    return false;
 //    return update_value(this, name.c_str(), val);
   }
   /**

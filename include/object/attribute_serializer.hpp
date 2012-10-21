@@ -19,6 +19,7 @@
 #define ATTRIBUTE_SERIALIZER_HPP
 
 #include "tools/convert.hpp"
+#include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
 
@@ -65,7 +66,7 @@ convert(const long &, object_ptr<object> &,
  * be convertible into the objects attribute.
  */
 template < class T >
-class attribute_reader
+class attribute_reader : public object_reader
 {
 public:
   /**

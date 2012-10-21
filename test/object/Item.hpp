@@ -21,8 +21,7 @@ public:
   {}
   virtual ~Item() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("val_char", char_);
@@ -39,8 +38,7 @@ public:
     deserializer.read("val_string", string_);
     deserializer.read("val_varchar", varchar_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("val_char", char_);
@@ -127,15 +125,13 @@ public:
   {}
   virtual ~ObjectItem() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("ref", ref_);
     deserializer.read("ptr", ptr_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("ref", ref_);
@@ -178,14 +174,12 @@ public:
   {}
   virtual ~List() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("list", list_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("list", list_);
@@ -238,14 +232,12 @@ public:
   {}
   virtual ~LinkedList() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("item_list", item_list_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("item_list", item_list_);
@@ -302,14 +294,12 @@ public:
   {}
   virtual ~Vector() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("item_vector", vector_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("item_vector", vector_);
@@ -365,16 +355,14 @@ public:
   {}
   virtual ~book() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("title", title_);
     deserializer.read("isbn", isbn_);
     deserializer.read("author", author_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("title", title_);
@@ -403,14 +391,12 @@ public:
   {}
   virtual ~book_list() {}
 
-  template < class S >
-  void deserialize(S &deserializer)
+  virtual void deserialize(object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("book_list", book_list_);
   }
-  template < class S >
-  void serialize(S &serializer)
+  virtual void serialize(object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("book_list", book_list_);

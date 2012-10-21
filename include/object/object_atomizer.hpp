@@ -7,7 +7,7 @@
  * (at your option) any later version.
  *
  * OpenObjectStore OOS is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY {} without even the implied warranty of
+ * but WITHOUT ANY WARRANTY = 0; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -50,7 +50,7 @@ class object_base_ptr;
 class OOS_API object_writer
 {
 public:
-	virtual ~object_writer() {}
+	virtual ~object_writer() = 0;
 
   /**
    * @fn virtual void write(const char *id, char x)
@@ -62,7 +62,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, char) {}
+	virtual void write(const char*, char) = 0;
 
   /**
    * @fn virtual void write(const char *id, float x)
@@ -74,7 +74,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, float) {}
+	virtual void write(const char*, float) = 0;
 
   /**
    * @fn virtual void write(const char *id, double x)
@@ -86,7 +86,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, double) {}
+	virtual void write(const char*, double) = 0;
 
   /**
    * @fn virtual void write(const char *id, short x)
@@ -98,7 +98,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write(const char*, short) {}
+  virtual void write(const char*, short) = 0;
 
   /**
    * @fn virtual void write(const char *id, int x)
@@ -110,7 +110,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, int) {}
+	virtual void write(const char*, int) = 0;
 
   /**
    * @fn virtual void write(const char *id, long x)
@@ -122,7 +122,19 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, long) {}
+	virtual void write(const char*, long) = 0;
+
+  /**
+   * @fn virtual void write(const char *id, unsigned char x)
+   * @brief Write a unsigned char to the atomizer.
+   * 
+   * Write a unsigned char to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write(const char*, unsigned char) = 0;
 
   /**
    * @fn virtual void write(const char *id, unsigned short x)
@@ -134,7 +146,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write(const char*, unsigned short) {}
+  virtual void write(const char*, unsigned short) = 0;
 
   /**
    * @fn virtual void write(const char *id, unsigned int x)
@@ -146,7 +158,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write(const char*, unsigned int) {}
+  virtual void write(const char*, unsigned int) = 0;
 
   /**
    * @fn virtual void write(const char *id, unsigned long x)
@@ -158,7 +170,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write(const char*, unsigned long) {}
+  virtual void write(const char*, unsigned long) = 0;
 
   /**
    * @fn virtual void write(const char *id, bool x)
@@ -170,7 +182,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, bool) {}
+	virtual void write(const char*, bool) = 0;
 
   /**
    * @fn virtual void write(const char *id, const char *x, int max_size)
@@ -183,7 +195,7 @@ public:
    * @param x The data to read from.
    * @param max_size Maximum size of the character array
    */
-	virtual void write(const char*, const char*, int) {}
+	virtual void write(const char*, const char*, int) = 0;
 
   /**
    * @fn virtual void write(const char *id, const std::string &x)
@@ -195,7 +207,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, const std::string&) {}
+	virtual void write(const char*, const std::string&) = 0;
 
   /**
    * @fn virtual void write(const char *id, const varchar_base &x)
@@ -207,7 +219,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, const varchar_base&) {}
+	virtual void write(const char*, const varchar_base&) = 0;
 
   /**
    * @fn virtual void write(const char *id, const object_base_ptr &x)
@@ -219,7 +231,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-	virtual void write(const char*, const object_base_ptr&) {}
+	virtual void write(const char*, const object_base_ptr&) = 0;
 
   /**
    * @fn virtual void write(const char *id, const object_container &x)
@@ -231,13 +243,39 @@ public:
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
-  virtual void write(const char*, const object_container&) {}
+  virtual void write(const char*, const object_container&) = 0;
+};
+
+template < class T >
+class generic_object_writer : public object_writer
+{
+public:
+	virtual ~generic_object_writer() {}
+
+	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, double x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, short x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, int x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, long x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, unsigned short x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, unsigned int x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, unsigned long x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, bool x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, const char *x, int s) { generic_writer_->write_value(id, x, s); }
+	virtual void write(const char *id, const std::string &x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
+  
+private:
+  T generic_writer_;
 };
 
 class OOS_API object_reader
 {
 public:
-  virtual ~object_reader() {}
+  virtual ~object_reader() = 0;
   /**
    * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.
@@ -248,7 +286,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, char&) {}
+  virtual void read(const char*, char&) = 0;
 
   /**
    * @fn virtual void read(const char *id, float &x)
@@ -260,7 +298,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, float&) {}
+  virtual void read(const char*, float&) = 0;
 
   /**
    * @fn virtual void read(const char *id, double &x)
@@ -272,7 +310,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, double&) {}
+  virtual void read(const char*, double&) = 0;
 
   /**
    * @fn virtual void read(const char *id, short &x)
@@ -284,7 +322,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, short&) {}
+  virtual void read(const char*, short&) = 0;
 
   /**
    * @fn virtual void read(const char *id, int &x)
@@ -296,7 +334,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, int&) {}
+	virtual void read(const char*, int&) = 0;
 
   /**
    * @fn virtual void read(const char *id, long &x)
@@ -308,7 +346,19 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, long&) {}
+	virtual void read(const char*, long&) = 0;
+
+  /**
+   * @fn virtual void read(const char *id, unsigned char &x)
+   * @brief Read an unsigned char from the atomizer.
+   * 
+   * Read a unsigned char from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read(const char*, unsigned char&) = 0;
 
   /**
    * @fn virtual void read(const char *id, unsigned short &x)
@@ -320,7 +370,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, unsigned short&) {}
+  virtual void read(const char*, unsigned short&) = 0;
 
   /**
    * @fn virtual void read(const char *id, unsigned int &x)
@@ -332,7 +382,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, unsigned int&) {}
+  virtual void read(const char*, unsigned int&) = 0;
 
   /**
    * @fn virtual void read(const char *id, unsigned long &x)
@@ -344,7 +394,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, unsigned long&) {}
+  virtual void read(const char*, unsigned long&) = 0;
 
   /**
    * @fn virtual void read(const char *id, bool &x)
@@ -356,7 +406,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, bool&) {}
+	virtual void read(const char*, bool&) = 0;
 
   /**
    * @fn virtual void read(const char *id, char *x, int max_size)
@@ -369,7 +419,7 @@ public:
    * @param x The data to write to.
    * @param max_size Maximum size of the character array
    */
-	virtual void read(const char*, char*, int) {}
+	virtual void read(const char*, char*, int) = 0;
 
   /**
    * @fn virtual void read(const char *id, std::string &x)
@@ -381,7 +431,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, std::string&) {}
+	virtual void read(const char*, std::string&) = 0;
 
   /**
    * @fn virtual void read(const char *id, varchar_base &x)
@@ -393,7 +443,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, varchar_base&) {}
+	virtual void read(const char*, varchar_base&) = 0;
 
   /**
    * @fn virtual void read(const char *id, object_base_ptr &x)
@@ -405,7 +455,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	virtual void read(const char*, object_base_ptr&) {}
+	virtual void read(const char*, object_base_ptr&) = 0;
 
   /**
    * @fn virtual void read(const char *id, object_container &x)
@@ -417,7 +467,33 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-  virtual void read(const char*, object_container&) {}
+  virtual void read(const char*, object_container&) = 0;
+};
+
+template < class T >
+class generic_object_reader : public object_reader
+{
+public:
+	virtual ~generic_object_reader() {}
+
+	virtual void read(const char *id, char x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, float x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, double x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, short x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, int x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, long x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned short x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned int x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned long x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, bool x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, const char *x, int s) { generic_reader_->read_value(id, x, s); }
+	virtual void read(const char *id, const std::string &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, const varchar_base &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, const object_base_ptr &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, const object_container &x) { generic_reader_->read_value(id, x); }
+  
+private:
+  T generic_reader_;
 };
 
 }
