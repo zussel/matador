@@ -33,11 +33,6 @@ using namespace std;
 
 namespace oos {
 
-object_serializer::object_serializer()
-  : ostore_(NULL)
-  , buffer_(NULL)
-{}
-
 object_serializer::~object_serializer()
 {}
 
@@ -61,15 +56,15 @@ bool object_serializer::deserialize(object *o, byte_buffer &buffer, object_store
   return true;
 }
 
-void object_serializer::write(const char*, const char *c)
+void object_serializer::write_value(const char*, const char *c, int s)
 {
-  size_t len = strlen(c);
+  size_t len = s;
   
   buffer_->append(&len, sizeof(len));
   buffer_->append(c, len);
 }
 
-void object_serializer::write(const char*, const std::string &s)
+void object_serializer::write_value(const char*, const std::string &s)
 {
   size_t len = s.size();
   
@@ -77,7 +72,7 @@ void object_serializer::write(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::write(const char*, const varchar_base &s)
+void object_serializer::write_value(const char*, const varchar_base &s)
 {
   size_t len = s.size();
   
@@ -85,14 +80,14 @@ void object_serializer::write(const char*, const varchar_base &s)
   buffer_->append(s.str().c_str(), len);
 }
 
-void object_serializer::write(const char*, const object_base_ptr &x)
+void object_serializer::write_value(const char*, const object_base_ptr &x)
 {
   // write type and id into buffer
   write(NULL, x.id());
   write(NULL, x.type());
 }
 
-void object_serializer::write(const char*, const object_container &x)
+void object_serializer::write_value(const char*, const object_container &x)
 {
   // write number of items in list
   // for each item write id and type
@@ -100,14 +95,15 @@ void object_serializer::write(const char*, const object_container &x)
   x.for_each(std::tr1::bind(&object_serializer::write_object_container_item, this, _1));  
 }
 
-void object_serializer::read(const char*, char *&c)
+void object_serializer::read_value(const char*, char *&c, int s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
+  // TODO: check size of buffer
   buffer_->release(c, len);
 }
 
-void object_serializer::read(const char*, std::string &s)
+void object_serializer::read_value(const char*, std::string &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -117,7 +113,7 @@ void object_serializer::read(const char*, std::string &s)
   delete [] str;
 }
 
-void object_serializer::read(const char*, varchar_base &s)
+void object_serializer::read_value(const char*, varchar_base &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -127,7 +123,7 @@ void object_serializer::read(const char*, varchar_base &s)
   delete [] str;
 }
 
-void object_serializer::read(const char*, object_base_ptr &x)
+void object_serializer::read_value(const char*, object_base_ptr &x)
 {
   /***************
    *
@@ -155,7 +151,7 @@ void object_serializer::read(const char*, object_base_ptr &x)
   }
 }
 
-void object_serializer::read(const char*, object_container &x)
+void object_serializer::read_value(const char*, object_container &x)
 {
   // get count of backuped list item
   object_container::size_type s(0);

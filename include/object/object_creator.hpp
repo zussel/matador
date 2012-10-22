@@ -18,6 +18,8 @@
 #ifndef OBJECT_CREATOR_HPP
 #define OBJECT_CREATOR_HPP
 
+#include "object/object_atomizer.hpp"
+
 #include <stack>
 
 namespace oos {
@@ -37,7 +39,7 @@ class object_container;
  * inserted into the object store.
  * This class does these tasks.
  */
-class object_creator
+class object_creator : public generic_object_reader<object_creator>
 {
 public:
   /**
@@ -51,13 +53,18 @@ public:
    * @param ostore The object_store.
    * @param notify The flag wether the observers should be informed or not.
    */
-  object_creator(object_store &ostore, bool notify);
+  object_creator(object_store &ostore, bool notify)
+    : generic_object_reader<object_creator>(this)
+    , ostore_(ostore)
+    , notify_(notify)
+  {}
 
   virtual ~object_creator();
 
   template < class T >
   void read_value(const char*, const T&) {}
 
+  void read_value(const char*, char*, int) {}
   void read_value(const char*, object_base_ptr &x);
   void read_value(const char*, object_container &x);
 

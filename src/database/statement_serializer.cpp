@@ -110,6 +110,14 @@ void statement_serializer::read(const char *id, long &x)
   x = stmt_->column_int(column_++);
 }
 
+void statement_serializer::read(const char *id, unsigned char &x)
+{
+  if (!valid_column(id, column_)) {
+    return;
+  }
+  x = stmt_->column_int(column_++);
+}
+
 void statement_serializer::read(const char *id, unsigned short &x)
 {
   if (!valid_column(id, column_)) {
@@ -142,17 +150,14 @@ void statement_serializer::read(const char *id, bool &x)
   x = stmt_->column_int(column_++) != 0;
 }
 
-void statement_serializer::read(const char *id, char* &x)
+void statement_serializer::read(const char *id, char *x, int s)
 {
   if (!valid_column(id, column_)) {
     return;
   }
-  if (x) {
-    delete [] x;
-  }
   const char *tmp = stmt_->column_text(column_++);
   size_t len = strlen(tmp);
-  x = new char[len + 1];
+  // TODO: check buffer size
 #ifdef WIN32
   strncpy_s(x, len, tmp, len);
 #else
@@ -199,6 +204,10 @@ void statement_serializer::read(const char *id, object_base_ptr &x)
   // set object id
 }
 
+void statement_serializer::read(const char *id, object_container &)
+{
+}
+
 bool statement_serializer::valid_column(const char *id, int i) const
 {
   const char *name = stmt_->column_name(i);
@@ -235,6 +244,11 @@ void statement_serializer::write(const char*, long x)
   stmt_->bind(++column_, (int)x);
 }
 
+void statement_serializer::write(const char*, unsigned char x)
+{
+  stmt_->bind(++column_, x);
+}
+
 void statement_serializer::write(const char*, unsigned short x)
 {
   stmt_->bind(++column_, x);
@@ -255,7 +269,7 @@ void statement_serializer::write(const char*, bool x)
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write(const char*, const char *x)
+void statement_serializer::write(const char*, const char *x, int s)
 {
   stmt_->bind(++column_, x);
 }
@@ -277,6 +291,10 @@ void statement_serializer::write(const char*, const object_base_ptr &x)
   } else {
     stmt_->bind_null(++column_);
   }
+}
+
+void statement_serializer::write(const char*, const object_container &)
+{
 }
 
 }

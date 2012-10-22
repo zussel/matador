@@ -55,7 +55,7 @@ public:
    *
    * @param oa The object_atomizer to deserialize from.
    */
-  virtual void read_from(object_reader *) = 0;
+  virtual void deserialize(object_reader &) = 0;
 
   /**
    * Serializes an object to the given
@@ -63,7 +63,7 @@ public:
    *
    * @param oa The object_atomizer to serialize to.
    */
-  virtual void write_to(object_writer *) const = 0;
+  virtual void serialize(object_writer &) const = 0;
 };
 
 }

@@ -38,9 +38,6 @@ object_deleter::t_object_count_struct::t_object_count_struct(object *o, bool ign
   , ignore(ignr)
 {}
 
-object_deleter::object_deleter()
-{}
-
 object_deleter::~object_deleter()
 {}
 
@@ -63,7 +60,7 @@ bool object_deleter::is_deletable(object_container &oc)
   return check_object_count_map();
 }
 
-void object_deleter::read(const char*, object_base_ptr &x)
+void object_deleter::read_value(const char*, object_base_ptr &x)
 {
   if (!x.ptr()) {
     return;
@@ -71,7 +68,7 @@ void object_deleter::read(const char*, object_base_ptr &x)
   check_object(x.ptr(), x.is_reference());
 }
 
-void object_deleter::read(const char*, object_container &x)
+void object_deleter::read_value(const char*, object_container &x)
 {
   x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
 }

@@ -30,6 +30,8 @@
   #define OOS_API
 #endif
 
+#include "object/object_atomizer.hpp"
+
 #include <string>
 
 namespace oos {
@@ -42,7 +44,7 @@ class varchar_base;
 
 /// @cond OOS_DEV
 
-class OOS_API statement_serializer
+class OOS_API statement_serializer : public object_reader, public object_writer
 {
 public:
   statement_serializer();
@@ -119,6 +121,17 @@ public:
 	void read(const char *id, long &x);
 
   /**
+   * @brief Read an unsigned char from the atomizer.
+   * 
+   * Read a unsigned char from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+	void read(const char *id, unsigned char &x);
+
+  /**
    * @brief Read an unsigned short from the atomizer.
    * 
    * Read a unsigned short from the atomizer
@@ -171,7 +184,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	void read(const char *id, char* &x);
+	void read(const char *id, char *x, int s);
 
   /**
    * @brief Read a std::string from the atomizer.
@@ -205,6 +218,18 @@ public:
    * @param x The data to write to.
    */
 	void read(const char *id, object_base_ptr &x);
+
+  /**
+   * @fn virtual void read(const char *id, object_container &x)
+   * @brief Read an object_container from the atomizer.
+   * 
+   * Read an object_container from the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
+  virtual void read(const char*, object_container&);
 
   /**
    * @brief Write a single character to the binder.
@@ -281,6 +306,17 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
+	void write(const char *id, unsigned char x);
+
+  /**
+   * @brief Write an unsigned short to the binder.
+   * 
+   * Add the value of the column identified by the
+   * to the sql statement.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
 	void write(const char *id, unsigned short x);
 
   /**
@@ -325,7 +361,7 @@ public:
    * @param id Unique id of the data.
    * @param x The data to write to.
    */
-	void write(const char *id, const char *x);
+	void write(const char *id, const char *x, int s);
 
   /**
    * @brief Write a std::string to the binder.
@@ -360,6 +396,18 @@ public:
    * @param x The data to write to.
    */
 	void write(const char *id, const object_base_ptr &x);
+
+  /**
+   * @fn virtual void write(const char *id, const object_container &x)
+   * @brief Write a object_container to the atomizer.
+   * 
+   * Write a object_container to the atomizer
+   * identified by a unique name.
+   * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+  virtual void write(const char*, const object_container&);
 
 private:
   bool valid_column(const char *id, int i) const;

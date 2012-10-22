@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "object/object_atomizer.hpp"
+
 #include <map>
 
 namespace oos {
@@ -50,7 +52,7 @@ class object_container;
  * If the check was successful, all the deletable object
  * can be accepted via the iterators.
  */
-class object_deleter
+class object_deleter : public generic_object_reader<object_deleter>
 {
 private:
   typedef struct t_object_count_struct
@@ -73,7 +75,9 @@ public:
   /**
    * Creates an instance of the object_deleter
    */
-  object_deleter();
+  object_deleter()
+    : generic_object_reader<object_deleter>(this)
+  {}
 
   virtual ~object_deleter();
 
@@ -110,10 +114,11 @@ public:
   iterator end();
 
   template < class T >
-  void read(const char*, const T&) {}
+  void read_value(const char*, const T&) {}
 
-  void read(const char*, object_base_ptr &x);
-  void read(const char*, object_container &x);
+  void read_value(const char*, char*, int) {}
+  void read_value(const char*, object_base_ptr &x);
+  void read_value(const char*, object_container &x);
 
   void check_object(object *o, bool is_ref);
   void check_object_list_node(object *node);

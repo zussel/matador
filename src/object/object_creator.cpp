@@ -22,10 +22,10 @@
 
 namespace oos {
 
-object_creator::object_creator(object_store &ostore, bool notify)
+/*object_creator::object_creator(object_store &ostore, bool notify)
   : ostore_(ostore)
   , notify_(notify)
-{}
+{}*/
 
 object_creator::~object_creator() {}
 

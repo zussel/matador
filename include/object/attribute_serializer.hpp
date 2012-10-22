@@ -19,7 +19,6 @@
 #define ATTRIBUTE_SERIALIZER_HPP
 
 #include "tools/convert.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
 
@@ -39,22 +38,7 @@
 namespace oos {
 
 class object_base_ptr;
-/*
-template < int CP >
-void
-convert(const long &from, object_ptr<object> &to,
-        typename oos::enable_if<CP == convert_strict>::type* = 0)
-{
-  throw std::bad_cast();
-}
-template < int CP >
-void
-convert(const long &, object_ptr<object> &,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
-{
-  std::cout << "converting id to object_ptr\n";
-}
-*/
+
 /**
  * @tparam T The type of the attribute to set.
  * @class attribute_reader
@@ -66,7 +50,7 @@ convert(const long &, object_ptr<object> &,
  * be convertible into the objects attribute.
  */
 template < class T >
-class attribute_reader : public object_reader
+class attribute_reader
 {
 public:
   /**

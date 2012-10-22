@@ -250,7 +250,8 @@ template < class T >
 class generic_object_writer : public object_writer
 {
 public:
-	virtual ~generic_object_writer() {}
+  generic_object_writer(T *writer) : generic_writer_(writer) {}
+	virtual ~generic_object_writer() { /*delete generic_writer_;*/ }
 
 	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
@@ -258,6 +259,7 @@ public:
   virtual void write(const char *id, short x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, int x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, long x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, unsigned char x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned short x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned int x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned long x) { generic_writer_->write_value(id, x); }
@@ -269,7 +271,7 @@ public:
   virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
   
 private:
-  T generic_writer_;
+  T *generic_writer_;
 };
 
 class OOS_API object_reader
@@ -474,26 +476,28 @@ template < class T >
 class generic_object_reader : public object_reader
 {
 public:
-	virtual ~generic_object_reader() {}
+  generic_object_reader(T *reader) : generic_reader_(reader) {}
+	virtual ~generic_object_reader() { /*delete generic_reader_;*/ }
 
-	virtual void read(const char *id, char x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, float x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, double x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, short x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, int x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, long x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, unsigned short x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, unsigned int x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, unsigned long x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, bool x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, const char *x, int s) { generic_reader_->read_value(id, x, s); }
-	virtual void read(const char *id, const std::string &x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, const varchar_base &x) { generic_reader_->read_value(id, x); }
-	virtual void read(const char *id, const object_base_ptr &x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, const object_container &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, char &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, float &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, double &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, short &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, int &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, long &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned char &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned short &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned int &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, unsigned long &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, bool &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, char *x, int s) { generic_reader_->read_value(id, x, s); }
+	virtual void read(const char *id, std::string &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, varchar_base &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, object_base_ptr &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, object_container &x) { generic_reader_->read_value(id, x); }
   
 private:
-  T generic_reader_;
+  T *generic_reader_;
 };
 
 }

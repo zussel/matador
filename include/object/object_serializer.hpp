@@ -31,6 +31,7 @@
 #endif
 
 #include "tools/byte_buffer.hpp"
+#include "object/object_atomizer.hpp"
 
 #include <string>
 
@@ -57,12 +58,19 @@ class object_container;
  * The application is responsible for this correctness.
  */
 class OOS_API object_serializer
+  : public generic_object_reader<object_serializer>
+  , public generic_object_writer<object_serializer>
 {
 public:
   /**
    * Creates an object_serializer
    */
-  object_serializer();
+  object_serializer()
+    : generic_object_reader<object_serializer>(this)
+    , generic_object_writer<object_serializer>(this)
+    , ostore_(NULL)
+    , buffer_(NULL)
+  {}
 
   virtual ~object_serializer();
 
@@ -87,28 +95,28 @@ public:
 
 public:
   template < class T >
-  void write(const char*, const T &x)
+  void write_value(const char*, const T &x)
   {
     buffer_->append(&x, sizeof(x));
   }
 
-	void write(const char* id, const char *c);
-	void write(const char* id, const std::string &s);
-  void write(const char*, const varchar_base &s);
-	void write(const char* id, const object_base_ptr &x);
-	void write(const char* id, const object_container &x);
+	void write_value(const char* id, const char *c, int s);
+	void write_value(const char* id, const std::string &s);
+  void write_value(const char*, const varchar_base &s);
+	void write_value(const char* id, const object_base_ptr &x);
+	void write_value(const char* id, const object_container &x);
 
   template < class T >
-  void read(const char*, T &x)
+  void read_value(const char*, T &x)
   {
     buffer_->release(&x, sizeof(x));
   }
 
-	void read(const char* id, char *&c);
-	void read(const char* id, std::string &s);
-  void read(const char*, varchar_base &s);
-  void read(const char* id, object_base_ptr &x);
-	void read(const char* id, object_container &x);
+	void read_value(const char* id, char *&c, int s);
+	void read_value(const char* id, std::string &s);
+  void read_value(const char*, varchar_base &s);
+  void read_value(const char* id, object_base_ptr &x);
+	void read_value(const char* id, object_container &x);
   
   void write_object_list_item(const object *o);
   void write_object_container_item(const object *o);
