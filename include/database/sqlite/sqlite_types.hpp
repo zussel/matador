@@ -34,6 +34,7 @@ template <> struct type_traits<char> { inline static const char* type_string() {
 template <> struct type_traits<short> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<int> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<long> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "INTEGER"; } };
 template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "INTEGER"; } };

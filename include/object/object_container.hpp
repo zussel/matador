@@ -118,7 +118,8 @@ class OOS_API object_container
 {
 public:
   typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
-  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
+  typedef unsigned long size_type;                             /**< Shortcut for size type. */
+//  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
 
 public:
   /**

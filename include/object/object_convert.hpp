@@ -41,30 +41,54 @@
 
 namespace oos {
 
+class object_container;
+
 template < int CP, class T, class U >
 void
 convert(const object_ptr<T> &from, object_ptr<U> &to,
-        typename oos::enable_if<CP == convert_all &&
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0) &&
                                 !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
 
-template < int CP, class T, class U >
+template < int CP, class T >
 void
-convert(const T &from, object_ptr<U> &to,
-        typename oos::enable_if<CP == convert_all &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+convert(const object_base_ptr &from, T &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
 {
   throw std::bad_cast();
 }
 
 template < int CP >
 void
-convert(const long &, object_ptr<object> &,
+convert(const object_base_ptr &from, long &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  to = from.id();
+}
+
+template < int CP, class T >
+void
+convert(const T &from, object_base_ptr &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < int CP >
+void
+convert(const long &, object_base_ptr &,
         typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
 {
   std::cout << "converting id to object_ptr\n";
+}
+
+template < int CP, class T >
+void
+convert(const object_container &, T &)
+{
+  throw std::bad_cast();
 }
 
 /*

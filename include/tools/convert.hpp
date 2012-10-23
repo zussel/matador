@@ -553,6 +553,8 @@ void
 convert(const T &from, U &to,
         typename oos::enable_if<((P & convert_fitting_weak) > 0)>::type* = 0,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
+                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
                                 CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
 {
   to = from;

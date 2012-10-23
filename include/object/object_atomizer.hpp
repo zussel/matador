@@ -50,7 +50,7 @@ class object_base_ptr;
 class OOS_API object_writer
 {
 public:
-	virtual ~object_writer() = 0;
+  virtual ~object_writer() {};
 
   /**
    * @fn virtual void write(const char *id, char x)
@@ -249,8 +249,10 @@ public:
 template < class T >
 class generic_object_writer : public object_writer
 {
-public:
+protected:
   generic_object_writer(T *writer) : generic_writer_(writer) {}
+
+public:
 	virtual ~generic_object_writer() { /*delete generic_writer_;*/ }
 
 	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
@@ -277,7 +279,7 @@ private:
 class OOS_API object_reader
 {
 public:
-  virtual ~object_reader() = 0;
+  virtual ~object_reader() {}
   /**
    * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.
@@ -475,8 +477,10 @@ public:
 template < class T >
 class generic_object_reader : public object_reader
 {
-public:
+protected:
   generic_object_reader(T *reader) : generic_reader_(reader) {}
+
+public:
 	virtual ~generic_object_reader() { /*delete generic_reader_;*/ }
 
 	virtual void read(const char *id, char &x) { generic_reader_->read_value(id, x); }

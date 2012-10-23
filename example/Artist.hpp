@@ -11,7 +11,8 @@
 class Album;
 
 namespace oos {
-  class object_atomizer;
+  class object_reader;
+  class object_writer;
 }
 
 class Artist : public oos::object
@@ -33,13 +34,13 @@ public:
 //  void read_from(oos::object_reader *reader);
 //  void write_to(oos::object_writer *writer) const;
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("name", name_);
     deserializer.read("album_artist_rel", album_artist_list_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("name", name_);

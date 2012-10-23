@@ -27,6 +27,7 @@
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
 #else
   #define OOS_API
 #endif

@@ -2,6 +2,7 @@
 #define ITEM_HPP
 
 #include "object/object.hpp"
+#include "object/object_atomizer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
 #include "object/linked_object_list.hpp"
@@ -21,7 +22,7 @@ public:
   {}
   virtual ~Item() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("val_char", char_);
@@ -38,7 +39,7 @@ public:
     deserializer.read("val_string", string_);
     deserializer.read("val_varchar", varchar_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("val_char", char_);
@@ -125,13 +126,13 @@ public:
   {}
   virtual ~ObjectItem() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("ref", ref_);
     deserializer.read("ptr", ptr_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("ref", ref_);
@@ -174,12 +175,12 @@ public:
   {}
   virtual ~List() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("list", list_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("list", list_);
@@ -232,12 +233,12 @@ public:
   {}
   virtual ~LinkedList() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("item_list", item_list_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("item_list", item_list_);
@@ -294,12 +295,12 @@ public:
   {}
   virtual ~Vector() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("item_vector", vector_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("item_vector", vector_);
@@ -355,14 +356,14 @@ public:
   {}
   virtual ~book() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("title", title_);
     deserializer.read("isbn", isbn_);
     deserializer.read("author", author_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("title", title_);
@@ -391,12 +392,12 @@ public:
   {}
   virtual ~book_list() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("book_list", book_list_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("book_list", book_list_);

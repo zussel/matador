@@ -83,8 +83,8 @@ void object_serializer::write_value(const char*, const varchar_base &s)
 void object_serializer::write_value(const char*, const object_base_ptr &x)
 {
   // write type and id into buffer
-  write(NULL, x.id());
-  write(NULL, x.type());
+  write(0, x.id());
+  write(0, x.type(), strlen(x.type()));
 }
 
 void object_serializer::write_value(const char*, const object_container &x)
@@ -173,7 +173,7 @@ void object_serializer::read_value(const char*, object_container &x)
 void object_serializer::write_object_container_item(const object *o)
 {
   write(0, o->id());
-  write(0, o->classname());
+  write(0, o->classname(), strlen(o->classname()));
 }
 
 }

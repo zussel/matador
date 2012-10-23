@@ -25,14 +25,14 @@ public:
 //  virtual void read_from(oos::object_reader *reader);
 //  virtual void write_to(oos::object_writer *writer) const;
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
     deserializer.read("title", title_);
     deserializer.read("duration", duration_);
     deserializer.read("artist", artist_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
     serializer.write("title", title_);

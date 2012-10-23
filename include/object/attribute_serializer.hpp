@@ -19,6 +19,7 @@
 #define ATTRIBUTE_SERIALIZER_HPP
 
 #include "tools/convert.hpp"
+#include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
 
@@ -28,9 +29,10 @@
 /// @cond OOS_DEV
 
 #ifdef WIN32
-#define CPP11_TYPE_TRAITS_NS std::tr1
+  #define CPP11_TYPE_TRAITS_NS std::tr1
+  #pragma warning(disable: 4355)
 #else
-#define CPP11_TYPE_TRAITS_NS std
+  #define CPP11_TYPE_TRAITS_NS std
 #endif
 
 /// @endcond OOS_DEV
@@ -50,7 +52,7 @@ class object_base_ptr;
  * be convertible into the objects attribute.
  */
 template < class T >
-class attribute_reader
+class attribute_reader : public generic_object_reader<attribute_reader<T> >
 {
 public:
   /**
@@ -64,7 +66,8 @@ public:
    * @param from The attribute value to set.
    */
   attribute_reader(const std::string &id, const T &from)
-    : id_(id)
+    : generic_object_reader<attribute_reader<T> >(this)
+    , id_(id)
     , from_(from)
     , success_(false)
   {}
@@ -85,12 +88,20 @@ public:
   }
 
   template < class V >
-  void read(const char *id, V &to)
+  void read_value(const char *id, V &to)
   {
     if (id_ != id) {
       return;
     }
     convert(from_, to);
+    success_ = true;
+  }
+  void read_value(const char *id, char *to, int s)
+  {
+    if (id_ != id) {
+      return;
+    }
+    convert(from_, to, s);
     success_ = true;
   }
 
@@ -115,7 +126,7 @@ private:
  * be convertible from the objects attribute.
  */
 template < class T >
-class attribute_writer
+class attribute_writer : public generic_object_writer<attribute_writer<T> >
 {
 public:
   /**
@@ -129,7 +140,8 @@ public:
    * @param to The attribute value to retrieve.
    */
   attribute_writer(const std::string &id, T &to, int precision)
-    : id_(id)
+    : generic_object_writer<attribute_writer<T> >(this)
+    , id_(id)
     , to_(to)
     , success_(false)
     , precision_(precision)
@@ -137,7 +149,8 @@ public:
   {}
    
   attribute_writer(const std::string &id, T &to, int size, int precision)
-    : id_(id)
+    : generic_object_writer<attribute_writer<T> >(this)
+    , id_(id)
     , to_(to)
     , success_(false)
     , precision_(precision)
@@ -160,7 +173,7 @@ public:
   }
 
   template < class V >
-  void write(const char *id, const V &from)
+  void write_value(const char *id, const V &from)
   {
     if (id_ != id) {
       return;
@@ -169,17 +182,14 @@ public:
     success_ = true;
   }
 
-  /*
-  template < class V >
-  void write(const char *id, const object_ptr<V> &from)
+  void write_value(const char *id, const char *from, int s)
   {
     if (id_ != id) {
       return;
     }
-//    convert(from, to_);
+    convert(from, to_, s);
     success_ = true;
   }
-  */
 
 private:
   std::string id_;

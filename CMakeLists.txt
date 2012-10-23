@@ -86,6 +86,8 @@ SET(OBJECT_INSTALL_HEADER
   include/object/object_observer.hpp
   include/object/object_expression.hpp
   include/object/attribute_serializer.hpp
+  include/object/object_atomizer.hpp
+  include/object/object_atomizable.hpp
 )
 
 SET(TOOLS_SOURCES

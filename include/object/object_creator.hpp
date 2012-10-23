@@ -18,6 +18,10 @@
 #ifndef OBJECT_CREATOR_HPP
 #define OBJECT_CREATOR_HPP
 
+#ifdef WIN32
+  #pragma warning(disable: 4355)
+#endif
+
 #include "object/object_atomizer.hpp"
 
 #include <stack>

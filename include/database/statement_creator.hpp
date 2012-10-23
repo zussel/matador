@@ -31,11 +31,14 @@
 #endif
 
 #include "object/object.hpp"
+#include "object/object_atomizer.hpp"
 
 #include <sstream>
 #include <cstring>
 
 namespace oos {
+
+class object_container;
 
 /// @cond OOS_DEV
 
@@ -58,10 +61,15 @@ private:
 };
 
 template < class T >
-class statement_field_creator : public statement_creator
+class statement_field_creator
+  : public statement_creator
+  , public generic_object_writer<statement_field_creator<T> >
 {
 public:
-  statement_field_creator() : first_(true) {}
+  statement_field_creator()
+    : first_(true)
+    , generic_object_writer<statement_field_creator<T> >(this)
+  {}
   virtual ~statement_field_creator() {}
 
 protected:
@@ -79,11 +87,15 @@ protected:
 
 public:
   template < class V >
-  void write(const char *id, const V &x)
+  void write_value(const char *id, const V &x)
   {
     write_field(id, types_.type_string(x));
   }
-	void write(const char *id, long x)
+  void write_value(const char *id, const char *x, int)
+  {
+    write_field(id, types_.type_string(x));
+  }
+	void write_value(const char *id, long x)
   {
     if (strcmp(id, "id") == 0) {
       write_pk_field(id, types_.type_string(x));
@@ -91,6 +103,7 @@ public:
       write_field(id, types_.type_string(x));
     }
   }
+  void write_value(const char *id, const object_container&) {}
 
 private:
   type_provider types_;
