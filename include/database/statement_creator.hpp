@@ -67,8 +67,8 @@ class statement_field_creator
 {
 public:
   statement_field_creator()
-    : first_(true)
-    , generic_object_writer<statement_field_creator<T> >(this)
+    : generic_object_writer<statement_field_creator<T> >(this)
+    , first_(true)
   {}
   virtual ~statement_field_creator() {}
 
@@ -103,7 +103,7 @@ public:
       write_field(id, types_.type_string(x));
     }
   }
-  void write_value(const char *id, const object_container&) {}
+  void write_value(const char*, const object_container&) {}
 
 private:
   type_provider types_;

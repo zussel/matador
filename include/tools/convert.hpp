@@ -6,7 +6,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * OpenObjectStore OOS is distributed in the hope that it will be useful,
+ * OpenObjectStore OOS is distributed in the hope that it wicll be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -542,7 +542,7 @@ convert(const T &from, bool &to,
  *****************/
 template < int P >
 void
-convert(bool &from, bool &to,
+convert(const bool &from, bool &to,
         typename oos::enable_if<((P & convert_fitting_weak) > 0)>::type* = 0)
 {
   to = from;

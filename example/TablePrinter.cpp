@@ -138,6 +138,11 @@ void TablePrinter::write(const char *id, long x)
   write_column(id, x, 10);
 }
 
+void TablePrinter::write(const char *id, unsigned char x)
+{
+  write_column(id, x, 5);
+}
+
 void TablePrinter::write(const char *id, unsigned short x)
 {
   write_column(id, x, 10);
@@ -158,7 +163,7 @@ void TablePrinter::write(const char *id, bool x)
   write_column(id, x, 1);
 }
 
-void TablePrinter::write(const char *id, const char *x)
+void TablePrinter::write(const char *id, const char *x, int s)
 {
   switch (state_) {
     case INITIALIZE:

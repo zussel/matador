@@ -171,9 +171,12 @@ public:
            typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value ||
                                     CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
   {
+    /*
     attribute_reader<T> reader(name, val);
     deserialize(reader);
     return reader.success();
+    */
+    return false;
 //    return update_value(this, name.c_str(), val);
   }
 
@@ -202,10 +205,13 @@ public:
            typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
                                     CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
   {
+    /*
     attribute_writer<T> writer(name, val, precision);
     serialize(writer);
     return writer.success();
-//    return retrieve_value(this, name.c_str(), val);
+    */
+    return false;
+    //    return retrieve_value(this, name.c_str(), val);
   }
 
   /*
@@ -222,9 +228,12 @@ public:
            typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
   {
+    /*
     attribute_writer<T> writer(name, val, 2);
     serialize(writer);
     return writer.success();
+    */
+    return false;
 //    return retrieve_value(this, name.c_str(), val);
   }
 

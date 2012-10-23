@@ -4,6 +4,7 @@
 #include "Artist.hpp"
 
 #include "object/object_ptr.hpp"
+#include "object/object_atomizer.hpp"
 #include "object/object_view.hpp"
 #include "object/object_store.hpp"
 
@@ -25,7 +26,7 @@ namespace oos {
   class object_base_ptr;
 }
 
-class TablePrinter
+class TablePrinter : public oos::object_writer
 {
 private:
   enum state_t {
@@ -73,14 +74,16 @@ public:
 	virtual void write(const char *id, short x);
 	virtual void write(const char *id, int x);
   virtual void write(const char *id, long x);
+	virtual void write(const char *id, unsigned char x);
 	virtual void write(const char *id, unsigned short x);
 	virtual void write(const char *id, unsigned int x);
 	virtual void write(const char *id, unsigned long x);
 	virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x);
+	virtual void write(const char *id, const char *x, int s);
 	virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::varchar_base &x);
   virtual void write(const char *id, const oos::object_base_ptr &x);
+  virtual void write(const char *id, const oos::object_container &) {}
 
 private:
   const oos::object_store &ostore_;

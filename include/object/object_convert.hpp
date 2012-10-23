@@ -91,6 +91,13 @@ convert(const object_container &, T &)
   throw std::bad_cast();
 }
 
+template < int CP, class T >
+void
+convert(const T &, object_container &)
+{
+  throw std::bad_cast();
+}
+
 /*
 template < class T >
 void
