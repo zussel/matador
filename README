@@ -12,3 +12,4 @@ Features:
  * One storage container
  * Filter with simple expressions
  * Reference counting mechanism
+ * STL like interface and iterators
