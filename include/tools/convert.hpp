@@ -879,6 +879,46 @@ convert(const T &, U &, S , P ,
   throw std::bad_cast();
 }
 
+template < int CP >
+void
+convert(const varchar_base &from, std::string &to,
+        typename oos::enable_if<CP == convert_strict>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+template < int CP >
+void
+convert(const varchar_base &from, std::string &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  to = from.str();
+}
+
+template < int CP >
+void
+convert(const std::string &from, varchar_base &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  to = from;
+}
+
+template < int CP >
+void
+convert(const std::string &from, std::string &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  to = from;
+}
+
+template < int CP >
+void
+convert(const varchar_base &from, varchar_base &to,
+        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+{
+  to = from;
+}
+
 template < class T, class U >
 void
 convert(const T &from, U &to)
