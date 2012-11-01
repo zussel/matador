@@ -1,16 +1,15 @@
+Open Object Store (OOS)
+
 Store all kind of objects in one container.
 
-Howto:
+OOS is a ORM framework written in C++. I aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.
 
-1. Goal for example:
-   A music store with artists, tracks and albums.
-2. Start with simple artist class
-   No object members.
-3. Add new class Track.
-   Class Track has an object_ref member of type Artist.
-4. Add new class Album.
-   Show how the object list class works. Album has a list of tracks.
-5. Add modify and deleted objects.
-   Show how to interact with your objects
-6. Make the data persistent
-   Use a database backend (hopefully sqlite)
+Features:
+
+ * Encapsulate database backends
+ * Encapsulate sql statements
+ * One to one/many relations
+ * One storage container
+ * Filter with simple expressions
+ * Reference counting mechanism
+ * STL like interface and iterators
