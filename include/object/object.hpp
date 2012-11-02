@@ -152,19 +152,15 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool set(const std::string &/*name*/, const T &/*val,
+  bool set(const std::string &name, const T &val/*,
            typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value &&
                                     !CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0*/)
   {
-    /*
     attribute_reader<T> reader(name, val);
     deserialize(reader);
-    read_from(&reader);
     return reader.success();
-    */
-    return false;
   }
 
   /*
