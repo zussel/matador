@@ -104,6 +104,7 @@ public:
     convert(from_, to, s);
     success_ = true;
   }
+  void read_value(const char*, object_container&) {}
 
 private:
   std::string id_;
@@ -244,7 +245,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char*, const object_container&) {}
+//  void write_value(const char*, const object_container&) {}
 
   void write_value(const char *id, const char *from, int)
   {

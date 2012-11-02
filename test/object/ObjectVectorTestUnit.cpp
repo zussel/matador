@@ -34,6 +34,7 @@ void ObjectVectorTestUnit::initialize()
 
 void ObjectVectorTestUnit::finalize()
 {
+  ostore_.clear(true);
 }
 
 void ObjectVectorTestUnit::test_ref_vector()

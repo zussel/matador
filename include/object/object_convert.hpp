@@ -54,7 +54,7 @@ convert(const object_ptr<T> &from, object_ptr<U> &to,
 
 template < int CP, class T >
 void
-convert(const object_base_ptr &from, T &to,
+convert(const object_base_ptr &, T &,
         typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
 {
   throw std::bad_cast();
@@ -70,7 +70,7 @@ convert(const object_base_ptr &from, long &to,
 
 template < int CP, class T >
 void
-convert(const T &from, object_base_ptr &to,
+convert(const T &, object_base_ptr &,
         typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
 {
   throw std::bad_cast();
@@ -86,14 +86,16 @@ convert(const long &, object_base_ptr &,
 
 template < int CP, class T >
 void
-convert(const object_container &, T &)
+convert(const object_container &, T &,
+        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0)
 {
   throw std::bad_cast();
 }
 
 template < int CP, class T >
 void
-convert(const T &, object_container &)
+convert(const T &, object_container &,
+        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0)
 {
   throw std::bad_cast();
 }

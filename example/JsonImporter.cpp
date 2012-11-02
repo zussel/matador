@@ -100,17 +100,17 @@ void JsonImporter::on_end_array()
 
 void JsonImporter::on_string(const std::string &value)
 {
-//  obj_->set(key_, value);
+  obj_->set(key_, value);
 }
 
 void JsonImporter::on_number(double value)
 {
-//  obj_->set(key_, value);
+  obj_->set(key_, value);
 }
 
 void JsonImporter::on_bool(bool value)
 {
-//  obj_->set(key_, value);
+  obj_->set(key_, value);
 }
 
 void JsonImporter::on_null()

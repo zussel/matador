@@ -39,6 +39,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <limits>
+#include <cstring>
 
 /// @cond OOS_DEV
 
@@ -695,6 +696,19 @@ convert(const T &, char *, S ,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   throw std::bad_cast();
+}
+
+template < int CP, class S >
+void
+convert(const char *from, char *to, S size,
+        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0,
+        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+{
+  if (strlen(from) < (size_t)size) {
+    strcpy(to, from);
+  } else {
+    throw std::bad_cast();
+  }
 }
 
 /*
