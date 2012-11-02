@@ -152,38 +152,13 @@ public:
    * @return       True if the operation succeeds.
    */
   template < class T >
-  bool set(const std::string &name, const T &val/*,
-           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, const char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_same<T, char*>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0*/)
+  bool set(const std::string &name, const T &val)
   {
     attribute_reader<T> reader(name, val);
     deserialize(reader);
     return reader.success();
   }
 
-  /*
-  // varchar and string
-  template < class T >
-  bool set(const std::string &name, T val,
-           typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value ||
-                                    CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value)>::type* = 0)
-  {
-    attribute_reader<T> reader(name, val);
-    deserialize(reader);
-    return reader.success();
-  }
-  */
-
-  /*
-  bool set(const std::string &name, const char *val, int )
-  {
-    attribute_reader<const char*> reader(name, val);
-    deserialize(reader);
-    return reader.success();
-  }
-  */
   /**
    * Gets the value of a member identified by
    * the given name. If the operation succeeds
@@ -194,17 +169,21 @@ public:
    * @param val    The reference where the value is assigned to.
    * @return       True if the operation succeeds.
    */
-  /*
   template < class T >
-  bool get(const std::string &name, T &val, int precision = 2,
-           typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
-                                    CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0)
+  bool get(const std::string &name, T &val)
+  {
+    attribute_writer<T> writer(name, val);
+    serialize(writer);
+    return writer.success();
+  }
+
+  template < class T >
+  bool get(const std::string &name, T &val, int precision)
   {
     attribute_writer<T> writer(name, val, precision);
     serialize(writer);
     return writer.success();
   }
-  */
 
   /*
   bool get(const std::string &name, char *val, int size, int precision = 2)
@@ -214,15 +193,6 @@ public:
     return writer.success();
   }
   */
-  template < class T >
-  bool get(const std::string &name, T &val/*,
-           typename oos::enable_if<(!CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value &&
-                                    !CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value)>::type* = 0*/)
-  {
-    attribute_writer<T> writer(name, val, 2);
-    serialize(writer);
-    return writer.success();
-  }
 
   /**
    * Modify the attribute assigning

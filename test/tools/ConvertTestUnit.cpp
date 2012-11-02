@@ -11,7 +11,6 @@
 #include <iostream>
 #include <string>
 #include <cerrno>
-#include <cmath>
 
 using namespace oos;
 
@@ -82,10 +81,10 @@ ConvertTestUnit::~ConvertTestUnit()
 
 #define CONVERT_NUMERIC_EXPECT_SUCCESS_ABS(FROM, TO, BOUNDARY, POLICY) \
   try { \
-    FROM from(std::abs(std::numeric_limits<TO>::BOUNDARY())); \
+    FROM from(std::abs(std::numeric_limits<FROM>::BOUNDARY())); \
     TO to; \
     convert<POLICY>(from, to); \
-    UNIT_ASSERT_EQUAL(to, std::abs(std::numeric_limits<TO>::BOUNDARY()), "convert failed: "#BOUNDARY" values are not equal"); \
+    UNIT_ASSERT_EQUAL(to, std::abs(std::numeric_limits<FROM>::BOUNDARY()), "convert failed: "#BOUNDARY" values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
   }

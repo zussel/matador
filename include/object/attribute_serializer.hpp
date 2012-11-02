@@ -109,10 +109,6 @@ private:
   std::string id_;
   const T &from_;
   bool success_;
-
-  size_t from_size;
-  size_t to_size;
-  int precision;
 };
 
 /**
@@ -139,22 +135,12 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, T &to, int precision)
+  attribute_writer(const std::string &id, T &to, int precision = -1)
     : generic_object_writer<attribute_writer<T> >(this)
     , id_(id)
     , to_(to)
     , success_(false)
     , precision_(precision)
-    , size_(0)
-  {}
-   
-  attribute_writer(const std::string &id, T &to, int size, int precision)
-    : generic_object_writer<attribute_writer<T> >(this)
-    , id_(id)
-    , to_(to)
-    , success_(false)
-    , precision_(precision)
-    , size_(size)
   {}
    
   virtual ~attribute_writer() {}
@@ -178,16 +164,24 @@ public:
     if (id_ != id) {
       return;
     }
-    convert(from, to_);
+    if (precision_ < 0) {
+      convert(from, to_);
+    } else {
+      convert(from, to_, precision_);
+    }
     success_ = true;
   }
 
-  void write_value(const char *id, const char *from, int s)
+  void write_value(const char *id, const char *from, int)
   {
     if (id_ != id) {
       return;
     }
-    convert(from, to_, s);
+    if (precision_ < 0) {
+      convert(from, to_);
+    } else {
+      convert(from, to_, precision_);
+    }
     success_ = true;
   }
 
@@ -196,7 +190,81 @@ private:
   T &to_;
   bool success_;
   int precision_;
+};
+
+template <>
+class attribute_writer<char*> : public generic_object_writer<attribute_writer<char*> >
+{
+public:
+  /**
+   * @brief Creates an attribute_writer
+   *
+   * Creates an attribute_writer for an attribute id of type T
+   * where id is the name of the attribute.
+   *
+   * @tparam T The type of the attribute.
+   * @param id The name of the attribute.
+   * @param to The attribute value to retrieve.
+   */
+  attribute_writer(const std::string &id, char *to, int size, int precision = -1)
+    : generic_object_writer<attribute_writer<char*> >(this)
+    , id_(id)
+    , to_(to)
+    , size_(size)
+    , success_(false)
+    , precision_(precision)
+  {}
+   
+  virtual ~attribute_writer() {}
+
+  /**
+   * @brief True if value could be retrieved.
+   *
+   * Returns true if the value could
+   * be retrieved successfully.
+   *
+   * @return True if value could be retrieved.
+   */
+  bool success() const
+  {
+    return success_;
+  }
+
+  template < class V >
+  void write_value(const char *id, const V &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (precision_ < 0) {
+      convert(from, to_, size_);
+    } else {
+      convert(from, to_, size_, precision_);
+    }
+    success_ = true;
+  }
+
+  void write_value(const char*, const object_container&) {}
+
+  void write_value(const char *id, const char *from, int)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (precision_ < 0) {
+      convert(from, to_, size_);
+    } else {
+      convert(from, to_, size_, precision_);
+    }
+    success_ = true;
+  }
+
+private:
+  std::string id_;
+  char *to_;
   int size_;
+  bool success_;
+  int precision_;
 };
 
 }
