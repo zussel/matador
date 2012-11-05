@@ -95,6 +95,65 @@ private:
   memfunc_type m_;
 };
 
+/*
+template < class R >
+class variable
+{
+public:
+  typedef R return_type;
+  
+  explicit variable(variable_impl *impl)
+    : impl_(impl)
+  {}
+  ~variable()
+  {
+    delete impl_;
+  }
+  return_type operator()(const object_base_ptr &o) const
+  {
+    return impl_->operator(o);
+  }
+  
+private:
+  variable_impl *impl_;
+};
+
+template < class R >
+class variable_impl
+{
+public:
+  virtual ~variable_impl() {}
+  
+  virtual return_type operator()(const object_base_ptr &o) const = 0;
+};
+
+template < class R, class O, class V = null_var >
+class object_variable_impl : public variable_impl
+{
+public:
+  typedef V var_type;
+  typedef typename V::object_type super_type;
+  typedef O object_type;
+  typedef R return_type;
+  typedef return_type (object_type::*memfunc_type)() const;
+
+  object_variable_impl(memfunc_type m, const var_type &v)
+    : v_(v)
+    , m_(m)
+  {}
+  virtual ~object_variable_impl() {}
+
+  virtual return_type operator()(const object_base_ptr &o) const
+  {
+    return (static_cast<O*>(v_(o).ptr())->*m_)();
+  }
+
+private:
+  var_type v_;
+  memfunc_type m_;
+};
+*/
+
 /**
  * @class variable
  * @tparam T Type of the variable.
