@@ -705,7 +705,11 @@ convert(const char *from, char *to, S size,
         typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
 {
   if (strlen(from) < (size_t)size) {
+#ifdef WIN32
+    strcpy_s(to, size, from);
+#else
     strcpy(to, from);
+#endif
   } else {
     throw std::bad_cast();
   }

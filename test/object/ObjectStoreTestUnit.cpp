@@ -84,9 +84,15 @@ ObjectStoreTestUnit::expression_test()
     itemlist->push_back(oi);
   }
 
+  variable<int> x(make_var(&ObjectItem<Item>::get_int));
+  variable<std::string> y(make_var(&ObjectItem<Item>::get_string));
+  variable<object_ptr<Item> > u(make_var(&ObjectItem<Item>::ptr));
+
+  /*
   variable<int, ObjectItem<Item> > x(&ObjectItem<Item>::get_int);
   variable<std::string, ObjectItem<Item> > y(&ObjectItem<Item>::get_string);
   variable<object_ptr<Item>, ObjectItem<Item> > u(&ObjectItem<Item>::ptr);
+  */
 
   object_view<ObjectItem<Item> > oview(ostore_);
   
@@ -98,8 +104,14 @@ ObjectStoreTestUnit::expression_test()
 
   typedef ObjectItemPtrList::item_type ObjectItemType;
 
+
+  variable<int> k(make_var(&ObjectItem<Item>::ptr, &Item::get_int));
+
+  variable<int> z(make_var(&ObjectItemType::value, &ObjectItem<Item>::get_int));
+  /*
   typedef variable<ObjectItemPtrList::value_type, ObjectItemType> item_var_t;
   variable<int, ObjectItem<Item>, item_var_t> z(&ObjectItem<Item>::get_int, item_var_t(&ObjectItemType::value));
+  */
 
 //  variable<int> x = make_var(
 //  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);

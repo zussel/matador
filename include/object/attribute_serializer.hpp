@@ -245,7 +245,7 @@ public:
     success_ = true;
   }
 
-//  void write_value(const char*, const object_container&) {}
+  void write_value(const char*, const object_container&) {}
 
   void write_value(const char *id, const char *from, int)
   {
