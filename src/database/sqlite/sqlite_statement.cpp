@@ -128,7 +128,10 @@ const char* sqlite_statement::column_name(int i) const
 
 const char* sqlite_statement::column_text(int i) const
 {
-  return (const char*)sqlite3_column_text(stmt_, i);
+
+  const unsigned char *val = sqlite3_column_text(stmt_, i);
+  int s = sqlite3_column_bytes(stmt_, i);
+  return (const char*)val;
 }
 
 int sqlite_statement::column_int(int i) const

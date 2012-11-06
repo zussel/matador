@@ -128,13 +128,13 @@ public:
 
   virtual void deserialize(oos::object_reader &deserializer)
   {
-    oos::object::deserialize(deserializer);
+    Item::deserialize(deserializer);
     deserializer.read("ref", ref_);
     deserializer.read("ptr", ptr_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
-    oos::object::serialize(serializer);
+    Item::serialize(serializer);
     serializer.write("ref", ref_);
     serializer.write("ptr", ptr_);
   }

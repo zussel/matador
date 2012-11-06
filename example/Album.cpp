@@ -83,9 +83,7 @@ void Album::add(int /*index*/, const track_ref &track, bool override_artist)
 
 Album::const_iterator Album::find(const std::string &title) const
 {
-  typedef variable<value_type, item_type> item_var_t;
-
-  variable<std::string, Track, item_var_t> x(&Track::title, item_var_t(&item_type::value));
+  variable<std::string> x(make_var(&item_type::value, &Track::title));
 
   return std::find_if(track_album_vector_.begin(), track_album_vector_.end(), x == title);
 }

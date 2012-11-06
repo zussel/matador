@@ -159,7 +159,9 @@ void statement_serializer::read(const char *id, char *x, int s)
   size_t len = strlen(tmp);
   // TODO: check buffer size
 #ifdef WIN32
-  strncpy_s(x, len, tmp, len);
+  // TODO: fixme: use db varchar in correct way
+//  strncpy_s(x, s, tmp, len);
+  strncpy_s(x, s, tmp, s-1);
 #else
   strncpy(x, tmp, len);
 #endif

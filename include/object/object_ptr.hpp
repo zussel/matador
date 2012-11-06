@@ -238,6 +238,9 @@ template < class T >
 class object_ptr : public object_base_ptr
 {
 public:
+  typedef T object_type;
+
+public:
   /**
    * Create an empty object_ptr
    */
@@ -367,6 +370,8 @@ public:
 template < class T >
 class object_ref : public object_base_ptr
 {
+public:
+  typedef T object_type;
 public:
   /**
    * Create an empty object_ref

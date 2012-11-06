@@ -46,14 +46,7 @@ public:
     : constant_(c)
   {}
 
-  template < class O >
-  T operator()(const object_ptr<O>&) const
-  {
-    return constant_;
-  }
-
-  template < class O >
-  T operator()(const object_ref<O>&) const
+  T operator()(const object_base_ptr&) const
   {
     return constant_;
   }
@@ -92,7 +85,7 @@ public:
 
   virtual return_type operator()(const object_base_ptr &optr) const
   {
-    return (v_(optr)->*m_)();
+    return (static_cast<const object_type*>(v_(optr).ptr())->*m_)();
   }
 
 private:
@@ -117,7 +110,7 @@ public:
 
   virtual return_type operator()(const object_base_ptr &optr) const
   {
-    return (static_cast<object_type*>(optr.ptr())->*m_)();
+    return (static_cast<const object_type*>(optr.ptr())->*m_)();
   }
 
 private:
@@ -145,9 +138,9 @@ public:
   }
   ~variable() {}
 
-  return_type operator()(const object &o) const
+  return_type operator()(const object_base_ptr &optr) const
   {
-    return impl_->operator()(o);
+    return impl_->operator()(optr);
   }
   
 private:
@@ -163,16 +156,23 @@ make_var(R (O::*mem_func)() const)
 
 template < class R, class O, class O1 >
 variable<R>
-make_var(const O1& (O::*mem_func)() const, R (O1::*mem_func_1)() const)
+make_var(O1 (O::*mem_func)() const, R (O1::object_type::*mem_func_1)() const)
 {
-  return variable<R>(new object_variable_impl<R, O1, variable<const O1&> >(mem_func_1, make_var(mem_func)));
+  return variable<R>(new object_variable_impl<R, O1::object_type, variable<O1> >(mem_func_1, make_var(mem_func)));
 }
 
 template < class R, class O, class O1, class O2 >
 variable<R>
-make_var(const O1& (O::*mem_func)() const, const O2& (O1::*mem_func_1)() const, R (O2::*mem_func_2)() const)
+make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, R (O2::object_type::*mem_func_2)() const)
 {
-  return variable<R>(new object_variable_impl<R, O2, variable<const O2&> >(mem_func_2, make_var(mem_func, mem_func_1)));
+  return variable<R>(new object_variable_impl<R, O2::object_type, variable<O2> >(mem_func_2, make_var(mem_func, mem_func_1)));
+}
+
+template < class R, class O, class O1, class O2, class O3 >
+variable<R>
+make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, O3 (O2::object_type::*mem_func_2)() const, R (O3::object_type::*mem_func_3)() const)
+{
+  return variable<R>(new object_variable_impl<R, O3::object_type, variable<O3> >(mem_func_3, make_var(mem_func, mem_func_1, mem_func_2)));
 }
 
 /*
@@ -358,18 +358,6 @@ binary_expression<T, variable<T>, std::greater<T> > operator>(const T &l, const 
   return binary_expression<T, variable<T>, std::greater<T> >(l, r);
 }
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::greater<T>, typename V::object_type > operator>(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::greater<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::greater<T>, typename V::object_type > operator>(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::greater<T>, typename V::object_type >(l, r);
-}
-*/
 binary_expression<variable<std::string>, const char*, std::greater<std::string> > operator>(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::greater<std::string> >(l, r);
@@ -379,7 +367,7 @@ binary_expression<const char*, variable<std::string>, std::greater<std::string> 
 {
   return binary_expression<const char*, variable<std::string>, std::greater<std::string> >(l, r);
 }
-
+*/
 /**
  * this implements the greater equal
  * specialization for the binary
@@ -403,21 +391,7 @@ binary_expression<T, variable<T>, std::greater_equal<T> > operator>=(const T &l,
 {
   return binary_expression<T, variable<T>, std::greater_equal<T> >(l, r);
 }
-
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::greater_equal<T>, typename V::object_type > operator>=(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::greater_equal<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::greater_equal<T>, typename V::object_type > operator>=(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::greater_equal<T>, typename V::object_type >(l, r);
-}
-*/
-
 binary_expression<variable<std::string>, const char*, std::greater_equal<std::string> > operator>=(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::greater_equal<std::string> >(l, r);
@@ -427,7 +401,7 @@ binary_expression<const char*, variable<std::string>, std::greater_equal<std::st
 {
   return binary_expression<const char*, variable<std::string>, std::greater_equal<std::string> >(l, r);
 }
-
+*/
 /**
  * this implements the less
  * specialization for the binary
@@ -451,21 +425,7 @@ binary_expression<T, variable<T>, std::less<T> > operator<(const T &l, const var
 {
   return binary_expression<T, variable<T>, std::less<T> >(l, r);
 }
-
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::less<T>, typename V::object_type > operator<(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::less<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::less<T>, typename V::object_type > operator<(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::less<T>, typename V::object_type >(l, r);
-}
-*/
-
 binary_expression<variable<std::string>, const char*, std::less<std::string> > operator<(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::less<std::string> >(l, r);
@@ -475,7 +435,7 @@ binary_expression<const char*, variable<std::string>, std::less<std::string> > o
 {
   return binary_expression<const char*, variable<std::string>, std::less<std::string> >(l, r);
 }
-
+*/
 /**
  * this implements the less equal
  * specialization for the binary
@@ -500,18 +460,6 @@ binary_expression<T, variable<T>, std::less_equal<T> > operator<=(const T &l, co
   return binary_expression<T, variable<T>, std::less_equal<T> >(l, r);
 }
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::less_equal<T>, typename V::object_type > operator<=(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::less_equal<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::less_equal<T>, typename V::object_type > operator<=(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::less_equal<T>, typename V::object_type >(l, r);
-}
-*/
 binary_expression<variable<std::string>, const char*, std::less_equal<std::string> > operator<=(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::less_equal<std::string> >(l, r);
@@ -521,7 +469,7 @@ binary_expression<const char*, variable<std::string>, std::less_equal<std::strin
 {
   return binary_expression<const char*, variable<std::string>, std::less_equal<std::string> >(l, r);
 }
-
+*/
 /**
  * this implements the equal
  * specialization for the binary
@@ -546,19 +494,6 @@ binary_expression<T, variable<T>, std::equal_to<T> > operator==(const T &l, cons
   return binary_expression<T, variable<T>, std::equal_to<T> >(l, r);
 }
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type > operator==(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::equal_to<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::equal_to<T>, typename V::object_type > operator==(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::equal_to<T>, typename V::object_type >(l, r);
-}
-*/
-
 binary_expression<variable<std::string>, const char*, std::equal_to<std::string> > operator==(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::equal_to<std::string> >(l, r);
@@ -569,7 +504,7 @@ binary_expression<const char*, variable<std::string>, std::equal_to<std::string>
 {
   return binary_expression<const char*, variable<std::string>, std::equal_to<std::string> >(l, r);
 }
-
+*/
 /**
  * this implements the not equal
  * specialization for the binary
@@ -594,18 +529,6 @@ binary_expression<T, variable<T>, std::not_equal_to<T> > operator!=(const T &l, 
   return binary_expression<T, variable<T>, std::not_equal_to<T> >(l, r);
 }
 /*
-template < class T, class O, class V >
-binary_expression<variable<T, O, V>, T, std::not_equal_to<T>, typename V::object_type > operator!=(const variable<T, O, V> &l, const T &r)
-{
-  return binary_expression<variable<T, O, V>, T, std::not_equal_to<T>, typename V::object_type >(l, r);
-}
-
-template < class T, class O, class V >
-binary_expression<T, variable<T, O, V>, std::not_equal_to<T>, typename V::object_type > operator!=(const T &l, const variable<T, O, V> &r)
-{
-  return binary_expression<T, variable<T, O, V>, std::not_equal_to<T>, typename V::object_type >(l, r);
-}
-*/
 binary_expression<variable<std::string>, const char*, std::not_equal_to<std::string> > operator!=(const variable<std::string> &l, const char *r)
 {
   return binary_expression<variable<std::string>, const char*, std::not_equal_to<std::string> >(l, r);
@@ -615,7 +538,7 @@ binary_expression<const char*, variable<std::string>, std::not_equal_to<std::str
 {
   return binary_expression<const char*, variable<std::string>, std::not_equal_to<std::string> >(l, r);
 }
-
+*/
 // logical
 
 template < class L1, class R1, class OP1, class L2, class R2, class OP2 >

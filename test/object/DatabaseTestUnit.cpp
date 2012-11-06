@@ -357,6 +357,8 @@ DatabaseTestUnit::reload()
     UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
     UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
 
+    item->set_cstr("hello", 5);
+
     oview_t oview(ostore_);
 
     UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");

@@ -174,7 +174,7 @@ void Import::parse(oos::object_store &ostore, const std::string &line, size_t po
   }
 
   object_view<Artist> oview(ostore);
-  variable<std::string, Artist> x(&Artist::name);
+  variable<std::string> x(make_var(&Artist::name));
   if (oview.find_if(x == name) != oview.end()) {
     // artist already exists
     std::cout << "artist [" << name << "] already exists!\n";
@@ -205,7 +205,7 @@ void Import::parse(oos::object_store &ostore, const artist_ptr &artist, const st
   }
 
   object_view<Album> oview(ostore);
-  variable<std::string, Album> x(&Album::name);
+  variable<std::string> x(make_var(&Album::name));
   if (oview.find_if(x == name) != oview.end()) {
     // artist already exists
     std::cout << "album [" << name << "] already exists!\n";
@@ -241,7 +241,7 @@ void Import::parse(oos::object_store &ostore, const album_ptr &album, const std:
   }
 
   object_view<Track> oview(ostore);
-  variable<std::string, Track> x(&Track::title);
+  variable<std::string> x(make_var(&Track::title));
   if (oview.find_if(x == name) != oview.end()) {
     // artist already exists
     std::cout << "track [" << name << "] already exists!\n";

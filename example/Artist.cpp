@@ -50,9 +50,7 @@ void Artist::add(const Artist::album_ref &album)
 
 Artist::const_iterator Artist::find(const std::string &name) const
 {
-  typedef variable<value_type, item_type> item_var_t;
-
-  variable<std::string, Album, item_var_t> x(&Album::name, item_var_t(&item_type::value));
+  variable<std::string> x(make_var(&item_type::value, &Album::name));
 
   return std::find_if(album_artist_list_.begin(), album_artist_list_.end(), x == name);
 }

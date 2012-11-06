@@ -139,14 +139,14 @@ ObjectStoreTestUnit::expression_test()
   j = std::find_if(oview.begin(), oview.end(), u == ii);
   UNIT_ASSERT_EQUAL((*j)->ptr(), ii, "couldn't find item 10");
 
-  j = std::find_if(oview.begin(), oview.end(), y == "ObjectItem");
+  j = std::find_if(oview.begin(), oview.end(), y == std::string("ObjectItem"));
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 
   // try to find unknown object
-  j = std::find_if(oview.begin(), oview.end(), y == "Simple");
+  j = std::find_if(oview.begin(), oview.end(), y == std::string("Simple"));
   UNIT_ASSERT_TRUE(j == oview.end(), "iterator must be end");
 
-  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == "ObjectItem"));
+  j = std::find_if(oview.begin(), oview.end(), (x > 6) && (y == std::string("ObjectItem")));
   UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }

@@ -1464,8 +1464,6 @@ ConvertTestUnit::convert_to_unsigned_short()
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned short, max, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned short, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned short, max, convert_weak);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned short, min,  0, convert_weak);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned short, max,  1, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned short, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned short, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned short, min, 256, convert_weak);
