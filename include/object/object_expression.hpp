@@ -158,91 +158,23 @@ template < class R, class O, class O1 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, R (O1::object_type::*mem_func_1)() const)
 {
-  return variable<R>(new object_variable_impl<R, O1::object_type, variable<O1> >(mem_func_1, make_var(mem_func)));
+  return variable<R>(new object_variable_impl<R, typename O1::object_type, variable<O1> >(mem_func_1, make_var(mem_func)));
 }
 
 template < class R, class O, class O1, class O2 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, R (O2::object_type::*mem_func_2)() const)
 {
-  return variable<R>(new object_variable_impl<R, O2::object_type, variable<O2> >(mem_func_2, make_var(mem_func, mem_func_1)));
+  return variable<R>(new object_variable_impl<R, typename O2::object_type, variable<O2> >(mem_func_2, make_var(mem_func, mem_func_1)));
 }
 
 template < class R, class O, class O1, class O2, class O3 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, O3 (O2::object_type::*mem_func_2)() const, R (O3::object_type::*mem_func_3)() const)
 {
-  return variable<R>(new object_variable_impl<R, O3::object_type, variable<O3> >(mem_func_3, make_var(mem_func, mem_func_1, mem_func_2)));
+  return variable<R>(new object_variable_impl<R, typename O3::object_type, variable<O3> >(mem_func_3, make_var(mem_func, mem_func_1, mem_func_2)));
 }
 
-/*
-template < class R, class O, class V = null_var >
-class variable
-{
-public:
-  typedef V var_type;
-  typedef typename V::object_type super_type;
-  typedef O object_type;
-  typedef R return_type;
-  typedef return_type (object_type::*memfunc_type)() const;
-
-  variable(memfunc_type m, const var_type &v)
-    : v_(v)
-    , m_(m)
-  {}
-
-  return_type operator()(const object_ptr<super_type> &o) const
-  {
-    return (v_(o).get()->*m_)();
-  }
-
-  return_type operator()(const object_ref<super_type> &o) const
-  {
-    return (v_(o).get()->*m_)();
-  }
-
-private:
-  var_type v_;
-  memfunc_type m_;
-};
-
-template < class R, class O >
-class variable<R, O, null_var>
-{
-public:
-  typedef O object_type;
-  typedef R return_type;
-  typedef return_type (object_type::*memfun)() const; /**< Shortcut for the member function. */
-
-  /**
-   * Creates a variable with the given member function
-   *
-   * @param m The member function to call.
-   * /
-  variable(memfun m)
-    : m_(m)
-  {}
-
-  return_type operator()(const object_ptr<object_type> &o) const
-  {
-    return (*o.get().*m_)();
-  }
-
-  return_type operator()(const object_ref<object_type> &o) const
-  {
-    return (*o.get().*m_)();
-  }
-
-  /*
-  virtual return_type operator()(const object_base_ptr &o) const
-  {
-    return *o.ptr().*m_)();
-  }
-  * /
-private:
-  memfun m_;
-};
-*/
 /// @cond OOS_DEV
 
 template < class E >

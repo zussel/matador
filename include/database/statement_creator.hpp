@@ -42,6 +42,13 @@ class object_container;
 
 /// @cond OOS_DEV
 
+/**
+ * @class statement_creator
+ * @brief Base class for sql statements to create
+ *
+ * This is the base class for all further classes
+ * creating sql statements.
+ */
 class statement_creator
 {
 public:
