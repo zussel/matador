@@ -155,13 +155,13 @@ void statement_serializer::read(const char *id, char *x, int s)
   if (!valid_column(id, column_)) {
     return;
   }
-  const char *tmp = stmt_->column_text(column_++);
-  size_t len = strlen(tmp);
+  int len(0);
+  const char *val = stmt_->column_text(column_++, len);
   // TODO: check buffer size
 #ifdef WIN32
   // TODO: fixme: use db varchar in correct way
 //  strncpy_s(x, s, tmp, len);
-  strncpy_s(x, s, tmp, s-1);
+  strncpy_s(x, s, val, len+1);
 #else
   strncpy(x, tmp, len);
 #endif
@@ -173,7 +173,8 @@ void statement_serializer::read(const char *id, std::string &x)
   if (!valid_column(id, column_)) {
     return;
   }
-  x = stmt_->column_text(column_++);
+  int len(0);
+  x = stmt_->column_text(column_++, len);
 }
 
 void statement_serializer::read(const char *id, varchar_base &x)
@@ -181,7 +182,8 @@ void statement_serializer::read(const char *id, varchar_base &x)
   if (!valid_column(id, column_)) {
     return;
   }
-  x = stmt_->column_text(column_++);
+  int len(0);
+  x = stmt_->column_text(column_++, len);
 }
 
 void statement_serializer::read(const char *id, object_base_ptr &x)
@@ -273,17 +275,17 @@ void statement_serializer::write(const char*, bool x)
 
 void statement_serializer::write(const char*, const char *x, int s)
 {
-  stmt_->bind(++column_, x);
+  stmt_->bind(++column_, x, strlen(x));
 }
 
 void statement_serializer::write(const char*, const std::string &x)
 {
-  stmt_->bind(++column_, x.c_str());
+  stmt_->bind(++column_, x.c_str(), x.size());
 }
 
 void statement_serializer::write(const char*, const varchar_base &x)
 {
-  stmt_->bind(++column_, x.c_str());
+  stmt_->bind(++column_, x.c_str(), x.size());
 }
 
 void statement_serializer::write(const char*, const object_base_ptr &x)

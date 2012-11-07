@@ -126,12 +126,10 @@ const char* sqlite_statement::column_name(int i) const
   return sqlite3_column_name(stmt_, i);
 }
 
-const char* sqlite_statement::column_text(int i) const
+const char* sqlite_statement::column_text(int i, int &s) const
 {
-
-  const unsigned char *val = sqlite3_column_text(stmt_, i);
-  int s = sqlite3_column_bytes(stmt_, i);
-  return (const char*)val;
+  s = sqlite3_column_bytes(stmt_, i);
+  return (const char*)sqlite3_column_text(stmt_, i);
 }
 
 int sqlite_statement::column_int(int i) const
@@ -177,9 +175,9 @@ int sqlite_statement::bind(int i, unsigned int value)
   return ret;
 }
 
-int sqlite_statement::bind(int i, const char *value)
+int sqlite_statement::bind(int i, const char *value, int len)
 {
-  int ret = sqlite3_bind_text(stmt_, i, value, -1, 0);
+  int ret = sqlite3_bind_text(stmt_, i, value, len, 0);
   throw_error(ret, db_(), "sqlite3_bind_text");
   return ret;
 }

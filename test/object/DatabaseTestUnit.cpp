@@ -330,11 +330,15 @@ DatabaseTestUnit::reload()
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
 
-  // load data
-  db.create();
+  try {
+    // load data
+    db.create();
 
-  // load data
-  db.load();
+    // load data
+    db.load();
+  } catch (exception &) {
+    UNIT_FAIL("couldn't create and load database");
+  }
 
   // create new transaction    
   transaction tr(db);

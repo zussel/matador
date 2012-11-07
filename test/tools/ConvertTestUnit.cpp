@@ -1652,8 +1652,12 @@ ConvertTestUnit::convert_to_unsigned_int()
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned int, min, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned int, max, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned int, min, convert_fitting);
-  CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned int, max, convert_fitting);
-  if (sizeof(int) < sizeof(long)) {
+  if (sizeof(unsigned int) < sizeof(long)) {
+    CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned int, max, convert_fitting);
+  } else {
+    CONVERT_NUMERIC_EXPECT_SUCCESS               (long, unsigned int, max, convert_fitting);
+  }
+  if (sizeof(unsigned int) < sizeof(long)) {
     CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned int, min, convert_weak);
     CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned int, max, 1, convert_weak);
   } else {
@@ -1708,8 +1712,13 @@ ConvertTestUnit::convert_to_unsigned_int()
 
   CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, min, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, max, convert_strict);
-  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, min, convert_fitting);
-  CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, max, convert_fitting);
+  if (sizeof(unsigned int) < sizeof(unsigned long)) {
+    CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, min, convert_fitting);
+    CONVERT_NUMERIC_EXPECT_FAILURE               (unsigned long, unsigned int, max, convert_fitting);
+  } else {
+    CONVERT_NUMERIC_EXPECT_SUCCESS               (unsigned long, unsigned int, min, convert_fitting);
+    CONVERT_NUMERIC_EXPECT_SUCCESS               (unsigned long, unsigned int, max, convert_fitting);
+  }
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned long, unsigned int, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (unsigned long, unsigned int, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (unsigned long, unsigned int, min,  0, convert_weak);
@@ -1725,7 +1734,6 @@ ConvertTestUnit::convert_to_unsigned_int()
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, unsigned int, max, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, unsigned int, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, unsigned int, max, convert_fitting);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, unsigned int, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (float, unsigned int, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, unsigned int, min, 0, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, unsigned int, max, 0, convert_weak);
@@ -1808,7 +1816,7 @@ ConvertTestUnit::convert_to_unsigned_long()
   CONVERT_NUMERIC_EXPECT_FAILURE               (char, unsigned long, max, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (char, unsigned long, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS               (char, unsigned long, max, convert_fitting);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (char, unsigned long, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_ABS           (char, unsigned long, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS               (char, unsigned long, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (char, unsigned long, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (char, unsigned long, min, 256, convert_fitting);
@@ -1851,8 +1859,8 @@ ConvertTestUnit::convert_to_unsigned_long()
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned long, max, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE               (long, unsigned long, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS               (long, unsigned long, max, convert_fitting);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned long, min,  0, convert_weak);
-  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned long, max,  1, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_ABS           (long, unsigned long, min, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS               (long, unsigned long, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned long, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned long, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (long, unsigned long, min, 256, convert_weak);

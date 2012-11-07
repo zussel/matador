@@ -12,16 +12,24 @@
 class Item : public oos::object
 {
 public:
-  Item() {}
+  Item() { init(); }
   explicit Item(const std::string &str)
     : string_(str)
-  {}
+  {
+    init();
+  }
   Item(const std::string &str, int i)
     : int_(i)
     , string_(str)
-  {}
+  {
+    init();
+  }
   virtual ~Item() {}
 
+private:
+  void init() { cstr_[0] = '\0'; }
+
+public:
   virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);

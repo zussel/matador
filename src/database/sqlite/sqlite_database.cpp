@@ -138,9 +138,6 @@ void sqlite_database::load(const prototype_node &node)
 
 void sqlite_database::execute(const char *sql, result_impl *res)
 {
-
-//  std::cerr << "executing " << sql << "\n";
-
   char *errmsg;
   int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res, &errmsg);
   if (ret != SQLITE_OK) {

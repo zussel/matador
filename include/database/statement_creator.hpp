@@ -70,20 +70,15 @@ private:
 template < class T >
 class statement_field_creator
   : public statement_creator
-  , public generic_object_writer<statement_field_creator<T> >
 {
 public:
   statement_field_creator()
-    : generic_object_writer<statement_field_creator<T> >(this)
-    , first_(true)
+    : first_(true)
   {}
   virtual ~statement_field_creator() {}
 
 protected:
   typedef T type_provider;
-
-  virtual void write_field(const char *id, const char *type) = 0;
-  virtual void write_pk_field(const char *id, const char *type) { write_field(id, type); }
 
   const type_provider& types() const { return types_; }
 
@@ -92,39 +87,23 @@ protected:
   bool is_first() const { return first_; }
   void first(bool f) { first_ = f; }
 
-public:
-  template < class V >
-  void write_value(const char *id, const V &x)
-  {
-    write_field(id, types_.type_string(x));
-  }
-  void write_value(const char *id, const char *x, int)
-  {
-    write_field(id, types_.type_string(x));
-  }
-	void write_value(const char *id, long x)
-  {
-    if (strcmp(id, "id") == 0) {
-      write_pk_field(id, types_.type_string(x));
-    } else {
-      write_field(id, types_.type_string(x));
-    }
-  }
-  void write_value(const char*, const object_container&) {}
-
 private:
   type_provider types_;
   bool first_;
 };
 
 template < class T >
-class create_statement_creator : public statement_field_creator<T>
+class create_statement_creator
+  : public statement_field_creator<T>
+  , public generic_object_writer<create_statement_creator<T> >
 {
 public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  create_statement_creator() {}
+  create_statement_creator()
+    : generic_object_writer<create_statement_creator<T> >(this)
+  {}
   virtual ~create_statement_creator() {}
 
   virtual std::string create(object *o, const char *table_name, const char*)
@@ -150,32 +129,59 @@ protected:
     this->statement_stream() << ");";
   }
 
-private:
-  virtual void write_field(const char *id, const char *type)
+public:
+  template < class V >
+  void write_value(const char *id, const V &x)
   {
     if (!this->is_first()) {
       this->statement_stream() << ", ";
     } else {
       this->first(false);
     }
-    this->statement_stream() << id << " " << type;
+    this->statement_stream() << id << " " << types().type_string(x);
+    if (strcmp(id, "id") == 0) {
+      this->statement_stream() << " " << T::primary_key_prefix();
+    }
+  }
+  void write_value(const char*, const object_container&) {}
+
+  void write_value(const char *id, const varchar_base &x)
+  {
+    write_var_field(id, types().type_string(x), x.capacity());
+  }
+  void write_value(const char *id, const char *x, int s)
+  {
+    write_var_field(id, types().type_string(x), s);
   }
 
-  virtual void write_pk_field(const char *id, const char *type)
+private:
+  void write_var_field(const char *id, const char *t, int s)
   {
-    base_creator::write_pk_field(id, type);
-    this->statement_stream() << " " << T::primary_key_prefix();
+    if (!this->is_first()) {
+      this->statement_stream() << ", ";
+    } else {
+      this->first(false);
+    }
+    this->statement_stream() << id << " " << t << "(" << s << ")";
+    if (strcmp(id, "id") == 0) {
+      this->statement_stream() << " " << T::primary_key_prefix();
+    }
   }
 };
 
 template < class T >
-class select_statement_creator : public statement_field_creator<T>
+
+class select_statement_creator
+  : public statement_field_creator<T>
+  , public generic_object_writer<select_statement_creator<T> >
 {
 public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  select_statement_creator() {}
+  select_statement_creator()
+    : generic_object_writer<select_statement_creator<T> >(this)
+  {}
   virtual ~select_statement_creator() {}
 
   virtual std::string create(object *o, const char *table_name, const char *where_clause)
@@ -205,8 +211,20 @@ protected:
     this->statement_stream() << ";";
   }
 
-private:
-  virtual void write_field(const char *id, const char *)
+public:
+  template < class V >
+  void write_value(const char *id, const V&)
+  {
+    write_column(id);
+  }
+  void write_value(const char *id, const char*, int)
+  {
+    write_column(id);
+  }
+
+  void write_value(const char*, const object_container&) {}
+
+  void write_column(const char *id)
   {
     if (!this->is_first()) {
       this->statement_stream() << ", ";
@@ -218,14 +236,17 @@ private:
 };
 
 template < class T >
-class insert_statement_creator : public statement_field_creator<T>
+class insert_statement_creator
+  : public statement_field_creator<T>
+  , public generic_object_writer<insert_statement_creator<T> >
 {
 public:
   typedef statement_field_creator<T> base_creator;
 
 public:
   insert_statement_creator()
-    : second_(false)
+    : generic_object_writer<insert_statement_creator<T> >(this)
+    , second_(false)
   {}
   virtual ~insert_statement_creator() {}
 
@@ -242,8 +263,20 @@ public:
     return this->statement_stream().str();
   }
 
-private:
-  virtual void write_field(const char *id, const char *)
+public:
+  template < class V >
+  void write_value(const char *id, const V&)
+  {
+    write_column(id);
+  }
+  void write_value(const char *id, const char*, int)
+  {
+    write_column(id);
+  }
+
+  void write_value(const char*, const object_container&) {}
+
+  void write_column(const char *id)
   {
     if (!this->is_first()) {
       this->statement_stream() << ", ";
@@ -288,13 +321,17 @@ private:
 };
 
 template < class T >
-class update_statement_creator : public statement_field_creator<T>
+class update_statement_creator
+  : public statement_field_creator<T>
+  , public generic_object_writer<update_statement_creator<T> >
 {
 public:
   typedef statement_field_creator<T> base_creator;
 
 public:
-  update_statement_creator() {}
+  update_statement_creator()
+    : generic_object_writer<update_statement_creator<T> >(this)
+  {}
   virtual ~update_statement_creator() {}
 
   virtual std::string create(object *o, const char *table_name, const char *where_clause)
@@ -308,8 +345,20 @@ public:
     return this->statement_stream().str();
   }
 
-private:
-  virtual void write_field(const char *id, const char *)
+public:
+  template < class V >
+  void write_value(const char *id, const V&)
+  {
+    write_column(id);
+  }
+  void write_value(const char *id, const char*, int)
+  {
+    write_column(id);
+  }
+
+  void write_value(const char*, const object_container&) {}
+
+  void write_column(const char *id)
   {
     if (!this->is_first()) {
       this->statement_stream() << ", ";

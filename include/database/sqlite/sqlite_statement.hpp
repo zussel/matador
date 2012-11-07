@@ -47,7 +47,7 @@ public:
   virtual int column_count() const;
   virtual const char* column_name(int i) const;
 
-  virtual const char* column_text(int i) const;
+  virtual const char* column_text(int i, int &s) const;
   virtual int column_int(int i) const;
   virtual double column_double(int i) const;
 
@@ -57,7 +57,7 @@ public:
   virtual int bind(int i, int value);
   virtual int bind(int i, long value);
   virtual int bind(int i, unsigned int value);
-  virtual int bind(int i, const char *value);
+  virtual int bind(int i, const char *value, int len);
   virtual int bind_null(int i);
 
   virtual database& db();
