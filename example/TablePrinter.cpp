@@ -163,7 +163,7 @@ void TablePrinter::write(const char *id, bool x)
   write_column(id, x, 1);
 }
 
-void TablePrinter::write(const char *id, const char *x, int s)
+void TablePrinter::write(const char *id, const char *x, int )
 {
   switch (state_) {
     case INITIALIZE:

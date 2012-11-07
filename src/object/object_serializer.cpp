@@ -95,7 +95,7 @@ void object_serializer::write_value(const char*, const object_container &x)
   x.for_each(std::tr1::bind(&object_serializer::write_object_container_item, this, _1));  
 }
 
-void object_serializer::read_value(const char*, char *&c, int s)
+void object_serializer::read_value(const char*, char *&c, int )
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));

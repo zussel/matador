@@ -10,7 +10,8 @@ SET(${PROJECT_NAME}_PATCH_LEVEL 0)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
     MESSAGE(STATUS "GCC detected - Adding compiler flags")
-    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -ggdb -Wextra -Wall -pedantic")
+    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
+#    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -ggdb -Wextra -Wall -pedantic")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 # add module path

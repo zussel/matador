@@ -138,7 +138,7 @@ public:
     } else {
       this->first(false);
     }
-    this->statement_stream() << id << " " << types().type_string(x);
+    this->statement_stream() << id << " " << this->types().type_string(x);
     if (strcmp(id, "id") == 0) {
       this->statement_stream() << " " << T::primary_key_prefix();
     }
@@ -147,11 +147,11 @@ public:
 
   void write_value(const char *id, const varchar_base &x)
   {
-    write_var_field(id, types().type_string(x), x.capacity());
+    write_var_field(id, this->types().type_string(x), x.capacity());
   }
   void write_value(const char *id, const char *x, int s)
   {
-    write_var_field(id, types().type_string(x), s);
+    write_var_field(id, this->types().type_string(x), s);
   }
 
 private:

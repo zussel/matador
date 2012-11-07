@@ -83,7 +83,7 @@ public:
 	virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::varchar_base &x);
   virtual void write(const char *id, const oos::object_base_ptr &x);
-  virtual void write(const char *id, const oos::object_container &) {}
+  virtual void write(const char *, const oos::object_container &) {}
 
 private:
   const oos::object_store &ostore_;

@@ -163,7 +163,7 @@ void statement_serializer::read(const char *id, char *x, int s)
 //  strncpy_s(x, s, tmp, len);
   strncpy_s(x, s, val, len+1);
 #else
-  strncpy(x, tmp, len);
+  strncpy(x, val, len);
 #endif
   x[len] = '\0';
 }
@@ -208,7 +208,7 @@ void statement_serializer::read(const char *id, object_base_ptr &x)
   // set object id
 }
 
-void statement_serializer::read(const char *id, object_container &)
+void statement_serializer::read(const char *, object_container &)
 {
 }
 
@@ -273,7 +273,7 @@ void statement_serializer::write(const char*, bool x)
   stmt_->bind(++column_, x);
 }
 
-void statement_serializer::write(const char*, const char *x, int s)
+void statement_serializer::write(const char*, const char *x, int)
 {
   stmt_->bind(++column_, x, strlen(x));
 }
