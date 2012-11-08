@@ -7,7 +7,8 @@
 	<link rel="stylesheet" type="text/css" href="style.css" />
     <!--link rel="stylesheet" type="text/css" href="vs.css"/-->
     <!--link rel="stylesheet" type="text/css" href="solarized_light.css"/-->
-    <link rel="stylesheet" type="text/css" href="arta.css"/>
+    <!--link rel="stylesheet" type="text/css" href="arta.css"/-->
+    <link rel="stylesheet" type="text/css" href="tomorrow.css"/>
   </head> 
   <body>
     <div id="wrapper">
@@ -31,27 +32,60 @@
       <div id="content">
         <h1>Open Object Store</h1>
         <h2>Introduction</h2>
-        <div class="width75 float_left">
-          <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides two things the ORM funcionality and a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All is done for you automagically. It gives the user both one container for all objects and the persistence backend functionality.</p>
+        <div class="width100 float_left">
+          <p>Open Object Store (OOS) is an open source and cross-plattform C++ framework for object-relational mapping (ORM). It provides two things the ORM funcionality and a container for all kind of your objects with the ability to persist these objects. You don't have to deal with tables, columns neither with creating sql statements at all. All 
+              this is done for you.. Besides the ORM functionality OOS comes with a framework 
+              for your objects centered around one container storing all your objects.</p>
+          <p>OOS is a ORM framework written in C++. I aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.</p>
+        </div>
+        <div class="width100 float_left">
           <h2>Features</h2>
+        </div>
+        <div class="width25 float_right">
+            <a href="#" class="button green">Download Version 0.1.0</a>
+        </div>
+        <div class="width75 float_left">
           <ul>
-            <li>Encapsulates all Database/SQL related functionality</li>
-            <li>Provides one container as the central point to store your objects</li>
+            <li>Encapsulates all database backends</li>
+            <li>Encapsulates SQL statements and database layout</li>
+            <li>One container for all your objects</li>
+            <li>STL like interface</li>
             <li>Clean and straight forward design</li>
             <li>Support of transactions</li>
-            <li>STL style</li>
+            <li>Easy expression for filtering</li>
+            <li>No dependencies to other frameworks</li>
             <li>Easy to use</li>
           </ul>
         </div>
-        <div class="width25 float_right">
-            <p>Download Version 0.1.0</p>
+        <div class="width50 float_left">
+            <h2 class="clear">Future Plans</h2>
+            <ul>
+              <li>Lazy loading</li>
+              <li>Class generator</li>
+              <li>More database backends</li>
+              <li>Custom primary key</li>
+              <li>Embeddable custom attributes</li>
+              <li>More class to database mapping</li>
+              <li>Constraints</li>
+            </ul>
         </div>
-        <h2 class="clear">Future Plans</h2>
-        <h2 class="clear">Getting started</h2>
+        <div class="width50 float_left">
+            <h2 class="clear">Limitations</h2>
+            <ul>
+              <li>No custom primary key</li>
+              <li>Only one supported database backend (SQLite)</li>
+              <li>Missing blob, date and time classes</li>
+              <li>Mapping of database features (not null, unique, ...)</li>
+            </ul>
+        </div>
+        <div class="width100 float_left">
+          <h2 class="clear">Getting started</h2>
         <!--div class="clear"></div-->
+        </div>
         <div class="width75 float_left">
           <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
-          <p>1. Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
+          <ol>
+            <li>Create your class derived from oos::object add access methods and overwrite the serialization interface.</li>
 <pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
 {
 <span class="keyword">private</span>:
@@ -87,10 +121,10 @@
     <span class="keyword">return</span> name_;
   }
 };</code></pre>
-        <p>2. Make your class type known to your object store</p>
+        <li>Make your class type known to your object store</li>
 <pre><code class="cpp">object_store ostore;
 ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);</code></pre>
-        <p>3. Create a new session start a new transaction and insert your objects.</p>
+        <li>Create a new session start a new transaction and insert your objects.</li>
 <pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
 
 db.create();
@@ -110,7 +144,7 @@ transaction tr(db);
     <span class="comment">// do your cleanup here</span>
     tr.rollback();
 }</code></pre>
-        <p>4. To access your objects open a view.</p>
+        <li>To access your objects open a view.</li>
 <pre><code class="cpp"><span class="keyword">typedef</span> object_ptr&lt;person&gt; person_ptr;
 <span class="keyword">typedef</span> object_view&lt;person&gt; person_view_t;
 
@@ -123,9 +157,10 @@ person_view_t::iterator last = oview.end();
     <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"person: "</span> &lt;&lt; p-&gt;name() &lt;&lt; <span class="string">"\n"</span>;
 }
 </code></pre>
+        </ol>
       </div>
         <div class="width25 float_right">
-            <p>Download this simple example here. It comes in one file and containes all neccessary includes.</p>
+          <p><a href="#" class="button green">Download Simple Sample</a></p>
         </div>
       <div class="width75 float_left">
         <p>As you can see, the class is only derived from oos::object and two serialize methods are added. Thats it! The following code snippet shows how we can creete a database and use a transaction to persist some objects. But first the class person must be made known to the object store.</p>

@@ -45,8 +45,6 @@
  * and must have a default constructor.
  *
  * @code
- * // Our first object based class
- * 
  * class person : public oos::object
  * {
  *   std::string name_;

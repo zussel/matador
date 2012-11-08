@@ -560,7 +560,7 @@ ConvertTestUnit::convert_to_char()
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (double, char, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (double, char, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, char, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, char, max, 0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (double, char, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, char, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, char, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, char, min, 256, convert_weak);
@@ -742,7 +742,7 @@ ConvertTestUnit::convert_to_short()
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, short, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, short, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, short, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, short, max, 0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (float, short, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, short, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, short, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, short, min, 256, convert_weak);
@@ -757,7 +757,7 @@ ConvertTestUnit::convert_to_short()
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (double, short, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (double, short, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, short, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, short, max, 0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (double, short, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, short, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, short, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, short, min, 256, convert_weak);
@@ -955,7 +955,7 @@ ConvertTestUnit::convert_to_int()
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, int, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, int, max, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, int, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, int, max, 0x80000000, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (float, int, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, int, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, int, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, int, min, 256, convert_weak);
@@ -968,7 +968,7 @@ ConvertTestUnit::convert_to_int()
   CONVERT_NUMERIC_EXPECT_FAILURE               (double, int, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE               (double, int, max, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, int, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, int, max, 0x80000000, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (double, int, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, int, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, int, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, int, min, 256, convert_weak);
@@ -1145,7 +1145,7 @@ ConvertTestUnit::convert_to_long()
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, long, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE               (float, long, max, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, long, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, long, max, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (float, long, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, long, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, long, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, long, min, 256, convert_weak);
@@ -1158,7 +1158,7 @@ ConvertTestUnit::convert_to_long()
   CONVERT_NUMERIC_EXPECT_FAILURE               (double, long, min, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE               (double, long, max, convert_fitting);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, long, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (double, long, max, 0x80000000, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (double, long, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, long, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, long, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (double, long, min, 256, convert_weak);
@@ -1340,7 +1340,7 @@ ConvertTestUnit::convert_to_unsigned_char()
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, unsigned char, min, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (float, unsigned char, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, unsigned char, min, 0, convert_weak);
-//  CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (float, unsigned char, max, 0, convert_weak);
+  CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED     (float, unsigned char, max, convert_weak);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, unsigned char, min, 256, convert_strict);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, unsigned char, min, 256, convert_fitting);
   CONVERT_NUMERIC_EXPECT_FAILURE_SIZE          (float, unsigned char, min, 256, convert_weak);
