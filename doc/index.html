@@ -99,16 +99,16 @@
   {}
   <span class="keyword">virtual</span> ~person() {}
   
-  <span class="keyword">virtual</span> <span class="keyword">void</span> read_from(oos::object_atomizer *a)
+  <span class="keyword">virtual</span> <span class="keyword">void</span> serialize(oos::object_reader &amp;rdr)
   {
-    oos::object::read_from(a);
-    a-&gt;read(<span class="string">"name"</span>, name_);
+    oos::object::serialize(rdr);
+    rdr.read(<span class="string">"name"</span>, name_);
   }
 
-  <span class="keyword">virtual</span> <span class="keyword">void</span> write_to(oos::object_atomizer *a) <span class="keyword">const</span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> deserialize(oos::object_writer &amp;wrt) <span class="keyword">const</span>
   {
-    oos::object::write_to(a);
-    a-&gt;write(<span class="string">"name"</span>, name_);
+    oos::object::deserialize(wrt);
+    wrt.write(<span class="string">"name"</span>, name_);
   }
 
   <span class="keyword">void</span> name(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;n)

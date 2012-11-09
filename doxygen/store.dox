@@ -1,0 +1,206 @@
+/**
+ * @htmlonly
+ * <div class="width75 float_left">
+ * @endhtmlonly
+ *
+ * @page store The ObjectStore
+ *
+ * @htmlonly
+ * <table id="doc_nav"><tbody><tr>
+ *   <td align="left" width="40%">
+ * @endhtmlonly
+ * @ref index
+ * @htmlonly
+ *   </td>
+ *   <td width="20%"></td>
+ *   <td align="right" width="40%">
+ * @endhtmlonly
+ * @ref relations
+ * @htmlonly
+ *   </td>
+ * </tr></tbody></table>
+ * @endhtmlonly
+ *
+ * @section objects_sec Objects
+ *
+ * As mentioned above there are a handful of rules you have to follow while
+ * intergrating your object classes into OOS.
+ *
+ * @subsection step1 Step 1: Derive your class from oos::object.
+ *
+ * All your entity classes or extity base classes must be derived from
+ * oos::object and must have a default constructor.
+ *
+ * @code
+ * class person : public oos::object
+ * {
+ *   std::string name_;
+ *
+ * public:
+ *   person();
+ *   virtual ~person();
+ * };
+ * @endcode
+ *
+ * @subsection step2 Step 2: Provide propper acces methods.
+ *
+ * Write correct access (get/set) methods for all your member attributes.
+ * It is important when modifying an attribute to use the oos::object::modify()
+ * method. It tells the oos::object_store and the oos::object_observer objects
+ * that an object is modified.
+ *
+ * @code
+ * void person::name(const std::string &n)
+ * {
+ *   modify(name_, n);
+ * }
+ *
+ * std::string name() const
+ * {
+ *   return name_;
+ * }
+ * @endcode
+ *
+ * @subsection step3 Step 3: Make the class serializable.
+ *
+ * To make the class serializable you have to implement the methods
+ * oos::object::serialize() and oos::object::deserialize(). And don't forget
+ * to call these methods for your super class.
+ *
+ * @code
+ * void person::serialize(oos::object_reader &serializer)
+ * {
+ *   object::serialize(serializer);
+ *   serializer.read("name", name_);
+ * }
+ *
+ * void person::deserialize(oos::object_writer &deserializer) const
+ * {
+ *   object::deserialize(deserializer);
+ *   deserializer->write("name", name_);
+ * }
+ * @endcode
+ *
+ * @section object_store_sec The Object Store
+ *
+ * Now that you've written your entity classes you might want to insert
+ * them into the oos::object_store. But before doing so you have to tell
+ * the oos::object_store about your entity hierarchy once.
+ *
+ * @subsection prototypes Setup the object hierarchy
+ *
+ * Assume we have the abstract base class Vehicle and derived from this
+ * classes Truck, Car and Bike. Now lets make this hierarchy known to the
+ * oos::object_store:
+ *
+ * @code
+ * oos::object_store ostore;
+ * ostore.insert_prototype<Vehicle>("vehicle", true);
+ * ostore.insert_prototype<Truck, Vehicle>("truck");
+ * ostore.insert_prototype<Car, Vehicle>("car");
+ * ostore.insert_prototype<Bike, Vehicle>("bike");
+ * @endcode
+ *
+ * As you can see it is quite simple to add the hierarchy to
+ * the oos::object_store by calling method oos::object_store::insert_prototype.
+ * As there are several ways to call this method we decide to use the one
+ * with template arguments.
+ *
+ * The Vehicle class is an abstract base (directly derived from oos::object).
+ * Here we need only one template argument (the class itself: Vehicle). With
+ * the first method paramter you give your type a unique name. The second parameter
+ * is a flag telling the oos::object_store that this type is abstract. Settings
+ * this flag to true you can't insert objects of this concrete type.
+ *
+ * @subsection add_objects Add objects
+ *
+ * Now that we've setup up our hierarchy we can add new objects to
+ * the oos::object_store.
+ *
+ * @code
+ * ostore.insert(new Truck("MAN");
+ * ostore.insert(new Car("VW Beetle");
+ * ostore.insert(new Bike("Honda");
+ * @endcode
+ * 
+ * @subsection modify_objects Modify objects
+ *
+ * Now that we have some objects inserted we may want
+ * to modify them. The important thing here is that you
+ * don't deal with raw pointer to your object when try
+ * to modify it. You always have a pointer object wrapped
+ * around the object (like shared_ptr).
+ * Here it is called oos::object_ptr. So how do you get
+ * such a oos::object_ptr?
+ * The oos::object_store for example returns an oos::object_ptr
+ * object when you insert a new object. Once you received
+ * the oos::object_ptr you can change your object by using it
+ * like usual pointer.
+ * 
+ * @code
+ * typedef oos::object_ptr<Truck> truck_ptr;
+ * truck_ptr truck = ostore.insert(new Truck("MAN"));
+ * 
+ * truck->weight(2.5);
+ * truck->color("red");
+ * @endcode
+ * 
+ * @subsection remove_objects Remove objects
+ * Once we have an object_ptr object we can easily delete this
+ * object from the object_store by calling oos::object_store::remove()
+ *
+ * @code
+ * typedef oos::object_ptr<Truck> truck_ptr;
+ * truck_ptr truck = ostore.insert(new Truck("MAN"));
+ * 
+ * if (ostore.remove(truck)) {
+ *   // successfully removed object
+ * } else {
+ *   // object removal failed
+ * }
+ * @endcode
+ *
+ * When removing an object internally a check is done if
+ * the object (and subsequently all connected objects) can be
+ * removed. This test is done by checking the pointer and reference
+ * count of each concerning object. If the test succeeds the object
+ * is removed and true is returned. If the test fails false is
+ * returned.
+ *
+ * @htmlonly
+ * <table id="doc_nav"><tbody><tr>
+ *   <td align="left" width="40%">Prev</td>
+ *   <td align="center" width="20%"></td>
+ *   <td align="right" width="40%">Next</td></tr><tr>
+ *   <td align="left" width="40%">
+ * @endhtmlonly
+ * @ref index
+ * @htmlonly
+ *   </td>
+ *   <td width="20%"></td>
+ *   <td align="right" width="40%">
+ * @endhtmlonly
+ * @ref relations
+ * @htmlonly
+ *   </td>
+ * </tr></tbody></table>
+ * @endhtmlonly
+ *
+ * @htmlonly
+ * </div>
+ * <div id="side_toc" class="width25 float_right">
+ * @endhtmlonly
+ * <b>Table of content</b> @n
+ * <ol>
+ *   <li>@ref intro_sec</li>
+ *   <li>@ref objects_sec</li>
+ *   <li>@ref object_store_sec</li>
+ *   <li>@ref object_relations_sec</li>
+ *   <li>@ref object_view_sec</li>
+ *   <li>@ref expression_sec</li>
+ *   <li>@ref database_sec</li>
+ * </ol>
+ * @htmlonly
+ * </div>
+ * @endhtmlonly
+ */

@@ -1,21 +1,16 @@
 /**
+ * @page test Test Page
+ *
+ * Test
+ */
+
+/**
  * @htmlonly
  * <div class="width75 float_left">
  * @endhtmlonly
+ * @mainpage
  *
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td align="left" width="40%"></td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @ref store
- * @htmlonly
- *   </td>
- * </tr></tbody></table>
- * @endhtmlonly
- *
- * @mainpage Introduction
+ * @ref test
  *
  * @section intro_sec Introduction
  *
@@ -519,21 +514,6 @@
  *   tr.rollback();
  * }
  * @endcode
- *
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td align="left" width="40%"></td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%">Next</td></tr><tr>
- *   <td align="left" width="40%"></td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @ref store
- * @htmlonly
- *   </td>
- * </tr></tbody></table>
- * @endhtmlonly
  *
  * @htmlonly
  * </div>
