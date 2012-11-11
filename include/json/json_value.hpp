@@ -51,8 +51,19 @@ class json_type;
 class OOS_API json_value
 {
 public:
+  /**
+   * Default constructor
+   */
   json_value();
+  /**
+   * Copy constructor
+   * 
+   * @param x Value to copy from.
+   */
   json_value(const json_value &x);
+  /**
+   *
+   */
   json_value(json_type *x);
   json_value(const std::string &x);
   json_value(const char *x);

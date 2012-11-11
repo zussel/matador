@@ -39,6 +39,20 @@ namespace oos {
 
 class json_value;
 
+/**
+ * @class json_type
+ * @brief Base class for all json types
+ * 
+ * This is the base class for all json types
+ * - array
+ * - object
+ * - string
+ * - number
+ * - boolean
+ * - null
+ * It provides all accessors to get the
+ * values for each concrete class.
+ */
 class OOS_API json_type
 {
 protected:

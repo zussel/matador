@@ -14,6 +14,9 @@
  *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
+ * @endhtmlonly
+ * @ref view
+ * @htmlonly
  *   </td>
  * </tr></tbody></table>
  * @endhtmlonly
@@ -166,6 +169,9 @@
  *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
+ * @endhtmlonly
+ * @ref view
+ * @htmlonly
  *   </td>
  * </tr></tbody></table>
  * @endhtmlonly

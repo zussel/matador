@@ -42,7 +42,12 @@
 
 namespace oos {
 
-  class OOS_API json_number : public json_type
+/**
+ * @class json_number
+ * @brief Representing json number type
+ * 
+ */
+class OOS_API json_number : public json_type
 {
 public:
   json_number();

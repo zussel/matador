@@ -296,6 +296,24 @@ color: #3fa6e7;
 	line-height: 120%;
 	font-size: 105%;
 	color: #444;
+
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  background-color: #eee;
+}
+
+.line
+{
+  font-family: monospace, fixed;
+  font-size: 13px;
+  min-height: 13px;
+  line-height: 1.0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .memberdecls

@@ -49,6 +49,8 @@
 #define CPP11_TYPE_TRAITS_NS std
 #endif
 
+/// @endcond
+
 namespace oos {
 
 class varchar_base;

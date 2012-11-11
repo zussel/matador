@@ -28,11 +28,19 @@
 
 namespace oos {
 
+/**
+ * @class value_item
+ * @tparam T Type of value
+ * @brief Holder class for the value type
+ *
+ * This class comes as a proxy between the container
+ * class and the values stored in the container.
+ */
 template < class T >
 class value_item : public object
 {
 public:
-  typedef T value_type;
+  typedef T value_type; /**< Shortcut for the value type. */
 
 public:
   value_item() {}
