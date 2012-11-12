@@ -44,6 +44,11 @@ public:
 
 public:
   value_item() {}
+  /**
+   * Copies a value_item.
+   * 
+   * @param v value_item to copy from.
+   */
   value_item(const value_type &v)
     : value_(v)
   {}
@@ -61,11 +66,21 @@ public:
     serializer.write("value", value_);
   }
 
+  /**
+   * Return the current value of the value_item.
+   * 
+   * @return The value of the value_item.
+   */
   value_type value() const
   {
     return value_;
   }
 
+  /**
+   * Sets a new value for the value_item.
+   * 
+   * @param v The new value to set.
+   */
   void value(const value_type &v)
   {
     modify(value_, v);
@@ -94,9 +109,24 @@ public:
   typedef typename container_type::size_type size_type; /**< Shortcut for the size type. */
 
   container_item() {}
+
+  /**
+   * Creates a container_item with a given
+   * reference to its container.
+   * 
+   * @param c The container reference to set.
+   */
   explicit container_item(const container_ref &c)
     : container_(c)
   {}
+  
+  /**
+   * Creates a container_item with a given
+   * reference to its container and a value.
+   * 
+   * @param c The container reference to set.
+   * @param v The value of the container_item
+   */
   container_item(const container_ref &c, const value_type &v)
     : value_item<value_type>(v)
     , container_(c)

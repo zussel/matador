@@ -88,7 +88,7 @@ public:
    * returns a json_value object representing
    * the json structure.
    *
-   * @param in The json std::string.
+   * @param str The json std::string.
    * @return A json_value structure.
    */
   json_value parse(std::string &str);

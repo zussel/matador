@@ -59,7 +59,7 @@ public:
   virtual void deserialize(object_reader &) = 0;
 
   /**
-   * @fn virtual void serialize(object_writer &serializer)
+   * @fn virtual void serialize(object_writer &serializer) const
    * Serializes an object to the given
    * object_atomizer object.
    *
