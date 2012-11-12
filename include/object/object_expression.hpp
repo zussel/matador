@@ -55,8 +55,6 @@ private:
   T constant_;
 };
 
-/// @endcond OOS_DEV
-
 template < class R >
 class variable_impl
 {
@@ -117,20 +115,41 @@ private:
   memfunc_type m_;
 };
 
+/// @endcond OOS_DEV
+
+/**
+ * @tparam R Type of the variable
+ * @class variable
+ * @brief Holds the functor to a method
+ * 
+ * Wrapper class for the concrete variable
+ * implementation.
+ */
 template < class R >
 class variable
 {
 public:
-  typedef R return_type;
+  typedef R return_type; /**< Shortcut for return type. */
   
   explicit variable(variable_impl<R> *impl)
     : impl_(impl)
   {}
 
+  /**
+   * Copies from the given variable.
+   * 
+   * @param x The variable to copy from.
+   */
   variable(const variable &x)
     : impl_(x.impl_)
   {}
 
+  /**
+   * Assigns from the given variable.
+   * 
+   * @param x The variable to assign from.
+   * @return Initialized variable.
+   */
   variable& operator=(const variable &x)
   {
     impl_ = x.impl_;
@@ -138,6 +157,13 @@ public:
   }
   ~variable() {}
 
+  /**
+   * Applies the () operator of the concrete
+   * variable and returns the result.
+   * 
+   * @param optr The object to apply the variable to.
+   * @return The value of the variable.
+   */
   return_type operator()(const object_base_ptr &optr) const
   {
     return impl_->operator()(optr);
@@ -147,6 +173,27 @@ private:
   std::tr1::shared_ptr<variable_impl<R> > impl_;
 };
 
+/**
+ * @file object_expression.hpp
+ * @brief Contains functions to create variables
+ *
+ * This file contains some functions creating
+ * variables. These functions wrap the constructor
+ * of the variable class and ease the creation
+ * of variables of cascading method calls.
+ */
+ 
+ /**
+  * @tparam R The return value type
+  * @tparam O The object type
+  * @brief Create a variable with depth zero
+  * 
+  * Creates a variable with depth zero. That means that the
+  * value is inside the object itself.
+  * 
+  * @param mem_func A member function of the object_type.
+  * @return A variable with return type R.
+  */
 template < class R, class O >
 variable<R>
 make_var(R (O::*mem_func)() const)
@@ -154,6 +201,19 @@ make_var(R (O::*mem_func)() const)
   return variable<R>(new object_variable_impl<R, O, null_var>(mem_func));
 }
 
+ /**
+  * @tparam R The return value type
+  * @tparam O The proxy object type
+  * @tparam O1 The object type
+  * @brief Create a variable with depth one
+  * 
+  * Creates a variable with depth one. That means that a
+  * value of a nested object is requested.
+  * 
+  * @param mem_func A member function of the object_type.
+  * @param mem_func_1 A member function of the nested object_type.
+  * @return A variable with return type R.
+  */
 template < class R, class O, class O1 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, R (O1::object_type::*mem_func_1)() const)
@@ -161,6 +221,21 @@ make_var(O1 (O::*mem_func)() const, R (O1::object_type::*mem_func_1)() const)
   return variable<R>(new object_variable_impl<R, typename O1::object_type, variable<O1> >(mem_func_1, make_var(mem_func)));
 }
 
+ /**
+  * @tparam R The return value type
+  * @tparam O The proxy object type
+  * @tparam O1 The nested object type
+  * @tparam O2 The nested object type
+  * @brief Create a variable with depth two
+  * 
+  * Creates a variable with depth one. That means that a
+  * value of a nested object is requested.
+  * 
+  * @param mem_func A member function of the object_type.
+  * @param mem_func_1 A member function of the nested object_type.
+  * @param mem_func_2 A member function of the nested object_type.
+  * @return A variable with return type R.
+  */
 template < class R, class O, class O1, class O2 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, R (O2::object_type::*mem_func_2)() const)
@@ -168,6 +243,23 @@ make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, R
   return variable<R>(new object_variable_impl<R, typename O2::object_type, variable<O2> >(mem_func_2, make_var(mem_func, mem_func_1)));
 }
 
+ /**
+  * @tparam R The return value type
+  * @tparam O The proxy object type
+  * @tparam O1 The nested object type
+  * @tparam O2 The nested object type
+  * @tparam O3 The nested object type
+  * @brief Create a variable with depth two
+  * 
+  * Creates a variable with depth one. That means that a
+  * value of a nested object is requested.
+  * 
+  * @param mem_func A member function of the object_type.
+  * @param mem_func_1 A member function of the nested object_type.
+  * @param mem_func_2 A member function of the nested object_type.
+  * @param mem_func_3 A member function of the nested object_type.
+  * @return A variable with return type R.
+  */
 template < class R, class O, class O1, class O2, class O3 >
 variable<R>
 make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, O3 (O2::object_type::*mem_func_2)() const, R (O3::object_type::*mem_func_3)() const)

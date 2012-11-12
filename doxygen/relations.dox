@@ -92,7 +92,7 @@
  * person we use object_ref as the type of the list.
  *
  * @code
- * class person
+ * class person : public oos::object
  * {
  * public:
  *   // the value type of the list

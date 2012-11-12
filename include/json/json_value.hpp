@@ -48,6 +48,14 @@ class json_number;
 class json_null;
 class json_type;
 
+/**
+ * @class json_value
+ * @brief Wrapper class for a concrete value
+ * 
+ * This class is a wrapper class for a concrete
+ * value. It holds an object of json_type which
+ * implements the concrete type.
+ */
 class OOS_API json_value
 {
 public:

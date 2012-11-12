@@ -246,14 +246,28 @@ public:
   virtual void write(const char*, const object_container&) = 0;
 };
 
+/**
+ * @tparam T Type of the generic object writer
+ * @class generic_object_writer
+ * @brief Generic base class for all object writer
+ * 
+ * This class implements the oos::object_writer interface
+ * and adds the functionality to describe a write_value
+ * method with a template.
+ */
 template < class T >
 class generic_object_writer : public object_writer
 {
 protected:
+  /**
+   * @tparam T Type of the concrete writer
+   * 
+   * Constructs a generic_object_writer.
+   */
   generic_object_writer(T *writer) : generic_writer_(writer) {}
 
 public:
-	virtual ~generic_object_writer() { /*delete generic_writer_;*/ }
+	virtual ~generic_object_writer() {}
 
 	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
@@ -276,6 +290,15 @@ private:
   T *generic_writer_;
 };
 
+/**
+ * @class object_reader
+ * @brief Base class for all object reader
+ * 
+ * This class is the base class for all
+ * atomizer reader classes. It has interfaces to 
+ * read data types (builtin and complex)
+ * identified by a name.
+ */
 class OOS_API object_reader
 {
 public:
@@ -474,14 +497,28 @@ public:
   virtual void read(const char*, object_container&) = 0;
 };
 
+/**
+ * @tparam T Type of the generic object reader
+ * @class generic_object_reader
+ * @brief Generic base class for all object readre
+ * 
+ * This class implements the oos::object_reader interface
+ * and adds the functionality to describe a read_value
+ * method with a template.
+ */
 template < class T >
 class generic_object_reader : public object_reader
 {
 protected:
+  /**
+   * @tparam T Type of the concrete reader
+   * 
+   * Constructs a generic_object_reader.
+   */
   generic_object_reader(T *reader) : generic_reader_(reader) {}
 
 public:
-	virtual ~generic_object_reader() { /*delete generic_reader_;*/ }
+	virtual ~generic_object_reader() {}
 
 	virtual void read(const char *id, char &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, float &x) { generic_reader_->read_value(id, x); }

@@ -466,3 +466,27 @@ pre .stringliteral
 {
 	width:100%;
 }
+
+.warn
+{
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  padding: 5px;
+/*  background-color: red;*/
+}
+
+p.warn
+{
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  -khtml-border-radius: 0;
+  border-radius: 0;
+  border: 0;
+  border-left: 5px solid red;
+  margin: 0;
+  padding; 0;
+}

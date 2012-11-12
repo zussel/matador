@@ -219,8 +219,12 @@ private:
   bool is_internal_;
 };
 
+/// @cond OOS_DEV
+
 template < class T >
 class object_ref;
+
+/// @endcond OOS_DEV
 
 /**
  * @class object_ptr
@@ -238,7 +242,7 @@ template < class T >
 class object_ptr : public object_base_ptr
 {
 public:
-  typedef T object_type;
+  typedef T object_type; /**< Shortcut for object type. */
 
 public:
   /**
@@ -371,7 +375,7 @@ template < class T >
 class object_ref : public object_base_ptr
 {
 public:
-  typedef T object_type;
+  typedef T object_type;  /**< Shortcut for object type. */
 public:
   /**
    * Create an empty object_ref

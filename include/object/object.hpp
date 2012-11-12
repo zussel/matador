@@ -57,8 +57,12 @@ namespace oos {
 struct object_proxy;
 class object_store;
 
+/// @cond OOS_DEV
+
 template < class T > class object_ref;
 template < class T > class object_ptr;
+
+/// @endcond OOS_DEV
 
 /**
  * @class object
@@ -210,11 +214,23 @@ public:
     attr = val;
   }
 
+  /**
+   * Modify the char attribute assigning
+   * the new given char value to attributes
+   * reference.
+   *
+   * @param attr Pointer to character string to change.
+   * @param max_size The maximum capacity of the destinition array.
+   * @param val New stringto set.
+   * @param size The length of the new string.
+   * @throw std::logic_error.
+   */
   void modify(char *attr, int max_size, const char *val, int size)
   {
     if (max_size < size) {
       throw std::logic_error("not enough character size");
     }
+    mark_modified();
 #ifdef WIN32
     strcpy_s(attr, max_size, val);
 #else

@@ -43,6 +43,10 @@ namespace oos {
 
 class object_container;
 
+#ifdef OOS_DOXYGEN_DOC
+
+#else
+
 template < int CP, class T, class U >
 void
 convert(const object_ptr<T> &from, object_ptr<U> &to,
@@ -149,6 +153,9 @@ convert(const long &, object_ptr<object> &)
   std::cout << "6 typeid: object_ptr<object>\n";
 }
 */
+
+#endif /* OOS_DOXYGEN_DOC */
+
 }
 
 #endif /* OBJECT_CONVERT_HPP */

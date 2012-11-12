@@ -50,35 +50,105 @@ class json_value;
  * - number
  * - boolean
  * - null
+ * 
  * It provides all accessors to get the
  * values for each concrete class.
  */
 class OOS_API json_type
 {
 protected:
+  /**
+   * Creates a json_type of a certain type
+   * 
+   * @param name Type of the json_type
+   */
   explicit json_type(const std::string &name);
 
 public:
   virtual ~json_type();
 
+  /**
+   * Parses in json input stream
+   * 
+   * @param in The json input stream
+   * @return True if stream was parsed correctly
+   */
   virtual bool parse(std::istream &in) = 0;
+
+  /**
+   * Prints the json type (tree) to
+   * a output stream.
+   * 
+   * @param out The stream to write on.
+   */
   virtual void print(std::ostream &out) const = 0;
 
+  /**
+   * Returns a json_value with the given key.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @param key The key of the json_value.
+   * @return the corresponding json_value.
+   */
   virtual json_value& operator[](const std::string &key);
+
+  /**
+   * Returns a json_value at the given index.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @param index The index of the json_value.
+   * @return the corresponding json_value.
+   */
   virtual json_value& operator[](size_t index);
+
+  /**
+   * Returns a json_value at the given index.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @param index The index of the json_value.
+   * @return the corresponding json_value.
+   */
   virtual const json_value& operator[](size_t index) const;
+
+  /**
+   * Adds a json_value to the current value.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @param x The json_value to add.
+   */
   virtual void push_back(const json_value &x);
+
+  /**
+   * Returns the size of the json_value.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @return The size of the json_value.
+   */
   virtual size_t size() const;
 
+  /**
+   * Return the type string of
+   * the json_type.
+   * 
+   * @return The type string.
+   */
   std::string type() const;
   
 
-  /*
-  friend OOS_API std::istream& operator>>(std::istream &str, json_type &value);
-  */
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
 
 protected:
+  /**
+   * Sets the type string of
+   * the json_type.
+   * 
+   * @param type The type string to set
+   */
   void type(const std::string &type);
 
 protected:

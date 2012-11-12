@@ -40,27 +40,104 @@
 
 namespace oos {
 
-  class OOS_API json_string : public json_type
+/**
+ * @class json_string
+ * @brief Class representing the json string type.
+ * 
+ * This class represents the json string type.
+ */
+class OOS_API json_string : public json_type
 {
 public:
   json_string();
+  /**
+   * Creates a new json_string and initializes
+   * the value with the given string.
+   * 
+   * @param val The string to set.
+   */
   json_string(const std::string &val);
+  
+  /**
+   * Creates a new json_string and initializes
+   * the value with the given json_value.
+   * 
+   * @param x The json_value to set.
+   */
   json_string(const json_value &x);
+
+  /**
+   * Creates a new json_string and initializes
+   * the value with the given string.
+   * 
+   * @param val The string to set.
+   */
   json_string(const char *val);
+
+  /**
+   * Creates a new json_string and initializes
+   * the value from the given json_string.
+   * 
+   * @param x The json_string to set.
+   */
   json_string(const json_string &x);
+  
+  /**
+   * Assign from a json_string
+   * 
+   * @param x The json_string to assign from.
+   * @return This.
+   */
   json_string& operator=(const json_string &x);
+
+  /**
+   * Assign from a json_value
+   * 
+   * @param x The json_value to assign from.
+   * @return This.
+   */
   json_string& operator=(const json_value &x);
+
+  /**
+   * Assign from a std::string
+   * 
+   * @param x The std::string to assign from.
+   * @return This.
+   */
   json_string& operator=(const std::string &x);
   virtual ~json_string();
  
+  /**
+   * Less operator for json_string. Internaly
+   * the less operator of std::string is used.
+   * 
+   * @param x The json_string to compare with.
+   * @return True if this is less than x.
+   */
   bool operator<(const json_string &x) const;
 
   virtual bool parse(std::istream &in);
   virtual void print(std::ostream &out) const;
 
+  /**
+   * Return the current value.
+   * 
+   * @return The current value.
+   */
   std::string value() const;
+  
+  /**
+   * Set a new value.
+   * 
+   * @param val The new value to set.
+   */
   void value(const std::string &val);
 
+  /**
+   * Append a new to the current json_string
+   *
+   * @param c The character to append.
+   */
   void push_back(char c);
 
 private:

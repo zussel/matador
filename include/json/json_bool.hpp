@@ -39,17 +39,40 @@
 
 namespace oos {
 
-  class OOS_API json_bool : public json_type
+/**
+ * @class json_bool
+ * @brief Class representing the json bool type.
+ * 
+ * This class represents the json bool type.
+ */
+class OOS_API json_bool : public json_type
 {
 public:
   json_bool(void);
+  /**
+   * Create a new json_bool value and
+   * initialize it with the given value.
+   * 
+   * @param val The value of json_bool.
+   */
   json_bool(bool val);
   virtual ~json_bool(void);
 
   virtual bool parse(std::istream &in);
   virtual void print(std::ostream &out) const;
 
+  /**
+   * Return the current value.
+   * 
+   * @return The current value.
+   */
   bool value() const;
+  
+  /**
+   * Set a new bool value.
+   * 
+   * @param val The new bool value.
+   */
   void value(bool val);
 
 private:

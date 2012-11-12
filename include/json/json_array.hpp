@@ -40,13 +40,19 @@
 
 namespace oos {
 
-  class OOS_API json_array : public json_type
+/**
+ * @class json_array
+ * @brief Class representing the json array type.
+ * 
+ * This class represents the json array type.
+ */
+class OOS_API json_array : public json_type
 {
 public:
-  typedef std::vector<json_value> t_value_vector;
-  typedef t_value_vector::const_iterator const_iterator;
-  typedef t_value_vector::iterator iterator;
-  typedef t_value_vector::size_type size_type;
+  typedef std::vector<json_value> t_value_vector;        /**< Shortcut for value vector. */
+  typedef t_value_vector::const_iterator const_iterator; /**< Shortcut for value vector iterator. */
+  typedef t_value_vector::iterator iterator;             /**< Shortcut for value vector const iterator. */
+  typedef t_value_vector::size_type size_type;           /**< Shortcut for value vector size type. */
 
 public:
   json_array();
@@ -58,12 +64,37 @@ public:
   virtual bool parse(std::istream &in);
   virtual void print(std::ostream &out) const;
 
+  /**
+   * Return the begin iterator
+   * 
+   * @return The begin iterator.
+   */
   iterator begin();
+  /**
+   * Return the constant begin iterator
+   * 
+   * @return The constant begin iterator.
+   */
   const_iterator begin() const;
 
+  /**
+   * Return the end iterator
+   * 
+   * @return The end iterator.
+   */
   iterator end();
+  /**
+   * Return the constant end iterator
+   * 
+   * @return The constant end iterator.
+   */
   const_iterator end() const;
 
+  /**
+   * Returns true on empty array.
+   * 
+   * @return True on empty array.
+   */
   bool empty() const;
 
   virtual json_value& operator[](size_t index) { return value_vector_[index]; }

@@ -39,6 +39,11 @@
 
 namespace oos {
 
+/**
+ * @brief Class representing the json null type.
+ * 
+ * This class represents the json null type.
+ */
 class OOS_API json_null : public json_type
 {
 public:

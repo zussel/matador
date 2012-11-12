@@ -29,8 +29,8 @@
 namespace oos {
 
 /**
- * @class value_item
  * @tparam T Type of value
+ * @class value_item
  * @brief Holder class for the value type
  *
  * This class comes as a proxy between the container
@@ -75,15 +75,23 @@ private:
   value_type value_;
 };
 
+/**
+ * @tparam T Type of the container item
+ * @tparam C Type of the container
+ * @brief Base class for all container items
+ * 
+ * The class is the base class for all container
+ * item classes. It holds the item and a reference
+ * to the container to which the item belongs.
+ */
 template < class T, class C >
 class container_item : public value_item<T>
 {
 public:
-  typedef oos::object_ref<C> container_ref;
-  typedef C container_type;
-  typedef T value_type;
-//  typedef unsigned long size_type;
-  typedef typename container_type::size_type size_type;
+  typedef oos::object_ref<C> container_ref; /**< Shortcut for the container ref type. */
+  typedef C container_type;                 /**< Shortcut for the container type. */
+  typedef T value_type;                     /**< Shortcut for the value type. */
+  typedef typename container_type::size_type size_type; /**< Shortcut for the size type. */
 
   container_item() {}
   explicit container_item(const container_ref &c)
@@ -106,6 +114,11 @@ public:
     serializer.write("container", container_);
   }
 
+  /**
+   * Return a reference to the container
+   *
+   * @return A reference to the container
+   */
   container_ref container() const
   {
     return container_;
@@ -126,7 +139,7 @@ class OOS_API object_container
 {
 public:
   typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
-  typedef unsigned long size_type;                             /**< Shortcut for size type. */
+  typedef unsigned long size_type;                       /**< Shortcut for size type. */
 //  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
 
 public:

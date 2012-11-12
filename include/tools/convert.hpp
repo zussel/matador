@@ -51,6 +51,20 @@
 
 /// @endcond
 
+/**
+ * @file convert.hpp
+ * @brief Provides gemeric conversion functions.
+ * 
+ * This file provides generic conversion function.
+ * All builtin types, std::string and oos::varchar_base
+ * types are supported. User can select between three
+ * conversion policies:
+ * - strict: Input type must be output type.
+ * - fitting: As long as the size of the types fits or it is a string.
+ * - weak: Conversion is done although data loss could take place.
+ *
+ */
+
 namespace oos {
 
 class varchar_base;
@@ -63,6 +77,27 @@ typedef enum {
   convert_fitting_weak   = convert_fitting | convert_weak,
   convert_all            = convert_fitting | convert_weak | convert_strict
 } t_convert_policy;
+
+#ifdef OOS_DOXYGEN_DOC
+
+/**
+ * Convert a paramater of one type into another. The conversion
+ * strategy is selected by the given policy. the default policy is
+ * <i>fitting</i>. If the strategy discovers that a conversion
+ * is not allowed an exception is thrown.
+ * 
+ * @tparam P Concersion strategy policy.
+ * @tparam T Type of from parameter.
+ * @tparam U Type of to parameter.
+ * @param from From value to convert.
+ * @param to Result parameter.
+ * @throw std::bad_cast() exception.
+ */
+template < int P, class T, class U >
+void
+convert(const T &from, U &to);
+
+#else
 
 /*
  * from
@@ -962,6 +997,8 @@ convert(const T &from, U &to, S size, P precision,
 {
   convert<convert_fitting>(from, to, size, precision);
 }
+
+#endif /* OOS_DOXYGEN_DOC */
 
 }
 

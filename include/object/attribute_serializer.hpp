@@ -193,6 +193,8 @@ private:
   int precision_;
 };
 
+/// @cond OOS_DEV
+
 template <>
 class attribute_writer<char*> : public generic_object_writer<attribute_writer<char*> >
 {
@@ -267,6 +269,8 @@ private:
   bool success_;
   int precision_;
 };
+
+/// @endcond
 
 }
 

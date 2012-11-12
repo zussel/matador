@@ -50,18 +50,20 @@ public:
   virtual ~object_atomizable() {}
 
   /**
+   * @fn virtual void deserialize(object_reader &deserializer)
    * Deserializes an object from the given
    * object_atomizer object.
    *
-   * @param oa The object_atomizer to deserialize from.
+   * @param deserializer The object_atomizer to deserialize from.
    */
   virtual void deserialize(object_reader &) = 0;
 
   /**
+   * @fn virtual void serialize(object_writer &serializer)
    * Serializes an object to the given
    * object_atomizer object.
    *
-   * @param oa The object_atomizer to serialize to.
+   * @param serializer The object_atomizer to serialize to.
    */
   virtual void serialize(object_writer &) const = 0;
 };
