@@ -188,24 +188,54 @@ public:
   }
 };
 
+/**
+ * Compares if two varchars are equal.
+ *
+ * @tparam C1 Size of left hand varchar
+ * @tparam C2 Size of right hand varchar
+ * @param l Left hand varchar to compare.
+ * @param r Right hand varchar to compare.
+ */
 template < unsigned int C1, unsigned int C2 >
 bool operator==(const varchar<C1> &l, const varchar<C2> &r)
 {
   return l.str() == r.str();
 }
 
+/**
+ * Compares if a varchar and a character array are equal.
+ *
+ * @tparam C Size of left hand varchar
+ * @param l Left hand varchar to compare.
+ * @param r Right hand character array to compare.
+ */
 template < unsigned int C >
 bool operator==(const varchar<C> &l, const char *r)
 {
   return l.str() == r;
 }
 
+/**
+ * Compares if two varchars are not equal.
+ *
+ * @tparam C1 Size of left hand varchar
+ * @tparam C2 Size of right hand varchar
+ * @param l Left hand varchar to compare.
+ * @param r Right hand varchar to compare.
+ */
 template < unsigned int C1, unsigned int C2 >
 bool operator!=(const varchar<C1> &l, const varchar<C2> &r)
 {
   return l.str() != r.str();
 }
 
+/**
+ * Compares if a varchar and a character array are not equal.
+ *
+ * @tparam C Size of right hand varchar
+ * @param l Left hand character array to compare.
+ * @param r Right hand varchar to compare.
+ */
 template < unsigned int C >
 bool operator!=(const varchar<C> &l, const char *r)
 {

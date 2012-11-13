@@ -139,7 +139,15 @@ public:
    */
   std::string type() const;
   
-
+  /**
+   * Output operator for json_type. Each
+   * concrete type overloads a print method,
+   * to have it print out correctly.
+   * 
+   * @param str The output stream to print on.
+   * @param value The json_type to print.
+   * @return The modified output stream.
+   */
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
 
 protected:
@@ -152,7 +160,7 @@ protected:
   void type(const std::string &type);
 
 protected:
-  static json_parser parser;
+  static json_parser parser; /**< The json_parser object */
 
 private:
   std::string type_;

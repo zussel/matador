@@ -76,7 +76,7 @@ public:
    * returns a json_value object representing
    * the json structure.
    *
-   * @param in The json const character string.
+   * @param str The json const character string.
    * @return A json_value structure.
    */
   json_value parse(const char *str);

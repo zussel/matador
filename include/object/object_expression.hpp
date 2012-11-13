@@ -130,7 +130,14 @@ class variable
 {
 public:
   typedef R return_type; /**< Shortcut for return type. */
-  
+
+  /**
+   * Initializes a variable with a
+   * pointer to a concrete variable
+   * implemnation.
+   * 
+   * @param impl The concrete variable.
+   */
   explicit variable(variable_impl<R> *impl)
     : impl_(impl)
   {}

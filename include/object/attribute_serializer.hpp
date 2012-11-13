@@ -54,6 +54,9 @@ class object_base_ptr;
 template < class T >
 class attribute_reader : public generic_object_reader<attribute_reader<T> >
 {
+private:
+  friend class generic_object_reader<attribute_reader<T>;
+
 public:
   /**
    * @brief Creates an attribute_reader
@@ -87,6 +90,7 @@ public:
     return success_;
   }
 
+private:
   template < class V >
   void read_value(const char *id, V &to)
   {
@@ -125,6 +129,9 @@ private:
 template < class T >
 class attribute_writer : public generic_object_writer<attribute_writer<T> >
 {
+private:
+  friend class generic_object_writer<attribute_writer<T>;
+
 public:
   /**
    * @brief Creates an attribute_writer
@@ -159,6 +166,7 @@ public:
     return success_;
   }
 
+private:
   template < class V >
   void write_value(const char *id, const V &from)
   {

@@ -486,7 +486,7 @@ p.warn
   -khtml-border-radius: 0;
   border-radius: 0;
   border: 0;
-  border-left: 5px solid red;
+  border-left: 5px solid #A80000;
   margin: 0;
   padding; 0;
 }

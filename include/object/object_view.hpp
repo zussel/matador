@@ -29,7 +29,9 @@
 
 namespace oos {
 
+#ifndef OOS_DOXYGEN_DOC
 template < class T > class const_object_view_iterator;
+#endif /* OOS_DOXYGEN_DOC */
 
 /// @cond OOS_DEV
 

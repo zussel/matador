@@ -22,10 +22,10 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < class T >
 class value;
-
-/// @cond OOS_DEV
 
 class value_base
 {

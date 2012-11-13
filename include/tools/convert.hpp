@@ -69,13 +69,22 @@ namespace oos {
 
 class varchar_base;
 
+/**
+ * Coversion policies. There are three
+ * policies:
+ * 
+ * - strict: Input must be output type.
+ * - fitting: As long as the size of the types fits or it is a string.
+ * - weak: Conversion is done although data loss could take place.
+ * 
+ */
 typedef enum {
-  convert_strict         = 1 << 0,
-  convert_fitting        = 1 << 1,
-  convert_weak           = 1 << 2,
-  convert_strict_fitting = convert_strict | convert_fitting,
-  convert_fitting_weak   = convert_fitting | convert_weak,
-  convert_all            = convert_fitting | convert_weak | convert_strict
+  convert_strict         = 1 << 0, /**< Strict policy for conversion */
+  convert_fitting        = 1 << 1, /**< Fitting policy for conversion */
+  convert_weak           = 1 << 2, /**< Weak policy for conversion */
+  convert_strict_fitting = convert_strict | convert_fitting,  /**< Shortcut for strict and fitting policy combination */
+  convert_fitting_weak   = convert_fitting | convert_weak,  /**< Shortcut for fitting and weak policy combination */
+  convert_all            = convert_fitting | convert_weak | convert_strict  /**< Shortcut for all policies combination */
 } t_convert_policy;
 
 #ifdef OOS_DOXYGEN_DOC

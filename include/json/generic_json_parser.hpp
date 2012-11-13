@@ -41,7 +41,10 @@ class generic_json_parser
 {
 protected:
   /**
-   * @brief 
+   * Creates a new generic_json_parser for
+   * concrete parser h.
+   * 
+   * @param h The concrete parser.
    */
   generic_json_parser(T *h) : handler_(h) {}
 

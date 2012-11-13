@@ -56,8 +56,28 @@ public:
 
 public:
   json_array();
+  /**
+   * Create a new json_array with a
+   * predefined size.
+   * 
+   * @param size The size of the array.
+   */
   explicit json_array(size_t size);
+  
+  /**
+   * Creates a new json_array and initializes
+   * the value with the given json_value.
+   * 
+   * @param x The json_value to set.
+   */
   json_array(const json_value &x);
+
+  /**
+   * Assign from a json_value
+   * 
+   * @param x The json_value to assign from.
+   * @return This.
+   */
   json_array& operator=(const json_value &x);
   ~json_array();
 
@@ -97,11 +117,45 @@ public:
    */
   bool empty() const;
 
+  /**
+   * Returns a json_value at the given index.
+   * 
+   * @param index The index of the json_value.
+   * @return the corresponding json_value.
+   */
   virtual json_value& operator[](size_t index) { return value_vector_[index]; }
+
+  /**
+   * Returns a json_value at the given index.
+   * 
+   * @param index The index of the json_value.
+   * @return the corresponding json_value.
+   */
   virtual const json_value& operator[](size_t index) const { return value_vector_[index]; }
+
+  /**
+   * Adds a json_value to the current value.
+   * 
+   * @param x The json_value to add.
+   */
   virtual void push_back(const json_value &x) { value_vector_.push_back(x); }
+
+  /**
+   * Returns the size of the json_value.
+   * If the concrete type doesn't support this
+   * method an exception is thrown.
+   * 
+   * @return The size of the json_value.
+   */
   virtual size_t size() const { return value_vector_.size(); }
 
+  /**
+   * Input operator for a json_array.
+   * 
+   * @param str The input stream to read from.
+   * @param ary The json_array read in.
+   * @return The modified input stream.
+   */
   friend OOS_API std::istream& operator>>(std::istream &str, json_array &ary);
 
 private:

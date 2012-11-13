@@ -41,11 +41,13 @@
 
 namespace oos {
 
+#ifndef OOS_DOXYGEN_DOC
 #ifdef WIN32
 typedef FARPROC func_ptr;
 #else
 typedef void* func_ptr;
 #endif
+#endif /* OOS_DOXYGEN_DOC */
 
 /**
  * @class library

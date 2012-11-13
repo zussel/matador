@@ -99,7 +99,7 @@ public:
 };
 /// @endcond
 
-typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr;
+typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for sequencer implementation pointer */
 
 /**
  * @cond OOS_DEV

@@ -18,7 +18,7 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef OOS_DOXYGEN_DOC
   #ifdef WIN32
     #ifdef oos_EXPORTS
       #define OOS_API __declspec(dllexport)
@@ -31,7 +31,13 @@
   #else
     #define OOS_API
   #endif
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+  #ifdef WIN32
+    #define CPP11_TYPE_TRAITS_NS std::tr1
+  #else
+  #define CPP11_TYPE_TRAITS_NS std
+#endif
+
+#endif /* OOS_DOXYGEN_DOC */
 
 #include "unit/unit_exception.hpp"
 
@@ -49,12 +55,6 @@
 #include <string>
 #include <sstream>
 #include <type_traits>
-
-#ifdef WIN32
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
 
 /**
  * @file unit_test.hpp
@@ -281,16 +281,16 @@ public:
    * exception is caught by the test_suite and the
    * message is displayed.
    * 
-   * @tparam T The type of the objects to compare.
+   * @tparam X The type of the left hand object to compare.
+   * @tparam Y The type of the right hand object to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
    * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
-  /*
-  template < class T >
-  void assert_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  template < class X, class Y >
+  void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
       // throw exception
@@ -299,7 +299,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-  */
+#ifndef OOS_DOXYGEN_DOC
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
@@ -311,18 +311,6 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-
-  template < class X, class Y >
-  void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
-  {
-    if (a != b) {
-      // throw exception
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
-  }
-
   template < class X >
   void assert_equal(const X &a, const bool &b, const std::string &msg, int line, const char *file)
   {
@@ -344,6 +332,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+#endif /* OOS_DOXYGEN_DOC */
 
   /**
    * @brief Checks if a is not equal b.
@@ -397,6 +386,7 @@ public:
     }
   }
 
+#ifndef OOS_DOXYGEN_DOC
   template < class X, class Y >
   void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
@@ -407,6 +397,8 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+#endif /* OOS_DOXYGEN_DOC */
+
   /**
    * @brief Checks if a is less b.
    *
