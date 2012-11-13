@@ -55,7 +55,7 @@ template < class T >
 class attribute_reader : public generic_object_reader<attribute_reader<T> >
 {
 private:
-  friend class generic_object_reader<attribute_reader<T>;
+  friend class generic_object_reader<attribute_reader<T> >;
 
 public:
   /**
@@ -130,7 +130,7 @@ template < class T >
 class attribute_writer : public generic_object_writer<attribute_writer<T> >
 {
 private:
-  friend class generic_object_writer<attribute_writer<T>;
+  friend class generic_object_writer<attribute_writer<T> >;
 
 public:
   /**
@@ -142,6 +142,7 @@ public:
    * @tparam T The type of the attribute.
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
+   * @param precision The precision of the value.
    */
   attribute_writer(const std::string &id, T &to, int precision = -1)
     : generic_object_writer<attribute_writer<T> >(this)
