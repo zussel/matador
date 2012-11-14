@@ -108,8 +108,7 @@ color: #3fa6e7;
 #navrow1 ul,
 #navrow2 ul,
 #navrow3 ul,
-#navrow4 ul,
-#nav-path ul
+#navrow4 ul
 {
   width: 100%;
   float: left;
@@ -121,8 +120,7 @@ color: #3fa6e7;
 #navrow1 ul li,
 #navrow2 ul li,
 #navrow3 ul li,
-#navrow4 ul li,
-#nav-path ul li
+#navrow4 ul li
 {
   float: left;
   padding: 6px 10px 2px 0px;
@@ -139,8 +137,7 @@ color: #3fa6e7;
 #navrow1 ul li a,
 #navrow2 ul li a,
 #navrow3 ul li a,
-#navrow4 ul li a,
-#nav-path ul li a
+#navrow4 ul li a
 {
   text-decoration: none;
   font-weight: bolder;
@@ -161,6 +158,26 @@ color: #3fa6e7;
 #navrow4 ul li.current a:hover
 {
   border-bottom: 4px solid #222;
+}
+
+#nav-path ul
+{
+  width: 100%;
+  float: left;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
+#nav-path ul li
+{
+  float: left;
+  padding: 6px 10px 2px 0px;
+}
+
+#nav-path ul li a
+{
+  text-decoration: none;
 }
 
 #content h3
@@ -489,4 +506,22 @@ p.warn
   border-left: 5px solid #A80000;
   margin: 0;
   padding; 0;
+}
+
+.summary
+{
+  font-size: 70%;
+  float: right;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  padding: 5px;
+}
+
+.headertitle
+{
+  clear: both;
 }
