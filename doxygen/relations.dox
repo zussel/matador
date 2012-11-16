@@ -89,7 +89,7 @@
  * 
  * Our handy person class needs a list of friends which are also
  * of type person. And because we want this list with soft linked
- * person we use object_ref as the type of the list.
+ * person we use oos::object_ref as the type of the list.
  *
  * @code
  * class person : public oos::object

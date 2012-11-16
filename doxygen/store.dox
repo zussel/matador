@@ -1,6 +1,6 @@
 /**
  * @htmlonly
- * <div class="width75 float_left">
+ * <div class="width66 float_left">
  * @endhtmlonly
  *
  * @page store The ObjectStore
@@ -23,7 +23,7 @@
  *
  * @section objects_sec Objects
  *
- * As mentioned above there are a handful of rules you have to follow while
+ * As mentioned above there are three rules you have to follow while
  * intergrating your object classes into OOS.
  *
  * @subsection step1 Step 1: Derive your class from oos::object.
@@ -81,7 +81,7 @@
  * }
  * @endcode
  *
- * @section object_store_sec The Object Store
+ * @section object_store_sec Object Store
  *
  * Now that you've written your entity classes you might want to insert
  * them into the oos::object_store. But before doing so you have to tell
@@ -188,7 +188,7 @@
  *
  * @htmlonly
  * </div>
- * <div id="side_toc" class="width25 float_right">
+ * <div id="side_toc" class="width33 float_right">
  * @endhtmlonly
  * <b>Table of content</b> @n
  * <ol>
