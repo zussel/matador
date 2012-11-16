@@ -1,4 +1,3 @@
-
 [file_prefs]
 final_new_line=true
 ensure_convert_new_lines=false
@@ -24,7 +23,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=-1
+current_page=1
+FILE_NAME_0=0;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fjson%2Fjson_parser.hpp;0;2
+FILE_NAME_1=3714;C++;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fobject%2Fattribute_serializer.hpp;0;2
 
 [VTE]
 last_dir=/home/sascha/development/oos/build/bin

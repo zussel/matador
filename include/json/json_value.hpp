@@ -277,6 +277,7 @@ public:
     return dynamic_cast<const T*>(type_.get());
   }
 
+//  template < class T >
 private:
   std::tr1::shared_ptr<json_type> type_;
 };

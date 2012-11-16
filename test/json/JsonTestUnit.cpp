@@ -112,18 +112,19 @@ void JsonTestUnit::access_test()
 
   UNIT_ASSERT_EQUAL(root.size(), 2, "json object must contain 2 elements");
 
-  /*
-  if (root["number"].get<long>() == 5000) {
-  }
-  
-  std::string value = root["array"][0].get<string>();
-  */
-
   json_object obj = root;
 
   UNIT_ASSERT_EQUAL(obj.size(), 2, "json object must contain 2 elements");
 
   json_number numb = root["number"];
+
+  bool succeeded = false;
+  try {
+    json_string str =root["number"];
+  } catch (std::logic_error &) {
+    succeeded = true;
+  }
+  UNIT_ASSERT_TRUE(succeeded, "json type conversion from number to string must fail");
 
   UNIT_ASSERT_EQUAL(numb.value(), 5.45, "number values are not the same");
 
