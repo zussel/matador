@@ -80,6 +80,12 @@
  *   <ul>
  *    <li>@ref objects_sec</li>
  *    <li>@ref object_store_sec</li>
+ *      <ul>
+ *        <li>@ref prototypes</li>
+ *        <li>@ref add_objects</li>
+ *        <li>@ref modify_objects</li>
+ *        <li>@ref remove_objects</li>
+ *      </ul>
  *   </ul></li>
  *   <li>@ref relations
  *   <ul>
