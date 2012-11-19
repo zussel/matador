@@ -26,6 +26,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
   add_test("reload", std::tr1::bind(&DatabaseTestUnit::reload, this), "reload database test");
   add_test("list2", std::tr1::bind(&DatabaseTestUnit::with_list2, this), "object with object list database test");
+  add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::reload_container, this), "reload object list database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -432,5 +433,9 @@ DatabaseTestUnit::reload()
   }
   // close db
   db.close();
-    
+}
+
+void
+DatabaseTestUnit::reload_container()
+{
 }

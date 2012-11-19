@@ -21,6 +21,7 @@ public:
   void with_list2();
   void with_vector();
   void reload();
+  void reload_container();
 
 private:
   oos::object_store ostore_;
