@@ -25,6 +25,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   add_test("list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
   add_test("reload", std::tr1::bind(&DatabaseTestUnit::reload, this), "reload database test");
+  add_test("list2", std::tr1::bind(&DatabaseTestUnit::with_list2, this), "object with object list database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -312,6 +313,34 @@ DatabaseTestUnit::with_list()
   }
   // close db
   db.close();
+}
+
+void
+DatabaseTestUnit::with_list2()
+{
+  ostore_.insert_prototype<person>("PERSON");
+  ostore_.insert_prototype<employee, person>("EMPLOYEE");
+  ostore_.insert_prototype<department>("DEPARTMENT");
+  
+  typedef object_ref<department> dep_ref;
+  typedef object_ref<employee> emp_ref;
+  
+  dep_ref identpro = ostore_.insert(new department("IdentPro"));
+  
+  emp_ref emp = ostore_.insert(new employee("Sascha"));
+  identpro->add(emp);
+  emp = ostore_.insert(new employee("David"));
+  identpro->add(emp);
+  emp = ostore_.insert(new employee("Dieter"));
+  identpro->add(emp);
+  emp = ostore_.insert(new employee("Stefan"));
+  identpro->add(emp);
+  
+  department::const_iterator first = identpro->begin();
+  department::const_iterator last = identpro->end();
+  while (first != last) {
+    cout << "\n" << (*first++)->value()->name();
+  }
 }
 
 void

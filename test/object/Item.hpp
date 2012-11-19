@@ -431,4 +431,112 @@ private:
   book_list_t book_list_;
 };
 
+class person : public oos::object
+{
+private:
+  std::string name_;
+
+public:
+  person() {}
+  person(const std::string &name)
+    : name_(name)
+  {}
+  
+  virtual ~person() {}
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+  }
+
+  std::string name() const { return name_; }
+  void name(const std::string &name) { modify(name_, name); }
+  
+};
+
+class department;
+
+class employee : public person
+{
+public:
+  typedef oos::object_ref<department> dep_ref;
+
+private:
+  dep_ref dep_;
+  
+public:
+  employee() {}
+  employee(const std::string &name_) : person(name_) {}
+  employee(const std::string &name_, const dep_ref &dep)
+    : person(name_)
+    , dep_(dep)
+  {}
+  
+  dep_ref dep() const { return dep_; }
+  void dep(const dep_ref &d) { dep_ = d; }
+};
+
+class department : public oos::object
+{
+public:
+  typedef oos::object_ref<employee> emp_ref;
+  typedef oos::object_list<department, emp_ref> emp_list_t;
+  typedef emp_list_t::size_type size_type;
+  typedef emp_list_t::iterator iterator;
+  typedef emp_list_t::const_iterator const_iterator;
+
+private:
+  std::string name_;
+  emp_list_t emp_list_;
+  
+public:
+  department() : emp_list_(this) {}
+  department(const std::string &name)
+    : name_(name)
+    , emp_list_(this)
+  {}
+  
+  virtual ~department() {}
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+    deserializer.read("employees", emp_list_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+    serializer.write("employees", emp_list_);
+  }
+
+  std::string name() const { return name_; }
+  void name(const std::string &name) { modify(name_, name); }
+
+  void add(const emp_ref &b)
+  {
+    // TODO: make it work!
+    //b->dep(this);
+    emp_list_.push_back(b);
+  }
+
+  iterator begin() { return emp_list_.begin(); }
+  const_iterator begin() const { return emp_list_.begin(); }
+
+  iterator end() { return emp_list_.end(); }
+  const_iterator end() const { return emp_list_.end(); }
+
+  iterator erase(iterator i) { return emp_list_.erase(i); }
+
+  size_type size() const { return emp_list_.size(); }
+  bool empty() const { return emp_list_.empty(); }
+};
+
 #endif /* ITEM_HPP */

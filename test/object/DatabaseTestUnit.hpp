@@ -18,6 +18,7 @@ public:
   void simple();
   void with_sub();
   void with_list();
+  void with_list2();
   void with_vector();
   void reload();
 
