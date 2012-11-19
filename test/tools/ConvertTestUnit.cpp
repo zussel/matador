@@ -1658,7 +1658,7 @@ ConvertTestUnit::convert_to_unsigned_int()
   }
   if (sizeof(unsigned int) < sizeof(long)) {
     CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned int, min, convert_weak);
-    CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT        (long, unsigned int, max, 1, convert_weak);
+    CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned int, max, convert_weak);
   } else {
     CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK          (long, unsigned int, min, convert_weak);
     CONVERT_NUMERIC_EXPECT_SUCCESS               (long, unsigned int, max, convert_weak);

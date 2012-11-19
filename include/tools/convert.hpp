@@ -228,7 +228,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  to = (U)abs(from);
+  to = (U)std::abs(from);
 }
 template < int CP, class T, class U >
 void
@@ -270,7 +270,7 @@ convert(const T &from, U &to,
                                  CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
-  to = (U)abs(from);
+  to = (U)std::abs(from);
 }
 template < int CP, class T, class U >
 void
