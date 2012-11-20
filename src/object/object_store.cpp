@@ -400,7 +400,11 @@ object_store::insert_object(object *o, bool notify)
     }
     oproxy->reset(o);
   } else {
-    // object gets new unique id
+	/* object doesn't exist in map
+	 * if object has a valid id, update
+	 * the sequencer else assign new
+     * nique id
+     */
     if (o->id() == 0) {
       o->id(seq_.next());
     } else {

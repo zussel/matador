@@ -231,8 +231,7 @@ DatabaseTestUnit::with_list()
   typedef ItemPtrList::value_type item_ptr;
 
   // create database and make object store known to the database
-  session db(ostore_);
-//  session db(ostore_, "sqlite://test.sqlite");
+  session db(ostore_, "sqlite://test.sqlite");
 
   // load data
   db.create();
@@ -438,4 +437,85 @@ DatabaseTestUnit::reload()
 void
 DatabaseTestUnit::reload_container()
 {
+  typedef object_ptr<ItemPtrList> itemlist_ptr;
+  typedef ItemPtrList::value_type item_ptr;
+
+  // create database and make object store known to the database
+  session db(ostore_, "sqlite://test.sqlite");
+
+  // load data
+  db.create();
+
+  // load db
+  db.load();
+
+  // create new transaction    
+  transaction tr(db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+
+    UNIT_ASSERT_GREATER(itemlist->id(), 0, "invalid item list");
+    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
+
+    tr.commit();
+
+    tr.begin();
+    for (int i = 0; i < 10; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      item_ptr item = ostore_.insert(new Item(name.str()));
+
+      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+
+      itemlist->push_back(item);
+    }
+
+    cout << "\nsize: " << itemlist->size() << "\n";
+
+    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)itemlist->size(), 10, "invalid item list size");
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db.close();  
+  // clear object store
+  ostore_.clear();
+
+  db.open();
+  
+  // load data
+  db.load();
+
+  try {
+    typedef object_view<ItemPtrList> list_view_t;
+    list_view_t oview(ostore_);
+
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    
+    itemlist_ptr l = *oview.begin();
+    
+    cout << "size: " << l->size() << "\n";
+    
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db.close();
 }
