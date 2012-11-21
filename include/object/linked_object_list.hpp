@@ -542,10 +542,10 @@ public:
 
 	virtual ~linked_object_list() {}
 
-  /*
-	virtual void read_from(object_atomizer *) {}
-	virtual void write_to(object_atomizer *) const {}
-  */
+  virtual const char* classname() const
+  {
+    return typeid(T).name();
+  }
 
   /**
    * Return the begin iterator of the list.

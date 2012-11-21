@@ -73,6 +73,11 @@ public:
 
   virtual ~object_list() {}
   
+  virtual const char* classname() const
+  {
+    return typeid(T).name();
+  }
+
   /**
    * Return the begin iterator of the list.
    * 

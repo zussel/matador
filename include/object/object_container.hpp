@@ -185,6 +185,14 @@ public:
   virtual ~object_container() {}
 
   /**
+   * Return the class id of the container
+   * item type
+   * 
+   * @return The class id
+   */
+  virtual const char* classname() const = 0;
+
+  /**
    * Tell wether the list is empty or not.
    * 
    * @return Returns true if the list is empty.

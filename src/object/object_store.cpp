@@ -46,6 +46,36 @@ using namespace std::tr1::placeholders;
 
 namespace oos {
 
+class relation_finder : public generic_object_writer<relation_finder>
+{
+public:
+  typedef std::list<std::string> string_list_t;
+  typedef string_list_t::const_iterator const_iterator;
+
+public:
+  relation_finder()
+    : generic_object_writer<relation_finder>(this)
+  {}
+  virtual ~relation_finder() {}
+
+  template < class T >
+  void write_value(const char*, const T&) {}
+  
+  void write_value(const char*, const char*, int) {}
+  
+  void write_value(const char *, const object_container &x)
+  {
+    relations_.push_back(x.classname());
+  }
+  
+  const_iterator begin() const { return relations_.begin(); }
+  const_iterator end() const { return relations_.end(); }
+  void clear() { relations_.clear(); }
+  
+private:
+  std::list<std::string> relations_;
+};
+
 class equal_type : public std::unary_function<const prototype_node*, bool> {
 public:
   explicit equal_type(const std::string &type) : type_(type) {}
@@ -186,6 +216,26 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   prototype_node *node = new prototype_node(producer, type, abstract);
   // append as child to parent prototype node
   parent_node->insert(node);
+
+  // Check if nodes object has to many relations
+  object *o = producer->create();
+  relation_finder rl;
+  o->serialize(rl);
+  
+  relation_finder::const_iterator first(rl.begin());
+  relation_finder::const_iterator last(rl.end());
+  while (first != last) {
+    std::string classname = *first++;
+    i = prototype_node_map_.find(classname);
+    if (i == prototype_node_map_.end()) {
+      // no such prototype node
+      // create new one in advance
+      cout << "found ";
+    }
+    // add parent node
+    cout << "relation type name: " << classname << " for container " << type << "\n";
+  }
+
   // store prototype in map
   prototype_node_map_.insert(std::make_pair(type, node));
   prototype_node_map_.insert(std::make_pair(producer->classname(), node));

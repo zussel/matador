@@ -134,6 +134,11 @@ public:
 
   virtual ~object_vector() {}
 
+  virtual const char* classname() const
+  {
+    return typeid(T).name();
+  }
+
   /**
    * Return the begin iterator of the vector.
    * 
