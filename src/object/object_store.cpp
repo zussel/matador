@@ -219,7 +219,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_finder rl;
+  relation_finder rl(this);
   o->serialize(rl);
   
   relation_finder::const_iterator first(rl.begin());
@@ -234,6 +234,14 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     }
     // add parent node
     cout << "relation type name: " << classname << " for container " << type << "\n";
+    
+    /*
+     * if container needs relation/value table
+     * add id
+     * if (!insert_prototype(producer, name)) {
+     *   return false;
+     * }
+     */
   }
 
   // store prototype in map
