@@ -477,7 +477,18 @@ public:
     : person(name_)
     , dep_(dep)
   {}
-  
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    person::deserialize(deserializer);
+    deserializer.read("department", dep_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    person::serialize(serializer);
+    serializer.write("department", dep_);
+  }
+
   dep_ref dep() const { return dep_; }
   void dep(const dep_ref &d) { dep_ = d; }
 };
@@ -499,7 +510,8 @@ public:
   department() : emp_list_(this) {}
   department(const std::string &name)
     : name_(name)
-    , emp_list_(this)
+    , emp_list_(this, "department")
+/*    , emp_list_(this, &employee::dep)*/
   {}
   
   virtual ~department() {}

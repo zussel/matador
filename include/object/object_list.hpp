@@ -60,7 +60,6 @@ public:
   typedef typename list_type::iterator iterator;                /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator;    /**< Shortcut for the list const iterator. */
 
-
   /**
    * Create an empty object list
    * with the given parent object.
@@ -69,6 +68,11 @@ public:
    */
   explicit object_list(S *parent)
     : parent_(parent)
+  {}
+
+  object_list(S *parent, const std::string &rel_name)
+    : parent_(parent)
+    , rel_name_(rel_name)
   {}
 
   virtual ~object_list() {}
@@ -271,6 +275,11 @@ protected:
     parent_ = temp;
   }
 
+  virtual object_base_producer* create_relation_producer() const
+  {
+    return new object_producer<item_type>;
+  }
+
 private:
   virtual void reset()
   {
@@ -286,6 +295,8 @@ private:
   list_type object_list_;
 
   S *parent_;
+
+  std::string rel_name_;
 };
 
 }

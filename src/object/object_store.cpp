@@ -219,7 +219,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_finder rl(this);
+  relation_finder rl/*(this)*/;
   o->serialize(rl);
   
   relation_finder::const_iterator first(rl.begin());
@@ -458,9 +458,9 @@ object_store::insert_object(object *o, bool notify)
     }
     oproxy->reset(o);
   } else {
-	/* object doesn't exist in map
-	 * if object has a valid id, update
-	 * the sequencer else assign new
+    /* object doesn't exist in map
+     * if object has a valid id, update
+     * the sequencer else assign new
      * nique id
      */
     if (o->id() == 0) {
@@ -493,6 +493,44 @@ object_store::insert_object(object *o, bool notify)
   // return new object
   //std::cout << "created object (" << std::right << std::setfill(' ') << std::setw(4) << o->id() << ") of type [" << o->classname() << "] proxy " << *oproxy << "\n";
   return o;
+}
+
+object*
+object_store::import_object(object *o)
+{
+  /*
+   * find prototype node
+   */
+  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
+  if (i == prototype_node_map_.end()) {
+    // raise exception
+    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
+    throw new object_exception(msg.c_str());
+  }
+  
+  //prototype_node *node = i->second;
+  
+  //relation::const_iterator first = node->relation_.begin();
+  //relation::const_iterator last = node->relation_.end();
+  //while (first != last) {
+    //relation rel(*first++);
+
+    ///*
+     //* get back link of parent object
+     //*/
+    //o->get(rel.name, parent);
+    
+    ///*
+     //* get parents list
+     //*/
+    //parent->get(rel.list_name, container);
+    
+    ///*
+     //* append object to container
+     //*/
+    //container->append_proxy(o->proxy_);
+  //}
+  return 0;
 }
 
 bool

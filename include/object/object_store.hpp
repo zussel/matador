@@ -556,6 +556,7 @@ private:
 
   bool remove(object *o);
 	object* insert_object(object *o, bool notify);
+	object* import_object(object *o);
 	bool remove_object(object *o, bool notify);
 	
   void link_proxy(object_proxy *base, object_proxy *next);

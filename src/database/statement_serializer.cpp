@@ -150,7 +150,7 @@ void statement_serializer::read(const char *id, bool &x)
   x = stmt_->column_int(column_++) != 0;
 }
 
-void statement_serializer::read(const char *id, char *x, int s)
+void statement_serializer::read(const char *id, char *x, int )
 {
   if (!valid_column(id, column_)) {
     return;

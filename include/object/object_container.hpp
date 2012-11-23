@@ -289,6 +289,14 @@ protected:
    */
   virtual void parent(object *p) = 0;
 
+  /**
+   * Create a producer object for
+   * the relation/value table.
+   * 
+   * @return The producer object;
+   */
+  virtual object_base_producer* create_relation_producer() const = 0;
+
 private:
   virtual void reset() {}
 

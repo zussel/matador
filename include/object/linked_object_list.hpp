@@ -767,6 +767,11 @@ protected:
     parent_ = temp;
   }
 
+  virtual object_base_producer* create_relation_producer() const
+  {
+    return new object_producer<item_type>;
+  }
+
 private:
   virtual void append_proxy(object_proxy *) {};
 
