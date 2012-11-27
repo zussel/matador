@@ -47,13 +47,15 @@ namespace oos {
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T >
+template < class S, class T, class CT = container_item<T, S> >
 class object_list : public object_container
 {
 public:
   typedef T value_type;                                         /**< Shortcut for the value type. */
   typedef S container_type;                                     /**< Shortcut for the container type. */
-  typedef container_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
+  typedef object_ref<container_type> cont_ref;                      /**< Shortcut for the container reference. */
+//  typedef container_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
+  typedef CT item_type;                                         /**< Shortcut for the container item. */
   typedef object_ptr<item_type> item_ptr;                       /**< Shortcut for the container item pointer. */
   typedef std::list<item_ptr> list_type;                        /**< Shortcut for the list class member. */
   typedef typename object_container::size_type size_type;       /**< Shortcut for size type. */
@@ -156,15 +158,27 @@ public:
    */
   iterator insert(iterator pos, const value_type &x)
   {
+    /*
+    if (has_rel_table) {
+      // create and insert new item
+      item_ptr item = ostore()->insert(new item_type(cont_ref(parent_), x));
+      // mark list object as modified
+      mark_modified(parent_);
+      // insert new item object
+      return object_list_.insert(pos, item);
+    } else {
+      // set back link
+      x->set(rel_name, cont_ref(parent_));
+      // insert new item object
+      return object_list_.insert(pos, x);      
+    }
+    */
+
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
       // create and insert new item
-      item_ptr item = ostore()->insert(new item_type(object_ref<S>(parent_), x));
-      /*
-      item->container_.reset(parent_);
-      item->value_ = x;
-      */
+      item_ptr item = ostore()->insert(new item_type(cont_ref(parent_), x));
       // mark list object as modified
       mark_modified(parent_);
       // insert new item object
