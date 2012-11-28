@@ -35,6 +35,239 @@
 
 namespace oos {
 
+template < class S, class T, class CT >
+class object_list_base : public object_container
+{
+public:
+  typedef T value_type;                                         /**< Shortcut for the value type. */
+  typedef S container_type;                                     /**< Shortcut for the container type. */
+  typedef object_ref<container_type> cont_ref;                  /**< Shortcut for the container reference. */
+  typedef CT item_type;                                         /**< Shortcut for the container item. */
+  typedef object_ptr<item_type> item_ptr;                       /**< Shortcut for the container item pointer. */
+  typedef std::list<item_ptr> list_type;                        /**< Shortcut for the list class member. */
+  typedef typename object_container::size_type size_type;       /**< Shortcut for size type. */
+  typedef typename list_type::iterator iterator;                /**< Shortcut for the list iterator. */
+  typedef typename list_type::const_iterator const_iterator;    /**< Shortcut for the list const iterator. */
+
+  /**
+   * Create an empty object list
+   * with the given parent object.
+   *
+   * @param parent The parent object of the list.
+   */
+  explicit object_list_base(S *parent)
+    : parent_(parent)
+  {}
+
+  virtual ~object_list() {}
+  
+  virtual const char* classname() const
+  {
+    return typeid(T).name();
+  }
+
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
+  iterator begin() {
+    return object_list_.begin();
+  }
+
+  /**
+   * Return the begin iterator of the list.
+   * 
+   * @return The begin iterator.
+   */
+  const_iterator begin() const {
+    return object_list_.begin();
+  }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
+  iterator end() {
+    return object_list_.end();
+  }
+
+  /**
+   * Return the end iterator of the list.
+   * 
+   * @return The end iterator.
+   */
+  const_iterator end() const {
+    return object_list_.end();
+  }
+
+  /**
+   * Returns true if the list is empty.
+   * 
+   * @return True if the list is empty.
+   */
+  virtual bool empty() const {
+    return object_list_.empty();
+  }
+
+  /**
+   * Clears the list
+   */
+  virtual void clear()
+  {
+    erase(begin(), end());
+  }
+
+  /**
+   * Returns the size of the list.
+   * 
+   * @return The size of the list.
+   */
+  virtual size_type size() const
+  {
+    return object_list_.size();
+  }
+
+  /**
+   * @brief Inserts a new element.
+   * 
+   * Insert a new element at a given iterator position.
+   * 
+   * @param pos The position where to insert.
+   * @param x The element to insert.
+   * @return The new position iterator.
+   */
+  virtual iterator insert(iterator pos, const value_type &x) = 0;
+
+  /**
+   * Adds an element to the beginning of the list.
+   *
+   * @param x The element to be pushed front.
+   */
+  void push_front(const value_type &x)
+  {
+    insert(begin(), x);
+  }
+
+  /**
+   * Adds an element to the end of the list.
+   *
+   * @param x The element to be pushed back.
+   */
+  void push_back(const value_type &x)
+  {
+    insert(end(), x);
+  }
+
+  /**
+   * @brief Interface to erase an element
+   *
+   * This is the interface for derived object_list
+   * classes to implement their erase element method.
+   * Erases a single element from the list.
+   *
+   * @param i The iterator to erase.
+   * @return Returns the next iterator.
+   */
+  virtual iterator erase(iterator i) = 0;
+
+  /**
+   * @brief Erases a range defines by iterators
+   *
+   * Erase a range of elements from the list. The
+   * range is defined by a first and a last iterator.
+   * 
+   * @param first The first iterator of the range to erase.
+   * @param last The last iterator of the range to erase.
+   * @return Returns the next iterator.
+   */
+  iterator erase(iterator first, iterator last)
+  {
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
+  }
+
+protected:
+  /**
+   * @brief Executes the given function object for all elements.
+   *
+   * Executes the given function object for all elements.
+   *
+   * @param nf Function object used to be executed on each element.
+   */
+  virtual void for_each(const node_func &nf) const
+  {
+    const_iterator first = object_list_.begin();
+    const_iterator last = object_list_.end();
+    while (first != last) {
+      nf((*first++).ptr());
+    }
+  }
+
+  /**
+   * Resets the object_store and clears the list.
+   */
+  virtual void uninstall()
+  {
+    object_container::uninstall();
+    object_list_.clear();
+  }
+
+  /**
+   * Sets the parent for the list
+   *
+   * @param p The parent object of the list.
+   */
+  virtual void parent(object *p)
+  {
+    S *temp = dynamic_cast<S*>(p);
+    if (!temp) {
+      throw object_exception("couldn't cast object to concrete type");
+    }
+    parent_ = temp;
+  }
+
+  virtual object_base_producer* create_relation_producer() const
+  {
+    return 0;
+  }
+
+private:
+  virtual void reset()
+  {
+    object_list_.clear();
+  }
+
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    object_list_.push_back(item_ptr(proxy));
+  }
+
+private:
+  list_type object_list_;
+
+  S *parent_;
+};
+
+/*
+ * Not implemented class
+ */
+template < class S, class T, void (T* ...SETFUNC)(const object_ref<S>&) >
+struct object_list;
+
+template < class S, class T >
+class object_list<S, T > : public object_list_base<S, T, container_item<T, S> >
+{
+};
+
+template < class S, class T, void (T*::SETFUNC)(const object_ref<S>&) >
+class object_list<S, T, SETFUNC> : public object_list_base<S, T, T>
+{
+};
+
 /**
  * @class object_list
  * @brief An object list class.
