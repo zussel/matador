@@ -497,7 +497,7 @@ class department : public oos::object
 {
 public:
   typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref> emp_list_t;
+  typedef oos::object_list<department, emp_ref, &employee::dep> emp_list_t;
   typedef emp_list_t::size_type size_type;
   typedef emp_list_t::iterator iterator;
   typedef emp_list_t::const_iterator const_iterator;
@@ -510,7 +510,7 @@ public:
   department() : emp_list_(this) {}
   department(const std::string &name)
     : name_(name)
-    , emp_list_(this, "department")
+    , emp_list_(this)
 /*    , emp_list_(this, &employee::dep)*/
   {}
   
