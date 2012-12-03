@@ -40,6 +40,7 @@ namespace oos {
  * @brief An object list class.
  * @tparam S The type of the parent object.
  * @tparam T The value of the list.
+ * @tparam H The value holder class (either oos::object_ref or oos::object_ptr)
  * 
  * The object_list class implements a list which
  * can hold any type of object from builtin types as
@@ -47,17 +48,14 @@ namespace oos {
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T, class CT >
+template < class S, class T, template < typename T > class H >
 class object_list_base : public object_container
 {
 public:
   typedef T value_type;                                      /**< Shortcut for the value type. */
   typedef S container_type;                                  /**< Shortcut for the container type. */
-//  typedef H holder_type;                                     /**< Shortcut for the item holder (oos::object_ref or oos::object_ptr). */
-  typedef object_ref<container_type> cont_ref;               /**< Shortcut for the container reference. */
-  typedef CT item_type;                                      /**< Shortcut for the container item. */
-//  typedef H<CT> item;
-  typedef std::list<item_type> list_type;                    /**< Shortcut for the list class member. */
+  typedef H<T> value_holder_type;                            /**< Shortcut for the value holder type. */
+  typedef std::list<value_holder_type> list_type;            /**< Shortcut for the list class member. */
   typedef typename object_container::size_type size_type;    /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;             /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator; /**< Shortcut for the list const iterator. */
@@ -151,14 +149,14 @@ public:
    * @param x The element to insert.
    * @return The new position iterator.
    */
-  virtual iterator insert(iterator pos, const value_type &x) = 0;
+  virtual iterator insert(iterator pos, const value_holder_type &x) = 0;
 
   /**
    * Adds an element to the beginning of the list.
    *
    * @param x The element to be pushed front.
    */
-  void push_front(const value_type &x)
+  void push_front(const value_holder_type &x)
   {
     insert(begin(), x);
   }
@@ -168,7 +166,7 @@ public:
    *
    * @param x The element to be pushed back.
    */
-  void push_back(const value_type &x)
+  void push_back(const value_holder_type &x)
   {
     insert(end(), x);
   }
@@ -243,6 +241,11 @@ protected:
     parent_ = temp;
   }
 
+  S* parent()
+  {
+    return parent_;
+  }
+
   virtual object_base_producer* create_relation_producer() const
   {
     return 0;
@@ -268,37 +271,38 @@ private:
 /*
  * Not implemented class
  */
-template < class S, class T, void (T::* ...SETFUNC)(const object_ref<S>&) >
+template < class S, class T, template < class T > class H, void (T::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
 
 /*
  * implementation with setter method.
  * a relation table won't be created
  */
-template < class S, class T, void (T::*SETFUNC)(const object_ref<S>&) >
-class object_list<S, T, SETFUNC> : public object_list_base<S, T, object_ref<T> >
+template < class S, class T, template < class T > class H, void (T::*SETFUNC)(const object_ref<S>&)>
+class object_list<S, T, H, SETFUNC> : public object_list_base<S, T, H>
 {
 public:
-  typedef object_ref<T> item_ref;
-  typedef object_list_base<S, T, object_ref<T> > super_list;
+  typedef H<T> item_holder;
+  typedef object_list_base<S, T, H> super_list;
   typedef typename super_list::value_type value_type;
+  typedef typename super_list::value_holder_type value_holder_type;
   typedef typename super_list::iterator iterator;
   typedef typename super_list::const_iterator const_iterator;
 
 public:
   object_list(S *parent)
-    : object_list_base<S, T, object_ref<T> >(parent)
+    : object_list_base<S, T, H>(parent)
     , setter_(SETFUNC)
   {}
   virtual ~object_list() {}
 
-  virtual iterator insert(iterator pos, const value_type &x)
+  virtual iterator insert(iterator pos, const value_holder_type &x)
   {
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
       // mark list object as modified
-      mark_modified(this->parent());
+      this->mark_modified(this->parent());
       // insert new item object
       return this->list().insert(pos, x);
     }
@@ -309,14 +313,14 @@ public:
     if (!this->ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      mark_modified(this->parent);
+      this->mark_modified(this->parent());
       return this->list().erase(i);
     }
   }
 private:
   virtual void append_proxy(object_proxy *proxy)
   {
-    this->list().push_back(item_ref(proxy));
+    this->list().push_back(item_holder(proxy));
   }
 
 private:
@@ -328,24 +332,26 @@ private:
  * implementation without setter method.
  * a relation table will be created
  */
-template < class S, class T >
-class object_list<S, T> : public object_list_base<S, T, object_ptr<container_item<T, S> > >
+template < class S, class T, template < class T > class H >
+class object_list<S, T, H> : public object_list_base<S, container_item<H, S>, object_ptr>
 {
 public:
   typedef object_ptr<container_item<T, S> > item_ptr;
-  typedef object_list_base<S, T, object_ptr<container_item<T, S> > > super_list;
-  typedef container_item<T, S> item_type;
+  typedef object_list_base<S, container_item<T, S>, object_ptr> super_list;
+  typedef container_item<H, S> item_type;
+  typedef object_ref<S> cont_ref;
   typedef typename super_list::value_type value_type;
+  typedef typename super_list::value_holder_type value_holder_type;
   typedef typename super_list::iterator iterator;
   typedef typename super_list::const_iterator const_iterator;
 
 public:
   object_list(S *parent)
-    : object_list_base<S, T, object_ptr<container_item<T, S> > >(parent)
+    : object_list_base<S, container_item<T, S>, object_ptr>(parent)
   {}
   virtual ~object_list() {}
 
-  virtual iterator insert(iterator pos, const value_type &x)
+  virtual iterator insert(iterator pos, const value_holder_type &x)
   {
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
@@ -365,7 +371,7 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       item_ptr item = *i;
-      mark_modified(this->parent());
+      this->mark_modified(this->parent());
       if (!this->ostore()->remove(item)) {
         return this->end();
       } else {
