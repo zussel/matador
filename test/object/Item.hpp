@@ -165,15 +165,15 @@ private:
   value_ptr ptr_;
 };
 
-template < class T, template < typename T > class H >
+template < class T >
 class List : public oos::object
 {
 public:
   typedef T value_type;
-  typedef H<T> value_holder;
-  typedef oos::object_list<List<T, H>, value_type, H> list_t;
+  typedef List<T> self;
+  typedef oos::object_list<self, T> list_t;
   typedef typename list_t::item_type item_type;
-  typedef typename list_t::item_type item_ptr;
+/*  typedef typename list_t::item_type item_ptr;*/
   typedef typename list_t::size_type size_type;
   typedef typename list_t::iterator iterator;
   typedef typename list_t::const_iterator const_iterator;
@@ -220,15 +220,9 @@ private:
   list_t list_;
 };
 
-/*
 typedef List<oos::object_ptr<Item> > ItemPtrList;
 typedef List<oos::object_ref<Item> > ItemRefList;
-typedef List<int> IntList;
-*/
-
-typedef List<Item, oos::object_ptr > ItemPtrList;
-typedef List<Item, oos::object_ref > ItemRefList;
-typedef List<int, oos::object_ptr> IntList;
+//typedef List<int> IntList;
 
 template < class T >
 class LinkedList : public oos::object
@@ -394,9 +388,8 @@ public:
 class book_list : public oos::object
 {
 public:
-  typedef oos::object_list<book_list, book, oos::object_ref> book_list_t;
-  typedef book_list_t::value_holder_type book_ref;
-  typedef book_list_t::item_type item_type;
+  typedef oos::object_ref<book> book_ref;
+  typedef oos::object_list<book_list, book_ref> book_list_t;
   typedef book_list_t::item_ptr item_ptr;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
@@ -504,7 +497,7 @@ class department : public oos::object
 {
 public:
   typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, employee, oos::object_ref, &employee::dep> emp_list_t;
+  typedef oos::object_list<department, emp_ref, &employee::dep> emp_list_t;
   typedef emp_list_t::size_type size_type;
   typedef emp_list_t::iterator iterator;
   typedef emp_list_t::const_iterator const_iterator;
@@ -518,7 +511,6 @@ public:
   department(const std::string &name)
     : name_(name)
     , emp_list_(this)
-/*    , emp_list_(this, &employee::dep)*/
   {}
   
   virtual ~department() {}

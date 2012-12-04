@@ -88,12 +88,6 @@ ObjectStoreTestUnit::expression_test()
   variable<std::string> y(make_var(&ObjectItem<Item>::get_string));
   variable<object_ptr<Item> > u(make_var(&ObjectItem<Item>::ptr));
 
-  /*
-  variable<int, ObjectItem<Item> > x(&ObjectItem<Item>::get_int);
-  variable<std::string, ObjectItem<Item> > y(&ObjectItem<Item>::get_string);
-  variable<object_ptr<Item>, ObjectItem<Item> > u(&ObjectItem<Item>::ptr);
-  */
-
   object_view<ObjectItem<Item> > oview(ostore_);
   
   int count(0);
@@ -101,20 +95,13 @@ ObjectStoreTestUnit::expression_test()
 
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
-
   typedef ObjectItemPtrList::item_type ObjectItemType;
 
 
   variable<int> k(make_var(&ObjectItem<Item>::ptr, &Item::get_int));
 
   variable<int> z(make_var(&ObjectItemType::value, &ObjectItem<Item>::get_int));
-  /*
-  typedef variable<ObjectItemPtrList::value_type, ObjectItemType> item_var_t;
-  variable<int, ObjectItem<Item>, item_var_t> z(&ObjectItem<Item>::get_int, item_var_t(&ObjectItemType::value));
-  */
 
-//  variable<int> x = make_var(
-//  variable<int, Item, ItemType> z(&Item::get_int, &ItemType::value);
   ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 

@@ -339,7 +339,8 @@ DatabaseTestUnit::with_list2()
   department::const_iterator first = identpro->begin();
   department::const_iterator last = identpro->end();
   while (first != last) {
-    cout << "\n" << (*first++)->value()->name();
+    first++;
+//    cout << "\n" << (*first++)->value()->name();
   }
 }
 
