@@ -46,25 +46,32 @@ using namespace std::tr1::placeholders;
 
 namespace oos {
 
-class relation_finder : public generic_object_writer<relation_finder>
+class relation_handler : public generic_object_writer<relation_handler>
 {
 public:
   typedef std::list<std::string> string_list_t;
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_finder()
-    : generic_object_writer<relation_finder>(this)
+  relation_handler(object_store &ostore)
+    : generic_object_writer<relation_handler>(this)
+    , ostore_(ostore)
   {}
-  virtual ~relation_finder() {}
+  virtual ~relation_handler() {}
 
   template < class T >
   void write_value(const char*, const T&) {}
   
   void write_value(const char*, const char*, int) {}
   
-  void write_value(const char *, const object_container &x)
+  void write_value(const char *id, const object_container &x)
   {
+    /*
+     * container knows if it needs
+     * a relation table
+     */
+    x.handle_container_item(ostore_, id);
+    
     relations_.push_back(x.classname());
   }
   
@@ -74,6 +81,7 @@ public:
   
 private:
   std::list<std::string> relations_;
+  object_store &ostore_;
 };
 
 class equal_type : public std::unary_function<const prototype_node*, bool> {
@@ -219,21 +227,23 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_finder rl/*(this)*/;
-  o->serialize(rl);
+  relation_handler rh(*this);
+  o->serialize(rh);
   
+  /*
   relation_finder::const_iterator first(rl.begin());
   relation_finder::const_iterator last(rl.end());
   while (first != last) {
     std::string classname = *first++;
     i = prototype_node_map_.find(classname);
     if (i == prototype_node_map_.end()) {
+      */
       // no such prototype node
       // create new one in advance
-      cout << "found ";
-    }
+//      cout << "found ";
+//    }
     // add parent node
-    cout << "relation type name: " << classname << " for container " << type << "\n";
+//    cout << "relation type name: " << classname << " for container " << type << "\n";
     
     /*
      * if container needs relation/value table
@@ -242,7 +252,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
      *   return false;
      * }
      */
-  }
+//  }
 
   // store prototype in map
   prototype_node_map_.insert(std::make_pair(type, node));

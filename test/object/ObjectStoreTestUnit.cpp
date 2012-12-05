@@ -1,7 +1,6 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "Item.hpp"
 
-//#include "object/object_value.hpp"
 #include "object/object_expression.hpp"
 #include "object/object_serializer.hpp"
 #include "object/object_view.hpp"
@@ -19,7 +18,6 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("ObjectStore Test Unit")
 {
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-//  add_test("access", std::tr1::bind(&ObjectStoreTestUnit::access_value, this), "access object values via generic interface");
   add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
   add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
@@ -264,61 +262,6 @@ ObjectStoreTestUnit::ref_ptr_counter()
   UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
   UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
 }
-
-/*
-void
-ObjectStoreTestUnit::access_value()
-{
-  std::string str("Godwanda");
-  varchar<32> vstr("Godwanda");
-
-  int numb = 42;
-
-  Item *i = new Item(str, numb);
-  i->set_varchar(vstr);
-
-  int n;
-
-  UNIT_ASSERT_TRUE(retrieve_value(i, "val_int", n), "couldn't get integer value for field [number]");
-  UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
-
-  numb = 13;
-  UNIT_ASSERT_TRUE(update_value(i, "val_int", numb), "couldn't set integer value for field [number]");
-
-  UNIT_ASSERT_TRUE(retrieve_value(i, "val_int", n), "couldn't get integer value for field [number]");
-  UNIT_ASSERT_EQUAL(n, numb, "retrieved value of integer isn't " + numb);
-
-  std::string s;
-
-  oos::varchar<32> vs;
-
-  UNIT_ASSERT_TRUE(retrieve_value(i, "val_varchar", vs), "couldn't get varchar value for field [name]");
-  UNIT_ASSERT_TRUE(retrieve_value(i, "val_string", s), "couldn't get string value for field [name]");
-  UNIT_ASSERT_EQUAL(s, str, "retrieved value of string isn't " + str);
-  UNIT_ASSERT_EQUAL(vs, vstr, "retrieved value of varchar isn't " + vstr.str());
-
-  str = "Kambrium";
-  UNIT_ASSERT_TRUE(update_value(i, "val_string", str), "couldn't set string value for field [name]");
-
-  UNIT_ASSERT_TRUE(retrieve_value(i, "val_string", s), "couldn't get string value for field [name]");
-  UNIT_ASSERT_EQUAL(s, str, "retrieved value of integer isn't " + str);
-
-  typedef object_ptr<ObjectItem<Item> > owsub_ptr;
-  typedef object_ptr<Item> osmpl_ptr;
-
-  owsub_ptr owsub = ostore_.insert(new ObjectItem<Item>);
-  osmpl_ptr osmpl = ostore_.insert(i);
-
-//  std::cout << "inserted simple object: " << osmpl << "\n";
-
-  UNIT_ASSERT_TRUE(update_value(owsub, "ptr", osmpl), "couldn't set object field [simple]");
-
-  osmpl.reset();
-
-  UNIT_ASSERT_TRUE(retrieve_value(owsub, "ptr", osmpl), "couldn't get object field [simple]");
-  UNIT_ASSERT_EQUAL(osmpl.get(), i, "retrieved object isn't the expected");
-}
-*/
 
 void
 ObjectStoreTestUnit::set_test()

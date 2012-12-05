@@ -772,6 +772,11 @@ protected:
     return new object_producer<item_type>;
   }
 
+  virtual void handle_container_item(object_store &ostore, const char *id) const
+  {
+    ostore.insert_prototype<item_type>(id);
+  }
+
 private:
   virtual void append_proxy(object_proxy *) {};
 

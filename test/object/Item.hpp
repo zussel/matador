@@ -222,7 +222,7 @@ private:
 
 typedef List<oos::object_ptr<Item> > ItemPtrList;
 typedef List<oos::object_ref<Item> > ItemRefList;
-//typedef List<int> IntList;
+typedef List<int> IntList;
 
 template < class T >
 class LinkedList : public oos::object
