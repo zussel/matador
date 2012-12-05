@@ -246,11 +246,6 @@ protected:
     return parent_;
   }
 
-  virtual object_base_producer* create_relation_producer() const
-  {
-    return 0;
-  }
-
   list_type& list()
   {
     return object_list_;
@@ -262,6 +257,11 @@ private:
     object_list_.clear();
   }
 
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    this->list().push_back(item_holder(proxy));
+  }
+
 private:
   list_type object_list_;
 
@@ -269,9 +269,15 @@ private:
 };
 
 /*
+ * helper class
+ */
+struct dummy { struct inner {}; typedef inner object_type; };
+
+/*
  * Not implemented class
  */
-template < class S, class T, void (T::object_type::* ...SETFUNC)(const object_ref<S>&) >
+//template < class S, class T, void (T::object_type::* ...SETFUNC)(const object_ref<S>&) >
+template < class S, class T, void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
 
 /*
@@ -318,11 +324,9 @@ public:
       return this->list().erase(i);
     }
   }
-private:
-  virtual void append_proxy(object_proxy *proxy)
-  {
-    this->list().push_back(value_holder(proxy));
-  }
+
+protected:
+  virtual void handle_container_item(object_store &, const char *) const {}
 
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
@@ -382,12 +386,11 @@ public:
     }
   }
 
-private:
-  virtual void append_proxy(object_proxy *proxy)
+protected:
+  virtual void handle_container_item(object_store &ostore, const char *id) const
   {
-    this->list().push_back(item_ptr(proxy));
+    ostore.insert_prototype<item_type>(id);
   }
-
 };
 
 }

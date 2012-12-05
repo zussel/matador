@@ -233,6 +233,7 @@ protected:
   friend class object_creator;
   friend class object_deleter;
   friend class object_serializer;
+  friend class relation_handler;
 
   /**
    * @brief Append a object via its object_proxy.
@@ -292,10 +293,12 @@ protected:
   /**
    * Create a producer object for
    * the relation/value table.
-   * 
+   *
+   * @param ostore The object_store.
+   * @param id The name of the relation.
    * @return The producer object;
    */
-  virtual object_base_producer* create_relation_producer() const = 0;
+  virtual void handle_container_item(object_store &ostore, const char *id) const = 0;
 
 private:
   virtual void reset() {}
