@@ -38,7 +38,7 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
   ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
+//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
 
   // delete db
   std::remove("test.sqlite");

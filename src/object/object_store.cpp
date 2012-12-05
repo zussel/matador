@@ -71,16 +71,9 @@ public:
      * a relation table
      */
     x.handle_container_item(ostore_, id);
-    
-    relations_.push_back(x.classname());
   }
   
-  const_iterator begin() const { return relations_.begin(); }
-  const_iterator end() const { return relations_.end(); }
-  void clear() { relations_.clear(); }
-  
 private:
-  std::list<std::string> relations_;
   object_store &ostore_;
 };
 
@@ -230,30 +223,6 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   relation_handler rh(*this);
   o->serialize(rh);
   
-  /*
-  relation_finder::const_iterator first(rl.begin());
-  relation_finder::const_iterator last(rl.end());
-  while (first != last) {
-    std::string classname = *first++;
-    i = prototype_node_map_.find(classname);
-    if (i == prototype_node_map_.end()) {
-      */
-      // no such prototype node
-      // create new one in advance
-//      cout << "found ";
-//    }
-    // add parent node
-//    cout << "relation type name: " << classname << " for container " << type << "\n";
-    
-    /*
-     * if container needs relation/value table
-     * add id
-     * if (!insert_prototype(producer, name)) {
-     *   return false;
-     * }
-     */
-//  }
-
   // store prototype in map
   prototype_node_map_.insert(std::make_pair(type, node));
   prototype_node_map_.insert(std::make_pair(producer->classname(), node));

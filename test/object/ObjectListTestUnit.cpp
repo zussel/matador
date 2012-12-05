@@ -32,17 +32,17 @@ ObjectListTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<IntList>("INT_LIST");
-  ostore_.insert_prototype<IntList::item_type>("INT");
+//  ostore_.insert_prototype<IntList::item_type>("INT");
   ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
-  ostore_.insert_prototype<ItemRefList::item_type>("ITEM_REF");
+//  ostore_.insert_prototype<ItemRefList::item_type>("ITEM_REF");
   ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
+//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
   ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
-  ostore_.insert_prototype<LinkedItemPtrList::item_type>("LINKED_ITEM_PTR");
+//  ostore_.insert_prototype<LinkedItemPtrList::item_type>("LINKED_ITEM_PTR");
   ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
-  ostore_.insert_prototype<LinkedItemRefList::item_type>("LINKED_ITEM_REF");
+//  ostore_.insert_prototype<LinkedItemRefList::item_type>("LINKED_ITEM_REF");
   ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
-  ostore_.insert_prototype<LinkedIntList::item_type>("LINKED_INT");
+//  ostore_.insert_prototype<LinkedIntList::item_type>("LINKED_INT");
 }
 
 void

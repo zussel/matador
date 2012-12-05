@@ -57,8 +57,8 @@ main(int argc, char *argv[])
   ostore.insert_prototype<Artist>("artist");
   ostore.insert_prototype<Track>("track");
   ostore.insert_prototype<Album>("album");
-  ostore.insert_prototype<Album::item_type>("track_album_rel");
-  ostore.insert_prototype<Artist::item_type>("album_artist_rel");
+//  ostore.insert_prototype<Album::item_type>("track_album_rel");
+//  ostore.insert_prototype<Artist::item_type>("album_artist_rel");
 
   // create and open db
   session db(ostore, "sqlite://mdb.sqlite");

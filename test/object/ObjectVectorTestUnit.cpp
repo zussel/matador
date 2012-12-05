@@ -25,11 +25,11 @@ void ObjectVectorTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ItemPtrVector>("ITEM_PTR_VECTOR");
-  ostore_.insert_prototype<ItemPtrVector::item_type>("ITEM_PTR");
+//  ostore_.insert_prototype<ItemPtrVector::item_type>("ITEM_PTR");
   ostore_.insert_prototype<ItemRefVector>("ITEM_REF_VECTOR");
-  ostore_.insert_prototype<ItemRefVector::item_type>("ITEM_REF");
+//  ostore_.insert_prototype<ItemRefVector::item_type>("ITEM_REF");
   ostore_.insert_prototype<IntVector>("ITEM_INT_VECTOR");
-  ostore_.insert_prototype<IntVector::item_type>("ITEM_INT");
+//  ostore_.insert_prototype<IntVector::item_type>("ITEM_INT");
 }
 
 void ObjectVectorTestUnit::finalize()
