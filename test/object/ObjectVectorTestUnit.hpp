@@ -14,6 +14,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
+  void test_empty();
   void test_int_vector();
   void test_ref_vector();
   void test_ptr_vector();

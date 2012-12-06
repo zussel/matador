@@ -304,11 +304,18 @@ public:
    */
   virtual iterator erase(iterator i)
   {
-    iterator ret = object_vector_.erase(i);
-    // update index values of all successor elements
-    adjust_index(ret);
+    // erase object from object store
+    item_ptr item = *i;
+    this->mark_modified(parent_);
+    if (!this->ostore()->remove(item)) {
+      return this->end();
+    } else {
+      iterator ret = object_vector_.erase(i);
+      // update index values of all successor elements
+      adjust_index(ret);
 
-    return ret;
+      return ret;
+    }
   }
 
   /**
@@ -323,11 +330,15 @@ public:
    */
   iterator erase(iterator first, iterator last)
   {
-    iterator ret = object_vector_.erase(first, last);
+    while (first != last) {
+      first = erase(first);
+    }
+    return first;
+//    iterator ret = object_vector_.erase(first, last);
     // adjust index
-    adjust_index(ret);
+//    adjust_index(ret);
 
-    return ret;
+//    return ret;
   }
 
 protected:

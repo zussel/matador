@@ -219,8 +219,8 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   parent_node->insert(node);
 
   // store prototype in map
-  cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
-  cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
+//  cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
+//  cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
   prototype_node_map_.insert(std::make_pair(type, node));
   prototype_node_map_.insert(std::make_pair(producer->classname(), node));
 
@@ -228,6 +228,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   object *o = producer->create();
   relation_handler rh(*this);
   o->serialize(rh);
+  delete o;
   
   return true;
 }
@@ -270,8 +271,8 @@ bool object_store::remove_prototype(const char *type)
 		return false;
 	}
 
-  cout << "DEBUG: removing prototype map: [" << i->second->type << "]\n";
-  cout << "DEBUG: removing prototype map: [" << i->second->producer->classname() << "]\n";
+//  cout << "DEBUG: removing prototype map: [" << i->second->type << "]\n";
+//  cout << "DEBUG: removing prototype map: [" << i->second->producer->classname() << "]\n";
 
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
