@@ -25,11 +25,8 @@ void ObjectVectorTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ItemPtrVector>("ITEM_PTR_VECTOR");
-//  ostore_.insert_prototype<ItemPtrVector::item_type>("ITEM_PTR");
   ostore_.insert_prototype<ItemRefVector>("ITEM_REF_VECTOR");
-//  ostore_.insert_prototype<ItemRefVector::item_type>("ITEM_REF");
   ostore_.insert_prototype<IntVector>("ITEM_INT_VECTOR");
-//  ostore_.insert_prototype<IntVector::item_type>("ITEM_INT");
 }
 
 void ObjectVectorTestUnit::finalize()
@@ -93,6 +90,8 @@ void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;
 
+  ostore_.dump_objects(cout);
+
   itemvector_ptr itemvector = ostore_.insert(new IntVector);
 
   IntVector::size_type val = 0;
@@ -101,6 +100,10 @@ void ObjectVectorTestUnit::test_int_vector()
   for (int i = 0; i < 20; ++i) {
     itemvector->push_back(i);
   }
+
+  cout << "\n";
+  
+  ostore_.dump_objects(cout);
 
   val = 20;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector has invalid size");
@@ -124,6 +127,10 @@ void ObjectVectorTestUnit::test_int_vector()
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 4, "itemvector size isn't valid");
 
   itemvector->clear();
+
+  cout << "\n";
+  
+  ostore_.dump_objects(cout);
 
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");

@@ -32,17 +32,11 @@ ObjectListTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<IntList>("INT_LIST");
-//  ostore_.insert_prototype<IntList::item_type>("INT");
   ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
-//  ostore_.insert_prototype<ItemRefList::item_type>("ITEM_REF");
   ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
   ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
-//  ostore_.insert_prototype<LinkedItemPtrList::item_type>("LINKED_ITEM_PTR");
   ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
-//  ostore_.insert_prototype<LinkedItemRefList::item_type>("LINKED_ITEM_REF");
   ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
-//  ostore_.insert_prototype<LinkedIntList::item_type>("LINKED_INT");
 }
 
 void
@@ -126,47 +120,51 @@ ObjectListTestUnit::test_ref_list()
 void
 ObjectListTestUnit::test_ptr_list()
 {
-  typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef ItemPtrList::value_type item_ptr;
+  try {
+    typedef object_ptr<ItemPtrList> itemlist_ptr;
+    typedef ItemPtrList::value_type item_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
 
-  ItemPtrList::size_type val = 0;
-  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
+    ItemPtrList::size_type val = 0;
+    UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
 
-  for (int i = 0; i < 20; ++i) {
-    stringstream name;
-    name << "Item " << i+1;
-    item_ptr item = ostore_.insert(new Item(name.str()));
-    if (i % 2) {
-      itemlist->push_back(item);
+    for (int i = 0; i < 20; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      item_ptr item = ostore_.insert(new Item(name.str()));
+      if (i % 2) {
+        itemlist->push_back(item);
+      }
     }
-  }
 
-  val = 10;
-  UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
+    val = 10;
+    UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list has invalid size");
 
-  typedef object_view<Item> item_view_t;
-  item_view_t item_view(ostore_);
+    typedef object_view<Item> item_view_t;
+    item_view_t item_view(ostore_);
 
-  val = 20;
-  UNIT_ASSERT_EQUAL(item_view.size(), val, "item view has invalid size");
+    val = 20;
+    UNIT_ASSERT_EQUAL(item_view.size(), val, "item view has invalid size");
 
 
-  item_view_t::iterator first = item_view.begin();
-  item_view_t::iterator last = item_view.end();
+    item_view_t::iterator first = item_view.begin();
+    item_view_t::iterator last = item_view.end();
 
-  int count = 0;
-  while (first != last) {
-    UNIT_ASSERT_LESS(count, 20, "item view count isn't valid");
-    ++first;
-    ++count;
-  }
-  
-  count = 0;
-  for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
-    UNIT_ASSERT_LESS(count, 10, "item list count isn't valid");
-    ++count;
+    int count = 0;
+    while (first != last) {
+      UNIT_ASSERT_LESS(count, 20, "item view count isn't valid");
+      ++first;
+      ++count;
+    }
+    
+    count = 0;
+    for (ItemPtrList::const_iterator i = itemlist->begin(); i != itemlist->end(); ++i) {
+      UNIT_ASSERT_LESS(count, 10, "item list count isn't valid");
+      ++count;
+    }
+  } catch (exception &ex) {
+    UNIT_FAIL(ex.what());
   }
 }
 

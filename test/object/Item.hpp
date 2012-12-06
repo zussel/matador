@@ -179,20 +179,21 @@ public:
   typedef typename list_t::const_iterator const_iterator;
 
 public:
-  List()
+  List(const std::string &relation_name)
     : list_(this)
+    , relation_name_(relation_name)
   {}
   virtual ~List() {}
 
   virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
-    deserializer.read("list", list_);
+    deserializer.read(relation_name_.c_str(), list_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
-    serializer.write("list", list_);
+    serializer.write(relation_name_.c_str(), list_);
   }
 
   void push_front(const value_type &i)
@@ -218,11 +219,29 @@ public:
 
 private:
   list_t list_;
+  std::string relation_name_;
 };
 
-typedef List<oos::object_ptr<Item> > ItemPtrList;
-typedef List<oos::object_ref<Item> > ItemRefList;
-typedef List<int> IntList;
+class IntList : public List<int>
+{
+public:
+  IntList() : List<int>("int_list") {}
+  virtual ~IntList() {}
+};
+
+class ItemPtrList : public List<oos::object_ptr<Item> >
+{
+public:
+  ItemPtrList() : List<oos::object_ptr<Item> >("ptr_list") {}
+  virtual ~ItemPtrList() {}
+};
+
+class ItemRefList : public List<oos::object_ref<Item> >
+{
+public:
+  ItemRefList() : List<oos::object_ref<Item> >("ref_list") {}
+  virtual ~ItemRefList() {}
+};
 
 template < class T >
 class LinkedList : public oos::object
@@ -237,20 +256,21 @@ public:
   typedef typename item_list_t::size_type size_type;
 
 public:
-  LinkedList()
+  LinkedList(const std::string &relation_name)
     : item_list_(this)
+    , relation_name_(relation_name)
   {}
   virtual ~LinkedList() {}
 
   virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
-    deserializer.read("item_list", item_list_);
+    deserializer.read(relation_name_.c_str(), item_list_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
-    serializer.write("item_list", item_list_);
+    serializer.write(relation_name_.c_str(), item_list_);
   }
 
   void push_front(const value_type &i)
@@ -280,11 +300,29 @@ public:
   }
 private:
   item_list_t item_list_;
+  std::string relation_name_;
 };
 
-typedef LinkedList<oos::object_ptr<Item> > LinkedItemPtrList;
-typedef LinkedList<oos::object_ref<Item> > LinkedItemRefList;
-typedef LinkedList<int> LinkedIntList;
+class LinkedIntList : public LinkedList<int>
+{
+public:
+  LinkedIntList() : LinkedList<int>("linked_int_list") {}
+  virtual ~LinkedIntList() {}
+};
+
+class LinkedItemPtrList : public LinkedList<oos::object_ptr<Item> >
+{
+public:
+  LinkedItemPtrList() : LinkedList<oos::object_ptr<Item> >("linked_ptr_list") {}
+  virtual ~LinkedItemPtrList() {}
+};
+
+class LinkedItemRefList : public LinkedList<oos::object_ref<Item> >
+{
+public:
+  LinkedItemRefList() : LinkedList<oos::object_ref<Item> >("linked_ref_list") {}
+  virtual ~LinkedItemRefList() {}
+};
 
 template < class T >
 class Vector : public oos::object
@@ -299,20 +337,21 @@ public:
   typedef typename vector_t::const_iterator const_iterator;
 
 public:
-  Vector()
+  Vector(const std::string &relation_name)
     : vector_(this)
+    , relation_name_(relation_name)
   {}
   virtual ~Vector() {}
 
   virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
-    deserializer.read("item_vector", vector_);
+    deserializer.read(relation_name_.c_str(), vector_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
-    serializer.write("item_vector", vector_);
+    serializer.write(relation_name_.c_str(), vector_);
   }
 
   void push_back(const value_type &i)
@@ -343,11 +382,30 @@ public:
 
 private:
   vector_t vector_;
+  std::string relation_name_;
 };
 
-typedef Vector<oos::object_ptr<Item> > ItemPtrVector;
-typedef Vector<oos::object_ref<Item> > ItemRefVector;
-typedef Vector<int> IntVector;
+class IntVector : public Vector<int>
+{
+public:
+  IntVector() : Vector<int>("int_vector") {}
+  virtual ~IntVector() {}
+};
+
+class ItemPtrVector : public Vector<oos::object_ptr<Item> >
+{
+public:
+  ItemPtrVector() : Vector<oos::object_ptr<Item> >("ptr_vector") {}
+  virtual ~ItemPtrVector() {}
+};
+
+class ItemRefVector : public Vector<oos::object_ref<Item> >
+{
+public:
+  ItemRefVector() : Vector<oos::object_ref<Item> >("ref_vector") {}
+  virtual ~ItemRefVector() {}
+};
+
 
 class book : public oos::object
 {

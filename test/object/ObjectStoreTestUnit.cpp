@@ -37,7 +37,12 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
 {}
 
-typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
+class ObjectItemPtrList : public List<oos::object_ptr<ObjectItem<Item> > >
+{
+public:
+  ObjectItemPtrList() : List<oos::object_ptr<ObjectItem<Item> > >("object_ptr_list") {}
+  virtual ~ObjectItemPtrList() {}
+};
 
 void
 ObjectStoreTestUnit::initialize()

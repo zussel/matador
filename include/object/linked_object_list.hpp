@@ -767,11 +767,6 @@ protected:
     parent_ = temp;
   }
 
-  virtual object_base_producer* create_relation_producer() const
-  {
-    return new object_producer<item_type>;
-  }
-
   virtual void handle_container_item(object_store &ostore, const char *id) const
   {
     ostore.insert_prototype<item_type>(id);

@@ -218,15 +218,17 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   // append as child to parent prototype node
   parent_node->insert(node);
 
+  // store prototype in map
+  cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
+  cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
+  prototype_node_map_.insert(std::make_pair(type, node));
+  prototype_node_map_.insert(std::make_pair(producer->classname(), node));
+
   // Check if nodes object has to many relations
   object *o = producer->create();
   relation_handler rh(*this);
   o->serialize(rh);
   
-  // store prototype in map
-  prototype_node_map_.insert(std::make_pair(type, node));
-  prototype_node_map_.insert(std::make_pair(producer->classname(), node));
-  // return success
   return true;
 }
 
@@ -268,6 +270,9 @@ bool object_store::remove_prototype(const char *type)
 		return false;
 	}
 
+  cout << "DEBUG: removing prototype map: [" << i->second->type << "]\n";
+  cout << "DEBUG: removing prototype map: [" << i->second->producer->classname() << "]\n";
+
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   while (i->second->first->next != i->second->last) {
@@ -292,7 +297,7 @@ const prototype_node* object_store::find_prototype(const char *type) const
   t_prototype_node_map::const_iterator i = prototype_node_map_.find(type);
   if (i == prototype_node_map_.end()) {
     //throw new object_exception("couldn't find prototype");
-    return NULL;
+    return 0;
   }
   return i->second;
 }
@@ -418,6 +423,7 @@ object_store::insert_object(object *o, bool notify)
     return NULL;
   }
   // find prototype node
+//  cout << "\nDEBUG: inserting object of type [" << typeid(*o).name() << "]";
   t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
   if (i == prototype_node_map_.end()) {
     // raise exception
