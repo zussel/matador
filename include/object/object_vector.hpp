@@ -330,15 +330,20 @@ public:
    */
   iterator erase(iterator first, iterator last)
   {
-    while (first != last) {
-      first = erase(first);
+    iterator i = first;
+    while (i != last) {
+      // erase object from object store
+      item_ptr item = *i++;
+      this->mark_modified(parent_);
+      if (!this->ostore()->remove(item)) {
+        return this->end();
+      }
     }
-    return first;
-//    iterator ret = object_vector_.erase(first, last);
+    i = object_vector_.erase(first, last);
     // adjust index
-//    adjust_index(ret);
+    adjust_index(i);
 
-//    return ret;
+    return i;
   }
 
 protected:

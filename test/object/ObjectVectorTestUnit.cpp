@@ -13,7 +13,6 @@ using namespace std;
 ObjectVectorTestUnit::ObjectVectorTestUnit()
   : unit_test("object vector")
 {
-  add_test("empty", std::tr1::bind(&ObjectVectorTestUnit::test_empty, this), "test an empty vector");
   add_test("int", std::tr1::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
   add_test("ptr", std::tr1::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
   add_test("ref", std::tr1::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
@@ -33,10 +32,6 @@ void ObjectVectorTestUnit::initialize()
 void ObjectVectorTestUnit::finalize()
 {
   ostore_.clear(true);
-}
-
-void ObjectVectorTestUnit::test_empty()
-{
 }
 
 void ObjectVectorTestUnit::test_ref_vector()
@@ -95,8 +90,6 @@ void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;
 
-  ostore_.dump_objects(cout);
-
   itemvector_ptr itemvector = ostore_.insert(new IntVector);
 
   IntVector::size_type val = 0;
@@ -105,10 +98,6 @@ void ObjectVectorTestUnit::test_int_vector()
   for (int i = 0; i < 20; ++i) {
     itemvector->push_back(i);
   }
-
-  cout << "\n";
-  
-  ostore_.dump_objects(cout);
 
   val = 20;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector has invalid size");
@@ -132,10 +121,6 @@ void ObjectVectorTestUnit::test_int_vector()
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 4, "itemvector size isn't valid");
 
   itemvector->clear();
-
-  cout << "\n";
-  
-  ostore_.dump_objects(cout);
 
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
