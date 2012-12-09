@@ -102,15 +102,14 @@ private:
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < typename S, class T >
-class object_vector : public object_container
+template < class S, class T, class CT = T >
+class object_vector_base : public object_container
 {
 public:
-  typedef T value_type;                                             /**< Shortcut for the value type. */
-  typedef S container_type;                                         /**< Shortcut for the container type. */
-  typedef object_vector_item<value_type, container_type> item_type; /**< Shortcut for the container item. */
-  typedef object_ptr<item_type> item_ptr;                           /**< Shortcut for the container item pointer. */
-  typedef std::vector<item_ptr> vector_type;                        /**< Shortcut for the vector class member. */
+  typedef T value_holder;                                    /**< Shortcut for the value type. */
+  typedef S parent_type;                                     /**< Shortcut for the container type. */
+  typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
+  typedef std::vector<item_holder> vector_type;                        /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;                  /**< Shortcut for the vector iterator. */
   typedef typename vector_type::const_iterator const_iterator;      /**< Shortcut for the vector const iterator. */
   typedef typename object_container::size_type size_type;           /**< Shortcut for the size type. */
@@ -128,11 +127,11 @@ public:
    * @tparam T Parent object type.
    * @param parent The containing vector object.
    */
-  object_vector(S *parent)
+  object_vector_base(parent_type *parent)
     : parent_(parent)
   {}
 
-  virtual ~object_vector() {}
+  virtual ~object_vector_base() {}
 
   virtual const char* classname() const
   {
@@ -211,39 +210,14 @@ public:
    * @param x The element to insert.
    * @return The new position iterator.
    */
-  iterator insert(iterator pos, const value_type &x)
-  {
-    if (!object_container::ostore()) {
-      throw object_exception("invalid object_store pointer");
-    } else {
-      // determine index
-      iterator last = object_vector_.end();
-      typename item_type::size_type index = object_vector_.size();
-      if (index && pos != last) {
-        index = (*pos)->index();
-      }
-      // create and insert new item
-      item_ptr item = ostore()->insert(new item_type(object_ref<container_type>(parent_), index, x));
-      // mark list object as modified
-      mark_modified(parent_);
-      // insert new item object
-      pos = object_vector_.insert(pos, item);
-      iterator first = pos;
-      // adjust indices of successor items
-      last = object_vector_.end();
-      while (++first != last) {
-        (*first)->index(++index);
-      }
-      return pos;
-    }
-  };
+  virtual iterator insert(iterator pos, const value_holder &x) = 0;
 
   /**
    * Adds an element to the end of the list.
    *
    * @param x The element to be pushed back.
    */
-  void push_back(const value_type &x)
+  void push_back(const value_holder &x)
   {
     insert(end(), x);
   }
@@ -254,7 +228,7 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  value_type operator[](size_type pos)
+  value_holder operator[](size_type pos)
   {
     return object_vector_[pos]->value();
   }
@@ -265,7 +239,7 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  const value_type operator[](size_type pos) const
+  const value_holder operator[](size_type pos) const
   {
     return object_vector_[pos]->value();
   }
@@ -276,7 +250,7 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  value_type at(size_type pos)
+  value_holder at(size_type pos)
   {
     return object_vector_.at(pos)->value();
   }
@@ -287,7 +261,7 @@ public:
    * @param pos The index of the requested element.
    * @return The requested element.
    */
-  const value_type at(size_type pos) const
+  const value_holder at(size_type pos) const
   {
     return object_vector_.at(pos)->value();
   }
@@ -302,21 +276,7 @@ public:
    * @param i The iterator to erase.
    * @return Returns the next iterator.
    */
-  virtual iterator erase(iterator i)
-  {
-    // erase object from object store
-    item_ptr item = *i;
-    this->mark_modified(parent_);
-    if (!this->ostore()->remove(item)) {
-      return this->end();
-    } else {
-      iterator ret = object_vector_.erase(i);
-      // update index values of all successor elements
-      adjust_index(ret);
-
-      return ret;
-    }
-  }
+  virtual iterator erase(iterator i) = 0;
 
   /**
    * @brief Erases a range defines by iterators
@@ -328,23 +288,7 @@ public:
    * @param last The last iterator of the range to erase.
    * @return Returns the next iterator.
    */
-  iterator erase(iterator first, iterator last)
-  {
-    iterator i = first;
-    while (i != last) {
-      // erase object from object store
-      item_ptr item = *i++;
-      this->mark_modified(parent_);
-      if (!this->ostore()->remove(item)) {
-        return this->end();
-      }
-    }
-    i = object_vector_.erase(first, last);
-    // adjust index
-    adjust_index(i);
-
-    return i;
-  }
+  virtual iterator erase(iterator first, iterator last) = 0;
 
 protected:
   /**
@@ -379,24 +323,29 @@ protected:
    */
   virtual void parent(object *p)
   {
-    S *temp = dynamic_cast<S*>(p);
+    parent_type *temp = dynamic_cast<parent_type*>(p);
     if (!temp) {
       throw object_exception("couldn't cast object to concrete type");
     }
     parent_ = temp;
   }
 
-  virtual void handle_container_item(object_store &ostore, const char *id) const
+  parent_type* parent()
   {
-    ostore.insert_prototype<item_type>(id);
+    return parent_;
   }
 
-private:
-  virtual void append_proxy(object_proxy *proxy)
+  virtual void handle_container_item(object_store &/*ostore*/, const char */*id*/) const
   {
-    object_vector_.push_back(item_ptr(proxy));
+//    ostore.insert_prototype<item_type>(id);
   }
 
+  vector_type& vector()
+  {
+    return object_vector_;
+  }
+
+//  virtual void adjust_index(iterator i) = 0;
   void adjust_index(iterator i)
   {
     while (i != object_vector_.end()) {
@@ -413,8 +362,147 @@ private:
   }
 
 private:
-  S *parent_;
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    object_vector_.push_back(item_holder(proxy));
+  }
+
+private:
+  parent_type *parent_;
   vector_type object_vector_;
+};
+
+struct dummyy { struct inner {}; typedef inner object_type; };
+
+template < class S, class T,
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC2)(int)>
+class object_vector;
+
+template < class S, class T,
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)>
+class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T>
+{
+public:
+	typedef typename T::value_type value_type;
+  typedef object_vector_base<S, T> base_vector;
+  typedef typename T::object_type item_type;
+  typedef typename base_vector::iterator iterator;
+  typedef typename base_vector::const_iterator const_iterator;
+
+public:
+	explicit object_vector(S *parent)
+    : object_vector_base<S, T>(parent)
+		, str_setter(FUNC1)
+		, int_setter(FUNC2)
+	{ std::cout << "func 2\n"; }
+  virtual ~object_vector() {}
+	
+  virtual iterator insert(iterator pos, const value_type &x)
+  {
+    return this->end();
+  }
+
+  virtual iterator erase(iterator i)
+  {
+    return this->end();
+  }
+
+  virtual iterator erase(iterator first, iterator last)
+  {
+    return this->end();
+  }
+private:
+	std::function<void (value_type&, const object_ref<S>&)> str_setter;
+	std::function<void (value_type&, int)> int_setter;
+};
+
+template < class S, class T,
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&)
+>
+class object_vector<S, T, FUNC1> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
+{
+public:
+	typedef typename std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type;
+  typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;
+  typedef T value_holder;
+  typedef object_ref<S> parent_ref;
+  typedef typename base_vector::item_holder item_holder;
+  typedef object_vector_item<T, S> item_type;
+  typedef item_holder item_ptr;
+  typedef typename base_vector::iterator iterator;
+  typedef typename base_vector::const_iterator const_iterator;
+
+public:
+	explicit object_vector(S *parent)
+    : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
+		, str_setter(FUNC1)
+	{ std::cout << "func 2\n"; }
+  virtual ~object_vector() {}
+	
+  virtual iterator insert(iterator pos, const value_holder &x)
+  {
+    if (!object_container::ostore()) {
+      throw object_exception("invalid object_store pointer");
+    } else {
+      // determine index
+      iterator last = this->vector().end();
+      typename item_type::size_type index = this->vector().size();
+      if (index && pos != last) {
+        index = (*pos)->index();
+      }
+      // create and insert new item
+      item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->parent()), index, x));
+      // mark list object as modified
+      this->mark_modified(this->parent());
+      // insert new item object
+      pos = this->vector().insert(pos, item);
+      iterator first = pos;
+      // adjust indices of successor items
+      last = this->vector().end();
+      while (++first != last) {
+        (*first)->index(++index);
+      }
+      return pos;
+    }
+  }
+
+  virtual iterator erase(iterator i)
+  {
+    // erase object from object store
+    item_ptr item = *i;
+    this->mark_modified(this->parent());
+    if (!this->ostore()->remove(item)) {
+      return this->end();
+    } else {
+      iterator ret = this->vector().erase(i);
+      // update index values of all successor elements
+      this->adjust_index(ret);
+
+      return ret;
+    }
+  }
+
+  virtual iterator erase(iterator first, iterator last)
+  {
+    iterator i = first;
+    while (i != last) {
+      // erase object from object store
+      item_ptr item = *i++;
+      this->mark_modified(this->parent());
+      if (!this->ostore()->remove(item)) {
+        return this->end();
+      }
+    }
+    i = this->vector().erase(first, last);
+    // adjust index
+    this->adjust_index(i);
+
+    return i;
+  }
+private:
+	std::function<void (value_type&, const object_ref<S>&)> str_setter;
 };
 
 }

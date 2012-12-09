@@ -33,8 +33,8 @@
 #include <string>
 
 namespace oos {
+
 class varchar_base;
-class object_vector_base;
 class object_container;
 class object_base_ptr;
 

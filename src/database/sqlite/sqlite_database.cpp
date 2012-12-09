@@ -104,9 +104,11 @@ void sqlite_database::drop(const prototype_node &node)
 {
   drop_statement_creator<sqlite_types> creator;
 
-  std::auto_ptr<object> o(node.producer->create());
+  object *o(node.producer->create());
 
-  std::string sql = creator.create(o.get(), node.type.c_str(), "");
+  std::string sql = creator.create(o, node.type.c_str(), "");
+
+  delete o;
 
   execute(sql.c_str());
 }
