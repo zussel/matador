@@ -20,6 +20,8 @@ public:
   void test_linked_int_list();
   void test_linked_ref_list();
   void test_linked_ptr_list();
+  
+  void test_direct_ref_list();
 
 private:
   oos::object_store ostore_;

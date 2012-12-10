@@ -591,8 +591,6 @@ public:
 
   void add(const emp_ref &b)
   {
-    // TODO: make it work!
-    //b->dep(this);
     emp_list_.push_back(b);
   }
 
@@ -607,5 +605,106 @@ public:
   size_type size() const { return emp_list_.size(); }
   bool empty() const { return emp_list_.empty(); }
 };
+
+class album;
+
+class track : public oos::object
+{
+public:
+  typedef oos::object_ref<album> album_ref;
+
+private:
+  std::string title_;
+  album_ref album_;
+  int index_;
+
+public:
+  track() {}
+  track(const std::string &title)
+    : title_(title)
+  {}
+  
+  virtual ~track() {}
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("title", title_);
+    deserializer.read("album", album_);
+    deserializer.read("track_index", index_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("title", title_);
+    serializer.write("album", album_);
+    serializer.write("track_index", index_);
+  }
+
+  std::string title() const { return title_; }
+  void title(const std::string &t) { modify(title_, t); }
+  
+  album_ref alb() const { return album_; }
+  void alb(const album_ref &a) { album_ = a; }
+  
+  int index() const { return index_; }
+  void index(int i) { index_ = i; }
+};
+
+class album : public oos::object
+{
+public:
+  typedef oos::object_ref<track> track_ref;
+  typedef oos::object_vector<album, track_ref, &track::alb, &track::index> track_list_t;
+  typedef typename track_list_t::size_type size_type;
+  typedef track_list_t::iterator iterator;
+  typedef track_list_t::const_iterator const_iterator;
+
+private:
+  std::string name_;
+  track_list_t tracks_;
+  
+public:
+  album() : tracks_(this) {}
+  album(const std::string &name)
+    : name_(name)
+    , tracks_(this)
+  {}
+  
+  virtual ~album() {}
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+    deserializer.read("tracks", tracks_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+    serializer.write("tracks", tracks_);
+  }
+
+  std::string name() const { return name_; }
+  void name(const std::string &name) { modify(name_, name); }
+
+  void add(const track_ref &b)
+  {
+    tracks_.push_back(b);
+  }
+
+  iterator begin() { return tracks_.begin(); }
+  const_iterator begin() const { return tracks_.begin(); }
+
+  iterator end() { return tracks_.end(); }
+  const_iterator end() const { return tracks_.end(); }
+
+  iterator erase(iterator i) { return tracks_.erase(i); }
+
+  size_type size() const { return tracks_.size(); }
+  bool empty() const { return tracks_.empty(); }
+};
+
 
 #endif /* ITEM_HPP */

@@ -276,7 +276,6 @@ struct dummy { struct inner {}; typedef inner object_type; };
 /*
  * Not implemented class
  */
-//template < class S, class T, void (T::object_type::* ...SETFUNC)(const object_ref<S>&) >
 template < class S, class T, void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
 
@@ -289,6 +288,7 @@ class object_list<S, T, SETFUNC> : public object_list_base<S, T>
 {
 public:
   typedef object_list_base<S, T> base_list;
+  typedef object_ref<S> parent_ref;
   typedef typename base_list::value_holder value_holder;
   typedef typename base_list::item_holder item_holder;
   typedef typename base_list::size_type size_type;
@@ -308,8 +308,10 @@ public:
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // mark list object as modified
-      this->mark_modified(this->parent());
+      // mark item object as modified
+      this->mark_modified(x.get());
+      // set back ref to parent
+      setter_(*x.get(), parent_ref(this->parent()));
       // insert new item object
       return this->list().insert(pos, x);
     }
@@ -320,7 +322,11 @@ public:
     if (!this->ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      this->mark_modified(this->parent());
+      // mark item object as modified
+      this->mark_modified((*i).get());
+      // set back ref to zero
+      setter_(*(*i).get(), parent_ref());
+      // erase element from list
       return this->list().erase(i);
     }
   }

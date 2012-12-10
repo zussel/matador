@@ -22,6 +22,7 @@ ObjectListTestUnit::ObjectListTestUnit()
   add_test("linked_int", std::tr1::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
   add_test("linked_ref", std::tr1::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
   add_test("linked_ptr", std::tr1::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
+  add_test("direct_ref", std::tr1::bind(&ObjectListTestUnit::test_direct_ref_list, this), "test object list without relation table");
 }
 
 ObjectListTestUnit::~ObjectListTestUnit()
@@ -37,6 +38,10 @@ ObjectListTestUnit::initialize()
   ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
   ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
   ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
+  
+  ostore_.insert_prototype<person>("person", true);
+  ostore_.insert_prototype<employee, person>("employee");
+  ostore_.insert_prototype<department>("department");
 }
 
 void
@@ -301,4 +306,35 @@ ObjectListTestUnit::test_linked_ptr_list()
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
   UNIT_ASSERT_TRUE(ostore_.remove(itemlist), "couldn't remove linked item list");
+}
+
+void ObjectListTestUnit::test_direct_ref_list()
+{
+  typedef object_ptr<department> department_ptr;
+  typedef object_ptr<employee> employee_ptr;
+  
+  department_ptr dep = ostore_.insert(new department("development"));
+  
+  UNIT_ASSERT_TRUE(dep->id() > 0, "department is must be greater zero");
+  UNIT_ASSERT_EQUAL((int)dep->size(), 0, "department is not empty");
+  UNIT_ASSERT_TRUE(dep->empty(), "department must be empty");
+  
+  employee_ptr emp1 = ostore_.insert(new employee("Karl"));
+  
+  UNIT_ASSERT_TRUE(emp1->dep().id() == 0, "department id of employee must be zero");
+
+  dep->add(emp1);
+
+  UNIT_ASSERT_TRUE(emp1->dep().id() > 0, "department id of employee must be zero");
+  UNIT_ASSERT_EQUAL(emp1->dep()->name(), "development", "department id of employee must be zero");
+    
+  department::iterator i = dep->begin();
+  
+  UNIT_ASSERT_EQUAL((*i)->name(), "Karl", "employees name must be 'Karl'");
+  
+  // remove karl from department
+  i = dep->erase(i);
+  
+  UNIT_ASSERT_TRUE(i == dep->end(), "iterator must be end");
+  UNIT_ASSERT_TRUE(emp1->dep().id() == 0, "department id of employee must be zero");
 }

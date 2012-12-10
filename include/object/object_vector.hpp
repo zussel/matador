@@ -345,21 +345,7 @@ protected:
     return object_vector_;
   }
 
-//  virtual void adjust_index(iterator i) = 0;
-  void adjust_index(iterator i)
-  {
-    while (i != object_vector_.end()) {
-      size_type index = 0;
-      if (!(*i)->get("item_index", index)) {
-        throw object_exception("couldn't get object vector index item");
-//      } else if (!(*i)->set("item_index", --index)) {
-//        throw object_exception("couldn't set object vector index item");
-      } else {
-        (*i)->index(--index);
-        ++i;
-      }
-    }
-  }
+  virtual void adjust_index(iterator i, int delta) = 0;
 
 private:
   virtual void append_proxy(object_proxy *proxy)
@@ -385,7 +371,9 @@ void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::t
 class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T>
 {
 public:
-	typedef typename T::value_type value_type;
+	typedef typename T::object_type value_type;
+  typedef T value_holder;
+  typedef object_ref<S> parent_ref;
   typedef object_vector_base<S, T> base_vector;
   typedef typename T::object_type item_type;
   typedef typename base_vector::iterator iterator;
@@ -394,27 +382,82 @@ public:
 public:
 	explicit object_vector(S *parent)
     : object_vector_base<S, T>(parent)
-		, str_setter(FUNC1)
+		, ref_setter(FUNC1)
 		, int_setter(FUNC2)
-	{ std::cout << "func 2\n"; }
+  {
+    std::cout << "func 2\n";
+  }
   virtual ~object_vector() {}
 	
-  virtual iterator insert(iterator pos, const value_type &x)
+  virtual iterator insert(iterator pos, const value_holder &x)
   {
-    return this->end();
+    if (!object_container::ostore()) {
+      throw object_exception("invalid object_store pointer");
+    } else {
+      // determine index
+      iterator last = this->vector().end();
+      size_t index = this->vector().size();
+      if (index && pos != last) {
+        index = (*pos)->index();
+      }
+      // mark list object as modified
+      this->mark_modified(this->parent());
+      ref_setter(*x.get(), parent_ref(this->parent()));
+      // insert new item object
+      pos = this->vector().insert(pos, x);
+      iterator first = pos;
+      // adjust index
+      this->adjust_index(first, 1);
+      return pos;
+    }
   }
 
   virtual iterator erase(iterator i)
   {
-    return this->end();
+    if (!this->ostore()) {
+      throw object_exception("invalid object_store pointer");
+    } else {
+      // mark item object as modified
+      this->mark_modified((*i).get());
+      // set back ref to zero
+      ref_setter(*(*i).get(), parent_ref());
+      // erase element from list
+      i = this->vector().erase(i);
+      // update index values of all successor elements
+      this->adjust_index(i, -1);
+      // return iterator
+      return i;
+    }
   }
 
   virtual iterator erase(iterator first, iterator last)
   {
-    return this->end();
+    iterator i = first;
+    while (i != last) {
+      // mark item object as modified
+      this->mark_modified((*i).get());
+      // set back ref to zero
+      ref_setter(*(*i).get(), parent_ref());
+    }
+    i = this->vector().erase(first, last);
+    // adjust index
+    this->adjust_index(i, last - first);
+
+    return i;
   }
+  
+protected:
+  virtual void adjust_index(iterator i, int delta)
+  {
+    size_t start = i - this->begin();
+    
+    while (i != this->vector().end()) {
+      int_setter(*(*i).get(), start++ + delta);
+    }
+  }
+
 private:
-	std::function<void (value_type&, const object_ref<S>&)> str_setter;
+	std::function<void (value_type&, const object_ref<S>&)> ref_setter;
 	std::function<void (value_type&, int)> int_setter;
 };
 
@@ -438,7 +481,9 @@ public:
 	explicit object_vector(S *parent)
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
 		, str_setter(FUNC1)
-	{ std::cout << "func 2\n"; }
+	{
+    std::cout << "func 2\n";
+  }
   virtual ~object_vector() {}
 	
   virtual iterator insert(iterator pos, const value_holder &x)
@@ -478,7 +523,7 @@ public:
     } else {
       iterator ret = this->vector().erase(i);
       // update index values of all successor elements
-      this->adjust_index(ret);
+      this->adjust_index(ret, -1);
 
       return ret;
     }
@@ -497,10 +542,32 @@ public:
     }
     i = this->vector().erase(first, last);
     // adjust index
-    this->adjust_index(i);
+    this->adjust_index(i, last - first);
 
     return i;
   }
+  
+protected:
+  virtual void handle_container_item(object_store &ostore, const char *id) const
+  {
+    ostore.insert_prototype<item_type>(id);
+  }
+
+  void adjust_index(iterator i, int /*delta*/)
+  {
+    while (i != this->vector().end()) {
+      size_t index = 0;
+      if (!(*i)->get("item_index", index)) {
+        throw object_exception("couldn't get object vector index item");
+//      } else if (!(*i)->set("item_index", --index)) {
+//        throw object_exception("couldn't set object vector index item");
+      } else {
+        (*i)->index(--index);
+        ++i;
+      }
+    }
+  }
+
 private:
 	std::function<void (value_type&, const object_ref<S>&)> str_setter;
 };
