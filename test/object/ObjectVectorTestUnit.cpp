@@ -16,6 +16,7 @@ ObjectVectorTestUnit::ObjectVectorTestUnit()
   add_test("int", std::tr1::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
   add_test("ptr", std::tr1::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
   add_test("ref", std::tr1::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
+  add_test("direct_ref", std::tr1::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct object vector with references");
 }
 
 ObjectVectorTestUnit::~ObjectVectorTestUnit()
@@ -27,6 +28,8 @@ void ObjectVectorTestUnit::initialize()
   ostore_.insert_prototype<ItemPtrVector>("ITEM_PTR_VECTOR");
   ostore_.insert_prototype<ItemRefVector>("ITEM_REF_VECTOR");
   ostore_.insert_prototype<IntVector>("ITEM_INT_VECTOR");
+  ostore_.insert_prototype<album>("album");
+  ostore_.insert_prototype<track>("track");
 }
 
 void ObjectVectorTestUnit::finalize()
@@ -168,4 +171,20 @@ void ObjectVectorTestUnit::test_ptr_vector()
 
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "itemvector size isn't valid");
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
+}
+
+void ObjectVectorTestUnit::test_direct_ref_vector()
+{
+  typedef object_ptr<album> album_ptr;
+  typedef object_ptr<track> track_ptr;
+  
+  album_ptr alb1 = ostore_.insert(new album("My Album"));
+
+  UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");
+
+  track_ptr track1 = ostore_.insert(new track("Track 1"));
+  
+  alb1->add(track1);
+  
+  std::cout << "\ntrack [" << track1->title() << "] index [" << track1->index() << "]\n";
 }

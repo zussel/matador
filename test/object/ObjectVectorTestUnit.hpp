@@ -18,6 +18,8 @@ public:
   void test_ref_vector();
   void test_ptr_vector();
 
+  void test_direct_ref_vector();
+
 private:
   oos::object_store ostore_;
 };

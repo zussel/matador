@@ -385,7 +385,7 @@ public:
 		, ref_setter(FUNC1)
 		, int_setter(FUNC2)
   {
-    std::cout << "func 2\n";
+//    std::cout << "func 2\n";
   }
   virtual ~object_vector() {}
 	
@@ -452,7 +452,7 @@ protected:
     size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
-      int_setter(*(*i).get(), start++ + delta);
+      int_setter(*(*i++).get(), start++ + delta);
     }
   }
 
@@ -482,7 +482,7 @@ public:
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
 		, str_setter(FUNC1)
 	{
-    std::cout << "func 2\n";
+//    std::cout << "func 2\n";
   }
   virtual ~object_vector() {}
 	
@@ -553,18 +553,12 @@ protected:
     ostore.insert_prototype<item_type>(id);
   }
 
-  void adjust_index(iterator i, int /*delta*/)
+  void adjust_index(iterator i, int delta)
   {
+    size_t start = i - this->begin();
+    
     while (i != this->vector().end()) {
-      size_t index = 0;
-      if (!(*i)->get("item_index", index)) {
-        throw object_exception("couldn't get object vector index item");
-//      } else if (!(*i)->set("item_index", --index)) {
-//        throw object_exception("couldn't set object vector index item");
-      } else {
-        (*i)->index(--index);
-        ++i;
-      }
+      (*i++)->index(start++ + delta);
     }
   }
 
