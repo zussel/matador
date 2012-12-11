@@ -23,6 +23,7 @@
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
 #include "object/object_exception.hpp"
+#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -335,11 +336,6 @@ protected:
     return parent_;
   }
 
-  virtual void handle_container_item(object_store &/*ostore*/, const char */*id*/) const
-  {
-//    ostore.insert_prototype<item_type>(id);
-  }
-
   vector_type& vector()
   {
     return object_vector_;
@@ -417,6 +413,8 @@ public:
     if (!this->ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
+      // mark parent object as modified
+      this->mark_modified(this->parent());
       // mark item object as modified
       this->mark_modified((*i).get());
       // set back ref to zero
@@ -432,6 +430,8 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
+    // mark parent object as modified
+    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
       // mark item object as modified
@@ -447,11 +447,33 @@ public:
   }
   
 protected:
+  virtual object_base_producer* create_item_producer() const
+  {
+    return 0;
+  }
+
+  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
+  {
+    // get prototype node
+//    prototype_node *item_node = this->find_prototype_node(ostore, this->classname());
+    std::cout << "node [" << node->type << "] value_type: " << typeid(value_type).name() << "\n";
+    prototype_node *item_node = this->find_prototype_node(ostore, typeid(value_type).name());
+    if (item_node) {
+      // add container node to item node
+      std::cout << "node [" << node->type << "] found node [" << item_node->type << "]\n";
+      node->relations.push_back(std::make_pair(id, item_node));
+    } else {
+      std::cout << "node [" << node->type << "] not found node [" << typeid(item_type).name() << "]\n";
+    }
+  }
+
   virtual void adjust_index(iterator i, int delta)
   {
     size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
+      // mark item object as modified
+      this->mark_modified(i->get());
       int_setter(*(*i++).get(), start++ + delta);
     }
   }
@@ -517,10 +539,10 @@ public:
   {
     // erase object from object store
     item_ptr item = *i;
-    this->mark_modified(this->parent());
     if (!this->ostore()->remove(item)) {
       return this->end();
     } else {
+      this->mark_modified(this->parent());
       iterator ret = this->vector().erase(i);
       // update index values of all successor elements
       this->adjust_index(ret, -1);
@@ -548,9 +570,27 @@ public:
   }
   
 protected:
-  virtual void handle_container_item(object_store &ostore, const char *id) const
+  virtual object_base_producer* create_item_producer() const
   {
-    ostore.insert_prototype<item_type>(id);
+    return new object_producer<item_type>();
+  }
+
+  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
+  {
+    object_base_producer *p = create_item_producer();
+    ostore.insert_prototype(p, id);
+//    ostore.insert_prototype<item_type>(id);
+    // get prototype node
+    std::cout << "item_type: " << typeid(item_type).name() << "\n";
+    prototype_node *item_node = this->find_prototype_node(ostore, typeid(item_type).name());
+    if (!item_node) {
+      std::cout << "not found node [" << typeid(item_type).name() << "] inserting in advance\n";
+      item_node = new prototype_node();
+      ostore.prototype_node_map_[typeid(item_type).name()] = item_node;
+    }
+    // add container node to item node
+    std::cout << "found node [" << item_node->type << "]\n";
+    node->relations.push_back(std::make_pair(id, item_node));
   }
 
   void adjust_index(iterator i, int delta)
@@ -558,6 +598,8 @@ protected:
     size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
+      // mark parent object as modified
+      this->mark_modified(i->get());
       (*i++)->index(start++ + delta);
     }
   }

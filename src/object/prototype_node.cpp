@@ -36,6 +36,7 @@ prototype_node::prototype_node()
   , depth(0)
   , count(0)
   , abstract(false)
+  , initialized(false)
 {
 }
 
@@ -53,6 +54,7 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
   , count(0)
   , type(t)
   , abstract(a)
+  , initialized(false)
 {
   first->next = last;
   last->prev = first;
@@ -275,6 +277,14 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     iop = iop->next;
   }
   os << "|{size|" << i << "}";
+  os << "|{relations}";
+  // list relations
+  prototype_node::string_node_pair_list_t::const_iterator first = pn.relations.begin();
+  prototype_node::string_node_pair_list_t::const_iterator last = pn.relations.end();
+  while (first != last) {
+    prototype_node::string_node_pair_t item = *first++;
+    os << "|{" << item.second->type << "|" << item.first << "}";
+  }
   os << "}\"]\n";
   return os;
 }

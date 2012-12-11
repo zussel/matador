@@ -23,6 +23,7 @@
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
 #include "object/object_exception.hpp"
+#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -332,7 +333,12 @@ public:
   }
 
 protected:
-  virtual void handle_container_item(object_store &, const char *) const {}
+  virtual object_base_producer* create_item_producer() const
+  {
+    return 0;
+  }
+
+  virtual void handle_container_item(object_store &, const char *, prototype_node *) const {}
 
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
@@ -393,9 +399,19 @@ public:
   }
 
 protected:
-  virtual void handle_container_item(object_store &ostore, const char *id) const
+  virtual object_base_producer* create_item_producer() const
+  {
+    return new object_producer<item_type>();
+  }
+
+  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
   {
     ostore.insert_prototype<item_type>(id);
+    // get prototype node
+//    prototype_node *item_node = this->find_prototype_node(ostore, this->classname());
+    prototype_node *item_node = this->find_prototype_node(ostore, typeid(item_type).name());
+    // add container node to item node
+    node->relations.push_back(std::make_pair(id, item_node));
   }
 };
 

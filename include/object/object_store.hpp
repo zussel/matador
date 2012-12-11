@@ -349,13 +349,15 @@ public:
   /**
    * @brief Finds prototype node.
    *
-   * Finds and returns prototype node identified
-   * by the given name or classname (typeid)
+   * Finds and returns prototype node iterator identified
+   * by the given name or classname (typeid). If the
+   * prototype couldn't be found prototype_iterator end
+   * is returned.
    *
    * @param type Name or class name of the prototype
-   * @return Returns the valid prototype node or NULL on unknown type.
+   * @return Returns a prototype iterator.
    */
-  const prototype_node* find_prototype(const char *type) const;
+  prototype_iterator find_prototype(const char *type) const;
 
   /**
    * Return the first prototype node.
@@ -548,7 +550,7 @@ private:
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
-//  friend class transaction;
+  friend class object_container;
   friend class object;
 
 private:

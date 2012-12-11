@@ -19,6 +19,7 @@
 #define PROTOTYPE_NODE_HPP
 
 #include <iostream>
+#include <list>
 #include <memory>
 
 #ifdef WIN32
@@ -170,6 +171,9 @@ struct OOS_API prototype_node
    */
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
+  typedef std::pair<std::string, prototype_node*> string_node_pair_t;
+  typedef std::list<string_node_pair_t> string_node_pair_list_t;
+
   // tree links
   prototype_node *parent; /**< The parent node */
   prototype_node *prev;   /**< The previous node */
@@ -179,6 +183,14 @@ struct OOS_API prototype_node
 
   // data
   object_base_producer *producer; /**< The object producer */
+
+  /* this list holds information about
+   * all prototypes in which this prototype
+   * is used as a child item (one to many
+   * relation). The string tells the name
+   * of the attribute
+   */
+  string_node_pair_list_t relations;
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */
@@ -190,6 +202,7 @@ struct OOS_API prototype_node
   std::string type;	   /**< The type name of the object */
   
   bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
+  bool initialized;    /**< Indicates wether this node is complete initialized or not */
 };
 
 }

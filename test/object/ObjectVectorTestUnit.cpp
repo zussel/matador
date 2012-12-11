@@ -6,6 +6,7 @@
 #include "object/object_view.hpp"
 
 #include <iostream>
+#include <fstream>
 
 using namespace oos;
 using namespace std;
@@ -24,10 +25,10 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 
 void ObjectVectorTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<ItemPtrVector>("ITEM_PTR_VECTOR");
-  ostore_.insert_prototype<ItemRefVector>("ITEM_REF_VECTOR");
-  ostore_.insert_prototype<IntVector>("ITEM_INT_VECTOR");
+  ostore_.insert_prototype<Item>("item");
+  ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
+  ostore_.insert_prototype<ItemRefVector>("item_ref_vector");
+  ostore_.insert_prototype<IntVector>("item_int_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 }
@@ -175,6 +176,10 @@ void ObjectVectorTestUnit::test_ptr_vector()
 
 void ObjectVectorTestUnit::test_direct_ref_vector()
 {
+  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
+  
+  ostore_.dump_prototypes(out);
+
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;
   

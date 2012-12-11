@@ -42,7 +42,6 @@ void statement_serializer::bind(statement_impl *stmt, object *o, bool bind_id)
 
   column_ = 0;
   // bind parameter
-//  o->write_to(this);
   o->serialize(*this);
 
   if (bind_id) {
@@ -56,7 +55,6 @@ void statement_serializer::read(statement_impl *stmt, object *o)
 
   column_ = 0;
 
-//  o->read_from(this);
   o->deserialize(*this);
 }
 
@@ -208,8 +206,16 @@ void statement_serializer::read(const char *id, object_base_ptr &x)
   // set object id
 }
 
-void statement_serializer::read(const char *, object_container &)
+void statement_serializer::read(const char *id, object_container &x)
 {
+  /*
+   * find prototype node and check if there
+   * are proxies to insert for this container
+   */
+  prototype_iterator p = stmt_->db().db()->ostore().find_prototype("");
+//  const prototype_node::proxy_list_t &proxy_list = p->relations[id][object_->id()];
+  
+  
 }
 
 bool statement_serializer::valid_column(const char *id, int i) const

@@ -56,7 +56,6 @@ public:
    * Creates an empty iterator
    */
   object_view_iterator()
-    : node_(NULL)
   {}
   
   /**
@@ -69,7 +68,7 @@ public:
    * @param current The object_proxy for the iterator
    * @param last The last object_proxy for the iterator
    */
-  object_view_iterator(const prototype_node *node, object_proxy *current, object_proxy *last)
+  object_view_iterator(const prototype_iterator &node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -218,7 +217,7 @@ private:
 private:
   friend class const_object_view_iterator<T>;
 
-  const prototype_node *node_;
+  prototype_iterator node_;
   object_proxy *current_;
   object_proxy *last_;
 };
@@ -244,7 +243,6 @@ public:
    * Creates an empty iterator
    */
   const_object_view_iterator()
-    : node_(NULL)
   {}
 
   /**
@@ -257,7 +255,7 @@ public:
    * @param current The object_proxy for the iterator
    * @param last The last object_proxy for the iterator
    */
-  const_object_view_iterator(const prototype_node *node, object_proxy *current, object_proxy *last)
+  const_object_view_iterator(const prototype_iterator &node, object_proxy *current, object_proxy *last)
     : node_(node)
     , current_(current)
     , last_(last)
@@ -428,7 +426,7 @@ private:
   }
 
 private:
-  const prototype_node *node_;
+  prototype_iterator node_;
   object_proxy *current_;
   object_proxy *last_;
 };
@@ -472,7 +470,7 @@ public:
     , node_(NULL)
   {
     node_ = ostore_.find_prototype(type.c_str());
-		if (!node_) {
+		if (node_ == ostore_.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << type << "]";
       throw object_exception(str.str().c_str());
@@ -614,7 +612,7 @@ public:
    *
    * @return The underlaying prototype node.
    */
-  const prototype_node* node() const
+  prototype_iterator node() const
   {
     return node_;
   }
@@ -622,7 +620,7 @@ public:
 private:
     const object_store &ostore_;
     bool skip_siblings_;
-    const prototype_node *node_;
+    prototype_iterator node_;
 };
 
 /**
@@ -656,10 +654,9 @@ public:
   object_view(const object_store &ostore, bool skip_siblings = false)
     : ostore_(ostore)
     , skip_siblings_(skip_siblings)
-    , node_(NULL)
   {
     node_ = ostore_.find_prototype(typeid(T).name());
-		if (!node_) {
+		if (node_ == ostore_.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << typeid(T).name() << "]";
       throw object_exception(str.str().c_str());
@@ -809,7 +806,7 @@ public:
 private:
     const object_store &ostore_;
     bool skip_siblings_;
-    const prototype_node *node_;
+    prototype_iterator node_;
 };
 
 }

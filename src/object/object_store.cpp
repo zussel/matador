@@ -53,9 +53,10 @@ public:
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_handler(object_store &ostore)
+  relation_handler(object_store &ostore, prototype_node *node)
     : generic_object_writer<relation_handler>(this)
     , ostore_(ostore)
+    , node_(node)
   {}
   virtual ~relation_handler() {}
 
@@ -70,11 +71,17 @@ public:
      * container knows if it needs
      * a relation table
      */
-    x.handle_container_item(ostore_, id);
+    x.handle_container_item(ostore_, id, node_);
+    
+    /*
+     * get the inserted prototype node
+     * and add item information
+     */
   }
   
 private:
   object_store &ostore_;
+  prototype_node *node_;
 };
 
 class equal_type : public std::unary_function<const prototype_node*, bool> {
@@ -226,10 +233,13 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_handler rh(*this);
+  relation_handler rh(*this, node);
   o->serialize(rh);
   delete o;
-  
+
+  // mark node as initialized
+  node->initialized = true;
+
   return true;
 }
 
@@ -293,14 +303,13 @@ bool object_store::remove_prototype(const char *type)
   return true;
 }
 
-const prototype_node* object_store::find_prototype(const char *type) const
+prototype_iterator object_store::find_prototype(const char *type) const
 {
   t_prototype_node_map::const_iterator i = prototype_node_map_.find(type);
   if (i == prototype_node_map_.end()) {
-    //throw new object_exception("couldn't find prototype");
-    return 0;
+    return end();
   }
-  return i->second;
+  return prototype_iterator(i->second);
 }
 
 prototype_iterator object_store::begin() const

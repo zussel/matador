@@ -298,7 +298,23 @@ protected:
    * @param id The name of the relation.
    * @return The producer object;
    */
-  virtual void handle_container_item(object_store &ostore, const char *id) const = 0;
+  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *) const = 0;
+
+  /**
+   * Create a producer for the item type.
+   * 
+   * @return The producer for the item type.
+   */
+  virtual object_base_producer* create_item_producer() const = 0;
+
+  prototype_node* find_prototype_node(object_store &ostore, const char *id) const
+  {
+    object_store::t_prototype_node_map::iterator i = ostore.prototype_node_map_.find(id);
+    if (i == ostore.prototype_node_map_.end()) {
+      return 0;
+    }
+    return i->second;
+  }
 
 private:
   virtual void reset() {}
