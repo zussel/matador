@@ -25,6 +25,7 @@
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
 #include "object/object_store.hpp"
+#include "object/object_container.hpp"
 
 #include <cstring>
 
@@ -56,6 +57,17 @@ void statement_serializer::read(statement_impl *stmt, object *o)
   column_ = 0;
 
   o->deserialize(*this);
+  
+  // check for relations
+  prototype_iterator p = stmt_->db().db()->ostore().find_prototype(o->classname());
+  prototype_node::string_node_pair_list_t::const_iterator first = p->relations.begin();
+  prototype_node::string_node_pair_list_t::const_iterator last = p->relations.end();
+  while (first != last) {
+    ++first;
+    // check if this object is part of a relation
+    
+  }
+  
 }
 
 void statement_serializer::read(const char *id, char &x)
@@ -202,8 +214,6 @@ void statement_serializer::read(const char *id, object_base_ptr &x)
     oproxy = stmt_->db().db()->ostore().create_proxy(oid);
   }
   x.reset(oproxy->obj);
-  //x.repoint(...);
-  // set object id
 }
 
 void statement_serializer::read(const char *id, object_container &x)
@@ -212,7 +222,7 @@ void statement_serializer::read(const char *id, object_container &x)
    * find prototype node and check if there
    * are proxies to insert for this container
    */
-  prototype_iterator p = stmt_->db().db()->ostore().find_prototype("");
+  prototype_iterator p = stmt_->db().db()->ostore().find_prototype(x.classname());
 //  const prototype_node::proxy_list_t &proxy_list = p->relations[id][object_->id()];
   
   

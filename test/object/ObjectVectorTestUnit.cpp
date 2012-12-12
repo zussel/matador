@@ -90,6 +90,11 @@ void ObjectVectorTestUnit::test_ref_vector()
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
 
+void print(const Vector<int>::item_ptr &item)
+{
+  std::cout << "item: " << item->value() << "(" << item->index() << ")\n";
+}
+
 void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;
@@ -116,6 +121,11 @@ void ObjectVectorTestUnit::test_int_vector()
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
 
   i = itemvector->erase(i);
+  
+  cout << "\n";
+
+  std::for_each(itemvector->begin(), itemvector->end(), print);
+
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
 

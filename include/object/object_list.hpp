@@ -56,6 +56,7 @@ public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
+  typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::list<item_holder> list_type;                  /**< Shortcut for the list class member. */
   typedef typename object_container::size_type size_type;    /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;             /**< Shortcut for the list iterator. */
@@ -75,7 +76,7 @@ public:
   
   virtual const char* classname() const
   {
-    return typeid(T).name();
+    return typeid(item_type).name();
   }
 
   /**
@@ -304,6 +305,11 @@ public:
   {}
   virtual ~object_list() {}
 
+  virtual const char* classname() const
+  {
+    return typeid(item_type).name();
+  }
+
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
@@ -337,8 +343,6 @@ protected:
   {
     return 0;
   }
-
-  virtual void handle_container_item(object_store &, const char *, prototype_node *) const {}
 
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
@@ -402,16 +406,6 @@ protected:
   virtual object_base_producer* create_item_producer() const
   {
     return new object_producer<item_type>();
-  }
-
-  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-  {
-    ostore.insert_prototype<item_type>(id);
-    // get prototype node
-//    prototype_node *item_node = this->find_prototype_node(ostore, this->classname());
-    prototype_node *item_node = this->find_prototype_node(ostore, typeid(item_type).name());
-    // add container node to item node
-    node->relations.push_back(std::make_pair(id, item_node));
   }
 };
 

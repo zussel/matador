@@ -110,6 +110,7 @@ public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
+  typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::vector<item_holder> vector_type;                        /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;                  /**< Shortcut for the vector iterator. */
   typedef typename vector_type::const_iterator const_iterator;      /**< Shortcut for the vector const iterator. */
@@ -136,7 +137,7 @@ public:
 
   virtual const char* classname() const
   {
-    return typeid(T).name();
+    return typeid(item_type).name();
   }
 
   /**
@@ -384,7 +385,7 @@ public:
 //    std::cout << "func 2\n";
   }
   virtual ~object_vector() {}
-	
+
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
@@ -392,10 +393,6 @@ public:
     } else {
       // determine index
       iterator last = this->vector().end();
-      size_t index = this->vector().size();
-      if (index && pos != last) {
-        index = (*pos)->index();
-      }
       // mark list object as modified
       this->mark_modified(this->parent());
       ref_setter(*x.get(), parent_ref(this->parent()));
@@ -452,21 +449,6 @@ protected:
     return 0;
   }
 
-  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-  {
-    // get prototype node
-//    prototype_node *item_node = this->find_prototype_node(ostore, this->classname());
-    std::cout << "node [" << node->type << "] value_type: " << typeid(value_type).name() << "\n";
-    prototype_node *item_node = this->find_prototype_node(ostore, typeid(value_type).name());
-    if (item_node) {
-      // add container node to item node
-      std::cout << "node [" << node->type << "] found node [" << item_node->type << "]\n";
-      node->relations.push_back(std::make_pair(id, item_node));
-    } else {
-      std::cout << "node [" << node->type << "] not found node [" << typeid(item_type).name() << "]\n";
-    }
-  }
-
   virtual void adjust_index(iterator i, int delta)
   {
     size_t start = i - this->begin();
@@ -474,7 +456,7 @@ protected:
     while (i != this->vector().end()) {
       // mark item object as modified
       this->mark_modified(i->get());
-      int_setter(*(*i++).get(), start++ + delta);
+      int_setter(*(*i++).get(), ++start + delta);
     }
   }
 
@@ -575,24 +557,6 @@ protected:
     return new object_producer<item_type>();
   }
 
-  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-  {
-    object_base_producer *p = create_item_producer();
-    ostore.insert_prototype(p, id);
-//    ostore.insert_prototype<item_type>(id);
-    // get prototype node
-    std::cout << "item_type: " << typeid(item_type).name() << "\n";
-    prototype_node *item_node = this->find_prototype_node(ostore, typeid(item_type).name());
-    if (!item_node) {
-      std::cout << "not found node [" << typeid(item_type).name() << "] inserting in advance\n";
-      item_node = new prototype_node();
-      ostore.prototype_node_map_[typeid(item_type).name()] = item_node;
-    }
-    // add container node to item node
-    std::cout << "found node [" << item_node->type << "]\n";
-    node->relations.push_back(std::make_pair(id, item_node));
-  }
-
   void adjust_index(iterator i, int delta)
   {
     size_t start = i - this->begin();
@@ -600,7 +564,7 @@ protected:
     while (i != this->vector().end()) {
       // mark parent object as modified
       this->mark_modified(i->get());
-      (*i++)->index(start++ + delta);
+      (*i++)->index(++start + delta);
     }
   }
 

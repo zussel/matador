@@ -545,7 +545,7 @@ public:
 
   virtual const char* classname() const
   {
-    return typeid(T).name();
+    return typeid(item_type).name();
   }
 
   /**
@@ -771,15 +771,6 @@ protected:
   virtual object_base_producer* create_item_producer() const
   {
     return new object_producer<item_type>();
-  }
-
-  virtual void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-  {
-    ostore.insert_prototype<item_type>(id);
-    // get prototype node
-    prototype_node *item_node = this->find_prototype_node(ostore, typeid(item_type).name());
-    // add container node to item node
-    node->relations.push_back(std::make_pair(id, item_node));
   }
 
 private:

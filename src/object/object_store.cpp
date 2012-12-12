@@ -72,11 +72,6 @@ public:
      * a relation table
      */
     x.handle_container_item(ostore_, id, node_);
-    
-    /*
-     * get the inserted prototype node
-     * and add item information
-     */
   }
   
 private:
@@ -215,30 +210,53 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     }
     parent_node = i->second;
   }
+  
   // find prototype node 'type' starting from node
-  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
-  if (i != prototype_node_map_.end()) {
-    //throw new object_exception("prototype already exists");
-    return false;
+  t_prototype_node_map::iterator i = prototype_node_map_.find(producer->classname());
+  if (i == prototype_node_map_.end()) {
+    // find prototype node 'type' starting from node
+    i = prototype_node_map_.find(type);
+    if (i != prototype_node_map_.end()) {
+      //throw new object_exception("prototype already exists");
+      return false;
+    } else {
+      prototype_node *node = new prototype_node(producer, type, abstract);
+      // append as child to parent prototype node
+      parent_node->insert(node);
+      // store prototype in map
+      // cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
+      // cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
+      prototype_node_map_.insert(std::make_pair(type, node));
+      i = prototype_node_map_.insert(std::make_pair(producer->classname(), node)).first;
+    }
+  } else {
+    // prototype with typeid name was found
+    // check if node is initialized
+    if (i->second->initialized || prototype_node_map_.find(type) != prototype_node_map_.end()) {
+      return false;
+    } else {
+      // initialize node
+      i->second->first = new prototype_node;
+      i->second->last = new prototype_node;
+      i->second->producer = producer;
+      i->second->abstract = abstract;
+      i->second->type = type;
+      i->second->first->next = i->second->last;
+      i->second->last->prev = i->second->first;
+      // append as child to parent prototype node
+      parent_node->insert(i->second);
+      prototype_node_map_.insert(std::make_pair(type, i->second));
+    }
   }
-  prototype_node *node = new prototype_node(producer, type, abstract);
-  // append as child to parent prototype node
-  parent_node->insert(node);
-
-  // store prototype in map
-//  cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
-//  cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
-  prototype_node_map_.insert(std::make_pair(type, node));
-  prototype_node_map_.insert(std::make_pair(producer->classname(), node));
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_handler rh(*this, node);
+  relation_handler rh(*this, i->second);
   o->serialize(rh);
   delete o;
 
   // mark node as initialized
-  node->initialized = true;
+  i->second->initialized = true;
 
   return true;
 }
