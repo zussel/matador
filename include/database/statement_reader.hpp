@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STATEMENT_SERIALIZER_HPP
-#define STATEMENT_SERIALIZER_HPP
+#ifndef STATEMENT_READER_HPP
+#define STATEMENT_READER_HPP
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -34,6 +34,12 @@
 
 #include <string>
 
+#ifdef WIN32
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 namespace oos {
 
 class statement_impl;
@@ -41,17 +47,20 @@ class object;
 class object_base_ptr;
 class object_container;
 class varchar_base;
+class prototype_node;
 
 /// @cond OOS_DEV
 
-class OOS_API statement_serializer : public object_reader, public object_writer
+class OOS_API statement_reader : public object_reader
 {
 public:
-  statement_serializer();
-  virtual ~statement_serializer();
+  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
 
-  void bind(statement_impl *stmt, object *o, bool bind_id);
-  void read(statement_impl *stmt, object *o);
+public:
+  statement_reader();
+  virtual ~statement_reader();
+
+  void import(const prototype_node &node, const statement_impl_ptr &stmt);
 
 public:
   /**
@@ -231,189 +240,11 @@ public:
    */
   virtual void read(const char*, object_container&);
 
-  /**
-   * @brief Write a single character to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, char x);
-
-  /**
-   * @brief Write a float to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, float x);
-
-  /**
-   * @brief Write a double to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, double x);
-
-  /**
-   * @brief Write a short to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, short x);
-
-  /**
-   * @brief Write a int to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, int x);
-
-  /**
-   * @brief Write a long to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, long x);
-
-  /**
-   * @brief Write an unsigned short to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, unsigned char x);
-
-  /**
-   * @brief Write an unsigned short to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, unsigned short x);
-
-  /**
-   * @brief Write an unsigned int to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, unsigned int x);
-
-  /**
-   * @brief Write an unsigned long to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, unsigned long x);
-
-  /**
-   * @brief Write a bool to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, bool x);
-
-  /**
-   * @brief Write a const character string to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, const char *x, int s);
-
-  /**
-   * @brief Write a std::string to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, const std::string &x);
-
-  /**
-   * @brief Write a varchar_base to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-  void write(const char *id, const varchar_base &x);
-
-  /**
-   * @brief Write an object_base_ptr to the binder.
-   * 
-   * Add the value of the column identified by the
-   * to the sql statement. In this case the id of the
-   * foreign object is written to the column.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to write to.
-   */
-	void write(const char *id, const object_base_ptr &x);
-
-  /**
-   * @fn virtual void write(const char *id, const object_container &x)
-   * @brief Write a object_container to the atomizer.
-   * 
-   * Write a object_container to the atomizer
-   * identified by a unique name.
-   * 
-   * @param id Unique id of the data.
-   * @param x The data to read from.
-   */
-  virtual void write(const char*, const object_container&);
-
 private:
   bool valid_column(const char *id, int i) const;
 
 private:
-  statement_impl *stmt_;
+  statement_impl_ptr stmt_;
   
   int column_;
 };
@@ -422,4 +253,4 @@ private:
 
 }
 
-#endif /* STATEMENT_SERIALIZER_HPP */
+#endif /* STATEMENT_READER_HPP */

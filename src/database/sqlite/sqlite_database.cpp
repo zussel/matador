@@ -24,7 +24,8 @@
 #include "database/session.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_creator.hpp"
-#include "database/statement_serializer.hpp"
+#include "database/statement_reader.hpp"
+#include "database/statement_binder.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
@@ -116,7 +117,11 @@ void sqlite_database::drop(const prototype_node &node)
 void sqlite_database::load(const prototype_node &node)
 {
   // create dummy object
+#ifdef WIN32
   std::auto_ptr<object> o(node.producer->create());
+#else
+  std::unique_ptr<object> o(node.producer->create());
+#endif
   // try to find select statement statement
   statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
   if (!stmt) {
@@ -131,14 +136,12 @@ void sqlite_database::load(const prototype_node &node)
     store_statement(node.type + "_SELECT", stmt);
   }
 
-  statement_serializer ss;
+  statement_reader reader;
   /* iterate over statement results and create 
    * and insert objects
    */
   while (stmt->step()) {
-    o.reset(node.producer->create());
-    ss.read(stmt.get(), o.get());
-    db()->ostore().insert(o.release());
+    reader.import(node, stmt);
   }
 }
 
@@ -174,13 +177,13 @@ void sqlite_database::visit(insert_action *a)
     
     store_statement(std::string(a->type()) + "_INSERT", stmt);    
   }
-  statement_serializer ss;
+  statement_binder binder;
 
   insert_action::const_iterator first = a->begin();
   insert_action::const_iterator last = a->end();
   while (first != last) {
     object *o = (*first++);
-    ss.bind(stmt.get(), o, false);
+    binder.bind(stmt, o, false);
     stmt->step();
     stmt->reset(true);
   }
@@ -201,8 +204,8 @@ void sqlite_database::visit(update_action *a)
     store_statement(std::string(a->obj()->classname()) + "_UPDATE", stmt);    
   }
 
-  statement_serializer ss;
-  ss.bind(stmt.get(), a->obj(), true);
+  statement_binder binder;
+  binder.bind(stmt, a->obj(), true);
   stmt->step();
   stmt->reset(true);
 }

@@ -167,7 +167,8 @@ SET(DATABASE_SOURCES
   src/database/row.cpp
   src/database/statement.cpp
   src/database/statement_creator.cpp
-  src/database/statement_serializer.cpp
+  src/database/statement_binder.cpp
+  src/database/statement_reader.cpp
 )
 
 SET(DATABASE_HEADER
@@ -182,7 +183,8 @@ SET(DATABASE_HEADER
   include/database/value.hpp
   include/database/statement.hpp
   include/database/statement_creator.hpp
-  include/database/statement_serializer.hpp
+  include/database/statement_binder.hpp
+  include/database/statement_reader.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER

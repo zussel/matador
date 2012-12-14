@@ -236,7 +236,7 @@ protected:
 
 private:
   friend class database_factory;
-  friend class statement_serializer;
+  friend class statement_reader;
 
   session *db_;
   bool commiting_;

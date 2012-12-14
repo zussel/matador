@@ -26,7 +26,7 @@ DatabaseTestUnit::DatabaseTestUnit()
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
   add_test("reload", std::tr1::bind(&DatabaseTestUnit::reload, this), "reload database test");
   add_test("list2", std::tr1::bind(&DatabaseTestUnit::with_list2, this), "object with object list database test");
-//  add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::reload_container, this), "reload object list database test");
+  add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::reload_container, this), "reload object list database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -35,10 +35,11 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
-  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
+  ostore_.insert_prototype<Item>("item");
+  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
+  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore_.insert_prototype<track>("track");
+  ostore_.insert_prototype<album>("album");
 
   // delete db
   std::remove("test.sqlite");
@@ -438,9 +439,9 @@ DatabaseTestUnit::reload()
 void
 DatabaseTestUnit::reload_container()
 {
-  typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef ItemPtrList::value_type item_ptr;
-
+  typedef object_ptr<album> album_ptr;
+  typedef object_ptr<track> track_ptr;
+  
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
 
@@ -455,30 +456,31 @@ DatabaseTestUnit::reload_container()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
 
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    album_ptr alb1 = ostore_.insert(new album("My Album"));
 
-    UNIT_ASSERT_GREATER(itemlist->id(), 0, "invalid item list");
-    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
+    UNIT_ASSERT_GREATER(alb1->id(), 0, "invalid album");
+    UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");
 
     tr.commit();
 
     tr.begin();
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 5; ++i) {
       stringstream name;
-      name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new Item(name.str()));
+      name << "Track " << i+1;
 
-      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+      track_ptr trk = ostore_.insert(new track(name.str()));
+      UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
 
-      itemlist->push_back(item);
+      alb1->add(trk);
     }
 
-    cout << "\nsize: " << itemlist->size() << "\n";
+    tr.commit();
 
-    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 10, "invalid item list size");
+    cout << "\nsize: " << alb1->size() << "\n";
+
+    UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
@@ -499,15 +501,18 @@ DatabaseTestUnit::reload_container()
   db.load();
 
   try {
-    typedef object_view<ItemPtrList> list_view_t;
-    list_view_t oview(ostore_);
+    typedef object_view<album> album_view_t;
+    album_view_t oview(ostore_);
 
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "album view must not be empty");
     
-    itemlist_ptr l = *oview.begin();
+    album_ptr alb1 = *oview.begin();
     
-    cout << "size: " << l->size() << "\n";
+    cout << "size: " << alb1->size() << "\n";
     
+    UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
+
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");

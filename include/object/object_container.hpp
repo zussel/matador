@@ -315,7 +315,7 @@ protected:
       ostore.prototype_node_map_[classname()] = item_node;
     }
     // add container node to item node
-    item_node->relations.push_back(std::make_pair(id, node));
+    node->relations.push_back(std::make_pair(id, item_node));
   }
 
   /**
