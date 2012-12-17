@@ -246,6 +246,8 @@ private:
 private:
   statement_impl_ptr stmt_;
   
+  object *object_;
+
   int column_;
 };
 

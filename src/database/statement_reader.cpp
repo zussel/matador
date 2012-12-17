@@ -33,6 +33,8 @@
 namespace oos {
 
 statement_reader::statement_reader()
+  : object_(0)
+  , column_(0)
 {}
 
 statement_reader::~statement_reader()
@@ -47,11 +49,11 @@ void statement_reader::import(const prototype_node &node, const statement_impl_p
   column_ = 0;
 
   // create object
-  object *o(node.producer->create());
+  object_ = node.producer->create();
   
-  o->deserialize(*this);
+  object_->deserialize(*this);
   
-  stmt_->db().db()->ostore().insert(o);
+  stmt_->db().db()->ostore().insert(object_);
 }
 
 void statement_reader::read(const char *id, char &x)
@@ -202,7 +204,7 @@ void statement_reader::read(const char *id, object_base_ptr &x)
   prototype_node::string_node_pair_list_t::const_iterator last = node->relations.end();
   while (first != last) {
     const prototype_node::string_node_pair_t rel = *first++;
-    std::cout << "DEBUG: found relation in node [" << node->type << "] for type [" << rel.second->type << "] field [" << rel.first << "]\n";
+    std::cout << "DEBUG: found relation in node [" << node->type << "] for type [" << rel.second->type << "] field [" << rel.first << "] and object [" << *object_ << "]\n";
     // check if this object is part of a relation
     
   }
