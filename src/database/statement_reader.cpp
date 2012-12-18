@@ -34,6 +34,7 @@ namespace oos {
 
 statement_reader::statement_reader()
   : object_(0)
+  , node_(0)
   , column_(0)
 {}
 
@@ -45,6 +46,7 @@ void statement_reader::import(const prototype_node &node, const statement_impl_p
   std::cout << "importing [" << node.type << "]\n";
 
   // init
+  node_ = &node;
   stmt_ = stmt;
   column_ = 0;
 
@@ -194,21 +196,11 @@ void statement_reader::read(const char *id, object_base_ptr &x)
     return;
   }
   
-  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "]\n";
+  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "|" << node_->type << "]\n";
   object_proxy *oproxy = stmt_->db().db()->ostore().find_proxy(oid);
 
   prototype_iterator node = stmt_->db().db()->ostore().find_prototype(x.type());
     
-  // check for relations
-  prototype_node::string_node_pair_list_t::const_iterator first = node->relations.begin();
-  prototype_node::string_node_pair_list_t::const_iterator last = node->relations.end();
-  while (first != last) {
-    const prototype_node::string_node_pair_t rel = *first++;
-    std::cout << "DEBUG: found relation in node [" << node->type << "] for type [" << rel.second->type << "] field [" << rel.first << "] and object [" << *object_ << "]\n";
-    // check if this object is part of a relation
-    
-  }
-
   if (!oproxy) {
     oproxy = stmt_->db().db()->ostore().create_proxy(oid);
     
@@ -221,6 +213,32 @@ void statement_reader::read(const char *id, object_base_ptr &x)
     // container_inserter reader(oproxy->obj, rel);
     // reader.read(
   }
+  /*
+   * add the child object to the object proxy
+   * of the parent container
+   */
+//  prototype_node::string_node_pair_list_t::const_iterator i = node->relations.find(id);
+
+  // check for relations
+  prototype_node::string_node_pair_list_t::const_iterator first = node->relations.begin();
+  prototype_node::string_node_pair_list_t::const_iterator last = node->relations.end();
+  
+  while (first != last) {
+    const prototype_node::string_node_pair_t rel = *first++;
+    std::cout << "DEBUG: found relation: object type [" << node->type << "] has relation field [" << rel.first << "] of type [" << rel.second->type << "] for object [" << *object_ << "]\n";
+    // check if this object is part of a relation
+    
+  }
+
+
+//  if (i != node->relations.end()) {
+//    std::cout << "DEBUG: found relations for object field [" << id << "]\n";
+    //oproxy->relations[].push_back(object_);
+    
+//    string_node_pair_list_t
+
+//  }
+  
   x.reset(oproxy->obj);
   
   /*

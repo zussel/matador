@@ -33,6 +33,8 @@
 
 #include <ostream>
 #include <set>
+#include <list>
+#include <map>
 
 #ifdef WIN32
 #include <memory>
@@ -204,6 +206,11 @@ struct object_proxy {
 
   typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */
+  
+  typedef std::list<object*> object_list_t;
+  typedef std::map<std::string, object_list_t> string_object_list_map_t;
+  
+  string_object_list_map_t relations;
 };
 /// @endcond
 }

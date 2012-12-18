@@ -247,6 +247,7 @@ private:
   statement_impl_ptr stmt_;
   
   object *object_;
+  const prototype_node *node_;
 
   int column_;
 };
