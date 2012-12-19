@@ -52,12 +52,24 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
   , op_last(0)
   , depth(0)
   , count(0)
-  , type(t)
   , abstract(a)
   , initialized(false)
 {
   first->next = last;
   last->prev = first;
+  aliases.insert(t);
+}
+
+void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
+{
+  first = new prototype_node;
+  last = new prototype_node;
+  producer = p;
+  abstract = a;
+  aliases.insert(t);
+  initialized = true;
+  first->next = last;
+  last->prev = first;  
 }
 
 prototype_node::~prototype_node()
@@ -263,9 +275,9 @@ void prototype_node::adjust_right_marker(object_proxy* old_proxy, object_proxy *
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
   if (pn.parent) {
-    os << "\t" << pn.parent->type << " -> " << pn.type << "\n";
+    os << "\t" << pn.parent->producer->classname() << " -> " << pn.producer->classname() << "\n";
   }
-  os << "\t" << pn.type << " [label=\"{" << pn.type;
+  os << "\t" << pn.producer->classname() << " [label=\"{" << pn.producer->classname();
   os << "|{op_first|" << pn.op_first << "}";
   os << "|{op_marker|" << pn.op_marker << "}";
   os << "|{op_last|" << pn.op_last << "}";
@@ -279,11 +291,16 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   os << "|{size|" << i << "}";
   os << "|{relations}";
   // list relations
-  prototype_node::string_node_pair_list_t::const_iterator first = pn.relations.begin();
-  prototype_node::string_node_pair_list_t::const_iterator last = pn.relations.end();
+  prototype_node::type_map_t::const_iterator first = pn.relations.begin();
+  prototype_node::type_map_t::const_iterator last = pn.relations.end();
   while (first != last) {
-    prototype_node::string_node_pair_t item = *first++;
-    os << "|{" << item.second->type << "|" << item.first << "}";
+    prototype_node::field_prototype_node_map_t::const_iterator ffirst = first->second.begin();
+    prototype_node::field_prototype_node_map_t::const_iterator llast = first->second.end();
+    while (ffirst != llast) {
+      os << "|{" << ffirst->second->producer->classname() << "|" << ffirst->first << "}";
+      ++ffirst;
+    }
+    ++first;
   }
   os << "}\"]\n";
   return os;

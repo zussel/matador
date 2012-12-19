@@ -40,6 +40,7 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<track>("track");
   ostore_.insert_prototype<album>("album");
+  ostore_.insert_prototype<playlist>("playlist");
 
   // delete db
   std::remove("test.sqlite");

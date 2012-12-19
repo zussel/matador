@@ -315,7 +315,10 @@ protected:
       ostore.prototype_node_map_[classname()] = item_node;
     }
     // add container node to item node
-    node->relations.push_back(std::make_pair(id, item_node));
+    std::cout << "DEBUG: storing relation: object type [" << node->producer->classname() << "] has relation field [" << id << "] of type [" << classname() << "]\n";
+    prototype_node::type_map_t::iterator i = node->relations.insert(std::make_pair(classname(), prototype_node::field_prototype_node_map_t())).first;
+    i->second.insert(std::make_pair(id, item_node));
+//    node->relations.push_back(std::make_pair(id, item_node));
   }
 
   /**

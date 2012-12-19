@@ -95,23 +95,38 @@ void sqlite_database::create(const prototype_node &node)
 {
   create_statement_creator<sqlite_types> creator;
 
+#ifdef WIN32
   std::auto_ptr<object> o(node.producer->create());
-  std::string sql = creator.create(o.get(), node.type.c_str(), "");
+#else
+  std::unique_ptr<object> o(node.producer->create());
+#endif
 
-  execute(sql.c_str());
+  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
+  prototype_node::string_set_t::const_iterator last = node.aliases.end();
+  while (first != last) {
+    std::string sql = creator.create(o.get(), (*first++).c_str(), "");
+
+    execute(sql.c_str());
+  }
 }
 
 void sqlite_database::drop(const prototype_node &node)
 {
   drop_statement_creator<sqlite_types> creator;
 
-  object *o(node.producer->create());
+#ifdef WIN32
+  std::auto_ptr<object> o(node.producer->create());
+#else
+  std::unique_ptr<object> o(node.producer->create());
+#endif
 
-  std::string sql = creator.create(o, node.type.c_str(), "");
+  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
+  prototype_node::string_set_t::const_iterator last = node.aliases.end();
+  while (first != last) {
+    std::string sql = creator.create(o.get(), (*first++).c_str(), "");
 
-  delete o;
-
-  execute(sql.c_str());
+    execute(sql.c_str());
+  }
 }
 
 void sqlite_database::load(const prototype_node &node)
@@ -123,25 +138,29 @@ void sqlite_database::load(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
-  if (!stmt) {
-    select_statement_creator<sqlite_types> creator;
-	// state wasn't found, create sql string
-    std::string sql = creator.create(o.get(), node.type.c_str(), 0);
-	// create the real statement
-    stmt.reset(create_statement());
-    // prepare statement
-    stmt->prepare(sql);
-    // store statement
-    store_statement(node.type + "_SELECT", stmt);
-  }
+  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
+  prototype_node::string_set_t::const_iterator last = node.aliases.end();
+  while (first != last) {
+    statement_impl_ptr stmt = find_statement(*first + "_SELECT");
+    if (!stmt) {
+      select_statement_creator<sqlite_types> creator;
+    // state wasn't found, create sql string
+      std::string sql = creator.create(o.get(), (*first).c_str(), 0);
+    // create the real statement
+      stmt.reset(create_statement());
+      // prepare statement
+      stmt->prepare(sql);
+      // store statement
+      store_statement(*first++ + "_SELECT", stmt);
+    }
 
-  statement_reader reader;
-  /* iterate over statement results and create 
-   * and insert objects
-   */
-  while (stmt->step()) {
-    reader.import(node, stmt);
+    statement_reader reader;
+    /* iterate over statement results and create 
+     * and insert objects
+     */
+    while (stmt->step()) {
+      reader.import(node, stmt);
+    }
   }
 }
 

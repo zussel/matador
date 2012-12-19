@@ -706,5 +706,63 @@ public:
   bool empty() const { return tracks_.empty(); }
 };
 
+class playlist : public oos::object
+{
+public:
+  typedef oos::object_ref<track> track_ref;
+  typedef oos::object_vector<playlist, track_ref> track_list_t;
+  typedef typename track_list_t::size_type size_type;
+  typedef track_list_t::iterator iterator;
+  typedef track_list_t::const_iterator const_iterator;
+
+private:
+  std::string name_;
+  track_list_t tracks_;
+  track_list_t backup_tracks_;
+  
+public:
+  playlist() : tracks_(this), backup_tracks_(this) {}
+  playlist(const std::string &name)
+    : name_(name)
+    , tracks_(this)
+    , backup_tracks_(this)
+  {}
+  
+  virtual ~playlist() {}
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    deserializer.read("name", name_);
+    deserializer.read("tracks", tracks_);
+    deserializer.read("backup_tracks", backup_tracks_);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("name", name_);
+    serializer.write("tracks", tracks_);
+    serializer.write("backup_tracks", backup_tracks_);
+  }
+
+  std::string name() const { return name_; }
+  void name(const std::string &name) { modify(name_, name); }
+
+  void add(const track_ref &b)
+  {
+    tracks_.push_back(b);
+  }
+
+  iterator begin() { return tracks_.begin(); }
+  const_iterator begin() const { return tracks_.begin(); }
+
+  iterator end() { return tracks_.end(); }
+  const_iterator end() const { return tracks_.end(); }
+
+  iterator erase(iterator i) { return tracks_.erase(i); }
+
+  size_type size() const { return tracks_.size(); }
+  bool empty() const { return tracks_.empty(); }
+};
 
 #endif /* ITEM_HPP */

@@ -19,7 +19,8 @@
 #define PROTOTYPE_NODE_HPP
 
 #include <iostream>
-#include <list>
+#include <map>
+#include <set>
 #include <memory>
 
 #ifdef WIN32
@@ -57,6 +58,12 @@ struct object_proxy;
  */ 
 struct OOS_API prototype_node
 {
+private:
+  // copying not permitted
+  prototype_node(const prototype_node&);
+  prototype_node& operator=(const prototype_node&);
+
+public:
   prototype_node();
 
   /**
@@ -73,6 +80,18 @@ struct OOS_API prototype_node
   prototype_node(object_base_producer *p, const char *t, bool a = false);
 
   ~prototype_node();
+
+  /**
+   * @brief Initializes a prototype_node.
+   * 
+   * Initializes a prototype_node. The node
+   * gets the given type name alias t.
+   * 
+   * @param p The object_base_producer.
+   * @param t The type name of this node.
+   * @param a Tells the node if its prototype is abstract.
+   */
+  void initialize(object_base_producer *p, const char *t, bool a);
 
   /**
    * clear removes all object proxies really belonging to
@@ -171,9 +190,10 @@ struct OOS_API prototype_node
    */
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
-  typedef std::pair<std::string, prototype_node*> string_node_pair_t;
-  typedef std::list<string_node_pair_t> string_node_pair_list_t;
+  typedef std::map<std::string, prototype_node*> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
+  typedef std::map<std::string, field_prototype_node_map_t> type_map_t;      /**< Holds the object type name and the field prototype map. */
 
+  typedef std::set<std::string> string_set_t; /**< Shortcut for a string set. */
   // tree links
   prototype_node *parent; /**< The parent node */
   prototype_node *prev;   /**< The previous node */
@@ -184,13 +204,15 @@ struct OOS_API prototype_node
   // data
   object_base_producer *producer; /**< The object producer */
 
-  /* this list holds information about
+  /* this map holds information about
    * all prototypes in which this prototype
    * is used as a child item (one to many
    * relation). The string tells the name
    * of the attribute
    */
-  string_node_pair_list_t relations;
+  type_map_t relations; /**< Holds all relation information for the type. */
+
+  string_set_t aliases; /**< Holds all aliases for this type. */
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */
@@ -199,7 +221,7 @@ struct OOS_API prototype_node
   unsigned int depth;  /**< The depth of the node inside of the tree. */
   unsigned long count; /**< The total count of elements. */
 
-  std::string type;	   /**< The type name of the object */
+//  std::string type;	   /**< The type name of the object */
   
   bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
   bool initialized;    /**< Indicates wether this node is complete initialized or not */

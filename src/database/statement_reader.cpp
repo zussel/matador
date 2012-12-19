@@ -43,7 +43,7 @@ statement_reader::~statement_reader()
 
 void statement_reader::import(const prototype_node &node, const statement_impl_ptr &stmt)
 {
-  std::cout << "importing [" << node.type << "]\n";
+  std::cout << "importing [" << node.producer->classname() << "]\n";
 
   // init
   node_ = &node;
@@ -196,7 +196,7 @@ void statement_reader::read(const char *id, object_base_ptr &x)
     return;
   }
   
-  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "|" << node_->type << "]\n";
+  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "|" << node_->producer->classname() << "]\n";
   object_proxy *oproxy = stmt_->db().db()->ostore().find_proxy(oid);
 
   prototype_iterator node = stmt_->db().db()->ostore().find_prototype(x.type());
@@ -205,10 +205,10 @@ void statement_reader::read(const char *id, object_base_ptr &x)
     oproxy = stmt_->db().db()->ostore().create_proxy(oid);
     
     //oproxy->relations[rel.second].push_back(object_);
-    std::cout << "DEBUG: object [" << oid << "] of type [" << node->type << "] not in store\n";
+    std::cout << "DEBUG: object [" << oid << "] of type [" << node->producer->classname() << "] not in store\n";
 
   } else {
-    std::cout << "DEBUG: object [" << oid << "] of type [" << node->type << "] found in store\n";
+    std::cout << "DEBUG: object [" << oid << "] of type [" << x.type() << "] found in store\n";
     
     // container_inserter reader(oproxy->obj, rel);
     // reader.read(
@@ -217,17 +217,14 @@ void statement_reader::read(const char *id, object_base_ptr &x)
    * add the child object to the object proxy
    * of the parent container
    */
-//  prototype_node::string_node_pair_list_t::const_iterator i = node->relations.find(id);
-
-  // check for relations
-  prototype_node::string_node_pair_list_t::const_iterator first = node->relations.begin();
-  prototype_node::string_node_pair_list_t::const_iterator last = node->relations.end();
-  
-  while (first != last) {
-    const prototype_node::string_node_pair_t rel = *first++;
-    std::cout << "DEBUG: found relation: object type [" << node->type << "] has relation field [" << rel.first << "] of type [" << rel.second->type << "] for object [" << *object_ << "]\n";
-    // check if this object is part of a relation
-    
+  prototype_node::type_map_t::const_iterator i = node->relations.find(id);
+  if (i != node->relations.end()) {
+    prototype_node::field_prototype_node_map_t::const_iterator first = i->second.begin();
+    prototype_node::field_prototype_node_map_t::const_iterator last = i->second.end();
+    while (first != last) {
+      std::cout << "DEBUG: found relation: object type [" << x.type() << "] has relation field [" << first->first << "] of type [" << first->second->producer->classname() << "] for object [" << *object_ << "]\n";
+      // check if this object is part of a relation
+    }
   }
 
 

@@ -79,6 +79,7 @@ private:
   prototype_node *node_;
 };
 
+/*
 class equal_type : public std::unary_function<const prototype_node*, bool> {
 public:
   explicit equal_type(const std::string &type) : type_(type) {}
@@ -89,6 +90,7 @@ public:
 private:
   const std::string &type_;
 };
+*/
 
 prototype_iterator::prototype_iterator()
   : node_(NULL)
@@ -200,17 +202,51 @@ bool
 object_store::insert_prototype(object_base_producer *producer, const char *type, bool abstract, const char *parent)
 {
   // set node to root node
-  prototype_node *parent_node;
-  if (parent) {
-    // parent type name is set search parent node
-    t_prototype_node_map::iterator i = prototype_node_map_.find(parent);
-    if (i == prototype_node_map_.end()) {
-      //throw new object_exception("couldn't find parent prototype");
-      return false;
-    }
-    parent_node = i->second;
+  prototype_node *parent_node = get_prototype(parent);
+  if (!parent_node) {
+    //throw new object_exception("couldn't find parent prototype");
+    return false;
   }
   
+  /*
+   * try to find prototype of name 'type'
+   * if not found (the type doesn't exist completely at least)
+   *   try to find the prototype by classname
+   *   if not found
+   *     create a new prototype
+   *     (add to prototype and alias map)
+   *   else
+   *     finish the creation
+   *     (add to alias map)
+   * else (prototype found)
+   *   return false
+   */
+  prototype_node *node = get_prototype(type);
+  cout << "DEBUG: try to insert into prototype map: [" << type << "]\n";
+  if (!node) {
+    t_prototype_node_map::iterator i = prototype_node_map_.find(producer->classname());
+    if (i != prototype_node_map_.end()) {
+      // finish existing
+      node->initialize(producer, type, abstract);
+      parent_node->insert(node);
+      alias_map_.insert(std::make_pair(type, node));
+    } else {
+      // create new one
+      prototype_node *node = new prototype_node(producer, type, abstract);
+      // append as child to parent prototype node
+      parent_node->insert(node);
+      // store prototype in map
+      cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
+      cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
+//      prototype_node_map_.insert(std::make_pair(type, node));
+      i = prototype_node_map_.insert(std::make_pair(producer->classname(), node)).first;
+      alias_map_.insert(std::make_pair(type, node));
+    }
+  } else {
+    //throw new object_exception("prototype already exists");
+    return false;
+  }
+  /*
   // find prototype node 'type' starting from node
   t_prototype_node_map::iterator i = prototype_node_map_.find(producer->classname());
   if (i == prototype_node_map_.end()) {
@@ -224,8 +260,8 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
       // append as child to parent prototype node
       parent_node->insert(node);
       // store prototype in map
-      // cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
-      // cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
+      cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
+      cout << "DEBUG: inserting into prototype map: [" << producer->classname() << "]\n\n";
       prototype_node_map_.insert(std::make_pair(type, node));
       i = prototype_node_map_.insert(std::make_pair(producer->classname(), node)).first;
     }
@@ -240,94 +276,114 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
       i->second->last = new prototype_node;
       i->second->producer = producer;
       i->second->abstract = abstract;
-      i->second->type = type;
+//      i->second->type = type;
       i->second->first->next = i->second->last;
       i->second->last->prev = i->second->first;
       // append as child to parent prototype node
+      i->second->aliases.insert(type);
       parent_node->insert(i->second);
       prototype_node_map_.insert(std::make_pair(type, i->second));
     }
   }
+  */
 
   // Check if nodes object has to many relations
   object *o = producer->create();
-  relation_handler rh(*this, i->second);
+  relation_handler rh(*this, node);
   o->serialize(rh);
   delete o;
 
   // mark node as initialized
-  i->second->initialized = true;
+//  i->second->initialized = true;
 
   return true;
 }
 
 bool object_store::clear_prototype(const char *type, bool recursive)
 {
-  // find node of given type
-  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
-  if (i == prototype_node_map_.end()) {
+  prototype_node *node = get_prototype(type);
+  if (!node) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
-
   if (recursive) {
     // clear all objects from child nodes
     // for each child call clear_prototype(child, recursive);
-    prototype_node *node = i->second->next_node(i->second->parent);
+    prototype_node *child = node->next_node(node->parent);
     while (node) {
-      clear_prototype(node->type.c_str(), recursive);
-      node = node->next_node();
+      clear_prototype(child->producer->classname(), recursive);
+      child = child->next_node();
     }
   }
 
-  i->second->clear();
+  node->clear();
 
   return true;
 }
 
 bool object_store::remove_prototype(const char *type)
 {
-  t_prototype_node_map::iterator i = prototype_node_map_.find(type);
-  if (i == prototype_node_map_.end()) {
+  prototype_node *node = get_prototype(type);
+  if (!node) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
-  t_prototype_node_map::iterator j = prototype_node_map_.find(i->second->producer->classname());
-  if (j == prototype_node_map_.end()) {
-		// couldn't fnd prototype in type map
-		// throw exception
-		return false;
-	}
 
 //  cout << "DEBUG: removing prototype map: [" << i->second->type << "]\n";
 //  cout << "DEBUG: removing prototype map: [" << i->second->producer->classname() << "]\n";
 
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  while (i->second->first->next != i->second->last) {
-    remove_prototype(i->second->first->next->type.c_str());
+  while (node->first->next != node->last) {
+    remove_prototype(node->first->next->producer->classname());
   }
   // and objects they're containing 
-  i->second->clear();
+  node->clear();
   // delete prototype node as well
   // unlink node
-  i->second->unlink();
+  node->unlink();
+  // remove aliases
+  while (!node->aliases.empty()) {
+    prototype_node::string_set_t::iterator i = node->aliases.begin();
+    alias_map_.erase(*i);
+    node->aliases.erase(i);
+  }
+  // get iterator
+  t_prototype_node_map::iterator i = prototype_node_map_.find(node->producer->classname());
+  if (i != prototype_node_map_.end()) {
+    prototype_node_map_.erase(i);
+  }
   // delete node
   delete i->second;
-  // erase node from maps
-  prototype_node_map_.erase(i);
-  prototype_node_map_.erase(j);
 
   return true;
 }
 
 prototype_iterator object_store::find_prototype(const char *type) const
 {
+  return prototype_iterator(get_prototype(type));
+}
+
+prototype_node* object_store::get_prototype(const char *type) const
+{
+  // check for null
+  if (type == 0) {
+    return 0;
+  }
+  /*
+   * first search in the prototype map
+   */
   t_prototype_node_map::const_iterator i = prototype_node_map_.find(type);
   if (i == prototype_node_map_.end()) {
-    return end();
+    /*
+     * if not found search in the alias map
+     */
+    i = alias_map_.find(type);
+    if (i == alias_map_.end()) {
+      return 0;
+    }
   }
-  return prototype_iterator(i->second);
+  return i->second;
 }
 
 prototype_iterator object_store::begin() const
@@ -345,11 +401,11 @@ void object_store::clear(bool full)
   if (full) {
     // clear objects and prototypes
     while (root_->first->next != root_->last) {
-      remove_prototype(root_->first->next->type.c_str());
+      remove_prototype(root_->first->next->producer->classname());
     }
   } else {
     // only delete objects
-    clear_prototype(root_->type.c_str(), true);
+    clear_prototype(root_->producer->classname(), true);
   }
   object_map_.clear();
 }

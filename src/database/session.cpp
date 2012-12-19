@@ -127,12 +127,6 @@ bool session::load()
     }
     impl_->load(node);
   }
-  /************
-   *
-   * init/adjust id counter
-   *
-   ************/
-  //ostore_.sequencer().init();
   return true;
 }
 

@@ -564,10 +564,18 @@ private:
   void link_proxy(object_proxy *base, object_proxy *next);
   void unlink_proxy(object_proxy *proxy);
 
+  prototype_node* get_prototype(const char *type) const;
+
 private:
   prototype_node *root_;
  
   t_prototype_node_map prototype_node_map_;
+  /*
+   * holding all aliases for a 
+   * specific prototype node
+   */
+  t_prototype_node_map alias_map_;
+
   t_object_proxy_map object_map_;
 
   sequencer seq_;
