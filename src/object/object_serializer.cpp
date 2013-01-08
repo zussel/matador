@@ -85,6 +85,7 @@ void object_serializer::write_value(const char*, const object_base_ptr &x)
   // write type and id into buffer
   write(0, x.id());
   write(0, x.type(), strlen(x.type()));
+//  write(0, x.classname(), strlen(x.classname()));
 }
 
 void object_serializer::write_value(const char*, const object_container &x)

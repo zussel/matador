@@ -7,6 +7,8 @@
 
 #include "Item.hpp"
 
+#include <fstream>
+
 using namespace oos;
 using namespace std;
 
@@ -17,6 +19,7 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
+  add_test("relation", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_relation, this), "prototype relation");
 }
 
 ObjectPrototypeTestUnit::~ObjectPrototypeTestUnit()
@@ -112,4 +115,32 @@ ObjectPrototypeTestUnit::prototype_traverse()
   }
   
   UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 4");
+}
+
+void
+ObjectPrototypeTestUnit::prototype_relation()
+{
+  object_store ostore;
+  /*
+  ostore.insert_prototype<Item>("item");
+  ostore.insert_prototype<ObjectItem<Item>, Item>("object_item");
+  ostore.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore.insert_prototype<album>("album");
+  */
+//  ostore.insert_prototype<playlist>("playlist");
+//  ostore.insert_prototype<track>("track");
+  
+//  ostore.clear(true);
+
+  /*
+  ostore.insert_prototype<Item>("item");
+  ostore.insert_prototype<ObjectItem<Item>, Item>("object_item");
+  ostore.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore.insert_prototype<album>("album");
+  */
+  ostore.insert_prototype<playlist>("playlist");
+  ostore.insert_prototype<album>("album");
+  ostore.insert_prototype<track>("track");
+  
+//  ostore.clear(false);
 }

@@ -43,7 +43,7 @@ statement_reader::~statement_reader()
 
 void statement_reader::import(const prototype_node &node, const statement_impl_ptr &stmt)
 {
-  std::cout << "importing [" << node.producer->classname() << "]\n";
+  std::cout << "importing [" << node.type << "]\n";
 
   // init
   node_ = &node;

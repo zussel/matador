@@ -128,6 +128,8 @@ public:
    */
   virtual const char* type() const = 0;
 
+//  const char* classname() const;
+
   /**
    * Resets the object_base_ptr with the given object.
    * 

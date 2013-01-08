@@ -193,7 +193,7 @@ public:
   typedef std::map<std::string, prototype_node*> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
   typedef std::map<std::string, field_prototype_node_map_t> type_map_t;      /**< Holds the object type name and the field prototype map. */
 
-  typedef std::set<std::string> string_set_t; /**< Shortcut for a string set. */
+//  typedef std::set<std::string> string_set_t; /**< Shortcut for a string set. */
   // tree links
   prototype_node *parent; /**< The parent node */
   prototype_node *prev;   /**< The previous node */
@@ -212,7 +212,7 @@ public:
    */
   type_map_t relations; /**< Holds all relation information for the type. */
 
-  string_set_t aliases; /**< Holds all aliases for this type. */
+//  string_set_t aliases; /**< Holds all aliases for this type. */
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */
@@ -221,7 +221,7 @@ public:
   unsigned int depth;  /**< The depth of the node inside of the tree. */
   unsigned long count; /**< The total count of elements. */
 
-//  std::string type;	   /**< The type name of the object */
+  std::string type;	   /**< The type name of the object */
   
   bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
   bool initialized;    /**< Indicates wether this node is complete initialized or not */

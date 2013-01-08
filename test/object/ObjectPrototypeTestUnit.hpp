@@ -16,6 +16,7 @@ public:
   void one_prototype();
   void prototype_hierachy();
   void prototype_traverse();
+  void prototype_relation();
 };
 
 #endif /* OBJECT_PROTOTYPE_TESTUNIT_HPP */

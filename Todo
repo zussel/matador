@@ -43,3 +43,32 @@ relation table which is be virtual and must be overwritten by the
 concrete container.
 
 object_base_producer* object_container::create_relation_producer();
+
+
+
+
+=============================
+
+Item
+Ref_List_A
+Ref_List_B
+
+
+initializing:
+
+insert_prototype(ListA)
+insert_prototype(ListB)
+insert_prototype(Item)
+
+- A inserts Item in advance with typeid as id
+- B must find prototype_node of Item inserted by A by typeid
+- Item must find unfinished prototype_node to finish it
+
+Solution: unfinished prototype nodes are inserted with typeid
+and when finished typeid entry is removed
+
+==============================
+
+A second map holds typeid to prototype_node map entries, to handle
+different prototype_nodes of the same typeid (tracks and backup_tracks
+in playlist)

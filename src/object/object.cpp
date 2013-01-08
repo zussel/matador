@@ -34,8 +34,8 @@ object::~object()
 const char* object::classname() const
 {
   if (proxy_ && proxy_->node) {
-//    return proxy_->node->type.c_str();
-    return proxy_->node->producer->classname();
+    return proxy_->node->type.c_str();
+//    return proxy_->node->producer->classname();
   } else {
     return 0;
   }

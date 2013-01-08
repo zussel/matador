@@ -37,6 +37,7 @@ void object_creator::read_value(const char*, object_base_ptr &x)
     if (!x.ptr()) {
       // create object
       object *o = ostore_.create(x.type());
+      //object *o = ostore_.create(x.classname());
       o->id(x.id());
       x.reset(ostore_.insert_object(o, notify_));
     } else {

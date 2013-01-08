@@ -36,11 +36,11 @@ void
 DatabaseTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
+  ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
-  ostore_.insert_prototype<track>("track");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<playlist>("playlist");
+  ostore_.insert_prototype<track>("track");
 
   // delete db
   std::remove("test.sqlite");
@@ -139,7 +139,7 @@ DatabaseTestUnit::simple()
     tr.commit();
 
     UNIT_ASSERT_TRUE(view.empty(), "item view is empty");
-  } catch (exception &ex) {
+  } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
     tr.rollback();
@@ -491,6 +491,13 @@ DatabaseTestUnit::reload_container()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+
+  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
+  
+  ostore_.dump_prototypes(out);
+
+  ostore_.dump_objects(cout);
+
   // close db
   db.close();  
   // clear object store

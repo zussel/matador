@@ -17,6 +17,7 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
 #include "object/object.hpp"
 
 #include <iostream>
@@ -120,7 +121,16 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 {
 	return !(x == *this);
 }
-
+/*
+const char* object_base_ptr::classname() const
+{
+  if (proxy_ && proxy_->node) {
+    return proxy_->node->type.c_str();
+  } else {
+    return 0;
+  }
+}
+*/
 void
 object_base_ptr::reset(const object *o)
 {
