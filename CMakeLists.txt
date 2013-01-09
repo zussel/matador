@@ -55,6 +55,7 @@ SET(OBJECT_SOURCES
   src/object/object.cpp
   src/object/object_creator.cpp
   src/object/object_deleter.cpp
+  src/object/object_container.cpp
   src/object/object_ptr.cpp
   src/object/object_store.cpp
   src/object/object_proxy.cpp

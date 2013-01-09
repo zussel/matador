@@ -23,6 +23,7 @@
 #include "database/result.hpp"
 
 #include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
 
 namespace oos {
 
@@ -50,6 +51,17 @@ void database::close()
   sequencer_->destroy();
   
   statement_impl_map_.clear();
+  prototype_map_.clear();
+}
+
+void database::load(const prototype_node &node)
+{
+  prototype_map_.insert(std::make_pair(node.type, &node));
+}
+
+bool database::is_loaded(const std::string &name) const
+{
+  return prototype_map_.count(name) > 0;
 }
 
 void database::drop()

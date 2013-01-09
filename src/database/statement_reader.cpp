@@ -43,7 +43,7 @@ statement_reader::~statement_reader()
 
 void statement_reader::import(const prototype_node &node, const statement_impl_ptr &stmt)
 {
-  std::cout << "importing [" << node.type << "]\n";
+  std::cout << "importing [" << node.type << " (type: " << node.producer->classname() << ")]\n";
 
   // init
   node_ = &node;
@@ -56,6 +56,8 @@ void statement_reader::import(const prototype_node &node, const statement_impl_p
   object_->deserialize(*this);
   
   stmt_->db().db()->ostore().insert(object_);
+  
+  
 }
 
 void statement_reader::read(const char *id, char &x)
@@ -196,11 +198,13 @@ void statement_reader::read(const char *id, object_base_ptr &x)
     return;
   }
   
-  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "|" << node_->producer->classname() << "]\n";
+  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "]\n";
   object_proxy *oproxy = stmt_->db().db()->ostore().find_proxy(oid);
 
   prototype_iterator node = stmt_->db().db()->ostore().find_prototype(x.type());
-    
+  
+  std::cout << "DEBUG: found prototype node [" << node->type << "]\n";
+
   if (!oproxy) {
     oproxy = stmt_->db().db()->ostore().create_proxy(oid);
     
@@ -217,13 +221,20 @@ void statement_reader::read(const char *id, object_base_ptr &x)
    * add the child object to the object proxy
    * of the parent container
    */
-  prototype_node::type_map_t::const_iterator i = node->relations.find(id);
+  prototype_node::type_map_t::const_iterator i = node->relations.find(node_->producer->classname());
   if (i != node->relations.end()) {
+    prototype_node::field_prototype_node_map_t::const_iterator j = i->second.find(id);
+    if (j != i->second.end()) {
+      std::cout << "DEBUG: found relation (" << id << "): object type [" << x.type() << "] has relation field [" << j->first << "] of type [" << j->second->producer->classname() << "] for object [" << *object_ << "]\n";
+    } else {
+      std::cout << "DEBUG: no relation found (" << id << ") [" << x.type() << "]\n";
+    }
     prototype_node::field_prototype_node_map_t::const_iterator first = i->second.begin();
     prototype_node::field_prototype_node_map_t::const_iterator last = i->second.end();
     while (first != last) {
       std::cout << "DEBUG: found relation: object type [" << x.type() << "] has relation field [" << first->first << "] of type [" << first->second->producer->classname() << "] for object [" << *object_ << "]\n";
       // check if this object is part of a relation
+      ++first;
     }
   }
 
@@ -254,7 +265,15 @@ void statement_reader::read(const char *id, object_container &x)
    * find prototype node and check if there
    * are proxies to insert for this container
    */
-//  prototype_iterator p = stmt_->db().db()->ostore().find_prototype(x.classname());
+  prototype_iterator p = stmt_->db().db()->ostore().find_prototype(x.classname());
+  if (p != stmt_->db().db()->ostore().end()) {
+    std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_->type << ":" << id << "]\n";
+    if (stmt_->db().is_loaded(p->type)) {
+      std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
+    } else {
+      std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled on load\n";
+    }
+  }
 //  const prototype_node::proxy_list_t &proxy_list = p->relations[id][object_->id()];
   
   

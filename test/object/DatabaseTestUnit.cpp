@@ -496,8 +496,6 @@ DatabaseTestUnit::reload_container()
   
   ostore_.dump_prototypes(out);
 
-  ostore_.dump_objects(cout);
-
   // close db
   db.close();  
   // clear object store

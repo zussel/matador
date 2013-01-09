@@ -118,7 +118,15 @@ public:
    *
    * @param node The node representing the table to read
    */
-  virtual void load(const prototype_node &node) = 0;
+  virtual void load(const prototype_node &node);
+
+  /**
+   * Checks if a specific table was loaded.
+   * 
+   * @param name Name of the table to check.
+   * @return Returns true if the table was loaded.
+   */
+  bool is_loaded(const std::string &name) const;
 
   /**
    * Execute a sql statement and return a result
@@ -247,6 +255,9 @@ private:
 
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;
+  
+  typedef std::map<std::string, const prototype_node*> prototype_map_t;
+  prototype_map_t prototype_map_;
 };
 
 /// @endcond

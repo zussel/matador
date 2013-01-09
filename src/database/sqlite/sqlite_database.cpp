@@ -139,30 +139,30 @@ void sqlite_database::load(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
   // try to find select statement statement
-//  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
-//  prototype_node::string_set_t::const_iterator last = node.aliases.end();
-//  while (first != last) {
-    statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
-    if (!stmt) {
-      select_statement_creator<sqlite_types> creator;
-    // state wasn't found, create sql string
-      std::string sql = creator.create(o.get(), node.type.c_str(), 0);
-    // create the real statement
-      stmt.reset(create_statement());
-      // prepare statement
-      stmt->prepare(sql);
-      // store statement
-      store_statement(node.type + "_SELECT", stmt);
-    }
+  statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
+  if (!stmt) {
+    select_statement_creator<sqlite_types> creator;
+  // state wasn't found, create sql string
+    std::string sql = creator.create(o.get(), node.type.c_str(), 0);
+  // create the real statement
+    stmt.reset(create_statement());
+    // prepare statement
+    stmt->prepare(sql);
+    // store statement
+    store_statement(node.type + "_SELECT", stmt);
+  }
 
-    statement_reader reader;
-    /* iterate over statement results and create 
-     * and insert objects
-     */
-    while (stmt->step()) {
-      reader.import(node, stmt);
-    }
-//  }
+  std::cout << "DEBUG: loading [" << node.type << "]\n";
+  statement_reader reader;
+  /* iterate over statement results and create 
+   * and insert objects
+   */
+  while (stmt->step()) {
+    reader.import(node, stmt);
+  }
+  
+  // call super class
+  database::load(node);
 }
 
 void sqlite_database::execute(const char *sql, result_impl *res)

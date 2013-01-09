@@ -189,27 +189,6 @@ prototype_node* prototype_node::next_node() const
   }
 }
 
-prototype_node* prototype_node::next_node(prototype_node *root) const
-{
-  // if we have a child, child is the next iterator to return
-  // (if we don't do iterate over the siblings)
-  if (first->next != last)
-    return first->next;
-  else {
-    // if there is no child, we check for sibling
-    // if there is a sibling, this is our next iterator to return
-    // if not, we go back to the parent
-    const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last && node != root) {
-      node = node->parent;
-    }
-    if (node != root)
-      return node->next;
-    else
-      return 0;
-  }
-}
-
 prototype_node* prototype_node::previous_node() const
 {
   // if node has a previous sibling, we set it

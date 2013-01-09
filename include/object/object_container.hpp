@@ -19,6 +19,7 @@
 #define OBJECT_CONTAINER_HPP
 
 #include "object/object.hpp"
+#include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
 #ifdef WIN32
@@ -299,35 +300,7 @@ protected:
    * @param id The name of the relation.
    * @return The producer object;
    */
-  void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-  {
-    prototype_node *item_node = 0;
-    object_base_producer *p = create_item_producer();
-    if (p) {
-      ostore.insert_prototype(p, id);
-      item_node = ostore.get_prototype(id);
-    } else {
-      
-      // insert new prototype
-      //ostore.insert_prototype(p, id);
-      // get prototype node of container item (child)
-      item_node = ostore.get_prototype(classname());
-      if (!item_node) {
-        // if there is no such prototype node
-        // insert a new one (it is automatically marked
-        // as uninitialzed)
-        item_node = new prototype_node();
-        ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_node_map()));
-//        std::cout << "DEBUG: inserting unfinished node [" << classname() << "] in advance\n";
-        ostore.prototype_node_map_[classname()] = item_node;
-      }
-    }
-    // add container node to item node
-//    std::cout << "DEBUG: storing relation: object type [" << node->producer->classname() << "] has relation field [" << id << "] of type [" << classname() << "]\n";
-    prototype_node::type_map_t::iterator i = node->relations.insert(std::make_pair(classname(), prototype_node::field_prototype_node_map_t())).first;
-    i->second.insert(std::make_pair(id, item_node));
-//    node->relations.push_back(std::make_pair(id, item_node));
-  }
+  void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const;
 
   /**
    * Create a producer for the item type.

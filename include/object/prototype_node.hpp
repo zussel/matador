@@ -142,14 +142,6 @@ public:
   prototype_node* next_node() const;
 
   /**
-   * Returns nodes successor node or NULL if node is last or
-   * if node is the given root element.
-   * 
-   * @return The next node.
-   */
-  prototype_node* next_node(prototype_node *root) const;
-  
-  /**
    * Return nodes predeccessor node or NULL if node is first.
    * 
    * @return The previous node.
