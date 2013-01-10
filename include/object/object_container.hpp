@@ -236,6 +236,7 @@ protected:
   friend class object_deleter;
   friend class object_serializer;
   friend class relation_handler;
+  friend class statement_reader;
 
   /**
    * @brief Append a object via its object_proxy.

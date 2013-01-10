@@ -45,11 +45,13 @@ void object_container::handle_container_item(object_store &ostore, const char *i
     }
   }
   // add container node to item node
-  std::cout << "DEBUG: [" << node->type << "] storing relation: [" << classname() << "][" << id << "] of prototype [" << item_node << "]\n";
-  std::cout << "DEBUG: storing relation: object type [" << node->producer->classname() << "] has relation field [" << id << "] of type [" << classname() << "]\n";
-  prototype_node::type_map_t::iterator i = node->relations.insert(std::make_pair(classname(), prototype_node::field_prototype_node_map_t())).first;
-  i->second.insert(std::make_pair(id, item_node));
-//    node->relations.push_back(std::make_pair(id, item_node));
+  std::cout << "DEBUG: storing relation info [" << classname() << "(item_node: " << item_node << ")] storing relation: [" << node->type << "][prototype: " << node << "(" << node->type << ")]\n";
+  
+  // insert the relation
+  item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
+  
+  // insert an id proxy list for this field (id)
+  node->relation_data.insert(std::make_pair(id, prototype_node::object_map_t()));
 }
 
 }

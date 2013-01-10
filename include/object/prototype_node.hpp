@@ -18,11 +18,6 @@
 #ifndef PROTOTYPE_NODE_HPP
 #define PROTOTYPE_NODE_HPP
 
-#include <iostream>
-#include <map>
-#include <set>
-#include <memory>
-
 #ifdef WIN32
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
@@ -37,9 +32,15 @@
   #define EXPIMP_TEMPLATE
 #endif
 
+#include <iostream>
+#include <map>
+#include <list>
+#include <memory>
+
 namespace oos {
 
 class object_base_producer;
+class object;
 struct object_proxy;
 
 /**
@@ -182,10 +183,12 @@ public:
    */
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
-  typedef std::map<std::string, prototype_node*> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
-  typedef std::map<std::string, field_prototype_node_map_t> type_map_t;      /**< Holds the object type name and the field prototype map. */
+  typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
+  typedef std::map<std::string, prototype_field_info_t> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
+  typedef std::list<object*> object_list_t;                      /**< Shortcut for a list of objects. */
+  typedef std::map<long, object_list_t> object_map_t;            /**< Shortcut for a id (pk) to object list map. */
+  typedef std::map<std::string, object_map_t> relation_data_map_t;     /**< Shortcur for the relation data map (hold by the container). */
 
-//  typedef std::set<std::string> string_set_t; /**< Shortcut for a string set. */
   // tree links
   prototype_node *parent; /**< The parent node */
   prototype_node *prev;   /**< The previous node */
@@ -202,9 +205,8 @@ public:
    * relation). The string tells the name
    * of the attribute
    */
-  type_map_t relations; /**< Holds all relation information for the type. */
-
-//  string_set_t aliases; /**< Holds all aliases for this type. */
+  field_prototype_node_map_t relations;
+  relation_data_map_t relation_data;
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */

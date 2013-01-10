@@ -275,6 +275,7 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     iop = iop->next;
   }
   os << "|{size|" << i << "}";
+  /*
   os << "|{relations}";
   // list relations
   prototype_node::type_map_t::const_iterator first = pn.relations.begin();
@@ -288,6 +289,7 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     }
     ++first;
   }
+  */
   os << "}\"]\n";
   return os;
 }

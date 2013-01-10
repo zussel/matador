@@ -57,7 +57,8 @@ void statement_reader::import(const prototype_node &node, const statement_impl_p
   
   stmt_->db().db()->ostore().insert(object_);
   
-  
+  // handle item relation (with this type as child)
+  // ...
 }
 
 void statement_reader::read(const char *id, char &x)
@@ -213,39 +214,17 @@ void statement_reader::read(const char *id, object_base_ptr &x)
 
   } else {
     std::cout << "DEBUG: object [" << oid << "] of type [" << x.type() << "] found in store\n";
-    
-    // container_inserter reader(oproxy->obj, rel);
-    // reader.read(
   }
   /*
    * add the child object to the object proxy
    * of the parent container
    */
-  prototype_node::type_map_t::const_iterator i = node->relations.find(node_->producer->classname());
-  if (i != node->relations.end()) {
-    prototype_node::field_prototype_node_map_t::const_iterator j = i->second.find(id);
-    if (j != i->second.end()) {
-      std::cout << "DEBUG: found relation (" << id << "): object type [" << x.type() << "] has relation field [" << j->first << "] of type [" << j->second->producer->classname() << "] for object [" << *object_ << "]\n";
-    } else {
-      std::cout << "DEBUG: no relation found (" << id << ") [" << x.type() << "]\n";
-    }
-    prototype_node::field_prototype_node_map_t::const_iterator first = i->second.begin();
-    prototype_node::field_prototype_node_map_t::const_iterator last = i->second.end();
-    while (first != last) {
-      std::cout << "DEBUG: found relation: object type [" << x.type() << "] has relation field [" << first->first << "] of type [" << first->second->producer->classname() << "] for object [" << *object_ << "]\n";
-      // check if this object is part of a relation
-      ++first;
-    }
+  prototype_node::field_prototype_node_map_t::const_iterator i = node_->relations.find(node->type);
+  if (i != node_->relations.end()) {
+    std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
+    i->second.first->relation_data[i->second.second][oid].push_back(object_);
+    std::cout << "DEBUG: store relation data in node [" << i->second.first->type << "]->[" << i->second.second << "][" << oid << "].push_back[" << *object_ << "]\n";
   }
-
-
-//  if (i != node->relations.end()) {
-//    std::cout << "DEBUG: found relations for object field [" << id << "]\n";
-    //oproxy->relations[].push_back(object_);
-    
-//    string_node_pair_list_t
-
-//  }
   
   x.reset(oproxy->obj);
   
@@ -271,12 +250,20 @@ void statement_reader::read(const char *id, object_container &x)
     if (stmt_->db().is_loaded(p->type)) {
       std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
     } else {
-      std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled on load\n";
+      std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled after of [" << x.classname() << "] load\n";
     }
   }
-//  const prototype_node::proxy_list_t &proxy_list = p->relations[id][object_->id()];
-  
-  
+  prototype_node::relation_data_map_t::const_iterator i = node_->relation_data.find(id);
+  if (i != node_->relation_data.end()) {
+    prototype_node::object_map_t::const_iterator j = i->second.find(object_->id());
+    if (j != i->second.end()) {
+      std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
+      while (!j->second.empty()) {
+        x.append_proxy(j->second.front()->proxy_);
+//        j->second.pop_front();
+      }
+    }
+  }
 }
 
 bool statement_reader::valid_column(const char *id, int i) const

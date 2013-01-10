@@ -329,6 +329,8 @@ private:
   friend class object_container;
   friend class object_value_base;
 	
+  friend class statement_reader;
+
 	long id_;
   object_proxy *proxy_;
 };
