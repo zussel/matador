@@ -122,9 +122,9 @@ void ObjectVectorTestUnit::test_int_vector()
 
   i = itemvector->erase(i);
   
-  cout << "\n";
+//  cout << "\n";
 
-  std::for_each(itemvector->begin(), itemvector->end(), print);
+//  std::for_each(itemvector->begin(), itemvector->end(), print);
 
   UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
   UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
@@ -184,6 +184,11 @@ void ObjectVectorTestUnit::test_ptr_vector()
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
 
+void print_track(const album::track_ref &trk)
+{
+  std::cout << "track [" << trk->title() << "] index [" << trk->index() << "]\n";
+}
+
 void ObjectVectorTestUnit::test_direct_ref_vector()
 {
   std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
@@ -198,8 +203,26 @@ void ObjectVectorTestUnit::test_direct_ref_vector()
   UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");
 
   track_ptr track1 = ostore_.insert(new track("Track 1"));
+  track_ptr track2 = ostore_.insert(new track("Track 2"));
+  track_ptr track3 = ostore_.insert(new track("Track 3"));
+  track_ptr track4 = ostore_.insert(new track("Track 4"));
   
   alb1->add(track1);
+  alb1->add(track2);
+  alb1->add(track3);
+  alb1->add(track4);
+
+//  std::cout << "\n";
   
-  std::cout << "\ntrack [" << track1->title() << "] index [" << track1->index() << "]\n";
+//  std::for_each(alb1->begin(), alb1->end(), print_track);
+
+  album::iterator i1 = alb1->begin() + 1;
+  album::iterator i2 = alb1->begin() + 3;
+  
+//  std::for_each(i1, i2, print_track);
+
+  alb1->erase(i1, i2);
+
+//  std::for_each(alb1->begin(), alb1->end(), print_track);
+
 }

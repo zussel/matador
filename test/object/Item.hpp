@@ -701,6 +701,7 @@ public:
   const_iterator end() const { return tracks_.end(); }
 
   iterator erase(iterator i) { return tracks_.erase(i); }
+  iterator erase(iterator a, iterator b) { return tracks_.erase(a, b); }
 
   size_type size() const { return tracks_.size(); }
   bool empty() const { return tracks_.empty(); }

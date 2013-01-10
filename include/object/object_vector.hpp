@@ -342,7 +342,7 @@ protected:
     return object_vector_;
   }
 
-  virtual void adjust_index(iterator i, int delta) = 0;
+  virtual void adjust_index(iterator i) = 0;
 
 private:
   virtual void append_proxy(object_proxy *proxy)
@@ -400,7 +400,7 @@ public:
       pos = this->vector().insert(pos, x);
       iterator first = pos;
       // adjust index
-      this->adjust_index(first, 1);
+      this->adjust_index(first);
       return pos;
     }
   }
@@ -419,7 +419,7 @@ public:
       // erase element from list
       i = this->vector().erase(i);
       // update index values of all successor elements
-      this->adjust_index(i, -1);
+      this->adjust_index(i);
       // return iterator
       return i;
     }
@@ -434,11 +434,11 @@ public:
       // mark item object as modified
       this->mark_modified((*i).get());
       // set back ref to zero
-      ref_setter(*(*i).get(), parent_ref());
+      ref_setter(*(*i++).get(), parent_ref());
     }
     i = this->vector().erase(first, last);
     // adjust index
-    this->adjust_index(i, last - first);
+    this->adjust_index(i);
 
     return i;
   }
@@ -449,14 +449,14 @@ protected:
     return 0;
   }
 
-  virtual void adjust_index(iterator i, int delta)
+  virtual void adjust_index(iterator i)
   {
     size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
       // mark item object as modified
       this->mark_modified(i->get());
-      int_setter(*(*i++).get(), ++start + delta);
+      int_setter(*(*i++).get(), start++);
     }
   }
 
@@ -527,7 +527,7 @@ public:
       this->mark_modified(this->parent());
       iterator ret = this->vector().erase(i);
       // update index values of all successor elements
-      this->adjust_index(ret, -1);
+      this->adjust_index(ret);
 
       return ret;
     }
@@ -546,7 +546,7 @@ public:
     }
     i = this->vector().erase(first, last);
     // adjust index
-    this->adjust_index(i, last - first);
+    this->adjust_index(i);
 
     return i;
   }
@@ -557,14 +557,14 @@ protected:
     return new object_producer<item_type>();
   }
 
-  void adjust_index(iterator i, int delta)
+  void adjust_index(iterator i)
   {
     size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
       // mark parent object as modified
       this->mark_modified(i->get());
-      (*i++)->index(++start + delta);
+      (*i++)->index(start++);
     }
   }
 
