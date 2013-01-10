@@ -474,6 +474,7 @@ DatabaseTestUnit::reload_container()
       UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
 
       alb1->add(trk);
+      cout << "added track: " << trk->title() << " (index: " << trk->index() << ")\n";
     }
 
     tr.commit();

@@ -258,10 +258,17 @@ void statement_reader::read(const char *id, object_container &x)
     prototype_node::object_map_t::const_iterator j = i->second.find(object_->id());
     if (j != i->second.end()) {
       std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
+      prototype_node::object_list_t::const_iterator first = j->second.begin();
+      prototype_node::object_list_t::const_iterator last = j->second.end();
+      while (first != last) {
+        x.append_proxy((*first++)->proxy_);
+      }
+      /*
       while (!j->second.empty()) {
         x.append_proxy(j->second.front()->proxy_);
 //        j->second.pop_front();
       }
+      */
     }
   }
 }
