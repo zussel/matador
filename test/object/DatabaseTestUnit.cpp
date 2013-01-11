@@ -466,7 +466,7 @@ DatabaseTestUnit::reload_container()
     tr.commit();
 
     tr.begin();
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 100000; ++i) {
       stringstream name;
       name << "Track " << i+1;
 
@@ -477,12 +477,25 @@ DatabaseTestUnit::reload_container()
 //      cout << "added track: " << trk->title() << " (index: " << trk->index() << ")\n";
     }
 
+    alb1->insert(alb1->begin() + 2, ostore_.insert(new track("Track 6")));
+
     tr.commit();
 
-//    cout << "\nsize: " << alb1->size() << "\n";
+    /*
+    cout << "\n";
+
+    album::const_iterator first = alb1->begin();
+    album::const_iterator last = alb1->end();
+    while (first != last) {
+      track_ptr tr1 = *first++;
+      cout << "track: " << tr1->title() << " (index: " << tr1->index() << ")\n";
+    }
+    */
+
+    cout << "\nsize: " << alb1->size() << "\n";
 
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 100001, "invalid album size");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
@@ -515,10 +528,10 @@ DatabaseTestUnit::reload_container()
     
     album_ptr alb1 = *oview.begin();
     
-//    cout << "size: " << alb1->size() << "\n";
+    cout << "size: " << alb1->size() << "\n";
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 100001, "invalid album size");
 
     /*
     album::const_iterator first = alb1->begin();

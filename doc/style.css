@@ -553,17 +553,28 @@ pre
   -khtml-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid #ddd;
-  margin: 15px 0;
+  margin: 0;
   background-color: #eee;
+  font-size: 88%;
 }
 
-#side_toc ol 
+#side_toc ul
 {
+  padding: 0 0 0 10px;
+  list-style: none;
+}
+
+#side_toc a
+{
+  text-decoration: none;
 }
 
 #side_toc b
 {
-	margin: 5px 20px;
+	margin: 5px 10px;
+  font-size: 110%;
+  font-weight: bolder;
+  text-decoration: underline;
 }
 
 #doc_nav

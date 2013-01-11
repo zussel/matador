@@ -1,6 +1,6 @@
 /**
  * @htmlonly
- * <div class="width66 float_left">
+ * <div class="width75 float_left">
  * @endhtmlonly
  *
  * @page view Object Views
@@ -105,10 +105,10 @@
  *
  * @htmlonly
  * </div>
- * <div id="side_toc" class="width33 float_right">
+ * <div id="side_toc" class="width25 float_right">
  * @endhtmlonly
  * <b>Table of content</b> @n
- * <ol>
+ * <ul>
  *   <li>@ref index
  *    <ul><li>@ref intro_sec</li></ul>
  *   </li>
@@ -124,13 +124,14 @@
  *      </ul>
  *   </ul></li>
  *   <li>@ref relations
+ *   <li>@ref view
  *   <ul>
  *    <li>@ref one_to_one</li>
  *    <li>@ref one_to_many</li>
  *   </ul></li>
- *   <li>@ref expression_sec</li>
- *   <li>@ref database_sec</li>
- * </ol>
+ *   <li>@ref expressions</li>
+ *   <li>@ref database</li>
+ * </ul>
  * @htmlonly
  * </div>
  * @endhtmlonly

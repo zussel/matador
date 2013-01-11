@@ -694,6 +694,11 @@ public:
     tracks_.push_back(b);
   }
 
+  iterator insert(iterator pos, const track_ref &b)
+  {
+    return tracks_.insert(pos, b);
+  }
+
   iterator begin() { return tracks_.begin(); }
   const_iterator begin() const { return tracks_.begin(); }
 

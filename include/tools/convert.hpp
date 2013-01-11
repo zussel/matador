@@ -106,6 +106,46 @@ template < int P, class T, class U >
 void
 convert(const T &from, U &to);
 
+/**
+ * Convert a paramater of one type into another. The conversion
+ * strategy is selected by the given policy. the default policy is
+ * <i>fitting</i>. If the strategy discovers that a conversion
+ * is not allowed an exception is thrown.
+ * 
+ * @tparam P Concersion strategy policy.
+ * @tparam T Type of from parameter.
+ * @tparam U Type of to parameter.
+ * @tparam S Size of to parameter.
+ * @param from From value to convert.
+ * @param to Result parameter.
+ * @param size Size of the result parameter
+ * @throw std::bad_cast() exception.
+ */
+template < int P, class T, class U, class S >
+void
+convert(const T &from, U &to, S size);
+
+/**
+ * Convert a paramater of one type into another. The conversion
+ * strategy is selected by the given policy. the default policy is
+ * <i>fitting</i>. If the strategy discovers that a conversion
+ * is not allowed an exception is thrown.
+ * 
+ * @tparam P Concersion strategy policy.
+ * @tparam T Type of from parameter.
+ * @tparam U Type of to parameter.
+ * @tparam S Size of to parameter.
+ * @tparam P Precision of to parameter.
+ * @param from From value to convert.
+ * @param to Result parameter.
+ * @param size Size of the result parameter
+ * @param precision Precision of the result parameter
+ * @throw std::bad_cast() exception.
+ */
+template < int P, class T, class U, class S, class P >
+void
+convert(const T &from, U &to, S size, P precision);
+
 #else
 
 /*

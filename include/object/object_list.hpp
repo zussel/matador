@@ -37,11 +37,11 @@
 namespace oos {
 
 /**
- * @class object_list
- * @brief An object list class.
+ * @class object_list_base
+ * @brief Base class for all object list classes.
  * @tparam S The type of the parent object.
  * @tparam T The value of the list.
- * @tparam H The value holder class (either oos::object_ref or oos::object_ptr)
+ * @tparam CT The container item type.
  * 
  * The object_list class implements a list which
  * can hold any type of object from builtin types as
@@ -270,6 +270,8 @@ private:
   S *parent_;
 };
 
+///@cond OOS_DEV
+
 /*
  * helper class
  */
@@ -280,6 +282,8 @@ struct dummy { struct inner {}; typedef inner object_type; };
  */
 template < class S, class T, void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
+
+///@endcond
 
 /*
  * implementation with setter method.

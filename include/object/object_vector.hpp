@@ -92,10 +92,11 @@ private:
 /// @endcond
 
 /**
- * @class object_vector
- * @brief An object vector class.
+ * @class object_vector_base
+ * @brief Base class for all object vector classes.
  * @tparam S The type of the parent object.
  * @tparam T The value of the vector.
+ * @tparam CT The container item type.
  * 
  * The object_vector class implements a vector which
  * can hold any type of object from builtin types as
@@ -355,12 +356,16 @@ private:
   vector_type object_vector_;
 };
 
+///@cond OOS_DEV
+
 struct dummyy { struct inner {}; typedef inner object_type; };
 
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC2)(int)>
 class object_vector;
+
+///@endcond
 
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),

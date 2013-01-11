@@ -26,6 +26,8 @@ namespace oos {
 class statement_impl;
 class object;
 
+/// @cond OOS_DEV
+
 class statement_binder : public object_writer
 {
 public:
@@ -219,6 +221,8 @@ private:
   statement_impl_ptr stmt_;
   int column_;
 };
+
+///@endcond
 
 }
 
