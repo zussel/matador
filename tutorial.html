@@ -8,8 +8,11 @@
     <link rel="stylesheet" type="text/css" href="solarized_light.css">
   </head> 
   <body>
-    <div id="wrapper">
-      <div id="header">
+    <div id="header">
+      <a href="https://github.com/zussel/oos"><img style="z-order: 10000; float: left; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png" alt="Fork me on GitHub"></a>
+      <div id="navigation">
+        <p class="logo">OOS</p>
+        <!--p>Store all your objects in one container</p-->
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="api/index.html">Documention</a></li>
@@ -17,25 +20,176 @@
           <li class="selected">Tutorial</li>
           <li><a href="about.html">About</a></li>
         </ul>
-        <div id="logo">
-          <table cellspacing="0">
-            <tr>
-              <td class="oos">OOS</td>
-              <td class="tagline">Store all your objects in one container.</td>
-            </tr>
-          </table>
-        </div>
       </div>
+    </div>
+    <div id="wrapper">
       <div id="content">
         <div class="width66 float_left">
           <h2>Introduction</h2>
-          <p>This tutorial should show how to work with OOS. We will learn</p>
+          <p>This tutorial will show you on hand of a real world example how you design, setup and implement an application with OOS. You will learn
+          </p>
           <ul>
-            <li>how to create object classes</li>
-            <li>how to setup our object class with the object store</li>
+            <li>how to design and create your classes</li>
+            <li>how to create object relations</li>
+            <li>how to setup the object store</li>
             <li>how to setup a database connection</li>
             <li>how to deal with database transactions</li>
           </ul>
+          <h2>Goal</h2>
+          <p>Goal of this project is to create a simple music database. With the resulting applicaction you'll be able to setup a little music database. The program will implement several commands which will work on the database.</p>
+          <h2>Schema Design</h2>
+          <p>We will have three main object types: Artist, Album and Track. Furthermore the artist needs a list of albums and each album needs am array of tracks. So that we defined our types we can fill 'em with their attributes. This will lead us to the following table layout:</p>
+          <table>
+            <caption>artist</caption>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>PK</td>
+              <td>id</td>
+              <td>INTEGER</td>
+              <td>primary key</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>name</td>
+              <td>VARCHAR(64)</td>
+              <td>name of artist</td>
+            </tr>
+          </table>
+          <table>
+            <caption>track</caption>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>PK</td>
+              <td>id</td>
+              <td>INTEGER</td>
+              <td>primary key</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>title</td>
+              <td>VARCHAR(64)</td>
+              <td>title of track</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>artist</td>
+              <td>INTEGER</td>
+              <td>foreign key of artist</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>duration</td>
+              <td>INTEGER</td>
+              <td>length of track</td>
+            </tr>
+          </table>
+          <table>
+            <caption>album</caption>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>PK</td>
+              <td>id</td>
+              <td>INTEGER</td>
+              <td>primary key</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>name</td>
+              <td>VARCHAR(64)</td>
+              <td>name of album</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>artist</td>
+              <td>INTEGER</td>
+              <td>foreign key of artist</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>year</td>
+              <td>INTEGER</td>
+              <td>year of release</td>
+            </tr>
+          </table>
+          <p>These are the main object types. Now we need to helper object types. The first carries the track to album releation and the second arries the album to artist releation. Because we will use a list and a vector in the artist and album objects these object types will be auto-generated. But we will come to this later. First the layout:</p>
+          <table>
+            <caption>track_album_rel</caption>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>PK</td>
+              <td>id</td>
+              <td>INTEGER</td>
+              <td>primary key</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>value</td>
+              <td>INTEGER</td>
+              <td>foreign key to track</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>container</td>
+              <td>INTEGER</td>
+              <td>foreign key to album</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>year</td>
+              <td>INTEGER</td>
+              <td>year of release</td>
+            </tr>
+          </table>
+          <table>
+            <caption>album_artist_rel</caption>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>PK</td>
+              <td>id</td>
+              <td>INTEGER</td>
+              <td>primary key</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>value</td>
+              <td>INTEGER</td>
+              <td>foreign key to album</td>
+            </tr>
+            <tr>
+              <td>FK</td>
+              <td>container</td>
+              <td>INTEGER</td>
+              <td>foreign key to artist</td>
+            </tr>
+          </table>
+          <h2>Object Creation</h2>
+          <h2>Commands</h2>
+          <h2>Wrap Up</h2>
         </div>
         <div class="width33 float_right">
         </div>
