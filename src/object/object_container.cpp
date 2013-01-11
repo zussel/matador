@@ -49,9 +49,6 @@ void object_container::handle_container_item(object_store &ostore, const char *i
   
   // insert the relation
   item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
-  
-  // insert an id proxy list for this field (id)
-  node->relation_data.insert(std::make_pair(id, prototype_node::object_map_t()));
 }
 
 }

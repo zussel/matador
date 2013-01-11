@@ -152,14 +152,13 @@ void sqlite_database::load(const prototype_node &node)
     store_statement(node.type + "_SELECT", stmt);
   }
 
-  std::cout << "DEBUG: loading [" << node.type << "]\n";
-  statement_reader reader;
+  table_info_t &info = table_info_map().at(node.type);
+
+  statement_reader reader(node, stmt, info);
   /* iterate over statement results and create 
    * and insert objects
    */
-  while (stmt->step()) {
-    reader.import(node, stmt);
-  }
+  reader.import();
   
   // call super class
   database::load(node);

@@ -203,6 +203,13 @@ public:
    */
   reference operator*() const;
 
+  /**
+   * Returns the pointer to the node.
+   * 
+   * @return The pointer to the node.
+   */
+  pointer get() const;
+
 private:
   void increment();
   void decrement();

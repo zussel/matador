@@ -330,6 +330,7 @@ private:
   friend class object_value_base;
 	
   friend class statement_reader;
+  friend class relation_filler;
 
 	long id_;
   object_proxy *proxy_;

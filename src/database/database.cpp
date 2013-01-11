@@ -31,13 +31,23 @@ database::database(session *db, database_sequencer *seq)
   : db_(db)
   , commiting_(false)
   , sequencer_(seq)
-{}
+{
+}
 
 database::~database()
 {}
 
 void database::open(const std::string&)
 {
+  prototype_iterator first = db_->ostore().begin();
+  prototype_iterator last = db_->ostore().end();
+  while (first != last) {
+    if (!first->abstract) {
+      table_info_map_.insert(std::make_pair(first->type, table_info_t(first.get())));
+    }
+    ++first;
+  }
+
   sequencer_->create();
   // setup sequencer
   sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
@@ -51,17 +61,17 @@ void database::close()
   sequencer_->destroy();
   
   statement_impl_map_.clear();
-  prototype_map_.clear();
+  table_info_map_.clear();
 }
 
 void database::load(const prototype_node &node)
 {
-  prototype_map_.insert(std::make_pair(node.type, &node));
+  table_info_map_.at(node.type).is_loaded = true;
 }
 
 bool database::is_loaded(const std::string &name) const
 {
-  return prototype_map_.count(name) > 0;
+  return table_info_map_.at(name).is_loaded;
 }
 
 void database::drop()

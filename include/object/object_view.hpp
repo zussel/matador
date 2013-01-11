@@ -465,12 +465,11 @@ public:
    * @param skip_siblings If true only objects of the concrete type are part of the view.
    */
   generic_view(const std::string &type, const object_store &ostore, bool skip_siblings = false)
-    : ostore_(ostore)
-    , skip_siblings_(skip_siblings)
+    : skip_siblings_(skip_siblings)
     , node_(NULL)
   {
-    node_ = ostore_.find_prototype(type.c_str());
-		if (node_ == ostore_.end()) {
+    node_ = ostore.find_prototype(type.c_str());
+		if (node_ == ostore.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << type << "]";
       throw object_exception(str.str().c_str());
@@ -618,7 +617,6 @@ public:
   }
 
 private:
-    const object_store &ostore_;
     bool skip_siblings_;
     prototype_iterator node_;
 };

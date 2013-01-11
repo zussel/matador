@@ -38,11 +38,14 @@
 
 #ifdef WIN32
 #include <memory>
+#include <unordered_map>
 #else
 #include <tr1/memory>
+#include <tr1/unordered_map>
 #endif
 
 #include <map>
+#include <list>
 
 namespace oos {
 
@@ -68,8 +71,19 @@ struct prototype_node;
 class OOS_API database : public action_visitor
 {
 public:
+  typedef std::list<object*> object_list_t;
+  typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
+  typedef std::map<std::string, object_map_t> relation_data_t;
   typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
   typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
+
+  struct table_info_t
+  {
+    table_info_t(const prototype_node *n) : is_loaded(false), node(n) {}
+    bool is_loaded;
+    relation_data_t relation_data;
+    const prototype_node *node;
+  };
 
 protected:
   database(session *db, database_sequencer *seq);
@@ -242,6 +256,11 @@ protected:
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;
 
+protected:
+  typedef std::map<std::string, table_info_t> table_info_map_t;
+
+  table_info_map_t& table_info_map() { return table_info_map_; }
+
 private:
   friend class database_factory;
   friend class statement_reader;
@@ -255,9 +274,8 @@ private:
 
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;
-  
-  typedef std::map<std::string, const prototype_node*> prototype_map_t;
-  prototype_map_t prototype_map_;
+
+  table_info_map_t table_info_map_;
 };
 
 /// @endcond

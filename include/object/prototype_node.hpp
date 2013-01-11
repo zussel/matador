@@ -185,9 +185,6 @@ public:
 
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
-  typedef std::list<object*> object_list_t;                      /**< Shortcut for a list of objects. */
-  typedef std::map<long, object_list_t> object_map_t;            /**< Shortcut for a id (pk) to object list map. */
-  typedef std::map<std::string, object_map_t> relation_data_map_t;     /**< Shortcur for the relation data map (hold by the container). */
 
   // tree links
   prototype_node *parent; /**< The parent node */
@@ -206,7 +203,6 @@ public:
    * of the attribute
    */
   field_prototype_node_map_t relations;
-  relation_data_map_t relation_data;
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */

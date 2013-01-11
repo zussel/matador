@@ -160,6 +160,11 @@ prototype_iterator::reference prototype_iterator::operator*() const
   return *node_;
 }
 
+prototype_iterator::pointer prototype_iterator::get() const
+{
+  return node_;
+}
+
 void prototype_iterator::increment()
 {
   if (node_) {

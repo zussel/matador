@@ -38,9 +38,9 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
-  ostore_.insert_prototype<track>("track");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<playlist>("playlist");
+  ostore_.insert_prototype<track>("track");
 
   // delete db
   std::remove("test.sqlite");
@@ -474,12 +474,12 @@ DatabaseTestUnit::reload_container()
       UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
 
       alb1->add(trk);
-      cout << "added track: " << trk->title() << " (index: " << trk->index() << ")\n";
+//      cout << "added track: " << trk->title() << " (index: " << trk->index() << ")\n";
     }
 
     tr.commit();
 
-    cout << "\nsize: " << alb1->size() << "\n";
+//    cout << "\nsize: " << alb1->size() << "\n";
 
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
     UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
@@ -515,15 +515,19 @@ DatabaseTestUnit::reload_container()
     
     album_ptr alb1 = *oview.begin();
     
-    cout << "size: " << alb1->size() << "\n";
+//    cout << "size: " << alb1->size() << "\n";
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
     UNIT_ASSERT_EQUAL((int)alb1->size(), 5, "invalid album size");
 
-    album::const_iterator i = alb1->begin();
-    
-    track_ptr tr1 = *i;
-    cout << "track: " << tr1->title() << " (index: " << tr1->index() << ")\n";
+    /*
+    album::const_iterator first = alb1->begin();
+    album::const_iterator last = alb1->end();
+    while (first != last) {
+      track_ptr tr1 = *first++;
+      cout << "track: " << tr1->title() << " (index: " << tr1->index() << ")\n";
+    }
+    */
 
   } catch (database_exception &ex) {
     // error, abort transaction

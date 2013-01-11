@@ -31,6 +31,7 @@
 #endif
 
 #include "object/object_atomizer.hpp"
+#include "database/database.hpp"
 
 #include <string>
 
@@ -57,10 +58,10 @@ public:
   typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
 
 public:
-  statement_reader();
+  statement_reader(const prototype_node &node, const statement_impl_ptr &stmt, database::table_info_t &info);
   virtual ~statement_reader();
 
-  void import(const prototype_node &node, const statement_impl_ptr &stmt);
+  void import();
 
 public:
   /**
@@ -244,11 +245,12 @@ private:
   bool valid_column(const char *id, int i) const;
 
 private:
-  statement_impl_ptr stmt_;
-  
   object *object_;
-  const prototype_node *node_;
 
+  statement_impl_ptr stmt_;
+  const prototype_node &node_;
+  database::table_info_t &info_;
+  
   int column_;
 };
 
