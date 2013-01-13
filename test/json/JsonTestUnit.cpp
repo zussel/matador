@@ -110,11 +110,11 @@ void JsonTestUnit::access_test()
   root["array"][3] = new json_null;
   root["array"].push_back(5);
 
-  UNIT_ASSERT_EQUAL(root.size(), 2, "json object must contain 2 elements");
+  UNIT_ASSERT_TRUE(root.size() == 2, "json object must contain 2 elements");
 
   json_object obj = root;
 
-  UNIT_ASSERT_EQUAL(obj.size(), 2, "json object must contain 2 elements");
+  UNIT_ASSERT_TRUE(obj.size() == 2, "json object must contain 2 elements");
 
   json_number numb = root["number"];
 
@@ -130,7 +130,7 @@ void JsonTestUnit::access_test()
 
   json_array ary = root["array"];
 
-  UNIT_ASSERT_EQUAL(ary.size(), 5, "json array must contain 5 elements");
+  UNIT_ASSERT_TRUE(ary.size() == 5, "json array must contain 5 elements");
 
   json_array::const_iterator first = ary.begin();
   json_array::const_iterator last = ary.end();

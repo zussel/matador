@@ -202,6 +202,12 @@ ADD_LIBRARY(oos SHARED
   ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER}
 )
 
+# Set the build version (VERSION) and the API version (SOVERSION)
+SET_TARGET_PROPERTIES(oos
+                      PROPERTIES
+                      VERSION 0.1.0
+                      SOVERSION 1)
+
 SET(SQLITE_DATABASE_SOURCES
   src/database/sqlite/sqlite_database.cpp
   src/database/sqlite/sqlite_exception.cpp
@@ -223,6 +229,11 @@ ADD_LIBRARY(oos-sqlite SHARED
   ${SQLITE_DATABASE_SOURCES} ${SQLITE_DATABASE_HEADER}
 )
 
+SET_TARGET_PROPERTIES(oos-sqlite
+                      PROPERTIES
+                      VERSION 0.1.0
+                      SOVERSION 1)
+
 TARGET_LINK_LIBRARIES(oos-sqlite oos ${SQLITE3_LIBRARY})
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
@@ -233,7 +244,6 @@ SOURCE_GROUP("unit" FILES ${UNIT_SOURCES} ${UNIT_HEADER})
 SOURCE_GROUP("database" FILES ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 
 ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(example)
 
 INSTALL(
 	TARGETS oos oos-sqlite

@@ -655,7 +655,7 @@ class album : public oos::object
 {
 public:
   typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<album, track_ref, &track::alb, &track::index> track_list_t;
+  typedef oos::object_vector<album, track_ref, &track::alb, &track::index, &track::index> track_list_t;
   typedef typename track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;

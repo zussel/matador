@@ -345,10 +345,14 @@ protected:
 
   virtual void adjust_index(iterator i) = 0;
 
-private:
   virtual void append_proxy(object_proxy *proxy)
   {
     object_vector_.push_back(item_holder(proxy));
+  }
+
+  vector_type& vec()
+  {
+    return object_vector_;
   }
 
 private:
@@ -362,15 +366,19 @@ struct dummyy { struct inner {}; typedef inner object_type; };
 
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC2)(int)>
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
+int (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
+>
 class object_vector;
 
 ///@endcond
 
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)>
-class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T>
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
+int (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
+>
+class object_vector<S, T, FUNC1, FUNC2, FUNC3> : public object_vector_base<S, T>
 {
 public:
 	typedef typename T::object_type value_type;
@@ -386,6 +394,7 @@ public:
     : object_vector_base<S, T>(parent)
 		, ref_setter(FUNC1)
 		, int_setter(FUNC2)
+    , int_getter(FUNC3)
   {
 //    std::cout << "func 2\n";
   }
@@ -465,15 +474,24 @@ protected:
     }
   }
 
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    
+    int index = int_getter(*static_cast<value_type*>(proxy->obj));
+    base_vector::append_proxy(proxy);
+  }
+
 private:
 	std::function<void (value_type&, const object_ref<S>&)> ref_setter;
 	std::function<void (value_type&, int)> int_setter;
+	std::function<int (const value_type&)> int_getter;
 };
 
 template < class S, class T,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&)
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
 >
-class object_vector<S, T, FUNC1> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
+class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
 	typedef typename std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type;
@@ -490,6 +508,7 @@ public:
 	explicit object_vector(S *parent)
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
 		, str_setter(FUNC1)
+    , int_setter(FUNC2)
 	{
 //    std::cout << "func 2\n";
   }
@@ -575,6 +594,7 @@ protected:
 
 private:
 	std::function<void (value_type&, const object_ref<S>&)> str_setter;
+	std::function<void (value_type&, int)> int_setter;
 };
 
 }
