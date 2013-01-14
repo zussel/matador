@@ -65,20 +65,23 @@
 </div><!--header-->
 <div class="contents">
 
-<p>An object vector class.  
+<p>Object vector class without relation table.  
  <a href="classobject__vector.html#details">More...</a></p>
 
 <p><code>#include &lt;object_vector.hpp&gt;</code></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>An object vector class. </p>
+<div class="textblock"><p>Object vector class without relation table. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">S</td><td>The type of the parent object. </td></tr>
-    <tr><td class="paramname">T</td><td>The value of the vector.</td></tr>
+    <tr><td class="paramname">T</td><td>The value of the vector. </td></tr>
+    <tr><td class="paramname">FUNC1</td><td>The parent setter function </td></tr>
+    <tr><td class="paramname">FUNC2</td><td>The index setter function </td></tr>
+    <tr><td class="paramname">FUNC3</td><td>The index getter function</td></tr>
   </table>
   </dd>
 </dl>
-<p>The <a class="el" href="classobject__vector.html" title="An object vector class.">object_vector</a> class implements a vector which can hold any type of object from builtin types as int, float to object_ptr or object_ref elements. The class provides STL like behaviour and the order of the elements is reliable. </p>
+<p>The <a class="el" href="classobject__vector.html" title="Object vector class without relation table.">object_vector</a> class implements a vector which can hold any type of object from builtin types as int, float to object_ptr or object_ref elements. The class provides STL like behaviour and the order of the elements is reliable. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/object/object_vector.hpp</li>
 </ul>

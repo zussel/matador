@@ -67,45 +67,40 @@
   <div class="summary">
 <a href="classoos_1_1object__list_3_01_s_00_01_t_01_4-members.html">List of all members</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">oos::object_list&lt; S, T &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
+<p>List class mapping items via relation table.  
+ <a href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;object_list.hpp&gt;</code></p>
+
 <p>Inherits <a class="el" href="classoos_1_1object__list__base.html">oos::object_list_base&lt; S, T, object_ptr&lt; container_item&lt; T, S &gt; &gt; &gt;</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ad652c145407962d21677654541605926"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad652c145407962d21677654541605926"></a>
-typedef <a class="el" href="classoos_1_1object__list__base.html">object_list_base</a>&lt; S, T, <br class="typebreak"/>
+<tr class="memitem:ad652c145407962d21677654541605926"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list__base.html">object_list_base</a>&lt; S, T, <br class="typebreak"/>
 <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a>&lt; <a class="el" href="classoos_1_1container__item.html">container_item</a>&lt; T, <br class="typebreak"/>
-S &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>base_list</b></td></tr>
+S &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#ad652c145407962d21677654541605926">base_list</a></td></tr>
 <tr class="separator:ad652c145407962d21677654541605926"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a756ea995f85cae9652802f8e3913153d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a756ea995f85cae9652802f8e3913153d"></a>
-typedef T&#160;</td><td class="memItemRight" valign="bottom"><b>value_holder</b></td></tr>
+<tr class="memitem:a756ea995f85cae9652802f8e3913153d"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a756ea995f85cae9652802f8e3913153d">value_holder</a></td></tr>
 <tr class="separator:a756ea995f85cae9652802f8e3913153d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ca7e986234dd3b78a5700827d020413"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ca7e986234dd3b78a5700827d020413"></a>
-typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt; S &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>parent_ref</b></td></tr>
+<tr class="memitem:a6ca7e986234dd3b78a5700827d020413"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt; S &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a6ca7e986234dd3b78a5700827d020413">parent_ref</a></td></tr>
 <tr class="separator:a6ca7e986234dd3b78a5700827d020413"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a016bbf94b62369b7ced3d3e7f8c13107"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a016bbf94b62369b7ced3d3e7f8c13107"></a>
-typedef <a class="el" href="classoos_1_1object__list__base.html#a630bc646e8230a9169d1eee595375075">base_list::size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
-<tr class="separator:a016bbf94b62369b7ced3d3e7f8c13107"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97abea4d80ec4d1b403e90f7eb24633f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97abea4d80ec4d1b403e90f7eb24633f"></a>
-typedef <a class="el" href="classoos_1_1object__list__base.html#a1e4e00ba71341bf61cbf92fe5de23955">base_list::item_holder</a>&#160;</td><td class="memItemRight" valign="bottom"><b>item_holder</b></td></tr>
-<tr class="separator:a97abea4d80ec4d1b403e90f7eb24633f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e87994f51456e97517dd472cd3161d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68e87994f51456e97517dd472cd3161d"></a>
-typedef <a class="el" href="classoos_1_1container__item.html">container_item</a>&lt; T, S &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>item_type</b></td></tr>
+<tr class="memitem:a68e87994f51456e97517dd472cd3161d"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1container__item.html">container_item</a>&lt; T, S &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a68e87994f51456e97517dd472cd3161d">item_type</a></td></tr>
 <tr class="separator:a68e87994f51456e97517dd472cd3161d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac176542d2449d8d528c033cc798262ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac176542d2449d8d528c033cc798262ff"></a>
-typedef <a class="el" href="classoos_1_1object__ptr.html">item_holder</a>&#160;</td><td class="memItemRight" valign="bottom"><b>item_ptr</b></td></tr>
+<tr class="memitem:a016bbf94b62369b7ced3d3e7f8c13107"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list__base.html#a630bc646e8230a9169d1eee595375075">base_list::size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a016bbf94b62369b7ced3d3e7f8c13107">size_type</a></td></tr>
+<tr class="separator:a016bbf94b62369b7ced3d3e7f8c13107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97abea4d80ec4d1b403e90f7eb24633f"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list__base.html#a1e4e00ba71341bf61cbf92fe5de23955">base_list::item_holder</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a97abea4d80ec4d1b403e90f7eb24633f">item_holder</a></td></tr>
+<tr class="separator:a97abea4d80ec4d1b403e90f7eb24633f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac176542d2449d8d528c033cc798262ff"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a97abea4d80ec4d1b403e90f7eb24633f">item_holder</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#ac176542d2449d8d528c033cc798262ff">item_ptr</a></td></tr>
 <tr class="separator:ac176542d2449d8d528c033cc798262ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf847c1fb0944de4db96e44215647336"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf847c1fb0944de4db96e44215647336"></a>
-typedef <a class="el" href="classoos_1_1object__list__base.html#a634aea11b1a3ae50bdc60c8a50ce81ac">base_list::iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
+<tr class="memitem:acf847c1fb0944de4db96e44215647336"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list__base.html#a634aea11b1a3ae50bdc60c8a50ce81ac">base_list::iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a></td></tr>
 <tr class="separator:acf847c1fb0944de4db96e44215647336"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59f77f5989d26bbf1d721b9b6ad2ea03"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59f77f5989d26bbf1d721b9b6ad2ea03"></a>
-typedef <a class="el" href="classoos_1_1object__list__base.html#a42c25fecf82cfa67c7f19d6be052600d">base_list::const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>const_iterator</b></td></tr>
+<tr class="memitem:a59f77f5989d26bbf1d721b9b6ad2ea03"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__list__base.html#a42c25fecf82cfa67c7f19d6be052600d">base_list::const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a59f77f5989d26bbf1d721b9b6ad2ea03">const_iterator</a></td></tr>
 <tr class="separator:a59f77f5989d26bbf1d721b9b6ad2ea03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classoos_1_1object__list__base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classoos_1_1object__list__base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classoos_1_1object__list__base.html">oos::object_list_base&lt; S, T, object_ptr&lt; container_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
 <tr class="memitem:ac323dfc080873cc970bc1533130b9cc4 inherit pub_types_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#ac323dfc080873cc970bc1533130b9cc4">value_holder</a></td></tr>
@@ -130,20 +125,18 @@ typedef <a class="el" href="classoos_1_1object__list__base.html#a42c25fecf82cfa6
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8863b35cdcb830296bd4d46401022f12"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8863b35cdcb830296bd4d46401022f12"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>object_list</b> (S *<a class="el" href="classoos_1_1object__list__base.html#a712f35328b1b2ceb02ead15167da3cc1">parent</a>)</td></tr>
+<tr class="memitem:a8863b35cdcb830296bd4d46401022f12"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a8863b35cdcb830296bd4d46401022f12">object_list</a> (S *<a class="el" href="classoos_1_1object__list__base.html#a712f35328b1b2ceb02ead15167da3cc1">parent</a>)</td></tr>
 <tr class="separator:a8863b35cdcb830296bd4d46401022f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7140f5b6e59350f979fae99e0a034b10"><td class="memItemLeft" align="right" valign="top">virtual iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a7140f5b6e59350f979fae99e0a034b10">insert</a> (iterator pos, const value_holder &amp;x)</td></tr>
+<tr class="memitem:a7140f5b6e59350f979fae99e0a034b10"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a7140f5b6e59350f979fae99e0a034b10">insert</a> (<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a> pos, const <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a756ea995f85cae9652802f8e3913153d">value_holder</a> &amp;x)</td></tr>
 <tr class="memdesc:a7140f5b6e59350f979fae99e0a034b10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a new element.  <a href="#a7140f5b6e59350f979fae99e0a034b10"></a><br/></td></tr>
 <tr class="separator:a7140f5b6e59350f979fae99e0a034b10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a2db8618ff4520f60f3150f237c6045"><td class="memItemLeft" align="right" valign="top">virtual iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a2a2db8618ff4520f60f3150f237c6045">erase</a> (iterator i)</td></tr>
+<tr class="memitem:a2a2db8618ff4520f60f3150f237c6045"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a2a2db8618ff4520f60f3150f237c6045">erase</a> (<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a> i)</td></tr>
 <tr class="memdesc:a2a2db8618ff4520f60f3150f237c6045"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface to erase an element.  <a href="#a2a2db8618ff4520f60f3150f237c6045"></a><br/></td></tr>
 <tr class="separator:a2a2db8618ff4520f60f3150f237c6045"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classoos_1_1object__list__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classoos_1_1object__list__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classoos_1_1object__list__base.html">oos::object_list_base&lt; S, T, object_ptr&lt; container_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
 <tr class="memitem:a8967daf8464f7804a3c7a76530b611ed inherit pub_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a8967daf8464f7804a3c7a76530b611ed">object_list_base</a> (S *parent)</td></tr>
 <tr class="separator:a8967daf8464f7804a3c7a76530b611ed inherit pub_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c6bbecc7c9c6b97d760ff98bcb9d3cc inherit pub_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c6bbecc7c9c6b97d760ff98bcb9d3cc"></a>
-virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>classname</b> () const</td></tr>
+<tr class="memitem:a1c6bbecc7c9c6b97d760ff98bcb9d3cc inherit pub_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a1c6bbecc7c9c6b97d760ff98bcb9d3cc">classname</a> () const</td></tr>
 <tr class="separator:a1c6bbecc7c9c6b97d760ff98bcb9d3cc inherit pub_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08750022f9858db879691ea4642e6c1c inherit pub_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoos_1_1object__list__base.html#a634aea11b1a3ae50bdc60c8a50ce81ac">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a08750022f9858db879691ea4642e6c1c">begin</a> ()</td></tr>
 <tr class="separator:a08750022f9858db879691ea4642e6c1c inherit pub_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,11 +160,8 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>class
 <tr class="memdesc:a8b016bbeae3e4047676466d1b47f304f inherit pub_methods_classoos_1_1object__list__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases a range defines by iterators.  <a href="#a8b016bbeae3e4047676466d1b47f304f"></a><br/></td></tr>
 <tr class="separator:a8b016bbeae3e4047676466d1b47f304f inherit pub_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:afde59f41ef457916faedc86a9de53457"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afde59f41ef457916faedc86a9de53457"></a>
-virtual <a class="el" href="classoos_1_1object__base__producer.html">object_base_producer</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>create_item_producer</b> () const </td></tr>
-<tr class="separator:afde59f41ef457916faedc86a9de53457"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classoos_1_1object__list__base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classoos_1_1object__list__base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classoos_1_1object__list__base.html">oos::object_list_base&lt; S, T, object_ptr&lt; container_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
 <tr class="memitem:a3549eff99cfdcab4002f43637b8e5aff inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a3549eff99cfdcab4002f43637b8e5aff">for_each</a> (const node_func &amp;nf) const</td></tr>
 <tr class="memdesc:a3549eff99cfdcab4002f43637b8e5aff inherit pro_methods_classoos_1_1object__list__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes the given function object for all elements.  <a href="#a3549eff99cfdcab4002f43637b8e5aff"></a><br/></td></tr>
@@ -180,13 +170,194 @@ virtual <a class="el" href="classoos_1_1object__base__producer.html">object_base
 <tr class="separator:a437e244cf1b84721f0dc36d256db5c18 inherit pro_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a712f35328b1b2ceb02ead15167da3cc1 inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a712f35328b1b2ceb02ead15167da3cc1">parent</a> (<a class="el" href="classoos_1_1object.html">object</a> *p)</td></tr>
 <tr class="separator:a712f35328b1b2ceb02ead15167da3cc1 inherit pro_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a916573b60568bdebcebf4d8b965bea98 inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a916573b60568bdebcebf4d8b965bea98"></a>
-S *&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> ()</td></tr>
+<tr class="memitem:a916573b60568bdebcebf4d8b965bea98 inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top">S *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#a916573b60568bdebcebf4d8b965bea98">parent</a> ()</td></tr>
 <tr class="separator:a916573b60568bdebcebf4d8b965bea98 inherit pro_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad93f3f5f57d8a0fbc03eff7f2e445d13 inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad93f3f5f57d8a0fbc03eff7f2e445d13"></a>
-<a class="el" href="classoos_1_1object__list__base.html#a297a3b8eb212124767279e41e969da69">list_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>list</b> ()</td></tr>
+<tr class="memitem:ad93f3f5f57d8a0fbc03eff7f2e445d13 inherit pro_methods_classoos_1_1object__list__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoos_1_1object__list__base.html#a297a3b8eb212124767279e41e969da69">list_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__list__base.html#ad93f3f5f57d8a0fbc03eff7f2e445d13">list</a> ()</td></tr>
 <tr class="separator:ad93f3f5f57d8a0fbc03eff7f2e445d13 inherit pro_methods_classoos_1_1object__list__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class S, class T&gt;<br/>
+class oos::object_list&lt; S, T &gt;</h3>
+
+<p>List class mapping items via relation table. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">S</td><td>The parent class type. </td></tr>
+    <tr><td class="paramname">T</td><td>The item class type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This object lisz class uses a relation table to map the items to its parent. </p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a class="anchor" id="ad652c145407962d21677654541605926"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list__base.html">object_list_base</a>&lt;S, T, <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a>&lt;<a class="el" href="classoos_1_1container__item.html">container_item</a>&lt;T, S&gt; &gt; &gt; oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#ad652c145407962d21677654541605926">base_list</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the base list. </p>
+
+</div>
+</div>
+<a class="anchor" id="a59f77f5989d26bbf1d721b9b6ad2ea03"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list__base.html#a42c25fecf82cfa67c7f19d6be052600d">base_list::const_iterator</a> oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a59f77f5989d26bbf1d721b9b6ad2ea03">const_iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the const iterator. </p>
+
+</div>
+</div>
+<a class="anchor" id="a97abea4d80ec4d1b403e90f7eb24633f"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list__base.html#a1e4e00ba71341bf61cbf92fe5de23955">base_list::item_holder</a> oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a97abea4d80ec4d1b403e90f7eb24633f">item_holder</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the item holder. </p>
+
+</div>
+</div>
+<a class="anchor" id="ac176542d2449d8d528c033cc798262ff"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a97abea4d80ec4d1b403e90f7eb24633f">item_holder</a> oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#ac176542d2449d8d528c033cc798262ff">item_ptr</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the item ptr. </p>
+
+</div>
+</div>
+<a class="anchor" id="a68e87994f51456e97517dd472cd3161d"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1container__item.html">container_item</a>&lt;T, S&gt; oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a68e87994f51456e97517dd472cd3161d">item_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the item type. </p>
+
+</div>
+</div>
+<a class="anchor" id="acf847c1fb0944de4db96e44215647336"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list__base.html#a634aea11b1a3ae50bdc60c8a50ce81ac">base_list::iterator</a> oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the iterator. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6ca7e986234dd3b78a5700827d020413"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt;S&gt; oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a6ca7e986234dd3b78a5700827d020413">parent_ref</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the parent reference. </p>
+
+</div>
+</div>
+<a class="anchor" id="a016bbf94b62369b7ced3d3e7f8c13107"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__list__base.html#a630bc646e8230a9169d1eee595375075">base_list::size_type</a> oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a016bbf94b62369b7ced3d3e7f8c13107">size_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the size type. </p>
+
+</div>
+</div>
+<a class="anchor" id="a756ea995f85cae9652802f8e3913153d"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef T oos::object_list&lt; S, T &gt;::<a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a756ea995f85cae9652802f8e3913153d">value_holder</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut for the value holder. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a8863b35cdcb830296bd4d46401022f12"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class S , class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">oos::object_list&lt; S, T &gt;::object_list </td>
+          <td>(</td>
+          <td class="paramtype">S *&#160;</td>
+          <td class="paramname"><em>parent</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates an empty list with the given parent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent</td><td>The parent of the list. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a2a2db8618ff4520f60f3150f237c6045"></a>
 <div class="memitem">
@@ -198,9 +369,9 @@ template&lt;class S , class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual iterator oos::object_list&lt; S, T &gt;::erase </td>
+          <td class="memname">virtual <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a> oos::object_list&lt; S, T &gt;::erase </td>
           <td>(</td>
-          <td class="paramtype">iterator&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a>&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
           <td></td>
         </tr>
@@ -236,15 +407,15 @@ template&lt;class S , class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual iterator oos::object_list&lt; S, T &gt;::insert </td>
+          <td class="memname">virtual <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a> oos::object_list&lt; S, T &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype">iterator&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#acf847c1fb0944de4db96e44215647336">iterator</a>&#160;</td>
           <td class="paramname"><em>pos</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const value_holder &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classoos_1_1object__list_3_01_s_00_01_t_01_4.html#a756ea995f85cae9652802f8e3913153d">value_holder</a> &amp;&#160;</td>
           <td class="paramname"><em>x</em>&#160;</td>
         </tr>
         <tr>

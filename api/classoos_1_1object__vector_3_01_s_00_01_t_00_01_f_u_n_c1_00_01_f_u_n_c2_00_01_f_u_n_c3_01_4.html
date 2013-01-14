@@ -60,64 +60,52 @@
   </div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceoos.html">oos</a></li><li class="navelem"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html">object_vector< S, T, FUNC1, FUNC2 ></a></li>  </ul>
+<li class="navelem"><a class="el" href="namespaceoos.html">oos</a></li><li class="navelem"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html">object_vector< S, T, FUNC1, FUNC2, FUNC3 ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4-members.html">List of all members</a> &#124;
+<a href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4-members.html">List of all members</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt; Class Template Reference</div>  </div>
+<div class="title">oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Object vector class with relation table.  
- <a href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#details">More...</a></p>
+<p>Object vector class without relation table.  
+ <a href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#details">More...</a></p>
 
 <p><code>#include &lt;object_vector.hpp&gt;</code></p>
 
-<p>Inherits <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a>.</p>
+<p>Inherits <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T &gt;</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac6f5a956cb911740e54da075975eeb21"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html">object_vector_base</a>&lt; S, <br class="typebreak"/>
-T, <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a><br class="typebreak"/>
-&lt; object_vector_item&lt; T, S &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#ac6f5a956cb911740e54da075975eeb21">base_vector</a></td></tr>
-<tr class="separator:ac6f5a956cb911740e54da075975eeb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a063eaf846e8db187866f6d58b7d62b1d"><td class="memItemLeft" align="right" valign="top">typedef std::conditional<br class="typebreak"/>
-&lt; std::is_base_of<br class="typebreak"/>
-&lt; <a class="el" href="classoos_1_1object__base__ptr.html">object_base_ptr</a>, T &gt;::value, <br class="typebreak"/>
-T, dummyy &gt;::type::object_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a063eaf846e8db187866f6d58b7d62b1d">value_type</a></td></tr>
-<tr class="separator:a063eaf846e8db187866f6d58b7d62b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9461f0c7c856c4a95a9294c3a082f2a5"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a9461f0c7c856c4a95a9294c3a082f2a5">value_holder</a></td></tr>
-<tr class="separator:a9461f0c7c856c4a95a9294c3a082f2a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45e8d4c34df28016f321d8dc5b0f9b84"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt; S &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a45e8d4c34df28016f321d8dc5b0f9b84">parent_ref</a></td></tr>
-<tr class="separator:a45e8d4c34df28016f321d8dc5b0f9b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec467374c012b03d8901472c69ed3e30"><td class="memItemLeft" align="right" valign="top">typedef base_vector::item_holder&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aec467374c012b03d8901472c69ed3e30">item_holder</a></td></tr>
-<tr class="separator:aec467374c012b03d8901472c69ed3e30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a50616b490e9c7bec5722af249a00fd"><td class="memItemLeft" align="right" valign="top">typedef object_vector_item&lt; T, S &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a2a50616b490e9c7bec5722af249a00fd">item_type</a></td></tr>
-<tr class="separator:a2a50616b490e9c7bec5722af249a00fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a937fbd5994d3cd1d0ac6066d0f5f8ea3"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aec467374c012b03d8901472c69ed3e30">item_holder</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a937fbd5994d3cd1d0ac6066d0f5f8ea3">item_ptr</a></td></tr>
-<tr class="separator:a937fbd5994d3cd1d0ac6066d0f5f8ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f047a30bfda830d68e1478a15983ddd"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#a1092b9bff7d97b0c5c7ef4f9a037c7e5">base_vector::size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a5f047a30bfda830d68e1478a15983ddd">size_type</a></td></tr>
-<tr class="separator:a5f047a30bfda830d68e1478a15983ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed343cb36cd23c0c8a13b14e4d82b940"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#ab8427a8911ecd5447c708963c226dd33">base_vector::iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a></td></tr>
-<tr class="separator:aed343cb36cd23c0c8a13b14e4d82b940"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae374a93112bf54174a3aee8ef43bfe7b"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#aa52a3e726708a5da2c80f5f8ee61a631">base_vector::const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#ae374a93112bf54174a3aee8ef43bfe7b">const_iterator</a></td></tr>
-<tr class="separator:ae374a93112bf54174a3aee8ef43bfe7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_types_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
+<tr class="memitem:a9cb48f42b6dcbf739eb3ace7706c0409"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html">object_vector_base</a>&lt; S, T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a9cb48f42b6dcbf739eb3ace7706c0409">base_vector</a></td></tr>
+<tr class="separator:a9cb48f42b6dcbf739eb3ace7706c0409"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93748411f77dc5124092a8d1288ea75b"><td class="memItemLeft" align="right" valign="top">typedef T::object_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a93748411f77dc5124092a8d1288ea75b">value_type</a></td></tr>
+<tr class="separator:a93748411f77dc5124092a8d1288ea75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873fd822b8c07b0d3ee0bb4fcd55c730"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a873fd822b8c07b0d3ee0bb4fcd55c730">value_holder</a></td></tr>
+<tr class="separator:a873fd822b8c07b0d3ee0bb4fcd55c730"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3769a1e15bbad562bf97b025b754d2e0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt; S &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a3769a1e15bbad562bf97b025b754d2e0">parent_ref</a></td></tr>
+<tr class="separator:a3769a1e15bbad562bf97b025b754d2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abff668031d4c8dbe3fdd6a31fc8053a5"><td class="memItemLeft" align="right" valign="top">typedef T::object_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#abff668031d4c8dbe3fdd6a31fc8053a5">item_type</a></td></tr>
+<tr class="separator:abff668031d4c8dbe3fdd6a31fc8053a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28bfd25a4b182076bf756af27c39db1b"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#a1092b9bff7d97b0c5c7ef4f9a037c7e5">base_vector::size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a28bfd25a4b182076bf756af27c39db1b">size_type</a></td></tr>
+<tr class="separator:a28bfd25a4b182076bf756af27c39db1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a367935c4b92b938296963f64e29889a6"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#ab8427a8911ecd5447c708963c226dd33">base_vector::iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a></td></tr>
+<tr class="separator:a367935c4b92b938296963f64e29889a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaeb9ab46a84bf57cbeb25677e0f4dd26"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__vector__base.html#aa52a3e726708a5da2c80f5f8ee61a631">base_vector::const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#aaeb9ab46a84bf57cbeb25677e0f4dd26">const_iterator</a></td></tr>
+<tr class="separator:aaeb9ab46a84bf57cbeb25677e0f4dd26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T &gt;</a></td></tr>
 <tr class="memitem:a9d404fe42070f13bc7bdfd5597ce12d4 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a9d404fe42070f13bc7bdfd5597ce12d4">value_holder</a></td></tr>
 <tr class="separator:a9d404fe42070f13bc7bdfd5597ce12d4 inherit pub_types_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e5906d2b7f21d235dc010a2374cba65 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef S&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a1e5906d2b7f21d235dc010a2374cba65">parent_type</a></td></tr>
 <tr class="separator:a1e5906d2b7f21d235dc010a2374cba65 inherit pub_types_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49254898caa415e87ee88aba2272bf53 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a><br class="typebreak"/>
-&lt; object_vector_item&lt; T, S &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a49254898caa415e87ee88aba2272bf53">item_holder</a></td></tr>
+<tr class="memitem:a49254898caa415e87ee88aba2272bf53 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a49254898caa415e87ee88aba2272bf53">item_holder</a></td></tr>
 <tr class="separator:a49254898caa415e87ee88aba2272bf53 inherit pub_types_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac12e00ef57487c141a7ee45c3a9373d5 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a><br class="typebreak"/>
-&lt; object_vector_item&lt; T, S &gt;<br class="typebreak"/>
- &gt;::object_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#ac12e00ef57487c141a7ee45c3a9373d5">item_type</a></td></tr>
+<tr class="memitem:ac12e00ef57487c141a7ee45c3a9373d5 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef T::object_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#ac12e00ef57487c141a7ee45c3a9373d5">item_type</a></td></tr>
 <tr class="separator:ac12e00ef57487c141a7ee45c3a9373d5 inherit pub_types_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afaf8dce3379d8ee223c7cf5156e60f64 inherit pub_types_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="classoos_1_1object__vector__base.html#a49254898caa415e87ee88aba2272bf53">item_holder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#afaf8dce3379d8ee223c7cf5156e60f64">vector_type</a></td></tr>
 <tr class="separator:afaf8dce3379d8ee223c7cf5156e60f64 inherit pub_types_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,20 +118,20 @@ T, dummyy &gt;::type::object_type&#160;</td><td class="memItemRight" valign="bot
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ade08218f83e136d6fccde34c92c1a150"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#ade08218f83e136d6fccde34c92c1a150">object_vector</a> (S *<a class="el" href="classoos_1_1object__vector__base.html#a46cb1a732f537e09006652a4f82dc29d">parent</a>)</td></tr>
-<tr class="memdesc:ade08218f83e136d6fccde34c92c1a150"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an empty vector.  <a href="#ade08218f83e136d6fccde34c92c1a150"></a><br/></td></tr>
-<tr class="separator:ade08218f83e136d6fccde34c92c1a150"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbc5b8bd659ebcf01b7b60fe111bc434"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#acbc5b8bd659ebcf01b7b60fe111bc434">insert</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> pos, const <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a9461f0c7c856c4a95a9294c3a082f2a5">value_holder</a> &amp;x)</td></tr>
-<tr class="memdesc:acbc5b8bd659ebcf01b7b60fe111bc434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a new element.  <a href="#acbc5b8bd659ebcf01b7b60fe111bc434"></a><br/></td></tr>
-<tr class="separator:acbc5b8bd659ebcf01b7b60fe111bc434"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30b306f621fb188e5bbcb102efac2034"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a30b306f621fb188e5bbcb102efac2034">erase</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> i)</td></tr>
-<tr class="memdesc:a30b306f621fb188e5bbcb102efac2034"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface to erase an element.  <a href="#a30b306f621fb188e5bbcb102efac2034"></a><br/></td></tr>
-<tr class="separator:a30b306f621fb188e5bbcb102efac2034"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a707138d0c11c56e8e109c325e0351955"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a707138d0c11c56e8e109c325e0351955">erase</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> first, <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> last)</td></tr>
-<tr class="memdesc:a707138d0c11c56e8e109c325e0351955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases a range defines by iterators.  <a href="#a707138d0c11c56e8e109c325e0351955"></a><br/></td></tr>
-<tr class="separator:a707138d0c11c56e8e109c325e0351955"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
-<tr class="memitem:a28813cfa00444f0bd75a7ef94b3fceba inherit pub_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a28813cfa00444f0bd75a7ef94b3fceba">object_vector_base</a> (parent_type *parent)</td></tr>
+<tr class="memitem:a1f5b56b972f48ea64f4a96c178b170d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a1f5b56b972f48ea64f4a96c178b170d4">object_vector</a> (S *<a class="el" href="classoos_1_1object__vector__base.html#a46cb1a732f537e09006652a4f82dc29d">parent</a>)</td></tr>
+<tr class="memdesc:a1f5b56b972f48ea64f4a96c178b170d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an empty vector.  <a href="#a1f5b56b972f48ea64f4a96c178b170d4"></a><br/></td></tr>
+<tr class="separator:a1f5b56b972f48ea64f4a96c178b170d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcc1cbaf36e3c7b29c2367e8b25aa1bc"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#adcc1cbaf36e3c7b29c2367e8b25aa1bc">insert</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> pos, const <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a873fd822b8c07b0d3ee0bb4fcd55c730">value_holder</a> &amp;x)</td></tr>
+<tr class="memdesc:adcc1cbaf36e3c7b29c2367e8b25aa1bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a new element.  <a href="#adcc1cbaf36e3c7b29c2367e8b25aa1bc"></a><br/></td></tr>
+<tr class="separator:adcc1cbaf36e3c7b29c2367e8b25aa1bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a997431f9818813b9eef13e4a16238328"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a997431f9818813b9eef13e4a16238328">erase</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> i)</td></tr>
+<tr class="memdesc:a997431f9818813b9eef13e4a16238328"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface to erase an element.  <a href="#a997431f9818813b9eef13e4a16238328"></a><br/></td></tr>
+<tr class="separator:a997431f9818813b9eef13e4a16238328"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac94c5696bdec09f664f83d46ecfd63f8"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#ac94c5696bdec09f664f83d46ecfd63f8">erase</a> (<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> first, <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> last)</td></tr>
+<tr class="memdesc:ac94c5696bdec09f664f83d46ecfd63f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases a range defines by iterators.  <a href="#ac94c5696bdec09f664f83d46ecfd63f8"></a><br/></td></tr>
+<tr class="separator:ac94c5696bdec09f664f83d46ecfd63f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T &gt;</a></td></tr>
+<tr class="memitem:a28813cfa00444f0bd75a7ef94b3fceba inherit pub_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a28813cfa00444f0bd75a7ef94b3fceba">object_vector_base</a> (<a class="el" href="classoos_1_1object__vector__base.html#a1e5906d2b7f21d235dc010a2374cba65">parent_type</a> *parent)</td></tr>
 <tr class="memdesc:a28813cfa00444f0bd75a7ef94b3fceba inherit pub_methods_classoos_1_1object__vector__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new object_vector.  <a href="#a28813cfa00444f0bd75a7ef94b3fceba"></a><br/></td></tr>
 <tr class="separator:a28813cfa00444f0bd75a7ef94b3fceba inherit pub_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7e2dab802e25f12673dd32354dbd254 inherit pub_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#ad7e2dab802e25f12673dd32354dbd254">classname</a> () const</td></tr>
@@ -175,7 +163,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a></td></tr>
+<tr class="inherit_header pro_methods_classoos_1_1object__vector__base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classoos_1_1object__vector__base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classoos_1_1object__vector__base.html">oos::object_vector_base&lt; S, T &gt;</a></td></tr>
 <tr class="memitem:acb4e92357df9edde15083dbd4317cef7 inherit pro_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#acb4e92357df9edde15083dbd4317cef7">for_each</a> (const node_func &amp;nf) const</td></tr>
 <tr class="memdesc:acb4e92357df9edde15083dbd4317cef7 inherit pro_methods_classoos_1_1object__vector__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes the given function object for all elements.  <a href="#acb4e92357df9edde15083dbd4317cef7"></a><br/></td></tr>
 <tr class="separator:acb4e92357df9edde15083dbd4317cef7 inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,7 +171,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:acf52fcc128babd77035893a9699d4dab inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46cb1a732f537e09006652a4f82dc29d inherit pro_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a46cb1a732f537e09006652a4f82dc29d">parent</a> (<a class="el" href="classoos_1_1object.html">object</a> *p)</td></tr>
 <tr class="separator:a46cb1a732f537e09006652a4f82dc29d inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4767947fd03db367a61a417a2a04096b inherit pro_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top">parent_type *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a4767947fd03db367a61a417a2a04096b">parent</a> ()</td></tr>
+<tr class="memitem:a4767947fd03db367a61a417a2a04096b inherit pro_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoos_1_1object__vector__base.html#a1e5906d2b7f21d235dc010a2374cba65">parent_type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a4767947fd03db367a61a417a2a04096b">parent</a> ()</td></tr>
 <tr class="separator:a4767947fd03db367a61a417a2a04096b inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ead000909eed75d8681bc1094715c9b inherit pro_methods_classoos_1_1object__vector__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoos_1_1object__vector__base.html#afaf8dce3379d8ee223c7cf5156e60f64">vector_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoos_1_1object__vector__base.html#a7ead000909eed75d8681bc1094715c9b">vector</a> ()</td></tr>
 <tr class="separator:a7ead000909eed75d8681bc1094715c9b inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,29 +179,30 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:ad86a026917e38b904c45b6a0961ba095 inherit pro_methods_classoos_1_1object__vector__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class S, class T, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt;<br/>
-class oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;</h3>
+<div class="textblock"><h3>template&lt;class S, class T, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt;<br/>
+class oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;</h3>
 
-<p>Object vector class with relation table. </p>
+<p>Object vector class without relation table. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">S</td><td>The type of the parent object. </td></tr>
     <tr><td class="paramname">T</td><td>The value of the vector. </td></tr>
     <tr><td class="paramname">FUNC1</td><td>The parent setter function </td></tr>
-    <tr><td class="paramname">FUNC2</td><td>The index setter function</td></tr>
+    <tr><td class="paramname">FUNC2</td><td>The index setter function </td></tr>
+    <tr><td class="paramname">FUNC3</td><td>The index getter function</td></tr>
   </table>
   </dd>
 </dl>
 <p>The object_vector class implements a vector which can hold any type of object from builtin types as int, float to <a class="el" href="classoos_1_1object__ptr.html" title="The object_ptr holds a pointer to an object.">object_ptr</a> or <a class="el" href="classoos_1_1object__ref.html" title="The object_ref holds a pointer to an object.">object_ref</a> elements. The class provides STL like behaviour and the order of the elements is reliable. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a class="anchor" id="ac6f5a956cb911740e54da075975eeb21"></a>
+<a class="anchor" id="a9cb48f42b6dcbf739eb3ace7706c0409"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html">object_vector_base</a>&lt;S, T, <a class="el" href="classoos_1_1object__ptr.html">object_ptr</a>&lt;object_vector_item&lt;T, S&gt; &gt; &gt; oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#ac6f5a956cb911740e54da075975eeb21">base_vector</a></td>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html">object_vector_base</a>&lt;S, T&gt; oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a9cb48f42b6dcbf739eb3ace7706c0409">base_vector</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -221,14 +210,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="ae374a93112bf54174a3aee8ef43bfe7b"></a>
+<a class="anchor" id="aaeb9ab46a84bf57cbeb25677e0f4dd26"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#aa52a3e726708a5da2c80f5f8ee61a631">base_vector::const_iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#ae374a93112bf54174a3aee8ef43bfe7b">const_iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#aa52a3e726708a5da2c80f5f8ee61a631">base_vector::const_iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#aaeb9ab46a84bf57cbeb25677e0f4dd26">const_iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -236,44 +225,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="aec467374c012b03d8901472c69ed3e30"></a>
+<a class="anchor" id="abff668031d4c8dbe3fdd6a31fc8053a5"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef base_vector::item_holder oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aec467374c012b03d8901472c69ed3e30">item_holder</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Shortcut for the item holder. </p>
-
-</div>
-</div>
-<a class="anchor" id="a937fbd5994d3cd1d0ac6066d0f5f8ea3"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aec467374c012b03d8901472c69ed3e30">item_holder</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a937fbd5994d3cd1d0ac6066d0f5f8ea3">item_ptr</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Shortcut for the item ptr. </p>
-
-</div>
-</div>
-<a class="anchor" id="a2a50616b490e9c7bec5722af249a00fd"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef object_vector_item&lt;T, S&gt; oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a2a50616b490e9c7bec5722af249a00fd">item_type</a></td>
+          <td class="memname">typedef T::object_type oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#abff668031d4c8dbe3fdd6a31fc8053a5">item_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -281,14 +240,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="aed343cb36cd23c0c8a13b14e4d82b940"></a>
+<a class="anchor" id="a367935c4b92b938296963f64e29889a6"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#ab8427a8911ecd5447c708963c226dd33">base_vector::iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#ab8427a8911ecd5447c708963c226dd33">base_vector::iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -296,14 +255,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="a45e8d4c34df28016f321d8dc5b0f9b84"></a>
+<a class="anchor" id="a3769a1e15bbad562bf97b025b754d2e0"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt;S&gt; oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a45e8d4c34df28016f321d8dc5b0f9b84">parent_ref</a></td>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__ref.html">object_ref</a>&lt;S&gt; oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a3769a1e15bbad562bf97b025b754d2e0">parent_ref</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -311,14 +270,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="a5f047a30bfda830d68e1478a15983ddd"></a>
+<a class="anchor" id="a28bfd25a4b182076bf756af27c39db1b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#a1092b9bff7d97b0c5c7ef4f9a037c7e5">base_vector::size_type</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a5f047a30bfda830d68e1478a15983ddd">size_type</a></td>
+          <td class="memname">typedef <a class="el" href="classoos_1_1object__vector__base.html#a1092b9bff7d97b0c5c7ef4f9a037c7e5">base_vector::size_type</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a28bfd25a4b182076bf756af27c39db1b">size_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -326,14 +285,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="a9461f0c7c856c4a95a9294c3a082f2a5"></a>
+<a class="anchor" id="a873fd822b8c07b0d3ee0bb4fcd55c730"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef T oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a9461f0c7c856c4a95a9294c3a082f2a5">value_holder</a></td>
+          <td class="memname">typedef T oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a873fd822b8c07b0d3ee0bb4fcd55c730">value_holder</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -341,14 +300,14 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 
 </div>
 </div>
-<a class="anchor" id="a063eaf846e8db187866f6d58b7d62b1d"></a>
+<a class="anchor" id="a93748411f77dc5124092a8d1288ea75b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::conditional&lt;std::is_base_of&lt;<a class="el" href="classoos_1_1object__base__ptr.html">object_base_ptr</a>, T&gt;::value, T, dummyy&gt;::type::object_type oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a063eaf846e8db187866f6d58b7d62b1d">value_type</a></td>
+          <td class="memname">typedef T::object_type oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::<a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a93748411f77dc5124092a8d1288ea75b">value_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -357,17 +316,17 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ade08218f83e136d6fccde34c92c1a150"></a>
+<a class="anchor" id="a1f5b56b972f48ea64f4a96c178b170d4"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::object_vector </td>
+          <td class="memname">oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::object_vector </td>
           <td>(</td>
           <td class="paramtype">S *&#160;</td>
           <td class="paramname"><em>parent</em></td><td>)</td>
@@ -382,7 +341,7 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </div><div class="memdoc">
 
 <p>Creates an empty vector. </p>
-<p>Creates an empty vector with the given parent. All items are mapped via a relation table</p>
+<p>Creates an empty vector. The parent reference and the index is holded by the item itself.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">parent</td><td>The parent object. </td></tr>
@@ -393,19 +352,19 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a30b306f621fb188e5bbcb102efac2034"></a>
+<a class="anchor" id="a997431f9818813b9eef13e4a16238328"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::erase </td>
+          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::erase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
           <td></td>
         </tr>
@@ -427,29 +386,29 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the next iterator. </dd></dl>
 
-<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#aff312f2a0638ac197e6997799e3d6ea0">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a>.</p>
+<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#aff312f2a0638ac197e6997799e3d6ea0">oos::object_vector_base&lt; S, T &gt;</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a707138d0c11c56e8e109c325e0351955"></a>
+<a class="anchor" id="ac94c5696bdec09f664f83d46ecfd63f8"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::erase </td>
+          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::erase </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td>
           <td class="paramname"><em>first</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td>
           <td class="paramname"><em>last</em>&#160;</td>
         </tr>
         <tr>
@@ -476,29 +435,29 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the next iterator. </dd></dl>
 
-<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#acdff3b97d50ad93d8961ad8a0784bd07">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a>.</p>
+<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#acdff3b97d50ad93d8961ad8a0784bd07">oos::object_vector_base&lt; S, T &gt;</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="acbc5b8bd659ebcf01b7b60fe111bc434"></a>
+<a class="anchor" id="adcc1cbaf36e3c7b29c2367e8b25aa1bc"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2&gt; </div>
+template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(const object_ref&lt; S &gt; &amp;) FUNC1, void(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)(int) FUNC2, int(std::conditional&lt; std::is_base_of&lt; object_base_ptr, T &gt;::value, T, dummyy &gt;::type::object_type::*)() const FUNC3&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2 &gt;::insert </td>
+          <td class="memname">virtual <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a> oos::object_vector&lt; S, T, FUNC1, FUNC2, FUNC3 &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#aed343cb36cd23c0c8a13b14e4d82b940">iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a367935c4b92b938296963f64e29889a6">iterator</a>&#160;</td>
           <td class="paramname"><em>pos</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_01_4.html#a9461f0c7c856c4a95a9294c3a082f2a5">value_holder</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classoos_1_1object__vector_3_01_s_00_01_t_00_01_f_u_n_c1_00_01_f_u_n_c2_00_01_f_u_n_c3_01_4.html#a873fd822b8c07b0d3ee0bb4fcd55c730">value_holder</a> &amp;&#160;</td>
           <td class="paramname"><em>x</em>&#160;</td>
         </tr>
         <tr>
@@ -525,7 +484,7 @@ template&lt;class S , class T , void(std::conditional&lt; std::is_base_of&lt; ob
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The new position iterator. </dd></dl>
 
-<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#abd4c04a5ac36111274ae7c23dfe042e8">oos::object_vector_base&lt; S, T, object_ptr&lt; object_vector_item&lt; T, S &gt; &gt; &gt;</a>.</p>
+<p>Implements <a class="el" href="classoos_1_1object__vector__base.html#abd4c04a5ac36111274ae7c23dfe042e8">oos::object_vector_base&lt; S, T &gt;</a>.</p>
 
 </div>
 </div>

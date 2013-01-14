@@ -65,21 +65,20 @@
 </div><!--header-->
 <div class="contents">
 
-<p>An object list class.  
+<p>List class mapping items via relation table.  
  <a href="classobject__list.html#details">More...</a></p>
 
 <p><code>#include &lt;object_list.hpp&gt;</code></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>An object list class. </p>
+<div class="textblock"><p>List class mapping items via relation table. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">S</td><td>The type of the parent object. </td></tr>
-    <tr><td class="paramname">T</td><td>The value of the list. </td></tr>
-    <tr><td class="paramname">H</td><td>The value holder class (either <a class="el" href="classoos_1_1object__ref.html" title="The object_ref holds a pointer to an object.">oos::object_ref</a> or <a class="el" href="classoos_1_1object__ptr.html" title="The object_ptr holds a pointer to an object.">oos::object_ptr</a>)</td></tr>
+    <tr><td class="paramname">S</td><td>The parent class type. </td></tr>
+    <tr><td class="paramname">T</td><td>The item class type.</td></tr>
   </table>
   </dd>
 </dl>
-<p>The <a class="el" href="classobject__list.html" title="An object list class.">object_list</a> class implements a list which can hold any type of object from builtin types as int, float to object_ptr or object_ref elements. The class provides STL like behaviour and the order of the elements is reliable. </p>
+<p>This object lisz class uses a relation table to map the items to its parent. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/object/object_list.hpp</li>
 </ul>
