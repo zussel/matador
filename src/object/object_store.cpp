@@ -203,14 +203,13 @@ object_store::~object_store()
   delete object_deleter_;
 }
 
-bool
+prototype_iterator
 object_store::insert_prototype(object_base_producer *producer, const char *type, bool abstract, const char *parent)
 {
   // set node to root node
   prototype_node *parent_node = get_prototype(parent);
   if (!parent_node) {
-    //throw new object_exception("couldn't find parent prototype");
-    return false;
+    throw object_exception("couldn't find parent prototype");
   }
 
   /* try to insert new prototype node
@@ -237,7 +236,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
         /* type found in typeid map
          * throw exception
          */
-        return false;
+        throw object_exception("unexpectly found prototype");
       } else {
         /* insert new prototype and add to
          * typeid map
@@ -258,7 +257,7 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     }
   } else {
     // already inserted return iterator
-    return false;
+    throw object_exception("prototype already inserted");
   }
 
   // append as child to parent prototype node
@@ -273,8 +272,8 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   relation_handler rh(*this, node);
   o->serialize(rh);
   delete o;
-
-  return true;
+  
+  return prototype_iterator(node);
 }
 
 bool object_store::clear_prototype(const char *type, bool recursive)
@@ -511,7 +510,7 @@ object_store::insert_object(object *o, bool notify)
 //  if (i == prototype_node_map_.end()) {
     // raise exception
     std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
-    throw new object_exception(msg.c_str());
+    throw object_exception(msg.c_str());
   }
 //  prototype_node *node = i->second;
   // retrieve and set new unique number into object
@@ -563,50 +562,23 @@ object_store::insert_object(object *o, bool notify)
   return o;
 }
 
-object*
-object_store::import_object(object *o)
+bool object_store::is_removable(const object_base_ptr &o) const
 {
-  /*
-   * find prototype node
-   */
-  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
-  if (i == prototype_node_map_.end()) {
-    // raise exception
-    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
-    throw new object_exception(msg.c_str());
-  }
-  
-  //prototype_node *node = i->second;
-  
-  //relation::const_iterator first = node->relation_.begin();
-  //relation::const_iterator last = node->relation_.end();
-  //while (first != last) {
-    //relation rel(*first++);
-
-    ///*
-     //* get back link of parent object
-     //*/
-    //o->get(rel.name, parent);
-    
-    ///*
-     //* get parents list
-     //*/
-    //parent->get(rel.list_name, container);
-    
-    ///*
-     //* append object to container
-     //*/
-    //container->append_proxy(o->proxy_);
-  //}
-  return 0;
+  return object_deleter_->is_deletable(o.ptr());
 }
 
-bool
+void
+object_store::remove(object_base_ptr &o)
+{
+  remove(o.ptr());
+}
+
+void
 object_store::remove(object *o)
 {
   // check if object tree is deletable
   if (!object_deleter_->is_deletable(o)) {
-    return false;
+    throw object_exception("object is not removable");
   }
   
   object_deleter::iterator first = object_deleter_->begin();
@@ -619,34 +591,24 @@ object_store::remove(object *o)
       ++first;
     }
   }
-	return true;
 }
-bool
+void
 object_store::remove_object(object *o, bool notify)
 {
   // find prototype node
   if (!o->proxy_->node) {
-    throw new object_exception("couldn't remove object, no proxy");
+    throw object_exception("couldn't remove object, no proxy");
   }
   
   prototype_node *node = get_prototype(o->proxy_->node->type.c_str());
   if (!node) {
-    throw new object_exception("couldn't find node for object");
+    throw object_exception("couldn't find node for object");
   }
   
-  /*
-  t_prototype_node_map::iterator i = prototype_node_map_.find(typeid(*o).name());
-  if (i == prototype_node_map_.end()) {
-    // raise exception
-    //throw new object_exception("couldn't insert element of type [" + o->type() + "]\n");
-    return false;
-  }
-  */
-
   if (object_map_.erase(o->id()) != 1) {
     // couldn't remove object
     // throw exception
-    return false;
+    throw object_exception("couldn't remove object");
   }
 
   remove_proxy(node, o->proxy_);
@@ -659,11 +621,9 @@ object_store::remove_object(object *o, bool notify)
   object_proxy *op = o->proxy_;
   // delete node
   delete op;
-  // set node of proxy to NULL
-  return true;
 }
 
-bool
+void
 object_store::remove(object_container &oc)
 {
   /**************
@@ -674,8 +634,9 @@ object_store::remove(object_container &oc)
    **************/
   // check if object tree is deletable
   if (!object_deleter_->is_deletable(oc)) {
-    return false;
+    throw object_exception("couldn't remove container object");
   }
+
   object_deleter::iterator first = object_deleter_->begin();
   object_deleter::iterator last = object_deleter_->end();
   
@@ -687,7 +648,6 @@ object_store::remove(object_container &oc)
     }
   }
   oc.uninstall();
-  return true;
 }
 
 void

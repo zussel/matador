@@ -543,6 +543,11 @@ public:
 
 	virtual ~linked_object_list() {}
 
+  /**
+   * Return the class name of the item.
+   * 
+   * @return The class name of the item.
+   */
   virtual const char* classname() const
   {
     return typeid(item_type).name();
@@ -708,13 +713,14 @@ public:
     node->prev_->next_ = node->next_;
     node->next_->prev_ = node->prev_;
     // delete node
-    if (!ostore()->remove(node)) {
+    ostore()->remove(node);
+//    if () {
 //      std::cout << "couldn't remove node (proxy: " << *node->proxy() << ")\n";
-      node->prev_->next_ = node;
-      node->next_->prev_ = node;
+//      node->prev_->next_ = node;
+//      node->next_->prev_ = node;
       // throw exception ?
-      return ++iterator(node);
-    }
+//      return ++iterator(node);
+//    }
     // return i's successor
     return i;
   }
@@ -768,10 +774,12 @@ protected:
     parent_ = temp;
   }
 
+///@cond OOS_DEV
   virtual object_base_producer* create_item_producer() const
   {
     return new object_producer<item_type>();
   }
+///@endcond
 
 private:
   virtual void append_proxy(object_proxy *) {};

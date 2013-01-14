@@ -118,7 +118,9 @@ DatabaseTestUnit::simple()
 
     tr.begin();
     // delete object
-    UNIT_ASSERT_TRUE(ostore_.remove(item), "couldn't delete item");
+    UNIT_ASSERT_TRUE(ostore_.is_removable(item), "couldn't delete item");
+    
+    ostore_.remove(item);
 
     tr.rollback();
 
@@ -134,7 +136,9 @@ DatabaseTestUnit::simple()
 
     tr.begin();
 
-    UNIT_ASSERT_TRUE(ostore_.remove(item), "couldn't delete item");
+    UNIT_ASSERT_TRUE(ostore_.is_removable(item), "couldn't delete item");
+    
+    ostore_.remove(item);
     
     tr.commit();
 
@@ -205,8 +209,10 @@ DatabaseTestUnit::with_sub()
 
     UNIT_ASSERT_FALSE(oview.empty(), "object item view couldn't be empty");
 
-    UNIT_ASSERT_TRUE(ostore_.remove(object_item), "couldn't remove object item");
+    UNIT_ASSERT_TRUE(ostore_.is_removable(object_item), "couldn't remove object item");
 
+    ostore_.remove(object_item);
+    
     UNIT_ASSERT_TRUE(oview.empty(), "object item view must be empty");
     
     tr.rollback();
@@ -466,7 +472,7 @@ DatabaseTestUnit::reload_container()
     tr.commit();
 
     tr.begin();
-    for (int i = 0; i < 100000; ++i) {
+    for (int i = 0; i < 5; ++i) {
       stringstream name;
       name << "Track " << i+1;
 
@@ -481,7 +487,7 @@ DatabaseTestUnit::reload_container()
 
     tr.commit();
 
-    /*
+/*
     cout << "\n";
 
     album::const_iterator first = alb1->begin();
@@ -490,12 +496,11 @@ DatabaseTestUnit::reload_container()
       track_ptr tr1 = *first++;
       cout << "track: " << tr1->title() << " (index: " << tr1->index() << ")\n";
     }
-    */
 
     cout << "\nsize: " << alb1->size() << "\n";
-
+*/
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)alb1->size(), 100001, "invalid album size");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
@@ -528,20 +533,19 @@ DatabaseTestUnit::reload_container()
     
     album_ptr alb1 = *oview.begin();
     
-    cout << "size: " << alb1->size() << "\n";
+//    cout << "size: " << alb1->size() << "\n";
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)alb1->size(), 100001, "invalid album size");
+    UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");
 
-    /*
+/*
     album::const_iterator first = alb1->begin();
     album::const_iterator last = alb1->end();
     while (first != last) {
       track_ptr tr1 = *first++;
       cout << "track: " << tr1->title() << " (index: " << tr1->index() << ")\n";
     }
-    */
-
+*/
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");

@@ -74,6 +74,11 @@ public:
 
   virtual ~object_list_base() {}
   
+  /**
+   * Return the class name of the item.
+   * 
+   * @return The class name of the item.
+   */
   virtual const char* classname() const
   {
     return typeid(item_type).name();
@@ -243,11 +248,21 @@ protected:
     parent_ = temp;
   }
 
+  /**
+   * Returns the parent object.
+   * 
+   * @return The parent object.
+   */
   S* parent()
   {
     return parent_;
   }
 
+  /**
+   * Return the underlying list object.
+   * 
+   * @return The list object.
+   */
   list_type& list()
   {
     return object_list_;
@@ -285,30 +300,47 @@ struct object_list;
 
 ///@endcond
 
-/*
- * implementation with setter method.
- * a relation table won't be created
+/**
+ * @brief List class mapping items via relation table
+ * 
+ * @tparam S The parent class type.
+ * @tparam T The item class type.
+ * @tparam SETFUNC The parent setter function.
+ *
+ * This object list class uses no relation table. The items
+ * hold the information of its parent by themself.
  */
 template < class S, class T, void (T::object_type::*SETFUNC)(const object_ref<S>&)>
 class object_list<S, T, SETFUNC> : public object_list_base<S, T>
 {
 public:
-  typedef object_list_base<S, T> base_list;
-  typedef object_ref<S> parent_ref;
-  typedef typename base_list::value_holder value_holder;
-  typedef typename base_list::item_holder item_holder;
-  typedef typename base_list::size_type size_type;
-  typedef typename T::object_type item_type;
-  typedef typename base_list::iterator iterator;
-  typedef typename base_list::const_iterator const_iterator;
+  typedef object_list_base<S, T> base_list;                  /**< Shortcut for the base list. */
+  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
+  typedef typename T::object_type item_type;                 /**< Shortcut for the item type. */
+  typedef typename base_list::value_holder value_holder;     /**< Shortcut for the value holder. */
+  typedef typename base_list::item_holder item_holder;       /**< Shortcut for the item holder. */
+  typedef typename base_list::size_type size_type;           /**< Shortcut for the size type. */
+  typedef typename base_list::iterator iterator;             /**< Shortcut for the iterator. */
+  typedef typename base_list::const_iterator const_iterator; /**< Shortcut for the const iterator. */
 
 public:
+  /**
+   * Creates an empty list with the given
+   * parent.
+   * 
+   * @param parent The parent of the list.
+   */
   object_list(S *parent)
     : object_list_base<S, T>(parent)
     , setter_(SETFUNC)
   {}
   virtual ~object_list() {}
 
+  /**
+   * Return the class name of the item.
+   * 
+   * @return The class name of the item.
+   */
   virtual const char* classname() const
   {
     return typeid(item_type).name();
@@ -343,35 +375,47 @@ public:
   }
 
 protected:
+///@cond OOS_DEV
   virtual object_base_producer* create_item_producer() const
   {
     return 0;
   }
-
+///@endcond
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
 
 };
 
-/*
- * implementation without setter method.
- * a relation table will be created
+/**
+ * @brief List class mapping items via relation table
+ * 
+ * @tparam S The parent class type.
+ * @tparam T The item class type.
+ *
+ * This object lisz class uses a relation table to
+ * map the items to its parent.
  */
 template < class S, class T>
 class object_list<S, T> : public object_list_base<S, T, object_ptr<container_item<T, S> > >
 {
 public:
-  typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list;
-  typedef T value_holder;
-  typedef object_ref<S> parent_ref;
-  typedef typename base_list::size_type size_type;
-  typedef typename base_list::item_holder item_holder;
-  typedef container_item<T, S> item_type;
-  typedef item_holder item_ptr;
-  typedef typename base_list::iterator iterator;
-  typedef typename base_list::const_iterator const_iterator;
+  typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list; /**< Shortcut for the base list. */
+  typedef T value_holder;                                                       /**< Shortcut for the value holder. */
+  typedef object_ref<S> parent_ref;                                             /**< Shortcut for the parent reference. */
+  typedef container_item<T, S> item_type;                                       /**< Shortcut for the item type. */
+  typedef typename base_list::size_type size_type;                              /**< Shortcut for the size type. */
+  typedef typename base_list::item_holder item_holder;                          /**< Shortcut for the item holder. */
+  typedef item_holder item_ptr;                                                 /**< Shortcut for the item ptr. */
+  typedef typename base_list::iterator iterator;                                /**< Shortcut for the iterator. */
+  typedef typename base_list::const_iterator const_iterator;                    /**< Shortcut for the const iterator. */
 
 public:
+  /**
+   * Creates an empty list with the given
+   * parent.
+   * 
+   * @param parent The parent of the list.
+   */
   object_list(S *parent)
     : object_list_base<S, T, object_ptr<container_item<T, S> > >(parent)
   {}
@@ -398,19 +442,18 @@ public:
     } else {
       item_ptr item = *i;
       this->mark_modified(this->parent());
-      if (!this->ostore()->remove(item)) {
-        return this->end();
-      } else {
-        return this->list().erase(i);
-      }
+      this->ostore()->remove(item);
+      return this->list().erase(i);
     }
   }
 
 protected:
+///@cond OOS_DEV
   virtual object_base_producer* create_item_producer() const
   {
     return new object_producer<item_type>();
   }
+///@endcond
 };
 
 }

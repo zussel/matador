@@ -41,7 +41,7 @@
 #include <limits>
 #include <cstring>
 
-/// @cond OOS_DEV
+///@cond OOS_DEV
 
 #ifdef WIN32
 #define CPP11_TYPE_TRAITS_NS std::tr1
@@ -49,7 +49,7 @@
 #define CPP11_TYPE_TRAITS_NS std
 #endif
 
-/// @endcond
+///@endcond
 
 /**
  * @file convert.hpp

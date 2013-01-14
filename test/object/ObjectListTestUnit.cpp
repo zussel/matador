@@ -211,7 +211,9 @@ ObjectListTestUnit::test_linked_int_list()
   UNIT_ASSERT_EQUAL((int)intlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(intlist->empty(), "linked item list must be empty");
 
-  UNIT_ASSERT_TRUE(ostore_.remove(intlist), "couldn't remove linked item list");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(intlist), "couldn't remove linked item list");
+  
+  ostore_.remove(intlist);
 }
 
 void
@@ -258,7 +260,9 @@ ObjectListTestUnit::test_linked_ref_list()
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
-  UNIT_ASSERT_TRUE(ostore_.remove(itemlist), "couldn't remove linked item list");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(itemlist), "couldn't remove linked item list");
+  
+  ostore_.remove(itemlist);
 }
 
 void
@@ -305,7 +309,9 @@ ObjectListTestUnit::test_linked_ptr_list()
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
 
-  UNIT_ASSERT_TRUE(ostore_.remove(itemlist), "couldn't remove linked item list");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(itemlist), "couldn't remove linked item list");
+  
+  ostore_.remove(itemlist);
 }
 
 void ObjectListTestUnit::test_direct_ref_list()

@@ -292,9 +292,9 @@ public:
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers object is treated as an abstract node.
    * @param parent   The name of the parent type.
-   * @return         Returns true if the prototype was inserted successfully.
+   * @return         Returns new inserted prototype iterator.
    */
-	bool insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -306,10 +306,10 @@ public:
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers object is treated as an abstract node.
-   * @return         Returns true if the prototype was inserted successfully.
+   * @return         Returns new inserted prototype iterator.
    */
   template < class T >
-  bool insert_prototype(const char *type, bool abstract = false)
+  prototype_iterator insert_prototype(const char *type, bool abstract = false)
   {
     return insert_prototype(new object_producer<T>, type, abstract, "object");
   }
@@ -325,10 +325,10 @@ public:
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers object is treated as an abstract node.
-   * @return         Returns true if the prototype was inserted successfully.
+   * @return         Returns new inserted prototype iterator.
    */
   template < class T, class S >
-  bool insert_prototype(const char *type, bool abstract = false)
+  prototype_iterator insert_prototype(const char *type, bool abstract = false)
   {
     return insert_prototype(new object_producer<T>, type, abstract, typeid(S).name());
   }
@@ -437,6 +437,15 @@ public:
   void insert(object_container &oc);
   
   /**
+   * Returns true if the underlaying
+   * object is removable.
+   * 
+   * @param o The object to check.
+   * @return True if object is removable.
+   */
+  bool is_removable(const object_base_ptr &o) const;
+
+  /**
    * Removes an object from the object store. After successfull
    * removal the object is set to zero and isn't valid any more.
    * 
@@ -444,24 +453,20 @@ public:
    * is done. If at least one counter is greater than zero the
    * object can't be removed and false is returned.
    * 
+   * @throw object_exception
    * @param o Object to remove.
-   * @return True on successful removal.
    */
-	template < class Y >
-	bool remove(object_ptr<Y> &o)
-  {
-    return remove(o.get());
-	}
+	void remove(object_base_ptr &o);
   
   /**
    * Removes an object_container from object store. All elements of the
    * container are removed from the store after a successfull reference and
    * pointer counter check.
    * 
+   * @throw object_exception
    * @param oc The object vector to remove.
-   * @return True on successful object vector removal.
    */
-  bool remove(object_container &oc);
+  void remove(object_container &oc);
 
   /*
   template < class InputIterator >
@@ -563,10 +568,9 @@ private:
 private:
   void mark_modified(object_proxy *oproxy);
 
-  bool remove(object *o);
+  void remove(object *o);
 	object* insert_object(object *o, bool notify);
-	object* import_object(object *o);
-	bool remove_object(object *o, bool notify);
+	void remove_object(object *o, bool notify);
 	
   void link_proxy(object_proxy *base, object_proxy *next);
   void unlink_proxy(object_proxy *proxy);

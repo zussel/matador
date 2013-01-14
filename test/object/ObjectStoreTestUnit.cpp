@@ -300,7 +300,9 @@ ObjectStoreTestUnit::simple_object()
   
   UNIT_ASSERT_NOT_NULL(simple.get(), "item object insertion failed");
   
-  UNIT_ASSERT_TRUE(ostore_.remove(simple), "deletion of item object failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(simple), "deletion of item object failed");
+  
+  ostore_.remove(simple);
 }
 
 void
@@ -325,7 +327,9 @@ ObjectStoreTestUnit::object_with_sub_object()
   
   UNIT_ASSERT_NOT_NULL(simple.get(), "item object creation failed");
   
-  UNIT_ASSERT_TRUE(ostore_.remove(ows), "deletion of object item failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of object item failed");
+  
+  ostore_.remove(ows);
 }
 
 void
@@ -401,11 +405,20 @@ ObjectStoreTestUnit::delete_object()
   typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
 
-  UNIT_ASSERT_FALSE(ostore_.remove(item), "item shouldn't be removable because ref count is one");
+  UNIT_ASSERT_FALSE(ostore_.is_removable(item), "item shouldn't be removable because ref count is one");
 
-  UNIT_ASSERT_TRUE(ostore_.remove(testitem), "test item must be removable");
+  try {
+    ostore_.remove(item);
+  } catch(object_exception &ex) {
+  }
+
+  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test item must be removable");
   
-  UNIT_ASSERT_TRUE(ostore_.remove(item), "item must be removable");
+  ostore_.remove(testitem);
+
+  UNIT_ASSERT_TRUE(ostore_.is_removable(item), "item must be removable");
+  
+  ostore_.remove(item);
 }
 
 void

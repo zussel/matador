@@ -32,6 +32,7 @@
 #endif
 
 #include <vector>
+#include <iostream>
 
 namespace oos {
 
@@ -136,6 +137,11 @@ public:
 
   virtual ~object_vector_base() {}
 
+  /**
+   * Return the typename of the item type class
+   * 
+   * @return The item type name.
+   */
   virtual const char* classname() const
   {
     return typeid(item_type).name();
@@ -333,27 +339,34 @@ protected:
     parent_ = temp;
   }
 
+  /**
+   * Return the parent of the 
+   * vector.
+   * @return The parent.
+   */
   parent_type* parent()
   {
     return parent_;
   }
 
+  /**
+   * Return a reference to the
+   * underlying vector class object.
+   *
+   * @return The vector object.
+   */
   vector_type& vector()
   {
     return object_vector_;
   }
 
+  /**
+   * Adjust indeces of all elements
+   * after the given iterator.
+   * 
+   * @param i The start iterator for the index adjustment.
+   */
   virtual void adjust_index(iterator i) = 0;
-
-  virtual void append_proxy(object_proxy *proxy)
-  {
-    object_vector_.push_back(item_holder(proxy));
-  }
-
-  vector_type& vec()
-  {
-    return object_vector_;
-  }
 
 private:
   parent_type *parent_;
@@ -373,6 +386,21 @@ class object_vector;
 
 ///@endcond
 
+/**
+ * @brief Object vector class without relation table
+ *
+ * @tparam S The type of the parent object.
+ * @tparam T The value of the vector.
+ * @tparam FUNC1 The parent setter function
+ * @tparam FUNC2 The index setter function
+ * @tparam FUNC3 The index getter function
+ * 
+ * The object_vector class implements a vector which
+ * can hold any type of object from builtin types as
+ * int, float to object_ptr or object_ref elements.
+ * The class provides STL like behaviour and the order of
+ * the elements is reliable.
+ */
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
@@ -381,23 +409,31 @@ int (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::ty
 class object_vector<S, T, FUNC1, FUNC2, FUNC3> : public object_vector_base<S, T>
 {
 public:
-	typedef typename T::object_type value_type;
-  typedef T value_holder;
-  typedef object_ref<S> parent_ref;
-  typedef object_vector_base<S, T> base_vector;
-  typedef typename T::object_type item_type;
-  typedef typename base_vector::iterator iterator;
-  typedef typename base_vector::const_iterator const_iterator;
+  typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
+	typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
+  typedef T value_holder;                                      /**< Shortcut for the value holder. */
+  typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */
+  typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */
+  typedef typename base_vector::size_type size_type;           /**< Shortcut for the size type. */
+  typedef typename base_vector::iterator iterator;             /**< Shortcut for the iterator. */
+  typedef typename base_vector::const_iterator const_iterator; /**< Shortcut for the const iterator. */
 
 public:
+  /**
+   * @brief Creates an empty vector.
+   * 
+   * Creates an empty vector. The parent reference
+   * and the index is holded by the item itself.
+   *
+   * @param parent The parent object.
+   */
 	explicit object_vector(S *parent)
     : object_vector_base<S, T>(parent)
 		, ref_setter(FUNC1)
 		, int_setter(FUNC2)
     , int_getter(FUNC3)
-  {
-//    std::cout << "func 2\n";
-  }
+  {}
+
   virtual ~object_vector() {}
 
   virtual iterator insert(iterator pos, const value_holder &x)
@@ -458,6 +494,8 @@ public:
   }
   
 protected:
+///@cond OOS_DEV
+
   virtual object_base_producer* create_item_producer() const
   {
     return 0;
@@ -475,11 +513,18 @@ protected:
   }
 
   virtual void append_proxy(object_proxy *proxy)
-  {
-    
+  {    
     int index = int_getter(*static_cast<value_type*>(proxy->obj));
-    base_vector::append_proxy(proxy);
+    if (this->vector().size() < (size_type)index) {
+      this->vector().resize(index);
+      this->vector().push_back(value_holder(proxy));
+    } else if (this->vector().size() == (size_type)index) {
+      this->vector().push_back(value_holder(proxy));
+    } else {
+      this->vector()[index] = value_holder(proxy);
+    }
   }
+///@endcond
 
 private:
 	std::function<void (value_type&, const object_ref<S>&)> ref_setter;
@@ -487,6 +532,20 @@ private:
 	std::function<int (const value_type&)> int_getter;
 };
 
+/**
+ * @brief Object vector class with relation table
+ *
+ * @tparam S The type of the parent object.
+ * @tparam T The value of the vector.
+ * @tparam FUNC1 The parent setter function
+ * @tparam FUNC2 The index setter function
+ * 
+ * The object_vector class implements a vector which
+ * can hold any type of object from builtin types as
+ * int, float to object_ptr or object_ref elements.
+ * The class provides STL like behaviour and the order of
+ * the elements is reliable.
+ */
 template < class S, class T,
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
 void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
@@ -494,24 +553,33 @@ void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::t
 class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
-	typedef typename std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type;
-  typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;
-  typedef T value_holder;
-  typedef object_ref<S> parent_ref;
-  typedef typename base_vector::item_holder item_holder;
-  typedef object_vector_item<T, S> item_type;
-  typedef item_holder item_ptr;
-  typedef typename base_vector::iterator iterator;
-  typedef typename base_vector::const_iterator const_iterator;
+  typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
+	typedef typename std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
+  typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
+  typedef object_ref<S> parent_ref;                                                                                       /**< Shortcut for the parent reference. */
+  typedef typename base_vector::item_holder item_holder;                                                                  /**< Shortcut for the item holder. */
+  typedef object_vector_item<T, S> item_type;                                                                             /**< Shortcut for the item type. */
+  typedef item_holder item_ptr;                                                                                           /**< Shortcut for the item ptr. */
+  typedef typename base_vector::size_type size_type;                                                                      /**< Shortcut for the size type. */
+  typedef typename base_vector::iterator iterator;                                                                        /**< Shortcut for the iterator. */
+  typedef typename base_vector::const_iterator const_iterator;                                                            /**< Shortcut for the const iterator. */
 
 public:
+  /**
+   * @brief Creates an empty vector
+   * 
+   * Creates an empty vector with the
+   * given parent. All items are mapped
+   * via a relation table
+   * 
+   * @param parent The parent object.
+   */
 	explicit object_vector(S *parent)
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
 		, str_setter(FUNC1)
     , int_setter(FUNC2)
-	{
-//    std::cout << "func 2\n";
-  }
+	{}
+
   virtual ~object_vector() {}
 	
   virtual iterator insert(iterator pos, const value_holder &x)
@@ -545,16 +613,13 @@ public:
   {
     // erase object from object store
     item_ptr item = *i;
-    if (!this->ostore()->remove(item)) {
-      return this->end();
-    } else {
-      this->mark_modified(this->parent());
-      iterator ret = this->vector().erase(i);
-      // update index values of all successor elements
-      this->adjust_index(ret);
+    this->ostore()->remove(item);
+    this->mark_modified(this->parent());
+    iterator ret = this->vector().erase(i);
+    // update index values of all successor elements
+    this->adjust_index(ret);
 
-      return ret;
-    }
+    return ret;
   }
 
   virtual iterator erase(iterator first, iterator last)
@@ -564,9 +629,7 @@ public:
       // erase object from object store
       item_ptr item = *i++;
       this->mark_modified(this->parent());
-      if (!this->ostore()->remove(item)) {
-        return this->end();
-      }
+      this->ostore()->remove(item);
     }
     i = this->vector().erase(first, last);
     // adjust index
@@ -576,6 +639,9 @@ public:
   }
   
 protected:
+
+///@cond OOS_DEV
+
   virtual object_base_producer* create_item_producer() const
   {
     return new object_producer<item_type>();
@@ -591,6 +657,22 @@ protected:
       (*i++)->index(start++);
     }
   }
+
+  virtual void append_proxy(object_proxy *proxy)
+  {
+    item_type *val = static_cast<item_type*>(proxy->obj);
+    int index = val->index();
+    if (this->vector().size() < (size_type)index) {
+      this->vector().resize(index);
+      this->vector().push_back(item_holder(proxy));
+    } else if (this->vector().size() == (size_type)index) {
+      this->vector().push_back(item_holder(proxy));
+    } else {
+      this->vector()[index] = item_holder(proxy);
+    }
+  }
+
+///@endcond
 
 private:
 	std::function<void (value_type&, const object_ref<S>&)> str_setter;
