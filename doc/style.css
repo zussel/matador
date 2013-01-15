@@ -305,14 +305,28 @@ a
 #content table
 {
   border-collapse: collapse;
-/*  width: 100%;
-  border: 1px solid #aaa;*/
+  width: 100%;
+  border: 1px solid #888;
+  border-radius: 10px;
 }
+
 
 #content table tr td,
 #content table tr th
 {
-/*  border: 1px solid #aaa;*/
+  border: 1px solid #888;
+  font-weight: bolder;
+}
+
+#content table tr th
+{
+  background-color: #aaa;
+  color: #fff;
+}
+
+#content table tr.alt td
+{
+  background-color: #ccc;
 }
 
 #footer
