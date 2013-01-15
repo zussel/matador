@@ -109,14 +109,21 @@ void statement_reader::import()
   prototype_node::field_prototype_node_map_t::const_iterator last = node_.relations.end();
   while (first != last) {
 //    std::cout << "DEBUG: checking for relation node [" << first->first << "] ...";
-    database::table_info_t &info = stmt_->db().table_info_map_.at(first->first);
-    if (info.is_loaded) {
-//      std::cout << " loaded\n";
-      relation_filler filler(info);
-      filler.fill();
+//    database::table_info_t &info = stmt_->db().table_info_map_.at(first->first);
+    database::table_info_map_t::iterator i = stmt_->db().table_info_map_.find(first->first);
+    if (i == stmt_->db().table_info_map_.end()) {
+      throw std::out_of_range("unknown key");
     } else {
-//      std::cout << " not loaded\n";
+      database::table_info_t &info = i->second;
+      if (info.is_loaded) {
+  //      std::cout << " loaded\n";
+        relation_filler filler(info);
+        filler.fill();
+      } else {
+  //      std::cout << " not loaded\n";
+      }
     }
+
     ++first;
   }
 }
@@ -211,7 +218,11 @@ void statement_reader::read(const char *id, bool &x)
   x = stmt_->column_int(column_++) != 0;
 }
 
-void statement_reader::read(const char *id, char *x, int )
+#ifdef WIN32
+void statement_reader::read(const char *id, char *x, int s)
+#else
+void statement_reader::read(const char *id, char *x, int)
+#endif
 {
   if (!valid_column(id, column_)) {
     return;
@@ -220,7 +231,6 @@ void statement_reader::read(const char *id, char *x, int )
   const char *val = stmt_->column_text(column_++, len);
   // TODO: check buffer size
 #ifdef WIN32
-  // TODO: fixme: use db varchar in correct way
 //  strncpy_s(x, s, tmp, len);
   strncpy_s(x, s, val, len+1);
 #else

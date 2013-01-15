@@ -25,6 +25,8 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
+#include <stdexcept>
+
 namespace oos {
 
 database::database(session *db, database_sequencer *seq)
@@ -66,12 +68,30 @@ void database::close()
 
 void database::load(const prototype_node &node)
 {
+#ifdef WIN32
+  table_info_map_t::iterator i = table_info_map_.find(node.type);
+  if (i == table_info_map_.end()) {
+    throw std::out_of_range("unknown key");
+  } else {
+    i->second.is_load = true;
+  }
+#else
   table_info_map_.at(node.type).is_loaded = true;
+#endif
 }
 
 bool database::is_loaded(const std::string &name) const
 {
+#ifdef WIN32
+  table_info_map_t::iterator i = table_info_map_.find(node.type);
+  if (i == table_info_map_.end()) {
+    throw std::out_of_range("unknown key");
+  } else {
+    return i->second.is_load;
+  }
+#else
   return table_info_map_.at(name).is_loaded;
+#endif
 }
 
 void database::drop()
