@@ -25,6 +25,8 @@
 #include "object/object_exception.hpp"
 #include "object/prototype_node.hpp"
 
+#include "tools/conditional.hpp"
+
 #ifdef WIN32
 #include <functional>
 #else
@@ -378,9 +380,9 @@ private:
 struct dummyy { struct inner {}; typedef inner object_type; };
 
 template < class S, class T,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
-int (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
+int (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
 >
 class object_vector;
 
@@ -402,9 +404,9 @@ class object_vector;
  * the elements is reliable.
  */
 template < class S, class T,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
-int (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
+int (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
 >
 class object_vector<S, T, FUNC1, FUNC2, FUNC3> : public object_vector_base<S, T>
 {
@@ -547,14 +549,14 @@ private:
  * the elements is reliable.
  */
 template < class S, class T,
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
 >
 class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
-	typedef typename std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
+	typedef typename oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
   typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
   typedef object_ref<S> parent_ref;                                                                                       /**< Shortcut for the parent reference. */
   typedef typename base_vector::item_holder item_holder;                                                                  /**< Shortcut for the item holder. */

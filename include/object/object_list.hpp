@@ -25,6 +25,8 @@
 #include "object/object_exception.hpp"
 #include "object/prototype_node.hpp"
 
+#include "tools/conditional.hpp"
+
 #ifdef WIN32
 #include <functional>
 #else
@@ -295,7 +297,7 @@ struct dummy { struct inner {}; typedef inner object_type; };
 /*
  * Not implemented class
  */
-template < class S, class T, void (std::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
+template < class S, class T, void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
 
 ///@endcond

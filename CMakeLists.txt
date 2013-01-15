@@ -113,6 +113,7 @@ SET(TOOLS_INSTALL_HEADER
   include/tools/string.hpp
   include/tools/convert.hpp
   include/tools/enable_if.hpp
+  include/tools/conditional.hpp
 )
 
 SET(JSON_SOURCE
