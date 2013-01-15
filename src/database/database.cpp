@@ -73,7 +73,7 @@ void database::load(const prototype_node &node)
   if (i == table_info_map_.end()) {
     throw std::out_of_range("unknown key");
   } else {
-    i->second.is_load = true;
+    i->second.is_loaded = true;
   }
 #else
   table_info_map_.at(node.type).is_loaded = true;
@@ -83,11 +83,11 @@ void database::load(const prototype_node &node)
 bool database::is_loaded(const std::string &name) const
 {
 #ifdef WIN32
-  table_info_map_t::iterator i = table_info_map_.find(node.type);
+  table_info_map_t::const_iterator i = table_info_map_.find(name);
   if (i == table_info_map_.end()) {
     throw std::out_of_range("unknown key");
   } else {
-    return i->second.is_load;
+    return i->second.is_loaded;
   }
 #else
   return table_info_map_.at(name).is_loaded;

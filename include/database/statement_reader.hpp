@@ -48,7 +48,7 @@ class object;
 class object_base_ptr;
 class object_container;
 class varchar_base;
-class prototype_node;
+struct prototype_node;
 
 /// @cond OOS_DEV
 

@@ -33,6 +33,7 @@
 #include <tr1/functional>
 #endif
 
+#include <type_traits>
 #include <list>
 #include <algorithm>
 
