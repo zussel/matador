@@ -297,7 +297,7 @@ struct dummy { struct inner {}; typedef inner object_type; };
 /*
  * Not implemented class
  */
-template < class S, class T, void (oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
+template < class S, class T, void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
 struct object_list;
 
 ///@endcond
