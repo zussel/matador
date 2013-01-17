@@ -385,10 +385,10 @@ private:
 
 struct dummyy { struct inner {}; typedef inner object_type; };
 
-template < class S, class T,
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
-int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
+template < class S, class T, bool WITH_JOIN_TABLE
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
+//int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
 >
 class object_vector;
 
@@ -409,14 +409,17 @@ class object_vector;
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T,
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
-int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
+template < class S, class T
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
+//int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
 >
-class object_vector<S, T, FUNC1, FUNC2, FUNC3> : public object_vector_base<S, T>
+class object_vector<S, T, false> : public object_vector_base<S, T>
 {
 public:
+  typedef void (T::object_type::*FUNC1)(const object_ref<S>&);
+  typedef void (T::object_type::*FUNC2)(int);
+  typedef int (T::object_type::*FUNC3)() const;
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
 	typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
@@ -435,11 +438,11 @@ public:
    *
    * @param parent The parent object.
    */
-	explicit object_vector(S *parent)
+	object_vector(S *parent, FUNC1 f1, FUNC2 f2, FUNC3 f3)
     : object_vector_base<S, T>(parent)
-		, ref_setter(FUNC1)
-		, int_setter(FUNC2)
-    , int_getter(FUNC3)
+		, ref_setter(f1)
+		, int_setter(f2)
+    , int_getter(f3)
   {}
 
   virtual ~object_vector() {}
@@ -554,13 +557,15 @@ private:
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T,
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
+template < class S, class T
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
 >
-class object_vector<S, T, FUNC1, FUNC2> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
+class object_vector<S, T, true> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
+  typedef void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&);
+  typedef void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int);
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
 	typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
   typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
@@ -582,10 +587,10 @@ public:
    * 
    * @param parent The parent object.
    */
-	explicit object_vector(S *parent)
+	explicit object_vector(S *parent, FUNC1 f1 = 0, FUNC2 f2 = 0)
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
-		, str_setter(FUNC1)
-    , int_setter(FUNC2)
+		, str_setter(f1)
+    , int_setter(f2)
 	{}
 
   virtual ~object_vector() {}

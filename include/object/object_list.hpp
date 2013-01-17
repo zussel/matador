@@ -298,8 +298,11 @@ struct dummy { struct inner {}; typedef inner object_type; };
 /*
  * Not implemented class
  */
-template < class S, class T, void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
-struct object_list;
+//template < class S, class T, void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
+//struct object_list;
+
+template < class S, class T, bool WITH_JOIN_TABLE >
+class object_list;
 
 ///@endcond
 
@@ -313,12 +316,15 @@ struct object_list;
  * This object list class uses no relation table. The items
  * hold the information of its parent by themself.
  */
-template < class S, class T, void (T::object_type::*SETFUNC)(const object_ref<S>&)>
-class object_list<S, T, SETFUNC> : public object_list_base<S, T>
+template < class S, class T >
+class object_list<S, T, false> : public  object_list_base<S, T>
+//template < class S, class T, void (T::object_type::*SETFUNC)(const object_ref<S>&)>
+//class object_list<S, T, SETFUNC> : public object_list_base<S, T>
 {
 public:
-  typedef object_list_base<S, T> base_list;                  /**< Shortcut for the base list. */
   typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
+  typedef void (T::object_type::*SETFUNC)(const parent_ref&);
+  typedef object_list_base<S, T> base_list;                  /**< Shortcut for the base list. */
   typedef typename T::object_type item_type;                 /**< Shortcut for the item type. */
   typedef typename base_list::value_holder value_holder;     /**< Shortcut for the value holder. */
   typedef typename base_list::item_holder item_holder;       /**< Shortcut for the item holder. */
@@ -333,9 +339,9 @@ public:
    * 
    * @param parent The parent of the list.
    */
-  object_list(S *parent)
+  object_list(S *parent, SETFUNC setfunc)
     : object_list_base<S, T>(parent)
-    , setter_(SETFUNC)
+    , setter_(setfunc)
   {}
   virtual ~object_list() {}
 
@@ -399,7 +405,7 @@ private:
  * map the items to its parent.
  */
 template < class S, class T>
-class object_list<S, T> : public object_list_base<S, T, object_ptr<container_item<T, S> > >
+class object_list<S, T, true> : public object_list_base<S, T, object_ptr<container_item<T, S> > >
 {
 public:
   typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list; /**< Shortcut for the base list. */

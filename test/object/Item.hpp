@@ -171,7 +171,7 @@ class List : public oos::object
 public:
   typedef T value_type;
   typedef List<T> self;
-  typedef oos::object_list<self, T> list_t;
+  typedef oos::object_list<self, T, true> list_t;
   typedef typename list_t::item_type item_type;
 /*  typedef typename list_t::item_type item_ptr;*/
   typedef typename list_t::size_type size_type;
@@ -329,7 +329,7 @@ class Vector : public oos::object
 {
 public:
   typedef T value_type;
-  typedef oos::object_vector<Vector<T>, value_type> vector_t;
+  typedef oos::object_vector<Vector<T>, value_type, true> vector_t;
   typedef typename vector_t::item_type item_type;
   typedef typename vector_t::item_ptr item_ptr;
   typedef typename vector_t::size_type size_type;
@@ -447,7 +447,7 @@ class book_list : public oos::object
 {
 public:
   typedef oos::object_ref<book> book_ref;
-  typedef oos::object_list<book_list, book_ref> book_list_t;
+  typedef oos::object_list<book_list, book_ref, true> book_list_t;
   typedef book_list_t::item_ptr item_ptr;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
@@ -555,7 +555,7 @@ class department : public oos::object
 {
 public:
   typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref, &employee::dep> emp_list_t;
+  typedef oos::object_list<department, emp_ref, false> emp_list_t;
   typedef emp_list_t::size_type size_type;
   typedef emp_list_t::iterator iterator;
   typedef emp_list_t::const_iterator const_iterator;
@@ -565,10 +565,10 @@ private:
   emp_list_t emp_list_;
   
 public:
-  department() : emp_list_(this) {}
+  department() : emp_list_(this, &employee::dep) {}
   department(const std::string &name)
     : name_(name)
-    , emp_list_(this)
+    , emp_list_(this, &employee::dep)
   {}
   
   virtual ~department() {}
@@ -655,7 +655,7 @@ class album : public oos::object
 {
 public:
   typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<album, track_ref, &track::alb, &track::index, &track::index> track_list_t;
+  typedef oos::object_vector<album, track_ref, false> track_list_t;
   typedef typename track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;
@@ -665,10 +665,12 @@ private:
   track_list_t tracks_;
   
 public:
-  album() : tracks_(this) {}
+  album()
+    : tracks_(this, &track::alb, &track::index, &track::index)
+  {}
   album(const std::string &name)
     : name_(name)
-    , tracks_(this)
+    , tracks_(this, &track::alb, &track::index, &track::index)
   {}
   
   virtual ~album() {}
@@ -716,7 +718,7 @@ class playlist : public oos::object
 {
 public:
   typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<playlist, track_ref> track_list_t;
+  typedef oos::object_vector<playlist, track_ref, true> track_list_t;
   typedef typename track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;
