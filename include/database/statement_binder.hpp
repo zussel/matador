@@ -28,7 +28,7 @@ class object;
 
 /// @cond OOS_DEV
 
-class statement_binder : public object_writer
+class OOS_API statement_binder : public object_writer
 {
 public:
   typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;

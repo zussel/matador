@@ -152,9 +152,13 @@ void sqlite_database::load(const prototype_node &node)
     store_statement(node.type + "_SELECT", stmt);
   }
 
-  table_info_t &info = table_info_map().at(node.type);
+  table_info_map_t::iterator i = table_info_map().find(node.type);
+  if (i == table_info_map().end()) {
+    throw sqlite_exception("load: couldn't find node");
+  }
+//  table_info_t &info = table_info_map().at(node.type);
 
-  statement_reader reader(node, stmt, info);
+  statement_reader reader(node, stmt, i->second);
   /* iterate over statement results and create 
    * and insert objects
    */
