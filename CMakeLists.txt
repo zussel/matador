@@ -14,6 +14,13 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 #    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -ggdb -Wextra -Wall -pedantic")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
+find_package(Doxygen)
+
+if(DOXYGEN_FOUND)
+    MESSAGE(STATUS "Doxygen detected")
+    ADD_CUSTOM_TARGET(doc ALL ${DOXYGEN_EXECUTABLE} 
+ENDIF(DOXYGEN_FOUND)
+
 # add module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
