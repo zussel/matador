@@ -24,10 +24,15 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=577;CMake;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2FCMakeLists.txt;0;2
+FILE_NAME_0=5492;CMake;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2FCMakeLists.txt;0;2
+FILE_NAME_1=6552;None;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Foos.dxy.in;0;2
+FILE_NAME_2=220;HTML;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fdoxygen%2Fdoc_header.html;0;2
+FILE_NAME_3=3991;CMake;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2FCMakeLists.txt;0;2
+FILE_NAME_4=25;CMake;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2FCMakeLists.txt;0;2
+FILE_NAME_5=845;CMake;0;16;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2Fsqlite%2FCMakeLists.txt;0;2
 
 [VTE]
-last_dir=/home/sascha/development/oos/build/bin
+last_dir=/home/sascha/development/oos/build
 
 [build-menu]
 C++FT_01_LB=Alles _Erstellen

@@ -18,7 +18,12 @@ find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen detected")
-    ADD_CUSTOM_TARGET(doc ALL ${DOXYGEN_EXECUTABLE} 
+    # Configure the Template Doxyfile for our specific project
+    configure_file(oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
+    # Add a custom target to run Doxygen when ever the project is built
+    add_custom_target (doc ALL 
+  										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
+  										 COMMENT "Generating API documentation with Doxygen" VERBATIM)
 ENDIF(DOXYGEN_FOUND)
 
 # add module path
@@ -31,6 +36,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+SET(CMAKE_MODULE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #FIND_PACKAGE(EXPAT REQUIRED PATHS "C:/Programme/Expat/Bin" "C:/Programme/Expat/Source/lib")
 
@@ -49,8 +55,6 @@ ENDIF(NOT SQLITE3_FOUND)
 
 INCLUDE_DIRECTORIES(
 	${PROJECT_SOURCE_DIR}/include
-#	${Boost_INCLUDE_DIRS}/boost/tr1/tr1
-#	${Boost_INCLUDE_DIRS}
 	${SQLITE3_INCLUDE_DIR}
 )
 
@@ -58,213 +62,17 @@ INCLUDE_DIRECTORIES(
 #  SET(CMAKE_BUILD_TYPE "Debug")
 #ENDIF()
 
-SET(OBJECT_SOURCES
-  src/object/object.cpp
-  src/object/object_creator.cpp
-  src/object/object_deleter.cpp
-  src/object/object_container.cpp
-  src/object/object_ptr.cpp
-  src/object/object_store.cpp
-  src/object/object_proxy.cpp
-  src/object/object_serializer.cpp
-  src/object/object_convert.cpp
-  src/object/prototype_node.cpp
-  src/object/attribute_serializer.cpp
-)
+# contains the full path to the top level directory of your build tree 
+MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
 
-SET(OBJECT_HEADER
-  include/object/object_creator.hpp
-  include/object/object_deleter.hpp
-  include/object/object_serializer.hpp
-)
+# contains the full path to the root of your project source directory,
+# i.e. to the nearest directory where CMakeLists.txt contains the PROJECT() command 
+MESSAGE( STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
 
-SET(OBJECT_INSTALL_HEADER
-  include/object/attribute_serializer.hpp
-  include/object/object.hpp
-  include/object/object_exception.hpp
-  include/object/object_ptr.hpp
-  include/object/object_store.hpp
-  include/object/object_container.hpp
-  include/object/object_convert.hpp
-  include/object/object_list.hpp
-  include/object/object_vector.hpp
-  include/object/linked_object_list.hpp
-  include/object/object_view.hpp
-  include/object/object_proxy.hpp
-  include/object/prototype_node.hpp
-  include/object/object_observer.hpp
-  include/object/object_expression.hpp
-  include/object/attribute_serializer.hpp
-  include/object/object_atomizer.hpp
-  include/object/object_atomizable.hpp
-)
+MESSAGE( STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR} )
 
-SET(TOOLS_SOURCES
-  src/tools/byte_buffer.cpp
-  src/tools/library.cpp
-  src/tools/blob.cpp
-  src/tools/varchar.cpp
-  src/tools/sequencer.cpp
-  src/tools/convert.cpp
-)
-
-SET(TOOLS_INSTALL_HEADER
-  include/tools/algorithm.hpp
-  include/tools/byte_buffer.hpp
-  include/tools/singleton.hpp
-  include/tools/library.hpp
-  include/tools/blob.hpp
-  include/tools/varchar.hpp
-  include/tools/sequencer.hpp
-  include/tools/factory.hpp
-  include/tools/string.hpp
-  include/tools/convert.hpp
-  include/tools/enable_if.hpp
-  include/tools/conditional.hpp
-)
-
-SET(JSON_SOURCE
-  src/json/json_type.cpp
-  src/json/json_value.cpp
-  src/json/json_object.cpp
-  src/json/json_string.cpp
-  src/json/json_bool.cpp
-  src/json/json_null.cpp
-  src/json/json_number.cpp
-  src/json/json_array.cpp
-  src/json/json_exception.cpp
-  src/json/json_parser.cpp
-)
-
-SET(JSON_INSTALL_HEADER
-  include/json/json.hpp
-  include/json/json_type.hpp
-  include/json/json_value.hpp
-  include/json/json_object.hpp
-  include/json/json_string.hpp
-  include/json/json_bool.hpp
-  include/json/json_null.hpp
-  include/json/json_number.hpp
-  include/json/json_array.hpp
-  include/json/json_exception.hpp
-  include/json/json_parser.hpp
-  include/json/generic_json_parser.hpp
-)
-
-SET(UNIT_SOURCES
-  src/unit/test_suite.cpp
-  src/unit/unit_exception.cpp
-  src/unit/unit_test.cpp
-)
-
-SET(UNIT_HEADER
-  include/unit/test_suite.hpp
-  include/unit/unit_exception.hpp
-  include/unit/unit_test.hpp
-)
-
-SET(DATABASE_SOURCES
-  src/database/action.cpp
-  src/database/session.cpp
-  src/database/database.cpp
-  src/database/database_exception.cpp
-  src/database/database_factory.cpp
-  src/database/memory_database.cpp
-  src/database/transaction.cpp
-  src/database/transaction_helper.cpp
-  src/database/result.cpp
-  src/database/row.cpp
-  src/database/statement.cpp
-  src/database/statement_creator.cpp
-  src/database/statement_binder.cpp
-  src/database/statement_reader.cpp
-)
-
-SET(DATABASE_HEADER
-  include/database/action.hpp
-  include/database/database.hpp
-  include/database/database_factory.hpp
-  include/database/memory_database.hpp
-  include/database/database_sequencer.hpp
-  include/database/transaction_helper.hpp
-  include/database/result.hpp
-  include/database/row.hpp
-  include/database/value.hpp
-  include/database/statement.hpp
-  include/database/statement_creator.hpp
-  include/database/statement_binder.hpp
-  include/database/statement_reader.hpp
-)
-
-SET(DATABASE_INSTALL_HEADER
-  include/database/session.hpp
-  include/database/database_exception.hpp
-  include/database/transaction.hpp
-)
-
-ADD_LIBRARY(oos SHARED
-  ${OBJECT_SOURCES} ${OBJECT_HEADER} ${OBJECT_INSTALL_HEADER}
-  ${TOOLS_SOURCES} ${TOOLS_INSTALL_HEADER}
-  ${JSON_SOURCE} ${JSON_INSTALL_HEADER}
-  ${UNIT_SOURCES} ${UNIT_HEADER}
-  ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER}
-)
-
-# Set the build version (VERSION) and the API version (SOVERSION)
-SET_TARGET_PROPERTIES(oos
-                      PROPERTIES
-                      VERSION 0.1.0
-                      SOVERSION 1)
-
-SET(SQLITE_DATABASE_SOURCES
-  src/database/sqlite/sqlite_database.cpp
-  src/database/sqlite/sqlite_exception.cpp
-  src/database/sqlite/sqlite_statement.cpp
-  src/database/sqlite/sqlite_sequencer.cpp
-  src/database/sqlite/sqlite_result.cpp
-)
-
-SET(SQLITE_DATABASE_HEADER
-  include/database/sqlite/sqlite_database.hpp
-  include/database/sqlite/sqlite_exception.hpp
-  include/database/sqlite/sqlite_statement.hpp
-  include/database/sqlite/sqlite_sequencer.hpp
-  include/database/sqlite/sqlite_result.hpp
-  include/database/sqlite/sqlite_types.hpp
-)
-
-ADD_LIBRARY(oos-sqlite SHARED
-  ${SQLITE_DATABASE_SOURCES} ${SQLITE_DATABASE_HEADER}
-)
-
-SET_TARGET_PROPERTIES(oos-sqlite
-                      PROPERTIES
-                      VERSION 0.1.0
-                      SOVERSION 1)
-
-TARGET_LINK_LIBRARIES(oos-sqlite oos ${SQLITE3_LIBRARY})
-
-# Group source files for IDE source explorers (e.g. Visual Studio)
-SOURCE_GROUP("object" FILES ${OBJECT_SOURCES} ${OBJECT_HEADER} ${OBJECT_INSTALL_HEADER})
-SOURCE_GROUP("tools" FILES ${TOOLS_SOURCES} ${TOOLS_INSTALL_HEADER})
-SOURCE_GROUP("json" FILES ${JSON_SOURCE} ${JSON_INSTALL_HEADER})
-SOURCE_GROUP("unit" FILES ${UNIT_SOURCES} ${UNIT_HEADER})
-SOURCE_GROUP("database" FILES ${DATABASE_SOURCES} ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
-
+ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
-
-INSTALL(
-	TARGETS oos oos-sqlite
-	ARCHIVE	DESTINATION lib
-	LIBRARY DESTINATION lib
-	COMPONENT libraries
-)
-
-INSTALL(
-	TARGETS oos oos-sqlite
-	DESTINATION lib
-	COMPONENT libraries
-)
 
 #INSTALL(
 #	TARGETS oos-tools
@@ -274,35 +82,10 @@ INSTALL(
 #)
 
 INSTALL(
-	FILES ${OBJECT_INSTALL_HEADER}
-	DESTINATION include/oos/object
-	COMPONENT headers
+  DIRECTORY ${PROJECT_BINARY_DIR}/doc
+  DESTINATION .
+  COMPONENT doc
 )
-
-INSTALL(
-	FILES ${DATABASE_INSTALL_HEADER}
-	DESTINATION include/oos/database
-	COMPONENT headers
-)
-
-INSTALL(
-	FILES ${TOOLS_INSTALL_HEADER}
-	DESTINATION include/oos/tools
-	COMPONENT headers
-)
-
-INSTALL(
-	FILES ${JSON_INSTALL_HEADER}
-	DESTINATION include/oos/json
-	COMPONENT headers
-)
-
-INSTALL(
-	FILES ${UNIT_HEADER}
-	DESTINATION include/oos/unit
-	COMPONENT headers
-)
-
 # Basic CPack configuration   
 SET(CPACK_PACKAGE_NAME "OOS")
 SET(CPACK_PACKAGE_VENDOR "Elephant Sky")
@@ -317,7 +100,7 @@ SET(CPACK_PACKAGE_INSTALL_DIRECTORY "OOS")
 # refers to the fact that this is the set of components that
 # will be included when CPack is instructed to put everything
 # into the binary installer (the default behavior).
-SET(CPACK_COMPONENTS_ALL libraries headers)
+SET(CPACK_COMPONENTS_ALL libraries headers doc)
 
 # Set the displayed names for each of the components to install.
 # These will be displayed in the list of components inside the installer.
@@ -361,6 +144,9 @@ SET(CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
 SET(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)
 SET(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
 #SET(CPACK_COMPONENT_APPLICATIONS_INSTALL_TYPES Full)
+
+# Set license file to add
+#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
 # Include CPack to introduce the appropriate targets
 INCLUDE(CPack)
