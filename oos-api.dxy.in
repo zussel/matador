@@ -52,7 +52,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@
+OUTPUT_DIRECTORY       = "@PROJECT_BINARY_DIR@"
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -140,7 +140,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is 
 # started.
 
-STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/include
+STRIP_FROM_PATH        = "@PROJECT_SOURCE_DIR@/include"
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -604,7 +604,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted 
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = @PROJECT_SOURCE_DIR@/doxygen/doxygen_layout.xml
+LAYOUT_FILE            = "@PROJECT_SOURCE_DIR@/doxygen/doxygen_layout.xml"
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files 
 # containing the references data. This must be a list of .bib files. The 
@@ -677,13 +677,13 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/include \
-                         @PROJECT_SOURCE_DIR@/doxygen/main.dox \
-                         @PROJECT_SOURCE_DIR@/doxygen/store.dox \
-                         @PROJECT_SOURCE_DIR@/doxygen/relations.dox \
-                         @PROJECT_SOURCE_DIR@/doxygen/expressions.dox \
-                         @PROJECT_SOURCE_DIR@/doxygen/view.dox \
-                         @PROJECT_SOURCE_DIR@/doxygen/database.dox
+INPUT                  = "@PROJECT_SOURCE_DIR@/include" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/main.dox" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/store.dox" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/relations.dox" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/expressions.dox" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/view.dox" \
+                         "@PROJECT_SOURCE_DIR@/doxygen/database.dox"
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -746,7 +746,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = @PROJECT_SOURCE_DIR@/include/database/sqlite
+EXCLUDE                = "@PROJECT_SOURCE_DIR@/include/database/sqlite"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 
@@ -946,13 +946,13 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when 
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = @PROJECT_SOURCE_DIR@/doxygen/api_header.html
+HTML_HEADER            = "@PROJECT_SOURCE_DIR@/doxygen/api_header.html"
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = @PROJECT_SOURCE_DIR@/doxygen/api_footer.html
+HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/doxygen/api_footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
@@ -961,7 +961,7 @@ HTML_FOOTER            = @PROJECT_SOURCE_DIR@/doxygen/api_footer.html
 # HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this 
 # tag will in the future become obsolete.
 
-HTML_STYLESHEET        = @PROJECT_SOURCE_DIR@/doc/web/style.css
+HTML_STYLESHEET        = "@PROJECT_SOURCE_DIR@/doc/web/style.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify an additional 
 # user-defined cascading style sheet that is included after the standard 
