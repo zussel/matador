@@ -322,15 +322,15 @@ class object_list<S, T, false> : public  object_list_base<S, T>
 //class object_list<S, T, SETFUNC> : public object_list_base<S, T>
 {
 public:
-  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
-  typedef void (T::object_type::*SETFUNC)(const parent_ref&);
-  typedef object_list_base<S, T> base_list;                  /**< Shortcut for the base list. */
-  typedef typename T::object_type item_type;                 /**< Shortcut for the item type. */
-  typedef typename base_list::value_holder value_holder;     /**< Shortcut for the value holder. */
-  typedef typename base_list::item_holder item_holder;       /**< Shortcut for the item holder. */
-  typedef typename base_list::size_type size_type;           /**< Shortcut for the size type. */
-  typedef typename base_list::iterator iterator;             /**< Shortcut for the iterator. */
-  typedef typename base_list::const_iterator const_iterator; /**< Shortcut for the const iterator. */
+  typedef object_ref<S> parent_ref;                           /**< Shortcut for the parent reference. */
+  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */
+  typedef object_list_base<S, T> base_list;                   /**< Shortcut for the base list. */
+  typedef typename T::object_type item_type;                  /**< Shortcut for the item type. */
+  typedef typename base_list::value_holder value_holder;      /**< Shortcut for the value holder. */
+  typedef typename base_list::item_holder item_holder;        /**< Shortcut for the item holder. */
+  typedef typename base_list::size_type size_type;            /**< Shortcut for the size type. */
+  typedef typename base_list::iterator iterator;              /**< Shortcut for the iterator. */
+  typedef typename base_list::const_iterator const_iterator;  /**< Shortcut for the const iterator. */
 
 public:
   /**
@@ -338,6 +338,7 @@ public:
    * parent.
    * 
    * @param parent The parent of the list.
+   * @param setfunc The parent reference setter function.
    */
   object_list(S *parent, SETFUNC setfunc)
     : object_list_base<S, T>(parent)

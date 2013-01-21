@@ -417,9 +417,9 @@ template < class S, class T
 class object_vector<S, T, false> : public object_vector_base<S, T>
 {
 public:
-  typedef void (T::object_type::*FUNC1)(const object_ref<S>&);
-  typedef void (T::object_type::*FUNC2)(int);
-  typedef int (T::object_type::*FUNC3)() const;
+  typedef void (T::object_type::*FUNC1)(const object_ref<S>&); /**< Shortcut for the parent reference setter function. */
+  typedef void (T::object_type::*FUNC2)(int);                  /**< Shortcut for the index setter function. */
+  typedef int (T::object_type::*FUNC3)() const;                /**< Shortcut for the index getter function. */
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
 	typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
@@ -437,6 +437,9 @@ public:
    * and the index is holded by the item itself.
    *
    * @param parent The parent object.
+   * @param f1 The parent reference setter function.
+   * @param f2 The index setter function.
+   * @param f3 The index getter function.
    */
 	object_vector(S *parent, FUNC1 f1, FUNC2 f2, FUNC3 f3)
     : object_vector_base<S, T>(parent)
@@ -543,6 +546,8 @@ private:
 	std::tr1::function<int (const value_type&)> int_getter;
 };
 
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
+//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
 /**
  * @brief Object vector class with relation table
  *
@@ -557,17 +562,14 @@ private:
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
->
+template < class S, class T >
 class object_vector<S, T, true> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
-  typedef void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&);
-  typedef void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int);
+  typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
+  typedef void (value_type::*FUNC1)(const object_ref<S>&);                                                                /**< Shortcut for the parent reference setter function. */
+  typedef void (value_type::*FUNC2)(int);                                                                                 /**< Shortcut for the index setter function. */
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
-	typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
   typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
   typedef object_ref<S> parent_ref;                                                                                       /**< Shortcut for the parent reference. */
   typedef typename base_vector::item_holder item_holder;                                                                  /**< Shortcut for the item holder. */
@@ -586,6 +588,8 @@ public:
    * via a relation table
    * 
    * @param parent The parent object.
+   * @param f1 The parent reference setter function.
+   * @param f2 The index setter function.
    */
 	explicit object_vector(S *parent, FUNC1 f1 = 0, FUNC2 f2 = 0)
     : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
