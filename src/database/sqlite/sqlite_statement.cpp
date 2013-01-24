@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 #include <sqlite3.h>
 
 namespace oos {
@@ -142,6 +143,34 @@ double sqlite_statement::column_double(int i) const
   return sqlite3_column_double(stmt_, i);
 }
 
+void sqlite_statement::column(int i, double &value) const
+{
+  value = sqlite3_column_double(stmt_, i);
+}
+
+void sqlite_statement::column(int i, int &value) const
+{
+  value = sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, char *value, int &len) const
+{
+  int s = sqlite3_column_bytes(stmt_, i);
+  if (s >= len) {
+    throw sqlite_exception("unsufficient size of character buffer");
+  } else {
+    strncpy(value, (const char*)sqlite3_column_text(stmt_, i), s);
+    value[s] = '\0';
+    len = s;
+  }
+}
+
+void sqlite_statement::column(int i, std::string &value) const
+{
+  int s = sqlite3_column_bytes(stmt_, i);
+  value.assign((const char*)sqlite3_column_text(stmt_, i), s);
+}
+
 int sqlite_statement::column_type(int i) const
 {
   return sqlite3_column_type(stmt_, i);
@@ -175,9 +204,23 @@ int sqlite_statement::bind(int i, unsigned int value)
   return ret;
 }
 
+int sqlite_statement::bind(int i, unsigned long value)
+{
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
+  return ret;
+}
+
 int sqlite_statement::bind(int i, const char *value, int len)
 {
   int ret = sqlite3_bind_text(stmt_, i, value, len, 0);
+  throw_error(ret, db_(), "sqlite3_bind_text");
+  return ret;
+}
+
+int sqlite_statement::bind(int i, const std::string &value)
+{
+  int ret = sqlite3_bind_text(stmt_, i, value.c_str(), value.size(), 0);
   throw_error(ret, db_(), "sqlite3_bind_text");
   return ret;
 }

@@ -16,7 +16,13 @@
  */
 
 #include "database/statement.hpp"
-#include "database/session.hpp"
+
+#include "object/object.hpp"
+#include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
+
+#include "database/statement_creator.hpp"
+#include "database/database.hpp"
 
 namespace oos {
 
@@ -31,35 +37,6 @@ void statement_impl::prepare(const std::string &sql)
 std::string statement_impl::sql() const
 {
   return sql_;
-}
-
-statement::statement(session &db)
-  : impl_(0)
-{
-  impl_ = db.create_statement_impl();
-}
-
-statement::statement(session &db, const std::string &sql)
-  : impl_(0)
-  , sql_(sql)
-{
-  impl_ = db.create_statement_impl();
-}
-
-statement::~statement()
-{}
-
-result_ptr statement::execute()
-{
-  impl_->prepare(sql_);
-
-  return result_ptr();
-}
-
-result_ptr statement::execute(const std::string &sql)
-{
-  sql_ = sql;
-  return execute();
 }
 
 }

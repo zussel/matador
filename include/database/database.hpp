@@ -207,6 +207,9 @@ public:
    */
   statement_impl_ptr find_statement(const std::string &id) const;
 
+  virtual void prepare_statement(const prototype_node &node,
+                         statement_impl *select, statement_impl *insert,
+                         statement_impl *update, statement_impl *remove) = 0;
   /**
    * @brief Prepares the beginning of a transaction
    * 

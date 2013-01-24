@@ -51,13 +51,20 @@ public:
   virtual int column_int(int i) const;
   virtual double column_double(int i) const;
 
+  virtual void column(int i, double &value) const;
+  virtual void column(int i, int &value) const;
+  virtual void column(int i, char *value, int &len) const;
+  virtual void column(int i, std::string &value) const;
+
   int column_type(int i) const;
 
   virtual int bind(int i, double value);
   virtual int bind(int i, int value);
   virtual int bind(int i, long value);
   virtual int bind(int i, unsigned int value);
+  virtual int bind(int i, unsigned long value);
   virtual int bind(int i, const char *value, int len);
+  virtual int bind(int i, const std::string &value);
   virtual int bind_null(int i);
 
   virtual database& db();

@@ -31,16 +31,14 @@
   #define OOS_API
 #endif
 
-#include "database/result.hpp"
-
 #include <string>
 
 namespace oos {
 
-class session;
-class result;
-class row;
 class database;
+class object;
+class object_store;
+struct prototype_node;
 
 /// @cond OOS_DEV
 class OOS_API statement_impl
@@ -63,11 +61,19 @@ public:
   virtual int column_int(int i) const = 0;
   virtual double column_double(int i) const = 0;
 
+  virtual void column(int i, double &value) const = 0;
+  virtual void column(int i, int &value) const = 0;
+  virtual void column(int i, char *value, int &len) const = 0;
+  virtual void column(int i, std::string &value) const = 0;
+
   virtual int bind(int i, double value) = 0;
   virtual int bind(int i, int value) = 0;
   virtual int bind(int i, long value) = 0;
   virtual int bind(int i, unsigned int value) = 0;
+  virtual int bind(int i, unsigned long value) = 0;
   virtual int bind(int i, const char *value, int len) = 0;
+  virtual int bind(int i, const std::string &value) = 0;
+
   virtual int bind_null(int i) = 0;
   
   std::string sql() const;
@@ -79,20 +85,6 @@ private:
   std::string sql_;
 };
 
-class OOS_API statement
-{
-public:
-  explicit statement(session &db);
-  statement(session &db, const std::string &sql);
-  ~statement();
-
-  result_ptr execute();
-  result_ptr execute(const std::string &sql);
-
-private:
-  statement_impl *impl_;
-  std::string sql_;
-};
 /// @endcond
 
 }

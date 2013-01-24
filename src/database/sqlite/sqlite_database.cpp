@@ -101,14 +101,10 @@ void sqlite_database::create(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
 
-//  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
-//  prototype_node::string_set_t::const_iterator last = node.aliases.end();
-//  while (first != last) {
 //  std::cout << "DEBUG: creating table [" << node.type.c_str() << "]\n";
     std::string sql = creator.create(o.get(), node.type.c_str(), "");
 
     execute(sql.c_str());
-//  }
 }
 
 void sqlite_database::drop(const prototype_node &node)
@@ -121,13 +117,9 @@ void sqlite_database::drop(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
 
-//  prototype_node::string_set_t::const_iterator first = node.aliases.begin();
-//  prototype_node::string_set_t::const_iterator last = node.aliases.end();
-//  while (first != last) {
     std::string sql = creator.create(o.get(), node.type.c_str(), "");
 
     execute(sql.c_str());
-//  }
 }
 
 void sqlite_database::load(const prototype_node &node)
@@ -261,6 +253,44 @@ result_impl* sqlite_database::create_result()
 statement_impl* sqlite_database::create_statement()
 {
   return new sqlite_statement(*this);
+}
+
+void sqlite_database::prepare_statement(const prototype_node &node,
+                         statement_impl *select, statement_impl *insert,
+                         statement_impl *update, statement_impl *remove)
+{
+  // create dummy
+  object *o = node.producer->create();
+  // prepare select statement
+  select_statement_creator<sqlite_types> select_creator;
+  // state wasn't found, create sql string
+  std::string sql = select_creator.create(o, node.type.c_str(), 0);
+  // prepare statement
+  select->prepare(sql);
+  
+  // prepare insert statement
+  insert_statement_creator<sqlite_types> insert_creator;
+  // state wasn't found, create sql string
+  sql = insert_creator.create(o, node.type.c_str(), 0);
+  // prepare statement
+  insert->prepare(sql);
+  
+  // prepare insert statement
+  update_statement_creator<sqlite_types> update_creator;
+  // state wasn't found, create sql string
+  sql = update_creator.create(o, node.type.c_str(), "id=?");
+  // prepare statement
+  update->prepare(sql);
+  
+  // prepare insert statement
+  delete_statement_creator<sqlite_types> delete_creator;
+  // state wasn't found, create sql string
+  sql = delete_creator.create(o, node.type.c_str(), "id=?");
+  // prepare statement
+  remove->prepare(sql);
+  
+  // delete dummy
+  delete o;
 }
 
 sqlite3* sqlite_database::operator()()
