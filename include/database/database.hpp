@@ -51,7 +51,8 @@ namespace oos {
 
 class transaction;
 class session;
-class statement_impl;
+class statement;
+class table;
 class result_impl;
 class database_sequencer;
 struct prototype_node;
@@ -74,7 +75,8 @@ public:
   typedef std::list<object*> object_list_t;
   typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
-  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::tr1::shared_ptr<statement> statement_ptr;
+  typedef std::tr1::shared_ptr<table> table_ptr;
   typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
 
   struct table_info_t
@@ -183,11 +185,11 @@ public:
   virtual result_impl* create_result() = 0;
 
   /**
-   * Create the concrete statement_impl.
+   * Create the concrete statement.
    *
-   * @return The concrete statement_impl.
+   * @return The concrete statement.
    */
-  virtual statement_impl* create_statement() = 0;
+  virtual statement* create_statement() = 0;
 
   /**
    * Store a prepared statement for
@@ -197,7 +199,7 @@ public:
    * @param stmt The prepared statement.
    * @return True if the statement could be stored
    */
-  bool store_statement(const std::string &id, statement_impl_ptr stmt);
+  bool store_statement(const std::string &id, statement_ptr stmt);
 
   /**
    * Find and return a stored statement.
@@ -205,11 +207,11 @@ public:
    * @param id The id of the statement to find.
    * @return The requested statement.
    */
-  statement_impl_ptr find_statement(const std::string &id) const;
+  statement_ptr find_statement(const std::string &id) const;
 
   virtual void prepare_statement(const prototype_node &node,
-                         statement_impl *select, statement_impl *insert,
-                         statement_impl *update, statement_impl *remove) = 0;
+                         statement *select, statement *insert,
+                         statement *update, statement *remove) = 0;
   /**
    * @brief Prepares the beginning of a transaction
    * 
@@ -267,13 +269,16 @@ protected:
 private:
   friend class database_factory;
   friend class statement_reader;
+  friend class table;
 
   session *db_;
   bool commiting_;
 
-  typedef std::map<std::string, statement_impl_ptr> statement_impl_map_t;
+  typedef std::map<std::string, table_ptr> table_map_t;
+  typedef std::map<std::string, statement_ptr> statement_map_t;
   
-  statement_impl_map_t statement_impl_map_;
+  table_map_t table_map_;
+  statement_map_t statement_map_;
 
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;

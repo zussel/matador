@@ -23,7 +23,7 @@
 
 namespace oos {
 
-class statement_impl;
+class statement;
 class object;
 
 /// @cond OOS_DEV
@@ -31,13 +31,13 @@ class object;
 class OOS_API statement_binder : public object_writer
 {
 public:
-  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::tr1::shared_ptr<statement> statement_ptr;
 
 public:
   statement_binder();
   virtual ~statement_binder();
 
-  void bind(const statement_impl_ptr &stmt, object *o, bool bind_id);
+  void bind(const statement_ptr &stmt, object *o, bool bind_id);
   
   /**
    * @brief Write a single character to the binder.
@@ -218,7 +218,7 @@ public:
   virtual void write(const char*, const object_container&);
 
 private:
-  statement_impl_ptr stmt_;
+  statement_ptr stmt_;
   int column_;
 };
 

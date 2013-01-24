@@ -135,7 +135,7 @@ public:
    * 
    * @return A new sqlite statement
    */
-  virtual statement_impl* create_statement();
+  virtual statement* create_statement();
 
   /**
    * Return the raw pointer to the sqlite3

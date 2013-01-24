@@ -32,13 +32,27 @@
 #endif
 
 #include "object/object_atomizer.hpp"
+#include "object/object_store.hpp"
+#include "object/object_container.hpp"
+#include "object/prototype_node.hpp"
 
 #include "database/statement.hpp"
+#include "database/database.hpp"
+
+#ifdef WIN32
+#include <memory>
+#include <unordered_map>
+#else
+#include <tr1/memory>
+#include <tr1/unordered_map>
+#endif
+
+#include <map>
+#include <list>
 
 namespace oos {
 
-class database;
-class statement_impl;
+class statement;
 class object;
 class object_container;
 class object_base_ptr;
@@ -52,6 +66,10 @@ class OOS_API table
   , public generic_object_writer<table>
 {
 public:
+  typedef std::list<object*> object_list_t;
+  typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
+  typedef std::map<std::string, object_map_t> relation_data_t;
+
   explicit table(database &db, const prototype_node &node);
   ~table();
 
@@ -60,11 +78,88 @@ public:
   void update(object *obj_);
   void remove(object *obj_);
 
+  bool is_loaded() const;
+
   template < class T >
-  void read_value(const char *, T &)
+  void read_value(const char *, T &x)
   {
+    select_->column(column_++, x);
   }
-  void read_value(const char *, char *, int) {}
+
+  void read_value(const char *, char *x, int s)
+  {
+    select_->column(column_++, x, s);
+  }
+
+  void read_value(const char *, varchar_base &x)
+  {
+    std::string val;
+    select_->column(column_++, val);
+    x = val;
+  }
+
+  void read_value(const char *, object_base_ptr &x)
+  {
+    long oid = 0;
+    oid = select_->column_int(column_++);
+    
+    if (oid == 0) {
+      return;
+    }
+    
+  //  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "]\n";
+    object_proxy *oproxy = ostore_->find_proxy(oid);
+
+    if (!oproxy) {
+      oproxy = ostore_->create_proxy(oid);
+    }
+
+    prototype_iterator node = ostore_->find_prototype(x.type());
+    
+  //  std::cout << "DEBUG: found prototype node [" << node->type << "]\n";
+
+    /*
+     * add the child object to the object proxy
+     * of the parent container
+     */
+    database::table_map_t::iterator j = db_.table_map_.find(node->type);
+    prototype_node::field_prototype_node_map_t::const_iterator i = node_.relations.find(node->type);
+    if (i != node_.relations.end()) {
+  //    std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
+      j->second->relation_data[i->second.second][oid].push_back(object_);
+  //    std::cout << "DEBUG: store relation data in node [" << i->second.first->type << "]->[" << i->second.second << "][" << oid << "].push_back[" << *object_ << "]\n";
+    }
+    
+    x.reset(oproxy->obj);
+  }
+
+  void read_value(const char *id, object_container &x)
+  {
+    /*
+     * find prototype node and check if there
+     * are proxies to insert for this container
+     */
+    prototype_iterator p = ostore_->find_prototype(x.classname());
+    if (p != ostore_->end()) {
+  //    std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_.type << ":" << id << "]\n";
+      if (db_.is_loaded(p->type)) {
+  //      std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
+        database::relation_data_t::iterator i = relation_data.find(id);
+        if (i != relation_data.end()) {
+          database::object_map_t::iterator j = i->second.find(object_->id());
+          if (j != i->second.end()) {
+  //          std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
+            while (!j->second.empty()) {
+              x.append_proxy(j->second.front()->proxy_);
+              j->second.pop_front();
+            }
+          }
+        }
+      } else {
+  //      std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled after of [" << x.classname() << "] load\n";
+      }
+    }
+  }
 
   template < class T >
   void write_value(const char *, const T &x)
@@ -88,15 +183,23 @@ public:
   void write_value(const char *, const object_container &) {}
 
 private:
-  statement_impl* select_;
-  statement_impl* insert_;
-  statement_impl* update_;
-  statement_impl* delete_;
+  statement* select_;
+  statement* insert_;
+  statement* update_;
+  statement* delete_;
 
+  database &db_;
   const prototype_node &node_;
   int column_;
+
+  // temp data while loading
   object *object_;
+  object_store *ostore_;
+  
   bool inserting_;
+
+  bool is_loaded_;
+  relation_data_t relation_data;
 };
 
 ///@endcond

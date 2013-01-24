@@ -26,15 +26,15 @@
 
 namespace oos {
 
-statement_impl::~statement_impl()
+statement::~statement()
 {}
 
-void statement_impl::prepare(const std::string &sql)
+void statement::prepare(const std::string &sql)
 {
   sql_ = sql;
 }
 
-std::string statement_impl::sql() const
+std::string statement::sql() const
 {
   return sql_;
 }

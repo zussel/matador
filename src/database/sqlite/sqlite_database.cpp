@@ -131,7 +131,7 @@ void sqlite_database::load(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
+  statement_ptr stmt = find_statement(node.type + "_SELECT");
   if (!stmt) {
     select_statement_creator<sqlite_types> creator;
   // state wasn't found, create sql string
@@ -174,7 +174,7 @@ void sqlite_database::execute(const char *sql, result_impl *res)
 void sqlite_database::visit(insert_action *a)
 {
   // create insert statement
-  statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
+  statement_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
   if (!stmt) {
     // create statement
     insert_statement_creator<sqlite_types> creator;
@@ -206,7 +206,7 @@ void sqlite_database::visit(insert_action *a)
 
 void sqlite_database::visit(update_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
+  statement_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
   if (!stmt) {
     // create statement
     update_statement_creator<sqlite_types> creator;
@@ -227,7 +227,7 @@ void sqlite_database::visit(update_action *a)
 
 void sqlite_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
+  statement_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
   if (!stmt) {
     // create statement
     delete_statement_creator<sqlite_types> creator;
@@ -250,14 +250,14 @@ result_impl* sqlite_database::create_result()
   return new sqlite_static_result;
 }
 
-statement_impl* sqlite_database::create_statement()
+statement* sqlite_database::create_statement()
 {
   return new sqlite_statement(*this);
 }
 
 void sqlite_database::prepare_statement(const prototype_node &node,
-                         statement_impl *select, statement_impl *insert,
-                         statement_impl *update, statement_impl *remove)
+                         statement *select, statement *insert,
+                         statement *update, statement *remove)
 {
   // create dummy
   object *o = node.producer->create();

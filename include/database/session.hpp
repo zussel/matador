@@ -48,7 +48,7 @@ class object_store;
 class result;
 class transaction;
 class database;
-class statement_impl;
+class statement;
 
 /**
  * @class session
@@ -208,9 +208,9 @@ private:
   /**
    * Create a statement implementation
    *
-   * @return A statement_impl object.
+   * @return A statement object.
    */
-  statement_impl* create_statement_impl() const;
+  statement* create_statement() const;
 
 private:
   std::string type_;

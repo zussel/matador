@@ -32,7 +32,7 @@ namespace mysql {
 
 class mysql_database;
 
-class mysql_statement : public statement_impl
+class mysql_statement : public statement
 {
 public:
   mysql_statement(mysql_database &db);

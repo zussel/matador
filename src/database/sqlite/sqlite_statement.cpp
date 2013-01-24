@@ -78,7 +78,7 @@ void sqlite_statement::prepare(const std::string &sql)
   // destroy statement
   finalize();
   // set new sql statement
-  statement_impl::prepare(sql);
+  statement::prepare(sql);
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
@@ -143,14 +143,59 @@ double sqlite_statement::column_double(int i) const
   return sqlite3_column_double(stmt_, i);
 }
 
+void sqlite_statement::column(int i, char &bool) const
+{
+  value = sqlite3_column_int(stmt_, i) > 0;
+}
+
+void sqlite_statement::column(int i, char &value) const
+{
+  value = (char)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, float &value) const
+{
+  value = (float)sqlite3_column_double(stmt_, i);
+}
+
 void sqlite_statement::column(int i, double &value) const
 {
   value = sqlite3_column_double(stmt_, i);
 }
 
+void sqlite_statement::column(int i, short &value) const
+{
+  value = (short)sqlite3_column_int(stmt_, i);
+}
+
 void sqlite_statement::column(int i, int &value) const
 {
   value = sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, long &value) const
+{
+  value = (long)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned char &value) const
+{
+  value = (unsigned char)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned short &value) const
+{
+  value = (unsigned short)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned int &value) const
+{
+  value = (unsigned int)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned long &value) const
+{
+  value = (unsigned long)sqlite3_column_int(stmt_, i);
 }
 
 void sqlite_statement::column(int i, char *value, int &len) const

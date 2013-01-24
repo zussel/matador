@@ -75,7 +75,7 @@ void mysql_statement::prepare(const std::string &sql)
   // destroy statement
   finalize();
   // set new sql statement
-  statement_impl::prepare(sql);
+  statement::prepare(sql);
   // create statement
   stmt_ = mysql_stmt_init(db_());
   // prepare mysql statement

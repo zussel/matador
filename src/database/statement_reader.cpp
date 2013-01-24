@@ -79,7 +79,7 @@ private:
   object *object_;
 };
 
-statement_reader::statement_reader(const prototype_node &node, const statement_impl_ptr &stmt, database::table_info_t &info)
+statement_reader::statement_reader(const prototype_node &node, const statement_ptr &stmt, database::table_info_t &info)
   : object_(0)
   , stmt_(stmt)
   , node_(node)

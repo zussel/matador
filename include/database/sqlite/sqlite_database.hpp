@@ -135,11 +135,11 @@ public:
    * 
    * @return A new sqlite statement
    */
-  virtual statement_impl* create_statement();
+  virtual statement* create_statement();
 
   virtual void prepare_statement(const prototype_node &node,
-                         statement_impl *select, statement_impl *insert,
-                         statement_impl *update, statement_impl *remove);
+                         statement *select, statement *insert,
+                         statement *update, statement *remove);
 
   /**
    * Return the raw pointer to the sqlite3

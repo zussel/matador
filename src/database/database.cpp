@@ -20,7 +20,7 @@
 #include "database/database_sequencer.hpp"
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
-#include "database/result.hpp"
+#include "database/table.hpp"
 
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
@@ -45,6 +45,7 @@ void database::open(const std::string&)
   prototype_iterator last = db_->ostore().end();
   while (first != last) {
     if (!first->abstract) {
+      table_map_.insert(std::make_pair(first->type, table_ptr(new table(*this, *first))));
       table_info_map_.insert(std::make_pair(first->type, table_info_t(first.get())));
     }
     ++first;
@@ -62,7 +63,8 @@ void database::close()
   }
   sequencer_->destroy();
   
-  statement_impl_map_.clear();
+  statement_map_.clear();
+  table_map_.clear();
   table_info_map_.clear();
 }
 
@@ -83,14 +85,14 @@ void database::load(const prototype_node &node)
 bool database::is_loaded(const std::string &name) const
 {
 #ifdef WIN32
-  table_info_map_t::const_iterator i = table_info_map_.find(name);
-  if (i == table_info_map_.end()) {
+  table_map_t::const_iterator i = table_map_.find(name);
+  if (i == table_map_.end()) {
     throw std::out_of_range("unknown key");
   } else {
-    return i->second.is_loaded;
+    return i->second->is_loaded();
   }
 #else
-  return table_info_map_.at(name).is_loaded;
+  return table_map_.at(name)->is_loaded();
 #endif
 }
 
@@ -99,18 +101,18 @@ void database::drop()
   sequencer_->drop();
 }
 
-bool database::store_statement(const std::string &id, database::statement_impl_ptr stmt)
+bool database::store_statement(const std::string &id, database::statement_ptr stmt)
 {
-  return statement_impl_map_.insert(std::make_pair(id, stmt)).second;
+  return statement_map_.insert(std::make_pair(id, stmt)).second;
 }
 
-database::statement_impl_ptr database::find_statement(const std::string &id) const
+database::statement_ptr database::find_statement(const std::string &id) const
 {
-  statement_impl_map_t::const_iterator i = statement_impl_map_.find(id);
-  if (i != statement_impl_map_.end()) {
+  statement_map_t::const_iterator i = statement_map_.find(id);
+  if (i != statement_map_.end()) {
     return i->second;
   } else {
-    return statement_impl_ptr();
+    return statement_ptr();
   }
 }
 

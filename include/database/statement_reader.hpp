@@ -43,7 +43,7 @@
 
 namespace oos {
 
-class statement_impl;
+class statement;
 class object;
 class object_base_ptr;
 class object_container;
@@ -55,10 +55,10 @@ struct prototype_node;
 class OOS_API statement_reader : public object_reader
 {
 public:
-  typedef std::tr1::shared_ptr<statement_impl> statement_impl_ptr;
+  typedef std::tr1::shared_ptr<statement> statement_ptr;
 
 public:
-  statement_reader(const prototype_node &node, const statement_impl_ptr &stmt, database::table_info_t &info);
+  statement_reader(const prototype_node &node, const statement_ptr &stmt, database::table_info_t &info);
   virtual ~statement_reader();
 
   void import();
@@ -247,7 +247,7 @@ private:
 private:
   object *object_;
 
-  statement_impl_ptr stmt_;
+  statement_ptr stmt_;
   const prototype_node &node_;
   database::table_info_t &info_;
   

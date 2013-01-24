@@ -237,7 +237,9 @@ protected:
   friend class object_serializer;
   friend class relation_handler;
   friend class relation_filler;
+  friend class relation_filler2;
   friend class statement_reader;
+  friend class table;
 
   /**
    * @brief Append a object via its object_proxy.

@@ -30,7 +30,7 @@ namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement : public statement_impl
+class sqlite_statement : public statement
 {
 public:
   sqlite_statement(sqlite_database &db);
@@ -51,8 +51,17 @@ public:
   virtual int column_int(int i) const;
   virtual double column_double(int i) const;
 
+  virtual void column(int i, bool &value) const;
+  virtual void column(int i, char &value) const;
+  virtual void column(int i, float &value) const;
   virtual void column(int i, double &value) const;
+  virtual void column(int i, unsigned char &value) const;
+  virtual void column(int i, unsigned short &value) const;
+  virtual void column(int i, unsigned int &value) const;
+  virtual void column(int i, unsigned long &value) const;
+  virtual void column(int i, short &value) const;
   virtual void column(int i, int &value) const;
+  virtual void column(int i, long &value) const;
   virtual void column(int i, char *value, int &len) const;
   virtual void column(int i, std::string &value) const;
 

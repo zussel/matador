@@ -61,10 +61,10 @@ public:
   virtual void visit(delete_action*) {}
 
   virtual result_impl* create_result() { return 0; }
-  virtual statement_impl* create_statement() { return 0; }
+  virtual statement* create_statement() { return 0; }
   virtual void prepare_statement(const prototype_node &,
-                         statement_impl *, statement_impl *,
-                         statement_impl *, statement_impl *) {}
+                         statement *, statement *,
+                         statement *, statement *) {}
 
 private:
   virtual void on_begin() {}

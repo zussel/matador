@@ -130,7 +130,7 @@ void mysql_database::load(const prototype_node &node)
   std::unique_ptr<object> o(node.producer->create());
 #endif
   // try to find select statement statement
-  statement_impl_ptr stmt = find_statement(node.type + "_SELECT");
+  statement_ptr stmt = find_statement(node.type + "_SELECT");
   if (!stmt) {
     select_statement_creator<mysql_types> creator;
   // state wasn't found, create sql string
@@ -172,7 +172,7 @@ void mysql_database::execute(const char *sql, result_impl *res)
 void mysql_database::visit(insert_action *a)
 {
   // create insert statement
-  statement_impl_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
+  statement_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
   if (!stmt) {
     // create statement
     insert_statement_creator<mysql_types> creator;
@@ -204,7 +204,7 @@ void mysql_database::visit(insert_action *a)
 
 void mysql_database::visit(update_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
+  statement_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
   if (!stmt) {
     // create statement
     update_statement_creator<mysql_types> creator;
@@ -225,7 +225,7 @@ void mysql_database::visit(update_action *a)
 
 void mysql_database::visit(delete_action *a)
 {
-  statement_impl_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
+  statement_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
   if (!stmt) {
     // create statement
     delete_statement_creator<mysql_types> creator;
@@ -248,7 +248,7 @@ result_impl* mysql_database::create_result()
   return new mysql_static_result;
 }
 
-statement_impl* mysql_database::create_statement()
+statement* mysql_database::create_statement()
 {
   return new mysql_statement(*this);
 }

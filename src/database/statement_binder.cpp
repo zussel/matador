@@ -11,7 +11,7 @@ statement_binder::statement_binder()
 statement_binder::~statement_binder()
 {}
 
-void statement_binder::bind(const statement_impl_ptr &stmt, object *o, bool bind_id)
+void statement_binder::bind(const statement_ptr &stmt, object *o, bool bind_id)
 {
   stmt_ = stmt;
 

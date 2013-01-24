@@ -41,12 +41,12 @@ class object_store;
 struct prototype_node;
 
 /// @cond OOS_DEV
-class OOS_API statement_impl
+class OOS_API statement
 {
 public:
   // auto prepare
-//  explicit statement_impl(const std::string &sql);
-  virtual ~statement_impl();
+//  explicit statement(const std::string &sql);
+  virtual ~statement();
 
   virtual void prepare(const std::string &sql);
 
@@ -61,8 +61,17 @@ public:
   virtual int column_int(int i) const = 0;
   virtual double column_double(int i) const = 0;
 
+  virtual void column(int i, bool &value) const = 0;
+  virtual void column(int i, char &value) const = 0;
+  virtual void column(int i, float &value) const = 0;
   virtual void column(int i, double &value) const = 0;
+  virtual void column(int i, short &value) const = 0;
   virtual void column(int i, int &value) const = 0;
+  virtual void column(int i, long &value) const = 0;
+  virtual void column(int i, unsigned char &value) const = 0;
+  virtual void column(int i, unsigned short &value) const = 0;
+  virtual void column(int i, unsigned int &value) const = 0;
+  virtual void column(int i, unsigned long &value) const = 0;
   virtual void column(int i, char *value, int &len) const = 0;
   virtual void column(int i, std::string &value) const = 0;
 

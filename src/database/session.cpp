@@ -198,7 +198,7 @@ void session::rollback()
   impl_->rollback();
 }
 
-statement_impl* session::create_statement_impl() const
+statement* session::create_statement() const
 {
   return impl_->create_statement();
 }
