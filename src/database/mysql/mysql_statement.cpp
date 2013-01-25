@@ -55,7 +55,7 @@ bool mysql_statement::step()
 
 //  std::cerr << "executing " << sql() << "\n";
 
-  int ret = mysql_stmt_next_result(stmt_);
+  int ret = mysql_stmt_fetch(stmt_);
   if (ret == 0/*SQLITE_ROW*/) {
     // retrieved new row
     // create row object
@@ -86,29 +86,6 @@ void mysql_statement::prepare(const std::string &sql)
 void mysql_statement::reset(bool clear_bindings)
 {
   mysql_stmt_reset(stmt_);
-  /*
-  if (clear_bindings) {
-    mysql3_clear_bindings(stmt_);
-  }
-  */
-}
-
-int mysql_statement::finalize()
-{
-  if (!stmt_) {
-    return 0/*SQLITE_OK*/;
-  }
-//  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
-//  int ret = mysql3_finalize(stmt_);
-//  throw_error(ret, db_(), "mysql3_finalize");
-  /*
-  if (ret != SQLITE_OK) {
-    std::string msg(mysql3_errmsg(db_()));
-    throw mysql_exception("mysql3_finalize: " + msg);
-  }
-  */
-  stmt_ = 0;
-  return ret;
 }
 
 int mysql_statement::column_count() const
@@ -116,71 +93,153 @@ int mysql_statement::column_count() const
   return mysql_stmt_field_count(stmt_);
 }
 
-const char* mysql_statement::column_name(int i) const
+const char* mysql_statement::column_name(int) const
 {
-  return mysql3_column_name(stmt_, i);
+  throw mysql_exception("unsupported feature");
 }
 
-const char* mysql_statement::column_text(int i, int &s) const
+void sqlite_statement::column(int i, bool &value) const
 {
-  s = mysql3_column_bytes(stmt_, i);
-  return (const char*)mysql3_column_text(stmt_, i);
+  MYSQL_BIND value;
+  value.buffer_type     = MYSQL_TYPE_LONG;
+	value.buffer         = (void *) &value;
+	value.buffer_length    = 0;
+	value.is_null         = 0;
+	value.length         = 0;
+
+  mysql_stmt_fetch_column
+  
+  value = sqlite3_column_int(stmt_, i) > 0;
 }
 
-int mysql_statement::column_int(int i) const
+void sqlite_statement::column(int i, char &value) const
 {
-  return mysql3_column_int(stmt_, i);
+  value = (char)sqlite3_column_int(stmt_, i);
 }
 
-double mysql_statement::column_double(int i) const
+void sqlite_statement::column(int i, float &value) const
 {
-  return mysql3_column_double(stmt_, i);
+  value = (float)sqlite3_column_double(stmt_, i);
 }
 
-int mysql_statement::column_type(int i) const
+void sqlite_statement::column(int i, double &value) const
 {
-  return mysql3_column_type(stmt_, i);
+  value = sqlite3_column_double(stmt_, i);
 }
 
-int mysql_statement::bind(int i, double value)
+void sqlite_statement::column(int i, short &value) const
 {
-  int ret = mysql3_bind_double(stmt_, i, value);
-  throw_error(ret, db_(), "mysql_bind_double");
+  value = (short)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, int &value) const
+{
+  value = sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, long &value) const
+{
+  value = (long)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned char &value) const
+{
+  value = (unsigned char)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned short &value) const
+{
+  value = (unsigned short)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned int &value) const
+{
+  value = (unsigned int)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, unsigned long &value) const
+{
+  value = (unsigned long)sqlite3_column_int(stmt_, i);
+}
+
+void sqlite_statement::column(int i, char *value, int &len) const
+{
+  int s = sqlite3_column_bytes(stmt_, i);
+
+  if (s > len) {
+    throw sqlite_exception("unsufficient size of character buffer");
+  } else {
+    const char *res = (const char*)sqlite3_column_text(stmt_, i);
+    len = strlen(res);
+    strncpy(value, res, len);
+    value[len] = '\0';
+  }
+}
+
+void sqlite_statement::column(int i, std::string &value) const
+{
+  int s = sqlite3_column_bytes(stmt_, i);
+  value.assign((const char*)sqlite3_column_text(stmt_, i), s);
+}
+
+int sqlite_statement::column_type(int i) const
+{
+  return sqlite3_column_type(stmt_, i);
+}
+
+int sqlite_statement::bind(int i, double value)
+{
+  int ret = sqlite3_bind_double(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_double");
   return ret;
 }
 
-int mysql_statement::bind(int i, int value)
+int sqlite_statement::bind(int i, int value)
 {
-  int ret = mysql3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "mysql_bind_int");
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int mysql_statement::bind(int i, long value)
+int sqlite_statement::bind(int i, long value)
 {
-  int ret = mysql3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "mysql_bind_int");
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int mysql_statement::bind(int i, unsigned int value)
+int sqlite_statement::bind(int i, unsigned int value)
 {
-  int ret = mysql3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "mysql_bind_int");
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int mysql_statement::bind(int i, const char *value, int len)
+int sqlite_statement::bind(int i, unsigned long value)
 {
-  int ret = mysql3_bind_text(stmt_, i, value, len, 0);
-  throw_error(ret, db_(), "mysql_bind_text");
+  int ret = sqlite3_bind_int(stmt_, i, value);
+  throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int mysql_statement::bind_null(int i)
+int sqlite_statement::bind(int i, const char *value, int len)
 {
-  int ret = mysql3_bind_null(stmt_, i);
-  throw_error(ret, db_(), "mysql_bind_null");
+  int ret = sqlite3_bind_text(stmt_, i, value, len, 0);
+  throw_error(ret, db_(), "sqlite3_bind_text");
+  return ret;
+}
+
+int sqlite_statement::bind(int i, const std::string &value)
+{
+  int ret = sqlite3_bind_text(stmt_, i, value.c_str(), value.size(), 0);
+  throw_error(ret, db_(), "sqlite3_bind_text");
+  return ret;
+}
+
+int sqlite_statement::bind_null(int i)
+{
+  int ret = sqlite3_bind_null(stmt_, i);
+  throw_error(ret, db_(), "sqlite3_bind_null");
   return ret;
 }
 

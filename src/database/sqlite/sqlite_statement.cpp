@@ -116,22 +116,6 @@ const char* sqlite_statement::column_name(int i) const
   return sqlite3_column_name(stmt_, i);
 }
 
-const char* sqlite_statement::column_text(int i, int &s) const
-{
-  s = sqlite3_column_bytes(stmt_, i);
-  return (const char*)sqlite3_column_text(stmt_, i);
-}
-
-int sqlite_statement::column_int(int i) const
-{
-  return sqlite3_column_int(stmt_, i);
-}
-
-double sqlite_statement::column_double(int i) const
-{
-  return sqlite3_column_double(stmt_, i);
-}
-
 void sqlite_statement::column(int i, bool &value) const
 {
   value = sqlite3_column_int(stmt_, i) > 0;

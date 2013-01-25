@@ -44,22 +44,30 @@ public:
   virtual void prepare(const std::string &sql);
   virtual void reset(bool clear_bindings);
   
-  int finalize();
-
   virtual int column_count() const;
   virtual const char* column_name(int i) const;
 
-  virtual const char* column_text(int i, int &s) const;
-  virtual int column_int(int i) const;
-  virtual double column_double(int i) const;
-
-  int column_type(int i) const;
+  virtual void column(int i, bool &value) const;
+  virtual void column(int i, char &value) const;
+  virtual void column(int i, float &value) const;
+  virtual void column(int i, double &value) const;
+  virtual void column(int i, short &value) const;
+  virtual void column(int i, int &value) const;
+  virtual void column(int i, long &value) const;
+  virtual void column(int i, unsigned char &value) const;
+  virtual void column(int i, unsigned short &value) const;
+  virtual void column(int i, unsigned int &value) const;
+  virtual void column(int i, unsigned long &value) const;
+  virtual void column(int i, char *value, int &len) const;
+  virtual void column(int i, std::string &value) const;
 
   virtual int bind(int i, double value);
   virtual int bind(int i, int value);
   virtual int bind(int i, long value);
   virtual int bind(int i, unsigned int value);
+  virtual int bind(int i, unsigned long value);
   virtual int bind(int i, const char *value, int len);
+  virtual int bind(int i, const std::string &value);
   virtual int bind_null(int i);
 
   virtual database& db();

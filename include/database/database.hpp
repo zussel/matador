@@ -200,24 +200,6 @@ public:
    */
   virtual statement* create_statement() = 0;
 
-  /**
-   * Store a prepared statement for
-   * later use.
-   * 
-   * @param id A unique id for the statement.
-   * @param stmt The prepared statement.
-   * @return True if the statement could be stored
-   */
-//  bool store_statement(const std::string &id, statement_ptr stmt);
-
-  /**
-   * Find and return a stored statement.
-   * 
-   * @param id The id of the statement to find.
-   * @return The requested statement.
-   */
-//  statement_ptr find_statement(const std::string &id) const;
-
   virtual void initialize_table(const prototype_node &node,
                          std::string &create_, std::string &drop_) = 0;
 

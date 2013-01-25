@@ -57,10 +57,6 @@ public:
   virtual int column_count() const = 0;
   virtual const char* column_name(int i) const = 0;
 
-  virtual const char* column_text(int i, int &s) const = 0;
-  virtual int column_int(int i) const = 0;
-  virtual double column_double(int i) const = 0;
-
   virtual void column(int i, bool &value) const = 0;
   virtual void column(int i, char &value) const = 0;
   virtual void column(int i, float &value) const = 0;

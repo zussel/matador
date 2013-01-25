@@ -89,66 +89,6 @@ void mysql_database::close()
   }
 }
 
-void mysql_database::create(const prototype_node &node)
-{
-  create_statement_creator<mysql_types> creator;
-
-#ifdef WIN32
-  std::auto_ptr<object> o(node.producer->create());
-#else
-  std::unique_ptr<object> o(node.producer->create());
-#endif
-
-    std::string sql = creator.create(o.get(), node.type.c_str(), "");
-
-    execute(sql.c_str());
-}
-
-void mysql_database::drop(const prototype_node &node)
-{
-  drop_statement_creator<mysql_types> creator;
-
-#ifdef WIN32
-  std::auto_ptr<object> o(node.producer->create());
-#else
-  std::unique_ptr<object> o(node.producer->create());
-#endif
-
-    std::string sql = creator.create(o.get(), node.type.c_str(), "");
-
-    execute(sql.c_str());
-}
-
-void mysql_database::execute(const char *sql, result_impl *res)
-{
-  char *errmsg;
-  mysql_query(mysql_db_, sql);
-  int ret = mysql_query(mysql_db_, sql);
-  if (ret != 0) {
-    throw mysql_exception("error");
-  }
-}
-
-void mysql_database::visit(delete_action *a)
-{
-  statement_ptr stmt = find_statement(std::string(a->classname()) + "_DELETE");
-  if (!stmt) {
-    // create statement
-    delete_statement_creator<mysql_types> creator;
-
-    std::string sql = creator.create(0, a->classname(), "id=?");
-
-    stmt.reset(create_statement());
-    stmt->prepare(sql);
-    
-    store_statement(std::string(a->classname()) + "_UPDATE", stmt);    
-  }
-
-  stmt->bind(1, a->id());
-  stmt->step();
-  stmt->reset(true);
-}
-
 result_impl* mysql_database::create_result()
 {
   return new mysql_static_result;
@@ -198,6 +138,17 @@ int mysql_database::parse_result(void* param, int column_count, char** values, c
   }
   result->push_back(r.release());
   return 0;
+}
+
+void mysql_database::initialize_table(const prototype_node &node,
+                       std::string &create_, std::string &drop_)
+{
+}
+
+void mysql_database::prepare_table(const prototype_node &node,
+                                   statement *select, statement *insert,
+                                   statement *update, statement *remove)
+{
 }
 
 }

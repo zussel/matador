@@ -53,7 +53,8 @@ void sqlite_sequencer::create()
   stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   
   if (stmt.step()) {
-    int id = stmt.column_int(1);
+    int id;
+    stmt.column(1, id);
     reset(id);
   } else {
     // no such element, insert one
