@@ -7,20 +7,20 @@
 
 namespace oos {
 
-class relation_filler2 : public generic_object_reader<relation_filler2>
+class relation_filler : public generic_object_reader<relation_filler>
 {
 public:
-  relation_filler2(database::table_ptr &tbl)
-    : generic_object_reader<relation_filler2>(this)
+  relation_filler(database::table_ptr &tbl)
+    : generic_object_reader<relation_filler>(this)
     , info_(tbl)
     , object_(0)
   {}
-  virtual ~relation_filler2() {}
+  virtual ~relation_filler() {}
   
   void fill()
   {
-    object_proxy *first = info_.node->op_first->next;
-    object_proxy *last = info_.node->op_marker;
+    object_proxy *first = info_->node_.op_first->next;
+    object_proxy *last = info_->node_.op_marker;
     while (first != last) {
       object_ = first->obj;
       object_->deserialize(*this);
@@ -36,9 +36,10 @@ public:
   void read_value(const char *id, object_container &x)
   {
 //    std::cout << "DEBUG: fill container [" << id << "]\n";
-    database::relation_data_t::iterator i = info_->relation_data.find(id);
+    table::relation_data_t::iterator i = info_->relation_data.find(id);
     if (i != info_->relation_data.end()) {
-      database::object_map_t::iterator j = i->second.find(object_->id());
+      table::object_map_t::iterator j = i->second.find(object_->id());
+//      std::cout << "DEBUG: lookup for object [" << object_->classname() << "] id [" << object_->id() << "]\n";
       if (j != i->second.end()) {
 //        std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
         while (!j->second.empty()) {
@@ -67,9 +68,10 @@ table::table(database &db, const prototype_node &node)
   , object_(0)
   , ostore_(0)
   , inserting_(false)
+  , prepared_(false)
   , is_loaded_(false)
 {
-  db.prepare_statement(node, select_, insert_, update_, delete_);
+  db_.initialize_table(node_, create_, drop_);
 }
 
 table::~table()
@@ -80,8 +82,28 @@ table::~table()
   delete delete_;
 }
 
+std::string table::name() const
+{
+  return node_.type;
+}
+
+void table::prepare()
+{
+  db_.prepare_table(node_, select_, insert_, update_, delete_);
+  prepared_ = true;
+}
+
+void table::create()
+{
+  db_.execute(create_.c_str());
+  prepare();
+}
+
 void table::load(object_store &ostore)
 {
+  if (!prepared_) {
+    prepare();
+  }
   ostore_ = &ostore;
   while (select_->step()) {
     column_ = 0;
@@ -101,53 +123,64 @@ void table::load(object_store &ostore)
 //    std::cout << "DEBUG: checking for relation node [" << first->first << "] ...";
     database::table_map_t::iterator i = db_.table_map_.find(first->first);
     if (i == db_.table_map_.end()) {
-      throw std::out_of_range("unknown key");
+//      throw std::out_of_range("unknown key");
     } else {
       database::table_ptr tbl = i->second;
       if (tbl->is_loaded()) {
-  //      std::cout << " loaded\n";
-        relation_filler2 filler(tbl);
+//        std::cout << " loaded\n";
+        relation_filler filler(tbl);
         filler.fill();
       } else {
-  //      std::cout << " not loaded\n";
+//        std::cout << " not loaded\n";
       }
     }
 
     ++first;
   }
+  is_loaded_ = true;
 }
 
-void table::insert(object *obj_)
+void table::insert(object *obj)
 {
   inserting_ = true;
 
   column_ = 0;
   
-  obj_->serialize(*this);
+  obj->serialize(*this);
 
   insert_->step();
   insert_->reset(true);
 }
 
-void table::update(object *obj_)
+void table::update(object *obj)
 {
   inserting_ = false;
 
   column_ = 0;
   
-  obj_->serialize(*this);
+  obj->serialize(*this);
 
-  update_->bind(++column_, (int)obj_->id());
+  update_->bind(++column_, (int)obj->id());
 
   update_->step();
   update_->reset(true);
 }
 
-void table::remove(object *obj_)
+void table::remove(object *obj)
 {
-  delete_->bind(1, obj_->id());
+  remove(obj->id());
+}
+
+void table::remove(long id)
+{
+  delete_->bind(1, id);
   delete_->step();
   delete_->reset(true);
+}
+
+void table::drop()
+{
+  db_.execute(drop_.c_str());
 }
 
 bool table::is_loaded() const

@@ -329,10 +329,8 @@ private:
   friend class object_container;
   friend class object_value_base;
 	
-  friend class statement_reader;
   friend class table;
   friend class relation_filler;
-  friend class relation_filler2;
 
 	long id_;
   object_proxy *proxy_;

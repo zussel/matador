@@ -480,13 +480,12 @@ DatabaseTestUnit::reload_container()
       UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
 
       alb1->add(trk);
-//      cout << "added track: " << trk->title() << " (index: " << trk->index() << ")\n";
+//      cout << "added track: " << trk->title() << " (index: " << trk->index() << ", album: " << trk->alb()->id() << ")\n";
     }
 
     alb1->insert(alb1->begin() + 2, ostore_.insert(new track("Track 6")));
 
     tr.commit();
-
 /*
     cout << "\n";
 
@@ -521,7 +520,8 @@ DatabaseTestUnit::reload_container()
   ostore_.clear();
 
   db.open();
-  
+
+//  cout << "reloading \n";
   // load data
   db.load();
 
@@ -537,7 +537,6 @@ DatabaseTestUnit::reload_container()
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
     UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");
-
 /*
     album::const_iterator first = alb1->begin();
     album::const_iterator last = alb1->end();

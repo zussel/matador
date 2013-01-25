@@ -49,7 +49,9 @@ public:
   virtual ~memory_database() {}
 
   virtual bool is_open() const { return true; }
+  virtual void create() {}
   virtual void create(const prototype_node&) {}
+  virtual void drop() {}
   virtual void drop(const prototype_node&) {}
 
   virtual void load(const prototype_node&) {}
@@ -62,7 +64,9 @@ public:
 
   virtual result_impl* create_result() { return 0; }
   virtual statement* create_statement() { return 0; }
-  virtual void prepare_statement(const prototype_node &,
+  virtual void initialize_table(const prototype_node &,
+                         std::string &, std::string &) {}
+  virtual void prepare_table(const prototype_node &,
                          statement *, statement *,
                          statement *, statement *) {}
 

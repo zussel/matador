@@ -116,8 +116,6 @@ SET(DATABASE_SOURCES
   database/row.cpp
   database/statement.cpp
   database/statement_creator.cpp
-  database/statement_binder.cpp
-  database/statement_reader.cpp
   database/table.cpp
 )
 
@@ -133,8 +131,6 @@ SET(DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/value.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement_creator.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/statement_binder.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/statement_reader.hpp
   ${PROJECT_SOURCE_DIR}/include/database/table.hpp
 )
 

@@ -113,11 +113,16 @@ public:
   virtual bool is_open() const = 0;
 
   /**
+   * Create all tables.
+   */
+  virtual void create();
+
+  /**
    * Create a table from the given object.
    *
    * @param o The object providing the table layout.
    */
-  virtual void create(const prototype_node &node) = 0;
+  virtual void create(const prototype_node &node);
 
   /**
    * Drops table defined by the given
@@ -125,9 +130,13 @@ public:
    *
    * @param o The object providing the table layout.
    */
-  virtual void drop(const prototype_node &node) = 0;
+  virtual void drop(const prototype_node &node);
 
+  /**
+   * Drop all tables.
+   */
   virtual void drop();
+
   /**
    * load a specific table based on
    * a prototype node
@@ -160,17 +169,17 @@ public:
   /**
    * The interface for the insert action.
    */
-  virtual void visit(insert_action*) = 0;
+  virtual void visit(insert_action*);
 
   /**
    * The interface for the update action.
    */
-  virtual void visit(update_action*) = 0;
+  virtual void visit(update_action*);
 
   /**
    * The interface for the delete action.
    */
-  virtual void visit(delete_action*) = 0;
+  virtual void visit(delete_action*);
 
   /**
    * The interface for the drop table action.
@@ -199,7 +208,7 @@ public:
    * @param stmt The prepared statement.
    * @return True if the statement could be stored
    */
-  bool store_statement(const std::string &id, statement_ptr stmt);
+//  bool store_statement(const std::string &id, statement_ptr stmt);
 
   /**
    * Find and return a stored statement.
@@ -207,9 +216,12 @@ public:
    * @param id The id of the statement to find.
    * @return The requested statement.
    */
-  statement_ptr find_statement(const std::string &id) const;
+//  statement_ptr find_statement(const std::string &id) const;
 
-  virtual void prepare_statement(const prototype_node &node,
+  virtual void initialize_table(const prototype_node &node,
+                         std::string &create_, std::string &drop_) = 0;
+
+  virtual void prepare_table(const prototype_node &node,
                          statement *select, statement *insert,
                          statement *update, statement *remove) = 0;
   /**
@@ -261,29 +273,20 @@ protected:
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;
 
-protected:
-  typedef std::map<std::string, table_info_t> table_info_map_t;
-
-  table_info_map_t& table_info_map() { return table_info_map_; }
 
 private:
   friend class database_factory;
-  friend class statement_reader;
   friend class table;
 
   session *db_;
   bool commiting_;
 
   typedef std::map<std::string, table_ptr> table_map_t;
-  typedef std::map<std::string, statement_ptr> statement_map_t;
   
   table_map_t table_map_;
-  statement_map_t statement_map_;
 
   database_sequencer_ptr sequencer_;
   sequencer_impl_ptr sequencer_backup_;
-
-  table_info_map_t table_info_map_;
 };
 
 /// @endcond

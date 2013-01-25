@@ -71,57 +71,12 @@ public:
   virtual void close();
 
   /**
-   * Create a sqlite table from the given object.
-   *
-   * @param o The object providing the table layout.
-   */
-  virtual void create(const prototype_node &node);
-
-  /**
-   * Drops table defined by the given
-   * prototype_node from the sqlite database.
-   *
-   * @param o The object providing the table layout.
-   */
-  virtual void drop(const prototype_node &node);
-
-  /**
-   * load a specific table based on
-   * a prototype node
-   *
-   * @param node The node representing the table to read
-   */
-  virtual void load(const prototype_node &node);
-
-  /**
    * Execute a sql statement and return a result
    * implementation via pointer.
    *
    * @param sql The sql statement to be executed.
    */
   virtual void execute(const char *sql, result_impl *res = 0);
-
-  virtual void visit(create_action *) {}
-
-  /**
-   * The interface for the insert action.
-   */
-  virtual void visit(insert_action *a);
-
-  /**
-   * The interface for the update action.
-   */
-  virtual void visit(update_action *a);
-
-  /**
-   * The interface for the delete action.
-   */
-  virtual void visit(delete_action *a);  
-
-  /**
-   * The interface for the drop table action.
-   */
-  virtual void visit(drop_action *) {}
 
   /**
    * Create a new sqlite result
@@ -137,7 +92,9 @@ public:
    */
   virtual statement* create_statement();
 
-  virtual void prepare_statement(const prototype_node &node,
+  virtual void initialize_table(const prototype_node &node, std::string &create_, std::string &drop_);
+
+  virtual void prepare_table(const prototype_node &node,
                          statement *select, statement *insert,
                          statement *update, statement *remove);
 

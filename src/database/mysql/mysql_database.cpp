@@ -24,8 +24,6 @@
 #include "database/session.hpp"
 #include "database/transaction.hpp"
 #include "database/statement_creator.hpp"
-#include "database/statement_reader.hpp"
-#include "database/statement_binder.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
@@ -121,44 +119,6 @@ void mysql_database::drop(const prototype_node &node)
     execute(sql.c_str());
 }
 
-void mysql_database::load(const prototype_node &node)
-{
-  // create dummy object
-#ifdef WIN32
-  std::auto_ptr<object> o(node.producer->create());
-#else
-  std::unique_ptr<object> o(node.producer->create());
-#endif
-  // try to find select statement statement
-  statement_ptr stmt = find_statement(node.type + "_SELECT");
-  if (!stmt) {
-    select_statement_creator<mysql_types> creator;
-  // state wasn't found, create sql string
-    std::string sql = creator.create(o.get(), node.type.c_str(), 0);
-  // create the real statement
-    stmt.reset(create_statement());
-    // prepare statement
-    stmt->prepare(sql);
-    // store statement
-    store_statement(node.type + "_SELECT", stmt);
-  }
-
-  table_info_map_t::iterator i = table_info_map().find(node.type);
-  if (i == table_info_map().end()) {
-    throw mysql_exception("load: couldn't find node");
-  }
-//  table_info_t &info = table_info_map().at(node.type);
-
-  statement_reader reader(node, stmt, i->second);
-  /* iterate over statement results and create 
-   * and insert objects
-   */
-  reader.import();
-  
-  // call super class
-  database::load(node);
-}
-
 void mysql_database::execute(const char *sql, result_impl *res)
 {
   char *errmsg;
@@ -167,60 +127,6 @@ void mysql_database::execute(const char *sql, result_impl *res)
   if (ret != 0) {
     throw mysql_exception("error");
   }
-}
-
-void mysql_database::visit(insert_action *a)
-{
-  // create insert statement
-  statement_ptr stmt = find_statement(std::string(a->type()) + "_INSERT");
-  if (!stmt) {
-    // create statement
-    insert_statement_creator<mysql_types> creator;
-
-    if (a->empty()) {
-      return;
-    }
-    
-    insert_action::const_iterator i = a->begin();
-    
-    std::string sql = creator.create(*i, a->type().c_str(), "");
-
-    stmt.reset(create_statement());
-    stmt->prepare(sql);
-    
-    store_statement(std::string(a->type()) + "_INSERT", stmt);    
-  }
-  statement_binder binder;
-
-  insert_action::const_iterator first = a->begin();
-  insert_action::const_iterator last = a->end();
-  while (first != last) {
-    object *o = (*first++);
-    binder.bind(stmt, o, false);
-    stmt->step();
-    stmt->reset(true);
-  }
-}
-
-void mysql_database::visit(update_action *a)
-{
-  statement_ptr stmt = find_statement(std::string(a->obj()->classname()) + "_UPDATE");
-  if (!stmt) {
-    // create statement
-    update_statement_creator<mysql_types> creator;
-
-    std::string sql = creator.create(a->obj(), a->obj()->classname(), "id=?");
-
-    stmt.reset(create_statement());
-    stmt->prepare(sql);
-    
-    store_statement(std::string(a->obj()->classname()) + "_UPDATE", stmt);    
-  }
-
-  statement_binder binder;
-  binder.bind(stmt, a->obj(), true);
-  stmt->step();
-  stmt->reset(true);
 }
 
 void mysql_database::visit(delete_action *a)

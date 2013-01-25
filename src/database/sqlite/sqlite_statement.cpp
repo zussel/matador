@@ -27,6 +27,8 @@
 #include <cstring>
 #include <sqlite3.h>
 
+using std::cout;
+
 namespace oos {
 
 namespace sqlite {
@@ -82,13 +84,6 @@ void sqlite_statement::prepare(const std::string &sql)
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
-  /*
-  if (SQLITE_OK != ret) {
-    std::string msg(sqlite3_errmsg(db_()));
-    std::cout << "error while preparing statement: " << sql << " " << msg << "\n";
-    throw sqlite_exception("sqlite3_prepare_v2: " + sql + " " + msg);
-  }
-  */
 }
 
 void sqlite_statement::reset(bool clear_bindings)
@@ -107,12 +102,6 @@ int sqlite_statement::finalize()
 //  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_(), "sqlite3_finalize");
-  /*
-  if (ret != SQLITE_OK) {
-    std::string msg(sqlite3_errmsg(db_()));
-    throw sqlite_exception("sqlite3_finalize: " + msg);
-  }
-  */
   stmt_ = 0;
   return ret;
 }
@@ -143,7 +132,7 @@ double sqlite_statement::column_double(int i) const
   return sqlite3_column_double(stmt_, i);
 }
 
-void sqlite_statement::column(int i, char &bool) const
+void sqlite_statement::column(int i, bool &value) const
 {
   value = sqlite3_column_int(stmt_, i) > 0;
 }
@@ -201,12 +190,14 @@ void sqlite_statement::column(int i, unsigned long &value) const
 void sqlite_statement::column(int i, char *value, int &len) const
 {
   int s = sqlite3_column_bytes(stmt_, i);
-  if (s >= len) {
+
+  if (s > len) {
     throw sqlite_exception("unsufficient size of character buffer");
   } else {
-    strncpy(value, (const char*)sqlite3_column_text(stmt_, i), s);
-    value[s] = '\0';
-    len = s;
+    const char *res = (const char*)sqlite3_column_text(stmt_, i);
+    len = strlen(res);
+    strncpy(value, res, len);
+    value[len] = '\0';
   }
 }
 

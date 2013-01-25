@@ -79,35 +79,11 @@ bool session::is_open() const
 
 void session::create()
 {
-  /*****************
-   * 
-   * traverse over all prototypes
-   * create an object and the create 
-   * table statement
-   * 
-   *****************/
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-  while (first != last) {
-    const prototype_node &node = (*first++);
-    if (node.abstract) {
-      continue;
-    }
-    impl_->create(node);
-  }
+  impl_->create();
 }
 
 void session::drop()
 {
-  prototype_iterator first = ostore_.begin();
-  prototype_iterator last = ostore_.end();
-  while (first != last) {
-    const prototype_node &node = (*first++);
-    if (node.abstract) {
-      continue;
-    }
-    impl_->drop(node);
-  }
   impl_->drop();
 }
 

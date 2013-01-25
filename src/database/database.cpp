@@ -17,6 +17,7 @@
 
 #include "database/session.hpp"
 #include "database/database.hpp"
+#include "database/database_exception.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
@@ -46,7 +47,6 @@ void database::open(const std::string&)
   while (first != last) {
     if (!first->abstract) {
       table_map_.insert(std::make_pair(first->type, table_ptr(new table(*this, *first))));
-      table_info_map_.insert(std::make_pair(first->type, table_info_t(first.get())));
     }
     ++first;
   }
@@ -63,23 +63,41 @@ void database::close()
   }
   sequencer_->destroy();
   
-  statement_map_.clear();
   table_map_.clear();
-  table_info_map_.clear();
+}
+
+void database::create()
+{
+  table_map_t::iterator first = table_map_.begin();
+  table_map_t::iterator last = table_map_.end();
+  while (first != last) {
+    ((first++)->second->create());
+  }
+}
+
+void database::create(const prototype_node &node)
+{
+  table_map_t::iterator i = table_map_.find(node.type);
+  if (i == table_map_.end()) {
+    // create table
+    table_ptr tbl(new table(*this, node));
+    
+    i = table_map_.insert(std::make_pair(node.type, tbl)).first;
+  }
+  i->second->create();
 }
 
 void database::load(const prototype_node &node)
 {
-#ifdef WIN32
-  table_info_map_t::iterator i = table_info_map_.find(node.type);
-  if (i == table_info_map_.end()) {
-    throw std::out_of_range("unknown key");
-  } else {
-    i->second.is_loaded = true;
+  table_map_t::iterator i = table_map_.find(node.type);
+  if (i == table_map_.end()) {
+    // create table
+    table_ptr tbl(new table(*this, node));
+    
+    i = table_map_.insert(std::make_pair(node.type, tbl)).first;
   }
-#else
-  table_info_map_.at(node.type).is_loaded = true;
-#endif
+  
+  i->second->load(db_->ostore());
 }
 
 bool database::is_loaded(const std::string &name) const
@@ -98,22 +116,22 @@ bool database::is_loaded(const std::string &name) const
 
 void database::drop()
 {
+  table_map_t::iterator first = table_map_.begin();
+  table_map_t::iterator last = table_map_.end();
+  while (first != last) {
+    ((first++)->second->drop());
+  }
   sequencer_->drop();
 }
 
-bool database::store_statement(const std::string &id, database::statement_ptr stmt)
+void database::drop(const prototype_node &node)
 {
-  return statement_map_.insert(std::make_pair(id, stmt)).second;
-}
-
-database::statement_ptr database::find_statement(const std::string &id) const
-{
-  statement_map_t::const_iterator i = statement_map_.find(id);
-  if (i != statement_map_.end()) {
-    return i->second;
-  } else {
-    return statement_ptr();
+  table_map_t::iterator i = table_map_.find(node.type);
+  if (i == table_map_.end()) {
+    // create table
+    throw database_exception("db", "table not found");
   }
+  i->second->drop();
 }
 
 void database::prepare()
@@ -145,6 +163,51 @@ void database::rollback()
     on_rollback();
     commiting_ = false;
   }
+}
+
+void database::visit(insert_action *a)
+{
+  table_map_t::iterator i = table_map_.find(a->type());
+  if (i == table_map_.end()) {
+    /*
+     * TODO: add prototype node to insert action
+     * to create the table
+     */
+    // create table
+    //table_ptr tbl(new table(*this, node));
+    //i = table_map_.insert(std::make_pair(node.type, tbl)).first;
+    throw database_exception("db", "table not found");
+  }
+  
+  
+  insert_action::const_iterator first = a->begin();
+  insert_action::const_iterator last = a->end();
+  while (first != last) {
+    object *o = (*first++);
+    
+    i->second->insert(o);
+  }
+}
+
+void database::visit(update_action *a)
+{
+  table_map_t::iterator i = table_map_.find(a->obj()->classname());
+  if (i == table_map_.end()) {
+    throw database_exception("db", "table not found");
+  }
+
+  i->second->update(a->obj());
+}
+
+void database::visit(delete_action *a)
+{
+  table_map_t::iterator i = table_map_.find(a->classname());
+  if (i == table_map_.end()) {
+    throw database_exception("db", "table not found");
+  }
+
+  i->second->remove(a->id());
+
 }
 
 const session* database::db() const

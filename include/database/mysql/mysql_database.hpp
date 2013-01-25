@@ -86,14 +86,6 @@ public:
   virtual void drop(const prototype_node &node);
 
   /**
-   * load a specific table based on
-   * a prototype node
-   *
-   * @param node The node representing the table to read
-   */
-  virtual void load(const prototype_node &node);
-
-  /**
    * Execute a sql statement and return a result
    * implementation via pointer.
    *
@@ -102,16 +94,6 @@ public:
   virtual void execute(const char *sql, result_impl *res = 0);
 
   virtual void visit(create_action *) {}
-
-  /**
-   * The interface for the insert action.
-   */
-  virtual void visit(insert_action *a);
-
-  /**
-   * The interface for the update action.
-   */
-  virtual void visit(update_action *a);
 
   /**
    * The interface for the delete action.
