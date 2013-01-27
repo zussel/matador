@@ -47,7 +47,6 @@ mysql_statement::mysql_statement(mysql_database &db)
 
 mysql_statement::~mysql_statement()
 {
-  finalize();
 }
 
 bool mysql_statement::step()
@@ -72,8 +71,6 @@ bool mysql_statement::step()
 
 void mysql_statement::prepare(const std::string &sql)
 {
-  // destroy statement
-  finalize();
   // set new sql statement
   statement::prepare(sql);
   // create statement
@@ -98,8 +95,9 @@ const char* mysql_statement::column_name(int) const
   throw mysql_exception("unsupported feature");
 }
 
-void sqlite_statement::column(int i, bool &value) const
+void mysql_statement::column(int i, bool &value) const
 {
+  /*
   MYSQL_BIND value;
   value.buffer_type     = MYSQL_TYPE_LONG;
 	value.buffer         = (void *) &value;
@@ -110,135 +108,109 @@ void sqlite_statement::column(int i, bool &value) const
   mysql_stmt_fetch_column
   
   value = sqlite3_column_int(stmt_, i) > 0;
+  */
 }
 
-void sqlite_statement::column(int i, char &value) const
+void mysql_statement::column(int i, char &value) const
 {
-  value = (char)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, float &value) const
+void mysql_statement::column(int i, float &value) const
 {
-  value = (float)sqlite3_column_double(stmt_, i);
 }
 
-void sqlite_statement::column(int i, double &value) const
+void mysql_statement::column(int i, double &value) const
 {
-  value = sqlite3_column_double(stmt_, i);
 }
 
-void sqlite_statement::column(int i, short &value) const
+void mysql_statement::column(int i, short &value) const
 {
-  value = (short)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, int &value) const
+void mysql_statement::column(int i, int &value) const
 {
-  value = sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, long &value) const
+void mysql_statement::column(int i, long &value) const
 {
-  value = (long)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned char &value) const
+void mysql_statement::column(int i, unsigned char &value) const
 {
-  value = (unsigned char)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned short &value) const
+void mysql_statement::column(int i, unsigned short &value) const
 {
-  value = (unsigned short)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned int &value) const
+void mysql_statement::column(int i, unsigned int &value) const
 {
-  value = (unsigned int)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned long &value) const
+void mysql_statement::column(int i, unsigned long &value) const
 {
-  value = (unsigned long)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, char *value, int &len) const
+void mysql_statement::column(int i, char *value, int &len) const
 {
-  int s = sqlite3_column_bytes(stmt_, i);
-
-  if (s > len) {
-    throw sqlite_exception("unsufficient size of character buffer");
-  } else {
-    const char *res = (const char*)sqlite3_column_text(stmt_, i);
-    len = strlen(res);
-    strncpy(value, res, len);
-    value[len] = '\0';
-  }
 }
 
-void sqlite_statement::column(int i, std::string &value) const
+void mysql_statement::column(int i, std::string &value) const
 {
-  int s = sqlite3_column_bytes(stmt_, i);
-  value.assign((const char*)sqlite3_column_text(stmt_, i), s);
 }
 
-int sqlite_statement::column_type(int i) const
+int mysql_statement::bind(int i, double value)
 {
-  return sqlite3_column_type(stmt_, i);
-}
-
-int sqlite_statement::bind(int i, double value)
-{
-  int ret = sqlite3_bind_double(stmt_, i, value);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_double");
   return ret;
 }
 
-int sqlite_statement::bind(int i, int value)
+int mysql_statement::bind(int i, int value)
 {
-  int ret = sqlite3_bind_int(stmt_, i, value);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int sqlite_statement::bind(int i, long value)
+int mysql_statement::bind(int i, long value)
 {
-  int ret = sqlite3_bind_int(stmt_, i, value);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int sqlite_statement::bind(int i, unsigned int value)
+int mysql_statement::bind(int i, unsigned int value)
 {
-  int ret = sqlite3_bind_int(stmt_, i, value);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int sqlite_statement::bind(int i, unsigned long value)
+int mysql_statement::bind(int i, unsigned long value)
 {
-  int ret = sqlite3_bind_int(stmt_, i, value);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_int");
   return ret;
 }
 
-int sqlite_statement::bind(int i, const char *value, int len)
+int mysql_statement::bind(int i, const char *value, int len)
 {
-  int ret = sqlite3_bind_text(stmt_, i, value, len, 0);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_text");
   return ret;
 }
 
-int sqlite_statement::bind(int i, const std::string &value)
+int mysql_statement::bind(int i, const std::string &value)
 {
-  int ret = sqlite3_bind_text(stmt_, i, value.c_str(), value.size(), 0);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_text");
   return ret;
 }
 
-int sqlite_statement::bind_null(int i)
+int mysql_statement::bind_null(int i)
 {
-  int ret = sqlite3_bind_null(stmt_, i);
+  int ret = 1;
   throw_error(ret, db_(), "sqlite3_bind_null");
   return ret;
 }

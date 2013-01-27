@@ -53,13 +53,13 @@ void mysql_sequencer::create()
   stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   
   if (stmt.step()) {
-    int id = stmt.column_int(1);
+    int id = 0;
+    stmt.column(1, id);
     reset(id);
   } else {
     // no such element, insert one
     db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
-  stmt.finalize();
   // prepare update statement
   update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }
@@ -93,7 +93,6 @@ void mysql_sequencer::drop()
 
 void mysql_sequencer::destroy()
 {
-  update_.finalize();
 }
 
 }
