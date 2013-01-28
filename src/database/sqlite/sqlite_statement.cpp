@@ -116,62 +116,62 @@ const char* sqlite_statement::column_name(int i) const
   return sqlite3_column_name(stmt_, i);
 }
 
-void sqlite_statement::column(int i, bool &value) const
+void sqlite_statement::column(int i, bool &value)
 {
   value = sqlite3_column_int(stmt_, i) > 0;
 }
 
-void sqlite_statement::column(int i, char &value) const
+void sqlite_statement::column(int i, char &value)
 {
   value = (char)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, float &value) const
+void sqlite_statement::column(int i, float &value)
 {
   value = (float)sqlite3_column_double(stmt_, i);
 }
 
-void sqlite_statement::column(int i, double &value) const
+void sqlite_statement::column(int i, double &value)
 {
   value = sqlite3_column_double(stmt_, i);
 }
 
-void sqlite_statement::column(int i, short &value) const
+void sqlite_statement::column(int i, short &value)
 {
   value = (short)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, int &value) const
+void sqlite_statement::column(int i, int &value)
 {
   value = sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, long &value) const
+void sqlite_statement::column(int i, long &value)
 {
   value = (long)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned char &value) const
+void sqlite_statement::column(int i, unsigned char &value)
 {
   value = (unsigned char)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned short &value) const
+void sqlite_statement::column(int i, unsigned short &value)
 {
   value = (unsigned short)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned int &value) const
+void sqlite_statement::column(int i, unsigned int &value)
 {
   value = (unsigned int)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, unsigned long &value) const
+void sqlite_statement::column(int i, unsigned long &value)
 {
   value = (unsigned long)sqlite3_column_int(stmt_, i);
 }
 
-void sqlite_statement::column(int i, char *value, int &len) const
+void sqlite_statement::column(int i, char *value, int &len)
 {
   int s = sqlite3_column_bytes(stmt_, i);
 
@@ -185,7 +185,7 @@ void sqlite_statement::column(int i, char *value, int &len) const
   }
 }
 
-void sqlite_statement::column(int i, std::string &value) const
+void sqlite_statement::column(int i, std::string &value)
 {
   int s = sqlite3_column_bytes(stmt_, i);
   value.assign((const char*)sqlite3_column_text(stmt_, i), s);

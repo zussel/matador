@@ -38,7 +38,7 @@ public:
   mysql_statement(mysql_database &db);
   virtual ~mysql_statement();
 
-//  virtual result* execute(const std::string &sql);
+  virtual void execute();
 
   virtual bool step();
   virtual void prepare(const std::string &sql);
@@ -47,19 +47,19 @@ public:
   virtual int column_count() const;
   virtual const char* column_name(int i) const;
 
-  virtual void column(int i, bool &value) const;
-  virtual void column(int i, char &value) const;
-  virtual void column(int i, float &value) const;
-  virtual void column(int i, double &value) const;
-  virtual void column(int i, short &value) const;
-  virtual void column(int i, int &value) const;
-  virtual void column(int i, long &value) const;
-  virtual void column(int i, unsigned char &value) const;
-  virtual void column(int i, unsigned short &value) const;
-  virtual void column(int i, unsigned int &value) const;
-  virtual void column(int i, unsigned long &value) const;
-  virtual void column(int i, char *value, int &len) const;
-  virtual void column(int i, std::string &value) const;
+  virtual void column(int i, bool &value);
+  virtual void column(int i, char &value);
+  virtual void column(int i, float &value);
+  virtual void column(int i, double &value);
+  virtual void column(int i, short &value);
+  virtual void column(int i, int &value);
+  virtual void column(int i, long &value);
+  virtual void column(int i, unsigned char &value);
+  virtual void column(int i, unsigned short &value);
+  virtual void column(int i, unsigned int &value);
+  virtual void column(int i, unsigned long &value);
+  virtual void column(int i, char *value, int &len);
+  virtual void column(int i, std::string &value);
 
   virtual int bind(int i, double value);
   virtual int bind(int i, int value);
@@ -76,6 +76,9 @@ public:
 private:
   st_mysql_stmt *stmt_;
   mysql_database &db_;
+  
+  MYSQL_BIND *param_;
+  MYSQL_BIND result_;
 };
 
 }

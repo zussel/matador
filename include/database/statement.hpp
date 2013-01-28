@@ -50,6 +50,7 @@ public:
 
   virtual void prepare(const std::string &sql);
 
+  virtual void execute() = 0;
   virtual bool step() = 0;
 
   virtual void reset(bool clear_bindings) = 0;
@@ -57,19 +58,19 @@ public:
   virtual int column_count() const = 0;
   virtual const char* column_name(int i) const = 0;
 
-  virtual void column(int i, bool &value) const = 0;
-  virtual void column(int i, char &value) const = 0;
-  virtual void column(int i, float &value) const = 0;
-  virtual void column(int i, double &value) const = 0;
-  virtual void column(int i, short &value) const = 0;
-  virtual void column(int i, int &value) const = 0;
-  virtual void column(int i, long &value) const = 0;
-  virtual void column(int i, unsigned char &value) const = 0;
-  virtual void column(int i, unsigned short &value) const = 0;
-  virtual void column(int i, unsigned int &value) const = 0;
-  virtual void column(int i, unsigned long &value) const = 0;
-  virtual void column(int i, char *value, int &len) const = 0;
-  virtual void column(int i, std::string &value) const = 0;
+  virtual void column(int i, bool &value) = 0;
+  virtual void column(int i, char &value) = 0;
+  virtual void column(int i, float &value) = 0;
+  virtual void column(int i, double &value) = 0;
+  virtual void column(int i, short &value) = 0;
+  virtual void column(int i, int &value) = 0;
+  virtual void column(int i, long &value) = 0;
+  virtual void column(int i, unsigned char &value) = 0;
+  virtual void column(int i, unsigned short &value) = 0;
+  virtual void column(int i, unsigned int &value) = 0;
+  virtual void column(int i, unsigned long &value) = 0;
+  virtual void column(int i, char *value, int &len) = 0;
+  virtual void column(int i, std::string &value) = 0;
 
   virtual int bind(int i, double value) = 0;
   virtual int bind(int i, int value) = 0;
