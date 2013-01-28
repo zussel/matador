@@ -1,6 +1,6 @@
 #include "ObjectListTestUnit.hpp"
 
-#include "Item.hpp"
+#include "../Item.hpp"
 
 #include "object/object_list.hpp"
 #include "object/object_view.hpp"

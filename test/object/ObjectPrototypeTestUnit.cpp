@@ -5,7 +5,7 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
-#include "Item.hpp"
+#include "../Item.hpp"
 
 #include <fstream>
 

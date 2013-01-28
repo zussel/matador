@@ -1,20 +1,21 @@
-#ifndef DATABASE_TEST_UNIT_HPP
-#define DATABASE_TEST_UNIT_HPP
+#ifndef MYSQL_DATABASE_TEST_UNIT_HPP
+#define MYSQL_DATABASE_TEST_UNIT_HPP
 
 #include "object/object_store.hpp"
 
 #include "unit/unit_test.hpp"
 
-class DatabaseTestUnit : public oos::unit_test
+class MySQLDatabaseTestUnit : public oos::unit_test
 {
 public:
-  DatabaseTestUnit();
-  virtual ~DatabaseTestUnit();
+  MySQLDatabaseTestUnit();
+  virtual ~MySQLDatabaseTestUnit();
 
   virtual void initialize();
   virtual void finalize();
 
   void open();
+  void test_create();
   void simple();
   void with_sub();
   void with_list();
@@ -27,4 +28,4 @@ private:
   oos::object_store ostore_;
 };
 
-#endif /* DATABASE_TEST_UNIT_HPP */
+#endif /* MYSQL_DATABASE_TEST_UNIT_HPP */

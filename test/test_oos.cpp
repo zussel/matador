@@ -27,7 +27,9 @@
 #include "object/ObjectPrototypeTestUnit.hpp"
 #include "object/ObjectListTestUnit.hpp"
 #include "object/ObjectVectorTestUnit.hpp"
-#include "object/DatabaseTestUnit.hpp"
+
+#include "database/SQLiteDatabaseTestUnit.hpp"
+#include "database/MySQLDatabaseTestUnit.hpp"
 
 #include "json/JsonTestUnit.hpp"
 
@@ -51,7 +53,8 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit("store", new ObjectStoreTestUnit());
   test_suite::instance().register_unit("list", new ObjectListTestUnit());
   test_suite::instance().register_unit("vector", new ObjectVectorTestUnit());
-  test_suite::instance().register_unit("database", new DatabaseTestUnit());
+  test_suite::instance().register_unit("mysql", new MySQLDatabaseTestUnit());
+  test_suite::instance().register_unit("sqlite", new SQLiteDatabaseTestUnit());
 
   test_suite::instance().register_unit("json", new JsonTestUnit());
 

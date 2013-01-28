@@ -66,7 +66,11 @@ void mysql_database::open(const std::string &db)
   } else {
     mysql_db_ = mysql_init(NULL);
   
-    st_mysql *ret = mysql_real_connect(mysql_db_, "", "", "", NULL, 0, NULL, 0);
+    st_mysql *ret = mysql_real_connect(mysql_db_, "locahost", "sascha", "sascha", "test", 0, NULL, 0);
+//    st_mysql *ret = mysql_real_connect(mysql_db_, "", "", "", NULL, 0, NULL, 0);
+    if (ret != 0) {
+      throw mysql_exception("couldn't open database: " + db);
+    }
     database::open(db);
   }
 }

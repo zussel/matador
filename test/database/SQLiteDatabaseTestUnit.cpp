@@ -1,6 +1,6 @@
-#include "DatabaseTestUnit.hpp"
+#include "SQLiteDatabaseTestUnit.hpp"
 
-#include "Item.hpp"
+#include "../Item.hpp"
 
 #include "object/object_view.hpp"
 #include "object/object_list.hpp"
@@ -16,24 +16,24 @@
 using namespace oos;
 using namespace std;
 
-DatabaseTestUnit::DatabaseTestUnit()
+SQLiteDatabaseTestUnit::SQLiteDatabaseTestUnit()
   : unit_test("database test unit")
 {
-  add_test("open", std::tr1::bind(&DatabaseTestUnit::open, this), "open database test");
-  add_test("simple", std::tr1::bind(&DatabaseTestUnit::simple, this), "simple database test");
-  add_test("complex", std::tr1::bind(&DatabaseTestUnit::with_sub, this), "object with sub object database test");
-  add_test("list", std::tr1::bind(&DatabaseTestUnit::with_list, this), "object with object list database test");
-  add_test("vector", std::tr1::bind(&DatabaseTestUnit::with_vector, this), "object with object vector database test");
-  add_test("reload", std::tr1::bind(&DatabaseTestUnit::reload, this), "reload database test");
-  add_test("list2", std::tr1::bind(&DatabaseTestUnit::with_list2, this), "object with object list database test");
-  add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::reload_container, this), "reload object list database test");
+  add_test("open", std::tr1::bind(&SQLiteDatabaseTestUnit::open, this), "open database test");
+  add_test("simple", std::tr1::bind(&SQLiteDatabaseTestUnit::simple, this), "simple database test");
+  add_test("complex", std::tr1::bind(&SQLiteDatabaseTestUnit::with_sub, this), "object with sub object database test");
+  add_test("list", std::tr1::bind(&SQLiteDatabaseTestUnit::with_list, this), "object with object list database test");
+  add_test("vector", std::tr1::bind(&SQLiteDatabaseTestUnit::with_vector, this), "object with object vector database test");
+  add_test("reload", std::tr1::bind(&SQLiteDatabaseTestUnit::reload, this), "reload database test");
+  add_test("list2", std::tr1::bind(&SQLiteDatabaseTestUnit::with_list2, this), "object with object list database test");
+  add_test("reload_container", std::tr1::bind(&SQLiteDatabaseTestUnit::reload_container, this), "reload object list database test");
 }
 
-DatabaseTestUnit::~DatabaseTestUnit()
+SQLiteDatabaseTestUnit::~SQLiteDatabaseTestUnit()
 {}
 
 void
-DatabaseTestUnit::initialize()
+SQLiteDatabaseTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
@@ -47,13 +47,13 @@ DatabaseTestUnit::initialize()
 }
 
 void
-DatabaseTestUnit::finalize()
+SQLiteDatabaseTestUnit::finalize()
 {
   ostore_.clear(true);
 }
 
 void
-DatabaseTestUnit::open()
+SQLiteDatabaseTestUnit::open()
 {
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
@@ -66,7 +66,7 @@ DatabaseTestUnit::open()
 }
 
 void
-DatabaseTestUnit::simple()
+SQLiteDatabaseTestUnit::simple()
 {
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
@@ -153,7 +153,7 @@ DatabaseTestUnit::simple()
 }
 
 void
-DatabaseTestUnit::with_sub()
+SQLiteDatabaseTestUnit::with_sub()
 {
   // create database and make object store known to the database
   session db(ostore_, "sqlite://test.sqlite");
@@ -233,7 +233,7 @@ DatabaseTestUnit::with_sub()
 }
 
 void
-DatabaseTestUnit::with_list()
+SQLiteDatabaseTestUnit::with_list()
 {
   typedef object_ptr<ItemPtrList> itemlist_ptr;
   typedef ItemPtrList::value_type item_ptr;
@@ -324,7 +324,7 @@ DatabaseTestUnit::with_list()
 }
 
 void
-DatabaseTestUnit::with_list2()
+SQLiteDatabaseTestUnit::with_list2()
 {
   ostore_.insert_prototype<person>("PERSON");
   ostore_.insert_prototype<employee, person>("EMPLOYEE");
@@ -353,12 +353,12 @@ DatabaseTestUnit::with_list2()
 }
 
 void
-DatabaseTestUnit::with_vector()
+SQLiteDatabaseTestUnit::with_vector()
 {
 }
 
 void
-DatabaseTestUnit::reload()
+SQLiteDatabaseTestUnit::reload()
 {
   typedef ObjectItem<Item> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
@@ -444,7 +444,7 @@ DatabaseTestUnit::reload()
 }
 
 void
-DatabaseTestUnit::reload_container()
+SQLiteDatabaseTestUnit::reload_container()
 {
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;

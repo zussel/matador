@@ -1,6 +1,6 @@
 #include "ObjectVectorTestUnit.hpp"
 
-#include "Item.hpp"
+#include "../Item.hpp"
 
 #include "object/object_vector.hpp"
 #include "object/object_view.hpp"

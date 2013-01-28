@@ -1,5 +1,5 @@
 #include "ObjectStoreTestUnit.hpp"
-#include "Item.hpp"
+#include "../Item.hpp"
 
 #include "object/object_expression.hpp"
 #include "object/object_serializer.hpp"

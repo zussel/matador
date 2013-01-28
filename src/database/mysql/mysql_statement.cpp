@@ -53,7 +53,7 @@ void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const
 mysql_statement::mysql_statement(mysql_database &db)
   : stmt_(0)
   , db_(db)
-  , param_(0);
+  , param_(0)
 {
 }
 
