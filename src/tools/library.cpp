@@ -17,6 +17,8 @@
 
 #include "tools/library.hpp"
 
+#include <unistd.h>
+
 namespace oos {
 
 library::library()
@@ -38,9 +40,16 @@ bool library::load()
 #ifdef WIN32
   handle_ = LoadLibrary((lib_ + ".dll").c_str());
 #else
+  char cwd[1024];
+  if (getcwd(cwd, sizeof(cwd)) != NULL)
+    fprintf(stdout, "Current working dir: %s\n", cwd);
+  else
+    perror("getcwd() error");
+  fprintf(stdout, "try to open [%s]\n", std::string("lib" + lib_ + ".so").c_str());
   handle_ = dlopen(std::string("lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
+    fprintf(stdout, "dlopen error: %s", dlerror());
     return false;
   }
   return true;

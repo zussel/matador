@@ -52,7 +52,9 @@ void sqlite_sequencer::create()
   sqlite_statement stmt(*db_);
   stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   
-  if (stmt.step()) {
+  stmt.execute();
+
+  if (stmt.fetch()) {
     int id;
     stmt.column(1, id);
     reset(id);
@@ -75,7 +77,8 @@ void sqlite_sequencer::commit()
 {
   // write current sequence id of object store to db
   update_.bind(1, (int)current());
-  update_.step();
+  update_.execute();
+  update_.fetch();
   update_.reset(true);
   backup_ = 0;
 }

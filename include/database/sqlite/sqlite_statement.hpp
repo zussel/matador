@@ -39,7 +39,7 @@ public:
 //  virtual result* execute(const std::string &sql);
 
   virtual void execute() {}
-  virtual bool step();
+  virtual bool fetch();
   virtual void prepare(const std::string &sql);
   virtual void reset(bool clear_bindings);
   

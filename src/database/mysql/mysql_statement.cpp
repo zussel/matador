@@ -70,22 +70,19 @@ void mysql_statement::execute()
   throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
 }
 
-bool mysql_statement::step()
+bool mysql_statement::fetch()
 {
 
 //  std::cerr << "executing " << sql() << "\n";
 
   int ret = mysql_stmt_fetch(stmt_);
-  if (ret == 0/*SQLITE_ROW*/) {
+  if (ret == 0) {
     // retrieved new row
     // create row object
     return true;
-  } else if (ret == 0/*SQLITE_DONE*/) {
-    // no further row available
-    return false;
   } else {
     // error, throw exception
-    throw_error(ret, db_(), "mysql_stmt_next_result");
+    throw_stmt_error(ret, stmt_, "mysql_stmt_next_result");
   }
   return false;
 }

@@ -54,7 +54,7 @@ sqlite_statement::~sqlite_statement()
   finalize();
 }
 
-bool sqlite_statement::step()
+bool sqlite_statement::fetch()
 {
 
 //  std::cerr << "executing " << sql() << "\n";

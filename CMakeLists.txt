@@ -21,7 +21,8 @@ if(DOXYGEN_FOUND)
     # Configure the Template Doxyfile for our specific project
     configure_file(oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
     # Add a custom target to run Doxygen when ever the project is built
-    add_custom_target (doc ALL 
+    #add_custom_target (doc ALL 
+    add_custom_target (doc
   										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
   										 COMMENT "Generating API documentation with Doxygen" VERBATIM)
 ENDIF(DOXYGEN_FOUND)
@@ -52,6 +53,12 @@ FIND_PACKAGE(SQLite3 REQUIRED)
 IF(NOT SQLITE3_FOUND)
 	MESSAGE(FATAL_ERROR "Looking for SQLite3 - not found")
 ENDIF(NOT SQLITE3_FOUND)
+
+MESSAGE(STATUS "Looking for MySQL")
+FIND_PACKAGE(MySQL REQUIRED)
+IF(NOT MYSQL_FOUND)
+	MESSAGE(FATAL_ERROR "Looking for MySQL - not found")
+ENDIF(NOT MYSQL_FOUND)
 
 INCLUDE_DIRECTORIES(
 	${PROJECT_SOURCE_DIR}/include

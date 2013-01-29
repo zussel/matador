@@ -105,7 +105,10 @@ void table::load(object_store &ostore)
     prepare();
   }
   ostore_ = &ostore;
-  while (select_->step()) {
+
+  select_->execute();
+
+  while (select_->fetch()) {
     column_ = 0;
 
     // create object
@@ -148,7 +151,8 @@ void table::insert(object *obj)
   
   obj->serialize(*this);
 
-  insert_->step();
+  insert_->execute();
+  insert_->fetch();
   insert_->reset(true);
 }
 
@@ -162,7 +166,8 @@ void table::update(object *obj)
 
   update_->bind(++column_, (int)obj->id());
 
-  update_->step();
+  update_->execute();
+  update_->fetch();
   update_->reset(true);
 }
 
@@ -174,7 +179,8 @@ void table::remove(object *obj)
 void table::remove(long id)
 {
   delete_->bind(1, id);
-  delete_->step();
+  delete_->execute();
+  delete_->fetch();
   delete_->reset(true);
 }
 

@@ -66,10 +66,12 @@ void mysql_database::open(const std::string &db)
   } else {
     mysql_db_ = mysql_init(NULL);
   
-    st_mysql *ret = mysql_real_connect(mysql_db_, "locahost", "sascha", "sascha", "test", 0, NULL, 0);
+    st_mysql *ret = mysql_real_connect(mysql_db_, "localhost", "sascha", "sascha", "test", 0, NULL, 0);
 //    st_mysql *ret = mysql_real_connect(mysql_db_, "", "", "", NULL, 0, NULL, 0);
-    if (ret != 0) {
-      throw mysql_exception("couldn't open database: " + db);
+    if (ret == 0) {
+      std::stringstream msg;
+      msg << "mysql" << ": " << mysql_error(mysql_db_) << "(" << db << ")";
+      throw mysql_exception(msg.str());
     }
     database::open(db);
   }
@@ -90,6 +92,15 @@ void mysql_database::close()
     mysql_close(mysql_db_);
 
     mysql_db_ = 0;
+  }
+}
+
+void mysql_database::execute(const char *sql, result_impl *res)
+{
+  if (mysql_query(mysql_db_, sql)) {
+    std::stringstream msg;
+    msg << "mysql" << ": " << mysql_error(mysql_db_) << "(" << sql << ")";
+    throw mysql_exception(msg.str());
   }
 }
 

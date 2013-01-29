@@ -51,7 +51,7 @@ public:
   virtual void prepare(const std::string &sql);
 
   virtual void execute() = 0;
-  virtual bool step() = 0;
+  virtual bool fetch() = 0;
 
   virtual void reset(bool clear_bindings) = 0;
 
