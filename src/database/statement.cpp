@@ -29,7 +29,7 @@ namespace oos {
 statement::~statement()
 {}
 
-void statement::prepare(const std::string &sql)
+void statement::prepare(const std::string &sql, int, int)
 {
   sql_ = sql;
 }

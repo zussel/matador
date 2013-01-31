@@ -50,20 +50,25 @@ void mysql_sequencer::create()
   db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
   
   mysql_statement stmt(*db_);
-  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
-  
+  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';", 0, 1);
+
+  stmt.prepare_result<int>(0);
+
+  //stmt.prepare_param<int>(0);
+
   stmt.execute();
 
   if (stmt.fetch()) {
+    // prepare result
     int id = 0;
-    stmt.column(1, id);
+    stmt.column(0, id);
     reset(id);
   } else {
     // no such element, insert one
     db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
   // prepare update statement
-  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
+  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';", 0, 1);
 }
 
 void mysql_sequencer::begin()

@@ -28,6 +28,7 @@
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
+#include "object/attribute_counter.hpp"
 #include "object/prototype_node.hpp"
 
 #include <stdexcept>
@@ -132,34 +133,37 @@ void sqlite_database::prepare_table(const prototype_node &node,
 {
   // create dummy
   object *o = node.producer->create();
-  
+
+  attribute_counter counter;
+  unsigned long count = counter.count(o);
+
   // prepare select statement
   select_statement_creator<sqlite_types> select_creator;
   // state wasn't found, create sql string
   std::string sql = select_creator.create(o, node.type.c_str(), 0);
   // prepare statement
-  select->prepare(sql);
+  select->prepare(sql, 0, count);
   
   // prepare insert statement
   insert_statement_creator<sqlite_types> insert_creator;
   // state wasn't found, create sql string
   sql = insert_creator.create(o, node.type.c_str(), 0);
   // prepare statement
-  insert->prepare(sql);
+  insert->prepare(sql, count, 0);
   
   // prepare insert statement
   update_statement_creator<sqlite_types> update_creator;
   // state wasn't found, create sql string
   sql = update_creator.create(o, node.type.c_str(), "id=?");
   // prepare statement
-  update->prepare(sql);
+  update->prepare(sql, count + 1, 0);
   
   // prepare insert statement
   delete_statement_creator<sqlite_types> delete_creator;
   // state wasn't found, create sql string
   sql = delete_creator.create(o, node.type.c_str(), "id=?");
   // prepare statement
-  remove->prepare(sql);
+  remove->prepare(sql, 1, 0);
   
   // delete dummy
   delete o;

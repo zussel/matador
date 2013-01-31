@@ -54,6 +54,7 @@ mysql_statement::mysql_statement(mysql_database &db)
   : stmt_(0)
   , db_(db)
   , param_(0)
+  , result_(0)
 {
 }
 
@@ -62,11 +63,17 @@ mysql_statement::~mysql_statement()
   if (param_) {
     delete [] param_;
   }
+  if (result_) {
+    delete [] result_;
+  }
 }
 
 void mysql_statement::execute()
 {
-  int ret = mysql_stmt_execute(stmt_);
+  int ret = mysql_stmt_bind_result(stmt_, result_);
+  throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
+  
+  ret = mysql_stmt_execute(stmt_);
   throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
 }
 
@@ -80,22 +87,39 @@ bool mysql_statement::fetch()
     // retrieved new row
     // create row object
     return true;
+  } else if (ret == MYSQL_NO_DATA) {
+    return false;
+  } else if (ret == MYSQL_DATA_TRUNCATED) {
+    std::stringstream msg;
+    msg << "mysql_stmt_fetch: data truncated (bind.error: " << 0 << ")";
+    throw mysql_exception(msg.str());
   } else {
     // error, throw exception
-    throw_stmt_error(ret, stmt_, "mysql_stmt_next_result");
+    throw_stmt_error(ret, stmt_, "mysql_stmt_fetch");
   }
   return false;
 }
 
-void mysql_statement::prepare(const std::string &sql)
+void mysql_statement::prepare(const std::string &sql, int params, int results)
 {
   // set new sql statement
-  statement::prepare(sql);
+  statement::prepare(sql, params, results);
   // create statement
   stmt_ = mysql_stmt_init(db_());
   // prepare mysql statement
   int ret = mysql_stmt_prepare(stmt_, sql.c_str(), sql.size());
   throw_error(ret, db_(), "mysql_stmt_prepare", sql);
+  // create result/binding param array
+  
+  param_ = new MYSQL_BIND[params];
+  memset(param_, 0, params * sizeof(MYSQL_BIND));
+  result_ = new MYSQL_BIND[results];
+  memset(result_, 0, results * sizeof(MYSQL_BIND));
+  result_length_ = new unsigned long[results];
+  for (unsigned long i = 0; i < (unsigned long)results; ++i) {
+    result_length_[i] = 0;
+    result_[i].length = &result_length_[i];
+  }
 }
 
 void mysql_statement::reset(bool)
@@ -136,120 +160,112 @@ void prepare_result(MYSQL_BIND &result, char *&val, int len, unsigned long &data
 
 void mysql_statement::column(int i, bool &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, char &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, float &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, double &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, short &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, int &value)
-{
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+{  
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, long &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, unsigned char &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, unsigned short &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, unsigned int &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, unsigned long &value)
 {
-  prepare_result(result_, value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
+  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, char *value, int &len)
 {
   unsigned long data_length;
-  prepare_result(result_, value, len, data_length);
-  len = data_length;
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], value, len, data_length);
 }
 
 void mysql_statement::column(int i, std::string &value)
 {
   unsigned long data_length;
   char *buf = new char[value.size()];
-  prepare_result(result_, buf, value.size(), data_length);
-  mysql_stmt_fetch_column(stmt_, &result_, i, 0);
+  prepare_result(result_[i], buf, value.size(), data_length);
   value.assign(buf, data_length);
 }
 
 int mysql_statement::bind(int i, double value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_double");
-  return ret;
+  prepare_result(param_[i], value, MYSQL_TYPE_DOUBLE);
+  return 0;
 }
 
 int mysql_statement::bind(int i, int value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
+  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
+  return 0;
 }
 
 int mysql_statement::bind(int i, long value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
+  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
+  return 0;
 }
 
 int mysql_statement::bind(int i, unsigned int value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
+  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
+  return 0;
 }
 
 int mysql_statement::bind(int i, unsigned long value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
+  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
+  return 0;
 }
 
 int mysql_statement::bind(int i, const char *value, int len)

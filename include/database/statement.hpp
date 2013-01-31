@@ -48,7 +48,7 @@ public:
 //  explicit statement(const std::string &sql);
   virtual ~statement();
 
-  virtual void prepare(const std::string &sql);
+  virtual void prepare(const std::string &sql, int params, int results);
 
   virtual void execute() = 0;
   virtual bool fetch() = 0;

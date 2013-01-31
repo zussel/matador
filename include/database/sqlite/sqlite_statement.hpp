@@ -40,7 +40,7 @@ public:
 
   virtual void execute() {}
   virtual bool fetch();
-  virtual void prepare(const std::string &sql);
+  virtual void prepare(const std::string &sql, int params, int results);
   virtual void reset(bool clear_bindings);
   
   int finalize();

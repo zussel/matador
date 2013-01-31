@@ -15,28 +15,28 @@ public:
   {}
   virtual ~attribute_counter() {}
   
-  unsigned long count(object *o, bool with_container = false) const
+  unsigned long count(object *o, bool with_container = false)
   {
     count_ = 0;
     with_container_ = with_container;
     
-    o->serialize();
+    o->serialize(*this);
     
     return count_;
   }
   
-  template < class >
-  void write(const char*, const T&)
+  template < class T >
+  void write_value(const char*, const T&)
   {
     ++count_;
   }
   
-  void write(const char*, const char*, int)
+  void write_value(const char*, const char*, int)
   {
     ++count_;
   }
   
-  void write(const char*, const object_container&)
+  void write_value(const char*, const object_container&)
   {
     if (with_container_) {
       ++count_;

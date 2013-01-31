@@ -75,12 +75,12 @@ bool sqlite_statement::fetch()
   return false;
 }
 
-void sqlite_statement::prepare(const std::string &sql)
+void sqlite_statement::prepare(const std::string &sql, int params, int results)
 {
   // destroy statement
   finalize();
   // set new sql statement
-  statement::prepare(sql);
+  statement::prepare(sql, params, results);
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
   throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
