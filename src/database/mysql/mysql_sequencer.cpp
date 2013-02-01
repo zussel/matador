@@ -52,7 +52,7 @@ void mysql_sequencer::create()
   mysql_statement stmt(*db_);
   stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';", 0, 1);
 
-  stmt.prepare_result<int>(0);
+//  stmt.prepare_result<int>(0);
 
   //stmt.prepare_param<int>(0);
 
