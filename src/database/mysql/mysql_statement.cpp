@@ -299,6 +299,12 @@ const database& mysql_statement::db() const
   return db_;
 }
 
+template <>
+void mysql_statement::prepare_result_column<int>(int)
+{
+  std::cout << "int result column\n";
+}
+
 }
 
 }

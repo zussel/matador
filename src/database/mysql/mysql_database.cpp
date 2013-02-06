@@ -161,6 +161,11 @@ void mysql_database::initialize_table(const prototype_node &node,
 {
 }
 
+statement* mysql_database::create_statement(const prototype_node &node, statement_creator::type type)
+{
+  return statement_creator::instance().create<mysql_types>(node, type)
+}
+
 void mysql_database::prepare_table(const prototype_node &node,
                                    statement *select, statement *insert,
                                    statement *update, statement *remove)

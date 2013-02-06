@@ -73,6 +73,13 @@ public:
   virtual database& db();
   virtual const database& db() const;
 
+  template < class T >
+  void prepare_result_column(int index);
+
+  template < class T >
+  void prepare_host_column(int index);
+  
+  
 private:
   st_mysql_stmt *stmt_;
   mysql_database &db_;
