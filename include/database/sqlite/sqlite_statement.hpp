@@ -40,7 +40,7 @@ public:
 
   virtual void execute() {}
   virtual bool fetch();
-  virtual void prepare(const std::string &sql, int params, int results);
+  virtual void prepare(const std::string &sql);
   virtual void reset(bool clear_bindings);
   
   int finalize();
@@ -75,6 +75,10 @@ public:
 
   virtual database& db();
   virtual const database& db() const;
+
+protected:
+  virtual void on_result_field(const std::string &field, int index) {}
+  virtual void on_host_field(const std::string &field, int index) {}
 
 private:
   sqlite3_stmt *stmt_;

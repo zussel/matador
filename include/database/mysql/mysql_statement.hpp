@@ -23,6 +23,7 @@
 #include <mysql/mysql.h>
 
 #include <string>
+#include <vector>
 
 struct st_mysql_stmt;
 
@@ -41,7 +42,7 @@ public:
   virtual void execute();
 
   virtual bool fetch();
-  virtual void prepare(const std::string &sql, int params, int results);
+  virtual void prepare(const std::string &sql);
   virtual void reset(bool clear_bindings);
   
   virtual int column_count() const;
@@ -79,7 +80,10 @@ public:
   template < class T >
   void prepare_host_column(int index);
   
-  
+protected:
+  virtual void on_result_field(const std::string &field, int index);
+  virtual void on_host_field(const std::string &field, int index);
+
 private:
   st_mysql_stmt *stmt_;
   mysql_database &db_;
@@ -87,6 +91,11 @@ private:
   MYSQL_BIND *param_;
   MYSQL_BIND *result_;
   unsigned long *result_length_;
+  
+  std::vector<unsigned long> host_vector_;
+  std::vector<unsigned long> result_vector_;
+  
+  int int_val;
 };
 
 }

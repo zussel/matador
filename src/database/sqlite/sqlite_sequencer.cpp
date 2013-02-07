@@ -50,7 +50,7 @@ void sqlite_sequencer::create()
   db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
   
   sqlite_statement stmt(*db_);
-  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';", 0, 1);
+  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
   
   stmt.execute();
 
@@ -64,7 +64,7 @@ void sqlite_sequencer::create()
   }
   stmt.finalize();
   // prepare update statement
-  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';", 1, 0);
+  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }
 
 void sqlite_sequencer::begin()

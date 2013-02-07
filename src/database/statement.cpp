@@ -22,16 +22,24 @@
 #include "object/prototype_node.hpp"
 
 #include "database/statement_creator.hpp"
+#include "database/statement_parser.hpp"
 #include "database/database.hpp"
+
+#include <functional>
+
+using namespace std::placeholders;
 
 namespace oos {
 
 statement::~statement()
 {}
 
-void statement::prepare(const std::string &sql, int, int)
+void statement::prepare(const std::string &sql)
 {
-  sql_ = sql;
+  statement_parser parser(std::bind(&statement::on_result_field, this, _1, _2),
+                          std::bind(&statement::on_host_field, this, _1, _2));
+  
+  sql_ = parser.parse(sql);
 }
 
 std::string statement::sql() const

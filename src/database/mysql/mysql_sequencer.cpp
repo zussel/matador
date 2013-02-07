@@ -50,8 +50,8 @@ void mysql_sequencer::create()
   db_->execute("CREATE TABLE IF NOT EXISTS oos_sequence (name VARCHAR(64), sequence INTEGER NOT NULL);");
   
   mysql_statement stmt(*db_);
-//  stmt.prepare("SELECT ~sequence FROM oos_sequence WHERE name='object';", 0, 1);
-  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';", 0, 1);
+  stmt.prepare("SELECT ~sequence FROM oos_sequence WHERE name='object';");
+//  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
 
   stmt.prepare_result_column<int>(0);
 
@@ -63,13 +63,15 @@ void mysql_sequencer::create()
     // prepare result
     int id = 0;
     stmt.column(0, id);
+    
+    std::cout << "got sequence index [" << id << "]\n";
     reset(id);
   } else {
     // no such element, insert one
     db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
   // prepare update statement
-  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';", 0, 1);
+  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }
 
 void mysql_sequencer::begin()

@@ -48,7 +48,7 @@ public:
 //  explicit statement(const std::string &sql);
   virtual ~statement();
 
-  virtual void prepare(const std::string &sql, int params, int results);
+  virtual void prepare(const std::string &sql);
 
   virtual void execute() = 0;
   virtual bool fetch() = 0;
@@ -86,6 +86,10 @@ public:
 
   virtual database& db() = 0;
   virtual const database& db() const = 0;
+
+protected:
+  virtual void on_result_field(const std::string &field, int index) = 0;
+  virtual void on_host_field(const std::string &field, int index) = 0;
 
 private:
   std::string sql_;

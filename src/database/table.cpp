@@ -89,12 +89,12 @@ std::string table::name() const
 
 void table::prepare()
 {
-  
-  
+  /*
   select_ = db_.create_statement(node_, database::select_statement);
   insert_ = db_.create_statement(node_, database::insert_statement);
   update_ = db_.create_statement(node_, database::update_statement);
   delete_ = db_.create_statement(node_, database::delete_statement);
+  */
 
   db_.prepare_table(node_, select_, insert_, update_, delete_);
   prepared_ = true;
