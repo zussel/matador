@@ -15,11 +15,10 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYSQL_SEQUENCER_HPP
-#define MYSQL_SEQUENCER_HPP
+#ifndef MYSQL_TABLE_HPP
+#define MYSQL_TABLE_HPP
 
-#include "database/database_sequencer.hpp"
-#include "database/mysql/mysql_statement.hpp"
+#include "database/table.hpp"
 
 namespace oos {
 
@@ -27,27 +26,22 @@ namespace mysql {
 
 class mysql_database;
 
-class mysql_sequencer : public database_sequencer
+class mysql_table : public table
 {
 public:
-  mysql_sequencer(mysql_database *db);
-  virtual ~mysql_sequencer();
+  mysql_table(mysql_database &db, const prototype_node &node);
 
-  virtual void create();
-  virtual void begin();
-  virtual void commit();
-  virtual void rollback();
-  virtual void drop();
-  virtual void destroy();
+  virtual void prepare();
+
+  virtual database& db();
+  virtual const database& db() const;
 
 private:
-  mysql_database *db_;
-  long backup_;
-  mysql_statement update_;
+  mysql_database &db_;
 };
 
 }
 
 }
 
-#endif /* MYSQL_SEQUENCER_HPP */
+#endif /* MYSQL_TABLE_HPP */

@@ -3,6 +3,7 @@ SET(SQLITE_DATABASE_SOURCES
   sqlite_exception.cpp
   sqlite_statement.cpp
   sqlite_sequencer.cpp
+  sqlite_table.cpp
   sqlite_result.cpp
 )
 
@@ -12,6 +13,7 @@ SET(SQLITE_DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/sqlite/sqlite_statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/sqlite/sqlite_sequencer.hpp
   ${PROJECT_SOURCE_DIR}/include/database/sqlite/sqlite_result.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/sqlite/sqlite_table.hpp
   ${PROJECT_SOURCE_DIR}/include/database/sqlite/sqlite_types.hpp
 )
 

@@ -18,13 +18,15 @@
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_result.hpp"
+#include "database/sqlite/sqlite_table.hpp"
 #include "database/sqlite/sqlite_types.hpp"
 #include "database/sqlite/sqlite_exception.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"
-#include "database/statement_creator.hpp"
 #include "database/row.hpp"
+
+#include "database/statement_creator.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -110,20 +112,9 @@ statement* sqlite_database::create_statement()
   return new sqlite_statement(*this);
 }
 
-void sqlite_database::initialize_table(const prototype_node &node, std::string &create_, std::string &drop_)
+table* sqlite_database::create_table(const prototype_node &node)
 {
-  // create dummy
-  object *o = node.producer->create();
-  // create string
-  create_statement_creator<sqlite_types> creator;
-  create_ = creator.create(o, node.type.c_str(), "");
-
-  // drop string
-  drop_statement_creator<sqlite_types> drop;
-  drop_ = drop.create(o, node.type.c_str(), "");
-
-  // delete dummy
-  delete o;
+  return new sqlite_table(*this, node);
 }
 
 void sqlite_database::prepare_table(const prototype_node &node,                         

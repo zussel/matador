@@ -15,17 +15,26 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SQLITE_STATEMENT_HPP
-#define SQLITE_STATEMENT_HPP
+#ifndef MYSQL_STATEMENT_HPP
+#define MYSQL_STATEMENT_HPP
 
 #include "database/statement.hpp"
+
+#include "tools/enable_if.hpp"
 
 #include <mysql/mysql.h>
 
 #include <string>
 #include <vector>
+#include <type_traits>
 
 struct st_mysql_stmt;
+
+#ifdef WIN32
+#define CPP11_TYPE_TRAITS_NS std::tr1
+#else
+#define CPP11_TYPE_TRAITS_NS std
+#endif
 
 namespace oos {
 
@@ -75,11 +84,15 @@ public:
   virtual const database& db() const;
 
   template < class T >
-  void prepare_result_column(int index);
+  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type prepare_result_column(int index)
+  {
+    result_[index].buffer_type = MYSQL_TYPE_LONG;
+    result_[index].buffer         = (void *) new char[sizeof(T)];
+    result_[index].buffer_length    = 0;
+    result_[index].is_null         = 0;
+    result_[index].length         = 0;
+  }
 
-  template < class T >
-  void prepare_host_column(int index);
-  
 protected:
   virtual void on_result_field(const std::string &field, int index);
   virtual void on_host_field(const std::string &field, int index);
@@ -102,4 +115,4 @@ private:
 
 }
 
-#endif /* SQLITE_STATEMENT_HPP */
+#endif /* MYSQL_STATEMENT_HPP */

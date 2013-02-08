@@ -18,25 +18,13 @@
 #ifndef MEMORY_DATABASE_HPP
 #define MEMORY_DATABASE_HPP
 
-/*
-#ifdef WIN32
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-  #else
-    #define OOS_API __declspec(dllimport)
-  #endif
-  #pragma warning(disable: 4355)
-#else
-  #define OOS_API
-#endif
-*/
 #include "database/database.hpp"
 
 namespace oos {
 
 /// @cond OOS_DEV
 
-class /*OOS_API */memory_database : public database
+class memory_database : public database
 {
 public:
   /**
@@ -64,6 +52,7 @@ public:
 
   virtual result_impl* create_result() { return 0; }
   virtual statement* create_statement() { return 0; }
+  virtual table* create_table(const prototype_node &) { return 0; }
   virtual void initialize_table(const prototype_node &,
                          std::string &, std::string &) {}
   virtual void prepare_table(const prototype_node &,

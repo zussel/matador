@@ -15,39 +15,34 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYSQL_SEQUENCER_HPP
-#define MYSQL_SEQUENCER_HPP
+#ifndef SQLITE_TABLE_HPP
+#define SQLITE_TABLE_HPP
 
-#include "database/database_sequencer.hpp"
-#include "database/mysql/mysql_statement.hpp"
+#include "database/table.hpp"
 
 namespace oos {
 
-namespace mysql {
+namespace sqlite {
 
-class mysql_database;
+class sqlite_database;
 
-class mysql_sequencer : public database_sequencer
+class sqlite_table : public table
 {
 public:
-  mysql_sequencer(mysql_database *db);
-  virtual ~mysql_sequencer();
+  sqlite_table(sqlite_database &db, const prototype_node &node);
 
-  virtual void create();
-  virtual void begin();
-  virtual void commit();
-  virtual void rollback();
-  virtual void drop();
-  virtual void destroy();
+  virtual void prepare();
+
+  virtual database& db();
+  virtual const database& db() const;
 
 private:
-  mysql_database *db_;
-  long backup_;
-  mysql_statement update_;
+  sqlite_database &db_;
 };
 
 }
 
 }
 
-#endif /* MYSQL_SEQUENCER_HPP */
+#endif /* SQLITE_TABLE_HPP */
+

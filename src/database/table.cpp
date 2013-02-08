@@ -55,14 +55,9 @@ private:
   object *object_;
 };
 
-table::table(database &db, const prototype_node &node)
+table::table(const prototype_node &node)
   : generic_object_reader<table>(this)
   , generic_object_writer<table>(this)
-  , select_(db.create_statement())
-  , insert_(db.create_statement())
-  , update_(db.create_statement())
-  , delete_(db.create_statement())
-  , db_(db)
   , node_(node)
   , column_(0)
   , object_(0)
@@ -70,9 +65,7 @@ table::table(database &db, const prototype_node &node)
   , inserting_(false)
   , prepared_(false)
   , is_loaded_(false)
-{
-  db_.initialize_table(node_, create_, drop_);
-}
+{}
 
 table::~table()
 {
@@ -87,22 +80,9 @@ std::string table::name() const
   return node_.type;
 }
 
-void table::prepare()
-{
-  /*
-  select_ = db_.create_statement(node_, database::select_statement);
-  insert_ = db_.create_statement(node_, database::insert_statement);
-  update_ = db_.create_statement(node_, database::update_statement);
-  delete_ = db_.create_statement(node_, database::delete_statement);
-  */
-
-  db_.prepare_table(node_, select_, insert_, update_, delete_);
-  prepared_ = true;
-}
-
 void table::create()
 {
-  db_.execute(create_.c_str());
+  db().execute(create_.c_str());
   prepare();
 }
 
@@ -131,8 +111,8 @@ void table::load(object_store &ostore)
   prototype_node::field_prototype_node_map_t::const_iterator last = node_.relations.end();
   while (first != last) {
 //    std::cout << "DEBUG: checking for relation node [" << first->first << "] ...";
-    database::table_map_t::iterator i = db_.table_map_.find(first->first);
-    if (i == db_.table_map_.end()) {
+    database::table_map_t::iterator i = db().table_map_.find(first->first);
+    if (i == db().table_map_.end()) {
 //      throw std::out_of_range("unknown key");
     } else {
       database::table_ptr tbl = i->second;
@@ -193,12 +173,27 @@ void table::remove(long id)
 
 void table::drop()
 {
-  db_.execute(drop_.c_str());
+  db().execute(drop_.c_str());
 }
 
 bool table::is_loaded() const
 {
   return is_loaded_;
+}
+
+void table::create_statement(const std::string &crt)
+{
+  create_ = crt;
+}
+
+void table::drop_statement(const std::string &drp)
+{
+  drop_ = drp;
+}
+
+const prototype_node& table::node() const
+{
+  return node_;
 }
 
 }

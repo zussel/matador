@@ -65,24 +65,6 @@ public:
   }
 };
 
-class mysql_create_type
-{
-public:
-  static const char *name() { return "CREATE TABLE"; }
-};
-
-class mysql_select_type
-{
-public:
-  static const char *name() { return "SELECT"; }
-};
-
-class mysql_update_type
-{
-public:
-  static const char *name() { return "UPDATE"; }
-};
-
 }
 
 }

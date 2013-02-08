@@ -70,11 +70,14 @@ public:
   typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
 
-  explicit table(database &db, const prototype_node &node);
-  ~table();
+protected:
+  explicit table(const prototype_node &node);
+
+public:
+  virtual ~table();
 
   std::string name() const;
-  void prepare();
+  virtual void prepare() = 0;
   void create();
   void load(object_store &ostore);
   void insert(object *obj);
@@ -129,7 +132,7 @@ public:
      * add the child object to the object proxy
      * of the parent container
      */
-    database::table_map_t::iterator j = db_.table_map_.find(node->type);
+    database::table_map_t::iterator j = db().table_map_.find(node->type);
     prototype_node::field_prototype_node_map_t::const_iterator i = node_.relations.find(node->type);
     if (i != node_.relations.end()) {
 //      std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
@@ -149,7 +152,7 @@ public:
     prototype_iterator p = ostore_->find_prototype(x.classname());
     if (p != ostore_->end()) {
 //      std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_.type << ":" << id << "]\n";
-      if (db_.is_loaded(p->type)) {
+      if (db().is_loaded(p->type)) {
 //        std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
         database::relation_data_t::iterator i = relation_data.find(id);
         if (i != relation_data.end()) {
@@ -211,6 +214,15 @@ public:
   }
   void write_value(const char *, const object_container &) {}
 
+protected:
+  const prototype_node& node() const;
+
+  virtual database& db() = 0;
+  virtual const database& db() const = 0;
+
+  void create_statement(const std::string &drp);
+  void drop_statement(const std::string &drp);
+
 private:
   friend class relation_filler;
 
@@ -222,7 +234,6 @@ private:
   statement* update_;
   statement* delete_;
 
-  database &db_;
   const prototype_node &node_;
   int column_;
 

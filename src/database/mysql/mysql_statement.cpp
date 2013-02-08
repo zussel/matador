@@ -64,6 +64,10 @@ mysql_statement::~mysql_statement()
     delete [] param_;
   }
   if (result_) {
+    // free data
+    for (unsigned long i = 0; i < result_vector_.size(); ++i) {
+      delete[] static_cast<char*>(result_[i].buffer);
+    }
     delete [] result_;
   }
 }
@@ -312,18 +316,6 @@ database& mysql_statement::db()
 const database& mysql_statement::db() const
 {
   return db_;
-}
-
-template <>
-void mysql_statement::prepare_result_column<int>(int index)
-{
-  result_[index].buffer_type = MYSQL_TYPE_LONG;
-//  result_[index].buffer         = (void *) new char[sizeof(int)];
-  result_[index].buffer         = (void *) &int_val;
-  result_[index].buffer_length    = 0;
-  result_[index].is_null         = 0;
-  result_[index].length         = 0;
-  std::cout << "int result column at index [" << index << "]\n";
 }
 
 void mysql_statement::on_result_field(const std::string &field, int index)

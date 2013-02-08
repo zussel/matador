@@ -200,8 +200,7 @@ public:
    */
   virtual statement* create_statement() = 0;
 
-  virtual void initialize_table(const prototype_node &node,
-                         std::string &create_, std::string &drop_) = 0;
+  virtual table* create_table(const prototype_node &node) = 0;
 
   virtual void prepare_table(const prototype_node &node,
                          statement *select, statement *insert,

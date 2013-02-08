@@ -77,8 +77,8 @@ public:
   virtual const database& db() const;
 
 protected:
-  virtual void on_result_field(const std::string &field, int index) {}
-  virtual void on_host_field(const std::string &field, int index) {}
+  virtual void on_result_field(const std::string &, int ) {}
+  virtual void on_host_field(const std::string &, int ) {}
 
 private:
   sqlite3_stmt *stmt_;

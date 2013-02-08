@@ -65,24 +65,6 @@ public:
   }
 };
 
-class sqlite_create_type
-{
-public:
-  static const char *name() { return "CREATE TABLE"; }
-};
-
-class sqlite_select_type
-{
-public:
-  static const char *name() { return "SELECT"; }
-};
-
-class sqlite_update_type
-{
-public:
-  static const char *name() { return "UPDATE"; }
-};
-
 }
 
 }

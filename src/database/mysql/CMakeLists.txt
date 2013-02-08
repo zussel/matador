@@ -3,6 +3,7 @@ SET(MYSQL_DATABASE_SOURCES
   mysql_exception.cpp
   mysql_statement.cpp
   mysql_sequencer.cpp
+  mysql_table.cpp
   mysql_result.cpp
 )
 
@@ -11,6 +12,7 @@ SET(MYSQL_DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_sequencer.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_table.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_result.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_types.hpp
 )

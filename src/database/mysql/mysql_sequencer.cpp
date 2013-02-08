@@ -55,8 +55,6 @@ void mysql_sequencer::create()
 
   stmt.prepare_result_column<int>(0);
 
-  //stmt.prepare_param<int>(0);
-
   stmt.execute();
 
   if (stmt.fetch()) {

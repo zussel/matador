@@ -91,9 +91,8 @@ public:
    * @return A new sqlite statement
    */
   virtual statement* create_statement();
-
-  virtual void initialize_table(const prototype_node &node,
-                         std::string &create_, std::string &drop_);
+  
+  virtual table* create_table(const prototype_node &node);
 
   virtual void prepare_table(const prototype_node &node,
                          statement *select, statement *insert,

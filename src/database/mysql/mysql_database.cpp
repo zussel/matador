@@ -18,6 +18,7 @@
 #include "database/mysql/mysql_database.hpp"
 #include "database/mysql/mysql_statement.hpp"
 #include "database/mysql/mysql_result.hpp"
+#include "database/mysql/mysql_table.hpp"
 #include "database/mysql/mysql_types.hpp"
 #include "database/mysql/mysql_exception.hpp"
 
@@ -95,7 +96,7 @@ void mysql_database::close()
   }
 }
 
-void mysql_database::execute(const char *sql, result_impl *res)
+void mysql_database::execute(const char *sql, result_impl */*res*/)
 {
   if (mysql_query(mysql_db_, sql)) {
     std::stringstream msg;
@@ -112,6 +113,11 @@ result_impl* mysql_database::create_result()
 statement* mysql_database::create_statement()
 {
   return new mysql_statement(*this);
+}
+
+table* mysql_database::create_table(const prototype_node &node)
+{
+  return new mysql_table(*this, node);
 }
 
 st_mysql* mysql_database::operator()()
@@ -154,18 +160,6 @@ int mysql_database::parse_result(void* param, int column_count, char** values, c
   result->push_back(r.release());
   return 0;
 }
-
-void mysql_database::initialize_table(const prototype_node &node,
-                       std::string &create_, std::string &drop_)
-{
-}
-
-/*
-statement* mysql_database::create_statement(const prototype_node &node, statement_creator::type type)
-{
-  return statement_creator::instance().create<mysql_types>(node, type)
-}
-*/
 
 void mysql_database::prepare_table(const prototype_node &node,
                                    statement *select, statement *insert,
