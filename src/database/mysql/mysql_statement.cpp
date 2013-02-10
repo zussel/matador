@@ -289,23 +289,32 @@ int mysql_statement::bind(int i, unsigned long value)
 
 int mysql_statement::bind(int i, const char *value, int len)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_text");
-  return ret;
+  param_[i].buffer_type = MYSQL_TYPE_STRING;
+  param_[i].buffer = (char *)value;
+  param_[i].buffer_length = len;
+  param_[i].is_null = 0;
+  param_[i].length = 0/*&str_length*/;
+  return 0;
 }
 
 int mysql_statement::bind(int i, const std::string &value)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_text");
-  return ret;
+  param_[i].buffer_type = MYSQL_TYPE_STRING;
+  param_[i].buffer = (char *)value.data();
+  param_[i].buffer_length = value.size();
+  param_[i].is_null = 0;
+  param_[i].length = 0/*&str_length*/;
+  return 0;
 }
 
 int mysql_statement::bind_null(int i)
 {
-  int ret = 1;
-  throw_error(ret, db_(), "sqlite3_bind_null");
-  return ret;
+  param_[i].buffer = 0;
+  param_[i].buffer_length = 0;
+  param_[i].length = 0;
+  param_[i].buffer_type = MYSQL_TYPE_NULL;
+  param_[i].is_null = 0;
+  return 0;
 }
 
 database& mysql_statement::db()
