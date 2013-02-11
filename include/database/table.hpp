@@ -91,18 +91,18 @@ public:
   template < class T >
   void read_value(const char *, T &x)
   {
-    select_->column(column_++, x);
+    select()->column(column_++, x);
   }
 
   void read_value(const char *, char *x, int s)
   {
-    select_->column(column_++, x, s);
+    select()->column(column_++, x, s);
   }
 
   void read_value(const char *, varchar_base &x)
   {
     std::string val;
-    select_->column(column_++, val);
+    select()->column(column_++, val);
     x = val;
   }
 
@@ -110,7 +110,7 @@ public:
   {
     long oid = 0;
 //    std::cout << "DEBUG: reading field [" << id << "] (column: " << column_ << ")\n";
-    select_->column(column_++, oid);
+    select()->column(column_++, oid);
     
     
     if (oid == 0) {
@@ -175,40 +175,40 @@ public:
   void write_value(const char *, const T &x)
   {
     if (inserting_) {
-      insert_->bind(++column_, x);
+      insert()->bind(++column_, x);
     } else {
-      update_->bind(++column_, x);
+      update()->bind(++column_, x);
     }
   }
   void write_value(const char *, const char *x, int s)
   {
     if (inserting_) {
-      insert_->bind(++column_, x, s);
+      insert()->bind(++column_, x, s);
     } else {
-      update_->bind(++column_, x, s);
+      update()->bind(++column_, x, s);
     }
   }
   void write_value(const char *, const varchar_base &x)
   {
     if (inserting_) {
-      insert_->bind(++column_, x.str());
+      insert()->bind(++column_, x.str());
     } else {
-      update_->bind(++column_, x.str());
+      update()->bind(++column_, x.str());
     }
   }
   void write_value(const char *, const object_base_ptr &x)
   {
     if (inserting_) {
       if (x.ptr()) {
-        insert_->bind(++column_, x.id());
+        insert()->bind(++column_, x.id());
       } else {
-        insert_->bind_null(++column_);
+        insert()->bind_null(++column_);
       }
     } else {
       if (x.ptr()) {
-        update_->bind(++column_, x.id());
+        update()->bind(++column_, x.id());
       } else {
-        update_->bind_null(++column_);
+        update()->bind_null(++column_);
       }
     }
   }
@@ -223,16 +223,16 @@ protected:
   void create_statement(const std::string &drp);
   void drop_statement(const std::string &drp);
 
+  virtual statement* select() = 0;
+  virtual statement* insert() = 0;
+  virtual statement* update() = 0;
+  virtual statement* remove() = 0;
+
 private:
   friend class relation_filler;
 
   std::string create_;
   std::string drop_;
-
-  statement* select_;
-  statement* insert_;
-  statement* update_;
-  statement* delete_;
 
   const prototype_node &node_;
   int column_;

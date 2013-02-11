@@ -117,45 +117,6 @@ table* sqlite_database::create_table(const prototype_node &node)
   return new sqlite_table(*this, node);
 }
 
-void sqlite_database::prepare_table(const prototype_node &node,                         
-                         statement *select, statement *insert,
-                         statement *update, statement *remove)
-{
-  // create dummy
-  object *o = node.producer->create();
-
-  // prepare select statement
-  select_statement_creator<sqlite_types> select_creator;
-  // state wasn't found, create sql string
-  std::string sql = select_creator.create(o, node.type.c_str(), 0);
-  // prepare statement
-  select->prepare(sql);
-  
-  // prepare insert statement
-  insert_statement_creator<sqlite_types> insert_creator;
-  // state wasn't found, create sql string
-  sql = insert_creator.create(o, node.type.c_str(), 0);
-  // prepare statement
-  insert->prepare(sql);
-  
-  // prepare insert statement
-  update_statement_creator<sqlite_types> update_creator;
-  // state wasn't found, create sql string
-  sql = update_creator.create(o, node.type.c_str(), "id=?");
-  // prepare statement
-  update->prepare(sql);
-  
-  // prepare insert statement
-  delete_statement_creator<sqlite_types> delete_creator;
-  // state wasn't found, create sql string
-  sql = delete_creator.create(o, node.type.c_str(), "id=?");
-  // prepare statement
-  remove->prepare(sql);
-  
-  // delete dummy
-  delete o;
-}
-
 sqlite3* sqlite_database::operator()()
 {
   return sqlite_db_;

@@ -25,6 +25,7 @@ namespace oos {
 namespace mysql {
 
 class mysql_database;
+class mysql_statement;
 
 class mysql_table : public table
 {
@@ -36,8 +37,19 @@ public:
   virtual database& db();
   virtual const database& db() const;
 
+protected:
+  virtual statement* select();
+  virtual statement* insert();
+  virtual statement* update();
+  virtual statement* remove();
+
 private:
   mysql_database &db_;
+
+  mysql_statement *select_;
+  mysql_statement *insert_;
+  mysql_statement *update_;
+  mysql_statement *delete_;
 };
 
 }

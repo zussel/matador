@@ -93,6 +93,16 @@ public:
     result_[index].length         = 0;
   }
 
+  template < class T >
+  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type prepare_result_column(int index)
+  {
+    result_[index].buffer_type = MYSQL_TYPE_DOUBLE;
+    result_[index].buffer         = (void *) new char[sizeof(T)];
+    result_[index].buffer_length    = 0;
+    result_[index].is_null         = 0;
+    result_[index].length         = 0;
+  }
+
 protected:
   virtual void on_result_field(const std::string &field, int index);
   virtual void on_host_field(const std::string &field, int index);

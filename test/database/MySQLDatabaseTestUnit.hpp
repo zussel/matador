@@ -16,6 +16,7 @@ public:
 
   void open();
   void test_create();
+  void test_drop();
   void simple();
   void with_sub();
   void with_list();

@@ -25,6 +25,7 @@ namespace oos {
 namespace sqlite {
 
 class sqlite_database;
+class sqlite_statement;
 
 class sqlite_table : public table
 {
@@ -36,8 +37,19 @@ public:
   virtual database& db();
   virtual const database& db() const;
 
+protected:
+  virtual statement* select();
+  virtual statement* insert();
+  virtual statement* update();
+  virtual statement* remove();
+
 private:
   sqlite_database &db_;
+  
+  sqlite_statement *select_;
+  sqlite_statement *insert_;
+  sqlite_statement *update_;
+  sqlite_statement *delete_;
 };
 
 }

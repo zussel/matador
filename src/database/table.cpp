@@ -69,10 +69,6 @@ table::table(const prototype_node &node)
 
 table::~table()
 {
-  delete select_;
-  delete insert_;
-  delete update_;
-  delete delete_;
 }
 
 std::string table::name() const
@@ -93,9 +89,9 @@ void table::load(object_store &ostore)
   }
   ostore_ = &ostore;
 
-  select_->execute();
+  select()->execute();
 
-  while (select_->fetch()) {
+  while (select()->fetch()) {
     column_ = 0;
 
     // create object
@@ -138,9 +134,9 @@ void table::insert(object *obj)
   
   obj->serialize(*this);
 
-  insert_->execute();
-  insert_->fetch();
-  insert_->reset(true);
+  insert()->execute();
+  insert()->fetch();
+  insert()->reset(true);
 }
 
 void table::update(object *obj)
@@ -151,11 +147,11 @@ void table::update(object *obj)
   
   obj->serialize(*this);
 
-  update_->bind(++column_, (int)obj->id());
+  update()->bind(++column_, (int)obj->id());
 
-  update_->execute();
-  update_->fetch();
-  update_->reset(true);
+  update()->execute();
+  update()->fetch();
+  update()->reset(true);
 }
 
 void table::remove(object *obj)
@@ -165,10 +161,10 @@ void table::remove(object *obj)
 
 void table::remove(long id)
 {
-  delete_->bind(1, id);
-  delete_->execute();
-  delete_->fetch();
-  delete_->reset(true);
+  remove()->bind(1, id);
+  remove()->execute();
+  remove()->fetch();
+  remove()->reset(true);
 }
 
 void table::drop()

@@ -21,6 +21,7 @@ MySQLDatabaseTestUnit::MySQLDatabaseTestUnit()
 {
   add_test("open", std::tr1::bind(&MySQLDatabaseTestUnit::open, this), "open database test");
   add_test("create", std::tr1::bind(&MySQLDatabaseTestUnit::test_create, this), "create database test");
+  add_test("drop", std::tr1::bind(&MySQLDatabaseTestUnit::test_drop, this), "drop database test");
   add_test("simple", std::tr1::bind(&MySQLDatabaseTestUnit::simple, this), "simple database test");
   add_test("complex", std::tr1::bind(&MySQLDatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("list", std::tr1::bind(&MySQLDatabaseTestUnit::with_list, this), "object with object list database test");
@@ -72,6 +73,23 @@ MySQLDatabaseTestUnit::test_create()
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
   db.create();
+
+  db.drop();
+
+  db.close();
+
+  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
+}
+
+void
+MySQLDatabaseTestUnit::test_drop()
+{
+  // create database and make object store known to the database
+  session db(ostore_, "mysql://sascha:sascha@localhost");
+
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
+  
+  db.drop();
 
   db.close();
 

@@ -69,7 +69,8 @@ void mysql_sequencer::create()
     db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
   }
   // prepare update statement
-  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
+//  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
+  update_.prepare("UPDATE oos_sequence SET sequence=:sequence WHERE name='object';");
 }
 
 void mysql_sequencer::begin()

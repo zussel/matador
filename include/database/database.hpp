@@ -202,9 +202,6 @@ public:
 
   virtual table* create_table(const prototype_node &node) = 0;
 
-  virtual void prepare_table(const prototype_node &node,
-                         statement *select, statement *insert,
-                         statement *update, statement *remove) = 0;
   /**
    * @brief Prepares the beginning of a transaction
    * 

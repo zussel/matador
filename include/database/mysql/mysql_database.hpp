@@ -92,11 +92,15 @@ public:
    */
   virtual statement* create_statement();
   
+  /**
+   * Creates a new table for the given
+   * prototype node.
+   * 
+   * @param node The prototype node.
+   * @return The new table based on the prototype.
+   */
   virtual table* create_table(const prototype_node &node);
 
-  virtual void prepare_table(const prototype_node &node,
-                         statement *select, statement *insert,
-                         statement *update, statement *remove);
   /**
    * Return the raw pointer to the sqlite3
    * database struct.

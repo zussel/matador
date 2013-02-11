@@ -29,6 +29,7 @@ protected:
   }
 	virtual void write(const char*, float)
   {
+    stmt_->prepare_result_column<float>(index_++);
   }
 	virtual void write(const char*, double)
   {
@@ -82,12 +83,19 @@ private:
 mysql_table::mysql_table(mysql_database &db, const prototype_node &node)
   : table(node)
   , db_(db)
+  , select_(new mysql_statement(db))
+  , insert_(new mysql_statement(db))
+  , update_(new mysql_statement(db))
+  , delete_(new mysql_statement(db))
 {
   // create dummy
   object *o = node.producer->create();
   // create string
   create_statement_creator<mysql_types> creator;
-  create_statement(creator.create(o, node.type.c_str(), ""));
+  
+  std::string stmt(creator.create(o, node.type.c_str(), ""));
+  std::cout << "create statement for table [" << node.type << "]: " << stmt << "\n";
+  create_statement(stmt);
 
   // drop string
   drop_statement_creator<mysql_types> drop;
@@ -107,11 +115,39 @@ void mysql_table::prepare()
   // state wasn't found, create sql string
   std::string sql = select_creator.create(o, node().type.c_str(), 0);
   // prepare statement
-  mysql_statement *select = new mysql_statement(db_);
-  select->prepare(sql);
+  select_->prepare(sql);
   // prepare result fields
-  result_initializer ri(select);
+  result_initializer ri(select_);
   ri.prepare_result_fields(o);
+
+  // prepare insert statement
+  insert_statement_creator<mysql_types> insert_creator;
+  // state wasn't found, create sql string
+  sql = insert_creator.create(o, node().type.c_str(), 0);
+  // prepare statement
+  insert_->prepare(sql);
+
+  // prepare insert statement
+  update_statement_creator<mysql_types> update_creator;
+  // state wasn't found, create sql string
+  sql = update_creator.create(o, node().type.c_str(), "id=?");
+  // prepare statement
+  update_->prepare(sql);
+  
+  // prepare insert statement
+  delete_statement_creator<mysql_types> delete_creator;
+  // state wasn't found, create sql string
+  sql = delete_creator.create(o, node().type.c_str(), "id=?");
+  // prepare statement
+  delete_->prepare(sql);
+
+  /*
+  statement *select = query.select(o).prepare();
+  statement *select_single = query.select(o).where("id=?").prepare();
+  statement *insert = query.insert(o).prepare();
+  statement *update = query.update(o).where("id=?").prepare();
+  statement *remove = query.remove(o).where("id=?").prepare();
+  */
 
   // delete object dummy
   delete o;
@@ -125,6 +161,26 @@ database& mysql_table::db()
 const database& mysql_table::db() const
 {
   return db_;
+}
+
+statement* mysql_table::select()
+{
+  return select_;
+}
+
+statement* mysql_table::insert()
+{
+  return insert_;
+}
+
+statement* mysql_table::update()
+{
+  return update_;
+}
+
+statement* mysql_table::remove()
+{
+  return delete_;
 }
 
 }

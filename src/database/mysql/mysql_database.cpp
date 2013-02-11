@@ -98,6 +98,7 @@ void mysql_database::close()
 
 void mysql_database::execute(const char *sql, result_impl */*res*/)
 {
+  std::cout << "executing: " << sql << "\n";
   if (mysql_query(mysql_db_, sql)) {
     std::stringstream msg;
     msg << "mysql" << ": " << mysql_error(mysql_db_) << "(" << sql << ")";
@@ -159,45 +160,6 @@ int mysql_database::parse_result(void* param, int column_count, char** values, c
   }
   result->push_back(r.release());
   return 0;
-}
-
-void mysql_database::prepare_table(const prototype_node &node,
-                                   statement *select, statement *insert,
-                                   statement *update, statement *remove)
-{
-  // create dummy
-  object *o = node.producer->create();
-  
-  // prepare select statement
-  select_statement_creator<mysql_types> select_creator;
-  // state wasn't found, create sql string
-  std::string sql = select_creator.create(o, node.type.c_str(), 0);
-  // prepare statement
-  select->prepare(sql);
-  
-  // prepare insert statement
-  insert_statement_creator<mysql_types> insert_creator;
-  // state wasn't found, create sql string
-  sql = insert_creator.create(o, node.type.c_str(), 0);
-  // prepare statement
-  insert->prepare(sql);
-  
-  // prepare insert statement
-  update_statement_creator<mysql_types> update_creator;
-  // state wasn't found, create sql string
-  sql = update_creator.create(o, node.type.c_str(), "id=?");
-  // prepare statement
-  update->prepare(sql);
-  
-  // prepare insert statement
-  delete_statement_creator<mysql_types> delete_creator;
-  // state wasn't found, create sql string
-  sql = delete_creator.create(o, node.type.c_str(), "id=?");
-  // prepare statement
-  remove->prepare(sql);
-  
-  // delete dummy
-  delete o;
 }
 
 }

@@ -117,7 +117,7 @@ void mysql_statement::prepare(const std::string &sql)
   // set new sql statement
   statement::prepare(sql);
   
-  std::cout << "prepared statement: [" << this->sql() << "]\n";
+//  std::cout << "prepared statement: [" << this->sql() << "]\n";
   // create statement
   stmt_ = mysql_stmt_init(db_());
   // prepare mysql statement
@@ -206,11 +206,8 @@ void mysql_statement::column(int i, short &value)
 
 void mysql_statement::column(int i, int &value)
 {
-  value = int_val;
+  value = *static_cast<int*>(result_[i].buffer);
   std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
-//  value = *(int*)(result_[i].buffer);
-//  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-//  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
 }
 
 void mysql_statement::column(int i, long &value)
