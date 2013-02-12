@@ -66,7 +66,8 @@ mysql_statement::~mysql_statement()
   if (result_) {
     // free data
     for (unsigned long i = 0; i < result_vector_.size(); ++i) {
-      delete[] static_cast<char*>(result_[i].buffer);
+      std::cout << "deleting result buffer of size " << result_[i].buffer_length << "\n";
+//      delete [] static_cast<char*>(result_[i].buffer);
     }
     delete [] result_;
   }
@@ -182,8 +183,8 @@ void mysql_statement::column(int i, bool &value)
 
 void mysql_statement::column(int i, char &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<char*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, float &value)
@@ -200,44 +201,45 @@ void mysql_statement::column(int i, double &value)
 
 void mysql_statement::column(int i, short &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<short*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, int &value)
 {
+//  value = int_val;
   value = *static_cast<int*>(result_[i].buffer);
   std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, long &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<long*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, unsigned char &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<unsigned char*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, unsigned short &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<unsigned short*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, unsigned int &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<unsigned int*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, unsigned long &value)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+  value = *static_cast<unsigned long*>(result_[i].buffer);
+  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
 }
 
 void mysql_statement::column(int i, char *value, int &len)
