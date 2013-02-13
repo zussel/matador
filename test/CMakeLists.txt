@@ -37,13 +37,11 @@ SET (TEST_DATABASE_SOURCES
   database/SQLiteDatabaseTestUnit.hpp
   database/MySQLDatabaseTestUnit.cpp
   database/MySQLDatabaseTestUnit.hpp
+  database/MySQLBaseTestUnit.cpp
+  database/MySQLBaseTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)
-
-#ADD_SUBDIRECTORY(object)
-#ADD_SUBDIRECTORY(tools)
-#ADD_SUBDIRECTORY(unit)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}

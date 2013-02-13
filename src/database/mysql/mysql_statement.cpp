@@ -66,10 +66,14 @@ mysql_statement::~mysql_statement()
   if (result_) {
     // free data
     for (unsigned long i = 0; i < result_vector_.size(); ++i) {
-      std::cout << "deleting result buffer of size " << result_[i].buffer_length << "\n";
-//      delete [] static_cast<char*>(result_[i].buffer);
+      std::cout << "deleting result buffer of size " << result_[i].buffer_length << "(address: " << result_[i].buffer << ")\n";
+      delete [] static_cast<char*>(result_[i].buffer);
     }
     delete [] result_;
+  }
+  
+  if (stmt_) {
+    mysql_stmt_close(stmt_);
   }
 }
 

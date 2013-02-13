@@ -21,6 +21,7 @@
 #include "database/mysql/mysql_table.hpp"
 #include "database/mysql/mysql_types.hpp"
 #include "database/mysql/mysql_exception.hpp"
+#include "database/mysql/mysql_sequencer.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"
@@ -33,8 +34,6 @@
 
 #include <stdexcept>
 #include <iostream>
-
-#include <mysql/mysql.h>
 
 #ifdef WIN32
 #include <functional>
@@ -50,13 +49,15 @@ namespace mysql {
   
 mysql_database::mysql_database(session *db)
   : database(db, new mysql_sequencer(this))
-  , mysql_db_(0)
+  , is_open_(false)
 {
 }
 
 mysql_database::~mysql_database()
 {
   close();
+  // tell mysql to close the library
+  mysql_library_end();
 }
 
 
@@ -65,22 +66,25 @@ void mysql_database::open(const std::string &db)
   if (is_open()) {
     return;
   } else {
-    mysql_db_ = mysql_init(NULL);
-  
-    st_mysql *ret = mysql_real_connect(mysql_db_, "localhost", "sascha", "sascha", "test", 0, NULL, 0);
-//    st_mysql *ret = mysql_real_connect(mysql_db_, "", "", "", NULL, 0, NULL, 0);
-    if (ret == 0) {
+    if (::mysql_init(&mysql_) == 0) {
       std::stringstream msg;
-      msg << "mysql" << ": " << mysql_error(mysql_db_) << "(" << db << ")";
+      msg << "mysql" << ": " << mysql_error(&mysql_) << "(" << db << ")";
+      throw mysql_exception(msg.str());
+    }  
+    if (0 == mysql_real_connect(&mysql_, "localhost", "sascha", "sascha", "test", 0, NULL, 0)) {
+      std::stringstream msg;
+      msg << "mysql" << ": " << mysql_error(&mysql_) << "(" << db << ")";
       throw mysql_exception(msg.str());
     }
     database::open(db);
+
+    is_open_ = true;
   }
 }
 
 bool mysql_database::is_open() const
 {
-  return mysql_db_ != 0;
+  return is_open_;
 }
 
 void mysql_database::close()
@@ -90,18 +94,19 @@ void mysql_database::close()
   } else {
     database::close();
 
-    mysql_close(mysql_db_);
+    std::cout << "closing database\n";
+    mysql_close(&mysql_);
 
-    mysql_db_ = 0;
+    is_open_ = false;
   }
 }
 
 void mysql_database::execute(const char *sql, result_impl */*res*/)
 {
   std::cout << "executing: " << sql << "\n";
-  if (mysql_query(mysql_db_, sql)) {
+  if (mysql_query(&mysql_, sql)) {
     std::stringstream msg;
-    msg << "mysql" << ": " << mysql_error(mysql_db_) << "(" << sql << ")";
+    msg << "mysql" << ": " << mysql_error(&mysql_) << "(" << sql << ")";
     throw mysql_exception(msg.str());
   }
 }
@@ -121,9 +126,9 @@ table* mysql_database::create_table(const prototype_node &node)
   return new mysql_table(*this, node);
 }
 
-st_mysql* mysql_database::operator()()
+MYSQL* mysql_database::operator()()
 {
-  return mysql_db_;
+  return &mysql_;
 }
 
 void mysql_database::on_begin()
@@ -175,6 +180,7 @@ extern "C"
 
   OOS_MYSQL_API void destroy_database(oos::database *db)
   {
+    printf("deleting database\n");
     delete db;
   }
 }

@@ -105,6 +105,14 @@ mysql_table::mysql_table(mysql_database &db, const prototype_node &node)
   delete o;
 }
 
+mysql_table::~mysql_table()
+{
+  delete select_;
+  delete insert_;
+  delete update_;
+  delete delete_;
+}
+
 void mysql_table::prepare()
 {
   // create object dummy

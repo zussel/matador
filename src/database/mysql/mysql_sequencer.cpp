@@ -60,7 +60,9 @@ void mysql_sequencer::create()
   if (stmt.fetch()) {
     // prepare result
     int id = 0;
+//    std::cout << "address of sequencer index: " << &id << "\n";
     stmt.column(0, id);
+//    std::cout << "address of sequencer index: " << &id << "\n";
     
     std::cout << "got sequence index [" << id << "]\n";
     reset(id);
@@ -71,6 +73,10 @@ void mysql_sequencer::create()
   // prepare update statement
 //  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
   update_.prepare("UPDATE oos_sequence SET sequence=:sequence WHERE name='object';");
+}
+
+void mysql_sequencer::load()
+{
 }
 
 void mysql_sequencer::begin()

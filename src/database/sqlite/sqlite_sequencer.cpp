@@ -67,6 +67,10 @@ void sqlite_sequencer::create()
   update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
 }
 
+void sqlite_sequencer::load()
+{
+}
+
 void sqlite_sequencer::begin()
 {
   // backup current sequence id from object store

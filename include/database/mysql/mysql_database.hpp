@@ -31,9 +31,7 @@
 
 #include "database/database.hpp"
 
-#include "database/mysql/mysql_sequencer.hpp"
-
-struct st_mysql;
+#include <mysql/mysql.h>
 
 namespace oos {
   
@@ -107,7 +105,7 @@ public:
    * 
    * @return The raw sqlite3 pointer.
    */
-  st_mysql* operator()();
+  MYSQL* operator()();
 
 protected:
   virtual void on_begin();
@@ -118,7 +116,8 @@ private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
 private:
-  st_mysql *mysql_db_;
+  MYSQL mysql_;
+  bool is_open_;
 };
 
 }

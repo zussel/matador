@@ -59,9 +59,9 @@ MySQLDatabaseTestUnit::open()
 
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
-  db.close();
+//  db.close();
 
-  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
+//  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
 }
 
 void
