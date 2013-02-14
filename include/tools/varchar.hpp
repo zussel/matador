@@ -131,7 +131,7 @@ public:
    *
    * @param x The string value to set.
    */
-  varchar(const std::string &x)
+  explicit varchar(const std::string &x)
     : varchar_base(C)
   {
     data_ = x;
@@ -143,10 +143,10 @@ public:
    *
    * @param x The string value to set.
    */
-  varchar(const char *x)
+  explicit varchar(const char *x)
     : varchar_base(C)
   {
-    data_ = x;
+    data_.assign(x);
   }
 
   /**

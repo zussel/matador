@@ -31,16 +31,31 @@
 
 #include "database/database_exception.hpp"
 
+#include <mysql/mysql.h>
+
 namespace oos {
 
 namespace mysql {
 
+void throw_error(int ec, MYSQL *db, const std::string &source, const std::string &sql = "");
+
+void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "");
+
 class mysql_exception : public database_exception
 {
 public:
-  mysql_exception(const std::string &what);
+  mysql_exception(MYSQL *db, const std::string &source, const std::string &what);
 
   virtual ~mysql_exception() throw();
+};
+
+class mysql_stmt_exception : public database_exception
+{
+public:
+  explicit mysql_stmt_exception(const std::string &what);
+  mysql_stmt_exception(MYSQL_STMT *stmt, const std::string &source, const std::string &what);
+  
+  virtual ~mysql_stmt_exception() throw();
 };
 
 }

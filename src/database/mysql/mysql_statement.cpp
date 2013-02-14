@@ -21,7 +21,6 @@
 
 #include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <cstring>
 
 #include <mysql/mysql.h>
@@ -29,26 +28,6 @@
 namespace oos {
 
 namespace mysql {
-
-void throw_error(int ec, st_mysql *db, const std::string &source, const std::string &sql = "")
-{
-  if (ec == 0) {
-    return;
-  }
-  std::stringstream msg;
-  msg << source << ": " << mysql_error(db) << "(" << sql << ")";
-  throw mysql_exception(msg.str()); 
-}
-
-void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "")
-{
-  if (ec == 0) {
-    return;
-  }
-  std::stringstream msg;
-  msg << source << ": " << mysql_stmt_error(stmt) << "(" << sql << ")";
-  throw mysql_exception(msg.str()); 
-}
 
 mysql_statement::mysql_statement(mysql_database &db)
   : stmt_(0)
@@ -67,7 +46,9 @@ mysql_statement::~mysql_statement()
     // free data
     for (unsigned long i = 0; i < result_vector_.size(); ++i) {
       std::cout << "deleting result buffer of size " << result_[i].buffer_length << "(address: " << result_[i].buffer << ")\n";
-      delete [] static_cast<char*>(result_[i].buffer);
+      if (result_[i].buffer) {
+        delete [] static_cast<char*>(result_[i].buffer);
+      }
     }
     delete [] result_;
   }
@@ -105,9 +86,7 @@ bool mysql_statement::fetch()
   } else if (ret == MYSQL_NO_DATA) {
     return false;
   } else if (ret == MYSQL_DATA_TRUNCATED) {
-    std::stringstream msg;
-    msg << "mysql_stmt_fetch: data truncated (bind.error: " << 0 << ")";
-    throw mysql_exception(msg.str());
+    throw mysql_stmt_exception(stmt_, "mysql_stmt_fetch", "mysql_stmt_fetch: data truncated (bind.error: 0)");
   } else {
     // error, throw exception
     throw_stmt_error(ret, stmt_, "mysql_stmt_fetch");
@@ -155,7 +134,7 @@ int mysql_statement::column_count() const
 
 const char* mysql_statement::column_name(int) const
 {
-  throw mysql_exception("unsupported feature");
+  throw mysql_stmt_exception("unsupported feature");
 }
 
 template < class T >

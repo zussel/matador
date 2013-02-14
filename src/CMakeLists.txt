@@ -116,7 +116,6 @@ SET(DATABASE_SOURCES
   database/row.cpp
   database/statement.cpp
   database/statement_creator.cpp
-  database/statement_parser.cpp
   database/table.cpp
 )
 
@@ -132,7 +131,6 @@ SET(DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/value.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement_creator.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/statement_parser.hpp
   ${PROJECT_SOURCE_DIR}/include/database/table.hpp
 )
 

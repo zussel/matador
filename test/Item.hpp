@@ -12,22 +12,58 @@
 class Item : public oos::object
 {
 public:
-  Item() { init(); }
+  Item()
+    : char_('c')
+    , float_(3.1415)
+    , double_(1.1414)
+    , short_(-128)
+    , int_(-65000)
+    , long_(-1280000)
+    , unsigned_short_(128)
+    , unsigned_int_(65000)
+    , unsigned_long_(128000)
+    , bool_(true)
+    , string_("Welt")
+    , varchar_("Erde")
+  {
+    init();
+  }
   explicit Item(const std::string &str)
-    : string_(str)
+    : char_('c')
+    , float_(3.1415)
+    , double_(1.1414)
+    , short_(-128)
+    , int_(-65000)
+    , long_(-1280000)
+    , unsigned_short_(128)
+    , unsigned_int_(65000)
+    , unsigned_long_(128000)
+    , bool_(true)
+    , string_(str)
+    , varchar_("Erde")
   {
     init();
   }
   Item(const std::string &str, int i)
-    : int_(i)
+    : char_('c')
+    , float_(3.1415)
+    , double_(1.1414)
+    , short_(-128)
+    , int_(i)
+    , long_(-1280000)
+    , unsigned_short_(128)
+    , unsigned_int_(65000)
+    , unsigned_long_(128000)
+    , bool_(true)
     , string_(str)
+    , varchar_("Erde")
   {
     init();
   }
   virtual ~Item() {}
 
 private:
-  void init() { cstr_[0] = '\0'; }
+  void init() { strcpy(cstr_, "Hallo"); cstr_[5] = '\0'; }
 
 public:
   virtual void deserialize(oos::object_reader &deserializer)

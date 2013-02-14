@@ -77,6 +77,30 @@ void mysql_sequencer::create()
 
 void mysql_sequencer::load()
 {
+  mysql_statement stmt(*db_);
+  stmt.prepare("SELECT ~sequence FROM oos_sequence WHERE name='object';");
+//  stmt.prepare("SELECT sequence FROM oos_sequence WHERE name='object';");
+
+  stmt.prepare_result_column<int>(0);
+
+  stmt.execute();
+
+  if (stmt.fetch()) {
+    // prepare result
+    int id = 0;
+//    std::cout << "address of sequencer index: " << &id << "\n";
+    stmt.column(0, id);
+//    std::cout << "address of sequencer index: " << &id << "\n";
+    
+    std::cout << "got sequence index [" << id << "]\n";
+    reset(id);
+  } else {
+    // no such element, insert one
+    db_->execute("INSERT INTO oos_sequence (name, sequence) VALUES ('object', 0);");
+  }
+  // prepare update statement
+//  update_.prepare("UPDATE oos_sequence SET sequence=? WHERE name='object';");
+  update_.prepare("UPDATE oos_sequence SET sequence=:sequence WHERE name='object';");
 }
 
 void mysql_sequencer::begin()
