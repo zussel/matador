@@ -34,6 +34,7 @@ public:
   virtual ~mysql_sequencer();
 
   virtual void create();
+  virtual void load();
   virtual void begin();
   virtual void commit();
   virtual void rollback();

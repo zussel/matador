@@ -52,7 +52,6 @@ void database::open(const std::string&)
     ++first;
   }
 
-  sequencer_->create();
   // setup sequencer
   sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
 }
@@ -69,6 +68,9 @@ void database::close()
 
 void database::create()
 {
+  // create sequencer
+  sequencer_->create();
+
   table_map_t::iterator first = table_map_.begin();
   table_map_t::iterator last = table_map_.end();
   while (first != last) {
@@ -90,6 +92,9 @@ void database::create(const prototype_node &node)
 
 void database::load(const prototype_node &node)
 {
+    // load sequencer
+  sequencer_->load();
+
   table_map_t::iterator i = table_map_.find(node.type);
   if (i == table_map_.end()) {
     // create table

@@ -88,7 +88,6 @@ public:
   typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type prepare_result_column(int index)
   {
     result_[index].buffer_type = MYSQL_TYPE_LONG;
-//    result_[index].buffer         = (void *) &int_val;
     result_[index].buffer         = new char[sizeof(T)];
     result_[index].buffer_length    = sizeof(T);
     result_[index].is_null         = 0;
@@ -99,18 +98,29 @@ public:
   template < class T >
   typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type prepare_result_column(int index)
   {
-    std::cout << "creating result buffer of size " << sizeof(T) << "\n";
     result_[index].buffer_type = MYSQL_TYPE_DOUBLE;
-//    result_[index].buffer         = (void *) &double_val;
     result_[index].buffer         = new char[sizeof(T)];
     result_[index].buffer_length    = sizeof(T);
     result_[index].is_null         = 0;
     result_[index].length         = 0;
+    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ", double)\n";
   }
 
   template < class T >
+  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<std::string, T>::value>::type prepare_result_column(int index, int size)
+  {
+    result_[index].buffer_type = MYSQL_TYPE_VAR_STRING;
+    result_[index].buffer         = new char[size];
+    result_[index].buffer_length    = size;
+    result_[index].is_null         = 0;
+    result_[index].length         = 0;
+    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ", string)\n";
+  }  
+
+  template < class T >
   typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                          !CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type prepare_result_column(int index)
+                          !CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
+                          !CPP11_TYPE_TRAITS_NS::is_same<std::string, T>::value>::type prepare_result_column(int index)
   {
     result_[index].buffer_type = MYSQL_TYPE_NULL;
     result_[index].buffer         = 0;
@@ -133,9 +143,6 @@ private:
   
   std::vector<unsigned long> host_vector_;
   std::vector<unsigned long> result_vector_;
-  
-  int int_val;
-  double double_val;
 };
 
 }

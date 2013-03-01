@@ -31,6 +31,7 @@ class mysql_table : public table
 {
 public:
   mysql_table(mysql_database &db, const prototype_node &node);
+  virtual ~mysql_table();
 
   virtual void prepare();
 

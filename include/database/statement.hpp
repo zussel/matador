@@ -32,6 +32,7 @@
 #endif
 
 #include <string>
+#include <functional>
 
 namespace oos {
 
@@ -43,10 +44,27 @@ struct prototype_node;
 /// @cond OOS_DEV
 class OOS_API statement
 {
+private:
+  enum state_t {
+    SQL_BEGIN,
+    SQL_BEGIN_RESULT,
+    SQL_RESULT,
+    SQL_BEGIN_HOST,
+    SQL_HOST,
+    SQL_STRING
+  };
+
+public:
+  typedef std::function<void (const std::string&, int)> param_func_t;
+
 public:
   // auto prepare
 //  explicit statement(const std::string &sql);
   virtual ~statement();
+
+  static std::string parse(const std::string &sql,
+                           const param_func_t &result_func, const param_func_t &host_func,
+                           char result_indicator = '~', char host_indicator = ':');
 
   virtual void prepare(const std::string &sql);
 

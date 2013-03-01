@@ -34,6 +34,7 @@ public:
   virtual ~sqlite_sequencer();
 
   virtual void create();
+  virtual void load();
   virtual void begin();
   virtual void commit();
   virtual void rollback();

@@ -26,6 +26,7 @@ public:
 protected:
 	virtual void write(const char*, char)
   {
+    stmt_->prepare_result_column<char>(index_++);
   }
 	virtual void write(const char*, float)
   {
@@ -33,9 +34,11 @@ protected:
   }
 	virtual void write(const char*, double)
   {
+    stmt_->prepare_result_column<double>(index_++);
   }
   virtual void write(const char*, short)
   {
+    stmt_->prepare_result_column<short>(index_++);
   }
 	virtual void write(const char*, int)
   {
@@ -43,18 +46,23 @@ protected:
   }
 	virtual void write(const char*, long)
   {
+    stmt_->prepare_result_column<long>(index_++);
   }
   virtual void write(const char*, unsigned char)
   {
+    stmt_->prepare_result_column<unsigned char>(index_++);
   }
   virtual void write(const char*, unsigned short)
   {
+    stmt_->prepare_result_column<unsigned short>(index_++);
   }
   virtual void write(const char*, unsigned int)
   {
+    stmt_->prepare_result_column<unsigned int>(index_++);
   }
   virtual void write(const char*, unsigned long)
   {
+    stmt_->prepare_result_column<unsigned long>(index_++);
   }
 	virtual void write(const char*, bool)
   {
@@ -64,6 +72,7 @@ protected:
   }
 	virtual void write(const char*, const std::string&)
   {
+//    stmt_->prepare_result_column<short>(index_++, );
   }
 	virtual void write(const char*, const varchar_base&)
   {
@@ -103,6 +112,14 @@ mysql_table::mysql_table(mysql_database &db, const prototype_node &node)
 
   // delete dummy
   delete o;
+}
+
+mysql_table::~mysql_table()
+{
+  delete select_;
+  delete insert_;
+  delete update_;
+  delete delete_;
 }
 
 void mysql_table::prepare()

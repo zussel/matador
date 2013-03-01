@@ -47,6 +47,7 @@ protected:
 
 public:
   virtual void create() = 0;
+  virtual void load() = 0;
   virtual void begin() = 0;
   virtual void commit() = 0;
   virtual void rollback() = 0;
@@ -61,6 +62,7 @@ public:
   virtual ~dummy_database_sequencer() {}
 
   virtual void create() {}
+  virtual void load() {}
   virtual void begin() { backup_ = current(); }
   virtual void commit() {backup_ = 0; }
   virtual void rollback() { reset(backup_); }
