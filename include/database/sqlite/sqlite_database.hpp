@@ -56,8 +56,6 @@ public:
   explicit sqlite_database(session *db);
   virtual ~sqlite_database();
   
-  virtual void open(const std::string &db);
-
   /**
    * Returns true if the database is open
    *
@@ -66,24 +64,12 @@ public:
   virtual bool is_open() const;
 
   /**
-   * Close the database
-   */
-  virtual void close();
-
-  /**
    * Execute a sql statement and return a result
    * implementation via pointer.
    *
    * @param sql The sql statement to be executed.
    */
-  virtual void execute(const char *sql, result_impl *res = 0);
-
-  /**
-   * Create a new sqlite result
-   * 
-   * @return A new sqlite result
-   */
-  virtual result_impl* create_result();
+  virtual result* execute(const std::string &sql);
 
   /**
    * Create a new sqlite statement
@@ -109,7 +95,11 @@ public:
    */
   sqlite3* operator()();
 
+  virtual const char* type_string(sql::data_type_t type) const;
+
 protected:
+  virtual void on_open(const std::string &db);
+  virtual void on_close();
   virtual void on_begin();
   virtual void on_commit();
   virtual void on_rollback();

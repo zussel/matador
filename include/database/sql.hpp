@@ -25,6 +25,7 @@ public:
     type_float,
     type_double,
     type_bool,
+    type_char_pointer,
     type_varchar,
     type_text,
     type_blob

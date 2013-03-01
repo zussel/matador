@@ -1,15 +1,18 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include "sql.hpp"
+#include "database/sql.hpp"
 
 #include <memory>
 #include <sstream>
+
+namespace oos {
 
 class result;
 class session;
 class statement;
 class object;
+class prototype_node;
 
 class query
 {
@@ -40,12 +43,12 @@ public:
   query(session &s);
   ~query();
 
-  query& create(object *o);
-  query& drop(object *o);
-  query& select(object *o);
+  query& create(const prototype_node &node);
+  query& drop(const prototype_node &node);
+  query& select(const prototype_node &node);
   query& insert(object *o);
   query& update(object *o);
-  query& remove(object *o);
+  query& remove(const prototype_node &node);
   query& where(const std::string &clause);
   query& order_by(const std::string &by);
   query& limit(int l);
@@ -89,5 +92,7 @@ private:
   session &session_;
   std::unique_ptr<statement> stmt;
 };
+
+}
 
 #endif /* QUERY_HPP */

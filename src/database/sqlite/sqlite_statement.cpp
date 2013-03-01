@@ -54,27 +54,6 @@ sqlite_statement::~sqlite_statement()
   finalize();
 }
 
-bool sqlite_statement::fetch()
-{
-
-//  std::cerr << "executing " << sql() << "\n";
-
-  int ret = sqlite3_step(stmt_);
-  if (ret == SQLITE_ROW) {
-    // retrieved new row
-    // create row object
-    return true;
-  } else if (ret == SQLITE_DONE) {
-    // no further row available
-    return false;
-  } else {
-    // error, throw exception
-    const char *msg = sqlite3_errmsg(db_());
-    throw sqlite_exception(std::string("sqlite3_step: ") + msg);
-  }
-  return false;
-}
-
 void sqlite_statement::prepare(const std::string &sql)
 {
   // destroy statement
@@ -86,12 +65,10 @@ void sqlite_statement::prepare(const std::string &sql)
   throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
 }
 
-void sqlite_statement::reset(bool clear_bindings)
+void sqlite_statement::reset()
 {
   sqlite3_reset(stmt_);
-  if (clear_bindings) {
-    sqlite3_clear_bindings(stmt_);
-  }
+  sqlite3_clear_bindings(stmt_);
 }
 
 int sqlite_statement::finalize()
@@ -106,6 +83,14 @@ int sqlite_statement::finalize()
   return ret;
 }
 
+void sqlite_statement::bind(serializable *o)
+{
+  reset();
+  host_index = 0;
+  o->serialize(*this);
+}
+
+/*
 int sqlite_statement::column_count() const
 {
   return sqlite3_column_count(stmt_);
@@ -115,152 +100,112 @@ const char* sqlite_statement::column_name(int i) const
 {
   return sqlite3_column_name(stmt_, i);
 }
-
-void sqlite_statement::column(int i, bool &value)
+*/
+void sqlite_statement::write(const char*, bool x)
 {
-  value = sqlite3_column_int(stmt_, i) > 0;
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, char &value)
+void sqlite_statement::write(const char*, char x)
 {
-  value = (char)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, float &value)
+void sqlite_statement::write(const char*, double x)
 {
-  value = (float)sqlite3_column_double(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, double &value)
+void sqlite_statement::write(const char*, short x)
 {
-  value = sqlite3_column_double(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, short &value)
+void sqlite_statement::write(const char*, int x)
 {
-  value = (short)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, int &value)
+void sqlite_statement::write(const char*, long x)
 {
-  value = sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, long &value)
+void sqlite_statement::write(const char*, unsigned char x)
 {
-  value = (long)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, unsigned char &value)
+void sqlite_statement::write(const char*, unsigned short x)
 {
-  value = (unsigned char)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, unsigned short &value)
+void sqlite_statement::write(const char*, unsigned int x)
 {
-  value = (unsigned short)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, unsigned int &value)
+void sqlite_statement::write(const char*, unsigned long x)
 {
-  value = (unsigned int)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::column(int i, unsigned long &value)
+void sqlite_statement::write(const char*, float x)
 {
-  value = (unsigned long)sqlite3_column_int(stmt_, i);
+  int ret = sqlite3_bind_double(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::column(int i, char *value, int &len)
+void sqlite_statement::write(const char*, double x)
 {
-  int s = sqlite3_column_bytes(stmt_, i);
-
-  if (s > len) {
-    throw sqlite_exception("unsufficient size of character buffer");
-  } else {
-    const char *res = (const char*)sqlite3_column_text(stmt_, i);
-    len = strlen(res);
-    strncpy(value, res, len);
-    value[len] = '\0';
-  }
+  int ret = sqlite3_bind_double(stmt_, ++host_index, x);
+  throw_error(ret, db_.connection(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::column(int i, std::string &value)
+void sqlite_statement::write(const char*, char *x, int &len)
 {
-  int s = sqlite3_column_bytes(stmt_, i);
-  value.assign((const char*)sqlite3_column_text(stmt_, i), s);
+  int ret = sqlite3_bind_text(stmt_, ++host_index, x, len, 0);
+  throw_error(ret, db_.connection(), "sqlite3_bind_text");
 }
 
+void sqlite_statement::write(const char*, const std::string &x)
+{
+  int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
+  throw_error(ret, db_.connection(), "sqlite3_bind_text");
+}
+
+void sqlite_statement::write(const char*, const varchar_base &x)
+{
+  int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
+  throw_error(ret, db_.connection(), "sqlite3_bind_text");
+}
+
+void sqlite_statement::write(const char *id, const object_base_ptr &x)
+{
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x.id());
+  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+}
+
+void sqlite_statement::write(const char *id, const object_container &x)
+{}
+
+/*
 int sqlite_statement::column_type(int i) const
 {
   return sqlite3_column_type(stmt_, i);
 }
-
-int sqlite_statement::bind(int i, double value)
-{
-  int ret = sqlite3_bind_double(stmt_, i, value);
-  throw_error(ret, db_(), "sqlite3_bind_double");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, int value)
-{
-  int ret = sqlite3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, long value)
-{
-  int ret = sqlite3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, unsigned int value)
-{
-  int ret = sqlite3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, unsigned long value)
-{
-  int ret = sqlite3_bind_int(stmt_, i, value);
-  throw_error(ret, db_(), "sqlite3_bind_int");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, const char *value, int len)
-{
-  int ret = sqlite3_bind_text(stmt_, i, value, len, 0);
-  throw_error(ret, db_(), "sqlite3_bind_text");
-  return ret;
-}
-
-int sqlite_statement::bind(int i, const std::string &value)
-{
-  int ret = sqlite3_bind_text(stmt_, i, value.c_str(), value.size(), 0);
-  throw_error(ret, db_(), "sqlite3_bind_text");
-  return ret;
-}
-
-int sqlite_statement::bind_null(int i)
-{
-  int ret = sqlite3_bind_null(stmt_, i);
-  throw_error(ret, db_(), "sqlite3_bind_null");
-  return ret;
-}
-
-database& sqlite_statement::db()
-{
-  return db_;
-}
-
-const database& sqlite_statement::db() const
-{
-  return db_;
-}
+*/
 
 }
 

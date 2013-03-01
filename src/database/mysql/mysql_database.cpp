@@ -61,21 +61,15 @@ mysql_database::~mysql_database()
 }
 
 
-void mysql_database::open(const std::string &db)
+void mysql_database::on_open(const std::string &db)
 {
-  if (is_open()) {
-    return;
-  } else {
-    if (::mysql_init(&mysql_) == 0) {
-      throw mysql_exception(&mysql_, "mysql_init", db);
-    }  
-    if (0 == mysql_real_connect(&mysql_, "localhost", "sascha", "sascha", "test", 0, NULL, 0)) {
-      throw mysql_exception(&mysql_, "mysql_real_connect", db);
-    }
-    database::open(db);
-
-    is_open_ = true;
+  if (::mysql_init(&mysql_) == 0) {
+    throw mysql_exception(&mysql_, "mysql_init", db);
+  }  
+  if (0 == mysql_real_connect(&mysql_, "localhost", "sascha", "sascha", "test", 0, NULL, 0)) {
+    throw mysql_exception(&mysql_, "mysql_real_connect", db);
   }
+  is_open_ = true;
 }
 
 bool mysql_database::is_open() const
@@ -83,18 +77,12 @@ bool mysql_database::is_open() const
   return is_open_;
 }
 
-void mysql_database::close()
+void mysql_database::on_close()
 {
-  if (!is_open()) {
-    return;
-  } else {
-    database::close();
+  std::cout << "closing database\n";
+  mysql_close(&mysql_);
 
-    std::cout << "closing database\n";
-    mysql_close(&mysql_);
-
-    is_open_ = false;
-  }
+  is_open_ = false;
 }
 
 void mysql_database::execute(const char *sql, result_impl */*res*/)

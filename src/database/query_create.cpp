@@ -1,8 +1,10 @@
-#include "query_create.hpp"
+#include "database/query_create.hpp"
 
-#include "database.hpp"
+#include "database/database.hpp"
 
 #include <cstring>
+
+namespace oos {
 
 query_create::query_create(sql &d, const database &db)
   : dialect(d)
@@ -13,18 +15,83 @@ query_create::query_create(sql &d, const database &db)
 query_create::~query_create()
 {}
 
-void query_create::write(const char *id, long )
+void query_create::write(const char *id, char)
+{
+  write(id, sql::type_char);
+}
+
+void query_create::write(const char *id, short)
+{
+  write(id, sql::type_short);
+}
+
+void query_create::write(const char *id, int)
+{
+  write(id, sql::type_int);
+}
+
+void query_create::write(const char *id, long)
 {
   write(id, sql::type_long);
 }
-void query_create::write(const char *id, double )
+
+void query_create::write(const char *id, unsigned char)
+{
+  write(id, sql::type_unsigned_char);
+}
+
+void query_create::write(const char *id, unsigned short)
+{
+  write(id, sql::type_unsigned_short);
+}
+
+void query_create::write(const char *id, unsigned int)
+{
+  write(id, sql::type_unsigned_int);
+}
+
+void query_create::write(const char *id, unsigned long)
+{
+  write(id, sql::type_unsigned_long);
+}
+
+void query_create::write(const char *id, float)
+{
+  write(id, sql::type_float);
+}
+
+void query_create::write(const char *id, double)
 {
   write(id, sql::type_double);
 }
+
+void query_create::write(const char *id, bool)
+{
+  write(id, sql::type_char_pointer);
+}
+
+void query_create::write(const char *id, const char *, int)
+{
+  write(id, sql::type_char_pointer);
+}
+
+void query_create::write(const char *id, const varchar_base &)
+{
+  write(id, sql::type_varchar);
+}
+
 void query_create::write(const char *id, const std::string &)
 {
   write(id, sql::type_text);
 }
+
+void query_create::write(const char *id, const object_base_ptr &)
+{
+  write(id, sql::type_long);
+}
+
+void query_create::write(const char *, const object_container &)
+{}
 
 void query_create::write(const char *id, sql::data_type_t type)
 {
@@ -34,8 +101,11 @@ void query_create::write(const char *id, sql::data_type_t type)
     dialect.append(", ");
   }
   dialect.append(std::string(id) + " ");
-  dialect.append(db_.type_string(type));
+  // TODO: fix call to type_string
+//  dialect.append(db_.type_string(type));
   if (strcmp(id, "id") == 0) {
     dialect.append(" NOT NULL PRIMARY KEY");
   }
+}
+
 }

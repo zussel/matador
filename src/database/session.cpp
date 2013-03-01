@@ -16,6 +16,7 @@
  */
 
 #include "database/session.hpp"
+#include "database/result.hpp"
 #include "database/database_factory.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
@@ -106,11 +107,9 @@ bool session::load()
   return true;
 }
 
-result_ptr session::execute(const std::string &sql)
+result* session::execute(const std::string &sql)
 {
-  result_impl *res = impl_->create_result();
-  impl_->execute(sql.c_str(), res);
-  return result_ptr(new result(res));
+  return impl_->execute(sql);
 }
 
 object_store& session::ostore()
@@ -182,6 +181,11 @@ statement* session::create_statement() const
 transaction* session::current_transaction() const
 {
   return (transaction_stack_.empty() ? 0 : transaction_stack_.top());
+}
+
+const database& session::db() const
+{
+  return *impl_;
 }
 
 }

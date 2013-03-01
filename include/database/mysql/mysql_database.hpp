@@ -54,19 +54,12 @@ public:
   explicit mysql_database(session *db);
   virtual ~mysql_database();
   
-  virtual void open(const std::string &db);
-
   /**
    * Returns true if the database is open
    *
    * @return True on open database connection.
    */
   virtual bool is_open() const;
-
-  /**
-   * Close the database
-   */
-  virtual void close();
 
   /**
    * Execute a sql statement and return a result
@@ -108,6 +101,8 @@ public:
   MYSQL* operator()();
 
 protected:
+  virtual void on_open(const std::string &db);
+  virtual void on_close();
   virtual void on_begin();
   virtual void on_commit();
   virtual void on_rollback();

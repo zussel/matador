@@ -44,13 +44,13 @@ public:
 
   virtual void load(const prototype_node&) {}
 
-  virtual void execute(const char*, result_impl*) {}
+  virtual result* execute(const std::string &) { return 0; }
 
   virtual void visit(insert_action*) {}
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
 
-  virtual result_impl* create_result() { return 0; }
+  virtual result* create_result() { return 0; }
   virtual statement* create_statement() { return 0; }
   virtual table* create_table(const prototype_node &) { return 0; }
   virtual void initialize_table(const prototype_node &,
@@ -59,7 +59,11 @@ public:
                          statement *, statement *,
                          statement *, statement *) {}
 
+  virtual const char* type_string(sql::data_type_t ) const { return 0; }
+
 private:
+  virtual void on_open(const std::string &) {}
+  virtual void on_close() {}
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

@@ -40,30 +40,45 @@ database::database(session *db, database_sequencer *seq)
 database::~database()
 {}
 
-void database::open(const std::string&)
+void database::open(const std::string &connection)
 {
-  prototype_iterator first = db_->ostore().begin();
-  prototype_iterator last = db_->ostore().end();
-  while (first != last) {
-    if (!first->abstract) {
-      std::cout << "adding table [" << first->type << "]\n";
-      table_map_.insert(std::make_pair(first->type, table_ptr(create_table(*first))));
+  if (is_open()) {
+    return;
+  } else {
+    // open the database backend
+    on_open(connection);
+    
+    // create all tables
+    prototype_iterator first = db_->ostore().begin();
+    prototype_iterator last = db_->ostore().end();
+    while (first != last) {
+      if (!first->abstract) {
+        std::cout << "adding table [" << first->type << "]\n";
+        table_map_.insert(std::make_pair(first->type, table_ptr(create_table(*first))));
+      }
+      ++first;
     }
-    ++first;
-  }
 
-  // setup sequencer
-  sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
+    // setup sequencer
+    sequencer_backup_ = db_->ostore().exchange_sequencer(sequencer_);
+  }
 }
 
 void database::close()
 {
-  if (sequencer_backup_) {
-    db()->ostore().exchange_sequencer(sequencer_backup_);
+  if (!is_open()) {
+    return;
+  } else {
+    if (sequencer_backup_) {
+      db()->ostore().exchange_sequencer(sequencer_backup_);
+    }
+    sequencer_->destroy();
+    
+    table_map_.clear();
+    
+    // close database backend
+    on_close();
   }
-  sequencer_->destroy();
-  
-  table_map_.clear();
 }
 
 void database::create()

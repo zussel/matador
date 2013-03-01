@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-#include "database/result.hpp"
-
 #include "object/object_ptr.hpp"
 
 #include "tools/library.hpp"
@@ -173,7 +171,7 @@ public:
    * @param sql The database query to execute.
    * @return The result of the query.
    */
-  result_ptr execute(const std::string &sql);
+  result* execute(const std::string &sql);
 
   /**
    * Returns the object_store.
@@ -192,9 +190,12 @@ public:
    */
   transaction* current_transaction() const;
 
+  const database& db() const;
+
 private:
   friend class transaction;
   friend class statement;
+  friend class query;
   
   void push_transaction(transaction *tr);
   void pop_transaction();

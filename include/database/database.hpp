@@ -32,6 +32,7 @@
 #endif
 
 #include "database/action.hpp"
+#include "database/sql.hpp"
 #include "database/transaction.hpp"
 
 #include "tools/sequencer.hpp"
@@ -53,7 +54,7 @@ class transaction;
 class session;
 class statement;
 class table;
-class result_impl;
+class result;
 class database_sequencer;
 struct prototype_node;
 
@@ -96,14 +97,14 @@ public:
   /**
    * Open the database
    *
-   * @param db The database connection string.
+   * @param connection The database connection string.
    */
-  virtual void open(const std::string &db);
+  void open(const std::string &connection);
 
   /**
    * Close the database
    */
-  virtual void close();
+  void close();
 
   /**
    * Returns true if the database is open
@@ -115,14 +116,14 @@ public:
   /**
    * Create all tables.
    */
-  virtual void create();
+  void create();
 
   /**
    * Create a table from the given object.
    *
    * @param o The object providing the table layout.
    */
-  virtual void create(const prototype_node &node);
+  void create(const prototype_node &node);
 
   /**
    * Drops table defined by the given
@@ -130,12 +131,12 @@ public:
    *
    * @param o The object providing the table layout.
    */
-  virtual void drop(const prototype_node &node);
+  void drop(const prototype_node &node);
 
   /**
    * Drop all tables.
    */
-  virtual void drop();
+  void drop();
 
   /**
    * load a specific table based on
@@ -143,7 +144,7 @@ public:
    *
    * @param node The node representing the table to read
    */
-  virtual void load(const prototype_node &node);
+  void load(const prototype_node &node);
 
   /**
    * Checks if a specific table was loaded.
@@ -158,8 +159,9 @@ public:
    * implementation via pointer.
    *
    * @param sql The sql statement to be executed.
+   * @return The result of the statement.
    */
-  virtual void execute(const char *sql, result_impl *res = 0) = 0;
+  virtual result* execute(const std::string &sql) = 0;
 
   /**
    * The interface for the create table action.
@@ -191,7 +193,7 @@ public:
    * 
    * @return New result implenation object.
    */
-  virtual result_impl* create_result() = 0;
+  virtual result* create_result() = 0;
 
   /**
    * Create the concrete statement.
@@ -200,6 +202,12 @@ public:
    */
   virtual statement* create_statement() = 0;
 
+  /**
+   * Create a table based on given prototype.
+   * 
+   * @param node Prototype node
+   * @return The newly created table.
+   */
   virtual table* create_table(const prototype_node &node) = 0;
 
   /**
@@ -242,11 +250,15 @@ public:
    */
   void rollback();
 
+  virtual const char* type_string(sql::data_type_t type) const = 0;
+
 protected:
   const session* db() const;
 
   session* db();
 
+  virtual void on_open(const std::string &connection) = 0;
+  virtual void on_close() = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

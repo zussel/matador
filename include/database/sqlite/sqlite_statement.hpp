@@ -30,7 +30,7 @@ namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement : public statement
+class sqlite_statement : public statement, public object_writer
 {
 public:
   sqlite_statement(sqlite_database &db);
@@ -38,47 +38,30 @@ public:
 
 //  virtual result* execute(const std::string &sql);
 
-  virtual void execute() {}
-  virtual bool fetch();
+  virtual result* execute();
   virtual void prepare(const std::string &sql);
-  virtual void reset(bool clear_bindings);
-  
+  virtual void reset();
+  virtual void bind(object_writer *o);
+
   int finalize();
 
-  virtual int column_count() const;
-  virtual const char* column_name(int i) const;
-
-  virtual void column(int i, bool &value);
-  virtual void column(int i, char &value);
-  virtual void column(int i, float &value);
-  virtual void column(int i, double &value);
-  virtual void column(int i, unsigned char &value);
-  virtual void column(int i, unsigned short &value);
-  virtual void column(int i, unsigned int &value);
-  virtual void column(int i, unsigned long &value);
-  virtual void column(int i, short &value);
-  virtual void column(int i, int &value);
-  virtual void column(int i, long &value);
-  virtual void column(int i, char *value, int &len);
-  virtual void column(int i, std::string &value);
-
-  int column_type(int i) const;
-
-  virtual int bind(int i, double value);
-  virtual int bind(int i, int value);
-  virtual int bind(int i, long value);
-  virtual int bind(int i, unsigned int value);
-  virtual int bind(int i, unsigned long value);
-  virtual int bind(int i, const char *value, int len);
-  virtual int bind(int i, const std::string &value);
-  virtual int bind_null(int i);
-
-  virtual database& db();
-  virtual const database& db() const;
-
 protected:
-  virtual void on_result_field(const std::string &, int ) {}
-  virtual void on_host_field(const std::string &, int ) {}
+  virtual void write(const char *id, char x);
+  virtual void write(const char *id, short x);
+  virtual void write(const char *id, int x);
+  virtual void write(const char *id, long x);
+  virtual void write(const char *id, unsigned char x);
+  virtual void write(const char *id, unsigned short x);
+  virtual void write(const char *id, unsigned int x);
+  virtual void write(const char *id, unsigned long x);
+  virtual void write(const char *id, float x);
+  virtual void write(const char *id, double x);
+  virtual void write(const char *id, bool x);
+	virtual void write(const char *id, const char *x, int s);
+  virtual void write(const char *id, const varchar_base &x);
+  virtual void write(const char *id, const std::string &x);
+	virtual void write(const char *id, const object_base_ptr &x);
+  virtual void write(const char *id, const object_container &x);
 
 private:
   sqlite3_stmt *stmt_;

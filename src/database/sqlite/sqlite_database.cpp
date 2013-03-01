@@ -28,10 +28,6 @@
 
 #include "database/statement_creator.hpp"
 
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
-
 #include <stdexcept>
 #include <sqlite3.h>
 #include <iostream>
@@ -60,16 +56,11 @@ sqlite_database::~sqlite_database()
 }
 
 
-void sqlite_database::open(const std::string &db)
+void sqlite_database::on_open(const std::string &db)
 {
-  if (is_open()) {
-    return;
-  } else {
-    int ret = sqlite3_open(db.c_str(), &sqlite_db_);
-    if (ret != SQLITE_OK) {
-      throw sqlite_exception("couldn't open database: " + db);
-    }
-    database::open(db);
+  int ret = sqlite3_open(db.c_str(), &sqlite_db_);
+  if (ret != SQLITE_OK) {
+    throw sqlite_exception("couldn't open database: " + db);
   }
 }
 
@@ -78,33 +69,25 @@ bool sqlite_database::is_open() const
   return sqlite_db_ != 0;
 }
 
-void sqlite_database::close()
+void sqlite_database::on_close()
 {
-  if (!is_open()) {
-    return;
-  } else {
-    database::close();
+  sqlite3_close(sqlite_db_);
 
-    sqlite3_close(sqlite_db_);
-
-    sqlite_db_ = 0;
-  }
+  sqlite_db_ = 0;
 }
 
-void sqlite_database::execute(const char *sql, result_impl *res)
+result* sqlite_database::execute(const char *sql)
 {
+  std::cout << "executing sql [" << sql << "]\n";
+  std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg;
-  int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res, &errmsg);
+  int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
     std::string error(errmsg);
     sqlite3_free(errmsg);
     throw sqlite_exception(error);
   }
-}
-
-result_impl* sqlite_database::create_result()
-{
-  return new sqlite_static_result;
+  return res.release();
 }
 
 statement* sqlite_database::create_statement()
@@ -156,6 +139,38 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
   }
   result->push_back(r.release());
   return 0;
+}
+
+const char* sqlite_database::type_string(sql::data_type_t type) const
+{
+  switch(type) {
+    case sql::type_char:
+      return "INTEGER";
+    case sql::type_short:
+      return "INTEGER";
+    case sql::type_int:
+      return "INTEGER";
+    case sql::type_long:
+      return "INTEGER";
+    case sql::type_unsigned_char:
+      return "INTEGER";
+    case sql::type_unsigned_short:
+      return "INTEGER";
+    case sql::type_unsigned_int:
+      return "INTEGER";
+    case sql::type_unsigned_long:
+      return "INTEGER";
+    case sql::type_bool:
+      return "INTEGER";
+    case sql::type_float:
+      return "DOUBLE";
+    case sql::type_double:
+      return "DOUBLE";
+    case sql::type_text:
+      return "VARCHAR(64)";
+    default:
+      throw std::logic_error("unknown type");
+  }
 }
 
 }

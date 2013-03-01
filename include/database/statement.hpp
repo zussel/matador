@@ -36,78 +36,24 @@
 
 namespace oos {
 
-class database;
-class object;
-class object_store;
-struct prototype_node;
+class result;
+class object_writer;
 
 /// @cond OOS_DEV
 class OOS_API statement
 {
-private:
-  enum state_t {
-    SQL_BEGIN,
-    SQL_BEGIN_RESULT,
-    SQL_RESULT,
-    SQL_BEGIN_HOST,
-    SQL_HOST,
-    SQL_STRING
-  };
-
 public:
-  typedef std::function<void (const std::string&, int)> param_func_t;
-
-public:
-  // auto prepare
-//  explicit statement(const std::string &sql);
   virtual ~statement();
-
-  static std::string parse(const std::string &sql,
-                           const param_func_t &result_func, const param_func_t &host_func,
-                           char result_indicator = '~', char host_indicator = ':');
 
   virtual void prepare(const std::string &sql);
 
-  virtual void execute() = 0;
-  virtual bool fetch() = 0;
+  virtual result* execute() = 0;
 
-  virtual void reset(bool clear_bindings) = 0;
-
-  virtual int column_count() const = 0;
-  virtual const char* column_name(int i) const = 0;
-
-  virtual void column(int i, bool &value) = 0;
-  virtual void column(int i, char &value) = 0;
-  virtual void column(int i, float &value) = 0;
-  virtual void column(int i, double &value) = 0;
-  virtual void column(int i, short &value) = 0;
-  virtual void column(int i, int &value) = 0;
-  virtual void column(int i, long &value) = 0;
-  virtual void column(int i, unsigned char &value) = 0;
-  virtual void column(int i, unsigned short &value) = 0;
-  virtual void column(int i, unsigned int &value) = 0;
-  virtual void column(int i, unsigned long &value) = 0;
-  virtual void column(int i, char *value, int &len) = 0;
-  virtual void column(int i, std::string &value) = 0;
-
-  virtual int bind(int i, double value) = 0;
-  virtual int bind(int i, int value) = 0;
-  virtual int bind(int i, long value) = 0;
-  virtual int bind(int i, unsigned int value) = 0;
-  virtual int bind(int i, unsigned long value) = 0;
-  virtual int bind(int i, const char *value, int len) = 0;
-  virtual int bind(int i, const std::string &value) = 0;
-
-  virtual int bind_null(int i) = 0;
+  virtual void reset() = 0;
   
+  virtual void bind(object_writer *o) = 0;
+
   std::string sql() const;
-
-  virtual database& db() = 0;
-  virtual const database& db() const = 0;
-
-protected:
-  virtual void on_result_field(const std::string &field, int index) = 0;
-  virtual void on_host_field(const std::string &field, int index) = 0;
 
 private:
   std::string sql_;

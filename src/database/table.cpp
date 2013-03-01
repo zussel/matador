@@ -1,5 +1,6 @@
 #include "database/table.hpp"
 #include "database/database.hpp"
+#include "database/result.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -57,7 +58,6 @@ private:
 
 table::table(const prototype_node &node)
   : generic_object_reader<table>(this)
-  , generic_object_writer<table>(this)
   , node_(node)
   , column_(0)
   , object_(0)
@@ -89,14 +89,16 @@ void table::load(object_store &ostore)
   }
   ostore_ = &ostore;
 
-  select()->execute();
+  result *res = select()->execute();
 
-  while (select()->fetch()) {
+  while (res->fetch()) {
     column_ = 0;
 
     // create object
     object_ = node_.producer->create();
     
+    res->get(o);
+    // 
     object_->deserialize(*this);
   
     ostore.insert(object_);
@@ -190,6 +192,71 @@ void table::drop_statement(const std::string &drp)
 const prototype_node& table::node() const
 {
   return node_;
+}
+
+void table::read_value(const char *, object_base_ptr &x)
+{
+  long oid = 0;
+//    std::cout << "DEBUG: reading field [" << id << "] (column: " << column_ << ")\n";
+  select()->column(column_++, oid);
+  
+  
+  if (oid == 0) {
+    return;
+  }
+  
+//    std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "]\n";
+  object_proxy *oproxy = ostore_->find_proxy(oid);
+
+  if (!oproxy) {
+    oproxy = ostore_->create_proxy(oid);
+  }
+
+  prototype_iterator node = ostore_->find_prototype(x.type());
+  
+//    std::cout << "DEBUG: found prototype node [" << node->type << "]\n";
+
+  /*
+   * add the child object to the object proxy
+   * of the parent container
+   */
+  database::table_map_t::iterator j = db().table_map_.find(node->type);
+  prototype_node::field_prototype_node_map_t::const_iterator i = node_.relations.find(node->type);
+  if (i != node_.relations.end()) {
+//      std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
+    j->second->relation_data[i->second.second][oid].push_back(object_);
+//      std::cout << "DEBUG: store relation data in node [" << i->second.first->type << "]->[" << i->second.second << "][" << oid << "].push_back[" << *object_ << "]\n";
+  }
+  
+  x.reset(oproxy->obj);
+}
+
+void table::read_value(const char *id, object_container &x)
+{
+  /*
+   * find prototype node and check if there
+   * are proxies to insert for this container
+   */
+  prototype_iterator p = ostore_->find_prototype(x.classname());
+  if (p != ostore_->end()) {
+//      std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_.type << ":" << id << "]\n";
+    if (db().is_loaded(p->type)) {
+//        std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
+      database::relation_data_t::iterator i = relation_data.find(id);
+      if (i != relation_data.end()) {
+        database::object_map_t::iterator j = i->second.find(object_->id());
+        if (j != i->second.end()) {
+//            std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
+          while (!j->second.empty()) {
+            x.append_proxy(j->second.front()->proxy_);
+            j->second.pop_front();
+          }
+        }
+      }
+    } else {
+//        std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled after of [" << x.classname() << "] load\n";
+    }
+  }
 }
 
 }

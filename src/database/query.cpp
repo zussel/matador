@@ -7,7 +7,11 @@
 #include "database/session.hpp"
 #include "database/statement.hpp"
 
-#include "objectobject.hpp"
+#include "object/object.hpp"
+#include "object/object_store.hpp"
+#include "object/prototype_node.hpp"
+
+namespace oos {
 
 query::query(session &s)
   : state(QUERY_BEGIN)
@@ -18,12 +22,14 @@ query::~query()
 {
 }
 
-query& query::create(object *o)
+query& query::create(const prototype_node &node)
 {
-  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + o->object_name() + std::string(" ("));
+  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + node.type + std::string(" ("));
   
+  object *o = node.producer->create();
   query_create s(sql_, session_.db());
   o->serialize(s);
+  delete o;
 
   sql_.append(")");
 
@@ -31,25 +37,27 @@ query& query::create(object *o)
   return *this;
 }
 
-query& query::drop(object *o)
+query& query::drop(const prototype_node &node)
 {
-  sql_.append(std::string("DROP TABLE ") + o->object_name());
+  sql_.append(std::string("DROP TABLE ") + node.type);
 
   state = QUERY_DROP;
   return *this;
 }
 
-query& query::select(object *o)
+query& query::select(const prototype_node &node)
 {
   throw_invalid(QUERY_OBJECT_SELECT, state);
 
   sql_.append("SELECT ");
 
+  object *o = node.producer->create();
   query_select s(sql_);
   o->serialize(s);
+  delete o;
 
   sql_.append(" FROM ");
-  sql_.append(o->object_name());
+  sql_.append(node.type);
 
   state = QUERY_OBJECT_SELECT;
 
@@ -59,7 +67,7 @@ query& query::insert(object *o)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
-  sql_.append(std::string("INSERT INTO ") + o->object_name() + std::string(" ("));
+  sql_.append(std::string("INSERT INTO ") + o->proxy_->node->type + std::string(" ("));
 
   query_insert s(sql_);
   s.fields();
@@ -80,7 +88,7 @@ query& query::update(object *o)
 {
   throw_invalid(QUERY_OBJECT_UPDATE, state);
 
-  sql_.append(std::string("UPDATE ") + o->object_name() + std::string(" SET "));
+  sql_.append(std::string("UPDATE ") + o->proxy_->node->type + std::string(" SET "));
 
   query_update s(sql_);
   o->serialize(s);
@@ -89,11 +97,12 @@ query& query::update(object *o)
 
   return *this;
 }
-query& query::remove(object *o)
+
+query& query::remove(const prototype_node &node)
 {
   throw_invalid(QUERY_DELETE, state);
 
-  sql_.append(std::string("DELETE FROM ") + o->object_name());
+  sql_.append(std::string("DELETE FROM ") + node.type);
 
   state = QUERY_DELETE;
 
@@ -183,7 +192,8 @@ statement* query::prepare()
   std::cout << "prepared statement: " << sql_.prepare() << "\n";
 
   statement *stmt = session_.create_statement();
-  stmt->prepare(sql_);
+  // TODO: fix call to prepare
+//  stmt->prepare(sql_);
   return stmt;
 }
 
@@ -249,4 +259,6 @@ void query::throw_invalid(query::state_t next, query::state_t current) const
     default:
       throw std::logic_error("unknown state");
   }
+}
+
 }
