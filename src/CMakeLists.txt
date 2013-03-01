@@ -118,6 +118,12 @@ SET(DATABASE_SOURCES
   database/statement_creator.cpp
   database/statement_parser.cpp
   database/table.cpp
+  database/sql.cpp
+  database/query.cpp
+  database/query_create.cpp
+  database/query_select.cpp
+  database/query_insert.cpp
+  database/query_update.cpp
 )
 
 SET(DATABASE_HEADER
@@ -134,6 +140,12 @@ SET(DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/statement_creator.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement_parser.hpp
   ${PROJECT_SOURCE_DIR}/include/database/table.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/sql.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/query.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/query_create.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/query_select.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/query_insert.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/query_update.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER

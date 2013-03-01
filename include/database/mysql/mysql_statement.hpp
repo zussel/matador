@@ -87,13 +87,13 @@ public:
   template < class T >
   typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type prepare_result_column(int index)
   {
-    std::cout << "creating result buffer of size " << sizeof(T) << "\n";
     result_[index].buffer_type = MYSQL_TYPE_LONG;
 //    result_[index].buffer         = (void *) &int_val;
     result_[index].buffer         = new char[sizeof(T)];
     result_[index].buffer_length    = sizeof(T);
     result_[index].is_null         = 0;
     result_[index].length         = 0;
+    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ")\n";
   }
 
   template < class T >
