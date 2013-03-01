@@ -83,7 +83,7 @@ int sqlite_statement::finalize()
   return ret;
 }
 
-void sqlite_statement::bind(serializable *o)
+void sqlite_statement::bind(object_atomizable *o)
 {
   reset();
   host_index = 0;

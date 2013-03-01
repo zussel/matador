@@ -56,16 +56,21 @@ private:
   object *object_;
 };
 
-table::table(const prototype_node &node)
+table::table(database &db, const prototype_node &node)
   : generic_object_reader<table>(this)
+  , create_(db)
+  , drop_(db)
+  , db_(db)
   , node_(node)
   , column_(0)
   , object_(0)
   , ostore_(0)
-  , inserting_(false)
   , prepared_(false)
   , is_loaded_(false)
-{}
+{
+  create_.create(node);
+  drop_.drop(node);
+}
 
 table::~table()
 {
@@ -76,9 +81,22 @@ std::string table::name() const
   return node_.type;
 }
 
+void table::prepare()
+{
+  query q(db_);
+  
+  object *o = node_.producer->create();
+  insert_ = q.insert(o).prepare();
+  update_ = q.reset().update(o).where("id=?").prepare();
+  delete_ = q.reset().remove(node_).where("id=?").prepare();
+  select_ = q.reset().select(node_).prepare();
+}
+
 void table::create()
 {
-  db().execute(create_.c_str());
+  result *res = create_.execute();
+  
+  // prepare CRUD statements
   prepare();
 }
 
@@ -87,6 +105,7 @@ void table::load(object_store &ostore)
   if (!prepared_) {
     prepare();
   }
+  /*
   ostore_ = &ostore;
 
   result *res = select()->execute();
@@ -125,35 +144,22 @@ void table::load(object_store &ostore)
 
     ++first;
   }
+  */
   is_loaded_ = true;
 }
 
 void table::insert(object *obj)
 {
-  inserting_ = true;
-
-  column_ = 0;
-  
-  obj->serialize(*this);
-
-  insert()->execute();
-  insert()->fetch();
-  insert()->reset(true);
+  insert_->bind(obj);
+  result *res = insert_->execute();
 }
 
 void table::update(object *obj)
 {
-  inserting_ = false;
-
-  column_ = 0;
-  
-  obj->serialize(*this);
-
-  update()->bind(++column_, (int)obj->id());
-
-  update()->execute();
-  update()->fetch();
-  update()->reset(true);
+  update_->bind(obj);
+  // TODO: provide bind() method
+//  update_->bind(-1, obj->id());
+  result *res = update_->execute();
 }
 
 void table::remove(object *obj)
@@ -163,30 +169,19 @@ void table::remove(object *obj)
 
 void table::remove(long id)
 {
-  remove()->bind(1, id);
-  remove()->execute();
-  remove()->fetch();
-  remove()->reset(true);
+  // TODO: provide bind() method
+//  delete_->bind(0, id);
+  result *res = delete_->execute();
 }
 
 void table::drop()
 {
-  db().execute(drop_.c_str());
+  result *res = drop_.execute();
 }
 
 bool table::is_loaded() const
 {
   return is_loaded_;
-}
-
-void table::create_statement(const std::string &crt)
-{
-  create_ = crt;
-}
-
-void table::drop_statement(const std::string &drp)
-{
-  drop_ = drp;
 }
 
 const prototype_node& table::node() const
@@ -196,10 +191,8 @@ const prototype_node& table::node() const
 
 void table::read_value(const char *, object_base_ptr &x)
 {
-  long oid = 0;
+  long oid = x.id();
 //    std::cout << "DEBUG: reading field [" << id << "] (column: " << column_ << ")\n";
-  select()->column(column_++, oid);
-  
   
   if (oid == 0) {
     return;

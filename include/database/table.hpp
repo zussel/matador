@@ -38,6 +38,7 @@
 
 #include "database/statement.hpp"
 #include "database/database.hpp"
+#include "database/query.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -68,14 +69,14 @@ public:
   typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
 
-protected:
-  explicit table(const prototype_node &node);
+//protected:
+  table(database &db, const prototype_node &node);
 
 public:
   virtual ~table();
 
   std::string name() const;
-  virtual void prepare() = 0;
+  virtual void prepare();
   void create();
   void load(object_store &ostore);
   void insert(object *obj);
@@ -87,39 +88,43 @@ public:
   bool is_loaded() const;
 
   template < class T >
-  void read_value(const char *, T &x) {}
-  void read_value(const char *, char *x, int s) {}
+  void read_value(const char *, T &) {}
+  void read_value(const char *, char *, int ) {}
   void read_value(const char *, object_base_ptr &x);
   void read_value(const char *id, object_container &x);
 
 protected:
   const prototype_node& node() const;
 
-  virtual database& db() = 0;
-  virtual const database& db() const = 0;
+  virtual database& db() { return db_; }
+  virtual const database& db() const { return db_; }
 
-  void create_statement(const std::string &drp);
-  void drop_statement(const std::string &drp);
-
+/*
   virtual statement* select() = 0;
   virtual statement* insert() = 0;
   virtual statement* update() = 0;
   virtual statement* remove() = 0;
+*/
 
 private:
   friend class relation_filler;
 
-  std::string create_;
-  std::string drop_;
+  query create_;
+  query drop_;
 
+  database &db_;
   const prototype_node &node_;
   int column_;
 
+  statement *insert_;
+  statement *update_;
+  statement *delete_;
+  statement *select_;
+  
   // temp data while loading
   object *object_;
   object_store *ostore_;
   
-  bool inserting_;
   bool prepared_;
 
   bool is_loaded_;

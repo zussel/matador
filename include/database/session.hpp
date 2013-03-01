@@ -192,6 +192,8 @@ public:
 
   const database& db() const;
 
+  database& db();
+
 private:
   friend class transaction;
   friend class statement;

@@ -6,6 +6,7 @@
 
 #include "database/session.hpp"
 #include "database/statement.hpp"
+#include "database/database.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -15,7 +16,12 @@ namespace oos {
 
 query::query(session &s)
   : state(QUERY_BEGIN)
-  , session_(s)
+  , db_(s.db())
+{}
+
+query::query(database &db)
+  : state(QUERY_BEGIN)
+  , db_(db)
 {}
 
 query::~query()
@@ -27,7 +33,7 @@ query& query::create(const prototype_node &node)
   sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + node.type + std::string(" ("));
   
   object *o = node.producer->create();
-  query_create s(sql_, session_.db());
+  query_create s(sql_, db_);
   o->serialize(s);
   delete o;
 
@@ -184,14 +190,14 @@ query& query::update(const std::string &table)
 
 result* query::execute()
 {
-  return session_.execute(sql_.direct().c_str());
+  return db_.execute(sql_.direct().c_str());
 }
 
 statement* query::prepare()
 {
   std::cout << "prepared statement: " << sql_.prepare() << "\n";
 
-  statement *stmt = session_.create_statement();
+  statement *stmt = db_.create_statement();
   // TODO: fix call to prepare
 //  stmt->prepare(sql_);
   return stmt;

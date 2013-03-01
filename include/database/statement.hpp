@@ -37,7 +37,7 @@
 namespace oos {
 
 class result;
-class object_writer;
+class object_atomizable;
 
 /// @cond OOS_DEV
 class OOS_API statement
@@ -51,7 +51,7 @@ public:
 
   virtual void reset() = 0;
   
-  virtual void bind(object_writer *o) = 0;
+  virtual void bind(object_atomizable *o) = 0;
 
   std::string sql() const;
 

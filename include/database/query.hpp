@@ -11,6 +11,7 @@ namespace oos {
 class result;
 class session;
 class statement;
+class database;
 class object;
 class prototype_node;
 
@@ -41,6 +42,7 @@ private:
 
 public:
   query(session &s);
+  query(database &s);
   ~query();
 
   query& create(const prototype_node &node);
@@ -89,7 +91,7 @@ private:
 private:
   sql sql_;
   state_t state;
-  session &session_;
+  database &db_;
   std::unique_ptr<statement> stmt;
 };
 

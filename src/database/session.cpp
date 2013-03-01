@@ -188,4 +188,9 @@ const database& session::db() const
   return *impl_;
 }
 
+database& session::db()
+{
+  return *impl_;
+}
+
 }

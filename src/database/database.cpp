@@ -54,7 +54,8 @@ void database::open(const std::string &connection)
     while (first != last) {
       if (!first->abstract) {
         std::cout << "adding table [" << first->type << "]\n";
-        table_map_.insert(std::make_pair(first->type, table_ptr(create_table(*first))));
+        table_map_.insert(std::make_pair(first->type, table_ptr(new table(*this, *first))));
+//        table_map_.insert(std::make_pair(first->type, table_ptr(create_table(*first))));
       }
       ++first;
     }

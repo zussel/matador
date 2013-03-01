@@ -76,7 +76,7 @@ void sqlite_database::on_close()
   sqlite_db_ = 0;
 }
 
-result* sqlite_database::execute(const char *sql)
+result* sqlite_database::execute(const std::string &sql)
 {
   std::cout << "executing sql [" << sql << "]\n";
   std::unique_ptr<sqlite_result> res(new sqlite_result);

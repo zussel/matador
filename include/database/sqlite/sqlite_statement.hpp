@@ -20,6 +20,8 @@
 
 #include "database/statement.hpp"
 
+#include "object/object_atomizer.hpp"
+
 #include <string>
 
 struct sqlite3_stmt;
@@ -41,7 +43,7 @@ public:
   virtual result* execute();
   virtual void prepare(const std::string &sql);
   virtual void reset();
-  virtual void bind(object_writer *o);
+  virtual void bind(object_atomizable *o);
 
   int finalize();
 
