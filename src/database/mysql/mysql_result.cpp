@@ -22,35 +22,69 @@ namespace oos {
 
 namespace mysql {
 
-mysql_result::~mysql_result()
-{}
-
-mysql_static_result::mysql_static_result()
-  : pos_(-1)
-{}
-
-mysql_static_result::~mysql_static_result()
+mysql_result::mysql_result(MYSQL *c)
+  : affected_rows_(mysql_affected_rows(c))
+  , rows(0)
+  , fields_(0)
+  , conn(c)
+  , res(0)
+  , result_index(0)
+  , result_size(0)
 {
-  while (!rows_.empty()) {
-    row *r = rows_.back();
-    delete r;
-    rows_.pop_back();
+  res = mysql_store_result(c);
+  if (res == 0 && mysql_errno(c) > 0) {
+    printf("Error %u: %s\n", mysql_errno(c), mysql_error(c));
+    exit(1);
+  } else if (res) {
+    rows = mysql_num_rows(res);
+    fields_ = mysql_num_fields(res);
+  }
+}
+mysql_result::~mysql_result()
+{
+  if (res) {
+    mysql_free_result(res);
   }
 }
 
-bool mysql_static_result::next()
+void mysql_result::get(serializable *)
 {
-  return ++pos_ < rows_.size();
+  result_index = 0;
+//  o->deserialize(*this);
 }
 
-row* mysql_static_result::current() const
+const char* mysql_result::column(size_type c) const
 {
-  return rows_.at(pos_);
+  if (row) {
+    return row[c];
+  } else {
+    return 0;
+  }
 }
 
-void mysql_static_result::push_back(row *r)
+bool mysql_result::fetch()
 {
-  rows_.push_back(r);
+  row = mysql_fetch_row(res);
+  if (!row) {
+    rows = 0;
+    return false;
+  }    
+  return rows-- > 0;
+}
+
+mysql_result::size_type mysql_result::affected_rows() const
+{
+  return affected_rows_;
+}
+
+mysql_result::size_type mysql_result::result_rows() const
+{
+  return rows;
+}
+
+mysql_result::size_type mysql_result::fields() const
+{
+  return fields_;
 }
 
 }

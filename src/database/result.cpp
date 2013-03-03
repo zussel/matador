@@ -33,6 +33,13 @@ row* result_impl::current() const
   return 0;
 }
 
+result::result()
+{}
+
+result::~result()
+{}
+
+/*
 result_iterator::result_iterator()
   : res_(0)
 {}
@@ -118,5 +125,7 @@ const result_impl* result::impl() const
 {
   return result_;
 }
+
+*/
 
 }

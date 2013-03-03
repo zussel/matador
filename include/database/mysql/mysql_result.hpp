@@ -28,29 +28,45 @@ class row;
 
 namespace mysql {
 
-class mysql_result : public result_impl
+class mysql_result : public result
 {
+private:
+  mysql_result(const mysql_result&);
+  mysql_result& operator=(const mysql_result&);
+
 public:
+  typedef unsigned long size_type;
+
+public:
+  mysql_result(MYSQL *c);
   virtual ~mysql_result();
-};
+  
+  void get(serializable *o);
+  const char* column(size_type c) const;
+  bool fetch();
+  size_type affected_rows() const;
+  size_type result_rows() const;
+  size_type fields() const;
 
-class mysql_static_result : public mysql_result
-{
-public:
-  mysql_static_result();
-  virtual ~mysql_static_result();
-
-  virtual bool next();
-
-  virtual row* current() const;
-
-  void push_back(row *r);
+  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
 
 private:
-  typedef std::vector<row*> row_vector_t;
-  row_vector_t rows_;
-  row_vector_t::size_type pos_;
-  
+  struct result_deleter
+  {
+    void operator()(MYSQL_RES *res) const {
+      if (res) {
+        mysql_free_result(res);
+      }
+    }
+  };
+  size_type affected_rows_;
+  size_type rows;
+  size_type fields_;
+  MYSQL* conn;
+  MYSQL_ROW row;
+  MYSQL_RES *res;
+  int result_index;
+  int result_size;
 };
 
 }

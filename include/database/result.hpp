@@ -43,6 +43,7 @@ namespace oos {
 
 class row;
 class statement;
+class object_atomizable;
 
 /// @cond OOS_DEV
 class OOS_API result_impl
@@ -87,39 +88,28 @@ private:
   result *res_;
 };
 
-class OOS_API result
+class result
 {
-protected:
-  explicit result(result_impl *res);
+private:
+  result(const result&);
+  result& operator=(const result&);
 
 public:
-  ~result();
+  typedef unsigned long size_type;
 
-  /**
-   * Return the first row of the result set.
-   *
-   * @return The first row of the result.
-   */
-  result_iterator begin();
+protected:
+  result();
 
-  /**
-   * Return the last row of the result set.
-   *
-   * @return The last row of the result.
-   */
-  result_iterator end();
+public:
+  virtual ~result();
+  
+  virtual void get(object_atomizable *o) = 0;
+  virtual const char* column(size_type c) const = 0;
+  virtual bool fetch() = 0;
+  virtual size_type affected_rows() const = 0;
+  virtual size_type result_rows() const = 0;
+  virtual size_type fields() const = 0;
 
-private:
-  friend class result_iterator;
-  friend class session;
-
-  result_impl* impl();
-
-  const result_impl* impl() const;
-
-private:
-  result_impl *result_;
-  row *current_;
 };
 
 typedef std::tr1::shared_ptr<result> result_ptr;

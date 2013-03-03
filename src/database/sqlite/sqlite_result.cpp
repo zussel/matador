@@ -22,14 +22,11 @@ namespace oos {
 
 namespace sqlite {
 
-sqlite_result::~sqlite_result()
-{}
-
-sqlite_static_result::sqlite_static_result()
+sqlite_result::sqlite_result()
   : pos_(-1)
 {}
 
-sqlite_static_result::~sqlite_static_result()
+sqlite_result::~sqlite_result()
 {
   while (!rows_.empty()) {
     row *r = rows_.back();
@@ -38,17 +35,36 @@ sqlite_static_result::~sqlite_static_result()
   }
 }
 
-bool sqlite_static_result::next()
+void sqlite_result::get(serializable *)
+{
+}
+
+const char* sqlite_result::column(sqlite_result::size_type c) const
+{
+  return rows_.at(pos_)->at<std::string>(c).c_str();
+}
+
+bool sqlite_result::fetch()
 {
   return ++pos_ < rows_.size();
 }
 
-row* sqlite_static_result::current() const
+sqlite_result::size_type sqlite_result::affected_rows() const
 {
-  return rows_.at(pos_);
+  return 0;
 }
 
-void sqlite_static_result::push_back(row *r)
+sqlite_result::size_type sqlite_result::result_rows() const
+{
+  return rows_.size();
+}
+
+sqlite_result::size_type sqlite_result::fields() const
+{
+  return 0;
+}
+
+void sqlite_result::push_back(row *r)
 {
   rows_.push_back(r);
 }
