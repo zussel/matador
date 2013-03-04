@@ -44,7 +44,7 @@ public:
 //  virtual result* execute(const std::string &sql);
 
   virtual result* execute();
-  virtual void prepare(const std::string &sql);
+  virtual void prepare(const sql &s);
   virtual void reset();
   virtual void bind(object_atomizable *o);
 

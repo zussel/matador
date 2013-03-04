@@ -20,6 +20,10 @@
 
 #include "tools/sequencer.hpp"
 
+#include "object/object_atomizable.hpp"
+
+#include <string>
+
 #ifdef WIN32
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
@@ -34,6 +38,9 @@
 #endif
 
 namespace oos {
+
+class database;
+class statement;
 
 /// @cond OOS_DEV
 
@@ -69,7 +76,10 @@ private:
 class dummy_database_sequencer : public database_sequencer
 {
 public:
-  dummy_database_sequencer() : backup_(0) {}
+  dummy_database_sequencer(database &db)
+    : database_sequencer(db)
+    , backup_(0)
+  {}
   virtual ~dummy_database_sequencer() {}
 
   virtual void create() {}

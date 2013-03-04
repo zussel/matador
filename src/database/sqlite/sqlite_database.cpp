@@ -18,7 +18,6 @@
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_result.hpp"
-#include "database/sqlite/sqlite_table.hpp"
 #include "database/sqlite/sqlite_types.hpp"
 #include "database/sqlite/sqlite_exception.hpp"
 
@@ -27,6 +26,7 @@
 #include "database/row.hpp"
 
 #include "database/statement_creator.hpp"
+#include "database/database_sequencer.hpp"
 
 #include <stdexcept>
 #include <sqlite3.h>
@@ -45,7 +45,7 @@ namespace oos {
 namespace sqlite {
   
 sqlite_database::sqlite_database(session *db)
-  : database(db, new sqlite_sequencer(this))
+  : database(db, new database_sequencer(*this))
   , sqlite_db_(0)
 {
 }
@@ -93,11 +93,6 @@ result* sqlite_database::execute(const std::string &sql)
 statement* sqlite_database::create_statement()
 {
   return new sqlite_statement(*this);
-}
-
-table* sqlite_database::create_table(const prototype_node &node)
-{
-  return new sqlite_table(*this, node);
 }
 
 sqlite3* sqlite_database::operator()()

@@ -38,6 +38,7 @@ namespace oos {
 
 class result;
 class object_atomizable;
+class sql;
 
 /// @cond OOS_DEV
 class OOS_API statement
@@ -45,15 +46,13 @@ class OOS_API statement
 public:
   virtual ~statement();
 
-  virtual void prepare(const std::string &sql);
+  virtual void prepare(const sql &s);
 
   virtual result* execute() = 0;
 
   virtual void reset() = 0;
   
   virtual void bind(object_atomizable *o) = 0;
-
-  std::string sql() const;
 
 private:
   std::string sql_;

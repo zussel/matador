@@ -66,15 +66,16 @@ public:
    * implementation via pointer.
    *
    * @param sql The sql statement to be executed.
+   * @return The result of the executed sql statement.
    */
-  virtual void execute(const char *sql, result_impl *res = 0);
+  virtual result* execute(const std::string &sql);
 
   /**
    * Create a new sqlite result
    * 
    * @return A new sqlite result
    */
-  virtual result_impl* create_result();
+  virtual result* create_result();
 
   /**
    * Create a new sqlite statement
@@ -83,14 +84,7 @@ public:
    */
   virtual statement* create_statement();
   
-  /**
-   * Creates a new table for the given
-   * prototype node.
-   * 
-   * @param node The prototype node.
-   * @return The new table based on the prototype.
-   */
-  virtual table* create_table(const prototype_node &node);
+  virtual const char* type_string(sql::data_type_t type) const;
 
   /**
    * Return the raw pointer to the sqlite3
@@ -106,9 +100,6 @@ protected:
   virtual void on_begin();
   virtual void on_commit();
   virtual void on_rollback();
-
-private:
-  static int parse_result(void* param, int column_count, char** values, char** columns);
 
 private:
   MYSQL mysql_;

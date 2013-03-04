@@ -31,8 +31,6 @@
 
 #include "database/database.hpp"
 
-#include "database/sqlite/sqlite_sequencer.hpp"
-
 struct sqlite3;
 
 namespace oos {
@@ -77,15 +75,6 @@ public:
    * @return A new sqlite statement
    */
   virtual statement* create_statement();
-
-  /**
-   * Creates a new table for the given
-   * prototype node.
-   * 
-   * @param node The prototype node.
-   * @return The new table based on the prototype.
-   */
-  virtual table* create_table(const prototype_node &node);
 
   virtual result *create_result();
   /**

@@ -18,13 +18,12 @@
 #include "database/mysql/mysql_database.hpp"
 #include "database/mysql/mysql_statement.hpp"
 #include "database/mysql/mysql_result.hpp"
-#include "database/mysql/mysql_table.hpp"
 #include "database/mysql/mysql_types.hpp"
 #include "database/mysql/mysql_exception.hpp"
-#include "database/mysql/mysql_sequencer.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"
+#include "database/database_sequencer.hpp"
 #include "database/statement_creator.hpp"
 #include "database/row.hpp"
 
@@ -48,9 +47,10 @@ namespace oos {
 namespace mysql {
   
 mysql_database::mysql_database(session *db)
-  : database(db, new mysql_sequencer(this))
+  : database(db, new database_sequencer(*this))
   , is_open_(false)
 {
+  mysql_init(&mysql_);
 }
 
 mysql_database::~mysql_database()
@@ -61,13 +61,23 @@ mysql_database::~mysql_database()
 }
 
 
-void mysql_database::on_open(const std::string &db)
+void mysql_database::on_open(const std::string &connection)
 {
-  if (::mysql_init(&mysql_) == 0) {
-    throw mysql_exception(&mysql_, "mysql_init", db);
-  }  
-  if (0 == mysql_real_connect(&mysql_, "localhost", "sascha", "sascha", "test", 0, NULL, 0)) {
-    throw mysql_exception(&mysql_, "mysql_real_connect", db);
+  // parse user:passwd@host/db
+  
+  std::string con = connection;
+  std::string::size_type pos = con.find(':');
+  std::string user = con.substr(0, pos);
+  con = con.substr(pos + 1);
+  pos = con.find('@');
+  std::string passwd = con.substr(0, pos);
+  con = con.substr(pos + 1);
+  pos = con.find('/');
+  std::string host = con.substr(0, pos);
+  std::string db = con.substr(pos + 1);
+  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0) == NULL) {
+    printf("Connection Error %u: %s\n", mysql_errno(&mysql_), mysql_error(&mysql_));
+    exit(1);
   }
   is_open_ = true;
 }
@@ -81,31 +91,28 @@ void mysql_database::on_close()
 {
   std::cout << "closing database\n";
   mysql_close(&mysql_);
+  mysql_library_end();
 
   is_open_ = false;
 }
 
-void mysql_database::execute(const char *sql, result_impl */*res*/)
+result* mysql_database::execute(const std::string &sqlstr)
 {
-  std::cout << "executing: " << sql << "\n";
-  if (mysql_query(&mysql_, sql)) {
-    throw mysql_exception(&mysql_, "mysql_query", sql);
+  std::cout << "executing: " << sqlstr << "\n";
+  if (mysql_query(&mysql_, sqlstr.c_str())) {
+    throw mysql_exception(&mysql_, "mysql_query", sqlstr);
   }
+  return new mysql_result(&mysql_);
 }
 
-result_impl* mysql_database::create_result()
+result* mysql_database::create_result()
 {
-  return new mysql_static_result;
+  return new mysql_result(&mysql_);
 }
 
 statement* mysql_database::create_statement()
 {
   return new mysql_statement(*this);
-}
-
-table* mysql_database::create_table(const prototype_node &node)
-{
-  return new mysql_table(*this, node);
 }
 
 MYSQL* mysql_database::operator()()
@@ -126,27 +133,6 @@ void mysql_database::on_commit()
 void mysql_database::on_rollback()
 {
   execute("ROLLBACK TRANSACTION;");
-}
-
-int mysql_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
-{
-  mysql_static_result *result = static_cast<mysql_static_result*>(param);
-
-  /********************
-   *
-   * a new row was retrived
-   * add a new row to the result
-   * and iterator over all columns
-   * adding each column value as
-   * string to the row
-   *
-   ********************/
-  std::auto_ptr<row> r(new row);
-  for (int i = 0; i < column_count; ++i) {
-    r->push_back(std::string(values[i]));
-  }
-  result->push_back(r.release());
-  return 0;
 }
 
 }

@@ -17,25 +17,11 @@
 
 #include "database/statement.hpp"
 
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
-
-#include "database/statement_creator.hpp"
-#include "database/database.hpp"
-
-#include <functional>
-
 using namespace std::placeholders;
 
 namespace oos {
 
 statement::~statement()
 {}
-
-std::string statement::sql() const
-{
-  return sql_;
-}
 
 }

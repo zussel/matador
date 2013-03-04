@@ -18,6 +18,7 @@
 #include "database/mysql/mysql_statement.hpp"
 #include "database/mysql/mysql_database.hpp"
 #include "database/mysql/mysql_exception.hpp"
+#include "database/mysql/mysql_prepared_result.hpp"
 
 #include <stdexcept>
 #include <iostream>
@@ -30,295 +31,273 @@ namespace oos {
 namespace mysql {
 
 mysql_statement::mysql_statement(mysql_database &db)
-  : stmt_(0)
-  , db_(db)
-  , param_(0)
-  , result_(0)
-{
-}
+  : db_(db)
+  , result_size(0)
+  , result_index(0)
+  , host_size(0)
+  , host_index(0)
+  , stmt(mysql_stmt_init(db()))
+  , result_array(0)
+  , host_array(0)
+{}
 
+mysql_statement::mysql_statement(mysql_database &db, const sql &s)
+  : db_(db)
+  , result_size(0)
+  , result_index(0)
+  , host_size(0)
+  , host_index(0)
+  , stmt(mysql_stmt_init(db()))
+  , result_array(0)
+  , host_array(0)
+{
+  prepare(s);
+}
 mysql_statement::~mysql_statement()
 {
-  if (param_) {
-    delete [] param_;
-  }
-  if (result_) {
-    // free data
-    for (unsigned long i = 0; i < result_vector_.size(); ++i) {
-      std::cout << "deleting result buffer of size " << result_[i].buffer_length << "(address: " << result_[i].buffer << ")\n";
-      if (result_[i].buffer) {
-        delete [] static_cast<char*>(result_[i].buffer);
-      }
+  reset();
+  mysql_stmt_close(stmt);
+}
+
+void mysql_statement::prepare(const sql &s)
+{
+  reset();
+  
+  sqlstr = s.prepare();
+  // parse sql to create result and host arrays
+  result_size = s.result_size();
+//  if (result_size) {
+  if (s.result_size()) {
+    /*
+     * prepare result array for mysql:
+     *
+     * allocate MYSQL_BIND array and
+     * setup each item with the correct type
+     * and allocate enough memory for the value
+     */
+    result_array = new MYSQL_BIND[s.result_size()];
+    memset(result_array, 0, s.result_size() * sizeof(MYSQL_BIND));
+    
+    sql::const_iterator first = s.result_begin();
+    sql::const_iterator last = s.result_end();
+    while (first != last) {
+      prepare_result_column(*first++);
     }
-    delete [] result_;
+  }
+  host_size = s.host_size();
+  if (host_size) {
+    host_array = new MYSQL_BIND[host_size];
+    memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
+    host_data.resize(host_size, false);
   }
   
-  if (stmt_) {
-    mysql_stmt_close(stmt_);
-  }
-}
-
-void mysql_statement::execute()
-{
-  std::cout << "binding result\n";
-  int ret = mysql_stmt_bind_result(stmt_, result_);
-  throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
-  
-  std::cout << "executing statement\n";
-  ret = mysql_stmt_execute(stmt_);
-  throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
-  
-  std::cout << "storing result\n";
-  ret = mysql_stmt_store_result(stmt_);
-  throw_stmt_error(ret, stmt_, "mysql_stmt_execute");
-}
-
-bool mysql_statement::fetch()
-{
-
-//  std::cerr << "executing " << sql() << "\n";
-
-  int ret = mysql_stmt_fetch(stmt_);
-  if (ret == 0) {
-    // retrieved new row
-    // create row object
-    return true;
-  } else if (ret == MYSQL_NO_DATA) {
-    return false;
-  } else if (ret == MYSQL_DATA_TRUNCATED) {
-    throw mysql_stmt_exception(stmt_, "mysql_stmt_fetch", "mysql_stmt_fetch: data truncated (bind.error: 0)");
-  } else {
-    // error, throw exception
-    throw_stmt_error(ret, stmt_, "mysql_stmt_fetch");
-  }
-  return false;
-}
-
-void mysql_statement::prepare(const std::string &sql)
-{
-  host_vector_.clear();
-  result_vector_.clear();
-  // set new sql statement
-  statement::prepare(sql);
-  
-//  std::cout << "prepared statement: [" << this->sql() << "]\n";
-  // create statement
-  stmt_ = mysql_stmt_init(db_());
-  // prepare mysql statement
-  int ret = mysql_stmt_prepare(stmt_, this->sql().c_str(), this->sql().size());
-  throw_error(ret, db_(), "mysql_stmt_prepare", sql);
-  // create result/binding param array
-  
-  param_ = new MYSQL_BIND[host_vector_.size()];
-  memset(param_, 0, host_vector_.size() * sizeof(MYSQL_BIND));
-  result_ = new MYSQL_BIND[result_vector_.size()];
-  memset(result_, 0, result_vector_.size() * sizeof(MYSQL_BIND));
-  
-  
-//  result_length_ = new unsigned long[results];
-  for (unsigned long i = 0; i < (unsigned long)result_vector_.size(); ++i) {
-//    result_length_[i] = 0;
-//    result_[i].length = &result_length_[i];
+  if (mysql_stmt_prepare(stmt, sqlstr.c_str(), sqlstr.size())) {
+    fprintf(stderr, " mysql_stmt_prepare(), SELECT failed\n");
+    fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
+    exit(EXIT_FAILURE);
   }
 }
 
-void mysql_statement::reset(bool)
+void mysql_statement::reset()
 {
-  mysql_stmt_reset(stmt_);
+//  std::cout << "reset mysql_statement\n";
+  for (int i = 0; i < host_size; ++i) {
+//    std::cout << "\tfreeing host_array[" << i << "].buffer: " << host_array[i].buffer << "\n";
+    if (host_array[i].buffer && host_data[i]) {
+      delete [] static_cast<char*>(host_array[i].buffer);
+    }
+  }
+  for (int i = 0; i < result_size; ++i) {
+    if (result_array[i].buffer) {
+      delete [] static_cast<char*>(result_array[i].buffer);
+    }
+  }
+  result_size = 0;
+  host_size = 0;
+  mysql_stmt_free_result(stmt);
+  delete [] result_array;
+  delete [] host_array;
+  host_data.clear();
 }
 
-int mysql_statement::column_count() const
+result* mysql_statement::execute()
 {
-  return mysql_stmt_field_count(stmt_);
+  if (result_array) {
+//    std::cout << "\tresult_array: " << result_array << "\n";
+    if (mysql_stmt_bind_result(stmt, result_array)) {
+      fprintf(stderr, " mysql_stmt_bind_result() failed\n");
+      fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
+      exit(EXIT_FAILURE);
+    }
+  }
+  if (host_array) {
+//    std::cout << "\thost_array: " << host_array << "\n";
+    if (mysql_stmt_bind_param(stmt, host_array)) {
+      fprintf(stderr, " mysql_stmt_bind_param() failed\n");
+      fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
+      exit(EXIT_FAILURE);
+    }
+  }
+  if (mysql_stmt_execute(stmt)) {
+    fprintf(stderr, " mysql_stmt_execute(), failed\n");
+    fprintf(stderr, " %d: %s\n", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
+    exit(EXIT_FAILURE);
+  }
+  if (mysql_stmt_store_result(stmt)) {
+    fprintf(stderr, " mysql_stmt_store_result(), failed\n");
+    fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
+    exit(EXIT_FAILURE);
+  }
+  return new mysql_prepared_result(stmt, result_array, result_size);
 }
 
-const char* mysql_statement::column_name(int) const
+void mysql_statement::bind(object_atomizable *o)
 {
-  throw mysql_stmt_exception("unsupported feature");
+  host_index = 0;
+  o->serialize(*this);
 }
 
-template < class T >
-void prepare_result(MYSQL_BIND &result, T &val, enum_field_types type)
+void mysql_statement::write(const char */*id*/, char x)
 {
-  memset(&result, 0, sizeof(result));
-  result.buffer_type = type;
-	result.buffer         = (void *) &val;
-	result.buffer_length    = 0;
-	result.is_null         = 0;
-	result.length         = 0;
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  ++host_index;
 }
 
-void prepare_result(MYSQL_BIND &result, char *&val, int len, unsigned long &data_len)
+void mysql_statement::write(const char */*id*/, short x)
 {
-  memset(&result, 0, sizeof(result));
-  result.buffer_type= MYSQL_TYPE_VAR_STRING;
-  result.buffer = val;
-  result.buffer_length = len;
-  result.is_null = 0;
-  result.length = &data_len;
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, bool &value)
+void mysql_statement::write(const char */*id*/, int x)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, char &value)
+void mysql_statement::write(const char */*id*/, long x)
 {
-  value = *static_cast<char*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, float &value)
+void mysql_statement::write(const char */*id*/, unsigned char x)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, double &value)
+void mysql_statement::write(const char */*id*/, unsigned short x)
 {
-  prepare_result(result_[i], value, MYSQL_TYPE_LONG);
-  mysql_stmt_fetch_column(stmt_, &result_[i], i, 0);
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, short &value)
+void mysql_statement::write(const char */*id*/, unsigned int x)
 {
-  value = *static_cast<short*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, int &value)
+void mysql_statement::write(const char */*id*/, unsigned long x)
 {
-//  value = int_val;
-  value = *static_cast<int*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, long &value)
+void mysql_statement::write(const char */*id*/, bool x)
 {
-  value = *static_cast<long*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, unsigned char &value)
+void mysql_statement::write(const char */*id*/, float x)
 {
-  value = *static_cast<unsigned char*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type double\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, unsigned short &value)
+void mysql_statement::write(const char */*id*/, double x)
 {
-  value = *static_cast<unsigned short*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type double\n";
+  bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::column(int i, unsigned int &value)
+void mysql_statement::write(const char */*id*/, const std::string &x)
 {
-  value = *static_cast<unsigned int*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
+  host_array[host_index].buffer_type = MYSQL_TYPE_STRING;
+  host_array[host_index].is_null         = 0;
+  host_array[host_index].length         = 0;
+  host_array[host_index].buffer_length = x.size();
+  host_array[host_index++].buffer = const_cast<char*>(x.data());
 }
 
-void mysql_statement::column(int i, unsigned long &value)
+void mysql_statement::write(const char */*id*/, const varchar_base &x)
 {
-  value = *static_cast<unsigned long*>(result_[i].buffer);
-  std::cout << "buffer length: [" << result_[i].buffer_length << "]\n";
+//  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
+  host_array[host_index].buffer_type = MYSQL_TYPE_STRING;
+  host_array[host_index].is_null         = 0;
+  host_array[host_index].length         = 0;
+  host_array[host_index].buffer_length = x.size();
+  host_array[host_index++].buffer = const_cast<char*>(x.c_str());
 }
 
-void mysql_statement::column(int i, char *value, int &len)
+void mysql_statement::prepare_result_column(const sql::field_ptr &fptr)
 {
-  unsigned long data_length;
-  prepare_result(result_[i], value, len, data_length);
+  if (result_array[fptr->index].buffer == 0) {
+    // allocating memory
+//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
+    unsigned int size = sql::type_size(fptr->type);
+    result_array[fptr->index].buffer = new char[size];
+    memset(result_array[fptr->index].buffer, 0, size);
+    result_array[fptr->index].buffer_length = size;
+  }
+  result_array[fptr->index].buffer_type = mysql_statement::type_enum(fptr->type);
+  result_array[fptr->index].is_null = 0;
 }
 
-void mysql_statement::column(int i, std::string &value)
+enum_field_types mysql_statement::type_enum(sql::data_type_t type)
 {
-  unsigned long data_length;
-  char *buf = new char[value.size()];
-  prepare_result(result_[i], buf, value.size(), data_length);
-  value.assign(buf, data_length);
-}
-
-int mysql_statement::bind(int i, double value)
-{
-  prepare_result(param_[i], value, MYSQL_TYPE_DOUBLE);
-  return 0;
-}
-
-int mysql_statement::bind(int i, int value)
-{
-  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
-  return 0;
-}
-
-int mysql_statement::bind(int i, long value)
-{
-  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
-  return 0;
-}
-
-int mysql_statement::bind(int i, unsigned int value)
-{
-  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
-  return 0;
-}
-
-int mysql_statement::bind(int i, unsigned long value)
-{
-  prepare_result(param_[i], value, MYSQL_TYPE_LONG);
-  return 0;
-}
-
-int mysql_statement::bind(int i, const char *value, int len)
-{
-  param_[i].buffer_type = MYSQL_TYPE_STRING;
-  param_[i].buffer = (char *)value;
-  param_[i].buffer_length = len;
-  param_[i].is_null = 0;
-  param_[i].length = 0/*&str_length*/;
-  return 0;
-}
-
-int mysql_statement::bind(int i, const std::string &value)
-{
-  param_[i].buffer_type = MYSQL_TYPE_STRING;
-  param_[i].buffer = (char *)value.data();
-  param_[i].buffer_length = value.size();
-  param_[i].is_null = 0;
-  param_[i].length = 0/*&str_length*/;
-  return 0;
-}
-
-int mysql_statement::bind_null(int i)
-{
-  param_[i].buffer = 0;
-  param_[i].buffer_length = 0;
-  param_[i].length = 0;
-  param_[i].buffer_type = MYSQL_TYPE_NULL;
-  param_[i].is_null = 0;
-  return 0;
-}
-
-database& mysql_statement::db()
-{
-  return db_;
-}
-
-const database& mysql_statement::db() const
-{
-  return db_;
-}
-
-void mysql_statement::on_result_field(const std::string &field, int index)
-{
-  result_vector_.push_back(0);  
-  std::cout << "result token: " << field << " (index: " << index << ")\n";
-}
-
-void mysql_statement::on_host_field(const std::string &field, int index)
-{
-  host_vector_.push_back(0);  
-  std::cout << "host token: " << field << " (index: " << index << ")\n";
+  switch(type) {
+    case sql::type_char:
+      return MYSQL_TYPE_TINY;
+    case sql::type_short:
+      return MYSQL_TYPE_SHORT;
+    case sql::type_int:
+      return MYSQL_TYPE_LONG;
+    case sql::type_long:
+      return MYSQL_TYPE_LONG;
+    case sql::type_unsigned_char:
+      return MYSQL_TYPE_TINY;
+    case sql::type_unsigned_short:
+      return MYSQL_TYPE_SHORT;
+    case sql::type_unsigned_int:
+      return MYSQL_TYPE_LONG;
+    case sql::type_unsigned_long:
+      return MYSQL_TYPE_LONG;
+    case sql::type_bool:
+      return MYSQL_TYPE_TINY;
+    case sql::type_float:
+      return MYSQL_TYPE_DOUBLE;
+    case sql::type_double:
+      return MYSQL_TYPE_DOUBLE;
+    case sql::type_text:
+      return MYSQL_TYPE_STRING;
+    default:
+      throw std::logic_error("unknown type");
+    }
 }
 
 }

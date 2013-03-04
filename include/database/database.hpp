@@ -203,14 +203,6 @@ public:
   virtual statement* create_statement() = 0;
 
   /**
-   * Create a table based on given prototype.
-   * 
-   * @param node Prototype node
-   * @return The newly created table.
-   */
-  virtual table* create_table(const prototype_node &node) = 0;
-
-  /**
    * @brief Prepares the beginning of a transaction
    * 
    * Prepares the begin of the transaction

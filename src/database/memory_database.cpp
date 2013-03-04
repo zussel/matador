@@ -20,7 +20,7 @@
 
 namespace oos {
 memory_database::memory_database(session *db)
-  : database(db, new dummy_database_sequencer)
+  : database(db, new dummy_database_sequencer(*this))
 {}
 
 }

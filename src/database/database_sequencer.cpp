@@ -16,8 +16,12 @@
  */
 
 #include "database/database_sequencer.hpp"
+#include "database/query.hpp"
+#include "database/statement.hpp"
 
-namepace oos {
+#include "object/object_atomizer.hpp"
+
+namespace oos {
 
 database_sequencer::database_sequencer(database &db)
   : db_(db)

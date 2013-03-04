@@ -99,7 +99,7 @@ void database::create(const prototype_node &node)
   table_map_t::iterator i = table_map_.find(node.type);
   if (i == table_map_.end()) {
     // create table
-    table_ptr tbl(create_table(node));
+    table_ptr tbl(new table(*this, node));
     
     i = table_map_.insert(std::make_pair(node.type, tbl)).first;
   }
@@ -114,7 +114,7 @@ void database::load(const prototype_node &node)
   table_map_t::iterator i = table_map_.find(node.type);
   if (i == table_map_.end()) {
     // create table
-    table_ptr tbl(create_table(node));
+    table_ptr tbl(new table(*this, node));
     
     i = table_map_.insert(std::make_pair(node.type, tbl)).first;
   }

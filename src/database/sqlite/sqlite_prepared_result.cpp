@@ -1,5 +1,5 @@
-#include "sqlite_prepared_result.hpp"
-#include "object.hpp"
+#include "database/sqlite/sqlite_prepared_result.hpp"
+#include "object/object.hpp"
 
 #include <ostream>
 
@@ -25,7 +25,7 @@ sqlite_prepared_result::~sqlite_prepared_result()
 {
 }
 
-void sqlite_prepared_result::get(serializable *o)
+void sqlite_prepared_result::get(object_atomizable *o)
 {
   result_index = 0;
   o->deserialize(*this);

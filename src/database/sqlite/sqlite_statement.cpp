@@ -59,15 +59,17 @@ sqlite_statement::~sqlite_statement()
   finalize();
 }
 
-void sqlite_statement::prepare(const std::string &sql)
+void sqlite_statement::prepare(const sql &s)
 {
+  reset();
+  
+  sqlstr = s.prepare();
+
   // destroy statement
   finalize();
-  // set new sql statement
-  statement::prepare(sql);
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_(), sql.c_str(), sql.size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2", sql);
+  int ret = sqlite3_prepare_v2(db_(), sqlstr.c_str(), sqlstr.size(), &stmt_, 0);
+  throw_error(ret, db_(), "sqlite3_prepare_v2", sqlstr);
 }
 
 void sqlite_statement::reset()

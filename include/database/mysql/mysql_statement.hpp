@@ -19,8 +19,9 @@
 #define MYSQL_STATEMENT_HPP
 
 #include "database/statement.hpp"
+#include "database/sql.hpp"
 
-#include "tools/enable_if.hpp"
+#include "object/object_atomizer.hpp"
 
 #include <mysql/mysql.h>
 
@@ -28,8 +29,6 @@
 #include <vector>
 #include <type_traits>
 #include <iostream>
-
-struct st_mysql_stmt;
 
 #ifdef WIN32
 #define CPP11_TYPE_TRAITS_NS std::tr1
@@ -39,110 +38,79 @@ struct st_mysql_stmt;
 
 namespace oos {
 
+class database;
+
 namespace mysql {
 
 class mysql_database;
 
-class mysql_statement : public statement
+class mysql_statement : public statement, public object_writer
 {
 public:
-  mysql_statement(mysql_database &db);
+  explicit mysql_statement(mysql_database &db);
+  mysql_statement(mysql_database &db, const sql &s);
   virtual ~mysql_statement();
 
-  virtual void execute();
-
-  virtual bool fetch();
-  virtual void prepare(const std::string &sql);
-  virtual void reset(bool clear_bindings);
+  virtual result* execute();
+  virtual void prepare(const sql &s);
+  virtual void reset();
+  virtual void bind(object_atomizable *o);
   
   virtual int column_count() const;
   virtual const char* column_name(int i) const;
 
-  virtual void column(int i, bool &value);
-  virtual void column(int i, char &value);
-  virtual void column(int i, float &value);
-  virtual void column(int i, double &value);
-  virtual void column(int i, short &value);
-  virtual void column(int i, int &value);
-  virtual void column(int i, long &value);
-  virtual void column(int i, unsigned char &value);
-  virtual void column(int i, unsigned short &value);
-  virtual void column(int i, unsigned int &value);
-  virtual void column(int i, unsigned long &value);
-  virtual void column(int i, char *value, int &len);
-  virtual void column(int i, std::string &value);
-
-  virtual int bind(int i, double value);
-  virtual int bind(int i, int value);
-  virtual int bind(int i, long value);
-  virtual int bind(int i, unsigned int value);
-  virtual int bind(int i, unsigned long value);
-  virtual int bind(int i, const char *value, int len);
-  virtual int bind(int i, const std::string &value);
-  virtual int bind_null(int i);
 
   virtual database& db();
   virtual const database& db() const;
 
-  template < class T >
-  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type prepare_result_column(int index)
-  {
-    result_[index].buffer_type = MYSQL_TYPE_LONG;
-    result_[index].buffer         = new char[sizeof(T)];
-    result_[index].buffer_length    = sizeof(T);
-    result_[index].is_null         = 0;
-    result_[index].length         = 0;
-    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ")\n";
-  }
-
-  template < class T >
-  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type prepare_result_column(int index)
-  {
-    result_[index].buffer_type = MYSQL_TYPE_DOUBLE;
-    result_[index].buffer         = new char[sizeof(T)];
-    result_[index].buffer_length    = sizeof(T);
-    result_[index].is_null         = 0;
-    result_[index].length         = 0;
-    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ", double)\n";
-  }
-
-  template < class T >
-  typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<std::string, T>::value>::type prepare_result_column(int index, int size)
-  {
-    result_[index].buffer_type = MYSQL_TYPE_VAR_STRING;
-    result_[index].buffer         = new char[size];
-    result_[index].buffer_length    = size;
-    result_[index].is_null         = 0;
-    result_[index].length         = 0;
-    std::cout << "creating result buffer of size " << sizeof(T) << " (address: " << result_[index].buffer << ", string)\n";
-  }  
-
-  template < class T >
-  typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                          !CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                          !CPP11_TYPE_TRAITS_NS::is_same<std::string, T>::value>::type prepare_result_column(int index)
-  {
-    result_[index].buffer_type = MYSQL_TYPE_NULL;
-    result_[index].buffer         = 0;
-    result_[index].buffer_length    = 0;
-    result_[index].is_null         = 0;
-    result_[index].length         = 0;
-  }
-
 protected:
-  virtual void on_result_field(const std::string &field, int index);
-  virtual void on_host_field(const std::string &field, int index);
+  virtual void write(const char *id, char x);
+  virtual void write(const char *id, short x);
+  virtual void write(const char *id, int x);
+  virtual void write(const char *id, long x);
+  virtual void write(const char *id, unsigned char x);
+  virtual void write(const char *id, unsigned short x);
+  virtual void write(const char *id, unsigned int x);
+  virtual void write(const char *id, unsigned long x);
+  virtual void write(const char *id, float x);
+  virtual void write(const char *id, double x);
+  virtual void write(const char *id, bool x);
+	virtual void write(const char *id, const char *x, int s);
+  virtual void write(const char *id, const varchar_base &x);
+  virtual void write(const char *id, const std::string &x);
+	virtual void write(const char *id, const object_base_ptr &x);
+  virtual void write(const char *id, const object_container &x);
+
+  virtual void prepare_result_column(const sql::field_ptr &fptr);
 
 private:
-  st_mysql_stmt *stmt_;
+  template < class T >
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int index)
+  {
+    if (bind.buffer == 0) {
+      // allocating memory
+//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
+      bind.buffer = new char[sizeof(T)];
+      host_data[index] = true;
+    }
+    *static_cast<T*>(bind.buffer) = value;
+    bind.buffer_type = type;
+    bind.is_null = 0;
+  }
+
+  static enum_field_types type_enum(sql::data_type_t type);
+
+private:
   mysql_database &db_;
-  
-  MYSQL_BIND *param_;
-  MYSQL_BIND *result_;
-  unsigned long *result_length_;
-  
-  std::vector<unsigned long> host_vector_;
-  std::vector<unsigned long> result_vector_;
+  std::string sqlstr;
+  int result_size;
+  int result_index;
+  int host_size;
+  int host_index;
+  std::vector<bool> host_data;
+  MYSQL_STMT *stmt;
+  MYSQL_BIND *result_array;
+  MYSQL_BIND *host_array;
 };
 
 }

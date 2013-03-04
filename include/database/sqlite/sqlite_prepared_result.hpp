@@ -1,8 +1,10 @@
 #ifndef SQLITE_PREPARED_RESULT_HPP
 #define SQLITE_PREPARED_RESULT_HPP
 
-#include "serializer.hpp"
-#include "result.hpp"
+#include "database/result.hpp"
+
+#include "object/object_atomizable.hpp"
+#include "object/object_atomizer.hpp"
 
 #include <mysql/mysql.h>
 
@@ -15,7 +17,7 @@ namespace oos {
 
 namespace sqlite {
 
-class sqlite_prepared_result : public result, public deserializer
+class sqlite_prepared_result : public result, public object_reader
 {
 private:
   sqlite_prepared_result(const sqlite_prepared_result&);
@@ -28,7 +30,7 @@ public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
   ~sqlite_prepared_result();
   
-  void get(serializable *o);
+  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;

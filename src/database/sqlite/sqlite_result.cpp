@@ -35,7 +35,7 @@ sqlite_result::~sqlite_result()
   }
 }
 
-void sqlite_result::get(serializable *)
+void sqlite_result::get(object_atomizable *)
 {
 }
 

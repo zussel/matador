@@ -1,8 +1,9 @@
 #ifndef MYSQL_PREPARED_RESULT_HPP
 #define MYSQL_PREPARED_RESULT_HPP
 
-#include "serializer.hpp"
-#include "result.hpp"
+#include "object/object_atomizable.hpp"
+#include "object/object_atomizer.hpp"
+#include "database/result.hpp"
 
 #include <mysql/mysql.h>
 
@@ -13,7 +14,7 @@ namespace oos {
 
 namespace mysql {
 
-class mysql_prepared_result : public result, public deserializer
+class mysql_prepared_result : public result, public object_reader
 {
 private:
   mysql_prepared_result(const mysql_prepared_result&);
@@ -26,7 +27,7 @@ public:
   mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs);
   ~mysql_prepared_result();
   
-  void get(serializable *o);
+  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;
