@@ -25,24 +25,31 @@
 namespace oos {
 
 class row;
+class object_atomizable;
 
 namespace sqlite {
 
-class sqlite_result : public result_impl
+class sqlite_result : public result
 {
+private:
+  sqlite_result(const sqlite_result&);
+  sqlite_result& operator=(const sqlite_result&);
+
 public:
+  typedef unsigned long size_type;
+
+public:
+  sqlite_result();
   virtual ~sqlite_result();
-};
+  
+  void get(object_atomizable *o);
+  const char* column(size_type c) const;
+  bool fetch();
+  size_type affected_rows() const;
+  size_type result_rows() const;
+  size_type fields() const;
 
-class sqlite_static_result : public sqlite_result
-{
-public:
-  sqlite_static_result();
-  virtual ~sqlite_static_result();
-
-  virtual bool next();
-
-  virtual row* current() const;
+  friend std::ostream& operator<<(std::ostream &out, const sqlite_result &res);
 
   void push_back(row *r);
 
@@ -50,7 +57,12 @@ private:
   typedef std::vector<row*> row_vector_t;
   row_vector_t rows_;
   row_vector_t::size_type pos_;
-  
+
+  size_type affected_rows_;
+  size_type rows;
+  size_type fields_;
+  int result_index;
+  int result_size;
 };
 
 }

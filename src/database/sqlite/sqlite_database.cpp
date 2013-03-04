@@ -81,7 +81,7 @@ result* sqlite_database::execute(const std::string &sql)
   std::cout << "executing sql [" << sql << "]\n";
   std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg;
-  int ret = sqlite3_exec(sqlite_db_, sql, parse_result, res.get(), &errmsg);
+  int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
     std::string error(errmsg);
     sqlite3_free(errmsg);
@@ -122,7 +122,7 @@ void sqlite_database::on_rollback()
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
 {
-  sqlite_static_result *result = static_cast<sqlite_static_result*>(param);
+  sqlite_result *result = static_cast<sqlite_result*>(param);
 
   /********************
    *
@@ -171,6 +171,11 @@ const char* sqlite_database::type_string(sql::data_type_t type) const
     default:
       throw std::logic_error("unknown type");
   }
+}
+
+result *sqlite_database::create_result()
+{
+  return 0;
 }
 
 }

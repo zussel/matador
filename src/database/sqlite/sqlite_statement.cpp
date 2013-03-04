@@ -21,6 +21,11 @@
 
 #include "database/row.hpp"
 
+#include "object/object_atomizable.hpp"
+#include "object/object_ptr.hpp"
+
+#include "tools/varchar.hpp"
+
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -44,8 +49,8 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
 }
 
 sqlite_statement::sqlite_statement(sqlite_database &db)
-  : stmt_(0)
-  , db_(db)
+  : db_(db)
+  , stmt_(0)
 {
 }
 
@@ -104,97 +109,91 @@ const char* sqlite_statement::column_name(int i) const
 void sqlite_statement::write(const char*, bool x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, char x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
-}
-
-void sqlite_statement::write(const char*, double x)
-{
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, short x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, int x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, long x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, unsigned char x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, unsigned short x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, unsigned int x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, unsigned long x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char*, float x)
 {
   int ret = sqlite3_bind_double(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_double");
+  throw_error(ret, db_(), "sqlite3_bind_double");
 }
 
 void sqlite_statement::write(const char*, double x)
 {
   int ret = sqlite3_bind_double(stmt_, ++host_index, x);
-  throw_error(ret, db_.connection(), "sqlite3_bind_double");
+  throw_error(ret, db_(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::write(const char*, char *x, int &len)
+void sqlite_statement::write(const char*, const char *x, int len)
 {
   int ret = sqlite3_bind_text(stmt_, ++host_index, x, len, 0);
-  throw_error(ret, db_.connection(), "sqlite3_bind_text");
+  throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
 void sqlite_statement::write(const char*, const std::string &x)
 {
   int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
-  throw_error(ret, db_.connection(), "sqlite3_bind_text");
+  throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
 void sqlite_statement::write(const char*, const varchar_base &x)
 {
   int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
-  throw_error(ret, db_.connection(), "sqlite3_bind_text");
+  throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
 void sqlite_statement::write(const char *id, const object_base_ptr &x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x.id());
-  throw_error(ret, db_.connection(), "sqlite3_bind_int");
+  throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
 void sqlite_statement::write(const char *id, const object_container &x)

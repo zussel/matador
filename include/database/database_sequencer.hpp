@@ -37,22 +37,33 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class database_sequencer : public default_sequencer
+class database_sequencer : public default_sequencer, public object_atomizable
 {
 public:
-  virtual ~database_sequencer() {}
-
-protected:
-  database_sequencer() {}
+  database_sequencer(database &db);
+  virtual ~database_sequencer();
 
 public:
-  virtual void create() = 0;
-  virtual void load() = 0;
-  virtual void begin() = 0;
-  virtual void commit() = 0;
-  virtual void rollback() = 0;
-  virtual void drop() = 0;
-  virtual void destroy() = 0;
+  virtual void deserialize(object_reader &r);
+  virtual void serialize(object_writer &w) const;
+
+  virtual void create();
+  virtual void load();
+  virtual void begin();
+  virtual void commit();
+  virtual void rollback();
+  virtual void drop();
+  virtual void destroy();
+  
+protected:
+  long backup_sequence() const;
+  void backup_sequence(long backup);
+
+private:
+  database &db_;
+  long backup_;
+  std::string name_;
+  statement *update_;
 };
 
 class dummy_database_sequencer : public database_sequencer

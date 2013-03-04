@@ -25,6 +25,7 @@
 namespace oos {
 
 class row;
+class object_atomizable;
 
 namespace mysql {
 
@@ -41,7 +42,7 @@ public:
   mysql_result(MYSQL *c);
   virtual ~mysql_result();
   
-  void get(serializable *o);
+  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;

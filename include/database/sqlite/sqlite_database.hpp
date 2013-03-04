@@ -87,6 +87,7 @@ public:
    */
   virtual table* create_table(const prototype_node &node);
 
+  virtual result *create_result();
   /**
    * Return the raw pointer to the sqlite3
    * database struct.

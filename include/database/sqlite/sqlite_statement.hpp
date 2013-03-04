@@ -23,10 +23,13 @@
 #include "object/object_atomizer.hpp"
 
 #include <string>
+#include <vector>
 
 struct sqlite3_stmt;
 
 namespace oos {
+
+class varchar_base;
 
 namespace sqlite {
 
@@ -66,8 +69,14 @@ protected:
   virtual void write(const char *id, const object_container &x);
 
 private:
-  sqlite3_stmt *stmt_;
   sqlite_database &db_;
+  sqlite3_stmt *stmt_;
+  std::string sqlstr;
+  int result_size;
+  int result_index;
+  int host_size;
+  int host_index;
+  std::vector<bool> host_data;
 };
 
 }

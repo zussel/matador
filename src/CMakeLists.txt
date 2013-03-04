@@ -109,6 +109,7 @@ SET(DATABASE_SOURCES
   database/database.cpp
   database/database_exception.cpp
   database/database_factory.cpp
+  database/database_sequencer.cpp
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
