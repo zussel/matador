@@ -46,13 +46,19 @@ class OOS_API statement
 public:
   virtual ~statement();
 
-  virtual void prepare(const sql &s);
+  virtual void prepare(const sql &s) = 0;
 
   virtual result* execute() = 0;
 
   virtual void reset() = 0;
   
-  virtual void bind(object_atomizable *o) = 0;
+  virtual int bind(object_atomizable *o) = 0;
+//  virtual int bind(
+
+  std::string str() const;
+
+protected:
+  void str(const std::string &s);
 
 private:
   std::string sql_;

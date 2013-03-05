@@ -20,6 +20,8 @@
 
 #include "database/result.hpp"
 
+#include <mysql/mysql.h>
+
 #include <vector>
 
 namespace oos {

@@ -54,10 +54,10 @@ public:
   virtual result* execute();
   virtual void prepare(const sql &s);
   virtual void reset();
-  virtual void bind(object_atomizable *o);
+  virtual int bind(object_atomizable *o);
   
-  virtual int column_count() const;
-  virtual const char* column_name(int i) const;
+//  virtual int column_count() const;
+//  virtual const char* column_name(int i) const;
 
 
   virtual database& db();
@@ -102,7 +102,6 @@ private:
 
 private:
   mysql_database &db_;
-  std::string sqlstr;
   int result_size;
   int result_index;
   int host_size;

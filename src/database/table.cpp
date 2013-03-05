@@ -1,6 +1,7 @@
 #include "database/table.hpp"
 #include "database/database.hpp"
 #include "database/result.hpp"
+#include "database/query.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -58,8 +59,6 @@ private:
 
 table::table(database &db, const prototype_node &node)
   : generic_object_reader<table>(this)
-  , create_(db)
-  , drop_(db)
   , db_(db)
   , node_(node)
   , column_(0)
@@ -67,13 +66,14 @@ table::table(database &db, const prototype_node &node)
   , ostore_(0)
   , prepared_(false)
   , is_loaded_(false)
-{
-  create_.create(node);
-  drop_.drop(node);
-}
+{}
 
 table::~table()
 {
+  delete insert_;
+  delete update_;
+  delete delete_;
+  delete select_;
 }
 
 std::string table::name() const
@@ -86,16 +86,21 @@ void table::prepare()
   query q(db_);
   
   object *o = node_.producer->create();
-  insert_ = q.insert(o).prepare();
-  update_ = q.reset().update(o).where("id=?").prepare();
+  insert_ = q.insert(o, node_.type).prepare();
+  update_ = q.reset().update(o, node_.type).where("id=?").prepare();
   delete_ = q.reset().remove(node_).where("id=?").prepare();
   select_ = q.reset().select(node_).prepare();
+  delete o;
 }
 
 void table::create()
 {
-  result *res = create_.execute();
+  query q(db_);
   
+  result *res = q.create(node_).execute();
+  
+  delete res;
+
   // prepare CRUD statements
   prepare();
 }
@@ -105,10 +110,10 @@ void table::load(object_store &ostore)
   if (!prepared_) {
     prepare();
   }
-  /*
+
   ostore_ = &ostore;
 
-  result *res = select()->execute();
+  result *res = select_->execute();
 
   while (res->fetch()) {
     column_ = 0;
@@ -116,12 +121,15 @@ void table::load(object_store &ostore)
     // create object
     object_ = node_.producer->create();
     
-    res->get(o);
+    res->get(object_);
     // 
     object_->deserialize(*this);
   
     ostore.insert(object_);
   }
+  
+  delete res;
+
   ostore_ = 0;
 
   prototype_node::field_prototype_node_map_t::const_iterator first = node_.relations.begin();
@@ -144,7 +152,7 @@ void table::load(object_store &ostore)
 
     ++first;
   }
-  */
+
   is_loaded_ = true;
 }
 
@@ -152,6 +160,8 @@ void table::insert(object *obj)
 {
   insert_->bind(obj);
   result *res = insert_->execute();
+  
+  delete res;
 }
 
 void table::update(object *obj)
@@ -160,6 +170,8 @@ void table::update(object *obj)
   // TODO: provide bind() method
 //  update_->bind(-1, obj->id());
   result *res = update_->execute();
+
+  delete res;
 }
 
 void table::remove(object *obj)
@@ -172,11 +184,17 @@ void table::remove(long id)
   // TODO: provide bind() method
 //  delete_->bind(0, id);
   result *res = delete_->execute();
+
+  delete res;
 }
 
 void table::drop()
 {
-  result *res = drop_.execute();
+  query q(db_);
+  
+  result *res = q.drop(node_).execute();
+  
+  delete res;
 }
 
 bool table::is_loaded() const

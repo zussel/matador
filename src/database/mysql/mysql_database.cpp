@@ -135,6 +135,47 @@ void mysql_database::on_rollback()
   execute("ROLLBACK TRANSACTION;");
 }
 
+const char* mysql_database::type_string(sql::data_type_t type) const
+{
+  switch(type) {
+    case sql::type_char:
+      return "INTEGER";
+    case sql::type_short:
+      return "INTEGER";
+    case sql::type_int:
+      return "INTEGER";
+    case sql::type_long:
+      return "INTEGER";
+    case sql::type_unsigned_char:
+      return "INTEGER";
+    case sql::type_unsigned_short:
+      return "INTEGER";
+    case sql::type_unsigned_int:
+      return "INTEGER";
+    case sql::type_unsigned_long:
+      return "INTEGER";
+    case sql::type_bool:
+      return "INTEGER";
+    case sql::type_float:
+      return "DOUBLE";
+    case sql::type_double:
+      return "DOUBLE";
+    case sql::type_char_pointer:
+      return "VARCHAR";
+    case sql::type_varchar:
+      return "VARCHAR";
+    case sql::type_text:
+      return "TEXT";
+    default:
+      {
+        std::stringstream msg;
+        msg << "mysql database: unknown type xxx [" << type << "]";
+        throw std::logic_error(msg.str());
+        //throw std::logic_error("mysql database: unknown type");
+      }
+    }
+}
+
 }
 
 }

@@ -69,11 +69,23 @@ query& query::select(const prototype_node &node)
 
   return *this;
 }
+
 query& query::insert(object *o)
+{
+  if (!o->proxy_) {
+    throw std::logic_error("query insert: no object proxy information");
+  }
+  if (!o->proxy_->node) {
+    throw std::logic_error("query insert: no object prototype information");
+  }
+  return insert(o, o->proxy_->node->type);
+}
+
+query& query::insert(object *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
-  sql_.append(std::string("INSERT INTO ") + o->proxy_->node->type + std::string(" ("));
+  sql_.append(std::string("INSERT INTO ") + type + std::string(" ("));
 
   query_insert s(sql_);
   s.fields();
@@ -90,11 +102,23 @@ query& query::insert(object *o)
 
   return *this;
 }
+
 query& query::update(object *o)
+{
+  if (!o->proxy_) {
+    throw std::logic_error("query update: no object proxy information");
+  }
+  if (!o->proxy_->node) {
+    throw std::logic_error("query update: no object prototype information");
+  }
+  return update(o, o->proxy_->node->type);
+}
+
+query& query::update(object *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_UPDATE, state);
 
-  sql_.append(std::string("UPDATE ") + o->proxy_->node->type + std::string(" SET "));
+  sql_.append(std::string("UPDATE ") + type + std::string(" SET "));
 
   query_update s(sql_);
   o->serialize(s);
@@ -199,7 +223,8 @@ statement* query::prepare()
 
   statement *stmt = db_.create_statement();
   // TODO: fix call to prepare
-//  stmt->prepare(sql_);
+  stmt->prepare(sql_);
+
   return stmt;
 }
 

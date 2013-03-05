@@ -1,7 +1,9 @@
 #include "database/query_create.hpp"
-
 #include "database/database.hpp"
 
+#include "tools/varchar.hpp"
+
+#include <sstream>
 #include <cstring>
 
 namespace oos {
@@ -67,17 +69,17 @@ void query_create::write(const char *id, double)
 
 void query_create::write(const char *id, bool)
 {
-  write(id, sql::type_char_pointer);
+  write(id, sql::type_bool);
 }
 
-void query_create::write(const char *id, const char *, int)
+void query_create::write(const char *id, const char *, int s)
 {
-  write(id, sql::type_char_pointer);
+  write(id, sql::type_char_pointer, s);
 }
 
-void query_create::write(const char *id, const varchar_base &)
+void query_create::write(const char *id, const varchar_base &x)
 {
-  write(id, sql::type_varchar);
+  write(id, sql::type_varchar, x.size());
 }
 
 void query_create::write(const char *id, const std::string &)
@@ -102,7 +104,24 @@ void query_create::write(const char *id, sql::data_type_t type)
   }
   dialect.append(std::string(id) + " ");
   // TODO: fix call to type_string
-//  dialect.append(db_.type_string(type));
+  dialect.append(db_.type_string(type));
+  if (strcmp(id, "id") == 0) {
+    dialect.append(" NOT NULL PRIMARY KEY");
+  }
+}
+
+void query_create::write(const char *id, sql::data_type_t type, int size)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + " ");
+
+  std::stringstream t;
+  t << db_.type_string(type) << "(" << size << ")";
+  dialect.append(t.str());
   if (strcmp(id, "id") == 0) {
     dialect.append(" NOT NULL PRIMARY KEY");
   }

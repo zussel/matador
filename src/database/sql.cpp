@@ -150,10 +150,14 @@ unsigned int sql::type_size(data_type_t type)
       return sizeof(float);
     case type_double:
       return sizeof(double);
+    case type_char_pointer:
+      return 64;
+    case type_varchar:
+      return 64;
     case type_text:
       return 64;
     default:
-      throw std::logic_error("unknown type");
+      throw std::logic_error("sql: unknown type");
     }
 }
 

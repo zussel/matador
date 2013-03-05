@@ -47,7 +47,7 @@ mysql_result::~mysql_result()
   }
 }
 
-void mysql_result::get(serializable *)
+void mysql_result::get(object_atomizable *)
 {
   result_index = 0;
 //  o->deserialize(*this);

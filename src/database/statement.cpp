@@ -24,4 +24,14 @@ namespace oos {
 statement::~statement()
 {}
 
+std::string statement::str() const
+{
+  return sql_;
+}
+
+void statement::str(const std::string &s)
+{
+  sql_ = s;
+}
+
 }

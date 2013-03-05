@@ -20,9 +20,12 @@
 #include "database/mysql/mysql_exception.hpp"
 #include "database/mysql/mysql_prepared_result.hpp"
 
+#include "tools/varchar.hpp"
+
 #include <stdexcept>
 #include <iostream>
 #include <cstring>
+#include <sstream>
 
 #include <mysql/mysql.h>
 
@@ -63,7 +66,7 @@ void mysql_statement::prepare(const sql &s)
 {
   reset();
   
-  sqlstr = s.prepare();
+  str(s.prepare());
   // parse sql to create result and host arrays
   result_size = s.result_size();
 //  if (result_size) {
@@ -91,7 +94,7 @@ void mysql_statement::prepare(const sql &s)
     host_data.resize(host_size, false);
   }
   
-  if (mysql_stmt_prepare(stmt, sqlstr.c_str(), sqlstr.size())) {
+  if (mysql_stmt_prepare(stmt, str().c_str(), str().size())) {
     fprintf(stderr, " mysql_stmt_prepare(), SELECT failed\n");
     fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
     exit(EXIT_FAILURE);
@@ -151,10 +154,11 @@ result* mysql_statement::execute()
   return new mysql_prepared_result(stmt, result_array, result_size);
 }
 
-void mysql_statement::bind(object_atomizable *o)
+int mysql_statement::bind(object_atomizable *o)
 {
   host_index = 0;
   o->serialize(*this);
+  return host_index;
 }
 
 void mysql_statement::write(const char */*id*/, char x)
@@ -234,6 +238,10 @@ void mysql_statement::write(const char */*id*/, double x)
   ++host_index;
 }
 
+void mysql_statement::write(const char */*id*/, const char *, int)
+{
+}
+
 void mysql_statement::write(const char */*id*/, const std::string &x)
 {
 //  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
@@ -252,6 +260,14 @@ void mysql_statement::write(const char */*id*/, const varchar_base &x)
   host_array[host_index].length         = 0;
   host_array[host_index].buffer_length = x.size();
   host_array[host_index++].buffer = const_cast<char*>(x.c_str());
+}
+
+void mysql_statement::write(const char */*id*/, const object_base_ptr &x)
+{
+}
+
+void mysql_statement::write(const char */*id*/, const object_container &x)
+{
 }
 
 void mysql_statement::prepare_result_column(const sql::field_ptr &fptr)
@@ -293,11 +309,27 @@ enum_field_types mysql_statement::type_enum(sql::data_type_t type)
       return MYSQL_TYPE_DOUBLE;
     case sql::type_double:
       return MYSQL_TYPE_DOUBLE;
+    case sql::type_char_pointer:
+      return MYSQL_TYPE_VAR_STRING;
+    case sql::type_varchar:
+      return MYSQL_TYPE_VAR_STRING;
     case sql::type_text:
       return MYSQL_TYPE_STRING;
     default:
-      throw std::logic_error("unknown type");
+      {
+        throw std::logic_error("mysql statement: unknown type");
+      }
     }
+}
+
+database& mysql_statement::db()
+{
+  return db_;
+}
+
+const database& mysql_statement::db() const
+{
+  return db_;
 }
 
 }

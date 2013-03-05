@@ -49,7 +49,9 @@ public:
   query& drop(const prototype_node &node);
   query& select(const prototype_node &node);
   query& insert(object *o);
+  query& insert(object *o, const std::string &type);
   query& update(object *o);
+  query& update(object *o, const std::string &type);
   query& remove(const prototype_node &node);
   query& where(const std::string &clause);
   query& order_by(const std::string &by);

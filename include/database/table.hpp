@@ -38,7 +38,6 @@
 
 #include "database/statement.hpp"
 #include "database/database.hpp"
-#include "database/query.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -108,9 +107,6 @@ protected:
 
 private:
   friend class relation_filler;
-
-  query create_;
-  query drop_;
 
   database &db_;
   const prototype_node &node_;

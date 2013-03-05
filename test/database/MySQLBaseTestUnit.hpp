@@ -12,8 +12,8 @@ public:
   virtual void initialize();
   virtual void finalize();
 
+  void test_open_close();
   void test_create_drop();
-  void test_insert();
 };
 
 #endif /* MYSQL_BASE_TEST_UNIT_HPP */

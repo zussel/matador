@@ -46,7 +46,7 @@ public:
   virtual result* execute();
   virtual void prepare(const sql &s);
   virtual void reset();
-  virtual void bind(object_atomizable *o);
+  virtual int bind(object_atomizable *o);
 
   int finalize();
 
@@ -71,7 +71,6 @@ protected:
 private:
   sqlite_database &db_;
   sqlite3_stmt *stmt_;
-  std::string sqlstr;
   int result_size;
   int result_index;
   int host_size;

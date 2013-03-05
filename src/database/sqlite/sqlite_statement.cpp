@@ -63,13 +63,13 @@ void sqlite_statement::prepare(const sql &s)
 {
   reset();
   
-  sqlstr = s.prepare();
+  str(s.prepare());
 
   // destroy statement
   finalize();
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_(), sqlstr.c_str(), sqlstr.size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2", sqlstr);
+  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
+  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
 }
 
 void sqlite_statement::reset()
@@ -90,11 +90,12 @@ int sqlite_statement::finalize()
   return ret;
 }
 
-void sqlite_statement::bind(object_atomizable *o)
+int sqlite_statement::bind(object_atomizable *o)
 {
   reset();
   host_index = 0;
   o->serialize(*this);
+  return host_index;
 }
 
 /*

@@ -3,7 +3,10 @@
 
 #include "object/object_atomizable.hpp"
 #include "object/object_atomizer.hpp"
+
 #include "database/result.hpp"
+
+#include "tools/varchar.hpp"
 
 #include <mysql/mysql.h>
 
@@ -11,6 +14,8 @@
 #include <iostream>
 
 namespace oos {
+
+class object_base_ptr;
 
 namespace mysql {
 
@@ -37,9 +42,22 @@ public:
   friend std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
 protected:
+  virtual void read(const char *id, char &x);
+  virtual void read(const char *id, short &x);
+  virtual void read(const char *id, int &x);
   virtual void read(const char *id, long &x);
+  virtual void read(const char *id, unsigned char &x);
+  virtual void read(const char *id, unsigned short &x);
+  virtual void read(const char *id, unsigned int &x);
+  virtual void read(const char *id, unsigned long &x);
+  virtual void read(const char *id, bool &x);
+  virtual void read(const char *id, float &x);
   virtual void read(const char *id, double &x);
+  virtual void read(const char *id, char *x, int s);
+  virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
 
 private:
   template < class T >
@@ -48,7 +66,9 @@ private:
     value = *static_cast<T*>(bind.buffer);
   }
 
+  void get_column_value(MYSQL_BIND &bind, enum_field_types type, char *x, int s);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, std::string &value);
+  void get_column_value(MYSQL_BIND &bind, enum_field_types type, object_base_ptr &value);
 
 private:
   size_type affected_rows_;

@@ -67,18 +67,87 @@ sqlite_prepared_result::size_type sqlite_prepared_result::fields() const
   return fields_;
 }
 
+void sqlite_prepared_result::read(const char *, char &x)
+{
+  x = (char)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, short &x)
+{
+  x = (short)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, int &x)
+{
+  x = (int)sqlite3_column_int(stmt_, result_index++);
+}
+
 void sqlite_prepared_result::read(const char *, long &x)
 {
   x = (long)sqlite3_column_int(stmt_, result_index++);
 }
+
+void sqlite_prepared_result::read(const char *, unsigned char &x)
+{
+  x = (char)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, unsigned short &x)
+{
+  x = (short)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, unsigned int &x)
+{
+  x = (int)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, unsigned long &x)
+{
+  x = (long)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, bool &x)
+{
+  x = sqlite3_column_int(stmt_, result_index++) > 0;
+}
+
+void sqlite_prepared_result::read(const char *, float &x)
+{
+  x = (float)sqlite3_column_double(stmt_, result_index++);
+}
+
 void sqlite_prepared_result::read(const char *, double &x)
 {
   x = sqlite3_column_double(stmt_, result_index++);
 }
+
 void sqlite_prepared_result::read(const char *, std::string &x)
 {
   int s = sqlite3_column_bytes(stmt_, result_index);
   x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+}
+
+void sqlite_prepared_result::read(const char *, varchar_base &x)
+{
+  int s = sqlite3_column_bytes(stmt_, result_index);
+  x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+}
+
+void sqlite_prepared_result::read(const char *, char *x, int s)
+{
+  int size = sqlite3_column_bytes(stmt_, result_index);
+//  x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+  ++result_index;
+}
+
+void sqlite_prepared_result::read(const char *, object_base_ptr &x)
+{
+  int id = (long)sqlite3_column_int(stmt_, result_index++);
+}
+
+void sqlite_prepared_result::read(const char *, object_container &)
+{
 }
 
 std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res)
