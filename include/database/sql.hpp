@@ -28,7 +28,8 @@ public:
     type_char_pointer,
     type_varchar,
     type_text,
-    type_blob
+    type_blob,
+    type_unknown
   };
 
   struct field

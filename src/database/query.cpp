@@ -150,6 +150,17 @@ query& query::where(const std::string &clause)
 
   return *this;
 }
+
+query& query::and_(const std::string &clause)
+{
+  return *this;
+}
+
+query& query::or_(const std::string &clause)
+{
+  return *this;
+}
+
 query& query::order_by(const std::string &by)
 {
   throw_invalid(QUERY_ORDERBY, state);
@@ -234,6 +245,63 @@ query& query::reset()
   sql_.reset();
   state = QUERY_BEGIN;
   return *this;
+}
+
+void query::parse_clause(const std::string &clause)
+{
+  // set start state
+  parse_state_t state = SQL_BEGIN;
+  // statement to return
+  std::string stmt;
+  // found token
+  std::string host;
+  std::string value;
+  std::string::size_type len = clause.size();
+  char end = '\0';
+  for(std::string::size_type i = 0; i < len; ++i) {
+    char c = clause[i];
+    switch (state) {
+      case SQL_BEGIN:
+        if (c == ':') {
+          state = SQL_BEGIN_HOST;
+        } else if (c == '\'' || c == '"') {
+          state = SQL_STRING;
+          stmt += c;
+          end = c;
+        } else {
+          stmt += c;
+        }
+        break;
+      case SQL_BEGIN_HOST:
+        if (std::isalpha(c)) {
+          host = c;
+          state = SQL_HOST;
+        } else {
+          throw std::logic_error("first host character must be alpha");
+        }
+        break;
+      case SQL_HOST:
+        if (std::isalnum(c) || c == '_') {
+          host += c;
+        } else if (c == ' ' || c == ')') {
+          state = SQL_BEGIN;
+          stmt += '?';
+          stmt += c;
+          sql_.append(host.c_str(), sql::type_unknown, "");
+        } else {
+          throw std::logic_error("invalid character");
+        }
+        break;
+      case SQL_STRING:
+        if (c == end) {
+          state = SQL_BEGIN;
+        }
+        stmt += c;
+        break;
+      default:
+        break;
+    };
+  }
 }
 
 void query::throw_invalid(query::state_t next, query::state_t current) const
