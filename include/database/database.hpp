@@ -138,6 +138,8 @@ public:
    */
   void drop();
 
+  object* insert(object *o);
+
   /**
    * load a specific table based on
    * a prototype node

@@ -15,6 +15,7 @@ public:
   void test_open_close();
   void test_create_drop();
   void test_insert();
+  void test_drop();
 };
 
 #endif /* MYSQL_BASE_TEST_UNIT_HPP */

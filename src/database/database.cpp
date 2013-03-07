@@ -106,6 +106,17 @@ void database::create(const prototype_node &node)
   i->second->create();
 }
 
+object* database::insert(object *o)
+{
+  table_map_t::iterator i = table_map_.find(o->proxy_->node->type);
+  if (i == table_map_.end()) {
+    throw database_exception("db::insert", "unknown type");
+  } else {
+    i->second->insert(o);
+  }
+  return o;
+}
+
 void database::load(const prototype_node &node)
 {
     // load sequencer

@@ -332,6 +332,7 @@ private:
   friend class table;
   friend class relation_filler;
   friend class query;
+  friend class database;
 
 	long id_;
   object_proxy *proxy_;

@@ -32,8 +32,11 @@
 #endif
 
 #include "object/object_ptr.hpp"
+#include "object/object_store.hpp"
 
 #include "tools/library.hpp"
+
+#include "database/database.hpp"
 
 #include <string>
 #include <stack>
@@ -45,7 +48,6 @@ namespace oos {
 class object_store;
 class result;
 class transaction;
-class database;
 class statement;
 
 /**
@@ -176,7 +178,9 @@ public:
   template < class T >
   object_ptr<T> insert(T *o)
   {
-    return object_ptr<T>();
+    object_ptr<T> optr = ostore_.insert(o);
+    impl_->insert(o);
+    return optr;
   }
 
   /**
