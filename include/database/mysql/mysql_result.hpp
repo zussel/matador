@@ -44,7 +44,6 @@ public:
   mysql_result(MYSQL *c);
   virtual ~mysql_result();
   
-  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;
@@ -52,6 +51,24 @@ public:
   size_type fields() const;
 
   friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
+
+protected:
+  virtual void read(const char *id, char &x);
+  virtual void read(const char *id, short &x);
+  virtual void read(const char *id, int &x);
+  virtual void read(const char *id, long &x);
+  virtual void read(const char *id, unsigned char &x);
+  virtual void read(const char *id, unsigned short &x);
+  virtual void read(const char *id, unsigned int &x);
+  virtual void read(const char *id, unsigned long &x);
+  virtual void read(const char *id, bool &x);
+  virtual void read(const char *id, float &x);
+  virtual void read(const char *id, double &x);
+  virtual void read(const char *id, char *x, int s);
+  virtual void read(const char *id, varchar_base &x);
+  virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
 
 private:
   struct result_deleter
@@ -68,8 +85,6 @@ private:
   MYSQL* conn;
   MYSQL_ROW row;
   MYSQL_RES *res;
-  int result_index;
-  int result_size;
 };
 
 }

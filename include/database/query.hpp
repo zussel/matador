@@ -14,17 +14,11 @@ class statement;
 class database;
 class object;
 class prototype_node;
+class condition;
 
 class query
 {
 private:
-  enum parse_state_t {
-    SQL_BEGIN,
-    SQL_BEGIN_HOST,
-    SQL_HOST,
-    SQL_STRING
-  };
-    
   enum state_t {
     QUERY_BEGIN,
     QUERY_CREATE,
@@ -40,6 +34,9 @@ private:
     QUERY_SET,
     QUERY_FROM,
     QUERY_WHERE,
+    QUERY_COND_WHERE,
+    QUERY_AND,
+    QUERY_OR,
     QUERY_ORDERBY,
     QUERY_GROUPBY,
     QUERY_EXECUTED,
@@ -61,8 +58,9 @@ public:
   query& update(object *o, const std::string &type);
   query& remove(const prototype_node &node);
   query& where(const std::string &clause);
-  query& and_(const std::string &clause);
-  query& or_(const std::string &clause);
+  query& where(const condition &c);
+  query& and_(const condition &c);
+  query& or_(const condition &c);
   query& order_by(const std::string &by);
   query& limit(int l);
   query& group_by(const std::string &field);
@@ -97,7 +95,6 @@ public:
   query& reset();
   
 private:
-  void parse_clause(const std::string &clause);
   void throw_invalid(state_t next, state_t current) const;
 
 private:

@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "object/object_atomizer.hpp"
+
 #include <string>
 #include <functional>
 
@@ -41,10 +43,12 @@ class object_atomizable;
 class sql;
 
 /// @cond OOS_DEV
-class OOS_API statement
+class OOS_API statement : public object_writer
 {
 public:
   virtual ~statement();
+
+  virtual void clear() = 0;
 
   virtual void prepare(const sql &s) = 0;
 
@@ -52,13 +56,23 @@ public:
 
   virtual void reset() = 0;
   
-  virtual int bind(object_atomizable *o) = 0;
-//  virtual int bind(
+  int bind(object_atomizable *o);
+
+  template < class T >
+  int bind(unsigned long i, const T &val)
+  {
+    host_index = i;
+    write("", val);
+    return host_index;
+  }
 
   std::string str() const;
 
 protected:
   void str(const std::string &s);
+
+protected:
+  int host_index;
 
 private:
   std::string sql_;

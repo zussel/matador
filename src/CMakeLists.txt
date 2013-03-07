@@ -105,6 +105,7 @@ SET(UNIT_HEADER
 
 SET(DATABASE_SOURCES
   database/action.cpp
+  database/condition.cpp
   database/session.cpp
   database/database.cpp
   database/database_exception.cpp
@@ -128,6 +129,7 @@ SET(DATABASE_SOURCES
 
 SET(DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/action.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/condition.hpp
   ${PROJECT_SOURCE_DIR}/include/database/database.hpp
   ${PROJECT_SOURCE_DIR}/include/database/database_factory.hpp
   ${PROJECT_SOURCE_DIR}/include/database/memory_database.hpp
@@ -145,6 +147,7 @@ SET(DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/query_select.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query_insert.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query_update.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/token.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER

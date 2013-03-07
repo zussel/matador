@@ -16,6 +16,7 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("ObjectStore Prototype Test Unit")
 {
   add_test("empty", std::tr1::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
+  add_test("find", std::tr1::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
   add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
@@ -40,10 +41,21 @@ ObjectPrototypeTestUnit::empty_store()
 }
 
 void
+ObjectPrototypeTestUnit::test_find()
+{
+  object_store ostore;
+  ostore.insert_prototype<Item>("item");
+  
+  prototype_iterator i = ostore.find_prototype<Item>();
+  
+  UNIT_ASSERT_TRUE(i != ostore.end(), "couldn't find prototype");
+}
+
+void
 ObjectPrototypeTestUnit::one_prototype()
 {
   object_store ostore;
-//  ostore.insert_prototype(new object_producer<Artist>, "ARTIST");
+
   ostore.insert_prototype<Item>("ITEM");
   
   object *o = ostore.create("ITEM");

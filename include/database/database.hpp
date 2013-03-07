@@ -259,6 +259,7 @@ protected:
 private:
   friend class database_factory;
   friend class table;
+  friend class query;
 
   session *db_;
   bool commiting_;

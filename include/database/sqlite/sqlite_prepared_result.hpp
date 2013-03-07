@@ -17,7 +17,7 @@ namespace oos {
 
 namespace sqlite {
 
-class sqlite_prepared_result : public result, public object_reader
+class sqlite_prepared_result : public result
 {
 private:
   sqlite_prepared_result(const sqlite_prepared_result&);

@@ -17,12 +17,22 @@
 
 #include "database/statement.hpp"
 
+#include "object/object_atomizable.hpp"
+
 using namespace std::placeholders;
 
 namespace oos {
 
 statement::~statement()
 {}
+
+int statement::bind(object_atomizable *o)
+{
+  reset();
+  host_index = 0;
+  o->serialize(*this);
+  return host_index;
+}
 
 std::string statement::str() const
 {

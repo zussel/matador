@@ -28,8 +28,6 @@ mysql_result::mysql_result(MYSQL *c)
   , fields_(0)
   , conn(c)
   , res(0)
-  , result_index(0)
-  , result_size(0)
 {
   res = mysql_store_result(c);
   if (res == 0 && mysql_errno(c) > 0) {
@@ -45,12 +43,6 @@ mysql_result::~mysql_result()
   if (res) {
     mysql_free_result(res);
   }
-}
-
-void mysql_result::get(object_atomizable *)
-{
-  result_index = 0;
-//  o->deserialize(*this);
 }
 
 const char* mysql_result::column(size_type c) const
@@ -86,6 +78,71 @@ mysql_result::size_type mysql_result::fields() const
 {
   return fields_;
 }
+
+void mysql_result::read(const char *id, char &x)
+{
+}
+
+void mysql_result::read(const char *id, short &x)
+{
+}
+
+void mysql_result::read(const char *id, int &x)
+{
+}
+
+void mysql_result::read(const char *id, long &x)
+{
+}
+
+void mysql_result::read(const char *id, unsigned char &x)
+{
+}
+
+void mysql_result::read(const char *id, unsigned short &x)
+{
+}
+
+void mysql_result::read(const char *id, unsigned int &x)
+{
+}
+
+void mysql_result::read(const char *id, unsigned long &x)
+{
+}
+
+void mysql_result::read(const char *id, bool &x)
+{
+}
+
+void mysql_result::read(const char *id, float &x)
+{
+}
+
+void mysql_result::read(const char *id, double &x)
+{
+}
+
+void mysql_result::read(const char *id, char *x, int s)
+{
+}
+
+void mysql_result::read(const char *id, varchar_base &x)
+{
+}
+
+void mysql_result::read(const char *id, std::string &x)
+{
+}
+
+void mysql_result::read(const char *id, object_base_ptr &x)
+{
+}
+
+void mysql_result::read(const char *id, object_container &x)
+{
+}
+
 
 }
 

@@ -35,10 +35,6 @@ sqlite_result::~sqlite_result()
   }
 }
 
-void sqlite_result::get(object_atomizable *)
-{
-}
-
 const char* sqlite_result::column(sqlite_result::size_type c) const
 {
   return rows_.at(pos_)->at<std::string>(c).c_str();
@@ -67,6 +63,70 @@ sqlite_result::size_type sqlite_result::fields() const
 void sqlite_result::push_back(row *r)
 {
   rows_.push_back(r);
+}
+
+void sqlite_result::read(const char *id, char &x)
+{
+}
+
+void sqlite_result::read(const char *id, short &x)
+{
+}
+
+void sqlite_result::read(const char *id, int &x)
+{
+}
+
+void sqlite_result::read(const char *id, long &x)
+{
+}
+
+void sqlite_result::read(const char *id, unsigned char &x)
+{
+}
+
+void sqlite_result::read(const char *id, unsigned short &x)
+{
+}
+
+void sqlite_result::read(const char *id, unsigned int &x)
+{
+}
+
+void sqlite_result::read(const char *id, unsigned long &x)
+{
+}
+
+void sqlite_result::read(const char *id, bool &x)
+{
+}
+
+void sqlite_result::read(const char *id, float &x)
+{
+}
+
+void sqlite_result::read(const char *id, double &x)
+{
+}
+
+void sqlite_result::read(const char *id, char *x, int s)
+{
+}
+
+void sqlite_result::read(const char *id, varchar_base &x)
+{
+}
+
+void sqlite_result::read(const char *id, std::string &x)
+{
+}
+
+void sqlite_result::read(const char *id, object_base_ptr &x)
+{
+}
+
+void sqlite_result::read(const char *id, object_container &x)
+{
 }
 
 }

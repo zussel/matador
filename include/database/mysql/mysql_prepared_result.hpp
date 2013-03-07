@@ -1,9 +1,6 @@
 #ifndef MYSQL_PREPARED_RESULT_HPP
 #define MYSQL_PREPARED_RESULT_HPP
 
-#include "object/object_atomizable.hpp"
-#include "object/object_atomizer.hpp"
-
 #include "database/result.hpp"
 
 #include "tools/varchar.hpp"
@@ -19,7 +16,7 @@ class object_base_ptr;
 
 namespace mysql {
 
-class mysql_prepared_result : public result, public object_reader
+class mysql_prepared_result : public result
 {
 private:
   mysql_prepared_result(const mysql_prepared_result&);
@@ -32,7 +29,6 @@ public:
   mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs);
   ~mysql_prepared_result();
   
-  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;

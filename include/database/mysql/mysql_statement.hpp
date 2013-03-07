@@ -21,8 +21,6 @@
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
-#include "object/object_atomizer.hpp"
-
 #include <mysql/mysql.h>
 
 #include <string>
@@ -44,21 +42,20 @@ namespace mysql {
 
 class mysql_database;
 
-class mysql_statement : public statement, public object_writer
+class mysql_statement : public statement
 {
 public:
   explicit mysql_statement(mysql_database &db);
   mysql_statement(mysql_database &db, const sql &s);
   virtual ~mysql_statement();
 
+  virtual void clear();
   virtual result* execute();
   virtual void prepare(const sql &s);
   virtual void reset();
-  virtual int bind(object_atomizable *o);
   
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
-
 
   virtual database& db();
   virtual const database& db() const;
@@ -97,15 +94,15 @@ private:
     bind.buffer_type = type;
     bind.is_null = 0;
   }
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
 
   static enum_field_types type_enum(sql::data_type_t type);
 
 private:
   mysql_database &db_;
   int result_size;
-  int result_index;
   int host_size;
-  int host_index;
   std::vector<bool> host_data;
   MYSQL_STMT *stmt;
   MYSQL_BIND *result_array;

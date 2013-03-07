@@ -1,4 +1,5 @@
 #include "database/sql.hpp"
+#include "database/token.hpp"
 
 namespace oos {
 
@@ -33,10 +34,19 @@ void sql::append(const char *id, data_type_t type, const std::string &val)
    * to token list and field vector
    * and insert it into field map
    */
-  field_ptr f(new field(id, type, host_field_vector_.size(), 1024));
+  field_ptr f(new field(id, type, host_field_vector_.size(), true));
   
   token_list_.push_back(new host_field_token(f, val));
   host_field_map_.insert(std::make_pair(id, f));
+  host_field_vector_.push_back(f);
+}
+
+void sql::append(const condition &c)
+{
+  field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
+  
+  token_list_.push_back(new condition_token(c));
+  host_field_map_.insert(std::make_pair(c.column(), f));
   host_field_vector_.push_back(f);
 }
 
@@ -151,13 +161,11 @@ unsigned int sql::type_size(data_type_t type)
     case type_double:
       return sizeof(double);
     case type_char_pointer:
-      return 64;
     case type_varchar:
-      return 64;
     case type_text:
       return 64;
     default:
-      throw std::logic_error("sql: unknown type");
+      throw std::logic_error("unknown type");
     }
 }
 

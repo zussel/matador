@@ -31,7 +31,7 @@
   #define OOS_API
 #endif
 
-#include <iterator>
+#include "object/object_atomizer.hpp"
 
 #ifdef WIN32
 #include <memory>
@@ -46,49 +46,8 @@ class statement;
 class object_atomizable;
 
 /// @cond OOS_DEV
-class OOS_API result_impl
-{
-public:
-  virtual ~result_impl();
 
-  virtual bool next() = 0;
-
-  virtual row* current() const = 0;
-};
-
-class result;
-
-class result_iterator : public std::iterator<std::input_iterator_tag, row>
-{
-public:
-  typedef result_iterator self;
-  typedef row value_type;
-  typedef value_type* pointer;
-  typedef value_type& reference;
-
-  result_iterator();
-  explicit result_iterator(result *res);
-  result_iterator(const result_iterator &x);
-  result_iterator& operator=(const result_iterator &x);
-  ~result_iterator();
-
-  self& operator++();
-
-  self operator++(int);
-
-  pointer operator->() const;
-
-  reference operator*() const;
-
-  bool operator==(const self &x) const;
-
-  bool operator!=(const self &x) const;
-
-private:
-  result *res_;
-};
-
-class result
+class result : public object_reader
 {
 private:
   result(const result&);
@@ -103,13 +62,22 @@ protected:
 public:
   virtual ~result();
   
-  virtual void get(object_atomizable *o) = 0;
+  template < class T >
+  void get(unsigned long i, T &val)
+  {
+    result_index = i;
+    read("", val);
+  }
+  void get(object_atomizable *o);
+  
   virtual const char* column(size_type c) const = 0;
   virtual bool fetch() = 0;
   virtual size_type affected_rows() const = 0;
   virtual size_type result_rows() const = 0;
   virtual size_type fields() const = 0;
 
+protected:
+  int result_index;
 };
 
 typedef std::tr1::shared_ptr<result> result_ptr;

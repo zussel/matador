@@ -56,7 +56,7 @@ sqlite_statement::sqlite_statement(sqlite_database &db)
 
 sqlite_statement::~sqlite_statement()
 {
-  finalize();
+  clear();
 }
 
 void sqlite_statement::prepare(const sql &s)
@@ -66,7 +66,7 @@ void sqlite_statement::prepare(const sql &s)
   str(s.prepare());
 
   // destroy statement
-  finalize();
+  clear();
   // prepare sqlite statement
   int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
   throw_error(ret, db_(), "sqlite3_prepare_v2", str());
@@ -74,28 +74,22 @@ void sqlite_statement::prepare(const sql &s)
 
 void sqlite_statement::reset()
 {
-  sqlite3_reset(stmt_);
-  sqlite3_clear_bindings(stmt_);
+  if (stmt_) {
+    sqlite3_reset(stmt_);
+    sqlite3_clear_bindings(stmt_);
+  }
 }
 
-int sqlite_statement::finalize()
+void sqlite_statement::clear()
 {
   if (!stmt_) {
-    return SQLITE_OK;
+    return;
   }
 //  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_(), "sqlite3_finalize");
   stmt_ = 0;
-  return ret;
-}
-
-int sqlite_statement::bind(object_atomizable *o)
-{
-  reset();
-  host_index = 0;
-  o->serialize(*this);
-  return host_index;
+  return;
 }
 
 /*

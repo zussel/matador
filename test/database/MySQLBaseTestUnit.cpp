@@ -23,6 +23,7 @@ MySQLBaseTestUnit::MySQLBaseTestUnit()
 {
   add_test("open_close", std::tr1::bind(&MySQLBaseTestUnit::test_open_close, this), "open and close database test");
   add_test("create_drop", std::tr1::bind(&MySQLBaseTestUnit::test_create_drop, this), "create and drop database test");
+  add_test("insert", std::tr1::bind(&MySQLBaseTestUnit::test_insert, this), "insert an item into the database");
 }
 
 MySQLBaseTestUnit::~MySQLBaseTestUnit()
@@ -66,6 +67,31 @@ void MySQLBaseTestUnit::test_create_drop()
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
   db.create();
+  
+//  db.drop();
+
+  db.close();
+
+  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
+
+  ostore.clear(true);
+}
+
+void MySQLBaseTestUnit::test_insert()
+{
+  oos::object_store ostore;
+  ostore.insert_prototype<Item>("item");
+
+  // create database and make object store known to the database
+  session db(ostore, "mysql://sascha:sascha@localhost/test");
+
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
+  
+  db.create();
+
+  object_ptr<Item> item = db.insert(new Item);
+
+//  db.drop();
 
   db.close();
 

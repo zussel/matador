@@ -35,20 +35,16 @@ namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement : public statement, public object_writer
+class sqlite_statement : public statement
 {
 public:
   sqlite_statement(sqlite_database &db);
   virtual ~sqlite_statement();
 
-//  virtual result* execute(const std::string &sql);
-
+  virtual void clear();
   virtual result* execute();
   virtual void prepare(const sql &s);
   virtual void reset();
-  virtual int bind(object_atomizable *o);
-
-  int finalize();
 
 protected:
   virtual void write(const char *id, char x);
@@ -71,11 +67,6 @@ protected:
 private:
   sqlite_database &db_;
   sqlite3_stmt *stmt_;
-  int result_size;
-  int result_index;
-  int host_size;
-  int host_index;
-  std::vector<bool> host_data;
 };
 
 }

@@ -367,6 +367,22 @@ public:
   prototype_iterator find_prototype(const char *type) const;
 
   /**
+   * @brief Finds prototype node by template type.
+   * @tparam Template type.
+   *
+   * Finds and returns prototype node iterator identified
+   * by the given template typeid. If the prototype couldn't
+   * be found prototype_iterator end is returned.
+   *
+   * @return Returns a prototype iterator.
+   */
+  template < class T >
+  prototype_iterator find_prototype() const
+  {
+    return find_prototype(typeid(T).name());
+  }
+
+  /**
    * Return the first prototype node.
    *
    * @return The first prototype node iterator.

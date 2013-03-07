@@ -10,6 +10,12 @@
 
 namespace oos {
 
+template < class T >
+struct type_traits;
+
+class token;
+class condition;
+
 class sql
 {
 public:
@@ -28,10 +34,10 @@ public:
     type_char_pointer,
     type_varchar,
     type_text,
-    type_blob,
-    type_unknown
+    type_blob
   };
 
+public:
   struct field
   {
     field(const char *n, data_type_t t, unsigned int i, bool h)
@@ -45,53 +51,10 @@ public:
 
   typedef std::shared_ptr<field> field_ptr;
 
-private:
   struct token {
     virtual ~token() {}
     
     virtual std::string get(bool) const = 0;
-  };
-  
-  struct string_token : public token {
-    string_token() {}
-    string_token(const std::string &s) : str(s) {}
-
-    virtual std::string get(bool) const {
-      return str;
-    }
-
-    std::string str;
-  };
-  
-  struct result_field_token : public token {
-    result_field_token(field_ptr f) : fld(f) {}
-
-    virtual std::string get(bool prepared) const {
-      if (prepared) {
-        return fld->name;
-      } else {
-        return fld->name;
-      }
-    }
-
-    field_ptr fld;
-  };
-
-  struct host_field_token : public string_token {
-    host_field_token(field_ptr f) : fld(f) {}
-    host_field_token(field_ptr f, const std::string &s)
-      : string_token(s), fld(f)
-    {}
-
-    virtual std::string get(bool prepared) const {
-      if (prepared) {
-        return std::string("?");
-      } else {
-        return str;
-      }
-    }
-
-    field_ptr fld;
   };
 
 public:
@@ -110,6 +73,7 @@ public:
   void append(const std::string &str);
   void append(const char *id, data_type_t type);
   void append(const char *id, data_type_t type, const std::string &val);
+  void append(const condition &c);
 
   std::string prepare() const;
   std::string direct() const;
@@ -129,6 +93,11 @@ public:
   size_type host_size() const;
 
   static unsigned int type_size(data_type_t type);
+  template < class T >
+  static unsigned int data_type()
+  {
+    return type_traits<T>::data_type();
+  }
 
 private:
   std::string generate(bool prepared) const;
@@ -141,6 +110,97 @@ private:
   
   token_list_t token_list_;
 };
+
+template <> struct type_traits<char>
+{
+  inline static sql::data_type_t data_type() { return sql::type_char; }
+  inline static unsigned long type_size() { return sizeof(char); }
+};
+
+template <> struct type_traits<short>
+{
+  inline static sql::data_type_t data_type() { return sql::type_short; }
+  inline static unsigned long type_size() { return sizeof(short); }
+};
+
+template <> struct type_traits<int>
+{
+  inline static sql::data_type_t data_type() { return sql::type_int; }
+  inline static unsigned long type_size() { return sizeof(int); }
+};
+
+template <> struct type_traits<long>
+{
+  inline static sql::data_type_t data_type() { return sql::type_long; }
+  inline static unsigned long type_size() { return sizeof(long); }
+};
+
+template <> struct type_traits<unsigned char>
+{
+  inline static sql::data_type_t data_type() { return sql::type_unsigned_char; }
+  inline static unsigned long type_size() { return sizeof(unsigned char); }
+};
+
+template <> struct type_traits<unsigned short>
+{
+  inline static sql::data_type_t data_type() { return sql::type_unsigned_short; }
+  inline static unsigned long type_size() { return sizeof(unsigned short); }
+};
+
+template <> struct type_traits<unsigned int>
+{
+  inline static sql::data_type_t data_type() { return sql::type_unsigned_int; }
+  inline static unsigned long type_size() { return sizeof(unsigned int); }
+};
+
+template <> struct type_traits<unsigned long>
+{
+  inline static sql::data_type_t data_type() { return sql::type_unsigned_long; }
+  inline static unsigned long type_size() { return sizeof(unsigned long); }
+};
+
+template <> struct type_traits<bool>
+{
+  inline static sql::data_type_t data_type() { return sql::type_bool; }
+  inline static unsigned long type_size() { return sizeof(bool); }
+};
+
+template <> struct type_traits<float>
+{
+  inline static sql::data_type_t data_type() { return sql::type_float; }
+  inline static unsigned long type_size() { return sizeof(float); }
+};
+
+template <> struct type_traits<double>
+{
+  inline static sql::data_type_t data_type() { return sql::type_double; }
+  inline static unsigned long type_size() { return sizeof(double); }
+};
+
+/*
+template <> struct type_traits<varchar_base>
+{
+  inline static sql::data_type_t data_type() { return sql::type_varchar; }
+};
+*/
+template <> struct type_traits<const char*>
+{
+  inline static sql::data_type_t data_type() { return sql::type_varchar; }
+  inline static unsigned long type_size() { return sizeof(const char*); }
+};
+
+template <> struct type_traits<std::string>
+{
+  inline static sql::data_type_t data_type() { return sql::type_text; }
+  inline static unsigned long type_size() { return 1024; }
+};
+
+/*
+template <> struct type_traits<object_base_ptr>
+{
+  inline static sql::data_type_t data_type() { return sql::type_long; }
+};
+*/
 
 }
 

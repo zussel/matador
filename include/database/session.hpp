@@ -173,6 +173,12 @@ public:
    */
   result* execute(const std::string &sql);
 
+  template < class T >
+  object_ptr<T> insert(T *o)
+  {
+    return object_ptr<T>();
+  }
+
   /**
    * Returns the object_store.
    */

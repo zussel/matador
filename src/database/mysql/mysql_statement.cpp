@@ -36,9 +36,7 @@ namespace mysql {
 mysql_statement::mysql_statement(mysql_database &db)
   : db_(db)
   , result_size(0)
-  , result_index(0)
   , host_size(0)
-  , host_index(0)
   , stmt(mysql_stmt_init(db()))
   , result_array(0)
   , host_array(0)
@@ -47,9 +45,7 @@ mysql_statement::mysql_statement(mysql_database &db)
 mysql_statement::mysql_statement(mysql_database &db, const sql &s)
   : db_(db)
   , result_size(0)
-  , result_index(0)
   , host_size(0)
-  , host_index(0)
   , stmt(mysql_stmt_init(db()))
   , result_array(0)
   , host_array(0)
@@ -58,7 +54,7 @@ mysql_statement::mysql_statement(mysql_database &db, const sql &s)
 }
 mysql_statement::~mysql_statement()
 {
-  reset();
+  clear();
   mysql_stmt_close(stmt);
 }
 
@@ -103,10 +99,15 @@ void mysql_statement::prepare(const sql &s)
 
 void mysql_statement::reset()
 {
+  mysql_stmt_reset(stmt);
+}
+
+void mysql_statement::clear()
+{
 //  std::cout << "reset mysql_statement\n";
   for (int i = 0; i < host_size; ++i) {
 //    std::cout << "\tfreeing host_array[" << i << "].buffer: " << host_array[i].buffer << "\n";
-    if (host_array[i].buffer && host_data[i]) {
+    if (host_array[i].buffer/* && host_data[i]*/) {
       delete [] static_cast<char*>(host_array[i].buffer);
     }
   }
@@ -152,13 +153,6 @@ result* mysql_statement::execute()
     exit(EXIT_FAILURE);
   }
   return new mysql_prepared_result(stmt, result_array, result_size);
-}
-
-int mysql_statement::bind(object_atomizable *o)
-{
-  host_index = 0;
-  o->serialize(*this);
-  return host_index;
 }
 
 void mysql_statement::write(const char */*id*/, char x)
@@ -238,28 +232,23 @@ void mysql_statement::write(const char */*id*/, double x)
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const char *, int)
+void mysql_statement::write(const char */*id*/, const char *x, int s)
 {
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s, host_index);
+  ++host_index;
 }
 
 void mysql_statement::write(const char */*id*/, const std::string &x)
 {
 //  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
-  host_array[host_index].buffer_type = MYSQL_TYPE_STRING;
-  host_array[host_index].is_null         = 0;
-  host_array[host_index].length         = 0;
-  host_array[host_index].buffer_length = x.size();
-  host_array[host_index++].buffer = const_cast<char*>(x.data());
+  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
+  ++host_index;
 }
 
 void mysql_statement::write(const char */*id*/, const varchar_base &x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
-  host_array[host_index].buffer_type = MYSQL_TYPE_STRING;
-  host_array[host_index].is_null         = 0;
-  host_array[host_index].length         = 0;
-  host_array[host_index].buffer_length = x.size();
-  host_array[host_index++].buffer = const_cast<char*>(x.c_str());
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x.c_str(), x.size(), host_index);
+  ++host_index;
 }
 
 void mysql_statement::write(const char */*id*/, const object_base_ptr &x)
@@ -330,6 +319,24 @@ database& mysql_statement::db()
 const database& mysql_statement::db() const
 {
   return db_;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index)
+{
+  if (bind.buffer == 0) {
+    // allocating memory
+//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
+    bind.buffer = new char[size];
+    bind.buffer_length = size;
+    host_data[index] = true;
+  }
+  strncpy(static_cast<char*>(bind.buffer), value, size);
+  bind.buffer_type = type;
+  bind.is_null = 0;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index)
+{
 }
 
 }

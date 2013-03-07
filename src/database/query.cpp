@@ -151,13 +151,36 @@ query& query::where(const std::string &clause)
   return *this;
 }
 
-query& query::and_(const std::string &clause)
+query& query::where(const condition &c)
 {
+  throw_invalid(QUERY_COND_WHERE, state);
+
+  sql_.append(std::string(" WHERE "));
+  sql_.append(c);
+
+  state = QUERY_COND_WHERE;
   return *this;
 }
 
-query& query::or_(const std::string &clause)
+query& query::and_(const condition &c)
 {
+  throw_invalid(QUERY_AND, state);
+
+  sql_.append(std::string(" AND "));
+  sql_.append(c);
+
+  state = QUERY_AND;
+  return *this;
+}
+
+query& query::or_(const condition &c)
+{
+  throw_invalid(QUERY_OR, state);
+
+  sql_.append(std::string(" OR "));
+  sql_.append(c);
+
+  state = QUERY_OR;
   return *this;
 }
 
@@ -211,7 +234,7 @@ query& query::column(const std::string &name, sql::data_type_t type)
 query& query::from(const std::string &table)
 {
   // check state (simple select)
-  sql_.append(" FROM " + table + " ");
+  sql_.append(" FROM " + table);
   return *this;
 }
 
@@ -247,63 +270,6 @@ query& query::reset()
   return *this;
 }
 
-void query::parse_clause(const std::string &clause)
-{
-  // set start state
-  parse_state_t state = SQL_BEGIN;
-  // statement to return
-  std::string stmt;
-  // found token
-  std::string host;
-  std::string value;
-  std::string::size_type len = clause.size();
-  char end = '\0';
-  for(std::string::size_type i = 0; i < len; ++i) {
-    char c = clause[i];
-    switch (state) {
-      case SQL_BEGIN:
-        if (c == ':') {
-          state = SQL_BEGIN_HOST;
-        } else if (c == '\'' || c == '"') {
-          state = SQL_STRING;
-          stmt += c;
-          end = c;
-        } else {
-          stmt += c;
-        }
-        break;
-      case SQL_BEGIN_HOST:
-        if (std::isalpha(c)) {
-          host = c;
-          state = SQL_HOST;
-        } else {
-          throw std::logic_error("first host character must be alpha");
-        }
-        break;
-      case SQL_HOST:
-        if (std::isalnum(c) || c == '_') {
-          host += c;
-        } else if (c == ' ' || c == ')') {
-          state = SQL_BEGIN;
-          stmt += '?';
-          stmt += c;
-          sql_.append(host.c_str(), sql::type_unknown, "");
-        } else {
-          throw std::logic_error("invalid character");
-        }
-        break;
-      case SQL_STRING:
-        if (c == end) {
-          state = SQL_BEGIN;
-        }
-        stmt += c;
-        break;
-      default:
-        break;
-    };
-  }
-}
-
 void query::throw_invalid(query::state_t next, query::state_t current) const
 {
   std::stringstream msg;
@@ -323,11 +289,23 @@ void query::throw_invalid(query::state_t next, query::state_t current) const
       }
       break;
     case query::QUERY_WHERE:
+    case query::QUERY_COND_WHERE:
       if (current != query::QUERY_SELECT &&
+          current != query::QUERY_COLUMN &&
           current != query::QUERY_SET &&
           current != query::QUERY_DELETE &&
           current != query::QUERY_OBJECT_SELECT &&
           current != query::QUERY_OBJECT_UPDATE)
+      {
+        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        throw std::logic_error(msg.str());
+      }
+      break;
+    case query::QUERY_AND:
+    case query::QUERY_OR:
+      if (current != query::QUERY_COND_WHERE &&
+          current != query::QUERY_OR &&
+          current != query::QUERY_AND)
       {
         msg << "invalid next state: [" << next << "] (current: " << current << ")";
         throw std::logic_error(msg.str());

@@ -14,7 +14,6 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int r
   , rows(mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
-  , result_index(0)
   , result_size(rs)
   , bind_(b)
 {
@@ -24,15 +23,9 @@ mysql_prepared_result::~mysql_prepared_result()
 {
 }
 
-void mysql_prepared_result::get(object_atomizable *o)
-{
-  result_index = 0;
-  o->deserialize(*this);
-}
-
 const char* mysql_prepared_result::column(size_type ) const
 {
-  return 0;
+  return "not implemented";
 }
 
 bool mysql_prepared_result::fetch()
