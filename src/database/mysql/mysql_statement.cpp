@@ -40,7 +40,9 @@ mysql_statement::mysql_statement(mysql_database &db)
   , stmt(mysql_stmt_init(db()))
   , result_array(0)
   , host_array(0)
-{}
+{
+  std::cout << "creating mysql statement " << this << "\n";
+}
 
 mysql_statement::mysql_statement(mysql_database &db, const sql &s)
   : db_(db)
@@ -50,10 +52,12 @@ mysql_statement::mysql_statement(mysql_database &db, const sql &s)
   , result_array(0)
   , host_array(0)
 {
+  std::cout << "creating mysql statement " << this << "\n";
   prepare(s);
 }
 mysql_statement::~mysql_statement()
 {
+  std::cout << "destroying mysql statement " << this << "\n";
   clear();
   mysql_stmt_close(stmt);
 }
@@ -126,6 +130,7 @@ void mysql_statement::clear()
 
 result* mysql_statement::execute()
 {
+  std::cout << "Executing prepared statement: " << str() << "\n";
   if (result_array) {
 //    std::cout << "\tresult_array: " << result_array << "\n";
     if (mysql_stmt_bind_result(stmt, result_array)) {

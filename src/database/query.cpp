@@ -30,13 +30,16 @@ query::~query()
 
 query& query::create(const prototype_node &node)
 {
-  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + node.type + std::string(" ("));
-  
-  object *o = node.producer->create();
+  std::unique_ptr<object> o(node.producer->create());
+  return create(node.type, o.get());
+}
+
+query& query::create(const std::string &name, object_atomizable *o)
+{
+  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
+
   query_create s(sql_, db_);
   o->serialize(s);
-  delete o;
-
   sql_.append(")");
 
   state = QUERY_CREATE;
@@ -45,7 +48,12 @@ query& query::create(const prototype_node &node)
 
 query& query::drop(const prototype_node &node)
 {
-  sql_.append(std::string("DROP TABLE ") + node.type);
+  return drop(node.type);
+}
+
+query& query::drop(const std::string &name)
+{
+  sql_.append(std::string("DROP TABLE ") + name);
 
   state = QUERY_DROP;
   return *this;
@@ -81,7 +89,7 @@ query& query::insert(object *o)
   return insert(o, o->proxy_->node->type);
 }
 
-query& query::insert(object *o, const std::string &type)
+query& query::insert(object_atomizable *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
@@ -111,10 +119,10 @@ query& query::update(object *o)
   if (!o->proxy_->node) {
     throw std::logic_error("query update: no object prototype information");
   }
-  return update(o, o->proxy_->node->type);
+  return update(o->proxy_->node->type, o);
 }
 
-query& query::update(object *o, const std::string &type)
+query& query::update(const std::string &type, object_atomizable *o)
 {
   throw_invalid(QUERY_OBJECT_UPDATE, state);
 
@@ -220,6 +228,18 @@ query& query::select()
   return *this;
 }
 
+query& query::select(object_atomizable *o)
+{
+  throw_invalid(QUERY_SELECT, state);
+  sql_.append("SELECT ");
+  
+  query_select s(sql_);
+  o->serialize(s);
+
+  state = QUERY_SELECT;
+  return *this;
+}
+
 query& query::column(const std::string &name, sql::data_type_t type)
 {
   throw_invalid(QUERY_COLUMN, state);
@@ -253,8 +273,6 @@ result* query::execute()
 
 statement* query::prepare()
 {
-  std::cout << "prepared statement: " << sql_.prepare() << "\n";
-
   statement *stmt = db_.create_statement();
   // TODO: fix call to prepare
   stmt->prepare(sql_);

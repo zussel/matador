@@ -87,7 +87,7 @@ void table::prepare()
   
   object *o = node_.producer->create();
   insert_ = q.insert(o, node_.type).prepare();
-  update_ = q.reset().update(o, node_.type).where("id=?").prepare();
+  update_ = q.reset().update(node_.type, o).where("id=?").prepare();
   delete_ = q.reset().remove(node_).where("id=?").prepare();
   select_ = q.reset().select(node_).prepare();
   delete o;
@@ -166,9 +166,9 @@ void table::insert(object *obj)
 
 void table::update(object *obj)
 {
-  update_->bind(obj);
+  int pos = update_->bind(obj);
   // TODO: provide bind() method
-//  update_->bind(-1, obj->id());
+  update_->bind(++pos, obj->id());
   result *res = update_->execute();
 
   delete res;
@@ -182,7 +182,7 @@ void table::remove(object *obj)
 void table::remove(long id)
 {
   // TODO: provide bind() method
-//  delete_->bind(0, id);
+  delete_->bind(0, id);
   result *res = delete_->execute();
 
   delete res;

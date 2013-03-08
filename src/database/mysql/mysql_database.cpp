@@ -98,7 +98,7 @@ void mysql_database::on_close()
 
 result* mysql_database::execute(const std::string &sqlstr)
 {
-  std::cout << "executing: " << sqlstr << "\n";
+  std::cout << "Executing statement: " << sqlstr << "\n";
   if (mysql_query(&mysql_, sqlstr.c_str())) {
     throw mysql_exception(&mysql_, "mysql_query", sqlstr);
   }

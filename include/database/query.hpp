@@ -15,6 +15,7 @@ class database;
 class object;
 class prototype_node;
 class condition;
+class object_atomizable;
 
 class query
 {
@@ -50,12 +51,14 @@ public:
   ~query();
 
   query& create(const prototype_node &node);
+  query& create(const std::string &name, object_atomizable *o);
   query& drop(const prototype_node &node);
+  query& drop(const std::string &name);
   query& select(const prototype_node &node);
   query& insert(object *o);
-  query& insert(object *o, const std::string &type);
+  query& insert(object_atomizable *o, const std::string &type);
   query& update(object *o);
-  query& update(object *o, const std::string &type);
+  query& update(const std::string &name, object_atomizable *o);
   query& remove(const prototype_node &node);
   query& where(const std::string &clause);
   query& where(const condition &c);
@@ -66,6 +69,7 @@ public:
   query& group_by(const std::string &field);
 
   query& select();
+  query& select(object_atomizable *o);
   query& column(const std::string &name, sql::data_type_t type);
   query& from(const std::string &table);
 
