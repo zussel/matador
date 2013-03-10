@@ -98,7 +98,7 @@ void mysql_prepared_result::read(const char *, bool &x)
 
 void mysql_prepared_result::read(const char *, float &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_DOUBLE, x);
+  get_column_value(bind_[result_index++], MYSQL_TYPE_FLOAT, x);
 }
 
 void mysql_prepared_result::read(const char *, double &x)
@@ -113,12 +113,12 @@ void mysql_prepared_result::read(const char *, char *x, int s)
 
 void mysql_prepared_result::read(const char *, std::string &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_DOUBLE, x);
+  get_column_value(bind_[result_index++], MYSQL_TYPE_STRING, x);
 }
 
 void mysql_prepared_result::read(const char *, varchar_base &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_DOUBLE, x);
+  get_column_value(bind_[result_index++], MYSQL_TYPE_VAR_STRING, x);
 }
 
 void mysql_prepared_result::read(const char *, object_base_ptr &x)

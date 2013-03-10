@@ -226,7 +226,7 @@ void mysql_statement::write(const char */*id*/, bool x)
 void mysql_statement::write(const char */*id*/, float x)
 {
 //  std::cout << "binding result [" << id << "] (" << x << ") of type double\n";
-  bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_FLOAT, x, host_index);
   ++host_index;
 }
 
@@ -300,7 +300,7 @@ enum_field_types mysql_statement::type_enum(sql::data_type_t type)
     case sql::type_bool:
       return MYSQL_TYPE_TINY;
     case sql::type_float:
-      return MYSQL_TYPE_DOUBLE;
+      return MYSQL_TYPE_FLOAT;
     case sql::type_double:
       return MYSQL_TYPE_DOUBLE;
     case sql::type_char_pointer:

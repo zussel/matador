@@ -59,6 +59,8 @@ void database_sequencer::create()
   query q(db_);
   result *res = q.create("oos_sequence", this).execute();
   
+  delete res;
+  
   res = q.reset().select(this).from("oos_sequence").where("name='object'").execute();
 
   if (res->fetch()) {

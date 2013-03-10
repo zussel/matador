@@ -62,6 +62,10 @@ table::table(database &db, const prototype_node &node)
   , db_(db)
   , node_(node)
   , column_(0)
+  , insert_(0)
+  , update_(0)
+  , delete_(0)
+  , select_(0)
   , object_(0)
   , ostore_(0)
   , prepared_(false)
@@ -70,10 +74,12 @@ table::table(database &db, const prototype_node &node)
 
 table::~table()
 {
-  delete insert_;
-  delete update_;
-  delete delete_;
-  delete select_;
+  if (insert_) {
+    delete insert_;
+    delete update_;
+    delete delete_;
+    delete select_;
+  }
 }
 
 std::string table::name() const

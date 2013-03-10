@@ -157,7 +157,7 @@ const char* mysql_database::type_string(sql::data_type_t type) const
     case sql::type_bool:
       return "INTEGER";
     case sql::type_float:
-      return "DOUBLE";
+      return "FLOAT";
     case sql::type_double:
       return "DOUBLE";
     case sql::type_char_pointer:

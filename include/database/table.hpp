@@ -98,13 +98,6 @@ protected:
   virtual database& db() { return db_; }
   virtual const database& db() const { return db_; }
 
-/*
-  virtual statement* select() = 0;
-  virtual statement* insert() = 0;
-  virtual statement* update() = 0;
-  virtual statement* remove() = 0;
-*/
-
 private:
   friend class relation_filler;
 

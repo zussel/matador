@@ -82,6 +82,7 @@ void MySQLBaseTestUnit::test_insert()
 {
   oos::object_store ostore;
   ostore.insert_prototype<Item>("item");
+//  ostore.insert_prototype<book>("book");
 
   // create database and make object store known to the database
   session db(ostore, "mysql://sascha:sascha@localhost/test");
@@ -90,7 +91,8 @@ void MySQLBaseTestUnit::test_insert()
   
   db.create();
 
-  object_ptr<Item> item = db.insert(new Item);
+  object_ptr<Item> item = db.insert(new Item());
+//  object_ptr<book> item = db.insert(new book("abc", "1234", "a. j."));
 
 //  db.drop();
 
@@ -105,6 +107,7 @@ void MySQLBaseTestUnit::test_drop()
 {
   oos::object_store ostore;
   ostore.insert_prototype<Item>("item");
+//  ostore.insert_prototype<book>("book");
 
   // create database and make object store known to the database
   session db(ostore, "mysql://sascha:sascha@localhost/test");
