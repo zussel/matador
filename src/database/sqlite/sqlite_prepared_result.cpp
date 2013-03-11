@@ -40,7 +40,7 @@ bool sqlite_prepared_result::fetch()
 {
   if (!first_) {
     // get next row
-    ret_ = sqlite3_step(stmt_);    
+    ret_ = sqlite3_step(stmt_);
   } else {
     first_ = false;
   }

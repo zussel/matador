@@ -18,6 +18,7 @@
 #include "database/sqlite/sqlite_statement.hpp"
 #include "database/sqlite/sqlite_database.hpp"
 #include "database/sqlite/sqlite_exception.hpp"
+#include "database/sqlite/sqlite_prepared_result.hpp"
 
 #include "database/row.hpp"
 
@@ -57,6 +58,14 @@ sqlite_statement::sqlite_statement(sqlite_database &db)
 sqlite_statement::~sqlite_statement()
 {
   clear();
+}
+
+result* sqlite_statement::execute()
+{
+  // get next row
+  int ret = sqlite3_step(stmt_);
+  
+  return new sqlite_prepared_result(stmt_, ret);
 }
 
 void sqlite_statement::prepare(const sql &s)
