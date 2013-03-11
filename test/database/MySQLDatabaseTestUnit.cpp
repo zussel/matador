@@ -19,9 +19,10 @@ using namespace std;
 MySQLDatabaseTestUnit::MySQLDatabaseTestUnit()
   : unit_test("database test unit")
 {
-  add_test("open", std::tr1::bind(&MySQLDatabaseTestUnit::open, this), "open database test");
-  add_test("create", std::tr1::bind(&MySQLDatabaseTestUnit::test_create, this), "create database test");
-  add_test("drop", std::tr1::bind(&MySQLDatabaseTestUnit::test_drop, this), "drop database test");
+  add_test("open_close", std::tr1::bind(&MySQLDatabaseTestUnit::test_open_close, this), "open database test");
+  add_test("create_drop", std::tr1::bind(&MySQLDatabaseTestUnit::test_create_drop, this), "create drop database test");
+  add_test("reopen", std::tr1::bind(&MySQLDatabaseTestUnit::test_reopen, this), "reopen database test");
+//  add_test("drop", std::tr1::bind(&MySQLDatabaseTestUnit::test_drop, this), "drop database test");
   add_test("simple", std::tr1::bind(&MySQLDatabaseTestUnit::simple, this), "simple database test");
   add_test("complex", std::tr1::bind(&MySQLDatabaseTestUnit::with_sub, this), "object with sub object database test");
   add_test("list", std::tr1::bind(&MySQLDatabaseTestUnit::with_list, this), "object with object list database test");
@@ -52,23 +53,23 @@ MySQLDatabaseTestUnit::finalize()
 }
 
 void
-MySQLDatabaseTestUnit::open()
+MySQLDatabaseTestUnit::test_open_close()
 {
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
-//  db.close();
+  db.close();
 
-//  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
 }
 
 void
-MySQLDatabaseTestUnit::test_create()
+MySQLDatabaseTestUnit::test_create_drop()
 {
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
@@ -81,11 +82,29 @@ MySQLDatabaseTestUnit::test_create()
   UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
 }
 
+void MySQLDatabaseTestUnit::test_reopen()
+{
+  // create database and make object store known to the database
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
+
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
+  
+  db.close();
+
+  db.open();
+  
+  UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
+
+  db.close();
+
+  UNIT_ASSERT_FALSE(db.is_open(), "couldn't close database database");
+}
+
 void
 MySQLDatabaseTestUnit::test_drop()
 {
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   UNIT_ASSERT_TRUE(db.is_open(), "couldn't open database database");
   
@@ -100,7 +119,7 @@ void
 MySQLDatabaseTestUnit::simple()
 {
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   // load data
   db.create();
@@ -179,6 +198,7 @@ MySQLDatabaseTestUnit::simple()
     UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
     tr.rollback();
   }
+  db.drop();
   // close db
   db.close();
 }
@@ -187,7 +207,7 @@ void
 MySQLDatabaseTestUnit::with_sub()
 {
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   // load data
   db.create();
@@ -259,6 +279,7 @@ MySQLDatabaseTestUnit::with_sub()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+  db.drop();
   // close db
   db.close();
 }
@@ -270,7 +291,7 @@ MySQLDatabaseTestUnit::with_list()
   typedef ItemPtrList::value_type item_ptr;
 
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   // load data
   db.create();
@@ -350,6 +371,7 @@ MySQLDatabaseTestUnit::with_list()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+  db.drop();
   // close db
   db.close();
 }
@@ -397,7 +419,7 @@ MySQLDatabaseTestUnit::reload()
   typedef object_view<object_item_t> oview_t;
 
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   try {
     // load data
@@ -470,6 +492,7 @@ MySQLDatabaseTestUnit::reload()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+  db.drop();
   // close db
   db.close();
 }
@@ -481,7 +504,7 @@ MySQLDatabaseTestUnit::reload_container()
   typedef object_ptr<track> track_ptr;
   
   // create database and make object store known to the database
-  session db(ostore_, "mysql://sascha:sascha@localhost");
+  session db(ostore_, "mysql://sascha:sascha@localhost/test");
 
   // load data
   db.create();
@@ -511,7 +534,7 @@ MySQLDatabaseTestUnit::reload_container()
       UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
 
       alb1->add(trk);
-//      cout << "added track: " << trk->title() << " (index: " << trk->index() << ", album: " << trk->alb()->id() << ")\n";
+//      cout << "\nadded track: " << trk->title() << " (index: " << trk->index() << ", album: " << trk->alb()->id() << ")";
     }
 
     alb1->insert(alb1->begin() + 2, ostore_.insert(new track("Track 6")));
@@ -585,6 +608,7 @@ MySQLDatabaseTestUnit::reload_container()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+  db.drop();
   // close db
   db.close();
 }

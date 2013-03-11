@@ -655,9 +655,10 @@ private:
   int index_;
 
 public:
-  track() {}
+  track() : index_(0) {}
   track(const std::string &title)
     : title_(title)
+    , index_(0)
   {}
   
   virtual ~track() {}

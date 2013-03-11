@@ -53,7 +53,7 @@ void database::open(const std::string &connection)
     prototype_iterator last = db_->ostore().end();
     while (first != last) {
       if (!first->abstract) {
-        std::cout << "adding table [" << first->type << "]\n";
+//        std::cout << "adding table [" << first->type << "]\n";
         table_map_.insert(std::make_pair(first->type, table_ptr(new table(*this, *first))));
 //        table_map_.insert(std::make_pair(first->type, table_ptr(create_table(*first))));
       }

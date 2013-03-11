@@ -152,6 +152,14 @@ public:
 	long id() const;
 
   /**
+   * Sets the object id. If a proxy
+   * is set an exception is thrown.
+   * 
+   * @param i The new object id
+   */
+  void id(long i);
+
+  /**
    * Returns the object
    * 
    * @return The object.

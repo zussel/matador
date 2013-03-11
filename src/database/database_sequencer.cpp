@@ -29,6 +29,7 @@ namespace oos {
 database_sequencer::database_sequencer(database &db)
   : db_(db)
   , backup_(0)
+  , sequence_(0)
   , name_("object")
   , update_(0)
 {
@@ -45,13 +46,42 @@ database_sequencer::~database_sequencer()
 void database_sequencer::deserialize(object_reader &r)
 {
   r.read("name", name_);
-  r.read("sequence", backup_);
+  r.read("number", sequence_);
 }
 
 void database_sequencer::serialize(object_writer &w) const
 {
   w.write("name", name_);
-  w.write("sequence", backup_);
+  w.write("number", sequence_);
+}
+
+long database_sequencer::init()
+{
+  return sequence_;
+}
+
+long database_sequencer::reset(long id)
+{
+  sequence_ = id;
+  return sequence_;
+}
+
+long database_sequencer::next()
+{
+  return ++sequence_;
+}
+
+long database_sequencer::current() const
+{
+  return sequence_;
+}
+
+long database_sequencer::update(long id)
+{
+  if (id > sequence_) {
+    sequence_ = id;
+  }
+  return sequence_;
 }
 
 void database_sequencer::create()
@@ -65,7 +95,7 @@ void database_sequencer::create()
 
   if (res->fetch()) {
     // get sequence number
-    convert(res->column(1), backup_);
+    convert(res->column(1), sequence_);
   } else {
     // TODO: check result
     result *res2 = q.reset().insert(this, "oos_sequence").execute();

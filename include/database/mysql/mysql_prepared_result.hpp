@@ -3,8 +3,6 @@
 
 #include "database/result.hpp"
 
-#include "tools/varchar.hpp"
-
 #include <mysql/mysql.h>
 
 #include <vector>
@@ -13,6 +11,7 @@
 namespace oos {
 
 class object_base_ptr;
+class varchar_base;
 
 namespace mysql {
 
@@ -64,6 +63,7 @@ private:
 
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, char *x, int s);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, std::string &value);
+  void get_column_value(MYSQL_BIND &bind, enum_field_types type, varchar_base &value);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, object_base_ptr &value);
 
 private:
@@ -73,7 +73,6 @@ private:
   MYSQL_ROW row;
   MYSQL_RES *res;
   MYSQL_STMT *stmt;
-  int result_index;
   int result_size;
   MYSQL_BIND *bind_;
 };

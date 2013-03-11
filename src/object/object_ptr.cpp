@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <stdexcept>
 
 using namespace std;
 
@@ -170,6 +171,15 @@ long
 object_base_ptr::id() const
 {
   return (proxy_ ? proxy_->id : id_);
+}
+
+void object_base_ptr::id(long i)
+{
+  if (proxy_) {
+    throw std::logic_error("proxy already set");
+  } else {
+    id_ = i;
+  }
 }
 
 object*

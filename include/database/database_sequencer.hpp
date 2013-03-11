@@ -44,7 +44,7 @@ class statement;
 
 /// @cond OOS_DEV
 
-class database_sequencer : public default_sequencer, public object_atomizable
+class database_sequencer : public sequencer_impl, public object_atomizable
 {
 public:
   database_sequencer(database &db);
@@ -53,6 +53,12 @@ public:
 public:
   virtual void deserialize(object_reader &r);
   virtual void serialize(object_writer &w) const;
+
+  virtual long init();
+  virtual long reset(long id);
+  virtual long next();
+  virtual long current() const;
+  virtual long update(long id);
 
   virtual void create();
   virtual void load();
@@ -69,6 +75,7 @@ protected:
 private:
   database &db_;
   long backup_;
+  long sequence_;
   std::string name_;
   statement *update_;
 };

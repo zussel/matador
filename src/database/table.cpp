@@ -2,6 +2,7 @@
 #include "database/database.hpp"
 #include "database/result.hpp"
 #include "database/query.hpp"
+#include "database/condition.hpp"
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -93,10 +94,12 @@ void table::prepare()
   
   object *o = node_.producer->create();
   insert_ = q.insert(o, node_.type).prepare();
-  update_ = q.reset().update(node_.type, o).where("id=?").prepare();
-  delete_ = q.reset().remove(node_).where("id=?").prepare();
+  update_ = q.reset().update(node_.type, o).where(cond("id").equal(0)).prepare();
+  delete_ = q.reset().remove(node_).where(cond("id").equal(0)).prepare();
   select_ = q.reset().select(node_).prepare();
   delete o;
+  
+  prepared_ = true;
 }
 
 void table::create()
@@ -173,8 +176,7 @@ void table::insert(object *obj)
 void table::update(object *obj)
 {
   int pos = update_->bind(obj);
-  // TODO: provide bind() method
-  update_->bind(++pos, obj->id());
+  update_->bind(pos, obj->id());
   result *res = update_->execute();
 
   delete res;
@@ -187,7 +189,6 @@ void table::remove(object *obj)
 
 void table::remove(long id)
 {
-  // TODO: provide bind() method
   delete_->bind(0, id);
   result *res = delete_->execute();
 
@@ -216,13 +217,13 @@ const prototype_node& table::node() const
 void table::read_value(const char *, object_base_ptr &x)
 {
   long oid = x.id();
-//    std::cout << "DEBUG: reading field [" << id << "] (column: " << column_ << ")\n";
+//  std::cout << "DEBUG: reading field [" << id << "] (column: " << column_ << ")\n";
   
   if (oid == 0) {
     return;
   }
   
-//    std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "]\n";
+//  std::cout << "DEBUG: reading field [" << id << "] of type [" << x.type() << "] (oid: " << oid << ")\n";
   object_proxy *oproxy = ostore_->find_proxy(oid);
 
   if (!oproxy) {
@@ -231,7 +232,7 @@ void table::read_value(const char *, object_base_ptr &x)
 
   prototype_iterator node = ostore_->find_prototype(x.type());
   
-//    std::cout << "DEBUG: found prototype node [" << node->type << "]\n";
+//  std::cout << "DEBUG: found prototype node [" << node->type << "]\n";
 
   /*
    * add the child object to the object proxy
@@ -240,9 +241,9 @@ void table::read_value(const char *, object_base_ptr &x)
   database::table_map_t::iterator j = db().table_map_.find(node->type);
   prototype_node::field_prototype_node_map_t::const_iterator i = node_.relations.find(node->type);
   if (i != node_.relations.end()) {
-//      std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
+//    std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
     j->second->relation_data[i->second.second][oid].push_back(object_);
-//      std::cout << "DEBUG: store relation data in node [" << i->second.first->type << "]->[" << i->second.second << "][" << oid << "].push_back[" << *object_ << "]\n";
+//    std::cout << "DEBUG: store relation data in node [" << i->second.first->type << "]->[" << i->second.second << "][" << oid << "].push_back[" << *object_ << "]\n";
   }
   
   x.reset(oproxy->obj);
@@ -256,14 +257,14 @@ void table::read_value(const char *id, object_container &x)
    */
   prototype_iterator p = ostore_->find_prototype(x.classname());
   if (p != ostore_->end()) {
-//      std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_.type << ":" << id << "]\n";
+//    std::cout << "DEBUG: found container of type [" << p->type << "(" << x.classname() << ")] for prototype:field [" << node_.type << ":" << id << "]\n";
     if (db().is_loaded(p->type)) {
-//        std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
+//      std::cout << "DEBUG: " << x.classname() << " loaded; fill in field [" << id << "] of container [" << object_->id() << "]\n";
       database::relation_data_t::iterator i = relation_data.find(id);
       if (i != relation_data.end()) {
         database::object_map_t::iterator j = i->second.find(object_->id());
         if (j != i->second.end()) {
-//            std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
+//          std::cout << "DEBUG: found item list [" << x.classname() << "] with [" << j->second.size() << "] elements\n";
           while (!j->second.empty()) {
             x.append_proxy(j->second.front()->proxy_);
             j->second.pop_front();
@@ -271,7 +272,7 @@ void table::read_value(const char *id, object_container &x)
         }
       }
     } else {
-//        std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled after of [" << x.classname() << "] load\n";
+//      std::cout << "DEBUG: " << x.classname() << " not loaded; container will be filled after of [" << x.classname() << "] load\n";
     }
   }
 }

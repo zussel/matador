@@ -50,14 +50,11 @@ mysql_database::mysql_database(session *db)
   : database(db, new database_sequencer(*this))
   , is_open_(false)
 {
-  mysql_init(&mysql_);
 }
 
 mysql_database::~mysql_database()
 {
   close();
-  // tell mysql to close the library
-  mysql_library_end();
 }
 
 
@@ -75,6 +72,7 @@ void mysql_database::on_open(const std::string &connection)
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   std::string db = con.substr(pos + 1);
+  mysql_init(&mysql_);
   if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0) == NULL) {
     printf("Connection Error %u: %s\n", mysql_errno(&mysql_), mysql_error(&mysql_));
     exit(1);
@@ -89,8 +87,9 @@ bool mysql_database::is_open() const
 
 void mysql_database::on_close()
 {
-  std::cout << "closing database\n";
+//  std::cout << "closing database\n";
   mysql_close(&mysql_);
+  // tell mysql to close the library
   mysql_library_end();
 
   is_open_ = false;
@@ -98,7 +97,7 @@ void mysql_database::on_close()
 
 result* mysql_database::execute(const std::string &sqlstr)
 {
-  std::cout << "Executing statement: " << sqlstr << "\n";
+//  std::cout << "Executing statement: " << sqlstr << "\n";
   if (mysql_query(&mysql_, sqlstr.c_str())) {
     throw mysql_exception(&mysql_, "mysql_query", sqlstr);
   }
@@ -122,17 +121,23 @@ MYSQL* mysql_database::operator()()
 
 void mysql_database::on_begin()
 {
-  execute("BEGIN TRANSACTION;");
+  result *res = execute("START TRANSACTION;");
+  // TODO: check result
+  delete res;
 }
 
 void mysql_database::on_commit()
 {
-  execute("COMMIT TRANSACTION;");
+  result *res = execute("COMMIT;");
+  // TODO: check result
+  delete res;
 }
 
 void mysql_database::on_rollback()
 {
-  execute("ROLLBACK TRANSACTION;");
+  result *res = execute("ROLLBACK;");
+  // TODO: check result
+  delete res;
 }
 
 const char* mysql_database::type_string(sql::data_type_t type) const
@@ -189,7 +194,6 @@ extern "C"
 
   OOS_MYSQL_API void destroy_database(oos::database *db)
   {
-    printf("deleting database\n");
     delete db;
   }
 }

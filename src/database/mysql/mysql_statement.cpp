@@ -20,6 +20,8 @@
 #include "database/mysql/mysql_exception.hpp"
 #include "database/mysql/mysql_prepared_result.hpp"
 
+#include "object/object_ptr.hpp"
+
 #include "tools/varchar.hpp"
 
 #include <stdexcept>
@@ -41,7 +43,7 @@ mysql_statement::mysql_statement(mysql_database &db)
   , result_array(0)
   , host_array(0)
 {
-  std::cout << "creating mysql statement " << this << "\n";
+//  std::cout << "creating mysql statement " << this << "\n";
 }
 
 mysql_statement::mysql_statement(mysql_database &db, const sql &s)
@@ -52,12 +54,12 @@ mysql_statement::mysql_statement(mysql_database &db, const sql &s)
   , result_array(0)
   , host_array(0)
 {
-  std::cout << "creating mysql statement " << this << "\n";
+//  std::cout << "creating mysql statement " << this << "\n";
   prepare(s);
 }
 mysql_statement::~mysql_statement()
 {
-  std::cout << "destroying mysql statement " << this << "\n";
+//  std::cout << "destroying mysql statement " << this << "\n";
   clear();
   mysql_stmt_close(stmt);
 }
@@ -130,7 +132,7 @@ void mysql_statement::clear()
 
 result* mysql_statement::execute()
 {
-  std::cout << "Executing prepared statement: " << str() << "\n";
+//  std::cout << "Executing prepared statement: " << str() << "\n";
   if (result_array) {
 //    std::cout << "\tresult_array: " << result_array << "\n";
     if (mysql_stmt_bind_result(stmt, result_array)) {
@@ -258,6 +260,8 @@ void mysql_statement::write(const char */*id*/, const varchar_base &x)
 
 void mysql_statement::write(const char */*id*/, const object_base_ptr &x)
 {
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x.id(), host_index);
+  ++host_index;
 }
 
 void mysql_statement::write(const char */*id*/, const object_container &x)

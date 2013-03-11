@@ -178,9 +178,15 @@ public:
   template < class T >
   object_ptr<T> insert(T *o)
   {
-    object_ptr<T> optr = ostore_.insert(o);
-    impl_->insert(o);
-    return optr;
+    transaction tr(*this);
+    try {
+      tr.begin();
+      object_ptr<T> optr = ostore_.insert(o);
+      tr.commit();
+      return optr;
+    } catch (std::exception &ex) {
+      return object_ptr<T>();
+    }
   }
 
   /**

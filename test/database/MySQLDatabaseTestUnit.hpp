@@ -14,9 +14,10 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  void open();
-  void test_create();
+  void test_open_close();
+  void test_create_drop();
   void test_drop();
+  void test_reopen();
   void simple();
   void with_sub();
   void with_list();

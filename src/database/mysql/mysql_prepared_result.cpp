@@ -1,6 +1,9 @@
 #include "database/mysql/mysql_prepared_result.hpp"
 
 #include "object/object_atomizable.hpp"
+#include "object/object_ptr.hpp"
+
+#include "tools/varchar.hpp"
 
 #include <ostream>
 #include <cstring>
@@ -121,7 +124,7 @@ void mysql_prepared_result::read(const char *, varchar_base &x)
   get_column_value(bind_[result_index++], MYSQL_TYPE_VAR_STRING, x);
 }
 
-void mysql_prepared_result::read(const char *, object_base_ptr &x)
+void mysql_prepared_result::read(const char *id, object_base_ptr &x)
 {
   get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
 }
@@ -139,8 +142,15 @@ void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types 
   value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
 }
 
+void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , varchar_base &value)
+{
+  value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
+}
+
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , object_base_ptr &value)
 {
+  long id = *static_cast<long*>(bind.buffer);
+  value.id(id);
 //  value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
 }
 
