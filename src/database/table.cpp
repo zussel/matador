@@ -91,14 +91,14 @@ std::string table::name() const
 void table::prepare()
 {
   query q(db_);
-  
+
   object *o = node_.producer->create();
   insert_ = q.insert(o, node_.type).prepare();
   update_ = q.reset().update(node_.type, o).where(cond("id").equal(0)).prepare();
   delete_ = q.reset().remove(node_).where(cond("id").equal(0)).prepare();
   select_ = q.reset().select(node_).prepare();
   delete o;
-  
+
   prepared_ = true;
 }
 
@@ -198,7 +198,7 @@ void table::remove(long id)
 void table::drop()
 {
   query q(db_);
-  
+
   result *res = q.drop(node_).execute();
   
   delete res;

@@ -18,6 +18,8 @@
 #include "database/sqlite/sqlite_result.hpp"
 #include "database/row.hpp"
 
+#include "tools/convert.hpp"
+
 namespace oos {
 
 namespace sqlite {
@@ -77,8 +79,12 @@ void sqlite_result::read(const char *id, int &x)
 {
 }
 
-void sqlite_result::read(const char *id, long &x)
+void sqlite_result::read(const char *, long &x)
 {
+  std::string val = rows_.at(pos_)->at<std::string>(result_index);
+  convert(val, x);
+  std::cout << "converted string [" << val << "] to long [" << x << "]\n";
+//  x = rows_.at(pos_)->at<long>(result_index);
 }
 
 void sqlite_result::read(const char *id, unsigned char &x)

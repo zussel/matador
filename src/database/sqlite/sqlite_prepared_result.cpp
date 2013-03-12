@@ -16,19 +16,12 @@ sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
   , rows(0)
   , fields_(0)
   , stmt_(stmt)
-  , result_index(0)
   , result_size(0)
 {
 }
 
 sqlite_prepared_result::~sqlite_prepared_result()
 {
-}
-
-void sqlite_prepared_result::get(object_atomizable *o)
-{
-  result_index = 0;
-  o->deserialize(*this);
 }
 
 const char* sqlite_prepared_result::column(size_type ) const
@@ -137,13 +130,19 @@ void sqlite_prepared_result::read(const char *, varchar_base &x)
 void sqlite_prepared_result::read(const char *, char *x, int s)
 {
   int size = sqlite3_column_bytes(stmt_, result_index);
-//  x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+  if (size < s) {
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), size);
+    x[size] = '\0';
+  } else {
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), s - 1);
+    x[s] = '\0';
+  }
   ++result_index;
 }
 
 void sqlite_prepared_result::read(const char *, object_base_ptr &x)
 {
-  int id = (long)sqlite3_column_int(stmt_, result_index++);
+  x.id((long)sqlite3_column_int(stmt_, result_index++));
 }
 
 void sqlite_prepared_result::read(const char *, object_container &)

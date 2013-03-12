@@ -196,13 +196,13 @@ void sqlite_statement::write(const char*, const varchar_base &x)
   throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::write(const char *id, const object_base_ptr &x)
+void sqlite_statement::write(const char *, const object_base_ptr &x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x.id());
   throw_error(ret, db_(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char *id, const object_container &x)
+void sqlite_statement::write(const char *, const object_container &)
 {}
 
 /*

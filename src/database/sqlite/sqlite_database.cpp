@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <sqlite3.h>
 #include <iostream>
+#include <sstream>
 
 #ifdef WIN32
 #include <functional>
@@ -44,6 +45,16 @@ namespace oos {
   
 namespace sqlite {
   
+void throw_error(int ec, sqlite3 *db, const std::string &source)
+{
+  if (ec == SQLITE_OK) {
+    return;
+  }
+  std::stringstream msg;
+  msg << source << ": " << sqlite3_errmsg(db);
+  throw sqlite_exception(msg.str()); 
+}
+
 sqlite_database::sqlite_database(session *db)
   : database(db, new database_sequencer(*this))
   , sqlite_db_(0)
@@ -71,16 +82,17 @@ bool sqlite_database::is_open() const
 
 void sqlite_database::on_close()
 {
-  sqlite3_close(sqlite_db_);
+  int ret = sqlite3_close(sqlite_db_);
+  
+  throw_error(ret, sqlite_db_, "sqlite_close");
 
   sqlite_db_ = 0;
 }
 
 result* sqlite_database::execute(const std::string &sql)
 {
-  std::cout << "executing sql [" << sql << "]\n";
   std::unique_ptr<sqlite_result> res(new sqlite_result);
-  char *errmsg;
+  char *errmsg = 0;
   int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
     std::string error(errmsg);
@@ -102,17 +114,20 @@ sqlite3* sqlite_database::operator()()
 
 void sqlite_database::on_begin()
 {
-  execute("BEGIN TRANSACTION;");
+  result *res = execute("BEGIN TRANSACTION;");
+  delete res;
 }
 
 void sqlite_database::on_commit()
 {
-  execute("COMMIT TRANSACTION;");
+  result *res = execute("COMMIT TRANSACTION;");
+  delete res;
 }
 
 void sqlite_database::on_rollback()
 {
-  execute("ROLLBACK TRANSACTION;");
+  result *res = execute("ROLLBACK TRANSACTION;");
+  delete res;
 }
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
@@ -161,10 +176,19 @@ const char* sqlite_database::type_string(sql::data_type_t type) const
       return "DOUBLE";
     case sql::type_double:
       return "DOUBLE";
+    case sql::type_char_pointer:
+      return "VARCHAR";
+    case sql::type_varchar:
+      return "VARCHAR";
     case sql::type_text:
-      return "VARCHAR(64)";
+      return "TEXT";
     default:
-      throw std::logic_error("unknown type");
+      {
+        std::stringstream msg;
+        msg << "mysql database: unknown type xxx [" << type << "]";
+        throw std::logic_error(msg.str());
+        //throw std::logic_error("mysql database: unknown type");
+      }
   }
 }
 

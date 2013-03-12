@@ -63,7 +63,11 @@ public:
   virtual ~Item() {}
 
 private:
-  void init() { strcpy(cstr_, "Hallo"); cstr_[5] = '\0'; }
+  void init() {
+    memset(cstr_, 0, CSTR_LEN);
+    strcpy(cstr_, "Hallo");
+    cstr_[5] = '\0';
+  }
 
 public:
   virtual void deserialize(oos::object_reader &deserializer)

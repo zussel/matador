@@ -38,9 +38,6 @@ database_sequencer::database_sequencer(database &db)
 database_sequencer::~database_sequencer()
 {
   destroy();
-  if (update_) {
-    delete update_;
-  }
 }
 
 void database_sequencer::deserialize(object_reader &r)
@@ -95,7 +92,8 @@ void database_sequencer::create()
 
   if (res->fetch()) {
     // get sequence number
-    convert(res->column(1), sequence_);
+    res->get(1, sequence_);
+//    convert(res->column(1), sequence_);
   } else {
     // TODO: check result
     result *res2 = q.reset().insert(this, "oos_sequence").execute();
@@ -140,6 +138,10 @@ void database_sequencer::drop()
 
 void database_sequencer::destroy()
 {
+  if (update_) {
+    delete update_;
+    update_ = 0;
+  }
 }
 
 

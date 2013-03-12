@@ -18,6 +18,8 @@
 #include "database/mysql/mysql_result.hpp"
 #include "database/row.hpp"
 
+#include "tools/convert.hpp"
+
 namespace oos {
 
 namespace mysql {
@@ -91,8 +93,13 @@ void mysql_result::read(const char *id, int &x)
 {
 }
 
-void mysql_result::read(const char *id, long &x)
+void mysql_result::read(const char *, long &x)
 {
+  if (!row) {
+    return;
+  } else {
+    convert(row[result_index], x);
+  }
 }
 
 void mysql_result::read(const char *id, unsigned char &x)

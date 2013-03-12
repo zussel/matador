@@ -30,7 +30,6 @@ public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
   ~sqlite_prepared_result();
   
-  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;
@@ -64,7 +63,6 @@ private:
   size_type rows;
   size_type fields_;
   sqlite3_stmt *stmt_;
-  int result_index;
   int result_size;
 };
 

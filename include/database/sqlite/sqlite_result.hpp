@@ -42,7 +42,6 @@ public:
   sqlite_result();
   virtual ~sqlite_result();
   
-  void get(object_atomizable *o);
   const char* column(size_type c) const;
   bool fetch();
   size_type affected_rows() const;
@@ -79,7 +78,6 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  int result_index;
   int result_size;
 };
 

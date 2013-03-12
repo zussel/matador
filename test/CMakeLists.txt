@@ -35,6 +35,8 @@ SET (TEST_JSON_SOURCES
 SET (TEST_DATABASE_SOURCES
   database/SQLiteDatabaseTestUnit.cpp
   database/SQLiteDatabaseTestUnit.hpp
+  database/DatabaseTestUnit.cpp
+  database/DatabaseTestUnit.hpp
   database/MySQLDatabaseTestUnit.cpp
   database/MySQLDatabaseTestUnit.hpp
   database/MySQLBaseTestUnit.cpp
