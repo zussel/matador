@@ -175,6 +175,17 @@ public:
    */
   result* execute(const std::string &sql);
 
+  /**
+   * @brief Inserts a new object
+   * @tparam T Type of object
+   * 
+   * Inserts a new not inserted object
+   * into object store and persists
+   * it on database
+   * 
+   * @param o The object to insert.
+   * @return The inserted persistent object.
+   */
   template < class T >
   object_ptr<T> insert(T *o)
   {
@@ -186,6 +197,50 @@ public:
       return optr;
     } catch (std::exception &ex) {
       return object_ptr<T>();
+    }
+  }
+
+  /**
+   * @brief Updates a given persistent object
+   * @tparam T Type of object tp update.
+   * 
+   * Updates a persistent object in object store
+   * and on database.
+   * 
+   * @param optr The object to update
+   * @return The updated object.
+   */
+  template < class T >
+  object_ptr<T> update(const object_base_ptr &optr)
+  {
+    transaction tr(*this);
+    try {
+      tr.begin();
+      //object_ptr<T> optr = ostore_.insert(o);
+      tr.commit();
+      return optr;
+    } catch (std::exception &ex) {
+      return object_ptr<T>();
+    }
+  }
+
+  /**
+   * @brief Deletes a given persistent object
+   * 
+   * Deletes a persistent object in object store
+   * and on database.
+   * 
+   * @param optr The object to delete
+   */
+  void remove(object_base_ptr &optr)
+  {
+    transaction tr(*this);
+    try {
+      tr.begin();
+      ostore_.remove(optr);
+      tr.commit();
+    } catch (std::exception &ex) {
+      return;
     }
   }
 
