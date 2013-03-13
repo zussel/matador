@@ -8,6 +8,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class query_insert : public object_writer
 {
 public:
@@ -59,6 +61,8 @@ private:
   bool first;
   bool fields_;
 };
+
+/// @endcond
 
 }
 

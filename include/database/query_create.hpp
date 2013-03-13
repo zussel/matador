@@ -8,6 +8,8 @@ namespace oos {
 
 class database;
 
+/// @cond OOS_DEV
+
 class query_create : public object_writer
 {
 public:
@@ -40,6 +42,8 @@ private:
   const database &db_;
   bool first;
 };
+
+/// @endcond
 
 }
 

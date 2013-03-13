@@ -8,6 +8,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class query_update : public object_writer
 {
 public:
@@ -52,6 +54,8 @@ private:
   sql &dialect;
   bool first;
 };
+
+/// @endcond
 
 }
 

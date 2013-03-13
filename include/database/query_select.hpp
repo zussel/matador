@@ -6,6 +6,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class query_select : public object_writer
 {
 public:
@@ -35,6 +37,8 @@ private:
   sql &dialect;
   bool first;
 };
+
+/// @endcond
 
 }
 
