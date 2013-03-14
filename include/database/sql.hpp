@@ -10,6 +10,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < class T >
 struct type_traits;
 
@@ -201,6 +203,8 @@ template <> struct type_traits<object_base_ptr>
   inline static sql::data_type_t data_type() { return sql::type_long; }
 };
 */
+
+/// @endcond
 
 }
 

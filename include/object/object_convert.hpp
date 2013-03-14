@@ -47,59 +47,62 @@ class object_container;
 
 #else
 
-template < int CP, class T, class U >
+template < class T, class U >
 void
 convert(const object_ptr<T> &from, object_ptr<U> &to,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0) &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
 
-template < int CP, class T >
+template < class T >
 void
-convert(const object_base_ptr &, T &,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+convert(const object_base_ptr &, T &)
 {
   throw std::bad_cast();
 }
 
-template < int CP >
 void
-convert(const object_base_ptr &from, long &to,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+convert(const object_base_ptr &from, long &to)
 {
   to = from.id();
 }
 
-template < int CP, class T >
+template < class T >
 void
-convert(const T &, object_base_ptr &,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+convert(const T &, object_base_ptr &)
 {
   throw std::bad_cast();
 }
 
-template < int CP >
 void
-convert(const long &, object_base_ptr &,
-        typename oos::enable_if<((CP & convert_fitting_weak) > 0)>::type* = 0)
+convert(const long &, object_base_ptr &)
 {
   std::cout << "converting id to object_ptr\n";
 }
 
-template < int CP, class T >
+template < class T >
 void
-convert(const object_container &, T &,
-        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0)
+convert(const object_container &, T &)
 {
   throw std::bad_cast();
 }
 
-template < int CP, class T >
+template < class T >
 void
-convert(const T &, object_container &,
-        typename oos::enable_if<((CP & convert_all) > 0)>::type* = 0)
+convert(const T &, object_container &)
+{
+  throw std::bad_cast();
+}
+
+void
+convert(const object_base_ptr &, char*, int)
+{
+  throw std::bad_cast();
+}
+
+void
+convert(const object_base_ptr &, char*, int, int)
 {
   throw std::bad_cast();
 }

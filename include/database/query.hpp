@@ -206,8 +206,25 @@ public:
    */
   query& update(const std::string &table);
 
+  /**
+   * Creates a delete statement based
+   * on the given prototype node.
+   * 
+   * @param node The prototype node used for the delete statement.
+   * @return A reference to the query.
+   */
   query& remove(const prototype_node &node);
+
+  /**
+   * Adds a where clause string to the select or
+   * update statement. For any other query an
+   * exception is thrown.
+   * 
+   * @param clause The where clause.
+   * @return A reference to the query.
+   */
   query& where(const std::string &clause);
+
   query& where(const condition &c);
   query& and_(const condition &c);
   query& or_(const condition &c);

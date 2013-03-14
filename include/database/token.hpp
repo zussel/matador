@@ -6,6 +6,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 struct string_token : public sql::token {
   string_token() {}
   string_token(const std::string &s) : str(s) {}
@@ -60,6 +62,8 @@ struct host_field_token : public string_token {
 
   sql::field_ptr fld;
 };
+
+/// @endcond
 
 }
 
