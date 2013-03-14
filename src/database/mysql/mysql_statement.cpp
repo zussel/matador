@@ -264,7 +264,7 @@ void mysql_statement::write(const char */*id*/, const object_base_ptr &x)
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const object_container &x)
+void mysql_statement::write(const char */*id*/, const object_container &)
 {
 }
 
@@ -346,6 +346,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index)
 {
+  bind_value(bind, type, value.id(), index);
 }
 
 }

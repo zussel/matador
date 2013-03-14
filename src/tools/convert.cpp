@@ -1,101 +1,64 @@
+/*
+ * This file is part of OpenObjectStore OOS.
+ *
+ * OpenObjectStore OOS is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenObjectStore OOS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "tools/convert.hpp"
 
 #include <cstring>
 
 namespace oos {
-/*
+
+void
+convert(const varchar_base &from, std::string &to)
+{
+  to = from.str();
+}
+
+void
+convert(const std::string &from, varchar_base &to)
+{
+  to = from;
+}
+
+void
+convert(const std::string &from, std::string &to)
+{
+  to = from;
+}
+
+void
+convert(const varchar_base &from, varchar_base &to)
+{
+  to = from;
+}
+
 void
 convert(const char *from, bool &to)
 {
   char *ptr;
   to = strtoul(from, &ptr, 10) > 0;
-  // cout << "SUCCEEDED: const char* > bool\n";
-}
-
-void
-convert(const char *from, std::string &to)
-{
-  // cout << "SUCCEEDED: const char* > string\n";
-  to.assign(from);
-}
-
-void
-convert(const oos::varchar_base &from, std::string &to)
-{
-  // cout << "SUCCEEDED: const char* > string\n";
-  to = from.str();
-}
-
-void
-convert(const std::string &from, char *to, size_t num)
-{
-  if (num > from.size()) {
-#ifdef WIN32
-    strncpy_s(to, num, from.c_str(), from.size());
-#else
-    strncpy(to, from.c_str(), from.size());
-#endif
-    to[from.size()] = '\0';
-    // cout << "SUCCEEDED: string > char*\n";
-  } else {
-    // cout << "FAILED: string > char*\n";
+  if (errno == ERANGE || (to == 0 && ptr == from)) {
     throw std::bad_cast();
   }
 }
 
 void
-convert(const oos::varchar_base &from, char *to, size_t num)
-{
-  if (num > from.size()) {
-#ifdef WIN32
-    strncpy_s(to, num, from.c_str(), from.size());
-#else
-    strncpy(to, from.c_str(), from.size());
-#endif
-    to[from.size()] = '\0';
-    // cout << "SUCCEEDED: varchar > char*\n";
-  } else {
-    // cout << "FAILED: varchar > char*\n";
-    throw std::bad_cast();
-  }
-}
-
-void
-convert(const char &from, char *to, size_t num)
-{
-  // cout << "SUCCEEDED: char > char*\n";
-#ifdef WIN32
-  _snprintf_s(to, num, num, "%c", from);
-#else
-  snprintf(to, num, "%c", from);
-#endif
-}
-
-void
-convert(const std::string &from, oos::varchar_base &to)
-{
-  // cout << "SUCCEEDED: string > varchar\n";
-  to = from;
-}
-
-void
-convert(const char *from, oos::varchar_base &to)
-{
-  // cout << "SUCCEEDED: const char* > varchar\n";
-  to.assign(from);
-}
-
-void
-convert(const char *from, oos::varchar_base &to, int)
-{
-  // cout << "SUCCEEDED: const char* > varchar\n";
-  to.assign(from);
-}
-
-void
-convert(const oos::varchar_base &from, oos::varchar_base &to)
+convert(const bool &from, bool &to)
 {
   to = from;
 }
-*/
+
 }

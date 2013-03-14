@@ -5,9 +5,21 @@
 
 namespace oos {
 
+/**
+ * @class attribute_counter
+ * @brief Counts the number of attributes within an object.
+ * 
+ * This class counts all attribute for the given
+ * object. With a flag one can indicate that also
+ * container attributes are considered for the
+ * counting. The default is false.
+ */
 class attribute_counter : public generic_object_writer<attribute_counter>
 {
 public:
+  /**
+   * Creates a new attribute counter.
+   */
   attribute_counter()
     : generic_object_writer<attribute_counter>(this)
     , count_(0)
@@ -15,6 +27,17 @@ public:
   {}
   virtual ~attribute_counter() {}
   
+  /**
+   * Counts all attributes for the
+   * given object. If the flag is set to true
+   * all container attributes are also
+   * considered for the counting.
+   * 
+   * @param o The object.
+   * @param with_container Indicates wether
+   *        container are considered or not.
+   * @return The number of attributes.
+   */
   unsigned long count(object *o, bool with_container = false)
   {
     count_ = 0;
@@ -24,7 +47,10 @@ public:
     
     return count_;
   }
-  
+
+protected:
+
+/// @cond OOS_DEV
   template < class T >
   void write_value(const char*, const T&)
   {
@@ -42,6 +68,7 @@ public:
       ++count_;
     }
   }
+/// @endcond
 
 private:
   unsigned long count_;

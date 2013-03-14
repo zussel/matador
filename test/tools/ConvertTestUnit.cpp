@@ -1,3 +1,20 @@
+/*
+ * This file is part of OpenObjectStore OOS.
+ *
+ * OpenObjectStore OOS is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenObjectStore OOS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "ConvertTestUnit.hpp"
 
 #include "tools/convert.hpp"
@@ -99,41 +116,41 @@ ConvertTestUnit::~ConvertTestUnit()
     UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
   }
 
-#define CONVERT_EXPECT_SUCCESS(from, in, to, out, policy) \
+#define CONVERT_EXPECT_SUCCESS(from, in, to, out) \
   try { \
     from a(in); \
     to b; \
-    convert<policy>(a, b); \
+    convert(a, b); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
-#define CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
+#define CONVERT_TO_ARRAY_EXPECT_SUCCESS_SIZE(from, in, to, out, size) \
   try { \
     from a(in); \
     to b[size]; \
-    convert<policy>(a, b, size); \
+    convert(a, b, size); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
-#define CONVERT_EXPECT_SUCCESS_SIZE(from, in, to, out, size, policy) \
+#define CONVERT_EXPECT_SUCCESS_SIZE(from, in, to, out, size) \
   try { \
     from a(in); \
     to b; \
-    convert<policy>(a, b, size); \
+    convert(a, b, size); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \
   }
 
-#define CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(from, in, to, out, size, precision, policy) \
+#define CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(from, in, to, out, size, precision) \
   try { \
     from a(in); \
     to b[size]; \
-    convert<policy>(a, b, size, precision); \
+    convert(a, b, size, precision); \
     UNIT_ASSERT_EQUAL(b, out, "convert failed: values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#from" to "#to" must not fail"); \

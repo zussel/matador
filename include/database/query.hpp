@@ -1,3 +1,20 @@
+/*
+ * This file is part of OpenObjectStore OOS.
+ *
+ * OpenObjectStore OOS is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenObjectStore OOS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
@@ -150,7 +167,7 @@ public:
    * Creates a select statement based
    * on the given serializable object.
    * 
-   * @param node The serializable object used for the select statement.
+   * @param o The serializable object used for the select statement.
    * @return A reference to the query.
    */
   query& select(object_atomizable *o);
@@ -159,7 +176,7 @@ public:
    * Creates an insert statement based
    * on the given object.
    * 
-   * @param node The object used for the insert statement.
+   * @param o The object used for the insert statement.
    * @return A reference to the query.
    */
   query& insert(object *o);
@@ -169,7 +186,7 @@ public:
    * on the given serializable object and.
    * the name of the table
    * 
-   * @param node The serializable object used for the insert statement.
+   * @param o The serializable object used for the insert statement.
    * @param name The name of the table.
    * @return A reference to the query.
    */
@@ -179,7 +196,7 @@ public:
    * Creates an update statement based
    * on the given object.
    * 
-   * @param node The object used for the update statement.
+   * @param o The object used for the update statement.
    * @return A reference to the query.
    */
   query& update(object *o);
@@ -190,7 +207,7 @@ public:
    * the name of the table
    * 
    * @param name The name of the table.
-   * @param node The serializable object used for the update statement.
+   * @param o The serializable object used for the update statement.
    * @return A reference to the query.
    */
   query& update(const std::string &name, object_atomizable *o);
@@ -225,7 +242,24 @@ public:
    */
   query& where(const std::string &clause);
 
+  /**
+   * Adds a where clause condition to the select or
+   * update statement. For any other query an
+   * exception is thrown.
+   * 
+   * @param c The condition.
+   * @return A reference to the query.
+   */
   query& where(const condition &c);
+
+  /**
+   * Adds a where clause condition to the select or
+   * update statement. For any other query an
+   * exception is thrown.
+   * 
+   * @param c The condition.
+   * @return A reference to the query.
+   */
   query& and_(const condition &c);
   query& or_(const condition &c);
   query& order_by(const std::string &by);
@@ -233,10 +267,31 @@ public:
   query& group_by(const std::string &field);
 
   query& column(const std::string &name, sql::data_type_t type);
+  
+  /**
+   * Appends the given table name to the
+   * select query. Must only be called for a
+   * select statement and after the queried
+   * columns are appended.
+   * 
+   * @param table The name of the table.
+   * @return A reference to the query.
+   */
   query& from(const std::string &table);
 
+  /**
+   * This method must only be called for
+   * an update statement. Sets for the given
+   * column the data type and a value.
+   * 
+   * @tparam T The value type.
+   * @param column The column name.
+   * @param type The data type.
+   * @param val The value to set.
+   * @return A reference to the query.
+   */
   template < class T >
-  query& set(const std::string &name, sql::data_type_t type, const T &val)
+  query& set(const std::string &column, sql::data_type_t type, const T &val)
   {
     throw_invalid(QUERY_SET, state);
 
@@ -244,19 +299,37 @@ public:
       sql_.append(", ");
     }
 
-    sql_.append(name + "=");
+    sql_.append(column + "=");
     std::stringstream valstr;
     valstr << val;
-    sql_.append(name.c_str(), type, valstr.str());
+    sql_.append(column.c_str(), type, valstr.str());
 
     state = QUERY_SET;
 
     return *this;
   }
 
+  /**
+   * Executes the current query and
+   * returns a new result object.
+   * 
+   * @return The result object.
+   */
   result* execute();
+  
+  /**
+   * Creates and returns a prepared
+   * statement based on the current query.
+   * 
+   * @return The new prepared statement.
+   */
   statement* prepare();
 
+  /**
+   * Resets the query.
+   * 
+   * @return A reference to the query.
+   */
   query& reset();
   
 private:

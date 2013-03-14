@@ -24,7 +24,6 @@
 #include "database/session.hpp"
 #include "database/transaction.hpp"
 #include "database/database_sequencer.hpp"
-#include "database/statement_creator.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
@@ -33,6 +32,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 
 #ifdef WIN32
 #include <functional>

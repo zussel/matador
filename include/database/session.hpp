@@ -261,8 +261,20 @@ public:
    */
   transaction* current_transaction() const;
 
+  /**
+   * Returns a constant reference to the 
+   * session underlaying database.
+   *
+   * @return The underlaying database.
+   */
   const database& db() const;
 
+  /**
+   * Returns a reference to the 
+   * session underlaying database.
+   *
+   * @return The underlaying database.
+   */
   database& db();
 
 private:

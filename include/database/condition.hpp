@@ -1,3 +1,20 @@
+/*
+ * This file is part of OpenObjectStore OOS.
+ *
+ * OpenObjectStore OOS is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenObjectStore OOS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
@@ -10,33 +27,50 @@
 
 namespace oos {
 
+/**
+ * @class condition
+ * @brief Represents a sql query condition
+ * 
+ * This class represents a condition part
+ * of a sql query or update statement.
+ * Each compare method returns a reference to
+ * the condition itself. That way one can
+ * concatenate conditions together.
+ */
 class condition
 {
 public:
+  /**
+   * Creates an empty unknown
+   * condition.
+   */
   condition()
     : valid_(false)
     , next_(0)
   {}
+  /**
+   * Creates a new condition for
+   * the given column c
+   * 
+   * @param c The column name.
+   */
   condition(const std::string &c)
     : column_(c)
     , valid_(false)
     , next_(0)
   {}
-  /*
-  condition(const condition &x)
-    : column_(x.column_)
-    , type_(x.type_)
-    , size_(x.size_)
-    , value_(x.value_)
-    , op_(x.op_)
-    , logic_(x.logic_)
-    , valid_(x.valid_)
-    , next_(x.next_)
-  {}
-  */
+
   ~condition()
   {}
-  
+
+  /**
+   * Evalutes the value of the column
+   * with the given value to equal.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& equal(const T &val)
   {
@@ -44,6 +78,14 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * with the given value to not equal.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& not_equal(const T &val)
   {
@@ -51,6 +93,14 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * with the given value to greater than.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& greater(const T &val)
   {
@@ -58,6 +108,15 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * with the given value to equal or
+   * greater than.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& greater_equal(const T &val)
   {
@@ -65,6 +124,14 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * with the given value to less than.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& less(const T &val)
   {
@@ -72,6 +139,15 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * with the given value to equal or
+   * less than.
+   * 
+   * @tparam T The type of the value.
+   * @param val The value to compares
+   * @return A reference to the condition.
+   */
   template < class T >
   condition& less_equal(const T &val)
   {
@@ -79,6 +155,12 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * to not null.
+   * 
+   * @return A reference to the condition.
+   */
   condition& not_null()
   {
     op_ = " IS NOT NULL";
@@ -86,6 +168,12 @@ public:
     return *this;
   }
 
+  /**
+   * Evalutes the value of the column
+   * to null.
+   * 
+   * @return A reference to the condition.
+   */
   condition& null()
   {
     op_ = " IS NULL";
@@ -93,12 +181,34 @@ public:
     return *this;
   }
 
+  /**
+   * Concatenate to conditions with logical or.
+   * 
+   * @return A reference to the condition.
+   */
   condition& or_(const condition &cond);
+
+  /**
+   * Concatenate to conditions with logical and.
+   * 
+   * @return A reference to the condition.
+   */
   condition& and_(const condition &cond);
   /*
   condition& not_(const condition &cond);
   */
 
+  /**
+   * Returns the string representation
+   * of the condition. With the prepared
+   * flag set to true the condition string
+   * is put together for preppared
+   * statements.
+   * 
+   * @param prepared Indicates wether the condition is
+   *        for prepared statements or not.
+   * @return A reference to the condition.
+   */
   std::string str(bool prepared) const
   {
     std::stringstream c;
@@ -114,29 +224,54 @@ public:
     return c.str();
   }
   
+  /**
+   * Returns the column name.
+   * 
+   * @return Returns the column name.
+   */
   std::string column() const
   {
     return column_;
   }
   
+  /**
+   * Returns the size of the data
+   * 
+   * @return The size of the data.
+   */
   unsigned long size() const
   {
     return size_;
   }
   
+  /**
+   * Returns the data type.
+   * 
+   * @return The data type.
+   */
   sql::data_type_t type() const
   {
     return type_;
   }
 
+  /**
+   * Returns wether the condition
+   * is in a valid state. This means
+   * a column name, an operator and a
+   * value must be set.
+   * 
+   * @return True if the condition is in a valid state.
+   */
   bool valid() const
   {
     return valid_;
   }
 
+protected:
+
+/// @cond OOS_DEV
   std::ostream& print(std::ostream &out, bool prepared) const;
 
-protected:
   template < class T >
   void set(const T &val, const char *op)
   {
@@ -169,6 +304,7 @@ protected:
     msg << "'" << val << "'";
     value_ = msg.str();
   }
+/// @endcond
 
 private:
   std::string column_;
@@ -181,7 +317,14 @@ private:
   std::shared_ptr<condition> next_;
 };
 
-condition cond(const std::string &c);
+/**
+ * Creates a condition for the given
+ * column name.
+ * 
+ * @param column The name of the column.
+ * @return A new condition.
+ */
+condition cond(const std::string &column);
 
 }
 

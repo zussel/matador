@@ -62,11 +62,7 @@ convert(const object_base_ptr &, T &)
   throw std::bad_cast();
 }
 
-void
-convert(const object_base_ptr &from, long &to)
-{
-  to = from.id();
-}
+void convert(const object_base_ptr &from, long &to);
 
 template < class T >
 void
@@ -75,11 +71,7 @@ convert(const T &, object_base_ptr &)
   throw std::bad_cast();
 }
 
-void
-convert(const long &, object_base_ptr &)
-{
-  std::cout << "converting id to object_ptr\n";
-}
+void convert(const long &, object_base_ptr &);
 
 template < class T >
 void
@@ -95,17 +87,9 @@ convert(const T &, object_container &)
   throw std::bad_cast();
 }
 
-void
-convert(const object_base_ptr &, char*, int)
-{
-  throw std::bad_cast();
-}
+void convert(const object_base_ptr &, char*, int);
 
-void
-convert(const object_base_ptr &, char*, int, int)
-{
-  throw std::bad_cast();
-}
+void convert(const object_base_ptr &, char*, int, int);
 
 /*
 template < class T >

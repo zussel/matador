@@ -25,7 +25,6 @@
 #include "database/transaction.hpp"
 #include "database/row.hpp"
 
-#include "database/statement_creator.hpp"
 #include "database/database_sequencer.hpp"
 
 #include <stdexcept>
