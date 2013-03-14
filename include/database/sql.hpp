@@ -22,8 +22,13 @@
 #include <map>
 #include <list>
 #include <vector>
-#include <memory>
 #include <stdexcept>
+
+#ifdef WIN32
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
 
 namespace oos {
 
@@ -68,7 +73,7 @@ public:
     bool is_host;
   };
 
-  typedef std::shared_ptr<field> field_ptr;
+  typedef std::tr1::shared_ptr<field> field_ptr;
 
   struct token {
     virtual ~token() {}

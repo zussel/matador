@@ -195,7 +195,7 @@ public:
       object_ptr<T> optr = ostore_.insert(o);
       tr.commit();
       return optr;
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       return object_ptr<T>();
     }
   }
@@ -219,7 +219,7 @@ public:
       //object_ptr<T> optr = ostore_.insert(o);
       tr.commit();
       return optr;
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       return object_ptr<T>();
     }
   }
@@ -239,7 +239,7 @@ public:
       tr.begin();
       ostore_.remove(optr);
       tr.commit();
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       return;
     }
   }

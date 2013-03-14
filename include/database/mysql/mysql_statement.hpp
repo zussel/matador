@@ -21,7 +21,7 @@
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
-#include <mysql/mysql.h>
+#include <mysql.h>
 
 #include <string>
 #include <vector>

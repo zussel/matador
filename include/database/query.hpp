@@ -20,7 +20,12 @@
 
 #include "database/sql.hpp"
 
+#ifdef WIN32
 #include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 #include <sstream>
 
 namespace oos {
@@ -30,7 +35,7 @@ class session;
 class statement;
 class database;
 class object;
-class prototype_node;
+struct prototype_node;
 class condition;
 class object_atomizable;
 
@@ -339,7 +344,11 @@ private:
   sql sql_;
   state_t state;
   database &db_;
+#ifdef WIN32
+  std::auto_ptr<statement> stmt;
+#else
   std::unique_ptr<statement> stmt;
+#endif
 };
 
 }

@@ -13,13 +13,17 @@ ENDIF (MYSQL_INCLUDE_DIR)
 FIND_PATH(MYSQL_INCLUDE_DIR mysql.h
   /usr/local/include/mysql
   /usr/include/mysql
+  $ENV{ProgramFiles}/MySQL/*/include
 )
 
 SET(MYSQL_NAMES mysqlclient mysqlclient_r)
 FIND_LIBRARY(MYSQL_LIBRARY
   NAMES ${MYSQL_NAMES}
-  PATHS /usr/lib /usr/local/lib
-  PATH_SUFFIXES mysql
+  PATHS
+  /usr/lib /usr/local/lib
+  /usr/lib /usr/local/lib/mysql
+  $ENV{ProgramFiles}/MySQL/*/lib/opt
+#  PATH_SUFFIXES mysql
 )
 
 IF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
@@ -32,7 +36,8 @@ ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
 
 IF (MYSQL_FOUND)
   IF (NOT MYSQL_FIND_QUIETLY)
-    MESSAGE(STATUS "Found MySQL: ${MYSQL_LIBRARY}")
+    MESSAGE(STATUS "Found MySQL LIB: ${MYSQL_LIBRARY}")
+    MESSAGE(STATUS "Found MySQL Include: ${MYSQL_INCLUDE_DIR}")
   ENDIF (NOT MYSQL_FIND_QUIETLY)
 ELSE (MYSQL_FOUND)
   IF (MYSQL_FIND_REQUIRED)

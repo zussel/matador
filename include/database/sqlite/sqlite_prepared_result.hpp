@@ -6,8 +6,6 @@
 #include "object/object_atomizable.hpp"
 #include "object/object_atomizer.hpp"
 
-#include <mysql/mysql.h>
-
 #include <vector>
 #include <iostream>
 

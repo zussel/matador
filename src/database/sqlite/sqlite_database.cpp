@@ -90,7 +90,11 @@ void sqlite_database::on_close()
 
 result* sqlite_database::execute(const std::string &sql)
 {
+#ifdef WIN32
+  std::auto_ptr<sqlite_result> res(new sqlite_result);
+#else
   std::unique_ptr<sqlite_result> res(new sqlite_result);
+#endif
   char *errmsg = 0;
   int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {

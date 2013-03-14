@@ -23,7 +23,12 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+
+#ifdef WIN32
 #include <memory>
+#else
+#include <tr1/memory>
+#endif
 
 namespace oos {
 
@@ -46,7 +51,6 @@ public:
    */
   condition()
     : valid_(false)
-    , next_(0)
   {}
   /**
    * Creates a new condition for
@@ -57,7 +61,6 @@ public:
   condition(const std::string &c)
     : column_(c)
     , valid_(false)
-    , next_(0)
   {}
 
   ~condition()
@@ -314,7 +317,7 @@ private:
   std::string op_;
   std::string logic_;
   bool valid_;
-  std::shared_ptr<condition> next_;
+  std::tr1::shared_ptr<condition> next_;
 };
 
 /**
