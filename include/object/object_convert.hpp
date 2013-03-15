@@ -87,9 +87,9 @@ convert(const T &, object_container &)
   throw std::bad_cast();
 }
 
-void convert(const object_base_ptr &, char*, int);
+OOS_API void convert(const object_base_ptr &, char*, int);
 
-void convert(const object_base_ptr &, char*, int, int);
+OOS_API void convert(const object_base_ptr &, char*, int, int);
 
 /*
 template < class T >
