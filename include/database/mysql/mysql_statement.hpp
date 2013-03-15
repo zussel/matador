@@ -21,7 +21,12 @@
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
+#ifdef WIN32
+#include <winsock2.h>
 #include <mysql.h>
+#else
+#include <mysql/mysql.h>
+#endif
 
 #include <string>
 #include <vector>
