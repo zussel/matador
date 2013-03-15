@@ -162,109 +162,97 @@ result* mysql_statement::execute()
   return new mysql_prepared_result(stmt, result_array, result_size);
 }
 
-void mysql_statement::write(const char */*id*/, char x)
+void mysql_statement::write(const char *, char x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, short x)
+void mysql_statement::write(const char *, short x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, int x)
+void mysql_statement::write(const char *, int x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, long x)
+void mysql_statement::write(const char *, long x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, unsigned char x)
+void mysql_statement::write(const char *, unsigned char x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, unsigned short x)
+void mysql_statement::write(const char *, unsigned short x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, unsigned int x)
+void mysql_statement::write(const char *, unsigned int x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, unsigned long x)
+void mysql_statement::write(const char *, unsigned long x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, bool x)
+void mysql_statement::write(const char *, bool x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type long\n";
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, float x)
+void mysql_statement::write(const char *, float x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type double\n";
   bind_value(host_array[host_index], MYSQL_TYPE_FLOAT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, double x)
+void mysql_statement::write(const char *, double x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type double\n";
   bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const char *x, int s)
+void mysql_statement::write(const char *, const char *x, int s)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const std::string &x)
+void mysql_statement::write(const char *, const std::string &x)
 {
-//  std::cout << "binding result [" << id << "] (" << x << ") of type string\n";
   bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const varchar_base &x)
+void mysql_statement::write(const char *, const varchar_base &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x.c_str(), x.size(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const object_base_ptr &x)
+void mysql_statement::write(const char *, const object_base_ptr &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x.id(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char */*id*/, const object_container &)
+void mysql_statement::write(const char *, const object_container &)
 {
 }
 
