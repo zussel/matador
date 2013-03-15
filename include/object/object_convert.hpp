@@ -62,7 +62,7 @@ convert(const object_base_ptr &, T &)
   throw std::bad_cast();
 }
 
-void convert(const object_base_ptr &from, long &to);
+OOS_API void convert(const object_base_ptr &from, long &to);
 
 template < class T >
 void

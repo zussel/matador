@@ -31,7 +31,7 @@ class Item : public oos::object
 public:
   Item()
     : char_('c')
-    , float_(3.1415)
+    , float_(3.1415f)
     , double_(1.1414)
     , short_(-128)
     , int_(-65000)
@@ -47,7 +47,7 @@ public:
   }
   explicit Item(const std::string &str)
     : char_('c')
-    , float_(3.1415)
+    , float_(3.1415f)
     , double_(1.1414)
     , short_(-128)
     , int_(-65000)
@@ -63,7 +63,7 @@ public:
   }
   Item(const std::string &str, int i)
     : char_('c')
-    , float_(3.1415)
+    , float_(3.1415f)
     , double_(1.1414)
     , short_(-128)
     , int_(i)
