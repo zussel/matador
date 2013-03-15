@@ -53,7 +53,7 @@ struct type_traits;
 class token;
 class condition;
 
-class sql
+class OOS_API sql
 {
 public:
   enum data_type_t {
@@ -112,8 +112,8 @@ public:
   void append(const char *id, data_type_t type, const std::string &val);
   void append(const condition &c);
 
-  OOS_API std::string prepare() const;
-  OOS_API std::string direct() const;
+  std::string prepare() const;
+  std::string direct() const;
 
   void reset();
 
