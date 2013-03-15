@@ -18,6 +18,19 @@
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "database/sql.hpp"
 
 #include <string>
@@ -42,7 +55,7 @@ namespace oos {
  * the condition itself. That way one can
  * concatenate conditions together.
  */
-class condition
+class OOS_API condition
 {
 public:
   /**
@@ -327,7 +340,7 @@ private:
  * @param column The name of the column.
  * @return A new condition.
  */
-condition cond(const std::string &column);
+OOS_API condition cond(const std::string &column);
 
 }
 

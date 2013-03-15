@@ -18,6 +18,19 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
+#ifdef WIN32
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+  #define OOS_API
+#endif
+
 #include "database/sql.hpp"
 
 #ifdef WIN32
@@ -66,7 +79,7 @@ class object_atomizable;
  * parts by calling the methods in a chain
  * (concatenated by dots).
  */
-class query
+class OOS_API query
 {
 private:
   enum state_t {

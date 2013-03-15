@@ -428,8 +428,7 @@ convert(const T &from, bool &to,
  *   bool
  *
  *****************/
-void
-convert(const bool &from, bool &to);
+OOS_API void convert(const bool &from, bool &to);
 
 template < class T, class U >
 void
@@ -676,7 +675,7 @@ convert(const char *from, T &to,
  * to
  *   bool
  */
-void convert(const char *from, bool &to);
+OOS_API void convert(const char *from, bool &to);
 /*
  * from
  *   const string
@@ -720,36 +719,10 @@ convert(const T &, U &, S , P ,
   throw std::bad_cast();
 }
 
-void convert(const varchar_base &from, std::string &to);
-void convert(const std::string &from, varchar_base &to);
-void convert(const std::string &from, std::string &to);
-void convert(const varchar_base &from, varchar_base &to);
-
-/*
-template < class T, class U >
-void
-convert(const T &from, U &to)
-{
-  convert(from, to);
-}
-
-template < class T, class U, class S >
-void
-convert(const T &from, U &to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
-{
-  convert<convert_fitting>(from, to, size);
-}
-
-template < class T, class U, class S, class P >
-void
-convert(const T &from, U &to, S size, P precision,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
-{
-  convert<convert_fitting>(from, to, size, precision);
-}
-*/
+OOS_API void convert(const varchar_base &from, std::string &to);
+OOS_API void convert(const std::string &from, varchar_base &to);
+OOS_API void convert(const std::string &from, std::string &to);
+OOS_API void convert(const varchar_base &from, varchar_base &to);
 
 #endif /* OOS_DOXYGEN_DOC */
 

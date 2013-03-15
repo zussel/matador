@@ -47,7 +47,7 @@ class object_atomizable;
 
 /// @cond OOS_DEV
 
-class result : public object_reader
+class OOS_API result : public object_reader
 {
 private:
   result(const result&);
