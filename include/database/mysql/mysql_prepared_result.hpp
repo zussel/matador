@@ -27,7 +27,7 @@ private:
   mysql_prepared_result& operator=(const mysql_prepared_result&);
 
 public:
-  typedef unsigned long size_type;
+  typedef result::size_type size_type;
 
 public:
   mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs);

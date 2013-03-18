@@ -22,7 +22,7 @@ private:
   sqlite_prepared_result& operator=(const sqlite_prepared_result&);
 
 public:
-  typedef unsigned long size_type;
+  typedef result::size_type size_type;
 
 public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);

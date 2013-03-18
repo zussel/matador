@@ -325,7 +325,11 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
     bind.buffer_length = size;
     host_data[index] = true;
   }
-  strncpy(static_cast<char*>(bind.buffer), value, size);
+#ifdef WIN32
+    strncpy_s(static_cast<char*>(bind.buffer), size, value, size);
+#else
+    strncpy(static_cast<char*>(bind.buffer), value, size);
+#endif
   bind.buffer_type = type;
   bind.is_null = 0;
 }

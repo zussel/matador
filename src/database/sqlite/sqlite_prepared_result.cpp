@@ -131,10 +131,18 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
 {
   int size = sqlite3_column_bytes(stmt_, result_index);
   if (size < s) {
+#ifdef WIN32
+    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index++), s);
+#else
     strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), size);
+#endif
     x[size] = '\0';
   } else {
+#ifdef WIN32
+    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index++), s - 1);
+#else
     strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), s - 1);
+#endif
     x[s] = '\0';
   }
   ++result_index;

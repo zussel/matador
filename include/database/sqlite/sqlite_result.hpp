@@ -39,7 +39,7 @@ private:
   sqlite_result& operator=(const sqlite_result&);
 
 public:
-  typedef unsigned long size_type;
+  typedef result::size_type size_type;
 
 public:
   sqlite_result();

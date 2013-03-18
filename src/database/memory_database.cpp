@@ -15,6 +15,10 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef WIN32
+#pragma warning(disable: 4355)
+#endif
+
 #include "database/memory_database.hpp"
 #include "database/database_sequencer.hpp"
 

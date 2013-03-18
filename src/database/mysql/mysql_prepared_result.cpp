@@ -13,8 +13,8 @@ namespace oos {
 namespace mysql {
 
 mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs)
-  : affected_rows_(mysql_stmt_affected_rows(s))
-  , rows(mysql_stmt_num_rows(s))
+  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
+  , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
   , result_size(rs)
@@ -134,7 +134,11 @@ void mysql_prepared_result::read(const char *, object_container &)
 
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , char *x, int s)
 {
+#ifdef WIN32
+  strncpy_s(x, s, (const char*)bind.buffer, s);
+#else
   strncpy(x, (const char*)bind.buffer, s);
+#endif
 }
 
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , std::string &value)
