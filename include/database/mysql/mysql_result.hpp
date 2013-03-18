@@ -20,6 +20,8 @@
 
 #include "database/result.hpp"
 
+#include "tools/convert.hpp"
+
 #include <mysql/mysql.h>
 
 #include <vector>
@@ -70,6 +72,15 @@ protected:
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
 
+  template < class T >
+  void read_column(const char *, T &val)
+  {
+    if (!row) {
+      return;
+    } else {
+      convert(row[result_index], val);
+    }
+  }
 private:
   struct result_deleter
   {

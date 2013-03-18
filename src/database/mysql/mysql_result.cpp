@@ -18,8 +18,6 @@
 #include "database/mysql/mysql_result.hpp"
 #include "database/row.hpp"
 
-#include "tools/convert.hpp"
-
 namespace oos {
 
 namespace mysql {
@@ -83,51 +81,57 @@ mysql_result::size_type mysql_result::fields() const
 
 void mysql_result::read(const char *id, char &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, short &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, int &x)
 {
+  read_column(id, x);
 }
 
-void mysql_result::read(const char *, long &x)
+void mysql_result::read(const char *id, long &x)
 {
-  if (!row) {
-    return;
-  } else {
-    convert(row[result_index], x);
-  }
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, unsigned char &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, unsigned short &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, unsigned int &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, unsigned long &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, bool &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, float &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, double &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, char *x, int s)
@@ -136,10 +140,12 @@ void mysql_result::read(const char *id, char *x, int s)
 
 void mysql_result::read(const char *id, varchar_base &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, std::string &x)
 {
+  read_column(id, x);
 }
 
 void mysql_result::read(const char *id, object_base_ptr &x)

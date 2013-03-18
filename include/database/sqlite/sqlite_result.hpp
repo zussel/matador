@@ -19,6 +19,9 @@
 #define SQLITE_RESULT_HPP
 
 #include "database/result.hpp"
+#include "database/row.hpp"
+
+#include "tools/convert.hpp"
 
 #include <vector>
 
@@ -69,6 +72,14 @@ protected:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
+
+  template < class T >
+  void read_column(const char *, T &x)
+  {
+    std::string val = rows_.at(pos_)->at<std::string>(result_index);
+    convert(val, x);
+//  std::cout << "converted string [" << val << "] to long [" << x << "]\n";
+  }
 
 private:
   typedef std::vector<row*> row_vector_t;

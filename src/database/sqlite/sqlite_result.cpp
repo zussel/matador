@@ -16,9 +16,6 @@
  */
 
 #include "database/sqlite/sqlite_result.hpp"
-#include "database/row.hpp"
-
-#include "tools/convert.hpp"
 
 namespace oos {
 
@@ -69,50 +66,57 @@ void sqlite_result::push_back(row *r)
 
 void sqlite_result::read(const char *id, char &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, short &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, int &x)
 {
+  read_column(id, x);
 }
 
-void sqlite_result::read(const char *, long &x)
+void sqlite_result::read(const char *id, long &x)
 {
-  std::string val = rows_.at(pos_)->at<std::string>(result_index);
-  convert(val, x);
-  std::cout << "converted string [" << val << "] to long [" << x << "]\n";
-//  x = rows_.at(pos_)->at<long>(result_index);
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, unsigned char &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, unsigned short &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, unsigned int &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, unsigned long &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, bool &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, float &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, double &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, char *x, int s)
@@ -121,10 +125,12 @@ void sqlite_result::read(const char *id, char *x, int s)
 
 void sqlite_result::read(const char *id, varchar_base &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, std::string &x)
 {
+  read_column(id, x);
 }
 
 void sqlite_result::read(const char *id, object_base_ptr &x)
