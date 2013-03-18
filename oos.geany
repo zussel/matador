@@ -23,10 +23,12 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=2484;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2FCMakeLists.txt;0;2
+current_page=4
+FILE_NAME_0=3177;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2FCMakeLists.txt;0;2
 FILE_NAME_1=0;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2FCMakeLists.txt;0;2
 FILE_NAME_2=2426;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fcmake%2FFindMySQL.cmake;0;2
+FILE_NAME_3=1752;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2FCMakeLists.txt;0;2
+FILE_NAME_4=0;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2FItem.hpp;0;2
 
 [VTE]
 last_dir=/home/sascha/development/oos/build

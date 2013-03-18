@@ -63,3 +63,6 @@ SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("database" FILES ${TEST_DATABASE_SOURCES})
 SOURCE_GROUP("main" FILES ${TEST_SOURCES})
+
+# add tests
+ADD_TEST(test_oos_convert_char ${CMAKE_CURRENT_BINARY_DIR}/test_oos exec convert:char)
