@@ -409,7 +409,7 @@ ObjectStoreTestUnit::delete_object()
 
   try {
     ostore_.remove(item);
-  } catch(object_exception &ex) {
+  } catch(object_exception &) {
   }
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test item must be removable");

@@ -22,7 +22,12 @@
 
 #include "tools/convert.hpp"
 
+#ifdef WIN32
+#include <winsock2.h>
+#include <mysql.h>
+#else
 #include <mysql/mysql.h>
+#endif
 
 #include <vector>
 

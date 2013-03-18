@@ -29,8 +29,6 @@
 #include <cstring>
 #include <sstream>
 
-#include <mysql/mysql.h>
-
 namespace oos {
 
 namespace mysql {

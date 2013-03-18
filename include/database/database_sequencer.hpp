@@ -44,7 +44,7 @@ class statement;
 
 /// @cond OOS_DEV
 
-class database_sequencer : public sequencer_impl, public object_atomizable
+class OOS_API database_sequencer : public sequencer_impl, public object_atomizable
 {
 public:
   database_sequencer(database &db);

@@ -19,7 +19,7 @@
 #define MYSQL_DATABASE_HPP
 
 #ifdef WIN32
-  #ifdef oos_sqlite_EXPORTS
+  #ifdef oos_mysql_EXPORTS
     #define OOS_MYSQL_API __declspec(dllexport)
   #else
     #define OOS_MYSQL_API __declspec(dllimport)
@@ -31,7 +31,12 @@
 
 #include "database/database.hpp"
 
+#ifdef WIN32
+#include <winsock2.h>
+#include <mysql.h>
+#else
 #include <mysql/mysql.h>
+#endif
 
 namespace oos {
   
