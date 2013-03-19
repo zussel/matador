@@ -39,8 +39,6 @@ SET (TEST_DATABASE_SOURCES
   database/DatabaseTestUnit.hpp
   database/MySQLDatabaseTestUnit.cpp
   database/MySQLDatabaseTestUnit.hpp
-  database/MySQLBaseTestUnit.cpp
-  database/MySQLBaseTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)

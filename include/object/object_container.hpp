@@ -313,8 +313,8 @@ protected:
 
   prototype_node* find_prototype_node(object_store &ostore, const char *id) const
   {
-    object_store::t_prototype_node_map::iterator i = ostore.prototype_node_map_.find(id);
-    if (i == ostore.prototype_node_map_.end()) {
+    object_store::t_prototype_map::iterator i = ostore.prototype_map_.find(id);
+    if (i == ostore.prototype_map_.end()) {
       return 0;
     }
     return i->second;

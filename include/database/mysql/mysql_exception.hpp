@@ -42,6 +42,8 @@ namespace oos {
 
 namespace mysql {
 
+void throw_error(const std::string &source, const std::string &sql = "");
+
 void throw_error(int ec, MYSQL *db, const std::string &source, const std::string &sql = "");
 
 void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "");
@@ -49,6 +51,7 @@ void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const
 class mysql_exception : public database_exception
 {
 public:
+  mysql_exception(const std::string &source, const std::string &what);
   mysql_exception(MYSQL *db, const std::string &source, const std::string &what);
 
   virtual ~mysql_exception() throw();

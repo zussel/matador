@@ -326,7 +326,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
     host_data[index] = true;
   }
 #ifdef WIN32
-    strncpy_s(static_cast<char*>(bind.buffer), size, value, size);
+    strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);
 #else
     strncpy(static_cast<char*>(bind.buffer), value, size);
 #endif
