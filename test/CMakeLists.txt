@@ -64,5 +64,9 @@ SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("database" FILES ${TEST_DATABASE_SOURCES})
 SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
+MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
+
 # add tests
-ADD_TEST(test_oos_convert_char ${CMAKE_CURRENT_BINARY_DIR}/test_oos exec convert:char)
+ADD_TEST(test_oos_convert_char test_oos exec convert:to_char)
+ADD_TEST(test_oos_convert_short test_oos exec convert:to_short)
+ADD_TEST(test_oos_convert_int test_oos exec convert:to_int)
