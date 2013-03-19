@@ -191,9 +191,9 @@ void print_track(const album::track_ref &trk)
 
 void ObjectVectorTestUnit::test_direct_ref_vector()
 {
-  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
+//  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
   
-  ostore_.dump_prototypes(out);
+//  ostore_.dump_prototypes(out);
 
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;

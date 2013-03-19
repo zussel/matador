@@ -589,9 +589,9 @@ DatabaseTestUnit::test_reload_container()
     tr.rollback();
   }
 
-  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
+//  std::ofstream out("prototype.dot", ios_base::out | ios_base::trunc);
   
-  ostore_.dump_prototypes(out);
+//  ostore_.dump_prototypes(out);
 
   // close db
   db->close();  

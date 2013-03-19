@@ -41,8 +41,11 @@ bool library::load()
   handle_ = dlopen(std::string("lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
+#ifdef WIN32
+#else
       // TODO: handle win32 and linux error
-//    fprintf(stdout, "dlopen error: %s", dlerror());
+    fprintf(stdout, "dlopen error: %s", dlerror());
+#endif
     return false;
   }
   return true;
