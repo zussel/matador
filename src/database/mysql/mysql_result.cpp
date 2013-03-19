@@ -23,7 +23,7 @@ namespace oos {
 namespace mysql {
 
 mysql_result::mysql_result(MYSQL *c)
-  : affected_rows_(mysql_affected_rows(c))
+  : affected_rows_((size_type)mysql_affected_rows(c))
   , rows(0)
   , fields_(0)
   , conn(c)
@@ -34,7 +34,7 @@ mysql_result::mysql_result(MYSQL *c)
     printf("Error %u: %s\n", mysql_errno(c), mysql_error(c));
     exit(1);
   } else if (res) {
-    rows = mysql_num_rows(res);
+    rows = (size_type)mysql_num_rows(res);
     fields_ = mysql_num_fields(res);
   }
 }

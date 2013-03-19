@@ -60,20 +60,35 @@ mysql_database::~mysql_database()
 
 void mysql_database::on_open(const std::string &connection)
 {
-  // parse user:passwd@host/db
+  // parse user[:passwd]@host/db
   
   std::string con = connection;
-  std::string::size_type pos = con.find(':');
-  std::string user = con.substr(0, pos);
-  con = con.substr(pos + 1);
-  pos = con.find('@');
-  std::string passwd = con.substr(0, pos);
+  std::string::size_type pos = con.find('@');
+  std::string user, passwd;
+  bool has_pwd = true;
+  if (pos == std::string::npos) {
+	  throw_error("mysql:open", "invalid dsn: " + connection);
+  } else {
+    // try to find colon (:)
+    std::string credentials = con.substr(0, pos);
+    std::string::size_type colpos = credentials.find(':');
+    if (colpos != std::string::npos) {
+      // found colon, extract user and passwd
+      user = credentials.substr(0, colpos);
+      passwd = credentials.substr(colpos + 1, pos);
+    } else {
+      // only user name given
+      user = credentials.substr(0, pos);
+      has_pwd = false;
+    }
+  }
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   std::string db = con.substr(pos + 1);
   mysql_init(&mysql_);
-  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0) == NULL) {
+//  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0) == NULL) {
+  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db.c_str(), 0, NULL, 0) == NULL) {
     printf("Connection Error %u: %s\n", mysql_errno(&mysql_), mysql_error(&mysql_));
     exit(1);
   }

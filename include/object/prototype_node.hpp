@@ -184,7 +184,7 @@ public:
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
-  typedef std::map<std::string, prototype_field_info_t> field_prototype_node_map_t; /**< Holds the fieldname and the prototype_node. */
+  typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
 
   // tree links
   prototype_node *parent; /**< The parent node */
@@ -202,7 +202,7 @@ public:
    * relation). The string tells the name
    * of the attribute
    */
-  field_prototype_node_map_t relations; /**< Map holding relation information for type. */
+  field_prototype_map_t relations; /**< Map holding relation information for type. */
 
   object_proxy *op_first;  /**< The marker of the first list node. */
   object_proxy *op_marker; /**< The marker of the last list node of the own elements. */

@@ -158,8 +158,8 @@ void table::load(object_store &ostore)
 
   ostore_ = 0;
 
-  prototype_node::field_prototype_node_map_t::const_iterator first = node_.relations.begin();
-  prototype_node::field_prototype_node_map_t::const_iterator last = node_.relations.end();
+  prototype_node::field_prototype_map_t::const_iterator first = node_.relations.begin();
+  prototype_node::field_prototype_map_t::const_iterator last = node_.relations.end();
   while (first != last) {
 //    std::cout << "DEBUG: checking for relation node [" << first->first << "] ...";
     database::table_map_t::iterator i = db().table_map_.find(first->first);
@@ -256,7 +256,7 @@ void table::read_value(const char *, object_base_ptr &x)
    * of the parent container
    */
   database::table_map_t::iterator j = db().table_map_.find(node->type);
-  prototype_node::field_prototype_node_map_t::const_iterator i = node_.relations.find(node->type);
+  prototype_node::field_prototype_map_t::const_iterator i = node_.relations.find(node->type);
   if (i != node_.relations.end()) {
 //    std::cout << "DEBUG: found relation node [" << i->second.first->type << "] for field [" << i->second.second << "]\n";
     j->second->relation_data[i->second.second][oid].push_back(object_);

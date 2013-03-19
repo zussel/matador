@@ -281,8 +281,8 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   prototype_node::type_map_t::const_iterator first = pn.relations.begin();
   prototype_node::type_map_t::const_iterator last = pn.relations.end();
   while (first != last) {
-    prototype_node::field_prototype_node_map_t::const_iterator ffirst = first->second.begin();
-    prototype_node::field_prototype_node_map_t::const_iterator llast = first->second.end();
+    prototype_node::field_prototype_map_t::const_iterator ffirst = first->second.begin();
+    prototype_node::field_prototype_map_t::const_iterator llast = first->second.end();
     while (ffirst != llast) {
       os << "|{" << (ffirst->second ? ffirst->second->type : "null") << "|" << ffirst->first << "}";
       ++ffirst;

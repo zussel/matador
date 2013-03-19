@@ -12,11 +12,7 @@ SET(OBJECT_SOURCES
   object/attribute_serializer.cpp
 )
 
-SET(OBJECT_HEADER
-  ${PROJECT_SOURCE_DIR}/include/object/object_creator.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_deleter.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_serializer.hpp
-)
+FILE(GLOB OBJECT_HEADER RELATIVE ${PROJECT_SOURCE_DIR} "${PROJECT_SOURCE_DIR}/include/object/*.hpp")
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp

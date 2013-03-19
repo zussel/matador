@@ -269,7 +269,7 @@ class OOS_API object_store
 {
 private:
   typedef std::tr1::unordered_map<long, object_proxy*> t_object_proxy_map;
-	typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_node_map;
+  typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_map;
 
 public:
   /**
@@ -597,10 +597,10 @@ private:
   prototype_node *root_;
 
   // name to prototype map
-  t_prototype_node_map prototype_node_map_;
+  t_prototype_map prototype_map_;
   
   // typeid -> [name -> prototype]
-  typedef std::map<std::string, t_prototype_node_map> t_typeid_prototype_map;
+  typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
   t_typeid_prototype_map typeid_prototype_map_;
 
   /*

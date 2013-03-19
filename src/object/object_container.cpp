@@ -39,9 +39,9 @@ void object_container::handle_container_item(object_store &ostore, const char *i
       // insert a new one (it is automatically marked
       // as uninitialzed)
       item_node = new prototype_node();
-      ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_node_map()));
+      ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_map()));
 //      std::cout << "DEBUG: inserting unfinished node [" << classname() << "] in advance\n";
-      ostore.prototype_node_map_[classname()] = item_node;
+      ostore.prototype_map_[classname()] = item_node;
     }
   }
   // add container node to item node
