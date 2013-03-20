@@ -14,3 +14,5 @@ Features:
  * Filter with simple expressions
  * Reference counting mechanism
  * STL like interface and iterators
+
+Documentation can be found [here](http://zussel.github.com/oos).
