@@ -308,11 +308,21 @@ a
   width: 100%;
 }
 
+#grid
+{
+  border-collapse: separate;
+  width: 100%;
+  border-left: 0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border-spacing: 0px;
+}
 
 #grid tr td,
 #grid tr th
 {
-  border: 1px solid #888;
+/*  border: 1px solid #888;*/
   font-weight: bolder;
 }
 
@@ -327,12 +337,37 @@ a
   background-color: #ccc;
 }
 
-#grid
+#grid th:first-child
 {
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #888;
-  border-radius: 10px;
+  -moz-border-radius: 5px 0 0 0;
+  -webkit-border-radius: 5px 0 0 0;
+  border-radius: 5px 0 0 0;
+}
+
+#grid th:last-child
+{
+  -moz-border-radius: 0 5px 0 0;
+  -webkit-border-radius: 0 5px 0 0;
+  border-radius: 0 5px 0 0;
+}
+
+#grid th:only-child
+{
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+}
+
+#grid tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 5px;
+    -webkit-border-radius: 0 0 0 5px;
+    border-radius: 0 0 0 5px;
+}
+
+#grid tr:last-child td:last-child {
+    -moz-border-radius: 0 0 5px 0;
+    -webkit-border-radius: 0 0 5px 0;
+    border-radius: 0 0 5px 0;
 }
 
 #footer
