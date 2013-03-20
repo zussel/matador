@@ -221,8 +221,11 @@ void ObjectVectorTestUnit::test_direct_ref_vector()
   
 //  std::for_each(i1, i2, print_track);
 
-  alb1->erase(i1, i2);
+  album::iterator i = alb1->erase(i1, i2);
+
+  UNIT_ASSERT_TRUE(i == alb1->begin() + 1, "invalid iterator");
+  album::size_type s = 2;
+  UNIT_ASSERT_EQUAL(alb1->size(), 2, "invalid album size");
 
 //  std::for_each(alb1->begin(), alb1->end(), print_track);
-
 }

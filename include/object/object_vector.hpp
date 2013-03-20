@@ -421,7 +421,8 @@ public:
   typedef void (T::object_type::*FUNC2)(int);                  /**< Shortcut for the index setter function. */
   typedef int (T::object_type::*FUNC3)() const;                /**< Shortcut for the index getter function. */
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
-	typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
+  typedef base_vector::vector_type vector_type;
+  typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
   typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */
   typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */
@@ -491,6 +492,11 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
+    size_t diff = std::distance(first, last);
+    size_t start = std::distance(this->begin(), first);
+
+    size_t s = this->size();
+
     // mark parent object as modified
     this->mark_modified(this->parent());
     iterator i = first;
@@ -500,7 +506,9 @@ public:
       // set back ref to zero
       ref_setter(*(*i++).get(), parent_ref());
     }
+
     i = this->vector().erase(first, last);
+
     // adjust index
     this->adjust_index(i);
 
@@ -517,7 +525,10 @@ protected:
 
   virtual void adjust_index(iterator i)
   {
-    size_t start = i - this->begin();
+//    iterator j = this->begin();
+    iterator j = this->vector().begin();
+    size_t start = std::distance(j, i);
+//    size_t start = i - this->begin();
     
     while (i != this->vector().end()) {
       // mark item object as modified
