@@ -271,19 +271,57 @@ public:
   query& where(const condition &c);
 
   /**
-   * Adds a where clause condition to the select or
-   * update statement. For any other query an
-   * exception is thrown.
+   * Adds an and clause condition to the where
+   * clause.
    * 
    * @param c The condition.
    * @return A reference to the query.
    */
   query& and_(const condition &c);
+  
+  /**
+   * Adds an or clause condition to the where
+   * clause.
+   * 
+   * @param c The condition.
+   * @return A reference to the query.
+   */
   query& or_(const condition &c);
+
+  /**
+   * Adds an order by clause to a select
+   * statement.
+   * 
+   * @param by The order by clause.
+   * @return A reference to the query.
+   */
   query& order_by(const std::string &by);
+
+  /**
+   * Adds a limit clause to a select
+   * statement.
+   * 
+   * @param l The limit clause.
+   * @return A reference to the query.
+   */
   query& limit(int l);
+
+  /**
+   * Adds a group by clause to a select
+   * statement.
+   * 
+   * @param field The group by clause.
+   * @return A reference to the query.
+   */
   query& group_by(const std::string &field);
 
+  /**
+   * Adds a column to a select statement.
+   * 
+   * @param name The name of the column.
+   * @param type The datatype of the column,
+   * @return A reference to the query.
+   */
   query& column(const std::string &name, sql::data_type_t type);
   
   /**

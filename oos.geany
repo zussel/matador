@@ -23,18 +23,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=6
-FILE_NAME_0=1327;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2Ftest_oos.cpp;0;2
-FILE_NAME_1=1194;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Ftools%2Flibrary.cpp;0;2
-FILE_NAME_2=17238;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2Fdatabase%2FDatabaseTestUnit.cpp;0;2
-FILE_NAME_3=5900;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2Fobject%2FObjectVectorTestUnit.cpp;0;2
-FILE_NAME_4=1902;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Ftest%2FItem.hpp;0;2
-FILE_NAME_5=16907;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fobject%2Fobject_store.hpp;0;2
-FILE_NAME_6=9037;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fobject%2Fobject_store.cpp;0;2
-FILE_NAME_7=1663;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2Fsession.cpp;0;2
-FILE_NAME_8=1852;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2Fdatabase.cpp;0;2
-FILE_NAME_9=2861;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2Fmysql%2Fmysql_database.cpp;0;2
-FILE_NAME_10=1459;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fobject%2Fobject_container.cpp;0;2
+current_page=2
+FILE_NAME_0=0;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2FCMakeLists.txt;0;2
+FILE_NAME_1=0;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2FCMakeLists.txt;0;2
+FILE_NAME_2=0;CMake;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fsrc%2Fdatabase%2FCMakeLists.txt;0;2
 
 [VTE]
 last_dir=/home/sascha/development/oos/build

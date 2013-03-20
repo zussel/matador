@@ -50,7 +50,7 @@ class object_container;
 template < class T, class U >
 void
 convert(const object_ptr<T> &from, object_ptr<U> &to,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+        typename oos::enable_if<!std::is_same<T, U>::value>::type* = 0)
 {
   throw std::bad_cast();
 }

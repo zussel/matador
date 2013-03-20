@@ -421,7 +421,6 @@ public:
   typedef void (T::object_type::*FUNC2)(int);                  /**< Shortcut for the index setter function. */
   typedef int (T::object_type::*FUNC3)() const;                /**< Shortcut for the index getter function. */
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
-  typedef base_vector::vector_type vector_type;
   typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
   typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */
@@ -492,11 +491,6 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
-    size_t diff = std::distance(first, last);
-    size_t start = std::distance(this->begin(), first);
-
-    size_t s = this->size();
-
     // mark parent object as modified
     this->mark_modified(this->parent());
     iterator i = first;

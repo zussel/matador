@@ -24,9 +24,11 @@
     </div>
     <div id="wrapper">
       <div id="content">
-        <div class="width75 float_left">
+        <div class="width100 float_left">
           <h2>Binary Packages</h2>
-          <table>
+        </div>
+        <div class="width100 float_left">
+          <table id="grid">
             <tr>
               <th>Name</th>
               <th>Type</th>
@@ -34,42 +36,47 @@
               <th>MD5</th>
             </tr>
             <tr>
-              <td><a href="#">liboos-0.1.0-windows-x86-64</a></td>
-              <td>ZIP</td>
-              <td>12345 byte</td>
-              <td>2e2f34fa73</td>
-            </tr>
-            <tr class="alt">
-              <td><a href="#">liboos-0.1.0-windows-x686</a></td>
-              <td>ZIP</td>
-              <td>12345 byte</td>
+              <td><a href="#">liboos-0.1.0-windows</a></td>
+              <td>zip</td>
+              <td>12345 bytes</td>
               <td>2e2f34fa73</td>
             </tr>
             <tr>
               <td><a href="#">liboos-0.1.0-linux-x86-64</a></td>
               <td>tgz</td>
-              <td>12345 byte</td>
+              <td>12345 bytes</td>
               <td>2e2f34fa73</td>
             </tr>
             <tr class="alt">
               <td><a href="#">liboos-0.1.0-linux-x686</a></td>
               <td>tgz</td>
-              <td>12345 byte</td>
+              <td>12345 bytes</td>
               <td>2e2f34fa73</td>
             </tr>
           </table>
           <h2>Requirements</h2>
+          <p>There are less requirements for the runtime library. At least the database library you want to use in your environments path.</p>
+          <p>If you would like to build from the sources you need at least the <a href="http://www.cmake.org">cmake</a> build system installed. If you plan to generate an install package on a windows system you need the <a href="http://nsis.sourceforge.net">nullsoft scriptable install system</a>.</p>
           <h2>Sources</h2>
-          <h2>Installation</h2>
+          <p>Get the sources from GitHub and enter the created directory:</p>
+<pre><code class="bash">$ git clone https://github.com/zussel/oos.git
+$ cd oos</code></pre>
+          <p>Make a build directory change to it and call cmake:</p>
+<pre><code class="bash">$ mkdir build
+$ cd build
+$ cmake ..</code></pre>
+        <p>Then you can build oos from sources:</p>
+        <pre><code class="bash">$ make</code></pre>
+        <h2>Installation</h2>
         </div>
-        <div class="width25 float_right">
+        <!--div id="side_toc" class="width25 float_right">
           <ul>
             <li>Binary Packages</li>
             <li>Requirements</li>
             <li>Sources</li>
             <li>Installation</li>
           </ul>
-        </div>
+        </div-->
       </div>
       <div class="clear" id="footer"></div>
     </div>

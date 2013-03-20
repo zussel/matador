@@ -34,22 +34,17 @@
 #include "tools/varchar.hpp"
 #include "tools/enable_if.hpp"
 
+#ifdef WIN32
 #include <type_traits>
+#else
+#include <tr1/type_traits>
+#endif
+
 #include <cstdlib>
 #include <iostream>
 #include <typeinfo>
 #include <limits>
 #include <cstring>
-
-///@cond OOS_DEV
-
-#ifdef WIN32
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
-
-///@endcond
 
 /**
  * @file convert.hpp
@@ -133,14 +128,14 @@ convert(const T &from, U &to, S size, P precision);
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
-                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_signed<T>::value &&
+                                 std::is_signed<U>::value) ||
+                                (std::is_unsigned<T>::value &&
+                                 std::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   to = (U)from;
@@ -159,14 +154,14 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value) ||
-                                (CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_signed<T>::value &&
+                                 std::is_signed<U>::value) ||
+                                (std::is_unsigned<T>::value &&
+                                 std::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
@@ -185,12 +180,12 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_signed<T>::value &&
+                                 std::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   if (from < 0) {
@@ -212,12 +207,12 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_signed<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_unsigned<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_signed<T>::value &&
+                                 std::is_unsigned<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
@@ -234,13 +229,13 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value &&
+                                !std::is_same<T, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_unsigned<T>::value &&
+                                 std::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<(sizeof(T) < sizeof(U))>::type* = 0)
 {
   to = from;
@@ -256,13 +251,13 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<U>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<T, U>::value &&
+                                !std::is_same<U, bool>::value &&
+                                !std::is_same<T, bool>::value>::type* = 0,
+        typename oos::enable_if<(std::is_unsigned<T>::value &&
+                                 std::is_signed<U>::value)>::type* = 0,
         typename oos::enable_if<!(sizeof(T) < sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
@@ -281,9 +276,9 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value &&
+                                std::is_floating_point<U>::value &&
+                                !std::is_same<T, U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   to = (U)from;
@@ -301,9 +296,9 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value &&
+                                std::is_floating_point<U>::value &&
+                                !std::is_same<T, U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
@@ -322,9 +317,9 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                !std::is_same<T, bool>::value &&
+                                std::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<!(sizeof(T) > sizeof(U))>::type* = 0)
 {
   to = (U)from;
@@ -342,9 +337,9 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_floating_point<U>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                !std::is_same<T, bool>::value &&
+                                std::is_floating_point<U>::value>::type* = 0,
         typename oos::enable_if<(sizeof(T) > sizeof(U))>::type* = 0)
 {
   throw std::bad_cast();
@@ -363,9 +358,9 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<!(std::numeric_limits<T>::digits > std::numeric_limits<U>::digits)>::type* = 0)
 {
   throw std::bad_cast();
@@ -374,9 +369,9 @@ convert(const T &, U &,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_integral<U>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value &&
+                                std::is_integral<U>::value &&
+                                !std::is_same<U, bool>::value>::type* = 0,
         typename oos::enable_if<(std::numeric_limits<T>::digits > std::numeric_limits<U>::digits)>::type* = 0)
 {
   throw std::bad_cast();
@@ -392,8 +387,8 @@ convert(const T &, U &,
 template < class T >
 void
 convert(bool from, T &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value &&
+                                !std::is_same<T, bool>::value>::type* = 0)
 {
   to = (from ? 1 : 0);
 }
@@ -401,7 +396,7 @@ convert(bool from, T &to,
 template < class T >
 void
 convert(bool from, T &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   to = (T)(from ? 1.0 : 0.0);
 }
@@ -415,8 +410,8 @@ convert(bool from, T &to,
 template < class T >
 void
 convert(const T &from, bool &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value>::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value &&
+                                !std::is_same<T, bool>::value>::type* = 0)
 {
   to = from > 0;
 }
@@ -433,10 +428,10 @@ OOS_API void convert(const bool &from, bool &to);
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value &&
-                                !CPP11_TYPE_TRAITS_NS::is_same<U, bool>::value &&
-                                CPP11_TYPE_TRAITS_NS::is_same<T, U>::value>::type* = 0)
+        typename oos::enable_if<std::is_arithmetic<T>::value &&
+                                !std::is_same<T, bool>::value &&
+                                !std::is_same<U, bool>::value &&
+                                std::is_same<T, U>::value>::type* = 0)
 {
   to = from;
 }
@@ -450,7 +445,7 @@ convert(const T &from, U &to,
 template < class S >
 void
 convert(bool from, char *to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
 #ifdef WIN32
   _snprintf_s(to, size, size, (from ? "true" : "false"));
@@ -468,11 +463,11 @@ convert(bool from, char *to, S size,
 template < class T, class S >
 void
 convert(const T &from, char *to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value >::type* = 0,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, unsigned char>::value >::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_unsigned<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, char>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, unsigned char>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
 #ifdef WIN32
   _snprintf_s(to, size, size, "%d", from);
@@ -489,9 +484,9 @@ convert(const T &from, char *to, S size,
 template < class T, class S >
 void
 convert(const T &from, char *to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<T, char>::value ||
-                                CPP11_TYPE_TRAITS_NS::is_same<T, unsigned char>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<std::is_same<T, char>::value ||
+                                std::is_same<T, unsigned char>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
 #ifdef WIN32
   _snprintf_s(to, size, size, "%c", from);
@@ -502,11 +497,11 @@ convert(const T &from, char *to, S size,
 template < class T, class S >
 void
 convert(const T &from, char *to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value >::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_signed<T>::value >::type* = 0,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value >::type* = 0,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_same<T, char>::value >::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<T>::value >::type* = 0,
+        typename oos::enable_if<std::is_signed<T>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, bool>::value >::type* = 0,
+        typename oos::enable_if<!std::is_same<T, char>::value >::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
 #ifdef WIN32
   _snprintf_s(to, size, size, "%d", from);
@@ -524,9 +519,9 @@ convert(const T &from, char *to, S size,
 template < class T, class S, class P >
 void
 convert(const T &from, char *to, S size, P precision,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<P>::value>::type* = 0)
 {
   char buf[32];
 #ifdef WIN32
@@ -547,8 +542,8 @@ convert(const T &from, char *to, S size, P precision,
 template < class T, class S >
 void
 convert(const T &, char *, S ,
-        typename oos::enable_if<!CPP11_TYPE_TRAITS_NS::is_arithmetic<T>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<!std::is_arithmetic<T>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -556,7 +551,7 @@ convert(const T &, char *, S ,
 template < class S >
 void
 convert(const char *from, char *to, S size,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
   if (strlen(from) < (size_t)size) {
 #ifdef WIN32
@@ -578,10 +573,10 @@ convert(const char *from, char *to, S size,
 template < class T, class U, class P >
 void
 convert(const T &from, U &to, P precision,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
-                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<std::is_same<U, std::string>::value ||
+                                std::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<P>::value>::type* = 0)
 {
   char buf[256];
   convert(from, buf, 256, precision);
@@ -597,9 +592,9 @@ convert(const T &from, U &to, P precision,
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
-                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<T>::value>::type* = 0)
+        typename oos::enable_if<std::is_same<U, std::string>::value ||
+                                std::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<T>::value>::type* = 0)
 {
   char buf[256];
   convert(from, buf, 256);
@@ -608,9 +603,9 @@ convert(const T &from, U &to,
 template < class T, class U >
 void
 convert(const T &, U &,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
-                                CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+        typename oos::enable_if<std::is_same<U, std::string>::value ||
+                                std::is_base_of<varchar_base, U>::value>::type* = 0,
+        typename oos::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -624,8 +619,8 @@ convert(const T &, U &,
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_signed<T>::value)>::type* = 0)
+        typename oos::enable_if<(std::is_integral<T>::value &&
+                                 std::is_signed<T>::value)>::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtol(from, &ptr, 10));
@@ -642,9 +637,9 @@ convert(const char *from, T &to,
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_integral<T>::value &&
-                                 CPP11_TYPE_TRAITS_NS::is_unsigned<T>::value &&
-                                 !CPP11_TYPE_TRAITS_NS::is_same<T, bool>::value)>::type* = 0)
+        typename oos::enable_if<(std::is_integral<T>::value &&
+                                 std::is_unsigned<T>::value &&
+                                 !std::is_same<T, bool>::value)>::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtoul(from, &ptr, 10));
@@ -661,7 +656,7 @@ convert(const char *from, T &to,
 template < class T >
 void
 convert(const char *from, T &to,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value>::type* = 0)
+        typename oos::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   char *ptr;
   to = static_cast<T>(strtod(from, &ptr));
@@ -685,9 +680,9 @@ OOS_API void convert(const char *from, bool &to);
 template < class T, class U >
 void
 convert(const T &from, U &to,
-        typename oos::enable_if<(CPP11_TYPE_TRAITS_NS::is_arithmetic<U>::value &&
-                                 (CPP11_TYPE_TRAITS_NS::is_same<T, std::string>::value ||
-                                  CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, T>::value))>::type* = 0)
+        typename oos::enable_if<(std::is_arithmetic<U>::value &&
+                                 (std::is_same<T, std::string>::value ||
+                                  std::is_base_of<varchar_base, T>::value))>::type* = 0)
 {
   convert(from.c_str(), to);
 }
@@ -702,10 +697,10 @@ convert(const T&, char*)
 template < class T, class U, class S >
 void
 convert(const T &, U &, S ,
-        typename oos::enable_if<!((CPP11_TYPE_TRAITS_NS::is_same<U, std::string>::value ||
-                                   CPP11_TYPE_TRAITS_NS::is_base_of<varchar_base, U>::value) &&
-                                  CPP11_TYPE_TRAITS_NS::is_floating_point<T>::value)>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0)
+        typename oos::enable_if<!((std::is_same<U, std::string>::value ||
+                                   std::is_base_of<varchar_base, U>::value) &&
+                                  std::is_floating_point<T>::value)>::type* = 0,
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -713,8 +708,8 @@ convert(const T &, U &, S ,
 template < class T, class U, class S, class P >
 void
 convert(const T &, U &, S , P ,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<S>::value>::type* = 0,
-        typename oos::enable_if<CPP11_TYPE_TRAITS_NS::is_integral<P>::value>::type* = 0)
+        typename oos::enable_if<std::is_integral<S>::value>::type* = 0,
+        typename oos::enable_if<std::is_integral<P>::value>::type* = 0)
 {
   throw std::bad_cast();
 }

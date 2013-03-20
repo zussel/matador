@@ -225,7 +225,7 @@ void ObjectVectorTestUnit::test_direct_ref_vector()
 
   UNIT_ASSERT_TRUE(i == alb1->begin() + 1, "invalid iterator");
   album::size_type s = 2;
-  UNIT_ASSERT_EQUAL(alb1->size(), 2, "invalid album size");
+  UNIT_ASSERT_EQUAL(alb1->size(), s, "invalid album size");
 
 //  std::for_each(alb1->begin(), alb1->end(), print_track);
 }

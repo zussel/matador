@@ -31,8 +31,14 @@
  * database schema ...
  *
  * @code
+ * // the object store
+ * object_store ostore;
+ *
+ * // configure object store
+ * // ...
+ *
  * // create and open a session
- * oos::session ses("sqlite://person.db");
+ * oos::session ses(ostore, "sqlite://person.db");
  *
  * // create the database schema
  * ses.create();
@@ -75,24 +81,6 @@
  *   tr.rollback();
  * }
  * @endcode
- *
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td align="left" width="40%">Prev</td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%"></td></tr><tr>
- *   <td align="left" width="40%">
- * @endhtmlonly
- * @ref expressions
- * @htmlonly
- *   </td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @htmlonly
- *   </td>
- * </tr></tbody></table>
- * @endhtmlonly
  *
  * @htmlonly
  * </div>

@@ -57,7 +57,7 @@
  *
  * @code
  * // create the variable
- * oos::variable<int, person> x(&person::age);
+ * oos::variable<int> x(oos::make_var(&person::age));
  *
  * // find the person of age 25
  * iterator i = pview.find_if(x == 25);
@@ -81,9 +81,7 @@
  * oos::variable<int> x(oos::make_var(&person::age));
  *
  * // use the for_each_if function
- * for_each_if(pview.begin(), pview.end(),
- *             x > 20 && x < 60,
- *             print);
+ * for_each_if(pview.begin(), pview.end(), x > 20 && x < 60, print);
  * @endcode
  *
  * All persons whos age lays between 40 and 60 are printed.

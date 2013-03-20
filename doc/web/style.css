@@ -297,36 +297,42 @@ a
 
 #content pre code
 {
-  font-size: 115%;
+  font-size: 110%;
   /*font-weight: bold;*/
-  line-height: 95%;
+  line-height: 100%;
 }
 
 #content table
 {
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid #888;
-  border-radius: 10px;
 }
 
 
-#content table tr td,
-#content table tr th
+#grid tr td,
+#grid tr th
 {
   border: 1px solid #888;
   font-weight: bolder;
 }
 
-#content table tr th
+#grid tr th
 {
   background-color: #aaa;
   color: #fff;
 }
 
-#content table tr.alt td
+#grid tr.alt td
 {
   background-color: #ccc;
+}
+
+#grid
+{
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #888;
+  border-radius: 10px;
 }
 
 #footer
@@ -636,4 +642,31 @@ p.warn
 .headertitle
 {
   clear: both;
+}
+
+.number
+{
+  margin: 0;
+  border-radius: 50%;
+  font-weight: bolder;
+  font-size: 150%;
+  padding: 2px 5px;
+/*  border: 3px solid #922;*/
+/*  background-color: #fcc;*/
+  background-color: #444;
+  width: 17px;
+  height: 23px;
+/*  float: left;*/
+  color: #fff;
+}
+.hint
+{
+  margin: 0;
+  padding: 0 3px;
+/*  background-color: #eee;*/
+  font-size: 90%;
+/*  border-left: 4px solid #aaa;*/
+/*  font-family: monospace;*/
+  line-height:1.3em;
+  text-align: left;
 }

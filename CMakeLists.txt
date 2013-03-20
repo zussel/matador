@@ -1,5 +1,5 @@
 # project name
-PROJECT(OOS)
+PROJECT(oos)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
@@ -108,14 +108,14 @@ INSTALL(
   COMPONENT doc
 )
 # Basic CPack configuration   
-SET(CPACK_PACKAGE_NAME "OOS")
+SET(CPACK_PACKAGE_NAME "oos")
 SET(CPACK_PACKAGE_VENDOR "Elephant Sky")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your object in one container")
 SET(CPACK_PACKAGE_VERSION "0.1.0")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "1")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "OOS")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "oos")
 
 # Tell CPack all of the components to install. The "ALL"
 # refers to the fact that this is the set of components that
