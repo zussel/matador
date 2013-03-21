@@ -17,7 +17,7 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="api/index.html">Documention</a></li>
           <li><a href="download.html">Download</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <!--li><a href="contact.html">Contact</a></li-->
           <li class="selected">About</li>
         </ul>
       </div>
@@ -26,6 +26,12 @@
       <div id="content">
         <div class="width100 float_left">
           <h2>About</h2>
+          <h3>What?</h3>
+          <p>OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all the database work. You don't have to deal with database backends or sql statements neither with serialization of objects. Its future goal is to cover more databases and add more (hibernate like) functionality.</p>
+          <h3>Why?</h3>
+          <p>Why did I wrote this library? This question has several answers. I'll try to cover them all in a short way: There are a lot of good ORM libraries out there but less in C++. Although they are all excellent and very well written I missed at least one part.</p>
+          <p>There was never a container for my objects. I always had to setup a storage point (list, map, vector, etc) by myself. I had to deal with several containers. But what I wanted was <b>one</b> container. I saw this once in a company I worked for (but I never understood completely how it works under the hood, because it was right after university). After a while I started to create such a container from scratch for two reasons: To have and use this one container and to study how such a container could work.</p>
+          <p>Right now it works very well. And to prove the concept I added a transaction mechanism and two database backends.</p>
         </div>
       </div>
       <div class="clear" id="footer"></div>

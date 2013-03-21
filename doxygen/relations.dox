@@ -83,6 +83,10 @@
  * When it comes to one to many releationships it is also
  * quiet easy. OOS comes with three types of container
  * classes which can be used to setup one to many relationships.
+ * * oos::object_vector
+ * * oos::object_list
+ * * oos::linked_object_list
+ *
  * Because these classes are designed in the same way as
  * the STL classes we can use them in the same way plus the
  * benefit of the relationship.

@@ -153,10 +153,11 @@
  * typedef oos::object_ptr<Truck> truck_ptr;
  * truck_ptr truck = ostore.insert(new Truck("MAN"));
  * 
- * if (ostore.remove(truck)) {
- *   // successfully removed object
+ * if (ostore.is_removable(truck)) {
+ *   // remove object
+ *   ostore.remove(truck);
  * } else {
- *   // object removal failed
+ *   // object can't be removed
  * }
  * @endcode
  *

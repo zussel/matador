@@ -27,7 +27,7 @@
  * database and wrap a transaction around your insertions or
  * modifications.
  *
- * After created a session objects youo can either create the
+ * After created a session objects you can either create the
  * database schema ...
  *
  * @code
