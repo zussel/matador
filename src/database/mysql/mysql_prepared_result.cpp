@@ -124,7 +124,7 @@ void mysql_prepared_result::read(const char *, varchar_base &x)
   get_column_value(bind_[result_index++], MYSQL_TYPE_VAR_STRING, x);
 }
 
-void mysql_prepared_result::read(const char *id, object_base_ptr &x)
+void mysql_prepared_result::read(const char *, object_base_ptr &x)
 {
   get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
 }
