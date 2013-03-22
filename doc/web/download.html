@@ -61,6 +61,8 @@
           <h2>Requirements</h2>
           <p>There are less requirements for the runtime library. At least the database library you want to use in your environments path.</p>
           <p>If you would like to build from the sources you need at least the <a href="http://www.cmake.org">cmake</a> build system installed. If you plan to generate an install package on a windows system you need the <a href="http://nsis.sourceforge.net">nullsoft scriptable install system</a>.</p>
+          <h2>Installation</h2>
+          <p>Once you have installed the library and want to develop some software with it tell your compiler where the includes and where the libraries are. If you plan to use one of the databases except the in memory one make sure your path contains the third party (mysql, sqlite) libraries in it.</p>
           <h2>Sources</h2>
           <p>Get the sources from GitHub and enter the created directory:</p>
 <pre><code class="bash">$ git clone https://github.com/zussel/oos.git
@@ -78,7 +80,6 @@ $ cmake ..</code></pre>
 $ cd build
 $ cmake -G "Visual Studio *" ..</code></pre>
         <p>Where <b>*</b> is one of the <b><i>"Visual Studio"</i></b> strings up from <b><i>"9 2008"</i></b>. See cmake documentation <a href="http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators">here</a>. After generation you find a <b>OOS.sln</b> solution file in the current directory.</p>
-        <!--h2>Installation</h2-->
         </div>
         <!--div id="side_toc" class="width25 float_right">
           <ul>

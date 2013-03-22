@@ -7,6 +7,12 @@
  *
  * @htmlonly
  * <table id="doc_nav"><tbody><tr>
+ *   <td><div class="left-arrow-top"></td>
+ *   <td align="left" width="40%">Prev</td>
+ *   <td align="center" width="20%"></td>
+ *   <td align="right" width="40%">Next</td>
+ *   <td><div class="right-arrow-top"></td></tr><tr>
+ *   <td><div class="left-arrow-bottom"></td>
  *   <td align="left" width="40%">
  * @endhtmlonly
  * @ref view
@@ -17,7 +23,7 @@
  * @endhtmlonly
  * @ref database
  * @htmlonly
- *   </td>
+ *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
  * @endhtmlonly
  *
@@ -88,9 +94,12 @@
  *
  * @htmlonly
  * <table id="doc_nav"><tbody><tr>
+ *   <td><div class="left-arrow-top"></td>
  *   <td align="left" width="40%">Prev</td>
  *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%">Next</td></tr><tr>
+ *   <td align="right" width="40%">Next</td>
+ *   <td><div class="right-arrow-top"></td></tr><tr>
+ *   <td><div class="left-arrow-bottom"></td>
  *   <td align="left" width="40%">
  * @endhtmlonly
  * @ref view
@@ -101,7 +110,7 @@
  * @endhtmlonly
  * @ref database
  * @htmlonly
- *   </td>
+ *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
  * @endhtmlonly
  *

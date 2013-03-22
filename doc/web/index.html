@@ -91,7 +91,7 @@
           <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
         </div>
         <div class="width33 float_left">
-          <p class="number">1</p><p class="hint">Create your class derived from oos::object add access methods and overwrite the serialization interface.</p>
+          <p class="number">1</p><p class="hint"><i>Create your class derived from oos::object add access methods and overwrite the serialization interface.</i></p>
         </div>
         <div class="width66 float_right">
 <pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
@@ -131,7 +131,7 @@
 };</code></pre>
         </div>
         <div class="clear width33 float_left">
-          <p class="number">2</p><p class="hint">Make your class type known to your object store.</p>
+          <p class="number">2</p><p class="hint"><i>Make your class type known to your object store.</i></p>
         </div>
         <div class="width66 float_right">
 <pre><code class="cpp">
@@ -142,7 +142,7 @@ ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
 </code></pre>
         </div>
         <div class="clear width33 float_left">
-          <p class="number">3</p><p class="hint">Create a new session start a new transaction and insert your objects.</p>
+          <p class="number">3</p><p class="hint"><i>Create a new session start a new transaction and insert your objects.</i></p>
         </div>
         <div class="width66 float_right">
 <pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
@@ -166,7 +166,7 @@ transaction tr(db);
 }</code></pre>
         </div>
         <div class="clear width33 float_left">
-          <p class="number">4</p><p class="hint">To access your objects open a view.</p>
+          <p class="number">4</p><p class="hint"><i>To access your objects open a view.</i></p>
         </div>
         <div class="width66 float_right">
 <pre><code class="cpp"><span class="keyword">typedef</span> object_ptr&lt;person&gt; person_ptr;

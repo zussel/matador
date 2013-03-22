@@ -634,7 +634,44 @@ pre
 
 #doc_nav
 {
+  margin-top: 20px;
 	width:100%;
+  border-spacing: 0;
+}
+
+#doc_nav tr td
+{
+  /*border: 1px solid #999;*/
+  padding: 0 5px;
+  line-height: 1em;
+}
+
+.left-arrow-top {
+    line-height: 0%;
+    width: 0px;
+    border-top: 20px solid transparent;
+    border-right: 10px solid #ddd;
+}
+
+.left-arrow-bottom {
+    line-height: 0%;
+    width: 0px;
+    border-bottom: 20px solid transparent;
+    border-right: 10px solid #ddd;
+}
+
+.right-arrow-top {
+    line-height: 0%;
+    width: 0px;
+    border-top: 20px solid transparent;
+    border-left: 10px solid #ddd;
+}
+
+.right-arrow-bottom {
+    line-height: 0%;
+    width: 0px;
+    border-bottom: 20px solid transparent;
+    border-left: 10px solid #ddd;
 }
 
 .warn
