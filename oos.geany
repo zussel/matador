@@ -23,7 +23,7 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=12
+current_page=6
 FILE_NAME_0=980;HTML;0;EUTF-8;0;1;1;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fdoc%2Fweb%2Fdownload.html;0;2
 FILE_NAME_1=3357;C++;0;EUTF-8;0;1;0;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Finclude%2Fdatabase%2Fsql.hpp;0;2
 FILE_NAME_2=1157;HTML;0;EUTF-8;0;1;1;%2Fhome%2Fsascha%2Fdevelopment%2Foos%2Fdoc%2Fweb%2Findex.html;0;2
