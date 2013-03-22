@@ -4,7 +4,12 @@
  * @endhtmlonly
  *
  * @htmlonly
- * <table id="doc_nav"><tbody><tr>
+ * <table id="doc_nav" cellpadding="0" cellspacing="0"><tbody><tr>
+ *   <td><div class="left-arrow-top"></td>
+ *   <td align="left" width="40%">Prev</td>
+ *   <td align="center" width="20%"></td>
+ *   <td align="right" width="40%"></td></tr><tr>
+ *   <td><div class="left-arrow-bottom"></td>
  *   <td align="left" width="40%">
  * @endhtmlonly
  * @ref expressions
@@ -18,7 +23,7 @@
  * </tr></tbody></table>
  * @endhtmlonly
  *
- * @page database Persist Objects
+ * @page database
  *
  * @section database_sec Persist Objects
  *
@@ -120,8 +125,31 @@
  * as loaded and when the children table is loaded all parent objects can
  * be filled with their children.
  *
- * <b>Scenario 2:</b> Children are loaded first. 
+ * <b>Scenario 2:</b> Children are loaded first. Because the parents aren't
+ * available placeholders with their ids are created from the id stored
+ * in the concrete children. Furthermore temporary lists are build up holding
+ * all children for each parent. When finally the parents are loaded these
+ * lists are used to the concrete parent container.
  * 
+ * @htmlonly
+ * <table id="doc_nav"><tbody><tr>
+ *   <td><div class="left-arrow-top"></td>
+ *   <td align="left" width="40%">Prev</td>
+ *   <td align="center" width="20%"></td>
+ *   <td align="right" width="40%"></td></tr><tr>
+ *   <td><div class="left-arrow-bottom"></td>
+ *   <td align="left" width="40%">
+ * @endhtmlonly
+ * @ref expressions
+ * @htmlonly
+ *   </td>
+ *   <td width="20%"></td>
+ *   <td align="right" width="40%">
+ * @endhtmlonly
+ * @htmlonly
+ *   </td>
+ * </tr></tbody></table>
+ * @endhtmlonly
  *
  * @htmlonly
  * </div>
@@ -151,7 +179,7 @@
  *     <li>@ref one_to_many</li>
  *   </ul></li>
  *   <li>@ref expressions</li>
- *   <li>@ref database
+ *   <li>@ref database_sec
  *      <ul>
  *        <li>@ref support_sec</li>
  *        <li>@ref db_relation_sec</li>
