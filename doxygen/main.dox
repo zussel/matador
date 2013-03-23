@@ -6,18 +6,25 @@
  * @htmlonly
  * <table id="doc_nav"><tbody><tr>
  *   <td align="left" width="40%"></td>
+ *   <td align="center" width="20%"></td>
+ *   <td align="right" width="40%">Next</td>
+ *   <td><div class="right-arrow-top"></td></tr><tr>
+ *   <td align="left" width="40%">
+ * @endhtmlonly
+ * @htmlonly
+ *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
  * @endhtmlonly
- * @ref store
+ * @ref objects_sec
  * @htmlonly
- *   </td>
+ *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
  * @endhtmlonly
  *
- * @mainpage Introduction
+ * @mainpage Overview
  *
- * @section intro_sec Overview
+ * @section intro_sec Introduction
  *
  * The following documentation will give you an overview over
  * the Open Object Store API. It will show you all main components
@@ -56,14 +63,18 @@
  * <table id="doc_nav"><tbody><tr>
  *   <td align="left" width="40%"></td>
  *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%">Next</td></tr><tr>
- *   <td align="left" width="40%"></td>
+ *   <td align="right" width="40%">Next</td>
+ *   <td><div class="right-arrow-top"></td></tr><tr>
+ *   <td align="left" width="40%">
+ * @endhtmlonly
+ * @htmlonly
+ *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
  * @endhtmlonly
- * @ref store
+ * @ref objects_sec
  * @htmlonly
- *   </td>
+ *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
  * @endhtmlonly
  *
@@ -73,20 +84,23 @@
  * @endhtmlonly
  * <b>Table of content</b> @n
  * <ul>
- *   <li>@ref index
- *    <ul><li>@ref intro_sec</li></ul>
+ *   <li>@ref index</li>
+ *   <li>@ref intro_sec</li>
+ *   <li>@ref objects
+ *       <ul>
+ *         <li>@ref step1</li>
+ *         <li>@ref step2</li>
+ *         <li>@ref step3</li>
+ *       </ul>
  *   </li>
- *   <li>@ref store
- *   <ul>
- *    <li>@ref objects_sec</li>
- *    <li>@ref object_store_sec</li>
- *      <ul>
- *        <li>@ref prototypes</li>
- *        <li>@ref add_objects</li>
- *        <li>@ref modify_objects</li>
- *        <li>@ref remove_objects</li>
- *      </ul>
- *   </ul></li>
+ *   <li>@ref store_sec
+ *     <ul>
+ *       <li>@ref prototypes</li>
+ *       <li>@ref add_objects</li>
+ *       <li>@ref modify_objects</li>
+ *       <li>@ref remove_objects</li>
+ *     </ul>
+ *   </li>
  *   <li>@ref relations
  *   <li>@ref view
  *   <ul>

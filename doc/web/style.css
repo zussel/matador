@@ -443,10 +443,12 @@ a
 
 .title
 {
-	font-size: 170%;
+	font-size: 30%;
 	font-weight: 900;
+  visibility: hidden;
 	margin: 0;
-	padding: 20px 0 10px 0;
+	/*padding: 20px 0 10px 0*/;
+  padding: 0;
 }
 
 .fragment

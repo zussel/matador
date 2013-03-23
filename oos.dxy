@@ -679,6 +679,7 @@ WARN_LOGFILE           =
 
 INPUT                  = include \
                          doxygen/main.dox \
+                         doxygen/objects.dox \
                          doxygen/store.dox \
                          doxygen/relations.dox \
                          doxygen/expressions.dox \
