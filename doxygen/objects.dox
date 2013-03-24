@@ -13,13 +13,13 @@
  *   <td><div class="left-arrow-bottom"></td>
  *   <td align="left" width="40%">
  * @endhtmlonly
- * @ref intro_sec
+ * @ref index
  * @htmlonly
  *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
  * @endhtmlonly
- * @ref store_sec
+ * @ref store
  * @htmlonly
  *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
@@ -97,13 +97,13 @@
  *   <td><div class="left-arrow-bottom"></td>
  *   <td align="left" width="40%">
  * @endhtmlonly
- * @ref intro_sec
+ * @ref index
  * @htmlonly
  *   </td>
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
  * @endhtmlonly
- * @ref store_sec
+ * @ref store
  * @htmlonly
  *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>

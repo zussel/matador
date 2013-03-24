@@ -16,7 +16,7 @@
  *   <td width="20%"></td>
  *   <td align="right" width="40%">
  * @endhtmlonly
- * @ref objects_sec
+ * @ref objects
  * @htmlonly
  *   </td><td><div class="right-arrow-bottom"></td>
  * </tr></tbody></table>
@@ -85,7 +85,6 @@
  * <b>Table of content</b> @n
  * <ul>
  *   <li>@ref index</li>
- *   <li>@ref intro_sec</li>
  *   <li>@ref objects
  *       <ul>
  *         <li>@ref step1</li>
