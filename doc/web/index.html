@@ -48,7 +48,7 @@
           <h2>Features</h2>
         </div>
         <div class="width25 float_right">
-            <a href="download.html" class="button green">Download Version 0.1.0</a>
+            <a href="download.html" class="button green">Download Version 0.1.0 beta</a>
         </div>
         <div class="width75 float_left">
           <ul>
@@ -142,14 +142,18 @@ ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
 </code></pre>
         </div>
         <div class="clear width33 float_left">
-          <p class="number">3</p><p class="hint"><i>Create a new session start a new transaction and insert your objects.</i></p>
+          <p class="number">3</p><p class="hint"><i>Create a new session and insert a new object</p>
+          <p>or</p><p>start a new transaction and insert your objects.</i></p>
         </div>
         <div class="width66 float_right">
 <pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
 
 db.create();
 
-transaction tr(db);
+db.insert(<span class="keyword">new</span> person(<span class="string">"Theo"</span>));
+</code></pre>
+
+<pre><code class="cpp">transaction tr(db);
 
 <span class="keyword">try</span> {  
     tr.begin();

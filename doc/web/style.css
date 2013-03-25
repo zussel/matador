@@ -300,12 +300,12 @@ a
 {
   font-size: 110%;
   /*font-weight: bold;*/
-  line-height: 100%;
+  line-height: 120%;
 }
 
 #content table
 {
-  border-collapse: collapse;
+/*  border-collapse: collapse;*/
   width: 100%;
 }
 
@@ -463,7 +463,6 @@ a.anchor
 .fragment
 {
 	padding: 5px;
-	line-height: 120%;
 	font-size: 105%;
 	color: #444;
 
@@ -481,19 +480,81 @@ a.anchor
   font-family: monospace, fixed;
   font-size: 13px;
   min-height: 13px;
-  line-height: 1.0;
+  line-height: 130%;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
-.memberdecls
-{
+.memberdecls {  
+  *border-collapse: collapse; /* IE7 and lower */
+  border-spacing: 0;
+  border:  1px solid #ccc;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
-table.memberdecls
-{
-  border-spacing: 0px;
-  padding: 0px;
+/*
+.memberdecls tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;     
+}    
+*/
+
+.memberdecls td, .memberdecls th {
+  border-left: 1px solid #ccc;
+  /*border-top: 1px solid #ccc;*/
+  padding: 5px;
+}
+
+.heading td {
+  background-color: #dce9f9;
+  border-top: none;
+}
+
+.memSeparator {
+  line-height: 1px;
+  padding: 0px !important;
+}
+
+.memberdecls td:first-child, .memberdecls th:first-child {
+  border-left: none;
+  border-top: none;
+}
+
+.memberdecls th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+
+.memberdecls th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+
+.memberdecls th:only-child{
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.memberdecls tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+.memberdecls tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
 }
 
 .memItemLeft,
@@ -502,18 +563,45 @@ table.memberdecls
 .memTemplItemRight,
 .memTemplParams
 {
+  border-top: 1px solid #ccc !important;
   font-family: monospace;
   font-weight: bold;
   font-size: 105%;
 }
 
-.memItemLeft,
-.memItemRight,
-.memTemplParams
+.mdescLeft,
+.memTemplItemLeft,
+.memItemLeft
 {
+  border-right: none;
+}
+
+.mdescRight,
+.memTemplItemRight,
+.memItemRight
+{
+  border-left: none !important;
+}
+
+.mdescLeft,
+.mdescRight
+{
+  border-top: none !important;
+}
+
+.memItemLeft
+{
+  text-align: right;
+}
+
+.memTemplItemLeft,
+.memTemplItemRight
+{
+  border-top: none !important;
 /*  border-top: 1px solid #333;*/
 }
 
+/*
 .memitem
 {
   -moz-border-radius: 5px;
@@ -523,12 +611,8 @@ table.memberdecls
   border: 1px solid #ddd;
   margin: 15px 0;
   background-color: #eee;
-/*
-  border: 1px solid #333;
-  margin-bottom: 20px;
-  font-size: 95%;
-*/
 }
+*/
 
 .memproto
 {
