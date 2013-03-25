@@ -117,6 +117,17 @@ object* database::insert(object *o)
   return o;
 }
 
+object* database::update(object *o)
+{
+  table_map_t::iterator i = table_map_.find(o->proxy_->node->type);
+  if (i == table_map_.end()) {
+    throw database_exception("db::update", "unknown type");
+  } else {
+    i->second->update(o);
+  }
+  return o;
+}
+
 void database::load(const prototype_node &node)
 {
     // load sequencer

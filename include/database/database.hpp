@@ -138,7 +138,21 @@ public:
    */
   void drop();
 
+  /**
+   * Insert the object into the database
+   * 
+   * @param o The object to insert.
+   * @return The inserted object.
+   */
   object* insert(object *o);
+
+  /**
+   * Update the object on the database
+   * 
+   * @param o The object to update.
+   * @return The updated object.
+   */
+  object* update(object *o);
 
   /**
    * load a specific table based on

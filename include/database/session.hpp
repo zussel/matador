@@ -213,15 +213,8 @@ public:
   template < class T >
   object_ptr<T> update(const object_base_ptr &optr)
   {
-    transaction tr(*this);
-    try {
-      tr.begin();
-      //object_ptr<T> optr = ostore_.insert(o);
-      tr.commit();
-      return optr;
-    } catch (std::exception &) {
-      return object_ptr<T>();
-    }
+    impl_->update(optr.ptr());
+    return object_ptr<T>(optr);
   }
 
   /**

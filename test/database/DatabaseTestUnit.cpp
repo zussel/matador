@@ -41,6 +41,8 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &msg, const std::string &db
   add_test("create_drop", std::tr1::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
   add_test("reopen", std::tr1::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
   add_test("insert", std::tr1::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
+  add_test("update", std::tr1::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
+  add_test("delete", std::tr1::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
 //  add_test("drop", std::tr1::bind(&DatabaseTestUnit::test_drop, this), "drop database test");
   add_test("simple", std::tr1::bind(&DatabaseTestUnit::test_simple, this), "simple database test");
   add_test("complex", std::tr1::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
@@ -181,6 +183,35 @@ void DatabaseTestUnit::test_insert()
   db->close();
 
   delete db;
+}
+
+void DatabaseTestUnit::test_update()
+{
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
+  
+  db->create();
+
+  item_ptr item = db->insert(new Item());
+
+  UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
+
+  db->drop();
+
+  db->close();
+
+  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+
+  delete db;
+}
+
+void DatabaseTestUnit::test_delete()
+{
 }
 
 void

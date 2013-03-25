@@ -42,6 +42,8 @@ public:
   void test_drop();
   void test_reopen();
   void test_insert();
+  void test_update();
+  void test_delete();
   void test_simple();
   void test_with_sub();
   void test_with_list();

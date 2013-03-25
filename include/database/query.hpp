@@ -67,6 +67,7 @@ class object_atomizable;
  * - insert
  * - update 
  * - delete
+ *
  * statements. These statements can be
  * created manually by adding each part
  * of the statement by hand or you can
