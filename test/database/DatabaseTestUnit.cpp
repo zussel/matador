@@ -143,6 +143,9 @@ DatabaseTestUnit::test_drop()
 
 void DatabaseTestUnit::test_insert()
 {
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
   // create database and make object store known to the database
   session *db = create_session();
 
@@ -150,14 +153,33 @@ void DatabaseTestUnit::test_insert()
   
   db->create();
 
-  object_ptr<Item> item = db->insert(new Item());
+  item_ptr item = db->insert(new Item());
 
-  db->drop();
+  UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 
   db->close();
 
   UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+
+  ostore_.clear();
   
+  db->open();
+  
+  db->load();
+  
+  oview_t oview(ostore_);
+
+  try {
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what());
+  }
+
+  db->drop();
+  
+  db->close();
+
   delete db;
 }
 
