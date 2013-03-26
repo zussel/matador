@@ -18,6 +18,7 @@
 #include "database/session.hpp"
 #include "database/result.hpp"
 #include "database/database_factory.hpp"
+#include "database/database_sequencer.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 #include "database/memory_database.hpp"
@@ -95,6 +96,9 @@ void session::close()
 
 bool session::load()
 {
+  // load sequencer
+  impl_->seq()->load();
+
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
   while (first != last) {
@@ -110,6 +114,23 @@ bool session::load()
 result* session::execute(const std::string &sql)
 {
   return impl_->execute(sql);
+}
+
+void session::update(const object_base_ptr &optr)
+{
+  impl_->update(optr.ptr());
+}
+
+void session::remove(object_base_ptr &optr)
+{
+  transaction tr(*this);
+  try {
+    tr.begin();
+    ostore_.remove(optr);
+    tr.commit();
+  } catch (std::exception &) {
+    return;
+  }
 }
 
 object_store& session::ostore()

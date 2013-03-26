@@ -260,6 +260,8 @@ public:
 
   virtual const char* type_string(sql::data_type_t type) const = 0;
 
+  database_sequencer_ptr seq() const;
+
 protected:
   const session* db() const;
 

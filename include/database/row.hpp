@@ -63,6 +63,11 @@ public:
     values_.push_back(value<T>(val));
   }
 
+  void push_back(const std::string &val)
+  {
+    values_.push_back(value_base(val));
+  }
+
   /**
    * Get value of column position
    *
@@ -74,6 +79,11 @@ public:
   T at(size_t pos)
   {
     return values_.at(pos).get<T>();
+  }
+
+  std::string str(size_t pos)
+  {
+    return values_.at(pos).val();
   }
 
 private:

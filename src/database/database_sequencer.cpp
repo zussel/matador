@@ -16,6 +16,7 @@
  */
 
 #include "database/database_sequencer.hpp"
+#include "database/database_exception.hpp"
 #include "database/query.hpp"
 #include "database/statement.hpp"
 #include "database/result.hpp"
@@ -93,7 +94,6 @@ void database_sequencer::create()
   if (res->fetch()) {
     // get sequence number
     res->get(1, sequence_);
-//    convert(res->column(1), sequence_);
   } else {
     // TODO: check result
     result *res2 = q.reset().insert(this, "oos_sequence").execute();
@@ -106,6 +106,19 @@ void database_sequencer::create()
 
 void database_sequencer::load()
 {
+  query q(db_);
+  result *res = q.reset().select(this).from("oos_sequence").where("name='object'").execute();
+
+  if (res->fetch()) {
+    // get sequence number
+    res->get(1, sequence_);
+  } else {
+    delete res;
+    throw database_exception("database::sequencer", "couldn't fetch sequence");
+  }
+  delete res;
+
+  update_ = q.reset().update("oos_sequence", this).where("name='object'").prepare();
 }
 
 void database_sequencer::begin()

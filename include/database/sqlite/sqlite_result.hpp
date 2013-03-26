@@ -76,9 +76,9 @@ protected:
   template < class T >
   void read_column(const char *, T &x)
   {
-    std::string val = rows_.at(pos_)->at<std::string>(result_index);
+    std::string val = rows_.at(pos_)->str(result_index);
+//    std::string val = rows_.at(pos_)->at<std::string>(result_index);
     convert(val, x);
-//  std::cout << "converted string [" << val << "] to long [" << x << "]\n";
   }
 
 private:

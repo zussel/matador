@@ -209,10 +209,7 @@ public:
    * 
    * @param optr The object to update
    */
-  void update(const object_base_ptr &optr)
-  {
-    impl_->update(optr.ptr());
-  }
+  void update(const object_base_ptr &optr);
 
   /**
    * @brief Deletes a given persistent object
@@ -222,17 +219,7 @@ public:
    * 
    * @param optr The object to delete
    */
-  void remove(object_base_ptr &optr)
-  {
-    transaction tr(*this);
-    try {
-      tr.begin();
-      ostore_.remove(optr);
-      tr.commit();
-    } catch (std::exception &) {
-      return;
-    }
-  }
+  void remove(object_base_ptr &optr);
 
   /**
    * Returns the object_store.

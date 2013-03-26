@@ -18,7 +18,9 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include <string>
 #include <typeinfo>
+#include <iostream>
 
 namespace oos {
 
@@ -30,7 +32,15 @@ class value;
 class value_base
 {
 public:
+  value_base(const std::string &v)
+    : val_(v)
+  {}
   virtual ~value_base() {}
+
+  std::string val() const
+  {
+    return val_;
+  }
 
   template < class T >
   T get()
@@ -46,6 +56,8 @@ public:
 private:
   template < class T >
   T operator()();
+  
+  std::string val_;
 };
 
 template < class T >

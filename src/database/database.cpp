@@ -130,9 +130,6 @@ object* database::update(object *o)
 
 void database::load(const prototype_node &node)
 {
-    // load sequencer
-  sequencer_->load();
-
   table_map_t::iterator i = table_map_.find(node.type);
   if (i == table_map_.end()) {
     // create table
@@ -207,6 +204,11 @@ void database::rollback()
     on_rollback();
     commiting_ = false;
   }
+}
+
+database::database_sequencer_ptr database::seq() const
+{
+  return sequencer_;
 }
 
 void database::visit(insert_action *a)
