@@ -118,13 +118,18 @@ void sqlite_prepared_result::read(const char *, double &x)
 void sqlite_prepared_result::read(const char *, std::string &x)
 {
   int s = sqlite3_column_bytes(stmt_, result_index);
-  x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+  const char *text = (const char*)sqlite3_column_text(stmt_, result_index++);
+  x.assign(text, s);
 }
 
 void sqlite_prepared_result::read(const char *, varchar_base &x)
 {
   int s = sqlite3_column_bytes(stmt_, result_index);
-  x.assign((const char*)sqlite3_column_text(stmt_, result_index++), s);
+  const char *text = (const char*)sqlite3_column_text(stmt_, result_index++);
+  if (s == 0) {
+  } else {
+    x.assign(text, s);
+  }
 }
 
 void sqlite_prepared_result::read(const char *, char *x, int s)
@@ -145,7 +150,6 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
 #endif
     x[s] = '\0';
   }
-  ++result_index;
 }
 
 void sqlite_prepared_result::read(const char *, object_base_ptr &x)

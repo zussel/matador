@@ -208,13 +208,10 @@ public:
    * and on database.
    * 
    * @param optr The object to update
-   * @return The updated object.
    */
-  template < class T >
-  object_ptr<T> update(const object_base_ptr &optr)
+  void update(const object_base_ptr &optr)
   {
     impl_->update(optr.ptr());
-    return object_ptr<T>(optr);
   }
 
   /**

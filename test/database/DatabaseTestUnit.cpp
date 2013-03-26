@@ -198,14 +198,32 @@ void DatabaseTestUnit::test_update()
   db->create();
 
   item_ptr item = db->insert(new Item());
-
+  
   UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 
-  db->drop();
+  item->set_string("Mars");
+  
+  db->update(item);
 
   db->close();
 
   UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+
+  ostore_.clear();
+  
+  db->open();
+  
+  db->load();
+  
+  oview_t oview(ostore_);
+  
+  item = oview.front();
+  
+  UNIT_ASSERT_EQUAL("Mars", item->get_string(), "expected string must be 'Mars'");
+
+  db->drop();
+
+  db->close();
 
   delete db;
 }
