@@ -92,70 +92,14 @@ a
 	font-weight: 900;
 	color: #ddd;
 }
-/*
-.logo
-{
-  padding-top: 10px;
-  font-family: sans-serif;
-	font-size: 400%;
-	font-weight: 900;
-	color: #ddd;
-}
-*/
+
 #wrapper
 {
 /*	width: 900px;*/
 	width: 790px;
 	margin: 0 auto;
 }
-/*
-#header
-{
-  margin: 10px auto;
-  width: 100%;
-  padding: 0 0;
-  color: #444;
-}
 
-#header h1
-{
-  text-align: center;
-}
-
-#header ul
-{
-  float: right;
-  margin: 30px 20px 0 0;
-  list-style: none;
-  padding: 0;
-}
-
-#header ul li
-{
-  float: left;
-  padding: 6px 5px 2px 5px;
-  font-weight: bolder;
-  color: #cb4b16;
-}
-
-#header ul li a
-{
-  text-decoration: none;
-  font-weight: bolder;
-  color: #3fa6e7;
-  border-bottom: 4px solid #444;
-}
-
-#header ul li a:hover
-{
-  border-bottom: 4px solid #ffcc33;
-}
-
-#header ul li.selected a:hover
-{
-  border-bottom: 4px solid #222;
-}
-*/
 #logo
 {
   width: 100%;
@@ -306,69 +250,97 @@ a
 #content table
 {
 /*  border-collapse: collapse;*/
+/*  width: 100%;*/
+}
+
+.grid
+{
   width: 100%;
+  *border-collapse: collapse; /* IE7 and lower */
+  border-spacing: 0;
+  border:  1px solid #ccc;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
-#grid
+.grid td
 {
-  border-collapse: separate;
-  width: 100%;
-  border-left: 0;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  border-spacing: 0px;
+  text-align: right;
 }
 
-#grid tr td,
-#grid tr th
+.grid td:first-child
 {
-/*  border: 1px solid #888;*/
-  font-weight: bolder;
+  text-align: left;
 }
 
-#grid tr th
+.grid tr:hover,
+.grid tr.alt:hover
 {
-  background-color: #aaa;
-  color: #fff;
+  background-color: #fbf8e9;
 }
 
-#grid tr.alt td
+/*
+ * left border for header and data fields
+ */
+.grid td, .grid th {
+  border-left: 1px solid #ccc;
+  /*border-top: 1px solid #ccc;*/
+  padding: 5px;
+}
+
+/*
+ * no left and top border for
+ * first header and data field
+ */
+.grid td:first-child, .grid th:first-child {
+  border-left: none;
+  border-top: none;
+}
+
+.grid tr th
 {
-  background-color: #ccc;
+  background-color: #dce9f9;
+  border-bottom: 1px solid #ccc;
 }
 
-#grid th:first-child
+.grid tr.alt
 {
-  -moz-border-radius: 5px 0 0 0;
-  -webkit-border-radius: 5px 0 0 0;
-  border-radius: 5px 0 0 0;
+  background-color: #eee;
 }
 
-#grid th:last-child
+.grid th:first-child
 {
-  -moz-border-radius: 0 5px 0 0;
-  -webkit-border-radius: 0 5px 0 0;
-  border-radius: 0 5px 0 0;
+  -moz-border-radius: 6px 0 0 0;
+  -webkit-border-radius: 6px 0 0 0;
+  border-radius: 6px 0 0 0;
 }
 
-#grid th:only-child
+.grid th:last-child
 {
-  -moz-border-radius: 5px 5px 0 0;
-  -webkit-border-radius: 5px 5px 0 0;
-  border-radius: 5px 5px 0 0;
+  -moz-border-radius: 0 6px 0 0;
+  -webkit-border-radius: 0 6px 0 0;
+  border-radius: 0 6px 0 0;
 }
 
-#grid tr:last-child td:first-child {
-    -moz-border-radius: 0 0 0 5px;
-    -webkit-border-radius: 0 0 0 5px;
-    border-radius: 0 0 0 5px;
+.grid th:only-child
+{
+  -moz-border-radius: 6px 6px 0 0;
+  -webkit-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
 }
 
-#grid tr:last-child td:last-child {
-    -moz-border-radius: 0 0 5px 0;
-    -webkit-border-radius: 0 0 5px 0;
-    border-radius: 0 0 5px 0;
+.grid tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+.grid tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
 }
 
 #footer
@@ -452,6 +424,7 @@ a
   padding: 0;
 }
 
+.memberdecls h2 a,
 a.anchor
 {
   display: block;
@@ -485,7 +458,12 @@ a.anchor
   word-wrap: break-word;
 }
 
-.memberdecls {  
+/*
+ * table with rounded corners
+ * and blue header
+ */
+.memberdecls {
+  width: 100%;
   *border-collapse: collapse; /* IE7 and lower */
   border-spacing: 0;
   border:  1px solid #ccc;
@@ -506,55 +484,87 @@ a.anchor
 }    
 */
 
+/*
+ * left border for header and data fields
+ */
 .memberdecls td, .memberdecls th {
   border-left: 1px solid #ccc;
   /*border-top: 1px solid #ccc;*/
   padding: 5px;
 }
 
+/*
+ * background color for header
+ * no border
+ */
 .heading td {
   background-color: #dce9f9;
   border-top: none;
 }
 
+/*
+ * reduce the separator row fields
+ */
 .memSeparator {
   line-height: 1px;
   padding: 0px !important;
 }
 
+/*
+ * no left and top border for
+ * first header and data field
+ */
 .memberdecls td:first-child, .memberdecls th:first-child {
   border-left: none;
   border-top: none;
 }
 
+/*
+ * rounded corner for first header field
+ */
 .memberdecls th:first-child {
     -moz-border-radius: 6px 0 0 0;
     -webkit-border-radius: 6px 0 0 0;
     border-radius: 6px 0 0 0;
 }
 
+/*
+ * rounded corner for last header field
+ */
 .memberdecls th:last-child {
     -moz-border-radius: 0 6px 0 0;
     -webkit-border-radius: 0 6px 0 0;
     border-radius: 0 6px 0 0;
 }
 
+/*
+ * rounded corner on both sides of header field
+ * if header field is the only child
+ */
 .memberdecls th:only-child{
     -moz-border-radius: 6px 6px 0 0;
     -webkit-border-radius: 6px 6px 0 0;
     border-radius: 6px 6px 0 0;
 }
 
+/*
+ * rounded corners for the first data field
+ * in the last row
+ */
 .memberdecls tr:last-child td:first-child {
     -moz-border-radius: 0 0 0 6px;
     -webkit-border-radius: 0 0 0 6px;
     border-radius: 0 0 0 6px;
 }
 
+/*
+ * rounded corners for the last data field
+ * in the last row
+ */
 .memberdecls tr:last-child td:last-child {
-    -moz-border-radius: 0 0 6px 0;
-    -webkit-border-radius: 0 0 6px 0;
-    border-radius: 0 0 6px 0;
+  -moz-border-radius: 0 0 6px 0;
+  -webkit-border-radius: 0 0 6px 0;
+  border-radius: 0 0 6px 0;
 }
 
 .memItemLeft,
@@ -598,37 +608,55 @@ a.anchor
 .memTemplItemRight
 {
   border-top: none !important;
-/*  border-top: 1px solid #333;*/
 }
-
-/*
-.memitem
-{
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -khtml-border-radius: 5px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  margin: 15px 0;
-  background-color: #eee;
-}
-*/
 
 .memproto
 {
+  margin-top: 10px;
   font-weight: bold;
-  border-bottom: 1px solid #ccc;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  background-color: #eee;
+  -moz-border-radius: 6px 6px 0 0;
+  -webkit-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
 }
 
 .memdoc
 {
   padding: 5px;
-  border-top: 1px solid #ddd;
+  border: 1px solid #ccc;
+  -moz-border-radius: 0 0 6px 6px;
+  -webkit-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
 }
 
-pre
+.memtemplate
 {
-  /*font-family: courier, monospace;*/
+  padding: 4px 5px 0 5px;
+  margin: 0;
+}
+
+.tparams,
+.params,
+.return
+{
+  margin: 2px 0;
+}
+
+.tparams dt,
+.params dt,
+.return dt
+{
+  font-weight: bolder;
+  font-style: italic;
+}
+
+.paramname
+{
+  font-weight: bolder;
+  font-family: monospace, courier;
+  color: #3fa6e7;
 }
 
 .comment
@@ -736,7 +764,6 @@ pre
 
 #doc_nav tr td
 {
-  /*border: 1px solid #999;*/
   padding: 0 5px;
   line-height: 1em;
 }
@@ -778,7 +805,6 @@ pre
   border: 1px solid #ddd;
   margin: 5px 0;
   padding: 5px;
-/*  background-color: red;*/
 }
 
 p.warn
@@ -818,22 +844,16 @@ p.warn
   font-weight: bolder;
   font-size: 150%;
   padding: 2px 5px;
-/*  border: 3px solid #922;*/
-/*  background-color: #fcc;*/
   background-color: #444;
   width: 17px;
   height: 23px;
-/*  float: left;*/
   color: #fff;
 }
 .hint
 {
   margin: 0;
   padding: 0 3px;
-/*  background-color: #eee;*/
   font-size: 90%;
-/*  border-left: 4px solid #aaa;*/
-/*  font-family: monospace;*/
   line-height:1.3em;
   text-align: left;
 }
