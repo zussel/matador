@@ -49,15 +49,19 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
+long sqlite_statement::counter_ = 0;
+
 sqlite_statement::sqlite_statement(sqlite_database &db)
   : db_(db)
   , stmt_(0)
 {
+  std::cout << "DEBUG: sqlite statement counter (create " << this << "): " << ++counter_ << "\n";
 }
 
 sqlite_statement::~sqlite_statement()
 {
   clear();
+  std::cout << "DEBUG: sqlite statement counter (destroy " << this << "): " << counter_-- << "\n";
 }
 
 result* sqlite_statement::execute()
