@@ -135,7 +135,6 @@ SET(DATABASE_HEADER_ORIG
   ${PROJECT_SOURCE_DIR}/include/database/statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/statement_creator.hpp
   ${PROJECT_SOURCE_DIR}/include/database/table.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/sql.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query_create.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query_select.hpp
@@ -147,6 +146,7 @@ SET(DATABASE_HEADER_ORIG
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp
   ${PROJECT_SOURCE_DIR}/include/database/database_exception.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/sql.hpp
   ${PROJECT_SOURCE_DIR}/include/database/transaction.hpp
 )
 
