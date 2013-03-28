@@ -118,7 +118,9 @@ void database_sequencer::load()
   }
   delete res;
 
-  update_ = q.reset().update("oos_sequence", this).where("name='object'").prepare();
+  if (!update_) {
+    update_ = q.reset().update("oos_sequence", this).where("name='object'").prepare();
+  }
 }
 
 void database_sequencer::begin()

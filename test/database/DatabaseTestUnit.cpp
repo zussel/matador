@@ -285,11 +285,8 @@ DatabaseTestUnit::test_simple()
   // create database and make object store known to the database
   session *db = create_session();
 
-  // load data
+  // create schema
   db->create();
-
-  // load data
-  db->load();
 
   // create new transaction    
   transaction tr(*db);
