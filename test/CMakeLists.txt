@@ -65,6 +65,8 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
 # add tests
-ADD_TEST(test_oos_convert_char test_oos exec convert:to_char)
-ADD_TEST(test_oos_convert_short test_oos exec convert:to_short)
-ADD_TEST(test_oos_convert_int test_oos exec convert:to_int)
+ADD_TEST(test_oos_convert_char ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_char)
+ADD_TEST(test_oos_convert_short ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_short)
+ADD_TEST(test_oos_convert_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_int)
+
+ADD_TEST(test_oos_sqlite_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:simple)
