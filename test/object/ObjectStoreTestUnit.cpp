@@ -75,7 +75,6 @@ ObjectStoreTestUnit::expression_test()
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
   typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
-  typedef ObjectItemPtrList::value_type item_type;
 
   itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList);
 
@@ -460,7 +459,6 @@ ObjectStoreTestUnit::hierarchy()
   }
   
   typedef object_view<Item> item_view_t;
-  typedef object_ptr<Item> item_ptr;
 
   item_view_t item_view(ostore_);
 
@@ -508,7 +506,6 @@ ObjectStoreTestUnit::hierarchy()
   
   // Todo: check sub item view (a,b,c)
   typedef object_view<ItemA> item_a_view_t;
-  typedef object_ptr<ItemA> item_a_ptr;
 
   item_a_view_t item_a_view(ostore_);
 

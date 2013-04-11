@@ -84,10 +84,11 @@ private:
   typedef struct test_suite_args_struct
   {
     test_suite_args_struct()
-      : cmd(UNKNOWN), initialized(false)
+      : cmd(UNKNOWN), initialized(false), brief(false)
     {}
     test_suite_cmd cmd;
     bool initialized;
+    bool brief;
     std::string unit;
     std::string test;
   } test_suite_args;
@@ -106,9 +107,10 @@ private:
 
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
   {
-    unit_lister(std::ostream &o);
+    unit_lister(std::ostream &o, bool b = false);
     void operator()(test_suite::value_type &x);
     std::ostream &out;
+    bool brief;
   };
 
 public:

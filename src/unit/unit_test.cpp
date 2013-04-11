@@ -69,6 +69,17 @@ void unit_test::list(std::ostream &out)
   }
 }
 
+void unit_test::list(std::ostream &out, const std::string &name)
+{
+  t_test_func_info_map::iterator first = test_func_info_map_.begin();
+  t_test_func_info_map::iterator last = test_func_info_map_.end();
+  // list each test
+  while (first != last) {
+    out << name << ":" << first->first << std::endl;
+    ++first;
+  }
+}
+
 void unit_test::add_test(const std::string &name, const test_func &test, const std::string &caption)
 {
   test_func_info_map_.insert(std::make_pair(name, test_func_info(test, caption)));

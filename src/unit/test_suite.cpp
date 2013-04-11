@@ -24,14 +24,18 @@ void test_suite::unit_executer::operator()(test_suite::value_type &x)
   x.second->execute();
 }
 
-test_suite::unit_lister::unit_lister(std::ostream &o)
-  : out(o)
+test_suite::unit_lister::unit_lister(std::ostream &o, bool b)
+  : out(o), brief(b)
 {}
 
 void test_suite::unit_lister::operator()(test_suite::value_type &x)
 {
-  out << "Unit Test [" << x.first << "] has the following test:\n";
-  x.second->list(out);
+  if (brief) {
+    x.second->list(out, x.first);
+  } else {
+    out << "Unit Test [" << x.first << "] has the following test:\n";
+    x.second->list(out);
+  }
 }
 
 test_suite::~test_suite()
@@ -51,6 +55,10 @@ void test_suite::init(int argc, char *argv[])
   if (arg == "list") {
     // list all test units
     args_.cmd = LIST;
+    if (argc == 3 && strcmp(argv[2], "brief") == 0) {
+      args_.brief = true;
+    } else {
+    }
   } else if (arg == "exec") {
     if (argc < 3) {
       return;
@@ -83,7 +91,7 @@ void test_suite::run()
   if (args_.initialized) {
     switch (args_.cmd) {
       case LIST:
-        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout));
+        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
         break;
       case EXECUTE:
         if (!args_.unit.empty() && !args_.test.empty()) {

@@ -257,8 +257,22 @@ public:
    * 
    * All tests and their descriptions are printed
    * to the given ostream.
+   * 
+   * @param out The stream to be written on.
    */
   void list(std::ostream &out);
+  
+  /**
+   * @brief Briefly list all tests
+   * 
+   * All tests are listed in a brief way
+   * '<unit name>:<test name>'. Therefor the
+   * name of the unit test class is passed.
+   * 
+   * @param out The stream to be written on.
+   * @param name The name of the unit test class.
+   */
+  void list(std::ostream &out, const std::string &name);
 
   /**
    * @brief Adds a test to the test_unit.
