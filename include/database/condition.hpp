@@ -31,7 +31,7 @@
   #define OOS_API
 #endif
 
-#include "database/sql.hpp"
+#include "database/types.hpp"
 
 #include <string>
 #include <sstream>
@@ -265,7 +265,7 @@ public:
    * 
    * @return The data type.
    */
-  sql::data_type_t type() const
+  data_type_t type() const
   {
     return type_;
   }
@@ -324,7 +324,7 @@ protected:
 
 private:
   std::string column_;
-  sql::data_type_t type_;
+  data_type_t type_;
   unsigned long size_;
   std::string value_;
   std::string op_;

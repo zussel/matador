@@ -19,83 +19,83 @@ query_create::~query_create()
 
 void query_create::write(const char *id, char)
 {
-  write(id, sql::type_char);
+  write(id, type_char);
 }
 
 void query_create::write(const char *id, short)
 {
-  write(id, sql::type_short);
+  write(id, type_short);
 }
 
 void query_create::write(const char *id, int)
 {
-  write(id, sql::type_int);
+  write(id, type_int);
 }
 
 void query_create::write(const char *id, long)
 {
-  write(id, sql::type_long);
+  write(id, type_long);
 }
 
 void query_create::write(const char *id, unsigned char)
 {
-  write(id, sql::type_unsigned_char);
+  write(id, type_unsigned_char);
 }
 
 void query_create::write(const char *id, unsigned short)
 {
-  write(id, sql::type_unsigned_short);
+  write(id, type_unsigned_short);
 }
 
 void query_create::write(const char *id, unsigned int)
 {
-  write(id, sql::type_unsigned_int);
+  write(id, type_unsigned_int);
 }
 
 void query_create::write(const char *id, unsigned long)
 {
-  write(id, sql::type_unsigned_long);
+  write(id, type_unsigned_long);
 }
 
 void query_create::write(const char *id, float)
 {
-  write(id, sql::type_float);
+  write(id, type_float);
 }
 
 void query_create::write(const char *id, double)
 {
-  write(id, sql::type_double);
+  write(id, type_double);
 }
 
 void query_create::write(const char *id, bool)
 {
-  write(id, sql::type_bool);
+  write(id, type_bool);
 }
 
 void query_create::write(const char *id, const char *, int s)
 {
-  write(id, sql::type_char_pointer, s);
+  write(id, type_char_pointer, s);
 }
 
 void query_create::write(const char *id, const varchar_base &x)
 {
-  write(id, sql::type_varchar, x.size());
+  write(id, type_varchar, x.size());
 }
 
 void query_create::write(const char *id, const std::string &)
 {
-  write(id, sql::type_text);
+  write(id, type_text);
 }
 
 void query_create::write(const char *id, const object_base_ptr &)
 {
-  write(id, sql::type_long);
+  write(id, type_long);
 }
 
 void query_create::write(const char *, const object_container &)
 {}
 
-void query_create::write(const char *id, sql::data_type_t type)
+void query_create::write(const char *id, data_type_t type)
 {
   if (first) {
     first = false;
@@ -110,7 +110,7 @@ void query_create::write(const char *id, sql::data_type_t type)
   }
 }
 
-void query_create::write(const char *id, sql::data_type_t type, int size)
+void query_create::write(const char *id, data_type_t type, int size)
 {
   if (first) {
     first = false;

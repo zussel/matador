@@ -89,7 +89,7 @@ public:
    */
   virtual statement* create_statement();
   
-  virtual const char* type_string(sql::data_type_t type) const;
+  virtual const char* type_string(data_type_t type) const;
 
   /**
    * Return the raw pointer to the sqlite3

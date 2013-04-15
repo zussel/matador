@@ -155,36 +155,36 @@ void mysql_database::on_rollback()
   delete res;
 }
 
-const char* mysql_database::type_string(sql::data_type_t type) const
+const char* mysql_database::type_string(data_type_t type) const
 {
   switch(type) {
-    case sql::type_char:
+    case type_char:
       return "INTEGER";
-    case sql::type_short:
+    case type_short:
       return "INTEGER";
-    case sql::type_int:
+    case type_int:
       return "INTEGER";
-    case sql::type_long:
+    case type_long:
       return "INTEGER";
-    case sql::type_unsigned_char:
+    case type_unsigned_char:
       return "INTEGER";
-    case sql::type_unsigned_short:
+    case type_unsigned_short:
       return "INTEGER";
-    case sql::type_unsigned_int:
+    case type_unsigned_int:
       return "INTEGER";
-    case sql::type_unsigned_long:
+    case type_unsigned_long:
       return "INTEGER";
-    case sql::type_bool:
+    case type_bool:
       return "INTEGER";
-    case sql::type_float:
+    case type_float:
       return "FLOAT";
-    case sql::type_double:
+    case type_double:
       return "DOUBLE";
-    case sql::type_char_pointer:
+    case type_char_pointer:
       return "VARCHAR";
-    case sql::type_varchar:
+    case type_varchar:
       return "VARCHAR";
-    case sql::type_text:
+    case type_text:
       return "TEXT";
     default:
       {

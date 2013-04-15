@@ -85,7 +85,7 @@ public:
    */
   sqlite3* operator()();
 
-  virtual const char* type_string(sql::data_type_t type) const;
+  virtual const char* type_string(data_type_t type) const;
 
 protected:
   virtual void on_open(const std::string &db);

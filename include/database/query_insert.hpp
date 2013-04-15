@@ -34,7 +34,7 @@ public:
   virtual void write(const char *id, const object_container &x);
 
   template < class T >
-  void write_field(const char *id, sql::data_type_t type, const T &x)
+  void write_field(const char *id, data_type_t type, const T &x)
   {
     if (first) {
       first = false;
@@ -49,9 +49,9 @@ public:
       dialect.append(id, type, valstr.str());
     }
   }
-  void write_field(const char *id, sql::data_type_t type, const std::string &x);
-  void write_field(const char *id, sql::data_type_t type, const varchar_base &x);
-  void write_field(const char *id, sql::data_type_t type, const char *x);
+  void write_field(const char *id, data_type_t type, const std::string &x);
+  void write_field(const char *id, data_type_t type, const varchar_base &x);
+  void write_field(const char *id, data_type_t type, const char *x);
   
   void fields();
   void values();

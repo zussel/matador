@@ -268,36 +268,36 @@ void mysql_statement::prepare_result_column(const sql::field_ptr &fptr)
   result_array[fptr->index].is_null = 0;
 }
 
-enum_field_types mysql_statement::type_enum(sql::data_type_t type)
+enum_field_types mysql_statement::type_enum(data_type_t type)
 {
   switch(type) {
-    case sql::type_char:
+    case type_char:
       return MYSQL_TYPE_TINY;
-    case sql::type_short:
+    case type_short:
       return MYSQL_TYPE_SHORT;
-    case sql::type_int:
+    case type_int:
       return MYSQL_TYPE_LONG;
-    case sql::type_long:
+    case type_long:
       return MYSQL_TYPE_LONG;
-    case sql::type_unsigned_char:
+    case type_unsigned_char:
       return MYSQL_TYPE_TINY;
-    case sql::type_unsigned_short:
+    case type_unsigned_short:
       return MYSQL_TYPE_SHORT;
-    case sql::type_unsigned_int:
+    case type_unsigned_int:
       return MYSQL_TYPE_LONG;
-    case sql::type_unsigned_long:
+    case type_unsigned_long:
       return MYSQL_TYPE_LONG;
-    case sql::type_bool:
+    case type_bool:
       return MYSQL_TYPE_TINY;
-    case sql::type_float:
+    case type_float:
       return MYSQL_TYPE_FLOAT;
-    case sql::type_double:
+    case type_double:
       return MYSQL_TYPE_DOUBLE;
-    case sql::type_char_pointer:
+    case type_char_pointer:
       return MYSQL_TYPE_VAR_STRING;
-    case sql::type_varchar:
+    case type_varchar:
       return MYSQL_TYPE_VAR_STRING;
-    case sql::type_text:
+    case type_text:
       return MYSQL_TYPE_STRING;
     default:
       {
