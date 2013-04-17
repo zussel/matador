@@ -54,6 +54,10 @@ ADD_EXECUTABLE(test_oos
 
 TARGET_LINK_LIBRARIES(test_oos oos ${CMAKE_DL_LIBS})
 
+ADD_CUSTOM_COMMAND(TARGET test_oos POST_BUILD
+                   COMMAND test_oos list brief > list.txt
+                   COMMAND echo `pwd`)
+
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
@@ -64,9 +68,18 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
+#SET(OOS_TESTS)
+#FILE(STRINGS ${CMAKE_BINARY_DIR}/test/list.txt OOS_TESTS)
+
+#FOREACH (T ${OOS_TESTS})
+#  MESSAGE(STATUS "Adding test ${T}")
+#  ADD_TEST(test_greeter_${T} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${T})
+#ENDFOREACH(T)
+
+#FILE(REMOVE ${CMAKE_BINARY_DIR}/test/list.txt)
+
 # add tests
 ADD_TEST(test_oos_convert_char ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_char)
 ADD_TEST(test_oos_convert_short ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_short)
 ADD_TEST(test_oos_convert_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_int)
-
 ADD_TEST(test_oos_sqlite_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:simple)

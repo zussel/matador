@@ -21,6 +21,7 @@
 #include "database/sqlite/sqlite_prepared_result.hpp"
 
 #include "database/row.hpp"
+#include "database/sql.hpp"
 
 #include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
