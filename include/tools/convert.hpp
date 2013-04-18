@@ -43,7 +43,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <typeinfo>
-#include <limits>
 #include <cstring>
 
 /**
@@ -360,19 +359,7 @@ void
 convert(const T &, U &,
         typename oos::enable_if<std::is_floating_point<T>::value &&
                                 std::is_integral<U>::value &&
-                                !std::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<!(std::numeric_limits<T>::digits > std::numeric_limits<U>::digits)>::type* = 0)
-{
-  throw std::bad_cast();
-}
-
-template < class T, class U >
-void
-convert(const T &, U &,
-        typename oos::enable_if<std::is_floating_point<T>::value &&
-                                std::is_integral<U>::value &&
-                                !std::is_same<U, bool>::value>::type* = 0,
-        typename oos::enable_if<(std::numeric_limits<T>::digits > std::numeric_limits<U>::digits)>::type* = 0)
+                                !std::is_same<U, bool>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
