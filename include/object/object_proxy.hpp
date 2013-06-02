@@ -192,6 +192,17 @@ struct object_proxy {
    */
   bool remove(object_base_ptr *ptr);
 
+  /**
+   * @brief True if proxy is valid
+   * 
+   * Returns true if the proxy is part of
+   * an object_store. Therefor ostore, node,
+   * prev and next must be set.
+   * 
+   * @return True if part of an object_store.
+   */
+  bool valid() const;
+
   object_proxy *prev;      /**< The previous object_proxy in the list. */
   object_proxy *next;      /**< The next object_proxy in the list. */
 

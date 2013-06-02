@@ -32,6 +32,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
+  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -631,4 +632,18 @@ ObjectStoreTestUnit::generic_test()
   UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
 
   delete item;
+}
+
+void ObjectStoreTestUnit::test_structure()
+{
+  typedef ObjectItem<Item> object_item_t;
+  typedef object_ptr<object_item_t> object_item_ptr;
+  typedef object_ptr<Item> item_ptr;
+  
+  object_item_t *oi = new object_item_t("object_item", 42);
+  
+  item_ptr iptr(new Item);
+  oi->ptr(iptr);
+  
+  object_item_ptr optr = ostore_.insert(oi);
 }
