@@ -134,7 +134,7 @@ void mysql_result::read(const char *id, double &x)
   read_column(id, x);
 }
 
-void mysql_result::read(const char *id, char *x, int s)
+void mysql_result::read(const char */*id*/, char */*x*/, int /*s*/)
 {
 }
 
@@ -148,11 +148,11 @@ void mysql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void mysql_result::read(const char *id, object_base_ptr &x)
+void mysql_result::read(const char */*id*/, object_base_ptr &/*x*/)
 {
 }
 
-void mysql_result::read(const char *id, object_container &x)
+void mysql_result::read(const char */*id*/, object_container &/*x*/)
 {
 }
 

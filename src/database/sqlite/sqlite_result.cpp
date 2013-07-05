@@ -119,7 +119,7 @@ void sqlite_result::read(const char *id, double &x)
   read_column(id, x);
 }
 
-void sqlite_result::read(const char *id, char *x, int s)
+void sqlite_result::read(const char */*id*/, char */*x*/, int /*s*/)
 {
 }
 
@@ -133,11 +133,11 @@ void sqlite_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void sqlite_result::read(const char *id, object_base_ptr &x)
+void sqlite_result::read(const char */*id*/, object_base_ptr &/*x*/)
 {
 }
 
-void sqlite_result::read(const char *id, object_container &x)
+void sqlite_result::read(const char */*id*/, object_container &/*x*/)
 {
 }
 

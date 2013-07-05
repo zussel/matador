@@ -10,8 +10,15 @@ SET(${PROJECT_NAME}_PATCH_LEVEL 0)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
     MESSAGE(STATUS "GCC detected - Adding compiler flags")
-    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
-#    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -ggdb -Wextra -Wall -pedantic")
+    
+    EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_GREATER 4.6)
+        MESSAGE(STATUS "Version > 4.6")
+        SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
+    else ()
+        MESSAGE(STATUS "Version <= 4.6")
+        SET(CMAKE_CXX_FLAGS "-std=c++0x -std=gnu++0x -Wextra -Wall -pedantic")
+    endif()
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 find_package(Doxygen)
