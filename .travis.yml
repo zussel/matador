@@ -3,6 +3,9 @@ language: cpp
 services:
   - mysql
 
+before_script:
+  - mysql -e 'create database oos_test;'
+
 script:
   - mkdir build
   - cd build
