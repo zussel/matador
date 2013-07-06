@@ -16,3 +16,8 @@ Features:
  * STL like interface and iterators
 
 Documentation can be found [here](http://zussel.github.com/oos).
+
+Build Status
+============
+
+[![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
