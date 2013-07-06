@@ -455,8 +455,6 @@ public:
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // determine index
-      iterator last = this->vector().end();
       // mark list object as modified
       this->mark_modified(this->parent());
       ref_setter(*x.get(), parent_ref(this->parent()));
