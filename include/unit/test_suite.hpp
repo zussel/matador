@@ -135,10 +135,9 @@ public:
    * Registers a new test_unit object identified
    * by the given name.
    *
-   * @param name Name of the test_unit.
    * @param utest test_unit object.
    */
-  void register_unit(const std::string &name, unit_test *utest);
+  void register_unit(unit_test *utest);
 
   /**
    * @brief Executes the test_suite.

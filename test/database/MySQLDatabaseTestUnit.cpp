@@ -11,7 +11,7 @@ using namespace std;
 #endif
 
 MySQLDatabaseTestUnit::MySQLDatabaseTestUnit()
-  : DatabaseTestUnit("mysql database test unit", MYSQL_DSN)
+  : DatabaseTestUnit("mysql", "mysql database test unit", MYSQL_DSN)
 {}
 
 MySQLDatabaseTestUnit::~MySQLDatabaseTestUnit()

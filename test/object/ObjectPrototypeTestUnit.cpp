@@ -13,7 +13,7 @@ using namespace oos;
 using namespace std;
 
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
-  : unit_test("ObjectStore Prototype Test Unit")
+  : unit_test("prototype", "ObjectStore Prototype Test Unit")
 {
   add_test("empty", std::tr1::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
   add_test("find", std::tr1::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");

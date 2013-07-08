@@ -15,7 +15,7 @@ using namespace oos;
 using namespace std;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
-  : unit_test("ObjectStore Test Unit")
+  : unit_test("store", "ObjectStore Test Unit")
 {
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");

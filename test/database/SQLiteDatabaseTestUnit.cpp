@@ -17,7 +17,7 @@ using namespace oos;
 using namespace std;
 
 SQLiteDatabaseTestUnit::SQLiteDatabaseTestUnit()
-  : DatabaseTestUnit("sqlite database test unit", "sqlite://test.sqlite")
+  : DatabaseTestUnit("sqlite", "sqlite database test unit", "sqlite://test.sqlite")
 {}
 
 SQLiteDatabaseTestUnit::~SQLiteDatabaseTestUnit()

@@ -12,7 +12,7 @@ using namespace oos;
 using namespace std;
 
 ObjectVectorTestUnit::ObjectVectorTestUnit()
-  : unit_test("object vector")
+  : unit_test("vector", "object vector")
 {
   add_test("int", std::tr1::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
   add_test("ptr", std::tr1::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");

@@ -51,7 +51,7 @@ public:
 };
 
 FactoryTestUnit::FactoryTestUnit()
-  : unit_test("factory test unit")
+  : unit_test("factory", "factory test unit")
 {
   add_test("create", std::tr1::bind(&FactoryTestUnit::create_factory, this), "create factory");
   add_test("insert", std::tr1::bind(&FactoryTestUnit::insert_items, this), "insert items into factory");

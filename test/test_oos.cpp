@@ -41,22 +41,22 @@ int main(int argc, char *argv[])
 {
   test_suite::instance().init(argc, argv);
 
-  test_suite::instance().register_unit("first", new FirstTestUnit());
-  test_suite::instance().register_unit("second", new SecondTestUnit());
+  test_suite::instance().register_unit(new FirstTestUnit());
+  test_suite::instance().register_unit(new SecondTestUnit());
 
-  test_suite::instance().register_unit("convert", new ConvertTestUnit());
-  test_suite::instance().register_unit("blob", new BlobTestUnit());
-  test_suite::instance().register_unit("varchar", new VarCharTestUnit());
-  test_suite::instance().register_unit("factory", new FactoryTestUnit());
+  test_suite::instance().register_unit(new ConvertTestUnit());
+  test_suite::instance().register_unit(new BlobTestUnit());
+  test_suite::instance().register_unit(new VarCharTestUnit());
+  test_suite::instance().register_unit(new FactoryTestUnit());
 
-  test_suite::instance().register_unit("prototype", new ObjectPrototypeTestUnit());
-  test_suite::instance().register_unit("store", new ObjectStoreTestUnit());
-  test_suite::instance().register_unit("list", new ObjectListTestUnit());
-  test_suite::instance().register_unit("vector", new ObjectVectorTestUnit());
-  test_suite::instance().register_unit("mysql", new MySQLDatabaseTestUnit());
-  test_suite::instance().register_unit("sqlite", new SQLiteDatabaseTestUnit());
+  test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
+  test_suite::instance().register_unit(new ObjectStoreTestUnit());
+  test_suite::instance().register_unit(new ObjectListTestUnit());
+  test_suite::instance().register_unit(new ObjectVectorTestUnit());
+  test_suite::instance().register_unit(new MySQLDatabaseTestUnit());
+  test_suite::instance().register_unit(new SQLiteDatabaseTestUnit());
 
-  test_suite::instance().register_unit("json", new JsonTestUnit());
+  test_suite::instance().register_unit(new JsonTestUnit());
 
   test_suite::instance().run();
   

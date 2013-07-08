@@ -33,8 +33,8 @@
 using namespace oos;
 using namespace std;
 
-DatabaseTestUnit::DatabaseTestUnit(const std::string &msg, const std::string &db)
-  : unit_test(msg)
+DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db)
+  : unit_test(name, msg)
   , db_(db)
 {
   add_test("open_close", std::tr1::bind(&DatabaseTestUnit::test_open_close, this), "open database test");

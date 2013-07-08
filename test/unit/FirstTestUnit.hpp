@@ -28,7 +28,7 @@
 class FirstTestUnit : public oos::unit_test
 {
 public:
-  FirstTestUnit() : unit_test("First test unit")
+  FirstTestUnit() : unit_test("first", "First test unit")
   {
     add_test("sub1", std::tr1::bind(&FirstTestUnit::first_sub_test, this), "sub first");
     add_test("sub2", std::tr1::bind(&FirstTestUnit::second_sub_test, this), "sub second");

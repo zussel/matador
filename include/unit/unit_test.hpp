@@ -271,18 +271,6 @@ public:
   void list(std::ostream &out);
   
   /**
-   * @brief Briefly list all tests
-   * 
-   * All tests are listed in a brief way
-   * '<unit name>:<test name>'. Therefor the
-   * name of the unit test class is passed.
-   * 
-   * @param out The stream to be written on.
-   * @param name The name of the unit test class.
-   */
-  void list(std::ostream &out, const std::string &name);
-
-  /**
    * @brief Adds a test to the test_unit.
    * 
    * This method adds a new test function identified
@@ -566,6 +554,8 @@ public:
   void info(const std::string &msg);
 
 private:
+  friend class test_suite;
+
   typedef struct test_func_info_struct
   {
     test_func_info_struct(const test_func &f, const std::string &c)

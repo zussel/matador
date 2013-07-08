@@ -10,9 +10,9 @@ namespace oos {
 test_suite::test_suite()
 {}
 
-void test_suite::register_unit(const std::string &name, unit_test *utest)
+void test_suite::register_unit(unit_test *utest)
 {
-  unit_test_map_.insert(std::make_pair(name, unit_test_ptr(utest)));
+  unit_test_map_.insert(std::make_pair(utest->name(), unit_test_ptr(utest)));
 }
 
 test_suite::unit_executer::unit_executer()
@@ -30,13 +30,20 @@ test_suite::unit_lister::unit_lister(std::ostream &o, bool b, bool c)
 
 void test_suite::unit_lister::operator()(test_suite::value_type &x)
 {
-  if (brief) {
-    x.second->list(out, x.first);
-  } else if (cmake) {
-    
-  } else {
+  if (!brief && !cmake) {
     out << "Unit Test [" << x.first << "] has the following test:\n";
-    x.second->list(out);
+  }
+  unit_test::t_test_func_info_map::const_iterator first = x.second->test_func_info_map_.begin();
+  unit_test::t_test_func_info_map::const_iterator last = x.second->test_func_info_map_.end();
+  while (first != last) {
+    if (brief) {
+      out << x.first << ":" << first->first << "\n";
+    } else if (cmake) {
+      out << "ADD_TEST(test_oos_" << x.first << "_" << first->first << " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec " << x.first << ":" << first->first << ")\n";
+    } else {
+      out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
+    }
+    ++first;
   }
 }
 
