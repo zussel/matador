@@ -24,13 +24,20 @@
 
 namespace oos {
 
-unit_test::unit_test(const std::string &caption)
- : caption_(caption)
+unit_test::unit_test(const std::string &name, const std::string &caption)
+ : name_(name)
+ , caption_(caption)
+ 
 {}
 
 unit_test::~unit_test()
 {
   test_func_info_map_.clear();
+}
+
+std::string unit_test::name() const
+{
+  return name_;
 }
 
 std::string unit_test::caption() const

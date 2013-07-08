@@ -123,9 +123,7 @@ void FactoryTestUnit::list_items()
   vehicle_factory::const_iterator first = vfac.begin();
   vehicle_factory::const_iterator last = vfac.end();
 
-  /*
-  while (first != last) {
-    std::cout << "producer of type [" << (first++)->first << "]\n";
-  }
-  */
+  UNIT_ASSERT_FALSE(first == last, "iterators must not be the same");
+  
+  UNIT_ASSERT_EQUAL(vfac.size(), 4, "size of factory must be 4 (four)");
 }
