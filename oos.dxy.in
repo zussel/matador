@@ -52,7 +52,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@/doc
+OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@/web
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -680,6 +680,7 @@ WARN_LOGFILE           =
 INPUT                  = @PROJECT_SOURCE_DIR@/include \
                          @PROJECT_SOURCE_DIR@/doxygen/main.dox \
                          @PROJECT_SOURCE_DIR@/doxygen/store.dox \
+                         @PROJECT_SOURCE_DIR@/doxygen/objects.dox \
                          @PROJECT_SOURCE_DIR@/doxygen/relations.dox \
                          @PROJECT_SOURCE_DIR@/doxygen/expressions.dox \
                          @PROJECT_SOURCE_DIR@/doxygen/view.dox \
@@ -746,7 +747,8 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = @PROJECT_SOURCE_DIR@/include/database/sqlite
+EXCLUDE                = @PROJECT_SOURCE_DIR@/include/database/sqlite \
+                         @PROJECT_SOURCE_DIR@/include/database/mysql
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 
@@ -905,7 +907,7 @@ ALPHABETICAL_INDEX     = YES
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns 
 # in which this list will be split (can be a number in the range [1..20])
 
-COLS_IN_ALPHA_INDEX    = 5
+COLS_IN_ALPHA_INDEX    = 3
 
 # In case all classes in a project start with a common prefix, all 
 # classes will be put under the same header in the alphabetical index. 

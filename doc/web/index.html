@@ -30,7 +30,7 @@
       <div id="content">
         <h1>Open Object Store</h1>
         <h2>Overview</h2>
-        <div class="width100 float_left">
+        <div class="width75 float_left">
           <p>OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all the database work. You don't have to deal with
              database backends or sql statements neither with serialization of objects.</p>
           <p>It provides the user an easy to use interface and as a unique feature <b>one container for all objects</b>. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on
@@ -40,17 +40,20 @@
             <p class=warn><b>Notice</b>: This is the first preview release of the library. That means that there may be bugs or unstable functionality. Furthermore the API could be subject of change.
             </p>
           </div>
-          <div class="warn">
-            <p>Actualy there is support for <b>SQLite</b> and <b>MySQL</b> but you can use the in memory database and have the benefit of sessions and transactions.</p>
-          </div>
-        </div>
-        <div class="width100 float_left">
-          <h2>Features</h2>
+          <p><a href="#gettingstarted" class="button green"><b>Getting started</b></a></p>
         </div>
         <div class="width25 float_right">
-            <a href="download.html" class="button green">Download Version 0.1.0 beta</a>
+          <div id="site_toc">
+            <h3>Latest Release</h3>
+            <b>Stable:</b> oos 0.1.0</br>
+            <b>Date:</b> 10th July 2013<br>
+            <div align="center">
+              <a href="download.html" class="button green"><b>Download</b></a>
+            </div>
+          </div>
         </div>
-        <div class="width75 float_left">
+        <div class="width66 float_left">
+          <h2>Features</h2>
           <ul>
             <li>Encapsulates all database backends</li>
             <li>Encapsulates SQL statements and database layout</li>
@@ -65,8 +68,8 @@
             <li>Easy to use</li>
           </ul>
         </div>
-        <div class="width50 float_left">
-            <h2 class="clear">Future Plans</h2>
+        <div class="width33 float_right">
+            <h2>Future Plans</h2>
             <ul>
               <li>Lazy loading</li>
               <li>Class generator</li>
@@ -77,7 +80,7 @@
               <li>Constraints</li>
             </ul>
         </div>
-        <div class="width50 float_left">
+        <div class="width100 float_left">
             <h2 class="clear">Limitations</h2>
             <ul>
               <li>No custom primary key</li>
@@ -87,7 +90,10 @@
             </ul>
         </div>
         <div class="width100 float_left">
-          <h2 class="clear">Getting started</h2>
+          <h2 class="clear">
+            <a name="gettingstarted" class="anchor"></a>
+            Getting started
+          </h2>
           <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
         </div>
         <div class="width33 float_left">

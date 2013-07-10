@@ -39,9 +39,18 @@ namespace oos {
     type_blob
   };
 
+/**
+ * @tparam T The type of the traits
+ * @brief Type traits for database types
+ * 
+ * This class is used to determine and
+ * provide the correct size information
+ * for a data type
+ */
 template < class T >
 struct type_traits;
 
+/// @cond OOS_DEV
 template <> struct type_traits<char>
 {
   inline static data_type_t data_type() { return type_char; }
@@ -132,6 +141,8 @@ template <> struct type_traits<object_base_ptr>
   inline static data_type_t data_type() { return type_long; }
 };
 */
+
+/// @endcond
 
 }
 

@@ -27,11 +27,16 @@ if(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen detected")
     # Configure the Template Doxyfile for our specific project
     configure_file(oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
+    configure_file(oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
     # Add a custom target to run Doxygen when ever the project is built
     #add_custom_target (doc ALL 
     add_custom_target (doc
   										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
   										 COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    add_custom_target (web
+  										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
+  										 COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
 ENDIF(DOXYGEN_FOUND)
 
 # add module path
@@ -85,7 +90,10 @@ INCLUDE_DIRECTORIES(
 	${PROJECT_SOURCE_DIR}/include
 	${SQLITE3_INCLUDE_DIR}
 	${MYSQL_INCLUDE_DIR}
+  ${PROJECT_BINARY_DIR}
 )
+
+CONFIGURE_FILE (${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
 
 #GET_PROPERTY(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 #FOREACH(dir ${dirs})
@@ -118,6 +126,13 @@ INSTALL(
   DESTINATION .
   COMPONENT doc
 )
+
+INSTALL(
+	FILES ${PROJECT_BINARY_DIR}/version.hpp
+	DESTINATION include/oos
+	COMPONENT headers
+)
+
 # Basic CPack configuration   
 SET(CPACK_PACKAGE_NAME "oos")
 SET(CPACK_PACKAGE_VENDOR "Elephant Sky")

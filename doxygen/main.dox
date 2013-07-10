@@ -92,7 +92,7 @@
  *         <li>@ref step3</li>
  *       </ul>
  *   </li>
- *   <li>@ref store_sec
+ *   <li>@ref store
  *     <ul>
  *       <li>@ref prototypes</li>
  *       <li>@ref add_objects</li>
@@ -101,13 +101,19 @@
  *     </ul>
  *   </li>
  *   <li>@ref relations
- *   <li>@ref view
- *   <ul>
- *    <li>@ref one_to_one</li>
- *    <li>@ref one_to_many</li>
- *   </ul></li>
+ *     <ul>
+ *       <li>@ref one_to_one</li>
+ *       <li>@ref one_to_many</li>
+ *     </ul>
+ *   </li>
+ *   <li>@ref view</li>
  *   <li>@ref expressions</li>
- *   <li>@ref database</li>
+ *   <li>@ref database
+ *      <ul>
+ *        <li>@ref support_sec</li>
+ *        <li>@ref db_relation_sec</li>
+ *      </ul>
+ *   </li>
  * </ul>
  * @htmlonly
  * </div>
