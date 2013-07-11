@@ -26,8 +26,8 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen detected")
     # Configure the Template Doxyfile for our specific project
-    configure_file(oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
-    configure_file(oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
+    configure_file(doc/doxygen/oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
+    configure_file(doc/doxygen/oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
     # Add a custom target to run Doxygen when ever the project is built
     #add_custom_target (doc ALL 
     add_custom_target (doc

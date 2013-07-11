@@ -9,7 +9,7 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
   - make
   - make test
 

@@ -58,6 +58,14 @@ ADD_EXECUTABLE(test_oos
   ${TEST_DATABASE_SOURCES}
 )
 
+SET(MYSQL_CONNECTION_STRING "mysql://root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
+SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
+
+MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
+MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
+
+CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
+
 TARGET_LINK_LIBRARIES(test_oos oos ${CMAKE_DL_LIBS})
 
 ADD_CUSTOM_COMMAND(TARGET test_oos POST_BUILD
