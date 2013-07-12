@@ -21,7 +21,11 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     endif()
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-find_package(Doxygen)
+MESSAGE("Architcture: ${CMAKE_SYSTEM_PROCESSOR}")
+MESSAGE("Architcture OSX: ${CMAKE_OSX_ARCHITECTURES}")
+MESSAGE("Architcture Size: ${CMAKE_SIZEOF_VOID_P}")
+
+FIND_PACKAGE(Doxygen)
 
 if(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen detected")
