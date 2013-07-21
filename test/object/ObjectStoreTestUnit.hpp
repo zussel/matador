@@ -18,6 +18,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
+  void version_test();
   void expression_test();
   void access_value();
   void set_test();

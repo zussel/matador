@@ -8,6 +8,8 @@
 #include "tools/byte_buffer.hpp"
 #include "tools/algorithm.hpp"
 
+#include "version.hpp"
+
 #include <algorithm>
 #include <iostream>
 
@@ -17,6 +19,7 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
+  add_test("version", std::tr1::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
@@ -69,6 +72,12 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
   void operator ()(const object_ptr<ObjectItem<Item> > &) { ++count; }
   int &count;
 };
+
+void
+ObjectStoreTestUnit::version_test()
+{
+  std::cout << "version: " << oos::version::str << "\n";
+}
 
 void
 ObjectStoreTestUnit::expression_test()
