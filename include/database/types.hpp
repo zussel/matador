@@ -21,22 +21,25 @@
 #include <string>
 
 namespace oos {
+  /**
+   * Enumeration of database data types
+   */
   enum data_type_t {
-    type_char = 0,
-    type_short,
-    type_int,
-    type_long,
-    type_unsigned_char,
-    type_unsigned_short,
-    type_unsigned_int,
-    type_unsigned_long,
-    type_float,
-    type_double,
-    type_bool,
-    type_char_pointer,
-    type_varchar,
-    type_text,
-    type_blob
+    type_char = 0,       /*!< Data type char */
+    type_short,          /*!< Data type short */
+    type_int,            /*!< Data type int */
+    type_long,           /*!< Data type long */
+    type_unsigned_char,  /*!< Data type unsigned char */
+    type_unsigned_short, /*!< Data type unsigned short */
+    type_unsigned_int,   /*!< Data type unsigned int */
+    type_unsigned_long,  /*!< Data type unsigned long */
+    type_float,          /*!< Data type float */
+    type_double,         /*!< Data type double */
+    type_bool,           /*!< Data type bool */
+    type_char_pointer,   /*!< Data type character pointer */
+    type_varchar,        /*!< Data type varchar */
+    type_text,           /*!< Data type text */
+    type_blob            /*!< Data type blob */
   };
 
 /**

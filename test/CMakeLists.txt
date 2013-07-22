@@ -135,6 +135,7 @@ ADD_TEST(test_oos_prototype_one ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec 
 ADD_TEST(test_oos_prototype_relation ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:relation)
 ADD_TEST(test_oos_second_big ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec second:big)
 ADD_TEST(test_oos_second_small ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec second:small)
+ADD_TEST(test_oos_store_version ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:version)
 ADD_TEST(test_oos_store_clear ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:clear)
 ADD_TEST(test_oos_store_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:delete)
 ADD_TEST(test_oos_store_expression ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:expression)

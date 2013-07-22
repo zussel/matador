@@ -31,8 +31,8 @@
   #define OOS_API
 #endif
 
-#include "database/action.hpp"
 #include "database/types.hpp"
+#include "database/action.hpp"
 #include "database/transaction.hpp"
 
 #include "tools/sequencer.hpp"
