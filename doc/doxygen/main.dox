@@ -36,7 +36,7 @@
  * automatically. And with sessions and transactions you can persist
  * your data.
  *
- * All classes are inside the namespace oos. I tryed to give the library
+ * All classes are inside the namespace oos. I tried to give the library
  * the look and feel of the STL so that it can interact with it easily.
  * 
  * As you will learn you must derive all your objects from a base object
