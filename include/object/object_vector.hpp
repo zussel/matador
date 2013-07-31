@@ -385,14 +385,64 @@ private:
 
 struct dummyy { struct inner {}; typedef inner object_type; };
 
-template < class S, class T, bool WITH_JOIN_TABLE
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&) = nullptr,
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int) = nullptr,
-//int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::* ...FUNC3)() const
->
+template < class S, class T, bool WITH_JOIN_TABLE >
 class object_vector;
 
 ///@endcond
+
+#ifdef OOS_DOXYGEN_DOC
+
+// NOTE: Only for doxygen documentation!
+
+/**
+ * @brief Object vector class without relation table
+ *
+ * @tparam S The type of the parent object.
+ * @tparam T The value of the vector.
+ * @tparam WITH_JOIN_TABLE Indicates wether a join object/table is used or not..
+ * 
+ * The object_vector class implements a vector which
+ * can hold any type of object from builtin types as
+ * int, float to object_ptr or object_ref elements.
+ * The class provides STL like behaviour and the order of
+ * the elements is reliable.
+ *
+ * S indicates the super class holding the
+ * vector and T is the type of the vector item.
+ * 
+ * The last template argument indicates wether the vector
+ * uses a relation object/table or not, where true means use
+ * a relation object/table and false not to.
+ * If the value is false the item must be an object containing
+ * already information about its super/holder object.
+ */
+template < class S, class T, bool WITH_JOIN_TABLE >
+class object_vector : public object_vector_base<S, T>
+{
+public:
+  typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */ // true, false
+  typedef void (T::object_type::*FUNC1)(const parent_ref&);    /**< Shortcut for the parent reference setter function. */ // true, false
+  typedef void (T::object_type::*FUNC2)(int);                  /**< Shortcut for the index setter function. */ // true, false
+  typedef int (T::object_type::*FUNC3)() const;                /**< Shortcut for the index getter function. */ // true
+
+  typedef typename base_vector::size_type size_type;           /**< Shortcut for the size type. */ // true, false
+  typedef typename base_vector::iterator iterator;             /**< Shortcut for the iterator. */ // true, false
+  typedef typename base_vector::const_iterator const_iterator; /**< Shortcut for the const iterator. */ // true, false
+
+  typedef object_vector_base<S, T> base_vector;                                         /**< Shortcut for the base vector. */ // false
+  typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector; /**< Shortcut for the base vector. */ // true
+
+  typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */ // false
+  typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */ // true
+  typedef T value_holder;                                      /**< Shortcut for the value holder. */ // true, false
+
+  typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */ // false
+  typedef object_vector_item<T, S> item_type;                  /**< Shortcut for the item type. */ // true
+  typedef typename base_vector::item_holder item_holder;       /**< Shortcut for the item holder. */ // true
+  typedef item_holder item_ptr;                                /**< Shortcut for the item ptr. */ // true
+};
+
+#else
 
 /**
  * @brief Object vector class without relation table
@@ -409,11 +459,7 @@ class object_vector;
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
  */
-template < class S, class T
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int),
-//int (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC3)() const
->
+template < class S, class T >
 class object_vector<S, T, false> : public object_vector_base<S, T>
 {
 public:
@@ -549,8 +595,6 @@ private:
 	std::tr1::function<int (const value_type&)> int_getter;
 };
 
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC1)(const object_ref<S>&),
-//void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type::*FUNC2)(int)
 /**
  * @brief Object vector class with relation table
  *
@@ -698,6 +742,8 @@ private:
 	std::tr1::function<void (value_type&, const object_ref<S>&)> str_setter;
 	std::tr1::function<void (value_type&, int)> int_setter;
 };
+
+#endif /* OOS_DOXYGEN_DOC */
 
 }
 
