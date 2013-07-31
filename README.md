@@ -19,3 +19,45 @@ Features:
 
 Documentation can be found [here](http://zussel.github.com/oos).
 
+Requirements
+------------
+
+There are less requirements for the runtime library. At least the database library you want to use in your environments path.
+If you would like to build from the sources you need at least the [cmake](http://www.cmake.org) build system installed. If you plan to generate an install package on a windows system you need the [nullsoft scriptable install system](http://nsis.sourceforge.net).
+          
+Sources
+-------
+
+Get the sources from GitHub and enter the created directory:
+
+    $ git clone https://github.com/zussel/oos.git
+    $ cd oos
+
+Building under Linux
+--------------------
+
+Create a build directory change to it and call cmake:
+
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    
+Then you can build oos from sources:
+
+    $ make
+
+Building under Windows (for Visual Studio)
+------------------------------------------
+
+Create a build directory change to it and call cmake:
+
+    $ mkdir build
+    $ cd build
+    $ cmake -G "Visual Studio *" ..
+
+Where __*__ is one of the *__"Visual Studio"__* strings up from *__"9 2008"__*. See cmake documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators). After generation you find a __oos.sln__ solution file in the current directory.
+
+Contact
+-------
+
+If you have questions or issues concerning oos you can place an issue in my [oos github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or contact me via mail *__oos at zussel dot de__*.
