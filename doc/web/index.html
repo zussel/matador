@@ -154,7 +154,9 @@ ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
 
 db.create();
 
-db.insert(<span class="keyword">new</span> person(<span class="string">"Theo"</span>));
+<span class="keyword">typedef</span> object_ptr&lt;person&gt; person_ptr;
+
+person_ptr p = db.insert(<span class="keyword">new</span> person(<span class="string">"Theo"</span>));
 </code></pre>
 
 <pre><code class="cpp">transaction tr(db);
