@@ -376,6 +376,30 @@ protected:
    */
   virtual void adjust_index(iterator i) = 0;
 
+  /**
+   * Insert a proxy object at a given position.
+   * 
+   * @param index The index to insert at.
+   * @param proxy The object_proxy to insert.
+   */
+  void insert_proxy(int index, object_proxy *proxy)
+  {
+    if (this->vector().size() < (size_type)index) {
+      this->vector().resize(index);
+      this->vector().push_back(item_holder(proxy));
+    } else if (this->vector().size() == (size_type)index) {
+      this->vector().push_back(item_holder(proxy));
+    } else {
+      this->vector()[index] = item_holder(proxy);
+    }
+  }
+
+private:
+  virtual void reset()
+  {
+    object_vector_.clear();
+  }
+
 private:
   parent_type *parent_;
   vector_type object_vector_;
@@ -576,16 +600,12 @@ protected:
   }
 
   virtual void append_proxy(object_proxy *proxy)
-  {    
-    int index = int_getter(*static_cast<value_type*>(proxy->obj));
-    if (this->vector().size() < (size_type)index) {
-      this->vector().resize(index);
-      this->vector().push_back(value_holder(proxy));
-    } else if (this->vector().size() == (size_type)index) {
-      this->vector().push_back(value_holder(proxy));
-    } else {
-      this->vector()[index] = value_holder(proxy);
+  {
+    int index = this->size();
+    if (proxy->obj) {
+      index = int_getter(*static_cast<value_type*>(proxy->obj));
     }
+    this->insert_proxy(index, proxy);
   }
 ///@endcond
 
@@ -677,8 +697,8 @@ public:
   {
     // erase object from object store
     item_ptr item = *i;
-    this->ostore()->remove(item);
     this->mark_modified(this->parent());
+    this->ostore()->remove(item);
     iterator ret = this->vector().erase(i);
     // update index values of all successor elements
     this->adjust_index(ret);
@@ -688,11 +708,11 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
+    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
       // erase object from object store
       item_ptr item = *i++;
-      this->mark_modified(this->parent());
       this->ostore()->remove(item);
     }
     i = this->vector().erase(first, last);
@@ -724,16 +744,11 @@ protected:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-    item_type *val = static_cast<item_type*>(proxy->obj);
-    int index = val->index();
-    if (this->vector().size() < (size_type)index) {
-      this->vector().resize(index);
-      this->vector().push_back(item_holder(proxy));
-    } else if (this->vector().size() == (size_type)index) {
-      this->vector().push_back(item_holder(proxy));
-    } else {
-      this->vector()[index] = item_holder(proxy);
+    int index = this->size();
+    if (proxy->obj) {
+      index = static_cast<item_type*>(proxy->obj)->index();
     }
+    this->insert_proxy(index, proxy);
   }
 
 ///@endcond
