@@ -339,22 +339,6 @@ INLINE_SIMPLE_STRUCTS  = NO
 
 TYPEDEF_HIDES_STRUCT   = NO
 
-# The SYMBOL_CACHE_SIZE determines the size of the internal cache use to 
-# determine which symbols to keep in memory and which to flush to disk. 
-# When the cache is full, less often used symbols will be written to disk. 
-# For small to medium size projects (<1000 input files) the default value is 
-# probably good enough. For larger projects a too small cache size can cause 
-# doxygen to be busy swapping symbols to and from disk most of the time 
-# causing a significant performance penalty. 
-# If the system has enough physical memory increasing the cache will improve the 
-# performance by keeping more symbols in memory. Note that the value works on 
-# a logarithmic scale so increasing the size by one will roughly double the 
-# memory usage. The cache size is given by this formula: 
-# 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
-# corresponding to a cache size of 2^16 = 65536 symbols.
-
-SYMBOL_CACHE_SIZE      = 0
-
 # Similar to the SYMBOL_CACHE_SIZE the size of the symbol lookup cache can be 
 # set using LOOKUP_CACHE_SIZE. This cache is used to resolve symbols given 
 # their name and scope. Since this can be an expensive process and often the 
@@ -604,7 +588,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted 
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = "@PROJECT_SOURCE_DIR@/doxygen/doxygen_layout.xml"
+LAYOUT_FILE            = "@PROJECT_SOURCE_DIR@/doc/doxygen/doxygen_layout.xml"
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files 
 # containing the references data. This must be a list of .bib files. The 
@@ -678,13 +662,13 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = "@PROJECT_SOURCE_DIR@/include" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/main.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/objects.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/store.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/relations.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/expressions.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/view.dox" \
-                         "@PROJECT_SOURCE_DIR@/doxygen/database.dox"
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/main.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/objects.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/store.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/relations.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/expressions.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/view.dox" \
+                         "@PROJECT_SOURCE_DIR@/doc/doxygen/database.dox"
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -948,13 +932,13 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when 
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = "@PROJECT_SOURCE_DIR@/doxygen/api_header.html"
+HTML_HEADER            = "@PROJECT_SOURCE_DIR@/doc/doxygen/api_header.html"
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/doxygen/api_footer.html"
+HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/doc/doxygen/api_footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 

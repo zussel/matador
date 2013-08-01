@@ -31,8 +31,8 @@
   #define OOS_API
 #endif
 
+#include "database/types.hpp"
 #include "database/action.hpp"
-#include "database/sql.hpp"
 #include "database/transaction.hpp"
 
 #include "tools/sequencer.hpp"
@@ -258,7 +258,7 @@ public:
    */
   void rollback();
 
-  virtual const char* type_string(sql::data_type_t type) const = 0;
+  virtual const char* type_string(data_type_t type) const = 0;
 
   database_sequencer_ptr seq() const;
 

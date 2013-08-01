@@ -1,0 +1,9 @@
+#ifndef CONNECTIONS_HPP
+#define CONNECTIONS_HPP
+
+namespace connection {
+ const char* const mysql = "@MYSQL_CONNECTION_STRING@";
+ const char* const sqlite = "@SQLITE_CONNECTION_STRING@";
+}
+
+#endif /* CONNECTIONS_HPP */

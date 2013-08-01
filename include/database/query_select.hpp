@@ -31,7 +31,7 @@ public:
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
 
-  void write(const char *id, sql::data_type_t type);
+  void write(const char *id, data_type_t type);
 
 private:
   sql &dialect;

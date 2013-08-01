@@ -10,21 +10,42 @@ SET(${PROJECT_NAME}_PATCH_LEVEL 0)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
     MESSAGE(STATUS "GCC detected - Adding compiler flags")
-    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
-#    SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -ggdb -Wextra -Wall -pedantic")
+    
+    EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_GREATER 4.6)
+        MESSAGE(STATUS "Version > 4.6")
+        SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
+    else ()
+        MESSAGE(STATUS "Version <= 4.6")
+        SET(CMAKE_CXX_FLAGS "-std=c++0x -std=gnu++0x -Wextra -Wall -pedantic")
+    endif()
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-find_package(Doxygen)
+MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+MESSAGE(STATUS "Architecture OSX: ${CMAKE_OSX_ARCHITECTURES}")
+MESSAGE(STATUS "Architecture Size: ${CMAKE_SIZEOF_VOID_P}")
+MESSAGE(STATUS "Architecture System: ${CMAKE_SYSTEM_NAME}")
+
+
+SET(SYSTEM_NAME_LOWER)
+STRING(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
+
+FIND_PACKAGE(Doxygen)
 
 if(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen detected")
     # Configure the Template Doxyfile for our specific project
-    configure_file(oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
+    configure_file(doc/doxygen/oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
+    configure_file(doc/doxygen/oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
     # Add a custom target to run Doxygen when ever the project is built
     #add_custom_target (doc ALL 
     add_custom_target (doc
   										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
   										 COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    add_custom_target (web
+  										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
+  										 COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
 ENDIF(DOXYGEN_FOUND)
 
 # add module path
@@ -57,32 +78,48 @@ ENDIF()
 
 MESSAGE(STATUS "Looking for SQLite3")
 FIND_PACKAGE(SQLite3)
-IF(NOT SQLITE3_FOUND)
-  MESSAGE(STATUS "SQLite not found - not building backend")
-ELSE(NOT SQLITE3_FOUND)
+IF(SQLITE3_FOUND)
 	MESSAGE(STATUS "Found SQLite3")
-ENDIF(NOT SQLITE3_FOUND)
+ELSE(SQLITE3_FOUND)
+  MESSAGE(STATUS "SQLite not found - not building backend")
+ENDIF(SQLITE3_FOUND)
 
 MESSAGE(STATUS "Looking for MySQL")
 FIND_PACKAGE(MySQL)
-IF(NOT MYSQL_FOUND)
-  MESSAGE(STATUS "MySQL not found - not building backend")
-ELSE(NOT MYSQL_FOUND)
+IF(MYSQL_FOUND)
 	MESSAGE(STATUS "Found MySQL")
-ENDIF(NOT MYSQL_FOUND)
+ELSE(MYSQL_FOUND)
+  MESSAGE(STATUS "MySQL not found - not building backend")
+ENDIF(MYSQL_FOUND)
 
-MESSAGE(STATUS "MySQL include: ${MYSQL_INCLUDE_DIR}")
-MESSAGE(STATUS "MySQL lib: ${MYSQL_LIBRARY}")
+MESSAGE(STATUS "SQLite3 include: ${SQLITE3_INCLUDE_DIR}")
 
-INCLUDE_DIRECTORIES(
-	${PROJECT_SOURCE_DIR}/include
-	${SQLITE3_INCLUDE_DIR}
-	${MYSQL_INCLUDE_DIR}
-)
+#MESSAGE(STATUS "MySQL lib: ${MYSQL_LIBRARY}")
+
+#
+# configure include dir
+#
+
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+
+IF (SQLITE3_FOUND)
+  MESSAGE(STATUS "Adding SQLite3 include directory")
+  INCLUDE_DIRECTORIES(${SQLITE3_INCLUDE_DIR})
+ELSE ()
+  MESSAGE(STATUS "Not adding SQLite3 include directory")
+ENDIF ()
+
+IF (MYSQL_FOUND)
+  INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})
+ENDIF ()
+
+INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
+
+CONFIGURE_FILE (${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
 
 GET_PROPERTY(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 FOREACH(dir ${dirs})
-  MESSAGE(STATUS "dir='${dir}'")
+  MESSAGE(STATUS "include dir='${dir}'")
 ENDFOREACH()
 
 
@@ -111,6 +148,13 @@ INSTALL(
   DESTINATION .
   COMPONENT doc
 )
+
+INSTALL(
+	FILES ${PROJECT_BINARY_DIR}/version.hpp
+	DESTINATION include/oos
+	COMPONENT headers
+)
+
 # Basic CPack configuration   
 SET(CPACK_PACKAGE_NAME "oos")
 SET(CPACK_PACKAGE_VENDOR "Elephant Sky")
@@ -120,6 +164,7 @@ SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "1")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "oos")
+SET(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_PROCESSOR}-${SYSTEM_NAME_LOWER}")
 
 # Tell CPack all of the components to install. The "ALL"
 # refers to the fact that this is the set of components that

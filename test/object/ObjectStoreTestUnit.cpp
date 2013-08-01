@@ -8,6 +8,8 @@
 #include "tools/byte_buffer.hpp"
 #include "tools/algorithm.hpp"
 
+#include "version.hpp"
+
 #include <algorithm>
 #include <iostream>
 
@@ -15,8 +17,9 @@ using namespace oos;
 using namespace std;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
-  : unit_test("ObjectStore Test Unit")
+  : unit_test("store", "ObjectStore Test Unit")
 {
+  add_test("version", std::tr1::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
@@ -32,6 +35,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
+//  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -68,6 +72,18 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
   void operator ()(const object_ptr<ObjectItem<Item> > &) { ++count; }
   int &count;
 };
+
+void
+ObjectStoreTestUnit::version_test()
+{
+  std::string version("0.1.0");
+  
+  UNIT_ASSERT_EQUAL(oos::version::str, version, "invalid oos version");
+
+  UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
+  UNIT_ASSERT_EQUAL(oos::version::minor, 1, "invalid minor version");
+  UNIT_ASSERT_EQUAL(oos::version::patch_level, 0, "invalid patch level");
+}
 
 void
 ObjectStoreTestUnit::expression_test()
@@ -631,4 +647,18 @@ ObjectStoreTestUnit::generic_test()
   UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
 
   delete item;
+}
+
+void ObjectStoreTestUnit::test_structure()
+{
+  typedef ObjectItem<Item> object_item_t;
+  typedef object_ptr<object_item_t> object_item_ptr;
+  typedef object_ptr<Item> item_ptr;
+  
+  object_item_t *oi = new object_item_t("object_item", 42);
+  
+  item_ptr iptr(new Item);
+  oi->ptr(iptr);
+  
+  object_item_ptr optr = ostore_.insert(oi);
 }

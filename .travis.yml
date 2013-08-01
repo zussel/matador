@@ -1,0 +1,25 @@
+language: cpp
+
+services:
+  - mysql
+
+before_script:
+  - mysql -e 'create database oos_test;'
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
+  - make
+  - make test
+
+branches:
+  only:
+    - develop
+
+notifications:
+  email:
+    recipients:
+      - sascha.kuehl@gmx.net
+  on_success: change # [always|never|change] # default: change
+  on_failure: always # [always|never|change] # default: always

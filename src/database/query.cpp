@@ -261,7 +261,7 @@ query& query::select(object_atomizable *o)
   return *this;
 }
 
-query& query::column(const std::string &name, sql::data_type_t type)
+query& query::column(const std::string &name, data_type_t type)
 {
   throw_invalid(QUERY_COLUMN, state);
   if (state == QUERY_COLUMN) {

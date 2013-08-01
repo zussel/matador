@@ -14,7 +14,7 @@ using namespace oos;
 using namespace std;
 
 ObjectListTestUnit::ObjectListTestUnit()
-  : unit_test("object list")
+  : unit_test("list", "object list")
 {
   add_test("int", std::tr1::bind(&ObjectListTestUnit::test_int_list, this), "test object list with integers");
   add_test("ref", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");

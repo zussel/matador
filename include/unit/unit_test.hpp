@@ -205,9 +205,10 @@ public:
   /**
    * @brief The constructor for a test_unit
    *
+   * @param name The name of a test_unit object.
    * @param caption The caption of a test_unit object.
    */
-  unit_test(const std::string &caption);
+  unit_test(const std::string &name, const std::string &caption);
   virtual ~unit_test();
   
   /**
@@ -225,6 +226,13 @@ public:
    * overwritten by the derived test_unit class.
    */
   virtual void finalize() = 0;
+
+  /**
+   * Returns the name of the test_unit.
+   *
+   * @return The name of the test_unit.
+   */
+  std::string name() const;
 
   /**
    * Returns the caption of the test_unit.
@@ -262,18 +270,6 @@ public:
    */
   void list(std::ostream &out);
   
-  /**
-   * @brief Briefly list all tests
-   * 
-   * All tests are listed in a brief way
-   * '<unit name>:<test name>'. Therefor the
-   * name of the unit test class is passed.
-   * 
-   * @param out The stream to be written on.
-   * @param name The name of the unit test class.
-   */
-  void list(std::ostream &out, const std::string &name);
-
   /**
    * @brief Adds a test to the test_unit.
    * 
@@ -558,6 +554,8 @@ public:
   void info(const std::string &msg);
 
 private:
+  friend class test_suite;
+
   typedef struct test_func_info_struct
   {
     test_func_info_struct(const test_func &f, const std::string &c)
@@ -573,6 +571,7 @@ private:
   void execute(test_func_info &test_info);
 
 private:
+  std::string name_;
   std::string caption_;
 
   typedef std::map<std::string, test_func_info> t_test_func_info_map;

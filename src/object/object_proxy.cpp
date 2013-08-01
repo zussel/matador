@@ -26,9 +26,9 @@ using namespace std;
 namespace oos {
 
 object_proxy::object_proxy(object_store *os)
-  : prev(NULL)
-  , next(NULL)
-  , obj(NULL)
+  : prev(0)
+  , next(0)
+  , obj(0)
   , id(0)
   , ref_count(0)
   , ptr_count(0)
@@ -37,9 +37,9 @@ object_proxy::object_proxy(object_store *os)
 {}
 
 object_proxy::object_proxy(long i, object_store *os)
-  : prev(NULL)
-  , next(NULL)
-  , obj(NULL)
+  : prev(0)
+  , next(0)
+  , obj(0)
   , id(i)
   , ref_count(0)
   , ptr_count(0)
@@ -48,8 +48,8 @@ object_proxy::object_proxy(long i, object_store *os)
 {}
 
 object_proxy::object_proxy(object *o, object_store *os)
-  : prev(NULL)
-  , next(NULL)
+  : prev(0)
+  , next(0)
   , obj(o)
   , id((o ? o->id() : 0))
   , ref_count(0)
@@ -151,6 +151,11 @@ void object_proxy::add(object_base_ptr *ptr)
 bool object_proxy::remove(object_base_ptr *ptr)
 {
   return ptr_set_.erase(ptr) == 1;
+}
+
+bool object_proxy::valid() const
+{
+  return ostore && node && prev && next;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

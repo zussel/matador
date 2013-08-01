@@ -33,8 +33,8 @@
 using namespace oos;
 using namespace std;
 
-DatabaseTestUnit::DatabaseTestUnit(const std::string &msg, const std::string &db)
-  : unit_test(msg)
+DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db)
+  : unit_test(name, msg)
   , db_(db)
 {
   add_test("open_close", std::tr1::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
@@ -61,6 +61,7 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<track>("track");
@@ -546,6 +547,95 @@ DatabaseTestUnit::test_with_list()
 void
 DatabaseTestUnit::test_with_vector()
 {
+  typedef object_ptr<ItemPtrVector> itemvector_ptr;
+  typedef ItemPtrVector::value_type item_ptr;
+
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  // load data
+  db->create();
+
+  // load db
+  db->load();
+
+  // create new transaction    
+  transaction tr(*db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+
+    itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
+
+    UNIT_ASSERT_GREATER(itemvector->id(), 0, "invalid item list");
+    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
+
+    tr.commit();
+
+    tr.begin();
+    for (int i = 0; i < 2; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      item_ptr item = ostore_.insert(new Item(name.str()));
+
+      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+
+      itemvector->push_back(item);
+    }
+
+    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
+
+    tr.rollback();
+
+    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
+    UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "invalid item list size");
+
+    tr.begin();
+
+    for (int i = 0; i < 2; ++i) {
+      stringstream name;
+      name << "Item " << i+1;
+      item_ptr item = ostore_.insert(new Item(name.str()));
+
+      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+
+      itemvector->push_back(item);
+    }
+
+    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
+
+    tr.commit();
+    
+    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
+    tr.begin();
+    
+    itemvector->clear();
+
+    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
+
+    tr.rollback();
+
+    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
+
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  db->drop();
+  // close db
+  db->close();
+  
+  delete db;
 }
 
 void

@@ -10,7 +10,7 @@ using namespace std;
 using namespace oos;
 
 JsonTestUnit::JsonTestUnit()
-  : unit_test("json test unit")
+  : unit_test("json", "json test unit")
 {
   add_test("simple", std::tr1::bind(&JsonTestUnit::simple_test, this), "simple json test");
   add_test("string", std::tr1::bind(&JsonTestUnit::string_test, this), "string json test");

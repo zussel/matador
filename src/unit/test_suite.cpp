@@ -10,9 +10,9 @@ namespace oos {
 test_suite::test_suite()
 {}
 
-void test_suite::register_unit(const std::string &name, unit_test *utest)
+void test_suite::register_unit(unit_test *utest)
 {
-  unit_test_map_.insert(std::make_pair(name, unit_test_ptr(utest)));
+  unit_test_map_.insert(std::make_pair(utest->name(), unit_test_ptr(utest)));
 }
 
 test_suite::unit_executer::unit_executer()
@@ -24,17 +24,26 @@ void test_suite::unit_executer::operator()(test_suite::value_type &x)
   x.second->execute();
 }
 
-test_suite::unit_lister::unit_lister(std::ostream &o, bool b)
-  : out(o), brief(b)
+test_suite::unit_lister::unit_lister(std::ostream &o, bool b, bool c)
+  : out(o), brief(b), cmake(c)
 {}
 
 void test_suite::unit_lister::operator()(test_suite::value_type &x)
 {
-  if (brief) {
-    x.second->list(out, x.first);
-  } else {
+  if (!brief && !cmake) {
     out << "Unit Test [" << x.first << "] has the following test:\n";
-    x.second->list(out);
+  }
+  unit_test::t_test_func_info_map::const_iterator first = x.second->test_func_info_map_.begin();
+  unit_test::t_test_func_info_map::const_iterator last = x.second->test_func_info_map_.end();
+  while (first != last) {
+    if (brief) {
+      out << x.first << ":" << first->first << "\n";
+    } else if (cmake) {
+      out << "ADD_TEST(test_oos_" << x.first << "_" << first->first << " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec " << x.first << ":" << first->first << ")\n";
+    } else {
+      out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
+    }
+    ++first;
   }
 }
 
@@ -55,8 +64,14 @@ void test_suite::init(int argc, char *argv[])
   if (arg == "list") {
     // list all test units
     args_.cmd = LIST;
-    if (argc == 3 && strcmp(argv[2], "brief") == 0) {
-      args_.brief = true;
+    if (argc == 3) {
+      if (strcmp(argv[2], "brief") == 0) {
+        args_.brief = true;
+      } else if (strcmp(argv[2] , "cmake") == 0) {
+        args_.cmake = true;
+      } else {
+        // unknow option arg
+      }
     } else {
     }
   } else if (arg == "exec") {
@@ -91,7 +106,7 @@ void test_suite::run()
   if (args_.initialized) {
     switch (args_.cmd) {
       case LIST:
-        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
+        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief, args_.cmake));
         break;
       case EXECUTE:
         if (!args_.unit.empty() && !args_.test.empty()) {

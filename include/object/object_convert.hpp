@@ -42,6 +42,7 @@
 namespace oos {
 
 class object_container;
+class varchar_base;
 
 #ifdef OOS_DOXYGEN_DOC
 

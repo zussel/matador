@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "database/types.hpp"
+
 #include <string>
 #include <map>
 #include <list>
@@ -47,33 +49,11 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-template < class T >
-struct type_traits;
-
 class token;
 class condition;
 
 class OOS_API sql
 {
-public:
-  enum data_type_t {
-    type_char = 0,
-    type_short,
-    type_int,
-    type_long,
-    type_unsigned_char,
-    type_unsigned_short,
-    type_unsigned_int,
-    type_unsigned_long,
-    type_float,
-    type_double,
-    type_bool,
-    type_char_pointer,
-    type_varchar,
-    type_text,
-    type_blob
-  };
-
 public:
   struct field
   {
@@ -147,97 +127,6 @@ private:
   
   token_list_t token_list_;
 };
-
-template <> struct type_traits<char>
-{
-  inline static sql::data_type_t data_type() { return sql::type_char; }
-  inline static unsigned long type_size() { return sizeof(char); }
-};
-
-template <> struct type_traits<short>
-{
-  inline static sql::data_type_t data_type() { return sql::type_short; }
-  inline static unsigned long type_size() { return sizeof(short); }
-};
-
-template <> struct type_traits<int>
-{
-  inline static sql::data_type_t data_type() { return sql::type_int; }
-  inline static unsigned long type_size() { return sizeof(int); }
-};
-
-template <> struct type_traits<long>
-{
-  inline static sql::data_type_t data_type() { return sql::type_long; }
-  inline static unsigned long type_size() { return sizeof(long); }
-};
-
-template <> struct type_traits<unsigned char>
-{
-  inline static sql::data_type_t data_type() { return sql::type_unsigned_char; }
-  inline static unsigned long type_size() { return sizeof(unsigned char); }
-};
-
-template <> struct type_traits<unsigned short>
-{
-  inline static sql::data_type_t data_type() { return sql::type_unsigned_short; }
-  inline static unsigned long type_size() { return sizeof(unsigned short); }
-};
-
-template <> struct type_traits<unsigned int>
-{
-  inline static sql::data_type_t data_type() { return sql::type_unsigned_int; }
-  inline static unsigned long type_size() { return sizeof(unsigned int); }
-};
-
-template <> struct type_traits<unsigned long>
-{
-  inline static sql::data_type_t data_type() { return sql::type_unsigned_long; }
-  inline static unsigned long type_size() { return sizeof(unsigned long); }
-};
-
-template <> struct type_traits<bool>
-{
-  inline static sql::data_type_t data_type() { return sql::type_bool; }
-  inline static unsigned long type_size() { return sizeof(bool); }
-};
-
-template <> struct type_traits<float>
-{
-  inline static sql::data_type_t data_type() { return sql::type_float; }
-  inline static unsigned long type_size() { return sizeof(float); }
-};
-
-template <> struct type_traits<double>
-{
-  inline static sql::data_type_t data_type() { return sql::type_double; }
-  inline static unsigned long type_size() { return sizeof(double); }
-};
-
-/*
-template <> struct type_traits<varchar_base>
-{
-  inline static sql::data_type_t data_type() { return sql::type_varchar; }
-};
-*/
-template <> struct type_traits<const char*>
-{
-  inline static sql::data_type_t data_type() { return sql::type_varchar; }
-  inline static unsigned long type_size() { return sizeof(const char*); }
-};
-
-template <> struct type_traits<std::string>
-{
-  inline static sql::data_type_t data_type() { return sql::type_text; }
-  inline static unsigned long type_size() { return 1024; }
-};
-
-/*
-template <> struct type_traits<object_base_ptr>
-{
-  inline static sql::data_type_t data_type() { return sql::type_long; }
-};
-*/
 
 /// @endcond
 

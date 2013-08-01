@@ -24,13 +24,20 @@
 
 namespace oos {
 
-unit_test::unit_test(const std::string &caption)
- : caption_(caption)
+unit_test::unit_test(const std::string &name, const std::string &caption)
+ : name_(name)
+ , caption_(caption)
+ 
 {}
 
 unit_test::~unit_test()
 {
   test_func_info_map_.clear();
+}
+
+std::string unit_test::name() const
+{
+  return name_;
 }
 
 std::string unit_test::caption() const
@@ -65,17 +72,6 @@ void unit_test::list(std::ostream &out)
   // list each test
   while (first != last) {
     out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
-    ++first;
-  }
-}
-
-void unit_test::list(std::ostream &out, const std::string &name)
-{
-  t_test_func_info_map::iterator first = test_func_info_map_.begin();
-  t_test_func_info_map::iterator last = test_func_info_map_.end();
-  // list each test
-  while (first != last) {
-    out << name << ":" << first->first << std::endl;
     ++first;
   }
 }

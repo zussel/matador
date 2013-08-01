@@ -9,7 +9,7 @@ using std::cout;
 using std::endl;
 
 VarCharTestUnit::VarCharTestUnit()
-  : unit_test("varchar test unit")
+  : unit_test("varchar", "varchar test unit")
 {
   add_test("create", std::tr1::bind(&VarCharTestUnit::create_varchar, this), "create varchar");
   add_test("copy", std::tr1::bind(&VarCharTestUnit::copy_varchar, this), "copy varchar");

@@ -59,7 +59,7 @@ public:
                          statement *, statement *,
                          statement *, statement *) {}
 
-  virtual const char* type_string(sql::data_type_t ) const { return 0; }
+  virtual const char* type_string(data_type_t ) const { return 0; }
 
 private:
   virtual void on_open(const std::string &) {}

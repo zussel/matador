@@ -297,7 +297,7 @@ public:
    * 
    * @param o The object.
    */
-	explicit object_ptr(object* o)
+	/*explicit */object_ptr(object* o)
     : object_base_ptr(o, false)
   {}
 

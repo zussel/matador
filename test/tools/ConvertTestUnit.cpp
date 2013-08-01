@@ -36,7 +36,7 @@ using std::string;
 
 
 ConvertTestUnit::ConvertTestUnit()
-  : unit_test("convert test unit")
+  : unit_test("convert", "convert test unit")
 {
   add_test("to_char", std::tr1::bind(&ConvertTestUnit::convert_to_char, this), "convert to char test");
   add_test("to_bool", std::tr1::bind(&ConvertTestUnit::convert_to_bool, this), "convert to bool test");

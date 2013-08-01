@@ -298,15 +298,60 @@ struct dummy { struct inner {}; typedef inner object_type; };
 /*
  * Not implemented class
  */
-//template < class S, class T, void (oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummy>::type::object_type::* ...SETFUNC)(const object_ref<S>&) >
-//struct object_list;
-
 template < class S, class T, bool WITH_JOIN_TABLE >
 class object_list;
 
 ///@endcond
 
+#ifdef OOS_DOXYGEN_DOC
+
+// NOTE: Only for doxygen documentation!
+
 /**
+ * @class object_list
+ * @brief List class mapping items via relation table
+ * 
+ * @tparam S The parent class type.
+ * @tparam T The item class type.
+ * @tparam WITH_JOIN_TABLE Indicates wether a join object/table is used or not.
+ *
+ * The object list class represents a list of objects or values
+ * in the object store. S indicates the super class holding 
+ * the list and T is the type of the list item.
+ * 
+ * The last template argument indicates wether the list
+ * uses a relation object/table or not, where true means use
+ * a relation object/table and false not to.
+ * If the value is false the item must be an object containing
+ * already information about its super/holder object.
+ */
+template < class S, class T, bool WITH_JOIN_TABLE >
+class object_list : public  object_list_base<S, T>
+{
+public:
+  typedef object_ref<S> parent_ref;                           /**< Shortcut for the parent reference. */ // true, false
+
+  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */ // false
+
+  typedef object_list_base<S, T> base_list;                                     /**< Shortcut for the base list. */ // false
+  typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list; /**< Shortcut for the base list. */ // true
+
+  typedef typename T::object_type item_type;                  /**< Shortcut for the item type. */ // false
+  typedef container_item<T, S> item_type;                     /**< Shortcut for the item type. */ // true
+
+  typedef typename base_list::value_holder value_holder;      /**< Shortcut for the value holder. */ // false
+  typedef T value_holder;                                     /**< Shortcut for the value holder. */ // true
+
+  typedef typename base_list::size_type size_type;            /**< Shortcut for the size type. */ // true, false
+  typedef typename base_list::iterator iterator;              /**< Shortcut for the iterator. */ // true, false
+  typedef typename base_list::const_iterator const_iterator;  /**< Shortcut for the const iterator. */ // true, false
+
+  typedef typename base_list::item_holder item_ptr;           /**< Shortcut for the item ptr. */ // true
+};
+
+#else
+/**
+ * @class object_list
  * @brief List class mapping items via relation table
  * 
  * @tparam S The parent class type.
@@ -318,8 +363,6 @@ class object_list;
  */
 template < class S, class T >
 class object_list<S, T, false> : public  object_list_base<S, T>
-//template < class S, class T, void (T::object_type::*SETFUNC)(const object_ref<S>&)>
-//class object_list<S, T, SETFUNC> : public object_list_base<S, T>
 {
 public:
   typedef object_ref<S> parent_ref;                           /**< Shortcut for the parent reference. */
@@ -397,6 +440,7 @@ private:
 };
 
 /**
+ * @class object_list
  * @brief List class mapping items via relation table
  * 
  * @tparam S The parent class type.
@@ -465,6 +509,8 @@ protected:
   }
 ///@endcond
 };
+
+#endif /* OOS_DOXYGEN_DOC */
 
 }
 

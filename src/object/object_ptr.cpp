@@ -90,6 +90,7 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
 
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
   : id_(o ? o->id_ : 0)
+//  , proxy_((o->proxy_ ? o->proxy_ : new object_proxy(o, 0)))
   , proxy_(o->proxy_)
   , is_reference_(is_ref)
   , is_internal_(false)

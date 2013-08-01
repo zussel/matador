@@ -41,7 +41,7 @@
  * As you can see we've extended the person class with an age attribute.
  *
  * @code
- * // add some friends
+ * // add some persons
  * ostore.insert(new person("joe", 45))
  * ostore.insert(new person("walter", 56));
  * ostore.insert(new person("helen", 37));

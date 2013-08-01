@@ -84,11 +84,12 @@ private:
   typedef struct test_suite_args_struct
   {
     test_suite_args_struct()
-      : cmd(UNKNOWN), initialized(false), brief(false)
+      : cmd(UNKNOWN), initialized(false), brief(false), cmake(false)
     {}
     test_suite_cmd cmd;
     bool initialized;
     bool brief;
+    bool cmake;
     std::string unit;
     std::string test;
   } test_suite_args;
@@ -107,10 +108,11 @@ private:
 
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
   {
-    unit_lister(std::ostream &o, bool b = false);
+    unit_lister(std::ostream &o, bool b = false, bool c = false);
     void operator()(test_suite::value_type &x);
     std::ostream &out;
     bool brief;
+    bool cmake;
   };
 
 public:
@@ -133,10 +135,9 @@ public:
    * Registers a new test_unit object identified
    * by the given name.
    *
-   * @param name Name of the test_unit.
    * @param utest test_unit object.
    */
-  void register_unit(const std::string &name, unit_test *utest);
+  void register_unit(unit_test *utest);
 
   /**
    * @brief Executes the test_suite.

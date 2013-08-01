@@ -18,6 +18,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
+  void version_test();
   void expression_test();
   void access_value();
   void set_test();
@@ -34,6 +35,7 @@ public:
   void view_test();
   void clear_test();
   void generic_test();
+  void test_structure();
 
 private:
   oos::object_store ostore_;

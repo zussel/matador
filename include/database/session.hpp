@@ -36,7 +36,7 @@
 
 #include "tools/library.hpp"
 
-#include "database/database.hpp"
+#include "database/transaction.hpp"
 
 #include <string>
 #include <stack>
@@ -47,8 +47,8 @@ namespace oos {
 
 class object_store;
 class result;
-class transaction;
 class statement;
+class database;
 
 /**
  * @class session

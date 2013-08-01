@@ -323,7 +323,7 @@ public:
    * @param type The datatype of the column,
    * @return A reference to the query.
    */
-  query& column(const std::string &name, sql::data_type_t type);
+  query& column(const std::string &name, data_type_t type);
   
   /**
    * Appends the given table name to the
@@ -348,7 +348,7 @@ public:
    * @return A reference to the query.
    */
   template < class T >
-  query& set(const std::string &column, sql::data_type_t type, const T &val)
+  query& set(const std::string &column, data_type_t type, const T &val)
   {
     throw_invalid(QUERY_SET, state);
 

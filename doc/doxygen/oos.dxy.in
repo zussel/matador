@@ -1,4 +1,4 @@
-# Doxyfile 1.8.3.1
+# Doxyfile 1.8.3
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -52,7 +52,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@/web
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -140,7 +140,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is 
 # started.
 
-STRIP_FROM_PATH        = 
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/include
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -338,22 +338,6 @@ INLINE_SIMPLE_STRUCTS  = NO
 # types are typedef'ed and only the typedef is referenced, never the tag name.
 
 TYPEDEF_HIDES_STRUCT   = NO
-
-# The SYMBOL_CACHE_SIZE determines the size of the internal cache use to 
-# determine which symbols to keep in memory and which to flush to disk. 
-# When the cache is full, less often used symbols will be written to disk. 
-# For small to medium size projects (<1000 input files) the default value is 
-# probably good enough. For larger projects a too small cache size can cause 
-# doxygen to be busy swapping symbols to and from disk most of the time 
-# causing a significant performance penalty. 
-# If the system has enough physical memory increasing the cache will improve the 
-# performance by keeping more symbols in memory. Note that the value works on 
-# a logarithmic scale so increasing the size by one will roughly double the 
-# memory usage. The cache size is given by this formula: 
-# 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
-# corresponding to a cache size of 2^16 = 65536 symbols.
-
-SYMBOL_CACHE_SIZE      = 0
 
 # Similar to the SYMBOL_CACHE_SIZE the size of the symbol lookup cache can be 
 # set using LOOKUP_CACHE_SIZE. This cache is used to resolve symbols given 
@@ -604,7 +588,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted 
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = doxygen/doxygen_layout.xml
+LAYOUT_FILE            = @PROJECT_SOURCE_DIR@/doc/doxygen/doxygen_layout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files 
 # containing the references data. This must be a list of .bib files. The 
@@ -677,14 +661,14 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = include \
-                         doxygen/main.dox \
-                         doxygen/objects.dox \
-                         doxygen/store.dox \
-                         doxygen/relations.dox \
-                         doxygen/expressions.dox \
-                         doxygen/view.dox \
-                         doxygen/database.dox
+INPUT                  = @PROJECT_SOURCE_DIR@/include \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/main.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/store.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/objects.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/relations.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/expressions.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/view.dox \
+                         @PROJECT_SOURCE_DIR@/doc/doxygen/database.dox
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -747,8 +731,8 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = include/database/sqlite \
-                         include/database/mysql
+EXCLUDE                = @PROJECT_SOURCE_DIR@/include/database/sqlite \
+                         @PROJECT_SOURCE_DIR@/include/database/mysql
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 
@@ -776,7 +760,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           =
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -948,13 +932,13 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when 
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = doxygen/api_header.html
+HTML_HEADER            = @PROJECT_SOURCE_DIR@/doc/doxygen/doc_header.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = doxygen/api_footer.html
+HTML_FOOTER            = @PROJECT_SOURCE_DIR@/doc/doxygen/doc_footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
@@ -963,7 +947,7 @@ HTML_FOOTER            = doxygen/api_footer.html
 # HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this 
 # tag will in the future become obsolete.
 
-HTML_STYLESHEET        = doc/web/style.css
+HTML_STYLESHEET        = @PROJECT_SOURCE_DIR@/doc/web/style.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify an additional 
 # user-defined cascading style sheet that is included after the standard 
@@ -1313,19 +1297,13 @@ SEARCHENGINE_URL       =
 
 SEARCHDATA_FILE        = searchdata.xml
 
-# When SERVER_BASED_SEARCH AND EXTERNAL_SEARCH are both enabled the 
-# EXTERNAL_SEARCH_ID tag can be used as an identifier for the project. This is 
-# useful in combination with EXTRA_SEARCH_MAPPINGS to search through multiple 
-# projects and redirect the results back to the right project.
-
-EXTERNAL_SEARCH_ID     = 
-
-# The EXTRA_SEARCH_MAPPINGS tag can be used to enable searching through doxygen 
-# projects other than the one defined by this configuration file, but that are 
-# all added to the same external search index. Each project needs to have a 
-# unique id set via EXTERNAL_SEARCH_ID. The search mapping then maps the id 
-# of to a relative location where the documentation can be found. 
-# The format is: EXTRA_SEARCH_MAPPINGS = id1=loc1 id2=loc2 ...
+# The EXTRA_SEARCH_MAPPINGS tag can be used to enable searching through other 
+# doxygen projects that are not otherwise connected via tags files, but are 
+# all added to the same search index. Each project needs to have a tag file set 
+# via GENERATE_TAGFILE. The search mapping then maps the name of the tag file 
+# to a relative location where the documentation can be found,  similar to the 
+# TAGFILES option but without actually processing the tag file. 
+# The format is: EXTRA_SEARCH_MAPPINGS = tagname1=loc1 tagname2=loc2 ...
 
 EXTRA_SEARCH_MAPPINGS  = 
 
