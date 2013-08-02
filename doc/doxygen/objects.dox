@@ -74,13 +74,13 @@
  * to call these methods for your super class.
  *
  * @code
- * void person::serialize(oos::object_reader &serializer)
+ * void person::serialize(oos::object_writer &serializer) const
  * {
  *   object::serialize(serializer);
  *   serializer.read("name", name_);
  * }
  *
- * void person::deserialize(oos::object_writer &deserializer) const
+ * void person::deserialize(oos::object_reader &deserializer)
  * {
  *   object::deserialize(deserializer);
  *   deserializer->write("name", name_);
