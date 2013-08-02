@@ -4,10 +4,7 @@
   <head> 
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/> 
     <title>Open Object Store</title> 
-	<link rel="stylesheet" type="text/css" href="style.css" />
-    <!--link rel="stylesheet" type="text/css" href="vs.css"/-->
-    <!--link rel="stylesheet" type="text/css" href="solarized_light.css"/-->
-    <!--link rel="stylesheet" type="text/css" href="arta.css"/-->
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" type="text/css" href="tomorrow.css"/>
   </head> 
   <body>
@@ -21,7 +18,7 @@
           <li class="selected">Home</li>
           <li><a href="api/index.html">Documention</a></li>
           <li><a href="download.html">Download</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <!--li><a href="contact.html">Contact</a></li-->
           <li><a href="about.html">About</a></li>
         </ul>
       </div>
@@ -30,27 +27,26 @@
       <div id="content">
         <h1>Open Object Store</h1>
         <h2>Overview</h2>
-        <div class="width100 float_left">
-          <p>OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all the database work. You don't have to deal with
-             database backends or sql statements neither with serialization of objects. It provides the user an easy to use interface and a unique container
-             for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on
-             concrete object types.
+        <div class="width75 float_left">
+          <p>OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all the database backend stuff. You don't have to deal with database backends or sql statements neither with mapping of data types or serialization of objects.</p>
+          <p>It provides an easy to use api and as a unique feature it comes with <b>one container for all objects</b> - the <i>object store</i>. Given this container one has a centralized point of storage for all objects but with the ability to create views on concrete object types, link or filter them.
           </p>
           <div class="warn">
-            <p class=warn><b>Notice</b>: This is the first preview release of the library. That means that there may be bugs or unstable functionality. Furthermore the API could be subject of change.
+            <p class=warn><b>Notice</b>: This is the first release of the library and it is a minor release. That means that there may be bugs or unstable functionality. Furthermore the API could be subject of change. As soon as a first major release is available (1.0.0) the API gets stable.
             </p>
           </div>
-          <div class="warn">
-            <p>Actualy there is only support for SQLite but you can use it in memory and have the benefit of sessions and transactions.</p>
+          <p><a href="#gettingstarted" class="button green"><b>Getting started</b></a></p>
+        </div>
+        <div class="width25 float_right side_box">
+          <h3>Latest Release</h3>
+          <b>Stable:</b> oos 0.1.0</br>
+          <b>Date:</b> 2nd August 2013<br>
+          <div align="center">
+            <a href="download.html" class="button green"><b>Download</b></a>
           </div>
         </div>
-        <div class="width100 float_left">
+        <div class="width66 float_left">
           <h2>Features</h2>
-        </div>
-        <div class="width25 float_right">
-            <a href="#" class="button green">Download Version 0.1.0</a>
-        </div>
-        <div class="width75 float_left">
           <ul>
             <li>Encapsulates all database backends</li>
             <li>Encapsulates SQL statements and database layout</li>
@@ -58,13 +54,16 @@
             <li>STL like interface</li>
             <li>Clean and straight forward design</li>
             <li>Support of transactions</li>
-            <li>Easy expression for filtering</li>
+            <li>Internal reference counting mechanism</li>
+            <li>Easy expressions for filtering</li>
+            <li>Supported databases: <b>SQLite</b>, <b>MySQL</b></li>
+            <li>Available for <b>Windows</b> and <b>Linux</b></li>
             <li>No dependencies to other frameworks</li>
             <li>Easy to use</li>
           </ul>
         </div>
-        <div class="width50 float_left">
-            <h2 class="clear">Future Plans</h2>
+        <div class="width33 float_right">
+            <h2>Future Plans</h2>
             <ul>
               <li>Lazy loading</li>
               <li>Class generator</li>
@@ -72,27 +71,36 @@
               <li>Custom primary key</li>
               <li>Embeddable custom attributes</li>
               <li>More class to database mapping</li>
+              <li>More datatypes like time, data and blob</li>
               <li>Constraints</li>
             </ul>
         </div>
-        <div class="width50 float_left">
+        <div class="width100 float_left">
             <h2 class="clear">Limitations</h2>
             <ul>
               <li>No custom primary key</li>
-              <li>Only one supported database backend (SQLite)</li>
               <li>Missing blob, date and time classes</li>
               <li>Mapping of database features (not null, unique, ...)</li>
+              <li>Loads the complete database</li>
             </ul>
         </div>
         <div class="width100 float_left">
-          <h2 class="clear">Getting started</h2>
-        <!--div class="clear"></div-->
-        </div>
-        <div class="width75 float_left">
+          <h2 class="clear">
+            <a name="gettingstarted" class="anchor"></a>
+            Getting started
+          </h2>
           <p>The following code should give you a brief overview how you design your object classes to integrate within OOS and how you can access your objects inserted into the object store.</p>
-          <ol>
-            <li>Create your class derived from oos::object add access methods and overwrite the serialization interface.</li>
-<pre><code class="cpp"><span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
+        </div>
+        <div class="width33 float_left">
+          <p class="number">1</p><p class="hint"><i>Create your class derived from oos::object add access methods and overwrite the serialization interface.</i></p>
+        </div>
+        <div class="width66 float_right">
+<pre><code class="cpp"><span class="preprocessor">#include "object/object.hpp"</span>
+<span class="preprocessor">#include "object/object_atomizer.hpp"</span>
+
+<span class="preprocessor">#include &lt;string&gt;</span>
+
+<span class="keyword">class</span> person : <span class="keyword">public</span> oos::object
 {
 <span class="keyword">private</span>:
   <span class="built_in">std</span>::<span class="built_in">string</span> name_;
@@ -105,15 +113,15 @@
   {}
   <span class="keyword">virtual</span> ~person() {}
   
-  <span class="keyword">virtual</span> <span class="keyword">void</span> serialize(oos::object_reader &amp;rdr)
+  <span class="keyword">virtual</span> <span class="keyword">void</span> deserialize(oos::object_reader &amp;rdr)
   {
-    oos::object::serialize(rdr);
+    oos::object::deserialize(rdr);
     rdr.read(<span class="string">"name"</span>, name_);
   }
 
-  <span class="keyword">virtual</span> <span class="keyword">void</span> deserialize(oos::object_writer &amp;wrt) <span class="keyword">const</span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> serialize(oos::object_writer &amp;wrt) <span class="keyword">const</span>
   {
-    oos::object::deserialize(wrt);
+    oos::object::serialize(wrt);
     wrt.write(<span class="string">"name"</span>, name_);
   }
 
@@ -127,16 +135,43 @@
     <span class="keyword">return</span> name_;
   }
 };</code></pre>
-        <li>Make your class type known to your object store</li>
-<pre><code class="cpp">object_store ostore;
-ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);</code></pre>
-        <li>Create a new session start a new transaction and insert your objects.</li>
-<pre><code class="cpp">session db(ostore, <span class="string">"sqlite://person.db"</span>);
+        </div>
+        <div class="clear width33 float_left">
+          <p class="number">2</p><p class="hint"><i>Make your class type known to your object store.</i></p>
+        </div>
+        <div class="width66 float_right">
+<pre><code class="cpp"><span class="preprocessor">#include "object/object_store.hpp"</span>
+
+oos::object_store ostore;
+
+ostore.insert_prototype&lt;person&gt;(<span class="string">"person"</span>);
+
+</code></pre>
+        </div>
+        <div class="clear width33 float_left">
+          <p class="number">3</p><p class="hint"><i>Create a new session and insert a new object</p>
+          <p>or</p><p>start a new transaction and insert your objects.</i></p>
+        </div>
+        <div class="width66 float_right">
+<pre><code class="cpp"><span class="preprocessor">#include "object/object_ptr.hpp"</span>
+
+<span class="preprocessor">#include "database/session.hpp"</span>
+<span class="preprocessor">#include "database/transaction.hpp"</span>
+
+<span class="preprocessor">#include &lt;exception&gt;</span>
+
+oos::session db(ostore, <span class="string">"sqlite://person.db"</span>);
 
 db.create();
 
-transaction tr(db);
+<span class="keyword">typedef</span> oos::object_ptr&lt;person&gt; person_ptr;
 
+<span class="comment">// insert object</span>
+person_ptr p = db.insert(<span class="keyword">new</span> person(<span class="string">"Theo"</span>));
+
+oos::transaction tr(db);
+
+<span class="comment">// start transaction</span>
 <span class="keyword">try</span> {  
     tr.begin();
 
@@ -146,13 +181,21 @@ transaction tr(db);
     ostore.insert(<span class="keyword">new</span> person(<span class="string">"Walter"</span>));
 
     tr.commit();
-} <span class="keyword">catch</span> (exception&amp;) {
-    <span class="comment">// do your cleanup here</span>
+} <span class="keyword">catch</span> (std::exception&amp;) {
+    <span class="comment">// an error occurred: do rollback</span>
     tr.rollback();
 }</code></pre>
-        <li>To access your objects open a view.</li>
-<pre><code class="cpp"><span class="keyword">typedef</span> object_ptr&lt;person&gt; person_ptr;
-<span class="keyword">typedef</span> object_view&lt;person&gt; person_view_t;
+        </div>
+        <div class="clear width33 float_left">
+          <p class="number">4</p><p class="hint"><i>To access your objects open a view.</i></p>
+        </div>
+        <div class="width66 float_right">
+<pre><code class="cpp"><span class="preprocessor">#include "object/object_view.hpp"</span>
+
+<span class="preprocessor">#include &lt;iostream&gt;</span>
+
+<span class="keyword">typedef</span> oos::object_ptr&lt;person&gt; person_ptr;
+<span class="keyword">typedef</span> oos::object_view&lt;person&gt; person_view_t;
 
 person_view_t oview(ostore);
 
@@ -163,13 +206,22 @@ person_view_t::iterator last = oview.end();
     <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"person: "</span> &lt;&lt; p-&gt;name() &lt;&lt; <span class="string">"\n"</span>;
 }
 </code></pre>
-        </ol>
       </div>
-        <div class="width25 float_right">
-          <p><a href="#" class="button green">Download Simple Sample</a></p>
-        </div>
-      <div class="width75 float_left">
+      <div class="width100 float_left">
         <p>As you can see, the class is only derived from oos::object and two serialize methods are added. Once the object is known by the object store you can work with.</p>
+        <p>You can download this exmaple <a href="example.cpp">here</a>.</p>
+        <p>To compile it add the include and library to your compiler. To start add the library to your system. On linux the compile call looks like this:</p>
+        <pre><code class="bash">$ g++ -Wall -std=c++11 -o "example" "example.cpp" &#92;
+  -I &lt;path_to_oos_includes&gt; &#92;
+  -L &lt;path_to_oos_libs&gt; -loos -ldl</code></pre>
+        <p>After compilation you can start it with</p>
+        <pre><code class="bash">$ LD_LIBRARY_PATH=&lt;path_to_oos_libs&gt; ./example</code></pre>
+        <p>The output of the example will be</p>
+        <pre><code class="bash">person: George
+person: Jane
+person: Tim
+person: Walter
+person: Theo</code></pre>
       </div>
     </div>
     <div id="footer"></div>
