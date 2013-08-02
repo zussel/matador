@@ -71,7 +71,7 @@
  * vehicle_ptr bike  = ostore.insert(new Bike("Honda");
  * @endcode
  *
- * As you can see we use object_ptr of type vehicle. The vehicle class in
+ * As you can see we use oos::object_ptr of type vehicle. The vehicle class in
  * our example is the abstract base class for all concrete vehicle types.
  * So the concrete vehicle object is inserted correctly and assigned to the
  * object_ptr.
