@@ -1,4 +1,4 @@
-oos 0.1.0-beta.1 "Terreneuvium"
+oos 0.1.0 "Terreneuvium"
 
 This is the initial release of Open Object Store (oos). oos is an c++ orm framework. As a unique feature it comes with a single point storage for all kind of objects called object store. Furthermore oos has the following main features:
 
