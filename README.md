@@ -3,7 +3,11 @@ Open Object Store (OOS)
 
 Store all kind of objects in one container.
 
-Build status at [travis-ci](https://travis-ci.org):  [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
+Build status at [travis-ci](https://travis-ci.org)
+
+[![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
+[![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
+
 
 OOS is a ORM framework written in C++. I aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.
 
