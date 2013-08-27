@@ -19,7 +19,7 @@
 #define MSSQL_EXCEPTION_HPP
 
 #ifdef WIN32
-  #ifdef oos_mysql_EXPORTS
+  #ifdef oos_mssql_EXPORTS
     #define OOS_MSSQL_API __declspec(dllexport)
   #else
     #define OOS_MSSQL_API __declspec(dllimport)

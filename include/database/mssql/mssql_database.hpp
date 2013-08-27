@@ -19,7 +19,7 @@
 #define MSSQL_DATABASE_HPP
 
 #ifdef WIN32
-  #ifdef oos_mysql_EXPORTS
+  #ifdef oos_mssql_EXPORTS
     #define OOS_MSSQL_API __declspec(dllexport)
   #else
     #define OOS_MSSQL_API __declspec(dllimport)
@@ -30,6 +30,10 @@
 #endif
 
 #include "database/database.hpp"
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 #include <sqltypes.h>
 

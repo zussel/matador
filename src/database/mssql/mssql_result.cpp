@@ -34,6 +34,7 @@ mssql_result::~mssql_result()
 
 const char* mssql_result::column(size_type c) const
 {
+  return 0;
 }
 
 bool mssql_result::fetch()
