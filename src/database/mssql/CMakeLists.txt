@@ -24,7 +24,7 @@ SET_TARGET_PROPERTIES(oos-mssql
                       VERSION 0.1.0
                       SOVERSION 1)
 
-TARGET_LINK_LIBRARIES(oos-mssql oos ${MSSQL_LIBRARY})
+TARGET_LINK_LIBRARIES(oos-mssql oos ${ODBC_LIBRARY})
 
 INSTALL(
 	TARGETS oos-mssql
