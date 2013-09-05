@@ -57,6 +57,20 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
 )
 
+SET(FS_SOURCES
+  fs/directory.cpp
+  fs/element.cpp
+  fs/file.cpp
+  fs/link.cpp
+)
+
+SET(FS_INSTALL_HEADER
+  ${PROJECT_SOURCE_DIR}/include/fs/directory.hpp
+  ${PROJECT_SOURCE_DIR}/include/fs/element.hpp
+  ${PROJECT_SOURCE_DIR}/include/fs/file.hpp
+  ${PROJECT_SOURCE_DIR}/include/fs/link.hpp
+)
+
 SET(JSON_SOURCE
   json/json_type.cpp
   json/json_value.cpp
@@ -156,6 +170,7 @@ SET(DATABASE_INSTALL_HEADER
 
 FILE(GLOB OBJECT_HEADER "${CMAKE_SOURCE_DIR}/include/object/*.hpp")
 FILE(GLOB TOOLS_HEADER "${CMAKE_SOURCE_DIR}/include/tools/*.hpp")
+FILE(GLOB FS_HEADER "${CMAKE_SOURCE_DIR}/include/fs/*.hpp")
 FILE(GLOB JSON_HEADER "${CMAKE_SOURCE_DIR}/include/json/*.hpp")
 FILE(GLOB DATABASE_HEADER "${CMAKE_SOURCE_DIR}/include/database/*.hpp")
 FILE(GLOB UNIT_HEADER "${CMAKE_SOURCE_DIR}/include/unit/*.hpp")
@@ -166,6 +181,8 @@ ADD_LIBRARY(oos SHARED
   ${OBJECT_HEADER}
   ${TOOLS_SOURCES}
   ${TOOLS_HEADER}
+  ${FS_SOURCES}
+  ${FS_HEADER}
   ${JSON_SOURCE}
   ${JSON_HEADER}
   ${UNIT_SOURCES}
@@ -186,11 +203,13 @@ ADD_SUBDIRECTORY(database)
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("include\\object" FILES ${OBJECT_HEADER})
 SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
+SOURCE_GROUP("include\\fs" FILES ${FS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
 SOURCE_GROUP("include\\database" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
+SOURCE_GROUP("src\\\\fs" FILES ${FS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
 SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
@@ -231,6 +250,12 @@ INSTALL(
 INSTALL(
 	FILES ${TOOLS_INSTALL_HEADER}
 	DESTINATION include/oos/tools
+	COMPONENT headers
+)
+
+INSTALL(
+	FILES ${FS_INSTALL_HEADER}
+	DESTINATION include/oos/fs
 	COMPONENT headers
 )
 
