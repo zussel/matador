@@ -4,7 +4,11 @@
 #include <sstream>
 #include <iterator>
 
+#include <iostream>
+
+#include <cstring>
 #include <unistd.h>
+#include <sys/stat.h>
 
 namespace oos {
 
@@ -20,11 +24,7 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
 
 directory::directory()
 {
-  char path[2048];
-  if (!getcwd(path, 2048)) {
-    throw std::logic_error("couldn't get current directory path");
-  }
-  initialize(path);
+  initialize("");
 }
 
 directory::directory(const std::string &path)
@@ -46,9 +46,19 @@ bool directory::operator==(const directory &x) const
   return str() == x.str();
 }
 
+bool directory::operator==(const std::string &path) const
+{
+  return str() == path;
+}
+
 bool directory::operator!=(const directory &x) const
 {
   return !this->operator==(x);
+}
+
+bool directory::operator!=(const std::string &path) const
+{
+  return !this->operator==(path);
 }
 
 directory& directory::up(unsigned levels)
@@ -87,6 +97,32 @@ directory& directory::reset(const char *path)
 {
   initialize(path);
   return *this;
+}
+
+directory& directory::remove(bool recursive)
+{
+  if (recursive) {
+    // remove all links and files
+    // call remove for all sub directories
+    element_iterator first = begin();
+    element_iterator last = end();
+    while (first != last) {
+      element elem = *first++;
+      if (elem.is_directory()) {
+        elem.to_directory().remove(recursive);
+      } else if (elem.is_file() || elem.is_link()) {
+        ::unlink((str() + elem.name()).c_str());
+      }
+    }
+    return *this;
+  } else if (0 == ::rmdir(str().c_str())) {
+    path_parts_.pop_back();
+    return *this;
+  } else {
+    std::stringstream msg;
+    msg << "rmdir error (" << errno << "): " << strerror(errno);
+    throw std::logic_error(msg.str());
+  }
 }
 
 std::string directory::str()
@@ -194,13 +230,33 @@ const_directory_iterator directory::directory_end() const
   return const_directory_iterator();
 }
 
-void directory::initialize(const std::string &path, bool clear)
+void directory::initialize(std::string path, bool clear)
 {
   if (clear) {
     path_parts_.clear();
   }
+  if (path.empty() || path[0] != '/') {
+    // given path is relative
+    // get absolute path
+    char p[2048];
+    if (!getcwd(p, 2048)) {
+      throw std::logic_error("couldn't get current directory path");
+    }
+    path.insert(0, "/");
+    path.insert(0, p);
+  }
   // cut path into parts
   split(path, '/', path_parts_);
+}
+
+directory mkdir(const std::string &path)
+{
+  if (-1 == ::mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)) {
+    std::stringstream msg;
+    msg << "mkdir error (" << errno << "): " << strerror(errno);
+    throw std::logic_error(msg.str());
+  }
+  return directory(path);
 }
 
 }

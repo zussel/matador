@@ -15,6 +15,11 @@ SET (TEST_TOOLS_SOURCES
   tools/FactoryTestUnit.cpp
 )
 
+SET (TEST_FS_SOURCES
+  fs/FileSystemTestUnit.hpp
+  fs/FileSystemTestUnit.cpp
+)
+
 SET (TEST_HEADER Item.hpp)
 
 SET (TEST_OBJECT_SOURCES
@@ -52,6 +57,7 @@ SET (TEST_SOURCES test_oos.cpp)
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}
   ${TEST_TOOLS_SOURCES}
+  ${TEST_FS_SOURCES}
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
   ${TEST_JSON_SOURCES}
@@ -75,6 +81,7 @@ ADD_CUSTOM_COMMAND(TARGET test_oos POST_BUILD
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
+SOURCE_GROUP("tools" FILES ${TEST_FS_SOURCES})
 SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("database" FILES ${TEST_DATABASE_SOURCES})
@@ -159,6 +166,7 @@ ADD_TEST(test_oos_vector_direct_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos e
 ADD_TEST(test_oos_vector_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:int)
 ADD_TEST(test_oos_vector_ptr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:ptr)
 ADD_TEST(test_oos_vector_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:ref)
+ADD_TEST(test_oos_fs_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec fs:simple)
 
 IF(SQLITE3_FOUND)
   ADD_TEST(test_oos_sqlite_open_close ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:open_close)

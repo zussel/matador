@@ -29,6 +29,11 @@ public:
 
   element_type type() const;
   
+  bool is_directory() const;
+  bool is_file() const;
+  bool is_link() const;
+  bool is_type(element_type type) const;
+
   std::string name() const;
 
   file to_file();

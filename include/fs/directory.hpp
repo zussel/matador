@@ -23,7 +23,9 @@ public:
   ~directory();
 
   bool operator==(const directory &x) const;
+  bool operator==(const std::string &path) const;
   bool operator!=(const directory &x) const;
+  bool operator!=(const std::string &path) const;
 
   directory& up(unsigned levels = 1);
 
@@ -33,6 +35,8 @@ public:
 
   directory& reset(const std::string &path);
   directory& reset(const char *path);
+
+  directory& remove(bool recursive);
 
   std::string str();
   const std::string str() const;
@@ -64,14 +68,15 @@ public:
   const_directory_iterator directory_end() const;
 
 private:
-  void initialize(const std::string &path, bool clear = true);
+  void initialize(std::string path, bool clear = true);
 
 private:
-  std::string path_;
   typedef std::vector<std::string> string_vector_t;
 
   string_vector_t path_parts_;
 };
+
+directory mkdir(const std::string &path);
 
 }
 

@@ -23,6 +23,8 @@
 #include "tools/VarCharTestUnit.hpp"
 #include "tools/FactoryTestUnit.hpp"
 
+#include "fs/FileSystemTestUnit.hpp"
+
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
 #include "object/ObjectListTestUnit.hpp"
@@ -48,6 +50,8 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new BlobTestUnit());
   test_suite::instance().register_unit(new VarCharTestUnit());
   test_suite::instance().register_unit(new FactoryTestUnit());
+
+  test_suite::instance().register_unit(new FileSystemTestUnit());
 
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
   test_suite::instance().register_unit(new ObjectStoreTestUnit());

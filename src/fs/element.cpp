@@ -52,32 +52,38 @@ element_type element::type() const
     throw_error(lstat(path_.c_str(), &buffer), "lstat", 0);
     std::cout << "type for: " << path_ << "\n";
     if (S_ISREG(buffer.st_mode)) {
-        return file_type;
+      return file_type;
     } else if (S_ISDIR(buffer.st_mode)) {
-        return directory_type;
+      return directory_type;
     } else if (S_ISLNK(buffer.st_mode)) {
-        return link_type;
+      return link_type;
     } else {
-        std::cout << "unknown type (" << buffer.st_mode << ")\n";
-        return unknown_type;
+      std::cout << "unknown type (" << buffer.st_mode << ")\n";
+      return unknown_type;
     }
-
-    /*
-    switch (buffer.st_mode) {
-      case S_IFDIR:
-        return directory_type;
-      case S_IFREG:
-        return file_type;
-      case S_IFLNK:
-        return link_type;
-      default:
-        std::cout << "unknown type (" << buffer.st_mode << ")\n";
-        return unknown_type;
-    }
-    */
   } else {
     return unknown_type;
   }
+}
+
+bool element::is_directory() const
+{
+  return is_type(directory_type);
+}
+
+bool element::is_file() const
+{
+  return is_type(file_type);
+}
+
+bool element::is_link() const
+{
+  return is_type(link_type);
+}
+
+bool element::is_type(element_type type) const
+{
+  return this->type() == type;
 }
 
 std::string element::name() const
