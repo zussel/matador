@@ -30,6 +30,8 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
+#include "tools/string.hpp"
+
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -68,6 +70,7 @@ void mssql_database::on_open(const std::string &connection)
   std::string con = connection;
   std::string::size_type pos = con.find('@');
   std::string user, passwd;
+  std::string driver;
 //  bool has_pwd = true;
   if (pos == std::string::npos) {
 	  throw_error("mssql:open", "invalid dsn: " + connection);
@@ -82,13 +85,25 @@ void mssql_database::on_open(const std::string &connection)
     } else {
       // only user name given
       user = credentials.substr(0, pos);
-//      has_pwd = false;
     }
   }
+  // get connection part
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   std::string db = con.substr(pos + 1);
+
+  // get driver
+  pos = db.find('(');
+  if (pos != std::string::npos) {
+    driver = db.substr(pos+1);
+    db = db.substr(0, pos);
+    db = trim(db);
+    pos = driver.find(')');
+    driver = driver.substr(0, pos);
+  } else {
+    driver = "SQL Server";
+  }
 
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
   if (ret != SQL_SUCCESS) {
@@ -110,7 +125,8 @@ void mssql_database::on_open(const std::string &connection)
     throw std::logic_error("couldn't get connection handle");
   }
 
-  std::string dns("DRIVER={SQL Server};SERVER=127.0.0.1\\SQLEXPRESS;DATABASE=test;UID=sascha;PWD=sascha;");
+//  std::string dns("DRIVER={SQL Server};SERVER=127.0.0.1\\SQLEXPRESS;DATABASE=test;UID=sascha;PWD=sascha;");
+  std::string dns("DRIVER={" + driver + "};SERVER=" + host + "\\" + db + ";DATABASE=test;UID=" + user + ";PWD=sascha;");
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);

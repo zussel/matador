@@ -61,7 +61,7 @@ ADD_EXECUTABLE(test_oos
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
-SET(MSSQL_CONNECTION_STRING "mssql://sascha@127.0.0.1/SQLEXPRESS" CACHE STRING "mssql connection string")
+SET(MSSQL_CONNECTION_STRING "mssql://sascha@127.0.0.1/SQLEXPRESS (SQL Server)" CACHE STRING "mssql connection string")
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
