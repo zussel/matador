@@ -20,10 +20,9 @@ set(ODBC_FOUND FALSE)
 
 IF (WIN32)
   FIND_PATH(ODBC_INCLUDE_DIR sql.h
-    "C:/Program Files/ODBC/include"
-    "C:/Program Files/Microsoft SDKs/Windows/v7.0A/include" 
-    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/include" 
-    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/include" 
+    "$ENV{ProgramFiles}/ODBC/include"
+    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v7.0A/include"
+    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v6.0a/include" 
     "C:/ODBC/include"
     DOC "Specify the directory containing sql.h."
   )
@@ -31,10 +30,9 @@ IF (WIN32)
   FIND_LIBRARY(ODBC_LIBRARY 
     NAMES iodbc odbc odbcinst odbc32
     PATHS
-    "C:/Program Files/ODBC/lib"
+    "$ENV{ProgramFiles}/ODBC/lib"
     "C:/ODBC/lib/debug"
-    "C:/Program Files/Microsoft SDKs/Windows/v7.0A/Lib"
-    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Lib"
+    "$ENV{ProgramFiles}/Microsoft SDKs/Windows/v7.0A/Lib"
     DOC "Specify the ODBC driver manager library here."
   )
 ELSE()
@@ -58,7 +56,6 @@ ELSE()
     DOC "Specify the ODBC driver manager library here."
   )
 ENDIF()
-
 
 if(ODBC_LIBRARY)
   if(ODBC_INCLUDE_DIR)
