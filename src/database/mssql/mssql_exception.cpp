@@ -17,6 +17,9 @@
 
 #include "database/mssql/mssql_exception.hpp"
 
+#include <sql.h>
+#include <sqlext.h>
+
 #include <string>
 #include <sstream>
 
@@ -31,34 +34,32 @@ std::string error_message(const std::string &source, const std::string &sql)
   return msg.str();
 }
 
-/*
-std::string error_message(const std::string &source, const std::string &sql)
+void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &msg)
 {
-  std::stringstream msg;
-  msg << source << ": " << " (" << sql << ")";
-  return msg.str();
-}
-*/
+  if (SQL_SUCCEEDED(ret)) {
+    return;
+  }
+  SQLCHAR state[6];
+  SQLINTEGER error;
+  SQLCHAR data[512];
+  SQLSMALLINT over_by;
 
-void throw_error(const std::string &source, const std::string &msg)
-{
+  ret = SQL_ERROR;
+  SQLSMALLINT i = 0;
+  std::stringstream text;
+  do {
+    ret = SQLGetDiagRec(htype, hndl, ++i, state, &error, data, 511, &over_by);
+    if (ret == SQL_SUCCESS) {
+      text << "odbc error [" << state << "] " << i << " (" << error << "): " << data;
+    }
+  } while (ret == SQL_SUCCESS);
+
   throw mssql_exception(source, msg);
 }
 
-void throw_error(int ec, const std::string &source, const std::string &sql)
+void throw_error(const std::string &source, const std::string &sql)
 {
-  if (ec == 0) {
-    return;
-  }
   throw mssql_exception(source, sql);
-}
-
-void throw_stmt_error(int ec, const std::string &source, const std::string &sql)
-{
-  if (ec == 0) {
-    return;
-  }
-  throw mssql_stmt_exception(source, sql); 
 }
 
 mssql_exception::mssql_exception(const std::string &source, const std::string &what)

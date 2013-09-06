@@ -110,9 +110,13 @@ void mssql_database::on_open(const std::string &connection)
     throw std::logic_error("couldn't get connection handle");
   }
 
-  long res = SQLConnect( connection_, (SQLCHAR*) "MySQL_Test", SQL_NTS,
-                               (SQLCHAR*) "scott", SQL_NTS,
-                               (SQLCHAR*) "tiger", SQL_NTS);
+  std::string dns("DRIVER={SQL Server};SERVER=127.0.0.1\\SQLEXPRESS;DATABASE=test;UID=sascha;PWD=sascha;");
+
+  SQLCHAR retconstring[1024];
+  ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
+
+
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on connect");
 
   is_open_ = true;
 }
@@ -124,6 +128,11 @@ bool mssql_database::is_open() const
 
 void mssql_database::on_close()
 {
+  SQLRETURN ret = SQLDisconnect(connection_);
+
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on close");
+
+  SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
   is_open_ = false;
 }
 

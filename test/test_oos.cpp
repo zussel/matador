@@ -30,6 +30,7 @@
 
 #include "database/SQLiteDatabaseTestUnit.hpp"
 #include "database/MySQLDatabaseTestUnit.hpp"
+#include "database/MSSQLDatabaseTestUnit.hpp"
 
 #include "json/JsonTestUnit.hpp"
 
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new ObjectListTestUnit());
   test_suite::instance().register_unit(new ObjectVectorTestUnit());
   test_suite::instance().register_unit(new MySQLDatabaseTestUnit());
+  test_suite::instance().register_unit(new MSSQLDatabaseTestUnit());
   test_suite::instance().register_unit(new SQLiteDatabaseTestUnit());
 
   test_suite::instance().register_unit(new JsonTestUnit());

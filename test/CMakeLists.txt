@@ -45,6 +45,8 @@ SET (TEST_DATABASE_SOURCES
   database/DatabaseTestUnit.hpp
   database/MySQLDatabaseTestUnit.cpp
   database/MySQLDatabaseTestUnit.hpp
+  database/MSSQLDatabaseTestUnit.cpp
+  database/MSSQLDatabaseTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)
@@ -59,9 +61,11 @@ ADD_EXECUTABLE(test_oos
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
+SET(MSSQL_CONNECTION_STRING "mssql://sascha@127.0.0.1/SQLEXPRESS" CACHE STRING "mssql connection string")
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
+MESSAGE(STATUS "mssql connection string: ${MSSQL_CONNECTION_STRING}")
 MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)

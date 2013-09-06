@@ -31,6 +31,12 @@
 
 #include "database/database_exception.hpp"
 
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
+
+#include <sqltypes.h>
+
 #ifdef WIN32
 
 #else
@@ -41,11 +47,9 @@ namespace oos {
 
 namespace mssql {
 
+void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &sql = "");
+
 void throw_error(const std::string &source, const std::string &sql = "");
-
-void throw_error(int ec, const std::string &source, const std::string &sql = "");
-
-void throw_stmt_error(int ec, const std::string &source, const std::string &sql = "");
 
 class mssql_exception : public database_exception
 {
