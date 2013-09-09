@@ -108,24 +108,21 @@ void mssql_database::on_open(const std::string &connection)
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-//    odbc_throw_error(ret, SQL_HANDLE_ENV, odbc_);
-    throw std::logic_error("couldn't get odbc handle");
+    throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "couldn't get odbc handle");
   }
 
   ret = SQLSetEnvAttr(odbc_, SQL_ATTR_ODBC_VERSION,(SQLPOINTER)SQL_OV_ODBC3, 0);
   if (ret != SQL_SUCCESS) {
     SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
-//    odbc_throw_error(ret, SQL_HANDLE_ENV, odbc_);
-    throw std::logic_error("couldn't set odbc driver version");
+    throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "couldn't set odbc driver version");
   }
 
   ret = SQLAllocHandle(SQL_HANDLE_DBC, odbc_, &connection_);
   if (ret != SQL_SUCCESS) {
-//  odbc_throw_error(ret, SQL_HANDLE_DBC, odbc_);
-    throw std::logic_error("couldn't get connection handle");
+    SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
+    throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "couldn't get connection handle");
   }
 
-//  std::string dns("DRIVER={SQL Server};SERVER=127.0.0.1\\SQLEXPRESS;DATABASE=test;UID=sascha;PWD=sascha;");
   std::string dns("DRIVER={" + driver + "};SERVER=" + host + "\\" + db + ";DATABASE=test;UID=" + user + ";PWD=sascha;");
 
   SQLCHAR retconstring[1024];
