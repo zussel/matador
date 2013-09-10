@@ -37,12 +37,6 @@
 
 #include <sqltypes.h>
 
-#ifdef WIN32
-
-#else
-
-#endif
-
 namespace oos {
   
 struct prototype_node;
@@ -108,6 +102,8 @@ private:
   SQLHANDLE connection_;
 
   bool is_open_;
+  
+  int retries_;
 };
 
 }

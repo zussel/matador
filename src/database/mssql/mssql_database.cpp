@@ -54,6 +54,7 @@ namespace mssql {
 mssql_database::mssql_database(session *db)
   : database(db, new database_sequencer(*this))
   , is_open_(false)
+  , retries_(1)
 {
 }
 
@@ -149,9 +150,26 @@ void mssql_database::on_close()
   is_open_ = false;
 }
 
-result* mssql_database::execute(const std::string &/*sqlstr*/)
+result* mssql_database::execute(const std::string &sqlstr)
 {
-  return 0;
+  if (!connection_) {
+    throw_error("mssql", "no odbc connection established");
+  }
+  // create statement handle
+  SQLHANDLE stmt;
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+
+  // execute statement
+  int retry = retries_;
+  ret = SQL_SUCCESS;
+  do {
+    ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
+  } while (retry-- && !SQL_SUCCEEDED(ret));
+
+  throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
+
+  return new mssql_result(stmt);
 }
 
 result* mssql_database::create_result()

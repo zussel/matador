@@ -22,11 +22,11 @@
 
 #include "tools/convert.hpp"
 
-#ifdef WIN32
-
-#else
-
+#if defined(_MSC_VER)
+#include <windows.h>
 #endif
+
+#include <sqltypes.h>
 
 #include <vector>
 
@@ -47,7 +47,7 @@ public:
   typedef result::size_type size_type;
 
 public:
-  mssql_result();
+  explicit mssql_result(SQLHANDLE stmt);
   virtual ~mssql_result();
   
   const char* column(size_type c) const;
@@ -77,13 +77,15 @@ protected:
   virtual void read(const char *id, object_container &x);
 
   template < class T >
-  void read_column(const char *, T &val)
+  void read_column(const char *, T &/*val*/)
   {
   }
 private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
+  
+  SQLHANDLE stmt_;
 };
 
 }

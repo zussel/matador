@@ -18,28 +18,43 @@
 #include "database/mssql/mssql_result.hpp"
 #include "database/row.hpp"
 
+#include "database/mssql/mssql_exception.hpp"
+
+#include <sql.h>
+
 namespace oos {
 
 namespace mssql {
 
-mssql_result::mssql_result()
+mssql_result::mssql_result(SQLHANDLE stmt)
   : affected_rows_(0)
   , rows(0)
   , fields_(0)
+  , stmt_(stmt)
 {
+  // get row and column information
+  SQLRETURN ret = SQLRowCount(stmt, (SQLLEN*)&rows);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't retrieve row count");
+
+  SQLSMALLINT columns = 0;
+  ret = SQLNumResultCols(stmt, &columns);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't get column count");
 }
+
 mssql_result::~mssql_result()
 {
 }
 
-const char* mssql_result::column(size_type c) const
+const char* mssql_result::column(size_type /*c*/) const
 {
   return 0;
 }
 
 bool mssql_result::fetch()
 {
-  return false;
+  SQLRETURN ret = SQLFetch(stmt_);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on fetching next row");
+  return rows-- > true;
 }
 
 mssql_result::size_type mssql_result::affected_rows() const
