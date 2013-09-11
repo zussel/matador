@@ -18,7 +18,11 @@
 #ifndef MSSQL_RESULT_HPP
 #define MSSQL_RESULT_HPP
 
+#include "database/mssql/mssql_exception.hpp"
+#include "database/mssql/mssql_statement.hpp"
+
 #include "database/result.hpp"
+#include "database/types.hpp"
 
 #include "tools/convert.hpp"
 
@@ -27,6 +31,7 @@
 #endif
 
 #include <sqltypes.h>
+#include <sql.h>
 
 #include <vector>
 
@@ -77,9 +82,22 @@ protected:
   virtual void read(const char *id, object_container &x);
 
   template < class T >
-  void read_column(const char *, T &/*val*/)
+  void read_column(const char *, T & val)
+  {
+    SQLLEN info = 0;
+    int type = mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, result_index, type, &val, sizeof(T), &info);
+    if (ret == SQL_SUCCESS && info == SQL_NULL_DATA) {
+      return;
+    } else {
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    }
+  }
+  
+  void read_column(const char *, varchar_base &val)
   {
   }
+
 private:
   size_type affected_rows_;
   size_type rows;

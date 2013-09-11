@@ -20,8 +20,6 @@
 
 #include "database/mssql/mssql_exception.hpp"
 
-#include <sql.h>
-
 namespace oos {
 
 namespace mssql {

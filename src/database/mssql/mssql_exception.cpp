@@ -36,7 +36,7 @@ std::string error_message(const std::string &source, const std::string &sql)
 
 void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::string &source, const std::string &msg)
 {
-  if (SQL_SUCCEEDED(ret)) {
+  if (SQL_SUCCEEDED(ret) || ret == SQL_NO_DATA) {
     return;
   }
   SQLCHAR state[6];
@@ -50,11 +50,11 @@ void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::st
   do {
     ret = SQLGetDiagRec(htype, hndl, ++i, state, &error, data, 511, &over_by);
     if (ret == SQL_SUCCESS) {
-      text << "odbc error [" << state << "] " << i << " (" << error << "): " << data;
+      text << "odbc error [" << state << "] " << msg << " " << i << " (" << error << "): " << data;
     }
   } while (ret == SQL_SUCCESS);
 
-  throw mssql_exception(source, msg);
+  throw mssql_exception(source, text.str());
 }
 
 void throw_error(const std::string &source, const std::string &sql)

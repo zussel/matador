@@ -161,11 +161,14 @@ result* mssql_database::execute(const std::string &sqlstr)
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
 
   // execute statement
-  int retry = retries_;
-  ret = SQL_SUCCESS;
+//  int retry = retries_;
+  ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
+  
+  /*
   do {
     ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-  } while (retry-- && !SQL_SUCCEEDED(ret));
+  } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
+  */
 
   throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
 
@@ -207,27 +210,27 @@ const char* mssql_database::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
-      return "INTEGER";
+      return "TINYINT";
     case type_short:
-      return "INTEGER";
+      return "SNALLINT";
     case type_int:
-      return "INTEGER";
+      return "INT";
     case type_long:
-      return "INTEGER";
+      return "INT";
     case type_unsigned_char:
-      return "INTEGER";
+      return "TINYINT";
     case type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT";
     case type_unsigned_int:
-      return "INTEGER";
+      return "INT";
     case type_unsigned_long:
-      return "INTEGER";
+      return "INT";
     case type_bool:
-      return "INTEGER";
+      return "TINYINT";
     case type_float:
       return "FLOAT";
     case type_double:
-      return "DOUBLE";
+      return "FLOAT";
     case type_char_pointer:
       return "VARCHAR";
     case type_varchar:

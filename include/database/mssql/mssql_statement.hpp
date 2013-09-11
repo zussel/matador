@@ -21,12 +21,6 @@
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
-#ifdef WIN32
-
-#else
-
-#endif
-
 #include <string>
 #include <vector>
 #include <type_traits>
@@ -63,6 +57,8 @@ public:
 
   virtual database& db();
   virtual const database& db() const;
+
+  static long type2int(data_type_t type);
 
 protected:
   virtual void write(const char *id, char x);

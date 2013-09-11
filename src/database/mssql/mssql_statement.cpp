@@ -24,6 +24,12 @@
 
 #include "tools/varchar.hpp"
 
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
+
+#include <sqlext.h>
+
 #include <stdexcept>
 #include <iostream>
 #include <cstring>
@@ -181,6 +187,44 @@ database& mssql_statement::db()
 const database& mssql_statement::db() const
 {
   return db_;
+}
+
+long mssql_statement::type2int(data_type_t type)
+{
+  switch(type) {
+    case type_char:
+      return SQL_C_STINYINT;
+    case type_short:
+      return SQL_C_SSHORT;
+    case type_int:
+      return SQL_C_SLONG;
+    case type_long:
+      return SQL_C_SLONG;
+    case type_unsigned_char:
+      return SQL_C_UTINYINT;
+    case type_unsigned_short:
+      return SQL_C_USHORT;
+    case type_unsigned_int:
+      return SQL_C_ULONG;
+    case type_unsigned_long:
+      return SQL_C_ULONG;
+    case type_bool:
+      return SQL_C_STINYINT;
+    case type_float:
+      return SQL_C_FLOAT;
+    case type_double:
+      return SQL_C_DOUBLE;
+    case type_char_pointer:
+      return SQL_C_CHAR;
+    case type_varchar:
+      return SQL_C_CHAR;
+    case type_text:
+      return SQL_C_CHAR;
+    default:
+      {
+        throw std::logic_error("mssql statement: unknown type");
+      }
+    }
 }
 
 }
