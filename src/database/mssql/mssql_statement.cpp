@@ -24,12 +24,6 @@
 
 #include "tools/varchar.hpp"
 
-#if defined(_MSC_VER)
-#include <windows.h>
-#endif
-
-#include <sqlext.h>
-
 #include <stdexcept>
 #include <iostream>
 #include <cstring>
@@ -44,7 +38,13 @@ mssql_statement::mssql_statement(mssql_database &db)
   , result_size(0)
   , host_size(0)
 {
-//  std::cout << "creating mssql statement " << this << "\n";
+  std::cout << "creating mssql statement " << this << "\n";
+  if (!db()) {
+    throw_error("mssql", "no odbc connection established");
+  }
+  // create statement handle
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db(), &stmt_);
+  throw_error(ret, SQL_HANDLE_DBC, db(), "mssql", "error on creating sql statement");
 }
 
 mssql_statement::mssql_statement(mssql_database &db, const sql &s)
@@ -52,7 +52,13 @@ mssql_statement::mssql_statement(mssql_database &db, const sql &s)
   , result_size(0)
   , host_size(0)
 {
-//  std::cout << "creating mssql statement " << this << "\n";
+  std::cout << "creating mssql statement " << this << "\n";
+  if (!db()) {
+    throw_error("mssql", "no odbc connection established");
+  }
+  // create statement handle
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db(), &stmt_);
+  throw_error(ret, SQL_HANDLE_DBC, db(), "mssql", "error on creating sql statement");
   prepare(s);
 }
 mssql_statement::~mssql_statement()
@@ -98,84 +104,91 @@ result* mssql_statement::execute()
 
 void mssql_statement::write(const char *, char x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, short x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, int x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, long x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, unsigned char x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, unsigned short x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, unsigned int x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, unsigned long x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, bool x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, float x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, double x)
 {
-  ++host_index;
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, const char *x, int s)
 {
-  ++host_index;
+  bind_value(x, s, ++host_index);
 }
 
 void mssql_statement::write(const char *, const std::string &x)
 {
-  ++host_index;
+  bind_value(x.data(), x.size(), ++host_index);
 }
 
 void mssql_statement::write(const char *, const varchar_base &x)
 {
-  ++host_index;
+  bind_value(x.c_str(), x.size(), ++host_index);
 }
 
 void mssql_statement::write(const char *, const object_base_ptr &x)
 {
-  ++host_index;
+  bind_value(x.id(), ++host_index);
 }
 
 void mssql_statement::write(const char *, const object_container &)
 {
 }
 
-void mssql_statement::prepare_result_column(const sql::field_ptr &fptr)
+void mssql_statement::bind_value(const char *val, int size, int index)
+{
+  SQLLEN len = 0;
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, (SQLPOINTER)val, 0, &len);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+}
+
+void mssql_statement::prepare_result_column(const sql::field_ptr &/*fptr*/)
 {
 }
 
@@ -220,6 +233,44 @@ long mssql_statement::type2int(data_type_t type)
       return SQL_C_CHAR;
     case type_text:
       return SQL_C_CHAR;
+    default:
+      {
+        throw std::logic_error("mssql statement: unknown type");
+      }
+    }
+}
+
+long mssql_statement::type2sql(data_type_t type)
+{
+  switch(type) {
+    case type_char:
+      return SQL_SMALLINT;
+    case type_short:
+      return SQL_SMALLINT;
+    case type_int:
+      return SQL_INTEGER;
+    case type_long:
+      return SQL_INTEGER;
+    case type_unsigned_char:
+      return SQL_SMALLINT;
+    case type_unsigned_short:
+      return SQL_SMALLINT;
+    case type_unsigned_int:
+      return SQL_INTEGER;
+    case type_unsigned_long:
+      return SQL_INTEGER;
+    case type_bool:
+      return SQL_SMALLINT;
+    case type_float:
+      return SQL_FLOAT;
+    case type_double:
+      return SQL_DOUBLE;
+    case type_char_pointer:
+      return SQL_VARCHAR;
+    case type_varchar:
+      return SQL_VARCHAR;
+    case type_text:
+      return SQL_VARCHAR;
     default:
       {
         throw std::logic_error("mssql statement: unknown type");

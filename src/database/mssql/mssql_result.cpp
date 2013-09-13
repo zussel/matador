@@ -41,6 +41,7 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
 mssql_result::~mssql_result()
 {
+  SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
 const char* mssql_result::column(size_type /*c*/) const

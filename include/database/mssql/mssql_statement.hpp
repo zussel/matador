@@ -21,6 +21,16 @@
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
+#include "database/mssql/mssql_exception.hpp"
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
+
+#include <sqltypes.h>
+#include <sql.h>
+#include <sqlext.h>
+
 #include <string>
 #include <vector>
 #include <type_traits>
@@ -59,6 +69,7 @@ public:
   virtual const database& db() const;
 
   static long type2int(data_type_t type);
+  static long type2sql(data_type_t type);
 
 protected:
   virtual void write(const char *id, char x);
@@ -78,6 +89,17 @@ protected:
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
 
+  template < class T >
+  void bind_value(T val, int index)
+  {
+    SQLLEN len = 0;
+    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
+    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, &val, 0, &len);
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+  }
+  void bind_value(const char *val, int size, int index);
+
   virtual void prepare_result_column(const sql::field_ptr &fptr);
 
 private:
@@ -85,6 +107,8 @@ private:
   int result_size;
   int host_size;
   std::vector<bool> host_data;
+  
+  SQLHANDLE stmt_;
 };
 
 }

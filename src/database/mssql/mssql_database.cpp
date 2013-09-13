@@ -182,7 +182,7 @@ result* mssql_database::create_result()
 
 statement* mssql_database::create_statement()
 {
-  return 0;
+  return new mssql_statement(*this);
 }
 
 void mssql_database::on_begin()
@@ -245,6 +245,11 @@ const char* mssql_database::type_string(data_type_t type) const
         //throw std::logic_error("mssql database: unknown type");
       }
     }
+}
+
+SQLHANDLE mssql_database::operator()()
+{
+  return connection_;
 }
 
 }

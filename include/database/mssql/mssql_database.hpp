@@ -90,6 +90,8 @@ public:
   
   virtual const char* type_string(data_type_t type) const;
 
+  SQLHANDLE operator()();
+
 protected:
   virtual void on_open(const std::string &db);
   virtual void on_close();
