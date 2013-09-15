@@ -94,7 +94,7 @@ protected:
     }
   }
   
-  void read_column(const char *, varchar_base &val)
+  void read_column(const char *, varchar_base &/*val*/)
   {
   }
 
