@@ -100,13 +100,8 @@ protected:
   }
   void bind_value(const char *val, int size, int index);
 
-  virtual void prepare_result_column(const sql::field_ptr &fptr);
-
 private:
   mssql_database &db_;
-  int result_size;
-  int host_size;
-  std::vector<bool> host_data;
   
   SQLHANDLE stmt_;
 };

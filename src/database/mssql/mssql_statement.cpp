@@ -18,7 +18,7 @@
 #include "database/mssql/mssql_statement.hpp"
 #include "database/mssql/mssql_database.hpp"
 #include "database/mssql/mssql_exception.hpp"
-#include "database/mssql/mssql_prepared_result.hpp"
+#include "database/mssql/mssql_result.hpp"
 
 #include "object/object_ptr.hpp"
 
@@ -35,8 +35,6 @@ namespace mssql {
 
 mssql_statement::mssql_statement(mssql_database &db)
   : db_(db)
-  , result_size(0)
-  , host_size(0)
 {
   std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
@@ -49,8 +47,6 @@ mssql_statement::mssql_statement(mssql_database &db)
 
 mssql_statement::mssql_statement(mssql_database &db, const sql &s)
   : db_(db)
-  , result_size(0)
-  , host_size(0)
 {
   std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
@@ -72,34 +68,25 @@ void mssql_statement::prepare(const sql &s)
   reset();
   
   str(s.prepare());
-  // parse sql to create result and host arrays
-  result_size = s.result_size();
-//  if (result_size) {
-  if (s.result_size()) {
-    
-    sql::const_iterator first = s.result_begin();
-    sql::const_iterator last = s.result_end();
-    while (first != last) {
-      prepare_result_column(*first++);
-    }
-  }
-  host_size = s.host_size();
+
+  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), str().size());
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }
 
 void mssql_statement::reset()
-{
-}
+{}
 
 void mssql_statement::clear()
-{
-  result_size = 0;
-  host_size = 0;
-  host_data.clear();
-}
+{}
 
 result* mssql_statement::execute()
 {
-  return 0;
+  SQLRETURN ret = SQLExecute(stmt_);
+
+  // check result
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
+
+  return new mssql_result(stmt_);
 }
 
 void mssql_statement::write(const char *, char x)
@@ -186,10 +173,6 @@ void mssql_statement::bind_value(const char *val, int size, int index)
   SQLLEN len = 0;
   SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, (SQLPOINTER)val, 0, &len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-void mssql_statement::prepare_result_column(const sql::field_ptr &/*fptr*/)
-{
 }
 
 database& mssql_statement::db()
