@@ -36,7 +36,7 @@ namespace mssql {
 mssql_statement::mssql_statement(mssql_database &db)
   : db_(db)
 {
-  std::cout << "creating mssql statement " << this << "\n";
+//  std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
     throw_error("mssql", "no odbc connection established");
   }
@@ -48,7 +48,7 @@ mssql_statement::mssql_statement(mssql_database &db)
 mssql_statement::mssql_statement(mssql_database &db, const sql &s)
   : db_(db)
 {
-  std::cout << "creating mssql statement " << this << "\n";
+//  std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
     throw_error("mssql", "no odbc connection established");
   }
@@ -59,7 +59,6 @@ mssql_statement::mssql_statement(mssql_database &db, const sql &s)
 }
 mssql_statement::~mssql_statement()
 {
-//  std::cout << "destroying mssql statement " << this << "\n";
   clear();
 }
 
@@ -77,7 +76,10 @@ void mssql_statement::reset()
 {}
 
 void mssql_statement::clear()
-{}
+{
+//  std::cout << "destroying mssql statement " << this << "\n";
+  SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+}
 
 result* mssql_statement::execute()
 {
@@ -86,7 +88,7 @@ result* mssql_statement::execute()
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
-  return new mssql_result(stmt_);
+  return new mssql_result(stmt_, false);
 }
 
 void mssql_statement::write(const char *, char x)

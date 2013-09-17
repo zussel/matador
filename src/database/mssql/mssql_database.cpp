@@ -53,6 +53,8 @@ namespace mssql {
   
 mssql_database::mssql_database(session *db)
   : database(db, new database_sequencer(*this))
+  , odbc_(0)
+  , connection_(0)
   , is_open_(false)
   , retries_(1)
 {
@@ -66,8 +68,7 @@ mssql_database::~mssql_database()
 
 void mssql_database::on_open(const std::string &connection)
 {
-  // parse user[:passwd]@host/db
-  
+  // parse user[:passwd]@host/db ([Drivername])
   std::string con = connection;
   std::string::size_type pos = con.find('@');
   std::string user, passwd;
@@ -124,11 +125,12 @@ void mssql_database::on_open(const std::string &connection)
     throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "couldn't get connection handle");
   }
 
+  SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
+
   std::string dns("DRIVER={" + driver + "};SERVER=" + host + "\\" + db + ";DATABASE=test;UID=" + user + ";PWD=sascha;");
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
-
 
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on connect");
 
@@ -146,7 +148,12 @@ void mssql_database::on_close()
 
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on close");
 
-  SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
+  ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on freeing connection");
+ 
+  ret = SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
+  throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "error on freeing odbc");
+ 
   is_open_ = false;
 }
 
@@ -172,7 +179,7 @@ result* mssql_database::execute(const std::string &sqlstr)
 
   throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
 
-  return new mssql_result(stmt);
+  return new mssql_result(stmt, true);
 }
 
 result* mssql_database::create_result()
@@ -212,7 +219,7 @@ const char* mssql_database::type_string(data_type_t type) const
     case type_char:
       return "TINYINT";
     case type_short:
-      return "SNALLINT";
+      return "SMALLINT";
     case type_int:
       return "INT";
     case type_long:

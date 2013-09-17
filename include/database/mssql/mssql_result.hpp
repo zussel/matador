@@ -52,7 +52,7 @@ public:
   typedef result::size_type size_type;
 
 public:
-  explicit mssql_result(SQLHANDLE stmt);
+  mssql_result(SQLHANDLE stmt, bool free);
   virtual ~mssql_result();
   
   const char* column(size_type c) const;
@@ -102,6 +102,8 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
+  
+  bool free_;
   
   SQLHANDLE stmt_;
 };

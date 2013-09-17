@@ -20,14 +20,17 @@
 
 #include "database/mssql/mssql_exception.hpp"
 
+#include <iostream>
+
 namespace oos {
 
 namespace mssql {
 
-mssql_result::mssql_result(SQLHANDLE stmt)
+mssql_result::mssql_result(SQLHANDLE stmt, bool free)
   : affected_rows_(0)
   , rows(0)
   , fields_(0)
+  , free_(free)
   , stmt_(stmt)
 {
   // get row and column information
@@ -41,7 +44,10 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
 mssql_result::~mssql_result()
 {
-  SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+  if (free_) {
+    std::cout << "freeing handle " << stmt_ << "\n";
+    SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+  }
 }
 
 const char* mssql_result::column(size_type /*c*/) const
