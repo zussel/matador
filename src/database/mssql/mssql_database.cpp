@@ -194,7 +194,7 @@ statement* mssql_database::create_statement()
 
 void mssql_database::on_begin()
 {
-  result *res = execute("START TRANSACTION;");
+  result *res = execute("BEGIN TRANSACTION;");
   // TODO: check result
   delete res;
 }
