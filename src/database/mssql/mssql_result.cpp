@@ -45,7 +45,6 @@ mssql_result::mssql_result(SQLHANDLE stmt, bool free)
 mssql_result::~mssql_result()
 {
   if (free_) {
-    std::cout << "freeing handle " << stmt_ << "\n";
     SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
   }
 }
