@@ -94,7 +94,7 @@ public:
   virtual void deserialize(oos::object_reader &deserializer)
   {
     oos::object::deserialize(deserializer);
-    deserializer.read("val_char", char_);
+/*    deserializer.read("val_char", char_);
     deserializer.read("val_float", float_);
     deserializer.read("val_double", double_);
     deserializer.read("val_short", short_);
@@ -103,15 +103,15 @@ public:
     deserializer.read("val_unsigned_short", unsigned_short_);
     deserializer.read("val_unsigned_int", unsigned_int_);
     deserializer.read("val_unsigned_long", unsigned_long_);
-    deserializer.read("val_bool", bool_);
+    deserializer.read("val_bool", bool_);*/
     deserializer.read("val_cstr", cstr_, CSTR_LEN);
-    deserializer.read("val_string", string_);
-    deserializer.read("val_varchar", varchar_);
+//    deserializer.read("val_string", string_);
+//    deserializer.read("val_varchar", varchar_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
     oos::object::serialize(serializer);
-    serializer.write("val_char", char_);
+/*    serializer.write("val_char", char_);
     serializer.write("val_float", float_);
     serializer.write("val_double", double_);
     serializer.write("val_short", short_);
@@ -120,10 +120,10 @@ public:
     serializer.write("val_unsigned_short", unsigned_short_);
     serializer.write("val_unsigned_int", unsigned_int_);
     serializer.write("val_unsigned_long", unsigned_long_);
-    serializer.write("val_bool", bool_);
+    serializer.write("val_bool", bool_);*/
     serializer.write("val_cstr", cstr_, CSTR_LEN);
-    serializer.write("val_string", string_);
-    serializer.write("val_varchar", varchar_);
+//    serializer.write("val_string", string_);
+//    serializer.write("val_varchar", varchar_);
   }
 
   void set_char(char x) { modify(char_, x); }

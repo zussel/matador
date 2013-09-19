@@ -66,15 +66,6 @@ public:
   virtual bool is_open() const;
 
   /**
-   * Execute a sql statement and return a result
-   * implementation via pointer.
-   *
-   * @param sql The sql statement to be executed.
-   * @return The result of the executed sql statement.
-   */
-  virtual result* execute(const std::string &sql);
-
-  /**
    * Create a new sqlite result
    * 
    * @return A new sqlite result
@@ -95,6 +86,7 @@ public:
 protected:
   virtual void on_open(const std::string &db);
   virtual void on_close();
+  virtual result* on_execute(const std::string &sql);
   virtual void on_begin();
   virtual void on_commit();
   virtual void on_rollback();

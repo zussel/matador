@@ -157,13 +157,14 @@ void mssql_database::on_close()
   is_open_ = false;
 }
 
-result* mssql_database::execute(const std::string &sqlstr)
+result* mssql_database::on_execute(const std::string &sqlstr)
 {
   if (!connection_) {
     throw_error("mssql", "no odbc connection established");
   }
   // create statement handle
   SQLHANDLE stmt;
+  
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
 

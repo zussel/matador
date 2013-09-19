@@ -68,16 +68,24 @@ void mssql_statement::prepare(const sql &s)
   
   str(s.prepare());
 
-  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), str().size());
+//  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), str().size());
+  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }
 
 void mssql_statement::reset()
-{}
+{
+  while (!host_data_.empty()) {
+    std::cout << "freeing host data\n";
+    delete host_data_.back();
+    host_data_.pop_back();
+  }
+}
 
 void mssql_statement::clear()
 {
 //  std::cout << "destroying mssql statement " << this << "\n";
+  reset();
   SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
@@ -158,7 +166,7 @@ void mssql_statement::write(const char *, const std::string &x)
 
 void mssql_statement::write(const char *, const varchar_base &x)
 {
-  bind_value(x.c_str(), x.size(), ++host_index);
+  bind_value(x.c_str(), x.size() + 1, ++host_index);
 }
 
 void mssql_statement::write(const char *, const object_base_ptr &x)
@@ -172,8 +180,17 @@ void mssql_statement::write(const char *, const object_container &)
 
 void mssql_statement::bind_value(const char *val, int size, int index)
 {
-  SQLLEN len = 0;
-  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, (SQLPOINTER)val, 0, &len);
+  SQLLEN len = SQL_NTS;
+  
+  size_t s = strlen(val);
+  char *buf = new char[s + 1];
+  memcpy(buf, val, s);
+  buf[s] = '\0';
+
+  host_data_.push_back(buf);
+
+//  std::cout << "binding character string [" << val << "] (size: " << strlen(val) << ", max: " << size << ")\n";
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, size, 0, buf, 0, &len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
