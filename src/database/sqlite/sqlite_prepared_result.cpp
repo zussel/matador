@@ -60,6 +60,11 @@ sqlite_prepared_result::size_type sqlite_prepared_result::fields() const
   return fields_;
 }
 
+int sqlite_prepared_result::transform_index(int index) const
+{
+  return index;
+}
+
 void sqlite_prepared_result::read(const char *, char &x)
 {
   x = (char)sqlite3_column_int(stmt_, result_index++);

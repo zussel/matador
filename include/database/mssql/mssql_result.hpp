@@ -61,6 +61,8 @@ public:
   size_type result_rows() const;
   size_type fields() const;
 
+  virtual int transform_index(int index) const;
+
   friend std::ostream& operator<<(std::ostream &out, const mssql_result &res);
 
 protected:
@@ -87,7 +89,7 @@ protected:
     SQLLEN info = 0;
     int type = mssql_statement::type2int(type_traits<T>::data_type());
     SQLRETURN ret = SQLGetData(stmt_, result_index, type, &val, sizeof(T), &info);
-    if (ret == SQL_SUCCESS && info == SQL_NULL_DATA) {
+    if (ret == SQL_SUCCESS) {
       return;
     } else {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");

@@ -65,7 +65,7 @@ public:
   template < class T >
   void get(unsigned long i, T &val)
   {
-    result_index = i;
+    result_index = transform_index(i);
     read("", val);
   }
   void get(object_atomizable *o);
@@ -75,6 +75,8 @@ public:
   virtual size_type affected_rows() const = 0;
   virtual size_type result_rows() const = 0;
   virtual size_type fields() const = 0;
+  
+  virtual int transform_index(int index) const = 0;
 
 protected:
   int result_index;

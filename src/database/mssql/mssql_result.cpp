@@ -76,6 +76,11 @@ mssql_result::size_type mssql_result::fields() const
   return fields_;
 }
 
+int mssql_result::transform_index(int index) const
+{
+  return ++index;
+}
+
 void mssql_result::read(const char *id, char &x)
 {
   read_column(id, x);

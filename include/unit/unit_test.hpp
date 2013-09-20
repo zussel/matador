@@ -152,7 +152,12 @@
  * with the given error message and the current
  * file and line number information.
  */
-#define UNIT_FAIL(msg)                   error(msg, __LINE__, __FILE__)
+#define UNIT_FAIL(msg)                   \
+  do {                                   \
+    std::stringstream fail_stream;       \
+    fail_stream << msg;                  \
+    error(fail_stream.str(), __LINE__, __FILE__);\
+  } while (false)
 
 /**
  * @brief Displays a warning.

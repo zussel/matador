@@ -54,6 +54,11 @@ mysql_prepared_result::size_type mysql_prepared_result::fields() const
   return fields_;
 }
 
+int mysql_prepared_result::transform_index(int index) const
+{
+  return index;
+}
+
 void mysql_prepared_result::read(const char *, char &x)
 {
   get_column_value(bind_[result_index++], MYSQL_TYPE_TINY, x);

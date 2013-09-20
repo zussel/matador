@@ -79,6 +79,11 @@ mysql_result::size_type mysql_result::fields() const
   return fields_;
 }
 
+int mysql_result::transform_index(int index) const
+{
+  return index;
+}
+
 void mysql_result::read(const char *id, char &x)
 {
   read_column(id, x);

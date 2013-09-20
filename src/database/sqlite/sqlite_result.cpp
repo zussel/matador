@@ -59,6 +59,11 @@ sqlite_result::size_type sqlite_result::fields() const
   return 0;
 }
 
+int sqlite_result::transform_index(int index) const
+{
+  return index;
+}
+
 void sqlite_result::push_back(row *r)
 {
   rows_.push_back(r);

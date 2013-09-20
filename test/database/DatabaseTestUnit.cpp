@@ -655,8 +655,8 @@ DatabaseTestUnit::test_reload()
 
     // load data
     db->load();
-  } catch (exception &) {
-    UNIT_FAIL("couldn't create and load database");
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
 
   // create new transaction    
