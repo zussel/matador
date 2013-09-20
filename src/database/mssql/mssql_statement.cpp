@@ -97,13 +97,6 @@ result* mssql_statement::execute()
 {
   SQLRETURN ret = SQLExecute(stmt_);
 
-  if (ret == SQL_NEED_DATA) {
-    SQLINTEGER marker = 0;
-    ret = SQLParamData(stmt_, (SQLPOINTER*)&marker);
-    if (ret == SQL_NEED_DATA) {
-      int j = 9;
-    }
-  }
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
