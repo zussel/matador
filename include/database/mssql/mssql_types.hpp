@@ -30,15 +30,15 @@ namespace mssql {
 template <class T> 
 struct type_traits; 
 
-template <> struct type_traits<char> { inline static const char* type_string() { return "TINYINT"; } }; 
+template <> struct type_traits<char> { inline static const char* type_string() { return "SMALLINT"; } }; 
 template <> struct type_traits<short> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<int> { inline static const char* type_string() { return "INT"; } };
 template <> struct type_traits<long> { inline static const char* type_string() { return "INT"; } };
-template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "TINYINT"; } };
-template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "SMALLINT"; } };
-template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "INT"; } };
-template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "INT"; } };
-template <> struct type_traits<bool> { inline static const char* type_string() { return "TINYINT"; } };
+template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "SMALLINT"; } };
+template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "INT"; } };
+template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "BIGINT"; } };
+template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "NUMERIC(20,0)"; } };
+template <> struct type_traits<bool> { inline static const char* type_string() { return "BIT"; } };
 template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };

@@ -306,7 +306,7 @@ DatabaseTestUnit::test_simple()
     tr.begin();
     // modify object
     item->set_int(120);
-//    UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
     
     transaction tr2(*db);
     try {
@@ -315,18 +315,18 @@ DatabaseTestUnit::test_simple()
       // change name again
       item->set_int(170);
 
-//      UNIT_ASSERT_EQUAL(item->get_int(), 170, "item has invalid int value");
+      UNIT_ASSERT_EQUAL(item->get_int(), 170, "item has invalid int value");
       // rollback transaction
       tr2.rollback();
 
-//      UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
+      UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
     } catch (exception &ex) {
       UNIT_WARN("transaction [" << tr2.id() << "] rolled back: " << ex.what());
       tr2.rollback();
     }
     tr.rollback();
 
-//    UNIT_ASSERT_EQUAL(item->get_int(), 70, "item has invalid int value");
+    UNIT_ASSERT_EQUAL(item->get_int(), 70, "item has invalid int value");
 
     tr.begin();
     // delete object
@@ -343,8 +343,8 @@ DatabaseTestUnit::test_simple()
 
     item = view.front();
 
-//    UNIT_ASSERT_EQUAL(item->get_string(), "Hello World", "invalid item name");
-//    UNIT_ASSERT_EQUAL(item->get_int(), 70, "invalid item int value");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hello World", "invalid item name");
+    UNIT_ASSERT_EQUAL(item->get_int(), 70, "invalid item int value");
 
     tr.begin();
 

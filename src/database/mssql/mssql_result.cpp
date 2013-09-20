@@ -58,7 +58,7 @@ bool mssql_result::fetch()
 {
   SQLRETURN ret = SQLFetch(stmt_);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on fetching next row");
-  return rows-- > true;
+  return rows-- > 0;
 }
 
 mssql_result::size_type mssql_result::affected_rows() const
@@ -131,7 +131,7 @@ void mssql_result::read(const char *id, double &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char */*id*/, char */*x*/, int /*s*/)
+void mssql_result::read(const char * /*id*/, char * /*x*/, int /*s*/)
 {
 }
 
@@ -145,11 +145,11 @@ void mssql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char */*id*/, object_base_ptr &/*x*/)
+void mssql_result::read(const char * /*id*/, object_base_ptr &/*x*/)
 {
 }
 
-void mssql_result::read(const char */*id*/, object_container &/*x*/)
+void mssql_result::read(const char * /*id*/, object_container &/*x*/)
 {
 }
 

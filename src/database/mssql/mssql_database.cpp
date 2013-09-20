@@ -218,7 +218,7 @@ const char* mssql_database::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
-      return "TINYINT";
+      return "SMALLINT";
     case type_short:
       return "SMALLINT";
     case type_int:
@@ -226,15 +226,15 @@ const char* mssql_database::type_string(data_type_t type) const
     case type_long:
       return "INT";
     case type_unsigned_char:
-      return "TINYINT";
-    case type_unsigned_short:
       return "SMALLINT";
+    case type_unsigned_short:
+      return "INT";
     case type_unsigned_int:
-      return "INT";
+      return "BIGINT";
     case type_unsigned_long:
-      return "INT";
+      return "NUMERIC(20,0)";
     case type_bool:
-      return "TINYINT";
+      return "BIT";
     case type_float:
       return "FLOAT";
     case type_double:

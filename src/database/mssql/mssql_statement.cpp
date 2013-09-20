@@ -27,6 +27,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
 #include <sstream>
 
 namespace oos {
@@ -68,17 +70,19 @@ void mssql_statement::prepare(const sql &s)
   
   str(s.prepare());
 
-//  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), str().size());
-  SQLRETURN ret = SQLPrepareA(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
+  SQLRETURN ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }
 
 void mssql_statement::reset()
 {
   while (!host_data_.empty()) {
-    std::cout << "freeing host data\n";
     delete host_data_.back();
     host_data_.pop_back();
+  }
+  while (!host_ulong_.empty()) {
+    delete [] host_ulong_.back();
+    host_ulong_.pop_back();
   }
 }
 
@@ -93,6 +97,13 @@ result* mssql_statement::execute()
 {
   SQLRETURN ret = SQLExecute(stmt_);
 
+  if (ret == SQL_NEED_DATA) {
+    SQLINTEGER marker = 0;
+    ret = SQLParamData(stmt_, (SQLPOINTER*)&marker);
+    if (ret == SQL_NEED_DATA) {
+      int j = 9;
+    }
+  }
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
@@ -178,19 +189,29 @@ void mssql_statement::write(const char *, const object_container &)
 {
 }
 
+void mssql_statement::bind_value(unsigned long val, int index)
+{
+  char *buf = new char[NUMERIC_LEN];
+#if defined(_MSC_VER)
+  int size = (int)_snprintf_s(buf, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
+#else
+  int size = (int)snprintf(buf, NUMERIC_LEN, "%lu", val);
+#endif
+  bind_value(buf, size, index);
+  host_ulong_.push_back(buf);
+}
+
 void mssql_statement::bind_value(const char *val, int size, int index)
 {
-  SQLLEN len = SQL_NTS;
+  SQLLEN *len = new SQLLEN;
+  *len = SQL_NTS;
   
   size_t s = strlen(val);
-  char *buf = new char[s + 1];
-  memcpy(buf, val, s);
-  buf[s] = '\0';
 
-  host_data_.push_back(buf);
+  host_data_.push_back(len);
 
 //  std::cout << "binding character string [" << val << "] (size: " << strlen(val) << ", max: " << size << ")\n";
-  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, size, 0, buf, 0, &len);
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, s, 0, (SQLPOINTER)val, 0, len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -222,9 +243,9 @@ long mssql_statement::type2int(data_type_t type)
     case type_unsigned_int:
       return SQL_C_ULONG;
     case type_unsigned_long:
-      return SQL_C_ULONG;
+      return SQL_C_CHAR;
     case type_bool:
-      return SQL_C_STINYINT;
+      return SQL_C_USHORT;
     case type_float:
       return SQL_C_FLOAT;
     case type_double:
@@ -252,17 +273,17 @@ long mssql_statement::type2sql(data_type_t type)
     case type_int:
       return SQL_INTEGER;
     case type_long:
-      return SQL_INTEGER;
+      return SQL_BIGINT;
     case type_unsigned_char:
       return SQL_SMALLINT;
     case type_unsigned_short:
-      return SQL_SMALLINT;
+      return SQL_INTEGER;
     case type_unsigned_int:
-      return SQL_INTEGER;
+      return SQL_BIGINT;
     case type_unsigned_long:
-      return SQL_INTEGER;
+      return SQL_NUMERIC;
     case type_bool:
-      return SQL_SMALLINT;
+      return SQL_INTEGER;
     case type_float:
       return SQL_FLOAT;
     case type_double:
