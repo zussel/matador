@@ -3,7 +3,6 @@ SET(MSSQL_DATABASE_SOURCES
   mssql_exception.cpp
   mssql_statement.cpp
   mssql_result.cpp
-  mssql_prepared_result.cpp
 )
 
 SET(MSSQL_DATABASE_HEADER
@@ -11,7 +10,6 @@ SET(MSSQL_DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/mssql/mssql_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mssql/mssql_statement.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mssql/mssql_result.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/mssql/mssql_prepared_result.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mssql/mssql_types.hpp
 )
 
