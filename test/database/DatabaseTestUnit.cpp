@@ -48,6 +48,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   add_test("complex", std::tr1::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
   add_test("list", std::tr1::bind(&DatabaseTestUnit::test_with_list, this), "object with object list database test");
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::test_with_vector, this), "object with object vector database test");
+  add_test("reload_simple", std::tr1::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
   add_test("reload", std::tr1::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
   add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
 }
@@ -60,11 +61,11 @@ DatabaseTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
+/*  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<playlist>("playlist");
-  ostore_.insert_prototype<track>("track");
+  ostore_.insert_prototype<track>("track");*/
 }
 
 void
@@ -622,6 +623,80 @@ DatabaseTestUnit::test_with_vector()
     UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
     UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
 
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  db->drop();
+  // close db
+  db->close();
+  
+  delete db;
+}
+
+void
+DatabaseTestUnit::test_reload_simple()
+{
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  try {
+    // load data
+    db->create();
+
+    // load data
+    db->load();
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
+  }
+
+  // create new transaction    
+  transaction tr(*db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+    // insert new object
+    item_ptr item = ostore_.insert(new Item("Foo", 42));
+
+    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+
+    tr.commit();
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db->close();
+
+  // clear object store
+  ostore_.clear();
+
+  db->open();
+  
+  // load data
+  db->load();
+
+  try {
+    // create view
+    oview_t oview(ostore_);
+    // check iterators
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    // check emptiness
+    UNIT_ASSERT_FALSE(oview.empty(), "object view must not be empty");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");

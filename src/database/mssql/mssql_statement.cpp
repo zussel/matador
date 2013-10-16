@@ -95,6 +95,8 @@ void mssql_statement::clear()
 
 result* mssql_statement::execute()
 {
+  std::cout << str() << "\n";
+
   SQLRETURN ret = SQLExecute(stmt_);
 
   // check result

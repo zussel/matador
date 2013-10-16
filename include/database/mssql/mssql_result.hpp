@@ -96,9 +96,9 @@ protected:
     }
   }
   
-  void read_column(const char *, varchar_base &/*val*/)
-  {
-  }
+  void read_column(const char *, unsigned long &val);
+  void read_column(const char *, std::string &/*val*/);
+  void read_column(const char *, varchar_base &/*val*/);
 
 private:
   size_type affected_rows_;
