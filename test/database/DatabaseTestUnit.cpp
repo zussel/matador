@@ -61,11 +61,11 @@ DatabaseTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
-/*  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<playlist>("playlist");
-  ostore_.insert_prototype<track>("track");*/
+  ostore_.insert_prototype<track>("track");
 }
 
 void
