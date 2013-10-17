@@ -224,7 +224,7 @@ const char* mssql_database::type_string(data_type_t type) const
     case type_int:
       return "INT";
     case type_long:
-      return "INT";
+      return "BIGINT";
     case type_unsigned_char:
       return "SMALLINT";
     case type_unsigned_short:

@@ -33,7 +33,7 @@ struct type_traits;
 template <> struct type_traits<char> { inline static const char* type_string() { return "SMALLINT"; } }; 
 template <> struct type_traits<short> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<int> { inline static const char* type_string() { return "INT"; } };
-template <> struct type_traits<long> { inline static const char* type_string() { return "INT"; } };
+template <> struct type_traits<long> { inline static const char* type_string() { return "BIGINT"; } };
 template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "INT"; } };
 template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "BIGINT"; } };
