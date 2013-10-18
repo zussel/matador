@@ -20,6 +20,8 @@
 
 #include "database/mssql/mssql_exception.hpp"
 
+#include "object/object_ptr.hpp"
+
 #include <iostream>
 
 namespace oos {
@@ -154,11 +156,14 @@ void mssql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char * /*id*/, object_base_ptr &/*x*/)
+void mssql_result::read(const char *id, object_base_ptr &x)
 {
+  long val;
+  read_column(id, val);
+  x.id(val);
 }
 
-void mssql_result::read(const char * /*id*/, object_container &/*x*/)
+void mssql_result::read(const char * /*id*/, object_container &x)
 {
 }
 

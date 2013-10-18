@@ -92,12 +92,14 @@ protected:
   template < class T >
   void bind_value(T val, int index)
   {
-    SQLLEN *len = new SQLLEN;
-    *len = 0;
-    host_data_.push_back(len);
+    value_t *v = new value_t;
+    v->data = new char[sizeof(T)];
+    *static_cast<T*>(v->data) = val;
+    host_data_.push_back(v);
+    
     int ctype = mssql_statement::type2int(type_traits<T>::data_type());
     int type = mssql_statement::type2sql(type_traits<T>::data_type());
-    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, &val, 0, len);
+    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
   void bind_value(unsigned long val, int index);
@@ -106,9 +108,16 @@ protected:
 private:
   mssql_database &db_;
   
-  std::vector<SQLLEN*> host_data_;
+  struct value_t {
+    explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
+    ~value_t() { delete [] static_cast<char*>(data); }
+    bool fixed;
+    SQLLEN len;
+    void *data;
+  };
+  std::vector<value_t*> host_data_;
+
   enum { NUMERIC_LEN = 21 };
-  std::vector<char*> host_ulong_;
 
   SQLHANDLE stmt_;
 };

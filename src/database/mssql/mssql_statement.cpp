@@ -80,10 +80,6 @@ void mssql_statement::reset()
     delete host_data_.back();
     host_data_.pop_back();
   }
-  while (!host_ulong_.empty()) {
-    delete [] host_ulong_.back();
-    host_ulong_.pop_back();
-  }
 }
 
 void mssql_statement::clear()
@@ -186,27 +182,31 @@ void mssql_statement::write(const char *, const object_container &)
 
 void mssql_statement::bind_value(unsigned long val, int index)
 {
-  char *buf = new char[NUMERIC_LEN];
+  value_t *v = new value_t(true, SQL_NTS);
+  v->data = new char[NUMERIC_LEN];
+  
+  host_data_.push_back(v);
+
 #if defined(_MSC_VER)
-  int size = (int)_snprintf_s(buf, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
+  size_t size = (int)_snprintf_s(static_cast<char*>(v->data), NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
 #else
-  int size = (int)snprintf(buf, NUMERIC_LEN, "%lu", val);
+  size_t size = (int)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
 #endif
-  bind_value(buf, size, index);
-  host_ulong_.push_back(buf);
+
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, size, 0, v->data, 0, &v->len);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
-void mssql_statement::bind_value(const char *val, int size, int index)
+void mssql_statement::bind_value(const char *val, int /*size*/, int index)
 {
-  SQLLEN *len = new SQLLEN;
-  *len = SQL_NTS;
-  
   size_t s = strlen(val);
+  value_t *v = new value_t(false, SQL_NTS);
+  v->data = strndup(val, s);
 
-  host_data_.push_back(len);
+  host_data_.push_back(v);
 
 //  std::cout << "binding character string [" << val << "] (size: " << strlen(val) << ", max: " << size << ")\n";
-  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, s, 0, (SQLPOINTER)val, 0, len);
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 

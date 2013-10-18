@@ -669,6 +669,10 @@ DatabaseTestUnit::test_reload_simple()
 
     UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
 
+    item = ostore_.insert(new Item("Bar", 99));
+
+    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+
     tr.commit();
   } catch (database_exception &ex) {
     // error, abort transaction
@@ -697,6 +701,8 @@ DatabaseTestUnit::test_reload_simple()
     UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
     // check emptiness
     UNIT_ASSERT_FALSE(oview.empty(), "object view must not be empty");
+    // check size
+    UNIT_ASSERT_TRUE(oview.size() == 2, "object view size must be 2");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
@@ -874,7 +880,8 @@ DatabaseTestUnit::test_reload_container()
 //  ostore_.dump_prototypes(out);
 
   // close db
-  db->close();  
+  db->close();
+  
   // clear object store
   ostore_.clear();
 
@@ -892,7 +899,7 @@ DatabaseTestUnit::test_reload_container()
     
     album_ptr alb1 = *oview.begin();
     
-//    cout << "size: " << alb1->size() << "\n";
+    cout << "size: " << alb1->size() << "\n";
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
     UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");
