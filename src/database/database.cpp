@@ -158,7 +158,7 @@ bool database::is_loaded(const std::string &name) const
 
 result* database::execute(const std::string &sql)
 {
-  std::cout << sql << "\n";
+//  std::cout << sql << "\n";
   return on_execute(sql);
 }
 

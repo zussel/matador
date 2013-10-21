@@ -142,8 +142,15 @@ void mssql_result::read(const char *id, double &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char * /*id*/, char * /*x*/, int /*s*/)
+void mssql_result::read(const char * /*id*/, char *x, int s)
 {
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, x, s, &info);
+  if (ret == SQL_SUCCESS) {
+    return;
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
 void mssql_result::read(const char *id, varchar_base &x)
@@ -163,20 +170,37 @@ void mssql_result::read(const char *id, object_base_ptr &x)
   x.id(val);
 }
 
-void mssql_result::read(const char * /*id*/, object_container &x)
+void mssql_result::read(const char * /*id*/, object_container &/*x*/)
 {
 }
 
-void mssql_result::read_column(const char *, unsigned long &val)
+void mssql_result::read_column(const char *, unsigned long &/*val*/)
 {
+  result_index++;
 }
 
-void mssql_result::read_column(const char *, std::string &/*val*/)
+void mssql_result::read_column(const char *, std::string &val)
 {
+  char buf[1024];
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, 1024, &info);
+  if (ret == SQL_SUCCESS) {
+    val.assign(buf, info);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
-void mssql_result::read_column(const char *, varchar_base &/*val*/)
+void mssql_result::read_column(const char *, varchar_base &val)
 {
+  char buf[1024];
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, 1024, &info);
+  if (ret == SQL_SUCCESS) {
+    val.assign(buf, info);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
 }

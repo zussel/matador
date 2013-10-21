@@ -63,8 +63,8 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
+//  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<album>("album");
-  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<track>("track");
 }
 
@@ -275,6 +275,8 @@ void DatabaseTestUnit::test_delete()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what());
   }
+
+  db->drop();
 
   db->close();
 
@@ -899,7 +901,7 @@ DatabaseTestUnit::test_reload_container()
     
     album_ptr alb1 = *oview.begin();
     
-    cout << "size: " << alb1->size() << "\n";
+//    cout << "size: " << alb1->size() << "\n";
     
     UNIT_ASSERT_FALSE(alb1->empty(), "album couldn't be empty");
     UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");

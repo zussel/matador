@@ -88,7 +88,7 @@ protected:
   {
     SQLLEN info = 0;
     int type = mssql_statement::type2int(type_traits<T>::data_type());
-    SQLRETURN ret = SQLGetData(stmt_, result_index, type, &val, sizeof(T), &info);
+    SQLRETURN ret = SQLGetData(stmt_, result_index++, type, &val, sizeof(T), &info);
     if (ret == SQL_SUCCESS) {
       return;
     } else {
