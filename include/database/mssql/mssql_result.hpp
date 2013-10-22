@@ -107,6 +107,8 @@ private:
   
   bool free_;
   
+  enum { NUMERIC_LEN = 21 };
+
   SQLHANDLE stmt_;
 };
 

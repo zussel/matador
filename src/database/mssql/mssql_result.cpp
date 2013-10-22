@@ -174,9 +174,18 @@ void mssql_result::read(const char * /*id*/, object_container &/*x*/)
 {
 }
 
-void mssql_result::read_column(const char *, unsigned long &/*val*/)
+void mssql_result::read_column(const char *, unsigned long &val)
 {
-  result_index++;
+  char buf[NUMERIC_LEN];
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, NUMERIC_LEN, &info);
+  if (ret == SQL_SUCCESS) {    
+    if (sscanf(buf, "%lu", &val) != 1) {
+      throw_error("mssql", strerror(errno));
+    }
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
 void mssql_result::read_column(const char *, std::string &val)
@@ -193,9 +202,9 @@ void mssql_result::read_column(const char *, std::string &val)
 
 void mssql_result::read_column(const char *, varchar_base &val)
 {
-  char buf[1024];
+  char *buf = new char[val.size()];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, 1024, &info);
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, val.size(), &info);
   if (ret == SQL_SUCCESS) {
     val.assign(buf, info);
   } else {
