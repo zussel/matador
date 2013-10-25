@@ -40,6 +40,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   add_test("open_close", std::tr1::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
   add_test("create_drop", std::tr1::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
   add_test("reopen", std::tr1::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
+  add_test("datatypes", std::tr1::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
   add_test("insert", std::tr1::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
   add_test("update", std::tr1::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
   add_test("delete", std::tr1::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
@@ -120,6 +121,28 @@ void DatabaseTestUnit::test_reopen()
   db->open();
   
   UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
+
+  db->close();
+
+  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+  
+  delete db;
+}
+
+void DatabaseTestUnit::test_datatypes()
+{
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  // create schema
+  db->create();
+
+  typedef object_ptr<Item> item_ptr;
+
+  Item *i = new Item();
+  item_ptr item = db->insert(i);
+
+  db->drop();
 
   db->close();
 

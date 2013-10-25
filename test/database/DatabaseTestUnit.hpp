@@ -41,6 +41,7 @@ public:
   void test_create_drop();
   void test_drop();
   void test_reopen();
+  void test_datatypes();
   void test_insert();
   void test_update();
   void test_delete();
