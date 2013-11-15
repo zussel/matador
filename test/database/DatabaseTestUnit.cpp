@@ -131,23 +131,100 @@ void DatabaseTestUnit::test_reopen()
 
 void DatabaseTestUnit::test_datatypes()
 {
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
   // create database and make object store known to the database
   session *db = create_session();
 
-  // create schema
-  db->create();
+  try {
+    // load data
+    db->create();
 
-  typedef object_ptr<Item> item_ptr;
+    // load data
+    db->load();
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
+  }
 
-  Item *i = new Item();
-  item_ptr item = db->insert(i);
+  float dval = 2.445566;
+  double fval = 11111.23433345;
+  char cval = 'c';
+  short sval = -128;
+  int ival = -49152;
+  long lval = -123456789;
+  unsigned short usval = 255;
+  unsigned int uival = 49152;
+  unsigned long ulval = 765432182;
+  bool bval = true;
+  oos::varchar<32> vval("hallo welt");
+  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
-  db->drop();
+  try {
 
+    Item *i = new Item();
+    
+    // set values
+    i->set_bool(bval);
+    i->set_char(cval);
+    i->set_double(dval);
+    i->set_float(fval);
+    i->set_short(sval);
+    i->set_int(ival);
+    i->set_long(lval);
+    i->set_unsigned_short(usval);
+    i->set_unsigned_int(uival);
+    i->set_unsigned_long(ulval);
+    i->set_varchar(vval);
+    i->set_string(strval);
+    
+    item_ptr item = db->insert(i);
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+  }
+  // close db
   db->close();
 
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+  // clear object store
+  ostore_.clear();
+
+  db->open();
   
+  // load data
+  db->load();
+
+  try {
+    oview_t oview(ostore_);
+    
+    item_ptr item = oview.front();
+
+    UNIT_ASSERT_EQUAL(item->get_char(), cval, "character is not equal");
+    UNIT_ASSERT_EQUAL(item->get_short(), sval, "short is not equal");
+    UNIT_ASSERT_EQUAL(item->get_int(), ival, "integer is not equal");
+    UNIT_ASSERT_EQUAL(item->get_long(), lval, "long is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_short(), usval, "unsigned short is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_int(), uival, "unsigned integer is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_long(), ulval, "unsigned long is not equal");
+    UNIT_ASSERT_EQUAL(item->get_bool(), bval, "bool is not equal");
+    UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
+    UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
+
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+  }
+  db->drop();
+  // close db
+  db->close();
+
   delete db;
 }
 
