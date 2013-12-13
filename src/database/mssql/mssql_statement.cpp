@@ -201,7 +201,8 @@ void mssql_statement::bind_value(const char *val, int /*size*/, int index)
 {
   size_t s = strlen(val);
   value_t *v = new value_t(false, SQL_NTS);
-  v->data = strndup(val, s);
+  v->data = new char[s];
+  v->data = strncpy((char*)v->data, val, s);
 
   host_data_.push_back(v);
 
