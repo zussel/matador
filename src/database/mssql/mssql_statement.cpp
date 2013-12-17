@@ -201,13 +201,14 @@ void mssql_statement::bind_value(const char *val, int /*size*/, int index)
 {
   size_t s = strlen(val);
   value_t *v = new value_t(false, SQL_NTS);
-  v->data = new char[s];
+  v->data = new char[s+1];
   v->data = strncpy((char*)v->data, val, s);
+  ((char*)v->data)[s++] = '\0';
 
   host_data_.push_back(v);
 
 //  std::cout << "binding character string [" << val << "] (size: " << strlen(val) << ", max: " << size << ")\n";
-  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, s, 0, v->data, 0, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
