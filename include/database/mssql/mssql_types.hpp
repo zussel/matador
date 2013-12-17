@@ -37,7 +37,7 @@ template <> struct type_traits<long> { inline static const char* type_string() {
 template <> struct type_traits<unsigned char> { inline static const char* type_string() { return "SMALLINT"; } };
 template <> struct type_traits<unsigned short> { inline static const char* type_string() { return "INT"; } };
 template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "BIGINT"; } };
-template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "NUMERIC(20,0)"; } };
+template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "NUMERIC(21,0)"; } };
 template <> struct type_traits<bool> { inline static const char* type_string() { return "BIT"; } };
 template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
 template <> struct type_traits<double> { inline static const char* type_string() { return "FLOAT"; } };
