@@ -202,9 +202,9 @@ void mssql_result::read_column(const char *, std::string &val)
 
 void mssql_result::read_column(const char *, varchar_base &val)
 {
-  char *buf = new char[val.size()];
+  char *buf = new char[val.capacity()];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, val.size(), &info);
+  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, val.capacity(), &info);
   if (ret == SQL_SUCCESS) {
     val.assign(buf, info);
   } else {

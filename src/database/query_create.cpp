@@ -79,7 +79,7 @@ void query_create::write(const char *id, const char *, int s)
 
 void query_create::write(const char *id, const varchar_base &x)
 {
-  write(id, type_varchar, x.size() + 1);
+  write(id, type_varchar, x.capacity());
 }
 
 void query_create::write(const char *id, const std::string &)
