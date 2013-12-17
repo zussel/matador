@@ -147,8 +147,8 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
 
-  float dval = 2.445566;
-  double fval = 11111.23433345;
+  float fval = 2.445566f;
+  double dval = 11111.23433345;
   char cval = 'c';
   short sval = -128;
   int ival = -49152;
@@ -157,6 +157,7 @@ void DatabaseTestUnit::test_datatypes()
   unsigned int uival = 49152;
   unsigned long ulval = 765432182;
   bool bval = true;
+  const char *cstr("Armer schwarzer Kater");
   oos::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
@@ -175,16 +176,20 @@ void DatabaseTestUnit::test_datatypes()
     i->set_unsigned_short(usval);
     i->set_unsigned_int(uival);
     i->set_unsigned_long(ulval);
+    i->set_cstr(cstr, strlen(cstr) + 1);
     i->set_varchar(vval);
     i->set_string(strval);
     
     item_ptr item = db->insert(i);
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_FAIL("caught database exception: " << ex.what() << " (start rollback)");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_FAIL("caught object exception: " << ex.what() << " (start rollback)");
+  } catch (std::exception &ex) {
+    // error, abort transaction
+    UNIT_FAIL("caught exception: " << ex.what() << " (start rollback)");
   }
   // close db
   db->close();
@@ -210,6 +215,7 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_ASSERT_EQUAL(item->get_unsigned_int(), uival, "unsigned integer is not equal");
     UNIT_ASSERT_EQUAL(item->get_unsigned_long(), ulval, "unsigned long is not equal");
     UNIT_ASSERT_EQUAL(item->get_bool(), bval, "bool is not equal");
+    UNIT_ASSERT_EQUAL(item->get_cstr(), cstr, "const char pointer is not equal");
     UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
     UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
 
