@@ -190,14 +190,10 @@ public:
   object_ptr<T> insert(T *o)
   {
     transaction tr(*this);
-    try {
-      tr.begin();
-      object_ptr<T> optr = ostore_.insert(o);
-      tr.commit();
-      return optr;
-    } catch (std::exception &) {
-      return object_ptr<T>();
-    }
+    tr.begin();
+    object_ptr<T> optr = ostore_.insert(o);
+    tr.commit();
+    return optr;
   }
 
   /**
