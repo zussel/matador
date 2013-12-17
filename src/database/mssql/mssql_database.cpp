@@ -232,7 +232,7 @@ const char* mssql_database::type_string(data_type_t type) const
     case type_unsigned_int:
       return "BIGINT";
     case type_unsigned_long:
-      return "NUMERIC(20,0)";
+      return "NUMERIC(21,0)";
     case type_bool:
       return "BIT";
     case type_float:
