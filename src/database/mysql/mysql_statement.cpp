@@ -180,7 +180,7 @@ void mysql_statement::write(const char *, int x)
 
 void mysql_statement::write(const char *, long x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
   ++host_index;
 }
 
@@ -204,7 +204,7 @@ void mysql_statement::write(const char *, unsigned int x)
 
 void mysql_statement::write(const char *, unsigned long x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
   ++host_index;
 }
 
@@ -278,7 +278,7 @@ enum_field_types mysql_statement::type_enum(data_type_t type)
     case type_int:
       return MYSQL_TYPE_LONG;
     case type_long:
-      return MYSQL_TYPE_LONG;
+      return MYSQL_TYPE_LONGLONG;
     case type_unsigned_char:
       return MYSQL_TYPE_TINY;
     case type_unsigned_short:
@@ -286,7 +286,7 @@ enum_field_types mysql_statement::type_enum(data_type_t type)
     case type_unsigned_int:
       return MYSQL_TYPE_LONG;
     case type_unsigned_long:
-      return MYSQL_TYPE_LONG;
+      return MYSQL_TYPE_LONGLONG;
     case type_bool:
       return MYSQL_TYPE_TINY;
     case type_float:

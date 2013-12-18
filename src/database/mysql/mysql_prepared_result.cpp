@@ -76,7 +76,7 @@ void mysql_prepared_result::read(const char *, int &x)
 
 void mysql_prepared_result::read(const char *, long &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
+  get_column_value(bind_[result_index++], MYSQL_TYPE_LONGLONG, x);
 }
 
 void mysql_prepared_result::read(const char *, unsigned char &x)
@@ -96,7 +96,7 @@ void mysql_prepared_result::read(const char *, unsigned int &x)
 
 void mysql_prepared_result::read(const char *, unsigned long &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
+  get_column_value(bind_[result_index++], MYSQL_TYPE_LONGLONG, x);
 }
 
 void mysql_prepared_result::read(const char *, bool &x)
@@ -137,6 +137,11 @@ void mysql_prepared_result::read(const char *, object_base_ptr &x)
 void mysql_prepared_result::read(const char *, object_container &)
 {}
 
+void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types, bool &value)
+{
+  value = (*static_cast<int*>(bind.buffer) > 0);
+}
+
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , char *x, int s)
 {
 #ifdef WIN32
@@ -148,6 +153,8 @@ void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types 
 
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , std::string &value)
 {
+  unsigned long *len = bind.length;
+  const char *buf = (const char*)bind.buffer;
   value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
 }
 

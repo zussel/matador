@@ -68,6 +68,7 @@ private:
     value = *static_cast<T*>(bind.buffer);
   }
 
+  void get_column_value(MYSQL_BIND &bind, enum_field_types type, bool &value);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, char *x, int s);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, std::string &value);
   void get_column_value(MYSQL_BIND &bind, enum_field_types type, varchar_base &value);
