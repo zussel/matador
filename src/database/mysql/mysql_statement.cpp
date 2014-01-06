@@ -91,7 +91,7 @@ void mysql_statement::prepare(const sql &s)
   if (host_size) {
     host_array = new MYSQL_BIND[host_size];
     memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
-    host_data.resize(host_size, false);
+    length_vector.assign(host_size, 0);
   }
   
   if (mysql_stmt_prepare(stmt, str().c_str(), str().size())) {
@@ -111,7 +111,7 @@ void mysql_statement::clear()
 //  std::cout << "reset mysql_statement\n";
   for (int i = 0; i < host_size; ++i) {
 //    std::cout << "\tfreeing host_array[" << i << "].buffer: " << host_array[i].buffer << "\n";
-    if (host_array[i].buffer/* && host_data[i]*/) {
+    if (host_array[i].buffer) {
       delete [] static_cast<char*>(host_array[i].buffer);
     }
   }
@@ -125,7 +125,6 @@ void mysql_statement::clear()
   mysql_stmt_free_result(stmt);
   delete [] result_array;
   delete [] host_array;
-  host_data.clear();
 }
 
 result* mysql_statement::execute()
@@ -232,9 +231,10 @@ void mysql_statement::write(const char *, const char *x, int s)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const std::string &x)
+void mysql_statement::write(const char *, const std::string &/*x*/)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
+//  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_STRING, host_index);
   ++host_index;
 }
 
@@ -316,14 +316,22 @@ const database& mysql_statement::db() const
   return db_;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int index)
+{
+  bind.buffer = 0;
+  bind.buffer_length = 0;
+  bind.length = &length_vector.at(index);
+  bind.buffer_type = type;
+  bind.is_null = 0;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int /*index*/)
 {
   if (bind.buffer == 0) {
     // allocating memory
 //      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
     bind.buffer = new char[size];
     bind.buffer_length = size;
-    host_data[index] = true;
   }
 #ifdef WIN32
     strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);

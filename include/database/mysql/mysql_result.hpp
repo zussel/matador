@@ -53,6 +53,9 @@ public:
   
   const char* column(size_type c) const;
   bool fetch();
+  
+  bool fetch(object *o);
+
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;

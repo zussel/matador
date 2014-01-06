@@ -45,6 +45,11 @@ bool sqlite_prepared_result::fetch()
   return true;
 }
 
+bool sqlite_prepared_result::fetch(object *)
+{
+  return false;
+}
+
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
 {
   return affected_rows_;

@@ -44,6 +44,11 @@ bool sqlite_result::fetch()
   return ++pos_ < rows_.size();
 }
 
+bool sqlite_result::fetch(object *)
+{
+  return false;
+}
+
 sqlite_result::size_type sqlite_result::affected_rows() const
 {
   return 0;

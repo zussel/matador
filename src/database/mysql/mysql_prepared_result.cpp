@@ -2,6 +2,7 @@
 
 #include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object.hpp"
 
 #include "tools/varchar.hpp"
 
@@ -34,8 +35,55 @@ const char* mysql_prepared_result::column(size_type ) const
 bool mysql_prepared_result::fetch()
 {
   // get next row
+  int ret = mysql_stmt_fetch(stmt);
+  if (ret == MYSQL_DATA_TRUNCATED) {
+  }
+/*
+      log_debug("mysql_stmt_fetch(" << stmt << ')');
+      int ret = mysql_stmt_fetch(stmt);
+
+      if (ret == MYSQL_DATA_TRUNCATED)
+      {
+        // fetch column data where truncated
+        MYSQL_FIELD* fields = mysqlStatement->getFields();
+        for (unsigned n = 0; n < row->getSize(); ++n)
+        {
+          if (*row->getMysqlBind()[n].length > row->getMysqlBind()[n].buffer_length)
+          {
+            // actual length was longer than buffer_length, so this column is truncated
+            fields[n].length = *row->getMysqlBind()[n].length;
+            row->initOutBuffer(n, fields[n]);
+
+            log_debug("mysql_stmt_fetch_column(" << stmt << ", BIND, " << n
+                << ", 0) with " << fields[n].length << " bytes");
+            if (mysql_stmt_fetch_column(stmt, row->getMysqlBind() + n, n, 0) != 0)
+              throw MysqlStmtError("mysql_stmt_fetch_column", stmt);
+          }
+        }
+      }
+      else if (ret == MYSQL_NO_DATA)
+      {
+        log_debug("MYSQL_NO_DATA");
+        row = 0;
+        return Row();
+      }
+      else if (ret == 1)
+        throw MysqlStmtError("mysql_stmt_fetch", stmt);
+
+      return Row(&*row);
+  */
+  return rows-- > 0;
+}
+
+bool mysql_prepared_result::fetch(object *o)
+{
+  // prepare bind array
+  o->deserialize(*this);
+  // bind result array to statement
+  mysql_stmt_bind_result(stmt, bind_);
+  // fetch data
   mysql_stmt_fetch(stmt);
-    
+
   return rows-- > 0;
 }
 
@@ -153,6 +201,7 @@ void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types 
 
 void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , std::string &value)
 {
+  // check real value
   unsigned long *len = bind.length;
   const char *buf = (const char*)bind.buffer;
   value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);

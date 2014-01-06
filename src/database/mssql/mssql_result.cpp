@@ -67,6 +67,11 @@ bool mssql_result::fetch()
   }
 }
 
+bool mssql_result::fetch(object *)
+{
+  return false;
+}
+
 mssql_result::size_type mssql_result::affected_rows() const
 {
   return affected_rows_;

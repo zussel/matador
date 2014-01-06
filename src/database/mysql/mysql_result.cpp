@@ -64,6 +64,11 @@ bool mysql_result::fetch()
   return rows-- > 0;
 }
 
+bool mysql_result::fetch(object *o)
+{
+  return false;
+}
+
 mysql_result::size_type mysql_result::affected_rows() const
 {
   return affected_rows_;

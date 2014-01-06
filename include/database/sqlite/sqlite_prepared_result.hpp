@@ -29,7 +29,8 @@ public:
   ~sqlite_prepared_result();
   
   const char* column(size_type c) const;
-  bool fetch();
+  virtual bool fetch();
+  virtual bool fetch(object *);
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;

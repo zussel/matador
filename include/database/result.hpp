@@ -43,6 +43,7 @@ namespace oos {
 
 class row;
 class statement;
+class object;
 class object_atomizable;
 
 /// @cond OOS_DEV
@@ -72,6 +73,16 @@ public:
   
   virtual const char* column(size_type c) const = 0;
   virtual bool fetch() = 0;
+  
+  /**
+   * Fetch next line from database and
+   * deserialized the given object.
+   *
+   * @param o Object to be deserialized
+   * @return True if object was successfully deserialized
+   */
+  virtual bool fetch(object *) { return false; }
+
   virtual size_type affected_rows() const = 0;
   virtual size_type result_rows() const = 0;
   virtual size_type fields() const = 0;

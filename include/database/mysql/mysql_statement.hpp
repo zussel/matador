@@ -87,18 +87,18 @@ protected:
 
 private:
   template < class T >
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int index)
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int /*index*/)
   {
     if (bind.buffer == 0) {
       // allocating memory
 //      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
       bind.buffer = new char[sizeof(T)];
-      host_data[index] = true;
     }
     *static_cast<T*>(bind.buffer) = value;
     bind.buffer_type = type;
     bind.is_null = 0;
   }
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
 
@@ -108,7 +108,7 @@ private:
   mysql_database &db_;
   int result_size;
   int host_size;
-  std::vector<bool> host_data;
+  std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt;
   MYSQL_BIND *result_array;
   MYSQL_BIND *host_array;

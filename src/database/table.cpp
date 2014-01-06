@@ -141,6 +141,34 @@ void table::load(object_store &ostore)
 
   result *res = select_->execute();
 
+  // check result
+  /*
+  while (res->has_row()) {
+    column_ = 0;
+    
+    object = node_.producer->create();
+    
+    // fetch object
+    res->fetch(object);
+    
+    // insert object
+    ostore.insert(object_);    
+  }*/
+  
+  auto_ptr<object> optr;
+  
+  while (true) {
+    column_ = 0;
+    
+    optr.reset(node_.producer->create();
+    
+    if (!res->fetch(optr.get())) {
+      break;
+    }
+  
+    ostore.insert(optr.release());
+  } 
+
   while (res->fetch()) {
     column_ = 0;
 
