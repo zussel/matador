@@ -9,22 +9,29 @@
 #include <ostream>
 #include <cstring>
 
+#include <iostream>
+
 namespace oos {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs)
+mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
   : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
   , result_size(rs)
-  , bind_(b)
+  , bind_(new MYSQL_BIND[rs])
+  , info_(new result_info[rs])
 {
+    memset(bind_, 0, rs * sizeof(MYSQL_BIND));
+    memset(info_, 0, rs * sizeof(result_info));
 }
 
 mysql_prepared_result::~mysql_prepared_result()
 {
+  delete [] bind_;
+  delete [] info_;
 }
 
 const char* mysql_prepared_result::column(size_type ) const
@@ -77,12 +84,16 @@ bool mysql_prepared_result::fetch()
 
 bool mysql_prepared_result::fetch(object *o)
 {
-  // prepare bind array
+  // prepare result array
   o->deserialize(*this);
   // bind result array to statement
   mysql_stmt_bind_result(stmt, bind_);
   // fetch data
-  mysql_stmt_fetch(stmt);
+  int ret = mysql_stmt_fetch(stmt);
+  if (ret == MYSQL_DATA_TRUNCATED) {
+    // load data from database
+    std::cout << "MYSQL: need to fetch column data\n";
+  }
 
   return rows-- > 0;
 }
@@ -109,114 +120,100 @@ int mysql_prepared_result::transform_index(int index) const
 
 void mysql_prepared_result::read(const char *, char &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_TINY, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_TINY, x);
 }
 
 void mysql_prepared_result::read(const char *, short &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_SHORT, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_SHORT, x);
 }
 
 void mysql_prepared_result::read(const char *, int &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_LONG, x);
 }
 
 void mysql_prepared_result::read(const char *, long &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONGLONG, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_LONGLONG, x);
 }
 
 void mysql_prepared_result::read(const char *, unsigned char &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_TINY, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_TINY, x);
 }
 
 void mysql_prepared_result::read(const char *, unsigned short &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_SHORT, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_SHORT, x);
 }
 
 void mysql_prepared_result::read(const char *, unsigned int &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_LONG, x);
 }
 
 void mysql_prepared_result::read(const char *, unsigned long &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONGLONG, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_LONGLONG, x);
 }
 
 void mysql_prepared_result::read(const char *, bool &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_TINY, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_TINY, x);
 }
 
 void mysql_prepared_result::read(const char *, float &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_FLOAT, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_FLOAT, x);
 }
 
 void mysql_prepared_result::read(const char *, double &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_DOUBLE, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_DOUBLE, x);
 }
 
 void mysql_prepared_result::read(const char *, char *x, int s)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_VAR_STRING, x, s);
+  prepare_bind_column(result_index++, MYSQL_TYPE_VAR_STRING, x, s);
 }
 
 void mysql_prepared_result::read(const char *, std::string &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_STRING, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_STRING, x);
 }
 
 void mysql_prepared_result::read(const char *, varchar_base &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_VAR_STRING, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_VAR_STRING, x);
 }
 
 void mysql_prepared_result::read(const char *, object_base_ptr &x)
 {
-  get_column_value(bind_[result_index++], MYSQL_TYPE_LONG, x);
+  prepare_bind_column(result_index++, MYSQL_TYPE_LONG, x);
 }
 
 void mysql_prepared_result::read(const char *, object_container &)
 {}
 
-void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types, bool &value)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/)
 {
-  value = (*static_cast<int*>(bind.buffer) > 0);
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = 0;
+  bind_[index].buffer_length = 0;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , char *x, int s)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, char *x, int s)
 {
-#ifdef WIN32
-  strncpy_s(x, s, (const char*)bind.buffer, s);
-#else
-  strncpy(x, (const char*)bind.buffer, s);
-#endif
-}
-
-void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , std::string &value)
-{
-  // check real value
-  unsigned long *len = bind.length;
-  const char *buf = (const char*)bind.buffer;
-  value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
-}
-
-void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , varchar_base &value)
-{
-  value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
-}
-
-void mysql_prepared_result::get_column_value(MYSQL_BIND &bind, enum_field_types , object_base_ptr &value)
-{
-  long id = *static_cast<long*>(bind.buffer);
-  value.id(id);
-//  value.assign((const char*)bind.buffer/*, (std::string::size_type)bind.length*/);
+  bind_[index].buffer_type = type;
+  bind_[index].buffer= x;
+  bind_[index].buffer_length = s;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
 }
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)

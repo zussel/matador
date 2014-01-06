@@ -30,7 +30,7 @@ public:
   typedef result::size_type size_type;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, MYSQL_BIND *b, int rs);
+  mysql_prepared_result(MYSQL_STMT *s, int rs);
   ~mysql_prepared_result();
   
   const char* column(size_type c) const;
@@ -65,17 +65,26 @@ protected:
   virtual void read(const char *id, object_container &x);
 
 private:
+
+  struct result_info {
+    unsigned long length;
+    my_bool is_null;
+    my_bool error;
+  };
+
   template < class T >
-  void get_column_value(MYSQL_BIND &bind, enum_field_types , T &value)
+  void prepare_bind_column(int index, enum_field_types type, T &value)
   {
-    value = *static_cast<T*>(bind.buffer);
+    bind_[index].buffer_type = type /*MYSQL_TYPE_STRING*/;
+    bind_[index].buffer= (char *)value;
+    bind_[index].buffer_length = sizeof(T);
+    bind_[index].is_null = &info_[index].is_null;
+    bind_[index].length = &info_[index].length;
+    bind_[index].error = &info_[index].error;
   }
 
-  void get_column_value(MYSQL_BIND &bind, enum_field_types type, bool &value);
-  void get_column_value(MYSQL_BIND &bind, enum_field_types type, char *x, int s);
-  void get_column_value(MYSQL_BIND &bind, enum_field_types type, std::string &value);
-  void get_column_value(MYSQL_BIND &bind, enum_field_types type, varchar_base &value);
-  void get_column_value(MYSQL_BIND &bind, enum_field_types type, object_base_ptr &value);
+  void prepare_bind_column(int index, enum_field_types type, std::string &value);
+  void prepare_bind_column(int index, enum_field_types type, char *x, int s);
 
 private:
   size_type affected_rows_;
@@ -86,6 +95,7 @@ private:
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
+  result_info *info_;
 };
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);

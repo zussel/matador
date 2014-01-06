@@ -155,20 +155,19 @@ void table::load(object_store &ostore)
     ostore.insert(object_);    
   }*/
   
-  auto_ptr<object> optr;
-  
-  while (true) {
-    column_ = 0;
-    
-    optr.reset(node_.producer->create();
-    
-    if (!res->fetch(optr.get())) {
-      break;
-    }
+  // create object
+  std::auto_ptr<object> optr(node_.producer->create());
+  column_ = 0;
+  while (res->fetch(optr.get())) {
   
     ostore.insert(optr.release());
+
+    column_ = 0;
+    
+    optr.reset(node_.producer->create());
   } 
 
+  /*
   while (res->fetch()) {
     column_ = 0;
 
@@ -181,6 +180,7 @@ void table::load(object_store &ostore)
   
     ostore.insert(object_);
   }
+  */
   
   delete res;
 

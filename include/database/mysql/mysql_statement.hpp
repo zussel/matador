@@ -83,7 +83,7 @@ protected:
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
 
-  virtual void prepare_result_column(const sql::field_ptr &fptr);
+//  virtual void prepare_result_column(const sql::field_ptr &fptr);
 
 private:
   template < class T >
@@ -110,7 +110,7 @@ private:
   int host_size;
   std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt;
-  MYSQL_BIND *result_array;
+//  MYSQL_BIND *result_array;
   MYSQL_BIND *host_array;
 };
 
