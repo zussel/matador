@@ -64,7 +64,7 @@ bool mysql_result::fetch()
   return rows-- > 0;
 }
 
-bool mysql_result::fetch(object *o)
+bool mysql_result::fetch(object *)
 {
   return false;
 }
