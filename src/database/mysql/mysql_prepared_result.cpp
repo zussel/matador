@@ -32,6 +32,11 @@ mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
 mysql_prepared_result::~mysql_prepared_result()
 {
   delete [] bind_;
+  for (int i = 0; i < result_size; ++i) {
+    if (info_[i].buffer != 0) {
+      delete [] info_[i].buffer;
+    }
+  }
   delete [] info_;
 }
 
@@ -221,12 +226,30 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &value)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &x)
 {
+  info_[index].buffer = new char[x.capacity()];
+  info_[index].buffer_length = x.capacity();
+
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = &info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, object_base_ptr &value)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, object_base_ptr &)
 {
+  info_[index].buffer = new char[sizeof(long)];
+  info_[index].buffer_length = sizeof(long);
+
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = &info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
 }
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)

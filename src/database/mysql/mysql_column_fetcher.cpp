@@ -39,8 +39,11 @@ void mysql_column_fetcher::read_value(const char *, std::string &x)
   ++column_index_;
 }
 
-void mysql_column_fetcher::read_value(const char *id, varchar_base &x)
+void mysql_column_fetcher::read_value(const char *, varchar_base &x)
 {
+  char *data = (char*)bind_[column_index_].buffer;
+  unsigned long len = bind_[column_index_].buffer_length;
+  x.assign(data, len);
   ++column_index_;
 }
 

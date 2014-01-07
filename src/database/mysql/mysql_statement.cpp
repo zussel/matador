@@ -67,25 +67,6 @@ void mysql_statement::prepare(const sql &s)
   str(s.prepare());
   // parse sql to create result and host arrays
   result_size = s.result_size();
-//  if (result_size) {
-//  if (s.result_size()) {
-    /*
-     * prepare result array for mysql:
-     *
-     * allocate MYSQL_BIND array and
-     * setup each item with the correct type
-     * and allocate enough memory for the value
-     */
-    /*
-    result_array = new MYSQL_BIND[s.result_size()];
-    memset(result_array, 0, s.result_size() * sizeof(MYSQL_BIND));
-    
-    sql::const_iterator first = s.result_begin();
-    sql::const_iterator last = s.result_end();
-    while (first != last) {
-      prepare_result_column(*first++);
-    }
-  }*/
   host_size = s.host_size();
   if (host_size) {
     host_array = new MYSQL_BIND[host_size];
@@ -131,14 +112,6 @@ void mysql_statement::clear()
 result* mysql_statement::execute()
 {
 //  std::cout << "Executing prepared statement: " << str() << "\n";
-//  if (result_array) {
-//    std::cout << "\tresult_array: " << result_array << "\n";
-/*    if (mysql_stmt_bind_result(stmt, result_array)) {
-      fprintf(stderr, " mysql_stmt_bind_result() failed\n");
-      fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
-      exit(EXIT_FAILURE);
-    }
-  }*/
   if (host_array) {
 //    std::cout << "\thost_array: " << host_array << "\n";
     if (mysql_stmt_bind_param(stmt, host_array)) {
@@ -254,21 +227,7 @@ void mysql_statement::write(const char *, const object_base_ptr &x)
 void mysql_statement::write(const char *, const object_container &)
 {
 }
-/*
-void mysql_statement::prepare_result_column(const sql::field_ptr &fptr)
-{
-  if (result_array[fptr->index].buffer == 0) {
-    // allocating memory
-//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
-    unsigned int size = sql::type_size(fptr->type);
-    result_array[fptr->index].buffer = new char[size];
-    memset(result_array[fptr->index].buffer, 0, size);
-    result_array[fptr->index].buffer_length = size;
-  }
-  result_array[fptr->index].buffer_type = mysql_statement::type_enum(fptr->type);
-  result_array[fptr->index].is_null = 0;
-}
-*/
+
 enum_field_types mysql_statement::type_enum(data_type_t type)
 {
   switch(type) {
