@@ -4,6 +4,7 @@ SET(MYSQL_DATABASE_SOURCES
   mysql_statement.cpp
   mysql_result.cpp
   mysql_prepared_result.cpp
+  mysql_column_fetcher.cpp
 )
 
 SET(MYSQL_DATABASE_HEADER
@@ -13,6 +14,7 @@ SET(MYSQL_DATABASE_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_result.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_prepared_result.hpp
   ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_types.hpp
+  ${PROJECT_SOURCE_DIR}/include/database/mysql/mysql_column_fetcher.hpp
 )
 
 ADD_LIBRARY(oos-mysql SHARED
