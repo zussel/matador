@@ -232,10 +232,10 @@ void mysql_statement::write(const char *, const char *x, int s)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const std::string &/*x*/)
+void mysql_statement::write(const char *, const std::string &x)
 {
-//  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
-  bind_value(host_array[host_index], MYSQL_TYPE_STRING, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
+//  bind_value(host_array[host_index], MYSQL_TYPE_STRING, host_index);
   ++host_index;
 }
 
