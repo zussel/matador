@@ -1,4 +1,5 @@
 #include "database/mysql/mysql_prepared_result.hpp"
+#include "database/mysql/mysql_column_fetcher.hpp"
 
 #include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
@@ -84,6 +85,8 @@ bool mysql_prepared_result::fetch()
 
 bool mysql_prepared_result::fetch(object *o)
 {
+  // reset result column index
+  result_index = 0;
   // prepare result array
   o->deserialize(*this);
   // bind result array to statement
@@ -93,6 +96,8 @@ bool mysql_prepared_result::fetch(object *o)
   if (ret == MYSQL_DATA_TRUNCATED) {
     // load data from database
     std::cout << "MYSQL: need to fetch column data\n";
+    mysql_column_fetcher fetcher(stmt, bind_, info_);
+    fetcher.fetch(o);
   }
 
   return rows-- > 0;
@@ -214,6 +219,14 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &value)
+{
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, object_base_ptr &value)
+{
 }
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)

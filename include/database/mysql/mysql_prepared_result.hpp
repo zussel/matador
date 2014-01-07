@@ -64,19 +64,19 @@ protected:
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
 
-private:
-
+public:
   struct result_info {
     unsigned long length;
     my_bool is_null;
     my_bool error;
   };
 
+private:
   template < class T >
   void prepare_bind_column(int index, enum_field_types type, T &value)
   {
     bind_[index].buffer_type = type /*MYSQL_TYPE_STRING*/;
-    bind_[index].buffer= (char *)value;
+    bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
     bind_[index].is_null = &info_[index].is_null;
     bind_[index].length = &info_[index].length;
@@ -85,6 +85,8 @@ private:
 
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
   void prepare_bind_column(int index, enum_field_types type, char *x, int s);
+  void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
+  void prepare_bind_column(int index, enum_field_types type, object_base_ptr &value);
 
 private:
   size_type affected_rows_;
