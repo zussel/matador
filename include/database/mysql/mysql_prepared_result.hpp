@@ -69,6 +69,8 @@ public:
     unsigned long length;
     my_bool is_null;
     my_bool error;
+    char *buffer;
+    unsigned long buffer_length;
   };
 
 private:
