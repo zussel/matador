@@ -114,9 +114,13 @@ ELSE(MYSQL_FOUND)
   MESSAGE(STATUS "MySQL not found - not building backend")
 ENDIF(MYSQL_FOUND)
 
-MESSAGE(STATUS "SQLite3 include: ${SQLITE3_INCLUDE_DIR}")
-
-#MESSAGE(STATUS "MySQL lib: ${MYSQL_LIBRARY}")
+MESSAGE(STATUS "Looking for ODBC")
+FIND_PACKAGE(ODBC)
+IF(ODBC_FOUND)
+	MESSAGE(STATUS "Found ODBC")
+ELSE(ODBC_FOUND)
+  MESSAGE(STATUS "ODBC not found - not building backend")
+ENDIF(ODBC_FOUND)
 
 #
 # configure include dir

@@ -177,7 +177,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  virtual result* execute(const std::string &sql) = 0;
+  result* execute(const std::string &sql);
 
   /**
    * The interface for the create table action.
@@ -269,6 +269,7 @@ protected:
 
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
+  virtual result* on_execute(const std::string &stmt) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

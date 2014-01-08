@@ -15,19 +15,23 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYSQL_RESULT_HPP
-#define MYSQL_RESULT_HPP
+#ifndef MSSQL_RESULT_HPP
+#define MSSQL_RESULT_HPP
+
+#include "database/mssql/mssql_exception.hpp"
+#include "database/mssql/mssql_statement.hpp"
 
 #include "database/result.hpp"
+#include "database/types.hpp"
 
 #include "tools/convert.hpp"
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <mysql.h>
-#else
-#include <mysql/mysql.h>
+#if defined(_MSC_VER)
+#include <windows.h>
 #endif
+
+#include <sqltypes.h>
+#include <sql.h>
 
 #include <vector>
 
@@ -36,33 +40,31 @@ namespace oos {
 class row;
 class object_atomizable;
 
-namespace mysql {
+namespace mssql {
 
-class mysql_result : public result
+class mssql_result : public result
 {
 private:
-  mysql_result(const mysql_result&);
-  mysql_result& operator=(const mysql_result&);
+  mssql_result(const mssql_result&);
+  mssql_result& operator=(const mssql_result&);
 
 public:
   typedef result::size_type size_type;
 
 public:
-  mysql_result(MYSQL *c);
-  virtual ~mysql_result();
+  mssql_result(SQLHANDLE stmt, bool free);
+  virtual ~mssql_result();
   
   const char* column(size_type c) const;
-  bool fetch();
-  
-  bool fetch(object *o);
-
+  virtual bool fetch();
+  virtual bool fetch(object *);
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
 
   virtual int transform_index(int index) const;
 
-  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
+  friend std::ostream& operator<<(std::ostream &out, const mssql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -83,33 +85,36 @@ protected:
   virtual void read(const char *id, object_container &x);
 
   template < class T >
-  void read_column(const char *, T &val)
+  void read_column(const char *, T & val)
   {
-    if (!row) {
+    SQLLEN info = 0;
+    int type = mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, result_index++, type, &val, sizeof(T), &info);
+    if (ret == SQL_SUCCESS) {
       return;
     } else {
-      convert(row[result_index], val);
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
     }
   }
+  
+  void read_column(const char *, unsigned long &val);
+  void read_column(const char *, std::string &/*val*/);
+  void read_column(const char *, varchar_base &/*val*/);
+
 private:
-  struct result_deleter
-  {
-    void operator()(MYSQL_RES *res) const {
-      if (res) {
-        mysql_free_result(res);
-      }
-    }
-  };
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  MYSQL* conn;
-  MYSQL_ROW row;
-  MYSQL_RES *res;
+  
+  bool free_;
+  
+  enum { NUMERIC_LEN = 21 };
+
+  SQLHANDLE stmt_;
 };
 
 }
 
 }
 
-#endif /* MYSQL_RESULT_HPP */
+#endif /* MSSQL_RESULT_HPP */

@@ -46,10 +46,13 @@ public:
   virtual ~sqlite_result();
   
   const char* column(size_type c) const;
-  bool fetch();
+  virtual bool fetch();
+  virtual bool fetch(object *);
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
+
+  virtual int transform_index(int index) const;
 
   friend std::ostream& operator<<(std::ostream &out, const sqlite_result &res);
 

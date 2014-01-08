@@ -45,6 +45,17 @@ bool sqlite_prepared_result::fetch()
   return true;
 }
 
+bool sqlite_prepared_result::fetch(object *o)
+{
+  if (!fetch()) {
+    return false;
+  }
+  
+  get(o);
+
+  return true;
+}
+
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
 {
   return affected_rows_;
@@ -58,6 +69,11 @@ sqlite_prepared_result::size_type sqlite_prepared_result::result_rows() const
 sqlite_prepared_result::size_type sqlite_prepared_result::fields() const
 {
   return fields_;
+}
+
+int sqlite_prepared_result::transform_index(int index) const
+{
+  return index;
 }
 
 void sqlite_prepared_result::read(const char *, char &x)

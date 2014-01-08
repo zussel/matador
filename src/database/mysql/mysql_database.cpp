@@ -110,15 +110,6 @@ void mysql_database::on_close()
   is_open_ = false;
 }
 
-result* mysql_database::execute(const std::string &sqlstr)
-{
-//  std::cout << "Executing statement: " << sqlstr << "\n";
-  if (mysql_query(&mysql_, sqlstr.c_str())) {
-    throw mysql_exception(&mysql_, "mysql_query", sqlstr);
-  }
-  return new mysql_result(&mysql_);
-}
-
 result* mysql_database::create_result()
 {
   return new mysql_result(&mysql_);
@@ -132,6 +123,14 @@ statement* mysql_database::create_statement()
 MYSQL* mysql_database::operator()()
 {
   return &mysql_;
+}
+
+result* mysql_database::on_execute(const std::string &sqlstr)
+{
+  if (mysql_query(&mysql_, sqlstr.c_str())) {
+    throw mysql_exception(&mysql_, "mysql_query", sqlstr);
+  }
+  return new mysql_result(&mysql_);
 }
 
 void mysql_database::on_begin()

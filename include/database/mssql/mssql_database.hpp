@@ -15,49 +15,48 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYSQL_DATABASE_HPP
-#define MYSQL_DATABASE_HPP
+#ifndef MSSQL_DATABASE_HPP
+#define MSSQL_DATABASE_HPP
 
 #ifdef WIN32
-  #ifdef oos_mysql_EXPORTS
-    #define OOS_MYSQL_API __declspec(dllexport)
+  #ifdef oos_mssql_EXPORTS
+    #define OOS_MSSQL_API __declspec(dllexport)
   #else
-    #define OOS_MYSQL_API __declspec(dllimport)
+    #define OOS_MSSQL_API __declspec(dllimport)
   #endif
   #pragma warning(disable: 4355)
 #else
-  #define OOS_MYSQL_API
+  #define OOS_MSSQL_API
 #endif
 
 #include "database/database.hpp"
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <mysql.h>
-#else
-#include <mysql/mysql.h>
+#if defined(_MSC_VER)
+#include <windows.h>
 #endif
+
+#include <sqltypes.h>
 
 namespace oos {
   
 struct prototype_node;
 
-namespace mysql {
+namespace mssql {
 
-class mysql_statement;
+class mssql_statement;
 
 /**
- * @class mysql_database
+ * @class mssql_database
  * @brief The mysql database backend
  * 
  * This class is the sqlite database backend
  * class. It provides the mysql version 4 and higher
  */
-class OOS_MYSQL_API mysql_database : public database
+class OOS_MSSQL_API mssql_database : public database
 {
 public:
-  explicit mysql_database(session *db);
-  virtual ~mysql_database();
+  explicit mssql_database(session *db);
+  virtual ~mssql_database();
   
   /**
    * Returns true if the database is open
@@ -82,13 +81,7 @@ public:
   
   virtual const char* type_string(data_type_t type) const;
 
-  /**
-   * Return the raw pointer to the sqlite3
-   * database struct.
-   * 
-   * @return The raw sqlite3 pointer.
-   */
-  MYSQL* operator()();
+  SQLHANDLE operator()();
 
 protected:
   virtual void on_open(const std::string &db);
@@ -99,8 +92,12 @@ protected:
   virtual void on_rollback();
 
 private:
-  MYSQL mysql_;
+  SQLHANDLE odbc_;
+  SQLHANDLE connection_;
+
   bool is_open_;
+  
+  int retries_;
 };
 
 }
@@ -109,9 +106,9 @@ private:
 
 extern "C"
 {
-  OOS_MYSQL_API oos::database* create_database(oos::session *ses);
+  OOS_MSSQL_API oos::database* create_database(oos::session *ses);
 
-  OOS_MYSQL_API void destroy_database(oos::database *db);
+  OOS_MSSQL_API void destroy_database(oos::database *db);
 }
 
-#endif /* MYSQL_DATABASE_HPP */
+#endif /* MSSQL_DATABASE_HPP */

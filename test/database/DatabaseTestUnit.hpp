@@ -41,6 +41,7 @@ public:
   void test_create_drop();
   void test_drop();
   void test_reopen();
+  void test_datatypes();
   void test_insert();
   void test_update();
   void test_delete();
@@ -48,6 +49,7 @@ public:
   void test_with_sub();
   void test_with_list();
   void test_with_vector();
+  void test_reload_simple();
   void test_reload();
   void test_reload_container();
 

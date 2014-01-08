@@ -15,18 +15,21 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYSQL_STATEMENT_HPP
-#define MYSQL_STATEMENT_HPP
+#ifndef MSSQL_STATEMENT_HPP
+#define MSSQL_STATEMENT_HPP
 
 #include "database/statement.hpp"
 #include "database/sql.hpp"
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <mysql.h>
-#else
-#include <mysql/mysql.h>
+#include "database/mssql/mssql_exception.hpp"
+
+#if defined(_MSC_VER)
+#include <windows.h>
 #endif
+
+#include <sqltypes.h>
+#include <sql.h>
+#include <sqlext.h>
 
 #include <string>
 #include <vector>
@@ -43,16 +46,16 @@ namespace oos {
 
 class database;
 
-namespace mysql {
+namespace mssql {
 
-class mysql_database;
+class mssql_database;
 
-class mysql_statement : public statement
+class mssql_statement : public statement
 {
 public:
-  explicit mysql_statement(mysql_database &db);
-  mysql_statement(mysql_database &db, const sql &s);
-  virtual ~mysql_statement();
+  explicit mssql_statement(mssql_database &db);
+  mssql_statement(mssql_database &db, const sql &s);
+  virtual ~mssql_statement();
 
   virtual void clear();
   virtual result* execute();
@@ -64,6 +67,9 @@ public:
 
   virtual database& db();
   virtual const database& db() const;
+
+  static long type2int(data_type_t type);
+  static long type2sql(data_type_t type);
 
 protected:
   virtual void write(const char *id, char x);
@@ -83,39 +89,41 @@ protected:
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
 
-//  virtual void prepare_result_column(const sql::field_ptr &fptr);
-
-private:
   template < class T >
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int /*index*/)
+  void bind_value(T val, int index)
   {
-    if (bind.buffer == 0) {
-      // allocating memory
-//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
-      bind.buffer = new char[sizeof(T)];
-    }
-    *static_cast<T*>(bind.buffer) = value;
-    bind.buffer_type = type;
-    bind.is_null = 0;
+    value_t *v = new value_t;
+    v->data = new char[sizeof(T)];
+    *static_cast<T*>(v->data) = val;
+    host_data_.push_back(v);
+    
+    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
+    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, &v->len);
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
-
-  static enum_field_types type_enum(data_type_t type);
+  void bind_value(unsigned long val, int index);
+  void bind_value(const char *val, int size, int index);
 
 private:
-  mysql_database &db_;
-  int result_size;
-  int host_size;
-  std::vector<unsigned long> length_vector;
-  MYSQL_STMT *stmt;
-//  MYSQL_BIND *result_array;
-  MYSQL_BIND *host_array;
+  mssql_database &db_;
+  
+  struct value_t {
+    explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
+    ~value_t() { delete [] static_cast<char*>(data); }
+    bool fixed;
+    SQLLEN len;
+    void *data;
+  };
+  std::vector<value_t*> host_data_;
+
+  enum { NUMERIC_LEN = 21 };
+
+  SQLHANDLE stmt_;
 };
 
 }
 
 }
 
-#endif /* MYSQL_STATEMENT_HPP */
+#endif /* MSSQL_STATEMENT_HPP */

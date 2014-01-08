@@ -152,7 +152,12 @@
  * with the given error message and the current
  * file and line number information.
  */
-#define UNIT_FAIL(msg)                   error(msg, __LINE__, __FILE__)
+#define UNIT_FAIL(msg)                   \
+  do {                                   \
+    std::stringstream fail_stream;       \
+    fail_stream << msg;                  \
+    error(fail_stream.str(), __LINE__, __FILE__);\
+  } while (false)
 
 /**
  * @brief Displays a warning.
@@ -303,6 +308,16 @@ public:
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
+      // throw exception
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
+  void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    if (strcmp(a, b) != 0) {
       // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;

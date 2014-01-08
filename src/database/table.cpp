@@ -139,23 +139,24 @@ void table::load(object_store &ostore)
 
   ostore_ = &ostore;
 
-  result *res = select_->execute();
-
-  while (res->fetch()) {
-    column_ = 0;
-
-    // create object
-    object_ = node_.producer->create();
-    
-    res->get(object_);
-    // 
+  // check result  
+  // create object
+  result *res(select_->execute());
+  object_ = node_.producer->create();
+  column_ = 0;
+  while (res->fetch(object_)) {
+  
     object_->deserialize(*this);
-  
-    ostore.insert(object_);
-  }
-  
-  delete res;
 
+    ostore.insert(object_);
+
+    column_ = 0;
+    
+    object_ = node_.producer->create();
+  }
+  delete object_;
+  delete res;
+  
   ostore_ = 0;
 
   prototype_node::field_prototype_map_t::const_iterator first = node_.relations.begin();

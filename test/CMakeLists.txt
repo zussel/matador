@@ -45,6 +45,8 @@ SET (TEST_DATABASE_SOURCES
   database/DatabaseTestUnit.hpp
   database/MySQLDatabaseTestUnit.cpp
   database/MySQLDatabaseTestUnit.hpp
+  database/MSSQLDatabaseTestUnit.cpp
+  database/MSSQLDatabaseTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)
@@ -58,10 +60,16 @@ ADD_EXECUTABLE(test_oos
   ${TEST_DATABASE_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
+IF (WIN32)
+  SET(MSSQL_CONNECTION_STRING "mssql://sascha@127.0.0.1/SQLEXPRESS (SQL Server)" CACHE STRING "mssql connection string")
+ELSE()
+  SET(MSSQL_CONNECTION_STRING "mssql://sascha@192.168.27.89/SQLEXPRESS (FreeTDS)" CACHE STRING "mssql connection string")
+ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
 
 MESSAGE(STATUS "mysql connection string: ${MYSQL_CONNECTION_STRING}")
+MESSAGE(STATUS "mssql connection string: ${MSSQL_CONNECTION_STRING}")
 MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
@@ -167,6 +175,7 @@ IF(SQLITE3_FOUND)
   ADD_TEST(test_oos_sqlite_insert ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:insert)
   ADD_TEST(test_oos_sqlite_update ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:update)
   ADD_TEST(test_oos_sqlite_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:delete)
+  ADD_TEST(test_oos_sqlite_datatypes ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:datatypes)
   ADD_TEST(test_oos_sqlite_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:simple)
   ADD_TEST(test_oos_sqlite_complex ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:complex)
   ADD_TEST(test_oos_sqlite_list ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:list)
@@ -176,6 +185,7 @@ IF(SQLITE3_FOUND)
 ELSE()
   MESSAGE("skipping SQLite tests")
 ENDIF()
+
 IF(MYSQL_FOUND)
   ADD_TEST(test_oos_mysql_open_close ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:open_close)
   ADD_TEST(test_oos_mysql_create_drop ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:create_drop)
@@ -184,6 +194,7 @@ IF(MYSQL_FOUND)
   ADD_TEST(test_oos_mysql_update ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:update)
   ADD_TEST(test_oos_mysql_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:delete)
   ADD_TEST(test_oos_mysql_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:simple)
+  ADD_TEST(test_oos_mysql_datatypes ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:datatypes)
   ADD_TEST(test_oos_mysql_complex ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:complex)
   ADD_TEST(test_oos_mysql_list ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:list)
   ADD_TEST(test_oos_mysql_vector ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:vector)

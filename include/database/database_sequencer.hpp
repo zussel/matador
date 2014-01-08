@@ -22,7 +22,7 @@
 
 #include "object/object_atomizable.hpp"
 
-#include <string>
+#include "tools/varchar.hpp"
 
 #ifdef WIN32
   #ifdef oos_EXPORTS
@@ -76,7 +76,7 @@ private:
   database &db_;
   long backup_;
   long sequence_;
-  std::string name_;
+  oos::varchar<64> name_;
   statement *update_;
 };
 
