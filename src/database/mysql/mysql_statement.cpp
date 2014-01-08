@@ -53,6 +53,7 @@ mysql_statement::mysql_statement(mysql_database &db, const sql &s)
 //  std::cout << "creating mysql statement " << this << "\n";
   prepare(s);
 }
+
 mysql_statement::~mysql_statement()
 {
 //  std::cout << "destroying mysql statement " << this << "\n";
@@ -95,17 +96,9 @@ void mysql_statement::clear()
       delete [] static_cast<char*>(host_array[i].buffer);
     }
   }
-  /*
-  for (int i = 0; i < result_size; ++i) {
-    if (result_array[i].buffer) {
-      delete [] static_cast<char*>(result_array[i].buffer);
-    }
-  }
-  */
   result_size = 0;
   host_size = 0;
   mysql_stmt_free_result(stmt);
-//  delete [] result_array;
   delete [] host_array;
 }
 
@@ -208,7 +201,6 @@ void mysql_statement::write(const char *, const char *x, int s)
 void mysql_statement::write(const char *, const std::string &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
-//  bind_value(host_array[host_index], MYSQL_TYPE_STRING, host_index);
   ++host_index;
 }
 

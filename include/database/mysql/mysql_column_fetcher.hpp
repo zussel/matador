@@ -32,6 +32,7 @@ public:
   
   void read_value(const char *id, std::string &x);
   void read_value(const char *id, varchar_base &x);
+  void read_value(const char *id, object_base_ptr &x);
   void read_value(const char *id, char *x, int s);
   
 private:

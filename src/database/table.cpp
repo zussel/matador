@@ -139,51 +139,24 @@ void table::load(object_store &ostore)
 
   ostore_ = &ostore;
 
-  result *res = select_->execute();
-
-  // check result
-  /*
-  while (res->has_row()) {
-    column_ = 0;
-    
-    object = node_.producer->create();
-    
-    // fetch object
-    res->fetch(object);
-    
-    // insert object
-    ostore.insert(object_);    
-  }*/
-  
+  // check result  
   // create object
-  std::auto_ptr<object> optr(node_.producer->create());
+  result *res(select_->execute());
+  object_ = node_.producer->create();
   column_ = 0;
-  while (res->fetch(optr.get())) {
+  while (res->fetch(object_)) {
   
-    ostore.insert(optr.release());
-
-    column_ = 0;
-    
-    optr.reset(node_.producer->create());
-  } 
-
-  /*
-  while (res->fetch()) {
-    column_ = 0;
-
-    // create object
-    object_ = node_.producer->create();
-    
-    res->get(object_);
-    // 
     object_->deserialize(*this);
-  
-    ostore.insert(object_);
-  }
-  */
-  
-  delete res;
 
+    ostore.insert(object_);
+
+    column_ = 0;
+    
+    object_ = node_.producer->create();
+  }
+  delete object_;
+  delete res;
+  
   ostore_ = 0;
 
   prototype_node::field_prototype_map_t::const_iterator first = node_.relations.begin();

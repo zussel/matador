@@ -21,6 +21,7 @@
 #include "database/mssql/mssql_exception.hpp"
 
 #include "object/object_ptr.hpp"
+#include "object/object.hpp"
 
 #include <iostream>
 
@@ -67,9 +68,15 @@ bool mssql_result::fetch()
   }
 }
 
-bool mssql_result::fetch(object *)
+bool mssql_result::fetch(object *o)
 {
-  return false;
+  if (!fetch()) {
+    return false;
+  }
+  
+  get(o);
+
+  return true;
 }
 
 mssql_result::size_type mssql_result::affected_rows() const

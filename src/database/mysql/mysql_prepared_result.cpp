@@ -1,5 +1,6 @@
 #include "database/mysql/mysql_prepared_result.hpp"
 #include "database/mysql/mysql_column_fetcher.hpp"
+#include "database/mysql/mysql_exception.hpp"
 
 #include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
@@ -98,14 +99,21 @@ bool mysql_prepared_result::fetch(object *o)
   mysql_stmt_bind_result(stmt, bind_);
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
-  if (ret == MYSQL_DATA_TRUNCATED) {
+  if (ret == MYSQL_NO_DATA) {
+    return false;
+  } else if (ret == 1) {
+    throw_stmt_error(ret, stmt, "mysql", "");
+  } else {
+//  if (ret == MYSQL_DATA_TRUNCATED) {
     // load data from database
-    std::cout << "MYSQL: need to fetch column data\n";
     mysql_column_fetcher fetcher(stmt, bind_, info_);
     fetcher.fetch(o);
+//  }
   }
 
-  return rows-- > 0;
+  return true;
+
+//  return rows-- > 0;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
@@ -228,11 +236,13 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &x)
 {
-  info_[index].buffer = new char[x.capacity()];
-  info_[index].buffer_length = x.capacity();
-
+  if (info_[index].buffer == 0) {
+    info_[index].buffer = new char[x.capacity()];
+    memset(info_[index].buffer, 0, x.capacity());
+    info_[index].buffer_length = x.capacity();
+  }
   bind_[index].buffer_type = type;
-  bind_[index].buffer = &info_[index].buffer;
+  bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
@@ -241,11 +251,14 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, object_base_ptr &)
 {
-  info_[index].buffer = new char[sizeof(long)];
-  info_[index].buffer_length = sizeof(long);
+  if (info_[index].buffer == 0) {
+    info_[index].buffer = new char[sizeof(long)];
+    memset(info_[index].buffer, 0, sizeof(long));
+    info_[index].buffer_length = sizeof(long);
+  }
 
   bind_[index].buffer_type = type;
-  bind_[index].buffer = &info_[index].buffer;
+  bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;

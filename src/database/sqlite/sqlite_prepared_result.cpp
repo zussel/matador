@@ -45,9 +45,15 @@ bool sqlite_prepared_result::fetch()
   return true;
 }
 
-bool sqlite_prepared_result::fetch(object *)
+bool sqlite_prepared_result::fetch(object *o)
 {
-  return false;
+  if (!fetch()) {
+    return false;
+  }
+  
+  get(o);
+
+  return true;
 }
 
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
