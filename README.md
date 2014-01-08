@@ -14,6 +14,7 @@ OOS is a ORM framework written in C++. I aims to encapsulate all the database wo
 Features:
 
  * Encapsulate database backends
+ * Support for SQLite, MySQL and MS SQL Server
  * Encapsulate sql statements
  * One to one/many relations
  * One storage container
