@@ -89,9 +89,19 @@
  *
  * @section support_sec Supported Databases
  *
- * There're currently two supported databases and the in memory database.
+ * There're currently three supported databases and the in memory database.
  * But more databases will follow. Next is the description of the
  * database connection string for the supported databases.
+ *
+ * @subsection mssql_sec MS SQL Server
+ *
+ * @code
+ * // MSSQL connection string with password
+ * session ses(ostore, "mssql://user:passwd@host/db");
+ *
+ * // MSSQL connection string without password
+ * session ses(ostore, "mssql://user@host/db");
+ * @endcode
  *
  * @subsection mysql_sec MySQL
  *
