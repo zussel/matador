@@ -156,6 +156,12 @@ bool database::is_loaded(const std::string &name) const
 #endif
 }
 
+result* database::execute(const std::string &sql)
+{
+//  std::cout << sql << "\n";
+  return on_execute(sql);
+}
+
 void database::drop()
 {
   table_map_t::iterator first = table_map_.begin();

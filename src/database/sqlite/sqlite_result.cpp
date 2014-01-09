@@ -44,6 +44,11 @@ bool sqlite_result::fetch()
   return ++pos_ < rows_.size();
 }
 
+bool sqlite_result::fetch(object *)
+{
+  return false;
+}
+
 sqlite_result::size_type sqlite_result::affected_rows() const
 {
   return 0;
@@ -57,6 +62,11 @@ sqlite_result::size_type sqlite_result::result_rows() const
 sqlite_result::size_type sqlite_result::fields() const
 {
   return 0;
+}
+
+int sqlite_result::transform_index(int index) const
+{
+  return index;
 }
 
 void sqlite_result::push_back(row *r)

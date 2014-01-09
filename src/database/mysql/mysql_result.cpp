@@ -64,6 +64,11 @@ bool mysql_result::fetch()
   return rows-- > 0;
 }
 
+bool mysql_result::fetch(object *)
+{
+  return false;
+}
+
 mysql_result::size_type mysql_result::affected_rows() const
 {
   return affected_rows_;
@@ -77,6 +82,11 @@ mysql_result::size_type mysql_result::result_rows() const
 mysql_result::size_type mysql_result::fields() const
 {
   return fields_;
+}
+
+int mysql_result::transform_index(int index) const
+{
+  return index;
 }
 
 void mysql_result::read(const char *id, char &x)

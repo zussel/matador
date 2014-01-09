@@ -5,7 +5,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # project version
 SET(${PROJECT_NAME}_MAJOR_VERSION 0)
-SET(${PROJECT_NAME}_MINOR_VERSION 1)
+SET(${PROJECT_NAME}_MINOR_VERSION 2)
 SET(${PROJECT_NAME}_PATCH_LEVEL 0)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -19,6 +19,32 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
         MESSAGE(STATUS "Version <= 4.6")
         SET(CMAKE_CXX_FLAGS "-std=c++0x -std=gnu++0x -Wextra -Wall -pedantic")
     endif()
+
+    MESSAGE(STATUS "GCC detected - Adding profile build type")
+    SET(CMAKE_CXX_FLAGS_COVERAGE "-g -O0 -Wall -fprofile-arcs -ftest-coverage" CACHE STRING
+        "Flags used by the C++ compiler during coverage builds."
+        FORCE )
+    SET( CMAKE_C_FLAGS_COVERAGE "-g -O0 -Wall -W -fprofile-arcs -ftest-coverage" CACHE STRING
+        "Flags used by the C compiler during coverage builds."
+        FORCE )
+    SET( CMAKE_EXE_LINKER_FLAGS_COVERAGE
+        "-fprofile-arcs -ftest-coverage -lgcov" CACHE STRING
+        "Flags used for linking binaries during coverage builds."
+        FORCE )
+    SET( CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+        "-Wl,--warn-unresolved-symbols,--warn-once -fprofile-arcs -ftest-coverage -lgcov" CACHE STRING
+        "Flags used by the shared libraries linker during coverage builds."
+        FORCE )
+    MARK_AS_ADVANCED(
+        CMAKE_CXX_FLAGS_COVERAGE
+        CMAKE_C_FLAGS_COVERAGE
+        CMAKE_EXE_LINKER_FLAGS_COVERAGE
+        CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+    )
+    # Update the documentation string of CMAKE_BUILD_TYPE for GUIs
+    SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
+        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Coverage."
+        FORCE )
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
@@ -60,21 +86,17 @@ ENDIF()
 # top of the build tree rather than in hard-to-find leaf
 # directories. This simplifies manual testing and the use of the build
 # tree rather than installed Boost libraries.
-#IF (WIN32)
+IF (WIN32)
   SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
   SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
   SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
   SET(CMAKE_MODULE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
-#ENDIF (WIN32)
-
-#FIND_PACKAGE(EXPAT REQUIRED PATHS "C:/Programme/Expat/Bin" "C:/Programme/Expat/Source/lib")
-
-#SET(Boost_ADDITIONAL_VERSIONS "1.49" "1.49.0")
-#FIND_PACKAGE(Boost 1.49.0 REQUIRED)
-
-#IF (NOT Boost_FOUND)
-#	MESSAGE(FATAL_ERROR "Couldn't find boost")
-#ENDIF()
+ELSE()
+  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  SET(CMAKE_MODULE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ENDIF()
 
 MESSAGE(STATUS "Looking for SQLite3")
 FIND_PACKAGE(SQLite3)
@@ -92,9 +114,13 @@ ELSE(MYSQL_FOUND)
   MESSAGE(STATUS "MySQL not found - not building backend")
 ENDIF(MYSQL_FOUND)
 
-MESSAGE(STATUS "SQLite3 include: ${SQLITE3_INCLUDE_DIR}")
-
-#MESSAGE(STATUS "MySQL lib: ${MYSQL_LIBRARY}")
+MESSAGE(STATUS "Looking for ODBC")
+FIND_PACKAGE(ODBC)
+IF(ODBC_FOUND)
+	MESSAGE(STATUS "Found ODBC")
+ELSE(ODBC_FOUND)
+  MESSAGE(STATUS "ODBC not found - not building backend")
+ENDIF(ODBC_FOUND)
 
 #
 # configure include dir
@@ -117,11 +143,10 @@ INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
 CONFIGURE_FILE (${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
 
-GET_PROPERTY(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-FOREACH(dir ${dirs})
-  MESSAGE(STATUS "include dir='${dir}'")
-ENDFOREACH()
-
+#GET_PROPERTY(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+#FOREACH(dir ${dirs})
+#  MESSAGE(STATUS "include dir='${dir}'")
+#ENDFOREACH()
 
 # contains the full path to the top level directory of your build tree 
 MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
@@ -159,9 +184,9 @@ INSTALL(
 SET(CPACK_PACKAGE_NAME "oos")
 SET(CPACK_PACKAGE_VENDOR "Elephant Sky")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your object in one container")
-SET(CPACK_PACKAGE_VERSION "0.1.0")
+SET(CPACK_PACKAGE_VERSION "0.2.0")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-SET(CPACK_PACKAGE_VERSION_MINOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "2")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "oos")
 SET(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_PROCESSOR}-${SYSTEM_NAME_LOWER}")

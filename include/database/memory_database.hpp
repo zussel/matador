@@ -44,8 +44,6 @@ public:
 
   virtual void load(const prototype_node&) {}
 
-  virtual result* execute(const std::string &) { return 0; }
-
   virtual void visit(insert_action*) {}
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
@@ -64,6 +62,7 @@ public:
 private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}
+  virtual result* on_execute(const std::string &) { return 0; }
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

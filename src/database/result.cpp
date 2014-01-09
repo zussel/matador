@@ -30,7 +30,7 @@ result::~result()
 
 void result::get(object_atomizable *o)
 {
-  result_index = 0;
+  result_index = transform_index(0);
   o->deserialize(*this);
 }
 

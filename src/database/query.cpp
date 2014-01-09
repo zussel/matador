@@ -57,7 +57,8 @@ query& query::create(const prototype_node &node)
 
 query& query::create(const std::string &name, object_atomizable *o)
 {
-  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
+//  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
+  sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
 
   query_create s(sql_, db_);
   o->serialize(s);

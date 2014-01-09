@@ -40,6 +40,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   add_test("open_close", std::tr1::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
   add_test("create_drop", std::tr1::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
   add_test("reopen", std::tr1::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
+  add_test("datatypes", std::tr1::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
   add_test("insert", std::tr1::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
   add_test("update", std::tr1::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
   add_test("delete", std::tr1::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
@@ -48,6 +49,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   add_test("complex", std::tr1::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
   add_test("list", std::tr1::bind(&DatabaseTestUnit::test_with_list, this), "object with object list database test");
   add_test("vector", std::tr1::bind(&DatabaseTestUnit::test_with_vector, this), "object with object vector database test");
+  add_test("reload_simple", std::tr1::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
   add_test("reload", std::tr1::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
   add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
 }
@@ -62,8 +64,8 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
+//  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<album>("album");
-  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<track>("track");
 }
 
@@ -124,6 +126,111 @@ void DatabaseTestUnit::test_reopen()
 
   UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
   
+  delete db;
+}
+
+void DatabaseTestUnit::test_datatypes()
+{
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  try {
+    // load data
+    db->create();
+
+    // load data
+    db->load();
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
+  }
+
+  float fval = 2.445566f;
+  double dval = 11111.23433345;
+  char cval = 'c';
+  short sval = -128;
+  int ival = -49152;
+  long lval = -123456789;
+  unsigned short usval = 255;
+  unsigned int uival = 49152;
+  unsigned long ulval = 765432182;
+  bool bval = true;
+  const char *cstr("Armer schwarzer Kater");
+  oos::varchar<32> vval("hallo welt");
+  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+  try {
+
+    Item *i = new Item();
+    
+    // set values
+    i->set_bool(bval);
+    i->set_char(cval);
+    i->set_double(dval);
+    i->set_float(fval);
+    i->set_short(sval);
+    i->set_int(ival);
+    i->set_long(lval);
+    i->set_unsigned_short(usval);
+    i->set_unsigned_int(uival);
+    i->set_unsigned_long(ulval);
+    i->set_cstr(cstr, strlen(cstr) + 1);
+    i->set_varchar(vval);
+    i->set_string(strval);
+    
+    item_ptr item = db->insert(i);
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_FAIL("caught database exception: " << ex.what() << " (start rollback)");
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_FAIL("caught object exception: " << ex.what() << " (start rollback)");
+  } catch (std::exception &ex) {
+    // error, abort transaction
+    UNIT_FAIL("caught exception: " << ex.what() << " (start rollback)");
+  }
+  // close db
+  db->close();
+
+  // clear object store
+  ostore_.clear();
+
+  db->open();
+  
+  // load data
+  db->load();
+
+  try {
+    oview_t oview(ostore_);
+    
+    item_ptr item = oview.front();
+
+    UNIT_ASSERT_EQUAL(item->get_char(), cval, "character is not equal");
+    UNIT_ASSERT_EQUAL(item->get_short(), sval, "short is not equal");
+    UNIT_ASSERT_EQUAL(item->get_int(), ival, "integer is not equal");
+    UNIT_ASSERT_EQUAL(item->get_long(), lval, "long is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_short(), usval, "unsigned short is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_int(), uival, "unsigned integer is not equal");
+    UNIT_ASSERT_EQUAL(item->get_unsigned_long(), ulval, "unsigned long is not equal");
+    UNIT_ASSERT_EQUAL(item->get_bool(), bval, "bool is not equal");
+    UNIT_ASSERT_EQUAL(item->get_cstr(), cstr, "const char pointer is not equal");
+    UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
+    UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
+
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+  }
+  db->drop();
+  // close db
+  db->close();
+
   delete db;
 }
 
@@ -274,6 +381,8 @@ void DatabaseTestUnit::test_delete()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what());
   }
+
+  db->drop();
 
   db->close();
 
@@ -639,6 +748,86 @@ DatabaseTestUnit::test_with_vector()
 }
 
 void
+DatabaseTestUnit::test_reload_simple()
+{
+  typedef object_ptr<Item> item_ptr;
+  typedef object_view<Item> oview_t;
+
+  // create database and make object store known to the database
+  session *db = create_session();
+
+  try {
+    // load data
+    db->create();
+
+    // load data
+    db->load();
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
+  }
+
+  // create new transaction    
+  transaction tr(*db);
+  try {
+    // begin transaction
+    tr.begin();
+    // ... do some object modifications
+    // insert new object
+    item_ptr item = ostore_.insert(new Item("Foo", 42));
+
+    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+
+    item = ostore_.insert(new Item("Bar", 99));
+
+    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+
+    tr.commit();
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  // close db
+  db->close();
+
+  // clear object store
+  ostore_.clear();
+
+  db->open();
+  
+  // load data
+  db->load();
+
+  try {
+    // create view
+    oview_t oview(ostore_);
+    // check iterators
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    // check emptiness
+    UNIT_ASSERT_FALSE(oview.empty(), "object view must not be empty");
+    // check size
+    UNIT_ASSERT_TRUE(oview.size() == 2, "object view size must be 2");
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+  db->drop();
+  // close db
+  db->close();
+  
+  delete db;
+}
+
+void
 DatabaseTestUnit::test_reload()
 {
   typedef ObjectItem<Item> object_item_t;
@@ -655,8 +844,8 @@ DatabaseTestUnit::test_reload()
 
     // load data
     db->load();
-  } catch (exception &) {
-    UNIT_FAIL("couldn't create and load database");
+  } catch (exception &ex) {
+    UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
 
   // create new transaction    
@@ -799,7 +988,8 @@ DatabaseTestUnit::test_reload_container()
 //  ostore_.dump_prototypes(out);
 
   // close db
-  db->close();  
+  db->close();
+  
   // clear object store
   ostore_.clear();
 

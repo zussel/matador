@@ -88,23 +88,6 @@ void sqlite_database::on_close()
   sqlite_db_ = 0;
 }
 
-result* sqlite_database::execute(const std::string &sql)
-{
-#ifdef WIN32
-  std::auto_ptr<sqlite_result> res(new sqlite_result);
-#else
-  std::unique_ptr<sqlite_result> res(new sqlite_result);
-#endif
-  char *errmsg = 0;
-  int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
-  if (ret != SQLITE_OK) {
-    std::string error(errmsg);
-    sqlite3_free(errmsg);
-    throw sqlite_exception(error);
-  }
-  return res.release();
-}
-
 statement* sqlite_database::create_statement()
 {
   return new sqlite_statement(*this);
@@ -125,6 +108,23 @@ void sqlite_database::on_commit()
 {
   result *res = execute("COMMIT TRANSACTION;");
   delete res;
+}
+
+result* sqlite_database::on_execute(const std::string &sql)
+{
+#ifdef WIN32
+  std::auto_ptr<sqlite_result> res(new sqlite_result);
+#else
+  std::unique_ptr<sqlite_result> res(new sqlite_result);
+#endif
+  char *errmsg = 0;
+  int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
+  if (ret != SQLITE_OK) {
+    std::string error(errmsg);
+    sqlite3_free(errmsg);
+    throw sqlite_exception(error);
+  }
+  return res.release();
 }
 
 void sqlite_database::on_rollback()
