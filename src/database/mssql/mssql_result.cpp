@@ -219,7 +219,9 @@ void mssql_result::read_column(const char *, varchar_base &val)
   SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, val.capacity(), &info);
   if (ret == SQL_SUCCESS) {
     val.assign(buf, info);
+    delete [] buf;
   } else {
+    delete [] buf;
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
   }
 }
