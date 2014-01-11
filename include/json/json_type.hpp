@@ -150,6 +150,10 @@ public:
    */
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
 
+  //these operators want to acess json_type::parser so they are allowed to
+  friend OOS_API std::istream& operator>>(std::istream &str, json_object &obj);
+  friend OOS_API std::istream& operator>>(std::istream &str, json_array &obj);
+
 protected:
   /**
    * Sets the type string of
