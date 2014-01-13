@@ -25,7 +25,6 @@
 #include "tools/varchar.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <cstring>
 #include <sstream>
 
@@ -40,7 +39,6 @@ mysql_statement::mysql_statement(mysql_database &db)
   , stmt(mysql_stmt_init(db()))
   , host_array(0)
 {
-//  std::cout << "creating mysql statement " << this << "\n";
 }
 
 mysql_statement::mysql_statement(mysql_database &db, const sql &s)
@@ -50,13 +48,11 @@ mysql_statement::mysql_statement(mysql_database &db, const sql &s)
   , stmt(mysql_stmt_init(db()))
   , host_array(0)
 {
-//  std::cout << "creating mysql statement " << this << "\n";
   prepare(s);
 }
 
 mysql_statement::~mysql_statement()
 {
-//  std::cout << "destroying mysql statement " << this << "\n";
   clear();
   mysql_stmt_close(stmt);
 }
@@ -88,9 +84,7 @@ void mysql_statement::reset()
 
 void mysql_statement::clear()
 {
-//  std::cout << "reset mysql_statement\n";
   for (int i = 0; i < host_size; ++i) {
-//    std::cout << "\tfreeing host_array[" << i << "].buffer: " << host_array[i].buffer << "\n";
     if (host_array[i].buffer) {
       delete [] static_cast<char*>(host_array[i].buffer);
     }
@@ -103,9 +97,7 @@ void mysql_statement::clear()
 
 result* mysql_statement::execute()
 {
-//  std::cout << "Executing prepared statement: " << str() << "\n";
   if (host_array) {
-//    std::cout << "\thost_array: " << host_array << "\n";
     int res = mysql_stmt_bind_param(stmt, host_array);
     if (res > 0) {
       throw_stmt_error(res, stmt, "mysql", str());
@@ -277,7 +269,6 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
 {
   if (bind.buffer == 0) {
     // allocating memory
-//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
     bind.buffer = new char[size];
     bind.buffer_length = size;
   }

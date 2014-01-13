@@ -34,7 +34,6 @@ namespace oos {
 
 void transaction::on_insert(object *o)
 {
-//  cout << "inserting " << *o << endl;
   /*****************
    * 
    * backup inserted object
@@ -61,7 +60,6 @@ void transaction::on_insert(object *o)
 
 void transaction::on_update(object *o)
 {
-//  cout << "updating " << *o << endl;
   /*****************
    * 
    * backup updated object
@@ -80,7 +78,6 @@ void transaction::on_update(object *o)
 
 void transaction::on_delete(object *o)
 {
-//  cout << "deleting " << *o << endl;
   /*****************
    * 
    * backup deleted object
@@ -130,20 +127,16 @@ transaction::begin()
    **************/
   id_ = ++transaction::id_counter;
   db_.begin(*this);
-//  cout << "starting transaction [" << id_ << "]\n";
 }
 
 void
 transaction::commit()
 {
   if (!db_.current_transaction() || db_.current_transaction() != this) {
-    // throw db_exception();
     throw database_exception("transaction", "transaction isn't current transaction");
-//    cout << "commit: transaction [" << id_ << "] isn't current transaction (" << db_.current_transaction() << ")\n";
   } else {
     // commit all transaction actions
     db_.commit(*this);
-//    cout << "commited transaction [" << id_ << "]\n";
     // clear actions
     cleanup();
   }
@@ -153,9 +146,7 @@ void
 transaction::rollback()
 {
   if (!db_.current_transaction() || db_.current_transaction() != this) {
-    // throw db_exception();
     throw database_exception("transaction", "transaction isn't current transaction");
-//    cout << "rollback: transaction [" << id_ << "] isn't current transaction\n";
   } else {
     /**************
      *
@@ -175,7 +166,6 @@ transaction::rollback()
 
     db_.rollback();
 
-//    cout << "rolled transaction [" << id_ << "]\n";
     // clear container
     cleanup();
   }

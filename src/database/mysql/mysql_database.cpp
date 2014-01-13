@@ -31,7 +31,6 @@
 #include "object/prototype_node.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 
 #ifdef WIN32
@@ -107,7 +106,6 @@ bool mysql_database::is_open() const
 
 void mysql_database::on_close()
 {
-//  std::cout << "closing database\n";
   mysql_close(&mysql_);
   // tell mysql to close the library
   mysql_library_end();

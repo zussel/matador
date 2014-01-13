@@ -90,11 +90,6 @@ void ObjectVectorTestUnit::test_ref_vector()
   UNIT_ASSERT_TRUE(itemvector->empty(), "itemvector must be empty");
 }
 
-void print(const Vector<int>::item_ptr &item)
-{
-  std::cout << "item: " << item->value() << "(" << item->index() << ")\n";
-}
-
 void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;

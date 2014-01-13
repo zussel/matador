@@ -31,7 +31,6 @@ byte_buffer::~byte_buffer()
 
 void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
 {
-//  std::cout << "appending " << size << " bytes to list (current size: " << this->size() << ") ... ";
   const char *ptr = (const char*)bytes;
   size_type bytes_written = 0;
   while (chunk_list_.back().available() < size) {
@@ -53,12 +52,10 @@ void byte_buffer::append(const void *bytes, byte_buffer::size_type size)
     std::copy(ptr+bytes_written, ptr+bytes_written+size, &chunk.data[chunk.write_cursor]);
     chunk.write_cursor += size;
   }
-//  std::cout << "finished (new size: " << this->size() << ")\n";
 }
 
 void byte_buffer::release(void *bytes, byte_buffer::size_type size)
 {
-//  std::cout << "releasing " << size << " bytes from list (current size: " << this->size() << ") ... ";  
   char *ptr = (char*)bytes;
   size_type bytes_read = 0;
   while (!chunk_list_.empty() && chunk_list_.front().used() <= size) {
@@ -84,7 +81,6 @@ void byte_buffer::release(void *bytes, byte_buffer::size_type size)
   if (chunk_list_.empty()) {
     chunk_list_.push_back(buffer_chunk());
   }
-//  std::cout << "finished (new size: " << this->size() << ")\n";
 }
 
 byte_buffer::size_type byte_buffer::size() const

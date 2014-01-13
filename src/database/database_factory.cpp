@@ -20,9 +20,6 @@
 #include "database/database.hpp"
 
 #include <stdexcept>
-#include <iostream>
-
-using std::cout;
 
 namespace oos {
 

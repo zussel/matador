@@ -91,7 +91,6 @@ private:
   {
     if (bind.buffer == 0) {
       // allocating memory
-//      std::cout << "allocating " << sizeof(T) << " bytes of memory\n";
       bind.buffer = new char[sizeof(T)];
     }
     *static_cast<T*>(bind.buffer) = value;
@@ -110,7 +109,6 @@ private:
   int host_size;
   std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt;
-//  MYSQL_BIND *result_array;
   MYSQL_BIND *host_array;
 };
 

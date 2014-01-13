@@ -25,7 +25,6 @@
 #include "tools/varchar.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -38,7 +37,6 @@ namespace mssql {
 mssql_statement::mssql_statement(mssql_database &db)
   : db_(db)
 {
-//  std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
     throw_error("mssql", "no odbc connection established");
   }
@@ -50,7 +48,6 @@ mssql_statement::mssql_statement(mssql_database &db)
 mssql_statement::mssql_statement(mssql_database &db, const sql &s)
   : db_(db)
 {
-//  std::cout << "creating mssql statement " << this << "\n";
   if (!db()) {
     throw_error("mssql", "no odbc connection established");
   }
@@ -84,15 +81,12 @@ void mssql_statement::reset()
 
 void mssql_statement::clear()
 {
-//  std::cout << "destroying mssql statement " << this << "\n";
   reset();
   SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
 result* mssql_statement::execute()
 {
-//  std::cout << str() << "\n";
-
   SQLRETURN ret = SQLExecute(stmt_);
 
   // check result
@@ -207,7 +201,6 @@ void mssql_statement::bind_value(const char *val, int /*size*/, int index)
 
   host_data_.push_back(v);
 
-//  std::cout << "binding character string [" << val << "] (size: " << strlen(val) << ", max: " << size << ")\n";
   SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
