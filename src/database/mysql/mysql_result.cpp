@@ -16,6 +16,7 @@
  */
 
 #include "database/mysql/mysql_result.hpp"
+#include "database/mysql/mysql_exception.hpp"
 #include "database/row.hpp"
 
 namespace oos {
@@ -31,8 +32,7 @@ mysql_result::mysql_result(MYSQL *c)
 {
   res = mysql_store_result(c);
   if (res == 0 && mysql_errno(c) > 0) {
-    printf("Error %u: %s\n", mysql_errno(c), mysql_error(c));
-    exit(1);
+    throw_error(-1, c, "mysql", "");
   } else if (res) {
     rows = (size_type)mysql_num_rows(res);
     fields_ = mysql_num_fields(res);

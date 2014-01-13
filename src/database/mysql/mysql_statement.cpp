@@ -75,10 +75,9 @@ void mysql_statement::prepare(const sql &s)
     length_vector.assign(host_size, 0);
   }
   
-  if (mysql_stmt_prepare(stmt, str().c_str(), str().size())) {
-    fprintf(stderr, " mysql_stmt_prepare(), SELECT failed\n");
-    fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
-    exit(EXIT_FAILURE);
+  int res = mysql_stmt_prepare(stmt, str().c_str(), str().size());
+  if (res > 0) {
+    throw_stmt_error(res, stmt, "mysql", str());
   }
 }
 
@@ -107,21 +106,18 @@ result* mysql_statement::execute()
 //  std::cout << "Executing prepared statement: " << str() << "\n";
   if (host_array) {
 //    std::cout << "\thost_array: " << host_array << "\n";
-    if (mysql_stmt_bind_param(stmt, host_array)) {
-      fprintf(stderr, " mysql_stmt_bind_param() failed\n");
-      fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
-      exit(EXIT_FAILURE);
+    int res = mysql_stmt_bind_param(stmt, host_array);
+    if (res > 0) {
+      throw_stmt_error(res, stmt, "mysql", str());
     }
   }
-  if (mysql_stmt_execute(stmt)) {
-    fprintf(stderr, " mysql_stmt_execute(), failed\n");
-    fprintf(stderr, " %d: %s\n", mysql_stmt_errno(stmt), mysql_stmt_error(stmt));
-    exit(EXIT_FAILURE);
+  int res = mysql_stmt_execute(stmt);
+  if (res > 0) {
+    throw_stmt_error(res, stmt, "mysql", str());
   }
-  if (mysql_stmt_store_result(stmt)) {
-    fprintf(stderr, " mysql_stmt_store_result(), failed\n");
-    fprintf(stderr, " %s\n", mysql_stmt_error(stmt));
-    exit(EXIT_FAILURE);
+  res = mysql_stmt_store_result(stmt);
+  if (res > 0) {
+    throw_stmt_error(res, stmt, "mysql", str());
   }
   return new mysql_prepared_result(stmt, result_size);
 }
