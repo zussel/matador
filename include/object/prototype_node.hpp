@@ -35,6 +35,7 @@
 #include <map>
 #include <list>
 #include <memory>
+#include <string>
 
 namespace oos {
 
