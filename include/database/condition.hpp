@@ -35,7 +35,6 @@
 
 #include <string>
 #include <sstream>
-#include <iostream>
 
 #ifdef WIN32
 #include <memory>

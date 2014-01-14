@@ -31,7 +31,6 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#include <iostream>
 
 #ifdef WIN32
 #define CPP11_TYPE_TRAITS_NS std::tr1

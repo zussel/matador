@@ -20,7 +20,6 @@
 
 #include <string>
 #include <typeinfo>
-#include <iostream>
 
 namespace oos {
 

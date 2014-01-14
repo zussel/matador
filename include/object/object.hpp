@@ -39,7 +39,6 @@
 #include "tools/varchar.hpp"
 
 #include <cstring>
-#include <iostream>
 #include <type_traits>
 
 /// @cond OOS_DEV

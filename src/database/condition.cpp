@@ -1,7 +1,5 @@
 #include "database/condition.hpp"
 
-#include <iostream>
-
 namespace oos {
 
 condition& condition::or_(const condition &cond)

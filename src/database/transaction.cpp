@@ -26,8 +26,6 @@
 #include "object/object_store.hpp"
 #include "object/object.hpp"
 
-#include <iostream>
-
 using namespace std;
 
 namespace oos {

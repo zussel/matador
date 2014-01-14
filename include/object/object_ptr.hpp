@@ -34,7 +34,6 @@
 #include "object/object_proxy.hpp"
 
 #include <memory>
-#include <iostream>
 #include <typeinfo>
 
 namespace oos {

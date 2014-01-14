@@ -32,7 +32,6 @@
   #define EXPIMP_TEMPLATE
 #endif
 
-#include <iostream>
 #include <map>
 #include <list>
 #include <memory>
