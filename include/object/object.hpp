@@ -39,7 +39,6 @@
 #include "tools/varchar.hpp"
 
 #include <cstring>
-#include <iostream>
 #include <type_traits>
 
 /// @cond OOS_DEV
@@ -108,9 +107,13 @@ public:
   }
 
   /**
+   * @brief Returns the classname of the  object
+   *
    * Returns the classname of the object
+   * if the object isn't stored in the
+   * object store 'nullptr' is returned
    * 
-   * @return Name of the object type
+   * @return Name of the object type or nullptr
    */
 	const char* classname() const;
   

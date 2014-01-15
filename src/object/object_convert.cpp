@@ -26,7 +26,6 @@ void convert(const object_base_ptr &from, long &to)
 
 void convert(const long &, object_base_ptr &)
 {
-  std::cout << "converting id to object_ptr\n";
 }
 
 void convert(const object_base_ptr &, char*, int)
@@ -39,12 +38,4 @@ void convert(const object_base_ptr &, char*, int, int)
   throw std::bad_cast();
 }
 
-/*
-void
-convert(const object_base_ptr &from, object_ptr<object> &to)
-{
-  std::cout << "6 " << from.ptr()->id() << "\n";
-  to.reset(from.ptr());
-}
-*/
 }

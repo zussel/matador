@@ -76,13 +76,13 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
 void
 ObjectStoreTestUnit::version_test()
 {
-  std::string version("0.2.0");
+  std::string version("0.2.1");
   
   UNIT_ASSERT_EQUAL(oos::version::str, version, "invalid oos version");
 
   UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
   UNIT_ASSERT_EQUAL(oos::version::minor, 2, "invalid minor version");
-  UNIT_ASSERT_EQUAL(oos::version::patch_level, 0, "invalid patch level");
+  UNIT_ASSERT_EQUAL(oos::version::patch_level, 1, "invalid patch level");
 }
 
 void

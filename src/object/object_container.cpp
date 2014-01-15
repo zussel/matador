@@ -31,7 +31,6 @@ void object_container::handle_container_item(object_store &ostore, const char *i
   } else {
     
     // insert new prototype
-    //ostore.insert_prototype(p, id);
     // get prototype node of container item (child)
     item_node = ostore.get_prototype(classname());
     if (!item_node) {
@@ -40,13 +39,10 @@ void object_container::handle_container_item(object_store &ostore, const char *i
       // as uninitialzed)
       item_node = new prototype_node();
       ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_map()));
-//      std::cout << "DEBUG: inserting unfinished node [" << classname() << "] in advance\n";
       ostore.prototype_map_[classname()] = item_node;
     }
   }
-  // add container node to item node
-//  std::cout << "DEBUG: storing relation info [" << classname() << "(item_node: " << item_node << ")] storing relation: [" << node->type << "][prototype: " << node << "(" << node->type << ")]\n";
-  
+  // add container node to item node  
   // insert the relation
   item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
 }

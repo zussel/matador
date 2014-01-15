@@ -36,7 +36,6 @@
 
 #include "tools/convert.hpp"
 
-#include <iostream>
 #include <typeinfo>
 
 namespace oos {
@@ -91,56 +90,6 @@ convert(const T &, object_container &)
 OOS_API void convert(const object_base_ptr &, char*, int);
 
 OOS_API void convert(const object_base_ptr &, char*, int, int);
-
-/*
-template < class T >
-void
-convert(const object_ptr<T> &from, object_ptr<T> &to)
-{
-  std::cout << "1 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
-
-OOS_API void convert(const object_base_ptr &from, object_ptr<object> &to);
-
-template < class T >
-void
-convert(const object_ref<T> &from, object_ptr<T> &to)
-{
-  std::cout << "2 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
-
-template < class T >
-void
-convert(const object_ptr<T> &from, object_ref<T> &to)
-{
-  std::cout << "3 typeid: " << typeid(T).name() << "\n";
-  to = from;
-}
-*/
-/*
-template < class T >
-void
-convert(const T &, object_base_ptr &)
-{
-  std::cout << "4 typeid: " << typeid(T).name() << "\n";
-}
-*/
-/*
-template < class T >
-void
-convert(const object_base_ptr &, T &)
-{
-  std::cout << "5 typeid: " << typeid(T).name() << "\n";
-}
-
-void
-convert(const long &, object_ptr<object> &)
-{
-  std::cout << "6 typeid: object_ptr<object>\n";
-}
-*/
 
 #endif /* OOS_DOXYGEN_DOC */
 

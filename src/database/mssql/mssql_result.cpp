@@ -23,8 +23,6 @@
 #include "object/object_ptr.hpp"
 #include "object/object.hpp"
 
-#include <iostream>
-
 namespace oos {
 
 namespace mssql {

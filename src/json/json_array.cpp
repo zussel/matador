@@ -72,7 +72,6 @@ bool json_array::parse(std::istream &in)
 
       value_vector_.push_back(val);
     } catch (std::logic_error &ex) {
-      std::cout << "json parse error: " << ex.what() << "\n";
       return false;
     }
 

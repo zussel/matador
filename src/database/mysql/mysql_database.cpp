@@ -31,7 +31,6 @@
 #include "object/prototype_node.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 
 #ifdef WIN32
@@ -86,11 +85,16 @@ void mysql_database::on_open(const std::string &connection)
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   std::string db = con.substr(pos + 1);
-  mysql_init(&mysql_);
-//  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0) == NULL) {
+
+  if (mysql_init(&mysql_) == 0) {
+    throw_error("mysql", "initialization failed");
+  }
+  
   if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db.c_str(), 0, NULL, 0) == NULL) {
-    printf("Connection Error %u: %s\n", mysql_errno(&mysql_), mysql_error(&mysql_));
-    exit(1);
+    // close all handles
+    mysql_close(&mysql_);
+    // throw exception
+    throw_error(-1, &mysql_, "mysql");
   }
   is_open_ = true;
 }
@@ -102,7 +106,6 @@ bool mysql_database::is_open() const
 
 void mysql_database::on_close()
 {
-//  std::cout << "closing database\n";
   mysql_close(&mysql_);
   // tell mysql to close the library
   mysql_library_end();

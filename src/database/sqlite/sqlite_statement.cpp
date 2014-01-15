@@ -29,12 +29,9 @@
 #include "tools/varchar.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 #include <cstring>
 #include <sqlite3.h>
-
-using std::cout;
 
 namespace oos {
 
@@ -56,13 +53,11 @@ sqlite_statement::sqlite_statement(sqlite_database &db)
   : db_(db)
   , stmt_(0)
 {
-//  std::cout << "DEBUG: sqlite statement counter (create " << this << "): " << ++counter_ << "\n";
 }
 
 sqlite_statement::~sqlite_statement()
 {
   clear();
-//  std::cout << "DEBUG: sqlite statement counter (destroy " << this << "): " << counter_-- << "\n";
 }
 
 result* sqlite_statement::execute()
@@ -99,24 +94,12 @@ void sqlite_statement::clear()
   if (!stmt_) {
     return;
   }
-//  std::cout << "finalizing statement 0x" << std::hex << stmt_ << "\n";
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_(), "sqlite3_finalize");
   stmt_ = 0;
   return;
 }
 
-/*
-int sqlite_statement::column_count() const
-{
-  return sqlite3_column_count(stmt_);
-}
-
-const char* sqlite_statement::column_name(int i) const
-{
-  return sqlite3_column_name(stmt_, i);
-}
-*/
 void sqlite_statement::write(const char*, bool x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x);
@@ -210,12 +193,6 @@ void sqlite_statement::write(const char *, const object_base_ptr &x)
 void sqlite_statement::write(const char *, const object_container &)
 {}
 
-/*
-int sqlite_statement::column_type(int i) const
-{
-  return sqlite3_column_type(stmt_, i);
-}
-*/
 
 }
 

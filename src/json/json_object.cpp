@@ -98,7 +98,6 @@ bool json_object::parse(std::istream &in)
 
       insert(key, val);
     } catch (std::logic_error &ex) {
-      std::cout << "json parse error: " << ex.what() << "\n";
       return false;
     }
 

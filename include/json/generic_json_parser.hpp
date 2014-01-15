@@ -18,8 +18,8 @@
 #ifndef GENERIC_JSON_PARSER_HPP
 #define GENERIC_JSON_PARSER_HPP
 
-#include <iostream>
 #include <stdexcept>
+#include <iostream>
 
 namespace oos {
 

@@ -127,6 +127,9 @@ void unit_test::execute(test_func_info &test_info)
     } catch (unit_exception &ex) {
       test_info.succeeded = false;
       test_info.message = ex.what();
+    } catch (std::exception &ex) {
+      test_info.succeeded = false;
+      test_info.message = ex.what();
     }
     finalize();
     if (test_info.succeeded) {

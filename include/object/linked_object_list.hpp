@@ -714,13 +714,6 @@ public:
     node->next_->prev_ = node->prev_;
     // delete node
     ostore()->remove(node);
-//    if () {
-//      std::cout << "couldn't remove node (proxy: " << *node->proxy() << ")\n";
-//      node->prev_->next_ = node;
-//      node->next_->prev_ = node;
-      // throw exception ?
-//      return ++iterator(node);
-//    }
     // return i's successor
     return i;
   }

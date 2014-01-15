@@ -150,6 +150,28 @@ public:
    */
   friend OOS_API std::ostream& operator<<(std::ostream &str, const json_type &value);
 
+  /**
+   * Input operator for json_object. In
+   * order to parse an object the corresponding
+   * input operator needs access to json_type.
+   * 
+   * @param str The input stream to print on.
+   * @param obj The json_object to parse.
+   * @return The modified input stream.
+   */
+  friend OOS_API std::istream& operator>>(std::istream &str, json_object &obj);
+
+  /**
+   * Input operator for json_array. In
+   * order to parse an array the corresponding
+   * input operator needs access to json_type.
+   * 
+   * @param str The input stream to print on.
+   * @param obj The json_array to parse.
+   * @return The modified input stream.
+   */
+  friend OOS_API std::istream& operator>>(std::istream &str, json_array &obj);
+
 protected:
   /**
    * Sets the type string of

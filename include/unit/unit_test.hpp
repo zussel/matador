@@ -315,6 +315,7 @@ public:
     }
   }
 
+#ifndef OOS_DOXYGEN_DOC
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
     if (strcmp(a, b) != 0) {
@@ -324,7 +325,6 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-#ifndef OOS_DOXYGEN_DOC
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)

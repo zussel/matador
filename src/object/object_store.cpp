@@ -212,10 +212,10 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
     throw object_exception("couldn't find parent prototype");
   }
 
-  /* try to insert new prototype node
+  /* 
+   * try to insert new prototype node
    */
   prototype_node *node = 0;
-//  cout << "DEBUG: try to insert into prototype map: [" << type << "]\n";
   t_prototype_map::iterator i = prototype_map_.find(type);
   if (i == prototype_map_.end()) {
     /* unknown type name try for typeid
@@ -250,7 +250,6 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
        * remove typeid entry and add to
        * typeid map
        */
-//      cout << "DEBUG: finishing existing type: [" << type << "]\n";
       node = i->second;
       node->initialize(producer, type, abstract);
       prototype_map_.erase(i);
@@ -263,7 +262,6 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   // append as child to parent prototype node
   parent_node->insert(node);
   // store prototype in map
-//  cout << "DEBUG: inserting into prototype map: [" << type << "]\n";
   i = prototype_map_.insert(std::make_pair(type, node)).first;
   typeid_prototype_map_[producer->classname()][type] = node;
 
@@ -283,16 +281,12 @@ bool object_store::clear_prototype(const char *type, bool recursive)
     //throw new object_exception("couldn't find prototype");
     return false;
   }
-//  cout << "DEBUG: clearing prototype map: [" << type << "]\n";
   if (recursive) {
     // clear all objects from child nodes
     // for each child call clear_prototype(child, recursive);
-//    prototype_node *child = node->next_node(node->parent);
     prototype_node *child = node->next_node();
     while (child && (child != node || child != node->parent)) {
-//      cout << "DEBUG: clearing prototype map: found child [" << child->type << "]\n";
       child->clear();
-//      clear_prototype(child->type.c_str(), recursive);
       child = child->next_node();
     }      
   }
@@ -309,8 +303,6 @@ bool object_store::remove_prototype(const char *type)
     //throw new object_exception("couldn't find prototype");
     return false;
   }
-
-//  cout << "DEBUG: removing prototype map: [" << node->type << "]\n";
 
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
@@ -335,9 +327,8 @@ bool object_store::remove_prototype(const char *type)
       typeid_prototype_map_.erase(j);
     }
   } else {
-//    cout << "DEBUG: Error: this could not happen!!!\n";
+    // TODO: throw error
   }
-  // delete node
   delete node;
 
   return true;
@@ -428,7 +419,6 @@ int depth(prototype_node *node)
 void object_store::dump_prototypes(std::ostream &out) const
 {
   prototype_node *node = root_;
-//  out << "dumping prototype tree:\n";
   out << "digraph G {\n";
   out << "\tgraph [fontsize=10]\n";
 	out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
@@ -484,7 +474,6 @@ void object_store::unregister_observer(object_observer *observer)
 {
   t_observer_list::iterator i = std::find(observer_list_.begin(), observer_list_.end(), observer);
   if (i != observer_list_.end()) {
-//    delete *i;
     observer_list_.erase(i);
   }
 }
@@ -503,16 +492,12 @@ object_store::insert_object(object *o, bool notify)
     return NULL;
   }
   // find prototype node
-//  cout << "DEBUG: inserting object of type [" << typeid(*o).name() << "]\n";
-//  t_prototype_map::iterator i = prototype_map_.find(typeid(*o).name());
   prototype_node *node = get_prototype(typeid(*o).name());
   if (!node) {
-//  if (i == prototype_map_.end()) {
     // raise exception
     std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
     throw object_exception(msg.c_str());
   }
-//  prototype_node *node = i->second;
   // retrieve and set new unique number into object
   object_proxy *oproxy = find_proxy(o->id());
   if (oproxy) {
@@ -558,7 +543,6 @@ object_store::insert_object(object *o, bool notify)
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
   // return new object
-  //std::cout << "created object (" << std::right << std::setfill(' ') << std::setw(4) << o->id() << ") of type [" << o->classname() << "] proxy " << *oproxy << "\n";
   return o;
 }
 
@@ -722,7 +706,6 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
      * insert before last last
      *
      *************/
-    //cout << "more than two elements: inserting " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
     oproxy->link(node->op_marker->prev);
   } else if (node->count == 1) {
     /*************
@@ -731,11 +714,6 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
      * insert as first; adjust "left" marker
      *
      *************/
-    /*if (node->op_marker->prev->obj) {
-      cout << "one element in list: inserting " << *o << " as first (before: " << *node->op_marker->prev->obj << ")\n";
-    } else {
-      cout << "one element in list: inserting " << *o << " as first (before: [0])\n";
-    }*/
     oproxy->link(node->op_marker->prev);
     node->adjust_left_marker(oproxy->next, oproxy);
   } else /* if (node->count == 0) */ {
@@ -745,11 +723,6 @@ void object_store::insert_proxy(prototype_node *node, object_proxy *oproxy)
      * insert as last; adjust "right" marker
      *
      *************/
-    /*if (node->op_marker->obj) {
-      cout << "list is empty: inserting " << *o << " as last before " << *node->op_marker->obj << "\n";
-    } else {
-      cout << "list is empty: inserting " << *o << " as last before [0]\n";
-    }*/
     oproxy->link(node->op_marker);
     node->adjust_left_marker(oproxy->next, oproxy);
     node->adjust_right_marker(oproxy->prev, oproxy);
@@ -764,14 +737,11 @@ void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
 {
   if (oproxy == node->op_first->next) {
     // adjust left marker
-    //cout << "remove: object proxy is left marker " << *o << " before second last (" << *node->op_marker->prev->obj << ")\n";
     node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
-    //adjust_left_marker(node, node->op_first->next->next);
   }
   if (oproxy == node->op_marker->prev) {
     // adjust right marker
     node->adjust_right_marker(oproxy, node->op_marker->prev->prev);
-    //adjust_right_marker(node, o->proxy_, node->op_marker->prev->prev);
   }
   // unlink object_proxy
   unlink_proxy(oproxy);

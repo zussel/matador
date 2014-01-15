@@ -33,7 +33,6 @@
 #include "tools/string.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 
 #include <sql.h>

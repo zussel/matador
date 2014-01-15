@@ -20,7 +20,6 @@
 #include "object/prototype_node.hpp"
 #include "object/object.hpp"
 
-#include <iostream>
 #include <cassert>
 #include <stdexcept>
 

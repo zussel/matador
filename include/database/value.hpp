@@ -20,7 +20,6 @@
 
 #include <string>
 #include <typeinfo>
-#include <iostream>
 
 namespace oos {
 
@@ -47,7 +46,7 @@ public:
   {
     value<T> *v = dynamic_cast<value<T>* >(this);
     if (v) {
-      return v->get<T>();
+      return v->template get<T>();
     } else {
       throw std::bad_cast();
     }
