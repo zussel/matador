@@ -11,8 +11,6 @@
 #include <ostream>
 #include <cstring>
 
-#include <iostream>
-
 namespace oos {
 
 namespace mysql {

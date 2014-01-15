@@ -36,7 +36,6 @@
 
 #include "tools/convert.hpp"
 
-#include <iostream>
 #include <typeinfo>
 
 namespace oos {

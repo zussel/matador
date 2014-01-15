@@ -11,7 +11,6 @@
 #endif
 
 #include <vector>
-#include <iostream>
 
 namespace oos {
 

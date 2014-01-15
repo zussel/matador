@@ -7,7 +7,6 @@
 #include "object/object_atomizer.hpp"
 
 #include <vector>
-#include <iostream>
 
 struct sqlite3_stmt;
 

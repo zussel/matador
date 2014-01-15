@@ -29,7 +29,6 @@
 
 #include <stdexcept>
 #include <sqlite3.h>
-#include <iostream>
 #include <sstream>
 
 #ifdef WIN32

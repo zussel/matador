@@ -29,7 +29,6 @@
 #include "tools/varchar.hpp"
 
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 #include <cstring>
 #include <sqlite3.h>

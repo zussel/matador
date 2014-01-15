@@ -35,7 +35,6 @@
 #include "json/json_value.hpp"
 
 #include <vector>
-#include <iostream>
 #include <stdexcept>
 
 namespace oos {

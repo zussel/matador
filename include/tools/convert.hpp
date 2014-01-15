@@ -41,7 +41,6 @@
 #endif
 
 #include <cstdlib>
-#include <iostream>
 #include <typeinfo>
 #include <cstring>
 

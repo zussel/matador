@@ -603,12 +603,6 @@ private:
   typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
   t_typeid_prototype_map typeid_prototype_map_;
 
-  /*
-   * holding all aliases for a 
-   * specific prototype node
-   */
-//  t_prototype_node_map alias_map_;
-
   t_object_proxy_map object_map_;
 
   sequencer seq_;

@@ -17,8 +17,6 @@
 
 #include "tools/byte_buffer.hpp"
 
-#include <iostream>
-
 namespace oos {
 
 byte_buffer::byte_buffer()

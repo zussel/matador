@@ -269,6 +269,8 @@ protected:
 public:
 	virtual ~generic_object_writer() {}
 
+/// @cond OOS_DEV
+
 	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, double x) { generic_writer_->write_value(id, x); }
@@ -285,6 +287,8 @@ public:
 	virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
+
+/// @endcond OOS_DEV
   
 private:
   T *generic_writer_;
@@ -520,6 +524,8 @@ protected:
 public:
 	virtual ~generic_object_reader() {}
 
+/// @cond OOS_DEV
+
 	virtual void read(const char *id, char &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, float &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, double &x) { generic_reader_->read_value(id, x); }
@@ -536,6 +542,8 @@ public:
 	virtual void read(const char *id, varchar_base &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, object_base_ptr &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, object_container &x) { generic_reader_->read_value(id, x); }
+
+/// @endcond OOS_DEV
   
 private:
   T *generic_reader_;
