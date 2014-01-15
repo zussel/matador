@@ -1,6 +1,8 @@
 Open Object Store (OOS)
 =======================
 
+__Verion 0.2.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
+
 Store all kind of objects in one container.
 
 Build status at [travis-ci](https://travis-ci.org)
@@ -9,7 +11,7 @@ Build status at [travis-ci](https://travis-ci.org)
 [![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
 
 
-OOS is a ORM framework written in C++. I aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.
+OOS is a ORM framework written in C++. It aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.
 
 Features:
 
@@ -60,7 +62,7 @@ Create a build directory change to it and call cmake:
     $ cd build
     $ cmake -G "Visual Studio *" ..
 
-Where __*__ is one of the *__"Visual Studio"__* strings up from *__"9 2008"__*. See cmake documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators). After generation you find a __oos.sln__ solution file in the current directory.
+Where __*__ is one of the *__"Visual Studio"__* strings up from *__"10"__*. See cmake documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators). After generation you find a __oos.sln__ solution file in the current directory.
 
 Contact
 -------
