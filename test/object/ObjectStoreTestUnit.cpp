@@ -118,7 +118,8 @@ ObjectStoreTestUnit::expression_test()
 
   variable<int> k(make_var(&ObjectItem<Item>::ptr, &Item::get_int));
 
-  variable<int> z(make_var(&ObjectItemType::value, &ObjectItem<Item>::get_int));
+  //Clang 3.2 needs the explicit template parameters on make_var
+  variable<int> z(make_var<int, ObjectItemType, object_item_ptr>(&ObjectItemType::value, &ObjectItem<Item>::get_int));
 
   ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
