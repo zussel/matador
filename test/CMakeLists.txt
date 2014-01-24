@@ -247,6 +247,13 @@ ELSE()
   MESSAGE("skipping MySQL tests")
 ENDIF()
 
+IF(MSSQL_FOUND)
+  SET(mssql ${database})
+  SET(TESTUNITS mssql)
+ELSE()
+  MESSAGE("skipping MSSQL tests")
+ENDIF()
+
 FOREACH(unit ${TESTUNITS})
   FOREACH(test ${${unit}})
     ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
