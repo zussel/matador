@@ -100,106 +100,155 @@ MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
 #FILE(REMOVE ${CMAKE_BINARY_DIR}/test/list.txt)
 
-# add tests
-ADD_TEST(test_oos_convert_bool ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_bool)
-ADD_TEST(test_oos_convert_char_pointer ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_char_pointer)
-ADD_TEST(test_oos_convert_float ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_float)
-ADD_TEST(test_oos_convert_double ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_double)
-ADD_TEST(test_oos_convert_string ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_string)
-ADD_TEST(test_oos_convert_varchar ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_varchar)
-ADD_TEST(test_oos_convert_char ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_char)
-ADD_TEST(test_oos_convert_short ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_short)
-ADD_TEST(test_oos_convert_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_int)
-ADD_TEST(test_oos_convert_long ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_long)
-ADD_TEST(test_oos_convert_unsigned_char ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_unsigned_char)
-ADD_TEST(test_oos_convert_unsigned_short ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_unsigned_short)
-ADD_TEST(test_oos_convert_unsigned_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_unsigned_int)
-ADD_TEST(test_oos_convert_unsigned_long ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec convert:to_unsigned_long)
-ADD_TEST(test_oos_factory_create ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec factory:create)
-ADD_TEST(test_oos_factory_insert ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec factory:insert)
-ADD_TEST(test_oos_factory_list ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec factory:list)
-ADD_TEST(test_oos_actory_produce ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec factory:produce)
-ADD_TEST(test_oos_first_sub1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec first:sub1)
-ADD_TEST(test_oos_first_sub2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec first:sub2)
-ADD_TEST(test_oos_first_sub3 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec first:sub3)
-ADD_TEST(test_oos_json_access ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:access)
-ADD_TEST(test_oos_json_create ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:create)
-ADD_TEST(test_oos_json_number ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:number)
-ADD_TEST(test_oos_json_parser ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:parser)
-ADD_TEST(test_oos_json_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:simple)
-ADD_TEST(test_oos_json_string ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec json:string)
-ADD_TEST(test_oos_list_direct_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:direct_ref)
-ADD_TEST(test_oos_list_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:int)
-ADD_TEST(test_oos_list_linked_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:linked_int)
-ADD_TEST(test_oos_list_linked_ptr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:linked_ptr)
-ADD_TEST(test_oos_list_linked_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:linked_ref)
-ADD_TEST(test_oos_list_linked_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:linked_ref)
-ADD_TEST(test_oos_list_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec list:ref)
-ADD_TEST(test_oos_prototype_empty ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:empty)
-ADD_TEST(test_oos_prototype_find ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:find)
-ADD_TEST(test_oos_prototype_hierarchy ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:hierarchy)
-ADD_TEST(test_oos_prototype_iterator ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:iterator)
-ADD_TEST(test_oos_prototype_one ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:one)
-ADD_TEST(test_oos_prototype_relation ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec prototype:relation)
-ADD_TEST(test_oos_second_big ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec second:big)
-ADD_TEST(test_oos_second_small ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec second:small)
-ADD_TEST(test_oos_store_version ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:version)
-ADD_TEST(test_oos_store_clear ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:clear)
-ADD_TEST(test_oos_store_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:delete)
-ADD_TEST(test_oos_store_expression ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:expression)
-ADD_TEST(test_oos_store_generic ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:generic)
-ADD_TEST(test_oos_store_get ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:get)
-ADD_TEST(test_oos_store_hierarchy ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:hierarchy)
-ADD_TEST(test_oos_store_multiple_object_with_sub ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:multiple_object_with_sub)
-ADD_TEST(test_oos_store_multiple_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:multiple_simple)
-ADD_TEST(test_oos_store_ref_ptr_counter ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:ref_ptr_counter)
-ADD_TEST(test_oos_store_serializer ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:serializer)
-ADD_TEST(test_oos_store_set ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:set)
-ADD_TEST(test_oos_store_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:simple)
-ADD_TEST(test_oos_store_structure ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:structure)
-ADD_TEST(test_oos_store_sub_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:sub_delete)
-ADD_TEST(test_oos_store_view ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:view)
-ADD_TEST(test_oos_store_with_sub ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec store:with_sub)
-ADD_TEST(test_oos_varchar_assign ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec varchar:assign)
-ADD_TEST(test_oos_varchar_copy ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec varchar:copy)
-ADD_TEST(test_oos_varchar_create ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec varchar:create)
-ADD_TEST(test_oos_vector_direct_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:direct_ref)
-ADD_TEST(test_oos_vector_int ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:int)
-ADD_TEST(test_oos_vector_ptr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:ptr)
-ADD_TEST(test_oos_vector_ref ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec vector:ref)
+# convert tests
+SET(convert
+  to_bool
+  to_char_pointer
+  to_float
+  to_double
+  to_string
+  to_varchar
+  to_char
+  to_short
+  to_int
+  to_long
+  to_unsigned_char
+  to_unsigned_short
+  to_unsigned_int
+  to_unsigned_long
+)
 
+# factory tests
+SET(factory
+  create
+  insert
+  list
+  produce
+)
+
+# first tests
+SET(first
+  sub1
+  sub2
+  sub3
+)
+
+# second tests
+SET(second
+  small
+  big
+)
+
+# json tests
+SET(json
+  access
+  create
+  number
+  parser
+  simple
+  string
+)
+
+# list tests
+SET(list
+  direct_ref
+  int
+  ptr
+  ref
+  linked_int
+  linked_ptr
+  linked_ref
+)
+
+# vector tests
+SET(vector
+  direct_ref
+  int
+  ptr
+  ref
+)
+
+# prototype tests
+SET(prototype
+  empty
+  find
+  hierarchy
+  iterator
+  one
+  relation
+)
+
+# object store tests
+SET(store
+  version
+  clear
+  delete
+  expression
+  generic
+  get
+  hierarchy
+  multiple_object_with_sub
+  multiple_simple
+  ref_ptr_counter
+  serializer
+  set
+  simple
+  structure
+  sub_delete
+  view
+  with_sub
+)
+
+# varchar tests
+SET(varchar
+  assign
+  copy
+  create
+)
+
+SET(TESTUNITS convert)
+SET(TESTUNITS factory)
+SET(TESTUNITS first)
+SET(TESTUNITS second)
+SET(TESTUNITS json)
+SET(TESTUNITS list)
+SET(TESTUNITS vector)
+SET(TESTUNITS prototype)
+SET(TESTUNITS store)
+SET(TESTUNITS varchar)
+
+SET(database
+  open_close
+  create_drop
+  reopen
+  insert
+  update
+  delete
+  datatypes
+  simple
+  complex
+  list
+  vector
+  reload
+  container
+)
+  
 IF(SQLITE3_FOUND)
-  ADD_TEST(test_oos_sqlite_open_close ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:open_close)
-  ADD_TEST(test_oos_sqlite_create_drop ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:create_drop)
-  ADD_TEST(test_oos_sqlite_reopen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:reopen)
-  ADD_TEST(test_oos_sqlite_insert ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:insert)
-  ADD_TEST(test_oos_sqlite_update ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:update)
-  ADD_TEST(test_oos_sqlite_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:delete)
-  ADD_TEST(test_oos_sqlite_datatypes ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:datatypes)
-  ADD_TEST(test_oos_sqlite_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:simple)
-  ADD_TEST(test_oos_sqlite_complex ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:complex)
-  ADD_TEST(test_oos_sqlite_list ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:list)
-  ADD_TEST(test_oos_sqlite_vector ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:vector)
-  ADD_TEST(test_oos_sqlite_reload ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:reload)
-  ADD_TEST(test_oos_sqlite_reload_container ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec sqlite:container)
+  SET(sqlite ${database})
+  SET(TESTUNITS sqlite)
 ELSE()
   MESSAGE("skipping SQLite tests")
 ENDIF()
 
 IF(MYSQL_FOUND)
-  ADD_TEST(test_oos_mysql_open_close ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:open_close)
-  ADD_TEST(test_oos_mysql_create_drop ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:create_drop)
-  ADD_TEST(test_oos_mysql_reopen ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:reopen)
-  ADD_TEST(test_oos_mysql_insert ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:insert)
-  ADD_TEST(test_oos_mysql_update ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:update)
-  ADD_TEST(test_oos_mysql_delete ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:delete)
-  ADD_TEST(test_oos_mysql_simple ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:simple)
-  ADD_TEST(test_oos_mysql_datatypes ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:datatypes)
-  ADD_TEST(test_oos_mysql_complex ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:complex)
-  ADD_TEST(test_oos_mysql_list ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:list)
-  ADD_TEST(test_oos_mysql_vector ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:vector)
-  ADD_TEST(test_oos_mysql_reload ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:reload)
-  ADD_TEST(test_oos_mysql_reload_container ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec mysql:container)
+  SET(mysql ${database})
+  SET(TESTUNITS mysql)
 ELSE()
   MESSAGE("skipping MySQL tests")
 ENDIF()
+
+FOREACH(unit ${TESTUNITS})
+  FOREACH(test ${${unit}})
+    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
+  ENDFOREACH(test)
+ENDFOREACH(unit)
