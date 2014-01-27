@@ -31,11 +31,11 @@ ELSEIF(CMAKE_COMPILER_IS_GNUCXX)
         "Flags used by the C compiler during coverage builds."
         FORCE )
     SET( CMAKE_EXE_LINKER_FLAGS_COVERAGE
-        "-fprofile-arcs -ftest-coverage -lgcov" CACHE STRING
+        "-fprofile-arcs -ftest-coverage" CACHE STRING
         "Flags used for linking binaries during coverage builds."
         FORCE )
     SET( CMAKE_SHARED_LINKER_FLAGS_COVERAGE
-        "-Wl,--warn-unresolved-symbols,--warn-once -fprofile-arcs -ftest-coverage -lgcov" CACHE STRING
+        "-Wl,--warn-unresolved-symbols,--warn-once -fprofile-arcs -ftest-coverage" CACHE STRING
         "Flags used by the shared libraries linker during coverage builds."
         FORCE )
     MARK_AS_ADVANCED(
@@ -83,6 +83,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 IF (NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "No build type selected, default to Release")
   SET(CMAKE_BUILD_TYPE "Release")
+ELSE()
+  MESSAGE(STATUS "Current build type ${CMAKE_BUILD_TYPE}")
 ENDIF()
 
 # Put the libaries and binaries that get built into directories at the
