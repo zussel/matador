@@ -255,7 +255,7 @@ ELSE()
   MESSAGE("skipping MySQL tests")
 ENDIF()
 
-IF(MSSQL_FOUND)
+IF(ODBC_FOUND)
   SET(mssql ${database})
   SET(TESTUNITS mssql)
 ELSE()
