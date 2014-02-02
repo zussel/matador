@@ -55,6 +55,15 @@ public:
    * @param val The value of json_bool.
    */
   json_bool(bool val);
+
+  /**
+   * Creates a new json_bool and initializes
+   * the value with the given json_value.
+   * 
+   * @param x The json_value to set.
+   */
+  json_bool(const json_value &x);
+
   virtual ~json_bool(void);
 
   virtual bool parse(std::istream &in);

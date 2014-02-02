@@ -15,6 +15,17 @@ json_bool::json_bool(bool val)
   , value_(val)
 {}
 
+json_bool::json_bool(const json_value &x)
+  : json_type("json_bool")
+{
+  const json_bool *b = x.value_type<json_bool>();
+  if (b) {
+    value_ = b->value();
+  } else {
+    throw std::logic_error("json_value isn't of type json_bool");
+  }
+}
+
 json_bool::~json_bool(void)
 {}
 

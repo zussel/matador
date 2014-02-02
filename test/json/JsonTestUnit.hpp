@@ -10,8 +10,10 @@ public:
   ~JsonTestUnit();
   
   void simple_test();
+  void bool_test();
   void string_test();
   void number_test();
+  void array_test();
   void create_test();
   void access_test();
   void parser_test();

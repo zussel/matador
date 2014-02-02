@@ -95,7 +95,7 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Coverage")
   
   INCLUDE(CodeCoverage)
   
-  setup_target_for_coverage(coverage test_oos coverage "exec;all")
+  setup_target_for_coverage(coverage test_oos coverage "exec;json")
 ENDIF()
 
 #SET(OOS_TESTS)
@@ -151,8 +151,10 @@ SET(second
 SET(json
   access
   create
+  bool
   number
   parser
+  array
   simple
   string
 )
