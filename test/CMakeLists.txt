@@ -76,10 +76,6 @@ CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IM
 
 TARGET_LINK_LIBRARIES(test_oos oos ${CMAKE_DL_LIBS})
 
-ADD_CUSTOM_COMMAND(TARGET test_oos POST_BUILD
-                   COMMAND test_oos list brief > list.txt
-                   COMMAND echo `pwd`)
-
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
@@ -97,16 +93,6 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Coverage")
   
   setup_target_for_coverage(coverage test_oos coverage "exec;json")
 ENDIF()
-
-#SET(OOS_TESTS)
-#FILE(STRINGS ${CMAKE_BINARY_DIR}/test/list.txt OOS_TESTS)
-
-#FOREACH (T ${OOS_TESTS})
-#  MESSAGE(STATUS "Adding test ${T}")
-#  ADD_TEST(test_greeter_${T} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${T})
-#ENDFOREACH(T)
-
-#FILE(REMOVE ${CMAKE_BINARY_DIR}/test/list.txt)
 
 # convert tests
 SET(convert
@@ -216,16 +202,18 @@ SET(varchar
   create
 )
 
-SET(TESTUNITS convert)
-SET(TESTUNITS factory)
-SET(TESTUNITS first)
-SET(TESTUNITS second)
-SET(TESTUNITS json)
-SET(TESTUNITS list)
-SET(TESTUNITS vector)
-SET(TESTUNITS prototype)
-SET(TESTUNITS store)
-SET(TESTUNITS varchar)
+SET(TESTUNITS)
+
+LIST(APPEND TESTUNITS convert)
+LIST(APPEND TESTUNITS factory)
+LIST(APPEND TESTUNITS first)
+LIST(APPEND TESTUNITS second)
+LIST(APPEND TESTUNITS json)
+LIST(APPEND TESTUNITS list)
+LIST(APPEND TESTUNITS vector)
+LIST(APPEND TESTUNITS prototype)
+LIST(APPEND TESTUNITS store)
+LIST(APPEND TESTUNITS varchar)
 
 SET(database
   open_close
@@ -245,21 +233,21 @@ SET(database
   
 IF(SQLITE3_FOUND)
   SET(sqlite ${database})
-  SET(TESTUNITS sqlite)
+  LIST(APPEND TESTUNITS sqlite)
 ELSE()
   MESSAGE("skipping SQLite tests")
 ENDIF()
 
 IF(MYSQL_FOUND)
   SET(mysql ${database})
-  SET(TESTUNITS mysql)
+  LIST(APPEND TESTUNITS mysql)
 ELSE()
   MESSAGE("skipping MySQL tests")
 ENDIF()
 
-IF(ODBC_FOUND)
+IF(ODBC_FOUND AND OOS_ODBC)
   SET(mssql ${database})
-  SET(TESTUNITS mssql)
+  LIST(APPEND TESTUNITS mssql)
 ELSE()
   MESSAGE("skipping MSSQL tests")
 ENDIF()
@@ -267,5 +255,6 @@ ENDIF()
 FOREACH(unit ${TESTUNITS})
   FOREACH(test ${${unit}})
     ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
+    MESSAGE(STATUS "add test ${unit}:${test}")
   ENDFOREACH(test)
 ENDFOREACH(unit)
