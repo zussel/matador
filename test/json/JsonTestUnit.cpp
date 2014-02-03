@@ -13,6 +13,7 @@ JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test unit")
 {
   add_test("simple", std::tr1::bind(&JsonTestUnit::simple_test, this), "simple json test");
+  add_test("null", std::tr1::bind(&JsonTestUnit::null_test, this), "null json test");
   add_test("bool", std::tr1::bind(&JsonTestUnit::bool_test, this), "bool json test");
   add_test("string", std::tr1::bind(&JsonTestUnit::string_test, this), "string json test");
   add_test("number", std::tr1::bind(&JsonTestUnit::number_test, this), "number json test");
@@ -44,6 +45,46 @@ void JsonTestUnit::simple_test()
   //cout << "\n" << obj << "\n";
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
+}
+
+void JsonTestUnit::null_test()
+{
+  json_null n;
+
+  std::stringstream in;
+  
+  in << "null";
+  
+  bool ret = n.parse(in);
+
+  UNIT_ASSERT_EQUAL(ret, true, "parsing unexpectly failed");
+  
+  in.str("");
+  in.clear();
+  
+  ret = n.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+  
+  in.str("");
+  in.clear();
+  in << "nut";
+  
+  ret = n.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+  
+  in.str("");
+  in.clear();
+  in << "nul";
+  
+  ret = n.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+  
+  in.str("");
+  in.clear();
+  in << "full";
+  
+  ret = n.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
 }
 
 void JsonTestUnit::bool_test()
@@ -186,6 +227,24 @@ void JsonTestUnit::array_test()
   size_t s = a.size();
   
   UNIT_ASSERT_TRUE(s == 2, "size of json array must be 2");
+  
+  // check clear and empty
+  a.clear();  
+  UNIT_ASSERT_TRUE(a.empty(), "json array must be empty");
+
+  // check parsing
+  stringstream in;
+  in << "  [ 1, true, \"hallo\"]";
+  
+  bool ret = a.parse(in);
+  UNIT_ASSERT_EQUAL(ret, true, "parsing unexpectly failed");
+  UNIT_ASSERT_EQUAL(a.size(), 3, "values are not equal");
+  
+  json_value jv(new json_array);
+  jv.push_back(1);
+  jv.push_back(2);
+  a = jv;
+  UNIT_ASSERT_EQUAL(a.size(), 2, "values are not equal");
 }
 
 void JsonTestUnit::create_test()
