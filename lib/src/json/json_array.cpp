@@ -130,6 +130,26 @@ bool json_array::empty() const
   return value_vector_.empty();
 }
 
+json_value& json_array::operator[](size_t index)
+{
+  return value_vector_[index];
+}
+
+const json_value& json_array::operator[](size_t index) const
+{
+  return value_vector_[index];
+}
+
+void json_array::push_back(const json_value &x)
+{
+  value_vector_.push_back(x);
+}
+
+size_t json_array::size() const
+{
+  return value_vector_.size();
+}
+
 std::istream& operator>>(std::istream &str, json_array &ary)
 {
   ary = json_type::parser.parse(str);
