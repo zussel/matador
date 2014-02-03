@@ -117,6 +117,12 @@ public:
   bool empty() const;
 
   /**
+   * Remove all elements from
+   * the array
+   */
+  void clear();
+
+  /**
    * Returns a json_value at the given index.
    * 
    * @param index The index of the json_value.

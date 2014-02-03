@@ -130,6 +130,11 @@ bool json_array::empty() const
   return value_vector_.empty();
 }
 
+void json_array::clear()
+{
+  value_vector_.clear();
+}
+
 json_value& json_array::operator[](size_t index)
 {
   return value_vector_[index];
