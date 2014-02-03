@@ -140,7 +140,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is 
 # started.
 
-STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/include
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/lib/include
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -661,7 +661,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/include \
+INPUT                  = @PROJECT_SOURCE_DIR@/lib/include \
                          @PROJECT_SOURCE_DIR@/doc/doxygen/main.dox \
                          @PROJECT_SOURCE_DIR@/doc/doxygen/store.dox \
                          @PROJECT_SOURCE_DIR@/doc/doxygen/objects.dox \
@@ -731,9 +731,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = @PROJECT_SOURCE_DIR@/include/database/sqlite \
-                         @PROJECT_SOURCE_DIR@/include/database/mysql \
-                         @PROJECT_SOURCE_DIR@/include/database/mssql
+EXCLUDE                = 
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 

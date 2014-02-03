@@ -51,31 +51,11 @@ ELSEIF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF()
 
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
-MESSAGE(STATUS "Architecture OSX: ${CMAKE_OSX_ARCHITECTURES}")
-MESSAGE(STATUS "Architecture Size: ${CMAKE_SIZEOF_VOID_P}")
 MESSAGE(STATUS "Architecture System: ${CMAKE_SYSTEM_NAME}")
 
 
 SET(SYSTEM_NAME_LOWER)
 STRING(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
-
-FIND_PACKAGE(Doxygen)
-
-if(DOXYGEN_FOUND)
-    MESSAGE(STATUS "Doxygen detected")
-    # Configure the Template Doxyfile for our specific project
-    configure_file(doc/doxygen/oos-api.dxy.in ${PROJECT_BINARY_DIR}/oos-api.dxy @ONLY IMMEDIATE)
-    configure_file(doc/doxygen/oos.dxy.in ${PROJECT_BINARY_DIR}/oos.dxy @ONLY IMMEDIATE)
-    # Add a custom target to run Doxygen when ever the project is built
-    #add_custom_target (doc ALL 
-    add_custom_target (doc
-  										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
-  										 COMMENT "Generating API documentation with Doxygen" VERBATIM)
-    add_custom_target (web
-  										 COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
-  										 COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
-ENDIF(DOXYGEN_FOUND)
 
 # add module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -103,35 +83,32 @@ ELSE()
   SET(CMAKE_MODULE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 ENDIF()
 
-MESSAGE(STATUS "Looking for SQLite3")
-FIND_PACKAGE(SQLite3)
-IF(SQLITE3_FOUND)
-	MESSAGE(STATUS "Found SQLite3")
-ELSE(SQLITE3_FOUND)
-  MESSAGE(STATUS "SQLite not found - not building backend")
-ENDIF(SQLITE3_FOUND)
-
-MESSAGE(STATUS "Looking for MySQL")
-FIND_PACKAGE(MySQL)
-IF(MYSQL_FOUND)
-	MESSAGE(STATUS "Found MySQL")
-ELSE(MYSQL_FOUND)
-  MESSAGE(STATUS "MySQL not found - not building backend")
-ENDIF(MYSQL_FOUND)
-
-MESSAGE(STATUS "Looking for ODBC")
-FIND_PACKAGE(ODBC)
-IF(ODBC_FOUND)
-	MESSAGE(STATUS "Found ODBC")
-ELSE(ODBC_FOUND)
-  MESSAGE(STATUS "ODBC not found - not building backend")
-ENDIF(ODBC_FOUND)
-
 #
 # configure include dir
 #
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib/include)
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+SET(BACKENDS
+  SQLite3
+  MySQL
+  ODBC
+)
+
+FOREACH(backend ${BACKENDS})
+  STRING(TOUPPER ${backend} BACKEND_UPPER)
+  OPTION(OOS_${BACKEND_UPPER} "Enable or disable backend ${backend}" TRUE)
+  
+  IF (OOS_${BACKEND_UPPER})
+    FIND_PACKAGE(${backend})
+    IF (${BACKEND_UPPER}_FOUND)
+      MESSAGE(STATUS "Found backend ${backend}")
+    ELSE()
+      MESSAGE(STATUS "No backend ${backend}")
+    ENDIF()
+  ELSE()
+    MESSAGE(STATUS "Backend ${backend} disabled")
+  ENDIF()
+ENDFOREACH(backend)
 
 IF (SQLITE3_FOUND)
   MESSAGE(STATUS "Adding SQLite3 include directory")
@@ -146,13 +123,6 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
-CONFIGURE_FILE (${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
-
-#GET_PROPERTY(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-#FOREACH(dir ${dirs})
-#  MESSAGE(STATUS "include dir='${dir}'")
-#ENDFOREACH()
-
 # contains the full path to the top level directory of your build tree 
 MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
 
@@ -163,7 +133,10 @@ MESSAGE( STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
 MESSAGE( STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR} )
 
 ENABLE_TESTING()
-ADD_SUBDIRECTORY(src)
+
+ADD_SUBDIRECTORY(lib)
+ADD_SUBDIRECTORY(db)
+ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
 
 #INSTALL(
@@ -187,8 +160,8 @@ INSTALL(
 
 # Basic CPack configuration   
 SET(CPACK_PACKAGE_NAME "oos")
-SET(CPACK_PACKAGE_VENDOR "Elephant Sky")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your object in one container")
+SET(CPACK_PACKAGE_VENDOR "zussel-soft")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your objects in one container")
 SET(CPACK_PACKAGE_VERSION "0.2.1")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "2")

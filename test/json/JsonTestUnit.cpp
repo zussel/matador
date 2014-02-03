@@ -13,8 +13,10 @@ JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test unit")
 {
   add_test("simple", std::tr1::bind(&JsonTestUnit::simple_test, this), "simple json test");
+  add_test("bool", std::tr1::bind(&JsonTestUnit::bool_test, this), "bool json test");
   add_test("string", std::tr1::bind(&JsonTestUnit::string_test, this), "string json test");
   add_test("number", std::tr1::bind(&JsonTestUnit::number_test, this), "number json test");
+  add_test("array", std::tr1::bind(&JsonTestUnit::array_test, this), "array json test");
   add_test("create", std::tr1::bind(&JsonTestUnit::create_test, this), "create json test");
   add_test("access", std::tr1::bind(&JsonTestUnit::access_test, this), "access json test");
   add_test("parser", std::tr1::bind(&JsonTestUnit::parser_test, this), "parser json test");
@@ -42,6 +44,80 @@ void JsonTestUnit::simple_test()
   //cout << "\n" << obj << "\n";
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
+}
+
+void JsonTestUnit::bool_test()
+{
+  json_bool b;
+  
+  bool v = b.value();
+
+  UNIT_ASSERT_EQUAL(v, true, "values are not equal");
+  
+  b.value(false);
+
+  UNIT_ASSERT_EQUAL(b.value(), false, "values are not equal");
+
+  bool failed = true;
+  try {
+    json_bool b2(json_value("hallo"));
+  } catch (std::logic_error &ex) {
+    failed = false;
+  }
+  UNIT_ASSERT_EQUAL(failed, false, "invalid json_bool initialization");
+  
+  std::stringstream in;
+  
+  in << "true";
+  
+  bool ret = b.parse(in);
+
+  UNIT_ASSERT_EQUAL(ret, true, "parsing unexpectly failed");
+  UNIT_ASSERT_EQUAL(v, true, "values are not equal");
+
+  in.str("");
+  in << "false";
+  
+  ret = b.parse(in);
+  
+  v = b.value();
+
+  UNIT_ASSERT_EQUAL(ret, true, "parsing unexpectly failed");
+  UNIT_ASSERT_EQUAL(v, false, "values are not equal");
+  
+  in.str("");
+  in.clear();
+  
+  ret = b.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+  
+  in.str("");
+  in.clear();
+  in << "tro";
+  
+  ret = b.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+
+  in.str("");
+  in.clear();
+  in << "tru";
+  
+  ret = b.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+
+  in.str("");
+  in.clear();
+  in << "falz";
+  
+  ret = b.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
+
+  in.str("");
+  in.clear();
+  in << "fals";
+  
+  ret = b.parse(in);
+  UNIT_ASSERT_EQUAL(ret, false, "parsing unexpectly successed");
 }
 
 void JsonTestUnit::string_test()
@@ -77,6 +153,39 @@ void JsonTestUnit::number_test()
     
     UNIT_ASSERT_EQUAL(numb.value(), 1.99998E+10, "values are not equal");
   }
+}
+
+void JsonTestUnit::array_test()
+{
+  json_array a;
+  
+  bool failed = true;
+  try {
+    json_array a2(json_value("hallo"));
+  } catch (std::logic_error &ex) {
+    failed = false;
+  }
+  UNIT_ASSERT_EQUAL(failed, false, "invalid json_array initialization");
+
+  UNIT_ASSERT_TRUE(a.empty(), "json array must be empty");
+
+  a.push_back(true);
+  
+  json_bool b = a[0];
+  
+  a.push_back("hallo");
+  
+  json_value& v = a[1];
+
+  UNIT_ASSERT_TRUE(v.is_type<json_string>(), "values must be equal");
+
+  const json_value& cv = a[0];
+  
+  UNIT_ASSERT_TRUE(cv.is_type<json_bool>(), "values must be equal");
+
+  size_t s = a.size();
+  
+  UNIT_ASSERT_TRUE(s == 2, "size of json array must be 2");
 }
 
 void JsonTestUnit::create_test()
