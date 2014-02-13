@@ -53,7 +53,7 @@ IF(NOT CMAKE_COMPILER_IS_GNUCXX)
 	ENDIF()
 ENDIF() # NOT CMAKE_COMPILER_IS_GNUCXX
 
-IF ( NOT CMAKE_BUILD_TYPE STREQUAL "Coverage")
+IF ( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
   MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
 ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
@@ -62,11 +62,12 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 # Param _testrunner     The name of the target which runs the tests.
 #						MUST return ZERO always, even on errors. 
 #						If not, no coverage report will be created!
+# Param _sourcedir      The directory of sources where lcov should be run
 # Param _outputname     lcov output is generated as _outputname.info
 #                       HTML report is generated in _outputname/index.html
-# Optional fourth parameter is passed as arguments to _testrunner
+# Optional fifth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
+FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _sourcedir _outputname)
 
 	IF(NOT LCOV_PATH)
 		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
@@ -80,13 +81,13 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 	ADD_CUSTOM_TARGET(${_targetname}
 		
 		# Cleanup lcov
-		${LCOV_PATH} --directory . --zerocounters
+		${LCOV_PATH} --directory ${_sourcedir} --zerocounters
 		
 		# Run tests
-		COMMAND ${_testrunner} ${ARGV3}
+		COMMAND ${_testrunner} ${ARGV4}
 		
 		# Capturing lcov counters and generating report
-		COMMAND ${LCOV_PATH} --directory lib --capture --output-file ${_outputname}.info
+		COMMAND ${LCOV_PATH} --directory ${_sourcedir} --capture --output-file ${_outputname}.info
 		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned

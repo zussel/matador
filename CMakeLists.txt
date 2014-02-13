@@ -22,32 +22,6 @@ ELSEIF(CMAKE_COMPILER_IS_GNUCXX)
         MESSAGE(STATUS "Version <= 4.6")
         SET(CMAKE_CXX_FLAGS "-std=c++0x -std=gnu++0x -Wextra -Wall -pedantic")
     endif()
-
-    MESSAGE(STATUS "GCC detected - Adding profile build type")
-    SET(CMAKE_CXX_FLAGS_COVERAGE "-g -O0 -Wall -fprofile-arcs -ftest-coverage" CACHE STRING
-        "Flags used by the C++ compiler during coverage builds."
-        FORCE )
-    SET( CMAKE_C_FLAGS_COVERAGE "-g -O0 -Wall -W -fprofile-arcs -ftest-coverage" CACHE STRING
-        "Flags used by the C compiler during coverage builds."
-        FORCE )
-    SET( CMAKE_EXE_LINKER_FLAGS_COVERAGE
-        "-fprofile-arcs -ftest-coverage" CACHE STRING
-        "Flags used for linking binaries during coverage builds."
-        FORCE )
-    SET( CMAKE_SHARED_LINKER_FLAGS_COVERAGE
-        "-Wl,--warn-unresolved-symbols,--warn-once -fprofile-arcs -ftest-coverage" CACHE STRING
-        "Flags used by the shared libraries linker during coverage builds."
-        FORCE )
-    MARK_AS_ADVANCED(
-        CMAKE_CXX_FLAGS_COVERAGE
-        CMAKE_C_FLAGS_COVERAGE
-        CMAKE_EXE_LINKER_FLAGS_COVERAGE
-        CMAKE_SHARED_LINKER_FLAGS_COVERAGE
-    )
-    # Update the documentation string of CMAKE_BUILD_TYPE for GUIs
-    SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Coverage."
-        FORCE )
 ENDIF()
 
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
@@ -66,6 +40,29 @@ IF (NOT CMAKE_BUILD_TYPE)
 ELSE()
   MESSAGE(STATUS "Current build type ${CMAKE_BUILD_TYPE}")
 ENDIF()
+
+option(COVERALLS "Enable generation and sending of coveralls data" false)
+option(COVERAGE "Enable generation of code coverage" false)
+
+include(CodeCoverage)
+include(Coveralls)
+
+if ((COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message(STATUS "will generate coverage data")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
+  set(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
+  #SET(CMAKE_SHARED_LINKER_FLAGS="-fprofile-arcs -ftest-coverage")
+  set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+  
+  if (COVERAGE)
+    setup_target_for_coverage(coverage test_oos lib coverage "exec:all")
+  endif()
+  
+  if (COVERALLS)
+    setup_target_for_coveralls(coveralls test_oos lib "exec:all")
+  endif()
+
+endif()
 
 # Put the libaries and binaries that get built into directories at the
 # top of the build tree rather than in hard-to-find leaf
