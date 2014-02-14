@@ -9,9 +9,13 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
   - make
   - make test
+
+after_success:
+  - make coveralls
+  - ./coveralls-upload
 
 branches:
   only:
