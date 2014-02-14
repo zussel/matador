@@ -28,10 +28,10 @@
 #include "object/ObjectListTestUnit.hpp"
 #include "object/ObjectVectorTestUnit.hpp"
 
+
 #include "database/SQLiteDatabaseTestUnit.hpp"
 #include "database/MySQLDatabaseTestUnit.hpp"
 #include "database/MSSQLDatabaseTestUnit.hpp"
-
 #include "json/JsonTestUnit.hpp"
 
 #include "unit/test_suite.hpp"
@@ -54,8 +54,12 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new ObjectStoreTestUnit());
   test_suite::instance().register_unit(new ObjectListTestUnit());
   test_suite::instance().register_unit(new ObjectVectorTestUnit());
+#if MYSQL_FOUND
   test_suite::instance().register_unit(new MySQLDatabaseTestUnit());
+#endif
+#if ODBC_FOUND
   test_suite::instance().register_unit(new MSSQLDatabaseTestUnit());
+#endif
   test_suite::instance().register_unit(new SQLiteDatabaseTestUnit());
 
   test_suite::instance().register_unit(new JsonTestUnit());

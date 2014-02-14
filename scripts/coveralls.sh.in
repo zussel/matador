@@ -68,8 +68,8 @@ do
   cat >>coverage.json <<EOF
     {
       "name": "${srcname//$SOURCE_PREFIX\//}",
-      "source": "$(tail -n +3 ${file} | cut -d ':' -f 3- | sed -re 's%\\%\\\\%g; s%"%\\"%g; s%\t%\\t%g; s%$%\\n%' | tr -d $'\n' | sed -re 's%\\n$%%')",
-      "coverage": [$(tail -n +3 ${file} | cut -d ':' -f 1 | sed -re 's%^ +%%g; s%-([0-9]+)%\1%; s%-%null%g; s%^[#=]+$%0%;' | tr $'\n' ',' | sed -re 's%,$%%')]
+      "source": "$(tail -n +6 ${file} | cut -d ':' -f 3- | sed -re 's%\\%\\\\%g; s%"%\\"%g; s%\t%\\t%g; s%$%\\n%' | tr -d $'\n' | sed -re 's%\\n$%%')",
+      "coverage": [$(tail -n +6 ${file} | cut -d ':' -f 1 | sed -re 's%^ +%%g; s%-([0-9]+)%\1%; s%-%null%g; s%^[#=]+$%0%;' | tr $'\n' ',' | sed -re 's%,$%%')]
     },
 EOF
 done
@@ -82,4 +82,4 @@ rm coverage.json.tmp
 
 curl -F json_file=@coverage.json https://coveralls.io/api/v1/jobs
 
-$(find * -name '*.gc*' -type f -exec rm {} \;)
+$(find * -name '*.gcov' -type f -exec rm {} \;)
