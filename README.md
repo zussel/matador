@@ -5,7 +5,8 @@ __Verion 0.2.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
 
 Store all kind of objects in one container.
 
-Build status at [travis-ci](https://travis-ci.org)
+Build status at [travis-ci](https://travis-ci.org),
+Code coverage at [coveralls.io](https://coveralls.io)
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=develop)](https://coveralls.io/r/zussel/oos?branch=develop)
