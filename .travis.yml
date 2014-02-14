@@ -16,7 +16,6 @@ script:
 branches:
   only:
     - develop
-    - master
 
 notifications:
   email:
