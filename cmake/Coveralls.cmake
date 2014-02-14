@@ -37,7 +37,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERALLS _targetname _testrunner _sourcedir)
   # add target for coverage by gcov
   ADD_CUSTOM_TARGET(${_targetname}
     # Run tests
-		COMMAND ${_testrunner} ${ARGV3}
+	COMMAND ${_testrunner} ${ARGV3}
   )
 
 ENDFUNCTION()

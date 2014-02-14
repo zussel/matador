@@ -55,11 +55,11 @@ if ((COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
   
   if (COVERAGE)
-    setup_target_for_coverage(coverage test_oos lib coverage "exec:all")
+    setup_target_for_coverage(coverage test_oos lib coverage "exec;all")
   endif()
   
   if (COVERALLS)
-    setup_target_for_coveralls(coveralls test_oos lib "exec:all")
+    setup_target_for_coveralls(coveralls test_oos lib "exec;all")
   endif()
 
 endif()
