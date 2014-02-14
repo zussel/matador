@@ -78,6 +78,10 @@ DatabaseTestUnit::finalize()
 void
 DatabaseTestUnit::test_open_close()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   // create database and make object store known to the database
   session *db = create_session();
 
@@ -93,6 +97,10 @@ DatabaseTestUnit::test_open_close()
 void
 DatabaseTestUnit::test_create_drop()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   // create database and make object store known to the database
   session *db = create_session();
 
@@ -111,6 +119,10 @@ DatabaseTestUnit::test_create_drop()
 
 void DatabaseTestUnit::test_reopen()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   // create database and make object store known to the database
   session *db = create_session();
 
@@ -131,6 +143,10 @@ void DatabaseTestUnit::test_reopen()
 
 void DatabaseTestUnit::test_datatypes()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
@@ -138,11 +154,8 @@ void DatabaseTestUnit::test_datatypes()
   session *db = create_session();
 
   try {
-    // load data
+    // create database
     db->create();
-
-    // load data
-    db->load();
   } catch (exception &ex) {
     UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
@@ -237,6 +250,10 @@ void DatabaseTestUnit::test_datatypes()
 void
 DatabaseTestUnit::test_drop()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   // create database and make object store known to the database
   session *db = create_session();
 
@@ -253,6 +270,10 @@ DatabaseTestUnit::test_drop()
 
 void DatabaseTestUnit::test_insert()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
@@ -295,6 +316,10 @@ void DatabaseTestUnit::test_insert()
 
 void DatabaseTestUnit::test_update()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
@@ -338,6 +363,10 @@ void DatabaseTestUnit::test_update()
 
 void DatabaseTestUnit::test_delete()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
@@ -496,7 +525,7 @@ DatabaseTestUnit::test_with_sub()
    * because there is already a car object
    * with id 1
    ****************/
-  db->load();
+//  db->load();
 
   // create new transaction    
   transaction tr(*db);
@@ -570,9 +599,6 @@ DatabaseTestUnit::test_with_list()
 
   // load data
   db->create();
-
-  // load db
-  db->load();
 
   // create new transaction    
   transaction tr(*db);
@@ -665,9 +691,6 @@ DatabaseTestUnit::test_with_vector()
   // load data
   db->create();
 
-  // load db
-  db->load();
-
   // create new transaction    
   transaction tr(*db);
   try {
@@ -750,6 +773,10 @@ DatabaseTestUnit::test_with_vector()
 void
 DatabaseTestUnit::test_reload_simple()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
@@ -759,9 +786,6 @@ DatabaseTestUnit::test_reload_simple()
   try {
     // load data
     db->create();
-
-    // load data
-    db->load();
   } catch (exception &ex) {
     UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
@@ -830,6 +854,10 @@ DatabaseTestUnit::test_reload_simple()
 void
 DatabaseTestUnit::test_reload()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef ObjectItem<Item> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<Item> item_ptr;
@@ -841,9 +869,6 @@ DatabaseTestUnit::test_reload()
   try {
     // load data
     db->create();
-
-    // load data
-    db->load();
   } catch (exception &ex) {
     UNIT_FAIL("couldn't create and load database: " << ex.what());
   }
@@ -919,6 +944,10 @@ DatabaseTestUnit::test_reload()
 void
 DatabaseTestUnit::test_reload_container()
 {
+  if (db_ == "memory") {
+    return;
+  }
+
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;
   
@@ -927,9 +956,6 @@ DatabaseTestUnit::test_reload_container()
 
   // load data
   db->create();
-
-  // load db
-  db->load();
 
   // create new transaction    
   transaction tr(*db);

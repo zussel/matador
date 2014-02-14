@@ -29,7 +29,7 @@ class session;
 class DatabaseTestUnit : public oos::unit_test
 {
 protected:
-  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db);
+  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
 
 public:
   virtual ~DatabaseTestUnit();

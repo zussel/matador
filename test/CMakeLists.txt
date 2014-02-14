@@ -47,6 +47,8 @@ SET (TEST_DATABASE_SOURCES
   database/MySQLDatabaseTestUnit.hpp
   database/MSSQLDatabaseTestUnit.cpp
   database/MSSQLDatabaseTestUnit.hpp
+  database/MemoryDatabaseTestUnit.cpp
+  database/MemoryDatabaseTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)
