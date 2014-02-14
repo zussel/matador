@@ -8,6 +8,7 @@ Store all kind of objects in one container.
 Build status at [travis-ci](https://travis-ci.org)
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
+[![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=master)](https://coveralls.io/r/zussel/oos?branch=master)
 [![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
 
 
