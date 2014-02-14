@@ -9,7 +9,7 @@ Build status at [travis-ci](https://travis-ci.org),
 Code coverage at [coveralls.io](https://coveralls.io)
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
-[![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=develop)](https://coveralls.io/r/zussel/oos?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=develop#)](https://coveralls.io/r/zussel/oos?branch=develop#)
 [![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
 
 
