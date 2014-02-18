@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/zussel/oos.png?label=ready)](https://waffle.io/zussel/oos)
 Open Object Store (OOS)
 =======================
 
