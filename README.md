@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/zussel/oos.png?label=ready)](https://waffle.io/zussel/oos)
 Open Object Store (OOS)
 =======================
 
@@ -10,6 +9,7 @@ Build status at [travis-ci](https://travis-ci.org)
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=master)](https://coveralls.io/r/zussel/oos?branch=master)
+[![Stories in Ready](https://badge.waffle.io/zussel/oos.png?label=ready)](https://waffle.io/zussel/oos)
 [![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
 
 
