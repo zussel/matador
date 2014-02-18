@@ -14,6 +14,9 @@ public:
   
   void empty_store();
   void test_find();
+  void test_size();
+  void test_is_parent_of();
+  void test_decrement();
   void one_prototype();
   void prototype_hierachy();
   void prototype_traverse();

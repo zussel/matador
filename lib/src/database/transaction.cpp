@@ -26,6 +26,8 @@
 #include "object/object_store.hpp"
 #include "object/object.hpp"
 
+#include <sstream>
+
 using namespace std;
 
 namespace oos {
@@ -52,7 +54,9 @@ void transaction::on_insert(object *o)
     }
   } else {
     // ERROR: an object with that id already exists
-    // throw error
+    std::stringstream msg;
+    msg << "an object with id " << o->id() << " already exists";
+    throw database_exception("database", msg.str().c_str());
   }
 }
 

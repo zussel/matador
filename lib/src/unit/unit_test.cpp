@@ -84,7 +84,6 @@ void unit_test::add_test(const std::string &name, const test_func &test, const s
 void unit_test::assert_true(bool a, const std::string &msg, int line, const char *file)
 {
   if (!a) {
-    // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is false: " << msg;
       throw unit_exception(msgstr.str());
@@ -94,7 +93,6 @@ void unit_test::assert_true(bool a, const std::string &msg, int line, const char
 void unit_test::assert_false(bool a, const std::string &msg, int line, const char *file)
 {
   if (a) {
-    // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is true: " << msg;
       throw unit_exception(msgstr.str());

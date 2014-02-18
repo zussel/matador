@@ -174,6 +174,8 @@ SET(prototype
   iterator
   one
   relation
+  size
+  parent_of
 )
 
 # object store tests

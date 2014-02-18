@@ -16,6 +16,7 @@
  */
 
 #include "database/transaction_helper.hpp"
+#include "database/database_exception.hpp"
 
 #include "object/object_store.hpp"
 #include "object/object.hpp"
@@ -198,7 +199,7 @@ void action_remover::visit(delete_action *a)
    ***********/
   if (a->id() == id_) {
     // ERROR: object was deleted twice
-    // throw exception
+    throw database_exception("database", "object was deleted twice");
   }
 }
 

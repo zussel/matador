@@ -120,7 +120,6 @@ bool prototype_iterator::operator==(const prototype_iterator &i) const
 
 bool prototype_iterator::operator!=(const prototype_iterator &i) const
 {
-//  return (node_ != i.node_);
   return !operator==(i);
 }
 

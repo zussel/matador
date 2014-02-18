@@ -57,14 +57,18 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new ObjectListTestUnit());
   test_suite::instance().register_unit(new ObjectVectorTestUnit());
 
-#if MYSQL_FOUND
+#ifdef OOS_MYSQL
   test_suite::instance().register_unit(new MySQLDatabaseTestUnit());
 #endif
 
-#if ODBC_FOUND
+#ifdef OOS_ODBC
   test_suite::instance().register_unit(new MSSQLDatabaseTestUnit());
 #endif
+
+#ifdef OOS_SQLITE3
   test_suite::instance().register_unit(new SQLiteDatabaseTestUnit());
+#endif
+
   test_suite::instance().register_unit(new MemoryDatabaseTestUnit());
 
   test_suite::instance().register_unit(new JsonTestUnit());
