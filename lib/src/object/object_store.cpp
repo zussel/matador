@@ -487,9 +487,9 @@ object_store::insert_object(object *o, bool notify)
 {
   // find type in tree
   if (!o) {
-    // throw exception
-    return NULL;
+    throw object_exception("object is null");
   }
+
   // find prototype node
   prototype_node *node = get_prototype(typeid(*o).name());
   if (!node) {
@@ -521,7 +521,6 @@ object_store::insert_object(object *o, bool notify)
     }
     oproxy = create_proxy(o->id());
     if (!oproxy) {
-      // throw exception
       throw object_exception("couldn't create object proxy");
     }
     oproxy->obj = o;
@@ -671,7 +670,7 @@ object_proxy* object_store::find_proxy(long id) const
 object_proxy* object_store::create_proxy(long id)
 {
   if (id == 0) {
-    return NULL;
+    return 0;
   }
   
   t_object_proxy_map::iterator i = object_map_.find(id);

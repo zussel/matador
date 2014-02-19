@@ -36,6 +36,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
 //  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("insert", std::tr1::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -661,4 +662,11 @@ void ObjectStoreTestUnit::test_structure()
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
+}
+
+void ObjectStoreTestUnit::test_insert()
+{
+  typedef object_ptr<Item> item_ptr;
+  
+  item_ptr iptr(new Item);
 }

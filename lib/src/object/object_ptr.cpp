@@ -96,6 +96,8 @@ object_base_ptr::object_base_ptr(object *o, bool is_ref)
 {
   if (proxy_) {
     proxy_->add(this);
+  } else {
+    proxy_ = new object_proxy(o, 0);
   }
 }
 

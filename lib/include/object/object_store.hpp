@@ -514,8 +514,11 @@ public:
    * be linked into the main object proxy list until
    * it gets a valid object.
    * 
+   * If the object proxy couldn't be created the method
+   * returns null
+   * 
    * @param id Unique id of the object proxy.
-   * @return An object proxy object.
+   * @return An object proxy object or null.
    */
   object_proxy *create_proxy(long id);
 

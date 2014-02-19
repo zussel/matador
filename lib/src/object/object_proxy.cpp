@@ -60,7 +60,6 @@ object_proxy::~object_proxy()
 {
   if (obj) {
     delete obj;
-    obj = NULL;
   }
   if (ostore && id > 0) {
     ostore->delete_proxy(id);
