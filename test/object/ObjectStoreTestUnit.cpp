@@ -669,4 +669,14 @@ void ObjectStoreTestUnit::test_insert()
   typedef object_ptr<Item> item_ptr;
   
   item_ptr iptr(new Item);
+  
+  bool failed = true;
+  try {
+    item_ptr x = ostore_.insert((Item*)0);
+  } catch(object_exception &) {
+    failed = false;
+  }
+  if (failed) {
+    UNIT_FAIL("could insert null object into object store");
+  }
 }
