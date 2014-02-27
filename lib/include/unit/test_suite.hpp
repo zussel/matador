@@ -84,12 +84,11 @@ private:
   typedef struct test_suite_args_struct
   {
     test_suite_args_struct()
-      : cmd(UNKNOWN), initialized(false), brief(false), cmake(false)
+      : cmd(UNKNOWN), initialized(false), brief(false)
     {}
     test_suite_cmd cmd;
     bool initialized;
     bool brief;
-    bool cmake;
     std::string unit;
     std::string test;
   } test_suite_args;
@@ -104,15 +103,22 @@ private:
   {
     unit_executer();
     void operator()(test_suite::value_type &x);
+    
+    bool succeeded;
   };
 
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
   {
-    unit_lister(std::ostream &o, bool b = false, bool c = false);
+    unit_lister(std::ostream &o, bool b = false);
     void operator()(test_suite::value_type &x);
     std::ostream &out;
     bool brief;
-    bool cmake;
+  };
+
+public:
+  struct suite_result
+  {
+    
   };
 
 public:
@@ -144,8 +150,10 @@ public:
    *
    * Executes all test unit classes or the
    * command given via init.
+   * 
+   * @return True if all tests succeeded.
    */
-  void run();
+  bool run();
 
   /**
    * @brief Executes a specific test_unit.
@@ -155,8 +163,9 @@ public:
    * name a message is diplayed.
    *
    * @param unit The name of the test_unit object to execute.
+   * @return True if all tests succeeded.
    */
-  void run(const std::string &unit);
+  bool run(const std::string &unit);
 
   /**
    * @brief Executes a single test of a test_unit.
@@ -168,8 +177,9 @@ public:
    *
    * @param unit Name of the test_unit object.
    * @param test Name of the test to execute.
+   * @return True if test succeeded.
    */
-  void run(const std::string &unit, const std::string &test);
+  bool run(const std::string &unit, const std::string &test);
 
 private:
   test_suite_args args_;

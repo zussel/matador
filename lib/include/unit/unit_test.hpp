@@ -252,7 +252,7 @@ public:
    * Each test method of the test_unit is
    * executed.
    */
-  void execute();
+  bool execute();
 
   /**
    * @brief Executes a concrete test method.
@@ -263,7 +263,7 @@ public:
    * 
    * @param test Name of the test to execute.
    */
-  void execute(const std::string &test);
+  bool execute(const std::string &test);
 
   /**
    * @brief List all tests.

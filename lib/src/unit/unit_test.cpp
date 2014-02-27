@@ -45,23 +45,31 @@ std::string unit_test::caption() const
   return caption_;
 }
 
-void unit_test::execute()
+bool unit_test::execute()
 {
   t_test_func_info_map::iterator first = test_func_info_map_.begin();
   t_test_func_info_map::iterator last = test_func_info_map_.end();
   // execute each test
+  bool succeeded = true;
   while (first != last) {
-    execute((first++)->second);
+    test_func_info &info = (first++)->second;
+    execute(info);
+    if (succeeded && !info.succeeded) {
+      succeeded = false;
+    }
   }
+  return succeeded;
 }
 
-void unit_test::execute(const std::string &test)
+bool unit_test::execute(const std::string &test)
 {
   t_test_func_info_map::iterator i = test_func_info_map_.find(test);
   if (i == test_func_info_map_.end()) {
     std::cout << "couldn't find test [" << test << "] of unit [" << caption_ << "]\n";
+    return false;
   } else {
     execute(i->second);
+    return i->second.succeeded;
   }
 }
 

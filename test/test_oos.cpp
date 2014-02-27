@@ -73,7 +73,5 @@ int main(int argc, char *argv[])
 
   test_suite::instance().register_unit(new JsonTestUnit());
 
-  test_suite::instance().run();
-  
-  return 0;
+  return test_suite::instance().run() ? 0 : 1;
 }
