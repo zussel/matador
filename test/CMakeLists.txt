@@ -232,7 +232,7 @@ SET(database
   list
   vector
   reload
-  container
+  reload_container
 )
   
 IF(SQLITE3_FOUND)

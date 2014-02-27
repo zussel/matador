@@ -35,7 +35,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-//  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
   add_test("insert", std::tr1::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
 }
 
