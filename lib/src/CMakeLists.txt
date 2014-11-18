@@ -33,6 +33,31 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizable.hpp
 )
 
+SET(OBJECT_HEADER
+  ../include/object/attribute_counter.hpp
+  ../include/object/attribute_serializer.hpp
+  ../include/object/object.hpp
+  ../include/object/object_exception.hpp
+  ../include/object/object_ptr.hpp
+  ../include/object/object_store.hpp
+  ../include/object/object_container.hpp
+  ../include/object/object_creator.hpp
+  ../include/object/object_convert.hpp
+  ../include/object/object_deleter.hpp
+  ../include/object/object_list.hpp
+  ../include/object/object_vector.hpp
+  ../include/object/linked_object_list.hpp
+  ../include/object/object_view.hpp
+  ../include/object/object_proxy.hpp
+  ../include/object/object_serializer.hpp
+  ../include/object/prototype_node.hpp
+  ../include/object/object_observer.hpp
+  ../include/object/object_expression.hpp
+  ../include/object/attribute_serializer.hpp
+  ../include/object/object_atomizer.hpp
+  ../include/object/object_atomizable.hpp
+)
+
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
   tools/library.cpp
@@ -55,6 +80,21 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/convert.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
+)
+
+SET(TOOLS_HEADER
+  ../include/tools/algorithm.hpp
+  ../include/tools/byte_buffer.hpp
+  ../include/tools/singleton.hpp
+  ../include/tools/library.hpp
+  ../include/tools/blob.hpp
+  ../include/tools/varchar.hpp
+  ../include/tools/sequencer.hpp
+  ../include/tools/factory.hpp
+  ../include/tools/string.hpp
+  ../include/tools/convert.hpp
+  ../include/tools/enable_if.hpp
+  ../include/tools/conditional.hpp
 )
 
 SET(JSON_SOURCE
@@ -85,6 +125,21 @@ SET(JSON_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/json/generic_json_parser.hpp
 )
 
+SET(JSON_HEADER
+  ../include/json/json.hpp
+  ../include/json/json_type.hpp
+  ../include/json/json_value.hpp
+  ../include/json/json_object.hpp
+  ../include/json/json_string.hpp
+  ../include/json/json_bool.hpp
+  ../include/json/json_null.hpp
+  ../include/json/json_number.hpp
+  ../include/json/json_array.hpp
+  ../include/json/json_exception.hpp
+  ../include/json/json_parser.hpp
+  ../include/json/generic_json_parser.hpp
+)
+
 SET(UNIT_SOURCES
   unit/test_suite.cpp
   unit/unit_exception.cpp
@@ -95,6 +150,12 @@ SET(UNIT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/unit/test_suite.hpp
   ${PROJECT_SOURCE_DIR}/include/unit/unit_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/unit/unit_test.hpp
+)
+
+SET(UNIT_HEADER
+  ../include/unit/test_suite.hpp
+  ../include/unit/unit_exception.hpp
+  ../include/unit/unit_test.hpp
 )
 
 SET(DATABASE_SOURCES
@@ -121,26 +182,30 @@ SET(DATABASE_SOURCES
   database/query_update.cpp
 )
 
-SET(DATABASE_HEADER_ORIG
-  ${PROJECT_SOURCE_DIR}/include/database/action.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/condition.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/database.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/database_factory.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/memory_database.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/database_sequencer.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/transaction_helper.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/result.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/row.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/value.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/statement.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/statement_creator.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/table.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query_create.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query_select.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query_insert.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query_update.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/token.hpp
+SET(DATABASE_HEADER
+  ../include/database/action.hpp
+  ../include/database/condition.hpp
+  ../include/database/session.hpp
+  ../include/database/database.hpp
+  ../include/database/database_exception.hpp
+  ../include/database/database_factory.hpp
+  ../include/database/memory_database.hpp
+  ../include/database/database_sequencer.hpp
+  ../include/database/transaction.hpp
+  ../include/database/transaction_helper.hpp
+  ../include/database/result.hpp
+  ../include/database/row.hpp
+  ../include/database/value.hpp
+  ../include/database/types.hpp
+  ../include/database/sql.hpp
+  ../include/database/statement.hpp
+  ../include/database/table.hpp
+  ../include/database/query.hpp
+  ../include/database/query_create.hpp
+  ../include/database/query_select.hpp
+  ../include/database/query_insert.hpp
+  ../include/database/query_update.hpp
+  ../include/database/token.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER
@@ -153,13 +218,6 @@ SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/types.hpp
   ${PROJECT_SOURCE_DIR}/include/database/transaction.hpp
 )
-
-FILE(GLOB OBJECT_HEADER "${CMAKE_SOURCE_DIR}/include/object/*.hpp")
-FILE(GLOB TOOLS_HEADER "${CMAKE_SOURCE_DIR}/include/tools/*.hpp")
-FILE(GLOB JSON_HEADER "${CMAKE_SOURCE_DIR}/include/json/*.hpp")
-FILE(GLOB DATABASE_HEADER "${CMAKE_SOURCE_DIR}/include/database/*.hpp")
-FILE(GLOB UNIT_HEADER "${CMAKE_SOURCE_DIR}/include/unit/*.hpp")
-
 
 ADD_LIBRARY(oos SHARED
   ${OBJECT_SOURCES}
