@@ -88,14 +88,6 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
-IF (CMAKE_BUILD_TYPE STREQUAL "Coverage")
-  MESSAGE(STATUS "Build type 'Coverage' detected")
-  
-  INCLUDE(CodeCoverage)
-  
-  setup_target_for_coverage(coverage test_oos coverage "exec;json")
-ENDIF()
-
 # convert tests
 SET(convert
   to_bool
