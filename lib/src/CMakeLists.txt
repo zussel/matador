@@ -9,6 +9,7 @@ SET(OBJECT_SOURCES
   object/object_serializer.cpp
   object/object_convert.cpp
   object/prototype_node.cpp
+  object/prototype_tree.cpp
   object/attribute_serializer.cpp
 )
 
@@ -26,6 +27,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
   ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
