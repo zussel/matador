@@ -153,7 +153,7 @@ public:
    */
 	~object_store();
 
-  prototype_tree& prototype_tree();
+  prototype_tree& object_tree();
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new

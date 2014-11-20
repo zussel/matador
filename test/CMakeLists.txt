@@ -26,6 +26,8 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectListTestUnit.hpp
   object/ObjectVectorTestUnit.cpp
   object/ObjectVectorTestUnit.hpp
+  object/PrototypeTreeTest.cpp
+  object/PrototypeTreeTest.hpp
 )
 
 SET (TEST_UNIT_SOURCES

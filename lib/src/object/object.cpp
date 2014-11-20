@@ -17,7 +17,6 @@
 
 #include "object/object.hpp"
 #include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
 
 namespace oos {
 

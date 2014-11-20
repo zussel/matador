@@ -24,6 +24,8 @@
 
 namespace oos {
 
+class prototype_tree;
+
 class relation_handler2 : public generic_object_writer<relation_handler2>
 {
 public:
@@ -31,9 +33,9 @@ public:
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_handler2(object_store &ostore, prototype_node *node)
+  relation_handler2(prototype_tree &ptree, prototype_node *node)
     : generic_object_writer<relation_handler2>(this)
-    , ostore_(ostore)
+    , ptree_(ptree)
     , node_(node)
   {}
   virtual ~relation_handler2() {}
@@ -49,11 +51,11 @@ public:
      * container knows if it needs
      * a relation table
      */
-    x.handle_container_item(ostore_, id, node_);
+    x.handle_container_item(ptree_, id, node_);
   }
 
 private:
-  object_store &ostore_;
+  prototype_tree &ptree_;
   prototype_node *node_;
 };
 
@@ -143,7 +145,12 @@ void prototype_iterator::decrement()
 }
 
 prototype_tree::prototype_tree()
-{}
+  : first_(new prototype_node)
+  , last_(new prototype_node)
+{
+  first_->next = last_;
+  last_->prev = first_;
+}
 
 prototype_tree::~prototype_tree()
 {}
@@ -204,7 +211,11 @@ prototype_iterator prototype_tree::insert(object_base_producer *producer, const 
   }
 
   // append as child to parent prototype node
-  parent_node->insert(node);
+  if (parent_node) {
+    parent_node->insert(node);
+  } else {
+    prepend(node, last_);
+  }
   // store prototype in map
   i = prototype_map_.insert(std::make_pair(type, node)).first;
   typeid_prototype_map_[producer->classname()][type] = node;
@@ -219,14 +230,23 @@ prototype_iterator prototype_tree::insert(object_base_producer *producer, const 
 }
 
 prototype_iterator prototype_tree::find(const char *type) {
-  return oos::prototype_iterator();
+  return prototype_iterator(find_prototype_node(type));
 }
 
-bool prototype_tree::clear(const char *type, bool recursive) {
+
+bool prototype_tree::empty() const {
+  return first_->next == last_;
+}
+
+
+size_t prototype_tree::size() const {
+  return 0;
+}
+
+void prototype_tree::clear(const char *type, bool recursive) {
   prototype_node *node = find_prototype_node(type);
   if (!node) {
-    //throw new object_exception("couldn't find prototype");
-    return false;
+    throw object_exception("couldn't find prototype");
   }
   if (recursive) {
     // clear all objects from child nodes
@@ -239,15 +259,12 @@ bool prototype_tree::clear(const char *type, bool recursive) {
   }
 
   node->clear();
-
-  return true;
 }
 
-bool prototype_tree::remove(const char *type) {
+void prototype_tree::remove(const char *type) {
   prototype_node *node = find_prototype_node(type);
   if (!node) {
-    //throw new object_exception("couldn't find prototype");
-    return false;
+    throw object_exception("couldn't find prototype");
   }
 
   // remove (and delete) from tree (deletes subsequently all child nodes
@@ -273,15 +290,13 @@ bool prototype_tree::remove(const char *type) {
       typeid_prototype_map_.erase(j);
     }
   } else {
-    // TODO: throw error
+    throw object_exception("couldn't find node by id");
   }
   delete node;
-
-  return true;
 }
 
 prototype_iterator prototype_tree::begin() const {
-  return prototype_iterator(first_);
+  return prototype_iterator(first_->next);
 }
 
 prototype_iterator prototype_tree::end() const {
@@ -291,7 +306,7 @@ prototype_iterator prototype_tree::end() const {
 prototype_node* prototype_tree::find_prototype_node(const char *type) {
   // check for null
   if (type == 0) {
-    return 0;
+    throw object_exception("invalid type (null)");
   }
   /*
  * first search in the prototype map
@@ -303,7 +318,7 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
    */
     t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
     if (j == typeid_prototype_map_.end()) {
-      return 0;
+      throw object_exception("unknown prototype type");
     } else {
       const t_prototype_map &val = j->second;
       /*
@@ -314,7 +329,7 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
      */
       if (val.size() > 1) {
         // throw exception
-        return 0;
+        throw object_exception("type id not unique");
       } else {
         // return the only prototype
         return val.begin()->second;
@@ -323,6 +338,29 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
   } else {
     return i->second;
   }
+}
+
+
+void prototype_tree::append(prototype_node *node, prototype_node *pred)
+{
+  // link new node in
+  node->next = pred->next;
+  node->next->prev = node;
+  pred->next = node;
+  node->prev = pred;
+
+  // link in object proxies
+}
+
+void prototype_tree::prepend(prototype_node *node, prototype_node *succ)
+{
+  // link new node in
+  node->next = succ;
+  node->prev = succ->prev;
+  node->prev->next = node;
+  succ->prev = node;
+
+  // link in object proxies
 }
 
 }

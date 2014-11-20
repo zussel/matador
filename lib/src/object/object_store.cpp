@@ -16,16 +16,11 @@
  */
 
 #include "object/object.hpp"
-#include "object/object_proxy.hpp"
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
-#include "object/object_exception.hpp"
-#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -37,9 +32,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <typeinfo>
-#include <algorithm>
-#include <stack>
 
 using namespace std;
 using namespace std::tr1::placeholders;

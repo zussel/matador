@@ -27,7 +27,7 @@
 #include "object/ObjectPrototypeTestUnit.hpp"
 #include "object/ObjectListTestUnit.hpp"
 #include "object/ObjectVectorTestUnit.hpp"
-
+#include "object/PrototypeTreeTest.hpp"
 
 #include "database/SQLiteDatabaseTestUnit.hpp"
 #include "database/MySQLDatabaseTestUnit.hpp"
@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new VarCharTestUnit());
   test_suite::instance().register_unit(new FactoryTestUnit());
 
+  test_suite::instance().register_unit(new PrototypeTreeTestUnit());
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
   test_suite::instance().register_unit(new ObjectStoreTestUnit());
   test_suite::instance().register_unit(new ObjectListTestUnit());

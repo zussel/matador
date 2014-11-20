@@ -64,15 +64,15 @@ object_proxy::~object_proxy()
   if (ostore && id > 0) {
     ostore->delete_proxy(id);
   }
-  ostore = NULL;
+  ostore = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
-    (*i)->proxy_ = NULL;
+    (*i)->proxy_ = 0;
   }
 }
 
 void object_proxy::link(object_proxy *successor)
 {
-  // link oproxy before this node
+  // link object proxy before this node
   prev = successor->prev;
   next = successor;
   if (successor->prev) {

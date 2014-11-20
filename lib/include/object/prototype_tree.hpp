@@ -33,6 +33,7 @@
 #endif
 
 #include "object/prototype_node.hpp"
+#include "object/object_proxy.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -205,6 +206,21 @@ public:
   prototype_iterator find(const char *type);
 
   /**
+   * Returns true if prototype tree
+   * is empty
+   *
+   * @return True on empty prototype tree
+   */
+  bool empty() const;
+
+  /**
+   * Return count of prototype nodes
+   *
+   * @return Count of prototype nodes
+   */
+  size_t size() const;
+
+  /**
   * Clears a prototype node. All objects will be deleted. If
   * the recursive flag is set all objects from the children nodea
   * will be deleted as well.
@@ -212,8 +228,9 @@ public:
   * @param type The name of the type to remove.
   * @param recursive If set, also the object in children nodes are deleted.
   * @return Returns true if the type was found and successfully cleared.
+  * @throws oos::object_exception on error
   */
-  bool clear(const char *type, bool recursive);
+  void clear(const char *type, bool recursive);
 
   /**
   * Removes an object prototype from the prototype tree. All children
@@ -221,8 +238,9 @@ public:
   *
   * @param type The name of the type to remove.
   * @return Returns true if the type was found and successfully removed
+  * @throws oos::object_exception on error
   */
-  bool remove(const char *type);
+  void remove(const char *type);
 
   /**
   * Return the first prototype node.
@@ -244,11 +262,32 @@ private:
   typedef std::unordered_map<std::string, t_prototype_map> t_typeid_prototype_map;
 
 private:
+  /**
+   * @internal
+   *
+   * Searches a prototype by type
+   * which can either be a type name
+   * or a class name.
+   * Allways returns a valid prototype node
+   * or throws an exception on error
+   *
+   * @param type Type name of the prototype node to search
+   * @return The requested prototype node
+   * @throws oos::object_exception if in error occurrs
+   */
   prototype_node* find_prototype_node(const char *type);
 
+  void append(prototype_node *node, prototype_node *pred);
+  void prepend(prototype_node *node, prototype_node *succ);
+
 private:
+  friend class object_container;
+
   prototype_node *first_;
   prototype_node *last_;
+
+  object_proxy *op_first_;
+  object_proxy *op_last_;
 
   // name to prototype map
   t_prototype_map prototype_map_;
