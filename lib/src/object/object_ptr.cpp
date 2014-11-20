@@ -96,6 +96,8 @@ object_base_ptr::object_base_ptr(object *o, bool is_ref)
 {
   if (proxy_) {
     proxy_->add(this);
+  } else {
+//    proxy_ = new object_proxy(o, 0);
   }
 }
 
@@ -110,6 +112,13 @@ object_base_ptr::~object_base_ptr()
       }
     }
     proxy_->remove(this);
+    /*
+     * if proxy was created temporary
+     * we can delete it here
+     */
+/*    if (!proxy_->ostore && proxy_->id == 0) {
+      delete proxy_;
+    }*/
   }
 }
 

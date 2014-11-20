@@ -16,21 +16,25 @@ void test_suite::register_unit(unit_test *utest)
 }
 
 test_suite::unit_executer::unit_executer()
+  : succeeded(true)
 {}
 
 void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
   std::cout << "Executing test unit [" << x.second->caption() << "]\n";
-  x.second->execute();
+  bool result = x.second->execute();
+  if (succeeded && !result) {
+    succeeded = result;
+  }
 }
 
-test_suite::unit_lister::unit_lister(std::ostream &o, bool b, bool c)
-  : out(o), brief(b), cmake(c)
+test_suite::unit_lister::unit_lister(std::ostream &o, bool b)
+  : out(o), brief(b)
 {}
 
 void test_suite::unit_lister::operator()(test_suite::value_type &x)
 {
-  if (!brief && !cmake) {
+  if (!brief) {
     out << "Unit Test [" << x.first << "] has the following test:\n";
   }
   unit_test::t_test_func_info_map::const_iterator first = x.second->test_func_info_map_.begin();
@@ -38,8 +42,6 @@ void test_suite::unit_lister::operator()(test_suite::value_type &x)
   while (first != last) {
     if (brief) {
       out << x.first << ":" << first->first << "\n";
-    } else if (cmake) {
-      out << "ADD_TEST(test_oos_" << x.first << "_" << first->first << " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec " << x.first << ":" << first->first << ")\n";
     } else {
       out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
     }
@@ -67,8 +69,6 @@ void test_suite::init(int argc, char *argv[])
     if (argc == 3) {
       if (strcmp(argv[2], "brief") == 0) {
         args_.brief = true;
-      } else if (strcmp(argv[2] , "cmake") == 0) {
-        args_.cmake = true;
       } else {
         // unknow option arg
       }
@@ -101,20 +101,22 @@ void test_suite::init(int argc, char *argv[])
   args_.initialized = true;
 }
 
-void test_suite::run()
+bool test_suite::run()
 {
   if (args_.initialized) {
     switch (args_.cmd) {
       case LIST:
-        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief, args_.cmake));
+        std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
         break;
       case EXECUTE:
         if (!args_.unit.empty() && !args_.test.empty()) {
-          run(args_.unit, args_.test);
+          return run(args_.unit, args_.test);
         } else if (!args_.unit.empty()) {
-          run(args_.unit);
+          return run(args_.unit);
         } else {
-          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_executer());
+          unit_executer ue;
+          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), ue);
+          return ue.succeeded;
         }
         break;
       default:
@@ -123,25 +125,28 @@ void test_suite::run()
   } else {
     std::cout << "usage: test_oos [list]|[exec <val>]\n";
   }
+  return true;
 }
 
-void test_suite::run(const std::string &unit)
+bool test_suite::run(const std::string &unit)
 {
   t_unit_test_map::const_iterator i = unit_test_map_.find(unit);
   if (i == unit_test_map_.end()) {
     std::cout << "couldn't find test unit [" << unit << "]\n";
+    return false;
   } else {
-    i->second->execute();
+    return i->second->execute();
   }
 }
 
-void test_suite::run(const std::string &unit, const std::string &test)
+bool test_suite::run(const std::string &unit, const std::string &test)
 {
   t_unit_test_map::const_iterator i = unit_test_map_.find(unit);
   if (i == unit_test_map_.end()) {
     std::cout << "couldn't find test unit [" << unit << "]\n";
+    return false;
   } else {
-    i->second->execute(test);
+    return i->second->execute(test);
   }
 }
 

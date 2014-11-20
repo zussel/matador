@@ -3,6 +3,22 @@ language: cpp
 services:
   - mysql
 
+#env:
+#  global:
+   # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+#   - secure: "alRiwZmJVN9Cdu0sPKUtt7NX72ok9R1Lg/UU6cuVmTvqezMovlP67JG9yotl0Gu7qbGcqdyGJrYtSNTndAYAh0udPAG4kvV0Bb7gdyrbcuIM6y9HYvUOKOjnxirDEvy3D16jtqw3FR88T/4fWz5iSLVwepJ2JGLcgM2Y0lHisFw="
+
+#addons:
+#  coverity_scan:
+#    project:
+#      name: "zussel/oos"
+#      description: "Store all your objects in one container"
+#    notification_email: sascha.kuehl@gmx.net
+#    build_command_prepend:
+#    build_command:
+#    branch_pattern: coverity_scan
+
 before_script:
   - mysql -e 'create database oos_test;'
 

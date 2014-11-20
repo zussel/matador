@@ -171,7 +171,6 @@ query& query::remove(const prototype_node &node)
 
 query& query::where(const std::string &clause)
 {
-  // throw on invalid state
   throw_invalid(QUERY_WHERE, state);
 
   sql_.append(std::string(" WHERE ") + clause);

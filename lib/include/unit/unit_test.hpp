@@ -252,7 +252,7 @@ public:
    * Each test method of the test_unit is
    * executed.
    */
-  void execute();
+  bool execute();
 
   /**
    * @brief Executes a concrete test method.
@@ -263,7 +263,7 @@ public:
    * 
    * @param test Name of the test to execute.
    */
-  void execute(const std::string &test);
+  bool execute(const std::string &test);
 
   /**
    * @brief List all tests.
@@ -308,7 +308,6 @@ public:
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -319,7 +318,6 @@ public:
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
     if (strcmp(a, b) != 0) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -330,7 +328,6 @@ public:
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
   {
     if (strcmp(a, b) != 0) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -341,7 +338,6 @@ public:
   {
     bool cmp = a > 0;
     if (cmp != b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -351,7 +347,6 @@ public:
   void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file)
   {
     if (a != b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -378,7 +373,6 @@ public:
   void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
     if (a == b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -404,7 +398,6 @@ public:
   void assert_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
     if (a <= b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -416,7 +409,6 @@ public:
   void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
     if (a <= b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -443,7 +435,6 @@ public:
   void assert_less(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
     if (a >= b) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is greater equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -468,7 +459,6 @@ public:
   void assert_null(const T *a, const std::string &msg, int line, const char *file)
   {
     if (a != 0) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null: " << msg;
       throw unit_exception(msgstr.str());
@@ -493,7 +483,6 @@ public:
   void assert_not_null(const T *a, const std::string &msg, int line, const char *file)
   {
     if (a == 0) {
-      // throw exception
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null: " << msg;
       throw unit_exception(msgstr.str());

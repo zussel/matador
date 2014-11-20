@@ -26,6 +26,8 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectListTestUnit.hpp
   object/ObjectVectorTestUnit.cpp
   object/ObjectVectorTestUnit.hpp
+  object/PrototypeTreeTest.cpp
+  object/PrototypeTreeTest.hpp
 )
 
 SET (TEST_UNIT_SOURCES
@@ -55,6 +57,7 @@ SET (TEST_SOURCES test_oos.cpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}
+  ${TEST_HEADER}
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
@@ -87,14 +90,6 @@ SOURCE_GROUP("database" FILES ${TEST_DATABASE_SOURCES})
 SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
-
-IF (CMAKE_BUILD_TYPE STREQUAL "Coverage")
-  MESSAGE(STATUS "Build type 'Coverage' detected")
-  
-  INCLUDE(CodeCoverage)
-  
-  setup_target_for_coverage(coverage test_oos coverage "exec;json")
-ENDIF()
 
 # convert tests
 SET(convert
@@ -174,6 +169,8 @@ SET(prototype
   iterator
   one
   relation
+  size
+  parent_of
 )
 
 # object store tests
@@ -230,7 +227,7 @@ SET(database
   list
   vector
   reload
-  container
+  reload_container
 )
   
 IF(SQLITE3_FOUND AND OOS_SQLITE3)

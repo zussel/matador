@@ -130,13 +130,7 @@ object_deleter::check_object_count_map() const
   {
     if (first->second.ignore) {
       ++first;
-    } else if (!first->second.ignore && first->second.ref_count == 0 && first->second.ptr_count == 0) {
-//    } else if (!first->second.ignore && first->second.obj != obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
-      ++first;
     } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
-//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 0) {
-//    } else if (first->second.obj == obj && first->second.ref_count == 0 && first->second.ptr_count == 1) {
-//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 1) {
       ++first;
     } else {
       return false;

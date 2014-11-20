@@ -30,6 +30,8 @@
 
 namespace oos {
 
+class prototype_tree;
+
 /**
  * @tparam T Type of value
  * @class value_item
@@ -235,7 +237,9 @@ protected:
   friend class object_creator;
   friend class object_deleter;
   friend class object_serializer;
+  friend class prototype_tree;
   friend class relation_handler;
+  friend class relation_handler2;
   friend class relation_filler;
   friend class table;
 
@@ -303,6 +307,7 @@ protected:
    * @return The producer object;
    */
   void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const;
+  void handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const;
 
   /**
    * Create a producer for the item type.

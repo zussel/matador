@@ -16,16 +16,11 @@
  */
 
 #include "object/object.hpp"
-#include "object/object_proxy.hpp"
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
-#include "object/object_exception.hpp"
-#include "object/prototype_node.hpp"
 
 #ifdef WIN32
 #include <functional>
@@ -37,9 +32,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <typeinfo>
-#include <algorithm>
-#include <stack>
 
 using namespace std;
 using namespace std::tr1::placeholders;
@@ -78,105 +70,6 @@ private:
   object_store &ostore_;
   prototype_node *node_;
 };
-
-/*
-class equal_type : public std::unary_function<const prototype_node*, bool> {
-public:
-  explicit equal_type(const std::string &type) : type_(type) {}
-
-  bool operator() (const prototype_node *x) const {
-    return x->type == type_;
-  }
-private:
-  const std::string &type_;
-};
-*/
-
-prototype_iterator::prototype_iterator()
-  : node_(NULL)
-{}
-
-prototype_iterator::prototype_iterator(prototype_node *node)
-  : node_(node)
-{}
-
-prototype_iterator::prototype_iterator(const prototype_iterator &x)
-  : node_(x.node_)
-{}
-
-prototype_iterator& prototype_iterator::operator=(const prototype_iterator &x)
-{
-  node_ = x.node_;
-  return *this;
-}
-
-prototype_iterator::~prototype_iterator()
-{}
-
-bool prototype_iterator::operator==(const prototype_iterator &i) const
-{
-  return (node_ == i.node_);
-}
-
-bool prototype_iterator::operator!=(const prototype_iterator &i) const
-{
-//  return (node_ != i.node_);
-  return !operator==(i);
-}
-
-prototype_iterator::self& prototype_iterator::operator++()
-{
-  increment();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator++(int)
-{
-  prototype_node *tmp = node_;
-  increment();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::self& prototype_iterator::operator--()
-{
-  decrement();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator--(int)
-{
-  prototype_node *tmp = node_;
-  decrement();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::pointer prototype_iterator::operator->() const
-{
-  return node_;
-}
-
-prototype_iterator::reference prototype_iterator::operator*() const
-{
-  return *node_;
-}
-
-prototype_iterator::pointer prototype_iterator::get() const
-{
-  return node_;
-}
-
-void prototype_iterator::increment()
-{
-  if (node_) {
-    node_ = node_->next_node();
-  }
-}
-void prototype_iterator::decrement()
-{
-  if (node_) {
-    node_ = node_->previous_node();
-  }
-}
 
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "object", true))
@@ -488,9 +381,9 @@ object_store::insert_object(object *o, bool notify)
 {
   // find type in tree
   if (!o) {
-    // throw exception
-    return NULL;
+    throw object_exception("object is null");
   }
+
   // find prototype node
   prototype_node *node = get_prototype(typeid(*o).name());
   if (!node) {
@@ -522,7 +415,6 @@ object_store::insert_object(object *o, bool notify)
     }
     oproxy = create_proxy(o->id());
     if (!oproxy) {
-      // throw exception
       throw object_exception("couldn't create object proxy");
     }
     oproxy->obj = o;
@@ -672,7 +564,7 @@ object_proxy* object_store::find_proxy(long id) const
 object_proxy* object_store::create_proxy(long id)
 {
   if (id == 0) {
-    return NULL;
+    return 0;
   }
   
   t_object_proxy_map::iterator i = object_map_.find(id);

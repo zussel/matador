@@ -35,7 +35,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-//  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("insert", std::tr1::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -661,4 +662,21 @@ void ObjectStoreTestUnit::test_structure()
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
+}
+
+void ObjectStoreTestUnit::test_insert()
+{
+  typedef object_ptr<Item> item_ptr;
+  
+  item_ptr iptr(new Item);
+  
+  bool failed = true;
+  try {
+    item_ptr x = ostore_.insert((Item*)0);
+  } catch(object_exception &) {
+    failed = false;
+  }
+  if (failed) {
+    UNIT_FAIL("could insert null object into object store");
+  }
 }

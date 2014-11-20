@@ -26,6 +26,14 @@ namespace oos {
 class object;
 
 /**
+ * Throws an object exception
+ * 
+ * @param source The source of the exception
+ * @param what Detailed information about the exception
+ */
+//void throw_error(const std::string &source, const std::string &what);
+
+/**
  * @class object_exception
  * @brief An object exception class
  *
