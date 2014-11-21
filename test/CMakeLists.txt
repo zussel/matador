@@ -230,14 +230,14 @@ SET(database
   reload_container
 )
   
-IF(SQLITE3_FOUND)
+IF(SQLITE3_FOUND AND OOS_SQLITE3)
   SET(sqlite ${database})
   LIST(APPEND TESTUNITS sqlite)
 ELSE()
   MESSAGE(STATUS "skipping SQLite tests")
 ENDIF()
 
-IF(MYSQL_FOUND)
+IF(MYSQL_FOUND AND OOS_MYSQL)
   SET(mysql ${database})
   LIST(APPEND TESTUNITS mysql)
 ELSE()
