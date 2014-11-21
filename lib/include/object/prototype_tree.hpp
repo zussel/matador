@@ -190,7 +190,7 @@ public:
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  prototype_iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = 0);
+  prototype_iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
 
   /**
   * @brief Finds prototype node.

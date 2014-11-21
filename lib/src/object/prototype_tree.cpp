@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "object/prototype_tree.hpp"
 
 #include "object/object_exception.hpp"
 #include "object/object_store.hpp"
 #include "object/object_atomizer.hpp"
 #include "object/object_container.hpp"
+
+#include <iterator>
 
 namespace oos {
 
@@ -148,12 +149,34 @@ prototype_tree::prototype_tree()
   : first_(new prototype_node)
   , last_(new prototype_node)
 {
-  first_->next = last_;
-  last_->prev = first_;
+  prototype_node *root = new prototype_node(new object_producer<object>, "object", true);
+  object_proxy *first = new object_proxy(0);
+  object_proxy *last = new object_proxy(0);
+
+  // init object proxies
+  root->op_first = first;
+  root->op_marker = last;
+  root->op_last = last;
+  root->op_first->next = root->op_last;
+  root->op_last->prev = root->op_first;
+
+  // link nodes together
+  first_->next = root;
+  root->prev = first_;
+  root->next = last_;
+  last_->prev = root;
+
+  // add to maps
+  prototype_map_.insert(std::make_pair("object", root));
+  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("object", root));
+
 }
 
 prototype_tree::~prototype_tree()
-{}
+{
+  delete last_;
+  delete first_;
+}
 
 
 prototype_iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
@@ -210,15 +233,12 @@ prototype_iterator prototype_tree::insert(object_base_producer *producer, const 
     throw object_exception("prototype already inserted");
   }
 
-  // append as child to parent prototype node
-  if (parent_node) {
-    parent_node->insert(node);
-  } else {
-    prepend(node, last_);
-  }
+  parent_node->insert(node);
+
   // store prototype in map
-  i = prototype_map_.insert(std::make_pair(type, node)).first;
-  typeid_prototype_map_[producer->classname()][type] = node;
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(type, node)).first;
+  typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
 
   // Check if nodes object has to many relations
   object *o = producer->create();
@@ -235,12 +255,12 @@ prototype_iterator prototype_tree::find(const char *type) {
 
 
 bool prototype_tree::empty() const {
-  return first_->next == last_;
+  return first_->next == last_->prev;
 }
 
 
 size_t prototype_tree::size() const {
-  return 0;
+  return std::distance(begin(), end());
 }
 
 void prototype_tree::clear(const char *type, bool recursive) {
@@ -338,29 +358,6 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
   } else {
     return i->second;
   }
-}
-
-
-void prototype_tree::append(prototype_node *node, prototype_node *pred)
-{
-  // link new node in
-  node->next = pred->next;
-  node->next->prev = node;
-  pred->next = node;
-  node->prev = pred;
-
-  // link in object proxies
-}
-
-void prototype_tree::prepend(prototype_node *node, prototype_node *succ)
-{
-  // link new node in
-  node->next = succ;
-  node->prev = succ->prev;
-  node->prev->next = node;
-  succ->prev = node;
-
-  // link in object proxies
 }
 
 }
