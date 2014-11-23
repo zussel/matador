@@ -26,8 +26,6 @@
 #include <functional>
 #include <memory>
 #else
-#include <tr1/functional>
-#include <tr1/memory>
 #endif
 
 #include <iostream>

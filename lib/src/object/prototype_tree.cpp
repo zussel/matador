@@ -260,7 +260,7 @@ bool prototype_tree::empty() const {
 
 
 size_t prototype_tree::size() const {
-  return std::distance(begin(), end());
+  return std::distance(begin(), end()) - 1;
 }
 
 void prototype_tree::clear(const char *type, bool recursive) {

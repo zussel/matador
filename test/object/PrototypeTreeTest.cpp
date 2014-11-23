@@ -3,6 +3,8 @@
 
 #include "object/prototype_tree.hpp"
 
+#include <iostream>
+
 using namespace oos;
 using namespace std;
 
@@ -26,6 +28,7 @@ void PrototypeTreeTestUnit::test_empty_tree()
 {
   prototype_tree ptree;
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype must be empty");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be zero (0)");
 }
 
 void PrototypeTreeTestUnit::test_insert_root_element()
@@ -33,5 +36,5 @@ void PrototypeTreeTestUnit::test_insert_root_element()
   prototype_tree ptree;
   ptree.insert(new object_producer<Item>, "item", false);
 
-  UNIT_ASSERT_TRUE(ptree.size() == 1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 }
