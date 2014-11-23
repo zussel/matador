@@ -344,3 +344,8 @@ void ObjectListTestUnit::test_direct_ref_list()
   UNIT_ASSERT_TRUE(i == dep->end(), "iterator must be end");
   UNIT_ASSERT_TRUE(emp1->dep().id() == 0, "department id of employee must be zero");
 }
+
+void ObjectListTestUnit::test_many_to_many()
+{
+
+}

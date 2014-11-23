@@ -125,5 +125,5 @@ void FactoryTestUnit::list_items()
 
   UNIT_ASSERT_FALSE(first == last, "iterators must not be the same");
   
-  UNIT_ASSERT_EQUAL(vfac.size(), 4, "size of factory must be 4 (four)");
+  UNIT_ASSERT_EQUAL(vfac.size(), (size_t)4, "size of factory must be 4 (four)");
 }

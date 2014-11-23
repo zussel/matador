@@ -23,6 +23,8 @@ public:
   
   void test_direct_ref_list();
 
+  void test_many_to_many();
+
 private:
   oos::object_store ostore_;
 };
