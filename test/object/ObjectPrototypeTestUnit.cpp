@@ -41,6 +41,8 @@ void
 ObjectPrototypeTestUnit::empty_store()
 {
   object_store ostore;
+
+  UNIT_ASSERT_TRUE(ostore.empty(), "object store must be empty");
 }
 
 void

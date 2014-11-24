@@ -14,8 +14,13 @@ public:
 
   virtual void finalize();
 
-  void test_empty_tree();
-  void test_insert_root_element();
+  void test_empty();
+  void test_insert();
+  void test_find();
+  void test_remove();
+  void test_decrement();
+  void test_child_of();
+
 };
 
 #endif /* PROTOTYPE_TREE_TESTUNIT_HPP */

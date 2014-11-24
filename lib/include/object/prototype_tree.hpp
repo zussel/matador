@@ -41,7 +41,9 @@
 namespace oos {
 
 class prototype_node;
+
 class object_base_producer;
+class const_prototype_iterator;
 
 /**
 * @cond OOS_DEV
@@ -52,10 +54,10 @@ class object_base_producer;
 * are stored in the object_store and must not be altered.
 * therefor the iterator is declared as const.
 */
-class OOS_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node*, const prototype_node&>
+class OOS_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
 {
 public:
-  typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node*, const prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
+  typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
   typedef prototype_iterator self;	            /**< Shortcut for this class. */
   typedef base_iterator::value_type value_type; /**< Shortcut for the value type. */
   typedef base_iterator::pointer pointer;       /**< Shortcut for the pointer type. */
@@ -74,7 +76,7 @@ public:
   *
   * @param node The prototype_node of the object_proxy
   */
-  prototype_iterator(prototype_node *node);
+  prototype_iterator(pointer node);
 
   /**
   * Copy from a given const_object_view_iterator.
@@ -169,11 +171,154 @@ private:
   void decrement();
 
 private:
-  prototype_node *node_;
+  friend class const_prototype_iterator;
+
+  pointer node_;
 };
+
+class OOS_API const_prototype_iterator
+  : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node *, const prototype_node &>
+{
+public:
+  typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node*, const prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
+  typedef const_prototype_iterator self;	            /**< Shortcut for this class. */
+  typedef base_iterator::value_type value_type; /**< Shortcut for the value type. */
+  typedef base_iterator::pointer pointer;       /**< Shortcut for the pointer type. */
+  typedef base_iterator::reference reference ;  /**< Shortcut for the reference type */
+
+  /**
+  * Creates an empty iterator
+  */
+  const_prototype_iterator();
+
+  /**
+  * @brief Creates a iterator for a concrete type.
+  *
+  * This constructor creates an iterator for a concrete
+  * type and a concrete object.
+  *
+  * @param node The prototype_node of the object_proxy
+  */
+  const_prototype_iterator(pointer node);
+
+  /**
+  * Copy from a given const_object_view_iterator.
+  *
+  * @param x The prototype_iterator to copy from.
+  */
+  const_prototype_iterator(const const_prototype_iterator &x);
+
+  /**
+  * Copy from a given const_object_view_iterator.
+  *
+  * @param x The prototype_iterator to copy from.
+  */
+  const_prototype_iterator(const prototype_iterator &x);
+
+  /**
+  * Assign from a given prototype_iterator.
+  *
+  * @param x The prototype_iterator to assign from.
+  * @return The assigned prototype_iterator.
+  */
+  const_prototype_iterator& operator=(const prototype_iterator &x);
+
+  /**
+  * Assign from a given prototype_iterator.
+  *
+  * @param x The prototype_iterator to assign from.
+  * @return The assigned prototype_iterator.
+  */
+  const_prototype_iterator& operator=(const const_prototype_iterator &x);
+
+  ~const_prototype_iterator();
+
+  /**
+  * @brief Compares this with another iterators.
+  *
+  * Compares this with another iterators. Returns true
+  * if the iterators node prototype_type are the same.
+  *
+  * @param i The iterator to compare with.
+  * @return True if the iterators are the same.
+  */
+  bool operator==(const const_prototype_iterator &i) const;
+
+  /**
+  * @brief Compares this with another iterators.
+  *
+  * Compares this with another iterators. Returns true
+  * if the iterators node prototype_node are not the same.
+  *
+  * @param i The iterator to compare with.
+  * @return True if the iterators are not the same.
+  */
+  bool operator!=(const const_prototype_iterator &i) const;
+
+  /**
+  * Pre increments the iterator
+  *
+  * @return Returns iterators successor.
+  */
+  self& operator++();
+
+  /**
+  * Post increments the iterator
+  *
+  * @return Returns iterator before incrementing.
+  */
+  self operator++(int);
+
+  /**
+  * Pre increments the iterator
+  *
+  * @return Returns iterators predeccessor.
+  */
+  self& operator--();
+
+  /**
+  * Post decrements the iterator
+  *
+  * @return Returns iterator before decrementing.
+  */
+  self operator--(int);
+
+  /**
+  * Returns the pointer to the node.
+  *
+  * @return The pointer to the node.
+  */
+  pointer operator->() const;
+
+  /**
+  * Returns the node.
+  *
+  * @return The iterators underlaying node.
+  */
+  reference operator*() const;
+
+  /**
+  * Returns the pointer to the node.
+  *
+  * @return The pointer to the node.
+  */
+  pointer get() const;
+
+private:
+  void increment();
+  void decrement();
+
+private:
+  pointer node_;
+};
+
 /// @endcond
 
 class OOS_API prototype_tree {
+public:
+  typedef prototype_iterator iterator;               /**< Shortcut for the list iterator. */
+  typedef const_prototype_iterator const_iterator;   /**< Shortcut for the list const iterator. */
+
 public:
   prototype_tree();
   ~prototype_tree();
@@ -190,7 +335,7 @@ public:
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  prototype_iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
 
   /**
   * @brief Finds prototype node.
@@ -203,7 +348,23 @@ public:
   * @param type Name or class name of the prototype
   * @return Returns a prototype iterator.
   */
-  prototype_iterator find(const char *type);
+  iterator find(const char *type);
+
+  /**
+  * @brief Finds prototype node by template type.
+  * @tparam Template type.
+  *
+  * Finds and returns prototype node iterator identified
+  * by the given template typeid. If the prototype couldn't
+  * be found prototype_iterator end is returned.
+  *
+  * @return Returns a prototype iterator.
+  */
+  template < class T >
+  iterator find()
+  {
+    return find(typeid(T).name());
+  }
 
   /**
    * Returns true if prototype tree
@@ -233,6 +394,16 @@ public:
   void clear(const char *type, bool recursive);
 
   /**
+   * Erase a prototype node identified
+   * by its iterator. The successor iterator
+   * is returned.
+   *
+   * @param i The prototype iterator to be erased
+   * @return The successor of the erased iterator
+   */
+  iterator erase(const prototype_iterator &i);
+
+  /**
   * Removes an object prototype from the prototype tree. All children
   * nodes and all objects are also removed.
   *
@@ -247,14 +418,28 @@ public:
   *
   * @return The first prototype node iterator.
   */
-  prototype_iterator begin() const;
+  iterator begin();
+
+  /**
+  * Return the first prototype node.
+  *
+  * @return The first prototype node iterator.
+  */
+  const_iterator begin() const;
 
   /**
   * Return the last prototype node.
   *
   * @return The last prototype node iterator.
   */
-  prototype_iterator end() const;
+  iterator end();
+
+  /**
+  * Return the last prototype node.
+  *
+  * @return The last prototype node iterator.
+  */
+  const_iterator end() const;
 
 private:
   typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
@@ -277,17 +462,23 @@ private:
    */
   prototype_node* find_prototype_node(const char *type);
 
-  void append(prototype_node *node, prototype_node *pred);
-  void prepend(prototype_node *node, prototype_node *succ);
+  /**
+   * @internal
+   *
+   * Removes a prototy node and
+   * return its successor node
+   *
+   * @param node The prototype node to remove
+   * @return The successor node
+   * @throws oos::object_exception if in error occurrs
+   */
+  prototype_node* remove_prototype_node(prototype_node *node);
 
 private:
   friend class object_container;
 
   prototype_node *first_;
   prototype_node *last_;
-
-  object_proxy *op_first_;
-  object_proxy *op_last_;
 
   // name to prototype map
   t_prototype_map prototype_map_;

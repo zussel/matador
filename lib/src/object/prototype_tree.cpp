@@ -61,10 +61,10 @@ private:
 };
 
 prototype_iterator::prototype_iterator()
-  : node_(NULL)
+  : node_(0)
 {}
 
-prototype_iterator::prototype_iterator(prototype_node *node)
+prototype_iterator::prototype_iterator(prototype_iterator::pointer node)
   : node_(node)
 {}
 
@@ -145,6 +145,101 @@ void prototype_iterator::decrement()
   }
 }
 
+const_prototype_iterator::const_prototype_iterator()
+  : node_(0)
+{}
+
+const_prototype_iterator::const_prototype_iterator(const_prototype_iterator::pointer node)
+  : node_(node)
+{}
+
+const_prototype_iterator::const_prototype_iterator(const const_prototype_iterator &x)
+  : node_(x.node_)
+{}
+
+const_prototype_iterator::const_prototype_iterator(const prototype_iterator &x)
+  : node_(x.node_)
+{}
+
+const_prototype_iterator& const_prototype_iterator::operator=(const const_prototype_iterator &x)
+{
+  node_ = x.node_;
+  return *this;
+}
+
+const_prototype_iterator& const_prototype_iterator::operator=(const prototype_iterator &x)
+{
+  node_ = x.node_;
+  return *this;
+}
+
+const_prototype_iterator::~const_prototype_iterator()
+{}
+
+bool const_prototype_iterator::operator==(const const_prototype_iterator &i) const
+{
+  return (node_ == i.node_);
+}
+
+bool const_prototype_iterator::operator!=(const const_prototype_iterator &i) const
+{
+  return !operator==(i);
+}
+
+const_prototype_iterator::self& const_prototype_iterator::operator++()
+{
+  increment();
+  return *this;
+}
+
+const_prototype_iterator::self const_prototype_iterator::operator++(int)
+{
+  pointer tmp = node_;
+  increment();
+  return const_prototype_iterator(tmp);
+}
+
+const_prototype_iterator::self& const_prototype_iterator::operator--()
+{
+  decrement();
+  return *this;
+}
+
+const_prototype_iterator::self const_prototype_iterator::operator--(int)
+{
+  pointer tmp = node_;
+  decrement();
+  return const_prototype_iterator(tmp);
+}
+
+const_prototype_iterator::pointer const_prototype_iterator::operator->() const
+{
+  return node_;
+}
+
+const_prototype_iterator::reference const_prototype_iterator::operator*() const
+{
+  return *node_;
+}
+
+const_prototype_iterator::pointer const_prototype_iterator::get() const
+{
+  return node_;
+}
+
+void const_prototype_iterator::increment()
+{
+  if (node_) {
+    node_ = node_->next_node();
+  }
+}
+void const_prototype_iterator::decrement()
+{
+  if (node_) {
+    node_ = node_->previous_node();
+  }
+}
+
 prototype_tree::prototype_tree()
   : first_(new prototype_node)
   , last_(new prototype_node)
@@ -179,7 +274,7 @@ prototype_tree::~prototype_tree()
 }
 
 
-prototype_iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
+prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
   // set node to root node
   prototype_node *parent_node = find_prototype_node(parent);
   if (!parent_node) {
@@ -249,7 +344,7 @@ prototype_iterator prototype_tree::insert(object_base_producer *producer, const 
   return prototype_iterator(node);
 }
 
-prototype_iterator prototype_tree::find(const char *type) {
+prototype_tree::iterator prototype_tree::find(const char *type) {
   return prototype_iterator(find_prototype_node(type));
 }
 
@@ -281,46 +376,40 @@ void prototype_tree::clear(const char *type, bool recursive) {
   node->clear();
 }
 
+prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
+  prototype_node *node = find_prototype_node(i->type.c_str());
+
+  node = remove_prototype_node(node);
+  return oos::prototype_iterator(node);
+}
+
 void prototype_tree::remove(const char *type) {
   prototype_node *node = find_prototype_node(type);
   if (!node) {
     throw object_exception("couldn't find prototype");
   }
 
-  // remove (and delete) from tree (deletes subsequently all child nodes
-  // for each child call remove_prototype(child);
-  while (node->first->next != node->last) {
-    remove(node->first->next->type.c_str());
-  }
-  // and objects they're containing
-  node->clear();
-  // delete prototype node as well
-  // unlink node
-  node->unlink();
-  // get iterator
-  t_prototype_map::iterator i = prototype_map_.find(node->type.c_str());
-  if (i != prototype_map_.end()) {
-    prototype_map_.erase(i);
-  }
-  // find item in typeid map
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(node->producer->classname());
-  if (j != typeid_prototype_map_.end()) {
-    j->second.erase(type);
-    if (j->second.empty()) {
-      typeid_prototype_map_.erase(j);
-    }
-  } else {
-    throw object_exception("couldn't find node by id");
-  }
-  delete node;
+  remove_prototype_node(node);
 }
 
-prototype_iterator prototype_tree::begin() const {
+prototype_tree::iterator prototype_tree::begin()
+{
   return prototype_iterator(first_->next);
 }
 
-prototype_iterator prototype_tree::end() const {
+prototype_tree::iterator prototype_tree::end()
+{
   return prototype_iterator(last_);
+}
+
+prototype_tree::const_iterator prototype_tree::begin() const
+{
+  return prototype_tree::const_iterator(first_->next);
+}
+
+prototype_tree::const_iterator prototype_tree::end() const
+{
+  return prototype_tree::const_iterator(last_);
 }
 
 prototype_node* prototype_tree::find_prototype_node(const char *type) {
@@ -358,6 +447,38 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
   } else {
     return i->second;
   }
+}
+
+
+prototype_node *prototype_tree::remove_prototype_node(prototype_node *node) {
+  // remove (and delete) from tree (deletes subsequently all child nodes
+  // for each child call remove_prototype(child);
+  while (node->first->next != node->last) {
+    remove(node->first->next->type.c_str());
+  }
+  // and objects they're containing
+  node->clear();
+  // delete prototype node as well
+  // unlink node
+  node->unlink();
+  // get iterator
+  t_prototype_map::iterator i = prototype_map_.find(node->type.c_str());
+  if (i != prototype_map_.end()) {
+    prototype_map_.erase(i);
+  }
+  // find item in typeid map
+  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(node->producer->classname());
+  if (j != typeid_prototype_map_.end()) {
+    j->second.erase(node->type);
+    if (j->second.empty()) {
+      typeid_prototype_map_.erase(j);
+    }
+  } else {
+    throw object_exception("couldn't find node by id");
+  }
+  prototype_node *next = node->next_node();
+  delete node;
+  return next;
 }
 
 }
