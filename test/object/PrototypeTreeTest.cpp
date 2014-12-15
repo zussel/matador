@@ -18,6 +18,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("decrement", std::tr1::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
   add_test("count", std::tr1::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
   add_test("child_of", std::tr1::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
+  add_test("traverse", std::tr1::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
 }
 
 PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
@@ -111,4 +112,25 @@ void PrototypeTreeTestUnit::test_child_of()
   UNIT_ASSERT_FALSE(root->is_child_of(item.get()), "root must not be child of node");
 
   UNIT_ASSERT_TRUE(item->is_child_of(root.get()), "node must be child of root");
+}
+
+void PrototypeTreeTestUnit::test_traverse()
+{
+  prototype_tree ptree;
+  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
+  ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
+  ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
+
+  prototype_iterator first = ptree.begin();
+  prototype_iterator last = ptree.end();
+  int count(0);
+
+  while (first != last) {
+    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    ++first;
+    ++count;
+  }
+
+  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 4");
 }

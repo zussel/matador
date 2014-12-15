@@ -21,6 +21,7 @@ public:
   void test_decrement();
   void test_count();
   void test_child_of();
+  void test_traverse();
 
 };
 
