@@ -19,6 +19,7 @@ public:
   void test_find();
   void test_remove();
   void test_decrement();
+  void test_count();
   void test_child_of();
 
 };

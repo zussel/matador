@@ -16,6 +16,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("find", std::tr1::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
   add_test("remove", std::tr1::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
   add_test("decrement", std::tr1::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
+  add_test("count", std::tr1::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
   add_test("child_of", std::tr1::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
 }
 
@@ -84,6 +85,16 @@ void PrototypeTreeTestUnit::test_decrement()
   --i;
 
   UNIT_ASSERT_TRUE(i == ptree.begin(), "iterator must be begin");
+}
+
+void PrototypeTreeTestUnit::test_count() {
+  prototype_tree ptree;
+  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
+  ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
+  ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
+
+  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)5, "prototype size must be one (5)");
 }
 
 void PrototypeTreeTestUnit::test_child_of()

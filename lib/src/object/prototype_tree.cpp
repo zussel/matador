@@ -22,24 +22,25 @@
 #include "object/object_container.hpp"
 
 #include <iterator>
+#include <string.h>
 
 namespace oos {
 
 class prototype_tree;
 
-class relation_handler2 : public generic_object_writer<relation_handler2>
+class relation_builder : public generic_object_writer<relation_builder>
 {
 public:
   typedef std::list<std::string> string_list_t;
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_handler2(prototype_tree &ptree, prototype_node *node)
-    : generic_object_writer<relation_handler2>(this)
+  relation_builder(prototype_tree &ptree, prototype_node *node)
+    : generic_object_writer<relation_builder>(this)
     , ptree_(ptree)
     , node_(node)
   {}
-  virtual ~relation_handler2() {}
+  virtual ~relation_builder() {}
 
   template < class T >
   void write_value(const char*, const T&) {}
@@ -264,7 +265,6 @@ prototype_tree::prototype_tree()
   // add to maps
   prototype_map_.insert(std::make_pair("object", root));
   typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("object", root));
-
 }
 
 prototype_tree::~prototype_tree()
@@ -335,10 +335,10 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   prototype_map_.insert(std::make_pair(type, node)).first;
   typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
 
-  // Check if nodes object has to many relations
+  // Check if nodes object has 'to-many' relations
   object *o = producer->create();
-  relation_handler2 rh(*this, node);
-  o->serialize(rh);
+  relation_builder rb(*this, node);
+  o->serialize(rb);
   delete o;
 
   return prototype_iterator(node);
@@ -355,7 +355,11 @@ bool prototype_tree::empty() const {
 
 
 size_t prototype_tree::size() const {
-  return std::distance(begin(), end()) - 1;
+  return (size_t) (std::distance(begin(), end()) - 1);
+}
+
+size_t prototype_tree::prototype_count() const {
+  return prototype_map_.size();
 }
 
 void prototype_tree::clear(const char *type, bool recursive) {

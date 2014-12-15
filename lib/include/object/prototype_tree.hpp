@@ -382,6 +382,14 @@ public:
   size_t size() const;
 
   /**
+   * Return the number of prototypes
+   * in the tree
+   *
+   * @return The number of prototypes
+   */
+  size_t prototype_count() const;
+
+  /**
   * Clears a prototype node. All objects will be deleted. If
   * the recursive flag is set all objects from the children nodea
   * will be deleted as well.
