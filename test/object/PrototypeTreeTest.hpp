@@ -16,6 +16,7 @@ public:
 
   void test_empty();
   void test_insert();
+  void test_insert_by_template();
   void test_find();
   void test_remove();
   void test_decrement();

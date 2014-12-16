@@ -13,6 +13,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
 {
   add_test("empty", std::tr1::bind(&PrototypeTreeTestUnit::test_empty, this), "test empty prototype tree");
   add_test("insert", std::tr1::bind(&PrototypeTreeTestUnit::test_insert, this), "test insert element");
+  add_test("insert_template", std::tr1::bind(&PrototypeTreeTestUnit::test_insert_by_template, this), "test insert element by template arguments");
   add_test("find", std::tr1::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
   add_test("remove", std::tr1::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
   add_test("decrement", std::tr1::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
@@ -43,6 +44,19 @@ void PrototypeTreeTestUnit::test_insert()
   ptree.insert(new object_producer<Item>, "item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+}
+
+
+void PrototypeTreeTestUnit::test_insert_by_template()
+{
+  prototype_tree ptree;
+  ptree.insert<Item>("item", false);
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+
+  ptree.insert<ItemA, Item>("item_a", false);
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
 }
 
 void PrototypeTreeTestUnit::test_find()

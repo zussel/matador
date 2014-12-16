@@ -27,7 +27,7 @@ namespace oos {
 unit_test::unit_test(const std::string &name, const std::string &caption)
  : name_(name)
  , caption_(caption)
- 
+ , current_test_func_info(nullptr)
 {}
 
 unit_test::~unit_test()
@@ -127,8 +127,9 @@ void unit_test::info(const std::string &msg)
 void unit_test::execute(test_func_info &test_info)
 {
     initialize();
-    std::cout << "Executing test [" << std::left << std::setw(70) << test_info.caption << "] ... ";
+    std::cout << std::left << std::setw(70) << test_info.caption << " ... ";
     try {
+      current_test_func_info = &test_info;
       test_info.func();
     } catch (unit_exception &ex) {
       test_info.succeeded = false;
@@ -139,10 +140,14 @@ void unit_test::execute(test_func_info &test_info)
     }
     finalize();
     if (test_info.succeeded) {
-      std::cout << "succeeded\n";
+      std::cout << "PASS\n";
     } else {
-      std::cout << "failed\n\t" << test_info.message << "\n";
+      std::cout << "FAILED\n\t" << test_info.message << "\n";
     }
+}
+
+void unit_test::reset() {
+
 }
 
 }

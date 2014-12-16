@@ -34,15 +34,13 @@
 
 #include "object/prototype_node.hpp"
 #include "object/object_proxy.hpp"
+#include "object/object_producer.hpp"
 
 #include <string>
 #include <unordered_map>
 
 namespace oos {
 
-class prototype_node;
-
-class object_base_producer;
 class const_prototype_iterator;
 
 /**
@@ -336,6 +334,43 @@ public:
   * @return         Returns new inserted prototype iterator.
   */
   iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+
+  /**
+  * Inserts a new object prototype into the prototype tree. The prototype
+  * consists of a producer and a unique type name. To know where the new
+  * prototype is inserted into the hierarchy the type name of the parent
+  * node is also given. The producer is automatically created via the template
+  * parameter.
+  *
+  * @tparam T       The type of the prototype node
+  * @param type     The unique name of the type.
+  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @return         Returns new inserted prototype iterator.
+  */
+  template < class T >
+  iterator insert(const char *type, bool abstract = false)
+  {
+    return insert(new object_producer<T>, type, abstract);
+  }
+
+  /**
+  * Inserts a new object prototype into the prototype tree. The prototype
+  * consists of a producer and a unique type name. To know where the new
+  * prototype is inserted into the hierarchy the type name of the parent
+  * node is also given. The producer is automatically created via the template
+  * parameter.
+  *
+  * @tparam T       The type of the prototype node
+  * @tparam S       The type of the parent prototype node
+  * @param type     The unique name of the type.
+  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @return         Returns new inserted prototype iterator.
+  */
+  template < class T, class S >
+  iterator insert(const char *type, bool abstract = false)
+  {
+    return insert(new object_producer<T>, type, abstract, typeid(S).name());
+  }
 
   /**
   * @brief Finds prototype node.

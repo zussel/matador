@@ -458,7 +458,8 @@ public:
   template < class T >
   void assert_null(const T *a, const std::string &msg, int line, const char *file)
   {
-    if (a != 0) {
+
+    if (a != nullptr) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null: " << msg;
       throw unit_exception(msgstr.str());
@@ -548,7 +549,7 @@ public:
   void warn(const std::string &msg, int line, const char *file);
 
   /**
-   * @brief Displays an informatkon.
+   * @brief Displays an information.
    *
    * The test method displays an information
    * with the given message.
@@ -557,16 +558,19 @@ public:
    */
   void info(const std::string &msg);
 
+  void reset();
+
 private:
   friend class test_suite;
 
   typedef struct test_func_info_struct
   {
     test_func_info_struct(const test_func &f, const std::string &c)
-      : func(f), succeeded(true), caption(c)
+      : func(f), succeeded(true), assertion_count(0), caption(c)
     {}
     test_func func;
     bool succeeded;
+    size_t assertion_count;
     std::string caption;
     std::string message;
   } test_func_info;
@@ -580,6 +584,9 @@ private:
 
   typedef std::map<std::string, test_func_info> t_test_func_info_map;
   t_test_func_info_map test_func_info_map_;
+
+  // runtime data
+  test_func_info *current_test_func_info;
 };
 
 }

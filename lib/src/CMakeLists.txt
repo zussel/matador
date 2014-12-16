@@ -23,6 +23,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_convert.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
