@@ -307,6 +307,7 @@ public:
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a != b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
@@ -317,6 +318,7 @@ public:
 #ifndef OOS_DOXYGEN_DOC
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
@@ -327,6 +329,7 @@ public:
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (strcmp(a, b) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
@@ -336,6 +339,7 @@ public:
   template < class X >
   void assert_equal(const X &a, const bool &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     bool cmp = a > 0;
     if (cmp != b) {
       std::stringstream msgstr;
@@ -346,6 +350,7 @@ public:
 
   void assert_equal(const bool &a, const bool &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a != b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
@@ -372,6 +377,7 @@ public:
   template < class T >
   void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a == b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
@@ -397,6 +403,7 @@ public:
   template < class T >
   void assert_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a <= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
@@ -408,6 +415,7 @@ public:
   template < class X, class Y >
   void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a <= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
@@ -434,6 +442,7 @@ public:
   template < class T >
   void assert_less(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a >= b) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is greater equal " << b << ": " << msg;
@@ -458,7 +467,7 @@ public:
   template < class T >
   void assert_null(const T *a, const std::string &msg, int line, const char *file)
   {
-
+    ++current_test_func_info->assertion_count;
     if (a != nullptr) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not null: " << msg;
@@ -483,6 +492,7 @@ public:
   template < class T >
   void assert_not_null(const T *a, const std::string &msg, int line, const char *file)
   {
+    ++current_test_func_info->assertion_count;
     if (a == 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is null: " << msg;

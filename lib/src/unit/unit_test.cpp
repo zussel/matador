@@ -91,6 +91,7 @@ void unit_test::add_test(const std::string &name, const test_func &test, const s
 
 void unit_test::assert_true(bool a, const std::string &msg, int line, const char *file)
 {
+  ++current_test_func_info->assertion_count;
   if (!a) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is false: " << msg;
@@ -100,6 +101,7 @@ void unit_test::assert_true(bool a, const std::string &msg, int line, const char
 
 void unit_test::assert_false(bool a, const std::string &msg, int line, const char *file)
 {
+  ++current_test_func_info->assertion_count;
   if (a) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is true: " << msg;
@@ -140,7 +142,7 @@ void unit_test::execute(test_func_info &test_info)
     }
     finalize();
     if (test_info.succeeded) {
-      std::cout << "PASS\n";
+      std::cout << "PASS (" << test_info.assertion_count << " assertions)\n";
     } else {
       std::cout << "FAILED\n\t" << test_info.message << "\n";
     }
