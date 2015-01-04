@@ -39,12 +39,12 @@ const char* object::classname() const
   }
 }
 
-long object::id() const
+unsigned long object::id() const
 {
 	return id_;
 }
 
-void object::id(long oid)
+void object::id(unsigned long oid)
 {
 	id_ = oid;
 }

@@ -126,7 +126,7 @@ public:
    * 
    * @return The unique id of the object.
    */
-	long id() const;
+	unsigned long id() const;
 
   /**
    * @brief Sets the id of the object.
@@ -135,7 +135,7 @@ public:
    * 
    * @param oid The new id of the object.
    */
-	void id(long oid);
+	void id(unsigned long oid);
 
   /**
    * @brief Returns the object store.
@@ -337,7 +337,7 @@ private:
   friend class query;
   friend class database;
 
-	long id_;
+	unsigned long id_;
   object_proxy *proxy_;
 };
 

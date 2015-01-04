@@ -17,11 +17,7 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
 #include "object/object.hpp"
-
-#include <cassert>
-#include <stdexcept>
 
 using namespace std;
 
@@ -176,13 +172,13 @@ object_base_ptr::is_loaded() const
   return (proxy_ && proxy_->obj);
 }
 
-long
+unsigned long
 object_base_ptr::id() const
 {
   return (proxy_ ? proxy_->id : id_);
 }
 
-void object_base_ptr::id(long i)
+void object_base_ptr::id(unsigned long i)
 {
   if (proxy_) {
     throw std::logic_error("proxy already set");
@@ -194,13 +190,13 @@ void object_base_ptr::id(long i)
 object*
 object_base_ptr::ptr() const
 {
-  return (proxy_ ? proxy_->obj : NULL);
+  return lookup_object();
 }
 
 object*
 object_base_ptr::lookup_object() const
 {
-  return (proxy_ ? proxy_->obj : NULL);
+  return (proxy_ ? proxy_->obj : nullptr);
 }
 
 bool object_base_ptr::is_reference() const

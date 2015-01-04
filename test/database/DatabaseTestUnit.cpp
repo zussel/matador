@@ -438,7 +438,7 @@ DatabaseTestUnit::test_simple()
     typedef object_view<Item> item_view;
     // insert new object
     item_ptr item = ostore_.insert(new Item("Hello World", 70));
-    UNIT_ASSERT_GREATER(item->id(), 0, "item has invalid object id");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "item has invalid object id");
     tr.commit();
 
     tr.begin();
@@ -539,11 +539,11 @@ DatabaseTestUnit::test_with_sub()
     // insert new object
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
 
-    UNIT_ASSERT_GREATER(object_item->id(), 0, "invalid object item");
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid object item");
 
     item_ptr item = object_item->ptr();
 
-    UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
     item->set_int(120);
     item->set_string("Bar");
@@ -609,7 +609,7 @@ DatabaseTestUnit::test_with_list()
 
     itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
 
-    UNIT_ASSERT_GREATER(itemlist->id(), 0, "invalid item list");
+    UNIT_ASSERT_GREATER(itemlist->id(), 0UL, "invalid item list");
     UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
 
     tr.commit();
@@ -620,7 +620,7 @@ DatabaseTestUnit::test_with_list()
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new Item(name.str()));
 
-      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
       itemlist->push_back(item);
     }
@@ -640,7 +640,7 @@ DatabaseTestUnit::test_with_list()
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new Item(name.str()));
 
-      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
       itemlist->push_back(item);
     }
@@ -700,7 +700,7 @@ DatabaseTestUnit::test_with_vector()
 
     itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
 
-    UNIT_ASSERT_GREATER(itemvector->id(), 0, "invalid item list");
+    UNIT_ASSERT_GREATER(itemvector->id(), 0UL, "invalid item list");
     UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
 
     tr.commit();
@@ -711,7 +711,7 @@ DatabaseTestUnit::test_with_vector()
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new Item(name.str()));
 
-      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
       itemvector->push_back(item);
     }
@@ -731,7 +731,7 @@ DatabaseTestUnit::test_with_vector()
       name << "Item " << i+1;
       item_ptr item = ostore_.insert(new Item(name.str()));
 
-      UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
       itemvector->push_back(item);
     }
@@ -799,11 +799,11 @@ DatabaseTestUnit::test_reload_simple()
     // insert new object
     item_ptr item = ostore_.insert(new Item("Foo", 42));
 
-    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid object item");
 
     item = ostore_.insert(new Item("Bar", 99));
 
-    UNIT_ASSERT_GREATER(item->id(), 0, "invalid object item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid object item");
 
     tr.commit();
   } catch (database_exception &ex) {
@@ -882,11 +882,11 @@ DatabaseTestUnit::test_reload()
     // insert new object
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
 
-    UNIT_ASSERT_GREATER(object_item->id(), 0, "invalid object item");
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid object item");
 
     item_ptr item = object_item->ptr();
 
-    UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
     item->set_int(120);
     item->set_string("Bar");
@@ -965,7 +965,7 @@ DatabaseTestUnit::test_reload_container()
 
     album_ptr alb1 = ostore_.insert(new album("My Album"));
 
-    UNIT_ASSERT_GREATER(alb1->id(), 0, "invalid album");
+    UNIT_ASSERT_GREATER(alb1->id(), 0UL, "invalid album");
     UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");
 
     tr.commit();
@@ -976,7 +976,7 @@ DatabaseTestUnit::test_reload_container()
       name << "Track " << i+1;
 
       track_ptr trk = ostore_.insert(new track(name.str()));
-      UNIT_ASSERT_GREATER(trk->id(), 0, "invalid track");
+      UNIT_ASSERT_GREATER(trk->id(), 0UL, "invalid track");
 
       alb1->add(trk);
 //      cout << "\nadded track: " << trk->title() << " (index: " << trk->index() << ", album: " << trk->alb()->id() << ")";

@@ -198,7 +198,7 @@ ObjectListTestUnit::test_linked_int_list()
   // remove an item
   LinkedIntList::iterator i = intlist->begin();
 
-  long id_val = (*i)->id();
+  unsigned long id_val = (*i)->id();
 
   i = intlist->erase(i);
 
@@ -247,7 +247,7 @@ ObjectListTestUnit::test_linked_ref_list()
   // remove an item
   LinkedItemRefList::iterator i = itemlist->begin();
 
-  long id_val = (*i)->id();
+  unsigned long id_val = (*i)->id();
 
   i = itemlist->erase(i);
 
@@ -296,7 +296,7 @@ ObjectListTestUnit::test_linked_ptr_list()
   // remove an item
   LinkedItemPtrList::iterator i = itemlist->begin();
 
-  long id_val = (*i)->id();
+  unsigned long id_val = (*i)->id();
 
   i = itemlist->erase(i);
 

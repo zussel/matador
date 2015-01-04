@@ -65,9 +65,9 @@ bool insert_action::empty() const
   return object_list_.empty();
 }
 
-struct object_by_id : public std::unary_function<long, bool>
+struct object_by_id : public std::unary_function<unsigned long, bool>
 {
-  object_by_id(long id)
+  object_by_id(unsigned long id)
     : id_(id)
   {}
   bool operator()(const object *o) const
@@ -75,15 +75,15 @@ struct object_by_id : public std::unary_function<long, bool>
     return (o && o->id() == id_);
   }
   
-  long id_;
+  unsigned long id_;
 };
 
-insert_action::iterator insert_action::find(long id)
+insert_action::iterator insert_action::find(unsigned long id)
 {
   return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
 }
 
-insert_action::const_iterator insert_action::find(long id) const
+insert_action::const_iterator insert_action::find(unsigned long id) const
 {
   return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
 }
@@ -108,7 +108,7 @@ const object* update_action::obj() const
   return obj_;
 }
 
-delete_action::delete_action(const char *classname, long id)
+delete_action::delete_action(const char *classname, unsigned long id)
   : classname_(classname)
   , id_(id)
 {}
@@ -126,7 +126,7 @@ const char* delete_action::classname() const
   return classname_.c_str();
 }
 
-long delete_action::id() const
+unsigned long delete_action::id() const
 {
   return id_;
 }

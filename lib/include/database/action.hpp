@@ -204,8 +204,8 @@ public:
 
   bool empty() const;
 
-  iterator find(long id);
-  const_iterator find(long id) const;
+  iterator find(unsigned long id);
+  const_iterator find(unsigned long id) const;
 
   void push_back(object *o);
 
@@ -274,7 +274,7 @@ public:
    * @param classname The object type name.
    * @param id The id of the deleted object.
    */
-  delete_action(const char *classname, long id);
+  delete_action(const char *classname, unsigned long id);
 
   virtual ~delete_action();
   
@@ -293,11 +293,11 @@ public:
    * 
    * @return The id of the deleted object.
    */
-  long id() const;
+  unsigned long id() const;
 
 private:
   std::string classname_;
-  long id_;
+  unsigned long id_;
 };
 
 /**

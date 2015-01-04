@@ -148,7 +148,7 @@ public:
    * 
    * @return The id of the object.
    */
-	long id() const;
+	unsigned long id() const;
 
   /**
    * Sets the object id. If a proxy
@@ -156,7 +156,7 @@ public:
    * 
    * @param i The new object id
    */
-  void id(long i);
+  void id(unsigned long i);
 
   /**
    * Returns the object
@@ -222,7 +222,7 @@ private:
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
-	long id_;
+	unsigned long id_;
   object_proxy *proxy_;
   bool is_reference_;
   bool is_internal_;
@@ -328,10 +328,7 @@ public:
    * @return The pointer to the object of type T.
    */
 	T* operator->() const {
-	  if (proxy_) {
-	    return dynamic_cast<T*>(lookup_object());
-	  }
-	  return NULL;
+    return get();
 	}
 
   /**
@@ -343,11 +340,7 @@ public:
    * @return The reference to the object of type T.
    */
 	T& operator*() const {
-		if (proxy_) {
-      return *dynamic_cast<T*>(lookup_object());
-    } else {
-      return *(T*)0;
-    }
+    return *get();
 	}
 
   /**
@@ -359,11 +352,8 @@ public:
    * @return The pointer to the object of type T.
    */
   T* get() const {
-    if (proxy_) {
-      T* t = dynamic_cast<T*>(lookup_object());
-      return t;
-    }
-    return NULL;
+      //return dynamic_cast<T*>(lookup_object());
+      return static_cast<T*>(lookup_object());
   }
 };
 
@@ -469,11 +459,26 @@ public:
    *
    * @return The pointer to the object of type T.
    */
-	T* operator->() const {
+	T* operator->() {
 	  if (proxy_) {
 	    return dynamic_cast<T*>(lookup_object());
 	  }
-	  return NULL;
+	  return 0;
+	}
+
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object 0 (null) is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
+	const T* operator->() const {
+	  if (proxy_) {
+	    return dynamic_cast<const T*>(lookup_object());
+	  }
+	  return 0;
 	}
 
   /**
@@ -503,7 +508,7 @@ public:
 		if (proxy_) {
       return dynamic_cast<T*>(lookup_object());
  		}
-    return NULL;
+    return 0;
 	}
 };
 

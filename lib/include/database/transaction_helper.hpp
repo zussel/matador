@@ -131,7 +131,7 @@ private:
   transaction::action_list_t &action_list_;
   transaction::iterator iter_;
   object *obj_;
-  long id_;
+  unsigned long id_;
 };
 /// @endcond
 

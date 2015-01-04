@@ -554,15 +554,15 @@ ObjectStoreTestUnit::view_test()
   item_view_t iview(ostore_);
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE((int)iview.empty(), "item view is not empty");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view is not empty");
 
   item_ptr item = iview.front();
 
-  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+  UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
   item = iview.back();
   
-  UNIT_ASSERT_GREATER(item->id(), 0, "invalid item");
+  UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 }
 
 void
