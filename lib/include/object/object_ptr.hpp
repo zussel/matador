@@ -459,26 +459,9 @@ public:
    *
    * @return The pointer to the object of type T.
    */
-	T* operator->() {
-	  if (proxy_) {
-	    return dynamic_cast<T*>(lookup_object());
-	  }
-	  return 0;
-	}
+	T* operator->() const {
+    return get();
 
-  /**
-   * @brief Return the pointer to the object of type T.
-   *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
-   *
-   * @return The pointer to the object of type T.
-   */
-	const T* operator->() const {
-	  if (proxy_) {
-	    return dynamic_cast<const T*>(lookup_object());
-	  }
-	  return 0;
 	}
 
   /**
@@ -490,10 +473,7 @@ public:
    * @return The reference to the object of type T.
    */
 	T& operator*() const {
-		if (proxy_) {
-      return *dynamic_cast<T*>(lookup_object());
- 		}
-    return NULL;
+    return *get();
 	}
 
   /**
@@ -505,10 +485,8 @@ public:
    * @return The pointer to the object of type T.
    */
 	T* get() const {
-		if (proxy_) {
-      return dynamic_cast<T*>(lookup_object());
- 		}
-    return 0;
+    return static_cast<T*>(lookup_object());
+//    return dynamic_cast<T*>(lookup_object());
 	}
 };
 

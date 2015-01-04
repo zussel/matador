@@ -238,13 +238,13 @@ void JsonTestUnit::array_test()
   
   bool ret = a.parse(in);
   UNIT_ASSERT_EQUAL(ret, true, "parsing unexpectly failed");
-  UNIT_ASSERT_EQUAL(a.size(), 3, "values are not equal");
+  UNIT_ASSERT_EQUAL(a.size(), (size_t)3, "values are not equal");
   
   json_value jv(new json_array);
   jv.push_back(1);
   jv.push_back(2);
   a = jv;
-  UNIT_ASSERT_EQUAL(a.size(), 2, "values are not equal");
+  UNIT_ASSERT_EQUAL(a.size(), (size_t)2, "values are not equal");
 }
 
 void JsonTestUnit::create_test()
