@@ -49,11 +49,13 @@ SET(OBJECT_HEADER
   ../include/object/object_deleter.hpp
   ../include/object/object_list.hpp
   ../include/object/object_vector.hpp
+  ../include/object/object_producer.hpp
   ../include/object/linked_object_list.hpp
   ../include/object/object_view.hpp
   ../include/object/object_proxy.hpp
   ../include/object/object_serializer.hpp
   ../include/object/prototype_node.hpp
+  ../include/object/prototype_tree.hpp
   ../include/object/object_observer.hpp
   ../include/object/object_expression.hpp
   ../include/object/attribute_serializer.hpp
