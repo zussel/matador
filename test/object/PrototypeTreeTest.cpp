@@ -1,10 +1,6 @@
 #include "PrototypeTreeTest.hpp"
 #include "../Item.hpp"
 
-#include "object/prototype_tree.hpp"
-
-#include <iostream>
-
 using namespace oos;
 using namespace std;
 
@@ -46,13 +42,15 @@ void PrototypeTreeTestUnit::test_insert()
 {
   prototype_tree ptree;
 
-  UNIT_ASSERT_EXCEPTION(ptree.insert(new object_producer<Item>, "item", false, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
+  object_base_producer *producer = new object_producer<Item>;
+  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
 
   ptree.insert(new object_producer<Item>, "item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.insert(new object_producer<Item>, "item", false), object_exception, "prototype already inserted", "inserted same prototype twice");
+  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false), object_exception, "prototype already inserted", "inserted same prototype twice");
+  delete producer;
 }
 
 

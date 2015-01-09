@@ -150,7 +150,7 @@ void prototype_node::remove()
 {
   // delete all object proxies
   clear();
-  // delete all cild nodes
+  // delete all children nodes
   while (first->next != last) {
     prototype_node *node = first->next;
     node->remove();

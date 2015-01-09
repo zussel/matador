@@ -270,6 +270,10 @@ prototype_tree::prototype_tree()
 prototype_tree::~prototype_tree()
 {
   clear();
+  prototype_node *root = first_->next;
+  delete root->op_first;
+  delete root->op_last;
+  delete root;
   delete last_;
   delete first_;
 }
@@ -360,14 +364,10 @@ size_t prototype_tree::prototype_count() const {
 }
 
 void prototype_tree::clear() {
-  prototype_node *node = find_prototype_node("object");
+  prototype_node *root = first_->next;
 
-  prototype_node *first = node->first;
-  prototype_node *last = node->last;
-  while(first != last) {
-    prototype_node *current = first;
-    first = current->next;
-    remove_prototype_node(current);
+  while(root->first->next != root->last) {
+    remove_prototype_node(root->first->next);
   }
 }
 

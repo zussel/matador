@@ -330,8 +330,7 @@ private:
   friend class object_base_ptr;
   friend class object_serializer;
   friend class object_container;
-  friend class object_value_base;
-	
+
   friend class table;
   friend class relation_filler;
   friend class query;
