@@ -269,6 +269,7 @@ prototype_tree::prototype_tree()
 
 prototype_tree::~prototype_tree()
 {
+  clear();
   delete last_;
   delete first_;
 }
@@ -277,10 +278,6 @@ prototype_tree::~prototype_tree()
 prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
   // set node to root node
   prototype_node *parent_node = find_prototype_node(parent);
-  if (!parent_node) {
-    throw object_exception("couldn't find parent prototype");
-  }
-
   /*
    * try to insert new prototype node
    */
@@ -362,25 +359,38 @@ size_t prototype_tree::prototype_count() const {
   return prototype_map_.size();
 }
 
-void prototype_tree::clear(const char *type, bool recursive) {
-  prototype_node *node = find_prototype_node(type);
-  if (!node) {
-    throw object_exception("couldn't find prototype");
-  }
-  if (recursive) {
-    // clear all objects from child nodes
-    // for each child call clear_prototype(child, recursive);
-    prototype_node *child = node->next_node();
-    while (child && (child != node || child != node->parent)) {
-      child->clear();
-      child = child->next_node();
-    }
-  }
+void prototype_tree::clear() {
+  prototype_node *node = find_prototype_node("object");
 
-  node->clear();
+  prototype_node *first = node->first;
+  prototype_node *last = node->last;
+  while(first != last) {
+    prototype_node *current = first;
+    first = current->next;
+    remove_prototype_node(current);
+  }
 }
 
+// Todo: move to object store
+//void prototype_tree::clear(const char *type, bool recursive) {
+//  prototype_node *node = find_prototype_node(type);
+//  if (recursive) {
+//    // clear all objects from child nodes
+//    // for each child call clear_prototype(child, recursive);
+//    prototype_node *child = node->next_node();
+//    while (child && (child != node || child != node->parent)) {
+//      child->clear();
+//      child = child->next_node();
+//    }
+//  }
+//
+//  node->clear();
+//}
+
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
+  if (!i.get()) {
+    throw object_exception("invalid prototype iterator");
+  }
   prototype_node *node = find_prototype_node(i->type.c_str());
 
   node = remove_prototype_node(node);
@@ -389,10 +399,6 @@ prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i
 
 void prototype_tree::remove(const char *type) {
   prototype_node *node = find_prototype_node(type);
-  if (!node) {
-    throw object_exception("couldn't find prototype");
-  }
-
   remove_prototype_node(node);
 }
 

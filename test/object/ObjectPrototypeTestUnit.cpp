@@ -19,7 +19,7 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   add_test("find", std::tr1::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
   add_test("size", std::tr1::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
   add_test("parent_of", std::tr1::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
-  add_test("decrement", std::tr1::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
+  //add_test("decrement", std::tr1::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
   add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");

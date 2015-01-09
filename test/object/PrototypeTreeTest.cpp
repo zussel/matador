@@ -16,10 +16,14 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("insert_template", std::tr1::bind(&PrototypeTreeTestUnit::test_insert_by_template, this), "test insert element by template arguments");
   add_test("find", std::tr1::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
   add_test("remove", std::tr1::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
+  add_test("erase", std::tr1::bind(&PrototypeTreeTestUnit::test_erase, this), "test erase element");
+  add_test("clear", std::tr1::bind(&PrototypeTreeTestUnit::test_clear, this), "test clear prototype tree");
+  add_test("container", std::tr1::bind(&PrototypeTreeTestUnit::test_container, this), "test insert container containing element");
   add_test("decrement", std::tr1::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
   add_test("count", std::tr1::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
   add_test("child_of", std::tr1::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
   add_test("traverse", std::tr1::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
+  add_test("const_traverse", std::tr1::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
 }
 
 PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
@@ -41,9 +45,14 @@ void PrototypeTreeTestUnit::test_empty()
 void PrototypeTreeTestUnit::test_insert()
 {
   prototype_tree ptree;
+
+  UNIT_ASSERT_EXCEPTION(ptree.insert(new object_producer<Item>, "item", false, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
+
   ptree.insert(new object_producer<Item>, "item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+
+  UNIT_ASSERT_EXCEPTION(ptree.insert(new object_producer<Item>, "item", false), object_exception, "prototype already inserted", "inserted same prototype twice");
 }
 
 
@@ -85,6 +94,56 @@ void PrototypeTreeTestUnit::test_remove()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
+  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an object exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an object exception when trying to remove unknown type");
+
+  ptree.remove("item");
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
+  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+}
+
+
+void PrototypeTreeTestUnit::test_erase()
+{
+  prototype_tree ptree;
+  prototype_iterator iter = ptree.insert(new object_producer<Item>, "item", false);
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+
+  prototype_iterator iter2;
+  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an object exception when trying to remove unknown type");
+
+  ptree.erase(iter);
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
+  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+}
+
+
+void PrototypeTreeTestUnit::test_clear()
+{
+  prototype_tree ptree;
+  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
+  ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
+  ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (4)");
+
+  ptree.clear();
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
+  UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
+}
+
+void PrototypeTreeTestUnit::test_container()
+{
+  prototype_tree ptree;
+  ptree.insert(new object_producer<track>, "track", false);
+  ptree.insert(new object_producer<album>, "album", false);
+
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
 }
 
 void PrototypeTreeTestUnit::test_decrement()
@@ -136,7 +195,8 @@ void PrototypeTreeTestUnit::test_traverse()
   ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
   ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
 
-  prototype_iterator first = ptree.begin();
+  prototype_iterator first;
+  first = ptree.begin();
   prototype_iterator last = ptree.end();
   int count(0);
 
@@ -146,5 +206,42 @@ void PrototypeTreeTestUnit::test_traverse()
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 4");
+  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+
+  first = ptree.begin();
+  ++first;
+  first--;
+
+  UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
+}
+
+void PrototypeTreeTestUnit::test_const_traverse()
+{
+  prototype_tree ptree;
+  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
+  ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
+  ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
+
+  const_prototype_iterator first;
+  first = ptree.begin();
+  const_prototype_iterator last = ptree.end();
+  int count(0);
+
+  while (first != last) {
+    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    ++first;
+    ++count;
+  }
+
+  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+
+  first = ptree.begin();
+  first++;
+  UNIT_ASSERT_EQUAL(first->type, "item", "type must be 'item'");
+  UNIT_ASSERT_EQUAL((*first).type, "item", "type must be 'item'");
+  UNIT_ASSERT_EQUAL(first.get()->type, "item", "type must be 'item'");
+  first--;
+
+  UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
 }

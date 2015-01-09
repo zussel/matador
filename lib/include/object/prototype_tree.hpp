@@ -434,7 +434,8 @@ public:
   * @return Returns true if the type was found and successfully cleared.
   * @throws oos::object_exception on error
   */
-  void clear(const char *type, bool recursive);
+  void clear();
+//  void clear(const char *type, bool recursive);
 
   /**
    * Erase a prototype node identified

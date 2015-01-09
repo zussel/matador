@@ -146,6 +146,28 @@
 #define UNIT_ASSERT_NOT_NULL(o, msg)     assert_not_null(o, msg, __LINE__, __FILE__)
 
 /**
+* @brief Checks if a is equal b.
+*
+* If a is not equal b the test method throws
+* a unit_exception with the given message. The
+* exception is caught by the test_suite the
+* message is displayed
+*/
+#define UNIT_ASSERT_EXCEPTION(expression, exception_type, exception_msg, msg)     \
+  do {                                                                            \
+    bool exception_caught(false);                                                 \
+    try {                                                                         \
+      expression;                                                                 \
+    } catch(exception_type &ex) {                                                 \
+      assert_equal(ex.what(), exception_msg, msg, __LINE__, __FILE__); \
+      exception_caught = true;                                                    \
+    }                                                                             \
+    if (!exception_caught) {                                                      \
+      error(msg, __LINE__, __FILE__);                                             \
+    }                                                                             \
+  } while(false);
+
+/**
  * @brief Throws an error.
  *
  * The test method throws an exception
