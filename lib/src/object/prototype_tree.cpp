@@ -345,7 +345,7 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   return prototype_iterator(node);
 }
 
-prototype_tree::iterator prototype_tree::find(const char *type) {
+prototype_tree::iterator prototype_tree::find(const char *type) const {
   return prototype_iterator(find_prototype_node(type));
 }
 
@@ -422,7 +422,7 @@ prototype_tree::const_iterator prototype_tree::end() const
   return prototype_tree::const_iterator(last_);
 }
 
-prototype_node* prototype_tree::find_prototype_node(const char *type) {
+prototype_node* prototype_tree::find_prototype_node(const char *type) const {
   // check for null
   if (type == 0) {
     throw object_exception("invalid type (null)");

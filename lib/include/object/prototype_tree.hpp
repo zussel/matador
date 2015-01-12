@@ -383,7 +383,7 @@ public:
   * @param type Name or class name of the prototype
   * @return Returns a prototype iterator.
   */
-  iterator find(const char *type);
+  iterator find(const char *type) const;
 
   /**
   * @brief Finds prototype node by template type.
@@ -396,7 +396,7 @@ public:
   * @return Returns a prototype iterator.
   */
   template < class T >
-  iterator find()
+  iterator find() const
   {
     return find(typeid(T).name());
   }
@@ -504,7 +504,7 @@ private:
    * @return The requested prototype node
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_node* find_prototype_node(const char *type);
+  prototype_node* find_prototype_node(const char *type) const;
 
   /**
    * @internal

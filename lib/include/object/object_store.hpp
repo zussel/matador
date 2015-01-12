@@ -163,9 +163,8 @@ public:
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
-   * @return Returns true if the type was found and successfully removed
    */
-  bool remove_prototype(const char *type);
+  void remove_prototype(const char *type);
 
   /**
    * @brief Finds prototype node.
@@ -201,14 +200,16 @@ public:
    *
    * @return The first prototype node iterator.
    */
-  prototype_iterator begin() const;
+  const_prototype_iterator begin() const;
+  prototype_iterator begin();
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  prototype_iterator end() const;
+  const_prototype_iterator end() const;
+  prototype_iterator end();
 
   /**
    * Removes all inserted prototypes and all inserted objects.
@@ -366,7 +367,7 @@ public:
    * @param node Prototype into which the proxy will be inserted.
    * @param oproxy Object proxy to insert
    */
-  void insert_proxy(prototype_node *node, object_proxy *oproxy);
+  void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
 
   /**
    * @brief Removes an object proxy from a prototype list
@@ -411,6 +412,8 @@ private:
   prototype_node* get_prototype(const char *type) const;
 
 private:
+  prototype_tree prototype_tree_;
+
   prototype_node *root_;
 
   // name to prototype map
