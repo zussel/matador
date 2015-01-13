@@ -18,7 +18,7 @@
 #ifndef TEST_SUITE_HPP
 #define TEST_SUITE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -33,11 +33,7 @@
 
 #include "tools/singleton.hpp"
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 #include <map>
 #include <string>

@@ -18,7 +18,7 @@
 #ifndef JSON_TYPE_HPP
 #define JSON_TYPE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE

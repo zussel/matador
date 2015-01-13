@@ -27,7 +27,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>

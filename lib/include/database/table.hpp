@@ -18,7 +18,7 @@
 #ifndef TABLE_HPP
 #define TABLE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -39,7 +39,7 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <memory>
 #include <unordered_map>
 #else

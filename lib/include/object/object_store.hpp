@@ -24,7 +24,7 @@
 
 #include "tools/sequencer.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <memory>
 #include <unordered_map>
 #else
@@ -36,7 +36,7 @@
 #include <ostream>
 #include <list>
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -95,7 +95,7 @@ public:
    *
    * @return The prototype tree
    */
-  prototype_tree& object_tree();
+  prototype_tree& prototypes();
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new

@@ -18,7 +18,7 @@
 #ifndef DATABASE_FACTORY_HPP
 #define DATABASE_FACTORY_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE

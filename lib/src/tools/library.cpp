@@ -35,13 +35,13 @@ library::~library()
 
 bool library::load()
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   handle_ = LoadLibrary((lib_ + ".dll").c_str());
 #else
   handle_ = dlopen(std::string("lib" + lib_ + ".so").c_str(), RTLD_LAZY);
 #endif
   if (!handle_) {
-#ifdef WIN32
+#ifdef _MSC_VER
 #else
       // TODO: handle win32 and linux error
     fprintf(stdout, "dlopen error: %s", dlerror());
@@ -64,7 +64,7 @@ bool library::unload()
 {
   bool ret(true);
   if (handle_) {
-#ifdef WIN32
+#ifdef _MSC_VER
     ret = FreeLibrary(handle_) == TRUE;
 #else
     ret = dlclose(handle_) == 0;
@@ -79,7 +79,7 @@ bool library::unload()
 
 func_ptr library::function(const std::string &f) const
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   return GetProcAddress(handle_, f.c_str());
 #else
   return dlsym(handle_, f.c_str());

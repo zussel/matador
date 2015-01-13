@@ -1,5 +1,7 @@
 #include "tools/varchar.hpp"
 
+#include <algorithm>
+
 namespace oos {
 
 varchar_base::varchar_base(size_type capacity)

@@ -18,7 +18,7 @@
 #ifndef LINKED_OBJECT_LIST_HPP
 #define LINKED_OBJECT_LIST_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE

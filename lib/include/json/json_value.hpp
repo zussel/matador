@@ -18,7 +18,7 @@
 #ifndef JSON_VALUE_HPP
 #define JSON_VALUE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -32,11 +32,7 @@
 #endif
 
 #include <istream>
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 namespace oos {
 

@@ -18,12 +18,7 @@
 #ifndef FACTORY_HPP
 #define FACTORY_HPP
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
-
 #include <map>
 
 namespace oos {

@@ -18,7 +18,7 @@
 #ifndef TRANSACTION_HPP
 #define TRANSACTION_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -35,7 +35,7 @@
 
 #include "tools/byte_buffer.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <unordered_map>
 #else
 #include <tr1/unordered_map>

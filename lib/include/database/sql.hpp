@@ -18,7 +18,7 @@
 #ifndef SQL_HPP
 #define SQL_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -39,11 +39,7 @@
 #include <vector>
 #include <stdexcept>
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 namespace oos {
 

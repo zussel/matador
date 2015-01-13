@@ -47,7 +47,7 @@ query::~query()
 
 query& query::create(const prototype_node &node)
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   std::auto_ptr<object> o(node.producer->create());
 #else
   std::unique_ptr<object> o(node.producer->create());

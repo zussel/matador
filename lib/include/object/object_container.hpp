@@ -22,7 +22,7 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>

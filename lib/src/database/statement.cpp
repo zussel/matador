@@ -19,11 +19,7 @@
 
 #include "object/object_atomizable.hpp"
 
-#ifdef WIN32
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 using namespace std::tr1::placeholders;
 

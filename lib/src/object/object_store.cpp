@@ -22,7 +22,7 @@
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #include <memory>
 #else
@@ -35,39 +35,6 @@ using namespace std;
 using namespace std::tr1::placeholders;
 
 namespace oos {
-
-class relation_handler : public generic_object_writer<relation_handler>
-{
-public:
-  typedef std::list<std::string> string_list_t;
-  typedef string_list_t::const_iterator const_iterator;
-
-public:
-  relation_handler(object_store &ostore, prototype_node *node)
-    : generic_object_writer<relation_handler>(this)
-    , ostore_(ostore)
-    , node_(node)
-  {}
-  virtual ~relation_handler() {}
-
-  template < class T >
-  void write_value(const char*, const T&) {}
-  
-  void write_value(const char*, const char*, int) {}
-  
-  void write_value(const char *id, const object_container &x)
-  {
-    /*
-     * container knows if it needs
-     * a relation table
-     */
-    x.handle_container_item(ostore_, id, node_);
-  }
-  
-private:
-  object_store &ostore_;
-  prototype_node *node_;
-};
 
 object_store::object_store()
   : root_(new prototype_node(new object_producer<object>, "object", true))
@@ -95,7 +62,7 @@ object_store::~object_store()
 }
 
 
-prototype_tree &object_store::object_tree() {
+prototype_tree &object_store::prototypes() {
   return prototype_tree_;
 }
 
@@ -107,8 +74,8 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
 
 bool object_store::clear_prototype(const char *type, bool recursive)
 {
-  prototype_node *node = get_prototype(type);
-  if (!node) {
+  prototype_iterator node = prototype_tree_.find(type);
+  if (node == prototype_tree_.end()) {
     //throw new object_exception("couldn't find prototype");
     return false;
   }
@@ -116,7 +83,7 @@ bool object_store::clear_prototype(const char *type, bool recursive)
     // clear all objects from child nodes
     // for each child call clear_prototype(child, recursive);
     prototype_node *child = node->next_node();
-    while (child && (child != node || child != node->parent)) {
+    while (child && (child != node.get() || child != node->parent)) {
       child->clear();
       child = child->next_node();
     }      
@@ -350,8 +317,8 @@ object_store::remove_object(object *o, bool notify)
     throw object_exception("couldn't remove object, no proxy");
   }
   
-  prototype_node *node = get_prototype(o->proxy_->node->type.c_str());
-  if (!node) {
+  prototype_iterator node = prototype_tree_.find(o->proxy_->node->type.c_str());
+  if (node == prototype_tree_.end()) {
     throw object_exception("couldn't find node for object");
   }
   
@@ -361,7 +328,7 @@ object_store::remove_object(object *o, bool notify)
     throw object_exception("couldn't remove object");
   }
 
-  remove_proxy(node, o->proxy_);
+  remove_proxy(node.get(), o->proxy_);
 
   if (notify) {
     // notify observer

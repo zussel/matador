@@ -18,7 +18,7 @@
 #ifndef OBJECT_VECTOR_HPP
 #define OBJECT_VECTOR_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #define CPP11_TYPE_TRAITS_NS std::tr1
 #else
 #define CPP11_TYPE_TRAITS_NS std
@@ -33,7 +33,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>

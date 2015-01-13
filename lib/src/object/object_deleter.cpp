@@ -21,7 +21,7 @@
 #include "object/object_vector.hpp"
 #include "object/object_container.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>

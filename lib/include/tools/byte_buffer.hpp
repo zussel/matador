@@ -18,7 +18,7 @@
 #ifndef BYTE_BUFFER_HPP
 #define BYTE_BUFFER_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -31,11 +31,7 @@
   #define OOS_API
 #endif
 
-#ifdef WIN32
 #include <array>
-#else
-#include <tr1/array>
-#endif
 
 #include <list>
 

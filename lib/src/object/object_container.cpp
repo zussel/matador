@@ -23,17 +23,16 @@ namespace oos {
 
 void object_container::handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
 {
-  prototype_node *item_node = 0;
+  prototype_iterator item_node;
   object_base_producer *p = create_item_producer();
   if (p) {
-    ostore.insert_prototype(p, id);
-    item_node = ostore.get_prototype(id);
+	prototype_iterator item_node = ostore.prototypes().insert(p, id);
   } else {
     
     // insert new prototype
     // get prototype node of container item (child)
-    item_node = ostore.get_prototype(classname());
-    if (!item_node) {
+    item_node = ostore.prototypes().find(classname());
+	if (item_node == ostore.prototypes().end()) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
       // as uninitialzed)
