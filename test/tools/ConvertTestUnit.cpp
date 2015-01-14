@@ -38,20 +38,20 @@ using std::string;
 ConvertTestUnit::ConvertTestUnit()
   : unit_test("convert", "convert test unit")
 {
-  add_test("to_char", std::tr1::bind(&ConvertTestUnit::convert_to_char, this), "convert to char test");
-  add_test("to_bool", std::tr1::bind(&ConvertTestUnit::convert_to_bool, this), "convert to bool test");
-  add_test("to_short", std::tr1::bind(&ConvertTestUnit::convert_to_short, this), "convert to short test");
-  add_test("to_int", std::tr1::bind(&ConvertTestUnit::convert_to_int, this), "convert to int test");
-  add_test("to_long", std::tr1::bind(&ConvertTestUnit::convert_to_long, this), "convert to long test");
-  add_test("to_unsigned_char", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_char, this), "convert to unsigned char test");
-  add_test("to_unsigned_short", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_short, this), "convert to unsigned short test");
-  add_test("to_unsigned_int", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_int, this), "convert to unsigned int test");
-  add_test("to_unsigned_long", std::tr1::bind(&ConvertTestUnit::convert_to_unsigned_long, this), "convert to unsigned long test");
-  add_test("to_float", std::tr1::bind(&ConvertTestUnit::convert_to_float, this), "convert to float test");
-  add_test("to_double", std::tr1::bind(&ConvertTestUnit::convert_to_double, this), "convert to double test");
-  add_test("to_char_pointer", std::tr1::bind(&ConvertTestUnit::convert_to_char_pointer, this), "convert to const char pointer test");
-  add_test("to_string", std::tr1::bind(&ConvertTestUnit::convert_to_string, this), "convert to string test");
-  add_test("to_varchar", std::tr1::bind(&ConvertTestUnit::convert_to_varchar, this), "convert to varchar test");
+  add_test("to_char", std::bind(&ConvertTestUnit::convert_to_char, this), "convert to char test");
+  add_test("to_bool", std::bind(&ConvertTestUnit::convert_to_bool, this), "convert to bool test");
+  add_test("to_short", std::bind(&ConvertTestUnit::convert_to_short, this), "convert to short test");
+  add_test("to_int", std::bind(&ConvertTestUnit::convert_to_int, this), "convert to int test");
+  add_test("to_long", std::bind(&ConvertTestUnit::convert_to_long, this), "convert to long test");
+  add_test("to_unsigned_char", std::bind(&ConvertTestUnit::convert_to_unsigned_char, this), "convert to unsigned char test");
+  add_test("to_unsigned_short", std::bind(&ConvertTestUnit::convert_to_unsigned_short, this), "convert to unsigned short test");
+  add_test("to_unsigned_int", std::bind(&ConvertTestUnit::convert_to_unsigned_int, this), "convert to unsigned int test");
+  add_test("to_unsigned_long", std::bind(&ConvertTestUnit::convert_to_unsigned_long, this), "convert to unsigned long test");
+  add_test("to_float", std::bind(&ConvertTestUnit::convert_to_float, this), "convert to float test");
+  add_test("to_double", std::bind(&ConvertTestUnit::convert_to_double, this), "convert to double test");
+  add_test("to_char_pointer", std::bind(&ConvertTestUnit::convert_to_char_pointer, this), "convert to const char pointer test");
+  add_test("to_string", std::bind(&ConvertTestUnit::convert_to_string, this), "convert to string test");
+  add_test("to_varchar", std::bind(&ConvertTestUnit::convert_to_varchar, this), "convert to varchar test");
 }
 
 ConvertTestUnit::~ConvertTestUnit()

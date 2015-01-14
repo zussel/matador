@@ -275,7 +275,7 @@ public:
 
 //  template < class T >
 private:
-  std::tr1::shared_ptr<json_type> type_;
+  std::shared_ptr<json_type> type_;
 };
 
 }

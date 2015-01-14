@@ -15,15 +15,15 @@ using namespace std;
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("prototype", "ObjectStore Prototype Test Unit")
 {
-  add_test("empty", std::tr1::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
-  add_test("find", std::tr1::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
-  add_test("size", std::tr1::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
-  add_test("parent_of", std::tr1::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
-  //add_test("decrement", std::tr1::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
-  add_test("one", std::tr1::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
-  add_test("hierarchy", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
-  add_test("iterator", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
-  add_test("relation", std::tr1::bind(&ObjectPrototypeTestUnit::prototype_relation, this), "prototype relation");
+  add_test("empty", std::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
+  add_test("find", std::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
+  add_test("size", std::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
+  add_test("parent_of", std::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
+  //add_test("decrement", std::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
+  add_test("one", std::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
+  add_test("hierarchy", std::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
+  add_test("iterator", std::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
+  add_test("relation", std::bind(&ObjectPrototypeTestUnit::prototype_relation, this), "prototype relation");
 }
 
 ObjectPrototypeTestUnit::~ObjectPrototypeTestUnit()

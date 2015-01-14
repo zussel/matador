@@ -515,8 +515,8 @@ template < class S, class T >
 class linked_object_list : public object_container
 {
 public:
-//  typedef std::tr1::function<void (T*, &T::G)> set_ref_func_t;
-//  typedef std::tr1::function<object_ref< (T*, &T::G)> get_ref_func_t;
+//  typedef std::function<void (T*, &T::G)> set_ref_func_t;
+//  typedef std::function<object_ref< (T*, &T::G)> get_ref_func_t;
   typedef T value_type;                                                  /**< Shortcut for the value type. */
   typedef S container_type;                                              /**< Shortcut for the container type. */
   typedef linked_object_list_item<value_type, container_type> item_type; /**< Shortcut for the container item. */

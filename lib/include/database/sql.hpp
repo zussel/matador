@@ -62,7 +62,7 @@ public:
     bool is_host;
   };
 
-  typedef std::tr1::shared_ptr<field> field_ptr;
+  typedef std::shared_ptr<field> field_ptr;
 
   struct token {
     virtual ~token() {}

@@ -37,21 +37,21 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   : unit_test(name, msg)
   , db_(db)
 {
-  add_test("open_close", std::tr1::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
-  add_test("create_drop", std::tr1::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
-  add_test("reopen", std::tr1::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
-  add_test("datatypes", std::tr1::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
-  add_test("insert", std::tr1::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
-  add_test("update", std::tr1::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
-  add_test("delete", std::tr1::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
-//  add_test("drop", std::tr1::bind(&DatabaseTestUnit::test_drop, this), "drop database test");
-  add_test("simple", std::tr1::bind(&DatabaseTestUnit::test_simple, this), "simple database test");
-  add_test("complex", std::tr1::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
-  add_test("list", std::tr1::bind(&DatabaseTestUnit::test_with_list, this), "object with object list database test");
-  add_test("vector", std::tr1::bind(&DatabaseTestUnit::test_with_vector, this), "object with object vector database test");
-  add_test("reload_simple", std::tr1::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
-  add_test("reload", std::tr1::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
-  add_test("reload_container", std::tr1::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
+  add_test("open_close", std::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
+  add_test("create_drop", std::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
+  add_test("reopen", std::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
+  add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
+  add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
+  add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
+  add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
+//  add_test("drop", std::bind(&DatabaseTestUnit::test_drop, this), "drop database test");
+  add_test("simple", std::bind(&DatabaseTestUnit::test_simple, this), "simple database test");
+  add_test("complex", std::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
+  add_test("list", std::bind(&DatabaseTestUnit::test_with_list, this), "object with object list database test");
+  add_test("vector", std::bind(&DatabaseTestUnit::test_with_vector, this), "object with object vector database test");
+  add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
+  add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
+  add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()

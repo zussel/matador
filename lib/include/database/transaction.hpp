@@ -35,12 +35,7 @@
 
 #include "tools/byte_buffer.hpp"
 
-#ifdef _MSC_VER
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
-
 #include <memory>
 #include <list>
 #include <set>
@@ -139,7 +134,7 @@ public:
 
 private:
   typedef std::set<long> id_set_t;
-  typedef std::tr1::unordered_map<long, iterator> id_iterator_map_t;
+  typedef std::unordered_map<long, iterator> id_iterator_map_t;
 
   friend class object_store;
   friend class session;

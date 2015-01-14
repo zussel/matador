@@ -177,7 +177,7 @@ public:
   }
   
 private:
-  std::tr1::shared_ptr<variable_impl<R> > impl_;
+  std::shared_ptr<variable_impl<R> > impl_;
 };
 
 /**

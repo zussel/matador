@@ -45,6 +45,7 @@
 
 #include <functional>
 #include <map>
+#include <vector>
 
 #include <cstring>
 #include <string>
@@ -222,7 +223,7 @@ public:
    * 
    * A shortcut for the test function object.
    */
-  typedef std::tr1::function<void ()> test_func;
+  typedef std::function<void ()> test_func;
 
   /**
    * @brief The constructor for a test_unit
@@ -290,7 +291,7 @@ public:
    * 
    * @param out The stream to be written on.
    */
-  void list(std::ostream &out);
+  void list(std::ostream &out) const;
   
   /**
    * @brief Adds a test to the test_unit.
@@ -592,12 +593,13 @@ private:
 
   typedef struct test_func_info_struct
   {
-    test_func_info_struct(const test_func &f, const std::string &c)
-      : func(f), succeeded(true), assertion_count(0), caption(c)
+    test_func_info_struct(const test_func &f, const std::string &n, const std::string &c)
+      : func(f), succeeded(true), assertion_count(0), name(n), caption(c)
     {}
     test_func func;
     bool succeeded;
     size_t assertion_count;
+    std::string name;
     std::string caption;
     std::string message;
   } test_func_info;
@@ -609,8 +611,8 @@ private:
   std::string name_;
   std::string caption_;
 
-  typedef std::map<std::string, test_func_info> t_test_func_info_map;
-  t_test_func_info_map test_func_info_map_;
+  typedef std::vector<test_func_info> t_test_func_info_vector;
+  t_test_func_info_vector test_func_infos_;
 
   // runtime data
   test_func_info *current_test_func_info;

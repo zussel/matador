@@ -329,7 +329,7 @@ private:
   std::string op_;
   std::string logic_;
   bool valid_;
-  std::tr1::shared_ptr<condition> next_;
+  std::shared_ptr<condition> next_;
 };
 
 /**

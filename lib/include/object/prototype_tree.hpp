@@ -103,6 +103,7 @@ public:
   * @return True if the iterators are the same.
   */
   bool operator==(const prototype_iterator &i) const;
+  bool operator==(const const_prototype_iterator &i) const;
 
   /**
   * @brief Compares this with another iterators.
@@ -114,6 +115,7 @@ public:
   * @return True if the iterators are not the same.
   */
   bool operator!=(const prototype_iterator &i) const;
+  bool operator!=(const const_prototype_iterator &i) const;
 
   /**
   * Pre increments the iterator
@@ -436,6 +438,15 @@ public:
   */
   void clear();
 //  void clear(const char *type, bool recursive);
+
+  int depth(const prototype_node *node) const;
+
+  /**
+  * Dump all prototypes to a given stream
+  *
+  * @param out The stream to the prototypes dump on.
+  */
+  void dump(std::ostream &out) const;
 
   /**
    * Erase a prototype node identified

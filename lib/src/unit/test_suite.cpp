@@ -32,21 +32,20 @@ test_suite::unit_lister::unit_lister(std::ostream &o, bool b)
   : out(o), brief(b)
 {}
 
-void test_suite::unit_lister::operator()(test_suite::value_type &x)
+void test_suite::unit_lister::operator()(const test_suite::value_type &x) const
 {
   if (!brief) {
     out << "Unit Test [" << x.first << "] has the following test:\n";
   }
-  unit_test::t_test_func_info_map::const_iterator first = x.second->test_func_info_map_.begin();
-  unit_test::t_test_func_info_map::const_iterator last = x.second->test_func_info_map_.end();
-  while (first != last) {
+
+  const unit_test::t_test_func_info_vector &tests = x.second->test_func_infos_;
+  std::for_each(tests.begin(), tests.end(), [this](const unit_test::t_test_func_info_vector::value_type &x) {
     if (brief) {
-      out << x.first << ":" << first->first << "\n";
+      out << x.name << ":" << x.caption << "\n";
     } else {
-      out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
+      out << "Test [" << x.name << "]: " << x.caption << std::endl;
     }
-    ++first;
-  }
+  });
 }
 
 test_suite::~test_suite()

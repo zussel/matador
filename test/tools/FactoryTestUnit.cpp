@@ -53,10 +53,10 @@ public:
 FactoryTestUnit::FactoryTestUnit()
   : unit_test("factory", "factory test unit")
 {
-  add_test("create", std::tr1::bind(&FactoryTestUnit::create_factory, this), "create factory");
-  add_test("insert", std::tr1::bind(&FactoryTestUnit::insert_items, this), "insert items into factory");
-  add_test("produce", std::tr1::bind(&FactoryTestUnit::produce_items, this), "produce items with factory");
-  add_test("list", std::tr1::bind(&FactoryTestUnit::list_items, this), "list all items in factory");
+  add_test("create", std::bind(&FactoryTestUnit::create_factory, this), "create factory");
+  add_test("insert", std::bind(&FactoryTestUnit::insert_items, this), "insert items into factory");
+  add_test("produce", std::bind(&FactoryTestUnit::produce_items, this), "produce items with factory");
+  add_test("list", std::bind(&FactoryTestUnit::list_items, this), "list all items in factory");
 }
 
 FactoryTestUnit::~FactoryTestUnit()

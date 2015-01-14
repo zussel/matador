@@ -53,7 +53,7 @@ class OOS_API byte_buffer
 {
 private:
   enum { BUF_SIZE = 1 << 14 };
-  typedef std::tr1::array<char, BUF_SIZE> t_data_array;
+  typedef std::array<char, BUF_SIZE> t_data_array;
 
 public:
   /**

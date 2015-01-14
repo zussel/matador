@@ -468,7 +468,8 @@ public:
     : skip_siblings_(skip_siblings)
     , node_(NULL)
   {
-    node_ = ostore.find_prototype(type.c_str());
+    node_ = ostore.prototypes().find(type.c_str());
+//    node_ = ostore.find_prototype(type.c_str());
 		if (node_ == ostore.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << type << "]";
@@ -611,7 +612,7 @@ public:
    *
    * @return The underlaying prototype node.
    */
-  prototype_iterator node() const
+  const_prototype_iterator node() const
   {
     return node_;
   }

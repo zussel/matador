@@ -47,7 +47,7 @@ public:
 
   typedef K key_type;                                          /**< Shortcut for key type. */
   typedef V value_type;                                        /**< Shortcut for value type. */
-  typedef std::tr1::shared_ptr<producer_base> producer_ptr;    /**< Shortcut for producer pointer class. */
+  typedef std::shared_ptr<producer_base> producer_ptr;    /**< Shortcut for producer pointer class. */
   typedef std::map<key_type, producer_ptr> container_t;        /**< Shortcut for map type. */
   typedef typename container_t::size_type size_type;           /**< Shortcut for size type. */
   typedef typename container_t::iterator iterator;             /**< Shortcut for iterator. */

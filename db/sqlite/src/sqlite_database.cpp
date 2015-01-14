@@ -22,22 +22,13 @@
 #include "sqlite_exception.hpp"
 
 #include "database/session.hpp"
-#include "database/transaction.hpp"
-#include "database/row.hpp"
 
 #include "database/database_sequencer.hpp"
 
-#include <stdexcept>
 #include <sqlite3.h>
 #include <sstream>
 
-#ifdef WIN32
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
-
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
   

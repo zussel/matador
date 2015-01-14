@@ -11,9 +11,9 @@ using std::endl;
 VarCharTestUnit::VarCharTestUnit()
   : unit_test("varchar", "varchar test unit")
 {
-  add_test("create", std::tr1::bind(&VarCharTestUnit::create_varchar, this), "create varchar");
-  add_test("copy", std::tr1::bind(&VarCharTestUnit::copy_varchar, this), "copy varchar");
-  add_test("assign", std::tr1::bind(&VarCharTestUnit::assign_varchar, this), "assign varchar");
+  add_test("create", std::bind(&VarCharTestUnit::create_varchar, this), "create varchar");
+  add_test("copy", std::bind(&VarCharTestUnit::copy_varchar, this), "copy varchar");
+  add_test("assign", std::bind(&VarCharTestUnit::assign_varchar, this), "assign varchar");
 }
 
 VarCharTestUnit::~VarCharTestUnit()

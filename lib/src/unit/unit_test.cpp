@@ -19,6 +19,7 @@
 
 #include "tools/varchar.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 
@@ -32,7 +33,7 @@ unit_test::unit_test(const std::string &name, const std::string &caption)
 
 unit_test::~unit_test()
 {
-  test_func_info_map_.clear();
+  test_func_infos_.clear();
 }
 
 std::string unit_test::name() const
@@ -47,46 +48,42 @@ std::string unit_test::caption() const
 
 bool unit_test::execute()
 {
-  t_test_func_info_map::iterator first = test_func_info_map_.begin();
-  t_test_func_info_map::iterator last = test_func_info_map_.end();
   // execute each test
   bool succeeded = true;
-  while (first != last) {
-    test_func_info &info = (first++)->second;
+  std::for_each(test_func_infos_.begin(), test_func_infos_.end(), [&](t_test_func_info_vector::value_type &info) {
     execute(info);
     if (succeeded && !info.succeeded) {
       succeeded = false;
     }
-  }
+  });
   return succeeded;
 }
 
 bool unit_test::execute(const std::string &test)
 {
-  t_test_func_info_map::iterator i = test_func_info_map_.find(test);
-  if (i == test_func_info_map_.end()) {
+  t_test_func_info_vector::iterator i = std::find_if(test_func_infos_.begin(), test_func_infos_.end(), [test](const t_test_func_info_vector::value_type &x) {
+    return x.name == test;
+  });
+
+  if (i == test_func_infos_.end()) {
     std::cout << "couldn't find test [" << test << "] of unit [" << caption_ << "]\n";
     return false;
   } else {
-    execute(i->second);
-    return i->second.succeeded;
+    execute(*i);
+    return i->succeeded;
   }
 }
 
-void unit_test::list(std::ostream &out)
+void unit_test::list(std::ostream &out) const
 {
-  t_test_func_info_map::iterator first = test_func_info_map_.begin();
-  t_test_func_info_map::iterator last = test_func_info_map_.end();
-  // list each test
-  while (first != last) {
-    out << "Test [" << first->first << "]: " << first->second.caption << std::endl;
-    ++first;
-  }
+  std::for_each(test_func_infos_.begin(), test_func_infos_.end(), [&](const t_test_func_info_vector::value_type &info) {
+    out << "Test [" << info.name << "]: " << info.caption << std::endl;
+  });
 }
 
 void unit_test::add_test(const std::string &name, const test_func &test, const std::string &caption)
 {
-  test_func_info_map_.insert(std::make_pair(name, test_func_info(test, caption)));
+  test_func_infos_.push_back(test_func_info(test, name, caption));
 }
 
 void unit_test::assert_true(bool a, const std::string &msg, int line, const char *file)

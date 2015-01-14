@@ -87,7 +87,19 @@ bool prototype_iterator::operator==(const prototype_iterator &i) const
   return (node_ == i.node_);
 }
 
+
+bool prototype_iterator::operator==(const const_prototype_iterator &i) const
+{
+  return node_ == i.get();
+}
+
 bool prototype_iterator::operator!=(const prototype_iterator &i) const
+{
+  return !operator==(i);
+}
+
+
+bool prototype_iterator::operator!=(const const_prototype_iterator &i) const
 {
   return !operator==(i);
 }
@@ -369,6 +381,33 @@ void prototype_tree::clear() {
   while(root->first->next != root->last) {
     remove_prototype_node(root->first->next);
   }
+}
+
+int prototype_tree::depth(const prototype_node *node) const
+{
+  int d = 0;
+  while (node->parent) {
+    node = node->parent;
+    ++d;
+  }
+  return d;
+}
+
+void prototype_tree::dump(std::ostream &out) const
+{
+  prototype_node *node = first_->next;
+  out << "digraph G {\n";
+  out << "\tgraph [fontsize=10]\n";
+  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+  out << "\tedge [color=\"#0c0c0c\"]\n";
+  do {
+    int d = depth(node);
+    for (int i = 0; i < d; ++i) out << " ";
+    out << *node;
+    out.flush();
+    node = node->next_node();
+  } while (node != first_->next->last);
+  out << "}" << std::endl;
 }
 
 // Todo: move to object store

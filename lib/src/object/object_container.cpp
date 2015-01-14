@@ -21,30 +21,30 @@ using namespace std;
 
 namespace oos {
 
-void object_container::handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-{
-  prototype_iterator item_node;
-  object_base_producer *p = create_item_producer();
-  if (p) {
-	prototype_iterator item_node = ostore.prototypes().insert(p, id);
-  } else {
-    
-    // insert new prototype
-    // get prototype node of container item (child)
-    item_node = ostore.prototypes().find(classname());
-	if (item_node == ostore.prototypes().end()) {
-      // if there is no such prototype node
-      // insert a new one (it is automatically marked
-      // as uninitialzed)
-      item_node = new prototype_node();
-      ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_map()));
-      ostore.prototype_map_[classname()] = item_node;
-    }
-  }
-  // add container node to item node  
-  // insert the relation
-  item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
-}
+//void object_container::handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
+//{
+//  prototype_iterator item_node;
+//  object_base_producer *p = create_item_producer();
+//  if (p) {
+//	prototype_iterator item_node = ostore.prototypes().insert(p, id);
+//  } else {
+//
+//    // insert new prototype
+//    // get prototype node of container item (child)
+//    item_node = ostore.prototypes().find(classname());
+//	if (item_node == ostore.prototypes().end()) {
+//      // if there is no such prototype node
+//      // insert a new one (it is automatically marked
+//      // as uninitialzed)
+//      item_node = prototype_iterator(new prototype_node());
+//      ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_map()));
+//      ostore.prototype_map_[classname()] = item_node.get();
+//    }
+//  }
+//  // add container node to item node
+//  // insert the relation
+//  item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
+//}
 
 void object_container::handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const
 {

@@ -89,7 +89,7 @@ protected:
   int result_index;
 };
 
-typedef std::tr1::shared_ptr<result> result_ptr;
+typedef std::shared_ptr<result> result_ptr;
 
 /// @endcond
 

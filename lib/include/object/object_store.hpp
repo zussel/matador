@@ -76,8 +76,8 @@ class object_container;
 class OOS_API object_store
 {
 private:
-  typedef std::tr1::unordered_map<long, object_proxy*> t_object_proxy_map;
-  typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_map;
+  typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
+  typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
 
 public:
   /**
@@ -96,6 +96,14 @@ public:
    * @return The prototype tree
    */
   prototype_tree& prototypes();
+
+  /*
+   * Returns the prototype tree
+   *
+   * @return The prototype tree
+   */
+  const prototype_tree& prototypes() const;
+
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new
@@ -223,13 +231,6 @@ public:
    * @return True on empty object_store.
    */
   bool empty() const;
-
-  /**
-   * Dump all prototypes to a given stream
-   *
-   * @param out The stream to the prototypes dump on.
-   */
-	void dump_prototypes(std::ostream &out) const;
 
   /**
    * Dump all object to a given stream
@@ -409,19 +410,17 @@ private:
   void link_proxy(object_proxy *base, object_proxy *next);
   void unlink_proxy(object_proxy *proxy);
 
-  prototype_node* get_prototype(const char *type) const;
-
 private:
   prototype_tree prototype_tree_;
 
-  prototype_node *root_;
-
-  // name to prototype map
-  t_prototype_map prototype_map_;
-  
-  // typeid -> [name -> prototype]
-  typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
-  t_typeid_prototype_map typeid_prototype_map_;
+//  prototype_node *root_;
+//
+//  // name to prototype map
+//  t_prototype_map prototype_map_;
+//
+//  // typeid -> [name -> prototype]
+//  typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
+//  t_typeid_prototype_map typeid_prototype_map_;
 
   t_object_proxy_map object_map_;
 

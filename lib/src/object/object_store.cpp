@@ -32,37 +32,27 @@
 #include <iomanip>
 
 using namespace std;
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
 
 object_store::object_store()
-  : root_(new prototype_node(new object_producer<object>, "object", true))
-  , first_(new object_proxy(this))
-  , last_(new object_proxy(this))
-  , object_deleter_(new object_deleter)
-{
-  prototype_map_.insert(std::make_pair("object", root_));
-  typeid_prototype_map_[root_->producer->classname()]["object"] = root_;
-  // set marker for root element
-  root_->op_first = first_;
-  root_->op_marker = last_;
-  root_->op_last = last_;
-  root_->op_first->next = root_->op_last;
-  root_->op_last->prev = root_->op_first;
-}
+  : object_deleter_(new object_deleter)
+{}
 
 object_store::~object_store()
 {
   clear(true);
-  delete last_;
-  delete first_;
-  delete root_;
   delete object_deleter_;
 }
 
 
 prototype_tree &object_store::prototypes() {
+  return prototype_tree_;
+}
+
+
+const prototype_tree &object_store::prototypes() const {
   return prototype_tree_;
 }
 
@@ -129,7 +119,7 @@ void object_store::clear(bool full)
     prototype_tree_.clear();
   } else {
     // only delete objects
-    clear_prototype(root_->type.c_str(), true);
+    clear_prototype("object", true);
   }
   object_map_.clear();
 }
@@ -137,32 +127,6 @@ void object_store::clear(bool full)
 bool object_store::empty() const
 {
   return first_->next == last_;
-}
-
-int depth(prototype_node *node)
-{
-  int d = 0;
-  while (node->parent) {
-    node = node->parent;
-    ++d;
-  }
-  return d;
-}
-
-void object_store::dump_prototypes(std::ostream &out) const
-{
-  prototype_node *node = root_;
-  out << "digraph G {\n";
-  out << "\tgraph [fontsize=10]\n";
-	out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-	out << "\tedge [color=\"#0c0c0c\"]\n";
-  do {
-    int d = depth(node);
-    for (int i = 0; i < d; ++i) out << " ";
-    out << *node;
-    node = node->next_node();
-  } while (node);
-  out << "}" << std::endl;
 }
 
 void object_store::dump_objects(std::ostream &out) const
@@ -194,7 +158,7 @@ object* object_store::create(const char *type) const
 
 void object_store::mark_modified(object_proxy *oproxy)
 {
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_update, _1, oproxy->obj));
+  std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_update, _1, oproxy->obj));
 }
 
 void object_store::register_observer(object_observer *observer)
@@ -271,7 +235,7 @@ object_store::insert_object(object *o, bool notify)
   o->proxy_ = oproxy;
   // notify observer
   if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_insert, _1, o));
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, o));
   }
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
@@ -332,7 +296,7 @@ object_store::remove_object(object *o, bool notify)
 
   if (notify) {
     // notify observer
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::tr1::bind(&object_observer::on_delete, _1, o));
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_delete, _1, o));
   }
   // set object in object_proxy to null
   object_proxy *op = o->proxy_;

@@ -21,7 +21,7 @@
 
 #include <functional>
 
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
 

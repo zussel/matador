@@ -65,7 +65,7 @@ class OOS_API table : public generic_object_reader<table>
 {
 public:
   typedef std::list<object*> object_list_t;
-  typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
+  typedef std::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
 
 //protected:

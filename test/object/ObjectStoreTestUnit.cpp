@@ -19,24 +19,24 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::tr1::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
-  add_test("expression", std::tr1::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("set", std::tr1::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-  add_test("get", std::tr1::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
-  add_test("serializer", std::tr1::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::tr1::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-  add_test("simple", std::tr1::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::tr1::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::tr1::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::tr1::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::tr1::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-  add_test("sub_delete", std::tr1::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
-  add_test("hierarchy", std::tr1::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
-  add_test("view", std::tr1::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
-  add_test("clear", std::tr1::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
-  add_test("generic", std::tr1::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-  add_test("structure", std::tr1::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
-  add_test("insert", std::tr1::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
+  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
+  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
+  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
+  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
+  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
+  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()

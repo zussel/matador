@@ -609,9 +609,9 @@ protected:
 ///@endcond
 
 private:
-  std::tr1::function<void (value_type&, const object_ref<S>&)> ref_setter;
-	std::tr1::function<void (value_type&, int)> int_setter;
-	std::tr1::function<int (const value_type&)> int_getter;
+  std::function<void (value_type&, const object_ref<S>&)> ref_setter;
+	std::function<void (value_type&, int)> int_setter;
+	std::function<int (const value_type&)> int_getter;
 };
 
 /**
@@ -753,8 +753,8 @@ protected:
 ///@endcond
 
 private:
-	std::tr1::function<void (value_type&, const object_ref<S>&)> str_setter;
-	std::tr1::function<void (value_type&, int)> int_setter;
+	std::function<void (value_type&, const object_ref<S>&)> str_setter;
+	std::function<void (value_type&, int)> int_setter;
 };
 
 #endif /* OOS_DOXYGEN_DOC */

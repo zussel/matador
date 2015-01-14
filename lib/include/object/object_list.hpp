@@ -435,7 +435,7 @@ protected:
   }
 ///@endcond
 private:
-  std::tr1::function<void (item_type&, const object_ref<S>&)> setter_;
+  std::function<void (item_type&, const object_ref<S>&)> setter_;
 
 };
 
