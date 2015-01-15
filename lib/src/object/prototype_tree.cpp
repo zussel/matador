@@ -395,18 +395,17 @@ int prototype_tree::depth(const prototype_node *node) const
 
 void prototype_tree::dump(std::ostream &out) const
 {
-  prototype_node *node = first_->next;
+  const_prototype_iterator node = begin();
   out << "digraph G {\n";
   out << "\tgraph [fontsize=10]\n";
   out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
   out << "\tedge [color=\"#0c0c0c\"]\n";
   do {
-    int d = depth(node);
+    int d = depth(node.get());
     for (int i = 0; i < d; ++i) out << " ";
-    out << *node;
+    out << *node.get();
     out.flush();
-    node = node->next_node();
-  } while (node != first_->next->last);
+  } while (++node != end());
   out << "}" << std::endl;
 }
 
