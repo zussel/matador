@@ -17,7 +17,8 @@
 
 #include "object/prototype_node.hpp"
 #include "object/object_store.hpp"
-#include "object/object_proxy.hpp"
+
+#include <iostream>
 
 using namespace std;
 
@@ -238,17 +239,25 @@ void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *n
 
 void prototype_node::adjust_right_marker(object_proxy* old_proxy, object_proxy *new_proxy)
 {
+  using std::cout;
+
+  cout << "adjust_right_marker START\n" << flush;
+  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
+  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
   // store start node
   prototype_node *node = this;
+  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
   // get previous node
   node = node->next_node();
   //bool first = true;
   while (node) {
+    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
     if (node->op_first == old_proxy) {
       node->op_first = new_proxy;
     }
     node = node->next_node();
   }
+  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
