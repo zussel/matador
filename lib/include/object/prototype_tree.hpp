@@ -437,7 +437,15 @@ public:
   * @throws oos::object_exception on error
   */
   void clear();
-//  void clear(const char *type, bool recursive);
+  void clear(const char *type);
+  void clear(const prototype_iterator &node);
+
+  /**
+  * clear removes all object proxies really belonging to
+  * this node and deletes them and the holded object
+  */
+  void clear_all_objects();
+  void clear_objects(const prototype_iterator &node, bool recursive);
 
   int depth(const prototype_node *node) const;
 
@@ -467,6 +475,16 @@ public:
   * @throws oos::object_exception on error
   */
   void remove(const char *type);
+
+  /**
+  * Removes an object prototype from the prototype tree. All children
+  * nodes and all objects are also removed.
+  *
+  * @param node The prototype iterator node to remove.
+  * @return Returns true if the type was found and successfully removed
+  * @throws oos::object_exception on error
+  */
+  void remove(const prototype_iterator &node);
 
   /**
   * Return the first prototype node.
@@ -527,10 +545,32 @@ private:
    * @return The successor node
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_node* remove_prototype_node(prototype_node *node);
+  prototype_iterator remove_prototype_node(const prototype_iterator &node);
+
+  /**
+   * @internal
+   *
+   * Adjusts self and last marker of all predeccessor nodes with given
+   * object proxy.
+   *
+   * @param old_proxy The old last marker proxy.
+   * @param new_proxy The new last marker proxy.
+   */
+  void adjust_left_marker(const prototype_iterator &node, object_proxy *old_proxy, object_proxy *new_proxy);
+
+  /**
+   * @internal
+   *
+   * Adjust first marker of all successor nodes with given object proxy.
+   *
+   * @param old_proxy The old first marker proxy.
+   * @param new_proxy The new first marker proxy.
+   */
+  void adjust_right_marker(const prototype_iterator &node, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
   friend class object_container;
+  friend class object_store;
 
   prototype_node *first_;
   prototype_node *last_;

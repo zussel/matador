@@ -95,12 +95,6 @@ public:
   void initialize(object_base_producer *p, const char *t, bool a);
 
   /**
-   * clear removes all object proxies really belonging to
-   * this node and deletes them and the holded object
-   */
-  void clear();
-
-  /**
    * Returns true if object proxy list is empty. If self is true, only
    * list of own objects is checked. If self is false, complete list is
    * checked.
@@ -123,12 +117,6 @@ public:
    * @param child The child node to add.
    */
   void insert(prototype_node *child);
-    
-  /**
-   * Removes node and cildren nodes from list, clears all object
-   * and deletes all members.
-   */
-  void remove();
 
   /**
    * Unlinks node from list.
@@ -156,23 +144,6 @@ public:
    * @return True if node is child of given parent node.
    */
   bool is_child_of(const prototype_node *parent) const;
-
-  /**
-   * Adjusts self and last marker of all predeccessor nodes with given
-   * object proxy.
-   * 
-   * @param old_proxy The old last marker proxy.
-   * @param new_proxy The new last marker proxy.
-   */
-  void adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy);
-  
-  /**
-   * Adjust first marker of all successor nodes with given object proxy.
-   * 
-   * @param old_proxy The old first marker proxy.
-   * @param new_proxy The new first marker proxy.
-   */
-  void adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy);
 
   /**
    * Prints the node in graphviz layout to the stream.

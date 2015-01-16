@@ -22,7 +22,7 @@
 #include "object/object_container.hpp"
 
 #include <iterator>
-#include <string.h>
+#include <iostream>
 
 namespace oos {
 
@@ -371,15 +371,66 @@ size_t prototype_tree::size() const {
   return (size_t) (std::distance(begin(), end()) - 1);
 }
 
-size_t prototype_tree::prototype_count() const {
+size_t prototype_tree::prototype_count() const
+{
   return prototype_map_.size();
 }
 
-void prototype_tree::clear() {
-  prototype_node *root = first_->next;
+void prototype_tree::clear()
+{
+  remove_prototype_node(begin());
+}
 
-  while(root->first->next != root->last) {
-    remove_prototype_node(root->first->next);
+void prototype_tree::clear(const char *type)
+{
+  clear(find(type));
+}
+
+
+void prototype_tree::clear(const prototype_iterator &node)
+{
+  remove_prototype_node(node);
+}
+
+
+void prototype_tree::clear_all_objects()
+{
+
+//  prototype_node *node = find_prototype_node(type);
+//  if (recursive) {
+//    // clear all objects from child nodes
+//    // for each child call clear_prototype(child, recursive);
+//    prototype_node *child = node->next_node();
+//    while (child && (child != node || child != node->parent)) {
+//      child->clear();
+//      child = child->next_node();
+//    }
+//  }
+//
+//  node->clear();
+}
+
+void prototype_tree::clear_objects(const prototype_iterator &node, bool recursive)
+{
+  if (!node->empty(true)) {
+    adjust_left_marker(node, node->op_first->next, node->op_marker);
+    adjust_right_marker(node, node->op_marker->prev, node->op_first);
+
+    while (node->op_first->next != node->op_marker) {
+      object_proxy *op = node->op_first->next;
+      // remove object proxy from list
+      op->unlink();
+      // delete object proxy and object
+      delete op;
+    }
+    node->count = 0;
+  }
+
+  if (recursive) {
+    prototype_iterator i = node;
+    while (++i != node) {
+      clear_objects(i, false);
+    }
   }
 }
 
@@ -409,34 +460,20 @@ void prototype_tree::dump(std::ostream &out) const
   out << "}" << std::endl;
 }
 
-// Todo: move to object store
-//void prototype_tree::clear(const char *type, bool recursive) {
-//  prototype_node *node = find_prototype_node(type);
-//  if (recursive) {
-//    // clear all objects from child nodes
-//    // for each child call clear_prototype(child, recursive);
-//    prototype_node *child = node->next_node();
-//    while (child && (child != node || child != node->parent)) {
-//      child->clear();
-//      child = child->next_node();
-//    }
-//  }
-//
-//  node->clear();
-//}
-
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
-  if (!i.get()) {
+  if (i == end()) {
     throw object_exception("invalid prototype iterator");
   }
-  prototype_node *node = find_prototype_node(i->type.c_str());
-
-  node = remove_prototype_node(node);
-  return oos::prototype_iterator(node);
+  return remove_prototype_node(i);
 }
 
 void prototype_tree::remove(const char *type) {
-  prototype_node *node = find_prototype_node(type);
+  prototype_iterator node = find(type);
+  remove_prototype_node(node);
+}
+
+void prototype_tree::remove(const prototype_iterator &node)
+{
   remove_prototype_node(node);
 }
 
@@ -498,35 +535,87 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) const {
 }
 
 
-prototype_node *prototype_tree::remove_prototype_node(prototype_node *node) {
+prototype_iterator prototype_tree::remove_prototype_node(const prototype_iterator &node) {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  while (node->first->next != node->last) {
-    remove(node->first->next->type.c_str());
+  prototype_iterator i = node;
+  while (++i != node) {
+    remove(i);
   }
+//  while (node->first->next != node->last) {
+//    remove(node->first->next->type.c_str());
+//  }
   // and objects they're containing
-  node->clear();
+  clear_objects(node, false);
+
+//  node->clear();
   // delete prototype node as well
   // unlink node
   node->unlink();
   // get iterator
-  t_prototype_map::iterator i = prototype_map_.find(node->type.c_str());
-  if (i != prototype_map_.end()) {
-    prototype_map_.erase(i);
+  t_prototype_map::iterator j = prototype_map_.find(node->type.c_str());
+  if (j != prototype_map_.end()) {
+    prototype_map_.erase(j);
   }
   // find item in typeid map
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(node->producer->classname());
-  if (j != typeid_prototype_map_.end()) {
-    j->second.erase(node->type);
-    if (j->second.empty()) {
-      typeid_prototype_map_.erase(j);
+  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->producer->classname());
+  if (k != typeid_prototype_map_.end()) {
+    k->second.erase(node->type);
+    if (k->second.empty()) {
+      typeid_prototype_map_.erase(k);
     }
   } else {
     throw object_exception("couldn't find node by id");
   }
-  prototype_node *next = node->next_node();
-  delete node;
+  prototype_iterator next = node;
+  ++next;
+  delete node.get();
   return next;
+}
+
+/*
+ * adjust the marker of all predeccessor nodes
+ * self and last marker
+ */
+void prototype_tree::adjust_left_marker(const prototype_iterator &root, object_proxy *old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_iterator node = root;
+  // get previous node
+//  node = node->previous_node();
+  while (--node != begin()) {
+    if (node->op_marker == old_proxy) {
+      node->op_marker = new_proxy;
+    }
+    if (node->depth >= root->depth && node->op_last == old_proxy) {
+      node->op_last = new_proxy;
+    }
+//    node = node->previous_node();
+  }
+}
+
+void prototype_tree::adjust_right_marker(const prototype_iterator &root, object_proxy* old_proxy, object_proxy *new_proxy)
+{
+  using std::cout;
+  using std::flush;
+
+  cout << "adjust_right_marker START\n" << flush;
+  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
+  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
+  // store start node
+  prototype_iterator node = root;
+  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
+  // get previous node
+//  node = node->next_node();
+  //bool first = true;
+  while (++node != end()) {
+    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
+    if (node->op_first == old_proxy) {
+      node->op_first = new_proxy;
+    }
+//    node = node->next_node();
+  }
+  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 }

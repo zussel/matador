@@ -22,12 +22,6 @@
 #include "object/object_creator.hpp"
 #include "object/object_deleter.hpp"
 
-#ifdef _MSC_VER
-#include <functional>
-#include <memory>
-#else
-#endif
-
 #include <iostream>
 #include <iomanip>
 
@@ -62,26 +56,14 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   return prototype_tree_.insert(producer, type, abstract, parent);
 }
 
-bool object_store::clear_prototype(const char *type, bool recursive)
+void object_store::clear_prototype(const char *type, bool recursive)
 {
   prototype_iterator node = prototype_tree_.find(type);
   if (node == prototype_tree_.end()) {
-    //throw new object_exception("couldn't find prototype");
-    return false;
-  }
-  if (recursive) {
-    // clear all objects from child nodes
-    // for each child call clear_prototype(child, recursive);
-    prototype_node *child = node->next_node();
-    while (child && (child != node.get() || child != node->parent)) {
-      child->clear();
-      child = child->next_node();
-    }      
+    throw object_exception("couldn't find prototype");
   }
 
-  node->clear();
-
-  return true;
+  prototype_tree_.clear_objects(node, recursive);
 }
 
 void object_store::remove_prototype(const char *type)
@@ -119,7 +101,7 @@ void object_store::clear(bool full)
     prototype_tree_.clear();
   } else {
     // only delete objects
-    clear_prototype("object", true);
+    prototype_tree_.clear_all_objects();
   }
   object_map_.clear();
 }
@@ -412,7 +394,7 @@ void object_store::insert_proxy(const prototype_iterator &node, object_proxy *op
      *
      *************/
     oproxy->link(node->op_marker->prev);
-    node->adjust_left_marker(oproxy->next, oproxy);
+    prototype_tree_.adjust_left_marker(node, oproxy->next, oproxy);
   } else /* if (node->count == 0) */ {
     /*************
      *
@@ -421,8 +403,8 @@ void object_store::insert_proxy(const prototype_iterator &node, object_proxy *op
      *
      *************/
     oproxy->link(node->op_marker);
-    node->adjust_left_marker(oproxy->next, oproxy);
-    node->adjust_right_marker(oproxy->prev, oproxy);
+    prototype_tree_.adjust_left_marker(node, oproxy->next, oproxy);
+    prototype_tree_.adjust_right_marker(node, oproxy->prev, oproxy);
   }
   // set prototype node
   oproxy->node = node.get();
@@ -434,11 +416,11 @@ void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
 {
   if (oproxy == node->op_first->next) {
     // adjust left marker
-    node->adjust_left_marker(node->op_first->next, node->op_first->next->next);
+    prototype_tree_.adjust_left_marker(node, node->op_first->next, node->op_first->next->next);
   }
   if (oproxy == node->op_marker->prev) {
     // adjust right marker
-    node->adjust_right_marker(oproxy, node->op_marker->prev->prev);
+    prototype_tree_.adjust_right_marker(node, oproxy, node->op_marker->prev->prev);
   }
   // unlink object_proxy
   unlink_proxy(oproxy);

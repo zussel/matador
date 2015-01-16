@@ -88,28 +88,6 @@ prototype_node::~prototype_node()
   }
 }
 
-void
-prototype_node::clear()
-{
-  if (empty(true)) {
-    return;
-  }
-  // remove object proxies until first and marker are left
-  // adjust marker first
-  
-  adjust_left_marker(op_first->next, op_marker);
-  adjust_right_marker(op_marker->prev, op_first);
-
-  while (op_first->next != op_marker) {
-    object_proxy *op = op_first->next;
-    // remove object proxy from list
-    op->unlink();
-    // delete object proxy and object
-    delete op;
-  }
-  count = 0;
-}
-
 bool
 prototype_node::empty(bool self) const
 {
@@ -147,20 +125,6 @@ prototype_node::insert(prototype_node *child)
   child->op_last = op_last;
 }    
 
-void prototype_node::remove()
-{
-  // delete all object proxies
-  clear();
-  // delete all children nodes
-  while (first->next != last) {
-    prototype_node *node = first->next;
-    node->remove();
-    delete node;
-  }
-  // unlink this node
-  unlink();
-}
-
 void prototype_node::unlink()
 {
   // unlink node
@@ -174,7 +138,7 @@ prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first->next != last)
+  if (first && first->next != last)
     return first->next;
   else {
     // if there is no child, we check for sibling
@@ -214,50 +178,6 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
     node = node->parent;
   }
   return node == parent;
-}
-
-/*
- * adjust the marker of all predeccessor nodes
- * self and last marker
- */
-void prototype_node::adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy)
-{
-  // store start node
-  prototype_node *node = this;
-  // get previous node
-  node = node->previous_node();
-  while (node) {
-    if (node->op_marker == old_proxy) {
-      node->op_marker = new_proxy;
-    }
-    if (node->depth >= depth && node->op_last == old_proxy) {
-      node->op_last = new_proxy;
-    }
-    node = node->previous_node();
-  }
-}
-
-void prototype_node::adjust_right_marker(object_proxy* old_proxy, object_proxy *new_proxy)
-{
-  using std::cout;
-
-  cout << "adjust_right_marker START\n" << flush;
-  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
-  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
-  // store start node
-  prototype_node *node = this;
-  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
-  // get previous node
-  node = node->next_node();
-  //bool first = true;
-  while (node) {
-    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
-    if (node->op_first == old_proxy) {
-      node->op_first = new_proxy;
-    }
-    node = node->next_node();
-  }
-  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)

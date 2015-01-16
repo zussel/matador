@@ -164,7 +164,7 @@ public:
    * @param recursive If set, also the object in children nodes are deleted.
    * @return Returns true if the type was found and successfully cleared.
    */
-  bool clear_prototype(const char *type, bool recursive);
+  void clear_prototype(const char *type, bool recursive);
 
   /**
    * Removes an object prototype from the prototype tree. All children
