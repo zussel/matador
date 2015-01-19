@@ -386,6 +386,13 @@ void prototype_tree::clear()
 //    delete current;
     current = next;
   }
+
+  prototype_map_.clear();
+  typeid_prototype_map_.clear();
+  // add to maps
+  prototype_map_.insert(std::make_pair("object", first_->next));
+  typeid_prototype_map_[first_->next->producer->classname()].insert(std::make_pair("object", first_->next));
+
 }
 
 void prototype_tree::clear(const char *type)
@@ -580,23 +587,23 @@ void prototype_tree::adjust_right_marker(const prototype_iterator &root, object_
   using std::cout;
   using std::flush;
 
-  cout << "adjust_right_marker START\n" << flush;
-  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
-  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
+//  cout << "adjust_right_marker START\n" << flush;
+//  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
+//  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
   // store start node
   prototype_iterator node = root;
-  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
+//  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
   // get previous node
 //  node = node->next_node();
   //bool first = true;
   while (++node != end()) {
-    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
+//    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
     if (node->op_first == old_proxy) {
       node->op_first = new_proxy;
     }
 //    node = node->next_node();
   }
-  cout << "adjust_right_marker FINISH\n" << flush;
+//  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 }
