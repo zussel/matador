@@ -21,16 +21,12 @@
 #include "object/object_ptr.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
+#include "object/object_deleter.hpp"
 
 #include "tools/sequencer.hpp"
 
-#ifdef _MSC_VER
 #include <memory>
 #include <unordered_map>
-#else
-#include <tr1/memory>
-#include <tr1/unordered_map>
-#endif
 
 #include <string>
 #include <ostream>
@@ -54,7 +50,6 @@ namespace oos {
 
 class object;
 struct object_proxy;
-class object_deleter;
 struct prototype_node;
 class object_observer;
 class object_container;
@@ -275,7 +270,7 @@ public:
    * @param o The object to check.
    * @return True if object is removable.
    */
-  bool is_removable(const object_base_ptr &o) const;
+  bool is_removable(const object_base_ptr &o);
 
   /**
    * Removes an object from the object store. After successfull
@@ -413,27 +408,14 @@ private:
 private:
   prototype_tree prototype_tree_;
 
-//  prototype_node *root_;
-//
-//  // name to prototype map
-//  t_prototype_map prototype_map_;
-//
-//  // typeid -> [name -> prototype]
-//  typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
-//  t_typeid_prototype_map typeid_prototype_map_;
-
   t_object_proxy_map object_map_;
 
   sequencer seq_;
-//  long id_;
-  
+
   typedef std::list<object_observer*> t_observer_list;
   t_observer_list observer_list_;
 
-  object_proxy *first_;
-  object_proxy *last_;
-  
-  object_deleter *object_deleter_;
+  object_deleter object_deleter_;
 };
 
 }

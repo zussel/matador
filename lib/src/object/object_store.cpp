@@ -20,7 +20,6 @@
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_creator.hpp"
-#include "object/object_deleter.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -31,13 +30,11 @@ using namespace std::placeholders;
 namespace oos {
 
 object_store::object_store()
-  : object_deleter_(new object_deleter)
 {}
 
 object_store::~object_store()
 {
   clear(true);
-  delete object_deleter_;
 }
 
 
@@ -98,14 +95,16 @@ void object_store::clear(bool full)
 
 bool object_store::empty() const
 {
-  return first_->next == last_;
+  const_prototype_iterator root = prototype_tree_.begin();
+  return root->op_first->next == root->op_last;
 }
 
 void object_store::dump_objects(std::ostream &out) const
 {
+  const_prototype_iterator root = prototype_tree_.begin();
   out << "dumping all objects\n";
 
-  object_proxy *op = first_;
+  object_proxy *op = root->op_first;
   while (op) {
     out << "[" << op << "] (";
     if (op->obj) {
@@ -215,9 +214,9 @@ object_store::insert_object(object *o, bool notify)
   return o;
 }
 
-bool object_store::is_removable(const object_base_ptr &o) const
+bool object_store::is_removable(const object_base_ptr &o)
 {
-  return object_deleter_->is_deletable(o.ptr());
+  return object_deleter_.is_deletable(o.ptr());
 }
 
 void
@@ -230,12 +229,12 @@ void
 object_store::remove(object *o)
 {
   // check if object tree is deletable
-  if (!object_deleter_->is_deletable(o)) {
+  if (!object_deleter_.is_deletable(o)) {
     throw object_exception("object is not removable");
   }
   
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
+  object_deleter::iterator first = object_deleter_.begin();
+  object_deleter::iterator last = object_deleter_.end();
   
   while (first != last) {
     if (!first->second.ignore) {
@@ -286,12 +285,12 @@ object_store::remove(object_container &oc)
    * 
    **************/
   // check if object tree is deletable
-  if (!object_deleter_->is_deletable(oc)) {
+  if (!object_deleter_.is_deletable(oc)) {
     throw object_exception("couldn't remove container object");
   }
 
-  object_deleter::iterator first = object_deleter_->begin();
-  object_deleter::iterator last = object_deleter_->end();
+  object_deleter::iterator first = object_deleter_.begin();
+  object_deleter::iterator last = object_deleter_.end();
   
   while (first != last) {
     if (!first->second.ignore) {
@@ -384,7 +383,7 @@ void object_store::insert_proxy(const prototype_iterator &node, object_proxy *op
      *
      *************/
     oproxy->link(node->op_marker->prev);
-    prototype_tree_.adjust_left_marker(node, oproxy->next, oproxy);
+    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
   } else /* if (node->count == 0) */ {
     /*************
      *
@@ -393,8 +392,8 @@ void object_store::insert_proxy(const prototype_iterator &node, object_proxy *op
      *
      *************/
     oproxy->link(node->op_marker);
-    prototype_tree_.adjust_left_marker(node, oproxy->next, oproxy);
-    prototype_tree_.adjust_right_marker(node, oproxy->prev, oproxy);
+    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
+    prototype_tree_.adjust_right_marker(node.get(), oproxy->prev, oproxy);
   }
   // set prototype node
   oproxy->node = node.get();

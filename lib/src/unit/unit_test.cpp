@@ -126,7 +126,7 @@ void unit_test::info(const std::string &msg)
 void unit_test::execute(test_func_info &test_info)
 {
     initialize();
-    std::cout << std::left << std::setw(70) << test_info.caption << " ... ";
+    std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
     try {
       current_test_func_info = &test_info;
       test_info.func();
