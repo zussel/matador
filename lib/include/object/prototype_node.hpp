@@ -36,11 +36,13 @@
 #include <list>
 #include <memory>
 #include <string>
+#include "prototype_tree.hpp"
 
 namespace oos {
 
 class object_base_producer;
 class object;
+class prototype_tree;
 struct object_proxy;
 
 /**
@@ -117,6 +119,19 @@ public:
    * @param child The child node to add.
    */
   void insert(prototype_node *child);
+
+  /**
+   * Delete all objects inside this node
+   * if recursive flag is set, delete all
+   * objects below this node as well.
+   * To adjust the object proxy marker for the
+   * remaining objects the corresponding
+   * prototype tree must be passed
+   *
+   * @param tree The corresponding prototype tree
+   * @param recursive Indicates wether all or only nodes objects are deleted
+   */
+  void clear(prototype_tree &tree, bool recursive);
 
   /**
    * Unlinks node from list.

@@ -56,16 +56,6 @@ object_store::insert_prototype(object_base_producer *producer, const char *type,
   return prototype_tree_.insert(producer, type, abstract, parent);
 }
 
-void object_store::clear_prototype(const char *type, bool recursive)
-{
-  prototype_iterator node = prototype_tree_.find(type);
-  if (node == prototype_tree_.end()) {
-    throw object_exception("couldn't find prototype");
-  }
-
-  prototype_tree_.clear_objects(node, recursive);
-}
-
 void object_store::remove_prototype(const char *type)
 {
   prototype_tree_.remove(type);
@@ -101,7 +91,7 @@ void object_store::clear(bool full)
     prototype_tree_.clear();
   } else {
     // only delete objects
-    prototype_tree_.clear_all_objects();
+    prototype_tree_.begin()->clear(prototype_tree_, true);
   }
   object_map_.clear();
 }

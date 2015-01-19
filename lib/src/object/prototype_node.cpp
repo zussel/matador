@@ -16,6 +16,7 @@
  */
 
 #include "object/prototype_node.hpp"
+#include "object/prototype_tree.hpp"
 #include "object/object_store.hpp"
 
 #include <iostream>
@@ -123,7 +124,34 @@ prototype_node::insert(prototype_node *child)
   child->op_marker = op_last;
   // 3. last
   child->op_last = op_last;
-}    
+}
+
+
+void prototype_node::clear(prototype_tree &tree, bool recursive)
+{
+  if (!empty(true)) {
+    tree.adjust_left_marker(this, op_first->next, op_marker);
+    tree.adjust_right_marker(this, op_marker->prev, op_first);
+
+    while (op_first->next != op_marker) {
+      object_proxy *op = op_first->next;
+      // remove object proxy from list
+      op->unlink();
+      // delete object proxy and object
+      delete op;
+    }
+    count = 0;
+  }
+
+  if (recursive) {
+    prototype_node *current = first->next;
+
+    while (current != last) {
+      current->clear(tree, recursive);
+      current = current->next;
+    }
+  }
+}
 
 void prototype_node::unlink()
 {

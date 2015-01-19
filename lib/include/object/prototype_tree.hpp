@@ -439,13 +439,7 @@ public:
   void clear();
   void clear(const char *type);
   void clear(const prototype_iterator &node);
-
-  /**
-  * clear removes all object proxies really belonging to
-  * this node and deletes them and the holded object
-  */
-  void clear_all_objects();
-  void clear_objects(const prototype_iterator &node, bool recursive);
+  void clear(prototype_node *node);
 
   int depth(const prototype_node *node) const;
 
@@ -571,6 +565,7 @@ private:
 private:
   friend class object_container;
   friend class object_store;
+  friend class prototype_node;
 
   prototype_node *first_;
   prototype_node *last_;

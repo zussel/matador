@@ -378,7 +378,14 @@ size_t prototype_tree::prototype_count() const
 
 void prototype_tree::clear()
 {
-  remove_prototype_node(begin());
+  prototype_node *current = first_->next;
+  prototype_node *next;
+  while(current != last_) {
+    next = current->next;
+    clear(current);
+//    delete current;
+    current = next;
+  }
 }
 
 void prototype_tree::clear(const char *type)
@@ -393,45 +400,19 @@ void prototype_tree::clear(const prototype_iterator &node)
 }
 
 
-void prototype_tree::clear_all_objects()
+void prototype_tree::clear(prototype_node *node)
 {
-
-//  prototype_node *node = find_prototype_node(type);
-//  if (recursive) {
-//    // clear all objects from child nodes
-//    // for each child call clear_prototype(child, recursive);
-//    prototype_node *child = node->next_node();
-//    while (child && (child != node || child != node->parent)) {
-//      child->clear();
-//      child = child->next_node();
-//    }
-//  }
-//
-//  node->clear();
-}
-
-void prototype_tree::clear_objects(const prototype_iterator &node, bool recursive)
-{
-  if (!node->empty(true)) {
-    adjust_left_marker(node, node->op_first->next, node->op_marker);
-    adjust_right_marker(node, node->op_marker->prev, node->op_first);
-
-    while (node->op_first->next != node->op_marker) {
-      object_proxy *op = node->op_first->next;
-      // remove object proxy from list
-      op->unlink();
-      // delete object proxy and object
-      delete op;
-    }
-    node->count = 0;
+  prototype_node *current = node->first->next;
+  prototype_node *next;
+  while (current != node->last) {
+    next = current->next;
+    clear(current);
+    delete current;
+    current = next;
   }
-
-  if (recursive) {
-    prototype_iterator i = node;
-    while (++i != node) {
-      clear_objects(i, false);
-    }
-  }
+  // finally link first to last and vice versa
+  node->first->next = node->last;
+  node->last->prev = node->first;
 }
 
 int prototype_tree::depth(const prototype_node *node) const
@@ -546,7 +527,7 @@ prototype_iterator prototype_tree::remove_prototype_node(const prototype_iterato
 //    remove(node->first->next->type.c_str());
 //  }
   // and objects they're containing
-  clear_objects(node, false);
+  node->clear(*this, false);
 
 //  node->clear();
   // delete prototype node as well
