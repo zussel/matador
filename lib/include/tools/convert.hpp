@@ -39,6 +39,7 @@
 #include <cstdlib>
 #include <typeinfo>
 #include <cstring>
+#include <stdio.h>
 
 /**
  * @file convert.hpp

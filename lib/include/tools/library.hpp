@@ -33,7 +33,7 @@
 
 #include <string>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #include <windows.h>
 #else
 #include <dlfcn.h>
@@ -42,7 +42,7 @@
 namespace oos {
 
 #ifndef OOS_DOXYGEN_DOC
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 typedef FARPROC func_ptr;
 #else
 typedef void* func_ptr;
@@ -122,7 +122,7 @@ public:
 private:
   std::string lib_;
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
   HMODULE handle_;
 #else
   void *handle_;
