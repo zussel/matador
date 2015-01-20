@@ -19,19 +19,19 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
-  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
+//  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+//  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
+//  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
+//  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+//  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
+//  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+//  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+//  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+//  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
+//  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+//  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
+//  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
+//  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
@@ -55,9 +55,7 @@ ObjectStoreTestUnit::initialize()
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
   ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ItemPtrList::item_type>("ITEM_PTR");
   ostore_.insert_prototype<ObjectItemPtrList>("OBJECT_ITEM_PTR_LIST");
-//  ostore_.insert_prototype<ObjectItemPtrList::item_type>("OBJECT_ITEM_PTR");
 }
 
 void
@@ -115,9 +113,6 @@ ObjectStoreTestUnit::expression_test()
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
   typedef ObjectItemPtrList::item_type ObjectItemType;
-
-
-  variable<int> k(make_var(&ObjectItem<Item>::ptr, &Item::get_int));
 
   variable<int> z(make_var(&ObjectItemType::value, &ObjectItem<Item>::get_int));
 

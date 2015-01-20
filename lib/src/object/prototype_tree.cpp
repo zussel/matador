@@ -378,20 +378,20 @@ size_t prototype_tree::prototype_count() const
 
 void prototype_tree::clear()
 {
-  prototype_node *current = first_->next;
+  prototype_node *current = first_->first->next;
   prototype_node *next;
-  while(current != last_) {
+  while(current != last_->prev->last) {
     next = current->next;
     clear(current);
 //    delete current;
     current = next;
   }
 
-  prototype_map_.clear();
-  typeid_prototype_map_.clear();
-  // add to maps
-  prototype_map_.insert(std::make_pair("object", first_->next));
-  typeid_prototype_map_[first_->next->producer->classname()].insert(std::make_pair("object", first_->next));
+//  prototype_map_.clear();
+//  typeid_prototype_map_.clear();
+//  // add to maps
+//  prototype_map_.insert(std::make_pair("object", first_->next));
+//  typeid_prototype_map_[first_->next->producer->classname()].insert(std::make_pair("object", first_->next));
 
 }
 
@@ -403,7 +403,7 @@ void prototype_tree::clear(const char *type)
 
 void prototype_tree::clear(const prototype_iterator &node)
 {
-  remove_prototype_node(node.get());
+  clear(node.get());
 }
 
 
@@ -414,10 +414,11 @@ void prototype_tree::clear(prototype_node *node)
   while (current != node->last) {
     next = current->next;
     clear(current);
-    delete current;
+//    delete current;
     current = next;
   }
   // finally link first to last and vice versa
+  remove_prototype_node(node);
   node->first->next = node->last;
   node->last->prev = node->first;
 }
