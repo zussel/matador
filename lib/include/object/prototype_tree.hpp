@@ -439,7 +439,7 @@ public:
   void clear();
   void clear(const char *type);
   void clear(const prototype_iterator &node);
-  void clear(prototype_node *node);
+  prototype_node* clear(prototype_node *node);
 
   int depth(const prototype_node *node) const;
 
@@ -539,7 +539,7 @@ private:
    * @return The successor node
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_iterator remove_prototype_node(prototype_node *node);
+  prototype_node* remove_prototype_node(prototype_node *node);
 
 private:
   /**

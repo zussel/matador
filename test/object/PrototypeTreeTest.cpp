@@ -129,8 +129,6 @@ void PrototypeTreeTestUnit::test_clear()
   ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
   ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
 
-  ptree.dump(std::cout);
-
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (4)");
 
   ptree.clear();

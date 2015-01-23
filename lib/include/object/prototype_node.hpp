@@ -144,6 +144,7 @@ public:
    * @return The next node.
    */
   prototype_node* next_node() const;
+  prototype_node* next_node(const prototype_node *root) const;
 
   /**
    * Return nodes predeccessor node or NULL if node is first.
@@ -151,6 +152,7 @@ public:
    * @return The previous node.
    */
   prototype_node* previous_node() const;
+  prototype_node* previous_node(const prototype_node *root) const;
 
   /**
    * Returns true if node is child of given parent node.
@@ -159,6 +161,13 @@ public:
    * @return True if node is child of given parent node.
    */
   bool is_child_of(const prototype_node *parent) const;
+
+  /**
+   * Returns true if node has children.
+   *
+   * @return True if node has children.
+   */
+  bool has_children() const;
 
   /**
    * Prints the node in graphviz layout to the stream.

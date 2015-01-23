@@ -378,21 +378,10 @@ size_t prototype_tree::prototype_count() const
 
 void prototype_tree::clear()
 {
-  prototype_node *current = first_->first->next;
-  prototype_node *next;
-  while(current != last_->prev->last) {
-    next = current->next;
-    clear(current);
-//    delete current;
-    current = next;
+  prototype_node *root = first_->next;
+  while(root->has_children()) {
+    remove_prototype_node(root->first->next);
   }
-
-//  prototype_map_.clear();
-//  typeid_prototype_map_.clear();
-//  // add to maps
-//  prototype_map_.insert(std::make_pair("object", first_->next));
-//  typeid_prototype_map_[first_->next->producer->classname()].insert(std::make_pair("object", first_->next));
-
 }
 
 void prototype_tree::clear(const char *type)
@@ -407,20 +396,14 @@ void prototype_tree::clear(const prototype_iterator &node)
 }
 
 
-void prototype_tree::clear(prototype_node *node)
+prototype_node* prototype_tree::clear(prototype_node *node)
 {
   prototype_node *current = node->first->next;
-  prototype_node *next;
   while (current != node->last) {
-    next = current->next;
-    clear(current);
-//    delete current;
-    current = next;
+    current = clear(current);
   }
   // finally link first to last and vice versa
-  remove_prototype_node(node);
-  node->first->next = node->last;
-  node->last->prev = node->first;
+  return remove_prototype_node(node);
 }
 
 int prototype_tree::depth(const prototype_node *node) const
@@ -450,7 +433,7 @@ void prototype_tree::dump(std::ostream &out) const
 }
 
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
-  if (i == end()) {
+  if (i == end() || i.get() == nullptr) {
     throw object_exception("invalid prototype iterator");
   }
   return remove_prototype_node(i.get());
@@ -524,16 +507,16 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) const {
 }
 
 
-prototype_iterator prototype_tree::remove_prototype_node(prototype_node *node) {
+prototype_node* prototype_tree::remove_prototype_node(prototype_node *node) {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  while (node->first->next != node->last) {
-    remove(node->first->next->type.c_str());
+  prototype_node *next = node->next_node(node);
+
+  while (node->has_children()) {
+    remove_prototype_node(node->first->next);
   }
   // and objects they're containing
   node->clear(*this, false);
-
-//  node->clear();
   // delete prototype node as well
   // unlink node
   node->unlink();
@@ -552,7 +535,6 @@ prototype_iterator prototype_tree::remove_prototype_node(prototype_node *node) {
   } else {
     throw object_exception("couldn't find node by id");
   }
-  prototype_node *next = node->next_node();
   delete node;
   return next;
 }

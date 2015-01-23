@@ -5,12 +5,10 @@
 #include "object/object_serializer.hpp"
 #include "object/object_view.hpp"
 
-#include "tools/byte_buffer.hpp"
 #include "tools/algorithm.hpp"
 
 #include "version.hpp"
 
-#include <algorithm>
 #include <iostream>
 
 using namespace oos;
@@ -19,19 +17,19 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-//  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
-//  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-//  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-//  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
-//  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-//  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-//  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-//  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
-//  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-//  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-//  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-//  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
-//  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
+  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
+  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
+  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");

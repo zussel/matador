@@ -180,6 +180,24 @@ prototype_node* prototype_node::next_node() const
   }
 }
 
+prototype_node* prototype_node::next_node(const prototype_node *root) const
+{
+  // if we have a child, child is the next iterator to return
+  // (if we don't do iterate over the siblings)
+  if (first && first->next != last)
+    return first->next;
+  else {
+    // if there is no child, we check for sibling
+    // if there is a sibling, this is our next iterator to return
+    // if not, we go back to the parent
+    const prototype_node *node = this;
+    while (node->parent && node->next == node->parent->last && node->parent != root) {
+      node = node->parent;
+    }
+    return node->next;
+  }
+}
+
 prototype_node* prototype_node::previous_node() const
 {
   // if node has a previous sibling, we set it
@@ -199,6 +217,25 @@ prototype_node* prototype_node::previous_node() const
   }
 }
 
+prototype_node* prototype_node::previous_node(const prototype_node *root) const
+{
+  // if node has a previous sibling, we set it
+  // as our next iterator. then we check if there
+  // are last childs. if so, we set the last last
+  // child as our iterator
+  if (prev && prev->prev) {
+    const prototype_node *node = prev;
+    while (node->last && node->first->next != node->last && node->parent != root) {
+      node = node->last->prev;
+    }
+    return const_cast<prototype_node*>(node);
+    // if there is no previous sibling, our next iterator
+    // is the parent of the node
+  } else {
+    return parent;
+  }
+}
+
 bool prototype_node::is_child_of(const prototype_node *parent) const
 {
   const prototype_node *node = this;
@@ -206,6 +243,12 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
     node = node->parent;
   }
   return node == parent;
+}
+
+
+bool prototype_node::has_children() const
+{
+  return first->next != last;
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
