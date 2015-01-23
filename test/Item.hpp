@@ -82,7 +82,7 @@ public:
 private:
   void init() {
     memset(cstr_, 0, CSTR_LEN);
-#ifdef WIN32
+#ifdef _MSC_VER
     strcpy_s(cstr_, CSTR_LEN, "Hallo");
 #else
     strcpy(cstr_, "Hallo");
