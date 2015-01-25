@@ -385,7 +385,8 @@ public:
   * @param type Name or class name of the prototype
   * @return Returns a prototype iterator.
   */
-  iterator find(const char *type) const;
+  iterator find(const char *type);
+  const_iterator find(const char *type) const;
 
   /**
   * @brief Finds prototype node by template type.
@@ -398,7 +399,12 @@ public:
   * @return Returns a prototype iterator.
   */
   template < class T >
-  iterator find() const
+  iterator find()
+  {
+    return find(typeid(T).name());
+  }
+  template < class T >
+  const_iterator find() const
   {
     return find(typeid(T).name());
   }
@@ -520,11 +526,12 @@ private:
    * Searches a prototype by type
    * which can either be a type name
    * or a class name.
-   * Allways returns a valid prototype node
+   * Returns a valid prototype node or
+   * nullptr on unknown type
    * or throws an exception on error
    *
    * @param type Type name of the prototype node to search
-   * @return The requested prototype node
+   * @return The requested prototype node or nullptr
    * @throws oos::object_exception if in error occurrs
    */
   prototype_node* find_prototype_node(const char *type) const;

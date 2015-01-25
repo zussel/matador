@@ -23,6 +23,7 @@
 
 #include <iterator>
 #include <iostream>
+#include <sstream>
 
 namespace oos {
 
@@ -294,6 +295,9 @@ prototype_tree::~prototype_tree()
 prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
   // set node to root node
   prototype_node *parent_node = find_prototype_node(parent);
+  if (!parent_node) {
+    throw object_exception("unknown prototype type");
+  }
   /*
    * try to insert new prototype node
    */
@@ -338,7 +342,9 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
     }
   } else {
     // already inserted return iterator
-    throw object_exception("prototype already inserted");
+    std::stringstream msg;
+    msg << "prototype already inserted: " << type;
+    throw object_exception(msg.str().c_str());
   }
 
   parent_node->insert(node);
@@ -357,10 +363,21 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   return prototype_iterator(node);
 }
 
-prototype_tree::iterator prototype_tree::find(const char *type) const {
-  return prototype_iterator(find_prototype_node(type));
+prototype_tree::iterator prototype_tree::find(const char *type) {
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return prototype_iterator(node);
 }
 
+prototype_tree::const_iterator prototype_tree::find(const char *type) const {
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return const_prototype_iterator(node);
+}
 
 bool prototype_tree::empty() const {
   return first_->next == last_->prev;
@@ -441,12 +458,15 @@ prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i
 
 void prototype_tree::remove(const char *type) {
   prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("unknown prototype type");
+  }
   remove_prototype_node(node);
 }
 
 void prototype_tree::remove(const prototype_iterator &node)
 {
-  remove_prototype_node(node.get());
+  remove(node.get());
 }
 
 prototype_tree::iterator prototype_tree::begin()
@@ -484,7 +504,7 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) const {
    */
     t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
     if (j == typeid_prototype_map_.end()) {
-      throw object_exception("unknown prototype type");
+      return nullptr;
     } else {
       const t_prototype_map &val = j->second;
       /*

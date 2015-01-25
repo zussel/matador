@@ -51,7 +51,7 @@ void PrototypeTreeTestUnit::test_insert()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false), object_exception, "prototype already inserted", "inserted same prototype twice");
+  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false), object_exception, "prototype already inserted: item", "inserted same prototype twice");
   delete producer;
 }
 

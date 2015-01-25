@@ -58,7 +58,12 @@ void object_store::remove_prototype(const char *type)
   prototype_tree_.remove(type);
 }
 
-prototype_iterator object_store::find_prototype(const char *type) const
+prototype_iterator object_store::find_prototype(const char *type)
+{
+  return prototype_tree_.find(type);
+}
+
+const_prototype_iterator object_store::find_prototype(const char *type) const
 {
   return prototype_tree_.find(type);
 }
@@ -122,8 +127,7 @@ object* object_store::create(const char *type) const
   if (node != prototype_tree_.end()) {
     return node->producer->create();
   } else {
-    // TODO: throw exception
-    return 0;
+    throw object_exception("unknown prototype type");
   }
 }
 

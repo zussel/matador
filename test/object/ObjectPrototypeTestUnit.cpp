@@ -126,9 +126,7 @@ ObjectPrototypeTestUnit::one_prototype()
   
   ostore.remove_prototype("ITEM");
   
-  o = ostore.create("ITEM");
-  
-  UNIT_ASSERT_NULL(o, "unexpected object creation");
+  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM"), object_exception, "unknown prototype type", "create with invalid type");
 }
 
 void
@@ -152,15 +150,13 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   
   ostore.remove_prototype("ITEM_B");
   
-  o = ostore.create("ITEM_B");
-  
-  UNIT_ASSERT_NULL(o, "unexpected object creation");
+  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_B"), object_exception, "unknown prototype type", "create with invalid type");
   
   ostore.remove_prototype("ITEM");
   
-  o = ostore.create("ITEM_C");
-  
-  UNIT_ASSERT_NULL(o, "unexpected object creation");
+  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM"), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_A"), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_C"), object_exception, "unknown prototype type", "create with invalid type");
 }
 
 void

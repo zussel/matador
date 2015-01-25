@@ -316,15 +316,6 @@ protected:
    */
   virtual object_base_producer* create_item_producer() const = 0;
 
-//  prototype_node* find_prototype_node(object_store &ostore, const char *id) const
-//  {
-//    object_store::t_prototype_map::iterator i = ostore.prototype_map_.find(id);
-//    if (i == ostore.prototype_map_.end()) {
-//      return 0;
-//    }
-//    return i->second;
-//  }
-
 private:
   virtual void reset() {}
 

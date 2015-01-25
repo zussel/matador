@@ -581,6 +581,7 @@ protected:
 
   virtual object_base_producer* create_item_producer() const
   {
+//    return new object_producer<item_type>();
     return 0;
   }
 

@@ -180,7 +180,8 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  prototype_iterator find_prototype(const char *type) const;
+  prototype_iterator find_prototype(const char *type);
+  const_prototype_iterator find_prototype(const char *type) const;
 
   /**
    * @brief Finds prototype node by template type.
@@ -193,7 +194,12 @@ public:
    * @return Returns a prototype iterator.
    */
   template < class T >
-  prototype_iterator find_prototype() const
+  prototype_iterator find_prototype()
+  {
+    return find_prototype(typeid(T).name());
+  }
+  template < class T >
+  const_prototype_iterator find_prototype() const
   {
     return find_prototype(typeid(T).name());
   }
