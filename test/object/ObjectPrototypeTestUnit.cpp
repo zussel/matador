@@ -19,7 +19,7 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   add_test("find", std::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
   add_test("size", std::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
   add_test("parent_of", std::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
-  //add_test("decrement", std::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
+  add_test("decrement", std::bind(&ObjectPrototypeTestUnit::test_decrement, this), "check decrementing iterator");
   add_test("one", std::bind(&ObjectPrototypeTestUnit::one_prototype, this), "one prototype");
   add_test("hierarchy", std::bind(&ObjectPrototypeTestUnit::prototype_hierachy, this), "prototype hierarchy");
   add_test("iterator", std::bind(&ObjectPrototypeTestUnit::prototype_traverse, this), "prototype iterator");
@@ -102,7 +102,7 @@ ObjectPrototypeTestUnit::test_decrement()
 
   prototype_iterator i = ostore.end();
 
-  cout << "node: " << (--i)->type << "\n";
+  --i;
 
   UNIT_ASSERT_TRUE(--i == ostore.begin(), "iterator must be begin");
 }
