@@ -37,6 +37,7 @@ public:
   void generic_test();
   void test_structure();
   void test_insert();
+  void test_remove();
 
 private:
   oos::object_store ostore_;

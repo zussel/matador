@@ -34,7 +34,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
 //  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
-//  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -275,6 +276,12 @@ ObjectStoreTestUnit::ref_ptr_counter()
   val = 1;
   UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
   UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
+}
+
+
+void ObjectStoreTestUnit::access_value()
+{
+
 }
 
 void
@@ -659,17 +666,22 @@ void ObjectStoreTestUnit::test_structure()
 
 void ObjectStoreTestUnit::test_insert()
 {
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((object*)0), object_exception, "object is null", "null shouldn't be insertable");
+
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(new ItemC), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+}
+
+void ObjectStoreTestUnit::test_remove()
+{
   typedef object_ptr<Item> item_ptr;
-  
-  item_ptr iptr(new Item);
-  
-  bool failed = true;
-  try {
-    item_ptr x = ostore_.insert((Item*)0);
-  } catch(object_exception &) {
-    failed = false;
-  }
-  if (failed) {
-    UNIT_FAIL("could insert null object into object store");
-  }
+
+  item_ptr item;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "null shouldn't be removable");
+
+  item = new Item;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "transient object shouldn't be removable");
+
+
 }

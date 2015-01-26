@@ -173,6 +173,22 @@ SET(prototype
   parent_of
 )
 
+# prototype tree tests
+SET(tree
+  empty
+  insert
+  insert_template
+  find
+  remove
+  erase
+  clear
+  container
+  decrement
+  child_of
+  traverse
+  const_traverse
+)
+
 # object store tests
 SET(store
   version
@@ -192,6 +208,8 @@ SET(store
   sub_delete
   view
   with_sub
+  insert
+  remove
 )
 
 # varchar tests
@@ -210,6 +228,7 @@ LIST(APPEND TESTUNITS second)
 LIST(APPEND TESTUNITS json)
 LIST(APPEND TESTUNITS list)
 LIST(APPEND TESTUNITS vector)
+LIST(APPEND TESTUNITS tree)
 LIST(APPEND TESTUNITS prototype)
 LIST(APPEND TESTUNITS store)
 LIST(APPEND TESTUNITS varchar)

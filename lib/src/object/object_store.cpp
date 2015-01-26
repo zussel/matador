@@ -168,8 +168,8 @@ object_store::insert_object(object *o, bool notify)
   prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
-    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
-    throw object_exception(msg.c_str());
+//    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
+    throw object_exception("couldn't insert object");
   }
   // retrieve and set new unique number into object
   object_proxy *oproxy = find_proxy(o->id());
@@ -232,6 +232,9 @@ object_store::remove(object_base_ptr &o)
 void
 object_store::remove(object *o)
 {
+  if (o == nullptr) {
+    throw object_exception("object is nullptr");
+  }
   // check if object tree is deletable
   if (!object_deleter_.is_deletable(o)) {
     throw object_exception("object is not removable");
@@ -252,8 +255,11 @@ void
 object_store::remove_object(object *o, bool notify)
 {
   // find prototype node
-  if (!o->proxy_->node) {
+  if (!o->proxy_) {
     throw object_exception("couldn't remove object, no proxy");
+  }
+  if (!o->proxy_->node) {
+    throw object_exception("couldn't remove object, no prototype");
   }
   
   prototype_iterator node = prototype_tree_.find(o->proxy_->node->type.c_str());
