@@ -257,6 +257,9 @@ public:
   }
 
   void write_value(const char*, const object_container&) {}
+  void write_value(const char*, const primary_key_base &)
+  {
+  }
 
   void write_value(const char *id, const char *from, int)
   {

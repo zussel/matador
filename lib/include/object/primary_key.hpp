@@ -1,15 +1,22 @@
 #ifndef PRIMARY_KEY_HPP
 #define PRIMARY_KEY_HPP
 
+#include "tools/enable_if.hpp"
+
+#include <type_traits>
+
 namespace oos {
 
 class primary_key_base
 {
-
+public:
+  virtual ~primary_key_base() {}
+  virtual void serialize(const char*, object_writer&) const = 0;
+  virtual void deserialize(const char*, object_reader&) = 0;
 };
 
 // Todo: Implementation only for integer and string types
-template < typename T >
+template < typename T, typename oos::enable_if<std::is_integral<T>::value > >
 class primary_key : public primary_key_base
 {
 public:
@@ -27,7 +34,18 @@ public:
     return *this;
   }
 
-  value_type operator() const {
+  virtual ~primary_key() {}
+  virtual void serialize(const char *id, object_writer &writer) const
+  {
+    writer.write(id, pk_);
+  }
+
+  virtual void deserialize(const char *id, object_reader &reader)
+  {
+    reader.read(id, pk_);
+  }
+
+  operator value_type() const {
     return pk_;
   }
 
@@ -37,6 +55,7 @@ private:
 
 }
 
+/*
 class obj
 {
 
@@ -45,5 +64,6 @@ private:
   oos::primary_key<long> id_;
   oos::nullable<std::string> name_;
 };
+*/
 
 #endif /* PRIMARY_KEY_HPP */
