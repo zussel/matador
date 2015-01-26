@@ -188,7 +188,7 @@ SET(store
   serializer
   set
   simple
-  structure
+#  structure
   sub_delete
   view
   with_sub
