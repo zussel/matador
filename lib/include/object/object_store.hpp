@@ -21,22 +21,18 @@
 #include "object/object_ptr.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
+#include "object/object_deleter.hpp"
 
 #include "tools/sequencer.hpp"
 
-#ifdef WIN32
 #include <memory>
 #include <unordered_map>
-#else
-#include <tr1/memory>
-#include <tr1/unordered_map>
-#endif
 
 #include <string>
 #include <ostream>
 #include <list>
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -54,7 +50,6 @@ namespace oos {
 
 class object;
 struct object_proxy;
-class object_deleter;
 struct prototype_node;
 class object_observer;
 class object_container;
@@ -76,8 +71,8 @@ class object_container;
 class OOS_API object_store
 {
 private:
-  typedef std::tr1::unordered_map<long, object_proxy*> t_object_proxy_map;
-  typedef std::tr1::unordered_map<std::string, prototype_node*> t_prototype_map;
+  typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
+  typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
 
 public:
   /**
@@ -95,7 +90,15 @@ public:
    *
    * @return The prototype tree
    */
-  prototype_tree& object_tree();
+  prototype_tree& prototypes();
+
+  /*
+   * Returns the prototype tree
+   *
+   * @return The prototype tree
+   */
+  const prototype_tree& prototypes() const;
+
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new
@@ -156,16 +159,15 @@ public:
    * @param recursive If set, also the object in children nodes are deleted.
    * @return Returns true if the type was found and successfully cleared.
    */
-  bool clear_prototype(const char *type, bool recursive);
+//  void clear_prototype(const char *type, bool recursive);
 
   /**
    * Removes an object prototype from the prototype tree. All children
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
-   * @return Returns true if the type was found and successfully removed
    */
-  bool remove_prototype(const char *type);
+  void remove_prototype(const char *type);
 
   /**
    * @brief Finds prototype node.
@@ -178,7 +180,8 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  prototype_iterator find_prototype(const char *type) const;
+  prototype_iterator find_prototype(const char *type);
+  const_prototype_iterator find_prototype(const char *type) const;
 
   /**
    * @brief Finds prototype node by template type.
@@ -191,7 +194,12 @@ public:
    * @return Returns a prototype iterator.
    */
   template < class T >
-  prototype_iterator find_prototype() const
+  prototype_iterator find_prototype()
+  {
+    return find_prototype(typeid(T).name());
+  }
+  template < class T >
+  const_prototype_iterator find_prototype() const
   {
     return find_prototype(typeid(T).name());
   }
@@ -201,14 +209,16 @@ public:
    *
    * @return The first prototype node iterator.
    */
-  prototype_iterator begin() const;
+  const_prototype_iterator begin() const;
+  prototype_iterator begin();
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  prototype_iterator end() const;
+  const_prototype_iterator end() const;
+  prototype_iterator end();
 
   /**
    * Removes all inserted prototypes and all inserted objects.
@@ -222,13 +232,6 @@ public:
    * @return True on empty object_store.
    */
   bool empty() const;
-
-  /**
-   * Dump all prototypes to a given stream
-   *
-   * @param out The stream to the prototypes dump on.
-   */
-	void dump_prototypes(std::ostream &out) const;
 
   /**
    * Dump all object to a given stream
@@ -273,7 +276,7 @@ public:
    * @param o The object to check.
    * @return True if object is removable.
    */
-  bool is_removable(const object_base_ptr &o) const;
+  bool is_removable(const object_base_ptr &o);
 
   /**
    * Removes an object from the object store. After successfull
@@ -366,7 +369,7 @@ public:
    * @param node Prototype into which the proxy will be inserted.
    * @param oproxy Object proxy to insert
    */
-  void insert_proxy(prototype_node *node, object_proxy *oproxy);
+  void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
 
   /**
    * @brief Removes an object proxy from a prototype list
@@ -408,30 +411,17 @@ private:
   void link_proxy(object_proxy *base, object_proxy *next);
   void unlink_proxy(object_proxy *proxy);
 
-  prototype_node* get_prototype(const char *type) const;
-
 private:
-  prototype_node *root_;
-
-  // name to prototype map
-  t_prototype_map prototype_map_;
-  
-  // typeid -> [name -> prototype]
-  typedef std::map<std::string, t_prototype_map> t_typeid_prototype_map;
-  t_typeid_prototype_map typeid_prototype_map_;
+  prototype_tree prototype_tree_;
 
   t_object_proxy_map object_map_;
 
   sequencer seq_;
-//  long id_;
-  
+
   typedef std::list<object_observer*> t_observer_list;
   t_observer_list observer_list_;
 
-  object_proxy *first_;
-  object_proxy *last_;
-  
-  object_deleter *object_deleter_;
+  object_deleter object_deleter_;
 };
 
 }

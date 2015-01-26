@@ -1,25 +1,27 @@
 #include "PrototypeTreeTest.hpp"
 #include "../Item.hpp"
 
+#include <iostream>
+
 using namespace oos;
 using namespace std;
 
 PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   : unit_test("tree", "Prototype Tree Test Unit")
 {
-  add_test("empty", std::tr1::bind(&PrototypeTreeTestUnit::test_empty, this), "test empty prototype tree");
-  add_test("insert", std::tr1::bind(&PrototypeTreeTestUnit::test_insert, this), "test insert element");
-  add_test("insert_template", std::tr1::bind(&PrototypeTreeTestUnit::test_insert_by_template, this), "test insert element by template arguments");
-  add_test("find", std::tr1::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
-  add_test("remove", std::tr1::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
-  add_test("erase", std::tr1::bind(&PrototypeTreeTestUnit::test_erase, this), "test erase element");
-  add_test("clear", std::tr1::bind(&PrototypeTreeTestUnit::test_clear, this), "test clear prototype tree");
-  add_test("container", std::tr1::bind(&PrototypeTreeTestUnit::test_container, this), "test insert container containing element");
-  add_test("decrement", std::tr1::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
-  add_test("count", std::tr1::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
-  add_test("child_of", std::tr1::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
-  add_test("traverse", std::tr1::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
-  add_test("const_traverse", std::tr1::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
+  add_test("empty", std::bind(&PrototypeTreeTestUnit::test_empty, this), "test empty prototype tree");
+  add_test("insert", std::bind(&PrototypeTreeTestUnit::test_insert, this), "test insert element");
+  add_test("insert_template", std::bind(&PrototypeTreeTestUnit::test_insert_by_template, this), "test insert element by template arguments");
+  add_test("find", std::bind(&PrototypeTreeTestUnit::test_find, this), "test find element");
+  add_test("remove", std::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
+  add_test("erase", std::bind(&PrototypeTreeTestUnit::test_erase, this), "test erase element");
+  add_test("clear", std::bind(&PrototypeTreeTestUnit::test_clear, this), "test clear prototype tree");
+  add_test("container", std::bind(&PrototypeTreeTestUnit::test_container, this), "test insert container containing element");
+  add_test("decrement", std::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
+  add_test("count", std::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
+  add_test("child_of", std::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
+  add_test("traverse", std::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
+  add_test("const_traverse", std::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
 }
 
 PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
@@ -49,7 +51,7 @@ void PrototypeTreeTestUnit::test_insert()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false), object_exception, "prototype already inserted", "inserted same prototype twice");
+  UNIT_ASSERT_EXCEPTION(ptree.insert(producer, "item", false), object_exception, "prototype already inserted: item", "inserted same prototype twice");
   delete producer;
 }
 

@@ -18,7 +18,7 @@
 #ifndef PROTOTYPE_TREE_HPP
 #define PROTOTYPE_TREE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -103,6 +103,7 @@ public:
   * @return True if the iterators are the same.
   */
   bool operator==(const prototype_iterator &i) const;
+  bool operator==(const const_prototype_iterator &i) const;
 
   /**
   * @brief Compares this with another iterators.
@@ -114,6 +115,7 @@ public:
   * @return True if the iterators are not the same.
   */
   bool operator!=(const prototype_iterator &i) const;
+  bool operator!=(const const_prototype_iterator &i) const;
 
   /**
   * Pre increments the iterator
@@ -384,6 +386,7 @@ public:
   * @return Returns a prototype iterator.
   */
   iterator find(const char *type);
+  const_iterator find(const char *type) const;
 
   /**
   * @brief Finds prototype node by template type.
@@ -397,6 +400,11 @@ public:
   */
   template < class T >
   iterator find()
+  {
+    return find(typeid(T).name());
+  }
+  template < class T >
+  const_iterator find() const
   {
     return find(typeid(T).name());
   }
@@ -435,7 +443,18 @@ public:
   * @throws oos::object_exception on error
   */
   void clear();
-//  void clear(const char *type, bool recursive);
+  void clear(const char *type);
+  void clear(const prototype_iterator &node);
+  prototype_node* clear(prototype_node *node);
+
+  int depth(const prototype_node *node) const;
+
+  /**
+  * Dump all prototypes to a given stream
+  *
+  * @param out The stream to the prototypes dump on.
+  */
+  void dump(std::ostream &out) const;
 
   /**
    * Erase a prototype node identified
@@ -456,6 +475,16 @@ public:
   * @throws oos::object_exception on error
   */
   void remove(const char *type);
+
+  /**
+  * Removes an object prototype from the prototype tree. All children
+  * nodes and all objects are also removed.
+  *
+  * @param node The prototype iterator node to remove.
+  * @return Returns true if the type was found and successfully removed
+  * @throws oos::object_exception on error
+  */
+  void remove(const prototype_iterator &node);
 
   /**
   * Return the first prototype node.
@@ -497,14 +526,15 @@ private:
    * Searches a prototype by type
    * which can either be a type name
    * or a class name.
-   * Allways returns a valid prototype node
+   * Returns a valid prototype node or
+   * nullptr on unknown type
    * or throws an exception on error
    *
    * @param type Type name of the prototype node to search
-   * @return The requested prototype node
+   * @return The requested prototype node or nullptr
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_node* find_prototype_node(const char *type);
+  prototype_node* find_prototype_node(const char *type) const;
 
   /**
    * @internal
@@ -519,7 +549,31 @@ private:
   prototype_node* remove_prototype_node(prototype_node *node);
 
 private:
+  /**
+  * @internal
+  *
+  * Adjust first marker of all successor nodes with given object proxy.
+  *
+  * @param old_proxy The old first marker proxy.
+  * @param new_proxy The new first marker proxy.
+  */
+  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
+  /**
+  * @internal
+  *
+  * Adjusts self and last marker of all predeccessor nodes with given
+  * object proxy.
+  *
+  * @param old_proxy The old last marker proxy.
+  * @param new_proxy The new last marker proxy.
+  */
+  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
+private:
   friend class object_container;
+  friend class object_store;
+  friend class prototype_node;
 
   prototype_node *first_;
   prototype_node *last_;

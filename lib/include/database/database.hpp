@@ -18,7 +18,7 @@
 #ifndef DATABASE_IMPL_HPP
 #define DATABASE_IMPL_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -37,14 +37,8 @@
 
 #include "tools/sequencer.hpp"
 
-#ifdef WIN32
 #include <memory>
 #include <unordered_map>
-#else
-#include <tr1/memory>
-#include <tr1/unordered_map>
-#endif
-
 #include <map>
 #include <list>
 
@@ -74,11 +68,11 @@ class OOS_API database : public action_visitor
 {
 public:
   typedef std::list<object*> object_list_t;
-  typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
+  typedef std::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
-  typedef std::tr1::shared_ptr<statement> statement_ptr;
-  typedef std::tr1::shared_ptr<table> table_ptr;
-  typedef std::tr1::shared_ptr<database_sequencer> database_sequencer_ptr;
+  typedef std::shared_ptr<statement> statement_ptr;
+  typedef std::shared_ptr<table> table_ptr;
+  typedef std::shared_ptr<database_sequencer> database_sequencer_ptr;
 
   struct table_info_t
   {

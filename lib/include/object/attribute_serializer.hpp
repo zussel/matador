@@ -28,7 +28,7 @@
 
 /// @cond OOS_DEV
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #define CPP11_TYPE_TRAITS_NS std::tr1
   #pragma warning(disable: 4355)
 #else

@@ -22,7 +22,8 @@
 #include "object/object_container.hpp"
 
 #include <iterator>
-#include <string.h>
+#include <iostream>
+#include <sstream>
 
 namespace oos {
 
@@ -87,7 +88,19 @@ bool prototype_iterator::operator==(const prototype_iterator &i) const
   return (node_ == i.node_);
 }
 
+
+bool prototype_iterator::operator==(const const_prototype_iterator &i) const
+{
+  return node_ == i.get();
+}
+
 bool prototype_iterator::operator!=(const prototype_iterator &i) const
+{
+  return !operator==(i);
+}
+
+
+bool prototype_iterator::operator!=(const const_prototype_iterator &i) const
 {
   return !operator==(i);
 }
@@ -282,6 +295,9 @@ prototype_tree::~prototype_tree()
 prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
   // set node to root node
   prototype_node *parent_node = find_prototype_node(parent);
+  if (!parent_node) {
+    throw object_exception("unknown prototype type");
+  }
   /*
    * try to insert new prototype node
    */
@@ -326,7 +342,9 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
     }
   } else {
     // already inserted return iterator
-    throw object_exception("prototype already inserted");
+    std::stringstream msg;
+    msg << "prototype already inserted: " << type;
+    throw object_exception(msg.str().c_str());
   }
 
   parent_node->insert(node);
@@ -346,9 +364,20 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
 }
 
 prototype_tree::iterator prototype_tree::find(const char *type) {
-  return prototype_iterator(find_prototype_node(type));
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return prototype_iterator(node);
 }
 
+prototype_tree::const_iterator prototype_tree::find(const char *type) const {
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return const_prototype_iterator(node);
+}
 
 bool prototype_tree::empty() const {
   return first_->next == last_->prev;
@@ -359,47 +388,85 @@ size_t prototype_tree::size() const {
   return (size_t) (std::distance(begin(), end()) - 1);
 }
 
-size_t prototype_tree::prototype_count() const {
+size_t prototype_tree::prototype_count() const
+{
   return prototype_map_.size();
 }
 
-void prototype_tree::clear() {
+void prototype_tree::clear()
+{
   prototype_node *root = first_->next;
-
-  while(root->first->next != root->last) {
+  while(root->has_children()) {
     remove_prototype_node(root->first->next);
   }
 }
 
-// Todo: move to object store
-//void prototype_tree::clear(const char *type, bool recursive) {
-//  prototype_node *node = find_prototype_node(type);
-//  if (recursive) {
-//    // clear all objects from child nodes
-//    // for each child call clear_prototype(child, recursive);
-//    prototype_node *child = node->next_node();
-//    while (child && (child != node || child != node->parent)) {
-//      child->clear();
-//      child = child->next_node();
-//    }
-//  }
-//
-//  node->clear();
-//}
+void prototype_tree::clear(const char *type)
+{
+  clear(find(type));
+}
+
+
+void prototype_tree::clear(const prototype_iterator &node)
+{
+  clear(node.get());
+}
+
+
+prototype_node* prototype_tree::clear(prototype_node *node)
+{
+  prototype_node *current = node->first->next;
+  while (current != node->last) {
+    current = clear(current);
+  }
+  // finally link first to last and vice versa
+  return remove_prototype_node(node);
+}
+
+int prototype_tree::depth(const prototype_node *node) const
+{
+  int d = 0;
+  while (node->parent) {
+    node = node->parent;
+    ++d;
+  }
+  return d;
+}
+
+void prototype_tree::dump(std::ostream &out) const
+{
+  const_prototype_iterator node = begin();
+  out << "digraph G {\n";
+  out << "\tgraph [fontsize=10]\n";
+  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+  out << "\tedge [color=\"#0c0c0c\"]\n";
+  do {
+    int d = depth(node.get());
+    for (int i = 0; i < d; ++i) out << " ";
+    out << *node.get();
+    out.flush();
+  } while (++node != end());
+  out << "}" << std::endl;
+}
 
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
-  if (!i.get()) {
+  if (i == end() || i.get() == nullptr) {
     throw object_exception("invalid prototype iterator");
   }
-  prototype_node *node = find_prototype_node(i->type.c_str());
-
-  node = remove_prototype_node(node);
-  return oos::prototype_iterator(node);
+  return remove_prototype_node(i.get());
 }
 
 void prototype_tree::remove(const char *type) {
   prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("unknown prototype type");
+  }
   remove_prototype_node(node);
+}
+
+void prototype_tree::remove(const prototype_iterator &node)
+{
+  remove(node.get());
 }
 
 prototype_tree::iterator prototype_tree::begin()
@@ -422,7 +489,7 @@ prototype_tree::const_iterator prototype_tree::end() const
   return prototype_tree::const_iterator(last_);
 }
 
-prototype_node* prototype_tree::find_prototype_node(const char *type) {
+prototype_node* prototype_tree::find_prototype_node(const char *type) const {
   // check for null
   if (type == 0) {
     throw object_exception("invalid type (null)");
@@ -437,7 +504,7 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
    */
     t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
     if (j == typeid_prototype_map_.end()) {
-      throw object_exception("unknown prototype type");
+      return nullptr;
     } else {
       const t_prototype_map &val = j->second;
       /*
@@ -460,35 +527,82 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) {
 }
 
 
-prototype_node *prototype_tree::remove_prototype_node(prototype_node *node) {
+prototype_node* prototype_tree::remove_prototype_node(prototype_node *node) {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
-  while (node->first->next != node->last) {
-    remove(node->first->next->type.c_str());
+  prototype_node *next = node->next_node(node);
+
+  while (node->has_children()) {
+    remove_prototype_node(node->first->next);
   }
   // and objects they're containing
-  node->clear();
+  node->clear(*this, false);
   // delete prototype node as well
   // unlink node
   node->unlink();
   // get iterator
-  t_prototype_map::iterator i = prototype_map_.find(node->type.c_str());
-  if (i != prototype_map_.end()) {
-    prototype_map_.erase(i);
+  t_prototype_map::iterator j = prototype_map_.find(node->type.c_str());
+  if (j != prototype_map_.end()) {
+    prototype_map_.erase(j);
   }
   // find item in typeid map
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(node->producer->classname());
-  if (j != typeid_prototype_map_.end()) {
-    j->second.erase(node->type);
-    if (j->second.empty()) {
-      typeid_prototype_map_.erase(j);
+  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->producer->classname());
+  if (k != typeid_prototype_map_.end()) {
+    k->second.erase(node->type);
+    if (k->second.empty()) {
+      typeid_prototype_map_.erase(k);
     }
   } else {
     throw object_exception("couldn't find node by id");
   }
-  prototype_node *next = node->next_node();
   delete node;
   return next;
+}
+
+/*
+ * adjust the marker of all predeccessor nodes
+ * self and last marker
+ */
+void prototype_tree::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = root->previous_node();
+  // get previous node
+  //while (node != first_) {
+  while (node) {
+    if (node->op_marker == old_proxy) {
+      node->op_marker = new_proxy;
+    }
+    if (node->depth >= root->depth && node->op_last == old_proxy) {
+      node->op_last = new_proxy;
+    }
+    node = node->previous_node();
+  }
+}
+
+void prototype_tree::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
+{
+  using std::cout;
+  using std::flush;
+
+//  cout << "adjust_right_marker START\n" << flush;
+//  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
+//  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
+  // store start node
+  prototype_node *node = root->next_node();
+//  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
+  // get previous node
+//  node = node->next_node();
+  //bool first = true;
+//  while (node != last_) {
+  while (node) {
+//    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
+    if (node->op_first == old_proxy) {
+      node->op_first = new_proxy;
+    }
+    node = node->next_node();
+  }
+//  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 }

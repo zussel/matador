@@ -18,7 +18,7 @@
 #ifndef CONDITION_HPP
 #define CONDITION_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -36,7 +36,7 @@
 #include <string>
 #include <sstream>
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <memory>
 #else
 #include <tr1/memory>
@@ -329,7 +329,7 @@ private:
   std::string op_;
   std::string logic_;
   bool valid_;
-  std::tr1::shared_ptr<condition> next_;
+  std::shared_ptr<condition> next_;
 };
 
 /**

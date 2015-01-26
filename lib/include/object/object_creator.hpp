@@ -18,7 +18,7 @@
 #ifndef OBJECT_CREATOR_HPP
 #define OBJECT_CREATOR_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #pragma warning(disable: 4355)
 #endif
 

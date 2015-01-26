@@ -16,13 +16,13 @@ using namespace std;
 ObjectListTestUnit::ObjectListTestUnit()
   : unit_test("list", "object list")
 {
-  add_test("int", std::tr1::bind(&ObjectListTestUnit::test_int_list, this), "test object list with integers");
-  add_test("ref", std::tr1::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
-  add_test("ptr", std::tr1::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
-  add_test("linked_int", std::tr1::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
-  add_test("linked_ref", std::tr1::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
-  add_test("linked_ptr", std::tr1::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
-  add_test("direct_ref", std::tr1::bind(&ObjectListTestUnit::test_direct_ref_list, this), "test object list without relation table");
+  add_test("int", std::bind(&ObjectListTestUnit::test_int_list, this), "test object list with integers");
+  add_test("ref", std::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
+  add_test("ptr", std::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
+  add_test("linked_int", std::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
+  add_test("linked_ref", std::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
+  add_test("linked_ptr", std::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
+  add_test("direct_ref", std::bind(&ObjectListTestUnit::test_direct_ref_list, this), "test object list without relation table");
 }
 
 ObjectListTestUnit::~ObjectListTestUnit()

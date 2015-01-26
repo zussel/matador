@@ -18,7 +18,7 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -33,12 +33,7 @@
 
 #include "database/sql.hpp"
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
-
 #include <sstream>
 
 namespace oos {
@@ -396,7 +391,7 @@ private:
   sql sql_;
   state_t state;
   database &db_;
-#ifdef WIN32
+#ifdef _MSC_VER
   std::auto_ptr<statement> stmt;
 #else
   std::unique_ptr<statement> stmt;

@@ -21,13 +21,13 @@
 #include "object/object_vector.hpp"
 #include "object/object_container.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>
 #endif
 
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
 
@@ -56,7 +56,7 @@ object_deleter::is_deletable(object *obj)
 bool object_deleter::is_deletable(object_container &oc)
 {
   object_count_map.clear();
-  oc.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+  oc.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
   return check_object_count_map();
 }
 
@@ -70,7 +70,7 @@ void object_deleter::read_value(const char*, object_base_ptr &x)
 
 void object_deleter::read_value(const char*, object_container &x)
 {
-  x.for_each(std::tr1::bind(&object_deleter::check_object_list_node, this, _1));
+  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
 }
 
 object_deleter::iterator

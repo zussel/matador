@@ -18,7 +18,7 @@
 #ifndef CONVERT_HPP
 #define CONVERT_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -34,15 +34,12 @@
 #include "tools/varchar.hpp"
 #include "tools/enable_if.hpp"
 
-#ifdef WIN32
 #include <type_traits>
-#else
-#include <tr1/type_traits>
-#endif
 
 #include <cstdlib>
 #include <typeinfo>
 #include <cstring>
+#include <stdio.h>
 
 /**
  * @file convert.hpp
@@ -433,7 +430,7 @@ void
 convert(bool from, char *to, S size,
         typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   _snprintf_s(to, size, size, (from ? "true" : "false"));
 #else
   snprintf(to, size, (from ? "true" : "false"));
@@ -455,7 +452,7 @@ convert(const T &from, char *to, S size,
         typename oos::enable_if<!std::is_same<T, unsigned char>::value >::type* = 0,
         typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   _snprintf_s(to, size, size, "%d", from);
 #else
   snprintf(to, size, "%lu", (long unsigned int)from);
@@ -474,7 +471,7 @@ convert(const T &from, char *to, S size,
                                 std::is_same<T, unsigned char>::value>::type* = 0,
         typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   _snprintf_s(to, size, size, "%c", from);
 #else
   snprintf(to, size, "%c", from);
@@ -489,7 +486,7 @@ convert(const T &from, char *to, S size,
         typename oos::enable_if<!std::is_same<T, char>::value >::type* = 0,
         typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   _snprintf_s(to, size, size, "%d", from);
 #else
   snprintf(to, size, "%ld", (long unsigned int)from);
@@ -510,7 +507,7 @@ convert(const T &from, char *to, S size, P precision,
         typename oos::enable_if<std::is_integral<P>::value>::type* = 0)
 {
   char buf[32];
-#ifdef WIN32
+#ifdef _MSC_VER
   _snprintf_s(buf, 32, 32, "%%0.%df", precision);
   _snprintf_s(to, size, size, buf, from);
 #else
@@ -540,7 +537,7 @@ convert(const char *from, char *to, S size,
         typename oos::enable_if<std::is_integral<S>::value>::type* = 0)
 {
   if (strlen(from) < (size_t)size) {
-#ifdef WIN32
+#ifdef _MSC_VER
     strcpy_s(to, size, from);
 #else
     strcpy(to, from);

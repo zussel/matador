@@ -18,7 +18,7 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -33,11 +33,7 @@
 
 #include "object/object_atomizer.hpp"
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 namespace oos {
 
@@ -93,7 +89,7 @@ protected:
   int result_index;
 };
 
-typedef std::tr1::shared_ptr<result> result_ptr;
+typedef std::shared_ptr<result> result_ptr;
 
 /// @endcond
 

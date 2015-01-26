@@ -27,7 +27,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>
@@ -435,7 +435,7 @@ protected:
   }
 ///@endcond
 private:
-  std::tr1::function<void (item_type&, const object_ref<S>&)> setter_;
+  std::function<void (item_type&, const object_ref<S>&)> setter_;
 
 };
 

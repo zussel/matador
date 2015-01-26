@@ -18,7 +18,7 @@
 #ifndef PROTOTYPE_NODE_HPP
 #define PROTOTYPE_NODE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -36,11 +36,13 @@
 #include <list>
 #include <memory>
 #include <string>
+#include "prototype_tree.hpp"
 
 namespace oos {
 
 class object_base_producer;
 class object;
+class prototype_tree;
 struct object_proxy;
 
 /**
@@ -95,12 +97,6 @@ public:
   void initialize(object_base_producer *p, const char *t, bool a);
 
   /**
-   * clear removes all object proxies really belonging to
-   * this node and deletes them and the holded object
-   */
-  void clear();
-
-  /**
    * Returns true if object proxy list is empty. If self is true, only
    * list of own objects is checked. If self is false, complete list is
    * checked.
@@ -123,12 +119,19 @@ public:
    * @param child The child node to add.
    */
   void insert(prototype_node *child);
-    
+
   /**
-   * Removes node and cildren nodes from list, clears all object
-   * and deletes all members.
+   * Delete all objects inside this node
+   * if recursive flag is set, delete all
+   * objects below this node as well.
+   * To adjust the object proxy marker for the
+   * remaining objects the corresponding
+   * prototype tree must be passed
+   *
+   * @param tree The corresponding prototype tree
+   * @param recursive Indicates wether all or only nodes objects are deleted
    */
-  void remove();
+  void clear(prototype_tree &tree, bool recursive);
 
   /**
    * Unlinks node from list.
@@ -141,6 +144,7 @@ public:
    * @return The next node.
    */
   prototype_node* next_node() const;
+  prototype_node* next_node(const prototype_node *root) const;
 
   /**
    * Return nodes predeccessor node or NULL if node is first.
@@ -148,6 +152,7 @@ public:
    * @return The previous node.
    */
   prototype_node* previous_node() const;
+  prototype_node* previous_node(const prototype_node *root) const;
 
   /**
    * Returns true if node is child of given parent node.
@@ -158,21 +163,11 @@ public:
   bool is_child_of(const prototype_node *parent) const;
 
   /**
-   * Adjusts self and last marker of all predeccessor nodes with given
-   * object proxy.
-   * 
-   * @param old_proxy The old last marker proxy.
-   * @param new_proxy The new last marker proxy.
+   * Returns true if node has children.
+   *
+   * @return True if node has children.
    */
-  void adjust_left_marker(object_proxy *old_proxy, object_proxy *new_proxy);
-  
-  /**
-   * Adjust first marker of all successor nodes with given object proxy.
-   * 
-   * @param old_proxy The old first marker proxy.
-   * @param new_proxy The new first marker proxy.
-   */
-  void adjust_right_marker(object_proxy *old_proxy, object_proxy *new_proxy);
+  bool has_children() const;
 
   /**
    * Prints the node in graphviz layout to the stream.

@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #pragma warning(disable: 4355)
 #endif
 

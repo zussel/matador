@@ -19,32 +19,16 @@
 #include "mssql_statement.hpp"
 #include "mssql_result.hpp"
 #include "mssql_types.hpp"
-#include "mssql_exception.hpp"
 
 #include "database/session.hpp"
-#include "database/transaction.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
 
 #include "tools/string.hpp"
 
-#include <stdexcept>
-#include <sstream>
-
-#include <sql.h>
-#include <sqlext.h>
-
-#ifdef WIN32
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
-
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
   

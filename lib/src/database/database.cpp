@@ -142,7 +142,7 @@ void database::load(const prototype_node &node)
 
 bool database::is_loaded(const std::string &name) const
 {
-#ifdef WIN32
+#ifdef _MSC_VER
   table_map_t::const_iterator i = table_map_.find(name);
   if (i == table_map_.end()) {
     throw std::out_of_range("unknown key");

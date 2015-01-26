@@ -18,7 +18,7 @@
 #ifndef SEQUENCER_HPP
 #define SEQUENCER_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -31,11 +31,7 @@
   #define OOS_API
 #endif
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 namespace oos {
 
@@ -99,7 +95,7 @@ public:
 };
 /// @endcond
 
-typedef std::tr1::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for sequencer implementation pointer */
+typedef std::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for sequencer implementation pointer */
 
 /**
  * @cond OOS_DEV

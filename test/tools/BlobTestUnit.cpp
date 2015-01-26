@@ -11,7 +11,7 @@ using std::cout;
 BlobTestUnit::BlobTestUnit()
   : unit_test("blob", "blob test unit")
 {
-  add_test("create", std::tr1::bind(&BlobTestUnit::create_blob, this), "create blob");
+  add_test("create", std::bind(&BlobTestUnit::create_blob, this), "create blob");
 }
 
 BlobTestUnit::~BlobTestUnit()

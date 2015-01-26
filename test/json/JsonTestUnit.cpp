@@ -12,15 +12,15 @@ using namespace oos;
 JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test unit")
 {
-  add_test("simple", std::tr1::bind(&JsonTestUnit::simple_test, this), "simple json test");
-  add_test("null", std::tr1::bind(&JsonTestUnit::null_test, this), "null json test");
-  add_test("bool", std::tr1::bind(&JsonTestUnit::bool_test, this), "bool json test");
-  add_test("string", std::tr1::bind(&JsonTestUnit::string_test, this), "string json test");
-  add_test("number", std::tr1::bind(&JsonTestUnit::number_test, this), "number json test");
-  add_test("array", std::tr1::bind(&JsonTestUnit::array_test, this), "array json test");
-  add_test("create", std::tr1::bind(&JsonTestUnit::create_test, this), "create json test");
-  add_test("access", std::tr1::bind(&JsonTestUnit::access_test, this), "access json test");
-  add_test("parser", std::tr1::bind(&JsonTestUnit::parser_test, this), "parser json test");
+  add_test("simple", std::bind(&JsonTestUnit::simple_test, this), "simple json test");
+  add_test("null", std::bind(&JsonTestUnit::null_test, this), "null json test");
+  add_test("bool", std::bind(&JsonTestUnit::bool_test, this), "bool json test");
+  add_test("string", std::bind(&JsonTestUnit::string_test, this), "string json test");
+  add_test("number", std::bind(&JsonTestUnit::number_test, this), "number json test");
+  add_test("array", std::bind(&JsonTestUnit::array_test, this), "array json test");
+  add_test("create", std::bind(&JsonTestUnit::create_test, this), "create json test");
+  add_test("access", std::bind(&JsonTestUnit::access_test, this), "access json test");
+  add_test("parser", std::bind(&JsonTestUnit::parser_test, this), "parser json test");
 }
 
 JsonTestUnit::~JsonTestUnit()

@@ -22,7 +22,7 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <functional>
 #else
 #include <tr1/functional>
@@ -172,7 +172,7 @@ private:
 class OOS_API object_container
 {
 public:
-  typedef std::tr1::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
+  typedef std::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
   typedef unsigned long size_type;                       /**< Shortcut for size type. */
 //  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
 
@@ -302,11 +302,11 @@ protected:
    * Create a producer object for
    * the relation/value table.
    *
-   * @param ostore The object_store.
+   * @param tree The prototype tree.
    * @param id The name of the relation.
+   * @param node The prototype node.
    * @return The producer object;
    */
-  void handle_container_item(object_store &ostore, const char *id, prototype_node *node) const;
   void handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const;
 
   /**
@@ -315,15 +315,6 @@ protected:
    * @return The producer for the item type.
    */
   virtual object_base_producer* create_item_producer() const = 0;
-
-  prototype_node* find_prototype_node(object_store &ostore, const char *id) const
-  {
-    object_store::t_prototype_map::iterator i = ostore.prototype_map_.find(id);
-    if (i == ostore.prototype_map_.end()) {
-      return 0;
-    }
-    return i->second;
-  }
 
 private:
   virtual void reset() {}

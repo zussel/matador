@@ -18,7 +18,7 @@
 #ifndef BYTE_BUFFER_HPP
 #define BYTE_BUFFER_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -31,11 +31,7 @@
   #define OOS_API
 #endif
 
-#ifdef WIN32
 #include <array>
-#else
-#include <tr1/array>
-#endif
 
 #include <list>
 
@@ -57,7 +53,7 @@ class OOS_API byte_buffer
 {
 private:
   enum { BUF_SIZE = 1 << 14 };
-  typedef std::tr1::array<char, BUF_SIZE> t_data_array;
+  typedef std::array<char, BUF_SIZE> t_data_array;
 
 public:
   /**

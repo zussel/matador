@@ -16,36 +16,11 @@
  */
 
 #include "object/object_container.hpp"
+#include "object/object_exception.hpp"
 
 using namespace std;
 
 namespace oos {
-
-void object_container::handle_container_item(object_store &ostore, const char *id, prototype_node *node) const
-{
-  prototype_node *item_node = 0;
-  object_base_producer *p = create_item_producer();
-  if (p) {
-    ostore.insert_prototype(p, id);
-    item_node = ostore.get_prototype(id);
-  } else {
-    
-    // insert new prototype
-    // get prototype node of container item (child)
-    item_node = ostore.get_prototype(classname());
-    if (!item_node) {
-      // if there is no such prototype node
-      // insert a new one (it is automatically marked
-      // as uninitialzed)
-      item_node = new prototype_node();
-      ostore.typeid_prototype_map_.insert(std::make_pair(classname(), object_store::t_prototype_map()));
-      ostore.prototype_map_[classname()] = item_node;
-    }
-  }
-  // add container node to item node  
-  // insert the relation
-  item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
-}
 
 void object_container::handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const
 {
@@ -54,8 +29,10 @@ void object_container::handle_container_item(prototype_tree &ptree, const char *
   if (p) {
     ptree.insert(p, id);
     item_node = ptree.find_prototype_node(id);
+    if (!item_node) {
+      throw object_exception("unknown prototype type");
+    }
   } else {
-
     // insert new prototype
     // get prototype node of container item (child)
     item_node = ptree.find_prototype_node(classname());
@@ -63,9 +40,9 @@ void object_container::handle_container_item(prototype_tree &ptree, const char *
       // if there is no such prototype node
       // insert a new one (it is automatically marked
       // as uninitialzed)
-      prototype_node *pnode = new prototype_node();
+      item_node = new prototype_node();
       ptree.typeid_prototype_map_.insert(std::make_pair(classname(), prototype_tree::t_prototype_map()));
-      ptree.prototype_map_[classname()] = pnode;
+      ptree.prototype_map_[classname()] = item_node;
     }
   }
   // add container node to item node

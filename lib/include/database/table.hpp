@@ -18,7 +18,7 @@
 #ifndef TABLE_HPP
 #define TABLE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -39,7 +39,7 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <memory>
 #include <unordered_map>
 #else
@@ -65,7 +65,7 @@ class OOS_API table : public generic_object_reader<table>
 {
 public:
   typedef std::list<object*> object_list_t;
-  typedef std::tr1::unordered_map<long, object_list_t> object_map_t;
+  typedef std::unordered_map<long, object_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
 
 //protected:

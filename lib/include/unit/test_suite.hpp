@@ -18,7 +18,7 @@
 #ifndef TEST_SUITE_HPP
 #define TEST_SUITE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -33,11 +33,7 @@
 
 #include "tools/singleton.hpp"
 
-#ifdef WIN32
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 #include <map>
 #include <string>
@@ -95,7 +91,7 @@ private:
 
   test_suite();
 
-  typedef std::tr1::shared_ptr<unit_test> unit_test_ptr;
+  typedef std::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
   typedef t_unit_test_map::value_type value_type;
 
@@ -110,7 +106,7 @@ private:
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
   {
     unit_lister(std::ostream &o, bool b = false);
-    void operator()(test_suite::value_type &x);
+    void operator()(const test_suite::value_type &x) const;
     std::ostream &out;
     bool brief;
   };

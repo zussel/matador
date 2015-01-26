@@ -426,7 +426,7 @@ private:
   }
 
 private:
-  prototype_iterator node_;
+  const_prototype_iterator node_;
   object_proxy *current_;
   object_proxy *last_;
 };
@@ -464,11 +464,12 @@ public:
    * @param ostore The object_store containing the objects.
    * @param skip_siblings If true only objects of the concrete type are part of the view.
    */
-  generic_view(const std::string &type, const object_store &ostore, bool skip_siblings = false)
+  generic_view(const std::string &type, object_store &ostore, bool skip_siblings = false)
     : skip_siblings_(skip_siblings)
     , node_(NULL)
   {
     node_ = ostore.find_prototype(type.c_str());
+//    node_ = ostore.find_prototype(type.c_str());
 		if (node_ == ostore.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << type << "]";
@@ -611,7 +612,7 @@ public:
    *
    * @return The underlaying prototype node.
    */
-  prototype_iterator node() const
+  const_prototype_iterator node() const
   {
     return node_;
   }
@@ -649,12 +650,11 @@ public:
    * @param ostore The object_store containing the objects.
    * @param skip_siblings If true only objects of concrete type T are part of the view.
    */
-  object_view(const object_store &ostore, bool skip_siblings = false)
-    : ostore_(ostore)
-    , skip_siblings_(skip_siblings)
+  object_view(object_store &ostore, bool skip_siblings = false)
+    : skip_siblings_(skip_siblings)
   {
-    node_ = ostore_.find_prototype(typeid(T).name());
-		if (node_ == ostore_.end()) {
+    node_ = ostore.find_prototype(typeid(T).name());
+		if (node_ == ostore.end()) {
       std::stringstream str;
       str << "couldn't find object type [" << typeid(T).name() << "]";
       throw object_exception(str.str().c_str());
@@ -802,7 +802,6 @@ public:
   }
 
 private:
-    const object_store &ostore_;
     bool skip_siblings_;
     prototype_iterator node_;
 };

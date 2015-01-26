@@ -22,24 +22,14 @@
 #include "mysql_exception.hpp"
 
 #include "database/session.hpp"
-#include "database/transaction.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
 #include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
 
-#include <stdexcept>
 #include <sstream>
 
-#ifdef WIN32
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
-
-using namespace std::tr1::placeholders;
+using namespace std::placeholders;
 
 namespace oos {
   

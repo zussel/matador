@@ -14,10 +14,10 @@ using namespace std;
 ObjectVectorTestUnit::ObjectVectorTestUnit()
   : unit_test("vector", "object vector")
 {
-  add_test("int", std::tr1::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
-  add_test("ptr", std::tr1::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
-  add_test("ref", std::tr1::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
-  add_test("direct_ref", std::tr1::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct object vector with references");
+  add_test("int", std::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
+  add_test("ptr", std::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
+  add_test("ref", std::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
+  add_test("direct_ref", std::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct object vector with references");
 }
 
 ObjectVectorTestUnit::~ObjectVectorTestUnit()

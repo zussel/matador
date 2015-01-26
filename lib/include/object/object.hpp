@@ -18,7 +18,7 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
@@ -43,7 +43,7 @@
 
 /// @cond OOS_DEV
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #define CPP11_TYPE_TRAITS_NS std::tr1
 #else
 #define CPP11_TYPE_TRAITS_NS std
@@ -245,7 +245,7 @@ public:
       throw std::logic_error("not enough character size");
     }
     mark_modified();
-#ifdef WIN32
+#ifdef _MSC_VER
     strcpy_s(attr, max_size, val);
 #else
     strcpy(attr, val);
