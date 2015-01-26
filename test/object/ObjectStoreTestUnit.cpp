@@ -33,8 +33,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
-  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+//  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
+//  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
