@@ -174,6 +174,11 @@ void mssql_statement::write(const char *, const object_container &)
 {
 }
 
+void mssql_statement::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+}
+
 void mssql_statement::bind_value(unsigned long val, int index)
 {
   value_t *v = new value_t(true, SQL_NTS);

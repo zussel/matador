@@ -77,6 +77,11 @@ public:
     }
   }
 
+  void read_value(const char *id, primary_key_base &x)
+  {
+    x.deserialize(id, *this);
+  }
+
 private:
   database::table_ptr &info_;
   object *object_;
@@ -295,4 +300,9 @@ void table::read_value(const char *id, object_container &x)
   }
 }
 
+
+void table::read_value(const char *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
+}
 }

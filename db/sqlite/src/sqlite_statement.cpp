@@ -193,6 +193,10 @@ void sqlite_statement::write(const char *, const object_base_ptr &x)
 void sqlite_statement::write(const char *, const object_container &)
 {}
 
+void sqlite_statement::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+}
 
 }
 

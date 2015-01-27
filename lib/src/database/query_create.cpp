@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <cstring>
+#include <object/primary_key.hpp>
 
 namespace oos {
 
@@ -95,6 +96,12 @@ void query_create::write(const char *id, const object_base_ptr &)
 void query_create::write(const char *, const object_container &)
 {}
 
+void query_create::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+  dialect.append(" NOT NULL PRIMARY KEY");
+}
+
 void query_create::write(const char *id, data_type_t type)
 {
   if (first) {
@@ -105,9 +112,9 @@ void query_create::write(const char *id, data_type_t type)
   dialect.append(std::string(id) + " ");
   // TODO: fix call to type_string
   dialect.append(db_.type_string(type));
-  if (strcmp(id, "id") == 0) {
-    dialect.append(" NOT NULL PRIMARY KEY");
-  }
+//  if (strcmp(id, "id") == 0) {
+//    dialect.append(" NOT NULL PRIMARY KEY");
+//  }
 }
 
 void query_create::write(const char *id, data_type_t type, int size)
@@ -122,9 +129,9 @@ void query_create::write(const char *id, data_type_t type, int size)
   std::stringstream t;
   t << db_.type_string(type) << "(" << size << ")";
   dialect.append(t.str());
-  if (strcmp(id, "id") == 0) {
-    dialect.append(" NOT NULL PRIMARY KEY");
-  }
+//  if (strcmp(id, "id") == 0) {
+//    dialect.append(" NOT NULL PRIMARY KEY");
+//  }
 }
 
 }

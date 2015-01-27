@@ -1,6 +1,8 @@
 #ifndef PRIMARY_KEY_HPP
 #define PRIMARY_KEY_HPP
 
+#include "object/object_atomizer.hpp"
+
 #include "tools/enable_if.hpp"
 
 #include <type_traits>
@@ -15,9 +17,12 @@ public:
   virtual void deserialize(const char*, object_reader&) = 0;
 };
 
+template < typename T, class Enable = void >
+class primary_key;
+
 // Todo: Implementation only for integer and string types
-template < typename T, typename oos::enable_if<std::is_integral<T>::value > >
-class primary_key : public primary_key_base
+template < typename T >
+class primary_key<T, typename oos::enable_if<std::is_integral<T>::value>::type > : public primary_key_base
 {
 public:
   typedef T value_type;
@@ -43,6 +48,11 @@ public:
   virtual void deserialize(const char *id, object_reader &reader)
   {
     reader.read(id, pk_);
+  }
+
+  value_type get() const
+  {
+    return pk_;
   }
 
   operator value_type() const {

@@ -34,6 +34,7 @@
 #include <sql.h>
 
 #include <vector>
+#include <object/primary_key.hpp>
 
 namespace oos {
 
@@ -83,6 +84,7 @@ protected:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, primary_key_base &x);
 
   template < class T >
   void read_column(const char *, T & val)

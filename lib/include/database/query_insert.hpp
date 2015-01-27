@@ -32,6 +32,7 @@ public:
   virtual void write(const char *id, const std::string &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
+  virtual void write(const char *id, const primary_key_base &x);
 
   template < class T >
   void write_field(const char *id, data_type_t type, const T &x)

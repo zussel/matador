@@ -212,6 +212,12 @@ void mysql_prepared_result::read(const char *, object_base_ptr &x)
 void mysql_prepared_result::read(const char *, object_container &)
 {}
 
+
+void mysql_prepared_result::read(const char *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
+}
+
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/)
 {
   bind_[index].buffer_type = type;
