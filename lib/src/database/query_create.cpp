@@ -112,9 +112,6 @@ void query_create::write(const char *id, data_type_t type)
   dialect.append(std::string(id) + " ");
   // TODO: fix call to type_string
   dialect.append(db_.type_string(type));
-//  if (strcmp(id, "id") == 0) {
-//    dialect.append(" NOT NULL PRIMARY KEY");
-//  }
 }
 
 void query_create::write(const char *id, data_type_t type, int size)
@@ -129,9 +126,6 @@ void query_create::write(const char *id, data_type_t type, int size)
   std::stringstream t;
   t << db_.type_string(type) << "(" << size << ")";
   dialect.append(t.str());
-//  if (strcmp(id, "id") == 0) {
-//    dialect.append(" NOT NULL PRIMARY KEY");
-//  }
 }
 
 }
