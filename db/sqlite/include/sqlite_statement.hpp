@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <object/primary_key.hpp>
 
 struct sqlite3_stmt;
 
@@ -63,6 +64,7 @@ protected:
   virtual void write(const char *id, const std::string &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
+  virtual void write(const char *id, const primary_key_base &x);
 
 private:
   sqlite_database &db_;

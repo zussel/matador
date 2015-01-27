@@ -5,6 +5,7 @@
 #include "tools/varchar.hpp"
 
 #include <sstream>
+#include <object/primary_key.hpp>
 
 namespace oos {
 
@@ -92,6 +93,11 @@ void query_insert::write(const char *id, const object_base_ptr &x)
 
 void query_insert::write(const char *, const object_container &)
 {}
+
+void query_insert::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+}
 
 void query_insert::write_field(const char *id, data_type_t type, const std::string &x)
 {

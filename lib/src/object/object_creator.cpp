@@ -62,4 +62,10 @@ void object_creator::read_value(const char*, object_container &x)
   ostore_.insert(x);
 }
 
+
+void object_creator::read_value(char const *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
+}
+
 }

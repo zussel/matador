@@ -7,6 +7,7 @@
 #include "object/object_atomizer.hpp"
 
 #include <vector>
+#include <object/primary_key.hpp>
 
 struct sqlite3_stmt;
 
@@ -55,6 +56,7 @@ protected:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, primary_key_base &x);
 
 private:
   int ret_;

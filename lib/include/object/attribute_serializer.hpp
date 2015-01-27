@@ -22,6 +22,7 @@
 #include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
+#include "primary_key.hpp"
 
 #include <stdexcept>
 #include <type_traits>
@@ -100,6 +101,12 @@ private:
     convert(from_, to);
     success_ = true;
   }
+
+  void read_value(const char *id, primary_key_base &x)
+  {
+    x.deserialize(id, *this);
+  }
+
   void read_value(const char *id, char *to, int s)
   {
     if (id_ != id) {
@@ -182,6 +189,11 @@ private:
     success_ = true;
   }
 
+  void write_value(const char *id, const primary_key_base &x)
+  {
+    x.serialize(id, *this);
+  }
+
   void write_value(const char *id, const char *from, int)
   {
     if (id_ != id) {
@@ -257,6 +269,9 @@ public:
   }
 
   void write_value(const char*, const object_container&) {}
+  void write_value(const char*, const primary_key_base &)
+  {
+  }
 
   void write_value(const char *id, const char *from, int)
   {

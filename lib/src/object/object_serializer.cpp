@@ -22,6 +22,7 @@
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
 #include "object/object_container.hpp"
+#include "object/primary_key.hpp"
 
 #include "tools/byte_buffer.hpp"
 #include "tools/varchar.hpp"
@@ -94,6 +95,11 @@ void object_serializer::write_value(const char*, const object_container &x)
   // for each item write id and type
   write(0, x.size());
   x.for_each(std::bind(&object_serializer::write_object_container_item, this, _1));
+}
+
+void object_serializer::write_value(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
 }
 
 void object_serializer::read_value(const char*, char *&c, int )
@@ -169,6 +175,11 @@ void object_serializer::read_value(const char*, object_container &x)
     }
     x.append_proxy(oproxy);
   }
+}
+
+void object_serializer::read_value(const char *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
 }
 
 void object_serializer::write_object_container_item(const object *o)

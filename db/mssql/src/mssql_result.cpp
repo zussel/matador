@@ -184,6 +184,10 @@ void mssql_result::read(const char * /*id*/, object_container &/*x*/)
 {
 }
 
+void mssql_result::read(const char *id, primary_key_base &x) {
+  x.deserialize(id, *this);
+}
+
 void mssql_result::read_column(const char *, unsigned long &val)
 {
   char buf[NUMERIC_LEN];

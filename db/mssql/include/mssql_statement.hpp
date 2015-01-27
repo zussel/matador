@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#include <object/primary_key.hpp>
 
 #ifdef WIN32
 #define CPP11_TYPE_TRAITS_NS std::tr1
@@ -87,6 +88,7 @@ protected:
   virtual void write(const char *id, const std::string &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
+  virtual void write(const char *id, const primary_key_base &x);
 
   template < class T >
   void bind_value(T val, int index)

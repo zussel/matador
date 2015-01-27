@@ -178,6 +178,11 @@ void sqlite_prepared_result::read(const char *, object_container &)
 {
 }
 
+void sqlite_prepared_result::read(const char *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
+}
+
 std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res)
 {  
   out << "affected rows [" << res.affected_rows_ << "] size [" << res.rows << "]";

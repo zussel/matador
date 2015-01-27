@@ -106,6 +106,7 @@ public:
   void write_value(const char*, const varchar_base &s);
 	void write_value(const char* id, const object_base_ptr &x);
 	void write_value(const char* id, const object_container &x);
+	void write_value(const char* id, const primary_key_base &);
 
   template < class T >
   void read_value(const char*, T &x)
@@ -118,6 +119,7 @@ public:
   void read_value(const char*, varchar_base &s);
   void read_value(const char* id, object_base_ptr &x);
 	void read_value(const char* id, object_container &x);
+	void read_value(const char* id, primary_key_base &x);
   
   void write_object_list_item(const object *o);
   void write_object_container_item(const object *o);

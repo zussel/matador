@@ -208,6 +208,11 @@ void mysql_statement::write(const char *, const object_container &)
 {
 }
 
+void mysql_statement::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+}
+
 enum_field_types mysql_statement::type_enum(data_type_t type)
 {
   switch(type) {

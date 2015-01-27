@@ -34,6 +34,7 @@
 #include "object/attribute_serializer.hpp"
 #include "object/object_atomizer.hpp"
 #include "object/object_atomizable.hpp"
+#include "object/primary_key.hpp"
 
 #include "tools/enable_if.hpp"
 #include "tools/varchar.hpp"
@@ -336,7 +337,7 @@ private:
   friend class query;
   friend class database;
 
-	unsigned long id_;
+	primary_key<unsigned long> id_;
   object_proxy *proxy_;
 };
 

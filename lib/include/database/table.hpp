@@ -91,6 +91,7 @@ public:
   void read_value(const char *, char *, int ) {}
   void read_value(const char *, object_base_ptr &x);
   void read_value(const char *id, object_container &x);
+  void read_value(const char *id, primary_key_base &x);
 
 protected:
   const prototype_node& node() const;

@@ -1,3 +1,4 @@
+#include <object/primary_key.hpp>
 #include "database/query_update.hpp"
 
 #include "object/object_ptr.hpp"
@@ -90,6 +91,11 @@ void query_update::write(const char *id, const object_base_ptr &x)
 
 void query_update::write(const char *, const object_container &)
 {}
+
+void query_update::write(const char *id, const primary_key_base &x)
+{
+  x.serialize(id, *this);
+}
 
 void query_update::write_pair(const char *id, data_type_t type, const std::string &x)
 {

@@ -37,6 +37,7 @@ namespace oos {
 class varchar_base;
 class object_container;
 class object_base_ptr;
+class primary_key_base;
 
 /**
  * @class object_writer
@@ -244,6 +245,8 @@ public:
    * @param x The data to read from.
    */
   virtual void write(const char*, const object_container&) = 0;
+  
+  virtual void write(const char*, const primary_key_base&) = 0;
 };
 
 /**
@@ -287,6 +290,7 @@ public:
 	virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const primary_key_base &x) { generic_writer_->write_value(id, x); }
 
 /// @endcond OOS_DEV
   
@@ -499,6 +503,8 @@ public:
    * @param x The data to write to.
    */
   virtual void read(const char*, object_container&) = 0;
+
+  virtual void read(const char*, primary_key_base&) = 0;
 };
 
 /**
@@ -542,6 +548,7 @@ public:
 	virtual void read(const char *id, varchar_base &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, object_base_ptr &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, object_container &x) { generic_reader_->read_value(id, x); }
+  virtual void read(const char *id, primary_key_base &x) { generic_reader_->read_value(id, x); }
 
 /// @endcond OOS_DEV
   
