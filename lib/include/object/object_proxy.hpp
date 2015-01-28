@@ -75,7 +75,7 @@ struct object_proxy {
    * @param i The id of the expected object.
    * @param os The object_store.
    */
-  object_proxy(long i, object_store *os);
+  object_proxy(unsigned long i, object_store *os);
 
   /**
    * @brief Create an object_proxy for a given object.

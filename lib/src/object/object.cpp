@@ -22,7 +22,6 @@ namespace oos {
 
 object::object()
 	: id_(0)
-  , proxy_(0)
 {
 }
 
@@ -30,14 +29,14 @@ object::~object()
 {
 }
 
-const char* object::classname() const
-{
-  if (proxy_ && proxy_->node) {
-    return proxy_->node->type.c_str();
-  } else {
-    return nullptr;
-  }
-}
+//const char* object::classname() const
+//{
+//  if (proxy_ && proxy_->node) {
+//    return proxy_->node->type.c_str();
+//  } else {
+//    return nullptr;
+//  }
+//}
 
 unsigned long object::id() const
 {
@@ -49,18 +48,18 @@ void object::id(unsigned long oid)
 	id_ = oid;
 }
 
-object_store* object::ostore() const
-{
-  return proxy_ ? proxy_->ostore : 0;
-}
+//object_store* object::ostore() const
+//{
+//  return proxy_ ? proxy_->ostore : 0;
+//}
 
 void object::mark_modified()
 {
-  if (!proxy_ || !proxy_->ostore) {
-    // throw exception
-    return;
-  }
-  proxy_->ostore->mark_modified(proxy_);
+//  if (!proxy_ || !proxy_->ostore) {
+//    // throw exception
+//    return;
+//  }
+//  proxy_->ostore->mark_modified(proxy_);
 }
 
 std::ostream& operator <<(std::ostream &os, const object &o)

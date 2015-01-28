@@ -24,15 +24,13 @@ using namespace std;
 namespace oos {
 
 object_base_ptr::object_base_ptr(bool is_ref)
-  : id_(0)
-  , proxy_(0)
+  : proxy_(0)
   , is_reference_(is_ref)
   , is_internal_(false)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
-  : id_(x.id_)
-  , proxy_(x.proxy_)
+  : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
   , is_internal_(false)
 {
@@ -55,7 +53,6 @@ object_base_ptr::operator=(const object_base_ptr &x)
       }
       proxy_->remove(this);
     }
-    id_ = x.id_;
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
     if (proxy_) {
@@ -73,8 +70,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
 }
 
 object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
-  : id_(op ? op->id : 0)
-  , proxy_(op)
+  : proxy_(op)
   , is_reference_(is_ref)
   , is_internal_(false)
 {
@@ -84,17 +80,11 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
 }
 
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
-  : id_(o ? o->id_.get() : 0UL)
-//  , proxy_((o->proxy_ ? o->proxy_ : new object_proxy(o, 0)))
-  , proxy_(o->proxy_)
+  : proxy_(new object_proxy(o, nullptr))
   , is_reference_(is_ref)
   , is_internal_(false)
 {
-  if (proxy_) {
-    proxy_->add(this);
-  } else {
-//    proxy_ = new object_proxy(o, 0);
-  }
+  proxy_->add(this);
 }
 
 object_base_ptr::~object_base_ptr()
@@ -112,9 +102,9 @@ object_base_ptr::~object_base_ptr()
      * if proxy was created temporary
      * we can delete it here
      */
-/*    if (!proxy_->ostore && proxy_->id == 0) {
+    if (!proxy_->ostore) {
       delete proxy_;
-    }*/
+    }
   }
 }
 
@@ -163,7 +153,6 @@ object_base_ptr::reset(const object *o)
       proxy_->add(this);
     }
   }
-  id_ = (proxy_ ? proxy_->id : 0);
 }
 
 bool
@@ -175,15 +164,16 @@ object_base_ptr::is_loaded() const
 unsigned long
 object_base_ptr::id() const
 {
-  return (proxy_ ? proxy_->id : id_);
+  return (proxy_ ? proxy_->id : 0);
 }
 
-void object_base_ptr::id(unsigned long i)
+void object_base_ptr::id(unsigned long id)
 {
   if (proxy_) {
     throw std::logic_error("proxy already set");
   } else {
-    id_ = i;
+    proxy_ = new object_proxy(id, nullptr);
+//    id_ = i;
   }
 }
 
@@ -231,7 +221,7 @@ std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
       out << "unload object [" << x.proxy_->id << "]";
     }
   } else {
-      out << "unknown object [" << x.id_ << "]";
+      out << "unknown object [" << 0 << "]";
   }
   return out;
 }

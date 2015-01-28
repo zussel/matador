@@ -34,7 +34,8 @@ object_proxy::object_proxy(object_store *os)
   , node(0)
 {}
 
-object_proxy::object_proxy(long i, object_store *os)
+
+object_proxy::object_proxy(unsigned long i, object_store *os)
   : prev(0)
   , next(0)
   , obj(0)

@@ -259,8 +259,8 @@ prototype_tree::prototype_tree()
   , last_(new prototype_node)
 {
   prototype_node *root = new prototype_node(new object_producer<object>, "object", true);
-  object_proxy *first = new object_proxy(0);
-  object_proxy *last = new object_proxy(0);
+  object_proxy *first = new object_proxy(nullptr);
+  object_proxy *last = new object_proxy(nullptr);
 
   // init object proxies
   root->op_first = first;

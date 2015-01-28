@@ -668,7 +668,9 @@ void ObjectStoreTestUnit::test_insert()
 {
   UNIT_ASSERT_EXCEPTION(ostore_.insert((object*)0), object_exception, "object is null", "null shouldn't be insertable");
 
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(new ItemC), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+  ItemC *ic = new ItemC;
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+  delete ic;
 }
 
 void ObjectStoreTestUnit::test_remove()
@@ -679,9 +681,10 @@ void ObjectStoreTestUnit::test_remove()
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "null shouldn't be removable");
 
-  item = new Item;
+  Item *i = new Item;
+  item = i;
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "transient object shouldn't be removable");
 
-
+  delete i;
 }

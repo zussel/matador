@@ -218,11 +218,11 @@ private:
   friend class object_creator;
   friend class object_serializer;
   friend struct object_proxy;
+  friend class object_deleter;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
-	unsigned long id_;
   object_proxy *proxy_;
   bool is_reference_;
   bool is_internal_;

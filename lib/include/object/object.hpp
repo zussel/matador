@@ -116,7 +116,7 @@ public:
    * 
    * @return Name of the object type or nullptr
    */
-	const char* classname() const;
+//	const char* classname() const;
   
   /**
    * @brief Returns the unique identifier of the object.
@@ -313,7 +313,7 @@ protected:
    * 
    * @return The object_proxy of the object.
    */
-  object_proxy* proxy() const { return proxy_; }
+//  object_proxy* proxy() const { return proxy_; }
 
   /**
    * @brief Marks this object as modified in its object_store
@@ -338,7 +338,7 @@ private:
   friend class database;
 
 	primary_key<unsigned long> id_;
-  object_proxy *proxy_;
+//  object_proxy *proxy_;
 };
 
 }
