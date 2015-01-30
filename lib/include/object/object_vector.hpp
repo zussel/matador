@@ -33,11 +33,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef _MSC_VER
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 #include <vector>
 
