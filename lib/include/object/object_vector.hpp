@@ -18,12 +18,6 @@
 #ifndef OBJECT_VECTOR_HPP
 #define OBJECT_VECTOR_HPP
 
-#ifdef _MSC_VER
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
-
 #include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
@@ -95,6 +89,12 @@ private:
 
 /// @endcond
 
+template < class T, class C, class CT >
+class object_vector_iterator;
+
+template < class T, class C, class CT >
+class const_object_vector_iterator;
+
 /**
  * @class object_vector_base
  * @brief Base class for all object vector classes.
@@ -116,10 +116,13 @@ public:
   typedef S parent_type;                                     /**< Shortcut for the container type. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
-  typedef std::vector<item_holder> vector_type;                        /**< Shortcut for the vector class member. */
+  typedef std::vector<item_holder> vector_type;              /**< Shortcut for the vector class member. */
   typedef typename vector_type::iterator iterator;                  /**< Shortcut for the vector iterator. */
   typedef typename vector_type::const_iterator const_iterator;      /**< Shortcut for the vector const iterator. */
   typedef typename object_container::size_type size_type;           /**< Shortcut for the size type. */
+
+//  typedef typename object_vector_iterator<T, S, CT> vector_iterator;
+//  typedef typename const_object_vector_iterator<T, S, CT> const_vector_iterator;
 
   /**
    * @brief Creates a new object_vector.
@@ -308,14 +311,14 @@ protected:
    *
    * Executes the given function object for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param pred Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const
+  virtual void for_each(const proxy_func &pred) const
   {
     const_iterator first = object_vector_.begin();
     const_iterator last = object_vector_.end();
     while (first != last) {
-      nf((*first++).ptr());
+      pred((*first++).proxy_);
     }
   }
 
@@ -401,6 +404,96 @@ private:
 };
 
 ///@cond OOS_DEV
+
+template < class T, class C, class CT >
+class object_vector_iterator : public std::iterator<std::random_access_iterator_tag, T> {
+public:
+  typedef object_vector_iterator<T,C,CT> self;	                /**< Shortcut for this iterator type. */
+  typedef object_vector_item<T, C> item_type;
+  typedef object_vector_base<C, T, CT> object_vector_type;
+  typedef typename object_vector_type::vector_type vector_type;
+  typedef typename vector_type::iterator vector_iterator;
+  typedef T value_type;                                   /**< Shortcut for value type. */
+  typedef value_type* pointer;
+  typedef value_type& reference;                          /**< Shortcut for the reference to the value type. */
+  typedef typename object_container::size_type size_type; /**< Shortcut for the size type. */
+
+  object_vector_iterator() {}
+  ~object_vector_iterator() {}
+
+private:
+  object_vector_iterator(const vector_iterator &i)
+    : iter_(i) {}
+
+public:
+
+  /**
+  * Pre increments the iterator
+  *
+  * @return Returns iterators successor.
+  */
+  self& operator++() {
+    increment();
+    return *this;
+  }
+
+  /**
+  * Post increments the iterator
+  *
+  * @return Returns iterator before incrementing.
+  */
+  self operator++(int) {
+    self tmp = *this;
+    increment();
+    return tmp;
+  }
+
+  /**
+  * Pre decrements the iterator
+  *
+  * @return Returns iterators predeccessor.
+  */
+  self& operator--() {
+    decrement();
+    return *this;
+  }
+
+  /**
+  * Post decrements the iterator
+  *
+  * @return Returns iterator before decrementing.
+  */
+  self operator--(int) {
+    self tmp = *this;
+    decrement();
+    return tmp;
+  }
+
+  /**
+  * Returns the pointer to the node.
+  *
+  * @return The pointer to the node.
+  */
+  pointer operator->() const {
+    return iter_->value();
+  }
+
+  /**
+  * Returns the node.
+  *
+  * @return The iterators underlaying node.
+  */
+  value_type operator*() const {
+    return iter_;
+  }
+
+private:
+  void decrement() { --iter_; }
+  void increment() { ++iter_; }
+
+private:
+  vector_iterator iter_;
+};
 
 struct dummyy { struct inner {}; typedef inner object_type; };
 
@@ -629,7 +722,7 @@ template < class S, class T >
 class object_vector<S, T, true> : public object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >
 {
 public:
-  typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
+  typedef typename oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */
   typedef void (value_type::*FUNC1)(const object_ref<S>&);                                                                /**< Shortcut for the parent reference setter function. */
   typedef void (value_type::*FUNC2)(int);                                                                                 /**< Shortcut for the index setter function. */
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */

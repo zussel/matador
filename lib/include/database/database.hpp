@@ -138,7 +138,7 @@ public:
    * @param o The object to insert.
    * @return The inserted object.
    */
-  object* insert(object *o);
+  object* insert(object_proxy *proxy);
 
   /**
    * Update the object on the database
@@ -146,7 +146,7 @@ public:
    * @param o The object to update.
    * @return The updated object.
    */
-  object* update(object *o);
+  object* update(object_proxy *proxy);
 
   /**
    * load a specific table based on

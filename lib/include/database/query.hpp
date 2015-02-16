@@ -35,6 +35,7 @@
 
 #include <memory>
 #include <sstream>
+#include <object/object_ptr.hpp>
 
 namespace oos {
 
@@ -193,7 +194,8 @@ public:
    * @param o The object used for the insert statement.
    * @return A reference to the query.
    */
-  query& insert(object *o);
+  query& insert(object_base_ptr &optr);
+  query& insert(object_proxy *proxy);
 
   /**
    * Creates an insert statement based
@@ -213,7 +215,8 @@ public:
    * @param o The object used for the update statement.
    * @return A reference to the query.
    */
-  query& update(object *o);
+  query& update(object_base_ptr &optr);
+  query& update(object_proxy *proxy);
 
   /**
    * Creates an update statement based

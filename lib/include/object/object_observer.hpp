@@ -21,6 +21,7 @@
 namespace oos {
 
 class object;
+class object_proxy;
 
 /**
  * @class object_observer
@@ -42,9 +43,9 @@ public:
    * Called when an object is inserted
    * into the object_store.
    * 
-   * @param o The inserted object.
+   * @param proxy The proxy of the inserted object.
    */
-  virtual void on_insert(object *o) = 0;
+  virtual void on_insert(object_proxy *proxy) = 0;
   
   /**
    * @brief Called on object update.
@@ -52,9 +53,9 @@ public:
    * Called when an object is updated
    * in the object_store.
    * 
-   * @param o The updated object.
+   * @param proxy The proxy of the updated object.
    */
-  virtual void on_update(object *o) = 0;
+  virtual void on_update(object_proxy *proxy) = 0;
   
   /**
    * @brief Called on object deletion.
@@ -62,9 +63,9 @@ public:
    * Called when an object is deleted
    * from the object_store.
    * 
-   * @param o The deleted object.
+   * @param proxy The proxy of the deleted object.
    */
-  virtual void on_delete(object *o) = 0;
+  virtual void on_delete(object_proxy *proxy) = 0;
 };
 
 }

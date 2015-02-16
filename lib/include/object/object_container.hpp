@@ -22,11 +22,7 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
-#ifdef _MSC_VER
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 namespace oos {
 
@@ -91,6 +87,7 @@ public:
   }
 
 private:
+  object_proxy *proxy_;
   value_type value_;
 };
 
@@ -172,9 +169,9 @@ private:
 class OOS_API object_container
 {
 public:
-  typedef std::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
-  typedef unsigned long size_type;                       /**< Shortcut for size type. */
-//  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
+  typedef std::function<void (object_proxy *)> proxy_func;  /**< Shortcut to the function type of the for_each method. */
+  typedef std::function<void (object *)> node_func;         /**< Shortcut to the function type of the for_each method. */
+  typedef unsigned long size_type;                          /**< Shortcut for size type. */
 
 public:
   /**
@@ -270,7 +267,7 @@ protected:
    *
    * @param nf Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const = 0;
+  virtual void for_each(const proxy_func &pred) const = 0;
 
   /**
    * Provides an interface which is called

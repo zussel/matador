@@ -134,7 +134,7 @@ public:
    * 
    * @param o The new object for the object_base_ptr.
    */
-	void reset(const object *o = 0);
+	void reset(object_proxy *proxy = 0);
 
   /**
    * Returns if the object is loaded.
@@ -219,6 +219,9 @@ private:
   friend class object_serializer;
   friend struct object_proxy;
   friend class object_deleter;
+  friend class object_store;
+  friend class session;
+  friend class query;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;

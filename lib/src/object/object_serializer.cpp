@@ -151,7 +151,7 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
-    x.reset(oproxy->obj);
+    x.reset(oproxy);
   } else {
     x.proxy_ = new object_proxy(id, nullptr);
 //    x.id_ = id;
@@ -182,10 +182,10 @@ void object_serializer::read_value(const char *id, primary_key_base &x)
   x.deserialize(id, *this);
 }
 
-void object_serializer::write_object_container_item(const object *o)
+void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
-  write(0, o->id());
-  write(0, o->classname(), strlen(o->classname()));
+  write(0, proxy->obj->id());
+  write(0, proxy->node->type);
 }
 
 }

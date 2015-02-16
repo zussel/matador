@@ -270,7 +270,7 @@ void table::read_value(const char *, object_base_ptr &x)
     j->second->relation_data[i->second.second][oid].push_back(object_);
   }
   
-  x.reset(oproxy->obj);
+  x.reset(oproxy);
 }
 
 void table::read_value(const char *id, object_container &x)

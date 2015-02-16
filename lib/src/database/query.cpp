@@ -100,15 +100,23 @@ query& query::select(const prototype_node &node)
   return *this;
 }
 
-query& query::insert(object *o)
+query& query::insert(object_base_ptr &optr)
 {
-  if (!o->proxy_) {
+  return insert(optr.proxy_);
+}
+
+query &query::insert(object_proxy *proxy)
+{
+  if (!proxy) {
     throw std::logic_error("query insert: no object proxy information");
   }
-  if (!o->proxy_->node) {
+  if (!proxy->obj) {
+    throw std::logic_error("query insert: no object information");
+  }
+  if (!proxy->node) {
     throw std::logic_error("query insert: no object prototype information");
   }
-  return insert(o, o->proxy_->node->type);
+  return insert(proxy->obj, proxy->node->type);
 }
 
 query& query::insert(object_atomizable *o, const std::string &type)
@@ -133,15 +141,23 @@ query& query::insert(object_atomizable *o, const std::string &type)
   return *this;
 }
 
-query& query::update(object *o)
+
+query &query::update(object_base_ptr &optr) {
+  return update(optr.proxy_);
+}
+
+query& query::update(object_proxy *proxy)
 {
-  if (!o->proxy_) {
+  if (!proxy) {
     throw std::logic_error("query update: no object proxy information");
   }
-  if (!o->proxy_->node) {
+  if (!proxy->obj) {
+    throw std::logic_error("query update: no object information");
+  }
+  if (!proxy->node) {
     throw std::logic_error("query update: no object prototype information");
   }
-  return update(o->proxy_->node->type, o);
+  return update(proxy->node->type, proxy->obj);
 }
 
 query& query::update(const std::string &type, object_atomizable *o)

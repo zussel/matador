@@ -41,6 +41,7 @@ namespace oos {
 class object;
 class object_base_ptr;
 class object_store;
+class object_proxy;
 class byte_buffer;
 class varchar_base;
 class object_container;
@@ -122,7 +123,7 @@ public:
 	void read_value(const char* id, primary_key_base &x);
   
   void write_object_list_item(const object *o);
-  void write_object_container_item(const object *o);
+  void write_object_container_item(const object_proxy *proxy);
   void write_object_vector_item(const object *o, unsigned int &index);
 
 private:

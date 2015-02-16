@@ -128,7 +128,7 @@ const char* object_base_ptr::classname() const
 }
 */
 void
-object_base_ptr::reset(const object *o)
+object_base_ptr::reset(object_proxy *proxy)
 {
   if (proxy_) {
     if (is_internal_) {
@@ -140,8 +140,8 @@ object_base_ptr::reset(const object *o)
     }
     proxy_->remove(this);
   }
-  if (o) {
-    proxy_ = o->proxy_;
+  if (proxy) {
+    proxy_ = proxy;
     if (proxy_) {
       if (is_internal_) {
         if (is_reference_) {

@@ -115,7 +115,7 @@ result* session::execute(const std::string &sql)
 
 void session::update(const object_base_ptr &optr)
 {
-  impl_->update(optr.ptr());
+  impl_->update(optr.proxy_);
 }
 
 void session::remove(object_base_ptr &optr)
