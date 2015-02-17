@@ -66,7 +66,7 @@ public:
       table::object_map_t::iterator j = i->second.find(object_->id());
       if (j != i->second.end()) {
         while (!j->second.empty()) {
-          x.append_proxy(j->second.front()->proxy_);
+          x.append_proxy(j->second.front());
           j->second.pop_front();
         }
       }
@@ -267,7 +267,7 @@ void table::read_value(const char *, object_base_ptr &x)
   database::table_map_t::iterator j = db().table_map_.find(node->type);
   prototype_node::field_prototype_map_t::const_iterator i = node_.relations.find(node->type);
   if (i != node_.relations.end()) {
-    j->second->relation_data[i->second.second][oid].push_back(object_);
+    j->second->relation_data[i->second.second][oid].push_back(oproxy);
   }
   
   x.reset(oproxy);
@@ -286,7 +286,7 @@ void table::read_value(const char *id, object_container &x)
       database::object_map_t::iterator j = i->second.find(object_->id());
       if (j != i->second.end()) {
         while (!j->second.empty()) {
-          x.append_proxy(j->second.front()->proxy_);
+          x.append_proxy(j->second.front());
           j->second.pop_front();
         }
       }

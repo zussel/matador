@@ -638,7 +638,8 @@ public:
     } else {
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type);
-      item->container().reset(parent_);
+      // Todo: fix parent object proxy
+      //item->container().reset(parent_);
       item->value(elem);
       // mark list object as modified
       mark_modified(parent_);
@@ -742,13 +743,13 @@ protected:
    *
    * Executes the given function object for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param pred Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const
+  virtual void for_each(const proxy_func &pred) const
   {
     item_ref node = first_;
     while(node.get()) {
-      nf(node.get());
+      pred(node.proxy_);
       node = node->next();
     }
   }

@@ -170,7 +170,6 @@ class OOS_API object_container
 {
 public:
   typedef std::function<void (object_proxy *)> proxy_func;  /**< Shortcut to the function type of the for_each method. */
-  typedef std::function<void (object *)> node_func;         /**< Shortcut to the function type of the for_each method. */
   typedef unsigned long size_type;                          /**< Shortcut for size type. */
 
 public:

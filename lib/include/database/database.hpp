@@ -67,8 +67,8 @@ struct prototype_node;
 class OOS_API database : public action_visitor
 {
 public:
-  typedef std::list<object*> object_list_t;
-  typedef std::unordered_map<long, object_list_t> object_map_t;
+  typedef std::list<object_proxy*> object_proxy_list_t;
+  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
   typedef std::shared_ptr<statement> statement_ptr;
   typedef std::shared_ptr<table> table_ptr;

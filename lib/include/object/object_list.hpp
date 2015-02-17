@@ -27,11 +27,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef _MSC_VER
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 #include <type_traits>
 #include <list>
@@ -217,14 +213,14 @@ protected:
    *
    * Executes the given function object for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param pred Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const
+  virtual void for_each(const proxy_func &pred) const
   {
     const_iterator first = object_list_.begin();
     const_iterator last = object_list_.end();
     while (first != last) {
-      nf((*first++).ptr());
+      pred((*first++).proxy_);
     }
   }
 
