@@ -199,12 +199,20 @@ struct object_proxy {
    */
   bool valid() const;
 
+  /**
+   * Return the id of the object. If no object is
+   * set 0 (null) is returned
+   *
+   * @return 0 (null) or the id of the object.
+   */
+  unsigned long id() const;
+
   object_proxy *prev;      /**< The previous object_proxy in the list. */
   object_proxy *next;      /**< The next object_proxy in the list. */
 
   object *obj;             /**< The concrete object. */
-  unsigned long id;        /**< The id of the concrete or expected object. */
-  
+  unsigned long oid;        /**< The id of the concrete or expected object. */
+
   unsigned long ref_count; /**< The reference counter */
   unsigned long ptr_count; /**< The pointer counter */
 

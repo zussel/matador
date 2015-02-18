@@ -24,6 +24,7 @@
 #include "object/object_deleter.hpp"
 
 #include "tools/sequencer.hpp"
+#include "object_exception.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -260,7 +261,20 @@ public:
   {
 		return object_ptr<Y>(insert_object(o, true));
 	}
-  
+
+  /**
+   *
+   */
+  template < class Y >
+  object_ptr<Y> insert(const object_ptr<Y> &optr)
+  {
+    if (!optr.proxy_) {
+      throw object_exception("object pointer is null");
+    }
+    insert_proxy(optr.proxy_);
+    return optr;
+  }
+
   /**
    * Inserts an object_container into the object store. Subsequently the
    * object_container is initialized.
@@ -370,6 +384,13 @@ public:
    * @param oproxy Object proxy to insert
    */
   void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
+
+  /**
+  * @brief Inserts a new proxy into the object store
+  *
+  * @param oproxy Object proxy to insert
+  */
+  void insert_proxy(object_proxy *oproxy);
 
   /**
    * @brief Removes an object proxy from a prototype list

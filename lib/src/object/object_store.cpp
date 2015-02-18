@@ -374,6 +374,20 @@ bool object_store::delete_proxy(long id)
   }
 }
 
+
+void object_store::insert_proxy(object_proxy *oproxy)
+{
+  if (!oproxy->obj) {
+    throw object_exception("object of proxy is null pointer");
+  }
+
+  if (oproxy->ostore) {
+    throw object_exception("object proxy already in object store");
+  }
+
+  
+}
+
 void object_store::insert_proxy(const prototype_iterator &node, object_proxy *oproxy)
 {
   // check count of object in subtree

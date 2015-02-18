@@ -18,6 +18,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+  add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
   add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
@@ -81,6 +82,24 @@ ObjectStoreTestUnit::version_test()
   UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
   UNIT_ASSERT_EQUAL(oos::version::minor, 2, "invalid minor version");
   UNIT_ASSERT_EQUAL(oos::version::patch_level, 1, "invalid patch level");
+}
+
+
+void ObjectStoreTestUnit::optr_test()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item_null;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "object pointer is null", "shouldn't insert null object pointer");
+
+  item_ptr item(new Item("Test"));
+
+  UNIT_ASSERT_FALSE(item.is_internal(), "item must not be internal");
+
+  item = ostore_.insert(item);
+
+  UNIT_ASSERT_TRUE(item.is_internal(), "item must be internal");
 }
 
 void

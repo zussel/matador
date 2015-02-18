@@ -164,7 +164,7 @@ object_base_ptr::is_loaded() const
 unsigned long
 object_base_ptr::id() const
 {
-  return (proxy_ ? proxy_->id : 0);
+  return (proxy_ ? proxy_->id() : 0);
 }
 
 void object_base_ptr::id(unsigned long id)
@@ -218,7 +218,7 @@ std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
     if (x.proxy_->obj) {
       out << *x.proxy_->obj;
     } else {
-      out << "unload object [" << x.proxy_->id << "]";
+      out << "unload object [" << x.proxy_->id() << "]";
     }
   } else {
       out << "unknown object [" << 0 << "]";
