@@ -186,7 +186,7 @@ object_store::insert_object(object *o, bool notify)
     /* object doesn't exist in map
      * if object has a valid id, update
      * the sequencer else assign new
-     * nique id
+     * unique id
      */
     if (o->id() == 0) {
       o->id(seq_.next());
@@ -201,13 +201,13 @@ object_store::insert_object(object *o, bool notify)
   }
   // insert new element node
   insert_proxy(node, oproxy);
-  // create object
+  // initialize object
   object_creator oc(*this, notify);
   o->deserialize(oc);
   // set corresponding prototype node
   oproxy->node = node.get();
   // set this into persistent object
-  oproxy->obj = o;
+//  oproxy->obj = o;
   // notify observer
   if (notify) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
@@ -333,15 +333,15 @@ object_store::unlink_proxy(object_proxy *proxy)
   if (proxy->next) {
     proxy->next->prev = proxy->prev;
   }
-  proxy->prev = NULL;
-  proxy->next = NULL;
+  proxy->prev = 0;
+  proxy->next = 0;
 }
 
 object_proxy* object_store::find_proxy(long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return NULL;
+    return nullptr;
   } else {
     return i->second;
   }
@@ -350,14 +350,14 @@ object_proxy* object_store::find_proxy(long id) const
 object_proxy* object_store::create_proxy(long id)
 {
   if (id == 0) {
-    return 0;
+    return nullptr;
   }
   
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
     return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
   } else {
-    return 0;
+    return nullptr;
   }
 }
 
@@ -381,11 +381,35 @@ void object_store::insert_proxy(object_proxy *oproxy)
     throw object_exception("object of proxy is null pointer");
   }
 
+  if (oproxy->id() > 0) {
+    throw object_exception("object id is greater zero");
+  }
+
   if (oproxy->ostore) {
     throw object_exception("object proxy already in object store");
   }
 
+  // find prototype node
+  prototype_iterator node = prototype_tree_.find(typeid(*oproxy->obj).name());
+  if (node == prototype_tree_.end()) {
+    // raise exception
+    throw object_exception("couldn't insert object");
+  }
+
+  oproxy->id(seq_.next());
+  oproxy->ostore = this;
   
+  insert_proxy(node, oproxy);
+
+  // initialize object
+  object_creator oc(*this, true);
+  oproxy->obj->deserialize(oc);
+  // notify observer
+  if (true) {
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
+  }
+  // insert element into hash map for fast lookup
+  object_map_[oproxy->id()] = oproxy;
 }
 
 void object_store::insert_proxy(const prototype_iterator &node, object_proxy *oproxy)

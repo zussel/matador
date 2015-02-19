@@ -226,6 +226,8 @@ struct object_proxy {
   typedef std::map<std::string, object_list_t> string_object_list_map_t;
   
   string_object_list_map_t relations;
+
+  void id(unsigned long i);
 };
 /// @endcond
 }

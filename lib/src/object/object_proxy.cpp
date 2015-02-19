@@ -161,4 +161,13 @@ std::ostream& operator <<(std::ostream &os, const object_proxy &op)
   return os;
 }
 
+void object_proxy::id(unsigned long i)
+{
+  if (obj) {
+    obj->id(i);
+  } else {
+    oid = i;
+  }
+}
+
 }
