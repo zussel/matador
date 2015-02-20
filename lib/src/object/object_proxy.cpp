@@ -59,11 +59,11 @@ object_proxy::object_proxy(object *o, object_store *os)
 
 object_proxy::~object_proxy()
 {
-  if (obj) {
-    delete obj;
-  }
   if (ostore && id() > 0) {
     ostore->delete_proxy(id());
+  }
+  if (obj) {
+    delete obj;
   }
   ostore = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {

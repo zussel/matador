@@ -401,7 +401,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item object as modified
-      this->mark_modified(x.get());
+//      this->mark_modified(x.get());
+      this->mark_modified(x.proxy_);
       // set back ref to parent
       setter_(*x.get(), parent_ref(this->parent()));
       // insert new item object
@@ -415,7 +416,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item object as modified
-      this->mark_modified((*i).get());
+      this->mark_modified(i->proxy_);
+//      this->mark_modified((*i).get());
       // set back ref to zero
       setter_(*(*i).get(), parent_ref());
       // erase element from list
@@ -479,7 +481,8 @@ public:
       // create and insert new item
       item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->parent()), x));
       // mark list object as modified
-      this->mark_modified(this->parent());
+//      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
       // insert new item object
       return this->list().insert(pos, item);
     }
@@ -491,7 +494,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       item_ptr item = *i;
-      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
+//      this->mark_modified(this->parent());
       this->ostore()->remove(item);
       return this->list().erase(i);
     }

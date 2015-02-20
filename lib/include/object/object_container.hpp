@@ -254,9 +254,16 @@ protected:
    *
    * @param o The object containig list
    */
-  void mark_modified(object *o)
+//  void mark_modified(object *o)
+//  {
+//    o->mark_modified();
+//  }
+
+  void mark_modified(object_proxy *proxy)
   {
-    o->mark_modified();
+    if (proxy->obj) {
+      proxy->ostore->mark_modified(proxy);
+    }
   }
 
   /**
@@ -294,6 +301,28 @@ protected:
    */
   virtual void parent(object *p) = 0;
 
+  template < class T >
+  T* parent() const
+  {
+    return static_cast<T*>(owner_->obj);
+  }
+
+  /**
+   * Returns the owner of the container
+   * represented by an object_proxy.
+   *
+   * @return The owner of the container
+   */
+  object_proxy* owner() const;
+
+  /**
+   * Sets the owner of an container
+   * represented by an object_proxy.
+   *
+   * @param ownr The new owner of the container
+   */
+  void owner(object_proxy *ownr);
+
   /**
    * Create a producer object for
    * the relation/value table.
@@ -317,6 +346,7 @@ private:
 
 private:
   object_store *ostore_;
+  object_proxy *owner_;
 };
 /// @endcond
 

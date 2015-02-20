@@ -614,7 +614,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark list object as modified
-      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
+//      this->mark_modified(this->parent());
       ref_setter(*x.get(), parent_ref(this->parent()));
       // insert new item object
       pos = this->vector().insert(pos, x);
@@ -631,9 +632,11 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark parent object as modified
-      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
+//      this->mark_modified(this->parent());
       // mark item object as modified
-      this->mark_modified((*i).get());
+      this->mark_modified(i->proxy_);
+//      this->mark_modified((*i).get());
       // set back ref to zero
       ref_setter(*(*i).get(), parent_ref());
       // erase element from list
@@ -648,11 +651,13 @@ public:
   virtual iterator erase(iterator first, iterator last)
   {
     // mark parent object as modified
-    this->mark_modified(this->parent());
+    this->mark_modified(this->owner());
+//    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
       // mark item object as modified
-      this->mark_modified((*i).get());
+      this->mark_modified(i->proxy_);
+//      this->mark_modified((*i).get());
       // set back ref to zero
       ref_setter(*(*i++).get(), parent_ref());
     }
@@ -683,7 +688,8 @@ protected:
     
     while (i != this->vector().end()) {
       // mark item object as modified
-      this->mark_modified(i->get());
+      this->mark_modified(i->proxy_);
+//      this->mark_modified(i->get());
       int_setter(*(*i++).get(), start++);
     }
   }
@@ -769,7 +775,8 @@ public:
       // create and insert new item
       item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->parent()), index, x));
       // mark list object as modified
-      this->mark_modified(this->parent());
+//      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
       // insert new item object
       pos = this->vector().insert(pos, item);
       iterator first = pos;
@@ -786,7 +793,8 @@ public:
   {
     // erase object from object store
     item_ptr item = *i;
-    this->mark_modified(this->parent());
+    this->mark_modified(this->owner());
+//    this->mark_modified(this->parent());
     this->ostore()->remove(item);
     iterator ret = this->vector().erase(i);
     // update index values of all successor elements
@@ -797,7 +805,8 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
-    this->mark_modified(this->parent());
+    this->mark_modified(this->owner());
+//    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
       // erase object from object store
@@ -826,7 +835,8 @@ protected:
     
     while (i != this->vector().end()) {
       // mark parent object as modified
-      this->mark_modified(i->get());
+      this->mark_modified(i->proxy_);
+//      this->mark_modified(i->get());
       (*i++)->index(start++);
     }
   }

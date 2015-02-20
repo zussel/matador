@@ -26,13 +26,11 @@ namespace oos {
 object_base_ptr::object_base_ptr(bool is_ref)
   : proxy_(0)
   , is_reference_(is_ref)
-  , is_internal_(false)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
   : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-  , is_internal_(false)
 {
   if (proxy_) {
     proxy_->add(this);
@@ -44,7 +42,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
     if (proxy_) {
-      if (is_internal_) {
+      if (proxy_->ostore) {
         if (is_reference_) {
           proxy_->unlink_ref();
         } else {
@@ -56,7 +54,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
     if (proxy_) {
-      if (is_internal_) {
+      if (proxy_->ostore) {
         if (is_reference_) {
           proxy_->link_ref();
         } else {
@@ -72,7 +70,6 @@ object_base_ptr::operator=(const object_base_ptr &x)
 object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   : proxy_(op)
   , is_reference_(is_ref)
-  , is_internal_(false)
 {
   if (proxy_) {
     proxy_->add(this);
@@ -82,7 +79,6 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
   : proxy_(new object_proxy(o, nullptr))
   , is_reference_(is_ref)
-  , is_internal_(false)
 {
   proxy_->add(this);
 }
@@ -90,7 +86,7 @@ object_base_ptr::object_base_ptr(object *o, bool is_ref)
 object_base_ptr::~object_base_ptr()
 {
   if (proxy_) {
-    if (is_internal_) {
+    if (proxy_->ostore) {
       if (is_reference_) {
         proxy_->unlink_ref();
       } else {
@@ -131,7 +127,7 @@ void
 object_base_ptr::reset(object_proxy *proxy)
 {
   if (proxy_) {
-    if (is_internal_) {
+    if (proxy_->ostore) {
       if (is_reference_) {
         proxy_->unlink_ref();
       } else {
@@ -143,7 +139,7 @@ object_base_ptr::reset(object_proxy *proxy)
   if (proxy) {
     proxy_ = proxy;
     if (proxy_) {
-      if (is_internal_) {
+      if (proxy_->ostore) {
         if (is_reference_) {
           proxy_->link_ref();
         } else {
@@ -177,16 +173,35 @@ void object_base_ptr::id(unsigned long id)
   }
 }
 
-object*
-object_base_ptr::ptr() const
+object* object_base_ptr::ptr()
 {
   return lookup_object();
 }
 
-object*
-object_base_ptr::lookup_object() const
+const object* object_base_ptr::ptr() const
 {
-  return (proxy_ ? proxy_->obj : nullptr);
+  return lookup_object();
+}
+
+object* object_base_ptr::lookup_object()
+{
+  if (proxy_ && proxy_->obj) {
+    if (proxy_->ostore) {
+      proxy_->ostore->mark_modified(proxy_);
+    }
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
+}
+
+const object* object_base_ptr::lookup_object() const
+{
+  if (proxy_ && proxy_->obj) {
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
 }
 
 bool object_base_ptr::is_reference() const
@@ -197,7 +212,7 @@ bool object_base_ptr::is_reference() const
 bool
 object_base_ptr::is_internal() const
 {
-  return is_internal_;
+  return proxy_ && proxy_->ostore;
 }
 
 unsigned long

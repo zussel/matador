@@ -420,7 +420,7 @@ private:
   friend class object_serializer;
   friend class restore_visitor;
   friend class object_container;
-  friend class object;
+  friend class object_base_ptr;
 
 private:
   void mark_modified(object_proxy *oproxy);

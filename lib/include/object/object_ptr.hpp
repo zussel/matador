@@ -163,14 +163,16 @@ public:
    * 
    * @return The object.
    */
-	object* ptr() const;
+	object* ptr();
+	const object* ptr() const;
 
   /**
    * Returns the object
    * 
    * @return The object.
    */
-	object* lookup_object() const;
+	object* lookup_object();
+	const object* lookup_object() const;
 
   /**
    * Returns if the object is treated as a reference.
@@ -232,7 +234,6 @@ private:
 
   object_proxy *proxy_;
   bool is_reference_;
-  bool is_internal_;
 };
 
 /// @cond OOS_DEV
@@ -359,7 +360,6 @@ public:
    * @return The pointer to the object of type T.
    */
   T* get() const {
-      //return dynamic_cast<T*>(lookup_object());
       return static_cast<T*>(lookup_object());
   }
 };
@@ -468,7 +468,6 @@ public:
    */
 	T* operator->() const {
     return get();
-
 	}
 
   /**
@@ -493,7 +492,6 @@ public:
    */
 	T* get() const {
     return static_cast<T*>(lookup_object());
-//    return dynamic_cast<T*>(lookup_object());
 	}
 };
 

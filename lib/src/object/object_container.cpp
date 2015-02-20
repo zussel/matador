@@ -16,11 +16,21 @@
  */
 
 #include "object/object_container.hpp"
-#include "object/object_exception.hpp"
 
 using namespace std;
 
 namespace oos {
+
+
+object_proxy* object_container::owner() const
+{
+  return owner_;
+}
+
+void object_container::owner(object_proxy *ownr)
+{
+  owner_ = ownr;
+}
 
 void object_container::handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const
 {
@@ -39,7 +49,7 @@ void object_container::handle_container_item(prototype_tree &ptree, const char *
     if (!item_node) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
-      // as uninitialzed)
+      // as uninitialized)
       item_node = new prototype_node();
       ptree.typeid_prototype_map_.insert(std::make_pair(classname(), prototype_tree::t_prototype_map()));
       ptree.prototype_map_[classname()] = item_node;
