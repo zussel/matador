@@ -224,10 +224,7 @@ private:
   friend class object_store;
   friend class session;
   friend class query;
-
-  template < class S, class T > friend class linked_object_list;
-  template < class S, class T, class CT > friend class object_vector_base;
-  template < class S, class T, class CT > friend class object_list_base;
+  friend class object_container;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;

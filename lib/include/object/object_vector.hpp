@@ -318,7 +318,7 @@ protected:
     const_iterator first = object_vector_.begin();
     const_iterator last = object_vector_.end();
     while (first != last) {
-      pred((*first++).proxy_);
+      pred(this->proxy(*first++));
     }
   }
 
@@ -635,7 +635,7 @@ public:
       this->mark_modified(this->owner());
 //      this->mark_modified(this->parent());
       // mark item object as modified
-      this->mark_modified(i->proxy_);
+      this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
       ref_setter(*(*i).get(), parent_ref());
@@ -656,7 +656,7 @@ public:
     iterator i = first;
     while (i != last) {
       // mark item object as modified
-      this->mark_modified(i->proxy_);
+      this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
       ref_setter(*(*i++).get(), parent_ref());
@@ -688,7 +688,7 @@ protected:
     
     while (i != this->vector().end()) {
       // mark item object as modified
-      this->mark_modified(i->proxy_);
+      this->mark_modified(this->proxy(*i));
 //      this->mark_modified(i->get());
       int_setter(*(*i++).get(), start++);
     }
@@ -835,7 +835,7 @@ protected:
     
     while (i != this->vector().end()) {
       // mark parent object as modified
-      this->mark_modified(i->proxy_);
+      this->mark_modified(this->proxy(*i));
 //      this->mark_modified(i->get());
       (*i++)->index(start++);
     }

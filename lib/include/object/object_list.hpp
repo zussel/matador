@@ -220,7 +220,7 @@ protected:
     const_iterator first = object_list_.begin();
     const_iterator last = object_list_.end();
     while (first != last) {
-      pred((*first++).proxy_);
+      pred(this->proxy(*first++));
     }
   }
 
@@ -402,7 +402,7 @@ public:
     } else {
       // mark item object as modified
 //      this->mark_modified(x.get());
-      this->mark_modified(x.proxy_);
+      this->mark_modified(this->proxy(x));
       // set back ref to parent
       setter_(*x.get(), parent_ref(this->parent()));
       // insert new item object
@@ -416,7 +416,7 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item object as modified
-      this->mark_modified(i->proxy_);
+      this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
       setter_(*(*i).get(), parent_ref());

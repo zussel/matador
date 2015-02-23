@@ -22,6 +22,11 @@ using namespace std;
 namespace oos {
 
 
+object_proxy* object_container::proxy(const object_base_ptr &optr) const
+{
+  return optr.proxy_;
+}
+
 object_proxy* object_container::owner() const
 {
   return owner_;

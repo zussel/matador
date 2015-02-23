@@ -248,6 +248,8 @@ protected:
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
+  object_proxy* proxy(const object_base_ptr &optr) const;
+
   /**
    * Mark the list containing object as modified
    * in the object_store.
