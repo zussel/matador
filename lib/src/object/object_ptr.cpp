@@ -195,7 +195,7 @@ object* object_base_ptr::lookup_object()
   }
 }
 
-const object* object_base_ptr::lookup_object() const
+object* object_base_ptr::lookup_object() const
 {
   if (proxy_ && proxy_->obj) {
     return proxy_->obj;

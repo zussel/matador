@@ -180,6 +180,7 @@ public:
    */
   object_container()
     : ostore_(0)
+    , owner_(0)
   {}
 
   virtual ~object_container() {}
@@ -294,17 +295,15 @@ protected:
   {
     ostore_ = 0;
   }
-  
-  /**
-   * Sets the parent for the
-   * concrete container
-   *
-   * @param p The parent object of the container.
-   */
-  virtual void parent(object *p) = 0;
 
   template < class T >
   T* parent() const
+  {
+    return static_cast<T*>(owner_->obj);
+  }
+
+  template < class T >
+  T* parent()
   {
     return static_cast<T*>(owner_->obj);
   }

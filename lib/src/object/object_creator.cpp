@@ -22,7 +22,7 @@
 
 namespace oos {
 
-/*object_creator::object_creator(object_store &ostore, bool notify)
+/*object_creator::object_creator(object_proxy *root, object_store &ostore, bool notify)
   : ostore_(ostore)
   , notify_(notify)
 {}*/
@@ -42,9 +42,9 @@ void object_creator::read_value(const char*, object_base_ptr &x)
       // do the pointer count
       x.proxy_->link_ptr();
     }
-    object_stack_.push(x.ptr());
+    object_proxy_stack_.push(x.proxy_);
     x.ptr()->deserialize(*this);
-    object_stack_.pop();
+    object_proxy_stack_.pop();
   } else if (x.proxy_) {
     // count reference
     x.proxy_->link_ref();
@@ -54,8 +54,8 @@ void object_creator::read_value(const char*, object_base_ptr &x)
 void object_creator::read_value(const char*, object_container &x)
 {
   // set parent object (if available)
-  if (!object_stack_.empty()) {
-    x.parent(object_stack_.top());
+  if (!object_proxy_stack_.empty()) {
+    x.owner(object_proxy_stack_.top());
   }
   ostore_.insert(x);
 }

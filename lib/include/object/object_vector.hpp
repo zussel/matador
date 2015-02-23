@@ -135,11 +135,8 @@ public:
    * the name of the index parameter must be given.
    * 
    * @tparam T Parent object type.
-   * @param parent The containing vector object.
    */
-  object_vector_base(parent_type *parent)
-    : parent_(parent)
-  {}
+  object_vector_base() {}
 
   virtual ~object_vector_base() {}
 
@@ -332,30 +329,6 @@ protected:
   }
 
   /**
-   * Sets the parent for the vector
-   *
-   * @param p The parent object of the vector.
-   */
-  virtual void parent(object *p)
-  {
-    parent_type *temp = dynamic_cast<parent_type*>(p);
-    if (!temp) {
-      throw object_exception("couldn't cast object to concrete type");
-    }
-    parent_ = temp;
-  }
-
-  /**
-   * Return the parent of the 
-   * vector.
-   * @return The parent.
-   */
-  parent_type* parent()
-  {
-    return parent_;
-  }
-
-  /**
    * Return a reference to the
    * underlying vector class object.
    *
@@ -399,7 +372,6 @@ private:
   }
 
 private:
-  parent_type *parent_;
   vector_type object_vector_;
 };
 
@@ -594,14 +566,12 @@ public:
    * Creates an empty vector. The parent reference
    * and the index is holded by the item itself.
    *
-   * @param parent The parent object.
    * @param f1 The parent reference setter function.
    * @param f2 The index setter function.
    * @param f3 The index getter function.
    */
-	object_vector(S *parent, FUNC1 f1, FUNC2 f2, FUNC3 f3)
-    : object_vector_base<S, T>(parent)
-		, ref_setter(f1)
+	object_vector(FUNC1 f1, FUNC2 f2, FUNC3 f3)
+    : ref_setter(f1)
 		, int_setter(f2)
     , int_getter(f3)
   {}
@@ -616,7 +586,8 @@ public:
       // mark list object as modified
       this->mark_modified(this->owner());
 //      this->mark_modified(this->parent());
-      ref_setter(*x.get(), parent_ref(this->parent()));
+      S* prnt = object_container::parent<S>();
+      ref_setter(*x.get(), parent_ref(prnt));
       // insert new item object
       pos = this->vector().insert(pos, x);
       iterator first = pos;
@@ -753,9 +724,8 @@ public:
    * @param f1 The parent reference setter function.
    * @param f2 The index setter function.
    */
-	explicit object_vector(S *parent, FUNC1 f1 = 0, FUNC2 f2 = 0)
-    : object_vector_base<S, T, object_ptr<object_vector_item<T, S> > >(parent)
-		, str_setter(f1)
+	explicit object_vector(FUNC1 f1 = 0, FUNC2 f2 = 0)
+    : str_setter(f1)
     , int_setter(f2)
 	{}
 
@@ -773,7 +743,7 @@ public:
         index = (*pos)->index();
       }
       // create and insert new item
-      item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->parent()), index, x));
+      item_ptr item = this->ostore()->insert(new item_type(parent_ref(object_container::parent<S>()), index, x));
       // mark list object as modified
 //      this->mark_modified(this->parent());
       this->mark_modified(this->owner());

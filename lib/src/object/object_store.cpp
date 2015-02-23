@@ -202,7 +202,7 @@ object_store::insert_object(object *o, bool notify)
   // insert new element node
   insert_proxy(node, oproxy);
   // initialize object
-  object_creator oc(*this, notify);
+  object_creator oc(oproxy, *this, notify);
   o->deserialize(oc);
   // set corresponding prototype node
   oproxy->node = node.get();
@@ -402,7 +402,7 @@ void object_store::insert_proxy(object_proxy *oproxy)
   insert_proxy(node, oproxy);
 
   // initialize object
-  object_creator oc(*this, true);
+  object_creator oc(oproxy, *this, true);
   oproxy->obj->deserialize(oc);
   // notify observer
   if (true) {

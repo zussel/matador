@@ -172,7 +172,7 @@ public:
    * @return The object.
    */
 	object* lookup_object();
-	const object* lookup_object() const;
+	object* lookup_object() const;
 
   /**
    * Returns if the object is treated as a reference.

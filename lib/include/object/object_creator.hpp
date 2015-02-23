@@ -24,6 +24,7 @@
 
 #include "object/object_atomizer.hpp"
 #include "primary_key.hpp"
+#include "object_proxy.hpp"
 
 #include <stack>
 
@@ -32,6 +33,7 @@ namespace oos {
 class object_store;
 class object_base_ptr;
 class object;
+class object_proxy;
 class object_container;
 
 /**
@@ -58,11 +60,13 @@ public:
    * @param ostore The object_store.
    * @param notify The flag wether the observers should be informed or not.
    */
-  object_creator(object_store &ostore, bool notify)
+  object_creator(object_proxy *root, object_store &ostore, bool notify)
     : generic_object_reader<object_creator>(this)
     , ostore_(ostore)
     , notify_(notify)
-  {}
+  {
+    object_proxy_stack_.push(root);
+  }
 
   virtual ~object_creator();
 
@@ -75,7 +79,7 @@ public:
   void read_value(const char*, primary_key_base &x);
 
 private:
-  std::stack<object*> object_stack_;
+  std::stack<object_proxy*> object_proxy_stack_;
   object_store &ostore_;
   bool notify_;
 };

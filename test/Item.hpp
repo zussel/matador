@@ -241,8 +241,7 @@ public:
 
 public:
   List(const std::string &relation_name)
-    : list_(this)
-    , relation_name_(relation_name)
+    : relation_name_(relation_name)
   {}
   virtual ~List() {}
 
@@ -318,8 +317,7 @@ public:
 
 public:
   LinkedList(const std::string &relation_name)
-    : item_list_(this)
-    , relation_name_(relation_name)
+    : relation_name_(relation_name)
   {}
   virtual ~LinkedList() {}
 
@@ -399,8 +397,7 @@ public:
 
 public:
   Vector(const std::string &relation_name)
-    : vector_(this)
-    , relation_name_(relation_name)
+    : relation_name_(relation_name)
   {}
   virtual ~Vector() {}
 
@@ -514,9 +511,7 @@ public:
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
-  book_list()
-    : book_list_(this)
-  {}
+  book_list() {}
   virtual ~book_list() {}
 
   virtual void deserialize(oos::object_reader &deserializer)
@@ -626,10 +621,10 @@ private:
   emp_list_t emp_list_;
   
 public:
-  department() : emp_list_(this, &employee::dep) {}
+  department() : emp_list_(&employee::dep) {}
   department(const std::string &name)
     : name_(name)
-    , emp_list_(this, &employee::dep)
+    , emp_list_(&employee::dep)
   {}
   
   virtual ~department() {}
@@ -728,11 +723,11 @@ private:
   
 public:
   album()
-    : tracks_(this, &track::alb, &track::index, &track::index)
+    : tracks_(&track::alb, &track::index, &track::index)
   {}
   album(const std::string &name)
     : name_(name)
-    , tracks_(this, &track::alb, &track::index, &track::index)
+    , tracks_(&track::alb, &track::index, &track::index)
   {}
   
   virtual ~album() {}
@@ -791,11 +786,9 @@ private:
   track_list_t backup_tracks_;
   
 public:
-  playlist() : tracks_(this), backup_tracks_(this) {}
+  playlist() {}
   playlist(const std::string &name)
     : name_(name)
-    , tracks_(this)
-    , backup_tracks_(this)
   {}
   
   virtual ~playlist() {}

@@ -267,7 +267,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
 
   object_item_1->ref(a1);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
   val = 1;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
   
