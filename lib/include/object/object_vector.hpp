@@ -586,8 +586,7 @@ public:
       // mark list object as modified
       this->mark_modified(this->owner());
 //      this->mark_modified(this->parent());
-      S* prnt = object_container::parent<S>();
-      ref_setter(*x.get(), parent_ref(prnt));
+      ref_setter(*x.get(), parent_ref(this->owner()));
       // insert new item object
       pos = this->vector().insert(pos, x);
       iterator first = pos;
@@ -743,7 +742,7 @@ public:
         index = (*pos)->index();
       }
       // create and insert new item
-      item_ptr item = this->ostore()->insert(new item_type(parent_ref(object_container::parent<S>()), index, x));
+      item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->owner()), index, x));
       // mark list object as modified
 //      this->mark_modified(this->parent());
       this->mark_modified(this->owner());

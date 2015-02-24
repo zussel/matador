@@ -766,8 +766,8 @@ private:
     object_container::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new item_type(oos::object_ref<S>(object_container::parent<S>())));
-    last_ = ostore()->insert(new item_type(oos::object_ref<S>(object_container::parent<S>())));
+    first_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
+    last_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
     // link object elements
     reset();
   }

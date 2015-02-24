@@ -376,7 +376,7 @@ public:
 //      this->mark_modified(x.get());
       this->mark_modified(this->proxy(x));
       // set back ref to parent
-      setter_(*x.get(), parent_ref(object_container::parent<S>()));
+      setter_(*x.get(), parent_ref(this->owner()));
       // insert new item object
       return this->list().insert(pos, x);
     }
