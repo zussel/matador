@@ -32,6 +32,7 @@ object_creator::~object_creator() {}
 void object_creator::read_value(const char*, object_base_ptr &x)
 {
   // mark object pointer as internal
+  x.is_internal_ = true;
   if (!x.is_reference()) {
     if (!x.ptr()) {
       // create object

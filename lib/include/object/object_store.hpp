@@ -22,9 +22,9 @@
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
+#include "object/object_exception.hpp"
 
 #include "tools/sequencer.hpp"
-#include "object_exception.hpp"
 
 #include <memory>
 #include <unordered_map>

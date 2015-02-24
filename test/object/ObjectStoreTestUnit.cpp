@@ -95,11 +95,11 @@ void ObjectStoreTestUnit::optr_test()
 
   item_ptr item(new Item("Test"));
 
-  UNIT_ASSERT_FALSE(item.is_internal(), "item must not be internal");
+  UNIT_ASSERT_NULL(item.store(), "item must not be internal");
 
   item = ostore_.insert(item);
 
-  UNIT_ASSERT_TRUE(item.is_internal(), "item must be internal");
+  UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
 }
 
 void
@@ -698,12 +698,10 @@ void ObjectStoreTestUnit::test_remove()
 
   item_ptr item;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "null shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
 
   Item *i = new Item;
   item = i;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "transient object shouldn't be removable");
-
-  delete i;
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "transient object shouldn't be removable");
 }

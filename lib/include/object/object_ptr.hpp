@@ -39,6 +39,7 @@
 namespace oos {
 
 class object;
+class object_store;
 
 /**
  * @class object_base_ptr
@@ -159,6 +160,12 @@ public:
   void id(unsigned long i);
 
   /**
+   * Returns the corresponding
+   * object_store or nullptr
+   */
+  object_store* store() const;
+
+  /**
    * Returns the object
    * 
    * @return The object.
@@ -231,6 +238,7 @@ private:
 
   object_proxy *proxy_;
   bool is_reference_;
+  bool is_internal_;
 };
 
 /// @cond OOS_DEV
