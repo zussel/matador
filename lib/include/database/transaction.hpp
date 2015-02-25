@@ -46,7 +46,6 @@ namespace oos {
 class session;
 class object_store;
 class object_proxy;
-class byte_buffer;
 class action;
 
 /**

@@ -21,13 +21,10 @@
 #include "database/database.hpp"
 #include "database/database_exception.hpp"
 
-#include "tools/byte_buffer.hpp"
-
-#include "object/object_store.hpp"
-#include "object/object_proxy.hpp"
 #include "object/object.hpp"
 
 #include <sstream>
+#include <memory>
 
 using namespace std;
 
@@ -162,7 +159,7 @@ transaction::rollback()
 
     while (!action_list_.empty()) {
       iterator i = action_list_.begin();
-      std::auto_ptr<action> a(*i);
+      std::unique_ptr<action> a(*i);
       action_list_.erase(i);
       restore(a.get());
     }

@@ -18,6 +18,8 @@
 #include "database/transaction_helper.hpp"
 #include "database/database_exception.hpp"
 
+#include "tools/byte_buffer.hpp"
+
 #include "object/object_store.hpp"
 #include "object/object.hpp"
 
@@ -41,13 +43,13 @@ void backup_visitor::visit(insert_action *)
 void backup_visitor::visit(update_action*)
 {
   // serialize object
-  serializer_.serialize(object_, *buffer_);
+  serializer_.serialize(object_, buffer_);
 }
 
 void backup_visitor::visit(delete_action*)
 {
   // serialize object
-  serializer_.serialize(object_, *buffer_);
+  serializer_.serialize(object_, buffer_);
 }
 
 bool restore_visitor::restore(action *act, byte_buffer *buffer, object_store *ostore)
@@ -71,7 +73,7 @@ void restore_visitor::visit(insert_action *a)
 void restore_visitor::visit(update_action *a)
 {
   // deserialize data from buffer into object
-  serializer_.deserialize(a->proxy()->obj, *buffer_, ostore_);
+  serializer_.deserialize(a->proxy()->obj, buffer_, ostore_);
 }
 
 void restore_visitor::visit(delete_action *a)
@@ -87,12 +89,12 @@ void restore_visitor::visit(delete_action *a)
     // create object with id and deserialize
     oproxy->obj = ostore_->create(a->classname());
     // data from buffer into object
-    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
     // insert object
     ostore_->insert_object(oproxy->obj, false);
   } else {
     // data from buffer into object
-    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
   }
 }
 

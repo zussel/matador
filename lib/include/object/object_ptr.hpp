@@ -343,6 +343,9 @@ public:
 	T* operator->() const {
     return get();
 	}
+	T* operator->() {
+    return get();
+	}
 
   /**
    * @brief Return the reference to the object of type T.
@@ -355,6 +358,9 @@ public:
 	T& operator*() const {
     return *get();
 	}
+	T& operator*() {
+    return *get();
+	}
 
   /**
    * @brief Return the pointer to the object of type T.
@@ -365,6 +371,9 @@ public:
    * @return The pointer to the object of type T.
    */
   T* get() const {
+      return static_cast<T*>(lookup_object());
+  }
+  T* get() {
       return static_cast<T*>(lookup_object());
   }
 };
@@ -474,6 +483,9 @@ public:
 	T* operator->() const {
     return get();
 	}
+	T* operator->() {
+    return get();
+	}
 
   /**
    * @brief Return the reference to the object of type T.
@@ -486,6 +498,9 @@ public:
 	T& operator*() const {
     return *get();
 	}
+	T& operator*() {
+    return *get();
+	}
 
   /**
    * @brief Return the pointer to the object of type T.
@@ -496,6 +511,9 @@ public:
    * @return The pointer to the object of type T.
    */
 	T* get() const {
+    return static_cast<T*>(lookup_object());
+	}
+	T* get() {
     return static_cast<T*>(lookup_object());
 	}
 };

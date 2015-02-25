@@ -23,13 +23,7 @@
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 
-#include "tools/byte_buffer.hpp"
-
-#ifdef _MSC_VER
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 
 #include <memory>
 #include <list>
@@ -39,6 +33,8 @@
 namespace oos {
 
 /// @cond OOS_DEV
+
+class byte_buffer;
 
 class backup_visitor : public action_visitor
 {

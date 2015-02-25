@@ -185,7 +185,11 @@ object_store *object_base_ptr::store() const
 
 object* object_base_ptr::ptr()
 {
-  return lookup_object();
+  if (proxy_ && proxy_->obj) {
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
 }
 
 const object* object_base_ptr::ptr() const

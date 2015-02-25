@@ -204,13 +204,13 @@ ObjectStoreTestUnit::serializer()
   object_serializer serializer;
  
   byte_buffer buffer;
-  serializer.serialize(item, buffer);
+  serializer.serialize(item, &buffer);
   
   delete item;
   
   item = new Item();
   
-  serializer.deserialize(item, buffer, &ostore_);
+  serializer.deserialize(item, &buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(c, item->get_char(), "restored character is not equal to the original character");
   UNIT_ASSERT_EQUAL(f, item->get_float(), "restored float is not equal to the original float");
