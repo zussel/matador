@@ -206,6 +206,7 @@ struct object_proxy {
    * @return 0 (null) or the id of the object.
    */
   unsigned long id() const;
+  void id(unsigned long i);
 
   object_proxy *prev;      /**< The previous object_proxy in the list. */
   object_proxy *next;      /**< The next object_proxy in the list. */
@@ -226,8 +227,6 @@ struct object_proxy {
   typedef std::map<std::string, object_list_t> string_object_list_map_t;
   
   string_object_list_map_t relations;
-
-  void id(unsigned long i);
 };
 /// @endcond
 }

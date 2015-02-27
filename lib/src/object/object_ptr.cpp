@@ -117,16 +117,7 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 {
 	return !(x == *this);
 }
-/*
-const char* object_base_ptr::classname() const
-{
-  if (proxy_ && proxy_->node) {
-    return proxy_->node->type.c_str();
-  } else {
-    return 0;
-  }
-}
-*/
+
 void
 object_base_ptr::reset(object_proxy *proxy)
 {

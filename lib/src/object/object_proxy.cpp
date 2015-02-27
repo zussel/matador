@@ -155,12 +155,6 @@ unsigned long object_proxy::id() const {
   return (obj ? obj->id() : oid);
 }
 
-std::ostream& operator <<(std::ostream &os, const object_proxy &op)
-{
-  os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "] refs [" << op.ref_count << "] ptrs [" << op.ptr_count << "]";
-  return os;
-}
-
 void object_proxy::id(unsigned long i)
 {
   if (obj) {
@@ -168,6 +162,12 @@ void object_proxy::id(unsigned long i)
   } else {
     oid = i;
   }
+}
+
+std::ostream& operator <<(std::ostream &os, const object_proxy &op)
+{
+  os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "] refs [" << op.ref_count << "] ptrs [" << op.ptr_count << "]";
+  return os;
 }
 
 }
