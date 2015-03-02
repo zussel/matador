@@ -27,14 +27,17 @@ object_base_ptr::object_base_ptr(bool is_ref)
   : proxy_(0)
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
   : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
   , is_internal_(false)
+  , oid_(x.oid_)
 {
   if (proxy_) {
+    oid_ = proxy_->id();
     proxy_->add(this);
   }
 }
@@ -56,6 +59,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
     if (proxy_) {
+      oid_ = proxy_->id();
       if (is_internal_) {
         if (is_reference_) {
           proxy_->link_ref();
@@ -73,8 +77,10 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   : proxy_(op)
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {
   if (proxy_) {
+    oid_ = proxy_->id();
     proxy_->add(this);
   }
 }
@@ -83,6 +89,7 @@ object_base_ptr::object_base_ptr(object *o, bool is_ref)
   : proxy_(new object_proxy(o, nullptr))
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {
   proxy_->add(this);
 }
@@ -134,6 +141,7 @@ object_base_ptr::reset(object_proxy *proxy)
   if (proxy) {
     proxy_ = proxy;
     if (proxy_) {
+      oid_ = proxy_->id();
       if (is_internal_) {
         if (is_reference_) {
           proxy_->link_ref();
@@ -155,7 +163,7 @@ object_base_ptr::is_loaded() const
 unsigned long
 object_base_ptr::id() const
 {
-  return (proxy_ ? proxy_->id() : 0);
+  return (proxy_ ? proxy_->id() : oid_);
 }
 
 void object_base_ptr::id(unsigned long id)
@@ -163,8 +171,7 @@ void object_base_ptr::id(unsigned long id)
   if (proxy_) {
     throw std::logic_error("proxy already set");
   } else {
-    proxy_ = new object_proxy(id, nullptr);
-//    id_ = i;
+    oid_ = id;
   }
 }
 
@@ -218,7 +225,6 @@ bool
 object_base_ptr::is_internal() const
 {
   return is_internal_;
-//  return proxy_ && proxy_->ostore;
 }
 
 unsigned long
@@ -239,7 +245,7 @@ std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
     if (x.proxy_->obj) {
       out << *x.proxy_->obj;
     } else {
-      out << "unload object [" << x.proxy_->id() << "]";
+      out << "unload object [" << x.id() << "]";
     }
   } else {
       out << "unknown object [" << 0 << "]";

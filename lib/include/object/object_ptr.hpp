@@ -239,6 +239,7 @@ private:
   object_proxy *proxy_;
   bool is_reference_;
   bool is_internal_;
+  unsigned long oid_;
 };
 
 /// @cond OOS_DEV
