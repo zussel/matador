@@ -280,18 +280,20 @@ void table::read_value(const char *id, object_container &x)
    * are proxies to insert for this container
    */
   prototype_iterator p = ostore_->find_prototype(x.classname());
-  if (p != ostore_->end() && db().is_loaded(p->type)) {
-    database::relation_data_t::iterator i = relation_data.find(id);
-    if (i != relation_data.end()) {
-      database::object_map_t::iterator j = i->second.find(object_->id());
-      if (j != i->second.end()) {
-        while (!j->second.empty()) {
-          x.append_proxy(j->second.front());
-          j->second.pop_front();
+  if (p != ostore_->end()) {
+    if (db().is_loaded(p->type)) {
+      database::relation_data_t::iterator i = relation_data.find(id);
+      if (i != relation_data.end()) {
+        database::object_map_t::iterator j = i->second.find(object_->id());
+        if (j != i->second.end()) {
+          while (!j->second.empty()) {
+            x.append_proxy(j->second.front());
+            j->second.pop_front();
+          }
         }
       }
-    } else {
-      throw database_exception("common", "couldn't object by id");
+//    } else {
+//      throw database_exception("common", "couldn't object by id");
     }
   } else {
     throw database_exception("common", "couldn't find prototype node");
