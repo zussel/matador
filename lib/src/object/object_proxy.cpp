@@ -133,6 +133,7 @@ void object_proxy::reset(object *o)
   ref_count = 0;
   ptr_count = 0;
   obj = o;
+  oid = o ? o->id() : 0;
   node = 0;
 }
 
