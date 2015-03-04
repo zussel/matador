@@ -47,6 +47,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
     if (proxy_) {
+      oid_ = 0;
       if (is_internal_) {
         if (is_reference_) {
           proxy_->unlink_ref();
@@ -129,6 +130,7 @@ void
 object_base_ptr::reset(object_proxy *proxy)
 {
   if (proxy_) {
+    oid_ = 0;
     if (is_internal_) {
       if (is_reference_) {
         proxy_->unlink_ref();
