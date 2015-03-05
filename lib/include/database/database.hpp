@@ -73,6 +73,7 @@ public:
   typedef std::shared_ptr<statement> statement_ptr;
   typedef std::shared_ptr<table> table_ptr;
   typedef std::shared_ptr<database_sequencer> database_sequencer_ptr;
+  typedef std::map<std::string, table_ptr> table_map_t;
 
   struct table_info_t
   {
@@ -272,13 +273,12 @@ protected:
 private:
   friend class database_factory;
   friend class table;
+  friend class table_reader;
   friend class query;
 
   session *db_;
   bool commiting_;
 
-  typedef std::map<std::string, table_ptr> table_map_t;
-  
   table_map_t table_map_;
 
   database_sequencer_ptr sequencer_;
