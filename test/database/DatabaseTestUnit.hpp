@@ -62,6 +62,7 @@ protected:
 private:
   oos::object_store ostore_;
   std::string db_;
+  oos::session *session_;
 };
 
 #endif /* DATABASE_TEST_UNIT_HPP */
