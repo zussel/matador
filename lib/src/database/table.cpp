@@ -85,10 +85,8 @@ private:
 };
 
 table::table(database &db, const prototype_node &node)
-  : generic_object_reader<table>(this)
-  , db_(db)
+  : db_(db)
   , node_(node)
-  , column_(0)
   , prepared_(false)
   , is_loaded_(false)
 {}
@@ -130,26 +128,11 @@ void table::load(object_store &ostore)
     prepare();
   }
 
-  table_reader reader(db_, node_, ostore);
+  table_reader reader(*this, ostore);
 
   std::unique_ptr<result> res(select_->execute());
 
   reader.read(res.get());
-  // check result  
-  // create object
-  object_ = node_.producer->create();
-  column_ = 0;
-  while (res->fetch(object_)) {
-  
-    object_->deserialize(*this);
-
-    ostore.insert(object_);
-
-    column_ = 0;
-    
-    object_ = node_.producer->create();
-  }
-  delete object_;
 
   /*
    * after all tables were loaded fill

@@ -271,6 +271,10 @@ public:
     if (!optr.proxy_) {
       throw object_exception("object pointer is null");
     }
+    if (optr.proxy_->id() > 0) {
+      throw object_exception("object id is greater zero");
+    }
+
     insert_proxy(optr.proxy_);
     return optr;
   }

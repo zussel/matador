@@ -11,11 +11,12 @@ class object_proxy;
 
 class database;
 class result;
+class table;
 
 class table_reader : public generic_object_reader<table_reader>
 {
 public:
-  table_reader(database &db, const prototype_node &node, object_store &ostore);
+  table_reader(table &t, object_store &ostore);
   virtual ~table_reader() {}
 
   void read(result *res);
@@ -31,8 +32,7 @@ private:
   // temp data while loading
   object_proxy *new_proxy_;
   object_store &ostore_;
-  database &db_;
-  const prototype_node &node_;
+  table &table_;
 };
 
 }

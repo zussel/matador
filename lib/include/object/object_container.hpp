@@ -23,6 +23,7 @@
 #include "object/prototype_node.hpp"
 
 #include <functional>
+#include <database/table_reader.hpp>
 
 namespace oos {
 
@@ -239,6 +240,7 @@ protected:
   friend class relation_builder;
   friend class relation_filler;
   friend class table;
+  friend class table_reader;
 
   /**
    * @brief Append a object via its object_proxy.

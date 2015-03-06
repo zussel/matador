@@ -54,7 +54,7 @@ struct prototype_node;
 
 /// @cond OOS_DEV
 
-class OOS_API table : public generic_object_reader<table>
+class OOS_API table
 {
 public:
   typedef std::list<object_proxy*> object_proxy_list_t;
@@ -87,10 +87,10 @@ protected:
 
 private:
   friend class relation_filler;
+  friend class table_reader;
 
   database &db_;
   const prototype_node &node_;
-  int column_;
 
   typedef std::unique_ptr<statement> statement_ptr;
   statement_ptr insert_;

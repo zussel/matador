@@ -207,7 +207,6 @@ object_store::insert_object(object *o, bool notify)
   // set corresponding prototype node
   oproxy->node = node.get();
   // set this into persistent object
-//  oproxy->obj = o;
   // notify observer
   if (notify) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
@@ -381,10 +380,6 @@ void object_store::insert_proxy(object_proxy *oproxy)
     throw object_exception("object of proxy is null pointer");
   }
 
-  if (oproxy->id() > 0) {
-    throw object_exception("object id is greater zero");
-  }
-
   if (oproxy->ostore) {
     throw object_exception("object proxy already in object store");
   }
@@ -396,7 +391,11 @@ void object_store::insert_proxy(object_proxy *oproxy)
     throw object_exception("couldn't insert object");
   }
 
-  oproxy->id(seq_.next());
+  if (oproxy->id() == 0) {
+    oproxy->id(seq_.next());
+  } else {
+    seq_.update(oproxy->id());
+  }
   oproxy->ostore = this;
   
   insert_proxy(node, oproxy);
