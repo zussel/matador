@@ -51,7 +51,7 @@ session::session(object_store &ostore, const std::string &dbstring)
     impl_ = df.create(type_, this);
   }
 
-  impl_->open(connection_);
+//  impl_->open(connection_);
 }
 
 
