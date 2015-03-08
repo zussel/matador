@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATABASE_TEST_UNIT_HPP
-#define DATABASE_TEST_UNIT_HPP
+#ifndef SESSION_TEST_UNIT_HPP
+#define SESSION_TEST_UNIT_HPP
 
 #include "object/object_store.hpp"
 
@@ -26,28 +26,22 @@ namespace oos {
 class session;
 }
 
-class DatabaseTestUnit : public oos::unit_test
+class SessionTestUnit : public oos::unit_test
 {
 public:
-  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
-  virtual ~DatabaseTestUnit();
+  SessionTestUnit(const std::string &name, const std::string &msg, const std::string &db);
+  virtual ~SessionTestUnit();
 
   virtual void initialize();
   virtual void finalize();
 
-  void test_datatypes();
-  void test_insert();
-  void test_update();
-  void test_delete();
-  void test_reload_simple();
-  void test_reload();
-  void test_reload_container();
+  void test_open_close();
+  void test_create_drop();
+  void test_drop();
+  void test_reopen();
 
 protected:
   oos::session* create_session();
-
-  oos::object_store& ostore();
-  const oos::object_store& ostore() const;
 
 private:
   oos::object_store ostore_;
@@ -55,4 +49,4 @@ private:
   oos::session *session_;
 };
 
-#endif /* DATABASE_TEST_UNIT_HPP */
+#endif /* SESSION_TEST_UNIT_HPP */

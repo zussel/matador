@@ -41,16 +41,12 @@ SET (TEST_JSON_SOURCES
 )
 
 SET (TEST_DATABASE_SOURCES
-  database/SQLiteDatabaseTestUnit.cpp
-  database/SQLiteDatabaseTestUnit.hpp
   database/DatabaseTestUnit.cpp
   database/DatabaseTestUnit.hpp
-  database/MySQLDatabaseTestUnit.cpp
-  database/MySQLDatabaseTestUnit.hpp
-  database/MSSQLDatabaseTestUnit.cpp
-  database/MSSQLDatabaseTestUnit.hpp
-  database/MemoryDatabaseTestUnit.cpp
-  database/MemoryDatabaseTestUnit.hpp
+  database/SessionTestUnit.hpp
+  database/SessionTestUnit.cpp
+  database/TransactionTestUnit.cpp
+  database/TransactionTestUnit.hpp
 )
 
 SET (TEST_SOURCES test_oos.cpp)
