@@ -16,12 +16,9 @@ void table_reader::read(result *res)
 {
   // check result
   // create object
+  std::unique_ptr<object> obj(table_.node_.producer->create());
 
-  while (res->fetch()) {
-    std::unique_ptr<object> obj(table_.node_.producer->create());
-
-    // fill object with data from select
-    res->get(obj.get());
+  while (res->fetch(obj.get())) {
 
     new_proxy_ = new object_proxy(obj.get(), nullptr);
 
@@ -30,6 +27,8 @@ void table_reader::read(result *res)
     obj.release();
 
     ostore_.insert_proxy(new_proxy_);
+
+    obj.reset(table_.node_.producer->create());
   }
 }
 
