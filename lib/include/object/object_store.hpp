@@ -50,8 +50,8 @@
 namespace oos {
 
 class object;
-struct object_proxy;
-struct prototype_node;
+class object_proxy;
+class prototype_node;
 class object_observer;
 class object_container;
 
@@ -271,9 +271,9 @@ public:
     if (!optr.proxy_) {
       throw object_exception("object pointer is null");
     }
-    if (optr.proxy_->id() > 0) {
-      throw object_exception("object id is greater zero");
-    }
+    //if (optr.proxy_->id() > 0) {
+    //  throw object_exception("object id is greater zero");
+    //}
 
     insert_proxy(optr.proxy_);
     return optr;

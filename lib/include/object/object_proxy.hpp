@@ -43,7 +43,7 @@ namespace oos {
 class object;
 class object_store;
 class object_base_ptr;
-struct prototype_node;
+class prototype_node;
 
 /**
  * @cond OOS_DEV
@@ -54,7 +54,8 @@ struct prototype_node;
  * the pointer to the object and the id. Once a new object
  * is inserted into the 
  */
-struct object_proxy {
+class object_proxy {
+public:
   /**
    * @brief Create an empty object_proxy
    *

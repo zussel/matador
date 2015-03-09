@@ -44,7 +44,7 @@ class session;
 class statement;
 class database;
 class object;
-struct prototype_node;
+class prototype_node;
 class condition;
 class object_atomizable;
 

@@ -50,7 +50,7 @@ class statement;
 class table;
 class result;
 class database_sequencer;
-struct prototype_node;
+class prototype_node;
 
 /// @cond OOS_DEV
 /**
