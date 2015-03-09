@@ -32,6 +32,7 @@
 #endif
 
 #include <cstring>
+#include <vector>
 
 namespace oos {
 
@@ -39,8 +40,7 @@ namespace oos {
 class OOS_API blob
 {
 public:
-  typedef unsigned int size_type;
-  enum { CHUNK_SIZE = 1024 };
+  typedef std::size_t size_type;
 
 public:
   blob();
@@ -61,10 +61,6 @@ public:
   template < typename T >
   bool assign(const T &val)
   {
-    delete [] data_;
-    data_ = new char[sizeof(T)];
-    memcpy(data_, &val, sizeof(T));
-    size_ = sizeof(T);
     return false;
   }
 
@@ -82,9 +78,6 @@ public:
   template < typename T >
   bool append(const T &val)
   {
-    if (sizeof(T) > size_) {
-      return false;
-    }
     return false;
   }
 
@@ -95,9 +88,7 @@ public:
   const char* data() const;
 
 private:
-  char *data_;
-  size_type size_;
-  size_type capacity_;
+  std::vector<char> data_;
 };
 /// @endcond
 }

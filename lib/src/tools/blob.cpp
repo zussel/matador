@@ -3,30 +3,25 @@
 namespace oos {
 
 blob::blob()
-  : data_(new char[CHUNK_SIZE])
-  , size_(0)
-  , capacity_(CHUNK_SIZE)
-{
-}
+{}
 
 blob::~blob()
 {
-  delete [] data_;
 }
 
 blob::size_type blob::size() const
 {
-  return size_;
+  return data_.size();
 }
 
 blob::size_type blob::capacity() const
 {
-  return capacity_;
+  return data_.capacity();
 }
 
 const char* blob::data() const
 {
-  return data_;
+  return &data_.front();
 }
 
 }
