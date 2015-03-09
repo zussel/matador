@@ -18,6 +18,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+  add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
   add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
@@ -81,6 +82,24 @@ ObjectStoreTestUnit::version_test()
   UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
   UNIT_ASSERT_EQUAL(oos::version::minor, 2, "invalid minor version");
   UNIT_ASSERT_EQUAL(oos::version::patch_level, 1, "invalid patch level");
+}
+
+
+void ObjectStoreTestUnit::optr_test()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item_null;
+
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "object pointer is null", "shouldn't insert null object pointer");
+
+  item_ptr item(new Item("Test"));
+
+  UNIT_ASSERT_NULL(item.store(), "item must not be internal");
+
+  item = ostore_.insert(item);
+
+  UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
 }
 
 void
@@ -185,13 +204,13 @@ ObjectStoreTestUnit::serializer()
   object_serializer serializer;
  
   byte_buffer buffer;
-  serializer.serialize(item, buffer);
+  serializer.serialize(item, &buffer);
   
   delete item;
   
   item = new Item();
   
-  serializer.deserialize(item, buffer, &ostore_);
+  serializer.deserialize(item, &buffer, &ostore_);
 
   UNIT_ASSERT_EQUAL(c, item->get_char(), "restored character is not equal to the original character");
   UNIT_ASSERT_EQUAL(f, item->get_float(), "restored float is not equal to the original float");
@@ -248,7 +267,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
 
   object_item_1->ref(a1);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
   val = 1;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
   
@@ -668,7 +687,9 @@ void ObjectStoreTestUnit::test_insert()
 {
   UNIT_ASSERT_EXCEPTION(ostore_.insert((object*)0), object_exception, "object is null", "null shouldn't be insertable");
 
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(new ItemC), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+  ItemC *ic = new ItemC;
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+  delete ic;
 }
 
 void ObjectStoreTestUnit::test_remove()
@@ -677,11 +698,10 @@ void ObjectStoreTestUnit::test_remove()
 
   item_ptr item;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "null shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
 
-  item = new Item;
+  Item *i = new Item;
+  item = i;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is nullptr", "transient object shouldn't be removable");
-
-
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "transient object shouldn't be removable");
 }

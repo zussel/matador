@@ -18,6 +18,8 @@
 #include "database/transaction_helper.hpp"
 #include "database/database_exception.hpp"
 
+#include "tools/byte_buffer.hpp"
+
 #include "object/object_store.hpp"
 #include "object/object.hpp"
 
@@ -41,13 +43,13 @@ void backup_visitor::visit(insert_action *)
 void backup_visitor::visit(update_action*)
 {
   // serialize object
-  serializer_.serialize(object_, *buffer_);
+  serializer_.serialize(object_, buffer_);
 }
 
 void backup_visitor::visit(delete_action*)
 {
   // serialize object
-  serializer_.serialize(object_, *buffer_);
+  serializer_.serialize(object_, buffer_);
 }
 
 bool restore_visitor::restore(action *act, byte_buffer *buffer, object_store *ostore)
@@ -71,7 +73,7 @@ void restore_visitor::visit(insert_action *a)
 void restore_visitor::visit(update_action *a)
 {
   // deserialize data from buffer into object
-  serializer_.deserialize(a->obj(), *buffer_, ostore_);
+  serializer_.deserialize(a->proxy()->obj, buffer_, ostore_);
 }
 
 void restore_visitor::visit(delete_action *a)
@@ -87,18 +89,18 @@ void restore_visitor::visit(delete_action *a)
     // create object with id and deserialize
     oproxy->obj = ostore_->create(a->classname());
     // data from buffer into object
-    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
     // insert object
     ostore_->insert_object(oproxy->obj, false);
   } else {
     // data from buffer into object
-    serializer_.deserialize(oproxy->obj, *buffer_, ostore_);
+    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
   }
 }
 
-transaction::iterator action_inserter::insert(object *o)
+transaction::iterator action_inserter::insert(object_proxy *proxy)
 {
-  obj_ = o;
+  proxy_ = proxy;
   inserted_ = false;
   transaction::iterator first = action_list_.begin();
   transaction::iterator last = action_list_.end();
@@ -111,8 +113,8 @@ transaction::iterator action_inserter::insert(object *o)
     }
   }
   if (!inserted_) {
-    insert_action *a = new insert_action(obj_->classname());
-    a->push_back(o);
+    insert_action *a = new insert_action(proxy_->node->type.c_str());
+    a->push_back(proxy_);
     return action_list_.insert(action_list_.end(), a);
   }
   return last;
@@ -123,8 +125,8 @@ void action_inserter::visit(insert_action *a)
   // check (object) type of insert action
   // if type is equal to objects type
   // add object to action
-  if (a->type() == obj_->classname()) {
-    a->push_back(obj_);
+  if (a->type() == proxy_->node->type) {
+    a->push_back(proxy_);
     inserted_ = true;
   }
 }
@@ -141,12 +143,12 @@ void action_inserter::visit(delete_action *)
   // it is inserted, throw error
 }
 
-bool action_remover::remove(transaction::iterator i, object *o)
+bool action_remover::remove(transaction::iterator i, object_proxy *proxy)
 {
-  obj_ = o;
+  proxy_ = proxy;
   iter_ = i;
   (*i)->accept(this);
-  obj_ = 0;
+  proxy_ = 0;
   return true;
 }
 
@@ -180,8 +182,8 @@ void action_remover::visit(update_action *a)
    * with this given object.
    *
    ***********/
-  if (a->obj()->id() == id_) {
-    *iter_ = new delete_action(obj_->classname(), obj_->id());
+  if (a->proxy()->obj->id() == id_) {
+    *iter_ = new delete_action(proxy_->node->type.c_str(), proxy_->obj->id());
     delete a;
   }
 }

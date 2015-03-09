@@ -36,19 +36,12 @@ using namespace std;
 DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db)
   : unit_test(name, msg)
   , db_(db)
+  , session_(nullptr) 
 {
-  add_test("open_close", std::bind(&DatabaseTestUnit::test_open_close, this), "open database test");
-  add_test("create_drop", std::bind(&DatabaseTestUnit::test_create_drop, this), "create drop database test");
-  add_test("reopen", std::bind(&DatabaseTestUnit::test_reopen, this), "reopen database test");
   add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
   add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
   add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
   add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
-//  add_test("drop", std::bind(&DatabaseTestUnit::test_drop, this), "drop database test");
-  add_test("simple", std::bind(&DatabaseTestUnit::test_simple, this), "simple database test");
-  add_test("complex", std::bind(&DatabaseTestUnit::test_with_sub, this), "object with sub object database test");
-  add_test("list", std::bind(&DatabaseTestUnit::test_with_list, this), "object with object list database test");
-  add_test("vector", std::bind(&DatabaseTestUnit::test_with_vector, this), "object with object vector database test");
   add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
   add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
   add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
@@ -67,98 +60,31 @@ DatabaseTestUnit::initialize()
 //  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
+  
+  // create session
+  session_ = create_session();
+
+  session_->open();
+
+  session_->create();
 }
 
 void
 DatabaseTestUnit::finalize()
 {
+  session_->drop();
+
+  session_->close();
+
+  delete session_;
+
   ostore_.clear(true);
-}
-
-void
-DatabaseTestUnit::test_open_close()
-{
-  if (db_ == "memory") {
-    return;
-  }
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->close();
-
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
-  
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_create_drop()
-{
-  if (db_ == "memory") {
-    return;
-  }
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->create();
-
-  db->drop();
-
-  db->close();
-
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
-  
-  delete db;
-}
-
-void DatabaseTestUnit::test_reopen()
-{
-  if (db_ == "memory") {
-    return;
-  }
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->close();
-
-  db->open();
-  
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-
-  db->close();
-
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
-  
-  delete db;
 }
 
 void DatabaseTestUnit::test_datatypes()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  try {
-    // create database
-    db->create();
-  } catch (exception &ex) {
-    UNIT_FAIL("couldn't create and load database: " << ex.what());
-  }
 
   float fval = 2.445566f;
   double dval = 11111.23433345;
@@ -193,7 +119,7 @@ void DatabaseTestUnit::test_datatypes()
     i->set_varchar(vval);
     i->set_string(strval);
     
-    item_ptr item = db->insert(i);
+    item_ptr item = session_->insert(i);
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_FAIL("caught database exception: " << ex.what() << " (start rollback)");
@@ -205,15 +131,15 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_FAIL("caught exception: " << ex.what() << " (start rollback)");
   }
   // close db
-  db->close();
+  session_->close();
 
   // clear object store
   ostore_.clear();
 
-  db->open();
+  session_->open();
   
   // load data
-  db->load();
+  session_->load();
 
   try {
     oview_t oview(ostore_);
@@ -240,63 +166,26 @@ void DatabaseTestUnit::test_datatypes()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
   }
-  db->drop();
-  // close db
-  db->close();
-
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_drop()
-{
-  if (db_ == "memory") {
-    return;
-  }
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->drop();
-
-  db->close();
-
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
-  
-  delete db;
 }
 
 void DatabaseTestUnit::test_insert()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->create();
-
-  item_ptr item = db->insert(new Item());
+  item_ptr item = session_->insert(new Item());
 
   UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 
-  db->close();
+  session_->close();
 
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
 
   ostore_.clear();
   
-  db->open();
+  session_->open();
   
-  db->load();
+  session_->load();
   
   oview_t oview(ostore_);
 
@@ -306,90 +195,56 @@ void DatabaseTestUnit::test_insert()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what());
   }
-
-  db->drop();
-  
-  db->close();
-
-  delete db;
 }
 
 void DatabaseTestUnit::test_update()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->create();
-
-  item_ptr item = db->insert(new Item());
+  item_ptr item = session_->insert(new Item());
   
   UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 
   item->set_string("Mars");
   
-  db->update(item);
+  session_->update(item);
 
-  db->close();
+  session_->close();
 
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
 
   ostore_.clear();
   
-  db->open();
+  session_->open();
   
-  db->load();
+  session_->load();
   
   oview_t oview(ostore_);
   
   item = oview.front();
   
   UNIT_ASSERT_EQUAL("Mars", item->get_string(), "expected string must be 'Mars'");
-
-  db->drop();
-
-  db->close();
-
-  delete db;
 }
 
 void DatabaseTestUnit::test_delete()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  UNIT_ASSERT_TRUE(db->is_open(), "couldn't open database database");
-  
-  db->create();
-
-  item_ptr item = db->insert(new Item());
+  item_ptr item = session_->insert(new Item());
 
   UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 
-  db->close();
+  session_->close();
 
-  UNIT_ASSERT_FALSE(db->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
 
   ostore_.clear();
   
-  db->open();
+  session_->open();
   
-  db->load();
+  session_->load();
   
   oview_t oview(ostore_);
 
@@ -402,7 +257,7 @@ void DatabaseTestUnit::test_delete()
 
   item = oview.front();
 
-  db->remove(item);
+  session_->remove(item);
 
   try {
     UNIT_ASSERT_TRUE(oview.begin() == oview.end(), "object view must be empty");
@@ -410,388 +265,16 @@ void DatabaseTestUnit::test_delete()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what());
   }
-
-  db->drop();
-
-  db->close();
-
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_simple()
-{
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  // create schema
-  db->create();
-
-  // create new transaction    
-  transaction tr(*db);
-  try {
-    // begin transaction
-    tr.begin();
-
-    // ... do some object modifications
-    typedef object_ptr<Item> item_ptr;
-    typedef object_view<Item> item_view;
-    // insert new object
-    item_ptr item = ostore_.insert(new Item("Hello World", 70));
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "item has invalid object id");
-    tr.commit();
-
-    tr.begin();
-    // modify object
-    item->set_int(120);
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
-    
-    transaction tr2(*db);
-    try {
-      // begin inner transaction
-      tr2.begin();
-      // change name again
-      item->set_int(170);
-
-      UNIT_ASSERT_EQUAL(item->get_int(), 170, "item has invalid int value");
-      // rollback transaction
-      tr2.rollback();
-
-      UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
-    } catch (exception &ex) {
-      UNIT_WARN("transaction [" << tr2.id() << "] rolled back: " << ex.what());
-      tr2.rollback();
-    }
-    tr.rollback();
-
-    UNIT_ASSERT_EQUAL(item->get_int(), 70, "item has invalid int value");
-
-    tr.begin();
-    // delete object
-    UNIT_ASSERT_TRUE(ostore_.is_removable(item), "couldn't delete item");
-    
-    ostore_.remove(item);
-
-    tr.rollback();
-
-    item_view view(ostore_);
-
-    UNIT_ASSERT_FALSE(view.empty(), "item view is empty");
-    UNIT_ASSERT_EQUAL((int)view.size(), 1, "more than one item in view");
-
-    item = view.front();
-
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hello World", "invalid item name");
-    UNIT_ASSERT_EQUAL(item->get_int(), 70, "invalid item int value");
-
-    tr.begin();
-
-    UNIT_ASSERT_TRUE(ostore_.is_removable(item), "couldn't delete item");
-    
-    ostore_.remove(item);
-    
-    tr.commit();
-
-    UNIT_ASSERT_TRUE(view.empty(), "item view is empty");
-  } catch (database_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
-    tr.rollback();
-  }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_with_sub()
-{
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  // load data
-  db->create();
-
-  // load data
-  /****************
-   *
-   * comment this statement and the following
-   * will happen if data exists:
-   * data won't be load
-   * a car object with id 1 is created
-   * and an exception on insert is thrown
-   * because there is already a car object
-   * with id 1
-   ****************/
-//  db->load();
-
-  // create new transaction    
-  transaction tr(*db);
-  try {
-    // begin transaction
-    tr.begin();
-    // ... do some object modifications
-    typedef ObjectItem<Item> object_item_t;
-    typedef object_ptr<object_item_t> object_item_ptr;
-    typedef object_ptr<Item> item_ptr;
-    // insert new object
-    object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
-
-    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid object item");
-
-    item_ptr item = object_item->ptr();
-
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-
-    item->set_int(120);
-    item->set_string("Bar");
-
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
-
-    tr.commit();
-    
-    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
-
-    tr.begin();
-    
-    object_view<object_item_t> oview(ostore_);
-
-    UNIT_ASSERT_FALSE(oview.empty(), "object item view couldn't be empty");
-
-    UNIT_ASSERT_TRUE(ostore_.is_removable(object_item), "couldn't remove object item");
-
-    ostore_.remove(object_item);
-    
-    UNIT_ASSERT_TRUE(oview.empty(), "object item view must be empty");
-    
-    tr.rollback();
-
-    UNIT_ASSERT_FALSE(oview.empty(), "object item view couldn't be empty");
-
-  } catch (database_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_with_list()
-{
-  typedef object_ptr<ItemPtrList> itemlist_ptr;
-  typedef ItemPtrList::value_type item_ptr;
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  // load data
-  db->create();
-
-  // create new transaction    
-  transaction tr(*db);
-  try {
-    // begin transaction
-    tr.begin();
-    // ... do some object modifications
-
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
-
-    UNIT_ASSERT_GREATER(itemlist->id(), 0UL, "invalid item list");
-    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-
-    tr.commit();
-
-    tr.begin();
-    for (int i = 0; i < 2; ++i) {
-      stringstream name;
-      name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new Item(name.str()));
-
-      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-
-      itemlist->push_back(item);
-    }
-
-    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-
-    tr.rollback();
-
-    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "invalid item list size");
-
-    tr.begin();
-
-    for (int i = 0; i < 2; ++i) {
-      stringstream name;
-      name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new Item(name.str()));
-
-      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-
-      itemlist->push_back(item);
-    }
-
-    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-
-    tr.commit();
-    
-    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-    tr.begin();
-    
-    itemlist->clear();
-
-    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-
-    tr.rollback();
-
-    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-
-  } catch (database_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
-}
-
-void
-DatabaseTestUnit::test_with_vector()
-{
-  typedef object_ptr<ItemPtrVector> itemvector_ptr;
-  typedef ItemPtrVector::value_type item_ptr;
-
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  // load data
-  db->create();
-
-  // create new transaction    
-  transaction tr(*db);
-  try {
-    // begin transaction
-    tr.begin();
-    // ... do some object modifications
-
-    itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
-
-    UNIT_ASSERT_GREATER(itemvector->id(), 0UL, "invalid item list");
-    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
-
-    tr.commit();
-
-    tr.begin();
-    for (int i = 0; i < 2; ++i) {
-      stringstream name;
-      name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new Item(name.str()));
-
-      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-
-      itemvector->push_back(item);
-    }
-
-    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
-
-    tr.rollback();
-
-    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
-    UNIT_ASSERT_EQUAL((int)itemvector->size(), 0, "invalid item list size");
-
-    tr.begin();
-
-    for (int i = 0; i < 2; ++i) {
-      stringstream name;
-      name << "Item " << i+1;
-      item_ptr item = ostore_.insert(new Item(name.str()));
-
-      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-
-      itemvector->push_back(item);
-    }
-
-    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
-
-    tr.commit();
-    
-    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
-    tr.begin();
-    
-    itemvector->clear();
-
-    UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
-
-    tr.rollback();
-
-    UNIT_ASSERT_FALSE(itemvector->empty(), "item list couldn't be empty");
-    UNIT_ASSERT_EQUAL((int)itemvector->size(), 2, "invalid item list size");
-
-  } catch (database_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  } catch (object_exception &ex) {
-    // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
-    tr.rollback();
-  }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
 }
 
 void
 DatabaseTestUnit::test_reload_simple()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<Item> item_ptr;
   typedef object_view<Item> oview_t;
 
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  try {
-    // load data
-    db->create();
-  } catch (exception &ex) {
-    UNIT_FAIL("couldn't create and load database: " << ex.what());
-  }
-
-  // create new transaction    
-  transaction tr(*db);
+  // create new transaction
+  transaction tr(*session_);
   try {
     // begin transaction
     tr.begin();
@@ -816,15 +299,15 @@ DatabaseTestUnit::test_reload_simple()
     tr.rollback();
   }
   // close db
-  db->close();
+  session_->close();
 
   // clear object store
   ostore_.clear();
 
-  db->open();
+  session_->open();
   
   // load data
-  db->load();
+  session_->load();
 
   try {
     // create view
@@ -844,37 +327,18 @@ DatabaseTestUnit::test_reload_simple()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
 }
 
 void
 DatabaseTestUnit::test_reload()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef ObjectItem<Item> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<Item> item_ptr;
   typedef object_view<object_item_t> oview_t;
 
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  try {
-    // load data
-    db->create();
-  } catch (exception &ex) {
-    UNIT_FAIL("couldn't create and load database: " << ex.what());
-  }
-
   // create new transaction    
-  transaction tr(*db);
+  transaction tr(*session_);
   try {
     // begin transaction
     tr.begin();
@@ -911,15 +375,15 @@ DatabaseTestUnit::test_reload()
     tr.rollback();
   }
   // close db
-  db->close();
+  session_->close();
 
   // clear object store
   ostore_.clear();
 
-  db->open();
+  session_->open();
   
   // load data
-  db->load();
+  session_->load();
 
   try {
     oview_t oview(ostore_);
@@ -934,31 +398,16 @@ DatabaseTestUnit::test_reload()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
 }
 
 void
 DatabaseTestUnit::test_reload_container()
 {
-  if (db_ == "memory") {
-    return;
-  }
-
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;
   
-  // create database and make object store known to the database
-  session *db = create_session();
-
-  // load data
-  db->create();
-
-  // create new transaction    
-  transaction tr(*db);
+  // create new transaction
+  transaction tr(*session_);
   try {
     // begin transaction
     tr.begin();
@@ -1014,16 +463,16 @@ DatabaseTestUnit::test_reload_container()
 //  ostore_.dump_prototypes(out);
 
   // close db
-  db->close();
+  session_->close();
   
   // clear object store
   ostore_.clear();
 
-  db->open();
+  session_->open();
 
 //  cout << "reloading \n";
   // load data
-  db->load();
+  session_->load();
 
   try {
     typedef object_view<album> album_view_t;
@@ -1054,11 +503,6 @@ DatabaseTestUnit::test_reload_container()
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
-  db->drop();
-  // close db
-  db->close();
-  
-  delete db;
 }
 
 session* DatabaseTestUnit::create_session()

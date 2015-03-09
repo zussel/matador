@@ -187,7 +187,7 @@
 #define UNIT_WARN(msg)                   \
   do {                                   \
     std::stringstream warn_stream;       \
-    warn_stream << msg;                  \
+    warn_stream << msg << "\n";          \
     warn(warn_stream.str(), __LINE__, __FILE__); \
   } while (false)
 

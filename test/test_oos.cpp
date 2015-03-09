@@ -29,14 +29,13 @@
 #include "object/ObjectVectorTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 
-#include "database/SQLiteDatabaseTestUnit.hpp"
-#include "database/MySQLDatabaseTestUnit.hpp"
-#include "database/MSSQLDatabaseTestUnit.hpp"
-#include "database/MemoryDatabaseTestUnit.hpp"
+#include "database/DatabaseTestUnit.hpp"
+#include "database/SessionTestUnit.hpp"
+#include "database/TransactionTestUnit.hpp"
 
 #include "json/JsonTestUnit.hpp"
 
-#include "unit/test_suite.hpp"
+#include "connections.hpp"
 
 using namespace oos;
 
@@ -59,18 +58,24 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new ObjectVectorTestUnit());
 
 #ifdef OOS_MYSQL
-  test_suite::instance().register_unit(new MySQLDatabaseTestUnit());
+  test_suite::instance().register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
+  test_suite::instance().register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
+  test_suite::instance().register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql));
 #endif
 
 #ifdef OOS_ODBC
-  test_suite::instance().register_unit(new MSSQLDatabaseTestUnit());
+  test_suite::instance().register_unit(new SessionTestUnit("mssql_session", "mssql session test unit", connection::mssql));
+  test_suite::instance().register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", connection::mssql));
+  test_suite::instance().register_unit(new DatabaseTestUnit("mssql_database", "mssql database test unit", connection::mssql));
 #endif
 
 #ifdef OOS_SQLITE3
-  test_suite::instance().register_unit(new SQLiteDatabaseTestUnit());
+  test_suite::instance().register_unit(new SessionTestUnit("sqlite_session", "sqlite session test unit", connection::sqlite));
+  test_suite::instance().register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", connection::sqlite));
+  test_suite::instance().register_unit(new DatabaseTestUnit("sqlite_database", "sqlite database test unit", connection::sqlite));
 #endif
 
-  test_suite::instance().register_unit(new MemoryDatabaseTestUnit());
+  test_suite::instance().register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
 
   test_suite::instance().register_unit(new JsonTestUnit());
 

@@ -34,6 +34,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizable.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
 )
 
 SET(OBJECT_HEADER
@@ -61,6 +62,7 @@ SET(OBJECT_HEADER
   ../include/object/attribute_serializer.hpp
   ../include/object/object_atomizer.hpp
   ../include/object/object_atomizable.hpp
+  ../include/object/primary_key.hpp
 )
 
 SET(TOOLS_SOURCES
@@ -179,6 +181,7 @@ SET(DATABASE_SOURCES
   database/statement.cpp
   database/statement_creator.cpp
   database/table.cpp
+  database/table_reader.cpp
   database/sql.cpp
   database/query.cpp
   database/query_create.cpp
@@ -205,6 +208,7 @@ SET(DATABASE_HEADER
   ../include/database/sql.hpp
   ../include/database/statement.hpp
   ../include/database/table.hpp
+  ../include/database/table_reader.hpp
   ../include/database/query.hpp
   ../include/database/query_create.hpp
   ../include/database/query_select.hpp

@@ -15,43 +15,42 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object.hpp"
+#ifndef TRANSACTION_TEST_UNIT_HPP
+#define TRANSACTION_TEST_UNIT_HPP
+
 #include "object/object_store.hpp"
 
+#include "unit/unit_test.hpp"
+
 namespace oos {
+class session;
+}
 
-object::object()
-	: id_(0)
+class TransactionTestUnit : public oos::unit_test
 {
-}
+public:
+  TransactionTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
+  virtual ~TransactionTestUnit();
 
-object::~object()
-{
-}
+  virtual void initialize();
+  virtual void finalize();
 
-unsigned long object::id() const
-{
-	return id_;
-}
+  void test_simple();
+  void test_with_sub();
+  void test_with_list();
+  void test_with_vector();
 
-void object::id(unsigned long oid)
-{
-	id_ = oid;
-}
+private:
+  oos::session* create_session();
 
-//void object::mark_modified()
-//{
-//  if (!proxy_ || !proxy_->ostore) {
-//    // throw exception
-//    return;
-//  }
-//  proxy_->ostore->mark_modified(proxy_);
-//}
+  oos::object_store& ostore();
+  const oos::object_store& ostore() const;
 
-std::ostream& operator <<(std::ostream &os, const object &o)
-{
-  os << "object " << typeid(o).name() << " (" << &o << ") [" << o.id_ << "]";
-  return os;
-}
+private:
+  oos::object_store ostore_;
+  std::string db_;
+  oos::session *session_;
 
-}
+};
+
+#endif /* TRANSACTION_TEST_UNIT_HPP */

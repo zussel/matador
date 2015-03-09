@@ -31,7 +31,6 @@
   #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
 #include "object/prototype_node.hpp"
@@ -39,14 +38,8 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#ifdef _MSC_VER
 #include <memory>
 #include <unordered_map>
-#else
-#include <tr1/memory>
-#include <tr1/unordered_map>
-#endif
-
 #include <map>
 #include <list>
 
@@ -61,18 +54,18 @@ struct prototype_node;
 
 /// @cond OOS_DEV
 
-class OOS_API table : public generic_object_reader<table>
+class OOS_API table
 {
 public:
-  typedef std::list<object*> object_list_t;
-  typedef std::unordered_map<long, object_list_t> object_map_t;
+  typedef std::list<object_proxy*> object_proxy_list_t;
+  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
 
 //protected:
   table(database &db, const prototype_node &node);
 
 public:
-  virtual ~table();
+  ~table();
 
   std::string name() const;
   virtual void prepare();
@@ -86,13 +79,6 @@ public:
 
   bool is_loaded() const;
 
-  template < class T >
-  void read_value(const char *, T &) {}
-  void read_value(const char *, char *, int ) {}
-  void read_value(const char *, object_base_ptr &x);
-  void read_value(const char *id, object_container &x);
-  void read_value(const char *id, primary_key_base &x);
-
 protected:
   const prototype_node& node() const;
 
@@ -101,20 +87,17 @@ protected:
 
 private:
   friend class relation_filler;
+  friend class table_reader;
 
   database &db_;
   const prototype_node &node_;
-  int column_;
 
-  statement *insert_;
-  statement *update_;
-  statement *delete_;
-  statement *select_;
-  
-  // temp data while loading
-  object *object_;
-  object_store *ostore_;
-  
+  typedef std::unique_ptr<statement> statement_ptr;
+  statement_ptr insert_;
+  statement_ptr update_;
+  statement_ptr delete_;
+  statement_ptr select_;
+
   bool prepared_;
 
   bool is_loaded_;

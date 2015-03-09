@@ -39,6 +39,7 @@
 namespace oos {
 
 class object;
+class object_store;
 
 /**
  * @class object_base_ptr
@@ -134,7 +135,7 @@ public:
    * 
    * @param o The new object for the object_base_ptr.
    */
-	void reset(const object *o = 0);
+	void reset(object_proxy *proxy = 0);
 
   /**
    * Returns if the object is loaded.
@@ -159,17 +160,25 @@ public:
   void id(unsigned long i);
 
   /**
-   * Returns the object
-   * 
-   * @return The object.
+   * Returns the corresponding
+   * object_store or nullptr
    */
-	object* ptr() const;
+  object_store* store() const;
 
   /**
    * Returns the object
    * 
    * @return The object.
    */
+	object* ptr();
+	const object* ptr() const;
+
+  /**
+   * Returns the object
+   * 
+   * @return The object.
+   */
+	object* lookup_object();
 	object* lookup_object() const;
 
   /**
@@ -218,14 +227,19 @@ private:
   friend class object_creator;
   friend class object_serializer;
   friend struct object_proxy;
+  friend class object_deleter;
+  friend class object_store;
+  friend class session;
+  friend class query;
+  friend class object_container;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
-	unsigned long id_;
   object_proxy *proxy_;
   bool is_reference_;
   bool is_internal_;
+  unsigned long oid_;
 };
 
 /// @cond OOS_DEV
@@ -330,6 +344,9 @@ public:
 	T* operator->() const {
     return get();
 	}
+	T* operator->() {
+    return get();
+	}
 
   /**
    * @brief Return the reference to the object of type T.
@@ -342,6 +359,9 @@ public:
 	T& operator*() const {
     return *get();
 	}
+	T& operator*() {
+    return *get();
+	}
 
   /**
    * @brief Return the pointer to the object of type T.
@@ -352,7 +372,9 @@ public:
    * @return The pointer to the object of type T.
    */
   T* get() const {
-      //return dynamic_cast<T*>(lookup_object());
+      return static_cast<T*>(lookup_object());
+  }
+  T* get() {
       return static_cast<T*>(lookup_object());
   }
 };
@@ -461,7 +483,9 @@ public:
    */
 	T* operator->() const {
     return get();
-
+	}
+	T* operator->() {
+    return get();
 	}
 
   /**
@@ -475,6 +499,9 @@ public:
 	T& operator*() const {
     return *get();
 	}
+	T& operator*() {
+    return *get();
+	}
 
   /**
    * @brief Return the pointer to the object of type T.
@@ -486,7 +513,9 @@ public:
    */
 	T* get() const {
     return static_cast<T*>(lookup_object());
-//    return dynamic_cast<T*>(lookup_object());
+	}
+	T* get() {
+    return static_cast<T*>(lookup_object());
 	}
 };
 

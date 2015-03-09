@@ -534,12 +534,8 @@ public:
    * of the given parent object and therefor a reference
    * to the parent object must be found inside the value
    * type object with the given list_ref_name.
-   * 
-   * @param parent The containing list object.
    */
-  linked_object_list(S *parent)
-    : parent_(parent)
-  {}
+  linked_object_list() {}
 
 	virtual ~linked_object_list() {}
 
@@ -638,10 +634,12 @@ public:
     } else {
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type);
-      item->container().reset(parent_);
+      // Todo: fix parent object proxy
+      //item->container().reset(parent_);
       item->value(elem);
       // mark list object as modified
-      mark_modified(parent_);
+      mark_modified(owner());
+//      mark_modified(parent_);
 
       // link new item before given iterator position
       item_ptr node = pos.optr();
@@ -742,29 +740,15 @@ protected:
    *
    * Executes the given function object for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param pred Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const
+  virtual void for_each(const proxy_func &pred) const
   {
     item_ref node = first_;
     while(node.get()) {
-      nf(node.get());
+      pred(this->proxy(node));
       node = node->next();
     }
-  }
-
-  /**
-   * Sets the parent for the linked list
-   *
-   * @param p The parent object of the linked list.
-   */
-  virtual void parent(object *p)
-  {
-    S *temp = dynamic_cast<S*>(p);
-    if (!temp) {
-      throw object_exception("couldn't cast object to concrete type");
-    }
-    parent_ = temp;
   }
 
 ///@cond OOS_DEV
@@ -782,15 +766,10 @@ private:
     object_container::install(os);
     
     // create first and last element
-    first_ = ostore()->insert(new item_type(oos::object_ref<S>(parent_)));
-    last_ = ostore()->insert(new item_type(oos::object_ref<S>(parent_)));
+    first_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
+    last_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
     // link object elements
-    first_->first_ = first_;
-    first_->last_ = last_;
-    first_->next_ = last_;
-    last_->first_ = first_;
-    last_->last_ = last_;
-    last_->prev_ = first_;
+    reset();
   }
 
   virtual void uninstall()
@@ -815,8 +794,6 @@ private:
   friend class object_store;
   friend class linked_object_list_iterator<T>;
   friend class const_linked_object_list_iterator<T>;
-
-  S *parent_;
 
   item_ptr first_;
   item_ptr last_;

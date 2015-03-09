@@ -32,7 +32,6 @@
 #endif
 
 #include <array>
-
 #include <list>
 
 namespace oos {

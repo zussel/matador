@@ -34,6 +34,7 @@
 
 #include "object/object_atomizer.hpp"
 #include "primary_key.hpp"
+#include "object_proxy.hpp"
 
 #include <map>
 
@@ -59,9 +60,9 @@ class object_deleter : public generic_object_reader<object_deleter>
 private:
   typedef struct t_object_count_struct
   {
-    t_object_count_struct(object *o, bool ignr = true);
+    t_object_count_struct(object_proxy *oproxy, bool ignr = true);
 
-    object *obj;
+    object_proxy *proxy;
     unsigned long ref_count;
     unsigned long ptr_count;
     bool ignore;
@@ -86,10 +87,10 @@ public:
   /**
    * Checks wether the given object is deletable.
    *
-   * @param obj The object to be checked.
+   * @param proxy The object_proxy to be checked.
    * @return True if the object could be deleted.
    */
-  bool is_deletable(object *obj);
+  bool is_deletable(object_proxy *proxy);
 
   /**
    * Checks wether the given object_container is deletable.
@@ -123,8 +124,8 @@ public:
   void read_value(const char*, object_container &x);
   void read_value(const char*, primary_key_base &x);
 
-  void check_object(object *o, bool is_ref);
-  void check_object_list_node(object *node);
+  void check_object(object_proxy *proxy, bool is_ref);
+  void check_object_list_node(object_proxy *proxy);
   bool check_object_count_map() const;
 
 private:

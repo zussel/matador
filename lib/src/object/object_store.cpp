@@ -133,7 +133,7 @@ object* object_store::create(const char *type) const
 
 void object_store::mark_modified(object_proxy *oproxy)
 {
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_update, _1, oproxy->obj));
+  std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_update, _1, oproxy));
 }
 
 void object_store::register_observer(object_observer *observer)
@@ -156,7 +156,7 @@ void object_store::insert(object_container &oc)
   oc.install(this);
 }
 
-object*
+object_proxy*
 object_store::insert_object(object *o, bool notify)
 {
   // find type in tree
@@ -186,7 +186,7 @@ object_store::insert_object(object *o, bool notify)
     /* object doesn't exist in map
      * if object has a valid id, update
      * the sequencer else assign new
-     * nique id
+     * unique id
      */
     if (o->id() == 0) {
       o->id(seq_.next());
@@ -201,42 +201,41 @@ object_store::insert_object(object *o, bool notify)
   }
   // insert new element node
   insert_proxy(node, oproxy);
-  // create object
-  object_creator oc(*this, notify);
+  // initialize object
+  object_creator oc(oproxy, *this, notify);
   o->deserialize(oc);
   // set corresponding prototype node
   oproxy->node = node.get();
   // set this into persistent object
-  o->proxy_ = oproxy;
   // notify observer
   if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, o));
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
   }
   // insert element into hash map for fast lookup
   object_map_[o->id()] = oproxy;
   // return new object
-  return o;
+  return oproxy;
 }
 
 bool object_store::is_removable(const object_base_ptr &o)
 {
-  return object_deleter_.is_deletable(o.ptr());
+  return object_deleter_.is_deletable(o.proxy_);
 }
 
 void
 object_store::remove(object_base_ptr &o)
 {
-  remove(o.ptr());
+  remove(o.proxy_);
 }
 
 void
-object_store::remove(object *o)
+object_store::remove(object_proxy *proxy)
 {
-  if (o == nullptr) {
-    throw object_exception("object is nullptr");
+  if (proxy == nullptr) {
+    throw object_exception("object proxy is nullptr");
   }
   // check if object tree is deletable
-  if (!object_deleter_.is_deletable(o)) {
+  if (!object_deleter_.is_deletable(proxy)) {
     throw object_exception("object is not removable");
   }
   
@@ -245,42 +244,42 @@ object_store::remove(object *o)
   
   while (first != last) {
     if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
+      remove_object((first++)->second.proxy, true);
     } else {
       ++first;
     }
   }
 }
 void
-object_store::remove_object(object *o, bool notify)
+object_store::remove_object(object_proxy *proxy, bool notify)
 {
   // find prototype node
-  if (!o->proxy_) {
+  if (!proxy) {
     throw object_exception("couldn't remove object, no proxy");
   }
-  if (!o->proxy_->node) {
+  if (!proxy->node) {
     throw object_exception("couldn't remove object, no prototype");
   }
   
-  prototype_iterator node = prototype_tree_.find(o->proxy_->node->type.c_str());
+  prototype_iterator node = prototype_tree_.find(proxy->node->type.c_str());
   if (node == prototype_tree_.end()) {
     throw object_exception("couldn't find node for object");
   }
   
-  if (object_map_.erase(o->id()) != 1) {
+  if (object_map_.erase(proxy->obj->id()) != 1) {
     // couldn't remove object
     // throw exception
     throw object_exception("couldn't remove object");
   }
 
-  remove_proxy(node.get(), o->proxy_);
+  remove_proxy(node.get(), proxy);
 
   if (notify) {
     // notify observer
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_delete, _1, o));
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_delete, _1, proxy));
   }
   // set object in object_proxy to null
-  object_proxy *op = o->proxy_;
+  object_proxy *op = proxy;
   // delete node
   delete op;
 }
@@ -304,7 +303,7 @@ object_store::remove(object_container &oc)
   
   while (first != last) {
     if (!first->second.ignore) {
-      remove_object((first++)->second.obj, true);
+      remove_object((first++)->second.proxy, true);
     } else {
       ++first;
     }
@@ -333,15 +332,15 @@ object_store::unlink_proxy(object_proxy *proxy)
   if (proxy->next) {
     proxy->next->prev = proxy->prev;
   }
-  proxy->prev = NULL;
-  proxy->next = NULL;
+  proxy->prev = 0;
+  proxy->next = 0;
 }
 
 object_proxy* object_store::find_proxy(long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return NULL;
+    return nullptr;
   } else {
     return i->second;
   }
@@ -350,14 +349,14 @@ object_proxy* object_store::find_proxy(long id) const
 object_proxy* object_store::create_proxy(long id)
 {
   if (id == 0) {
-    return 0;
+    return nullptr;
   }
   
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
     return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
   } else {
-    return 0;
+    return nullptr;
   }
 }
 
@@ -372,6 +371,44 @@ bool object_store::delete_proxy(long id)
     object_map_.erase(i);
     return true;
   }
+}
+
+
+void object_store::insert_proxy(object_proxy *oproxy)
+{
+  if (!oproxy->obj) {
+    throw object_exception("object of proxy is null pointer");
+  }
+
+  if (oproxy->ostore) {
+    throw object_exception("object proxy already in object store");
+  }
+
+  // find prototype node
+  prototype_iterator node = prototype_tree_.find(typeid(*oproxy->obj).name());
+  if (node == prototype_tree_.end()) {
+    // raise exception
+    throw object_exception("couldn't insert object");
+  }
+
+  if (oproxy->id() == 0) {
+    oproxy->id(seq_.next());
+  } else {
+    seq_.update(oproxy->id());
+  }
+  oproxy->ostore = this;
+  
+  insert_proxy(node, oproxy);
+
+  // initialize object
+  object_creator oc(oproxy, *this, true);
+  oproxy->obj->deserialize(oc);
+  // notify observer
+  if (true) {
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
+  }
+  // insert element into hash map for fast lookup
+  object_map_[oproxy->id()] = oproxy;
 }
 
 void object_store::insert_proxy(const prototype_iterator &node, object_proxy *oproxy)

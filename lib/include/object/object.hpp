@@ -116,7 +116,7 @@ public:
    * 
    * @return Name of the object type or nullptr
    */
-	const char* classname() const;
+//	const char* classname() const;
   
   /**
    * @brief Returns the unique identifier of the object.
@@ -147,7 +147,7 @@ public:
    * 
    * @return The object_store to which the object belongs.
    */
-  object_store* ostore() const;
+//  object_store* ostore() const;
 
   /**
    * Sets a value of a member identified by
@@ -225,7 +225,7 @@ public:
   template < class T >
   void modify(T &attr, const T &val)
   {
-    mark_modified();
+//    mark_modified();
     attr = val;
   }
 
@@ -245,7 +245,7 @@ public:
     if (max_size < size) {
       throw std::logic_error("not enough character size");
     }
-    mark_modified();
+//    mark_modified();
 #ifdef _MSC_VER
     strcpy_s(attr, max_size, val);
 #else
@@ -264,7 +264,7 @@ public:
   template < class T >
   void modify(oos::object_ref<T> &attr, const oos::object_ptr<T> &val)
   {
-    mark_modified();
+//    mark_modified();
     attr = val;
   }
 
@@ -277,7 +277,7 @@ public:
    */
   void modify(varchar_base &attr, const std::string &val)
   {
-    mark_modified();
+//    mark_modified();
     attr = val;
   }
 
@@ -290,7 +290,7 @@ public:
    */
   void modify(varchar_base &attr, const varchar_base &val)
   {
-    mark_modified();
+//    mark_modified();
     attr = val;
   }
 
@@ -313,7 +313,7 @@ protected:
    * 
    * @return The object_proxy of the object.
    */
-  object_proxy* proxy() const { return proxy_; }
+//  object_proxy* proxy() const { return proxy_; }
 
   /**
    * @brief Marks this object as modified in its object_store
@@ -323,7 +323,7 @@ protected:
    * object. Otherwise the object can't be restored on an
    * error or rollback.
    */
-	void mark_modified();
+//	void mark_modified();
 
 private:
 	friend class object_store;
@@ -338,7 +338,7 @@ private:
   friend class database;
 
 	primary_key<unsigned long> id_;
-  object_proxy *proxy_;
+//  object_proxy *proxy_;
 };
 
 }

@@ -67,12 +67,13 @@ struct prototype_node;
 class OOS_API database : public action_visitor
 {
 public:
-  typedef std::list<object*> object_list_t;
-  typedef std::unordered_map<long, object_list_t> object_map_t;
+  typedef std::list<object_proxy*> object_proxy_list_t;
+  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
   typedef std::shared_ptr<statement> statement_ptr;
   typedef std::shared_ptr<table> table_ptr;
   typedef std::shared_ptr<database_sequencer> database_sequencer_ptr;
+  typedef std::map<std::string, table_ptr> table_map_t;
 
   struct table_info_t
   {
@@ -138,7 +139,7 @@ public:
    * @param o The object to insert.
    * @return The inserted object.
    */
-  object* insert(object *o);
+  object* insert(object_proxy *proxy);
 
   /**
    * Update the object on the database
@@ -146,7 +147,7 @@ public:
    * @param o The object to update.
    * @return The updated object.
    */
-  object* update(object *o);
+  object* update(object_proxy *proxy);
 
   /**
    * load a specific table based on
@@ -272,13 +273,12 @@ protected:
 private:
   friend class database_factory;
   friend class table;
+  friend class table_reader;
   friend class query;
 
   session *db_;
   bool commiting_;
 
-  typedef std::map<std::string, table_ptr> table_map_t;
-  
   table_map_t table_map_;
 
   database_sequencer_ptr sequencer_;

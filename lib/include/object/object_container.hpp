@@ -22,11 +22,8 @@
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
-#ifdef _MSC_VER
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
+#include <database/table_reader.hpp>
 
 namespace oos {
 
@@ -91,6 +88,7 @@ public:
   }
 
 private:
+  object_proxy *proxy_;
   value_type value_;
 };
 
@@ -172,9 +170,8 @@ private:
 class OOS_API object_container
 {
 public:
-  typedef std::function<void (object *)> node_func; /**< Shortcut to the function type of the for_each method. */
-  typedef unsigned long size_type;                       /**< Shortcut for size type. */
-//  typedef long unsigned int size_type;                             /**< Shortcut for size type. */
+  typedef std::function<void (object_proxy *)> proxy_func;  /**< Shortcut to the function type of the for_each method. */
+  typedef unsigned long size_type;                          /**< Shortcut for size type. */
 
 public:
   /**
@@ -184,6 +181,7 @@ public:
    */
   object_container()
     : ostore_(0)
+    , owner_(0)
   {}
 
   virtual ~object_container() {}
@@ -242,6 +240,7 @@ protected:
   friend class relation_builder;
   friend class relation_filler;
   friend class table;
+  friend class table_reader;
 
   /**
    * @brief Append a object via its object_proxy.
@@ -252,15 +251,24 @@ protected:
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
+  object_proxy* proxy(const object_base_ptr &optr) const;
+
   /**
    * Mark the list containing object as modified
    * in the object_store.
    *
    * @param o The object containig list
    */
-  void mark_modified(object *o)
+//  void mark_modified(object *o)
+//  {
+//    o->mark_modified();
+//  }
+
+  void mark_modified(object_proxy *proxy)
   {
-    o->mark_modified();
+    if (proxy->obj) {
+      proxy->ostore->mark_modified(proxy);
+    }
   }
 
   /**
@@ -270,7 +278,7 @@ protected:
    *
    * @param nf Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const = 0;
+  virtual void for_each(const proxy_func &pred) const = 0;
 
   /**
    * Provides an interface which is called
@@ -289,14 +297,34 @@ protected:
   {
     ostore_ = 0;
   }
-  
+
+  template < class T >
+  T* parent() const
+  {
+    return static_cast<T*>(owner_->obj);
+  }
+
+  template < class T >
+  T* parent()
+  {
+    return static_cast<T*>(owner_->obj);
+  }
+
   /**
-   * Sets the parent for the
-   * concrete container
+   * Returns the owner of the container
+   * represented by an object_proxy.
    *
-   * @param p The parent object of the container.
+   * @return The owner of the container
    */
-  virtual void parent(object *p) = 0;
+  object_proxy* owner() const;
+
+  /**
+   * Sets the owner of an container
+   * represented by an object_proxy.
+   *
+   * @param ownr The new owner of the container
+   */
+  void owner(object_proxy *ownr);
 
   /**
    * Create a producer object for
@@ -321,6 +349,7 @@ private:
 
 private:
   object_store *ostore_;
+  object_proxy *owner_;
 };
 /// @endcond
 

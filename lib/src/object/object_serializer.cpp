@@ -18,16 +18,9 @@
 #include "object/object_serializer.hpp"
 #include "object/object.hpp"
 #include "object/object_store.hpp"
-#include "object/object_ptr.hpp"
 #include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
-#include "object/primary_key.hpp"
 
 #include "tools/byte_buffer.hpp"
-#include "tools/varchar.hpp"
-
-#include <string.h>
 
 using namespace std::placeholders;
 using namespace std;
@@ -37,20 +30,18 @@ namespace oos {
 object_serializer::~object_serializer()
 {}
 
-bool object_serializer::serialize(const object *o, byte_buffer &buffer)
+bool object_serializer::serialize(const object *o, byte_buffer *buffer)
 {
-  buffer_ = &buffer;
-//  o->write_to(this);
+  buffer_ = buffer;
   o->serialize(*this);
   buffer_ = NULL;
   return true;
 }
 
-bool object_serializer::deserialize(object *o, byte_buffer &buffer, object_store *ostore)
+bool object_serializer::deserialize(object *o, byte_buffer *buffer, object_store *ostore)
 {
   ostore_ = ostore;
-  buffer_ = &buffer;
-//  o->read_from(this);
+  buffer_ = buffer;
   o->deserialize(*this);
   buffer_ = NULL;
   ostore_ = NULL;
@@ -86,7 +77,6 @@ void object_serializer::write_value(const char*, const object_base_ptr &x)
   // write type and id into buffer
   write(0, x.id());
   write(0, x.type(), strlen(x.type()));
-//  write(0, x.classname(), strlen(x.classname()));
 }
 
 void object_serializer::write_value(const char*, const object_container &x)
@@ -151,10 +141,10 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
-    x.reset(oproxy->obj);
+    x.reset(oproxy);
   } else {
-    x.proxy_ = 0;
-    x.id_ = id;
+    x.proxy_ = new object_proxy(id, nullptr);
+//    x.id_ = id;
   }
 }
 
@@ -182,10 +172,10 @@ void object_serializer::read_value(const char *id, primary_key_base &x)
   x.deserialize(id, *this);
 }
 
-void object_serializer::write_object_container_item(const object *o)
+void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
-  write(0, o->id());
-  write(0, o->classname(), strlen(o->classname()));
+  write(0, proxy->obj->id());
+  write(0, proxy->node->type);
 }
 
 }

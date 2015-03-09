@@ -22,6 +22,7 @@
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
+#include "object/object_exception.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -260,7 +261,24 @@ public:
   {
 		return object_ptr<Y>(insert_object(o, true));
 	}
-  
+
+  /**
+   *
+   */
+  template < class Y >
+  object_ptr<Y> insert(const object_ptr<Y> &optr)
+  {
+    if (!optr.proxy_) {
+      throw object_exception("object pointer is null");
+    }
+    if (optr.proxy_->id() > 0) {
+      throw object_exception("object id is greater zero");
+    }
+
+    insert_proxy(optr.proxy_);
+    return optr;
+  }
+
   /**
    * Inserts an object_container into the object store. Subsequently the
    * object_container is initialized.
@@ -372,6 +390,13 @@ public:
   void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
 
   /**
+  * @brief Inserts a new proxy into the object store
+  *
+  * @param oproxy Object proxy to insert
+  */
+  void insert_proxy(object_proxy *oproxy);
+
+  /**
    * @brief Removes an object proxy from a prototype list
    *
    * @param node Prototype from which the proxy will be removed.
@@ -399,14 +424,14 @@ private:
   friend class object_serializer;
   friend class restore_visitor;
   friend class object_container;
-  friend class object;
+  friend class object_base_ptr;
 
 private:
   void mark_modified(object_proxy *oproxy);
 
-  void remove(object *o);
-	object* insert_object(object *o, bool notify);
-	void remove_object(object *o, bool notify);
+  void remove(object_proxy *proxy);
+	object_proxy* insert_object(object *o, bool notify);
+	void remove_object(object_proxy *proxy, bool notify);
 	
   void link_proxy(object_proxy *base, object_proxy *next);
   void unlink_proxy(object_proxy *proxy);

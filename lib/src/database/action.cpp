@@ -42,27 +42,27 @@ std::string insert_action::type() const
 
 insert_action::iterator insert_action::begin()
 {
-  return object_list_.begin();
+  return object_proxy_list_.begin();
 }
 
 insert_action::const_iterator insert_action::begin() const
 {
-  return object_list_.begin();
+  return object_proxy_list_.begin();
 }
 
 insert_action::iterator insert_action::end()
 {
-  return object_list_.end();
+  return object_proxy_list_.end();
 }
 
 insert_action::const_iterator insert_action::end() const
 {
-  return object_list_.end();
+  return object_proxy_list_.end();
 }
 
 bool insert_action::empty() const
 {
-  return object_list_.empty();
+  return object_proxy_list_.empty();
 }
 
 struct object_by_id : public std::unary_function<unsigned long, bool>
@@ -70,9 +70,9 @@ struct object_by_id : public std::unary_function<unsigned long, bool>
   object_by_id(unsigned long id)
     : id_(id)
   {}
-  bool operator()(const object *o) const
+  bool operator()(const object_proxy *proxy) const
   {
-    return (o && o->id() == id_);
+    return (proxy->obj && proxy->obj->id() == id_);
   }
   
   unsigned long id_;
@@ -80,32 +80,32 @@ struct object_by_id : public std::unary_function<unsigned long, bool>
 
 insert_action::iterator insert_action::find(unsigned long id)
 {
-  return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
+  return std::find_if(object_proxy_list_.begin(), object_proxy_list_.end(), object_by_id(id));
 }
 
 insert_action::const_iterator insert_action::find(unsigned long id) const
 {
-  return std::find_if(object_list_.begin(), object_list_.end(), object_by_id(id));
+  return std::find_if(object_proxy_list_.begin(), object_proxy_list_.end(), object_by_id(id));
 }
 
-void insert_action::push_back(object *o)
+void insert_action::push_back(object_proxy *proxy)
 {
-  object_list_.push_back(o);
+  object_proxy_list_.push_back(proxy);
 }
 
 insert_action::iterator insert_action::erase(insert_action::iterator i)
 {
-  return object_list_.erase(i);
+  return object_proxy_list_.erase(i);
 }
 
-object* update_action::obj()
+object_proxy* update_action::proxy()
 {
-  return obj_;
+  return proxy_;
 }
 
-const object* update_action::obj() const
+const object_proxy* update_action::proxy() const
 {
-  return obj_;
+  return proxy_;
 }
 
 delete_action::delete_action(const char *classname, unsigned long id)

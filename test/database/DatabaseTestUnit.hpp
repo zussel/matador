@@ -28,27 +28,17 @@ class session;
 
 class DatabaseTestUnit : public oos::unit_test
 {
-protected:
-  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
-
 public:
+  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
   virtual ~DatabaseTestUnit();
 
   virtual void initialize();
   virtual void finalize();
 
-  void test_open_close();
-  void test_create_drop();
-  void test_drop();
-  void test_reopen();
   void test_datatypes();
   void test_insert();
   void test_update();
   void test_delete();
-  void test_simple();
-  void test_with_sub();
-  void test_with_list();
-  void test_with_vector();
   void test_reload_simple();
   void test_reload();
   void test_reload_container();
@@ -58,10 +48,11 @@ protected:
 
   oos::object_store& ostore();
   const oos::object_store& ostore() const;
-  
+
 private:
   oos::object_store ostore_;
   std::string db_;
+  oos::session *session_;
 };
 
 #endif /* DATABASE_TEST_UNIT_HPP */

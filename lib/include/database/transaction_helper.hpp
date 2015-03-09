@@ -23,13 +23,7 @@
 #include "database/action.hpp"
 #include "database/transaction.hpp"
 
-#include "tools/byte_buffer.hpp"
-
-#ifdef _MSC_VER
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 
 #include <memory>
 #include <list>
@@ -39,6 +33,8 @@
 namespace oos {
 
 /// @cond OOS_DEV
+
+class byte_buffer;
 
 class backup_visitor : public action_visitor
 {
@@ -91,12 +87,12 @@ class action_inserter : public action_visitor
 public:
   action_inserter(transaction::action_list_t &action_list)
     : action_list_(action_list)
-    , obj_(0)
+    , proxy_(0)
     , inserted_(false)
   {}
   virtual ~action_inserter() {}
 
-  transaction::iterator insert(object *o);
+  transaction::iterator insert(object_proxy *proxy);
 
   virtual void visit(create_action*) {}
   virtual void visit(insert_action *a);
@@ -106,7 +102,7 @@ public:
 
 private:
   transaction::action_list_t &action_list_;
-  object *obj_;
+  object_proxy *proxy_;
   bool inserted_;
 };
 
@@ -119,7 +115,7 @@ public:
   {}
   virtual ~action_remover() {}
 
-  bool remove(transaction::iterator i, object *o);
+  bool remove(transaction::iterator i, object_proxy *proxy);
 
   virtual void visit(create_action*) {}
   virtual void visit(insert_action *a);
@@ -130,7 +126,7 @@ public:
 private:
   transaction::action_list_t &action_list_;
   transaction::iterator iter_;
-  object *obj_;
+  object_proxy *proxy_;
   unsigned long id_;
 };
 /// @endcond

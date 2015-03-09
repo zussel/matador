@@ -33,6 +33,7 @@
 
 #include <string>
 #include <list>
+#include <object/object_proxy.hpp>
 
 namespace oos {
 
@@ -172,9 +173,9 @@ public:
 class OOS_API insert_action : public action
 {
 public:
-  typedef std::list<object*> object_list_t;
-  typedef object_list_t::iterator iterator;
-  typedef object_list_t::const_iterator const_iterator;
+  typedef std::list<object_proxy*> object_proxy_list_t;
+  typedef object_proxy_list_t::iterator iterator;
+  typedef object_proxy_list_t::const_iterator const_iterator;
 
 public:
   /**
@@ -207,12 +208,12 @@ public:
   iterator find(unsigned long id);
   const_iterator find(unsigned long id) const;
 
-  void push_back(object *o);
+  void push_back(object_proxy *proxy);
 
   iterator erase(iterator i);
 private:
   std::string type_;
-  object_list_t object_list_;
+  object_proxy_list_t object_proxy_list_;
 };
 
 
@@ -232,8 +233,8 @@ public:
    * 
    * @param o The updated object.
    */
-  update_action(object *o)
-    : obj_(o)
+  update_action(object_proxy *proxy)
+    : proxy_(proxy)
   {}
 
   virtual ~update_action() {}
@@ -246,15 +247,15 @@ public:
   /**
    * The object of the action.
    */
-  object* obj();
+  object_proxy* proxy();
 
   /**
    * The object of the action.
    */
-  const object* obj() const;
+  const object_proxy* proxy() const;
 
 private:
-  object *obj_;
+  object_proxy *proxy_;
 };
 
 /**

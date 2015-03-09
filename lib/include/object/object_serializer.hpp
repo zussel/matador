@@ -41,6 +41,7 @@ namespace oos {
 class object;
 class object_base_ptr;
 class object_store;
+class object_proxy;
 class byte_buffer;
 class varchar_base;
 class object_container;
@@ -82,7 +83,7 @@ public:
    * @param buffer The byte_buffer to serialize to.
    * @return True on success.
    */
-  bool serialize(const object *o, byte_buffer &buffer);
+  bool serialize(const object *o, byte_buffer *buffer);
 
   /**
    * Serialize the given object to the given buffer
@@ -92,7 +93,7 @@ public:
    * @param ostore The object_store where the object resides.
    * @return True on success.
    */
-  bool deserialize(object *o, byte_buffer &buffer, object_store *ostore);
+  bool deserialize(object *o, byte_buffer *buffer, object_store *ostore);
 
 public:
   template < class T >
@@ -121,9 +122,7 @@ public:
 	void read_value(const char* id, object_container &x);
 	void read_value(const char* id, primary_key_base &x);
   
-  void write_object_list_item(const object *o);
-  void write_object_container_item(const object *o);
-  void write_object_vector_item(const object *o, unsigned int &index);
+  void write_object_container_item(const object_proxy *proxy);
 
 private:
   object_store *ostore_;

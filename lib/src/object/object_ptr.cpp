@@ -24,19 +24,20 @@ using namespace std;
 namespace oos {
 
 object_base_ptr::object_base_ptr(bool is_ref)
-  : id_(0)
-  , proxy_(0)
+  : proxy_(0)
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
-  : id_(x.id_)
-  , proxy_(x.proxy_)
+  : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
   , is_internal_(false)
+  , oid_(x.oid_)
 {
   if (proxy_) {
+    oid_ = proxy_->id();
     proxy_->add(this);
   }
 }
@@ -46,6 +47,7 @@ object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
     if (proxy_) {
+      oid_ = 0;
       if (is_internal_) {
         if (is_reference_) {
           proxy_->unlink_ref();
@@ -55,10 +57,10 @@ object_base_ptr::operator=(const object_base_ptr &x)
       }
       proxy_->remove(this);
     }
-    id_ = x.id_;
     proxy_ = x.proxy_;
     is_reference_ = x.is_reference_;
     if (proxy_) {
+      oid_ = proxy_->id();
       if (is_internal_) {
         if (is_reference_) {
           proxy_->link_ref();
@@ -73,28 +75,24 @@ object_base_ptr::operator=(const object_base_ptr &x)
 }
 
 object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
-  : id_(op ? op->id : 0)
-  , proxy_(op)
+  : proxy_(op)
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {
   if (proxy_) {
+    oid_ = proxy_->id();
     proxy_->add(this);
   }
 }
 
 object_base_ptr::object_base_ptr(object *o, bool is_ref)
-  : id_(o ? o->id_.get() : 0UL)
-//  , proxy_((o->proxy_ ? o->proxy_ : new object_proxy(o, 0)))
-  , proxy_(o->proxy_)
+  : proxy_(new object_proxy(o, nullptr))
   , is_reference_(is_ref)
   , is_internal_(false)
+  , oid_(0)
 {
-  if (proxy_) {
-    proxy_->add(this);
-  } else {
-//    proxy_ = new object_proxy(o, 0);
-  }
+  proxy_->add(this);
 }
 
 object_base_ptr::~object_base_ptr()
@@ -112,9 +110,9 @@ object_base_ptr::~object_base_ptr()
      * if proxy was created temporary
      * we can delete it here
      */
-/*    if (!proxy_->ostore && proxy_->id == 0) {
+    if (!proxy_->ostore) {
       delete proxy_;
-    }*/
+    }
   }
 }
 
@@ -127,20 +125,12 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 {
 	return !(x == *this);
 }
-/*
-const char* object_base_ptr::classname() const
-{
-  if (proxy_ && proxy_->node) {
-    return proxy_->node->type.c_str();
-  } else {
-    return 0;
-  }
-}
-*/
+
 void
-object_base_ptr::reset(const object *o)
+object_base_ptr::reset(object_proxy *proxy)
 {
   if (proxy_) {
+    oid_ = 0;
     if (is_internal_) {
       if (is_reference_) {
         proxy_->unlink_ref();
@@ -150,9 +140,10 @@ object_base_ptr::reset(const object *o)
     }
     proxy_->remove(this);
   }
-  if (o) {
-    proxy_ = o->proxy_;
+  if (proxy) {
+    proxy_ = proxy;
     if (proxy_) {
+      oid_ = proxy_->id();
       if (is_internal_) {
         if (is_reference_) {
           proxy_->link_ref();
@@ -163,7 +154,6 @@ object_base_ptr::reset(const object *o)
       proxy_->add(this);
     }
   }
-  id_ = (proxy_ ? proxy_->id : 0);
 }
 
 bool
@@ -175,28 +165,57 @@ object_base_ptr::is_loaded() const
 unsigned long
 object_base_ptr::id() const
 {
-  return (proxy_ ? proxy_->id : id_);
+  return (proxy_ ? proxy_->id() : oid_);
 }
 
-void object_base_ptr::id(unsigned long i)
+void object_base_ptr::id(unsigned long id)
 {
   if (proxy_) {
     throw std::logic_error("proxy already set");
   } else {
-    id_ = i;
+    oid_ = id;
   }
 }
 
-object*
-object_base_ptr::ptr() const
+
+object_store *object_base_ptr::store() const
+{
+  return (proxy_ ? proxy_->ostore : nullptr);
+}
+
+object* object_base_ptr::ptr()
+{
+  if (proxy_ && proxy_->obj) {
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
+}
+
+const object* object_base_ptr::ptr() const
 {
   return lookup_object();
 }
 
-object*
-object_base_ptr::lookup_object() const
+object* object_base_ptr::lookup_object()
 {
-  return (proxy_ ? proxy_->obj : nullptr);
+  if (proxy_ && proxy_->obj) {
+    if (proxy_->ostore) {
+      proxy_->ostore->mark_modified(proxy_);
+    }
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
+}
+
+object* object_base_ptr::lookup_object() const
+{
+  if (proxy_ && proxy_->obj) {
+    return proxy_->obj;
+  } else {
+    return nullptr;
+  }
 }
 
 bool object_base_ptr::is_reference() const
@@ -228,10 +247,10 @@ std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
     if (x.proxy_->obj) {
       out << *x.proxy_->obj;
     } else {
-      out << "unload object [" << x.proxy_->id << "]";
+      out << "unload object [" << x.id() << "]";
     }
   } else {
-      out << "unknown object [" << x.id_ << "]";
+      out << "unknown object [" << 0 << "]";
   }
   return out;
 }

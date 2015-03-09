@@ -27,18 +27,19 @@ object_proxy::object_proxy(object_store *os)
   : prev(0)
   , next(0)
   , obj(0)
-  , id(0)
+  , oid(0)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
   , node(0)
 {}
 
-object_proxy::object_proxy(long i, object_store *os)
+
+object_proxy::object_proxy(unsigned long i, object_store *os)
   : prev(0)
   , next(0)
   , obj(0)
-  , id(i)
+  , oid(i)
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
@@ -49,7 +50,7 @@ object_proxy::object_proxy(object *o, object_store *os)
   : prev(0)
   , next(0)
   , obj(o)
-  , id((o ? o->id() : 0))
+  , oid((o ? o->id() : 0))
   , ref_count(0)
   , ptr_count(0)
   , ostore(os)
@@ -58,11 +59,11 @@ object_proxy::object_proxy(object *o, object_store *os)
 
 object_proxy::~object_proxy()
 {
+  if (ostore && id() > 0) {
+    ostore->delete_proxy(id());
+  }
   if (obj) {
     delete obj;
-  }
-  if (ostore && id > 0) {
-    ostore->delete_proxy(id);
   }
   ostore = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
@@ -131,8 +132,8 @@ void object_proxy::reset(object *o)
 {
   ref_count = 0;
   ptr_count = 0;
-  id = o->id();
   obj = o;
+  oid = o ? o->id() : 0;
   node = 0;
 }
 
@@ -149,6 +150,19 @@ bool object_proxy::remove(object_base_ptr *ptr)
 bool object_proxy::valid() const
 {
   return ostore && node && prev && next;
+}
+
+unsigned long object_proxy::id() const {
+  return (obj ? obj->id() : oid);
+}
+
+void object_proxy::id(unsigned long i)
+{
+  if (obj) {
+    obj->id(i);
+  } else {
+    oid = i;
+  }
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

@@ -21,18 +21,16 @@
 #include "database/database.hpp"
 #include "database/database_exception.hpp"
 
-#include "tools/byte_buffer.hpp"
-
-#include "object/object_store.hpp"
 #include "object/object.hpp"
 
 #include <sstream>
+#include <memory>
 
 using namespace std;
 
 namespace oos {
 
-void transaction::on_insert(object *o)
+void transaction::on_insert(object_proxy *proxy)
 {
   /*****************
    * 
@@ -42,25 +40,25 @@ void transaction::on_insert(object *o)
    * store
    * 
    *****************/
-  id_iterator_map_t::iterator i = id_map_.find(o->id());
+  id_iterator_map_t::iterator i = id_map_.find(proxy->obj->id());
   if (i == id_map_.end()) {
     // create insert action and insert object
     action_inserter ai(action_list_);
-    iterator j = ai.insert(o);
+    iterator j = ai.insert(proxy);
     if (j == action_list_.end()) {
       // should not happen
     } else {
-      id_map_.insert(std::make_pair(o->id(), j));
+      id_map_.insert(std::make_pair(proxy->obj->id(), j));
     }
   } else {
     // ERROR: an object with that id already exists
     std::stringstream msg;
-    msg << "an object with id " << o->id() << " already exists";
+    msg << "an object with id " << proxy->obj->id() << " already exists";
     throw database_exception("database", msg.str().c_str());
   }
 }
 
-void transaction::on_update(object *o)
+void transaction::on_update(object_proxy *proxy)
 {
   /*****************
    * 
@@ -69,8 +67,8 @@ void transaction::on_update(object *o)
    * is restored to old values
    * 
    *****************/
-  if (id_map_.find(o->id()) == id_map_.end()) {
-    backup(new update_action(o), o);
+  if (id_map_.find(proxy->obj->id()) == id_map_.end()) {
+    backup(new update_action(proxy), proxy->obj);
   } else {
     // An object with that id already exists
     // do nothing because the object is already
@@ -78,7 +76,7 @@ void transaction::on_update(object *o)
   }
 }
 
-void transaction::on_delete(object *o)
+void transaction::on_delete(object_proxy *proxy)
 {
   /*****************
    * 
@@ -89,12 +87,12 @@ void transaction::on_delete(object *o)
    * 
    *****************/
 
-  id_iterator_map_t::iterator i = id_map_.find(o->id());
+  id_iterator_map_t::iterator i = id_map_.find(proxy->obj->id());
   if (i == id_map_.end()) {
-    backup(new delete_action(o->classname(), o->id()), o);
+    backup(new delete_action(proxy->node->type.c_str(), proxy->obj->id()), proxy->obj);
   } else {
     action_remover ar(action_list_);
-    ar.remove(i->second, o);
+    ar.remove(i->second, proxy);
   }
 }
 
@@ -161,7 +159,7 @@ transaction::rollback()
 
     while (!action_list_.empty()) {
       iterator i = action_list_.begin();
-      std::auto_ptr<action> a(*i);
+      std::unique_ptr<action> a(*i);
       action_list_.erase(i);
       restore(a.get());
     }

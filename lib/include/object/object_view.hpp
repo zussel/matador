@@ -176,7 +176,7 @@ public:
    */
   pointer operator->() const
   {
-    return static_cast<pointer>(current_->obj);
+    return static_cast<pointer>(current_);
   }
 
   /**
@@ -197,7 +197,7 @@ public:
   value_type optr() const
   {
     if (current_->obj)
-      return value_type(current_->obj);
+      return value_type(current_);
     else
       return value_type();
   }
@@ -388,7 +388,7 @@ public:
    */
   pointer operator->() const
   {
-    return static_cast<pointer>(current_->obj);
+    return static_cast<pointer>(current_);
   }
 
   /**
@@ -408,7 +408,7 @@ public:
    */
   value_type optr() const {
     if (current_->obj)
-      return value_type(current_->obj);
+      return value_type(current_);
     else
       return value_type();
   }

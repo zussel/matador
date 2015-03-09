@@ -18,23 +18,15 @@
 #include "object/object_deleter.hpp"
 #include "object/object.hpp"
 #include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/object_container.hpp"
-
-#ifdef _MSC_VER
-#include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 using namespace std::placeholders;
 
 namespace oos {
 
-object_deleter::t_object_count_struct::t_object_count_struct(object *o, bool ignr)
-  : obj(o)
-  , ref_count(o->proxy_->ref_count)
-  , ptr_count(o->proxy_->ptr_count)
+object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
+  : proxy(oproxy)
+  , ref_count(oproxy->ref_count)
+  , ptr_count(oproxy->ptr_count)
   , ignore(ignr)
 {}
 
@@ -42,13 +34,13 @@ object_deleter::~object_deleter()
 {}
 
 bool
-object_deleter::is_deletable(object *obj)
+object_deleter::is_deletable(object_proxy *proxy)
 {
   object_count_map.clear();
-  object_count_map.insert(std::make_pair(obj->id(), t_object_count(obj, false)));
+  object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy, false)));
 
   // start collecting information
-  obj->deserialize(*this);
+  proxy->obj->deserialize(*this);
   
   return check_object_count_map();
 }
@@ -65,7 +57,7 @@ void object_deleter::read_value(const char*, object_base_ptr &x)
   if (!x.ptr()) {
     return;
   }
-  check_object(x.ptr(), x.is_reference());
+  check_object(x.proxy_, x.is_reference());
 }
 
 void object_deleter::read_value(const char*, object_container &x)
@@ -90,9 +82,9 @@ object_deleter::end()
   return object_count_map.end();
 }
 
-void object_deleter::check_object(object *o, bool is_ref)
+void object_deleter::check_object(object_proxy *proxy, bool is_ref)
 {
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(o->id(), t_object_count(o)));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy)));
   if (!is_ref) {
     --ret.first->second.ptr_count;
   } else {
@@ -100,14 +92,14 @@ void object_deleter::check_object(object *o, bool is_ref)
   }
   if (!is_ref) {
     ret.first->second.ignore = false;
-    o->deserialize(*this);
+    proxy->obj->deserialize(*this);
   }
 }
 
 void
-object_deleter::check_object_list_node(object *node)
+object_deleter::check_object_list_node(object_proxy *proxy)
 {
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(node->id(), t_object_count(node, false)));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy, false)));
   
   /**********
    * 
@@ -122,7 +114,7 @@ object_deleter::check_object_list_node(object *node)
   }
 
   // start collecting information
-  node->deserialize(*this);
+  proxy->obj->deserialize(*this);
 }
 
 bool

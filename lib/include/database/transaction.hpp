@@ -45,7 +45,7 @@ namespace oos {
 
 class session;
 class object_store;
-class byte_buffer;
+class object_proxy;
 class action;
 
 /**
@@ -128,9 +128,9 @@ public:
    */
   const session& db() const;
 
-  virtual void on_insert(object *o);
-  virtual void on_update(object *o);
-  virtual void on_delete(object *o);
+  virtual void on_insert(object_proxy *proxy);
+  virtual void on_update(object_proxy *proxy);
+  virtual void on_delete(object_proxy *proxy);
 
 private:
   typedef std::set<long> id_set_t;

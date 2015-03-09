@@ -27,11 +27,7 @@
 
 #include "tools/conditional.hpp"
 
-#ifdef _MSC_VER
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 #include <type_traits>
 #include <list>
@@ -71,8 +67,7 @@ public:
    *
    * @param parent The parent object of the list.
    */
-  explicit object_list_base(S *parent)
-    : parent_(parent)
+  explicit object_list_base()
   {}
 
   virtual ~object_list_base() {}
@@ -217,14 +212,14 @@ protected:
    *
    * Executes the given function object for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param pred Function object used to be executed on each element.
    */
-  virtual void for_each(const node_func &nf) const
+  virtual void for_each(const proxy_func &pred) const
   {
     const_iterator first = object_list_.begin();
     const_iterator last = object_list_.end();
     while (first != last) {
-      nf((*first++).ptr());
+      pred(this->proxy(*first++));
     }
   }
 
@@ -235,30 +230,6 @@ protected:
   {
     object_container::uninstall();
     object_list_.clear();
-  }
-
-  /**
-   * Sets the parent for the list
-   *
-   * @param p The parent object of the list.
-   */
-  virtual void parent(object *p)
-  {
-    S *temp = dynamic_cast<S*>(p);
-    if (!temp) {
-      throw object_exception("couldn't cast object to concrete type");
-    }
-    parent_ = temp;
-  }
-
-  /**
-   * Returns the parent object.
-   * 
-   * @return The parent object.
-   */
-  S* parent()
-  {
-    return parent_;
   }
 
   /**
@@ -284,8 +255,6 @@ private:
 
 private:
   list_type object_list_;
-
-  S *parent_;
 };
 
 ///@cond OOS_DEV
@@ -383,9 +352,8 @@ public:
    * @param parent The parent of the list.
    * @param setfunc The parent reference setter function.
    */
-  object_list(S *parent, SETFUNC setfunc)
-    : object_list_base<S, T>(parent)
-    , setter_(setfunc)
+  object_list(SETFUNC setfunc)
+    : setter_(setfunc)
   {}
   virtual ~object_list() {}
 
@@ -405,9 +373,10 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item object as modified
-      this->mark_modified(x.get());
+//      this->mark_modified(x.get());
+      this->mark_modified(this->proxy(x));
       // set back ref to parent
-      setter_(*x.get(), parent_ref(this->parent()));
+      setter_(*x.get(), parent_ref(this->owner()));
       // insert new item object
       return this->list().insert(pos, x);
     }
@@ -419,7 +388,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item object as modified
-      this->mark_modified((*i).get());
+      this->mark_modified(this->proxy(*i));
+//      this->mark_modified((*i).get());
       // set back ref to zero
       setter_(*(*i).get(), parent_ref());
       // erase element from list
@@ -470,9 +440,7 @@ public:
    * 
    * @param parent The parent of the list.
    */
-  object_list(S *parent)
-    : object_list_base<S, T, object_ptr<container_item<T, S> > >(parent)
-  {}
+  object_list() {}
   virtual ~object_list() {}
 
   virtual iterator insert(iterator pos, const value_holder &x)
@@ -481,9 +449,12 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // create and insert new item
-      item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->parent()), x));
+      parent_ref pref(this->owner());
+      item_type *it = new item_type(pref, x);
+      item_ptr item = this->ostore()->insert(it);
       // mark list object as modified
-      this->mark_modified(this->parent());
+//      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
       // insert new item object
       return this->list().insert(pos, item);
     }
@@ -495,7 +466,8 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       item_ptr item = *i;
-      this->mark_modified(this->parent());
+      this->mark_modified(this->owner());
+//      this->mark_modified(this->parent());
       this->ostore()->remove(item);
       return this->list().erase(i);
     }

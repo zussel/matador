@@ -15,43 +15,38 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object.hpp"
+#ifndef SESSION_TEST_UNIT_HPP
+#define SESSION_TEST_UNIT_HPP
+
 #include "object/object_store.hpp"
 
+#include "unit/unit_test.hpp"
+
 namespace oos {
+class session;
+}
 
-object::object()
-	: id_(0)
+class SessionTestUnit : public oos::unit_test
 {
-}
+public:
+  SessionTestUnit(const std::string &name, const std::string &msg, const std::string &db);
+  virtual ~SessionTestUnit();
 
-object::~object()
-{
-}
+  virtual void initialize();
+  virtual void finalize();
 
-unsigned long object::id() const
-{
-	return id_;
-}
+  void test_open_close();
+  void test_create_drop();
+  void test_drop();
+  void test_reopen();
 
-void object::id(unsigned long oid)
-{
-	id_ = oid;
-}
+protected:
+  oos::session* create_session();
 
-//void object::mark_modified()
-//{
-//  if (!proxy_ || !proxy_->ostore) {
-//    // throw exception
-//    return;
-//  }
-//  proxy_->ostore->mark_modified(proxy_);
-//}
+private:
+  oos::object_store ostore_;
+  std::string db_;
+  oos::session *session_;
+};
 
-std::ostream& operator <<(std::ostream &os, const object &o)
-{
-  os << "object " << typeid(o).name() << " (" << &o << ") [" << o.id_ << "]";
-  return os;
-}
-
-}
+#endif /* SESSION_TEST_UNIT_HPP */
