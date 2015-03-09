@@ -20,6 +20,7 @@
 
 #include "tools/ConvertTestUnit.hpp"
 #include "tools/BlobTestUnit.hpp"
+#include "tools/DateTestUnit.hpp"
 #include "tools/VarCharTestUnit.hpp"
 #include "tools/FactoryTestUnit.hpp"
 
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new SecondTestUnit());
 
   test_suite::instance().register_unit(new ConvertTestUnit());
+  test_suite::instance().register_unit(new DateTestUnit());
   test_suite::instance().register_unit(new BlobTestUnit());
   test_suite::instance().register_unit(new VarCharTestUnit());
   test_suite::instance().register_unit(new FactoryTestUnit());

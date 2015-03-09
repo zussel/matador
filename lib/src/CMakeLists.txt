@@ -69,6 +69,8 @@ SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
   tools/library.cpp
   tools/blob.cpp
+  tools/calendar.cpp
+  tools/date.cpp
   tools/varchar.cpp
   tools/sequencer.cpp
   tools/convert.cpp
@@ -80,6 +82,7 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/singleton.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/library.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/blob.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/date.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/varchar.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/sequencer.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/factory.hpp
@@ -95,6 +98,8 @@ SET(TOOLS_HEADER
   ../include/tools/singleton.hpp
   ../include/tools/library.hpp
   ../include/tools/blob.hpp
+  ../include/tools/calendar.h
+  ../include/tools/date.hpp
   ../include/tools/varchar.hpp
   ../include/tools/sequencer.hpp
   ../include/tools/factory.hpp
