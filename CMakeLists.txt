@@ -44,8 +44,10 @@ ENDIF()
 option(COVERALLS "Enable generation and sending of coveralls data" false)
 option(COVERAGE "Enable generation of code coverage" false)
 
-include(CodeCoverage)
-include(Coveralls)
+if (NOT MSVC)
+  include(CodeCoverage)
+  include(Coveralls)
+endif()
 
 if ((COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "will generate coverage data")

@@ -54,7 +54,7 @@
 
 namespace oos {
 
-struct object_proxy;
+class object_proxy;
 class object_store;
 
 /// @cond OOS_DEV

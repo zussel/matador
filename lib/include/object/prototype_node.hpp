@@ -43,10 +43,10 @@ namespace oos {
 class object_base_producer;
 class object;
 class prototype_tree;
-struct object_proxy;
+class object_proxy;
 
 /**
- * @struct prototype_node
+ * @class prototype_node
  * @brief Holds the prototype of a concrete object.
  *
  * The prototype_node class holds the prototype of
@@ -59,7 +59,7 @@ struct object_proxy;
  * of the list, the end of the own objects and the end of
  * the last child objects.
  */ 
-struct OOS_API prototype_node
+class OOS_API prototype_node
 {
 private:
   // copying not permitted

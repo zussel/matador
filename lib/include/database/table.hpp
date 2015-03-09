@@ -50,7 +50,7 @@ class object;
 class object_container;
 class object_base_ptr;
 class object_store;
-struct prototype_node;
+class prototype_node;
 
 /// @cond OOS_DEV
 

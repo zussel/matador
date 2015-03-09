@@ -29,11 +29,11 @@ public:
 
 public:
   primary_key() : pk_(0) {}
-  primary_key(primary_key::value_type pk)
+  primary_key(T pk)
     : pk_(pk)
   {}
 
-  primary_key& operator=(primary_key::value_type pk)
+  primary_key& operator=(T pk)
   {
     pk_ = pk;
     return *this;
