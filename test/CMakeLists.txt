@@ -229,42 +229,64 @@ LIST(APPEND TESTUNITS prototype)
 LIST(APPEND TESTUNITS store)
 LIST(APPEND TESTUNITS varchar)
 
-SET(database
-  open_close
-  create_drop
-  reopen
-  insert
-  update
-  delete
-  datatypes
+SET(transaction
   simple
   complex
   list
   vector
+)
+
+SET(session
+  open_close
+  create_drop
+  reopen
+)
+
+SET(database
+  insert
+  update
+  delete
+  datatypes
+  reload_simple
   reload
   reload_container
 )
   
 IF(SQLITE3_FOUND AND OOS_SQLITE3)
-  SET(sqlite ${database})
-  LIST(APPEND TESTUNITS sqlite)
+  SET(sqlite_database ${database})
+  SET(sqlite_transaction ${transaction})
+  SET(sqlite_session ${session})
+  LIST(APPEND TESTUNITS sqlite_database)
+  LIST(APPEND TESTUNITS sqlite_transaction)
+  LIST(APPEND TESTUNITS sqlite_session)
 ELSE()
   MESSAGE(STATUS "skipping SQLite tests")
 ENDIF()
 
 IF(MYSQL_FOUND AND OOS_MYSQL)
-  SET(mysql ${database})
-  LIST(APPEND TESTUNITS mysql)
+  SET(mysql_database ${database})
+  SET(mysql_transaction ${transaction})
+  SET(mysql_session ${session})
+  LIST(APPEND TESTUNITS mysql_database)
+  LIST(APPEND TESTUNITS mysql_transaction)
+  LIST(APPEND TESTUNITS mysql_session)
 ELSE()
   MESSAGE(STATUS "skipping MySQL tests")
 ENDIF()
 
 IF(ODBC_FOUND AND OOS_ODBC)
-  SET(mssql ${database})
-  LIST(APPEND TESTUNITS mssql)
+  SET(mssql_database ${database})
+  SET(mssql_transaction ${transaction})
+  SET(mssql_session ${session})
+  LIST(APPEND TESTUNITS mssql_database)
+  LIST(APPEND TESTUNITS mssql_transaction)
+  LIST(APPEND TESTUNITS mssql_session)
 ELSE()
   MESSAGE(STATUS "skipping MSSQL tests")
 ENDIF()
+
+SET(memory_transaction ${transaction})
+LIST(APPEND TESTUNITS memory_transaction)
 
 FOREACH(unit ${TESTUNITS})
   FOREACH(test ${${unit}})
