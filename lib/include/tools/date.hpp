@@ -5,6 +5,8 @@
 
 namespace oos {
 
+unsigned char month_days[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
 class date {
 public:
   date();
@@ -39,16 +41,32 @@ public:
   int month() const;
   int year() const;
 
+  static bool is_leapyear(int year);
+
+  static bool is_valid_date(int year, int month, int day);
+
+  static bool is_daylight_saving(int year, int month, int day);
+
   int julian_date() const;
 
   virtual int difference(const date &x) const;
 
-protected:
-  int day_;
-  int month_;
-  int year_;
+private:
+  struct details_t {
+    details_t();
+    details_t(int jd);
+    details_t(int y, int m, int d);
+    details_t(const details_t &x);
+    int day;
+    int month;
+    int year;
+    bool is_daylight_saving;
+    bool is_leap_year;
+    int julian_date;
+  };
 
-  int julian_date_;
+private:
+  details_t details_;
 };
 
 }

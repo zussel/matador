@@ -1,4 +1,5 @@
 #include "tools/time.hpp"
+#include "tools/date.hpp"
 
 #include <stdexcept>
 #include <cstring>
@@ -10,8 +11,6 @@
 namespace oos {
 
 //const char *time::default_format = "%FT%T.SSSSS%z";
-
-unsigned char month_days[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 time::time()
 {
