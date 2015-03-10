@@ -13,6 +13,8 @@ public:
   virtual void finalize() {}
 
   void test_create();
+  void test_julian_date();
+  void test_initialize();
 };
 
 #endif /* DATETESTUNIT_HPP */

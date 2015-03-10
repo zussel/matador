@@ -5,6 +5,8 @@
 #ADD_SUBDIRECTORY(unit)
 
 SET (TEST_TOOLS_SOURCES
+  tools/TimeTestUnit.cpp
+  tools/TimeTestUnit.hpp
   tools/DateTestUnit.cpp
   tools/DateTestUnit.hpp
   tools/BlobTestUnit.hpp
