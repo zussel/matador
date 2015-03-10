@@ -130,9 +130,9 @@ bool time::is_valid_date(int year, int month, int day)
   if (month < 1 || month > 12) {
     return false;
   }
-  if (month == 1 && (month_days[month] + (is_leap ? 1 : 0) < day || day < 1)) {
+  if (month == 2 && (month_days[month-1] + (is_leap ? 1 : 0) < day || day < 1)) {
     return false;
-  } else if (month_days[month] < day || day < 1) {
+  } else if (month_days[month-1] < day || day < 1) {
     return false;
   }
   return true;
