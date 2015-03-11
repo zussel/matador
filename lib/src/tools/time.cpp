@@ -17,12 +17,14 @@ time::time()
   if (gettimeofday(&time_, 0) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 time::time(time_t t)
 {
   time_.tv_sec = t;
   time_.tv_usec = 0;
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
@@ -30,8 +32,8 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
   if (!date::is_valid_date(year, month, day)) {
     throw std::logic_error("invalid date");
   }
-
-  if (date::is_daylight_saving(year, month, day)) {
+  if (!time::is_valid_time(hour, min, sec, millis)) {
+    throw std::logic_error("invalid time");
   }
   struct tm t;
   t.tm_year = year - 1900;
@@ -43,21 +45,25 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
 
   time_.tv_sec = mktime(&t);
   time_.tv_usec = millis;
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 time::time(uint64_t microseconds)
 {
   time_.tv_sec = microseconds / 1000000;
   time_.tv_usec = microseconds % 1000000;
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 time::time(const time &x)
   : time_(x.time_)
+  , tm_(x.tm_)
 {}
 
 time &time::operator=(const time &x)
 {
   time_ = x.time_;
+  tm_ = x.tm_;
   return *this;
 }
 
@@ -101,7 +107,6 @@ time time::now()
   return time();
 }
 
-
 //std::string time::str() const
 //{
 //  return format("%FT%T.SSSSS%z", utc);
@@ -117,70 +122,75 @@ time time::now()
 //  return format(f, utc);
 //}
 
+bool time::is_valid_time(int hour, int min, int sec, int millis) {
+  if (hour < 0 || hour > 23) {
+    return false;
+  }
+  if (min < 0 || min > 59) {
+    return false;
+  }
+  if (sec < 0 || sec > 59) {
+    return false;
+  }
+  if (millis < 0 || millis > 9999) {
+    return false;
+  }
+  return true;
+}
+
 int time::year() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_year + 1900;
+  return tm_.tm_year + 1900;
 }
 
 int time::month() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_mon + 1;
+  return tm_.tm_mon + 1;
 }
 
 int time::day() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_mday;
+  return tm_.tm_mday;
 }
 
 int time::day_of_week() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_wday;
+  return tm_.tm_wday;
 }
 
 int time::day_of_year() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_yday;
+  return tm_.tm_yday;
 }
 
 bool time::is_leapyear() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  int year = t->tm_year + 1900;
-  return date::is_leapyear(year);
+  return date::is_leapyear(tm_.tm_year + 1900);
 }
 
 bool time::is_daylight_saving() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_isdst == 1;
+  return tm_.tm_isdst == 1;
 }
 
 int time::hour() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_hour;
+  return tm_.tm_hour;
 }
 
 int time::minute() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_min;
+  return tm_.tm_min;
 }
 
 int time::second() const
 {
-  struct tm *t = localtime(&time_.tv_sec);
-  return t->tm_sec;
+  return tm_.tm_sec;
 }
 
 int time::milli_second() const
 {
-  return time_.tv_usec;
+  return (int)(time_.tv_usec / 1000);
 }
 
 //struct timeval time::operator()() const
