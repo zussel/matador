@@ -12,6 +12,7 @@ public:
   void create_varchar();
   void copy_varchar();
   void assign_varchar();
+  void init_varchar();
 
   /**
    * Initializes a test unit

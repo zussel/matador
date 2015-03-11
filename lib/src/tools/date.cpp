@@ -2,104 +2,132 @@
 #include "tools/calendar.h"
 
 #include <ctime>
+#include <stdexcept>
 
 namespace oos {
 
 const unsigned char date::month_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-date::details_t::details_t(){
+void throw_invalid_date(int d, int m, int y)
+{
+  if (!date::is_valid_date(y, m, d)) {
+    throw std::logic_error("date isn't valid");
+  }
+}
+
+date::date()
+{
   // should calc now
   time_t t = time(0);
   struct tm *now = localtime(&t);
-  day = now->tm_mday;
-  month = now->tm_mon + 1;
-  year = now->tm_year + 1900;
-  is_daylight_saving = now->tm_isdst > 0;
-  is_leap_year = date::is_leapyear(year);
-  julian_date = gc2jd(day, month, year);
+  day_ = now->tm_mday;
+  month_ = now->tm_mon + 1;
+  year_ = now->tm_year + 1900;
+  is_daylight_saving_ = now->tm_isdst > 0;
+  is_leap_year_ = date::is_leapyear(year_);
+  julian_date_ = gc2jd(day_, month_, year_);
 }
 
-date::details_t::details_t(int jd)
-  : julian_date(jd)
-{}
-
-date::details_t::details_t(int y, int m, int d)
-  : day(d), month(m), year(y)
-{}
-
-date::details_t::details_t(const details_t &x)
-  : day(x.day), month(x.month), year(x.year)
-  , is_daylight_saving(x.is_daylight_saving)
-  , is_leap_year(x.is_leap_year)
-{}
-
-date::date()
-{}
-
-date::date(int julian_date) : details_(julian_date) {
-  jd2gc(details_.julian_date, details_.day, details_.month, details_.year);
+date::date(int julian_date)
+  : julian_date_(julian_date)
+{
+  sync_julian_date(julian_date);
 }
 
 date::date(int day, int month, int year)
-  : details_(year, month, day)
+  : day_(day)
+  , month_(month)
+  , year_(year)
 {
-  // calculate julian date
-  details_.julian_date = gc2jd(details_.day, details_.month, details_.year);
+  sync_date(day_, month_, year_);
 }
 
 date::date(const char *stamp, const char *format) {
   this->set(stamp, format);
 }
 
-date::date(const date &x) :
-  details_(x.details_)
+date::date(const date &x)
+  : day_(x.day_)
+  , month_(x.month_)
+  , year_(x.year_)
+  , is_daylight_saving_(x.is_daylight_saving_)
+  , is_leap_year_(x.is_leap_year_)
+  , julian_date_(x.julian_date_)
 {}
 
 date &
 date::operator=(const date &x) {
-  details_.day = x.details_.day;
-  details_.month = x.details_.month;
-  details_.year = x.details_.year;
-  details_.julian_date = x.details_.julian_date;
+  day_ = x.day_;
+  month_ = x.month_;
+  year_ = x.year_;
+  is_daylight_saving_ = x.is_daylight_saving_;
+  is_leap_year_ = x.is_leap_year_;
+  julian_date_ = x.julian_date_;
   return *this;
 }
 
-date::~date() {
-}
+date::~date()
+{}
 
 bool
 operator==(const date &a, const date &b) {
-  return a.details_.julian_date == b.details_.julian_date;
+  return a.julian_date_ == b.julian_date_;
 }
 
 bool
 operator!=(const date &a, const date &b) {
-  return a.details_.julian_date != b.details_.julian_date;
+  return a.julian_date_ != b.julian_date_;
+}
+
+date& date::operator+=(int days) {
+  sync_julian_date(julian_date_ + days);
+  return *this;
+}
+
+date& date::operator-=(int days) {
+  sync_julian_date(julian_date_ - days);
+  return *this;
+}
+
+date& date::operator++()
+{
+  sync_julian_date(julian_date_ + 1);
+  return *this;
+}
+
+date date::operator++(int) {
+  date d(*this);
+  ++(*this);
+  return d;
+}
+
+date &date::operator--()
+{
+  sync_julian_date(julian_date_ - 1);
+  return *this;
+}
+
+date date::operator--(int) {
+  date d(*this);
+  --(*this);
+  return d;
 }
 
 date
-operator+(const date &a, const date &b) {
-  return date(a.details_.julian_date + b.details_.julian_date);
+operator+(date a, int days)
+{
+  return a += days;
 }
 
 date
-operator+(const date &a, int days) {
-  return date(a.details_.julian_date + days);
-}
-
-date
-operator-(const date &a, const date &b) {
-  return date(a.details_.julian_date - b.details_.julian_date);
-}
-
-date
-operator-(const date &a, int days) {
-  return date(a.details_.julian_date - days);
+operator-(date a, int days)
+{
+  return a -= days;
 }
 
 bool
 operator<(const date &a, const date &b) {
-  return a.details_.julian_date < b.details_.julian_date;
+  return a.julian_date_ < b.julian_date_;
 }
 
 bool
@@ -119,7 +147,7 @@ operator>=(const date &a, const date &b) {
 
 std::ostream &
 operator<<(std::ostream &lhs, const date &rhs) {
-  lhs << rhs.details_.day << "." << rhs.details_.month << "." << rhs.details_.year;
+  lhs << rhs.day_ << "." << rhs.month_ << "." << rhs.year_;
   return lhs;
 }
 
@@ -127,18 +155,12 @@ void
 date::set(const char *datestr, const char *format) {
   struct tm t;
   strptime(datestr, format, &t);
-  details_.day = t.tm_mday;
-  details_.month = t.tm_mon + 1;
-  details_.year = t.tm_year + 1900;
-  details_.julian_date = gc2jd(details_.day, details_.month, details_.year);
+  sync_date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
 }
 
 void
 date::set(int day, int month, int year) {
-  details_.day = day;
-  details_.month = month;
-  details_.year = year;
-  details_.julian_date = gc2jd(details_.day, details_.month, details_.year);
+  sync_date(day, month, year);
 }
 
 bool date::is_leapyear(int year)
@@ -179,7 +201,7 @@ bool date::is_daylight_saving(int year, int month, int day)
   if (month > 3 && month < 11) { return true; }
   int previousSunday = day - day_of_week;
   //In march, we are DST if our previous sunday was on or after the 8th.
-  if (month == 3) { return previousSunday >= 8; }
+  if (month == 3) { return previousSunday >= 25; }
   //In november we must be before the first sunday to be dst.
   //That means the previous sunday must be before the 1st.
   return previousSunday <= 0;
@@ -187,27 +209,94 @@ bool date::is_daylight_saving(int year, int month, int day)
 
 int
 date::day() const {
-  return details_.day;
+  return day_;
 }
 
 int
 date::month() const {
-  return details_.month;
+  return month_;
 }
 
 int
 date::year() const {
-  return details_.year;
+  return year_;
+}
+
+
+date &date::day(int d)
+{
+  sync_day(d);
+  return *this;
+}
+
+date &date::month(int m)
+{
+  sync_month(m);
+  return *this;
+}
+
+date &date::year(int y)
+{
+  sync_year(y);
+  return *this;
+}
+
+
+bool date::is_leapyear() const
+{
+  return is_leapyear(year_);
+}
+
+bool date::is_daylight_saving() const
+{
+  return is_daylight_saving(year_, month_, day_);
 }
 
 int
-date::julian_date() const {
-  return details_.julian_date;
+date::julian_date() const
+{
+  return julian_date_;
 }
 
 int
 date::difference(const date &x) const {
-  return x.julian_date() - details_.julian_date;
+  return x.julian_date() - julian_date_;
+}
+
+
+void date::sync_day(int d)
+{
+  sync_date(d, month_, year_);
+}
+
+void date::sync_month(int m)
+{
+  sync_date(day_, m, year_);
+}
+
+void date::sync_year(int y)
+{
+  sync_date(day_, month_, y);
+}
+
+void date::sync_date(int d, int m, int y)
+{
+  throw_invalid_date(d, m, y);
+  day_ = d;
+  month_ = m;
+  year_ = y;
+  // calculate julian date
+  is_leap_year_ = is_leapyear(year_);
+  is_daylight_saving_ = is_daylight_saving(year_, month_, day_);
+  julian_date_ = gc2jd(day_, month_, year_);
+}
+
+void date::sync_julian_date(int juliandate)
+{
+  julian_date_ = juliandate;
+  jd2gc(juliandate, day_, month_, year_);
+  is_leap_year_ = is_leapyear(year_);
+  is_daylight_saving_ = is_daylight_saving(year_, month_, day_);
 }
 
 }

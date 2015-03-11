@@ -15,6 +15,13 @@ public:
   void test_create();
   void test_julian_date();
   void test_initialize();
+  void test_invalid();
+  void test_copy();
+  void test_assign();
+  void test_compare();
+  void test_set();
+  void test_modify();
+  void test_difference();
 };
 
 #endif /* DATETESTUNIT_HPP */
