@@ -2,6 +2,8 @@
 
 #include "tools/date.hpp"
 
+#include <stdexcept>
+
 using namespace oos;
 
 using std::cout;
