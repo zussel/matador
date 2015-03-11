@@ -48,12 +48,6 @@ public:
 
   static time now();
 
-  static bool is_leapyear(int year);
-
-  static bool is_valid_date(int year, int month, int day);
-
-  static bool is_daylight_saving(int year, int month, int day);
-
 //  std::string str() const;
 //
 //  std::string to_local(const char *f) const;

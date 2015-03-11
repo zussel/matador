@@ -27,11 +27,11 @@ time::time(time_t t)
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
 {
-  if (!is_valid_date(year, month, day)) {
+  if (!date::is_valid_date(year, month, day)) {
     throw std::logic_error("invalid date");
   }
 
-  if (is_daylight_saving(year, month, day)) {
+  if (date::is_daylight_saving(year, month, day)) {
   }
   struct tm t;
   t.tm_year = year - 1900;
@@ -117,48 +117,6 @@ time time::now()
 //  return format(f, utc);
 //}
 
-bool time::is_leapyear(int year)
-{
-  return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
-}
-
-
-bool time::is_valid_date(int year, int month, int day)
-{
-  bool is_leap = time::is_leapyear(year);
-  if (month < 1 || month > 12) {
-    return false;
-  }
-  if (month == 2 && (date::month_days[month-1] + (is_leap ? 1 : 0) < day || day < 1)) {
-    return false;
-  } else if (date::month_days[month-1] < day || day < 1) {
-    return false;
-  }
-  return true;
-}
-
-
-bool time::is_daylight_saving(int year, int month, int day)
-{
-  /* Calculate day of week in proleptic Gregorian calendar. Sunday == 0. */
-  int adjustment = (14 - month) / 12;
-  int mm = month + 12 * adjustment - 2;
-  int yy = year - adjustment;
-
-  // calculate day of week
-  int day_of_week = (day + (13 * mm - 1) / 5 + yy + yy / 4 - yy / 100 + yy / 400) % 7;
-  //January, february, and december are out.
-  if (month < 3 || month > 11) { return false; }
-  //April to October are in
-  if (month > 3 && month < 11) { return true; }
-  int previousSunday = day - day_of_week;
-  //In march, we are DST if our previous sunday was on or after the 8th.
-  if (month == 3) { return previousSunday >= 8; }
-  //In november we must be before the first sunday to be dst.
-  //That means the previous sunday must be before the 1st.
-  return previousSunday <= 0;
-}
-
 int time::year() const
 {
   struct tm *t = localtime(&time_.tv_sec);
@@ -193,7 +151,7 @@ bool time::is_leapyear() const
 {
   struct tm *t = localtime(&time_.tv_sec);
   int year = t->tm_year + 1900;
-  return time::is_leapyear(year);
+  return date::is_leapyear(year);
 }
 
 bool time::is_daylight_saving() const
