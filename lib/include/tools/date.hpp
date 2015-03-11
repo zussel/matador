@@ -5,9 +5,10 @@
 
 namespace oos {
 
-unsigned char month_days[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
 class date {
+public:
+  static const unsigned char month_days[];
+
 public:
   date();
   explicit date(int julian_date);

@@ -5,6 +5,8 @@
 
 namespace oos {
 
+const unsigned char date::month_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
 date::details_t::details_t(){
   // should calc now
   time_t t = time(0);
