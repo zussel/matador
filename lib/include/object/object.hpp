@@ -97,15 +97,8 @@ public:
    */
 	virtual ~object();
 	
-  virtual void deserialize(object_reader &deserializer)
-  {
-    deserializer.read("id", id_);
-  }
-
-  virtual void serialize(object_writer &serializer) const
-  {
-    serializer.write("id", id_);
-  }
+  virtual void deserialize(object_reader &deserializer);
+  virtual void serialize(object_writer &serializer) const;
 
   /**
    * @brief Returns the classname of the  object

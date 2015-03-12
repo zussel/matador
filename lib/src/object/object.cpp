@@ -29,6 +29,16 @@ object::~object()
 {
 }
 
+void object::deserialize(object_reader &deserializer)
+{
+	deserializer.read("id", id_);
+}
+
+void object::serialize(object_writer &serializer) const
+{
+	serializer.write("id", id_);
+}
+
 unsigned long object::id() const
 {
 	return id_;

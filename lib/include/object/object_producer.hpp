@@ -28,8 +28,7 @@ namespace oos {
 */
 class OOS_API object_base_producer{
   public:
-  virtual ~object_base_producer() {
-  }
+  virtual ~object_base_producer() {}
 
   /**
   * @brief Create a new object.
@@ -63,15 +62,15 @@ class OOS_API object_base_producer{
 template<class T>
 class object_producer : public object_base_producer {
 public:
-  virtual ~object_producer() {
-  }
+  virtual ~object_producer() {}
 
   /**
   * Creates and returns a new object of type T
   *
   * @return new object of type T
   */
-  virtual object *create() const {
+  virtual object *create() const
+  {
     return new T;
   }
 
@@ -80,7 +79,8 @@ public:
   *
   * @return the name of the produced class
   */
-  virtual const char *classname() const {
+  virtual const char *classname() const
+  {
     return typeid(T).name();
   }
 };
