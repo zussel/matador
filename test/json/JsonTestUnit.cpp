@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 using namespace oos;
@@ -13,6 +14,7 @@ JsonTestUnit::JsonTestUnit()
   : unit_test("json", "json test unit")
 {
   add_test("simple", std::bind(&JsonTestUnit::simple_test, this), "simple json test");
+  add_test("invalid", std::bind(&JsonTestUnit::invalid_test, this), "invalid json test");
   add_test("null", std::bind(&JsonTestUnit::null_test, this), "null json test");
   add_test("bool", std::bind(&JsonTestUnit::bool_test, this), "bool json test");
   add_test("string", std::bind(&JsonTestUnit::string_test, this), "string json test");
@@ -39,12 +41,54 @@ void JsonTestUnit::simple_test()
 
   sin >> obj;
 
+  UNIT_ASSERT_EQUAL(obj.size(), (size_t)3, "size of json object must be 3");
+  UNIT_ASSERT_TRUE(obj.contains("text"), "object must contain 'text' attribute");
+
+  int count = 0;
+  for_each(obj.begin(), obj.end(), [&](const json_object::value_type &) {
+    ++count;
+  });
+  UNIT_ASSERT_EQUAL(count, 3, "object must contain 3 elements");
+
   stringstream out;
   out << obj;
   
-  //cout << "\n" << obj << "\n";
+  UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
+
+  obj.clear();
+  UNIT_ASSERT_TRUE(obj.empty(), "object must be empty");
+
+  obj.insert("name", "jon");
+  UNIT_ASSERT_TRUE(obj.contains("name"), "object must contain 'name' attribute");
+
+  str = "   [ {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ]      } ]               ";
+  result = "[ { \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"text\" : \"hello world!\" } ]";
+  sin.clear();
+  sin.str(str);
+
+  json_array ary;
+
+  sin >> ary;
+
+  out.str("");
+  out << ary;
 
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
+}
+
+void JsonTestUnit::invalid_test()
+{
+  string str("      xxx     {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ]      }");
+  istringstream sin(str);
+  json_object obj;
+
+  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "root must be either array '[]' or object '{}'", "shouldn't create json object from invalid json");
+
+  str = "           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ]      } xxxx ";
+  sin.clear();
+  sin.str(str);
+
+  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "no characters are allowed after closed root node", "shouldn't create json object from invalid json");
 }
 
 void JsonTestUnit::null_test()
@@ -193,6 +237,30 @@ void JsonTestUnit::number_test()
     json_number numb = obj["number"];
     
     UNIT_ASSERT_EQUAL(numb.value(), 1.99998E+10, "values are not equal");
+
+    json_number numb2(numb);
+
+    UNIT_ASSERT_EQUAL(numb2.value(), 1.99998E+10, "values are not equal");
+
+    json_number numb3;
+
+    numb2 = 5.2;
+
+    UNIT_ASSERT_EQUAL(numb2.value(), 5.2, "values are not equal");
+
+    UNIT_ASSERT_TRUE(numb2 < numb, "numb2 must be less than numb");
+
+    numb3 = numb2;
+
+    UNIT_ASSERT_EQUAL(numb3.value(), 5.2, "values are not equal");
+
+    numb3 = obj["number"];
+
+    UNIT_ASSERT_EQUAL(numb3.value(), 1.99998E+10, "values are not equal");
+
+    numb2.value(-1.223);
+
+    UNIT_ASSERT_EQUAL(numb2.value(), -1.223, "values are not equal");
   }
 }
 

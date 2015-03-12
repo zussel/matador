@@ -2,6 +2,7 @@
 #include "json/json_string.hpp"
 
 #include <algorithm>
+#include <glob.h>
 
 namespace oos {
 
@@ -36,86 +37,9 @@ json_object::~json_object()
 
 bool json_object::parse(std::istream &in)
 {
-
   json_type::parser.parse(in);
 
-    return true;
-
-  in >> std::ws;
-
-  /*
-   * parse '{'
-   * 
-   * parse string (key)
-   * 
-   * parse ':'
-   * 
-   * parse value (object, string, array, bool or null)
-   * 
-   * parse '}'
-   */
-  char c(0);
-  
-  c = in.get();
-  if (in.good() && c != '{') {
-    in.putback(c);
-    return false;
-  }
-  
-  c = in.get();
-  if (in.good() && c == '}') {
-    // empty object
-    return true;
-  }
-  
-  // skip white
-  in >> std::ws;
-
-  do {
-
-    json_string key;
-    if (!key.parse(in)) {
-      return false;
-    }
-
-    // skip ws
-    in >> std::ws;
-
-    // read colon
-    c = in.get();
-    if (in.good() && c != ':') {
-      return false;
-    }
-
-    // skip ws
-    in >> std::ws;
-
-    try {
-      // create value
-      json_value val(json_value::create(in));
-
-      in >> val;
-
-      insert(key, val);
-    } catch (std::logic_error &ex) {
-      return false;
-    }
-
-    // skip white
-    in >> std::ws;
-
-    c = in.get();
-  } while (in && in.good() && c == ',');
-
-  if (c != '}') {
-    return false;
-  }
-
-  // skip white
-  in >> std::ws;
-
-  // no characters after closing parenthesis are aloud
-  return in.eof();
+  return true;
 }
 
 void json_object::print(std::ostream &out) const
@@ -173,6 +97,11 @@ bool json_object::contains(const std::string &k)
 json_value& json_object::operator[](const std::string &key)
 {
   return string_value_map_[key];
+}
+
+size_t json_object::size() const
+{
+  return string_value_map_.size();
 }
 
 void json_object::insert(const json_string &key, const json_value &val)

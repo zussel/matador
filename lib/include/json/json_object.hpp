@@ -50,6 +50,7 @@ class OOS_API json_object : public json_type
 {
 public:
   typedef std::map<json_string, json_value> t_string_value_map; /**< Shortcut for the string value map */
+  typedef t_string_value_map::value_type value_type;            /**< Shortcut for the string value map type */
   typedef t_string_value_map::const_iterator const_iterator;    /**< Shortcut for the map const iterator */
   typedef t_string_value_map::iterator iterator;                /**< Shortcut for the map iterator */
   typedef t_string_value_map::size_type size_type;              /**< Shortcut for the map size type */
@@ -151,7 +152,7 @@ public:
    * 
    * @return The size of the json_object.
    */
-  virtual size_t size() const { return string_value_map_.size(); }
+  virtual size_t size() const;
 
   /**
    * Input operator for a json_object.
