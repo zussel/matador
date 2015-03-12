@@ -5,6 +5,8 @@
 
 namespace oos {
 
+void throw_invalid_date(int d, int m, int y);
+
 class date {
 public:
   static const unsigned char month_days[];

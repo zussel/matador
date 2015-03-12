@@ -38,7 +38,9 @@ public:
 
   static time now();
 
-  static bool is_valid_time(int hour, int min, int sec, int millis);
+  static bool is_valid_time(int hour, int min, int sec, long millis);
+
+  void set(int year, int month, int day, int hour, int min, int sec, long millis);
 
 //  std::string str() const;
 //
@@ -49,26 +51,40 @@ public:
   int year() const;
   int month() const;
   int day() const;
+  int hour() const;
+  int minute() const;
+  int second() const;
+  int milli_second() const;
+
+  time& year(int y);
+  time& month(int m);
+  time& day(int d);
+  time& hour(int h);
+  time& minute(int m);
+  time& second(int s);
+  time& milli_second(int ms);
+
   int day_of_week() const;
   int day_of_year() const;
 
   bool is_leapyear() const;
   bool is_daylight_saving() const;
 
-  int hour() const;
-  int minute() const;
-  int second() const;
-  int milli_second() const;
-
-//  struct timeval operator()() const;
-
-  std::string format(const char *f, tz_t tz = local) const;
-
-  void parse(const char *f, const std::string &ts);
+//  std::string format(const char *f, tz_t tz = local) const;
+//  void parse(const char *f, const std::string &ts);
 
   friend std::ostream &operator<<(std::ostream &out, const time &x);
+//  friend std::istream &operator>>(std::istream &in, time &x);
 
-  friend std::istream &operator>>(std::istream &in, time &x);
+private:
+  void sync_day(int d);
+  void sync_month(int m);
+  void sync_year(int y);
+  void sync_hour(int h);
+  void sync_minute(int m);
+  void sync_second(int s);
+  void sync_milli_second(int ms);
+  void sync_time(int y, int m, int d, int h, int min, int s, long ms);
 
 private:
   struct timeval time_;

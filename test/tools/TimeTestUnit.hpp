@@ -14,6 +14,11 @@ public:
 
   void test_create();
   void test_initialize();
+  void test_invalid();
+  void test_copy();
+  void test_assign();
+  void test_compare();
+  void test_modify();
 };
 
 #endif /* TIMETESTUNIT_HPP */
