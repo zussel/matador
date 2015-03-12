@@ -115,6 +115,8 @@ private:
     convert(from_, to, s);
     success_ = true;
   }
+  void read_value(const char*, date&) {}
+  void read_value(const char*, time&) {}
   void read_value(const char*, object_container&) {}
 
 private:
@@ -268,10 +270,10 @@ public:
     success_ = true;
   }
 
+  void write_value(const char*, const date&) {}
+  void write_value(const char*, const time&) {}
   void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const primary_key_base &)
-  {
-  }
+  void write_value(const char*, const primary_key_base &) {}
 
   void write_value(const char *id, const char *from, int)
   {
