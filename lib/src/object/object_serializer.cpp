@@ -15,6 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <tools/date.hpp>
+#include <tools/time.hpp>
 #include "object/object_serializer.hpp"
 #include "object/object.hpp"
 #include "object/object_store.hpp"
@@ -72,6 +74,16 @@ void object_serializer::write_value(const char*, const varchar_base &s)
   buffer_->append(s.str().c_str(), len);
 }
 
+void object_serializer::write_value(const char *, const date &x)
+{
+  // TODO: implement write date
+}
+
+void object_serializer::write_value(const char *, const time &x)
+{
+  // TODO: implement write time
+}
+
 void object_serializer::write_value(const char*, const object_base_ptr &x)
 {
   // write type and id into buffer
@@ -118,6 +130,16 @@ void object_serializer::read_value(const char*, varchar_base &s)
   buffer_->release(str, len);
   s.assign(str, len);
   delete [] str;
+}
+
+void object_serializer::read_value(const char *, date &x)
+{
+  // TODO: implement read date
+}
+
+void object_serializer::read_value(const char *, time &x)
+{
+  // TODO: implement read time
 }
 
 void object_serializer::read_value(const char*, object_base_ptr &x)

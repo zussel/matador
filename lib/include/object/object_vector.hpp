@@ -517,7 +517,7 @@ public:
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector; /**< Shortcut for the base vector. */ // true
 
   typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */ // false
-  typedef typename oos::conditional<CPP11_TYPE_TRAITS_NS::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */ // true
+  typedef typename oos::conditional<std::is_base_of<object_base_ptr, T>::value, T, dummyy>::type::object_type value_type; /**< Shortcut for the value type. */ // true
   typedef T value_holder;                                      /**< Shortcut for the value holder. */ // true, false
 
   typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */ // false

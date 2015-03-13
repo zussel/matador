@@ -33,12 +33,6 @@
 #include <type_traits>
 #include <object/primary_key.hpp>
 
-#ifdef WIN32
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
-
 namespace oos {
 
 class database;

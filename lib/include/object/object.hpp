@@ -42,16 +42,6 @@
 #include <cstring>
 #include <type_traits>
 
-/// @cond OOS_DEV
-
-#ifdef _MSC_VER
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
-
-/// @endcond OOS_DEV
-
 namespace oos {
 
 class object_proxy;

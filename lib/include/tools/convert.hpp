@@ -32,6 +32,8 @@
 #endif
 
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 #include "tools/enable_if.hpp"
 
 #include <type_traits>
@@ -53,7 +55,8 @@
 
 namespace oos {
 
-class varchar_base;
+class date;
+class time;
 
 #ifdef OOS_DOXYGEN_DOC
 
@@ -701,6 +704,54 @@ OOS_API void convert(const varchar_base &from, std::string &to);
 OOS_API void convert(const std::string &from, varchar_base &to);
 OOS_API void convert(const std::string &from, std::string &to);
 OOS_API void convert(const varchar_base &from, varchar_base &to);
+
+/*
+ * From
+ *  date
+ * to
+ *  T
+ */
+template < typename T >
+void convert(const date &/*from*/, T &/*to*/)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * From
+ *  time
+ * to
+ *  T
+ */
+template < typename T >
+void convert(const oos::time &/*from*/, T &/*to*/)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * From
+ *  T
+ * to
+ *  date
+ */
+template < typename T >
+void convert(const T &/*from*/, date &/*to*/)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * From
+ *  T
+ * to
+ *  time
+ */
+template < typename T >
+void convert(const T &/*from*/, oos::time &/*to*/)
+{
+  throw std::bad_cast();
+}
 
 #endif /* OOS_DOXYGEN_DOC */
 

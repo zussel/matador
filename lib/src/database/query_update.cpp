@@ -1,4 +1,5 @@
 #include <object/primary_key.hpp>
+#include <tools/date.hpp>
 #include "database/query_update.hpp"
 
 #include "object/object_ptr.hpp"
@@ -82,6 +83,16 @@ void query_update::write(const char *id, const varchar_base &x)
 void query_update::write(const char *id, const std::string &x)
 {
   write_pair(id, type_text, x);
+}
+
+void query_update::write(const char *id, const date &x)
+{
+  // TODO: implement write date
+}
+
+void query_update::write(const char *id, const time &x)
+{
+  // TODO: implement write time
 }
 
 void query_update::write(const char *id, const object_base_ptr &x)

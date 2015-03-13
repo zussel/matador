@@ -31,12 +31,6 @@
   #else
     #define OOS_API
   #endif
-  #ifdef _MSC_VER
-    #define CPP11_TYPE_TRAITS_NS std::tr1
-  #else
-  #define CPP11_TYPE_TRAITS_NS std
-#endif
-
 #endif /* OOS_DOXYGEN_DOC */
 
 #include "unit/unit_exception.hpp"
