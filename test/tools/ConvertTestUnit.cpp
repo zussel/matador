@@ -52,6 +52,7 @@ ConvertTestUnit::ConvertTestUnit()
   add_test("to_char_pointer", std::bind(&ConvertTestUnit::convert_to_char_pointer, this), "convert to const char pointer test");
   add_test("to_string", std::bind(&ConvertTestUnit::convert_to_string, this), "convert to string test");
   add_test("to_varchar", std::bind(&ConvertTestUnit::convert_to_varchar, this), "convert to varchar test");
+  add_test("to_date", std::bind(&ConvertTestUnit::convert_to_date, this), "convert to date test");
 }
 
 ConvertTestUnit::~ConvertTestUnit()
@@ -1280,4 +1281,14 @@ ConvertTestUnit::convert_to_varchar()
   // TODO: add varchar conversions
   CONVERT_EXPECT_SUCCESS(varchar<8>, varchar<64>, "99", "99");
   */
+}
+
+void ConvertTestUnit::convert_to_date()
+{
+  CONVERT_EXPECT_FAILURE(bool, true, date, 0);
+}
+
+void ConvertTestUnit::convert_to_time()
+{
+
 }
