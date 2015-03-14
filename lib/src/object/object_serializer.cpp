@@ -74,14 +74,16 @@ void object_serializer::write_value(const char*, const varchar_base &s)
   buffer_->append(s.str().c_str(), len);
 }
 
-void object_serializer::write_value(const char *, const date &x)
+void object_serializer::write_value(const char *id, const date &x)
 {
-  // TODO: implement write date
+  write_value(id, x.julian_date());
 }
 
-void object_serializer::write_value(const char *, const time &x)
+void object_serializer::write_value(const char *id, const time &x)
 {
-  // TODO: implement write time
+  struct timeval tv = x.get();
+  write_value(id, tv.tv_sec);
+  write_value(id, tv.tv_usec);
 }
 
 void object_serializer::write_value(const char*, const object_base_ptr &x)
@@ -134,12 +136,17 @@ void object_serializer::read_value(const char*, varchar_base &s)
 
 void object_serializer::read_value(const char *, date &x)
 {
-  // TODO: implement read date
+  int julian_date(0);
+  buffer_->release(&julian_date, sizeof(julian_date));
+  x.set(julian_date);
 }
 
 void object_serializer::read_value(const char *, time &x)
 {
-  // TODO: implement read time
+  struct timeval tv;
+  buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
+  buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
+  x.set(tv);
 }
 
 void object_serializer::read_value(const char*, object_base_ptr &x)

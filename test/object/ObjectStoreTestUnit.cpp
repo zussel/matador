@@ -6,6 +6,8 @@
 #include "object/object_view.hpp"
 
 #include "tools/algorithm.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 
 #include "version.hpp"
 
@@ -185,6 +187,8 @@ ObjectStoreTestUnit::serializer()
   bool b = true;
   std::string title = "Hallo Welt";
   oos::varchar<64> str("The answer is 42");
+  oos::date dt(15, 9, 1972);
+  oos::time t(2008, 12, 27, 13, 6, 57, 4711);
 
   Item *item = new Item();
   
@@ -200,6 +204,8 @@ ObjectStoreTestUnit::serializer()
   item->set_bool(b);
   item->set_string(title);
   item->set_varchar(str);
+  item->set_date(dt);
+  item->set_time(t);
   
   object_serializer serializer;
  
@@ -224,7 +230,9 @@ ObjectStoreTestUnit::serializer()
   UNIT_ASSERT_EQUAL(b, item->get_bool(), "restored bool is not equal to the original bool");
   UNIT_ASSERT_EQUAL(title, item->get_string(), "restored string is not equal to the original string");
   UNIT_ASSERT_EQUAL(str, item->get_varchar(), "restored varchar is not equal to the original varchar");
-  
+  UNIT_ASSERT_EQUAL(dt, item->get_date(), "restored date is not equal to the original date");
+  UNIT_ASSERT_EQUAL(t, item->get_time(), "restored time is not equal to the original time");
+
   delete item;
 }
 

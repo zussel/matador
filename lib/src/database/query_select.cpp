@@ -81,14 +81,14 @@ void query_select::write(const char *id, const std::string &)
   write(id, type_text);
 }
 
-void query_select::write(const char *id, const date &x)
+void query_select::write(const char *id, const date &)
 {
-  // TODO: implement write date
+  write(id, type_date);
 }
 
-void query_select::write(const char *id, const time &x)
+void query_select::write(const char *id, const time &)
 {
-  // TODO: implement write time
+  write(id, type_time);
 }
 
 void query_select::write(const char *id, const object_base_ptr &)

@@ -107,6 +107,8 @@ public:
     deserializer.read("val_cstr", cstr_, CSTR_LEN);
     deserializer.read("val_string", string_);
     deserializer.read("val_varchar", varchar_);
+    deserializer.read("val_date", date_);
+    deserializer.read("val_time", time_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
@@ -124,6 +126,8 @@ public:
     serializer.write("val_cstr", cstr_, CSTR_LEN);
     serializer.write("val_string", string_);
     serializer.write("val_varchar", varchar_);
+    serializer.write("val_date", date_);
+    serializer.write("val_time", time_);
   }
 
   void set_char(char x) { modify(char_, x); }
@@ -139,6 +143,8 @@ public:
   void set_cstr(const char *x, int size) { modify(cstr_, CSTR_LEN, x, size); }
   void set_string(const std::string &x) { modify(string_, x); }
   void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
+  void set_date(const oos::date &d) { date_ = d; }
+  void set_time(const oos::time &d) { time_ = d; }
 
   char get_char() const { return char_; }
   float get_float() const { return float_; }
@@ -153,6 +159,8 @@ public:
   const char* get_cstr() const { return cstr_; }
   std::string get_string() const { return string_; }
   oos::varchar_base get_varchar() const { return varchar_; }
+  oos::date get_date() const { return date_; }
+  oos::time get_time() const { return time_; }
 
   friend std::ostream& operator <<(std::ostream &os, const Item &i)
   {
@@ -176,6 +184,8 @@ private:
   char cstr_[CSTR_LEN];
   std::string string_;
   oos::varchar<64> varchar_;
+  oos::date date_;
+  oos::time time_;
 };
 
 class ItemA : public Item {};

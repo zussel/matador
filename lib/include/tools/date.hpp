@@ -45,6 +45,7 @@ public:
   // sets the date from a string
   void set(const char *datestr, const char *format = "%d.%m.%Y");
   void set(int day, int month, int year);
+  void set(int julian_date);
 
   int day() const;
   int month() const;

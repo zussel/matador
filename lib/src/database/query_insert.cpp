@@ -7,6 +7,7 @@
 #include <sstream>
 #include <object/primary_key.hpp>
 #include <tools/date.hpp>
+#include <tools/time.hpp>
 
 namespace oos {
 
@@ -89,12 +90,12 @@ void query_insert::write(const char *id, const std::string &x)
 
 void query_insert::write(const char *id, const date &x)
 {
-  // TODO: implement write date
+  write_field(id, type_date, x);
 }
 
 void query_insert::write(const char *id, const time &x)
 {
-  // TODO: implement write time
+  write_field(id, type_time, x);
 }
 
 void query_insert::write(const char *id, const object_base_ptr &x)
@@ -108,6 +109,26 @@ void query_insert::write(const char *, const object_container &)
 void query_insert::write(const char *id, const primary_key_base &x)
 {
   x.serialize(id, *this);
+}
+
+void query_insert::write_field(const char *id, data_type_t /*type*/, const oos::date &/*x*/)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  // TODO: append query insert part for date
+}
+
+void query_insert::write_field(const char *id, data_type_t /*type*/, const oos::time &/*x*/)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  // TODO: append query insert part for time
 }
 
 void query_insert::write_field(const char *id, data_type_t type, const std::string &x)

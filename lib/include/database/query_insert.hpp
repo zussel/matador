@@ -52,6 +52,8 @@ public:
       dialect.append(id, type, valstr.str());
     }
   }
+  void write_field(const char *id, data_type_t type, const oos::date &x);
+  void write_field(const char *id, data_type_t type, const oos::time &x);
   void write_field(const char *id, data_type_t type, const std::string &x);
   void write_field(const char *id, data_type_t type, const varchar_base &x);
   void write_field(const char *id, data_type_t type, const char *x);

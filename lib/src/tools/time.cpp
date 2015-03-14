@@ -29,36 +29,12 @@ time::time()
 
 time::time(time_t t)
 {
-  time_.tv_sec = t;
-  time_.tv_usec = 0;
-  localtime_r(&time_.tv_sec, &tm_);
+  set(t, 0);
 }
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
 {
   set(year, month, day, hour, min, sec, millis);
-}
-
-void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
-{
-  throw_invalid_date(day, month, year);
-  throw_invalid_time(hour, min, sec, millis);
-
-  time_t rawtime;
-  ::time(&rawtime);
-
-  struct tm *t = localtime(&rawtime);
-  t->tm_year = year - 1900;
-  t->tm_mon = month - 1;
-  t->tm_mday = day;
-  t->tm_hour = hour;
-  t->tm_min = min;
-  t->tm_sec = sec;
-  t->tm_isdst = date::is_daylight_saving(year, month, day);
-
-  this->time_.tv_sec = mktime(t);
-  this->time_.tv_usec = millis * 1000;
-  localtime_r(&this->time_.tv_sec, &this->tm_);
 }
 
 time::time(uint64_t microseconds)
@@ -149,6 +125,41 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
     return false;
   }
   return true;
+}
+
+void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
+{
+  throw_invalid_date(day, month, year);
+  throw_invalid_time(hour, min, sec, millis);
+
+  time_t rawtime;
+  ::time(&rawtime);
+
+  struct tm *t = localtime(&rawtime);
+  t->tm_year = year - 1900;
+  t->tm_mon = month - 1;
+  t->tm_mday = day;
+  t->tm_hour = hour;
+  t->tm_min = min;
+  t->tm_sec = sec;
+  t->tm_isdst = date::is_daylight_saving(year, month, day);
+
+  this->time_.tv_sec = mktime(t);
+  this->time_.tv_usec = millis * 1000;
+  localtime_r(&this->time_.tv_sec, &this->tm_);
+}
+
+void time::set(time_t t, long millis)
+{
+  time_.tv_sec = t;
+  time_.tv_usec = millis * 1000;
+  localtime_r(&time_.tv_sec, &tm_);
+}
+
+void time::set(timeval tv)
+{
+  time_ = tv;
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 int time::year() const
@@ -246,6 +257,11 @@ bool time::is_leapyear() const
 bool time::is_daylight_saving() const
 {
   return tm_.tm_isdst == 1;
+}
+
+struct timeval time::get() const
+{
+  return time_;
 }
 
 //std::string time::format(const char *f, tz_t tz) const
