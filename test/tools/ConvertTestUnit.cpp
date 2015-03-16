@@ -68,51 +68,12 @@ ConvertTestUnit::~ConvertTestUnit()
     UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
   }
 
-#define CONVERT_NUMERIC_EXPECT_SUCCESS_SIGN(FROM, TO, BOUNDARY, SIGN) \
-  try { \
-    FROM from(SIGN std::numeric_limits<FROM>::BOUNDARY()); \
-    TO to; \
-    convert(from, to); \
-    UNIT_ASSERT_EQUAL(to, SIGN std::numeric_limits<FROM>::BOUNDARY(), "convert failed: "#BOUNDARY" values are not equal"); \
-  } catch (std::bad_cast &) { \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
-  }
-
 #define CONVERT_NUMERIC_EXPECT_SUCCESS_WEAK(FROM, TO, BOUNDARY) \
   try { \
     FROM from(std::numeric_limits<TO>::BOUNDARY()); \
     TO to; \
     convert(from, to); \
     UNIT_ASSERT_EQUAL(to, std::numeric_limits<TO>::BOUNDARY(), "convert failed: "#BOUNDARY" values are not equal"); \
-  } catch (std::bad_cast &) { \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
-  }
-
-#define CONVERT_NUMERIC_EXPECT_SUCCESS_UNCHECKED(FROM, TO, BOUNDARY) \
-  try { \
-    FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
-    TO to; \
-    convert(from, to); \
-  } catch (std::bad_cast &) { \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
-  }
-
-#define CONVERT_NUMERIC_EXPECT_SUCCESS_ABS(FROM, TO, BOUNDARY) \
-  try { \
-    FROM from(std::abs(std::numeric_limits<FROM>::BOUNDARY())); \
-    TO to; \
-    convert(from, to); \
-    UNIT_ASSERT_EQUAL(to, std::abs(std::numeric_limits<FROM>::BOUNDARY()), "convert failed: "#BOUNDARY" values are not equal"); \
-  } catch (std::bad_cast &) { \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
-  }
-
-#define CONVERT_NUMERIC_EXPECT_SUCCESS_RESULT(FROM, TO, BOUNDARY, RESULT) \
-  try { \
-    FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
-    TO to; \
-    convert(from, to); \
-    UNIT_ASSERT_EQUAL(to, (TO)RESULT, "convert failed: "#BOUNDARY" values are not equal"); \
   } catch (std::bad_cast &) { \
     UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must not fail"); \
   }
@@ -158,67 +119,60 @@ ConvertTestUnit::~ConvertTestUnit()
   }
 
 #define CONVERT_NUMERIC_EXPECT_FAILURE(FROM, TO, BOUNDARY) \
-  try { \
+  { \
     FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
     TO to; \
-    convert(from, to); \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+    const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
+    UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
 #define CONVERT_NUMERIC_EXPECT_FAILURE_SIZE(FROM, TO, BOUNDARY, SIZE) \
-  try { \
+  { \
     FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
     TO to; \
-    convert(from, to, SIZE); \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+    const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
+    UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
 #define CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(FROM, TO, BOUNDARY, SIZE, PRECISION) \
-  try { \
+  { \
     FROM from(std::numeric_limits<FROM>::BOUNDARY()); \
     TO to; \
-    convert(from, to, SIZE, PRECISION); \
-    UNIT_FAIL("convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+    const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
+    UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE, PRECISION), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
-#define CONVERT_EXPECT_FAILURE(from, in, to, out) \
-  try { \
-    from a(in); \
-    to b; \
-    convert(a, b); \
-    UNIT_FAIL("convertion "#from" to "#to" must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+#define CONVERT_EXPECT_FAILURE(FROM, IN, TO, OUT) \
+  { \
+    FROM from(IN); \
+    TO to; \
+    const char *msg = "convertion from "#FROM" to "#TO" must fail"; \
+    UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
-#define CONVERT_TO_PTR_EXPECT_FAILURE(from, in, to, out) \
-  try { \
-    from a(in); \
-    to b(0); \
-    convert(a, b); \
-    UNIT_FAIL("convertion "#from" to "#to" must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+#define CONVERT_TO_PTR_EXPECT_FAILURE(FROM, IN, TO, OUT) \
+  { \
+    FROM from(IN); \
+    TO to(0); \
+    const char *msg("convertion from "#FROM" to "#TO" must fail"); \
+    UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
-#define CONVERT_EXPECT_FAILURE_SIZE(from, in, to, out, size) \
-  try { \
-    from a(in); \
-    to b; \
-    convert(a, b, size); \
-    UNIT_FAIL("convertion "#from" to "#to" must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+#define CONVERT_EXPECT_FAILURE_SIZE(FROM, IN, TO, OUT, SIZE) \
+  { \
+    FROM from(IN); \
+    TO to; \
+    const char *msg("convertion from "#FROM" to "#TO" must fail"); \
+    UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
-#define CONVERT_EXPECT_FAILURE_SIZE_PRECISION(from, in, to, out, size, precision) \
-  try { \
-    from a(in); \
-    to b; \
-    convert(a, b, size, precision); \
-    UNIT_FAIL("convertion "#from" to "#to" must fail"); \
-  } catch (std::bad_cast &) { \
-  }
+#define CONVERT_EXPECT_FAILURE_SIZE_PRECISION(FROM, IN, TO, OUT, SIZE, PRECISION) \
+  { \
+    FROM from(IN); \
+    TO to; \
+    const char *msg("convertion from "#FROM" to "#TO" must fail"); \
+    UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE, PRECISION), std::bad_cast, "std::bad_cast", msg) \
+  } while(false);
 
 void
 ConvertTestUnit::convert_to_bool()
@@ -292,6 +246,10 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", bool, false);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", bool, true, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", bool, true, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, bool, false);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, bool, true, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, bool, true, 256, 3);
 }
 
 void
@@ -366,6 +324,10 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", char, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", char, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", char, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, char, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, char, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, char, 99, 256, 3);
 }
 
 void
@@ -440,6 +402,10 @@ ConvertTestUnit::convert_to_short()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", short, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", short, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", short, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, short, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, short, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, short, 99, 256, 3);
 }
 
 void
@@ -531,6 +497,10 @@ ConvertTestUnit::convert_to_int()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", int, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", int, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", int, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, int, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, int, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, int, 99, 256, 3);
 }
 
 void
@@ -610,6 +580,10 @@ ConvertTestUnit::convert_to_long()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", long, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", long, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", long, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, long, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, long, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, long, 99, 256, 3);
 }
 
 void
@@ -1286,6 +1260,10 @@ ConvertTestUnit::convert_to_varchar()
 void ConvertTestUnit::convert_to_date()
 {
   CONVERT_EXPECT_FAILURE(bool, true, date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(bool, true, date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, date, 0, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS(int, 2457090, oos::date, oos::date(2457090));
 }
 
 void ConvertTestUnit::convert_to_time()
