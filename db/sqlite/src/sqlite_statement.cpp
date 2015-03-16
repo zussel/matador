@@ -184,6 +184,16 @@ void sqlite_statement::write(const char*, const varchar_base &x)
   throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
+void sqlite_statement::write(const char *, const oos::date &)
+{
+  // Todo: implement write/bind of date column
+}
+
+void sqlite_statement::write(const char *, const oos::time &)
+{
+  // Todo: implement write/bind of time column
+}
+
 void sqlite_statement::write(const char *, const object_base_ptr &x)
 {
   int ret = sqlite3_bind_int(stmt_, ++host_index, x.id());

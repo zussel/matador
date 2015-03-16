@@ -144,8 +144,18 @@ void sqlite_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
+void sqlite_result::read(const char *, oos::date &)
+{
+}
+
+void sqlite_result::read(const char *, oos::time &)
+{
+  // Todo: implement read of date column
+}
+
 void sqlite_result::read(const char */*id*/, object_base_ptr &/*x*/)
 {
+  // Todo: implement read of time column
 }
 
 void sqlite_result::read(const char */*id*/, object_container &/*x*/)
