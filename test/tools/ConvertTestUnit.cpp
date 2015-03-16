@@ -1259,11 +1259,41 @@ ConvertTestUnit::convert_to_varchar()
 
 void ConvertTestUnit::convert_to_date()
 {
-  CONVERT_EXPECT_FAILURE(bool, true, date, 0);
-  CONVERT_EXPECT_FAILURE_SIZE(bool, true, date, 0, 256);
-  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, date, 0, 256, 3);
+  CONVERT_EXPECT_FAILURE(bool, true, oos::date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(bool, true, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(char, 99, oos::date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(char, 99, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 99, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(short, 99, oos::date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(short, 99, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, oos::date, 0, 256, 3);
 
   CONVERT_EXPECT_SUCCESS(int, 2457090, oos::date, oos::date(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(int, 2457090, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 2457090, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS(long, 2457090, oos::date, oos::date(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(long, 2457090, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 2457090, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned char, 99, oos::date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned char, 99, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 99, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned short, 99, oos::date, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned short, 99, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS(unsigned int, 2457090, oos::date, oos::date(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned int, 2457090, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 2457090, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS(unsigned long, 2457090, oos::date, oos::date(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned long, 2457090, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 2457090, oos::date, 0, 256, 3);
 }
 
 void ConvertTestUnit::convert_to_time()

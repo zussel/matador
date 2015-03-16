@@ -45,8 +45,7 @@ convert(const varchar_base &from, varchar_base &to)
   to = from;
 }
 
-void
-convert(const char *from, bool &to)
+void convert(const char *from, bool &to)
 {
   char *ptr;
   to = strtoul(from, &ptr, 10) > 0;
@@ -55,10 +54,29 @@ convert(const char *from, bool &to)
   }
 }
 
-void
-convert(const bool &from, bool &to)
+void convert(const bool &from, bool &to)
 {
   to = from;
+}
+
+void convert(int from, date &to)
+{
+  to.set(from);
+}
+
+void convert(unsigned int from, date &to)
+{
+  to.set((int)from);
+}
+
+void convert(long from, date &to)
+{
+  to.set((int)from);
+}
+
+void convert(unsigned long from, date &to)
+{
+  to.set((int)from);
 }
 
 }

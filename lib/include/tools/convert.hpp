@@ -729,6 +729,11 @@ void convert(const oos::time &/*from*/, T &/*to*/)
   throw std::bad_cast();
 }
 
+void convert(int from, date &to);
+void convert(unsigned int from, date &to);
+void convert(long from, date &to);
+void convert(unsigned long from, date &to);
+
 /*
  * From
  *  T
