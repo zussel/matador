@@ -15,9 +15,10 @@ public:
   date();
   explicit date(int julian_date);
   date(int day, int month, int year);
-  date(const char *stamp, const char *format = "%d.%m.%Y");
+  explicit date(const char *stamp, const char *format = "%d.%m.%Y");
   date(const date &x);
   date& operator=(const date &x);
+  date& operator=(int julian_date);
 
   virtual ~date();
 

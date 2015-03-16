@@ -66,6 +66,12 @@ date::operator=(const date &x) {
   return *this;
 }
 
+date &date::operator=(int julian_date)
+{
+  sync_julian_date(julian_date);
+  return *this;
+}
+
 date::~date()
 {}
 
