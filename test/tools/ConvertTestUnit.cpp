@@ -53,6 +53,7 @@ ConvertTestUnit::ConvertTestUnit()
   add_test("to_string", std::bind(&ConvertTestUnit::convert_to_string, this), "convert to string test");
   add_test("to_varchar", std::bind(&ConvertTestUnit::convert_to_varchar, this), "convert to varchar test");
   add_test("to_date", std::bind(&ConvertTestUnit::convert_to_date, this), "convert to date test");
+  add_test("to_time", std::bind(&ConvertTestUnit::convert_to_time, this), "convert to time test");
 }
 
 ConvertTestUnit::~ConvertTestUnit()
@@ -250,6 +251,10 @@ ConvertTestUnit::convert_to_bool()
   CONVERT_EXPECT_FAILURE               (oos::date, 2457090, bool, false);
   CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, bool, true, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, bool, true, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::time, 2457090, bool, false);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::time, 2457090, bool, true, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::time, 2457090, bool, true, 256, 3);
 }
 
 void
@@ -328,6 +333,10 @@ ConvertTestUnit::convert_to_char()
   CONVERT_EXPECT_FAILURE               (oos::date, 2457090, char, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, char, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, char, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::time, 2457090, char, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::time, 2457090, char, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::time, 2457090, char, 99, 256, 3);
 }
 
 void
@@ -406,6 +415,10 @@ ConvertTestUnit::convert_to_short()
   CONVERT_EXPECT_FAILURE               (oos::date, 2457090, short, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, short, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, short, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::time, 2457090, short, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::time, 2457090, short, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::time, 2457090, short, 99, 256, 3);
 }
 
 void
@@ -498,9 +511,9 @@ ConvertTestUnit::convert_to_int()
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", int, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", int, 99, 256, 3);
 
-  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, int, 99);
-  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, int, 99, 256);
-  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, int, 99, 256, 3);
+  CONVERT_EXPECT_SUCCESS               (oos::date, 2457090, int, 2457090);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, int, 2457090, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, int, 2457090, 256, 3);
 }
 
 void
@@ -581,9 +594,9 @@ ConvertTestUnit::convert_to_long()
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", long, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", long, 99, 256, 3);
 
-  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, long, 99);
-  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, long, 99, 256);
-  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, long, 99, 256, 3);
+  CONVERT_EXPECT_SUCCESS               (oos::date, 2457090, long, 2457090);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, long, 2457090, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, long, 2457090, 256, 3);
 }
 
 void
@@ -658,6 +671,10 @@ ConvertTestUnit::convert_to_unsigned_char()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", unsigned char, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", unsigned char, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", unsigned char, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, unsigned char, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, unsigned char, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, unsigned char, 99, 256, 3);
 }
 
 void
@@ -732,6 +749,10 @@ ConvertTestUnit::convert_to_unsigned_short()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", unsigned short, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", unsigned short, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", unsigned short, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, unsigned short, 99);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, unsigned short, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, unsigned short, 99, 256, 3);
 }
 
 void
@@ -815,6 +836,10 @@ ConvertTestUnit::convert_to_unsigned_int()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", unsigned int, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", unsigned int, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", unsigned int, 99, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS               (oos::date, 2457090, unsigned int, 2457090);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, unsigned int, 2457090, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, unsigned int, 2457090, 256, 3);
 }
 
 void
@@ -893,6 +918,10 @@ ConvertTestUnit::convert_to_unsigned_long()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", unsigned long, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", unsigned long, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", unsigned long, 99, 256, 3);
+
+  CONVERT_EXPECT_SUCCESS               (oos::date, 2457090, unsigned long, 2457090);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, unsigned long, 2457090, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, unsigned long, 2457090, 256, 3);
 }
 
 void
@@ -969,6 +998,10 @@ ConvertTestUnit::convert_to_float()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", float, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", float, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", float, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, float, 99.456f);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, float, 99.456f, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, float, 99.456f, 256, 3);
 }
 
 void
@@ -1036,6 +1069,10 @@ ConvertTestUnit::convert_to_double()
   CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", double, 99);
   CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", double, 99, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", double, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, double, 99.456f);
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, double, 99.456f, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, double, 99.456f, 256, 3);
 }
 
 void
@@ -1088,6 +1125,10 @@ ConvertTestUnit::convert_to_char_pointer()
   CONVERT_TO_PTR_EXPECT_FAILURE        (double, 99.4567, char*, "99.457");
   CONVERT_EXPECT_FAILURE_SIZE          (double, 99.4567, char, "99.457", 256);
   CONVERT_EXPECT_SUCCESS_SIZE_PRECISION(double, 99.4567, char, "99.457", 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, char*, "99.457");
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, char, "99.457", 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, char, "99.457", 256, 3);
 }
 
 void
@@ -1153,6 +1194,9 @@ ConvertTestUnit::convert_to_string()
   CONVERT_EXPECT_FAILURE_SIZE          (std::string, "varchar", std::string, "varchar", 3);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(std::string, "varchar", std::string, "varchar", 256, 3);
 
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, std::string, "99.457");
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, std::string, "99.457", 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, std::string, "99.457", 256, 3);
   /*
   CONVERT_EXPECT_SUCCESS(char, std::string, 'c', "c");
   // TODO: check on 1,true,on
@@ -1237,6 +1281,9 @@ ConvertTestUnit::convert_to_varchar()
   CONVERT_EXPECT_FAILURE_SIZE          (std::string, "varchar", varchar<64>, "varchar", 3);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(std::string, "varchar", varchar<64>, "varchar", 256, 3);
 
+  CONVERT_EXPECT_FAILURE               (oos::date, 2457090, varchar<64>, "99.457");
+  CONVERT_EXPECT_FAILURE_SIZE          (oos::date, 2457090, varchar<64>, "99.457", 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(oos::date, 2457090, varchar<64>, "99.457", 256, 3);
   /*
   CONVERT_EXPECT_SUCCESS(char, varchar<64>, 'c', "c");
   // TODO: check on 1,true,on
@@ -1294,9 +1341,83 @@ void ConvertTestUnit::convert_to_date()
   CONVERT_EXPECT_SUCCESS(unsigned long, 2457090, oos::date, oos::date(2457090));
   CONVERT_EXPECT_FAILURE_SIZE(unsigned long, 2457090, oos::date, 0, 256);
   CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 2457090, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(float, 2.56, oos::date, oos::date());
+  CONVERT_EXPECT_FAILURE_SIZE(float, 2.56, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 2.56, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(double, 2.56, oos::date, oos::date());
+  CONVERT_EXPECT_FAILURE_SIZE(double, 2.56, oos::date, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 2.56, oos::date, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (const char*, "hello", oos::date, oos::date());
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", oos::date, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", oos::date, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (string, "hello", oos::date, oos::date());
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", oos::date, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", oos::date, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", oos::date, oos::date());
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", oos::date, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", oos::date, 99, 256, 3);
 }
 
 void ConvertTestUnit::convert_to_time()
 {
+  CONVERT_EXPECT_FAILURE(bool, true, oos::time, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(bool, true, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(bool, true, oos::time, 0, 256, 3);
 
+  CONVERT_EXPECT_FAILURE(char, 99, oos::time, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(char, 99, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(char, 99, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(short, 99, oos::time, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(short, 99, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(short, 99, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(int, 2457090, oos::time, oos::time(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(int, 2457090, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(int, 2457090, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(long, 2457090, oos::time, oos::time(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(long, 2457090, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(long, 2457090, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned char, 99, oos::time, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned char, 99, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned char, 99, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned short, 99, oos::time, 0);
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned short, 99, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned short, 99, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned int, 2457090, oos::time, oos::time(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned int, 2457090, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned int, 2457090, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(unsigned long, 2457090, oos::time, oos::time(2457090));
+  CONVERT_EXPECT_FAILURE_SIZE(unsigned long, 2457090, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(unsigned long, 2457090, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(float, 2.56, oos::time, oos::time());
+  CONVERT_EXPECT_FAILURE_SIZE(float, 2.56, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(float, 2.56, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE(double, 2.56, oos::time, oos::time());
+  CONVERT_EXPECT_FAILURE_SIZE(double, 2.56, oos::time, 0, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(double, 2.56, oos::time, 0, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (const char*, "hello", oos::time, oos::time());
+  CONVERT_EXPECT_FAILURE_SIZE          (const char*, "99", oos::time, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(const char*, "99", oos::time, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (string, "hello", oos::time, oos::time());
+  CONVERT_EXPECT_FAILURE_SIZE          (string, "99", oos::time, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(string, "99", oos::time, 99, 256, 3);
+
+  CONVERT_EXPECT_FAILURE               (varchar<16>, "hello", oos::time, oos::time());
+  CONVERT_EXPECT_FAILURE_SIZE          (varchar<16>, "99", oos::time, 99, 256);
+  CONVERT_EXPECT_FAILURE_SIZE_PRECISION(varchar<16>, "99", oos::time, 99, 256, 3);
 }

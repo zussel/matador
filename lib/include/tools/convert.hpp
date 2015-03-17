@@ -675,7 +675,7 @@ convert(const T &from, U &to,
 
 template < class T >
 void
-convert(const T&, char*)
+convert(const T&, char*,typename oos::enable_if<!std::is_same<T, oos::date>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -705,6 +705,11 @@ OOS_API void convert(const std::string &from, varchar_base &to);
 OOS_API void convert(const std::string &from, std::string &to);
 OOS_API void convert(const varchar_base &from, varchar_base &to);
 
+OOS_API void convert(const date &from, int &to);
+OOS_API void convert(const date &from, long &to);
+OOS_API void convert(const date &from, unsigned int &to);
+OOS_API void convert(const date &from, unsigned long &to);
+
 /*
  * From
  *  date
@@ -729,10 +734,10 @@ void convert(const oos::time &/*from*/, T &/*to*/)
   throw std::bad_cast();
 }
 
-void convert(int from, date &to);
-void convert(unsigned int from, date &to);
-void convert(long from, date &to);
-void convert(unsigned long from, date &to);
+OOS_API void convert(int from, date &to);
+OOS_API void convert(unsigned int from, date &to);
+OOS_API void convert(long from, date &to);
+OOS_API void convert(unsigned long from, date &to);
 
 /*
  * From

@@ -45,6 +45,26 @@ convert(const varchar_base &from, varchar_base &to)
   to = from;
 }
 
+void convert(const date &from, int &to)
+{
+  to = from.julian_date();
+}
+
+void convert(const date &from, long &to)
+{
+  to = from.julian_date();
+}
+
+void convert(const date &from, unsigned int &to)
+{
+  to = from.julian_date();
+}
+
+void convert(const date &from, unsigned long &to)
+{
+  to = from.julian_date();
+}
+
 void convert(const char *from, bool &to)
 {
   char *ptr;

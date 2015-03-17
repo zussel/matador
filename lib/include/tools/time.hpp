@@ -24,7 +24,7 @@ public:
 
   explicit time(time_t t);
   time(int year, int month, int day, int hour, int min, int sec, long millis = 0);
-  explicit time(uint64_t microseconds);
+//  explicit time(uint64_t microseconds);
   time(const time &x);
   time &operator=(const time &x);
   ~time();

@@ -37,12 +37,12 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
   set(year, month, day, hour, min, sec, millis);
 }
 
-time::time(uint64_t microseconds)
-{
-  time_.tv_sec = microseconds / 1000000;
-  time_.tv_usec = microseconds % 1000000;
-  localtime_r(&time_.tv_sec, &tm_);
-}
+//time::time(uint64_t microseconds)
+//{
+//  time_.tv_sec = microseconds / 1000000;
+//  time_.tv_usec = microseconds % 1000000;
+//  localtime_r(&time_.tv_sec, &tm_);
+//}
 
 time::time(const time &x)
   : time_(x.time_)
