@@ -264,9 +264,14 @@ bool time::is_daylight_saving() const
   return tm_.tm_isdst == 1;
 }
 
-struct timeval time::get() const
+struct timeval time::get_timeval() const
 {
   return time_;
+}
+
+struct tm time::get_tm() const
+{
+  return tm_;
 }
 
 //std::string time::format(const char *f, tz_t tz) const

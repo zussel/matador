@@ -1,6 +1,19 @@
 #ifndef TIME_HPP
 #define TIME_HPP
 
+#ifdef _MSC_VER
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "tools/date.hpp"
 
 #include <ctime>
@@ -9,7 +22,8 @@
 
 namespace oos {
 
-class time {
+class OOS_API time
+{
 public:
   enum tz_t {
     local,
@@ -75,7 +89,8 @@ public:
   bool is_leapyear() const;
   bool is_daylight_saving() const;
 
-  struct timeval get() const;
+  struct timeval get_timeval() const;
+  struct tm get_tm() const;
 
   date to_date() const;
 
