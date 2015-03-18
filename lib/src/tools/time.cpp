@@ -156,6 +156,11 @@ void time::set(time_t t, long millis)
   localtime_r(&time_.tv_sec, &tm_);
 }
 
+void time::set(const date &d)
+{
+  set(d.year(), d.month(), d.day(), 0, 0, 0, 0);
+}
+
 void time::set(timeval tv)
 {
   time_ = tv;
@@ -411,6 +416,11 @@ struct timeval time::get() const
 //    time_.tv_usec = 0;
 //  }
 //}
+
+date time::to_date() const
+{
+  return oos::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
+}
 
 std::ostream& operator<<(std::ostream &out, const time &/*x*/)
 {

@@ -1,6 +1,8 @@
 #ifndef TIME_HPP
 #define TIME_HPP
 
+#include "tools/date.hpp"
+
 #include <ctime>
 #include <cstdint>
 #include <string>
@@ -42,6 +44,7 @@ public:
 
   void set(int year, int month, int day, int hour, int min, int sec, long millis);
   void set(time_t t, long millis);
+  void set(const date &d);
   void set(timeval tv);
 
 //  std::string str() const;
@@ -73,6 +76,8 @@ public:
   bool is_daylight_saving() const;
 
   struct timeval get() const;
+
+  date to_date() const;
 
 //  std::string format(const char *f, tz_t tz = local) const;
 //  void parse(const char *f, const std::string &ts);

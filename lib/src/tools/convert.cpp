@@ -65,6 +65,11 @@ void convert(const date &from, unsigned long &to)
   to = from.julian_date();
 }
 
+void convert(const date &from, date &to)
+{
+  to = from;
+}
+
 void convert(const char *from, bool &to)
 {
   char *ptr;
@@ -97,6 +102,11 @@ void convert(long from, date &to)
 void convert(unsigned long from, date &to)
 {
   to.set((int)from);
+}
+
+void convert(const oos::time &from, oos::time &to)
+{
+  to = from;
 }
 
 }

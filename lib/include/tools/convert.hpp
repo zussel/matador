@@ -675,7 +675,7 @@ convert(const T &from, U &to,
 
 template < class T >
 void
-convert(const T&, char*,typename oos::enable_if<!std::is_same<T, oos::date>::value>::type* = 0)
+convert(const T&, char*,typename oos::enable_if<!std::is_same<T, oos::date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -709,6 +709,7 @@ OOS_API void convert(const date &from, int &to);
 OOS_API void convert(const date &from, long &to);
 OOS_API void convert(const date &from, unsigned int &to);
 OOS_API void convert(const date &from, unsigned long &to);
+OOS_API void convert(const date &from, date &to);
 
 /*
  * From
@@ -717,7 +718,7 @@ OOS_API void convert(const date &from, unsigned long &to);
  *  T
  */
 template < typename T >
-void convert(const date &/*from*/, T &/*to*/)
+void convert(const date &/*from*/, T &/*to*/, typename oos::enable_if<!std::is_same<T, date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -729,7 +730,7 @@ void convert(const date &/*from*/, T &/*to*/)
  *  T
  */
 template < typename T >
-void convert(const oos::time &/*from*/, T &/*to*/)
+void convert(const oos::time &/*from*/, T &/*to*/, typename oos::enable_if<!std::is_same<T, date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -738,6 +739,8 @@ OOS_API void convert(int from, date &to);
 OOS_API void convert(unsigned int from, date &to);
 OOS_API void convert(long from, date &to);
 OOS_API void convert(unsigned long from, date &to);
+
+OOS_API void convert(const oos::time &from, oos::time &to);
 
 /*
  * From
