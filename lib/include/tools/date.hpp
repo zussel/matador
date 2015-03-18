@@ -1,13 +1,27 @@
 #ifndef DATE_HPP
 #define DATE_HPP
 
+#ifdef _MSC_VER
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include <iostream>
 
 namespace oos {
 
 void throw_invalid_date(int d, int m, int y);
 
-class date {
+class OOS_API date
+{
 public:
   static const unsigned char month_days[];
 
