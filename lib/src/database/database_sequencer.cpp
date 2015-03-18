@@ -21,10 +21,6 @@
 #include "database/statement.hpp"
 #include "database/result.hpp"
 
-#include "object/object_atomizer.hpp"
-
-#include "tools/convert.hpp"
-
 namespace oos {
 
 database_sequencer::database_sequencer(database &db)
