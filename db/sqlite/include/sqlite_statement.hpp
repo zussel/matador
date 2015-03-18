@@ -71,8 +71,6 @@ protected:
 private:
   sqlite_database &db_;
   sqlite3_stmt *stmt_;
-  
-  static long counter_;
 };
 
 }

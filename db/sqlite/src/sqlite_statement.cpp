@@ -23,15 +23,15 @@
 #include "database/row.hpp"
 #include "database/sql.hpp"
 
-#include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
 
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
 
-#include <stdexcept>
 #include <sstream>
 #include <cstring>
 #include <sqlite3.h>
+#include <tools/string.hpp>
 
 namespace oos {
 
@@ -46,8 +46,6 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   msg << source << ": " << sqlite3_errmsg(db) << "(" << sql << ")";
   throw sqlite_exception(msg.str()); 
 }
-
-long sqlite_statement::counter_ = 0;
 
 sqlite_statement::sqlite_statement(sqlite_database &db)
   : db_(db)
@@ -184,14 +182,16 @@ void sqlite_statement::write(const char*, const varchar_base &x)
   throw_error(ret, db_(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::write(const char *, const oos::date &)
+void sqlite_statement::write(const char *, const oos::date &x)
 {
-  // Todo: implement write/bind of date column
-}
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x.julian_date());
+  throw_error(ret, db_(), "sqlite3_bind_int");}
 
-void sqlite_statement::write(const char *, const oos::time &)
+void sqlite_statement::write(const char *, const oos::time &x)
 {
   // Todo: implement write/bind of time column
+  // format time to ISO8601
+  std::string tstr = oos::to_string(x, oos::time_format::ISO8601);
 }
 
 void sqlite_statement::write(const char *, const object_base_ptr &x)
