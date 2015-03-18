@@ -75,6 +75,7 @@ SET(TOOLS_SOURCES
   tools/varchar.cpp
   tools/sequencer.cpp
   tools/convert.cpp
+  tools/string.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
