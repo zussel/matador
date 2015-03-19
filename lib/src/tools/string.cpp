@@ -11,6 +11,13 @@ namespace oos {
 
 std::string to_string(const oos::time &x, const char *format)
 {
+  struct tm timeinfo = x.get_tm();
+
+  char buffer[80];
+  if (strftime(buffer, 80, format, &timeinfo) == 0) {
+    throw std::logic_error("couldn't format date string");
+  }
+  return buffer;
 }
 
 std::string to_string(const oos::date &x, const char *format)
