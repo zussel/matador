@@ -160,6 +160,16 @@ void mssql_statement::write(const char *, const std::string &x)
   bind_value(x.data(), x.size(), ++host_index);
 }
 
+void mssql_statement::write(const char *, const oos::date &)
+{
+  // TODO: bind date value to mssql statement
+}
+
+void mssql_statement::write(const char *, const oos::time &)
+{
+  // TODO: bind time value to mssql statement
+}
+
 void mssql_statement::write(const char *, const varchar_base &x)
 {
   bind_value(x.c_str(), x.size() + 1, ++host_index);

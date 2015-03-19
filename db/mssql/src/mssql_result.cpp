@@ -173,6 +173,16 @@ void mssql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
+void mssql_result::read(const char *, oos::date &)
+{
+  // TODO: read date from mssql result
+}
+
+void mssql_result::read(const char *, oos::time &)
+{
+  // TODO: read time from mssql result
+}
+
 void mssql_result::read(const char *id, object_base_ptr &x)
 {
   long val;
