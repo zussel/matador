@@ -229,6 +229,36 @@ void mysql_prepared_result::read(const char *id, primary_key_base &x)
   x.deserialize(id, *this);
 }
 
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::date &)
+{
+  if (info_[index].buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    info_[index].buffer = (char*)new MYSQL_TIME;
+    info_[index].buffer_length = s;
+  }
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::time &)
+{
+  if (info_[index].buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    info_[index].buffer = (char*)new MYSQL_TIME;
+    info_[index].buffer_length = s;
+  }
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/)
 {
   bind_[index].buffer_type = type;

@@ -88,6 +88,8 @@ private:
     bind_[index].error = &info_[index].error;
   }
 
+  void prepare_bind_column(int index, enum_field_types type, oos::date &value);
+  void prepare_bind_column(int index, enum_field_types type, oos::time &value);
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
   void prepare_bind_column(int index, enum_field_types type, char *x, int s);
   void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
