@@ -10,6 +10,7 @@
 
 #include <ostream>
 #include <cstring>
+#include <fakemysql.h>
 
 namespace oos {
 
@@ -197,6 +198,16 @@ void mysql_prepared_result::read(const char *, char *x, int s)
 void mysql_prepared_result::read(const char *, std::string &x)
 {
   prepare_bind_column(result_index++, MYSQL_TYPE_STRING, x);
+}
+
+void mysql_prepared_result::read(const char *, oos::date &x)
+{
+  prepare_bind_column(result_index++, MYSQL_TYPE_DATE, x);
+}
+
+void mysql_prepared_result::read(const char *, oos::time &x)
+{
+  prepare_bind_column(result_index++, MYSQL_TYPE_TIMESTAMP, x);
 }
 
 void mysql_prepared_result::read(const char *, varchar_base &x)

@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <sstream>
+#include <tools/date.hpp>
 
 namespace oos {
 
@@ -190,6 +191,16 @@ void mysql_statement::write(const char *, const std::string &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
   ++host_index;
+}
+
+void mysql_statement::write(const char *, const oos::date &)
+{
+  // TODO: bind date value to mysql prepared statement
+}
+
+void mysql_statement::write(const char *, const oos::time &)
+{
+  // TODO: bind time value to mysql prepared statement
 }
 
 void mysql_statement::write(const char *, const varchar_base &x)
