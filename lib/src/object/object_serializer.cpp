@@ -81,7 +81,7 @@ void object_serializer::write_value(const char *id, const date &x)
 
 void object_serializer::write_value(const char *id, const time &x)
 {
-  struct timeval tv = x.get();
+  struct timeval tv = x.get_timeval();
   write_value(id, tv.tv_sec);
   write_value(id, tv.tv_usec);
 }
