@@ -99,6 +99,7 @@ void DatabaseTestUnit::test_datatypes()
   const char *cstr("Armer schwarzer Kater");
   oos::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+  oos::date date_val(15, 3, 2015);
 
   try {
 
@@ -118,6 +119,7 @@ void DatabaseTestUnit::test_datatypes()
     i->set_cstr(cstr, strlen(cstr) + 1);
     i->set_varchar(vval);
     i->set_string(strval);
+    i->set_date(date_val);
     
     item_ptr item = session_->insert(i);
   } catch (database_exception &ex) {
@@ -157,6 +159,7 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_ASSERT_EQUAL(item->get_cstr(), cstr, "const char pointer is not equal");
     UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
     UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
+    UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
 
     UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
   } catch (database_exception &ex) {
