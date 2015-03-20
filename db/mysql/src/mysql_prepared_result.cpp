@@ -10,7 +10,6 @@
 
 #include <ostream>
 #include <cstring>
-#include <fakemysql.h>
 
 namespace oos {
 
