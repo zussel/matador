@@ -94,6 +94,8 @@ private:
     bind.buffer_type = type;
     bind.is_null = 0;
   }
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);

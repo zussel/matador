@@ -24,10 +24,11 @@
 
 #include "tools/varchar.hpp"
 
-#include <stdexcept>
 #include <cstring>
 #include <sstream>
 #include <tools/date.hpp>
+#include <mysql_com.h>
+#include <mysql.h>
 
 namespace oos {
 
@@ -193,14 +194,16 @@ void mysql_statement::write(const char *, const std::string &x)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const oos::date &)
+void mysql_statement::write(const char *, const oos::date &x)
 {
-  // TODO: bind date value to mysql prepared statement
+  bind_value(host_array[host_index], MYSQL_TYPE_DATE, x, host_index);
+  ++host_index;
 }
 
-void mysql_statement::write(const char *, const oos::time &)
+void mysql_statement::write(const char *, const oos::time &x)
 {
-  // TODO: bind time value to mysql prepared statement
+  bind_value(host_array[host_index], MYSQL_TYPE_TIMESTAMP, x, host_index);
+  ++host_index;
 }
 
 void mysql_statement::write(const char *, const varchar_base &x)
@@ -270,6 +273,16 @@ database& mysql_statement::db()
 const database& mysql_statement::db() const
 {
   return db_;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index)
+{
+  // TODO: bind date value to mysql prepared statement
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index)
+{
+  // TODO: bind time value to mysql prepared statement
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int index)
