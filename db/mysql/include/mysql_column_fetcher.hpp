@@ -30,6 +30,8 @@ public:
     ++column_index_;
   }
   
+  void read_value(const char *id, oos::date &x);
+  void read_value(const char *id, oos::time &x);
   void read_value(const char *id, std::string &x);
   void read_value(const char *id, varchar_base &x);
   void read_value(const char *id, object_base_ptr &x);
