@@ -27,8 +27,7 @@
 #include <cstring>
 #include <sstream>
 #include <tools/date.hpp>
-#include <mysql_com.h>
-#include <mysql.h>
+#include <tools/time.hpp>
 
 namespace oos {
 
@@ -227,43 +226,43 @@ void mysql_statement::write(const char *id, const primary_key_base &x)
   x.serialize(id, *this);
 }
 
-enum_field_types mysql_statement::type_enum(data_type_t type)
-{
-  switch(type) {
-    case type_char:
-      return MYSQL_TYPE_TINY;
-    case type_short:
-      return MYSQL_TYPE_SHORT;
-    case type_int:
-      return MYSQL_TYPE_LONG;
-    case type_long:
-      return MYSQL_TYPE_LONGLONG;
-    case type_unsigned_char:
-      return MYSQL_TYPE_TINY;
-    case type_unsigned_short:
-      return MYSQL_TYPE_SHORT;
-    case type_unsigned_int:
-      return MYSQL_TYPE_LONG;
-    case type_unsigned_long:
-      return MYSQL_TYPE_LONGLONG;
-    case type_bool:
-      return MYSQL_TYPE_TINY;
-    case type_float:
-      return MYSQL_TYPE_FLOAT;
-    case type_double:
-      return MYSQL_TYPE_DOUBLE;
-    case type_char_pointer:
-      return MYSQL_TYPE_VAR_STRING;
-    case type_varchar:
-      return MYSQL_TYPE_VAR_STRING;
-    case type_text:
-      return MYSQL_TYPE_STRING;
-    default:
-      {
-        throw std::logic_error("mysql statement: unknown type");
-      }
-    }
-}
+//enum_field_types mysql_statement::type_enum(data_type_t type)
+//{
+//  switch(type) {
+//    case type_char:
+//      return MYSQL_TYPE_TINY;
+//    case type_short:
+//      return MYSQL_TYPE_SHORT;
+//    case type_int:
+//      return MYSQL_TYPE_LONG;
+//    case type_long:
+//      return MYSQL_TYPE_LONGLONG;
+//    case type_unsigned_char:
+//      return MYSQL_TYPE_TINY;
+//    case type_unsigned_short:
+//      return MYSQL_TYPE_SHORT;
+//    case type_unsigned_int:
+//      return MYSQL_TYPE_LONG;
+//    case type_unsigned_long:
+//      return MYSQL_TYPE_LONGLONG;
+//    case type_bool:
+//      return MYSQL_TYPE_TINY;
+//    case type_float:
+//      return MYSQL_TYPE_FLOAT;
+//    case type_double:
+//      return MYSQL_TYPE_DOUBLE;
+//    case type_char_pointer:
+//      return MYSQL_TYPE_VAR_STRING;
+//    case type_varchar:
+//      return MYSQL_TYPE_VAR_STRING;
+//    case type_text:
+//      return MYSQL_TYPE_STRING;
+//    default:
+//      {
+//        throw std::logic_error("mysql statement: unknown type");
+//      }
+//    }
+//}
 
 database& mysql_statement::db()
 {
@@ -275,14 +274,46 @@ const database& mysql_statement::db() const
   return db_;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int /*index*/)
 {
-  // TODO: bind date value to mysql prepared statement
+  if (bind.buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    bind.buffer = new char[s];
+    bind.buffer_length = s;
+  }
+  memset(bind.buffer, 0, sizeof(MYSQL_TIME));
+  bind.buffer_type = type;
+  bind.length = 0;
+  bind.is_null = 0;
+  MYSQL_TIME *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  mt->day = (unsigned int)x.day();
+  mt->month = (unsigned int)x.month();
+  mt->year = (unsigned int)x.year();
+//  mt->hour = 0;
+//  mt->minute = 0;
+//  mt->second = 0;
+//  mt->second_part = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int /*index*/)
 {
-  // TODO: bind time value to mysql prepared statement
+  if (bind.buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    bind.buffer = new char[s];
+    bind.buffer_length = s;
+  }
+  memset(bind.buffer, 0, sizeof(MYSQL_TIME));
+  bind.buffer_type = type;
+  bind.length = 0;
+  bind.is_null = 0;
+  MYSQL_TIME *mt = static_cast<MYSQL_TIME*>(bind.buffer);
+  mt->day = (unsigned int)x.day();
+  mt->month = (unsigned int)x.month();
+  mt->year = (unsigned int)x.year();
+//  mt->hour = (unsigned int)x.hour();
+//  mt->minute = (unsigned int)x.minute();
+//  mt->second = (unsigned int)x.second();
+//  mt->second_part = (unsigned long)x.milli_second();
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int index)

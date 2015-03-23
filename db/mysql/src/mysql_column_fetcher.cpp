@@ -28,7 +28,6 @@ void mysql_column_fetcher::read_value(const char *, oos::date &x)
   if (info_[column_index_].length > 0) {
     MYSQL_TIME *mtt = (MYSQL_TIME*)info_[column_index_].buffer;
     x.set(mtt->day, mtt->month, mtt->year);
-    delete [] (char*)bind_[column_index_].buffer;
   }
   ++column_index_;
 }
@@ -38,7 +37,6 @@ void mysql_column_fetcher::read_value(const char *, oos::time &x)
   if (info_[column_index_].length > 0) {
     MYSQL_TIME *mtt = (MYSQL_TIME*)info_[column_index_].buffer;
     x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part);
-    delete [] (char*)bind_[column_index_].buffer;
   }
   ++column_index_;
 }

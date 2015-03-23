@@ -232,7 +232,8 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 {
   if (info_[index].buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);
-    info_[index].buffer = (char*)new MYSQL_TIME;
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
     info_[index].buffer_length = s;
   }
   bind_[index].buffer_type = type;
@@ -247,7 +248,8 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 {
   if (info_[index].buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);
-    info_[index].buffer = (char*)new MYSQL_TIME;
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
     info_[index].buffer_length = s;
   }
   bind_[index].buffer_type = type;
@@ -272,7 +274,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 {
   bind_[index].buffer_type = type;
   bind_[index].buffer= x;
-  bind_[index].buffer_length = s;
+  bind_[index].buffer_length = (unsigned long) s;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
   bind_[index].error = &info_[index].error;

@@ -100,7 +100,7 @@ private:
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
 
-  static enum_field_types type_enum(data_type_t type);
+//  static enum_field_types type_enum(data_type_t type);
 
 private:
   mysql_database &db_;
