@@ -238,6 +238,20 @@ void mssql_result::read_column(const char *, varchar_base &val)
   }
 }
 
+
+void mssql_result::read_column(char const *string, date &date1)
+{
+  char *buf = new char[sizeof(TIMESTAMP_STRUCT)];
+  TIMESTAMP_STRUCT * ts = reinterpret_cast<TIMESTAMP_STRUCT*>(buf);
+
+  ts->year = 
+}
+
+void mssql_result::read_column(char const *string, time &time1)
+{
+
+}
+
 }
 
 }

@@ -261,6 +261,10 @@ long mssql_statement::type2int(data_type_t type)
       return SQL_C_CHAR;
     case type_text:
       return SQL_C_CHAR;
+    case type_date:
+      return SQL_C_DATE;
+    case type_time:
+      return SQL_C_TIMESTAMP;
     default:
       {
         throw std::logic_error("mssql statement: unknown type");
