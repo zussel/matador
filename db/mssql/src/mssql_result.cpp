@@ -228,9 +228,9 @@ void mssql_result::read_column(const char *, varchar_base &val)
 {
   char *buf = new char[val.capacity()];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, val.capacity(), &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_CHAR, buf, val.capacity(), &info);
   if (ret == SQL_SUCCESS) {
-    val.assign(buf, info);
+    val.assign(buf, static_cast<size_t>(info));
     delete [] buf;
   } else {
     delete [] buf;
@@ -239,12 +239,14 @@ void mssql_result::read_column(const char *, varchar_base &val)
 }
 
 
-void mssql_result::read_column(char const *string, date &date1)
+void mssql_result::read_column(char const *, date &x)
 {
   char *buf = new char[sizeof(TIMESTAMP_STRUCT)];
   TIMESTAMP_STRUCT * ts = reinterpret_cast<TIMESTAMP_STRUCT*>(buf);
 
-  ts->year = 
+  ts->year = static_cast<SQLUSMALLINT>(x.year());
+  ts->month = static_cast<SQLUSMALLINT>(x.month());
+  ts->day = static_cast<SQLUSMALLINT>(x.day());
 }
 
 void mssql_result::read_column(char const *string, time &time1)
