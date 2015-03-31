@@ -175,6 +175,10 @@ const char* sqlite_database::type_string(data_type_t type) const
       return "VARCHAR";
     case type_text:
       return "TEXT";
+    case type_date:
+      return "REAL";
+    case type_time:
+      return "TEXT";
     default:
       {
         std::stringstream msg;
@@ -187,7 +191,7 @@ const char* sqlite_database::type_string(data_type_t type) const
 
 result *sqlite_database::create_result()
 {
-  return 0;
+  return nullptr;
 }
 
 }

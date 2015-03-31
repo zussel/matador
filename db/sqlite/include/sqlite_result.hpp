@@ -86,6 +86,8 @@ protected:
 //    std::string val = rows_.at(pos_)->at<std::string>(result_index);
     convert(val, x);
   }
+  void read_column(const char *, oos::date &x);
+  void read_column(const char *, oos::time &x);
 
 private:
   typedef std::vector<row*> row_vector_t;
