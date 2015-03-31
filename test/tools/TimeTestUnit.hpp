@@ -19,6 +19,7 @@ public:
   void test_assign();
   void test_compare();
   void test_modify();
+  void test_parse();
 };
 
 #endif /* TIMETESTUNIT_HPP */

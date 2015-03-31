@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
-#include <iostream>
+#include <vector>
 
 #include <sys/time.h>
 
@@ -30,6 +30,11 @@ time::time()
 time::time(time_t t)
 {
   set(t, 0);
+}
+
+time::time(struct timeval tv)
+{
+  set(tv);
 }
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
@@ -125,6 +130,41 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
     return false;
   }
   return true;
+}
+
+time time::parse(const std::string &tstr, const char *format)
+{
+  /*
+  * find the %f format token
+  * and split the string to parse
+  */
+  const char *pch = strstr(format, "%f");
+
+  std::string part(format, (pch ? pch-format : strlen(format)));
+  struct tm tm;
+  memset(&tm, 0, sizeof(struct tm));
+  const char *endptr = strptime(tstr.c_str(), part.c_str(), &tm);
+  unsigned long usec = 0;
+  if (endptr == nullptr && pch != nullptr) {
+    // parse error
+    throw std::logic_error("error parsing time");
+  } else if (pch != nullptr) {
+    char *next;
+    usec = std::strtoul(endptr, &next, 10);
+    // calculate precision
+    unsigned digits = next - endptr;
+    usec *= (unsigned long)pow(10.0, 6 - digits);
+    if ((size_t)(next - format) != strlen(format)) {
+      // still time string to parse
+      strptime(next, pch+2, &tm);
+    }
+  }
+
+  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  struct timeval tv;
+  tv.tv_sec = mktime(&tm);
+  tv.tv_usec = usec;
+  return oos::time(tv);
 }
 
 void time::set(int year, int month, int day, int hour, int min, int sec, long millis)

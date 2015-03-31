@@ -16,6 +16,7 @@ TimeTestUnit::TimeTestUnit()
   add_test("assign", std::bind(&TimeTestUnit::test_assign, this), "assign time");
   add_test("compare", std::bind(&TimeTestUnit::test_compare, this), "compare time");
   add_test("modify", std::bind(&TimeTestUnit::test_modify, this), "modify time");
+  add_test("parse", std::bind(&TimeTestUnit::test_parse, this), "parse time");
 }
 
 TimeTestUnit::~TimeTestUnit()
@@ -220,4 +221,43 @@ void TimeTestUnit::test_modify()
   UNIT_ASSERT_EQUAL(4711, t.milli_second(), "millisecond of day isn't equal 0");
   UNIT_ASSERT_TRUE(t.is_daylight_saving(), "time stamp must not be daylight saving");
   UNIT_ASSERT_TRUE(t.is_leapyear(), "time stamp must be a leap year");
+}
+
+void TimeTestUnit::test_parse()
+{
+  std::string tstr1("03.04.2015 12:55:12.123");
+
+  oos::time t = oos::time::parse(tstr1, "%d.%m.%Y %H:%M:%S.%f");
+
+  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
+  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
+  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
+  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
+  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
+  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
+  UNIT_ASSERT_EQUAL(123, t.milli_second(), "millisecond must be 123");
+
+  tstr1.assign("12:55:12.123 03.04.2015");
+
+  t = oos::time::parse(tstr1, "%H:%M:%S.%f %d.%m.%Y");
+
+  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
+  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
+  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
+  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
+  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
+  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
+  UNIT_ASSERT_EQUAL(123, t.milli_second(), "millisecond must be 123");
+
+  tstr1.assign("12:55:12 03.04.2015");
+
+  t = oos::time::parse(tstr1, "%H:%M:%S %d.%m.%Y");
+
+  UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
+  UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
+  UNIT_ASSERT_EQUAL(3, t.day(), "day must be 3");
+  UNIT_ASSERT_EQUAL(12, t.hour(), "hour must be 12");
+  UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
+  UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
+  UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond must be 0");
 }
