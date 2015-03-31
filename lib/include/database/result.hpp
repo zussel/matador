@@ -47,8 +47,8 @@ class object_atomizable;
 class OOS_API result : public object_reader
 {
 private:
-  result(const result&);
-  result& operator=(const result&);
+  result(const result&) = delete;
+  result& operator=(const result&) = delete;
 
 public:
   typedef unsigned long size_type;
