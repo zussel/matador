@@ -136,7 +136,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
    * string to the row
    *
    ********************/
-  std::auto_ptr<row> r(new row);
+  std::unique_ptr<row> r(new row);
   for (int i = 0; i < column_count; ++i) {
     r->push_back(std::string(values[i]));
   }

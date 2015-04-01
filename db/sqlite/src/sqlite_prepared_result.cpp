@@ -158,10 +158,9 @@ void sqlite_prepared_result::read(const char *id, oos::date &x)
 
 void sqlite_prepared_result::read(const char *id, oos::time &x)
 {
-  // Todo: implement read of time column
   std::string val;
   read(id, val);
-  oos::time::parse(val, "")
+  x = oos::time::parse(val, "%F %T.%f");
 }
 
 void sqlite_prepared_result::read(const char *, char *x, int s)

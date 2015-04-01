@@ -187,11 +187,12 @@ void sqlite_statement::write(const char *, const oos::date &x)
   int ret = sqlite3_bind_int(stmt_, ++host_index, x.julian_date());
   throw_error(ret, db_(), "sqlite3_bind_int");}
 
-void sqlite_statement::write(const char *, const oos::time &x)
+void sqlite_statement::write(const char *id, const oos::time &x)
 {
   // Todo: implement write/bind of time column
   // format time to ISO8601
-  std::string tstr = oos::to_string(x, oos::time_format::ISO8601);
+  std::string tstr = oos::to_string(x, "%F %T.%f");
+  write(id, tstr);
 }
 
 void sqlite_statement::write(const char *, const object_base_ptr &x)
