@@ -1,8 +1,7 @@
 #include "TimeTestUnit.hpp"
 
 #include "tools/time.hpp"
-
-#include <stdexcept>
+#include "tools/string.hpp"
 
 using namespace oos;
 
@@ -17,6 +16,7 @@ TimeTestUnit::TimeTestUnit()
   add_test("compare", std::bind(&TimeTestUnit::test_compare, this), "compare time");
   add_test("modify", std::bind(&TimeTestUnit::test_modify, this), "modify time");
   add_test("parse", std::bind(&TimeTestUnit::test_parse, this), "parse time");
+  add_test("format", std::bind(&TimeTestUnit::test_format, this), "format time");
 }
 
 TimeTestUnit::~TimeTestUnit()
@@ -90,13 +90,13 @@ void TimeTestUnit::test_initialize()
 
 void TimeTestUnit::test_invalid()
 {
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time t(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid", "time should not be valid");
 }
 
 void TimeTestUnit::test_copy()
@@ -260,4 +260,13 @@ void TimeTestUnit::test_parse()
   UNIT_ASSERT_EQUAL(55, t.minute(), "minute must be 55");
   UNIT_ASSERT_EQUAL(12, t.second(), "second must be 12");
   UNIT_ASSERT_EQUAL(0, t.milli_second(), "millisecond must be 0");
+}
+
+void TimeTestUnit::test_format()
+{
+  oos::time t(2015, 1, 31, 11, 35, 7, 123);
+
+  std::string tstr(to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
+
+  UNIT_ASSERT_EQUAL(tstr, "11:35:07.123 31.01.2015", "invalid time string [" + tstr + "]");
 }
