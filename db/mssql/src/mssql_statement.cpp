@@ -191,25 +191,27 @@ void mssql_statement::write(const char *id, const primary_key_base &x)
 
 void mssql_statement::bind_value(const oos::date &d, int index)
 {
-  value_t *v = new value_t(true, sizeof(SQL_DATE_STRUCT));
-  std::unique_ptr<SQL_DATE_STRUCT> ts(new SQL_DATE_STRUCT);
+  std::unique_ptr<value_t> v(new value_t(true, sizeof(SQL_DATE_STRUCT)));
+  v->data = new char[v->len];
+
+  SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT*>(v->data);
 
   ts->year = (SQLSMALLINT) d.year();
   ts->month = (SQLUSMALLINT) d.month();
   ts->day = (SQLUSMALLINT) d.day();
 
-  v->data = (char*)ts.release();
-
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TIMESTAMP, sizeof(SQL_DATE_STRUCT), 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+
+  host_data_.push_back(v.release());
 }
 
 void mssql_statement::bind_value(const oos::time &t, int index)
 {
-  value_t *v = new value_t(true, SQL_NTS);
-  std::unique_ptr<SQL_TIMESTAMP_STRUCT> ts(new SQL_TIMESTAMP_STRUCT);
+  std::unique_ptr<value_t> v(new value_t(true, SQL_NTS));
+  v->data = new char[sizeof(SQL_TIMESTAMP_STRUCT)];
 
-  SQL_TIMESTAMP_STRUCT &sts = *ts.get();
+  SQL_TIMESTAMP_STRUCT *ts = static_cast<SQL_TIMESTAMP_STRUCT*>(v->data);
 
   ts->year = (SQLSMALLINT) t.year();
   ts->month = (SQLUSMALLINT) t.month();
@@ -219,10 +221,10 @@ void mssql_statement::bind_value(const oos::time &t, int index)
   ts->second = (SQLUSMALLINT) t.second();
   ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
 
-  v->data = (char*)ts.release();
-
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+
+  host_data_.push_back(v.release());
 }
 
 void mssql_statement::bind_value(unsigned long val, int index)
