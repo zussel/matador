@@ -17,6 +17,8 @@ SET (TEST_TOOLS_SOURCES
   tools/VarCharTestUnit.cpp
   tools/FactoryTestUnit.hpp
   tools/FactoryTestUnit.cpp
+  tools/StringTestUnit.cpp
+  tools/StringTestUnit.hpp
 )
 
 SET (TEST_HEADER Item.hpp)

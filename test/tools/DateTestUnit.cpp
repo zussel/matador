@@ -1,6 +1,7 @@
 #include "DateTestUnit.hpp"
 
 #include "tools/date.hpp"
+#include <tools/string.hpp>
 
 #include <stdexcept>
 
@@ -21,6 +22,7 @@ DateTestUnit::DateTestUnit()
   add_test("set", std::bind(&DateTestUnit::test_set, this), "set date");
   add_test("modify", std::bind(&DateTestUnit::test_modify, this), "modify date");
   add_test("difference", std::bind(&DateTestUnit::test_difference, this), "difference date");
+  add_test("to_string", std::bind(&DateTestUnit::test_to_string, this), "to string");
 }
 
 DateTestUnit::~DateTestUnit()
@@ -28,7 +30,7 @@ DateTestUnit::~DateTestUnit()
 
 void DateTestUnit::test_create()
 {
-  time_t t = time(0);
+  time_t t = ::time(0);
   struct tm *tt = localtime(&t);
 
   date now;
@@ -251,4 +253,13 @@ void DateTestUnit::test_difference()
 
   int diff = d2.difference(d1);
   UNIT_ASSERT_EQUAL(diff, 29, "difference between d1 and d2 must be 29 days");
+}
+
+void DateTestUnit::test_to_string()
+{
+  date d1(30, 6, 2015);
+
+  std::string str = oos::to_string(d1);
+
+  UNIT_ASSERT_EQUAL(str, "2015-06-30", "result must be '2015-06-30'");
 }

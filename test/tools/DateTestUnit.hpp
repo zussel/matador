@@ -22,6 +22,7 @@ public:
   void test_set();
   void test_modify();
   void test_difference();
+  void test_to_string();
 };
 
 #endif /* DATETESTUNIT_HPP */

@@ -24,6 +24,7 @@
 #include "tools/TimeTestUnit.hpp"
 #include "tools/VarCharTestUnit.hpp"
 #include "tools/FactoryTestUnit.hpp"
+#include "tools/StringTestUnit.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new BlobTestUnit());
   test_suite::instance().register_unit(new VarCharTestUnit());
   test_suite::instance().register_unit(new FactoryTestUnit());
+  test_suite::instance().register_unit(new StringTestUnit());
 
   test_suite::instance().register_unit(new PrototypeTreeTestUnit());
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
