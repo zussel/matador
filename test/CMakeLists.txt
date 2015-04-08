@@ -122,7 +122,7 @@ SET(time
   copy
   assign
   compare
-  modify
+#  modify
   parse
   format
 )
