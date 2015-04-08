@@ -66,6 +66,12 @@ date::operator=(const date &x) {
   return *this;
 }
 
+date &date::operator=(int julian_date)
+{
+  sync_julian_date(julian_date);
+  return *this;
+}
+
 date::~date()
 {}
 
@@ -151,23 +157,27 @@ operator<<(std::ostream &lhs, const date &rhs) {
   return lhs;
 }
 
-void
-date::set(const char *datestr, const char *format) {
+void date::set(const char *datestr, const char *format)
+{
   struct tm t;
   strptime(datestr, format, &t);
   sync_date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
 }
 
-void
-date::set(int day, int month, int year) {
+void date::set(int day, int month, int year)
+{
   sync_date(day, month, year);
+}
+
+void date::set(int julian_date)
+{
+  sync_julian_date(julian_date);
 }
 
 bool date::is_leapyear(int year)
 {
   return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
 }
-
 
 bool date::is_valid_date(int year, int month, int day)
 {

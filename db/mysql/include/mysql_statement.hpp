@@ -33,12 +33,6 @@
 #include <type_traits>
 #include <object/primary_key.hpp>
 
-#ifdef WIN32
-#define CPP11_TYPE_TRAITS_NS std::tr1
-#else
-#define CPP11_TYPE_TRAITS_NS std
-#endif
-
 namespace oos {
 
 class database;
@@ -80,6 +74,8 @@ protected:
 	virtual void write(const char *id, const char *x, int s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
+  virtual void write(const char *id, const oos::date &x);
+  virtual void write(const char *id, const oos::time &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
   virtual void write(const char *id, const primary_key_base &x);
@@ -98,11 +94,11 @@ private:
     bind.buffer_type = type;
     bind.is_null = 0;
   }
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
-
-  static enum_field_types type_enum(data_type_t type);
 
 private:
   mysql_database &db_;

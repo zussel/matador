@@ -267,14 +267,8 @@ void JsonTestUnit::number_test()
 void JsonTestUnit::array_test()
 {
   json_array a;
-  
-  bool failed = true;
-  try {
-    json_array a2(json_value("hallo"));
-  } catch (std::logic_error &ex) {
-    failed = false;
-  }
-  UNIT_ASSERT_EQUAL(failed, false, "invalid json_array initialization");
+
+  UNIT_ASSERT_EXCEPTION(json_array a2(json_value("hallo")), std::logic_error, "json_value isn't of type json_array", "shouldn't initialize ");
 
   UNIT_ASSERT_TRUE(a.empty(), "json array must be empty");
 

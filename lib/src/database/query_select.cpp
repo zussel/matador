@@ -1,4 +1,5 @@
 #include <object/primary_key.hpp>
+#include <tools/date.hpp>
 #include "database/query_select.hpp"
 
 namespace oos {
@@ -78,6 +79,16 @@ void query_select::write(const char *id, const varchar_base &)
 void query_select::write(const char *id, const std::string &)
 {
   write(id, type_text);
+}
+
+void query_select::write(const char *id, const date &)
+{
+  write(id, type_date);
+}
+
+void query_select::write(const char *id, const time &)
+{
+  write(id, type_time);
 }
 
 void query_select::write(const char *id, const object_base_ptr &)

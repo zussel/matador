@@ -41,8 +41,8 @@ namespace mysql {
 class mysql_result : public result
 {
 private:
-  mysql_result(const mysql_result&);
-  mysql_result& operator=(const mysql_result&);
+  mysql_result(const mysql_result&) = delete;
+  mysql_result& operator=(const mysql_result&) = delete;
 
 public:
   typedef result::size_type size_type;
@@ -62,7 +62,7 @@ public:
 
   virtual int transform_index(int index) const;
 
-  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
+//  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -79,6 +79,8 @@ protected:
   virtual void read(const char *id, char *x, int s);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, oos::date &x);
+  virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);

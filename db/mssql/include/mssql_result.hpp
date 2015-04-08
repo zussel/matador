@@ -46,8 +46,8 @@ namespace mssql {
 class mssql_result : public result
 {
 private:
-  mssql_result(const mssql_result&);
-  mssql_result& operator=(const mssql_result&);
+  mssql_result(const mssql_result&) = delete;
+  mssql_result& operator=(const mssql_result&) = delete;
 
 public:
   typedef result::size_type size_type;
@@ -65,7 +65,7 @@ public:
 
   virtual int transform_index(int index) const;
 
-  friend std::ostream& operator<<(std::ostream &out, const mssql_result &res);
+//  friend std::ostream& operator<<(std::ostream &out, const mssql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -82,6 +82,8 @@ protected:
   virtual void read(const char *id, char *x, int s);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, oos::date &x);
+  virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
@@ -90,8 +92,8 @@ protected:
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    int type = mssql_statement::type2int(type_traits<T>::data_type());
-    SQLRETURN ret = SQLGetData(stmt_, result_index++, type, &val, sizeof(T), &info);
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index++), type, &val, sizeof(T), &info);
     if (ret == SQL_SUCCESS) {
       return;
     } else {
@@ -100,8 +102,10 @@ protected:
   }
   
   void read_column(const char *, unsigned long &val);
-  void read_column(const char *, std::string &/*val*/);
-  void read_column(const char *, varchar_base &/*val*/);
+  void read_column(const char *, std::string &val);
+  void read_column(const char *, varchar_base &val);
+  void read_column(const char *, oos::date &val);
+  void read_column(const char *, oos::time &val);
 
 private:
   size_type affected_rows_;

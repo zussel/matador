@@ -1,10 +1,9 @@
 #include "tools/time.hpp"
-#include "tools/date.hpp"
 
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
-#include <iostream>
+#include <vector>
 
 #include <sys/time.h>
 
@@ -29,9 +28,12 @@ time::time()
 
 time::time(time_t t)
 {
-  time_.tv_sec = t;
-  time_.tv_usec = 0;
-  localtime_r(&time_.tv_sec, &tm_);
+  set(t, 0);
+}
+
+time::time(struct timeval tv)
+{
+  set(tv);
 }
 
 time::time(int year, int month, int day, int hour, int min, int sec, long millis)
@@ -39,34 +41,12 @@ time::time(int year, int month, int day, int hour, int min, int sec, long millis
   set(year, month, day, hour, min, sec, millis);
 }
 
-void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
-{
-  throw_invalid_date(day, month, year);
-  throw_invalid_time(hour, min, sec, millis);
-
-  time_t rawtime;
-  ::time(&rawtime);
-
-  struct tm *t = localtime(&rawtime);
-  t->tm_year = year - 1900;
-  t->tm_mon = month - 1;
-  t->tm_mday = day;
-  t->tm_hour = hour;
-  t->tm_min = min;
-  t->tm_sec = sec;
-  t->tm_isdst = date::is_daylight_saving(year, month, day);
-
-  this->time_.tv_sec = mktime(t);
-  this->time_.tv_usec = millis * 1000;
-  localtime_r(&this->time_.tv_sec, &this->tm_);
-}
-
-time::time(uint64_t microseconds)
-{
-  time_.tv_sec = microseconds / 1000000;
-  time_.tv_usec = microseconds % 1000000;
-  localtime_r(&time_.tv_sec, &tm_);
-}
+//time::time(uint64_t microseconds)
+//{
+//  time_.tv_sec = microseconds / 1000000;
+//  time_.tv_usec = microseconds % 1000000;
+//  localtime_r(&time_.tv_sec, &tm_);
+//}
 
 time::time(const time &x)
   : time_(x.time_)
@@ -149,6 +129,81 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
     return false;
   }
   return true;
+}
+
+time time::parse(const std::string &tstr, const char *format)
+{
+  /*
+  * find the %f format token
+  * and split the string to parse
+  */
+  const char *pch = strstr(format, "%f");
+
+  std::string part(format, (pch ? pch-format : strlen(format)));
+  struct tm tm;
+  memset(&tm, 0, sizeof(struct tm));
+  const char *endptr = strptime(tstr.c_str(), part.c_str(), &tm);
+  unsigned long usec = 0;
+  if (endptr == nullptr && pch != nullptr) {
+    // parse error
+    throw std::logic_error("error parsing time");
+  } else if (pch != nullptr) {
+    char *next;
+    usec = std::strtoul(endptr, &next, 10);
+    // calculate precision
+    unsigned digits = next - endptr;
+    usec *= (unsigned long)pow(10.0, 6 - digits);
+    if ((size_t)(next - format) != strlen(format)) {
+      // still time string to parse
+      strptime(next, pch+2, &tm);
+    }
+  }
+
+  tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  struct timeval tv;
+  tv.tv_sec = mktime(&tm);
+  tv.tv_usec = usec;
+  return oos::time(tv);
+}
+
+void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
+{
+  throw_invalid_date(day, month, year);
+  throw_invalid_time(hour, min, sec, millis);
+
+  time_t rawtime;
+  ::time(&rawtime);
+
+  struct tm *t = localtime(&rawtime);
+  t->tm_year = year - 1900;
+  t->tm_mon = month - 1;
+  t->tm_mday = day;
+  t->tm_hour = hour;
+  t->tm_min = min;
+  t->tm_sec = sec;
+  t->tm_isdst = date::is_daylight_saving(year, month, day);
+
+  this->time_.tv_sec = mktime(t);
+  this->time_.tv_usec = millis * 1000;
+  localtime_r(&this->time_.tv_sec, &this->tm_);
+}
+
+void time::set(time_t t, long millis)
+{
+  time_.tv_sec = t;
+  time_.tv_usec = millis * 1000;
+  localtime_r(&time_.tv_sec, &tm_);
+}
+
+void time::set(const date &d)
+{
+  set(d.year(), d.month(), d.day(), 0, 0, 0, 0);
+}
+
+void time::set(timeval tv)
+{
+  time_ = tv;
+  localtime_r(&time_.tv_sec, &tm_);
 }
 
 int time::year() const
@@ -246,6 +301,16 @@ bool time::is_leapyear() const
 bool time::is_daylight_saving() const
 {
   return tm_.tm_isdst == 1;
+}
+
+struct timeval time::get_timeval() const
+{
+  return time_;
+}
+
+struct tm time::get_tm() const
+{
+  return tm_;
 }
 
 //std::string time::format(const char *f, tz_t tz) const
@@ -395,6 +460,11 @@ bool time::is_daylight_saving() const
 //    time_.tv_usec = 0;
 //  }
 //}
+
+date time::to_date() const
+{
+  return oos::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
+}
 
 std::ostream& operator<<(std::ostream &out, const time &/*x*/)
 {

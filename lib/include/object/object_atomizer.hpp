@@ -38,6 +38,8 @@ class varchar_base;
 class object_container;
 class object_base_ptr;
 class primary_key_base;
+class date;
+class time;
 
 /**
  * @class object_writer
@@ -223,12 +225,36 @@ public:
 	virtual void write(const char*, const varchar_base&) = 0;
 
   /**
-   * @fn virtual void write(const char *id, const object_base_ptr &x)
-   * @brief Write a object_base_ptr to the atomizer.
+   * @fn virtual void write(const char *id, const date &x)
+   * @brief Write a date to the atomizer.
    * 
-   * Write a object_base_ptr to the atomizer
+   * Write a date to the atomizer
    * identified by a unique name.
    * 
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+	virtual void write(const char*, const date&) = 0;
+
+  /**
+   * @fn virtual void write(const char *id, const time &x)
+   * @brief Write a time to the atomizer.
+   *
+   * Write a time to the atomizer
+   * identified by a unique name.
+   *
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
+	virtual void write(const char*, const time&) = 0;
+
+  /**
+   * @fn virtual void write(const char *id, const object_base_ptr &x)
+   * @brief Write a object_base_ptr to the atomizer.
+   *
+   * Write a object_base_ptr to the atomizer
+   * identified by a unique name.
+   *
    * @param id Unique id of the data.
    * @param x The data to read from.
    */
@@ -288,6 +314,8 @@ public:
 	virtual void write(const char *id, const char *x, int s) { generic_writer_->write_value(id, x, s); }
 	virtual void write(const char *id, const std::string &x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, const date &x) { generic_writer_->write_value(id, x); }
+	virtual void write(const char *id, const time &x) { generic_writer_->write_value(id, x); }
 	virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const primary_key_base &x) { generic_writer_->write_value(id, x); }
@@ -481,6 +509,30 @@ public:
 	virtual void read(const char*, varchar_base&) = 0;
 
   /**
+  * @fn virtual void read(const char *id, date &x)
+  * @brief Read a date from the atomizer.
+  *
+  * Read a time from the atomizer
+  * identified by a unique name.
+  *
+  * @param id Unique id of the data.
+  * @param x The data to write to.
+  */
+  virtual void read(const char*, date&) = 0;
+
+  /**
+  * @fn virtual void read(const char *id, time &x)
+  * @brief Read a time from the atomizer.
+  *
+  * Read a time from the atomizer
+  * identified by a unique name.
+  *
+  * @param id Unique id of the data.
+  * @param x The data to write to.
+  */
+  virtual void read(const char*, time&) = 0;
+
+  /**
    * @fn virtual void read(const char *id, object_base_ptr &x)
    * @brief Read an object_base_ptr from the atomizer.
    * 
@@ -547,6 +599,8 @@ public:
 	virtual void read(const char *id, std::string &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, varchar_base &x) { generic_reader_->read_value(id, x); }
 	virtual void read(const char *id, object_base_ptr &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, date &x) { generic_reader_->read_value(id, x); }
+	virtual void read(const char *id, time &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, object_container &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, primary_key_base &x) { generic_reader_->read_value(id, x); }
 

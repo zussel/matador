@@ -28,6 +28,8 @@ public:
 	virtual void write(const char *id, const char *x, int s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
+	virtual void write(const char *id, const date &x);
+	virtual void write(const char *id, const time &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
   virtual void write(const char *id, const primary_key_base &x);

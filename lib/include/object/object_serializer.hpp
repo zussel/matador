@@ -105,6 +105,8 @@ public:
 	void write_value(const char* id, const char *c, int s);
 	void write_value(const char* id, const std::string &s);
   void write_value(const char*, const varchar_base &s);
+	void write_value(const char* id, const date &x);
+	void write_value(const char* id, const time &x);
 	void write_value(const char* id, const object_base_ptr &x);
 	void write_value(const char* id, const object_container &x);
 	void write_value(const char* id, const primary_key_base &);
@@ -118,6 +120,8 @@ public:
 	void read_value(const char* id, char *&c, int s);
 	void read_value(const char* id, std::string &s);
   void read_value(const char*, varchar_base &s);
+  void read_value(const char* id, date &x);
+  void read_value(const char* id, time &x);
   void read_value(const char* id, object_base_ptr &x);
 	void read_value(const char* id, object_container &x);
 	void read_value(const char* id, primary_key_base &x);

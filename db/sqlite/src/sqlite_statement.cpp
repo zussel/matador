@@ -23,14 +23,16 @@
 #include "database/row.hpp"
 #include "database/sql.hpp"
 
-#include "object/object_atomizable.hpp"
 #include "object/object_ptr.hpp"
 
+#include "tools/string.hpp"
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
 
-#include <stdexcept>
 #include <sstream>
 #include <cstring>
+#include <memory>
+
 #include <sqlite3.h>
 
 namespace oos {
@@ -46,8 +48,6 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   msg << source << ": " << sqlite3_errmsg(db) << "(" << sql << ")";
   throw sqlite_exception(msg.str()); 
 }
-
-long sqlite_statement::counter_ = 0;
 
 sqlite_statement::sqlite_statement(sqlite_database &db)
   : db_(db)
@@ -182,6 +182,19 @@ void sqlite_statement::write(const char*, const varchar_base &x)
 {
   int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
   throw_error(ret, db_(), "sqlite3_bind_text");
+}
+
+void sqlite_statement::write(const char *, const oos::date &x)
+{
+  int ret = sqlite3_bind_int(stmt_, ++host_index, x.julian_date());
+  throw_error(ret, db_(), "sqlite3_bind_int");}
+
+void sqlite_statement::write(const char *id, const oos::time &x)
+{
+  // format time to ISO8601
+  auto time_string = std::make_shared<std::string>(oos::to_string(x, "%F %T.%f"));
+  write(id, *time_string);
+  host_strings_.push_back(time_string);
 }
 
 void sqlite_statement::write(const char *, const object_base_ptr &x)

@@ -23,8 +23,8 @@ namespace mysql {
 class mysql_prepared_result : public result
 {
 private:
-  mysql_prepared_result(const mysql_prepared_result&);
-  mysql_prepared_result& operator=(const mysql_prepared_result&);
+  mysql_prepared_result(const mysql_prepared_result&) = delete;
+  mysql_prepared_result& operator=(const mysql_prepared_result&) = delete;
 
 public:
   typedef result::size_type size_type;
@@ -61,6 +61,8 @@ protected:
   virtual void read(const char *id, char *x, int s);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, oos::date &x);
+  virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
@@ -78,7 +80,7 @@ private:
   template < class T >
   void prepare_bind_column(int index, enum_field_types type, T &value)
   {
-    bind_[index].buffer_type = type /*MYSQL_TYPE_STRING*/;
+    bind_[index].buffer_type = type;
     bind_[index].buffer= (char *)&value;
     bind_[index].buffer_length = sizeof(T);
     bind_[index].is_null = &info_[index].is_null;
@@ -86,6 +88,8 @@ private:
     bind_[index].error = &info_[index].error;
   }
 
+  void prepare_bind_column(int index, enum_field_types type, oos::date &value);
+  void prepare_bind_column(int index, enum_field_types type, oos::time &value);
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
   void prepare_bind_column(int index, enum_field_types type, char *x, int s);
   void prepare_bind_column(int index, enum_field_types type, varchar_base &value);

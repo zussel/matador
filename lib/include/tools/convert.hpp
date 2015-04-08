@@ -32,6 +32,8 @@
 #endif
 
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 #include "tools/enable_if.hpp"
 
 #include <type_traits>
@@ -53,7 +55,8 @@
 
 namespace oos {
 
-class varchar_base;
+class date;
+class time;
 
 #ifdef OOS_DOXYGEN_DOC
 
@@ -672,7 +675,7 @@ convert(const T &from, U &to,
 
 template < class T >
 void
-convert(const T&, char*)
+convert(const T&, char*,typename oos::enable_if<!std::is_same<T, oos::date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
 {
   throw std::bad_cast();
 }
@@ -701,6 +704,67 @@ OOS_API void convert(const varchar_base &from, std::string &to);
 OOS_API void convert(const std::string &from, varchar_base &to);
 OOS_API void convert(const std::string &from, std::string &to);
 OOS_API void convert(const varchar_base &from, varchar_base &to);
+
+OOS_API void convert(const date &from, int &to);
+OOS_API void convert(const date &from, long &to);
+OOS_API void convert(const date &from, unsigned int &to);
+OOS_API void convert(const date &from, unsigned long &to);
+OOS_API void convert(const date &from, date &to);
+
+/*
+ * From
+ *  date
+ * to
+ *  T
+ */
+template < typename T >
+void convert(const date &/*from*/, T &/*to*/, typename oos::enable_if<!std::is_same<T, date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * From
+ *  time
+ * to
+ *  T
+ */
+template < typename T >
+void convert(const oos::time &/*from*/, T &/*to*/, typename oos::enable_if<!std::is_same<T, date>::value && !std::is_same<T, oos::time>::value>::type* = 0)
+{
+  throw std::bad_cast();
+}
+
+OOS_API void convert(int from, date &to);
+OOS_API void convert(unsigned int from, date &to);
+OOS_API void convert(long from, date &to);
+OOS_API void convert(unsigned long from, date &to);
+
+OOS_API void convert(const oos::time &from, oos::time &to);
+
+/*
+ * From
+ *  T
+ * to
+ *  date
+ */
+template < typename T >
+void convert(const T &/*from*/, date &/*to*/)
+{
+  throw std::bad_cast();
+}
+
+/*
+ * From
+ *  T
+ * to
+ *  time
+ */
+template < typename T >
+void convert(const T &/*from*/, oos::time &/*to*/)
+{
+  throw std::bad_cast();
+}
 
 #endif /* OOS_DOXYGEN_DOC */
 

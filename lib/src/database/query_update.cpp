@@ -1,4 +1,6 @@
 #include <object/primary_key.hpp>
+#include <tools/date.hpp>
+#include <tools/time.hpp>
 #include "database/query_update.hpp"
 
 #include "object/object_ptr.hpp"
@@ -84,6 +86,16 @@ void query_update::write(const char *id, const std::string &x)
   write_pair(id, type_text, x);
 }
 
+void query_update::write(const char *id, const date &x)
+{
+  write_pair(id, type_date, x);
+}
+
+void query_update::write(const char *id, const time &x)
+{
+  write_pair(id, type_time, x);
+}
+
 void query_update::write(const char *id, const object_base_ptr &x)
 {
   write_pair(id, type_long, x.id());
@@ -95,6 +107,34 @@ void query_update::write(const char *, const object_container &)
 void query_update::write(const char *id, const primary_key_base &x)
 {
   x.serialize(id, *this);
+}
+
+void query_update::write_pair(const char *id, data_type_t type, const oos::date &x)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  // TODO: append query update part for time
+  std::stringstream valstr;
+  valstr << x;
+  dialect.append(id, type, valstr.str());
+}
+
+void query_update::write_pair(const char *id, data_type_t type, const oos::time &x)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  // TODO: append query update part for time
+  std::stringstream valstr;
+  valstr << x;
+  dialect.append(id, type, valstr.str());
 }
 
 void query_update::write_pair(const char *id, data_type_t type, const std::string &x)

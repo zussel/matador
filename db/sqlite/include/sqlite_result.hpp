@@ -73,6 +73,8 @@ protected:
   virtual void read(const char *id, char *x, int s);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, oos::date &x);
+  virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
@@ -84,6 +86,8 @@ protected:
 //    std::string val = rows_.at(pos_)->at<std::string>(result_index);
     convert(val, x);
   }
+  void read_column(const char *, oos::date &x);
+  void read_column(const char *, oos::time &x);
 
 private:
   typedef std::vector<row*> row_vector_t;

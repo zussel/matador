@@ -20,6 +20,8 @@
 
 #include "object/object_store.hpp"
 
+#include "tools/time.hpp"
+
 #include "unit/unit_test.hpp"
 
 namespace oos {
@@ -29,7 +31,7 @@ class session;
 class DatabaseTestUnit : public oos::unit_test
 {
 public:
-  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
+  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const oos::time &timeval = oos::time(2015, 3, 15, 13, 56, 23, 123));
   virtual ~DatabaseTestUnit();
 
   virtual void initialize();
@@ -53,6 +55,7 @@ private:
   oos::object_store ostore_;
   std::string db_;
   oos::session *session_;
+  oos::time time_val_;
 };
 
 #endif /* DATABASE_TEST_UNIT_HPP */

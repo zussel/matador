@@ -30,6 +30,8 @@ public:
 	virtual void write(const char *id, const char *x, int s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
+	virtual void write(const char *id, const date &x);
+	virtual void write(const char *id, const time &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
   virtual void write(const char *id, const primary_key_base &x);
@@ -47,6 +49,8 @@ public:
     valstr << x;
     dialect.append(id, type, valstr.str());
   }
+  void write_pair(const char *id, data_type_t type, const oos::date &x);
+  void write_pair(const char *id, data_type_t type, const oos::time &x);
   void write_pair(const char *id, data_type_t type, const std::string &x);
   void write_pair(const char *id, data_type_t type, const varchar_base &x);
   void write_pair(const char *id, data_type_t type, const char *x);

@@ -75,6 +75,7 @@ SET(TOOLS_SOURCES
   tools/varchar.cpp
   tools/sequencer.cpp
   tools/convert.cpp
+  tools/string.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
@@ -127,6 +128,7 @@ SET(JSON_SOURCE
 
 SET(JSON_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/json/json.hpp
+  ${PROJECT_SOURCE_DIR}/include/json/json_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/json/json_type.hpp
   ${PROJECT_SOURCE_DIR}/include/json/json_value.hpp
   ${PROJECT_SOURCE_DIR}/include/json/json_object.hpp

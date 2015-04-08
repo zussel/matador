@@ -144,6 +144,16 @@ void sqlite_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
+void sqlite_result::read(const char *id, oos::date &x)
+{
+  read_column(id, x);
+}
+
+void sqlite_result::read(const char *id, oos::time &x)
+{
+  read_column(id, x);
+}
+
 void sqlite_result::read(const char */*id*/, object_base_ptr &/*x*/)
 {
 }
@@ -155,6 +165,16 @@ void sqlite_result::read(const char */*id*/, object_container &/*x*/)
 void sqlite_result::read(const char *id, primary_key_base &x)
 {
   x.deserialize(id, *this);
+}
+
+void sqlite_result::read_column(char const *, oos::date &x)
+{
+
+}
+
+void sqlite_result::read_column(char const *, oos::time &x)
+{
+
 }
 
 }

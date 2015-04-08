@@ -32,6 +32,8 @@ public:
    * 11. const char*
    * 12. std::string
    * 13. oos::varchar_base
+   * 14. oos::date
+   * 15. oos::time
    */
   void convert_to_char();
   void convert_to_bool();
@@ -47,34 +49,8 @@ public:
   void convert_to_char_pointer();
   void convert_to_string();
   void convert_to_varchar();
-
-private:
-  /*
-  template < class T, class U >
-  void convert_expect_success(const T& in, U &out)
-  {
-  }
-  template < class T, class U >
-  void convert_expect_success(const T& in, U &out, int size)
-  {
-  }
-  template < class T, class U >
-  void convert_expect_success(const T& in, U &out, int size, int precision)
-  {
-  }
-  template < class T, class U >
-  void convert_expect_failure(const T& in, U &out)
-  {
-  }
-  template < class T, class U >
-  void convert_expect_failure(const T& in, U &out, int size)
-  {
-  }
-  template < class T, class U >
-  void convert_expect_failure(const T& in, U &out, int size, int precision)
-  {
-  }
-  */
+  void convert_to_date();
+  void convert_to_time();
 };
 
 #endif /* CONVERTTESTUNIT_HPP */

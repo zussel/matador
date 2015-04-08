@@ -160,6 +160,16 @@ void mysql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
+void mysql_result::read(const char *, oos::date &)
+{
+  // TODO: read date from mysql result
+}
+
+void mysql_result::read(const char *, oos::time &)
+{
+  // TODO: read time from mysql result
+}
+
 void mysql_result::read(const char */*id*/, object_base_ptr &/*x*/)
 {
 }

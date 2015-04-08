@@ -31,6 +31,7 @@ class value;
 class value_base
 {
 public:
+  value_base() {}
   value_base(const std::string &v)
     : val_(v)
   {}

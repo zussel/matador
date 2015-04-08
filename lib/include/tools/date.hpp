@@ -1,13 +1,27 @@
 #ifndef DATE_HPP
 #define DATE_HPP
 
+#ifdef _MSC_VER
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include <iostream>
 
 namespace oos {
 
 void throw_invalid_date(int d, int m, int y);
 
-class date {
+class OOS_API date
+{
 public:
   static const unsigned char month_days[];
 
@@ -15,9 +29,10 @@ public:
   date();
   explicit date(int julian_date);
   date(int day, int month, int year);
-  date(const char *stamp, const char *format = "%d.%m.%Y");
+  explicit date(const char *stamp, const char *format = "%d.%m.%Y");
   date(const date &x);
   date& operator=(const date &x);
+  date& operator=(int julian_date);
 
   virtual ~date();
 
@@ -45,6 +60,7 @@ public:
   // sets the date from a string
   void set(const char *datestr, const char *format = "%d.%m.%Y");
   void set(int day, int month, int year);
+  void set(int julian_date);
 
   int day() const;
   int month() const;

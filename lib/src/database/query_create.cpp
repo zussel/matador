@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstring>
 #include <object/primary_key.hpp>
+#include <tools/date.hpp>
 
 namespace oos {
 
@@ -86,6 +87,16 @@ void query_create::write(const char *id, const varchar_base &x)
 void query_create::write(const char *id, const std::string &)
 {
   write(id, type_text);
+}
+
+void query_create::write(const char *id, const date &)
+{
+  write(id, type_date);
+}
+
+void query_create::write(const char *id, const time &)
+{
+  write(id, type_time);
 }
 
 void query_create::write(const char *id, const object_base_ptr &)

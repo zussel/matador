@@ -1,13 +1,29 @@
 #ifndef TIME_HPP
 #define TIME_HPP
 
+#ifdef _MSC_VER
+  #ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
+#include "tools/date.hpp"
+
 #include <ctime>
 #include <cstdint>
 #include <string>
 
 namespace oos {
 
-class time {
+class OOS_API time
+{
 public:
   enum tz_t {
     local,
@@ -23,8 +39,9 @@ public:
   time();
 
   explicit time(time_t t);
+  explicit time(struct timeval tv);
   time(int year, int month, int day, int hour, int min, int sec, long millis = 0);
-  explicit time(uint64_t microseconds);
+//  explicit time(uint64_t microseconds);
   time(const time &x);
   time &operator=(const time &x);
   ~time();
@@ -40,7 +57,12 @@ public:
 
   static bool is_valid_time(int hour, int min, int sec, long millis);
 
+  static time parse(const std::string &tstr, const char *format);
+
   void set(int year, int month, int day, int hour, int min, int sec, long millis);
+  void set(time_t t, long millis);
+  void set(const date &d);
+  void set(timeval tv);
 
 //  std::string str() const;
 //
@@ -69,6 +91,11 @@ public:
 
   bool is_leapyear() const;
   bool is_daylight_saving() const;
+
+  struct timeval get_timeval() const;
+  struct tm get_tm() const;
+
+  date to_date() const;
 
 //  std::string format(const char *f, tz_t tz = local) const;
 //  void parse(const char *f, const std::string &ts);

@@ -27,17 +27,6 @@
 #include <stdexcept>
 #include <type_traits>
 
-/// @cond OOS_DEV
-
-#ifdef _MSC_VER
-  #define CPP11_TYPE_TRAITS_NS std::tr1
-  #pragma warning(disable: 4355)
-#else
-  #define CPP11_TYPE_TRAITS_NS std
-#endif
-
-/// @endcond OOS_DEV
-
 namespace oos {
 
 class object_base_ptr;
@@ -115,6 +104,8 @@ private:
     convert(from_, to, s);
     success_ = true;
   }
+  void read_value(const char*, date&) {}
+  void read_value(const char*, time&) {}
   void read_value(const char*, object_container&) {}
 
 private:
@@ -268,10 +259,10 @@ public:
     success_ = true;
   }
 
+  void write_value(const char*, const date&) {}
+  void write_value(const char*, const time&) {}
   void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const primary_key_base &)
-  {
-  }
+  void write_value(const char*, const primary_key_base &) {}
 
   void write_value(const char *id, const char *from, int)
   {
