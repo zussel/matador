@@ -62,8 +62,8 @@ public:
   virtual database& db();
   virtual const database& db() const;
 
-  static long type2int(data_type_t type);
-  static long type2sql(data_type_t type);
+  static int type2int(data_type_t type);
+  static int type2sql(data_type_t type);
 
 protected:
   virtual void write(const char *id, char x);
@@ -99,6 +99,8 @@ protected:
     SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
+  void bind_value(const oos::date &d, int index);
+  void bind_value(const oos::time &t, int index);
   void bind_value(unsigned long val, int index);
   void bind_value(const char *val, int size, int index);
 

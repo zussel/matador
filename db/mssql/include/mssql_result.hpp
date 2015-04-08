@@ -102,10 +102,10 @@ protected:
   }
   
   void read_column(const char *, unsigned long &val);
-  void read_column(const char *, std::string &/*val*/);
-  void read_column(const char *, varchar_base &/*val*/);
-  void read_column(const char *, oos::date &/*val*/);
-  void read_column(const char *, oos::time &/*val*/);
+  void read_column(const char *, std::string &val);
+  void read_column(const char *, varchar_base &val);
+  void read_column(const char *, oos::date &val);
+  void read_column(const char *, oos::time &val);
 
 private:
   size_type affected_rows_;

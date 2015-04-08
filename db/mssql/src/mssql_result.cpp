@@ -173,14 +173,14 @@ void mssql_result::read(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char *, oos::date &)
+void mssql_result::read(const char *id, oos::date &x)
 {
-  // TODO: read date from mssql result
+  read_column(id, x);
 }
 
-void mssql_result::read(const char *, oos::time &)
+void mssql_result::read(const char *id, oos::time &x)
 {
-  // TODO: read time from mssql result
+  read_column(id, x);
 }
 
 void mssql_result::read(const char *id, object_base_ptr &x)
@@ -241,17 +241,30 @@ void mssql_result::read_column(const char *, varchar_base &val)
 
 void mssql_result::read_column(char const *, date &x)
 {
-  char *buf = new char[sizeof(TIMESTAMP_STRUCT)];
-  TIMESTAMP_STRUCT * ts = reinterpret_cast<TIMESTAMP_STRUCT*>(buf);
+  SQL_DATE_STRUCT ds;
 
-  ts->year = static_cast<SQLUSMALLINT>(x.year());
-  ts->month = static_cast<SQLUSMALLINT>(x.month());
-  ts->day = static_cast<SQLUSMALLINT>(x.day());
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_TYPE_DATE, &ds, 0, &info);
+  if (ret == SQL_SUCCESS) {
+    x.year(ds.year);
+    x.month(ds.month);
+    x.day(ds.day);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
-void mssql_result::read_column(char const *string, time &time1)
+void mssql_result::read_column(char const *, time &x)
 {
+  SQL_TIMESTAMP_STRUCT ts;
 
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
+  if (ret == SQL_SUCCESS) {
+    x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+  }
 }
 
 }
