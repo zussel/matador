@@ -35,8 +35,8 @@ namespace sqlite {
 class sqlite_result : public result
 {
 private:
-  sqlite_result(const sqlite_result&);
-  sqlite_result& operator=(const sqlite_result&);
+  sqlite_result(const sqlite_result&) = delete;
+  sqlite_result& operator=(const sqlite_result&) = delete;
 
 public:
   typedef result::size_type size_type;
