@@ -3,6 +3,8 @@
 #include "tools/time.hpp"
 #include "tools/string.hpp"
 
+#include <stdexcept>
+
 using namespace oos;
 
 TimeTestUnit::TimeTestUnit()
