@@ -92,8 +92,8 @@ protected:
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    int type = mssql_statement::type2int(type_traits<T>::data_type());
-    SQLRETURN ret = SQLGetData(stmt_, result_index++, type, &val, sizeof(T), &info);
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index++), type, &val, sizeof(T), &info);
     if (ret == SQL_SUCCESS) {
       return;
     } else {
@@ -102,8 +102,10 @@ protected:
   }
   
   void read_column(const char *, unsigned long &val);
-  void read_column(const char *, std::string &/*val*/);
-  void read_column(const char *, varchar_base &/*val*/);
+  void read_column(const char *, std::string &val);
+  void read_column(const char *, varchar_base &val);
+  void read_column(const char *, oos::date &val);
+  void read_column(const char *, oos::time &val);
 
 private:
   size_type affected_rows_;

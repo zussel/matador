@@ -136,7 +136,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
    * string to the row
    *
    ********************/
-  std::auto_ptr<row> r(new row);
+  std::unique_ptr<row> r(new row);
   for (int i = 0; i < column_count; ++i) {
     r->push_back(std::string(values[i]));
   }
@@ -175,6 +175,10 @@ const char* sqlite_database::type_string(data_type_t type) const
       return "VARCHAR";
     case type_text:
       return "TEXT";
+    case type_date:
+      return "REAL";
+    case type_time:
+      return "TEXT";
     default:
       {
         std::stringstream msg;
@@ -187,7 +191,7 @@ const char* sqlite_database::type_string(data_type_t type) const
 
 result *sqlite_database::create_result()
 {
-  return 0;
+  return nullptr;
 }
 
 }

@@ -149,14 +149,18 @@ void sqlite_prepared_result::read(const char *, varchar_base &x)
   }
 }
 
-void sqlite_prepared_result::read(const char*, oos::date &x)
+void sqlite_prepared_result::read(const char *id, oos::date &x)
 {
-  x = sqlite3_column_int(stmt_, result_index++);
+  double val = 0;
+  read(id, val);
+  x.set(static_cast<int>(val));
 }
 
-void sqlite_prepared_result::read(const char*, oos::time &)
+void sqlite_prepared_result::read(const char *id, oos::time &x)
 {
-  // Todo: implement read of time column
+  std::string val;
+  read(id, val);
+  x = oos::time::parse(val, "%F %T.%f");
 }
 
 void sqlite_prepared_result::read(const char *, char *x, int s)

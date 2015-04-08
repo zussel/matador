@@ -172,6 +172,14 @@ const char* mysql_database::type_string(data_type_t type) const
       return "FLOAT";
     case type_double:
       return "DOUBLE";
+    case type_date:
+      return "DATE";
+    case type_time:
+#if MYSQL_VERSION_ID < 50604
+      return "DATETIME";
+#else
+      return "DATETIME(3)";
+#endif
     case type_char_pointer:
       return "VARCHAR";
     case type_varchar:

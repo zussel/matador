@@ -160,14 +160,14 @@ void mssql_statement::write(const char *, const std::string &x)
   bind_value(x.data(), x.size(), ++host_index);
 }
 
-void mssql_statement::write(const char *, const oos::date &)
+void mssql_statement::write(const char *, const oos::date &x)
 {
-  // TODO: bind date value to mssql statement
+  bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, const oos::time &)
+void mssql_statement::write(const char *, const oos::time &x)
 {
-  // TODO: bind time value to mssql statement
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::write(const char *, const varchar_base &x)
@@ -187,6 +187,44 @@ void mssql_statement::write(const char *, const object_container &)
 void mssql_statement::write(const char *id, const primary_key_base &x)
 {
   x.serialize(id, *this);
+}
+
+void mssql_statement::bind_value(const oos::date &d, int index)
+{
+  std::unique_ptr<value_t> v(new value_t(true, sizeof(SQL_DATE_STRUCT)));
+  v->data = new char[v->len];
+
+  SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT*>(v->data);
+
+  ts->year = (SQLSMALLINT) d.year();
+  ts->month = (SQLUSMALLINT) d.month();
+  ts->day = (SQLUSMALLINT) d.day();
+
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TIMESTAMP, sizeof(SQL_DATE_STRUCT), 0, v->data, 0, &v->len);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+
+  host_data_.push_back(v.release());
+}
+
+void mssql_statement::bind_value(const oos::time &t, int index)
+{
+  std::unique_ptr<value_t> v(new value_t(true, SQL_NTS));
+  v->data = new char[sizeof(SQL_TIMESTAMP_STRUCT)];
+
+  SQL_TIMESTAMP_STRUCT *ts = static_cast<SQL_TIMESTAMP_STRUCT*>(v->data);
+
+  ts->year = (SQLSMALLINT) t.year();
+  ts->month = (SQLUSMALLINT) t.month();
+  ts->day = (SQLUSMALLINT) t.day();
+  ts->hour = (SQLUSMALLINT) t.hour();
+  ts->minute = (SQLUSMALLINT) t.minute();
+  ts->second = (SQLUSMALLINT) t.second();
+  ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
+
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+
+  host_data_.push_back(v.release());
 }
 
 void mssql_statement::bind_value(unsigned long val, int index)
@@ -230,7 +268,7 @@ const database& mssql_statement::db() const
   return db_;
 }
 
-long mssql_statement::type2int(data_type_t type)
+int mssql_statement::type2int(data_type_t type)
 {
   switch(type) {
     case type_char:
@@ -261,6 +299,10 @@ long mssql_statement::type2int(data_type_t type)
       return SQL_C_CHAR;
     case type_text:
       return SQL_C_CHAR;
+    case type_date:
+      return SQL_C_DATE;
+    case type_time:
+      return SQL_C_TIMESTAMP;
     default:
       {
         throw std::logic_error("mssql statement: unknown type");
@@ -268,7 +310,7 @@ long mssql_statement::type2int(data_type_t type)
     }
 }
 
-long mssql_statement::type2sql(data_type_t type)
+int mssql_statement::type2sql(data_type_t type)
 {
   switch(type) {
     case type_char:
@@ -299,6 +341,10 @@ long mssql_statement::type2sql(data_type_t type)
       return SQL_VARCHAR;
     case type_text:
       return SQL_VARCHAR;
+    case type_date:
+      return SQL_DATE;
+    case type_time:
+      return SQL_DATETIME;
     default:
       {
         throw std::logic_error("mssql statement: unknown type");

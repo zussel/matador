@@ -39,6 +39,7 @@ public:
   time();
 
   explicit time(time_t t);
+  explicit time(struct timeval tv);
   time(int year, int month, int day, int hour, int min, int sec, long millis = 0);
 //  explicit time(uint64_t microseconds);
   time(const time &x);
@@ -55,6 +56,8 @@ public:
   static time now();
 
   static bool is_valid_time(int hour, int min, int sec, long millis);
+
+  static time parse(const std::string &tstr, const char *format);
 
   void set(int year, int month, int day, int hour, int min, int sec, long millis);
   void set(time_t t, long millis);

@@ -24,6 +24,7 @@
 #include "tools/TimeTestUnit.hpp"
 #include "tools/VarCharTestUnit.hpp"
 #include "tools/FactoryTestUnit.hpp"
+#include "tools/StringTestUnit.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -38,6 +39,14 @@
 #include "json/JsonTestUnit.hpp"
 
 #include "connections.hpp"
+
+#ifdef OOS_MYSQL
+#ifdef WIN32
+#include <mysql_version.h>
+#else
+#include <mysql/mysql_version.h>
+#endif
+#endif
 
 using namespace oos;
 
@@ -54,6 +63,7 @@ int main(int argc, char *argv[])
   test_suite::instance().register_unit(new BlobTestUnit());
   test_suite::instance().register_unit(new VarCharTestUnit());
   test_suite::instance().register_unit(new FactoryTestUnit());
+  test_suite::instance().register_unit(new StringTestUnit());
 
   test_suite::instance().register_unit(new PrototypeTreeTestUnit());
   test_suite::instance().register_unit(new ObjectPrototypeTestUnit());
@@ -64,7 +74,11 @@ int main(int argc, char *argv[])
 #ifdef OOS_MYSQL
   test_suite::instance().register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
   test_suite::instance().register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
-  test_suite::instance().register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql));
+  #if MYSQL_VERSION_ID < 50604
+    test_suite::instance().register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
+  #else
+    test_suite::instance().register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql));
+  #endif
 #endif
 
 #ifdef OOS_ODBC

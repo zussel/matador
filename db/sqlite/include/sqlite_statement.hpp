@@ -21,10 +21,11 @@
 #include "database/statement.hpp"
 
 #include "object/object_atomizer.hpp"
+#include "object/primary_key.hpp"
 
 #include <string>
 #include <vector>
-#include <object/primary_key.hpp>
+#include <memory>
 
 struct sqlite3_stmt;
 
@@ -71,6 +72,8 @@ protected:
 private:
   sqlite_database &db_;
   sqlite3_stmt *stmt_;
+
+  std::vector<std::shared_ptr<std::string> > host_strings_;
 };
 
 }

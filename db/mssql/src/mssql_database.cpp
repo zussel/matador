@@ -228,6 +228,10 @@ const char* mssql_database::type_string(data_type_t type) const
       return "VARCHAR";
     case type_text:
       return "TEXT";
+    case type_date:
+      return "DATE";
+    case type_time:
+      return "DATETIME";
     default:
       {
         std::stringstream msg;
