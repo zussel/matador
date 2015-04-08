@@ -20,15 +20,11 @@
 #include "../Item.hpp"
 
 #include "object/object_view.hpp"
-#include "object/object_list.hpp"
 
 #include "database/session.hpp"
-#include "database/transaction.hpp"
 #include "database/database_exception.hpp"
 
-#include <iostream>
 #include <fstream>
-#include <cstdio>
 
 using namespace oos;
 using namespace std;
@@ -57,7 +53,6 @@ DatabaseTestUnit::initialize()
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
-//  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
   
