@@ -175,7 +175,7 @@ const char* mysql_database::type_string(data_type_t type) const
     case type_date:
       return "DATE";
     case type_time:
-      return "TIMESTAMP";
+      return "DATETIME(3)";
     case type_char_pointer:
       return "VARCHAR";
     case type_varchar:

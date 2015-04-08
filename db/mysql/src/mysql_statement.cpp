@@ -226,43 +226,6 @@ void mysql_statement::write(const char *id, const primary_key_base &x)
   x.serialize(id, *this);
 }
 
-//enum_field_types mysql_statement::type_enum(data_type_t type)
-//{
-//  switch(type) {
-//    case type_char:
-//      return MYSQL_TYPE_TINY;
-//    case type_short:
-//      return MYSQL_TYPE_SHORT;
-//    case type_int:
-//      return MYSQL_TYPE_LONG;
-//    case type_long:
-//      return MYSQL_TYPE_LONGLONG;
-//    case type_unsigned_char:
-//      return MYSQL_TYPE_TINY;
-//    case type_unsigned_short:
-//      return MYSQL_TYPE_SHORT;
-//    case type_unsigned_int:
-//      return MYSQL_TYPE_LONG;
-//    case type_unsigned_long:
-//      return MYSQL_TYPE_LONGLONG;
-//    case type_bool:
-//      return MYSQL_TYPE_TINY;
-//    case type_float:
-//      return MYSQL_TYPE_FLOAT;
-//    case type_double:
-//      return MYSQL_TYPE_DOUBLE;
-//    case type_char_pointer:
-//      return MYSQL_TYPE_VAR_STRING;
-//    case type_varchar:
-//      return MYSQL_TYPE_VAR_STRING;
-//    case type_text:
-//      return MYSQL_TYPE_STRING;
-//    default:
-//      {
-//        throw std::logic_error("mysql statement: unknown type");
-//      }
-//    }
-//}
 
 database& mysql_statement::db()
 {
@@ -289,6 +252,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->day = (unsigned int)x.day();
   mt->month = (unsigned int)x.month();
   mt->year = (unsigned int)x.year();
+  mt->time_type  = MYSQL_TIMESTAMP_DATE;
 //  mt->hour = 0;
 //  mt->minute = 0;
 //  mt->second = 0;
@@ -310,10 +274,11 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->day = (unsigned int)x.day();
   mt->month = (unsigned int)x.month();
   mt->year = (unsigned int)x.year();
-//  mt->hour = (unsigned int)x.hour();
-//  mt->minute = (unsigned int)x.minute();
-//  mt->second = (unsigned int)x.second();
-//  mt->second_part = (unsigned long)x.milli_second();
+  mt->hour = (unsigned int)x.hour();
+  mt->minute = (unsigned int)x.minute();
+  mt->second = (unsigned int)x.second();
+  mt->second_part = (unsigned long)x.milli_second() * 1000;
+  mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int index)

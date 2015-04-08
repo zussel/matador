@@ -36,7 +36,7 @@ void mysql_column_fetcher::read_value(const char *, oos::time &x)
 {
   if (info_[column_index_].length > 0) {
     MYSQL_TIME *mtt = (MYSQL_TIME*)info_[column_index_].buffer;
-    x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part);
+    x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
   }
   ++column_index_;
 }
