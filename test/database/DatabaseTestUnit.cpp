@@ -29,10 +29,11 @@
 using namespace oos;
 using namespace std;
 
-DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db)
+DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db, const oos::time &timeval)
   : unit_test(name, msg)
   , db_(db)
-  , session_(nullptr) 
+  , session_(nullptr)
+  , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
   add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
@@ -95,7 +96,7 @@ void DatabaseTestUnit::test_datatypes()
   oos::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   oos::date date_val(15, 3, 2015);
-  oos::time time_val(2015, 3, 15, 13, 56, 23, 123);
+  oos::time time_val = time_val_;
 
   try {
 
