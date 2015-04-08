@@ -25,13 +25,15 @@
 
 #include "object/object_ptr.hpp"
 
+#include "tools/string.hpp"
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 
 #include <sstream>
 #include <cstring>
+#include <memory>
+
 #include <sqlite3.h>
-#include <tools/string.hpp>
 
 namespace oos {
 
@@ -189,10 +191,10 @@ void sqlite_statement::write(const char *, const oos::date &x)
 
 void sqlite_statement::write(const char *id, const oos::time &x)
 {
-  // Todo: implement write/bind of time column
   // format time to ISO8601
-  std::string tstr = oos::to_string(x, "%F %T.%f");
-  write(id, tstr);
+  auto time_string = std::make_shared<std::string>(oos::to_string(x, "%F %T.%f"));
+  write(id, *time_string);
+  host_strings_.push_back(time_string);
 }
 
 void sqlite_statement::write(const char *, const object_base_ptr &x)
