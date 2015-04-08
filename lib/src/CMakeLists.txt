@@ -187,6 +187,7 @@ SET(DATABASE_SOURCES
   database/transaction.cpp
   database/transaction_helper.cpp
   database/result.cpp
+  database/result_impl.cpp
   database/row.cpp
   database/statement.cpp
   database/statement_creator.cpp
@@ -212,6 +213,7 @@ SET(DATABASE_HEADER
   ../include/database/transaction.hpp
   ../include/database/transaction_helper.hpp
   ../include/database/result.hpp
+  ../include/database/result_impl.hpp
   ../include/database/row.hpp
   ../include/database/value.hpp
   ../include/database/types.hpp
