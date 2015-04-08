@@ -74,6 +74,7 @@ void TimeTestUnit::test_initialize()
   tt->tm_mday = 3;
   tt->tm_mon = 11;
   tt->tm_year = 2014 - 1900;
+  tt->tm_isdst = 0;
 
   oos::time t2(mktime(tt));
 
