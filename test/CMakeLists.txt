@@ -93,6 +93,40 @@ SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
+# string tests
+SET(string
+  split
+  trim
+)
+
+# date tests
+SET(date
+  create
+  julian
+  init
+  invalid
+  copy
+  assign
+  compare
+  set
+  modify
+  difference
+  to_string
+)
+
+# time tests
+SET(time
+  create
+  init
+  invalid
+  copy
+  assign
+  compare
+  modify
+  parse
+  format
+)
+
 # convert tests
 SET(convert
   to_bool
@@ -223,6 +257,9 @@ SET(varchar
 
 SET(TESTUNITS)
 
+LIST(APPEND TESTUNITS string)
+LIST(APPEND TESTUNITS date)
+LIST(APPEND TESTUNITS time)
 LIST(APPEND TESTUNITS convert)
 LIST(APPEND TESTUNITS factory)
 LIST(APPEND TESTUNITS first)
