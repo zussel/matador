@@ -97,5 +97,6 @@ int main(int argc, char *argv[])
 
   test_suite::instance().register_unit(new JsonTestUnit());
 
-  return test_suite::instance().run() ? 0 : 1;
+  bool result = test_suite::instance().run();
+  return result ? 0 : 1;
 }

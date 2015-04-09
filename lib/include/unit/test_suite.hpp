@@ -34,9 +34,9 @@
 #include "tools/singleton.hpp"
 
 #include <memory>
-
 #include <map>
 #include <string>
+#include <vector>
 
 /**
  * @namespace oos
@@ -77,6 +77,14 @@ private:
     EXECUTE      /**<Enum type for the execute command. */
   } test_suite_cmd;
 
+  typedef std::vector<std::string> t_string_vector;
+
+  typedef struct test_unit_args_struct
+  {
+    std::string unit;
+    t_string_vector tests;
+  } test_unit_args;
+
   typedef struct test_suite_args_struct
   {
     test_suite_args_struct()
@@ -85,8 +93,7 @@ private:
     test_suite_cmd cmd;
     bool initialized;
     bool brief;
-    std::string unit;
-    std::string test;
+    std::vector<test_unit_args> unit_args;
   } test_suite_args;
 
   test_suite();
@@ -156,12 +163,27 @@ public:
    *
    * Executes the test_unit with the given name.
    * If there is no test_unit object with such a
-   * name a message is diplayed.
+   * name a message is displayed.
    *
    * @param unit The name of the test_unit object to execute.
    * @return True if all tests succeeded.
    */
   bool run(const std::string &unit);
+
+  /**
+   * @brief Executes a specific test_unit.
+   *
+   * Executes the test_unit with the given args.
+   * Arguments contain name of test unit and
+   * a list of all tests to be executed.
+   * If list is empty all tests are executed.
+   * If there is no test_unit object with such a
+   * name a message is displayed.
+   *
+   * @param unit_args The arguments of the test_unit to execute.
+   * @return True if all tests succeeded.
+   */
+  bool run(const test_unit_args &unit_args);
 
   /**
    * @brief Executes a single test of a test_unit.

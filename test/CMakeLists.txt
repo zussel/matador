@@ -337,4 +337,4 @@ FOREACH(unit ${TESTUNITS})
   ENDFOREACH(test)
 ENDFOREACH(unit)
 
-ADD_TEST(test_oos ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec all)
+ADD_TEST(test_oos_1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec date,time,date)
