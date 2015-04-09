@@ -62,7 +62,6 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
 {
   first->next = last;
   last->prev = first;
-//  aliases.insert(t);
 }
 
 void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
@@ -72,7 +71,6 @@ void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
   producer = p;
   type.assign(t);
   abstract = a;
-//  aliases.insert(t);
   initialized = true;
   has_primary_key = false;
   first->next = last;
