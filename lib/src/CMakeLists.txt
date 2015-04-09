@@ -11,6 +11,7 @@ SET(OBJECT_SOURCES
   object/prototype_node.cpp
   object/prototype_tree.cpp
   object/attribute_serializer.cpp
+  object/primary_key_analyzer.cpp
 )
 
 SET(OBJECT_INSTALL_HEADER
@@ -63,6 +64,7 @@ SET(OBJECT_HEADER
   ../include/object/object_atomizer.hpp
   ../include/object/object_atomizable.hpp
   ../include/object/primary_key.hpp
+  ../include/object/primary_key_analyzer.hpp
 )
 
 SET(TOOLS_SOURCES

@@ -36,7 +36,7 @@
 #include <list>
 #include <memory>
 #include <string>
-#include "prototype_tree.hpp"
+#include <unordered_map>
 
 namespace oos {
 
@@ -44,6 +44,7 @@ class object_base_producer;
 class object;
 class prototype_tree;
 class object_proxy;
+class primary_key_base;
 
 /**
  * @class prototype_node
@@ -210,6 +211,10 @@ public:
   
   bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
   bool initialized;    /**< Indicates wether this node is complete initialized or not */
+
+  bool has_primary_key;
+
+  std::unordered_map<primary_key_base*, object_proxy*> primary_key_map;
 };
 
 }

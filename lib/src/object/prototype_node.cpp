@@ -39,6 +39,7 @@ prototype_node::prototype_node()
   , count(0)
   , abstract(false)
   , initialized(false)
+  , has_primary_key(false)
 {
 }
 
@@ -57,6 +58,7 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
   , type(t)
   , abstract(a)
   , initialized(false)
+  , has_primary_key(false)
 {
   first->next = last;
   last->prev = first;
@@ -72,6 +74,7 @@ void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
   abstract = a;
 //  aliases.insert(t);
   initialized = true;
+  has_primary_key = false;
   first->next = last;
   last->prev = first;  
 }
