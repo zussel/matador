@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "object/primary_key_serializer.hpp"
+
 #include <ostream>
 #include <set>
 #include <list>
@@ -44,6 +46,7 @@ class object;
 class object_store;
 class object_base_ptr;
 class prototype_node;
+class primary_key_base;
 
 /**
  * @cond OOS_DEV
@@ -209,6 +212,14 @@ public:
   unsigned long id() const;
   void id(unsigned long i);
 
+  /**
+   * Returns true if the underlying
+   * object has a primary key
+   *
+   * @return true If the object has a primary key
+   */
+  bool has_primary_key() const;
+
   object_proxy *prev;      /**< The previous object_proxy in the list. */
   object_proxy *next;      /**< The next object_proxy in the list. */
 
@@ -228,6 +239,10 @@ public:
   typedef std::map<std::string, object_list_t> string_object_list_map_t;
   
   string_object_list_map_t relations;
+
+  std::shared_ptr<primary_key_base> primary_key_ = nullptr;
+
+  static primary_key_serializer pk_serializer;
 };
 /// @endcond
 }

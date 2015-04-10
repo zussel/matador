@@ -39,6 +39,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 //  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
+  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -712,4 +713,13 @@ void ObjectStoreTestUnit::test_remove()
   item = i;
 
   UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "transient object shouldn't be removable");
+}
+
+void ObjectStoreTestUnit::test_primary_key()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item(new Item("Test"));
+
+//  UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
 }

@@ -13,8 +13,22 @@ class primary_key_base
 {
 public:
   virtual ~primary_key_base() {}
+
+  friend bool operator==(primary_key_base const &a, primary_key_base const &b)
+  {
+    return a.equal_to(b);
+  }
+  friend bool operator<(primary_key_base const &a, primary_key_base const &b)
+  {
+    return a.less(b);
+  }
   virtual void serialize(const char*, object_writer&) const = 0;
   virtual void deserialize(const char*, object_reader&) = 0;
+  virtual primary_key_base* clone() const = 0;
+
+protected:
+  virtual bool equal_to(primary_key_base const &other) const = 0;
+  virtual bool less(primary_key_base const &other) const = 0;
 };
 
 template < typename T, class Enable = void >
@@ -50,6 +64,11 @@ public:
     reader.read(id, pk_);
   }
 
+  virtual primary_key_base* clone() const
+  {
+    return new primary_key<T>(pk_);
+  }
+
   value_type get() const
   {
     return pk_;
@@ -57,6 +76,26 @@ public:
 
   operator value_type() const {
     return pk_;
+  }
+
+protected:
+
+  virtual bool equal_to(primary_key_base const &other) const
+  {
+    if (primary_key<T> const *b = dynamic_cast<primary_key<T> const*>(&other)) {
+      return pk_ == b->pk_;
+    } else {
+      return false;
+    }
+  }
+
+  virtual bool less(primary_key_base const &other) const
+  {
+    if (primary_key<T> const *b = dynamic_cast<primary_key<T> const*>(&other)) {
+      return pk_ < b->pk_;
+    } else {
+      return false;
+    }
   }
 
 private:

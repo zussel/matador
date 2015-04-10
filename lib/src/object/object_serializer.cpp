@@ -173,7 +173,6 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
     x.reset(oproxy);
   } else {
     x.proxy_ = new object_proxy(id, nullptr);
-//    x.id_ = id;
   }
 }
 

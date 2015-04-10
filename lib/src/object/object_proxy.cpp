@@ -23,6 +23,8 @@ using namespace std;
 
 namespace oos {
 
+primary_key_serializer object_proxy::pk_serializer = primary_key_serializer();
+
 object_proxy::object_proxy(object_store *os)
   : prev(0)
   , next(0)
@@ -55,7 +57,9 @@ object_proxy::object_proxy(object *o, object_store *os)
   , ptr_count(0)
   , ostore(os)
   , node(0)
-{}
+{
+  primary_key_.reset(pk_serializer.serialize(o));
+}
 
 object_proxy::~object_proxy()
 {
@@ -163,6 +167,11 @@ void object_proxy::id(unsigned long i)
   } else {
     oid = i;
   }
+}
+
+bool object_proxy::has_primary_key() const
+{
+  return primary_key_ != nullptr;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
