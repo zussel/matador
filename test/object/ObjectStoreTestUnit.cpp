@@ -723,7 +723,7 @@ void ObjectStoreTestUnit::test_primary_key()
 
   UNIT_ASSERT_FALSE(item.has_primary_key(), "item must not have a primary key");
 
-  item.reset(new Item("Test"));
+  item = new Item("Test");
 
   UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
 }

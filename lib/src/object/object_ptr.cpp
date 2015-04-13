@@ -243,7 +243,7 @@ object_base_ptr::ptr_count() const
 
 bool object_base_ptr::has_primary_key() const
 {
-  return (!proxy_ ? false : proxy_->has_primary_key());
+  return (proxy_ ? proxy_->has_primary_key() : false);
 }
 
 std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)

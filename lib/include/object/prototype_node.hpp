@@ -64,8 +64,8 @@ class OOS_API prototype_node
 {
 private:
   // copying not permitted
-  prototype_node(const prototype_node&);
-  prototype_node& operator=(const prototype_node&);
+  prototype_node(const prototype_node&) = delete;
+  prototype_node& operator=(const prototype_node&) = delete;
 
 public:
   prototype_node();
