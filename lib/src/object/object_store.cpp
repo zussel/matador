@@ -201,6 +201,13 @@ object_store::insert_object(object *o, bool notify)
   }
   // insert new element node
   insert_proxy(node, oproxy);
+
+  // find and insert primary key
+  primary_key_base *pk = nullptr;
+  if (pk) {
+    node->primary_key_map.insert(pk, oproxy);
+  }
+
   // initialize object
   object_creator oc(oproxy, *this, notify);
   o->deserialize(oc);
