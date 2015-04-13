@@ -213,6 +213,14 @@ public:
   unsigned long ptr_count() const;
 
   /**
+   * Returns true if the underlying
+   * object has a primary key
+   *
+   * @return true If the object has a primary key
+   */
+  bool has_primary_key() const;
+
+  /**
    * Prints the underlaying object
    *
    * @param out The output stream to write on.
@@ -299,11 +307,11 @@ public:
    * @param x The object_ptr to assign from
    * @return The assign object_ptr
    */
-	object_ptr& operator=(const object_ptr &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
+//	object_ptr& operator=(const object_ptr &x)
+//  {
+//    object_base_ptr::operator=(x);
+//    return *this;
+//  }
 
   /**
    * Create an object_ptr from an object
@@ -429,11 +437,11 @@ public:
    * @param x The object_ref to assign from
    * @return The assign object_ref
    */
-	object_ref& operator=(const object_ref &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
+//	object_ref& operator=(const object_ref &x)
+//  {
+//    object_base_ptr::operator=(x);
+//    return *this;
+//  }
 
   /**
    * @brief Check on equal.
