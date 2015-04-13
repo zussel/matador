@@ -212,6 +212,7 @@ public:
    */
   unsigned long ptr_count() const;
 
+  bool has_primary_key() const;
   /**
    * Prints the underlaying object
    *
@@ -294,18 +295,6 @@ public:
   {}
 
   /**
-   * Assign an object_ptr
-   * 
-   * @param x The object_ptr to assign from
-   * @return The assign object_ptr
-   */
-	object_ptr& operator=(const object_ptr &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
-
-  /**
    * Create an object_ptr from an object
    * 
    * @param o The object.
@@ -331,6 +320,18 @@ public:
   virtual const char* type() const
   {
     return typeid(T).name();
+  }
+
+  /**
+   * Assign operator.
+   *
+   * @param x The x object to assign from.
+   */
+  object_ptr<T>& operator=(object *x)
+  {
+    is_reference_ = false;
+    reset(new object_proxy(x, nullptr));
+    return *this;
   }
 
   /**
@@ -424,32 +425,6 @@ public:
   {}
 
   /**
-   * Assign an object_ref
-   * 
-   * @param x The object_ref to assign from
-   * @return The assign object_ref
-   */
-	object_ref& operator=(const object_ref &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
-
-  /**
-   * @brief Check on equal.
-   *
-   * Check if this object_ref is equal to
-   * the given one.
-   *
-   * @param x The object_ref to compare with.
-   * @return True if the object_ref are equal.
-   */
-  bool operator==(const object_ref &x) const
-  {
-    return object_base_ptr::operator ==(x);
-  }
-
-  /**
    * Create an object_ref from an object
    * 
    * @param o The object.
@@ -472,6 +447,19 @@ public:
   {
     return typeid(T).name();
   }
+
+  /**
+   * Assign operator.
+   *
+   * @param x The x object to assign from.
+   */
+  object_ref<T>& operator=(object *x)
+  {
+    is_reference_ = true;
+    reset(new object_proxy(x, nullptr));
+    return *this;
+  }
+
 
   /**
    * @brief Return the pointer to the object of type T.
