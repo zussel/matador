@@ -719,7 +719,13 @@ void ObjectStoreTestUnit::test_primary_key()
 {
   typedef object_ptr<Item> item_ptr;
 
-  item_ptr item(new Item("Test"));
+  item_ptr item;
 
-//  UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
+  UNIT_ASSERT_FALSE(item.has_primary_key(), "item must not have a primary key");
+
+  item = new Item("Test");
+
+  UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
+
+  
 }
