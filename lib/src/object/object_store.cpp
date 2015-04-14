@@ -203,9 +203,9 @@ object_store::insert_object(object *o, bool notify)
   node->insert(oproxy);
 
   // find and insert primary key
-  primary_key_base *pk = nullptr;
+  std::shared_ptr<primary_key_base> pk(pk_serializer_.serialize(o));
   if (pk) {
-//    node->primary_key_map.insert(pk, oproxy);
+    node->primary_key_map.insert(std::make_pair(pk, oproxy));
   }
 
   // initialize object

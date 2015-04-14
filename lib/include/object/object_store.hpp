@@ -73,7 +73,6 @@ class OOS_API object_store
 {
 private:
   typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
-  typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
 
 public:
   /**
@@ -428,6 +427,7 @@ private:
   t_observer_list observer_list_;
 
   object_deleter object_deleter_;
+  primary_key_serializer pk_serializer_;
 };
 
 }

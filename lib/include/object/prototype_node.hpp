@@ -229,7 +229,7 @@ public:
   bool initialized = false;    /**< Indicates wether this node is complete initialized or not */
   bool has_primary_key = false;
 
-  std::unordered_map<primary_key_base*, object_proxy*> primary_key_map;
+  std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;
 };
 
 }
