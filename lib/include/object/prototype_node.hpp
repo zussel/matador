@@ -37,6 +37,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "object_proxy.hpp"
+#include "prototype_tree.hpp"
 
 namespace oos {
 
@@ -122,6 +124,18 @@ public:
   void insert(prototype_node *child);
 
   /**
+   * Inserts a object proxy into the
+   */
+  void insert(object_proxy *proxy);
+
+  /**
+   * @brief Removes an object proxy from prototype node
+   *
+   * @param oproxy Object proxy to remove
+   */
+  void remove(object_proxy *proxy);
+
+  /**
    * Delete all objects inside this node
    * if recursive flag is set, delete all
    * objects below this node as well.
@@ -182,15 +196,17 @@ public:
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
 
+  prototype_tree *tree = nullptr;   /**< The prototype tree to which the node belongs */
+
   // tree links
-  prototype_node *parent; /**< The parent node */
-  prototype_node *prev;   /**< The previous node */
-  prototype_node *next;   /**< The next node */
-  prototype_node *first;  /**< The first children node */
-  prototype_node *last;   /**< The last children node */
+  prototype_node *parent = nullptr; /**< The parent node */
+  prototype_node *prev = nullptr;   /**< The previous node */
+  prototype_node *next = nullptr;   /**< The next node */
+  std::unique_ptr<prototype_node> first = nullptr;  /**< The first children node */
+  std::unique_ptr<prototype_node> last = nullptr;   /**< The last children node */
 
   // data
-  object_base_producer *producer; /**< The object producer */
+  std::unique_ptr<object_base_producer> producer = nullptr; /**< The object producer */
 
   /* this map holds information about
    * all prototypes in which this prototype
@@ -200,19 +216,18 @@ public:
    */
   field_prototype_map_t relations; /**< Map holding relation information for type. */
 
-  object_proxy *op_first;  /**< The marker of the first list node. */
-  object_proxy *op_marker; /**< The marker of the last list node of the own elements. */
-  object_proxy *op_last;   /**< The marker of the last list node of all elements. */
+  object_proxy *op_first = nullptr;  /**< The marker of the first list node. */
+  object_proxy *op_marker = nullptr; /**< The marker of the last list node of the own elements. */
+  object_proxy *op_last = nullptr;   /**< The marker of the last list node of all elements. */
   
-  unsigned int depth;  /**< The depth of the node inside of the tree. */
-  unsigned long count; /**< The total count of elements. */
+  unsigned int depth = 0;  /**< The depth of the node inside of the tree. */
+  unsigned long count = 0; /**< The total count of elements. */
 
   std::string type;	   /**< The type name of the object */
   
-  bool abstract;       /**< Indicates wether this node holds a producer of an abstract object */
-  bool initialized;    /**< Indicates wether this node is complete initialized or not */
-
-  bool has_primary_key;
+  bool abstract = false;       /**< Indicates wether this node holds a producer of an abstract object */
+  bool initialized = false;    /**< Indicates wether this node is complete initialized or not */
+  bool has_primary_key = false;
 
   std::unordered_map<primary_key_base*, object_proxy*> primary_key_map;
 };

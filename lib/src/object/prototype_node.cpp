@@ -26,69 +26,35 @@ using namespace std;
 namespace oos {
 
 prototype_node::prototype_node()
-  : parent(0)
-  , prev(0)
-  , next(0)
-  , first(0)
-  , last(0)
-  , producer(0)
-  , op_first(0)
-  , op_marker(0)
-  , op_last(0)
-  , depth(0)
-  , count(0)
-  , abstract(false)
-  , initialized(false)
-  , has_primary_key(false)
 {
 }
 
 prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
-  : parent(0)
-  , prev(0)
-  , next(0)
-  , first(new prototype_node)
+  : first(new prototype_node)
   , last(new prototype_node)
   , producer(p)
-  , op_first(0)
-  , op_marker(0)
-  , op_last(0)
-  , depth(0)
-  , count(0)
   , type(t)
   , abstract(a)
-  , initialized(false)
-  , has_primary_key(false)
 {
-  first->next = last;
-  last->prev = first;
+  first->next = last.get();
+  last->prev = first.get();
 }
 
 void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
 {
-  first = new prototype_node;
-  last = new prototype_node;
-  producer = p;
+  first.reset(new prototype_node);
+  last.reset(new prototype_node);
+  producer.reset(p);
   type.assign(t);
   abstract = a;
   initialized = true;
   has_primary_key = false;
-  first->next = last;
-  last->prev = first;  
+  first->next = last.get();
+  last->prev = first.get();
 }
 
 prototype_node::~prototype_node()
-{
-  if (first) {
-    delete first;
-  }
-  if (last) {
-    delete last;
-  }
-  if (producer) {
-    delete producer;
-  }
-}
+{}
 
 bool
 prototype_node::empty(bool self) const
@@ -107,7 +73,7 @@ prototype_node::insert(prototype_node *child)
 {
   child->parent = this;
   child->prev = last->prev;
-  child->next = last;
+  child->next = last.get();
   last->prev->next = child;
   last->prev = child;
   // set depth
@@ -127,6 +93,66 @@ prototype_node::insert(prototype_node *child)
   child->op_last = op_last;
 }
 
+void prototype_node::insert(object_proxy *proxy)
+{
+  // check count of object in subtree
+  if (count >= 2) {
+    /*************
+     *
+     * there are more than two objects (normal case)
+     * insert before last last
+     *
+     *************/
+    proxy->link(op_marker->prev);
+  } else if (count == 1) {
+    /*************
+     *
+     * there is one object in subtree
+     * insert as first; adjust "left" marker
+     *
+     *************/
+    proxy->link(op_marker->prev);
+    tree->adjust_left_marker(this, proxy->next, proxy);
+  } else /* if (node->count == 0) */ {
+    /*************
+     *
+     * there is no object in subtree
+     * insert as last; adjust "right" marker
+     *
+     *************/
+    proxy->link(op_marker);
+    tree->adjust_left_marker(this, proxy->next, proxy);
+    tree->adjust_right_marker(this, proxy->prev, proxy);
+  }
+  // set prototype node
+  proxy->node = this;
+  // adjust size
+  ++count;
+}
+
+void prototype_node::remove(object_proxy *proxy)
+{
+  if (proxy == op_first->next) {
+    // adjust left marker
+    tree->adjust_left_marker(this, op_first->next, op_first->next->next);
+  }
+  if (proxy == op_marker->prev) {
+    // adjust right marker
+    tree->adjust_right_marker(this, proxy, op_marker->prev->prev);
+  }
+  // unlink object_proxy
+  if (proxy->prev) {
+    proxy->prev->next = proxy->next;
+  }
+  if (proxy->next) {
+    proxy->next->prev = proxy->prev;
+  }
+  proxy->prev = 0;
+  proxy->next = 0;
+
+  // adjust object count for node
+  --count;
+}
 
 void prototype_node::clear(prototype_tree &tree, bool recursive)
 {
@@ -147,7 +173,7 @@ void prototype_node::clear(prototype_tree &tree, bool recursive)
   if (recursive) {
     prototype_node *current = first->next;
 
-    while (current != last) {
+    while (current != last.get()) {
       current->clear(tree, recursive);
       current = current->next;
     }
@@ -167,14 +193,14 @@ prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first && first->next != last)
+  if (first && first->next != last.get())
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last) {
+    while (node->parent && node->next == node->parent->last.get()) {
       node = node->parent;
     }
     return node->next;
@@ -185,14 +211,14 @@ prototype_node* prototype_node::next_node(const prototype_node *root) const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first && first->next != last)
+  if (first && first->next != last.get())
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last && node->parent != root) {
+    while (node->parent && node->next == node->parent->last.get() && node->parent != root) {
       node = node->parent;
     }
     return node->next;
@@ -207,7 +233,7 @@ prototype_node* prototype_node::previous_node() const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last) {
+    while (node->last && node->first->next != node->last.get()) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
@@ -226,7 +252,7 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last && node->parent != root) {
+    while (node->last && node->first->next != node->last.get() && node->parent != root) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
@@ -249,7 +275,7 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
 
 bool prototype_node::has_children() const
 {
-  return first->next != last;
+  return first->next != last.get();
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
@@ -264,8 +290,8 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   os << "|{parent|" << pn.parent << "}";
   os << "|{prev|" << pn.prev << "}";
   os << "|{next|" << pn.next << "}";
-  os << "|{first|" << pn.first << "}";
-  os << "|{last|" << pn.last << "}";
+  os << "|{first|" << pn.first.get() << "}";
+  os << "|{last|" << pn.last.get() << "}";
   // determine size
   int i = 0;
   object_proxy *iop = pn.op_first;

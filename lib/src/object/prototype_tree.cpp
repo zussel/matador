@@ -406,17 +406,15 @@ void prototype_tree::clear(const char *type)
   clear(find(type));
 }
 
-
 void prototype_tree::clear(const prototype_iterator &node)
 {
   clear(node.get());
 }
 
-
 prototype_node* prototype_tree::clear(prototype_node *node)
 {
   prototype_node *current = node->first->next;
-  while (current != node->last) {
+  while (current != node->last.get()) {
     current = clear(current);
   }
   // finally link first to last and vice versa

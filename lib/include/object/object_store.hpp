@@ -382,27 +382,11 @@ public:
   object_proxy *find_proxy(long id) const;
 
   /**
-   * @brief Inserts the proxy into a prototype list
-   * 
-   * @param node Prototype into which the proxy will be inserted.
-   * @param oproxy Object proxy to insert
-   */
-  void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
-
-  /**
   * @brief Inserts a new proxy into the object store
   *
   * @param oproxy Object proxy to insert
   */
   void insert_proxy(object_proxy *oproxy);
-
-  /**
-   * @brief Removes an object proxy from a prototype list
-   *
-   * @param node Prototype from which the proxy will be removed.
-   * @param oproxy Object proxy to remove
-   */
-  void remove_proxy(prototype_node *node, object_proxy *oproxy);
 
   /**
    * @brief Exchange the sequencer strategy.
@@ -433,9 +417,6 @@ private:
 	object_proxy* insert_object(object *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
 	
-  void link_proxy(object_proxy *base, object_proxy *next);
-  void unlink_proxy(object_proxy *proxy);
-
 private:
   prototype_tree prototype_tree_;
 

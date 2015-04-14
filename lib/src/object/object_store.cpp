@@ -179,7 +179,7 @@ object_store::insert_object(object *o, bool notify)
       // replace it with new object
       // unlink it and
       // link it into new place in list
-      remove_proxy(oproxy->node, oproxy);
+      oproxy->node->remove(oproxy);
     }
     oproxy->reset(o);
   } else {
@@ -200,12 +200,12 @@ object_store::insert_object(object *o, bool notify)
     oproxy->obj = o;
   }
   // insert new element node
-  insert_proxy(node, oproxy);
+  node->insert(oproxy);
 
   // find and insert primary key
   primary_key_base *pk = nullptr;
   if (pk) {
-    node->primary_key_map.insert(pk, oproxy);
+//    node->primary_key_map.insert(pk, oproxy);
   }
 
   // initialize object
@@ -240,6 +240,9 @@ object_store::remove(object_proxy *proxy)
 {
   if (proxy == nullptr) {
     throw object_exception("object proxy is nullptr");
+  }
+  if (proxy->node == nullptr) {
+    throw object_exception("prototype node is nullptr");
   }
   // check if object tree is deletable
   if (!object_deleter_.is_deletable(proxy)) {
@@ -279,7 +282,7 @@ object_store::remove_object(object_proxy *proxy, bool notify)
     throw object_exception("couldn't remove object");
   }
 
-  remove_proxy(node.get(), proxy);
+  node->remove(proxy);
 
   if (notify) {
     // notify observer
@@ -316,31 +319,6 @@ object_store::remove(object_container &oc)
     }
   }
   oc.uninstall();
-}
-
-void
-object_store::link_proxy(object_proxy *base, object_proxy *prev_proxy)
-{
-  // link oproxy before this node
-  prev_proxy->prev = base->prev;
-  prev_proxy->next = base;
-  if (base->prev) {
-    base->prev->next = prev_proxy;
-  }
-  base->prev = prev_proxy;
-}
-
-void
-object_store::unlink_proxy(object_proxy *proxy)
-{
-  if (proxy->prev) {
-    proxy->prev->next = proxy->next;
-  }
-  if (proxy->next) {
-    proxy->next->prev = proxy->prev;
-  }
-  proxy->prev = 0;
-  proxy->next = 0;
 }
 
 object_proxy* object_store::find_proxy(long id) const
@@ -404,8 +382,8 @@ void object_store::insert_proxy(object_proxy *oproxy)
     seq_.update(oproxy->id());
   }
   oproxy->ostore = this;
-  
-  insert_proxy(node, oproxy);
+
+  node->insert(oproxy);
 
   // initialize object
   object_creator oc(oproxy, *this, true);
@@ -416,59 +394,6 @@ void object_store::insert_proxy(object_proxy *oproxy)
   }
   // insert element into hash map for fast lookup
   object_map_[oproxy->id()] = oproxy;
-}
-
-void object_store::insert_proxy(const prototype_iterator &node, object_proxy *oproxy)
-{
-  // check count of object in subtree
-  if (node->count >= 2) {
-    /*************
-     *
-     * there are more than two objects (normal case)
-     * insert before last last
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-  } else if (node->count == 1) {
-    /*************
-     *
-     * there is one object in subtree
-     * insert as first; adjust "left" marker
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
-  } else /* if (node->count == 0) */ {
-    /*************
-     *
-     * there is no object in subtree
-     * insert as last; adjust "right" marker
-     *
-     *************/
-    oproxy->link(node->op_marker);
-    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
-    prototype_tree_.adjust_right_marker(node.get(), oproxy->prev, oproxy);
-  }
-  // set prototype node
-  oproxy->node = node.get();
-  // adjust size
-  ++node->count;
-}
-
-void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
-{
-  if (oproxy == node->op_first->next) {
-    // adjust left marker
-    prototype_tree_.adjust_left_marker(node, node->op_first->next, node->op_first->next->next);
-  }
-  if (oproxy == node->op_marker->prev) {
-    // adjust right marker
-    prototype_tree_.adjust_right_marker(node, oproxy, node->op_marker->prev->prev);
-  }
-  // unlink object_proxy
-  unlink_proxy(oproxy);
-  // adjust object count for node
-  --node->count;
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)

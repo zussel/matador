@@ -712,7 +712,7 @@ void ObjectStoreTestUnit::test_remove()
   Item *i = new Item;
   item = i;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "transient object shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient object shouldn't be removable");
 }
 
 void ObjectStoreTestUnit::test_primary_key()
