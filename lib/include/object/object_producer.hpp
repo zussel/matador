@@ -15,6 +15,8 @@
 #define OOS_API
 #endif
 
+#include <typeinfo>
+
 namespace oos {
 /**
 * @class object_base_producer

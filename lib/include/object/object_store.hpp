@@ -427,7 +427,6 @@ private:
   t_observer_list observer_list_;
 
   object_deleter object_deleter_;
-  primary_key_serializer pk_serializer_;
 };
 
 }

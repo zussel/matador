@@ -32,17 +32,17 @@
   #define EXPIMP_TEMPLATE
 #endif
 
+#include "object/primary_key_serializer.hpp"
+#include "object/object_producer.hpp"
+
 #include <map>
 #include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "object_proxy.hpp"
-#include "prototype_tree.hpp"
 
 namespace oos {
 
-class object_base_producer;
 class object;
 class prototype_tree;
 class object_proxy;
@@ -229,6 +229,7 @@ public:
   bool initialized = false;    /**< Indicates wether this node is complete initialized or not */
   bool has_primary_key = false;
 
+  primary_key_serializer pk_serializer;
   std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;
 };
 
