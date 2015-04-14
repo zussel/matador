@@ -84,7 +84,7 @@ public:
    */
   void value(const value_type &v)
   {
-    modify(value_, v);
+    value_ = v;
   }
 
 private:

@@ -197,87 +197,6 @@ public:
   */
 
   /**
-   * Modify the attribute assigning
-   * the new given value to attributes
-   * reference.
-   *
-   * @tparam T Type of attribute to change.
-   * @param attr Refernce to attribute to change.
-   * @param val New value for attribute.
-   */
-  template < class T >
-  void modify(T &attr, const T &val)
-  {
-//    mark_modified();
-    attr = val;
-  }
-
-  /**
-   * Modify the char attribute assigning
-   * the new given char value to attributes
-   * reference.
-   *
-   * @param attr Pointer to character string to change.
-   * @param max_size The maximum capacity of the destinition array.
-   * @param val New stringto set.
-   * @param size The length of the new string.
-   * @throw std::logic_error.
-   */
-  void modify(char *attr, int max_size, const char *val, int size)
-  {
-    if (max_size < size) {
-      throw std::logic_error("not enough character size");
-    }
-//    mark_modified();
-#ifdef _MSC_VER
-    strcpy_s(attr, max_size, val);
-#else
-    strcpy(attr, val);
-#endif
-  }
-
-  /**
-   * Modify an object_ptr attribute assigning
-   * the new given value to attributes reference.
-   *
-   * @tparam T Type of object_ptr to change.
-   * @param attr Refernce to object_ptr to change.
-   * @param val New value for object_ptr.
-   */
-  template < class T >
-  void modify(oos::object_ref<T> &attr, const oos::object_ptr<T> &val)
-  {
-//    mark_modified();
-    attr = val;
-  }
-
-  /**
-   * Modify a varchar_base attribute assigning
-   * the new given value to attributes reference.
-   *
-   * @param attr Refernce to varchar_base to change.
-   * @param val New value for varchar_base.
-   */
-  void modify(varchar_base &attr, const std::string &val)
-  {
-//    mark_modified();
-    attr = val;
-  }
-
-  /**
-   * Modify a varchar_base attribute assigning
-   * the new given value to attributes reference.
-   *
-   * @param attr Refernce to varchar_base to change.
-   * @param val New value for varchar_base.
-   */
-  void modify(varchar_base &attr, const varchar_base &val)
-  {
-//    mark_modified();
-    attr = val;
-  }
-
-  /**
    * Print the object to a given stream
    *
    * @param os The stream to write the object on.
@@ -321,7 +240,6 @@ private:
   friend class database;
 
 	primary_key<unsigned long> id_;
-//  object_proxy *proxy_;
 };
 
 }

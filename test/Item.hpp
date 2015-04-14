@@ -130,19 +130,30 @@ public:
     serializer.write("val_time", time_);
   }
 
-  void set_char(char x) { modify(char_, x); }
-  void set_float(float x) { modify(float_, x); }
-  void set_double(double x) { modify(double_, x); }
-  void set_short(short x) { modify(short_, x); }
-  void set_int(int x) { modify(int_, x); }
-  void set_long(long x) { modify(long_, x); }
-  void set_unsigned_short(unsigned short x) { modify(unsigned_short_, x); }
-  void set_unsigned_int(unsigned int x) { modify(unsigned_int_, x); }
-  void set_unsigned_long(unsigned long x) { modify(unsigned_long_, x); }
-  void set_bool(bool x) { modify(bool_, x); }
-  void set_cstr(const char *x, int size) { modify(cstr_, CSTR_LEN, x, size); }
-  void set_string(const std::string &x) { modify(string_, x); }
-  void set_varchar(const oos::varchar_base &x) { modify(varchar_, x); }
+  void set_char(char x) { char_ = x; }
+  void set_float(float x) { float_ = x; }
+  void set_double(double x) { double_ = x; }
+  void set_short(short x) { short_ = x; }
+  void set_int(int x) { int_ = x; }
+  void set_long(long x) { long_ = x; }
+  void set_unsigned_short(unsigned short x) { unsigned_short_ = x; }
+  void set_unsigned_int(unsigned int x) { unsigned_int_ = x; }
+  void set_unsigned_long(unsigned long x) { unsigned_long_ = x; }
+  void set_bool(bool x) { bool_ = x; }
+  void set_cstr(const char *x, int size)
+  {
+    if (CSTR_LEN < size) {
+      throw std::logic_error("not enough character size");
+    }
+//    mark_modified();
+#ifdef _MSC_VER
+    strcpy_s(cstr_, CSTR_LEN, x);
+#else
+    strcpy(cstr_, x);
+#endif
+  }
+  void set_string(const std::string &x) { string_ = x; }
+  void set_varchar(const oos::varchar_base &x) { varchar_ = x.c_str(); }
   void set_date(const oos::date &d) { date_ = d; }
   void set_time(const oos::time &d) { time_ = d; }
 
@@ -218,8 +229,8 @@ public:
     serializer.write("ptr", ptr_);
   }
 
-  void ref(const value_ref &r) { modify(ref_, r); }
-  void ptr(const value_ptr &p) { modify(ptr_, p); }
+  void ref(const value_ref &r) { ref_ = r; }
+  void ptr(const value_ptr &p) { ptr_ = p; }
 
   value_ref ref() const { return ref_; }
   value_ptr ptr() const { return ptr_; }
@@ -580,7 +591,7 @@ public:
   }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
   
 };
 
@@ -653,7 +664,7 @@ public:
   }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
 
   void add(const emp_ref &b)
   {
@@ -709,7 +720,7 @@ public:
   }
 
   std::string title() const { return title_; }
-  void title(const std::string &t) { modify(title_, t); }
+  void title(const std::string &t) { title_ = t; }
   
   album_ref alb() const { return album_; }
   void alb(const album_ref &a) { album_ = a; }
@@ -756,7 +767,7 @@ public:
   }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
 
   void add(const track_ref &b)
   {
@@ -819,7 +830,7 @@ public:
   }
 
   std::string name() const { return name_; }
-  void name(const std::string &name) { modify(name_, name); }
+  void name(const std::string &name) { name_ = name; }
 
   void add(const track_ref &b)
   {

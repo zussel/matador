@@ -80,7 +80,7 @@ public:
 
   void index(size_type i)
   {
-    base_item::modify(index_, i);
+    index_ =  i;
   }
 
 private:
