@@ -182,8 +182,8 @@ void action_remover::visit(update_action *a)
    * with this given object.
    *
    ***********/
-  if (a->proxy()->obj->id() == id_) {
-    *iter_ = new delete_action(proxy_->node->type.c_str(), proxy_->obj->id());
+  if (a->proxy()->id() == id_) {
+    *iter_ = new delete_action(proxy_->node->type.c_str(), proxy_->id());
     delete a;
   }
 }

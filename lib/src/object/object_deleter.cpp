@@ -37,7 +37,7 @@ bool
 object_deleter::is_deletable(object_proxy *proxy)
 {
   object_count_map.clear();
-  object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy, false)));
+  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
 
   // start collecting information
   proxy->obj->deserialize(*this);
@@ -84,7 +84,7 @@ object_deleter::end()
 
 void object_deleter::check_object(object_proxy *proxy, bool is_ref)
 {
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy)));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy)));
   if (!is_ref) {
     --ret.first->second.ptr_count;
   } else {
@@ -99,7 +99,7 @@ void object_deleter::check_object(object_proxy *proxy, bool is_ref)
 void
 object_deleter::check_object_list_node(object_proxy *proxy)
 {
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->obj->id(), t_object_count(proxy, false)));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
   
   /**********
    * 

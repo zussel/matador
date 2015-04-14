@@ -202,7 +202,7 @@ void object_serializer::read_value(const char *id, primary_key_base &x)
 
 void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
-  write(0, proxy->obj->id());
+  write(0, proxy->id());
   write(0, proxy->node->type);
 }
 

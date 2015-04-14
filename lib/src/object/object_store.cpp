@@ -276,7 +276,7 @@ object_store::remove_object(object_proxy *proxy, bool notify)
     throw object_exception("couldn't find node for object");
   }
   
-  if (object_map_.erase(proxy->obj->id()) != 1) {
+  if (object_map_.erase(proxy->id()) != 1) {
     // couldn't remove object
     // throw exception
     throw object_exception("couldn't remove object");

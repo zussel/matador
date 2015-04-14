@@ -40,7 +40,7 @@ void transaction::on_insert(object_proxy *proxy)
    * store
    * 
    *****************/
-  id_iterator_map_t::iterator i = id_map_.find(proxy->obj->id());
+  id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
     // create insert action and insert object
     action_inserter ai(action_list_);
@@ -48,12 +48,12 @@ void transaction::on_insert(object_proxy *proxy)
     if (j == action_list_.end()) {
       // should not happen
     } else {
-      id_map_.insert(std::make_pair(proxy->obj->id(), j));
+      id_map_.insert(std::make_pair(proxy->id(), j));
     }
   } else {
     // ERROR: an object with that id already exists
     std::stringstream msg;
-    msg << "an object with id " << proxy->obj->id() << " already exists";
+    msg << "an object with id " << proxy->id() << " already exists";
     throw database_exception("database", msg.str().c_str());
   }
 }
@@ -67,7 +67,7 @@ void transaction::on_update(object_proxy *proxy)
    * is restored to old values
    * 
    *****************/
-  if (id_map_.find(proxy->obj->id()) == id_map_.end()) {
+  if (id_map_.find(proxy->id()) == id_map_.end()) {
     backup(new update_action(proxy), proxy->obj);
   } else {
     // An object with that id already exists
@@ -87,9 +87,9 @@ void transaction::on_delete(object_proxy *proxy)
    * 
    *****************/
 
-  id_iterator_map_t::iterator i = id_map_.find(proxy->obj->id());
+  id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    backup(new delete_action(proxy->node->type.c_str(), proxy->obj->id()), proxy->obj);
+    backup(new delete_action(proxy->node->type.c_str(), proxy->id()), proxy->obj);
   } else {
     action_remover ar(action_list_);
     ar.remove(i->second, proxy);
