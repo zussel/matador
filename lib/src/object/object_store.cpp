@@ -168,7 +168,6 @@ object_store::insert_object(object *o, bool notify)
   prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
-//    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
     throw object_exception("couldn't insert object");
   }
   // retrieve and set new unique number into object
