@@ -30,7 +30,7 @@ public:
   relation_filler(database::table_ptr &tbl)
     : generic_object_reader<relation_filler>(this)
     , info_(tbl)
-    , object_(0)
+    , proxy_(nullptr)
   {}
   virtual ~relation_filler() {}
 
@@ -39,8 +39,8 @@ public:
     object_proxy *first = info_->node_.op_first->next;
     object_proxy *last = info_->node_.op_marker;
     while (first != last) {
-      object_ = first->obj;
-      object_->deserialize(*this);
+      proxy_ = first;
+      proxy_->obj->deserialize(*this);
       first = first->next;
     }
   }
@@ -64,7 +64,7 @@ public:
      */
     table::relation_data_t::iterator i = info_->relation_data.find(id);
     if (i != info_->relation_data.end()) {
-      table::object_map_t::iterator j = i->second.find(object_->id());
+      table::object_map_t::iterator j = i->second.find(proxy_->id());
       if (j != i->second.end()) {
         while (!j->second.empty()) {
           x.append_proxy(j->second.front());
@@ -74,14 +74,9 @@ public:
     }
   }
 
-  void read_value(const char *id, primary_key_base &x)
-  {
-    x.deserialize(id, *this);
-  }
-
 private:
   database::table_ptr &info_;
-  object *object_;
+  object_proxy *proxy_;
 };
 
 table::table(database &db, const prototype_node &node)
