@@ -70,7 +70,6 @@ public:
   typedef std::list<object_proxy*> object_proxy_list_t;
   typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
   typedef std::map<std::string, object_map_t> relation_data_t;
-  typedef std::shared_ptr<statement> statement_ptr;
   typedef std::shared_ptr<table> table_ptr;
   typedef std::shared_ptr<database_sequencer> database_sequencer_ptr;
   typedef std::map<std::string, table_ptr> table_map_t;
@@ -79,7 +78,6 @@ public:
   {
     table_info_t(const prototype_node *n) : is_loaded(false), node(n) {}
     bool is_loaded;
-    relation_data_t relation_data;
     const prototype_node *node;
   };
 
