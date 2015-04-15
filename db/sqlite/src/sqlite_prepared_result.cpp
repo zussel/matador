@@ -99,22 +99,22 @@ void sqlite_prepared_result::read(const char *, long &x)
 
 void sqlite_prepared_result::read(const char *, unsigned char &x)
 {
-  x = (char)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned char)sqlite3_column_int(stmt_, result_index++);
 }
 
 void sqlite_prepared_result::read(const char *, unsigned short &x)
 {
-  x = (short)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned short)sqlite3_column_int(stmt_, result_index++);
 }
 
 void sqlite_prepared_result::read(const char *, unsigned int &x)
 {
-  x = (int)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned int)sqlite3_column_int(stmt_, result_index++);
 }
 
 void sqlite_prepared_result::read(const char *, unsigned long &x)
 {
-  x = (long)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned long)sqlite3_column_int(stmt_, result_index++);
 }
 
 void sqlite_prepared_result::read(const char *, bool &x)
@@ -186,6 +186,7 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
 void sqlite_prepared_result::read(const char *, object_base_ptr &x)
 {
 
+  std::cout << "read object of type [" << x.type() << "]\n";
   /*
    * determine primary key
    */
