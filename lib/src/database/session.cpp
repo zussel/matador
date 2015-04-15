@@ -39,30 +39,20 @@ session::session(object_store &ostore, const std::string &dbstring)
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
   type_ = dbstring.substr(0, pos);
-  if (type_ == "memory") {
-    impl_ = new memory_database(this);
-  } else {
-    connection_ = dbstring.substr(pos + 3);
+  connection_ = dbstring.substr(pos + 3);
 
-    // get driver factory singleton
-    database_factory &df = database_factory::instance();
+  // get driver factory singleton
+  database_factory &df = database_factory::instance();
 
-    // try to create database implementation
-    impl_ = df.create(type_, this);
-  }
-
-//  impl_->open(connection_);
+  // try to create database implementation
+  impl_ = df.create(type_, this);
 }
 
 
 session::~session()
 {
   if (impl_) {
-    if (type_ == "memory") {
-      delete impl_;
-    } else {
-      database_factory::instance().destroy(type_, impl_);
-    }
+    database_factory::instance().destroy(type_, impl_);
   }
 }
 

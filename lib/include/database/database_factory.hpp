@@ -59,26 +59,37 @@ public:
   bool destroy(const std::string &name, database* impl);
   
 private:
-private:
+
   class database_producer : public factory_t::producer_base
   {
   public:
-    explicit database_producer(const std::string &name);
-    virtual ~database_producer();
+    explicit database_producer() : db_(nullptr) {};
+    virtual ~database_producer() {};
     virtual factory_t::value_type* create() const;
-    factory_t::value_type* create(session *db);
-    void destroy(factory_t::value_type* val) const;
+    virtual factory_t::value_type* create(session *db);
+    virtual void destroy(factory_t::value_type* val) const;
+
+  protected:
+    session *db_;
+  };
+
+  class dynamic_database_producer : public database_producer
+  {
+  public:
+    explicit dynamic_database_producer(const std::string &name);
+    virtual ~dynamic_database_producer();
+    virtual factory_t::value_type* create() const;
+    virtual void destroy(factory_t::value_type* val) const;
 
   private:
     typedef database*(*create_func)(session*);
     typedef void (*destroy_func)(database*);
-    
+
   private:
     create_func create_;
     destroy_func destroy_;
 
     library loader_;
-    session *db_;
   };
 
 private:
