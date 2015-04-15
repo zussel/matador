@@ -34,6 +34,10 @@ void table_reader::read(result *res)
 
 void table_reader::read_value(const char *, object_base_ptr &x)
 {
+  /*
+   * check if object has primary key
+   *
+   */
   long oid = x.id();
 
   if (oid == 0) {

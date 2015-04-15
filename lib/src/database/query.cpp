@@ -55,7 +55,7 @@ query& query::create(const prototype_node &node)
   return create(node.type, o.get());
 }
 
-query& query::create(const std::string &name, object_atomizable *o)
+query& query::create(const std::string &name, serializable *o)
 {
 //  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
   sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
@@ -119,7 +119,7 @@ query &query::insert(object_proxy *proxy)
   return insert(proxy->obj, proxy->node->type);
 }
 
-query& query::insert(object_atomizable *o, const std::string &type)
+query& query::insert(serializable *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
@@ -160,7 +160,7 @@ query& query::update(object_proxy *proxy)
   return update(proxy->node->type, proxy->obj);
 }
 
-query& query::update(const std::string &type, object_atomizable *o)
+query& query::update(const std::string &type, serializable *o)
 {
   throw_invalid(QUERY_OBJECT_UPDATE, state);
 
@@ -265,7 +265,7 @@ query& query::select()
   return *this;
 }
 
-query& query::select(object_atomizable *o)
+query& query::select(serializable *o)
 {
   throw_invalid(QUERY_SELECT, state);
   sql_.append("SELECT ");

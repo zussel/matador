@@ -3,7 +3,7 @@
 
 #include "database/result.hpp"
 
-#include "object/object_atomizable.hpp"
+#include "object/serializable.hpp"
 #include "object/object_atomizer.hpp"
 
 #include <vector>
@@ -18,8 +18,8 @@ namespace sqlite {
 class sqlite_prepared_result : public result
 {
 private:
-  sqlite_prepared_result(const sqlite_prepared_result&);
-  sqlite_prepared_result& operator=(const sqlite_prepared_result&);
+  sqlite_prepared_result(const sqlite_prepared_result&) = delete;
+  sqlite_prepared_result& operator=(const sqlite_prepared_result&) = delete;
 
 public:
   typedef result::size_type size_type;

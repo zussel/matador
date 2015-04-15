@@ -185,7 +185,11 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
 
 void sqlite_prepared_result::read(const char *, object_base_ptr &x)
 {
-  x.id((long)sqlite3_column_int(stmt_, result_index++));
+
+  /*
+   * determine primary key
+   */
+  x.id((unsigned long)sqlite3_column_int(stmt_, result_index++));
 }
 
 void sqlite_prepared_result::read(const char *, object_container &)

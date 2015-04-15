@@ -37,17 +37,17 @@ class object_writer;
 class object_reader;
 
 /**
- * @class object_atomizable
+ * @class serializable
  * @brief Base class for all serializable objects
  *
  * This class provides an interface to serialize
  * and deserialize an object. It is used with
  * an instance of a concrete object_atomizer class.
  */
-class OOS_API object_atomizable
+class OOS_API serializable
 {
 public:
-  virtual ~object_atomizable() {}
+  virtual ~serializable() {}
 
   /**
    * @fn virtual void deserialize(object_reader &deserializer)

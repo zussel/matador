@@ -212,7 +212,20 @@ public:
    */
   unsigned long ptr_count() const;
 
+  /**
+   * Returns true if object has a primary key
+   *
+   * @return true if object has a primary key
+   */
   bool has_primary_key() const;
+
+  /**
+   * Gets the primary key of the foreign object
+   *
+   * @return The primary key of the foreign object
+   */
+  std::shared_ptr<primary_key_base> primary_key() const;
+
   /**
    * Prints the underlaying object
    *

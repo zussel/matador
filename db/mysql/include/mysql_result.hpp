@@ -34,7 +34,7 @@
 namespace oos {
 
 class row;
-class object_atomizable;
+class serializable;
 
 namespace mysql {
 

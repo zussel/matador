@@ -18,7 +18,7 @@
 #include "database/result.hpp"
 #include "database/statement.hpp"
 
-#include "object/object_atomizable.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 
@@ -28,7 +28,7 @@ result::result()
 result::~result()
 {}
 
-void result::get(object_atomizable *o)
+void result::get(serializable *o)
 {
   result_index = transform_index(0);
   o->deserialize(*this);

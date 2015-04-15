@@ -35,7 +35,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_atomizable.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
   ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
 )
 
@@ -63,7 +63,7 @@ SET(OBJECT_HEADER
   ../include/object/object_expression.hpp
   ../include/object/attribute_serializer.hpp
   ../include/object/object_atomizer.hpp
-  ../include/object/object_atomizable.hpp
+  ../include/object/serializable.hpp
   ../include/object/primary_key.hpp
   ../include/object/primary_key_analyzer.hpp
   ../include/object/primary_key_serializer.hpp

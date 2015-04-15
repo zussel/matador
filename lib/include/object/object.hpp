@@ -33,7 +33,7 @@
 
 #include "object/attribute_serializer.hpp"
 #include "object/object_atomizer.hpp"
-#include "object/object_atomizable.hpp"
+#include "object/serializable.hpp"
 #include "object/primary_key.hpp"
 
 #include "tools/enable_if.hpp"
@@ -67,11 +67,11 @@ template < class T > class object_ptr;
  * The object is identified by a unique id, which is
  * set by the object_store.
  */
-class OOS_API object : public object_atomizable
+class OOS_API object : public serializable
 {
 	// don't allow copying
-	object(const object&);
-	object& operator=(const object&);
+	object(const object&) = delete;
+	object& operator=(const object&) = delete;
 	
 public:
   /**
@@ -91,17 +91,6 @@ public:
   virtual void serialize(object_writer &serializer) const;
 
   /**
-   * @brief Returns the classname of the  object
-   *
-   * Returns the classname of the object
-   * if the object isn't stored in the
-   * object store 'nullptr' is returned
-   * 
-   * @return Name of the object type or nullptr
-   */
-//	const char* classname() const;
-  
-  /**
    * @brief Returns the unique identifier of the object.
    * 
    * This method returns the unique id of the object. These
@@ -120,17 +109,6 @@ public:
    * @param oid The new id of the object.
    */
 	void id(unsigned long oid);
-
-  /**
-   * @brief Returns the object store.
-   * 
-   * Returns the object_store into which
-   * this object was inserted. If this object
-   * wasn't inserted NULL is returned.
-   * 
-   * @return The object_store to which the object belongs.
-   */
-//  object_store* ostore() const;
 
   /**
    * Sets a value of a member identified by
@@ -187,15 +165,6 @@ public:
     return writer.success();
   }
 
-  /*
-  bool get(const std::string &name, char *val, int size, int precision = 2)
-  {
-    attribute_writer<char*> writer(name, val, size, precision);
-    write_to(&writer);
-    return writer.success();
-  }
-  */
-
   /**
    * Print the object to a given stream
    *
@@ -204,28 +173,6 @@ public:
    * @return The modified stream.
    */
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
-
-protected:
-  /**
-   * @brief Returns the object_proxy of the object.
-   * 
-   * Returns the object_proxy of the object. If the
-   * object isn't inserted into a object_store NULL
-   * is returned.
-   * 
-   * @return The object_proxy of the object.
-   */
-//  object_proxy* proxy() const { return proxy_; }
-
-  /**
-   * @brief Marks this object as modified in its object_store
-   *
-   * Marks this object as modified in its object_store.
-   * This method must be called before modifing a derived
-   * object. Otherwise the object can't be restored on an
-   * error or rollback.
-   */
-//	void mark_modified();
 
 private:
 	friend class object_store;

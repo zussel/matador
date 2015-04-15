@@ -20,7 +20,7 @@
 
 #include "tools/sequencer.hpp"
 
-#include "object/object_atomizable.hpp"
+#include "object/serializable.hpp"
 
 #include "tools/varchar.hpp"
 
@@ -44,7 +44,7 @@ class statement;
 
 /// @cond OOS_DEV
 
-class OOS_API database_sequencer : public sequencer_impl, public object_atomizable
+class OOS_API database_sequencer : public sequencer_impl, public serializable
 {
 public:
   database_sequencer(database &db);

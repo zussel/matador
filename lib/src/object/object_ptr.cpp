@@ -246,6 +246,11 @@ bool object_base_ptr::has_primary_key() const
   return (proxy_ ? proxy_->has_primary_key() : false);
 }
 
+std::shared_ptr<primary_key_base> object_base_ptr::primary_key() const
+{
+  return (proxy_ ? proxy_->primary_key_ : nullptr);
+}
+
 std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
 {
   if (x.proxy_) {

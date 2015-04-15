@@ -40,7 +40,7 @@ namespace oos {
 class row;
 class statement;
 class object;
-class object_atomizable;
+class serializable;
 
 /// @cond OOS_DEV
 
@@ -65,7 +65,7 @@ public:
     result_index = transform_index(i);
     read("", val);
   }
-  void get(object_atomizable *o);
+  void get(serializable *o);
   
   virtual const char* column(size_type c) const = 0;
   virtual bool fetch() = 0;

@@ -46,7 +46,7 @@ class database;
 class object;
 class prototype_node;
 class condition;
-class object_atomizable;
+class serializable;
 
 /**
  * @class query
@@ -140,7 +140,7 @@ public:
    * @param o The serializable object providing the field information.
    * @return A reference to the query.
    */
-  query& create(const std::string &name, object_atomizable *o);
+  query& create(const std::string &name, serializable *o);
 
   /**
    * Creates a drop statement based
@@ -185,7 +185,7 @@ public:
    * @param o The serializable object used for the select statement.
    * @return A reference to the query.
    */
-  query& select(object_atomizable *o);
+  query& select(serializable *o);
 
   /**
    * Creates an insert statement based
@@ -206,7 +206,7 @@ public:
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& insert(object_atomizable *o, const std::string &name);
+  query& insert(serializable *o, const std::string &name);
 
   /**
    * Creates an update statement based
@@ -227,7 +227,7 @@ public:
    * @param o The serializable object used for the update statement.
    * @return A reference to the query.
    */
-  query& update(const std::string &name, object_atomizable *o);
+  query& update(const std::string &name, serializable *o);
 
   /**
    * Creates an update statement without
