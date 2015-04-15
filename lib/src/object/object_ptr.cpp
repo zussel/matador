@@ -24,16 +24,12 @@ using namespace std;
 namespace oos {
 
 object_base_ptr::object_base_ptr(bool is_ref)
-  : proxy_(0)
-  , is_reference_(is_ref)
-  , is_internal_(false)
-  , oid_(0)
+  : is_reference_(is_ref)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
   : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-  , is_internal_(false)
   , oid_(x.oid_)
 {
   if (proxy_) {

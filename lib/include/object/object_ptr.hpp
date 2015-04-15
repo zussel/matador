@@ -32,6 +32,7 @@
 #endif
 
 #include "object/object_proxy.hpp"
+#include "prototype_node.hpp"
 
 #include <memory>
 #include <typeinfo>
@@ -40,6 +41,7 @@ namespace oos {
 
 class object;
 class object_store;
+class prototype_node;
 
 /**
  * @class object_base_ptr
@@ -250,10 +252,10 @@ private:
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
-  object_proxy *proxy_;
-  bool is_reference_;
-  bool is_internal_;
-  unsigned long oid_;
+  object_proxy *proxy_ = nullptr;
+  bool is_reference_ = false;
+  bool is_internal_ = false;
+  unsigned long oid_ = 0;
 };
 
 /// @cond OOS_DEV

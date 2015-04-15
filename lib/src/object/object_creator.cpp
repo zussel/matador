@@ -18,7 +18,6 @@
 #include "object/object_creator.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
-#include "object/object_vector.hpp"
 
 namespace oos {
 

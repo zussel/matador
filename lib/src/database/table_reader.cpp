@@ -38,6 +38,14 @@ void table_reader::read_value(const char *, object_base_ptr &x)
    * check if object has primary key
    *
    */
+
+  const_prototype_iterator n = ostore_.find_prototype(x.type());
+
+  if (n != ostore_.end()) {
+    prototype_node *pn = n.get();
+    pn->has_primary_key;
+  }
+
   long oid = x.id();
 
   if (oid == 0) {

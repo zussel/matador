@@ -23,8 +23,7 @@
 #endif
 
 #include "object/object_atomizer.hpp"
-#include "primary_key.hpp"
-#include "object_proxy.hpp"
+#include "object/object_proxy.hpp"
 
 #include <stack>
 
