@@ -18,6 +18,7 @@
 #include "object/prototype_node.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_store.hpp"
+#include <object/primary_key_analyzer.hpp>
 
 #include <iostream>
 
@@ -38,6 +39,9 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
 {
   first->next = last.get();
   last->prev = first.get();
+  // check for primary key
+  primary_key_analyzer pk_analyzer(*this);
+  pk_analyzer.analyze();
 }
 
 void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
@@ -47,10 +51,11 @@ void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
   producer.reset(p);
   type.assign(t);
   abstract = a;
-  initialized = true;
-  has_primary_key = false;
   first->next = last.get();
   last->prev = first.get();
+  // check for primary key
+  primary_key_analyzer pk_analyzer(*this);
+  pk_analyzer.analyze();
 }
 
 prototype_node::~prototype_node()
@@ -281,6 +286,11 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
 bool prototype_node::has_children() const
 {
   return first->next != last.get();
+}
+
+bool prototype_node::has_primary_key() const
+{
+  return primary_key.get() != nullptr;
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)

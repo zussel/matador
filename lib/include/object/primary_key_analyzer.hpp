@@ -14,7 +14,7 @@ public:
   explicit primary_key_analyzer(prototype_node &node);
   virtual ~primary_key_analyzer();
 
-  void analyze(object *obj);
+  void analyze();
 
   template < class T >
   void read_value(const char*, const T&) {}

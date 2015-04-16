@@ -137,7 +137,7 @@ public:
    * 
    * @param o The new object for the object_base_ptr.
    */
-	void reset(object_proxy *proxy = 0);
+	void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
    * Returns if the object is loaded.
@@ -345,7 +345,7 @@ public:
   object_ptr<T>& operator=(object *x)
   {
     is_reference_ = false;
-    reset(new object_proxy(x, nullptr));
+    reset(new object_proxy(x, nullptr), is_reference());
     return *this;
   }
 
@@ -471,7 +471,7 @@ public:
   object_ref<T>& operator=(object *x)
   {
     is_reference_ = true;
-    reset(new object_proxy(x, nullptr));
+    reset(new object_proxy(x, nullptr), is_reference());
     return *this;
   }
 

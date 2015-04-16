@@ -42,30 +42,7 @@ object_base_ptr&
 object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
-    if (proxy_) {
-      oid_ = 0;
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->unlink_ref();
-        } else {
-          proxy_->unlink_ptr();
-        }
-      }
-      proxy_->remove(this);
-    }
-    proxy_ = x.proxy_;
-    is_reference_ = x.is_reference_;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->link_ref();
-        } else {
-          proxy_->link_ptr();
-        }
-      }
-      proxy_->add(this);
-    }
+    reset(x.proxy_, x.is_reference_);
   }
   return *this;
 }
@@ -123,7 +100,7 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 }
 
 void
-object_base_ptr::reset(object_proxy *proxy)
+object_base_ptr::reset(object_proxy *proxy, bool is_ref)
 {
   if (proxy_) {
     oid_ = 0;
@@ -136,19 +113,18 @@ object_base_ptr::reset(object_proxy *proxy)
     }
     proxy_->remove(this);
   }
-  if (proxy) {
-    proxy_ = proxy;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->link_ref();
-        } else {
-          proxy_->link_ptr();
-        }
+  proxy_ = proxy;
+  is_reference_ = is_ref;
+  if (proxy_) {
+    oid_ = proxy_->id();
+    if (is_internal_) {
+      if (is_reference_) {
+        proxy_->link_ref();
+      } else {
+        proxy_->link_ptr();
       }
-      proxy_->add(this);
     }
+    proxy_->add(this);
   }
 }
 

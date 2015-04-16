@@ -37,7 +37,7 @@ void object_creator::read_value(const char*, object_base_ptr &x)
       // create object
       object *o = ostore_.create(x.type());
       o->id(x.id());
-      x.reset(ostore_.insert_object(o, notify_));
+      x.reset(ostore_.insert_object(o, notify_), x.is_reference());
     } else {
       // do the pointer count
       x.proxy_->link_ptr();

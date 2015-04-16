@@ -185,6 +185,13 @@ public:
   bool has_children() const;
 
   /**
+   * Returns true if the object represented by this node
+   * owns a primary key
+   *
+   * @return True if object owns a primary key
+   */
+  bool has_primary_key() const;
+  /**
    * Prints the node in graphviz layout to the stream.
    * 
    * @param os The ostream to write to.
@@ -225,12 +232,12 @@ public:
 
   std::string type;	   /**< The type name of the object */
   
-  bool abstract = false;       /**< Indicates wether this node holds a producer of an abstract object */
-  bool initialized = false;    /**< Indicates wether this node is complete initialized or not */
-  bool has_primary_key = false;
+  bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract object */
 
   primary_key_serializer pk_serializer;
   std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;
+
+  std::unique_ptr<primary_key_base> primary_key;
 };
 
 }

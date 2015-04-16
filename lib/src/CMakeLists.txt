@@ -8,6 +8,7 @@ SET(OBJECT_SOURCES
   object/object_proxy.cpp
   object/object_serializer.cpp
   object/object_convert.cpp
+  object/object_preparator.cpp
   object/prototype_node.cpp
   object/prototype_tree.cpp
   object/attribute_serializer.cpp
@@ -63,6 +64,7 @@ SET(OBJECT_HEADER
   ../include/object/object_expression.hpp
   ../include/object/attribute_serializer.hpp
   ../include/object/object_atomizer.hpp
+  ../include/object/object_preparator.hpp
   ../include/object/serializable.hpp
   ../include/object/primary_key.hpp
   ../include/object/primary_key_analyzer.hpp

@@ -8,6 +8,7 @@ namespace oos {
 table_reader::table_reader(table &t, object_store &ostore)
   : generic_object_reader(this)
   , ostore_(ostore)
+  , object_preparator_(ostore.prototypes())
   , table_(t)
 {}
 
@@ -17,6 +18,9 @@ void table_reader::read(result *res)
   // check result
   // create object
   std::unique_ptr<object> obj(table_.node_.producer->create());
+
+  // prepare object for read (set object_proxy into object ptr)
+  object_preparator_.prepare(obj.get());
 
   while (res->fetch(obj.get())) {
 
@@ -32,20 +36,8 @@ void table_reader::read(result *res)
   }
 }
 
-void table_reader::read_value(const char *, object_base_ptr &x)
+void table_reader::read_value(const char *id, object_base_ptr &x)
 {
-  /*
-   * check if object has primary key
-   *
-   */
-
-  const_prototype_iterator n = ostore_.find_prototype(x.type());
-
-  if (n != ostore_.end()) {
-    prototype_node *pn = n.get();
-    pn->has_primary_key;
-  }
-
   long oid = x.id();
 
   if (oid == 0) {
@@ -73,7 +65,7 @@ void table_reader::read_value(const char *, object_base_ptr &x)
     j->second->relation_data[i->second.second][oid].push_back(new_proxy_);
   }
 
-  x.reset(oproxy);
+  x.reset(oproxy, x.is_reference());
 }
 
 void table_reader::read_value(const char *id, object_container &x)
@@ -86,26 +78,20 @@ void table_reader::read_value(const char *id, object_container &x)
   if (p == ostore_.end()) {
     throw database_exception("common", "couldn't find prototype node");
   }
-  if (table_.db_.is_loaded(p->type)) {
-    database::relation_data_t::iterator i = table_.relation_data.find(id);
-    if (i != table_.relation_data.end()) {
-      database::object_map_t::iterator j = i->second.find(new_proxy_->id());
-      if (j != i->second.end()) {
-        while (!j->second.empty()) {
-          x.append_proxy(j->second.front());
-          j->second.pop_front();
-        }
-      }
-    }
-//    } else {
-//      throw database_exception("common", "couldn't object by id");
+  if (!table_.db_.is_loaded(p->type)) {
+    return;
   }
-}
-
-
-void table_reader::read_value(const char *id, primary_key_base &x)
-{
-  x.deserialize(id, *this);
+  database::relation_data_t::iterator i = table_.relation_data.find(id);
+  if (i == table_.relation_data.end()) {
+    return;
+  }
+  database::object_map_t::iterator j = i->second.find(new_proxy_->id());
+  if (j != i->second.end()) {
+    while (!j->second.empty()) {
+      x.append_proxy(j->second.front());
+      j->second.pop_front();
+    }
+  }
 }
 
 }

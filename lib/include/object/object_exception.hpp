@@ -20,6 +20,7 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
 
 namespace oos {
 
@@ -68,6 +69,13 @@ private:
   std::string what_;
   object *obj_;
 };
+
+#define throw_object_exception(message) \
+  do { \
+    std::stringstream msg; \
+    msg << message; \
+    throw object_exception(msg.str().c_str()); \
+  } while(false);
 
 }
 

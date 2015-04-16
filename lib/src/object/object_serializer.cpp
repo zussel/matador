@@ -170,7 +170,7 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
     if (!oproxy) {
       oproxy = ostore_->create_proxy(id);
     }
-    x.reset(oproxy);
+    x.reset(oproxy, x.is_reference());
   } else {
     x.proxy_ = new object_proxy(id, nullptr);
   }

@@ -16,14 +16,15 @@ primary_key_analyzer::~primary_key_analyzer() {
 
 }
 
-void primary_key_analyzer::analyze(object *obj)
+void primary_key_analyzer::analyze()
 {
-    obj->deserialize(*this);
+  std::unique_ptr<object> obj(node_.producer->create());
+  obj->deserialize(*this);
 }
 
-void primary_key_analyzer::read_value(char const *, primary_key_base &)
+void primary_key_analyzer::read_value(char const *, primary_key_base &x)
 {
-  node_.has_primary_key = true;
+  node_.primary_key.reset(x.clone());
 }
 
 }

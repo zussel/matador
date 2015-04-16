@@ -303,48 +303,45 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
    */
   prototype_node *node = 0;
   t_prototype_map::iterator i = prototype_map_.find(type);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+
+  /* unknown type name try for typeid
+   * (unfinished prototype)
+   */
+  i = prototype_map_.find(producer->classname());
   if (i == prototype_map_.end()) {
-    /* unknown type name try for typeid
-     * (unfinished prototype)
+    /*
+     * no typeid found, seems to be
+     * a new type
+     * to be sure check in typeid map
      */
-    i = prototype_map_.find(producer->classname());
-    if (i == prototype_map_.end()) {
-      /*
-       * no typeid found, seems to be
-       * a new type
-       * to be sure check in typeid map
+    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
+    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
+      /* unexpected found the
+       * typeid check for type
        */
-      t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
-      if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-        /* unexpected found the
-         * typeid check for type
-         */
-        /* type found in typeid map
-         * throw exception
-         */
-        throw object_exception("unexpectly found prototype");
-      } else {
-        /* insert new prototype and add to
-         * typeid map
-         */
-        // create new one
-        node = new prototype_node(producer, type, abstract);
-      }
+      /* type found in typeid map
+       * throw exception
+       */
+      throw object_exception("unexpectly found prototype");
     } else {
-      /* prototype is unfinished,
-       * finish it, insert by type name,
-       * remove typeid entry and add to
+      /* insert new prototype and add to
        * typeid map
        */
-      node = i->second;
-      node->initialize(producer, type, abstract);
-      prototype_map_.erase(i);
+      // create new one
+      node = new prototype_node(producer, type, abstract);
     }
   } else {
-    // already inserted return iterator
-    std::stringstream msg;
-    msg << "prototype already inserted: " << type;
-    throw object_exception(msg.str().c_str());
+    /* prototype is unfinished,
+     * finish it, insert by type name,
+     * remove typeid entry and add to
+     * typeid map
+     */
+    node = i->second;
+    node->initialize(producer, type, abstract);
+    prototype_map_.erase(i);
   }
 
   parent_node->insert(node);
