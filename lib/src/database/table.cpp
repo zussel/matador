@@ -137,8 +137,8 @@ void table::load(object_store &ostore)
   prototype_node::field_prototype_map_t::const_iterator first = node_.relations.begin();
   prototype_node::field_prototype_map_t::const_iterator last = node_.relations.end();
   while (first != last) {
-    database::table_map_t::iterator i = db().table_map_.find(first->first);
-    if (i == db().table_map_.end()) {
+    database::table_map_t::iterator i = db_.table_map_.find(first->first);
+    if (i == db_.table_map_.end()) {
 //      throw std::out_of_range("unknown key");
     } else {
       database::table_ptr tbl = i->second;
@@ -192,11 +192,6 @@ void table::drop()
 bool table::is_loaded() const
 {
   return is_loaded_;
-}
-
-const prototype_node& table::node() const
-{
-  return node_;
 }
 
 }

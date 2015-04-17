@@ -9,9 +9,9 @@
 namespace oos {
 
 
-object_preparator::object_preparator(prototype_tree &tree)
+object_preparator::object_preparator(const prototype_node &node)
   : generic_object_reader<object_preparator>(this)
-  , tree_(tree)
+  , node_(node)
 {}
 
 object_preparator::~object_preparator()
@@ -24,18 +24,16 @@ void object_preparator::prepare(object *obj)
   obj->deserialize(*this);
 }
 
-void object_preparator::read_value(char const *, object_base_ptr &x)
+void object_preparator::read_value(char const *id, object_base_ptr &x)
 {
   std::unique_ptr<object_proxy> proxy(new object_proxy(nullptr));
 
-  const_prototype_iterator node = tree_.find(x.type());
-  if (node == tree_.end()) {
-    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
-  } else if (!node->has_primary_key()) {
-    throw_object_exception("object of type '" << x.type() << "' has no primary key");
+  prototype_node::t_foreign_key_map::const_iterator i = node_.foreign_keys.find(id);
+  if (i == node_.foreign_keys.end()) {
+    throw_object_exception("couldn't find foreign key for object of type'" << x.type() << "'");
   }
 
-  proxy->primary_key_.reset(node->primary_key->clone());
+  proxy->primary_key_.reset(i->second->clone());
 
   x.reset(proxy.release());
 }

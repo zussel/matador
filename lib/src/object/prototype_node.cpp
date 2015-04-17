@@ -30,8 +30,9 @@ prototype_node::prototype_node()
 {
 }
 
-prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
-  : first(new prototype_node)
+prototype_node::prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
+  : tree(tr)
+  , first(new prototype_node)
   , last(new prototype_node)
   , producer(p)
   , type(t)
@@ -39,13 +40,14 @@ prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
 {
   first->next = last.get();
   last->prev = first.get();
-  // check for primary key
-  primary_key_analyzer pk_analyzer(*this);
-  pk_analyzer.analyze();
 }
 
-void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
+prototype_node::~prototype_node()
+{}
+
+void prototype_node::initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
 {
+  tree = tr;
   first.reset(new prototype_node);
   last.reset(new prototype_node);
   producer.reset(p);
@@ -53,13 +55,7 @@ void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
   abstract = a;
   first->next = last.get();
   last->prev = first.get();
-  // check for primary key
-  primary_key_analyzer pk_analyzer(*this);
-  pk_analyzer.analyze();
 }
-
-prototype_node::~prototype_node()
-{}
 
 bool
 prototype_node::empty(bool self) const

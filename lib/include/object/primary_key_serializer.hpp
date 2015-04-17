@@ -2,15 +2,17 @@
 // Created by sascha on 4/10/15.
 //
 
-#include "object/object_atomizer.hpp"
-#include "object/primary_key.hpp"
-
 #ifndef PRIMARY_KEY_SERIALIZER_HPP
 #define PRIMARY_KEY_SERIALIZER_HPP
+
+#include "object/object_atomizer.hpp"
 
 namespace oos {
 
 class object;
+class object_base_ptr;
+class primary_key_base;
+class prototype_node;
 
 class primary_key_serializer : public generic_object_writer<primary_key_serializer>
 {

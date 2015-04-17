@@ -1,14 +1,15 @@
-#include "object_atomizer.hpp"
-
 #ifndef PRIMARY_KEY_ANALYZER_HPP
 #define PRIMARY_KEY_ANALYZER_HPP
+
+#include "object/object_atomizer.hpp"
 
 namespace oos {
 
 class prototype_node;
 class object;
+class object_base_ptr;
 
-class primary_key_analyzer : public generic_object_reader<primary_key_analyzer>
+class primary_key_analyzer : public generic_object_writer<primary_key_analyzer>
 {
 public:
   explicit primary_key_analyzer(prototype_node &node);
@@ -17,10 +18,11 @@ public:
   void analyze();
 
   template < class T >
-  void read_value(const char*, const T&) {}
+  void write_value(const char*, const T&) {}
 
-  void read_value(const char*, char*, int) {}
-  void read_value(const char *id, primary_key_base &x);
+  void write_value(const char*, const char*, int) {}
+  void write_value(const char *id, const primary_key_base &x);
+  void write_value(const char *id, const object_base_ptr &x);
 
 private:
   prototype_node &node_;

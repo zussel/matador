@@ -3,6 +3,8 @@
 //
 
 #include "object/primary_key_serializer.hpp"
+#include "object/primary_key.hpp"
+#include "object/object_ptr.hpp"
 #include "object/object.hpp"
 
 namespace oos {

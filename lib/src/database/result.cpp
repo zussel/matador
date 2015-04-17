@@ -19,6 +19,8 @@
 #include "database/statement.hpp"
 
 #include "object/serializable.hpp"
+#include "object/object_ptr.hpp"
+#include "object/primary_key.hpp"
 
 namespace oos {
 
@@ -34,5 +36,9 @@ void result::get(serializable *o)
   o->deserialize(*this);
 }
 
+void result::read_foreign_key(const char *id, object_base_ptr &x)
+{
+  x.proxy_->primary_key_->deserialize(id, *this);
+}
 
 }

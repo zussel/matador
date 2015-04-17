@@ -18,6 +18,8 @@
 #include <typeinfo>
 
 namespace oos {
+
+class object;
 /**
 * @class object_base_producer
 * @brief Base class for object producer classes

@@ -7,12 +7,12 @@
 namespace oos {
 
 class object;
-class prototype_tree;
+class prototype_node;
 
 class object_preparator : public generic_object_reader<object_preparator>
 {
 public:
-  explicit object_preparator(prototype_tree &tree);
+  explicit object_preparator(const prototype_node &node);
   virtual ~object_preparator();
 
   void prepare(object *obj);
@@ -24,7 +24,7 @@ public:
   void read_value(const char*, object_base_ptr &x);
 
 private:
-  prototype_tree &tree_;
+  const prototype_node &node_;
 };
 
 }

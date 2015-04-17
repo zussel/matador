@@ -86,6 +86,9 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
+  void read_foreign_key(const char *id, object_base_ptr &x);
+
+protected:
   int result_index;
 };
 

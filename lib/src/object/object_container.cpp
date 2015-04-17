@@ -37,32 +37,31 @@ void object_container::owner(object_proxy *ownr)
   owner_ = ownr;
 }
 
-void object_container::handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const
+void object_container::handle_container_item(const char *id, prototype_node &node) const
 {
-  prototype_node *item_node = 0;
+  prototype_iterator pi;
   object_base_producer *p = create_item_producer();
   if (p) {
-    ptree.insert(p, id);
-    item_node = ptree.find_prototype_node(id);
-    if (!item_node) {
+    pi = node.tree->insert(p, id);
+    if (pi == node.tree->end()) {
       throw object_exception("unknown prototype type");
     }
   } else {
     // insert new prototype
     // get prototype node of container item (child)
-    item_node = ptree.find_prototype_node(classname());
-    if (!item_node) {
+    pi = node.tree->find(classname());
+    if (pi == node.tree->end()) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
       // as uninitialized)
-      item_node = new prototype_node();
-      ptree.typeid_prototype_map_.insert(std::make_pair(classname(), prototype_tree::t_prototype_map()));
-      ptree.prototype_map_[classname()] = item_node;
+      pi = prototype_iterator(new prototype_node());
+      node.tree->typeid_prototype_map_.insert(std::make_pair(classname(), prototype_tree::t_prototype_map()));
+      node.tree->prototype_map_[classname()] = pi.get();
     }
   }
   // add container node to item node
   // insert the relation
-  item_node->relations.insert(std::make_pair(node->type, std::make_pair(node, id)));
+  pi->relations.insert(std::make_pair(node.type, std::make_pair(&node, id)));
 }
 
 }

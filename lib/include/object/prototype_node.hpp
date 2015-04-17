@@ -79,11 +79,12 @@ public:
    * object from given object_base_producer. The node
    * gets the given type name t.
    * 
+   * @param tr The node containing tree.
    * @param p The object_base_producer.
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  prototype_node(object_base_producer *p, const char *t, bool a = false);
+  prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a = false);
 
   ~prototype_node();
 
@@ -92,12 +93,13 @@ public:
    * 
    * Initializes a prototype_node. The node
    * gets the given type name alias t.
-   * 
+   *
+   * @param tr The node containing tree.
    * @param p The object_base_producer.
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  void initialize(object_base_producer *p, const char *t, bool a);
+  void initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a);
 
   /**
    * Returns true if object proxy list is empty. If self is true, only
@@ -238,6 +240,9 @@ public:
   std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;
 
   std::unique_ptr<primary_key_base> primary_key;
+
+  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_foreign_key_map;
+  t_foreign_key_map foreign_keys;
 };
 
 }

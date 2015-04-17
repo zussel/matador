@@ -8,7 +8,7 @@ namespace oos {
 table_reader::table_reader(table &t, object_store &ostore)
   : generic_object_reader(this)
   , ostore_(ostore)
-  , object_preparator_(ostore.prototypes())
+  , object_preparator_(t.node_)
   , table_(t)
 {}
 
@@ -22,6 +22,7 @@ void table_reader::read(result *res)
   // prepare object for read (set object_proxy into object ptr)
   object_preparator_.prepare(obj.get());
 
+//  std::for_each(res->begin(), res->end(), [](object *obj) {})
   while (res->fetch(obj.get())) {
 
     new_proxy_ = new object_proxy(obj.get(), nullptr);
@@ -38,6 +39,7 @@ void table_reader::read(result *res)
 
 void table_reader::read_value(const char *id, object_base_ptr &x)
 {
+
   long oid = x.id();
 
   if (oid == 0) {

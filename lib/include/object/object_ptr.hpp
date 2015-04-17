@@ -247,6 +247,7 @@ private:
   friend class object_store;
   friend class session;
   friend class query;
+  friend class result;
   friend class object_container;
 
   template < class T > friend class object_ref;

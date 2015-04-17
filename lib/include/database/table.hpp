@@ -80,10 +80,10 @@ public:
   bool is_loaded() const;
 
 protected:
-  const prototype_node& node() const;
-
-  virtual database& db() { return db_; }
-  virtual const database& db() const { return db_; }
+//  const prototype_node& node() const;
+//
+//  virtual database& db() { return db_; }
+//  virtual const database& db() const { return db_; }
 
 private:
   friend class relation_filler;

@@ -18,12 +18,11 @@
 
 #include "object/object_exception.hpp"
 #include "object/object_store.hpp"
-#include "object/object_atomizer.hpp"
 #include "object/object_container.hpp"
+#include "object/primary_key_analyzer.hpp"
 
 #include <iterator>
-#include <iostream>
-#include <sstream>
+#include <algorithm>
 
 namespace oos {
 
@@ -36,13 +35,13 @@ public:
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_builder(prototype_tree &ptree, prototype_node *node)
+  relation_builder(prototype_node &node)
     : generic_object_writer<relation_builder>(this)
-    , ptree_(ptree)
     , node_(node)
   {}
   virtual ~relation_builder() {}
 
+  void build(object *o) { o->serialize(*this); }
   template < class T >
   void write_value(const char*, const T&) {}
 
@@ -54,12 +53,16 @@ public:
      * container knows if it needs
      * a relation table
      */
-    x.handle_container_item(ptree_, id, node_);
+    x.handle_container_item(id, node_);
+  }
+
+  void write_value(const char *id, const object_base_ptr &x)
+  {
+    std::cout << "relation builder: write object " << id << " of type " << x.type() << "\n";
   }
 
 private:
-  prototype_tree &ptree_;
-  prototype_node *node_;
+  prototype_node &node_;
 };
 
 prototype_iterator::prototype_iterator()
@@ -87,7 +90,6 @@ bool prototype_iterator::operator==(const prototype_iterator &i) const
 {
   return (node_ == i.node_);
 }
-
 
 bool prototype_iterator::operator==(const const_prototype_iterator &i) const
 {
@@ -258,7 +260,7 @@ prototype_tree::prototype_tree()
   : first_(new prototype_node)
   , last_(new prototype_node)
 {
-  prototype_node *root = new prototype_node(new object_producer<object>, "object", true);
+  prototype_node *root = new prototype_node(this, new object_producer<object>, "object", true);
   object_proxy *first = new object_proxy(nullptr);
   object_proxy *last = new object_proxy(nullptr);
 
@@ -331,7 +333,7 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
        * typeid map
        */
       // create new one
-      node = new prototype_node(producer, type, abstract);
+      node = new prototype_node(this, producer, type, abstract);
     }
   } else {
     /* prototype is unfinished,
@@ -340,7 +342,7 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
      * typeid map
      */
     node = i->second;
-    node->initialize(producer, type, abstract);
+    node->initialize(this, producer, type, abstract);
     prototype_map_.erase(i);
   }
 
@@ -352,10 +354,13 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
 
   // Check if nodes object has 'to-many' relations
-  object *o = producer->create();
-  relation_builder rb(*this, node);
-  o->serialize(rb);
-  delete o;
+  std::unique_ptr<object> o(producer->create());
+  relation_builder rb(*node);
+  rb.build(o.get());
+
+  // Analyze primary and foreign keys of node
+  primary_key_analyzer pk_analyzer(*node);
+  pk_analyzer.analyze();
 
   return prototype_iterator(node);
 }
@@ -430,18 +435,27 @@ int prototype_tree::depth(const prototype_node *node) const
 
 void prototype_tree::dump(std::ostream &out) const
 {
-  const_prototype_iterator node = begin();
-  out << "digraph G {\n";
-  out << "\tgraph [fontsize=10]\n";
-  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-  out << "\tedge [color=\"#0c0c0c\"]\n";
-  do {
-    int d = depth(node.get());
-    for (int i = 0; i < d; ++i) out << " ";
-    out << *node.get();
-    out.flush();
-  } while (++node != end());
-  out << "}" << std::endl;
+//  const_prototype_iterator node = begin();
+//  out << "digraph G {\n";
+//  out << "\tgraph [fontsize=10]\n";
+//  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+//  out << "\tedge [color=\"#0c0c0c\"]\n";
+//  do {
+//    int d = depth(node.get());
+//    for (int i = 0; i < d; ++i) out << " ";
+//    out << *node.get();
+//    out.flush();
+//  } while (++node != end());
+//  out << "}" << std::endl;
+
+  out << "prototype map item keys\n";
+  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
+  out << "typeid map item keys\n";
+  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
 }
 
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {

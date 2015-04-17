@@ -183,9 +183,10 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
   }
 }
 
-void sqlite_prepared_result::read(const char *, object_base_ptr &x)
+void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
 {
 
+//  read_foreign_key(id, x);
   std::cout << "read object of type [" << x.type() << "]\n";
   /*
    * determine primary key

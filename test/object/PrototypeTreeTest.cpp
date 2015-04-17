@@ -84,6 +84,24 @@ void PrototypeTreeTestUnit::test_find()
 
   UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
   UNIT_ASSERT_EQUAL(elem->type, "item", "type must be 'item'");
+
+  elem = ptree.find("unknown");
+  UNIT_ASSERT_TRUE(elem == ptree.end(), "shouldn't find a prototype");
+
+  ptree.insert(new object_producer<ObjectItem<Item>>, "object_item", false, "item");
+  elem = ptree.find("object_item");
+
+  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
+  UNIT_ASSERT_EQUAL(elem->type, "object_item", "type must be 'item'");
+
+  elem = ptree.find("item");
+
+  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
+  UNIT_ASSERT_EQUAL(elem->type, "item", "type must be 'item'");
+
+  ptree.insert<ItemPtrList>("item_ptr_list");
+
+  ptree.dump(std::cout);
 }
 
 
