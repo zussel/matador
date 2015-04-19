@@ -335,7 +335,8 @@ public:
    */
   virtual const char* type() const
   {
-    return typeid(T).name();
+    return classname_.c_str();
+    //return typeid(T).name();
   }
 
   /**
@@ -394,7 +395,13 @@ public:
   T* get() {
       return static_cast<T*>(lookup_object());
   }
+
+private:
+  static std::string classname_;
 };
+
+template < class T >
+std::string object_ptr<T>::classname_ = typeid(T).name();
 
 /**
  * @class object_ref
@@ -461,7 +468,8 @@ public:
    */
   virtual const char* type() const
   {
-    return typeid(T).name();
+    return classname_.c_str();
+    //return typeid(T).name();
   }
 
   /**
@@ -521,7 +529,12 @@ public:
 	T* get() {
     return static_cast<T*>(lookup_object());
 	}
+private:
+  static std::string classname_;
 };
+
+template < class T >
+std::string object_ref<T>::classname_ = typeid(T).name();
 
 }
 

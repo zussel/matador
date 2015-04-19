@@ -156,6 +156,11 @@ public:
     return container_;
   }
 
+  const char* container_classname() const
+  {
+    return container_.type();
+  }
+
 private:
   container_ref container_;
 };

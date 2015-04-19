@@ -41,7 +41,10 @@ void object_container::handle_container_item(const char *id, prototype_node &nod
 {
   prototype_iterator pi;
   object_base_producer *p = create_item_producer();
+
   if (p) {
+    //std::unique_ptr<container_item> ct(static_cast<container_item*>(p->create()));
+
     pi = node.tree->insert(p, id);
     if (pi == node.tree->end()) {
       throw object_exception("unknown prototype type");
