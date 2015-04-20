@@ -99,9 +99,7 @@ void PrototypeTreeTestUnit::test_find()
   UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
   UNIT_ASSERT_EQUAL(elem->type, "item", "type must be 'item'");
 
-  ptree.insert<ItemPtrList>("item_ptr_list");
-
-  ptree.dump(std::cout);
+  ptree.insert(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
 }
 
 

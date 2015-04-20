@@ -22,7 +22,6 @@ public:
 
   void write_value(const char*, const char*, int) {}
   void write_value(const char *id, const primary_key_base &x);
-  void write_value(const char *id, const object_base_ptr &x);
 
 private:
   prototype_node &node_;

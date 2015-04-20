@@ -114,6 +114,7 @@ class object_vector_base : public object_container
 public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
+  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::vector<item_holder> vector_type;              /**< Shortcut for the vector class member. */
@@ -147,7 +148,8 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return typeid(parent_ref).name();
+//    return typeid(item_type).name();
   }
 
   /**
@@ -553,7 +555,7 @@ public:
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
   typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */
+  typedef typename base_vector::parent_ref parent_ref;         /**< Shortcut for the parent reference. */
   typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */
   typedef typename base_vector::size_type size_type;           /**< Shortcut for the size type. */
   typedef typename base_vector::iterator iterator;             /**< Shortcut for the iterator. */
@@ -703,7 +705,7 @@ public:
   typedef void (value_type::*FUNC2)(int);                                                                                 /**< Shortcut for the index setter function. */
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
   typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                                                                                       /**< Shortcut for the parent reference. */
+  typedef typename base_vector::parent_ref parent_ref;                                                                    /**< Shortcut for the parent reference. */
   typedef typename base_vector::item_holder item_holder;                                                                  /**< Shortcut for the item holder. */
   typedef object_vector_item<T, S> item_type;                                                                             /**< Shortcut for the item type. */
   typedef item_holder item_ptr;                                                                                           /**< Shortcut for the item ptr. */

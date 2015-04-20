@@ -57,7 +57,7 @@ ObjectStoreTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
-  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
   ostore_.insert_prototype<ObjectItemPtrList>("OBJECT_ITEM_PTR_LIST");
 }
 

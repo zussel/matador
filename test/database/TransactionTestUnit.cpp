@@ -29,9 +29,8 @@ TransactionTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
   ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
-//  ostore_.insert_prototype<playlist>("playlist");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 
@@ -230,7 +229,7 @@ TransactionTestUnit::test_with_list()
     tr.begin();
     // ... do some object modifications
 
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList("ptr_list"));
 
     UNIT_ASSERT_GREATER(itemlist->id(), 0UL, "invalid item list");
     UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");

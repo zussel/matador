@@ -332,17 +332,6 @@ protected:
   void owner(object_proxy *ownr);
 
   /**
-   * Create a producer object for
-   * the relation/value table.
-   *
-   * @param tree The prototype tree.
-   * @param id The name of the relation.
-   * @param node The prototype node.
-   * @return The producer object;
-   */
-  void handle_container_item(const char *id, prototype_node &node) const;
-
-  /**
    * Create a producer for the item type.
    * 
    * @return The producer for the item type.

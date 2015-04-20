@@ -54,6 +54,7 @@ class object_list_base : public object_container
 public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
+  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::list<item_holder> list_type;                  /**< Shortcut for the list class member. */
@@ -79,7 +80,7 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return typeid(parent_ref).name();
   }
 
   /**
@@ -334,10 +335,10 @@ template < class S, class T >
 class object_list<S, T, false> : public  object_list_base<S, T>
 {
 public:
-  typedef object_ref<S> parent_ref;                           /**< Shortcut for the parent reference. */
-  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */
   typedef object_list_base<S, T> base_list;                   /**< Shortcut for the base list. */
   typedef typename T::object_type item_type;                  /**< Shortcut for the item type. */
+  typedef typename base_list::parent_ref parent_ref;          /**< Shortcut for the parent reference. */
+  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */
   typedef typename base_list::value_holder value_holder;      /**< Shortcut for the value holder. */
   typedef typename base_list::item_holder item_holder;        /**< Shortcut for the item holder. */
   typedef typename base_list::size_type size_type;            /**< Shortcut for the size type. */
@@ -364,7 +365,7 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return typeid(parent_ref).name();
   }
 
   virtual iterator insert(iterator pos, const value_holder &x)
@@ -416,7 +417,7 @@ private:
  * @tparam S The parent class type.
  * @tparam T The item class type.
  *
- * This object lisz class uses a relation table to
+ * This object list class uses a relation table to
  * map the items to its parent.
  */
 template < class S, class T>
@@ -425,8 +426,8 @@ class object_list<S, T, true> : public object_list_base<S, T, object_ptr<contain
 public:
   typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list; /**< Shortcut for the base list. */
   typedef T value_holder;                                                       /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                                             /**< Shortcut for the parent reference. */
   typedef container_item<T, S> item_type;                                       /**< Shortcut for the item type. */
+  typedef typename base_list::parent_ref parent_ref;                            /**< Shortcut for the parent reference. */
   typedef typename base_list::size_type size_type;                              /**< Shortcut for the size type. */
   typedef typename base_list::item_holder item_holder;                          /**< Shortcut for the item holder. */
   typedef item_holder item_ptr;                                                 /**< Shortcut for the item ptr. */

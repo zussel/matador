@@ -20,13 +20,12 @@
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
 #include "object/primary_key_analyzer.hpp"
+#include <object/foreign_key_analyzer.hpp>
 
 #include <iterator>
 #include <algorithm>
 
 namespace oos {
-
-class prototype_tree;
 
 class relation_builder : public generic_object_writer<relation_builder>
 {
@@ -49,16 +48,34 @@ public:
 
   void write_value(const char *id, const object_container &x)
   {
-    /*
-     * container knows if it needs
-     * a relation table
-     */
-    x.handle_container_item(id, node_);
+    prototype_iterator pi;
+    object_base_producer *p = x.create_item_producer();
+    if (p) {
+      pi = node_.tree->insert(p, id);
+      if (pi == node_.tree->end()) {
+        throw object_exception("unknown prototype type");
+      }
+    } else {
+      // insert new prototype
+      // get prototype node of container item (child)
+      pi = node_.tree->find(x.classname());
+      if (pi == node_.tree->end()) {
+        // if there is no such prototype node
+        // insert a new one (it is automatically marked
+        // as uninitialized)
+        pi = prototype_iterator(new prototype_node());
+        node_.tree->typeid_prototype_map_.insert(std::make_pair(x.classname(), prototype_tree::t_prototype_map()));
+        node_.tree->prototype_map_[x.classname()] = pi.get();
+      }
+    }
+    // add container node to item node
+    // insert the relation
+    pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
   void write_value(const char *id, const object_base_ptr &x)
   {
-    std::cout << "relation builder: write object " << id << " of type " << x.type() << "\n";
+//    std::cout << "relation builder: write object " << id << " of type " << x.type() << "\n";
   }
 
 private:
@@ -353,14 +370,18 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   prototype_map_.insert(std::make_pair(type, node)).first;
   typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
 
+  // Analyze primary and foreign keys of node
+  primary_key_analyzer pk_analyzer(*node);
+  pk_analyzer.analyze();
+
   // Check if nodes object has 'to-many' relations
   std::unique_ptr<object> o(producer->create());
   relation_builder rb(*node);
   rb.build(o.get());
 
   // Analyze primary and foreign keys of node
-  primary_key_analyzer pk_analyzer(*node);
-  pk_analyzer.analyze();
+  foreign_key_analyzer fk_analyzer(*node);
+  fk_analyzer.analyze();
 
   return prototype_iterator(node);
 }

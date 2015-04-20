@@ -183,26 +183,8 @@ void
 ObjectPrototypeTestUnit::prototype_relation()
 {
   object_store ostore;
-  /*
-  ostore.insert_prototype<Item>("item");
-  ostore.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore.insert_prototype<ItemPtrList>("item_ptr_list");
-  ostore.insert_prototype<album>("album");
-  */
-//  ostore.insert_prototype<playlist>("playlist");
-//  ostore.insert_prototype<track>("track");
-  
-//  ostore.clear(true);
 
-  /*
-  ostore.insert_prototype<Item>("item");
-  ostore.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore.insert_prototype<ItemPtrList>("item_ptr_list");
-  ostore.insert_prototype<album>("album");
-  */
   ostore.insert_prototype<playlist>("playlist");
   ostore.insert_prototype<album>("album");
   ostore.insert_prototype<track>("track");
-  
-//  ostore.clear(false);
 }

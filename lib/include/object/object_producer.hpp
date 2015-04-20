@@ -20,6 +20,9 @@
 namespace oos {
 
 class object;
+template < class T > class object_ref;
+template < class T > class object_ptr;
+
 /**
 * @class object_base_producer
 * @brief Base class for object producer classes
@@ -73,7 +76,7 @@ public:
   *
   * @return new object of type T
   */
-  virtual object *create() const
+  virtual object* create() const
   {
     return new T;
   }
@@ -83,11 +86,17 @@ public:
   *
   * @return the name of the produced class
   */
-  virtual const char *classname() const
+  virtual const char* classname() const
   {
-    return typeid(T).name();
+    return classname_.c_str();
   }
+
+private:
+  static std::string classname_;
 };
+
+template < class T >
+std::string object_producer<T>::classname_ = typeid(T).name();
 
 }
 

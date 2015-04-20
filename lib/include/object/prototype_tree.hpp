@@ -574,6 +574,7 @@ private:
   friend class object_container;
   friend class object_store;
   friend class prototype_node;
+  friend class relation_builder;
 
   prototype_node *first_;
   prototype_node *last_;

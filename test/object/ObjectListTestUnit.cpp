@@ -28,9 +28,9 @@ void
 ObjectListTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<IntList>("INT_LIST");
-  ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
-  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<IntList>("int_list"), "INT_LIST");
+  ostore_.insert_prototype(new list_object_producer<ItemRefList>("ref_list"), "ITEM_REF_LIST");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
   ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
   ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
   ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
@@ -52,7 +52,7 @@ ObjectListTestUnit::test_int_list()
 {
   typedef object_ptr<IntList> intlist_ptr;
 
-  intlist_ptr intlist = ostore_.insert(new IntList);
+  intlist_ptr intlist = ostore_.insert(new IntList("int_list"));
 
   IntList::size_type val = 0;
   UNIT_ASSERT_EQUAL(intlist->size(), val, "integer list is not empty");
@@ -77,7 +77,7 @@ ObjectListTestUnit::test_ref_list()
   typedef object_ptr<ItemRefList> itemlist_ptr;
   typedef ItemRefList::value_type item_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
+  itemlist_ptr itemlist = ostore_.insert(new ItemRefList("ref_list"));
 
   ItemRefList::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
@@ -125,7 +125,7 @@ ObjectListTestUnit::test_ptr_list()
     typedef object_ptr<ItemPtrList> itemlist_ptr;
     typedef ItemPtrList::value_type item_ptr;
 
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList("ptr_list"));
 
     ItemPtrList::size_type val = 0;
     UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");

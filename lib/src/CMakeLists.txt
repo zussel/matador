@@ -13,6 +13,7 @@ SET(OBJECT_SOURCES
   object/prototype_tree.cpp
   object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
+  object/foreign_key_analyzer.cpp
   object/primary_key_serializer.cpp
 )
 
@@ -68,6 +69,7 @@ SET(OBJECT_HEADER
   ../include/object/serializable.hpp
   ../include/object/primary_key.hpp
   ../include/object/primary_key_analyzer.hpp
+  ../include/object/foreign_key_analyzer.hpp
   ../include/object/primary_key_serializer.hpp
 )
 

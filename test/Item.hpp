@@ -303,26 +303,33 @@ private:
   std::string relation_name_;
 };
 
-class IntList : public List<int>
-{
+typedef List<oos::object_ptr<Item> > ItemPtrList;
+typedef List<oos::object_ref<Item> > ItemRefList;
+typedef List<int> IntList;
+
+template<class T>
+class list_object_producer : public oos::object_base_producer {
 public:
-  IntList() : List<int>("int_list") {}
-  virtual ~IntList() {}
+  list_object_producer(const std::string &name) : name_(name) {}
+  virtual ~list_object_producer() {}
+
+  virtual oos::object* create() const
+  {
+    return new T(name_);
+  }
+
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
+
+private:
+  std::string name_;
+  static std::string classname_;
 };
 
-class ItemPtrList : public List<oos::object_ptr<Item> >
-{
-public:
-  ItemPtrList() : List<oos::object_ptr<Item> >("ptr_list") {}
-  virtual ~ItemPtrList() {}
-};
-
-class ItemRefList : public List<oos::object_ref<Item> >
-{
-public:
-  ItemRefList() : List<oos::object_ref<Item> >("ref_list") {}
-  virtual ~ItemRefList() {}
-};
+template < class T >
+std::string list_object_producer<T>::classname_ = typeid(T).name();
 
 template < class T >
 class LinkedList : public oos::object

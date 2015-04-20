@@ -336,7 +336,6 @@ public:
   virtual const char* type() const
   {
     return classname_.c_str();
-    //return typeid(T).name();
   }
 
   /**
@@ -469,7 +468,6 @@ public:
   virtual const char* type() const
   {
     return classname_.c_str();
-    //return typeid(T).name();
   }
 
   /**
