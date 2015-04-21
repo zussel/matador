@@ -325,7 +325,7 @@ public:
 
   /**
   * Inserts a new object prototype into the prototype tree. The prototype
-  * constist of a producer and a unique type name. To know where the new
+  * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given.
   *
