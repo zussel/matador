@@ -36,6 +36,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
+  add_test("pk", std::bind(&DatabaseTestUnit::test_primary_key, this), "test primary key object with database");
   add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
   add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
   add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
@@ -168,6 +169,33 @@ void DatabaseTestUnit::test_datatypes()
     // error, abort transaction
     UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
   }
+}
+
+void DatabaseTestUnit::test_primary_key()
+{
+  class pktest : public oos::object
+  {
+  public:
+    pktest() {}
+    virtual ~pktest() {}
+
+    std::string name;
+  };
+
+  object_store ostore;
+  ostore.prototypes().insert<pktest>("pktest");
+
+  std::unique_ptr<session> ses(new session(ostore, "sqlite://pktest.sqlite"));
+
+  ses->open();
+
+  ses->create();
+
+  ses->insert(new pktest);
+
+  ses->drop();
+
+  ses->close();
 }
 
 void DatabaseTestUnit::test_insert()
