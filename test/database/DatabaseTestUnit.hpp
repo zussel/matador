@@ -38,6 +38,7 @@ public:
   virtual void finalize();
 
   void test_datatypes();
+  void test_primary_key();
   void test_insert();
   void test_update();
   void test_delete();
