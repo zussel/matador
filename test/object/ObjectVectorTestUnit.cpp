@@ -26,9 +26,9 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 void ObjectVectorTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
-  ostore_.insert_prototype<ItemRefVector>("item_ref_vector");
-  ostore_.insert_prototype<IntVector>("item_int_vector");
+  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
+  ostore_.insert_prototype(new vector_object_producer<ItemRefVector>("ref_vector"), "item_ref_vector");
+  ostore_.insert_prototype(new vector_object_producer<IntVector>("int_vector"), "item_int_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 }
@@ -43,7 +43,7 @@ void ObjectVectorTestUnit::test_ref_vector()
   typedef object_ptr<ItemRefVector> itemvector_ptr;
   typedef ItemRefVector::value_type item_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new ItemRefVector);
+  itemvector_ptr itemvector = ostore_.insert(new ItemRefVector("item_ref_vector"));
 
   ItemRefVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
@@ -94,7 +94,7 @@ void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new IntVector);
+  itemvector_ptr itemvector = ostore_.insert(new IntVector("int_vector"));
 
   IntVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
@@ -140,7 +140,7 @@ void ObjectVectorTestUnit::test_ptr_vector()
   typedef object_ptr<ItemPtrVector> itemvector_ptr;
   typedef ItemPtrVector::value_type item_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
+  itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector("item_ptr_vector"));
 
   ItemPtrVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");

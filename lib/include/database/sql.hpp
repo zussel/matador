@@ -53,12 +53,12 @@ class OOS_API sql
 public:
   struct field
   {
-    field(const char *n, data_type_t t, unsigned int i, bool h)
+    field(const char *n, data_type_t t, std::size_t i, bool h)
       : name(n), type(t), index(i), is_host(h)
     {}
     std::string name;
     data_type_t type;
-    unsigned int index;
+    std::size_t index;
     bool is_host;
   };
 

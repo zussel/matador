@@ -167,12 +167,12 @@ void sqlite_result::read(const char *id, primary_key_base &x)
   x.deserialize(id, *this);
 }
 
-void sqlite_result::read_column(char const *, oos::date &x)
+void sqlite_result::read_column(char const *, oos::date &/*x*/)
 {
 
 }
 
-void sqlite_result::read_column(char const *, oos::time &x)
+void sqlite_result::read_column(char const *, oos::time &/*x*/)
 {
 
 }

@@ -67,6 +67,8 @@ void mssql_statement::prepare(const sql &s)
   
   str(s.prepare());
 
+  std::cout << "prepare: " << str() << "\n";
+
   SQLRETURN ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }

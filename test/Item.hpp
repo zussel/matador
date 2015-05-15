@@ -471,27 +471,33 @@ private:
   std::string relation_name_;
 };
 
-class IntVector : public Vector<int>
-{
+template<class T>
+class vector_object_producer : public oos::object_base_producer {
 public:
-  IntVector() : Vector<int>("int_vector") {}
-  virtual ~IntVector() {}
+  vector_object_producer(const std::string &name) : name_(name) {}
+  virtual ~vector_object_producer() {}
+
+  virtual oos::object* create() const
+  {
+    return new T(name_);
+  }
+
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
+
+private:
+  std::string name_;
+  static std::string classname_;
 };
 
-class ItemPtrVector : public Vector<oos::object_ptr<Item> >
-{
-public:
-  ItemPtrVector() : Vector<oos::object_ptr<Item> >("ptr_vector") {}
-  virtual ~ItemPtrVector() {}
-};
+template < class T >
+std::string vector_object_producer<T>::classname_ = typeid(T).name();
 
-class ItemRefVector : public Vector<oos::object_ref<Item> >
-{
-public:
-  ItemRefVector() : Vector<oos::object_ref<Item> >("ref_vector") {}
-  virtual ~ItemRefVector() {}
-};
-
+typedef Vector<int> IntVector;
+typedef Vector<oos::object_ptr<Item> > ItemPtrVector;
+typedef Vector<oos::object_ref<Item> > ItemRefVector;
 
 class book : public oos::object
 {
