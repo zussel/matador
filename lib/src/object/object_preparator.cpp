@@ -33,7 +33,7 @@ void object_preparator::read_value(char const *id, object_base_ptr &x)
   }
 
   proxy->primary_key_.reset(i->second->clone());
-  proxy->node = &node_;
+  proxy->node = const_cast<prototype_node*>(&node_);
 
   x.reset(proxy.release());
 }
