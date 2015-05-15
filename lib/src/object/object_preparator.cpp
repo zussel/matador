@@ -2,7 +2,6 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object_ptr.hpp"
-#include "object/prototype_tree.hpp"
 #include "object/object.hpp"
 #include "object/object_exception.hpp"
 
@@ -34,6 +33,7 @@ void object_preparator::read_value(char const *id, object_base_ptr &x)
   }
 
   proxy->primary_key_.reset(i->second->clone());
+  proxy->node = &node_;
 
   x.reset(proxy.release());
 }
