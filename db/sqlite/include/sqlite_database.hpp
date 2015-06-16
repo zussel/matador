@@ -69,7 +69,11 @@ public:
   virtual statement* create_statement();
 
   virtual result *create_result();
-  /**
+
+
+    virtual unsigned long last_inserted_id() override;
+
+/**
    * Return the raw pointer to the sqlite3
    * database struct.
    * 

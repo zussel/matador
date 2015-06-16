@@ -234,8 +234,9 @@ void database::visit(insert_action *a)
   insert_action::const_iterator last = a->end();
   while (first != last) {
     object_proxy *proxy = (*first++);
-    
-    i->second->insert(proxy->obj);
+
+    table_ptr t = i->second;
+    t->insert(proxy->obj);
   }
 }
 

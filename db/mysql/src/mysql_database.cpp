@@ -196,6 +196,16 @@ const char* mysql_database::type_string(data_type_t type) const
     }
 }
 
+unsigned long mysql_database::last_inserted_id()
+{
+  if (mysql_field_count(&mysql_) == 0 &&
+      mysql_insert_id(&mysql_) != 0)
+  {
+    return mysql_insert_id(&mysql_);
+  }
+  return 0;
+}
+
 }
 
 }

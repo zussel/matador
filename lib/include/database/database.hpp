@@ -86,7 +86,7 @@ protected:
 
 public:
   virtual ~database();
-  
+
   /**
    * Open the database
    *
@@ -133,7 +133,7 @@ public:
 
   /**
    * Insert the object into the database
-   * 
+   *
    * @param o The object to insert.
    * @return The inserted object.
    */
@@ -141,7 +141,7 @@ public:
 
   /**
    * Update the object on the database
-   * 
+   *
    * @param o The object to update.
    * @return The updated object.
    */
@@ -157,7 +157,7 @@ public:
 
   /**
    * Checks if a specific table was loaded.
-   * 
+   *
    * @param name Name of the table to check.
    * @return Returns true if the table was loaded.
    */
@@ -199,7 +199,7 @@ public:
 
   /**
    * Create a new result object
-   * 
+   *
    * @return New result implenation object.
    */
   virtual result* create_result() = 0;
@@ -212,8 +212,13 @@ public:
   virtual statement* create_statement() = 0;
 
   /**
+   * Get last inserted id from database
+   */
+  virtual unsigned long last_inserted_id() = 0;
+
+  /**
    * @brief Prepares the beginning of a transaction
-   * 
+   *
    * Prepares the begin of the transaction
    * in database and object store. Calls
    * begin() on sequencer, which backups
@@ -223,7 +228,7 @@ public:
 
   /**
    * @brief Marks the beginning of the real transaction.
-   * 
+   *
    * This method is called when the real database
    * transaction are about to begin and a BEGIN
    * TRANSACTION kind of statement is executed on
@@ -243,7 +248,7 @@ public:
 
   /**
    * @brief Rolls back the current transaction
-   * 
+   *
    * When called the current transaction is
    * rolled back on database and subsequently
    * in object store. All transient data is

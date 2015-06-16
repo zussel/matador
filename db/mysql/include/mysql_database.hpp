@@ -82,7 +82,10 @@ public:
   
   virtual const char* type_string(data_type_t type) const;
 
-  /**
+
+  virtual unsigned long last_inserted_id() override;
+
+/**
    * Return the raw pointer to the sqlite3
    * database struct.
    * 

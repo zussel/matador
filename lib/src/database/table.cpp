@@ -158,6 +158,7 @@ void table::insert(object *obj)
 {
   insert_->bind(obj);
   std::unique_ptr<result> res(insert_->execute());
+  long id = db_.last_inserted_id();
   // Todo: check insert result == 1
 }
 
