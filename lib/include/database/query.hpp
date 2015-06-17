@@ -43,7 +43,7 @@ class result;
 class session;
 class statement;
 class database;
-class object;
+class serializable;
 class prototype_node;
 class condition;
 class serializable;
@@ -67,7 +67,7 @@ class serializable;
  * statements. These statements can be
  * created manually by adding each part
  * of the statement by hand or you can
- * create them using object based class or
+ * create them using serializable based class or
  * instances.
  * 
  * The class uses a chain mechanism. Each method
@@ -137,7 +137,7 @@ public:
    * class instance.
    * 
    * @param name The name of the table to create.
-   * @param o The serializable object providing the field information.
+   * @param o The serializable serializable providing the field information.
    * @return A reference to the query.
    */
   query& create(const std::string &name, serializable *o);
@@ -180,18 +180,18 @@ public:
 
   /**
    * Creates a select statement based
-   * on the given serializable object.
+   * on the given serializable serializable.
    * 
-   * @param o The serializable object used for the select statement.
+   * @param o The serializable serializable used for the select statement.
    * @return A reference to the query.
    */
   query& select(serializable *o);
 
   /**
    * Creates an insert statement based
-   * on the given object.
+   * on the given serializable.
    * 
-   * @param o The object used for the insert statement.
+   * @param o The serializable used for the insert statement.
    * @return A reference to the query.
    */
   query& insert(object_base_ptr &optr);
@@ -199,10 +199,10 @@ public:
 
   /**
    * Creates an insert statement based
-   * on the given serializable object and.
+   * on the given serializable serializable and.
    * the name of the table
    * 
-   * @param o The serializable object used for the insert statement.
+   * @param o The serializable serializable used for the insert statement.
    * @param name The name of the table.
    * @return A reference to the query.
    */
@@ -210,9 +210,9 @@ public:
 
   /**
    * Creates an update statement based
-   * on the given object.
+   * on the given serializable.
    * 
-   * @param o The object used for the update statement.
+   * @param o The serializable used for the update statement.
    * @return A reference to the query.
    */
   query& update(object_base_ptr &optr);
@@ -220,11 +220,11 @@ public:
 
   /**
    * Creates an update statement based
-   * on the given serializable object and.
+   * on the given serializable serializable and.
    * the name of the table
    * 
    * @param name The name of the table.
-   * @param o The serializable object used for the update statement.
+   * @param o The serializable serializable used for the update statement.
    * @return A reference to the query.
    */
   query& update(const std::string &name, serializable *o);
@@ -366,9 +366,9 @@ public:
 
   /**
    * Executes the current query and
-   * returns a new result object.
+   * returns a new result serializable.
    * 
-   * @return The result object.
+   * @return The result serializable.
    */
   result* execute();
   

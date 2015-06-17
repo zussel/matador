@@ -27,7 +27,7 @@ database_sequencer::database_sequencer(database &db)
   : db_(db)
   , backup_(0)
   , sequence_(0)
-  , name_("object")
+  , name_("serializable")
   , update_(0)
 {
 }
@@ -85,7 +85,7 @@ void database_sequencer::create()
   
   delete res;
   
-  res = q.reset().select(this).from("oos_sequence").where("name='object'").execute();
+  res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
 
   if (res->fetch()) {
     // get sequence number
@@ -97,13 +97,13 @@ void database_sequencer::create()
   }
   delete res;
 
-  update_ = q.reset().update("oos_sequence", this).where("name='object'").prepare();
+  update_ = q.reset().update("oos_sequence", this).where("name='serializable'").prepare();
 }
 
 void database_sequencer::load()
 {
   query q(db_);
-  result *res = q.reset().select(this).from("oos_sequence").where("name='object'").execute();
+  result *res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
 
   if (res->fetch()) {
     // get sequence number
@@ -115,13 +115,13 @@ void database_sequencer::load()
   delete res;
 
   if (!update_) {
-    update_ = q.reset().update("oos_sequence", this).where("name='object'").prepare();
+    update_ = q.reset().update("oos_sequence", this).where("name='serializable'").prepare();
   }
 }
 
 void database_sequencer::begin()
 {
-  // backup current sequence id from object store
+  // backup current sequence id from serializable store
   backup_ = current();
 }
 

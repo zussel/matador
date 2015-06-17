@@ -105,26 +105,26 @@ void database::create(const prototype_node &node)
   i->second->create();
 }
 
-object* database::insert(object_proxy *proxy)
+serializable * database::insert(object_proxy *proxy)
 {
-  table_map_t::iterator i = table_map_.find(proxy->node->type);
+  table_map_t::iterator i = table_map_.find(proxy->node()->type);
   if (i == table_map_.end()) {
     throw database_exception("db::insert", "unknown type");
   } else {
-    i->second->insert(proxy->obj);
+    i->second->insert(proxy->obj());
   }
-  return proxy->obj;
+  return proxy->obj();
 }
 
-object* database::update(object_proxy *proxy)
+serializable * database::update(object_proxy *proxy)
 {
-  table_map_t::iterator i = table_map_.find(proxy->node->type);
+  table_map_t::iterator i = table_map_.find(proxy->node()->type);
   if (i == table_map_.end()) {
     throw database_exception("db::update", "unknown type");
   } else {
-    i->second->update(proxy->obj);
+    i->second->update(proxy->obj());
   }
-  return proxy->obj;
+  return proxy->obj();
 }
 
 void database::load(const prototype_node &node)
@@ -236,18 +236,18 @@ void database::visit(insert_action *a)
     object_proxy *proxy = (*first++);
 
     table_ptr t = i->second;
-    t->insert(proxy->obj);
+    t->insert(proxy->obj());
   }
 }
 
 void database::visit(update_action *a)
 {
-  table_map_t::iterator i = table_map_.find(a->proxy()->node->type);
+  table_map_t::iterator i = table_map_.find(a->proxy()->node()->type);
   if (i == table_map_.end()) {
     throw database_exception("db", "table not found");
   }
 
-  i->second->update(a->proxy()->obj);
+  i->second->update(a->proxy()->obj());
 }
 
 void database::visit(delete_action *a)

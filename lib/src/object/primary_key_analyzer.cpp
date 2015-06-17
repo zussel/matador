@@ -18,7 +18,7 @@ primary_key_analyzer::~primary_key_analyzer() {
 
 void primary_key_analyzer::analyze()
 {
-  std::unique_ptr<object> obj(node_.producer->create());
+  std::unique_ptr<serializable> obj(node_.producer->create());
   obj->serialize(*this);
 }
 

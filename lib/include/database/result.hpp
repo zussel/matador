@@ -39,7 +39,7 @@ namespace oos {
 
 class row;
 class statement;
-class object;
+class serializable;
 class serializable;
 
 /// @cond OOS_DEV
@@ -72,12 +72,12 @@ public:
   
   /**
    * Fetch next line from database and
-   * deserialized the given object.
+   * deserialized the given serializable.
    *
    * @param o Object to be deserialized
-   * @return True if object was successfully deserialized
+   * @return True if serializable was successfully deserialized
    */
-  virtual bool fetch(object *) { return false; }
+  virtual bool fetch(serializable *) { return false; }
 
   virtual size_type affected_rows() const = 0;
   virtual size_type result_rows() const = 0;

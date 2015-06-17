@@ -36,12 +36,12 @@ public:
 
   void fill()
   {
-    object_proxy *first = info_->node_.op_first->next;
+    object_proxy *first = info_->node_.op_first->next();
     object_proxy *last = info_->node_.op_marker;
     while (first != last) {
       proxy_ = first;
-      proxy_->obj->deserialize(*this);
-      first = first->next;
+      proxy_->obj()->deserialize(*this);
+      first = first->next();
     }
   }
 
@@ -55,12 +55,12 @@ public:
     /*
      * find the relation data identified
      * by given id
-     * find the object map identified by
+     * find the serializable map identified by
      * objects id
-     * if both are found fill object
+     * if both are found fill serializable
      * container with corresponding data
      * the data will be erased from found
-     * object map
+     * serializable map
      */
     table::relation_data_t::iterator i = info_->relation_data.find(id);
     if (i != info_->relation_data.end()) {
@@ -98,7 +98,7 @@ void table::prepare()
 {
   query q(db_);
 
-  std::unique_ptr<object> o(node_.producer->create());
+  std::unique_ptr<serializable> o(node_.producer->create());
   insert_.reset(q.insert(o.get(), node_.type).prepare());
   update_.reset(q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare());
   delete_.reset(q.reset().remove(node_).where(cond("id").equal(0)).prepare());
@@ -131,8 +131,8 @@ void table::load(object_store &ostore)
 
   /*
    * after all tables were loaded fill
-   * all object containers appearing
-   * in certain object types
+   * all serializable containers appearing
+   * in certain serializable types
    */
   prototype_node::field_prototype_map_t::const_iterator first = node_.relations.begin();
   prototype_node::field_prototype_map_t::const_iterator last = node_.relations.end();
@@ -154,7 +154,7 @@ void table::load(object_store &ostore)
   is_loaded_ = true;
 }
 
-void table::insert(object *obj)
+void table::insert(serializable *obj)
 {
   insert_->bind(obj);
   std::unique_ptr<result> res(insert_->execute());
@@ -162,17 +162,19 @@ void table::insert(object *obj)
   // Todo: check insert result == 1
 }
 
-void table::update(object *obj)
+void table::update(serializable *obj)
 {
   int pos = update_->bind(obj);
-  update_->bind(pos, obj->id());
+  // Todo: handle primary key
+  //update_->bind(pos, obj->id());
   std::unique_ptr<result> res(update_->execute());
   // Todo: check update result
 }
 
-void table::remove(object *obj)
+void table::remove(serializable *obj)
 {
-  remove(obj->id());
+  // Todo: handle primary key
+//  remove(obj->id());
 }
 
 void table::remove(long id)

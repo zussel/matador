@@ -18,27 +18,27 @@ SET(OBJECT_SOURCES
 )
 
 SET(OBJECT_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_convert.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/attribute_serializer.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/serializable.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_exception.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_ptr.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_store.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_container.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_convert.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_list.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_vector.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_producer.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/linked_object_list.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_view.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_proxy.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/prototype_node.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/prototype_tree.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_observer.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_expression.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/attribute_serializer.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/object_atomizer.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/serializable.hpp
+  ${PROJECT_SOURCE_DIR}/include/serializable/primary_key.hpp
 )
 
 SET(OBJECT_HEADER
@@ -268,23 +268,23 @@ SET_TARGET_PROPERTIES(oos
                       SOVERSION 0)
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
-SOURCE_GROUP("include\\object" FILES ${OBJECT_HEADER})
+SOURCE_GROUP("include\\serializable" FILES ${OBJECT_HEADER})
 SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
 SOURCE_GROUP("include\\database" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
-SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
+SOURCE_GROUP("src\\serializable" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
 SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
 
 #FOREACH(inc ${OBJECT_HEADER})
-#  MESSAGE(STATUS "object include: ${inc}")
+#  MESSAGE(STATUS "serializable include: ${inc}")
 #ENDFOREACH(inc)
 
 #FOREACH(inc ${OBJECT_SOURCES})
-#  MESSAGE(STATUS "object source: ${inc}")
+#  MESSAGE(STATUS "serializable source: ${inc}")
 #ENDFOREACH(inc)
 
 INSTALL(
@@ -302,7 +302,7 @@ INSTALL(
 
 INSTALL(
 	FILES ${OBJECT_INSTALL_HEADER}
-	DESTINATION include/oos/object
+	DESTINATION include/oos/serializable
 	COMPONENT headers
 )
 

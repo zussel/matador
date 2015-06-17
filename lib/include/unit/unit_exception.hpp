@@ -42,7 +42,7 @@ namespace oos {
  * 
  * This unit_exception is thrown when an assert evaluates
  * to false. This exception is caugt by the main test_suite
- * object.
+ * serializable.
  */
 class OOS_API unit_exception : public std::exception
 {
@@ -50,7 +50,7 @@ public:
   /**
    * @brief Contructs a unit_exception
    * 
-   * A object of type unit_exception with
+   * A serializable of type unit_exception with
    * the given message is created.
    * 
    * @param msg Message of the exception.

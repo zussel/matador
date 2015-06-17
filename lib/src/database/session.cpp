@@ -148,7 +148,7 @@ void session::pop_transaction()
   }
 }
 
-object* session::load(const std::string &/*type*/, int /*id*/)
+serializable * session::load(const std::string &/*type*/, int /*id*/)
 {
   return 0;
 }

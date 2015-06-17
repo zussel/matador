@@ -60,7 +60,7 @@ void prototype_node::initialize(prototype_tree *tr, object_base_producer *p, con
 bool
 prototype_node::empty(bool self) const
 {
-  return op_first->next == (self ? op_marker : op_last);
+  return op_first->next() == (self ? op_marker : op_last);
 }
 
 unsigned long
@@ -79,14 +79,14 @@ prototype_node::insert(prototype_node *child)
   last->prev = child;
   // set depth
   child->depth = depth + 1;
-  // set object proxy pointer
+  // set serializable proxy pointer
   // 1. first
-  if (op_first->next == op_last) {
-    // node hasn't any object (proxy)
+  if (op_first->next() == op_last) {
+    // node hasn't any serializable (proxy)
     child->op_first = op_first;
   } else {
     // node has some objects (proxy)
-    child->op_first = op_last->prev;
+    child->op_first = op_last->prev_;
   }
   // 2. marker
   child->op_marker = op_last;
@@ -96,7 +96,7 @@ prototype_node::insert(prototype_node *child)
 
 void prototype_node::insert(object_proxy *proxy)
 {
-  // check count of object in subtree
+  // check count of serializable in subtree
   if (count >= 2) {
     /*************
      *
@@ -104,33 +104,33 @@ void prototype_node::insert(object_proxy *proxy)
      * insert before last last
      *
      *************/
-    proxy->link(op_marker->prev);
+    proxy->link(op_marker->prev_);
   } else if (count == 1) {
     /*************
      *
-     * there is one object in subtree
+     * there is one serializable in subtree
      * insert as first; adjust "left" marker
      *
      *************/
-    proxy->link(op_marker->prev);
-    tree->adjust_left_marker(this, proxy->next, proxy);
+    proxy->link(op_marker->prev_);
+    tree->adjust_left_marker(this, proxy->next_, proxy);
   } else /* if (node->count == 0) */ {
     /*************
      *
-     * there is no object in subtree
+     * there is no serializable in subtree
      * insert as last; adjust "right" marker
      *
      *************/
     proxy->link(op_marker);
-    tree->adjust_left_marker(this, proxy->next, proxy);
-    tree->adjust_right_marker(this, proxy->prev, proxy);
+    tree->adjust_left_marker(this, proxy->next_, proxy);
+    tree->adjust_right_marker(this, proxy->prev_, proxy);
   }
   // set prototype node
-  proxy->node = this;
+  proxy->node_ = this;
   // adjust size
   ++count;
   // find and insert primary key
-  std::shared_ptr<primary_key_base> pk(pk_serializer.serialize(proxy->obj));
+  std::shared_ptr<primary_key_base> pk(pk_serializer.serialize(proxy->obj()));
   if (pk) {
     primary_key_map.insert(std::make_pair(pk, proxy));
   }
@@ -138,39 +138,39 @@ void prototype_node::insert(object_proxy *proxy)
 
 void prototype_node::remove(object_proxy *proxy)
 {
-  if (proxy == op_first->next) {
+  if (proxy == op_first->next()) {
     // adjust left marker
-    tree->adjust_left_marker(this, op_first->next, op_first->next->next);
+    tree->adjust_left_marker(this, op_first->next_, op_first->next_->next_);
   }
-  if (proxy == op_marker->prev) {
+  if (proxy == op_marker->prev()) {
     // adjust right marker
-    tree->adjust_right_marker(this, proxy, op_marker->prev->prev);
+    tree->adjust_right_marker(this, proxy, op_marker->prev_->prev_);
   }
   // unlink object_proxy
-  if (proxy->prev) {
-    proxy->prev->next = proxy->next;
+  if (proxy->prev()) {
+    proxy->prev_->next_ = proxy->next_;
   }
-  if (proxy->next) {
-    proxy->next->prev = proxy->prev;
+  if (proxy->next()) {
+    proxy->next_->prev_ = proxy->prev_;
   }
-  proxy->prev = 0;
-  proxy->next = 0;
+  proxy->prev_ = nullptr;
+  proxy->next_ = nullptr;
 
-  // adjust object count for node
+  // adjust serializable count for node
   --count;
 }
 
 void prototype_node::clear(prototype_tree &tree, bool recursive)
 {
   if (!empty(true)) {
-    tree.adjust_left_marker(this, op_first->next, op_marker);
-    tree.adjust_right_marker(this, op_marker->prev, op_first);
+    tree.adjust_left_marker(this, op_first->next_, op_marker);
+    tree.adjust_right_marker(this, op_marker->prev_, op_first);
 
-    while (op_first->next != op_marker) {
-      object_proxy *op = op_first->next;
-      // remove object proxy from list
+    while (op_first->next() != op_marker) {
+      object_proxy *op = op_first->next_;
+      // remove serializable proxy from list
       op->unlink();
-      // delete object proxy and object
+      // delete serializable proxy and serializable
       delete op;
     }
     count = 0;
@@ -305,10 +305,10 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   os << "|{last|" << pn.last.get() << "}";
   // determine size
   int i = 0;
-  object_proxy *iop = pn.op_first;
-  while (iop && iop->next != pn.op_marker) {
+  const object_proxy *iop = pn.op_first;
+  while (iop && iop->next() != pn.op_marker) {
     ++i;
-    iop = iop->next;
+    iop = iop->next();
   }
   os << "|{size|" << i << "}";
   /*

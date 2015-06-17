@@ -66,7 +66,7 @@ bool mysql_result::fetch()
   return rows-- > 0;
 }
 
-bool mysql_result::fetch(object *)
+bool mysql_result::fetch(serializable *)
 {
   return false;
 }

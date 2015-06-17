@@ -70,7 +70,7 @@ public:
   * @brief Creates a iterator for a concrete type.
   *
   * This constructor creates an iterator for a concrete
-  * type and a concrete object.
+  * type and a concrete serializable.
   *
   * @param node The prototype_node of the object_proxy
   */
@@ -195,7 +195,7 @@ public:
   * @brief Creates a iterator for a concrete type.
   *
   * This constructor creates an iterator for a concrete
-  * type and a concrete object.
+  * type and a concrete serializable.
   *
   * @param node The prototype_node of the object_proxy
   */
@@ -324,21 +324,21 @@ public:
   ~prototype_tree();
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
+  * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given.
   *
-  * @param producer The producer object produces a new object of a specific type.
+  * @param producer The producer serializable produces a new serializable of a specific type.
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "serializable");
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
+  * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given. The producer is automatically created via the template
@@ -346,7 +346,7 @@ public:
   *
   * @tparam T       The type of the prototype node
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @return         Returns new inserted prototype iterator.
   */
   template < class T >
@@ -356,7 +356,7 @@ public:
   }
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
+  * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given. The producer is automatically created via the template
@@ -365,7 +365,7 @@ public:
   * @tparam T       The type of the prototype node
   * @tparam S       The type of the parent prototype node
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @return         Returns new inserted prototype iterator.
   */
   template < class T, class S >
@@ -438,7 +438,7 @@ public:
   * will be deleted as well.
   *
   * @param type The name of the type to remove.
-  * @param recursive If set, also the object in children nodes are deleted.
+  * @param recursive If set, also the serializable in children nodes are deleted.
   * @return Returns true if the type was found and successfully cleared.
   * @throws oos::object_exception on error
   */
@@ -467,7 +467,7 @@ public:
   iterator erase(const prototype_iterator &i);
 
   /**
-  * Removes an object prototype from the prototype tree. All children
+  * Removes an serializable prototype from the prototype tree. All children
   * nodes and all objects are also removed.
   *
   * @param type The name of the type to remove.
@@ -477,7 +477,7 @@ public:
   void remove(const char *type);
 
   /**
-  * Removes an object prototype from the prototype tree. All children
+  * Removes an serializable prototype from the prototype tree. All children
   * nodes and all objects are also removed.
   *
   * @param node The prototype iterator node to remove.
@@ -552,7 +552,7 @@ private:
   /**
   * @internal
   *
-  * Adjust first marker of all successor nodes with given object proxy.
+  * Adjust first marker of all successor nodes with given serializable proxy.
   *
   * @param old_proxy The old first marker proxy.
   * @param new_proxy The new first marker proxy.
@@ -563,7 +563,7 @@ private:
   * @internal
   *
   * Adjusts self and last marker of all predeccessor nodes with given
-  * object proxy.
+  * serializable proxy.
   *
   * @param old_proxy The old last marker proxy.
   * @param new_proxy The new last marker proxy.

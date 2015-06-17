@@ -46,7 +46,7 @@ bool sqlite_prepared_result::fetch()
   return true;
 }
 
-bool sqlite_prepared_result::fetch(object *o)
+bool sqlite_prepared_result::fetch(serializable *o)
 {
   if (!fetch()) {
     return false;
@@ -187,7 +187,7 @@ void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
 {
 
 //  read_foreign_key(id, x);
-  std::cout << "read object of type [" << x.type() << "]\n";
+  std::cout << "read serializable of type [" << x.type() << "]\n";
   /*
    * determine primary key
    */

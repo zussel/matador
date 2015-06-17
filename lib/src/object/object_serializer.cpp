@@ -32,7 +32,7 @@ namespace oos {
 object_serializer::~object_serializer()
 {}
 
-bool object_serializer::serialize(const object *o, byte_buffer *buffer)
+bool object_serializer::serialize(const serializable *o, byte_buffer *buffer)
 {
   buffer_ = buffer;
   o->serialize(*this);
@@ -40,7 +40,7 @@ bool object_serializer::serialize(const object *o, byte_buffer *buffer)
   return true;
 }
 
-bool object_serializer::deserialize(object *o, byte_buffer *buffer, object_store *ostore)
+bool object_serializer::deserialize(serializable *o, byte_buffer *buffer, object_store *ostore)
 {
   ostore_ = ostore;
   buffer_ = buffer;
@@ -153,11 +153,11 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
 {
   /***************
    *
-   * extract id and type of object from buffer
-   * try to find object on object store
+   * extract id and type of serializable from buffer
+   * try to find serializable on serializable store
    * if found check type if wrong type throw error
-   * else create object and set extracted id
-   * insert object into object store
+   * else create serializable and set extracted id
+   * insert serializable into serializable store
    *
    ***************/
   long id = 0;
@@ -203,7 +203,7 @@ void object_serializer::read_value(const char *id, primary_key_base &x)
 void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
   write(0, proxy->id());
-  write(0, proxy->node->type);
+  write(0, proxy->node()->type);
 }
 
 }

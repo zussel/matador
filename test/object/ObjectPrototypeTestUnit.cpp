@@ -13,7 +13,7 @@ using namespace std;
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   : unit_test("prototype", "ObjectStore Prototype Test Unit")
 {
-  add_test("empty", std::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty object store");
+  add_test("empty", std::bind(&ObjectPrototypeTestUnit::empty_store, this), "test empty serializable store");
   add_test("find", std::bind(&ObjectPrototypeTestUnit::test_find, this), "find prototype test");
   add_test("size", std::bind(&ObjectPrototypeTestUnit::test_size, this), "size prototype test");
   add_test("parent_of", std::bind(&ObjectPrototypeTestUnit::test_is_parent_of, this), "check parent");
@@ -40,7 +40,7 @@ ObjectPrototypeTestUnit::empty_store()
 {
   object_store ostore;
 
-  UNIT_ASSERT_TRUE(ostore.empty(), "object store must be empty");
+  UNIT_ASSERT_TRUE(ostore.empty(), "serializable store must be empty");
 }
 
 void
@@ -112,13 +112,13 @@ ObjectPrototypeTestUnit::one_prototype()
 
   ostore.insert_prototype<Item>("ITEM");
   
-  object *o = ostore.create("ITEM");
+  serializable *o = ostore.create("ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Item>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
   
   Item *i = dynamic_cast<Item*>(o);
   
-  UNIT_ASSERT_NOT_NULL(i, "couldn't cast object to Item");
+  UNIT_ASSERT_NOT_NULL(i, "couldn't cast serializable to Item");
   
   delete i;
   
@@ -136,13 +136,13 @@ ObjectPrototypeTestUnit::prototype_hierachy()
   ostore.insert_prototype<ItemB, Item>("ITEM_B");
   ostore.insert_prototype<ItemC, Item>("ITEM_C");
 
-  object *o = ostore.create("ITEM_B");
+  serializable *o = ostore.create("ITEM_B");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ItemB>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ItemB>");
   
   ItemB *a = dynamic_cast<ItemB*>(o);
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ItemB");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to ItemB");
   
   delete a;
   

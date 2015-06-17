@@ -139,10 +139,10 @@ public:
    * @brief Creates a new sequencer.
    *
    * This constructor creates a new sequencer.
-   * If no implementation object is given, a
-   * default implementation object is used.
+   * If no implementation serializable is given, a
+   * default implementation serializable is used.
    *
-   * @param impl The sequence implementation object
+   * @param impl The sequence implementation serializable
    *             implementing the sequence strategy.
    */
   sequencer(const sequencer_impl_ptr &impl = sequencer_impl_ptr(new default_sequencer));

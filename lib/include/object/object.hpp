@@ -55,35 +55,35 @@ template < class T > class object_ptr;
 /// @endcond OOS_DEV
 
 /**
- * @class object
+ * @class serializable
  * @brief The base class for all objects.
  * 
- * The object class must be the base class
+ * The serializable class must be the base class
  * of all classes inserted into the object_store.
  * At least the object_store handles with objects
- * of base type object. When iterating over a view
+ * of base type serializable. When iterating over a view
  * these objects are casted to the concrete type.
  * 
- * The object is identified by a unique id, which is
+ * The serializable is identified by a unique id, which is
  * set by the object_store.
  */
 class OOS_API object : public serializable
 {
 	// don't allow copying
-	object(const object&) = delete;
-	object& operator=(const object&) = delete;
+  object(const object &) = delete;
+  object & operator=(const object &) = delete;
 	
 public:
   /**
-   * @brief Create a new object.
+   * @brief Create a new serializable.
    * 
-   * Creates a new object, which is not
+   * Creates a new serializable, which is not
    * member of the object_store.
    */
-	object();
+  object();
 
   /**
-   * Destroys the object.
+   * Destroys the serializable.
    */
 	virtual ~object();
 	
@@ -91,22 +91,22 @@ public:
   virtual void serialize(object_writer &serializer) const;
 
   /**
-   * @brief Returns the unique identifier of the object.
+   * @brief Returns the unique identifier of the serializable.
    * 
-   * This method returns the unique id of the object. These
-   * id is first set when the object is inserted into the
+   * This method returns the unique id of the serializable. These
+   * id is first set when the serializable is inserted into the
    * object_store. On creation the value of the id is zero.
    * 
-   * @return The unique id of the object.
+   * @return The unique id of the serializable.
    */
 	unsigned long id() const;
 
   /**
-   * @brief Sets the id of the object.
+   * @brief Sets the id of the serializable.
    * 
-   * Sets the id of the object.
+   * Sets the id of the serializable.
    * 
-   * @param oid The new id of the object.
+   * @param oid The new id of the serializable.
    */
 	void id(unsigned long oid);
 
@@ -166,13 +166,13 @@ public:
   }
 
   /**
-   * Print the object to a given stream
+   * Print the serializable to a given stream
    *
-   * @param os The stream to write the object on.
-   * @param o The object to write
+   * @param os The stream to write the serializable on.
+   * @param o The serializable to write
    * @return The modified stream.
    */
-  friend OOS_API std::ostream& operator <<(std::ostream &os, const object &o);
+  friend OOS_API std::ostream& operator <<(std::ostream &os, const serializable &o);
 
 private:
 	friend class object_store;

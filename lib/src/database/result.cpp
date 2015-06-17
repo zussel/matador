@@ -38,7 +38,7 @@ void result::get(serializable *o)
 
 void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
-  x.proxy_->primary_key_->deserialize(id, *this);
+  x.proxy_->pk()->deserialize(id, *this);
 }
 
 }

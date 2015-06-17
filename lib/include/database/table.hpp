@@ -46,7 +46,7 @@
 namespace oos {
 
 class statement;
-class object;
+class serializable;
 class object_container;
 class object_base_ptr;
 class object_store;
@@ -71,9 +71,9 @@ public:
   virtual void prepare();
   void create();
   void load(object_store &ostore);
-  void insert(object *obj);
-  void update(object *obj);
-  void remove(object *obj);
+  void insert(serializable *obj);
+  void update(serializable *obj);
+  void remove(serializable *obj);
   void remove(long id);
   void drop();
 

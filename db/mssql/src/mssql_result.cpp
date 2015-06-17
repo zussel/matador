@@ -66,7 +66,7 @@ bool mssql_result::fetch()
   }
 }
 
-bool mssql_result::fetch(object *o)
+bool mssql_result::fetch(serializable *o)
 {
   if (!fetch()) {
     return false;

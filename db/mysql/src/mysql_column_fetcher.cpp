@@ -17,7 +17,7 @@ mysql_column_fetcher::mysql_column_fetcher(MYSQL_STMT *stmt, MYSQL_BIND *bind, m
 mysql_column_fetcher::~mysql_column_fetcher()
 {}
 
-void mysql_column_fetcher::fetch(object *o)
+void mysql_column_fetcher::fetch(serializable *o)
 {
   column_index_ = 0;
   o->deserialize(*this);

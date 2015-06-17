@@ -6,7 +6,7 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class prototype_node;
 
 class object_preparator : public generic_object_reader<object_preparator>
@@ -15,7 +15,7 @@ public:
   explicit object_preparator(const prototype_node &node);
   virtual ~object_preparator();
 
-  void prepare(object *obj);
+  void prepare(serializable *obj);
 
   template < class T >
   void read_value(const char*, const T&) {}

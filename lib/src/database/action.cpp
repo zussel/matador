@@ -72,7 +72,7 @@ struct object_by_id : public std::unary_function<unsigned long, bool>
   {}
   bool operator()(const object_proxy *proxy) const
   {
-    return (proxy->obj && proxy->id() == id_);
+    return (proxy->obj() && proxy->id() == id_);
   }
   
   unsigned long id_;

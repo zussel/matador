@@ -9,7 +9,7 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class object_base_ptr;
 class primary_key_base;
 class prototype_node;
@@ -20,7 +20,7 @@ public:
   primary_key_serializer();
   virtual ~primary_key_serializer();
 
-  primary_key_base* serialize(const object *o);
+  primary_key_base* serialize(const serializable *o);
 
   template < class T >
   void write_value(const char*, const T&) {}

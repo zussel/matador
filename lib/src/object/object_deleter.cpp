@@ -25,8 +25,8 @@ namespace oos {
 
 object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
   : proxy(oproxy)
-  , ref_count(oproxy->ref_count)
-  , ptr_count(oproxy->ptr_count)
+  , ref_count(oproxy->ref_count())
+  , ptr_count(oproxy->ptr_count())
   , ignore(ignr)
 {}
 
@@ -40,7 +40,7 @@ object_deleter::is_deletable(object_proxy *proxy)
   object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
 
   // start collecting information
-  proxy->obj->deserialize(*this);
+  proxy->obj()->deserialize(*this);
   
   return check_object_count_map();
 }
@@ -92,7 +92,7 @@ void object_deleter::check_object(object_proxy *proxy, bool is_ref)
   }
   if (!is_ref) {
     ret.first->second.ignore = false;
-    proxy->obj->deserialize(*this);
+    proxy->obj()->deserialize(*this);
   }
 }
 
@@ -103,7 +103,7 @@ object_deleter::check_object_list_node(object_proxy *proxy)
   
   /**********
    * 
-   * object is already in list and will
+   * serializable is already in list and will
    * be ignored on deletion so set
    * ignore flag to false because this
    * node must be deleted
@@ -114,7 +114,7 @@ object_deleter::check_object_list_node(object_proxy *proxy)
   }
 
   // start collecting information
-  proxy->obj->deserialize(*this);
+  proxy->obj()->deserialize(*this);
 }
 
 bool

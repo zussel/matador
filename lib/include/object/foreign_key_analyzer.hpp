@@ -6,7 +6,7 @@
 namespace oos {
 
 class prototype_node;
-class object;
+class serializable;
 class object_base_ptr;
 
 class foreign_key_analyzer : public generic_object_writer<foreign_key_analyzer>

@@ -91,7 +91,7 @@ public:
   /**
    * @brief Start the transaction.
    *
-   * Start the transaction. All object insertions,
+   * Start the transaction. All serializable insertions,
    * modifications and deletions are stored.
    */
   void begin();
@@ -99,7 +99,7 @@ public:
   /**
    * @brief Commit the started transaction.
    *
-   * Commit the started transaction. All object
+   * Commit the started transaction. All serializable
    * insertions, modifications and deletions are
    * written to the database.
    */
@@ -109,7 +109,7 @@ public:
    * @brief Abort and rollback the started transaction.
    *
    * Abort and rollback the started transaction. All
-   * object insertions, modifications and deletions are
+   * serializable insertions, modifications and deletions are
    * rolled back in the object_store.
    */
   void rollback();
@@ -139,7 +139,7 @@ private:
   friend class object_store;
   friend class session;
   
-  void backup(action *a, const object *o);
+  void backup(action *a, const serializable *o);
   void restore(action *a);
 
   void cleanup();

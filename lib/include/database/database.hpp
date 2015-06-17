@@ -112,9 +112,9 @@ public:
   void create();
 
   /**
-   * Create a table from the given object.
+   * Create a table from the given serializable.
    *
-   * @param o The object providing the table layout.
+   * @param o The serializable providing the table layout.
    */
   void create(const prototype_node &node);
 
@@ -122,7 +122,7 @@ public:
    * Drops table defined by the given
    * prototype_node from the database.
    *
-   * @param o The object providing the table layout.
+   * @param o The serializable providing the table layout.
    */
   void drop(const prototype_node &node);
 
@@ -132,20 +132,20 @@ public:
   void drop();
 
   /**
-   * Insert the object into the database
+   * Insert the serializable into the database
    *
-   * @param o The object to insert.
-   * @return The inserted object.
+   * @param o The serializable to insert.
+   * @return The inserted serializable.
    */
-  object* insert(object_proxy *proxy);
+  serializable * insert(object_proxy *proxy);
 
   /**
-   * Update the object on the database
+   * Update the serializable on the database
    *
-   * @param o The object to update.
-   * @return The updated object.
+   * @param o The serializable to update.
+   * @return The updated serializable.
    */
-  object* update(object_proxy *proxy);
+  serializable * update(object_proxy *proxy);
 
   /**
    * load a specific table based on
@@ -198,9 +198,9 @@ public:
   virtual void visit(drop_action*) {}
 
   /**
-   * Create a new result object
+   * Create a new result serializable
    *
-   * @return New result implenation object.
+   * @return New result implenation serializable.
    */
   virtual result* create_result() = 0;
 
@@ -220,9 +220,9 @@ public:
    * @brief Prepares the beginning of a transaction
    *
    * Prepares the begin of the transaction
-   * in database and object store. Calls
+   * in database and serializable store. Calls
    * begin() on sequencer, which backups
-   * object stores current ids.
+   * serializable stores current ids.
    */
   void prepare();
 
@@ -251,7 +251,7 @@ public:
    *
    * When called the current transaction is
    * rolled back on database and subsequently
-   * in object store. All transient data is
+   * in serializable store. All transient data is
    * restored.
    */
   void rollback();

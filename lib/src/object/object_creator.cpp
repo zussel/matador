@@ -30,13 +30,13 @@ object_creator::~object_creator() {}
 
 void object_creator::read_value(const char*, object_base_ptr &x)
 {
-  // mark object pointer as internal
+  // mark serializable pointer as internal
   x.is_internal_ = true;
   if (!x.is_reference()) {
     if (!x.ptr()) {
-      // create object
-      object *o = ostore_.create(x.type());
-      o->id(x.id());
+      // create serializable
+      serializable *o = ostore_.create(x.type());
+//      o->id(x.id());
       x.reset(ostore_.insert_object(o, notify_), x.is_reference());
     } else {
       // do the pointer count
@@ -53,7 +53,7 @@ void object_creator::read_value(const char*, object_base_ptr &x)
 
 void object_creator::read_value(const char*, object_container &x)
 {
-  // set parent object (if available)
+  // set parent serializable (if available)
   if (!object_proxy_stack_.empty()) {
     x.owner(object_proxy_stack_.top());
   }

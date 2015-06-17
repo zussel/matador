@@ -60,7 +60,7 @@ void object::id(unsigned long oid)
 
 std::ostream& operator <<(std::ostream &os, const object &o)
 {
-  os << "object " << typeid(o).name() << " (" << &o << ") [" << o.id_ << "]";
+  os << "object " << typeid(o).name() << " (" << &o << ") [" << o.id() << "]";
   return os;
 }
 

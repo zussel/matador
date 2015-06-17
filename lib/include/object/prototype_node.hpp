@@ -43,18 +43,18 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class prototype_tree;
 class object_proxy;
 class primary_key_base;
 
 /**
  * @class prototype_node
- * @brief Holds the prototype of a concrete object.
+ * @brief Holds the prototype of a concrete serializable.
  *
  * The prototype_node class holds the prototype of
- * a concrete object inside a producer object. Whenever
- * requested the class produces a new object.
+ * a concrete serializable inside a producer serializable. Whenever
+ * requested the class produces a new serializable.
  * 
  * It also holds a partial list containing all objects of
  * this and all children nodes.
@@ -76,7 +76,7 @@ public:
    * @brief Creates a new prototype_node.
    * 
    * Creates a new prototype_node which creates an
-   * object from given object_base_producer. The node
+   * serializable from given object_base_producer. The node
    * gets the given type name t.
    * 
    * @param tr The node containing tree.
@@ -102,7 +102,7 @@ public:
   void initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a);
 
   /**
-   * Returns true if object proxy list is empty. If self is true, only
+   * Returns true if serializable proxy list is empty. If self is true, only
    * list of own objects is checked. If self is false, complete list is
    * checked.
    * 
@@ -112,7 +112,7 @@ public:
   bool empty(bool self) const;
   
   /**
-   * Returns the size of the object proxy list.
+   * Returns the size of the serializable proxy list.
    * 
    * @return The number of objects.
    */
@@ -126,12 +126,12 @@ public:
   void insert(prototype_node *child);
 
   /**
-   * Inserts a object proxy into the
+   * Inserts a serializable proxy into the
    */
   void insert(object_proxy *proxy);
 
   /**
-   * @brief Removes an object proxy from prototype node
+   * @brief Removes an serializable proxy from prototype node
    *
    * @param oproxy Object proxy to remove
    */
@@ -141,7 +141,7 @@ public:
    * Delete all objects inside this node
    * if recursive flag is set, delete all
    * objects below this node as well.
-   * To adjust the object proxy marker for the
+   * To adjust the serializable proxy marker for the
    * remaining objects the corresponding
    * prototype tree must be passed
    *
@@ -187,10 +187,10 @@ public:
   bool has_children() const;
 
   /**
-   * Returns true if the object represented by this node
+   * Returns true if the serializable represented by this node
    * owns a primary key
    *
-   * @return True if object owns a primary key
+   * @return True if serializable owns a primary key
    */
   bool has_primary_key() const;
   /**
@@ -215,7 +215,7 @@ public:
   std::unique_ptr<prototype_node> last = nullptr;   /**< The last children node */
 
   // data
-  std::unique_ptr<object_base_producer> producer = nullptr; /**< The object producer */
+  std::unique_ptr<object_base_producer> producer = nullptr; /**< The serializable producer */
 
   /* this map holds information about
    * all prototypes in which this prototype
@@ -232,9 +232,9 @@ public:
   unsigned int depth = 0;  /**< The depth of the node inside of the tree. */
   unsigned long count = 0; /**< The total count of elements. */
 
-  std::string type;	   /**< The type name of the object */
+  std::string type;	   /**< The type name of the serializable */
   
-  bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract object */
+  bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
   primary_key_serializer pk_serializer;
   std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;

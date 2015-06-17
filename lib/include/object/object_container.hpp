@@ -38,7 +38,7 @@ class prototype_tree;
  * class and the values stored in the container.
  */
 template < class T >
-class value_item : public object
+class value_item : public serializable
 {
 public:
   typedef T value_type; /**< Shortcut for the value type. */
@@ -57,13 +57,11 @@ public:
 
   virtual void deserialize(object_reader &deserializer)
   {
-    oos::object::deserialize(deserializer);
     deserializer.read("value", value_);
   }
 
   virtual void serialize(object_writer &serializer) const
   {
-    oos::object::serialize(serializer);
     serializer.write("value", value_);
   }
 
@@ -180,7 +178,7 @@ public:
 
 public:
   /**
-   * @brief Creates an empty object_container object.
+   * @brief Creates an empty object_container serializable.
    * 
    * The constructor creates an empty object_container.
    */
@@ -248,40 +246,40 @@ protected:
   friend class table_reader;
 
   /**
-   * @brief Append a object via its object_proxy.
+   * @brief Append a serializable via its object_proxy.
    *
-   * Append a object via its object_proxy to the list.
+   * Append a serializable via its object_proxy to the list.
    *
-   * @param op The object_proxy containing the list element object.
+   * @param op The object_proxy containing the list element serializable.
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
   object_proxy* proxy(const object_base_ptr &optr) const;
 
   /**
-   * Mark the list containing object as modified
+   * Mark the list containing serializable as modified
    * in the object_store.
    *
-   * @param o The object containig list
+   * @param o The serializable containig list
    */
-//  void mark_modified(object *o)
+//  void mark_modified(serializable *o)
 //  {
 //    o->mark_modified();
 //  }
 
   void mark_modified(object_proxy *proxy)
   {
-    if (proxy->obj) {
-      proxy->ostore->mark_modified(proxy);
+    if (proxy->obj()) {
+      ostore_->mark_modified(proxy);
     }
   }
 
   /**
-   * @brief Executes the given function object for all elements.
+   * @brief Executes the given function serializable for all elements.
    *
-   * Executes the given function object for all elements.
+   * Executes the given function serializable for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param nf Function serializable used to be executed on each element.
    */
   virtual void for_each(const proxy_func &pred) const = 0;
 

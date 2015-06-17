@@ -122,14 +122,14 @@ public:
   /**
    * @cond OOS_DEV
    *
-   * Load a concrete object of a specfic type
-   * and a given id from the database. If an object
+   * Load a concrete serializable of a specfic type
+   * and a given id from the database. If an serializable
    * with the given id couldn't be found an empty
    * object_ptr is returned
    *
-   * @tparam T The type of the object.
-   * @param id The unique primary id of the object.
-   * @return The object defined by the given parameters.
+   * @tparam T The type of the serializable.
+   * @param id The unique primary id of the serializable.
+   * @return The serializable defined by the given parameters.
    */
   template < class T >
   object_ptr<T> load(int id)
@@ -168,7 +168,7 @@ public:
    * @brief Executes a database query.
    * 
    * Executes the given query on the database and
-   * return the result in a query_result object.
+   * return the result in a query_result serializable.
    * 
    * @param sql The database query to execute.
    * @return The result of the query.
@@ -176,15 +176,15 @@ public:
   result* execute(const std::string &sql);
 
   /**
-   * @brief Inserts a new object
-   * @tparam T Type of object
+   * @brief Inserts a new serializable
+   * @tparam T Type of serializable
    * 
-   * Inserts a new not inserted object
-   * into object store and persists
+   * Inserts a new not inserted serializable
+   * into serializable store and persists
    * it on database
    * 
-   * @param o The object to insert.
-   * @return The inserted persistent object.
+   * @param o The serializable to insert.
+   * @return The inserted persistent serializable.
    */
   template < class T >
   object_ptr<T> insert(T *o)
@@ -197,23 +197,23 @@ public:
   }
 
   /**
-   * @brief Updates a given persistent object
-   * @tparam T Type of object tp update.
+   * @brief Updates a given persistent serializable
+   * @tparam T Type of serializable tp update.
    * 
-   * Updates a persistent object in object store
+   * Updates a persistent serializable in serializable store
    * and on database.
    * 
-   * @param optr The object to update
+   * @param optr The serializable to update
    */
   void update(const object_base_ptr &optr);
 
   /**
-   * @brief Deletes a given persistent object
+   * @brief Deletes a given persistent serializable
    * 
-   * Deletes a persistent object in object store
+   * Deletes a persistent serializable in serializable store
    * and on database.
    * 
-   * @param optr The object to delete
+   * @param optr The serializable to delete
    */
   void remove(object_base_ptr &optr);
 
@@ -258,7 +258,7 @@ private:
   void push_transaction(transaction *tr);
   void pop_transaction();
 
-  object* load(const std::string &type, int id = 0);
+  serializable * load(const std::string &type, int id = 0);
 
   void begin(transaction &tr);
   void commit(transaction &tr);
@@ -267,7 +267,7 @@ private:
   /**
    * Create a statement implementation
    *
-   * @return A statement object.
+   * @return A statement serializable.
    */
   statement* create_statement() const;
 

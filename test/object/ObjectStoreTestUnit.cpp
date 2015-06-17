@@ -21,36 +21,38 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
   add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one serializable");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub serializable");
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub object");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
-  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
-  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
-  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
-//  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object structure test");
-  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
-  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
-  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub serializable");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
+  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
+  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
+  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
+  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
+//  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable structure test");
+  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
+  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
+  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
 {}
 
-class ObjectItemPtrList : public List<oos::object_ptr<ObjectItem<Item> > >
-{
-public:
-  ObjectItemPtrList() : List<oos::object_ptr<ObjectItem<Item> > >("object_ptr_list") {}
-  virtual ~ObjectItemPtrList() {}
-};
+typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
+
+//class ObjectItemPtrList : public List<oos::object_ptr<ObjectItem<Item> > >
+//{
+//public:
+//  ObjectItemPtrList() : List<oos::object_ptr<ObjectItem<Item> > >("object_ptr_list") {}
+//  virtual ~ObjectItemPtrList() {}
+//};
 
 void
 ObjectStoreTestUnit::initialize()
@@ -58,7 +60,7 @@ ObjectStoreTestUnit::initialize()
   ostore_.insert_prototype<Item>("ITEM");
   ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
   ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
-  ostore_.insert_prototype<ObjectItemPtrList>("OBJECT_ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "OBJECT_ITEM_PTR_LIST");
 }
 
 void
@@ -94,7 +96,7 @@ void ObjectStoreTestUnit::optr_test()
 
   item_ptr item_null;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "object pointer is null", "shouldn't insert null object pointer");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "serializable pointer is null", "shouldn't insert null serializable pointer");
 
   item_ptr item(new Item("Test"));
 
@@ -112,7 +114,7 @@ ObjectStoreTestUnit::expression_test()
   typedef object_ptr<Item> item_ptr;
   typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList);
+  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList("object_ptr_list"));
 
   item_ptr ii;
   for (int i = 0; i < 10; ++i) {
@@ -164,7 +166,7 @@ ObjectStoreTestUnit::expression_test()
   j = std::find_if(oview.begin(), oview.end(), y == std::string("ObjectItem"));
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 
-  // try to find unknown object
+  // try to find unknown serializable
   j = std::find_if(oview.begin(), oview.end(), y == std::string("Simple"));
   UNIT_ASSERT_TRUE(j == oview.end(), "iterator must be end");
 
@@ -330,21 +332,21 @@ ObjectStoreTestUnit::get_test()
 void
 ObjectStoreTestUnit::simple_object()
 {
-  object *o = ostore_.create("ITEM");
+  serializable *o = ostore_.create("ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ITEM>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ITEM>");
   
   Item *a = dynamic_cast<Item*>(o);
   
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
   
   typedef object_ptr<Item> item_ptr;
   
   item_ptr simple = ostore_.insert(a);
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "item object insertion failed");
+  UNIT_ASSERT_NOT_NULL(simple.get(), "item serializable insertion failed");
   
-  UNIT_ASSERT_TRUE(ostore_.is_removable(simple), "deletion of item object failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(simple), "deletion of item serializable failed");
   
   ostore_.remove(simple);
 }
@@ -352,26 +354,26 @@ ObjectStoreTestUnit::simple_object()
 void
 ObjectStoreTestUnit::object_with_sub_object()
 {
-  object *o = ostore_.create("OBJECT_ITEM");
+  serializable *o = ostore_.create("OBJECT_ITEM");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem>");
   
   ObjectItem<Item> *s = dynamic_cast<ObjectItem<Item>*>(o);
   
-  UNIT_ASSERT_NOT_NULL(s, "couldn't cast object to ObjectItem<Item>");
+  UNIT_ASSERT_NOT_NULL(s, "couldn't cast serializable to ObjectItem<Item>");
   
   typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
   
   obj_item_ptr ows = ostore_.insert(s);
   
-  UNIT_ASSERT_NOT_NULL(ows.get(), "object item object insertion failed");
+  UNIT_ASSERT_NOT_NULL(ows.get(), "serializable item serializable insertion failed");
   
-  // check if sub object exists
+  // check if sub serializable exists
   object_ptr<Item> simple = ows->ptr();
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "item object creation failed");
+  UNIT_ASSERT_NOT_NULL(simple.get(), "item serializable creation failed");
   
-  UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of object item failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of serializable item failed");
   
   ostore_.remove(ows);
 }
@@ -384,13 +386,13 @@ ObjectStoreTestUnit::multiple_simple_objects()
   size_t elem_size = 10000;
   // create 1000 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("ITEM");
+    serializable *o = ostore_.create("ITEM");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <Item>");
+    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
     
     Item *a = dynamic_cast<Item*>(o);
     
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to Item");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
     
     item_ptr simple = ostore_.insert(a);
   }
@@ -409,13 +411,13 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   // create 1000 objects
   size_t elem_size = 1000;
   for (size_t i = 0; i < elem_size; ++i) {
-    object *o = ostore_.create("OBJECT_ITEM");
+    serializable *o = ostore_.create("OBJECT_ITEM");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create object of type <ObjectItem<Item> >");
+    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem<Item> >");
     
     ObjectItem<Item>  *a = dynamic_cast<ObjectItem<Item> *>(o);
     
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast object to ObjectItem<Item> ");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to ObjectItem<Item> ");
     
     ows_ptr ows = ostore_.insert(a);
   }
@@ -477,8 +479,8 @@ ObjectStoreTestUnit::hierarchy()
   ostore_.insert_prototype<ItemB, Item>("ITEM_B");
   ostore_.insert_prototype<ItemC, Item>("ITEM_C");
   
-  /* Insert 5 object of each item
-   * object type
+  /* Insert 5 serializable of each item
+   * serializable type
    */
 
   Item *itm;
@@ -608,11 +610,11 @@ ObjectStoreTestUnit::clear_test()
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
   UNIT_ASSERT_FALSE((int)iview.empty(), "item view shouldn't be empty");
-  UNIT_ASSERT_FALSE((int)ostore_.empty(), "object store shouldn't be empty");
+  UNIT_ASSERT_FALSE((int)ostore_.empty(), "serializable store shouldn't be empty");
 
   ostore_.clear();
 
-  UNIT_ASSERT_TRUE((int)ostore_.empty(), "object store must be empty");
+  UNIT_ASSERT_TRUE((int)ostore_.empty(), "serializable store must be empty");
   UNIT_ASSERT_EQUAL((int)iview.size(), 0, "invalid item view size");
   UNIT_ASSERT_TRUE((int)iview.empty(), "item view must be empty");
 
@@ -694,10 +696,10 @@ void ObjectStoreTestUnit::test_structure()
 
 void ObjectStoreTestUnit::test_insert()
 {
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((object*)0), object_exception, "object is null", "null shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((serializable *)0), object_exception, "serializable is null", "null shouldn't be insertable");
 
   ItemC *ic = new ItemC;
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert object", "unknown object type shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert serializable", "unknown serializable type shouldn't be insertable");
   delete ic;
 }
 
@@ -707,12 +709,12 @@ void ObjectStoreTestUnit::test_remove()
 
   item_ptr item;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "serializable proxy is nullptr", "null shouldn't be removable");
 
   Item *i = new Item;
   item = i;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient object shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient serializable shouldn't be removable");
 }
 
 void ObjectStoreTestUnit::test_primary_key()

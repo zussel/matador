@@ -110,8 +110,8 @@ void PrototypeTreeTestUnit::test_remove()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an object exception when trying to remove unknown type");
-  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an object exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an serializable exception when trying to remove unknown type");
 
   ptree.remove("item");
 
@@ -128,7 +128,7 @@ void PrototypeTreeTestUnit::test_erase()
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
   prototype_iterator iter2;
-  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an object exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an serializable exception when trying to remove unknown type");
 
   ptree.erase(iter);
 

@@ -31,7 +31,7 @@ namespace oos {
 
 class object_store;
 class object_base_ptr;
-class object;
+class serializable;
 class object_proxy;
 class object_container;
 
@@ -40,9 +40,9 @@ class object_container;
  * @class object_creator
  * @brief Creates objects and object_lists
  * 
- * When an object is inserted into the object store
- * subsequently other object must be created and
- * inserted into the object store.
+ * When an serializable is inserted into the serializable store
+ * subsequently other serializable must be created and
+ * inserted into the serializable store.
  * This class does these tasks.
  */
 class object_creator : public generic_object_reader<object_creator>

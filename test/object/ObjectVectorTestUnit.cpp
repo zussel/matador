@@ -12,12 +12,12 @@ using namespace oos;
 using namespace std;
 
 ObjectVectorTestUnit::ObjectVectorTestUnit()
-  : unit_test("vector", "object vector")
+  : unit_test("vector", "serializable vector")
 {
-  add_test("int", std::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
-  add_test("ptr", std::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
-  add_test("ref", std::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
-  add_test("direct_ref", std::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct object vector with references");
+  add_test("int", std::bind(&ObjectVectorTestUnit::test_int_vector, this), "test serializable vector with integers");
+  add_test("ptr", std::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test serializable vector with pointers");
+  add_test("ref", std::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test serializable vector with references");
+  add_test("direct_ref", std::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct serializable vector with references");
 }
 
 ObjectVectorTestUnit::~ObjectVectorTestUnit()
@@ -71,7 +71,7 @@ void ObjectVectorTestUnit::test_ref_vector()
 
   std::string str;
     /*
-     * TODO: implement object::get(id, val, precision)
+     * TODO: implement serializable::get(id, val, precision)
   (*i)->value()->get("val_float", str, 2);
   */
 

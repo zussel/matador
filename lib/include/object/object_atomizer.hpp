@@ -43,7 +43,7 @@ class time;
 
 /**
  * @class object_writer
- * @brief Base class for all object writer
+ * @brief Base class for all serializable writer
  * 
  * This class is the base class for all
  * atomizer classes. It has interfaces to 
@@ -276,9 +276,9 @@ public:
 };
 
 /**
- * @tparam T Type of the generic object writer
+ * @tparam T Type of the generic serializable writer
  * @class generic_object_writer
- * @brief Generic base class for all object writer
+ * @brief Generic base class for all serializable writer
  * 
  * This class implements the oos::object_writer interface
  * and adds the functionality to describe a write_value
@@ -328,7 +328,7 @@ private:
 
 /**
  * @class object_reader
- * @brief Base class for all object reader
+ * @brief Base class for all serializable reader
  * 
  * This class is the base class for all
  * atomizer reader classes. It has interfaces to 
@@ -560,9 +560,9 @@ public:
 };
 
 /**
- * @tparam T Type of the generic object reader
+ * @tparam T Type of the generic serializable reader
  * @class generic_object_reader
- * @brief Generic base class for all object readre
+ * @brief Generic base class for all serializable readre
  * 
  * This class implements the oos::object_reader interface
  * and adds the functionality to describe a read_value

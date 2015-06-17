@@ -22,7 +22,7 @@ public:
   mysql_column_fetcher(MYSQL_STMT *stmt, MYSQL_BIND *bind, mysql_prepared_result::result_info *info);
   virtual ~mysql_column_fetcher();
   
-  void fetch(object *o);
+  void fetch(serializable *o);
 
   template < class T >
   void read_value(const char *, T &)

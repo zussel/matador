@@ -45,7 +45,7 @@ bool sqlite_result::fetch()
   return ++pos_ < rows_.size();
 }
 
-bool sqlite_result::fetch(object *)
+bool sqlite_result::fetch(serializable *)
 {
   return false;
 }

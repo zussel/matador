@@ -19,17 +19,16 @@
 
 namespace oos {
 
-class object;
 template < class T > class object_ref;
 template < class T > class object_ptr;
 
 /**
 * @class object_base_producer
-* @brief Base class for object producer classes
+* @brief Base class for serializable producer classes
 *
-* When using the object_store to create object
+* When using the object_store to create serializable
 * an instance of a class of this type is used to
-* create the object.
+* create the serializable.
 * The interface provides a create and a classname
 * method.
 */
@@ -38,31 +37,31 @@ class OOS_API object_base_producer{
   virtual ~object_base_producer() {}
 
   /**
-  * @brief Create a new object.
+  * @brief Create a new serializable.
   *
-  * This method creates a new object
+  * This method creates a new serializable
   * and returns it.
   *
-  * @return The created object.
+  * @return The created serializable.
   */
-  virtual object* create() const = 0;
+  virtual serializable* create() const = 0;
 
   /**
   * Returns the unique classname of the
-  * object prototype.
+  * serializable prototype.
   *
-  * @return The classname of the object.
+  * @return The classname of the serializable.
   */
   virtual const char *classname() const = 0;
 };
 
 /**
 * @class object_producer
-* @brief Produces a new object of type T
+* @brief Produces a new serializable of type T
 *
-* These producers a placed in the object type tree and whenever
-* a new object of a certain type is requested, the appropiate
-* producer is used to create the object.
+* These producers a placed in the serializable type tree and whenever
+* a new serializable of a certain type is requested, the appropiate
+* producer is used to create the serializable.
 * It supports also a method to determine the name of the class
 * which is produced.
 */
@@ -72,11 +71,11 @@ public:
   virtual ~object_producer() {}
 
   /**
-  * Creates and returns a new object of type T
+  * Creates and returns a new serializable of type T
   *
-  * @return new object of type T
+  * @return new serializable of type T
   */
-  virtual object* create() const
+  virtual serializable* create() const
   {
     return new T;
   }

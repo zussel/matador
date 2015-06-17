@@ -5,7 +5,7 @@
 #include "object/primary_key_serializer.hpp"
 #include "object/primary_key.hpp"
 #include "object/object_ptr.hpp"
-#include "object/object.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 
@@ -17,7 +17,7 @@ primary_key_serializer::primary_key_serializer()
 primary_key_serializer::~primary_key_serializer()
 {}
 
-primary_key_base* primary_key_serializer::serialize(const object *o)
+primary_key_base* primary_key_serializer::serialize(const serializable *o)
 {
   primary_key_ = 0;
   o->serialize(*this);

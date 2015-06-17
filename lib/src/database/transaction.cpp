@@ -34,15 +34,15 @@ void transaction::on_insert(object_proxy *proxy)
 {
   /*****************
    * 
-   * backup inserted object
-   * on rollback the object
-   * is removed from object
+   * backup inserted serializable
+   * on rollback the serializable
+   * is removed from serializable
    * store
    * 
    *****************/
   id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    // create insert action and insert object
+    // create insert action and insert serializable
     action_inserter ai(action_list_);
     iterator j = ai.insert(proxy);
     if (j == action_list_.end()) {
@@ -51,9 +51,9 @@ void transaction::on_insert(object_proxy *proxy)
       id_map_.insert(std::make_pair(proxy->id(), j));
     }
   } else {
-    // ERROR: an object with that id already exists
+    // ERROR: an serializable with that id already exists
     std::stringstream msg;
-    msg << "an object with id " << proxy->id() << " already exists";
+    msg << "an serializable with id " << proxy->id() << " already exists";
     throw database_exception("database", msg.str().c_str());
   }
 }
@@ -62,16 +62,16 @@ void transaction::on_update(object_proxy *proxy)
 {
   /*****************
    * 
-   * backup updated object
-   * on rollback the object
+   * backup updated serializable
+   * on rollback the serializable
    * is restored to old values
    * 
    *****************/
   if (id_map_.find(proxy->id()) == id_map_.end()) {
-    backup(new update_action(proxy), proxy->obj);
+    backup(new update_action(proxy), proxy->obj());
   } else {
-    // An object with that id already exists
-    // do nothing because the object is already
+    // An serializable with that id already exists
+    // do nothing because the serializable is already
     // backed up
   }
 }
@@ -80,16 +80,16 @@ void transaction::on_delete(object_proxy *proxy)
 {
   /*****************
    * 
-   * backup deleted object
-   * on rollback the object
+   * backup deleted serializable
+   * on rollback the serializable
    * is restored into the
-   * object store
+   * serializable store
    * 
    *****************/
 
   id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    backup(new delete_action(proxy->node->type.c_str(), proxy->id()), proxy->obj);
+    backup(new delete_action(proxy->node()->type.c_str(), proxy->id()), proxy->obj());
   } else {
     action_remover ar(action_list_);
     ar.remove(i->second, proxy);
@@ -184,18 +184,19 @@ transaction::db() const
 }
 
 void
-transaction::backup(action *a, const object *o)
+transaction::backup(action *a, const serializable *o)
 {
   /*************
    * 
-   * try to find object with
+   * try to find serializable with
    * id in action map
    * 
    *************/
   backup_visitor bv;
   bv.backup(a, o, &object_buffer_);
   iterator i = action_list_.insert(action_list_.end(), a);
-  id_map_.insert(std::make_pair(o->id(), i));
+  // Todo: replace primary key by object store id
+//  id_map_.insert(std::make_pair(o->id(), i));
 }
 
 void transaction::restore(action *a)

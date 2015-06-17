@@ -25,7 +25,7 @@
 
 namespace oos {
 
-bool backup_visitor::backup(action *act, const object *o, byte_buffer *buffer)
+bool backup_visitor::backup(action *act, const serializable *o, byte_buffer *buffer)
 {
   buffer_ = buffer;
   object_ = o;
@@ -42,13 +42,13 @@ void backup_visitor::visit(insert_action *)
 
 void backup_visitor::visit(update_action*)
 {
-  // serialize object
+  // serialize serializable
   serializer_.serialize(object_, buffer_);
 }
 
 void backup_visitor::visit(delete_action*)
 {
-  // serialize object
+  // serialize serializable
   serializer_.serialize(object_, buffer_);
 }
 
@@ -64,7 +64,7 @@ bool restore_visitor::restore(action *act, byte_buffer *buffer, object_store *os
 
 void restore_visitor::visit(insert_action *a)
 {
-  // remove object from object store
+  // remove serializable from serializable store
   for (insert_action::iterator i = a->begin(); i != a->end(); ++i) {
     ostore_->remove_object(*i, false);
   }
@@ -72,29 +72,29 @@ void restore_visitor::visit(insert_action *a)
 
 void restore_visitor::visit(update_action *a)
 {
-  // deserialize data from buffer into object
-  serializer_.deserialize(a->proxy()->obj, buffer_, ostore_);
+  // deserialize data from buffer into serializable
+  serializer_.deserialize(a->proxy()->obj(), buffer_, ostore_);
 }
 
 void restore_visitor::visit(delete_action *a)
 {
-  // check if there is an object with id in
-  // object store
+  // check if there is an serializable with id in
+  // serializable store
   object_proxy *oproxy = ostore_->find_proxy(a->id());
   if (!oproxy) {
     // create proxy
     oproxy = ostore_->create_proxy(a->id());
   }
-  if (!oproxy->obj) {
-    // create object with id and deserialize
-    oproxy->obj = ostore_->create(a->classname());
-    // data from buffer into object
-    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
-    // insert object
-    ostore_->insert_object(oproxy->obj, false);
+  if (!oproxy->obj()) {
+    // create serializable with id and deserialize
+    oproxy->reset(ostore_->create(a->classname()));
+    // data from buffer into serializable
+    serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+    // insert serializable
+    ostore_->insert_object(oproxy->obj(), false);
   } else {
-    // data from buffer into object
-    serializer_.deserialize(oproxy->obj, buffer_, ostore_);
+    // data from buffer into serializable
+    serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
   }
 }
 
@@ -113,7 +113,7 @@ transaction::iterator action_inserter::insert(object_proxy *proxy)
     }
   }
   if (!inserted_) {
-    insert_action *a = new insert_action(proxy_->node->type.c_str());
+    insert_action *a = new insert_action(proxy_->node()->type.c_str());
     a->push_back(proxy_);
     return action_list_.insert(action_list_.end(), a);
   }
@@ -122,10 +122,10 @@ transaction::iterator action_inserter::insert(object_proxy *proxy)
 
 void action_inserter::visit(insert_action *a)
 {
-  // check (object) type of insert action
+  // check (serializable) type of insert action
   // if type is equal to objects type
-  // add object to action
-  if (a->type() == proxy_->node->type) {
+  // add serializable to action
+  if (a->type() == proxy_->node()->type) {
     a->push_back(proxy_);
     inserted_ = true;
   }
@@ -133,13 +133,13 @@ void action_inserter::visit(insert_action *a)
 
 void action_inserter::visit(update_action *)
 {
-  // error: object can't be updated before
+  // error: serializable can't be updated before
   // it is inserted, throw error
 }
 
 void action_inserter::visit(delete_action *)
 {
-  // error: object can't be deleted before
+  // error: serializable can't be deleted before
   // it is inserted, throw error
 }
 
@@ -157,7 +157,7 @@ void action_remover::visit(insert_action *a)
   /***********
    * 
    * an insert action was found
-   * try to find object with given
+   * try to find serializable with given
    * id and delete and remove it
    * from insert action
    *
@@ -179,11 +179,11 @@ void action_remover::visit(update_action *a)
    * an update action was found
    * replace this update action
    * with a new delete action
-   * with this given object.
+   * with this given serializable.
    *
    ***********/
   if (a->proxy()->id() == id_) {
-    *iter_ = new delete_action(proxy_->node->type.c_str(), proxy_->id());
+    *iter_ = new delete_action(proxy_->node()->type.c_str(), proxy_->id());
     delete a;
   }
 }
@@ -195,13 +195,13 @@ void action_remover::visit(delete_action *a)
    * an delete action was found
    * this is an error, there can't
    * be a second delete action for
-   * the same object
+   * the same serializable
    * throw an error
    * 
    ***********/
   if (a->id() == id_) {
-    // ERROR: object was deleted twice
-    throw database_exception("database", "object was deleted twice");
+    // ERROR: serializable was deleted twice
+    throw database_exception("database", "serializable was deleted twice");
   }
 }
 

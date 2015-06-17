@@ -16,13 +16,13 @@ table_reader::table_reader(table &t, object_store &ostore)
 void table_reader::read(result *res)
 {
   // check result
-  // create object
-  std::unique_ptr<object> obj(table_.node_.producer->create());
+  // create serializable
+  std::unique_ptr<serializable> obj(table_.node_.producer->create());
 
-  // prepare object for read (set object_proxy into object ptr)
+  // prepare serializable for read (set object_proxy into serializable ptr)
   object_preparator_.prepare(obj.get());
 
-//  std::for_each(res->begin(), res->end(), [](object *obj) {})
+//  std::for_each(res->begin(), res->end(), [](serializable *obj) {})
   while (res->fetch(obj.get())) {
 
     new_proxy_ = new object_proxy(obj.get(), nullptr);
@@ -47,7 +47,7 @@ void table_reader::read_value(const char *id, object_base_ptr &x)
   }
 
   /*
-   * find object proxy with given id
+   * find serializable proxy with given id
    */
   object_proxy *oproxy = ostore_.find_proxy(oid);
 
@@ -58,7 +58,7 @@ void table_reader::read_value(const char *id, object_base_ptr &x)
   prototype_iterator node = ostore_.find_prototype(x.type());
 
   /*
-   * add the child object to the object proxy
+   * add the child serializable to the serializable proxy
    * of the parent container
    */
   database::table_map_t::iterator j = table_.db_.table_map_.find(node->type);

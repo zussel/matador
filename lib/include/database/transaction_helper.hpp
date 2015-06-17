@@ -45,7 +45,7 @@ public:
   {}
   virtual ~backup_visitor() {}
 
-  bool backup(action *act, const object *o, byte_buffer *buffer);
+  bool backup(action *act, const serializable *o, byte_buffer *buffer);
 
   virtual void visit(create_action *) {}
   virtual void visit(insert_action *a);
@@ -55,7 +55,7 @@ public:
 
 private:
   byte_buffer *buffer_;
-  const object *object_;
+  const serializable *object_;
   object_serializer serializer_;
 };
 

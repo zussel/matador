@@ -36,13 +36,13 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
-  add_test("pk", std::bind(&DatabaseTestUnit::test_primary_key, this), "test primary key object with database");
+  add_test("pk", std::bind(&DatabaseTestUnit::test_primary_key, this), "test primary key serializable with database");
   add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
   add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
   add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
   add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
   add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
-  add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload object list database test");
+  add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload serializable list database test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -126,7 +126,7 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_FAIL("caught database exception: " << ex.what() << " (start rollback)");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_FAIL("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_FAIL("caught serializable exception: " << ex.what() << " (start rollback)");
   } catch (std::exception &ex) {
     // error, abort transaction
     UNIT_FAIL("caught exception: " << ex.what() << " (start rollback)");
@@ -134,7 +134,7 @@ void DatabaseTestUnit::test_datatypes()
   // close db
   session_->close();
 
-  // clear object store
+  // clear serializable store
   ostore_.clear();
 
   session_->open();
@@ -161,13 +161,13 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
     UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
 
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
   }
 }
 
@@ -179,6 +179,14 @@ void DatabaseTestUnit::test_primary_key()
     pktest() {}
     virtual ~pktest() {}
 
+    virtual void deserialize(oos::object_reader &r) {
+      object::deserialize(r);
+      r.read("name", name);
+    }
+    virtual void serialize(oos::object_writer &w) const {
+      object::serialize(w);
+      w.write("name", name);
+    }
     std::string name;
   };
 
@@ -220,10 +228,10 @@ void DatabaseTestUnit::test_insert()
   oview_t oview(ostore_);
 
   try {
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what());
+    UNIT_WARN("caught serializable exception: " << ex.what());
   }
 }
 
@@ -279,10 +287,10 @@ void DatabaseTestUnit::test_delete()
   oview_t oview(ostore_);
 
   try {
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what());
+    UNIT_WARN("caught serializable exception: " << ex.what());
   }
 
   item = oview.front();
@@ -290,10 +298,10 @@ void DatabaseTestUnit::test_delete()
   session_->remove(item);
 
   try {
-    UNIT_ASSERT_TRUE(oview.begin() == oview.end(), "object view must be empty");
+    UNIT_ASSERT_TRUE(oview.begin() == oview.end(), "serializable view must be empty");
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what());
+    UNIT_WARN("caught serializable exception: " << ex.what());
   }
 }
 
@@ -308,15 +316,15 @@ DatabaseTestUnit::test_reload_simple()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
-    // insert new object
+    // ... do some serializable modifications
+    // insert new serializable
     item_ptr item = ostore_.insert(new Item("Foo", 42));
 
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid object item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid serializable item");
 
     item = ostore_.insert(new Item("Bar", 99));
 
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid object item");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid serializable item");
 
     tr.commit();
   } catch (database_exception &ex) {
@@ -325,13 +333,13 @@ DatabaseTestUnit::test_reload_simple()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
   // close db
   session_->close();
 
-  // clear object store
+  // clear serializable store
   ostore_.clear();
 
   session_->open();
@@ -343,18 +351,18 @@ DatabaseTestUnit::test_reload_simple()
     // create view
     oview_t oview(ostore_);
     // check iterators
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
     // check emptiness
-    UNIT_ASSERT_FALSE(oview.empty(), "object view must not be empty");
+    UNIT_ASSERT_FALSE(oview.empty(), "serializable view must not be empty");
     // check size
-    UNIT_ASSERT_TRUE(oview.size() == 2, "object view size must be 2");
+    UNIT_ASSERT_TRUE(oview.size() == 2, "serializable view size must be 2");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 }
@@ -372,11 +380,11 @@ DatabaseTestUnit::test_reload()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
-    // insert new object
+    // ... do some serializable modifications
+    // insert new serializable
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
 
-    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid object item");
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
 
     item_ptr item = object_item->ptr();
 
@@ -392,7 +400,7 @@ DatabaseTestUnit::test_reload()
 
     oview_t oview(ostore_);
 
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
 
     tr.commit();
   } catch (database_exception &ex) {
@@ -401,13 +409,13 @@ DatabaseTestUnit::test_reload()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
   // close db
   session_->close();
 
-  // clear object store
+  // clear serializable store
   ostore_.clear();
 
   session_->open();
@@ -418,14 +426,14 @@ DatabaseTestUnit::test_reload()
   try {
     oview_t oview(ostore_);
 
-    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "object view must not be empty");
+    UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 }
@@ -484,7 +492,7 @@ DatabaseTestUnit::test_reload_container()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 
@@ -495,7 +503,7 @@ DatabaseTestUnit::test_reload_container()
   // close db
   session_->close();
   
-  // clear object store
+  // clear serializable store
   ostore_.clear();
 
   session_->open();
@@ -530,7 +538,7 @@ DatabaseTestUnit::test_reload_container()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 }

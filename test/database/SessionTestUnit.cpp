@@ -62,7 +62,7 @@ SessionTestUnit::finalize()
 void
 SessionTestUnit::test_open_close()
 {
-  // create database and make object store known to the database
+  // create database and make serializable store known to the database
   UNIT_ASSERT_FALSE(session_->is_open(), "session must not be open");
 
   session_->open();

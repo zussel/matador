@@ -40,7 +40,7 @@ public:
   {}
   virtual ~relation_builder() {}
 
-  void build(object *o) { o->serialize(*this); }
+  void build(serializable *o) { o->serialize(*this); }
   template < class T >
   void write_value(const char*, const T&) {}
 
@@ -73,9 +73,9 @@ public:
     pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
-  void write_value(const char *id, const object_base_ptr &x)
+  void write_value(const char /* *id*/, const object_base_ptr &/*x*/)
   {
-//    std::cout << "relation builder: write object " << id << " of type " << x.type() << "\n";
+//    std::cout << "relation builder: write serializable " << id << " of type " << x.type() << "\n";
   }
 
 private:
@@ -281,12 +281,12 @@ prototype_tree::prototype_tree()
   object_proxy *first = new object_proxy(nullptr);
   object_proxy *last = new object_proxy(nullptr);
 
-  // init object proxies
+  // init serializable proxies
   root->op_first = first;
   root->op_marker = last;
   root->op_last = last;
-  root->op_first->next = root->op_last;
-  root->op_last->prev = root->op_first;
+  root->op_first->next_ = root->op_last;
+  root->op_last->prev_ = root->op_first;
 
   // link nodes together
   first_->next = root;
@@ -295,8 +295,8 @@ prototype_tree::prototype_tree()
   last_->prev = root;
 
   // add to maps
-  prototype_map_.insert(std::make_pair("object", root));
-  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("object", root));
+  prototype_map_.insert(std::make_pair("serializable", root));
+  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("serializable", root));
 }
 
 prototype_tree::~prototype_tree()
@@ -374,8 +374,8 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   primary_key_analyzer pk_analyzer(*node);
   pk_analyzer.analyze();
 
-  // Check if nodes object has 'to-many' relations
-  std::unique_ptr<object> o(producer->create());
+  // Check if nodes serializable has 'to-many' relations
+  std::unique_ptr<serializable> o(producer->create());
   relation_builder rb(*node);
   rb.build(o.get());
 

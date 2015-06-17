@@ -82,7 +82,7 @@ bool mysql_prepared_result::fetch()
   return rows-- > 0;
 }
 
-bool mysql_prepared_result::fetch(object *o)
+bool mysql_prepared_result::fetch(serializable *o)
 {
   // reset result column index
   result_index = 0;

@@ -38,7 +38,7 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class object_base_ptr;
 class object_store;
 class object_proxy;
@@ -52,10 +52,10 @@ class object_container;
  * @brief serialize objects to a given buffer.
  *
  * The object_serializer class serialize a given
- * object to a given buffer or deserialize a given
- * object from a given buffer.
+ * serializable to a given buffer or deserialize a given
+ * serializable from a given buffer.
  * On deserialization the class doesn't take care
- * of the correctness of the object and the current
+ * of the correctness of the serializable and the current
  * memory the buffer points to.
  * The application is responsible for this correctness.
  */
@@ -77,23 +77,23 @@ public:
   virtual ~object_serializer();
 
   /**
-   * Serialize the given object to the given buffer
+   * Serialize the given serializable to the given buffer
    *
-   * @param o The object to serialize.
+   * @param o The serializable to serialize.
    * @param buffer The byte_buffer to serialize to.
    * @return True on success.
    */
-  bool serialize(const object *o, byte_buffer *buffer);
+  bool serialize(const serializable *o, byte_buffer *buffer);
 
   /**
-   * Serialize the given object to the given buffer
+   * Serialize the given serializable to the given buffer
    *
-   * @param o The object to deserialize.
+   * @param o The serializable to deserialize.
    * @param buffer The byte_buffer to deserialize from.
-   * @param ostore The object_store where the object resides.
+   * @param ostore The object_store where the serializable resides.
    * @return True on success.
    */
-  bool deserialize(object *o, byte_buffer *buffer, object_store *ostore);
+  bool deserialize(serializable *o, byte_buffer *buffer, object_store *ostore);
 
 public:
   template < class T >

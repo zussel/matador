@@ -1,6 +1,6 @@
 #ADD_SUBDIRECTORY(tools)
 #ADD_SUBDIRECTORY(database)
-#ADD_SUBDIRECTORY(object)
+#ADD_SUBDIRECTORY(serializable)
 #ADD_SUBDIRECTORY(json)
 #ADD_SUBDIRECTORY(unit)
 
@@ -225,7 +225,7 @@ SET(tree
   const_traverse
 )
 
-# object store tests
+# serializable store tests
 SET(store
   version
   clear
