@@ -198,6 +198,10 @@ object_store::insert_object(serializable *o, bool notify)
     oproxy->obj_ = o;
   }
 
+  // if object has primary key of type short, int or long
+  // set the id of proxy as value
+  assigner_.assign(o, oproxy->id());
+
   // insert new element node
   node->insert(oproxy);
 
