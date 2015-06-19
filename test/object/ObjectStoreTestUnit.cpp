@@ -701,6 +701,10 @@ void ObjectStoreTestUnit::test_insert()
   ItemC *ic = new ItemC;
   UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert serializable", "unknown serializable type shouldn't be insertable");
   delete ic;
+
+  object_ptr<Item> item = ostore_.insert(new Item("test"));
+  UNIT_ASSERT_NOT_NULL(item.ptr(), "internal pointer should not be zero");
+  UNIT_ASSERT_TRUE(item->id() > 0, "id must be greater zero");
 }
 
 void ObjectStoreTestUnit::test_remove()

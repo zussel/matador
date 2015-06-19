@@ -93,6 +93,18 @@ public:
    */
   object_proxy(serializable *o, object_store *os);
 
+  /**
+   * @brief Create an object_proxy for a given serializable.
+   *
+   * Create an object_proxy for unknown serializable
+   * with given id.
+   *
+   * @param o The valid serializable.
+   * @param id The object store id for the given object
+   * @param os The object_store.
+   */
+  object_proxy(serializable *o, unsigned long id, object_store *os);
+
   ~object_proxy();
 
   /**

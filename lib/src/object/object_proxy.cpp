@@ -61,6 +61,21 @@ object_proxy::object_proxy(serializable *o, object_store *os)
   primary_key_.reset(pk_serializer.serialize(o));
 }
 
+object_proxy::object_proxy(serializable *o, unsigned long id, object_store *os)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(o)
+  , oid(id)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(os)
+  , node_(nullptr)
+{
+  if (obj_ != nullptr) {
+    primary_key_.reset(pk_serializer.serialize(obj_));
+  }
+}
+
 object_proxy::~object_proxy()
 {
   if (ostore_ && id() > 0) {

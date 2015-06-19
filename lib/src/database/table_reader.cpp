@@ -52,7 +52,7 @@ void table_reader::read_value(const char *id, object_base_ptr &x)
   object_proxy *oproxy = ostore_.find_proxy(oid);
 
   if (!oproxy) {
-    oproxy = ostore_.create_proxy(oid);
+    oproxy = ostore_.create_proxy(nullptr, oid);
   }
 
   prototype_iterator node = ostore_.find_prototype(x.type());

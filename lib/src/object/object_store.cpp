@@ -191,13 +191,15 @@ object_store::insert_object(serializable *o, bool notify)
      * the sequencer else assign new
      * unique id
      */
-    oproxy = create_proxy(seq_.next());
+    oproxy = create_proxy(o, seq_.next());
     if (!oproxy) {
       throw object_exception("couldn't create serializable proxy");
     }
-    oproxy->obj_ = o;
   }
 
+  if (oproxy->has_primary_key()) {
+    oproxy->primary_key_->set(oproxy->id());
+  }
   // if object has primary key of type short, int or long
   // set the id of proxy as value
   assigner_.assign(o, oproxy->id());
@@ -318,7 +320,7 @@ object_store::remove(object_container &oc)
   oc.uninstall();
 }
 
-object_proxy* object_store::find_proxy(long id) const
+object_proxy* object_store::find_proxy(unsigned long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
@@ -328,7 +330,7 @@ object_proxy* object_store::find_proxy(long id) const
   }
 }
 
-object_proxy* object_store::create_proxy(long id)
+object_proxy* object_store::create_proxy(serializable *o, unsigned long id)
 {
   if (id == 0) {
     return nullptr;
@@ -336,13 +338,15 @@ object_proxy* object_store::create_proxy(long id)
   
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, id, this));
+
+    return object_map_.insert(std::make_pair(id, proxy.release())).first->second;
   } else {
     return nullptr;
   }
 }
 
-bool object_store::delete_proxy(long id)
+bool object_store::delete_proxy(unsigned long id)
 {
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {

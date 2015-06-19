@@ -168,7 +168,7 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
   if (id > 0) {
     object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
-      oproxy = ostore_->create_proxy(id);
+      oproxy = ostore_->create_proxy(nullptr, id);
     }
     x.reset(oproxy, x.is_reference());
   } else {
@@ -189,7 +189,7 @@ void object_serializer::read_value(const char*, object_container &x)
     read(0, type);
     object_proxy *oproxy = ostore_->find_proxy(id);
     if (!oproxy) {
-      oproxy = ostore_->create_proxy(id);
+      oproxy = ostore_->create_proxy(nullptr, id);
     }
     x.append_proxy(oproxy);
   }

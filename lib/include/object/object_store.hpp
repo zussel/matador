@@ -348,11 +348,12 @@ public:
    * 
    * If the serializable proxy couldn't be created the method
    * returns null
-   * 
+   *
+   * @param o The object set into the new object proxy.
    * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(long id);
+  object_proxy *create_proxy(serializable *o, unsigned long id);
 
   /**
    * @brief Delete proxy from map
@@ -363,7 +364,7 @@ public:
    * @param id Id of proxy to delete
    * @return Returns true if deletion was successfully
    */
-  bool delete_proxy(long id);
+  bool delete_proxy(unsigned long id);
 
   /**
    * @brief Finds serializable proxy with id
@@ -376,7 +377,7 @@ public:
    * @return On success it returns an serializable proxy on failure null
    *
    */
-  object_proxy *find_proxy(long id) const;
+  object_proxy *find_proxy(unsigned long id) const;
 
   /**
   * @brief Inserts a new proxy into the serializable store
