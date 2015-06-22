@@ -148,8 +148,9 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(parent_ref).name();
+//    return typeid(parent_ref).name();
 //    return typeid(item_type).name();
+    return classname_.c_str();
   }
 
   /**
@@ -375,7 +376,11 @@ private:
 
 private:
   vector_type object_vector_;
+  static std::string classname_;
 };
+
+template < class S, class T, class CT >
+std::string object_vector_base<T, S, CT>::classname_ = typeid(object_vector_base<T, S, CT>::item_type).name();
 
 ///@cond OOS_DEV
 
