@@ -53,7 +53,7 @@ public:
    *
    * @return The sequence number after init.
    */
-  virtual long init() = 0;
+  virtual unsigned long init() = 0;
 
   /**
    * Resets the sequencer implementation to
@@ -63,7 +63,7 @@ public:
    * @param id The new id of the sequencer.
    * @return The new set id.
    */
-  virtual long reset(long id) = 0;
+  virtual unsigned long reset(unsigned long id) = 0;
 
   /**
    * Get the next valid sequence id.
@@ -72,7 +72,7 @@ public:
    *
    * @return The next valid sequence id.
    */
-  virtual long next() = 0;
+  virtual unsigned long next() = 0;
 
   /**
    * Returns the current sequence id without
@@ -80,7 +80,7 @@ public:
    *
    * @return The current sequence id.
    */
-  virtual long current() const = 0;
+  virtual unsigned long current() const = 0;
 
   /**
    * Updates the given id with the current id
@@ -91,7 +91,7 @@ public:
    * @param id The id to update
    * @return The new id.
    */
-  virtual long update(long id) = 0;
+  virtual unsigned long update(unsigned long id) = 0;
 };
 /// @endcond
 
@@ -107,17 +107,17 @@ public:
   default_sequencer();
   virtual ~default_sequencer();
 
-  virtual long init();
+  virtual unsigned long init();
 
-  virtual long reset(long id);
+  virtual unsigned long reset(unsigned long id);
 
-  virtual long next();
-  virtual long current() const;
+  virtual unsigned long next();
+  virtual unsigned long current() const;
 
-  virtual long update(long id);
+  virtual unsigned long update(unsigned long id);
 
 private:
-  long number_;
+  unsigned long number_;
 };
 /// @endcond
 
@@ -164,7 +164,7 @@ public:
    *
    * @return The current sequence number.
    */
-  long init();
+  unsigned long init();
 
   /**
    * Resets the sequencers sequence
@@ -173,21 +173,21 @@ public:
    * @param id The new sequence number.
    * @return The current sequence number.
    */
-  long reset(long id);
+  unsigned long reset(unsigned long id);
 
   /**
    * Returns the next valid sequence number.
    *
    * @return The next sequence number.
    */
-  long next();
+  unsigned long next();
 
   /**
    * Returns the current sequence number.
    *
    * @return The current sequence number.
    */
-  long current() const;
+  unsigned long current() const;
 
   /**
    * Updates the sequence number
@@ -196,7 +196,7 @@ public:
    * @param id The value to update.
    * @return The new current sequence value.
    */
-  long update(long id);
+  unsigned long update(unsigned long id);
 
 private:
   sequencer_impl_ptr impl_;

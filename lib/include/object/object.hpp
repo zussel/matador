@@ -172,7 +172,7 @@ public:
    * @param o The serializable to write
    * @return The modified stream.
    */
-  friend OOS_API std::ostream& operator <<(std::ostream &os, const serializable &o);
+//  friend OOS_API std::ostream& operator <<(std::ostream &os, const serializable &o);
 
 private:
 	friend class object_store;

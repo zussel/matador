@@ -37,7 +37,7 @@ void table_reader::read(result *res)
   }
 }
 
-void table_reader::read_value(const char *id, object_base_ptr &x)
+void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
 
   long oid = x.id();

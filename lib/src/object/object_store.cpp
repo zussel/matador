@@ -21,6 +21,7 @@
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_creator.hpp"
+#include "object/primary_key_reader.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -198,11 +199,11 @@ object_store::insert_object(serializable *o, bool notify)
   }
 
   if (oproxy->has_primary_key()) {
-    oproxy->primary_key_->set(oproxy->id());
+    // if object has primary key of type short, int or long
+    // set the id of proxy as value
+    primary_key_reader<unsigned long> reader(oproxy->id());
+    o->deserialize(reader);
   }
-  // if object has primary key of type short, int or long
-  // set the id of proxy as value
-  assigner_.assign(o, oproxy->id());
 
   // insert new element node
   node->insert(oproxy);
@@ -390,9 +391,9 @@ void object_store::insert_proxy(object_proxy *oproxy)
   object_creator oc(oproxy, *this, true);
   oproxy->obj()->deserialize(oc);
   // notify observer
-  if (true) {
+//  if (true) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
-  }
+//  }
   // insert element into hash map for fast lookup
   object_map_[oproxy->id()] = oproxy;
 }

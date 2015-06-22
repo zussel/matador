@@ -4,7 +4,6 @@
 #include "object/object_atomizer.hpp"
 
 #include "tools/enable_if.hpp"
-#include "serializable.hpp"
 
 #include <type_traits>
 
@@ -26,12 +25,6 @@ public:
   virtual void serialize(const char*, object_writer&) const = 0;
   virtual void deserialize(const char*, object_reader&) = 0;
   virtual primary_key_base* clone() const = 0;
-
-  template < class T >
-  void set(const T &value)
-  {
-//    serialize("", );
-  }
 
 protected:
   virtual bool equal_to(primary_key_base const &other) const = 0;

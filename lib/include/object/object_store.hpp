@@ -23,7 +23,6 @@
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
-#include "object/primary_key_assigner.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -430,8 +429,6 @@ private:
   t_observer_list observer_list_;
 
   object_deleter object_deleter_;
-
-  primary_key_assigner assigner_;
 };
 
 }

@@ -158,7 +158,7 @@ void table::insert(serializable *obj)
 {
   insert_->bind(obj);
   std::unique_ptr<result> res(insert_->execute());
-  long id = db_.last_inserted_id();
+//  long id = db_.last_inserted_id();
   // Todo: check insert result == 1
 }
 
@@ -166,7 +166,7 @@ void table::update(serializable *obj)
 {
   int pos = update_->bind(obj);
   // Todo: handle primary key
-  //update_->bind(pos, obj->id());
+//  update_->bind(pos, obj->id());
   std::unique_ptr<result> res(update_->execute());
   // Todo: check update result
 }

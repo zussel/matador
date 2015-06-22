@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "object/prototype_tree.hpp"
+#include "object/object_proxy.hpp"
 
 #include "object/object_exception.hpp"
 #include "object/object_store.hpp"
@@ -51,13 +52,15 @@ public:
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
     if (p) {
-      pi = node_.tree->insert(p, id);
+//      pi = node_.tree->insert(p, id);
+      pi = node_.tree->insert(p, p->classname());
       if (pi == node_.tree->end()) {
         throw object_exception("unknown prototype type");
       }
     } else {
       // insert new prototype
       // get prototype node of container item (child)
+      std::cout << "rb: inserting " << x.classname() << '\n';
       pi = node_.tree->find(x.classname());
       if (pi == node_.tree->end()) {
         // if there is no such prototype node
@@ -358,6 +361,7 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
      * remove typeid entry and add to
      * typeid map
      */
+    std::cout << "finishing uninitialized node " << type << '\n';
     node = i->second;
     node->initialize(this, producer, type, abstract);
     prototype_map_.erase(i);
@@ -456,18 +460,18 @@ int prototype_tree::depth(const prototype_node *node) const
 
 void prototype_tree::dump(std::ostream &out) const
 {
-//  const_prototype_iterator node = begin();
-//  out << "digraph G {\n";
-//  out << "\tgraph [fontsize=10]\n";
-//  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-//  out << "\tedge [color=\"#0c0c0c\"]\n";
-//  do {
-//    int d = depth(node.get());
-//    for (int i = 0; i < d; ++i) out << " ";
-//    out << *node.get();
-//    out.flush();
-//  } while (++node != end());
-//  out << "}" << std::endl;
+  const_prototype_iterator node = begin();
+  out << "digraph G {\n";
+  out << "\tgraph [fontsize=10]\n";
+  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+  out << "\tedge [color=\"#0c0c0c\"]\n";
+  do {
+    int d = depth(node.get());
+    for (int i = 0; i < d; ++i) out << " ";
+    out << "type: " << node->type << '\n';
+    out.flush();
+  } while (++node != end());
+  out << "}" << std::endl;
 
   out << "prototype map item keys\n";
   std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
@@ -496,7 +500,7 @@ void prototype_tree::remove(const char *type) {
 
 void prototype_tree::remove(const prototype_iterator &node)
 {
-  remove(node.get());
+  remove_prototype_node(node.get());
 }
 
 prototype_tree::iterator prototype_tree::begin()
@@ -525,8 +529,8 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) const {
     throw object_exception("invalid type (null)");
   }
   /*
- * first search in the prototype map
- */
+   * first search in the prototype map
+   */
   t_prototype_map::const_iterator i = prototype_map_.find(type);
   if (i == prototype_map_.end()) {
     /*

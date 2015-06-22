@@ -15,7 +15,6 @@ SET(OBJECT_SOURCES
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
   object/primary_key_serializer.cpp
-  object/primary_key_assigner.cpp
 )
 
 SET(OBJECT_INSTALL_HEADER
@@ -40,7 +39,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
   ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key_assigner.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
 )
 
 SET(OBJECT_HEADER
@@ -73,6 +72,7 @@ SET(OBJECT_HEADER
   ../include/object/primary_key_analyzer.hpp
   ../include/object/foreign_key_analyzer.hpp
   ../include/object/primary_key_serializer.hpp
+  ../include/object/primary_key_reader.hpp
 )
 
 SET(TOOLS_SOURCES

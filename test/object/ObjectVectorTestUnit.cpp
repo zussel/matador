@@ -25,10 +25,10 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 
 void ObjectVectorTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
-  ostore_.insert_prototype(new vector_object_producer<ItemRefVector>("ref_vector"), "item_ref_vector");
-  ostore_.insert_prototype(new vector_object_producer<IntVector>("int_vector"), "item_int_vector");
+//  ostore_.insert_prototype<Item>("item");
+//  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
+//  ostore_.insert_prototype(new vector_object_producer<ItemRefVector>("ref_vector"), "item_ref_vector");
+//  ostore_.insert_prototype(new vector_object_producer<IntVector>("int_vector"), "item_int_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 }
@@ -192,7 +192,10 @@ void ObjectVectorTestUnit::test_direct_ref_vector()
 
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;
-  
+
+  ostore_.prototypes().dump(std::cout);
+
+  return;
   album_ptr alb1 = ostore_.insert(new album("My Album"));
 
   UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");

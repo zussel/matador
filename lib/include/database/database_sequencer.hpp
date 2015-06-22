@@ -54,11 +54,11 @@ public:
   virtual void deserialize(object_reader &r);
   virtual void serialize(object_writer &w) const;
 
-  virtual long init();
-  virtual long reset(long id);
-  virtual long next();
-  virtual long current() const;
-  virtual long update(long id);
+  virtual unsigned long init();
+  virtual unsigned long reset(unsigned long id);
+  virtual unsigned long next();
+  virtual unsigned long current() const;
+  virtual unsigned long update(unsigned long id);
 
   virtual void create();
   virtual void load();
@@ -74,8 +74,8 @@ protected:
 
 private:
   database &db_;
-  long backup_;
-  long sequence_;
+  unsigned long backup_;
+  unsigned long sequence_;
   oos::varchar<64> name_;
   statement *update_;
 };

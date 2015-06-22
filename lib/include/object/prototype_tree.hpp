@@ -33,7 +33,6 @@
 #endif
 
 #include "object/prototype_node.hpp"
-#include "object/object_proxy.hpp"
 #include "object/object_producer.hpp"
 
 #include <string>
@@ -41,6 +40,7 @@
 
 namespace oos {
 
+class object_proxy;
 class const_prototype_iterator;
 
 /**
@@ -386,6 +386,18 @@ public:
   * @return Returns a prototype iterator.
   */
   iterator find(const char *type);
+
+  /**
+  * @brief Finds prototype node.
+  *
+  * Finds and returns prototype node const iterator identified
+  * by the given name or classname (typeid). If the
+  * prototype couldn't be found const_prototype_iterator end
+  * is returned.
+  *
+  * @param type Name or class name of the prototype
+  * @return Returns a prototype const iterator.
+  */
   const_iterator find(const char *type) const;
 
   /**
@@ -403,6 +415,17 @@ public:
   {
     return find(typeid(T).name());
   }
+
+  /**
+  * @brief Finds prototype node by template type.
+  * @tparam Template type.
+  *
+  * Finds and returns prototype node const iterator identified
+  * by the given template typeid. If the prototype couldn't
+  * be found const_prototype_iterator end is returned.
+  *
+  * @return Returns a prototype const iterator.
+  */
   template < class T >
   const_iterator find() const
   {

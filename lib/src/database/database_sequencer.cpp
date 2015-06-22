@@ -49,28 +49,28 @@ void database_sequencer::serialize(object_writer &w) const
   w.write("number", sequence_);
 }
 
-long database_sequencer::init()
+unsigned long database_sequencer::init()
 {
   return sequence_;
 }
 
-long database_sequencer::reset(long id)
+unsigned long database_sequencer::reset(unsigned long id)
 {
   sequence_ = id;
   return sequence_;
 }
 
-long database_sequencer::next()
+unsigned long database_sequencer::next()
 {
   return ++sequence_;
 }
 
-long database_sequencer::current() const
+unsigned long database_sequencer::current() const
 {
   return sequence_;
 }
 
-long database_sequencer::update(long id)
+unsigned long database_sequencer::update(unsigned long id)
 {
   if (id > sequence_) {
     sequence_ = id;
