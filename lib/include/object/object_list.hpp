@@ -80,7 +80,7 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(parent_ref).name();
+    return classname_.c_str();
   }
 
   /**
@@ -256,7 +256,12 @@ private:
 
 private:
   list_type object_list_;
+
+  static std::string classname_;
 };
+
+template < class S, class T, class CT >
+std::string object_list_base<S, T, CT>::classname_ = typeid(parent_ref).name();
 
 ///@cond OOS_DEV
 
@@ -363,10 +368,10 @@ public:
    * 
    * @return The class name of the item.
    */
-  virtual const char* classname() const
-  {
-    return typeid(parent_ref).name();
-  }
+//  virtual const char* classname() const
+//  {
+//    return typeid(parent_ref).name();
+//  }
 
   virtual iterator insert(iterator pos, const value_holder &x)
   {
