@@ -31,13 +31,13 @@ ObjectListTestUnit::initialize()
   ostore_.insert_prototype(new list_object_producer<IntList>("int_list"), "INT_LIST");
   ostore_.insert_prototype(new list_object_producer<ItemRefList>("ref_list"), "ITEM_REF_LIST");
   ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
-  ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
-  ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
-  ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
-  
+  ostore_.insert_prototype(new list_object_producer<LinkedIntList>("linked_int_list"), "LINKED_INT_LIST");
+  ostore_.insert_prototype(new list_object_producer<LinkedItemPtrList>("linked_ptr_list"), "LINKED_ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<LinkedItemRefList>("linked_ref_list"), "LINKED_ITEM_REF_LIST");
+
   ostore_.insert_prototype<person>("person", true);
-  ostore_.insert_prototype<employee, person>("employee");
   ostore_.insert_prototype<department>("department");
+  ostore_.insert_prototype<employee, person>("employee");
 }
 
 void
@@ -174,7 +174,7 @@ ObjectListTestUnit::test_linked_int_list()
 {
   typedef object_ptr<LinkedIntList> intlist_ptr;
   
-  intlist_ptr intlist = ostore_.insert(new LinkedIntList);
+  intlist_ptr intlist = ostore_.insert(new LinkedIntList("linked_int_list"));
 
   UNIT_ASSERT_EQUAL((int)intlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(intlist->empty(), "linked item list must be empty");
@@ -194,11 +194,11 @@ ObjectListTestUnit::test_linked_int_list()
   // remove an item
   LinkedIntList::iterator i = intlist->begin();
 
-//  unsigned long id_val = (*i)->id();
-//
-//  i = intlist->erase(i);
-//
-//  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
+  unsigned long id_val = (*i)->id();
+
+  i = intlist->erase(i);
+
+  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
   UNIT_ASSERT_EQUAL((int)intlist->size(), 4, "linked list size is invalid");
   
   // clear list
@@ -218,7 +218,7 @@ ObjectListTestUnit::test_linked_ref_list()
   typedef object_ptr<LinkedItemRefList> itemlist_ptr;
   typedef LinkedItemRefList::value_type item_ptr;
   
-  itemlist_ptr itemlist = ostore_.insert(new LinkedItemRefList);
+  itemlist_ptr itemlist = ostore_.insert(new LinkedItemRefList("linked_ref_list"));
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
@@ -243,11 +243,11 @@ ObjectListTestUnit::test_linked_ref_list()
   // remove an item
   LinkedItemRefList::iterator i = itemlist->begin();
 
-//  unsigned long id_val = (*i)->id();
-//
-//  i = itemlist->erase(i);
-//
-//  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
+  unsigned long id_val = (*i)->id();
+
+  i = itemlist->erase(i);
+
+  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "linked list size is invalid");
   
   // clear list
@@ -267,7 +267,7 @@ ObjectListTestUnit::test_linked_ptr_list()
   typedef object_ptr<LinkedItemPtrList> itemlist_ptr;
   typedef LinkedItemPtrList::value_type item_ptr;
   
-  itemlist_ptr itemlist = ostore_.insert(new LinkedItemPtrList);
+  itemlist_ptr itemlist = ostore_.insert(new LinkedItemPtrList("linked_ptr_list"));
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
@@ -292,11 +292,11 @@ ObjectListTestUnit::test_linked_ptr_list()
   // remove an item
   LinkedItemPtrList::iterator i = itemlist->begin();
 
-//  unsigned long id_val = (*i)->id();
-//
-//  i = itemlist->erase(i);
-//
-//  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
+  unsigned long id_val = (*i)->id();
+
+  i = itemlist->erase(i);
+
+  UNIT_ASSERT_NOT_EQUAL((*i)->id(), id_val, "returned iterator is the same as erased");
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 4, "linked list size is invalid");
   
   // clear list
