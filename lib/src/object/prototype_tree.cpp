@@ -60,7 +60,6 @@ public:
     } else {
       // insert new prototype
       // get prototype node of container item (child)
-      std::cout << "rb: inserting " << x.classname() << '\n';
       pi = node_.tree->find(x.classname());
       if (pi == node_.tree->end()) {
         // if there is no such prototype node
