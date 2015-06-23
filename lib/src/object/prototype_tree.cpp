@@ -360,7 +360,6 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
      * remove typeid entry and add to
      * typeid map
      */
-    std::cout << "finishing uninitialized node " << type << '\n';
     node = i->second;
     node->initialize(this, producer, type, abstract);
     prototype_map_.erase(i);
