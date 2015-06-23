@@ -700,6 +700,51 @@ public:
   bool empty() const { return emp_list_.empty(); }
 };
 
+class course;
+
+class student : public person
+{
+public:
+  typedef oos::object_ref<course> course_ref;
+  typedef oos::object_list<student, course_ref, false> course_list_t;
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    person::deserialize(deserializer);
+    deserializer.read("students", courses);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    person::serialize(serializer);
+    serializer.write("courses", courses);
+  }
+
+  course_list_t courses;
+};
+
+class course : public oos::object
+{
+public:
+  typedef oos::object_ref<student> student_ref;
+  typedef oos::object_list<course, student_ref, false> student_list_t;
+
+  virtual void deserialize(oos::object_reader &deserializer)
+  {
+    oos::object::deserialize(deserializer);
+    // Todo: handle many to man relation (create table, link serializable)
+    oos::read_many_to_many(deserializer, "student_course", "student_id", students);
+    deserializer.read("students", students);
+  }
+  virtual void serialize(oos::object_writer &serializer) const
+  {
+    oos::object::serialize(serializer);
+    serializer.write("students", students);
+  }
+
+  std::string name;
+  student_list_t students;
+};
+
 class album;
 
 class track : public oos::object
