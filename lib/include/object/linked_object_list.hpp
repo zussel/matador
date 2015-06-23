@@ -75,6 +75,7 @@ public:
   virtual void deserialize(object_reader &deserializer)
   {
     base_item::deserialize(deserializer);
+    deserializer.read("id", id_);
     deserializer.read("first", first_);
     deserializer.read("last", last_);
     deserializer.read("prev", prev_);
@@ -84,10 +85,16 @@ public:
   virtual void serialize(object_writer &serializer) const
   {
     base_item::serialize(serializer);
+    serializer.write("id", id_);
     serializer.write("first", first_);
     serializer.write("last", last_);
     serializer.write("prev", prev_);
     serializer.write("next", next_);
+  }
+
+  unsigned long id() const
+  {
+    return id_;
   }
 
   self_ref first() const
@@ -113,6 +120,7 @@ public:
 private:
   template < class V, class S > friend class linked_object_list;
 
+  primary_key<unsigned long> id_;
   self_ref first_;
   self_ref last_;
   self_ref prev_;
@@ -546,7 +554,7 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return classname_.c_str();
   }
 
   /**
@@ -612,7 +620,7 @@ public:
    */
   virtual size_type size() const
   {
-    return std::distance(begin(), end());
+    return (size_type)std::distance(begin(), end());
   }
 
   /**
@@ -797,7 +805,12 @@ private:
 
   item_ptr first_;
   item_ptr last_;
+
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string linked_object_list<S, T>::classname_ = typeid(item_ptr).name();
 
 }
 
