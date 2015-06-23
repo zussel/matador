@@ -100,8 +100,10 @@ void table::prepare()
 
   std::unique_ptr<serializable> o(node_.producer->create());
   insert_.reset(q.insert(o.get(), node_.type).prepare());
-  update_.reset(q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare());
-  delete_.reset(q.reset().remove(node_).where(cond("id").equal(0)).prepare());
+  if (node_.has_primary_key()) {
+    update_.reset(q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare());
+    delete_.reset(q.reset().remove(node_).where(cond("id").equal(0)).prepare());
+  }
   select_.reset(q.reset().select(node_).prepare());
 
   prepared_ = true;
