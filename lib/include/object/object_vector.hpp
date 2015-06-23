@@ -380,7 +380,7 @@ private:
 };
 
 template < class S, class T, class CT >
-std::string object_vector_base<T, S, CT>::classname_ = typeid(object_vector_base<T, S, CT>::item_type).name();
+std::string object_vector_base<S, T, CT>::classname_ = typeid(T).name();
 
 ///@cond OOS_DEV
 
