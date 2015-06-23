@@ -390,26 +390,30 @@ private:
   std::string relation_name_;
 };
 
-class LinkedIntList : public LinkedList<int>
-{
-public:
-  LinkedIntList() : LinkedList<int>("linked_int_list") {}
-  virtual ~LinkedIntList() {}
-};
+typedef LinkedList<int> LinkedIntList;
+typedef LinkedList<oos::object_ptr<Item>> LinkedItemPtrList;
+typedef LinkedList<oos::object_ref<Item>> LinkedItemRefList;
 
-class LinkedItemPtrList : public LinkedList<oos::object_ptr<Item> >
-{
-public:
-  LinkedItemPtrList() : LinkedList<oos::object_ptr<Item> >("linked_ptr_list") {}
-  virtual ~LinkedItemPtrList() {}
-};
+//class LinkedIntList : public LinkedList<int>
+//{
+//public:
+//  LinkedIntList() : LinkedList<int>("linked_int_list") {}
+//  virtual ~LinkedIntList() {}
+//};
 
-class LinkedItemRefList : public LinkedList<oos::object_ref<Item> >
-{
-public:
-  LinkedItemRefList() : LinkedList<oos::object_ref<Item> >("linked_ref_list") {}
-  virtual ~LinkedItemRefList() {}
-};
+//class LinkedItemPtrList : public LinkedList<oos::object_ptr<Item> >
+//{
+//public:
+//  LinkedItemPtrList() : LinkedList<oos::object_ptr<Item> >("linked_ptr_list") {}
+//  virtual ~LinkedItemPtrList() {}
+//};
+//
+//class LinkedItemRefList : public LinkedList<oos::object_ref<Item> >
+//{
+//public:
+//  LinkedItemRefList() : LinkedList<oos::object_ref<Item> >("linked_ref_list") {}
+//  virtual ~LinkedItemRefList() {}
+//};
 
 template < class T >
 class Vector : public oos::object
