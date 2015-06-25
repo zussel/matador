@@ -69,8 +69,13 @@ prototype_node::size() const
   return count;
 }
 
-void
-prototype_node::insert(prototype_node *child)
+
+void prototype_node::append(prototype_node *sibling)
+{
+
+}
+
+void prototype_node::insert(prototype_node *child)
 {
   child->parent = this;
   child->prev = last->prev;
@@ -79,7 +84,7 @@ prototype_node::insert(prototype_node *child)
   last->prev = child;
   // set depth
   child->depth = depth + 1;
-  // set serializable proxy pointer
+  // set object proxy pointer
   // 1. first
   if (op_first->next() == op_last) {
     // node hasn't any serializable (proxy)

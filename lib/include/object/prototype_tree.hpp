@@ -324,6 +324,19 @@ public:
   ~prototype_tree();
 
   /**
+   * Inserts a new serializable prototype into the prototype tree on root level.
+   * The prototype consists of a producer and a unique type name. To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   *
+   * @param producer The producer serializable produces a new serializable of a specific type.
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @return         Returns new inserted prototype iterator.
+   */
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false);
+
+  /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
@@ -335,7 +348,7 @@ public:
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "serializable");
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent);
 
   /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -594,10 +607,29 @@ private:
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
+  /**
+   * Get or create a prototype node
+   *
+   * @param producer The producer of the concrete object
+   * @param type The type name of the node
+   * @param abstract indicates wether the representing object is abstract
+   * @return The prototype node
+   */
+  prototype_node *acquire(object_base_producer *producer, const char *type, bool abstract);
+
+  /**
+   * Initializes a prototype node
+   *
+   * @param node The node to initialize
+   * @return iterator representing the prototype node
+   */
+  iterator initialize(prototype_node *node);
+
+private:
   friend class object_container;
   friend class object_store;
   friend class prototype_node;
-  friend class relation_builder;
+  friend class relation_resolver;
 
   prototype_node *first_;
   prototype_node *last_;

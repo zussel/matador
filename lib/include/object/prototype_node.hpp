@@ -117,7 +117,14 @@ public:
    * @return The number of objects.
    */
   unsigned long size() const;
-  
+
+  /**
+   * Appends the given prototype node as a sibling
+   * on the same level.
+   *
+   * @params sibling The new sibling node.
+   */
+  void append(prototype_node *sibling);
   /**
    * Appends the given prototype node to the list of children.
    * 

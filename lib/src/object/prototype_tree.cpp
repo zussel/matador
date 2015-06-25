@@ -28,18 +28,18 @@
 
 namespace oos {
 
-class relation_builder : public generic_object_writer<relation_builder>
+class relation_resolver : public generic_object_writer<relation_resolver>
 {
 public:
   typedef std::list<std::string> string_list_t;
   typedef string_list_t::const_iterator const_iterator;
 
 public:
-  relation_builder(prototype_node &node)
-    : generic_object_writer<relation_builder>(this)
+  relation_resolver(prototype_node &node)
+    : generic_object_writer<relation_resolver>(this)
     , node_(node)
   {}
-  virtual ~relation_builder() {}
+  virtual ~relation_resolver() {}
 
   void build(serializable *o) { o->serialize(*this); }
   template < class T >
@@ -279,6 +279,9 @@ prototype_tree::prototype_tree()
   : first_(new prototype_node)
   , last_(new prototype_node)
 {
+  // empty tree where first points to last and
+  // last points to first sentinel
+
   prototype_node *root = new prototype_node(this, new object_producer<object>, "object", true);
   object_proxy *first = new object_proxy(nullptr);
   object_proxy *last = new object_proxy(nullptr);
@@ -312,8 +315,24 @@ prototype_tree::~prototype_tree()
   delete first_;
 }
 
+prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract)
+{
+  if (type == nullptr) {
+    throw object_exception("type name is nullptr");
+  }
 
-prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent) {
+  prototype_node *node = acquire(producer, type, abstract);
+
+  first_->append(node);
+
+  return initialize(node);
+}
+
+prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent)
+{
+  if (parent == nullptr) {
+    throw object_exception("parent name is nullptr");
+  }
   // set node to root node
   prototype_node *parent_node = find_prototype_node(parent);
   if (!parent_node) {
@@ -322,70 +341,11 @@ prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, 
   /*
    * try to insert new prototype node
    */
-  prototype_node *node = 0;
-  t_prototype_map::iterator i = prototype_map_.find(type);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << type);
-  }
-
-  /* unknown type name try for typeid
-   * (unfinished prototype)
-   */
-  i = prototype_map_.find(producer->classname());
-  if (i == prototype_map_.end()) {
-    /*
-     * no typeid found, seems to be
-     * a new type
-     * to be sure check in typeid map
-     */
-    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
-    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-      /* unexpected found the
-       * typeid check for type
-       */
-      /* type found in typeid map
-       * throw exception
-       */
-      throw object_exception("unexpectly found prototype");
-    } else {
-      /* insert new prototype and add to
-       * typeid map
-       */
-      // create new one
-      node = new prototype_node(this, producer, type, abstract);
-    }
-  } else {
-    /* prototype is unfinished,
-     * finish it, insert by type name,
-     * remove typeid entry and add to
-     * typeid map
-     */
-    node = i->second;
-    node->initialize(this, producer, type, abstract);
-    prototype_map_.erase(i);
-  }
+  prototype_node *node = acquire(producer, type, abstract);
 
   parent_node->insert(node);
 
-  // store prototype in map
-  // Todo: check return value
-  prototype_map_.insert(std::make_pair(type, node)).first;
-  typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
-
-  // Analyze primary and foreign keys of node
-  primary_key_analyzer pk_analyzer(*node);
-  pk_analyzer.analyze();
-
-  // Check if nodes serializable has 'to-many' relations
-  std::unique_ptr<serializable> o(producer->create());
-  relation_builder rb(*node);
-  rb.build(o.get());
-
-  // Analyze primary and foreign keys of node
-  foreign_key_analyzer fk_analyzer(*node);
-  fk_analyzer.analyze();
-
-  return prototype_iterator(node);
+  return initialize(node);
 }
 
 prototype_tree::iterator prototype_tree::find(const char *type) {
@@ -635,6 +595,78 @@ void prototype_tree::adjust_right_marker(prototype_node *root, object_proxy* old
     node = node->next_node();
   }
 //  cout << "adjust_right_marker FINISH\n" << flush;
+}
+
+prototype_node *prototype_tree::acquire(object_base_producer *producer, const char *type, bool abstract)
+{
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prototype_map_.find(type);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+
+  /* unknown type name try for typeid
+   * (unfinished prototype)
+   */
+  i = prototype_map_.find(producer->classname());
+  if (i == prototype_map_.end()) {
+    /*
+     * no typeid found, seems to be
+     * a new type
+     * to be sure check in typeid map
+     */
+    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
+    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
+      /* unexpected found the
+       * typeid check for type
+       */
+      /* type found in typeid map
+       * throw exception
+       */
+      throw object_exception("unexpectly found prototype");
+    } else {
+      /* insert new prototype and add to
+       * typeid map
+       */
+      // create new one
+      node = new prototype_node(this, producer, type, abstract);
+    }
+  } else {
+    /* prototype is unfinished,
+     * finish it, insert by type name,
+     * remove typeid entry and add to
+     * typeid map
+     */
+    node = i->second;
+    node->initialize(this, producer, type, abstract);
+    prototype_map_.erase(i);
+  }
+
+  return node;
+}
+
+
+prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
+{
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(type, node)).first;
+  typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
+
+  // Analyze primary and foreign keys of node
+  primary_key_analyzer pk_analyzer(*node);
+  pk_analyzer.analyze();
+
+  // Check if nodes serializable has 'to-many' relations
+  std::unique_ptr<serializable> o(producer->create());
+  relation_resolver rb(*node);
+  rb.build(o.get());
+
+  // Analyze primary and foreign keys of node
+  foreign_key_analyzer fk_analyzer(*node);
+  fk_analyzer.analyze();
+
+  return prototype_iterator(node);
 }
 
 }
