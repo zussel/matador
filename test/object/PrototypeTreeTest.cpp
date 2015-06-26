@@ -156,8 +156,8 @@ void PrototypeTreeTestUnit::test_clear()
 void PrototypeTreeTestUnit::test_container()
 {
   prototype_tree ptree;
-  ptree.insert(new object_producer<track>, "track", false);
   ptree.insert(new object_producer<album>, "album", false);
+  ptree.insert(new object_producer<track>, "track", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
 }
@@ -172,7 +172,6 @@ void PrototypeTreeTestUnit::test_decrement()
   prototype_iterator i = ptree.end();
 
   --i;
-  --i;
 
   UNIT_ASSERT_TRUE(i == ptree.begin(), "iterator must be begin");
 }
@@ -184,15 +183,16 @@ void PrototypeTreeTestUnit::test_count() {
   ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
   ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)5, "prototype size must be one (5)");
+  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)4, "prototype size must be one (5)");
 }
 
 void PrototypeTreeTestUnit::test_child_of()
 {
   prototype_tree ptree;
-  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<object>, "object", true);
+  ptree.insert(new object_producer<Item>, "item", false, "object");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (1)");
 
   prototype_iterator root = ptree.begin();
 
@@ -217,12 +217,12 @@ void PrototypeTreeTestUnit::test_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
 
   first = ptree.begin();
   ++first;
@@ -245,18 +245,18 @@ void PrototypeTreeTestUnit::test_const_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
 
   first = ptree.begin();
   first++;
-  UNIT_ASSERT_EQUAL(first->type, "item", "type must be 'item'");
-  UNIT_ASSERT_EQUAL((*first).type, "item", "type must be 'item'");
-  UNIT_ASSERT_EQUAL(first.get()->type, "item", "type must be 'item'");
+  UNIT_ASSERT_EQUAL(first->type, "item_a", "type must be 'item_a'");
+  UNIT_ASSERT_EQUAL((*first).type, "item_a", "type must be 'item_a'");
+  UNIT_ASSERT_EQUAL(first.get()->type, "item_a", "type must be 'item_a'");
   first--;
 
   UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");

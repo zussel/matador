@@ -611,7 +611,7 @@ private:
 };
 
 template < typename T >
-void read_many_to_many(object_reader &reader, const std::string &relation, const std::string &id, T &container)
+void read_many_to_many(object_reader &/*reader*/, const std::string &/*relation*/, const std::string &/*id*/, T &/*container*/)
 {
 
 }

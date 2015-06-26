@@ -316,6 +316,16 @@ public:
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
+  template < class X >
+  void assert_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (a != b) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
@@ -328,6 +338,15 @@ public:
   }
 
 #ifndef OOS_DOXYGEN_DOC
+  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a.c_str(), b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;

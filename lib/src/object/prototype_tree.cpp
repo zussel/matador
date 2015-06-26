@@ -281,69 +281,58 @@ prototype_tree::prototype_tree()
 {
   // empty tree where first points to last and
   // last points to first sentinel
+  first_->next = last_;
+  last_->prev = first_;
 
-  prototype_node *root = new prototype_node(this, new object_producer<object>, "object", true);
-  object_proxy *first = new object_proxy(nullptr);
-  object_proxy *last = new object_proxy(nullptr);
-
-  // init serializable proxies
-  root->op_first = first;
-  root->op_marker = last;
-  root->op_last = last;
-  root->op_first->next_ = root->op_last;
-  root->op_last->prev_ = root->op_first;
-
-  // link nodes together
-  first_->next = root;
-  root->prev = first_;
-  root->next = last_;
-  last_->prev = root;
-
-  // add to maps
-  prototype_map_.insert(std::make_pair("serializable", root));
-  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("serializable", root));
+//  prototype_node *root = new prototype_node(this, new object_producer<object>, "object", true);
+//  object_proxy *first = new object_proxy(nullptr);
+//  object_proxy *last = new object_proxy(nullptr);
+//
+//  // init serializable proxies
+//  root->op_first = first;
+//  root->op_marker = last;
+//  root->op_last = last;
+//  root->op_first->next_ = root->op_last;
+//  root->op_last->prev_ = root->op_first;
+//
+//  // link nodes together
+//  first_->next = root;
+//  root->prev = first_;
+//  root->next = last_;
+//  last_->prev = root;
+//
+//  // add to maps
+//  prototype_map_.insert(std::make_pair("serializable", root));
+//  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("serializable", root));
 }
 
 prototype_tree::~prototype_tree()
 {
   clear();
-  prototype_node *root = first_->next;
-  delete root->op_first;
-  delete root->op_last;
-  delete root;
   delete last_;
   delete first_;
 }
 
-prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract)
-{
-  if (type == nullptr) {
-    throw object_exception("type name is nullptr");
-  }
-
-  prototype_node *node = acquire(producer, type, abstract);
-
-  first_->append(node);
-
-  return initialize(node);
-}
-
 prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent)
 {
-  if (parent == nullptr) {
-    throw object_exception("parent name is nullptr");
-  }
   // set node to root node
-  prototype_node *parent_node = find_prototype_node(parent);
-  if (!parent_node) {
-    throw object_exception("unknown prototype type");
+  prototype_node *parent_node = nullptr;
+  if (parent != nullptr) {
+    parent_node = find_prototype_node(parent);
+    if (!parent_node) {
+      throw object_exception("unknown prototype type");
+    }
   }
   /*
    * try to insert new prototype node
    */
   prototype_node *node = acquire(producer, type, abstract);
 
-  parent_node->insert(node);
+  if (parent != nullptr) {
+    parent_node->insert(node);
+  } else {
+    last_->prev->append(node);
+  }
 
   return initialize(node);
 }
@@ -365,12 +354,12 @@ prototype_tree::const_iterator prototype_tree::find(const char *type) const {
 }
 
 bool prototype_tree::empty() const {
-  return first_->next == last_->prev;
+  return first_->next == last_;
 }
 
 
 size_t prototype_tree::size() const {
-  return (size_t) (std::distance(begin(), end()) - 1);
+  return (size_t) (std::distance(begin(), end()));
 }
 
 size_t prototype_tree::prototype_count() const
@@ -380,9 +369,8 @@ size_t prototype_tree::prototype_count() const
 
 void prototype_tree::clear()
 {
-  prototype_node *root = first_->next;
-  while(root->has_children()) {
-    remove_prototype_node(root->first->next);
+  while (first_->next != last_) {
+    remove_prototype_node(first_->next);
   }
 }
 
@@ -528,7 +516,7 @@ prototype_node* prototype_tree::remove_prototype_node(prototype_node *node) {
     remove_prototype_node(node->first->next);
   }
   // and objects they're containing
-  node->clear(*this, false);
+  node->clear(false);
   // delete prototype node as well
   // unlink node
   node->unlink();
@@ -560,7 +548,6 @@ void prototype_tree::adjust_left_marker(prototype_node *root, object_proxy *old_
   // store start node
   prototype_node *node = root->previous_node();
   // get previous node
-  //while (node != first_) {
   while (node) {
     if (node->op_marker == old_proxy) {
       node->op_marker = new_proxy;
@@ -574,27 +561,14 @@ void prototype_tree::adjust_left_marker(prototype_node *root, object_proxy *old_
 
 void prototype_tree::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
 {
-  using std::cout;
-  using std::flush;
-
-//  cout << "adjust_right_marker START\n" << flush;
-//  cout << "adjust_right_marker old_proxy: " << old_proxy << "\n" << flush;
-//  cout << "adjust_right_marker new_proxy: " << new_proxy << "\n" << flush;
   // store start node
   prototype_node *node = root->next_node();
-//  cout << "adjust_right_marker initial node: " << *node << "\n" << flush;
-  // get previous node
-//  node = node->next_node();
-  //bool first = true;
-//  while (node != last_) {
   while (node) {
-//    cout << "adjust_right_marker next node: " << *node << "\n" << flush;
     if (node->op_first == old_proxy) {
       node->op_first = new_proxy;
     }
     node = node->next_node();
   }
-//  cout << "adjust_right_marker FINISH\n" << flush;
 }
 
 prototype_node *prototype_tree::acquire(object_base_producer *producer, const char *type, bool abstract)
@@ -650,15 +624,15 @@ prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
 {
   // store prototype in map
   // Todo: check return value
-  prototype_map_.insert(std::make_pair(type, node)).first;
-  typeid_prototype_map_[producer->classname()].insert(std::make_pair(type, node));
+  prototype_map_.insert(std::make_pair(node->type, node)).first;
+  typeid_prototype_map_[node->producer->classname()].insert(std::make_pair(node->type, node));
 
   // Analyze primary and foreign keys of node
   primary_key_analyzer pk_analyzer(*node);
   pk_analyzer.analyze();
 
   // Check if nodes serializable has 'to-many' relations
-  std::unique_ptr<serializable> o(producer->create());
+  std::unique_ptr<serializable> o(node->producer->create());
   relation_resolver rb(*node);
   rb.build(o.get());
 

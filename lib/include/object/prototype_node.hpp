@@ -152,10 +152,9 @@ public:
    * remaining objects the corresponding
    * prototype tree must be passed
    *
-   * @param tree The corresponding prototype tree
    * @param recursive Indicates wether all or only nodes objects are deleted
    */
-  void clear(prototype_tree &tree, bool recursive);
+  void clear(bool recursive);
 
   /**
    * Unlinks node from list.

@@ -72,7 +72,34 @@ prototype_node::size() const
 
 void prototype_node::append(prototype_node *sibling)
 {
+  sibling->parent = parent;
 
+  sibling->prev = this;
+  sibling->next = next;
+  next = sibling;
+  sibling->next->prev = sibling;
+  sibling->depth = depth;
+
+  if (!parent) {
+    sibling->op_first = new object_proxy(nullptr);
+    sibling->op_last = sibling->op_marker = new object_proxy(nullptr);
+    sibling->op_first->next_ = sibling->op_last;
+    sibling->op_last->prev_ = sibling->op_first;
+  } else {
+    throw object_exception("");
+    // 1. first
+//    if (op_first->next() == op_last) {
+//      // node hasn't any serializable (proxy)
+//      sibling->op_first = op_first;
+//    } else {
+//      // node has some objects (proxy)
+//      sibling->op_first = op_last->prev_;
+//    }
+//    // 2. marker
+//    sibling->op_marker = op_last;
+//    // 3. last
+//    sibling->op_last = op_last;
+  }
 }
 
 void prototype_node::insert(prototype_node *child)
@@ -165,11 +192,11 @@ void prototype_node::remove(object_proxy *proxy)
   --count;
 }
 
-void prototype_node::clear(prototype_tree &tree, bool recursive)
+void prototype_node::clear(bool recursive)
 {
   if (!empty(true)) {
-    tree.adjust_left_marker(this, op_first->next_, op_marker);
-    tree.adjust_right_marker(this, op_marker->prev_, op_first);
+    tree->adjust_left_marker(this, op_first->next_, op_marker);
+    tree->adjust_right_marker(this, op_marker->prev_, op_first);
 
     while (op_first->next() != op_marker) {
       object_proxy *op = op_first->next_;
@@ -185,7 +212,7 @@ void prototype_node::clear(prototype_tree &tree, bool recursive)
     prototype_node *current = first->next;
 
     while (current != last.get()) {
-      current->clear(tree, recursive);
+      current->clear(recursive);
       current = current->next;
     }
   }

@@ -324,19 +324,6 @@ public:
   ~prototype_tree();
 
   /**
-   * Inserts a new serializable prototype into the prototype tree on root level.
-   * The prototype consists of a producer and a unique type name. To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given.
-   *
-   * @param producer The producer serializable produces a new serializable of a specific type.
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @return         Returns new inserted prototype iterator.
-   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false);
-
-  /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
@@ -348,7 +335,7 @@ public:
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent);
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -634,9 +621,9 @@ private:
   prototype_node *first_;
   prototype_node *last_;
 
-  // name to prototype map
+  // name to prototype node map
   t_prototype_map prototype_map_;
-
+  // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 };
 

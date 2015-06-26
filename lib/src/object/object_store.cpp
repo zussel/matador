@@ -95,7 +95,7 @@ void object_store::clear(bool full)
     prototype_tree_.clear();
   } else {
     // only delete objects
-    prototype_tree_.begin()->clear(prototype_tree_, true);
+    prototype_tree_.begin()->clear(true);
   }
   object_map_.clear();
 }
