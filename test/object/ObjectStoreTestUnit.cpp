@@ -4,6 +4,7 @@
 #include "object/object_expression.hpp"
 #include "object/object_serializer.hpp"
 #include "object/object_view.hpp"
+#include "object/generic_access.hpp"
 
 #include "tools/algorithm.hpp"
 #include "tools/date.hpp"
@@ -46,13 +47,6 @@ ObjectStoreTestUnit::~ObjectStoreTestUnit()
 {}
 
 typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
-
-//class ObjectItemPtrList : public List<oos::object_ptr<ObjectItem<Item> > >
-//{
-//public:
-//  ObjectItemPtrList() : List<oos::object_ptr<ObjectItem<Item> > >("object_ptr_list") {}
-//  virtual ~ObjectItemPtrList() {}
-//};
 
 void
 ObjectStoreTestUnit::initialize()
@@ -320,7 +314,10 @@ ObjectStoreTestUnit::set_test()
   Item *i = new Item("item", 4711);
   
   std::string one("1");
-  i->set("val_int", one);
+  oos::set(i, "val_int", one);
+
+  UNIT_ASSERT_EQUAL(1, i->get_int(), "value must be one (1)");
+
   delete i;
 }
 
@@ -628,7 +625,7 @@ ObjectStoreTestUnit::clear_test()
   first = ostore_.begin();
   last = ostore_.end();
 
-  UNIT_ASSERT_TRUE(++first == last, "prototype iterator must be the same");
+  UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
 void
@@ -649,32 +646,34 @@ ObjectStoreTestUnit::generic_test()
   oos::varchar<64> str("The answer is 42");
 
   Item *item = new Item();
+
+  oos::set(item, "val_char", c);
   
-  item->set("val_char", c);
-  item->set("val_float", f);
-  item->set("val_double", d);
-  item->set("val_short", s);
-  item->set("val_int", i);
-  item->set("val_long", l);
-  item->set("val_unsigned_short", us);
-  item->set("val_unsigned_int", ui);
-  item->set("val_unsigned_long", ul);
-  item->set("val_bool", b);
+  oos::set(item, "val_char", c);
+  oos::set(item, "val_float", f);
+  oos::set(item, "val_double", d);
+  oos::set(item, "val_short", s);
+  oos::set(item, "val_int", i);
+  oos::set(item, "val_long", l);
+  oos::set(item, "val_unsigned_short", us);
+  oos::set(item, "val_unsigned_int", ui);
+  oos::set(item, "val_unsigned_long", ul);
+  oos::set(item, "val_bool", b);
 
-  item->set("val_cstr", cstr);
+  oos::set(item, "val_cstr", cstr);
 
-  item->set("val_string", title);
-  item->set("val_varchar", str);
+  oos::set(item, "val_string", title);
+  oos::set(item, "val_varchar", str);
   /* get float value into string
    * with precision 2
    */
-  item->get("val_float", str, 2);
+  oos::get(item, "val_float", str, 2);
   UNIT_ASSERT_EQUAL(str, "1.55", "float string is invalid");
 
-  item->get("val_int", str);
+  oos::get(item, "val_int", str);
   UNIT_ASSERT_EQUAL(str, "-98765", "float string is invalid");
 
-  item->get("val_double", str, 3);
+  oos::get(item, "val_double", str, 3);
   UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
 
   delete item;

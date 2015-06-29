@@ -102,8 +102,11 @@ void object_store::clear(bool full)
 
 bool object_store::empty() const
 {
-  const_prototype_iterator root = prototype_tree_.begin();
-  return root->op_first->next_ == root->op_last;
+  bool is_empty = true;
+  prototype_tree_.for_each_root_node([&](const_prototype_iterator i) {
+    is_empty &= i->empty(false);
+  });
+  return is_empty;
 }
 
 void object_store::dump_objects(std::ostream &out) const

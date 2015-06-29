@@ -18,7 +18,6 @@
 #ifndef OBJECT_VECTOR_HPP
 #define OBJECT_VECTOR_HPP
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"

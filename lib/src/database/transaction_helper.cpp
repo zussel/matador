@@ -21,7 +21,6 @@
 #include "tools/byte_buffer.hpp"
 
 #include "object/object_store.hpp"
-#include "object/object.hpp"
 
 namespace oos {
 

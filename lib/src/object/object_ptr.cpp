@@ -17,7 +17,6 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object.hpp"
 
 using namespace std;
 

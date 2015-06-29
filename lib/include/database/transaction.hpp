@@ -40,6 +40,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <object/object_proxy.hpp>
 
 namespace oos {
 
@@ -139,7 +140,7 @@ private:
   friend class object_store;
   friend class session;
   
-  void backup(action *a, const serializable *o);
+  void backup(action *a, const object_proxy *proxy);
   void restore(action *a);
 
   void cleanup();

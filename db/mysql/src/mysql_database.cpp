@@ -25,8 +25,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
-#include "object/object.hpp"
-
 #include <sstream>
 
 using namespace std::placeholders;

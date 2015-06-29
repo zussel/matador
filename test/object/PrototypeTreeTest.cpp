@@ -189,18 +189,18 @@ void PrototypeTreeTestUnit::test_count() {
 void PrototypeTreeTestUnit::test_child_of()
 {
   prototype_tree ptree;
-  ptree.insert(new object_producer<object>, "object", true);
-  ptree.insert(new object_producer<Item>, "item", false, "object");
+  ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (1)");
 
   prototype_iterator root = ptree.begin();
 
-  prototype_iterator item = ptree.find<Item>();
+  prototype_iterator item_a = ptree.find<ItemA>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(item.get()), "root must not be child of node");
+  UNIT_ASSERT_FALSE(root->is_child_of(item_a.get()), "root must not be child of node");
 
-  UNIT_ASSERT_TRUE(item->is_child_of(root.get()), "node must be child of root");
+  UNIT_ASSERT_TRUE(item_a->is_child_of(root.get()), "node must be child of root");
 }
 
 void PrototypeTreeTestUnit::test_traverse()

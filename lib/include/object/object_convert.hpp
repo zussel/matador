@@ -31,7 +31,6 @@
   #define OOS_API
 #endif
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 
 #include "tools/convert.hpp"

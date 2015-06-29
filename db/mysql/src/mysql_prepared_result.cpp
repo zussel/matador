@@ -2,9 +2,12 @@
 #include "mysql_column_fetcher.hpp"
 #include "mysql_exception.hpp"
 
+#include "tools/varchar.hpp"
+
 #include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
-#include "object/object.hpp"
+
+#include <cstring>
 
 namespace oos {
 

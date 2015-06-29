@@ -1,8 +1,12 @@
 #include "sqlite_prepared_result.hpp"
 
-#include "object/object.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/varchar.hpp"
 
-#include <ostream>
+#include "object/object_ptr.hpp"
+
+#include <cstring>
 
 #include <sqlite3.h>
 

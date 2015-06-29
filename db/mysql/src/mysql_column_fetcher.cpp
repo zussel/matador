@@ -1,6 +1,11 @@
 #include "mysql_column_fetcher.hpp"
 
-#include "object/object.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/varchar.hpp"
+
+#include "object/object_ptr.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 

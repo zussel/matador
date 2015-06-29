@@ -2,6 +2,7 @@
 #define ATTRIBUTE_COUNTER_HPP
 
 #include "object/object_atomizer.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 
@@ -38,7 +39,7 @@ public:
    *        container are considered or not.
    * @return The number of attributes.
    */
-  unsigned long count(object *o, bool with_container = false)
+  unsigned long count(serializable *o, bool with_container = false)
   {
     count_ = 0;
     with_container_ = with_container;

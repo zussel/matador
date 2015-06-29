@@ -4,6 +4,7 @@
 
 #include "object/object_vector.hpp"
 #include "object/object_view.hpp"
+#include "object/generic_access.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -52,7 +53,7 @@ void ObjectVectorTestUnit::test_ref_vector()
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new Item(name.str()));
-    item->set("val_float", 3.4f);
+    oos::set(item, "val_float", 3.4f);
 
     itemvector->push_back(item);
   }

@@ -173,20 +173,21 @@ void DatabaseTestUnit::test_datatypes()
 
 void DatabaseTestUnit::test_primary_key()
 {
-  class pktest : public oos::object
+  class pktest : public oos::serializable
   {
   public:
     pktest() {}
     virtual ~pktest() {}
 
     virtual void deserialize(oos::object_reader &r) {
-      object::deserialize(r);
+      r.read("id", id);
       r.read("name", name);
     }
     virtual void serialize(oos::object_writer &w) const {
-      object::serialize(w);
+      w.write("id", id);
       w.write("name", name);
     }
+    oos::primary_key<unsigned long> id;
     std::string name;
   };
 

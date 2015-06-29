@@ -5,7 +5,6 @@
 
 #include "tools/varchar.hpp"
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 

@@ -21,7 +21,6 @@
 #include "database/row.hpp"
 
 #include "object/object_ptr.hpp"
-#include "object/object.hpp"
 
 namespace oos {
 

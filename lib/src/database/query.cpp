@@ -25,9 +25,7 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 

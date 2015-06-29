@@ -25,6 +25,7 @@
 
 #include <iterator>
 #include <algorithm>
+#include <iostream>
 
 namespace oos {
 
@@ -49,6 +50,8 @@ public:
 
   void write_value(const char *id, const object_container &x)
   {
+//    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
+
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
     if (p) {
@@ -75,9 +78,9 @@ public:
     pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
-  void write_value(const char /* *id*/, const object_base_ptr &/*x*/)
+  void write_value(const char *id, const object_base_ptr &x)
   {
-//    std::cout << "relation builder: write serializable " << id << " of type " << x.type() << "\n";
+//    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
   }
 
 private:

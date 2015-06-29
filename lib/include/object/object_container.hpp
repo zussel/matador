@@ -18,12 +18,11 @@
 #ifndef OBJECT_CONTAINER_HPP
 #define OBJECT_CONTAINER_HPP
 
-#include "object/object.hpp"
+#include "object/serializable.hpp"
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
 #include <functional>
-#include <database/table_reader.hpp>
 
 namespace oos {
 

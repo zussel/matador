@@ -24,8 +24,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
-#include "object/object.hpp"
-
 #include "tools/string.hpp"
 
 using namespace std::placeholders;

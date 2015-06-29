@@ -108,7 +108,7 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "serializable");
+	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
    * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -125,7 +125,7 @@ public:
   template < class T >
   prototype_iterator insert_prototype(const char *type, bool abstract = false)
   {
-    return insert_prototype(new object_producer<T>, type, abstract, "serializable");
+    return insert_prototype(new object_producer<T>, type, abstract);
   }
 
   /**

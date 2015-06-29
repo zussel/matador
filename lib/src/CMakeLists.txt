@@ -1,5 +1,4 @@
 SET(OBJECT_SOURCES
-  object/object.cpp
   object/object_creator.cpp
   object/object_deleter.cpp
   object/object_container.cpp
@@ -19,6 +18,7 @@ SET(OBJECT_SOURCES
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
   ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
@@ -45,7 +45,7 @@ SET(OBJECT_INSTALL_HEADER
 SET(OBJECT_HEADER
   ../include/object/attribute_counter.hpp
   ../include/object/attribute_serializer.hpp
-  ../include/object/object.hpp
+  ../include/object/generic_access.hpp
   ../include/object/object_exception.hpp
   ../include/object/object_ptr.hpp
   ../include/object/object_store.hpp

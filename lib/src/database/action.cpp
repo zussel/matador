@@ -16,7 +16,6 @@
  */
 
 #include "database/action.hpp"
-#include "object/object.hpp"
 
 #include <algorithm>
 

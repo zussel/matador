@@ -15,14 +15,16 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <tools/date.hpp>
-#include <tools/time.hpp>
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/varchar.hpp"
+
 #include "object/object_serializer.hpp"
-#include "object/object.hpp"
+#include "object/serializable.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
 
-#include "tools/byte_buffer.hpp"
+#include <cstring>
 
 using namespace std::placeholders;
 using namespace std;

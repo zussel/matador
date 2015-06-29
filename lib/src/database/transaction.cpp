@@ -21,11 +21,6 @@
 #include "database/database.hpp"
 #include "database/database_exception.hpp"
 
-#include "object/object.hpp"
-
-#include <sstream>
-#include <memory>
-
 using namespace std;
 
 namespace oos {
@@ -68,7 +63,7 @@ void transaction::on_update(object_proxy *proxy)
    * 
    *****************/
   if (id_map_.find(proxy->id()) == id_map_.end()) {
-    backup(new update_action(proxy), proxy->obj());
+    backup(new update_action(proxy), proxy);
   } else {
     // An serializable with that id already exists
     // do nothing because the serializable is already
@@ -89,7 +84,7 @@ void transaction::on_delete(object_proxy *proxy)
 
   id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    backup(new delete_action(proxy->node()->type.c_str(), proxy->id()), proxy->obj());
+    backup(new delete_action(proxy->node()->type.c_str(), proxy->id()), proxy);
   } else {
     action_remover ar(action_list_);
     ar.remove(i->second, proxy);
@@ -184,7 +179,7 @@ transaction::db() const
 }
 
 void
-transaction::backup(action *a, const serializable *o)
+transaction::backup(action *a, const object_proxy *proxy)
 {
   /*************
    * 
@@ -193,10 +188,9 @@ transaction::backup(action *a, const serializable *o)
    * 
    *************/
   backup_visitor bv;
-  bv.backup(a, o, &object_buffer_);
+  bv.backup(a, proxy->obj(), &object_buffer_);
   iterator i = action_list_.insert(action_list_.end(), a);
-  // Todo: replace primary key by object store id
-//  id_map_.insert(std::make_pair(o->id(), i));
+  id_map_.insert(std::make_pair(proxy->id(), i));
 }
 
 void transaction::restore(action *a)

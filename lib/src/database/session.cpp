@@ -20,14 +20,7 @@
 #include "database/database_factory.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/action.hpp"
-#include "database/transaction.hpp"
 #include "database/memory_database.hpp"
-
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
-
-#include <stdexcept>
 
 using namespace std;
 

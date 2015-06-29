@@ -531,12 +531,21 @@ public:
   iterator end();
 
   /**
-  * Return the last prototype node.
-  *
-  * @return The last prototype node iterator.
-  */
+   * Return the last prototype node.
+   *
+   * @return The last prototype node iterator.
+   */
   const_iterator end() const;
 
+  template < typename P >
+  void for_each_root_node(P pred) const
+  {
+    prototype_node *node = first_->next;
+    while (node != last_) {
+      pred(const_prototype_iterator(node));
+      node = node->next;
+    }
+  }
 private:
   typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
   // typeid -> [name -> prototype]
