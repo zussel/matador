@@ -90,7 +90,8 @@ void restore_visitor::visit(delete_action *a)
     // data from buffer into serializable
     serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
     // insert serializable
-    ostore_->insert_object(oproxy->obj(), false);
+    ostore_->insert_proxy(oproxy, false, false);
+//    ostore_->insert_object(oproxy->obj(), false);
   } else {
     // data from buffer into serializable
     serializer_.deserialize(oproxy->obj(), buffer_, ostore_);

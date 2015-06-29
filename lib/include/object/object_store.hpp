@@ -379,11 +379,12 @@ public:
   object_proxy *find_proxy(unsigned long id) const;
 
   /**
-  * @brief Inserts a new proxy into the serializable store
-  *
-  * @param oproxy Object proxy to insert
-  */
-  void insert_proxy(object_proxy *oproxy);
+   * @brief Inserts a new proxy into the serializable store
+   *
+   * @param oproxy Object proxy to insert
+   * @param is_new Proxy is a new not inserted proxy, skip object store check
+   */
+  void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);
 
   /**
    * @brief Exchange the sequencer strategy.

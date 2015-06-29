@@ -364,13 +364,13 @@ bool object_store::delete_proxy(unsigned long id)
 }
 
 
-void object_store::insert_proxy(object_proxy *oproxy)
+void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
 {
   if (!oproxy->obj()) {
     throw object_exception("serializable of proxy is null pointer");
   }
 
-  if (oproxy->ostore()) {
+  if (is_new && oproxy->ostore()) {
     throw object_exception("serializable proxy already in serializable store");
   }
 
@@ -394,9 +394,9 @@ void object_store::insert_proxy(object_proxy *oproxy)
   object_creator oc(oproxy, *this, true);
   oproxy->obj()->deserialize(oc);
   // notify observer
-//  if (true) {
+  if (notify) {
     std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
-//  }
+  }
   // insert element into hash map for fast lookup
   object_map_[oproxy->id()] = oproxy;
 }
