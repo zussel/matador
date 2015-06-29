@@ -566,10 +566,11 @@ private:
    * return its successor node
    *
    * @param node The prototype node to remove
+   * @param is_root Indicates if given node is root node
    * @return The successor node
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_node* remove_prototype_node(prototype_node *node);
+  prototype_node* remove_prototype_node(prototype_node *node, bool is_root);
 
 private:
   /**

@@ -283,27 +283,6 @@ prototype_tree::prototype_tree()
   // last points to first sentinel
   first_->next = last_;
   last_->prev = first_;
-
-//  prototype_node *root = new prototype_node(this, new object_producer<object>, "object", true);
-//  object_proxy *first = new object_proxy(nullptr);
-//  object_proxy *last = new object_proxy(nullptr);
-//
-//  // init serializable proxies
-//  root->op_first = first;
-//  root->op_marker = last;
-//  root->op_last = last;
-//  root->op_first->next_ = root->op_last;
-//  root->op_last->prev_ = root->op_first;
-//
-//  // link nodes together
-//  first_->next = root;
-//  root->prev = first_;
-//  root->next = last_;
-//  last_->prev = root;
-//
-//  // add to maps
-//  prototype_map_.insert(std::make_pair("serializable", root));
-//  typeid_prototype_map_[root->producer->classname()].insert(std::make_pair("serializable", root));
 }
 
 prototype_tree::~prototype_tree()
@@ -370,7 +349,7 @@ size_t prototype_tree::prototype_count() const
 void prototype_tree::clear()
 {
   while (first_->next != last_) {
-    remove_prototype_node(first_->next);
+    remove_prototype_node(first_->next, true);
   }
 }
 
@@ -391,7 +370,7 @@ prototype_node* prototype_tree::clear(prototype_node *node)
     current = clear(current);
   }
   // finally link first to last and vice versa
-  return remove_prototype_node(node);
+  return remove_prototype_node(node, false);
 }
 
 int prototype_tree::depth(const prototype_node *node) const
@@ -433,7 +412,7 @@ prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i
   if (i == end() || i.get() == nullptr) {
     throw object_exception("invalid prototype iterator");
   }
-  return remove_prototype_node(i.get());
+  return remove_prototype_node(i.get(), i->depth == 0);
 }
 
 void prototype_tree::remove(const char *type) {
@@ -441,12 +420,12 @@ void prototype_tree::remove(const char *type) {
   if (!node) {
     throw object_exception("unknown prototype type");
   }
-  remove_prototype_node(node);
+  remove_prototype_node(node, node->depth == 0);
 }
 
 void prototype_tree::remove(const prototype_iterator &node)
 {
-  remove_prototype_node(node.get());
+  remove_prototype_node(node.get(), false);
 }
 
 prototype_tree::iterator prototype_tree::begin()
@@ -507,13 +486,13 @@ prototype_node* prototype_tree::find_prototype_node(const char *type) const {
 }
 
 
-prototype_node* prototype_tree::remove_prototype_node(prototype_node *node) {
+prototype_node* prototype_tree::remove_prototype_node(prototype_node *node, bool is_root) {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   prototype_node *next = node->next_node(node);
 
   while (node->has_children()) {
-    remove_prototype_node(node->first->next);
+    remove_prototype_node(node->first->next, false);
   }
   // and objects they're containing
   node->clear(false);
@@ -534,6 +513,10 @@ prototype_node* prototype_tree::remove_prototype_node(prototype_node *node) {
     }
   } else {
     throw object_exception("couldn't find node by id");
+  }
+  if (is_root) {
+    delete node->op_first;
+    delete node->op_last;
   }
   delete node;
   return next;
