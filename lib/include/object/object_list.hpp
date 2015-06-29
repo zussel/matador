@@ -260,7 +260,7 @@ private:
 };
 
 template < class S, class T, class CT >
-std::string object_list_base<S, T, CT>::classname_ = typeid(parent_ref).name();
+std::string object_list_base<S, T, CT>::classname_ = typeid(T).name();
 
 ///@cond OOS_DEV
 

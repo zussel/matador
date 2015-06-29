@@ -50,7 +50,7 @@ public:
 
   void write_value(const char *id, const object_container &x)
   {
-//    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
+    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
 
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
@@ -80,7 +80,7 @@ public:
 
   void write_value(const char *id, const object_base_ptr &x)
   {
-//    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
+    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
   }
 
 private:
