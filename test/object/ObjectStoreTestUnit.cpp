@@ -41,6 +41,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
+  add_test("to_many", std::bind(&ObjectStoreTestUnit::test_to_many, this), "to many test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -51,10 +52,14 @@ typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
 void
 ObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<ObjectItem<Item> >("OBJECT_ITEM");
-  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
-  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "OBJECT_ITEM_PTR_LIST");
+//  ostore_.insert_prototype<Item>("item");
+//  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
+//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+//  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
+
+  ostore_.insert_prototype<person>("person");
+  ostore_.insert_prototype<employee, person>("employee");
+  ostore_.insert_prototype<department>("department");
 }
 
 void
@@ -731,4 +736,12 @@ void ObjectStoreTestUnit::test_primary_key()
   item = new Item("Test");
 
   UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
+}
+
+void ObjectStoreTestUnit::test_to_many()
+{
+  typedef object_ptr<employee> emp_ptr;
+  typedef object_ptr<department> dep_ptr;
+
+
 }

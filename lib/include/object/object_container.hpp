@@ -26,8 +26,6 @@
 
 namespace oos {
 
-class prototype_tree;
-
 /**
  * @tparam T Type of value
  * @class value_item

@@ -59,8 +59,8 @@ public:
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
     if (p) {
-//      pi = node_.tree->insert(p, id);
-      pi = node_.tree->insert(p, p->classname());
+      pi = node_.tree->insert(p, id);
+//      pi = node_.tree->insert(p, p->classname());
       if (pi == node_.tree->end()) {
         throw object_exception("unknown prototype type");
       }
@@ -85,6 +85,16 @@ public:
   void write_value(const char *id, const object_base_ptr &x)
   {
     std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
+
+    prototype_iterator pi = node_.tree->find(x.type());
+    if (pi == node_.tree->end()) {
+      // if there is no such prototype node
+      // insert a new one (it is automatically marked
+      // as uninitialized)
+      pi = prototype_iterator(new prototype_node());
+      node_.tree->typeid_prototype_map_.insert(std::make_pair(x.type(), prototype_tree::t_prototype_map()));
+      node_.tree->prototype_map_[x.type()] = pi.get();
+    }
   }
 
 private:

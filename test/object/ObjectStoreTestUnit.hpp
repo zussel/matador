@@ -39,6 +39,7 @@ public:
   void test_insert();
   void test_remove();
   void test_primary_key();
+  void test_to_many();
 
 private:
   oos::object_store ostore_;

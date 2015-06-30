@@ -616,6 +616,18 @@ void read_many_to_many(object_reader &/*reader*/, const std::string &/*relation*
 
 }
 
+template < typename T >
+void read_to_many(const std::string &join_table, const std::string &join_colmn, const std::string &inverse_join_colmn, T &container)
+{
+
+}
+
+template < typename T >
+void read_to_many(const std::string &join_colmn, T &container)
+{
+
+}
+
 }
 
 #endif /* OBJECTATOMIZER_HPP */
