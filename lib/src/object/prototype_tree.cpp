@@ -50,6 +50,10 @@ public:
 
   void write_value(const char *id, const object_container &x)
   {
+    /*
+     * get item type of the container
+     * try to insert it as prototype
+     */
     std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
 
     prototype_iterator pi;
