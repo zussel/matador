@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-#include "tools/singleton.hpp"
-
 #include <memory>
 #include <map>
 #include <string>
@@ -59,11 +57,9 @@ class unit_test;
  * It also provides function listing all test_unit classes
  * and their tests.
  */
-class OOS_API test_suite : public singleton<test_suite>
+class OOS_API test_suite
 {
 private:
-  friend class singleton<test_suite>;
-
   /**
    * @brief test_suite commands
    * 
@@ -96,8 +92,6 @@ private:
     std::vector<test_unit_args> unit_args;
   } test_suite_args;
 
-  test_suite();
-
   typedef std::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
   typedef t_unit_test_map::value_type value_type;
@@ -125,6 +119,7 @@ public:
   };
 
 public:
+  test_suite();
   virtual ~test_suite();
   
   /**
