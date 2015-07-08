@@ -27,10 +27,10 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
   add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one serializable");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub serializable");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub object");
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub serializable");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
   add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
   add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
   add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
@@ -52,10 +52,10 @@ typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
 void
 ObjectStoreTestUnit::initialize()
 {
-//  ostore_.insert_prototype<Item>("item");
-//  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
-//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
-//  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
+  ostore_.insert_prototype<Item>("item");
+  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
 
   ostore_.insert_prototype<person>("person");
   ostore_.insert_prototype<employee, person>("employee");
@@ -334,9 +334,9 @@ ObjectStoreTestUnit::get_test()
 void
 ObjectStoreTestUnit::simple_object()
 {
-  serializable *o = ostore_.create("ITEM");
+  serializable *o = ostore_.create("item");
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ITEM>");
+  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
   
   Item *a = dynamic_cast<Item*>(o);
   
@@ -356,7 +356,7 @@ ObjectStoreTestUnit::simple_object()
 void
 ObjectStoreTestUnit::object_with_sub_object()
 {
-  serializable *o = ostore_.create("OBJECT_ITEM");
+  serializable *o = ostore_.create("object_item");
   
   UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem>");
   
@@ -388,7 +388,7 @@ ObjectStoreTestUnit::multiple_simple_objects()
   size_t elem_size = 10000;
   // create 1000 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("ITEM");
+    serializable *o = ostore_.create("item");
     
     UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
     
@@ -413,7 +413,7 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   // create 1000 objects
   size_t elem_size = 1000;
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("OBJECT_ITEM");
+    serializable *o = ostore_.create("object_item");
     
     UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem<Item> >");
     

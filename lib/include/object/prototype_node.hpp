@@ -73,6 +73,18 @@ public:
   prototype_node();
 
   /**
+   * @brief Creates a prototype_node only with typename
+   *
+   * Creates a new prototype node only with typename and
+   * corresponding tree. Concrete type and producer will be
+   * added later.
+   *
+   * @param tr The corresponding prototype_tree
+   * @param t The typename
+   */
+  prototype_node(prototype_tree *tr, const char *t);
+
+  /**
    * @brief Creates a new prototype_node.
    * 
    * Creates a new prototype_node which creates an

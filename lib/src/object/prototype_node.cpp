@@ -30,6 +30,12 @@ prototype_node::prototype_node()
 {
 }
 
+prototype_node::prototype_node(prototype_tree *tr, const char *t)
+    : tree(tr)
+    , type(t)
+{
+}
+
 prototype_node::prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
   : tree(tr)
   , first(new prototype_node)

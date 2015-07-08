@@ -54,7 +54,7 @@ public:
      * get item type of the container
      * try to insert it as prototype
      */
-    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
+//    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
 
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
@@ -72,9 +72,7 @@ public:
         // if there is no such prototype node
         // insert a new one (it is automatically marked
         // as uninitialized)
-        pi = prototype_iterator(new prototype_node());
-        node_.tree->typeid_prototype_map_.insert(std::make_pair(x.classname(), prototype_tree::t_prototype_map()));
-        node_.tree->prototype_map_[x.classname()] = pi.get();
+        pi = prototype_iterator(node_.tree->prepare_insert(x.classname()));
       }
     }
     // add container node to item node
@@ -84,16 +82,15 @@ public:
 
   void write_value(const char *id, const object_base_ptr &x)
   {
-    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
+//    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
 
     prototype_iterator pi = node_.tree->find(x.type());
     if (pi == node_.tree->end()) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
       // as uninitialized)
-      pi = prototype_iterator(new prototype_node());
-      node_.tree->typeid_prototype_map_.insert(std::make_pair(x.type(), prototype_tree::t_prototype_map()));
-      node_.tree->prototype_map_[x.type()] = pi.get();
+
+      node_.tree->prepare_insert(x.type());
     }
   }
 
@@ -641,6 +638,15 @@ prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
   fk_analyzer.analyze();
 
   return prototype_iterator(node);
+}
+
+prototype_node *prototype_tree::prepare_insert(const char *type)
+{
+  prototype_node *node = new prototype_node(this, type);
+  typeid_prototype_map_.insert(std::make_pair(type, prototype_tree::t_prototype_map()));
+  prototype_map_[type] = node;
+
+  return node;
 }
 
 }

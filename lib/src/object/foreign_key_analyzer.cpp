@@ -27,6 +27,11 @@ void foreign_key_analyzer::analyze()
 void foreign_key_analyzer::write_value(const char *id, const object_base_ptr &x)
 {
   const_prototype_iterator node = node_.tree->find(x.type());
+
+  if (node->producer == nullptr) {
+      // node isn't completely initialized yet
+      return;
+  }
   if (node == node_.tree->end()) {
     throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
   } else if (!node->has_primary_key()) {

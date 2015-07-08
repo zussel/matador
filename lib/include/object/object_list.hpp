@@ -73,16 +73,6 @@ public:
   virtual ~object_list_base() {}
   
   /**
-   * Return the class name of the item.
-   * 
-   * @return The class name of the item.
-   */
-  virtual const char* classname() const
-  {
-    return classname_.c_str();
-  }
-
-  /**
    * Return the begin iterator of the list.
    * 
    * @return The begin iterator.
@@ -255,12 +245,7 @@ private:
 
 private:
   list_type object_list_;
-
-  static std::string classname_;
 };
-
-template < class S, class T, class CT >
-std::string object_list_base<S, T, CT>::classname_ = typeid(T).name();
 
 ///@cond OOS_DEV
 
@@ -364,6 +349,16 @@ public:
 
   /**
    * Return the class name of the item.
+   *
+   * @return The class name of the item.
+   */
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
+
+  /**
+   * Return the class name of the item.
    * 
    * @return The class name of the item.
    */
@@ -412,7 +407,11 @@ protected:
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
 
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string object_list<S, T, false>::classname_ = typeid(item_type).name();
 
 /**
  * @class object_list
@@ -447,6 +446,16 @@ public:
    */
   object_list() {}
   virtual ~object_list() {}
+
+  /**
+   * Return the class name of the item.
+   *
+   * @return The class name of the item.
+   */
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
 
   virtual iterator insert(iterator pos, const value_holder &x)
   {
@@ -485,7 +494,13 @@ protected:
     return new object_producer<item_type>();
   }
 ///@endcond
+
+private:
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string object_list<S, T, true>::classname_ = typeid(item_type).name();
 
 #endif /* OOS_DOXYGEN_DOC */
 

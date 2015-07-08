@@ -387,6 +387,9 @@ public:
   */
   iterator find(const char *type);
 
+
+  prototype_node* prepare_insert(const char *type);
+
   /**
   * @brief Finds prototype node.
   *
