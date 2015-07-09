@@ -160,8 +160,10 @@ void table::insert(serializable *obj)
 {
   insert_->bind(obj);
   std::unique_ptr<result> res(insert_->execute());
-//  long id = db_.last_inserted_id();
-  // Todo: check insert result == 1
+
+  if (res->affected_rows() != 1) {
+    throw database_exception("insert", "more than one affected row while inserting an object");
+  }
 }
 
 void table::update(serializable *obj)
@@ -170,7 +172,9 @@ void table::update(serializable *obj)
   // Todo: handle primary key
 //  update_->bind(pos, obj->id());
   std::unique_ptr<result> res(update_->execute());
-  // Todo: check update result
+  if (res->affected_rows() != 1) {
+    throw database_exception("update", "more than one affected row while updating an object");
+  }
 }
 
 void table::remove(serializable *obj)

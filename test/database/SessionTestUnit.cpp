@@ -44,9 +44,12 @@ SessionTestUnit::~SessionTestUnit()
 void
 SessionTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
+
+  ostore_.insert_prototype<person>("person");
+  ostore_.insert_prototype<employee>("employee");
+  ostore_.insert_prototype<department>("department");
 
   // create session
   session_ = create_session();

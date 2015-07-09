@@ -54,8 +54,6 @@ public:
      * get item type of the container
      * try to insert it as prototype
      */
-//    std::cout << "\nrelation resolver: resolving container " << id << " of type " << x.classname();
-
     prototype_iterator pi;
     object_base_producer *p = x.create_item_producer();
     if (p) {
@@ -82,8 +80,6 @@ public:
 
   void write_value(const char *id, const object_base_ptr &x)
   {
-//    std::cout << "\nrelation resolver: resolving serializable " << id << " of type " << x.type();
-
     prototype_iterator pi = node_.tree->find(x.type());
     if (pi == node_.tree->end()) {
       // if there is no such prototype node

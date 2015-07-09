@@ -27,6 +27,8 @@
 
 #include "object/serializable.hpp"
 
+#include <iostream>
+
 namespace oos {
 
 query::query(session &s)
@@ -61,6 +63,8 @@ query& query::create(const std::string &name, serializable *o)
   query_create s(sql_, db_);
   o->serialize(s);
   sql_.append(")");
+
+  std::cout << sql_.str(true) << '\n';
 
   state = QUERY_CREATE;
   return *this;

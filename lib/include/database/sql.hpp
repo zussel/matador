@@ -112,6 +112,8 @@ public:
     return type_traits<T>::data_type();
   }
 
+  std::string str(bool prepared) const;
+
 private:
   std::string generate(bool prepared) const;
 

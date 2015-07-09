@@ -332,7 +332,7 @@ void ObjectListTestUnit::test_direct_ref_list()
     
   department::iterator i = dep->begin();
   
-  UNIT_ASSERT_EQUAL((*i)->name(), "Karl", "employees name must be 'Karl'");
+  UNIT_ASSERT_EQUAL((*i)->value()->name(), "Karl", "employees name must be 'Karl'");
   
   // remove karl from department
   i = dep->erase(i);

@@ -670,7 +670,7 @@ class department : public oos::serializable
 {
 public:
   typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref, false> emp_list_t;
+  typedef oos::object_list<department, emp_ref, true> emp_list_t;
   typedef emp_list_t::size_type size_type;
   typedef emp_list_t::iterator iterator;
   typedef emp_list_t::const_iterator const_iterator;
@@ -681,10 +681,11 @@ private:
   emp_list_t emp_list_;
   
 public:
-  department() : emp_list_(&employee::dep) {}
+  department() {}
+//  department() : emp_list_(&employee::dep) {}
   department(const std::string &name)
     : name_(name)
-    , emp_list_(&employee::dep)
+//    , emp_list_(&employee::dep)
   {}
   
   virtual ~department() {}
@@ -693,13 +694,13 @@ public:
   {
     deserializer.read("id", id_);
     deserializer.read("name", name_);
-    deserializer.read("employees", emp_list_);
+    deserializer.read("employee_department", emp_list_);
   }
   virtual void serialize(oos::object_writer &serializer) const
   {
     serializer.write("id", id_);
     serializer.write("name", name_);
-    serializer.write("employees", emp_list_);
+    serializer.write("employee_department", emp_list_);
   }
 
   unsigned long id() const { return id_; }
