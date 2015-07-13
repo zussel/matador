@@ -303,7 +303,6 @@ public:
 
 private:
   friend class object_store;
-  friend class prototype_node;
   friend class object_preparator;
   friend class prototype_node;
   friend class prototype_tree;
