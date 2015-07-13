@@ -208,6 +208,7 @@ SET(DATABASE_SOURCES
   database/query_select.cpp
   database/query_insert.cpp
   database/query_update.cpp
+  database/primary_key_binder.cpp
 )
 
 SET(DATABASE_HEADER
@@ -235,6 +236,7 @@ SET(DATABASE_HEADER
   ../include/database/query_insert.hpp
   ../include/database/query_update.hpp
   ../include/database/token.hpp
+  ../include/database/primary_key_binder.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER
