@@ -275,7 +275,7 @@ public:
    * @param classname The serializable type name.
    * @param id The id of the deleted serializable.
    */
-  delete_action(const char *classname, unsigned long id);
+  delete_action(const char *classname, unsigned long id, primary_key_base *pk);
 
   virtual ~delete_action();
   
@@ -290,15 +290,18 @@ public:
   const char* classname() const;
 
   /**
-   * The id of the serializable of the action.
+   * The primary key of the serializable of the action.
    * 
-   * @return The id of the deleted serializable.
+   * @return The primary key of the deleted serializable.
    */
+  primary_key_base* pk() const;
+
   unsigned long id() const;
 
 private:
   std::string classname_;
   unsigned long id_;
+  primary_key_base *pk_;
 };
 
 /**

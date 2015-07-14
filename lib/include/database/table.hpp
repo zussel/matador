@@ -37,6 +37,7 @@
 
 #include "database/statement.hpp"
 #include "database/database.hpp"
+#include "database/primary_key_binder.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -74,7 +75,6 @@ public:
   void insert(serializable *obj);
   void update(serializable *obj);
   void remove(serializable *obj);
-  void remove(long id);
   void drop();
 
   bool is_loaded() const;
@@ -102,6 +102,8 @@ private:
 
   bool is_loaded_;
   relation_data_t relation_data;
+
+  primary_key_binder primary_key_binder_;
 };
 
 ///@endcond

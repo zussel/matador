@@ -257,7 +257,8 @@ void database::visit(delete_action *a)
     throw database_exception("db", "table not found");
   }
 
-  i->second->remove(a->id());
+  // Todo: handle remove action (one solution: store primary key)
+//  i->second->remove(a->id());
 
 }
 

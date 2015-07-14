@@ -170,6 +170,9 @@ void table::update(serializable *obj)
 {
   int pos = update_->bind(obj);
   // Todo: handle primary key
+
+  primary_key_binder_.bind(obj, update_.get(), pos);
+
 //  update_->bind(pos, obj->id());
   std::unique_ptr<result> res(update_->execute());
   if (res->affected_rows() != 1) {
@@ -180,14 +183,7 @@ void table::update(serializable *obj)
 void table::remove(serializable *obj)
 {
   // Todo: handle primary key
-//  remove(obj->id());
-}
-
-void table::remove(long id)
-{
-  delete_->bind(0, id);
-  std::unique_ptr<result> res(delete_->execute());
-  // Todo: check delete result
+  primary_key_binder_.bind(obj, delete_.get(), 0);
 }
 
 void table::drop()

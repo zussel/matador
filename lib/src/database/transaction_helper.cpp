@@ -182,8 +182,11 @@ void action_remover::visit(update_action *a)
    * with this given serializable.
    *
    ***********/
+
   if (a->proxy()->id() == id_) {
-    *iter_ = new delete_action(proxy_->node()->type.c_str(), proxy_->id());
+    primary_key_base *pk = primary_key_serializer_.serialize(proxy_->obj());
+
+    *iter_ = new delete_action(proxy_->node()->type.c_str(), proxy_->id(), pk);
     delete a;
   }
 }
