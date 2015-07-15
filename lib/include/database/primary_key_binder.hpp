@@ -18,7 +18,7 @@ class serializable;
 class primary_key_binder : public generic_object_reader<primary_key_binder>
 {
 public:
-  primary_key_binder() : generic_object_reader<primary_key_binder>(*this) {}
+  primary_key_binder() : generic_object_reader<primary_key_binder>(this) {}
   virtual ~primary_key_binder() {}
 
   void bind(serializable *obj, statement *stmt, int pos);
