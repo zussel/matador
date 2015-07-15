@@ -14,6 +14,14 @@ class object_base_ptr;
 class primary_key_base;
 class prototype_node;
 
+/**
+ * @class primary_key_serializer
+ * @brief Returns the primary key of an object
+ *
+ * Returns the primary key class of a serializable
+ * object. If object doesn't have a primary key
+ * nullptr is returned
+ */
 class primary_key_serializer : public generic_object_writer<primary_key_serializer>
 {
 public:

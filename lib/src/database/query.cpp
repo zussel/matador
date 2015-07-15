@@ -64,7 +64,7 @@ query& query::create(const std::string &name, serializable *o)
   o->serialize(s);
   sql_.append(")");
 
-  std::cout << sql_.str(true) << '\n';
+//  std::cout << sql_.str(true) << '\n';
 
   state = QUERY_CREATE;
   return *this;

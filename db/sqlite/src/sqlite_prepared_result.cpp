@@ -63,7 +63,9 @@ bool sqlite_prepared_result::fetch(serializable *o)
 
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
 {
-  return affected_rows_;
+  sqlite3 *db = sqlite3_db_handle(stmt_);
+  return (size_type)sqlite3_changes(db);
+//  return affected_rows_;
 }
 
 sqlite_prepared_result::size_type sqlite_prepared_result::result_rows() const
@@ -190,8 +192,8 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
 void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
 {
 
-//  read_foreign_key(id, x);
-  std::cout << "read serializable of type [" << x.type() << "]\n";
+  read_foreign_key(id, x);
+//  std::cout << "read serializable of type [" << x.type() << "]\n";
   /*
    * determine primary key
    */

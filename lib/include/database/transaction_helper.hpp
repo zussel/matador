@@ -19,6 +19,7 @@
 #define TRANSACTION_HELPER_HPP
 
 #include "object/object_serializer.hpp"
+#include "object/primary_key_serializer.hpp"
 
 #include "database/action.hpp"
 #include "database/transaction.hpp"
@@ -124,6 +125,7 @@ public:
   virtual void visit(drop_action*) {}
 
 private:
+  primary_key_serializer primary_key_serializer_;
   transaction::action_list_t &action_list_;
   transaction::iterator iter_;
   object_proxy *proxy_;
