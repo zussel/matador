@@ -249,6 +249,7 @@ private:
   friend class query;
   friend class result;
   friend class object_container;
+  friend class table_reader;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;

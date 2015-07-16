@@ -428,6 +428,17 @@ DatabaseTestUnit::test_reload()
     oview_t oview(ostore_);
 
     UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
+
+    object_item_ptr optr = oview.begin().optr();
+
+    UNIT_ASSERT_TRUE(optr.id() > 0, "object store id must be greater zero");
+    UNIT_ASSERT_TRUE(optr->id() > 0, "primary key id must be greater zero");
+
+    item_ptr iptr = optr->ptr();
+
+    UNIT_ASSERT_TRUE(iptr.id() > 0, "object store id must be greater zero");
+    UNIT_ASSERT_TRUE(iptr->id() > 0, "primary key id must be greater zero");
+
   } catch (database_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
