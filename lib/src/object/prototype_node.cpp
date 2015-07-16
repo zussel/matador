@@ -327,6 +327,12 @@ bool prototype_node::has_primary_key() const
   return primary_key.get() != nullptr;
 }
 
+object_proxy *prototype_node::find_proxy(const std::shared_ptr<primary_key_base> &pk)
+{
+  t_primary_key_map::iterator i = primary_key_map.find(pk);
+  return (i != primary_key_map.end() ? i->second : nullptr);
+}
+
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
   if (pn.parent) {

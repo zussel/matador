@@ -344,15 +344,18 @@ public:
    * into the internal proxy hash map. The proxy won't
    * be linked into the main serializable proxy list until
    * it gets a valid serializable.
-   * 
+   *
+   * If id is zero a new id is generated.
+   *
    * If the serializable proxy couldn't be created the method
-   * returns null
+   * returns nullptr
    *
    * @param o The object set into the new object proxy.
+   * @param node Objects corresponding prototype_node.
    * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(serializable *o, unsigned long id);
+  object_proxy *create_proxy(serializable *o, prototype_node *node = nullptr, unsigned long id = 0);
 
   /**
    * @brief Delete proxy from map

@@ -38,7 +38,7 @@ void result::get(serializable *o)
 
 void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
-  std::shared_ptr<primary_key_base> pk = x.proxy_->pk();
+  std::shared_ptr<primary_key_base> pk(x.proxy_->pk());
   pk->deserialize(id, *this);
 }
 

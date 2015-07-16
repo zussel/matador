@@ -34,6 +34,8 @@
 
 #include "object/primary_key_serializer.hpp"
 #include "object/object_producer.hpp"
+#include "object_proxy.hpp"
+#include "primary_key.hpp"
 
 #include <map>
 #include <list>
@@ -211,6 +213,16 @@ public:
    * @return True if serializable owns a primary key
    */
   bool has_primary_key() const;
+
+  /**
+   * Find the underlying proxy of the given primary key.
+   * If no proxy is found nullptr is returned
+   *
+   * @param pk The primary key
+   * @return The corresponding object_proxy or nullptr
+   */
+  object_proxy* find_proxy(const std::shared_ptr<primary_key_base> &pk);
+
   /**
    * Prints the node in graphviz layout to the stream.
    * 
@@ -255,7 +267,9 @@ public:
   bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
   primary_key_serializer pk_serializer;
-  std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> primary_key_map;
+
+  typedef std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> t_primary_key_map;
+  t_primary_key_map primary_key_map;
 
   std::unique_ptr<primary_key_base> primary_key;
 

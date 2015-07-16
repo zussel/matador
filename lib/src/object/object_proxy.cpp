@@ -226,7 +226,7 @@ bool object_proxy::has_primary_key() const
 
 std::shared_ptr<primary_key_base> object_proxy::pk() const
 {
-  return std::shared_ptr<primary_key_base>();
+  return primary_key_;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
