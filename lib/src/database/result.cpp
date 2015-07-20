@@ -40,6 +40,9 @@ void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
   std::shared_ptr<primary_key_base> pk(x.proxy_->pk());
   pk->deserialize(id, *this);
+  if (!pk->is_valid()) {
+    x.reset(nullptr);
+  }
 }
 
 }

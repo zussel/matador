@@ -25,6 +25,7 @@ public:
   virtual void serialize(const char*, object_writer&) const = 0;
   virtual void deserialize(const char*, object_reader&) = 0;
   virtual primary_key_base* clone() const = 0;
+  virtual bool is_valid() const = 0;
 
 protected:
   virtual bool equal_to(primary_key_base const &other) const = 0;
@@ -67,6 +68,10 @@ public:
   virtual primary_key_base* clone() const
   {
     return new primary_key<T>(pk_);
+  }
+
+  virtual bool is_valid() const {
+    return pk_ != 0;
   }
 
   value_type get() const
