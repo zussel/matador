@@ -15,36 +15,50 @@ table_reader::table_reader(table &t, object_store &ostore)
 
 void table_reader::read(result *res)
 {
-  // check result
-  // create serializable
-  std::unique_ptr<serializable> obj(table_.node_.producer->create());
 
-  // prepare serializable for read (set object_proxy into serializable ptr)
-  object_preparator_.prepare(obj.get());
+  serializable *obj = nullptr;
 
-//  std::for_each(res->begin(), res->end(), [](serializable *obj) {})
-  while (res->fetch(obj.get())) {
+  while ((obj = res->fetch(&table_.node_))) {
 
-    new_proxy_ = new object_proxy(obj.get(), nullptr);
+    new_proxy_ = new object_proxy(obj, nullptr);
 
     obj->deserialize(*this);
 
-    obj.release();
-
     ostore_.insert_proxy(new_proxy_);
-
-    obj.reset(table_.node_.producer->create());
   }
+
+
+  // check result
+  // create serializable
+//  std::unique_ptr<serializable> obj(table_.node_.producer->create());
+//
+//  // prepare serializable for read (set object_proxy into serializable ptr)
+//  object_preparator_.prepare(obj.get());
+//
+////  std::for_each(res->begin(), res->end(), [](serializable *obj) {})
+//  while (res->fetch(obj.get())) {
+//
+//    new_proxy_ = new object_proxy(obj.get(), nullptr);
+//
+//    obj->deserialize(*this);
+//
+//    obj.release();
+//
+//    ostore_.insert_proxy(new_proxy_);
+//
+//    obj.reset(table_.node_.producer->create());
+//  }
 }
 
-void table_reader::read_value(const char *id, object_base_ptr &x)
+void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
   // get node of object type
   prototype_iterator node = ostore_.find_prototype(x.type());
 
   std::shared_ptr<primary_key_base> pk = x.primary_key();
   if (!pk) {
-    throw_object_exception("object pointer " << id << " hasn't expected primary key");
+    return;
+//    throw_object_exception("object pointer " << id << " hasn't expected primary key");
   }
   // try to find proxy
   object_proxy *proxy = x.proxy_;

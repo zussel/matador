@@ -20,6 +20,7 @@
 
 #include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_exception.hpp"
 #include "object/primary_key.hpp"
 
 namespace oos {
@@ -36,13 +37,48 @@ void result::get(serializable *o)
   o->deserialize(*this);
 }
 
+serializable* result::fetch(const oos::prototype_node *node)
+{
+  node_ = node;
+
+  std::unique_ptr<serializable> obj(node_->producer->create());
+
+  if (!fetch(obj.get())) {
+    obj.reset(nullptr);
+  }
+
+  node_ = nullptr;
+  return obj.release();
+}
+
 void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
-  std::shared_ptr<primary_key_base> pk(x.proxy_->pk());
+
+  prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
+  if (i == node_->foreign_keys.end()) {
+    throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");
+  }
+
+  /*
+   * clone new primary key and deserialize it
+   * if valid value is set create new proxy
+   * with primary key
+   */
+  std::shared_ptr<primary_key_base> pk(i->second->clone());
   pk->deserialize(id, *this);
   if (!pk->is_valid()) {
-    x.reset(nullptr);
+    return;
   }
+
+
+  std::unique_ptr<object_proxy> proxy(new object_proxy(nullptr));
+  // Todo: create a object_proxy ctor like below
+//  std::unique_ptr<object_proxy> proxy(new object_proxy(const_cast<prototype_node*>(&node_), pk));
+
+  proxy->primary_key_ = pk;
+  proxy->node_ = const_cast<prototype_node*>(node_);
+
+  x.reset(proxy.release());
 }
 
 }

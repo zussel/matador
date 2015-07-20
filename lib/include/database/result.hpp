@@ -34,12 +34,12 @@
 #include "object/object_atomizer.hpp"
 
 #include <memory>
+#include <object/prototype_node.hpp>
 
 namespace oos {
 
 class row;
 class statement;
-class serializable;
 class serializable;
 
 /// @cond OOS_DEV
@@ -69,7 +69,16 @@ public:
   
   virtual const char* column(size_type c) const = 0;
   virtual bool fetch() = 0;
-  
+
+  /*
+   * Create new object and fill all builtin datatypes. If all
+   * rows are processed nullptr is returned.
+   *
+   * @param node The corresponding prototype_node
+   * @return The filled and created serializable or nullptr
+   */
+  serializable* fetch(const oos::prototype_node *node);
+
   /**
    * Fetch next line from database and
    * deserialized the given serializable.
@@ -90,6 +99,9 @@ protected:
 
 protected:
   int result_index;
+
+private:
+  const prototype_node *node_ = nullptr;
 };
 
 typedef std::shared_ptr<result> result_ptr;
