@@ -382,7 +382,7 @@ public:
   object_proxy *find_proxy(unsigned long id) const;
 
   /**
-   * @brief Inserts a new proxy into the serializable store
+   * @brief Inserts a new proxy into the object store
    *
    * @param oproxy Object proxy to insert
    * @param is_new Proxy is a new not inserted proxy, skip object store check
@@ -417,7 +417,10 @@ private:
   void remove(object_proxy *proxy);
 	object_proxy* insert_object(serializable *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
-	
+
+
+  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
+
 private:
   prototype_tree prototype_tree_;
 

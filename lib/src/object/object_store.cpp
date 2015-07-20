@@ -208,23 +208,23 @@ object_store::insert_object(serializable *o, bool notify)
     o->deserialize(reader);
   }
 
-  // insert new element node
+  return initialze_proxy(oproxy, node, notify);
+}
+
+object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
+{// insert new element node
   node->insert(oproxy);
 
   // initialize serializable
   object_creator oc(oproxy, *this, notify);
-  o->deserialize(oc);
-  // set corresponding prototype node
-  oproxy->node_ = node.get();
+  oproxy->obj()->deserialize(oc);
   // set this into persistent serializable
   // notify observer
   if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
+    for_each(observer_list_.begin(), observer_list_.end(), bind(&object_observer::on_insert, _1, oproxy));
   }
   // insert element into hash map for fast lookup
   object_map_[oproxy->id()] = oproxy;
-  // return new serializable
-  return oproxy;
 }
 
 bool object_store::is_removable(const object_base_ptr &o)
@@ -389,17 +389,7 @@ void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
   }
   oproxy->ostore_ = this;
 
-  node->insert(oproxy);
-
-  // initialize serializable
-  object_creator oc(oproxy, *this, true);
-  oproxy->obj()->deserialize(oc);
-  // notify observer
-  if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[oproxy->id()] = oproxy;
+  initialze_proxy(oproxy, node, true);
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
