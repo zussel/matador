@@ -20,6 +20,10 @@ void table_reader::read(result *res)
 
   while ((obj = res->fetch(&table_.node_))) {
 
+    if (table_.node_.has_primary_key()) {
+      
+    }
+
     new_proxy_ = new object_proxy(obj, nullptr);
 
     obj->deserialize(*this);

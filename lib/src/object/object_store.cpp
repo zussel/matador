@@ -225,6 +225,8 @@ object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iter
   }
   // insert element into hash map for fast lookup
   object_map_[oproxy->id()] = oproxy;
+
+  return oproxy;
 }
 
 bool object_store::is_removable(const object_base_ptr &o)
@@ -364,7 +366,6 @@ bool object_store::delete_proxy(unsigned long id)
   }
 }
 
-
 void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
 {
   if (!oproxy->obj()) {
@@ -389,7 +390,7 @@ void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
   }
   oproxy->ostore_ = this;
 
-  initialze_proxy(oproxy, node, true);
+  initialze_proxy(oproxy, node, notify);
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)

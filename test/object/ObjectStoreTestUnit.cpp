@@ -740,8 +740,8 @@ void ObjectStoreTestUnit::test_primary_key()
 
 void ObjectStoreTestUnit::test_to_many()
 {
-  typedef object_ptr<employee> emp_ptr;
-  typedef object_ptr<department> dep_ptr;
+//  typedef object_ptr<employee> emp_ptr;
+//  typedef object_ptr<department> dep_ptr;
 
 
 }

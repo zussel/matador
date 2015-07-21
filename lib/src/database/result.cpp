@@ -54,6 +54,14 @@ serializable* result::fetch(const oos::prototype_node *node)
 void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
 
+  /*
+   * read key
+   * if valid key
+   * create serializable with key
+   * insert into object store
+   * reset object ptr
+   */
+
   prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
   if (i == node_->foreign_keys.end()) {
     throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");

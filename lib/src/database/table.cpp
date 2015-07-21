@@ -50,6 +50,29 @@ public:
 
   void read_value(const char*, char*, int) {}
 
+  void read_value(const char *id, object_base_ptr &x)
+  {
+    /*
+     * find the relation data identified
+     * by given id
+     * find the object map identified by
+     * objects id
+     * if both are found set stored object_proxy
+     * into object base ptr
+     * the data will be erased from found
+     * object map
+     */
+    table::relation_data_t::iterator i = info_->relation_data.find(id);
+    if (i != info_->relation_data.end()) {
+      table::object_map_t::iterator j = i->second.find(proxy_->id());
+      if (j != i->second.end()) {
+        while (!j->second.empty()) {
+          x.reset(j->second.front(), x.is_reference());
+          j->second.pop_front();
+        }
+      }
+    }
+  }
   void read_value(const char *id, object_container &x)
   {
     /*
