@@ -36,6 +36,17 @@ object_proxy::object_proxy(object_store *os)
   , node_(nullptr)
 {}
 
+object_proxy::object_proxy(const std::shared_ptr<primary_key_base> &pk, prototype_node *node)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(nullptr)
+  , oid(0)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(nullptr)
+  , node_(node)
+  , primary_key_(pk)
+{}
 
 object_proxy::object_proxy(unsigned long i, object_store *os)
   : prev_(nullptr)

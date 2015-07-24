@@ -195,7 +195,7 @@ object_store::insert_object(serializable *o, bool notify)
      * the sequencer else assign new
      * unique id
      */
-    oproxy = create_proxy(o, nullptr, seq_.next());
+    oproxy = create_proxy(o, nullptr);
     if (!oproxy) {
       throw object_exception("couldn't create serializable proxy");
     }
@@ -391,6 +391,21 @@ void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
   oproxy->ostore_ = this;
 
   initialze_proxy(oproxy, node, notify);
+}
+
+object_proxy* object_store::register_proxy(object_proxy *oproxy)
+{
+  if (oproxy->id() != 0) {
+    throw_object_exception("object proxy already registerd");
+  }
+
+  if (oproxy->node() == nullptr) {
+    throw_object_exception("object proxy hasn't git a prototype node");
+  }
+
+  oproxy->id(seq_.next());
+
+  return object_map_.insert(std::make_pair(oproxy->id(), oproxy)).first->second;
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)

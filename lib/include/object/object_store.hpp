@@ -390,6 +390,20 @@ public:
   void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);
 
   /**
+   * @brief Registers a new proxy
+   *
+   * Proxy will be registered in object store. It
+   * gets an id and is insert into object map.
+   * If proxy has already an id an exception is thrown.
+   * If proxy doesn't have a prototype_node an exception is thrown.
+   *
+   * @param oproxy The object_proxy to register
+   * @return The registered object_proxy
+   * @throws object_exception
+   */
+  object_proxy* register_proxy(object_proxy *oproxy);
+
+  /**
    * @brief Exchange the sequencer strategy.
    * 
    * Exchange the sequencer strategy of this object_store.

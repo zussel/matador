@@ -56,22 +56,25 @@ void table_reader::read(result *res)
 
 void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
-  // get node of object type
-  prototype_iterator node = ostore_.find_prototype(x.type());
-
   std::shared_ptr<primary_key_base> pk = x.primary_key();
   if (!pk) {
     return;
-//    throw_object_exception("object pointer " << id << " hasn't expected primary key");
-  }
-  // try to find proxy
-  object_proxy *proxy = x.proxy_;
-
-  if (!proxy) {
-    // create new proxy
-    proxy = ostore_.create_proxy(nullptr, node.get());
   }
 
+  // get node of object type
+  prototype_iterator node = ostore_.find_prototype(x.type());
+
+  /**
+   * find proxy in node map
+   * if proxy can be found object was
+   * already read - replace proxy
+   */
+  object_proxy *proxy = node->find_proxy(pk);
+  if (proxy) {
+    x.reset(proxy, x.is_reference());
+  } else {
+    proxy = ostore_.register_proxy(x.proxy_);
+  }
 
   /*
    * add the child serializable to the serializable proxy
@@ -82,8 +85,6 @@ void table_reader::read_value(const char */*id*/, object_base_ptr &x)
   if (i != table_.node_.relations.end()) {
     j->second->relation_data[i->second.second][proxy->id()].push_back(new_proxy_);
   }
-//
-  x.reset(proxy, x.is_reference());
 }
 
 void table_reader::read_value(const char *id, object_container &x)

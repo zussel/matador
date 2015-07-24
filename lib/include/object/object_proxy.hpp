@@ -71,6 +71,14 @@ public:
   explicit object_proxy(object_store *os);
 
   /**
+   * Create a new object proxy with primary key and node
+   *
+   * @param pk primary key of object
+   * @param node The prototype node
+   */
+  object_proxy(const std::shared_ptr<primary_key_base> &pk, prototype_node *node);
+
+  /**
    * @brief Create an object_proxy for unknown
    *        serializable with given id.
    *

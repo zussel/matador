@@ -21,11 +21,6 @@
 
 namespace oos {
 
-/*object_creator::object_creator(object_proxy *root, object_store &ostore, bool notify)
-  : ostore_(ostore)
-  , notify_(notify)
-{}*/
-
 object_creator::~object_creator() {}
 
 void object_creator::read_value(const char*, object_base_ptr &x)

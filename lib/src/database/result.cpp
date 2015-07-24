@@ -21,7 +21,7 @@
 #include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_exception.hpp"
-#include "object/primary_key.hpp"
+#include "object/prototype_tree.hpp"
 
 namespace oos {
 
@@ -53,7 +53,6 @@ serializable* result::fetch(const oos::prototype_node *node)
 
 void result::read_foreign_key(const char *id, object_base_ptr &x)
 {
-
   /*
    * read key
    * if valid key
@@ -61,7 +60,7 @@ void result::read_foreign_key(const char *id, object_base_ptr &x)
    * insert into object store
    * reset object ptr
    */
-
+  // find prototype node of foreign key
   prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
   if (i == node_->foreign_keys.end()) {
     throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");
@@ -78,13 +77,10 @@ void result::read_foreign_key(const char *id, object_base_ptr &x)
     return;
   }
 
+  // get node of object type
+  prototype_iterator node = node_->tree->find(x.type());
 
-  std::unique_ptr<object_proxy> proxy(new object_proxy(nullptr));
-  // Todo: create a object_proxy ctor like below
-//  std::unique_ptr<object_proxy> proxy(new object_proxy(const_cast<prototype_node*>(&node_), pk));
-
-  proxy->primary_key_ = pk;
-  proxy->node_ = const_cast<prototype_node*>(node_);
+  std::unique_ptr<object_proxy> proxy(new object_proxy(pk, const_cast<prototype_node*>(node.get())));
 
   x.reset(proxy.release());
 }
