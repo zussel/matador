@@ -6,12 +6,17 @@
 #include "tools/enable_if.hpp"
 
 #include <type_traits>
+#include <stdexcept>
 
 namespace oos {
 
 class primary_key_base
 {
 public:
+  enum class primary_key_type : uint8_t {
+    numeric, string, compound, custom
+  };
+
   virtual ~primary_key_base() {}
 
   friend bool operator==(primary_key_base const &a, primary_key_base const &b)
@@ -26,6 +31,8 @@ public:
   virtual void deserialize(const char*, object_reader&) = 0;
   virtual primary_key_base* clone() const = 0;
   virtual bool is_valid() const = 0;
+
+  template < typename T > T get_value() const;
 
 protected:
   virtual bool equal_to(primary_key_base const &other) const = 0;
@@ -44,7 +51,7 @@ public:
 
 public:
   primary_key() : pk_(0) {}
-  explicit primary_key(const T &pk)
+  explicit primary_key(T pk)
     : pk_(pk)
   {}
 
@@ -106,6 +113,16 @@ protected:
 private:
   T pk_;
 };
+
+template < typename T >
+T primary_key_base::get_value() const
+{
+  if (primary_key<T> const *b = dynamic_cast<primary_key<T> const*>(this)) {
+    return b->get();
+  } else {
+    throw std::logic_error("invalid cast");
+  }
+}
 
 }
 

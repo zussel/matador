@@ -54,7 +54,7 @@ void table_reader::read(result *res)
 //  }
 }
 
-void table_reader::read_value(const char */*id*/, object_base_ptr &x)
+void table_reader::read_value(const char *id, object_base_ptr &x)
 {
   std::shared_ptr<primary_key_base> pk = x.primary_key();
   if (!pk) {
@@ -73,8 +73,10 @@ void table_reader::read_value(const char */*id*/, object_base_ptr &x)
   if (proxy) {
     x.reset(proxy, x.is_reference());
   } else {
+    x.proxy_->obj_ = node->producer->create();
     proxy = ostore_.register_proxy(x.proxy_);
   }
+
 
   /*
    * add the child serializable to the serializable proxy
@@ -100,16 +102,22 @@ void table_reader::read_value(const char *id, object_container &x)
   if (!table_.db_.is_loaded(p->type)) {
     return;
   }
-  database::relation_data_t::iterator i = table_.relation_data.find(id);
+  table::t_to_many_data::iterator i = table_.relation_data.find(id);
   if (i == table_.relation_data.end()) {
     return;
   }
-  database::object_map_t::iterator j = i->second.find(new_proxy_->id());
-  if (j != i->second.end()) {
-    while (!j->second.empty()) {
-      x.append_proxy(j->second.front());
-      j->second.pop_front();
-    }
+  /*
+   * find object for container in new object
+   */
+  table::object_map_t::iterator j = i->second.find(new_proxy_->id());
+  if (j == i->second.end()) {
+    // no objects found
+    return;
+  }
+  // move object into container
+  while (!j->second.empty()) {
+    x.append_proxy(j->second.front());
+    j->second.pop_front();
   }
 }
 

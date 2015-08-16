@@ -31,6 +31,7 @@
 #include "object/ObjectListTestUnit.hpp"
 #include "object/ObjectVectorTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
+#include "object/PrimaryKeyUnitTest.hpp"
 
 #include "database/DatabaseTestUnit.hpp"
 #include "database/SessionTestUnit.hpp"
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new FactoryTestUnit());
   suite.register_unit(new StringTestUnit());
 
+  suite.register_unit(new PrimaryKeyUnitTest());
   suite.register_unit(new PrototypeTreeTestUnit());
   suite.register_unit(new ObjectPrototypeTestUnit());
   suite.register_unit(new ObjectStoreTestUnit());

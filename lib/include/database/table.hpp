@@ -60,7 +60,9 @@ class OOS_API table
 public:
   typedef std::list<object_proxy*> object_proxy_list_t;
   typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
-  typedef std::map<std::string, object_map_t> relation_data_t;
+  typedef std::map<std::string, object_map_t> t_to_many_data;
+
+  typedef std::map<std::shared_ptr<primary_key_base>, object_proxy*> t_to_one_data;
 
 //protected:
   table(database &db, const prototype_node &node);
@@ -101,7 +103,8 @@ private:
   bool prepared_;
 
   bool is_loaded_;
-  relation_data_t relation_data;
+  t_to_many_data relation_data;
+  t_to_one_data to_one_data;
 
   primary_key_binder primary_key_binder_;
 };

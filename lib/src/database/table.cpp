@@ -62,7 +62,7 @@ public:
      * the data will be erased from found
      * object map
      */
-    table::relation_data_t::iterator i = info_->relation_data.find(id);
+    table::t_to_many_data::iterator i = info_->relation_data.find(id);
     if (i != info_->relation_data.end()) {
       table::object_map_t::iterator j = i->second.find(proxy_->id());
       if (j != i->second.end()) {
@@ -85,7 +85,7 @@ public:
      * the data will be erased from found
      * serializable map
      */
-    table::relation_data_t::iterator i = info_->relation_data.find(id);
+    table::t_to_many_data::iterator i = info_->relation_data.find(id);
     if (i != info_->relation_data.end()) {
       table::object_map_t::iterator j = i->second.find(proxy_->id());
       if (j != i->second.end()) {

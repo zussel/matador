@@ -34,7 +34,7 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
-)
+object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
@@ -55,7 +55,7 @@ SET (TEST_DATABASE_SOURCES
   database/TransactionTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_oos.cpp)
+SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}

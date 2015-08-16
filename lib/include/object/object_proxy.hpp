@@ -315,6 +315,7 @@ private:
   friend class prototype_node;
   friend class prototype_tree;
   friend class result;
+  friend class table_reader;
 
   object_proxy *prev_;      /**< The previous object_proxy in the list. */
   object_proxy *next_;      /**< The next object_proxy in the list. */
