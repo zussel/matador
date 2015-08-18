@@ -280,6 +280,15 @@ public:
   std::unique_ptr<primary_key_base> primary_key;
 
   /*
+   * a list of prototype_node and ids for
+   * which the relation map is yet to be filled
+   * once the object type is really inserted
+   * this list is processed
+   */
+  typedef std::list<std::pair<prototype_node*, std::string> > t_node_id_list;
+  t_node_id_list foreign_key_ids;
+
+  /*
    * a list of all foreign keys inside nodes object
    */
   typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_foreign_key_map;
