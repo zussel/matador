@@ -268,11 +268,20 @@ public:
 
   primary_key_serializer pk_serializer;
 
+  /*
+   * Holds the primary keys of all proxies in this node
+   */
   typedef std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> t_primary_key_map;
   t_primary_key_map primary_key_map;
 
+  /*
+   * a primary key prototype to clone from
+   */
   std::unique_ptr<primary_key_base> primary_key;
 
+  /*
+   * a list of all foreign keys inside nodes object
+   */
   typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_foreign_key_map;
   t_foreign_key_map foreign_keys;
 };
