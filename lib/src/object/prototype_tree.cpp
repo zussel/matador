@@ -75,17 +75,18 @@ public:
     }
     // add container node to item node
     // insert the relation
+    std::cout << "inserting container relation for node '" << node_.type << "' with field '" << id << "'\n";
     pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
-  void write_value(const char */*id*/, const object_base_ptr &x)
+  void write_value(const char *id, const object_base_ptr &x)
   {
     prototype_iterator pi = node_.tree->find(x.type());
+    std::cout << "inserting object relation for node '" << node_.type << "' with field '" << id << "'\n";
     if (pi == node_.tree->end()) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
       // as uninitialized)
-
       node_.tree->prepare_insert(x.type());
     }
   }
