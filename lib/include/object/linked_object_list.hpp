@@ -59,7 +59,6 @@ private:
 public:
   typedef typename base_item::container_ref container_ref;
   typedef typename base_item::value_type value_type;
-  typedef typename base_item::size_type size_type;
   typedef linked_object_list_item<T, C> self;
   typedef object_ref<self> self_ref;
 

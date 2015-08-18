@@ -103,7 +103,6 @@ public:
   typedef oos::object_ref<C> container_ref; /**< Shortcut for the container ref type. */
   typedef C container_type;                 /**< Shortcut for the container type. */
   typedef T value_type;                     /**< Shortcut for the value type. */
-  typedef typename container_type::size_type size_type; /**< Shortcut for the size type. */
 
   container_item() {}
 
