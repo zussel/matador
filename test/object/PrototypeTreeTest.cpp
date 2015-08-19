@@ -345,11 +345,9 @@ void PrototypeTreeTestUnit::test_relations()
       children_list_t children;
   };
 
-  std::cout << '\n';
-
+  prototype_tree::const_iterator children_list_node = ptree.insert<children_list>("children_list");
   prototype_tree::const_iterator master_node = ptree.insert<master>("master");
   prototype_tree::const_iterator child_node = ptree.insert<child>("child");
-  prototype_tree::const_iterator children_list_node = ptree.insert<children_list>("children_list");
 
   /*
    * get the relation table for children

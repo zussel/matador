@@ -75,14 +75,12 @@ public:
     }
     // add container node to item node
     // insert the relation
-    std::cout << "inserting container relation for node '" << node_.type << "' with field '" << id << "'\n";
     pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
-  void write_value(const char *id, const object_base_ptr &x)
+  void write_value(const char */*id*/, const object_base_ptr &x)
   {
     prototype_iterator pi = node_.tree->find(x.type());
-    std::cout << "inserting object relation for node '" << node_.type << "' with field '" << id << "'\n";
     if (pi == node_.tree->end()) {
       // if there is no such prototype node
       // insert a new one (it is automatically marked
@@ -633,6 +631,14 @@ prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
   // Analyze primary and foreign keys of node
   foreign_key_analyzer fk_analyzer(*node);
   fk_analyzer.analyze();
+
+  while (!node->foreign_key_ids.empty()) {
+      auto i = node->foreign_key_ids.front();
+      node->foreign_key_ids.pop_front();
+      prototype_node *foreign_node = i.first;
+      std::shared_ptr<primary_key_base> fk(node->primary_key->clone());
+      foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
+  }
 
   return prototype_iterator(node);
 }

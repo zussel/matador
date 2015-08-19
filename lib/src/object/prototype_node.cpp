@@ -61,12 +61,6 @@ void prototype_node::initialize(prototype_tree *tr, object_base_producer *p, con
   abstract = a;
   first->next = last.get();
   last->prev = first.get();
-
-  for (auto i : foreign_key_ids) {
-      prototype_node *node = i.first;
-      std::shared_ptr<primary_key_base> fk(primary_key->clone());
-      node->foreign_keys.insert(std::make_pair(i.second, fk));
-  }
 }
 
 bool
