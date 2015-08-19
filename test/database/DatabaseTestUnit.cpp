@@ -581,6 +581,8 @@ void DatabaseTestUnit::test_reload_relation()
   try {
     tr.begin();
     child_ptr cptr = store.insert(new child("child1"));
+    master_ptr mptr = store.insert(new master("master1"));
+    mptr->children = cptr;
     tr.commit();
   } catch (database_exception &ex) {
     // error, abort transaction
