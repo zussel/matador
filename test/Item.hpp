@@ -943,4 +943,82 @@ public:
   bool empty() const { return tracks_.empty(); }
 };
 
+class child : public oos::serializable
+{
+public:
+    child() {}
+    child(const std::string &n) : name(n) {}
+    virtual ~child() {}
+
+    virtual void deserialize(oos::object_reader &r)
+    {
+        r.read("id", id);
+        r.read("name", name);
+    }
+
+    virtual void serialize(oos::object_writer &w) const
+    {
+        w.write("id", id);
+        w.write("name", name);
+    }
+
+    oos::primary_key<long> id;
+    std::string name;
+};
+
+class master : public oos::serializable
+{
+public:
+    master() {}
+    master(const std::string &n) : name(n) {}
+    virtual ~master() {}
+
+    virtual void deserialize(oos::object_reader &r)
+    {
+        r.read("id", id);
+        r.read("name", name);
+        r.read("child", children);
+    }
+
+    virtual void serialize(oos::object_writer &w) const
+    {
+        w.write("id", id);
+        w.write("name", name);
+        w.write("child", children);
+    }
+
+    oos::primary_key<long> id;
+    std::string name;
+    oos::object_ptr<child> children;
+};
+
+class children_list : public oos::serializable
+{
+public:
+    typedef oos::object_ref<child> child_ref;
+    typedef oos::object_list<children_list, child_ref, true> children_list_t;
+
+    children_list() {}
+    children_list(const std::string &n) : name(n) {}
+    virtual ~children_list() {}
+
+    virtual void deserialize(oos::object_reader &r)
+    {
+        r.read("id", id);
+        r.read("name", name);
+        r.read("children", children);
+    }
+
+    virtual void serialize(oos::object_writer &w) const
+    {
+        w.write("id", id);
+        w.write("name", name);
+        w.write("children", children);
+    }
+
+    oos::primary_key<long> id;
+    std::string name;
+    children_list_t children;
+};
+
 #endif /* ITEM_HPP */

@@ -45,12 +45,15 @@ public:
   void test_reload_simple();
   void test_reload();
   void test_reload_container();
+  void test_reload_relation();
 
 protected:
   oos::session* create_session();
 
   oos::object_store& ostore();
   const oos::object_store& ostore() const;
+
+  std::string db() const;
 
 private:
   oos::object_store ostore_;

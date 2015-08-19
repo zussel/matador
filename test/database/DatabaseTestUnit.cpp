@@ -43,6 +43,7 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
   add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
   add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload serializable list database test");
+  add_test("relation", std::bind(&DatabaseTestUnit::test_reload_relation, this), "reload relation test");
 }
 
 DatabaseTestUnit::~DatabaseTestUnit()
@@ -51,6 +52,7 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
+    /*
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
@@ -64,11 +66,13 @@ DatabaseTestUnit::initialize()
   session_->open();
 
   session_->create();
+  */
 }
 
 void
 DatabaseTestUnit::finalize()
 {
+    /*
   session_->drop();
 
   session_->close();
@@ -76,6 +80,7 @@ DatabaseTestUnit::finalize()
   delete session_;
 
   ostore_.clear(true);
+  */
 }
 
 void DatabaseTestUnit::test_datatypes()
@@ -553,6 +558,64 @@ DatabaseTestUnit::test_reload_container()
     UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
+}
+
+void DatabaseTestUnit::test_reload_relation()
+{
+  oos::object_store store;
+  oos::prototype_tree &tree = store.prototypes();
+
+  prototype_tree::const_iterator children_list_node = tree.insert<children_list>("children_list");
+  prototype_tree::const_iterator master_node = tree.insert<master>("master");
+  prototype_tree::const_iterator child_node = tree.insert<child>("child");
+
+  typedef oos::object_ptr<child> child_ptr;
+  typedef oos::object_ptr<master> master_ptr;
+
+  oos::session ses(store, db());
+  ses.open();
+  ses.create();
+
+  oos::transaction tr(ses);
+
+  try {
+    tr.begin();
+    child_ptr cptr = store.insert(new child("child1"));
+    tr.commit();
+  } catch (database_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+
+  ses.close();
+  store.clear();
+  ses.open();
+  ses.load();
+
+  typedef oos::object_view<child> t_child_view;
+
+  t_child_view child_view(store);
+
+  UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
+  UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
+
+  child_ptr cptr = child_view.front();
+
+  UNIT_ASSERT_EQUAL(cptr->name, "child1", "name must be equal 'child1'");
+
+  ses.drop();
+  store.clear(true);
+  ses.close();
+}
+
+std::string DatabaseTestUnit::db() const
+{
+  return db_;
 }
 
 session* DatabaseTestUnit::create_session()

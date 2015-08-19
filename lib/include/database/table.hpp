@@ -58,9 +58,9 @@ class prototype_node;
 class OOS_API table
 {
 public:
-  typedef std::list<object_proxy*> object_proxy_list_t;
-  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
-  typedef std::map<std::string, object_map_t> t_to_many_data;
+  typedef std::list<object_proxy*> object_proxy_list_t;                 /**< List of object proxies */
+  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;   /**< Map of object proxy lists where key is the primary key of the object in this table */
+  typedef std::map<std::string, object_map_t> t_to_many_data;           /**< Map of object proxy list maps where key is the field name of the object */
 
   typedef std::map<std::shared_ptr<primary_key_base>, object_proxy*> t_to_one_data;
 
