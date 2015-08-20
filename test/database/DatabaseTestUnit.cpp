@@ -578,9 +578,20 @@ void DatabaseTestUnit::test_reload_relation()
 
   oos::transaction tr(ses);
 
+  typedef oos::object_view<child> t_child_view;
+  t_child_view child_view(store);
+
   try {
     tr.begin();
+
+    UNIT_ASSERT_TRUE(child_view.empty(), "child view must not be empty");
+    UNIT_ASSERT_EQUAL(child_view.size(), (size_t)0, "size of child view must be zero");
+
     child_ptr cptr = store.insert(new child("child1"));
+
+    UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
+    UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
+
     master_ptr mptr = store.insert(new master("master1"));
     mptr->children = cptr;
     tr.commit();
@@ -595,13 +606,17 @@ void DatabaseTestUnit::test_reload_relation()
   }
 
   ses.close();
+
+  UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
+  UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
+
   store.clear();
+
+  UNIT_ASSERT_TRUE(child_view.empty(), "child view must not be empty");
+  UNIT_ASSERT_EQUAL(child_view.size(), (size_t)0, "size of child view must be zero");
+
   ses.open();
   ses.load();
-
-  typedef oos::object_view<child> t_child_view;
-
-  t_child_view child_view(store);
 
   UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
   UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
