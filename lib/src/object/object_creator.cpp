@@ -30,16 +30,15 @@ void object_creator::read_value(const char*, object_base_ptr &x)
   if (!x.is_reference()) {
     if (!x.ptr()) {
       // create serializable
-      serializable *o = ostore_.create(x.type());
-//      o->id(x.id());
-      x.reset(ostore_.insert_object(o, notify_), x.is_reference());
+//      serializable *o = ostore_.create(x.type());
+//      x.reset(ostore_.insert_object(o, notify_), x.is_reference());
     } else {
       // do the pointer count
       x.proxy_->link_ptr();
+      object_proxy_stack_.push(x.proxy_);
+      x.ptr()->deserialize(*this);
+      object_proxy_stack_.pop();
     }
-    object_proxy_stack_.push(x.proxy_);
-    x.ptr()->deserialize(*this);
-    object_proxy_stack_.pop();
   } else if (x.proxy_) {
     // count reference
     x.proxy_->link_ref();

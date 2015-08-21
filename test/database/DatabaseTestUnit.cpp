@@ -581,6 +581,9 @@ void DatabaseTestUnit::test_reload_relation()
   typedef oos::object_view<child> t_child_view;
   t_child_view child_view(store);
 
+  typedef oos::object_view<master> t_master_view;
+  t_master_view master_view(store);
+
   try {
     tr.begin();
 
@@ -624,6 +627,11 @@ void DatabaseTestUnit::test_reload_relation()
   child_ptr cptr = child_view.front();
 
   UNIT_ASSERT_EQUAL(cptr->name, "child1", "name must be equal 'child1'");
+
+  master_ptr mptr = master_view.front();
+
+  UNIT_ASSERT_EQUAL(mptr->name, "master1", "name must be equal 'master1'");
+  UNIT_ASSERT_TRUE(mptr->children.get() != nullptr, "child pointer must be not null");
 
   ses.drop();
   store.clear(true);

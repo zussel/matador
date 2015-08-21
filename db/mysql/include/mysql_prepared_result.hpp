@@ -46,7 +46,6 @@ public:
 
   friend std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
-protected:
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
   virtual void read(const char *id, int &x);
@@ -59,10 +58,10 @@ protected:
   virtual void read(const char *id, float &x);
   virtual void read(const char *id, double &x);
   virtual void read(const char *id, char *x, int s);
-  virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
+  virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
@@ -77,25 +76,8 @@ public:
   };
 
 private:
-  template < class T >
-  void prepare_bind_column(int index, enum_field_types type, T &value)
-  {
-    bind_[index].buffer_type = type;
-    bind_[index].buffer= (char *)&value;
-    bind_[index].buffer_length = sizeof(T);
-    bind_[index].is_null = &info_[index].is_null;
-    bind_[index].length = &info_[index].length;
-    bind_[index].error = &info_[index].error;
-  }
+  int column_index_;
 
-  void prepare_bind_column(int index, enum_field_types type, oos::date &value);
-  void prepare_bind_column(int index, enum_field_types type, oos::time &value);
-  void prepare_bind_column(int index, enum_field_types type, std::string &value);
-  void prepare_bind_column(int index, enum_field_types type, char *x, int s);
-  void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
-  void prepare_bind_column(int index, enum_field_types type, object_base_ptr &value);
-
-private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
