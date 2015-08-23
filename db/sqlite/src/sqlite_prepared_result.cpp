@@ -189,26 +189,6 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
   }
 }
 
-void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
-{
-
-  read_foreign_key(id, x);
-//  std::cout << "read serializable of type [" << x.type() << "]\n";
-  /*
-   * determine primary key
-   */
-//  x.id((unsigned long)sqlite3_column_int(stmt_, result_index++));
-}
-
-void sqlite_prepared_result::read(const char *, object_container &)
-{
-}
-
-void sqlite_prepared_result::read(const char *id, primary_key_base &x)
-{
-  x.deserialize(id, *this);
-}
-
 std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res)
 {  
   out << "affected rows [" << res.affected_rows_ << "] size [" << res.rows << "]";

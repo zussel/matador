@@ -63,7 +63,7 @@ public:
   void get(unsigned long i, T &val)
   {
     result_index = transform_index(i);
-    read("", val);
+    this->read("", val);
   }
   void get(serializable *o);
   
@@ -95,7 +95,10 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  void read_foreign_key(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, unsigned long &x) = 0;
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, primary_key_base &x);
 
 protected:
   int result_index;

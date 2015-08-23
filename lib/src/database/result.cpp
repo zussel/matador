@@ -51,7 +51,7 @@ serializable* result::fetch(const oos::prototype_node *node)
   return obj.release();
 }
 
-void result::read_foreign_key(const char *id, object_base_ptr &x)
+void result::read(const char *id, object_base_ptr &x)
 {
   /*
    * read key
@@ -84,5 +84,13 @@ void result::read_foreign_key(const char *id, object_base_ptr &x)
 
   x.reset(proxy.release());
 }
+
+void result::read(const char *id, object_container &x) { }
+
+void result::read(const char *id, primary_key_base &x)
+{
+  x.deserialize(id, *this);
+}
+
 
 }
