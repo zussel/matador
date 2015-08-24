@@ -100,6 +100,8 @@ protected:
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
 
+  const prototype_node* node() const;
+
 protected:
   int result_index;
 

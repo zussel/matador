@@ -3,7 +3,7 @@
 
 #include "object/object_atomizer.hpp"
 
-#include "mysql_prepared_result.hpp"
+#include "mysql_result_info.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -12,19 +12,24 @@
 #include <mysql/mysql.h>
 #endif
 
+#include <unordered_map>
+#include <memory>
+
 namespace oos {
+
+class serializable;
+class prototype_node;
 
 namespace mysql {
 
-class mysql_column_binder : public generic_object_reader<mysql_column_binder>
+class mysql_column_binder : public object_reader
 {
 public:
   mysql_column_binder();
   virtual ~mysql_column_binder();
   
-  void fetch(serializable *o);
-
-  void bind(serializable *o, MYSQL_STMT *stmt, MYSQL_BIND *bind);
+  void bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map,
+            mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
 
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
@@ -66,8 +71,13 @@ private:
   void prepare_bind_column(int index, enum_field_types type, object_base_ptr &value);
 
 private:
-  MYSQL_STMT *stmt_;
-  MYSQL_BIND *bind_;
+  int column_index_ = 0;
+  MYSQL_STMT *stmt_ = nullptr;
+  MYSQL_BIND *bind_ = nullptr;
+  mysql_result_info *info_ = nullptr;
+  const prototype_node *node_;
+
+  std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map_;
 };
 
 }

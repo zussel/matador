@@ -85,11 +85,16 @@ void result::read(const char *id, object_base_ptr &x)
   x.reset(proxy.release());
 }
 
-void result::read(const char *id, object_container &x) { }
+void result::read(const char */*id*/, object_container &/*x*/) { }
 
 void result::read(const char *id, primary_key_base &x)
 {
   x.deserialize(id, *this);
+}
+
+const prototype_node* result::node() const
+{
+  return node_;
 }
 
 

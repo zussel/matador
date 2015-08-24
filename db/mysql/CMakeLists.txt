@@ -13,6 +13,7 @@ SET(MYSQL_DATABASE_HEADER
   include/mysql_statement.hpp
   include/mysql_result.hpp
   include/mysql_prepared_result.hpp
+  include/mysql_result_info.hpp
   include/mysql_types.hpp
   include/mysql_column_binder.hpp
 )

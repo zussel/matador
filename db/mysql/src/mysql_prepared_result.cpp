@@ -2,11 +2,16 @@
 #include "mysql_column_binder.hpp"
 #include "mysql_exception.hpp"
 #include "mysql_column_binder.hpp"
+#include "mysql_result_info.hpp"
 
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 #include "tools/varchar.hpp"
 
 #include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_exception.hpp"
+#include "object/prototype_tree.hpp"
 
 #include <cstring>
 
@@ -15,17 +20,16 @@ namespace oos {
 namespace mysql {
 
 mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
-  : column_index_(0)
-  , affected_rows_((size_type)mysql_stmt_affected_rows(s))
+  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
   , result_size(rs)
   , bind_(new MYSQL_BIND[rs])
-  , info_(new result_info[rs])
+  , info_(new mysql_result_info[rs])
 {
     memset(bind_, 0, rs * sizeof(MYSQL_BIND));
-    memset(info_, 0, rs * sizeof(result_info));
+    memset(info_, 0, rs * sizeof(mysql_result_info));
 }
 
 mysql_prepared_result::~mysql_prepared_result()
@@ -90,11 +94,10 @@ bool mysql_prepared_result::fetch()
 bool mysql_prepared_result::fetch(serializable *o)
 {
   // reset result column index
-  column_index_ = 0;
   result_index = 0;
   // prepare result array
   mysql_column_binder binder;
-  binder.bind(o, stmt, bind_);
+  binder.bind(o, node(), &pk_map_, info_, stmt, bind_);
 
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
@@ -105,7 +108,7 @@ bool mysql_prepared_result::fetch(serializable *o)
   } else {
 //  if (ret == MYSQL_DATA_TRUNCATED) {
     // load data from database
-    o->serialize(*this);
+    o->deserialize(*this);
 //  }
   }
 
@@ -134,130 +137,145 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::read(const char *id, char &x)
+void mysql_prepared_result::read(const char */*id*/, char &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, short &x)
+void mysql_prepared_result::read(const char */*id*/, short &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, int &x)
+void mysql_prepared_result::read(const char */*id*/, int &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, long &x)
+void mysql_prepared_result::read(const char */*id*/, long &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, unsigned char &x)
+void mysql_prepared_result::read(const char */*id*/, unsigned char &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, unsigned short &x)
+void mysql_prepared_result::read(const char */*id*/, unsigned short &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, unsigned int &x)
+void mysql_prepared_result::read(const char */*id*/, unsigned int &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, unsigned long &x)
+void mysql_prepared_result::read(const char */*id*/, unsigned long &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, bool &x)
+void mysql_prepared_result::read(const char */*id*/, bool &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, float &x)
+void mysql_prepared_result::read(const char */*id*/, float &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, double &x)
+void mysql_prepared_result::read(const char */*id*/, double &/*x*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, char *x, int s)
+void mysql_prepared_result::read(const char */*id*/, char */*x*/, int /*s*/)
 {
- ++column_index_;
+ ++result_index;
 }
 
-void mysql_prepared_result::read(const char *, oos::date &x)
+void mysql_prepared_result::read(const char */*id*/, oos::date &x)
 {
-  if (info_[column_index_].length > 0) {
-    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[column_index_].buffer;
+  if (info_[result_index].length > 0) {
+    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
     x.set(mtt->day, mtt->month, mtt->year);
   }
-  ++column_index_;
+  ++result_index;
 }
 
-void mysql_prepared_result::read(const char *, oos::time &x)
+void mysql_prepared_result::read(const char */*id*/, oos::time &x)
 {
-  if (info_[column_index_].length > 0) {
-    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[column_index_].buffer;
+  if (info_[result_index].length > 0) {
+    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
     x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
   }
-  ++column_index_;
+  ++result_index;
 }
 
-void mysql_prepared_result::read(const char *, std::string &x)
+void mysql_prepared_result::read(const char */*id*/, std::string &x)
 {
-  if (info_[column_index_].length > 0) {
-    bind_[column_index_].buffer = new char[info_[column_index_].length];
-    bind_[column_index_].buffer_length = info_[column_index_].length;
-    if (mysql_stmt_fetch_column(stmt_, &bind_[column_index_], column_index_, 0) != 0) {
+  if (info_[result_index].length > 0) {
+    bind_[result_index].buffer = new char[info_[result_index].length];
+    bind_[result_index].buffer_length = info_[result_index].length;
+    if (mysql_stmt_fetch_column(stmt, &bind_[result_index], result_index, 0) != 0) {
       // an error occured
     } else {
-      char *data = (char*)bind_[column_index_].buffer;
-      unsigned long len = bind_[column_index_].buffer_length;
+      char *data = (char*)bind_[result_index].buffer;
+      unsigned long len = bind_[result_index].buffer_length;
       x.assign(data, len);
     }
-    delete [] (char*)bind_[column_index_].buffer;
-    bind_[column_index_].buffer = 0;
+    delete [] (char*)bind_[result_index].buffer;
+    bind_[result_index].buffer = 0;
   }
-  ++column_index_;
+  ++result_index;
 }
 
-void mysql_prepared_result::read(const char *, varchar_base &x)
+void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
 {
-  char *data = (char*)bind_[column_index_].buffer;
-//  unsigned long len = bind_[column_index_].buffer_length;
-  unsigned long len = info_[column_index_].length;
+  char *data = (char*)bind_[result_index].buffer;
+//  unsigned long len = bind_[result_index].buffer_length;
+  unsigned long len = info_[result_index].length;
   x.assign(data, len);
-  ++column_index_;
+  ++result_index;
 }
 
-void mysql_prepared_result::read(const char *, object_base_ptr &x)
+void mysql_prepared_result::read(const char *id, object_base_ptr &x)
 {
-  long id = *static_cast<long*>(bind_[column_index_].buffer);
-  x.id(id);
-}
+  /*
+   * read key
+   * if valid key
+   * create serializable with key
+   * insert into object store
+   * reset object ptr
+   */
 
-void mysql_prepared_result::read(const char *id, object_container &x)
-{
-  ++column_index_;
-}
+  t_pk_map::iterator i = pk_map_.find(id);
+  if (i == pk_map_.end()) {
+      return;
+  }
 
-void mysql_prepared_result::read(const char *id, primary_key_base &x)
-{
-  ++column_index_;
-}
+  /*
+   * clone new primary key and deserialize it
+   * if valid value is set create new proxy
+   * with primary key
+   */
+//  std::shared_ptr<primary_key_base> pk(i->second->clone());
+  std::shared_ptr<primary_key_base> pk = i->second;
+  pk_map_.erase(i);
+  pk->deserialize(id, *this);
+  if (!pk->is_valid()) {
+    return;
+  }
 
-void mysql_prepared_result::read(const char *, char *, int )
-{
-  ++column_index_;
+  // get node of object type
+  prototype_iterator xnode = node()->tree->find(x.type());
+
+  std::unique_ptr<object_proxy> proxy(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
+
+  x.reset(proxy.release());
 }
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)

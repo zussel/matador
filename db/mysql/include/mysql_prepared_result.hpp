@@ -11,14 +11,18 @@
 #endif
 
 #include <vector>
-#include <object/primary_key.hpp>
+#include <unordered_map>
+#include <string>
 
 namespace oos {
 
 class object_base_ptr;
 class varchar_base;
+class primary_key_base;
 
 namespace mysql {
+
+class mysql_result_info;
 
 class mysql_prepared_result : public result
 {
@@ -28,6 +32,7 @@ private:
 
 public:
   typedef result::size_type size_type;
+  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_pk_map;
 
 public:
   mysql_prepared_result(MYSQL_STMT *s, int rs);
@@ -63,21 +68,8 @@ public:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
-
-public:
-  struct result_info {
-    unsigned long length;
-    my_bool is_null;
-    my_bool error;
-    char *buffer;
-    unsigned long buffer_length;
-  };
 
 private:
-  int column_index_;
-
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
@@ -86,7 +78,9 @@ private:
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
-  result_info *info_;
+  mysql_result_info *info_;
+
+  t_pk_map pk_map_;
 };
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
