@@ -209,7 +209,7 @@ object_store::insert_object(serializable *o, bool notify)
   if (oproxy->has_primary_key()) {
     // if object has primary key of type short, int or long
     // set the id of proxy as value
-    primary_key_reader<long> reader(oproxy->id());
+    primary_key_reader<unsigned long> reader(oproxy->id());
     o->deserialize(reader);
   }
 

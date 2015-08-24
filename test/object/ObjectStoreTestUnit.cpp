@@ -254,7 +254,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
 
   
   unsigned long val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
   val = 1;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
@@ -262,7 +262,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
   item_ptr a2 = item;
   
   val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
   val = 1;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
@@ -271,7 +271,7 @@ ObjectStoreTestUnit::ref_ptr_counter()
   item_ref aref1 = a1;
 
   val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
   val = 1;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
@@ -284,18 +284,17 @@ ObjectStoreTestUnit::ref_ptr_counter()
   a1 = object_item_2->ptr();
 
   val = 0;
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be null");
-  val = 1;
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
 
   object_item_2->ptr(item);
   val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
   val = 2;
   UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
   val = 0;
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be null");
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
+  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
 
   object_item_2->ref(item);
   val = 2;
@@ -303,8 +302,9 @@ ObjectStoreTestUnit::ref_ptr_counter()
 
   object_item_2->ref(a1);
   val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be null");
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be null");
+  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
+  val = 0;
+  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
 }
 
 
@@ -373,7 +373,7 @@ ObjectStoreTestUnit::object_with_sub_object()
   // check if sub serializable exists
   object_ptr<Item> simple = ows->ptr();
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "item serializable creation failed");
+  UNIT_ASSERT_NULL(simple.get(), "item must be nullptr");
   
   UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of serializable item failed");
   

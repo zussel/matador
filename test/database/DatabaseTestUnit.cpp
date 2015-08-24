@@ -52,27 +52,28 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
-    /*
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
   ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
   ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
-  
+
+  ostore_.insert_prototype<children_list>("children_list");
+  ostore_.insert_prototype<master>("master");
+  ostore_.insert_prototype<child>("child");
+
   // create session
   session_ = create_session();
 
   session_->open();
 
   session_->create();
-  */
 }
 
 void
 DatabaseTestUnit::finalize()
 {
-    /*
   session_->drop();
 
   session_->close();
@@ -80,7 +81,6 @@ DatabaseTestUnit::finalize()
   delete session_;
 
   ostore_.clear(true);
-  */
 }
 
 void DatabaseTestUnit::test_datatypes()
@@ -388,11 +388,13 @@ DatabaseTestUnit::test_reload()
     tr.begin();
     // ... do some serializable modifications
     // insert new serializable
+    item_ptr item = ostore_.insert(new Item("Bar", 13));
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
+    object_item->ptr(item);
 
     UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
 
-    item_ptr item = object_item->ptr();
+    item = object_item->ptr();
 
     UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
@@ -562,27 +564,22 @@ DatabaseTestUnit::test_reload_container()
 
 void DatabaseTestUnit::test_reload_relation()
 {
-  oos::object_store store;
-  oos::prototype_tree &tree = store.prototypes();
+  oos::prototype_tree &tree = ostore_.prototypes();
 
-  prototype_tree::const_iterator children_list_node = tree.insert<children_list>("children_list");
-  prototype_tree::const_iterator master_node = tree.insert<master>("master");
-  prototype_tree::const_iterator child_node = tree.insert<child>("child");
+  prototype_tree::const_iterator children_list_node = tree.find("children_list");
+  prototype_tree::const_iterator master_node = tree.find("master");
+  prototype_tree::const_iterator child_node = tree.find("child");
 
   typedef oos::object_ptr<child> child_ptr;
   typedef oos::object_ptr<master> master_ptr;
 
-  oos::session ses(store, db());
-  ses.open();
-  ses.create();
-
-  oos::transaction tr(ses);
+  oos::transaction tr(*session_);
 
   typedef oos::object_view<child> t_child_view;
-  t_child_view child_view(store);
+  t_child_view child_view(ostore_);
 
   typedef oos::object_view<master> t_master_view;
-  t_master_view master_view(store);
+  t_master_view master_view(ostore_);
 
   try {
     tr.begin();
@@ -590,12 +587,12 @@ void DatabaseTestUnit::test_reload_relation()
     UNIT_ASSERT_TRUE(child_view.empty(), "child view must not be empty");
     UNIT_ASSERT_EQUAL(child_view.size(), (size_t)0, "size of child view must be zero");
 
-    child_ptr cptr = store.insert(new child("child1"));
+    child_ptr cptr = ostore_.insert(new child("child1"));
 
     UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
     UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
 
-    master_ptr mptr = store.insert(new master("master1"));
+    master_ptr mptr = ostore_.insert(new master("master1"));
     mptr->children = cptr;
     tr.commit();
   } catch (database_exception &ex) {
@@ -608,18 +605,18 @@ void DatabaseTestUnit::test_reload_relation()
     tr.rollback();
   }
 
-  ses.close();
+  session_->close();
 
   UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
   UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
 
-  store.clear();
+  ostore_.clear();
 
   UNIT_ASSERT_TRUE(child_view.empty(), "child view must not be empty");
   UNIT_ASSERT_EQUAL(child_view.size(), (size_t)0, "size of child view must be zero");
 
-  ses.open();
-  ses.load();
+  session_->open();
+  session_->load();
 
   UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");
   UNIT_ASSERT_EQUAL(child_view.size(), (size_t)1, "size of child view must be one");
@@ -632,10 +629,6 @@ void DatabaseTestUnit::test_reload_relation()
 
   UNIT_ASSERT_EQUAL(mptr->name, "master1", "name must be equal 'master1'");
   UNIT_ASSERT_TRUE(mptr->children.get() != nullptr, "child pointer must be not null");
-
-  ses.drop();
-  store.clear(true);
-  ses.close();
 }
 
 std::string DatabaseTestUnit::db() const

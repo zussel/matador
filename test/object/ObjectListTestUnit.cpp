@@ -318,7 +318,7 @@ void ObjectListTestUnit::test_direct_ref_list()
   department_ptr dep = ostore_.insert(new department("development"));
   
   UNIT_ASSERT_TRUE(dep->id() > 0, "department is must be greater zero");
-  UNIT_ASSERT_EQUAL((int)dep->size(), 0, "department is not empty");
+  UNIT_ASSERT_EQUAL(dep->size(), (size_t)0, "department is not empty");
   UNIT_ASSERT_TRUE(dep->empty(), "department must be empty");
   
   employee_ptr emp1 = ostore_.insert(new employee("Karl"));
@@ -332,7 +332,7 @@ void ObjectListTestUnit::test_direct_ref_list()
     
   department::iterator i = dep->begin();
   
-  UNIT_ASSERT_EQUAL((*i)->value()->name(), "Karl", "employees name must be 'Karl'");
+  UNIT_ASSERT_EQUAL((*i)->name(), "Karl", "employees name must be 'Karl'");
   
   // remove karl from department
   i = dep->erase(i);

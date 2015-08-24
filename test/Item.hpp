@@ -670,7 +670,7 @@ class department : public oos::serializable
 {
 public:
   typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref, true> emp_list_t;
+  typedef oos::object_list<department, emp_ref, false> emp_list_t;
   typedef emp_list_t::size_type size_type;
   typedef emp_list_t::iterator iterator;
   typedef emp_list_t::const_iterator const_iterator;
@@ -681,11 +681,11 @@ private:
   emp_list_t emp_list_;
   
 public:
-  department() {}
-//  department() : emp_list_(&employee::dep) {}
+//  department() {}
+  department() : emp_list_(&employee::dep) {}
   department(const std::string &name)
     : name_(name)
-//    , emp_list_(&employee::dep)
+    , emp_list_(&employee::dep)
   {}
   
   virtual ~department() {}
@@ -962,7 +962,7 @@ public:
         w.write("name", name);
     }
 
-    oos::primary_key<long> id;
+    oos::primary_key<unsigned long> id;
     std::string name;
 };
 
@@ -987,7 +987,7 @@ public:
         w.write("child", children);
     }
 
-    oos::primary_key<long> id;
+    oos::primary_key<unsigned long> id;
     std::string name;
     oos::object_ptr<child> children;
 };
@@ -1016,7 +1016,7 @@ public:
         w.write("children", children);
     }
 
-    oos::primary_key<long> id;
+    oos::primary_key<unsigned long> id;
     std::string name;
     children_list_t children;
 };
