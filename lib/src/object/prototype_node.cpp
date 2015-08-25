@@ -194,6 +194,12 @@ void prototype_node::remove(object_proxy *proxy)
   proxy->prev_ = nullptr;
   proxy->next_ = nullptr;
 
+  if (has_primary_key()) {
+    if (primary_key_map.erase(proxy->primary_key_) == 0) {
+      // couldn't find and erase primary key
+    }
+  }
+
   // adjust serializable count for node
   --count;
 }
@@ -211,6 +217,7 @@ void prototype_node::clear(bool recursive)
       // delete serializable proxy and serializable
       delete op;
     }
+    primary_key_map.clear();
     count = 0;
   }
 

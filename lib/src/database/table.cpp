@@ -198,9 +198,9 @@ void table::update(serializable *obj)
 
 //  update_->bind(pos, obj->id());
   std::unique_ptr<result> res(update_->execute());
-  if (res->affected_rows() != 1) {
-    throw database_exception("update", "more than one affected row while updating an object");
-  }
+//  if (res->affected_rows() != 1) {
+//    throw database_exception("update", "more than one affected row while updating an object");
+//  }
 }
 
 void table::remove(serializable *obj)

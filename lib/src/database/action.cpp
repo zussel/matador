@@ -128,7 +128,7 @@ const char* delete_action::classname() const
 
 primary_key_base* delete_action::pk() const
 {
-  return pk_;
+  return pk_.get();
 }
 
 unsigned long delete_action::id() const

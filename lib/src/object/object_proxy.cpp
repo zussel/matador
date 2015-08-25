@@ -197,13 +197,16 @@ unsigned long object_proxy::ptr_count() const
   return ptr_count_;
 }
 
-  void object_proxy::reset(serializable *o)
+void object_proxy::reset(serializable *o)
 {
   ref_count_ = 0;
   ptr_count_ = 0;
   obj_ = o;
   oid = 0;
   node_ = 0;
+  if (obj_ != nullptr) {
+    primary_key_.reset(pk_serializer.serialize(obj_));
+  }
 }
 
 void object_proxy::add(object_base_ptr *ptr)

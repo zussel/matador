@@ -301,7 +301,7 @@ public:
 private:
   std::string classname_;
   unsigned long id_;
-  primary_key_base *pk_;
+  std::unique_ptr<primary_key_base> pk_;
 };
 
 /**

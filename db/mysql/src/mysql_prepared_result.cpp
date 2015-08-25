@@ -119,7 +119,9 @@ bool mysql_prepared_result::fetch(serializable *o)
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  return affected_rows_;
+  long ar = mysql_stmt_affected_rows(stmt);
+  return ar;
+  //return affected_rows_;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::result_rows() const
@@ -273,7 +275,11 @@ void mysql_prepared_result::read(const char *id, object_base_ptr &x)
   // get node of object type
   prototype_iterator xnode = node()->tree->find(x.type());
 
-  std::unique_ptr<object_proxy> proxy(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
+  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
+
+  if (!proxy) {
+    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
+  }
 
   x.reset(proxy.release());
 }

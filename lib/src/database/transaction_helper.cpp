@@ -89,6 +89,11 @@ void restore_visitor::visit(delete_action *a)
     oproxy->reset(ostore_->create(a->classname()));
     // data from buffer into serializable
     serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+    // restore pk
+    if (a->pk()) {
+
+      oproxy->primary_key_.reset(a->pk()->clone());
+    }
     // insert serializable
     ostore_->insert_proxy(oproxy, false, false);
 //    ostore_->insert_object(oproxy->obj(), false);

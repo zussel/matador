@@ -161,11 +161,13 @@ TransactionTestUnit::test_with_sub()
     typedef object_ptr<object_item_t> object_item_ptr;
     typedef object_ptr<Item> item_ptr;
     // insert new serializable
+    item_ptr item = ostore_.insert(new Item("Bar", 13));
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
+    object_item->ptr(item);
 
     UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
 
-    item_ptr item = object_item->ptr();
+    item = object_item->ptr();
 
     UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 

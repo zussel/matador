@@ -444,6 +444,7 @@ DatabaseTestUnit::test_reload()
     item_ptr iptr = optr->ptr();
 
     UNIT_ASSERT_TRUE(iptr.id() > 0, "object store id must be greater zero");
+    UNIT_ASSERT_EQUAL(iptr->get_string(), "Bar", "string must content 'Bar'");
     UNIT_ASSERT_TRUE(iptr->id() > 0, "primary key id must be greater zero");
 
   } catch (database_exception &ex) {

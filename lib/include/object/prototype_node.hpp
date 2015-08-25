@@ -271,7 +271,13 @@ public:
   /*
    * Holds the primary keys of all proxies in this node
    */
-  typedef std::unordered_map<std::shared_ptr<primary_key_base>, object_proxy*> t_primary_key_map;
+  typedef std::shared_ptr<primary_key_base> pk_ptr;
+  struct pk_equal : public std::binary_function<pk_ptr, pk_ptr, bool>
+  {
+      bool operator()(const pk_ptr &a, const pk_ptr &b) const { return *a == *b; }
+  };
+
+  typedef std::unordered_map<pk_ptr, object_proxy*, std::hash<pk_ptr>, pk_equal> t_primary_key_map;
   t_primary_key_map primary_key_map;
 
   /*
