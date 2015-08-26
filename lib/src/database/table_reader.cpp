@@ -13,7 +13,7 @@ table_reader::table_reader(table &t, object_store &ostore)
 {}
 
 
-void table_reader::read(result *res)
+void table_reader::load(result *res)
 {
 
   serializable *obj = nullptr;

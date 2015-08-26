@@ -152,7 +152,7 @@ void table::load(object_store &ostore)
 
   std::unique_ptr<result> res(select_->execute());
 
-  reader.read(res.get());
+  reader.load(res.get());
 
   /*
    * after all tables were loaded fill
