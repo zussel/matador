@@ -78,9 +78,13 @@ void result::read(const char *id, object_base_ptr &x)
   }
 
   // get node of object type
-  prototype_iterator node = node_->tree->find(x.type());
+  prototype_iterator xnode = node_->tree->find(x.type());
 
-  std::unique_ptr<object_proxy> proxy(new object_proxy(pk, const_cast<prototype_node*>(node.get())));
+  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
+
+  if (!proxy) {
+    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
+  }
 
   x.reset(proxy.release());
 }
