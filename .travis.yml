@@ -5,6 +5,51 @@ sudo: false
 services:
   - mysql
 
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8']
+      env: COMPILER=g++-4.8
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.9']
+      env: COMPILER=g++-4.9
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5']
+      env: COMPILER=g++-5
+
+    - os: linux
+      compiler: clang
+      env: COMPILER=clang++
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          packages: ['clang-3.5']
+      env: COMPILER=clang++-3.5
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
+          packages: ['clang-3.6']
+      env: COMPILER=clang++-3.6
 #env:
 #  global:
    # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
@@ -23,11 +68,11 @@ services:
 
 before_script:
   - mysql -e 'create database oos_test;'
-
-script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
+  - cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
+
+script:
   - make
   - make test
 
