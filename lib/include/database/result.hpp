@@ -95,10 +95,10 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  virtual void read(const char *id, unsigned long &x) = 0;
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, unsigned long &x) override = 0;
+  virtual void read(const char *id, object_base_ptr &x) override;
+  virtual void read(const char *id, object_container &x) override;
+  virtual void read(const char *id, primary_key_base &x) override;
 
   const prototype_node* node() const;
 

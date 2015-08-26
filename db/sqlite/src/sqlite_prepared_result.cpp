@@ -21,7 +21,6 @@ sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
   , rows(0)
   , fields_(0)
   , stmt_(stmt)
-  , result_size(0)
 {
 }
 

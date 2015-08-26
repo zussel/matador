@@ -137,7 +137,7 @@ public:
    *
    * @param c The character to append.
    */
-  void push_back(char c);
+  void append(char c);
 
 private:
   std::string value_;

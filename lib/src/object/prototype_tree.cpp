@@ -616,7 +616,7 @@ prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
 {
   // store prototype in map
   // Todo: check return value
-  prototype_map_.insert(std::make_pair(node->type, node)).first;
+  prototype_map_.insert(std::make_pair(node->type, node))/*.first*/;
   typeid_prototype_map_[node->producer->classname()].insert(std::make_pair(node->type, node));
 
   // Analyze primary and foreign keys of node

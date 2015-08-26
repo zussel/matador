@@ -40,7 +40,7 @@
 
 namespace oos {
   
-struct prototype_node;
+class prototype_node;
 
 namespace mysql {
 
@@ -64,23 +64,23 @@ public:
    *
    * @return True on open database connection.
    */
-  virtual bool is_open() const;
+  virtual bool is_open() const override;
 
   /**
    * Create a new sqlite result
    * 
    * @return A new sqlite result
    */
-  virtual result* create_result();
+  virtual result* create_result() override;
 
   /**
    * Create a new sqlite statement
    * 
    * @return A new sqlite statement
    */
-  virtual statement* create_statement();
+  virtual statement* create_statement() override;
   
-  virtual const char* type_string(data_type_t type) const;
+  virtual const char* type_string(data_type_t type) const override;
 
 
   virtual unsigned long last_inserted_id() override;
@@ -94,12 +94,12 @@ public:
   MYSQL* operator()();
 
 protected:
-  virtual void on_open(const std::string &db);
-  virtual void on_close();
-  virtual result* on_execute(const std::string &sql);
-  virtual void on_begin();
-  virtual void on_commit();
-  virtual void on_rollback();
+  virtual void on_open(const std::string &db) override;
+  virtual void on_close() override;
+  virtual result* on_execute(const std::string &sql) override;
+  virtual void on_begin() override;
+  virtual void on_commit() override;
+  virtual void on_rollback() override;
 
 private:
   MYSQL mysql_;

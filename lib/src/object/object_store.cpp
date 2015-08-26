@@ -382,7 +382,8 @@ void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
   }
 
   // find prototype node
-  prototype_iterator node = prototype_tree_.find(typeid(*oproxy->obj()).name());
+  serializable *o = oproxy->obj();
+  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
     throw object_exception("couldn't insert serializable");
