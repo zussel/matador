@@ -67,7 +67,6 @@ public:
   }
 private:
   std::string what_;
-  serializable *obj_;
 };
 
 #define throw_object_exception(message) \

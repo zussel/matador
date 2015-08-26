@@ -221,7 +221,7 @@ object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iter
   node->insert(oproxy);
 
   // initialize serializable
-  object_creator oc(oproxy, *this, notify);
+  object_creator oc(oproxy, *this);
   oproxy->obj()->deserialize(oc);
   // set this into persistent serializable
   // notify observer

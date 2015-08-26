@@ -57,12 +57,10 @@ public:
    * notified or not.
    * 
    * @param ostore The object_store.
-   * @param notify The flag wether the observers should be informed or not.
    */
-  object_creator(object_proxy *root, object_store &ostore, bool notify)
+  object_creator(object_proxy *root, object_store &ostore)
     : generic_object_reader<object_creator>(this)
     , ostore_(ostore)
-    , notify_(notify)
   {
     object_proxy_stack_.push(root);
   }
@@ -80,7 +78,6 @@ public:
 private:
   std::stack<object_proxy*> object_proxy_stack_;
   object_store &ostore_;
-  bool notify_;
 };
 /// @endcond
 

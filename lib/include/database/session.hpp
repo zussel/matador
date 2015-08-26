@@ -132,7 +132,7 @@ public:
    * @return The serializable defined by the given parameters.
    */
   template < class T >
-  object_ptr<T> load(int id)
+  object_ptr<T> load(int /*id*/)
   {
     return object_ptr<T>();
   }
