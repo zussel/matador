@@ -26,28 +26,28 @@ default_sequencer::default_sequencer()
 default_sequencer::~default_sequencer()
 {}
 
-long default_sequencer::init()
+unsigned long default_sequencer::init()
 {
   return number_;
 }
 
-long default_sequencer::reset(long id)
+unsigned long default_sequencer::reset(unsigned long id)
 {
   number_ = id;
   return number_;
 }
 
-long default_sequencer::next()
+unsigned long default_sequencer::next()
 {
   return ++number_;
 }
 
-long default_sequencer::current() const
+unsigned long default_sequencer::current() const
 {
   return number_;
 }
 
-long default_sequencer::update(long id)
+unsigned long default_sequencer::update(unsigned long id)
 {
   if (id > number_) {
     number_ = id;
@@ -70,27 +70,27 @@ sequencer_impl_ptr sequencer::exchange_sequencer(const sequencer_impl_ptr &impl)
   return tmp;
 }
 
-long sequencer::init()
+unsigned long sequencer::init()
 {
   return impl_->init();
 }
 
-long sequencer::reset(long id)
+unsigned long sequencer::reset(unsigned long id)
 {
   return impl_->reset(id);
 }
 
-long sequencer::next()
+unsigned long sequencer::next()
 {
   return impl_->next();
 }
 
-long sequencer::current() const
+unsigned long sequencer::current() const
 {
   return impl_->current();
 }
 
-long sequencer::update(long id)
+unsigned long sequencer::update(unsigned long id)
 {
   return impl_->update(id);
 }

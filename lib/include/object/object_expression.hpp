@@ -168,7 +168,7 @@ public:
    * Applies the () operator of the concrete
    * variable and returns the result.
    * 
-   * @param optr The object to apply the variable to.
+   * @param optr The serializable to apply the variable to.
    * @return The value of the variable.
    */
   return_type operator()(const object_base_ptr &optr) const
@@ -192,11 +192,11 @@ private:
  
  /**
   * @tparam R The return value type
-  * @tparam O The object type
+  * @tparam O The serializable type
   * @brief Create a variable with depth zero
   * 
   * Creates a variable with depth zero. That means that the
-  * value is inside the object itself.
+  * value is inside the serializable itself.
   * 
   * @param mem_func A member function of the object_type.
   * @return A variable with return type R.
@@ -210,12 +210,12 @@ make_var(R (O::*mem_func)() const)
 
  /**
   * @tparam R The return value type
-  * @tparam O The proxy object type
-  * @tparam O1 The object type
+  * @tparam O The proxy serializable type
+  * @tparam O1 The serializable type
   * @brief Create a variable with depth one
   * 
   * Creates a variable with depth one. That means that a
-  * value of a nested object is requested.
+  * value of a nested serializable is requested.
   * 
   * @param mem_func A member function of the object_type.
   * @param mem_func_1 A member function of the nested object_type.
@@ -230,13 +230,13 @@ make_var(O1 (O::*mem_func)() const, R (O1::object_type::*mem_func_1)() const)
 
  /**
   * @tparam R The return value type
-  * @tparam O The proxy object type
-  * @tparam O1 The nested object type
-  * @tparam O2 The nested object type
+  * @tparam O The proxy serializable type
+  * @tparam O1 The nested serializable type
+  * @tparam O2 The nested serializable type
   * @brief Create a variable with depth two
   * 
   * Creates a variable with depth one. That means that a
-  * value of a nested object is requested.
+  * value of a nested serializable is requested.
   * 
   * @param mem_func A member function of the object_type.
   * @param mem_func_1 A member function of the nested object_type.
@@ -252,14 +252,14 @@ make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, R
 
  /**
   * @tparam R The return value type
-  * @tparam O The proxy object type
-  * @tparam O1 The nested object type
-  * @tparam O2 The nested object type
-  * @tparam O3 The nested object type
+  * @tparam O The proxy serializable type
+  * @tparam O1 The nested serializable type
+  * @tparam O2 The nested serializable type
+  * @tparam O3 The nested serializable type
   * @brief Create a variable with depth two
   * 
   * Creates a variable with depth one. That means that a
-  * value of a nested object is requested.
+  * value of a nested serializable is requested.
   * 
   * @param mem_func A member function of the object_type.
   * @param mem_func_1 A member function of the nested object_type.

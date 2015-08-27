@@ -66,7 +66,7 @@ class OOS_API library
 {
 public:
   /**
-   * Create a unspecified library object
+   * Create a unspecified library serializable
    */
   library();
   /**

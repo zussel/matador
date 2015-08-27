@@ -44,9 +44,12 @@ SessionTestUnit::~SessionTestUnit()
 void
 SessionTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
+
+  ostore_.insert_prototype<person>("person");
+  ostore_.insert_prototype<employee>("employee");
+  ostore_.insert_prototype<department>("department");
 
   // create session
   session_ = create_session();
@@ -62,7 +65,7 @@ SessionTestUnit::finalize()
 void
 SessionTestUnit::test_open_close()
 {
-  // create database and make object store known to the database
+  // create database and make serializable store known to the database
   UNIT_ASSERT_FALSE(session_->is_open(), "session must not be open");
 
   session_->open();

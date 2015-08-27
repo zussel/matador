@@ -42,9 +42,9 @@ namespace oos {
 
 /**
  * @class json_object
- * @brief Class representing the json object type.
+ * @brief Class representing the json serializable type.
  * 
- * This class represents the json object type.
+ * This class represents the json serializable type.
  */
 class OOS_API json_object : public json_type
 {

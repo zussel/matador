@@ -20,16 +20,16 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class object_proxy;
 
 /**
  * @class object_observer
- * @brief Base class for object observer classes
+ * @brief Base class for serializable observer classes
  * 
  * When interessted to observe insert, update and
  * delete actions an observer class instance must be
- * registered with object store.
+ * registered with serializable store.
  * Use this class as base class for all observer classes.
  */
 class OOS_API object_observer
@@ -38,32 +38,32 @@ public:
   virtual ~object_observer() {}
   
   /**
-   * @brief Called on object insertion.
+   * @brief Called on serializable insertion.
    * 
-   * Called when an object is inserted
+   * Called when an serializable is inserted
    * into the object_store.
    * 
-   * @param proxy The proxy of the inserted object.
+   * @param proxy The proxy of the inserted serializable.
    */
   virtual void on_insert(object_proxy *proxy) = 0;
   
   /**
-   * @brief Called on object update.
+   * @brief Called on serializable update.
    * 
-   * Called when an object is updated
+   * Called when an serializable is updated
    * in the object_store.
    * 
-   * @param proxy The proxy of the updated object.
+   * @param proxy The proxy of the updated serializable.
    */
   virtual void on_update(object_proxy *proxy) = 0;
   
   /**
-   * @brief Called on object deletion.
+   * @brief Called on serializable deletion.
    * 
-   * Called when an object is deleted
+   * Called when an serializable is deleted
    * from the object_store.
    * 
-   * @param proxy The proxy of the deleted object.
+   * @param proxy The proxy of the deleted serializable.
    */
   virtual void on_delete(object_proxy *proxy) = 0;
 };

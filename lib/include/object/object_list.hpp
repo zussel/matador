@@ -18,7 +18,6 @@
 #ifndef OBJECT_LIST_HPP
 #define OBJECT_LIST_HPP
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
@@ -37,13 +36,13 @@ namespace oos {
 
 /**
  * @class object_list_base
- * @brief Base class for all object list classes.
- * @tparam S The type of the parent object.
+ * @brief Base class for all serializable list classes.
+ * @tparam S The type of the parent serializable.
  * @tparam T The value of the list.
  * @tparam CT The container item type.
  * 
  * The object_list class implements a list which
- * can hold any type of object from builtin types as
+ * can hold any type of serializable from builtin types as
  * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
@@ -54,6 +53,7 @@ class object_list_base : public object_container
 public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
+  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::list<item_holder> list_type;                  /**< Shortcut for the list class member. */
@@ -62,26 +62,16 @@ public:
   typedef typename list_type::const_iterator const_iterator; /**< Shortcut for the list const iterator. */
 
   /**
-   * Create an empty object list
-   * with the given parent object.
+   * Create an empty serializable list
+   * with the given parent serializable.
    *
-   * @param parent The parent object of the list.
+   * @param parent The parent serializable of the list.
    */
   explicit object_list_base()
   {}
 
   virtual ~object_list_base() {}
   
-  /**
-   * Return the class name of the item.
-   * 
-   * @return The class name of the item.
-   */
-  virtual const char* classname() const
-  {
-    return typeid(item_type).name();
-  }
-
   /**
    * Return the begin iterator of the list.
    * 
@@ -208,11 +198,11 @@ public:
 
 protected:
   /**
-   * @brief Executes the given function object for all elements.
+   * @brief Executes the given function serializable for all elements.
    *
-   * Executes the given function object for all elements.
+   * Executes the given function serializable for all elements.
    *
-   * @param pred Function object used to be executed on each element.
+   * @param pred Function serializable used to be executed on each element.
    */
   virtual void for_each(const proxy_func &pred) const
   {
@@ -233,9 +223,9 @@ protected:
   }
 
   /**
-   * Return the underlying list object.
+   * Return the underlying list serializable.
    * 
-   * @return The list object.
+   * @return The list serializable.
    */
   list_type& list()
   {
@@ -282,17 +272,17 @@ class object_list;
  * 
  * @tparam S The parent class type.
  * @tparam T The item class type.
- * @tparam WITH_JOIN_TABLE Indicates wether a join object/table is used or not.
+ * @tparam WITH_JOIN_TABLE Indicates wether a join serializable/table is used or not.
  *
- * The object list class represents a list of objects or values
- * in the object store. S indicates the super class holding 
+ * The serializable list class represents a list of objects or values
+ * in the serializable store. S indicates the super class holding
  * the list and T is the type of the list item.
  * 
  * The last template argument indicates wether the list
- * uses a relation object/table or not, where true means use
- * a relation object/table and false not to.
- * If the value is false the item must be an object containing
- * already information about its super/holder object.
+ * uses a relation serializable/table or not, where true means use
+ * a relation serializable/table and false not to.
+ * If the value is false the item must be an serializable containing
+ * already information about its super/holder serializable.
  */
 template < class S, class T, bool WITH_JOIN_TABLE >
 class object_list : public  object_list_base<S, T>
@@ -327,17 +317,17 @@ public:
  * @tparam T The item class type.
  * @tparam SETFUNC The parent setter function.
  *
- * This object list class uses no relation table. The items
+ * This serializable list class uses no relation table. The items
  * hold the information of its parent by themself.
  */
 template < class S, class T >
 class object_list<S, T, false> : public  object_list_base<S, T>
 {
 public:
-  typedef object_ref<S> parent_ref;                           /**< Shortcut for the parent reference. */
-  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */
   typedef object_list_base<S, T> base_list;                   /**< Shortcut for the base list. */
   typedef typename T::object_type item_type;                  /**< Shortcut for the item type. */
+  typedef typename base_list::parent_ref parent_ref;          /**< Shortcut for the parent reference. */
+  typedef void (T::object_type::*SETFUNC)(const parent_ref&); /**< Shortcut for the parent reference setter function. */
   typedef typename base_list::value_holder value_holder;      /**< Shortcut for the value holder. */
   typedef typename base_list::item_holder item_holder;        /**< Shortcut for the item holder. */
   typedef typename base_list::size_type size_type;            /**< Shortcut for the size type. */
@@ -359,25 +349,35 @@ public:
 
   /**
    * Return the class name of the item.
-   * 
+   *
    * @return The class name of the item.
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return classname_.c_str();
   }
+
+  /**
+   * Return the class name of the item.
+   * 
+   * @return The class name of the item.
+   */
+//  virtual const char* classname() const
+//  {
+//    return typeid(parent_ref).name();
+//  }
 
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // mark item object as modified
+      // mark item serializable as modified
 //      this->mark_modified(x.get());
       this->mark_modified(this->proxy(x));
       // set back ref to parent
       setter_(*x.get(), parent_ref(this->owner()));
-      // insert new item object
+      // insert new item serializable
       return this->list().insert(pos, x);
     }
   };
@@ -387,7 +387,7 @@ public:
     if (!this->ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // mark item object as modified
+      // mark item serializable as modified
       this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
@@ -407,7 +407,11 @@ protected:
 private:
   std::function<void (item_type&, const object_ref<S>&)> setter_;
 
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string object_list<S, T, false>::classname_ = typeid(item_type).name();
 
 /**
  * @class object_list
@@ -416,7 +420,7 @@ private:
  * @tparam S The parent class type.
  * @tparam T The item class type.
  *
- * This object lisz class uses a relation table to
+ * This serializable list class uses a relation table to
  * map the items to its parent.
  */
 template < class S, class T>
@@ -425,8 +429,8 @@ class object_list<S, T, true> : public object_list_base<S, T, object_ptr<contain
 public:
   typedef object_list_base<S, T, object_ptr<container_item<T, S> > > base_list; /**< Shortcut for the base list. */
   typedef T value_holder;                                                       /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                                             /**< Shortcut for the parent reference. */
   typedef container_item<T, S> item_type;                                       /**< Shortcut for the item type. */
+  typedef typename base_list::parent_ref parent_ref;                            /**< Shortcut for the parent reference. */
   typedef typename base_list::size_type size_type;                              /**< Shortcut for the size type. */
   typedef typename base_list::item_holder item_holder;                          /**< Shortcut for the item holder. */
   typedef item_holder item_ptr;                                                 /**< Shortcut for the item ptr. */
@@ -443,6 +447,16 @@ public:
   object_list() {}
   virtual ~object_list() {}
 
+  /**
+   * Return the class name of the item.
+   *
+   * @return The class name of the item.
+   */
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
+
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
@@ -452,10 +466,10 @@ public:
       parent_ref pref(this->owner());
       item_type *it = new item_type(pref, x);
       item_ptr item = this->ostore()->insert(it);
-      // mark list object as modified
+      // mark list serializable as modified
 //      this->mark_modified(this->parent());
       this->mark_modified(this->owner());
-      // insert new item object
+      // insert new item serializable
       return this->list().insert(pos, item);
     }
   }
@@ -480,7 +494,13 @@ protected:
     return new object_producer<item_type>();
   }
 ///@endcond
+
+private:
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string object_list<S, T, true>::classname_ = typeid(item_type).name();
 
 #endif /* OOS_DOXYGEN_DOC */
 

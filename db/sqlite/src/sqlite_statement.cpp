@@ -29,9 +29,7 @@
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 
-#include <sstream>
 #include <cstring>
-#include <memory>
 
 #include <sqlite3.h>
 
@@ -45,7 +43,10 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
     return;
   }
   std::stringstream msg;
-  msg << source << ": " << sqlite3_errmsg(db) << "(" << sql << ")";
+  msg << source << ": " << sqlite3_errmsg(db);
+  if (!sql.empty()) {
+    msg << " (" << sql << ")";
+  }
   throw sqlite_exception(msg.str()); 
 }
 

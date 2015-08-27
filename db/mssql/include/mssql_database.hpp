@@ -83,6 +83,9 @@ public:
 
   SQLHANDLE operator()();
 
+
+  virtual unsigned long last_inserted_id() override;
+
 protected:
   virtual void on_open(const std::string &db);
   virtual void on_close();

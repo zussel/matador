@@ -3,3 +3,4 @@ doc/api/
 doc/web/api/
 oos.geany
 .idea
+*.user

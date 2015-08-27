@@ -34,7 +34,7 @@
 namespace oos {
 
 class row;
-class object_atomizable;
+class serializable;
 
 namespace mysql {
 
@@ -54,7 +54,7 @@ public:
   const char* column(size_type c) const;
   bool fetch();
   
-  bool fetch(object *o);
+  bool fetch(serializable *o);
 
   size_type affected_rows() const;
   size_type result_rows() const;

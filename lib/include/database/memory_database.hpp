@@ -59,6 +59,9 @@ public:
 
   virtual const char* type_string(data_type_t ) const { return 0; }
 
+
+  virtual unsigned long last_inserted_id() { return 0; }
+
 private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}

@@ -18,7 +18,6 @@
 #ifndef OBJECT_VECTOR_HPP
 #define OBJECT_VECTOR_HPP
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 #include "object/object_container.hpp"
@@ -44,21 +43,22 @@ private:
 public:
   typedef typename base_item::container_ref container_ref;
   typedef typename base_item::value_type value_type;
-  typedef typename base_item::size_type size_type;
+//  typedef typename base_item::size_type size_type;
+  typedef size_t size_type;
 
 public:
   object_vector_item() : index_(0) {}
   explicit object_vector_item(const container_ref &c)
-    : base_item(c)
-    , index_(0)
+  : base_item(c)
+  , index_(0)
   {}
   object_vector_item(const container_ref &c, const value_type &v)
-    : base_item(c, v)
-    , index_(0)
+  : base_item(c, v)
+  , index_(0)
   {}
   object_vector_item(const container_ref &c, size_type i, const value_type &v)
-    : base_item(c, v)
-    , index_(i)
+  : base_item(c, v)
+  , index_(i)
   {}
   virtual ~object_vector_item() {}
 
@@ -80,7 +80,7 @@ public:
 
   void index(size_type i)
   {
-    base_item::modify(index_, i);
+    index_ =  i;
   }
 
 private:
@@ -97,13 +97,13 @@ class const_object_vector_iterator;
 
 /**
  * @class object_vector_base
- * @brief Base class for all object vector classes.
- * @tparam S The type of the parent object.
+ * @brief Base class for all serializable vector classes.
+ * @tparam S The type of the parent serializable.
  * @tparam T The value of the vector.
  * @tparam CT The container item type.
  * 
  * The object_vector class implements a vector which
- * can hold any type of object from builtin types as
+ * can hold any type of serializable from builtin types as
  * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
@@ -114,6 +114,7 @@ class object_vector_base : public object_container
 public:
   typedef T value_holder;                                    /**< Shortcut for the value type. */
   typedef S parent_type;                                     /**< Shortcut for the container type. */
+  typedef object_ref<S> parent_ref;                          /**< Shortcut for the parent reference. */
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::vector<item_holder> vector_type;              /**< Shortcut for the vector class member. */
@@ -126,33 +127,23 @@ public:
 
   /**
    * @brief Creates a new object_vector.
-   * 
+   *
    * A new object_vector is created. The vector is part
-   * of the given parent object and therefor a reference
-   * to the parent object must be found inside the value
-   * type object with the given vector_name. Also the index
+   * of the given parent serializable and therefor a reference
+   * to the parent serializable must be found inside the value
+   * type serializable with the given vector_name. Also the index
    * of the element is stored within the element. Therefor
    * the name of the index parameter must be given.
-   * 
-   * @tparam T Parent object type.
+   *
+   * @tparam T Parent serializable type.
    */
   object_vector_base() {}
 
   virtual ~object_vector_base() {}
 
   /**
-   * Return the typename of the item type class
-   * 
-   * @return The item type name.
-   */
-  virtual const char* classname() const
-  {
-    return typeid(item_type).name();
-  }
-
-  /**
    * Return the begin iterator of the vector.
-   * 
+   *
    * @return The begin iterator.
    */
   iterator begin() {
@@ -161,7 +152,7 @@ public:
 
   /**
    * Return the begin iterator of the vector.
-   * 
+   *
    * @return The begin iterator.
    */
   const_iterator begin() const {
@@ -170,7 +161,7 @@ public:
 
   /**
    * Return the end iterator of the vector.
-   * 
+   *
    * @return The end iterator.
    */
   iterator end() {
@@ -179,7 +170,7 @@ public:
 
   /**
    * Return the end iterator of the vector.
-   * 
+   *
    * @return The end iterator.
    */
   const_iterator end() const {
@@ -188,7 +179,7 @@ public:
 
   /**
    * Returns true if the vector is empty.
-   * 
+   *
    * @return True if the vector is empty.
    */
   virtual bool empty() const {
@@ -205,7 +196,7 @@ public:
 
   /**
    * Returns the size of the vector.
-   * 
+   *
    * @return The size of the vector.
    */
   virtual size_type size() const
@@ -215,9 +206,9 @@ public:
 
   /**
    * @brief Inserts a new element.
-   * 
+   *
    * Insert a new element at a given iterator position.
-   * 
+   *
    * @param pos The position where to insert.
    * @param x The element to insert.
    * @return The new position iterator.
@@ -295,7 +286,7 @@ public:
    *
    * Erase a range of elements from the list. The
    * range is defined by a first and a last iterator.
-   * 
+   *
    * @param first The first iterator of the range to erase.
    * @param last The last iterator of the range to erase.
    * @return Returns the next iterator.
@@ -304,11 +295,11 @@ public:
 
 protected:
   /**
-   * @brief Executes the given function object for all elements.
+   * @brief Executes the given function serializable for all elements.
    *
-   * Executes the given function object for all elements.
+   * Executes the given function serializable for all elements.
    *
-   * @param pred Function object used to be executed on each element.
+   * @param pred Function serializable used to be executed on each element.
    */
   virtual void for_each(const proxy_func &pred) const
   {
@@ -330,9 +321,9 @@ protected:
 
   /**
    * Return a reference to the
-   * underlying vector class object.
+   * underlying vector class serializable.
    *
-   * @return The vector object.
+   * @return The vector serializable.
    */
   vector_type& vector()
   {
@@ -342,18 +333,18 @@ protected:
   /**
    * Adjust indeces of all elements
    * after the given iterator.
-   * 
+   *
    * @param i The start iterator for the index adjustment.
    */
   virtual void adjust_index(iterator i) = 0;
 
   /**
-   * Insert a proxy object at a given position.
-   * 
+   * Insert a proxy serializable at a given position.
+   *
    * @param index The index to insert at.
    * @param proxy The object_proxy to insert.
    */
-  void insert_proxy(int index, object_proxy *proxy)
+  void insert_proxy(size_t index, object_proxy *proxy)
   {
     if (this->vector().size() < (size_type)index) {
       this->vector().resize(index);
@@ -395,7 +386,7 @@ public:
 
 private:
   object_vector_iterator(const vector_iterator &i)
-    : iter_(i) {}
+  : iter_(i) {}
 
 public:
 
@@ -481,12 +472,12 @@ class object_vector;
 /**
  * @brief Object vector class without relation table
  *
- * @tparam S The type of the parent object.
+ * @tparam S The type of the parent serializable.
  * @tparam T The value of the vector.
- * @tparam WITH_JOIN_TABLE Indicates wether a join object/table is used or not..
+ * @tparam WITH_JOIN_TABLE Indicates wether a join serializable/table is used or not..
  * 
  * The object_vector class implements a vector which
- * can hold any type of object from builtin types as
+ * can hold any type of serializable from builtin types as
  * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
@@ -495,10 +486,10 @@ class object_vector;
  * vector and T is the type of the vector item.
  * 
  * The last template argument indicates wether the vector
- * uses a relation object/table or not, where true means use
- * a relation object/table and false not to.
- * If the value is false the item must be an object containing
- * already information about its super/holder object.
+ * uses a relation serializable/table or not, where true means use
+ * a relation serializable/table and false not to.
+ * If the value is false the item must be an serializable containing
+ * already information about its super/holder serializable.
  */
 template < class S, class T, bool WITH_JOIN_TABLE >
 class object_vector : public object_vector_base<S, T>
@@ -531,14 +522,14 @@ public:
 /**
  * @brief Object vector class without relation table
  *
- * @tparam S The type of the parent object.
+ * @tparam S The type of the parent serializable.
  * @tparam T The value of the vector.
  * @tparam FUNC1 The parent setter function
  * @tparam FUNC2 The index setter function
  * @tparam FUNC3 The index getter function
  * 
  * The object_vector class implements a vector which
- * can hold any type of object from builtin types as
+ * can hold any type of serializable from builtin types as
  * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
@@ -553,7 +544,7 @@ public:
   typedef object_vector_base<S, T> base_vector;                /**< Shortcut for the base vector. */
   typedef typename T::object_type value_type;                  /**< Shortcut for the value type. */
   typedef T value_holder;                                      /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                            /**< Shortcut for the parent reference. */
+  typedef typename base_vector::parent_ref parent_ref;         /**< Shortcut for the parent reference. */
   typedef typename T::object_type item_type;                   /**< Shortcut for the item type. */
   typedef typename base_vector::size_type size_type;           /**< Shortcut for the size type. */
   typedef typename base_vector::iterator iterator;             /**< Shortcut for the iterator. */
@@ -562,7 +553,7 @@ public:
 public:
   /**
    * @brief Creates an empty vector.
-   * 
+   *
    * Creates an empty vector. The parent reference
    * and the index is holded by the item itself.
    *
@@ -570,24 +561,34 @@ public:
    * @param f2 The index setter function.
    * @param f3 The index getter function.
    */
-	object_vector(FUNC1 f1, FUNC2 f2, FUNC3 f3)
-    : ref_setter(f1)
-		, int_setter(f2)
-    , int_getter(f3)
+  object_vector(FUNC1 f1, FUNC2 f2, FUNC3 f3)
+  : ref_setter(f1)
+  , int_setter(f2)
+  , int_getter(f3)
   {}
 
   virtual ~object_vector() {}
+
+  /**
+   * Return the typename of the item type class
+   *
+   * @return The item type name.
+   */
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
 
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // mark list object as modified
+      // mark list serializable as modified
       this->mark_modified(this->owner());
 //      this->mark_modified(this->parent());
       ref_setter(*x.get(), parent_ref(this->owner()));
-      // insert new item object
+      // insert new item serializable
       pos = this->vector().insert(pos, x);
       iterator first = pos;
       // adjust index
@@ -601,10 +602,10 @@ public:
     if (!this->ostore()) {
       throw object_exception("invalid object_store pointer");
     } else {
-      // mark parent object as modified
+      // mark parent serializable as modified
       this->mark_modified(this->owner());
 //      this->mark_modified(this->parent());
-      // mark item object as modified
+      // mark item serializable as modified
       this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
@@ -620,12 +621,12 @@ public:
 
   virtual iterator erase(iterator first, iterator last)
   {
-    // mark parent object as modified
+    // mark parent serializable as modified
     this->mark_modified(this->owner());
 //    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
-      // mark item object as modified
+      // mark item serializable as modified
       this->mark_modified(this->proxy(*i));
 //      this->mark_modified((*i).get());
       // set back ref to zero
@@ -639,7 +640,7 @@ public:
 
     return i;
   }
-  
+
 protected:
 ///@cond OOS_DEV
 
@@ -653,11 +654,11 @@ protected:
   {
 //    iterator j = this->begin();
     iterator j = this->vector().begin();
-    size_t start = std::distance(j, i);
+    size_t start = static_cast<size_t>(std::distance(j, i));
 //    size_t start = i - this->begin();
-    
+
     while (i != this->vector().end()) {
-      // mark item object as modified
+      // mark item serializable as modified
       this->mark_modified(this->proxy(*i));
 //      this->mark_modified(i->get());
       int_setter(*(*i++).get(), start++);
@@ -666,9 +667,9 @@ protected:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-    int index = this->size();
-    if (proxy->obj) {
-      index = int_getter(*static_cast<value_type*>(proxy->obj));
+    size_t index = this->size();
+    if (proxy->obj()) {
+      index = int_getter(*static_cast<value_type*>(proxy->obj()));
     }
     this->insert_proxy(index, proxy);
   }
@@ -676,20 +677,27 @@ protected:
 
 private:
   std::function<void (value_type&, const object_ref<S>&)> ref_setter;
-	std::function<void (value_type&, int)> int_setter;
-	std::function<int (const value_type&)> int_getter;
+  std::function<void (value_type&, int)> int_setter;
+  std::function<int (const value_type&)> int_getter;
+
+  static std::string classname_;
+
 };
+
+template < class S, class T >
+std::string object_vector<S, T, false>::classname_ = typeid(item_type).name();
+
 
 /**
  * @brief Object vector class with relation table
  *
- * @tparam S The type of the parent object.
+ * @tparam S The type of the parent serializable.
  * @tparam T The value of the vector.
  * @tparam FUNC1 The parent setter function
  * @tparam FUNC2 The index setter function
  * 
  * The object_vector class implements a vector which
- * can hold any type of object from builtin types as
+ * can hold any type of serializable from builtin types as
  * int, float to object_ptr or object_ref elements.
  * The class provides STL like behaviour and the order of
  * the elements is reliable.
@@ -703,7 +711,7 @@ public:
   typedef void (value_type::*FUNC2)(int);                                                                                 /**< Shortcut for the index setter function. */
   typedef object_vector_base<S, T, object_ptr<object_vector_item<T, S> > > base_vector;                                   /**< Shortcut for the base vector. */
   typedef T value_holder;                                                                                                 /**< Shortcut for the value holder. */
-  typedef object_ref<S> parent_ref;                                                                                       /**< Shortcut for the parent reference. */
+  typedef typename base_vector::parent_ref parent_ref;                                                                    /**< Shortcut for the parent reference. */
   typedef typename base_vector::item_holder item_holder;                                                                  /**< Shortcut for the item holder. */
   typedef object_vector_item<T, S> item_type;                                                                             /**< Shortcut for the item type. */
   typedef item_holder item_ptr;                                                                                           /**< Shortcut for the item ptr. */
@@ -714,22 +722,32 @@ public:
 public:
   /**
    * @brief Creates an empty vector
-   * 
+   *
    * Creates an empty vector with the
    * given parent. All items are mapped
    * via a relation table
-   * 
-   * @param parent The parent object.
+   *
+   * @param parent The parent serializable.
    * @param f1 The parent reference setter function.
    * @param f2 The index setter function.
    */
-	explicit object_vector(FUNC1 f1 = 0, FUNC2 f2 = 0)
-    : str_setter(f1)
-    , int_setter(f2)
-	{}
+  explicit object_vector(FUNC1 f1 = 0, FUNC2 f2 = 0)
+  : str_setter(f1)
+  , int_setter(f2)
+  {}
 
   virtual ~object_vector() {}
-	
+
+  /**
+   * Return the typename of the item type class
+   *
+   * @return The item type name.
+   */
+  virtual const char* classname() const
+  {
+    return classname_.c_str();
+  }
+
   virtual iterator insert(iterator pos, const value_holder &x)
   {
     if (!object_container::ostore()) {
@@ -743,10 +761,10 @@ public:
       }
       // create and insert new item
       item_ptr item = this->ostore()->insert(new item_type(parent_ref(this->owner()), index, x));
-      // mark list object as modified
+      // mark list serializable as modified
 //      this->mark_modified(this->parent());
       this->mark_modified(this->owner());
-      // insert new item object
+      // insert new item serializable
       pos = this->vector().insert(pos, item);
       iterator first = pos;
       // adjust indices of successor items
@@ -760,7 +778,7 @@ public:
 
   virtual iterator erase(iterator i)
   {
-    // erase object from object store
+    // erase serializable from serializable store
     item_ptr item = *i;
     this->mark_modified(this->owner());
 //    this->mark_modified(this->parent());
@@ -778,7 +796,7 @@ public:
 //    this->mark_modified(this->parent());
     iterator i = first;
     while (i != last) {
-      // erase object from object store
+      // erase serializable from serializable store
       item_ptr item = *i++;
       this->ostore()->remove(item);
     }
@@ -788,7 +806,7 @@ public:
 
     return i;
   }
-  
+
 protected:
 
 ///@cond OOS_DEV
@@ -801,9 +819,9 @@ protected:
   void adjust_index(iterator i)
   {
     size_t start = i - this->begin();
-    
+
     while (i != this->vector().end()) {
-      // mark parent object as modified
+      // mark parent serializable as modified
       this->mark_modified(this->proxy(*i));
 //      this->mark_modified(i->get());
       (*i++)->index(start++);
@@ -812,9 +830,9 @@ protected:
 
   virtual void append_proxy(object_proxy *proxy)
   {
-    int index = this->size();
-    if (proxy->obj) {
-      index = static_cast<item_type*>(proxy->obj)->index();
+    size_t index = this->size();
+    if (proxy->obj()) {
+      index = static_cast<item_type*>(proxy->obj())->index();
     }
     this->insert_proxy(index, proxy);
   }
@@ -822,9 +840,14 @@ protected:
 ///@endcond
 
 private:
-	std::function<void (value_type&, const object_ref<S>&)> str_setter;
-	std::function<void (value_type&, int)> int_setter;
+  std::function<void (value_type&, const object_ref<S>&)> str_setter;
+  std::function<void (value_type&, int)> int_setter;
+  static std::string classname_;
+
 };
+
+template < class S, class T >
+std::string object_vector<S, T, true>::classname_ = typeid(item_type).name();
 
 #endif /* OOS_DOXYGEN_DOC */
 

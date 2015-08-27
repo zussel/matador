@@ -110,6 +110,7 @@ void query_create::write(const char *, const object_container &)
 void query_create::write(const char *id, const primary_key_base &x)
 {
   x.serialize(id, *this);
+//  dialect.append(" NOT NULL PRIMARY KEY AUTOINCREMENT");
   dialect.append(" NOT NULL PRIMARY KEY");
 }
 

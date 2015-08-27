@@ -17,9 +17,7 @@
 
 #include "database/statement.hpp"
 
-#include "object/object_atomizable.hpp"
-
-#include <functional>
+#include "object/serializable.hpp"
 
 using namespace std::placeholders;
 
@@ -28,7 +26,7 @@ namespace oos {
 statement::~statement()
 {}
 
-int statement::bind(object_atomizable *o)
+int statement::bind(serializable *o)
 {
   reset();
   host_index = 0;

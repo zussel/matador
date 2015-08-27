@@ -34,13 +34,13 @@
 #include "object/object_atomizer.hpp"
 
 #include <memory>
+#include <object/prototype_node.hpp>
 
 namespace oos {
 
 class row;
 class statement;
-class object;
-class object_atomizable;
+class serializable;
 
 /// @cond OOS_DEV
 
@@ -63,21 +63,30 @@ public:
   void get(unsigned long i, T &val)
   {
     result_index = transform_index(i);
-    read("", val);
+    this->read("", val);
   }
-  void get(object_atomizable *o);
+  void get(serializable *o);
   
   virtual const char* column(size_type c) const = 0;
   virtual bool fetch() = 0;
-  
+
+  /*
+   * Create new object and fill all builtin datatypes. If all
+   * rows are processed nullptr is returned.
+   *
+   * @param node The corresponding prototype_node
+   * @return The filled and created serializable or nullptr
+   */
+  serializable* fetch(const oos::prototype_node *node);
+
   /**
    * Fetch next line from database and
-   * deserialized the given object.
+   * deserialized the given serializable.
    *
    * @param o Object to be deserialized
-   * @return True if object was successfully deserialized
+   * @return True if serializable was successfully deserialized
    */
-  virtual bool fetch(object *) { return false; }
+  virtual bool fetch(serializable *) { return false; }
 
   virtual size_type affected_rows() const = 0;
   virtual size_type result_rows() const = 0;
@@ -86,7 +95,18 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
+  virtual void read(const char *id, unsigned long &x) override = 0;
+  virtual void read(const char *id, object_base_ptr &x) override;
+  virtual void read(const char *id, object_container &x) override;
+  virtual void read(const char *id, primary_key_base &x) override;
+
+  const prototype_node* node() const;
+
+protected:
   int result_index;
+
+private:
+  const prototype_node *node_ = nullptr;
 };
 
 typedef std::shared_ptr<result> result_ptr;

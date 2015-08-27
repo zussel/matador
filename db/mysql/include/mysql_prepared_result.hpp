@@ -11,14 +11,18 @@
 #endif
 
 #include <vector>
-#include <object/primary_key.hpp>
+#include <unordered_map>
+#include <string>
 
 namespace oos {
 
 class object_base_ptr;
 class varchar_base;
+class primary_key_base;
 
 namespace mysql {
+
+class mysql_result_info;
 
 class mysql_prepared_result : public result
 {
@@ -28,6 +32,7 @@ private:
 
 public:
   typedef result::size_type size_type;
+  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_pk_map;
 
 public:
   mysql_prepared_result(MYSQL_STMT *s, int rs);
@@ -36,7 +41,7 @@ public:
   const char* column(size_type c) const;
   bool fetch();
   
-  bool fetch(object *o);
+  bool fetch(serializable *o);
   
   size_type affected_rows() const;
   size_type result_rows() const;
@@ -46,7 +51,6 @@ public:
 
   friend std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
-protected:
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
   virtual void read(const char *id, int &x);
@@ -59,41 +63,11 @@ protected:
   virtual void read(const char *id, float &x);
   virtual void read(const char *id, double &x);
   virtual void read(const char *id, char *x, int s);
-  virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
+  virtual void read(const char *id, std::string &x);
+  virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
-
-public:
-  struct result_info {
-    unsigned long length;
-    my_bool is_null;
-    my_bool error;
-    char *buffer;
-    unsigned long buffer_length;
-  };
-
-private:
-  template < class T >
-  void prepare_bind_column(int index, enum_field_types type, T &value)
-  {
-    bind_[index].buffer_type = type;
-    bind_[index].buffer= (char *)&value;
-    bind_[index].buffer_length = sizeof(T);
-    bind_[index].is_null = &info_[index].is_null;
-    bind_[index].length = &info_[index].length;
-    bind_[index].error = &info_[index].error;
-  }
-
-  void prepare_bind_column(int index, enum_field_types type, oos::date &value);
-  void prepare_bind_column(int index, enum_field_types type, oos::time &value);
-  void prepare_bind_column(int index, enum_field_types type, std::string &value);
-  void prepare_bind_column(int index, enum_field_types type, char *x, int s);
-  void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
-  void prepare_bind_column(int index, enum_field_types type, object_base_ptr &value);
 
 private:
   size_type affected_rows_;
@@ -104,7 +78,9 @@ private:
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
-  result_info *info_;
+  mysql_result_info *info_;
+
+  t_pk_map pk_map_;
 };
 
 std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);

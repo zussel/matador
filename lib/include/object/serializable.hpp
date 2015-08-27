@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECT_ATOMIZABLE_HPP
-#define OBJECT_ATOMIZABLE_HPP
+#ifndef SERIALIZABLE_HPP
+#define SERIALIZABLE_HPP
 
 #ifdef _MSC_VER
   #ifdef oos_EXPORTS
@@ -37,22 +37,22 @@ class object_writer;
 class object_reader;
 
 /**
- * @class object_atomizable
+ * @class serializable
  * @brief Base class for all serializable objects
  *
  * This class provides an interface to serialize
- * and deserialize an object. It is used with
+ * and deserialize an serializable. It is used with
  * an instance of a concrete object_atomizer class.
  */
-class OOS_API object_atomizable
+class OOS_API serializable
 {
 public:
-  virtual ~object_atomizable() {}
+  virtual ~serializable() {}
 
   /**
    * @fn virtual void deserialize(object_reader &deserializer)
-   * Deserializes an object from the given
-   * object_atomizer object.
+   * Deserializes an serializable from the given
+   * object_atomizer serializable.
    *
    * @param deserializer The object_atomizer to deserialize from.
    */
@@ -60,8 +60,8 @@ public:
 
   /**
    * @fn virtual void serialize(object_writer &serializer) const
-   * Serializes an object to the given
-   * object_atomizer object.
+   * Serializes an serializable to the given
+   * object_atomizer serializable.
    *
    * @param serializer The object_atomizer to serialize to.
    */
@@ -69,4 +69,4 @@ public:
 };
 
 }
-#endif /* OBJECT_ATOMIZABLE_HPP */
+#endif /* SERIALIZABLE */

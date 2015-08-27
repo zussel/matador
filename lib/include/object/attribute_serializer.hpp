@@ -34,10 +34,10 @@ class object_base_ptr;
 /**
  * @tparam T The type of the attribute to set.
  * @class attribute_reader
- * @brief Set an attribute value of an object.
+ * @brief Set an attribute value of an serializable.
  *
  * A given attribute value of a template type is
- * tried to set into an object. Therefor the attribute
+ * tried to set into an serializable. Therefor the attribute
  * with given name must be found and the value must
  * be convertible into the objects attribute.
  */
@@ -117,10 +117,10 @@ private:
 /**
  * @tparam T The type of the attribute to retieve.
  * @class attribute_writer
- * @brief Retrieve an attribute value from an object.
+ * @brief Retrieve an attribute value from an serializable.
  *
  * A attribute value of a template type is
- * tried to retriev from an object. Therefor the attribute
+ * tried to retriev from an serializable. Therefor the attribute
  * of given name must be found and the value must
  * be convertible from the objects attribute.
  */

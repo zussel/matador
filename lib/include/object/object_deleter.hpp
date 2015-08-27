@@ -40,19 +40,19 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class object_base_ptr;
 class object_container;
 
 /**
  * @cond OOS_DEV
  * @class object_deleter
- * @brief Checks if an object could be deleted
+ * @brief Checks if an serializable could be deleted
  *
- * This class checks wether a given object or a
+ * This class checks wether a given serializable or a
  * given object_list_base and their children objects
  * could be deleted or not.
- * If the check was successful, all the deletable object
+ * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
 class object_deleter : public generic_object_reader<object_deleter>
@@ -72,8 +72,8 @@ private:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
 
 public:
-  typedef t_object_count_map::iterator iterator;             /**< Shortcut the object map iterator */
-  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the object map const_iterator */
+  typedef t_object_count_map::iterator iterator;             /**< Shortcut the serializable map iterator */
+  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
 
   /**
    * Creates an instance of the object_deleter
@@ -85,10 +85,10 @@ public:
   virtual ~object_deleter();
 
   /**
-   * Checks wether the given object is deletable.
+   * Checks wether the given serializable is deletable.
    *
    * @param proxy The object_proxy to be checked.
-   * @return True if the object could be deleted.
+   * @return True if the serializable could be deleted.
    */
   bool is_deletable(object_proxy *proxy);
 
@@ -101,18 +101,18 @@ public:
   bool is_deletable(object_container &oc);
 
   /**
-   * @brief Returns the first deletable object.
+   * @brief Returns the first deletable serializable.
    *
    * If the check was made and was successful this
-   * returns the first deletable object.
+   * returns the first deletable serializable.
    */
   iterator begin();
 
   /**
-   * @brief Returns the first deletable object.
+   * @brief Returns the first deletable serializable.
    *
    * If the check was made and was successful this
-   * returns the last deletable object.
+   * returns the last deletable serializable.
    */
   iterator end();
 

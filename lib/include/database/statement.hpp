@@ -39,7 +39,7 @@
 namespace oos {
 
 class result;
-class object_atomizable;
+class serializable;
 class sql;
 
 /// @cond OOS_DEV
@@ -56,7 +56,7 @@ public:
 
   virtual void reset() = 0;
   
-  int bind(object_atomizable *o);
+  int bind(serializable *o);
 
   template < class T >
   int bind(unsigned long i, const T &val)

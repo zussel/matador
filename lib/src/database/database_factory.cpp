@@ -18,13 +18,15 @@
 #include "database/database_factory.hpp"
 #include "database/session.hpp"
 #include "database/database.hpp"
-
-#include <stdexcept>
+#include "database/memory_database.hpp"
 
 namespace oos {
 
 database_factory::database_factory()
-{}
+{
+  std::unique_ptr<factory_t::producer_base> dbp(new database_producer);
+  factory_.insert("memory", dbp.release());
+}
 
 database_factory::~database_factory()
 {}
@@ -33,8 +35,8 @@ database* database_factory::create(const std::string &name, session *db)
 {
   factory_t::iterator i = factory_.find(name);
   if (i == factory_.end()) {
-    database_producer *producer = new database_producer(name);
-    i = factory_.insert(name, producer).first;
+    std::unique_ptr<factory_t::producer_base> producer(new dynamic_database_producer(name));
+    i = factory_.insert(name, producer.release()).first;
   }
   database_producer *producer = static_cast<database_producer*>(i->second.get());
   return producer->create(db);
@@ -52,8 +54,24 @@ bool database_factory::destroy(const std::string &name, database* impl)
   return true;
 }
 
-database_factory::database_producer::database_producer(const std::string &name)
-  : db_(0)
+database* database_factory::database_producer::create() const
+{
+  return new memory_database(db_);
+}
+
+database* database_factory::database_producer::create(session *db)
+{
+  db_ = db;
+  std::unique_ptr<database> impl(create());
+  db_ = nullptr;
+  return impl.release();
+}
+void database_factory::database_producer::destroy(database* val) const
+{
+  delete val;
+}
+
+database_factory::dynamic_database_producer::dynamic_database_producer(const std::string &name)
 {
   // load oos driver library
   // create instance
@@ -66,27 +84,19 @@ database_factory::database_producer::database_producer(const std::string &name)
   destroy_ = reinterpret_cast<destroy_func>(reinterpret_cast<long>(loader_.function("destroy_database")));
 }
 
-database_factory::database_producer::~database_producer()
+database_factory::dynamic_database_producer::~dynamic_database_producer()
 {
   loader_.unload();
 }
 
-database* database_factory::database_producer::create(session *db)
-{
-  db_ = db;
-  database *impl = this->create();
-  db_ = 0;
-  return impl;
-}
-
-database* database_factory::database_producer::create() const
+database* database_factory::dynamic_database_producer::create() const
 {
   // on each call store the created database for later
   // explicit destruction
   return (*create_)(db_);
 }
 
-void database_factory::database_producer::destroy(database_factory::factory_t::value_type* val) const
+void database_factory::dynamic_database_producer::destroy(database* val) const
 {
   (*destroy_)(val);
 }

@@ -38,7 +38,7 @@ void sql::append(const char *id, data_type_t type)
    * and insert it into field map
    */
   field_ptr f(new field(id, type, result_field_vector_.size(), false));
-  
+
   token_list_.push_back(new result_field_token(f));
   result_field_map_.insert(std::make_pair(id, f));
   result_field_vector_.push_back(f);
@@ -52,7 +52,7 @@ void sql::append(const char *id, data_type_t type, const std::string &val)
    * and insert it into field map
    */
   field_ptr f(new field(id, type, host_field_vector_.size(), true));
-  
+
   token_list_.push_back(new host_field_token(f, val));
   host_field_map_.insert(std::make_pair(id, f));
   host_field_vector_.push_back(f);
@@ -61,7 +61,7 @@ void sql::append(const char *id, data_type_t type, const std::string &val)
 void sql::append(const condition &c)
 {
   field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
-  
+
   token_list_.push_back(new condition_token(c));
   host_field_map_.insert(std::make_pair(c.column(), f));
   host_field_vector_.push_back(f);
@@ -183,7 +183,12 @@ unsigned int sql::type_size(data_type_t type)
       return 64;
     default:
       throw std::logic_error("unknown type");
-    }
+  }
+}
+
+std::string sql::str(bool prepared) const
+{
+  return generate(prepared);
 }
 
 }

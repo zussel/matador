@@ -25,9 +25,9 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
+#include "object/serializable.hpp"
+
+#include <iostream>
 
 namespace oos {
 
@@ -48,14 +48,14 @@ query::~query()
 query& query::create(const prototype_node &node)
 {
 #ifdef _MSC_VER
-  std::auto_ptr<object> o(node.producer->create());
+  std::auto_ptr<serializable> o(node.producer->create());
 #else
-  std::unique_ptr<object> o(node.producer->create());
+  std::unique_ptr<serializable> o(node.producer->create());
 #endif
   return create(node.type, o.get());
 }
 
-query& query::create(const std::string &name, object_atomizable *o)
+query& query::create(const std::string &name, serializable *o)
 {
 //  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
   sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
@@ -63,6 +63,8 @@ query& query::create(const std::string &name, object_atomizable *o)
   query_create s(sql_, db_);
   o->serialize(s);
   sql_.append(")");
+
+//  std::cout << sql_.str(true) << '\n';
 
   state = QUERY_CREATE;
   return *this;
@@ -87,7 +89,7 @@ query& query::select(const prototype_node &node)
 
   sql_.append("SELECT ");
 
-  object *o = node.producer->create();
+  serializable *o = node.producer->create();
   query_select s(sql_);
   o->serialize(s);
   delete o;
@@ -108,18 +110,18 @@ query& query::insert(object_base_ptr &optr)
 query &query::insert(object_proxy *proxy)
 {
   if (!proxy) {
-    throw std::logic_error("query insert: no object proxy information");
+    throw std::logic_error("query insert: no serializable proxy information");
   }
-  if (!proxy->obj) {
-    throw std::logic_error("query insert: no object information");
+  if (!proxy->obj()) {
+    throw std::logic_error("query insert: no serializable information");
   }
-  if (!proxy->node) {
-    throw std::logic_error("query insert: no object prototype information");
+  if (!proxy->node()) {
+    throw std::logic_error("query insert: no serializable prototype information");
   }
-  return insert(proxy->obj, proxy->node->type);
+  return insert(proxy->obj(), proxy->node()->type);
 }
 
-query& query::insert(object_atomizable *o, const std::string &type)
+query& query::insert(serializable *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
@@ -149,18 +151,18 @@ query &query::update(object_base_ptr &optr) {
 query& query::update(object_proxy *proxy)
 {
   if (!proxy) {
-    throw std::logic_error("query update: no object proxy information");
+    throw std::logic_error("query update: no serializable proxy information");
   }
-  if (!proxy->obj) {
-    throw std::logic_error("query update: no object information");
+  if (!proxy->obj()) {
+    throw std::logic_error("query update: no serializable information");
   }
-  if (!proxy->node) {
-    throw std::logic_error("query update: no object prototype information");
+  if (!proxy->node()) {
+    throw std::logic_error("query update: no serializable prototype information");
   }
-  return update(proxy->node->type, proxy->obj);
+  return update(proxy->node()->type, proxy->obj());
 }
 
-query& query::update(const std::string &type, object_atomizable *o)
+query& query::update(const std::string &type, serializable *o)
 {
   throw_invalid(QUERY_OBJECT_UPDATE, state);
 
@@ -265,7 +267,7 @@ query& query::select()
   return *this;
 }
 
-query& query::select(object_atomizable *o)
+query& query::select(serializable *o)
 {
   throw_invalid(QUERY_SELECT, state);
   sql_.append("SELECT ");

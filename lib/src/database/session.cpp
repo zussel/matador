@@ -20,14 +20,7 @@
 #include "database/database_factory.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/action.hpp"
-#include "database/transaction.hpp"
 #include "database/memory_database.hpp"
-
-#include "object/object.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
-
-#include <stdexcept>
 
 using namespace std;
 
@@ -39,30 +32,20 @@ session::session(object_store &ostore, const std::string &dbstring)
   // parse dbstring
   std::string::size_type pos = dbstring.find(':');
   type_ = dbstring.substr(0, pos);
-  if (type_ == "memory") {
-    impl_ = new memory_database(this);
-  } else {
-    connection_ = dbstring.substr(pos + 3);
+  connection_ = dbstring.substr(pos + 3);
 
-    // get driver factory singleton
-    database_factory &df = database_factory::instance();
+  // get driver factory singleton
+  database_factory &df = database_factory::instance();
 
-    // try to create database implementation
-    impl_ = df.create(type_, this);
-  }
-
-//  impl_->open(connection_);
+  // try to create database implementation
+  impl_ = df.create(type_, this);
 }
 
 
 session::~session()
 {
   if (impl_) {
-    if (type_ == "memory") {
-      delete impl_;
-    } else {
-      database_factory::instance().destroy(type_, impl_);
-    }
+    database_factory::instance().destroy(type_, impl_);
   }
 }
 
@@ -158,7 +141,7 @@ void session::pop_transaction()
   }
 }
 
-object* session::load(const std::string &/*type*/, int /*id*/)
+serializable * session::load(const std::string &/*type*/, int /*id*/)
 {
   return 0;
 }

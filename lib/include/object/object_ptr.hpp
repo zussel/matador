@@ -32,22 +32,24 @@
 #endif
 
 #include "object/object_proxy.hpp"
+#include "object/prototype_node.hpp"
 
 #include <memory>
 #include <typeinfo>
 
 namespace oos {
 
-class object;
+class serializable;
 class object_store;
+class prototype_node;
 
 /**
  * @class object_base_ptr
- * @brief Base class for the object pointer and reference class
+ * @brief Base class for the serializable pointer and reference class
  * 
- * This is the base class for the object pointer
+ * This is the base class for the serializable pointer
  * and reference class. The class holds the proxy
- * of the object and the id of the object.
+ * of the serializable and the id of the serializable.
  */
 class OOS_API object_base_ptr
 {
@@ -56,12 +58,12 @@ protected:
    * @brief Creates and empty base pointer.
    * 
    * Creates and empty base pointer. The boolean
-   * tells the class if the object is handled
+   * tells the class if the serializable is handled
    * as a reference or an pointer. The difference
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
    * 
-   * @param is_ref If true the object is handled as a reference.
+   * @param is_ref If true the serializable is handled as a reference.
    */
 	explicit object_base_ptr(bool is_ref);
   
@@ -80,16 +82,16 @@ protected:
 	object_base_ptr& operator=(const object_base_ptr &x);
 
   /**
-   * @brief Creates an object_base_ptr with a given object
+   * @brief Creates an object_base_ptr with a given serializable
    * 
-   * Creates an object_base_ptr with a given object. The
+   * Creates an object_base_ptr with a given serializable. The
    * boolean tells the object_base_ptr if it should be
    * handled as a reference or a pointer.
    * 
-   * @param o The object of the object_base_ptr
-   * @param is_ref If true the object is handled as a reference.
+   * @param o The serializable of the object_base_ptr
+   * @param is_ref If true the serializable is handled as a reference.
    */
-	object_base_ptr(object* o, bool is_ref);
+	object_base_ptr(serializable *o, bool is_ref);
   
   /**
    * @brief Creates an object_base_ptr with a given object_proxy
@@ -99,7 +101,7 @@ protected:
    * handled as a reference or a pointer.
    * 
    * @param op The object_proxy of the object_base_ptr
-   * @param is_ref If true the object is handled as a reference.
+   * @param is_ref If true the serializable is handled as a reference.
    */
 	object_base_ptr(object_proxy *op, bool is_ref);
 
@@ -122,40 +124,40 @@ public:
 	bool operator!=(const object_base_ptr &x) const;
 
   /**
-   * Returns the type string of the object
+   * Returns the type string of the serializable
    * 
-   * @return The type string of the object.
+   * @return The type string of the serializable.
    */
   virtual const char* type() const = 0;
 
 //  const char* classname() const;
 
   /**
-   * Resets the object_base_ptr with the given object.
+   * Resets the object_base_ptr with the given serializable.
    * 
-   * @param o The new object for the object_base_ptr.
+   * @param o The new serializable for the object_base_ptr.
    */
-	void reset(object_proxy *proxy = 0);
+	void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
-   * Returns if the object is loaded.
+   * Returns if the serializable is loaded.
    * 
-   * @return True if the object is loaded.
+   * @return True if the serializable is loaded.
    */
 	bool is_loaded() const;
 
   /**
-   * Returns the object id.
+   * Returns the serializable id.
    * 
-   * @return The id of the object.
+   * @return The id of the serializable.
    */
 	unsigned long id() const;
 
   /**
-   * Sets the object id. If a proxy
+   * Sets the serializable id. If a proxy
    * is set an exception is thrown.
    * 
-   * @param i The new object id
+   * @param i The new serializable id
    */
   void id(unsigned long i);
 
@@ -166,25 +168,25 @@ public:
   object_store* store() const;
 
   /**
-   * Returns the object
+   * Returns the serializable
    * 
-   * @return The object.
+   * @return The serializable.
    */
-	object* ptr();
-	const object* ptr() const;
+  serializable* ptr();
+	const serializable* ptr() const;
 
   /**
-   * Returns the object
+   * Returns the serializable
    * 
-   * @return The object.
+   * @return The serializable.
    */
-	object* lookup_object();
-	object* lookup_object() const;
+  serializable* lookup_object();
+	serializable* lookup_object() const;
 
   /**
-   * Returns if the object is treated as a reference.
+   * Returns if the serializable is treated as a reference.
    * 
-   * @return True if the object is treated like a reference.
+   * @return True if the serializable is treated like a reference.
    */
   virtual bool is_reference() const;
 
@@ -213,10 +215,24 @@ public:
   unsigned long ptr_count() const;
 
   /**
-   * Prints the underlaying object
+   * Returns true if serializable has a primary key
+   *
+   * @return true if serializable has a primary key
+   */
+  bool has_primary_key() const;
+
+  /**
+   * Gets the primary key of the foreign serializable
+   *
+   * @return The primary key of the foreign serializable
+   */
+  std::shared_ptr<primary_key_base> primary_key() const;
+
+  /**
+   * Prints the underlaying serializable
    *
    * @param out The output stream to write on.
-   * @param x The object pointer to print.
+   * @param x The serializable pointer to print.
    * @return The output stream.
    */
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
@@ -231,15 +247,17 @@ private:
   friend class object_store;
   friend class session;
   friend class query;
+  friend class result;
   friend class object_container;
+  friend class table_reader;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
-  object_proxy *proxy_;
-  bool is_reference_;
-  bool is_internal_;
-  unsigned long oid_;
+  object_proxy *proxy_ = nullptr;
+  bool is_reference_ = false;
+  bool is_internal_ = false;
+  unsigned long oid_ = 0;
 };
 
 /// @cond OOS_DEV
@@ -251,11 +269,11 @@ class object_ref;
 
 /**
  * @class object_ptr
- * @brief The object_ptr holds a pointer to an object.
- * @tparam T The type of the object.
+ * @brief The object_ptr holds a pointer to an serializable.
+ * @tparam T The type of the serializable.
  * 
- * The object_ptr holds a pointer to an object. The
- * object_ptr is a wrapper class for the object class
+ * The object_ptr holds a pointer to an serializable. The
+ * object_ptr is a wrapper class for the serializable class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
  * as a object_ptr and should be used through the
@@ -265,7 +283,7 @@ template < class T >
 class object_ptr : public object_base_ptr
 {
 public:
-  typedef T object_type; /**< Shortcut for object type. */
+  typedef T object_type; /**< Shortcut for serializable type. */
 
 public:
   /**
@@ -294,23 +312,11 @@ public:
   {}
 
   /**
-   * Assign an object_ptr
+   * Create an object_ptr from an serializable
    * 
-   * @param x The object_ptr to assign from
-   * @return The assign object_ptr
+   * @param o The serializable.
    */
-	object_ptr& operator=(const object_ptr &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
-
-  /**
-   * Create an object_ptr from an object
-   * 
-   * @param o The object.
-   */
-	/*explicit */object_ptr(object* o)
+	/*explicit */object_ptr(serializable * o)
     : object_base_ptr(o, false)
   {}
 
@@ -324,22 +330,34 @@ public:
   {}
 
   /**
-   * Return the type string of the object
+   * Return the type string of the serializable
    * 
-   * @return The type string of the object.
+   * @return The type string of the serializable.
    */
   virtual const char* type() const
   {
-    return typeid(T).name();
+    return classname_.c_str();
   }
 
   /**
-   * @brief Return the pointer to the object of type T.
+   * Assign operator.
    *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * @param x The x serializable to assign from.
+   */
+  object_ptr<T>& operator=(serializable *x)
+  {
+    is_reference_ = false;
+    reset(new object_proxy(x, nullptr), is_reference());
+    return *this;
+  }
+
+  /**
+   * @brief Return the pointer to the serializable of type T.
    *
-   * @return The pointer to the object of type T.
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
    */
 	T* operator->() const {
     return get();
@@ -349,12 +367,12 @@ public:
 	}
 
   /**
-   * @brief Return the reference to the object of type T.
+   * @brief Return the reference to the serializable of type T.
    *
-   * Return the reference to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * Return the reference to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
    *
-   * @return The reference to the object of type T.
+   * @return The reference to the serializable of type T.
    */
 	T& operator*() const {
     return *get();
@@ -364,12 +382,12 @@ public:
 	}
 
   /**
-   * @brief Return the pointer to the object of type T.
+   * @brief Return the pointer to the serializable of type T.
    *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
    *
-   * @return The pointer to the object of type T.
+   * @return The pointer to the serializable of type T.
    */
   T* get() const {
       return static_cast<T*>(lookup_object());
@@ -377,15 +395,21 @@ public:
   T* get() {
       return static_cast<T*>(lookup_object());
   }
+
+private:
+  static std::string classname_;
 };
+
+template < class T >
+std::string object_ptr<T>::classname_ = typeid(T).name();
 
 /**
  * @class object_ref
- * @brief The object_ref holds a pointer to an object.
- * @tparam T The type of the object.
+ * @brief The object_ref holds a pointer to an serializable.
+ * @tparam T The type of the serializable.
  * 
- * The object_ref holds a pointer to an object. The
- * object_ref is a wrapper class for the object class
+ * The object_ref holds a pointer to an serializable. The
+ * object_ref is a wrapper class for the serializable class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
  * as a object_ref and should be used through the
@@ -396,7 +420,7 @@ template < class T >
 class object_ref : public object_base_ptr
 {
 public:
-  typedef T object_type;  /**< Shortcut for object type. */
+  typedef T object_type;  /**< Shortcut for serializable type. */
 public:
   /**
    * Create an empty object_ref
@@ -424,62 +448,49 @@ public:
   {}
 
   /**
-   * Assign an object_ref
+   * Create an object_ref from an serializable
    * 
-   * @param x The object_ref to assign from
-   * @return The assign object_ref
+   * @param o The serializable.
    */
-	object_ref& operator=(const object_ref &x)
-  {
-    object_base_ptr::operator=(x);
-    return *this;
-  }
-
-  /**
-   * @brief Check on equal.
-   *
-   * Check if this object_ref is equal to
-   * the given one.
-   *
-   * @param x The object_ref to compare with.
-   * @return True if the object_ref are equal.
-   */
-  bool operator==(const object_ref &x) const
-  {
-    return object_base_ptr::operator ==(x);
-  }
-
-  /**
-   * Create an object_ref from an object
-   * 
-   * @param o The object.
-   */
-  explicit object_ref(object* o) : object_base_ptr(o, true) {}
+  explicit object_ref(serializable * o) : object_base_ptr(o, true) {}
 
   /**
    * Create an object_ref from an object_proxy
    * 
-   * @param proxy The object.
+   * @param proxy The serializable.
    */
   explicit object_ref(object_proxy *proxy) : object_base_ptr(proxy, true) {}
 
   /**
-   * Return the type string of the object
+   * Return the type string of the serializable
    * 
-   * @return The type string of the object.
+   * @return The type string of the serializable.
    */
   virtual const char* type() const
   {
-    return typeid(T).name();
+    return classname_.c_str();
   }
 
   /**
-   * @brief Return the pointer to the object of type T.
+   * Assign operator.
    *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * @param x The x serializable to assign from.
+   */
+  object_ref<T>& operator=(serializable *x)
+  {
+    is_reference_ = true;
+    reset(new object_proxy(x, nullptr), is_reference());
+    return *this;
+  }
+
+
+  /**
+   * @brief Return the pointer to the serializable of type T.
    *
-   * @return The pointer to the object of type T.
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
    */
 	T* operator->() const {
     return get();
@@ -489,12 +500,12 @@ public:
 	}
 
   /**
-   * @brief Return the reference to the object of type T.
+   * @brief Return the reference to the serializable of type T.
    *
-   * Return the reference to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * Return the reference to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
    *
-   * @return The reference to the object of type T.
+   * @return The reference to the serializable of type T.
    */
 	T& operator*() const {
     return *get();
@@ -504,12 +515,12 @@ public:
 	}
 
   /**
-   * @brief Return the pointer to the object of type T.
+   * @brief Return the pointer to the serializable of type T.
    *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object 0 (null) is returned.
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
    *
-   * @return The pointer to the object of type T.
+   * @return The pointer to the serializable of type T.
    */
 	T* get() const {
     return static_cast<T*>(lookup_object());
@@ -517,7 +528,12 @@ public:
 	T* get() {
     return static_cast<T*>(lookup_object());
 	}
+private:
+  static std::string classname_;
 };
+
+template < class T >
+std::string object_ref<T>::classname_ = typeid(T).name();
 
 }
 

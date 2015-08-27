@@ -1,5 +1,4 @@
 SET(OBJECT_SOURCES
-  object/object.cpp
   object/object_creator.cpp
   object/object_deleter.cpp
   object/object_container.cpp
@@ -8,14 +7,19 @@ SET(OBJECT_SOURCES
   object/object_proxy.cpp
   object/object_serializer.cpp
   object/object_convert.cpp
+  object/object_preparator.cpp
   object/prototype_node.cpp
   object/prototype_tree.cpp
   object/attribute_serializer.cpp
+  object/primary_key_analyzer.cpp
+  object/foreign_key_analyzer.cpp
+  object/primary_key_serializer.cpp
 )
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
@@ -33,14 +37,15 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_atomizable.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
   ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
 )
 
 SET(OBJECT_HEADER
   ../include/object/attribute_counter.hpp
   ../include/object/attribute_serializer.hpp
-  ../include/object/object.hpp
+  ../include/object/generic_access.hpp
   ../include/object/object_exception.hpp
   ../include/object/object_ptr.hpp
   ../include/object/object_store.hpp
@@ -61,8 +66,13 @@ SET(OBJECT_HEADER
   ../include/object/object_expression.hpp
   ../include/object/attribute_serializer.hpp
   ../include/object/object_atomizer.hpp
-  ../include/object/object_atomizable.hpp
+  ../include/object/object_preparator.hpp
+  ../include/object/serializable.hpp
   ../include/object/primary_key.hpp
+  ../include/object/primary_key_analyzer.hpp
+  ../include/object/foreign_key_analyzer.hpp
+  ../include/object/primary_key_serializer.hpp
+  ../include/object/primary_key_reader.hpp
 )
 
 SET(TOOLS_SOURCES
@@ -198,6 +208,7 @@ SET(DATABASE_SOURCES
   database/query_select.cpp
   database/query_insert.cpp
   database/query_update.cpp
+  database/primary_key_binder.cpp
 )
 
 SET(DATABASE_HEADER
@@ -225,6 +236,7 @@ SET(DATABASE_HEADER
   ../include/database/query_insert.hpp
   ../include/database/query_update.hpp
   ../include/database/token.hpp
+  ../include/database/primary_key_binder.hpp
 )
 
 SET(DATABASE_INSTALL_HEADER

@@ -19,6 +19,7 @@
 #define TRANSACTION_HELPER_HPP
 
 #include "object/object_serializer.hpp"
+#include "object/primary_key_serializer.hpp"
 
 #include "database/action.hpp"
 #include "database/transaction.hpp"
@@ -45,7 +46,7 @@ public:
   {}
   virtual ~backup_visitor() {}
 
-  bool backup(action *act, const object *o, byte_buffer *buffer);
+  bool backup(action *act, const serializable *o, byte_buffer *buffer);
 
   virtual void visit(create_action *) {}
   virtual void visit(insert_action *a);
@@ -55,7 +56,7 @@ public:
 
 private:
   byte_buffer *buffer_;
-  const object *object_;
+  const serializable *object_;
   object_serializer serializer_;
 };
 
@@ -124,6 +125,7 @@ public:
   virtual void visit(drop_action*) {}
 
 private:
+  primary_key_serializer primary_key_serializer_;
   transaction::action_list_t &action_list_;
   transaction::iterator iter_;
   object_proxy *proxy_;

@@ -31,7 +31,6 @@
   #define OOS_API
 #endif
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 
 #include "tools/convert.hpp"
@@ -49,7 +48,7 @@ class varchar_base;
 
 template < class T, class U >
 void
-convert(const object_ptr<T> &from, object_ptr<U> &to,
+convert(const object_ptr<T> &/*from*/, object_ptr<U> &/*to*/,
         typename oos::enable_if<!std::is_same<T, U>::value>::type* = 0)
 {
   throw std::bad_cast();

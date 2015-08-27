@@ -16,7 +16,6 @@
  */
 
 #include "database/action.hpp"
-#include "object/object.hpp"
 
 #include <algorithm>
 
@@ -72,7 +71,7 @@ struct object_by_id : public std::unary_function<unsigned long, bool>
   {}
   bool operator()(const object_proxy *proxy) const
   {
-    return (proxy->obj && proxy->obj->id() == id_);
+    return (proxy->obj() && proxy->id() == id_);
   }
   
   unsigned long id_;
@@ -108,9 +107,10 @@ const object_proxy* update_action::proxy() const
   return proxy_;
 }
 
-delete_action::delete_action(const char *classname, unsigned long id)
+delete_action::delete_action(const char *classname, unsigned long id, primary_key_base *pk)
   : classname_(classname)
   , id_(id)
+  , pk_(pk)
 {}
 
 delete_action::~delete_action()
@@ -124,6 +124,11 @@ void delete_action::accept(action_visitor *av)
 const char* delete_action::classname() const
 {
   return classname_.c_str();
+}
+
+primary_key_base* delete_action::pk() const
+{
+  return pk_.get();
 }
 
 unsigned long delete_action::id() const

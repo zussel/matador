@@ -24,8 +24,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
-#include "object/object.hpp"
-
 #include "tools/string.hpp"
 
 using namespace std::placeholders;
@@ -33,7 +31,7 @@ using namespace std::placeholders;
 namespace oos {
   
 namespace mssql {
-  
+
 mssql_database::mssql_database(session *db)
   : database(db, new database_sequencer(*this))
   , odbc_(0)
@@ -133,10 +131,10 @@ void mssql_database::on_close()
 
   ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on freeing connection");
- 
+
   ret = SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
   throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "error on freeing odbc");
- 
+
   is_open_ = false;
 }
 
@@ -147,14 +145,14 @@ result* mssql_database::on_execute(const std::string &sqlstr)
   }
   // create statement handle
   SQLHANDLE stmt;
-  
+
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
 
   // execute statement
 //  int retry = retries_;
   ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
-  
+
   /*
   do {
     ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
@@ -245,6 +243,14 @@ const char* mssql_database::type_string(data_type_t type) const
 SQLHANDLE mssql_database::operator()()
 {
   return connection_;
+}
+
+unsigned long mssql_database::last_inserted_id()
+{
+  std::unique_ptr<result> result(execute("select scope_identity()"));
+  unsigned long id = 0;
+  result->get(0, id);
+  return id;
 }
 
 }

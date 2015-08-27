@@ -18,16 +18,13 @@
 #ifndef OBJECT_CONTAINER_HPP
 #define OBJECT_CONTAINER_HPP
 
-#include "object/object.hpp"
+#include "object/serializable.hpp"
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
 
 #include <functional>
-#include <database/table_reader.hpp>
 
 namespace oos {
-
-class prototype_tree;
 
 /**
  * @tparam T Type of value
@@ -38,7 +35,7 @@ class prototype_tree;
  * class and the values stored in the container.
  */
 template < class T >
-class value_item : public object
+class value_item : public serializable
 {
 public:
   typedef T value_type; /**< Shortcut for the value type. */
@@ -57,13 +54,11 @@ public:
 
   virtual void deserialize(object_reader &deserializer)
   {
-    oos::object::deserialize(deserializer);
     deserializer.read("value", value_);
   }
 
   virtual void serialize(object_writer &serializer) const
   {
-    oos::object::serialize(serializer);
     serializer.write("value", value_);
   }
 
@@ -84,7 +79,7 @@ public:
    */
   void value(const value_type &v)
   {
-    modify(value_, v);
+    value_ = v;
   }
 
 private:
@@ -108,7 +103,6 @@ public:
   typedef oos::object_ref<C> container_ref; /**< Shortcut for the container ref type. */
   typedef C container_type;                 /**< Shortcut for the container type. */
   typedef T value_type;                     /**< Shortcut for the value type. */
-  typedef typename container_type::size_type size_type; /**< Shortcut for the size type. */
 
   container_item() {}
 
@@ -156,6 +150,11 @@ public:
     return container_;
   }
 
+  const char* container_classname() const
+  {
+    return container_.type();
+  }
+
 private:
   container_ref container_;
 };
@@ -175,7 +174,7 @@ public:
 
 public:
   /**
-   * @brief Creates an empty object_container object.
+   * @brief Creates an empty object_container serializable.
    * 
    * The constructor creates an empty object_container.
    */
@@ -237,46 +236,46 @@ protected:
   friend class object_serializer;
   friend class prototype_tree;
   friend class relation_handler;
-  friend class relation_builder;
+  friend class relation_resolver;
   friend class relation_filler;
   friend class table;
   friend class table_reader;
 
   /**
-   * @brief Append a object via its object_proxy.
+   * @brief Append a serializable via its object_proxy.
    *
-   * Append a object via its object_proxy to the list.
+   * Append a serializable via its object_proxy to the list.
    *
-   * @param op The object_proxy containing the list element object.
+   * @param op The object_proxy containing the list element serializable.
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
   object_proxy* proxy(const object_base_ptr &optr) const;
 
   /**
-   * Mark the list containing object as modified
+   * Mark the list containing serializable as modified
    * in the object_store.
    *
-   * @param o The object containig list
+   * @param o The serializable containig list
    */
-//  void mark_modified(object *o)
+//  void mark_modified(serializable *o)
 //  {
 //    o->mark_modified();
 //  }
 
   void mark_modified(object_proxy *proxy)
   {
-    if (proxy->obj) {
-      proxy->ostore->mark_modified(proxy);
+    if (proxy->obj()) {
+      ostore_->mark_modified(proxy);
     }
   }
 
   /**
-   * @brief Executes the given function object for all elements.
+   * @brief Executes the given function serializable for all elements.
    *
-   * Executes the given function object for all elements.
+   * Executes the given function serializable for all elements.
    *
-   * @param nf Function object used to be executed on each element.
+   * @param nf Function serializable used to be executed on each element.
    */
   virtual void for_each(const proxy_func &pred) const = 0;
 
@@ -325,17 +324,6 @@ protected:
    * @param ownr The new owner of the container
    */
   void owner(object_proxy *ownr);
-
-  /**
-   * Create a producer object for
-   * the relation/value table.
-   *
-   * @param tree The prototype tree.
-   * @param id The name of the relation.
-   * @param node The prototype node.
-   * @return The producer object;
-   */
-  void handle_container_item(prototype_tree &ptree, const char *id, prototype_node *node) const;
 
   /**
    * Create a producer for the item type.
