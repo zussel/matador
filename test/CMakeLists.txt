@@ -293,6 +293,7 @@ SET(database
   reload_simple
   reload
   reload_container
+  relation
 )
   
 IF(SQLITE3_FOUND AND OOS_SQLITE3)
