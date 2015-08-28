@@ -29,7 +29,6 @@ mysql_result::mysql_result(MYSQL *c)
   : affected_rows_((size_type)mysql_affected_rows(c))
   , rows(0)
   , fields_(0)
-  , conn(c)
   , res(0)
 {
   res = mysql_store_result(c);

@@ -106,7 +106,6 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  MYSQL* conn;
   MYSQL_ROW row;
   MYSQL_RES *res;
 };

@@ -63,7 +63,7 @@ public:
   void get(unsigned long i, T &val)
   {
     result_index = transform_index(i);
-    this->read("", val);
+    read("", val);
   }
   void get(serializable *o);
   
@@ -95,10 +95,25 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  virtual void read(const char *id, unsigned long &x) override = 0;
-  virtual void read(const char *id, object_base_ptr &x) override;
-  virtual void read(const char *id, object_container &x) override;
-  virtual void read(const char *id, primary_key_base &x) override;
+  virtual void read(const char *, char &) {}
+  virtual void read(const char *, short &) {}
+  virtual void read(const char *, int &) {}
+  virtual void read(const char *, long &) {}
+  virtual void read(const char *, unsigned char &) {}
+  virtual void read(const char *, unsigned short &) {}
+  virtual void read(const char *, unsigned int &) {}
+  virtual void read(const char *, unsigned long &) {}
+  virtual void read(const char *, bool &) {}
+  virtual void read(const char *, float &) {}
+  virtual void read(const char *, double &) {}
+  virtual void read(const char *, char *, int ) {}
+  virtual void read(const char *, varchar_base &) {}
+  virtual void read(const char *, std::string &) {}
+  virtual void read(const char *, oos::date &) {}
+  virtual void read(const char *, oos::time &) {}
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, primary_key_base &x);
 
   const prototype_node* node() const;
 

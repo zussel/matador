@@ -22,7 +22,7 @@ class primary_key_base;
 
 namespace mysql {
 
-class mysql_result_info;
+struct mysql_result_info;
 
 class mysql_prepared_result : public result
 {
@@ -73,8 +73,8 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-  MYSQL_ROW row;
-  MYSQL_RES *res;
+//  MYSQL_ROW row;
+//  MYSQL_RES *res;
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
