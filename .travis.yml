@@ -2,9 +2,6 @@ language: cpp
 
 sudo: false
 
-services:
-  - mysql
-
 matrix:
   include:
     - os: linux
