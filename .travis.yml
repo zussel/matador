@@ -2,9 +2,10 @@ language: cpp
 
 sudo: false
 
-before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq valgrind
+addons:
+  apt:
+    packages:
+    - valgrind
 
 matrix:
   include:
