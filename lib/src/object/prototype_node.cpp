@@ -21,6 +21,7 @@
 #include <object/primary_key_analyzer.hpp>
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -336,7 +337,10 @@ bool prototype_node::has_primary_key() const
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<primary_key_base> &pk)
 {
-  t_primary_key_map::iterator i = primary_key_map.find(pk);
+  t_primary_key_map::iterator i = std::find_if(primary_key_map.begin(), primary_key_map.end(), [pk](const t_primary_key_map::value_type &x) {
+    return *pk == *(x.first);
+  });
+//  t_primary_key_map::iterator i = primary_key_map.find(pk);
   return (i != primary_key_map.end() ? i->second : nullptr);
 }
 

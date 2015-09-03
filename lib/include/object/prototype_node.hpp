@@ -50,6 +50,20 @@ class prototype_tree;
 class object_proxy;
 class primary_key_base;
 
+template<class T> class pk_hash;
+
+template<>
+class pk_hash<std::shared_ptr<primary_key_base> >
+{
+public:
+  size_t operator()(const std::shared_ptr<primary_key_base> &pk) const
+  {
+    size_t h = pk->hash();
+//      return h1 ^ (h2 << 1)
+    return h;
+  }
+};
+
 /**
  * @class prototype_node
  * @brief Holds the prototype of a concrete serializable.
@@ -277,7 +291,7 @@ public:
       bool operator()(const pk_ptr &a, const pk_ptr &b) const { return *a == *b; }
   };
 
-  typedef std::unordered_map<pk_ptr, object_proxy*, std::hash<pk_ptr>, pk_equal> t_primary_key_map;
+  typedef std::unordered_map<pk_ptr, object_proxy*, pk_hash<pk_ptr> > t_primary_key_map;
   t_primary_key_map primary_key_map;
 
   /*

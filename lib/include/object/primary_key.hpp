@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <stdexcept>
+#include <functional>
 
 namespace oos {
 
@@ -31,6 +32,8 @@ public:
   virtual void deserialize(const char*, object_reader&) = 0;
   virtual primary_key_base* clone() const = 0;
   virtual bool is_valid() const = 0;
+
+  virtual size_t hash() const = 0;
 
   template < typename T > T get_value() const;
 
@@ -79,6 +82,12 @@ public:
 
   virtual bool is_valid() const {
     return pk_ != 0;
+  }
+
+  virtual size_t hash() const
+  {
+    std::hash<value_type> pk_hash;
+    return pk_hash(pk_);
   }
 
   value_type get() const
