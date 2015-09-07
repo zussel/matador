@@ -53,7 +53,7 @@ SET (TEST_DATABASE_SOURCES
   database/SessionTestUnit.cpp
   database/TransactionTestUnit.cpp
   database/TransactionTestUnit.hpp
-)
+        database/SQLTestUnit.cpp database/SQLTestUnit.hpp)
 
 SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
 

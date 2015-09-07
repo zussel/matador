@@ -82,13 +82,24 @@ public:
 
 private:
   template < class V >
-  void read_value(const char *id, V &to)
+  void read_value(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
     }
-    convert(from_, to);
+    to = from_;
+//    convert(from_, to);
     success_ = true;
+  }
+
+  template < class V >
+  void read_value(const char *id, V &to, typename std::enable_if< !std::is_same<T, V>::value >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    // Todo: throw exception
+    std::cout << "not same type\n";
   }
 
   void read_value(const char *id, primary_key_base &x)
