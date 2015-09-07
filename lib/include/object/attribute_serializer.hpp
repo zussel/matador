@@ -93,7 +93,7 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &to, typename std::enable_if< !std::is_same<T, V>::value >::type* = 0)
+  void read_value(const char *id, V &/*to*/, typename std::enable_if< !std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;

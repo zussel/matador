@@ -319,8 +319,7 @@ ObjectStoreTestUnit::set_test()
 {
   Item *i = new Item("item", 4711);
   
-  std::string one("1");
-  oos::set(i, "val_int", one);
+  oos::set(i, "val_int", 1);
 
   UNIT_ASSERT_EQUAL(1, i->get_int(), "value must be one (1)");
 
