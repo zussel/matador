@@ -19,7 +19,19 @@
 namespace oos {
 
 void throw_invalid_date(int d, int m, int y);
-
+/**
+ * @class date
+ * @brief This class provides simple date representation
+ *
+ * This class provides simple date representation with
+ * julian calendar for date calcultion.
+ *
+ * A date can be constructed either from
+ * - a julian date
+ * - year, month and day values
+ * - from a date string and its format
+ * - copied from another date
+ */
 class OOS_API date
 {
 public:
