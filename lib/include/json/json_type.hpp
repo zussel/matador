@@ -45,7 +45,7 @@ class json_value;
  * 
  * This is the base class for all json types
  * - array
- * - object
+ * - serializable
  * - string
  * - number
  * - boolean
@@ -152,7 +152,7 @@ public:
 
   /**
    * Input operator for json_object. In
-   * order to parse an object the corresponding
+   * order to parse an serializable the corresponding
    * input operator needs access to json_type.
    * 
    * @param str The input stream to print on.
@@ -182,7 +182,7 @@ protected:
   void type(const std::string &type);
 
 protected:
-  static json_parser parser; /**< The json_parser object */
+  static json_parser parser; /**< The json_parser serializable */
 
 private:
   std::string type_;

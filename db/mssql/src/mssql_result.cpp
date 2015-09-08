@@ -21,7 +21,6 @@
 #include "database/row.hpp"
 
 #include "object/object_ptr.hpp"
-#include "object/object.hpp"
 
 namespace oos {
 
@@ -66,7 +65,7 @@ bool mssql_result::fetch()
   }
 }
 
-bool mssql_result::fetch(object *o)
+bool mssql_result::fetch(serializable *o)
 {
   if (!fetch()) {
     return false;

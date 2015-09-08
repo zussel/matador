@@ -16,9 +16,9 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   , session_(nullptr)
 {
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple database test");
-  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "object with sub object database test");
-  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "object with object list database test");
-  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "object with object vector database test");
+  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "serializable with sub serializable database test");
+  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list database test");
+  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector database test");
 }
 
 
@@ -29,9 +29,8 @@ TransactionTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
   ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore_.insert_prototype<ItemPtrList>("item_ptr_list");
-  ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
-//  ostore_.insert_prototype<playlist>("playlist");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 
@@ -60,16 +59,16 @@ TransactionTestUnit::test_simple()
     // begin transaction
     tr.begin();
 
-    // ... do some object modifications
+    // ... do some serializable modifications
     typedef object_ptr<Item> item_ptr;
     typedef object_view<Item> item_view;
-    // insert new object
+    // insert new serializable
     item_ptr item = ostore_.insert(new Item("Hello World", 70));
-    UNIT_ASSERT_GREATER(item->id(), 0UL, "item has invalid object id");
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "item has invalid serializable id");
     tr.commit();
 
     tr.begin();
-    // modify object
+    // modify serializable
     item->set_int(120);
     UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
 
@@ -94,7 +93,7 @@ TransactionTestUnit::test_simple()
     UNIT_ASSERT_EQUAL(item->get_int(), 70, "item has invalid int value");
 
     tr.begin();
-    // delete object
+    // delete serializable
     UNIT_ASSERT_TRUE(ostore_.is_removable(item), "couldn't delete item");
 
     ostore_.remove(item);
@@ -145,9 +144,9 @@ TransactionTestUnit::test_with_sub()
   * comment this statement and the following
   * will happen if data exists:
   * data won't be load
-  * a car object with id 1 is created
+  * a car serializable with id 1 is created
   * and an exception on insert is thrown
-  * because there is already a car object
+  * because there is already a car serializable
   * with id 1
   ****************/
 //  session_->load();
@@ -157,16 +156,18 @@ TransactionTestUnit::test_with_sub()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
+    // ... do some serializable modifications
     typedef ObjectItem<Item> object_item_t;
     typedef object_ptr<object_item_t> object_item_ptr;
     typedef object_ptr<Item> item_ptr;
-    // insert new object
+    // insert new serializable
+    item_ptr item = ostore_.insert(new Item("Bar", 13));
     object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
+    object_item->ptr(item);
 
-    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid object item");
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
 
-    item_ptr item = object_item->ptr();
+    item = object_item->ptr();
 
     UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 
@@ -185,17 +186,17 @@ TransactionTestUnit::test_with_sub()
 
     object_view<object_item_t> oview(ostore_);
 
-    UNIT_ASSERT_FALSE(oview.empty(), "object item view couldn't be empty");
+    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
 
-    UNIT_ASSERT_TRUE(ostore_.is_removable(object_item), "couldn't remove object item");
+    UNIT_ASSERT_TRUE(ostore_.is_removable(object_item), "couldn't remove serializable item");
 
     ostore_.remove(object_item);
 
-    UNIT_ASSERT_TRUE(oview.empty(), "object item view must be empty");
+    UNIT_ASSERT_TRUE(oview.empty(), "serializable item view must be empty");
 
     tr.rollback();
 
-    UNIT_ASSERT_FALSE(oview.empty(), "object item view couldn't be empty");
+    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
 
   } catch (database_exception &ex) {
     // error, abort transaction
@@ -203,7 +204,7 @@ TransactionTestUnit::test_with_sub()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
   session_->drop();
@@ -228,9 +229,9 @@ TransactionTestUnit::test_with_list()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
+    // ... do some serializable modifications
 
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList("ptr_list"));
 
     UNIT_ASSERT_GREATER(itemlist->id(), 0UL, "invalid item list");
     UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
@@ -292,7 +293,7 @@ TransactionTestUnit::test_with_list()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
   session_->drop();
@@ -317,9 +318,9 @@ TransactionTestUnit::test_with_vector()
   try {
     // begin transaction
     tr.begin();
-    // ... do some object modifications
+    // ... do some serializable modifications
 
-    itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
+    itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector("item_ptr_vector"));
 
     UNIT_ASSERT_GREATER(itemvector->id(), 0UL, "invalid item list");
     UNIT_ASSERT_TRUE(itemvector->empty(), "item list must be empty");
@@ -381,7 +382,7 @@ TransactionTestUnit::test_with_vector()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
   session_->drop();

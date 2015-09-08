@@ -44,12 +44,10 @@ ENDIF()
 option(COVERALLS "Enable generation and sending of coveralls data" false)
 option(COVERAGE "Enable generation of code coverage" false)
 
-if (NOT MSVC)
+if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
+  message(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
   include(CodeCoverage)
   include(Coveralls)
-endif()
-
-if ((COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "will generate coverage data")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
   set(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
@@ -63,7 +61,8 @@ if ((COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   if (COVERALLS)
     setup_target_for_coveralls(coveralls test_oos lib "exec;all")
   endif()
-
+else()
+  message(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
 
 # Put the libaries and binaries that get built into directories at the

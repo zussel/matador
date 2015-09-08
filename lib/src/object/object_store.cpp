@@ -15,11 +15,13 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object.hpp"
+#include "object/serializable.hpp"
+
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_creator.hpp"
+#include "object/primary_key_reader.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -93,15 +95,23 @@ void object_store::clear(bool full)
     prototype_tree_.clear();
   } else {
     // only delete objects
-    prototype_tree_.begin()->clear(prototype_tree_, true);
+    prototype_iterator first = prototype_tree_.begin();
+    prototype_iterator last = prototype_tree_.end();
+    while (first != last) {
+        (first++)->clear(false);
+    }
+//    prototype_tree_.begin()->clear(true);
   }
   object_map_.clear();
 }
 
 bool object_store::empty() const
 {
-  const_prototype_iterator root = prototype_tree_.begin();
-  return root->op_first->next == root->op_last;
+  bool is_empty = true;
+  prototype_tree_.for_each_root_node([&](const_prototype_iterator i) {
+    is_empty &= i->empty(false);
+  });
+  return is_empty;
 }
 
 void object_store::dump_objects(std::ostream &out) const
@@ -112,16 +122,16 @@ void object_store::dump_objects(std::ostream &out) const
   object_proxy *op = root->op_first;
   while (op) {
     out << "[" << op << "] (";
-    if (op->obj) {
-      out << *op->obj << " prev [" << op->prev->obj << "] next [" << op->next->obj << "])\n";
+    if (op->obj()) {
+      out << op->obj() << " prev [" << op->prev()->obj() << "] next [" << op->next()->obj() << "])\n";
     } else {
-      out << "object 0)\n";
+      out << "serializable 0)\n";
     }
-    op = op->next;
+    op = op->next_;
   }
 }
 
-object* object_store::create(const char *type) const
+serializable * object_store::create(const char *type) const
 {
   const_prototype_iterator node = prototype_tree_.find(type);
   if (node != prototype_tree_.end()) {
@@ -157,63 +167,70 @@ void object_store::insert(object_container &oc)
 }
 
 object_proxy*
-object_store::insert_object(object *o, bool notify)
+object_store::insert_object(serializable *o, bool notify)
 {
   // find type in tree
   if (!o) {
-    throw object_exception("object is null");
+    throw object_exception("serializable is null");
   }
 
   // find prototype node
   prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
-//    std::string msg("couldn't insert element of type [" + std::string(typeid(*o).name()) + "]");
-    throw object_exception("couldn't insert object");
+    throw object_exception("couldn't insert serializable");
   }
-  // retrieve and set new unique number into object
-  object_proxy *oproxy = find_proxy(o->id());
-  if (oproxy) {
+  // retrieve and set new unique number into serializable
+  object_proxy *oproxy = nullptr;
+  t_serializable_proxy_map::iterator i = serializable_map_.find(o);
+  if (i != serializable_map_.end()) {
+    // serializable exists in serializable store
+    oproxy = i->second;
     if (oproxy->linked()) {
-      // an object exists in map.
-      // replace it with new object
+      // an serializable exists in map.
+      // replace it with new serializable
       // unlink it and
       // link it into new place in list
-      remove_proxy(oproxy->node, oproxy);
+      oproxy->node()->remove(oproxy);
     }
     oproxy->reset(o);
   } else {
-    /* object doesn't exist in map
-     * if object has a valid id, update
+    /* serializable doesn't exist in map
+     * if serializable has a valid id, update
      * the sequencer else assign new
      * unique id
      */
-    if (o->id() == 0) {
-      o->id(seq_.next());
-    } else {
-      seq_.update(o->id());
-    }
-    oproxy = create_proxy(o->id());
+    oproxy = create_proxy(o, nullptr);
     if (!oproxy) {
-      throw object_exception("couldn't create object proxy");
+      throw object_exception("couldn't create serializable proxy");
     }
-    oproxy->obj = o;
   }
-  // insert new element node
-  insert_proxy(node, oproxy);
-  // initialize object
-  object_creator oc(oproxy, *this, notify);
-  o->deserialize(oc);
-  // set corresponding prototype node
-  oproxy->node = node.get();
-  // set this into persistent object
+
+  if (oproxy->has_primary_key()) {
+    // if object has primary key of type short, int or long
+    // set the id of proxy as value
+    primary_key_reader<unsigned long> reader(oproxy->id());
+    o->deserialize(reader);
+  }
+
+  return initialze_proxy(oproxy, node, notify);
+}
+
+object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
+{// insert new element node
+  node->insert(oproxy);
+
+  // initialize serializable
+  object_creator oc(oproxy, *this);
+  oproxy->obj()->deserialize(oc);
+  // set this into persistent serializable
   // notify observer
   if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
+    for_each(observer_list_.begin(), observer_list_.end(), bind(&object_observer::on_insert, _1, oproxy));
   }
   // insert element into hash map for fast lookup
-  object_map_[o->id()] = oproxy;
-  // return new object
+  object_map_[oproxy->id()] = oproxy;
+
   return oproxy;
 }
 
@@ -232,11 +249,14 @@ void
 object_store::remove(object_proxy *proxy)
 {
   if (proxy == nullptr) {
-    throw object_exception("object proxy is nullptr");
+    throw object_exception("serializable proxy is nullptr");
   }
-  // check if object tree is deletable
+  if (proxy->node() == nullptr) {
+    throw object_exception("prototype node is nullptr");
+  }
+  // check if serializable tree is deletable
   if (!object_deleter_.is_deletable(proxy)) {
-    throw object_exception("object is not removable");
+    throw object_exception("serializable is not removable");
   }
   
   object_deleter::iterator first = object_deleter_.begin();
@@ -255,30 +275,30 @@ object_store::remove_object(object_proxy *proxy, bool notify)
 {
   // find prototype node
   if (!proxy) {
-    throw object_exception("couldn't remove object, no proxy");
+    throw object_exception("couldn't remove serializable, no proxy");
   }
-  if (!proxy->node) {
-    throw object_exception("couldn't remove object, no prototype");
+  if (!proxy->node()) {
+    throw object_exception("couldn't remove serializable, no prototype");
   }
   
-  prototype_iterator node = prototype_tree_.find(proxy->node->type.c_str());
+  prototype_iterator node = prototype_tree_.find(proxy->node()->type.c_str());
   if (node == prototype_tree_.end()) {
-    throw object_exception("couldn't find node for object");
+    throw object_exception("couldn't find node for serializable");
   }
   
-  if (object_map_.erase(proxy->obj->id()) != 1) {
-    // couldn't remove object
+  if (object_map_.erase(proxy->id()) != 1) {
+    // couldn't remove serializable
     // throw exception
-    throw object_exception("couldn't remove object");
+    throw object_exception("couldn't remove serializable");
   }
 
-  remove_proxy(node.get(), proxy);
+  node->remove(proxy);
 
   if (notify) {
     // notify observer
     std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_delete, _1, proxy));
   }
-  // set object in object_proxy to null
+  // set serializable in object_proxy to null
   object_proxy *op = proxy;
   // delete node
   delete op;
@@ -293,9 +313,9 @@ object_store::remove(object_container &oc)
    * and first and last sentinel
    * 
    **************/
-  // check if object tree is deletable
+  // check if serializable tree is deletable
   if (!object_deleter_.is_deletable(oc)) {
-    throw object_exception("couldn't remove container object");
+    throw object_exception("couldn't remove container serializable");
   }
 
   object_deleter::iterator first = object_deleter_.begin();
@@ -311,32 +331,7 @@ object_store::remove(object_container &oc)
   oc.uninstall();
 }
 
-void
-object_store::link_proxy(object_proxy *base, object_proxy *prev_proxy)
-{
-  // link oproxy before this node
-  prev_proxy->prev = base->prev;
-  prev_proxy->next = base;
-  if (base->prev) {
-    base->prev->next = prev_proxy;
-  }
-  base->prev = prev_proxy;
-}
-
-void
-object_store::unlink_proxy(object_proxy *proxy)
-{
-  if (proxy->prev) {
-    proxy->prev->next = proxy->next;
-  }
-  if (proxy->next) {
-    proxy->next->prev = proxy->prev;
-  }
-  proxy->prev = 0;
-  proxy->next = 0;
-}
-
-object_proxy* object_store::find_proxy(long id) const
+object_proxy* object_store::find_proxy(unsigned long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
@@ -346,21 +341,24 @@ object_proxy* object_store::find_proxy(long id) const
   }
 }
 
-object_proxy* object_store::create_proxy(long id)
+object_proxy* object_store::create_proxy(serializable *o, prototype_node *node, unsigned long id)
 {
   if (id == 0) {
-    return nullptr;
+    id = seq_.next();
   }
   
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    return object_map_.insert(std::make_pair(id, new object_proxy(id, this))).first->second;
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, id, this));
+
+    proxy->node_ = node;
+    return object_map_.insert(std::make_pair(id, proxy.release())).first->second;
   } else {
     return nullptr;
   }
 }
 
-bool object_store::delete_proxy(long id)
+bool object_store::delete_proxy(unsigned long id)
 {
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
@@ -373,22 +371,22 @@ bool object_store::delete_proxy(long id)
   }
 }
 
-
-void object_store::insert_proxy(object_proxy *oproxy)
+void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
 {
-  if (!oproxy->obj) {
-    throw object_exception("object of proxy is null pointer");
+  if (!oproxy->obj()) {
+    throw object_exception("serializable of proxy is null pointer");
   }
 
-  if (oproxy->ostore) {
-    throw object_exception("object proxy already in object store");
+  if (is_new && oproxy->ostore()) {
+    throw object_exception("serializable proxy already in serializable store");
   }
 
   // find prototype node
-  prototype_iterator node = prototype_tree_.find(typeid(*oproxy->obj).name());
+  serializable *o = oproxy->obj();
+  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
-    throw object_exception("couldn't insert object");
+    throw object_exception("couldn't insert serializable");
   }
 
   if (oproxy->id() == 0) {
@@ -396,72 +394,24 @@ void object_store::insert_proxy(object_proxy *oproxy)
   } else {
     seq_.update(oproxy->id());
   }
-  oproxy->ostore = this;
-  
-  insert_proxy(node, oproxy);
+  oproxy->ostore_ = this;
 
-  // initialize object
-  object_creator oc(oproxy, *this, true);
-  oproxy->obj->deserialize(oc);
-  // notify observer
-  if (true) {
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, _1, oproxy));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[oproxy->id()] = oproxy;
+  initialze_proxy(oproxy, node, notify);
 }
 
-void object_store::insert_proxy(const prototype_iterator &node, object_proxy *oproxy)
+object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
-  // check count of object in subtree
-  if (node->count >= 2) {
-    /*************
-     *
-     * there are more than two objects (normal case)
-     * insert before last last
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-  } else if (node->count == 1) {
-    /*************
-     *
-     * there is one object in subtree
-     * insert as first; adjust "left" marker
-     *
-     *************/
-    oproxy->link(node->op_marker->prev);
-    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
-  } else /* if (node->count == 0) */ {
-    /*************
-     *
-     * there is no object in subtree
-     * insert as last; adjust "right" marker
-     *
-     *************/
-    oproxy->link(node->op_marker);
-    prototype_tree_.adjust_left_marker(node.get(), oproxy->next, oproxy);
-    prototype_tree_.adjust_right_marker(node.get(), oproxy->prev, oproxy);
+  if (oproxy->id() != 0) {
+    throw_object_exception("object proxy already registerd");
   }
-  // set prototype node
-  oproxy->node = node.get();
-  // adjust size
-  ++node->count;
-}
 
-void object_store::remove_proxy(prototype_node *node, object_proxy *oproxy)
-{
-  if (oproxy == node->op_first->next) {
-    // adjust left marker
-    prototype_tree_.adjust_left_marker(node, node->op_first->next, node->op_first->next->next);
+  if (oproxy->node() == nullptr) {
+    throw_object_exception("object proxy hasn't git a prototype node");
   }
-  if (oproxy == node->op_marker->prev) {
-    // adjust right marker
-    prototype_tree_.adjust_right_marker(node, oproxy, node->op_marker->prev->prev);
-  }
-  // unlink object_proxy
-  unlink_proxy(oproxy);
-  // adjust object count for node
-  --node->count;
+
+  oproxy->id(seq_.next());
+
+  return object_map_.insert(std::make_pair(oproxy->id(), oproxy)).first->second;
 }
 
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)

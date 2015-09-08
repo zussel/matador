@@ -41,14 +41,14 @@ void JsonTestUnit::simple_test()
 
   sin >> obj;
 
-  UNIT_ASSERT_EQUAL(obj.size(), (size_t)3, "size of json object must be 3");
-  UNIT_ASSERT_TRUE(obj.contains("text"), "object must contain 'text' attribute");
+  UNIT_ASSERT_EQUAL(obj.size(), (size_t)3, "size of json serializable must be 3");
+  UNIT_ASSERT_TRUE(obj.contains("text"), "serializable must contain 'text' attribute");
 
   int count = 0;
   for_each(obj.begin(), obj.end(), [&](const json_object::value_type &) {
     ++count;
   });
-  UNIT_ASSERT_EQUAL(count, 3, "object must contain 3 elements");
+  UNIT_ASSERT_EQUAL(count, 3, "serializable must contain 3 elements");
 
   stringstream out;
   out << obj;
@@ -56,10 +56,10 @@ void JsonTestUnit::simple_test()
   UNIT_ASSERT_EQUAL(out.str(), result, "result isn't as expected");
 
   obj.clear();
-  UNIT_ASSERT_TRUE(obj.empty(), "object must be empty");
+  UNIT_ASSERT_TRUE(obj.empty(), "serializable must be empty");
 
   obj.insert("name", "jon");
-  UNIT_ASSERT_TRUE(obj.contains("name"), "object must contain 'name' attribute");
+  UNIT_ASSERT_TRUE(obj.contains("name"), "serializable must contain 'name' attribute");
 
   str = "   [ {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ]      } ]               ";
   result = "[ { \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"text\" : \"hello world!\" } ]";
@@ -82,13 +82,13 @@ void JsonTestUnit::invalid_test()
   istringstream sin(str);
   json_object obj;
 
-  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "root must be either array '[]' or object '{}'", "shouldn't create json object from invalid json");
+  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "root must be either array '[]' or serializable '{}'", "shouldn't create json serializable from invalid json");
 
   str = "           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ]      } xxxx ";
   sin.clear();
   sin.str(str);
 
-  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "no characters are allowed after closed root node", "shouldn't create json object from invalid json");
+  UNIT_ASSERT_EXCEPTION(sin >> obj, std::logic_error, "no characters are allowed after closed root node", "shouldn't create json serializable from invalid json");
 }
 
 void JsonTestUnit::null_test()
@@ -340,11 +340,11 @@ void JsonTestUnit::access_test()
   root["array"][3] = new json_null;
   root["array"].push_back(5);
 
-  UNIT_ASSERT_TRUE(root.size() == 2, "json object must contain 2 elements");
+  UNIT_ASSERT_TRUE(root.size() == 2, "json serializable must contain 2 elements");
 
   json_object obj = root;
 
-  UNIT_ASSERT_TRUE(obj.size() == 2, "json object must contain 2 elements");
+  UNIT_ASSERT_TRUE(obj.size() == 2, "json serializable must contain 2 elements");
 
   json_number numb = root["number"];
 
@@ -374,9 +374,9 @@ void JsonTestUnit::parser_test()
 {
   json_parser parser;
 
-  json_value v = parser.parse("           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ], \"object\" :      { \"found\": true}      }");
+  json_value v = parser.parse("           {      \"text\" :       \"hello world!\",     \"bool\" : false, \"array\" :  [   null, false, -5.66667 ], \"serializable\" :      { \"found\": true}      }");
 
-  string result("{ \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"object\" : { \"found\" : true }, \"text\" : \"hello world!\" }");
+  string result("{ \"array\" : [ null, false, -5.66667 ], \"bool\" : false, \"serializable\" : { \"found\" : true }, \"text\" : \"hello world!\" }");
 
   stringstream out;
   out << v;

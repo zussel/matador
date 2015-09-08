@@ -33,7 +33,6 @@
 #endif
 
 #include "object/prototype_node.hpp"
-#include "object/object_proxy.hpp"
 #include "object/object_producer.hpp"
 
 #include <string>
@@ -41,6 +40,7 @@
 
 namespace oos {
 
+class object_proxy;
 class const_prototype_iterator;
 
 /**
@@ -70,7 +70,7 @@ public:
   * @brief Creates a iterator for a concrete type.
   *
   * This constructor creates an iterator for a concrete
-  * type and a concrete object.
+  * type and a concrete serializable.
   *
   * @param node The prototype_node of the object_proxy
   */
@@ -195,7 +195,7 @@ public:
   * @brief Creates a iterator for a concrete type.
   *
   * This constructor creates an iterator for a concrete
-  * type and a concrete object.
+  * type and a concrete serializable.
   *
   * @param node The prototype_node of the object_proxy
   */
@@ -324,21 +324,21 @@ public:
   ~prototype_tree();
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
-  * constist of a producer and a unique type name. To know where the new
+  * Inserts a new serializable prototype into the prototype tree. The prototype
+  * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given.
   *
-  * @param producer The producer object produces a new object of a specific type.
+  * @param producer The producer serializable produces a new serializable of a specific type.
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
+  * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given. The producer is automatically created via the template
@@ -346,7 +346,7 @@ public:
   *
   * @tparam T       The type of the prototype node
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @return         Returns new inserted prototype iterator.
   */
   template < class T >
@@ -356,7 +356,7 @@ public:
   }
 
   /**
-  * Inserts a new object prototype into the prototype tree. The prototype
+  * Inserts a new serializable prototype into the prototype tree. The prototype
   * consists of a producer and a unique type name. To know where the new
   * prototype is inserted into the hierarchy the type name of the parent
   * node is also given. The producer is automatically created via the template
@@ -365,7 +365,7 @@ public:
   * @tparam T       The type of the prototype node
   * @tparam S       The type of the parent prototype node
   * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers object is treated as an abstract node.
+  * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @return         Returns new inserted prototype iterator.
   */
   template < class T, class S >
@@ -386,6 +386,21 @@ public:
   * @return Returns a prototype iterator.
   */
   iterator find(const char *type);
+
+
+  prototype_node* prepare_insert(const char *type);
+
+  /**
+  * @brief Finds prototype node.
+  *
+  * Finds and returns prototype node const iterator identified
+  * by the given name or classname (typeid). If the
+  * prototype couldn't be found const_prototype_iterator end
+  * is returned.
+  *
+  * @param type Name or class name of the prototype
+  * @return Returns a prototype const iterator.
+  */
   const_iterator find(const char *type) const;
 
   /**
@@ -403,6 +418,17 @@ public:
   {
     return find(typeid(T).name());
   }
+
+  /**
+  * @brief Finds prototype node by template type.
+  * @tparam Template type.
+  *
+  * Finds and returns prototype node const iterator identified
+  * by the given template typeid. If the prototype couldn't
+  * be found const_prototype_iterator end is returned.
+  *
+  * @return Returns a prototype const iterator.
+  */
   template < class T >
   const_iterator find() const
   {
@@ -438,7 +464,7 @@ public:
   * will be deleted as well.
   *
   * @param type The name of the type to remove.
-  * @param recursive If set, also the object in children nodes are deleted.
+  * @param recursive If set, also the serializable in children nodes are deleted.
   * @return Returns true if the type was found and successfully cleared.
   * @throws oos::object_exception on error
   */
@@ -467,7 +493,7 @@ public:
   iterator erase(const prototype_iterator &i);
 
   /**
-  * Removes an object prototype from the prototype tree. All children
+  * Removes an serializable prototype from the prototype tree. All children
   * nodes and all objects are also removed.
   *
   * @param type The name of the type to remove.
@@ -477,7 +503,7 @@ public:
   void remove(const char *type);
 
   /**
-  * Removes an object prototype from the prototype tree. All children
+  * Removes an serializable prototype from the prototype tree. All children
   * nodes and all objects are also removed.
   *
   * @param node The prototype iterator node to remove.
@@ -508,12 +534,21 @@ public:
   iterator end();
 
   /**
-  * Return the last prototype node.
-  *
-  * @return The last prototype node iterator.
-  */
+   * Return the last prototype node.
+   *
+   * @return The last prototype node iterator.
+   */
   const_iterator end() const;
 
+  template < typename P >
+  void for_each_root_node(P pred) const
+  {
+    prototype_node *node = first_->next;
+    while (node != last_) {
+      pred(const_prototype_iterator(node));
+      node = node->next;
+    }
+  }
 private:
   typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
   // typeid -> [name -> prototype]
@@ -543,16 +578,17 @@ private:
    * return its successor node
    *
    * @param node The prototype node to remove
+   * @param is_root Indicates if given node is root node
    * @return The successor node
    * @throws oos::object_exception if in error occurrs
    */
-  prototype_node* remove_prototype_node(prototype_node *node);
+  prototype_node* remove_prototype_node(prototype_node *node, bool is_root);
 
 private:
   /**
   * @internal
   *
-  * Adjust first marker of all successor nodes with given object proxy.
+  * Adjust first marker of all successor nodes with given serializable proxy.
   *
   * @param old_proxy The old first marker proxy.
   * @param new_proxy The new first marker proxy.
@@ -563,7 +599,7 @@ private:
   * @internal
   *
   * Adjusts self and last marker of all predeccessor nodes with given
-  * object proxy.
+  * serializable proxy.
   *
   * @param old_proxy The old last marker proxy.
   * @param new_proxy The new last marker proxy.
@@ -571,16 +607,36 @@ private:
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
 private:
+  /**
+   * Get or create a prototype node
+   *
+   * @param producer The producer of the concrete object
+   * @param type The type name of the node
+   * @param abstract indicates wether the representing object is abstract
+   * @return The prototype node
+   */
+  prototype_node *acquire(object_base_producer *producer, const char *type, bool abstract);
+
+  /**
+   * Initializes a prototype node
+   *
+   * @param node The node to initialize
+   * @return iterator representing the prototype node
+   */
+  iterator initialize(prototype_node *node);
+
+private:
   friend class object_container;
   friend class object_store;
   friend class prototype_node;
+  friend class relation_resolver;
 
   prototype_node *first_;
   prototype_node *last_;
 
-  // name to prototype map
+  // name to prototype node map
   t_prototype_map prototype_map_;
-
+  // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 };
 

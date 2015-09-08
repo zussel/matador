@@ -4,6 +4,7 @@
 
 #include "object/object_vector.hpp"
 #include "object/object_view.hpp"
+#include "object/generic_access.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -12,12 +13,12 @@ using namespace oos;
 using namespace std;
 
 ObjectVectorTestUnit::ObjectVectorTestUnit()
-  : unit_test("vector", "object vector")
+  : unit_test("vector", "serializable vector")
 {
-  add_test("int", std::bind(&ObjectVectorTestUnit::test_int_vector, this), "test object vector with integers");
-  add_test("ptr", std::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test object vector with pointers");
-  add_test("ref", std::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test object vector with references");
-  add_test("direct_ref", std::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct object vector with references");
+  add_test("int", std::bind(&ObjectVectorTestUnit::test_int_vector, this), "test serializable vector with integers");
+  add_test("ptr", std::bind(&ObjectVectorTestUnit::test_ptr_vector, this), "test serializable vector with pointers");
+  add_test("ref", std::bind(&ObjectVectorTestUnit::test_ref_vector, this), "test serializable vector with references");
+  add_test("direct_ref", std::bind(&ObjectVectorTestUnit::test_direct_ref_vector, this), "test direct serializable vector with references");
 }
 
 ObjectVectorTestUnit::~ObjectVectorTestUnit()
@@ -26,9 +27,9 @@ ObjectVectorTestUnit::~ObjectVectorTestUnit()
 void ObjectVectorTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ItemPtrVector>("item_ptr_vector");
-  ostore_.insert_prototype<ItemRefVector>("item_ref_vector");
-  ostore_.insert_prototype<IntVector>("item_int_vector");
+  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
+  ostore_.insert_prototype(new vector_object_producer<ItemRefVector>("ref_vector"), "item_ref_vector");
+  ostore_.insert_prototype(new vector_object_producer<IntVector>("int_vector"), "item_int_vector");
   ostore_.insert_prototype<album>("album");
   ostore_.insert_prototype<track>("track");
 }
@@ -43,7 +44,7 @@ void ObjectVectorTestUnit::test_ref_vector()
   typedef object_ptr<ItemRefVector> itemvector_ptr;
   typedef ItemRefVector::value_type item_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new ItemRefVector);
+  itemvector_ptr itemvector = ostore_.insert(new ItemRefVector("item_ref_vector"));
 
   ItemRefVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
@@ -52,7 +53,7 @@ void ObjectVectorTestUnit::test_ref_vector()
     stringstream name;
     name << "Item " << i+1;
     item_ptr item = ostore_.insert(new Item(name.str()));
-    item->set("val_float", 3.4f);
+    oos::set(item, "val_float", 3.4f);
 
     itemvector->push_back(item);
   }
@@ -71,7 +72,7 @@ void ObjectVectorTestUnit::test_ref_vector()
 
   std::string str;
     /*
-     * TODO: implement object::get(id, val, precision)
+     * TODO: implement serializable::get(id, val, precision)
   (*i)->value()->get("val_float", str, 2);
   */
 
@@ -94,7 +95,7 @@ void ObjectVectorTestUnit::test_int_vector()
 {
   typedef object_ptr<IntVector> itemvector_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new IntVector);
+  itemvector_ptr itemvector = ostore_.insert(new IntVector("int_vector"));
 
   IntVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
@@ -140,7 +141,7 @@ void ObjectVectorTestUnit::test_ptr_vector()
   typedef object_ptr<ItemPtrVector> itemvector_ptr;
   typedef ItemPtrVector::value_type item_ptr;
 
-  itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector);
+  itemvector_ptr itemvector = ostore_.insert(new ItemPtrVector("item_ptr_vector"));
 
   ItemPtrVector::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemvector->size(), val, "pointer vector is not empty");
@@ -192,7 +193,10 @@ void ObjectVectorTestUnit::test_direct_ref_vector()
 
   typedef object_ptr<album> album_ptr;
   typedef object_ptr<track> track_ptr;
-  
+
+//  ostore_.prototypes().dump(std::cout);
+//
+//  return;
   album_ptr alb1 = ostore_.insert(new album("My Album"));
 
   UNIT_ASSERT_TRUE(alb1->empty(), "album must be empty");

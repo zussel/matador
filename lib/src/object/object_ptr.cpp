@@ -17,23 +17,18 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/object.hpp"
 
 using namespace std;
 
 namespace oos {
 
 object_base_ptr::object_base_ptr(bool is_ref)
-  : proxy_(0)
-  , is_reference_(is_ref)
-  , is_internal_(false)
-  , oid_(0)
+  : is_reference_(is_ref)
 {}
 
 object_base_ptr::object_base_ptr(const object_base_ptr &x)
   : proxy_(x.proxy_)
   , is_reference_(x.is_reference_)
-  , is_internal_(false)
   , oid_(x.oid_)
 {
   if (proxy_) {
@@ -46,30 +41,7 @@ object_base_ptr&
 object_base_ptr::operator=(const object_base_ptr &x)
 {
   if (this != &x) {
-    if (proxy_) {
-      oid_ = 0;
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->unlink_ref();
-        } else {
-          proxy_->unlink_ptr();
-        }
-      }
-      proxy_->remove(this);
-    }
-    proxy_ = x.proxy_;
-    is_reference_ = x.is_reference_;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->link_ref();
-        } else {
-          proxy_->link_ptr();
-        }
-      }
-      proxy_->add(this);
-    }
+    reset(x.proxy_, x.is_reference_);
   }
   return *this;
 }
@@ -86,7 +58,7 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   }
 }
 
-object_base_ptr::object_base_ptr(object *o, bool is_ref)
+object_base_ptr::object_base_ptr(serializable *o, bool is_ref)
   : proxy_(new object_proxy(o, nullptr))
   , is_reference_(is_ref)
   , is_internal_(false)
@@ -110,7 +82,7 @@ object_base_ptr::~object_base_ptr()
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore) {
+    if (!proxy_->ostore()) {
       delete proxy_;
     }
   }
@@ -127,7 +99,7 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 }
 
 void
-object_base_ptr::reset(object_proxy *proxy)
+object_base_ptr::reset(object_proxy *proxy, bool is_ref)
 {
   if (proxy_) {
     oid_ = 0;
@@ -140,26 +112,25 @@ object_base_ptr::reset(object_proxy *proxy)
     }
     proxy_->remove(this);
   }
-  if (proxy) {
-    proxy_ = proxy;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      if (is_internal_) {
-        if (is_reference_) {
-          proxy_->link_ref();
-        } else {
-          proxy_->link_ptr();
-        }
+  proxy_ = proxy;
+  is_reference_ = is_ref;
+  if (proxy_) {
+    oid_ = proxy_->id();
+    if (is_internal_) {
+      if (is_reference_) {
+        proxy_->link_ref();
+      } else {
+        proxy_->link_ptr();
       }
-      proxy_->add(this);
     }
+    proxy_->add(this);
   }
 }
 
 bool
 object_base_ptr::is_loaded() const
 {
-  return (proxy_ && proxy_->obj);
+  return (proxy_ && proxy_->obj());
 }
 
 unsigned long
@@ -180,39 +151,39 @@ void object_base_ptr::id(unsigned long id)
 
 object_store *object_base_ptr::store() const
 {
-  return (proxy_ ? proxy_->ostore : nullptr);
+  return (proxy_ ? proxy_->ostore() : nullptr);
 }
 
-object* object_base_ptr::ptr()
+serializable * object_base_ptr::ptr()
 {
-  if (proxy_ && proxy_->obj) {
-    return proxy_->obj;
+  if (proxy_ && proxy_->obj()) {
+    return proxy_->obj();
   } else {
     return nullptr;
   }
 }
 
-const object* object_base_ptr::ptr() const
+const serializable * object_base_ptr::ptr() const
 {
   return lookup_object();
 }
 
-object* object_base_ptr::lookup_object()
+serializable * object_base_ptr::lookup_object()
 {
-  if (proxy_ && proxy_->obj) {
-    if (proxy_->ostore) {
-      proxy_->ostore->mark_modified(proxy_);
+  if (proxy_ && proxy_->obj()) {
+    if (proxy_->ostore()) {
+      proxy_->ostore()->mark_modified(proxy_);
     }
-    return proxy_->obj;
+    return proxy_->obj();
   } else {
     return nullptr;
   }
 }
 
-object* object_base_ptr::lookup_object() const
+serializable * object_base_ptr::lookup_object() const
 {
-  if (proxy_ && proxy_->obj) {
-    return proxy_->obj;
+  if (proxy_ && proxy_->obj()) {
+    return proxy_->obj();
   } else {
     return nullptr;
   }
@@ -232,25 +203,35 @@ object_base_ptr::is_internal() const
 unsigned long
 object_base_ptr::ref_count() const
 {
-  return (!proxy_ ? 0 : proxy_->ref_count);
+  return (!proxy_ ? 0 : proxy_->ref_count());
 }
 
 unsigned long
 object_base_ptr::ptr_count() const
 {
-  return (!proxy_ ? 0 : proxy_->ptr_count);
+  return (!proxy_ ? 0 : proxy_->ptr_count());
+}
+
+bool object_base_ptr::has_primary_key() const
+{
+  return (proxy_ ? proxy_->has_primary_key() : false);
+}
+
+std::shared_ptr<primary_key_base> object_base_ptr::primary_key() const
+{
+  return (proxy_ ? proxy_->pk() : nullptr);
 }
 
 std::ostream& operator<<(std::ostream &out, const object_base_ptr &x)
 {
   if (x.proxy_) {
-    if (x.proxy_->obj) {
-      out << *x.proxy_->obj;
+    if (x.proxy_->obj()) {
+      out << "loaded serializable " << x.proxy_->obj();
     } else {
-      out << "unload object [" << x.id() << "]";
+      out << "unload serializable [" << x.id() << "]";
     }
   } else {
-      out << "unknown object [" << 0 << "]";
+      out << "unknown serializable [" << 0 << "]";
   }
   return out;
 }

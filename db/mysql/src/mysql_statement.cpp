@@ -104,6 +104,8 @@ result* mysql_statement::execute()
       throw_stmt_error(res, stmt, "mysql", str());
     }
   }
+//  std::cout << str() << '\n';
+
   int res = mysql_stmt_execute(stmt);
   if (res > 0) {
     throw_stmt_error(res, stmt, "mysql", str());

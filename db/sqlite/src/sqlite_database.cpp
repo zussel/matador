@@ -194,6 +194,11 @@ result *sqlite_database::create_result()
   return nullptr;
 }
 
+unsigned long sqlite_database::last_inserted_id()
+{
+    return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));
+}
+
 }
 
 }

@@ -125,7 +125,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
     UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_NUMERIC_EXPECT_FAILURE_SIZE(FROM, TO, BOUNDARY, SIZE) \
   { \
@@ -133,7 +133,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
     UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_NUMERIC_EXPECT_FAILURE_SIZE_PRECISION(FROM, TO, BOUNDARY, SIZE, PRECISION) \
   { \
@@ -141,7 +141,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg = "convertion from "#FROM" to "#TO" "#BOUNDARY" values must fail"; \
     UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE, PRECISION), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_EXPECT_FAILURE(FROM, IN, TO, OUT) \
   { \
@@ -149,7 +149,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg = "convertion from "#FROM" to "#TO" must fail"; \
     UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_TO_PTR_EXPECT_FAILURE(FROM, IN, TO, OUT) \
   { \
@@ -157,7 +157,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to(0); \
     const char *msg("convertion from "#FROM" to "#TO" must fail"); \
     UNIT_ASSERT_EXCEPTION(convert(from, to), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_EXPECT_FAILURE_SIZE(FROM, IN, TO, OUT, SIZE) \
   { \
@@ -165,7 +165,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg("convertion from "#FROM" to "#TO" must fail"); \
     UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 #define CONVERT_EXPECT_FAILURE_SIZE_PRECISION(FROM, IN, TO, OUT, SIZE, PRECISION) \
   { \
@@ -173,7 +173,7 @@ ConvertTestUnit::~ConvertTestUnit()
     TO to; \
     const char *msg("convertion from "#FROM" to "#TO" must fail"); \
     UNIT_ASSERT_EXCEPTION(convert(from, to, SIZE, PRECISION), std::bad_cast, "std::bad_cast", msg) \
-  } while(false);
+  } while(false)
 
 void
 ConvertTestUnit::convert_to_bool()

@@ -18,81 +18,56 @@
 #include "object/prototype_node.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_store.hpp"
+#include <object/primary_key_analyzer.hpp>
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
 namespace oos {
 
 prototype_node::prototype_node()
-  : parent(0)
-  , prev(0)
-  , next(0)
-  , first(0)
-  , last(0)
-  , producer(0)
-  , op_first(0)
-  , op_marker(0)
-  , op_last(0)
-  , depth(0)
-  , count(0)
-  , abstract(false)
-  , initialized(false)
 {
 }
 
-prototype_node::prototype_node(object_base_producer *p, const char *t, bool a)
-  : parent(0)
-  , prev(0)
-  , next(0)
+prototype_node::prototype_node(prototype_tree *tr, const char *t)
+    : tree(tr)
+    , type(t)
+{
+}
+
+prototype_node::prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
+  : tree(tr)
   , first(new prototype_node)
   , last(new prototype_node)
   , producer(p)
-  , op_first(0)
-  , op_marker(0)
-  , op_last(0)
-  , depth(0)
-  , count(0)
   , type(t)
   , abstract(a)
-  , initialized(false)
 {
-  first->next = last;
-  last->prev = first;
-//  aliases.insert(t);
-}
-
-void prototype_node::initialize(object_base_producer *p, const char *t, bool a)
-{
-  first = new prototype_node;
-  last = new prototype_node;
-  producer = p;
-  type.assign(t);
-  abstract = a;
-//  aliases.insert(t);
-  initialized = true;
-  first->next = last;
-  last->prev = first;  
+  first->next = last.get();
+  last->prev = first.get();
 }
 
 prototype_node::~prototype_node()
+{}
+
+void prototype_node::initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
 {
-  if (first) {
-    delete first;
-  }
-  if (last) {
-    delete last;
-  }
-  if (producer) {
-    delete producer;
-  }
+  tree = tr;
+  first.reset(new prototype_node);
+  last.reset(new prototype_node);
+  producer.reset(p);
+  type.assign(t);
+  abstract = a;
+  first->next = last.get();
+  last->prev = first.get();
 }
 
 bool
 prototype_node::empty(bool self) const
 {
-  return op_first->next == (self ? op_marker : op_last);
+  return op_first->next() == (self ? op_marker : op_last);
 }
 
 unsigned long
@@ -101,24 +76,56 @@ prototype_node::size() const
   return count;
 }
 
-void
-prototype_node::insert(prototype_node *child)
+
+void prototype_node::append(prototype_node *sibling)
+{
+  sibling->parent = parent;
+
+  sibling->prev = this;
+  sibling->next = next;
+  next = sibling;
+  sibling->next->prev = sibling;
+  sibling->depth = depth;
+
+  if (!parent) {
+    sibling->op_first = new object_proxy(nullptr);
+    sibling->op_last = sibling->op_marker = new object_proxy(nullptr);
+    sibling->op_first->next_ = sibling->op_last;
+    sibling->op_last->prev_ = sibling->op_first;
+  } else {
+    throw object_exception("");
+    // 1. first
+//    if (op_first->next() == op_last) {
+//      // node hasn't any serializable (proxy)
+//      sibling->op_first = op_first;
+//    } else {
+//      // node has some objects (proxy)
+//      sibling->op_first = op_last->prev_;
+//    }
+//    // 2. marker
+//    sibling->op_marker = op_last;
+//    // 3. last
+//    sibling->op_last = op_last;
+  }
+}
+
+void prototype_node::insert(prototype_node *child)
 {
   child->parent = this;
   child->prev = last->prev;
-  child->next = last;
+  child->next = last.get();
   last->prev->next = child;
   last->prev = child;
   // set depth
   child->depth = depth + 1;
   // set object proxy pointer
   // 1. first
-  if (op_first->next == op_last) {
-    // node hasn't any object (proxy)
+  if (op_first->next() == op_last) {
+    // node hasn't any serializable (proxy)
     child->op_first = op_first;
   } else {
     // node has some objects (proxy)
-    child->op_first = op_last->prev;
+    child->op_first = op_last->prev_;
   }
   // 2. marker
   child->op_marker = op_last;
@@ -126,28 +133,100 @@ prototype_node::insert(prototype_node *child)
   child->op_last = op_last;
 }
 
+void prototype_node::insert(object_proxy *proxy)
+{
+  // check count of serializable in subtree
+  if (count >= 2) {
+    /*************
+     *
+     * there are more than two objects (normal case)
+     * insert before last last
+     *
+     *************/
+    proxy->link(op_marker->prev_);
+  } else if (count == 1) {
+    /*************
+     *
+     * there is one serializable in subtree
+     * insert as first; adjust "left" marker
+     *
+     *************/
+    proxy->link(op_marker->prev_);
+    tree->adjust_left_marker(this, proxy->next_, proxy);
+  } else /* if (node->count == 0) */ {
+    /*************
+     *
+     * there is no serializable in subtree
+     * insert as last; adjust "right" marker
+     *
+     *************/
+    proxy->link(op_marker);
+    tree->adjust_left_marker(this, proxy->next_, proxy);
+    tree->adjust_right_marker(this, proxy->prev_, proxy);
+  }
+  // set prototype node
+  proxy->node_ = this;
+  // adjust size
+  ++count;
+  // find and insert primary key
+  std::shared_ptr<primary_key_base> pk(pk_serializer.serialize(proxy->obj()));
+  if (pk) {
+    primary_key_map.insert(std::make_pair(pk, proxy));
+  }
+}
 
-void prototype_node::clear(prototype_tree &tree, bool recursive)
+void prototype_node::remove(object_proxy *proxy)
+{
+  if (proxy == op_first->next()) {
+    // adjust left marker
+    tree->adjust_left_marker(this, op_first->next_, op_first->next_->next_);
+  }
+  if (proxy == op_marker->prev()) {
+    // adjust right marker
+    tree->adjust_right_marker(this, proxy, op_marker->prev_->prev_);
+  }
+  // unlink object_proxy
+  if (proxy->prev()) {
+    proxy->prev_->next_ = proxy->next_;
+  }
+  if (proxy->next()) {
+    proxy->next_->prev_ = proxy->prev_;
+  }
+  proxy->prev_ = nullptr;
+  proxy->next_ = nullptr;
+
+  if (has_primary_key()) {
+    if (primary_key_map.erase(proxy->primary_key_) == 0) {
+      // couldn't find and erase primary key
+    }
+  }
+
+  // adjust serializable count for node
+  --count;
+}
+
+void prototype_node::clear(bool recursive)
 {
   if (!empty(true)) {
-    tree.adjust_left_marker(this, op_first->next, op_marker);
-    tree.adjust_right_marker(this, op_marker->prev, op_first);
+    tree->adjust_left_marker(this, op_first->next_, op_marker);
+    tree->adjust_right_marker(this, op_marker->prev_, op_first);
 
-    while (op_first->next != op_marker) {
-      object_proxy *op = op_first->next;
-      // remove object proxy from list
+    while (op_first->next() != op_marker) {
+      object_proxy *op = op_first->next_;
+      // remove serializable proxy from list
       op->unlink();
-      // delete object proxy and object
+      // delete serializable proxy and serializable
       delete op;
     }
+    primary_key_map.clear();
     count = 0;
   }
 
   if (recursive) {
     prototype_node *current = first->next;
 
-    while (current != last) {
-      current->clear(tree, recursive);
+    while (current != last.get()) {
+      current->clear(recursive);
       current = current->next;
     }
   }
@@ -166,14 +245,14 @@ prototype_node* prototype_node::next_node() const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first && first->next != last)
+  if (first && first->next != last.get())
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last) {
+    while (node->parent && node->next == node->parent->last.get()) {
       node = node->parent;
     }
     return node->next;
@@ -184,14 +263,14 @@ prototype_node* prototype_node::next_node(const prototype_node *root) const
 {
   // if we have a child, child is the next iterator to return
   // (if we don't do iterate over the siblings)
-  if (first && first->next != last)
+  if (first && first->next != last.get())
     return first->next;
   else {
     // if there is no child, we check for sibling
     // if there is a sibling, this is our next iterator to return
     // if not, we go back to the parent
     const prototype_node *node = this;
-    while (node->parent && node->next == node->parent->last && node->parent != root) {
+    while (node->parent && node->next == node->parent->last.get() && node->parent != root) {
       node = node->parent;
     }
     return node->next;
@@ -206,7 +285,7 @@ prototype_node* prototype_node::previous_node() const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last) {
+    while (node->last && node->first->next != node->last.get()) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
@@ -225,7 +304,7 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
   // child as our iterator
   if (prev && prev->prev) {
     const prototype_node *node = prev;
-    while (node->last && node->first->next != node->last && node->parent != root) {
+    while (node->last && node->first->next != node->last.get() && node->parent != root) {
       node = node->last->prev;
     }
     return const_cast<prototype_node*>(node);
@@ -248,7 +327,21 @@ bool prototype_node::is_child_of(const prototype_node *parent) const
 
 bool prototype_node::has_children() const
 {
-  return first->next != last;
+  return first->next != last.get();
+}
+
+bool prototype_node::has_primary_key() const
+{
+  return primary_key.get() != nullptr;
+}
+
+object_proxy *prototype_node::find_proxy(const std::shared_ptr<primary_key_base> &pk)
+{
+  t_primary_key_map::iterator i = std::find_if(primary_key_map.begin(), primary_key_map.end(), [pk](const t_primary_key_map::value_type &x) {
+    return *pk == *(x.first);
+  });
+//  t_primary_key_map::iterator i = primary_key_map.find(pk);
+  return (i != primary_key_map.end() ? i->second : nullptr);
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
@@ -263,14 +356,14 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   os << "|{parent|" << pn.parent << "}";
   os << "|{prev|" << pn.prev << "}";
   os << "|{next|" << pn.next << "}";
-  os << "|{first|" << pn.first << "}";
-  os << "|{last|" << pn.last << "}";
+  os << "|{first|" << pn.first.get() << "}";
+  os << "|{last|" << pn.last.get() << "}";
   // determine size
   int i = 0;
-  object_proxy *iop = pn.op_first;
-  while (iop && iop->next != pn.op_marker) {
+  const object_proxy *iop = pn.op_first;
+  while (iop && iop->next() != pn.op_marker) {
     ++i;
-    iop = iop->next;
+    iop = iop->next();
   }
   os << "|{size|" << i << "}";
   /*

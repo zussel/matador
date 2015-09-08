@@ -2,15 +2,16 @@
 #define ATTRIBUTE_COUNTER_HPP
 
 #include "object/object_atomizer.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 
 /**
  * @class attribute_counter
- * @brief Counts the number of attributes within an object.
+ * @brief Counts the number of attributes within an serializable.
  * 
  * This class counts all attribute for the given
- * object. With a flag one can indicate that also
+ * serializable. With a flag one can indicate that also
  * container attributes are considered for the
  * counting. The default is false.
  */
@@ -29,16 +30,16 @@ public:
   
   /**
    * Counts all attributes for the
-   * given object. If the flag is set to true
+   * given serializable. If the flag is set to true
    * all container attributes are also
    * considered for the counting.
    * 
-   * @param o The object.
+   * @param o The serializable.
    * @param with_container Indicates wether
    *        container are considered or not.
    * @return The number of attributes.
    */
-  unsigned long count(object *o, bool with_container = false)
+  unsigned long count(serializable *o, bool with_container = false)
   {
     count_ = 0;
     with_container_ = with_container;

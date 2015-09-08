@@ -38,10 +38,10 @@ namespace oos {
 
 /**
  * @class database_exception
- * @brief An object exception class
+ * @brief An serializable exception class
  *
  * This kind of exception is thrown, when 
- * an object dealing error occurs.
+ * an serializable dealing error occurs.
  */
 class OOS_API database_exception : public std::exception
 {

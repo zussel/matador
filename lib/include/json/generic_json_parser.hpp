@@ -106,7 +106,7 @@ generic_json_parser<T>::parse_json(std::istream &in)
       break;
     default:
       // TODO: throw json_error instead
-      throw std::logic_error("root must be either array '[]' or object '{}'");
+      throw std::logic_error("root must be either array '[]' or serializable '{}'");
   }
 
   // skip white
@@ -132,7 +132,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
    * 
    * parse ':'
    * 
-   * parse value (object, string, array, number, bool or null)
+   * parse value (serializable, string, array, number, bool or null)
    * 
    * parse '}'
    */
@@ -142,7 +142,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
   if (in.good() && c != '{') {
     in.putback(c);
     // TODO: throw json_error instead
-    throw std::logic_error("character isn't object opening bracket");
+    throw std::logic_error("character isn't serializable opening bracket");
   }
 
   /* 
@@ -156,7 +156,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
      * call handler callback
      */
     handler_->on_end_object();
-    // empty object
+    // empty serializable
     return;
   }
   
@@ -190,7 +190,7 @@ generic_json_parser<T>::parse_json_object(std::istream &in)
 
   if (c != '}') {
     // TODO: throw json_error instead
-    throw std::logic_error("not a valid object closing bracket");
+    throw std::logic_error("not a valid serializable closing bracket");
   }
 
   /*

@@ -44,8 +44,8 @@ namespace oos {
  * @brief Parse a json formatted stream or string
  *
  * This class parse a given input stream or string
- * into a json object representation.
- * The result will be a oos::json_value object.
+ * into a json serializable representation.
+ * The result will be a oos::json_value serializable.
  */
 class OOS_API json_parser : public generic_json_parser<json_parser>
 {
@@ -60,7 +60,7 @@ public:
    * @brief parse an input stream.
    *
    * Parses an input stream and returns 
-   * a json_value object representing
+   * a json_value serializable representing
    * the json structure.
    *
    * @param in The json input stream.
@@ -72,7 +72,7 @@ public:
    * @brief parse a const character string.
    *
    * Parses a const character string and
-   * returns a json_value object representing
+   * returns a json_value serializable representing
    * the json structure.
    *
    * @param str The json const character string.
@@ -84,7 +84,7 @@ public:
    * @brief parse a std::string.
    *
    * Parses a std::string and
-   * returns a json_value object representing
+   * returns a json_value serializable representing
    * the json structure.
    *
    * @param str The json std::string.
@@ -112,7 +112,7 @@ private:
   std::string key_;
   /*
    * the boolean value indicates wether the
-   * value is an object (true) or an array
+   * value is an serializable (true) or an array
    * (false)
    */
   typedef std::pair<bool, json_value> state_value_pair_t;

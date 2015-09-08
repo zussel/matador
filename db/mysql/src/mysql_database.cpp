@@ -25,8 +25,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/row.hpp"
 
-#include "object/object.hpp"
-
 #include <sstream>
 
 using namespace std::placeholders;
@@ -194,6 +192,16 @@ const char* mysql_database::type_string(data_type_t type) const
         //throw std::logic_error("mysql database: unknown type");
       }
     }
+}
+
+unsigned long mysql_database::last_inserted_id()
+{
+  if (mysql_field_count(&mysql_) == 0 &&
+      mysql_insert_id(&mysql_) != 0)
+  {
+    return mysql_insert_id(&mysql_);
+  }
+  return 0;
 }
 
 }

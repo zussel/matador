@@ -1,6 +1,6 @@
 #ADD_SUBDIRECTORY(tools)
 #ADD_SUBDIRECTORY(database)
-#ADD_SUBDIRECTORY(object)
+#ADD_SUBDIRECTORY(serializable)
 #ADD_SUBDIRECTORY(json)
 #ADD_SUBDIRECTORY(unit)
 
@@ -34,7 +34,7 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
-)
+object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
@@ -53,9 +53,9 @@ SET (TEST_DATABASE_SOURCES
   database/SessionTestUnit.cpp
   database/TransactionTestUnit.cpp
   database/TransactionTestUnit.hpp
-)
+        database/SQLTestUnit.cpp database/SQLTestUnit.hpp)
 
-SET (TEST_SOURCES test_oos.cpp)
+SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}
@@ -225,7 +225,7 @@ SET(tree
   const_traverse
 )
 
-# object store tests
+# serializable store tests
 SET(store
   version
   clear
@@ -293,6 +293,7 @@ SET(database
   reload_simple
   reload
   reload_container
+  relation
 )
   
 IF(SQLITE3_FOUND AND OOS_SQLITE3)
@@ -333,8 +334,8 @@ LIST(APPEND TESTUNITS memory_transaction)
 
 FOREACH(unit ${TESTUNITS})
   FOREACH(test ${${unit}})
-#    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
+    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
   ENDFOREACH(test)
 ENDFOREACH(unit)
 
-ADD_TEST(test_oos ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec all)
+#ADD_TEST(test_oos_1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec date,time,date)

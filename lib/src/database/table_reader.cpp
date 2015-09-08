@@ -8,60 +8,85 @@ namespace oos {
 table_reader::table_reader(table &t, object_store &ostore)
   : generic_object_reader(this)
   , ostore_(ostore)
+  , object_preparator_(t.node_)
   , table_(t)
 {}
 
 
-void table_reader::read(result *res)
+void table_reader::load(result *res)
 {
-  // check result
-  // create object
-  std::unique_ptr<object> obj(table_.node_.producer->create());
 
-  while (res->fetch(obj.get())) {
+  serializable *obj = nullptr;
 
-    new_proxy_ = new object_proxy(obj.get(), nullptr);
+  while ((obj = res->fetch(&table_.node_))) {
+
+    if (table_.node_.has_primary_key()) {
+      
+    }
+
+    new_proxy_ = new object_proxy(obj, nullptr);
 
     obj->deserialize(*this);
 
-    obj.release();
-
     ostore_.insert_proxy(new_proxy_);
-
-    obj.reset(table_.node_.producer->create());
   }
+
+
+  // check result
+  // create serializable
+//  std::unique_ptr<serializable> obj(table_.node_.producer->create());
+//
+//  // prepare serializable for read (set object_proxy into serializable ptr)
+//  object_preparator_.prepare(obj.get());
+//
+////  std::for_each(res->begin(), res->end(), [](serializable *obj) {})
+//  while (res->fetch(obj.get())) {
+//
+//    new_proxy_ = new object_proxy(obj.get(), nullptr);
+//
+//    obj->deserialize(*this);
+//
+//    obj.release();
+//
+//    ostore_.insert_proxy(new_proxy_);
+//
+//    obj.reset(table_.node_.producer->create());
+//  }
 }
 
-void table_reader::read_value(const char *, object_base_ptr &x)
+void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
-  long oid = x.id();
-
-  if (oid == 0) {
+  std::shared_ptr<primary_key_base> pk = x.primary_key();
+  if (!pk) {
     return;
   }
 
-  /*
-   * find object proxy with given id
-   */
-  object_proxy *oproxy = ostore_.find_proxy(oid);
-
-  if (!oproxy) {
-    oproxy = ostore_.create_proxy(oid);
-  }
-
+  // get node of object type
   prototype_iterator node = ostore_.find_prototype(x.type());
 
+  /**
+   * find proxy in node map
+   * if proxy can be found object was
+   * already read - replace proxy
+   */
+  object_proxy *proxy = node->find_proxy(pk);
+  if (proxy) {
+    x.reset(proxy, x.is_reference());
+  } else {
+    x.proxy_->obj_ = node->producer->create();
+    proxy = ostore_.register_proxy(x.proxy_);
+  }
+
+
   /*
-   * add the child object to the object proxy
+   * add the child serializable to the serializable proxy
    * of the parent container
    */
   database::table_map_t::iterator j = table_.db_.table_map_.find(node->type);
   prototype_node::field_prototype_map_t::const_iterator i = table_.node_.relations.find(node->type);
   if (i != table_.node_.relations.end()) {
-    j->second->relation_data[i->second.second][oid].push_back(new_proxy_);
+    j->second->relation_data[i->second.second][proxy->id()].push_back(new_proxy_);
   }
-
-  x.reset(oproxy);
 }
 
 void table_reader::read_value(const char *id, object_container &x)
@@ -74,26 +99,26 @@ void table_reader::read_value(const char *id, object_container &x)
   if (p == ostore_.end()) {
     throw database_exception("common", "couldn't find prototype node");
   }
-  if (table_.db_.is_loaded(p->type)) {
-    database::relation_data_t::iterator i = table_.relation_data.find(id);
-    if (i != table_.relation_data.end()) {
-      database::object_map_t::iterator j = i->second.find(new_proxy_->id());
-      if (j != i->second.end()) {
-        while (!j->second.empty()) {
-          x.append_proxy(j->second.front());
-          j->second.pop_front();
-        }
-      }
-    }
-//    } else {
-//      throw database_exception("common", "couldn't object by id");
+  if (!table_.db_.is_loaded(p->type)) {
+    return;
   }
-}
-
-
-void table_reader::read_value(const char *id, primary_key_base &x)
-{
-  x.deserialize(id, *this);
+  table::t_to_many_data::iterator i = table_.relation_data.find(id);
+  if (i == table_.relation_data.end()) {
+    return;
+  }
+  /*
+   * find object for container in new object
+   */
+  table::object_map_t::iterator j = i->second.find(new_proxy_->id());
+  if (j == i->second.end()) {
+    // no objects found
+    return;
+  }
+  // move object into container
+  while (!j->second.empty()) {
+    x.append_proxy(j->second.front());
+    j->second.pop_front();
+  }
 }
 
 }

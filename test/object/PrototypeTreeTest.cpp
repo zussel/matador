@@ -22,6 +22,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("child_of", std::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
   add_test("traverse", std::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
   add_test("const_traverse", std::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
+  add_test("relations", std::bind(&PrototypeTreeTestUnit::test_relations, this), "test relations");
 }
 
 PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
@@ -84,6 +85,22 @@ void PrototypeTreeTestUnit::test_find()
 
   UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
   UNIT_ASSERT_EQUAL(elem->type, "item", "type must be 'item'");
+
+  elem = ptree.find("unknown");
+  UNIT_ASSERT_TRUE(elem == ptree.end(), "shouldn't find a prototype");
+
+  ptree.insert(new object_producer<ObjectItem<Item>>, "object_item", false, "item");
+  elem = ptree.find("object_item");
+
+  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
+  UNIT_ASSERT_EQUAL(elem->type, "object_item", "type must be 'item'");
+
+  elem = ptree.find("item");
+
+  UNIT_ASSERT_TRUE(elem != ptree.end(), "couldn't find prototype");
+  UNIT_ASSERT_EQUAL(elem->type, "item", "type must be 'item'");
+
+  ptree.insert(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
 }
 
 
@@ -94,8 +111,8 @@ void PrototypeTreeTestUnit::test_remove()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an object exception when trying to remove unknown type");
-  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an object exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an serializable exception when trying to remove unknown type");
 
   ptree.remove("item");
 
@@ -112,7 +129,7 @@ void PrototypeTreeTestUnit::test_erase()
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
   prototype_iterator iter2;
-  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an object exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an serializable exception when trying to remove unknown type");
 
   ptree.erase(iter);
 
@@ -140,8 +157,8 @@ void PrototypeTreeTestUnit::test_clear()
 void PrototypeTreeTestUnit::test_container()
 {
   prototype_tree ptree;
-  ptree.insert(new object_producer<track>, "track", false);
   ptree.insert(new object_producer<album>, "album", false);
+  ptree.insert(new object_producer<track>, "track", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
 }
@@ -156,7 +173,6 @@ void PrototypeTreeTestUnit::test_decrement()
   prototype_iterator i = ptree.end();
 
   --i;
-  --i;
 
   UNIT_ASSERT_TRUE(i == ptree.begin(), "iterator must be begin");
 }
@@ -168,23 +184,24 @@ void PrototypeTreeTestUnit::test_count() {
   ptree.insert(new object_producer<ItemB>, "item_b", false, "item");
   ptree.insert(new object_producer<ItemC>, "item_c", false, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)5, "prototype size must be one (5)");
+  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)4, "prototype size must be one (5)");
 }
 
 void PrototypeTreeTestUnit::test_child_of()
 {
   prototype_tree ptree;
   ptree.insert(new object_producer<Item>, "item", false);
+  ptree.insert(new object_producer<ItemA>, "item_a", false, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (1)");
 
   prototype_iterator root = ptree.begin();
 
-  prototype_iterator item = ptree.find<Item>();
+  prototype_iterator item_a = ptree.find<ItemA>();
 
-  UNIT_ASSERT_FALSE(root->is_child_of(item.get()), "root must not be child of node");
+  UNIT_ASSERT_FALSE(root->is_child_of(item_a.get()), "root must not be child of node");
 
-  UNIT_ASSERT_TRUE(item->is_child_of(root.get()), "node must be child of root");
+  UNIT_ASSERT_TRUE(item_a->is_child_of(root.get()), "node must be child of root");
 }
 
 void PrototypeTreeTestUnit::test_traverse()
@@ -201,12 +218,12 @@ void PrototypeTreeTestUnit::test_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
 
   first = ptree.begin();
   ++first;
@@ -229,19 +246,59 @@ void PrototypeTreeTestUnit::test_const_traverse()
   int count(0);
 
   while (first != last) {
-    UNIT_ASSERT_LESS(count, 5, "prototype count isn't valid");
+    UNIT_ASSERT_LESS(count, 4, "prototype count isn't valid");
     ++first;
     ++count;
   }
 
-  UNIT_ASSERT_EQUAL(count, 5, "expected prototype size isn't 5");
+  UNIT_ASSERT_EQUAL(count, 4, "expected prototype size isn't 5");
 
   first = ptree.begin();
   first++;
-  UNIT_ASSERT_EQUAL(first->type, "item", "type must be 'item'");
-  UNIT_ASSERT_EQUAL((*first).type, "item", "type must be 'item'");
-  UNIT_ASSERT_EQUAL(first.get()->type, "item", "type must be 'item'");
+  UNIT_ASSERT_EQUAL(first->type, "item_a", "type must be 'item_a'");
+  UNIT_ASSERT_EQUAL((*first).type, "item_a", "type must be 'item_a'");
+  UNIT_ASSERT_EQUAL(first.get()->type, "item_a", "type must be 'item_a'");
   first--;
 
   UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
+}
+
+void PrototypeTreeTestUnit::test_relations()
+{
+  prototype_tree ptree;
+
+  prototype_tree::const_iterator children_list_node = ptree.insert<children_list>("children_list");
+  prototype_tree::const_iterator master_node = ptree.insert<master>("master");
+  prototype_tree::const_iterator child_node = ptree.insert<child>("child");
+
+  /*
+   * get the relation table for children
+   * holding id of children_list (container)
+   * and id of child (value)
+   */
+  prototype_tree::const_iterator children_node = ptree.find("children");
+
+  UNIT_ASSERT_TRUE(child_node->relations.empty(), "relations must be empty");
+  UNIT_ASSERT_TRUE(child_node->foreign_keys.empty(), "foreign keys must be empty");
+
+  UNIT_ASSERT_TRUE(children_list_node->relations.empty(), "relations must be empty");
+  UNIT_ASSERT_TRUE(children_list_node->foreign_keys.empty(), "foreign keys must be empty");
+
+  UNIT_ASSERT_TRUE(master_node->relations.empty(), "relations must be empty");
+  UNIT_ASSERT_FALSE(master_node->foreign_keys.empty(), "foreign key must not be empty");
+  UNIT_ASSERT_EQUAL(master_node->foreign_keys.size(), (size_t)1, "there must be one foreign key");
+  prototype_node::t_foreign_key_map::const_iterator j = master_node->foreign_keys.find("child");
+  UNIT_ASSERT_FALSE(j == master_node->foreign_keys.end(), "iterator must not be end");
+
+  UNIT_ASSERT_FALSE(children_node->relations.empty(), "relations must not be empty");
+  UNIT_ASSERT_EQUAL(children_node->relations.size(), (size_t)1, "there must be one relation");
+  prototype_node::field_prototype_map_t::const_iterator i = children_node->relations.find("children_list");
+  UNIT_ASSERT_FALSE(i == children_node->relations.end(), "iterator must not be end");
+
+  UNIT_ASSERT_FALSE(children_node->foreign_keys.empty(), "foreign keys must not be empty");
+  UNIT_ASSERT_EQUAL(children_node->foreign_keys.size(), (size_t)2, "there must be two foreign keys");
+  j = children_node->foreign_keys.find("container");
+  UNIT_ASSERT_FALSE(j == children_node->foreign_keys.end(), "iterator must not be end");
+  j = children_node->foreign_keys.find("value");
+  UNIT_ASSERT_FALSE(j == children_node->foreign_keys.end(), "iterator must not be end");
 }

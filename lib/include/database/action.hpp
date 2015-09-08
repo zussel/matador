@@ -37,7 +37,7 @@
 
 namespace oos {
 
-class object;
+class serializable;
 
 class create_action;
 class insert_action;
@@ -67,7 +67,7 @@ public:
    * 
    * When a new prototype is inserted into
    * the object_store a new create_action
-   * with the prototype object is created.
+   * with the prototype serializable is created.
    * 
    * @param a The create_action to visit.
    */
@@ -76,9 +76,9 @@ public:
   /**
    * @brief Called with a insert_action
    * 
-   * When a new object inserted into the
+   * When a new serializable inserted into the
    * object_store a new insert_action with
-   * newly created object is created.
+   * newly created serializable is created.
    * 
    * @param a The insert_action to visit.
    */
@@ -87,9 +87,9 @@ public:
   /**
    * @brief Called with a update_action
    * 
-   * When an object updated in the
+   * When an serializable updated in the
    * object_store a new update_action
-   * with modified object is created.
+   * with modified serializable is created.
    * 
    * @param a The update_action to visit.
    */
@@ -98,9 +98,9 @@ public:
   /**
    * @brief Called with a delete_action
    * 
-   * When an object deleted from the
+   * When an serializable deleted from the
    * object_store a new delete_action
-   * with deleted object is created.
+   * with deleted serializable is created.
    * 
    * @param a The delete_action to visit.
    */
@@ -111,7 +111,7 @@ public:
    * 
    * When a prototype is removed from
    * the object_store a new drop_action
-   * with the prototype object is created.
+   * with the prototype serializable is created.
    * 
    * @param a The drop_action to visit.
    */
@@ -165,7 +165,7 @@ public:
 /**
  * @internal
  * @class insert_action
- * @brief Action when inserting an object.
+ * @brief Action when inserting an serializable.
  * 
  * This action is used when an objected
  * is inserted into the database.
@@ -190,10 +190,10 @@ public:
   virtual void accept(action_visitor *av);
 
   /**
-   * Return the object type
+   * Return the serializable type
    * of the action.
    *
-   * @return The object type of the action
+   * @return The serializable type of the action
    */
   std::string type() const;
 
@@ -220,7 +220,7 @@ private:
 /**
  * @internal
  * @class update_action
- * @brief Action when updating an object.
+ * @brief Action when updating an serializable.
  * 
  * This action is used when an objected
  * is updated on the database.
@@ -231,7 +231,7 @@ public:
   /**
    * Creates an update_action.
    * 
-   * @param o The updated object.
+   * @param o The updated serializable.
    */
   update_action(object_proxy *proxy)
     : proxy_(proxy)
@@ -245,12 +245,12 @@ public:
   }
 
   /**
-   * The object of the action.
+   * The serializable of the action.
    */
   object_proxy* proxy();
 
   /**
-   * The object of the action.
+   * The serializable of the action.
    */
   const object_proxy* proxy() const;
 
@@ -261,7 +261,7 @@ private:
 /**
  * @internal
  * @class delete_action
- * @brief Action when deleting an object.
+ * @brief Action when deleting an serializable.
  * 
  * This action is used when an objected
  * is deleted from the database.
@@ -272,10 +272,10 @@ public:
   /**
    * Creates an delete_action.
    * 
-   * @param classname The object type name.
-   * @param id The id of the deleted object.
+   * @param classname The serializable type name.
+   * @param id The id of the deleted serializable.
    */
-  delete_action(const char *classname, unsigned long id);
+  delete_action(const char *classname, unsigned long id, primary_key_base *pk);
 
   virtual ~delete_action();
   
@@ -283,22 +283,25 @@ public:
 
   /**
    * Return the class name of the
-   * object.
+   * serializable.
    * 
    * @return The class name.
    */
   const char* classname() const;
 
   /**
-   * The id of the object of the action.
+   * The primary key of the serializable of the action.
    * 
-   * @return The id of the deleted object.
+   * @return The primary key of the deleted serializable.
    */
+  primary_key_base* pk() const;
+
   unsigned long id() const;
 
 private:
   std::string classname_;
   unsigned long id_;
+  std::unique_ptr<primary_key_base> pk_;
 };
 
 /**

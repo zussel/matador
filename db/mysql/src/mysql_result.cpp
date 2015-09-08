@@ -29,7 +29,6 @@ mysql_result::mysql_result(MYSQL *c)
   : affected_rows_((size_type)mysql_affected_rows(c))
   , rows(0)
   , fields_(0)
-  , conn(c)
   , res(0)
 {
   res = mysql_store_result(c);
@@ -66,7 +65,7 @@ bool mysql_result::fetch()
   return rows-- > 0;
 }
 
-bool mysql_result::fetch(object *)
+bool mysql_result::fetch(serializable *)
 {
   return false;
 }

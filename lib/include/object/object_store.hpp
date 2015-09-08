@@ -49,7 +49,7 @@
 
 namespace oos {
 
-class object;
+class serializable;
 class object_proxy;
 class prototype_node;
 class object_observer;
@@ -61,23 +61,19 @@ class object_container;
  * 
  * This class is the main container class for all
  * objects. To manage the internal list of objects
- * the store must know the object class hierarchy.
+ * the store must know the serializable class hierarchy.
  *
- * Therefor an object prototype tree holds the object
+ * Therefor an serializable prototype tree holds the serializable
  * hierarchy representation including a producer class
- * object of all known types.
+ * serializable of all known types.
  *
  * 
  */
 class OOS_API object_store
 {
-private:
-  typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
-  typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
-
 public:
   /**
-   * Create an empty object store.
+   * Create an empty serializable store.
    */
 	object_store();
 
@@ -101,21 +97,21 @@ public:
   const prototype_tree& prototypes() const;
 
   /**
-   * Inserts a new object prototype into the prototype tree. The prototype
+   * Inserts a new serializable prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    * 
-   * @param producer The producer object produces a new object of a specific type.
+   * @param producer The producer serializable produces a new serializable of a specific type.
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers object is treated as an abstract node.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = "object");
+	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
-   * Inserts a new object prototype into the prototype tree. The prototype
+   * Inserts a new serializable prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given. The producer is automatically created via the template
@@ -123,17 +119,17 @@ public:
    * 
    * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers object is treated as an abstract node.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template < class T >
   prototype_iterator insert_prototype(const char *type, bool abstract = false)
   {
-    return insert_prototype(new object_producer<T>, type, abstract, "object");
+    return insert_prototype(new object_producer<T>, type, abstract);
   }
 
   /**
-   * Inserts a new object prototype into the prototype tree. The prototype
+   * Inserts a new serializable prototype into the prototype tree. The prototype
    * constist of a producer and a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given. The producer is automatically created via the template
@@ -142,7 +138,7 @@ public:
    * @tparam T       The type of the prototype node
    * @tparam S       The type of the parent prototype node
    * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers object is treated as an abstract node.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
   template < class T, class S >
@@ -157,13 +153,13 @@ public:
    * will be deleted as well.
    * 
    * @param type The name of the type to remove.
-   * @param recursive If set, also the object in children nodes are deleted.
+   * @param recursive If set, also the serializable in children nodes are deleted.
    * @return Returns true if the type was found and successfully cleared.
    */
 //  void clear_prototype(const char *type, bool recursive);
 
   /**
-   * Removes an object prototype from the prototype tree. All children
+   * Removes an serializable prototype from the prototype tree. All children
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
@@ -235,26 +231,26 @@ public:
   bool empty() const;
 
   /**
-   * Dump all object to a given stream
+   * Dump all serializable to a given stream
    *
    * @param out The stream to the objects dump on.
    */
   void dump_objects(std::ostream &out) const;
 
   /**
-   * Creates an object of the given type name.
+   * Creates an serializable of the given type name.
    * 
-   * @param type Typename of the object to create.
-   * @return The created object on success or NULL if the type couldn't be found.
+   * @param type Typename of the serializable to create.
+   * @return The created serializable on success or NULL if the type couldn't be found.
    */
-	object* create(const char *type) const;
+	serializable* create(const char *type) const;
 
   /**
-   * Inserts an object of a specfic type. On successfull insertion
-   * an object_ptr element with the inserted object is returned.
+   * Inserts an serializable of a specfic type. On successfull insertion
+   * an object_ptr element with the inserted serializable is returned.
    * 
    * @param o Object to be inserted.
-   * @return Inserted object contained by an object_ptr on success.
+   * @return Inserted serializable contained by an object_ptr on success.
    */
   template < class Y >
 	object_ptr<Y> insert(Y *o)
@@ -269,10 +265,10 @@ public:
   object_ptr<Y> insert(const object_ptr<Y> &optr)
   {
     if (!optr.proxy_) {
-      throw object_exception("object pointer is null");
+      throw object_exception("serializable pointer is null");
     }
     //if (optr.proxy_->id() > 0) {
-    //  throw object_exception("object id is greater zero");
+    //  throw object_exception("serializable id is greater zero");
     //}
 
     insert_proxy(optr.proxy_);
@@ -280,7 +276,7 @@ public:
   }
 
   /**
-   * Inserts an object_container into the object store. Subsequently the
+   * Inserts an object_container into the serializable store. Subsequently the
    * object_container is initialized.
    * 
    * @param oc The object_container to insert.
@@ -289,20 +285,20 @@ public:
   
   /**
    * Returns true if the underlaying
-   * object is removable.
+   * serializable is removable.
    * 
-   * @param o The object to check.
-   * @return True if object is removable.
+   * @param o The serializable to check.
+   * @return True if serializable is removable.
    */
   bool is_removable(const object_base_ptr &o);
 
   /**
-   * Removes an object from the object store. After successfull
-   * removal the object is set to zero and isn't valid any more.
+   * Removes an serializable from the serializable store. After successfull
+   * removal the serializable is set to zero and isn't valid any more.
    * 
    * Before removal is done a reference and pointer counter check
    * is done. If at least one counter is greater than zero the
-   * object can't be removed and false is returned.
+   * serializable can't be removed and false is returned.
    * 
    * @throw object_exception
    * @param o Object to remove.
@@ -310,12 +306,12 @@ public:
 	void remove(object_base_ptr &o);
   
   /**
-   * Removes an object_container from object store. All elements of the
+   * Removes an object_container from serializable store. All elements of the
    * container are removed from the store after a successfull reference and
    * pointer counter check.
    * 
    * @throw object_exception
-   * @param oc The object vector to remove.
+   * @param oc The serializable vector to remove.
    */
   void remove(object_container &oc);
 
@@ -328,34 +324,38 @@ public:
   */
   
   /**
-   * @brief Register an observer with the object store
+   * @brief Register an observer with the serializable store
    *
-   * @param observer The object observer to register.
+   * @param observer The serializable observer to register.
    */
   void register_observer(object_observer *observer);
 
   /**
-   * @brief Unregisters an observer from the object store
+   * @brief Unregisters an observer from the serializable store
    *
-   * @param observer The object observer to unregister.
+   * @param observer The serializable observer to unregister.
    */
   void unregister_observer(object_observer *observer);
 
   /**
-   * @brief Creates and inserts an object proxy object.
+   * @brief Creates and inserts an serializable proxy serializable.
    * 
-   * An object proxy object is created and inserted
+   * An serializable proxy serializable is created and inserted
    * into the internal proxy hash map. The proxy won't
-   * be linked into the main object proxy list until
-   * it gets a valid object.
-   * 
-   * If the object proxy couldn't be created the method
-   * returns null
-   * 
-   * @param id Unique id of the object proxy.
-   * @return An object proxy object or null.
+   * be linked into the main serializable proxy list until
+   * it gets a valid serializable.
+   *
+   * If id is zero a new id is generated.
+   *
+   * If the serializable proxy couldn't be created the method
+   * returns nullptr
+   *
+   * @param o The object set into the new object proxy.
+   * @param node Objects corresponding prototype_node.
+   * @param id Unique id of the serializable proxy.
+   * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(long id);
+  object_proxy *create_proxy(serializable *o, prototype_node *node = nullptr, unsigned long id = 0);
 
   /**
    * @brief Delete proxy from map
@@ -366,43 +366,42 @@ public:
    * @param id Id of proxy to delete
    * @return Returns true if deletion was successfully
    */
-  bool delete_proxy(long id);
+  bool delete_proxy(unsigned long id);
 
   /**
-   * @brief Finds object proxy with id
+   * @brief Finds serializable proxy with id
    *
-   * Try to find the object proxy with given id in
-   * object stores proxy map. If object can't be found
+   * Try to find the serializable proxy with given id in
+   * serializable stores proxy map. If serializable can't be found
    * NULL is returned.
    *
-   * @param id ID of object proxy to find
-   * @return On success it returns an object proxy on failure null
+   * @param id ID of serializable proxy to find
+   * @return On success it returns an serializable proxy on failure null
    *
    */
-  object_proxy *find_proxy(long id) const;
+  object_proxy *find_proxy(unsigned long id) const;
 
   /**
-   * @brief Inserts the proxy into a prototype list
-   * 
-   * @param node Prototype into which the proxy will be inserted.
+   * @brief Inserts a new proxy into the object store
+   *
    * @param oproxy Object proxy to insert
+   * @param is_new Proxy is a new not inserted proxy, skip object store check
    */
-  void insert_proxy(const prototype_iterator &node, object_proxy *oproxy);
+  void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);
 
   /**
-  * @brief Inserts a new proxy into the object store
-  *
-  * @param oproxy Object proxy to insert
-  */
-  void insert_proxy(object_proxy *oproxy);
-
-  /**
-   * @brief Removes an object proxy from a prototype list
+   * @brief Registers a new proxy
    *
-   * @param node Prototype from which the proxy will be removed.
-   * @param oproxy Object proxy to remove
+   * Proxy will be registered in object store. It
+   * gets an id and is insert into object map.
+   * If proxy has already an id an exception is thrown.
+   * If proxy doesn't have a prototype_node an exception is thrown.
+   *
+   * @param oproxy The object_proxy to register
+   * @return The registered object_proxy
+   * @throws object_exception
    */
-  void remove_proxy(prototype_node *node, object_proxy *oproxy);
+  object_proxy* register_proxy(object_proxy *oproxy);
 
   /**
    * @brief Exchange the sequencer strategy.
@@ -413,7 +412,7 @@ public:
    * sequence.
    * The old strategy is returned.
    * 
-   * @param seq The new sequencer strategy object.
+   * @param seq The new sequencer strategy serializable.
    * @return The old sequencer startegy implementation.
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
@@ -430,15 +429,19 @@ private:
   void mark_modified(object_proxy *oproxy);
 
   void remove(object_proxy *proxy);
-	object_proxy* insert_object(object *o, bool notify);
+	object_proxy* insert_object(serializable *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
-	
-  void link_proxy(object_proxy *base, object_proxy *next);
-  void unlink_proxy(object_proxy *proxy);
+
+
+  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
 private:
   prototype_tree prototype_tree_;
 
+  typedef std::unordered_map<serializable*, object_proxy*> t_serializable_proxy_map;
+  t_serializable_proxy_map serializable_map_;
+
+  typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
   t_object_proxy_map object_map_;
 
   sequencer seq_;

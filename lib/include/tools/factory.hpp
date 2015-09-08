@@ -33,7 +33,7 @@ namespace oos {
  * are stored in producer objects as pointers
  * wrapped by std::shared_ptr of type V.
  * The key type is used to identify the producer.
- * Once create is called a new object of value
+ * Once create is called a new serializable of value
  * type V is created and returned.
  * The class uses a producer interface of type
  * producer_base and a defualt producer class
@@ -66,21 +66,21 @@ public:
   public:
     virtual ~producer_base() {}
     /**
-     * Creates a new object of value_type
+     * Creates a new serializable of value_type
      *
-     * @return A new object of value_type.
+     * @return A new serializable of value_type.
      */
     virtual value_type* create() const = 0;
   };
   
   /**
-   * @tparam T Type of the object to produce.
+   * @tparam T Type of the serializable to produce.
    * @class default_producer
    * @brief Default producer class for factory
    * 
    * This class represents the default
    * producer class which simple create
-   * a new object of value_type by calling
+   * a new serializable of value_type by calling
    * new T.
    */
   template < class T >
@@ -88,10 +88,10 @@ public:
   {
     virtual ~default_producer() {}
     /**
-     * Returns a new object of value_type
+     * Returns a new serializable of value_type
      * by calling new T.
      *
-     * @return A new object of value_type.
+     * @return A new serializable of value_type.
      */
     virtual value_type* create() const
     {
@@ -140,10 +140,10 @@ public:
    * Creates a new value for the given
    * key. If the key is valid the underlaying
    * producer calls create and returns a new
-   * object. If the key is invalid null is returned.
+   * serializable. If the key is invalid null is returned.
    *
    * @param key The key type to erase.
-   * @return A new object of value_type or null.
+   * @return A new serializable of value_type or null.
    */
   value_type* create(const key_type &key) const
   {
@@ -222,7 +222,7 @@ public:
    * @param key The key type to search.
    * @return The number of producers with key.
    */
-  size_type count(const key_type &key) const
+  size_type count(const key_type &/*key*/) const
   {
     return container_.count();
   }

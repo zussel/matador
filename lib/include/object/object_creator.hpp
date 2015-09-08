@@ -23,8 +23,7 @@
 #endif
 
 #include "object/object_atomizer.hpp"
-#include "primary_key.hpp"
-#include "object_proxy.hpp"
+#include "object/object_proxy.hpp"
 
 #include <stack>
 
@@ -32,7 +31,7 @@ namespace oos {
 
 class object_store;
 class object_base_ptr;
-class object;
+class serializable;
 class object_proxy;
 class object_container;
 
@@ -41,9 +40,9 @@ class object_container;
  * @class object_creator
  * @brief Creates objects and object_lists
  * 
- * When an object is inserted into the object store
- * subsequently other object must be created and
- * inserted into the object store.
+ * When an serializable is inserted into the serializable store
+ * subsequently other serializable must be created and
+ * inserted into the serializable store.
  * This class does these tasks.
  */
 class object_creator : public generic_object_reader<object_creator>
@@ -58,12 +57,10 @@ public:
    * notified or not.
    * 
    * @param ostore The object_store.
-   * @param notify The flag wether the observers should be informed or not.
    */
-  object_creator(object_proxy *root, object_store &ostore, bool notify)
+  object_creator(object_proxy *root, object_store &ostore)
     : generic_object_reader<object_creator>(this)
     , ostore_(ostore)
-    , notify_(notify)
   {
     object_proxy_stack_.push(root);
   }
@@ -81,7 +78,6 @@ public:
 private:
   std::stack<object_proxy*> object_proxy_stack_;
   object_store &ostore_;
-  bool notify_;
 };
 /// @endcond
 

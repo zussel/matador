@@ -37,6 +37,7 @@
 
 #include "database/statement.hpp"
 #include "database/database.hpp"
+#include "database/primary_key_binder.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -46,7 +47,7 @@
 namespace oos {
 
 class statement;
-class object;
+class serializable;
 class object_container;
 class object_base_ptr;
 class object_store;
@@ -57,9 +58,11 @@ class prototype_node;
 class OOS_API table
 {
 public:
-  typedef std::list<object_proxy*> object_proxy_list_t;
-  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
-  typedef std::map<std::string, object_map_t> relation_data_t;
+  typedef std::list<object_proxy*> object_proxy_list_t;                 /**< List of object proxies */
+  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;   /**< Map of object proxy lists where key is the primary key of the object in this table */
+  typedef std::map<std::string, object_map_t> t_to_many_data;           /**< Map of object proxy list maps where key is the field name of the object */
+
+  typedef std::map<std::shared_ptr<primary_key_base>, object_proxy*> t_to_one_data;
 
 //protected:
   table(database &db, const prototype_node &node);
@@ -71,19 +74,18 @@ public:
   virtual void prepare();
   void create();
   void load(object_store &ostore);
-  void insert(object *obj);
-  void update(object *obj);
-  void remove(object *obj);
-  void remove(long id);
+  void insert(serializable *obj);
+  void update(serializable *obj);
+  void remove(serializable *obj);
   void drop();
 
   bool is_loaded() const;
 
 protected:
-  const prototype_node& node() const;
-
-  virtual database& db() { return db_; }
-  virtual const database& db() const { return db_; }
+//  const prototype_node& node() const;
+//
+//  virtual database& db() { return db_; }
+//  virtual const database& db() const { return db_; }
 
 private:
   friend class relation_filler;
@@ -101,7 +103,10 @@ private:
   bool prepared_;
 
   bool is_loaded_;
-  relation_data_t relation_data;
+  t_to_many_data relation_data;
+  t_to_one_data to_one_data;
+
+  primary_key_binder primary_key_binder_;
 };
 
 ///@endcond

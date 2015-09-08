@@ -39,7 +39,7 @@
 namespace oos {
 
 class row;
-class object_atomizable;
+class serializable;
 
 namespace mssql {
 
@@ -58,7 +58,7 @@ public:
   
   const char* column(size_type c) const;
   virtual bool fetch();
-  virtual bool fetch(object *);
+  virtual bool fetch(serializable *);
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;

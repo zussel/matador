@@ -67,10 +67,6 @@ class prototype_node;
 class OOS_API database : public action_visitor
 {
 public:
-  typedef std::list<object_proxy*> object_proxy_list_t;
-  typedef std::unordered_map<long, object_proxy_list_t> object_map_t;
-  typedef std::map<std::string, object_map_t> relation_data_t;
-  typedef std::shared_ptr<statement> statement_ptr;
   typedef std::shared_ptr<table> table_ptr;
   typedef std::shared_ptr<database_sequencer> database_sequencer_ptr;
   typedef std::map<std::string, table_ptr> table_map_t;
@@ -79,7 +75,6 @@ public:
   {
     table_info_t(const prototype_node *n) : is_loaded(false), node(n) {}
     bool is_loaded;
-    relation_data_t relation_data;
     const prototype_node *node;
   };
 
@@ -88,7 +83,7 @@ protected:
 
 public:
   virtual ~database();
-  
+
   /**
    * Open the database
    *
@@ -114,9 +109,9 @@ public:
   void create();
 
   /**
-   * Create a table from the given object.
+   * Create a table from the given serializable.
    *
-   * @param o The object providing the table layout.
+   * @param o The serializable providing the table layout.
    */
   void create(const prototype_node &node);
 
@@ -124,7 +119,7 @@ public:
    * Drops table defined by the given
    * prototype_node from the database.
    *
-   * @param o The object providing the table layout.
+   * @param o The serializable providing the table layout.
    */
   void drop(const prototype_node &node);
 
@@ -134,20 +129,20 @@ public:
   void drop();
 
   /**
-   * Insert the object into the database
-   * 
-   * @param o The object to insert.
-   * @return The inserted object.
+   * Insert the serializable into the database
+   *
+   * @param o The serializable to insert.
+   * @return The inserted serializable.
    */
-  object* insert(object_proxy *proxy);
+  serializable * insert(object_proxy *proxy);
 
   /**
-   * Update the object on the database
-   * 
-   * @param o The object to update.
-   * @return The updated object.
+   * Update the serializable on the database
+   *
+   * @param o The serializable to update.
+   * @return The updated serializable.
    */
-  object* update(object_proxy *proxy);
+  serializable * update(object_proxy *proxy);
 
   /**
    * load a specific table based on
@@ -159,7 +154,7 @@ public:
 
   /**
    * Checks if a specific table was loaded.
-   * 
+   *
    * @param name Name of the table to check.
    * @return Returns true if the table was loaded.
    */
@@ -200,9 +195,9 @@ public:
   virtual void visit(drop_action*) {}
 
   /**
-   * Create a new result object
-   * 
-   * @return New result implenation object.
+   * Create a new result serializable
+   *
+   * @return New result implenation serializable.
    */
   virtual result* create_result() = 0;
 
@@ -214,18 +209,23 @@ public:
   virtual statement* create_statement() = 0;
 
   /**
+   * Get last inserted id from database
+   */
+  virtual unsigned long last_inserted_id() = 0;
+
+  /**
    * @brief Prepares the beginning of a transaction
-   * 
+   *
    * Prepares the begin of the transaction
-   * in database and object store. Calls
+   * in database and serializable store. Calls
    * begin() on sequencer, which backups
-   * object stores current ids.
+   * serializable stores current ids.
    */
   void prepare();
 
   /**
    * @brief Marks the beginning of the real transaction.
-   * 
+   *
    * This method is called when the real database
    * transaction are about to begin and a BEGIN
    * TRANSACTION kind of statement is executed on
@@ -245,10 +245,10 @@ public:
 
   /**
    * @brief Rolls back the current transaction
-   * 
+   *
    * When called the current transaction is
    * rolled back on database and subsequently
-   * in object store. All transient data is
+   * in serializable store. All transient data is
    * restored.
    */
   void rollback();

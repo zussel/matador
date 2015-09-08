@@ -3,7 +3,7 @@
 
 #include "database/result.hpp"
 
-#include "object/object_atomizable.hpp"
+#include "object/serializable.hpp"
 #include "object/object_atomizer.hpp"
 
 #include <vector>
@@ -18,8 +18,8 @@ namespace sqlite {
 class sqlite_prepared_result : public result
 {
 private:
-  sqlite_prepared_result(const sqlite_prepared_result&);
-  sqlite_prepared_result& operator=(const sqlite_prepared_result&);
+  sqlite_prepared_result(const sqlite_prepared_result&) = delete;
+  sqlite_prepared_result& operator=(const sqlite_prepared_result&) = delete;
 
 public:
   typedef result::size_type size_type;
@@ -28,37 +28,34 @@ public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
   ~sqlite_prepared_result();
   
-  const char* column(size_type c) const;
-  virtual bool fetch();
-  virtual bool fetch(object *);
-  size_type affected_rows() const;
-  size_type result_rows() const;
-  size_type fields() const;
+  virtual const char* column(size_type c) const override;
+  virtual bool fetch() override;
+  virtual bool fetch(serializable *) override;
+  size_type affected_rows() const override;
+  size_type result_rows() const override;
+  size_type fields() const override;
 
-  virtual int transform_index(int index) const;
+  virtual int transform_index(int index) const override;
 
   friend std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);
 
 protected:
-  virtual void read(const char *id, char &x);
-  virtual void read(const char *id, short &x);
-  virtual void read(const char *id, int &x);
-  virtual void read(const char *id, long &x);
-  virtual void read(const char *id, unsigned char &x);
-  virtual void read(const char *id, unsigned short &x);
-  virtual void read(const char *id, unsigned int &x);
-  virtual void read(const char *id, unsigned long &x);
-  virtual void read(const char *id, bool &x);
-  virtual void read(const char *id, float &x);
-  virtual void read(const char *id, double &x);
-  virtual void read(const char *id, char *x, int s);
-  virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, std::string &x);
-  virtual void read(const char *id, oos::date &x);
-  virtual void read(const char *id, oos::time &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, char &x) override;
+  virtual void read(const char *id, short &x) override;
+  virtual void read(const char *id, int &x) override;
+  virtual void read(const char *id, long &x) override;
+  virtual void read(const char *id, unsigned char &x) override;
+  virtual void read(const char *id, unsigned short &x) override;
+  virtual void read(const char *id, unsigned int &x) override;
+  virtual void read(const char *id, unsigned long &x) override;
+  virtual void read(const char *id, bool &x) override;
+  virtual void read(const char *id, float &x) override;
+  virtual void read(const char *id, double &x) override;
+  virtual void read(const char *id, char *x, int s) override;
+  virtual void read(const char *id, varchar_base &x) override;
+  virtual void read(const char *id, std::string &x) override;
+  virtual void read(const char *id, oos::date &x) override;
+  virtual void read(const char *id, oos::time &x) override;
 
 private:
   int ret_;
@@ -67,7 +64,6 @@ private:
   size_type rows;
   size_type fields_;
   sqlite3_stmt *stmt_;
-  int result_size;
 };
 
 std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);

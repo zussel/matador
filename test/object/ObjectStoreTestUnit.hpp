@@ -5,7 +5,6 @@
 
 #include "tools/varchar.hpp"
 
-#include "object/object.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
 
@@ -39,6 +38,8 @@ public:
   void test_structure();
   void test_insert();
   void test_remove();
+  void test_primary_key();
+  void test_to_many();
 
 private:
   oos::object_store ostore_;

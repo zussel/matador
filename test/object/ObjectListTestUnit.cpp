@@ -10,15 +10,15 @@ using namespace oos;
 using namespace std;
 
 ObjectListTestUnit::ObjectListTestUnit()
-  : unit_test("list", "object list")
+  : unit_test("list", "serializable list")
 {
-  add_test("int", std::bind(&ObjectListTestUnit::test_int_list, this), "test object list with integers");
-  add_test("ref", std::bind(&ObjectListTestUnit::test_ref_list, this), "test object list with references");
-  add_test("ptr", std::bind(&ObjectListTestUnit::test_ptr_list, this), "test object list with pointers");
+  add_test("int", std::bind(&ObjectListTestUnit::test_int_list, this), "test serializable list with integers");
+  add_test("ref", std::bind(&ObjectListTestUnit::test_ref_list, this), "test serializable list with references");
+  add_test("ptr", std::bind(&ObjectListTestUnit::test_ptr_list, this), "test serializable list with pointers");
   add_test("linked_int", std::bind(&ObjectListTestUnit::test_linked_int_list, this), "test linked integer list");
-  add_test("linked_ref", std::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked object list with references");
-  add_test("linked_ptr", std::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked object list with pointers");
-  add_test("direct_ref", std::bind(&ObjectListTestUnit::test_direct_ref_list, this), "test object list without relation table");
+  add_test("linked_ref", std::bind(&ObjectListTestUnit::test_linked_ref_list, this), "test linked serializable list with references");
+  add_test("linked_ptr", std::bind(&ObjectListTestUnit::test_linked_ptr_list, this), "test linked serializable list with pointers");
+  add_test("direct_ref", std::bind(&ObjectListTestUnit::test_direct_ref_list, this), "test serializable list without relation table");
 }
 
 ObjectListTestUnit::~ObjectListTestUnit()
@@ -28,16 +28,16 @@ void
 ObjectListTestUnit::initialize()
 {
   ostore_.insert_prototype<Item>("ITEM");
-  ostore_.insert_prototype<IntList>("INT_LIST");
-  ostore_.insert_prototype<ItemRefList>("ITEM_REF_LIST");
-  ostore_.insert_prototype<ItemPtrList>("ITEM_PTR_LIST");
-  ostore_.insert_prototype<LinkedItemPtrList>("LINKED_ITEM_PTR_LIST");
-  ostore_.insert_prototype<LinkedItemRefList>("LINKED_ITEM_REF_LIST");
-  ostore_.insert_prototype<LinkedIntList>("LINKED_INT_LIST");
-  
+  ostore_.insert_prototype(new list_object_producer<IntList>("int_list"), "INT_LIST");
+  ostore_.insert_prototype(new list_object_producer<ItemRefList>("ref_list"), "ITEM_REF_LIST");
+  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<LinkedIntList>("linked_int_list"), "LINKED_INT_LIST");
+  ostore_.insert_prototype(new list_object_producer<LinkedItemPtrList>("linked_ptr_list"), "LINKED_ITEM_PTR_LIST");
+  ostore_.insert_prototype(new list_object_producer<LinkedItemRefList>("linked_ref_list"), "LINKED_ITEM_REF_LIST");
+
   ostore_.insert_prototype<person>("person", true);
-  ostore_.insert_prototype<employee, person>("employee");
   ostore_.insert_prototype<department>("department");
+  ostore_.insert_prototype<employee, person>("employee");
 }
 
 void
@@ -52,7 +52,7 @@ ObjectListTestUnit::test_int_list()
 {
   typedef object_ptr<IntList> intlist_ptr;
 
-  intlist_ptr intlist = ostore_.insert(new IntList);
+  intlist_ptr intlist = ostore_.insert(new IntList("int_list"));
 
   IntList::size_type val = 0;
   UNIT_ASSERT_EQUAL(intlist->size(), val, "integer list is not empty");
@@ -77,7 +77,7 @@ ObjectListTestUnit::test_ref_list()
   typedef object_ptr<ItemRefList> itemlist_ptr;
   typedef ItemRefList::value_type item_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ItemRefList);
+  itemlist_ptr itemlist = ostore_.insert(new ItemRefList("ref_list"));
 
   ItemRefList::size_type val = 0;
   UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
@@ -125,7 +125,7 @@ ObjectListTestUnit::test_ptr_list()
     typedef object_ptr<ItemPtrList> itemlist_ptr;
     typedef ItemPtrList::value_type item_ptr;
 
-    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList);
+    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList("ptr_list"));
 
     ItemPtrList::size_type val = 0;
     UNIT_ASSERT_EQUAL(itemlist->size(), val, "reference list is not empty");
@@ -174,7 +174,7 @@ ObjectListTestUnit::test_linked_int_list()
 {
   typedef object_ptr<LinkedIntList> intlist_ptr;
   
-  intlist_ptr intlist = ostore_.insert(new LinkedIntList);
+  intlist_ptr intlist = ostore_.insert(new LinkedIntList("linked_int_list"));
 
   UNIT_ASSERT_EQUAL((int)intlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(intlist->empty(), "linked item list must be empty");
@@ -218,7 +218,7 @@ ObjectListTestUnit::test_linked_ref_list()
   typedef object_ptr<LinkedItemRefList> itemlist_ptr;
   typedef LinkedItemRefList::value_type item_ptr;
   
-  itemlist_ptr itemlist = ostore_.insert(new LinkedItemRefList);
+  itemlist_ptr itemlist = ostore_.insert(new LinkedItemRefList("linked_ref_list"));
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
@@ -267,7 +267,7 @@ ObjectListTestUnit::test_linked_ptr_list()
   typedef object_ptr<LinkedItemPtrList> itemlist_ptr;
   typedef LinkedItemPtrList::value_type item_ptr;
   
-  itemlist_ptr itemlist = ostore_.insert(new LinkedItemPtrList);
+  itemlist_ptr itemlist = ostore_.insert(new LinkedItemPtrList("linked_ptr_list"));
 
   UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "linked list is not empty");
   UNIT_ASSERT_TRUE(itemlist->empty(), "linked item list must be empty");
@@ -318,7 +318,7 @@ void ObjectListTestUnit::test_direct_ref_list()
   department_ptr dep = ostore_.insert(new department("development"));
   
   UNIT_ASSERT_TRUE(dep->id() > 0, "department is must be greater zero");
-  UNIT_ASSERT_EQUAL((int)dep->size(), 0, "department is not empty");
+  UNIT_ASSERT_EQUAL(dep->size(), (size_t)0, "department is not empty");
   UNIT_ASSERT_TRUE(dep->empty(), "department must be empty");
   
   employee_ptr emp1 = ostore_.insert(new employee("Karl"));

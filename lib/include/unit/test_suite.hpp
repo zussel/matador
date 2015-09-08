@@ -31,12 +31,10 @@
   #define OOS_API
 #endif
 
-#include "tools/singleton.hpp"
-
 #include <memory>
-
 #include <map>
 #include <string>
+#include <vector>
 
 /**
  * @namespace oos
@@ -59,11 +57,9 @@ class unit_test;
  * It also provides function listing all test_unit classes
  * and their tests.
  */
-class OOS_API test_suite : public singleton<test_suite>
+class OOS_API test_suite
 {
 private:
-  friend class singleton<test_suite>;
-
   /**
    * @brief test_suite commands
    * 
@@ -77,6 +73,14 @@ private:
     EXECUTE      /**<Enum type for the execute command. */
   } test_suite_cmd;
 
+  typedef std::vector<std::string> t_string_vector;
+
+  typedef struct test_unit_args_struct
+  {
+    std::string unit;
+    t_string_vector tests;
+  } test_unit_args;
+
   typedef struct test_suite_args_struct
   {
     test_suite_args_struct()
@@ -85,11 +89,8 @@ private:
     test_suite_cmd cmd;
     bool initialized;
     bool brief;
-    std::string unit;
-    std::string test;
+    std::vector<test_unit_args> unit_args;
   } test_suite_args;
-
-  test_suite();
 
   typedef std::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
@@ -118,6 +119,7 @@ public:
   };
 
 public:
+  test_suite();
   virtual ~test_suite();
   
   /**
@@ -132,12 +134,12 @@ public:
   void init(int argc, char *argv[]);
 
   /**
-   * @brief Register a new test_unit object.
+   * @brief Register a new test_unit serializable.
    *
-   * Registers a new test_unit object identified
+   * Registers a new test_unit serializable identified
    * by the given name.
    *
-   * @param utest test_unit object.
+   * @param utest test_unit serializable.
    */
   void register_unit(unit_test *utest);
 
@@ -155,23 +157,38 @@ public:
    * @brief Executes a specific test_unit.
    *
    * Executes the test_unit with the given name.
-   * If there is no test_unit object with such a
-   * name a message is diplayed.
+   * If there is no test_unit serializable with such a
+   * name a message is displayed.
    *
-   * @param unit The name of the test_unit object to execute.
+   * @param unit The name of the test_unit serializable to execute.
    * @return True if all tests succeeded.
    */
   bool run(const std::string &unit);
 
   /**
+   * @brief Executes a specific test_unit.
+   *
+   * Executes the test_unit with the given args.
+   * Arguments contain name of test unit and
+   * a list of all tests to be executed.
+   * If list is empty all tests are executed.
+   * If there is no test_unit serializable with such a
+   * name a message is displayed.
+   *
+   * @param unit_args The arguments of the test_unit to execute.
+   * @return True if all tests succeeded.
+   */
+  bool run(const test_unit_args &unit_args);
+
+  /**
    * @brief Executes a single test of a test_unit.
    *
-   * Executes a single test of a test_unit object,
+   * Executes a single test of a test_unit serializable,
    * identified by the name of the test and the name
-   * of the test_unit object.
+   * of the test_unit serializable.
    * If test couldn't be found a message is displayed.
    *
-   * @param unit Name of the test_unit object.
+   * @param unit Name of the test_unit serializable.
    * @param test Name of the test to execute.
    * @return True if test succeeded.
    */

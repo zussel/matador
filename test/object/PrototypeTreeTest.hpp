@@ -27,6 +27,7 @@ public:
   void test_child_of();
   void test_traverse();
   void test_const_traverse();
+  void test_relations();
 };
 
 #endif /* PROTOTYPE_TREE_TESTUNIT_HPP */

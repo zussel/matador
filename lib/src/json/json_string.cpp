@@ -152,7 +152,7 @@ void json_string::value(const std::string &val)
   value_ = val;
 }
 
-void json_string::push_back(char c)
+void json_string::append(char c)
 {
   value_.push_back(c);
 }

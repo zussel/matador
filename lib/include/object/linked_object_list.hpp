@@ -59,7 +59,6 @@ private:
 public:
   typedef typename base_item::container_ref container_ref;
   typedef typename base_item::value_type value_type;
-  typedef typename base_item::size_type size_type;
   typedef linked_object_list_item<T, C> self;
   typedef object_ref<self> self_ref;
 
@@ -75,6 +74,7 @@ public:
   virtual void deserialize(object_reader &deserializer)
   {
     base_item::deserialize(deserializer);
+    deserializer.read("id", id_);
     deserializer.read("first", first_);
     deserializer.read("last", last_);
     deserializer.read("prev", prev_);
@@ -84,10 +84,16 @@ public:
   virtual void serialize(object_writer &serializer) const
   {
     base_item::serialize(serializer);
+    serializer.write("id", id_);
     serializer.write("first", first_);
     serializer.write("last", last_);
     serializer.write("prev", prev_);
     serializer.write("next", next_);
+  }
+
+  unsigned long id() const
+  {
+    return id_;
   }
 
   self_ref first() const
@@ -113,6 +119,7 @@ public:
 private:
   template < class V, class S > friend class linked_object_list;
 
+  primary_key<unsigned long> id_;
   self_ref first_;
   self_ref last_;
   self_ref prev_;
@@ -310,7 +317,7 @@ private:
  * @tparam T Containing list node type of the iterator.
  * 
  * This is the iterator class used by all linked
- * list types. The containing object is treated
+ * list types. The containing serializable is treated
  * as a constant.
  */
 template < class T >
@@ -500,11 +507,11 @@ private:
 
 /**
  * @class linked_object_list
- * @brief An linked object list class.
- * @tparam S The type of the parent object.
- * @tparam T The concrete object type.
+ * @brief An linked serializable list class.
+ * @tparam S The type of the parent serializable.
+ * @tparam T The concrete serializable type.
  * 
- * The linked_object_list class stores object of
+ * The linked_object_list class stores serializable of
  * type T where T must be derived from linked_object_list_node.
  * This base class contains the previous and next links as
  * well as the first and last element of the linked list.
@@ -531,9 +538,9 @@ public:
    * @brief Creates an empty linked list.
    * 
    * A new linked_object_list is created. The list is part
-   * of the given parent object and therefor a reference
-   * to the parent object must be found inside the value
-   * type object with the given list_ref_name.
+   * of the given parent serializable and therefor a reference
+   * to the parent serializable must be found inside the value
+   * type serializable with the given list_ref_name.
    */
   linked_object_list() {}
 
@@ -546,7 +553,7 @@ public:
    */
   virtual const char* classname() const
   {
-    return typeid(item_type).name();
+    return classname_.c_str();
   }
 
   /**
@@ -612,16 +619,16 @@ public:
    */
   virtual size_type size() const
   {
-    return std::distance(begin(), end());
+    return (size_type)std::distance(begin(), end());
   }
 
   /**
-   * @brief Insert a new object before the given iterator.
+   * @brief Insert a new serializable before the given iterator.
    * 
-   * An object not inserted into the object_store will
+   * An serializable not inserted into the object_store will
    * be pushed front to the list and inserted to the
    * object_store. Furthermore the reference link to the
-   * list object and the links between the surrounding nodes
+   * list serializable and the links between the surrounding nodes
    * is done automatilcally.
    *
    * @param pos The position where to insert the new elemetnt.
@@ -634,10 +641,10 @@ public:
     } else {
       // create and insert new item
       item_ptr item = ostore()->insert(new item_type);
-      // Todo: fix parent object proxy
+      // Todo: fix parent serializable proxy
       //item->container().reset(parent_);
       item->value(elem);
-      // mark list object as modified
+      // mark list serializable as modified
       mark_modified(owner());
 //      mark_modified(parent_);
 
@@ -656,12 +663,12 @@ public:
 
 
   /**
-   * @brief Push a new object to the front of the list.
+   * @brief Push a new serializable to the front of the list.
    * 
-   * An object not inserted into the object_store will
+   * An serializable not inserted into the object_store will
    * be pushed front to the list and inserted to the
    * object_store. Furthermore the reference link to the
-   * list object and the links between the surrounding nodes
+   * list serializable and the links between the surrounding nodes
    * is done automatilcally.
    *
    * @param elem The element to be pushed front
@@ -672,12 +679,12 @@ public:
   }
 
   /**
-   * @brief Push a new object to the end of the list.
+   * @brief Push a new serializable to the end of the list.
    * 
-   * An object not inserted into the object_store will
+   * An serializable not inserted into the object_store will
    * be pushed back to the list and inserted to the
    * object_store. Furthermore the reference link to the
-   * list object and the links between the surrounding nodes
+   * list serializable and the links between the surrounding nodes
    * is done automatilcally.
    *
    * @param elem The element to be pushed back
@@ -688,14 +695,14 @@ public:
   }
 
   /**
-   * @brief Erase the object at iterators position.
+   * @brief Erase the serializable at iterators position.
    * 
-   * The object inside the iterator will first be
+   * The serializable inside the iterator will first be
    * removed from the object_store and second be unlinked
    * and erased from the list.
    * The next iterator position is returned.
    *
-   * @param i The object to be erased containing iterator.
+   * @param i The serializable to be erased containing iterator.
    * @return The next iterator position
    */
   iterator erase(iterator i)
@@ -736,11 +743,11 @@ public:
 
 protected:
   /**
-   * @brief Executes the given function object for all elements.
+   * @brief Executes the given function serializable for all elements.
    *
-   * Executes the given function object for all elements.
+   * Executes the given function serializable for all elements.
    *
-   * @param pred Function object used to be executed on each element.
+   * @param pred Function serializable used to be executed on each element.
    */
   virtual void for_each(const proxy_func &pred) const
   {
@@ -768,7 +775,7 @@ private:
     // create first and last element
     first_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
     last_ = ostore()->insert(new item_type(oos::object_ref<S>(owner())));
-    // link object elements
+    // link serializable elements
     reset();
   }
 
@@ -781,7 +788,7 @@ private:
 
   virtual void reset()
   {
-    // link object elements
+    // link serializable elements
     first_->first_ = first_;
     first_->last_ = last_;
     first_->next_ = last_;
@@ -797,7 +804,12 @@ private:
 
   item_ptr first_;
   item_ptr last_;
+
+  static std::string classname_;
 };
+
+template < class S, class T >
+std::string linked_object_list<S, T>::classname_ = typeid(item_ptr).name();
 
 }
 

@@ -49,7 +49,7 @@ class json_type;
  * @brief Wrapper class for a concrete value
  * 
  * This class is a wrapper class for a concrete
- * value. It holds an object of json_type which
+ * value. It holds an serializable of json_type which
  * implements the concrete type.
  */
 class OOS_API json_value
@@ -71,13 +71,13 @@ public:
    * initializes it with a concrete
    * json_type.
    * 
-   * @param x A concrete json_type object.
+   * @param x A concrete json_type serializable.
    */
   json_value(json_type *x);
 
   /**
    * Creates a new json_value and initializes
-   * it with a string. Internaly an object of
+   * it with a string. Internaly an serializable of
    * type json_string is created.
    * 
    * @param x The string to initialize from.
@@ -86,7 +86,7 @@ public:
 
   /**
    * Creates a new json_value and initializes
-   * it with a string. Internaly an object of
+   * it with a string. Internaly an serializable of
    * type json_string is created.
    * 
    * @param x The string to initialize from.
@@ -95,7 +95,7 @@ public:
 
   /**
    * Creates a new json_value and initializes
-   * it with a integer. Internaly an object of
+   * it with a integer. Internaly an serializable of
    * type json_number is created.
    * 
    * @param x The integer to initialize from.
@@ -104,7 +104,7 @@ public:
 
   /**
    * Creates a new json_value and initializes
-   * it with a double. Internaly an object of
+   * it with a double. Internaly an serializable of
    * type json_number is created.
    * 
    * @param x The double to initialize from.
@@ -113,7 +113,7 @@ public:
 
   /**
    * Creates a new json_value and initializes
-   * it with a boolean. Internaly an object of
+   * it with a boolean. Internaly an serializable of
    * type json_bool is created.
    * 
    * @param x The boolean to initialize from.

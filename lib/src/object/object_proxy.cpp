@@ -16,125 +16,197 @@
  */
 
 #include "object/object_proxy.hpp"
-#include "object/object.hpp"
+#include "object/serializable.hpp"
 #include "object/object_store.hpp"
 
 using namespace std;
 
 namespace oos {
 
+primary_key_serializer object_proxy::pk_serializer = primary_key_serializer();
+
 object_proxy::object_proxy(object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(0)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(nullptr)
   , oid(0)
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(os)
+  , node_(nullptr)
 {}
 
+object_proxy::object_proxy(const std::shared_ptr<primary_key_base> &pk, prototype_node *node)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(nullptr)
+  , oid(0)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(nullptr)
+  , node_(node)
+  , primary_key_(pk)
+{}
 
 object_proxy::object_proxy(unsigned long i, object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(0)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(nullptr)
   , oid(i)
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(os)
+  , node_(nullptr)
 {}
 
-object_proxy::object_proxy(object *o, object_store *os)
-  : prev(0)
-  , next(0)
-  , obj(o)
-  , oid((o ? o->id() : 0))
-  , ref_count(0)
-  , ptr_count(0)
-  , ostore(os)
-  , node(0)
-{}
+object_proxy::object_proxy(serializable *o, object_store *os)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(o)
+  , oid(0)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(os)
+  , node_(nullptr)
+{
+  primary_key_.reset(pk_serializer.serialize(o));
+}
+
+object_proxy::object_proxy(serializable *o, unsigned long id, object_store *os)
+  : prev_(nullptr)
+  , next_(nullptr)
+  , obj_(o)
+  , oid(id)
+  , ref_count_(0)
+  , ptr_count_(0)
+  , ostore_(os)
+  , node_(nullptr)
+{
+  if (obj_ != nullptr) {
+    primary_key_.reset(pk_serializer.serialize(obj_));
+  }
+}
 
 object_proxy::~object_proxy()
 {
-  if (ostore && id() > 0) {
-    ostore->delete_proxy(id());
+  if (ostore_ && id() > 0) {
+    ostore_->delete_proxy(id());
   }
-  if (obj) {
-    delete obj;
+  if (obj_) {
+    delete obj_;
   }
-  ostore = 0;
+  ostore_ = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
     (*i)->proxy_ = 0;
   }
 }
+  
+serializable *object_proxy::obj()
+{
+  return obj_;
+}
+
+const serializable *object_proxy::obj() const {
+  return obj_;
+}
+
+object_store *object_proxy::ostore() const
+{
+  return ostore_;
+}
+
+prototype_node *object_proxy::node() const
+{
+  return node_;
+}
 
 void object_proxy::link(object_proxy *successor)
 {
-  // link object proxy before this node
-  prev = successor->prev;
-  next = successor;
-  if (successor->prev) {
-    successor->prev->next = this;
+  // link serializable proxy before this node_
+  prev_ = successor->prev_;
+  next_ = successor;
+  if (successor->prev_) {
+    successor->prev_->next_ = this;
   }
-  successor->prev = this;
+  successor->prev_ = this;
 }
 
 void object_proxy::unlink()
 {
-  if (prev) {
-    prev->next = next;
+  if (prev_) {
+    prev_->next_ = next_;
   }
-  if (next) {
-    next->prev = prev;
+  if (next_) {
+    next_->prev_ = prev_;
   }
-  prev = 0;
-  next = 0;
-  node = 0;
+  prev_ = 0;
+  next_ = 0;
+  node_ = 0;
 }
 
 void object_proxy::link_ref()
 {
-  if (obj) {
-    ++ref_count;
+  if (obj_) {
+    ++ref_count_;
   }
 }
 
 void object_proxy::unlink_ref()
 {
-  if (obj) {
-    --ref_count;
+  if (obj_) {
+    --ref_count_;
   }
 }
 
 void object_proxy::link_ptr()
 {
-  if (obj) {
-    ++ptr_count;
+  if (obj_) {
+    ++ptr_count_;
   }
 }
 
 void object_proxy::unlink_ptr()
 {
-  if (obj) {
-    --ptr_count;
+  if (obj_) {
+    --ptr_count_;
   }
 }
 
 bool object_proxy::linked() const
 {
-  return node != 0;
+  return node_ != 0;
 }
 
-void object_proxy::reset(object *o)
+object_proxy *object_proxy::next() const
 {
-  ref_count = 0;
-  ptr_count = 0;
-  obj = o;
-  oid = o ? o->id() : 0;
-  node = 0;
+  return next_;
+}
+
+object_proxy *object_proxy::prev() const
+{
+  return prev_;
+}
+
+unsigned long object_proxy::ref_count() const
+{
+  return ref_count_;
+}
+
+unsigned long object_proxy::ptr_count() const
+{
+  return ptr_count_;
+}
+
+void object_proxy::reset(serializable *o)
+{
+  ref_count_ = 0;
+  ptr_count_ = 0;
+  obj_ = o;
+  oid = 0;
+  node_ = 0;
+  if (obj_ != nullptr) {
+    primary_key_.reset(pk_serializer.serialize(obj_));
+  }
 }
 
 void object_proxy::add(object_base_ptr *ptr)
@@ -149,25 +221,31 @@ bool object_proxy::remove(object_base_ptr *ptr)
 
 bool object_proxy::valid() const
 {
-  return ostore && node && prev && next;
+  return ostore_ && node_ && prev_ && next_;
 }
 
 unsigned long object_proxy::id() const {
-  return (obj ? obj->id() : oid);
+  return oid;
 }
 
 void object_proxy::id(unsigned long i)
 {
-  if (obj) {
-    obj->id(i);
-  } else {
-    oid = i;
-  }
+  oid = i;
+}
+
+bool object_proxy::has_primary_key() const
+{
+  return primary_key_ != nullptr;
+}
+
+std::shared_ptr<primary_key_base> object_proxy::pk() const
+{
+  return primary_key_;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] prev [" << op.prev << "] next [" << op.next << "] object [" << op.obj << "] refs [" << op.ref_count << "] ptrs [" << op.ptr_count << "]";
+  os << "proxy [" << &op << "] prev_ [" << op.prev_ << "] next_ [" << op.next_ << "] serializable [" << op.obj_ << "] refs [" << op.ref_count_ << "] ptrs [" << op.ptr_count_ << "]";
   return os;
 }
 

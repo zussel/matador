@@ -62,7 +62,7 @@ public:
    * @brief Creates a iterator for a concrete type.
    * 
    * This constructor creates an iterator for a concrete
-   * type and a concrete object.
+   * type and a concrete serializable.
    * 
    * @param node The prototype_node of the object_proxy
    * @param current The object_proxy for the iterator
@@ -196,7 +196,7 @@ public:
    */
   value_type optr() const
   {
-    if (current_->obj)
+    if (current_->obj())
       return value_type(current_);
     else
       return value_type();
@@ -205,12 +205,12 @@ public:
 private:
   void increment() {
     if (current_ != last_) {
-      current_ = current_->next;
+      current_ = current_->next();
     }
   }
   void decrement() {
     if (current_ != node_->op_first) {
-      current_ = current_->prev;
+      current_ = current_->prev();
     }
   }
 
@@ -249,7 +249,7 @@ public:
    * @brief Creates a iterator for a concrete type.
    * 
    * This constructor creates an iterator for a concrete
-   * type and a concrete object.
+   * type and a concrete serializable.
    * 
    * @param node The prototype_node of the object_proxy
    * @param current The object_proxy for the iterator
@@ -407,7 +407,7 @@ public:
    * @return The iterators underlaying node as object_ptr.
    */
   value_type optr() const {
-    if (current_->obj)
+    if (current_->obj())
       return value_type(current_);
     else
       return value_type();
@@ -416,12 +416,12 @@ public:
 private:
   void increment() {
     if (current_ != last_) {
-      current_ = current_->next;
+      current_ = current_->next();
     }
   }
   void decrement() {
     if (current_ != node_->op_first) {
-      current_ = current_->prev;
+      current_ = current_->prev();
     }
   }
 
@@ -435,11 +435,11 @@ private:
 /**
  *
  * @class generic_view
- * @brief Creates a generic view of a concrete object type
+ * @brief Creates a generic view of a concrete serializable type
  *
- * The generic_view class creates a generic view over an object type
- * without casting the object to the concrete type. The class deals
- * with the base class oos::object.
+ * The generic_view class creates a generic view over an serializable type
+ * without casting the serializable to the concrete type. The class deals
+ * with the base class oos::serializable.
  * When creating it is possible to have the view only over
  * the given type or over the complete subset of objects including
  * child objects.
@@ -448,19 +448,19 @@ private:
 class generic_view
 {
 public:
-  typedef object_view_iterator<object> iterator;             /**< Shortcut to the iterator type */
-  typedef const_object_view_iterator<object> const_iterator; /**< Shortcut to the const_iterator type */
-  typedef object_ptr<object> object_pointer;                 /**< Shortcut to object pointer */
+  typedef object_view_iterator<serializable> iterator;             /**< Shortcut to the iterator type */
+  typedef const_object_view_iterator<serializable> const_iterator; /**< Shortcut to the const_iterator type */
+  typedef object_ptr<serializable> object_pointer;                 /**< Shortcut to serializable pointer */
 
   /**
    * @brief Creates an generic_view.
    * 
-   * Creates an generic_view over the given object type provided
+   * Creates an generic_view over the given serializable type provided
    * by the type string within the given object_store. When the
-   * skip_siblings flag is true, the view only has object of the given
+   * skip_siblings flag is true, the view only has serializable of the given
    * type.
    *
-   * @param type The type of the object.
+   * @param type The type of the serializable.
    * @param ostore The object_store containing the objects.
    * @param skip_siblings If true only objects of the concrete type are part of the view.
    */
@@ -472,7 +472,7 @@ public:
 //    node_ = ostore.find_prototype(type.c_str());
 		if (node_ == ostore.end()) {
       std::stringstream str;
-      str << "couldn't find object type [" << type << "]";
+      str << "couldn't find serializable type [" << type << "]";
       throw object_exception(str.str().c_str());
     }
   }
@@ -557,7 +557,7 @@ public:
    * @return True if object_view is empty.
    */
   bool empty() const {
-    return node_->op_first->next == node_->op_last;
+    return node_->op_first->next() == node_->op_last;
   }
 
   /**
@@ -566,7 +566,7 @@ public:
    * @return The size of the generic_view.
    */
   size_t size() const {
-    return std::distance(begin(), end());
+    return static_cast<size_t>(std::distance(begin(), end()));
   }
   
   /**
@@ -582,11 +582,11 @@ public:
   }
 
   /**
-   * Find object which matches the given condition
+   * Find serializable which matches the given condition
    *
    * @tparam Predicate The type for the find predicate
    * @param pred The find predicate
-   * @return The first iterator with the object matching the condition.
+   * @return The first iterator with the serializable matching the condition.
    */
   template < class Predicate >
   const_iterator find_if(Predicate pred) const
@@ -595,11 +595,11 @@ public:
   }
 
   /**
-   * Find object which matches the given condition
+   * Find serializable which matches the given condition
    *
    * @tparam Predicate The type for the find predicate
    * @param pred The find predicate
-   * @return The first iterator with the object matching the condition.
+   * @return The first iterator with the serializable matching the condition.
    */
   template < class Predicate >
   iterator find_if(Predicate pred)
@@ -624,10 +624,10 @@ private:
 
 /**
  * @class object_view
- * @brief Create a view for a concrete object type
+ * @brief Create a view for a concrete serializable type
  * @tparam T The type of the object_view.
  * 
- * The object_view class creates a view over an object type.
+ * The object_view class creates a view over an serializable type.
  * When creating it is possible to have the view only over
  * the given type or over the complete subset of objects including
  * child objects.
@@ -638,14 +638,14 @@ class object_view
 public:
   typedef object_view_iterator<T> iterator;             /**< Shortcut to the iterator type */
   typedef const_object_view_iterator<T> const_iterator; /**< Shortcut to the const_iterator type */
-  typedef object_ptr<T> object_pointer;                 /**< Shortcut to object pointer */
+  typedef object_ptr<T> object_pointer;                 /**< Shortcut to serializable pointer */
 
   /**
    * @brief Creates an object_view.
    * 
    * Creates an object_view over the given template type
    * T within the given object_store. When the skip_siblings
-   * flag is true, the view only has object of type T.
+   * flag is true, the view only has serializable of type T.
    *
    * @param ostore The object_store containing the objects.
    * @param skip_siblings If true only objects of concrete type T are part of the view.
@@ -656,7 +656,7 @@ public:
     node_ = ostore.find_prototype(typeid(T).name());
 		if (node_ == ostore.end()) {
       std::stringstream str;
-      str << "couldn't find object type [" << typeid(T).name() << "]";
+      str << "couldn't find serializable type [" << typeid(T).name() << "]";
       throw object_exception(str.str().c_str());
     }
   }
@@ -741,7 +741,7 @@ public:
    * @return True if object_view is empty.
    */
   bool empty() const {
-    return node_->op_first->next == node_->op_last;
+    return node_->op_first->next() == node_->op_last;
   }
 
   /**
@@ -750,7 +750,7 @@ public:
    * @return The size of the object_view.
    */
   size_t size() const {
-    return std::distance(begin(), end());
+    return static_cast<size_t>(std::distance(begin(), end()));
   }
   
   /**
@@ -766,11 +766,11 @@ public:
   }
 
   /**
-   * Find object which matches the given condition
+   * Find serializable which matches the given condition
    *
    * @tparam Predicate The type for the find predicate
    * @param pred The find predicate
-   * @return The first iterator with the object matching the condition.
+   * @return The first iterator with the serializable matching the condition.
    */
   template < class Predicate >
   const_iterator find_if(Predicate pred) const
@@ -779,11 +779,11 @@ public:
   }
 
   /**
-   * Find object which matches the given condition
+   * Find serializable which matches the given condition
    *
    * @tparam Predicate The type for the find predicate
    * @param pred The find predicate
-   * @return The first iterator with the object matching the condition.
+   * @return The first iterator with the serializable matching the condition.
    */
   template < class Predicate >
   iterator find_if(Predicate pred)

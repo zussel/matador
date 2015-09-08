@@ -59,7 +59,7 @@ public:
    * @return True if data could be assigned.
    */
   template < typename T >
-  bool assign(const T &val)
+  bool assign(const T &/*val*/)
   {
     return false;
   }
@@ -76,7 +76,7 @@ public:
    * @return True if data could be appended.
    */
   template < typename T >
-  bool append(const T &val)
+  bool append(const T &/*val*/)
   {
     return false;
   }

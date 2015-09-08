@@ -206,24 +206,24 @@ class varchar_base;
  * test unit classes with several test methods.
  * These methods must be added to the test_unit class
  * with the contructor.
- * With a concrete test_unit object all or one test
+ * With a concrete test_unit serializable all or one test
  * method can be executed.
  */
 class OOS_API unit_test
 {
 public:
   /**
-   * @brief A shortcut for the test function object.
+   * @brief A shortcut for the test function serializable.
    * 
-   * A shortcut for the test function object.
+   * A shortcut for the test function serializable.
    */
   typedef std::function<void ()> test_func;
 
   /**
    * @brief The constructor for a test_unit
    *
-   * @param name The name of a test_unit object.
-   * @param caption The caption of a test_unit object.
+   * @param name The name of a test_unit serializable.
+   * @param caption The caption of a test_unit serializable.
    */
   unit_test(const std::string &name, const std::string &caption);
   virtual ~unit_test();
@@ -295,7 +295,7 @@ public:
    * a short description must be given.
    *
    * @param name unique name of the test to store.
-   * @param test The test function object.
+   * @param test The test function serializable.
    * @param caption A short description of the test.
    */
   void add_test(const std::string &name, const test_func &test, const std::string &caption);
@@ -308,14 +308,24 @@ public:
    * exception is caught by the test_suite and the
    * message is displayed.
    * 
-   * @tparam X The type of the left hand object to compare.
-   * @tparam Y The type of the right hand object to compare.
+   * @tparam X The type of the left hand serializable to compare.
+   * @tparam Y The type of the right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
    * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
+  template < class X >
+  void assert_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (a != b) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
@@ -328,6 +338,15 @@ public:
   }
 
 #ifndef OOS_DOXYGEN_DOC
+  void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a.c_str(), b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;

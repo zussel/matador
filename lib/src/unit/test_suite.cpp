@@ -83,15 +83,27 @@ void test_suite::init(int argc, char *argv[])
     std::string val(argv[2]);
     if (val == "all") {
     } else {
-      size_t pos = val.find(':');
-      
-      if (pos == std::string::npos) {
-        // execute all test of a unit class
-        args_.unit = val;
-      } else {
-        // extract unit and test name
-        args_.unit = val.substr(0, pos);
-        args_.test = val.substr(pos+1);
+      std::stringstream sval(val);
+      std::string part;
+      while (std::getline(sval, part, ',')) {
+        size_t pos = part.find(':');
+
+        test_unit_args unit_args;
+
+        if (pos == std::string::npos) {
+          // execute all test of a unit class
+          unit_args.unit = part;
+        } else {
+          // extract unit and test name
+          unit_args.unit = part.substr(0, pos);
+          std::stringstream tests(part.substr(pos+1));
+          std::string test;
+          while (std::getline(tests, test, ':')) {
+            unit_args.tests.push_back(test);
+          }
+        }
+
+        args_.unit_args.push_back(unit_args);
       }
     }
   } else {
@@ -108,16 +120,20 @@ bool test_suite::run()
         std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
         break;
       case EXECUTE:
-        if (!args_.unit.empty() && !args_.test.empty()) {
-          return run(args_.unit, args_.test);
-        } else if (!args_.unit.empty()) {
-          return run(args_.unit);
+        if (!args_.unit_args.empty()) {
+          bool result = true;
+          for (auto item : args_.unit_args) {
+            bool succeeded = run(item);
+            if (result && !succeeded) {
+              result = succeeded;
+            }
+          }
+          return result;
         } else {
           unit_executer ue;
           std::for_each(unit_test_map_.begin(), unit_test_map_.end(), ue);
           return ue.succeeded;
         }
-        break;
       default:
         break;
       }
@@ -134,8 +150,25 @@ bool test_suite::run(const std::string &unit)
     std::cout << "couldn't find test unit [" << unit << "]\n";
     return false;
   } else {
+    std::cout << "Executing test unit [" << i->second->caption() << "]\n";
     return i->second->execute();
   }
+}
+
+bool test_suite::run(const test_unit_args &unit_args)
+{
+  bool result = true;
+  if (unit_args.tests.empty()) {
+    result = run(unit_args.unit);
+  } else {
+    for (auto test : unit_args.tests) {
+      bool succeeded = run(unit_args.unit, test);
+      if (result && !succeeded) {
+        result = succeeded;
+      }
+    }
+  }
+  return result;
 }
 
 bool test_suite::run(const std::string &unit, const std::string &test)
