@@ -95,6 +95,11 @@ public:
     return pk_;
   }
 
+  void set(T pk)
+  {
+    pk_ = pk;
+  }
+
   operator value_type() const {
     return pk_;
   }

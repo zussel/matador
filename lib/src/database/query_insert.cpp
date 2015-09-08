@@ -3,11 +3,9 @@
 #include "object/object_ptr.hpp"
 
 #include "tools/varchar.hpp"
-
-#include <sstream>
-#include <object/primary_key.hpp>
-#include <tools/date.hpp>
-#include <tools/time.hpp>
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/string.hpp"
 
 namespace oos {
 
@@ -111,6 +109,22 @@ void query_insert::write(const char *id, const primary_key_base &x)
   x.serialize(id, *this);
 }
 
+
+void query_insert::write_field(const char *id, data_type_t type, const char &x) {
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  if (fields_) {
+    dialect.append(id);
+  } else {
+    std::stringstream valstr;
+    valstr << "'" << x << "'";
+    dialect.append(id, type, valstr.str());
+  }
+}
+
 void query_insert::write_field(const char *id, data_type_t type, const oos::date &x)
 {
   if (first) {
@@ -123,7 +137,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::date
     dialect.append(id);
   } else {
     std::stringstream valstr;
-    valstr << x;
+    valstr << "'" << to_string(x) << "'";
     dialect.append(id, type, valstr.str());
   }
 }
@@ -140,7 +154,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::time
     dialect.append(id);
   } else {
     std::stringstream valstr;
-    valstr << x;
+    valstr << "'" << to_string(x) << "'";
     dialect.append(id, type, valstr.str());
   }
 }

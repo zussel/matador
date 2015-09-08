@@ -35,6 +35,7 @@
 
 #include <memory>
 #include <object/prototype_node.hpp>
+#include <object/serializable.hpp>
 
 namespace oos {
 
@@ -44,20 +45,65 @@ class serializable;
 
 /// @cond OOS_DEV
 
-class OOS_API result : public object_reader
+class result_iterator  : public std::iterator<std::forward_iterator_tag, serializable>
+{
+public:
+    typedef result_iterator self;	            /**< Shortcut for this class. */
+    typedef serializable value_type;            /**< Shortcut for the value type. */
+    typedef value_type* pointer;                /**< Shortcut for the pointer type. */
+    typedef value_type& reference;              /**< Shortcut for the reference type */
+
+    result_iterator();
+    result_iterator(const result_iterator& x);
+    result_iterator& operator=(const result_iterator& x);
+    ~result_iterator();
+
+    bool operator==(const result_iterator& rhs);
+    bool operator!=(const result_iterator& rhs);
+
+    result_iterator& operator++();
+    result_iterator operator++(int);
+
+    reference operator*();
+    pointer operator->();
+    pointer operator&();
+};
+
+class result_impl;
+
+class OOS_API result
+{
+public:
+    typedef result_iterator iterator;
+
+public:
+    result();
+    ~result();
+
+    iterator begin();
+    iterator end();
+
+    bool empty () const;
+    std::size_t size () const;
+
+private:
+    result_impl *p;
+};
+
+class OOS_API result_impl : public object_reader
 {
 private:
-  result(const result&) = delete;
-  result& operator=(const result&) = delete;
+  result_impl(const result_impl&) = delete;
+  result_impl& operator=(const result_impl&) = delete;
 
 public:
   typedef unsigned long size_type;
 
 protected:
-  result();
+  result_impl();
 
 public:
-  virtual ~result();
+  virtual ~result_impl();
   
   template < class T >
   void get(unsigned long i, T &val)

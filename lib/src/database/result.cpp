@@ -25,19 +25,89 @@
 
 namespace oos {
 
-result::result()
+
+result_iterator::result_iterator() {
+
+}
+
+result_iterator::result_iterator(const result_iterator &x) {
+
+}
+
+result_iterator &result_iterator::operator=(const result_iterator &x) {
+  return <#initializer#>;
+}
+
+result_iterator::~result_iterator() {
+
+}
+
+bool result_iterator::operator==(const result_iterator &rhs) {
+  return false;
+}
+
+bool result_iterator::operator!=(const result_iterator &rhs) {
+  return false;
+}
+
+result_iterator &result_iterator::operator++() {
+  return <#initializer#>;
+}
+
+result_iterator result_iterator::operator++(int i) {
+  return oos::result_iterator();
+}
+
+result_iterator::value_type &result_iterator::operator*() {
+  return <#initializer#>;
+}
+
+result_iterator::pointer result_iterator::operator->() {
+  return nullptr;
+}
+
+result_iterator::pointer result_iterator::operator&() {
+  return nullptr;
+}
+
+
+result::result() {
+
+}
+
+result::~result() {
+
+}
+
+result::iterator result::begin() {
+  return oos::result_iterator();
+}
+
+result::iterator result::end() {
+  return oos::result_iterator();
+}
+
+bool result::empty() const {
+  return false;
+}
+
+std::size_t result::size() const {
+  return 0;
+}
+
+result_impl::result_impl()
 {}
 
-result::~result()
+result_impl::~result_impl()
 {}
 
-void result::get(serializable *o)
+void result_impl::get(serializable *o)
 {
   result_index = transform_index(0);
   o->deserialize(*this);
 }
 
-serializable* result::fetch(const oos::prototype_node *node)
+serializable* result_impl::fetch(const oos::prototype_node *node)
 {
   node_ = node;
 
@@ -51,7 +121,7 @@ serializable* result::fetch(const oos::prototype_node *node)
   return obj.release();
 }
 
-void result::read(const char *id, object_base_ptr &x)
+void result_impl::read(const char *id, object_base_ptr &x)
 {
   /*
    * read key
@@ -89,14 +159,14 @@ void result::read(const char *id, object_base_ptr &x)
   x.reset(proxy.release());
 }
 
-void result::read(const char */*id*/, object_container &/*x*/) { }
+void result_impl::read(const char */*id*/, object_container &/*x*/) { }
 
-void result::read(const char *id, primary_key_base &x)
+void result_impl::read(const char *id, primary_key_base &x)
 {
   x.deserialize(id, *this);
 }
 
-const prototype_node* result::node() const
+const prototype_node* result_impl::node() const
 {
   return node_;
 }

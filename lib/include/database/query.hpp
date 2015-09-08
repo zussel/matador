@@ -142,6 +142,13 @@ public:
    */
   query& create(const std::string &name, serializable *o);
 
+  template < class T >
+  query& create(const std::string &name)
+  {
+    T obj;
+    return create(name, &obj);
+  }
+
   /**
    * Creates a drop statement based
    * on the given prototype node.
@@ -186,6 +193,13 @@ public:
    * @return A reference to the query.
    */
   query& select(serializable *o);
+
+  template < class T >
+  query& select()
+  {
+    T obj;
+    return select(&obj);
+  }
 
   /**
    * Creates an insert statement based

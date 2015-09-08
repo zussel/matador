@@ -6,6 +6,7 @@
 #define OOS_SQLTEST_HPP
 
 
+#include "object/object_store.hpp"
 #include "unit/unit_test.hpp"
 
 namespace oos {
@@ -15,7 +16,7 @@ namespace oos {
 class SQLTestUnit : public oos::unit_test
 {
 public:
-    SQLTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const oos::time &timeval = oos::time(2015, 3, 15, 13, 56, 23, 123));
+    SQLTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
     virtual ~SQLTestUnit();
 
     virtual void initialize();
@@ -24,10 +25,17 @@ public:
     void test_create();
 
 protected:
+    oos::session* create_session();
+
+    oos::object_store& ostore();
+    const oos::object_store& ostore() const;
+
     std::string db() const;
 
 private:
+    oos::object_store ostore_;
     std::string db_;
+    std::unique_ptr<oos::session> session_;
 };
 
 
