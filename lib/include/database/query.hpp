@@ -32,6 +32,7 @@
 #endif
 
 #include "database/sql.hpp"
+#include "database/result.hpp"
 
 #include <memory>
 #include <sstream>
@@ -39,7 +40,6 @@
 
 namespace oos {
 
-class result;
 class session;
 class statement;
 class database;
@@ -384,7 +384,7 @@ public:
    * 
    * @return The result serializable.
    */
-  result* execute();
+  result execute();
   
   /**
    * Creates and returns a prepared

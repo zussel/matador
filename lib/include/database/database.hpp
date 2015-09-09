@@ -167,7 +167,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  result* execute(const std::string &sql);
+  result execute(const std::string &sql);
 
   /**
    * The interface for the create table action.

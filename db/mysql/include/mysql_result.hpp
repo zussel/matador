@@ -18,7 +18,7 @@
 #ifndef MYSQL_RESULT_HPP
 #define MYSQL_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 
 #include "tools/convert.hpp"
 
@@ -38,14 +38,14 @@ class serializable;
 
 namespace mysql {
 
-class mysql_result : public result
+class mysql_result : public detail::result_impl
 {
 private:
   mysql_result(const mysql_result&) = delete;
   mysql_result& operator=(const mysql_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
 
 public:
   mysql_result(MYSQL *c);
@@ -61,8 +61,6 @@ public:
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-//  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);

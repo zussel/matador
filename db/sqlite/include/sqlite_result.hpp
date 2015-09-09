@@ -18,7 +18,7 @@
 #ifndef SQLITE_RESULT_HPP
 #define SQLITE_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 #include "database/row.hpp"
 
 #include "tools/convert.hpp"
@@ -32,14 +32,14 @@ class serializable;
 
 namespace sqlite {
 
-class sqlite_result : public result
+class sqlite_result : public detail::result_impl
 {
 private:
   sqlite_result(const sqlite_result&) = delete;
   sqlite_result& operator=(const sqlite_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
 
 public:
   sqlite_result();
@@ -53,8 +53,6 @@ public:
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-  friend std::ostream& operator<<(std::ostream &out, const sqlite_result &res);
 
   void push_back(row *r);
 

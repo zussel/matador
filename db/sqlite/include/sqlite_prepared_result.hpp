@@ -1,7 +1,7 @@
 #ifndef SQLITE_PREPARED_RESULT_HPP
 #define SQLITE_PREPARED_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 
 #include "object/serializable.hpp"
 #include "object/object_atomizer.hpp"
@@ -15,14 +15,14 @@ namespace oos {
 
 namespace sqlite {
 
-class sqlite_prepared_result : public result
+class sqlite_prepared_result : public detail::result_impl
 {
 private:
   sqlite_prepared_result(const sqlite_prepared_result&) = delete;
   sqlite_prepared_result& operator=(const sqlite_prepared_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
 
 public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
@@ -36,8 +36,6 @@ public:
   size_type fields() const override;
 
   virtual int transform_index(int index) const override;
-
-  friend std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);
 
 protected:
   virtual void read(const char *id, char &x) override;
@@ -65,10 +63,6 @@ private:
   size_type fields_;
   sqlite3_stmt *stmt_;
 };
-
-std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);
-
-}
 
 }
 

@@ -1,7 +1,7 @@
 #ifndef MYSQL_PREPARED_RESULT_HPP
 #define MYSQL_PREPARED_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -13,6 +13,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 namespace oos {
 
@@ -24,14 +25,14 @@ namespace mysql {
 
 struct mysql_result_info;
 
-class mysql_prepared_result : public result
+class mysql_prepared_result : public detail::result_impl
 {
 private:
   mysql_prepared_result(const mysql_prepared_result&) = delete;
   mysql_prepared_result& operator=(const mysql_prepared_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
   typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_pk_map;
 
 public:
@@ -48,8 +49,6 @@ public:
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-  friend std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
@@ -82,10 +81,6 @@ private:
 
   t_pk_map pk_map_;
 };
-
-std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
-
-}
 
 }
 
