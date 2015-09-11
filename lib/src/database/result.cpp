@@ -38,7 +38,7 @@ result_iterator::result_iterator(const result_iterator &x)
 
 result_iterator &result_iterator::operator=(const result_iterator &x)
 {
-  return <#initializer#>;
+  return *this;
 }
 
 result_iterator::~result_iterator()
@@ -58,17 +58,12 @@ bool result_iterator::operator!=(const result_iterator &rhs)
 
 result_iterator &result_iterator::operator++()
 {
-  return <#initializer#>;
+  return *this;
 }
 
 result_iterator result_iterator::operator++(int i)
 {
   return oos::result_iterator();
-}
-
-result_iterator::value_type &result_iterator::operator*()
-{
-  return <#initializer#>;
 }
 
 result_iterator::pointer result_iterator::operator->()
@@ -81,6 +76,14 @@ result_iterator::pointer result_iterator::operator&()
   return nullptr;
 }
 
+result_iterator::reference result_iterator::operator*()
+{
+  return *obj;
+}
+
+result_iterator::pointer result_iterator::get() {
+  return nullptr;
+}
 
 result_iterator::pointer result_iterator::release()
 {
@@ -126,6 +129,16 @@ bool result::empty() const
 std::size_t result::size() const
 {
   return 0;
+}
+
+
+result::result(result::result_impl *impl)
+  : p(impl)
+{ }
+
+template<class T>
+result result::create_result(T *impl) const {
+  return oos::result(impl);
 }
 
 }

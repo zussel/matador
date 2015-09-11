@@ -264,7 +264,7 @@ protected:
 
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
-  virtual result* on_execute(const std::string &stmt) = 0;
+  virtual result on_execute(const std::string &stmt) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

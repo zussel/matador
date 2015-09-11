@@ -136,7 +136,7 @@ void table::create()
 {
   query q(db_);
   
-  std::unique_ptr<result> res(q.create(node_).execute());
+  result res = q.create(node_).execute();
   
   // prepare CRUD statements
   prepare();
@@ -150,9 +150,9 @@ void table::load(object_store &ostore)
 
   table_reader reader(*this, ostore);
 
-  std::unique_ptr<result> res(select_->execute());
+  result res = select_->execute();
 
-  reader.load(res.get());
+  reader.load(res);
 
   /*
    * after all tables were loaded fill
@@ -182,11 +182,11 @@ void table::load(object_store &ostore)
 void table::insert(serializable *obj)
 {
   insert_->bind(obj);
-  std::unique_ptr<result> res(insert_->execute());
+  result res = insert_->execute();
 
-  if (res->affected_rows() != 1) {
-    throw database_exception("insert", "more than one affected row while inserting an object");
-  }
+//  if (res->affected_rows() != 1) {
+//    throw database_exception("insert", "more than one affected row while inserting an object");
+//  }
 }
 
 void table::update(serializable *obj)
@@ -197,7 +197,7 @@ void table::update(serializable *obj)
   primary_key_binder_.bind(obj, update_.get(), pos);
 
 //  update_->bind(pos, obj->id());
-  std::unique_ptr<result> res(update_->execute());
+  result res(update_->execute());
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
 //  }
@@ -213,7 +213,7 @@ void table::drop()
 {
   query q(db_);
 
-  std::unique_ptr<result> res(q.drop(node_).execute());
+  result res(q.drop(node_).execute());
   // Todo: check drop result
 }
 

@@ -19,7 +19,7 @@ public:
   table_reader(table &t, object_store &ostore);
   virtual ~table_reader() {}
 
-  void load(result *res);
+  void load(result &res);
 
   template < class T >
   void read_value(const char *, T &) {}

@@ -19,6 +19,7 @@
 #define MEMORY_DATABASE_HPP
 
 #include "database/database.hpp"
+#include "database/result.hpp"
 
 namespace oos {
 
@@ -65,7 +66,7 @@ public:
 private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}
-  virtual result* on_execute(const std::string &) { return 0; }
+  virtual result on_execute(const std::string &) { return result(); }
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

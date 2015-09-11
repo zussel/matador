@@ -91,7 +91,7 @@ bool session::load()
   return true;
 }
 
-result* session::execute(const std::string &sql)
+result session::execute(const std::string &sql)
 {
   return impl_->execute(sql);
 }

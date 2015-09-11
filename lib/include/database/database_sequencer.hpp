@@ -77,7 +77,7 @@ private:
   unsigned long backup_;
   unsigned long sequence_;
   oos::varchar<64> name_;
-  statement *update_;
+  std::unique_ptr<statement> update_;
 };
 
 class dummy_database_sequencer : public database_sequencer

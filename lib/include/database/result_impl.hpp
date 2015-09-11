@@ -55,8 +55,7 @@ public:
    * @param o Object to be deserialized
    * @return True if serializable was successfully deserialized
    */
-  virtual bool fetch(serializable *)
-  { return false; }
+  virtual bool fetch(serializable *) { return false; }
 
   virtual size_type affected_rows() const = 0;
 
@@ -67,12 +66,8 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  virtual void read(const char *, char &)
-  { }
-
-  virtual void read(const char *, short &)
-  { }
-
+  virtual void read(const char *, char &) { }
+  virtual void read(const char *, short &) { }
   virtual void read(const char *, int &)
   { }
 

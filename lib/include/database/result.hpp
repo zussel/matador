@@ -66,10 +66,14 @@ public:
   result_iterator& operator++();
   result_iterator operator++(int);
 
-  reference operator*();
   pointer operator->();
   pointer operator&();
+  reference operator*();
+  pointer get();
   pointer release();
+
+private:
+  serializable *obj;
 };
 
 class OOS_API result
@@ -89,6 +93,14 @@ public:
 
   bool empty () const;
   std::size_t size () const;
+
+private:
+  friend class result_impl;
+
+  result(result_impl *impl);
+
+  template < class T >
+  result create_result(T *impl) const;
 
 private:
   std::shared_ptr<detail::result_impl> p;

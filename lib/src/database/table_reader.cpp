@@ -13,23 +13,28 @@ table_reader::table_reader(table &t, object_store &ostore)
 {}
 
 
-void table_reader::load(result *res)
+void table_reader::load(result &res)
 {
 
-  serializable *obj = nullptr;
+//  serializable *obj = nullptr;
 
-  while ((obj = res->fetch(&table_.node_))) {
-
-    if (table_.node_.has_primary_key()) {
-      
-    }
-
+  result_iterator first = res.begin();
+  result_iterator last = res.end();
+  while (first != last) {
+    serializable *obj = first.release();
     new_proxy_ = new object_proxy(obj, nullptr);
-
     obj->deserialize(*this);
-
     ostore_.insert_proxy(new_proxy_);
+    ++first;
   }
+//  while ((obj = res->fetch(&table_.node_))) {
+//
+//    new_proxy_ = new object_proxy(obj, nullptr);
+//
+//    obj->deserialize(*this);
+//
+//    ostore_.insert_proxy(new_proxy_);
+//  }
 
 
   // check result

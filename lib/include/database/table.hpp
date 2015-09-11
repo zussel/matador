@@ -48,7 +48,6 @@ namespace oos {
 
 class statement;
 class serializable;
-class object_container;
 class object_base_ptr;
 class object_store;
 class prototype_node;

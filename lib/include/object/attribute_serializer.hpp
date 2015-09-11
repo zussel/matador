@@ -22,6 +22,7 @@
 #include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_container.hpp"
 #include "primary_key.hpp"
 
 #include <stdexcept>

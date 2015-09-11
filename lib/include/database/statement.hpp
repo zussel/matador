@@ -52,7 +52,7 @@ public:
 
   virtual void prepare(const sql &s) = 0;
 
-  virtual result* execute() = 0;
+  virtual result execute() = 0;
 
   virtual void reset() = 0;
   

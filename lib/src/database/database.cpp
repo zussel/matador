@@ -22,7 +22,7 @@
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
 #include "database/table.hpp"
-#include "database/action.hpp"
+#include "database/result.hpp"
 
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"

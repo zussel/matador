@@ -61,11 +61,12 @@ sqlite_statement::~sqlite_statement()
   clear();
 }
 
-result* sqlite_statement::execute()
+result sqlite_statement::execute()
 {
   // get next row
   int ret = sqlite3_step(stmt_);
-  
+
+  return cre
   return new sqlite_prepared_result(stmt_, ret);
 }
 

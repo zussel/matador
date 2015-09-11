@@ -173,7 +173,7 @@ public:
    * @param sql The database query to execute.
    * @return The result of the query.
    */
-  result* execute(const std::string &sql);
+  result execute(const std::string &sql);
 
   /**
    * @brief Inserts a new serializable

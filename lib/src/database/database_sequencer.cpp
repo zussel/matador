@@ -19,7 +19,8 @@
 #include "database/database_exception.hpp"
 #include "database/query.hpp"
 #include "database/statement.hpp"
-#include "database/result.hpp"
+
+#include "object/generic_access.hpp"
 
 namespace oos {
 
@@ -28,9 +29,7 @@ database_sequencer::database_sequencer(database &db)
   , backup_(0)
   , sequence_(0)
   , name_("serializable")
-  , update_(0)
-{
-}
+{}
 
 database_sequencer::~database_sequencer()
 {
@@ -81,41 +80,38 @@ unsigned long database_sequencer::update(unsigned long id)
 void database_sequencer::create()
 {
   query q(db_);
-  result *res = q.create("oos_sequence", this).execute();
-  
-  delete res;
+  result res = q.create("oos_sequence", this).execute();
   
   res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
 
-  if (res->fetch()) {
-    // get sequence number
-    res->get(1, sequence_);
+
+  result_iterator first = res.begin();
+
+  if (first != res.end()) {
+    oos::get(first.get(), "number", sequence_);
   } else {
     // TODO: check result
-    result *res2 = q.reset().insert(this, "oos_sequence").execute();
-    delete res2;
+    q.reset().insert(this, "oos_sequence").execute();
   }
-  delete res;
 
-  update_ = q.reset().update("oos_sequence", this).where("name='serializable'").prepare();
+  update_.reset(q.reset().update("oos_sequence", this).where("name='serializable'").prepare());
 }
 
 void database_sequencer::load()
 {
   query q(db_);
-  result *res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
+  result res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
 
-  if (res->fetch()) {
-    // get sequence number
-    res->get(1, sequence_);
+  result_iterator first = res.begin();
+
+  if (first != res.end()) {
+    oos::get(first.get(), "number", sequence_);
   } else {
-    delete res;
     throw database_exception("database::sequencer", "couldn't fetch sequence");
   }
-  delete res;
 
   if (!update_) {
-    update_ = q.reset().update("oos_sequence", this).where("name='serializable'").prepare();
+    update_.reset(q.reset().update("oos_sequence", this).where("name='serializable'").prepare());
   }
 }
 
@@ -129,8 +125,7 @@ void database_sequencer::commit()
 {
   update_->bind(this);
   // TODO: check result
-  result *res = update_->execute();
-  delete res;
+  update_->execute();
   update_->reset();
 }
 
@@ -143,16 +138,11 @@ void database_sequencer::drop()
 {
   query q(db_);
   // TODO: check result
-  result *res = q.drop("oos_sequence").execute();
-  delete res;
+  q.drop("oos_sequence").execute();
 }
 
 void database_sequencer::destroy()
 {
-  if (update_) {
-    delete update_;
-    update_ = 0;
-  }
 }
 
 

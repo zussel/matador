@@ -37,26 +37,26 @@ void SQLTestUnit::test_create()
 
     query q(session_->db());
 
-    std::unique_ptr<result> res(q.create<Item>("item").execute());
+    result res(q.create<Item>("item").execute());
 
     q.reset();
 
     Item hans("Hans", 4711);
-    res.reset(q.insert(&hans, "item").execute());
+    res = q.insert(&hans, "item").execute();
 
     q.reset();
 
-    res.reset(q.select<Item>().from("item").execute());
+    res = q.select<Item>().from("item").execute();
 
 
-    std::for_each(res->begin(), res->end(), [](res))
-        while(res->fetch()) {
+    std::for_each(res.begin(), res.end(), [](serializable& obj) {
 
-            q.reset();
-
-    res.reset(q.drop("item").execute());
-
-    }
+    });
+//        while(res->fetch()) {
+//
+//            q.reset();
+//
+    res = q.drop("item").execute();
 }
 
 session* SQLTestUnit::create_session()
