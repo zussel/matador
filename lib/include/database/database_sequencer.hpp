@@ -44,15 +44,31 @@ class statement;
 
 /// @cond OOS_DEV
 
+class sequence : public serializable
+{
+public:
+  sequence();
+  virtual ~sequence();
+
+  virtual void deserialize(object_reader &r);
+  virtual void serialize(object_writer &w) const;
+
+
+  unsigned long seq() const;
+  void seq(unsigned long sequence);
+
+  const varchar<64> &name() const;
+  void name(const varchar<64> &name);
+
+private:
+  unsigned long sequence_ = 0;
+  oos::varchar<64> name_;
+};
 class OOS_API database_sequencer : public sequencer_impl, public serializable
 {
 public:
   database_sequencer(database &db);
   virtual ~database_sequencer();
-
-public:
-  virtual void deserialize(object_reader &r);
-  virtual void serialize(object_writer &w) const;
 
   virtual unsigned long init();
   virtual unsigned long reset(unsigned long id);
@@ -74,9 +90,8 @@ protected:
 
 private:
   database &db_;
+  sequence sequence_;
   unsigned long backup_;
-  unsigned long sequence_;
-  oos::varchar<64> name_;
   std::unique_ptr<statement> update_;
 };
 

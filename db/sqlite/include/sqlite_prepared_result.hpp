@@ -15,20 +15,20 @@ namespace oos {
 
 namespace sqlite {
 
-class sqlite_prepared_result : public detail::result_impl
+class sqlite_prepared_result : public oos::detail::result_impl
 {
 private:
-  sqlite_prepared_result(const sqlite_prepared_result&) = delete;
-  sqlite_prepared_result& operator=(const sqlite_prepared_result&) = delete;
+  sqlite_prepared_result(const sqlite_prepared_result &) = delete;
+  sqlite_prepared_result &operator=(const sqlite_prepared_result &) = delete;
 
 public:
-  typedef detail::result_impl::size_type size_type;
+  typedef oos::detail::result_impl::size_type size_type;
 
 public:
   sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
   ~sqlite_prepared_result();
-  
-  virtual const char* column(size_type c) const override;
+
+  virtual const char *column(size_type c) const override;
   virtual bool fetch() override;
   virtual bool fetch(serializable *) override;
   size_type affected_rows() const override;
@@ -63,6 +63,8 @@ private:
   size_type fields_;
   sqlite3_stmt *stmt_;
 };
+
+}
 
 }
 

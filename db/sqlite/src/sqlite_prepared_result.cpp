@@ -188,12 +188,6 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
   }
 }
 
-std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res)
-{  
-  out << "affected rows [" << res.affected_rows_ << "] size [" << res.rows << "]";
-  return out;
-}
-
 }
 
 }

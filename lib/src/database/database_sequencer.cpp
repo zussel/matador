@@ -24,11 +24,52 @@
 
 namespace oos {
 
+
+sequence::sequence()
+{
+
+}
+
+sequence::~sequence()
+{
+
+}
+
+void sequence::deserialize(object_reader &r)
+{
+  r.read("name", name_);
+  r.read("number", sequence_);
+}
+
+void sequence::serialize(object_writer &w) const
+{
+  w.write("name", name_);
+  w.write("number", sequence_);
+}
+
+unsigned long sequence::seq() const
+{
+  return 0;
+}
+
+void sequence::seq(unsigned long sequence)
+{
+  sequence_ = sequence;
+}
+
+const varchar<64> &sequence::name() const
+{
+  return name_;
+}
+
+void sequence::name(const varchar<64> &name)
+{
+  name_ = name;
+}
+
 database_sequencer::database_sequencer(database &db)
   : db_(db)
   , backup_(0)
-  , sequence_(0)
-  , name_("serializable")
 {}
 
 database_sequencer::~database_sequencer()
@@ -36,27 +77,15 @@ database_sequencer::~database_sequencer()
   destroy();
 }
 
-void database_sequencer::deserialize(object_reader &r)
-{
-  r.read("name", name_);
-  r.read("number", sequence_);
-}
-
-void database_sequencer::serialize(object_writer &w) const
-{
-  w.write("name", name_);
-  w.write("number", sequence_);
-}
-
 unsigned long database_sequencer::init()
 {
-  return sequence_;
+  return sequence_.seq();
 }
 
 unsigned long database_sequencer::reset(unsigned long id)
 {
-  sequence_ = id;
-  return sequence_;
+  sequence_.seq(id);
+  return sequence_.seq();
 }
 
 unsigned long database_sequencer::next()

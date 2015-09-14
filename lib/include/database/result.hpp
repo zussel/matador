@@ -33,9 +33,11 @@
 
 #include "object/object_atomizer.hpp"
 
+#include "object/prototype_node.hpp"
+#include "object/serializable.hpp"
+#include "result_impl.hpp"
+
 #include <memory>
-#include <object/prototype_node.hpp>
-#include <object/serializable.hpp>
 
 namespace oos {
 
@@ -58,6 +60,7 @@ public:
   typedef value_type& reference;              /**< Shortcut for the reference type */
 
   result_iterator();
+  result_iterator(oos::detail::result_impl *result_impl, oos::object_base_producer *producer, serializable *obj = nullptr);
   result_iterator(const result_iterator& x);
   result_iterator& operator=(const result_iterator& x);
   ~result_iterator();
@@ -75,7 +78,9 @@ public:
   pointer release();
 
 private:
-  serializable *obj;
+  std::unique_ptr<serializable> obj_;
+  oos::detail::result_impl *result_impl_ = nullptr;
+  oos::object_base_producer *producer_ = nullptr;
 };
 
 class OOS_API result
@@ -88,6 +93,7 @@ public:
 
 public:
   result();
+  result(oos::detail::result_impl *impl, oos::object_base_producer *producer);
   ~result();
 
   result(result &&x);
@@ -100,13 +106,8 @@ public:
   std::size_t size () const;
 
 private:
-  friend class database;
-  friend class statement;
-
-  result(oos::detail::result_impl *impl);
-
-private:
-  detail::result_impl *p;
+  oos::detail::result_impl *p = nullptr;
+  oos::object_base_producer *producer_ = nullptr;
 };
 
 /// @endcond

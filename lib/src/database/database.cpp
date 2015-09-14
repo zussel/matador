@@ -156,7 +156,7 @@ bool database::is_loaded(const std::string &name) const
 
 result database::execute(const std::string &sql)
 {
-  return on_execute(sql);
+  return result(on_execute(sql));
 }
 
 void database::drop()

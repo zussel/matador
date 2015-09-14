@@ -61,12 +61,12 @@ sqlite_statement::~sqlite_statement()
   clear();
 }
 
-result sqlite_statement::execute()
+result sqlite_statement::execute(object_base_producer *producer)
 {
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return result(new sqlite_prepared_result(stmt_, ret));
+  return result(new sqlite_prepared_result(stmt_, ret), producer);
 }
 
 void sqlite_statement::prepare(const sql &s)

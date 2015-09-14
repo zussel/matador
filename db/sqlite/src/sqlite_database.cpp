@@ -99,7 +99,7 @@ void sqlite_database::on_commit()
   execute("COMMIT TRANSACTION;");
 }
 
-result sqlite_database::on_execute(const std::string &sql)
+oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql)
 {
 #ifdef WIN32
   std::auto_ptr<sqlite_result> res(new sqlite_result);
@@ -113,7 +113,7 @@ result sqlite_database::on_execute(const std::string &sql)
     sqlite3_free(errmsg);
     throw sqlite_exception(error);
   }
-  return create_result(res.release());
+  return res.release();
 }
 
 void sqlite_database::on_rollback()
