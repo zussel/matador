@@ -272,4 +272,8 @@ session* database::db()
   return db_;
 }
 
+result database::create_result(detail::result_impl *impl) {
+  return oos::result(impl);
+}
+
 }

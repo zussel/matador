@@ -91,23 +91,28 @@ result_iterator::pointer result_iterator::release()
 }
 
 result::result()
+  : p(nullptr)
 {
 
 }
 
 result::~result()
 {
-
+  if (p) {
+    delete p;
+  }
 }
 
-result::result(const result &x)
+result::result(result &&x)
   : p(x.p)
 {
+  x.p = nullptr;
 }
 
-result &result::operator=(const result &x)
+result &result::operator=(result &&x)
 {
   p = x.p;
+  x.p = nullptr;
   return *this;
 }
 
@@ -132,13 +137,8 @@ std::size_t result::size() const
 }
 
 
-result::result(result::result_impl *impl)
+result::result(oos::detail::result_impl *impl)
   : p(impl)
 { }
-
-template<class T>
-result result::create_result(T *impl) const {
-  return oos::result(impl);
-}
 
 }

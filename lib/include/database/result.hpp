@@ -33,8 +33,6 @@
 
 #include "object/object_atomizer.hpp"
 
-#include "database/result_impl.hpp"
-
 #include <memory>
 #include <object/prototype_node.hpp>
 #include <object/serializable.hpp>
@@ -44,6 +42,10 @@ namespace oos {
 class row;
 class statement;
 class serializable;
+
+namespace detail {
+class result_impl;
+}
 
 /// @cond OOS_DEV
 
@@ -81,12 +83,15 @@ class OOS_API result
 public:
   typedef result_iterator iterator;
 
+  result(const result &x) = delete;
+  result& operator=(const result &x) = delete;
+
 public:
   result();
   ~result();
 
-  result(const result &x);
-  result& operator=(const result &x);
+  result(result &&x);
+  result& operator=(result &&x);
 
   iterator begin();
   iterator end();
@@ -95,15 +100,13 @@ public:
   std::size_t size () const;
 
 private:
-  friend class result_impl;
+  friend class database;
+  friend class statement;
 
-  result(result_impl *impl);
-
-  template < class T >
-  result create_result(T *impl) const;
+  result(oos::detail::result_impl *impl);
 
 private:
-  std::shared_ptr<detail::result_impl> p;
+  detail::result_impl *p;
 };
 
 /// @endcond

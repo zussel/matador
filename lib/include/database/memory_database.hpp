@@ -49,7 +49,7 @@ public:
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
 
-  virtual result* create_result() { return 0; }
+  virtual result create_result(detail::result_impl *) { return result(); }
   virtual statement* create_statement() { return 0; }
   virtual table* create_table(const prototype_node &) { return 0; }
   virtual void initialize_table(const prototype_node &,

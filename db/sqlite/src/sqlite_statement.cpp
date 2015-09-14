@@ -66,8 +66,7 @@ result sqlite_statement::execute()
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return cre
-  return new sqlite_prepared_result(stmt_, ret);
+  return result(new sqlite_prepared_result(stmt_, ret));
 }
 
 void sqlite_statement::prepare(const sql &s)

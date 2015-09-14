@@ -29,6 +29,7 @@
   #define OOS_SQLITE_API
 #endif
 
+#include <database/result_impl.hpp>
 #include "database/database.hpp"
 
 struct sqlite3;
@@ -68,9 +69,6 @@ public:
    */
   virtual statement* create_statement() override;
 
-  virtual result *create_result() override;
-
-
   virtual unsigned long last_inserted_id() override;
 
   /**
@@ -86,7 +84,7 @@ public:
 protected:
   virtual void on_open(const std::string &db) override;
   virtual void on_close() override;
-  virtual result* on_execute(const std::string &sql) override;
+  virtual result on_execute(const std::string &sql) override;
   virtual void on_begin() override;
   virtual void on_commit() override;
   virtual void on_rollback() override;

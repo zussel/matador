@@ -3,6 +3,8 @@
 
 #include <object/object_atomizer.hpp>
 
+#include <database/result.hpp>
+
 namespace oos {
 
 class serializable;

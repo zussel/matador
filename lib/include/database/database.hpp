@@ -34,6 +34,7 @@
 #include "database/types.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
+#include "database/result.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -199,7 +200,7 @@ public:
    *
    * @return New result implenation serializable.
    */
-  virtual result* create_result() = 0;
+  result create_result(detail::result_impl *impl);
 
   /**
    * Create the concrete statement.
