@@ -67,6 +67,10 @@ void sequence::name(const varchar<64> &name)
   name_ = name;
 }
 
+unsigned long sequence::operator++() {
+  return ++sequence_;
+}
+
 database_sequencer::database_sequencer(database &db)
   : db_(db)
   , backup_(0)
@@ -95,23 +99,23 @@ unsigned long database_sequencer::next()
 
 unsigned long database_sequencer::current() const
 {
-  return sequence_;
+  return sequence_.seq();
 }
 
 unsigned long database_sequencer::update(unsigned long id)
 {
-  if (id > sequence_) {
-    sequence_ = id;
+  if (id > sequence_.seq()) {
+    sequence_.seq(id);
   }
-  return sequence_;
+  return sequence_.seq();
 }
 
 void database_sequencer::create()
 {
   query q(db_);
-  result res = q.create("oos_sequence", this).execute();
+  result res = q.create("oos_sequence", &sequence_).execute();
   
-  res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
+  res = q.reset().select(&sequence_).from("oos_sequence").where("name='serializable'").execute();
 
 
   result_iterator first = res.begin();
@@ -120,16 +124,16 @@ void database_sequencer::create()
     oos::get(first.get(), "number", sequence_);
   } else {
     // TODO: check result
-    q.reset().insert(this, "oos_sequence").execute();
+    q.reset().insert(&sequence_, "oos_sequence").execute();
   }
 
-  update_.reset(q.reset().update("oos_sequence", this).where("name='serializable'").prepare());
+  update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
 }
 
 void database_sequencer::load()
 {
   query q(db_);
-  result res = q.reset().select(this).from("oos_sequence").where("name='serializable'").execute();
+  result res = q.reset().select(&sequence_).from("oos_sequence").where("name='serializable'").execute();
 
   result_iterator first = res.begin();
 
@@ -140,7 +144,7 @@ void database_sequencer::load()
   }
 
   if (!update_) {
-    update_.reset(q.reset().update("oos_sequence", this).where("name='serializable'").prepare());
+    update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
   }
 }
 
@@ -152,9 +156,9 @@ void database_sequencer::begin()
 
 void database_sequencer::commit()
 {
-  update_->bind(this);
+  update_->bind(&sequence_);
   // TODO: check result
-  update_->execute();
+  update_->execute(nullptr);
   update_->reset();
 }
 

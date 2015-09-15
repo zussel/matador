@@ -60,11 +60,13 @@ public:
   const varchar<64> &name() const;
   void name(const varchar<64> &name);
 
+  unsigned long operator++();
+
 private:
   unsigned long sequence_ = 0;
   oos::varchar<64> name_;
 };
-class OOS_API database_sequencer : public sequencer_impl, public serializable
+class OOS_API database_sequencer : public sequencer_impl
 {
 public:
   database_sequencer(database &db);

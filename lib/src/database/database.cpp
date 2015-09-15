@@ -156,7 +156,7 @@ bool database::is_loaded(const std::string &name) const
 
 result database::execute(const std::string &sql)
 {
-  return result(on_execute(sql));
+  return result(on_execute(sql), nullptr);
 }
 
 void database::drop()
@@ -273,7 +273,7 @@ session* database::db()
 }
 
 result database::create_result(detail::result_impl *impl) {
-  return oos::result(impl);
+  return oos::result(impl, nullptr);
 }
 
 }

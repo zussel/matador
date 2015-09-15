@@ -118,7 +118,7 @@ oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql)
 
 void sqlite_database::on_rollback()
 {
-  result res = execute("ROLLBACK TRANSACTION;");
+  execute("ROLLBACK TRANSACTION;");
 }
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
