@@ -44,7 +44,7 @@ public:
   virtual ~sqlite_statement();
 
   virtual void clear();
-  virtual result execute(object_base_producer *producer);
+  virtual result execute();
   virtual void prepare(const sql &s);
   virtual void reset();
 

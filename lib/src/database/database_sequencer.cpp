@@ -121,7 +121,9 @@ void database_sequencer::create()
   result_iterator first = res.begin();
 
   if (first != res.end()) {
-    oos::get(first.get(), "number", sequence_);
+    unsigned long seq = 0;
+    oos::get(first.get(), "number", seq);
+    sequence_.seq(seq);
   } else {
     // TODO: check result
     q.reset().insert(&sequence_, "oos_sequence").execute();
@@ -138,7 +140,9 @@ void database_sequencer::load()
   result_iterator first = res.begin();
 
   if (first != res.end()) {
-    oos::get(first.get(), "number", sequence_);
+    unsigned long seq = 0;
+    oos::get(first.get(), "number", seq);
+    sequence_.seq(seq);
   } else {
     throw database_exception("database::sequencer", "couldn't fetch sequence");
   }
@@ -158,7 +162,7 @@ void database_sequencer::commit()
 {
   update_->bind(&sequence_);
   // TODO: check result
-  update_->execute(nullptr);
+  update_->execute();
   update_->reset();
 }
 
