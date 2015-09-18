@@ -43,10 +43,15 @@ class serializable;
 class sql;
 class object_base_producer;
 
-/// @cond OOS_DEV
-class OOS_API statement : public object_writer
+namespace detail {
+  class statement_impl;
+}
+
+    /// @cond OOS_DEV
+class OOS_API statement
 {
 public:
+  statement
   virtual ~statement();
 
   virtual void clear() = 0;
@@ -77,6 +82,9 @@ protected:
 
 private:
   std::string sql_;
+
+  oos::detail::statement_impl *p = nullptr;
+
 };
 
 /// @endcond

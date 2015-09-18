@@ -239,7 +239,7 @@ SET(DATABASE_HEADER
   ../include/database/query_update.hpp
   ../include/database/token.hpp
   ../include/database/primary_key_binder.hpp
-)
+        ../include/database/statement_impl.hpp)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp
