@@ -34,7 +34,9 @@
 #include "database/types.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
+#include "database/sql.hpp"
 #include "database/result.hpp"
+#include "database/statement.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -47,9 +49,7 @@ namespace oos {
 
 class transaction;
 class session;
-class statement;
 class table;
-class result;
 class database_sequencer;
 class prototype_node;
 
@@ -205,9 +205,11 @@ public:
   /**
    * Create the concrete statement.
    *
+   * @param sql The sql query representation
+   *
    * @return The concrete statement.
    */
-  virtual statement* create_statement() = 0;
+  statement create_statement(const sql &s);
 
   /**
    * Get last inserted id from database
@@ -266,6 +268,7 @@ protected:
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
   virtual oos::detail::result_impl* on_execute(const std::string &stmt) = 0;
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &sql) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

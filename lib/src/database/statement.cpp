@@ -16,6 +16,7 @@
  */
 
 #include "database/statement.hpp"
+#include "database/statement_impl.hpp"
 
 #include "object/serializable.hpp"
 
@@ -23,25 +24,36 @@ using namespace std::placeholders;
 
 namespace oos {
 
+statement::statement(detail::statement_impl *impl)
+  : p(impl)
+{ }
+
 statement::~statement()
 {}
 
 int statement::bind(serializable *o)
 {
-  reset();
-  host_index = 0;
-  o->serialize(*this);
-  return host_index;
+  return p->bind(o);
+}
+
+void statement::clear()
+{
+  p->clear();
+}
+
+result statement::execute()
+{
+  return p->execute();
+}
+
+void statement::reset()
+{
+  p->reset();
 }
 
 std::string statement::str() const
 {
   return sql_;
-}
-
-void statement::str(const std::string &s)
-{
-  sql_ = s;
 }
 
 }

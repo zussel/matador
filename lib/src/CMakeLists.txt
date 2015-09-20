@@ -210,7 +210,7 @@ SET(DATABASE_SOURCES
   database/query_insert.cpp
   database/query_update.cpp
   database/primary_key_binder.cpp
-)
+        database/statement_impl.cpp)
 
 SET(DATABASE_HEADER
   ../include/database/action.hpp

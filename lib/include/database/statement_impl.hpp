@@ -32,7 +32,7 @@ namespace detail {
 class OOS_API statement_impl : public object_writer
 {
 public:
-  virtual ~statement();
+  virtual ~statement_impl();
 
   virtual void clear() = 0;
 

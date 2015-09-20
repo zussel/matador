@@ -276,4 +276,9 @@ result database::create_result(detail::result_impl *impl) {
   return oos::result(impl, nullptr);
 }
 
+statement database::create_statement(const sql &s)
+{
+  return oos::statement();
+}
+
 }

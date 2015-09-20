@@ -392,7 +392,7 @@ public:
    * 
    * @return The new prepared statement.
    */
-  statement* prepare();
+  statement prepare();
 
   /**
    * Resets the query.

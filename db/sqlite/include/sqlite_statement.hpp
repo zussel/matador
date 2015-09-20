@@ -18,7 +18,7 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
-#include "database/statement.hpp"
+#include "database/statement_impl.hpp"
 
 #include "object/object_atomizer.hpp"
 #include "object/primary_key.hpp"
@@ -37,7 +37,7 @@ namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement : public statement
+class sqlite_statement : public oos::detail::statement_impl
 {
 public:
   sqlite_statement(sqlite_database &db);

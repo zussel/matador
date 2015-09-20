@@ -311,13 +311,9 @@ result query::execute()
   return db_.execute(sql_.direct().c_str());
 }
 
-statement* query::prepare()
+statement query::prepare()
 {
-  statement *stmt = db_.create_statement();
-  // TODO: fix call to prepare
-  stmt->prepare(sql_);
-
-  return stmt;
+  return stmt(db_.create_statement(sql_));
 }
 
 query& query::reset()

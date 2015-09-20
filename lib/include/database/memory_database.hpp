@@ -20,6 +20,7 @@
 
 #include "database/database.hpp"
 #include "database/result.hpp"
+#include "statement_impl.hpp"
 
 namespace oos {
 
@@ -49,8 +50,6 @@ public:
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
 
-  virtual result create_result(detail::result_impl *) { return result(); }
-  virtual statement* create_statement() { return 0; }
   virtual table* create_table(const prototype_node &) { return 0; }
   virtual void initialize_table(const prototype_node &,
                          std::string &, std::string &) {}
@@ -67,6 +66,7 @@ private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}
   virtual oos::detail::result_impl* on_execute(const std::string &) { return nullptr; }
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &) { return nullptr; }
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

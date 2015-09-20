@@ -116,6 +116,11 @@ oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql)
   return res.release();
 }
 
+oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql)
+{
+  return nullptr;
+}
+
 void sqlite_database::on_rollback()
 {
   execute("ROLLBACK TRANSACTION;");
