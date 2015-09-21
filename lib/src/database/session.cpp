@@ -170,11 +170,6 @@ void session::rollback()
   impl_->rollback();
 }
 
-statement* session::create_statement() const
-{
-  return impl_->create_statement();
-}
-
 transaction* session::current_transaction() const
 {
   return (transaction_stack_.empty() ? 0 : transaction_stack_.top());

@@ -79,11 +79,6 @@ void sqlite_database::on_close()
   sqlite_db_ = 0;
 }
 
-statement* sqlite_database::create_statement()
-{
-  return new sqlite_statement(*this);
-}
-
 sqlite3* sqlite_database::operator()()
 {
   return sqlite_db_;
@@ -118,7 +113,7 @@ oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql)
 
 oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql)
 {
-  return nullptr;
+  return new sqlite_statement(*this, sql.prepare());
 }
 
 void sqlite_database::on_rollback()

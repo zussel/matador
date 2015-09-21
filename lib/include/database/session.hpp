@@ -264,13 +264,6 @@ private:
   void commit(transaction &tr);
   void rollback();
 
-  /**
-   * Create a statement implementation
-   *
-   * @return A statement serializable.
-   */
-  statement* create_statement() const;
-
 private:
   std::string type_;
   std::string connection_;

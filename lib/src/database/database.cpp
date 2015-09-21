@@ -159,6 +159,11 @@ result database::execute(const std::string &sql)
   return result(on_execute(sql), nullptr);
 }
 
+statement database::prepare(const oos::sql &sql)
+{
+  return statement(on_prepare(sql));
+}
+
 void database::drop()
 {
   table_map_t::iterator first = table_map_.begin();
@@ -274,11 +279,6 @@ session* database::db()
 
 result database::create_result(detail::result_impl *impl) {
   return oos::result(impl, nullptr);
-}
-
-statement database::create_statement(const sql &s)
-{
-  return oos::statement();
 }
 
 }

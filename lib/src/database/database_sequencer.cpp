@@ -74,6 +74,7 @@ unsigned long sequence::operator++() {
 database_sequencer::database_sequencer(database &db)
   : db_(db)
   , backup_(0)
+  , update_()
 {}
 
 database_sequencer::~database_sequencer()
@@ -129,7 +130,7 @@ void database_sequencer::create()
     q.reset().insert(&sequence_, "oos_sequence").execute();
   }
 
-  update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
+  update_ = q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare();
 }
 
 void database_sequencer::load()
@@ -147,9 +148,10 @@ void database_sequencer::load()
     throw database_exception("database::sequencer", "couldn't fetch sequence");
   }
 
-  if (!update_) {
-    update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
-  }
+//  if (!update_) {
+//    update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
+//  }
+  update_ = q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare();
 }
 
 void database_sequencer::begin()
@@ -160,10 +162,10 @@ void database_sequencer::begin()
 
 void database_sequencer::commit()
 {
-  update_->bind(&sequence_);
+  update_.bind(&sequence_);
   // TODO: check result
-  update_->execute();
-  update_->reset();
+  update_.execute();
+  update_.reset();
 }
 
 void database_sequencer::rollback()

@@ -16,13 +16,14 @@
  */
 
 #include "database/statement.hpp"
-#include "database/statement_impl.hpp"
-
-#include "object/serializable.hpp"
 
 using namespace std::placeholders;
 
 namespace oos {
+
+statement::statement()
+  : p(nullptr)
+{ }
 
 statement::statement(detail::statement_impl *impl)
   : p(impl)
@@ -30,6 +31,19 @@ statement::statement(detail::statement_impl *impl)
 
 statement::~statement()
 {}
+
+statement::statement(statement &&x)
+  : p(x.p)
+{
+  x.p = nullptr;
+}
+
+statement &statement::operator=(statement &&x)
+{
+  p = x.p;
+  x.p = nullptr;
+  return *this;
+}
 
 int statement::bind(serializable *o)
 {
@@ -53,7 +67,7 @@ void statement::reset()
 
 std::string statement::str() const
 {
-  return sql_;
+  return p->str();
 }
 
 }

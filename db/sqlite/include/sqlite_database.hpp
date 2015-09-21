@@ -63,12 +63,6 @@ public:
    */
   virtual bool is_open() const override;
 
-  /**
-   * Create a new sqlite statement
-   * 
-   * @return A new sqlite statement
-   */
-  virtual statement* create_statement() override;
 
   virtual unsigned long last_inserted_id() override;
 

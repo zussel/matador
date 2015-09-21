@@ -93,11 +93,10 @@ private:
   database &db_;
   const prototype_node &node_;
 
-  typedef std::unique_ptr<statement> statement_ptr;
-  statement_ptr insert_;
-  statement_ptr update_;
-  statement_ptr delete_;
-  statement_ptr select_;
+  statement insert_;
+  statement update_;
+  statement delete_;
+  statement select_;
 
   bool prepared_;
 

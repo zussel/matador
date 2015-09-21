@@ -5,7 +5,6 @@
 #include "object/object_atomizer.hpp"
 
 #include "database/result.hpp"
-#include "database/sql.hpp"
 
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
@@ -26,6 +25,7 @@
 namespace oos {
 
 class serializable;
+class sql;
 
 namespace detail {
 
@@ -35,8 +35,6 @@ public:
   virtual ~statement_impl();
 
   virtual void clear() = 0;
-
-  virtual void prepare(const sql &s) = 0;
 
   virtual result execute() = 0;
 

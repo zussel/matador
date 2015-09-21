@@ -308,12 +308,12 @@ query& query::update(const std::string &table)
 result query::execute()
 {
   std::cout << "SQL: " << sql_.direct().c_str() << '\n';
-  return db_.execute(sql_.direct().c_str());
+  return db_.execute(sql_.direct());
 }
 
 statement query::prepare()
 {
-  return stmt(db_.create_statement(sql_));
+  return db_.prepare(sql_);
 }
 
 query& query::reset()

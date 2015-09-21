@@ -122,12 +122,12 @@ void table::prepare()
   query q(db_);
 
   std::unique_ptr<serializable> o(node_.producer->create());
-  insert_.reset(q.insert(o.get(), node_.type).prepare());
+  insert_ = q.insert(o.get(), node_.type).prepare();
   if (node_.has_primary_key()) {
-    update_.reset(q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare());
-    delete_.reset(q.reset().remove(node_).where(cond("id").equal(0)).prepare());
+    update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
+    delete_ = q.reset().remove(node_).where(cond("id").equal(0)).prepare();
   }
-  select_.reset(q.reset().select(node_).prepare());
+  select_ = q.reset().select(node_).prepare();
 
   prepared_ = true;
 }
@@ -150,7 +150,7 @@ void table::load(object_store &ostore)
 
   table_reader reader(*this, ostore);
 
-  result res = select_->execute();
+  result res = select_.execute();
 
   reader.load(res);
 
@@ -181,8 +181,8 @@ void table::load(object_store &ostore)
 
 void table::insert(serializable *obj)
 {
-  insert_->bind(obj);
-  result res = insert_->execute();
+  insert_.bind(obj);
+  result res = insert_.execute();
 
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("insert", "more than one affected row while inserting an object");
@@ -191,13 +191,13 @@ void table::insert(serializable *obj)
 
 void table::update(serializable *obj)
 {
-  int pos = update_->bind(obj);
+  int pos = update_.bind(obj);
   // Todo: handle primary key
 
-  primary_key_binder_.bind(obj, update_.get(), pos);
+  primary_key_binder_.bind(obj, &update_, pos);
 
 //  update_->bind(pos, obj->id());
-  result res(update_->execute());
+  result res(update_.execute());
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
 //  }
@@ -206,7 +206,7 @@ void table::update(serializable *obj)
 void table::remove(serializable *obj)
 {
   // Todo: handle primary key
-  primary_key_binder_.bind(obj, delete_.get(), 0);
+  primary_key_binder_.bind(obj, &delete_, 0);
 }
 
 void table::drop()

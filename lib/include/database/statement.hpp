@@ -33,6 +33,8 @@
 
 #include "object/object_atomizer.hpp"
 
+#include "database/statement_impl.hpp"
+
 #include <string>
 #include <functional>
 
@@ -50,9 +52,17 @@ namespace detail {
     /// @cond OOS_DEV
 class OOS_API statement
 {
+private:
+  statement(const statement &x) = delete;
+  statement& operator=(const statement &x) = delete;
+
 public:
+  statement();
   statement(detail::statement_impl *impl);
   ~statement();
+
+  statement(statement &&x);
+  statement& operator=(statement &&x);
 
   void clear();
 
@@ -61,14 +71,16 @@ public:
   void reset();
   
   int bind(serializable *o);
+  template < class T >
+  int bind(unsigned long i, const T &val)
+  {
+    return p->bind(i, val);
+  }
 
   std::string str() const;
 
 private:
-  std::string sql_;
-
   oos::detail::statement_impl *p = nullptr;
-
 };
 
 /// @endcond

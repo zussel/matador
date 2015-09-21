@@ -50,10 +50,15 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_database &db)
+sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt)
   : db_(db)
   , stmt_(0)
 {
+  str(stmt);
+  // prepare sqlite statement
+  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
+  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
+
 }
 
 sqlite_statement::~sqlite_statement()
@@ -66,20 +71,7 @@ result sqlite_statement::execute()
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return result(new sqlite_prepared_result(stmt_, ret));
-}
-
-void sqlite_statement::prepare(const sql &s)
-{
-  reset();
-  
-  str(s.prepare());
-
-  // destroy statement
-  clear();
-  // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
+  return result(new sqlite_prepared_result(stmt_, ret), nullptr);
 }
 
 void sqlite_statement::reset()

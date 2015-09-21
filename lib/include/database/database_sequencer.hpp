@@ -19,10 +19,11 @@
 #define DATABASE_SEQUENCER_HPP
 
 #include "tools/sequencer.hpp"
+#include "tools/varchar.hpp"
 
 #include "object/serializable.hpp"
 
-#include "tools/varchar.hpp"
+#include "database/statement.hpp"
 
 #ifdef _MSC_VER
   #ifdef oos_EXPORTS
@@ -40,7 +41,6 @@
 namespace oos {
 
 class database;
-class statement;
 
 /// @cond OOS_DEV
 
@@ -94,7 +94,7 @@ private:
   database &db_;
   sequence sequence_;
   unsigned long backup_;
-  std::unique_ptr<statement> update_;
+  statement update_;
 };
 
 class dummy_database_sequencer : public database_sequencer

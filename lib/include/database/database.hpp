@@ -171,6 +171,15 @@ public:
   result execute(const std::string &sql);
 
   /**
+   * Prepare a sql statement and return a
+   * prepared statement object.
+   *
+   * @param sql The sql statement string to be prepared.
+   * @return The resulting prepared statement.
+   */
+  statement prepare(const oos::sql &sql);
+
+  /**
    * The interface for the create table action.
    */
   virtual void visit(create_action*) {}
@@ -201,15 +210,6 @@ public:
    * @return New result implenation serializable.
    */
   result create_result(detail::result_impl *impl);
-
-  /**
-   * Create the concrete statement.
-   *
-   * @param sql The sql query representation
-   *
-   * @return The concrete statement.
-   */
-  statement create_statement(const sql &s);
 
   /**
    * Get last inserted id from database
@@ -268,7 +268,7 @@ protected:
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
   virtual oos::detail::result_impl* on_execute(const std::string &stmt) = 0;
-  virtual oos::detail::statement_impl* on_prepare(const oos::sql &sql) = 0;
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

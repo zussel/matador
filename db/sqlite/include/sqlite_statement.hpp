@@ -40,12 +40,11 @@ class sqlite_database;
 class sqlite_statement : public oos::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db);
+  sqlite_statement(sqlite_database &db, const std::string stmt);
   virtual ~sqlite_statement();
 
   virtual void clear();
   virtual result execute();
-  virtual void prepare(const sql &s);
   virtual void reset();
 
 protected:
