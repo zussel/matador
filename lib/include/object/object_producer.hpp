@@ -19,6 +19,8 @@
 
 namespace oos {
 
+class serializable;
+
 template < class T > class object_ref;
 template < class T > class object_ptr;
 

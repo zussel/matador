@@ -25,8 +25,6 @@
 #include "database/statement.hpp"
 #include "database/database.hpp"
 
-#include "object/serializable.hpp"
-
 #include <iostream>
 
 namespace oos {
@@ -83,28 +81,24 @@ query& query::drop(const std::string &name)
   return *this;
 }
 
-query& query::select(const prototype_node &node)
+query& query::select()
 {
-  throw_invalid(QUERY_OBJECT_SELECT, state);
-
+  throw_invalid(QUERY_SELECT, state);
   sql_.append("SELECT ");
-
-  serializable *o = node.producer->create();
-  query_select s(sql_);
-  o->serialize(s);
-  delete o;
-
-  sql_.append(" FROM ");
-  sql_.append(node.type);
-
-  state = QUERY_OBJECT_SELECT;
-
+  state = QUERY_SELECT;
   return *this;
 }
 
-query& query::insert(object_base_ptr &optr)
+query& query::select(serializable *o)
 {
-  return insert(optr.proxy_);
+  throw_invalid(QUERY_SELECT, state);
+  sql_.append("SELECT ");
+
+  query_select s(sql_);
+  o->serialize(s);
+
+  state = QUERY_SELECT;
+  return *this;
 }
 
 query &query::insert(object_proxy *proxy)
@@ -143,11 +137,6 @@ query& query::insert(serializable *o, const std::string &type)
   return *this;
 }
 
-
-query &query::update(object_base_ptr &optr) {
-  return update(optr.proxy_);
-}
-
 query& query::update(object_proxy *proxy)
 {
   if (!proxy) {
@@ -176,11 +165,11 @@ query& query::update(const std::string &type, serializable *o)
   return *this;
 }
 
-query& query::remove(const prototype_node &node)
+query& query::remove(const std::string &table)
 {
   throw_invalid(QUERY_DELETE, state);
 
-  sql_.append(std::string("DELETE FROM ") + node.type);
+  sql_.append(std::string("DELETE FROM ") + table);
 
   state = QUERY_DELETE;
 
@@ -259,26 +248,6 @@ query& query::group_by(const std::string &fld)
   return *this;
 }
 
-query& query::select()
-{
-  throw_invalid(QUERY_SELECT, state);
-  sql_.append("SELECT ");
-  state = QUERY_SELECT;
-  return *this;
-}
-
-query& query::select(serializable *o)
-{
-  throw_invalid(QUERY_SELECT, state);
-  sql_.append("SELECT ");
-  
-  query_select s(sql_);
-  o->serialize(s);
-
-  state = QUERY_SELECT;
-  return *this;
-}
-
 query& query::column(const std::string &name, data_type_t type)
 {
   throw_invalid(QUERY_COLUMN, state);
@@ -308,7 +277,7 @@ query& query::update(const std::string &table)
 result query::execute()
 {
   std::cout << "SQL: " << sql_.direct().c_str() << '\n';
-  return db_.execute(sql_.direct());
+  return db_.execute(sql_.direct(), producer_);
 }
 
 statement query::prepare()
@@ -318,7 +287,6 @@ statement query::prepare()
 
 query& query::reset()
 {
-  stmt.reset();
   sql_.reset();
   state = QUERY_BEGIN;
   return *this;

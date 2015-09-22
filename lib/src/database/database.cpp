@@ -154,9 +154,9 @@ bool database::is_loaded(const std::string &name) const
 #endif
 }
 
-result database::execute(const std::string &sql)
+result database::execute(std::string sql, std::shared_ptr<object_base_producer> ptr)
 {
-  return result(on_execute(sql), nullptr);
+  return result(on_execute(sql, ptr));
 }
 
 statement database::prepare(const oos::sql &sql)
@@ -278,7 +278,7 @@ session* database::db()
 }
 
 result database::create_result(detail::result_impl *impl) {
-  return oos::result(impl, nullptr);
+  return oos::result(impl);
 }
 
 }

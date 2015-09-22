@@ -126,21 +126,24 @@ result* mysql_database::on_execute(const std::string &sqlstr)
 
 void mysql_database::on_begin()
 {
-  result *res = execute("START TRANSACTION;");
+  result *res = execute("START TRANSACTION;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }
 
 void mysql_database::on_commit()
 {
-  result *res = execute("COMMIT;");
+  result *res = execute("COMMIT;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }
 
 void mysql_database::on_rollback()
 {
-  result *res = execute("ROLLBACK;");
+  result *res = execute("ROLLBACK;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }

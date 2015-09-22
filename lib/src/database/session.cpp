@@ -93,7 +93,8 @@ bool session::load()
 
 result session::execute(const std::string &sql)
 {
-  return impl_->execute(sql);
+  return impl_->execute(sql,
+                        (std::shared_ptr<object_base_producer>()));
 }
 
 void session::update(const object_base_ptr &optr)

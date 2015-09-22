@@ -42,7 +42,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  sqlite_result();
+  sqlite_result(std::shared_ptr<object_base_producer> producer);
   virtual ~sqlite_result();
   
   const char* column(size_type c) const;
@@ -88,6 +88,11 @@ protected:
   void read_column(const char *, oos::time &x);
 
 private:
+  friend class sqlite_database;
+
+  void serialize_row(char *values[], int column_count);
+
+private:
   typedef std::vector<row*> row_vector_t;
   row_vector_t rows_;
   row_vector_t::size_type pos_;
@@ -96,6 +101,11 @@ private:
   size_type rows;
   size_type fields_;
   int result_size;
+
+  char *values_[];
+  int column_;
+
+  typedef std::vector<std::shared_ptr<serializable> > serializables_;
 };
 
 }

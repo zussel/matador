@@ -29,23 +29,20 @@ namespace oos {
 
 result_iterator::result_iterator() { }
 
-result_iterator::result_iterator(oos::detail::result_impl *result_impl, oos::object_base_producer *producer, serializable *obj)
+result_iterator::result_iterator(oos::detail::result_impl *result_impl, serializable *obj)
   : obj_(obj)
   , result_impl_(result_impl)
-  , producer_(producer)
 {
 
 }
 
 result_iterator::result_iterator(const result_iterator &x)
   : result_impl_(x.result_impl_)
-  , producer_(x.producer_)
 { }
 
 result_iterator &result_iterator::operator=(const result_iterator &x)
 {
   result_impl_ = x.result_impl_;
-  producer_ = x.producer_;
   return *this;
 }
 
@@ -56,26 +53,26 @@ result_iterator::~result_iterator()
 
 bool result_iterator::operator==(const result_iterator &rhs)
 {
-  return false;
+  return obj_ == rhs.obj_;
 }
 
 bool result_iterator::operator!=(const result_iterator &rhs)
 {
-  return false;
+  return obj_ != rhs.obj_;
 }
 
 result_iterator &result_iterator::operator++()
 {
-  obj_.reset(producer_->create());
+  obj_.reset(result_impl_->producer()->create());
   result_impl_->fetch(obj_.get());
   return *this;
 }
 
-result_iterator result_iterator::operator++(int i)
+result_iterator result_iterator::operator++(int)
 {
-  serializable *obj = producer_->create();
+  serializable *obj = result_impl_->producer()->create();
   result_impl_->fetch(obj);
-  return oos::result_iterator(result_impl_, producer_, obj);
+  return oos::result_iterator(result_impl_, obj);
 }
 
 result_iterator::pointer result_iterator::operator->()
@@ -104,9 +101,8 @@ result_iterator::pointer result_iterator::release()
 
 result::result() { }
 
-result::result(oos::detail::result_impl *impl, object_base_producer *producer)
+result::result(oos::detail::result_impl *impl)
     : p(impl)
-    , producer_(producer)
 { }
 
 result::~result()
@@ -118,7 +114,6 @@ result::~result()
 
 result::result(result &&x)
   : p(x.p)
-  , producer_(x.producer_)
 {
   x.p = nullptr;
 }
@@ -126,14 +121,13 @@ result::result(result &&x)
 result &result::operator=(result &&x)
 {
   p = x.p;
-  producer_ = x.producer_;
   x.p = nullptr;
   return *this;
 }
 
 result::iterator result::begin()
 {
-  return ++oos::result_iterator(p, producer_);
+  return ++oos::result_iterator(p);
 }
 
 result::iterator result::end()

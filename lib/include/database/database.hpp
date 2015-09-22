@@ -168,7 +168,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  result execute(const std::string &sql);
+  result execute(std::string sql, std::shared_ptr<object_base_producer> ptr);
 
   /**
    * Prepare a sql statement and return a
@@ -267,7 +267,7 @@ protected:
 
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
-  virtual oos::detail::result_impl* on_execute(const std::string &stmt) = 0;
+  virtual oos::detail::result_impl* on_execute(const std::string &stmt, std::shared_ptr<object_base_producer> ptr) = 0;
   virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;

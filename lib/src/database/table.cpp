@@ -125,9 +125,9 @@ void table::prepare()
   insert_ = q.insert(o.get(), node_.type).prepare();
   if (node_.has_primary_key()) {
     update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
-    delete_ = q.reset().remove(node_).where(cond("id").equal(0)).prepare();
+    delete_ = q.reset().remove(node_.type).where(cond("id").equal(0)).prepare();
   }
-  select_ = q.reset().select(node_).prepare();
+  select_ = q.reset().select(o.get()).from(node_.type).prepare();
 
   prepared_ = true;
 }

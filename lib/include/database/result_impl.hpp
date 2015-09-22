@@ -15,6 +15,9 @@
 #endif
 
 #include <object/object_atomizer.hpp>
+#include <object/object_producer.hpp>
+
+#include <memory>
 
 namespace oos {
 
@@ -27,14 +30,13 @@ class OOS_API result_impl : public object_reader
 {
 private:
   result_impl(const result_impl &) = delete;
-
   result_impl &operator=(const result_impl &) = delete;
 
 public:
   typedef unsigned long size_type;
 
 protected:
-  result_impl();
+  result_impl(std::shared_ptr<object_base_producer> producer_);
 
 public:
   virtual ~result_impl();
@@ -77,6 +79,8 @@ public:
   virtual size_type fields() const = 0;
 
   virtual int transform_index(int index) const = 0;
+
+  std::shared_ptr<object_base_producer> producer() const;
 
 protected:
   virtual void read(const char *, char &) { }
@@ -136,6 +140,8 @@ protected:
 
 private:
   const prototype_node *node_ = nullptr;
+
+  std::shared_ptr<object_base_producer> producer_;
 };
 
 }

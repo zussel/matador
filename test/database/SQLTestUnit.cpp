@@ -48,14 +48,24 @@ void SQLTestUnit::test_create()
 
     res = q.select<Item>().from("item").execute();
 
+    result_iterator first = res.begin();
+    result_iterator last = res.end();
 
-    std::for_each(res.begin(), res.end(), [](serializable& obj) {
+    while (first != last) {
+      serializable *obj = first.get();
+      std::cout << obj << '\n';
+      ++first;
+    }
 
-    });
+//    std::for_each(res.begin(), res.end(), [](serializable& obj) {
+//      std::cout << &obj << '\n';
+//    });
 //        while(res->fetch()) {
 //
 //            q.reset();
 //
+    q.reset();
+
     res = q.drop("item").execute();
 }
 

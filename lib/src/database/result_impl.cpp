@@ -12,7 +12,8 @@
 namespace oos {
 namespace detail {
 
-result_impl::result_impl()
+result_impl::result_impl(std::shared_ptr<object_base_producer> producer)
+  : producer_(producer)
 {}
 
 result_impl::~result_impl()
@@ -86,6 +87,11 @@ void result_impl::read(const char *id, primary_key_base &x)
 const prototype_node* result_impl::node() const
 {
   return node_;
+}
+
+std::shared_ptr<object_base_producer> result_impl::producer() const
+{
+  return producer_;
 }
 
 }

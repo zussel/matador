@@ -36,7 +36,6 @@
 
 #include <memory>
 #include <sstream>
-#include <object/object_ptr.hpp>
 
 namespace oos {
 
@@ -178,15 +177,6 @@ public:
 
   /**
    * Creates a select statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the select statement.
-   * @return A reference to the query.
-   */
-  query& select(const prototype_node &node);
-
-  /**
-   * Creates a select statement based
    * on the given serializable serializable.
    * 
    * @param o The serializable serializable used for the select statement.
@@ -198,6 +188,7 @@ public:
   query& select()
   {
     T obj;
+    producer_.reset(new object_producer<T>);
     return select(&obj);
   }
 
@@ -208,7 +199,6 @@ public:
    * @param o The serializable used for the insert statement.
    * @return A reference to the query.
    */
-  query& insert(object_base_ptr &optr);
   query& insert(object_proxy *proxy);
 
   /**
@@ -229,7 +219,6 @@ public:
    * @param o The serializable used for the update statement.
    * @return A reference to the query.
    */
-  query& update(object_base_ptr &optr);
   query& update(object_proxy *proxy);
 
   /**
@@ -258,10 +247,10 @@ public:
    * Creates a delete statement based
    * on the given prototype node.
    * 
-   * @param node The prototype node used for the delete statement.
+   * @param table The table name to remove from.
    * @return A reference to the query.
    */
-  query& remove(const prototype_node &node);
+  query& remove(const std::string &table);
 
   /**
    * Adds a where clause string to the select or
@@ -408,11 +397,8 @@ private:
   sql sql_;
   state_t state;
   database &db_;
-#ifdef _MSC_VER
-  std::auto_ptr<statement> stmt;
-#else
-  std::unique_ptr<statement> stmt;
-#endif
+
+  std::shared_ptr <object_base_producer> producer_;
 };
 
 }

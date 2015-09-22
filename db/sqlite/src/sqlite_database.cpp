@@ -86,21 +86,19 @@ sqlite3* sqlite_database::operator()()
 
 void sqlite_database::on_begin()
 {
-  execute("BEGIN TRANSACTION;");
+  execute("BEGIN TRANSACTION;",
+          (std::shared_ptr<object_base_producer>()));
 }
 
 void sqlite_database::on_commit()
 {
-  execute("COMMIT TRANSACTION;");
+  execute("COMMIT TRANSACTION;",
+          (std::shared_ptr<object_base_producer>()));
 }
 
-oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql)
+oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr)
 {
-#ifdef WIN32
-  std::auto_ptr<sqlite_result> res(new sqlite_result);
-#else
-  std::unique_ptr<sqlite_result> res(new sqlite_result);
-#endif
+  std::unique_ptr<sqlite_result> res(new sqlite_result(ptr));
   char *errmsg = 0;
   int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
@@ -118,7 +116,8 @@ oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql)
 
 void sqlite_database::on_rollback()
 {
-  execute("ROLLBACK TRANSACTION;");
+  execute("ROLLBACK TRANSACTION;",
+          (std::shared_ptr<object_base_producer>()));
 }
 
 int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
@@ -134,6 +133,8 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
    * string to the row
    *
    ********************/
+
+  result->serialize_row(values, column_count);
   std::unique_ptr<row> r(new row);
   for (int i = 0; i < column_count; ++i) {
     r->push_back(std::string(values[i]));

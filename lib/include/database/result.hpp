@@ -60,7 +60,7 @@ public:
   typedef value_type& reference;              /**< Shortcut for the reference type */
 
   result_iterator();
-  result_iterator(oos::detail::result_impl *result_impl, oos::object_base_producer *producer, serializable *obj = nullptr);
+  result_iterator(oos::detail::result_impl *result_impl, serializable *obj = nullptr);
   result_iterator(const result_iterator& x);
   result_iterator& operator=(const result_iterator& x);
   ~result_iterator();
@@ -80,7 +80,6 @@ public:
 private:
   std::unique_ptr<serializable> obj_;
   oos::detail::result_impl *result_impl_ = nullptr;
-  oos::object_base_producer *producer_ = nullptr;
 };
 
 class OOS_API result
@@ -93,7 +92,7 @@ public:
 
 public:
   result();
-  result(oos::detail::result_impl *impl, oos::object_base_producer *producer);
+  result(oos::detail::result_impl *impl);
   ~result();
 
   result(result &&x);
@@ -107,7 +106,6 @@ public:
 
 private:
   oos::detail::result_impl *p = nullptr;
-  oos::object_base_producer *producer_ = nullptr;
 };
 
 /// @endcond

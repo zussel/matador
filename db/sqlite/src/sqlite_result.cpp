@@ -15,15 +15,18 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <object/primary_key.hpp>
+#include "object/primary_key.hpp"
+#include "object/serializable.hpp"
+
 #include "sqlite_result.hpp"
 
 namespace oos {
 
 namespace sqlite {
 
-sqlite_result::sqlite_result()
-  : pos_(-1)
+sqlite_result::sqlite_result(std::shared_ptr<object_base_producer> producer)
+  : detail::result_impl(producer)
+  , pos_(-1)
 {}
 
 sqlite_result::~sqlite_result()
@@ -77,81 +80,117 @@ void sqlite_result::push_back(row *r)
 
 void sqlite_result::read(const char *id, char &x)
 {
-  read_column(id, x);
+  char *val = values_[column_++];
+
+  if (strlen(val) > 1) {
+    x = val[0];
+  }
 }
 
 void sqlite_result::read(const char *id, short &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (short)strtol(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, int &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (int)strtol(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, long &x)
 {
-  read_column(id, x);
+  char *end;
+  x = strtol(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, unsigned char &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (unsigned char)strtoul(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, unsigned short &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (unsigned short)strtoul(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, unsigned int &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (unsigned int)strtoul(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, unsigned long &x)
 {
-  read_column(id, x);
+  char *end;
+  x = strtoul(values_[column_++], &end, 10);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, bool &x)
 {
-  read_column(id, x);
+  char *end;
+  x = strtoul(values_[column_++], &end, 10) > 0;
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, float &x)
 {
-  read_column(id, x);
+  char *end;
+  x = (float)strtod(values_[column_++], &end);
+  // Todo: check error
 }
 
 void sqlite_result::read(const char *id, double &x)
 {
-  read_column(id, x);
+  char *end;
+  x = strtod(values_[column_++], &end);
+  // Todo: check error
 }
 
-void sqlite_result::read(const char */*id*/, char */*x*/, int /*s*/)
+void sqlite_result::read(const char */*id*/, char *x, int s)
 {
+  char *val = values_[column_++];
+  size_t len = strlen(val);
+  if (len > s) {
+    strncpy(x, val, s);
+    x[s-1] = '\n';
+  } else {
+    strcpy(x, val);
+  }
 }
 
 void sqlite_result::read(const char *id, varchar_base &x)
 {
-  read_column(id, x);
+  x.assign(values_[column_++]);
 }
 
 void sqlite_result::read(const char *id, std::string &x)
 {
-  read_column(id, x);
+  x.assign(values_[column_++]);
 }
 
 void sqlite_result::read(const char *id, oos::date &x)
 {
-  read_column(id, x);
+  double val = 0;
+  read(id, val);
+  x.set(static_cast<int>(val));
 }
 
 void sqlite_result::read(const char *id, oos::time &x)
 {
-  read_column(id, x);
+  std::string val;
+  read(id, val);
+  x = oos::time::parse(val, "%F %T.%f");
 }
 
 void sqlite_result::read(const char */*id*/, object_base_ptr &/*x*/)
@@ -175,6 +214,15 @@ void sqlite_result::read_column(char const *, oos::date &/*x*/)
 void sqlite_result::read_column(char const *, oos::time &/*x*/)
 {
 
+}
+
+void sqlite_result::serialize_row(char **values, int column_count)
+{
+  values_ = values;
+  column_ = 0;
+  std::shared_ptr<serializable> obj(producer()->create());
+  obj->deserialize(*this);
+  serializables_.push_back(obj);
 }
 
 }

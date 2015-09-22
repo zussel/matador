@@ -176,21 +176,24 @@ statement* mssql_database::create_statement()
 
 void mssql_database::on_begin()
 {
-  result *res = execute("BEGIN TRANSACTION;");
+  result *res = execute("BEGIN TRANSACTION;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }
 
 void mssql_database::on_commit()
 {
-  result *res = execute("COMMIT;");
+  result *res = execute("COMMIT;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }
 
 void mssql_database::on_rollback()
 {
-  result *res = execute("ROLLBACK;");
+  result *res = execute("ROLLBACK;",
+                        (std::shared_ptr<object_base_producer>()));
   // TODO: check result
   delete res;
 }
@@ -247,7 +250,8 @@ SQLHANDLE mssql_database::operator()()
 
 unsigned long mssql_database::last_inserted_id()
 {
-  std::unique_ptr<result> result(execute("select scope_identity()"));
+  std::unique_ptr<result> result(execute("select scope_identity()",
+                                         (std::shared_ptr<object_base_producer>())));
   unsigned long id = 0;
   result->get(0, id);
   return id;

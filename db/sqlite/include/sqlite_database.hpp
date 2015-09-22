@@ -79,7 +79,7 @@ public:
 protected:
   virtual void on_open(const std::string &db) override;
   virtual void on_close() override;
-  virtual oos::detail::result_impl* on_execute(const std::string &sql) override;
+  virtual oos::detail::result_impl* on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr) override;
   virtual oos::detail::statement_impl* on_prepare(const oos::sql &sql) override;
   virtual void on_begin() override;
   virtual void on_commit() override;
