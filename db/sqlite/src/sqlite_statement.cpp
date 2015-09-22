@@ -71,7 +71,7 @@ result sqlite_statement::execute()
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return result(new sqlite_prepared_result(stmt_, ret), nullptr);
+  return result(new sqlite_prepared_result(stmt_, ret));
 }
 
 void sqlite_statement::reset()

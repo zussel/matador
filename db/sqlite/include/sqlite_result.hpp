@@ -102,10 +102,11 @@ private:
   size_type fields_;
   int result_size;
 
-  char *values_[];
+  char **values_;
   int column_;
 
-  typedef std::vector<std::shared_ptr<serializable> > serializables_;
+  typedef std::vector<std::shared_ptr<serializable> > t_serializable_vector;
+  t_serializable_vector serializables_;
 };
 
 }
