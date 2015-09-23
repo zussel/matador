@@ -112,8 +112,8 @@ result::result(oos::detail::result_impl *impl, database *db)
 
 result::~result()
 {
-  if (p) {
-    delete p;
+  if (p && db_) {
+    db_->free_result(p);
   }
 }
 

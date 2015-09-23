@@ -34,6 +34,7 @@
 #include "object/object_atomizer.hpp"
 
 #include "database/statement_impl.hpp"
+#include "database.hpp"
 
 #include <string>
 #include <functional>
@@ -44,6 +45,7 @@ class result;
 class serializable;
 class sql;
 class object_base_producer;
+class database;
 
 namespace detail {
   class statement_impl;
@@ -58,7 +60,7 @@ private:
 
 public:
   statement();
-  statement(detail::statement_impl *impl);
+  statement(detail::statement_impl *impl, database *db);
   ~statement();
 
   statement(statement &&x);
@@ -81,6 +83,7 @@ public:
 
 private:
   oos::detail::statement_impl *p = nullptr;
+  database *db_ = nullptr;
 };
 
 /// @endcond

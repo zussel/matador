@@ -36,7 +36,7 @@ public:
 
   virtual void clear() = 0;
 
-  virtual result execute() = 0;
+  virtual detail::result_impl* execute() = 0;
 
   virtual void reset() = 0;
 

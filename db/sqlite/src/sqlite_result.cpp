@@ -32,12 +32,15 @@ sqlite_result::sqlite_result(std::shared_ptr<object_base_producer> producer)
 
 sqlite_result::~sqlite_result()
 {
+  std::cout << "result deleting (rows: " << result_.size() << ")\n";
+
   std::for_each(result_.begin(), result_.end(), [](t_result::value_type& row) {
     std::for_each(row.begin(), row.end(), [](char *val) {
       std::cout << "result deleting value [" << val << "]\n";
       delete [] val;
     });
   });
+  std::cout << "result deleting (rows: " << result_.size() << ")\n";
 }
 
 const char* sqlite_result::column(sqlite_result::size_type c) const

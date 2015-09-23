@@ -256,6 +256,8 @@ public:
    */
   void rollback();
 
+  virtual void free_result(detail::result_impl *impl) const = 0;
+
   virtual const char* type_string(data_type_t type) const = 0;
 
   database_sequencer_ptr seq() const;

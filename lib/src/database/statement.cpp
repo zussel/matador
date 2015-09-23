@@ -25,8 +25,9 @@ statement::statement()
   : p(nullptr)
 { }
 
-statement::statement(detail::statement_impl *impl)
+statement::statement(detail::statement_impl *impl, database *db)
   : p(impl)
+  , db_(db)
 { }
 
 statement::~statement()
@@ -57,7 +58,7 @@ void statement::clear()
 
 result statement::execute()
 {
-  return p->execute();
+  return result(p->execute(), db_);
 }
 
 void statement::reset()

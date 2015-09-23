@@ -161,7 +161,7 @@ result database::execute(std::string sql, std::shared_ptr<object_base_producer> 
 
 statement database::prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
 {
-  return statement(on_prepare(sql, ptr));
+  return statement(on_prepare(sql, ptr), this);
 }
 
 void database::drop()

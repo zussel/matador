@@ -61,6 +61,7 @@ public:
 
 
   virtual unsigned long last_inserted_id() { return 0; }
+  virtual void free_result(detail::result_impl *) const { };
 
 private:
   virtual void on_open(const std::string &) {}

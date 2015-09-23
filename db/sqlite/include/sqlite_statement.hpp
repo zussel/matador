@@ -44,7 +44,7 @@ public:
   virtual ~sqlite_statement();
 
   virtual void clear();
-  virtual result execute();
+  virtual detail::result_impl* execute();
   virtual void reset();
 
 protected:

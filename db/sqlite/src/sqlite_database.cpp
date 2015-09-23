@@ -84,6 +84,11 @@ sqlite3* sqlite_database::operator()()
   return sqlite_db_;
 }
 
+void sqlite_database::free_result(detail::result_impl *impl) const
+{
+  delete impl;
+}
+
 void sqlite_database::on_begin()
 {
   execute("BEGIN TRANSACTION;",
