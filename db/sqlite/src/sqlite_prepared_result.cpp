@@ -14,8 +14,9 @@ namespace oos {
 
 namespace sqlite {
 
-sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
-  : ret_(ret)
+sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret, std::shared_ptr<oos::object_base_producer> producer)
+  : result_impl(producer)
+  , ret_(ret)
   , first_(true)
   , affected_rows_(0)
   , rows(0)

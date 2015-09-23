@@ -177,7 +177,7 @@ public:
    * @param sql The sql statement string to be prepared.
    * @return The resulting prepared statement.
    */
-  statement prepare(const oos::sql &sql);
+  statement prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr);
 
   /**
    * The interface for the create table action.
@@ -268,7 +268,7 @@ protected:
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
   virtual oos::detail::result_impl* on_execute(const std::string &stmt, std::shared_ptr<object_base_producer> ptr) = 0;
-  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt) = 0;
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

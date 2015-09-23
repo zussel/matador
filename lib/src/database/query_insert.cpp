@@ -154,7 +154,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::time
     dialect.append(id);
   } else {
     std::stringstream valstr;
-    valstr << "'" << to_string(x) << "'";
+    valstr << "'" << to_string(x, "%F %T.%f") << "'";
     dialect.append(id, type, valstr.str());
   }
 }

@@ -20,37 +20,48 @@
 
 #include "sqlite_result.hpp"
 
+#include <algorithm>
+
 namespace oos {
 
 namespace sqlite {
 
 sqlite_result::sqlite_result(std::shared_ptr<object_base_producer> producer)
   : detail::result_impl(producer)
-  , pos_(-1)
 {}
 
 sqlite_result::~sqlite_result()
 {
-  while (!rows_.empty()) {
-    row *r = rows_.back();
-    delete r;
-    rows_.pop_back();
-  }
+  std::for_each(result_.begin(), result_.end(), [](t_result::value_type& row) {
+    std::for_each(row.begin(), row.end(), [](char *val) {
+      std::cout << "result deleting value [" << val << "]\n";
+      delete [] val;
+    });
+  });
 }
 
 const char* sqlite_result::column(sqlite_result::size_type c) const
 {
-  return rows_.at(pos_)->at<std::string>(c).c_str();
+  t_row::value_type val = result_.at(pos_).at(c);
+  return val;
 }
 
 bool sqlite_result::fetch()
 {
-  return ++pos_ < rows_.size();
+  return ++pos_ < result_.size();
 }
 
-bool sqlite_result::fetch(serializable *)
+bool sqlite_result::fetch(serializable *obj)
 {
-  return false;
+  if (pos_ + 1 > result_.size()) {
+    return false;
+  }
+
+  column_ = 0;
+  obj->deserialize(*this);
+  ++pos_;
+
+  return true;
 }
 
 sqlite_result::size_type sqlite_result::affected_rows() const
@@ -60,7 +71,7 @@ sqlite_result::size_type sqlite_result::affected_rows() const
 
 sqlite_result::size_type sqlite_result::result_rows() const
 {
-  return rows_.size();
+  return result_.size();
 }
 
 sqlite_result::size_type sqlite_result::fields() const
@@ -73,95 +84,114 @@ int sqlite_result::transform_index(int index) const
   return index;
 }
 
-void sqlite_result::push_back(row *r)
+void sqlite_result::push_back(char **row_values, int column_count)
 {
-  rows_.push_back(r);
+  t_row row;
+  for(int i = 0; i < column_count; ++i) {
+    // copy and store column data;
+    size_t size = strlen(row_values[i]);
+//    auto val = std::shared_ptr<char>(new char[size], std::default_delete<char[]>());
+    auto val = new char[size];
+    std::memcpy(val, row_values[i], size);
+    row.push_back(val);
+  }
+  result_.push_back(row);
 }
 
-void sqlite_result::read(const char *id, char &x)
+void sqlite_result::read(const char */*id*/, char &x)
 {
-  char *val = values_[column_++];
+  t_row::value_type &val = result_[pos_][column_++];
 
   if (strlen(val) > 1) {
     x = val[0];
   }
 }
 
-void sqlite_result::read(const char *id, short &x)
+void sqlite_result::read(const char */*id*/, short &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (short)strtol(values_[column_++], &end, 10);
+  x = (short)strtol(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, int &x)
+void sqlite_result::read(const char */*id*/, int &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (int)strtol(values_[column_++], &end, 10);
+  x = (int)strtol(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, long &x)
+void sqlite_result::read(const char */*id*/, long &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = strtol(values_[column_++], &end, 10);
+  x = strtol(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, unsigned char &x)
+void sqlite_result::read(const char */*id*/, unsigned char &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (unsigned char)strtoul(values_[column_++], &end, 10);
+  x = (unsigned char)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, unsigned short &x)
+void sqlite_result::read(const char */*id*/, unsigned short &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (unsigned short)strtoul(values_[column_++], &end, 10);
+  x = (unsigned short)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, unsigned int &x)
+void sqlite_result::read(const char */*id*/, unsigned int &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (unsigned int)strtoul(values_[column_++], &end, 10);
+  x = (unsigned int)strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, unsigned long &x)
+void sqlite_result::read(const char */*id*/, unsigned long &x)
 {
-  char *end;
-  x = strtoul(values_[column_++], &end, 10);
+  char *val = result_[pos_][column_++];
+  char *end = nullptr;
+  x = strtoul(val, &end, 10);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, bool &x)
+void sqlite_result::read(const char */*id*/, bool &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = strtoul(values_[column_++], &end, 10) > 0;
+  x = strtoul(val, &end, 10) > 0;
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, float &x)
+void sqlite_result::read(const char */*id*/, float &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = (float)strtod(values_[column_++], &end);
+  x = (float)strtod(val, &end);
   // Todo: check error
 }
 
-void sqlite_result::read(const char *id, double &x)
+void sqlite_result::read(const char */*id*/, double &x)
 {
+  t_row::value_type &val = result_[pos_][column_++];
   char *end;
-  x = strtod(values_[column_++], &end);
+  x = strtod(val, &end);
   // Todo: check error
 }
 
 void sqlite_result::read(const char */*id*/, char *x, int s)
 {
-  char *val = values_[column_++];
+  t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);
-  if (len > s) {
+  if (len > (size_t)s) {
     strncpy(x, val, s);
     x[s-1] = '\n';
   } else {
@@ -169,14 +199,16 @@ void sqlite_result::read(const char */*id*/, char *x, int s)
   }
 }
 
-void sqlite_result::read(const char *id, varchar_base &x)
+void sqlite_result::read(const char */*id*/, varchar_base &x)
 {
-  x.assign(values_[column_++]);
+  t_row::value_type val = result_[pos_][column_++];
+  x.assign(val);
 }
 
-void sqlite_result::read(const char *id, std::string &x)
+void sqlite_result::read(const char */*id*/, std::string &x)
 {
-  x.assign(values_[column_++]);
+  t_row::value_type val = result_[pos_][column_++];
+  x.assign(val);
 }
 
 void sqlite_result::read(const char *id, oos::date &x)
@@ -204,25 +236,6 @@ void sqlite_result::read(const char */*id*/, object_container &/*x*/)
 void sqlite_result::read(const char *id, primary_key_base &x)
 {
   x.deserialize(id, *this);
-}
-
-void sqlite_result::read_column(char const *, oos::date &/*x*/)
-{
-
-}
-
-void sqlite_result::read_column(char const *, oos::time &/*x*/)
-{
-
-}
-
-void sqlite_result::serialize_row(char **values, int column_count)
-{
-  values_ = values;
-  column_ = 0;
-  std::shared_ptr<serializable> obj(producer()->create());
-  obj->deserialize(*this);
-  serializables_.push_back(obj);
 }
 
 }

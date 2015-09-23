@@ -50,9 +50,10 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt)
+sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer)
   : db_(db)
   , stmt_(0)
+  , producer_(producer)
 {
   str(stmt);
   // prepare sqlite statement
@@ -71,7 +72,7 @@ result sqlite_statement::execute()
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return result(new sqlite_prepared_result(stmt_, ret));
+  return result(new sqlite_prepared_result(stmt_, ret, producer_));
 }
 
 void sqlite_statement::reset()

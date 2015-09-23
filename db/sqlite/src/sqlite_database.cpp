@@ -109,9 +109,9 @@ oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql, st
   return res.release();
 }
 
-oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql)
+oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
 {
-  return new sqlite_statement(*this, sql.prepare());
+  return new sqlite_statement(*this, sql.prepare(), ptr);
 }
 
 void sqlite_database::on_rollback()
@@ -126,7 +126,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
 
   /********************
    *
-   * a new row was retrived
+   * a new row was retrieved
    * add a new row to the result
    * and iterator over all columns
    * adding each column value as
@@ -134,12 +134,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
    *
    ********************/
 
-  result->serialize_row(values, column_count);
-  std::unique_ptr<row> r(new row);
-  for (int i = 0; i < column_count; ++i) {
-    r->push_back(std::string(values[i]));
-  }
-  result->push_back(r.release());
+  result->push_back(values, column_count);
   return 0;
 }
 

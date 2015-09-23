@@ -282,7 +282,7 @@ result query::execute()
 
 statement query::prepare()
 {
-  return db_.prepare(sql_);
+  return db_.prepare(sql_, producer_);
 }
 
 query& query::reset()

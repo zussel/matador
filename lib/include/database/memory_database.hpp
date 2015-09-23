@@ -66,7 +66,7 @@ private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}
   virtual oos::detail::result_impl* on_execute(const std::string &, std::shared_ptr<object_base_producer>) { return nullptr; }
-  virtual oos::detail::statement_impl* on_prepare(const oos::sql &) { return nullptr; }
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &, std::shared_ptr<object_base_producer>) { return nullptr; }
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

@@ -25,7 +25,7 @@ public:
   typedef oos::detail::result_impl::size_type size_type;
 
 public:
-  sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
+  sqlite_prepared_result(sqlite3_stmt *stmt, int rs, std::shared_ptr<oos::object_base_producer> producer);
   ~sqlite_prepared_result();
 
   virtual const char *column(size_type c) const override;

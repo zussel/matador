@@ -40,7 +40,7 @@ class sqlite_database;
 class sqlite_statement : public oos::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db, const std::string stmt);
+  sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~sqlite_statement();
 
   virtual void clear();
@@ -73,6 +73,7 @@ private:
   sqlite3_stmt *stmt_;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;
+  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

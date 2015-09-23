@@ -36,13 +36,15 @@ result_iterator::result_iterator(oos::detail::result_impl *result_impl, serializ
 
 }
 
-result_iterator::result_iterator(const result_iterator &x)
-  : result_impl_(x.result_impl_)
+result_iterator::result_iterator(result_iterator &&x)
+  : obj_(x.obj_.release())
+  , result_impl_(x.result_impl_)
 { }
 
-result_iterator &result_iterator::operator=(const result_iterator &x)
+result_iterator &result_iterator::operator=(result_iterator &&x)
 {
   result_impl_ = x.result_impl_;
+  obj_.reset(x.obj_.release());
   return *this;
 }
 
@@ -64,15 +66,17 @@ bool result_iterator::operator!=(const result_iterator &rhs)
 result_iterator &result_iterator::operator++()
 {
   obj_.reset(result_impl_->producer()->create());
-  result_impl_->fetch(obj_.get());
+  if (!result_impl_->fetch(obj_.get())) {
+    obj_.reset();
+  }
   return *this;
 }
 
 result_iterator result_iterator::operator++(int)
 {
-  serializable *obj = result_impl_->producer()->create();
-  result_impl_->fetch(obj);
-  return oos::result_iterator(result_impl_, obj);
+  std::unique_ptr<serializable> obj(result_impl_->producer()->create());
+  result_impl_->fetch(obj.get());
+  return oos::result_iterator(result_impl_, obj.release());
 }
 
 result_iterator::pointer result_iterator::operator->()
@@ -101,8 +105,9 @@ result_iterator::pointer result_iterator::release()
 
 result::result() { }
 
-result::result(oos::detail::result_impl *impl)
-    : p(impl)
+result::result(oos::detail::result_impl *impl, database *db)
+  : p(impl)
+  , db_(db)
 { }
 
 result::~result()
@@ -127,7 +132,7 @@ result &result::operator=(result &&x)
 
 result::iterator result::begin()
 {
-  return ++oos::result_iterator(p);
+  return std::move(++oos::result_iterator(p));
 }
 
 result::iterator result::end()

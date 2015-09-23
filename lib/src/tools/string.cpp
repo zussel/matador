@@ -37,6 +37,7 @@ std::string to_string(const oos::time &x, const char *format)
   struct tm timeinfo = x.get_tm();
 
   char buffer[255];
+  memset(buffer, 0, 255);
   if (strftime(buffer, 255, format, &timeinfo) == 0) {
     throw std::logic_error("couldn't format date string");
   }
@@ -59,6 +60,7 @@ std::string to_string(const oos::date &x, const char *format)
   timeinfo.tm_mday = x.day();
 
   char buffer[80];
+  memset(buffer, 0, 80);
   if (strftime(buffer, 80, format, &timeinfo) == 0) {
     throw std::logic_error("couldn't format date string");
   }

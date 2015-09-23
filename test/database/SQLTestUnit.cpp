@@ -42,6 +42,7 @@ void SQLTestUnit::test_create()
     q.reset();
 
     Item hans("Hans", 4711);
+    hans.set_time(oos::time(2015, 3, 15, 13, 56, 23, 123));
     res = q.insert(&hans, "item").execute();
 
     q.reset();
@@ -57,13 +58,6 @@ void SQLTestUnit::test_create()
       ++first;
     }
 
-//    std::for_each(res.begin(), res.end(), [](serializable& obj) {
-//      std::cout << &obj << '\n';
-//    });
-//        while(res->fetch()) {
-//
-//            q.reset();
-//
     q.reset();
 
     res = q.drop("item").execute();

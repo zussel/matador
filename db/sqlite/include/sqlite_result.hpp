@@ -54,7 +54,7 @@ public:
 
   virtual int transform_index(int index) const;
 
-  void push_back(row *r);
+  void push_back(char **row_values, int column_count);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -77,36 +77,20 @@ protected:
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, primary_key_base &x);
 
-  template < class T >
-  void read_column(const char *, T &x)
-  {
-    std::string val = rows_.at(pos_)->str(result_index);
-//    std::string val = rows_.at(pos_)->at<std::string>(result_index);
-    convert(val, x);
-  }
-  void read_column(const char *, oos::date &x);
-  void read_column(const char *, oos::time &x);
-
 private:
   friend class sqlite_database;
 
-  void serialize_row(char *values[], int column_count);
-
 private:
-  typedef std::vector<row*> row_vector_t;
-  row_vector_t rows_;
-  row_vector_t::size_type pos_;
 
-  size_type affected_rows_;
-  size_type rows;
+//  typedef std::vector<std::shared_ptr<char> > t_row;
+  typedef std::vector<char*> t_row;
+  typedef std::vector<t_row> t_result;
+
+  t_result result_;
+  t_result::size_type pos_ = 0;
+  t_result::size_type column_ = 0;
+
   size_type fields_;
-  int result_size;
-
-  char **values_;
-  int column_;
-
-  typedef std::vector<std::shared_ptr<serializable> > t_serializable_vector;
-  t_serializable_vector serializables_;
 };
 
 }

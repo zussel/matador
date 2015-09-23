@@ -35,12 +35,14 @@
 
 #include "object/prototype_node.hpp"
 #include "object/serializable.hpp"
-#include "result_impl.hpp"
+
+#include "database/result_impl.hpp"
 
 #include <memory>
 
 namespace oos {
 
+class database;
 class row;
 class statement;
 class serializable;
@@ -61,8 +63,8 @@ public:
 
   result_iterator();
   result_iterator(oos::detail::result_impl *result_impl, serializable *obj = nullptr);
-  result_iterator(const result_iterator& x);
-  result_iterator& operator=(const result_iterator& x);
+  result_iterator(result_iterator&& x);
+  result_iterator& operator=(result_iterator&& x);
   ~result_iterator();
 
   bool operator==(const result_iterator& rhs);
@@ -78,7 +80,7 @@ public:
   pointer release();
 
 private:
-  std::unique_ptr<serializable> obj_;
+  std::unique_ptr<oos::serializable> obj_;
   oos::detail::result_impl *result_impl_ = nullptr;
 };
 
@@ -92,7 +94,7 @@ public:
 
 public:
   result();
-  result(oos::detail::result_impl *impl);
+  result(oos::detail::result_impl *impl, database *db);
   ~result();
 
   result(result &&x);
@@ -106,6 +108,7 @@ public:
 
 private:
   oos::detail::result_impl *p = nullptr;
+  database *db_ = nullptr;
 };
 
 /// @endcond
