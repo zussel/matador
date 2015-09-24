@@ -327,6 +327,11 @@ public:
   list_object_producer(const std::string &name) : name_(name) {}
   virtual ~list_object_producer() {}
 
+  virtual oos::object_base_producer* clone() const
+  {
+    return new list_object_producer(name_);
+  }
+
   virtual oos::serializable* create() const
   {
     return new T(name_);
@@ -498,6 +503,11 @@ class vector_object_producer : public oos::object_base_producer {
 public:
   vector_object_producer(const std::string &name) : name_(name) {}
   virtual ~vector_object_producer() {}
+
+  virtual oos::object_base_producer* clone() const
+  {
+    return new vector_object_producer(name_);
+  }
 
   virtual oos::serializable* create() const
   {

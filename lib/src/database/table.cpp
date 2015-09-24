@@ -127,7 +127,7 @@ void table::prepare()
     update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
     delete_ = q.reset().remove(node_.type).where(cond("id").equal(0)).prepare();
   }
-  select_ = q.reset().select<serializable>().from(node_.type).prepare();
+  select_ = q.reset().select(node_.producer->clone()).from(node_.type).prepare();
 
   prepared_ = true;
 }
@@ -201,7 +201,7 @@ void table::update(serializable *obj)
 
 //  update_->bind(pos, obj->id());
   result res(update_.execute());
-  insert_.clear();
+  update_.clear();
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
 //  }

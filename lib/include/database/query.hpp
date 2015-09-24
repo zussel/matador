@@ -192,6 +192,13 @@ public:
     return select(&obj);
   }
 
+  query& select(object_base_producer *producer)
+  {
+    std::unique_ptr<serializable> obj(producer->create());
+    producer_.reset(producer);
+    return select(obj.get());
+  }
+
   /**
    * Creates an insert statement based
    * on the given serializable.
