@@ -23,6 +23,7 @@ public:
     virtual void finalize();
 
     void test_create();
+    void test_statement();
 
 protected:
     oos::session* create_session();

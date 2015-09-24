@@ -31,18 +31,24 @@ statement::statement(detail::statement_impl *impl, database *db)
 { }
 
 statement::~statement()
-{}
+{
+  if (p) {
+    delete p;
+  }
+}
 
 statement::statement(statement &&x)
-  : p(x.p)
 {
-  x.p = nullptr;
+  std::swap(p, x.p);
 }
 
 statement &statement::operator=(statement &&x)
 {
-  p = x.p;
-  x.p = nullptr;
+  if (p) {
+    delete p;
+    p = nullptr;
+  }
+  std::swap(p, x.p);
   return *this;
 }
 

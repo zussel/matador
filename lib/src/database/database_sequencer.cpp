@@ -116,7 +116,7 @@ void database_sequencer::create()
   query q(db_);
   result res = q.create("oos_sequence", &sequence_).execute();
   
-  res = q.reset().select(&sequence_).from("oos_sequence").where("name='serializable'").execute();
+  res = q.reset().select<sequence>().from("oos_sequence").where("name='serializable'").execute();
 
 
   result_iterator first = res.begin();
