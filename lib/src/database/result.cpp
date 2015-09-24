@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "database/result.hpp"
 #include "database/result_impl.hpp"
 #include "database/statement.hpp"
@@ -118,15 +119,17 @@ result::~result()
 }
 
 result::result(result &&x)
-  : p(x.p)
 {
-  x.p = nullptr;
+  std::swap(p, x.p);
 }
 
 result &result::operator=(result &&x)
 {
-  p = x.p;
-  x.p = nullptr;
+  if (p) {
+    db_->free_result(p);
+    p = nullptr;
+  }
+  std::swap(p, x.p);
   return *this;
 }
 

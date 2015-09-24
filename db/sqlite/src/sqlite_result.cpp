@@ -32,15 +32,11 @@ sqlite_result::sqlite_result(std::shared_ptr<object_base_producer> producer)
 
 sqlite_result::~sqlite_result()
 {
-  std::cout << "result deleting (rows: " << result_.size() << ")\n";
-
   std::for_each(result_.begin(), result_.end(), [](t_result::value_type& row) {
     std::for_each(row.begin(), row.end(), [](char *val) {
-      std::cout << "result deleting value [" << val << "]\n";
       delete [] val;
     });
   });
-  std::cout << "result deleting (rows: " << result_.size() << ")\n";
 }
 
 const char* sqlite_result::column(sqlite_result::size_type c) const
@@ -94,8 +90,9 @@ void sqlite_result::push_back(char **row_values, int column_count)
     // copy and store column data;
     size_t size = strlen(row_values[i]);
 //    auto val = std::shared_ptr<char>(new char[size], std::default_delete<char[]>());
-    auto val = new char[size];
+    auto val = new char[size+1];
     std::memcpy(val, row_values[i], size);
+    val[size] = '\0';
     row.push_back(val);
   }
   result_.push_back(row);
@@ -113,6 +110,9 @@ void sqlite_result::read(const char */*id*/, char &x)
 void sqlite_result::read(const char */*id*/, short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (short)strtol(val, &end, 10);
   // Todo: check error
@@ -121,6 +121,9 @@ void sqlite_result::read(const char */*id*/, short &x)
 void sqlite_result::read(const char */*id*/, int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (int)strtol(val, &end, 10);
   // Todo: check error
@@ -129,6 +132,9 @@ void sqlite_result::read(const char */*id*/, int &x)
 void sqlite_result::read(const char */*id*/, long &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = strtol(val, &end, 10);
   // Todo: check error
@@ -137,6 +143,9 @@ void sqlite_result::read(const char */*id*/, long &x)
 void sqlite_result::read(const char */*id*/, unsigned char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (unsigned char)strtoul(val, &end, 10);
   // Todo: check error
@@ -145,6 +154,9 @@ void sqlite_result::read(const char */*id*/, unsigned char &x)
 void sqlite_result::read(const char */*id*/, unsigned short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (unsigned short)strtoul(val, &end, 10);
   // Todo: check error
@@ -153,6 +165,9 @@ void sqlite_result::read(const char */*id*/, unsigned short &x)
 void sqlite_result::read(const char */*id*/, unsigned int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (unsigned int)strtoul(val, &end, 10);
   // Todo: check error
@@ -161,6 +176,9 @@ void sqlite_result::read(const char */*id*/, unsigned int &x)
 void sqlite_result::read(const char */*id*/, unsigned long &x)
 {
   char *val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end = nullptr;
   x = strtoul(val, &end, 10);
   // Todo: check error
@@ -169,6 +187,9 @@ void sqlite_result::read(const char */*id*/, unsigned long &x)
 void sqlite_result::read(const char */*id*/, bool &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = strtoul(val, &end, 10) > 0;
   // Todo: check error
@@ -177,6 +198,9 @@ void sqlite_result::read(const char */*id*/, bool &x)
 void sqlite_result::read(const char */*id*/, float &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = (float)strtod(val, &end);
   // Todo: check error
@@ -185,6 +209,9 @@ void sqlite_result::read(const char */*id*/, float &x)
 void sqlite_result::read(const char */*id*/, double &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
+  if (strlen(val) == 0) {
+    return;
+  }
   char *end;
   x = strtod(val, &end);
   // Todo: check error

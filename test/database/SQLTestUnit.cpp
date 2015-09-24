@@ -53,8 +53,8 @@ void SQLTestUnit::test_create()
     result_iterator last = res.end();
 
     while (first != last) {
-      serializable *obj = first.get();
-      std::cout << obj << '\n';
+      serializable *obj = first.release();
+      delete obj;
       ++first;
     }
 
