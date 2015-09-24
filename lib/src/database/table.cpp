@@ -127,7 +127,7 @@ void table::prepare()
     update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
     delete_ = q.reset().remove(node_.type).where(cond("id").equal(0)).prepare();
   }
-  select_ = q.reset().select(o.get()).from(node_.type).prepare();
+  select_ = q.reset().select<serializable>().from(node_.type).prepare();
 
   prepared_ = true;
 }
