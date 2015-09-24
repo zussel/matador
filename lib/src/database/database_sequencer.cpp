@@ -136,7 +136,7 @@ void database_sequencer::create()
 void database_sequencer::load()
 {
   query q(db_);
-  result res = q.reset().select(&sequence_).from("oos_sequence").where("name='serializable'").execute();
+  result res = q.reset().select<sequence>().from("oos_sequence").where("name='serializable'").execute();
 
   result_iterator first = res.begin();
 
@@ -165,6 +165,7 @@ void database_sequencer::commit()
   update_.bind(&sequence_);
   // TODO: check result
   update_.execute();
+  update_.clear();
   update_.reset();
 }
 

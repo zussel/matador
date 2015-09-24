@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "database/statement.hpp"
 
 using namespace std::placeholders;
@@ -64,6 +65,7 @@ void statement::clear()
 
 result statement::execute()
 {
+  std::cout << "SQL: " << p->str() << '\n';
   return result(p->execute(), db_);
 }
 

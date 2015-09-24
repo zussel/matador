@@ -154,6 +154,8 @@ void table::load(object_store &ostore)
 
   reader.load(res);
 
+  select_.clear();
+
   /*
    * after all tables were loaded fill
    * all serializable containers appearing
@@ -183,6 +185,7 @@ void table::insert(serializable *obj)
 {
   insert_.bind(obj);
   result res = insert_.execute();
+  insert_.clear();
 
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("insert", "more than one affected row while inserting an object");
@@ -198,6 +201,7 @@ void table::update(serializable *obj)
 
 //  update_->bind(pos, obj->id());
   result res(update_.execute());
+  insert_.clear();
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
 //  }
