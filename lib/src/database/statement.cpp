@@ -60,12 +60,14 @@ int statement::bind(serializable *o)
 
 void statement::clear()
 {
-  p->clear();
+  if (p) {
+    p->clear();
+  }
 }
 
 result statement::execute()
 {
-  std::cout << "SQL: " << p->str() << '\n';
+//  std::cout << "SQL: " << p->str() << '\n';
   return result(p->execute(), db_);
 }
 

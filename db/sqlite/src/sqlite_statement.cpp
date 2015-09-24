@@ -88,6 +88,7 @@ void sqlite_statement::clear()
   if (!stmt_) {
     return;
   }
+  std::cout.flush();
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_(), "sqlite3_finalize");
   stmt_ = 0;

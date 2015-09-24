@@ -185,6 +185,7 @@ void database_sequencer::drop()
 
 void database_sequencer::destroy()
 {
+  update_.clear();
 }
 
 
