@@ -223,7 +223,7 @@ void mysql_statement::write(const char *, const object_container &)
 {
 }
 
-void mysql_statement::write(const char *id, const primary_key_base &x)
+void mysql_statement::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

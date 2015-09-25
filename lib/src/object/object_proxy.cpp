@@ -36,7 +36,7 @@ object_proxy::object_proxy(object_store *os)
   , node_(nullptr)
 {}
 
-object_proxy::object_proxy(const std::shared_ptr<primary_key_base> &pk, prototype_node *node)
+object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk, prototype_node *node)
   : prev_(nullptr)
   , next_(nullptr)
   , obj_(nullptr)
@@ -238,7 +238,7 @@ bool object_proxy::has_primary_key() const
   return primary_key_ != nullptr;
 }
 
-std::shared_ptr<primary_key_base> object_proxy::pk() const
+std::shared_ptr<basic_identifier> object_proxy::pk() const
 {
   return primary_key_;
 }

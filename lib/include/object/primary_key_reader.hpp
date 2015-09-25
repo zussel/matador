@@ -6,7 +6,7 @@
 #define PRIMARY_KEY_READER_HPP
 
 #include "object/object_atomizer.hpp"
-#include "object/primary_key.hpp"
+#include "identifier.hpp"
 
 namespace oos {
 
@@ -26,7 +26,7 @@ public:
 public:
 
   void read_value(const char*, T &x);
-  void read_value(const char*, primary_key_base &x);
+  void read_value(const char*, basic_identifier &x);
 
   template < class V >
   void read_value(const char*, V &) {}
@@ -45,7 +45,7 @@ void primary_key_reader<T>::read_value(const char*, T &x) {
 }
 
 template < class T >
-void primary_key_reader<T>::read_value(const char*, primary_key_base &x)
+void primary_key_reader<T>::read_value(const char*, basic_identifier &x)
 {
   reading_pk_ = true;
   x.deserialize("", *this);

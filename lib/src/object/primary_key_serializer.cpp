@@ -3,7 +3,7 @@
 //
 
 #include "object/primary_key_serializer.hpp"
-#include "object/primary_key.hpp"
+#include "object/identifier.hpp"
 #include "object/object_ptr.hpp"
 #include "object/serializable.hpp"
 
@@ -17,14 +17,14 @@ primary_key_serializer::primary_key_serializer()
 primary_key_serializer::~primary_key_serializer()
 {}
 
-primary_key_base* primary_key_serializer::serialize(const serializable *o)
+basic_identifier * primary_key_serializer::serialize(const serializable *o)
 {
   primary_key_ = 0;
   o->serialize(*this);
   return primary_key_;
 }
 
-void primary_key_serializer::write_value(const char *, const primary_key_base &x)
+void primary_key_serializer::write_value(const char *, const basic_identifier &x)
 {
   primary_key_ = x.clone();
 }

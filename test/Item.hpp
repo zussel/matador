@@ -19,7 +19,7 @@
 #define ITEM_HPP
 
 #include "object/serializable.hpp"
-#include "object/primary_key.hpp"
+#include "object/identifier.hpp"
 #include "object/object_atomizer.hpp"
 #include "object/object_list.hpp"
 #include "object/object_vector.hpp"
@@ -136,8 +136,8 @@ public:
     serializer.write("val_time", time_);
   }
 
-  unsigned long id() const { return id_; }
-  void id(unsigned long i) { id_ = i; }
+  unsigned long id() const { return id_.value(); }
+  void id(unsigned long i) { id_.value(i); }
 
   void set_char(char x) { char_ = x; }
   void set_float(float x) { float_ = x; }
@@ -191,7 +191,7 @@ public:
 private:
   enum { CSTR_LEN=256 };
 
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
 
   char char_;
   float float_;
@@ -298,7 +298,7 @@ public:
     list_.push_back(i);
   }
 
-  unsigned long id() { return id_; }
+  unsigned long id() { return id_.value(); }
 
   iterator begin() { return list_.begin(); }
   const_iterator begin() const { return list_.begin(); }
@@ -312,7 +312,7 @@ public:
   size_type size() { return list_.size(); }
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   list_t list_;
   std::string relation_name_;
 };
@@ -405,7 +405,7 @@ public:
     return item_list_.erase(i);
   }
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   item_list_t item_list_;
   std::string relation_name_;
 };
@@ -464,7 +464,7 @@ public:
     serializer.write(relation_name_.c_str(), vector_);
   }
 
-  unsigned long id() { return id_; }
+  unsigned long id() { return id_.value(); }
 
   void push_back(const value_type &i)
   {
@@ -493,7 +493,7 @@ public:
   size_type size() { return vector_.size(); }
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   vector_t vector_;
   std::string relation_name_;
 };
@@ -534,7 +534,7 @@ typedef Vector<oos::object_ref<Item> > ItemRefVector;
 class book : public oos::serializable
 {
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string title_;
   std::string isbn_;
   std::string author_;
@@ -609,14 +609,14 @@ public:
   bool empty() const { return book_list_.empty(); }
   
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   book_list_t book_list_;
 };
 
 class person : public oos::serializable
 {
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string name_;
 
 public:
@@ -686,7 +686,7 @@ public:
   typedef emp_list_t::const_iterator const_iterator;
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string name_;
   emp_list_t emp_list_;
   
@@ -713,7 +713,7 @@ public:
     serializer.write("employee_department", emp_list_);
   }
 
-  unsigned long id() const { return id_; }
+  unsigned long id() const { return id_.value(); }
   std::string name() const { return name_; }
   void name(const std::string &name) { name_ = name; }
 
@@ -775,7 +775,7 @@ public:
     serializer.write("students", students);
   }
 
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string name;
   student_list_t students;
 };
@@ -788,7 +788,7 @@ public:
   typedef oos::object_ref<album> album_ref;
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string title_;
   album_ref album_;
   int index_;
@@ -817,7 +817,7 @@ public:
     serializer.write("track_index", index_);
   }
 
-  unsigned long id() { return id_; }
+  unsigned long id() { return id_.value(); }
 
   std::string title() const { return title_; }
   void title(const std::string &t) { title_ = t; }
@@ -839,7 +839,7 @@ public:
   typedef track_list_t::const_iterator const_iterator;
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string name_;
   track_list_t tracks_;
   
@@ -867,7 +867,7 @@ public:
     serializer.write("tracks", tracks_);
   }
 
-  unsigned long id() { return id_; }
+  unsigned long id() { return id_.value(); }
 
   std::string name() const { return name_; }
   void name(const std::string &name) { name_ = name; }
@@ -905,7 +905,7 @@ public:
   typedef track_list_t::const_iterator const_iterator;
 
 private:
-  oos::primary_key<unsigned long> id_;
+  oos::identifier<unsigned long> id_;
   std::string name_;
   track_list_t tracks_;
   track_list_t backup_tracks_;
@@ -972,7 +972,7 @@ public:
         w.write("name", name);
     }
 
-    oos::primary_key<unsigned long> id;
+    oos::identifier<unsigned long> id;
     std::string name;
 };
 
@@ -997,7 +997,7 @@ public:
         w.write("child", children);
     }
 
-    oos::primary_key<unsigned long> id;
+    oos::identifier<unsigned long> id;
     std::string name;
     oos::object_ptr<child> children;
 };
@@ -1026,7 +1026,7 @@ public:
         w.write("children", children);
     }
 
-    oos::primary_key<unsigned long> id;
+    oos::identifier<unsigned long> id;
     std::string name;
     children_list_t children;
 };

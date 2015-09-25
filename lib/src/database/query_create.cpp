@@ -2,11 +2,10 @@
 #include "database/database.hpp"
 
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
 
 #include <sstream>
 #include <cstring>
-#include <object/primary_key.hpp>
-#include <tools/date.hpp>
 
 namespace oos {
 
@@ -107,7 +106,7 @@ void query_create::write(const char *id, const object_base_ptr &)
 void query_create::write(const char *, const object_container &)
 {}
 
-void query_create::write(const char *id, const primary_key_base &x)
+void query_create::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 //  dialect.append(" NOT NULL PRIMARY KEY AUTOINCREMENT");

@@ -226,7 +226,7 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  std::shared_ptr<primary_key_base> primary_key() const;
+  std::shared_ptr<basic_identifier> primary_key() const;
 
   /**
    * Prints the underlaying serializable

@@ -11,7 +11,7 @@ namespace oos {
 
 class serializable;
 class object_base_ptr;
-class primary_key_base;
+class basic_identifier;
 class prototype_node;
 
 /**
@@ -28,16 +28,16 @@ public:
   primary_key_serializer();
   virtual ~primary_key_serializer();
 
-  primary_key_base* serialize(const serializable *o);
+  basic_identifier * serialize(const serializable *o);
 
   template < class T >
   void write_value(const char*, const T&) {}
 
   void write_value(const char*, const char*, int) {}
-  void write_value(const char *id, const primary_key_base &x);
+  void write_value(const char *id, const basic_identifier &x);
 
 private:
-  primary_key_base *primary_key_;
+  basic_identifier *primary_key_;
 };
 
 }

@@ -24,7 +24,7 @@ mysql_column_binder::mysql_column_binder()
 mysql_column_binder::~mysql_column_binder()
 {}
 
-void mysql_column_binder::bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map,
+void mysql_column_binder::bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<basic_identifier> > *pk_map,
                                mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind)
 {
   pk_map_ = pk_map;
@@ -132,7 +132,7 @@ void mysql_column_binder::read(const char *id, object_base_ptr &x)
     // create primary key
     // bind value
     // store in key map
-    std::shared_ptr<primary_key_base> pk(xnode->primary_key->clone());
+    std::shared_ptr<basic_identifier> pk(xnode->primary_key->clone());
     pk->deserialize(id, *this);
     pk_map_->insert(std::make_pair(id, pk));
   }
@@ -142,7 +142,7 @@ void mysql_column_binder::read(const char *, object_container &)
 {}
 
 
-void mysql_column_binder::read(const char *id, primary_key_base &x)
+void mysql_column_binder::read(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }
@@ -216,7 +216,7 @@ void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, 
 
 void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, object_base_ptr &x)
 {
-  std::shared_ptr<primary_key_base> pk = x.primary_key();
+  std::shared_ptr<basic_identifier> pk = x.primary_key();
 
   if (info_[index].buffer == 0) {
     info_[index].buffer = new char[sizeof(long)];

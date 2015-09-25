@@ -21,7 +21,7 @@
 #include "database/statement_impl.hpp"
 
 #include "object/object_atomizer.hpp"
-#include "object/primary_key.hpp"
+#include "identifier.hpp"
 
 #include <string>
 #include <vector>
@@ -66,7 +66,7 @@ protected:
   virtual void write(const char *id, const oos::time &x);
   virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const primary_key_base &x);
+  virtual void write(const char *id, const basic_identifier &x);
 
 private:
   sqlite_database &db_;

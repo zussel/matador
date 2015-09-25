@@ -84,7 +84,7 @@ void transaction::on_delete(object_proxy *proxy)
 
   id_iterator_map_t::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    primary_key_base *pk = primary_key_serializer_.serialize(proxy->obj());
+    basic_identifier *pk = primary_key_serializer_.serialize(proxy->obj());
     backup(new delete_action(proxy->node()->type.c_str(), proxy->id(), pk), proxy);
   } else {
     action_remover ar(action_list_);

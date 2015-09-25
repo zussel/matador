@@ -192,7 +192,7 @@ void DatabaseTestUnit::test_primary_key()
       w.write("id", id);
       w.write("name", name);
     }
-    oos::primary_key<unsigned long> id;
+    oos::identifier<unsigned long> id;
     std::string name;
   };
 

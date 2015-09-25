@@ -129,9 +129,9 @@ protected:
 
   virtual void read(const char *id, object_base_ptr &x);
 
-  virtual void read(const char *id, object_container &x)  {}
+  virtual void read(const char */*id*/, object_container &/*x*/)  {}
 
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, basic_identifier &x);
 
   const prototype_node *node() const;
 

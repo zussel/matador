@@ -23,7 +23,7 @@
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_container.hpp"
-#include "primary_key.hpp"
+#include "identifier.hpp"
 
 #include <stdexcept>
 #include <type_traits>
@@ -103,7 +103,7 @@ private:
     std::cout << "not same type\n";
   }
 
-  void read_value(const char *id, primary_key_base &x)
+  void read_value(const char *id, basic_identifier &x)
   {
     x.deserialize(id, *this);
   }
@@ -192,7 +192,7 @@ private:
     success_ = true;
   }
 
-  void write_value(const char *id, const primary_key_base &x)
+  void write_value(const char *id, const basic_identifier &x)
   {
     x.serialize(id, *this);
   }
@@ -274,7 +274,7 @@ public:
   void write_value(const char*, const date&) {}
   void write_value(const char*, const time&) {}
   void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const primary_key_base &) {}
+  void write_value(const char*, const basic_identifier &) {}
 
   void write_value(const char *id, const char *from, int)
   {

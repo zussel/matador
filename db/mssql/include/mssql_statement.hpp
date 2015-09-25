@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#include <object/primary_key.hpp>
+#include "identifier.hpp"
 
 namespace oos {
 

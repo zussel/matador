@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <object/primary_key.hpp>
+#include "identifier.hpp"
 #include "mysql_result.hpp"
 #include "mysql_exception.hpp"
 
@@ -177,7 +177,7 @@ void mysql_result::read(const char */*id*/, object_container &/*x*/)
 {
 }
 
-void mysql_result::read(const char *id, primary_key_base &x)
+void mysql_result::read(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

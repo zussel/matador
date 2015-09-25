@@ -1,5 +1,5 @@
-#include <object/primary_key.hpp>
-#include <tools/date.hpp>
+#include "object/identifier.hpp"
+#include "tools/date.hpp"
 #include "database/query_select.hpp"
 
 namespace oos {
@@ -99,7 +99,7 @@ void query_select::write(const char *id, const object_base_ptr &)
 void query_select::write(const char *, const object_container &)
 {}
 
-void query_select::write(const char *id, const primary_key_base &x)
+void query_select::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

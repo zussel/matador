@@ -169,7 +169,7 @@ void prototype_node::insert(object_proxy *proxy)
   // adjust size
   ++count;
   // find and insert primary key
-  std::shared_ptr<primary_key_base> pk(pk_serializer.serialize(proxy->obj()));
+  std::shared_ptr<basic_identifier> pk(pk_serializer.serialize(proxy->obj()));
   if (pk) {
     primary_key_map.insert(std::make_pair(pk, proxy));
   }
@@ -335,7 +335,7 @@ bool prototype_node::has_primary_key() const
   return primary_key.get() != nullptr;
 }
 
-object_proxy *prototype_node::find_proxy(const std::shared_ptr<primary_key_base> &pk)
+object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
   t_primary_key_map::iterator i = std::find_if(primary_key_map.begin(), primary_key_map.end(), [pk](const t_primary_key_map::value_type &x) {
     return *pk == *(x.first);

@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/primary_key.hpp"
+#include "identifier.hpp"
 #include "object/serializable.hpp"
 
 #include "sqlite_result.hpp"
@@ -263,7 +263,7 @@ void sqlite_result::read(const char */*id*/, object_container &/*x*/)
 {
 }
 
-void sqlite_result::read(const char *id, primary_key_base &x)
+void sqlite_result::read(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

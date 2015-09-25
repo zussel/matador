@@ -46,7 +46,7 @@ void result_impl::read(const char *id, object_base_ptr &x)
    *
    */
 
-//  std::shared_ptr<primary_key_base> pk = create_primary_key(x);
+//  std::shared_ptr<basic_identifier> pk = create_primary_key(x);
 //
 //  pk->deserialize(id, this);
 //  if (!pk->is_valid()) {
@@ -55,7 +55,7 @@ void result_impl::read(const char *id, object_base_ptr &x)
 //  }
 
   // set found primary key into object_base_ptr
-//  x.primary_key = pk;
+//  x.identifier = pk;
 
   /*
    * read key
@@ -75,7 +75,7 @@ void result_impl::read(const char *id, object_base_ptr &x)
    * if valid value is set create new proxy
    * with primary key
    */
-  std::shared_ptr<primary_key_base> pk(i->second->clone());
+  std::shared_ptr<basic_identifier> pk(i->second->clone());
   pk->deserialize(id, *this);
   if (!pk->is_valid()) {
     return;
@@ -93,7 +93,7 @@ void result_impl::read(const char *id, object_base_ptr &x)
   x.reset(proxy.release());
 }
 
-void result_impl::read(const char *id, primary_key_base &x)
+void result_impl::read(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

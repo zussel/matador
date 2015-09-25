@@ -264,8 +264,8 @@ void mysql_prepared_result::read(const char *id, object_base_ptr &x)
    * if valid value is set create new proxy
    * with primary key
    */
-//  std::shared_ptr<primary_key_base> pk(i->second->clone());
-  std::shared_ptr<primary_key_base> pk = i->second;
+//  std::shared_ptr<basic_identifier> pk(i->second->clone());
+  std::shared_ptr<basic_identifier> pk = i->second;
   pk_map_.erase(i);
   pk->deserialize(id, *this);
   if (!pk->is_valid()) {

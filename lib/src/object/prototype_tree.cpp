@@ -636,7 +636,7 @@ prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
       auto i = node->foreign_key_ids.front();
       node->foreign_key_ids.pop_front();
       prototype_node *foreign_node = i.first;
-      std::shared_ptr<primary_key_base> fk(node->primary_key->clone());
+      std::shared_ptr<basic_identifier> fk(node->primary_key->clone());
       foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
   }
 

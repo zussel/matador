@@ -14,7 +14,7 @@ SET(OBJECT_SOURCES
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
   object/primary_key_serializer.cpp
-)
+        object/basic_identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -38,7 +38,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/identifier.hpp
   ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
 )
 
@@ -68,12 +68,12 @@ SET(OBJECT_HEADER
   ../include/object/object_atomizer.hpp
   ../include/object/object_preparator.hpp
   ../include/object/serializable.hpp
-  ../include/object/primary_key.hpp
+        ../include/object/identifier.hpp
   ../include/object/primary_key_analyzer.hpp
   ../include/object/foreign_key_analyzer.hpp
   ../include/object/primary_key_serializer.hpp
   ../include/object/primary_key_reader.hpp
-)
+        ../include/object/basic_identifier.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

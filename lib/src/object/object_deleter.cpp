@@ -65,7 +65,7 @@ void object_deleter::read_value(const char*, object_container &x)
   x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
 }
 
-void object_deleter::read_value(char const *id, primary_key_base &x)
+void object_deleter::read_value(char const *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

@@ -19,7 +19,7 @@ namespace oos {
 
 class object_base_ptr;
 class varchar_base;
-class primary_key_base;
+class basic_identifier;
 
 namespace mysql {
 
@@ -33,7 +33,7 @@ private:
 
 public:
   typedef detail::result_impl::size_type size_type;
-  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_pk_map;
+  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_pk_map;
 
 public:
   mysql_prepared_result(MYSQL_STMT *s, int rs);

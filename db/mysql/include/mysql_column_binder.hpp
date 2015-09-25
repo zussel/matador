@@ -28,7 +28,7 @@ public:
   mysql_column_binder();
   virtual ~mysql_column_binder();
   
-  void bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map,
+  void bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<basic_identifier> > *pk_map,
             mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
 
   virtual void read(const char *id, char &x);
@@ -49,7 +49,7 @@ public:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, basic_identifier &x);
   
 private:
   template < class T >
@@ -77,7 +77,7 @@ private:
   mysql_result_info *info_ = nullptr;
   const prototype_node *node_;
 
-  std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map_;
+  std::unordered_map<std::string, std::shared_ptr<basic_identifier> > *pk_map_;
 };
 
 }

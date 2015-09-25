@@ -104,7 +104,7 @@ void query_insert::write(const char *id, const object_base_ptr &x)
 void query_insert::write(const char *, const object_container &)
 {}
 
-void query_insert::write(const char *id, const primary_key_base &x)
+void query_insert::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

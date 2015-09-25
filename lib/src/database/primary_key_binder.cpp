@@ -16,7 +16,7 @@ void primary_key_binder::bind(serializable *obj, statement *stmt, int pos)
   cleanup();
 }
 
-void primary_key_binder::read_value(const char *id, primary_key_base &x)
+void primary_key_binder::read_value(const char *id, basic_identifier &x)
 {
   reading_pk_ = true;
   x.deserialize(id, *this);

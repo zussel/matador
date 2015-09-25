@@ -61,7 +61,7 @@ void table_reader::load(result &res)
 
 void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
-  std::shared_ptr<primary_key_base> pk = x.primary_key();
+  std::shared_ptr<basic_identifier> pk = x.primary_key();
   if (!pk) {
     return;
   }

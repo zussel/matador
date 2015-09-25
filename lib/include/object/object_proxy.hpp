@@ -47,7 +47,7 @@ class serializable;
 class object_store;
 class object_base_ptr;
 class prototype_node;
-class primary_key_base;
+class basic_identifier;
 
 /**
  * @cond OOS_DEV
@@ -76,7 +76,7 @@ public:
    * @param pk primary key of object
    * @param node The prototype node
    */
-  object_proxy(const std::shared_ptr<primary_key_base> &pk, prototype_node *node);
+  object_proxy(const std::shared_ptr<basic_identifier> &pk, prototype_node *node);
 
   /**
    * @brief Create an object_proxy for unknown
@@ -307,7 +307,7 @@ public:
    *
    * @return The primary key of the underlaying serializable
    */
-  std::shared_ptr<primary_key_base> pk() const;
+  std::shared_ptr<basic_identifier> pk() const;
 
 private:
   friend class object_store;
@@ -338,7 +338,7 @@ private:
   
   string_object_list_map_t relations;
 
-  std::shared_ptr<primary_key_base> primary_key_ = nullptr;
+  std::shared_ptr<basic_identifier> primary_key_ = nullptr;
 
   static primary_key_serializer pk_serializer;
 };

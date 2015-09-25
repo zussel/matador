@@ -33,7 +33,7 @@
 #endif
 
 #include "object/object_atomizer.hpp"
-#include "primary_key.hpp"
+#include "identifier.hpp"
 #include "object_proxy.hpp"
 
 #include <map>
@@ -122,7 +122,7 @@ public:
   void read_value(const char*, char*, int) {}
   void read_value(const char*, object_base_ptr &x);
   void read_value(const char*, object_container &x);
-  void read_value(const char*, primary_key_base &x);
+  void read_value(const char*, basic_identifier &x);
 
   void check_object(object_proxy *proxy, bool is_ref);
   void check_object_list_node(object_proxy *proxy);
