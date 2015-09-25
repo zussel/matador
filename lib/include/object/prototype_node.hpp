@@ -32,7 +32,7 @@
   #define EXPIMP_TEMPLATE
 #endif
 
-#include "object/primary_key_serializer.hpp"
+#include "identifier_resolver.hpp"
 #include "object/object_producer.hpp"
 #include "object_proxy.hpp"
 #include "identifier.hpp"
@@ -280,7 +280,7 @@ public:
   
   bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  primary_key_serializer pk_serializer;
+  identifier_resolver pk_serializer;
 
   /*
    * Holds the primary keys of all proxies in this node

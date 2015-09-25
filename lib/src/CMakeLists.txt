@@ -13,7 +13,7 @@ SET(OBJECT_SOURCES
   object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
-  object/primary_key_serializer.cpp
+        object/identifier_resolver.cpp
         object/basic_identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
@@ -71,7 +71,7 @@ SET(OBJECT_HEADER
         ../include/object/identifier.hpp
   ../include/object/primary_key_analyzer.hpp
   ../include/object/foreign_key_analyzer.hpp
-  ../include/object/primary_key_serializer.hpp
+        ../include/object/identifier_resolver.hpp
   ../include/object/primary_key_reader.hpp
         ../include/object/basic_identifier.hpp)
 

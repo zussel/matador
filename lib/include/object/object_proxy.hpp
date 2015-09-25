@@ -31,7 +31,7 @@
   #define OOS_API
 #endif
 
-#include "object/primary_key_serializer.hpp"
+#include "identifier_resolver.hpp"
 #include "prototype_node.hpp"
 
 #include <ostream>
@@ -340,7 +340,7 @@ private:
 
   std::shared_ptr<basic_identifier> primary_key_ = nullptr;
 
-  static primary_key_serializer pk_serializer;
+  static identifier_resolver pk_serializer;
 };
 /// @endcond
 }

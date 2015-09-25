@@ -23,7 +23,7 @@ using namespace std;
 
 namespace oos {
 
-primary_key_serializer object_proxy::pk_serializer = primary_key_serializer();
+identifier_resolver object_proxy::pk_serializer = identifier_resolver();
 
 object_proxy::object_proxy(object_store *os)
   : prev_(nullptr)
@@ -69,7 +69,7 @@ object_proxy::object_proxy(serializable *o, object_store *os)
   , ostore_(os)
   , node_(nullptr)
 {
-  primary_key_.reset(pk_serializer.serialize(o));
+  primary_key_.reset(identifier_resolver::resolve(o));
 }
 
 object_proxy::object_proxy(serializable *o, unsigned long id, object_store *os)
@@ -83,7 +83,7 @@ object_proxy::object_proxy(serializable *o, unsigned long id, object_store *os)
   , node_(nullptr)
 {
   if (obj_ != nullptr) {
-    primary_key_.reset(pk_serializer.serialize(obj_));
+    primary_key_.reset(identifier_resolver::resolve(obj_));
   }
 }
 
@@ -205,7 +205,7 @@ void object_proxy::reset(serializable *o)
   oid = 0;
   node_ = 0;
   if (obj_ != nullptr) {
-    primary_key_.reset(pk_serializer.serialize(obj_));
+    primary_key_.reset(identifier_resolver::resolve(obj_));
   }
 }
 

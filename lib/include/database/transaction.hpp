@@ -156,7 +156,7 @@ private:
   action_list_t action_list_;
 
   byte_buffer object_buffer_;
-  primary_key_serializer primary_key_serializer_;
+  identifier_resolver primary_key_serializer_;
 };
 
 }

@@ -169,7 +169,7 @@ void prototype_node::insert(object_proxy *proxy)
   // adjust size
   ++count;
   // find and insert primary key
-  std::shared_ptr<basic_identifier> pk(pk_serializer.serialize(proxy->obj()));
+  std::shared_ptr<basic_identifier> pk(identifier_resolver::resolve(proxy->obj()));
   if (pk) {
     primary_key_map.insert(std::make_pair(pk, proxy));
   }
