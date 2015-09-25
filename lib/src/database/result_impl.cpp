@@ -42,6 +42,22 @@ serializable* result_impl::fetch(const oos::prototype_node *node)
 void result_impl::read(const char *id, object_base_ptr &x)
 {
   /*
+   * deterime and create primary key of object ptr
+   *
+   */
+
+//  std::shared_ptr<primary_key_base> pk = create_primary_key(x);
+//
+//  pk->deserialize(id, this);
+//  if (!pk->is_valid()) {
+//    // no pk is set => null
+//    return;
+//  }
+
+  // set found primary key into object_base_ptr
+//  x.primary_key = pk;
+
+  /*
    * read key
    * if valid key
    * create serializable with key
@@ -76,8 +92,6 @@ void result_impl::read(const char *id, object_base_ptr &x)
 
   x.reset(proxy.release());
 }
-
-void result_impl::read(const char */*id*/, object_container &/*x*/) { }
 
 void result_impl::read(const char *id, primary_key_base &x)
 {
