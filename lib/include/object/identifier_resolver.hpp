@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include "object/object_atomizer.hpp"
 #include "serializable.hpp"
+#include "basic_identifier.hpp"
 
 namespace oos {
 
@@ -29,6 +30,14 @@ class identifier_resolver : public generic_object_writer<identifier_resolver>
 public:
   identifier_resolver();
   virtual ~identifier_resolver();
+
+  template < class T >
+  static basic_identifier* resolve()
+  {
+    T obj;
+
+    return resolve(&obj);
+  }
 
   static basic_identifier* resolve(serializable *obj)
   {

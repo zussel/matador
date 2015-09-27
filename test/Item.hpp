@@ -272,6 +272,7 @@ public:
   typedef typename list_t::const_iterator const_iterator;
 
 public:
+  List() {}
   List(const std::string &relation_name)
     : relation_name_(relation_name)
   {}
@@ -363,6 +364,7 @@ public:
   typedef typename item_list_t::size_type size_type;
 
 public:
+  LinkedList() {}
   LinkedList(const std::string &relation_name)
     : relation_name_(relation_name)
   {}
@@ -448,6 +450,7 @@ public:
   typedef typename vector_t::const_iterator const_iterator;
 
 public:
+  Vector() {}
   Vector(const std::string &relation_name)
     : relation_name_(relation_name)
   {}

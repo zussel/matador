@@ -33,6 +33,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
+#include "object/identifier_resolver.hpp"
 
 #include <memory>
 #include <typeinfo>
@@ -228,6 +229,8 @@ public:
    */
   std::shared_ptr<basic_identifier> primary_key() const;
 
+  virtual basic_identifier* create_identifier() const = 0;
+
   /**
    * Prints the underlaying serializable
    *
@@ -396,12 +399,21 @@ public:
       return static_cast<T*>(lookup_object());
   }
 
+  virtual basic_identifier* create_identifier() const
+  {
+    return object_ptr<T>::identifier_->clone();
+  }
+
 private:
   static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
 };
 
 template < class T >
 std::string object_ptr<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver::resolve<T>());
 
 /**
  * @class object_ref
@@ -528,12 +540,21 @@ public:
 	T* get() {
     return static_cast<T*>(lookup_object());
 	}
+
+  virtual basic_identifier* create_identifier() const
+  {
+    return object_ref<T>::identifier_->clone();
+  }
 private:
   static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
 };
 
 template < class T >
 std::string object_ref<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> object_ref<T>::identifier_(identifier_resolver::resolve<T>());
 
 }
 
