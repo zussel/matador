@@ -448,6 +448,8 @@ private:
 class generic_view
 {
 public:
+
+  
   typedef object_view_iterator<serializable> iterator;             /**< Shortcut to the iterator type */
   typedef const_object_view_iterator<serializable> const_iterator; /**< Shortcut to the const_iterator type */
   typedef object_ptr<serializable> object_pointer;                 /**< Shortcut to serializable pointer */
