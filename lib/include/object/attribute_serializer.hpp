@@ -94,7 +94,33 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &/*to*/, typename std::enable_if< !std::is_same<T, V>::value >::type* = 0)
+  void read_value(const char *id, V &to, typename std::enable_if<
+    std::is_base_of<V, T>::value &&
+    std::is_same<V, oos::varchar_base>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to = from_;
+  }
+
+  template < class V >
+  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+    std::is_base_of<V, T>::value &&
+    std::is_same<V, oos::object_base_ptr>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    std::cout << "found object_ptr conversion\n";
+  }
+
+  template < class V >
+  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+    !std::is_same<T, V>::value &&
+    !std::is_base_of<V, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;

@@ -5,10 +5,10 @@
 #ifndef PRIMARY_KEY_SERIALIZER_HPP
 #define PRIMARY_KEY_SERIALIZER_HPP
 
-#include <stdexcept>
 #include "object/object_atomizer.hpp"
-#include "serializable.hpp"
-#include "basic_identifier.hpp"
+#include "object/serializable.hpp"
+
+#include <stdexcept>
 
 namespace oos {
 
@@ -32,11 +32,17 @@ public:
   virtual ~identifier_resolver();
 
   template < class T >
-  static basic_identifier* resolve()
+  static basic_identifier* resolve(typename std::enable_if<!std::is_same<T, oos::serializable>::value>::type* = 0)
   {
     T obj;
 
     return resolve(&obj);
+  }
+
+  template < class T >
+  static basic_identifier* resolve(typename std::enable_if<std::is_same<T, oos::serializable>::value>::type* = 0)
+  {
+    return nullptr;
   }
 
   static basic_identifier* resolve(serializable *obj)
@@ -44,7 +50,7 @@ public:
     identifier_resolver resolver;
     obj->serialize(resolver);
     if (!resolver.id_) {
-      throw std::logic_error("no identifier found");
+      return nullptr;
     }
     return resolver.id_;
   }
