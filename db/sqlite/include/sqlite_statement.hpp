@@ -21,7 +21,6 @@
 #include "database/statement_impl.hpp"
 
 #include "object/object_atomizer.hpp"
-#include "identifier.hpp"
 
 #include <string>
 #include <vector>
@@ -32,6 +31,7 @@ struct sqlite3_stmt;
 namespace oos {
 
 class varchar_base;
+class basic_identifier;
 
 namespace sqlite {
 

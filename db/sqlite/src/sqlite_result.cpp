@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "identifier.hpp"
+#include "object/identifier.hpp"
 #include "object/serializable.hpp"
 
 #include "sqlite_result.hpp"
