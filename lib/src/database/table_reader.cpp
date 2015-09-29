@@ -78,6 +78,7 @@ void table_reader::read_value(const char */*id*/, object_base_ptr &x)
   if (proxy) {
     x.reset(proxy, x.is_reference());
   } else {
+    // TODO: Can we call reset instead?
     x.proxy_->obj_ = node->producer->create();
     proxy = ostore_.register_proxy(x.proxy_);
   }

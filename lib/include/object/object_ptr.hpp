@@ -174,6 +174,12 @@ public:
    * @return The serializable.
    */
   serializable* ptr();
+
+  /**
+   * Returns the serializable
+   *
+   * @return The serializable.
+   */
 	const serializable* ptr() const;
 
   /**
@@ -241,23 +247,23 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
 
 private:
-	friend class object_reader;
-	friend class object_writer;
   friend class object_creator;
   friend class object_serializer;
   friend class object_proxy;
   friend class object_deleter;
   friend class object_store;
-  friend class session;
-  friend class query;
-  friend class result;
   friend class object_container;
+
+  // Todo: change interface to remove friend
+  friend class session;
+  // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
   template < class T > friend class object_ref;
   template < class T > friend class object_ptr;
 
   object_proxy *proxy_ = nullptr;
+  std::shared_ptr<oos::basic_identifier> identifier_;
   bool is_reference_ = false;
   bool is_internal_ = false;
   unsigned long oid_ = 0;
