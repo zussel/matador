@@ -98,7 +98,12 @@ void query_insert::write(const char *id, const time &x)
 
 void query_insert::write(const char *id, const object_base_ptr &x)
 {
-  write_field(id, type_long, x.id());
+  if (x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+//    write_field(id, type_long, x.id());
+  } else {
+    write_null(id);
+  }
 }
 
 void query_insert::write(const char *, const object_container &)
@@ -217,6 +222,20 @@ void query_insert::values()
 {
   fields_ = false;
   first = true;
+}
+
+void query_insert::write_null(const char *id)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  if (fields_) {
+    dialect.append(id);
+  } else {
+    dialect.append(id, type_long, "NULL");
+  }
 }
 
 }

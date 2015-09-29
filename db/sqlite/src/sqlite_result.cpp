@@ -89,12 +89,17 @@ void sqlite_result::push_back(char **row_values, int column_count)
   t_row row;
   for(int i = 0; i < column_count; ++i) {
     // copy and store column data;
-    size_t size = strlen(row_values[i]);
-//    auto val = std::shared_ptr<char>(new char[size], std::default_delete<char[]>());
-    auto val = new char[size+1];
-    std::memcpy(val, row_values[i], size);
-    val[size] = '\0';
-    row.push_back(val);
+    if (row_values[i] == nullptr) {
+      auto val = new char[1];
+      val[0] = '\0';
+      row.push_back(val);
+    } else {
+      size_t size = strlen(row_values[i]);
+      auto val = new char[size + 1];
+      std::memcpy(val, row_values[i], size);
+      val[size] = '\0';
+      row.push_back(val);
+    }
   }
   result_.push_back(row);
 }

@@ -58,9 +58,12 @@ public:
   void write_field(const char *id, data_type_t type, const std::string &x);
   void write_field(const char *id, data_type_t type, const varchar_base &x);
   void write_field(const char *id, data_type_t type, const char *x);
-  
+
   void fields();
   void values();
+
+private:
+  void write_null(const char *id);
 
 private:
   sql &dialect;
