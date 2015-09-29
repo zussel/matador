@@ -39,8 +39,26 @@ serializable* result_impl::fetch(const oos::prototype_node *node)
   return obj.release();
 }
 
-void result_impl::read(const char *id, object_base_ptr &x)
+void result_impl::read_foreign_object(const char *id, object_base_ptr &x)
 {
+  /*
+   * deterime and create primary key of object ptr
+   *
+   */
+  std::shared_ptr<basic_identifier> pk(x.create_identifier());
+
+  pk->deserialize(id, *this);
+  if (!pk->is_valid()) {
+    // no pk is set => null
+    return;
+  }
+
+  // set found primary key into object_base_ptr
+  x.identifier_ = pk;
+}
+
+//void result_impl::read(const char *id, object_base_ptr &x)
+//{
   /*
    * deterime and create primary key of object ptr
    *
@@ -65,38 +83,33 @@ void result_impl::read(const char *id, object_base_ptr &x)
    * reset object ptr
    */
   // find prototype node of foreign key
-  prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
-  if (i == node_->foreign_keys.end()) {
-    throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");
-  }
-
-  /*
-   * clone new primary key and deserialize it
-   * if valid value is set create new proxy
-   * with primary key
-   */
-  std::shared_ptr<basic_identifier> pk(i->second->clone());
-  pk->deserialize(id, *this);
-  if (!pk->is_valid()) {
-    return;
-  }
-
-  // get node of object type
-  prototype_iterator xnode = node_->tree->find(x.type());
-
-  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
-
-  if (!proxy) {
-    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
-  }
-
-  x.reset(proxy.release());
-}
-
-void result_impl::read(const char *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
-}
+//  prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
+//  if (i == node_->foreign_keys.end()) {
+//    throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");
+//  }
+//
+//  /*
+//   * clone new primary key and deserialize it
+//   * if valid value is set create new proxy
+//   * with primary key
+//   */
+//  std::shared_ptr<basic_identifier> pk(i->second->clone());
+//  pk->deserialize(id, *this);
+//  if (!pk->is_valid()) {
+//    return;
+//  }
+//
+//  // get node of object type
+//  prototype_iterator xnode = node_->tree->find(x.type());
+//
+//  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
+//
+//  if (!proxy) {
+//    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
+//  }
+//
+//  x.reset(proxy.release());
+//}
 
 const prototype_node* result_impl::node() const
 {

@@ -135,8 +135,9 @@ void table::prepare()
 void table::create()
 {
   query q(db_);
-  
-  result res = q.create(node_).execute();
+
+  std::unique_ptr<serializable> obj(node_.producer->create());
+  result res = q.create(node_.type, obj.get()).execute();
   
   // prepare CRUD statements
   prepare();
@@ -217,7 +218,7 @@ void table::drop()
 {
   query q(db_);
 
-  result res(q.drop(node_).execute());
+  result res(q.drop(node_.type).execute());
   // Todo: check drop result
 }
 

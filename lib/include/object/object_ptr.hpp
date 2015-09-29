@@ -40,6 +40,10 @@
 
 namespace oos {
 
+namespace detail {
+class result_impl;
+}
+
 class serializable;
 class object_store;
 class prototype_node;
@@ -253,6 +257,8 @@ private:
   friend class object_deleter;
   friend class object_store;
   friend class object_container;
+
+  friend class detail::result_impl;
 
   // Todo: change interface to remove friend
   friend class session;

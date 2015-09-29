@@ -43,9 +43,8 @@ class session;
 class statement;
 class database;
 class serializable;
-class prototype_node;
 class condition;
-class serializable;
+class object_base_ptr;
 
 /**
  * @class query
@@ -123,15 +122,6 @@ public:
 
   /**
    * Creates a create statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the create statement.
-   * @return A reference to the query.
-   */
-  query& create(const prototype_node &node);
-
-  /**
-   * Creates a create statement based
    * on a given name and a serializable
    * class instance.
    * 
@@ -147,15 +137,6 @@ public:
     T obj;
     return create(name, &obj);
   }
-
-  /**
-   * Creates a drop statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the drop statement.
-   * @return A reference to the query.
-   */
-  query& drop(const prototype_node &node);
 
   /**
    * Creates a drop statement based
@@ -201,32 +182,16 @@ public:
 
   /**
    * Creates an insert statement based
-   * on the given serializable.
-   * 
-   * @param o The serializable used for the insert statement.
-   * @return A reference to the query.
-   */
-  query& insert(object_proxy *proxy);
-
-  /**
-   * Creates an insert statement based
    * on the given serializable serializable and.
    * the name of the table
-   * 
+   *
    * @param o The serializable serializable used for the insert statement.
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& insert(serializable *o, const std::string &name);
+  query& insert(const serializable *o, const std::string &name);
 
-  /**
-   * Creates an update statement based
-   * on the given serializable.
-   * 
-   * @param o The serializable used for the update statement.
-   * @return A reference to the query.
-   */
-  query& update(object_proxy *proxy);
+  query& insert(const object_base_ptr &ptr, const std::string &name);
 
   /**
    * Creates an update statement based

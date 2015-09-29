@@ -53,6 +53,9 @@ protected:
   virtual void read(const char *id, std::string &x) override;
   virtual void read(const char *id, oos::date &x) override;
   virtual void read(const char *id, oos::time &x) override;
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, basic_identifier &x);
 
 private:
   int ret_;

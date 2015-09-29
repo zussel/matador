@@ -17,6 +17,7 @@
 
 #include "object/identifier.hpp"
 #include "object/serializable.hpp"
+#include "object/object_ptr.hpp"
 
 #include "sqlite_result.hpp"
 
@@ -255,8 +256,9 @@ void sqlite_result::read(const char *id, oos::time &x)
   x = oos::time::parse(val, "%F %T.%f");
 }
 
-void sqlite_result::read(const char */*id*/, object_base_ptr &/*x*/)
+void sqlite_result::read(const char *id, object_base_ptr &x)
 {
+  read_foreign_object(id, x);
 }
 
 void sqlite_result::read(const char */*id*/, object_container &/*x*/)

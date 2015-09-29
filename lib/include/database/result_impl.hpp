@@ -18,6 +18,7 @@
 #include <object/object_producer.hpp>
 
 #include <memory>
+#include <object/object_ptr.hpp>
 
 namespace oos {
 
@@ -40,13 +41,6 @@ protected:
 
 public:
   virtual ~result_impl();
-
-  template<class T>
-  void get(unsigned long i, T &val)
-  {
-    result_index = transform_index(i);
-    read("", val);
-  }
 
   void get(serializable *o);
 
@@ -83,55 +77,7 @@ public:
   std::shared_ptr<object_base_producer> producer() const;
 
 protected:
-  virtual void read(const char *, char &) { }
-  virtual void read(const char *, short &) { }
-  virtual void read(const char *, int &)
-  { }
-
-  virtual void read(const char *, long &)
-  { }
-
-  virtual void read(const char *, unsigned char &)
-  { }
-
-  virtual void read(const char *, unsigned short &)
-  { }
-
-  virtual void read(const char *, unsigned int &)
-  { }
-
-  virtual void read(const char *, unsigned long &)
-  { }
-
-  virtual void read(const char *, bool &)
-  { }
-
-  virtual void read(const char *, float &)
-  { }
-
-  virtual void read(const char *, double &)
-  { }
-
-  virtual void read(const char *, char *, int)
-  { }
-
-  virtual void read(const char *, varchar_base &)
-  { }
-
-  virtual void read(const char *, std::string &)
-  { }
-
-  virtual void read(const char *, oos::date &)
-  { }
-
-  virtual void read(const char *, oos::time &)
-  { }
-
-  virtual void read(const char *id, object_base_ptr &x);
-
-  virtual void read(const char */*id*/, object_container &/*x*/)  {}
-
-  virtual void read(const char *id, basic_identifier &x);
+  void read_foreign_object(const char *id, object_base_ptr &x);
 
   const prototype_node *node() const;
 

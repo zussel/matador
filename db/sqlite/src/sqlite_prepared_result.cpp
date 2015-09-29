@@ -155,20 +155,6 @@ void sqlite_prepared_result::read(const char *, varchar_base &x)
   }
 }
 
-void sqlite_prepared_result::read(const char *id, oos::date &x)
-{
-  double val = 0;
-  read(id, val);
-  x.set(static_cast<int>(val));
-}
-
-void sqlite_prepared_result::read(const char *id, oos::time &x)
-{
-  std::string val;
-  read(id, val);
-  x = oos::time::parse(val, "%F %T.%f");
-}
-
 void sqlite_prepared_result::read(const char *, char *x, int s)
 {
   int size = sqlite3_column_bytes(stmt_, result_index);
@@ -189,6 +175,31 @@ void sqlite_prepared_result::read(const char *, char *x, int s)
   }
 }
 
+void sqlite_prepared_result::read(const char *id, oos::date &x)
+{
+  double val = 0;
+  read(id, val);
+  x.set(static_cast<int>(val));
+}
+
+void sqlite_prepared_result::read(const char *id, oos::time &x)
+{
+  std::string val;
+  read(id, val);
+  x = oos::time::parse(val, "%F %T.%f");
+}
+
+void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
+{
+  read_foreign_object(id, x);
+}
+
+void sqlite_prepared_result::read(const char *, object_container &) { }
+
+void sqlite_prepared_result::read(const char *id, basic_identifier &x)
+{
+  x.deserialize(id, *this);
+}
 }
 
 }
