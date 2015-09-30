@@ -14,7 +14,7 @@ SET(OBJECT_SOURCES
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
         object/identifier_resolver.cpp
-        object/basic_identifier.cpp)
+        object/basic_identifier.cpp object/identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -239,7 +239,7 @@ SET(DATABASE_HEADER
   ../include/database/query_update.hpp
   ../include/database/token.hpp
   ../include/database/primary_key_binder.hpp
-        ../include/database/statement_impl.hpp)
+        ../include/database/statement_impl.hpp object/identifier.cpp)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp

@@ -44,5 +44,6 @@ void PrimaryKeyUnitTest::test_share()
 {
   oos::identifier<std::string> strid("baba");
 
-  std::shared_ptr<oos::identifier<std::string> > strid_copy( "baba");
+  auto shared_id = share_identifier(strid);
+//  std::shared_ptr<oos::identifier<std::string> > strid_copy( "baba");
 }

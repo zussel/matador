@@ -25,14 +25,17 @@ public:
   explicit identifier(T val) : id_(new T(val))
   { }
 
-  identifier(const basic_identifier *id)
-  {
-    if (!is_same_type(*id)) {
-      throw std::logic_error("not the same type");
-    }
-    const self *xid = static_cast<const self *>(id);
-    *id_ = *(xid->value());
-  }
+//  identifier(const std::shared_ptr<T> &id) : id_(id) { }
+//
+//  identifier(const basic_identifier *id)
+//  {
+//    if (!is_same_type(*id)) {
+//      throw std::logic_error("not the same type");
+//    }
+//    const self *xid = static_cast<const self *>(id);
+//    *id_ = xid->value();
+//  }
+
   virtual ~identifier()
   { };
 
@@ -89,7 +92,7 @@ public:
 
   virtual basic_identifier *share() const
   {
-    return new self(id_);
+    return nullptr;
   }
 
   virtual bool is_valid() const {
@@ -125,6 +128,17 @@ public:
   explicit identifier(const std::string &val) : id_(new std::string(val))
   { }
 
+//  identifier(const std::shared_ptr<std::string> &id) : id_(id) { }
+//
+//  identifier(const basic_identifier *id)
+//  {
+//    if (!is_same_type(*id)) {
+//      throw std::logic_error("not the same type");
+//    }
+//    const self *xid = static_cast<const self *>(id);
+//    *id_ = xid->value();
+//  }
+
   virtual ~identifier()
   { };
 
@@ -150,7 +164,7 @@ public:
   virtual bool equal_to(const basic_identifier &x) const
   {
     if (this->is_same_type(x)) {
-      return *id_ == static_cast<const identifier<T> &>(x).value();
+      return *id_ == static_cast<const identifier<std::string> &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -181,7 +195,7 @@ public:
 
   virtual basic_identifier *share() const
   {
-    return new self(id_);
+    return nullptr;
   }
 
   virtual bool is_valid() const {
@@ -200,14 +214,18 @@ private:
   static std::type_index type_index_;
 };
 
-template<typename T>
-std::type_index identifier<T, typename std::enable_if<std::is_same<T, std::string>::value>::type>::type_index_ = std::type_index(
-    typeid(identifier<T, typename std::enable_if<std::is_same<T, std::string>::value>::type>));
-
 template<class T>
 identifier<T> *make_id(const T &id)
 {
   return new identifier<T>(id);
+}
+
+template<class T>
+identifier<T> share_identifier(const identifier<T> &id)
+{
+  identifier<T> shared;
+
+  return shared;
 }
 
 }
