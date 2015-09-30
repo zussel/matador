@@ -127,6 +127,15 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
   }
 }
 
+void object_base_ptr::reset(const std::shared_ptr<basic_identifier> &id)
+{
+  if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
+      throw object_exception("identifier types are not equal");
+  }
+  object_proxy *proxy = new object_proxy(id, nullptr);
+  reset(proxy);
+}
+
 bool
 object_base_ptr::is_loaded() const
 {

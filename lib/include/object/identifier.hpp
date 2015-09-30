@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <stdexcept>
 #include <functional>
+#include <memory>
 
 namespace oos {
 
@@ -18,29 +19,37 @@ class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> :
 public:
   typedef identifier<T> self;
 
-  identifier()
+  identifier() : id_(new T(0))
   { };
 
-  explicit identifier(T val) : value_(val)
+  explicit identifier(T val) : id_(new T(val))
   { }
 
+  identifier(const basic_identifier *id)
+  {
+    if (!is_same_type(*id)) {
+      throw std::logic_error("not the same type");
+    }
+    const self *xid = static_cast<const self *>(id);
+    *id_ = *(xid->value());
+  }
   virtual ~identifier()
   { };
 
   virtual void serialize(const char *id, object_writer &writer) const
   {
-    writer.write(id, value_);
+    writer.write(id, *id_);
   }
 
   virtual void deserialize(const char *id, object_reader &reader)
   {
-    reader.read(id, value_);
+    reader.read(id, *id_);
   }
 
   virtual bool less(const basic_identifier &x) const
   {
     if (this->is_same_type(x)) {
-      return value_ < static_cast<const self &>(x).value();
+      return *id_ < static_cast<const self &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -49,7 +58,7 @@ public:
   virtual bool equal_to(const basic_identifier &x) const
   {
     if (this->is_same_type(x)) {
-      return value_ == static_cast<const identifier<T> &>(x).value();
+      return *id_ == static_cast<const identifier<T> &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -58,7 +67,7 @@ public:
   virtual size_t hash() const
   {
     std::hash<T> pk_hash;
-    return pk_hash(value_);
+    return pk_hash(*id_);
   }
 
   virtual bool is_same_type(const basic_identifier &x) const
@@ -69,27 +78,32 @@ public:
 
   virtual std::ostream &print(std::ostream &out) const
   {
-    out << value_;
+    out << *id_;
     return out;
   }
 
   virtual basic_identifier *clone() const
   {
-    return new self(value_);
+    return new self(*id_);
+  }
+
+  virtual basic_identifier *share() const
+  {
+    return new self(id_);
   }
 
   virtual bool is_valid() const {
-    return value_ != 0;
+    return *id_ != 0;
   }
 
   T value() const
-  { return value_; }
+  { return *id_; }
 
   void value(T val)
-  { value_ = val; }
+  { *id_ = val; }
 
 private:
-  T value_ = 0;
+  std::shared_ptr<T> id_;
 
   static std::type_index type_index_;
 };
@@ -99,16 +113,16 @@ std::type_index identifier<T, typename std::enable_if<std::is_integral<T>::value
     typeid(identifier<T, typename std::enable_if<std::is_integral<T>::value>::type>));
 
 
-template<typename T>
-class identifier<T, typename std::enable_if<std::is_same<T, std::string>::value>::type> : public basic_identifier
+template<>
+class identifier<std::string> : public basic_identifier
 {
 public:
-  typedef identifier<T> self;
+  typedef identifier<std::string> self;
 
-  identifier()
+  identifier() : id_(new std::string(""))
   { };
 
-  explicit identifier(T val) : value_(val)
+  explicit identifier(const std::string &val) : id_(new std::string(val))
   { }
 
   virtual ~identifier()
@@ -116,18 +130,18 @@ public:
 
   virtual void serialize(const char *id, object_writer &writer) const
   {
-    writer.write(id, value_);
+    writer.write(id, *id_);
   }
 
   virtual void deserialize(const char *id, object_reader &reader)
   {
-    reader.read(id, value_);
+    reader.read(id, *id_);
   }
 
   virtual bool less(const basic_identifier &x) const
   {
     if (this->is_same_type(x)) {
-      return value_ < static_cast<const self &>(x).value();
+      return *id_ < static_cast<const self &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -136,7 +150,7 @@ public:
   virtual bool equal_to(const basic_identifier &x) const
   {
     if (this->is_same_type(x)) {
-      return value_ == static_cast<const identifier<T> &>(x).value();
+      return *id_ == static_cast<const identifier<T> &>(x).value();
     } else {
       throw std::logic_error("not the same type");
     }
@@ -144,8 +158,8 @@ public:
 
   virtual size_t hash() const
   {
-    std::hash<T> pk_hash;
-    return pk_hash(value_);
+    std::hash<std::string> pk_hash;
+    return pk_hash(*id_);
   }
 
   virtual bool is_same_type(const basic_identifier &x) const
@@ -156,27 +170,32 @@ public:
 
   virtual std::ostream &print(std::ostream &out) const
   {
-    out << value_;
+    out << *id_;
     return out;
   }
 
   virtual basic_identifier *clone() const
   {
-    return new self(value_);
+    return new self(*id_);
+  }
+
+  virtual basic_identifier *share() const
+  {
+    return new self(id_);
   }
 
   virtual bool is_valid() const {
-    return !value_.empty();
+    return !id_->empty();
   }
 
-  T value() const
-  { return value_; }
+  std::string value() const
+  { return *id_; }
 
-  void value(T val)
-  { value_ = val; }
+  void value(const std::string &val)
+  { *id_ = val; }
 
 private:
-  T value_;
+  std::shared_ptr<std::string> id_;
 
   static std::type_index type_index_;
 };

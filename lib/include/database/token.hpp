@@ -40,11 +40,7 @@ struct result_field_token : public sql::token {
   result_field_token(sql::field_ptr f) : fld(f) {}
 
   virtual std::string get(bool prepared) const {
-    if (prepared) {
-      return fld->name;
-    } else {
-      return fld->name;
-    }
+    return fld->name;
   }
 
   sql::field_ptr fld;

@@ -145,6 +145,15 @@ public:
 	void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
+   * Resets the object_base_ptr with the given
+   * identifier. If the type of identifier differs
+   * from internal type an exception is thrown
+   *
+   * @param id The identifier to set
+   */
+  void reset(const std::shared_ptr<basic_identifier> &id);
+
+  /**
    * Returns if the serializable is loaded.
    * 
    * @return True if the serializable is loaded.
@@ -258,8 +267,6 @@ private:
   friend class object_store;
   friend class object_container;
 
-  friend class detail::result_impl;
-
   // Todo: change interface to remove friend
   friend class session;
   // Todo: replace private access of proxy with call to reset
@@ -269,7 +276,6 @@ private:
   template < class T > friend class object_ptr;
 
   object_proxy *proxy_ = nullptr;
-  std::shared_ptr<oos::basic_identifier> identifier_;
   bool is_reference_ = false;
   bool is_internal_ = false;
   unsigned long oid_ = 0;

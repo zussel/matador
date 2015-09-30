@@ -38,6 +38,7 @@ public:
   virtual const std::type_index &type_index() const = 0;
 
   virtual basic_identifier *clone() const = 0;
+  virtual basic_identifier *share() const = 0;
 
   virtual std::ostream &print(std::ostream &out) const = 0;
 

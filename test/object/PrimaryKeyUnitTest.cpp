@@ -12,6 +12,7 @@ PrimaryKeyUnitTest::PrimaryKeyUnitTest()
   : unit_test("pk", "Primary Key Unit Test")
 {
   add_test("create", std::bind(&PrimaryKeyUnitTest::test_create, this), "test create");
+  add_test("share", std::bind(&PrimaryKeyUnitTest::test_share, this), "test share");
 }
 
 PrimaryKeyUnitTest::~PrimaryKeyUnitTest()
@@ -37,4 +38,11 @@ void PrimaryKeyUnitTest::test_create()
   long result = pkb->id<long>();
 
   UNIT_ASSERT_EQUAL(id57, result, "values are must be equal");
+}
+
+void PrimaryKeyUnitTest::test_share()
+{
+  oos::identifier<std::string> strid("baba");
+
+  std::shared_ptr<oos::identifier<std::string> > strid_copy( "baba");
 }

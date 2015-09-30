@@ -136,6 +136,7 @@ void SQLTestUnit::test_foreign_query()
   q.reset();
 
   object_ptr<Item> hans(new Item("Hans", 4711));
+  hans->id(23);
   hans->set_time(oos::time(2015, 3, 15, 13, 56, 23, 123));
   res = q.insert(hans, "item").execute();
 

@@ -54,7 +54,7 @@ void result_impl::read_foreign_object(const char *id, object_base_ptr &x)
   }
 
   // set found primary key into object_base_ptr
-  x.identifier_ = pk;
+  x.reset(pk);
 }
 
 //void result_impl::read(const char *id, object_base_ptr &x)

@@ -19,6 +19,7 @@ public:
   virtual void finalize();
 
   void test_create();
+  void test_share();
 };
 
 
