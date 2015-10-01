@@ -25,7 +25,7 @@ class prototype_node;
  * object. If object doesn't have a primary key
  * nullptr is returned
  */
-class identifier_resolver : public generic_object_writer<identifier_resolver>
+class identifier_resolver : public generic_object_reader<identifier_resolver>
 {
 public:
   identifier_resolver();
@@ -48,7 +48,7 @@ public:
   static basic_identifier* resolve(serializable *obj)
   {
     identifier_resolver resolver;
-    obj->serialize(resolver);
+    obj->deserialize(resolver);
     if (!resolver.id_) {
       return nullptr;
     }
@@ -56,10 +56,10 @@ public:
   }
 
   template < class T >
-  void write_value(const char*, const T&) {}
+  void read_value(const char*, T&) {}
 
-  void write_value(const char*, const char*, int) {}
-  void write_value(const char *id, const basic_identifier &x);
+  void read_value(const char*, char*, int) {}
+  void read_value(const char *id, basic_identifier &x);
 
 private:
   basic_identifier *id_ = nullptr;

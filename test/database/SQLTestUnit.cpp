@@ -164,6 +164,9 @@ void SQLTestUnit::test_foreign_query()
 
     t_object_item *oi = dynamic_cast<t_object_item*>(obj);
 
+    object_ptr<Item> i = oi->ptr();
+
+    std::cout << "item pk: " << *i.primary_key() << '\n';
     delete obj;
     ++first;
   }

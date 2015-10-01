@@ -93,6 +93,18 @@ public:
     return new self(*id_);
   }
 
+  virtual self* share()
+  {
+    std::unique_ptr<self> shared(new self());
+    shared->id_ = id_;
+    return shared.release();
+  }
+
+  virtual void isolate()
+  {
+    id_.reset(new T(*id_));
+  }
+
   virtual void share_with(basic_identifier &id)
   {
     if (!is_same_type(id)) {
@@ -187,6 +199,18 @@ public:
   virtual basic_identifier *clone() const
   {
     return new self(*id_);
+  }
+
+  virtual identifier<std::string>* share()
+  {
+    std::unique_ptr<identifier<std::string>> shared(new identifier<std::string>);
+    shared->id_ = id_;
+    return shared.release();
+  }
+
+  virtual void isolate()
+  {
+    id_.reset(new std::string(*id_));
   }
 
   virtual void share_with(basic_identifier &id)
