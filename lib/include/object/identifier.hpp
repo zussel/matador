@@ -13,6 +13,9 @@
 
 namespace oos {
 
+template<class T>
+identifier<T> share_identifier(const identifier<T> &id);
+
 template<typename T>
 class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> : public basic_identifier
 {
@@ -90,9 +93,13 @@ public:
     return new self(*id_);
   }
 
-  virtual basic_identifier *share() const
+  virtual void share_with(basic_identifier &id)
   {
-    return nullptr;
+    if (!is_same_type(id)) {
+      return;
+    }
+    identifier<T> &xid = static_cast<identifier<T> &>(id);
+    xid.id_ = id_;
   }
 
   virtual bool is_valid() const {
@@ -127,17 +134,6 @@ public:
 
   explicit identifier(const std::string &val) : id_(new std::string(val))
   { }
-
-//  identifier(const std::shared_ptr<std::string> &id) : id_(id) { }
-//
-//  identifier(const basic_identifier *id)
-//  {
-//    if (!is_same_type(*id)) {
-//      throw std::logic_error("not the same type");
-//    }
-//    const self *xid = static_cast<const self *>(id);
-//    *id_ = xid->value();
-//  }
 
   virtual ~identifier()
   { };
@@ -193,9 +189,13 @@ public:
     return new self(*id_);
   }
 
-  virtual basic_identifier *share() const
+  virtual void share_with(basic_identifier &id)
   {
-    return nullptr;
+    if (!is_same_type(id)) {
+      return;
+    }
+    identifier<std::string> &xid = static_cast<identifier<std::string> &>(id);
+    xid.id_ = id_;
   }
 
   virtual bool is_valid() const {
@@ -218,14 +218,6 @@ template<class T>
 identifier<T> *make_id(const T &id)
 {
   return new identifier<T>(id);
-}
-
-template<class T>
-identifier<T> share_identifier(const identifier<T> &id)
-{
-  identifier<T> shared;
-
-  return shared;
 }
 
 }

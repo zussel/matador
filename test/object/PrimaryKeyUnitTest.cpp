@@ -42,8 +42,22 @@ void PrimaryKeyUnitTest::test_create()
 
 void PrimaryKeyUnitTest::test_share()
 {
-  oos::identifier<std::string> strid("baba");
+  std::string id("max@mustermann.de");
+  std::string gollum("gollum@mittelerde.to");
+  oos::identifier<std::string> email(id);
 
-  auto shared_id = share_identifier(strid);
-//  std::shared_ptr<oos::identifier<std::string> > strid_copy( "baba");
+  UNIT_ASSERT_EQUAL(id, email.value(), "invalid identifier value");
+
+  oos::identifier<std::string> shared_email;
+
+  UNIT_ASSERT_TRUE(shared_email.value().empty(), "identifier must be empty");
+
+  email.share_with(shared_email);
+
+  UNIT_ASSERT_EQUAL(id, shared_email.value(), "invalid identifier value");
+
+  email.value(gollum);
+
+  UNIT_ASSERT_EQUAL(gollum, email.value(), "invalid identifier value");
+  UNIT_ASSERT_EQUAL(gollum, shared_email.value(), "invalid identifier value");
 }
