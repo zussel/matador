@@ -34,6 +34,7 @@ statement::statement(detail::statement_impl *impl, database *db)
 statement::~statement()
 {
   if (p) {
+    p->clear();
     delete p;
   }
 }

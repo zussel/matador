@@ -155,7 +155,7 @@ void table::load(object_store &ostore)
 
   reader.load(res);
 
-  select_.clear();
+//  select_.clear();
 
   /*
    * after all tables were loaded fill
@@ -186,7 +186,8 @@ void table::insert(serializable *obj)
 {
   insert_.bind(obj);
   result res = insert_.execute();
-  insert_.clear();
+//  insert_.clear();
+//  insert_.reset();
 
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("insert", "more than one affected row while inserting an object");
@@ -216,6 +217,11 @@ void table::remove(serializable *obj)
 
 void table::drop()
 {
+  insert_.clear();
+  update_.clear();
+  delete_.clear();
+  select_.clear();
+
   query q(db_);
 
   result res(q.drop(node_.type).execute());

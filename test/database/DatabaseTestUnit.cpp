@@ -52,12 +52,12 @@ DatabaseTestUnit::~DatabaseTestUnit()
 void
 DatabaseTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
-  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
-  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
-  ostore_.insert_prototype<album>("album");
-  ostore_.insert_prototype<track>("track");
+//  ostore_.insert_prototype<Item>("item");
+//  ostore_.insert_prototype<ObjectItem<Item>, Item>("object_item");
+//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+//  ostore_.insert_prototype(new vector_object_producer<ItemPtrVector>("ptr_vector"), "item_ptr_vector");
+//  ostore_.insert_prototype<album>("album");
+//  ostore_.insert_prototype<track>("track");
 
   ostore_.insert_prototype<children_list>("children_list");
   ostore_.insert_prototype<master>("master");

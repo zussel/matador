@@ -167,7 +167,7 @@ void database_sequencer::commit()
   update_.bind(&sequence_);
   // TODO: check result
   update_.execute();
-  update_.clear();
+//  update_.clear();
   update_.reset();
 }
 
@@ -178,6 +178,7 @@ void database_sequencer::rollback()
 
 void database_sequencer::drop()
 {
+  update_.clear();
   query q(db_);
   // TODO: check result
   q.drop("oos_sequence").execute();
