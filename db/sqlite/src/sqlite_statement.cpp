@@ -22,8 +22,6 @@
 
 #include "database/row.hpp"
 
-#include "object/object_ptr.hpp"
-
 #include "tools/string.hpp"
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
@@ -56,8 +54,6 @@ sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt, 
 {
   str(stmt);
   // prepare sqlite statement
-  std::cout << "preparing statement: " << str() << '\n';
-  std::cout.flush();
   int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
   throw_error(ret, db_(), "sqlite3_prepare_v2", str());
 
@@ -89,8 +85,6 @@ void sqlite_statement::clear()
   if (!stmt_) {
     return;
   }
-  std::cout << "finalizing statement: " << str() << '\n';
-  std::cout.flush();
   int ret = sqlite3_finalize(stmt_);
   throw_error(ret, db_(), "sqlite3_finalize");
   stmt_ = 0;

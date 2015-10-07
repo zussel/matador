@@ -617,6 +617,7 @@ void DatabaseTestUnit::test_reload_relation()
   UNIT_ASSERT_EQUAL(child_view.size(), (size_t)0, "size of child view must be zero");
 
   session_->open();
+
   session_->load();
 
   UNIT_ASSERT_FALSE(child_view.empty(), "child view must not be empty");

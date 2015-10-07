@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "database/table_reader.hpp"
 #include "database/table.hpp"
 #include "database/database_exception.hpp"
@@ -107,7 +108,8 @@ table::table(database &db, const prototype_node &node)
   , node_(node)
   , prepared_(false)
   , is_loaded_(false)
-{}
+{
+}
 
 table::~table()
 {}
@@ -221,6 +223,8 @@ void table::drop()
   update_.clear();
   delete_.clear();
   select_.clear();
+
+  prepared_ = false;
 
   query q(db_);
 
