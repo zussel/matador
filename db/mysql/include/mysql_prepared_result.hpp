@@ -67,6 +67,8 @@ public:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, basic_identifier &x);
 
 private:
   size_type affected_rows_;

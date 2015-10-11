@@ -113,8 +113,8 @@ result::result(oos::detail::result_impl *impl, database *db)
 
 result::~result()
 {
-  if (p && db_) {
-    db_->free_result(p);
+  if (p) {
+    delete p;
   }
 }
 
@@ -126,7 +126,7 @@ result::result(result &&x)
 result &result::operator=(result &&x)
 {
   if (p) {
-    db_->free_result(p);
+    delete p;
     p = nullptr;
   }
   std::swap(p, x.p);

@@ -247,42 +247,14 @@ void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
 
 void mysql_prepared_result::read(const char *id, object_base_ptr &x)
 {
-  /*
-   * read key
-   * if valid key
-   * create serializable with key
-   * insert into object store
-   * reset object ptr
-   */
+    read_foreign_object(id, x);
+}
 
-  t_pk_map::iterator i = pk_map_.find(id);
-  if (i == pk_map_.end()) {
-      return;
-  }
+void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
 
-  /*
-   * clone new primary key and deserialize it
-   * if valid value is set create new proxy
-   * with primary key
-   */
-//  std::shared_ptr<basic_identifier> pk(i->second->clone());
-  std::shared_ptr<basic_identifier> pk = i->second;
-  pk_map_.erase(i);
-  pk->deserialize(id, *this);
-  if (!pk->is_valid()) {
-    return;
-  }
-
-  // get node of object type
-  prototype_iterator xnode = node()->tree->find(x.type());
-
-  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
-
-  if (!proxy) {
-    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
-  }
-
-  x.reset(proxy.release());
+void mysql_prepared_result::read(const char *id, basic_identifier &x)
+{
+  x.deserialize(id, *this);
 }
 
 }
