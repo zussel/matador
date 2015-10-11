@@ -101,51 +101,43 @@ void mysql_database::on_close()
   is_open_ = false;
 }
 
-result* mysql_database::create_result()
-{
-  return new mysql_result(&mysql_);
-}
-
-statement* mysql_database::create_statement()
-{
-  return new mysql_statement(*this);
-}
-
 MYSQL* mysql_database::operator()()
 {
   return &mysql_;
 }
 
-result* mysql_database::on_execute(const std::string &sqlstr)
+detail::result_impl* mysql_database::on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr)
 {
   if (mysql_query(&mysql_, sqlstr.c_str())) {
     throw mysql_exception(&mysql_, "mysql_query", sqlstr);
   }
-  return new mysql_result(&mysql_);
+  return new mysql_result(ptr, &mysql_);
+}
+
+detail::statement_impl* mysql_database::on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr)
+{
+  return new mysql_statement(*this, stmt, ptr);
 }
 
 void mysql_database::on_begin()
 {
-  result *res = execute("START TRANSACTION;",
+  result res = execute("START TRANSACTION;",
                         (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 void mysql_database::on_commit()
 {
-  result *res = execute("COMMIT;",
+  result res = execute("COMMIT;",
                         (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 void mysql_database::on_rollback()
 {
-  result *res = execute("ROLLBACK;",
+  result res = execute("ROLLBACK;",
                         (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 const char* mysql_database::type_string(data_type_t type) const

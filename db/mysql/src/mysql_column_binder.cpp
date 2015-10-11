@@ -5,7 +5,6 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_ptr.hpp"
-#include "object/serializable.hpp"
 #include "object/prototype_tree.hpp"
 
 #include <cstring>

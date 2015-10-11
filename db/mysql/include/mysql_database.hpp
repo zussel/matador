@@ -66,24 +66,9 @@ public:
    */
   virtual bool is_open() const override;
 
-  /**
-   * Create a new sqlite result
-   * 
-   * @return A new sqlite result
-   */
-  virtual result* create_result() override;
-
-  /**
-   * Create a new sqlite statement
-   * 
-   * @return A new sqlite statement
-   */
-  virtual statement* create_statement() override;
-  
-  virtual const char* type_string(data_type_t type) const override;
-
-
   virtual unsigned long last_inserted_id() override;
+
+  virtual const char* type_string(data_type_t type) const override;
 
 /**
    * Return the raw pointer to the sqlite3
@@ -96,7 +81,8 @@ public:
 protected:
   virtual void on_open(const std::string &db) override;
   virtual void on_close() override;
-  virtual result* on_execute(const std::string &sql) override;
+  detail::result_impl* on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr);
+  detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr);
   virtual void on_begin() override;
   virtual void on_commit() override;
   virtual void on_rollback() override;

@@ -300,23 +300,23 @@ public:
 
 /// @cond OOS_DEV
 
-	virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, double x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, char x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, float x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, double x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, short x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, int x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, long x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, int x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, long x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned char x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned short x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned int x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned long x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, bool x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, const char *x, int s) { generic_writer_->write_value(id, x, s); }
-	virtual void write(const char *id, const std::string &x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, const date &x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, const time &x) { generic_writer_->write_value(id, x); }
-	virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, bool x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const char *x, int s) { generic_writer_->write_value(id, x, s); }
+  virtual void write(const char *id, const std::string &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const date &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const time &x) { generic_writer_->write_value(id, x); }
+  virtual void write(const char *id, const object_base_ptr &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const object_container &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const basic_identifier &x) { generic_writer_->write_value(id, x); }
 

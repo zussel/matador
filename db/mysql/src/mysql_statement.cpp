@@ -33,54 +33,39 @@ namespace oos {
 
 namespace mysql {
 
-mysql_statement::mysql_statement(mysql_database &db)
+mysql_statement::mysql_statement(mysql_database &db, const oos::sql &stmt, std::shared_ptr<oos::object_base_producer> producer)
   : db_(db)
   , result_size(0)
   , host_size(0)
-  , stmt(mysql_stmt_init(db()))
+  , stmt_(mysql_stmt_init(db()))
   , host_array(0)
+  , producer_(producer)
 {
-}
-
-mysql_statement::mysql_statement(mysql_database &db, const sql &s)
-  : db_(db)
-  , result_size(0)
-  , host_size(0)
-  , stmt(mysql_stmt_init(db()))
-  , host_array(0)
-{
-  prepare(s);
-}
-
-mysql_statement::~mysql_statement()
-{
-  clear();
-  mysql_stmt_close(stmt);
-}
-
-void mysql_statement::prepare(const sql &s)
-{
-  reset();
-  
-  str(s.prepare());
+  str(stmt.prepare());
   // parse sql to create result and host arrays
-  result_size = s.result_size();
-  host_size = s.host_size();
+  result_size = stmt.result_size();
+  host_size = stmt.host_size();
   if (host_size) {
     host_array = new MYSQL_BIND[host_size];
     memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
     length_vector.assign(host_size, 0);
   }
-  
-  int res = mysql_stmt_prepare(stmt, str().c_str(), str().size());
+
+  int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
   if (res > 0) {
-    throw_stmt_error(res, stmt, "mysql", str());
+    throw_stmt_error(res, stmt_, "mysql", str());
   }
+}
+
+mysql_statement::~mysql_statement()
+{
+  clear();
+  mysql_stmt_close(stmt_);
 }
 
 void mysql_statement::reset()
 {
-  mysql_stmt_reset(stmt);
+  mysql_stmt_reset(stmt_);
 }
 
 void mysql_statement::clear()
@@ -92,29 +77,29 @@ void mysql_statement::clear()
   }
   result_size = 0;
   host_size = 0;
-  mysql_stmt_free_result(stmt);
+  mysql_stmt_free_result(stmt_);
   delete [] host_array;
 }
 
-result* mysql_statement::execute()
+detail::result_impl* mysql_statement::execute()
 {
   if (host_array) {
-    int res = mysql_stmt_bind_param(stmt, host_array);
+    int res = mysql_stmt_bind_param(stmt_, host_array);
     if (res > 0) {
-      throw_stmt_error(res, stmt, "mysql", str());
+      throw_stmt_error(res, stmt_, "mysql", str());
     }
   }
 //  std::cout << str() << '\n';
 
-  int res = mysql_stmt_execute(stmt);
+  int res = mysql_stmt_execute(stmt_);
   if (res > 0) {
-    throw_stmt_error(res, stmt, "mysql", str());
+    throw_stmt_error(res, stmt_, "mysql", str());
   }
-  res = mysql_stmt_store_result(stmt);
+  res = mysql_stmt_store_result(stmt_);
   if (res > 0) {
-    throw_stmt_error(res, stmt, "mysql", str());
+    throw_stmt_error(res, stmt_, "mysql", str());
   }
-  return new mysql_prepared_result(stmt, result_size);
+  return new mysql_prepared_result(stmt_, result_size, producer_);
 }
 
 void mysql_statement::write(const char *, char x)
@@ -226,17 +211,6 @@ void mysql_statement::write(const char *, const object_container &)
 void mysql_statement::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
-}
-
-
-database& mysql_statement::db()
-{
-  return db_;
-}
-
-const database& mysql_statement::db() const
-{
-  return db_;
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int /*index*/)

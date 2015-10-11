@@ -19,8 +19,9 @@ namespace oos {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
-  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
+mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer)
+  : detail::result_impl(producer)
+  , affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
@@ -282,12 +283,6 @@ void mysql_prepared_result::read(const char *id, object_base_ptr &x)
   }
 
   x.reset(proxy.release());
-}
-
-std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)
-{  
-  out << "affected rows [" << res.affected_rows_ << "] size [" << res.rows << "]";
-  return out;
 }
 
 }

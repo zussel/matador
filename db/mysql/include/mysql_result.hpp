@@ -20,8 +20,6 @@
 
 #include "database/result_impl.hpp"
 
-#include "tools/convert.hpp"
-
 #ifdef WIN32
 #include <winsock2.h>
 #include <mysql.h>
@@ -48,7 +46,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_result(MYSQL *c);
+  mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c);
   virtual ~mysql_result();
   
   const char* column(size_type c) const;
@@ -83,15 +81,6 @@ protected:
   virtual void read(const char *id, object_container &x);
   virtual void read(const char *id, basic_identifier &x);
 
-  template < class T >
-  void read_column(const char *, T &val)
-  {
-    if (!row) {
-      return;
-    } else {
-      convert(row[result_index], val);
-    }
-  }
 private:
   struct result_deleter
   {

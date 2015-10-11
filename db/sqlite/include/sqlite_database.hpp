@@ -76,8 +76,6 @@ public:
 
   virtual const char* type_string(data_type_t type) const override;
 
-  virtual void free_result(detail::result_impl *impl) const;
-
 protected:
   virtual void on_open(const std::string &db) override;
   virtual void on_close() override;

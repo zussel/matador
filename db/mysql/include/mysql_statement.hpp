@@ -18,8 +18,9 @@
 #ifndef MYSQL_STATEMENT_HPP
 #define MYSQL_STATEMENT_HPP
 
-#include "database/statement.hpp"
-#include "database/sql.hpp"
+#include "database/statement_impl.hpp"
+
+#include "object/identifier.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -31,7 +32,6 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#include "identifier.hpp"
 
 namespace oos {
 
@@ -41,24 +41,16 @@ namespace mysql {
 
 class mysql_database;
 
-class mysql_statement : public statement
+class mysql_statement : public oos::detail::statement_impl
 {
 public:
-  explicit mysql_statement(mysql_database &db);
-  mysql_statement(mysql_database &db, const sql &s);
+  mysql_statement(mysql_database &db, const oos::sql &stmt, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~mysql_statement();
 
   virtual void clear();
-  virtual result* execute();
-  virtual void prepare(const sql &s);
+  virtual detail::result_impl* execute();
   virtual void reset();
   
-//  virtual int column_count() const;
-//  virtual const char* column_name(int i) const;
-
-  virtual database& db();
-  virtual const database& db() const;
-
 protected:
   virtual void write(const char *id, char x);
   virtual void write(const char *id, short x);
@@ -71,12 +63,12 @@ protected:
   virtual void write(const char *id, float x);
   virtual void write(const char *id, double x);
   virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x, int s);
+  virtual void write(const char *id, const char *x, int s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::date &x);
   virtual void write(const char *id, const oos::time &x);
-	virtual void write(const char *id, const object_base_ptr &x);
+  virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
   virtual void write(const char *id, const basic_identifier &x);
 
@@ -105,8 +97,10 @@ private:
   int result_size;
   int host_size;
   std::vector<unsigned long> length_vector;
-  MYSQL_STMT *stmt;
+  MYSQL_STMT *stmt_;
   MYSQL_BIND *host_array;
+
+  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

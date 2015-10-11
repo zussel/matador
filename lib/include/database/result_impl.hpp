@@ -6,7 +6,7 @@
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_API __declspec(stddllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
@@ -91,6 +91,7 @@ private:
 };
 
 }
+
 }
 
 #endif /* RESULT_IMPL_HPP */

@@ -15,12 +15,17 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+
 #include "object/identifier.hpp"
 #include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
 
 #include "sqlite_result.hpp"
 
+#include <cstring>
 #include <algorithm>
 
 namespace oos {
@@ -256,9 +261,9 @@ void sqlite_result::read(const char *id, oos::date &x)
 
 void sqlite_result::read(const char *id, oos::time &x)
 {
-  std::string val;
-  read(id, val);
-  x = oos::time::parse(val, "%F %T.%f");
+std::string val;
+read(id, val);
+x = oos::time::parse(val, "%F %T.%f");
 }
 
 void sqlite_result::read(const char *id, object_base_ptr &x)

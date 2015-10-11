@@ -19,9 +19,6 @@
 #define SQLITE_RESULT_HPP
 
 #include "database/result_impl.hpp"
-#include "database/row.hpp"
-
-#include "tools/convert.hpp"
 
 #include <vector>
 

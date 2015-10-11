@@ -28,22 +28,22 @@ struct mysql_result_info;
 class mysql_prepared_result : public detail::result_impl
 {
 private:
-  mysql_prepared_result(const mysql_prepared_result&) = delete;
-  mysql_prepared_result& operator=(const mysql_prepared_result&) = delete;
+  mysql_prepared_result(const mysql_prepared_result &) = delete;
+  mysql_prepared_result &operator=(const mysql_prepared_result &) = delete;
 
 public:
   typedef detail::result_impl::size_type size_type;
   typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_pk_map;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, int rs);
+  mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer);
   ~mysql_prepared_result();
-  
-  const char* column(size_type c) const;
+
+  const char *column(size_type c) const;
   bool fetch();
-  
+
   bool fetch(serializable *o);
-  
+
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
@@ -81,6 +81,8 @@ private:
 
   t_pk_map pk_map_;
 };
+
+}
 
 }
 

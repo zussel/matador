@@ -19,6 +19,8 @@ namespace oos {
 
 class serializable;
 class prototype_node;
+class date;
+class time;
 
 namespace mysql {
 
