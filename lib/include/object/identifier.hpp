@@ -90,7 +90,8 @@ public:
 
   virtual basic_identifier *clone() const
   {
-    return new self(*id_);
+    T id = *id_;
+    return new self(id);
   }
 
   virtual self* share()

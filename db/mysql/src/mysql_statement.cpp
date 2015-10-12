@@ -38,7 +38,6 @@ mysql_statement::mysql_statement(mysql_database &db, const oos::sql &stmt, std::
   , result_size(0)
   , host_size(0)
   , stmt_(mysql_stmt_init(db()))
-  , host_array(0)
   , producer_(producer)
 {
   str(stmt.prepare());
@@ -75,10 +74,12 @@ void mysql_statement::clear()
       delete [] static_cast<char*>(host_array[i].buffer);
     }
   }
+  delete [] host_array;
+  host_array = nullptr;
+
   result_size = 0;
   host_size = 0;
   mysql_stmt_free_result(stmt_);
-  delete [] host_array;
 }
 
 detail::result_impl* mysql_statement::execute()

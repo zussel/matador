@@ -98,7 +98,7 @@ bool mysql_prepared_result::fetch(serializable *o)
   result_index = 0;
   // prepare result array
   mysql_column_binder binder;
-  binder.bind(o, node(), &pk_map_, info_, stmt, bind_);
+  binder.bind(o, info_, stmt, bind_);
 
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
@@ -115,7 +115,7 @@ bool mysql_prepared_result::fetch(serializable *o)
 
   return true;
 
-//  return rows-- > 0;
+//  return rows_-- > 0;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const

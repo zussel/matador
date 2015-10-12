@@ -97,8 +97,8 @@ private:
   int result_size;
   int host_size;
   std::vector<unsigned long> length_vector;
-  MYSQL_STMT *stmt_;
-  MYSQL_BIND *host_array;
+  MYSQL_STMT *stmt_ = nullptr;
+  MYSQL_BIND *host_array = nullptr;
 
   std::shared_ptr<oos::object_base_producer> producer_;
 };

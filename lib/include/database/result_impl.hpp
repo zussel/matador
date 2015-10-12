@@ -48,15 +48,6 @@ public:
 
   virtual bool fetch() = 0;
 
-  /*
-   * Create new object and fill all builtin datatypes. If all
-   * rows are processed nullptr is returned.
-   *
-   * @param node The corresponding prototype_node
-   * @return The filled and created serializable or nullptr
-   */
-  serializable *fetch(const oos::prototype_node *node);
-
   /**
    * Fetch next line from database and
    * deserialized the given serializable.
@@ -79,14 +70,10 @@ public:
 protected:
   void read_foreign_object(const char *id, object_base_ptr &x);
 
-  const prototype_node *node() const;
-
 protected:
   int result_index;
 
 private:
-  const prototype_node *node_ = nullptr;
-
   std::shared_ptr<object_base_producer> producer_;
 };
 

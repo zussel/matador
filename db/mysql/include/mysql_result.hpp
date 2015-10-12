@@ -91,10 +91,10 @@ private:
     }
   };
   size_type affected_rows_;
-  size_type rows;
+  size_type rows_;
   size_type fields_;
-  MYSQL_ROW row;
-  MYSQL_RES *res;
+  MYSQL_ROW row_;
+  MYSQL_RES *res_;
 };
 
 }
