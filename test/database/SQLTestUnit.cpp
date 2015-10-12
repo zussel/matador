@@ -122,8 +122,6 @@ void SQLTestUnit::test_statement()
 
 void SQLTestUnit::test_foreign_query()
 {
-  std::cout << '\n';
-
   session_->open();
 
 //    query<Item> q(session_->db(), "item");
@@ -166,7 +164,6 @@ void SQLTestUnit::test_foreign_query()
 
     object_ptr<Item> i = oi->ptr();
 
-    std::cout << "item pk: " << *i.primary_key() << '\n';
     delete obj;
     ++first;
   }

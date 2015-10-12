@@ -180,7 +180,7 @@ void mysql_result::read(const char */*id*/, unsigned int &x)
 void mysql_result::read(const char */*id*/, unsigned long &x)
 {
   char *val = row_[result_index++];
-  if (strlen(val) == 0) {
+  if (!val || strlen(val) == 0) {
     return;
   }
   char *end = nullptr;
