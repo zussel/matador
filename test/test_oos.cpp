@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectListTestUnit());
   suite.register_unit(new ObjectVectorTestUnit());
 
+
 #ifdef OOS_MYSQL
   suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));

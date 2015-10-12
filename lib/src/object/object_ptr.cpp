@@ -111,6 +111,13 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
       }
     }
     proxy_->remove(this);
+    /*
+     * if proxy was created temporary
+     * we can delete it here
+     */
+    if (!proxy_->ostore()) {
+      delete proxy_;
+    }
   }
   proxy_ = proxy;
   is_reference_ = is_ref;
