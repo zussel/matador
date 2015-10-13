@@ -737,51 +737,53 @@ public:
   bool empty() const { return emp_list_.empty(); }
 };
 
-class course;
-
-class student : public person
-{
-public:
-  typedef oos::object_ref<course> course_ref;
-  typedef oos::object_list<student, course_ref, false> course_list_t;
-
-  virtual void deserialize(oos::object_reader &deserializer)
-  {
-    person::deserialize(deserializer);
-    deserializer.read("students", courses);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    person::serialize(serializer);
-    serializer.write("courses", courses);
-  }
-
-  course_list_t courses;
-};
-
-class course : public oos::serializable
-{
-public:
-  typedef oos::object_ref<student> student_ref;
-  typedef oos::object_list<course, student_ref, false> student_list_t;
-
-  virtual void deserialize(oos::object_reader &deserializer)
-  {
-    deserializer.read("id", id_);
-    // Todo: handle many to man relation (create table, link serializable)
-    oos::read_many_to_many(deserializer, "student_course", "student_id", students);
-    deserializer.read("students", students);
-  }
-  virtual void serialize(oos::object_writer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("students", students);
-  }
-
-  oos::identifier<unsigned long> id_;
-  std::string name;
-  student_list_t students;
-};
+//class course;
+//
+//class student : public person
+//{
+//public:
+//  typedef oos::object_ref<course> course_ref;
+//  typedef oos::object_list<student, course_ref, false> course_list_t;
+//
+//  virtual void deserialize(oos::object_reader &deserializer)
+//  {
+//    person::deserialize(deserializer);
+//    deserializer.read("students", courses);
+//  }
+//  virtual void serialize(oos::object_writer &serializer) const
+//  {
+//    person::serialize(serializer);
+//    serializer.write("courses", courses);
+//  }
+//
+//  course_list_t courses;
+//};
+//
+//class course : public oos::serializable
+//{
+//public:
+//  typedef oos::object_ref<student> student_ref;
+//  typedef oos::object_list<course, student_ref, false> student_list_t;
+//
+//  course() : students {}
+//
+//  virtual void deserialize(oos::object_reader &deserializer)
+//  {
+//    deserializer.read("id", id_);
+//    // Todo: handle many to man relation (create table, link serializable)
+//    oos::read_many_to_many(deserializer, "student_course", "student_id", students);
+//    deserializer.read("students", students);
+//  }
+//  virtual void serialize(oos::object_writer &serializer) const
+//  {
+//    serializer.write("id", id_);
+//    serializer.write("students", students);
+//  }
+//
+//  oos::identifier<unsigned long> id_;
+//  std::string name;
+//  student_list_t students;
+//};
 
 class album;
 
