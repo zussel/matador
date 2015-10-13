@@ -32,7 +32,7 @@ public:
 	virtual void write(const char *id, const time &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const primary_key_base &x);
+  virtual void write(const char *id, const basic_identifier &x);
 
   void write(const char *id, data_type_t type);
 

@@ -1,13 +1,12 @@
 #ifndef SQLITE_PREPARED_RESULT_HPP
 #define SQLITE_PREPARED_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 
 #include "object/serializable.hpp"
 #include "object/object_atomizer.hpp"
 
 #include <vector>
-#include <object/primary_key.hpp>
 
 struct sqlite3_stmt;
 
@@ -15,20 +14,20 @@ namespace oos {
 
 namespace sqlite {
 
-class sqlite_prepared_result : public result
+class sqlite_prepared_result : public oos::detail::result_impl
 {
 private:
-  sqlite_prepared_result(const sqlite_prepared_result&) = delete;
-  sqlite_prepared_result& operator=(const sqlite_prepared_result&) = delete;
+  sqlite_prepared_result(const sqlite_prepared_result &) = delete;
+  sqlite_prepared_result &operator=(const sqlite_prepared_result &) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef oos::detail::result_impl::size_type size_type;
 
 public:
-  sqlite_prepared_result(sqlite3_stmt *stmt, int rs);
+  sqlite_prepared_result(sqlite3_stmt *stmt, int rs, std::shared_ptr<oos::object_base_producer> producer);
   ~sqlite_prepared_result();
-  
-  virtual const char* column(size_type c) const override;
+
+  virtual const char *column(size_type c) const override;
   virtual bool fetch() override;
   virtual bool fetch(serializable *) override;
   size_type affected_rows() const override;
@@ -36,8 +35,6 @@ public:
   size_type fields() const override;
 
   virtual int transform_index(int index) const override;
-
-  friend std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);
 
 protected:
   virtual void read(const char *id, char &x) override;
@@ -56,6 +53,9 @@ protected:
   virtual void read(const char *id, std::string &x) override;
   virtual void read(const char *id, oos::date &x) override;
   virtual void read(const char *id, oos::time &x) override;
+  virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, basic_identifier &x);
 
 private:
   int ret_;
@@ -65,8 +65,6 @@ private:
   size_type fields_;
   sqlite3_stmt *stmt_;
 };
-
-std::ostream& operator<<(std::ostream &out, const sqlite_prepared_result &res);
 
 }
 

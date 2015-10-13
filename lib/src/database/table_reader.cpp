@@ -13,23 +13,28 @@ table_reader::table_reader(table &t, object_store &ostore)
 {}
 
 
-void table_reader::load(result *res)
+void table_reader::load(result &res)
 {
 
-  serializable *obj = nullptr;
+//  serializable *obj = nullptr;
 
-  while ((obj = res->fetch(&table_.node_))) {
-
-    if (table_.node_.has_primary_key()) {
-      
-    }
-
+  result_iterator first = res.begin();
+  result_iterator last = res.end();
+  while (first != last) {
+    serializable *obj = first.release();
     new_proxy_ = new object_proxy(obj, nullptr);
-
     obj->deserialize(*this);
-
     ostore_.insert_proxy(new_proxy_);
+    ++first;
   }
+//  while ((obj = res->fetch(&table_.node_))) {
+//
+//    new_proxy_ = new object_proxy(obj, nullptr);
+//
+//    obj->deserialize(*this);
+//
+//    ostore_.insert_proxy(new_proxy_);
+//  }
 
 
   // check result
@@ -56,7 +61,7 @@ void table_reader::load(result *res)
 
 void table_reader::read_value(const char */*id*/, object_base_ptr &x)
 {
-  std::shared_ptr<primary_key_base> pk = x.primary_key();
+  std::shared_ptr<basic_identifier> pk = x.primary_key();
   if (!pk) {
     return;
   }
@@ -73,10 +78,11 @@ void table_reader::read_value(const char */*id*/, object_base_ptr &x)
   if (proxy) {
     x.reset(proxy, x.is_reference());
   } else {
+    // TODO: Can we call reset instead?
     x.proxy_->obj_ = node->producer->create();
+    x.proxy_->node_ = node.get();
     proxy = ostore_.register_proxy(x.proxy_);
   }
-
 
   /*
    * add the child serializable to the serializable proxy

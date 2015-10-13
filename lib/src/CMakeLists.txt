@@ -13,8 +13,8 @@ SET(OBJECT_SOURCES
   object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
-  object/primary_key_serializer.cpp
-)
+        object/identifier_resolver.cpp
+        object/basic_identifier.cpp object/identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -38,7 +38,7 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key.hpp
+  ${PROJECT_SOURCE_DIR}/include/object/identifier.hpp
   ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
 )
 
@@ -68,12 +68,12 @@ SET(OBJECT_HEADER
   ../include/object/object_atomizer.hpp
   ../include/object/object_preparator.hpp
   ../include/object/serializable.hpp
-  ../include/object/primary_key.hpp
+        ../include/object/identifier.hpp
   ../include/object/primary_key_analyzer.hpp
   ../include/object/foreign_key_analyzer.hpp
-  ../include/object/primary_key_serializer.hpp
+        ../include/object/identifier_resolver.hpp
   ../include/object/primary_key_reader.hpp
-)
+        ../include/object/basic_identifier.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -197,6 +197,7 @@ SET(DATABASE_SOURCES
   database/transaction.cpp
   database/transaction_helper.cpp
   database/result.cpp
+  database/result_impl.cpp
   database/row.cpp
   database/statement.cpp
   database/statement_creator.cpp
@@ -209,7 +210,7 @@ SET(DATABASE_SOURCES
   database/query_insert.cpp
   database/query_update.cpp
   database/primary_key_binder.cpp
-)
+        database/statement_impl.cpp)
 
 SET(DATABASE_HEADER
   ../include/database/action.hpp
@@ -223,6 +224,7 @@ SET(DATABASE_HEADER
   ../include/database/transaction.hpp
   ../include/database/transaction_helper.hpp
   ../include/database/result.hpp
+  ../include/database/result_impl.hpp
   ../include/database/row.hpp
   ../include/database/value.hpp
   ../include/database/types.hpp
@@ -237,7 +239,7 @@ SET(DATABASE_HEADER
   ../include/database/query_update.hpp
   ../include/database/token.hpp
   ../include/database/primary_key_binder.hpp
-)
+        ../include/database/statement_impl.hpp object/identifier.cpp)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp

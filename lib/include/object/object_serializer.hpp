@@ -109,7 +109,7 @@ public:
 	void write_value(const char* id, const time &x);
 	void write_value(const char* id, const object_base_ptr &x);
 	void write_value(const char* id, const object_container &x);
-	void write_value(const char* id, const primary_key_base &);
+	void write_value(const char* id, const basic_identifier &);
 
   template < class T >
   void read_value(const char*, T &x)
@@ -124,7 +124,7 @@ public:
   void read_value(const char* id, time &x);
   void read_value(const char* id, object_base_ptr &x);
 	void read_value(const char* id, object_container &x);
-	void read_value(const char* id, primary_key_base &x);
+	void read_value(const char* id, basic_identifier &x);
   
   void write_object_container_item(const object_proxy *proxy);
 

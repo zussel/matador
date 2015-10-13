@@ -18,10 +18,7 @@
 #ifndef SQLITE_RESULT_HPP
 #define SQLITE_RESULT_HPP
 
-#include "database/result.hpp"
-#include "database/row.hpp"
-
-#include "tools/convert.hpp"
+#include "database/result_impl.hpp"
 
 #include <vector>
 
@@ -32,17 +29,17 @@ class serializable;
 
 namespace sqlite {
 
-class sqlite_result : public result
+class sqlite_result : public detail::result_impl
 {
 private:
   sqlite_result(const sqlite_result&) = delete;
   sqlite_result& operator=(const sqlite_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
 
 public:
-  sqlite_result();
+  sqlite_result(std::shared_ptr<object_base_producer> producer);
   virtual ~sqlite_result();
   
   const char* column(size_type c) const;
@@ -54,9 +51,7 @@ public:
 
   virtual int transform_index(int index) const;
 
-  friend std::ostream& operator<<(std::ostream &out, const sqlite_result &res);
-
-  void push_back(row *r);
+  void push_back(char **row_values, int column_count);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -77,27 +72,22 @@ protected:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
-
-  template < class T >
-  void read_column(const char *, T &x)
-  {
-    std::string val = rows_.at(pos_)->str(result_index);
-//    std::string val = rows_.at(pos_)->at<std::string>(result_index);
-    convert(val, x);
-  }
-  void read_column(const char *, oos::date &x);
-  void read_column(const char *, oos::time &x);
+  virtual void read(const char *id, basic_identifier &x);
 
 private:
-  typedef std::vector<row*> row_vector_t;
-  row_vector_t rows_;
-  row_vector_t::size_type pos_;
+  friend class sqlite_database;
 
-  size_type affected_rows_;
-  size_type rows;
+private:
+
+//  typedef std::vector<std::shared_ptr<char> > t_row;
+  typedef std::vector<char*> t_row;
+  typedef std::vector<t_row> t_result;
+
+  t_result result_;
+  t_result::size_type pos_ = 0;
+  t_result::size_type column_ = 0;
+
   size_type fields_;
-  int result_size;
 };
 
 }

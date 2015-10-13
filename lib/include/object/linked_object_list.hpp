@@ -93,7 +93,7 @@ public:
 
   unsigned long id() const
   {
-    return id_;
+    return id_.value();
   }
 
   self_ref first() const
@@ -119,7 +119,7 @@ public:
 private:
   template < class V, class S > friend class linked_object_list;
 
-  primary_key<unsigned long> id_;
+  identifier<unsigned long> id_;
   self_ref first_;
   self_ref last_;
   self_ref prev_;

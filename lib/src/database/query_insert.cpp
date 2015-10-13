@@ -3,11 +3,9 @@
 #include "object/object_ptr.hpp"
 
 #include "tools/varchar.hpp"
-
-#include <sstream>
-#include <object/primary_key.hpp>
-#include <tools/date.hpp>
-#include <tools/time.hpp>
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/string.hpp"
 
 namespace oos {
 
@@ -100,15 +98,36 @@ void query_insert::write(const char *id, const time &x)
 
 void query_insert::write(const char *id, const object_base_ptr &x)
 {
-  write_field(id, type_long, x.id());
+  if (x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+//    write_field(id, type_long, x.id());
+  } else {
+    write_null(id);
+  }
 }
 
 void query_insert::write(const char *, const object_container &)
 {}
 
-void query_insert::write(const char *id, const primary_key_base &x)
+void query_insert::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
+}
+
+
+void query_insert::write_field(const char *id, data_type_t type, const char &x) {
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  if (fields_) {
+    dialect.append(id);
+  } else {
+    std::stringstream valstr;
+    valstr << "'" << x << "'";
+    dialect.append(id, type, valstr.str());
+  }
 }
 
 void query_insert::write_field(const char *id, data_type_t type, const oos::date &x)
@@ -123,7 +142,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::date
     dialect.append(id);
   } else {
     std::stringstream valstr;
-    valstr << x;
+    valstr << "'" << to_string(x) << "'";
     dialect.append(id, type, valstr.str());
   }
 }
@@ -140,7 +159,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::time
     dialect.append(id);
   } else {
     std::stringstream valstr;
-    valstr << x;
+    valstr << "'" << to_string(x, "%F %T.%f") << "'";
     dialect.append(id, type, valstr.str());
   }
 }
@@ -203,6 +222,20 @@ void query_insert::values()
 {
   fields_ = false;
   first = true;
+}
+
+void query_insert::write_null(const char *id)
+{
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  if (fields_) {
+    dialect.append(id);
+  } else {
+    dialect.append(id, type_long, "NULL");
+  }
 }
 
 }

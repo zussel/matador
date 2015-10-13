@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "database/table_reader.hpp"
 #include "database/table.hpp"
 #include "database/database_exception.hpp"
@@ -107,7 +108,8 @@ table::table(database &db, const prototype_node &node)
   , node_(node)
   , prepared_(false)
   , is_loaded_(false)
-{}
+{
+}
 
 table::~table()
 {}
@@ -122,12 +124,12 @@ void table::prepare()
   query q(db_);
 
   std::unique_ptr<serializable> o(node_.producer->create());
-  insert_.reset(q.insert(o.get(), node_.type).prepare());
+  insert_ = q.insert(o.get(), node_.type).prepare();
   if (node_.has_primary_key()) {
-    update_.reset(q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare());
-    delete_.reset(q.reset().remove(node_).where(cond("id").equal(0)).prepare());
+    update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
+    delete_ = q.reset().remove(node_.type).where(cond("id").equal(0)).prepare();
   }
-  select_.reset(q.reset().select(node_).prepare());
+  select_ = q.reset().select(node_.producer->clone()).from(node_.type).prepare();
 
   prepared_ = true;
 }
@@ -135,8 +137,9 @@ void table::prepare()
 void table::create()
 {
   query q(db_);
-  
-  std::unique_ptr<result> res(q.create(node_).execute());
+
+  std::unique_ptr<serializable> obj(node_.producer->create());
+  result res = q.create(node_.type, obj.get()).execute();
   
   // prepare CRUD statements
   prepare();
@@ -150,9 +153,11 @@ void table::load(object_store &ostore)
 
   table_reader reader(*this, ostore);
 
-  std::unique_ptr<result> res(select_->execute());
+  result res = select_.execute();
 
-  reader.load(res.get());
+  reader.load(res);
+
+//  select_.clear();
 
   /*
    * after all tables were loaded fill
@@ -181,23 +186,26 @@ void table::load(object_store &ostore)
 
 void table::insert(serializable *obj)
 {
-  insert_->bind(obj);
-  std::unique_ptr<result> res(insert_->execute());
+  insert_.bind(obj);
+  result res = insert_.execute();
+//  insert_.clear();
+//  insert_.reset();
 
-  if (res->affected_rows() != 1) {
-    throw database_exception("insert", "more than one affected row while inserting an object");
-  }
+//  if (res->affected_rows() != 1) {
+//    throw database_exception("insert", "more than one affected row while inserting an object");
+//  }
 }
 
 void table::update(serializable *obj)
 {
-  int pos = update_->bind(obj);
+  int pos = update_.bind(obj);
   // Todo: handle primary key
 
-  primary_key_binder_.bind(obj, update_.get(), pos);
+  primary_key_binder_.bind(obj, &update_, pos);
 
 //  update_->bind(pos, obj->id());
-  std::unique_ptr<result> res(update_->execute());
+  result res(update_.execute());
+  update_.clear();
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
 //  }
@@ -206,14 +214,21 @@ void table::update(serializable *obj)
 void table::remove(serializable *obj)
 {
   // Todo: handle primary key
-  primary_key_binder_.bind(obj, delete_.get(), 0);
+  primary_key_binder_.bind(obj, &delete_, 0);
 }
 
 void table::drop()
 {
+  insert_.clear();
+  update_.clear();
+  delete_.clear();
+  select_.clear();
+
+  prepared_ = false;
+
   query q(db_);
 
-  std::unique_ptr<result> res(q.drop(node_).execute());
+  result res(q.drop(node_.type).execute());
   // Todo: check drop result
 }
 

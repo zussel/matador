@@ -33,6 +33,9 @@
 
 #include "object/object_atomizer.hpp"
 
+#include "database/statement_impl.hpp"
+#include "database.hpp"
+
 #include <string>
 #include <functional>
 
@@ -41,41 +44,46 @@ namespace oos {
 class result;
 class serializable;
 class sql;
+class object_base_producer;
+class database;
 
-/// @cond OOS_DEV
-class OOS_API statement : public object_writer
+namespace detail {
+  class statement_impl;
+}
+
+    /// @cond OOS_DEV
+class OOS_API statement
 {
+private:
+  statement(const statement &x) = delete;
+  statement& operator=(const statement &x) = delete;
+
 public:
-  virtual ~statement();
+  statement();
+  statement(detail::statement_impl *impl, database *db);
+  ~statement();
 
-  virtual void clear() = 0;
+  statement(statement &&x);
+  statement& operator=(statement &&x);
 
-  virtual void prepare(const sql &s) = 0;
+  void clear();
 
-  virtual result* execute() = 0;
+  result execute();
 
-  virtual void reset() = 0;
+  void reset();
   
   int bind(serializable *o);
-
   template < class T >
   int bind(unsigned long i, const T &val)
   {
-    host_index = i;
-    write("", val);
-    return host_index;
+    return p->bind(i, val);
   }
 
   std::string str() const;
 
-protected:
-  void str(const std::string &s);
-
-protected:
-  int host_index;
-
 private:
-  std::string sql_;
+  oos::detail::statement_impl *p = nullptr;
+  database *db_ = nullptr;
 };
 
 /// @endcond

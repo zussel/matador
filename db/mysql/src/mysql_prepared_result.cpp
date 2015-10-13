@@ -19,8 +19,9 @@ namespace oos {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
-  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
+mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer)
+  : detail::result_impl(producer)
+  , affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
@@ -97,7 +98,7 @@ bool mysql_prepared_result::fetch(serializable *o)
   result_index = 0;
   // prepare result array
   mysql_column_binder binder;
-  binder.bind(o, node(), &pk_map_, info_, stmt, bind_);
+  binder.bind(o, info_, stmt, bind_);
 
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
@@ -114,7 +115,7 @@ bool mysql_prepared_result::fetch(serializable *o)
 
   return true;
 
-//  return rows-- > 0;
+//  return rows_-- > 0;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
@@ -246,48 +247,14 @@ void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
 
 void mysql_prepared_result::read(const char *id, object_base_ptr &x)
 {
-  /*
-   * read key
-   * if valid key
-   * create serializable with key
-   * insert into object store
-   * reset object ptr
-   */
-
-  t_pk_map::iterator i = pk_map_.find(id);
-  if (i == pk_map_.end()) {
-      return;
-  }
-
-  /*
-   * clone new primary key and deserialize it
-   * if valid value is set create new proxy
-   * with primary key
-   */
-//  std::shared_ptr<primary_key_base> pk(i->second->clone());
-  std::shared_ptr<primary_key_base> pk = i->second;
-  pk_map_.erase(i);
-  pk->deserialize(id, *this);
-  if (!pk->is_valid()) {
-    return;
-  }
-
-  // get node of object type
-  prototype_iterator xnode = node()->tree->find(x.type());
-
-  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
-
-  if (!proxy) {
-    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
-  }
-
-  x.reset(proxy.release());
+    read_foreign_object(id, x);
 }
 
-std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res)
-{  
-  out << "affected rows [" << res.affected_rows_ << "] size [" << res.rows << "]";
-  return out;
+void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
+
+void mysql_prepared_result::read(const char *id, basic_identifier &x)
+{
+  x.deserialize(id, *this);
 }
 
 }

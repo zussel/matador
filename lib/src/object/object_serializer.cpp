@@ -103,7 +103,7 @@ void object_serializer::write_value(const char*, const object_container &x)
   x.for_each(std::bind(&object_serializer::write_object_container_item, this, _1));
 }
 
-void object_serializer::write_value(const char *id, const primary_key_base &x)
+void object_serializer::write_value(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }
@@ -197,7 +197,7 @@ void object_serializer::read_value(const char*, object_container &x)
   }
 }
 
-void object_serializer::read_value(const char *id, primary_key_base &x)
+void object_serializer::read_value(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

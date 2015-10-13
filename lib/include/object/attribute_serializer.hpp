@@ -22,7 +22,8 @@
 #include "object/object_atomizer.hpp"
 #include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
-#include "primary_key.hpp"
+#include "object/object_container.hpp"
+#include "identifier.hpp"
 
 #include <stdexcept>
 #include <type_traits>
@@ -93,7 +94,33 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &/*to*/, typename std::enable_if< !std::is_same<T, V>::value >::type* = 0)
+  void read_value(const char *id, V &to, typename std::enable_if<
+    std::is_base_of<V, T>::value &&
+    std::is_same<V, oos::varchar_base>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to = from_;
+  }
+
+  template < class V >
+  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+    std::is_base_of<V, T>::value &&
+    std::is_same<V, oos::object_base_ptr>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    std::cout << "found object_ptr conversion\n";
+  }
+
+  template < class V >
+  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+    !std::is_same<T, V>::value &&
+    !std::is_base_of<V, T>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -102,7 +129,7 @@ private:
     std::cout << "not same type\n";
   }
 
-  void read_value(const char *id, primary_key_base &x)
+  void read_value(const char *id, basic_identifier &x)
   {
     x.deserialize(id, *this);
   }
@@ -191,7 +218,7 @@ private:
     success_ = true;
   }
 
-  void write_value(const char *id, const primary_key_base &x)
+  void write_value(const char *id, const basic_identifier &x)
   {
     x.serialize(id, *this);
   }
@@ -273,7 +300,7 @@ public:
   void write_value(const char*, const date&) {}
   void write_value(const char*, const time&) {}
   void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const primary_key_base &) {}
+  void write_value(const char*, const basic_identifier &) {}
 
   void write_value(const char *id, const char *from, int)
   {

@@ -23,9 +23,6 @@
 
 #include "database/session.hpp"
 #include "database/statement.hpp"
-#include "database/database.hpp"
-
-#include "object/serializable.hpp"
 
 #include <iostream>
 
@@ -45,16 +42,6 @@ query::~query()
 {
 }
 
-query& query::create(const prototype_node &node)
-{
-#ifdef _MSC_VER
-  std::auto_ptr<serializable> o(node.producer->create());
-#else
-  std::unique_ptr<serializable> o(node.producer->create());
-#endif
-  return create(node.type, o.get());
-}
-
 query& query::create(const std::string &name, serializable *o)
 {
 //  sql_.append(std::string("CREATE TABLE IF NOT EXISTS ") + name + std::string(" ("));
@@ -70,11 +57,6 @@ query& query::create(const std::string &name, serializable *o)
   return *this;
 }
 
-query& query::drop(const prototype_node &node)
-{
-  return drop(node.type);
-}
-
 query& query::drop(const std::string &name)
 {
   sql_.append(std::string("DROP TABLE ") + name);
@@ -83,45 +65,27 @@ query& query::drop(const std::string &name)
   return *this;
 }
 
-query& query::select(const prototype_node &node)
+query& query::select()
 {
-  throw_invalid(QUERY_OBJECT_SELECT, state);
-
+  throw_invalid(QUERY_SELECT, state);
   sql_.append("SELECT ");
-
-  serializable *o = node.producer->create();
-  query_select s(sql_);
-  o->serialize(s);
-  delete o;
-
-  sql_.append(" FROM ");
-  sql_.append(node.type);
-
-  state = QUERY_OBJECT_SELECT;
-
+  state = QUERY_SELECT;
   return *this;
 }
 
-query& query::insert(object_base_ptr &optr)
+query& query::select(serializable *o)
 {
-  return insert(optr.proxy_);
+  throw_invalid(QUERY_SELECT, state);
+  sql_.append("SELECT ");
+
+  query_select s(sql_);
+  o->serialize(s);
+
+  state = QUERY_SELECT;
+  return *this;
 }
 
-query &query::insert(object_proxy *proxy)
-{
-  if (!proxy) {
-    throw std::logic_error("query insert: no serializable proxy information");
-  }
-  if (!proxy->obj()) {
-    throw std::logic_error("query insert: no serializable information");
-  }
-  if (!proxy->node()) {
-    throw std::logic_error("query insert: no serializable prototype information");
-  }
-  return insert(proxy->obj(), proxy->node()->type);
-}
-
-query& query::insert(serializable *o, const std::string &type)
+query& query::insert(const serializable *o, const std::string &type)
 {
   throw_invalid(QUERY_OBJECT_INSERT, state);
 
@@ -143,23 +107,9 @@ query& query::insert(serializable *o, const std::string &type)
   return *this;
 }
 
-
-query &query::update(object_base_ptr &optr) {
-  return update(optr.proxy_);
-}
-
-query& query::update(object_proxy *proxy)
+query &query::insert(const object_base_ptr &ptr, const std::string &name)
 {
-  if (!proxy) {
-    throw std::logic_error("query update: no serializable proxy information");
-  }
-  if (!proxy->obj()) {
-    throw std::logic_error("query update: no serializable information");
-  }
-  if (!proxy->node()) {
-    throw std::logic_error("query update: no serializable prototype information");
-  }
-  return update(proxy->node()->type, proxy->obj());
+  return insert(ptr.ptr(), name);
 }
 
 query& query::update(const std::string &type, serializable *o)
@@ -176,11 +126,11 @@ query& query::update(const std::string &type, serializable *o)
   return *this;
 }
 
-query& query::remove(const prototype_node &node)
+query& query::remove(const std::string &table)
 {
   throw_invalid(QUERY_DELETE, state);
 
-  sql_.append(std::string("DELETE FROM ") + node.type);
+  sql_.append(std::string("DELETE FROM ") + table);
 
   state = QUERY_DELETE;
 
@@ -259,26 +209,6 @@ query& query::group_by(const std::string &fld)
   return *this;
 }
 
-query& query::select()
-{
-  throw_invalid(QUERY_SELECT, state);
-  sql_.append("SELECT ");
-  state = QUERY_SELECT;
-  return *this;
-}
-
-query& query::select(serializable *o)
-{
-  throw_invalid(QUERY_SELECT, state);
-  sql_.append("SELECT ");
-  
-  query_select s(sql_);
-  o->serialize(s);
-
-  state = QUERY_SELECT;
-  return *this;
-}
-
 query& query::column(const std::string &name, data_type_t type)
 {
   throw_invalid(QUERY_COLUMN, state);
@@ -305,23 +235,20 @@ query& query::update(const std::string &table)
   return *this;
 }
 
-result* query::execute()
+result query::execute()
 {
-  return db_.execute(sql_.direct().c_str());
+//  std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//  std::cout.flush();
+  return db_.execute(sql_.direct(), producer_);
 }
 
-statement* query::prepare()
+statement query::prepare()
 {
-  statement *stmt = db_.create_statement();
-  // TODO: fix call to prepare
-  stmt->prepare(sql_);
-
-  return stmt;
+  return db_.prepare(sql_, producer_);
 }
 
 query& query::reset()
 {
-  stmt.reset();
   sql_.reset();
   state = QUERY_BEGIN;
   return *this;

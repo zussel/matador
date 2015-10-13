@@ -107,7 +107,7 @@ const object_proxy* update_action::proxy() const
   return proxy_;
 }
 
-delete_action::delete_action(const char *classname, unsigned long id, primary_key_base *pk)
+delete_action::delete_action(const char *classname, unsigned long id, basic_identifier *pk)
   : classname_(classname)
   , id_(id)
   , pk_(pk)
@@ -126,7 +126,7 @@ const char* delete_action::classname() const
   return classname_.c_str();
 }
 
-primary_key_base* delete_action::pk() const
+basic_identifier * delete_action::pk() const
 {
   return pk_.get();
 }

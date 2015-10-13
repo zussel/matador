@@ -36,6 +36,7 @@
 #include "database/DatabaseTestUnit.hpp"
 #include "database/SessionTestUnit.hpp"
 #include "database/TransactionTestUnit.hpp"
+#include "database/SQLTestUnit.hpp"
 
 #include "json/JsonTestUnit.hpp"
 
@@ -75,9 +76,11 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectListTestUnit());
   suite.register_unit(new ObjectVectorTestUnit());
 
+
 #ifdef OOS_MYSQL
   suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
+  suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
   #if MYSQL_VERSION_ID < 50604
     suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
   #else
@@ -89,12 +92,14 @@ int main(int argc, char *argv[])
   suite.register_unit(new SessionTestUnit("mssql_session", "mssql session test unit", connection::mssql));
   suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", connection::mssql));
   suite.register_unit(new DatabaseTestUnit("mssql_database", "mssql database test unit", connection::mssql));
+  suite.register_unit(new SQLTestUnit("mssql_query", "mssql query test unit", connection::mssql));
 #endif
 
 #ifdef OOS_SQLITE3
   suite.register_unit(new SessionTestUnit("sqlite_session", "sqlite session test unit", connection::sqlite));
   suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", connection::sqlite));
   suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite database test unit", connection::sqlite));
+  suite.register_unit(new SQLTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
 #endif
 
   suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

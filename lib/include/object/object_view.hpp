@@ -798,7 +798,7 @@ public:
    */
   const prototype_node* node() const
   {
-    return node_;
+    return node_.get();
   }
 
 private:

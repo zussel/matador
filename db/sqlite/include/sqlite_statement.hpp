@@ -18,10 +18,9 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
-#include "database/statement.hpp"
+#include "database/statement_impl.hpp"
 
 #include "object/object_atomizer.hpp"
-#include "object/primary_key.hpp"
 
 #include <string>
 #include <vector>
@@ -32,20 +31,20 @@ struct sqlite3_stmt;
 namespace oos {
 
 class varchar_base;
+class basic_identifier;
 
 namespace sqlite {
 
 class sqlite_database;
 
-class sqlite_statement : public statement
+class sqlite_statement : public oos::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db);
+  sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~sqlite_statement();
 
   virtual void clear();
-  virtual result* execute();
-  virtual void prepare(const sql &s);
+  virtual detail::result_impl* execute();
   virtual void reset();
 
 protected:
@@ -67,13 +66,14 @@ protected:
   virtual void write(const char *id, const oos::time &x);
   virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const primary_key_base &x);
+  virtual void write(const char *id, const basic_identifier &x);
 
 private:
   sqlite_database &db_;
   sqlite3_stmt *stmt_;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;
+  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

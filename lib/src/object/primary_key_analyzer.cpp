@@ -2,7 +2,7 @@
 #include "object/object_exception.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/serializable.hpp"
-#include "object/primary_key.hpp"
+#include "object/identifier.hpp"
 
 namespace oos {
 
@@ -23,7 +23,7 @@ void primary_key_analyzer::analyze()
   obj->serialize(*this);
 }
 
-void primary_key_analyzer::write_value(char const *, const primary_key_base &x)
+void primary_key_analyzer::write_value(char const *, const basic_identifier &x)
 {
   node_.primary_key.reset(x.clone());
 }

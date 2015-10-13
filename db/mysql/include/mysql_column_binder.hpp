@@ -19,6 +19,8 @@ namespace oos {
 
 class serializable;
 class prototype_node;
+class date;
+class time;
 
 namespace mysql {
 
@@ -28,8 +30,7 @@ public:
   mysql_column_binder();
   virtual ~mysql_column_binder();
   
-  void bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map,
-            mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
+  void bind(serializable *o, mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
 
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
@@ -49,7 +50,7 @@ public:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, basic_identifier &x);
   
 private:
   template < class T >
@@ -68,16 +69,12 @@ private:
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
   void prepare_bind_column(int index, enum_field_types type, char *x, int s);
   void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
-  void prepare_bind_column(int index, enum_field_types type, object_base_ptr &value);
 
 private:
   int column_index_ = 0;
   MYSQL_STMT *stmt_ = nullptr;
   MYSQL_BIND *bind_ = nullptr;
   mysql_result_info *info_ = nullptr;
-  const prototype_node *node_;
-
-  std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map_;
 };
 
 }

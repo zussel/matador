@@ -53,7 +53,11 @@ std::string to_string(const oos::time &x, const char *format)
 
 std::string to_string(const oos::date &x, const char *format)
 {
+  time_t now = std::time(NULL);
   struct tm timeinfo;
+
+  localtime_r(&now, &timeinfo);
+
   timeinfo.tm_mon = x.month() - 1;
   timeinfo.tm_year = x.year() - 1900;
   timeinfo.tm_mday = x.day();

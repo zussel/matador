@@ -34,6 +34,9 @@
 #include "database/types.hpp"
 #include "database/action.hpp"
 #include "database/transaction.hpp"
+#include "database/sql.hpp"
+#include "database/result.hpp"
+#include "database/statement.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -46,9 +49,7 @@ namespace oos {
 
 class transaction;
 class session;
-class statement;
 class table;
-class result;
 class database_sequencer;
 class prototype_node;
 
@@ -167,7 +168,16 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  result* execute(const std::string &sql);
+  result execute(std::string sql, std::shared_ptr<object_base_producer> ptr);
+
+  /**
+   * Prepare a sql statement and return a
+   * prepared statement object.
+   *
+   * @param sql The sql statement string to be prepared.
+   * @return The resulting prepared statement.
+   */
+  statement prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr);
 
   /**
    * The interface for the create table action.
@@ -199,14 +209,7 @@ public:
    *
    * @return New result implenation serializable.
    */
-  virtual result* create_result() = 0;
-
-  /**
-   * Create the concrete statement.
-   *
-   * @return The concrete statement.
-   */
-  virtual statement* create_statement() = 0;
+  result create_result(detail::result_impl *impl);
 
   /**
    * Get last inserted id from database
@@ -264,7 +267,8 @@ protected:
 
   virtual void on_open(const std::string &connection) = 0;
   virtual void on_close() = 0;
-  virtual result* on_execute(const std::string &stmt) = 0;
+  virtual oos::detail::result_impl* on_execute(const std::string &stmt, std::shared_ptr<object_base_producer> ptr) = 0;
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr) = 0;
   virtual void on_begin() = 0;
   virtual void on_commit() = 0;
   virtual void on_rollback() = 0;

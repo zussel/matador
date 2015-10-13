@@ -91,9 +91,10 @@ bool session::load()
   return true;
 }
 
-result* session::execute(const std::string &sql)
+result session::execute(const std::string &sql)
 {
-  return impl_->execute(sql);
+  return impl_->execute(sql,
+                        (std::shared_ptr<object_base_producer>()));
 }
 
 void session::update(const object_base_ptr &optr)
@@ -168,11 +169,6 @@ void session::commit(transaction &tr)
 void session::rollback()
 {
   impl_->rollback();
-}
-
-statement* session::create_statement() const
-{
-  return impl_->create_statement();
 }
 
 transaction* session::current_transaction() const

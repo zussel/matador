@@ -111,6 +111,13 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
       }
     }
     proxy_->remove(this);
+    /*
+     * if proxy was created temporary
+     * we can delete it here
+     */
+    if (!proxy_->ostore()) {
+      delete proxy_;
+    }
   }
   proxy_ = proxy;
   is_reference_ = is_ref;
@@ -125,6 +132,15 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
     }
     proxy_->add(this);
   }
+}
+
+void object_base_ptr::reset(const std::shared_ptr<basic_identifier> &id)
+{
+  if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
+      throw object_exception("identifier types are not equal");
+  }
+  object_proxy *proxy = new object_proxy(id, nullptr);
+  reset(proxy);
 }
 
 bool
@@ -217,7 +233,7 @@ bool object_base_ptr::has_primary_key() const
   return (proxy_ ? proxy_->has_primary_key() : false);
 }
 
-std::shared_ptr<primary_key_base> object_base_ptr::primary_key() const
+std::shared_ptr<basic_identifier> object_base_ptr::primary_key() const
 {
   return (proxy_ ? proxy_->pk() : nullptr);
 }

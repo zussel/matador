@@ -15,7 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "database/result.hpp"
+#include "database/result_impl.hpp"
 #include "database/statement.hpp"
 
 #include "object/serializable.hpp"
@@ -25,81 +27,130 @@
 
 namespace oos {
 
-result::result()
-{}
+
+result_iterator::result_iterator() { }
+
+result_iterator::result_iterator(oos::detail::result_impl *result_impl, serializable *obj)
+  : obj_(obj)
+  , result_impl_(result_impl)
+{
+
+}
+
+result_iterator::result_iterator(result_iterator &&x)
+  : obj_(x.obj_.release())
+  , result_impl_(x.result_impl_)
+{ }
+
+result_iterator &result_iterator::operator=(result_iterator &&x)
+{
+  result_impl_ = x.result_impl_;
+  obj_.reset(x.obj_.release());
+  return *this;
+}
+
+result_iterator::~result_iterator()
+{
+
+}
+
+bool result_iterator::operator==(const result_iterator &rhs)
+{
+  return obj_ == rhs.obj_;
+}
+
+bool result_iterator::operator!=(const result_iterator &rhs)
+{
+  return obj_ != rhs.obj_;
+}
+
+result_iterator &result_iterator::operator++()
+{
+  obj_.reset(result_impl_->producer()->create());
+  if (!result_impl_->fetch(obj_.get())) {
+    obj_.reset();
+  }
+  return *this;
+}
+
+result_iterator result_iterator::operator++(int)
+{
+  std::unique_ptr<serializable> obj(result_impl_->producer()->create());
+  result_impl_->fetch(obj.get());
+  return oos::result_iterator(result_impl_, obj.release());
+}
+
+result_iterator::pointer result_iterator::operator->()
+{
+  return obj_.get();
+}
+
+result_iterator::pointer result_iterator::operator&()
+{
+  return obj_.get();
+}
+
+result_iterator::reference result_iterator::operator*()
+{
+  return *obj_.get();
+}
+
+result_iterator::pointer result_iterator::get() {
+  return obj_.get();
+}
+
+result_iterator::pointer result_iterator::release()
+{
+  return obj_.release();
+}
+
+result::result() { }
+
+result::result(oos::detail::result_impl *impl, database *db)
+  : p(impl)
+  , db_(db)
+{ }
 
 result::~result()
-{}
-
-void result::get(serializable *o)
 {
-  result_index = transform_index(0);
-  o->deserialize(*this);
-}
-
-serializable* result::fetch(const oos::prototype_node *node)
-{
-  node_ = node;
-
-  std::unique_ptr<serializable> obj(node_->producer->create());
-
-  if (!fetch(obj.get())) {
-    obj.reset(nullptr);
+  if (p) {
+    delete p;
   }
-
-  node_ = nullptr;
-  return obj.release();
 }
 
-void result::read(const char *id, object_base_ptr &x)
+result::result(result &&x)
 {
-  /*
-   * read key
-   * if valid key
-   * create serializable with key
-   * insert into object store
-   * reset object ptr
-   */
-  // find prototype node of foreign key
-  prototype_node::t_foreign_key_map::const_iterator i = node_->foreign_keys.find(id);
-  if (i == node_->foreign_keys.end()) {
-    throw_object_exception("couldn't find foreign key for serializable of type'" << x.type() << "'");
-  }
-
-  /*
-   * clone new primary key and deserialize it
-   * if valid value is set create new proxy
-   * with primary key
-   */
-  std::shared_ptr<primary_key_base> pk(i->second->clone());
-  pk->deserialize(id, *this);
-  if (!pk->is_valid()) {
-    return;
-  }
-
-  // get node of object type
-  prototype_iterator xnode = node_->tree->find(x.type());
-
-  std::unique_ptr<object_proxy> proxy(xnode->find_proxy(pk));
-
-  if (!proxy) {
-    proxy.reset(new object_proxy(pk, const_cast<prototype_node*>(xnode.get())));
-  }
-
-  x.reset(proxy.release());
+  std::swap(p, x.p);
 }
 
-void result::read(const char */*id*/, object_container &/*x*/) { }
-
-void result::read(const char *id, primary_key_base &x)
+result &result::operator=(result &&x)
 {
-  x.deserialize(id, *this);
+  if (p) {
+    delete p;
+    p = nullptr;
+  }
+  std::swap(p, x.p);
+  return *this;
 }
 
-const prototype_node* result::node() const
+result::iterator result::begin()
 {
-  return node_;
+  return std::move(++oos::result_iterator(p));
 }
 
+result::iterator result::end()
+{
+  return oos::result_iterator();
+}
+
+bool result::empty() const
+{
+  return false;
+}
+
+std::size_t result::size() const
+{
+  return 0;
+}
 
 }

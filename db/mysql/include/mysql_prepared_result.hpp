@@ -1,7 +1,7 @@
 #ifndef MYSQL_PREPARED_RESULT_HPP
 #define MYSQL_PREPARED_RESULT_HPP
 
-#include "database/result.hpp"
+#include "database/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -13,43 +13,42 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 namespace oos {
 
 class object_base_ptr;
 class varchar_base;
-class primary_key_base;
+class basic_identifier;
 
 namespace mysql {
 
 struct mysql_result_info;
 
-class mysql_prepared_result : public result
+class mysql_prepared_result : public detail::result_impl
 {
 private:
-  mysql_prepared_result(const mysql_prepared_result&) = delete;
-  mysql_prepared_result& operator=(const mysql_prepared_result&) = delete;
+  mysql_prepared_result(const mysql_prepared_result &) = delete;
+  mysql_prepared_result &operator=(const mysql_prepared_result &) = delete;
 
 public:
-  typedef result::size_type size_type;
-  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_pk_map;
+  typedef detail::result_impl::size_type size_type;
+  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_pk_map;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, int rs);
+  mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer);
   ~mysql_prepared_result();
-  
-  const char* column(size_type c) const;
+
+  const char *column(size_type c) const;
   bool fetch();
-  
+
   bool fetch(serializable *o);
-  
+
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-  friend std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
@@ -68,6 +67,8 @@ public:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, object_base_ptr &x);
+  virtual void read(const char *id, object_container &x);
+  virtual void read(const char *id, basic_identifier &x);
 
 private:
   size_type affected_rows_;
@@ -82,8 +83,6 @@ private:
 
   t_pk_map pk_map_;
 };
-
-std::ostream& operator<<(std::ostream &out, const mysql_prepared_result &res);
 
 }
 

@@ -138,7 +138,7 @@ void mssql_database::on_close()
   is_open_ = false;
 }
 
-result* mssql_database::on_execute(const std::string &sqlstr)
+detail::result_impl* mssql_database::on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr)
 {
   if (!connection_) {
     throw_error("mssql", "no odbc connection established");
@@ -161,38 +161,30 @@ result* mssql_database::on_execute(const std::string &sqlstr)
 
   throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
 
-  return new mssql_result(stmt, true);
+  return new mssql_result(stmt, true, ptr);
 }
 
-result* mssql_database::create_result()
+oos::detail::statement_impl *mssql_database::on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr)
 {
-  return 0;
-}
-
-statement* mssql_database::create_statement()
-{
-  return new mssql_statement(*this);
+  return new mssql_statement(*this, stmt, ptr);
 }
 
 void mssql_database::on_begin()
 {
-  result *res = execute("BEGIN TRANSACTION;");
+  result res = execute("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 void mssql_database::on_commit()
 {
-  result *res = execute("COMMIT;");
+  result res = execute("COMMIT;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 void mssql_database::on_rollback()
 {
-  result *res = execute("ROLLBACK;");
+  result res = execute("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
-  delete res;
 }
 
 const char* mssql_database::type_string(data_type_t type) const
@@ -240,16 +232,17 @@ const char* mssql_database::type_string(data_type_t type) const
     }
 }
 
-SQLHANDLE mssql_database::operator()()
+SQLHANDLE mssql_database::handle()
 {
   return connection_;
 }
 
 unsigned long mssql_database::last_inserted_id()
 {
-  std::unique_ptr<result> result(execute("select scope_identity()"));
+  result result = execute("select scope_identity()",
+                                         (std::shared_ptr<object_base_producer>()));
   unsigned long id = 0;
-  result->get(0, id);
+//  result.get(0, id);
   return id;
 }
 

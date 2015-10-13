@@ -41,7 +41,8 @@ namespace oos {
     type_text,           /*!< Data type text */
     type_date,           /*!< Data type date */
     type_time,           /*!< Data type time */
-    type_blob            /*!< Data type blob */
+    type_blob,           /*!< Data type blob */
+    type_null            /*!< Data type null */
   };
 
 /**

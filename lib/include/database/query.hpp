@@ -32,21 +32,19 @@
 #endif
 
 #include "database/sql.hpp"
+#include "database/result.hpp"
 
 #include <memory>
 #include <sstream>
-#include <object/object_ptr.hpp>
 
 namespace oos {
 
-class result;
 class session;
 class statement;
 class database;
 class serializable;
-class prototype_node;
 class condition;
-class serializable;
+class object_base_ptr;
 
 /**
  * @class query
@@ -124,15 +122,6 @@ public:
 
   /**
    * Creates a create statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the create statement.
-   * @return A reference to the query.
-   */
-  query& create(const prototype_node &node);
-
-  /**
-   * Creates a create statement based
    * on a given name and a serializable
    * class instance.
    * 
@@ -142,14 +131,12 @@ public:
    */
   query& create(const std::string &name, serializable *o);
 
-  /**
-   * Creates a drop statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the drop statement.
-   * @return A reference to the query.
-   */
-  query& drop(const prototype_node &node);
+  template < class T >
+  query& create(const std::string &name)
+  {
+    T obj;
+    return create(name, &obj);
+  }
 
   /**
    * Creates a drop statement based
@@ -171,15 +158,6 @@ public:
 
   /**
    * Creates a select statement based
-   * on the given prototype node.
-   * 
-   * @param node The prototype node used for the select statement.
-   * @return A reference to the query.
-   */
-  query& select(const prototype_node &node);
-
-  /**
-   * Creates a select statement based
    * on the given serializable serializable.
    * 
    * @param o The serializable serializable used for the select statement.
@@ -187,36 +165,33 @@ public:
    */
   query& select(serializable *o);
 
-  /**
-   * Creates an insert statement based
-   * on the given serializable.
-   * 
-   * @param o The serializable used for the insert statement.
-   * @return A reference to the query.
-   */
-  query& insert(object_base_ptr &optr);
-  query& insert(object_proxy *proxy);
+  template < class T >
+  query& select()
+  {
+    T obj;
+    producer_.reset(new object_producer<T>);
+    return select(&obj);
+  }
+
+  query& select(object_base_producer *producer)
+  {
+    std::unique_ptr<serializable> obj(producer->create());
+    producer_.reset(producer);
+    return select(obj.get());
+  }
 
   /**
    * Creates an insert statement based
    * on the given serializable serializable and.
    * the name of the table
-   * 
+   *
    * @param o The serializable serializable used for the insert statement.
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& insert(serializable *o, const std::string &name);
+  query& insert(const serializable *o, const std::string &name);
 
-  /**
-   * Creates an update statement based
-   * on the given serializable.
-   * 
-   * @param o The serializable used for the update statement.
-   * @return A reference to the query.
-   */
-  query& update(object_base_ptr &optr);
-  query& update(object_proxy *proxy);
+  query& insert(const object_base_ptr &ptr, const std::string &name);
 
   /**
    * Creates an update statement based
@@ -244,10 +219,10 @@ public:
    * Creates a delete statement based
    * on the given prototype node.
    * 
-   * @param node The prototype node used for the delete statement.
+   * @param table The table name to remove from.
    * @return A reference to the query.
    */
-  query& remove(const prototype_node &node);
+  query& remove(const std::string &table);
 
   /**
    * Adds a where clause string to the select or
@@ -370,7 +345,7 @@ public:
    * 
    * @return The result serializable.
    */
-  result* execute();
+  result execute();
   
   /**
    * Creates and returns a prepared
@@ -378,7 +353,7 @@ public:
    * 
    * @return The new prepared statement.
    */
-  statement* prepare();
+  statement prepare();
 
   /**
    * Resets the query.
@@ -394,11 +369,8 @@ private:
   sql sql_;
   state_t state;
   database &db_;
-#ifdef _MSC_VER
-  std::auto_ptr<statement> stmt;
-#else
-  std::unique_ptr<statement> stmt;
-#endif
+
+  std::shared_ptr <object_base_producer> producer_;
 };
 
 }

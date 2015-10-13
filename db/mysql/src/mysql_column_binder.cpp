@@ -5,8 +5,6 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_ptr.hpp"
-#include "object/serializable.hpp"
-#include "object/prototype_tree.hpp"
 
 #include <cstring>
 
@@ -24,20 +22,15 @@ mysql_column_binder::mysql_column_binder()
 mysql_column_binder::~mysql_column_binder()
 {}
 
-void mysql_column_binder::bind(serializable *o, const prototype_node *node, std::unordered_map<std::string, std::shared_ptr<primary_key_base> > *pk_map,
-                               mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind)
+void mysql_column_binder::bind(serializable *o, mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind)
 {
-  pk_map_ = pk_map;
-  pk_map_->clear();
   column_index_ = 0;
   stmt_ = stmt;
   bind_ = bind;
   info_ = info;
-  node_ = node;
   o->deserialize(*this);
   // bind result array to statement
   mysql_stmt_bind_result(stmt, bind_);
-  node_ = nullptr;
   info_ = nullptr;
   bind_ = nullptr;
   stmt_ = nullptr;
@@ -125,24 +118,18 @@ void mysql_column_binder::read(const char *, varchar_base &x)
 
 void mysql_column_binder::read(const char *id, object_base_ptr &x)
 {
-  const_prototype_iterator xnode = node_->tree->find(x.type());
-  if (xnode == node_->tree->end()) {
-    ++column_index_;
-  } else {
-    // create primary key
-    // bind value
-    // store in key map
-    std::shared_ptr<primary_key_base> pk(xnode->primary_key->clone());
-    pk->deserialize(id, *this);
-    pk_map_->insert(std::make_pair(id, pk));
-  }
+  std::shared_ptr<basic_identifier> pk(x.create_identifier());
+
+  x.reset(pk);
+
+  pk->deserialize(id, *this);
 }
 
 void mysql_column_binder::read(const char *, object_container &)
 {}
 
 
-void mysql_column_binder::read(const char *id, primary_key_base &x)
+void mysql_column_binder::read(const char *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }
@@ -206,24 +193,6 @@ void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, 
     memset(info_[index].buffer, 0, x.capacity());
     info_[index].buffer_length = x.capacity();
   }
-  bind_[index].buffer_type = type;
-  bind_[index].buffer = info_[index].buffer;
-  bind_[index].buffer_length = info_[index].buffer_length;
-  bind_[index].is_null = &info_[index].is_null;
-  bind_[index].length = &info_[index].length;
-  bind_[index].error = &info_[index].error;
-}
-
-void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, object_base_ptr &x)
-{
-  std::shared_ptr<primary_key_base> pk = x.primary_key();
-
-  if (info_[index].buffer == 0) {
-    info_[index].buffer = new char[sizeof(long)];
-    memset(info_[index].buffer, 0, sizeof(long));
-    info_[index].buffer_length = sizeof(long);
-  }
-
   bind_[index].buffer_type = type;
   bind_[index].buffer = info_[index].buffer;
   bind_[index].buffer_length = info_[index].buffer_length;

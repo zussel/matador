@@ -33,11 +33,16 @@
 
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
+#include "object/identifier_resolver.hpp"
 
 #include <memory>
 #include <typeinfo>
 
 namespace oos {
+
+namespace detail {
+class result_impl;
+}
 
 class serializable;
 class object_store;
@@ -140,6 +145,15 @@ public:
 	void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
+   * Resets the object_base_ptr with the given
+   * identifier. If the type of identifier differs
+   * from internal type an exception is thrown
+   *
+   * @param id The identifier to set
+   */
+  void reset(const std::shared_ptr<basic_identifier> &id);
+
+  /**
    * Returns if the serializable is loaded.
    * 
    * @return True if the serializable is loaded.
@@ -173,6 +187,12 @@ public:
    * @return The serializable.
    */
   serializable* ptr();
+
+  /**
+   * Returns the serializable
+   *
+   * @return The serializable.
+   */
 	const serializable* ptr() const;
 
   /**
@@ -226,7 +246,9 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  std::shared_ptr<primary_key_base> primary_key() const;
+  std::shared_ptr<basic_identifier> primary_key() const;
+
+  virtual basic_identifier* create_identifier() const = 0;
 
   /**
    * Prints the underlaying serializable
@@ -238,17 +260,16 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
 
 private:
-	friend class object_reader;
-	friend class object_writer;
   friend class object_creator;
   friend class object_serializer;
   friend class object_proxy;
   friend class object_deleter;
   friend class object_store;
-  friend class session;
-  friend class query;
-  friend class result;
   friend class object_container;
+
+  // Todo: change interface to remove friend
+  friend class session;
+  // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
   template < class T > friend class object_ref;
@@ -396,12 +417,21 @@ public:
       return static_cast<T*>(lookup_object());
   }
 
+  virtual basic_identifier* create_identifier() const
+  {
+    return object_ptr<T>::identifier_->clone();
+  }
+
 private:
   static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
 };
 
 template < class T >
 std::string object_ptr<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver::resolve<T>());
 
 /**
  * @class object_ref
@@ -528,12 +558,21 @@ public:
 	T* get() {
     return static_cast<T*>(lookup_object());
 	}
+
+  virtual basic_identifier* create_identifier() const
+  {
+    return object_ref<T>::identifier_->clone();
+  }
 private:
   static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
 };
 
 template < class T >
 std::string object_ref<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> object_ref<T>::identifier_(identifier_resolver::resolve<T>());
 
 }
 

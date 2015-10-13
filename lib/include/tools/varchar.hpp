@@ -143,7 +143,7 @@ public:
    *
    * @param x The string value to set.
    */
-  explicit varchar(const char *x)
+  varchar(const char *x)
     : varchar_base(C)
   {
     data_.assign(x);

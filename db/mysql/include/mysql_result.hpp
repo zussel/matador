@@ -18,9 +18,7 @@
 #ifndef MYSQL_RESULT_HPP
 #define MYSQL_RESULT_HPP
 
-#include "database/result.hpp"
-
-#include "tools/convert.hpp"
+#include "database/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -38,17 +36,17 @@ class serializable;
 
 namespace mysql {
 
-class mysql_result : public result
+class mysql_result : public detail::result_impl
 {
 private:
   mysql_result(const mysql_result&) = delete;
   mysql_result& operator=(const mysql_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
+  typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_result(MYSQL *c);
+  mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c);
   virtual ~mysql_result();
   
   const char* column(size_type c) const;
@@ -61,8 +59,6 @@ public:
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-//  friend std::ostream& operator<<(std::ostream &out, const mysql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -83,17 +79,8 @@ protected:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, basic_identifier &x);
 
-  template < class T >
-  void read_column(const char *, T &val)
-  {
-    if (!row) {
-      return;
-    } else {
-      convert(row[result_index], val);
-    }
-  }
 private:
   struct result_deleter
   {
@@ -104,10 +91,10 @@ private:
     }
   };
   size_type affected_rows_;
-  size_type rows;
+  size_type rows_;
   size_type fields_;
-  MYSQL_ROW row;
-  MYSQL_RES *res;
+  MYSQL_ROW row_;
+  MYSQL_RES *res_;
 };
 
 }

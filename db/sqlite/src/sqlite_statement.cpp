@@ -21,9 +21,6 @@
 #include "sqlite_prepared_result.hpp"
 
 #include "database/row.hpp"
-#include "database/sql.hpp"
-
-#include "object/object_ptr.hpp"
 
 #include "tools/string.hpp"
 #include "tools/varchar.hpp"
@@ -50,10 +47,16 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_database &db)
+sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer)
   : db_(db)
   , stmt_(0)
+  , producer_(producer)
 {
+  str(stmt);
+  // prepare sqlite statement
+  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
+  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
+
 }
 
 sqlite_statement::~sqlite_statement()
@@ -61,25 +64,12 @@ sqlite_statement::~sqlite_statement()
   clear();
 }
 
-result* sqlite_statement::execute()
+detail::result_impl* sqlite_statement::execute()
 {
   // get next row
   int ret = sqlite3_step(stmt_);
-  
-  return new sqlite_prepared_result(stmt_, ret);
-}
 
-void sqlite_statement::prepare(const sql &s)
-{
-  reset();
-  
-  str(s.prepare());
-
-  // destroy statement
-  clear();
-  // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
+  return new sqlite_prepared_result(stmt_, ret, producer_);
 }
 
 void sqlite_statement::reset()
@@ -207,7 +197,7 @@ void sqlite_statement::write(const char *, const object_base_ptr &x)
 void sqlite_statement::write(const char *, const object_container &)
 {}
 
-void sqlite_statement::write(const char *id, const primary_key_base &x)
+void sqlite_statement::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

@@ -48,7 +48,6 @@ namespace oos {
 
 class statement;
 class serializable;
-class object_container;
 class object_base_ptr;
 class object_store;
 class prototype_node;
@@ -62,7 +61,7 @@ public:
   typedef std::unordered_map<long, object_proxy_list_t> object_map_t;   /**< Map of object proxy lists where key is the primary key of the object in this table */
   typedef std::map<std::string, object_map_t> t_to_many_data;           /**< Map of object proxy list maps where key is the field name of the object */
 
-  typedef std::map<std::shared_ptr<primary_key_base>, object_proxy*> t_to_one_data;
+  typedef std::map<std::shared_ptr<basic_identifier>, object_proxy*> t_to_one_data;
 
 //protected:
   table(database &db, const prototype_node &node);
@@ -94,11 +93,10 @@ private:
   database &db_;
   const prototype_node &node_;
 
-  typedef std::unique_ptr<statement> statement_ptr;
-  statement_ptr insert_;
-  statement_ptr update_;
-  statement_ptr delete_;
-  statement_ptr select_;
+  statement insert_;
+  statement update_;
+  statement delete_;
+  statement select_;
 
   bool prepared_;
 

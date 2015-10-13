@@ -19,6 +19,8 @@
 #define MEMORY_DATABASE_HPP
 
 #include "database/database.hpp"
+#include "database/result.hpp"
+#include "statement_impl.hpp"
 
 namespace oos {
 
@@ -48,8 +50,6 @@ public:
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
 
-  virtual result* create_result() { return 0; }
-  virtual statement* create_statement() { return 0; }
   virtual table* create_table(const prototype_node &) { return 0; }
   virtual void initialize_table(const prototype_node &,
                          std::string &, std::string &) {}
@@ -61,11 +61,13 @@ public:
 
 
   virtual unsigned long last_inserted_id() { return 0; }
+  virtual void free_result(detail::result_impl *) const { };
 
 private:
   virtual void on_open(const std::string &) {}
   virtual void on_close() {}
-  virtual result* on_execute(const std::string &) { return 0; }
+  virtual oos::detail::result_impl* on_execute(const std::string &, std::shared_ptr<object_base_producer>) { return nullptr; }
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &, std::shared_ptr<object_base_producer>) { return nullptr; }
   virtual void on_begin() {}
   virtual void on_commit() {}
   virtual void on_rollback() {}

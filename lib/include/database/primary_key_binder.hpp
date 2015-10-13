@@ -3,7 +3,7 @@
 //
 
 #include "object/object_atomizer.hpp"
-#include "object/primary_key.hpp"
+#include "object/identifier.hpp"
 
 #include "database/statement.hpp"
 
@@ -25,7 +25,7 @@ public:
 
   template < class T >
   void read_value(const char*, T &x);
-  void read_value(const char*, primary_key_base &x);
+  void read_value(const char*, basic_identifier &x);
   void read_value(const char*, char *, int) {}
 
 private:

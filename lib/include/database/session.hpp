@@ -173,7 +173,7 @@ public:
    * @param sql The database query to execute.
    * @return The result of the query.
    */
-  result* execute(const std::string &sql);
+  result execute(const std::string &sql);
 
   /**
    * @brief Inserts a new serializable
@@ -263,13 +263,6 @@ private:
   void begin(transaction &tr);
   void commit(transaction &tr);
   void rollback();
-
-  /**
-   * Create a statement implementation
-   *
-   * @return A statement serializable.
-   */
-  statement* create_statement() const;
 
 private:
   std::string type_;

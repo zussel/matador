@@ -1,11 +1,11 @@
-#include <object/primary_key.hpp>
-#include <tools/date.hpp>
-#include <tools/time.hpp>
-#include "database/query_update.hpp"
-
+#include "object/identifier.hpp"
 #include "object/object_ptr.hpp"
 
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 #include "tools/varchar.hpp"
+
+#include "database/query_update.hpp"
 
 namespace oos {
 
@@ -104,7 +104,7 @@ void query_update::write(const char *id, const object_base_ptr &x)
 void query_update::write(const char *, const object_container &)
 {}
 
-void query_update::write(const char *id, const primary_key_base &x)
+void query_update::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

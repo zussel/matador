@@ -22,7 +22,7 @@
 #include "database/transaction.hpp"
 #include "database/statement.hpp"
 #include "database/table.hpp"
-#include "database/action.hpp"
+#include "database/result.hpp"
 
 #include "object/object_store.hpp"
 #include "object/prototype_node.hpp"
@@ -154,9 +154,14 @@ bool database::is_loaded(const std::string &name) const
 #endif
 }
 
-result* database::execute(const std::string &sql)
+result database::execute(std::string sql, std::shared_ptr<object_base_producer> ptr)
 {
-  return on_execute(sql);
+  return result(on_execute(sql, ptr), this);
+}
+
+statement database::prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
+{
+  return statement(on_prepare(sql, ptr), this);
 }
 
 void database::drop()
@@ -270,6 +275,10 @@ const session* database::db() const
 session* database::db()
 {
   return db_;
+}
+
+result database::create_result(detail::result_impl *impl) {
+  return oos::result(impl, this);
 }
 
 }

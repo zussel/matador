@@ -32,10 +32,10 @@
   #define EXPIMP_TEMPLATE
 #endif
 
-#include "object/primary_key_serializer.hpp"
+#include "identifier_resolver.hpp"
 #include "object/object_producer.hpp"
 #include "object_proxy.hpp"
-#include "primary_key.hpp"
+#include "identifier.hpp"
 
 #include <map>
 #include <list>
@@ -48,15 +48,15 @@ namespace oos {
 class serializable;
 class prototype_tree;
 class object_proxy;
-class primary_key_base;
+class basic_identifier;
 
 template<class T> class pk_hash;
 
 template<>
-class pk_hash<std::shared_ptr<primary_key_base> >
+class pk_hash<std::shared_ptr<basic_identifier> >
 {
 public:
-  size_t operator()(const std::shared_ptr<primary_key_base> &pk) const
+  size_t operator()(const std::shared_ptr<basic_identifier> &pk) const
   {
     size_t h = pk->hash();
 //      return h1 ^ (h2 << 1)
@@ -235,7 +235,7 @@ public:
    * @param pk The primary key
    * @return The corresponding object_proxy or nullptr
    */
-  object_proxy* find_proxy(const std::shared_ptr<primary_key_base> &pk);
+  object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
   /**
    * Prints the node in graphviz layout to the stream.
@@ -280,12 +280,12 @@ public:
   
   bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  primary_key_serializer pk_serializer;
+  identifier_resolver pk_serializer;
 
   /*
    * Holds the primary keys of all proxies in this node
    */
-  typedef std::shared_ptr<primary_key_base> pk_ptr;
+  typedef std::shared_ptr<basic_identifier> pk_ptr;
   struct pk_equal : public std::binary_function<pk_ptr, pk_ptr, bool>
   {
       bool operator()(const pk_ptr &a, const pk_ptr &b) const { return *a == *b; }
@@ -297,7 +297,7 @@ public:
   /*
    * a primary key prototype to clone from
    */
-  std::unique_ptr<primary_key_base> primary_key;
+  std::unique_ptr<basic_identifier> primary_key;
 
   /*
    * a list of prototype_node and ids for
@@ -311,7 +311,7 @@ public:
   /*
    * a list of all foreign keys inside nodes object
    */
-  typedef std::unordered_map<std::string, std::shared_ptr<primary_key_base> > t_foreign_key_map;
+  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
   t_foreign_key_map foreign_keys;
 };
 
