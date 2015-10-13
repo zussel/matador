@@ -1,1 +1,0 @@
-drop table album, item, item_ptr_list, item_ptr_vector, object_item, oos_sequence, ptr_list, ptr_vector, track;
