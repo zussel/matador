@@ -34,43 +34,26 @@ namespace oos {
 
 namespace mssql {
 
-mssql_statement::mssql_statement(mssql_database &db)
+mssql_statement::mssql_statement(mssql_database &db, const sql &s, std::shared_ptr<oos::object_base_producer> producer)
   : db_(db)
+  , producer_(producer)
 {
-  if (!db()) {
+  if (!db.handle()) {
     throw_error("mssql", "no odbc connection established");
   }
   // create statement handle
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db(), &stmt_);
-  throw_error(ret, SQL_HANDLE_DBC, db(), "mssql", "error on creating sql statement");
-}
-
-mssql_statement::mssql_statement(mssql_database &db, const sql &s)
-  : db_(db)
-{
-  if (!db()) {
-    throw_error("mssql", "no odbc connection established");
-  }
-  // create statement handle
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db(), &stmt_);
-  throw_error(ret, SQL_HANDLE_DBC, db(), "mssql", "error on creating sql statement");
-  prepare(s);
-}
-mssql_statement::~mssql_statement()
-{
-  clear();
-}
-
-void mssql_statement::prepare(const sql &s)
-{
-  reset();
-  
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db.handle(), &stmt_);
+  throw_error(ret, SQL_HANDLE_DBC, db.handle(), "mssql", "error on creating sql statement");
   str(s.prepare());
 
   std::cout << "prepare: " << str() << "\n";
 
-  SQLRETURN ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
+  ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
+}
+mssql_statement::~mssql_statement()
+{
+  clear();
 }
 
 void mssql_statement::reset()
@@ -87,14 +70,14 @@ void mssql_statement::clear()
   SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 }
 
-result* mssql_statement::execute()
+detail::result_impl* mssql_statement::execute()
 {
   SQLRETURN ret = SQLExecute(stmt_);
 
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
-  return new mssql_result(stmt_, false);
+  return new mssql_result(stmt_, false, producer_);
 }
 
 void mssql_statement::write(const char *, char x)
@@ -186,7 +169,7 @@ void mssql_statement::write(const char *, const object_container &)
 {
 }
 
-void mssql_statement::write(const char *id, const primary_key_base &x)
+void mssql_statement::write(const char *id, const basic_identifier &x)
 {
   x.serialize(id, *this);
 }

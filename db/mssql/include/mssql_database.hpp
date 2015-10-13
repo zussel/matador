@@ -81,7 +81,7 @@ public:
   
   virtual const char* type_string(data_type_t type) const;
 
-  SQLHANDLE operator()();
+  SQLHANDLE handle();
 
 
   virtual unsigned long last_inserted_id() override;
@@ -89,7 +89,8 @@ public:
 protected:
   virtual void on_open(const std::string &db);
   virtual void on_close();
-  virtual result* on_execute(const std::string &sql);
+  virtual oos::detail::result_impl* on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr);
+  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr);
   virtual void on_begin();
   virtual void on_commit();
   virtual void on_rollback();

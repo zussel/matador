@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#include "identifier.hpp"
+#include "object/identifier.hpp"
 
 namespace oos {
 
@@ -44,16 +44,14 @@ namespace mssql {
 
 class mssql_database;
 
-class mssql_statement : public statement
+class mssql_statement : public detail::statement_impl
 {
 public:
-  explicit mssql_statement(mssql_database &db);
-  mssql_statement(mssql_database &db, const sql &s);
+  mssql_statement(mssql_database &db, const sql &s, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~mssql_statement();
 
   virtual void clear();
-  virtual result* execute();
-  virtual void prepare(const sql &s);
+  virtual detail::result_impl* execute();
   virtual void reset();
   
 //  virtual int column_count() const;
@@ -84,7 +82,7 @@ protected:
   virtual void write(const char *id, const oos::time &x);
 	virtual void write(const char *id, const object_base_ptr &x);
   virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const primary_key_base &x);
+  virtual void write(const char *id, const basic_identifier &x);
 
   template < class T >
   void bind_value(T val, int index)
@@ -119,6 +117,8 @@ private:
   enum { NUMERIC_LEN = 21 };
 
   SQLHANDLE stmt_;
+
+  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

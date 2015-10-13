@@ -26,8 +26,9 @@ namespace oos {
 
 namespace mssql {
 
-mssql_result::mssql_result(SQLHANDLE stmt, bool free)
-  : affected_rows_(0)
+mssql_result::mssql_result(SQLHANDLE stmt, bool free, std::shared_ptr<oos::object_base_producer> producer)
+  : detail::result_impl(producer)
+  , affected_rows_(0)
   , rows(0)
   , fields_(0)
   , free_(free)
@@ -184,16 +185,14 @@ void mssql_result::read(const char *id, oos::time &x)
 
 void mssql_result::read(const char *id, object_base_ptr &x)
 {
-  long val;
-  read_column(id, val);
-  x.id(val);
+  read_foreign_object(id, x);
 }
 
 void mssql_result::read(const char * /*id*/, object_container &/*x*/)
 {
 }
 
-void mssql_result::read(const char *id, primary_key_base &x) {
+void mssql_result::read(const char *id, basic_identifier &x) {
   x.deserialize(id, *this);
 }
 

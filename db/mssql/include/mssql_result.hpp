@@ -34,7 +34,7 @@
 #include <sql.h>
 
 #include <vector>
-#include "identifier.hpp"
+#include "object/identifier.hpp"
 
 namespace oos {
 
@@ -43,17 +43,14 @@ class serializable;
 
 namespace mssql {
 
-class mssql_result : public result
+class mssql_result : public detail::result_impl
 {
 private:
   mssql_result(const mssql_result&) = delete;
   mssql_result& operator=(const mssql_result&) = delete;
 
 public:
-  typedef result::size_type size_type;
-
-public:
-  mssql_result(SQLHANDLE stmt, bool free);
+  mssql_result(SQLHANDLE stmt, bool free, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~mssql_result();
   
   const char* column(size_type c) const;
@@ -64,8 +61,6 @@ public:
   size_type fields() const;
 
   virtual int transform_index(int index) const;
-
-//  friend std::ostream& operator<<(std::ostream &out, const mssql_result &res);
 
 protected:
   virtual void read(const char *id, char &x);
@@ -86,7 +81,7 @@ protected:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, object_base_ptr &x);
   virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, primary_key_base &x);
+  virtual void read(const char *id, basic_identifier &x);
 
   template < class T >
   void read_column(const char *, T & val)
