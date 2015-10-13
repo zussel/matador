@@ -49,7 +49,7 @@ void sequence::serialize(object_writer &w) const
 
 unsigned long sequence::seq() const
 {
-  return 0;
+  return sequence_;
 }
 
 void sequence::seq(unsigned long sequence)
