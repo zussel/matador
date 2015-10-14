@@ -253,7 +253,7 @@ public:
 private:
   friend class transaction;
   friend class statement;
-  friend class query;
+  template <class T > friend class query;
   
   void push_transaction(transaction *tr);
   void pop_transaction();

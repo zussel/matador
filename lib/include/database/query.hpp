@@ -33,15 +33,20 @@
 
 #include "database/sql.hpp"
 #include "database/result.hpp"
+#include "database/session.hpp"
+#include "database/database.hpp"
+
+#include "database/query_create.hpp"
+#include "database/query_insert.hpp"
+#include "database/query_update.hpp"
+#include "database/query_select.hpp"
 
 #include <memory>
 #include <sstream>
 
 namespace oos {
 
-class session;
 class statement;
-class database;
 class serializable;
 class condition;
 class object_base_ptr;
@@ -74,6 +79,7 @@ class object_base_ptr;
  * parts by calling the methods in a chain
  * (concatenated by dots).
  */
+template < class T >
 class OOS_API query
 {
 private:
@@ -109,7 +115,10 @@ public:
    * 
    * @param s The session.
    */
-  query(session &s);
+  query(session &s)
+    : state(QUERY_BEGIN)
+    , db_(s.db())
+  {}
   
   /**
    * Create a new query for the
@@ -117,8 +126,12 @@ public:
    * 
    * @param s The database.
    */
-  query(database &s);
-  ~query();
+  query(database &db)
+    : state(QUERY_BEGIN)
+    , db_(db)
+  {}
+
+  ~query() {}
 
   /**
    * Creates a create statement based
@@ -129,13 +142,33 @@ public:
    * @param o The serializable serializable providing the field information.
    * @return A reference to the query.
    */
-  query& create(const std::string &name, serializable *o);
-
-  template < class T >
   query& create(const std::string &name)
   {
     T obj;
-    return create(name, &obj);
+    sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
+
+    query_create s(sql_, db_);
+    obj.serialize(s);
+    sql_.append(")");
+
+//  std::cout << sql_.str(true) << '\n';
+
+    state = QUERY_CREATE;
+    return *this;
+  }
+
+  query& create(const std::string &name, serializable *obj)
+  {
+    sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
+
+    query_create s(sql_, db_);
+    obj->serialize(s);
+    sql_.append(")");
+
+//  std::cout << sql_.str(true) << '\n';
+
+    state = QUERY_CREATE;
+    return *this;
   }
 
   /**
@@ -145,7 +178,13 @@ public:
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& drop(const std::string &name);
+  query& drop(const std::string &name)
+  {
+    sql_.append(std::string("DROP TABLE ") + name);
+
+    state = QUERY_DROP;
+    return *this;
+  }
 
   /**
    * Creates a select statement without
@@ -154,31 +193,56 @@ public:
    * 
    * @return A reference to the query.
    */
-  query& select();
+//  query& select()
+//  {
+//    throw_invalid(QUERY_SELECT, state);
+//    sql_.append("SELECT ");
+//    state = QUERY_SELECT;
+//    return *this;
+//  }
 
   /**
    * Creates a select statement based
    * on the given serializable serializable.
    * 
-   * @param o The serializable serializable used for the select statement.
    * @return A reference to the query.
    */
-  query& select(serializable *o);
-
-  template < class T >
   query& select()
   {
     T obj;
     producer_.reset(new object_producer<T>);
-    return select(&obj);
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append("SELECT ");
+
+    query_select s(sql_);
+    obj.serialize(s);
+
+    state = QUERY_SELECT;
+    return *this;
   }
 
   query& select(object_base_producer *producer)
   {
-    std::unique_ptr<serializable> obj(producer->create());
     producer_.reset(producer);
-    return select(obj.get());
+
+    std::unique_ptr<serializable> obj(producer->create());
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append("SELECT ");
+
+    query_select s(sql_);
+    obj->serialize(s);
+
+    state = QUERY_SELECT;
+    return *this;
   }
+
+//  query& select(object_base_producer *producer)
+//  {
+//    std::unique_ptr<serializable> obj(producer->create());
+//    producer_.reset(producer);
+//    return select(obj.get());
+//  }
 
   /**
    * Creates an insert statement based
@@ -189,20 +253,71 @@ public:
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& insert(const serializable *o, const std::string &name);
+  query& insert(const T *o, const std::string &table)
+  {
+    throw_invalid(QUERY_OBJECT_INSERT, state);
 
-  query& insert(const object_base_ptr &ptr, const std::string &name);
+    sql_.append(std::string("INSERT INTO ") + table + std::string(" ("));
+
+    query_insert s(sql_);
+    s.fields();
+    o->serialize(s);
+
+    sql_.append(") VALUES (");
+
+    s.values();
+    o->serialize(s);
+
+    sql_.append(")");
+
+    state = QUERY_OBJECT_INSERT;
+
+    return *this;
+  }
+
+  query& insert(const object_ptr<T> &ptr, const std::string &table)
+  {
+    return insert(ptr.get(), table);
+  }
+
+  query& insert(const object_ref<T> &ref, const std::string &table)
+  {
+    return insert(ref.get(), table);
+  }
 
   /**
    * Creates an update statement based
    * on the given serializable serializable and.
    * the name of the table
    * 
-   * @param name The name of the table.
    * @param o The serializable serializable used for the update statement.
+   * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& update(const std::string &name, serializable *o);
+  query& update(T *o, const std::string &table)
+  {
+    throw_invalid(QUERY_OBJECT_UPDATE, state);
+
+    sql_.append(std::string("UPDATE ") + table + std::string(" SET "));
+
+    query_update s(sql_);
+    o->serialize(s);
+
+    state = QUERY_OBJECT_UPDATE;
+
+    return *this;
+  }
+
+  query& update(object_ptr<T> &ptr, const std::string &table)
+  {
+    return update(ptr.get(), table);
+  }
+
+  query& update(object_ref<T> &ref, const std::string &table)
+  {
+    return update(ref.get(), table);
+  }
+
 
   /**
    * Creates an update statement without
@@ -213,7 +328,13 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& update(const std::string &table);
+  query& update(const std::string &table)
+  {
+    throw_invalid(QUERY_UPDATE, state);
+    sql_.append("UPDATE " + table + " SET ");
+    state = QUERY_UPDATE;
+    return *this;
+  }
 
   /**
    * Creates a delete statement based
@@ -222,8 +343,16 @@ public:
    * @param table The table name to remove from.
    * @return A reference to the query.
    */
-  query& remove(const std::string &table);
+  query& remove(const std::string &table)
+  {
+    throw_invalid(QUERY_DELETE, state);
 
+    sql_.append(std::string("DELETE FROM ") + table);
+
+    state = QUERY_DELETE;
+
+    return *this;
+  }
   /**
    * Adds a where clause string to the select or
    * update statement. For any other query an
@@ -232,7 +361,16 @@ public:
    * @param clause The where clause.
    * @return A reference to the query.
    */
-  query& where(const std::string &clause);
+  query& where(const std::string &clause)
+  {
+    throw_invalid(QUERY_WHERE, state);
+
+    sql_.append(std::string(" WHERE ") + clause);
+
+    state = QUERY_WHERE;
+
+    return *this;
+  }
 
   /**
    * Adds a where clause condition to the select or
@@ -242,7 +380,16 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& where(const condition &c);
+  query& where(const condition &c)
+  {
+    throw_invalid(QUERY_COND_WHERE, state);
+
+    sql_.append(std::string(" WHERE "));
+    sql_.append(c);
+
+    state = QUERY_COND_WHERE;
+    return *this;
+  }
 
   /**
    * Adds an and clause condition to the where
@@ -251,8 +398,17 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& and_(const condition &c);
-  
+  query& and_(const condition &c)
+  {
+    throw_invalid(QUERY_AND, state);
+
+    sql_.append(std::string(" AND "));
+    sql_.append(c);
+
+    state = QUERY_AND;
+    return *this;
+  }
+
   /**
    * Adds an or clause condition to the where
    * clause.
@@ -260,7 +416,16 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& or_(const condition &c);
+  query& or_(const condition &c)
+  {
+    throw_invalid(QUERY_OR, state);
+
+    sql_.append(std::string(" OR "));
+    sql_.append(c);
+
+    state = QUERY_OR;
+    return *this;
+  }
 
   /**
    * Adds an order by clause to a select
@@ -269,7 +434,16 @@ public:
    * @param by The order by clause.
    * @return A reference to the query.
    */
-  query& order_by(const std::string &by);
+  query& order_by(const std::string &by)
+  {
+    throw_invalid(QUERY_ORDERBY, state);
+
+    sql_.append(std::string(" ORDER BY ") + by);
+
+    state = QUERY_ORDERBY;
+
+    return *this;
+  }
 
   /**
    * Adds a limit clause to a select
@@ -278,7 +452,13 @@ public:
    * @param l The limit clause.
    * @return A reference to the query.
    */
-  query& limit(int l);
+  query& limit(std::size_t l)
+  {
+    std::stringstream limval;
+    limval << " LIMIT(" << l << ")";
+    sql_.append(limval.str());
+    return *this;
+  }
 
   /**
    * Adds a group by clause to a select
@@ -287,7 +467,16 @@ public:
    * @param field The group by clause.
    * @return A reference to the query.
    */
-  query& group_by(const std::string &field);
+  query& group_by(const std::string &field)
+  {
+    throw_invalid(QUERY_GROUPBY, state);
+
+    sql_.append(std::string(" GROUP BY ") + field);
+
+    state = QUERY_GROUPBY;
+
+    return *this;
+  }
 
   /**
    * Adds a column to a select statement.
@@ -296,8 +485,17 @@ public:
    * @param type The datatype of the column,
    * @return A reference to the query.
    */
-  query& column(const std::string &name, data_type_t type);
-  
+  query& column(const std::string &field, data_type_t type)
+  {
+    throw_invalid(QUERY_COLUMN, state);
+    if (state == QUERY_COLUMN) {
+      sql_.append(", ");
+    }
+    sql_.append(field.c_str(), type);
+    state = QUERY_COLUMN;
+    return *this;
+  }
+
   /**
    * Appends the given table name to the
    * select query. Must only be called for a
@@ -307,7 +505,12 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& from(const std::string &table);
+  query& from(const std::string &table)
+  {
+    // check state (simple select)
+    sql_.append(" FROM " + table);
+    return *this;
+  }
 
   /**
    * This method must only be called for
@@ -320,8 +523,8 @@ public:
    * @param val The value to set.
    * @return A reference to the query.
    */
-  template < class T >
-  query& set(const std::string &column, data_type_t type, const T &val)
+  template < class V >
+  query& set(const std::string &column, data_type_t type, const V &val)
   {
     throw_invalid(QUERY_SET, state);
 
@@ -345,25 +548,106 @@ public:
    * 
    * @return The result serializable.
    */
-  result execute();
-  
+  result execute()
+  {
+//  std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//  std::cout.flush();
+    return db_.execute(sql_.direct(), producer_);
+  }
+
   /**
    * Creates and returns a prepared
    * statement based on the current query.
    * 
    * @return The new prepared statement.
    */
-  statement prepare();
+  statement prepare()
+  {
+    return db_.prepare(sql_, producer_);
+  }
 
   /**
    * Resets the query.
    * 
    * @return A reference to the query.
    */
-  query& reset();
-  
+  query& reset()
+  {
+    sql_.reset();
+    state = QUERY_BEGIN;
+    return *this;
+  }
+
+
 private:
-  void throw_invalid(state_t next, state_t current) const;
+  static void throw_invalid(state_t next, state_t current)
+  {
+    std::stringstream msg;
+    switch (next) {
+      case query::QUERY_CREATE:
+      case query::QUERY_DROP:
+      case query::QUERY_SELECT:
+      case query::QUERY_INSERT:
+      case query::QUERY_UPDATE:
+      case query::QUERY_DELETE:
+      case query::QUERY_OBJECT_SELECT:
+      case query::QUERY_OBJECT_INSERT:
+      case query::QUERY_OBJECT_UPDATE:
+        if (current != QUERY_BEGIN) {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_WHERE:
+      case query::QUERY_COND_WHERE:
+        if (current != query::QUERY_SELECT &&
+            current != query::QUERY_COLUMN &&
+            current != query::QUERY_SET &&
+            current != query::QUERY_DELETE &&
+            current != query::QUERY_OBJECT_SELECT &&
+            current != query::QUERY_OBJECT_UPDATE)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_AND:
+      case query::QUERY_OR:
+        if (current != query::QUERY_COND_WHERE &&
+            current != query::QUERY_OR &&
+            current != query::QUERY_AND)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_COLUMN:
+        if (current != query::QUERY_SELECT &&
+            current != query::QUERY_COLUMN)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_FROM:
+        if (current != query::QUERY_COLUMN) {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_SET:
+        if (current != query::QUERY_UPDATE &&
+            current != query::QUERY_SET)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      default:
+        throw std::logic_error("unknown state");
+    }
+  }
+
 
 private:
   sql sql_;

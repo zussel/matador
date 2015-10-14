@@ -2,11 +2,13 @@
 #define QUERY_CREATE_HPP
 
 #include "object/object_atomizer.hpp"
-#include "database/sql.hpp"
+
+#include "database/types.hpp"
 
 namespace oos {
 
 class database;
+class sql;
 
 /// @cond OOS_DEV
 

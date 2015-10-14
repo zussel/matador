@@ -121,12 +121,12 @@ std::string table::name() const
 
 void table::prepare()
 {
-  query q(db_);
+  query<serializable> q(db_);
 
   std::unique_ptr<serializable> o(node_.producer->create());
   insert_ = q.insert(o.get(), node_.type).prepare();
   if (node_.has_primary_key()) {
-    update_ = q.reset().update(node_.type, o.get()).where(cond("id").equal(0)).prepare();
+    update_ = q.reset().update(o.get(), node_.type).where(cond("id").equal(0)).prepare();
     delete_ = q.reset().remove(node_.type).where(cond("id").equal(0)).prepare();
   }
   select_ = q.reset().select(node_.producer->clone()).from(node_.type).prepare();
@@ -136,7 +136,7 @@ void table::prepare()
 
 void table::create()
 {
-  query q(db_);
+  query<serializable> q(db_);
 
   std::unique_ptr<serializable> obj(node_.producer->create());
   result res = q.create(node_.type, obj.get()).execute();
@@ -226,7 +226,7 @@ void table::drop()
 
   prepared_ = false;
 
-  query q(db_);
+  query<serializable> q(db_);
 
   result res(q.drop(node_.type).execute());
   // Todo: check drop result

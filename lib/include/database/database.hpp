@@ -278,7 +278,7 @@ private:
   friend class database_factory;
   friend class table;
   friend class table_reader;
-  friend class query;
+  template <class T > friend class query;
 
   session *db_;
   bool commiting_;

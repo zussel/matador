@@ -13,8 +13,9 @@ SET(OBJECT_SOURCES
   object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
-        object/identifier_resolver.cpp
-        object/basic_identifier.cpp object/identifier.cpp)
+  object/identifier_resolver.cpp
+  object/basic_identifier.cpp
+  object/identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -204,13 +205,12 @@ SET(DATABASE_SOURCES
   database/table.cpp
   database/table_reader.cpp
   database/sql.cpp
-  database/query.cpp
   database/query_create.cpp
   database/query_select.cpp
   database/query_insert.cpp
   database/query_update.cpp
   database/primary_key_binder.cpp
-        database/statement_impl.cpp)
+  database/statement_impl.cpp)
 
 SET(DATABASE_HEADER
   ../include/database/action.hpp
@@ -239,7 +239,7 @@ SET(DATABASE_HEADER
   ../include/database/query_update.hpp
   ../include/database/token.hpp
   ../include/database/primary_key_binder.hpp
-        ../include/database/statement_impl.hpp object/identifier.cpp)
+  ../include/database/statement_impl.hpp object/identifier.cpp)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp

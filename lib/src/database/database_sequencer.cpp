@@ -18,7 +18,6 @@
 #include "database/database_sequencer.hpp"
 #include "database/database_exception.hpp"
 #include "database/query.hpp"
-#include "database/statement.hpp"
 
 #include "object/generic_access.hpp"
 
@@ -113,11 +112,10 @@ unsigned long database_sequencer::update(unsigned long id)
 
 void database_sequencer::create()
 {
-  query q(db_);
-  result res = q.create("oos_sequence", &sequence_).execute();
+  query<sequence> q(db_);
+  result res = q.create("oos_sequence").execute();
   
-  res = q.reset().select<sequence>().from("oos_sequence").where("name='serializable'").execute();
-
+  res = q.reset().select().from("oos_sequence").where("name='serializable'").execute();
 
   result_iterator first = res.begin();
 
@@ -132,13 +130,13 @@ void database_sequencer::create()
     q.reset().insert(&sequence_, "oos_sequence").execute();
   }
 
-  update_ = q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare();
+  update_ = q.reset().update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
 }
 
 void database_sequencer::load()
 {
-  query q(db_);
-  result res = q.select<sequence>().from("oos_sequence").where("name='serializable'").execute();
+  query<sequence> q(db_);
+  result res = q.select().from("oos_sequence").where("name='serializable'").execute();
 
   result_iterator first = res.begin();
 
@@ -153,7 +151,7 @@ void database_sequencer::load()
 //  if (!update_) {
 //    update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
 //  }
-  update_ = q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare();
+  update_ = q.reset().update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
 }
 
 void database_sequencer::begin()
@@ -179,7 +177,7 @@ void database_sequencer::rollback()
 void database_sequencer::drop()
 {
   update_.clear();
-  query q(db_);
+  query<sequence> q(db_);
   // TODO: check result
   q.drop("oos_sequence").execute();
 }
