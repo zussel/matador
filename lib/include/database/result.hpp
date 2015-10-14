@@ -33,7 +33,6 @@
 
 #include "object/object_atomizer.hpp"
 
-#include "object/prototype_node.hpp"
 #include "object/serializable.hpp"
 
 #include "database/result_impl.hpp"
@@ -43,9 +42,6 @@
 namespace oos {
 
 class database;
-class row;
-class statement;
-class serializable;
 
 namespace detail {
 class result_impl;
@@ -101,7 +97,7 @@ public:
 
   self operator++(int)
   {
-    std::unique_ptr<serializable> obj(result_impl_->producer()->create());
+    std::unique_ptr<T> obj(result_impl_->producer()->create());
     result_impl_->fetch(obj.get());
     return self(result_impl_, obj.release());
   }

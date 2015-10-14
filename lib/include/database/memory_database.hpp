@@ -20,12 +20,14 @@
 
 #include "database/database.hpp"
 #include "database/result.hpp"
-#include "statement_impl.hpp"
 
 namespace oos {
 
 /// @cond OOS_DEV
 
+namespace detail {
+class statement_impl;
+}
 class memory_database : public database
 {
 public:
@@ -49,13 +51,6 @@ public:
   virtual void visit(insert_action*) {}
   virtual void visit(update_action*) {}
   virtual void visit(delete_action*) {}
-
-  virtual table* create_table(const prototype_node &) { return 0; }
-  virtual void initialize_table(const prototype_node &,
-                         std::string &, std::string &) {}
-  virtual void prepare_table(const prototype_node &,
-                         statement *, statement *,
-                         statement *, statement *) {}
 
   virtual const char* type_string(data_type_t ) const { return 0; }
 

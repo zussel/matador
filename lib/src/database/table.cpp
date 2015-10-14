@@ -139,7 +139,7 @@ void table::create()
   query<serializable> q(db_);
 
   std::unique_ptr<serializable> obj(node_.producer->create());
-  result res = q.create(node_.type, obj.get()).execute();
+  auto res = q.create(node_.type, obj.get()).execute();
   
   // prepare CRUD statements
   prepare();
@@ -153,7 +153,7 @@ void table::load(object_store &ostore)
 
   table_reader reader(*this, ostore);
 
-  result res = select_.execute();
+  auto res = select_.execute();
 
   reader.load(res);
 
@@ -187,7 +187,7 @@ void table::load(object_store &ostore)
 void table::insert(serializable *obj)
 {
   insert_.bind(obj);
-  result res = insert_.execute();
+  auto res = insert_.execute();
 //  insert_.clear();
 //  insert_.reset();
 
@@ -204,7 +204,7 @@ void table::update(serializable *obj)
   primary_key_binder_.bind(obj, &update_, pos);
 
 //  update_->bind(pos, obj->id());
-  result res(update_.execute());
+  auto res(update_.execute());
   update_.clear();
 //  if (res->affected_rows() != 1) {
 //    throw database_exception("update", "more than one affected row while updating an object");
@@ -228,7 +228,7 @@ void table::drop()
 
   query<serializable> q(db_);
 
-  result res(q.drop(node_.type).execute());
+  auto res(q.drop(node_.type).execute());
   // Todo: check drop result
 }
 

@@ -94,7 +94,7 @@ private:
   database &db_;
   sequence sequence_;
   unsigned long backup_;
-  statement update_;
+  statement<serializable> update_;
 };
 
 class dummy_database_sequencer : public database_sequencer

@@ -154,16 +154,6 @@ bool database::is_loaded(const std::string &name) const
 #endif
 }
 
-result<serializable> database::execute(std::string sql, std::shared_ptr<object_base_producer> ptr)
-{
-  return result<serializable>(on_execute(sql, ptr), this);
-}
-
-statement database::prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
-{
-  return statement(on_prepare(sql, ptr), this);
-}
-
 void database::drop()
 {
   table_map_t::iterator first = table_map_.begin();

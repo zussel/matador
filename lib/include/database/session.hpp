@@ -48,7 +48,6 @@
 namespace oos {
 
 class object_store;
-class statement;
 class database;
 
 /**
@@ -253,7 +252,7 @@ public:
 
 private:
   friend class transaction;
-  friend class statement;
+  template < class T >friend class statement;
   template <class T > friend class query;
   
   void push_transaction(transaction *tr);

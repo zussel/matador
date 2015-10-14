@@ -12,16 +12,16 @@
 
 namespace oos {
 
-class statement;
+template < class T > class statement;
 class serializable;
 
-class primary_key_binder : public generic_object_reader<primary_key_binder>
+class identifier_binder : public generic_object_reader<identifier_binder>
 {
 public:
-  primary_key_binder() : generic_object_reader<primary_key_binder>(this) {}
-  virtual ~primary_key_binder() {}
+  identifier_binder() : generic_object_reader<identifier_binder>(this) {}
+  virtual ~identifier_binder() {}
 
-  void bind(serializable *obj, statement *stmt, int pos);
+  void bind(serializable *obj, statement<serializable> *stmt, int pos);
 
   template < class T >
   void read_value(const char*, T &x);
@@ -29,18 +29,18 @@ public:
   void read_value(const char*, char *, int) {}
 
 private:
-  void setup(statement *stmt, serializable *obj, int pos);
+  void setup(statement<serializable> *stmt, serializable *obj, int pos);
   void cleanup();
 
 private:
   bool reading_pk_ = false;
-  statement *stmt_ = nullptr;
+  statement<serializable> *stmt_ = nullptr;
   int pos_ = 0;
   serializable *obj_ = nullptr;
 };
 
 template < class T >
-void primary_key_binder::read_value(const char*, T &x) {
+void identifier_binder::read_value(const char*, T &x) {
   if (reading_pk_) {
     stmt_->bind(pos_, x);
   }

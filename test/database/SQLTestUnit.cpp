@@ -37,8 +37,7 @@ void SQLTestUnit::test_create()
 
   query<Item> q(session_->db());
 
-//    result<Item> res(q.create("item").execute());
-  result res(q.create("item").execute());
+  result<Item> res(q.create("item").execute());
 
   q.reset();
 
@@ -48,21 +47,16 @@ void SQLTestUnit::test_create()
 
   q.reset();
 
-//    res = q.select().from("item").execute();
   res = q.select().from("item").execute();
 
-//    result_iterator<Item> first = res.begin();
-//    result_iterator<Item> last = res.end();
+  result_iterator<Item> first = res.begin();
+  result_iterator<Item> last = res.end();
 //    auto first = res.begin();
 //    auto last = res.end();
-  result_iterator first = res.begin();
-  result_iterator last = res.end();
 
   while (first != last) {
-//      Item *item = first.release();
-//      delete item;
-    serializable *obj = first.release();
-    delete obj;
+    Item *item = first.release();
+    delete item;
     ++first;
   }
 
@@ -77,10 +71,9 @@ void SQLTestUnit::test_statement()
 
   query<Item> q(session_->db());
 
-//    result<Item> res(q.create("item").execute());
-  statement stmt(q.create("item").prepare());
+  statement<Item> stmt(q.create("item").prepare());
 
-  result res(stmt.execute());
+  result<Item> res(stmt.execute());
 
   q.reset();
 
@@ -96,18 +89,12 @@ void SQLTestUnit::test_statement()
   stmt = q.select().from("item").prepare();
   res = stmt.execute();
 
-//    result_iterator<Item> first = res.begin();
-//    result_iterator<Item> last = res.end();
-//    auto first = res.begin();
-//    auto last = res.end();
-  result_iterator first = res.begin();
-  result_iterator last = res.end();
+  result_iterator<Item> first = res.begin();
+  result_iterator<Item> last = res.end();
 
   while (first != last) {
-//      Item *item = first.release();
-//      delete item;
-    serializable *obj = first.release();
-    delete obj;
+    Item *item = first.release();
+    delete item;
     ++first;
   }
 
@@ -127,7 +114,7 @@ void SQLTestUnit::test_foreign_query()
   using t_object_item = ObjectItem<Item>;
 
   // create item table and insert item
-  result res(q.create("item").execute());
+  result<Item> res(q.create("item").execute());
   q.reset();
 
   object_ptr<Item> hans(new Item("Hans", 4711));
@@ -139,28 +126,26 @@ void SQLTestUnit::test_foreign_query()
 
   query<t_object_item> object_item_query(session_->db());
 //    result<Item> res(q.create("item").execute());
-  res = object_item_query.create("object_item").execute();
+  result<t_object_item> ores = object_item_query.create("object_item").execute();
 
   object_item_query.reset();
 
   t_object_item oitem;
   oitem.ptr(hans);
 
-  res = object_item_query.insert(&oitem, "object_item").execute();
+  ores = object_item_query.insert(&oitem, "object_item").execute();
 
   object_item_query.reset();
 
-  res = object_item_query.select().from("object_item").execute();
+  ores = object_item_query.select().from("object_item").execute();
 
-  result_iterator first = res.begin();
-  result_iterator last = res.end();
+  result_iterator<t_object_item> first = ores.begin();
+  result_iterator<t_object_item> last = ores.end();
 
   while (first != last) {
-    serializable *obj = first.release();
+    t_object_item *obj = first.release();
 
-    t_object_item *oi = dynamic_cast<t_object_item*>(obj);
-
-    object_ptr<Item> i = oi->ptr();
+    object_ptr<Item> i = obj->ptr();
 
     delete obj;
     ++first;

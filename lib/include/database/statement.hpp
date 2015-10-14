@@ -34,7 +34,6 @@
 #include "object/object_atomizer.hpp"
 
 #include "database/statement_impl.hpp"
-#include "database/database.hpp"
 #include "database/result.hpp"
 
 #include <string>
@@ -51,7 +50,8 @@ namespace detail {
   class statement_impl;
 }
 
-    /// @cond OOS_DEV
+/// @cond OOS_DEV
+template < class T >
 class OOS_API statement
 {
 private:
@@ -59,27 +59,71 @@ private:
   statement& operator=(const statement &x) = delete;
 
 public:
-  statement();
-  statement(detail::statement_impl *impl, database *db);
-  ~statement();
+  statement()
+    : p(nullptr)
+  { }
 
-  statement(statement &&x);
-  statement& operator=(statement &&x);
+  statement(detail::statement_impl *impl, database *db)
+    : p(impl)
+    , db_(db)
+  { }
 
-  void clear();
+  ~statement()
+  {
+    if (p) {
+      p->clear();
+      delete p;
+    }
+  }
 
-  result<serializable> execute();
+  statement(statement &&x)
+  {
+    std::swap(p, x.p);
+  }
 
-  void reset();
+  statement& operator=(statement &&x)
+  {
+    if (p) {
+      delete p;
+      p = nullptr;
+    }
+    std::swap(p, x.p);
+    return *this;
+  }
+
+  void clear()
+  {
+    if (p) {
+      p->clear();
+    }
+  }
+
+  result<T> execute()
+  {
+//  std::cout << "SQL: " << p->str() << '\n';
+    return result<T>(p->execute(), db_);
+  }
+
+  void reset()
+  {
+    p->reset();
+  }
   
-  int bind(serializable *o);
-  template < class T >
-  int bind(unsigned long i, const T &val)
+  int bind(T *o)
+  {
+    return p->bind(o);
+  }
+
+  template < class V >
+  int bind(unsigned long i, const V &val)
   {
     return p->bind(i, val);
   }
 
-  std::string str() const;
+  std::string str() const
+  {
+    return p->str();
+  }
 
 private:
   oos::detail::statement_impl *p = nullptr;
