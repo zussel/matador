@@ -10,7 +10,7 @@ class object_store;
 class object_proxy;
 
 class database;
-class result;
+template < class T > class result;
 class table;
 
 class table_reader : public generic_object_reader<table_reader>
@@ -19,7 +19,7 @@ public:
   table_reader(table &t, object_store &ostore);
   virtual ~table_reader() {}
 
-  void load(result &res);
+  void load(result<serializable> &res);
 
   template < class T >
   void read_value(const char *, T &) {}

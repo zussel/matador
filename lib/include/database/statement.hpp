@@ -34,14 +34,14 @@
 #include "object/object_atomizer.hpp"
 
 #include "database/statement_impl.hpp"
-#include "database.hpp"
+#include "database/database.hpp"
+#include "database/result.hpp"
 
 #include <string>
 #include <functional>
 
 namespace oos {
 
-class result;
 class serializable;
 class sql;
 class object_base_producer;
@@ -68,7 +68,7 @@ public:
 
   void clear();
 
-  result execute();
+  result<serializable> execute();
 
   void reset();
   

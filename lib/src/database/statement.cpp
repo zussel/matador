@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+
 #include "database/statement.hpp"
 
 using namespace std::placeholders;
@@ -66,7 +67,7 @@ void statement::clear()
   }
 }
 
-result statement::execute()
+result<serializable> statement::execute()
 {
 //  std::cout << "SQL: " << p->str() << '\n';
   return result(p->execute(), db_);

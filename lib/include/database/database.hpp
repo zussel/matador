@@ -168,7 +168,7 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  result execute(std::string sql, std::shared_ptr<object_base_producer> ptr);
+  result<serializable> execute(std::string sql, std::shared_ptr<object_base_producer> ptr);
 
   /**
    * Prepare a sql statement and return a
@@ -209,7 +209,7 @@ public:
    *
    * @return New result implenation serializable.
    */
-  result create_result(detail::result_impl *impl);
+  result<serializable> create_result(detail::result_impl *impl);
 
   /**
    * Get last inserted id from database

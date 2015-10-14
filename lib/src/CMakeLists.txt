@@ -197,7 +197,6 @@ SET(DATABASE_SOURCES
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
-  database/result.cpp
   database/result_impl.cpp
   database/row.cpp
   database/statement.cpp

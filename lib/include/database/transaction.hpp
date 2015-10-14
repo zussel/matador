@@ -40,7 +40,6 @@
 #include <list>
 #include <set>
 #include <map>
-#include <object/object_proxy.hpp>
 
 namespace oos {
 
@@ -156,7 +155,6 @@ private:
   action_list_t action_list_;
 
   byte_buffer object_buffer_;
-  identifier_resolver primary_key_serializer_;
 };
 
 }

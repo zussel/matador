@@ -548,7 +548,7 @@ public:
    * 
    * @return The result serializable.
    */
-  result execute()
+  result<T> execute()
   {
 //  std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //  std::cout.flush();

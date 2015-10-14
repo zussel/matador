@@ -52,59 +52,147 @@ class result_impl;
 }
 
 /// @cond OOS_DEV
-
-class result_iterator  : public std::iterator<std::forward_iterator_tag, serializable>
+template < class T >
+class result_iterator  : public std::iterator<std::forward_iterator_tag, T>
 {
 public:
-  typedef result_iterator self;	            /**< Shortcut for this class. */
-  typedef serializable value_type;            /**< Shortcut for the value type. */
-  typedef value_type* pointer;                /**< Shortcut for the pointer type. */
-  typedef value_type& reference;              /**< Shortcut for the reference type */
+  typedef result_iterator<T> self; /**< Shortcut for this class. */
+  typedef T value_type;            /**< Shortcut for the value type. */
+  typedef value_type* pointer;     /**< Shortcut for the pointer type. */
+  typedef value_type& reference;   /**< Shortcut for the reference type */
 
-  result_iterator();
-  result_iterator(oos::detail::result_impl *result_impl, serializable *obj = nullptr);
-  result_iterator(result_iterator&& x);
-  result_iterator& operator=(result_iterator&& x);
-  ~result_iterator();
+  result_iterator() {}
+  result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
+    : obj_(obj)
+    , result_impl_(result_impl)
+  {}
+  result_iterator(result_iterator&& x)
+    : obj_(x.obj_.release())
+    , result_impl_(x.result_impl_)
+  {}
 
-  bool operator==(const result_iterator& rhs);
-  bool operator!=(const result_iterator& rhs);
+  result_iterator& operator=(result_iterator&& x)
+  {
+    result_impl_ = x.result_impl_;
+    obj_.reset(x.obj_.release());
+    return *this;
+  }
 
-  result_iterator& operator++();
-  result_iterator operator++(int);
+  ~result_iterator() {}
 
-  pointer operator->();
-  pointer operator&();
-  reference operator*();
-  pointer get();
-  pointer release();
+  bool operator==(const result_iterator& rhs)
+  {
+    return obj_ == rhs.obj_;
+  }
+
+  bool operator!=(const result_iterator& rhs)
+  {
+    return obj_ != rhs.obj_;
+  }
+
+  self& operator++()
+  {
+    obj_.reset(result_impl_->producer()->create());
+    if (!result_impl_->fetch(obj_.get())) {
+      obj_.reset();
+    }
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    std::unique_ptr<serializable> obj(result_impl_->producer()->create());
+    result_impl_->fetch(obj.get());
+    return self(result_impl_, obj.release());
+  }
+
+  pointer operator->()
+  {
+    return obj_.get();
+  }
+
+  pointer operator&()
+  {
+    return obj_.get();
+  }
+
+  reference operator*()
+  {
+    return *obj_.get();
+  }
+
+  pointer get()
+  {
+    return obj_.get();
+  }
+
+  pointer release()
+  {
+    return obj_.release();
+  }
 
 private:
-  std::unique_ptr<oos::serializable> obj_;
+  std::unique_ptr<T> obj_;
   oos::detail::result_impl *result_impl_ = nullptr;
 };
 
-class OOS_API result
+template < class T >
+class result
 {
 public:
-  typedef result_iterator iterator;
+  typedef result_iterator<T> iterator;
 
   result(const result &x) = delete;
   result& operator=(const result &x) = delete;
 
 public:
-  result();
-  result(oos::detail::result_impl *impl, database *db);
-  ~result();
+  result() {}
+  result(oos::detail::result_impl *impl, database *db)
+    : p(impl)
+    , db_(db)
+  {}
 
-  result(result &&x);
-  result& operator=(result &&x);
+  ~result()
+  {
+    if (p) {
+      delete p;
+    }
+  }
 
-  iterator begin();
-  iterator end();
+  result(result &&x)
+  {
+    std::swap(p, x.p);
+  }
 
-  bool empty () const;
-  std::size_t size () const;
+  result& operator=(result &&x)
+  {
+    if (p) {
+      delete p;
+      p = nullptr;
+    }
+    std::swap(p, x.p);
+    return *this;
+  }
+
+  iterator begin()
+  {
+    return std::move(++iterator(p));
+  }
+
+  iterator end()
+  {
+    return iterator();
+  }
+
+  bool empty () const
+  {
+    return false;
+  }
+
+  std::size_t size () const
+  {
+    return 0;
+  }
 
 private:
   oos::detail::result_impl *p = nullptr;
