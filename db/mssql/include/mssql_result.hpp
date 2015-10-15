@@ -24,8 +24,6 @@
 #include "database/result.hpp"
 #include "database/types.hpp"
 
-#include "tools/convert.hpp"
-
 #if defined(_MSC_VER)
 #include <windows.h>
 #endif

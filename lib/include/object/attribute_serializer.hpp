@@ -18,12 +18,10 @@
 #ifndef ATTRIBUTE_SERIALIZER_HPP
 #define ATTRIBUTE_SERIALIZER_HPP
 
-#include "tools/convert.hpp"
 #include "object/object_atomizer.hpp"
-#include "object/object_convert.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_container.hpp"
-#include "identifier.hpp"
+#include "object/identifier.hpp"
 
 #include <stdexcept>
 #include <type_traits>
@@ -114,7 +112,6 @@ private:
     if (id_ != id) {
       return;
     }
-    std::cout << "found object_ptr conversion\n";
   }
 
   template < class V >
@@ -126,7 +123,6 @@ private:
       return;
     }
     // Todo: throw exception
-    std::cout << "not same type\n";
   }
 
   void read_value(const char *id, basic_identifier &x)
