@@ -314,7 +314,7 @@ private:
   friend class object_preparator;
   friend class prototype_node;
   friend class prototype_tree;
-  friend class result;
+  template < class T > friend class result;
   friend class table_reader;
   friend class restore_visitor;
 

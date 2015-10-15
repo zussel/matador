@@ -37,7 +37,7 @@
 
 #include "database/statement.hpp"
 #include "database/database.hpp"
-#include "database/primary_key_binder.hpp"
+#include "database/identifier_binder.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -46,7 +46,6 @@
 
 namespace oos {
 
-class statement;
 class serializable;
 class object_base_ptr;
 class object_store;
@@ -93,10 +92,10 @@ private:
   database &db_;
   const prototype_node &node_;
 
-  statement insert_;
-  statement update_;
-  statement delete_;
-  statement select_;
+  statement<serializable> insert_;
+  statement<serializable> update_;
+  statement<serializable> delete_;
+  statement<serializable> select_;
 
   bool prepared_;
 
@@ -104,7 +103,7 @@ private:
   t_to_many_data relation_data;
   t_to_one_data to_one_data;
 
-  primary_key_binder primary_key_binder_;
+  identifier_binder primary_key_binder_;
 };
 
 ///@endcond

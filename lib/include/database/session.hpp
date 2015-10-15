@@ -33,10 +33,12 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
+#include "object/serializable.hpp"
 
 #include "tools/library.hpp"
 
 #include "database/transaction.hpp"
+#include "database/result.hpp"
 
 #include <string>
 #include <stack>
@@ -46,8 +48,6 @@
 namespace oos {
 
 class object_store;
-class result;
-class statement;
 class database;
 
 /**
@@ -173,7 +173,7 @@ public:
    * @param sql The database query to execute.
    * @return The result of the query.
    */
-  result execute(const std::string &sql);
+  result<serializable> execute(const std::string &sql);
 
   /**
    * @brief Inserts a new serializable
@@ -252,7 +252,7 @@ public:
 
 private:
   friend class transaction;
-  friend class statement;
+  template < class T >friend class statement;
   template <class T > friend class query;
   
   void push_transaction(transaction *tr);

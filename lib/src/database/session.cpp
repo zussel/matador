@@ -16,7 +16,6 @@
  */
 
 #include "database/session.hpp"
-#include "database/result.hpp"
 #include "database/database_factory.hpp"
 #include "database/database_sequencer.hpp"
 #include "database/action.hpp"
@@ -91,10 +90,9 @@ bool session::load()
   return true;
 }
 
-result session::execute(const std::string &sql)
+result<serializable> session::execute(const std::string &sql)
 {
-  return impl_->execute(sql,
-                        (std::shared_ptr<object_base_producer>()));
+  return impl_->execute<serializable>(sql, (std::shared_ptr<object_base_producer>()));
 }
 
 void session::update(const object_base_ptr &optr)

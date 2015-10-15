@@ -33,6 +33,7 @@
 
 #include "database/sql.hpp"
 #include "database/result.hpp"
+#include "database/statement.hpp"
 #include "database/session.hpp"
 #include "database/database.hpp"
 
@@ -46,7 +47,6 @@
 
 namespace oos {
 
-class statement;
 class serializable;
 class condition;
 class object_base_ptr;
@@ -548,11 +548,11 @@ public:
    * 
    * @return The result serializable.
    */
-  result execute()
+  result<T> execute()
   {
 //  std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //  std::cout.flush();
-    return db_.execute(sql_.direct(), producer_);
+    return db_.execute<T>(sql_.direct(), producer_);
   }
 
   /**
@@ -561,9 +561,9 @@ public:
    * 
    * @return The new prepared statement.
    */
-  statement prepare()
+  statement<T> prepare()
   {
-    return db_.prepare(sql_, producer_);
+    return db_.prepare<T>(sql_, producer_);
   }
 
   /**

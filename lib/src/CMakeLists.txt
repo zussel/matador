@@ -69,12 +69,12 @@ SET(OBJECT_HEADER
   ../include/object/object_atomizer.hpp
   ../include/object/object_preparator.hpp
   ../include/object/serializable.hpp
-        ../include/object/identifier.hpp
+  ../include/object/identifier.hpp
   ../include/object/primary_key_analyzer.hpp
   ../include/object/foreign_key_analyzer.hpp
-        ../include/object/identifier_resolver.hpp
+  ../include/object/identifier_resolver.hpp
   ../include/object/primary_key_reader.hpp
-        ../include/object/basic_identifier.hpp)
+  ../include/object/basic_identifier.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -197,10 +197,8 @@ SET(DATABASE_SOURCES
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
-  database/result.cpp
   database/result_impl.cpp
   database/row.cpp
-  database/statement.cpp
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
@@ -209,7 +207,7 @@ SET(DATABASE_SOURCES
   database/query_select.cpp
   database/query_insert.cpp
   database/query_update.cpp
-  database/primary_key_binder.cpp
+  database/identifier_binder.cpp
   database/statement_impl.cpp)
 
 SET(DATABASE_HEADER
@@ -238,7 +236,7 @@ SET(DATABASE_HEADER
   ../include/database/query_insert.hpp
   ../include/database/query_update.hpp
   ../include/database/token.hpp
-  ../include/database/primary_key_binder.hpp
+  ../include/database/identifier_binder.hpp
   ../include/database/statement_impl.hpp object/identifier.cpp)
 
 SET(DATABASE_INSTALL_HEADER

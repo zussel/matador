@@ -121,22 +121,19 @@ detail::statement_impl* mysql_database::on_prepare(const oos::sql &stmt, std::sh
 
 void mysql_database::on_begin()
 {
-  result res = execute("START TRANSACTION;",
-                        (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("START TRANSACTION;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 
 void mysql_database::on_commit()
 {
-  result res = execute("COMMIT;",
-                        (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("COMMIT;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 
 void mysql_database::on_rollback()
 {
-  result res = execute("ROLLBACK;",
-                        (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 

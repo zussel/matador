@@ -168,7 +168,12 @@ public:
    * @param sql The sql statement to be executed.
    * @return The result of the statement.
    */
-  result execute(std::string sql, std::shared_ptr<object_base_producer> ptr);
+  template < class T >
+  result<T> execute(std::string sql, std::shared_ptr<object_base_producer> ptr)
+  {
+    return result<T>(on_execute(sql, ptr), this);
+  }
+
 
   /**
    * Prepare a sql statement and return a
@@ -177,7 +182,11 @@ public:
    * @param sql The sql statement string to be prepared.
    * @return The resulting prepared statement.
    */
-  statement prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr);
+  template < class T >
+  statement<T> prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
+  {
+    return statement<T>(on_prepare(sql, ptr), this);
+  }
 
   /**
    * The interface for the create table action.
@@ -209,7 +218,7 @@ public:
    *
    * @return New result implenation serializable.
    */
-  result create_result(detail::result_impl *impl);
+  result<serializable> create_result(detail::result_impl *impl);
 
   /**
    * Get last inserted id from database
