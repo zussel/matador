@@ -112,12 +112,12 @@ unsigned long database_sequencer::update(unsigned long id)
 
 void database_sequencer::create()
 {
-  query<serializable> q(db_);
-  result<serializable> res = q.create("oos_sequence", &sequence_).execute();
+  query<sequence> q(db_);
+  result<sequence> res = q.create("oos_sequence", &sequence_).execute();
 
   res = q.reset().select(new object_producer<sequence>).from("oos_sequence").where("name='serializable'").execute();
 
-  result_iterator<serializable> first = res.begin();
+  result_iterator<sequence> first = res.begin();
 
   if (first != res.end()) {
     unsigned long seq = 0;
@@ -135,7 +135,7 @@ void database_sequencer::create()
 
 void database_sequencer::load()
 {
-  query<serializable> q(db_);
+  query<sequence> q(db_);
   auto res = q.select(new object_producer<sequence>).from("oos_sequence").where("name='serializable'").execute();
 
   auto first = res.begin();
@@ -177,7 +177,7 @@ void database_sequencer::rollback()
 void database_sequencer::drop()
 {
   update_.clear();
-  query<serializable> q(db_);
+  query<sequence> q(db_);
   // TODO: check result
   q.drop("oos_sequence").execute();
 }

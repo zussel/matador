@@ -171,19 +171,19 @@ oos::detail::statement_impl *mssql_database::on_prepare(const oos::sql &stmt, st
 
 void mssql_database::on_begin()
 {
-  result res = execute("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 
 void mssql_database::on_commit()
 {
-  result res = execute("COMMIT;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("COMMIT;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 
 void mssql_database::on_rollback()
 {
-  result res = execute("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
   // TODO: check result
 }
 
@@ -239,10 +239,9 @@ SQLHANDLE mssql_database::handle()
 
 unsigned long mssql_database::last_inserted_id()
 {
-  result result = execute("select scope_identity()",
-                                         (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("select scope_identity()", (std::shared_ptr<object_base_producer>()));
   unsigned long id = 0;
-//  result.get(0, id);
+//  res.get(0, id);
   return id;
 }
 

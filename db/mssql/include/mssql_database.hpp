@@ -65,20 +65,6 @@ public:
    */
   virtual bool is_open() const;
 
-  /**
-   * Create a new sqlite result
-   * 
-   * @return A new sqlite result
-   */
-  virtual result* create_result();
-
-  /**
-   * Create a new sqlite statement
-   * 
-   * @return A new sqlite statement
-   */
-  virtual statement* create_statement();
-  
   virtual const char* type_string(data_type_t type) const;
 
   SQLHANDLE handle();

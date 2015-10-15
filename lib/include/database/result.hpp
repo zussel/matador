@@ -33,11 +33,10 @@
 
 #include "object/object_atomizer.hpp"
 
-#include "object/serializable.hpp"
-
 #include "database/result_impl.hpp"
 
 #include <memory>
+#include <type_traits>
 
 namespace oos {
 
@@ -49,57 +48,41 @@ class result_impl;
 
 /// @cond OOS_DEV
 template < class T >
-class result_iterator  : public std::iterator<std::forward_iterator_tag, T>
+class base_result_iterator : public std::iterator<std::forward_iterator_tag, T>
 {
 public:
-  typedef result_iterator<T> self; /**< Shortcut for this class. */
+  typedef base_result_iterator<T> self; /**< Shortcut for this class. */
   typedef T value_type;            /**< Shortcut for the value type. */
   typedef value_type* pointer;     /**< Shortcut for the pointer type. */
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
-  result_iterator() {}
-  result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
-    : obj_(obj)
-    , result_impl_(result_impl)
+  base_result_iterator() {}
+  base_result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
+  : obj_(obj)
+  , result_impl_(result_impl)
   {}
-  result_iterator(result_iterator&& x)
-    : obj_(x.obj_.release())
-    , result_impl_(x.result_impl_)
+  base_result_iterator(base_result_iterator&& x)
+  : obj_(x.obj_.release())
+  , result_impl_(x.result_impl_)
   {}
 
-  result_iterator& operator=(result_iterator&& x)
+  base_result_iterator& operator=(base_result_iterator&& x)
   {
     result_impl_ = x.result_impl_;
     obj_.reset(x.obj_.release());
     return *this;
   }
 
-  ~result_iterator() {}
+  ~base_result_iterator() {}
 
-  bool operator==(const result_iterator& rhs)
+  bool operator==(const base_result_iterator& rhs)
   {
     return obj_ == rhs.obj_;
   }
 
-  bool operator!=(const result_iterator& rhs)
+  bool operator!=(const base_result_iterator& rhs)
   {
     return obj_ != rhs.obj_;
-  }
-
-  self& operator++()
-  {
-    obj_.reset(result_impl_->producer()->create());
-    if (!result_impl_->fetch(obj_.get())) {
-      obj_.reset();
-    }
-    return *this;
-  }
-
-  self operator++(int)
-  {
-    std::unique_ptr<T> obj(result_impl_->producer()->create());
-    result_impl_->fetch(obj.get());
-    return self(result_impl_, obj.release());
   }
 
   pointer operator->()
@@ -127,9 +110,71 @@ public:
     return obj_.release();
   }
 
-private:
+protected:
   std::unique_ptr<T> obj_;
   oos::detail::result_impl *result_impl_ = nullptr;
+};
+
+template < class T, class Enable = void >
+class result_iterator {};
+
+template < class T >
+class result_iterator<T,typename std::enable_if< std::is_same<T, oos::serializable>::value >::type> : public base_result_iterator<T>
+{
+public:
+  typedef base_result_iterator<T> base;
+  typedef result_iterator<T> self; /**< Shortcut for this class. */
+  typedef T value_type;            /**< Shortcut for the value type. */
+  typedef value_type* pointer;     /**< Shortcut for the pointer type. */
+  typedef value_type& reference;   /**< Shortcut for the reference type */
+
+  using base_result_iterator<T>::base_result_iterator;
+
+  self& operator++()
+  {
+    serializable *obj = base::result_impl_->producer()->create();
+    base::obj_.reset(obj);
+    if (!base::result_impl_->fetch(base::obj_.get())) {
+      base::obj_.reset();
+    }
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    std::unique_ptr<T> obj(static_cast<T>(base::result_impl_->producer()->create()));
+    base::result_impl_->fetch(obj.get());
+    return self(base::result_impl_, obj.release());
+  }
+};
+
+template < class T >
+class result_iterator<T,typename std::enable_if< !std::is_same<T, oos::serializable>::value >::type> : public base_result_iterator<T>
+{
+public:
+  typedef base_result_iterator<T> base;
+  typedef result_iterator<T> self; /**< Shortcut for this class. */
+  typedef T value_type;            /**< Shortcut for the value type. */
+  typedef value_type* pointer;     /**< Shortcut for the pointer type. */
+  typedef value_type& reference;   /**< Shortcut for the reference type */
+
+  using base_result_iterator<T>::base_result_iterator;
+
+  self& operator++()
+  {
+    base::obj_.reset(new T);
+    if (!base::result_impl_->fetch(base::obj_.get())) {
+      base::obj_.reset();
+    }
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    std::unique_ptr<T> obj(new T);
+    base::result_impl_->fetch(obj.get());
+    return self(base::result_impl_, obj.release());
+  }
 };
 
 template < class T >
