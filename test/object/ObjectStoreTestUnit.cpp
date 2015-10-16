@@ -633,53 +633,125 @@ ObjectStoreTestUnit::clear_test()
   UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
+template < class T, class Enabled = void >
+struct test_pair;
+
+template < class T >
+struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type >
+{
+  explicit test_pair(const T &exp) : expected(exp) {}
+  T expected;
+  T result;
+};
+
+template < class T >
+struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::type >
+{
+  test_pair(T const exp, int s) : expected(new char[strlen(exp)]), result(new char[s]), size(s)
+  {
+    strcpy(expected, exp);
+  }
+  ~test_pair() {
+    delete [] expected;
+    delete [] result;
+  }
+  T expected;
+  T result;
+  int size;
+};
+
 void
 ObjectStoreTestUnit::generic_test()
 {
-  char c = 'c';
-  float f = 1.55f;
-  double d = 123.55789;
-  short s = -42;
-  int i = -98765;
-  long l = -1234567890;
-  unsigned short us = 45;
-  unsigned int ui = 4567890;
-  unsigned long ul = 987654321;
-  bool b = true;
-  const char *cstr("baba");
-  std::string title = "Hallo Welt";
-  oos::varchar<64> str("The answer is 42");
+  test_pair<char> c('c');
+  test_pair<bool> b(true);
+  test_pair<float> f(1.55f);
+  test_pair<double> d(123.55789);
+  test_pair<short> s(-42);
+  test_pair<int> i(-98765);
+  test_pair<long> l(1234567890);
+  test_pair<unsigned short> us(45);
+  test_pair<unsigned int> ui(4567890);
+  test_pair<unsigned long> ul(987654321);
+  test_pair<char*> cstr("baba", 5);
+  test_pair<std::string> str("Hallo Welt");
+  test_pair<oos::varchar<64> > varstr("The answer is 42");
+  test_pair<oos::date> dateval(oos::date("29.4.1972"));
+  test_pair<oos::time > timeval(oos::time(2015, 10, 16, 8, 54, 32, 123));
+
+//  char c = 'c';
+//  float f = 1.55f;
+//  double d = 123.55789;
+//  short s = -42;
+//  int i = -98765;
+//  long l = -1234567890;
+//  unsigned short us = 45;
+//  unsigned int ui = 4567890;
+//  unsigned long ul = 987654321;
+//  bool b = true;
+//  const char *cstr("baba");
+//  std::string title = "Hallo Welt";
+//  oos::varchar<64> str("The answer is 42");
 
   Item *item = new Item();
 
-  oos::set(item, "val_char", c);
-  
-  oos::set(item, "val_char", c);
-  oos::set(item, "val_float", f);
-  oos::set(item, "val_double", d);
-  oos::set(item, "val_short", s);
-  oos::set(item, "val_int", i);
-  oos::set(item, "val_long", l);
-  oos::set(item, "val_unsigned_short", us);
-  oos::set(item, "val_unsigned_int", ui);
-  oos::set(item, "val_unsigned_long", ul);
-  oos::set(item, "val_bool", b);
+  oos::set(item, "val_char", c.expected);
+  oos::get(item, "val_char", c.result);
+  UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  oos::set(item, "val_cstr", cstr);
+  oos::set(item, "val_float", f.expected);
+  oos::get(item, "val_float", f.result);
+  UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
 
-  oos::set(item, "val_string", title);
-  oos::set(item, "val_varchar", str);
+  oos::set(item, "val_double", d.expected);
+  oos::get(item, "val_double", d.result);
+  UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
+
+  oos::set(item, "val_short", s.expected);
+  oos::get(item, "val_short", s.result);
+  UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
+
+  oos::set(item, "val_int", i.expected);
+  oos::get(item, "val_int", i.result);
+  UNIT_ASSERT_EQUAL(i.result, i.expected, "not expected result value");
+
+  oos::set(item, "val_long", l.expected);
+  oos::get(item, "val_long", l.result);
+  UNIT_ASSERT_EQUAL(l.result, l.expected, "not expected result value");
+
+  oos::set(item, "val_unsigned_short", us.expected);
+  oos::get(item, "val_unsigned_short", us.result);
+  UNIT_ASSERT_EQUAL(us.result, us.expected, "not expected result value");
+
+  oos::set(item, "val_unsigned_int", ui.expected);
+  oos::get(item, "val_unsigned_int", ui.result);
+  UNIT_ASSERT_EQUAL(ui.result, ui.expected, "not expected result value");
+
+  oos::set(item, "val_unsigned_long", ul.expected);
+  oos::get(item, "val_unsigned_long", ul.result);
+  UNIT_ASSERT_EQUAL(ul.result, ul.expected, "not expected result value");
+
+  oos::set(item, "val_bool", b.expected);
+  oos::get(item, "val_bool", b.result);
+  UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
+
+  oos::set(item, "val_cstr", cstr.expected);
+  oos::get(item, "val_cstr", cstr.result);
+  UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
+
+  oos::set(item, "val_string", str.expected);
+  oos::set(item, "val_varchar", varstr.expected);
   /* get float value into string
    * with precision 2
    */
-  oos::get(item, "val_float", str, 2);
-  UNIT_ASSERT_EQUAL(str, "1.55", "float string is invalid");
+  oos::get(item, "val_float", str.result, 2);
+  UNIT_ASSERT_EQUAL(str.result, "1.55", "float string is invalid");
 
-  oos::get(item, "val_int", str);
-  UNIT_ASSERT_EQUAL(str, "-98765", "float string is invalid");
+  oos::get(item, "val_int", str.result);
+  UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  oos::get(item, "val_double", str, 3);
-  UNIT_ASSERT_EQUAL(str, "123.558", "double string is invalid");
+  oos::get(item, "val_double", str.result, 3);
+  UNIT_ASSERT_EQUAL(str.result, "123.558", "double string is invalid");
 
   delete item;
 }

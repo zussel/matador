@@ -18,7 +18,6 @@
 #include "unit/FirstTestUnit.hpp"
 #include "unit/SecondTestUnit.hpp"
 
-#include "tools/ConvertTestUnit.hpp"
 #include "tools/BlobTestUnit.hpp"
 #include "tools/DateTestUnit.hpp"
 #include "tools/TimeTestUnit.hpp"
@@ -61,7 +60,6 @@ int main(int argc, char *argv[])
   suite.register_unit(new FirstTestUnit());
   suite.register_unit(new SecondTestUnit());
 
-  suite.register_unit(new ConvertTestUnit());
   suite.register_unit(new DateTestUnit());
   suite.register_unit(new TimeTestUnit());
   suite.register_unit(new BlobTestUnit());

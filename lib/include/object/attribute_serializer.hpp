@@ -25,11 +25,45 @@
 
 #include <stdexcept>
 #include <type_traits>
+#include <cstring>
 
 namespace oos {
 
 class object_base_ptr;
 
+template < class T, class V >
+void convert(const T &, V &)
+{
+
+}
+
+template < class T, class V >
+void convert(const T &, V &, int)
+{
+
+}
+
+template < class T, class V >
+void convert(const T &, V &, int, int)
+{
+
+}
+
+void convert(const char* from, char *to, int size);
+
+void convert(const char* from, char *to, int size, int);
+
+//template < class V >
+//void convert(const char *, V &, int)
+//{
+//
+//}
+//
+//template < class V >
+//void convert(const char *, V &, int, int)
+//{
+//
+//}
 /**
  * @tparam T The type of the attribute to set.
  * @class attribute_reader
@@ -135,6 +169,8 @@ private:
     if (id_ != id) {
       return;
     }
+
+    // convert any type to char*
     convert(from_, to, s);
     success_ = true;
   }
@@ -201,17 +237,30 @@ public:
 
 private:
   template < class V >
-  void write_value(const char *id, const V &from)
+  void write_value(const char *id, const V &from, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
     }
     if (precision_ < 0) {
-      convert(from, to_);
+      to_ = from;
+//      convert(from, to_);
+      success_ = true;
     } else {
-      convert(from, to_, precision_);
+      success_ = false;
+//      convert(from, to_, precision_);
     }
-    success_ = true;
+  }
+
+  template < class V >
+  void write_value(const char *id, V &/*to*/, typename std::enable_if<
+    !std::is_same<T, V>::value &&
+    !std::is_base_of<V, T>::value>::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    // Todo: throw exception
   }
 
   void write_value(const char *id, const basic_identifier &x)
