@@ -337,6 +337,16 @@ public:
     }
   }
 
+  void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+
 #ifndef OOS_DOXYGEN_DOC
   void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
   {
@@ -359,6 +369,17 @@ public:
   template < int N1, int N2 >
   void
   assert_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+  template < int N1, int N2 >
+  void
+  assert_equal(char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
     if (strcmp(a, b) != 0) {

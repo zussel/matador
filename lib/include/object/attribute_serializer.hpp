@@ -74,8 +74,12 @@ void convert(const char* from, char *to, int size, int);
  * with given name must be found and the value must
  * be convertible into the objects attribute.
  */
+
+template < class T, class Enable = void >
+class attribute_reader;
+
 template < class T >
-class attribute_reader : public generic_object_reader<attribute_reader<T> >
+class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type> : public generic_object_reader<attribute_reader<T> >
 {
 private:
   friend class generic_object_reader<attribute_reader<T> >;
@@ -184,6 +188,64 @@ private:
   bool success_;
 };
 
+// set
+template < class T >
+class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_object_reader<attribute_reader<T> >
+{
+public:
+  attribute_reader(const std::string &id, const char from[], int size)
+    : generic_object_reader<attribute_reader<T> >(this)
+    , id_(id)
+    , from_(from)
+    , size_(size)
+    , success_(false)
+  {}
+
+  /**
+ * @brief True if value was set.
+ *
+ * Returns true if the value could
+ * be set successfully.
+ *
+ * @return True if value was set.
+ */
+  bool success() const
+  {
+    return success_;
+  }
+
+  template < class V >
+  void read_value(const char *id, V &/*to*/)
+  {
+    if (id_ != id) {
+      return;
+    }
+//    to = from_;
+//    convert(from_, to);
+    success_ = true;
+  }
+
+  void read_value(const char *id, char *to, int s)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (s < size_) {
+      return;
+    }
+    strncpy(to, from_, size_);
+    to[size_] = '\0';
+//    to = from_;
+//    convert(from_, to);
+    success_ = true;
+  }
+private:
+  std::string id_;
+  const char *from_;
+  int size_;
+  bool success_;
+};
+
 /**
  * @tparam T The type of the attribute to retieve.
  * @class attribute_writer
@@ -237,7 +299,23 @@ public:
 
 private:
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
+  void write_value(const char *id, const V &from, typename std::enable_if<
+    std::is_same<T, V>::value &&
+    !std::is_floating_point<V>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = from;
+    success_ = true;
+  }
+
+  template < class V >
+  void write_value(const char *id, const V &from, typename std::enable_if<
+    std::is_same<T, V>::value &&
+    std::is_floating_point<V>::value
+  >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -245,6 +323,25 @@ private:
     if (precision_ < 0) {
       to_ = from;
 //      convert(from, to_);
+      success_ = true;
+    } else {
+      success_ = false;
+//      convert(from, to_, precision_);
+    }
+  }
+
+  template < class V >
+  void write_value(const char *id, const V &from, typename std::enable_if<
+    !std::is_same<T, V>::value &&
+    std::is_same<V, oos::varchar_base>::value &&
+    std::is_base_of<V, T>::value
+  >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (precision_ < 0) {
+      to_ = from.str();
       success_ = true;
     } else {
       success_ = false;

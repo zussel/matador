@@ -647,9 +647,16 @@ struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::t
 template < class T >
 struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::type >
 {
-  explicit test_pair(const char exp[],int s) : expected(exp), size(s) {}
-  const T expected;
+  explicit test_pair(const char exp[],int s)
+    : expected(exp)
+    , result(new char[s])
+    , expected_size(strlen(exp))
+    , size(s)
+  {}
+  ~test_pair() { delete [] result; }
+  const char* expected;
   T result;
+  int expected_size;
   int size;
 };
 
@@ -728,17 +735,31 @@ ObjectStoreTestUnit::generic_test()
   oos::get(item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
 
-  oos::set(item, "val_cstr", cstr.expected);
-  oos::get(item, "val_cstr", cstr.result);
+  oos::set(item, "val_cstr", cstr.expected, cstr.expected_size);
+  oos::get(item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
 
   oos::set(item, "val_string", str.expected);
+  oos::get(item, "val_string", str.result);
+  UNIT_ASSERT_EQUAL(str.result, str.expected, "not expected result value");
+
   oos::set(item, "val_varchar", varstr.expected);
+  oos::get(item, "val_varchar", varstr.result);
+  UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "not expected result value");
+
+  oos::set(item, "val_float", f.expected);
+  oos::get(item, "val_float", f.result);
+  UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
   /* get float value into string
    * with precision 2
    */
-  oos::get(item, "val_float", str.result, 2);
-  UNIT_ASSERT_EQUAL(str.result, "1.55", "float string is invalid");
+  std::string fresult;
+  oos::get(item, "val_float", f.result, 2);
+  UNIT_ASSERT_EQUAL(fresult, "1.55", "float string is invalid");
+
+  oos::set(item, "val_double", d.expected);
+  oos::get(item, "val_double", d.result);
+  UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
 
   oos::get(item, "val_int", str.result);
   UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
