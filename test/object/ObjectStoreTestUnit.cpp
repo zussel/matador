@@ -633,11 +633,16 @@ ObjectStoreTestUnit::clear_test()
   UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
+struct basic_test_pair
+{
+  std::string str_result;
+};
+
 template < class T, class Enabled = void >
 struct test_pair;
 
 template < class T >
-struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type >
+struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type > : public basic_test_pair
 {
   explicit test_pair(const T &exp) : expected(exp) {}
   T expected;
@@ -645,7 +650,7 @@ struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::t
 };
 
 template < class T >
-struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::type >
+struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::type > : public basic_test_pair
 {
   explicit test_pair(const char exp[],int s)
     : expected(exp)

@@ -465,6 +465,95 @@ private:
   int precision_;
 };
 
+template <>
+class attribute_writer<std::string> : public generic_object_writer<attribute_writer<std::string> >
+{
+public:
+  /**
+   * @brief Creates an attribute_writer
+   *
+   * Creates an attribute_writer for an attribute id of type T
+   * where id is the name of the attribute.
+   *
+   * @tparam T The type of the attribute.
+   * @param id The name of the attribute.
+   * @param to The attribute value to retrieve.
+   */
+  attribute_writer(const std::string &id, char *to, int size, int precision = -1)
+    : generic_object_writer<attribute_writer<std::string> >(this)
+    , id_(id)
+    , to_(to)
+    , size_(size)
+    , success_(false)
+    , precision_(precision)
+  {}
+
+  virtual ~attribute_writer() {}
+
+  /**
+   * @brief True if value could be retrieved.
+   *
+   * Returns true if the value could
+   * be retrieved successfully.
+   *
+   * @return True if value could be retrieved.
+   */
+  bool success() const
+  {
+    return success_;
+  }
+
+  template < class V, typename std::enable_if< std::is_integral<V>::value>::type >
+  void write_value(const char *id, const V &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = std::to_string(from);
+    success_ = true;
+  }
+
+  template < class V, typename std::enable_if< std::is_floating_point<V>::value>::type >
+  void write_value(const char *id, const V &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = std::to_string(from);
+    if (precision_ < 0) {
+      to_ = std::to_string(from);
+    } else {
+      to_ = std::to_string(from);
+    }
+    success_ = true;
+  }
+
+  void write_value(const char*, const date&) {}
+  void write_value(const char*, const time&) {}
+  void write_value(const char*, const object_container&) {}
+  void write_value(const char*, const basic_identifier &) {}
+
+  void write_value(const char *id, const char *from, int)
+  {
+    if (id_ != id) {
+      return;
+    }
+    if (precision_ < 0) {
+      convert(from, to_, size_);
+    } else {
+      convert(from, to_, size_, precision_);
+    }
+    success_ = true;
+  }
+
+private:
+  std::string id_;
+  std::string to_;
+  int size_;
+  bool success_;
+  int precision_;
+};
+
 /// @endcond
 
 }
