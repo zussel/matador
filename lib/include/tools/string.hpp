@@ -17,6 +17,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <type_traits>
 
 namespace oos {
 
@@ -48,6 +49,20 @@ struct time_format
 
 OOS_API std::string to_string(const oos::time &x, const char *format = time_format::ISO8601);
 OOS_API std::string to_string(const oos::date &x, const char *format = date_format::ISO8601);
+template < class T >
+OOS_API std::string to_string(T x, int precision = -1, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
+{
+  if (precision < 0) {
+    return to_string(x);
+  } else {
+    char format[32];
+    sprintf(format, "%%.%df", precision);
+    std::string s(32, '\0');
+    auto written = std::snprintf(&s[0], s.size(), format, x);
+    s.resize(written);
+    return s;
+  }
+}
 
 }
 

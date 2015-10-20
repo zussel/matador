@@ -32,3 +32,11 @@ wenn pk in to_one_relation_data existiert,
 	das neue object (aus map entfernen)
 sonst
 	erzeuge ein neues object_proxy für das object
+
+to_string();
+
+to_charptr();
+
+to_varchar();
+
+to_value();

@@ -16,11 +16,12 @@
  */
 
 #include "mssql_result.hpp"
-#include "mssql_exception.hpp"
 
-#include "database/row.hpp"
+#include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 
-#include "object/object_ptr.hpp"
+#include <cstring>
 
 namespace oos {
 

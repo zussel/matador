@@ -11,8 +11,6 @@ SET (TEST_TOOLS_SOURCES
   tools/DateTestUnit.hpp
   tools/BlobTestUnit.hpp
   tools/BlobTestUnit.cpp
-  tools/ConvertTestUnit.hpp
-  tools/ConvertTestUnit.cpp
   tools/VarCharTestUnit.hpp
   tools/VarCharTestUnit.cpp
   tools/FactoryTestUnit.hpp
@@ -125,24 +123,6 @@ SET(time
 #  modify
   parse
   format
-)
-
-# convert tests
-SET(convert
-  to_bool
-  to_char_pointer
-  to_float
-  to_double
-  to_string
-  to_varchar
-  to_char
-  to_short
-  to_int
-  to_long
-  to_unsigned_char
-  to_unsigned_short
-  to_unsigned_int
-  to_unsigned_long
 )
 
 # factory tests
@@ -260,7 +240,6 @@ SET(TESTUNITS)
 LIST(APPEND TESTUNITS string)
 LIST(APPEND TESTUNITS date)
 LIST(APPEND TESTUNITS time)
-LIST(APPEND TESTUNITS convert)
 LIST(APPEND TESTUNITS factory)
 LIST(APPEND TESTUNITS first)
 LIST(APPEND TESTUNITS second)

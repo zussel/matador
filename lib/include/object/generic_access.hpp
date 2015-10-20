@@ -28,6 +28,14 @@ bool set(O &obj, const std::string &name, const T &val)
   return reader.success();
 }
 
+template < typename O >
+bool set(O &obj, const std::string &name, const char *val, int size)
+{
+  attribute_reader<char*> reader(name, val, size);
+  obj->deserialize(reader);
+  return reader.success();
+}
+
 /**
  * Gets the value of a member identified by
  * the given name. If the operation succeeds
@@ -43,6 +51,14 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val)
 {
   attribute_writer<T> writer(name, val);
+  obj->serialize(writer);
+  return writer.success();
+}
+
+template < typename O, class T >
+bool get(const O &obj, const std::string &name, char *val, int size)
+{
+  attribute_writer<T> writer(name, val, size);
   obj->serialize(writer);
   return writer.success();
 }

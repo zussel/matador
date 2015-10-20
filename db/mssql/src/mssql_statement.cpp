@@ -17,17 +17,14 @@
 
 #include "mssql_statement.hpp"
 #include "mssql_database.hpp"
-#include "mssql_exception.hpp"
 #include "mssql_result.hpp"
 
-#include "object/object_ptr.hpp"
 
 #include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 
-#include <stdexcept>
 #include <cstring>
-#include <cstdio>
-#include <cstdlib>
 #include <sstream>
 
 namespace oos {
@@ -45,8 +42,6 @@ mssql_statement::mssql_statement(mssql_database &db, const sql &s, std::shared_p
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db.handle(), &stmt_);
   throw_error(ret, SQL_HANDLE_DBC, db.handle(), "mssql", "error on creating sql statement");
   str(s.prepare());
-
-  std::cout << "prepare: " << str() << "\n";
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());

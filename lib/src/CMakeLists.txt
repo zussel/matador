@@ -6,11 +6,9 @@ SET(OBJECT_SOURCES
   object/object_store.cpp
   object/object_proxy.cpp
   object/object_serializer.cpp
-  object/object_convert.cpp
   object/object_preparator.cpp
   object/prototype_node.cpp
   object/prototype_tree.cpp
-  object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
   object/identifier_resolver.cpp
@@ -25,7 +23,6 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_convert.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
@@ -52,7 +49,6 @@ SET(OBJECT_HEADER
   ../include/object/object_store.hpp
   ../include/object/object_container.hpp
   ../include/object/object_creator.hpp
-  ../include/object/object_convert.hpp
   ../include/object/object_deleter.hpp
   ../include/object/object_list.hpp
   ../include/object/object_vector.hpp
@@ -85,7 +81,6 @@ SET(TOOLS_SOURCES
   tools/time.cpp
   tools/varchar.cpp
   tools/sequencer.cpp
-  tools/convert.cpp
   tools/string.cpp
 )
 
@@ -101,7 +96,6 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/sequencer.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/factory.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/string.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/convert.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
 )
@@ -119,7 +113,6 @@ SET(TOOLS_HEADER
   ../include/tools/sequencer.hpp
   ../include/tools/factory.hpp
   ../include/tools/string.hpp
-  ../include/tools/convert.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
 )
