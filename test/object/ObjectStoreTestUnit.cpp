@@ -678,7 +678,7 @@ ObjectStoreTestUnit::generic_test()
   test_pair<unsigned short> us(45);
   test_pair<unsigned int> ui(4567890);
   test_pair<unsigned long> ul(987654321);
-  test_pair<char*> cstr("baba", 5);
+  test_pair<char*> cstr("baba", 256);
   test_pair<std::string> str("Hallo Welt");
   test_pair<oos::varchar<64> > varstr("The answer is 42");
   test_pair<oos::date> dateval(oos::date("29.4.1972"));
@@ -698,23 +698,17 @@ ObjectStoreTestUnit::generic_test()
 //  std::string title = "Hallo Welt";
 //  oos::varchar<64> str("The answer is 42");
 
-  Item *item = new Item();
+  std::unique_ptr<Item> item(new Item());
 
   oos::set(item, "val_char", c.expected);
   oos::get(item, "val_char", c.result);
   UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  oos::set(item, "val_float", f.expected);
-  oos::get(item, "val_float", f.result);
-  UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
-
-  oos::set(item, "val_double", d.expected);
-  oos::get(item, "val_double", d.result);
-  UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
-
   oos::set(item, "val_short", s.expected);
   oos::get(item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
+  oos::get(item, "val_short", s.str_result);
+  UNIT_ASSERT_EQUAL(s.str_result, "-42", "float string is invalid");
 
   oos::set(item, "val_int", i.expected);
   oos::get(item, "val_int", i.result);
@@ -758,21 +752,28 @@ ObjectStoreTestUnit::generic_test()
   /* get float value into string
    * with precision 2
    */
-  std::string fresult;
-  oos::get(item, "val_float", f.result, 2);
-  UNIT_ASSERT_EQUAL(fresult, "1.55", "float string is invalid");
+  oos::get(item, "val_float", f.str_result, 2);
+  UNIT_ASSERT_EQUAL(f.str_result, "1.55", "float string is invalid");
 
   oos::set(item, "val_double", d.expected);
   oos::get(item, "val_double", d.result);
   UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
+  /* get double value into string
+   * with precision 3
+   */
+  oos::get(item, "val_double", d.str_result, 3);
+  UNIT_ASSERT_EQUAL(d.str_result, "123.558", "double string is invalid");
 
   oos::get(item, "val_int", str.result);
   UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  oos::get(item, "val_double", str.result, 3);
-  UNIT_ASSERT_EQUAL(str.result, "123.558", "double string is invalid");
+  oos::set(item, "val_date", dateval.expected);
+  oos::get(item, "val_date", dateval.result);
+  UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "not expected result value");
 
-  delete item;
+  oos::set(item, "val_time", timeval.expected);
+  oos::get(item, "val_time", timeval.result);
+  UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
 }
 
 void ObjectStoreTestUnit::test_structure()

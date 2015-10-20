@@ -9,7 +9,6 @@ SET(OBJECT_SOURCES
   object/object_preparator.cpp
   object/prototype_node.cpp
   object/prototype_tree.cpp
-  object/attribute_serializer.cpp
   object/primary_key_analyzer.cpp
   object/foreign_key_analyzer.cpp
   object/identifier_resolver.cpp

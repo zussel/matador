@@ -23,47 +23,15 @@
 #include "object/object_container.hpp"
 #include "object/identifier.hpp"
 
+#include "tools/varchar.hpp"
+#include "tools/string.hpp"
+
 #include <stdexcept>
 #include <type_traits>
 #include <cstring>
 
 namespace oos {
 
-class object_base_ptr;
-
-template < class T, class V >
-void convert(const T &, V &)
-{
-
-}
-
-template < class T, class V >
-void convert(const T &, V &, int)
-{
-
-}
-
-template < class T, class V >
-void convert(const T &, V &, int, int)
-{
-
-}
-
-void convert(const char* from, char *to, int size);
-
-void convert(const char* from, char *to, int size, int);
-
-//template < class V >
-//void convert(const char *, V &, int)
-//{
-//
-//}
-//
-//template < class V >
-//void convert(const char *, V &, int, int)
-//{
-//
-//}
 /**
  * @tparam T The type of the attribute to set.
  * @class attribute_reader
@@ -125,7 +93,6 @@ private:
       return;
     }
     to = from_;
-//    convert(from_, to);
     success_ = true;
   }
 
@@ -168,18 +135,29 @@ private:
     x.deserialize(id, *this);
   }
 
-  void read_value(const char *id, char *to, int s)
+  void read_value(const char *id, char */*to*/, int /*s*/)
   {
     if (id_ != id) {
       return;
     }
 
-    // convert any type to char*
-    convert(from_, to, s);
+    // Todo: convert any type to char*
     success_ = true;
   }
-  void read_value(const char*, date&) {}
-  void read_value(const char*, time&) {}
+  template < class V >
+  void read_value(const char *id, date &to, typename std::enable_if<
+    std::is_same<T, V>::value &&
+      (std::is_same<V, oos::date>::value ||
+       std::is_same<V, oos::time>::value
+      )>::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to = from_;
+    success_ = true;
+  }
+
   void read_value(const char*, object_container&) {}
 
 private:
@@ -220,8 +198,8 @@ public:
     if (id_ != id) {
       return;
     }
-//    to = from_;
-//    convert(from_, to);
+    // convert from char* to any type
+    // i.e. to = to_value<V>(from_);
     success_ = true;
   }
 
@@ -235,8 +213,6 @@ public:
     }
     strncpy(to, from_, size_);
     to[size_] = '\0';
-//    to = from_;
-//    convert(from_, to);
     success_ = true;
   }
 private:
@@ -320,14 +296,8 @@ private:
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      to_ = from;
-//      convert(from, to_);
-      success_ = true;
-    } else {
-      success_ = false;
-//      convert(from, to_, precision_);
-    }
+    to_ = from;
+    success_ = true;
   }
 
   template < class V >
@@ -340,13 +310,8 @@ private:
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      to_ = from.str();
-      success_ = true;
-    } else {
-      success_ = false;
-//      convert(from, to_, precision_);
-    }
+    to_ = from.str();
+    success_ = true;
   }
 
   template < class V >
@@ -365,16 +330,13 @@ private:
     x.serialize(id, *this);
   }
 
-  void write_value(const char *id, const char *from, int)
+  void write_value(const char *id, const char */*from*/, int)
   {
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      convert(from, to_);
-    } else {
-      convert(from, to_, precision_);
-    }
+    // convert from string
+    // i.e. to_ = to_value<T>(from);
     success_ = true;
   }
 
@@ -426,16 +388,12 @@ public:
   }
 
   template < class V >
-  void write_value(const char *id, const V &from)
+  void write_value(const char *id, const V &/*from*/)
   {
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      convert(from, to_, size_);
-    } else {
-      convert(from, to_, size_, precision_);
-    }
+    // Todo: convert each type to char*
     success_ = true;
   }
 
@@ -444,16 +402,17 @@ public:
   void write_value(const char*, const object_container&) {}
   void write_value(const char*, const basic_identifier &) {}
 
-  void write_value(const char *id, const char *from, int)
+  void write_value(const char *id, const char *from, int size)
   {
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      convert(from, to_, size_);
-    } else {
-      convert(from, to_, size_, precision_);
+    if (size_ < size) {
+      // not enough size
+      return;
     }
+    strncpy(to_, from, size);
+    to_[size] = '\0';
     success_ = true;
   }
 
@@ -479,11 +438,10 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, char *to, int size, int precision = -1)
+  attribute_writer(const std::string &id, std::string &to, int precision = -1)
     : generic_object_writer<attribute_writer<std::string> >(this)
     , id_(id)
     , to_(to)
-    , size_(size)
     , success_(false)
     , precision_(precision)
   {}
@@ -503,8 +461,8 @@ public:
     return success_;
   }
 
-  template < class V, typename std::enable_if< std::is_integral<V>::value>::type >
-  void write_value(const char *id, const V &from)
+  template < class V >
+  void write_value(const char *id, const V &from, typename std::enable_if< std::is_integral<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -513,43 +471,96 @@ public:
     success_ = true;
   }
 
-  template < class V, typename std::enable_if< std::is_floating_point<V>::value>::type >
-  void write_value(const char *id, const V &from)
+  template < class V >
+  void write_value(const char *id, const V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = oos::to_string(from, precision_);
+    success_ = true;
+  }
+
+  void write_value(const char *id, const char &from)
   {
     if (id_ != id) {
       return;
     }
     to_ = std::to_string(from);
-    if (precision_ < 0) {
-      to_ = std::to_string(from);
+    success_ = true;
+  }
+
+  void write_value(const char *id, const std::string &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = from;
+    success_ = true;
+  }
+
+  void write_value(const char *id, const oos::varchar_base &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = from.str();
+    success_ = true;
+  }
+  void write_value(const char *id, const date &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = to_string(from);
+    success_ = true;
+  }
+  void write_value(const char *id, const oos::time &from)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = to_string(from);
+    success_ = true;
+  }
+  void write_value(const char *id, const object_base_ptr &x)
+  {
+    if (id_ != id) {
+      return;
+    }
+    std::stringstream to;
+    if (x.has_primary_key()) {
+      x.primary_key()->print(to);
     } else {
-      to_ = std::to_string(from);
+      to << x.id();
     }
+    to_ = to.str();
     success_ = true;
   }
-
-  void write_value(const char*, const date&) {}
-  void write_value(const char*, const time&) {}
   void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const basic_identifier &) {}
-
-  void write_value(const char *id, const char *from, int)
+  void write_value(const char *id, const basic_identifier &x)
   {
     if (id_ != id) {
       return;
     }
-    if (precision_ < 0) {
-      convert(from, to_, size_);
-    } else {
-      convert(from, to_, size_, precision_);
+    std::stringstream to;
+    x.print(to);
+    to_ = to.str();
+    success_ = true;
+  }
+
+  void write_value(const char *id, const char *from, int size)
+  {
+    if (id_ != id) {
+      return;
     }
+    to_.assign(from, size);
     success_ = true;
   }
 
 private:
   std::string id_;
-  std::string to_;
-  int size_;
+  std::string &to_;
   bool success_;
   int precision_;
 };
