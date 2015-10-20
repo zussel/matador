@@ -313,8 +313,8 @@ LIST(APPEND TESTUNITS memory_transaction)
 
 FOREACH(unit ${TESTUNITS})
   FOREACH(test ${${unit}})
-    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
+#    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
   ENDFOREACH(test)
 ENDFOREACH(unit)
 
-#ADD_TEST(test_oos_1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec date,time,date)
+ADD_TEST(test_oos_all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec all)
