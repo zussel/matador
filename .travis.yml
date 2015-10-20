@@ -74,9 +74,9 @@ before_script:
 
 script:
   - make
-  - valgrind --leak-check=full --error-exitcode=1 ./bin/test_oos exec sqlite_database:reload
+#  - valgrind --leak-check=full --error-exitcode=1 ./bin/test_oos exec sqlite_database:reload
   - make test ARGS=-V
-  
+
 after_success:
   - make coveralls
   - ./coveralls-upload
