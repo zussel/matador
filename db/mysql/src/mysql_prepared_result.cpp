@@ -212,8 +212,18 @@ void mysql_prepared_result::read(const char */*id*/, oos::date &x)
 void mysql_prepared_result::read(const char */*id*/, oos::time &x)
 {
   if (info_[result_index].length > 0) {
+#if MYSQL_VERSION_ID < 50604
+    // before mysql version 5.6.4 datetime
+    // doesn't support fractional seconds
+    // so we use a datetime string here
+    char *data = (char*)bind_[result_index].buffer;
+    unsigned long len = info_[result_index].length;
+    std::string str(data,len);
+    x.parse(str, "%F %T.%f");
+#else
     MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
     x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
+#endif
   }
   ++result_index;
 }

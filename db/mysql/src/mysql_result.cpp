@@ -255,9 +255,17 @@ void mysql_result::read(const char *id, oos::date &x)
 
 void mysql_result::read(const char *id, oos::time &x)
 {
+#if MYSQL_VERSION_ID < 50604
+  // before mysql version 5.6.4 datetime
+  // doesn't support fractional seconds
+  // so we use a datetime string here
+  char *val = row_[result_index++];
+  x.parse(val, "%F %T.%f");
+#else
   std::string val;
   read(id, val);
   x = oos::time::parse(val, "%F %T.%f");
+#endif
 }
 
 void mysql_result::read(const char *id, object_base_ptr &x)

@@ -79,11 +79,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
   suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
-  #if MYSQL_VERSION_ID < 50604
-    suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
-  #else
-    suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql));
-  #endif
+  suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
 #endif
 
 #ifdef OOS_ODBC

@@ -550,8 +550,8 @@ public:
    */
   result<T> execute()
   {
-//  std::cout << "SQL: " << sql_.direct().c_str() << '\n';
-//  std::cout.flush();
+//    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//    std::cout.flush();
     return db_.execute<T>(sql_.direct(), producer_);
   }
 

@@ -108,7 +108,11 @@ void mysql_column_binder::read(const char *, oos::date &x)
 
 void mysql_column_binder::read(const char *, oos::time &x)
 {
+#if MYSQL_VERSION_ID < 50604
+  prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+#else
   prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
+#endif
 }
 
 void mysql_column_binder::read(const char *, varchar_base &x)

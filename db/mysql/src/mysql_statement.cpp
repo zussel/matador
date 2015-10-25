@@ -20,9 +20,8 @@
 #include "mysql_exception.hpp"
 #include "mysql_prepared_result.hpp"
 
-#include "object/object_ptr.hpp"
-
 #include "tools/varchar.hpp"
+#include "tools/string.hpp"
 
 #include <cstring>
 #include <sstream>
@@ -189,7 +188,16 @@ void mysql_statement::write(const char *, const oos::date &x)
 
 void mysql_statement::write(const char *, const oos::time &x)
 {
+#if MYSQL_VERSION_ID < 50604
+  // before mysql version 5.6.4 datetime
+  // doesn't support fractional seconds
+  // so we use a datetime string here
+
+  std::string tstr = to_string(x, "%F %T.%f");
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_index);
+#else
   bind_value(host_array[host_index], MYSQL_TYPE_TIMESTAMP, x, host_index);
+#endif
   ++host_index;
 }
 
