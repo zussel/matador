@@ -41,22 +41,23 @@ void SQLTestUnit::test_create()
 
   q.reset();
 
+  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
-  hans.set_time(oos::time(2015, 3, 15, 13, 56, 23, 123));
+  hans.set_time(itime);
   res = q.insert(&hans, "item").execute();
 
   q.reset();
 
   res = q.select().from("item").execute();
 
-  result_iterator<Item> first = res.begin();
-  result_iterator<Item> last = res.end();
-//    auto first = res.begin();
-//    auto last = res.end();
+  auto first = res.begin();
+  auto last = res.end();
 
   while (first != last) {
-    Item *item = first.release();
-    delete item;
+    std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -77,8 +78,9 @@ void SQLTestUnit::test_statement()
 
   q.reset();
 
+  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
-  hans.set_time(oos::time(2015, 3, 15, 13, 56, 23, 123));
+  hans.set_time(itime);
   stmt = q.insert(&hans, "item").prepare();
 
   stmt.bind(&hans);
@@ -89,12 +91,14 @@ void SQLTestUnit::test_statement()
   stmt = q.select().from("item").prepare();
   res = stmt.execute();
 
-  result_iterator<Item> first = res.begin();
-  result_iterator<Item> last = res.end();
+  auto first = res.begin();
+  auto last = res.end();
 
   while (first != last) {
-    Item *item = first.release();
-    delete item;
+    std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -117,15 +121,16 @@ void SQLTestUnit::test_foreign_query()
   result<Item> res(q.create("item").execute());
   q.reset();
 
+  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  oos::identifier<unsigned long> id(23);
   object_ptr<Item> hans(new Item("Hans", 4711));
-  hans->id(23);
-  hans->set_time(oos::time(2015, 3, 15, 13, 56, 23, 123));
+  hans->id(id.value());
+  hans->set_time(itime);
   res = q.insert(hans, "item").execute();
 
   q.reset();
 
   query<t_object_item> object_item_query(session_->db());
-//    result<Item> res(q.create("item").execute());
   result<t_object_item> ores = object_item_query.create("object_item").execute();
 
   object_item_query.reset();
@@ -139,15 +144,16 @@ void SQLTestUnit::test_foreign_query()
 
   ores = object_item_query.select().from("object_item").execute();
 
-  result_iterator<t_object_item> first = ores.begin();
-  result_iterator<t_object_item> last = ores.end();
+  auto first = ores.begin();
+  auto last = ores.end();
 
   while (first != last) {
-    t_object_item *obj = first.release();
+    std::unique_ptr<t_object_item> obj(first.release());
 
     object_ptr<Item> i = obj->ptr();
+    UNIT_ASSERT_TRUE(i.has_primary_key(), "expected valid identifier");
+    UNIT_ASSERT_TRUE(*i.primary_key() == id, "expected id must be 23");
 
-    delete obj;
     ++first;
   }
 
