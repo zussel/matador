@@ -40,7 +40,7 @@ object_base_ptr::object_base_ptr(const object_base_ptr &x)
 object_base_ptr&
 object_base_ptr::operator=(const object_base_ptr &x)
 {
-  if (this != &x) {
+  if (this != &x && proxy_ != x.proxy_) {
     reset(x.proxy_, x.is_reference_);
   }
   return *this;
@@ -101,6 +101,9 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 void
 object_base_ptr::reset(object_proxy *proxy, bool is_ref)
 {
+  if (proxy == proxy_) {
+    return;
+  }
   if (proxy_) {
     oid_ = 0;
     if (is_internal_) {

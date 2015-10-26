@@ -37,7 +37,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
-//  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable structure test");
+  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable structure test");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
@@ -788,6 +788,12 @@ void ObjectStoreTestUnit::test_structure()
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
+
+  UNIT_ASSERT_GREATER(optr.id(), 0UL, "object id must be greater zero");
+
+  iptr = optr->ptr();
+
+  UNIT_ASSERT_GREATER(iptr.id(), 0UL, "object id must be greater zero");
 }
 
 void ObjectStoreTestUnit::test_insert()
