@@ -260,7 +260,7 @@ void mysql_result::read(const char *id, oos::time &x)
   // doesn't support fractional seconds
   // so we use a datetime string here
   char *val = row_[result_index++];
-  x.parse(val, "%F %T.%f");
+  x = time::parse(val, "%F %T.%f");
 #else
   std::string val;
   read(id, val);
