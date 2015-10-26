@@ -36,9 +36,11 @@ public:
 
   void small_test()
   {
+    UNIT_ASSERT_TRUE(true, "test should be executed");
   }
   void big_test()
   {
+    UNIT_ASSERT_TRUE(true, "test should be executed");
   }
   /**
    * Initializes a test unit

@@ -40,10 +40,24 @@ void VarCharTestUnit::create_varchar()
 
 void VarCharTestUnit::copy_varchar()
 {
+  varchar<8> str8("Hallo");
+
+  varchar<8> str8_2(str8);
+
+  UNIT_ASSERT_EQUAL(str8_2, "Hallo", "expected string must be 'Hallo'");
 }
 
 void VarCharTestUnit::assign_varchar()
 {
+  varchar<8> str8("Hallo");
+
+  varchar<8> str8_2 = str8;
+
+  UNIT_ASSERT_EQUAL(str8_2, "Hallo", "expected string must be 'Hallo'");
+
+  str8 = "Baba";
+
+  UNIT_ASSERT_EQUAL(str8, "Baba", "expected string must be 'Baba'");
 }
 
 void VarCharTestUnit::init_varchar()

@@ -205,7 +205,13 @@ void DatabaseTestUnit::test_primary_key()
 
   ses->create();
 
-  ses->insert(new pktest);
+  std::unique_ptr<pktest> p(new pktest);
+  UNIT_ASSERT_EQUAL(p->id.value(), 0UL, "identifier value should be greater zero");
+
+  auto pkt = ses->insert(p.release());
+
+  UNIT_ASSERT_TRUE(pkt.has_primary_key(), "object ptr should have an identifier");
+  UNIT_ASSERT_GREATER(pkt->id.value(), 0UL, "identifier value should be greater zero");
 
   ses->drop();
 

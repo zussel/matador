@@ -32,7 +32,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
   add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
-  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
+//  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
   add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
@@ -41,7 +41,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
-  add_test("to_many", std::bind(&ObjectStoreTestUnit::test_to_many, this), "to many test");
+//  add_test("to_many", std::bind(&ObjectStoreTestUnit::test_to_many, this), "to many test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -385,8 +385,8 @@ ObjectStoreTestUnit::multiple_simple_objects()
 {
   typedef object_ptr<Item> item_ptr;
 
-  size_t elem_size = 10000;
-  // create 1000 objects
+  size_t elem_size = 10;
+  // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
     serializable *o = ostore_.create("item");
     
@@ -402,7 +402,7 @@ ObjectStoreTestUnit::multiple_simple_objects()
   typedef object_view<Item> simple_view_t;
   simple_view_t simple_view(ostore_);
 
-  UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10000");
+  UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10");
 }
 
 void
@@ -410,8 +410,8 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
 {
   typedef object_ptr<ObjectItem<Item> > ows_ptr;
     
-  // create 1000 objects
-  size_t elem_size = 1000;
+  // create 10 objects
+  size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
     serializable *o = ostore_.create("object_item");
     
@@ -427,7 +427,7 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   typedef object_view<ObjectItem<Item> > withsub_view_t;
   withsub_view_t withsub_view(ostore_);
 
-  UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10000");
+  UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10");
 }
 
 void
