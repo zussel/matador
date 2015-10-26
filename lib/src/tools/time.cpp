@@ -1,4 +1,5 @@
 #include "tools/time.hpp"
+#include "tools/string.hpp"
 
 #include <stdexcept>
 #include <cstring>
@@ -466,9 +467,9 @@ date time::to_date() const
   return oos::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
 }
 
-std::ostream& operator<<(std::ostream &out, const time &/*x*/)
+std::ostream& operator<<(std::ostream &out, const time &x)
 {
-//  out << x.str();
+  out << to_string(x);
   return out;
 }
 

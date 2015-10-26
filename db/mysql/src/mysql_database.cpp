@@ -166,6 +166,9 @@ const char* mysql_database::type_string(data_type_t type) const
       return "DATE";
     case type_time:
 #if MYSQL_VERSION_ID < 50604
+      // before mysql version 5.6.4 datetime
+      // doesn't support fractional seconds
+      // so we use a datetime string here
       return "VARCHAR(256)";
 #else
       return "DATETIME(3)";
