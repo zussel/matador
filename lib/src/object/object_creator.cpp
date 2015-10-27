@@ -51,9 +51,9 @@ void object_creator::read_value(const char*, object_container &x)
 }
 
 
-void object_creator::read_value(char const *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
-}
+//void object_creator::read_value(char const *id, basic_identifier &x)
+//{
+//  x.deserialize(id, *this);
+//}
 
 }

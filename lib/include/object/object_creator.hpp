@@ -68,12 +68,11 @@ public:
   virtual ~object_creator();
 
   template < class T >
-  void read_value(const char*, const T&) {}
+  void read_value(const char*, T&) {}
 
   void read_value(const char*, char*, int) {}
   void read_value(const char*, object_base_ptr &x);
   void read_value(const char*, object_container &x);
-  void read_value(const char*, basic_identifier &x);
 
 private:
   std::stack<object_proxy*> object_proxy_stack_;
