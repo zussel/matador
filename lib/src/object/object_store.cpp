@@ -166,8 +166,17 @@ void object_store::insert(object_container &oc)
   oc.install(this);
 }
 
-object_proxy*
-object_store::insert_object(serializable *o, bool notify)
+object_proxy *object_store::insert_object(serializable *o)
+{
+//  if (proxy == nullptr) {
+//    throw object_exception("serializable proxy is nullptr");
+//  }
+//
+//  object_inserter_.collect()
+  return nullptr;
+}
+
+object_proxy* object_store::insert_object(serializable *o, bool notify)
 {
   // find type in tree
   if (!o) {

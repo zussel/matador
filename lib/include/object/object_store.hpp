@@ -23,6 +23,7 @@
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
+#include "object/object_inserter.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -429,6 +430,7 @@ private:
   void mark_modified(object_proxy *oproxy);
 
   void remove(object_proxy *proxy);
+  object_proxy* insert_object(serializable *o);
 	object_proxy* insert_object(serializable *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
 
@@ -450,6 +452,7 @@ private:
   t_observer_list observer_list_;
 
   object_deleter object_deleter_;
+  object_inserter object_inserter_;
 };
 
 }

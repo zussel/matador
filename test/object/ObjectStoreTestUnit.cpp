@@ -32,7 +32,6 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
   add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
-//  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
   add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
@@ -309,11 +308,6 @@ ObjectStoreTestUnit::ref_ptr_counter()
 }
 
 
-void ObjectStoreTestUnit::access_value()
-{
-
-}
-
 void
 ObjectStoreTestUnit::set_test()
 {
@@ -467,11 +461,6 @@ ObjectStoreTestUnit::delete_object()
   UNIT_ASSERT_TRUE(ostore_.is_removable(item), "item must be removable");
   
   ostore_.remove(item);
-}
-
-void
-ObjectStoreTestUnit::sub_delete()
-{
 }
 
 void

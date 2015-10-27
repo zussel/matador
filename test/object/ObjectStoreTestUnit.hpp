@@ -20,7 +20,6 @@ public:
   void version_test();
   void optr_test();
   void expression_test();
-  void access_value();
   void set_test();
   void get_test();
   void serializer();
@@ -30,7 +29,6 @@ public:
   void multiple_simple_objects();
   void multiple_object_with_sub_objects();
   void delete_object();
-  void sub_delete();
   void hierarchy();
   void view_test();
   void clear_test();

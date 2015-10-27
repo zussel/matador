@@ -28,11 +28,7 @@ void object_creator::read_value(const char*, object_base_ptr &x)
   // mark serializable pointer as internal
   x.is_internal_ = true;
   if (!x.is_reference()) {
-    if (!x.ptr()) {
-      // create serializable
-//      serializable *o = ostore_.create(x.type());
-//      x.reset(ostore_.insert_object(o, notify_), x.is_reference());
-    } else {
+    if (x.ptr()) {
       // do the pointer count
       x.proxy_->link_ptr();
       object_proxy_stack_.push(x.proxy_);

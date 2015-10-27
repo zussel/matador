@@ -264,6 +264,7 @@ private:
   friend class object_serializer;
   friend class object_proxy;
   friend class object_deleter;
+  friend class object_inserter;
   friend class object_store;
   friend class object_container;
 
