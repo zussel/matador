@@ -373,7 +373,6 @@ public:
       throw object_exception("invalid object_store pointer");
     } else {
       // mark item serializable as modified
-//      this->mark_modified(x.get());
       this->mark_modified(this->proxy(x));
       // set back ref to parent
       setter_(*x.get(), parent_ref(this->owner()));
@@ -467,7 +466,6 @@ public:
       item_type *it = new item_type(pref, x);
       item_ptr item = this->ostore()->insert(it);
       // mark list serializable as modified
-//      this->mark_modified(this->parent());
       this->mark_modified(this->owner());
       // insert new item serializable
       return this->list().insert(pos, item);
@@ -481,7 +479,6 @@ public:
     } else {
       item_ptr item = *i;
       this->mark_modified(this->owner());
-//      this->mark_modified(this->parent());
       this->ostore()->remove(item);
       return this->list().erase(i);
     }

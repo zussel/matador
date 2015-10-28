@@ -54,9 +54,11 @@ void object_inserter::read_value(const char*, object_base_ptr &x)
       if (x.id()) {
         // do the pointer count
         x.proxy_->link_ptr();
-        object_proxy_stack_.push(x.proxy_);
-        x.ptr()->deserialize(*this);
-        object_proxy_stack_.pop();
+        if (new_object) {
+          object_proxy_stack_.push(x.proxy_);
+          x.ptr()->deserialize(*this);
+          object_proxy_stack_.pop();
+        }
       } else if (new_object){
         // new object
         ostore_.insert_proxy(x.proxy_);

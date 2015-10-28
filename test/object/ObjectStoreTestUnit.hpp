@@ -34,6 +34,8 @@ public:
   void clear_test();
   void generic_test();
   void test_structure();
+  void test_structure_cyclic();
+  void test_structure_container();
   void test_insert();
   void test_remove();
   void test_primary_key();

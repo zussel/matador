@@ -483,7 +483,7 @@ public:
    * 
    * @param o The serializable.
    */
-  explicit object_ref(serializable * o) : object_base_ptr(o, true) {}
+  object_ref(serializable * o) : object_base_ptr(o, true) {}
 
   /**
    * Create an object_ref from an object_proxy
