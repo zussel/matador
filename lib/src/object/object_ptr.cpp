@@ -167,7 +167,6 @@ void object_base_ptr::id(unsigned long id)
   }
 }
 
-
 object_store *object_base_ptr::store() const
 {
   return (proxy_ ? proxy_->ostore() : nullptr);
@@ -175,11 +174,7 @@ object_store *object_base_ptr::store() const
 
 serializable * object_base_ptr::ptr()
 {
-  if (proxy_ && proxy_->obj()) {
-    return proxy_->obj();
-  } else {
-    return nullptr;
-  }
+  return proxy_ ? proxy_->obj() : nullptr;
 }
 
 const serializable * object_base_ptr::ptr() const
@@ -201,11 +196,7 @@ serializable * object_base_ptr::lookup_object()
 
 serializable * object_base_ptr::lookup_object() const
 {
-  if (proxy_ && proxy_->obj()) {
-    return proxy_->obj();
-  } else {
-    return nullptr;
-  }
+  return proxy_ ? proxy_->obj() : nullptr;
 }
 
 bool object_base_ptr::is_reference() const

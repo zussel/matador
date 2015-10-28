@@ -20,7 +20,6 @@
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_list.hpp"
-#include "object/object_creator.hpp"
 #include "object/primary_key_reader.hpp"
 
 #include <iostream>
@@ -32,6 +31,7 @@ using namespace std::placeholders;
 namespace oos {
 
 object_store::object_store()
+  : object_inserter_(*this)
 {}
 
 object_store::~object_store()
@@ -166,16 +166,6 @@ void object_store::insert(object_container &oc)
   oc.install(this);
 }
 
-object_proxy *object_store::insert_object(serializable *o)
-{
-//  if (proxy == nullptr) {
-//    throw object_exception("serializable proxy is nullptr");
-//  }
-//
-//  object_inserter_.collect()
-  return nullptr;
-}
-
 object_proxy* object_store::insert_object(serializable *o, bool notify)
 {
   // find type in tree
@@ -230,8 +220,10 @@ object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iter
   node->insert(oproxy);
 
   // initialize serializable
-  object_creator oc(oproxy, *this);
-  oproxy->obj()->deserialize(oc);
+//  object_inserter oc(oproxy, *this);
+
+  object_inserter_.insert(oproxy);
+//  oproxy->obj()->deserialize(oc);
   // set this into persistent serializable
   // notify observer
   if (notify) {

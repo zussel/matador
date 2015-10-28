@@ -419,7 +419,7 @@ public:
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
 private:
-  friend class object_creator;
+  friend class object_inserter;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
@@ -430,7 +430,6 @@ private:
   void mark_modified(object_proxy *oproxy);
 
   void remove(object_proxy *proxy);
-  object_proxy* insert_object(serializable *o);
 	object_proxy* insert_object(serializable *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
 

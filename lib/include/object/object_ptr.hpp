@@ -260,7 +260,7 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
 
 private:
-  friend class object_creator;
+  friend class object_inserter;
   friend class object_serializer;
   friend class object_proxy;
   friend class object_deleter;

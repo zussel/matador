@@ -231,7 +231,7 @@ public:
 
 protected:
   friend class object_store;
-  friend class object_creator;
+  friend class object_inserter;
   friend class object_deleter;
   friend class object_serializer;
   friend class prototype_tree;

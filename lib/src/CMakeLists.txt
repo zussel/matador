@@ -1,5 +1,5 @@
 SET(OBJECT_SOURCES
-		object/object_creator.cpp
+		object/object_inserter.cpp
 		object/object_deleter.cpp
 		object/object_container.cpp
 		object/object_ptr.cpp
@@ -12,7 +12,7 @@ SET(OBJECT_SOURCES
 		object/foreign_key_analyzer.cpp
 		object/identifier_resolver.cpp
 		object/basic_identifier.cpp
-		object/identifier.cpp object/object_inserter.cpp)
+		object/identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -47,7 +47,7 @@ SET(OBJECT_HEADER
 		../include/object/object_ptr.hpp
 		../include/object/object_store.hpp
 		../include/object/object_container.hpp
-		../include/object/object_creator.hpp
+		../include/object/object_inserter.hpp
 		../include/object/object_deleter.hpp
 		../include/object/object_list.hpp
 		../include/object/object_vector.hpp
@@ -68,7 +68,7 @@ SET(OBJECT_HEADER
 		../include/object/foreign_key_analyzer.hpp
 		../include/object/identifier_resolver.hpp
 		../include/object/primary_key_reader.hpp
-		../include/object/basic_identifier.hpp ../include/object/object_inserter.hpp)
+		../include/object/basic_identifier.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
