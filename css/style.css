@@ -1,0 +1,16 @@
+.container pre
+{
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  background-color: #fafafa;
+}
+
+.container pre code
+{
+  font-size: 100%;
+  line-height: 110%;
+}
