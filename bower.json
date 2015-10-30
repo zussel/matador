@@ -1,0 +1,27 @@
+{
+  "name": "oos-web",
+  "homepage": "https://github.com/zussel/oos",
+  "authors": [
+    "sascha.kuehl@gmx.net"
+  ],
+  "description": "OOS documentation",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "oos"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0"
+  }
+}
