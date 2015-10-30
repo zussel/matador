@@ -71,7 +71,7 @@ public:
   {}
 
   virtual ~object_list_base() {}
-  
+
   /**
    * Return the begin iterator of the list.
    * 
@@ -458,18 +458,23 @@ public:
 
   virtual iterator insert(iterator pos, const value_holder &x)
   {
-    if (!object_container::ostore()) {
-      throw object_exception("invalid object_store pointer");
-    } else {
-      // create and insert new item
-      parent_ref pref(this->owner());
-      item_type *it = new item_type(pref, x);
-      item_ptr item = this->ostore()->insert(it);
+//    if (!object_container::ostore()) {
+//      throw object_exception("invalid object_store pointer");
+//    } else {
+    // create and insert new item
+    parent_ref pref(this->owner());
+    item_type *it = new item_type(pref, x);
+    item_ptr item(it);
+    if (this->ostore()) {
+      item = this->ostore()->insert(item);
       // mark list serializable as modified
       this->mark_modified(this->owner());
       // insert new item serializable
       return this->list().insert(pos, item);
+    } else {
+      return this->list().insert(pos, item);
     }
+//    }
   }
 
   virtual iterator erase(iterator i)

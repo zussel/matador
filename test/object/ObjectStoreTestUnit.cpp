@@ -843,6 +843,10 @@ void ObjectStoreTestUnit::test_structure_container()
   childrens_ptr childrens(new children_list("ch1"));
 
   childrens->children.push_back(new child("heinz"));
+
+  ostore.insert(childrens);
+
+  childrens->children.
 }
 
 void ObjectStoreTestUnit::test_insert()
