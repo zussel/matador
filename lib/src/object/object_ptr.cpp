@@ -82,7 +82,7 @@ object_base_ptr::~object_base_ptr()
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore()) {
+    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }
@@ -118,7 +118,7 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore()) {
+    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }

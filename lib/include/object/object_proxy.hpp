@@ -316,6 +316,7 @@ private:
   template < class T > friend class result;
   friend class table_reader;
   friend class restore_visitor;
+  friend class object_base_ptr;
 
   object_proxy *prev_;      /**< The previous object_proxy in the list. */
   object_proxy *next_;      /**< The next object_proxy in the list. */

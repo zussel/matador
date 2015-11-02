@@ -36,6 +36,7 @@ public:
   void test_structure();
   void test_structure_cyclic();
   void test_structure_container();
+  void test_transient_optr();
   void test_insert();
   void test_remove();
   void test_primary_key();

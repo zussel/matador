@@ -39,6 +39,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable transient structure test");
   add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "serializable transient cyclic structure test");
   add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
+  add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
@@ -852,6 +853,23 @@ void ObjectStoreTestUnit::test_structure_container()
   UNIT_ASSERT_EQUAL(c1.ref_count(), 0UL, "reference count must be zero");
   UNIT_ASSERT_EQUAL(c1.ptr_count(), 1UL, "reference count must be one");
 
+}
+
+void ObjectStoreTestUnit::test_transient_optr()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item(new Item("item", 5));
+
+
+  item_ptr item_copy = item;
+
+
+  std::cout << item_copy->get_string() << "\n";
+
+  item_copy.reset();
+
+  std::cout << item->get_string() << "\n";
 }
 
 void ObjectStoreTestUnit::test_insert()
