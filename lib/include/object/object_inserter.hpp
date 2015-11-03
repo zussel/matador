@@ -37,7 +37,7 @@ class object_container;
 
 /**
  * @cond OOS_DEV
- * @class object_creator
+ * @class object_inserter
  * @brief Creates objects and object_lists
  * 
  * When an serializable is inserted into the serializable store
@@ -45,38 +45,38 @@ class object_container;
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class object_creator : public generic_object_reader<object_creator>
+class object_inserter : public generic_object_reader<object_inserter>
 {
 public:
   /**
-   * @brief Creates an object_creator instance.
+   * @brief Creates an object_inserter instance.
    * 
-   * An object_creator instance ist created for a
+   * An object_inserter instance ist created for a
    * given object_store. The notify flag tells the
-   * object_creator wether the observers should be
+   * object_inserter wether the observers should be
    * notified or not.
    * 
    * @param ostore The object_store.
    */
-  object_creator(object_proxy *root, object_store &ostore)
-    : generic_object_reader<object_creator>(this)
-    , ostore_(ostore)
-  {
-    object_proxy_stack_.push(root);
-  }
+  object_inserter(object_store &ostore);
+  virtual ~object_inserter();
 
-  virtual ~object_creator();
+  void insert(object_proxy *proxy);
 
   template < class T >
-  void read_value(const char*, const T&) {}
+  void read_value(const char*, T&) {}
 
   void read_value(const char*, char*, int) {}
   void read_value(const char*, object_base_ptr &x);
   void read_value(const char*, object_container &x);
-  void read_value(const char*, basic_identifier &x);
 
 private:
+  typedef std::set<object_proxy*> t_object_proxy_set;
+
+  t_object_proxy_set object_proxies_;
+
   std::stack<object_proxy*> object_proxy_stack_;
+
   object_store &ostore_;
 };
 /// @endcond

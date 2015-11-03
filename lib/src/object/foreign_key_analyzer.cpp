@@ -36,6 +36,7 @@ void foreign_key_analyzer::write_value(const char *id, const object_base_ptr &x)
   } else if (!node->has_primary_key()) {
     throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
   } else {
+    // node is inserted/attached store it in nodes foreign key map
     std::shared_ptr<basic_identifier> fk(node->primary_key->clone());
     node_.foreign_keys.insert(std::make_pair(id, fk));
   }

@@ -8,18 +8,14 @@ namespace oos {
 table_reader::table_reader(table &t, object_store &ostore)
   : generic_object_reader(this)
   , ostore_(ostore)
-  , object_preparator_(t.node_)
   , table_(t)
 {}
 
 
 void table_reader::load(result<serializable> &res)
 {
-
-//  serializable *obj = nullptr;
-
-  result_iterator<serializable> first = res.begin();
-  result_iterator<serializable> last = res.end();
+  auto first = res.begin();
+  auto last = res.end();
   while (first != last) {
     serializable *obj = first.release();
     new_proxy_ = new object_proxy(obj, nullptr);
@@ -27,36 +23,6 @@ void table_reader::load(result<serializable> &res)
     ostore_.insert_proxy(new_proxy_);
     ++first;
   }
-//  while ((obj = res->fetch(&table_.node_))) {
-//
-//    new_proxy_ = new object_proxy(obj, nullptr);
-//
-//    obj->deserialize(*this);
-//
-//    ostore_.insert_proxy(new_proxy_);
-//  }
-
-
-  // check result
-  // create serializable
-//  std::unique_ptr<serializable> obj(table_.node_.producer->create());
-//
-//  // prepare serializable for read (set object_proxy into serializable ptr)
-//  object_preparator_.prepare(obj.get());
-//
-////  std::for_each(res->begin(), res->end(), [](serializable *obj) {})
-//  while (res->fetch(obj.get())) {
-//
-//    new_proxy_ = new object_proxy(obj.get(), nullptr);
-//
-//    obj->deserialize(*this);
-//
-//    obj.release();
-//
-//    ostore_.insert_proxy(new_proxy_);
-//
-//    obj.reset(table_.node_.producer->create());
-//  }
 }
 
 void table_reader::read_value(const char */*id*/, object_base_ptr &x)

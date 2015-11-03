@@ -1,8 +1,8 @@
 #ifndef TABLE_READER_HPP
 #define TABLE_READER_HPP
 
-#include "object/object_preparator.hpp"
 #include "object/object_atomizer.hpp"
+#include "object/serializable.hpp"
 
 namespace oos {
 
@@ -31,7 +31,6 @@ private:
   // temp data while loading
   object_proxy *new_proxy_;
   object_store &ostore_;
-  object_preparator object_preparator_;
   table &table_;
 };
 

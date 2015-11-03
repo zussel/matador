@@ -412,7 +412,12 @@ public:
       return;
     }
     strncpy(to_, from, size);
-    to_[size] = '\0';
+    size_t from_size = strlen(from);
+    if (from_size > (size_t)size) {
+      to_[size-1] = '\0';
+    } else {
+      to_[from_size] = '\0';
+    }
     success_ = true;
   }
 

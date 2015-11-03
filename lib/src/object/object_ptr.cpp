@@ -40,7 +40,7 @@ object_base_ptr::object_base_ptr(const object_base_ptr &x)
 object_base_ptr&
 object_base_ptr::operator=(const object_base_ptr &x)
 {
-  if (this != &x) {
+  if (this != &x && proxy_ != x.proxy_) {
     reset(x.proxy_, x.is_reference_);
   }
   return *this;
@@ -82,7 +82,7 @@ object_base_ptr::~object_base_ptr()
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore()) {
+    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }
@@ -101,6 +101,9 @@ bool object_base_ptr::operator!=(const object_base_ptr &x) const
 void
 object_base_ptr::reset(object_proxy *proxy, bool is_ref)
 {
+  if (proxy == proxy_) {
+    return;
+  }
   if (proxy_) {
     oid_ = 0;
     if (is_internal_) {
@@ -115,7 +118,7 @@ object_base_ptr::reset(object_proxy *proxy, bool is_ref)
      * if proxy was created temporary
      * we can delete it here
      */
-    if (!proxy_->ostore()) {
+    if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
       delete proxy_;
     }
   }
@@ -164,7 +167,6 @@ void object_base_ptr::id(unsigned long id)
   }
 }
 
-
 object_store *object_base_ptr::store() const
 {
   return (proxy_ ? proxy_->ostore() : nullptr);
@@ -172,11 +174,7 @@ object_store *object_base_ptr::store() const
 
 serializable * object_base_ptr::ptr()
 {
-  if (proxy_ && proxy_->obj()) {
-    return proxy_->obj();
-  } else {
-    return nullptr;
-  }
+  return proxy_ ? proxy_->obj() : nullptr;
 }
 
 const serializable * object_base_ptr::ptr() const
@@ -198,11 +196,7 @@ serializable * object_base_ptr::lookup_object()
 
 serializable * object_base_ptr::lookup_object() const
 {
-  if (proxy_ && proxy_->obj()) {
-    return proxy_->obj();
-  } else {
-    return nullptr;
-  }
+  return proxy_ ? proxy_->obj() : nullptr;
 }
 
 bool object_base_ptr::is_reference() const

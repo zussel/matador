@@ -32,12 +32,14 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
   add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
-//  add_test("sub_delete", std::bind(&ObjectStoreTestUnit::sub_delete, this), "create and delete multiple objects with sub serializable");
   add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
   add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
   add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
-//  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable structure test");
+  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable transient structure test");
+  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "serializable transient cyclic structure test");
+  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
+  add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
@@ -309,11 +311,6 @@ ObjectStoreTestUnit::ref_ptr_counter()
 }
 
 
-void ObjectStoreTestUnit::access_value()
-{
-
-}
-
 void
 ObjectStoreTestUnit::set_test()
 {
@@ -467,11 +464,6 @@ ObjectStoreTestUnit::delete_object()
   UNIT_ASSERT_TRUE(ostore_.is_removable(item), "item must be removable");
   
   ostore_.remove(item);
-}
-
-void
-ObjectStoreTestUnit::sub_delete()
-{
 }
 
 void
@@ -788,6 +780,91 @@ void ObjectStoreTestUnit::test_structure()
   oi->ptr(iptr);
   
   object_item_ptr optr = ostore_.insert(oi);
+
+  UNIT_ASSERT_GREATER(optr.id(), 0UL, "object id must be greater zero");
+
+  iptr = optr->ptr();
+
+  UNIT_ASSERT_GREATER(iptr.id(), 0UL, "object id must be greater zero");
+}
+
+void ObjectStoreTestUnit::test_structure_cyclic()
+{
+  class cyclic : public oos::serializable
+  {
+  public:
+    cyclic() {}
+    cyclic(const std::string &n) : name(n) {}
+    virtual ~cyclic() {}
+
+    virtual void deserialize(oos::object_reader &r) {
+      r.read("id", id);
+      r.read("name", name);
+      r.read("cycler", cycler);
+    }
+    virtual void serialize(oos::object_writer &w) const {
+      w.write("id", id);
+      w.write("name", name);
+      w.write("cycler", cycler);
+    }
+    oos::identifier<unsigned long> id;
+    std::string name;
+    object_ptr<cyclic> cycler;
+  };
+
+  object_store ostore;
+  ostore.prototypes().insert<cyclic>("cyclic");
+
+  using cyclic_ptr = object_ptr<cyclic>;
+
+  cyclic_ptr c1(new cyclic("c1"));
+  cyclic_ptr c2(new cyclic("c2"));
+
+  // cycle: c1 -> c2 -> c1
+  c1->cycler = c2;
+  c2->cycler = c1;
+
+  cyclic_ptr cptr = ostore.insert(c1);
+
+  UNIT_ASSERT_EQUAL(cptr.ref_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(cptr.ptr_count(), 1UL, "reference count must be one");
+
+  UNIT_ASSERT_EQUAL(c2.ref_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.ptr_count(), 1UL, "reference count must be one");
+}
+
+void ObjectStoreTestUnit::test_structure_container()
+{
+  object_store ostore;
+  ostore.prototypes().insert<child>("cild");
+  ostore.prototypes().insert<children_list>("cildren_list");
+
+  using childrens_ptr = object_ptr<children_list>;
+
+  childrens_ptr childrens(new children_list("ch1"));
+
+  childrens->children.push_back(new child("heinz"));
+
+  ostore.insert(childrens);
+
+  object_ref<child> c1 = (*childrens->children.begin())->value();
+
+  UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
+  UNIT_ASSERT_EQUAL(c1.ref_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c1.ptr_count(), 0UL, "reference count must be one");
+
+}
+
+void ObjectStoreTestUnit::test_transient_optr()
+{
+  typedef object_ptr<Item> item_ptr;
+
+  item_ptr item(new Item("item", 5));
+
+  item_ptr item_copy = item;
+
+
+  item_copy.reset();
 }
 
 void ObjectStoreTestUnit::test_insert()

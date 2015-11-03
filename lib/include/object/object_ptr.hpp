@@ -260,10 +260,11 @@ public:
   friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
 
 private:
-  friend class object_creator;
+  friend class object_inserter;
   friend class object_serializer;
   friend class object_proxy;
   friend class object_deleter;
+  friend class object_inserter;
   friend class object_store;
   friend class object_container;
 
@@ -482,7 +483,7 @@ public:
    * 
    * @param o The serializable.
    */
-  explicit object_ref(serializable * o) : object_base_ptr(o, true) {}
+  object_ref(serializable * o) : object_base_ptr(o, true) {}
 
   /**
    * Create an object_ref from an object_proxy

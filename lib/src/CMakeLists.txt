@@ -1,19 +1,18 @@
 SET(OBJECT_SOURCES
-  object/object_creator.cpp
-  object/object_deleter.cpp
-  object/object_container.cpp
-  object/object_ptr.cpp
-  object/object_store.cpp
-  object/object_proxy.cpp
-  object/object_serializer.cpp
-  object/object_preparator.cpp
-  object/prototype_node.cpp
-  object/prototype_tree.cpp
-  object/primary_key_analyzer.cpp
-  object/foreign_key_analyzer.cpp
-  object/identifier_resolver.cpp
-  object/basic_identifier.cpp
-  object/identifier.cpp)
+		object/object_inserter.cpp
+		object/object_deleter.cpp
+		object/object_container.cpp
+		object/object_ptr.cpp
+		object/object_store.cpp
+		object/object_proxy.cpp
+		object/object_serializer.cpp
+		object/prototype_node.cpp
+		object/prototype_tree.cpp
+		object/primary_key_analyzer.cpp
+		object/foreign_key_analyzer.cpp
+		object/identifier_resolver.cpp
+		object/basic_identifier.cpp
+		object/identifier.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -41,36 +40,35 @@ SET(OBJECT_INSTALL_HEADER
 )
 
 SET(OBJECT_HEADER
-  ../include/object/attribute_counter.hpp
-  ../include/object/attribute_serializer.hpp
-  ../include/object/generic_access.hpp
-  ../include/object/object_exception.hpp
-  ../include/object/object_ptr.hpp
-  ../include/object/object_store.hpp
-  ../include/object/object_container.hpp
-  ../include/object/object_creator.hpp
-  ../include/object/object_deleter.hpp
-  ../include/object/object_list.hpp
-  ../include/object/object_vector.hpp
-  ../include/object/object_producer.hpp
-  ../include/object/linked_object_list.hpp
-  ../include/object/object_view.hpp
-  ../include/object/object_proxy.hpp
-  ../include/object/object_serializer.hpp
-  ../include/object/prototype_node.hpp
-  ../include/object/prototype_tree.hpp
-  ../include/object/object_observer.hpp
-  ../include/object/object_expression.hpp
-  ../include/object/attribute_serializer.hpp
-  ../include/object/object_atomizer.hpp
-  ../include/object/object_preparator.hpp
-  ../include/object/serializable.hpp
-  ../include/object/identifier.hpp
-  ../include/object/primary_key_analyzer.hpp
-  ../include/object/foreign_key_analyzer.hpp
-  ../include/object/identifier_resolver.hpp
-  ../include/object/primary_key_reader.hpp
-  ../include/object/basic_identifier.hpp)
+		../include/object/attribute_counter.hpp
+		../include/object/attribute_serializer.hpp
+		../include/object/generic_access.hpp
+		../include/object/object_exception.hpp
+		../include/object/object_ptr.hpp
+		../include/object/object_store.hpp
+		../include/object/object_container.hpp
+		../include/object/object_inserter.hpp
+		../include/object/object_deleter.hpp
+		../include/object/object_list.hpp
+		../include/object/object_vector.hpp
+		../include/object/object_producer.hpp
+		../include/object/linked_object_list.hpp
+		../include/object/object_view.hpp
+		../include/object/object_proxy.hpp
+		../include/object/object_serializer.hpp
+		../include/object/prototype_node.hpp
+		../include/object/prototype_tree.hpp
+		../include/object/object_observer.hpp
+		../include/object/object_expression.hpp
+		../include/object/attribute_serializer.hpp
+		../include/object/object_atomizer.hpp
+		../include/object/serializable.hpp
+		../include/object/identifier.hpp
+		../include/object/primary_key_analyzer.hpp
+		../include/object/foreign_key_analyzer.hpp
+		../include/object/identifier_resolver.hpp
+		../include/object/primary_key_reader.hpp
+		../include/object/basic_identifier.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

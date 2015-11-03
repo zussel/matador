@@ -23,6 +23,7 @@
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
+#include "object/object_inserter.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -418,7 +419,7 @@ public:
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
 private:
-  friend class object_creator;
+  friend class object_inserter;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
@@ -450,6 +451,7 @@ private:
   t_observer_list observer_list_;
 
   object_deleter object_deleter_;
+  object_inserter object_inserter_;
 };
 
 }
