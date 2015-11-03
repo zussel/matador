@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "object/object_inserter.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
@@ -48,41 +49,53 @@ void object_inserter::read_value(const char*, object_base_ptr &x)
   // mark serializable pointer as internal
   x.is_internal_ = true;
 
-  if (!x.is_reference()) {
-    if (x.ptr()) {
-      bool new_object = object_proxies_.insert(x.proxy_).second;
-      if (x.id()) {
-        // do the pointer count
-        x.proxy_->link_ptr();
-        if (new_object) {
-          object_proxy_stack_.push(x.proxy_);
-          x.ptr()->deserialize(*this);
-          object_proxy_stack_.pop();
-        }
-      } else if (new_object){
-        // new object
-        ostore_.insert_proxy(x.proxy_);
-      }
-    }
-  } else if (x.proxy_) {
-    // count reference
+  if (!x.proxy_) {
+    return;
+  }
+
+  if (x.is_reference()) {
     x.proxy_->link_ref();
+  } else if (x.ptr() && x.id()){
+    x.proxy_->link_ptr();
+  }
+  if (x.ptr()) {
+    bool new_object = object_proxies_.insert(x.proxy_).second;
+    if (x.id()) {
+      // do the pointer count
+//      x.proxy_->link_ptr();
+      if (new_object) {
+        object_proxy_stack_.push(x.proxy_);
+        x.ptr()->deserialize(*this);
+        object_proxy_stack_.pop();
+      }
+    } else if (new_object){
+      // new object
+      ostore_.insert_proxy(x.proxy_);
+    }
   }
 }
 
 void object_inserter::read_value(const char*, object_container &x)
 {
+  if (x.ostore()) {
+    return;
+  }
   // set parent serializable (if available)
   if (!object_proxy_stack_.empty()) {
     x.owner(object_proxy_stack_.top());
   }
+  x.for_each([this](object_proxy *proxy) {
+    bool new_object = object_proxies_.insert(proxy).second;
+    if (!proxy->obj()) {
+      return;
+    }
+    if (new_object) {
+      object_proxy_stack_.push(proxy);
+      proxy->obj()->deserialize(*this);
+      object_proxy_stack_.pop();
+    }
+  });
   ostore_.insert(x);
 }
-
-
-//void object_inserter::read_value(char const *id, basic_identifier &x)
-//{
-//  x.deserialize(id, *this);
-//}
 
 }

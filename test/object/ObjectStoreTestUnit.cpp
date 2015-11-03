@@ -850,8 +850,8 @@ void ObjectStoreTestUnit::test_structure_container()
   object_ref<child> c1 = (*childrens->children.begin())->value();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.ref_count(), 0UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(c1.ptr_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(c1.ref_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c1.ptr_count(), 0UL, "reference count must be one");
 
 }
 
@@ -861,15 +861,10 @@ void ObjectStoreTestUnit::test_transient_optr()
 
   item_ptr item(new Item("item", 5));
 
-
   item_ptr item_copy = item;
 
 
-  std::cout << item_copy->get_string() << "\n";
-
   item_copy.reset();
-
-  std::cout << item->get_string() << "\n";
 }
 
 void ObjectStoreTestUnit::test_insert()
