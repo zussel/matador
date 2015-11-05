@@ -327,7 +327,7 @@ public:
    */
   template < bool TYPE2 >
   object_holder(const object_holder<T, TYPE2> &x)
-    : object_base_ptr(x.proxy_, x.is_reference_)
+    : object_base_ptr(x.proxy_, TYPE)
   {}
 
   /**
