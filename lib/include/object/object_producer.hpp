@@ -21,9 +21,6 @@ namespace oos {
 
 class serializable;
 
-template < class T > class object_ref;
-template < class T > class object_ptr;
-
 /**
 * @class object_base_producer
 * @brief Base class for serializable producer classes

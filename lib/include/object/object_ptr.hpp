@@ -273,8 +273,7 @@ private:
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T > friend class object_ref;
-  template < class T > friend class object_ptr;
+  template < class T, bool TYPE > friend class object_holder;
 
   object_proxy *proxy_ = nullptr;
   bool is_reference_ = false;
@@ -282,20 +281,28 @@ private:
   unsigned long oid_ = 0;
 };
 
-/// @cond OOS_DEV
-
-template < class T >
-class object_ref;
-
-/// @endcond OOS_DEV
-
+/**
+ * @class object_holder
+ * @brief The object_holder holds a pointer to an serializable.
+ * @tparam T The type of the serializable.
+ * @tparam TYPE The type of the holder (referencer or pointer).
+ *
+ * The object_holder holds a pointer to an serializable. The
+ * object_holder is a wrapper class for the serializable class
+ * It has a reference count mechanism.
+ * The objects inserted into the object_store are returned
+ * as a object_holder and should be used through the
+ * object_holder class.
+ * The TYPE template parameter indicates wether the holder acts
+ * like a pointer (object can be deleted) or a reference (object
+ * can't be directly deleted)
+ */
 template < class T, bool TYPE >
 class object_holder : public object_base_ptr
 {
 public:
-  typedef T object_type; /**< Shortcut for serializable type. */
-  typedef object_holder<T, TYPE> self;
-  typedef object_holder<T, !TYPE> opposite;
+  typedef T object_type;                    /**< Shortcut for serializable type. */
+  typedef object_holder<T, TYPE> self;      /**< Shortcut for self class. */
 
 public:
   /**
@@ -310,7 +317,7 @@ public:
    * @param x The object_ptr to copy
    */
   object_holder(const self &x)
-    : object_base_ptr(x.proxy_, false)
+    : object_base_ptr(x.proxy_, x.is_reference_)
   {}
 
   /**
@@ -318,8 +325,9 @@ public:
    *
    * @param x The object_ref to copy
    */
-  object_holder(const opposite &x)
-    : object_base_ptr(x.proxy_, false)
+  template < bool TYPE2 >
+  object_holder(const object_holder<T, TYPE2> &x)
+    : object_base_ptr(x.proxy_, x.is_reference_)
   {}
 
   /**
@@ -328,7 +336,7 @@ public:
    * @param o The serializable.
    */
   object_holder(serializable *o)
-    : object_base_ptr(o, false)
+    : object_base_ptr(o, TYPE)
   {}
 
   /**
@@ -337,8 +345,20 @@ public:
    * @param proxy The object_proxy.
    */
   explicit object_holder(object_proxy *proxy)
-  : object_base_ptr(proxy, false)
+  : object_base_ptr(proxy, TYPE)
   {}
+
+  /**
+   * Assign operator.
+   *
+   * @param x The x serializable to assign from.
+   */
+  self& operator=(serializable *x)
+  {
+//    is_reference_ = TYPE;
+    reset(new object_proxy(x, nullptr), is_reference_);
+    return *this;
+  }
 
   /**
    * Return the type string of the serializable
@@ -348,18 +368,6 @@ public:
   virtual const char* type() const
   {
     return classname_.c_str();
-  }
-
-  /**
-   * Assign operator.
-   *
-   * @param x The x serializable to assign from.
-   */
-  self& operator=(serializable *x)
-  {
-    is_reference_ = false;
-    reset(new object_proxy(x, nullptr), is_reference());
-    return *this;
   }
 
   /**
@@ -423,294 +431,8 @@ std::string object_holder<T, TYPE>::classname_ = typeid(T).name();
 template < class T, bool TYPE >
 std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver::resolve<T>());
 
-template < class T > using object_pointer = object_holder<T, false>;
-template < class T > using object_reference = object_holder<T, true>;
-
-/**
- * @class object_ptr
- * @brief The object_ptr holds a pointer to an serializable.
- * @tparam T The type of the serializable.
- * 
- * The object_ptr holds a pointer to an serializable. The
- * object_ptr is a wrapper class for the serializable class
- * It has a reference count mechanism.
- * The objects inserted into the object_store are returned
- * as a object_ptr and should be used through the
- * object_ptr class.
- */
-template < class T >
-class object_ptr : public object_base_ptr
-{
-public:
-  typedef T object_type; /**< Shortcut for serializable type. */
-
-public:
-  /**
-   * Create an empty object_ptr
-   */
-	object_ptr()
-    : object_base_ptr(false)
-  {}
-  
-  /**
-   * Copies object_ptr
-   * 
-   * @param x The object_ptr to copy
-   */
-  object_ptr(const object_ptr &x)
-    : object_base_ptr(x.proxy_, false)
-  {}
-
-  /**
-   * Copies a object_ref
-   * 
-   * @param x The object_ref to copy
-   */
-  object_ptr(const object_ref<T> &x)
-    : object_base_ptr(x.proxy_, false)
-  {}
-
-  /**
-   * Create an object_ptr from an serializable
-   * 
-   * @param o The serializable.
-   */
-	/*explicit */object_ptr(serializable * o)
-    : object_base_ptr(o, false)
-  {}
-
-  /**
-   * Create an object_ptr from an object_proxy
-   * 
-   * @param proxy The object_proxy.
-   */
-  explicit object_ptr(object_proxy *proxy)
-    : object_base_ptr(proxy, false)
-  {}
-
-  /**
-   * Return the type string of the serializable
-   * 
-   * @return The type string of the serializable.
-   */
-  virtual const char* type() const
-  {
-    return classname_.c_str();
-  }
-
-  /**
-   * Assign operator.
-   *
-   * @param x The x serializable to assign from.
-   */
-  object_ptr<T>& operator=(serializable *x)
-  {
-    is_reference_ = false;
-    reset(new object_proxy(x, nullptr), is_reference());
-    return *this;
-  }
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-	T* operator->() const {
-    return get();
-	}
-	T* operator->() {
-    return get();
-	}
-
-  /**
-   * @brief Return the reference to the serializable of type T.
-   *
-   * Return the reference to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The reference to the serializable of type T.
-   */
-	T& operator*() const {
-    return *get();
-	}
-	T& operator*() {
-    return *get();
-	}
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-  T* get() const {
-      return static_cast<T*>(lookup_object());
-  }
-  T* get() {
-      return static_cast<T*>(lookup_object());
-  }
-
-  virtual basic_identifier* create_identifier() const
-  {
-    return object_ptr<T>::identifier_->clone();
-  }
-
-private:
-  static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
-};
-
-template < class T >
-std::string object_ptr<T>::classname_ = typeid(T).name();
-
-template < class T >
-std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver::resolve<T>());
-
-/**
- * @class object_ref
- * @brief The object_ref holds a pointer to an serializable.
- * @tparam T The type of the serializable.
- * 
- * The object_ref holds a pointer to an serializable. The
- * object_ref is a wrapper class for the serializable class
- * It has a reference count mechanism.
- * The objects inserted into the object_store are returned
- * as a object_ref and should be used through the
- * object_ref class.
- * A object_ref can't be deleted from the object_store.
- */
-template < class T >
-class object_ref : public object_base_ptr
-{
-public:
-  typedef T object_type;  /**< Shortcut for serializable type. */
-public:
-  /**
-   * Create an empty object_ref
-   */
-	object_ref()
-    : object_base_ptr(true)
-  {}
-  
-  /**
-   * Copies object_ref
-   * 
-   * @param x The object_ref to copy
-   */
-  object_ref(const object_ref &x)
-    : object_base_ptr(x.proxy_, true)
-  {}
-  
-  /**
-   * Copies object_ptr
-   * 
-   * @param x The object_ptr to copy
-   */
-  object_ref(const object_ptr<T> &x)
-    : object_base_ptr(x.proxy_, true)
-  {}
-
-  /**
-   * Create an object_ref from an serializable
-   * 
-   * @param o The serializable.
-   */
-  object_ref(serializable * o) : object_base_ptr(o, true) {}
-
-  /**
-   * Create an object_ref from an object_proxy
-   * 
-   * @param proxy The serializable.
-   */
-  explicit object_ref(object_proxy *proxy) : object_base_ptr(proxy, true) {}
-
-  /**
-   * Return the type string of the serializable
-   * 
-   * @return The type string of the serializable.
-   */
-  virtual const char* type() const
-  {
-    return classname_.c_str();
-  }
-
-  /**
-   * Assign operator.
-   *
-   * @param x The x serializable to assign from.
-   */
-  object_ref<T>& operator=(serializable *x)
-  {
-    is_reference_ = true;
-    reset(new object_proxy(x, nullptr), is_reference());
-    return *this;
-  }
-
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-	T* operator->() const {
-    return get();
-	}
-	T* operator->() {
-    return get();
-	}
-
-  /**
-   * @brief Return the reference to the serializable of type T.
-   *
-   * Return the reference to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The reference to the serializable of type T.
-   */
-	T& operator*() const {
-    return *get();
-	}
-	T& operator*() {
-    return *get();
-	}
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-	T* get() const {
-    return static_cast<T*>(lookup_object());
-	}
-	T* get() {
-    return static_cast<T*>(lookup_object());
-	}
-
-  virtual basic_identifier* create_identifier() const
-  {
-    return object_ref<T>::identifier_->clone();
-  }
-private:
-  static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
-};
-
-template < class T >
-std::string object_ref<T>::classname_ = typeid(T).name();
-
-template < class T >
-std::unique_ptr<basic_identifier> object_ref<T>::identifier_(identifier_resolver::resolve<T>());
+template < class T > using object_ptr = object_holder<T, false>;
+template < class T > using object_ref = object_holder<T, true>;
 
 }
 

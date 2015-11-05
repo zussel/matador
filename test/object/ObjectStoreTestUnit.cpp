@@ -857,9 +857,6 @@ void ObjectStoreTestUnit::test_structure_container()
 
 void ObjectStoreTestUnit::test_transient_optr()
 {
-
-  object_pointer<Item> item_pointer;
-
   typedef object_ptr<Item> item_ptr;
 
   item_ptr item(new Item("item", 5));
