@@ -191,7 +191,7 @@ const char* mssql_database::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
-      return "SMALLINT";
+      return "CHAR(1)";
     case type_short:
       return "SMALLINT";
     case type_int:

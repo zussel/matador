@@ -252,7 +252,7 @@ int mssql_statement::type2int(data_type_t type)
 {
   switch(type) {
     case type_char:
-      return SQL_C_STINYINT;
+      return SQL_C_CHAR;
     case type_short:
       return SQL_C_SSHORT;
     case type_int:
@@ -266,7 +266,7 @@ int mssql_statement::type2int(data_type_t type)
     case type_unsigned_int:
       return SQL_C_ULONG;
     case type_unsigned_long:
-      return SQL_C_CHAR;
+      return SQL_C_ULONG;
     case type_bool:
       return SQL_C_USHORT;
     case type_float:
@@ -294,7 +294,7 @@ int mssql_statement::type2sql(data_type_t type)
 {
   switch(type) {
     case type_char:
-      return SQL_SMALLINT;
+      return SQL_CHAR;
     case type_short:
       return SQL_SMALLINT;
     case type_int:
