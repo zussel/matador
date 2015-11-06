@@ -33,11 +33,11 @@
 
 #include <string>
 #include <list>
-#include <object/object_proxy.hpp>
 
 namespace oos {
 
 class serializable;
+class object_proxy;
 
 class create_action;
 class insert_action;

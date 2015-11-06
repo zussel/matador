@@ -22,15 +22,26 @@
 
 namespace oos {
 
+/**
+ * @class time
+ *
+ * @brief Simple time class with milliseconds
+ *
+ * This class provides a simple interface
+ * for time representation. It is possible to
+ * create a time with millisecond precision.
+ *
+ * Addition and subtraction of times is possible
+ * as well as parsing and formatting.
+ */
 class OOS_API time
 {
 public:
+  /*! timezone enum */
   enum tz_t {
-    local,
-    utc
+    local, /*!< use local timezone */
+    utc    /*!< use utc timezone */
   };
-
-  static const char *default_format;
 
   /**
    * Creates a new time with
@@ -38,19 +49,99 @@ public:
    */
   time();
 
+  /**
+   * Create a time from time_t
+   *
+   * @param t time_t value to create time from
+   */
   explicit time(time_t t);
+
+  /**
+   * Create a time from a timeval struct
+   *
+   * @param t timeval value to create time from
+   */
   explicit time(struct timeval tv);
+
+  /**
+   * Create a time from discret values
+   *
+   * @param year Year value of time
+   * @param month Month value of time
+   * @param day Day value of time
+   * @param hour Hour part of time
+   * @param min Minute part of time
+   * @param sec Second part of time
+   * @param millis Milliseconds of time (default is zero)
+   */
   time(int year, int month, int day, int hour, int min, int sec, long millis = 0);
-//  explicit time(uint64_t microseconds);
+
+  /**
+   * Create a time from another time
+   *
+   * @param x Other time object to be initialized from
+   */
   time(const time &x);
+
+  /**
+   * Assign time from another time object
+   *
+   * @param x Assign time from this time object
+   * @return Return reference of this
+   */
   time &operator=(const time &x);
+
+  /**
+   * Destroy time
+   */
   ~time();
 
+  /**
+   * Check if two times are equal
+   *
+   * @param x Time object to compare with
+   * @return True if times are equal
+   */
   bool operator==(const time &x) const;
+
+  /**
+   * Check if two times are not equal
+   *
+   * @param x Time object to compare with
+   * @return True if times are not equal
+   */
   bool operator!=(const time &x) const;
+
+  /**
+   * Check if time is less equal than other time
+   *
+   * @param x Time object to compare with
+   * @return True if time is less equal than other time
+   */
   bool operator<=(const time &x) const;
+
+  /**
+   * Check if time is less than other time
+   *
+   * @param x Time object to compare with
+   * @return True if time is less than other time
+   */
   bool operator<(const time &x) const;
+
+  /**
+   * Check if time is greater than other time
+   *
+   * @param x Time object to compare with
+   * @return True if time is greater than other time
+   */
   bool operator>(const time &x) const;
+
+  /**
+   * Check if time is greater equal than other time
+   *
+   * @param x Time object to compare with
+   * @return True if time is greater equal than other time
+   */
   bool operator>=(const time &x) const;
 
   static time now();
