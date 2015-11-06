@@ -1,2 +1,11 @@
 Todo:
 =====
+check mssql memor leak
+
+SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &h_env);
+SQLSetEnvAttr(h_env, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
+SQLAllocHandle(SQL_HANDLE_DBC, h_env, &h_dbc);
+SQLDriverConnect(h_dbc, NULL, ...
+SQLDisconnect(h_dbc);
+SQLFreeHandle(SQL_HANDLE_DBC, h_dbc);
+SQLFreeHandle(SQL_HANDLE_ENV, h_env);
