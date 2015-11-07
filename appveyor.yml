@@ -21,7 +21,7 @@ before_build:
 - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
 
 build:
-  project: build\oos.sln
+  project: C:\projects\oos\build\oos.sln
 
 test_script:
 - cd build && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
