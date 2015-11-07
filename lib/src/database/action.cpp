@@ -17,6 +17,8 @@
 
 #include "database/action.hpp"
 
+#include "object/object_proxy.hpp"
+
 #include <algorithm>
 
 namespace oos

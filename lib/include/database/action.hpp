@@ -33,12 +33,13 @@
 
 #include <string>
 #include <list>
+#include <memory>
 
 namespace oos {
 
 class serializable;
 class object_proxy;
-
+class basic_identifier;
 class create_action;
 class insert_action;
 class update_action;
