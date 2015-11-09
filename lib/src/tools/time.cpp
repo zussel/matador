@@ -6,11 +6,49 @@
 #include <cmath>
 #include <vector>
 
+#ifndef _MSC_VER
 #include <sys/time.h>
+#endif
 
 namespace oos {
 
-//const char *time::default_format = "%FT%T.SSSSS%z";
+namespace detail {
+
+  void localtime(const time_t *in, struct tm *out)
+  {
+#ifdef _MSC_VER
+    localtime_s(out, in);
+#else
+    localtime_s(in, out);
+#endif
+  }
+
+#ifdef _MSC_VER
+  /* FILETIME of Jan 1 1970 00:00:00. */
+  static const unsigned __int64 epoch = ((unsigned __int64)116444736000000000ULL);
+#endif
+
+  int gettimeofday(struct timeval * tp, struct timezone * tzp)
+  {
+#ifdef _MSC_VER
+    FILETIME    file_time;
+    SYSTEMTIME  system_time;
+    ULARGE_INTEGER ularge;
+
+    GetSystemTime(&system_time);
+    SystemTimeToFileTime(&system_time, &file_time);
+    ularge.LowPart = file_time.dwLowDateTime;
+    ularge.HighPart = file_time.dwHighDateTime;
+
+    tp->tv_sec = (long)((ularge.QuadPart - epoch) / 10000000L);
+    tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+
+    return 0;
+#else
+    gettimeofday(&time_, 0)
+#endif
+  }
+}
 
 void throw_invalid_time(int h, int m, int s, long ms)
 {
@@ -21,10 +59,10 @@ void throw_invalid_time(int h, int m, int s, long ms)
 
 time::time()
 {
-  if (gettimeofday(&time_, 0) != 0) {
+  if (detail::gettimeofday(&time_, 0) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
-  localtime_r(&time_.tv_sec, &tm_);
+  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
 }
 
 time::time(time_t t)
@@ -101,21 +139,6 @@ time time::now()
   return time();
 }
 
-//std::string time::str() const
-//{
-//  return format("%FT%T.SSSSS%z", utc);
-//}
-//
-//std::string time::to_local(const char *f) const
-//{
-//  return format(f, local);
-//}
-//
-//std::string time::to_utc(const char *f) const
-//{
-//  return format(f, utc);
-//}
-
 bool time::is_valid_time(int hour, int min, int sec, long millis) {
   if (hour < 0 || hour > 23) {
     return false;
@@ -162,8 +185,13 @@ time time::parse(const std::string &tstr, const char *format)
 
   tm.tm_isdst = date::is_daylight_saving(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   struct timeval tv;
+#ifdef _MSC_VER
+  tv.tv_sec = (long)mktime(&tm);
+  tv.tv_usec = usec;
+#else
   tv.tv_sec = mktime(&tm);
   tv.tv_usec = usec;
+#endif
   return oos::time(tv);
 }
 
@@ -186,14 +214,16 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
 
   this->time_.tv_sec = mktime(t);
   this->time_.tv_usec = millis * 1000;
-  localtime_r(&this->time_.tv_sec, &this->tm_);
+
+  detail::localtime(&(time_t&)this->time_.tv_sec, &this->tm_);
+
 }
 
 void time::set(time_t t, long millis)
 {
   time_.tv_sec = t;
   time_.tv_usec = millis * 1000;
-  localtime_r(&time_.tv_sec, &tm_);
+  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
 }
 
 void time::set(const date &d)
@@ -204,7 +234,7 @@ void time::set(const date &d)
 void time::set(timeval tv)
 {
   time_ = tv;
-  localtime_r(&time_.tv_sec, &tm_);
+  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
 }
 
 int time::year() const
@@ -314,154 +344,6 @@ struct tm time::get_tm() const
   return tm_;
 }
 
-//std::string time::format(const char *f, tz_t tz) const
-//{
-//  /*
-//   * find '%S.S' in format string
-//   * if found check if ".S{1-5}" are
-//   * the next characters. They are
-//   * interpreted as fraction of a second
-//   */
-//  const char *m = strstr(f, "%S.S");
-//  if (m == 0) {
-//    m = strstr(f, "%T.S");
-//  }
-//  if (m != 0) {
-//    /*
-//     * found second token with
-//     * at least one position after
-//     * decimal point; find last one
-//     */
-//    size_t len = strlen(f);
-//    // index of first S
-//    size_t i = m - f + 3;
-//    // calculate precision
-//    while (i < len) {
-//      ++i;
-//      if (f[i] != 'S') {
-//        break;
-//      }
-//    }
-//    /*
-//     * generate the first half of the
-//     * time, add the precision digits
-//     * and add the second half of the
-//     * time
-//     */
-//    char fstr[64];
-//    strncpy(fstr, f, m - f + 3);
-//    fstr[m - f + 3] = '\0';
-//    // generate first half
-//    char first[64];
-//    if (tz == local) {
-//      strftime(first, 64, fstr, localtime(&time_.tv_sec));
-//    } else {
-//      strftime(first, 64, fstr, gmtime(&time_.tv_sec));
-//    }
-//    strcpy(fstr, m + 3 + i - (m - f + 3));
-//    // generate second half
-//    char second[64];
-//    memset(second, 0, 64);
-//    if (tz == local) {
-//      strftime(second, 64, fstr, localtime(&time_.tv_sec));
-//    } else {
-//      strftime(second, 64, fstr, gmtime(&time_.tv_sec));
-//    }
-//    // generate time with precision
-//    char buf[128];
-//    memset(buf, 0, 128);
-//    // calculate precision
-//    char digits[7];
-//    memset(digits, 0, 7);
-//    sprintf(digits, "%.6ld", time_.tv_usec);
-//    digits[i - (m - f + 3)] = '\0';
-//    sprintf(buf, "%s%s%s", first, digits, second);
-//    return buf;
-//  } else {
-//    char buf[64];
-//    if (tz == local) {
-//      strftime(buf, 64, f, localtime(&time_.tv_sec));
-//    } else {
-//      strftime(buf, 64, f, gmtime(&time_.tv_sec));
-//    }
-//    return buf;
-//  }
-//}
-
-//void time::parse(const char *f, const std::string &ts)
-//{
-//  /*
-//   * find '%S.S' in format string
-//   * if found check if ".S{1-5}" are
-//   * the next characters. They are
-//   * interpreted as fraction of a second
-//   */
-//
-//  struct tm t;
-//  memset(&t, 0, sizeof(t));
-//
-//  const char *m = strstr(f, "%S.S");
-//  if (m == 0) {
-//    m = strstr(f, "%T.S");
-//  }
-//  if (m != 0) {
-//    /*
-//     * found second token with
-//     * at least one position after
-//     * decimal point; find last one
-//     */
-//    size_t len = strlen(f);
-//    // index of first S
-//    size_t i = m - f + 3;
-//    // calculate precision
-//    while (i < len) {
-//      ++i;
-//      if (f[i] != 'S') {
-//        break;
-//      }
-//    }
-//    /*
-//     * extract the first part of the
-//     * time, cut out the precision digits
-//     * and parse the resulting time
-//     * handle the fraction digits seperatly
-//     */
-//    char fstr[64];
-//    memset(fstr, 0, 64);
-//    strncpy(fstr, f, m - f + 3);
-//    fstr[m - f + 3] = '\0';
-//    // generate first half
-//    // to get the beginning of the fraction part
-//    char *next = strptime(ts.c_str(), fstr, &t);
-//    char tsstr[256];
-//    memset(tsstr, 0, 256);
-//    strncpy(tsstr, ts.c_str(), next-ts.c_str());
-//    tsstr[next-ts.c_str()] = '\0';
-//    // calculate the length of the
-//    // franction and the value
-//    char frac[16];
-//    memset(frac, 0, 16);
-//    strncpy(frac, next, i - (m - f + 3));
-//    frac[i - (m - f + 3)] = '\0';
-//    // cut out the fraction format
-//    strcpy(fstr+strlen(fstr), m + 3 + i - (m - f + 3));
-//    // cut out the fraction
-//    strcpy(tsstr+strlen(tsstr), next+i - (m - f + 3));
-//    // parse string
-//    strptime(tsstr, fstr, &t);
-//    // set new time
-//    time_.tv_sec = mktime(&t);
-//    // convert fraction
-//    sscanf(frac, "%ld", &time_.tv_usec);
-//    // calculate precision
-//    time_.tv_usec = time_.tv_usec * (int)pow(10.0, 6 - strlen(frac));
-//  } else {
-//    strptime(ts.c_str(), f, &t);
-//    time_.tv_sec = mktime(&t);
-//    time_.tv_usec = 0;
-//  }
-//}
-
 date time::to_date() const
 {
   return oos::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
@@ -472,14 +354,6 @@ std::ostream& operator<<(std::ostream &out, const time &x)
   out << to_string(x);
   return out;
 }
-
-//std::istream& operator>>(std::istream &in, time &x)
-//{
-//  std::string time_string;
-//  in >> time_string;
-//  x.parse("%FT%T.SSSSS%z", time_string);
-//  return in;
-//}
 
 void time::sync_day(int d)
 {

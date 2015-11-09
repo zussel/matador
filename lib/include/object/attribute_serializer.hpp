@@ -135,7 +135,7 @@ private:
     x.deserialize(id, *this);
   }
 
-  void read_value(const char *id, char */*to*/, int /*s*/)
+  void read_value(const char *id, char *, int )
   {
     if (id_ != id) {
       return;
@@ -330,7 +330,7 @@ private:
     x.serialize(id, *this);
   }
 
-  void write_value(const char *id, const char */*from*/, int)
+  void write_value(const char *id, const char *, int)
   {
     if (id_ != id) {
       return;

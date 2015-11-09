@@ -44,7 +44,7 @@ public:
   typedef typename base_item::container_ref container_ref;
   typedef typename base_item::value_type value_type;
 //  typedef typename base_item::size_type size_type;
-  typedef size_t size_type;
+  typedef std::size_t size_type;
 
 public:
   object_vector_item() : index_(0) {}

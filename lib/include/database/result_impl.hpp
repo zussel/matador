@@ -2,11 +2,11 @@
 #define RESULT_IMPL_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_EXPORTS
+  #ifdef oos_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(stddllimport)
+    #define OOS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)

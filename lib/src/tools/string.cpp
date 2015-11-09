@@ -20,6 +20,11 @@ size_t split(const std::string &str, char delim, std::vector<std::string> &value
   return values.size();
 }
 
+#ifdef _MSC_VER
+const char* date_format::ISO8601 = "%F";
+const char* time_format::ISO8601 = "%F %T";
+#endif
+
 std::string trim(const std::string& str, const std::string& whitespace)
 {
   const auto first = str.find_first_not_of(whitespace);
@@ -56,7 +61,11 @@ std::string to_string(const oos::date &x, const char *format)
   time_t now = std::time(NULL);
   struct tm timeinfo;
 
-  localtime_r(&now, &timeinfo);
+#ifdef _MSC_VER
+  localtime_s(&timeinfo, &now);
+#else
+  localtime_s(&now, &timeinfo);
+#endif
 
   timeinfo.tm_mon = x.month() - 1;
   timeinfo.tm_year = x.year() - 1900;

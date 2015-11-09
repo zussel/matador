@@ -3,6 +3,7 @@
 #include "tools/date.hpp"
 #include <tools/string.hpp>
 
+#include <ctime>
 #include <stdexcept>
 
 using namespace oos;
@@ -30,7 +31,7 @@ DateTestUnit::~DateTestUnit()
 
 void DateTestUnit::test_create()
 {
-  time_t t = ::time(0);
+  time_t t = std::time(0);
   struct tm *tt = localtime(&t);
 
   date now;

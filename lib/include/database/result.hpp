@@ -128,7 +128,11 @@ public:
   typedef value_type* pointer;     /**< Shortcut for the pointer type. */
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
+#ifdef _MSC_VER1
+  typedef base_result_iterator<T>::base_result_iterator base_result_iterator;
+#else
   using base_result_iterator<T>::base_result_iterator;
+#endif
 
   self& operator++()
   {
@@ -158,7 +162,11 @@ public:
   typedef value_type* pointer;     /**< Shortcut for the pointer type. */
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
+#ifdef _MSC_VER1
+  typedef base_result_iterator<T>::base_result_iterator base_result_iterator;
+#else
   using base_result_iterator<T>::base_result_iterator;
+#endif
 
   self& operator++()
   {

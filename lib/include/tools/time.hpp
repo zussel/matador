@@ -20,6 +20,10 @@
 #include <cstdint>
 #include <string>
 
+#ifdef WIN32
+#include <WinSock2.h>
+#endif
+
 namespace oos {
 
 /**
@@ -155,12 +159,6 @@ public:
   void set(const date &d);
   void set(timeval tv);
 
-//  std::string str() const;
-//
-//  std::string to_local(const char *f) const;
-//
-//  std::string to_utc(const char *f) const;
-
   int year() const;
   int month() const;
   int day() const;
@@ -188,11 +186,7 @@ public:
 
   date to_date() const;
 
-//  std::string format(const char *f, tz_t tz = local) const;
-//  void parse(const char *f, const std::string &ts);
-
   friend std::ostream &operator<<(std::ostream &out, const time &x);
-//  friend std::istream &operator>>(std::istream &in, time &x);
 
 private:
   void sync_day(int d);

@@ -57,6 +57,7 @@ public:
   typedef CT item_holder;                                    /**< Shortcut for the value holder type. */
   typedef typename CT::object_type item_type;                /**< Shortcut for the item type. */
   typedef std::list<item_holder> list_type;                  /**< Shortcut for the list class member. */
+//  typedef typename std::size_t size_type;    /**< Shortcut for size type. */
   typedef typename object_container::size_type size_type;    /**< Shortcut for size type. */
   typedef typename list_type::iterator iterator;             /**< Shortcut for the list iterator. */
   typedef typename list_type::const_iterator const_iterator; /**< Shortcut for the list const iterator. */

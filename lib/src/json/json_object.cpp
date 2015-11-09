@@ -2,7 +2,6 @@
 #include "json/json_string.hpp"
 
 #include <algorithm>
-#include <glob.h>
 
 namespace oos {
 

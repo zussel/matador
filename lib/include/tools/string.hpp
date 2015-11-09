@@ -37,20 +37,29 @@ class date;
 OOS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
 OOS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
-struct date_format
+struct OOS_API date_format
 {
+#ifdef _MSC_VER
+	static const char* ISO8601;
+#else
   static constexpr const char* ISO8601 = "%F";
+#endif
 };
 
-struct time_format
+struct OOS_API time_format
 {
+#ifdef _MSC_VER
+  static const char* ISO8601;
+#else
   static constexpr const char* ISO8601 = "%F %T";
+#endif
 };
 
 OOS_API std::string to_string(const oos::time &x, const char *format = time_format::ISO8601);
 OOS_API std::string to_string(const oos::date &x, const char *format = date_format::ISO8601);
+
 template < class T >
-OOS_API std::string to_string(T x, int precision = -1, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
+std::string to_string(T x, int precision = -1, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   if (precision < 0) {
     return to_string(x);
@@ -58,7 +67,11 @@ OOS_API std::string to_string(T x, int precision = -1, typename std::enable_if<s
     char format[32];
     sprintf(format, "%%.%df", precision);
     std::string s(32, '\0');
+#ifdef _MSC_VER
+    auto written = _snprintf_s(&s[0], s.size(), 32, format, x);
+#else
     auto written = std::snprintf(&s[0], s.size(), format, x);
+#endif
     s.resize(written);
     return s;
   }

@@ -19,11 +19,16 @@ date::date()
 {
   // should calc now
   time_t t = time(0);
-  struct tm *now = localtime(&t);
-  day_ = now->tm_mday;
-  month_ = now->tm_mon + 1;
-  year_ = now->tm_year + 1900;
-  is_daylight_saving_ = now->tm_isdst > 0;
+  struct tm now;
+#ifdef _MSC_VER
+  localtime_s(&now, &t);
+#else
+  localtime_s(&t, &now);
+#endif
+  day_ = now.tm_mday;
+  month_ = now.tm_mon + 1;
+  year_ = now.tm_year + 1900;
+  is_daylight_saving_ = now.tm_isdst > 0;
   is_leap_year_ = date::is_leapyear(year_);
   julian_date_ = gc2jd(day_, month_, year_);
 }
