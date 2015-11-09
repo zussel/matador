@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <cstring>
 
+#include <time.h>
+
 namespace oos {
 
 size_t split(const std::string &str, char delim, std::vector<std::string> &values)
@@ -64,7 +66,7 @@ std::string to_string(const oos::date &x, const char *format)
 #ifdef _MSC_VER
   localtime_s(&timeinfo, &now);
 #else
-  localtime_s(&now, &timeinfo);
+  localtime_r(&now, &timeinfo);
 #endif
 
   timeinfo.tm_mon = x.month() - 1;

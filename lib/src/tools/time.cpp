@@ -19,7 +19,7 @@ namespace detail {
 #ifdef _MSC_VER
     localtime_s(out, in);
 #else
-    localtime_s(in, out);
+    localtime_r(in, out);
 #endif
   }
 
@@ -28,7 +28,7 @@ namespace detail {
   static const unsigned __int64 epoch = ((unsigned __int64)116444736000000000ULL);
 #endif
 
-  int gettimeofday(struct timeval * tp, struct timezone * tzp)
+  int gettimeofday(struct timeval * tp, struct timezone *)
   {
 #ifdef _MSC_VER
     FILETIME    file_time;
@@ -45,7 +45,7 @@ namespace detail {
 
     return 0;
 #else
-    gettimeofday(&time_, 0)
+    return ::gettimeofday(tp, 0);
 #endif
   }
 }
