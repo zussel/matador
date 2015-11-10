@@ -24,7 +24,7 @@ date::date()
 #ifdef _MSC_VER
   localtime_s(&now, &t);
 #else
-  localtime_s(&t, &now);
+  localtime_r(&t, &now);
 #endif
   day_ = now.tm_mday;
   month_ = now.tm_mon + 1;
