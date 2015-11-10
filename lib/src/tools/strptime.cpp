@@ -350,7 +350,7 @@ namespace detail {
     /* LINTED functional specification */
     return ((char *)bp);
 #else
-    return strptime(buf, fm, tm);
+    return ::strptime(buf, fmt, tm);
 #endif
   }
 
