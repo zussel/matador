@@ -344,7 +344,7 @@ public:
    * @param setfunc The parent reference setter function.
    */
   object_list(SETFUNC setfunc)
-    : setter_(setfunc)
+    : setter_(std::mem_fn(setfunc))
   {}
   virtual ~object_list() {}
 

@@ -1,5 +1,6 @@
 #include "tools/date.hpp"
 #include "tools/calendar.h"
+#include "tools/strptime.hpp"
 
 #include <ctime>
 #include <stdexcept>
@@ -165,7 +166,7 @@ operator<<(std::ostream &lhs, const date &rhs) {
 void date::set(const char *datestr, const char *format)
 {
   struct tm t;
-  strptime(datestr, format, &t);
+  detail::strptime(datestr, format, &t);
   sync_date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
 }
 

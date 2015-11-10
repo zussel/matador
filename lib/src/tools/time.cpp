@@ -1,5 +1,6 @@
 #include "tools/time.hpp"
 #include "tools/string.hpp"
+#include "tools/strptime.hpp"
 
 #include <stdexcept>
 #include <cstring>
@@ -166,7 +167,7 @@ time time::parse(const std::string &tstr, const char *format)
   std::string part(format, (pch ? pch-format : strlen(format)));
   struct tm tm;
   memset(&tm, 0, sizeof(struct tm));
-  const char *endptr = strptime(tstr.c_str(), part.c_str(), &tm);
+  const char *endptr = detail::strptime(tstr.c_str(), part.c_str(), &tm);
   unsigned long usec = 0;
   if (endptr == nullptr && pch != nullptr) {
     // parse error
@@ -179,7 +180,7 @@ time time::parse(const std::string &tstr, const char *format)
     usec *= (unsigned long)pow(10.0, 6 - digits);
     if ((size_t)(next - format) != strlen(format)) {
       // still time string to parse
-      strptime(next, pch+2, &tm);
+      detail::strptime(next, pch+2, &tm);
     }
   }
 

@@ -80,6 +80,7 @@ SET(TOOLS_SOURCES
   tools/varchar.cpp
   tools/sequencer.cpp
   tools/string.cpp
+  tools/strptime.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
@@ -94,6 +95,7 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/sequencer.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/factory.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/string.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/strptime.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
 )
@@ -111,6 +113,7 @@ SET(TOOLS_HEADER
   ../include/tools/sequencer.hpp
   ../include/tools/factory.hpp
   ../include/tools/string.hpp
+  ../include/tools/strptime.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
 )

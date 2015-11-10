@@ -65,12 +65,12 @@ public:
   virtual void deserialize(object_reader &deserializer)
   {
     base_item::deserialize(deserializer);
-    deserializer.read("item_index", index_);
+    deserializer.read("item_index", (unsigned long&)index_);
   }
   virtual void serialize(object_writer &serializer) const
   {
     base_item::serialize(serializer);
-    serializer.write("item_index", index_);
+    serializer.write("item_index", (unsigned long)index_);
   }
 
   size_type index() const
@@ -562,9 +562,9 @@ public:
    * @param f3 The index getter function.
    */
   object_vector(FUNC1 f1, FUNC2 f2, FUNC3 f3)
-  : ref_setter(f1)
-  , int_setter(f2)
-  , int_getter(f3)
+    : ref_setter(std::mem_fn(f1))
+    , int_setter(std::mem_fn(f2))
+    , int_getter(std::mem_fn(f3))
   {}
 
   virtual ~object_vector() {}
@@ -732,8 +732,8 @@ public:
    * @param f2 The index setter function.
    */
   explicit object_vector(FUNC1 f1 = 0, FUNC2 f2 = 0)
-  : str_setter(f1)
-  , int_setter(f2)
+    : str_setter(std::mem_fn(f1))
+    , int_setter(std::mem_fn(f2))
   {}
 
   virtual ~object_vector() {}

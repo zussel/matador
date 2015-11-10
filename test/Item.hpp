@@ -694,8 +694,9 @@ private:
   emp_list_t emp_list_;
   
 public:
-//  department() {}
-  department() : emp_list_(&employee::dep) {}
+  department()
+    : emp_list_(&employee::dep)
+  {}
   department(const std::string &name)
     : name_(name)
     , emp_list_(&employee::dep)
