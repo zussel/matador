@@ -38,9 +38,6 @@
 #include <sqltypes.h>
 
 namespace oos {
-  
-struct prototype_node;
-
 namespace mssql {
 
 class mssql_statement;
