@@ -18,7 +18,7 @@ namespace detail {
   void localtime(const time_t *in, struct tm *out)
   {
 #ifdef _MSC_VER
-    localtime_s(out, in);
+    errno_t err = localtime_s(out, in);
 #else
     localtime_r(in, out);
 #endif
@@ -217,7 +217,6 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   this->time_.tv_usec = millis * 1000;
 
   detail::localtime(&(time_t&)this->time_.tv_sec, &this->tm_);
-
 }
 
 void time::set(time_t t, long millis)
