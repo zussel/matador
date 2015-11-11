@@ -18,19 +18,6 @@
 #ifndef STATEMENT_HPP
 #define STATEMENT_HPP
 
-#ifdef _MSC_VER
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
-
 #include "object/object_atomizer.hpp"
 
 #include "database/statement_impl.hpp"
@@ -52,7 +39,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 template < class T >
-class OOS_API statement
+class statement
 {
 private:
   statement(const statement &x) = delete;

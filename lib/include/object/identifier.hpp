@@ -1,6 +1,19 @@
 #ifndef IDENTIFIER_HPP
 #define IDENTIFIER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/basic_identifier.hpp"
 #include "object/object_atomizer.hpp"
 
@@ -137,7 +150,7 @@ std::type_index identifier<T, typename std::enable_if<std::is_integral<T>::value
 
 
 template<>
-class identifier<std::string> : public basic_identifier
+class OOS_API identifier<std::string> : public basic_identifier
 {
 public:
   typedef identifier<std::string> self;

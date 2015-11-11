@@ -5,6 +5,19 @@
 #ifndef OOS_BASIC_IDENTIFIER_HPP
 #define OOS_BASIC_IDENTIFIER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 
 #include <typeindex>
@@ -16,7 +29,7 @@ namespace oos {
 template < typename T, class Enable = void >
 class identifier;
 
-class basic_identifier
+class OOS_API basic_identifier
 {
 public:
   basic_identifier();

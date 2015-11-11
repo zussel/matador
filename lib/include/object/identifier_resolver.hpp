@@ -5,6 +5,19 @@
 #ifndef PRIMARY_KEY_SERIALIZER_HPP
 #define PRIMARY_KEY_SERIALIZER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 #include "object/serializable.hpp"
 
@@ -25,7 +38,7 @@ class prototype_node;
  * object. If object doesn't have a primary key
  * nullptr is returned
  */
-class identifier_resolver : public generic_object_reader<identifier_resolver>
+class OOS_API identifier_resolver : public generic_object_reader<identifier_resolver>
 {
 public:
   identifier_resolver();

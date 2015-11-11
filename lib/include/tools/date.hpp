@@ -48,8 +48,8 @@ public:
 
   virtual ~date();
 
-  friend bool operator==(const date &a, const date &b);
-  friend bool operator!=(const date &a, const date &b);
+  friend OOS_API bool operator==(const date &a, const date &b);
+  friend OOS_API bool operator!=(const date &a, const date &b);
 
   date& operator+=(int days);
   date& operator-=(int days);
@@ -59,15 +59,15 @@ public:
   date& operator--();
   date operator--(int);
 
-  friend date operator+(date a, int days);
-  friend date operator-(date a, int days);
+  friend OOS_API date operator+(date a, int days);
+  friend OOS_API date operator-(date a, int days);
 
-  friend bool operator<(const date &a, const date &b);
-  friend bool operator>(const date &a, const date &b);
-  friend bool operator<=(const date &a, const date &b);
-  friend bool operator>=(const date &a, const date &b);
+  friend OOS_API bool operator<(const date &a, const date &b);
+  friend OOS_API bool operator>(const date &a, const date &b);
+  friend OOS_API bool operator<=(const date &a, const date &b);
+  friend OOS_API bool operator>=(const date &a, const date &b);
 
-  friend std::ostream& operator<< (std::ostream& lhs, const date& rhs);
+  friend OOS_API std::ostream& operator<< (std::ostream& lhs, const date& rhs);
   // friend std::istream& operator>> (std::istream& lhs, date& rhs);
   // sets the date from a string
   void set(const char *datestr, const char *format = "%d.%m.%Y");

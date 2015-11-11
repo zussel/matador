@@ -18,19 +18,6 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#ifdef _MSC_VER
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
-
 #include "database/sql.hpp"
 #include "database/result.hpp"
 #include "database/statement.hpp"
@@ -80,7 +67,7 @@ class object_base_ptr;
  * (concatenated by dots).
  */
 template < class T >
-class OOS_API query
+class query
 {
 private:
   enum state_t {

@@ -25,7 +25,7 @@ void table_reader::load(result<serializable> &res)
   }
 }
 
-void table_reader::read_value(const char */*id*/, object_base_ptr &x)
+void table_reader::read_value(const char *, object_base_ptr &x)
 {
   std::shared_ptr<basic_identifier> pk = x.primary_key();
   if (!pk) {

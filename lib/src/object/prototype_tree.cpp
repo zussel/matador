@@ -78,7 +78,7 @@ public:
     pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
   }
 
-  void write_value(const char */*id*/, const object_base_ptr &x)
+  void write_value(const char *, const object_base_ptr &x)
   {
     prototype_iterator pi = node_.tree->find(x.type());
     if (pi == node_.tree->end()) {

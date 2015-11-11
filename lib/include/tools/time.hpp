@@ -186,7 +186,7 @@ public:
 
   date to_date() const;
 
-  friend std::ostream &operator<<(std::ostream &out, const time &x);
+  friend OOS_API std::ostream &operator<<(std::ostream &out, const time &x);
 
 private:
   void sync_day(int d);

@@ -1,6 +1,19 @@
 #ifndef QUERY_UPDATE_HPP
 #define QUERY_UPDATE_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/object_atomizer.hpp"
 #include "database/sql.hpp"
 
@@ -10,7 +23,7 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class query_update : public object_writer
+class OOS_API query_update : public object_writer
 {
 public:
   explicit query_update(sql &s);

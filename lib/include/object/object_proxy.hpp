@@ -58,7 +58,7 @@ class basic_identifier;
  * the pointer to the serializable and the id. Once a new serializable
  * is inserted into the 
  */
-class object_proxy {
+class OOS_API object_proxy {
 public:
   /**
    * @brief Create an empty object_proxy
