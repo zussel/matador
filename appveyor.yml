@@ -6,10 +6,10 @@ configuration:
 
 environment:
   matrix:
-  - VS_VERSION: 11
-    VS_PLATFORM: win32
-  - VS_VERSION: 11
-    VS_PLATFORM: x64
+#  - VS_VERSION: 11
+#    VS_PLATFORM: win32
+#  - VS_VERSION: 11
+#    VS_PLATFORM: x64
   - VS_VERSION: 12
     VS_PLATFORM: win32
   - VS_VERSION: 12
