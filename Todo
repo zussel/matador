@@ -9,3 +9,9 @@ SQLDriverConnect(h_dbc, NULL, ...
 SQLDisconnect(h_dbc);
 SQLFreeHandle(SQL_HANDLE_DBC, h_dbc);
 SQLFreeHandle(SQL_HANDLE_ENV, h_env);
+
+CMAKE CTP SETTINGS:
+===================
+
+CMAKE_GENERATOR_TOOLSET = CTP_Nov2013
+CMAKE_VS_PLATFORM_TOOLSET = CTP_Nov2013
