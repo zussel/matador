@@ -24,4 +24,4 @@ build:
   project: C:\projects\oos\build\oos.sln
 
 test_script:
-- cd build && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
+- cd C:\projects\oos\build && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
