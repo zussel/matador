@@ -271,7 +271,17 @@ public:
    * @param x The data to read from.
    */
   virtual void write(const char*, const object_container&) = 0;
-  
+
+	/**
+   * @fn virtual void write(const char *id, const basic_identifier &x)
+   * @brief Write a basic_identifier to the atomizer.
+   *
+   * Write a basic_identifier to the atomizer
+   * identified by a unique name.
+   *
+   * @param id Unique id of the data.
+   * @param x The data to read from.
+   */
   virtual void write(const char*, const basic_identifier &) = 0;
 };
 
@@ -556,6 +566,16 @@ public:
    */
   virtual void read(const char*, object_container&) = 0;
 
+	/**
+   * @fn virtual void read(const char *id, basic_identifier &x)
+   * @brief Read an basic_identifier from the atomizer.
+   *
+   * Read an basic_identifier from the atomizer
+   * identified by a unique name.
+   *
+   * @param id Unique id of the data.
+   * @param x The data to write to.
+   */
   virtual void read(const char*, basic_identifier &) = 0;
 };
 
