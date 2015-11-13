@@ -314,6 +314,34 @@ private:
 
 /// @endcond
 
+/**
+ * @brief This class holds all prototypes nodes in a tree
+ *
+ * All prototype_node objects are stored within this tree. The user
+ * decides the hierarchy when inserting a prototype_node
+ *
+ * The following example inserts a new prototype_node 'student' under
+ * the base class 'person' (which must be already inserted).
+ *
+ * @code{.cpp}
+ * tree.insert<student, person>("student");
+ * @endcode
+ *
+ * One can find a prototype_node by its name or type
+ *
+ * @code{.cpp}
+ * tree.find("student");
+ * tree.find<student>();
+ * @endcode
+ *
+ * One can also erase a prototype_node by its name or type
+ *
+ * @code{.cpp}
+ * tree.remove("student");
+ * tree.erase<student>();
+ * @endcode
+ *
+ */
 class OOS_API prototype_tree {
 public:
   typedef prototype_iterator iterator;               /**< Shortcut for the list iterator. */
@@ -459,20 +487,37 @@ public:
   size_t prototype_count() const;
 
   /**
-  * Clears a prototype node. All objects will be deleted. If
-  * the recursive flag is set all objects from the children nodea
-  * will be deleted as well.
-  *
-  * @param type The name of the type to remove.
-  * @param recursive If set, also the serializable in children nodes are deleted.
-  * @return Returns true if the type was found and successfully cleared.
-  * @throws oos::object_exception on error
-  */
+   * Clears the whole tree. All nodes and object_proxy objects
+   * are deleted.
+   */
   void clear();
+
+  /**
+   * Clears a prototype node and its cildren nodes.
+   * All objects will be deleted.
+   *
+   * @param type The name of the type to remove.
+   * @throws oos::object_exception on error
+   */
   void clear(const char *type);
+
+  /**
+   * Clears a prototype node by an iterator and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_iterator to remove.
+   * @throws oos::object_exception on error
+   */
   void clear(const prototype_iterator &node);
   prototype_node* clear(prototype_node *node);
 
+  /**
+   * Determines the depth of a prototype_node.
+   *
+   * @param node The prototype_node requesting its depth
+   * @return The depth of the given node
+   */
   int depth(const prototype_node *node) const;
 
   /**
@@ -540,6 +585,12 @@ public:
    */
   const_iterator end() const;
 
+  /**
+   * Executes a predicate for each root node
+   *
+   * @tparam P The type of the predicate function object
+   * @param pred The function object to be executed
+   */
   template < typename P >
   void for_each_root_node(P pred) const
   {

@@ -67,8 +67,6 @@ class object_container;
  * Therefor an serializable prototype tree holds the serializable
  * hierarchy representation including a producer class
  * serializable of all known types.
- *
- * 
  */
 class OOS_API object_store
 {

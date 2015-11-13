@@ -65,8 +65,6 @@ public:
   /**
    * Create an empty serializable list
    * with the given parent serializable.
-   *
-   * @param parent The parent serializable of the list.
    */
   explicit object_list_base()
   {}
