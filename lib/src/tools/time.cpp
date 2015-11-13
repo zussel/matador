@@ -15,12 +15,12 @@ namespace oos {
 
 namespace detail {
 
-  void localtime(const time_t *in, struct tm *out)
+  void localtime(const time_t &in, struct tm &out)
   {
 #ifdef _MSC_VER
-    errno_t err = localtime_s(out, in);
+    errno_t err = localtime_s(&out, &in);
 #else
-    localtime_r(in, out);
+    localtime_r(&in, &out);
 #endif
   }
 
@@ -63,7 +63,8 @@ time::time()
   if (detail::gettimeofday(&time_, 0) != 0) {
     throw std::logic_error("couldn' get time of day");
   }
-  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
+  const time_t temp = (const time_t)this->time_.tv_sec;
+  detail::localtime(temp, tm_);
 }
 
 time::time(time_t t)
@@ -204,26 +205,38 @@ void time::set(int year, int month, int day, int hour, int min, int sec, long mi
   time_t rawtime;
   ::time(&rawtime);
 
-  struct tm *t = localtime(&rawtime);
-  t->tm_year = year - 1900;
-  t->tm_mon = month - 1;
-  t->tm_mday = day;
-  t->tm_hour = hour;
-  t->tm_min = min;
-  t->tm_sec = sec;
-  t->tm_isdst = date::is_daylight_saving(year, month, day);
+  struct tm t;
+  detail::localtime(rawtime, t);
+  t.tm_year = year - 1900;
+  t.tm_mon = month - 1;
+  t.tm_mday = day;
+  t.tm_hour = hour;
+  t.tm_min = min;
+  t.tm_sec = sec;
+  t.tm_isdst = date::is_daylight_saving(year, month, day);
 
-  this->time_.tv_sec = mktime(t);
+#ifdef _MSC_VER
+  time_t tt = mktime(&t);
+  this->time_.tv_sec = (long)tt;
+#else
+  this->time_.tv_sec = mktime(&t);
+#endif
   this->time_.tv_usec = millis * 1000;
 
-  detail::localtime(&(time_t&)this->time_.tv_sec, &this->tm_);
+  const time_t temp = (const time_t)this->time_.tv_sec;
+  detail::localtime(temp, this->tm_);
 }
 
 void time::set(time_t t, long millis)
 {
+#ifdef _MSC_VER
+  time_.tv_sec = (long)t;
+#else
   time_.tv_sec = t;
+#endif
   time_.tv_usec = millis * 1000;
-  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
+  const time_t temp = (const time_t)this->time_.tv_sec;
+  detail::localtime(temp, tm_);
 }
 
 void time::set(const date &d)
@@ -234,7 +247,8 @@ void time::set(const date &d)
 void time::set(timeval tv)
 {
   time_ = tv;
-  detail::localtime(&(time_t&)time_.tv_sec, &tm_);
+  const time_t temp = (const time_t)this->time_.tv_sec;
+  detail::localtime(temp, tm_);
 }
 
 int time::year() const

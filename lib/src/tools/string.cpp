@@ -42,7 +42,7 @@ std::string trim(const std::string& str, const std::string& whitespace)
 std::string to_string(const oos::time &x, const char *format)
 {
   struct tm timeinfo = x.get_tm();
-
+#ifndef _MSC_VER
   char buffer[255];
   if (strftime(buffer, 255, format, &timeinfo) == 0) {
     throw std::logic_error("couldn't format date string");
@@ -56,48 +56,38 @@ std::string to_string(const oos::time &x, const char *format)
     result.replace(pos, 2, millis);
   }
   return result;
+#else
+  char buffer[255];
+  // try to find "%f" for milliseconds
+  const char *fpos = strstr(format, "%f");
+  if (fpos != nullptr) {
+    // split format string (exclude %f)
+    size_t len = fpos - format;
+    char *d = new char[len + 1];
+    strncpy_s(d, len + 1, format, len);
+    d[len] = '\0';
+    std::string fstr = to_string(x, d) + std::to_string(x.milli_second());
+    delete[] d;
+    fstr += to_string(x, fpos+2);
+    return fstr;
+    /*
+    len = strlen(format) - len - 2;
+    d = new char[len + 1];
+    strncpy_s(d, len + 1, fpos + 2, len);
+    d[len] = '\0';
+    fstr += to_string(x, d);
+    delete[] d;
+    return fstr;
+    */
+  } else {
+    if (strftime(buffer, 255, format, &timeinfo) == 0) {
+      throw std::logic_error("couldn't format date string");
+    }
+    return buffer;
+  }
+#endif
 }
 
-/*
-std::string to_string(const oos::time &x, const char *format)
-{
-struct tm timeinfo = x.get_tm();
-
-char buffer[255];
-// try to find "%f" for milliseconds
-const char *fpos = strstr(format, "%f");
-if (fpos != nullptr) {
-// split format string (exclude %f)
-size_t len = fpos - format;
-char *d = new char[len + 1];
-strncpy_s(d, len + 1, format, len);
-d[len] = '\0';
-std::string fstr = to_string(x, d) + std::to_string(x.milli_second());
-delete[] d;
-len = strlen(format) - len - 2;
-d = new char[len + 1];
-strncpy_s(d, len + 1, fpos + 2, len);
-d[len] = '\0';
-fstr += to_string(x, d);
-delete[] d;
-return fstr;
-} else {
-if (strftime(buffer, 255, format, &timeinfo) == 0) {
-throw std::logic_error("couldn't format date string");
-}
-std::string result(buffer);
-// check for %f
-auto pos = result.find("%f");
-if (pos != std::string::npos) {
-std::string millis = std::to_string(x.milli_second());
-// replace %f with millis
-result.replace(pos, 2, millis);
-}
-return result;
-}
-}
-
-*/
 std::string to_string(const oos::date &x, const char *format)
 {
   time_t now = std::time(NULL);
