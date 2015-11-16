@@ -30,6 +30,8 @@ class object_base_ptr;
 class basic_identifier;
 class prototype_node;
 
+/// @cond OOS_DEV
+
 /**
  * @class identifier_resolver
  * @brief Returns the primary key of an object
@@ -77,6 +79,8 @@ public:
 private:
   basic_identifier *id_ = nullptr;
 };
+
+/// @endcond
 
 }
 

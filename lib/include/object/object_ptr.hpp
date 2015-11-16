@@ -483,7 +483,18 @@ std::string object_holder<T, TYPE>::classname_ = typeid(T).name();
 template < class T, bool TYPE >
 std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver::resolve<T>());
 
+/**
+ * Shortcut to object_ptr
+ *
+ * @tparam T The type of the object_ptr
+ */
 template < class T > using object_ptr = object_holder<T, false>;
+
+/**
+ * Shortcut to object_ref
+ *
+ * @tparam T The type of the object_ref
+ */
 template < class T > using object_ref = object_holder<T, true>;
 
 }

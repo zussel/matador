@@ -34,7 +34,7 @@ void throw_invalid_date(int d, int m, int y);
  */
 class OOS_API date
 {
-public:
+private:
   static const unsigned char month_days[];
 
 public:
@@ -70,7 +70,19 @@ public:
    */
   explicit date(const char *stamp, const char *format = "%d.%m.%Y");
 
+  /**
+   * Copy date from given date
+   *
+   * @param x Date to copy from.
+   */
   date(const date &x);
+
+  /**
+   * Assign from given date
+   *
+   * @param x The date to assign from.
+   * @return Reference to the assigned date.
+   */
   date& operator=(const date &x);
 
   /**
@@ -83,30 +95,149 @@ public:
 
   virtual ~date();
 
+  /**
+   * Check if two dates are equal
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if the dates are equal.
+   */
   friend OOS_API bool operator==(const date &a, const date &b);
+
+  /**
+   * Check if two dates are not equal
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if the dates are not equal.
+   */
   friend OOS_API bool operator!=(const date &a, const date &b);
 
+  /**
+   * Add a given number of days.
+   *
+   * @param days Days to add
+   * @return The modified date
+   */
   date& operator+=(int days);
+
+  /**
+   * Subtract a given number of days.
+   *
+   * @param days Days to subtract
+   * @return The modified date
+   */
   date& operator-=(int days);
 
+  /**
+   * Increment date by one day
+   *
+   * @return The modified date
+   */
   date& operator++();
+
+  /**
+   * Increment date by one day
+   *
+   * @return The modified date
+   */
   date operator++(int);
+
+  /**
+   * Decrement date by one day
+   *
+   * @return The modified date
+   */
   date& operator--();
+
+  /**
+   * Decrement date by one day
+   *
+   * @return The modified date
+   */
   date operator--(int);
 
+  /**
+   * Add a number of days to a given date
+   *
+   * @param a The date to add the days to
+   * @param days The days to be added
+   * @return a new date
+   */
   friend OOS_API date operator+(date a, int days);
+
+  /**
+   * Subtract a number of days to a given date
+   *
+   * @param a The date to subtract the days to
+   * @param days The days to be subtracted
+   * @return a new date
+   */
   friend OOS_API date operator-(date a, int days);
 
+  /**
+   * Checks if date a is less than date b
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if date a less than date b
+   */
   friend OOS_API bool operator<(const date &a, const date &b);
+
+  /**
+   * Checks if date a is greater than date b
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if date a greater than date b
+   */
   friend OOS_API bool operator>(const date &a, const date &b);
+
+  /**
+   * Checks if date a is less equal than date b
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if date a less equal than date b
+   */
   friend OOS_API bool operator<=(const date &a, const date &b);
+
+  /**
+   * Checks if date a is greater equal than date b
+   *
+   * @param a The left hand date to compare.
+   * @param b The right hand date to compare.
+   * @return True if date a greater equal than date b
+   */
   friend OOS_API bool operator>=(const date &a, const date &b);
 
   friend OOS_API std::ostream& operator<< (std::ostream& lhs, const date& rhs);
 
-  // sets the date from a string
+  /**
+   * Sets the date from a given date/time
+   * string and a format string
+   *
+   * @param datestr The date/time string to parse
+   * @param format The format to use for parsing
+   */
   void set(const char *datestr, const char *format = "%d.%m.%Y");
+
+  /**
+   * Sets the date from given year, month
+   * and day
+   *
+   * @param day Dates day
+   * @param month Dates month
+   * @param year Dates year
+   */
   void set(int day, int month, int year);
+
+  /**
+   * Sets the date from the
+   * given julian date
+   *
+   * @param julian_date The julian date to set
+   */
   void set(int julian_date);
 
   /**

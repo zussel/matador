@@ -166,7 +166,7 @@ private:
   bool success_;
 };
 
-// set
+#ifndef OOS_DOXYGEN_DOC
 template < class T >
 class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_object_reader<attribute_reader<T> >
 {
@@ -221,6 +221,7 @@ private:
   int size_;
   bool success_;
 };
+#endif
 
 /**
  * @tparam T The type of the attribute to retieve.

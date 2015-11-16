@@ -15,6 +15,8 @@ namespace oos {
 template < class T > class statement;
 class serializable;
 
+/// @cond OOS_DEV
+
 class identifier_binder : public generic_object_reader<identifier_binder>
 {
 public:
@@ -45,6 +47,8 @@ void identifier_binder::read_value(const char*, T &x) {
     stmt_->bind(pos_, x);
   }
 }
+
+/// @endcond
 
 }
 

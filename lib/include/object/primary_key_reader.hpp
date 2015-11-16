@@ -54,7 +54,7 @@ void primary_key_reader<T>::read_value(const char*, basic_identifier &x)
   reading_pk_ = false;
 }
 
-/// endcond
+/// @endcond
 
 }
 #endif /* PRIMARY_KEY_READER_HPP */
