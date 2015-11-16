@@ -27,6 +27,8 @@ class prototype_node;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API result_impl : public object_reader
 {
 private:
@@ -76,6 +78,8 @@ protected:
 private:
   std::shared_ptr<object_base_producer> producer_;
 };
+
+/// @endcond
 
 }
 

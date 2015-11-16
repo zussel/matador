@@ -222,9 +222,9 @@ public:
    * @param key The key type to search.
    * @return The number of producers with key.
    */
-  size_type count(const key_type &/*key*/) const
+  size_type count(const key_type &key) const
   {
-    return container_.count();
+    return container_.count(key);
   }
 
   /**

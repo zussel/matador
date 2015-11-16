@@ -29,6 +29,8 @@ class sql;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API statement_impl : public object_writer
 {
 public:
@@ -61,6 +63,8 @@ protected:
 private:
   std::string sql_;
 };
+
+/// @endcond
 
 }
 }

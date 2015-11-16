@@ -37,20 +37,36 @@ class date;
 OOS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
 OOS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
+/**
+ * The date_format struct represents
+ * common date format string as ISO8601
+ * and the likes.
+ */
 struct OOS_API date_format
 {
 #ifdef _MSC_VER
 	static const char* ISO8601;
 #else
+  /**
+   * date format string representing the ISO8601 format
+   */
   static constexpr const char* ISO8601 = "%F";
 #endif
 };
 
+/**
+ * The time_format struct represents
+ * common time format string as ISO8601
+ * and the likes.
+ */
 struct OOS_API time_format
 {
 #ifdef _MSC_VER
   static const char* ISO8601;
 #else
+  /**
+   * time format string representing the ISO8601 format
+   */
   static constexpr const char* ISO8601 = "%F %T";
 #endif
 };

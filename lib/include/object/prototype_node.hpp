@@ -52,6 +52,7 @@ class basic_identifier;
 
 template<class T> class pk_hash;
 
+/// @cond OOS_DEV
 template<>
 class pk_hash<std::shared_ptr<basic_identifier> >
 {
@@ -59,10 +60,10 @@ public:
   size_t operator()(const std::shared_ptr<basic_identifier> &pk) const
   {
     size_t h = pk->hash();
-//      return h1 ^ (h2 << 1)
     return h;
   }
 };
+/// @endcond
 
 /**
  * @class prototype_node
@@ -150,7 +151,7 @@ public:
    * Appends the given prototype node as a sibling
    * on the same level.
    *
-   * @params sibling The new sibling node.
+   * @param sibling The new sibling node.
    */
   void append(prototype_node *sibling);
   /**
@@ -168,7 +169,7 @@ public:
   /**
    * @brief Removes an serializable proxy from prototype node
    *
-   * @param oproxy Object proxy to remove
+   * @param proxy Object proxy to remove
    */
   void remove(object_proxy *proxy);
 
@@ -195,6 +196,15 @@ public:
    * @return The next node.
    */
   prototype_node* next_node() const;
+
+  /**
+   * Returns nodes successor node or nullptr if node is last.
+   * Where given root node is the sentinel not to pass while
+   * traversing
+   *
+   * @param root The sentinel root node not to pass.
+   * @return The next node.
+   */
   prototype_node* next_node(const prototype_node *root) const;
 
   /**
@@ -203,6 +213,15 @@ public:
    * @return The previous node.
    */
   prototype_node* previous_node() const;
+
+  /**
+   * Returns nodes predeccessor node or nullptr if node is last.
+   * Where given root node is the sentinel not to pass while
+   * traversing
+   *
+   * @param root The sentinel root node not to pass.
+   * @return The previous node.
+   */
   prototype_node* previous_node(const prototype_node *root) const;
 
   /**
@@ -280,39 +299,49 @@ public:
   
   bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  identifier_resolver pk_serializer;
+  identifier_resolver pk_serializer; /**< The identifier resolver object */
 
-  /*
-   * Holds the primary keys of all proxies in this node
+  typedef std::shared_ptr<basic_identifier> pk_ptr; /**< Shortcut to shared identifier ptr */
+
+  /**
+   * equal function object for identifier
    */
-  typedef std::shared_ptr<basic_identifier> pk_ptr;
   struct pk_equal : public std::binary_function<pk_ptr, pk_ptr, bool>
   {
+    /**
+     * Returns true if identifier are equal
+     *
+     * @param a Left identifier to compare.
+     * @param b Right identifier to compare.
+     * @return True on equality.
+     */
       bool operator()(const pk_ptr &a, const pk_ptr &b) const { return *a == *b; }
   };
-
+  /**
+   * Holds the primary keys of all proxies in this node
+   */
   typedef std::unordered_map<pk_ptr, object_proxy*, pk_hash<pk_ptr> > t_primary_key_map;
-  t_primary_key_map primary_key_map;
+  t_primary_key_map primary_key_map; /**< The identifier to object_proxy map */
 
-  /*
+  /**
    * a primary key prototype to clone from
    */
   std::unique_ptr<basic_identifier> primary_key;
 
-  /*
+  /**
    * a list of prototype_node and ids for
    * which the relation map is yet to be filled
    * once the object type is really inserted
    * this list is processed
    */
   typedef std::list<std::pair<prototype_node*, std::string> > t_node_id_list;
-  t_node_id_list foreign_key_ids;
+  t_node_id_list foreign_key_ids; /**< The foreign key id list */
 
-  /*
+  /**
    * a list of all foreign keys inside nodes object
    */
   typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
-  t_foreign_key_map foreign_keys;
+  t_foreign_key_map foreign_keys; /**< The foreign key map */
 };
 
 }

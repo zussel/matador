@@ -415,7 +415,12 @@ public:
   */
   iterator find(const char *type);
 
-
+  /**
+   * Prepares an insertion of a type
+   *
+   * @param type The name of the type to be prepared
+   * @return The prepared prototype_node
+   */
   prototype_node* prepare_insert(const char *type);
 
   /**
@@ -510,6 +515,16 @@ public:
    * @throws oos::object_exception on error
    */
   void clear(const prototype_iterator &node);
+
+  /**
+   * Clears a prototype_node and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_node to remove.
+   * @return The next valid prototype node.
+   * @throws oos::object_exception on error
+   */
   prototype_node* clear(prototype_node *node);
 
   /**

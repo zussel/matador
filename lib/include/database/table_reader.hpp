@@ -13,6 +13,8 @@ class database;
 template < class T > class result;
 class table;
 
+/// @cond OOS_DEV
+
 class table_reader : public generic_object_reader<table_reader>
 {
 public:
@@ -33,6 +35,8 @@ private:
   object_store &ostore_;
   table &table_;
 };
+
+/// @endcond
 
 }
 #endif /* TABLE_READER_HPP */

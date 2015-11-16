@@ -145,8 +145,4 @@ void unit_test::execute(test_func_info &test_info)
     }
 }
 
-void unit_test::reset() {
-
-}
-
 }

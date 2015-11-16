@@ -81,14 +81,14 @@ public:
    */
 	~object_store();
 
-  /*
+  /**
    * Returns the prototype tree
    *
    * @return The prototype tree
    */
   prototype_tree& prototypes();
 
-  /*
+  /**
    * Returns the prototype tree
    *
    * @return The prototype tree
@@ -147,17 +147,6 @@ public:
   }
 
   /**
-   * Clears a prototype node. All objects will be deleted. If
-   * the recursive flag is set all objects from the children nodea
-   * will be deleted as well.
-   * 
-   * @param type The name of the type to remove.
-   * @param recursive If set, also the serializable in children nodes are deleted.
-   * @return Returns true if the type was found and successfully cleared.
-   */
-//  void clear_prototype(const char *type, bool recursive);
-
-  /**
    * Removes an serializable prototype from the prototype tree. All children
    * nodes and all objects are also removed.
    * 
@@ -177,6 +166,18 @@ public:
    * @return Returns a prototype iterator.
    */
   prototype_iterator find_prototype(const char *type);
+
+  /**
+   * @brief Finds prototype node.
+   *
+   * Finds and returns prototype node iterator identified
+   * by the given name or classname (typeid). If the
+   * prototype couldn't be found prototype_iterator end
+   * is returned.
+   *
+   * @param type Name or class name of the prototype
+   * @return Returns a prototype iterator.
+   */
   const_prototype_iterator find_prototype(const char *type) const;
 
   /**
@@ -194,6 +195,17 @@ public:
   {
     return find_prototype(typeid(T).name());
   }
+
+  /**
+   * @brief Finds prototype node by template type.
+   * @tparam Template type.
+   *
+   * Finds and returns prototype node iterator identified
+   * by the given template typeid. If the prototype couldn't
+   * be found prototype_iterator end is returned.
+   *
+   * @return Returns a prototype iterator.
+   */
   template < class T >
   const_prototype_iterator find_prototype() const
   {
@@ -206,6 +218,12 @@ public:
    * @return The first prototype node iterator.
    */
   const_prototype_iterator begin() const;
+
+  /**
+   * Return the first prototype node.
+   *
+   * @return The first prototype node iterator.
+   */
   prototype_iterator begin();
 
   /**
@@ -214,6 +232,12 @@ public:
    * @return The last prototype node iterator.
    */
   const_prototype_iterator end() const;
+
+  /**
+   * Return the last prototype node.
+   *
+   * @return The last prototype node iterator.
+   */
   prototype_iterator end();
 
   /**
@@ -258,7 +282,12 @@ public:
 	}
 
   /**
+   * Inserts a given object_ptr of specific type.
+   * On successfull insertion an object_ptr element
+   * with the inserted serializable is returned.
    *
+   * @param optr object_ptr to be inserted.
+   * @return Inserted serializable contained by an object_ptr on success.
    */
   template < class Y >
   object_ptr<Y> insert(const object_ptr<Y> &optr)
@@ -384,6 +413,7 @@ public:
    * @brief Inserts a new proxy into the object store
    *
    * @param oproxy Object proxy to insert
+   * @param notify Indicates wether all observers should be notified.
    * @param is_new Proxy is a new not inserted proxy, skip object store check
    */
   void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);

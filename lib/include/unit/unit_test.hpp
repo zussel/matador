@@ -308,8 +308,7 @@ public:
    * exception is caught by the test_suite and the
    * message is displayed.
    * 
-   * @tparam X The type of the left hand serializable to compare.
-   * @tparam Y The type of the right hand serializable to compare.
+   * @tparam X The type of the left and right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
    * @param msg The message to print if the check fails.
@@ -326,6 +325,23 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+
+  /**
+   * @brief Checks if a is equal b.
+   *
+   * If a is not equal b the test method throws
+   * a unit_exception with the given message. The
+   * exception is caught by the test_suite and the
+   * message is displayed.
+   *
+   * @tparam X The type of the left hand serializable to compare.
+   * @tparam Y The type of the right hand serializable to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class X, class Y >
   void assert_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
@@ -337,6 +353,7 @@ public:
     }
   }
 
+#ifndef OOS_DOXYGEN_DOC
   void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
@@ -347,7 +364,6 @@ public:
     }
   }
 
-#ifndef OOS_DOXYGEN_DOC
   void assert_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
@@ -619,8 +635,6 @@ public:
    * @param msg The message to print if the check fails.
    */
   void info(const std::string &msg);
-
-  void reset();
 
 private:
   friend class test_suite;

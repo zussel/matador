@@ -9,6 +9,8 @@ class prototype_node;
 class serializable;
 class object_base_ptr;
 
+/// @cond OOS_DEV
+
 class foreign_key_analyzer : public generic_object_writer<foreign_key_analyzer>
 {
 public:
@@ -26,6 +28,8 @@ public:
 private:
   prototype_node &node_;
 };
+
+/// @endcond
 
 }
 

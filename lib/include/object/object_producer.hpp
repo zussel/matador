@@ -35,6 +35,11 @@ class OOS_API object_base_producer{
   public:
   virtual ~object_base_producer() {}
 
+  /**
+   * Clones the object_base_producer
+   *
+   * @return A clone of the object_base_producer;
+   */
   virtual object_base_producer* clone() const = 0;
 
   /**

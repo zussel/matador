@@ -111,7 +111,7 @@ public:
    * Create a new query for the
    * given database.
    * 
-   * @param s The database.
+   * @param db The database.
    */
   query(database &db)
     : state(QUERY_BEGIN)
@@ -122,11 +122,9 @@ public:
 
   /**
    * Creates a create statement based
-   * on a given name and a serializable
-   * class instance.
+   * on a given name.
    * 
    * @param name The name of the table to create.
-   * @param o The serializable serializable providing the field information.
    * @return A reference to the query.
    */
   query& create(const std::string &name)
@@ -138,12 +136,19 @@ public:
     obj.serialize(s);
     sql_.append(")");
 
-//  std::cout << sql_.str(true) << '\n';
-
     state = QUERY_CREATE;
     return *this;
   }
 
+  /**
+   * Creates a create statement based
+   * on a given name and a serializable
+   * class instance.
+   *
+   * @param name The name of the table to create.
+   * @param obj The serializable providing the field information.
+   * @return A reference to the query.
+   */
   query& create(const std::string &name, serializable *obj)
   {
     sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
@@ -174,21 +179,6 @@ public:
   }
 
   /**
-   * Creates a select statement without
-   * any selection. All columns must be
-   * added manually via the column method.
-   * 
-   * @return A reference to the query.
-   */
-//  query& select()
-//  {
-//    throw_invalid(QUERY_SELECT, state);
-//    sql_.append("SELECT ");
-//    state = QUERY_SELECT;
-//    return *this;
-//  }
-
-  /**
    * Creates a select statement based
    * on the given serializable serializable.
    * 
@@ -208,6 +198,12 @@ public:
     return *this;
   }
 
+  /**
+   * Creates a select statement based
+   * on the given object_base_produces.
+   *
+   * @return A reference to the query.
+   */
   query& select(object_base_producer *producer)
   {
     producer_.reset(producer);
@@ -224,23 +220,16 @@ public:
     return *this;
   }
 
-//  query& select(object_base_producer *producer)
-//  {
-//    std::unique_ptr<serializable> obj(producer->create());
-//    producer_.reset(producer);
-//    return select(obj.get());
-//  }
-
   /**
    * Creates an insert statement based
-   * on the given serializable serializable and.
+   * on the given serializable and.
    * the name of the table
    *
-   * @param o The serializable serializable used for the insert statement.
-   * @param name The name of the table.
+   * @param obj The serializable used for the insert statement.
+   * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& insert(const T *o, const std::string &table)
+  query& insert(const T *obj, const std::string &table)
   {
     throw_invalid(QUERY_OBJECT_INSERT, state);
 
@@ -248,12 +237,12 @@ public:
 
     query_insert s(sql_);
     s.fields();
-    o->serialize(s);
+    obj->serialize(s);
 
     sql_.append(") VALUES (");
 
     s.values();
-    o->serialize(s);
+    obj->serialize(s);
 
     sql_.append(")");
 
@@ -262,22 +251,27 @@ public:
     return *this;
   }
 
-  query& insert(const object_ptr<T> &ptr, const std::string &table)
+  /**
+   * Creates an insert statement based
+   * on the given object_ptr and the name of the table
+   *
+   * @tparam TYPE The flag indicating if the holder represents a reference or a pointer
+   * @param holder The object_holder used for the insert statement.
+   * @param table The name of the table.
+   * @return A reference to the query.
+   */
+  template < bool TYPE >
+  query& insert(const object_holder<T, TYPE> &holder, const std::string &table)
   {
-    return insert(ptr.get(), table);
-  }
-
-  query& insert(const object_ref<T> &ref, const std::string &table)
-  {
-    return insert(ref.get(), table);
+    return insert(holder.get(), table);
   }
 
   /**
    * Creates an update statement based
-   * on the given serializable serializable and.
+   * on the given serializable and.
    * the name of the table
    * 
-   * @param o The serializable serializable used for the update statement.
+   * @param o The serializable used for the update statement.
    * @param table The name of the table.
    * @return A reference to the query.
    */
@@ -295,16 +289,20 @@ public:
     return *this;
   }
 
-  query& update(object_ptr<T> &ptr, const std::string &table)
+  /**
+   * Creates an update statement based
+   * on the given object_ptr and the name of the table
+   *
+   * @tparam TYPE The flag indicating if the holder represents a reference or a pointer
+   * @param holder The object_holder used for the insert statement.
+   * @param table The name of the table.
+   * @return A reference to the query.
+   */
+  template < bool TYPE >
+  query& update(object_holder<T, TYPE> &holder, const std::string &table)
   {
-    return update(ptr.get(), table);
+    return update(holder.get(), table);
   }
-
-  query& update(object_ref<T> &ref, const std::string &table)
-  {
-    return update(ref.get(), table);
-  }
-
 
   /**
    * Creates an update statement without
@@ -468,7 +466,7 @@ public:
   /**
    * Adds a column to a select statement.
    * 
-   * @param name The name of the column.
+   * @param field The name of the column.
    * @param type The datatype of the column,
    * @return A reference to the query.
    */

@@ -110,6 +110,14 @@ protected:
    */
 	object_base_ptr(object_proxy *op, bool is_ref);
 
+  /**
+   * Destroys the object_base_ptr
+   * and decides wether the underlaying
+   * object_proxy is destroyed as well.
+   *
+   * It is destroyed if it is not inserted
+   * into any object_store.
+   */
 	virtual ~object_base_ptr();
 
 public:
@@ -138,9 +146,10 @@ public:
 //  const char* classname() const;
 
   /**
-   * Resets the object_base_ptr with the given serializable.
+   * Resets the object_base_ptr with the given object_proxy.
    * 
-   * @param o The new serializable for the object_base_ptr.
+   * @param proxy The new object_proxy for the object_base_ptr.
+   * @param is_ref Indicates if the given object_proxy is a reference.
    */
 	void reset(object_proxy *proxy = 0, bool is_ref = false);
 
@@ -201,6 +210,12 @@ public:
    * @return The serializable.
    */
   serializable* lookup_object();
+
+  /**
+   * Returns the serializable
+   *
+   * @return The serializable.
+   */
 	serializable* lookup_object() const;
 
   /**
@@ -248,6 +263,11 @@ public:
    */
   std::shared_ptr<basic_identifier> primary_key() const;
 
+  /**
+   * Creates a new identifier object.
+   *
+   * @return Returns a new identifier object.
+   */
   virtual basic_identifier* create_identifier() const = 0;
 
   /**
@@ -380,6 +400,15 @@ public:
   T* operator->() const {
     return get();
   }
+
+  /**
+   * @brief Return the pointer to the serializable of type T.
+   *
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
+   */
   T* operator->() {
     return get();
   }
@@ -395,6 +424,15 @@ public:
   T& operator*() const {
     return *get();
   }
+
+  /**
+   * @brief Return the reference to the serializable of type T.
+   *
+   * Return the reference to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The reference to the serializable of type T.
+   */
   T& operator*() {
     return *get();
   }
@@ -410,10 +448,25 @@ public:
   T* get() const {
     return static_cast<T*>(lookup_object());
   }
+
+  /**
+   * @brief Return the pointer to the serializable of type T.
+   *
+   * Return the pointer to the serializable of type T. If there
+   * isn't a valid serializable 0 (null) is returned.
+   *
+   * @return The pointer to the serializable of type T.
+   */
   T* get() {
     return static_cast<T*>(lookup_object());
   }
 
+  /**
+   * Creates a new identifier, represented by the identifier
+   * of the underlaying type.
+   *
+   * @return A new identifier.
+   */
   virtual basic_identifier* create_identifier() const
   {
     return self::identifier_->clone();

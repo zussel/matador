@@ -10,6 +10,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < class T >
 class primary_key_reader : public generic_object_reader<primary_key_reader<T> >
 {
@@ -51,6 +53,8 @@ void primary_key_reader<T>::read_value(const char*, basic_identifier &x)
   x.deserialize("", *this);
   reading_pk_ = false;
 }
+
+/// endcond
 
 }
 #endif /* PRIMARY_KEY_READER_HPP */
