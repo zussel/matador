@@ -26,23 +26,81 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < typename T, class Enable = void >
 class identifier;
 
+/// @endcond
+
+/**
+ * This is the base class for any identifier class
+ * It supports interfaces for comparing, sharing
+ * and cloning
+ * It also implements the output operator to streams
+ * and a generic method to retrieve the value of the
+ * concrete identifier.
+ */
 class OOS_API basic_identifier
 {
 public:
   basic_identifier();
   virtual ~basic_identifier();
 
+  /**
+   * Checks if two identifiers are equal
+   *
+   * @param x The identifier to compare with
+   * @return True if identifiers are equal
+   */
   bool operator==(const basic_identifier &x) const;
+
+  /**
+   * Checks if two identifiers are not equal
+   *
+   * @param x The identifier to compare with
+   * @return True if identifiers are not equal
+   */
   bool operator!=(const basic_identifier &x) const;
+
+  /**
+   * Checks if this identifier is less than another identifier.
+   *
+   * @param x The identifier to compare with
+   * @return True this identifier is less than another identifier
+   */
   bool operator<(const basic_identifier &x) const;
 
-  virtual void serialize(const char*, object_writer&) const = 0;
-  virtual void deserialize(const char*, object_reader&) = 0;
+  /**
+   * Serialize the identifier.
+   *
+   * @param id Id of the identifier.
+   * @param writer The object to write to
+   */
+  virtual void serialize(const char *id, object_writer &writer) const = 0;
 
+  /**
+   * Deserialize the identifier.
+   *
+   * @param id Id of the identifier.
+   * @param reader The object to read from
+   */
+  virtual void deserialize(const char *id, object_reader &reader) = 0;
+
+  /**
+   * Interface for the less than operator
+   *
+   * @param x The identifier to compare to
+   * @return True if this identifier is less than another identifier
+   */
   virtual bool less(const basic_identifier &x) const = 0;
+
+  /**
+   * Interface for the equal to operator
+   *
+   * @param x The identifier to compare to
+   * @return True if both identifiers are equal
+   */
   virtual bool equal_to(const basic_identifier &x) const = 0;
 
   virtual size_t hash() const = 0;
