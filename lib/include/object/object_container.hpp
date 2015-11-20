@@ -180,6 +180,7 @@ public:
 
   virtual ~object_container() {}
 
+
   /**
    * Return the class id of the container
    * item type

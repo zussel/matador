@@ -99,7 +99,7 @@ void object_serializer::write_value(const char*, const object_container &x)
 {
   // write number of items in list
   // for each item write id and type
-  write(0, x.size());
+  write(0, (unsigned long)x.size());
   x.for_each(std::bind(&object_serializer::write_object_container_item, this, _1));
 }
 
