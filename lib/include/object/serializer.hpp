@@ -42,7 +42,7 @@ class date;
 class time;
 
 /**
- * @class object_writer
+ * @class serializer
  * @brief Base class for all serializable writer
  * 
  * This class is the base class for all
@@ -290,7 +290,7 @@ public:
  * @class generic_serializer
  * @brief Generic base class for all serializable writer
  * 
- * This class implements the oos::object_writer interface
+ * This class implements the oos::serializer interface
  * and adds the functionality to describe a write_value
  * method with a template.
  */
@@ -337,7 +337,7 @@ private:
 };
 
 /**
- * @class object_reader
+ * @class deserializer
  * @brief Base class for all serializable reader
  * 
  * This class is the base class for all
@@ -584,7 +584,7 @@ public:
  * @class generic_deserializer
  * @brief Generic base class for all serializable readre
  * 
- * This class implements the oos::object_reader interface
+ * This class implements the oos::deserializer interface
  * and adds the functionality to describe a read_value
  * method with a template.
  */
