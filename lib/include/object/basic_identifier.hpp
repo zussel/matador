@@ -77,7 +77,7 @@ public:
    * @param id Id of the identifier.
    * @param writer The object to write to
    */
-  virtual void serialize(const char *id, object_writer &writer) const = 0;
+  virtual void serialize(const char *id, serializer &writer) const = 0;
 
   /**
    * Deserialize the identifier.
@@ -85,7 +85,7 @@ public:
    * @param id Id of the identifier.
    * @param reader The object to read from
    */
-  virtual void deserialize(const char *id, object_reader &reader) = 0;
+  virtual void deserialize(const char *id, deserializer &reader) = 0;
 
   /**
    * Interface for the less than operator

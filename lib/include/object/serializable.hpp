@@ -50,7 +50,7 @@ public:
   virtual ~serializable() {}
 
   /**
-   * @fn virtual void deserialize(object_reader &deserializer)
+   * @fn virtual void deserialize(deserializer &deserializer)
    * Deserializes an serializable from the given
    * object_atomizer serializable.
    *
@@ -59,7 +59,7 @@ public:
   virtual void deserialize(deserializer &) = 0;
 
   /**
-   * @fn virtual void serialize(object_writer &serializer) const
+   * @fn virtual void serialize(serializer &serializer) const
    * Serializes an serializable to the given
    * object_atomizer serializable.
    *
