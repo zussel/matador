@@ -18,6 +18,8 @@
 #include "object/object_deleter.hpp"
 #include "object/serializable.hpp"
 #include "object/object_list.hpp"
+#include "object/identifier.hpp"
+#include "object/object_proxy.hpp"
 
 using namespace std::placeholders;
 
@@ -28,6 +30,10 @@ object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oprox
   , ref_count(oproxy->ref_count())
   , ptr_count(oproxy->ptr_count())
   , ignore(ignr)
+{}
+
+object_deleter::object_deleter()
+  : generic_deserializer<object_deleter>(this)
 {}
 
 object_deleter::~object_deleter()

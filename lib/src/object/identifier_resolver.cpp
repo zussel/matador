@@ -11,7 +11,7 @@ namespace oos {
 
 
 identifier_resolver::identifier_resolver()
-  : generic_object_reader<identifier_resolver>(this)
+  : generic_deserializer<identifier_resolver>(this)
 {}
 
 identifier_resolver::~identifier_resolver()

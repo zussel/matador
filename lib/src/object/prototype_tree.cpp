@@ -29,7 +29,7 @@
 
 namespace oos {
 
-class relation_resolver : public generic_object_writer<relation_resolver>
+class relation_resolver : public generic_serializer<relation_resolver>
 {
 public:
   typedef std::list<std::string> string_list_t;
@@ -37,7 +37,7 @@ public:
 
 public:
   relation_resolver(prototype_node &node)
-    : generic_object_writer<relation_resolver>(this)
+    : generic_serializer<relation_resolver>(this)
     , node_(node)
   {}
   virtual ~relation_resolver() {}

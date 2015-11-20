@@ -23,7 +23,7 @@
 namespace oos {
 
 object_inserter::object_inserter(object_store &ostore)
-  : generic_object_reader<object_inserter>(this)
+  : generic_deserializer<object_inserter>(this)
   , ostore_(ostore)
 {}
 

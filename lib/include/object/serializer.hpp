@@ -50,10 +50,10 @@ class time;
  * write data types (builtin and complex)
  * identified by a name.
  */
-class OOS_API object_writer
+class OOS_API serializer
 {
 public:
-  virtual ~object_writer() {};
+  virtual ~serializer() {};
 
   /**
    * @fn virtual void write(const char *id, char x)
@@ -287,7 +287,7 @@ public:
 
 /**
  * @tparam T Type of the generic serializable writer
- * @class generic_object_writer
+ * @class generic_serializer
  * @brief Generic base class for all serializable writer
  * 
  * This class implements the oos::object_writer interface
@@ -295,18 +295,18 @@ public:
  * method with a template.
  */
 template < class T >
-class generic_object_writer : public object_writer
+class generic_serializer : public serializer
 {
 protected:
   /**
    * @tparam T Type of the concrete writer
    * 
-   * Constructs a generic_object_writer.
+   * Constructs a generic_serializer.
    */
-  generic_object_writer(T *writer) : generic_writer_(writer) {}
+  generic_serializer(T *writer) : generic_writer_(writer) {}
 
 public:
-	virtual ~generic_object_writer() {}
+	virtual ~generic_serializer() {}
 
 /// @cond OOS_DEV
 
@@ -345,10 +345,10 @@ private:
  * read data types (builtin and complex)
  * identified by a name.
  */
-class OOS_API object_reader
+class OOS_API deserializer
 {
 public:
-  virtual ~object_reader() {}
+  virtual ~deserializer() {}
   /**
    * @fn virtual void read(const char *id, char &x)
    * @brief Read a single character from the atomizer.
@@ -581,7 +581,7 @@ public:
 
 /**
  * @tparam T Type of the generic serializable reader
- * @class generic_object_reader
+ * @class generic_deserializer
  * @brief Generic base class for all serializable readre
  * 
  * This class implements the oos::object_reader interface
@@ -589,18 +589,18 @@ public:
  * method with a template.
  */
 template < class T >
-class generic_object_reader : public object_reader
+class generic_deserializer : public deserializer
 {
 protected:
   /**
    * @tparam T Type of the concrete reader
    * 
-   * Constructs a generic_object_reader.
+   * Constructs a generic_deserializer.
    */
-  generic_object_reader(T *reader) : generic_reader_(reader) {}
+  generic_deserializer(T *reader) : generic_reader_(reader) {}
 
 public:
-	virtual ~generic_object_reader() {}
+	virtual ~generic_deserializer() {}
 
 /// @cond OOS_DEV
 
@@ -631,7 +631,7 @@ private:
 };
 
 template < typename T >
-void read_many_to_many(object_reader &/*reader*/, const std::string &/*relation*/, const std::string &/*id*/, T &/*container*/)
+void read_many_to_many(deserializer &/*reader*/, const std::string &/*relation*/, const std::string &/*id*/, T &/*container*/)
 {
 
 }

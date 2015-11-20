@@ -14,14 +14,17 @@
 #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
-#include "database/sql.hpp"
+#include "object/serializer.hpp"
+
+#include "database/types.hpp"
 
 namespace oos {
 
 /// @cond OOS_DEV
 
-class OOS_API query_select : public object_writer
+class sql;
+
+class OOS_API query_select : public serializer
 {
 public:
   explicit query_select(sql &s);

@@ -20,6 +20,7 @@
 #include "tools/time.hpp"
 
 #include "object/identifier.hpp"
+#include "object/serializable.hpp"
 
 #include "mysql_result.hpp"
 #include "mysql_exception.hpp"

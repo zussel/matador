@@ -33,8 +33,8 @@
 
 namespace oos {
 
-class object_writer;
-class object_reader;
+class serializer;
+class deserializer;
 
 /**
  * @class serializable
@@ -56,7 +56,7 @@ public:
    *
    * @param deserializer The object_atomizer to deserialize from.
    */
-  virtual void deserialize(object_reader &) = 0;
+  virtual void deserialize(deserializer &) = 0;
 
   /**
    * @fn virtual void serialize(object_writer &serializer) const
@@ -65,7 +65,7 @@ public:
    *
    * @param serializer The object_atomizer to serialize to.
    */
-  virtual void serialize(object_writer &) const = 0;
+  virtual void serialize(serializer &) const = 0;
 };
 
 }

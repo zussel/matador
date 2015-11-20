@@ -32,17 +32,16 @@
   #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
-#include "identifier.hpp"
-#include "object_proxy.hpp"
+#include "object/serializer.hpp"
 
 #include <map>
 
 namespace oos {
 
-class serializable;
 class object_base_ptr;
 class object_container;
+class object_proxy;
+class basic_identifier;
 
 /**
  * @cond OOS_DEV
@@ -55,7 +54,7 @@ class object_container;
  * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
-class object_deleter : public generic_object_reader<object_deleter>
+class object_deleter : public generic_deserializer<object_deleter>
 {
 private:
   typedef struct t_object_count_struct
@@ -78,9 +77,7 @@ public:
   /**
    * Creates an instance of the object_deleter
    */
-  object_deleter()
-    : generic_object_reader<object_deleter>(this)
-  {}
+  object_deleter();
 
   virtual ~object_deleter();
 

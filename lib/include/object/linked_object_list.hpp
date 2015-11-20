@@ -71,7 +71,7 @@ public:
   {}
   virtual ~linked_object_list_item() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(deserializer &deserializer)
   {
     base_item::deserialize(deserializer);
     deserializer.read("id", id_);
@@ -81,7 +81,7 @@ public:
     deserializer.read("next", next_);
   }
 
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(serializer &serializer) const
   {
     base_item::serialize(serializer);
     serializer.write("id", id_);

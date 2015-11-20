@@ -18,8 +18,6 @@
 #ifndef STATEMENT_HPP
 #define STATEMENT_HPP
 
-#include "object/object_atomizer.hpp"
-
 #include "database/statement_impl.hpp"
 #include "database/result.hpp"
 

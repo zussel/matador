@@ -18,7 +18,7 @@
 #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 #include <typeindex>
 #include <iosfwd>
@@ -39,8 +39,8 @@ public:
   bool operator!=(const basic_identifier &x) const;
   bool operator<(const basic_identifier &x) const;
 
-  virtual void serialize(const char*, object_writer&) const = 0;
-  virtual void deserialize(const char*, object_reader&) = 0;
+  virtual void serialize(const char*, serializer &) const = 0;
+  virtual void deserialize(const char*, deserializer &) = 0;
 
   virtual bool less(const basic_identifier &x) const = 0;
   virtual bool equal_to(const basic_identifier &x) const = 0;

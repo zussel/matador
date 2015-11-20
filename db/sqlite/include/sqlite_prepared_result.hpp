@@ -4,7 +4,6 @@
 #include "database/result_impl.hpp"
 
 #include "object/serializable.hpp"
-#include "object/object_atomizer.hpp"
 
 #include <vector>
 

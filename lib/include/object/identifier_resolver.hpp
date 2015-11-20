@@ -18,7 +18,7 @@
 #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 #include "object/serializable.hpp"
 
 #include <stdexcept>
@@ -40,7 +40,7 @@ class prototype_node;
  * object. If object doesn't have a primary key
  * nullptr is returned
  */
-class OOS_API identifier_resolver : public generic_object_reader<identifier_resolver>
+class OOS_API identifier_resolver : public generic_deserializer<identifier_resolver>
 {
 public:
   identifier_resolver();

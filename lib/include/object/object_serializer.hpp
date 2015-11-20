@@ -32,7 +32,7 @@
 #endif
 
 #include "tools/byte_buffer.hpp"
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 #include <string>
 
@@ -60,16 +60,16 @@ class object_container;
  * The application is responsible for this correctness.
  */
 class OOS_API object_serializer
-  : public generic_object_reader<object_serializer>
-  , public generic_object_writer<object_serializer>
+  : public generic_deserializer<object_serializer>
+  , public generic_serializer<object_serializer>
 {
 public:
   /**
    * Creates an object_serializer
    */
   object_serializer()
-    : generic_object_reader<object_serializer>(this)
-    , generic_object_writer<object_serializer>(this)
+    : generic_deserializer<object_serializer>(this)
+    , generic_serializer<object_serializer>(this)
     , ostore_(NULL)
     , buffer_(NULL)
   {}

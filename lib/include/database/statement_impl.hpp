@@ -2,7 +2,7 @@
 // Created by sascha on 9/18/15.
 //
 
-#include "object/object_atomizer.hpp"
+#include "object/serializer.hpp"
 
 #include "database/result.hpp"
 
@@ -31,7 +31,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API statement_impl : public object_writer
+class OOS_API statement_impl : public serializer
 {
 public:
   virtual ~statement_impl();

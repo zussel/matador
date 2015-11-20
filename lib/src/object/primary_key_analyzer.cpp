@@ -7,7 +7,7 @@
 namespace oos {
 
 primary_key_analyzer::primary_key_analyzer(prototype_node &node)
-  : generic_object_writer<primary_key_analyzer>(this)
+  : generic_serializer<primary_key_analyzer>(this)
   , node_(node)
 {
 

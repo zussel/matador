@@ -1,7 +1,7 @@
 #ifndef MYSQL_COLUMN_FETCHER_HPP
 #define MYSQL_COLUMN_FETCHER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "object/serializer.hpp"
 
 #include "mysql_result_info.hpp"
 
@@ -24,7 +24,7 @@ class time;
 
 namespace mysql {
 
-class mysql_column_binder : public object_reader
+class mysql_column_binder : public deserializer
 {
 public:
   mysql_column_binder();

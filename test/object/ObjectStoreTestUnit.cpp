@@ -797,12 +797,12 @@ void ObjectStoreTestUnit::test_structure_cyclic()
     cyclic(const std::string &n) : name(n) {}
     virtual ~cyclic() {}
 
-    virtual void deserialize(oos::object_reader &r) {
+    virtual void deserialize(oos::deserializer &r) {
       r.read("id", id);
       r.read("name", name);
       r.read("cycler", cycler);
     }
-    virtual void serialize(oos::object_writer &w) const {
+    virtual void serialize(oos::serializer &w) const {
       w.write("id", id);
       w.write("name", name);
       w.write("cycler", cycler);

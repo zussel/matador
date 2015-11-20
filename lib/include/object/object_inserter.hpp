@@ -22,7 +22,7 @@
   #pragma warning(disable: 4355)
 #endif
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 #include "object/object_proxy.hpp"
 
 #include <stack>
@@ -45,7 +45,7 @@ class object_container;
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class object_inserter : public generic_object_reader<object_inserter>
+class object_inserter : public generic_deserializer<object_inserter>
 {
 public:
   /**

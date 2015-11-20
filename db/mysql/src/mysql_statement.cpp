@@ -20,13 +20,14 @@
 #include "mysql_exception.hpp"
 #include "mysql_prepared_result.hpp"
 
+#include "object/object_ptr.hpp"
+
 #include "tools/varchar.hpp"
 #include "tools/string.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
 
 #include <cstring>
-#include <sstream>
-#include <tools/date.hpp>
-#include <tools/time.hpp>
 
 namespace oos {
 

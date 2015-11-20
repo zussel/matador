@@ -1,7 +1,7 @@
 #ifndef PRIMARY_KEY_ANALYZER_HPP
 #define PRIMARY_KEY_ANALYZER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 namespace oos {
 
@@ -11,7 +11,7 @@ class object_base_ptr;
 
 /// @cond OOS_DEV
 
-class primary_key_analyzer : public generic_object_writer<primary_key_analyzer>
+class primary_key_analyzer : public generic_serializer<primary_key_analyzer>
 {
 public:
   explicit primary_key_analyzer(prototype_node &node);

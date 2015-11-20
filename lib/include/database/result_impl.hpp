@@ -14,22 +14,21 @@
 #define OOS_API
 #endif
 
-#include <object/object_atomizer.hpp>
-#include <object/object_producer.hpp>
+#include "object/serializer.hpp"
+#include "object/object_producer.hpp"
 
 #include <memory>
-#include <object/object_ptr.hpp>
 
 namespace oos {
 
 class serializable;
-class prototype_node;
+class object_base_ptr;
 
 namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API result_impl : public object_reader
+class OOS_API result_impl : public deserializer
 {
 private:
   result_impl(const result_impl &) = delete;

@@ -1,11 +1,11 @@
+#include "database/query_update.hpp"
+
 #include "object/identifier.hpp"
 #include "object/object_ptr.hpp"
 
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 #include "tools/varchar.hpp"
-
-#include "database/query_update.hpp"
 
 namespace oos {
 

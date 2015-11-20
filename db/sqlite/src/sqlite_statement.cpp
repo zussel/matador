@@ -20,6 +20,8 @@
 #include "sqlite_exception.hpp"
 #include "sqlite_prepared_result.hpp"
 
+#include "object/object_ptr.hpp"
+
 #include "database/row.hpp"
 
 #include "tools/string.hpp"

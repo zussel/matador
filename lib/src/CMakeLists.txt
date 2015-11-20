@@ -61,7 +61,7 @@ SET(OBJECT_HEADER
 		../include/object/object_observer.hpp
 		../include/object/object_expression.hpp
 		../include/object/attribute_serializer.hpp
-		../include/object/object_atomizer.hpp
+		../include/object/serializer.hpp
 		../include/object/serializable.hpp
 		../include/object/identifier.hpp
 		../include/object/primary_key_analyzer.hpp

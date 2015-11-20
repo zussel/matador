@@ -25,11 +25,11 @@
 
 namespace oos {
 
-class relation_filler : public generic_object_reader<relation_filler>
+class relation_filler : public generic_deserializer<relation_filler>
 {
 public:
   relation_filler(database::table_ptr &tbl)
-    : generic_object_reader<relation_filler>(this)
+    : generic_deserializer<relation_filler>(this)
     , info_(tbl)
     , proxy_(nullptr)
   {}
