@@ -43,11 +43,10 @@ void TimeTestUnit::test_create()
   UNIT_ASSERT_EQUAL(tt->tm_min, now.minute(), "minute of day isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_sec, now.second(), "second of day isn't equal");
 
-  t = ::time(0);
 #ifdef _MSC_VER
   localtime_s(tt, &t);
 #else
-  struct tm *tt = localtime(&t);
+  tt = localtime(&t);
 #endif
   oos::time t1 = time::now();
 
