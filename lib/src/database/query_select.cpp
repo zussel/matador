@@ -69,7 +69,7 @@ void query_select::write(const char *id, bool)
   write(id, type_char_pointer);
 }
 
-void query_select::write(const char *id, const char *, int )
+void query_select::write(const char *id, const char *, size_t )
 {
   write(id, type_char_pointer);
 }

@@ -71,7 +71,7 @@ void query_insert::write(const char *id, bool x)
   write_field(id, type_char_pointer, x);
 }
 
-void query_insert::write(const char *id, const char *x, int)
+void query_insert::write(const char *id, const char *x, size_t)
 {
   write_field(id, type_char_pointer, x);
 }

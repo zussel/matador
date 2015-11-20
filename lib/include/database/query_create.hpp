@@ -42,7 +42,7 @@ public:
   virtual void write(const char *id, float x);
   virtual void write(const char *id, double x);
   virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x, int s);
+	virtual void write(const char *id, const char *x, size_t s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
 	virtual void write(const char *id, const date &x);
@@ -53,7 +53,7 @@ public:
 
 private:
   void write(const char *id, data_type_t type);
-  void write(const char *id, data_type_t type, int size);
+  void write(const char *id, data_type_t type, size_t size);
 
 private:  
   sql &dialect;

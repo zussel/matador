@@ -71,7 +71,7 @@ void query_update::write(const char *id, bool x)
   write_pair(id, type_char_pointer, x);
 }
 
-void query_update::write(const char *id, const char *x, int)
+void query_update::write(const char *id, const char *x, size_t)
 {
   write_pair(id, type_char_pointer, x);
 }

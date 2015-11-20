@@ -188,7 +188,7 @@ public:
 	virtual void write(const char*, bool) = 0;
 
   /**
-   * @fn virtual void write(const char *id, const char *x, int max_size)
+   * @fn virtual void write(const char *id, const char *x, size_t max_size)
    * @brief Write a const char pointer to the atomizer.
    * 
    * Write a const char pointer to the atomizer
@@ -198,7 +198,7 @@ public:
    * @param x The data to read from.
    * @param max_size Maximum size of the character array
    */
-	virtual void write(const char*, const char*, int) = 0;
+	virtual void write(const char*, const char*, std::size_t) = 0;
 
   /**
    * @fn virtual void write(const char *id, const std::string &x)
@@ -321,7 +321,7 @@ public:
   virtual void write(const char *id, unsigned int x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, unsigned long x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, bool x) { generic_writer_->write_value(id, x); }
-  virtual void write(const char *id, const char *x, int s) { generic_writer_->write_value(id, x, s); }
+  virtual void write(const char *id, const char *x, std::size_t s) { generic_writer_->write_value(id, x, s); }
   virtual void write(const char *id, const std::string &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const varchar_base &x) { generic_writer_->write_value(id, x); }
   virtual void write(const char *id, const date &x) { generic_writer_->write_value(id, x); }
@@ -482,7 +482,7 @@ public:
 	virtual void read(const char*, bool&) = 0;
 
   /**
-   * @fn virtual void read(const char *id, char *x, int max_size)
+   * @fn virtual void read(const char *id, char *x, size_t max_size)
    * @brief Read a const char pointer from the atomizer.
    * 
    * Read a const char pointer from the atomizer
@@ -492,7 +492,7 @@ public:
    * @param x The data to write to.
    * @param max_size Maximum size of the character array
    */
-	virtual void read(const char*, char*, int) = 0;
+	virtual void read(const char*, char*, size_t) = 0;
 
   /**
    * @fn virtual void read(const char *id, std::string &x)
@@ -615,7 +615,7 @@ public:
   virtual void read(const char *id, unsigned int &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, unsigned long &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, bool &x) { generic_reader_->read_value(id, x); }
-  virtual void read(const char *id, char *x, int s) { generic_reader_->read_value(id, x, s); }
+  virtual void read(const char *id, char *x, size_t s) { generic_reader_->read_value(id, x, s); }
   virtual void read(const char *id, std::string &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, varchar_base &x) { generic_reader_->read_value(id, x); }
   virtual void read(const char *id, object_base_ptr &x) { generic_reader_->read_value(id, x); }

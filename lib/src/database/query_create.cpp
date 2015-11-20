@@ -75,7 +75,7 @@ void query_create::write(const char *id, bool)
   write(id, type_bool);
 }
 
-void query_create::write(const char *id, const char *, int s)
+void query_create::write(const char *id, const char *, size_t s)
 {
   write(id, type_char_pointer, s);
 }
@@ -127,7 +127,7 @@ void query_create::write(const char *id, data_type_t type)
   dialect.append(db_.type_string(type));
 }
 
-void query_create::write(const char *id, data_type_t type, int size)
+void query_create::write(const char *id, data_type_t type, size_t size)
 {
   if (first) {
     first = false;
