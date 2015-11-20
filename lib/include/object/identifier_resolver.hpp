@@ -73,7 +73,7 @@ public:
   template < class T >
   void read_value(const char*, T&) {}
 
-  void read_value(const char*, char*, int) {}
+  void read_value(const char*, char*, size_t) {}
   void read_value(const char *id, basic_identifier &x);
 
 private:

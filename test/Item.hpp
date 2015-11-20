@@ -149,7 +149,7 @@ public:
   void set_unsigned_int(unsigned int x) { unsigned_int_ = x; }
   void set_unsigned_long(unsigned long x) { unsigned_long_ = x; }
   void set_bool(bool x) { bool_ = x; }
-  void set_cstr(const char *x, int size)
+  void set_cstr(const char *x, size_t size)
   {
     if (CSTR_LEN < size) {
       throw std::logic_error("not enough character size");

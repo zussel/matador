@@ -102,7 +102,7 @@ public:
     buffer_->append(&x, sizeof(x));
   }
 
-	void write_value(const char* id, const char *c, int s);
+	void write_value(const char* id, const char *c, size_t s);
 	void write_value(const char* id, const std::string &s);
   void write_value(const char*, const varchar_base &s);
 	void write_value(const char* id, const date &x);
@@ -117,7 +117,7 @@ public:
     buffer_->release(&x, sizeof(x));
   }
 
-	void read_value(const char* id, char *&c, int s);
+  void read_value(const char* id, char *&c, size_t s);
 	void read_value(const char* id, std::string &s);
   void read_value(const char*, varchar_base &s);
   void read_value(const char* id, date &x);

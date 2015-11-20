@@ -135,7 +135,7 @@ private:
     x.deserialize(id, *this);
   }
 
-  void read_value(const char *id, char *, int )
+  void read_value(const char *id, char *, size_t)
   {
     if (id_ != id) {
       return;
@@ -171,7 +171,7 @@ template < class T >
 class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_deserializer<attribute_reader<T> >
 {
 public:
-  attribute_reader(const std::string &id, const char from[], int size)
+  attribute_reader(const std::string &id, const char from[], size_t size)
     : generic_deserializer<attribute_reader<T> >(this)
     , id_(id)
     , from_(from)
@@ -203,7 +203,7 @@ public:
     success_ = true;
   }
 
-  void read_value(const char *id, char *to, int s)
+  void read_value(const char *id, char *to, size_t s)
   {
     if (id_ != id) {
       return;
@@ -222,7 +222,7 @@ public:
 private:
   std::string id_;
   const char *from_;
-  int size_;
+  size_t size_;
   bool success_;
 };
 #endif
@@ -255,7 +255,7 @@ public:
    * @param to The attribute value to retrieve.
    * @param precision The precision of the value.
    */
-  attribute_writer(const std::string &id, T &to, int precision = -1)
+  attribute_writer(const std::string &id, T &to, size_t precision = 0)
     : generic_serializer<attribute_writer<T> >(this)
     , id_(id)
     , to_(to)
@@ -335,7 +335,7 @@ private:
     x.serialize(id, *this);
   }
 
-  void write_value(const char *id, const char *, int)
+  void write_value(const char *id, const char *, size_t)
   {
     if (id_ != id) {
       return;
@@ -349,7 +349,7 @@ private:
   std::string id_;
   T &to_;
   bool success_;
-  int precision_;
+  size_t precision_;
 };
 
 /// @cond OOS_DEV
@@ -368,7 +368,7 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, char *to, int size, int precision = -1)
+  attribute_writer(const std::string &id, char *to, size_t size, size_t precision = 0)
     : generic_serializer<attribute_writer<char*> >(this)
     , id_(id)
     , to_(to)
@@ -407,7 +407,7 @@ public:
   void write_value(const char*, const object_container&) {}
   void write_value(const char*, const basic_identifier &) {}
 
-  void write_value(const char *id, const char *from, int size)
+  void write_value(const char *id, const char *from, size_t size)
   {
     if (id_ != id) {
       return;
@@ -433,9 +433,9 @@ public:
 private:
   std::string id_;
   char *to_;
-  int size_;
+  size_t size_;
   bool success_;
-  int precision_;
+  size_t precision_;
 };
 
 template <>
@@ -452,7 +452,7 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, std::string &to, int precision = -1)
+  attribute_writer(const std::string &id, std::string &to, size_t precision = 0)
     : generic_serializer<attribute_writer<std::string> >(this)
     , id_(id)
     , to_(to)
@@ -563,7 +563,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char *id, const char *from, int size)
+  void write_value(const char *id, const char *from, size_t size)
   {
     if (id_ != id) {
       return;
@@ -576,7 +576,7 @@ private:
   std::string id_;
   std::string &to_;
   bool success_;
-  int precision_;
+  size_t precision_;
 };
 
 /// @endcond

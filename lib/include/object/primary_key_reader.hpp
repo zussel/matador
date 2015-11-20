@@ -32,7 +32,7 @@ public:
 
   template < class V >
   void read_value(const char*, V &) {}
-  void read_value(const char*, char *, int) {}
+  void read_value(const char*, char *, size_t) {}
 
 private:
   T value_;

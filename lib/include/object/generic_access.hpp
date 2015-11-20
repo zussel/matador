@@ -43,7 +43,7 @@ bool set(O &obj, const std::string &name, const T &val)
  * @return       True if the operation succeeds.
  */
 template < typename O >
-bool set(O &obj, const std::string &name, const char *val, int size)
+bool set(O &obj, const std::string &name, const char *val, size_t size)
 {
   attribute_reader<char*> reader(name, val, size);
   obj->deserialize(reader);
@@ -105,7 +105,7 @@ bool get(const O &obj, const std::string &name, char *val, int size)
  * @return          True if the operation succeeds.
  */
 template < typename O, class T >
-bool get(const O &obj, const std::string &name, T &val, int precision)
+bool get(const O &obj, const std::string &name, T &val, size_t precision)
 {
   attribute_writer<T> writer(name, val, precision);
   obj->serialize(writer);

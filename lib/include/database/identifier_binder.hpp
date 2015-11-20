@@ -28,7 +28,7 @@ public:
   template < class T >
   void read_value(const char*, T &x);
   void read_value(const char*, basic_identifier &x);
-  void read_value(const char*, char *, int) {}
+  void read_value(const char*, char *, size_t) {}
 
 private:
   void setup(statement<serializable> *stmt, serializable *obj, int pos);

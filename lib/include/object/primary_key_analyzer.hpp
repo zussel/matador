@@ -22,7 +22,7 @@ public:
   template < class T >
   void write_value(const char*, const T&) {}
 
-  void write_value(const char*, const char*, int) {}
+  void write_value(const char*, const char*, size_t) {}
   void write_value(const char *id, const basic_identifier &x);
 
 private:

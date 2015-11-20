@@ -52,7 +52,7 @@ bool object_serializer::deserialize(serializable *o, byte_buffer *buffer, object
   return true;
 }
 
-void object_serializer::write_value(const char*, const char *c, int s)
+void object_serializer::write_value(const char*, const char *c, size_t s)
 {
   size_t len = s;
   
@@ -108,7 +108,7 @@ void object_serializer::write_value(const char *id, const basic_identifier &x)
   x.serialize(id, *this);
 }
 
-void object_serializer::read_value(const char*, char *&c, int )
+void object_serializer::read_value(const char*, char *&c, size_t)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));

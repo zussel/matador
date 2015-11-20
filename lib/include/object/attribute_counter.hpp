@@ -58,7 +58,7 @@ protected:
     ++count_;
   }
   
-  void write_value(const char*, const char*, int)
+  void write_value(const char*, const char*, size_t)
   {
     ++count_;
   }

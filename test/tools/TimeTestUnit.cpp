@@ -27,7 +27,12 @@ TimeTestUnit::~TimeTestUnit()
 void TimeTestUnit::test_create()
 {
   time_t t = ::time(0);
+#ifdef _MSC_VER
+  struct tm *tt = new tm;
+  localtime_s(tt, &t);
+#else
   struct tm *tt = localtime(&t);
+#endif
 
   oos::time now;
 
@@ -39,7 +44,11 @@ void TimeTestUnit::test_create()
   UNIT_ASSERT_EQUAL(tt->tm_sec, now.second(), "second of day isn't equal");
 
   t = ::time(0);
-  tt = localtime(&t);
+#ifdef _MSC_VER
+  localtime_s(tt, &t);
+#else
+  struct tm *tt = localtime(&t);
+#endif
   oos::time t1 = time::now();
 
   UNIT_ASSERT_EQUAL(tt->tm_year + 1900, t1.year(), "year isn't equal");
@@ -68,7 +77,12 @@ void TimeTestUnit::test_initialize()
 
   time_t t;
   ::time(&t);
+#ifdef _MSC_VER
+  struct tm *tt = new tm;
+  localtime_s(tt, &t);
+#else
   struct tm *tt = localtime(&t);
+#endif
 
   tt->tm_sec = 45;
   tt->tm_min = 17;

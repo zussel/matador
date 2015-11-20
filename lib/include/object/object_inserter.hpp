@@ -66,7 +66,7 @@ public:
   template < class T >
   void read_value(const char*, T&) {}
 
-  void read_value(const char*, char*, int) {}
+  void read_value(const char*, char*, size_t) {}
   void read_value(const char*, object_base_ptr &x);
   void read_value(const char*, object_container &x);
 

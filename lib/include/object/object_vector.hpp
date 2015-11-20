@@ -677,7 +677,7 @@ protected:
 
 private:
   std::function<void (value_type&, const object_ref<S>&)> ref_setter;
-  std::function<void (value_type&, int)> int_setter;
+  std::function<void (value_type&, size_t)> int_setter;
   std::function<int (const value_type&)> int_getter;
 
   static std::string classname_;

@@ -644,7 +644,7 @@ struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::t
 template < class T >
 struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::type > : public basic_test_pair
 {
-  explicit test_pair(const char exp[],int s)
+  explicit test_pair(const char exp[],size_t s)
     : expected(exp)
     , result(new char[s])
     , expected_size(strlen(exp))
@@ -653,8 +653,8 @@ struct test_pair<T, typename std::enable_if< std::is_same<T, char*>::value >::ty
   ~test_pair() { delete [] result; }
   const char* expected;
   T result;
-  int expected_size;
-  int size;
+  size_t expected_size;
+  size_t size;
 };
 
 void

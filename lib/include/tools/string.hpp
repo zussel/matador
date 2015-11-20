@@ -108,9 +108,9 @@ OOS_API std::string to_string(const oos::date &x, const char *format = date_form
  * @return The floating point value as string
  */
 template < class T >
-std::string to_string(T x, int precision = -1, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
+std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
-  if (precision < 0) {
+  if (precision == 0) {
     return to_string(x);
   } else {
     char format[32];
