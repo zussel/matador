@@ -47,7 +47,7 @@ protected:
   virtual void read(const char *id, bool &x) override;
   virtual void read(const char *id, float &x) override;
   virtual void read(const char *id, double &x) override;
-  virtual void read(const char *id, char *x, int s) override;
+  virtual void read(const char *id, char *x, size_t s) override;
   virtual void read(const char *id, varchar_base &x) override;
   virtual void read(const char *id, std::string &x) override;
   virtual void read(const char *id, oos::date &x) override;

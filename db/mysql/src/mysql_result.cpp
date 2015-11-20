@@ -222,7 +222,7 @@ void mysql_result::read(const char */*id*/, double &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, char *x, int s)
+void mysql_result::read(const char */*id*/, char *x, size_t s)
 {
   char *val = row_[result_index++];
   size_t len = strlen(val);

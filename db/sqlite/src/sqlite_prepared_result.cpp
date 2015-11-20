@@ -155,9 +155,9 @@ void sqlite_prepared_result::read(const char *, varchar_base &x)
   }
 }
 
-void sqlite_prepared_result::read(const char *, char *x, int s)
+void sqlite_prepared_result::read(const char *, char *x, size_t s)
 {
-  int size = sqlite3_column_bytes(stmt_, result_index);
+  size_t size = sqlite3_column_bytes(stmt_, result_index);
   if (size < s) {
 #ifdef WIN32
     strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index++), s);

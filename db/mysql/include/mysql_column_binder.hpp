@@ -43,7 +43,7 @@ public:
   virtual void read(const char *id, bool &x);
   virtual void read(const char *id, float &x);
   virtual void read(const char *id, double &x);
-  virtual void read(const char *id, char *x, int s);
+  virtual void read(const char *id, char *x, size_t s);
   virtual void read(const char *id, varchar_base &x);
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, oos::date &x);
@@ -67,7 +67,7 @@ private:
   void prepare_bind_column(int index, enum_field_types type, oos::date &value);
   void prepare_bind_column(int index, enum_field_types type, oos::time &value);
   void prepare_bind_column(int index, enum_field_types type, std::string &value);
-  void prepare_bind_column(int index, enum_field_types type, char *x, int s);
+  void prepare_bind_column(int index, enum_field_types type, char *x, size_t s);
   void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
 
 private:

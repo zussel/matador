@@ -153,7 +153,7 @@ void mssql_result::read(const char *id, double &x)
   read_column(id, x);
 }
 
-void mssql_result::read(const char * /*id*/, char *x, int s)
+void mssql_result::read(const char * /*id*/, char *x, size_t s)
 {
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, x, s, &info);

@@ -91,7 +91,7 @@ void mysql_column_binder::read(const char *, double &x)
   prepare_bind_column(column_index_++, MYSQL_TYPE_DOUBLE, x);
 }
 
-void mysql_column_binder::read(const char *, char *x, int s)
+void mysql_column_binder::read(const char *, char *x, size_t s)
 {
   prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
 }
@@ -180,7 +180,7 @@ void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, 
   bind_[index].error = &info_[index].error;
 }
 
-void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, char *x, int s)
+void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, char *x, size_t s)
 {
   bind_[index].buffer_type = type;
   bind_[index].buffer= x;

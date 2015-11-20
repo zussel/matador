@@ -75,7 +75,7 @@ protected:
   virtual void write(const char *id, float x);
   virtual void write(const char *id, double x);
   virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x, int s);
+	virtual void write(const char *id, const char *x, size_t s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::date &x);
@@ -100,7 +100,7 @@ protected:
   void bind_value(const oos::date &d, int index);
   void bind_value(const oos::time &t, int index);
   void bind_value(unsigned long val, int index);
-  void bind_value(const char *val, int size, int index);
+  void bind_value(const char *val, size_t size, int index);
 
 private:
   mssql_database &db_;
