@@ -114,7 +114,11 @@ std::string to_string(T x, int precision = -1, typename std::enable_if<std::is_f
     return to_string(x);
   } else {
     char format[32];
+#ifdef _MSC_VER
+    sprintf_s(format, "%%.%df", precision);
+#else
     sprintf(format, "%%.%df", precision);
+#endif
     std::string s(32, '\0');
 #ifdef _MSC_VER
     auto written = _snprintf_s(&s[0], s.size(), 32, format, x);

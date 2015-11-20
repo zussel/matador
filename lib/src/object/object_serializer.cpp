@@ -181,7 +181,8 @@ void object_serializer::read_value(const char*, object_base_ptr &x)
 void object_serializer::read_value(const char*, object_container &x)
 {
   // get count of backuped list item
-  object_container::size_type s(0);
+//  object_container::size_type s(0);
+  unsigned long s(0);
   read(0, s);
   x.reset();
   string type;

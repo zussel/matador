@@ -211,7 +211,11 @@ public:
     if (s < size_) {
       return;
     }
+#ifdef _MSC_VER
+    strncpy_s(to, s, from_, size_);
+#else
     strncpy(to, from_, size_);
+#endif
     to[size_] = '\0';
     success_ = true;
   }
@@ -412,7 +416,11 @@ public:
       // not enough size
       return;
     }
+#ifdef _MSC_VER
+    strncpy_s(to_, size_, from, size);
+#else
     strncpy(to_, from, size);
+#endif
     size_t from_size = strlen(from);
     if (from_size > (size_t)size) {
       to_[size-1] = '\0';

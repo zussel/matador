@@ -1,7 +1,7 @@
 #include "DateTestUnit.hpp"
 
 #include "tools/date.hpp"
-#include <tools/string.hpp>
+#include "tools/string.hpp"
 
 #include <ctime>
 #include <stdexcept>
@@ -32,7 +32,12 @@ DateTestUnit::~DateTestUnit()
 void DateTestUnit::test_create()
 {
   time_t t = std::time(0);
+#ifdef _MSC_VER
+  struct tm *tt = new tm;
+  localtime_s(tt, &t);
+#else
   struct tm *tt = localtime(&t);
+#endif
 
   date now;
 
