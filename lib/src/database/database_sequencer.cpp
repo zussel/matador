@@ -34,13 +34,13 @@ sequence::~sequence()
 
 }
 
-void sequence::deserialize(object_reader &r)
+void sequence::deserialize(deserializer &r)
 {
   r.read("name", name_);
   r.read("number", sequence_);
 }
 
-void sequence::serialize(object_writer &w) const
+void sequence::serialize(serializer &w) const
 {
   w.write("name", name_);
   w.write("number", sequence_);

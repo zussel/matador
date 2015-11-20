@@ -1,7 +1,7 @@
 #ifndef TABLE_READER_HPP
 #define TABLE_READER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "object/serializer.hpp"
 #include "object/serializable.hpp"
 
 namespace oos {
@@ -15,7 +15,7 @@ class table;
 
 /// @cond OOS_DEV
 
-class table_reader : public generic_object_reader<table_reader>
+class table_reader : public generic_deserializer<table_reader>
 {
 public:
   table_reader(table &t, object_store &ostore);

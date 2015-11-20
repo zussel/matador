@@ -1,7 +1,7 @@
 #ifndef FOREIGN_KEY_ANALYZER_HPP
 #define FOREIGN_KEY_ANALYZER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 namespace oos {
 
@@ -11,7 +11,7 @@ class object_base_ptr;
 
 /// @cond OOS_DEV
 
-class foreign_key_analyzer : public generic_object_writer<foreign_key_analyzer>
+class foreign_key_analyzer : public generic_serializer<foreign_key_analyzer>
 {
 public:
   explicit foreign_key_analyzer(prototype_node &node);

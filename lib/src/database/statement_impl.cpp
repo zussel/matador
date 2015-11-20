@@ -3,6 +3,8 @@
 //
 #include "database/statement_impl.hpp"
 
+#include "object/serializable.hpp"
+
 namespace oos {
 
 namespace detail {

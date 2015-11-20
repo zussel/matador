@@ -52,12 +52,12 @@ public:
   {}
   virtual ~value_item() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(deserializer &deserializer)
   {
     deserializer.read("value", value_);
   }
 
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(serializer &serializer) const
   {
     serializer.write("value", value_);
   }
@@ -129,12 +129,12 @@ public:
   {}
   virtual ~container_item() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(deserializer &deserializer)
   {
     value_item<T>::deserialize(deserializer);
     deserializer.read("container", container_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(serializer &serializer) const
   {
     value_item<T>::serialize(serializer);
     serializer.write("container", container_);
@@ -179,6 +179,7 @@ public:
   {}
 
   virtual ~object_container() {}
+
 
   /**
    * Return the class id of the container

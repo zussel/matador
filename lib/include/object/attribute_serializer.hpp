@@ -18,7 +18,7 @@
 #ifndef ATTRIBUTE_SERIALIZER_HPP
 #define ATTRIBUTE_SERIALIZER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_container.hpp"
 #include "object/identifier.hpp"
@@ -47,10 +47,10 @@ template < class T, class Enable = void >
 class attribute_reader;
 
 template < class T >
-class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type> : public generic_object_reader<attribute_reader<T> >
+class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type> : public generic_deserializer<attribute_reader<T> >
 {
 private:
-  friend class generic_object_reader<attribute_reader<T> >;
+  friend class generic_deserializer<attribute_reader<T> >;
 
 public:
   /**
@@ -64,7 +64,7 @@ public:
    * @param from The attribute value to set.
    */
   attribute_reader(const std::string &id, const T &from)
-    : generic_object_reader<attribute_reader<T> >(this)
+    : generic_deserializer<attribute_reader<T> >(this)
     , id_(id)
     , from_(from)
     , success_(false)
@@ -168,11 +168,11 @@ private:
 
 #ifndef OOS_DOXYGEN_DOC
 template < class T >
-class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_object_reader<attribute_reader<T> >
+class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_deserializer<attribute_reader<T> >
 {
 public:
   attribute_reader(const std::string &id, const char from[], int size)
-    : generic_object_reader<attribute_reader<T> >(this)
+    : generic_deserializer<attribute_reader<T> >(this)
     , id_(id)
     , from_(from)
     , size_(size)
@@ -234,10 +234,10 @@ private:
  * be convertible from the objects attribute.
  */
 template < class T >
-class attribute_writer : public generic_object_writer<attribute_writer<T> >
+class attribute_writer : public generic_serializer<attribute_writer<T> >
 {
 private:
-  friend class generic_object_writer<attribute_writer<T> >;
+  friend class generic_serializer<attribute_writer<T> >;
 
 public:
   /**
@@ -252,7 +252,7 @@ public:
    * @param precision The precision of the value.
    */
   attribute_writer(const std::string &id, T &to, int precision = -1)
-    : generic_object_writer<attribute_writer<T> >(this)
+    : generic_serializer<attribute_writer<T> >(this)
     , id_(id)
     , to_(to)
     , success_(false)
@@ -351,7 +351,7 @@ private:
 /// @cond OOS_DEV
 
 template <>
-class attribute_writer<char*> : public generic_object_writer<attribute_writer<char*> >
+class attribute_writer<char*> : public generic_serializer<attribute_writer<char*> >
 {
 public:
   /**
@@ -365,7 +365,7 @@ public:
    * @param to The attribute value to retrieve.
    */
   attribute_writer(const std::string &id, char *to, int size, int precision = -1)
-    : generic_object_writer<attribute_writer<char*> >(this)
+    : generic_serializer<attribute_writer<char*> >(this)
     , id_(id)
     , to_(to)
     , size_(size)
@@ -431,7 +431,7 @@ private:
 };
 
 template <>
-class attribute_writer<std::string> : public generic_object_writer<attribute_writer<std::string> >
+class attribute_writer<std::string> : public generic_serializer<attribute_writer<std::string> >
 {
 public:
   /**
@@ -445,7 +445,7 @@ public:
    * @param to The attribute value to retrieve.
    */
   attribute_writer(const std::string &id, std::string &to, int precision = -1)
-    : generic_object_writer<attribute_writer<std::string> >(this)
+    : generic_serializer<attribute_writer<std::string> >(this)
     , id_(id)
     , to_(to)
     , success_(false)

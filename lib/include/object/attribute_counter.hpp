@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTE_COUNTER_HPP
 #define ATTRIBUTE_COUNTER_HPP
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 #include "object/serializable.hpp"
 
 namespace oos {
@@ -15,14 +15,14 @@ namespace oos {
  * container attributes are considered for the
  * counting. The default is false.
  */
-class attribute_counter : public generic_object_writer<attribute_counter>
+class attribute_counter : public generic_serializer<attribute_counter>
 {
 public:
   /**
    * Creates a new attribute counter.
    */
   attribute_counter()
-    : generic_object_writer<attribute_counter>(this)
+    : generic_serializer<attribute_counter>(this)
     , count_(0)
     , with_container_(false)
   {}

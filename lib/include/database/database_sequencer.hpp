@@ -50,8 +50,8 @@ public:
   sequence();
   virtual ~sequence();
 
-  virtual void deserialize(object_reader &r);
-  virtual void serialize(object_writer &w) const;
+  virtual void deserialize(deserializer &r);
+  virtual void serialize(serializer &w) const;
 
 
   unsigned long seq() const;

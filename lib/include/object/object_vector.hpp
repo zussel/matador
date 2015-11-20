@@ -62,12 +62,12 @@ public:
   {}
   virtual ~object_vector_item() {}
 
-  virtual void deserialize(object_reader &deserializer)
+  virtual void deserialize(deserializer &deserializer)
   {
     base_item::deserialize(deserializer);
     deserializer.read("item_index", (unsigned long&)index_);
   }
-  virtual void serialize(object_writer &serializer) const
+  virtual void serialize(serializer &serializer) const
   {
     base_item::serialize(serializer);
     serializer.write("item_index", (unsigned long)index_);

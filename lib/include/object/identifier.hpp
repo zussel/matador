@@ -15,7 +15,7 @@
 #endif
 
 #include "object/basic_identifier.hpp"
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 #include "tools/enable_if.hpp"
 
@@ -44,12 +44,12 @@ public:
   virtual ~identifier()
   { };
 
-  virtual void serialize(const char *id, object_writer &writer) const
+  virtual void serialize(const char *id, serializer &writer) const
   {
     writer.write(id, *id_);
   }
 
-  virtual void deserialize(const char *id, object_reader &reader)
+  virtual void deserialize(const char *id, deserializer &reader)
   {
     reader.read(id, *id_);
   }
@@ -153,12 +153,12 @@ public:
   virtual ~identifier()
   { };
 
-  virtual void serialize(const char *id, object_writer &writer) const
+  virtual void serialize(const char *id, serializer &writer) const
   {
     writer.write(id, *id_);
   }
 
-  virtual void deserialize(const char *id, object_reader &reader)
+  virtual void deserialize(const char *id, deserializer &reader)
   {
     reader.read(id, *id_);
   }

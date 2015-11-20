@@ -18,7 +18,7 @@
 #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 
 #include <typeindex>
 #include <iosfwd>

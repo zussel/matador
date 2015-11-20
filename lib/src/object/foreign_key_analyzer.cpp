@@ -8,7 +8,7 @@
 namespace oos {
 
 foreign_key_analyzer::foreign_key_analyzer(prototype_node &node)
-  : generic_object_writer<foreign_key_analyzer>(this)
+  : generic_serializer<foreign_key_analyzer>(this)
   , node_(node)
 {
 

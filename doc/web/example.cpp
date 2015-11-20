@@ -1,5 +1,5 @@
 #include "object/serializable.hpp"
-#include "object/object_atomizer.hpp"
+#include "serializer.hpp"
 #include "object/object_store.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_view.hpp"

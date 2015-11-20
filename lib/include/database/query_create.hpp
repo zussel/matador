@@ -14,7 +14,7 @@
 #define OOS_API
 #endif
 
-#include "object/object_atomizer.hpp"
+#include "object/serializer.hpp"
 
 #include "database/types.hpp"
 
@@ -25,7 +25,7 @@ class sql;
 
 /// @cond OOS_DEV
 
-class OOS_API query_create : public object_writer
+class OOS_API query_create : public serializer
 {
 public:
   explicit query_create(sql &d, const database &db);

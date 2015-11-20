@@ -19,6 +19,7 @@
 #include "mssql_database.hpp"
 #include "mssql_result.hpp"
 
+#include "object/object_ptr.hpp"
 
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"

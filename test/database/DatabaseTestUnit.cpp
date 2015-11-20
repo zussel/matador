@@ -184,11 +184,11 @@ void DatabaseTestUnit::test_primary_key()
     pktest() {}
     virtual ~pktest() {}
 
-    virtual void deserialize(oos::object_reader &r) {
+    virtual void deserialize(oos::deserializer &r) {
       r.read("id", id);
       r.read("name", name);
     }
-    virtual void serialize(oos::object_writer &w) const {
+    virtual void serialize(oos::serializer &w) const {
       w.write("id", id);
       w.write("name", name);
     }

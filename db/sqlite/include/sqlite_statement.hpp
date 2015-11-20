@@ -20,8 +20,6 @@
 
 #include "database/statement_impl.hpp"
 
-#include "object/object_atomizer.hpp"
-
 #include <string>
 #include <vector>
 #include <memory>

@@ -18,7 +18,7 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#include "object/object_atomizer.hpp"
+#include "object/serializer.hpp"
 
 #include "database/result_impl.hpp"
 

@@ -6,7 +6,7 @@
 namespace oos {
 
 table_reader::table_reader(table &t, object_store &ostore)
-  : generic_object_reader(this)
+  : generic_deserializer(this)
   , ostore_(ostore)
   , table_(t)
 {}
