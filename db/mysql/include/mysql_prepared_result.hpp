@@ -61,7 +61,7 @@ public:
   virtual void read(const char *id, bool &x);
   virtual void read(const char *id, float &x);
   virtual void read(const char *id, double &x);
-  virtual void read(const char *id, char *x, int s);
+  virtual void read(const char *id, char *x, size_t s);
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, std::string &x);

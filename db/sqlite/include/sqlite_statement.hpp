@@ -57,7 +57,7 @@ protected:
   virtual void write(const char *id, float x);
   virtual void write(const char *id, double x);
   virtual void write(const char *id, bool x);
-  virtual void write(const char *id, const char *x, int s);
+  virtual void write(const char *id, const char *x, size_t s);
   virtual void write(const char *id, const varchar_base &x);
   virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::date &x);

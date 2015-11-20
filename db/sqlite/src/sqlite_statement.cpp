@@ -159,7 +159,7 @@ void sqlite_statement::write(const char*, double x)
   throw_error(ret, db_(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::write(const char*, const char *x, int len)
+void sqlite_statement::write(const char*, const char *x, size_t len)
 {
   int ret = sqlite3_bind_text(stmt_, ++host_index, x, len, 0);
   throw_error(ret, db_(), "sqlite3_bind_text");

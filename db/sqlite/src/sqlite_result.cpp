@@ -228,7 +228,7 @@ void sqlite_result::read(const char */*id*/, double &x)
   // Todo: check error
 }
 
-void sqlite_result::read(const char */*id*/, char *x, int s)
+void sqlite_result::read(const char */*id*/, char *x, size_t s)
 {
   t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);

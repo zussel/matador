@@ -169,7 +169,7 @@ void mysql_statement::write(const char *, double x)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const char *x, int s)
+void mysql_statement::write(const char *, const char *x, size_t s)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s, host_index);
   ++host_index;
@@ -275,12 +275,12 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int in
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, int size, int /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int /*index*/)
 {
   if (bind.buffer == 0) {
     // allocating memory
     bind.buffer = new char[size];
-    bind.buffer_length = size;
+    bind.buffer_length = (unsigned long)size;
   }
 #ifdef WIN32
     strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);

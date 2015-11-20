@@ -131,7 +131,7 @@ void mssql_statement::write(const char *, double x)
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, const char *x, int s)
+void mssql_statement::write(const char *, const char *x, size_t s)
 {
   bind_value(x, s, ++host_index);
 }
@@ -225,7 +225,7 @@ void mssql_statement::bind_value(unsigned long val, int index)
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
-void mssql_statement::bind_value(const char *val, int /*size*/, int index)
+void mssql_statement::bind_value(const char *val, size_t /*size*/, int index)
 {
   size_t s = strlen(val);
   value_t *v = new value_t(false, SQL_NTS);

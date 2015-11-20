@@ -195,7 +195,7 @@ void mysql_prepared_result::read(const char */*id*/, double &/*x*/)
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, char */*x*/, int /*s*/)
+void mysql_prepared_result::read(const char */*id*/, char */*x*/, size_t /*s*/)
 {
  ++result_index;
 }
