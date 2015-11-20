@@ -165,6 +165,11 @@ protected:
    * @return The specific type_index
    */
   virtual const std::type_index &type_index() const = 0;
+
+private:
+  template < typename T, class Enable >
+  friend class identifier;
+
 };
 
 template<class T>
