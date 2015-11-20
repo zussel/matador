@@ -211,7 +211,14 @@ public:
    */
   friend OOS_API bool operator>=(const date &a, const date &b);
 
-  friend OOS_API std::ostream& operator<< (std::ostream& lhs, const date& rhs);
+  /**
+   * Writes a date to a given ostream
+   *
+   * @param out The ostream to write to
+   * @param d The date to write
+   * @return Reference to the ostream
+   */
+  friend OOS_API std::ostream& operator<< (std::ostream& out, const date& d);
 
   /**
    * Sets the date from a given date/time
@@ -261,8 +268,31 @@ public:
    */
   int year() const;
 
+  /**
+   * Sets the day part of the date
+   * and returns a reference to the date
+   *
+   * @param d The day part of the date
+   * @return Reference to the date
+   */
   date& day(int d);
+
+  /**
+   * Sets the month part of the date
+   * and returns a reference to the date
+   *
+   * @param m The month part of the date
+   * @return Reference to the date
+   */
   date& month(int m);
+
+  /**
+   * Sets the year part of the date
+   * and returns a reference to the date
+   *
+   * @param y The year part of the date
+   * @return Reference to the date
+   */
   date& year(int y);
 
   /**

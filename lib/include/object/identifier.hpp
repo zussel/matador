@@ -41,17 +41,6 @@ public:
   explicit identifier(T val) : id_(new T(val))
   { }
 
-//  identifier(const std::shared_ptr<T> &id) : id_(id) { }
-//
-//  identifier(const basic_identifier *id)
-//  {
-//    if (!is_same_type(*id)) {
-//      throw std::logic_error("not the same type");
-//    }
-//    const self *xid = static_cast<const self *>(id);
-//    *id_ = xid->value();
-//  }
-
   virtual ~identifier()
   { };
 
