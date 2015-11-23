@@ -115,7 +115,7 @@ void database_sequencer::create()
   query<sequence> q(db_);
   result<sequence> res = q.create("oos_sequence", &sequence_).execute();
 
-  res = q.reset().select(new object_producer<sequence>).from("oos_sequence").where("name='serializable'").execute();
+  res = q.select(new object_producer<sequence>).from("oos_sequence").where("name='serializable'").execute();
 
   result_iterator<sequence> first = res.begin();
 
@@ -127,10 +127,10 @@ void database_sequencer::create()
     // TODO: check result
     sequence_.name("serializable");
     sequence_.seq(0);
-    q.reset().insert(&sequence_, "oos_sequence").execute();
+    q.insert(&sequence_, "oos_sequence").execute();
   }
 
-  update_ = q.reset().update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
+  update_ = q.update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
 }
 
 void database_sequencer::load()
@@ -151,7 +151,7 @@ void database_sequencer::load()
 //  if (!update_) {
 //    update_.reset(q.reset().update("oos_sequence", &sequence_).where("name='serializable'").prepare());
 //  }
-  update_ = q.reset().update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
+  update_ = q.update(&sequence_, "oos_sequence").where("name='serializable'").prepare();
 }
 
 void database_sequencer::begin()

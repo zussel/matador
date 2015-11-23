@@ -130,14 +130,7 @@ public:
   query& create(const std::string &name)
   {
     T obj;
-    sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
-
-    query_create s(sql_, db_);
-    obj.serialize(s);
-    sql_.append(")");
-
-    state = QUERY_CREATE;
-    return *this;
+    return create(name, &obj);
   }
 
   /**
@@ -151,6 +144,7 @@ public:
    */
   query& create(const std::string &name, serializable *obj)
   {
+    reset();
     sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
 
     query_create s(sql_, db_);
@@ -172,6 +166,7 @@ public:
    */
   query& drop(const std::string &name)
   {
+    reset();
     sql_.append(std::string("DROP TABLE ") + name);
 
     state = QUERY_DROP;
@@ -187,15 +182,7 @@ public:
   query& select()
   {
     T obj;
-    producer_.reset(new object_producer<T>);
-    throw_invalid(QUERY_SELECT, state);
-    sql_.append("SELECT ");
-
-    query_select s(sql_);
-    obj.serialize(s);
-
-    state = QUERY_SELECT;
-    return *this;
+    return select(new object_producer<T>);
   }
 
   /**
@@ -206,6 +193,7 @@ public:
    */
   query& select(object_base_producer *producer)
   {
+    reset();
     producer_.reset(producer);
 
     std::unique_ptr<serializable> obj(producer->create());
@@ -233,6 +221,7 @@ public:
   {
     throw_invalid(QUERY_OBJECT_INSERT, state);
 
+    reset();
     sql_.append(std::string("INSERT INTO ") + table + std::string(" ("));
 
     query_insert s(sql_);
@@ -279,6 +268,7 @@ public:
   {
     throw_invalid(QUERY_OBJECT_UPDATE, state);
 
+    reset();
     sql_.append(std::string("UPDATE ") + table + std::string(" SET "));
 
     query_update s(sql_);
@@ -316,6 +306,7 @@ public:
   query& update(const std::string &table)
   {
     throw_invalid(QUERY_UPDATE, state);
+    reset();
     sql_.append("UPDATE " + table + " SET ");
     state = QUERY_UPDATE;
     return *this;
@@ -331,6 +322,8 @@ public:
   query& remove(const std::string &table)
   {
     throw_invalid(QUERY_DELETE, state);
+
+    reset();
 
     sql_.append(std::string("DELETE FROM ") + table);
 

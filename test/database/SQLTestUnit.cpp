@@ -39,14 +39,10 @@ void SQLTestUnit::test_create()
 
   result<Item> res(q.create("item").execute());
 
-  q.reset();
-
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
   hans.set_time(itime);
   res = q.insert(&hans, "item").execute();
-
-  q.reset();
 
   res = q.select().from("item").execute();
 
@@ -61,8 +57,6 @@ void SQLTestUnit::test_create()
     ++first;
   }
 
-  q.reset();
-
   res = q.drop("item").execute();
 }
 
@@ -76,8 +70,6 @@ void SQLTestUnit::test_statement()
 
   result<Item> res(stmt.execute());
 
-  q.reset();
-
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
   hans.set_time(itime);
@@ -85,8 +77,6 @@ void SQLTestUnit::test_statement()
 
   stmt.bind(&hans);
   res = stmt.execute();
-
-  q.reset();
 
   stmt = q.select().from("item").prepare();
   res = stmt.execute();
@@ -101,8 +91,6 @@ void SQLTestUnit::test_statement()
     UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
-
-  q.reset();
 
   stmt = q.drop("item").prepare();
 
@@ -119,7 +107,6 @@ void SQLTestUnit::test_foreign_query()
 
   // create item table and insert item
   result<Item> res(q.create("item").execute());
-  q.reset();
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   oos::identifier<unsigned long> id(23);
@@ -128,19 +115,13 @@ void SQLTestUnit::test_foreign_query()
   hans->set_time(itime);
   res = q.insert(hans, "item").execute();
 
-  q.reset();
-
   query<t_object_item> object_item_query(session_->db());
   result<t_object_item> ores = object_item_query.create("object_item").execute();
-
-  object_item_query.reset();
 
   t_object_item oitem;
   oitem.ptr(hans);
 
   ores = object_item_query.insert(&oitem, "object_item").execute();
-
-  object_item_query.reset();
 
   ores = object_item_query.select().from("object_item").execute();
 
@@ -157,11 +138,7 @@ void SQLTestUnit::test_foreign_query()
     ++first;
   }
 
-  object_item_query.reset();
-
   object_item_query.drop("object_item").execute();
-
-  q.reset();
 
   q.drop("item").execute();
 }

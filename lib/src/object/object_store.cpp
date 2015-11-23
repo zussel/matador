@@ -19,11 +19,12 @@
 
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
-#include "object/object_list.hpp"
+#include "object/object_container.hpp"
 #include "object/primary_key_reader.hpp"
 
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 using namespace std::placeholders;
