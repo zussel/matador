@@ -149,12 +149,38 @@ public:
    */
   virtual void share_with(basic_identifier &id) = 0;
 
+  /**
+   * Prints the identifier to the given stream.
+   *
+   * @param out The stream to write to
+   */
   virtual std::ostream &print(std::ostream &out) const = 0;
 
+  /**
+   * Writes the given identifier to the given ostream.
+   *
+   * @param os The ostream to write to.
+   * @param x The identifier to write.
+   * @return Reference to the ostream.
+   */
   friend std::ostream &operator<<(std::ostream &os, const basic_identifier &x);
 
+  /**
+   * Returns true if the identifier has a
+   * valid value.
+   *
+   * @return True id identifier is valid.
+   */
   virtual bool is_valid() const = 0;
 
+  /**
+   * Cast the value of the concrete identifier
+   * to the type T. Throws a logical_error if
+   * a cast is not possible.
+   *
+   * @tparam T The type to cast to.
+   * @return The casted value.
+   */
   template<class T>
   T id() const;
 

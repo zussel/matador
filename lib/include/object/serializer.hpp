@@ -188,7 +188,7 @@ public:
 	virtual void write(const char*, bool) = 0;
 
   /**
-   * @fn virtual void write(const char *id, const char *x, size_t max_size)
+   * @fn virtual void write(const char *id, const char *x, std::size_t max_size)
    * @brief Write a const char pointer to the atomizer.
    * 
    * Write a const char pointer to the atomizer
