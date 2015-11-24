@@ -219,8 +219,6 @@ public:
    */
   query& insert(const T *obj, const std::string &table)
   {
-    throw_invalid(QUERY_OBJECT_INSERT, state);
-
     reset();
     sql_.append(std::string("INSERT INTO ") + table + std::string(" ("));
 
@@ -266,8 +264,6 @@ public:
    */
   query& update(T *o, const std::string &table)
   {
-    throw_invalid(QUERY_OBJECT_UPDATE, state);
-
     reset();
     sql_.append(std::string("UPDATE ") + table + std::string(" SET "));
 
@@ -321,8 +317,6 @@ public:
    */
   query& remove(const std::string &table)
   {
-    throw_invalid(QUERY_DELETE, state);
-
     reset();
 
     sql_.append(std::string("DELETE FROM ") + table);
