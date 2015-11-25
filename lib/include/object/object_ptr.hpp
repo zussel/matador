@@ -481,7 +481,7 @@ template < class T, bool TYPE >
 std::string object_holder<T, TYPE>::classname_ = typeid(T).name();
 
 template < class T, bool TYPE >
-std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver::resolve<T>());
+std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver<T>::resolve());
 
 /**
  * Shortcut to object_ptr

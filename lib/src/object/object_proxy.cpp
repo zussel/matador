@@ -23,8 +23,6 @@ using namespace std;
 
 namespace oos {
 
-identifier_resolver object_proxy::pk_serializer = identifier_resolver();
-
 object_proxy::object_proxy(object_store *os)
   : prev_(nullptr)
   , next_(nullptr)

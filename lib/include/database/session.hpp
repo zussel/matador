@@ -264,6 +264,13 @@ private:
   void commit(transaction &tr);
   void rollback();
 
+
+  template < class T >
+  void attach(const std::string &entity)
+  {
+
+  }
+
 private:
   std::string type_;
   std::string connection_;

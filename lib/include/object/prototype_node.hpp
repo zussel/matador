@@ -32,7 +32,6 @@
   #define EXPIMP_TEMPLATE
 #endif
 
-#include "object/identifier_resolver.hpp"
 #include "object/identifier.hpp"
 #include "object/object_producer.hpp"
 
@@ -296,8 +295,6 @@ public:
   std::string type;	   /**< The type name of the serializable */
   
   bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
-
-  identifier_resolver pk_serializer; /**< The identifier resolver object */
 
   typedef std::shared_ptr<basic_identifier> pk_ptr; /**< Shortcut to shared identifier ptr */
 

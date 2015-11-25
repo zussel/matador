@@ -339,8 +339,6 @@ private:
   string_object_list_map_t relations;
 
   std::shared_ptr<basic_identifier> primary_key_ = nullptr;
-
-  static identifier_resolver pk_serializer;
 };
 /// @endcond
 }

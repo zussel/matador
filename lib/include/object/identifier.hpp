@@ -35,6 +35,7 @@ class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> :
 {
 public:
   typedef identifier<T> self;
+  typedef T type;
 
   identifier() : id_(new T(0))
   { };

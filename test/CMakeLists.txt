@@ -32,7 +32,9 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
-object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
+  object/PrimaryKeyUnitTest.cpp
+  object/PrimaryKeyUnitTest.hpp
+)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp

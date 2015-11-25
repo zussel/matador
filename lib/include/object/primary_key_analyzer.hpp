@@ -2,6 +2,7 @@
 #define PRIMARY_KEY_ANALYZER_HPP
 
 #include "object/serializer.hpp"
+#include "access.hpp"
 
 namespace oos {
 
@@ -11,19 +12,25 @@ class object_base_ptr;
 
 /// @cond OOS_DEV
 
-class primary_key_analyzer : public generic_serializer<primary_key_analyzer>
+template < class T >
+class primary_key_analyzer
 {
 public:
-  explicit primary_key_analyzer(prototype_node &node);
+  primary_key_analyzer();
   virtual ~primary_key_analyzer();
 
   void analyze();
 
   template < class T >
-  void write_value(const char*, const T&) {}
+  void serialize(const T &x) {
+    oos::access::serialize(*this, x);
+  }
 
-  void write_value(const char*, const char*, size_t) {}
-  void write_value(const char *id, const basic_identifier &x);
+  template < class T >
+  void serialize(const char*, const T&) {}
+
+  void serialize(const char*, const char*, size_t) {}
+  void serialize(const char *id, const basic_identifier &x);
 
 private:
   prototype_node &node_;

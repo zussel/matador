@@ -16,81 +16,15 @@
  */
 #include "object/prototype_tree.hpp"
 #include "object/object_proxy.hpp"
+#include "object/access.hpp"
 
-#include "object/object_exception.hpp"
 #include "object/object_container.hpp"
-#include "object/primary_key_analyzer.hpp"
-#include <object/foreign_key_analyzer.hpp>
 
 #include <iterator>
 #include <algorithm>
 #include <iostream>
 
 namespace oos {
-
-class relation_resolver : public generic_serializer<relation_resolver>
-{
-public:
-  typedef std::list<std::string> string_list_t;
-  typedef string_list_t::const_iterator const_iterator;
-
-public:
-  relation_resolver(prototype_node &node)
-    : generic_serializer<relation_resolver>(this)
-    , node_(node)
-  {}
-  virtual ~relation_resolver() {}
-
-  void build(serializable *o) { o->serialize(*this); }
-  template < class T >
-  void write_value(const char*, const T&) {}
-
-  void write_value(const char*, const char*, int) {}
-
-  void write_value(const char *id, const object_container &x)
-  {
-    /*
-     * get item type of the container
-     * try to insert it as prototype
-     */
-    prototype_iterator pi;
-    object_base_producer *p = x.create_item_producer();
-    if (p) {
-      pi = node_.tree->insert(p, id);
-//      pi = node_.tree->insert(p, p->classname());
-      if (pi == node_.tree->end()) {
-        throw object_exception("unknown prototype type");
-      }
-    } else {
-      // insert new prototype
-      // get prototype node of container item (child)
-      pi = node_.tree->find(x.classname());
-      if (pi == node_.tree->end()) {
-        // if there is no such prototype node
-        // insert a new one (it is automatically marked
-        // as uninitialized)
-        pi = prototype_iterator(node_.tree->prepare_insert(x.classname()));
-      }
-    }
-    // add container node to item node
-    // insert the relation
-    pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
-  }
-
-  void write_value(const char *, const object_base_ptr &x)
-  {
-    prototype_iterator pi = node_.tree->find(x.type());
-    if (pi == node_.tree->end()) {
-      // if there is no such prototype node
-      // insert a new one (it is automatically marked
-      // as uninitialized)
-      node_.tree->prepare_insert(x.type());
-    }
-  }
-
-private:
-  prototype_node &node_;
-};
 
 prototype_iterator::prototype_iterator()
   : node_(0)
@@ -298,30 +232,6 @@ prototype_tree::~prototype_tree()
   clear();
   delete last_;
   delete first_;
-}
-
-prototype_tree::iterator prototype_tree::insert(object_base_producer *producer, const char *type, bool abstract, const char *parent)
-{
-  // set node to root node
-  prototype_node *parent_node = nullptr;
-  if (parent != nullptr) {
-    parent_node = find_prototype_node(parent);
-    if (!parent_node) {
-      throw object_exception("unknown prototype type");
-    }
-  }
-  /*
-   * try to insert new prototype node
-   */
-  prototype_node *node = acquire(producer, type, abstract);
-
-  if (parent != nullptr) {
-    parent_node->insert(node);
-  } else {
-    last_->prev->append(node);
-  }
-
-  return initialize(node);
 }
 
 prototype_tree::iterator prototype_tree::find(const char *type) {
@@ -608,38 +518,6 @@ prototype_node *prototype_tree::acquire(object_base_producer *producer, const ch
   }
 
   return node;
-}
-
-
-prototype_tree::iterator prototype_tree::initialize(prototype_node *node)
-{
-  // store prototype in map
-  // Todo: check return value
-  prototype_map_.insert(std::make_pair(node->type, node))/*.first*/;
-  typeid_prototype_map_[node->producer->classname()].insert(std::make_pair(node->type, node));
-
-  // Analyze primary and foreign keys of node
-  primary_key_analyzer pk_analyzer(*node);
-  pk_analyzer.analyze();
-
-  // Check if nodes serializable has 'to-many' relations
-  std::unique_ptr<serializable> o(node->producer->create());
-  relation_resolver rb(*node);
-  rb.build(o.get());
-
-  // Analyze primary and foreign keys of node
-  foreign_key_analyzer fk_analyzer(*node);
-  fk_analyzer.analyze();
-
-  while (!node->foreign_key_ids.empty()) {
-      auto i = node->foreign_key_ids.front();
-      node->foreign_key_ids.pop_front();
-      prototype_node *foreign_node = i.first;
-      std::shared_ptr<basic_identifier> fk(node->primary_key->clone());
-      foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
-  }
-
-  return prototype_iterator(node);
 }
 
 prototype_node *prototype_tree::prepare_insert(const char *type)

@@ -34,6 +34,11 @@
 
 #include "object/prototype_node.hpp"
 #include "object/object_producer.hpp"
+#include "object/object_exception.hpp"
+#include "object/identifier_resolver.hpp"
+#include "object/foreign_key_analyzer.hpp"
+
+#include "object/detail/relation_resolver.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -363,7 +368,30 @@ public:
   * @param parent   The name of the parent type.
   * @return         Returns new inserted prototype iterator.
   */
-  iterator insert(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
+  template < class T >
+  iterator insert(object_producer<T> *producer, const char *type, bool abstract = false, const char *parent = nullptr)
+  {
+    // set node to root node
+    prototype_node *parent_node = nullptr;
+    if (parent != nullptr) {
+      parent_node = find_prototype_node(parent);
+      if (!parent_node) {
+        throw object_exception("unknown prototype type");
+      }
+    }
+    /*
+     * try to insert new prototype node
+     */
+    prototype_node *node = acquire(producer, type, abstract);
+
+    if (parent != nullptr) {
+      parent_node->insert(node);
+    } else {
+      last_->prev->append(node);
+    }
+
+    return initialize<T>(node);
+  }
 
   /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -689,7 +717,40 @@ private:
    * @param node The node to initialize
    * @return iterator representing the prototype node
    */
-  iterator initialize(prototype_node *node);
+  template < class T >
+  iterator initialize(prototype_node *node)
+  {
+    // store prototype in map
+    // Todo: check return value
+    prototype_map_.insert(std::make_pair(node->type, node))/*.first*/;
+    typeid_prototype_map_[node->producer->classname()].insert(std::make_pair(node->type, node));
+
+    // Analyze primary and foreign keys of node
+    basic_identifier *id = identifier_resolver<T>::resolve();
+    if (id) {
+      id->isolate();
+      node->primary_key.reset(id);
+    }
+
+    // Check if nodes serializable has 'to-many' relations
+    T obj;
+    std::unique_ptr<serializable> o(node->producer->create());
+    detail::relation_resolver<T>::build(*node);
+
+    // Analyze primary and foreign keys of node
+    foreign_key_analyzer fk_analyzer(*node);
+    fk_analyzer.analyze();
+
+    while (!node->foreign_key_ids.empty()) {
+      auto i = node->foreign_key_ids.front();
+      node->foreign_key_ids.pop_front();
+      prototype_node *foreign_node = i.first;
+      std::shared_ptr<basic_identifier> fk(node->primary_key->clone());
+      foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
+    }
+
+    return prototype_iterator(node);
+  }
 
 private:
   friend class object_container;

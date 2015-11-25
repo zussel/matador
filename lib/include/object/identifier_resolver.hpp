@@ -20,6 +20,8 @@
 
 #include "object/serializer.hpp"
 #include "object/serializable.hpp"
+#include "object/basic_identifier.hpp"
+#include "object/access.hpp"
 
 #include <stdexcept>
 
@@ -40,41 +42,32 @@ class prototype_node;
  * object. If object doesn't have a primary key
  * nullptr is returned
  */
-class OOS_API identifier_resolver : public generic_deserializer<identifier_resolver>
+template < class T >
+class OOS_API identifier_resolver
 {
 public:
-  identifier_resolver();
-  virtual ~identifier_resolver();
+  identifier_resolver() {}
+  virtual ~identifier_resolver() {}
 
-  template < class T >
-  static basic_identifier* resolve(typename std::enable_if<!std::is_same<T, oos::serializable>::value>::type* = 0)
+  static basic_identifier* resolve()
   {
+    identifier_resolver<T> resolver;
     T obj;
-
-    return resolve(&obj);
-  }
-
-  template < class T >
-  static basic_identifier* resolve(typename std::enable_if<std::is_same<T, oos::serializable>::value>::type* = 0)
-  {
-    return nullptr;
-  }
-
-  static basic_identifier* resolve(serializable *obj)
-  {
-    identifier_resolver resolver;
-    obj->deserialize(resolver);
+    oos::access::deserialize(resolver, obj);
     if (!resolver.id_) {
       return nullptr;
     }
     return resolver.id_;
   }
 
-  template < class T >
-  void read_value(const char*, T&) {}
+  template < class V >
+  void deserialize(const char*, V&) {}
 
-  void read_value(const char*, char*, size_t) {}
-  void read_value(const char *id, basic_identifier &x);
+  void deserialize(const char*, char*, size_t) {}
+  void deserialize(const char *id, basic_identifier &x)
+  {
+    id_ = x.share();
+  }
 
 private:
   basic_identifier *id_ = nullptr;

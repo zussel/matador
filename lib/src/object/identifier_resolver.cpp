@@ -9,17 +9,4 @@
 
 namespace oos {
 
-
-identifier_resolver::identifier_resolver()
-  : generic_deserializer<identifier_resolver>(this)
-{}
-
-identifier_resolver::~identifier_resolver()
-{}
-
-void identifier_resolver::read_value(const char *, basic_identifier &x)
-{
-  id_ = x.share();
-}
-
 }

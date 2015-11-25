@@ -4,8 +4,7 @@
 namespace oos {
 
 primary_key_analyzer::primary_key_analyzer(prototype_node &node)
-  : generic_serializer<primary_key_analyzer>(this)
-  , node_(node)
+  : node_(node)
 {
 
 }
@@ -20,7 +19,7 @@ void primary_key_analyzer::analyze()
   obj->serialize(*this);
 }
 
-void primary_key_analyzer::write_value(char const *, const basic_identifier &x)
+void primary_key_analyzer::serialize(char const *, const basic_identifier &x)
 {
   node_.primary_key.reset(x.clone());
 }
