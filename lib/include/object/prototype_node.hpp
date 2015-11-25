@@ -32,10 +32,9 @@
   #define EXPIMP_TEMPLATE
 #endif
 
-#include "identifier_resolver.hpp"
+#include "object/identifier_resolver.hpp"
+#include "object/identifier.hpp"
 #include "object/object_producer.hpp"
-#include "object_proxy.hpp"
-#include "identifier.hpp"
 
 #include <map>
 #include <list>
@@ -48,7 +47,6 @@ namespace oos {
 class serializable;
 class prototype_tree;
 class object_proxy;
-class basic_identifier;
 
 template<class T> class pk_hash;
 
@@ -271,14 +269,14 @@ public:
   prototype_tree *tree = nullptr;   /**< The prototype tree to which the node belongs */
 
   // tree links
-  prototype_node *parent = nullptr; /**< The parent node */
-  prototype_node *prev = nullptr;   /**< The previous node */
-  prototype_node *next = nullptr;   /**< The next node */
-  std::unique_ptr<prototype_node> first = nullptr;  /**< The first children node */
-  std::unique_ptr<prototype_node> last = nullptr;   /**< The last children node */
+  prototype_node *parent = nullptr;       /**< The parent node */
+  prototype_node *prev = nullptr;         /**< The previous node */
+  prototype_node *next = nullptr;         /**< The next node */
+  std::unique_ptr<prototype_node> first;  /**< The first children node */
+  std::unique_ptr<prototype_node> last;   /**< The last children node */
 
   // data
-  std::unique_ptr<object_base_producer> producer = nullptr; /**< The serializable producer */
+  std::unique_ptr<object_base_producer> producer; /**< The serializable producer */
 
   /* this map holds information about
    * all prototypes in which this prototype

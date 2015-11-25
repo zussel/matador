@@ -19,8 +19,7 @@
 #define OBJECT_CONTAINER_HPP
 
 #include "object/serializable.hpp"
-#include "object/object_store.hpp"
-#include "object/prototype_node.hpp"
+#include "object/object_ptr.hpp"
 
 #include <functional>
 
@@ -173,10 +172,7 @@ public:
    * 
    * The constructor creates an empty object_container.
    */
-  object_container()
-    : ostore_(0)
-    , owner_(0)
-  {}
+  object_container();
 
   virtual ~object_container() {}
 
@@ -220,10 +216,7 @@ public:
    * 
    * @return The containing object_store.
    */
-  object_store* ostore() const
-  {
-    return ostore_;
-  }
+  object_store* ostore() const;
 
 protected:
   friend class object_store;
@@ -252,19 +245,9 @@ protected:
    * Mark the list containing serializable as modified
    * in the object_store.
    *
-   * @param o The serializable containig list
+   * @param proxy The object_proxy containig list
    */
-//  void mark_modified(serializable *o)
-//  {
-//    o->mark_modified();
-//  }
-
-  void mark_modified(object_proxy *proxy)
-  {
-    if (proxy->obj()) {
-      ostore_->mark_modified(proxy);
-    }
-  }
+  void mark_modified(object_proxy *proxy);
 
   /**
    * @brief Executes the given function serializable for all elements.
@@ -279,19 +262,13 @@ protected:
    * Provides an interface which is called
    * when inserting the list into the object_store.
    */
-  virtual void install(object_store *ostore)
-  {
-    ostore_ = ostore;
-  }
+  virtual void install(object_store *ostore);
 
   /**
    * Provides an interface which is called
    * when removing the list from the object_store.
    */
-  virtual void uninstall()
-  {
-    ostore_ = 0;
-  }
+  virtual void uninstall();
 
   template < class T >
   T* parent() const

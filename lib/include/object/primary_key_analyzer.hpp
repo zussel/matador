@@ -1,7 +1,7 @@
 #ifndef PRIMARY_KEY_ANALYZER_HPP
 #define PRIMARY_KEY_ANALYZER_HPP
 
-#include "serializer.hpp"
+#include "object/serializer.hpp"
 
 namespace oos {
 

@@ -1,7 +1,7 @@
 #ifndef FOREIGN_KEY_ANALYZER_HPP
 #define FOREIGN_KEY_ANALYZER_HPP
 
-#include "serializer.hpp"
+#include "object/serializer.hpp"
 
 namespace oos {
 

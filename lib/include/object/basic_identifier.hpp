@@ -18,8 +18,6 @@
 #define OOS_API
 #endif
 
-#include "serializer.hpp"
-
 #include <typeindex>
 #include <iosfwd>
 #include <stdexcept>
@@ -30,6 +28,9 @@ namespace oos {
 
 template < typename T, class Enable = void >
 class identifier;
+
+class serializer;
+class deserializer;
 
 /// @endcond
 

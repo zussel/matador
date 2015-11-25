@@ -16,6 +16,7 @@
 #endif
 
 #include <typeinfo>
+#include <string>
 
 namespace oos {
 

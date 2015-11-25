@@ -18,7 +18,6 @@
 #include "object/object_proxy.hpp"
 
 #include "object/object_exception.hpp"
-#include "object/object_store.hpp"
 #include "object/object_container.hpp"
 #include "object/primary_key_analyzer.hpp"
 #include <object/foreign_key_analyzer.hpp>

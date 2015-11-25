@@ -15,9 +15,7 @@
 #endif
 
 #include "object/basic_identifier.hpp"
-#include "serializer.hpp"
-
-#include "tools/enable_if.hpp"
+#include "object/serializer.hpp"
 
 #include <type_traits>
 #include <stdexcept>

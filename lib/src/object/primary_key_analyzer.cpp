@@ -1,8 +1,5 @@
 #include "object/primary_key_analyzer.hpp"
-#include "object/object_exception.hpp"
-#include "object/prototype_tree.hpp"
-#include "object/serializable.hpp"
-#include "object/identifier.hpp"
+#include "object/prototype_node.hpp"
 
 namespace oos {
 

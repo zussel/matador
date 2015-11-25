@@ -17,8 +17,8 @@
 
 #include "object/prototype_node.hpp"
 #include "object/prototype_tree.hpp"
-#include "object/object_store.hpp"
-#include <object/primary_key_analyzer.hpp>
+#include "object/object_proxy.hpp"
+#include "object/object_exception.hpp"
 
 #include <iostream>
 #include <algorithm>

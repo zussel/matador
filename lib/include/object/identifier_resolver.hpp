@@ -18,7 +18,7 @@
 #define OOS_API
 #endif
 
-#include "serializer.hpp"
+#include "object/serializer.hpp"
 #include "object/serializable.hpp"
 
 #include <stdexcept>

@@ -16,11 +16,16 @@
  */
 
 #include "object/object_container.hpp"
+#include "object/object_store.hpp"
 
 using namespace std;
 
 namespace oos {
 
+object_container::object_container()
+  : ostore_(nullptr)
+  , owner_(nullptr)
+{}
 
 object_proxy* object_container::proxy(const object_base_ptr &optr) const
 {
@@ -35,6 +40,28 @@ object_proxy* object_container::owner() const
 void object_container::owner(object_proxy *ownr)
 {
   owner_ = ownr;
+}
+
+object_store* object_container::ostore() const
+{
+  return ostore_;
+}
+
+void object_container::mark_modified(object_proxy *proxy)
+{
+  if (proxy->obj()) {
+    ostore_->mark_modified(proxy);
+  }
+}
+
+void object_container::install(object_store *ostore)
+{
+  ostore_ = ostore;
+}
+
+void object_container::uninstall()
+{
+  ostore_ = 0;
 }
 
 }
