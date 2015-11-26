@@ -4,13 +4,13 @@ sudo: false
 
 matrix:
   include:
-    - os: osx
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8', 'valgrind']
-      env: COMPILER=g++-4.8
+#    - os: osx
+#      compiler: gcc
+#      addons:
+#        apt:
+#          sources: ['ubuntu-toolchain-r-test']
+#          packages: ['g++-4.8', 'valgrind']
+#      env: COMPILER=g++-4.8
     - os: linux
       compiler: gcc
       addons:
