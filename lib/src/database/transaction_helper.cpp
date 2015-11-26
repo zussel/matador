@@ -83,7 +83,7 @@ void restore_visitor::visit(delete_action *a)
   object_proxy *oproxy = ostore_->find_proxy(a->id());
   if (!oproxy) {
     // create proxy
-    oproxy = ostore_->create_proxy(nullptr, nullptr, a->id());
+    oproxy = ostore_->create_proxy(a->id());
   }
   if (!oproxy->obj()) {
     // create serializable with id and deserialize

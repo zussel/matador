@@ -200,7 +200,7 @@ object_proxy* object_store::insert_object(serializable *o, bool notify)
      * the sequencer else assign new
      * unique id
      */
-    oproxy = create_proxy(o, nullptr);
+    oproxy = create_proxy(o);
     if (!oproxy) {
       throw object_exception("couldn't create serializable proxy");
     }
@@ -343,17 +343,22 @@ object_proxy* object_store::find_proxy(unsigned long id) const
   }
 }
 
-object_proxy* object_store::create_proxy(serializable *o, prototype_node *node, unsigned long id)
+object_proxy* object_store::create_proxy(serializable *o)
+{
+  std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
+  return object_map_.insert(std::make_pair(proxy->id(), proxy.release())).first->second;
+}
+
+object_proxy* object_store::create_proxy(unsigned long id)
 {
   if (id == 0) {
-    id = seq_.next();
+    return nullptr;
   }
-  
+
   t_object_proxy_map::iterator i = object_map_.find(id);
   if (i == object_map_.end()) {
-    std::unique_ptr<object_proxy> proxy(new object_proxy(o, id, this));
+    std::unique_ptr<object_proxy> proxy(new object_proxy(nullptr, id, this));
 
-    proxy->node_ = node;
     return object_map_.insert(std::make_pair(id, proxy.release())).first->second;
   } else {
     return nullptr;

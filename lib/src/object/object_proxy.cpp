@@ -23,62 +23,26 @@ using namespace std;
 
 namespace oos {
 
-object_proxy::object_proxy(object_store *os)
-  : prev_(nullptr)
-  , next_(nullptr)
-  , obj_(nullptr)
-  , oid(0)
-  , ref_count_(0)
-  , ptr_count_(0)
-  , ostore_(os)
-  , node_(nullptr)
+object_proxy::object_proxy() {}
+
+object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
+  : primary_key_(pk)
 {}
 
-object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk, prototype_node *node)
-  : prev_(nullptr)
-  , next_(nullptr)
-  , obj_(nullptr)
-  , oid(0)
-  , ref_count_(0)
-  , ptr_count_(0)
-  , ostore_(nullptr)
-  , node_(node)
-  , primary_key_(pk)
+object_proxy::object_proxy(unsigned long i)
+  : oid(i)
 {}
 
-object_proxy::object_proxy(unsigned long i, object_store *os)
-  : prev_(nullptr)
-  , next_(nullptr)
-  , obj_(nullptr)
-  , oid(i)
-  , ref_count_(0)
-  , ptr_count_(0)
-  , ostore_(os)
-  , node_(nullptr)
-{}
-
-object_proxy::object_proxy(serializable *o, object_store *os)
-  : prev_(nullptr)
-  , next_(nullptr)
-  , obj_(o)
-  , oid(0)
-  , ref_count_(0)
-  , ptr_count_(0)
-  , ostore_(os)
-  , node_(nullptr)
+object_proxy::object_proxy(serializable *o)
+  : obj_(o)
 {
   primary_key_.reset(identifier_resolver::resolve(o));
 }
 
 object_proxy::object_proxy(serializable *o, unsigned long id, object_store *os)
-  : prev_(nullptr)
-  , next_(nullptr)
-  , obj_(o)
+  : obj_(o)
   , oid(id)
-  , ref_count_(0)
-  , ptr_count_(0)
   , ostore_(os)
-  , node_(nullptr)
 {
   if (obj_ != nullptr) {
     primary_key_.reset(identifier_resolver::resolve(obj_));

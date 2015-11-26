@@ -375,7 +375,7 @@ public:
   self& operator=(serializable *x)
   {
 //    is_reference_ = TYPE;
-    reset(new object_proxy(x, nullptr), is_reference_);
+    reset(new object_proxy(x), is_reference_);
     return *this;
   }
 
