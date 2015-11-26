@@ -33,6 +33,7 @@
 
 #include "identifier_resolver.hpp"
 #include "prototype_node.hpp"
+#include "object_store.hpp"
 
 #include <ostream>
 #include <set>
@@ -48,6 +49,39 @@ class object_store;
 class object_base_ptr;
 class prototype_node;
 class basic_identifier;
+
+class basic_object_proxy
+{
+public:
+  /**
+   * ini
+   */
+  explicit basic_object_proxy(object_store *store, unsigned long id = 0);
+  basic_object_proxy(const std::shared_ptr<basic_identifier> &pk, prototype_node *node);
+
+private:
+  basic_object_proxy *prev_;      /**< The previous object_proxy in the list. */
+  basic_object_proxy *next_;      /**< The next object_proxy in the list. */
+
+  unsigned long oid;        /**< The id of the concrete or expected serializable. */
+
+  unsigned long ref_count_; /**< The reference counter */
+  unsigned long ptr_count_; /**< The pointer counter */
+
+  object_store *ostore_;    /**< The object_store to which the object_proxy belongs. */
+  prototype_node *node_;    /**< The prototype_node containing the type of the serializable. */
+
+  typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
+  ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */
+
+  typedef std::list<serializable*> object_list_t;
+  typedef std::map<std::string, object_list_t> string_object_list_map_t;
+
+  string_object_list_map_t relations;
+
+  std::shared_ptr<basic_identifier> primary_key_ = nullptr;
+};
+
 
 /**
  * @cond OOS_DEV
