@@ -346,7 +346,7 @@ object_proxy* object_store::find_proxy(unsigned long id) const
 object_proxy* object_store::create_proxy(serializable *o)
 {
   std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
-  return object_map_.insert(std::make_pair(proxy->id(), proxy.release())).first->second;
+  return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
 }
 
 object_proxy* object_store::create_proxy(unsigned long id)
