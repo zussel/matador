@@ -63,20 +63,16 @@ public:
   /**
    * @brief Create an empty object_proxy
    *
-   * Create an empty object_proxy for a
-   * given object_store
-   *
-   * @param os The object_store.
+   * Create an empty object_proxy
    */
-  explicit object_proxy(object_store *os);
+  explicit object_proxy();
 
   /**
    * Create a new object proxy with primary key and node
    *
    * @param pk primary key of object
-   * @param node The prototype node
    */
-  object_proxy(const std::shared_ptr<basic_identifier> &pk, prototype_node *node);
+  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk);
 
   /**
    * @brief Create an object_proxy for unknown
@@ -86,9 +82,8 @@ public:
    * with given id.
    *
    * @param i The id of the expected serializable.
-   * @param os The object_store.
    */
-  object_proxy(unsigned long i, object_store *os);
+  explicit object_proxy(unsigned long i);
 
   /**
    * @brief Create an object_proxy for a given serializable.
@@ -99,7 +94,7 @@ public:
    * @param o The valid serializable.
    * @param os The object_store.
    */
-  object_proxy(serializable *o, object_store *os);
+  object_proxy(serializable *o);
 
   /**
    * @brief Create an object_proxy for a given serializable.
@@ -290,6 +285,12 @@ public:
    * @return 0 (null) or the id of the serializable.
    */
   unsigned long id() const;
+
+  /**
+   * Sets the id of the object_proxy.
+   *
+   * @param i New id of the proxy.
+   */
   void id(unsigned long i);
 
   /**
@@ -318,17 +319,17 @@ private:
   friend class restore_visitor;
   friend class object_base_ptr;
 
-  object_proxy *prev_;      /**< The previous object_proxy in the list. */
-  object_proxy *next_;      /**< The next object_proxy in the list. */
+  object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
+  object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
-  serializable *obj_;        /**< The concrete serializable. */
-  unsigned long oid;        /**< The id of the concrete or expected serializable. */
+  serializable *obj_ = nullptr;        /**< The concrete serializable. */
+  unsigned long oid = 0;        /**< The id of the concrete or expected serializable. */
 
-  unsigned long ref_count_; /**< The reference counter */
-  unsigned long ptr_count_; /**< The pointer counter */
+  unsigned long ref_count_ = 0; /**< The reference counter */
+  unsigned long ptr_count_ = 0; /**< The pointer counter */
 
-  object_store *ostore_;    /**< The object_store to which the object_proxy belongs. */
-  prototype_node *node_;    /**< The prototype_node containing the type of the serializable. */
+  object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
+  prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the serializable. */
 
   typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */

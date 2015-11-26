@@ -18,7 +18,7 @@ void table_reader::load(result<serializable> &res)
   auto last = res.end();
   while (first != last) {
     serializable *obj = first.release();
-    new_proxy_ = new object_proxy(obj, nullptr);
+    new_proxy_ = new object_proxy(obj);
     obj->deserialize(*this);
     ostore_.insert_proxy(new_proxy_);
     ++first;

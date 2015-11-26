@@ -383,7 +383,8 @@ public:
    * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(serializable *o, prototype_node *node = nullptr, unsigned long id = 0);
+  object_proxy *create_proxy(serializable *o);
+  object_proxy *create_proxy(unsigned long id);
 
   /**
    * @brief Delete proxy from map

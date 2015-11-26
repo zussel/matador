@@ -88,8 +88,10 @@ void prototype_node::append(prototype_node *sibling)
   sibling->depth = depth;
 
   if (!parent) {
-    sibling->op_first = new object_proxy(nullptr);
-    sibling->op_last = sibling->op_marker = new object_proxy(nullptr);
+    sibling->op_first = new object_proxy();
+//    sibling->op_first = new object_proxy(nullptr);
+    sibling->op_last = sibling->op_marker = new object_proxy();
+//    sibling->op_last = sibling->op_marker = new object_proxy(nullptr);
     sibling->op_first->next_ = sibling->op_last;
     sibling->op_last->prev_ = sibling->op_first;
   } else {

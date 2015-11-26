@@ -59,7 +59,7 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
 }
 
 object_base_ptr::object_base_ptr(serializable *o, bool is_ref)
-  : proxy_(new object_proxy(o, nullptr))
+  : proxy_(new object_proxy(o))
   , is_reference_(is_ref)
   , is_internal_(false)
   , oid_(0)
@@ -142,7 +142,7 @@ void object_base_ptr::reset(const std::shared_ptr<basic_identifier> &id)
   if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
       throw object_exception("identifier types are not equal");
   }
-  object_proxy *proxy = new object_proxy(id, nullptr);
+  object_proxy *proxy = new object_proxy(id);
   reset(proxy);
 }
 
