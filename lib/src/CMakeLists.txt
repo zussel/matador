@@ -12,7 +12,7 @@ SET(OBJECT_SOURCES
 		object/foreign_key_analyzer.cpp
 		object/identifier_resolver.cpp
 		object/basic_identifier.cpp
-		object/identifier.cpp)
+		object/identifier.cpp object/detail/relation_resolver.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp

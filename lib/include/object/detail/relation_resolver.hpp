@@ -5,14 +5,19 @@
 #ifndef OOS_RELATION_RESOLVER_HPP
 #define OOS_RELATION_RESOLVER_HPP
 
-#include <string>
+#include "object/access.hpp"
 
-#include "object/prototype_tree.hpp"
+#include <string>
+#include <list>
 
 namespace oos {
+
+class prototype_node;
+class object_container;
+class object_base_ptr;
+
 namespace detail {
 
-template < class T >
 class relation_resolver
 {
 public:
@@ -25,11 +30,14 @@ public:
   {}
   virtual ~relation_resolver() {}
 
+  template < class T >
   static void build(prototype_node &node)
   {
-    relation_resolver<T> resolver(node);
-    resolver.build();
+    relation_resolver resolver(node);
+    resolver.build<T>();
   }
+
+  template < class T >
   void build()
   {
     T obj;
@@ -44,48 +52,9 @@ public:
 
   template < class V >
   void serialize(const char*, const V&) {}
-
   void serialize(const char*, const char*, int) {}
-
-  void serialize(const char *id, const object_container &x)
-  {
-    /*
-     * get item type of the container
-     * try to insert it as prototype
-     */
-    prototype_iterator pi;
-    object_base_producer *p = x.create_item_producer();
-    if (p) {
-      pi = node_.tree->insert(p, id);
-      if (pi == node_.tree->end()) {
-        throw object_exception("unknown prototype type");
-      }
-    } else {
-      // insert new prototype
-      // get prototype node of container item (child)
-      pi = node_.tree->find(x.classname());
-      if (pi == node_.tree->end()) {
-        // if there is no such prototype node
-        // insert a new one (it is automatically marked
-        // as uninitialized)
-        pi = prototype_iterator(node_.tree->prepare_insert(x.classname()));
-      }
-    }
-    // add container node to item node
-    // insert the relation
-    pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
-  }
-
-  void serialize(const char *, const object_base_ptr &x)
-  {
-    prototype_iterator pi = node_.tree->find(x.type());
-    if (pi == node_.tree->end()) {
-      // if there is no such prototype node
-      // insert a new one (it is automatically marked
-      // as uninitialized)
-      node_.tree->prepare_insert(x.type());
-    }
-  }
+  void serialize(const char *id, const object_container &x);
+  void serialize(const char *, const object_base_ptr &x);
 
 private:
   prototype_node &node_;
