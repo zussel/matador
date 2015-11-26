@@ -68,7 +68,7 @@ public:
   explicit object_proxy();
 
   /**
-   * Create a new object proxy with primary key and node
+   * Create a new object proxy with primary key
    *
    * @param pk primary key of object
    */
@@ -81,7 +81,7 @@ public:
    * Create an object_proxy for unknown serializable
    * with given id.
    *
-   * @param i The id of the expected serializable.
+   * @param i The id of the unknown serializable.
    */
   explicit object_proxy(unsigned long i);
 
@@ -92,7 +92,6 @@ public:
    * with given id.
    *
    * @param o The valid serializable.
-   * @param os The object_store.
    */
   object_proxy(serializable *o);
 
