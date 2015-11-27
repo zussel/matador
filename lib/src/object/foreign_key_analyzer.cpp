@@ -6,23 +6,13 @@
 namespace oos {
 
 foreign_key_analyzer::foreign_key_analyzer(prototype_node &node)
-  : generic_serializer<foreign_key_analyzer>(this)
-  , node_(node)
-{
+  : node_(node)
+{}
 
-}
+foreign_key_analyzer::~foreign_key_analyzer() {}
 
-foreign_key_analyzer::~foreign_key_analyzer() {
 
-}
-
-void foreign_key_analyzer::analyze()
-{
-  std::unique_ptr<serializable> obj(node_.producer->create());
-  obj->serialize(*this);
-}
-
-void foreign_key_analyzer::write_value(const char *id, const object_base_ptr &x)
+void foreign_key_analyzer::serialize(const char *id, const object_base_ptr &x)
 {
   prototype_iterator node = node_.tree->find(x.type());
 

@@ -58,15 +58,6 @@ object_base_ptr::object_base_ptr(object_proxy *op, bool is_ref)
   }
 }
 
-object_base_ptr::object_base_ptr(serializable *o, bool is_ref)
-  : proxy_(new object_proxy(o))
-  , is_reference_(is_ref)
-  , is_internal_(false)
-  , oid_(0)
-{
-  proxy_->add(this);
-}
-
 object_base_ptr::~object_base_ptr()
 {
   if (proxy_) {
@@ -172,17 +163,17 @@ object_store *object_base_ptr::store() const
   return (proxy_ ? proxy_->ostore() : nullptr);
 }
 
-serializable * object_base_ptr::ptr()
+void* object_base_ptr::ptr()
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }
 
-const serializable * object_base_ptr::ptr() const
+const void* object_base_ptr::ptr() const
 {
   return lookup_object();
 }
 
-serializable * object_base_ptr::lookup_object()
+void* object_base_ptr::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore()) {
@@ -194,7 +185,7 @@ serializable * object_base_ptr::lookup_object()
   }
 }
 
-serializable * object_base_ptr::lookup_object() const
+void* object_base_ptr::lookup_object() const
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }

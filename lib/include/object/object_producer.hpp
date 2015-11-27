@@ -37,13 +37,6 @@ class OOS_API object_base_producer{
   virtual ~object_base_producer() {}
 
   /**
-   * Clones the object_base_producer
-   *
-   * @return A clone of the object_base_producer;
-   */
-  virtual object_base_producer* clone() const = 0;
-
-  /**
    * @brief Create a new serializable.
    *
    * This method creates a new serializable
@@ -51,7 +44,7 @@ class OOS_API object_base_producer{
    *
    * @return The created serializable.
    */
-  virtual serializable* create() const = 0;
+  virtual void* create() const = 0;
 
   /**
    * Returns the unique classname of the
@@ -87,7 +80,7 @@ public:
   *
   * @return new serializable of type T
   */
-  virtual serializable* create() const
+  virtual void* create() const
   {
     return new T;
   }

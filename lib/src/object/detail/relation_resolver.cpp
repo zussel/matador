@@ -16,6 +16,7 @@ void relation_resolver::serialize(const char *id, const object_container &x)
    * get item type of the container
    * try to insert it as prototype
    */
+  /*
   prototype_iterator pi;
   object_base_producer *p = x.create_item_producer();
   if (p) {
@@ -37,6 +38,7 @@ void relation_resolver::serialize(const char *id, const object_container &x)
   // add container node to item node
   // insert the relation
   pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
+  */
 }
 
 void relation_resolver::serialize(const char *, const object_base_ptr &x)

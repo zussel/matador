@@ -47,7 +47,7 @@ class OOS_API identifier_resolver
 {
 public:
   identifier_resolver() {}
-  virtual ~identifier_resolver() {}
+  ~identifier_resolver() {}
 
   static basic_identifier* resolve()
   {

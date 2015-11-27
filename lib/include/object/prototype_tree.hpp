@@ -734,12 +734,11 @@ private:
 
     // Check if nodes serializable has 'to-many' relations
     T obj;
-    std::unique_ptr<serializable> o(node->producer->create());
+    std::unique_ptr<T> o(new T);
     detail::relation_resolver::build<T>(*node);
 
     // Analyze primary and foreign keys of node
-    foreign_key_analyzer fk_analyzer(*node);
-    fk_analyzer.analyze();
+    foreign_key_analyzer::analyze<T>(*node);
 
     while (!node->foreign_key_ids.empty()) {
       auto i = node->foreign_key_ids.front();

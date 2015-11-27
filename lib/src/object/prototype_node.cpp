@@ -134,34 +134,28 @@ void prototype_node::insert(prototype_node *child)
   // 3. last
   child->op_last = op_last;
 }
-
+/*
 void prototype_node::insert(object_proxy *proxy)
 {
   // check count of serializable in subtree
   if (count >= 2) {
-    /*************
-     *
-     * there are more than two objects (normal case)
-     * insert before last last
-     *
-     *************/
+
+     // there are more than two objects (normal case)
+     // insert before last last
+
     proxy->link(op_marker->prev_);
   } else if (count == 1) {
-    /*************
-     *
-     * there is one serializable in subtree
-     * insert as first; adjust "left" marker
-     *
-     *************/
+
+     // there is one serializable in subtree
+     // insert as first; adjust "left" marker
+
     proxy->link(op_marker->prev_);
     tree->adjust_left_marker(this, proxy->next_, proxy);
-  } else /* if (node->count == 0) */ {
-    /*************
-     *
-     * there is no serializable in subtree
-     * insert as last; adjust "right" marker
-     *
-     *************/
+  } else { // node->count == 0
+
+     // there is no serializable in subtree
+     //insert as last; adjust "right" marker
+
     proxy->link(op_marker);
     tree->adjust_left_marker(this, proxy->next_, proxy);
     tree->adjust_right_marker(this, proxy->prev_, proxy);
@@ -176,6 +170,7 @@ void prototype_node::insert(object_proxy *proxy)
     primary_key_map.insert(std::make_pair(pk, proxy));
   }
 }
+*/
 
 void prototype_node::remove(object_proxy *proxy)
 {

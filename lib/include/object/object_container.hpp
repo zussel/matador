@@ -22,9 +22,15 @@
 #include "object/object_ptr.hpp"
 
 #include <functional>
+#include <object/detail/relation_resolver.hpp>
 
 namespace oos {
 
+namespace detail {
+
+class relation_resolver;
+
+}
 /**
  * @tparam T Type of value
  * @class value_item
@@ -225,7 +231,7 @@ protected:
   friend class object_serializer;
   friend class prototype_tree;
   friend class relation_handler;
-  friend class relation_resolver;
+  friend class detail::relation_resolver;
   friend class relation_filler;
   friend class table;
   friend class table_reader;

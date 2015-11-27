@@ -87,18 +87,6 @@ protected:
 	object_base_ptr& operator=(const object_base_ptr &x);
 
   /**
-   * @brief Creates an object_base_ptr with a given serializable
-   * 
-   * Creates an object_base_ptr with a given serializable. The
-   * boolean tells the object_base_ptr if it should be
-   * handled as a reference or a pointer.
-   * 
-   * @param o The serializable of the object_base_ptr
-   * @param is_ref If true the serializable is handled as a reference.
-   */
-	object_base_ptr(serializable *o, bool is_ref);
-  
-  /**
    * @brief Creates an object_base_ptr with a given object_proxy
    * 
    * Creates an object_base_ptr with a given object_proxy. The
@@ -195,28 +183,28 @@ public:
    * 
    * @return The serializable.
    */
-  serializable* ptr();
+  void* ptr();
 
   /**
    * Returns the serializable
    *
    * @return The serializable.
    */
-	const serializable* ptr() const;
+	const void* ptr() const;
 
   /**
    * Returns the serializable
    * 
    * @return The serializable.
    */
-  serializable* lookup_object();
+  void* lookup_object();
 
   /**
    * Returns the serializable
    *
    * @return The serializable.
    */
-	serializable* lookup_object() const;
+	void* lookup_object() const;
 
   /**
    * Returns if the serializable is treated as a reference.
@@ -354,8 +342,8 @@ public:
    *
    * @param o The serializable.
    */
-  object_holder(serializable *o)
-    : object_base_ptr(o, TYPE)
+  object_holder(T *o)
+    : object_base_ptr(new object_proxy(o), TYPE)
   {}
 
   /**
@@ -372,7 +360,7 @@ public:
    *
    * @param x The x serializable to assign from.
    */
-  self& operator=(serializable *x)
+  self& operator=(T *x)
   {
 //    is_reference_ = TYPE;
     reset(new object_proxy(x), is_reference_);

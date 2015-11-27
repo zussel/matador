@@ -1,29 +1,36 @@
 #ifndef FOREIGN_KEY_ANALYZER_HPP
 #define FOREIGN_KEY_ANALYZER_HPP
 
-#include "object/serializer.hpp"
+#include "object/access.hpp"
+
+#include <cstddef>
 
 namespace oos {
 
-class prototype_node;
-class serializable;
 class object_base_ptr;
+class prototype_node;
 
 /// @cond OOS_DEV
 
-class foreign_key_analyzer : public generic_serializer<foreign_key_analyzer>
+class foreign_key_analyzer
 {
 public:
   explicit foreign_key_analyzer(prototype_node &node);
-  virtual ~foreign_key_analyzer();
-
-  void analyze();
+  ~foreign_key_analyzer();
 
   template < class T >
-  void write_value(const char*, const T&) {}
+  static void analyze(prototype_node &node)
+  {
+    foreign_key_analyzer analyzer(node);
+    T obj;
+    oos::access::serialize(analyzer, obj);
+  }
 
-  void write_value(const char*, const char*, size_t) {}
-  void write_value(const char *id, const object_base_ptr &x);
+  template < class V >
+  void serialize(const char*, const V&) {}
+
+  void serialize(const char*, const char*, size_t) {}
+  void serialize(const char *id, const object_base_ptr &x);
 
 private:
   prototype_node &node_;
