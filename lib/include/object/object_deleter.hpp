@@ -32,8 +32,6 @@
   #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-
 #include <map>
 
 namespace oos {
@@ -54,7 +52,7 @@ class basic_identifier;
  * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
-class object_deleter : public generic_deserializer<object_deleter>
+class object_deleter
 {
 private:
   typedef struct t_object_count_struct
@@ -79,7 +77,7 @@ public:
    */
   object_deleter();
 
-  virtual ~object_deleter();
+  ~object_deleter();
 
   /**
    * Checks wether the given serializable is deletable.
@@ -114,12 +112,12 @@ public:
   iterator end();
 
   template < class T >
-  void read_value(const char*, const T&) {}
+  void serialize(const char*, const T&) {}
 
-  void read_value(const char*, char*, size_t) {}
-  void read_value(const char*, object_base_ptr &x);
-  void read_value(const char*, object_container &x);
-  void read_value(const char*, basic_identifier &x);
+  void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, object_base_ptr &x);
+  void serialize(const char*, object_container &x);
+  void serialize(const char*, basic_identifier &x);
 
   void check_object(object_proxy *proxy, bool is_ref);
   void check_object_list_node(object_proxy *proxy);

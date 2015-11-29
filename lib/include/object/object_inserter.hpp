@@ -22,7 +22,6 @@
   #pragma warning(disable: 4355)
 #endif
 
-#include "serializer.hpp"
 #include "object/object_proxy.hpp"
 
 #include <stack>
@@ -45,7 +44,7 @@ class object_container;
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class object_inserter : public generic_deserializer<object_inserter>
+class object_inserter
 {
 public:
   /**
@@ -59,16 +58,16 @@ public:
    * @param ostore The object_store.
    */
   object_inserter(object_store &ostore);
-  virtual ~object_inserter();
+  ~object_inserter();
 
   void insert(object_proxy *proxy);
 
   template < class T >
-  void read_value(const char*, T&) {}
+  void serialize(const char*, T&) {}
 
-  void read_value(const char*, char*, size_t) {}
-  void read_value(const char*, object_base_ptr &x);
-  void read_value(const char*, object_container &x);
+  void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, object_base_ptr &x);
+  void serialize(const char*, object_container &x);
 
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;

@@ -24,6 +24,7 @@
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_inserter.hpp"
+#include "object/primary_key_reader.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -107,7 +108,12 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
+  template < class T >
+	prototype_iterator insert_prototype(object_producer<T> *producer, const char *type, bool abstract = false, const char *parent = nullptr)
+  {
+    return prototype_tree_.insert(producer, type, abstract, parent);
+  }
+
 
   /**
    * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -266,7 +272,15 @@ public:
    * @param type Typename of the serializable to create.
    * @return The created serializable on success or NULL if the type couldn't be found.
    */
-	serializable* create(const char *type) const;
+  template < class T >
+	T* create() const {
+    const_prototype_iterator node = prototype_tree_.find<T>();
+    if (node != prototype_tree_.end()) {
+      return node->producer->create();
+    } else {
+      throw object_exception("unknown prototype type");
+    }
+  }
 
   /**
    * Inserts an serializable of a specfic type. On successfull insertion
@@ -289,6 +303,7 @@ public:
    * @param optr object_ptr to be inserted.
    * @return Inserted serializable contained by an object_ptr on success.
    */
+  /*
   template < class Y >
   object_ptr<Y> insert(const object_ptr<Y> &optr)
   {
@@ -302,6 +317,7 @@ public:
     insert_proxy(optr.proxy_);
     return optr;
   }
+  */
 
   /**
    * Inserts an object_container into the serializable store. Subsequently the
@@ -383,8 +399,14 @@ public:
    * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(serializable *o);
-  object_proxy *create_proxy(unsigned long id);
+  template < class T >
+  object_proxy *create_proxy(T *o)
+  {
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
+    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
+  }
+
+//  object_proxy *create_proxy(unsigned long id);
 
   /**
    * @brief Delete proxy from map
@@ -459,9 +481,10 @@ private:
   void mark_modified(object_proxy *oproxy);
 
   void remove(object_proxy *proxy);
-	object_proxy* insert_object(serializable *o, bool notify);
-	void remove_object(object_proxy *proxy, bool notify);
 
+  template < class T >
+	object_proxy* insert_object(T *o, bool notify);
+	void remove_object(object_proxy *proxy, bool notify);
 
   object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
@@ -482,6 +505,57 @@ private:
   object_deleter object_deleter_;
   object_inserter object_inserter_;
 };
+
+template < class T >
+object_proxy* object_store::insert_object(T *o, bool notify)
+{
+  // find type in tree
+  if (!o) {
+    throw object_exception("serializable is null");
+  }
+
+  // find prototype node
+  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
+  if (node == prototype_tree_.end()) {
+    // raise exception
+    throw object_exception("couldn't insert serializable");
+  }
+  // retrieve and set new unique number into serializable
+  object_proxy *oproxy = nullptr;
+  t_serializable_proxy_map::iterator i = serializable_map_.find(o);
+  if (i != serializable_map_.end()) {
+    // serializable exists in serializable store
+    oproxy = i->second;
+    if (oproxy->linked()) {
+      // an serializable exists in map.
+      // replace it with new serializable
+      // unlink it and
+      // link it into new place in list
+      oproxy->node()->remove(oproxy);
+    }
+    oproxy->reset(o);
+  } else {
+    /* serializable doesn't exist in map
+     * if serializable has a valid id, update
+     * the sequencer else assign new
+     * unique id
+     */
+    oproxy = create_proxy(o);
+    if (!oproxy) {
+      throw object_exception("couldn't create serializable proxy");
+    }
+  }
+
+  if (oproxy->has_primary_key()) {
+    // if object has primary key of type short, int or long
+    // set the id of proxy as value
+    primary_key_reader<unsigned long> reader(oproxy->id());
+    o->deserialize(reader);
+  }
+
+  return initialze_proxy(oproxy, node, notify);
+}
+
 
 }
 

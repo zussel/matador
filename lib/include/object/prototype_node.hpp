@@ -161,7 +161,7 @@ public:
   /**
    * Inserts a serializable proxy into the
    */
-//  void insert(object_proxy *proxy);
+  void insert(object_proxy *proxy);
 
   /**
    * @brief Removes an serializable proxy from prototype node

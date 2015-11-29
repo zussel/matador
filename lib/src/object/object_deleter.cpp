@@ -33,7 +33,6 @@ object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oprox
 {}
 
 object_deleter::object_deleter()
-  : generic_deserializer<object_deleter>(this)
 {}
 
 object_deleter::~object_deleter()
@@ -58,7 +57,7 @@ bool object_deleter::is_deletable(object_container &oc)
   return check_object_count_map();
 }
 
-void object_deleter::read_value(const char*, object_base_ptr &x)
+void object_deleter::serialize(const char*, object_base_ptr &x)
 {
   if (!x.ptr()) {
     return;
@@ -66,12 +65,12 @@ void object_deleter::read_value(const char*, object_base_ptr &x)
   check_object(x.proxy_, x.is_reference());
 }
 
-void object_deleter::read_value(const char*, object_container &x)
+void object_deleter::serialize(const char*, object_container &x)
 {
   x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
 }
 
-void object_deleter::read_value(char const *id, basic_identifier &x)
+void object_deleter::serialize(char const *id, basic_identifier &x)
 {
   x.deserialize(id, *this);
 }

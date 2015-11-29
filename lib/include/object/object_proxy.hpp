@@ -124,9 +124,10 @@ public:
   ~object_proxy();
 
   /**
-   * Return the underlaying serializable object
+   * Return the underlaying object
    *
-   * @return The underlaying serializable
+   * @tparam The type of the object
+   * @return The underlaying object
    */
   template < typename T = void >
   T* obj()
@@ -135,9 +136,10 @@ public:
   }
 
   /**
-   * Return the underlaying serializable object
+   * Return the underlaying object
    *
-   * @return The underlaying serializable
+   * @tparam The type of the object
+   * @return The underlaying object
    */
   template < typename T = void >
   const T* obj() const

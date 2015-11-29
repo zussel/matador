@@ -20,7 +20,6 @@
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_container.hpp"
-#include "object/primary_key_reader.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -48,12 +47,6 @@ prototype_tree &object_store::prototypes() {
 
 const prototype_tree &object_store::prototypes() const {
   return prototype_tree_;
-}
-
-prototype_iterator
-object_store::insert_prototype(object_base_producer *producer, const char *type, bool abstract, const char *parent)
-{
-  return prototype_tree_.insert(producer, type, abstract, parent);
 }
 
 void object_store::remove_prototype(const char *type)
@@ -132,16 +125,6 @@ void object_store::dump_objects(std::ostream &out) const
   }
 }
 
-serializable * object_store::create(const char *type) const
-{
-  const_prototype_iterator node = prototype_tree_.find(type);
-  if (node != prototype_tree_.end()) {
-    return node->producer->create();
-  } else {
-    throw object_exception("unknown prototype type");
-  }
-}
-
 void object_store::mark_modified(object_proxy *oproxy)
 {
   std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_update, _1, oproxy));
@@ -167,64 +150,12 @@ void object_store::insert(object_container &oc)
   oc.install(this);
 }
 
-object_proxy* object_store::insert_object(serializable *o, bool notify)
-{
-  // find type in tree
-  if (!o) {
-    throw object_exception("serializable is null");
-  }
-
-  // find prototype node
-  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
-  if (node == prototype_tree_.end()) {
-    // raise exception
-    throw object_exception("couldn't insert serializable");
-  }
-  // retrieve and set new unique number into serializable
-  object_proxy *oproxy = nullptr;
-  t_serializable_proxy_map::iterator i = serializable_map_.find(o);
-  if (i != serializable_map_.end()) {
-    // serializable exists in serializable store
-    oproxy = i->second;
-    if (oproxy->linked()) {
-      // an serializable exists in map.
-      // replace it with new serializable
-      // unlink it and
-      // link it into new place in list
-      oproxy->node()->remove(oproxy);
-    }
-    oproxy->reset(o);
-  } else {
-    /* serializable doesn't exist in map
-     * if serializable has a valid id, update
-     * the sequencer else assign new
-     * unique id
-     */
-    oproxy = create_proxy(o);
-    if (!oproxy) {
-      throw object_exception("couldn't create serializable proxy");
-    }
-  }
-
-  if (oproxy->has_primary_key()) {
-    // if object has primary key of type short, int or long
-    // set the id of proxy as value
-    primary_key_reader<unsigned long> reader(oproxy->id());
-    o->deserialize(reader);
-  }
-
-  return initialze_proxy(oproxy, node, notify);
-}
-
 object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
 {// insert new element node
   node->insert(oproxy);
 
-  // initialize serializable
-//  object_inserter oc(oproxy, *this);
-
+  // initialize object
   object_inserter_.insert(oproxy);
-//  oproxy->obj()->deserialize(oc);
   // set this into persistent serializable
   // notify observer
   if (notify) {
@@ -343,12 +274,7 @@ object_proxy* object_store::find_proxy(unsigned long id) const
   }
 }
 
-object_proxy* object_store::create_proxy(serializable *o)
-{
-  std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
-  return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
-}
-
+/*
 object_proxy* object_store::create_proxy(unsigned long id)
 {
   if (id == 0) {
@@ -364,7 +290,7 @@ object_proxy* object_store::create_proxy(unsigned long id)
     return nullptr;
   }
 }
-
+*/
 bool object_store::delete_proxy(unsigned long id)
 {
   t_object_proxy_map::iterator i = object_map_.find(id);
@@ -377,7 +303,7 @@ bool object_store::delete_proxy(unsigned long id)
     return true;
   }
 }
-
+/*
 void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
 {
   if (!oproxy->obj()) {
@@ -405,7 +331,7 @@ void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
 
   initialze_proxy(oproxy, node, notify);
 }
-
+*/
 object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
   if (oproxy->id() != 0) {

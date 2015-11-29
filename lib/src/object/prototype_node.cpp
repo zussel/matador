@@ -134,7 +134,7 @@ void prototype_node::insert(prototype_node *child)
   // 3. last
   child->op_last = op_last;
 }
-/*
+
 void prototype_node::insert(object_proxy *proxy)
 {
   // check count of serializable in subtree
@@ -165,12 +165,11 @@ void prototype_node::insert(object_proxy *proxy)
   // adjust size
   ++count;
   // find and insert primary key
-  std::shared_ptr<basic_identifier> pk(identifier_resolver::resolve(proxy->obj()));
+  std::shared_ptr<basic_identifier> pk(proxy->primary_key_);
   if (pk) {
     primary_key_map.insert(std::make_pair(pk, proxy));
   }
 }
-*/
 
 void prototype_node::remove(object_proxy *proxy)
 {

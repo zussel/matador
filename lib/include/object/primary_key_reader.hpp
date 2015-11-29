@@ -5,25 +5,23 @@
 #ifndef PRIMARY_KEY_READER_HPP
 #define PRIMARY_KEY_READER_HPP
 
-#include "serializer.hpp"
-#include "identifier.hpp"
+#include "object/identifier.hpp"
 
 namespace oos {
 
 /// @cond OOS_DEV
 
 template < class T >
-class primary_key_reader : public generic_deserializer<primary_key_reader<T> >
+class primary_key_reader
 {
 
 public:
   explicit primary_key_reader(const T &value)
-    : generic_deserializer<primary_key_reader<T> >(this)
-    , value_(value)
+    : value_(value)
   {
     value_ = value;
   }
-  virtual ~primary_key_reader() { }
+  ~primary_key_reader() { }
 
 public:
 

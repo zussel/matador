@@ -23,8 +23,7 @@
 namespace oos {
 
 object_inserter::object_inserter(object_store &ostore)
-  : generic_deserializer<object_inserter>(this)
-  , ostore_(ostore)
+  : ostore_(ostore)
 {}
 
 object_inserter::~object_inserter() {}
@@ -44,7 +43,7 @@ void object_inserter::insert(object_proxy *proxy)
 
 }
 
-void object_inserter::read_value(const char*, object_base_ptr &x)
+void object_inserter::serialize(const char*, object_base_ptr &x)
 {
   // mark serializable pointer as internal
   x.is_internal_ = true;
@@ -75,7 +74,7 @@ void object_inserter::read_value(const char*, object_base_ptr &x)
   }
 }
 
-void object_inserter::read_value(const char*, object_container &x)
+void object_inserter::serialize(const char*, object_container &x)
 {
   if (x.ostore()) {
     return;
