@@ -16,8 +16,7 @@
  */
 
 #include "object/object_proxy.hpp"
-#include "object/serializable.hpp"
-#include "object/object_store.hpp"
+#include "object/object_ptr.hpp"
 
 using namespace std;
 
@@ -29,14 +28,15 @@ object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
   : primary_key_(pk)
 {}
 
-object_proxy::object_proxy(unsigned long i)
-  : oid(i)
-{}
+//object_proxy::object_proxy(unsigned long i)
+//  : oid(i)
+//{}
 
 object_proxy::~object_proxy()
 {
   if (ostore_ && id() > 0) {
-    ostore_->delete_proxy(id());
+    // Todo: callback to object store
+//    ostore_->delete_proxy(id());
   }
   if (obj_) {
     deleter_(obj_);

@@ -17,8 +17,6 @@
 
 #include "object/prototype_node.hpp"
 #include "object/prototype_tree.hpp"
-#include "object/object_proxy.hpp"
-#include "object/object_exception.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -31,35 +29,16 @@ prototype_node::prototype_node()
 {
 }
 
-prototype_node::prototype_node(prototype_tree *tr, const char *t)
-    : tree(tr)
-    , type(t)
-{
-}
-
-prototype_node::prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
-  : tree(tr)
-  , first(new prototype_node)
-  , last(new prototype_node)
-  , producer(p)
-  , type(t)
-  , abstract(a)
-{
-  first->next = last.get();
-  last->prev = first.get();
-}
-
 prototype_node::~prototype_node()
 {}
 
-void prototype_node::initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a)
+void prototype_node::initialize(prototype_tree *tr, const char *t, bool a)
 {
-  tree = tr;
+  tree_ = tr;
   first.reset(new prototype_node);
   last.reset(new prototype_node);
-  producer.reset(p);
-  type.assign(t);
-  abstract = a;
+  type_.assign(t);
+  abstract_ = a;
   first->next = last.get();
   last->prev = first.get();
 }
@@ -76,6 +55,15 @@ prototype_node::size() const
   return count;
 }
 
+const char *prototype_node::type() const
+{
+  return type_.c_str();
+}
+
+const char *prototype_node::type_id() const
+{
+  return typeid_.c_str();
+}
 
 void prototype_node::append(prototype_node *sibling)
 {
@@ -150,15 +138,15 @@ void prototype_node::insert(object_proxy *proxy)
      // insert as first; adjust "left" marker
 
     proxy->link(op_marker->prev_);
-    tree->adjust_left_marker(this, proxy->next_, proxy);
+    tree_->adjust_left_marker(this, proxy->next_, proxy);
   } else { // node->count == 0
 
      // there is no serializable in subtree
      //insert as last; adjust "right" marker
 
     proxy->link(op_marker);
-    tree->adjust_left_marker(this, proxy->next_, proxy);
-    tree->adjust_right_marker(this, proxy->prev_, proxy);
+    tree_->adjust_left_marker(this, proxy->next_, proxy);
+    tree_->adjust_right_marker(this, proxy->prev_, proxy);
   }
   // set prototype node
   proxy->node_ = this;
@@ -167,7 +155,7 @@ void prototype_node::insert(object_proxy *proxy)
   // find and insert primary key
   std::shared_ptr<basic_identifier> pk(proxy->primary_key_);
   if (pk) {
-    primary_key_map.insert(std::make_pair(pk, proxy));
+    id_map_.insert(std::make_pair(pk, proxy));
   }
 }
 
@@ -175,11 +163,11 @@ void prototype_node::remove(object_proxy *proxy)
 {
   if (proxy == op_first->next()) {
     // adjust left marker
-    tree->adjust_left_marker(this, op_first->next_, op_first->next_->next_);
+    tree_->adjust_left_marker(this, op_first->next_, op_first->next_->next_);
   }
   if (proxy == op_marker->prev()) {
     // adjust right marker
-    tree->adjust_right_marker(this, proxy, op_marker->prev_->prev_);
+    tree_->adjust_right_marker(this, proxy, op_marker->prev_->prev_);
   }
   // unlink object_proxy
   if (proxy->prev()) {
@@ -192,7 +180,7 @@ void prototype_node::remove(object_proxy *proxy)
   proxy->next_ = nullptr;
 
   if (has_primary_key()) {
-    if (primary_key_map.erase(proxy->primary_key_) == 0) {
+    if (id_map_.erase(proxy->primary_key_) == 0) {
       // couldn't find and erase primary key
     }
   }
@@ -204,8 +192,8 @@ void prototype_node::remove(object_proxy *proxy)
 void prototype_node::clear(bool recursive)
 {
   if (!empty(true)) {
-    tree->adjust_left_marker(this, op_first->next_, op_marker);
-    tree->adjust_right_marker(this, op_marker->prev_, op_first);
+    tree_->adjust_left_marker(this, op_first->next_, op_marker);
+    tree_->adjust_right_marker(this, op_marker->prev_, op_first);
 
     while (op_first->next() != op_marker) {
       object_proxy *op = op_first->next_;
@@ -214,7 +202,7 @@ void prototype_node::clear(bool recursive)
       // delete serializable proxy and serializable
       delete op;
     }
-    primary_key_map.clear();
+    id_map_.clear();
     count = 0;
   }
 
@@ -311,6 +299,11 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
   }
 }
 
+prototype_tree *prototype_node::tree() const
+{
+  return tree_;
+}
+
 bool prototype_node::is_child_of(const prototype_node *parent) const
 {
   const prototype_node *node = this;
@@ -328,24 +321,29 @@ bool prototype_node::has_children() const
 
 bool prototype_node::has_primary_key() const
 {
-  return primary_key.get() != nullptr;
+  return id_.get() != nullptr;
+}
+
+bool prototype_node::is_abstract() const
+{
+  return abstract_;
 }
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
-  t_primary_key_map::iterator i = std::find_if(primary_key_map.begin(), primary_key_map.end(), [pk](const t_primary_key_map::value_type &x) {
+  t_id_map::iterator i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const t_id_map::value_type &x) {
     return *pk == *(x.first);
   });
 //  t_primary_key_map::iterator i = primary_key_map.find(pk);
-  return (i != primary_key_map.end() ? i->second : nullptr);
+  return (i != id_map_.end() ? i->second : nullptr);
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
   if (pn.parent) {
-    os << "\t" << pn.parent->type << " -> " << pn.type << "\n";
+    os << "\t" << pn.parent->type_ << " -> " << pn.type_ << "\n";
   }
-  os << "\t" << pn.type << " [label=\"{" << pn.type << " (" << &pn << ")";
+  os << "\t" << pn.type_ << " [label=\"{" << pn.type_ << " (" << &pn << ")";
   os << "|{op_first|" << pn.op_first << "}";
   os << "|{op_marker|" << pn.op_marker << "}";
   os << "|{op_last|" << pn.op_last << "}";

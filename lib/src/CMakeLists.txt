@@ -1,9 +1,9 @@
 SET(OBJECT_SOURCES
-		object/object_inserter.cpp
-		object/object_deleter.cpp
-		object/object_container.cpp
+#		object/object_inserter.cpp
+#		object/object_deleter.cpp
+#		object/object_container.cpp
 		object/object_ptr.cpp
-		object/object_store.cpp
+#		object/object_store.cpp
 		object/object_proxy.cpp
 #		object/object_serializer.cpp
 		object/prototype_node.cpp
@@ -12,7 +12,9 @@ SET(OBJECT_SOURCES
 		object/foreign_key_analyzer.cpp
 		object/identifier_resolver.cpp
 		object/basic_identifier.cpp
-		object/identifier.cpp object/detail/relation_resolver.cpp)
+		object/identifier.cpp
+		object/detail/relation_resolver.cpp
+		object/prototype_iterator.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -46,12 +48,12 @@ SET(OBJECT_HEADER
 		../include/object/object_exception.hpp
 		../include/object/object_ptr.hpp
 #		../include/object/object_store.hpp
-		../include/object/object_container.hpp
-		../include/object/object_inserter.hpp
-		../include/object/object_deleter.hpp
+#		../include/object/object_container.hpp
+#		../include/object/object_inserter.hpp
+#		../include/object/object_deleter.hpp
 #		../include/object/object_list.hpp
 #		../include/object/object_vector.hpp
-		../include/object/object_producer.hpp
+#		../include/object/object_producer.hpp
 #		../include/object/linked_object_list.hpp
 #		../include/object/object_view.hpp
 		../include/object/object_proxy.hpp
@@ -69,7 +71,7 @@ SET(OBJECT_HEADER
 		../include/object/identifier_resolver.hpp
 		../include/object/primary_key_reader.hpp
 		../include/object/basic_identifier.hpp
-		../include/object/detail/relation_resolver.hpp)
+		../include/object/detail/relation_resolver.hpp ../include/object/prototype_iterator.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

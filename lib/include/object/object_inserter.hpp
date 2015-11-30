@@ -23,6 +23,7 @@
 #endif
 
 #include "object/object_proxy.hpp"
+#include "object/object_ptr.hpp"
 
 #include <stack>
 
@@ -31,7 +32,6 @@ namespace oos {
 class object_store;
 class object_base_ptr;
 class serializable;
-class object_proxy;
 class object_container;
 
 /**
@@ -60,15 +60,65 @@ public:
   object_inserter(object_store &ostore);
   ~object_inserter();
 
-  void insert(object_proxy *proxy);
+  template < class T >
+  void insert(object_proxy *proxy)
+  {
+    object_proxies_.clear();
+    while (!object_proxy_stack_.empty()) {
+      object_proxy_stack_.pop();
+    }
+
+    object_proxies_.insert(proxy);
+    object_proxy_stack_.push(proxy);
+    if (proxy->obj()) {
+      oos::access::deserialize(*this, *proxy->obj<T>());
+//      proxy->obj()->deserialize(*this);
+    }
+  }
 
   template < class T >
   void serialize(const char*, T&) {}
 
   void serialize(const char*, char*, size_t) {}
-  void serialize(const char*, object_base_ptr &x);
-  void serialize(const char*, object_container &x);
 
+  template < class T, bool TYPE >
+  void serialize(const char*, object_holder<T, TYPE> &x)
+  {
+    // mark serializable pointer as internal
+    x.is_internal_ = true;
+
+    if (!x.proxy_) {
+      return;
+    }
+
+    if (x.is_reference()) {
+      x.proxy_->link_ref();
+    } else if (x.ptr() && x.id()){
+      x.proxy_->link_ptr();
+    }
+    if (x.ptr()) {
+      bool new_object = object_proxies_.insert(x.proxy_).second;
+      if (x.id()) {
+        // do the pointer count
+//      x.proxy_->link_ptr();
+        if (new_object) {
+          object_proxy_stack_.push(x.proxy_);
+          oos::access::deserialize(*this, *x.get());
+//          x.ptr()->deserialize(*this);
+          object_proxy_stack_.pop();
+        }
+      } else if (new_object){
+        // new object
+        insert_into_store(x.proxy_);
+      }
+    }
+  }
+
+  void serialize(const char*, object_container &x);
+  
+private:
+  void insert_into_store(object_proxy *proxy);
+  
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;
 

@@ -15,207 +15,11 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "object/prototype_tree.hpp"
-#include "object/object_proxy.hpp"
-#include "object/access.hpp"
 
-#include "object/object_container.hpp"
-
-#include <iterator>
 #include <algorithm>
 #include <iostream>
 
 namespace oos {
-
-prototype_iterator::prototype_iterator()
-  : node_(0)
-{}
-
-prototype_iterator::prototype_iterator(prototype_iterator::pointer node)
-  : node_(node)
-{}
-
-prototype_iterator::prototype_iterator(const prototype_iterator &x)
-  : node_(x.node_)
-{}
-
-prototype_iterator& prototype_iterator::operator=(const prototype_iterator &x)
-{
-  node_ = x.node_;
-  return *this;
-}
-
-prototype_iterator::~prototype_iterator()
-{}
-
-bool prototype_iterator::operator==(const prototype_iterator &i) const
-{
-  return (node_ == i.node_);
-}
-
-bool prototype_iterator::operator==(const const_prototype_iterator &i) const
-{
-  return node_ == i.get();
-}
-
-bool prototype_iterator::operator!=(const prototype_iterator &i) const
-{
-  return !operator==(i);
-}
-
-
-bool prototype_iterator::operator!=(const const_prototype_iterator &i) const
-{
-  return !operator==(i);
-}
-
-prototype_iterator::self& prototype_iterator::operator++()
-{
-  increment();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator++(int)
-{
-  prototype_node *tmp = node_;
-  increment();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::self& prototype_iterator::operator--()
-{
-  decrement();
-  return *this;
-}
-
-prototype_iterator::self prototype_iterator::operator--(int)
-{
-  prototype_node *tmp = node_;
-  decrement();
-  return prototype_iterator(tmp);
-}
-
-prototype_iterator::pointer prototype_iterator::operator->() const
-{
-  return node_;
-}
-
-prototype_iterator::reference prototype_iterator::operator*() const
-{
-  return *node_;
-}
-
-prototype_iterator::pointer prototype_iterator::get() const
-{
-  return node_;
-}
-
-void prototype_iterator::increment()
-{
-  if (node_) {
-    node_ = node_->next_node();
-  }
-}
-void prototype_iterator::decrement()
-{
-  if (node_) {
-    node_ = node_->previous_node();
-  }
-}
-
-const_prototype_iterator::const_prototype_iterator()
-  : node_(0)
-{}
-
-const_prototype_iterator::const_prototype_iterator(const_prototype_iterator::pointer node)
-  : node_(node)
-{}
-
-const_prototype_iterator::const_prototype_iterator(const const_prototype_iterator &x)
-  : node_(x.node_)
-{}
-
-const_prototype_iterator::const_prototype_iterator(const prototype_iterator &x)
-  : node_(x.node_)
-{}
-
-const_prototype_iterator& const_prototype_iterator::operator=(const const_prototype_iterator &x)
-{
-  node_ = x.node_;
-  return *this;
-}
-
-const_prototype_iterator& const_prototype_iterator::operator=(const prototype_iterator &x)
-{
-  node_ = x.node_;
-  return *this;
-}
-
-const_prototype_iterator::~const_prototype_iterator()
-{}
-
-bool const_prototype_iterator::operator==(const const_prototype_iterator &i) const
-{
-  return (node_ == i.node_);
-}
-
-bool const_prototype_iterator::operator!=(const const_prototype_iterator &i) const
-{
-  return !operator==(i);
-}
-
-const_prototype_iterator::self& const_prototype_iterator::operator++()
-{
-  increment();
-  return *this;
-}
-
-const_prototype_iterator::self const_prototype_iterator::operator++(int)
-{
-  pointer tmp = node_;
-  increment();
-  return const_prototype_iterator(tmp);
-}
-
-const_prototype_iterator::self& const_prototype_iterator::operator--()
-{
-  decrement();
-  return *this;
-}
-
-const_prototype_iterator::self const_prototype_iterator::operator--(int)
-{
-  pointer tmp = node_;
-  decrement();
-  return const_prototype_iterator(tmp);
-}
-
-const_prototype_iterator::pointer const_prototype_iterator::operator->() const
-{
-  return node_;
-}
-
-const_prototype_iterator::reference const_prototype_iterator::operator*() const
-{
-  return *node_;
-}
-
-const_prototype_iterator::pointer const_prototype_iterator::get() const
-{
-  return node_;
-}
-
-void const_prototype_iterator::increment()
-{
-  if (node_) {
-    node_ = node_->next_node();
-  }
-}
-void const_prototype_iterator::decrement()
-{
-  if (node_) {
-    node_ = node_->previous_node();
-  }
-}
 
 prototype_tree::prototype_tree()
   : first_(new prototype_node)
@@ -311,7 +115,7 @@ void prototype_tree::dump(std::ostream &out) const
   do {
     int d = depth(node.get());
     for (int i = 0; i < d; ++i) out << " ";
-    out << "type: " << node->type << '\n';
+    out << "type: " << node->type_ << '\n';
     out.flush();
   } while (++node != end());
   out << "}" << std::endl;
@@ -418,14 +222,14 @@ prototype_node* prototype_tree::remove_prototype_node(prototype_node *node, bool
   // unlink node
   node->unlink();
   // get iterator
-  t_prototype_map::iterator j = prototype_map_.find(node->type.c_str());
+  t_prototype_map::iterator j = prototype_map_.find(node->type_.c_str());
   if (j != prototype_map_.end()) {
     prototype_map_.erase(j);
   }
   // find item in typeid map
-  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->producer->classname());
+  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->type_id());
   if (k != typeid_prototype_map_.end()) {
-    k->second.erase(node->type);
+    k->second.erase(node->type_);
     if (k->second.empty()) {
       typeid_prototype_map_.erase(k);
     }
@@ -470,54 +274,6 @@ void prototype_tree::adjust_right_marker(prototype_node *root, object_proxy* old
     }
     node = node->next_node();
   }
-}
-
-prototype_node *prototype_tree::acquire(object_base_producer *producer, const char *type, bool abstract)
-{
-  prototype_node *node = nullptr;
-  t_prototype_map::iterator i = prototype_map_.find(type);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << type);
-  }
-
-  /* unknown type name try for typeid
-   * (unfinished prototype)
-   */
-  i = prototype_map_.find(producer->classname());
-  if (i == prototype_map_.end()) {
-    /*
-     * no typeid found, seems to be
-     * a new type
-     * to be sure check in typeid map
-     */
-    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(producer->classname());
-    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-      /* unexpected found the
-       * typeid check for type
-       */
-      /* type found in typeid map
-       * throw exception
-       */
-      throw object_exception("unexpectly found prototype");
-    } else {
-      /* insert new prototype and add to
-       * typeid map
-       */
-      // create new one
-      node = new prototype_node(this, producer, type, abstract);
-    }
-  } else {
-    /* prototype is unfinished,
-     * finish it, insert by type name,
-     * remove typeid entry and add to
-     * typeid map
-     */
-    node = i->second;
-    node->initialize(this, producer, type, abstract);
-    prototype_map_.erase(i);
-  }
-
-  return node;
 }
 
 prototype_node *prototype_tree::prepare_insert(const char *type)

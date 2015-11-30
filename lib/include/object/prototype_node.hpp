@@ -33,7 +33,6 @@
 #endif
 
 #include "object/identifier.hpp"
-#include "object/object_producer.hpp"
 
 #include <map>
 #include <list>
@@ -43,20 +42,19 @@
 
 namespace oos {
 
-class serializable;
 class prototype_tree;
 class object_proxy;
 
-template<class T> class pk_hash;
+template<class T> class id_hash;
 
 /// @cond OOS_DEV
 template<>
-class pk_hash<std::shared_ptr<basic_identifier> >
+class id_hash<std::shared_ptr<basic_identifier> >
 {
 public:
-  size_t operator()(const std::shared_ptr<basic_identifier> &pk) const
+  size_t operator()(const std::shared_ptr<basic_identifier> &id) const
   {
-    size_t h = pk->hash();
+    size_t h = id->hash();
     return h;
   }
 };
@@ -87,18 +85,6 @@ public:
   prototype_node();
 
   /**
-   * @brief Creates a prototype_node only with typename
-   *
-   * Creates a new prototype node only with typename and
-   * corresponding tree. Concrete type and producer will be
-   * added later.
-   *
-   * @param tr The corresponding prototype_tree
-   * @param t The typename
-   */
-  prototype_node(prototype_tree *tr, const char *t);
-
-  /**
    * @brief Creates a new prototype_node.
    * 
    * Creates a new prototype_node which creates an
@@ -110,7 +96,18 @@ public:
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  prototype_node(prototype_tree *tr, object_base_producer *p, const char *t, bool a = false);
+  prototype_node(prototype_tree *tree, const char *type, const char *type_id = "", bool abstract = false)
+    : tree_(tree)
+    , first(new prototype_node)
+    , last(new prototype_node)
+    , type_(type)
+    , typeid_(type_id)
+    , abstract_(abstract)
+  {
+    first->next = last.get();
+    last->prev = first.get();
+  }
+
 
   ~prototype_node();
 
@@ -125,7 +122,7 @@ public:
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  void initialize(prototype_tree *tr, object_base_producer *p, const char *t, bool a);
+  void initialize(prototype_tree *tr, const char *t, bool a);
 
   /**
    * Returns true if serializable proxy list is empty. If self is true, only
@@ -143,6 +140,9 @@ public:
    * @return The number of objects.
    */
   unsigned long size() const;
+
+  const char* type() const;
+  const char* type_id() const;
 
   /**
    * Appends the given prototype node as a sibling
@@ -221,6 +221,8 @@ public:
    */
   prototype_node* previous_node(const prototype_node *root) const;
 
+  prototype_tree* tree() const;
+
   /**
    * Returns true if node is child of given parent node.
    * 
@@ -244,6 +246,18 @@ public:
    */
   bool has_primary_key() const;
 
+  bool is_abstract() const;
+
+  /**
+   * Prints the node in graphviz layout to the stream.
+   *
+   * @param os The ostream to write to.
+   * @param pn The prototype_node to be written.
+   * @return The modified ostream.
+   */
+  friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
+
+private:
   /**
    * Find the underlying proxy of the given primary key.
    * If no proxy is found nullptr is returned
@@ -253,19 +267,13 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
-  /**
-   * Prints the node in graphviz layout to the stream.
-   * 
-   * @param os The ostream to write to.
-   * @param pn The prototype_node to be written.
-   * @return The modified ostream.
-   */
-  friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
+private:
+  friend class prototype_tree;
 
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
 
-  prototype_tree *tree = nullptr;   /**< The prototype tree to which the node belongs */
+  prototype_tree *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
   // tree links
   prototype_node *parent = nullptr;       /**< The parent node */
@@ -273,9 +281,6 @@ public:
   prototype_node *next = nullptr;         /**< The next node */
   std::unique_ptr<prototype_node> first;  /**< The first children node */
   std::unique_ptr<prototype_node> last;   /**< The last children node */
-
-  // data
-  std::unique_ptr<object_base_producer> producer; /**< The serializable producer */
 
   /* this map holds information about
    * all prototypes in which this prototype
@@ -292,36 +297,23 @@ public:
   unsigned int depth = 0;  /**< The depth of the node inside of the tree. */
   unsigned long count = 0; /**< The total count of elements. */
 
-  std::string type;	   /**< The type name of the serializable */
-  
-  bool abstract = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
+  std::string type_;	       /**< The type name of the prototype node */
+  std::string typeid_;	   /**< The type id of the prototype node */
 
-  typedef std::shared_ptr<basic_identifier> pk_ptr; /**< Shortcut to shared identifier ptr */
+  bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  /**
-   * equal function object for identifier
-   */
-  struct pk_equal : public std::binary_function<pk_ptr, pk_ptr, bool>
-  {
-    /**
-     * Returns true if identifier are equal
-     *
-     * @param a Left identifier to compare.
-     * @param b Right identifier to compare.
-     * @return True on equality.
-     */
-      bool operator()(const pk_ptr &a, const pk_ptr &b) const { return *a == *b; }
-  };
+  typedef std::shared_ptr<basic_identifier> id_ptr; /**< Shortcut to shared identifier ptr */
+
   /**
    * Holds the primary keys of all proxies in this node
    */
-  typedef std::unordered_map<pk_ptr, object_proxy*, pk_hash<pk_ptr> > t_primary_key_map;
-  t_primary_key_map primary_key_map; /**< The identifier to object_proxy map */
+  typedef std::unordered_map<id_ptr, object_proxy*, id_hash<id_ptr> > t_id_map;
+  t_id_map id_map_; /**< The identifier to object_proxy map */
 
   /**
    * a primary key prototype to clone from
    */
-  std::unique_ptr<basic_identifier> primary_key;
+  std::unique_ptr<basic_identifier> id_;
 
   /**
    * a list of prototype_node and ids for

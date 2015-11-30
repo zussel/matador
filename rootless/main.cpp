@@ -8,7 +8,7 @@ int main()
 {
   prototype_tree tree;
 
-  tree.insert<person>("person");
+  tree.attach<person>("person");
 
   prototype_iterator i = tree.find("person");
 

@@ -6,6 +6,9 @@
 #define OOS_RELATION_RESOLVER_HPP
 
 #include "object/access.hpp"
+#include <object/prototype_iterator.hpp>
+#include <object/prototype_tree.hpp>
+#include <object/object_ptr.hpp>
 
 #include <string>
 #include <list>
@@ -54,7 +57,18 @@ public:
   void serialize(const char*, const V&) {}
   void serialize(const char*, const char*, int) {}
   void serialize(const char *id, const object_container &x);
-  void serialize(const char *, const object_base_ptr &x);
+
+  template < class T, bool TYPE >
+  void serialize(const char *, const object_holder<T, TYPE> &x)
+  {
+    prototype_iterator pi = node_.tree()->find(x.type());
+    if (pi == node_.tree()->end()) {
+      // if there is no such prototype node
+      // insert a new one (it is automatically marked
+      // as uninitialized)
+      node_.tree()->attach<T>(x.type());
+    }
+  }
 
 private:
   prototype_node &node_;

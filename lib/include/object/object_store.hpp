@@ -518,25 +518,29 @@ object_proxy* object_store::insert_object(T *o, bool notify)
   prototype_iterator node = prototype_tree_.find(typeid(*o).name());
   if (node == prototype_tree_.end()) {
     // raise exception
-    throw object_exception("couldn't insert serializable");
+    throw object_exception("unknown object type");
   }
   // retrieve and set new unique number into serializable
   object_proxy *oproxy = nullptr;
   t_serializable_proxy_map::iterator i = serializable_map_.find(o);
   if (i != serializable_map_.end()) {
-    // serializable exists in serializable store
+    // object exists in object store
+    // get object proxy
     oproxy = i->second;
     if (oproxy->linked()) {
-      // an serializable exists in map.
+      // an object exists in map.
       // replace it with new serializable
       // unlink it and
       // link it into new place in list
       oproxy->node()->remove(oproxy);
+      // Todo: replace reset with a propper replace method
+      // (call remove on node)
+//      oproxy->replace(o);
     }
     oproxy->reset(o);
   } else {
-    /* serializable doesn't exist in map
-     * if serializable has a valid id, update
+    /* object doesn't exist in map
+     * if object has a valid id, update
      * the sequencer else assign new
      * unique id
      */
@@ -546,12 +550,16 @@ object_proxy* object_store::insert_object(T *o, bool notify)
     }
   }
 
+//  if (oproxy->is_identifiable()) {
   if (oproxy->has_primary_key()) {
     // if object has primary key of type short, int or long
     // set the id of proxy as value
+//    identifier_assigner<unsigned long>::assign(oproxy->id(), o);
     primary_key_reader<unsigned long> reader(oproxy->id());
     o->deserialize(reader);
   }
+
+  node->insert<T>(oproxy);
 
   return initialze_proxy(oproxy, node, notify);
 }

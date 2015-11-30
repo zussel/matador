@@ -76,7 +76,7 @@ public:
    *
    * @param i The id of the unknown serializable.
    */
-  explicit object_proxy(unsigned long id);
+//  explicit object_proxy(unsigned long id);
 
   /**
    * Create a new object proxy with primary key

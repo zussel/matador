@@ -16,7 +16,7 @@
  */
 
 #include "object/object_ptr.hpp"
-#include "object/object_store.hpp"
+#include "object/object_exception.hpp"
 
 using namespace std;
 
@@ -177,7 +177,8 @@ void* object_base_ptr::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore()) {
-      proxy_->ostore()->mark_modified(proxy_);
+      // Todo: callback to object store
+//      proxy_->ostore()->mark_modified(proxy_);
     }
     return proxy_->obj();
   } else {

@@ -304,13 +304,6 @@ protected:
    */
   void owner(object_proxy *ownr);
 
-  /**
-   * Create a producer for the item type.
-   * 
-   * @return The producer for the item type.
-   */
-  virtual object_base_producer* create_item_producer() const = 0;
-
 private:
   virtual void reset() {}
 
