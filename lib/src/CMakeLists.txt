@@ -13,7 +13,6 @@ SET(OBJECT_SOURCES
 		object/identifier_resolver.cpp
 		object/basic_identifier.cpp
 		object/identifier.cpp
-		object/detail/relation_resolver.cpp
 		object/prototype_iterator.cpp)
 
 SET(OBJECT_INSTALL_HEADER
@@ -71,7 +70,9 @@ SET(OBJECT_HEADER
 		../include/object/identifier_resolver.hpp
 		../include/object/primary_key_reader.hpp
 		../include/object/basic_identifier.hpp
-		../include/object/detail/relation_resolver.hpp ../include/object/prototype_iterator.hpp)
+		../include/object/detail/relation_resolver.hpp
+		../include/object/detail/relation_resolver.impl
+		../include/object/prototype_iterator.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -234,7 +235,7 @@ SET(DATABASE_HEADER
   ../include/database/query_update.hpp
   ../include/database/token.hpp
   ../include/database/identifier_binder.hpp
-  ../include/database/statement_impl.hpp object/identifier.cpp)
+  ../include/database/statement_impl.hpp)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp

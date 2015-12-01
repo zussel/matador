@@ -2,9 +2,11 @@
 // Created by sascha on 11/25/15.
 //
 
-#include "object/detail/relation_resolver.hpp"
+#include "relation_resolver.hpp"
 
-#include "object/prototype_tree.hpp"
+#include "../object_ptr.hpp"
+#include "../prototype_iterator.hpp"
+#include "../prototype_tree.hpp"
 
 namespace oos {
 namespace detail {
@@ -35,6 +37,7 @@ namespace detail {
 //  // insert the relation
 //  pi->relations.insert(std::make_pair(node_.type, std::make_pair(&node_, id)));
 //}
+
 
 }
 }

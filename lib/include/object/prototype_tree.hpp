@@ -37,14 +37,61 @@
 #include "object/object_exception.hpp"
 #include "object/identifier_resolver.hpp"
 #include "object/foreign_key_analyzer.hpp"
+#include "object/object_ptr.hpp"
 
-#include "object/detail/relation_resolver.hpp"
-#include "object_ptr.hpp"
+//#include "object/detail/relation_resolver.hpp"
 
 #include <string>
 #include <unordered_map>
 
 namespace oos {
+namespace detail {
+
+class relation_resolver
+{
+public:
+  typedef std::list<std::string> string_list_t;
+  typedef string_list_t::const_iterator const_iterator;
+
+public:
+  relation_resolver(prototype_node &node)
+    : node_(node)
+  {}
+  virtual ~relation_resolver() {}
+
+  template < class T >
+  static void build(prototype_node &node)
+  {
+    relation_resolver resolver(node);
+    resolver.build<T>();
+  }
+
+  template < class T >
+  void build()
+  {
+    T obj;
+    oos::access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const V &x)
+  {
+    oos::access::serialize(*this, x);
+  }
+
+  template < class V >
+  void serialize(const char*, const V&) {}
+  void serialize(const char*, const char*, int) {}
+  void serialize(const char *, const object_container &) {}
+
+  template < class T, bool TYPE >
+  void serialize(const char *, const object_holder<T, TYPE> &x);
+
+private:
+  prototype_node &node_;
+};
+
+}
 
 /**
  * @brief This class holds all prototypes nodes in a tree
@@ -132,11 +179,11 @@ public:
   * @param abstract Indicates if the producers serializable is treated as an abstract node.
   * @return         Returns new inserted prototype iterator.
   */
-  template < class T >
-  iterator attach(const char *type, bool abstract = false)
-  {
-    return attach<T>(type, abstract);
-  }
+//  template < class T >
+//  iterator attach(const char *type, bool abstract = false)
+//  {
+//    return attach<T>(type, abstract);
+//  }
 
   /**
   * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -539,6 +586,21 @@ private:
   // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 };
+
+namespace detail {
+//#include "object/detail/relation_resolver.impl"
+template<class T, bool TYPE>
+void relation_resolver::serialize(const char *, const object_holder<T, TYPE> &x) {
+  prototype_iterator pi = node_.tree()->find(x.type());
+  if (pi == node_.tree()->end()) {
+    // if there is no such prototype node
+    // insert a new one (it is automatically marked
+    // as uninitialized)
+    node_.tree()->attach<T>(x.type());
+  }
+}
+
+}
 
 }
 

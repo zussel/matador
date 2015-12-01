@@ -1,6 +1,7 @@
 #include "object/prototype_tree.hpp"
 
 #include "person.hpp"
+#include "student.hpp"
 
 using namespace oos;
 
@@ -9,6 +10,7 @@ int main()
   prototype_tree tree;
 
   tree.attach<person>("person");
+  tree.attach<student, person>("student");
 
   prototype_iterator i = tree.find("person");
 
