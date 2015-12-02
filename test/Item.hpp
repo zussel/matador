@@ -786,10 +786,10 @@ public:
 //  std::string name;
 //  student_list_t students;
 //};
-
+*/
 class album;
 
-class track : public oos::serializable
+class track
 {
 public:
   typedef oos::object_ref<album> album_ref;
@@ -807,21 +807,23 @@ public:
     , index_(0)
   {}
   
-  virtual ~track() {}
+  ~track() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("title", title_);
-    deserializer.read("album", album_);
-    deserializer.read("track_index", index_);
+    deserializer.deserialize("id", id_);
+    deserializer.deserialize("title", title_);
+    deserializer.deserialize("album", album_);
+    deserializer.deserialize("track_index", index_);
   }
-  virtual void serialize(oos::serializer &serializer) const
+  template < class SERIALIZER >
+  virtual void serialize(SERIALIZER &serializer) const
   {
-    serializer.write("id", id_);
-    serializer.write("title", title_);
-    serializer.write("album", album_);
-    serializer.write("track_index", index_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("album", album_);
+    serializer.serialize("track_index", index_);
   }
 
   unsigned long id() { return id_.value(); }
@@ -836,7 +838,7 @@ public:
   void index(int i) { index_ = i; }
 };
 
-class album : public oos::serializable
+class album
 {
 public:
   typedef oos::object_ref<track> track_ref;
