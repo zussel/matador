@@ -22,9 +22,10 @@
 #include "object/object_ptr.hpp"
 
 #include <functional>
-#include <object/detail/relation_resolver.hpp>
 
 namespace oos {
+
+class object_proxy;
 
 namespace detail {
 

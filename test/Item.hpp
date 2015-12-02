@@ -18,18 +18,20 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include "object/serializable.hpp"
+#include <object/base_class.hpp>
 #include "object/identifier.hpp"
-#include "object/serializer.hpp"
-#include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/linked_object_list.hpp"
+#include "object/object_ptr.hpp"
+//#include "object/object_list.hpp"
+//#include "object/object_vector.hpp"
+//#include "object/linked_object_list.hpp"
 
 #include "tools/time.hpp"
 #include "tools/date.hpp"
 #include "tools/varchar.hpp"
 
-class Item : public oos::serializable
+#include <ostream>
+
+class Item
 {
 public:
   Item()
@@ -83,7 +85,7 @@ public:
   {
     init();
   }
-  virtual ~Item() {}
+  ~Item() {}
 
 private:
   void init() {
@@ -97,43 +99,43 @@ private:
   }
 
 public:
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class DESERIALIZER > void deserialize(DESERIALIZER &deserializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("val_char", char_);
-    deserializer.read("val_float", float_);
-    deserializer.read("val_double", double_);
-    deserializer.read("val_short", short_);
-    deserializer.read("val_int", int_);
-    deserializer.read("val_long", long_);
-    deserializer.read("val_unsigned_short", unsigned_short_);
-    deserializer.read("val_unsigned_int", unsigned_int_);
-    deserializer.read("val_unsigned_long", unsigned_long_);
-    deserializer.read("val_bool", bool_);
-    deserializer.read("val_cstr", cstr_, CSTR_LEN);
-    deserializer.read("val_string", string_);
-    deserializer.read("val_varchar", varchar_);
-    deserializer.read("val_date", date_);
-    deserializer.read("val_time", time_);
+    deserializer.deserialize("id", id_);
+    deserializer.deserialize("val_char", char_);
+    deserializer.deserialize("val_float", float_);
+    deserializer.deserialize("val_double", double_);
+    deserializer.deserialize("val_short", short_);
+    deserializer.deserialize("val_int", int_);
+    deserializer.deserialize("val_long", long_);
+    deserializer.deserialize("val_unsigned_short", unsigned_short_);
+    deserializer.deserialize("val_unsigned_int", unsigned_int_);
+    deserializer.deserialize("val_unsigned_long", unsigned_long_);
+    deserializer.deserialize("val_bool", bool_);
+    deserializer.deserialize("val_cstr", cstr_, CSTR_LEN);
+    deserializer.deserialize("val_string", string_);
+    deserializer.deserialize("val_varchar", varchar_);
+    deserializer.deserialize("val_date", date_);
+    deserializer.deserialize("val_time", time_);
   }
-  virtual void serialize(oos::serializer &serializer) const
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer) const
   {
-    serializer.write("id", id_);
-    serializer.write("val_char", char_);
-    serializer.write("val_float", float_);
-    serializer.write("val_double", double_);
-    serializer.write("val_short", short_);
-    serializer.write("val_int", int_);
-    serializer.write("val_long", long_);
-    serializer.write("val_unsigned_short", unsigned_short_);
-    serializer.write("val_unsigned_int", unsigned_int_);
-    serializer.write("val_unsigned_long", unsigned_long_);
-    serializer.write("val_bool", bool_);
-    serializer.write("val_cstr", cstr_, CSTR_LEN);
-    serializer.write("val_string", string_);
-    serializer.write("val_varchar", varchar_);
-    serializer.write("val_date", date_);
-    serializer.write("val_time", time_);
+    serializer.serialize("id", id_);
+    serializer.serialize("val_char", char_);
+    serializer.serialize("val_float", float_);
+    serializer.serialize("val_double", double_);
+    serializer.serialize("val_short", short_);
+    serializer.serialize("val_int", int_);
+    serializer.serialize("val_long", long_);
+    serializer.serialize("val_unsigned_short", unsigned_short_);
+    serializer.serialize("val_unsigned_int", unsigned_int_);
+    serializer.serialize("val_unsigned_long", unsigned_long_);
+    serializer.serialize("val_bool", bool_);
+    serializer.serialize("val_cstr", cstr_, CSTR_LEN);
+    serializer.serialize("val_string", string_);
+    serializer.serialize("val_varchar", varchar_);
+    serializer.serialize("val_date", date_);
+    serializer.serialize("val_time", time_);
   }
 
   unsigned long id() const { return id_.value(); }
@@ -227,17 +229,17 @@ public:
   {}
   virtual ~ObjectItem() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class DESERIALIZER > void deserialize(DESERIALIZER &deserializer)
   {
-    Item::deserialize(deserializer);
-    deserializer.read("ref", ref_);
-    deserializer.read("ptr", ptr_);
+    deserializer.deserialize(*oos::base_class<Item>(this));
+    deserializer.deserialize("ref", ref_);
+    deserializer.deserialize("ptr", ptr_);
   }
-  virtual void serialize(oos::serializer &serializer) const
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer) const
   {
     Item::serialize(serializer);
-    serializer.write("ref", ref_);
-    serializer.write("ptr", ptr_);
+    serializer.serialize("ref", ref_);
+    serializer.serialize("ptr", ptr_);
   }
 
   void ref(const value_ref &r) { ref_ = r; }
@@ -257,7 +259,7 @@ private:
   value_ref ref_;
   value_ptr ptr_;
 };
-
+/*
 template < class T >
 class List : public oos::serializable
 {
@@ -266,7 +268,6 @@ public:
   typedef List<T> self;
   typedef oos::object_list<self, T, true> list_t;
   typedef typename list_t::item_type item_type;
-/*  typedef typename list_t::item_type item_ptr;*/
   typedef typename list_t::size_type size_type;
   typedef typename list_t::iterator iterator;
   typedef typename list_t::const_iterator const_iterator;
@@ -840,7 +841,7 @@ class album : public oos::serializable
 public:
   typedef oos::object_ref<track> track_ref;
   typedef oos::object_vector<album, track_ref, false> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
+  typedef track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;
 
@@ -906,7 +907,7 @@ class playlist : public oos::serializable
 public:
   typedef oos::object_ref<track> track_ref;
   typedef oos::object_vector<playlist, track_ref, true> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
+  typedef track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
   typedef track_list_t::const_iterator const_iterator;
 
@@ -1036,5 +1037,5 @@ public:
     std::string name;
     children_list_t children;
 };
-
+*/
 #endif /* ITEM_HPP */

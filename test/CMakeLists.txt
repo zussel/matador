@@ -22,14 +22,14 @@ SET (TEST_TOOLS_SOURCES
 SET (TEST_HEADER Item.hpp)
 
 SET (TEST_OBJECT_SOURCES
-  object/ObjectPrototypeTestUnit.cpp
-  object/ObjectPrototypeTestUnit.hpp
-  object/ObjectStoreTestUnit.cpp
-  object/ObjectStoreTestUnit.hpp
-  object/ObjectListTestUnit.cpp
-  object/ObjectListTestUnit.hpp
-  object/ObjectVectorTestUnit.cpp
-  object/ObjectVectorTestUnit.hpp
+#  object/ObjectPrototypeTestUnit.cpp
+#  object/ObjectPrototypeTestUnit.hpp
+#  object/ObjectStoreTestUnit.cpp
+#  object/ObjectStoreTestUnit.hpp
+#  object/ObjectListTestUnit.cpp
+#  object/ObjectListTestUnit.hpp
+#  object/ObjectVectorTestUnit.cpp
+#  object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
   object/PrimaryKeyUnitTest.cpp
@@ -63,8 +63,8 @@ ADD_EXECUTABLE(test_oos
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
-  ${TEST_JSON_SOURCES}
-  ${TEST_DATABASE_SOURCES}
+#  ${TEST_JSON_SOURCES}
+#  ${TEST_DATABASE_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")

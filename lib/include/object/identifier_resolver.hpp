@@ -18,8 +18,6 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-#include "object/serializable.hpp"
 #include "object/basic_identifier.hpp"
 #include "object/access.hpp"
 
@@ -58,6 +56,12 @@ public:
       return nullptr;
     }
     return resolver.id_;
+  }
+
+  template < class V >
+  void deserialize(V &x)
+  {
+    oos::access::deserialize(*this, x);
   }
 
   template < class V >

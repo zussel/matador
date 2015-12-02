@@ -70,9 +70,7 @@ SET(OBJECT_HEADER
 		../include/object/identifier_resolver.hpp
 		../include/object/primary_key_reader.hpp
 		../include/object/basic_identifier.hpp
-		../include/object/detail/relation_resolver.hpp
-		../include/object/detail/relation_resolver.impl
-		../include/object/prototype_iterator.hpp)
+		../include/object/prototype_iterator.hpp ../include/object/base_class.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
