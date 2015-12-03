@@ -85,7 +85,7 @@ public:
   void serialize(const T *o, byte_buffer *buffer)
   {
     buffer_ = buffer;
-    oos::access::serialize(*this, o);
+    oos::access::serialize(*this, *o);
     buffer_ = nullptr;
   }
 
@@ -102,7 +102,7 @@ public:
   {
     ostore_ = ostore;
     buffer_ = buffer;
-    oos::access::deserialize(*this, o);
+    oos::access::deserialize(*this, *o);
     buffer_ = nullptr;
     ostore_ = nullptr;
   }

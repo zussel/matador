@@ -25,12 +25,13 @@ public:
 
 public:
 
-  void read_value(const char*, T &x);
-  void read_value(const char*, basic_identifier &x);
+  void deserialize(const char*, T &x);
+  template < class V >
+  void deserialize(const char*, identifier<V> &x);
 
   template < class V >
-  void read_value(const char*, V &) {}
-  void read_value(const char*, char *, size_t) {}
+  void deserialize(const char*, V &) {}
+  void deserialize(const char*, char *, size_t) {}
 
 private:
   T value_;
@@ -38,17 +39,21 @@ private:
 };
 
 template < class T >
-void primary_key_reader<T>::read_value(const char*, T &x) {
+void primary_key_reader<T>::deserialize(const char*, T &x) {
   if (reading_pk_) {
     x = value_;
   }
 }
 
 template < class T >
-void primary_key_reader<T>::read_value(const char*, basic_identifier &x)
+template < class V >
+void primary_key_reader<T>::deserialize(const char *id, identifier<V> &x)
 {
   reading_pk_ = true;
-  x.deserialize("", *this);
+  // Todo; check correctness
+  V val;
+  deserialize(id, val);
+  x.value(val);
   reading_pk_ = false;
 }
 

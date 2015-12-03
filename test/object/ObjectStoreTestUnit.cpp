@@ -22,7 +22,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
+//  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
@@ -107,7 +107,7 @@ void ObjectStoreTestUnit::optr_test()
 
   UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
 }
-
+/*
 void
 ObjectStoreTestUnit::expression_test()
 {
@@ -176,7 +176,7 @@ ObjectStoreTestUnit::expression_test()
   UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }
-
+*/
 void
 ObjectStoreTestUnit::serializer()
 {  
@@ -331,13 +331,9 @@ ObjectStoreTestUnit::get_test()
 void
 ObjectStoreTestUnit::simple_object()
 {
-  serializable *o = ostore_.create("item");
+  Item *a = ostore_.create<Item>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
-  
-  Item *a = dynamic_cast<Item*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
   
   typedef object_ptr<Item> item_ptr;
   
@@ -353,13 +349,9 @@ ObjectStoreTestUnit::simple_object()
 void
 ObjectStoreTestUnit::object_with_sub_object()
 {
-  serializable *o = ostore_.create("object_item");
+  ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem>");
-  
-  ObjectItem<Item> *s = dynamic_cast<ObjectItem<Item>*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(s, "couldn't cast serializable to ObjectItem<Item>");
+  UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
   
   typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
   
@@ -385,13 +377,9 @@ ObjectStoreTestUnit::multiple_simple_objects()
   size_t elem_size = 10;
   // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("item");
+    Item *a = ostore_.create<Item>();
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
-    
-    Item *a = dynamic_cast<Item*>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
     
     item_ptr simple = ostore_.insert(a);
   }
@@ -410,15 +398,11 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   // create 10 objects
   size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("object_item");
+    ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
+
+    UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem<Item> >");
-    
-    ObjectItem<Item>  *a = dynamic_cast<ObjectItem<Item> *>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to ObjectItem<Item> ");
-    
-    ows_ptr ows = ostore_.insert(a);
+    ows_ptr ows = ostore_.insert(s);
   }
 
   typedef object_view<ObjectItem<Item> > withsub_view_t;
@@ -469,9 +453,9 @@ ObjectStoreTestUnit::delete_object()
 void
 ObjectStoreTestUnit::hierarchy()
 {
-  ostore_.insert_prototype<ItemA, Item>("ITEM_A");
-  ostore_.insert_prototype<ItemB, Item>("ITEM_B");
-  ostore_.insert_prototype<ItemC, Item>("ITEM_C");
+  ostore_.attach<ItemA, Item>("ITEM_A");
+  ostore_.attach<ItemB, Item>("ITEM_B");
+  ostore_.attach<ItemC, Item>("ITEM_C");
   
   /* Insert 5 object of each item
    * object type
@@ -603,14 +587,14 @@ ObjectStoreTestUnit::clear_test()
   item_view_t iview(ostore_);
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE((int)iview.empty(), "item view shouldn't be empty");
-  UNIT_ASSERT_FALSE((int)ostore_.empty(), "serializable store shouldn't be empty");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view shouldn't be empty");
+  UNIT_ASSERT_FALSE(ostore_.empty(), "serializable store shouldn't be empty");
 
   ostore_.clear();
 
-  UNIT_ASSERT_TRUE((int)ostore_.empty(), "serializable store must be empty");
+  UNIT_ASSERT_TRUE(ostore_.empty(), "serializable store must be empty");
   UNIT_ASSERT_EQUAL((int)iview.size(), 0, "invalid item view size");
-  UNIT_ASSERT_TRUE((int)iview.empty(), "item view must be empty");
+  UNIT_ASSERT_TRUE(iview.empty(), "item view must be empty");
 
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
@@ -813,7 +797,7 @@ void ObjectStoreTestUnit::test_structure_cyclic()
   };
 
   object_store ostore;
-  ostore.prototypes().insert<cyclic>("cyclic");
+  ostore.prototypes().attach<cyclic>("cyclic");
 
   using cyclic_ptr = object_ptr<cyclic>;
 
@@ -832,12 +816,12 @@ void ObjectStoreTestUnit::test_structure_cyclic()
   UNIT_ASSERT_EQUAL(c2.ref_count(), 0UL, "reference count must be zero");
   UNIT_ASSERT_EQUAL(c2.ptr_count(), 1UL, "reference count must be one");
 }
-
+/*
 void ObjectStoreTestUnit::test_structure_container()
 {
   object_store ostore;
-  ostore.prototypes().insert<child>("cild");
-  ostore.prototypes().insert<children_list>("cildren_list");
+  ostore.prototypes().attach<child>("cild");
+  ostore.prototypes().attach<children_list>("cildren_list");
 
   using childrens_ptr = object_ptr<children_list>;
 
@@ -854,7 +838,7 @@ void ObjectStoreTestUnit::test_structure_container()
   UNIT_ASSERT_EQUAL(c1.ptr_count(), 0UL, "reference count must be one");
 
 }
-
+*/
 void ObjectStoreTestUnit::test_transient_optr()
 {
   typedef object_ptr<Item> item_ptr;
