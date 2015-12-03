@@ -15,8 +15,6 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/serializable.hpp"
-
 #include "object/object_store.hpp"
 #include "object/object_observer.hpp"
 #include "object/object_container.hpp"
@@ -49,7 +47,7 @@ const prototype_tree &object_store::prototypes() const {
   return prototype_tree_;
 }
 
-void object_store::remove_prototype(const char *type)
+void object_store::detach(const char *type)
 {
   prototype_tree_.remove(type);
 }
@@ -149,7 +147,7 @@ void object_store::insert(object_container &oc)
 {
   oc.install(this);
 }
-
+/*
 object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
 {// insert new element node
   node->insert(oproxy);
@@ -166,43 +164,8 @@ object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iter
 
   return oproxy;
 }
+*/
 
-bool object_store::is_removable(const object_base_ptr &o)
-{
-  return object_deleter_.is_deletable(o.proxy_);
-}
-
-void
-object_store::remove(object_base_ptr &o)
-{
-  remove(o.proxy_);
-}
-
-void
-object_store::remove(object_proxy *proxy)
-{
-  if (proxy == nullptr) {
-    throw object_exception("serializable proxy is nullptr");
-  }
-  if (proxy->node() == nullptr) {
-    throw object_exception("prototype node is nullptr");
-  }
-  // check if serializable tree is deletable
-  if (!object_deleter_.is_deletable(proxy)) {
-    throw object_exception("serializable is not removable");
-  }
-  
-  object_deleter::iterator first = object_deleter_.begin();
-  object_deleter::iterator last = object_deleter_.end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.proxy, true);
-    } else {
-      ++first;
-    }
-  }
-}
 void
 object_store::remove_object(object_proxy *proxy, bool notify)
 {
@@ -214,7 +177,7 @@ object_store::remove_object(object_proxy *proxy, bool notify)
     throw object_exception("couldn't remove serializable, no prototype");
   }
   
-  prototype_iterator node = prototype_tree_.find(proxy->node()->type.c_str());
+  prototype_iterator node = prototype_tree_.find(proxy->node()->type());
   if (node == prototype_tree_.end()) {
     throw object_exception("couldn't find node for serializable");
   }
@@ -303,35 +266,7 @@ bool object_store::delete_proxy(unsigned long id)
     return true;
   }
 }
-/*
-void object_store::insert_proxy(object_proxy *oproxy, bool notify, bool is_new)
-{
-  if (!oproxy->obj()) {
-    throw object_exception("serializable of proxy is null pointer");
-  }
 
-  if (is_new && oproxy->ostore()) {
-    throw object_exception("serializable proxy already in serializable store");
-  }
-
-  // find prototype node
-  serializable *o = oproxy->obj();
-  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
-  if (node == prototype_tree_.end()) {
-    // raise exception
-    throw object_exception("couldn't insert serializable");
-  }
-
-  if (oproxy->id() == 0) {
-    oproxy->id(seq_.next());
-  } else {
-    seq_.update(oproxy->id());
-  }
-  oproxy->ostore_ = this;
-
-  initialze_proxy(oproxy, node, notify);
-}
-*/
 object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
   if (oproxy->id() != 0) {

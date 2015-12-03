@@ -32,19 +32,21 @@
 #endif
 
 #include "tools/byte_buffer.hpp"
-#include "serializer.hpp"
+
+#include "object/access.hpp"
+#include "object/identifier.hpp"
 
 #include <string>
 
 namespace oos {
 
-class serializable;
 class object_base_ptr;
 class object_store;
 class object_proxy;
 class byte_buffer;
 class varchar_base;
 class object_container;
+class basic_identifier;
 
 /**
  * @cond OOS_DEV
@@ -60,17 +62,13 @@ class object_container;
  * The application is responsible for this correctness.
  */
 class OOS_API object_serializer
-  : public generic_deserializer<object_serializer>
-  , public generic_serializer<object_serializer>
 {
 public:
   /**
    * Creates an object_serializer
    */
   object_serializer()
-    : generic_deserializer<object_serializer>(this)
-    , generic_serializer<object_serializer>(this)
-    , ostore_(NULL)
+    : ostore_(NULL)
     , buffer_(NULL)
   {}
 
@@ -83,7 +81,13 @@ public:
    * @param buffer The byte_buffer to serialize to.
    * @return True on success.
    */
-  bool serialize(const serializable *o, byte_buffer *buffer);
+  template < class T >
+  void serialize(const T *o, byte_buffer *buffer)
+  {
+    buffer_ = buffer;
+    oos::access::serialize(*this, o);
+    buffer_ = nullptr;
+  }
 
   /**
    * Serialize the given serializable to the given buffer
@@ -93,38 +97,54 @@ public:
    * @param ostore The object_store where the serializable resides.
    * @return True on success.
    */
-  bool deserialize(serializable *o, byte_buffer *buffer, object_store *ostore);
+  template < class T >
+  void deserialize(T *o, byte_buffer *buffer, object_store *ostore)
+  {
+    ostore_ = ostore;
+    buffer_ = buffer;
+    oos::access::deserialize(*this, o);
+    buffer_ = nullptr;
+    ostore_ = nullptr;
+  }
 
 public:
   template < class T >
-  void write_value(const char*, const T &x)
+  void deserialize(const char*, const T &x)
   {
     buffer_->append(&x, sizeof(x));
   }
 
-	void write_value(const char* id, const char *c, size_t s);
-	void write_value(const char* id, const std::string &s);
-  void write_value(const char*, const varchar_base &s);
-	void write_value(const char* id, const date &x);
-	void write_value(const char* id, const time &x);
-	void write_value(const char* id, const object_base_ptr &x);
-	void write_value(const char* id, const object_container &x);
-	void write_value(const char* id, const basic_identifier &);
+	void deserialize(const char* id, const char *c, size_t s);
+	void deserialize(const char* id, const std::string &s);
+  void deserialize(const char*, const varchar_base &s);
+	void deserialize(const char* id, const date &x);
+	void deserialize(const char* id, const time &x);
+	void deserialize(const char* id, const object_base_ptr &x);
+	void deserialize(const char* id, const object_container &x);
+  template < class V >
+	void deserialize(const char* id, const identifier<V> &x)
+  {
+    deserialize(id, x.id());
+  }
 
   template < class T >
-  void read_value(const char*, T &x)
+  void serialize(const char*, T &x)
   {
     buffer_->release(&x, sizeof(x));
   }
 
-  void read_value(const char* id, char *&c, size_t s);
-	void read_value(const char* id, std::string &s);
-  void read_value(const char*, varchar_base &s);
-  void read_value(const char* id, date &x);
-  void read_value(const char* id, time &x);
-  void read_value(const char* id, object_base_ptr &x);
-	void read_value(const char* id, object_container &x);
-	void read_value(const char* id, basic_identifier &x);
+  void serialize(const char* id, char *&c, size_t s);
+	void serialize(const char* id, std::string &s);
+  void serialize(const char*, varchar_base &s);
+  void serialize(const char* id, date &x);
+  void serialize(const char* id, time &x);
+  void serialize(const char* id, object_base_ptr &x);
+	void serialize(const char* id, object_container &x);
+  template < class V >
+  void serialize(const char* id, identifier<V> &x)
+  {
+    serialize(id, x.id());
+  }
   
   void write_object_container_item(const object_proxy *proxy);
 

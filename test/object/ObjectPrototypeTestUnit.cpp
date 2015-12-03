@@ -46,7 +46,7 @@ void
 ObjectPrototypeTestUnit::test_find()
 {
   object_store ostore;
-  ostore.insert_prototype<Item>("item");
+  ostore.attach<Item>("item");
   
   prototype_iterator i = ostore.find_prototype<Item>();
   
@@ -62,7 +62,7 @@ ObjectPrototypeTestUnit::test_size()
   
   UNIT_ASSERT_TRUE(i->size() == 0, "prototype node must be empty");
 
-  ostore.insert_prototype<Item>("item");
+  ostore.attach<Item>("item");
     
   i = ostore.find_prototype<Item>();
 
@@ -82,7 +82,7 @@ ObjectPrototypeTestUnit::test_is_parent_of()
   
   UNIT_ASSERT_TRUE(root->size() == 0, "prototype node must be empty");
 
-  ostore.insert_prototype<Item>("item");
+  ostore.attach<Item>("item");
     
   prototype_iterator i = ostore.find_prototype<Item>();
 
@@ -95,8 +95,8 @@ void
 ObjectPrototypeTestUnit::test_decrement()
 {
   object_store ostore;
-  ostore.insert_prototype<Item>("item");
-  ostore.insert_prototype<ItemA, Item>("item_a", false);
+  ostore.attach<Item>("item");
+  ostore.attach<ItemA, Item>("item_a", false);
 
   prototype_iterator i = ostore.end();
 
@@ -110,61 +110,53 @@ ObjectPrototypeTestUnit::one_prototype()
 {
   object_store ostore;
 
-  ostore.insert_prototype<Item>("item");
+  ostore.attach<Item>("item");
   
-  serializable *o = ostore.create("item");
+  Item *o = ostore.create<Item>();
   
   UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
+
+  delete o;
   
-  Item *i = dynamic_cast<Item*>(o);
+  ostore.detach("item");
   
-  UNIT_ASSERT_NOT_NULL(i, "couldn't cast serializable to Item");
-  
-  delete i;
-  
-  ostore.remove_prototype("item");
-  
-  UNIT_ASSERT_EXCEPTION(ostore.create("item"), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type", "create with invalid type");
 }
 
 void
 ObjectPrototypeTestUnit::prototype_hierachy()
 {
   object_store ostore;
-  ostore.insert_prototype<Item>("ITEM");
-  ostore.insert_prototype<ItemA, Item>("ITEM_A");
-  ostore.insert_prototype<ItemB, Item>("ITEM_B");
-  ostore.insert_prototype<ItemC, Item>("ITEM_C");
+  ostore.attach<Item>("ITEM");
+  ostore.attach<ItemA, Item>("ITEM_A");
+  ostore.attach<ItemB, Item>("ITEM_B");
+  ostore.attach<ItemC, Item>("ITEM_C");
 
-  serializable *o = ostore.create("ITEM_B");
+  ItemB *a = ostore.create<ItemB>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ItemB>");
-  
-  ItemB *a = dynamic_cast<ItemB*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to ItemB");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't create serializable of type <ItemB>");
   
   delete a;
   
-  ostore.remove_prototype("ITEM_B");
+  ostore.detach("ITEM_B");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_B"), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemB>(), object_exception, "unknown prototype type", "create with invalid type");
   
-  ostore.remove_prototype("ITEM");
+  ostore.detach("ITEM");
   
-  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM"), object_exception, "unknown prototype type", "create with invalid type");
-  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_A"), object_exception, "unknown prototype type", "create with invalid type");
-  UNIT_ASSERT_EXCEPTION(ostore.create("ITEM_C"), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<Item>(), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemA>(), object_exception, "unknown prototype type", "create with invalid type");
+  UNIT_ASSERT_EXCEPTION(ostore.create<ItemC>(), object_exception, "unknown prototype type", "create with invalid type");
 }
 
 void
 ObjectPrototypeTestUnit::prototype_traverse()
 {
   object_store ostore;
-  ostore.insert_prototype<Item>("ITEM");
-  ostore.insert_prototype<ItemA, Item>("ITEM_A");
-  ostore.insert_prototype<ItemB, Item>("ITEM_B");
-  ostore.insert_prototype<ItemC, Item>("ITEM_C");
+  ostore.attach<Item>("ITEM");
+  ostore.attach<ItemA, Item>("ITEM_A");
+  ostore.attach<ItemB, Item>("ITEM_B");
+  ostore.attach<ItemC, Item>("ITEM_C");
 
   prototype_iterator first = ostore.begin();
   prototype_iterator last = ostore.end();
@@ -185,7 +177,7 @@ ObjectPrototypeTestUnit::prototype_relation()
   // Todo: complete test!
   object_store ostore;
 
-  ostore.insert_prototype<album>("album");
-  ostore.insert_prototype<track>("track");
-  ostore.insert_prototype<playlist>("playlist");
+//  ostore.attach<album>("album");
+//  ostore.attach<track>("track");
+//  ostore.attach<playlist>("playlist");
 }

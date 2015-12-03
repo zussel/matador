@@ -38,7 +38,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
   add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable transient structure test");
   add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "serializable transient cyclic structure test");
-  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
+//  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
   add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
@@ -49,19 +49,19 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
 {}
 
-typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
+//typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
 
 void
 ObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
-  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
-  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+//  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
 
-  ostore_.insert_prototype<person>("person");
-  ostore_.insert_prototype<employee, person>("employee");
-  ostore_.insert_prototype<department>("department");
+//  ostore_.attach<person>("person");
+//  ostore_.attach<employee, person>("employee");
+//  ostore_.attach<department>("department");
 }
 
 void

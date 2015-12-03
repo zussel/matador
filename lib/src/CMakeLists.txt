@@ -1,16 +1,15 @@
 SET(OBJECT_SOURCES
-#		object/object_inserter.cpp
-#		object/object_deleter.cpp
+		object/object_inserter.cpp
+		object/object_deleter.cpp
 #		object/object_container.cpp
 		object/object_ptr.cpp
-#		object/object_store.cpp
+		object/object_store.cpp
 		object/object_proxy.cpp
-#		object/object_serializer.cpp
+		object/object_serializer.cpp
 		object/prototype_node.cpp
 		object/prototype_tree.cpp
 #		object/primary_key_analyzer.cpp
 		object/foreign_key_analyzer.cpp
-		object/identifier_resolver.cpp
 		object/basic_identifier.cpp
 		object/identifier.cpp
 		object/prototype_iterator.cpp)
@@ -46,20 +45,20 @@ SET(OBJECT_HEADER
 #		../include/object/generic_access.hpp
 		../include/object/object_exception.hpp
 		../include/object/object_ptr.hpp
-#		../include/object/object_store.hpp
+		../include/object/object_store.hpp
 #		../include/object/object_container.hpp
-#		../include/object/object_inserter.hpp
-#		../include/object/object_deleter.hpp
+		../include/object/object_inserter.hpp
+		../include/object/object_deleter.hpp
 #		../include/object/object_list.hpp
 #		../include/object/object_vector.hpp
 #		../include/object/object_producer.hpp
 #		../include/object/linked_object_list.hpp
 #		../include/object/object_view.hpp
 		../include/object/object_proxy.hpp
-#		../include/object/object_serializer.hpp
+		../include/object/object_serializer.hpp
 		../include/object/prototype_node.hpp
 		../include/object/prototype_tree.hpp
-#		../include/object/object_observer.hpp
+		../include/object/object_observer.hpp
 #		../include/object/object_expression.hpp
 #		../include/object/attribute_serializer.hpp
 #		../include/object/serializer.hpp
@@ -70,7 +69,9 @@ SET(OBJECT_HEADER
 		../include/object/identifier_resolver.hpp
 		../include/object/primary_key_reader.hpp
 		../include/object/basic_identifier.hpp
-		../include/object/prototype_iterator.hpp ../include/object/base_class.hpp)
+		../include/object/prototype_iterator.hpp
+		../include/object/base_class.hpp
+)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

@@ -47,6 +47,11 @@ object_proxy::~object_proxy()
   }
 }
 
+const char *object_proxy::classname() const
+{
+  return namer_(obj_);
+}
+
 object_store *object_proxy::ostore() const
 {
   return ostore_;

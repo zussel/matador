@@ -61,7 +61,7 @@ public:
   ~object_inserter();
 
   template < class T >
-  void insert(object_proxy *proxy)
+  void insert(object_proxy *proxy, T *o)
   {
     object_proxies_.clear();
     while (!object_proxy_stack_.empty()) {
@@ -71,8 +71,7 @@ public:
     object_proxies_.insert(proxy);
     object_proxy_stack_.push(proxy);
     if (proxy->obj()) {
-      oos::access::deserialize(*this, *proxy->obj<T>());
-//      proxy->obj()->deserialize(*this);
+      oos::access::deserialize(*this, *o);
     }
   }
 
@@ -100,11 +99,9 @@ public:
       bool new_object = object_proxies_.insert(x.proxy_).second;
       if (x.id()) {
         // do the pointer count
-//      x.proxy_->link_ptr();
         if (new_object) {
           object_proxy_stack_.push(x.proxy_);
           oos::access::deserialize(*this, *x.get());
-//          x.ptr()->deserialize(*this);
           object_proxy_stack_.pop();
         }
       } else if (new_object){

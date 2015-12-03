@@ -22,10 +22,10 @@ SET (TEST_TOOLS_SOURCES
 SET (TEST_HEADER Item.hpp)
 
 SET (TEST_OBJECT_SOURCES
-#  object/ObjectPrototypeTestUnit.cpp
-#  object/ObjectPrototypeTestUnit.hpp
-#  object/ObjectStoreTestUnit.cpp
-#  object/ObjectStoreTestUnit.hpp
+  object/ObjectPrototypeTestUnit.cpp
+  object/ObjectPrototypeTestUnit.hpp
+  object/ObjectStoreTestUnit.cpp
+  object/ObjectStoreTestUnit.hpp
 #  object/ObjectListTestUnit.cpp
 #  object/ObjectListTestUnit.hpp
 #  object/ObjectVectorTestUnit.cpp

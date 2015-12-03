@@ -38,18 +38,6 @@ object_deleter::object_deleter()
 object_deleter::~object_deleter()
 {}
 
-bool
-object_deleter::is_deletable(object_proxy *proxy)
-{
-  object_count_map.clear();
-  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
-
-  // start collecting information
-  proxy->obj()->deserialize(*this);
-  
-  return check_object_count_map();
-}
-
 bool object_deleter::is_deletable(object_container &oc)
 {
   object_count_map.clear();
@@ -57,22 +45,10 @@ bool object_deleter::is_deletable(object_container &oc)
   return check_object_count_map();
 }
 
-void object_deleter::serialize(const char*, object_base_ptr &x)
+void object_deleter::serialize(const char*, object_container &)
 {
-  if (!x.ptr()) {
-    return;
-  }
-  check_object(x.proxy_, x.is_reference());
-}
-
-void object_deleter::serialize(const char*, object_container &x)
-{
-  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
-}
-
-void object_deleter::serialize(char const *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
+  // Todo: correct implementation
+//  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
 }
 
 object_deleter::iterator
@@ -85,20 +61,6 @@ object_deleter::iterator
 object_deleter::end()
 {
   return object_count_map.end();
-}
-
-void object_deleter::check_object(object_proxy *proxy, bool is_ref)
-{
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy)));
-  if (!is_ref) {
-    --ret.first->second.ptr_count;
-  } else {
-    --ret.first->second.ref_count;
-  }
-  if (!is_ref) {
-    ret.first->second.ignore = false;
-    proxy->obj()->deserialize(*this);
-  }
 }
 
 void
@@ -119,7 +81,7 @@ object_deleter::check_object_list_node(object_proxy *proxy)
   }
 
   // start collecting information
-  proxy->obj()->deserialize(*this);
+//  proxy->obj()->deserialize(*this);
 }
 
 bool

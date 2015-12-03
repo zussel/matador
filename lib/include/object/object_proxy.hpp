@@ -124,6 +124,13 @@ public:
   ~object_proxy();
 
   /**
+   * Return the classname/typeid of the object
+   *
+   * @return The classname of the object
+   */
+  const char* classname() const;
+
+  /**
    * Return the underlaying object
    *
    * @tparam The type of the object
@@ -355,10 +362,18 @@ private:
   friend class object_base_ptr;
 
   typedef void (*deleter)(void*);
+  typedef const char* (*namer)(void*);
 
   template <typename T>
-  static void destroy(void* p) {
+  static void destroy(void* p)
+  {
     delete static_cast<T*>(p);
+  }
+
+  template < class T >
+  const char* type_id(void *p)
+  {
+    return typeid(static_cast<T*>(p)).name();
   }
 
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
@@ -366,6 +381,7 @@ private:
 
   void *obj_ = nullptr;         /**< The concrete serializable. */
   deleter deleter_;             /**< The object deleter function */
+  namer namer_;                 /**< The object classname function */
   unsigned long oid = 0;        /**< The id of the concrete or expected serializable. */
 
   unsigned long ref_count_ = 0; /**< The reference counter */

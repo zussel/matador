@@ -32,6 +32,10 @@
   #define OOS_API
 #endif
 
+#include "object/access.hpp"
+#include "object/object_proxy.hpp"
+#include "object_ptr.hpp"
+
 #include <map>
 
 namespace oos {
@@ -85,7 +89,17 @@ public:
    * @param proxy The object_proxy to be checked.
    * @return True if the serializable could be deleted.
    */
-  bool is_deletable(object_proxy *proxy);
+  template < class T >
+  bool is_deletable(object_proxy *proxy, T *o)
+  {
+    object_count_map.clear();
+    object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
+
+    // start collecting information
+    oos::access::deserialize(*this, o);
+
+    return check_object_count_map();
+  }
 
   /**
    * Checks wether the given object_container is deletable.
@@ -115,11 +129,36 @@ public:
   void serialize(const char*, const T&) {}
 
   void serialize(const char*, char*, size_t) {}
-  void serialize(const char*, object_base_ptr &x);
-  void serialize(const char*, object_container &x);
-  void serialize(const char*, basic_identifier &x);
+  template < class T, bool TYPE >
+  void serialize(const char*, object_holder<T, TYPE> &x)
+  {
+    if (!x.ptr()) {
+      return;
+    }
+    check_object(x.proxy_, x.get(), x.is_reference());
+  }
 
-  void check_object(object_proxy *proxy, bool is_ref);
+  void serialize(const char*, object_container &x);
+  template < class T >
+  void serialize(const char *id, identifier<T> &x)
+  {
+    serialize(id, x.id());
+  }
+
+  template < class T >
+  void check_object(object_proxy *proxy, T *o, bool is_ref)
+  {
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy)));
+    if (!is_ref) {
+      --ret.first->second.ptr_count;
+    } else {
+      --ret.first->second.ref_count;
+    }
+    if (!is_ref) {
+      ret.first->second.ignore = false;
+      oos::access::serialize(*this, o);
+    }
+  }
   void check_object_list_node(object_proxy *proxy);
   bool check_object_count_map() const;
 

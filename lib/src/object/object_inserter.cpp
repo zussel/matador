@@ -74,7 +74,7 @@ object_inserter::~object_inserter() {}
 //  }
 //}
 
-void object_inserter::serialize(const char*, object_container &x)
+void object_inserter::serialize(const char*, object_container &)
 {
 //  if (x.ostore()) {
 //    return;
@@ -97,9 +97,9 @@ void object_inserter::serialize(const char*, object_container &x)
 //  ostore_.insert(x);
 }
 
-void object_inserter::insert_into_store(object_proxy *proxy)
+void object_inserter::insert_into_store(object_proxy *)
 {
-  ostore_.insert_proxy(proxy);
+//  ostore_.insert_proxy(proxy);
 }
 
 }

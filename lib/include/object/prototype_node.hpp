@@ -269,6 +269,9 @@ private:
 
 private:
   friend class prototype_tree;
+  friend class object_store;
+  template < class T >
+  friend class object_view;
 
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */

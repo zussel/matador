@@ -24,12 +24,14 @@
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_inserter.hpp"
+#include "object/object_observer.hpp"
 #include "object/primary_key_reader.hpp"
 
 #include "tools/sequencer.hpp"
 
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
 
 #include <string>
 #include <ostream>
@@ -54,7 +56,6 @@ namespace oos {
 class serializable;
 class object_proxy;
 class prototype_node;
-class object_observer;
 class object_container;
 
 /**
@@ -109,28 +110,9 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template < class T >
-	prototype_iterator insert_prototype(object_producer<T> *producer, const char *type, bool abstract = false, const char *parent = nullptr)
+	prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr)
   {
-    return prototype_tree_.insert(producer, type, abstract, parent);
-  }
-
-
-  /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given. The producer is automatically created via the template
-   * parameter.
-   * 
-   * @tparam T       The type of the prototype node
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @return         Returns new inserted prototype iterator.
-   */
-  template < class T >
-  prototype_iterator insert_prototype(const char *type, bool abstract = false)
-  {
-    return insert_prototype(new object_producer<T>, type, abstract);
+    return prototype_tree_.attach<T>(type, abstract, parent);
   }
 
   /**
@@ -147,9 +129,9 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template < class T, class S >
-  prototype_iterator insert_prototype(const char *type, bool abstract = false)
+  prototype_iterator attach(const char *type, bool abstract = false)
   {
-    return insert_prototype(new object_producer<T>, type, abstract, typeid(S).name());
+    return prototype_tree_.attach<T, S>(type, abstract);
   }
 
   /**
@@ -158,7 +140,7 @@ public:
    * 
    * @param type The name of the type to remove.
    */
-  void remove_prototype(const char *type);
+  void detach(const char *type);
 
   /**
    * @brief Finds prototype node.
@@ -276,7 +258,7 @@ public:
 	T* create() const {
     const_prototype_iterator node = prototype_tree_.find<T>();
     if (node != prototype_tree_.end()) {
-      return node->producer->create();
+      return new T;
     } else {
       throw object_exception("unknown prototype type");
     }
@@ -303,7 +285,6 @@ public:
    * @param optr object_ptr to be inserted.
    * @return Inserted serializable contained by an object_ptr on success.
    */
-  /*
   template < class Y >
   object_ptr<Y> insert(const object_ptr<Y> &optr)
   {
@@ -317,7 +298,6 @@ public:
     insert_proxy(optr.proxy_);
     return optr;
   }
-  */
 
   /**
    * Inserts an object_container into the serializable store. Subsequently the
@@ -334,7 +314,11 @@ public:
    * @param o The serializable to check.
    * @return True if serializable is removable.
    */
-  bool is_removable(const object_base_ptr &o);
+  template < class T, bool TYPE >
+  bool is_removable(const object_holder<T, TYPE> &o)
+  {
+    return object_deleter_.is_deletable(o.proxy_, o.get());
+  }
 
   /**
    * Removes an serializable from the serializable store. After successfull
@@ -347,7 +331,31 @@ public:
    * @throw object_exception
    * @param o Object to remove.
    */
-	void remove(object_base_ptr &o);
+  template < class T, bool TYPE >
+	void remove(object_holder<T, TYPE> &o)
+  {
+    if (o.proxy_ == nullptr) {
+      throw object_exception("serializable proxy is nullptr");
+    }
+    if (o.proxy_->node() == nullptr) {
+      throw object_exception("prototype node is nullptr");
+    }
+    // check if serializable tree is deletable
+    if (!object_deleter_.is_deletable<T>(o.proxy_, o.get())) {
+      throw object_exception("serializable is not removable");
+    }
+
+    object_deleter::iterator first = object_deleter_.begin();
+    object_deleter::iterator last = object_deleter_.end();
+
+    while (first != last) {
+      if (!first->second.ignore) {
+        remove_object((first++)->second.proxy, true);
+      } else {
+        ++first;
+      }
+    }
+  }
   
   /**
    * Removes an object_container from serializable store. All elements of the
@@ -439,7 +447,8 @@ public:
    * @param notify Indicates wether all observers should be notified.
    * @param is_new Proxy is a new not inserted proxy, skip object store check
    */
-  void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);
+  template < class T >
+  object_proxy* insert_proxy(object_proxy *oproxy, T *o, bool notify = true, bool is_new = true);
 
   /**
    * @brief Registers a new proxy
@@ -480,13 +489,11 @@ private:
 private:
   void mark_modified(object_proxy *oproxy);
 
-  void remove(object_proxy *proxy);
-
   template < class T >
 	object_proxy* insert_object(T *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
 
-  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
+//  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
 private:
   prototype_tree prototype_tree_;
@@ -559,11 +566,60 @@ object_proxy* object_store::insert_object(T *o, bool notify)
     o->deserialize(reader);
   }
 
-  node->insert<T>(oproxy);
+  node->insert(oproxy);
 
-  return initialze_proxy(oproxy, node, notify);
+  // initialize object
+  object_inserter_.insert(oproxy, o);
+  // set this into persistent serializable
+  // notify observer
+  if (notify) {
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, std::placeholders::_1, oproxy));
+  }
+  // insert element into hash map for fast lookup
+  object_map_[oproxy->id()] = oproxy;
+
+  return oproxy;
 }
 
+template < class T >
+object_proxy* object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify, bool is_new)
+{
+  if (!oproxy->obj()) {
+    throw object_exception("serializable of proxy is null pointer");
+  }
+
+  if (is_new && oproxy->ostore()) {
+    throw object_exception("serializable proxy already in serializable store");
+  }
+
+  // find prototype node
+  prototype_iterator node = prototype_tree_.find(oproxy->classname());
+  if (node == prototype_tree_.end()) {
+    // raise exception
+    throw object_exception("couldn't insert serializable");
+  }
+
+  if (oproxy->id() == 0) {
+    oproxy->id(seq_.next());
+  } else {
+    seq_.update(oproxy->id());
+  }
+  oproxy->ostore_ = this;
+
+  node->insert(oproxy);
+
+  // initialize object
+  object_inserter_.insert(oproxy, o);
+  // set this into persistent serializable
+  // notify observer
+  if (notify) {
+    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_insert, std::placeholders::_1, oproxy));
+  }
+  // insert element into hash map for fast lookup
+  object_map_[oproxy->id()] = oproxy;
+
+  return oproxy;
+}
 
 }
 
