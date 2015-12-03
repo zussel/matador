@@ -772,30 +772,32 @@ void ObjectStoreTestUnit::test_structure()
   UNIT_ASSERT_GREATER(iptr.id(), 0UL, "object id must be greater zero");
 }
 
+class cyclic
+{
+public:
+  cyclic() {}
+  cyclic(const std::string &n) : name(n) {}
+  ~cyclic() {}
+
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &r) {
+    r.deserialize("id", id);
+    r.deserialize("name", name);
+    r.deserialize("cycler", cycler);
+  }
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &w) const {
+    w.serialize("id", id);
+    w.serialize("name", name);
+    w.serialize("cycler", cycler);
+  }
+  oos::identifier<unsigned long> id;
+  std::string name;
+  object_ptr<cyclic> cycler;
+};
+
 void ObjectStoreTestUnit::test_structure_cyclic()
 {
-  class cyclic : public oos::serializable
-  {
-  public:
-    cyclic() {}
-    cyclic(const std::string &n) : name(n) {}
-    virtual ~cyclic() {}
-
-    virtual void deserialize(oos::deserializer &r) {
-      r.read("id", id);
-      r.read("name", name);
-      r.read("cycler", cycler);
-    }
-    virtual void serialize(oos::serializer &w) const {
-      w.write("id", id);
-      w.write("name", name);
-      w.write("cycler", cycler);
-    }
-    oos::identifier<unsigned long> id;
-    std::string name;
-    object_ptr<cyclic> cycler;
-  };
-
   object_store ostore;
   ostore.prototypes().attach<cyclic>("cyclic");
 

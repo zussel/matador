@@ -21,12 +21,17 @@ namespace oos {
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
+template < typename O, bool TYPE, class T >
+bool set(object_holder<O, TYPE> &optr, const std::string &name, const T &val)
+{
+  return set(optr.get(), name, val);
+}
+
 template < typename O, class T >
-bool set(O &obj, const std::string &name, const T &val)
+bool set(O *obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
-  oos::access
-  obj->deserialize(reader);
+  oos::access::deserialize(reader, *obj);
   return reader.success();
 }
 
@@ -47,7 +52,7 @@ template < typename O >
 bool set(O &obj, const std::string &name, const char *val, size_t size)
 {
   attribute_reader<char*> reader(name, val, size);
-  obj->deserialize(reader);
+  oos::access::deserialize(reader, obj);
   return reader.success();
 }
 
@@ -67,7 +72,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val)
 {
   attribute_writer<T> writer(name, val);
-  obj->serialize(writer);
+  oos::access::serialize(writer, obj);
   return writer.success();
 }
 
@@ -85,10 +90,10 @@ bool get(const O &obj, const std::string &name, T &val)
  * @return       True if the operation succeeds.
  */
 template < typename O, class T >
-bool get(const O &obj, const std::string &name, char *val, int size)
+bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
   attribute_writer<T> writer(name, val, size);
-  obj->serialize(writer);
+  oos::access::serialize(writer, obj);
   return writer.success();
 }
 
@@ -109,7 +114,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val, size_t precision)
 {
   attribute_writer<T> writer(name, val, precision);
-  obj->serialize(writer);
+  oos::access::serialize(writer, obj);
   return writer.success();
 }
 

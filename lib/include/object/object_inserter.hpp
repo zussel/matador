@@ -71,7 +71,7 @@ public:
     object_proxies_.insert(proxy);
     object_proxy_stack_.push(proxy);
     if (proxy->obj()) {
-      oos::access::deserialize(*this, *o);
+      oos::access::serialize(*this, *o);
     }
   }
 
