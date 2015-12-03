@@ -25,6 +25,7 @@ template < typename O, class T >
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
+  oos::access
   obj->deserialize(reader);
   return reader.success();
 }

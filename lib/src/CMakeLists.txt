@@ -41,8 +41,8 @@ SET(OBJECT_INSTALL_HEADER
 
 SET(OBJECT_HEADER
 #		../include/object/attribute_counter.hpp
-#		../include/object/attribute_serializer.hpp
-#		../include/object/generic_access.hpp
+		../include/object/attribute_serializer.hpp
+		../include/object/generic_access.hpp
 		../include/object/object_exception.hpp
 		../include/object/object_ptr.hpp
 		../include/object/object_store.hpp

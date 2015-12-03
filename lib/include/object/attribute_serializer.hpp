@@ -47,7 +47,7 @@ template < class T, class Enable = void >
 class attribute_reader;
 
 template < class T >
-class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type> : public generic_deserializer<attribute_reader<T> >
+class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type>
 {
 private:
   friend class generic_deserializer<attribute_reader<T> >;
@@ -64,13 +64,12 @@ public:
    * @param from The attribute value to set.
    */
   attribute_reader(const std::string &id, const T &from)
-    : generic_deserializer<attribute_reader<T> >(this)
-    , id_(id)
+    : id_(id)
     , from_(from)
     , success_(false)
   {}
   
-  virtual ~attribute_reader() {}
+  ~attribute_reader() {}
 
   /**
    * @brief True if value was set.
@@ -87,7 +86,7 @@ public:
 
 private:
   template < class V >
-  void read_value(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
+  void deserialize(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -97,7 +96,7 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &to, typename std::enable_if<
+  void deserialize(const char *id, V &to, typename std::enable_if<
     std::is_base_of<V, T>::value &&
     std::is_same<V, oos::varchar_base>::value
   >::type* = 0)
@@ -109,7 +108,7 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+  void deserialize(const char *id, V &/*to*/, typename std::enable_if<
     std::is_base_of<V, T>::value &&
     std::is_same<V, oos::object_base_ptr>::value
   >::type* = 0)
@@ -120,7 +119,7 @@ private:
   }
 
   template < class V >
-  void read_value(const char *id, V &/*to*/, typename std::enable_if<
+  void deserialize(const char *id, V &/*to*/, typename std::enable_if<
     !std::is_same<T, V>::value &&
     !std::is_base_of<V, T>::value>::type* = 0)
   {
@@ -130,12 +129,12 @@ private:
     // Todo: throw exception
   }
 
-  void read_value(const char *id, basic_identifier &x)
+  void deserialize(const char *id, basic_identifier &x)
   {
     x.deserialize(id, *this);
   }
 
-  void read_value(const char *id, char *, size_t)
+  void deserialize(const char *id, char *, size_t)
   {
     if (id_ != id) {
       return;
@@ -145,7 +144,7 @@ private:
     success_ = true;
   }
   template < class V >
-  void read_value(const char *id, date &to, typename std::enable_if<
+  void deserialize(const char *id, date &to, typename std::enable_if<
     std::is_same<T, V>::value &&
       (std::is_same<V, oos::date>::value ||
        std::is_same<V, oos::time>::value
@@ -158,7 +157,7 @@ private:
     success_ = true;
   }
 
-  void read_value(const char*, object_container&) {}
+  void deserialize(const char*, object_container&) {}
 
 private:
   std::string id_;
@@ -168,12 +167,11 @@ private:
 
 #ifndef OOS_DOXYGEN_DOC
 template < class T >
-class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type> : public generic_deserializer<attribute_reader<T> >
+class attribute_reader<T, typename std::enable_if< std::is_same<T, char*>::value >::type>
 {
 public:
   attribute_reader(const std::string &id, const char from[], size_t size)
-    : generic_deserializer<attribute_reader<T> >(this)
-    , id_(id)
+    : id_(id)
     , from_(from)
     , size_(size)
     , success_(false)
@@ -193,7 +191,7 @@ public:
   }
 
   template < class V >
-  void read_value(const char *id, V &/*to*/)
+  void deserialize(const char *id, V &/*to*/)
   {
     if (id_ != id) {
       return;
@@ -203,7 +201,7 @@ public:
     success_ = true;
   }
 
-  void read_value(const char *id, char *to, size_t s)
+  void deserialize(const char *id, char *to, size_t s)
   {
     if (id_ != id) {
       return;
@@ -238,7 +236,7 @@ private:
  * be convertible from the objects attribute.
  */
 template < class T >
-class attribute_writer : public generic_serializer<attribute_writer<T> >
+class attribute_writer
 {
 private:
   friend class generic_serializer<attribute_writer<T> >;
@@ -256,14 +254,13 @@ public:
    * @param precision The precision of the value.
    */
   attribute_writer(const std::string &id, T &to, size_t precision = 0)
-    : generic_serializer<attribute_writer<T> >(this)
-    , id_(id)
+    : id_(id)
     , to_(to)
     , success_(false)
     , precision_(precision)
   {}
    
-  virtual ~attribute_writer() {}
+  ~attribute_writer() {}
 
   /**
    * @brief True if value could be retrieved.
@@ -280,7 +277,7 @@ public:
 
 private:
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if<
+  void serialize(const char *id, const V &from, typename std::enable_if<
     std::is_same<T, V>::value &&
     !std::is_floating_point<V>::value
   >::type* = 0)
@@ -293,7 +290,7 @@ private:
   }
 
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if<
+  void serialize(const char *id, const V &from, typename std::enable_if<
     std::is_same<T, V>::value &&
     std::is_floating_point<V>::value
   >::type* = 0)
@@ -306,7 +303,7 @@ private:
   }
 
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if<
+  void serialize(const char *id, const V &from, typename std::enable_if<
     !std::is_same<T, V>::value &&
     std::is_same<V, oos::varchar_base>::value &&
     std::is_base_of<V, T>::value
@@ -320,7 +317,7 @@ private:
   }
 
   template < class V >
-  void write_value(const char *id, V &/*to*/, typename std::enable_if<
+  void serialize(const char *id, V &/*to*/, typename std::enable_if<
     !std::is_same<T, V>::value &&
     !std::is_base_of<V, T>::value>::type* = 0)
   {
@@ -330,12 +327,12 @@ private:
     // Todo: throw exception
   }
 
-  void write_value(const char *id, const basic_identifier &x)
+  void serialize(const char *id, const basic_identifier &x)
   {
     x.serialize(id, *this);
   }
 
-  void write_value(const char *id, const char *, size_t)
+  void serialize(const char *id, const char *, size_t)
   {
     if (id_ != id) {
       return;
@@ -355,7 +352,7 @@ private:
 /// @cond OOS_DEV
 
 template <>
-class attribute_writer<char*> : public generic_serializer<attribute_writer<char*> >
+class attribute_writer<char*>
 {
 public:
   /**
@@ -369,15 +366,14 @@ public:
    * @param to The attribute value to retrieve.
    */
   attribute_writer(const std::string &id, char *to, size_t size, size_t precision = 0)
-    : generic_serializer<attribute_writer<char*> >(this)
-    , id_(id)
+    : id_(id)
     , to_(to)
     , size_(size)
     , success_(false)
     , precision_(precision)
   {}
    
-  virtual ~attribute_writer() {}
+  ~attribute_writer() {}
 
   /**
    * @brief True if value could be retrieved.
@@ -393,7 +389,7 @@ public:
   }
 
   template < class V >
-  void write_value(const char *id, const V &/*from*/)
+  void serialize(const char *id, const V &/*from*/)
   {
     if (id_ != id) {
       return;
@@ -402,12 +398,12 @@ public:
     success_ = true;
   }
 
-  void write_value(const char*, const date&) {}
-  void write_value(const char*, const time&) {}
-  void write_value(const char*, const object_container&) {}
-  void write_value(const char*, const basic_identifier &) {}
+  void serialize(const char*, const date&) {}
+  void serialize(const char*, const time&) {}
+  void serialize(const char*, const object_container&) {}
+  void serialize(const char*, const basic_identifier &) {}
 
-  void write_value(const char *id, const char *from, size_t size)
+  void serialize(const char *id, const char *from, size_t size)
   {
     if (id_ != id) {
       return;
@@ -439,7 +435,7 @@ private:
 };
 
 template <>
-class attribute_writer<std::string> : public generic_serializer<attribute_writer<std::string> >
+class attribute_writer<std::string>
 {
 public:
   /**
@@ -453,14 +449,13 @@ public:
    * @param to The attribute value to retrieve.
    */
   attribute_writer(const std::string &id, std::string &to, size_t precision = 0)
-    : generic_serializer<attribute_writer<std::string> >(this)
-    , id_(id)
+    : id_(id)
     , to_(to)
     , success_(false)
     , precision_(precision)
   {}
 
-  virtual ~attribute_writer() {}
+  ~attribute_writer() {}
 
   /**
    * @brief True if value could be retrieved.
@@ -476,7 +471,7 @@ public:
   }
 
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if< std::is_integral<V>::value>::type* = 0)
+  void serialize(const char *id, const V &from, typename std::enable_if< std::is_integral<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -486,7 +481,7 @@ public:
   }
 
   template < class V >
-  void write_value(const char *id, const V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
+  void serialize(const char *id, const V &from, typename std::enable_if< std::is_floating_point<V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -495,7 +490,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char *id, const char &from)
+  void serialize(const char *id, const char &from)
   {
     if (id_ != id) {
       return;
@@ -504,7 +499,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char *id, const std::string &from)
+  void serialize(const char *id, const std::string &from)
   {
     if (id_ != id) {
       return;
@@ -513,7 +508,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char *id, const oos::varchar_base &from)
+  void serialize(const char *id, const oos::varchar_base &from)
   {
     if (id_ != id) {
       return;
@@ -521,7 +516,7 @@ public:
     to_ = from.str();
     success_ = true;
   }
-  void write_value(const char *id, const date &from)
+  void serialize(const char *id, const date &from)
   {
     if (id_ != id) {
       return;
@@ -529,7 +524,7 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void write_value(const char *id, const oos::time &from)
+  void serialize(const char *id, const oos::time &from)
   {
     if (id_ != id) {
       return;
@@ -537,7 +532,7 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void write_value(const char *id, const object_base_ptr &x)
+  void serialize(const char *id, const object_base_ptr &x)
   {
     if (id_ != id) {
       return;
@@ -551,8 +546,8 @@ public:
     to_ = to.str();
     success_ = true;
   }
-  void write_value(const char*, const object_container&) {}
-  void write_value(const char *id, const basic_identifier &x)
+  void serialize(const char*, const object_container&) {}
+  void serialize(const char *id, const basic_identifier &x)
   {
     if (id_ != id) {
       return;
@@ -563,7 +558,7 @@ public:
     success_ = true;
   }
 
-  void write_value(const char *id, const char *from, size_t size)
+  void serialize(const char *id, const char *from, size_t size)
   {
     if (id_ != id) {
       return;
