@@ -45,6 +45,9 @@
 #include <unordered_map>
 
 namespace oos {
+
+class object_container;
+
 namespace detail {
 
 class relation_resolver

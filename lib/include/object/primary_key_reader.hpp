@@ -27,7 +27,15 @@ public:
 
   void deserialize(const char*, T &x);
   template < class V >
-  void deserialize(const char*, identifier<V> &x);
+  void deserialize(const char *id, identifier<V> &x)
+  {
+    reading_pk_ = true;
+    // Todo; check correctness
+    V val;
+    deserialize(id, val);
+    x.value(val);
+    reading_pk_ = false;
+  }
 
   template < class V >
   void deserialize(const char*, V &) {}
@@ -45,17 +53,16 @@ void primary_key_reader<T>::deserialize(const char*, T &x) {
   }
 }
 
-template < class T >
-template < class V >
-void primary_key_reader<T>::deserialize(const char *id, identifier<V> &x)
-{
-  reading_pk_ = true;
-  // Todo; check correctness
-  V val;
-  deserialize(id, val);
-  x.value(val);
-  reading_pk_ = false;
-}
+//template < class T, class V >
+//void primary_key_reader<T>::deserialize(const char *id, identifier<V> &x)
+//{
+//  reading_pk_ = true;
+//  // Todo; check correctness
+//  V val;
+//  deserialize(id, val);
+//  x.value(val);
+//  reading_pk_ = false;
+//}
 
 /// @endcond
 

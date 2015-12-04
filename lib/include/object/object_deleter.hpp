@@ -96,7 +96,7 @@ public:
     object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
 
     // start collecting information
-    oos::access::deserialize(*this, o);
+    oos::access::deserialize(*this, *o);
 
     return check_object_count_map();
   }

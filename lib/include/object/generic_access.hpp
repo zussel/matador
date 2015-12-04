@@ -7,6 +7,8 @@
 
 #include "object/attribute_serializer.hpp"
 
+#include <type_traits>
+
 namespace oos {
 
 /**
@@ -21,12 +23,22 @@ namespace oos {
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
-template < typename O, bool TYPE, class T >
-bool set(object_holder<O, TYPE> &optr, const std::string &name, const T &val)
+
+template < typename O, class T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr >
+bool set(O *obj, const std::string &name, const T &val)
 {
-  return set(optr.get(), name, val);
+  return set(*obj, name, val);
 }
 
+template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr >
+bool set(O &obj, const std::string &name, const T &val)
+{
+  attribute_reader<T> reader(name, val);
+  oos::access::deserialize(reader, obj);
+  return reader.success();
+}
+
+/*
 template < typename O, class T >
 bool set(O *obj, const std::string &name, const T &val)
 {
@@ -34,7 +46,7 @@ bool set(O *obj, const std::string &name, const T &val)
   oos::access::deserialize(reader, *obj);
   return reader.success();
 }
-
+*/
 /**
  * Sets string value of a member identified by
  * the given name. The value is passed as a

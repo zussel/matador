@@ -316,7 +316,7 @@ ObjectStoreTestUnit::set_test()
 {
   Item *i = new Item("item", 4711);
   
-  oos::set(i, "val_int", 1);
+  oos::set(*i, "val_int", 1);
 
   UNIT_ASSERT_EQUAL(1, i->get_int(), "value must be one (1)");
 
@@ -676,79 +676,79 @@ ObjectStoreTestUnit::generic_test()
 
   std::unique_ptr<Item> item(new Item());
 
-  oos::set(item, "val_char", c.expected);
-  oos::get(item, "val_char", c.result);
+  oos::set(*item, "val_char", c.expected);
+  oos::get(*item, "val_char", c.result);
   UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  oos::set(item, "val_short", s.expected);
-  oos::get(item, "val_short", s.result);
+  oos::set(*item, "val_short", s.expected);
+  oos::get(*item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
-  oos::get(item, "val_short", s.str_result);
+  oos::get(*item, "val_short", s.str_result);
   UNIT_ASSERT_EQUAL(s.str_result, "-42", "float string is invalid");
 
-  oos::set(item, "val_int", i.expected);
-  oos::get(item, "val_int", i.result);
+  oos::set(*item, "val_int", i.expected);
+  oos::get(*item, "val_int", i.result);
   UNIT_ASSERT_EQUAL(i.result, i.expected, "not expected result value");
 
-  oos::set(item, "val_long", l.expected);
-  oos::get(item, "val_long", l.result);
+  oos::set(*item, "val_long", l.expected);
+  oos::get(*item, "val_long", l.result);
   UNIT_ASSERT_EQUAL(l.result, l.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_short", us.expected);
-  oos::get(item, "val_unsigned_short", us.result);
+  oos::set(*item, "val_unsigned_short", us.expected);
+  oos::get(*item, "val_unsigned_short", us.result);
   UNIT_ASSERT_EQUAL(us.result, us.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_int", ui.expected);
-  oos::get(item, "val_unsigned_int", ui.result);
+  oos::set(*item, "val_unsigned_int", ui.expected);
+  oos::get(*item, "val_unsigned_int", ui.result);
   UNIT_ASSERT_EQUAL(ui.result, ui.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_long", ul.expected);
-  oos::get(item, "val_unsigned_long", ul.result);
+  oos::set(*item, "val_unsigned_long", ul.expected);
+  oos::get(*item, "val_unsigned_long", ul.result);
   UNIT_ASSERT_EQUAL(ul.result, ul.expected, "not expected result value");
 
-  oos::set(item, "val_bool", b.expected);
-  oos::get(item, "val_bool", b.result);
+  oos::set(*item, "val_bool", b.expected);
+  oos::get(*item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
 
-  oos::set(item, "val_cstr", cstr.expected, cstr.expected_size);
-  oos::get(item, "val_cstr", cstr.result, cstr.size);
+  oos::set(*item, "val_cstr", cstr.expected, cstr.expected_size);
+  oos::get(*item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
 
-  oos::set(item, "val_string", str.expected);
-  oos::get(item, "val_string", str.result);
+  oos::set(*item, "val_string", str.expected);
+  oos::get(*item, "val_string", str.result);
   UNIT_ASSERT_EQUAL(str.result, str.expected, "not expected result value");
 
-  oos::set(item, "val_varchar", varstr.expected);
-  oos::get(item, "val_varchar", varstr.result);
+  oos::set(*item, "val_varchar", varstr.expected);
+  oos::get(*item, "val_varchar", varstr.result);
   UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "not expected result value");
 
-  oos::set(item, "val_float", f.expected);
-  oos::get(item, "val_float", f.result);
+  oos::set(*item, "val_float", f.expected);
+  oos::get(*item, "val_float", f.result);
   UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
   /* get float value into string
    * with precision 2
    */
-  oos::get(item, "val_float", f.str_result, 2);
+  oos::get(*item, "val_float", f.str_result, 2);
   UNIT_ASSERT_EQUAL(f.str_result, "1.55", "float string is invalid");
 
-  oos::set(item, "val_double", d.expected);
-  oos::get(item, "val_double", d.result);
+  oos::set(*item, "val_double", d.expected);
+  oos::get(*item, "val_double", d.result);
   UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
   /* get double value into string
    * with precision 3
    */
-  oos::get(item, "val_double", d.str_result, 3);
+  oos::get(*item, "val_double", d.str_result, 3);
   UNIT_ASSERT_EQUAL(d.str_result, "123.558", "double string is invalid");
 
-  oos::get(item, "val_int", str.result);
+  oos::get(*item, "val_int", str.result);
   UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  oos::set(item, "val_date", dateval.expected);
-  oos::get(item, "val_date", dateval.result);
+  oos::set(*item, "val_date", dateval.expected);
+  oos::get(*item, "val_date", dateval.result);
   UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "not expected result value");
 
-  oos::set(item, "val_time", timeval.expected);
-  oos::get(item, "val_time", timeval.result);
+  oos::set(*item, "val_time", timeval.expected);
+  oos::get(*item, "val_time", timeval.result);
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
 }
 
@@ -855,7 +855,7 @@ void ObjectStoreTestUnit::test_transient_optr()
 
 void ObjectStoreTestUnit::test_insert()
 {
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((serializable *)0), object_exception, "serializable is null", "null shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)0), object_exception, "serializable is null", "null shouldn't be insertable");
 
   ItemC *ic = new ItemC;
   UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert serializable", "unknown serializable type shouldn't be insertable");

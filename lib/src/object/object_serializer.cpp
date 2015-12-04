@@ -34,7 +34,7 @@ namespace oos {
 object_serializer::~object_serializer()
 {}
 
-void object_serializer::deserialize(const char*, const char *c, size_t s)
+void object_serializer::serialize(const char*, const char *c, size_t s)
 {
   size_t len = s;
   
@@ -42,7 +42,7 @@ void object_serializer::deserialize(const char*, const char *c, size_t s)
   buffer_->append(c, len);
 }
 
-void object_serializer::deserialize(const char*, const std::string &s)
+void object_serializer::serialize(const char*, const std::string &s)
 {
   size_t len = s.size();
   
@@ -50,7 +50,7 @@ void object_serializer::deserialize(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::deserialize(const char*, const varchar_base &s)
+void object_serializer::serialize(const char*, const varchar_base &s)
 {
   size_t len = s.size();
   
@@ -58,34 +58,34 @@ void object_serializer::deserialize(const char*, const varchar_base &s)
   buffer_->append(s.str().c_str(), len);
 }
 
-void object_serializer::deserialize(const char *id, const date &x)
+void object_serializer::serialize(const char *id, const date &x)
 {
-  deserialize(id, x.julian_date());
+  serialize(id, x.julian_date());
 }
 
-void object_serializer::deserialize(const char *id, const time &x)
+void object_serializer::serialize(const char *id, const time &x)
 {
   struct timeval tv = x.get_timeval();
-  deserialize(id, tv.tv_sec);
-  deserialize(id, tv.tv_usec);
+  serialize(id, tv.tv_sec);
+  serialize(id, tv.tv_usec);
 }
 
-void object_serializer::deserialize(const char *id, const object_base_ptr &x)
+void object_serializer::serialize(const char *id, const object_base_ptr &x)
 {
   // write type and id into buffer
-  deserialize(id, x.id());
-  deserialize(id, x.type(), strlen(x.type()));
+  serialize(id, x.id());
+  serialize(id, x.type(), strlen(x.type()));
 }
 
-void object_serializer::deserialize(const char *id, const object_container &x)
+void object_serializer::serialize(const char *id, const object_container &x)
 {
   // write number of items in list
   // for each item write id and type
-  deserialize(id, (unsigned long)x.size());
+  serialize(id, (unsigned long)x.size());
   x.for_each(std::bind(&object_serializer::write_object_container_item, this, _1));
 }
 
-void object_serializer::serialize(const char*, char *&c, size_t)
+void object_serializer::deserialize(const char*, char *c, size_t)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -93,7 +93,7 @@ void object_serializer::serialize(const char*, char *&c, size_t)
   buffer_->release(c, len);
 }
 
-void object_serializer::serialize(const char*, std::string &s)
+void object_serializer::deserialize(const char*, std::string &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -103,7 +103,7 @@ void object_serializer::serialize(const char*, std::string &s)
   delete [] str;
 }
 
-void object_serializer::serialize(const char*, varchar_base &s)
+void object_serializer::deserialize(const char*, varchar_base &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));
@@ -113,14 +113,14 @@ void object_serializer::serialize(const char*, varchar_base &s)
   delete [] str;
 }
 
-void object_serializer::serialize(const char *, date &x)
+void object_serializer::deserialize(const char *, date &x)
 {
   int julian_date(0);
   buffer_->release(&julian_date, sizeof(julian_date));
   x.set(julian_date);
 }
 
-void object_serializer::serialize(const char *, time &x)
+void object_serializer::deserialize(const char *, time &x)
 {
   struct timeval tv;
   buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
@@ -128,7 +128,7 @@ void object_serializer::serialize(const char *, time &x)
   x.set(tv);
 }
 
-void object_serializer::serialize(const char */*id*/, object_base_ptr &/*x*/)
+void object_serializer::deserialize(const char */*id*/, object_base_ptr &/*x*/)
 {
   /***************
    *
@@ -156,7 +156,7 @@ void object_serializer::serialize(const char */*id*/, object_base_ptr &/*x*/)
 //  }
 }
 
-void object_serializer::serialize(const char */*id*/, object_container &/*x*/)
+void object_serializer::deserialize(const char */*id*/, object_container &/*x*/)
 {
   // get count of backuped list item
 //  object_container::size_type s(0);
@@ -179,8 +179,8 @@ void object_serializer::serialize(const char */*id*/, object_container &/*x*/)
 
 void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
-  deserialize(nullptr, proxy->id());
-  deserialize(nullptr, proxy->node()->type());
+  serialize(nullptr, proxy->id());
+  serialize(nullptr, proxy->node()->type());
 }
 
 }

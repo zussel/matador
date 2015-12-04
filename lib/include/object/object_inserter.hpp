@@ -78,7 +78,7 @@ public:
   template < class T >
   void serialize(const char*, T&) {}
 
-  void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, const char*, size_t) {}
 
   template < class T, bool TYPE >
   void serialize(const char*, object_holder<T, TYPE> &x)

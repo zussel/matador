@@ -29,9 +29,6 @@ namespace oos {
 template < typename T, class Enable = void >
 class identifier;
 
-class serializer;
-class deserializer;
-
 /// @endcond
 
 /**
@@ -71,22 +68,6 @@ public:
    * @return True this identifier is less than another identifier
    */
   bool operator<(const basic_identifier &x) const;
-
-  /**
-   * Serialize the identifier.
-   *
-   * @param id Id of the identifier.
-   * @param writer The object to write to
-   */
-  virtual void serialize(const char *id, serializer &writer) const = 0;
-
-  /**
-   * Deserialize the identifier.
-   *
-   * @param id Id of the identifier.
-   * @param reader The object to read from
-   */
-  virtual void deserialize(const char *id, deserializer &reader) = 0;
 
   /**
    * Interface for the less than operator
@@ -182,8 +163,8 @@ public:
    * @tparam T The type to cast to.
    * @return The casted value.
    */
-  template<class T>
-  T id() const;
+//  template<class T>
+//  T id() const;
 
 protected:
   /**
@@ -199,15 +180,15 @@ private:
 
 };
 
-template<class T>
-T basic_identifier::id() const
-{
-  if (type_index() == std::type_index(typeid(identifier < T > ))) {
-    return static_cast<const identifier <T> &>(*this).value();
-  } else {
-    throw std::logic_error("not the same type");
-  }
-}
+//template<class T>
+//T basic_identifier::id() const
+//{
+//  if (type_index() == std::type_index(typeid(identifier < T > ))) {
+//    return static_cast<const identifier <T> &>(*this).value();
+//  } else {
+//    throw std::logic_error("not the same type");
+//  }
+//}
 
 }
 

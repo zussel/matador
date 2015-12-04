@@ -15,7 +15,6 @@
 #endif
 
 #include "object/basic_identifier.hpp"
-#include "object/serializer.hpp"
 
 #include <type_traits>
 #include <stdexcept>
@@ -45,16 +44,6 @@ public:
 
   virtual ~identifier()
   { };
-
-  virtual void serialize(const char *id, serializer &writer) const
-  {
-    writer.write(id, *id_);
-  }
-
-  virtual void deserialize(const char *id, deserializer &reader)
-  {
-    reader.read(id, *id_);
-  }
 
   virtual bool less(const basic_identifier &x) const
   {
@@ -154,16 +143,6 @@ public:
 
   virtual ~identifier()
   { };
-
-  virtual void serialize(const char *id, serializer &writer) const
-  {
-    writer.write(id, *id_);
-  }
-
-  virtual void deserialize(const char *id, deserializer &reader)
-  {
-    reader.read(id, *id_);
-  }
 
   virtual bool less(const basic_identifier &x) const
   {

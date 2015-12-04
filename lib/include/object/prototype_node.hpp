@@ -272,6 +272,10 @@ private:
   friend class object_store;
   template < class T >
   friend class object_view;
+  template < class T >
+  friend class const_object_view_iterator;
+  template < class T >
+  friend class object_view_iterator;
 
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */

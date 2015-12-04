@@ -112,7 +112,7 @@ public:
     deserializer.deserialize("val_unsigned_int", unsigned_int_);
     deserializer.deserialize("val_unsigned_long", unsigned_long_);
     deserializer.deserialize("val_bool", bool_);
-    deserializer.deserialize("val_cstr", cstr_, CSTR_LEN);
+    deserializer.deserialize("val_cstr", cstr_, (size_t)CSTR_LEN);
     deserializer.deserialize("val_string", string_);
     deserializer.deserialize("val_varchar", varchar_);
     deserializer.deserialize("val_date", date_);
@@ -131,7 +131,7 @@ public:
     serializer.serialize("val_unsigned_int", unsigned_int_);
     serializer.serialize("val_unsigned_long", unsigned_long_);
     serializer.serialize("val_bool", bool_);
-    serializer.serialize("val_cstr", cstr_, CSTR_LEN);
+    serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
     serializer.serialize("val_string", string_);
     serializer.serialize("val_varchar", varchar_);
     serializer.serialize("val_date", date_);

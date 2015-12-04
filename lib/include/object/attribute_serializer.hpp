@@ -84,7 +84,7 @@ public:
     return success_;
   }
 
-private:
+public:
   template < class V >
   void deserialize(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
   {
@@ -275,7 +275,7 @@ public:
     return success_;
   }
 
-private:
+public:
   template < class V >
   void serialize(const char *id, const V &from, typename std::enable_if<
     std::is_same<T, V>::value &&

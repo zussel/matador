@@ -43,10 +43,8 @@ namespace oos {
 class object_base_ptr;
 class object_store;
 class object_proxy;
-class byte_buffer;
 class varchar_base;
 class object_container;
-class basic_identifier;
 
 /**
  * @cond OOS_DEV
@@ -109,41 +107,43 @@ public:
 
 public:
   template < class T >
-  void deserialize(const char*, const T &x)
+  void serialize(const char*, const T &x)
   {
     buffer_->append(&x, sizeof(x));
   }
 
-	void deserialize(const char* id, const char *c, size_t s);
-	void deserialize(const char* id, const std::string &s);
-  void deserialize(const char*, const varchar_base &s);
-	void deserialize(const char* id, const date &x);
-	void deserialize(const char* id, const time &x);
-	void deserialize(const char* id, const object_base_ptr &x);
-	void deserialize(const char* id, const object_container &x);
+	void serialize(const char* id, const char *c, size_t s);
+	void serialize(const char* id, const std::string &s);
+  void serialize(const char*, const varchar_base &s);
+	void serialize(const char* id, const date &x);
+	void serialize(const char* id, const time &x);
+	void serialize(const char* id, const object_base_ptr &x);
+	void serialize(const char* id, const object_container &x);
   template < class V >
-	void deserialize(const char* id, const identifier<V> &x)
+	void serialize(const char* id, const identifier<V> &x)
   {
-    deserialize(id, x.id());
+    serialize(id, x.id());
   }
 
   template < class T >
-  void serialize(const char*, T &x)
+  void deserialize(const char*, T &x)
   {
     buffer_->release(&x, sizeof(x));
   }
 
-  void serialize(const char* id, char *&c, size_t s);
-	void serialize(const char* id, std::string &s);
-  void serialize(const char*, varchar_base &s);
-  void serialize(const char* id, date &x);
-  void serialize(const char* id, time &x);
-  void serialize(const char* id, object_base_ptr &x);
-	void serialize(const char* id, object_container &x);
+  void deserialize(const char* id, char *c, size_t s);
+	void deserialize(const char* id, std::string &s);
+  void deserialize(const char*, varchar_base &s);
+  void deserialize(const char* id, date &x);
+  void deserialize(const char* id, time &x);
+  void deserialize(const char* id, object_base_ptr &x);
+	void deserialize(const char* id, object_container &x);
   template < class V >
-  void serialize(const char* id, identifier<V> &x)
+  void deserialize(const char* id, identifier<V> &x)
   {
-    serialize(id, x.id());
+    V val;
+    deserialize(id, val);
+    x.value(val);
   }
   
   void write_object_container_item(const object_proxy *proxy);
