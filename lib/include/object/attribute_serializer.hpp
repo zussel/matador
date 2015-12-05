@@ -129,9 +129,12 @@ public:
     // Todo: throw exception
   }
 
-  void deserialize(const char *id, basic_identifier &x)
+  template < class V >
+  void deserialize(const char *id, identifier<V> &x)
   {
-    x.deserialize(id, *this);
+    V val;
+    deserialize(id, val);
+    x.value(val);
   }
 
   void deserialize(const char *id, char *, size_t)
@@ -327,9 +330,11 @@ public:
     // Todo: throw exception
   }
 
-  void serialize(const char *id, const basic_identifier &x)
+  template < class V>
+  void serialize(const char *id, const identifier<V> &x)
   {
-    x.serialize(id, *this);
+    V val = x.value();
+    serialize(id, val);
   }
 
   void serialize(const char *id, const char *, size_t)

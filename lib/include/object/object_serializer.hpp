@@ -122,7 +122,7 @@ public:
   template < class V >
 	void serialize(const char* id, const identifier<V> &x)
   {
-    serialize(id, x.id());
+    serialize(id, x.value());
   }
 
   template < class T >

@@ -96,7 +96,7 @@ public:
     object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
 
     // start collecting information
-    oos::access::deserialize(*this, *o);
+    oos::access::serialize(*this, *o);
 
     return check_object_count_map();
   }
@@ -126,9 +126,15 @@ public:
   iterator end();
 
   template < class T >
+  void serialize(const T &x)
+  {
+    oos::access::serialize(*this, x);
+  }
+
+  template < class T >
   void serialize(const char*, const T&) {}
 
-  void serialize(const char*, char*, size_t) {}
+  void serialize(const char*, const char*, size_t) {}
   template < class T, bool TYPE >
   void serialize(const char*, object_holder<T, TYPE> &x)
   {
@@ -142,7 +148,8 @@ public:
   template < class T >
   void serialize(const char *id, identifier<T> &x)
   {
-    serialize(id, x.id());
+    T val = x.value();
+    serialize(id, val);
   }
 
   template < class T >

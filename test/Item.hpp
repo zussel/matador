@@ -237,7 +237,7 @@ public:
   }
   template < class SERIALIZER > void serialize(SERIALIZER &serializer) const
   {
-    Item::serialize(serializer);
+    serializer.serialize(*oos::base_class<Item>(this));
     serializer.serialize("ref", ref_);
     serializer.serialize("ptr", ptr_);
   }

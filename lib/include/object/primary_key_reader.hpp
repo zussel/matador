@@ -25,6 +25,11 @@ public:
 
 public:
 
+  template < class V >
+  void deserialize(V &x)
+  {
+    oos::access::deserialize(*this, x);
+  }
   void deserialize(const char*, T &x);
   template < class V >
   void deserialize(const char *id, identifier<V> &x)

@@ -76,6 +76,12 @@ public:
   }
 
   template < class T >
+  void serialize(const T &x)
+  {
+    oos::access::serialize(*this, x);
+  }
+
+  template < class T >
   void serialize(const char*, T&) {}
 
   void serialize(const char*, const char*, size_t) {}
