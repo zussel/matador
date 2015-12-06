@@ -20,7 +20,6 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_serializer.hpp"
-#include "object/serializable.hpp"
 #include "object/object_store.hpp"
 #include "object/object_list.hpp"
 

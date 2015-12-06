@@ -18,7 +18,6 @@
 #ifndef ATTRIBUTE_SERIALIZER_HPP
 #define ATTRIBUTE_SERIALIZER_HPP
 
-#include "serializer.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_container.hpp"
 #include "object/identifier.hpp"
@@ -49,9 +48,6 @@ class attribute_reader;
 template < class T >
 class attribute_reader<T, typename std::enable_if< !std::is_same<T, char*>::value >::type>
 {
-private:
-  friend class generic_deserializer<attribute_reader<T> >;
-
 public:
   /**
    * @brief Creates an attribute_reader
@@ -241,9 +237,6 @@ private:
 template < class T >
 class attribute_writer
 {
-private:
-  friend class generic_serializer<attribute_writer<T> >;
-
 public:
   /**
    * @brief Creates an attribute_writer

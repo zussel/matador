@@ -96,6 +96,8 @@ public:
   template < typename T >
   explicit object_proxy(T *o)
     : obj_(o)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
   {
     primary_key_.reset(identifier_resolver<T>::resolve());
   }
@@ -113,6 +115,8 @@ public:
   template < typename T >
   object_proxy(T *o, unsigned long id, object_store *os)
     : obj_(o)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
     , oid(id)
     , ostore_(os)
   {
@@ -277,6 +281,8 @@ public:
   {
     ref_count_ = 0;
     ptr_count_ = 0;
+    deleter_ = destroy;
+    namer_ = type_id;
     obj_ = o;
     oid = 0;
     node_ = 0;
@@ -371,9 +377,10 @@ private:
   }
 
   template < class T >
-  const char* type_id(void *p)
+  static const char* type_id(void *p)
   {
-    return typeid(static_cast<T*>(p)).name();
+    return typeid(T).name();
+//    return typeid(static_cast<T*>(p)).name();
   }
 
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */

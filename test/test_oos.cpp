@@ -25,8 +25,8 @@
 #include "tools/FactoryTestUnit.hpp"
 #include "tools/StringTestUnit.hpp"
 
-//#include "object/ObjectStoreTestUnit.hpp"
-//#include "object/ObjectPrototypeTestUnit.hpp"
+#include "object/ObjectStoreTestUnit.hpp"
+#include "object/ObjectPrototypeTestUnit.hpp"
 //#include "object/ObjectListTestUnit.hpp"
 //#include "object/ObjectVectorTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new PrimaryKeyUnitTest());
   suite.register_unit(new PrototypeTreeTestUnit());
-//  suite.register_unit(new ObjectPrototypeTestUnit());
-//  suite.register_unit(new ObjectStoreTestUnit());
+  suite.register_unit(new ObjectPrototypeTestUnit());
+  suite.register_unit(new ObjectStoreTestUnit());
 //  suite.register_unit(new ObjectListTestUnit());
 //  suite.register_unit(new ObjectVectorTestUnit());
 

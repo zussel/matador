@@ -18,7 +18,6 @@
 #ifndef OBJECT_CONTAINER_HPP
 #define OBJECT_CONTAINER_HPP
 
-#include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
 #include "object/base_class.hpp"
 
