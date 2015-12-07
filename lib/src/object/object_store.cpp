@@ -27,6 +27,13 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace oos {
+object_inserter::object_inserter(object_store &ostore)
+  : ostore_(ostore)
+{}
+
+object_inserter::~object_inserter() {}
+
+void object_inserter::deserialize(const char*, object_container &) {}
 
 object_store::object_store()
   : object_inserter_(*this)

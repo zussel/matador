@@ -23,7 +23,6 @@
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
-#include "object/object_inserter.hpp"
 #include "object/object_observer.hpp"
 #include "object/primary_key_reader.hpp"
 
@@ -32,6 +31,7 @@
 #include <memory>
 #include <unordered_map>
 #include <algorithm>
+#include <stack>
 
 #include <string>
 #include <ostream>
@@ -57,6 +57,59 @@ class serializable;
 class object_proxy;
 class prototype_node;
 class object_container;
+
+/**
+ * @cond OOS_DEV
+ * @class object_inserter
+ * @brief Creates objects and object_lists
+ *
+ * When an serializable is inserted into the serializable store
+ * subsequently other serializable must be created and
+ * inserted into the serializable store.
+ * This class does these tasks.
+ */
+class object_inserter
+{
+public:
+  /**
+   * @brief Creates an object_inserter instance.
+   *
+   * An object_inserter instance ist created for a
+   * given object_store. The notify flag tells the
+   * object_inserter wether the observers should be
+   * notified or not.
+   *
+   * @param ostore The object_store.
+   */
+  object_inserter(object_store &ostore);
+  ~object_inserter();
+
+  template < class T >
+  void insert(object_proxy *proxy, T *o);
+  template < class T >
+  void deserialize(T &x);
+  template < class T >
+  void deserialize(const char*, T&) {}
+
+  void deserialize(const char*, char*, size_t) {}
+
+//  template < class T >
+//  void serialize(const char *, object_ptr<T> &x)
+  template < class T, bool TYPE >
+  void deserialize(const char*, object_holder<T, TYPE> &x);
+
+  void deserialize(const char*, object_container &x);
+
+private:
+  typedef std::set<object_proxy*> t_object_proxy_set;
+
+  t_object_proxy_set object_proxies_;
+
+  std::stack<object_proxy*> object_proxy_stack_;
+
+  object_store &ostore_;
+};
+/// @endcond
 
 /**
  * @class object_store
@@ -600,6 +653,58 @@ object_proxy* object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify
   object_map_[oproxy->id()] = oproxy;
 
   return oproxy;
+}
+
+template < class T >
+void object_inserter::insert(object_proxy *proxy, T *o)
+{
+  object_proxies_.clear();
+  while (!object_proxy_stack_.empty()) {
+    object_proxy_stack_.pop();
+  }
+
+  object_proxies_.insert(proxy);
+  object_proxy_stack_.push(proxy);
+  if (proxy->obj()) {
+    oos::access::deserialize(*this, *o);
+  }
+}
+
+template < class T >
+void object_inserter::deserialize(T &x)
+{
+  oos::access::deserialize(*this, x);
+}
+
+template < class T, bool TYPE >
+void object_inserter::deserialize(const char*, object_holder<T, TYPE> &x)
+{
+  // mark serializable pointer as internal
+  x.is_internal_ = true;
+
+  if (!x.proxy_) {
+    return;
+  }
+
+  if (x.is_reference()) {
+    x.proxy_->link_ref();
+  } else if (x.ptr() && x.id()){
+    x.proxy_->link_ptr();
+  }
+  if (x.ptr()) {
+    bool new_object = object_proxies_.insert(x.proxy_).second;
+    if (x.id()) {
+      // do the pointer count
+      if (new_object) {
+        object_proxy_stack_.push(x.proxy_);
+        oos::access::deserialize(*this, *x.get());
+        object_proxy_stack_.pop();
+      }
+    } else if (new_object){
+      // new object
+      ostore_.insert_proxy(x.proxy_, x.get());
+    }
+  }
 }
 
 }

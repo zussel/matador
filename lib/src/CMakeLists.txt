@@ -1,5 +1,5 @@
 SET(OBJECT_SOURCES
-		object/object_inserter.cpp
+#		object/object_inserter.cpp
 		object/object_deleter.cpp
 #		object/object_container.cpp
 		object/object_ptr.cpp
@@ -47,7 +47,7 @@ SET(OBJECT_HEADER
 		../include/object/object_ptr.hpp
 		../include/object/object_store.hpp
 #		../include/object/object_container.hpp
-		../include/object/object_inserter.hpp
+#		../include/object/object_inserter.hpp
 		../include/object/object_deleter.hpp
 #		../include/object/object_list.hpp
 #		../include/object/object_vector.hpp
