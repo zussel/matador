@@ -68,7 +68,9 @@ public:
   void deserialize(const char*, V&) {}
 
   void deserialize(const char*, char*, size_t) {}
-  void deserialize(const char *id, basic_identifier &x)
+
+  template < class V >
+  void deserialize(const char *, identifier<V> &x)
   {
     id_ = x.share();
   }

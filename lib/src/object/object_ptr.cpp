@@ -216,7 +216,7 @@ object_base_ptr::ptr_count() const
 
 bool object_base_ptr::has_primary_key() const
 {
-  return (proxy_ ? proxy_->has_primary_key() : false);
+  return (proxy_ ? proxy_->has_identifier() : false);
 }
 
 std::shared_ptr<basic_identifier> object_base_ptr::primary_key() const

@@ -347,7 +347,7 @@ public:
    *
    * @return true If the serializable has a primary key
    */
-  bool has_primary_key() const;
+  bool has_identifier() const;
 
   /**
    * Return the primary key. If underlaying serializable

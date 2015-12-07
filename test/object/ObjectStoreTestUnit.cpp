@@ -461,26 +461,25 @@ ObjectStoreTestUnit::hierarchy()
    * object type
    */
 
-  Item *itm;
   for (int i = 0; i < 5; ++i) {
     std::stringstream str;
     str << "item " << i;
     ostore_.insert(new Item(str.str()));
     str.str("");
     str << "item a " << i;
-    itm = new ItemA;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemA *ia = new ItemA;
+    ia->set_string(str.str());
+    ostore_.insert(ia);
     str.str("");
     str << "item b " << i;
-    itm = new ItemB;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemB *ib = new ItemB;
+    ib->set_string(str.str());
+    ostore_.insert(ib);
     str.str("");
     str << "item c " << i;
-    itm = new ItemC;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemC *ic = new ItemC;
+    ic->set_string(str.str());
+    ostore_.insert(ic);
   }
   
   typedef object_view<Item> item_view_t;

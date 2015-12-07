@@ -274,6 +274,7 @@ public:
   template < class Y >
 	object_ptr<Y> insert(Y *o)
   {
+//    return insert(object_ptr<Y>(o));
 		return object_ptr<Y>(insert_object(o, true));
 	}
 
@@ -528,37 +529,17 @@ object_proxy* object_store::insert_object(T *o, bool notify)
     throw object_exception("unknown object type");
   }
   // retrieve and set new unique number into serializable
-  object_proxy *oproxy = nullptr;
-//  t_serializable_proxy_map::iterator i = serializable_map_.find(o);
-//  if (i != serializable_map_.end()) {
-//    // object exists in object store
-//    // get object proxy
-//    oproxy = i->second;
-//    if (oproxy->linked()) {
-//      // an object exists in map.
-//      // replace it with new serializable
-//      // unlink it and
-//      // link it into new place in list
-//      oproxy->node()->remove(oproxy);
-//      // Todo: replace reset with a propper replace method
-//      // (call remove on node)
-////      oproxy->replace(o);
-//    }
-//    oproxy->reset(o);
-//  } else {
-    /* object doesn't exist in map
-     * if object has a valid id, update
-     * the sequencer else assign new
-     * unique id
-     */
-    oproxy = create_proxy(o);
-    if (!oproxy) {
-      throw object_exception("couldn't create serializable proxy");
-//    }
+  /* object doesn't exist in map
+   * if object has a valid id, update
+   * the sequencer else assign new
+   * unique id
+   */
+  object_proxy *oproxy = create_proxy(o);
+  if (!oproxy) {
+    throw object_exception("couldn't create serializable proxy");
   }
 
-//  if (oproxy->is_identifiable()) {
-  if (oproxy->has_primary_key()) {
+  if (oproxy->has_identifier()) {
     // if object has primary key of type short, int or long
     // set the id of proxy as value
 //    identifier_assigner<unsigned long>::assign(oproxy->id(), o);

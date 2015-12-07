@@ -163,7 +163,7 @@ void object_proxy::id(unsigned long i)
   oid = i;
 }
 
-bool object_proxy::has_primary_key() const
+bool object_proxy::has_identifier() const
 {
   return primary_key_ != nullptr;
 }
