@@ -49,14 +49,6 @@ void object_serializer::serialize(const char*, const std::string &s)
   buffer_->append(s.c_str(), len);
 }
 
-void object_serializer::serialize(const char*, const varchar_base &s)
-{
-  size_t len = s.size();
-  
-  buffer_->append(&len, sizeof(len));
-  buffer_->append(s.str().c_str(), len);
-}
-
 void object_serializer::serialize(const char *id, const date &x)
 {
   serialize(id, x.julian_date());
@@ -93,16 +85,6 @@ void object_serializer::deserialize(const char*, char *c, size_t)
 }
 
 void object_serializer::deserialize(const char*, std::string &s)
-{
-  size_t len = 0;
-  buffer_->release(&len, sizeof(len));
-  char *str = new char[len];
-  buffer_->release(str, len);
-  s.assign(str, len);
-  delete [] str;
-}
-
-void object_serializer::deserialize(const char*, varchar_base &s)
 {
   size_t len = 0;
   buffer_->release(&len, sizeof(len));

@@ -49,7 +49,7 @@ object_proxy::~object_proxy()
 
 const char *object_proxy::classname() const
 {
-  return namer_(obj_);
+  return namer_();
 }
 
 object_store *object_proxy::ostore() const

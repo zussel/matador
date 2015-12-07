@@ -74,7 +74,7 @@ object_inserter::~object_inserter() {}
 //  }
 //}
 
-void object_inserter::serialize(const char*, object_container &)
+void object_inserter::deserialize(const char*, object_container &)
 {
 //  if (x.ostore()) {
 //    return;

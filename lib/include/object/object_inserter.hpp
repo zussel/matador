@@ -71,23 +71,25 @@ public:
     object_proxies_.insert(proxy);
     object_proxy_stack_.push(proxy);
     if (proxy->obj()) {
-      oos::access::serialize(*this, *o);
+      oos::access::deserialize(*this, *o);
     }
   }
 
   template < class T >
-  void serialize(const T &x)
+  void deserialize(T &x)
   {
-    oos::access::serialize(*this, x);
+    oos::access::deserialize(*this, x);
   }
 
   template < class T >
-  void serialize(const char*, T&) {}
+  void deserialize(const char*, T&) {}
 
-  void serialize(const char*, const char*, size_t) {}
+  void deserialize(const char*, char*, size_t) {}
 
+//  template < class T >
+//  void serialize(const char *, object_ptr<T> &x)
   template < class T, bool TYPE >
-  void serialize(const char*, object_holder<T, TYPE> &x)
+  void deserialize(const char*, object_holder<T, TYPE> &x)
   {
     // mark serializable pointer as internal
     x.is_internal_ = true;
@@ -117,7 +119,7 @@ public:
     }
   }
 
-  void serialize(const char*, object_container &x);
+  void deserialize(const char*, object_container &x);
   
 private:
   void insert_into_store(object_proxy *proxy);

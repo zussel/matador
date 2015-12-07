@@ -114,7 +114,15 @@ public:
 
 	void serialize(const char* id, const char *c, size_t s);
 	void serialize(const char* id, const std::string &s);
-  void serialize(const char*, const varchar_base &s);
+  template < unsigned int C >
+  void serialize(const char*, const varchar<C> &s)
+  {
+    size_t len = s.size();
+
+    buffer_->append(&len, sizeof(len));
+    buffer_->append(s.str().c_str(), len);
+  }
+
 	void serialize(const char* id, const date &x);
 	void serialize(const char* id, const time &x);
 	void serialize(const char* id, const object_base_ptr &x);
@@ -133,7 +141,16 @@ public:
 
   void deserialize(const char* id, char *c, size_t s);
 	void deserialize(const char* id, std::string &s);
-  void deserialize(const char*, varchar_base &s);
+  template < unsigned int C >
+  void deserialize(const char*, varchar<C> &s)
+  {
+    size_t len = 0;
+    buffer_->release(&len, sizeof(len));
+    char *str = new char[len];
+    buffer_->release(str, len);
+    s.assign(str, len);
+    delete [] str;
+  }
   void deserialize(const char* id, date &x);
   void deserialize(const char* id, time &x);
   void deserialize(const char* id, object_base_ptr &x);

@@ -368,7 +368,7 @@ private:
   friend class object_base_ptr;
 
   typedef void (*deleter)(void*);
-  typedef const char* (*namer)(void*);
+  typedef const char* (*namer)();
 
   template <typename T>
   static void destroy(void* p)
@@ -377,7 +377,7 @@ private:
   }
 
   template < class T >
-  static const char* type_id(void *p)
+  static const char* type_id()
   {
     return typeid(T).name();
 //    return typeid(static_cast<T*>(p)).name();

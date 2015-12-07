@@ -494,7 +494,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   size_t max = 20;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 20");
   
   item_view_t::const_iterator first = item_view.begin();
   item_view_t::const_iterator last = item_view.end();
@@ -515,7 +515,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   max = 5;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 5");
   
   first = item_view.begin();
   last = item_view.end();
@@ -855,10 +855,10 @@ void ObjectStoreTestUnit::test_transient_optr()
 
 void ObjectStoreTestUnit::test_insert()
 {
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)0), object_exception, "serializable is null", "null shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "serializable is null", "null shouldn't be insertable");
 
   ItemC *ic = new ItemC;
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert serializable", "unknown serializable type shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "unknown object type", "unknown serializable type shouldn't be insertable");
   delete ic;
 
   object_ptr<Item> item = ostore_.insert(new Item("test"));
