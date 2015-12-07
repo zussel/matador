@@ -24,6 +24,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object_ptr.hpp"
+#include "object/object_store.hpp"
 
 #include <stack>
 
@@ -114,7 +115,7 @@ public:
         }
       } else if (new_object){
         // new object
-        insert_into_store(x.proxy_);
+        insert_into_store(x.proxy_, x.get());
       }
     }
   }
@@ -122,7 +123,11 @@ public:
   void deserialize(const char*, object_container &x);
   
 private:
-  void insert_into_store(object_proxy *proxy);
+  template < class T >
+  void insert_into_store(object_proxy *proxy, T *o)
+  {
+    ostore_.insert_proxy(proxy, o);
+  }
   
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;

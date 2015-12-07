@@ -34,7 +34,7 @@
 
 #include "object/access.hpp"
 #include "object/object_proxy.hpp"
-#include "object_ptr.hpp"
+#include "object/object_ptr.hpp"
 
 #include <map>
 

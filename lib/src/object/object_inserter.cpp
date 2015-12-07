@@ -28,52 +28,6 @@ object_inserter::object_inserter(object_store &ostore)
 
 object_inserter::~object_inserter() {}
 
-//void object_inserter::insert(object_proxy *proxy)
-//{
-//  object_proxies_.clear();
-//  while (!object_proxy_stack_.empty()) {
-//    object_proxy_stack_.pop();
-//  }
-//
-//  object_proxies_.insert(proxy);
-//  object_proxy_stack_.push(proxy);
-//  if (proxy->obj()) {
-//    proxy->obj()->deserialize(*this);
-//  }
-//
-//}
-
-//void object_inserter::serialize(const char*, object_base_ptr &x)
-//{
-//  // mark serializable pointer as internal
-//  x.is_internal_ = true;
-//
-//  if (!x.proxy_) {
-//    return;
-//  }
-//
-//  if (x.is_reference()) {
-//    x.proxy_->link_ref();
-//  } else if (x.ptr() && x.id()){
-//    x.proxy_->link_ptr();
-//  }
-//  if (x.ptr()) {
-//    bool new_object = object_proxies_.insert(x.proxy_).second;
-//    if (x.id()) {
-//      // do the pointer count
-////      x.proxy_->link_ptr();
-//      if (new_object) {
-//        object_proxy_stack_.push(x.proxy_);
-//        x.ptr()->deserialize(*this);
-//        object_proxy_stack_.pop();
-//      }
-//    } else if (new_object){
-//      // new object
-//      ostore_.insert_proxy(x.proxy_);
-//    }
-//  }
-//}
-
 void object_inserter::deserialize(const char*, object_container &)
 {
 //  if (x.ostore()) {
@@ -95,11 +49,6 @@ void object_inserter::deserialize(const char*, object_container &)
 //    }
 //  });
 //  ostore_.insert(x);
-}
-
-void object_inserter::insert_into_store(object_proxy *)
-{
-//  ostore_.insert_proxy(proxy);
 }
 
 }

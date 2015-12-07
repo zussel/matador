@@ -17,8 +17,6 @@
 
 #include "object/object_deleter.hpp"
 #include "object/object_list.hpp"
-#include "object/identifier.hpp"
-#include "object/object_proxy.hpp"
 
 using namespace std::placeholders;
 
