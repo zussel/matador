@@ -24,11 +24,13 @@
 //#include "object/object_list.hpp"
 //#include "object/object_vector.hpp"
 //#include "object/linked_object_list.hpp"
+#include "object/has_one.hpp"
+#include "object/has_many.hpp"
 
 #include "tools/time.hpp"
 #include "tools/date.hpp"
-#include "tools/varchar.hpp"
 
+#include "tools/varchar.hpp"
 #include <ostream>
 
 class Item
@@ -245,8 +247,8 @@ public:
   void ref(const value_ref &r) { ref_ = r; }
   void ptr(const value_ptr &p) { ptr_ = p; }
 
-  value_ref ref() const { return ref_; }
-  value_ptr ptr() const { return ptr_; }
+//  value_ref ref() const { return ref_; }
+//  value_ptr ptr() const { return ptr_; }
 
   template < class I >
   friend std::ostream& operator <<(std::ostream &os, const ObjectItem<I> &i)
@@ -256,8 +258,10 @@ public:
   }
 
 private:
-  value_ref ref_;
-  value_ptr ptr_;
+  oos::has_one<T> ref_;
+  oos::has_one<T> ptr_;
+//  value_ref ref_;
+//  value_ptr ptr_;
 };
 /*
 template < class T >
@@ -534,8 +538,8 @@ std::string vector_object_producer<T>::classname_ = typeid(T).name();
 typedef Vector<int> IntVector;
 typedef Vector<oos::object_ptr<Item> > ItemPtrVector;
 typedef Vector<oos::object_ref<Item> > ItemRefVector;
-
-class book : public oos::serializable
+*/
+class book
 {
 private:
   oos::identifier<unsigned long> id_;
@@ -550,21 +554,23 @@ public:
     , isbn_(isbn)
     , author_(author)
   {}
-  virtual ~book() {}
+  ~book() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("title", title_);
-    deserializer.read("isbn", isbn_);
-    deserializer.read("author", author_);
+    deserializer.deserialize("id", id_);
+    deserializer.deserializer("title", title_);
+    deserializer.deserializer("isbn", isbn_);
+    deserializer.deserializer("author", author_);
   }
-  virtual void serialize(oos::serializer &serializer) const
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) const
   {
-    serializer.write("id", id_);
-    serializer.write("title", title_);
-    serializer.write("isbn", isbn_);
-    serializer.write("author", author_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("isbn", isbn_);
+    serializer.serialize("author", author_);
   }
 
   std::string title() const { return title_; }
@@ -572,31 +578,32 @@ public:
   std::string author() const { return author_; }
 };
 
-class book_list : public oos::serializable
+class book_list
 {
 public:
-  typedef oos::object_ref<book> book_ref;
-  typedef oos::object_list<book_list, book_ref, true> book_list_t;
-  typedef book_list_t::item_ptr item_ptr;
+  typedef oos::has_many<book> book_list_t;
+  typedef book_list_t::value_type item_ptr;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
   book_list() {}
-  virtual ~book_list() {}
+  ~book_list() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("book_list", book_list_);
+    deserializer.deserialize("id", id_);
+    deserializer.deserialize("book_list", book_list_);
   }
-  virtual void serialize(oos::serializer &serializer) const
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) const
   {
-    serializer.write("id", id_);
-    serializer.write("book_list", book_list_);
+    serializer.serialize("id", id_);
+    serializer.serialize("book_list", book_list_);
   }
 
-  void add(const book_ref &b)
+  void add(const item_ptr &b)
   {
     book_list_.push_back(b);
   }
@@ -616,7 +623,7 @@ private:
   oos::identifier<unsigned long> id_;
   book_list_t book_list_;
 };
-
+/*
 class person : public oos::serializable
 {
 private:

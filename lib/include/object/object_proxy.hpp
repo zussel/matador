@@ -295,7 +295,7 @@ public:
   /**
    * @brief Add an object_base_ptr to the linked list.
    *
-   * Each object_base_ptr containg this object_proxy
+   * Each object_base_ptr containing this object_proxy
    * calls this method. So object_proxy knows how many
    * object_base_ptr are dealing with this serializable.
    *

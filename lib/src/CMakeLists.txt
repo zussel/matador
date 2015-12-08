@@ -59,8 +59,6 @@ SET(OBJECT_HEADER
 		../include/object/object_observer.hpp
 #		../include/object/object_expression.hpp
 #		../include/object/attribute_serializer.hpp
-#		../include/object/serializer.hpp
-#		../include/object/serializable.hpp
 		../include/object/identifier.hpp
 #		../include/object/primary_key_analyzer.hpp
 		../include/object/foreign_key_analyzer.hpp
@@ -71,7 +69,7 @@ SET(OBJECT_HEADER
 		../include/object/base_class.hpp
 		../include/object/has_many.hpp
 		../include/object/has_one.hpp
-)
+		../include/object/container_type_traits.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
