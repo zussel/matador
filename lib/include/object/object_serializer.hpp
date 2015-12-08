@@ -35,6 +35,7 @@
 
 #include "object/access.hpp"
 #include "object/identifier.hpp"
+#include "object/object_ptr.hpp"
 
 #include <string>
 
@@ -125,7 +126,13 @@ public:
 
 	void serialize(const char* id, const date &x);
 	void serialize(const char* id, const time &x);
-	void serialize(const char* id, const object_base_ptr &x);
+  template < class T, bool TYPE >
+	void serialize(const char* id, const object_holder<T, TYPE> &x)
+  {
+    serialize(id, x.id());
+    serialize(id, x.type(), strlen(x.type()));
+  }
+
 	void serialize(const char* id, const object_container &x);
   template < class V >
 	void serialize(const char* id, const identifier<V> &x)

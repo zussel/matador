@@ -61,13 +61,6 @@ void object_serializer::serialize(const char *id, const time &x)
   serialize(id, tv.tv_usec);
 }
 
-void object_serializer::serialize(const char *id, const object_base_ptr &x)
-{
-  // write type and id into buffer
-  serialize(id, x.id());
-  serialize(id, x.type(), strlen(x.type()));
-}
-
 void object_serializer::serialize(const char *id, const object_container &x)
 {
   // write number of items in list

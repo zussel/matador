@@ -229,7 +229,6 @@ public:
   ObjectItem(const std::string &n, int i)
     : Item(n, i)
   {}
-  virtual ~ObjectItem() {}
 
   template < class DESERIALIZER > void deserialize(DESERIALIZER &deserializer)
   {
@@ -247,8 +246,8 @@ public:
   void ref(const value_ref &r) { ref_ = r; }
   void ptr(const value_ptr &p) { ptr_ = p; }
 
-//  value_ref ref() const { return ref_; }
-//  value_ptr ptr() const { return ptr_; }
+  value_ref ref() const { return ref_; }
+  value_ptr ptr() const { return ptr_; }
 
   template < class I >
   friend std::ostream& operator <<(std::ostream &os, const ObjectItem<I> &i)
@@ -258,10 +257,10 @@ public:
   }
 
 private:
-  oos::has_one<T> ref_;
-  oos::has_one<T> ptr_;
-//  value_ref ref_;
-//  value_ptr ptr_;
+//  oos::has_one<T> ref_;
+//  oos::has_one<T> ptr_;
+  value_ref ref_;
+  value_ptr ptr_;
 };
 /*
 template < class T >

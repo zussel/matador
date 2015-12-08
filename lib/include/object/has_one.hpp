@@ -39,6 +39,7 @@ public:
   template < bool TYPE >
   has_one& operator=(const object_holder<T, TYPE> &x)
   {
+    proxy_ = x.proxy_;
     return *this;
   }
 

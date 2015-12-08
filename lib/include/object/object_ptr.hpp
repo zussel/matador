@@ -106,7 +106,7 @@ protected:
    * It is destroyed if it is not inserted
    * into any object_store.
    */
-	virtual ~object_base_ptr();
+	~object_base_ptr();
 
 public:
 
@@ -123,15 +123,6 @@ public:
    * @param x The object_base_ptr to check unequality with.
    */
 	bool operator!=(const object_base_ptr &x) const;
-
-  /**
-   * Returns the type string of the serializable
-   * 
-   * @return The type string of the serializable.
-   */
-  virtual const char* type() const = 0;
-
-//  const char* classname() const;
 
   /**
    * Resets the object_base_ptr with the given object_proxy.
@@ -252,13 +243,6 @@ public:
   std::shared_ptr<basic_identifier> primary_key() const;
 
   /**
-   * Creates a new identifier object.
-   *
-   * @return Returns a new identifier object.
-   */
-  virtual basic_identifier* create_identifier() const = 0;
-
-  /**
    * Prints the underlaying serializable
    *
    * @param out The output stream to write on.
@@ -281,6 +265,7 @@ private:
   friend class table_reader;
 
   template < class T, bool TYPE > friend class object_holder;
+  template < class T > friend class has_one;
 
   object_proxy *proxy_ = nullptr;
   bool is_reference_ = false;
@@ -372,7 +357,7 @@ public:
    *
    * @return The type string of the serializable.
    */
-  virtual const char* type() const
+  const char* type() const
   {
     return classname_.c_str();
   }
@@ -455,7 +440,7 @@ public:
    *
    * @return A new identifier.
    */
-  virtual basic_identifier* create_identifier() const
+  basic_identifier* create_identifier() const
   {
     return self::identifier_->clone();
   }
