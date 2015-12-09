@@ -15,7 +15,6 @@ template < class T >
 class has_one
 {
 public:
-  typedef T object_type;                    /**< Shortcut for serializable type. */
   typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
