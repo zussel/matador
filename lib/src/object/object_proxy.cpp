@@ -139,12 +139,12 @@ unsigned long object_proxy::ptr_count() const
   return ptr_count_;
 }
 
-void object_proxy::add(object_base_ptr *ptr)
+void object_proxy::add(basic_object_holder *ptr)
 {
   ptr_set_.insert(ptr);
 }
 
-bool object_proxy::remove(object_base_ptr *ptr)
+bool object_proxy::remove(basic_object_holder *ptr)
 {
   return ptr_set_.erase(ptr) == 1;
 }

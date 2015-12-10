@@ -6,7 +6,6 @@
 #define OOS_HAS_ONE_HPP
 
 #include "object/object_proxy.hpp"
-#include "object/object_ptr.hpp"
 #include "object/identifier_resolver.hpp"
 
 namespace oos {
@@ -45,6 +44,42 @@ public:
   T* operator->()
   {
     return static_cast<T*>(proxy_->obj());
+  }
+
+  void reset(object_proxy *proxy, bool is_ref)
+  {
+    if (proxy == proxy_) {
+      return;
+    }
+    if (proxy_) {
+      oid_ = 0;
+      if (is_reference_) {
+        proxy_->unlink_ref();
+      } else {
+        proxy_->unlink_ptr();
+      }
+      // Todo: need a solution for this
+//      proxy_->remove(this);
+      /*
+       * if proxy was created temporary
+       * we can delete it here
+       */
+      if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
+        delete proxy_;
+      }
+    }
+    proxy_ = proxy;
+    is_reference_ = is_ref;
+    if (proxy_) {
+      oid_ = proxy_->id();
+      if (is_reference_) {
+        proxy_->link_ref();
+      } else {
+        proxy_->link_ptr();
+      }
+      // Todo: need a solution for this
+//      proxy_->add(this);
+    }
   }
 
   /**

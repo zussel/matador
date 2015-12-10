@@ -8,7 +8,7 @@
 
 namespace oos {
 
-class object_base_ptr;
+class basic_object_holder;
 class prototype_node;
 
 /// @cond OOS_DEV

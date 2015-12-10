@@ -41,7 +41,7 @@
 
 namespace oos {
 
-class object_base_ptr;
+class basic_object_holder;
 class object_store;
 class object_proxy;
 class varchar_base;
@@ -160,7 +160,7 @@ public:
   }
   void deserialize(const char* id, date &x);
   void deserialize(const char* id, time &x);
-  void deserialize(const char* id, object_base_ptr &x);
+  void deserialize(const char* id, basic_object_holder &x);
 	void deserialize(const char* id, object_container &x);
   template < class V >
   void deserialize(const char* id, identifier<V> &x)

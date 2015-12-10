@@ -26,7 +26,7 @@
 namespace oos {
 
 class serializable;
-class object_base_ptr;
+class basic_object_holder;
 class basic_identifier;
 class prototype_node;
 

@@ -11,7 +11,8 @@ SET(OBJECT_SOURCES
 		object/foreign_key_analyzer.cpp
 		object/basic_identifier.cpp
 		object/identifier.cpp
-		object/prototype_iterator.cpp)
+		object/prototype_iterator.cpp
+		object/basic_object_holder.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -69,7 +70,8 @@ SET(OBJECT_HEADER
 		../include/object/base_class.hpp
 		../include/object/has_many.hpp
 		../include/object/has_one.hpp
-		../include/object/container_type_traits.hpp)
+		../include/object/container_type_traits.hpp
+		../include/object/basic_object_holder.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

@@ -102,7 +102,7 @@ void object_serializer::deserialize(const char *, time &x)
   x.set(tv);
 }
 
-void object_serializer::deserialize(const char */*id*/, object_base_ptr &/*x*/)
+void object_serializer::deserialize(const char */*id*/, basic_object_holder &/*x*/)
 {
   /***************
    *

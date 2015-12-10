@@ -106,7 +106,7 @@ public:
   template < class V >
   void deserialize(const char *id, V &/*to*/, typename std::enable_if<
     std::is_base_of<V, T>::value &&
-    std::is_same<V, oos::object_base_ptr>::value
+    std::is_same<V, oos::basic_object_holder>::value
   >::type* = 0)
   {
     if (id_ != id) {
@@ -530,7 +530,7 @@ public:
     to_ = to_string(from);
     success_ = true;
   }
-  void serialize(const char *id, const object_base_ptr &x)
+  void serialize(const char *id, const basic_object_holder &x)
   {
     if (id_ != id) {
       return;

@@ -44,7 +44,7 @@ namespace oos {
 
 class serializable;
 class object_store;
-class object_base_ptr;
+class basic_object_holder;
 class prototype_node;
 class basic_identifier;
 
@@ -293,27 +293,27 @@ public:
 
 
   /**
-   * @brief Add an object_base_ptr to the linked list.
+   * @brief Add an basic_object_holder to the linked list.
    *
-   * Each object_base_ptr containing this object_proxy
+   * Each basic_object_holder containing this object_proxy
    * calls this method. So object_proxy knows how many
-   * object_base_ptr are dealing with this serializable.
+   * basic_object_holder are dealing with this serializable.
    *
-   * @param ptr The object_base_ptr containing this object_proxy.
+   * @param ptr The basic_object_holder containing this object_proxy.
    */
-  void add(object_base_ptr *ptr);
+  void add(basic_object_holder *ptr);
 
   /**
-   * @brief Remove an object_base_ptr from the linked list.
+   * @brief Remove an basic_object_holder from the linked list.
    *
-   * Each destroying ore reseting object_base_ptr
+   * Each destroying ore reseting basic_object_holder
    * containg this object_proxy calls this method.
-   * So object_proxy knows how many object_base_ptr
+   * So object_proxy knows how many basic_object_holder
    * are dealing with this serializable.
    *
-   * @param ptr The object_base_ptr containing this object_proxy.
+   * @param ptr The basic_object_holder containing this object_proxy.
    */
-  bool remove(object_base_ptr *ptr);
+  bool remove(basic_object_holder *ptr);
 
   /**
    * @brief True if proxy is valid
@@ -365,7 +365,8 @@ private:
   template < class T > friend class result;
   friend class table_reader;
   friend class restore_visitor;
-  friend class object_base_ptr;
+  friend class basic_object_holder;
+  template < class T > friend class has_one;
 
   typedef void (*deleter)(void*);
   typedef const char* (*namer)();
@@ -397,8 +398,8 @@ private:
   object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
   prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the serializable. */
 
-  typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
-  ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */
+  typedef std::set<basic_object_holder *> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
+  ptr_set_t ptr_set_;      /**< This set contains every basic_object_holder pointing to this object_proxy. */
   
   typedef std::list<serializable*> object_list_t;
   typedef std::map<std::string, object_list_t> string_object_list_map_t;

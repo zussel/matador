@@ -40,7 +40,7 @@
 
 namespace oos {
 
-class object_base_ptr;
+class basic_object_holder;
 class object_container;
 class object_proxy;
 class basic_identifier;
