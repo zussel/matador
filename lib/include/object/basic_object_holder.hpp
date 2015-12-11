@@ -18,9 +18,10 @@
 #define OOS_API
 #endif
 
-
+#include <memory>
 namespace oos {
 
+class basic_identifier;
 /**
  * @class basic_object_holder
  * @brief Base class for the serializable pointer and reference class

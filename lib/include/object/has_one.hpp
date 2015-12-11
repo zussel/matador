@@ -6,12 +6,13 @@
 #define OOS_HAS_ONE_HPP
 
 #include "object/object_proxy.hpp"
+#include "object/basic_object_holder.hpp"
 #include "object/identifier_resolver.hpp"
 
 namespace oos {
 
 template < class T >
-class has_one
+class has_one : public basic_object_holder
 {
 public:
   typedef has_one<T> self;      /**< Shortcut for self class. */
