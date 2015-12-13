@@ -22,6 +22,16 @@
 namespace oos {
 
 class basic_identifier;
+
+enum cascade_type
+{
+  NONE = 0,
+  DELETE = 1,
+  UPDATE = 2,
+  INSERT = 4,
+  ALL = DELETE | UPDATE | INSERT
+};
+
 /**
  * @class basic_object_holder
  * @brief Base class for the serializable pointer and reference class
@@ -42,9 +52,12 @@ protected:
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
    * 
-   * @param is_ref If true the serializable is handled as a reference.
+   * @param cascade Indicates wether the insert, update or delete action
+   *                is allowed to be applied.
+   * @param is_internal True if the pointer is used internal, which means
+   *                    it is used to describe an entity.
    */
-  explicit basic_object_holder(bool is_ref);
+explicit basic_object_holder(cascade_type cascade, bool is_internal);
 
   /**
    * Copies from another basic_object_holder

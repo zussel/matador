@@ -18,15 +18,6 @@ public:
   typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
-  enum cascade
-  {
-    NONE = 0,
-    DELETE = 1,
-    UPDATE = 2,
-    INSERT = 4,
-    ALL = DELETE | UPDATE | INSERT
-  };
-
   has_one() {}
   has_one(T *o)
     : proxy_(new object_proxy(o))
