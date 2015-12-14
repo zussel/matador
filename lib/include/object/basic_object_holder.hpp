@@ -52,12 +52,12 @@ protected:
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
    * 
-   * @param cascade Indicates wether the insert, update or delete action
-   *                is allowed to be applied.
    * @param is_internal True if the pointer is used internal, which means
    *                    it is used to describe an entity.
+   * @param cascade Indicates wether the insert, update or delete action
+   *                is allowed to be applied.
    */
-explicit basic_object_holder(cascade_type cascade, bool is_internal);
+  explicit basic_object_holder(bool is_internal, cascade_type cascade = cascade_type::NONE);
 
   /**
    * Copies from another basic_object_holder
@@ -255,6 +255,7 @@ private:
   template < class T > friend class has_one;
 
   object_proxy *proxy_ = nullptr;
+  cascade_type cascade_ = cascade_type::NONE;
   bool is_reference_ = false;
   bool is_internal_ = false;
   unsigned long oid_ = 0;

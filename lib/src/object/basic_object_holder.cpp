@@ -6,8 +6,9 @@
 
 namespace oos {
 
-basic_object_holder::basic_object_holder(bool is_ref)
-  : is_reference_(is_ref)
+basic_object_holder::basic_object_holder(bool is_internal, cascade_type cascade)
+  : is_internal_(is_internal)
+  , cascade_(cascade)
 {}
 
 basic_object_holder::basic_object_holder(const basic_object_holder &x)
