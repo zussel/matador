@@ -18,12 +18,16 @@ public:
   typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
-  has_one() {}
+  has_one()
+    : basic_object_holder(true)
+  {}
   has_one(T *o)
-    : proxy_(new object_proxy(o))
+    : basic_object_holder(true)
+    , proxy_(new object_proxy(o))
   {}
   has_one(object_proxy *proxy)
-    : proxy_(proxy)
+    : basic_object_holder(true)
+    , proxy_(proxy)
   {}
 
   template < bool TYPE >
@@ -36,42 +40,6 @@ public:
   T* operator->()
   {
     return static_cast<T*>(proxy_->obj());
-  }
-
-  void reset(object_proxy *proxy, bool is_ref)
-  {
-    if (proxy == proxy_) {
-      return;
-    }
-    if (proxy_) {
-      oid_ = 0;
-      if (is_reference_) {
-        proxy_->unlink_ref();
-      } else {
-        proxy_->unlink_ptr();
-      }
-      // Todo: need a solution for this
-//      proxy_->remove(this);
-      /*
-       * if proxy was created temporary
-       * we can delete it here
-       */
-      if (!proxy_->ostore() && proxy_->ptr_set_.empty()) {
-        delete proxy_;
-      }
-    }
-    proxy_ = proxy;
-    is_reference_ = is_ref;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      if (is_reference_) {
-        proxy_->link_ref();
-      } else {
-        proxy_->link_ptr();
-      }
-      // Todo: need a solution for this
-//      proxy_->add(this);
-    }
   }
 
   /**

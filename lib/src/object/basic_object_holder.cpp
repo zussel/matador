@@ -3,17 +3,19 @@
 //
 
 #include "object/basic_object_holder.hpp"
+#include "object/object_proxy.hpp"
+#include "object/object_exception.hpp"
 
 namespace oos {
 
 basic_object_holder::basic_object_holder(bool is_internal, cascade_type cascade)
-  : is_internal_(is_internal)
-  , cascade_(cascade)
+  : cascade_(cascade)
+  , is_internal_(is_internal)
 {}
 
 basic_object_holder::basic_object_holder(const basic_object_holder &x)
   : proxy_(x.proxy_)
-  , is_reference_(x.is_reference_)
+  , cascade_(x.cascade_)
   , oid_(x.oid_)
 {
   if (proxy_) {
@@ -33,7 +35,6 @@ basic_object_holder::operator=(const basic_object_holder &x)
 
 basic_object_holder::basic_object_holder(object_proxy *op, bool is_ref)
 : proxy_(op)
-, is_reference_(is_ref)
 , is_internal_(false)
 , oid_(0)
 {
@@ -47,7 +48,7 @@ basic_object_holder::~basic_object_holder()
 {
   if (proxy_) {
     if (is_internal_) {
-      if (is_reference_) {
+      if (cascade_ | cascade_type::DELETE) {
         proxy_->unlink_ref();
       } else {
         proxy_->unlink_ptr();
@@ -74,8 +75,7 @@ bool basic_object_holder::operator!=(const basic_object_holder &x) const
   return !(x == *this);
 }
 
-void
-basic_object_holder::reset(object_proxy *proxy, bool is_ref)
+void basic_object_holder::reset(basic_object_holder &other);
 {
   if (proxy == proxy_) {
     return;
@@ -83,7 +83,7 @@ basic_object_holder::reset(object_proxy *proxy, bool is_ref)
   if (proxy_) {
     oid_ = 0;
     if (is_internal_) {
-      if (is_reference_) {
+      if (cascade_ | cascade_type::DELETE) {
         proxy_->unlink_ref();
       } else {
         proxy_->unlink_ptr();
@@ -178,7 +178,7 @@ void*basic_object_holder::lookup_object() const
 
 bool basic_object_holder::is_reference() const
 {
-  return is_reference_;
+  return cascade_ == cascade_type::DELETE;
 }
 
 bool

@@ -30,7 +30,7 @@
   #define OOS_API
 #endif
 
-#include "object/object_ptr.hpp"
+#include "object/basic_object_holder.hpp"
 
 #include <string>
 
@@ -46,7 +46,7 @@ public:
     : constant_(c)
   {}
 
-  T operator()(const object_base_ptr&) const
+  T operator()(const basic_object_holder&) const
   {
     return constant_;
   }
@@ -63,7 +63,7 @@ public:
 
   virtual ~variable_impl() {}
   
-  virtual return_type operator()(const object_base_ptr &optr) const = 0;
+  virtual return_type operator()(const basic_object_holder &optr) const = 0;
 };
 
 template < class R, class O, class V >
@@ -81,7 +81,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const object_base_ptr &optr) const
+  virtual return_type operator()(const basic_object_holder &optr) const
   {
     return (static_cast<const object_type*>(v_(optr).ptr())->*m_)();
   }
@@ -106,7 +106,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const object_base_ptr &optr) const
+  virtual return_type operator()(const basic_object_holder &optr) const
   {
     return (static_cast<const object_type*>(optr.ptr())->*m_)();
   }
@@ -171,7 +171,7 @@ public:
    * @param optr The serializable to apply the variable to.
    * @return The value of the variable.
    */
-  return_type operator()(const object_base_ptr &optr) const
+  return_type operator()(const basic_object_holder &optr) const
   {
     return impl_->operator()(optr);
   }
@@ -334,7 +334,7 @@ public:
   {}
 
 
-  bool operator()(const object_base_ptr &optr) const
+  bool operator()(const basic_object_holder &optr) const
   {
     return op_(left_(optr));
   }
@@ -354,7 +354,7 @@ public:
     , op_(op)
   {}
 
-  bool operator()(const object_base_ptr &optr) const
+  bool operator()(const basic_object_holder &optr) const
   {
     return op_(left_(optr), right_(optr));
   }

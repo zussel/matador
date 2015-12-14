@@ -19,9 +19,12 @@
 #endif
 
 #include <memory>
+
 namespace oos {
 
 class basic_identifier;
+class object_proxy;
+class object_store;
 
 enum cascade_type
 {
@@ -117,6 +120,7 @@ public:
    * @param proxy The new object_proxy for the basic_object_holder.
    * @param is_ref Indicates if the given object_proxy is a reference.
    */
+  void reset(basic_object_holder &other);
   void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
@@ -256,7 +260,6 @@ private:
 
   object_proxy *proxy_ = nullptr;
   cascade_type cascade_ = cascade_type::NONE;
-  bool is_reference_ = false;
   bool is_internal_ = false;
   unsigned long oid_ = 0;
 };

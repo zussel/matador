@@ -20,6 +20,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
+#include "object/basic_object_holder.hpp"
 #include "object/identifier_resolver.hpp"
 
 #include <memory>

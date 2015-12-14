@@ -26,6 +26,7 @@
 namespace oos {
 
 class object_proxy;
+class basic_object_holder;
 
 namespace detail {
 
@@ -255,7 +256,7 @@ protected:
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
-  object_proxy* proxy(const object_base_ptr &optr) const;
+  object_proxy* proxy(const basic_object_holder &optr) const;
 
   /**
    * Mark the list containing serializable as modified
