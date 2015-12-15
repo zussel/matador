@@ -95,8 +95,8 @@ public:
 
 //  template < class T >
 //  void serialize(const char *, object_ptr<T> &x)
-  template < class T, bool TYPE >
-  void deserialize(const char*, object_holder<T, TYPE> &x);
+  template < class T >
+  void deserialize(const char*, object_ptr<T> &x);
 
   void deserialize(const char*, object_container &x);
 
@@ -368,8 +368,8 @@ public:
    * @param o The serializable to check.
    * @return True if serializable is removable.
    */
-  template < class T, bool TYPE >
-  bool is_removable(const object_holder<T, TYPE> &o)
+  template < class T  >
+  bool is_removable(const object_ptr<T> &o)
   {
     return object_deleter_.is_deletable(o.proxy_, o.get());
   }
@@ -385,8 +385,8 @@ public:
    * @throw object_exception
    * @param o Object to remove.
    */
-  template < class T, bool TYPE >
-	void remove(object_holder<T, TYPE> &o)
+  template < class T >
+	void remove(object_ptr<T> &o)
   {
     if (o.proxy_ == nullptr) {
       throw object_exception("serializable proxy is nullptr");
@@ -676,8 +676,8 @@ void object_inserter::deserialize(T &x)
   oos::access::deserialize(*this, x);
 }
 
-template < class T, bool TYPE >
-void object_inserter::deserialize(const char*, object_holder<T, TYPE> &x)
+template < class T >
+void object_inserter::deserialize(const char*, object_ptr<T> &x)
 {
   // mark serializable pointer as internal
   x.is_internal_ = true;

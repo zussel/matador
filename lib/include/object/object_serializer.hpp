@@ -38,6 +38,7 @@
 #include "object/object_ptr.hpp"
 
 #include <string>
+#include <cstring>
 
 namespace oos {
 
@@ -126,8 +127,8 @@ public:
 
 	void serialize(const char* id, const date &x);
 	void serialize(const char* id, const time &x);
-  template < class T, bool TYPE >
-	void serialize(const char* id, const object_holder<T, TYPE> &x)
+  template < class T >
+	void serialize(const char* id, const object_ptr<T> &x)
   {
     serialize(id, x.id());
     serialize(id, x.type(), strlen(x.type()));

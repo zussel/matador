@@ -28,15 +28,16 @@ basic_object_holder &
 basic_object_holder::operator=(const basic_object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
-    reset(x.proxy_, x.is_reference_);
+    reset(*this);
   }
   return *this;
 }
 
-basic_object_holder::basic_object_holder(object_proxy *op, bool is_ref)
-: proxy_(op)
-, is_internal_(false)
-, oid_(0)
+basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op, cascade_type cascade)
+  : proxy_(op)
+  , cascade_(cascade)
+  , is_internal_(is_internal)
+  , oid_(0)
 {
   if (proxy_) {
     oid_ = proxy_->id();
@@ -75,9 +76,9 @@ bool basic_object_holder::operator!=(const basic_object_holder &x) const
   return !(x == *this);
 }
 
-void basic_object_holder::reset(basic_object_holder &other);
+void basic_object_holder::reset(basic_object_holder &other)
 {
-  if (proxy == proxy_) {
+  if (proxy_ == other.proxy_) {
     return;
   }
   if (proxy_) {
@@ -98,12 +99,12 @@ void basic_object_holder::reset(basic_object_holder &other);
       delete proxy_;
     }
   }
-  proxy_ = proxy;
-  is_reference_ = is_ref;
+  proxy_ = other.proxy_;
+  cascade_ = other.cascade_;
   if (proxy_) {
     oid_ = proxy_->id();
     if (is_internal_) {
-      if (is_reference_) {
+      if (cascade_ | cascade_type::DELETE) {
         proxy_->link_ref();
       } else {
         proxy_->link_ptr();
@@ -119,7 +120,8 @@ void basic_object_holder::reset(const std::shared_ptr<basic_identifier> &id)
     throw object_exception("identifier types are not equal");
   }
   object_proxy *proxy = new object_proxy(id);
-  reset(proxy);
+  // Todo: implement reset
+//  reset(proxy);
 }
 
 bool
@@ -148,7 +150,7 @@ object_store *basic_object_holder::store() const
   return (proxy_ ? proxy_->ostore() : nullptr);
 }
 
-void*basic_object_holder::ptr()
+void* basic_object_holder::ptr()
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }

@@ -235,6 +235,8 @@ public:
     deserializer.deserialize(*oos::base_class<Item>(this));
     deserializer.deserialize("ref", ref_);
     deserializer.deserialize("ptr", ptr_);
+//    deserializer.deserialize("ptr", ptr_);
+//    deserializer.deserialize("ref", ref_);
   }
   template < class SERIALIZER > void serialize(SERIALIZER &serializer) const
   {
@@ -257,8 +259,8 @@ public:
   }
 
 private:
-//  oos::has_one<T> ref_;
-//  oos::has_one<T> ptr_;
+  oos::has_one<T, oos::cascade_type::ALL> ref_;
+  oos::has_one<T, oos::cascade_type::NONE> ptr_;
   value_ref ref_;
   value_ptr ptr_;
 };

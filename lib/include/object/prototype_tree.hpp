@@ -87,8 +87,8 @@ public:
   void serialize(const char*, const char*, int) {}
   void serialize(const char *, const object_container &) {}
 
-  template < class T, bool TYPE >
-  void serialize(const char *, const object_holder<T, TYPE> &x);
+  template < class T >
+  void serialize(const char *, const object_ptr<T> &x);
 
 private:
   prototype_node &node_;
@@ -592,8 +592,8 @@ private:
 
 namespace detail {
 //#include "object/detail/relation_resolver.impl"
-template<class T, bool TYPE>
-void relation_resolver::serialize(const char *, const object_holder<T, TYPE> &x) {
+template<class T >
+void relation_resolver::serialize(const char *, const object_ptr<T> &x) {
   prototype_iterator pi = node_.tree()->find(x.type());
   if (pi == node_.tree()->end()) {
     // if there is no such prototype node

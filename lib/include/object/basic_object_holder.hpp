@@ -86,7 +86,7 @@ protected:
    * @param op The object_proxy of the basic_object_holder
    * @param is_ref If true the serializable is handled as a reference.
    */
-  basic_object_holder(object_proxy *op, bool is_ref);
+  basic_object_holder(bool is_internal, object_proxy *op, cascade_type cascade = cascade_type::NONE);
 
   /**
    * Destroys the basic_object_holder
@@ -121,7 +121,6 @@ public:
    * @param is_ref Indicates if the given object_proxy is a reference.
    */
   void reset(basic_object_holder &other);
-  void reset(object_proxy *proxy = 0, bool is_ref = false);
 
   /**
    * Resets the basic_object_holder with the given
@@ -255,7 +254,7 @@ private:
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T, bool TYPE > friend class object_holder;
+  template < class T > friend class object_ptr;
   template < class T > friend class has_one;
 
   object_proxy *proxy_ = nullptr;

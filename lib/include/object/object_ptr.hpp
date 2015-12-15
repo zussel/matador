@@ -22,6 +22,7 @@
 #include "object/prototype_node.hpp"
 #include "object/basic_object_holder.hpp"
 #include "object/identifier_resolver.hpp"
+#include "object/has_one.hpp"
 
 #include <memory>
 #include <typeinfo>
@@ -32,9 +33,77 @@ namespace detail {
 class result_impl;
 }
 
-class serializable;
 class object_store;
 class prototype_node;
+
+template < class T > class object_ptr;
+
+template < class T >
+class has_one : public basic_object_holder
+{
+public:
+  typedef has_one<T> self;      /**< Shortcut for self class. */
+
+public:
+  has_one()
+    : basic_object_holder(true)
+  {}
+  has_one(T *o)
+    : basic_object_holder(true, new object_proxy(o))
+  {}
+  has_one(object_proxy *proxy)
+    : basic_object_holder(true, proxy)
+  {}
+
+  has_one(const object_ptr <T> &x);
+
+  has_one& operator=(const object_ptr <T> &x);
+
+  T* operator->()
+  {
+    return static_cast<T*>(proxy_->obj());
+  }
+
+  T* get()
+  {
+    return static_cast<T*>(proxy_->obj());
+  }
+
+  /**
+   * Return the type string of the serializable
+   *
+   * @return The type string of the serializable.
+   */
+  const char* type() const
+  {
+    return classname_.c_str();
+  }
+
+  /**
+   * Creates a new identifier, represented by the identifier
+   * of the underlaying type.
+   *
+   * @return A new identifier.
+   */
+  basic_identifier* create_identifier() const
+  {
+    return self::identifier_->clone();
+  }
+
+private:
+  friend class object_deleter;
+
+private:
+  static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
+};
+
+template < class T >
+std::string has_one<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>::resolve());
+
 
 /**
  * @class object_holder
@@ -52,37 +121,27 @@ class prototype_node;
  * like a pointer (object can be deleted) or a reference (object
  * can't be directly deleted)
  */
-template < class T, bool TYPE >
-class object_holder : public basic_object_holder
+template < class T >
+class object_ptr : public basic_object_holder
 {
 public:
   typedef T object_type;                    /**< Shortcut for serializable type. */
-  typedef object_holder<T, TYPE> self;      /**< Shortcut for self class. */
+  typedef object_ptr<T> self;      /**< Shortcut for self class. */
 
 public:
   /**
    * Create an empty object_holder
    */
-  object_holder()
-    : basic_object_holder(TYPE)
+  object_ptr()
+    : basic_object_holder(false)
   {}
   /**
    * Copies object_ptr
    *
    * @param x The object_ptr to copy
    */
-  object_holder(const self &x)
-    : basic_object_holder(x.proxy_, x.is_reference_)
-  {}
-
-  /**
-   * Copies a object_ref
-   *
-   * @param x The object_ref to copy
-   */
-  template < bool TYPE2 >
-  object_holder(const object_holder<T, TYPE2> &x)
-    : basic_object_holder(x.proxy_, TYPE)
+  object_ptr(const self &x)
+    : basic_object_holder(x.is_internal_, x.proxy_, x.cascade_)
   {}
 
   /**
@@ -90,8 +149,8 @@ public:
    *
    * @param o The serializable.
    */
-  object_holder(T *o)
-    : basic_object_holder(new object_proxy(o), TYPE)
+  object_ptr(T *o)
+    : basic_object_holder(false, new object_proxy(o))
   {}
 
   /**
@@ -99,8 +158,13 @@ public:
    *
    * @param proxy The object_proxy.
    */
-  explicit object_holder(object_proxy *proxy)
-  : basic_object_holder(proxy, TYPE)
+  explicit object_ptr(object_proxy *proxy)
+  : basic_object_holder(false, proxy)
+  {}
+
+  object_ptr(const has_one<T> &x)
+    : basic_object_holder(false, x.cascade_)
+    , proxy_(x.proxy_)
   {}
 
   /**
@@ -110,11 +174,16 @@ public:
    */
   self& operator=(T *x)
   {
-//    is_reference_ = TYPE;
-    reset(new object_proxy(x), is_reference_);
+    reset(*x);
+//    reset(new object_proxy(x), is_reference_);
     return *this;
   }
 
+  self& operator=(has_one<T> &x)
+  {
+    reset(x);
+    return *this;
+  }
   /**
    * Return the type string of the serializable
    *
@@ -213,25 +282,25 @@ private:
   static std::unique_ptr<basic_identifier> identifier_;
 };
 
-template < class T, bool TYPE >
-std::string object_holder<T, TYPE>::classname_ = typeid(T).name();
+template < class T >
+std::string object_ptr<T>::classname_ = typeid(T).name();
 
-template < class T, bool TYPE >
-std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver<T>::resolve());
+template < class T >
+std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::resolve());
 
-/**
- * Shortcut to object_ptr
- *
- * @tparam T The type of the object_ptr
- */
-template < class T > using object_ptr = object_holder<T, false>;
 
-/**
- * Shortcut to object_ref
- *
- * @tparam T The type of the object_ref
- */
-template < class T > using object_ref = object_holder<T, true>;
+template < class T >
+has_one<T>::has_one(const object_ptr<T> &x)
+  : basic_object_holder(true, x.cascade_)
+  , proxy_(x.proxy_)
+{}
+
+template < class T >
+has_one& has_one<T>::operator=(const object_ptr <T> &x)
+{
+  proxy_ = x.proxy_;
+  return *this;
+}
 
 }
 

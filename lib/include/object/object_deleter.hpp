@@ -34,7 +34,7 @@
 
 #include "object/access.hpp"
 #include "object/object_proxy.hpp"
-#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
 
 #include <map>
 
@@ -135,8 +135,8 @@ public:
   void serialize(const char*, const T&) {}
 
   void serialize(const char*, const char*, size_t) {}
-  template < class T, bool TYPE >
-  void serialize(const char*, object_holder<T, TYPE> &x)
+  template < class T >
+  void serialize(const char*, has_one<T> &x)
   {
     if (!x.ptr()) {
       return;

@@ -2,7 +2,7 @@
 #define FOREIGN_KEY_ANALYZER_HPP
 
 #include "object/access.hpp"
-#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
 
 #include <cstddef>
 
@@ -38,8 +38,8 @@ public:
 
   void serialize(const char*, const char*, size_t) {}
 
-  template < class T, bool TYPE >
-  void serialize(const char*, const object_holder<T, TYPE> &)
+  template < class T >
+  void serialize(const char*, const has_one<T> &)
   {
 //    prototype_iterator node = node_.tree()->find(x.type());
 //  if (node->producer == nullptr) {
