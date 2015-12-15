@@ -111,7 +111,6 @@ template < class T, class C >
 class container_item : public value_item<T>
 {
 public:
-  typedef oos::object_ref<C> container_ref; /**< Shortcut for the container ref type. */
   typedef C container_type;                 /**< Shortcut for the container type. */
   typedef T value_type;                     /**< Shortcut for the value type. */
 
@@ -123,7 +122,7 @@ public:
    * 
    * @param c The container reference to set.
    */
-  explicit container_item(const container_ref &c)
+  explicit container_item(const object_ptr<C> &c)
     : container_(c)
   {}
   
@@ -134,7 +133,7 @@ public:
    * @param c The container reference to set.
    * @param v The value of the container_item
    */
-  container_item(const container_ref &c, const value_type &v)
+  container_item(const object_ptr<C> &c, const value_type &v)
     : value_item<value_type>(v)
     , container_(c)
   {}
@@ -144,7 +143,7 @@ public:
    *
    * @return A reference to the container
    */
-  container_ref container() const
+  object_ptr<C> container() const
   {
     return container_;
   }
@@ -156,18 +155,18 @@ private:
   {
     deserializer.deserialize(*oos::base_class<value_item<T>>(this));
 //    value_item<T>::deserialize(deserializer);
-    deserializer.deserialize("container", container_);
+    deserializer.deserialize("container", container_, cascade_type::NONE);
   }
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*oos::base_class<value_item<T>>(this));
 //    value_item<T>::serialize(serializer);
-    serializer.serialize("container", container_);
+    serializer.serialize("container", container_, cascade_type::NONE);
   }
 
 private:
-  container_ref container_;
+  has_one<C> container_;
 };
 
 /**

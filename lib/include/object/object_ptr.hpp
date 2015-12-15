@@ -57,7 +57,7 @@ public:
 
   has_one(const object_ptr <T> &x);
 
-  has_one& operator=(const object_ptr <T> &x);
+  has_one& operator=(object_ptr <T> &x);
 
   T* operator->()
   {
@@ -163,8 +163,7 @@ public:
   {}
 
   object_ptr(const has_one<T> &x)
-    : basic_object_holder(false, x.cascade_)
-    , proxy_(x.proxy_)
+    : basic_object_holder(false, x.proxy_, x.cascade_)
   {}
 
   /**
@@ -291,14 +290,13 @@ std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver
 
 template < class T >
 has_one<T>::has_one(const object_ptr<T> &x)
-  : basic_object_holder(true, x.cascade_)
-  , proxy_(x.proxy_)
+  : basic_object_holder(true, x.proxy_, x.cascade_)
 {}
 
 template < class T >
-has_one& has_one<T>::operator=(const object_ptr <T> &x)
+has_one<T>& has_one<T>::operator=(object_ptr <T> &x)
 {
-  proxy_ = x.proxy_;
+  reset(x);
   return *this;
 }
 
