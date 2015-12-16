@@ -37,7 +37,7 @@
 #include "object/object_exception.hpp"
 #include "object/identifier_resolver.hpp"
 #include "object/foreign_key_analyzer.hpp"
-#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
 
 //#include "object/detail/relation_resolver.hpp"
 
@@ -88,7 +88,7 @@ public:
   void serialize(const char *, const object_container &) {}
 
   template < class T >
-  void serialize(const char *, const object_ptr<T> &x);
+  void serialize(const char *, const has_one<T> &x, cascade_type cascade);
 
 private:
   prototype_node &node_;
@@ -591,9 +591,9 @@ private:
 };
 
 namespace detail {
-//#include "object/detail/relation_resolver.impl"
+
 template<class T >
-void relation_resolver::serialize(const char *, const object_ptr<T> &x) {
+void relation_resolver::serialize(const char *, const has_one<T> &x, cascade_type) {
   prototype_iterator pi = node_.tree()->find(x.type());
   if (pi == node_.tree()->end()) {
     // if there is no such prototype node

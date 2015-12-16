@@ -71,7 +71,7 @@ SET(OBJECT_HEADER
 		../include/object/has_many.hpp
 		../include/object/has_one.hpp
 		../include/object/container_type_traits.hpp
-		../include/object/basic_object_holder.hpp)
+		../include/object/basic_object_holder.hpp ../include/object/cascade_type.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

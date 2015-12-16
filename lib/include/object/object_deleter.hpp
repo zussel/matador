@@ -136,12 +136,24 @@ public:
 
   void serialize(const char*, const char*, size_t) {}
   template < class T >
-  void serialize(const char*, has_one<T> &x)
+  void serialize(const char*, const has_one<T> &x, cascade_type cascade)
   {
     if (!x.ptr()) {
       return;
     }
-    check_object(x.proxy_, x.get(), x.is_reference());
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+    if (cascade | cascade_type::DELETE) {
+      --ret.first->second.ptr_count;
+    } else {
+      --ret.first->second.ref_count;
+    }
+    if (cascade | cascade_type::DELETE) {
+      ret.first->second.ignore = false;
+      oos::access::serialize(*this, *x.get());
+    }
+
+//    check_object(x, !(cascade | cascade_type::DELETE));
+//    check_object(x.proxy_, x.get(), x.is_reference());
   }
 
   void serialize(const char*, object_container &x);
@@ -152,20 +164,20 @@ public:
     serialize(id, val);
   }
 
-  template < class T >
-  void check_object(object_proxy *proxy, T *o, bool is_ref)
-  {
-    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy)));
-    if (!is_ref) {
-      --ret.first->second.ptr_count;
-    } else {
-      --ret.first->second.ref_count;
-    }
-    if (!is_ref) {
-      ret.first->second.ignore = false;
-      oos::access::serialize(*this, o);
-    }
-  }
+//  template < class T >
+//  void check_object(const has_one<T> &x, bool is_ref)
+//  {
+//    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+//    if (!is_ref) {
+//      --ret.first->second.ptr_count;
+//    } else {
+//      --ret.first->second.ref_count;
+//    }
+//    if (!is_ref) {
+//      ret.first->second.ignore = false;
+//      oos::access::serialize(*this, x);
+//    }
+//  }
   void check_object_list_node(object_proxy *proxy);
   bool check_object_count_map() const;
 

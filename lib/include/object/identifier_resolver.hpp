@@ -18,6 +18,7 @@
 #define OOS_API
 #endif
 
+#include "object/cascade_type.hpp"
 #include "object/basic_identifier.hpp"
 #include "object/access.hpp"
 
@@ -25,10 +26,10 @@
 
 namespace oos {
 
-class serializable;
-class basic_object_holder;
 class basic_identifier;
 class prototype_node;
+
+template < class T > class has_one;
 
 /// @cond OOS_DEV
 
@@ -68,6 +69,9 @@ public:
   void deserialize(const char*, V&) {}
 
   void deserialize(const char*, char*, size_t) {}
+
+  template < class V >
+  void deserialize(const char*, has_one<V>&, cascade_type) {}
 
   template < class V >
   void deserialize(const char *, identifier<V> &x)

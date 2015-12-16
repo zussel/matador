@@ -18,7 +18,7 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
-#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
@@ -96,7 +96,7 @@ public:
 //  template < class T >
 //  void serialize(const char *, object_ptr<T> &x)
   template < class T >
-  void deserialize(const char*, object_ptr<T> &x);
+  void deserialize(const char*, has_one<T> &x, cascade_type cascade);
 
   void deserialize(const char*, object_container &x);
 
@@ -677,16 +677,14 @@ void object_inserter::deserialize(T &x)
 }
 
 template < class T >
-void object_inserter::deserialize(const char*, object_ptr<T> &x)
+void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type cascade)
 {
-  // mark serializable pointer as internal
-  x.is_internal_ = true;
-
   if (!x.proxy_) {
     return;
   }
 
-  if (x.is_reference()) {
+  x.cascade_ = cascade;
+  if (!(cascade | cascade_type::DELETE)) {
     x.proxy_->link_ref();
   } else if (x.ptr() && x.id()){
     x.proxy_->link_ptr();

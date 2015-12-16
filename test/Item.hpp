@@ -223,7 +223,6 @@ class ObjectItem : public Item
 {
 public:
   typedef oos::object_ptr<T> value_ptr;
-  typedef oos::object_ref<T> value_ref;
 
   ObjectItem() {}
   ObjectItem(const std::string &n, int i)
@@ -233,22 +232,22 @@ public:
   template < class DESERIALIZER > void deserialize(DESERIALIZER &deserializer)
   {
     deserializer.deserialize(*oos::base_class<Item>(this));
-    deserializer.deserialize("ref", ref_);
-    deserializer.deserialize("ptr", ptr_);
+    deserializer.deserialize("ref", ref_, oos::cascade_type::NONE);
+    deserializer.deserialize("ptr", ptr_, oos::cascade_type::ALL);
 //    deserializer.deserialize("ptr", ptr_);
 //    deserializer.deserialize("ref", ref_);
   }
   template < class SERIALIZER > void serialize(SERIALIZER &serializer) const
   {
     serializer.serialize(*oos::base_class<Item>(this));
-    serializer.serialize("ref", ref_);
-    serializer.serialize("ptr", ptr_);
+    serializer.serialize("ref", ref_, oos::cascade_type::NONE);
+    serializer.serialize("ptr", ptr_, oos::cascade_type::ALL);
   }
 
-  void ref(const value_ref &r) { ref_ = r; }
+  void ref(const value_ptr &r) { ref_ = r; }
   void ptr(const value_ptr &p) { ptr_ = p; }
 
-  value_ref ref() const { return ref_; }
+  value_ptr ref() const { return ref_; }
   value_ptr ptr() const { return ptr_; }
 
   template < class I >
@@ -259,10 +258,8 @@ public:
   }
 
 private:
-  oos::has_one<T, oos::cascade_type::ALL> ref_;
-  oos::has_one<T, oos::cascade_type::NONE> ptr_;
-  value_ref ref_;
-  value_ptr ptr_;
+  oos::has_one<T> ref_;
+  oos::has_one<T> ptr_;
 };
 /*
 template < class T >

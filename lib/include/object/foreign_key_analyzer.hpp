@@ -39,7 +39,7 @@ public:
   void serialize(const char*, const char*, size_t) {}
 
   template < class T >
-  void serialize(const char*, const has_one<T> &)
+  void serialize(const char*, const has_one<T> &, cascade_type)
   {
 //    prototype_iterator node = node_.tree()->find(x.type());
 //  if (node->producer == nullptr) {

@@ -31,6 +31,7 @@ public:
     oos::access::deserialize(*this, x);
   }
   void deserialize(const char*, T &x);
+
   template < class V >
   void deserialize(const char *id, identifier<V> &x)
   {
@@ -45,6 +46,8 @@ public:
   template < class V >
   void deserialize(const char*, V &) {}
   void deserialize(const char*, char *, size_t) {}
+  template < class V >
+  void deserialize(const char*, has_one<V>, cascade_type) {}
 
 private:
   T value_;

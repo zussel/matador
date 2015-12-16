@@ -30,7 +30,7 @@
   #define OOS_API
 #endif
 
-#include "object/basic_object_holder.hpp"
+#include "object/object_ptr.hpp"
 
 #include <string>
 
@@ -316,12 +316,6 @@ template < class T >
 struct expression_traits<object_ptr<T> >
 {
   typedef constant<object_ptr<T> > expression_type;
-};
-
-template < class T >
-struct expression_traits<object_ref<T> >
-{
-  typedef constant<object_ref<T> > expression_type;
 };
 
 template < class L, class OP >

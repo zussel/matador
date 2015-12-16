@@ -8,14 +8,12 @@
 
 namespace oos {
 
-basic_object_holder::basic_object_holder(bool is_internal, cascade_type cascade)
-  : cascade_(cascade)
-  , is_internal_(is_internal)
+basic_object_holder::basic_object_holder(bool is_internal)
+  : is_internal_(is_internal)
 {}
 
 basic_object_holder::basic_object_holder(const basic_object_holder &x)
   : proxy_(x.proxy_)
-  , cascade_(x.cascade_)
   , oid_(x.oid_)
 {
   if (proxy_) {
@@ -28,14 +26,13 @@ basic_object_holder &
 basic_object_holder::operator=(const basic_object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
-    reset(*this);
+    reset(x.proxy_, cascade_type::NONE);
   }
   return *this;
 }
 
-basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op, cascade_type cascade)
+basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op)
   : proxy_(op)
-  , cascade_(cascade)
   , is_internal_(is_internal)
   , oid_(0)
 {
@@ -48,13 +45,6 @@ basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op, cas
 basic_object_holder::~basic_object_holder()
 {
   if (proxy_) {
-    if (is_internal_) {
-      if (cascade_ | cascade_type::DELETE) {
-        proxy_->unlink_ref();
-      } else {
-        proxy_->unlink_ptr();
-      }
-    }
     proxy_->remove(this);
     /*
      * if proxy was created temporary
@@ -76,9 +66,9 @@ bool basic_object_holder::operator!=(const basic_object_holder &x) const
   return !(x == *this);
 }
 
-void basic_object_holder::reset(basic_object_holder &other)
+void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
 {
-  if (proxy_ == other.proxy_) {
+  if (proxy_ == proxy) {
     return;
   }
   if (proxy_) {
@@ -99,8 +89,8 @@ void basic_object_holder::reset(basic_object_holder &other)
       delete proxy_;
     }
   }
-  proxy_ = other.proxy_;
-  cascade_ = other.cascade_;
+  proxy_ = proxy;
+  cascade_ = cascade;
   if (proxy_) {
     oid_ = proxy_->id();
     if (is_internal_) {
@@ -119,9 +109,7 @@ void basic_object_holder::reset(const std::shared_ptr<basic_identifier> &id)
   if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
     throw object_exception("identifier types are not equal");
   }
-  object_proxy *proxy = new object_proxy(id);
-  // Todo: implement reset
-//  reset(proxy);
+  reset(new object_proxy(id), cascade_type::NONE);
 }
 
 bool
@@ -160,7 +148,7 @@ const void*basic_object_holder::ptr() const
   return lookup_object();
 }
 
-void*basic_object_holder::lookup_object()
+void* basic_object_holder::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore()) {
@@ -173,32 +161,15 @@ void*basic_object_holder::lookup_object()
   }
 }
 
-void*basic_object_holder::lookup_object() const
+void* basic_object_holder::lookup_object() const
 {
   return proxy_ ? proxy_->obj() : nullptr;
-}
-
-bool basic_object_holder::is_reference() const
-{
-  return cascade_ == cascade_type::DELETE;
 }
 
 bool
 basic_object_holder::is_internal() const
 {
   return is_internal_;
-}
-
-unsigned long
-basic_object_holder::ref_count() const
-{
-  return (!proxy_ ? 0 : proxy_->ref_count());
-}
-
-unsigned long
-basic_object_holder::ptr_count() const
-{
-  return (!proxy_ ? 0 : proxy_->ptr_count());
 }
 
 bool basic_object_holder::has_primary_key() const
@@ -215,12 +186,12 @@ std::ostream& operator<<(std::ostream &out, const basic_object_holder &x)
 {
   if (x.proxy_) {
     if (x.proxy_->obj()) {
-      out << "loaded serializable " << x.proxy_->obj();
+      out << "loaded object " << x.proxy_->obj();
     } else {
-      out << "unload serializable [" << x.id() << "]";
+      out << "unload object [" << x.id() << "]";
     }
   } else {
-    out << "unknown serializable [" << 0 << "]";
+    out << "unknown object [" << 0 << "]";
   }
   return out;
 }

@@ -69,6 +69,11 @@ public:
     return static_cast<T*>(proxy_->obj());
   }
 
+  const T* get() const
+  {
+    return static_cast<T*>(proxy_->obj());
+  }
+
   /**
    * Return the type string of the serializable
    *
@@ -141,7 +146,7 @@ public:
    * @param x The object_ptr to copy
    */
   object_ptr(const self &x)
-    : basic_object_holder(x.is_internal_, x.proxy_, x.cascade_)
+    : basic_object_holder(x.is_internal_, x.proxy_)
   {}
 
   /**
@@ -163,7 +168,7 @@ public:
   {}
 
   object_ptr(const has_one<T> &x)
-    : basic_object_holder(false, x.proxy_, x.cascade_)
+    : basic_object_holder(false, x.proxy_)
   {}
 
   /**
@@ -173,14 +178,13 @@ public:
    */
   self& operator=(T *x)
   {
-    reset(*x);
-//    reset(new object_proxy(x), is_reference_);
+    reset(new object_proxy(x), cascade_type::NONE);
     return *this;
   }
 
   self& operator=(has_one<T> &x)
   {
-    reset(x);
+    reset(x.proxy_);
     return *this;
   }
   /**
@@ -290,7 +294,7 @@ std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver
 
 template < class T >
 has_one<T>::has_one(const object_ptr<T> &x)
-  : basic_object_holder(true, x.proxy_, x.cascade_)
+  : basic_object_holder(true, x.proxy_)
 {}
 
 template < class T >

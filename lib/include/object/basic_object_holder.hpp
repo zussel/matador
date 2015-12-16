@@ -18,6 +18,9 @@
 #define OOS_API
 #endif
 
+#include "object/cascade_type.hpp"
+#include "object_proxy.hpp"
+
 #include <memory>
 
 namespace oos {
@@ -25,15 +28,6 @@ namespace oos {
 class basic_identifier;
 class object_proxy;
 class object_store;
-
-enum cascade_type
-{
-  NONE = 0,
-  DELETE = 1,
-  UPDATE = 2,
-  INSERT = 4,
-  ALL = DELETE | UPDATE | INSERT
-};
 
 /**
  * @class basic_object_holder
@@ -57,10 +51,8 @@ protected:
    * 
    * @param is_internal True if the pointer is used internal, which means
    *                    it is used to describe an entity.
-   * @param cascade Indicates wether the insert, update or delete action
-   *                is allowed to be applied.
    */
-  explicit basic_object_holder(bool is_internal, cascade_type cascade = cascade_type::NONE);
+  explicit basic_object_holder(bool is_internal);
 
   /**
    * Copies from another basic_object_holder
@@ -86,7 +78,7 @@ protected:
    * @param op The object_proxy of the basic_object_holder
    * @param is_ref If true the serializable is handled as a reference.
    */
-  basic_object_holder(bool is_internal, object_proxy *op, cascade_type cascade = cascade_type::NONE);
+  basic_object_holder(bool is_internal, object_proxy *op);
 
   /**
    * Destroys the basic_object_holder
@@ -118,9 +110,9 @@ public:
    * Resets the basic_object_holder with the given object_proxy.
    * 
    * @param proxy The new object_proxy for the basic_object_holder.
-   * @param is_ref Indicates if the given object_proxy is a reference.
+   * @param cascade Sets the cascadable actions for the proxy.
    */
-  void reset(basic_object_holder &other);
+  void reset(object_proxy *proxy, cascade_type cascade);
 
   /**
    * Resets the basic_object_holder with the given
@@ -188,13 +180,6 @@ public:
   void* lookup_object() const;
 
   /**
-   * Returns if the serializable is treated as a reference.
-   * 
-   * @return True if the serializable is treated like a reference.
-   */
-  virtual bool is_reference() const;
-
-  /**
    * Returns if this basic_object_holder is inside
    * of the object_store. This is important
    * to calculate the reference and pointer
@@ -203,20 +188,6 @@ public:
    * @return True if the basic_object_holder internal
    */
   bool is_internal() const;
-
-  /**
-   * Returns the reference count.
-   * 
-   * @return The reference count.
-   */
-  unsigned long ref_count() const;
-
-  /**
-   * Returns the pointer count.
-   * 
-   * @return The pointer count.
-   */
-  unsigned long ptr_count() const;
 
   /**
    * Returns true if serializable has a primary key

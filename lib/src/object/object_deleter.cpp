@@ -16,7 +16,7 @@
  */
 
 #include "object/object_deleter.hpp"
-#include "object/object_list.hpp"
+#include "object/object_container.hpp"
 
 using namespace std::placeholders;
 
