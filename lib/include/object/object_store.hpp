@@ -685,7 +685,7 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
   }
 
   x.cascade_ = cascade;
-  if (cascade | cascade_type::DELETE) {
+  if (!(cascade | cascade_type::DELETE)) {
     x.proxy_->link_ref();
   } else if (x.ptr() && x.id()){
     x.proxy_->link_ptr();
