@@ -244,7 +244,10 @@ public:
     serializer.serialize("ptr", ptr_, oos::cascade_type::ALL);
   }
 
-  void ref(const value_ptr &r) { ref_ = r; }
+  void ref(const value_ptr &r)
+  {
+    ref_ = r;
+  }
   void ptr(const value_ptr &p) { ptr_ = p; }
 
   value_ptr ref() const { return ref_; }

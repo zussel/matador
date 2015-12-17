@@ -418,7 +418,6 @@ ObjectStoreTestUnit::delete_object()
   typedef object_ptr<TestItem> test_item_ptr;
   typedef object_ptr<Item> item_ptr;
 
-  
   item_ptr item = ostore_.insert(new Item("item 1"));
 
   TestItem *ti = new TestItem;
@@ -426,10 +425,10 @@ ObjectStoreTestUnit::delete_object()
   
   test_item_ptr testitem = ostore_.insert(ti);
 
-//  UNIT_ASSERT_EQUAL(item.ref_count(), (unsigned long)1, "reference count for item should be 1 (one)");
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), (unsigned long)0, "reference count for item should be 0 (zero)");
-//  UNIT_ASSERT_EQUAL(testitem.ref_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
-//  UNIT_ASSERT_EQUAL(testitem.ptr_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
+  UNIT_ASSERT_EQUAL(item.ref_count(), (unsigned long)1, "reference count for item should be 1 (one)");
+  UNIT_ASSERT_EQUAL(item.ptr_count(), (unsigned long)0, "pointer count for item should be 0 (zero)");
+  UNIT_ASSERT_EQUAL(testitem.ref_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
+  UNIT_ASSERT_EQUAL(testitem.ptr_count(), (unsigned long)0, "pointer count for test item should be 0 (zero)");
   
   typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
@@ -441,7 +440,7 @@ ObjectStoreTestUnit::delete_object()
   } catch(object_exception &) {
   }
 
-  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test item must be removable");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test object item must be removable");
   
   ostore_.remove(testitem);
 

@@ -57,19 +57,19 @@ public:
 
   has_one(const object_ptr <T> &x);
 
-  has_one& operator=(const has_one<T> &x)
-  {
-    proxy_ = x.proxy_;
-    cascade_ = x.cascade_;
-    is_internal_ = x.is_internal_;
-    if (proxy_) {
-      oid_ = proxy_->id();
-      proxy_->add(this);
-    }
-    return *this;
-  }
+//  has_one& operator=(const has_one<T> &x)
+//  {
+//    proxy_ = x.proxy_;
+//    cascade_ = x.cascade_;
+//    is_internal_ = x.is_internal_;
+//    if (proxy_) {
+//      oid_ = proxy_->id();
+//      proxy_->add(this);
+//    }
+//    return *this;
+//  }
 
-  has_one& operator=(object_ptr <T> &x);
+  has_one& operator=(const object_ptr <T> &x);
 
   T* operator->()
   {
@@ -310,9 +310,9 @@ has_one<T>::has_one(const object_ptr<T> &x)
 {}
 
 template < class T >
-has_one<T>& has_one<T>::operator=(object_ptr <T> &x)
+has_one<T>& has_one<T>::operator=(const object_ptr <T> &x)
 {
-  reset(x);
+  reset(x.proxy_, x.cascade_);
   return *this;
 }
 

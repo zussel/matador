@@ -182,6 +182,16 @@ std::shared_ptr<basic_identifier> basic_object_holder::primary_key() const
   return (proxy_ ? proxy_->pk() : nullptr);
 }
 
+unsigned long basic_object_holder::ref_count() const
+{
+  return (proxy_ ? proxy_->ref_count() : 0UL);
+}
+
+unsigned long basic_object_holder::ptr_count() const
+{
+  return (proxy_ ? proxy_->ptr_count() : 0UL);
+}
+
 std::ostream& operator<<(std::ostream &out, const basic_object_holder &x)
 {
   if (x.proxy_) {
