@@ -73,7 +73,7 @@ void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
   }
   if (proxy_) {
     oid_ = 0;
-    if (is_internal_) {
+    if (is_internal_ && is_inserted_ && proxy_->ostore_) {
       if (cascade_ | cascade_type::DELETE) {
         proxy_->unlink_ref();
       } else {
@@ -93,7 +93,7 @@ void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
   cascade_ = cascade;
   if (proxy_) {
     oid_ = proxy_->id();
-    if (is_internal_) {
+    if (is_internal_ && is_inserted_ && proxy_->ostore_) {
       if (cascade_ | cascade_type::DELETE) {
         proxy_->link_ref();
       } else {
@@ -170,6 +170,11 @@ bool
 basic_object_holder::is_internal() const
 {
   return is_internal_;
+}
+
+bool basic_object_holder::is_inserted() const
+{
+  return is_inserted_;
 }
 
 bool basic_object_holder::has_primary_key() const

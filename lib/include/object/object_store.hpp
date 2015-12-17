@@ -679,12 +679,13 @@ void object_inserter::deserialize(T &x)
 template < class T >
 void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type cascade)
 {
+  x.is_inserted_ = true;
   if (!x.proxy_) {
     return;
   }
 
   x.cascade_ = cascade;
-  if (!(cascade | cascade_type::DELETE)) {
+  if (cascade | cascade_type::DELETE) {
     x.proxy_->link_ref();
   } else if (x.ptr() && x.id()){
     x.proxy_->link_ptr();

@@ -189,6 +189,8 @@ public:
    */
   bool is_internal() const;
 
+  bool is_inserted() const;
+
   /**
    * Returns true if serializable has a primary key
    *
@@ -234,6 +236,7 @@ private:
   object_proxy *proxy_ = nullptr;
   cascade_type cascade_ = cascade_type::NONE;
   bool is_internal_ = false;
+  bool is_inserted_ = false;
   unsigned long oid_ = 0;
 };
 
