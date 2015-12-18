@@ -207,7 +207,7 @@ public:
    * Link as referenece incremenets
    * the reference counter.
    */
-  void link_ref();
+//  void link_ref();
 
   /**
    * @brief Unlink as referenece
@@ -215,7 +215,7 @@ public:
    * Unlink as referenece decremenets
    * the reference counter.
    */
-  void unlink_ref();
+//  void unlink_ref();
 
   /**
    * @brief Link as pointer
@@ -223,7 +223,7 @@ public:
    * Link as pointer incremenets
    * the pointer counter.
    */
-  void link_ptr();
+//  void link_ptr();
 
   /**
    * @brief Unlink as pointer
@@ -231,8 +231,18 @@ public:
    * Unlink as pointer decremenets
    * the pointer counter.
    */
-  void unlink_ptr();
+//  void unlink_ptr();
 
+  /**
+   * Increment reference counter
+   */
+  unsigned long operator++();
+  unsigned long operator++(int);
+  /**
+   * Decrement reference counter
+   */
+  unsigned long operator--();
+  unsigned long operator--(int);
   /**
    * Return true if the object_proxy is linked.
    *
@@ -254,13 +264,15 @@ public:
    */
   object_proxy* prev() const;
 
+
+  unsigned long reference_count() const;
   /**
    * Return the current reference count
    * for underlaying serializable
    *
    * @return Current reference count
    */
-  unsigned long ref_count() const;
+//  unsigned long ref_count() const;
 
   /**
    * Return the current pointer count
@@ -268,7 +280,7 @@ public:
    *
    * @return Current pointer count
    */
-  unsigned long ptr_count() const;
+//  unsigned long ptr_count() const;
 
   /**
    * Resets the serializable of the object_proxy
@@ -279,8 +291,9 @@ public:
   template < typename T >
   void reset(T *o)
   {
-    ref_count_ = 0;
-    ptr_count_ = 0;
+    reference_counter_ = 0;
+//    ref_count_ = 0;
+//    ptr_count_ = 0;
     deleter_ = destroy;
     namer_ = type_id;
     obj_ = o;
@@ -392,8 +405,10 @@ private:
   namer namer_;                 /**< The object classname function */
   unsigned long oid = 0;        /**< The id of the concrete or expected serializable. */
 
-  unsigned long ref_count_ = 0; /**< The reference counter */
-  unsigned long ptr_count_ = 0; /**< The pointer counter */
+//  unsigned long ref_count_ = 0; /**< The reference counter */
+//  unsigned long ptr_count_ = 0; /**< The pointer counter */
+
+  unsigned long reference_counter_ = 0;
 
   object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
   prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the serializable. */

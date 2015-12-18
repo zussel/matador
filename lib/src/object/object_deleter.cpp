@@ -24,8 +24,9 @@ namespace oos {
 
 object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
   : proxy(oproxy)
-  , ref_count(oproxy->ref_count())
-  , ptr_count(oproxy->ptr_count())
+  , reference_counter(oproxy->reference_count())
+//  , ref_count(oproxy->ref_count())
+//  , ptr_count(oproxy->ptr_count())
   , ignore(ignr)
 {}
 
@@ -91,7 +92,8 @@ object_deleter::check_object_count_map() const
   {
     if (first->second.ignore) {
       ++first;
-    } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
+    } else if (first->second.reference_counter == 0) {
+//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
       ++first;
     } else {
       return false;

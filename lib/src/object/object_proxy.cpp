@@ -86,32 +86,52 @@ void object_proxy::unlink()
   node_ = 0;
 }
 
-void object_proxy::link_ref()
+//void object_proxy::link_ref()
+//{
+//  if (obj_) {
+//    ++ref_count_;
+//  }
+//}
+//
+//void object_proxy::unlink_ref()
+//{
+//  if (obj_) {
+//    --ref_count_;
+//  }
+//}
+//
+//void object_proxy::link_ptr()
+//{
+//  if (obj_) {
+//    ++ptr_count_;
+//  }
+//}
+//
+//void object_proxy::unlink_ptr()
+//{
+//  if (obj_) {
+//    --ptr_count_;
+//  }
+//}
+
+unsigned long object_proxy::operator++()
 {
-  if (obj_) {
-    ++ref_count_;
-  }
+  return ++reference_counter_;
 }
 
-void object_proxy::unlink_ref()
+unsigned long object_proxy::operator++(int)
 {
-  if (obj_) {
-    --ref_count_;
-  }
+  return reference_counter_++;
 }
 
-void object_proxy::link_ptr()
+unsigned long object_proxy::operator--()
 {
-  if (obj_) {
-    ++ptr_count_;
-  }
+  return --reference_counter_;
 }
 
-void object_proxy::unlink_ptr()
+unsigned long object_proxy::operator--(int)
 {
-  if (obj_) {
-    --ptr_count_;
-  }
+  return reference_counter_--;
 }
 
 bool object_proxy::linked() const
@@ -129,14 +149,19 @@ object_proxy *object_proxy::prev() const
   return prev_;
 }
 
-unsigned long object_proxy::ref_count() const
-{
-  return ref_count_;
-}
+//unsigned long object_proxy::ref_count() const
+//{
+//  return ref_count_;
+//}
+//
+//unsigned long object_proxy::ptr_count() const
+//{
+//  return ptr_count_;
+//}
 
-unsigned long object_proxy::ptr_count() const
+unsigned long object_proxy::reference_count() const
 {
-  return ptr_count_;
+  return reference_counter_;
 }
 
 void object_proxy::add(basic_object_holder *ptr)
@@ -175,7 +200,7 @@ std::shared_ptr<basic_identifier> object_proxy::pk() const
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)
 {
-  os << "proxy [" << &op << "] prev_ [" << op.prev_ << "] next_ [" << op.next_ << "] object [" << op.obj_ << "] refs [" << op.ref_count_ << "] ptrs [" << op.ptr_count_ << "]";
+  os << "proxy [" << &op << "] prev_ [" << op.prev_ << "] next_ [" << op.next_ << "] object [" << op.obj_ << "]";// refs [" << op.ref_count_ << "] ptrs [" << op.ptr_count_ << "]";
   return os;
 }
 

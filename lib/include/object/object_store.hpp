@@ -685,11 +685,15 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
   }
 
   x.cascade_ = cascade;
-  if (!(cascade | cascade_type::DELETE)) {
-    x.proxy_->link_ref();
-  } else if (x.ptr() && x.id()){
-    x.proxy_->link_ptr();
+
+  if (x.ptr() && x.id()) {
+    ++(*x.proxy_);
   }
+//  if (cascade | cascade_type::DELETE) {
+//    x.proxy_->link_ref();
+//  } else if (x.ptr() && x.id()){
+//    x.proxy_->link_ptr();
+//  }
   if (x.ptr()) {
     bool new_object = object_proxies_.insert(x.proxy_).second;
     if (x.id()) {

@@ -205,8 +205,7 @@ public:
    */
   std::shared_ptr<basic_identifier> primary_key() const;
 
-  unsigned long ref_count() const;
-  unsigned long ptr_count() const;
+  unsigned long reference_count() const;
 
   /**
    * Prints the underlaying serializable

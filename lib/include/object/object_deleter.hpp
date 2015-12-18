@@ -64,8 +64,9 @@ private:
     t_object_count_struct(object_proxy *oproxy, bool ignr = true);
 
     object_proxy *proxy;
-    unsigned long ref_count;
-    unsigned long ptr_count;
+    unsigned long reference_counter;
+//    unsigned long ref_count;
+//    unsigned long ptr_count;
     bool ignore;
   } t_object_count;
 
@@ -142,11 +143,12 @@ public:
       return;
     }
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
-    if (cascade | cascade_type::DELETE) {
-      --ret.first->second.ptr_count;
-    } else {
-      --ret.first->second.ref_count;
-    }
+    --ret.first->second.reference_counter;
+//    if (cascade | cascade_type::DELETE) {
+//      --ret.first->second.ptr_count;
+//    } else {
+//      --ret.first->second.ref_count;
+//    }
     if (cascade | cascade_type::DELETE) {
       ret.first->second.ignore = false;
       oos::access::serialize(*this, *x.get());
