@@ -45,6 +45,9 @@ basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op)
 basic_object_holder::~basic_object_holder()
 {
   if (proxy_) {
+    if (is_internal_ && is_inserted_) {
+      --(*proxy_);
+    }
     proxy_->remove(this);
     /*
      * if proxy was created temporary

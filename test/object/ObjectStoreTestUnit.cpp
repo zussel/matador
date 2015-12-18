@@ -437,10 +437,7 @@ ObjectStoreTestUnit::delete_object()
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item), "item shouldn't be removable because ref count is one");
 
-  try {
-    ostore_.remove(item);
-  } catch(object_exception &) {
-  }
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is not removable", "item shouldn't be removed");
 
   UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test object item must be removable");
   
@@ -871,7 +868,7 @@ void ObjectStoreTestUnit::test_remove()
 
   item_ptr item;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "serializable proxy is nullptr", "null shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
 
   Item *i = new Item;
   item = i;

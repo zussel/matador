@@ -149,7 +149,7 @@ public:
 //    } else {
 //      --ret.first->second.ref_count;
 //    }
-    if (cascade | cascade_type::DELETE) {
+    if (cascade & cascade_type::DELETE) {
       ret.first->second.ignore = false;
       oos::access::serialize(*this, *x.get());
     }

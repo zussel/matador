@@ -389,14 +389,14 @@ public:
 	void remove(object_ptr<T> &o)
   {
     if (o.proxy_ == nullptr) {
-      throw object_exception("serializable proxy is nullptr");
+      throw object_exception("object proxy is nullptr");
     }
     if (o.proxy_->node() == nullptr) {
       throw object_exception("prototype node is nullptr");
     }
     // check if serializable tree is deletable
     if (!object_deleter_.is_deletable<T>(o.proxy_, o.get())) {
-      throw object_exception("serializable is not removable");
+      throw object_exception("object is not removable");
     }
 
     object_deleter::iterator first = object_deleter_.begin();
