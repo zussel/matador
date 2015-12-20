@@ -43,7 +43,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
-//  add_test("to_many", std::bind(&ObjectStoreTestUnit::test_to_many, this), "to many test");
+  add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 }
 
 ObjectStoreTestUnit::~ObjectStoreTestUnit()
@@ -889,10 +889,12 @@ void ObjectStoreTestUnit::test_primary_key()
   UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
 }
 
-void ObjectStoreTestUnit::test_to_many()
+void ObjectStoreTestUnit::test_has_many()
 {
 //  typedef object_ptr<employee> emp_ptr;
 //  typedef object_ptr<department> dep_ptr;
+  ostore_.attach<book>("book");
+  ostore_.attach<book_list>("book_list");
 
-
+  ostore_.insert(new book_list);
 }

@@ -14,8 +14,6 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-
 #include "database/sql.hpp"
 
 #include <sstream>

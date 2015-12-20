@@ -2,8 +2,6 @@
 // Created by sascha on 9/18/15.
 //
 
-#include "object/serializer.hpp"
-
 #include "database/result.hpp"
 
 #ifndef OOS_STATEMENT_IMPL_HPP
@@ -31,7 +29,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API statement_impl : public serializer
+class OOS_API statement_impl
 {
 public:
   virtual ~statement_impl();

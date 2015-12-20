@@ -14,7 +14,6 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
 #include "object/object_producer.hpp"
 
 #include <memory>
@@ -28,7 +27,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API result_impl : public deserializer
+class OOS_API result_impl
 {
 private:
   result_impl(const result_impl &) = delete;

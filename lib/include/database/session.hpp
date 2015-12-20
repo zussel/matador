@@ -33,7 +33,6 @@
 
 #include "object/object_ptr.hpp"
 #include "object/object_store.hpp"
-#include "object/serializable.hpp"
 
 #include "tools/library.hpp"
 

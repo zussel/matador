@@ -25,26 +25,10 @@ namespace oos {
 
 
 sequence::sequence()
-{
-
-}
+{}
 
 sequence::~sequence()
-{
-
-}
-
-void sequence::deserialize(deserializer &r)
-{
-  r.read("name", name_);
-  r.read("number", sequence_);
-}
-
-void sequence::serialize(serializer &w) const
-{
-  w.write("name", name_);
-  w.write("number", sequence_);
-}
+{}
 
 unsigned long sequence::seq() const
 {

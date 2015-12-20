@@ -18,8 +18,6 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#include "object/serializer.hpp"
-
 #include "database/result_impl.hpp"
 
 #include <memory>

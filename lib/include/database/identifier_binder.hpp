@@ -2,7 +2,6 @@
 // Created by sascha on 7/13/15.
 //
 
-#include "object/serializer.hpp"
 #include "object/identifier.hpp"
 
 #include "database/statement.hpp"
@@ -17,10 +16,10 @@ class serializable;
 
 /// @cond OOS_DEV
 
-class identifier_binder : public generic_deserializer<identifier_binder>
+class identifier_binder
 {
 public:
-  identifier_binder() : generic_deserializer<identifier_binder>(this) {}
+  identifier_binder() {}
   virtual ~identifier_binder() {}
 
   void bind(serializable *obj, statement<serializable> *stmt, int pos);

@@ -14,8 +14,6 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-
 #include "database/types.hpp"
 
 namespace oos {
@@ -25,7 +23,7 @@ class sql;
 
 /// @cond OOS_DEV
 
-class OOS_API query_create : public serializer
+class OOS_API query_create
 {
 public:
   explicit query_create(sql &d, const database &db);

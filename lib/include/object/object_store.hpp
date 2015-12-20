@@ -27,6 +27,7 @@
 #include "object/primary_key_reader.hpp"
 
 #include "tools/sequencer.hpp"
+#include "has_many.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -36,6 +37,7 @@
 #include <string>
 #include <ostream>
 #include <list>
+#include <iostream>
 
 #ifdef _MSC_VER
   #ifdef oos_EXPORTS
@@ -98,7 +100,8 @@ public:
   template < class T >
   void deserialize(const char*, has_one<T> &x, cascade_type cascade);
 
-  void deserialize(const char*, object_container &x);
+  template < class T, template <class ...> class C >
+  void deserialize(const char*, has_many<T, C> &x);
 
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;
@@ -708,6 +711,31 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
       ostore_.insert_proxy(x.proxy_, x.get());
     }
   }
+}
+
+template < class T, template <class ...> class C >
+void object_inserter::deserialize(const char*, has_many<T, C> &x)
+{
+  std::cout << "inserting has_many\n";
+  if (x.ostore()) {
+    return;
+  }
+  // set parent serializable (if available)
+  if (!object_proxy_stack_.empty()) {
+    x.owner(object_proxy_stack_.top());
+  }
+  x.for_each([this](object_proxy *proxy) {
+    bool new_object = object_proxies_.insert(proxy).second;
+    if (!proxy->obj()) {
+      return;
+    }
+    if (new_object) {
+      object_proxy_stack_.push(proxy);
+      proxy->obj()->deserialize(*this);
+      object_proxy_stack_.pop();
+    }
+  });
+  ostore_.insert(x);
 }
 
 }

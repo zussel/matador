@@ -561,9 +561,9 @@ public:
   void deserialize(DESERIALIZER &deserializer)
   {
     deserializer.deserialize("id", id_);
-    deserializer.deserializer("title", title_);
-    deserializer.deserializer("isbn", isbn_);
-    deserializer.deserializer("author", author_);
+    deserializer.deserialize("title", title_);
+    deserializer.deserialize("isbn", isbn_);
+    deserializer.deserialize("author", author_);
   }
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer) const
