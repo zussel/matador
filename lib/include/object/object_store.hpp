@@ -689,15 +689,10 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
 
   x.cascade_ = cascade;
 
-  if (x.ptr() && x.id()) {
+  if (x.get() && x.id()) {
     ++(*x.proxy_);
   }
-//  if (cascade | cascade_type::DELETE) {
-//    x.proxy_->link_ref();
-//  } else if (x.ptr() && x.id()){
-//    x.proxy_->link_ptr();
-//  }
-  if (x.ptr()) {
+  if (x.get()) {
     bool new_object = object_proxies_.insert(x.proxy_).second;
     if (x.id()) {
       // do the pointer count
@@ -717,25 +712,30 @@ template < class T, template <class ...> class C >
 void object_inserter::deserialize(const char*, has_many<T, C> &x)
 {
   std::cout << "inserting has_many\n";
-  if (x.ostore()) {
+  if (x.ostore_) {
     return;
   }
   // set parent serializable (if available)
   if (!object_proxy_stack_.empty()) {
-    x.owner(object_proxy_stack_.top());
+    x.owner_ = object_proxy_stack_.top();
   }
-  x.for_each([this](object_proxy *proxy) {
-    bool new_object = object_proxies_.insert(proxy).second;
-    if (!proxy->obj()) {
-      return;
-    }
-    if (new_object) {
-      object_proxy_stack_.push(proxy);
-      proxy->obj()->deserialize(*this);
-      object_proxy_stack_.pop();
-    }
-  });
-  ostore_.insert(x);
+
+//  has_many<T, C>::iterator first = x.begin();
+//  has_many<T, C>::iterator last = x.end();
+//
+//  x.for_each([this](object_proxy *proxy) {
+//    bool new_object = object_proxies_.insert(proxy).second;
+//    if (!proxy->obj()) {
+//      return;
+//    }
+//    if (new_object) {
+//      object_proxy_stack_.push(proxy);
+//      proxy->obj()->deserialize(*this);
+//      object_proxy_stack_.pop();
+//    }
+//  });
+//  ostore_.insert(x);
+//}
 }
 
 }
