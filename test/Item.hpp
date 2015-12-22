@@ -582,13 +582,15 @@ public:
 class book_list
 {
 public:
-  typedef oos::has_many<book_list, book> book_list_t;
+  typedef oos::has_many<book> book_list_t;
   typedef book_list_t::value_type item_ptr;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
-  book_list() {}
+  book_list()
+    : book_list_(id_)
+  {}
   ~book_list() {}
 
   template < class DESERIALIZER >

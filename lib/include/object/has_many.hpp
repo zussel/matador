@@ -13,12 +13,11 @@
 
 namespace oos {
 
-template < class T, class O >
+template < class T >
 class basic_has_many
 {
 public:
   typedef has_one<T> value_type;
-  typedef O owner_type;
   typedef value_type& reference;
   typedef value_type* pointer;
 
@@ -26,11 +25,9 @@ protected:
   friend class object_inserter;
 
   object_store *ostore_ = nullptr;
-
-  owner_type *owner_ = nullptr;
 };
 
-template < class T, class O, template <class ...> class C = std::vector, class Enable = void >
+template < class T, template <class ...> class C = std::vector, class Enable = void >
 class has_many;
 
 /**
@@ -82,14 +79,14 @@ public:
   }
 
 private:
-  basic_identifier owner_;
+  basic_identifier *owner_;
   has_one<T> item_;
 
   std::string owner_id_;
   std::string item_id_;
 };
 
-template < class T, class O, template <class ...> class C >
+template < class T, template <class ...> class C >
 class has_many<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value || is_same_container_type<C, std::list>::value>::type> : public basic_has_many<T>
 {
 public:
@@ -101,6 +98,11 @@ public:
   typedef typename container_type::size_type size_type;
   typedef typename container_type::iterator iterator;
   typedef typename container_type::const_iterator const_iterator;
+
+  template < class I >
+  explicit has_many(identifier<I> &id)
+    : owner_id_(id.share())
+  {}
 
   void push_back(const oos::object_ptr<T> &value)
   {
@@ -117,7 +119,9 @@ public:
 
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
+
 private:
+  std::unique_ptr<basic_identifier> owner_id_;
   container_type container_;
 };
 
