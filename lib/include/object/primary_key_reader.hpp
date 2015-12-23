@@ -6,6 +6,7 @@
 #define PRIMARY_KEY_READER_HPP
 
 #include "object/identifier.hpp"
+#include "object/has_many.hpp"
 
 namespace oos {
 
@@ -48,6 +49,9 @@ public:
   void deserialize(const char*, char *, size_t) {}
   template < class V >
   void deserialize(const char*, has_one<V>, cascade_type) {}
+
+  template < class I, template <class ...> class C >
+  void deserialize(const char *, has_many<I, C> &, const char *, const char *) {}
 
 private:
   T value_;

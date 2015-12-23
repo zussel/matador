@@ -1,7 +1,7 @@
 SET(OBJECT_SOURCES
 		object/object_deleter.cpp
 #		object/object_container.cpp
-		object/object_ptr.cpp
+#		object/object_ptr.cpp
 		object/object_store.cpp
 		object/object_proxy.cpp
 		object/object_serializer.cpp

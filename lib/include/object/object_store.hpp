@@ -18,16 +18,16 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
-#include "object/has_one.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
 #include "object/primary_key_reader.hpp"
+#include "object/has_one.hpp"
+#include "object/has_many.hpp"
 
 #include "tools/sequencer.hpp"
-#include "has_many.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -101,7 +101,7 @@ public:
   void deserialize(const char*, has_one<T> &x, cascade_type cascade);
 
   template < class T, template <class ...> class C >
-  void deserialize(const char*, has_many<T, C> &x);
+  void deserialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field);
 
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;
@@ -709,16 +709,26 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
 }
 
 template < class T, template <class ...> class C >
-void object_inserter::deserialize(const char*, has_many<T, C> &x)
+void object_inserter::deserialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field)
 {
+  // initialize the has many relation
+  // set identifier
+  // relation table name
+  // owner field name
+  // item field name
+  if (object_proxy_stack_.empty()) {
+    throw object_exception("no owner for has many releation");
+  }
+
   std::cout << "inserting has_many\n";
   if (x.ostore_) {
     return;
   }
-  // set parent serializable (if available)
-  if (!object_proxy_stack_.empty()) {
-    x.owner_ = object_proxy_stack_.top();
-  }
+  object_proxy *proxy = object_proxy_stack_.top();
+  x.owner_id_ = proxy->pk();
+
+
+  ostore_.insert()
 
 //  has_many<T, C>::iterator first = x.begin();
 //  has_many<T, C>::iterator last = x.end();

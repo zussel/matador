@@ -56,6 +56,9 @@ public:
 //  }
   }
 
+  template < class HAS_MANY >
+  void serialize(const char *id, const HAS_MANY &x, const char *owner_field, const char *item_field) {}
+
 private:
   prototype_node &node_;
 };

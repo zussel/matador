@@ -85,10 +85,12 @@ public:
   template < class V >
   void serialize(const char*, const V&) {}
   void serialize(const char*, const char*, int) {}
-  void serialize(const char *, const object_container &) {}
 
   template < class T >
   void serialize(const char *, const has_one<T> &x, cascade_type cascade);
+
+  template < class HAS_MANY >
+  void serialize(const char *, const HAS_MANY &, const char *, const char *) {}
 
 private:
   prototype_node &node_;

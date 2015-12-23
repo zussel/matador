@@ -20,7 +20,7 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_serializer.hpp"
-#include "object/object_store.hpp"
+//#include "object/object_store.hpp"
 #include "object/object_container.hpp"
 
 #include <cstring>

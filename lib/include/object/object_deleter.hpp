@@ -33,7 +33,6 @@
 #endif
 
 #include "object/access.hpp"
-#include "object/object_proxy.hpp"
 #include "object/has_one.hpp"
 
 #include <map>

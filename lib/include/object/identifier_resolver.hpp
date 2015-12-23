@@ -29,8 +29,6 @@ namespace oos {
 class basic_identifier;
 class prototype_node;
 
-template < class T > class has_one;
-
 /// @cond OOS_DEV
 
 /**
@@ -70,8 +68,11 @@ public:
 
   void deserialize(const char*, char*, size_t) {}
 
-  template < class V >
-  void deserialize(const char*, has_one<V>&, cascade_type) {}
+  template < class HAS_ONE >
+  void deserialize(const char*, HAS_ONE&, cascade_type) {}
+
+  template < class HAS_MANY >
+  void deserialize(const char *, HAS_MANY &, const char *, const char *) {}
 
   template < class V >
   void deserialize(const char *, identifier<V> &x)

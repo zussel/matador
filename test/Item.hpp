@@ -588,25 +588,23 @@ public:
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
-  book_list()
-    : book_list_(id_)
-  {}
+  book_list() {}
   ~book_list() {}
 
   template < class DESERIALIZER >
   void deserialize(DESERIALIZER &deserializer)
   {
     deserializer.deserialize("id", id_);
-    deserializer.deserialize("book_list", book_list_);
+    deserializer.deserialize("book_list", book_list_, "book_list_id", "book_id");
   }
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer) const
   {
     serializer.serialize("id", id_);
-    serializer.serialize("book_list", book_list_);
+    serializer.serialize("book_list", book_list_, "book_list_id", "book_id");
   }
 
-  void add(const item_ptr &b)
+  void add(const oos::object_ptr<book> &b)
   {
     book_list_.push_back(b);
   }
