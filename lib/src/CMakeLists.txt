@@ -8,7 +8,7 @@ SET(OBJECT_SOURCES
 		object/prototype_node.cpp
 		object/prototype_tree.cpp
 #		object/primary_key_analyzer.cpp
-		object/foreign_key_analyzer.cpp
+#		object/foreign_key_analyzer.cpp
 		object/basic_identifier.cpp
 		object/identifier.cpp
 		object/prototype_iterator.cpp
@@ -62,9 +62,9 @@ SET(OBJECT_HEADER
 #		../include/object/attribute_serializer.hpp
 		../include/object/identifier.hpp
 #		../include/object/primary_key_analyzer.hpp
-		../include/object/foreign_key_analyzer.hpp
+#		../include/object/foreign_key_analyzer.hpp
 		../include/object/identifier_resolver.hpp
-		../include/object/primary_key_reader.hpp
+		../include/object/identifier_setter.hpp
 		../include/object/basic_identifier.hpp
 		../include/object/prototype_iterator.hpp
 		../include/object/base_class.hpp

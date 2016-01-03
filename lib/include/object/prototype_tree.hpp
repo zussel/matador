@@ -36,10 +36,8 @@
 #include "object/prototype_iterator.hpp"
 #include "object/object_exception.hpp"
 #include "object/identifier_resolver.hpp"
-#include "object/foreign_key_analyzer.hpp"
 #include "object/has_one.hpp"
-
-//#include "object/detail/relation_resolver.hpp"
+#include "object/has_many.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -49,6 +47,38 @@ namespace oos {
 class object_container;
 
 namespace detail {
+
+class foreign_key_analyzer
+{
+public:
+  explicit foreign_key_analyzer(prototype_node &node) : node_(node){}
+  ~foreign_key_analyzer() {}
+
+  template < class T >
+  static void analyze(prototype_node &node)
+  {
+    foreign_key_analyzer analyzer(node);
+    T obj;
+    oos::access::serialize(analyzer, obj);
+  }
+
+  template < class V >
+  void serialize(V &x)
+  {
+    oos::access::serialize(*this, x);
+  }
+
+  template < class V >
+  void serialize(const char*, V&) {}
+  void serialize(const char*, char*, size_t) {}
+  template < class T >
+  void serialize(const char *id, has_one<T> &x, cascade_type);
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+
+private:
+  prototype_node &node_;
+};
 
 class relation_resolver
 {
@@ -77,20 +107,18 @@ public:
   }
 
   template < class V >
-  void serialize(const V &x)
+  void serialize(V &x)
   {
     oos::access::serialize(*this, x);
   }
 
   template < class V >
-  void serialize(const char*, const V&) {}
-  void serialize(const char*, const char*, int) {}
-
+  void serialize(const char*, V&) {}
+  void serialize(const char*, char*, int) {}
   template < class T >
-  void serialize(const char *, const has_one<T> &x, cascade_type cascade);
-
-  template < class HAS_MANY >
-  void serialize(const char *, const HAS_MANY &, const char *, const char *) {}
+  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  template < class T, template <class ...> class C >
+  void serialize(const char *, has_many<T, C> &, const char *, const char *);
 
 private:
   prototype_node &node_;
@@ -121,7 +149,7 @@ private:
  * One can also erase a prototype_node by its name or type
  *
  * @code{.cpp}
- * tree.remove("student");
+ * tree.remove("student");const
  * tree.erase<student>();
  * @endcode
  *
@@ -564,7 +592,7 @@ private:
     detail::relation_resolver::build<T>(*node);
 
     // Analyze primary and foreign keys of node
-    foreign_key_analyzer::analyze<T>(*node);
+    detail::foreign_key_analyzer::analyze<T>(*node);
 
     while (!node->foreign_key_ids.empty()) {
       auto i = node->foreign_key_ids.front();
@@ -594,15 +622,36 @@ private:
 
 namespace detail {
 
+template < class T >
+void foreign_key_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
+{
+  prototype_iterator node = node_.tree()->find(x.type());
+  if (node == node_.tree()->end()) {
+    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
+  } else if (!node->has_primary_key()) {
+    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
+  } else {
+    // node is inserted/attached; store it in nodes foreign key map
+    std::shared_ptr<basic_identifier> fk(node->id()->clone());
+    node_.register_foreign_key(id, fk);
+  }
+}
+
 template<class T >
-void relation_resolver::serialize(const char *, const has_one<T> &x, cascade_type) {
+void relation_resolver::serialize(const char *, has_one<T> &x, cascade_type) {
   prototype_iterator pi = node_.tree()->find(x.type());
   if (pi == node_.tree()->end()) {
     // if there is no such prototype node
-    // insert a new one (it is automatically marked
-    // as uninitialized)
+    // insert a new one
     node_.tree()->attach<T>(x.type());
   }
+}
+
+template < class T, template <class ...> class C >
+void relation_resolver::serialize(const char *id, has_many<T, C> &, const char *, const char *)
+{
+  // attach releation table for has many relation
+  node_.tree()->attach<typename has_many<T, C>::value_type>(id);
 }
 
 }

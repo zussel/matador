@@ -324,9 +324,19 @@ bool prototype_node::has_primary_key() const
   return id_.get() != nullptr;
 }
 
+basic_identifier *prototype_node::id() const
+{
+  return id_.get();
+}
+
 bool prototype_node::is_abstract() const
 {
   return abstract_;
+}
+
+void prototype_node::register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key)
+{
+  foreign_keys.insert(std::make_pair(id, foreign_key));
 }
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)

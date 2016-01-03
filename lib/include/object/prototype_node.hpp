@@ -246,8 +246,11 @@ public:
    */
   bool has_primary_key() const;
 
+  basic_identifier* id() const;
+
   bool is_abstract() const;
 
+  void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
   /**
    * Prints the node in graphviz layout to the stream.
    *

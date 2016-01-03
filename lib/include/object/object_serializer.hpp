@@ -67,10 +67,7 @@ public:
   /**
    * Creates an object_serializer
    */
-  object_serializer()
-    : ostore_(NULL)
-    , buffer_(NULL)
-  {}
+  object_serializer() {}
 
   virtual ~object_serializer();
 
@@ -82,8 +79,9 @@ public:
    * @return True on success.
    */
   template < class T >
-  void serialize(const T *o, byte_buffer *buffer)
+  void serialize(T *o, byte_buffer *buffer)
   {
+    restore = false;
     buffer_ = buffer;
     oos::access::serialize(*this, *o);
     buffer_ = nullptr;
@@ -100,82 +98,102 @@ public:
   template < class T >
   void deserialize(T *o, byte_buffer *buffer, object_store *ostore)
   {
+    restore = true;
     ostore_ = ostore;
     buffer_ = buffer;
-    oos::access::deserialize(*this, *o);
+    oos::access::serialize(*this, *o);
     buffer_ = nullptr;
     ostore_ = nullptr;
   }
 
 public:
   template < class T >
-  void serialize(const char*, const T &x)
+  void serialize(const char*, T x)
   {
-    buffer_->append(&x, sizeof(x));
+    if (restore) {
+      buffer_->release(&x, sizeof(x));
+    } else {
+      buffer_->append(&x, sizeof(x));
+    }
   }
 
-	void serialize(const char* id, const char *c, size_t s);
-	void serialize(const char* id, const std::string &s);
+	void serialize(const char* id, char *c, size_t s);
+	void serialize(const char* id, std::string &s);
+
   template < unsigned int C >
-  void serialize(const char*, const varchar<C> &s)
+  void serialize(const char*, varchar<C> &s)
   {
-    size_t len = s.size();
+    if (restore) {
+      size_t len = 0;
+      buffer_->release(&len, sizeof(len));
+      char *str = new char[len];
+      buffer_->release(str, len);
+      s.assign(str, len);
+      delete [] str;
+    } else {
+      size_t len = s.size();
 
-    buffer_->append(&len, sizeof(len));
-    buffer_->append(s.str().c_str(), len);
+      buffer_->append(&len, sizeof(len));
+      buffer_->append(s.str().c_str(), len);
+    }
   }
 
-	void serialize(const char* id, const date &x);
-	void serialize(const char* id, const time &x);
+	void serialize(const char* id, date &x);
+	void serialize(const char* id, time &x);
   template < class T >
-	void serialize(const char* id, const object_ptr<T> &x)
+
+	void serialize(const char* id, has_one<T> &x)
   {
-    serialize(id, x.id());
-    serialize(id, x.type(), strlen(x.type()));
+    if (restore) {
+      /***************
+       *
+       * extract id and type of serializable from buffer
+       * try to find serializable on serializable store
+       * if found check type if wrong type throw error
+       * else create serializable and set extracted id
+       * insert serializable into serializable store
+       *
+       ***************/
+      // Todo: correct implementation
+//  unsigned long oid = 0;
+//  serialize(id, oid);
+//  std::string type;
+//  serialize(id, type);
+//
+//  if (id > 0) {
+//    object_proxy *oproxy = ostore_->find_proxy(oid);
+//    if (!oproxy) {
+//      oproxy = ostore_->create_proxy(oid);
+//    }
+//    x.reset(oproxy, x.is_reference());
+//  } else {
+//    x.proxy_ = new object_proxy(oid);
+//  }
+    } else {
+      serialize(id, x.id());
+      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
+    }
   }
 
-	void serialize(const char* id, const object_container &x);
+//	void serialize(const char* id, const object_container &x);
   template < class V >
-	void serialize(const char* id, const identifier<V> &x)
+	void serialize(const char* id, identifier<V> &x)
   {
-    serialize(id, x.value());
+    if (restore) {
+      V val;
+      serialize(id, val);
+      x.value(val);
+    } else {
+      serialize(id, x.value());
+    }
   }
 
-  template < class T >
-  void deserialize(const char*, T &x)
-  {
-    buffer_->release(&x, sizeof(x));
-  }
-
-  void deserialize(const char* id, char *c, size_t s);
-	void deserialize(const char* id, std::string &s);
-  template < unsigned int C >
-  void deserialize(const char*, varchar<C> &s)
-  {
-    size_t len = 0;
-    buffer_->release(&len, sizeof(len));
-    char *str = new char[len];
-    buffer_->release(str, len);
-    s.assign(str, len);
-    delete [] str;
-  }
-  void deserialize(const char* id, date &x);
-  void deserialize(const char* id, time &x);
-  void deserialize(const char* id, basic_object_holder &x);
-	void deserialize(const char* id, object_container &x);
-  template < class V >
-  void deserialize(const char* id, identifier<V> &x)
-  {
-    V val;
-    deserialize(id, val);
-    x.value(val);
-  }
-  
   void write_object_container_item(const object_proxy *proxy);
 
 private:
-  object_store *ostore_;
-  byte_buffer *buffer_;
+  object_store *ostore_ = nullptr;
+  byte_buffer *buffer_ = nullptr;
+  bool restore = false;
 };
 /// @endcond
 }

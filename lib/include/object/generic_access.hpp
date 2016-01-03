@@ -34,7 +34,7 @@ template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::val
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
-  oos::access::deserialize(reader, obj);
+  oos::access::serialize(reader, obj);
   return reader.success();
 }
 
@@ -64,7 +64,7 @@ template < typename O >
 bool set(O &obj, const std::string &name, const char *val, size_t size)
 {
   attribute_reader<char*> reader(name, val, size);
-  oos::access::deserialize(reader, obj);
+  oos::access::serialize(reader, obj);
   return reader.success();
 }
 
@@ -84,7 +84,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val)
 {
   attribute_writer<T> writer(name, val);
-  oos::access::serialize(writer, obj);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -105,7 +105,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
   attribute_writer<T> writer(name, val, size);
-  oos::access::serialize(writer, obj);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -126,7 +126,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val, size_t precision)
 {
   attribute_writer<T> writer(name, val, precision);
-  oos::access::serialize(writer, obj);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 

@@ -82,7 +82,7 @@ public:
 
 public:
   template < class V >
-  void deserialize(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
+  void serialize(const char *id, V &to, typename std::enable_if< std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -92,7 +92,7 @@ public:
   }
 
   template < class V >
-  void deserialize(const char *id, V &to, typename std::enable_if<
+  void serialize(const char *id, V &to, typename std::enable_if<
     std::is_base_of<V, T>::value &&
     std::is_same<V, oos::varchar_base>::value
   >::type* = 0)
@@ -104,7 +104,7 @@ public:
   }
 
   template < class V >
-  void deserialize(const char *id, V &/*to*/, typename std::enable_if<
+  void serialize(const char *id, V &/*to*/, typename std::enable_if<
     std::is_base_of<V, T>::value &&
     std::is_same<V, oos::basic_object_holder>::value
   >::type* = 0)
@@ -115,7 +115,7 @@ public:
   }
 
   template < class V >
-  void deserialize(const char *id, V &/*to*/, typename std::enable_if<
+  void serialize(const char *id, V &/*to*/, typename std::enable_if<
     !std::is_same<T, V>::value &&
     !std::is_base_of<V, T>::value>::type* = 0)
   {
@@ -126,14 +126,14 @@ public:
   }
 
   template < class V >
-  void deserialize(const char *id, identifier<V> &x)
+  void serialize(const char *id, identifier<V> &x)
   {
     V val;
-    deserialize(id, val);
+    serialize(id, val);
     x.value(val);
   }
 
-  void deserialize(const char *id, char *, size_t)
+  void serialize(const char *id, char *, size_t)
   {
     if (id_ != id) {
       return;
@@ -143,7 +143,7 @@ public:
     success_ = true;
   }
   template < class V >
-  void deserialize(const char *id, date &to, typename std::enable_if<
+  void serialize(const char *id, date &to, typename std::enable_if<
     std::is_same<T, V>::value &&
       (std::is_same<V, oos::date>::value ||
        std::is_same<V, oos::time>::value
@@ -156,7 +156,7 @@ public:
     success_ = true;
   }
 
-  void deserialize(const char*, object_container&) {}
+  void serialize(const char*, object_container&) {}
 
 private:
   std::string id_;
@@ -190,7 +190,7 @@ public:
   }
 
   template < class V >
-  void deserialize(const char *id, V &/*to*/)
+  void serialize(const char *id, V &/*to*/)
   {
     if (id_ != id) {
       return;
@@ -200,7 +200,7 @@ public:
     success_ = true;
   }
 
-  void deserialize(const char *id, char *to, size_t s)
+  void serialize(const char *id, char *to, size_t s)
   {
     if (id_ != id) {
       return;

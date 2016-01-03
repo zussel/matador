@@ -19,7 +19,6 @@
 #define OBJECT_PTR_HPP
 
 #include "object/object_proxy.hpp"
-#include "object/prototype_node.hpp"
 #include "object/basic_object_holder.hpp"
 #include "object/identifier_resolver.hpp"
 #include "object/has_one.hpp"
@@ -34,7 +33,6 @@ class result_impl;
 }
 
 class object_store;
-class prototype_node;
 
 template < class T > class object_ptr;
 

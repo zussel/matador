@@ -50,7 +50,7 @@ public:
   {
     identifier_resolver<T> resolver;
     T obj;
-    oos::access::deserialize(resolver, obj);
+    oos::access::serialize(resolver, obj);
     if (!resolver.id_) {
       return nullptr;
     }
@@ -58,24 +58,24 @@ public:
   }
 
   template < class V >
-  void deserialize(V &x)
+  void serialize(V &x)
   {
-    oos::access::deserialize(*this, x);
+    oos::access::serialize(*this, x);
   }
 
   template < class V >
-  void deserialize(const char*, V&) {}
+  void serialize(const char*, V&) {}
 
-  void deserialize(const char*, char*, size_t) {}
+  void serialize(const char*, char*, size_t) {}
 
   template < class HAS_ONE >
-  void deserialize(const char*, HAS_ONE&, cascade_type) {}
+  void serialize(const char*, HAS_ONE&, cascade_type) {}
 
   template < class HAS_MANY >
-  void deserialize(const char *, HAS_MANY &, const char *, const char *) {}
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
 
   template < class V >
-  void deserialize(const char *, identifier<V> &x)
+  void serialize(const char *, identifier<V> &x)
   {
     id_ = x.share();
   }

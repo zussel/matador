@@ -34,6 +34,7 @@
 
 #include "object/access.hpp"
 #include "object/has_one.hpp"
+#include "object/has_many.hpp"
 
 #include <map>
 
@@ -64,8 +65,6 @@ private:
 
     object_proxy *proxy;
     unsigned long reference_counter;
-//    unsigned long ref_count;
-//    unsigned long ptr_count;
     bool ignore;
   } t_object_count;
 
@@ -126,36 +125,31 @@ public:
   iterator end();
 
   template < class T >
-  void serialize(const T &x)
+  void serialize(T &x)
   {
     oos::access::serialize(*this, x);
   }
 
   template < class T >
-  void serialize(const char*, const T&) {}
+  void serialize(const char*, T&) {}
 
-  void serialize(const char*, const char*, size_t) {}
+  void serialize(const char*, char*, size_t) {}
   template < class T >
-  void serialize(const char*, const has_one<T> &x, cascade_type cascade)
+  void serialize(const char*, has_one<T> &x, cascade_type cascade)
   {
     if (!x.ptr()) {
       return;
     }
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
     --ret.first->second.reference_counter;
-//    if (cascade | cascade_type::DELETE) {
-//      --ret.first->second.ptr_count;
-//    } else {
-//      --ret.first->second.ref_count;
-//    }
     if (cascade & cascade_type::DELETE) {
       ret.first->second.ignore = false;
       oos::access::serialize(*this, *x.get());
     }
-
-//    check_object(x, !(cascade | cascade_type::DELETE));
-//    check_object(x.proxy_, x.get(), x.is_reference());
   }
+
+  template < class T, template <class ...> class C >
+  void serialize(const char *, has_many<T, C> &, const char *, const char *);
 
   void serialize(const char*, object_container &x);
   template < class T >
@@ -165,26 +159,20 @@ public:
     serialize(id, val);
   }
 
-//  template < class T >
-//  void check_object(const has_one<T> &x, bool is_ref)
-//  {
-//    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
-//    if (!is_ref) {
-//      --ret.first->second.ptr_count;
-//    } else {
-//      --ret.first->second.ref_count;
-//    }
-//    if (!is_ref) {
-//      ret.first->second.ignore = false;
-//      oos::access::serialize(*this, x);
-//    }
-//  }
   void check_object_list_node(object_proxy *proxy);
   bool check_object_count_map() const;
 
 private:
   t_object_count_map object_count_map;
 };
+
+template < class T, template <class ...> class C >
+void object_deleter::serialize(const char *id, has_many<T, C> &x, const char *, const char *)
+{
+  typename has_many<T, C>::iterator first = x.begin();
+  typename has_many<T, C>::iterator last = x.end();
+}
+
 /// @endcond
 }
 

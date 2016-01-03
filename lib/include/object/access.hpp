@@ -11,21 +11,12 @@ class access
 {
 public:
   template<class S, class T>
-  friend inline void serialize(S &s, const T &t);
+  friend inline void serialize(S &s, T &t);
 
   template<class S, class T>
-  friend inline void deserialize(S &s, T &t);
-
-  template<class S, class T>
-  static void serialize(S &s, const T &t)
+  static void serialize(S &s, T &t)
   {
     t.serialize(s);
-  }
-
-  template<class S, class T>
-  static void deserialize(S &s, T &t)
-  {
-    t.deserialize(s);
   }
 };
 

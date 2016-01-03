@@ -17,7 +17,7 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("remove", std::bind(&PrototypeTreeTestUnit::test_remove, this), "test remove element");
   add_test("erase", std::bind(&PrototypeTreeTestUnit::test_erase, this), "test erase element");
   add_test("clear", std::bind(&PrototypeTreeTestUnit::test_clear, this), "test clear prototype tree");
-//  add_test("container", std::bind(&PrototypeTreeTestUnit::test_container, this), "test insert container containing element");
+  add_test("has_many", std::bind(&PrototypeTreeTestUnit::test_has_many, this), "test insert has_many relation");
   add_test("decrement", std::bind(&PrototypeTreeTestUnit::test_decrement, this), "test decrement iterator");
   add_test("count", std::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
   add_test("child_of", std::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
@@ -140,16 +140,18 @@ void PrototypeTreeTestUnit::test_clear()
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
 }
 
-/*
-void PrototypeTreeTestUnit::test_container()
+void PrototypeTreeTestUnit::test_has_many()
 {
   prototype_tree ptree;
-  ptree.insert(new object_producer<album>, "album", false);
-  ptree.insert(new object_producer<track>, "track", false);
+  ptree.attach<book>("book", false);
+  ptree.attach<book_list>("book_list", false);
 
-  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)2, "prototype size must be one (2)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)3, "prototype size must be one (3)");
+
+  prototype_iterator i = ptree.find("books");
+
+  UNIT_ASSERT_TRUE(i != ptree.end(), "should've found 'books' node");
 }
-*/
 
 void PrototypeTreeTestUnit::test_decrement()
 {

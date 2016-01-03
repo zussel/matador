@@ -23,7 +23,7 @@
 #include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
-#include "object/primary_key_reader.hpp"
+#include "object/identifier_setter.hpp"
 #include "object/has_one.hpp"
 #include "object/has_many.hpp"
 
@@ -89,19 +89,19 @@ public:
   template < class T >
   void insert(object_proxy *proxy, T *o);
   template < class T >
-  void deserialize(T &x);
+  void serialize(T &x);
   template < class T >
-  void deserialize(const char*, T&) {}
+  void serialize(const char*, T&) {}
 
-  void deserialize(const char*, char*, size_t) {}
+  void serialize(const char*, char*, size_t) {}
 
 //  template < class T >
 //  void serialize(const char *, object_ptr<T> &x)
   template < class T >
-  void deserialize(const char*, has_one<T> &x, cascade_type cascade);
+  void serialize(const char*, has_one<T> &x, cascade_type cascade);
 
   template < class T, template <class ...> class C >
-  void deserialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field);
+  void serialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field);
 
 private:
   typedef std::set<object_proxy*> t_object_proxy_set;
@@ -599,8 +599,8 @@ object_proxy* object_store::insert_object(T *o, bool notify)
     // if object has primary key of type short, int or long
     // set the id of proxy as value
 //    identifier_assigner<unsigned long>::assign(oproxy->id(), o);
-    primary_key_reader<unsigned long> reader(oproxy->id());
-    oos::access::deserialize(reader, *o);
+    identifier_setter<unsigned long> setter(oproxy->id());
+    oos::access::serialize(setter, *o);
   }
 
   node->insert(oproxy);
@@ -669,18 +669,18 @@ void object_inserter::insert(object_proxy *proxy, T *o)
   object_proxies_.insert(proxy);
   object_proxy_stack_.push(proxy);
   if (proxy->obj()) {
-    oos::access::deserialize(*this, *o);
+    oos::access::serialize(*this, *o);
   }
 }
 
 template < class T >
-void object_inserter::deserialize(T &x)
+void object_inserter::serialize(T &x)
 {
-  oos::access::deserialize(*this, x);
+  oos::access::serialize(*this, x);
 }
 
 template < class T >
-void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type cascade)
+void object_inserter::serialize(const char*, has_one<T> &x, cascade_type cascade)
 {
   x.is_inserted_ = true;
   if (!x.proxy_) {
@@ -698,7 +698,7 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
       // do the pointer count
       if (new_object) {
         object_proxy_stack_.push(x.proxy_);
-        oos::access::deserialize(*this, *x.get());
+        oos::access::serialize(*this, *x.get());
         object_proxy_stack_.pop();
       }
     } else if (new_object){
@@ -709,7 +709,7 @@ void object_inserter::deserialize(const char*, has_one<T> &x, cascade_type casca
 }
 
 template < class T, template <class ...> class C >
-void object_inserter::deserialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field)
+void object_inserter::serialize(const char *, has_many<T, C> &x, const char */*owner_field*/, const char */*item_field*/)
 {
   // initialize the has many relation
   // set identifier
@@ -726,9 +726,7 @@ void object_inserter::deserialize(const char *id, has_many<T, C> &x, const char 
   }
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
-
-
-  ostore_.insert()
+  x.ostore_ = &ostore_;
 
 //  has_many<T, C>::iterator first = x.begin();
 //  has_many<T, C>::iterator last = x.end();
@@ -740,7 +738,7 @@ void object_inserter::deserialize(const char *id, has_many<T, C> &x, const char 
 //    }
 //    if (new_object) {
 //      object_proxy_stack_.push(proxy);
-//      proxy->obj()->deserialize(*this);
+//      proxy->obj()->serialize(*this);
 //      object_proxy_stack_.pop();
 //    }
 //  });

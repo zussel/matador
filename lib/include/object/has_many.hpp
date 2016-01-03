@@ -43,6 +43,9 @@ template < class T >
 class has_many_item
 {
 public:
+  typedef object_ptr<T> value_pointer;
+
+public:
 
   has_many_item()
     : owner_id_("owner_id")
@@ -63,19 +66,16 @@ public:
   { }
 
   template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer) const
+  void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(owner_id_.c_str(), *owner_);
     serializer.serialize(item_id_.c_str(), item_);
   }
 
-  template < class DESERIALIZER >
-  void deserialize(DESERIALIZER &deserializer)
+  value_pointer value() const
   {
-    deserializer.deserialize(owner_id_.c_str(), *owner_);
-    deserializer.deserialize(item_id_.c_str(), item_);
+    return item_;
   }
-
 
   std::string owner_id() const
   {
@@ -105,8 +105,128 @@ private:
   std::string item_id_;
 };
 
+template < class T, template <class ...> class C = std::vector, class Enable = void >
+class has_many_iterator;
+
 template < class T, template <class ...> class C >
-class has_many<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value || is_same_container_type<C, std::list>::value>::type> : public basic_has_many<T>
+class has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
+{
+public:
+  typedef has_many_iterator<T, C> self;
+  typedef object_ptr<T> value_pointer;
+  typedef has_many_item<T> value_type;
+  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef typename container_type::iterator iterator_type;
+public:
+  has_many_iterator() {}
+  explicit has_many_iterator(iterator_type iter)
+    : iter_(iter)
+  {}
+  ~has_many_iterator() {}
+
+  self& operator++()
+  {
+    ++iter_;
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    self tmp = *this;
+    ++iter_;
+    return tmp;
+  }
+
+  self& operator--()
+  {
+    self tmp = *this;
+    --iter_;
+    return tmp;
+  }
+
+  self operator--(int)
+  {
+    return self();
+  }
+
+  value_pointer operator->() const
+  {
+    return iter_->value();
+  }
+
+private:
+  iterator_type iter_;
+};
+
+/**
+ * has_many with std::vector
+ */
+template < class T, template <class ...> class C >
+class has_many<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type> : public basic_has_many<T>
+{
+public:
+
+  typedef basic_has_many<T> base;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> value_type;
+//  typedef oos::has_one<T> value_type;
+  typedef C<value_type, std::allocator<value_type>> container_type;
+//  typedef C<oos::has_one<T>, std::allocator<oos::has_one<T>>> container_type;
+  typedef has_many_iterator<T,C> iterator;
+  typedef typename container_type::size_type size_type;
+//  typedef typename container_type::iterator iterator;
+//  typedef typename container_type::const_iterator const_iterator;
+
+  explicit has_many() {}
+
+  iterator insert(iterator pos, const oos::object_ptr<T> &value)
+  {
+    // create new has_many
+    if (indexed_) {
+
+    }
+    item_type *item = create_item(value);
+    object_ptr<item_type> iptr(item);
+    if (this->ostore_) {
+      this->ostore_->insert(iptr);
+//      ostore_->mark_modified()
+    }
+    return container_.insert(pos, iptr);
+  }
+
+  void push_back(const oos::object_ptr<T> &value)
+  {
+    insert(end(), value);
+  }
+
+  iterator begin() { return iterator(container_.begin()); }
+  iterator end() { return iterator(container_.end()); }
+
+//  const_iterator begin() const { return container_.begin(); }
+//  const_iterator end() const { return container_.end(); }
+
+  iterator erase(iterator i) { return container_.erase(i); }
+  iterator erase(iterator start, iterator end) { return container_.erase(start, end); }
+
+  size_type size() const { return container_.size(); }
+  bool empty() const { return container_.empty(); }
+
+private:
+  has_many_item<T>* create_item(const oos::object_ptr<T> &value)
+  {
+    return new has_many_item<T>(owner_field_, item_field_, base::owner_id_, value);
+  }
+private:
+  container_type container_;
+
+  std::string owner_field_ = "owner_id";
+  std::string item_field_ = "item_id";
+
+  bool indexed_ = false;
+};
+
+template < class T, template <class ...> class C >
+class has_many<T, C, typename std::enable_if<is_same_container_type<C, std::list>::value>::type> : public basic_has_many<T>
 {
 public:
 
@@ -120,6 +240,20 @@ public:
   typedef typename container_type::const_iterator const_iterator;
 
   explicit has_many() {}
+
+  iterator insert(iterator pos, const oos::object_ptr<T> &value)
+  {
+    // create new has_many
+    value_type *item = create_item(value);
+    return container_.insert(pos, item);
+  }
+
+  void push_front(const oos::object_ptr<T> &value)
+  {
+    // create new has_many
+    value_type item = create_item(value);
+    container_.push_front(item);
+  }
 
   void push_back(const oos::object_ptr<T> &value)
   {
@@ -135,14 +269,15 @@ public:
   const_iterator end() const { return container_.end(); }
 
   iterator erase(iterator i) { return container_.erase(i); }
+  iterator erase(iterator start, iterator end) { return container_.erase(start, end); }
 
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
 private:
-  has_many_item<T> create_item(const oos::object_ptr<T> &value)
+  has_many_item<T>* create_item(const oos::object_ptr<T> &value)
   {
-    return has_many_item<T>(owner_field_, item_field_, base::owner_id_, value);
+    return new has_many_item<T>(owner_field_, item_field_, base::owner_id_, value);
   }
 private:
   container_type container_;
