@@ -357,14 +357,6 @@ public:
   }
 
   /**
-   * Inserts an object_container into the serializable store. Subsequently the
-   * object_container is initialized.
-   * 
-   * @param oc The object_container to insert.
-   */
-  void insert(object_container &oc);
-  
-  /**
    * Returns true if the underlaying
    * serializable is removable.
    * 

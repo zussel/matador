@@ -16,7 +16,6 @@
  */
 
 #include "object/object_store.hpp"
-#include "object/object_observer.hpp"
 #include "object/object_container.hpp"
 
 #include <iostream>
@@ -148,10 +147,6 @@ void object_store::unregister_observer(object_observer *observer)
   }
 }
 
-void object_store::insert(object_container &oc)
-{
-  oc.install(this);
-}
 /*
 object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
 {// insert new element node

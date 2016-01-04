@@ -7,6 +7,7 @@
 
 #include "object/has_one.hpp"
 #include "object/container_type_traits.hpp"
+#include "object/object_store.hpp"
 
 #include <vector>
 #include <list>
@@ -114,12 +115,13 @@ class has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, 
 public:
   typedef has_many_iterator<T, C> self;
   typedef object_ptr<T> value_pointer;
-  typedef has_many_item<T> value_type;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> value_type;
   typedef C<value_type, std::allocator<value_type>> container_type;
-  typedef typename container_type::iterator iterator_type;
+  typedef typename container_type::iterator container_iterator;
 public:
   has_many_iterator() {}
-  explicit has_many_iterator(iterator_type iter)
+  explicit has_many_iterator(container_iterator iter)
     : iter_(iter)
   {}
   ~has_many_iterator() {}
@@ -155,7 +157,7 @@ public:
   }
 
 private:
-  iterator_type iter_;
+  container_iterator iter_;
 };
 
 /**
@@ -174,10 +176,10 @@ public:
 //  typedef C<oos::has_one<T>, std::allocator<oos::has_one<T>>> container_type;
   typedef has_many_iterator<T,C> iterator;
   typedef typename container_type::size_type size_type;
-//  typedef typename container_type::iterator iterator;
+  typedef typename container_type::iterator container_iterator;
 //  typedef typename container_type::const_iterator const_iterator;
 
-  explicit has_many() {}
+  has_many() {}
 
   iterator insert(iterator pos, const oos::object_ptr<T> &value)
   {
@@ -205,8 +207,13 @@ public:
 //  const_iterator begin() const { return container_.begin(); }
 //  const_iterator end() const { return container_.end(); }
 
-  iterator erase(iterator i) { return container_.erase(i); }
-  iterator erase(iterator start, iterator end) { return container_.erase(start, end); }
+  iterator erase(iterator i)
+  {
+
+    return iterator();
+//    return iterator(container_.erase(i));
+  }
+  iterator erase(iterator start, iterator end) { return iterator(container_.erase(start, end)); }
 
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
