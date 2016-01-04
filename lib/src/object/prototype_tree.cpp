@@ -16,9 +16,6 @@
  */
 #include "object/prototype_tree.hpp"
 
-#include <algorithm>
-#include <iostream>
-
 namespace oos {
 
 prototype_tree::prototype_tree()
@@ -105,30 +102,30 @@ int prototype_tree::depth(const prototype_node *node) const
   return d;
 }
 
-void prototype_tree::dump(std::ostream &out) const
-{
-  const_prototype_iterator node = begin();
-  out << "digraph G {\n";
-  out << "\tgraph [fontsize=10]\n";
-  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
-  out << "\tedge [color=\"#0c0c0c\"]\n";
-  do {
-    int d = depth(node.get());
-    for (int i = 0; i < d; ++i) out << " ";
-    out << "type: " << node->type_ << '\n';
-    out.flush();
-  } while (++node != end());
-  out << "}" << std::endl;
-
-  out << "prototype map item keys\n";
-  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
-    out << "key: " << item.first << "\n";
-  });
-  out << "typeid map item keys\n";
-  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
-    out << "key: " << item.first << "\n";
-  });
-}
+//void prototype_tree::dump(std::ostream &out) const
+//{
+//  const_prototype_iterator node = begin();
+//  out << "digraph G {\n";
+//  out << "\tgraph [fontsize=10]\n";
+//  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+//  out << "\tedge [color=\"#0c0c0c\"]\n";
+//  do {
+//    int d = depth(node.get());
+//    for (int i = 0; i < d; ++i) out << " ";
+//    out << "type: " << node->type_ << '\n';
+//    out.flush();
+//  } while (++node != end());
+//  out << "}" << std::endl;
+//
+//  out << "prototype map item keys\n";
+//  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
+//    out << "key: " << item.first << "\n";
+//  });
+//  out << "typeid map item keys\n";
+//  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
+//    out << "key: " << item.first << "\n";
+//  });
+//}
 
 prototype_tree::iterator prototype_tree::erase(const prototype_tree::iterator &i) {
   if (i == end() || i.get() == nullptr) {
@@ -274,15 +271,6 @@ void prototype_tree::adjust_right_marker(prototype_node *root, object_proxy* old
     }
     node = node->next_node();
   }
-}
-
-prototype_node *prototype_tree::prepare_insert(const char *type)
-{
-  prototype_node *node = new prototype_node(this, type);
-  typeid_prototype_map_.insert(std::make_pair(type, prototype_tree::t_prototype_map()));
-  prototype_map_[type] = node;
-
-  return node;
 }
 
 }

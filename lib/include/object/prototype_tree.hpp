@@ -208,24 +208,6 @@ public:
   * parameter.
   *
   * @tparam T       The type of the prototype node
-  * @param type     The unique name of the type.
-  * @param abstract Indicates if the producers serializable is treated as an abstract node.
-  * @return         Returns new inserted prototype iterator.
-  */
-//  template < class T >
-//  iterator attach(const char *type, bool abstract = false)
-//  {
-//    return attach<T>(type, abstract);
-//  }
-
-  /**
-  * Inserts a new serializable prototype into the prototype tree. The prototype
-  * consists of a producer and a unique type name. To know where the new
-  * prototype is inserted into the hierarchy the type name of the parent
-  * node is also given. The producer is automatically created via the template
-  * parameter.
-  *
-  * @tparam T       The type of the prototype node
   * @tparam S       The type of the parent prototype node
   * @param type     The unique name of the type.
   * @param abstract Indicates if the producers serializable is treated as an abstract node.
@@ -249,14 +231,6 @@ public:
   * @return Returns a prototype iterator.
   */
   iterator find(const char *type);
-
-  /**
-   * Prepares an insertion of a type
-   *
-   * @param type The name of the type to be prepared
-   * @return The prepared prototype_node
-   */
-  prototype_node* prepare_insert(const char *type);
 
   /**
   * @brief Finds prototype node.
@@ -375,7 +349,7 @@ public:
   *
   * @param out The stream to the prototypes dump on.
   */
-  void dump(std::ostream &out) const;
+//  void dump(std::ostream &out) const;
 
   /**
    * Erase a prototype node identified
@@ -485,7 +459,6 @@ private:
    */
   prototype_node* remove_prototype_node(prototype_node *node, bool is_root);
 
-private:
   /**
   * @internal
   *

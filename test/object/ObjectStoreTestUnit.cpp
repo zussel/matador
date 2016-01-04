@@ -776,14 +776,8 @@ public:
   cyclic(const std::string &n) : name(n) {}
   ~cyclic() {}
 
-  template < class DESERIALIZER >
-  void deserialize(DESERIALIZER &r) {
-    r.deserialize("id", id);
-    r.deserialize("name", name);
-    r.deserialize("cycler", cycler);
-  }
   template < class SERIALIZER >
-  void serialize(SERIALIZER &w) const {
+  void serialize(SERIALIZER &w) {
     w.serialize("id", id);
     w.serialize("name", name);
     w.serialize("cycler", cycler);
@@ -796,7 +790,7 @@ public:
 void ObjectStoreTestUnit::test_structure_cyclic()
 {
   object_store ostore;
-  ostore.prototypes().attach<cyclic>("cyclic");
+  ostore.attach<cyclic>("cyclic");
 
   using cyclic_ptr = object_ptr<cyclic>;
 

@@ -50,8 +50,8 @@ public:
   template < class V >
   void serialize(const char*, has_one<V>, cascade_type) {}
 
-  template < class I, template <class ...> class C >
-  void serialize(const char *, has_many<I, C> &, const char *, const char *) {}
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
 
 private:
   T value_;

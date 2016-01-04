@@ -18,14 +18,13 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
+#include "object/has_many.hpp"
 #include "object/prototype_tree.hpp"
 #include "object/object_producer.hpp"
-#include "object/object_deleter.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
 #include "object/identifier_setter.hpp"
 #include "object/has_one.hpp"
-#include "object/has_many.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -112,6 +111,97 @@ private:
 
   object_store &ostore_;
 };
+
+/**
+ * @cond OOS_DEV
+ * @class object_deleter
+ * @brief Checks if an serializable could be deleted
+ *
+ * This class checks wether a given serializable or a
+ * given object_list_base and their children objects
+ * could be deleted or not.
+ * If the check was successful, all the deletable serializable
+ * can be accepted via the iterators.
+ */
+class object_deleter
+{
+private:
+  typedef struct t_object_count_struct
+  {
+    t_object_count_struct(object_proxy *oproxy, bool ignr = true);
+
+    object_proxy *proxy;
+    unsigned long reference_counter;
+    bool ignore;
+  } t_object_count;
+
+private:
+  typedef std::map<unsigned long, t_object_count> t_object_count_map;
+
+public:
+  typedef t_object_count_map::iterator iterator;             /**< Shortcut the serializable map iterator */
+  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
+
+  /**
+   * Creates an instance of the object_deleter
+   */
+  object_deleter() {}
+  ~object_deleter() {}
+
+  /**
+   * Checks wether the given serializable is deletable.
+   *
+   * @param proxy The object_proxy to be checked.
+   * @return True if the serializable could be deleted.
+   */
+  template < class T >
+  bool is_deletable(object_proxy *proxy, T *o);
+
+  /**
+   * Checks wether the given object_container is deletable.
+   *
+   * @param ovector The object_container to be checked.
+   * @return True if the object_container could be deleted.
+   */
+  bool is_deletable(object_container &oc);
+
+  /**
+   * @brief Returns the first deletable serializable.
+   *
+   * If the check was made and was successful this
+   * returns the first deletable serializable.
+   */
+  iterator begin();
+
+  /**
+   * @brief Returns the first deletable serializable.
+   *
+   * If the check was made and was successful this
+   * returns the last deletable serializable.
+   */
+  iterator end();
+
+  template < class T >
+  void serialize(T &x) { oos::access::serialize(*this, x); }
+  template < class T >
+  void serialize(const char*, T&) {}
+  void serialize(const char*, char*, size_t) {}
+  template < class T >
+  void serialize(const char*, has_one<T> &x, cascade_type cascade);
+
+  template < class T, template <class ...> class C >
+  void serialize(const char *, has_many<T, C> &, const char *, const char *);
+
+  template < class T >
+  void serialize(const char *id, identifier<T> &x);
+
+  void check_object_list_node(object_proxy *proxy);
+  bool check_object_count_map() const;
+
+private:
+  t_object_count_map object_count_map;
+};
+
 /// @endcond
 
 /**
@@ -138,20 +228,6 @@ public:
    * Destroys all prototypes, objects and observers in store.
    */
 	~object_store();
-
-  /**
-   * Returns the prototype tree
-   *
-   * @return The prototype tree
-   */
-  prototype_tree& prototypes();
-
-  /**
-   * Returns the prototype tree
-   *
-   * @return The prototype tree
-   */
-  const prototype_tree& prototypes() const;
 
   /**
    * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -736,6 +812,47 @@ void object_inserter::serialize(const char *, has_many<T, C> &x, const char */*o
 //  });
 //  ostore_.insert(x);
 //}
+}
+
+template < class T >
+bool object_deleter::is_deletable(object_proxy *proxy, T *o)
+{
+  object_count_map.clear();
+  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
+
+  // start collecting information
+  oos::access::serialize(*this, *o);
+
+  return check_object_count_map();
+}
+
+template < class T >
+void object_deleter::serialize(const char*, has_one<T> &x, cascade_type cascade)
+{
+  if (!x.ptr()) {
+    return;
+  }
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+  --ret.first->second.reference_counter;
+  if (cascade & cascade_type::DELETE) {
+    ret.first->second.ignore = false;
+    oos::access::serialize(*this, *x.get());
+  }
+}
+
+template < class T, template <class ...> class C >
+void object_deleter::serialize(const char *id, has_many<T, C> &x, const char *, const char *)
+{
+//  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
+  typename has_many<T, C>::iterator first = x.begin();
+  typename has_many<T, C>::iterator last = x.end();
+}
+
+template < class T >
+void object_deleter::serialize(const char *id, identifier<T> &x)
+{
+  T val = x.value();
+  serialize(id, val);
 }
 
 }

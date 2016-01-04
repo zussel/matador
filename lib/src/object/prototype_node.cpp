@@ -18,9 +18,6 @@
 #include "object/prototype_node.hpp"
 #include "object/prototype_tree.hpp"
 
-#include <iostream>
-#include <algorithm>
-
 using namespace std;
 
 namespace oos {
