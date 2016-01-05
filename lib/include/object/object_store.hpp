@@ -18,13 +18,13 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
-#include "object/has_many.hpp"
-#include "object/prototype_tree.hpp"
+#include "object/prototype_iterator.hpp"
 #include "object/object_producer.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
 #include "object/identifier_setter.hpp"
 #include "object/has_one.hpp"
+#include "object/has_many.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -219,6 +219,10 @@ private:
 class OOS_API object_store
 {
 public:
+  typedef prototype_iterator iterator;               /**< Shortcut for the list iterator. */
+  typedef const_prototype_iterator const_iterator;   /**< Shortcut for the list const iterator. */
+
+public:
   /**
    * Create an empty serializable store.
    */
@@ -242,10 +246,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template < class T >
-	prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr)
-  {
-    return prototype_tree_.attach<T>(type, abstract, parent);
-  }
+	prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
    * Inserts a new serializable prototype into the prototype tree. The prototype
@@ -261,10 +262,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template < class T, class S >
-  prototype_iterator attach(const char *type, bool abstract = false)
-  {
-    return prototype_tree_.attach<T, S>(type, abstract);
-  }
+  prototype_iterator attach(const char *type, bool abstract = false);
 
   /**
    * Removes an serializable prototype from the prototype tree. All children
@@ -285,7 +283,7 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  prototype_iterator find_prototype(const char *type);
+  iterator find(const char *type);
 
   /**
    * @brief Finds prototype node.
@@ -298,7 +296,7 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  const_prototype_iterator find_prototype(const char *type) const;
+  const_iterator find(const char *type) const;
 
   /**
    * @brief Finds prototype node by template type.
@@ -311,9 +309,9 @@ public:
    * @return Returns a prototype iterator.
    */
   template < class T >
-  prototype_iterator find_prototype()
+  iterator find()
   {
-    return find_prototype(typeid(T).name());
+    return find(typeid(T).name());
   }
 
   /**
@@ -327,9 +325,9 @@ public:
    * @return Returns a prototype iterator.
    */
   template < class T >
-  const_prototype_iterator find_prototype() const
+  const_iterator find() const
   {
-    return find_prototype(typeid(T).name());
+    return find(typeid(T).name());
   }
 
   /**
@@ -337,28 +335,28 @@ public:
    *
    * @return The first prototype node iterator.
    */
-  const_prototype_iterator begin() const;
+  const_iterator begin() const;
 
   /**
    * Return the first prototype node.
    *
    * @return The first prototype node iterator.
    */
-  prototype_iterator begin();
+  iterator begin();
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  const_prototype_iterator end() const;
+  const_iterator end() const;
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  prototype_iterator end();
+  iterator end();
 
   /**
    * Removes all inserted prototypes and all inserted objects.
@@ -618,13 +616,91 @@ private:
 	object_proxy* insert_object(T *o, bool notify);
 	void remove_object(object_proxy *proxy, bool notify);
 
+  /**
+   * @internal
+   *
+   * Adjust first marker of all successor nodes with given serializable proxy.
+   *
+   * @param old_proxy The old first marker proxy.
+   * @param new_proxy The new first marker proxy.
+   */
+  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
+  /**
+   * @internal
+   *
+   * Adjusts self and last marker of all predeccessor nodes with given
+   * serializable proxy.
+   *
+   * @param old_proxy The old last marker proxy.
+   * @param new_proxy The new last marker proxy.
+   */
+  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
+  /**
+   * @internal
+   *
+   * Searches a prototype by type
+   * which can either be a type name
+   * or a class name.
+   * Returns a valid prototype node or
+   * nullptr on unknown type
+   * or throws an exception on error
+   *
+   * @param type Type name of the prototype node to search
+   * @return The requested prototype node or nullptr
+   * @throws oos::object_exception if in error occurrs
+   */
+  prototype_node* find_prototype_node(const char *type) const;
+
+  /**
+   * @internal
+   *
+   * Removes a prototy node and
+   * return its successor node
+   *
+   * @param node The prototype node to remove
+   * @param is_root Indicates if given node is root node
+   * @return The successor node
+   * @throws oos::object_exception if in error occurrs
+   */
+  prototype_node* remove_prototype_node(prototype_node *node, bool is_root);
+
+  /**
+   * Get or create a prototype node
+   *
+   * @param producer The producer of the concrete object
+   * @param type The type name of the node
+   * @param abstract indicates wether the representing object is abstract
+   * @tparam T Type of the node
+   * @return The prototype node
+   */
+  template < class T >
+  prototype_node *acquire(const char *type, bool abstract);
+  /**
+   * Initializes a prototype node
+   *
+   * @param node The node to initialize
+   * @return iterator representing the prototype node
+   */
+  template < class T >
+  iterator initialize(prototype_node *node);
+
 //  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
 private:
-  prototype_tree prototype_tree_;
+  typedef std::unordered_map<std::string, prototype_node*> t_prototype_map;
+  // typeid -> [name -> prototype]
+  typedef std::unordered_map<std::string, t_prototype_map> t_typeid_prototype_map;
 
-//  typedef std::unordered_map<serializable*, object_proxy*> t_serializable_proxy_map;
-//  t_serializable_proxy_map serializable_map_;
+private:
+  prototype_node *first_;
+  prototype_node *last_;
+
+  // name to prototype node map
+  t_prototype_map prototype_map_;
+  // typeid to prototype node map
+  t_typeid_prototype_map typeid_prototype_map_;
 
   typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
   t_object_proxy_map object_map_;
@@ -639,6 +715,37 @@ private:
 };
 
 template < class T >
+object_store::iterator object_store::attach(const char *type, bool abstract = false, const char *parent = nullptr)
+{
+  // set node to root node
+  prototype_node *parent_node = nullptr;
+  if (parent != nullptr) {
+    parent_node = find_prototype_node(parent);
+    if (!parent_node) {
+      throw object_exception("unknown prototype type");
+    }
+  }
+  /*
+   * try to insert new prototype node
+   */
+  prototype_node *node = acquire<T>(type, abstract);
+
+  if (parent != nullptr) {
+    parent_node->insert(node);
+  } else {
+    last_->prev->append(node);
+  }
+
+  return initialize<T>(node);
+}
+
+template < class T, class S >
+object_store::iterator object_store::attach(const char *type, bool abstract = false)
+{
+  return attach<T>(type, abstract, typeid(S).name());
+}
+
+template < class T >
 object_proxy* object_store::insert_object(T *o, bool notify)
 {
   // find type in tree
@@ -647,8 +754,8 @@ object_proxy* object_store::insert_object(T *o, bool notify)
   }
 
   // find prototype node
-  prototype_iterator node = prototype_tree_.find(typeid(*o).name());
-  if (node == prototype_tree_.end()) {
+  iterator node = find(typeid(*o).name());
+  if (node == end()) {
     // raise exception
     throw object_exception("unknown object type");
   }
@@ -698,8 +805,8 @@ object_proxy* object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify
   }
 
   // find prototype node
-  prototype_iterator node = prototype_tree_.find(oproxy->classname());
-  if (node == prototype_tree_.end()) {
+  prototype_iterator node = find(oproxy->classname());
+  if (node == end()) {
     // raise exception
     throw object_exception("couldn't insert serializable");
   }
@@ -724,6 +831,90 @@ object_proxy* object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify
   object_map_[oproxy->id()] = oproxy;
 
   return oproxy;
+}
+
+template < class T >
+prototype_node* object_store::acquire(const char *type, bool abstract)
+{
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prototype_map_.find(type);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+
+  /* unknown type name try for typeid
+   * (unfinished prototype)
+   */
+  const char *name = typeid(T).name();
+  i = prototype_map_.find(name);
+  if (i == prototype_map_.end()) {
+    /*
+     * no typeid found, seems to be
+     * a new type
+     * to be sure check in typeid map
+     */
+    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
+    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
+      /* unexpected found the
+       * typeid check for type
+       */
+      /* type found in typeid map
+       * throw exception
+       */
+      throw object_exception("unexpectly found prototype");
+    } else {
+      /* insert new prototype and add to
+       * typeid map
+       */
+      // create new one
+      node = new prototype_node(this, type, typeid(T).name(), abstract);
+    }
+  } else {
+    /* prototype is unfinished,
+     * finish it, insert by type name,
+     * remove typeid entry and add to
+     * typeid map
+     */
+    node = i->second;
+    node->initialize(this, type, abstract);
+    prototype_map_.erase(i);
+  }
+
+  return node;
+}
+
+template < class T >
+object_store::iterator object_store::initialize(prototype_node *node)
+{
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
+  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
+
+  // Analyze primary and foreign keys of node
+  basic_identifier *id = identifier_resolver<T>::resolve();
+  if (id) {
+    id->isolate();
+    node->id_.reset(id);
+  }
+
+  // Check if nodes serializable has 'to-many' relations
+  T obj;
+  std::unique_ptr<T> o(new T);
+  detail::relation_resolver::build<T>(*node);
+
+  // Analyze primary and foreign keys of node
+  detail::foreign_key_analyzer::analyze<T>(*node);
+
+  while (!node->foreign_key_ids.empty()) {
+    auto i = node->foreign_key_ids.front();
+    node->foreign_key_ids.pop_front();
+    prototype_node *foreign_node = i.first;
+    std::shared_ptr<basic_identifier> fk(node->id_->clone());
+    foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
+  }
+
+  return prototype_iterator(node);
 }
 
 template < class T >

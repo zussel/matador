@@ -41,58 +41,60 @@ object_store::~object_store()
   clear(true);
 }
 
-
-prototype_tree &object_store::prototypes() {
-  return prototype_tree_;
-}
-
-
-const prototype_tree &object_store::prototypes() const {
-  return prototype_tree_;
-}
-
 void object_store::detach(const char *type)
 {
-  prototype_tree_.remove(type);
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("unknown prototype type");
+  }
+  remove_prototype_node(node, node->depth == 0);
 }
 
-prototype_iterator object_store::find_prototype(const char *type)
+object_store::iterator object_store::find(const char *type)
 {
-  return prototype_tree_.find(type);
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return iterator(node);
 }
 
-const_prototype_iterator object_store::find_prototype(const char *type) const
+object_store::const_iterator object_store::find(const char *type) const
 {
-  return prototype_tree_.find(type);
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    return end();
+  }
+  return const_iterator(node);
 }
 
-const_prototype_iterator object_store::begin() const
+object_store::const_iterator object_store::begin() const
 {
-  return prototype_tree_.begin();
+  return const_iterator(first_->next);
 }
 
 prototype_iterator object_store::begin() {
-  return prototype_tree_.begin();
+  return prototype_iterator(first_->next);
 }
 
 const_prototype_iterator object_store::end() const
 {
-  return prototype_tree_.end();
+  return const_iterator(last_);
 }
 
 prototype_iterator object_store::end()
 {
-  return prototype_tree_.end();
+  return iterator(last_);
 }
 
 void object_store::clear(bool full)
 {
   if (full) {
-    prototype_tree_.clear();
+    clear();
   } else {
     // only delete objects
-    prototype_iterator first = prototype_tree_.begin();
-    prototype_iterator last = prototype_tree_.end();
+    prototype_iterator first = begin();
+    prototype_iterator last = end();
     while (first != last) {
         (first++)->clear(false);
     }
@@ -112,7 +114,7 @@ bool object_store::empty() const
 
 void object_store::dump_objects(std::ostream &out) const
 {
-  const_prototype_iterator root = prototype_tree_.begin();
+  const_prototype_iterator root = begin();
   out << "dumping all objects\n";
 
   object_proxy *op = root->op_first;
@@ -177,8 +179,8 @@ object_store::remove_object(object_proxy *proxy, bool notify)
     throw object_exception("couldn't remove serializable, no prototype");
   }
   
-  prototype_iterator node = prototype_tree_.find(proxy->node()->type());
-  if (node == prototype_tree_.end()) {
+  prototype_iterator node = find(proxy->node()->type());
+  if (node == end()) {
     throw object_exception("couldn't find node for serializable");
   }
   
@@ -285,6 +287,112 @@ object_proxy* object_store::register_proxy(object_proxy *oproxy)
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
 {
   return seq_.exchange_sequencer(seq);
+}
+
+/*
+ * adjust the marker of all predeccessor nodes
+ * self and last marker
+ */
+void object_store::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = root->previous_node();
+  // get previous node
+  while (node) {
+    if (node->op_marker == old_proxy) {
+      node->op_marker = new_proxy;
+    }
+    if (node->depth >= root->depth && node->op_last == old_proxy) {
+      node->op_last = new_proxy;
+    }
+    node = node->previous_node();
+  }
+}
+
+void object_store::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = root->next_node();
+  while (node) {
+    if (node->op_first == old_proxy) {
+      node->op_first = new_proxy;
+    }
+    node = node->next_node();
+  }
+}
+
+prototype_node* object_store::find_prototype_node(const char *type) const {
+  // check for null
+  if (type == 0) {
+    throw object_exception("invalid type (null)");
+  }
+  /*
+   * first search in the prototype map
+   */
+  t_prototype_map::const_iterator i = prototype_map_.find(type);
+  if (i == prototype_map_.end()) {
+    /*
+   * if not found search in the typeid to prototype map
+   */
+    t_typeid_prototype_map::const_iterator j = typeid_prototype_map_.find(type);
+    if (j == typeid_prototype_map_.end()) {
+      return nullptr;
+    } else {
+      const t_prototype_map &val = j->second;
+      /*
+     * if size is greater one (1) the name
+     * is a typeid and has more than one prototype
+     * node and therefor it is not unique and an
+     * exception is thrown
+     */
+      if (val.size() > 1) {
+        // throw exception
+        throw object_exception("type id not unique");
+      } else {
+        // return the only prototype
+        return val.begin()->second;
+      }
+    }
+  } else {
+    return i->second;
+  }
+}
+
+
+prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root) {
+  // remove (and delete) from tree (deletes subsequently all child nodes
+  // for each child call remove_prototype(child);
+  prototype_node *next = node->next_node(node);
+
+  while (node->has_children()) {
+    remove_prototype_node(node->first->next, false);
+  }
+  // and objects they're containing
+  node->clear(false);
+  // delete prototype node as well
+  // unlink node
+  node->unlink();
+  // get iterator
+  t_prototype_map::iterator j = prototype_map_.find(node->type_.c_str());
+  if (j != prototype_map_.end()) {
+    prototype_map_.erase(j);
+  }
+  // find item in typeid map
+  t_typeid_prototype_map::iterator k = typeid_prototype_map_.find(node->type_id());
+  if (k != typeid_prototype_map_.end()) {
+    k->second.erase(node->type_);
+    if (k->second.empty()) {
+      typeid_prototype_map_.erase(k);
+    }
+  } else {
+    throw object_exception("couldn't find node by id");
+  }
+  if (is_root) {
+    delete node->op_first;
+    delete node->op_last;
+  }
+  delete node;
+  return next;
 }
 
 object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
