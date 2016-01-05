@@ -42,7 +42,7 @@
 
 namespace oos {
 
-class prototype_tree;
+class object_store;
 class object_proxy;
 
 template<class T> class id_hash;
@@ -96,7 +96,7 @@ public:
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  prototype_node(prototype_tree *tree, const char *type, const char *type_id = "", bool abstract = false)
+  prototype_node(object_store *tree, const char *type, const char *type_id = "", bool abstract = false)
     : tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
@@ -122,7 +122,7 @@ public:
    * @param t The type name of this node.
    * @param a Tells the node if its prototype is abstract.
    */
-  void initialize(prototype_tree *tr, const char *t, bool a);
+  void initialize(object_store *tr, const char *t, bool a);
 
   /**
    * Returns true if serializable proxy list is empty. If self is true, only
@@ -221,7 +221,7 @@ public:
    */
   prototype_node* previous_node(const prototype_node *root) const;
 
-  prototype_tree* tree() const;
+  object_store* tree() const;
 
   /**
    * Returns true if node is child of given parent node.
@@ -283,7 +283,7 @@ private:
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
 
-  prototype_tree *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
+  object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
   // tree links
   prototype_node *parent = nullptr;       /**< The parent node */

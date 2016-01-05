@@ -26,11 +26,15 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace oos {
-object_inserter::object_inserter(object_store &ostore)
-  : ostore_(ostore)
-{}
 
-object_inserter::~object_inserter() {}
+namespace detail {
+
+object_inserter::object_inserter(object_store &ostore)
+  : ostore_(ostore) { }
+
+object_inserter::~object_inserter() { }
+
+}
 
 object_store::object_store()
   : object_inserter_(*this)
@@ -103,10 +107,15 @@ void object_store::clear(bool full)
   object_map_.clear();
 }
 
+size_t object_store::size() const
+{
+  return (size_t) (std::distance(begin(), end()));
+}
+
 bool object_store::empty() const
 {
   bool is_empty = true;
-  prototype_tree_.for_each_root_node([&](const_prototype_iterator i) {
+  for_each_root_node([&](const_prototype_iterator i) {
     is_empty &= i->empty(false);
   });
   return is_empty;
@@ -202,32 +211,32 @@ object_store::remove_object(object_proxy *proxy, bool notify)
   delete op;
 }
 
-void
-object_store::remove(object_container &oc)
-{
-  /**************
-   * 
-   * remove all objects from container
-   * and first and last sentinel
-   * 
-   **************/
-  // check if serializable tree is deletable
-  if (!object_deleter_.is_deletable(oc)) {
-    throw object_exception("couldn't remove container serializable");
-  }
-
-  object_deleter::iterator first = object_deleter_.begin();
-  object_deleter::iterator last = object_deleter_.end();
-  
-  while (first != last) {
-    if (!first->second.ignore) {
-      remove_object((first++)->second.proxy, true);
-    } else {
-      ++first;
-    }
-  }
-  oc.uninstall();
-}
+//void
+//object_store::remove(object_container &oc)
+//{
+//  /**************
+//   *
+//   * remove all objects from container
+//   * and first and last sentinel
+//   *
+//   **************/
+//  // check if serializable tree is deletable
+//  if (!object_deleter_.is_deletable(oc)) {
+//    throw object_exception("couldn't remove container serializable");
+//  }
+//
+//  object_deleter::iterator first = object_deleter_.begin();
+//  object_deleter::iterator last = object_deleter_.end();
+//
+//  while (first != last) {
+//    if (!first->second.ignore) {
+//      remove_object((first++)->second.proxy, true);
+//    } else {
+//      ++first;
+//    }
+//  }
+//  oc.uninstall();
+//}
 
 object_proxy* object_store::find_proxy(unsigned long id) const
 {
@@ -395,37 +404,34 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool i
   return next;
 }
 
+namespace detail {
+
 object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
-  : proxy(oproxy)
-  , reference_counter(oproxy->reference_count())
-//  , ref_count(oproxy->ref_count())
-//  , ptr_count(oproxy->ptr_count())
+  : proxy(oproxy), reference_counter(oproxy->reference_count())
   , ignore(ignr)
-{}
+{ }
 
-bool object_deleter::is_deletable(object_container &oc)
-{
-  object_count_map.clear();
-  oc.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
-  return check_object_count_map();
-}
+//bool object_deleter::is_deletable(object_container &oc)
+//{
+//  object_count_map.clear();
+//  oc.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
+//  return check_object_count_map();
+//}
 
-object_deleter::iterator
-object_deleter::begin()
+object_deleter::iterator object_deleter::begin()
 {
   return object_count_map.begin();
 }
 
-object_deleter::iterator
-object_deleter::end()
+object_deleter::iterator object_deleter::end()
 {
   return object_count_map.end();
 }
 
-void
-object_deleter::check_object_list_node(object_proxy *proxy)
+void object_deleter::check_object_list_node(object_proxy *proxy)
 {
-  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
+    std::make_pair(proxy->id(), t_object_count(proxy, false)));
 
   /**********
    *
@@ -443,14 +449,12 @@ object_deleter::check_object_list_node(object_proxy *proxy)
 //  proxy->obj()->deserialize(*this);
 }
 
-bool
-object_deleter::check_object_count_map() const
+bool object_deleter::check_object_count_map() const
 {
   // check the reference and pointer counter of collected objects
   const_iterator first = object_count_map.begin();
   const_iterator last = object_count_map.end();
-  while (first != last)
-  {
+  while (first != last) {
     if (first->second.ignore) {
       ++first;
     } else if (first->second.reference_counter == 0) {
@@ -461,6 +465,8 @@ object_deleter::check_object_count_map() const
     }
   }
   return true;
+}
+
 }
 
 }

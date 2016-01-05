@@ -5,7 +5,7 @@ SET(OBJECT_SOURCES
 		object/object_proxy.cpp
 		object/object_serializer.cpp
 		object/prototype_node.cpp
-		object/prototype_tree.cpp
+#		object/prototype_tree.cpp
 #		object/primary_key_analyzer.cpp
 #		object/foreign_key_analyzer.cpp
 		object/basic_identifier.cpp
@@ -54,7 +54,7 @@ SET(OBJECT_HEADER
 		../include/object/object_proxy.hpp
 		../include/object/object_serializer.hpp
 		../include/object/prototype_node.hpp
-		../include/object/prototype_tree.hpp
+#		../include/object/prototype_tree.hpp
 		../include/object/object_observer.hpp
 #		../include/object/object_expression.hpp
 #		../include/object/attribute_serializer.hpp

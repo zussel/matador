@@ -16,7 +16,7 @@
  */
 
 #include "object/prototype_node.hpp"
-#include "object/prototype_tree.hpp"
+#include "object/object_store.hpp"
 
 using namespace std;
 
@@ -29,7 +29,7 @@ prototype_node::prototype_node()
 prototype_node::~prototype_node()
 {}
 
-void prototype_node::initialize(prototype_tree *tr, const char *t, bool a)
+void prototype_node::initialize(object_store *tr, const char *t, bool a)
 {
   tree_ = tr;
   first.reset(new prototype_node);
@@ -296,7 +296,7 @@ prototype_node* prototype_node::previous_node(const prototype_node *root) const
   }
 }
 
-prototype_tree *prototype_node::tree() const
+object_store *prototype_node::tree() const
 {
   return tree_;
 }

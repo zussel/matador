@@ -1,6 +1,6 @@
 #include "PrototypeTreeTest.hpp"
 
-#include "object/prototype_tree.hpp"
+#include "object/object_store.hpp"
 #include "../Item.hpp"
 
 #include <iostream>
@@ -37,14 +37,14 @@ void PrototypeTreeTestUnit::finalize()
 
 void PrototypeTreeTestUnit::test_empty()
 {
-  prototype_tree ptree;
+  object_store ptree;
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype must be empty");
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be zero (0)");
 }
 
 void PrototypeTreeTestUnit::test_insert()
 {
-  prototype_tree ptree;
+  object_store ptree;
   UNIT_ASSERT_EXCEPTION(ptree.attach<Item>("item", false, "baba"), object_exception, "unknown prototype type", "inserted with invalid parent");
 
   ptree.attach<Item>("item", false);
@@ -60,7 +60,7 @@ void PrototypeTreeTestUnit::test_insert()
 
 void PrototypeTreeTestUnit::test_find()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
@@ -94,15 +94,15 @@ void PrototypeTreeTestUnit::test_find()
 
 void PrototypeTreeTestUnit::test_remove()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
-  UNIT_ASSERT_EXCEPTION(ptree.remove(0), object_exception, "invalid type (null)", "expect an serializable exception when trying to remove unknown type");
-  UNIT_ASSERT_EXCEPTION(ptree.remove("ITEM"), object_exception, "unknown prototype type", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.detach(0), object_exception, "invalid type (null)", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.detach("ITEM"), object_exception, "unknown prototype type", "expect an serializable exception when trying to remove unknown type");
 
-  ptree.remove("item");
+  ptree.detach("item");
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
@@ -110,7 +110,7 @@ void PrototypeTreeTestUnit::test_remove()
 
 void PrototypeTreeTestUnit::test_erase()
 {
-  prototype_tree ptree;
+  object_store ptree;
   prototype_iterator iter = ptree.attach<Item>("item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
@@ -126,7 +126,7 @@ void PrototypeTreeTestUnit::test_erase()
 
 void PrototypeTreeTestUnit::test_clear()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
   ptree.attach<ItemA>("item_a", false, "item");
   ptree.attach<ItemB>("item_b", false, "item");
@@ -142,7 +142,7 @@ void PrototypeTreeTestUnit::test_clear()
 
 void PrototypeTreeTestUnit::test_has_many()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<book>("book", false);
   ptree.attach<book_list>("book_list", false);
 
@@ -155,7 +155,7 @@ void PrototypeTreeTestUnit::test_has_many()
 
 void PrototypeTreeTestUnit::test_decrement()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
@@ -168,7 +168,7 @@ void PrototypeTreeTestUnit::test_decrement()
 }
 
 void PrototypeTreeTestUnit::test_count() {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
   ptree.attach<ItemA>("item_a", false, "item");
   ptree.attach<ItemB>("item_b", false, "item");
@@ -179,7 +179,7 @@ void PrototypeTreeTestUnit::test_count() {
 
 void PrototypeTreeTestUnit::test_child_of()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
   ptree.attach<ItemA>("item_a", false, "item");
 
@@ -196,7 +196,7 @@ void PrototypeTreeTestUnit::test_child_of()
 
 void PrototypeTreeTestUnit::test_traverse()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
   ptree.attach<ItemA>("item_a", false, "item");
   ptree.attach<ItemB>("item_b", false, "item");
@@ -224,7 +224,7 @@ void PrototypeTreeTestUnit::test_traverse()
 
 void PrototypeTreeTestUnit::test_const_traverse()
 {
-  prototype_tree ptree;
+  object_store ptree;
   ptree.attach<Item>("item", false);
   ptree.attach<ItemA>("item_a", false, "item");
   ptree.attach<ItemB>("item_b", false, "item");
@@ -255,16 +255,16 @@ void PrototypeTreeTestUnit::test_const_traverse()
 /*
 void PrototypeTreeTestUnit::test_relations()
 {
-  prototype_tree ptree;
+  object_store ptree;
 
-  prototype_tree::const_iterator children_list_node = ptree.insert<children_list>("children_list");
-  prototype_tree::const_iterator master_node = ptree.insert<master>("master");
-  prototype_tree::const_iterator child_node = ptree.insert<child>("child");
+  object_store::const_iterator children_list_node = ptree.insert<children_list>("children_list");
+  object_store::const_iterator master_node = ptree.insert<master>("master");
+  object_store::const_iterator child_node = ptree.insert<child>("child");
 
   // get the relation table for children
   // holding id of children_list (container)
   // and id of child (value)
-  prototype_tree::const_iterator children_node = ptree.find("children");
+  object_store::const_iterator children_node = ptree.find("children");
 
   UNIT_ASSERT_TRUE(child_node->relations.empty(), "relations must be empty");
   UNIT_ASSERT_TRUE(child_node->foreign_keys.empty(), "foreign keys must be empty");
