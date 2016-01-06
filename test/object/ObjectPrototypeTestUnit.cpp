@@ -48,7 +48,7 @@ ObjectPrototypeTestUnit::test_find()
   object_store ostore;
   ostore.attach<Item>("item");
   
-  prototype_iterator i = ostore.find_prototype<Item>();
+  prototype_iterator i = ostore.find<Item>();
   
   UNIT_ASSERT_TRUE(i != ostore.end(), "couldn't find prototype");
 }
@@ -64,7 +64,7 @@ ObjectPrototypeTestUnit::test_size()
 
   ostore.attach<Item>("item");
     
-  i = ostore.find_prototype<Item>();
+  i = ostore.find<Item>();
 
   UNIT_ASSERT_TRUE(i->size() == 0, "prototype node must be empty");
   
@@ -84,7 +84,7 @@ ObjectPrototypeTestUnit::test_is_parent_of()
 
   ostore.attach<Item>("item");
     
-  prototype_iterator i = ostore.find_prototype<Item>();
+  prototype_iterator i = ostore.find<Item>();
 
   UNIT_ASSERT_FALSE(root->is_child_of(i.get()), "root must not be child of node");
 

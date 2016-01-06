@@ -32,8 +32,6 @@ namespace detail {
 class result_impl;
 }
 
-class object_store;
-
 template < class T > class object_ptr;
 
 template < class T >

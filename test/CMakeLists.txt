@@ -34,7 +34,9 @@ SET (TEST_OBJECT_SOURCES
   object/PrototypeTreeTest.hpp
   object/PrimaryKeyUnitTest.cpp
   object/PrimaryKeyUnitTest.hpp
-        object/HasManyUnitTest.cpp object/HasManyUnitTest.hpp)
+  object/HasManyUnitTest.cpp
+  object/HasManyUnitTest.hpp
+)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp

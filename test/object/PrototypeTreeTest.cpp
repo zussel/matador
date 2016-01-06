@@ -116,9 +116,9 @@ void PrototypeTreeTestUnit::test_erase()
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)1, "prototype size must be one (1)");
 
   prototype_iterator iter2;
-  UNIT_ASSERT_EXCEPTION(ptree.erase(iter2), object_exception, "invalid prototype iterator", "expect an serializable exception when trying to remove unknown type");
+  UNIT_ASSERT_EXCEPTION(ptree.detach(iter2), object_exception, "invalid prototype iterator", "expect an serializable exception when trying to remove unknown type");
 
-  ptree.erase(iter);
+  ptree.detach(iter);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
@@ -174,7 +174,7 @@ void PrototypeTreeTestUnit::test_count() {
   ptree.attach<ItemB>("item_b", false, "item");
   ptree.attach<ItemC>("item_c", false, "item");
 
-  UNIT_ASSERT_EQUAL(ptree.prototype_count(), (size_t)4, "prototype size must be one (5)");
+  UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (5)");
 }
 
 void PrototypeTreeTestUnit::test_child_of()

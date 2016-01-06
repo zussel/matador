@@ -37,12 +37,21 @@ object_inserter::~object_inserter() { }
 }
 
 object_store::object_store()
-  : object_inserter_(*this)
-{}
+  : first_(new prototype_node)
+  , last_(new prototype_node)
+  , object_inserter_(*this)
+{
+  // empty tree where first points to last and
+  // last points to first sentinel
+  first_->next = last_;
+  last_->prev = first_;
+}
 
 object_store::~object_store()
 {
   clear(true);
+  delete last_;
+  delete first_;
 }
 
 void object_store::detach(const char *type)
@@ -52,6 +61,14 @@ void object_store::detach(const char *type)
     throw object_exception("unknown prototype type");
   }
   remove_prototype_node(node, node->depth == 0);
+}
+
+object_store::iterator object_store::detach(const prototype_iterator &i)
+{
+  if (i == end() || i.get() == nullptr) {
+    throw object_exception("invalid prototype iterator");
+  }
+  return remove_prototype_node(i.get(), i->depth == 0);
 }
 
 object_store::iterator object_store::find(const char *type)
@@ -94,7 +111,9 @@ prototype_iterator object_store::end()
 void object_store::clear(bool full)
 {
   if (full) {
-    clear();
+    while (first_->next != last_) {
+      remove_prototype_node(first_->next, true);
+    }
   } else {
     // only delete objects
     prototype_iterator first = begin();
@@ -105,6 +124,26 @@ void object_store::clear(bool full)
 //    prototype_tree_.begin()->clear(true);
   }
   object_map_.clear();
+}
+
+void object_store::clear(const char *type)
+{
+  clear(find(type));
+}
+
+void object_store::clear(const prototype_iterator &node)
+{
+  clear(node.get());
+}
+
+prototype_node* object_store::clear(prototype_node *node)
+{
+  prototype_node *current = node->first->next;
+  while (current != node->last.get()) {
+    current = clear(current);
+  }
+  // finally link first to last and vice versa
+  return remove_prototype_node(node, false);
 }
 
 size_t object_store::size() const

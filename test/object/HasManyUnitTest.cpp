@@ -28,7 +28,7 @@ void HasManyUnitTest::test_vector_join_table()
   store.attach<item>("item");
   store.attach<owner>("owner");
 
-  prototype_iterator i = store.find_prototype("owner_item");
+  prototype_iterator i = store.find("owner_item");
   UNIT_ASSERT_TRUE(i != store.end(), "iterator shouldn't be end");
 
   UNIT_ASSERT_EQUAL("owner_item", i->type(), "type should be 'owner_item'");

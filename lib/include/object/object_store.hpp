@@ -24,7 +24,7 @@
 #include "object/object_observer.hpp"
 #include "object/identifier_setter.hpp"
 #include "object/has_one.hpp"
-#include "object/has_many.hpp"
+#include "object/basic_has_many.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -94,7 +94,6 @@ public:
 
   template<class T>
   void serialize(const char *, T &) { }
-
   void serialize(const char *, char *, size_t) { }
 
 //  template < class T >
@@ -103,7 +102,7 @@ public:
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field);
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
 
 private:
   typedef std::set<object_proxy *> t_object_proxy_set;
@@ -196,7 +195,7 @@ public:
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
-  void serialize(const char *, has_many<T, C> &, const char *, const char *);
+  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
 
   template<class T>
   void serialize(const char *id, identifier<T> &x);
@@ -304,6 +303,16 @@ public:
   void detach(const char *type);
 
   /**
+   * Erase a prototype node identified
+   * by its iterator. The successor iterator
+   * is returned.
+   *
+   * @param i The prototype iterator to be erased
+   * @return The successor of the erased iterator
+   */
+  iterator detach(const prototype_iterator &i);
+
+  /**
    * @brief Finds prototype node.
    *
    * Finds and returns prototype node iterator identified
@@ -391,6 +400,36 @@ public:
    * Removes all inserted prototypes and all inserted objects.
    */
   void clear(bool full = false);
+
+  /**
+ * Clears a prototype node and its cildren nodes.
+ * All objects will be deleted.
+ *
+ * @param type The name of the type to remove.
+ * @throws oos::object_exception on error
+ */
+  void clear(const char *type);
+
+  /**
+   * Clears a prototype node by an iterator and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_iterator to remove.
+   * @throws oos::object_exception on error
+   */
+  void clear(const prototype_iterator &node);
+
+  /**
+   * Clears a prototype_node and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_node to remove.
+   * @return The next valid prototype node.
+   * @throws oos::object_exception on error
+   */
+  prototype_node* clear(prototype_node *node);
 
   /**
    * Return count of prototype nodes
@@ -1048,8 +1087,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, has_many<T, C> &x, const char */*owner_field*/,
-                                const char */*item_field*/) {
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char */*owner_field*/, const char */*item_field*/) {
   // initialize the has many relation
   // set identifier
   // relation table name
@@ -1111,10 +1149,10 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *id, has_many<T, C> &x, const char *, const char *) {
+void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *) {
 //  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
-  typename has_many<T, C>::iterator first = x.begin();
-  typename has_many<T, C>::iterator last = x.end();
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
 }
 
 template<class T>

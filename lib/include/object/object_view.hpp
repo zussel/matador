@@ -476,7 +476,7 @@ public:
   object_view(object_store &ostore, bool skip_siblings = false)
     : skip_siblings_(skip_siblings)
   {
-    node_ = ostore.find_prototype(typeid(T).name());
+    node_ = ostore.find(typeid(T).name());
 		if (node_ == ostore.end()) {
       std::stringstream str;
       str << "couldn't find serializable type [" << typeid(T).name() << "]";
