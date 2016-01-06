@@ -71,7 +71,8 @@ void object_serializer::serialize(const char *id, date &x)
     buffer_->release(&julian_date, sizeof(julian_date));
     x.set(julian_date);
   } else {
-    serialize(id, x.julian_date());
+    int jd(x.julian_date());
+    serialize(id, jd);
   }
 }
 
@@ -120,8 +121,10 @@ void object_serializer::serialize(const char *id, time &x)
 
 void object_serializer::write_object_container_item(const object_proxy *proxy)
 {
-  serialize(nullptr, proxy->id());
-  serialize(nullptr, proxy->node()->type());
+  unsigned long id(proxy->id());
+  serialize(nullptr, id);
+  std::string type(proxy->node()->type());
+  serialize(nullptr, type);
 }
 
 }

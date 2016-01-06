@@ -1036,7 +1036,7 @@ template<class T, template<class ...> class C>
 void node_analyzer::serialize(const char *id, has_many<T, C> &, const char *, const char *)
 {
   // attach releation table for has many relation
-  node_.tree()->attach<typename has_many<T, C>::value_type>(id);
+  node_.tree()->attach<typename has_many<T, C>::item_type>(id);
 }
 
 template<class T>

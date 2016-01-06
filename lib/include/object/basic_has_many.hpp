@@ -12,6 +12,10 @@
 
 namespace oos {
 
+namespace detail {
+class object_inserter;
+}
+
 /**
  * @class has_many_item
  * @brief Holds item and owner id of a has many relation
@@ -166,7 +170,7 @@ public:
 //  const_iterator end() const { return container_.end(); }
 
 protected:
-  friend class object_inserter;
+  friend class detail::object_inserter;
   friend class object_store;
 
   object_store *ostore_ = nullptr;

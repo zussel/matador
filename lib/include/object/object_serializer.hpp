@@ -108,7 +108,7 @@ public:
 
 public:
   template < class T >
-  void serialize(const char*, T x)
+  void serialize(const char*, T &x)
   {
     if (restore) {
       buffer_->release(&x, sizeof(x));
@@ -184,7 +184,8 @@ public:
       serialize(id, val);
       x.value(val);
     } else {
-      serialize(id, x.value());
+      V val(x.value());
+      serialize(id, val);
     }
   }
 

@@ -19,11 +19,15 @@
 #endif
 
 #include "object/cascade_type.hpp"
-#include "object_proxy.hpp"
 
 #include <memory>
 
 namespace oos {
+
+namespace detail {
+class object_inserter;
+class object_deleter;
+}
 
 class basic_identifier;
 class object_proxy;
@@ -219,8 +223,8 @@ public:
 private:
   friend class object_serializer;
   friend class object_proxy;
-  friend class object_deleter;
-  friend class object_inserter;
+  friend class detail::object_deleter;
+  friend class detail::object_inserter;
   friend class object_store;
   friend class object_container;
 
