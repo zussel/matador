@@ -249,10 +249,10 @@ public:
   basic_identifier* id() const;
 
   size_t relation_count() const;
-  bool has_relation(const std::string &relation_name);
+  bool has_relation(const std::string &relation_name) const;
 
   size_t foreign_key_count() const;
-  bool has_foreign_key(const std::string &foreign_key_name);
+  bool has_foreign_key(const std::string &foreign_key_name) const;
 
   bool is_abstract() const;
 

@@ -602,7 +602,7 @@ void foreign_key_analyzer::serialize(const char *id, has_one<T> &x, cascade_type
   if (node == node_.tree()->end()) {
     throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
   } else if (!node->has_primary_key()) {
-    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
+    throw_object_exception("object of type '" << x.type() << "' has no primary key");
   } else {
     // node is inserted/attached; store it in nodes foreign key map
     std::shared_ptr<basic_identifier> fk(node->id()->clone());

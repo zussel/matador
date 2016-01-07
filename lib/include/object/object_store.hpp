@@ -986,7 +986,6 @@ object_store::iterator object_store::initialize(prototype_node *node) {
   // Check if nodes serializable has 'to-many' relations
   // Analyze primary and foreign keys of node
   T obj;
-  std::unique_ptr<T> o(new T);
   detail::node_analyzer::analyze<T>(*node);
 
   while (!node->foreign_key_ids.empty()) {
@@ -1021,9 +1020,10 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
     // insert a new one
-    node_.tree()->attach<T>(x.type());
-    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
-  } else if (!node->has_primary_key()) {
+    node = node_.tree()->attach<T>(x.type());
+//    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
+  }
+  if (!node->has_primary_key()) {
     throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
   } else {
     // node is inserted/attached; store it in nodes foreign key map

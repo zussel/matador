@@ -927,7 +927,7 @@ public:
   ~child() {}
 
   template < class S >
-  void serialize(S &serializer) const
+  void serialize(S &serializer)
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
@@ -945,16 +945,16 @@ public:
     ~master() {}
 
   template < class S >
-  void serialize(S &serializer) const
+  void serialize(S &serializer)
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("child", children);
+    serializer.serialize("child", children, oos::cascade_type::DELETE);
   }
 
     oos::identifier<unsigned long> id;
     std::string name;
-    oos::object_ptr<child> children;
+    oos::has_one<child> children;
 };
 
 class children_list
@@ -967,7 +967,7 @@ public:
   ~children_list() {}
 
   template < class S >
-  void serialize(S &serializer) const
+  void serialize(S &serializer)
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
