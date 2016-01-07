@@ -918,83 +918,65 @@ public:
   size_type size() const { return tracks_.size(); }
   bool empty() const { return tracks_.empty(); }
 };
-/*
-class child : public oos::serializable
+
+class child
 {
 public:
-    child() {}
-    child(const std::string &n) : name(n) {}
-    virtual ~child() {}
+  child() {}
+  child(const std::string &n) : name(n) {}
+  ~child() {}
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-    }
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+  }
 
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-    }
-
-    oos::identifier<unsigned long> id;
-    std::string name;
+  oos::identifier<unsigned long> id;
+  std::string name;
 };
 
-class master : public oos::serializable
+class master
 {
 public:
     master() {}
     master(const std::string &n) : name(n) {}
-    virtual ~master() {}
+    ~master() {}
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-        r.read("child", children);
-    }
-
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-        w.write("child", children);
-    }
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("child", children);
+  }
 
     oos::identifier<unsigned long> id;
     std::string name;
     oos::object_ptr<child> children;
 };
 
-class children_list : public oos::serializable
+class children_list
 {
 public:
-    typedef oos::object_ref<child> child_ref;
-    typedef oos::object_list<children_list, child_ref, true> children_list_t;
+  typedef oos::has_many<child> children_list_t;
 
-    children_list() {}
-    children_list(const std::string &n) : name(n) {}
-    virtual ~children_list() {}
+  children_list() {}
+  children_list(const std::string &n) : name(n) {}
+  ~children_list() {}
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-        r.read("children", children);
-    }
+  template < class S >
+  void serialize(S &serializer) const
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "list_id", "child_id");
+  }
 
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-        w.write("children", children);
-    }
-
-    oos::identifier<unsigned long> id;
-    std::string name;
-    children_list_t children;
+  oos::identifier<unsigned long> id;
+  std::string name;
+  children_list_t children;
 };
-*/
+
 #endif /* ITEM_HPP */

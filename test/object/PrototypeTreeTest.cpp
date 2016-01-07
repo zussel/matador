@@ -22,8 +22,8 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("count", std::bind(&PrototypeTreeTestUnit::test_count, this), "test count of prototypes");
   add_test("child_of", std::bind(&PrototypeTreeTestUnit::test_child_of, this), "test child of element");
   add_test("traverse", std::bind(&PrototypeTreeTestUnit::test_traverse, this), "test traversing the prototype tree");
-//  add_test("const_traverse", std::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
-//  add_test("relations", std::bind(&PrototypeTreeTestUnit::test_relations, this), "test relations");
+  add_test("const_traverse", std::bind(&PrototypeTreeTestUnit::test_const_traverse, this), "test const traversing the prototype tree");
+  add_test("relations", std::bind(&PrototypeTreeTestUnit::test_relations, this), "test relations");
 }
 
 PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
@@ -134,7 +134,7 @@ void PrototypeTreeTestUnit::test_clear()
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)4, "prototype size must be one (4)");
 
-  ptree.clear();
+  ptree.clear(true);
 
   UNIT_ASSERT_EQUAL(ptree.size(), (size_t)0, "prototype size must be one (0)");
   UNIT_ASSERT_TRUE(ptree.empty(), "prototype tree must be empty");
@@ -252,36 +252,38 @@ void PrototypeTreeTestUnit::test_const_traverse()
   UNIT_ASSERT_TRUE(first == ptree.begin(), "expected prototype iterator to be begin()");
 }
 
-/*
 void PrototypeTreeTestUnit::test_relations()
 {
   object_store ptree;
 
-  object_store::const_iterator children_list_node = ptree.insert<children_list>("children_list");
-  object_store::const_iterator master_node = ptree.insert<master>("master");
-  object_store::const_iterator child_node = ptree.insert<child>("child");
+  object_store::const_iterator children_list_node = ptree.attach<children_list>("children_list");
+  object_store::const_iterator master_node = ptree.attach<master>("master");
+  object_store::const_iterator child_node = ptree.attach<child>("child");
 
   // get the relation table for children
   // holding id of children_list (container)
   // and id of child (value)
   object_store::const_iterator children_node = ptree.find("children");
 
-  UNIT_ASSERT_TRUE(child_node->relations.empty(), "relations must be empty");
-  UNIT_ASSERT_TRUE(child_node->foreign_keys.empty(), "foreign keys must be empty");
+  UNIT_ASSERT_EQUAL(child_node->relation_count(), 0, "relations must be empty");
+  UNIT_ASSERT_EQUAL(child_node->foreign_key_count(), 0, "foreign keys must be empty");
 
-  UNIT_ASSERT_TRUE(children_list_node->relations.empty(), "relations must be empty");
-  UNIT_ASSERT_TRUE(children_list_node->foreign_keys.empty(), "foreign keys must be empty");
+  UNIT_ASSERT_EQUAL(children_list_node->relation_count(), 0, "relations must be empty");
+  UNIT_ASSERT_EQUAL(children_list_node->foreign_key_count(), 0, "foreign keys must be empty");
 
-  UNIT_ASSERT_TRUE(master_node->relations.empty(), "relations must be empty");
-  UNIT_ASSERT_FALSE(master_node->foreign_keys.empty(), "foreign key must not be empty");
-  UNIT_ASSERT_EQUAL(master_node->foreign_keys.size(), (size_t)1, "there must be one foreign key");
-  prototype_node::t_foreign_key_map::const_iterator j = master_node->foreign_keys.find("child");
-  UNIT_ASSERT_FALSE(j == master_node->foreign_keys.end(), "iterator must not be end");
+  UNIT_ASSERT_EQUAL(master_node->relation_count(), 0, "relations must be empty");
+  UNIT_ASSERT_GREATER(master_node->foreign_key_count(), 0, "foreign key must not be empty");
+  UNIT_ASSERT_EQUAL(master_node->foreign_key_count(), 1UL, "there must be one foreign key");
 
-  UNIT_ASSERT_FALSE(children_node->relations.empty(), "relations must not be empty");
-  UNIT_ASSERT_EQUAL(children_node->relations.size(), (size_t)1, "there must be one relation");
-  prototype_node::field_prototype_map_t::const_iterator i = children_node->relations.find("children_list");
-  UNIT_ASSERT_FALSE(i == children_node->relations.end(), "iterator must not be end");
+//  prototype_node::t_foreign_key_map::const_iterator j = master_node->foreign_keys.find("child");
+  UNIT_ASSERT_FALSE(master_node->has_foreign_key("child"), "iterator must not be end");
+//  UNIT_ASSERT_FALSE(j == master_node->foreign_keys.end(), "iterator must not be end");
+
+  UNIT_ASSERT_NOT_EQUAL(children_node->relation_count(), 0, "relations must not be empty");
+  UNIT_ASSERT_EQUAL(children_node->relation_count(), 1UL, "there must be one relation");
+//  prototype_node::field_prototype_map_t::const_iterator i = children_node->relations.find("children_list");
+  UNIT_ASSERT_FALSE(children_node->has_relation("children_list"), "iterator must not be end");
+//  UNIT_ASSERT_FALSE(i == children_node->relations.end(), "iterator must not be end");
 
   UNIT_ASSERT_FALSE(children_node->foreign_keys.empty(), "foreign keys must not be empty");
   UNIT_ASSERT_EQUAL(children_node->foreign_keys.size(), (size_t)2, "there must be two foreign keys");
@@ -290,4 +292,3 @@ void PrototypeTreeTestUnit::test_relations()
   j = children_node->foreign_keys.find("value");
   UNIT_ASSERT_FALSE(j == children_node->foreign_keys.end(), "iterator must not be end");
 }
-*/

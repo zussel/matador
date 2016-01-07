@@ -44,6 +44,7 @@ ENDIF()
 option(COVERALLS "Enable generation and sending of coveralls data" false)
 option(COVERAGE "Enable generation of code coverage" false)
 
+
 if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   message(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
   include(CodeCoverage)

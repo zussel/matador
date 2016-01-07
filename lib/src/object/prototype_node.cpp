@@ -326,6 +326,26 @@ basic_identifier *prototype_node::id() const
   return id_.get();
 }
 
+size_t prototype_node::relation_count() const
+{
+  return relations.size();
+}
+
+bool prototype_node::has_relation(const std::string &relation_name)
+{
+  return relations.find(relation_name) != relations.end();
+}
+
+size_t prototype_node::foreign_key_count() const
+{
+  return foreign_keys.size();
+}
+
+bool prototype_node::has_foreign_key(const std::string &foreign_key_name)
+{
+  return foreign_keys.find(foreign_key_name) != foreign_keys.end();
+}
+
 bool prototype_node::is_abstract() const
 {
   return abstract_;

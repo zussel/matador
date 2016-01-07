@@ -248,6 +248,12 @@ public:
 
   basic_identifier* id() const;
 
+  size_t relation_count() const;
+  bool has_relation(const std::string &relation_name);
+
+  size_t foreign_key_count() const;
+  bool has_foreign_key(const std::string &foreign_key_name);
+
   bool is_abstract() const;
 
   void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
