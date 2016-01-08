@@ -29,13 +29,13 @@ prototype_node::prototype_node()
 prototype_node::~prototype_node()
 {}
 
-void prototype_node::initialize(object_store *tr, const char *t, bool a)
+void prototype_node::initialize(object_store *tree, const char *type, bool abstract)
 {
-  tree_ = tr;
+  tree_ = tree;
   first.reset(new prototype_node);
   last.reset(new prototype_node);
-  type_.assign(t);
-  abstract_ = a;
+  type_.assign(type);
+  abstract_ = abstract;
   first->next = last.get();
   last->prev = first.get();
 }

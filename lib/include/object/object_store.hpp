@@ -264,12 +264,12 @@ public:
   ~object_store();
 
   /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    * 
-   * @param producer The producer serializable produces a new serializable of a specific type.
+   * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
@@ -279,10 +279,10 @@ public:
   prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given. The producer is automatically created via the template
+   * node is also given.
    * parameter.
    * 
    * @tparam T       The type of the prototype node
@@ -293,6 +293,34 @@ public:
    */
   template<class T, class S>
   prototype_iterator attach(const char *type, bool abstract = false);
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name (generated from typeid). To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   *
+   * @tparam T       The type of the prototype node
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param parent   The name of the parent type.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T>
+  prototype_iterator attach(bool abstract = false, const char *parent = nullptr);
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name (generated from typeid). To know where the new
+   * prototype is inserted into the hierarchy the typeid of the parent
+   * node is also given.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, class S>
+  prototype_iterator attach(bool abstract = false);
 
   /**
    * Removes an serializable prototype from the prototype tree. All children
@@ -777,6 +805,8 @@ private:
 
 //  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
+  prototype_node* find_parent(const char *name) const;
+
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
   // typeid -> [name -> prototype]
@@ -806,30 +836,57 @@ private:
 template<class T>
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent) {
   // set node to root node
-  prototype_node *parent_node = nullptr;
-  if (parent != nullptr) {
-    parent_node = find_prototype_node(parent);
-    if (!parent_node) {
-      throw object_exception("unknown prototype type");
-    }
-  }
+  prototype_node *parent_node = find_parent(parent);
   /*
    * try to insert new prototype node
    */
   prototype_node *node = acquire<T>(type, abstract);
 
-  if (parent != nullptr) {
+  if (parent_node != nullptr) {
     parent_node->insert(node);
   } else {
     last_->prev->append(node);
   }
 
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
+  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
   return initialize<T>(node);
 }
 
 template<class T, class S>
 object_store::iterator object_store::attach(const char *type, bool abstract) {
   return attach<T>(type, abstract, typeid(S).name());
+}
+
+template<class T>
+prototype_iterator object_store::attach(bool abstract, const char *parent)
+{
+  prototype_node *parent_node = find_parent(parent);
+
+  if (typeid_prototype_map_.find(typeid(T).name()) != typeid_prototype_map_.end()) {
+    throw_object_exception("attach: object type " << typeid(T).name() << " already in attached");
+  }
+
+  prototype_node *node = new prototype_node(this, "", typeid(T).name(), abstract);
+
+  if (parent_node != nullptr) {
+    parent_node->insert(node);
+  } else {
+    last_->prev->append(node);
+  }
+
+  // store only in prototype typeid map prototype in map
+  // Todo: check return value
+  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
+  return initialize<T>(node);
+}
+
+template<class T, class S>
+prototype_iterator object_store::attach(bool abstract)
+{
+  return attach<T>(abstract, typeid(T).name());
 }
 
 template<class T>
@@ -971,11 +1028,6 @@ prototype_node *object_store::acquire(const char *type, bool abstract) {
 
 template<class T>
 object_store::iterator object_store::initialize(prototype_node *node) {
-  // store prototype in map
-  // Todo: check return value
-  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
-  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
-
   // Analyze primary and foreign keys of node
   basic_identifier *id = identifier_resolver<T>::resolve();
   if (id) {

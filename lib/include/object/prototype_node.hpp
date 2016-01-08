@@ -117,12 +117,11 @@ public:
    * Initializes a prototype_node. The node
    * gets the given type name alias t.
    *
-   * @param tr The node containing tree.
-   * @param p The object_base_producer.
-   * @param t The type name of this node.
-   * @param a Tells the node if its prototype is abstract.
+   * @param tree The node containing tree.
+   * @param type The type name of this node.
+   * @param abstract Tells the node if its prototype is abstract.
    */
-  void initialize(object_store *tr, const char *t, bool a);
+  void initialize(object_store *tree, const char *type, bool abstract);
 
   /**
    * Returns true if serializable proxy list is empty. If self is true, only

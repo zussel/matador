@@ -406,7 +406,6 @@ prototype_node* object_store::find_prototype_node(const char *type) const {
   }
 }
 
-
 prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root) {
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
@@ -441,6 +440,18 @@ prototype_node* object_store::remove_prototype_node(prototype_node *node, bool i
   }
   delete node;
   return next;
+}
+
+prototype_node *object_store::find_parent(const char *name) const
+{
+  prototype_node *parent_node(nullptr);
+  if (name != nullptr) {
+    parent_node = find_prototype_node(name);
+    if (!parent_node) {
+      throw object_exception("unknown prototype type");
+    }
+  }
+  return parent_node;
 }
 
 namespace detail {
