@@ -306,7 +306,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T>
-  prototype_iterator attach(bool abstract = false, const char *parent = nullptr);
+  prototype_iterator prepare_attach(bool abstract = false, const char *parent = nullptr);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -320,7 +320,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
-  prototype_iterator attach(bool abstract = false);
+  prototype_iterator prepare_attach(bool abstract = false);
 
   /**
    * Removes an serializable prototype from the prototype tree. All children
@@ -821,6 +821,9 @@ private:
   // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
 
+  // prepared prototype nodes
+  t_prototype_map prepared_prototype_map_;
+
   typedef std::unordered_map<long, object_proxy *> t_object_proxy_map;
   t_object_proxy_map object_map_;
 
@@ -861,7 +864,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract) {
 }
 
 template<class T>
-prototype_iterator object_store::attach(bool abstract, const char *parent)
+prototype_iterator object_store::prepare_attach(bool abstract, const char *parent)
 {
   prototype_node *parent_node = find_parent(parent);
 
@@ -884,9 +887,9 @@ prototype_iterator object_store::attach(bool abstract, const char *parent)
 }
 
 template<class T, class S>
-prototype_iterator object_store::attach(bool abstract)
+prototype_iterator object_store::prepare_attach(bool abstract)
 {
-  return attach<T>(abstract, typeid(T).name());
+  return prepare_attach<T>(abstract, typeid(T).name());
 }
 
 template<class T>
