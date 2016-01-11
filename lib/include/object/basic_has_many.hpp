@@ -51,7 +51,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(owner_id_.c_str(), *owner_);
-    serializer.serialize(item_id_.c_str(), item_);
+    serializer.serialize(item_id_.c_str(), item_, cascade_type::NONE);
   }
 
   value_pointer value() const

@@ -849,6 +849,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   if (i != prepared_prototype_map_.end()) {
     // found a prepared node
     node = i->second;
+    node->type_.assign(type);
     prepared_prototype_map_.erase(i);
   } else {
     node = acquire<T>(type, abstract);
