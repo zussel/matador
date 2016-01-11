@@ -843,12 +843,27 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   /*
    * try to insert new prototype node
    */
-  prototype_node *node = acquire<T>(type, abstract);
-
-  if (parent_node != nullptr) {
-    parent_node->insert(node);
+  const char *name = typeid(T).name();
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prepared_prototype_map_.find(name);
+  if (i != prepared_prototype_map_.end()) {
+    // found a prepared node
+    node = i->second;
+    prepared_prototype_map_.erase(i);
   } else {
-    last_->prev->append(node);
+    node = acquire<T>(type, abstract);
+    // insert node
+    if (parent_node != nullptr) {
+      parent_node->insert(node);
+    } else {
+      last_->prev->append(node);
+    }
+    // Analyze primary and foreign keys of node
+    basic_identifier *id = identifier_resolver<T>::resolve();
+    if (id) {
+      id->isolate();
+      node->id_.reset(id);
+    }
   }
 
   // store prototype in map
@@ -872,18 +887,28 @@ prototype_iterator object_store::prepare_attach(bool abstract, const char *paren
     throw_object_exception("attach: object type " << typeid(T).name() << " already in attached");
   }
 
-  prototype_node *node = new prototype_node(this, "", typeid(T).name(), abstract);
+  std::unique_ptr<prototype_node> node(new prototype_node(this, "", typeid(T).name(), abstract));
+
+  node->initialize(this, "", abstract);
 
   if (parent_node != nullptr) {
-    parent_node->insert(node);
+    parent_node->insert(node.get());
   } else {
-    last_->prev->append(node);
+    last_->prev->append(node.get());
   }
 
   // store only in prototype typeid map prototype in map
   // Todo: check return value
-  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
-  return initialize<T>(node);
+  prepared_prototype_map_.insert(std::make_pair(typeid(T).name(), node.get()));
+//  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
+  // Analyze primary and foreign keys of node
+  std::unique_ptr<basic_identifier> id(identifier_resolver<T>::resolve());
+  if (id) {
+    id->isolate();
+    node->id_.reset(id.release());
+  }
+
+  return prototype_iterator(node.release());
 }
 
 template<class T, class S>
@@ -981,66 +1006,46 @@ object_proxy *object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify
 }
 
 template<class T>
-prototype_node *object_store::acquire(const char *type, bool abstract) {
+prototype_node *object_store::acquire(const char *type, bool abstract)
+{
+  // try to find node in prepared map
+  const char *name = typeid(T).name();
   prototype_node *node = nullptr;
   t_prototype_map::iterator i = prototype_map_.find(type);
   if (i != prototype_map_.end()) {
     throw_object_exception("prototype already inserted: " << type);
   }
-
-  /* unknown type name try for typeid
-   * (unfinished prototype)
-   */
-  const char *name = typeid(T).name();
+  // try to find by typeid name
   i = prototype_map_.find(name);
-  if (i == prototype_map_.end()) {
-    /*
-     * no typeid found, seems to be
-     * a new type
-     * to be sure check in typeid map
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+  /*
+   * no typeid found, seems to be
+   * a new type
+   * to be sure check in typeid map
+   */
+  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
+  if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
+    /* unexpected found the
+     * typeid check for type
+     * throw exception
      */
-    t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
-    if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-      /* unexpected found the
-       * typeid check for type
-       */
-      /* type found in typeid map
-       * throw exception
-       */
-      throw object_exception("unexpectly found prototype");
-    } else {
-      /* insert new prototype and add to
-       * typeid map
-       */
-      // create new one
-      node = new prototype_node(this, type, typeid(T).name(), abstract);
-    }
+    throw object_exception("unexpectly found prototype");
   } else {
-    /* prototype is unfinished,
-     * finish it, insert by type name,
-     * remove typeid entry and add to
+    /* insert new prototype and add to
      * typeid map
      */
-    node = i->second;
-    node->initialize(this, type, abstract);
-    prototype_map_.erase(i);
+    node = new prototype_node(this, type, typeid(T).name(), abstract);
   }
-
   return node;
 }
 
 template<class T>
-object_store::iterator object_store::initialize(prototype_node *node) {
-  // Analyze primary and foreign keys of node
-  basic_identifier *id = identifier_resolver<T>::resolve();
-  if (id) {
-    id->isolate();
-    node->id_.reset(id);
-  }
-
+object_store::iterator object_store::initialize(prototype_node *node)
+{
   // Check if nodes serializable has 'to-many' relations
   // Analyze primary and foreign keys of node
-  T obj;
   detail::node_analyzer::analyze<T>(*node);
 
   while (!node->foreign_key_ids.empty()) {
@@ -1075,7 +1080,7 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
     // insert a new one
-    node = node_.tree()->attach<T>(x.type());
+    node = node_.tree()->prepare_attach<T>();
 //    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
   }
   if (!node->has_primary_key()) {
@@ -1090,8 +1095,12 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
 template<class T, template<class ...> class C>
 void node_analyzer::serialize(const char *id, has_many<T, C> &, const char *, const char *)
 {
+  // Todo: distinguish between join table and no join table
   // attach releation table for has many relation
-  node_.tree()->attach<typename has_many<T, C>::item_type>(id);
+  prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
+  // add container node to item node
+  // insert the relation
+  pi->register_relation(node_.type(), &node_, id);
 }
 
 template<class T>
