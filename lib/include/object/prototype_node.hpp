@@ -257,6 +257,8 @@ public:
 
   void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
   void register_relation(const char *type, prototype_node *node, const char *id);
+
+  void prepare_foreign_key(prototype_node *master_node, const char *id);
   /**
    * Prints the node in graphviz layout to the stream.
    *

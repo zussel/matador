@@ -361,6 +361,11 @@ void prototype_node::register_relation(const char *type, prototype_node *node, c
   relations.insert(std::make_pair(type, std::make_pair(node, id)));
 }
 
+void prototype_node::prepare_foreign_key(prototype_node *master_node, const char *id)
+{
+  foreign_key_ids.push_back(std::make_pair(master_node, id));
+}
+
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
   t_id_map::iterator i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const t_id_map::value_type &x) {

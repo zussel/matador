@@ -888,6 +888,12 @@ prototype_iterator object_store::prepare_attach(bool abstract, const char *paren
     throw_object_exception("attach: object type " << typeid(T).name() << " already in attached");
   }
 
+  t_prototype_map::iterator i = prepared_prototype_map_.find(typeid(T).name());
+  if (i != prepared_prototype_map_.end()) {
+    // there is already a prepared node for this type
+    return prototype_iterator(i->second);
+  }
+
   std::unique_ptr<prototype_node> node(new prototype_node(this, "", typeid(T).name(), abstract));
 
   node->initialize(this, "", abstract);
@@ -1081,10 +1087,11 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
     // insert a new one
+//    node = node_.tree()->attach<T>(id);
     node = node_.tree()->prepare_attach<T>();
+    node->prepare_foreign_key(&node_, id);
 //    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
-  }
-  if (!node->has_primary_key()) {
+  } else if (!node->has_primary_key()) {
     throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
   } else {
     // node is inserted/attached; store it in nodes foreign key map
