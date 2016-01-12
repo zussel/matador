@@ -169,6 +169,17 @@ public:
 //  const_iterator begin() const { return container_.begin(); }
 //  const_iterator end() const { return container_.end(); }
 
+  size_type size() const { return container_.size(); }
+  bool empty() const { return container_.empty(); }
+
+  void owner_field(const std::string &ownerfield) { owner_field_ = ownerfield; }
+  void item_field(const std::string &itemfield) { item_field_ = itemfield; }
+
+  item_type* create_item(const oos::object_ptr<T> &value)
+  {
+    return new item_type(owner_field_, item_field_, owner_id_, value);
+  }
+
 protected:
   friend class detail::object_inserter;
   friend class object_store;
@@ -177,6 +188,9 @@ protected:
   std::shared_ptr<basic_identifier> owner_id_;
 
   container_type container_;
+
+  std::string owner_field_ = "owner_id";
+  std::string item_field_ = "item_id";
 };
 
 }

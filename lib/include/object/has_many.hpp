@@ -43,7 +43,7 @@ public:
     if (indexed_) {
 
     }
-    item_type *item = create_item(value);
+    item_type *item = this->create_item(value);
     object_ptr<item_type> iptr(item);
     if (this->ostore_) {
       this->ostore_->insert(iptr);
@@ -66,18 +66,7 @@ public:
     return iterator(this->container_.erase(start.iter_, end.iter_));
   }
 
-  size_type size() const { return this->container_.size(); }
-  bool empty() const { return this->container_.empty(); }
-
 private:
-  has_many_item<T>* create_item(const oos::object_ptr<T> &value)
-  {
-    return new has_many_item<T>(owner_field_, item_field_, base::owner_id_, value);
-  }
-private:
-  std::string owner_field_ = "owner_id";
-  std::string item_field_ = "item_id";
-
   bool indexed_ = false;
 };
 
@@ -100,46 +89,29 @@ public:
   iterator insert(iterator pos, const oos::object_ptr<T> &value)
   {
     // create new has_many
-    value_type *item = create_item(value);
-    return container_.insert(pos, item);
+    item_type *item = this->create_item(value);
+    return this->container_.insert(pos, item);
   }
 
   void push_front(const oos::object_ptr<T> &value)
   {
     // create new has_many
     value_type item = create_item(value);
-    container_.push_front(item);
+    this->container_.push_front(item);
   }
 
   void push_back(const oos::object_ptr<T> &value)
   {
     // create new has_many
     value_type item = create_item(value);
-    container_.push_back(item);
+    this->container_.push_back(item);
   }
-
-  iterator begin() { return container_.begin(); }
-  iterator end() { return container_.end(); }
 
 //  const_iterator begin() const { return container_.begin(); }
 //  const_iterator end() const { return container_.end(); }
 
-  iterator erase(iterator i) { return container_.erase(i); }
-  iterator erase(iterator start, iterator end) { return container_.erase(start, end); }
-
-  size_type size() const { return container_.size(); }
-  bool empty() const { return container_.empty(); }
-
-private:
-  has_many_item<T>* create_item(const oos::object_ptr<T> &value)
-  {
-    return new has_many_item<T>(owner_field_, item_field_, base::owner_id_, value);
-  }
-private:
-  container_type container_;
-
-  std::string owner_field_ = "owner_id";
-  std::string item_field_ = "item_id";
+//  iterator erase(iterator i) { return container_.erase(i); }
+//  iterator erase(iterator start, iterator end) { return container_.erase(start, end); }
 };
 /*
 template < class T, template <class ...> class C >

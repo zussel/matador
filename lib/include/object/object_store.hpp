@@ -1159,7 +1159,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char */*owner_field*/, const char */*item_field*/) {
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char *owner_field, const char *item_field) {
   // initialize the has many relation
   // set identifier
   // relation table name
@@ -1176,6 +1176,8 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
   x.ostore_ = &ostore_;
+  x.owner_field(owner_field);
+  x.item_field(item_field);
 
 //  has_many<T, C>::iterator first = x.begin();
 //  has_many<T, C>::iterator last = x.end();
