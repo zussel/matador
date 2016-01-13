@@ -1101,10 +1101,12 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
 }
 
 template<class T, template<class ...> class C>
-void node_analyzer::serialize(const char *id, has_many<T, C> &, const char *, const char *)
+void node_analyzer::serialize(const char *id, has_many<T, C> &, const char *owner_field, const char *item_field)
 {
   // Todo: distinguish between join table and no join table
   // attach releation table for has many relation
+  // Todo: prepare owner and item field name for later analyzing
+//  node_.prepare_has_many_item(owner_field, item_field);
   prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
   // add container node to item node
   // insert the relation
