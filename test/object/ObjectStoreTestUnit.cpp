@@ -22,7 +22,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
-//  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
@@ -38,7 +38,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
   add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable transient structure test");
   add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "serializable transient cyclic structure test");
-//  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
+  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
   add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
   add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
@@ -57,7 +57,7 @@ ObjectStoreTestUnit::initialize()
   ostore_.attach<Item>("item");
   ostore_.attach<ObjectItem<Item> >("object_item");
 //  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
-//  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
+  ostore_.attach<ObjectItemList>("object_item_ptr_list");
 
 //  ostore_.attach<person>("person");
 //  ostore_.attach<employee, person>("employee");
@@ -107,22 +107,22 @@ void ObjectStoreTestUnit::optr_test()
 
   UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
 }
-/*
+
 void
 ObjectStoreTestUnit::expression_test()
 {
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
-  typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
+  typedef object_ptr<ObjectItemList> itemlist_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList("object_ptr_list"));
+  itemlist_ptr itemlist = ostore_.insert(new ObjectItemList("object_ptr_list"));
 
   item_ptr ii;
   for (int i = 0; i < 10; ++i) {
     object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
     ii = ostore_.insert(new Item("Item", i));
     oi->ptr(ii);
-    itemlist->push_back(oi);
+    itemlist->items.push_back(oi);
   }
 
   variable<int> x(make_var(&ObjectItem<Item>::get_int));
@@ -136,12 +136,17 @@ ObjectStoreTestUnit::expression_test()
 
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
-  typedef ObjectItemPtrList::item_type ObjectItemType;
+  variable<int> z(make_var(&ObjectItem<Item>::get_int));
 
-  //Clang 3.2 needs the explicit template parameters on make_var
-  variable<int> z(make_var<int, ObjectItemType, object_item_ptr>(&ObjectItemType::value, &ObjectItem<Item>::get_int));
+  expression *exp = make_expression(z == 4);
 
-  ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+  object_ptr<ObjectItem<Item>> optr = itemlist->begin().get();
+
+  (*exp)(optr);
+
+  delete exp;
+
+  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 
   object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
@@ -176,7 +181,7 @@ ObjectStoreTestUnit::expression_test()
   UNIT_ASSERT_EQUAL((*j)->get_int(), 7, "couldn't find item 7");
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }
-*/
+
 void
 ObjectStoreTestUnit::serializer()
 {  
@@ -805,12 +810,12 @@ void ObjectStoreTestUnit::test_structure_cyclic()
 //  UNIT_ASSERT_EQUAL(c2.ref_count(), 0UL, "reference count must be zero");
 //  UNIT_ASSERT_EQUAL(c2.ptr_count(), 1UL, "reference count must be one");
 }
-/*
+
 void ObjectStoreTestUnit::test_structure_container()
 {
   object_store ostore;
-  ostore.prototypes().attach<child>("cild");
-  ostore.prototypes().attach<children_list>("cildren_list");
+  ostore.attach<child>("cild");
+  ostore.attach<children_list>("cildren_list");
 
   using childrens_ptr = object_ptr<children_list>;
 
@@ -820,14 +825,12 @@ void ObjectStoreTestUnit::test_structure_container()
 
   ostore.insert(childrens);
 
-  object_ref<child> c1 = (*childrens->children.begin())->value();
+  object_ptr<child> c1 = childrens->children.begin().get();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.ref_count(), 1UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(c1.ptr_count(), 0UL, "reference count must be one");
-
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be zero");
 }
-*/
+
 void ObjectStoreTestUnit::test_transient_optr()
 {
   typedef object_ptr<Item> item_ptr;

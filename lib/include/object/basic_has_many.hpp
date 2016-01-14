@@ -25,6 +25,7 @@ template < class T >
 class has_many_item
 {
 public:
+  typedef T value_type;
   typedef object_ptr<T> value_pointer;
 
 public:
@@ -93,6 +94,10 @@ class has_many;
 template < class T, template <class ...> class C = std::vector, class Enable = void >
 class has_many_iterator;
 
+template < class T, template <class ...> class C = std::vector, class Enable = void >
+class const_has_many_iterator;
+
+
 template < class T, template <class ...> class C >
 class has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
 {
@@ -103,12 +108,148 @@ public:
   typedef has_one<item_type> value_type;
   typedef C<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
+  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
 public:
   has_many_iterator() {}
   explicit has_many_iterator(container_iterator iter)
     : iter_(iter)
   {}
   ~has_many_iterator() {}
+
+  /**
+   * @brief Compares this with another iterators.
+   *
+   * Compares this with another iterators. Returns true
+   * if the iterators current container iterator and
+   * others iterator are the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are the same.
+   */
+  bool operator==(const self &i) const
+  {
+    return (iter_ == i.iter_);
+  }
+
+  /**
+   * @brief Compares this with another iterators.
+   *
+   * Compares this with another iterators. Returns true
+   * if the iterators current containers iterator and
+   * others iterator are not the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are not the same.
+   */
+  bool operator!=(const self &i) const
+  {
+    return !this->operator==(i);
+  }
+
+  friend difference_type operator-(self a, self b)
+  {
+    return a.iter_ - b.iter_;
+  }
+
+  self& operator++()
+  {
+    ++iter_;
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    self tmp = *this;
+    ++iter_;
+    return tmp;
+  }
+
+  self& operator--()
+  {
+    self tmp = *this;
+    --iter_;
+    return tmp;
+  }
+
+  self operator--(int)
+  {
+    return self();
+  }
+
+  value_pointer operator->() const
+  {
+    return (*iter_)->value();
+  }
+
+  value_pointer operator*() const
+  {
+    return (*iter_)->value();
+  }
+
+  value_pointer get() const
+  {
+    return (*iter_)->value();
+  }
+
+private:
+//  template < class T, template <class ...> class C >
+  friend class has_many<T, C>;
+
+  container_iterator iter_;
+};
+
+template < class T, template <class ...> class C >
+class const_has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+{
+public:
+  typedef const_has_many_iterator<T, C> self;
+  typedef object_ptr<T> value_pointer;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> value_type;
+  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename container_type::const_iterator const_container_iterator;
+public:
+  const_has_many_iterator() {}
+  explicit const_has_many_iterator(container_iterator iter)
+    : iter_(iter)
+  {}
+  explicit const_has_many_iterator(const_container_iterator iter)
+    : iter_(iter)
+  {}
+  ~const_has_many_iterator() {}
+
+  /**
+   * @brief Compares this with another iterators.
+   *
+   * Compares this with another iterators. Returns true
+   * if the iterators current container iterator and
+   * others iterator are the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are the same.
+   */
+  bool operator==(const self &i) const
+  {
+    return (iter_ == i.iter_);
+  }
+
+  /**
+   * @brief Compares this with another iterators.
+   *
+   * Compares this with another iterators. Returns true
+   * if the iterators current containers iterator and
+   * others iterator are not the same.
+   *
+   * @param i The iterator to compare with.
+   * @return True if the iterators are not the same.
+   */
+  bool operator!=(const self &i) const
+  {
+    return !this->operator==(i);
+  }
 
   self& operator++()
   {
@@ -144,11 +285,29 @@ private:
 //  template < class T, template <class ...> class C >
   friend class has_many<T, C>;
 
-  container_iterator iter_;
+  const_container_iterator iter_;
+};
+
+class abstract_has_many
+{
+public:
+  void owner_field(const std::string &ownerfield) { owner_field_ = ownerfield; }
+  void item_field(const std::string &itemfield) { item_field_ = itemfield; }
+
+  std::string owner_field() const { return owner_field_; }
+  std::string item_field() const { return item_field_; }
+
+protected:
+  friend class detail::object_inserter;
+
+  object_store *ostore_ = nullptr;
+
+  std::string owner_field_ = "owner_id";
+  std::string item_field_ = "item_id";
 };
 
 template < class T, template <class ...> class C >
-class basic_has_many
+class basic_has_many : public abstract_has_many
 {
 public:
   typedef basic_has_many<T, C> base;
@@ -156,6 +315,7 @@ public:
   typedef has_one<item_type> value_type;
   typedef C<value_type, std::allocator<value_type>> container_type;
   typedef has_many_iterator<T,C> iterator;
+  typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
   typedef typename container_type::iterator container_iterator;
 
@@ -166,31 +326,29 @@ public:
   iterator begin() { return iterator(container_.begin()); }
   iterator end() { return iterator(container_.end()); }
 
-//  const_iterator begin() const { return container_.begin(); }
-//  const_iterator end() const { return container_.end(); }
+  const_iterator begin() const { return const_iterator(container_.begin()); }
+  const_iterator end() const { return const_iterator(container_.end()); }
 
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
-  void owner_field(const std::string &ownerfield) { owner_field_ = ownerfield; }
-  void item_field(const std::string &itemfield) { item_field_ = itemfield; }
-
   item_type* create_item(const oos::object_ptr<T> &value)
   {
-    return new item_type(owner_field_, item_field_, owner_id_, value);
+    return new item_type(this->owner_field_, this->item_field_, owner_id_, value);
+  }
+
+  bool has_join_table() const
+  {
+    return true;
   }
 
 protected:
   friend class detail::object_inserter;
   friend class object_store;
 
-  object_store *ostore_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
 
   container_type container_;
-
-  std::string owner_field_ = "owner_id";
-  std::string item_field_ = "item_id";
 };
 
 }

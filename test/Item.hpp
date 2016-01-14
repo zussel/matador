@@ -237,6 +237,40 @@ private:
   oos::has_one<T> ref_;
   oos::has_one<T> ptr_;
 };
+
+class ObjectItemList
+{
+public:
+  typedef oos::has_many<ObjectItem<Item>> object_item_list_t;
+  typedef typename object_item_list_t::item_type item_type;
+  typedef typename object_item_list_t::iterator iterator;
+  typedef typename object_item_list_t::const_iterator const_iterator;
+
+  oos::identifier<unsigned long> id;
+  std::string name;
+  object_item_list_t items;
+
+  ObjectItemList() {}
+  explicit ObjectItemList(const std::string &n) : name(n) {}
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+    //s.serialize(items); // -> should create relation as in next line
+    //s.serialize("owner_item",items); // -> should create relation as in next line
+    s.serialize("object_item_list", items, "list_id", "object_item_id");
+  }
+
+  iterator begin() { return items.begin(); }
+  iterator end() { return items.end(); }
+
+  const_iterator begin() const { return items.begin(); }
+  const_iterator end() const { return items.end(); }
+
+};
+
 /*
 template < class T >
 class List : public oos::serializable

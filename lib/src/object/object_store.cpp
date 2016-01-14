@@ -481,7 +481,8 @@ object_deleter::iterator object_deleter::end()
 void object_deleter::check_object_list_node(object_proxy *proxy)
 {
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
-    std::make_pair(proxy->id(), t_object_count(proxy, false)));
+    std::make_pair(proxy->id(), t_object_count(proxy, false))
+  );
 
   /**********
    *

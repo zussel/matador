@@ -56,7 +56,7 @@ SET(OBJECT_HEADER
 		../include/object/prototype_node.hpp
 #		../include/object/prototype_tree.hpp
 		../include/object/object_observer.hpp
-#		../include/object/object_expression.hpp
+		../include/object/object_expression.hpp
 #		../include/object/attribute_serializer.hpp
 		../include/object/identifier.hpp
 #		../include/object/primary_key_analyzer.hpp

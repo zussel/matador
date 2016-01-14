@@ -44,4 +44,8 @@ void HasManyUnitTest::test_vector_join_table()
   o->items.push_back(i1);
 
   UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(new item("i2"));
+
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
 }

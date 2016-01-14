@@ -723,8 +723,18 @@ private:
   friend class object_container;
   friend class basic_object_holder;
   friend class prototype_node;
+  friend class detail::node_analyzer;
 
 private:
+  template < class T, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
+  prototype_iterator attach(const char *id, abstract_has_many *container)
+  {
+    temp_container_ = container;
+    prototype_iterator i = attach<T>(id);
+    temp_container_ = nullptr;
+    return i;
+  }
+
   void mark_modified(object_proxy *oproxy);
 
   template<class T>
@@ -834,6 +844,9 @@ private:
 
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
+
+  // only used when a has_many object is inserted
+  abstract_has_many *temp_container_ = nullptr;
 };
 
 template<class T>
@@ -904,10 +917,9 @@ prototype_iterator object_store::prepare_attach(bool abstract, const char *paren
     last_->prev->append(node.get());
   }
 
-  // store only in prototype typeid map prototype in map
+  // store only in prepared prototype map
   // Todo: check return value
   prepared_prototype_map_.insert(std::make_pair(typeid(T).name(), node.get()));
-//  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
   // Analyze primary and foreign keys of node
   std::unique_ptr<basic_identifier> id(identifier_resolver<T>::resolve());
   if (id) {
@@ -1086,11 +1098,13 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
   prototype_iterator node = node_.tree()->find(x.type());
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
-    // insert a new one
-//    node = node_.tree()->attach<T>(id);
+    // prepare insertion of new node
     node = node_.tree()->prepare_attach<T>();
-    node->prepare_foreign_key(&node_, id);
-//    throw_object_exception("couldn't find prototype node of type '" << x.type() << "'");
+    if (node_.tree()->temp_container_) {
+      node->prepare_foreign_key(&node_, node_.tree()->temp_container_->item_field().c_str());
+    } else {
+      node->prepare_foreign_key(&node_, id);
+    }
   } else if (!node->has_primary_key()) {
     throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
   } else {
@@ -1101,16 +1115,22 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
 }
 
 template<class T, template<class ...> class C>
-void node_analyzer::serialize(const char *id, has_many<T, C> &, const char *owner_field, const char *item_field)
+void node_analyzer::serialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field)
 {
+  // item field field names
+  x.owner_field(owner_field);
+  x.item_field(item_field);
   // Todo: distinguish between join table and no join table
-  // attach releation table for has many relation
-  // Todo: prepare owner and item field name for later analyzing
-//  node_.prepare_has_many_item(owner_field, item_field);
-  prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
-  // add container node to item node
-  // insert the relation
-  pi->register_relation(node_.type(), &node_, id);
+  if (x.has_join_table()) {
+    // attach releation table for has many relation
+    prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id, &x);
+//    prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
+    // insert the relation
+    // add container node to item node
+    pi->register_relation(node_.type(), &node_, id);
+  } else {
+    throw object_exception("has_many without join table not supported");
+  }
 }
 
 template<class T>
@@ -1161,7 +1181,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char *owner_field, const char *item_field) {
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*) {
   // initialize the has many relation
   // set identifier
   // relation table name
@@ -1171,18 +1191,19 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
     throw object_exception("no owner for has many releation");
   }
 
-  std::cout << "inserting has_many\n";
   if (x.ostore_) {
     return;
   }
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
   x.ostore_ = &ostore_;
-  x.owner_field(owner_field);
-  x.item_field(item_field);
 
-//  has_many<T, C>::iterator first = x.begin();
-//  has_many<T, C>::iterator last = x.end();
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+
+  while (first != last) {
+    ++first;
+  }
 //
 //  x.for_each([this](object_proxy *proxy) {
 //    bool new_object = object_proxies_.insert(proxy).second;
@@ -1229,6 +1250,9 @@ void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const ch
 //  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
+  while (first != last) {
+    ++first;
+  }
 }
 
 template<class T>

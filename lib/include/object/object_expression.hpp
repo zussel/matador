@@ -313,13 +313,22 @@ struct expression_traits<const char*>
 };
 
 template < class T >
-struct expression_traits<object_ptr<T> >
+struct expression_traits<oos::object_ptr<T> >
 {
-  typedef constant<object_ptr<T> > expression_type;
+  typedef oos::object_ptr<T> optr_type;
+  typedef constant<optr_type> expression_type;
+};
+
+class expression
+{
+public:
+  virtual ~expression() {}
+
+  virtual bool operator()(const basic_object_holder &optr) const = 0;
 };
 
 template < class L, class OP >
-class unary_expression
+class unary_expression : public expression
 {
 public:
   unary_expression(const L &l, OP op = OP())
@@ -328,7 +337,7 @@ public:
   {}
 
 
-  bool operator()(const basic_object_holder &optr) const
+  virtual bool operator()(const basic_object_holder &optr) const
   {
     return op_(left_(optr));
   }
@@ -339,7 +348,7 @@ private:
 };
 
 template < class L, class R, class OP >
-class binary_expression
+class binary_expression : public expression
 {
 public:
   binary_expression(const L &l, const R &r, OP op = OP())
@@ -348,7 +357,7 @@ public:
     , op_(op)
   {}
 
-  bool operator()(const basic_object_holder &optr) const
+  virtual bool operator()(const basic_object_holder &optr) const
   {
     return op_(left_(optr), right_(optr));
   }
@@ -358,6 +367,18 @@ private:
   typename expression_traits<R>::expression_type right_;
   OP op_;
 };
+
+template < class L, class OP >
+expression* make_expression(const unary_expression<L, OP> &ue)
+{
+  return new unary_expression<L, OP>(ue);
+}
+
+template < class L, class R, class OP >
+expression* make_expression(const binary_expression<L, R, OP> &be)
+{
+  return new binary_expression<L, R, OP>(be);
+}
 
 /**
  * this implements the greater
