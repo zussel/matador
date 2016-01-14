@@ -804,11 +804,8 @@ void ObjectStoreTestUnit::test_structure_cyclic()
 
   cyclic_ptr cptr = ostore.insert(c1);
 
-//  UNIT_ASSERT_EQUAL(cptr.ref_count(), 0UL, "reference count must be zero");
-//  UNIT_ASSERT_EQUAL(cptr.ptr_count(), 1UL, "reference count must be one");
-//
-//  UNIT_ASSERT_EQUAL(c2.ref_count(), 0UL, "reference count must be zero");
-//  UNIT_ASSERT_EQUAL(c2.ptr_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(cptr.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be one");
 }
 
 void ObjectStoreTestUnit::test_structure_container()

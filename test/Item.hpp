@@ -564,16 +564,8 @@ public:
   {}
   ~book() {}
 
-  template < class DESERIALIZER >
-  void deserialize(DESERIALIZER &deserializer)
-  {
-    deserializer.deserialize("id", id_);
-    deserializer.deserialize("title", title_);
-    deserializer.deserialize("isbn", isbn_);
-    deserializer.deserialize("author", author_);
-  }
   template < class SERIALIZER >
-  void serialize(SERIALIZER &serializer) const
+  void serialize(SERIALIZER &serializer)
   {
     serializer.serialize("id", id_);
     serializer.serialize("title", title_);
