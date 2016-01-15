@@ -21,8 +21,11 @@ class object_inserter;
  * @brief Holds item and owner id of a has many relation
  * @tparam T Type of the item
  */
+template < class T, class Enable = void >
+class has_many_item;
+
 template < class T >
-class has_many_item
+class has_many_item<T, typename std::enable_if<!std::is_scalar<T>::value>::type >
 {
 public:
   typedef T value_type;
@@ -88,6 +91,75 @@ private:
   std::string item_id_;
 };
 
+template < class T >
+class has_many_item<T, typename std::enable_if<std::is_scalar<T>::value>::type >
+{
+public:
+  typedef T value_type;
+
+public:
+
+  has_many_item()
+    : owner_id_("owner_id")
+    , item_name_("item")
+  { }
+
+  has_many_item(const std::string &owner_id, const std::string &item_name)
+    : owner_id_(owner_id)
+    , item_(item_name)
+  { }
+
+  has_many_item(const std::string &owner_id, const std::string &item_name,
+                const std::shared_ptr<basic_identifier> &id, T item)
+    : owner_(id)
+    , item_(item)
+    , owner_id_(owner_id)
+    , item_name_(item_name)
+  { }
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(owner_id_.c_str(), *owner_);
+    serializer.serialize(item_name_.c_str(), item_);
+  }
+
+  value_type value() const
+  {
+    return item_;
+  }
+
+  std::string owner_id() const
+  {
+    return owner_id_;
+  }
+
+  void owner_id(const std::string &oid)
+  {
+    owner_id_ = oid;
+  }
+
+  std::string item_name() const
+  {
+    return item_name_;
+  }
+
+  void item_id(const std::string &item_name)
+  {
+    item_name_ = item_name;
+  }
+
+private:
+  std::shared_ptr<basic_identifier> owner_;
+  T item_;
+
+  std::string owner_id_;
+  std::string item_name_;
+};
+
+template < class T, template <class ...> class C = std::vector >
+class basic_has_many;
+
 template < class T, template <class ...> class C = std::vector, class Enable = void >
 class has_many;
 
@@ -106,6 +178,7 @@ public:
   typedef object_ptr<T> value_pointer;
   typedef has_many_item<T> item_type;
   typedef has_one<item_type> value_type;
+  typedef object_ptr<item_type> item_ptr;
   typedef C<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
@@ -192,9 +265,15 @@ public:
     return (*iter_)->value();
   }
 
+  item_ptr relation_item() const
+  {
+    return *iter_;
+  }
+
 private:
 //  template < class T, template <class ...> class C >
   friend class has_many<T, C>;
+  friend class basic_has_many<T, C>;
 
   container_iterator iter_;
 };
@@ -284,6 +363,7 @@ public:
 private:
 //  template < class T, template <class ...> class C >
   friend class has_many<T, C>;
+  friend class basic_has_many<T, C>;
 
   const_container_iterator iter_;
 };
@@ -313,6 +393,7 @@ public:
   typedef basic_has_many<T, C> base;
   typedef has_many_item<T> item_type;
   typedef has_one<item_type> value_type;
+  typedef object_ptr<item_type> item_ptr;
   typedef C<value_type, std::allocator<value_type>> container_type;
   typedef has_many_iterator<T,C> iterator;
   typedef const_has_many_iterator<T,C> const_iterator;
@@ -332,9 +413,13 @@ public:
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
-  item_type* create_item(const oos::object_ptr<T> &value)
+  iterator erase(iterator i)
   {
-    return new item_type(this->owner_field_, this->item_field_, owner_id_, value);
+    return iterator(container_.erase(i.iter_));
+  }
+  iterator erase(iterator start, iterator end)
+  {
+    return iterator(container_.erase(start.iter_, end.iter_));
   }
 
   bool has_join_table() const

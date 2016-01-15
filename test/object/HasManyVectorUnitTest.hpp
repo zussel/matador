@@ -53,17 +53,18 @@ public:
 
 }
 
-class HasManyUnitTest : public oos::unit_test
+class HasManyVectorUnitTest : public oos::unit_test
 {
 
 public:
-  HasManyUnitTest();
-  virtual ~HasManyUnitTest();
+  HasManyVectorUnitTest();
+  virtual ~HasManyVectorUnitTest();
 
   virtual void initialize() override;
   virtual void finalize() override;
 
   void test_vector_join_table();
+  void test_vector_integer();
 };
 
 #endif //OOS_HASMANYUNITTEST_HPP

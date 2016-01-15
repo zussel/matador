@@ -78,11 +78,6 @@ void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = 0;
     if (is_internal_ && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
-//      if (cascade_ | cascade_type::DELETE) {
-//        proxy_->unlink_ref();
-//      } else {
-//        proxy_->unlink_ptr();
-//      }
     }
     proxy_->remove(this);
     /*
@@ -99,11 +94,6 @@ void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = proxy_->id();
     if (is_internal_ && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
-//      if (cascade_ | cascade_type::DELETE) {
-//        proxy_->link_ref();
-//      } else {
-//        proxy_->link_ptr();
-//      }
     }
     proxy_->add(this);
   }
@@ -196,16 +186,6 @@ unsigned long basic_object_holder::reference_count() const
 {
   return (proxy_ ? proxy_->reference_counter_ : 0UL);
 }
-
-//unsigned long basic_object_holder::ref_count() const
-//{
-//  return (proxy_ ? proxy_->ref_count() : 0UL);
-//}
-//
-//unsigned long basic_object_holder::ptr_count() const
-//{
-//  return (proxy_ ? proxy_->ptr_count() : 0UL);
-//}
 
 std::ostream& operator<<(std::ostream &out, const basic_object_holder &x)
 {
