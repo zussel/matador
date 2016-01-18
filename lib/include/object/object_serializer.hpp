@@ -35,7 +35,9 @@
 
 #include "object/access.hpp"
 #include "object/identifier.hpp"
-#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
+#include "object/basic_has_many.hpp"
+#include "object/object_store.hpp"
 
 #include <string>
 #include <cstring>
@@ -43,10 +45,7 @@
 namespace oos {
 
 class basic_object_holder;
-class object_store;
-class object_proxy;
 class varchar_base;
-class object_container;
 
 /**
  * @cond OOS_DEV
@@ -142,7 +141,7 @@ public:
 	void serialize(const char* id, time &x);
   template < class T >
 
-	void serialize(const char* id, has_one<T> &x)
+	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
   {
     if (restore) {
       /***************
@@ -155,24 +154,30 @@ public:
        *
        ***************/
       // Todo: correct implementation
-//  unsigned long oid = 0;
-//  serialize(id, oid);
-//  std::string type;
-//  serialize(id, type);
-//
-//  if (id > 0) {
-//    object_proxy *oproxy = ostore_->find_proxy(oid);
-//    if (!oproxy) {
-//      oproxy = ostore_->create_proxy(oid);
-//    }
-//    x.reset(oproxy, x.is_reference());
-//  } else {
-//    x.proxy_ = new object_proxy(oid);
-//  }
+      unsigned long oid = 0;
+      serialize(id, oid);
+      std::string type;
+      serialize(id, type);
+
+      if (oid > 0) {
+        object_proxy *oproxy = ostore_->find_proxy(oid);
+        if (!oproxy) {
+          oproxy = ostore_->create_proxy(new T, oid);
+        }
+        x.reset(oproxy, cascade);
+      } else {
+        x.reset(new object_proxy(new T, oid, ostore_));
+      }
     } else {
-      serialize(id, x.id());
+      unsigned long oid = x.id();
+      serialize(id, oid);
       serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
+  }
+
+  template<class T, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *) {
+
   }
 
 //	void serialize(const char* id, const object_container &x);

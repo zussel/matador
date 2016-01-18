@@ -646,9 +646,17 @@ public:
    * @return An serializable proxy serializable or null.
    */
   template<class T>
-  object_proxy *create_proxy(T *o) {
+  object_proxy *create_proxy(T *o)
+  {
     std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
     return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
+  }
+
+  template<class T>
+  object_proxy *create_proxy(T *o, unsigned long oid)
+  {
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
+    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
   }
 
 //  object_proxy *create_proxy(unsigned long id);
@@ -1255,7 +1263,26 @@ void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const ch
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
   while (first != last) {
-    ++first;
+    // Todo: get the real holder: on join table get has_many_item
+    typename basic_has_many<T, C>::item_ptr iptr = (*first++);
+    object_proxy *proxy = iptr.proxy_;
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
+      std::make_pair(proxy->id(), t_object_count(proxy, false))
+    );
+    /**********
+     *
+     * serializable is already in list and will
+     * be ignored on deletion so set
+     * ignore flag to false because this
+     * node must be deleted
+     *
+     **********/
+    if (!ret.second && ret.first->second.ignore) {
+      ret.first->second.ignore = false;
+    }
+
+    T &obj = *iptr;
+    oos::access::serialize(*this, obj);
   }
 }
 

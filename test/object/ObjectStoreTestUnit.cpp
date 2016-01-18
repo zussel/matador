@@ -682,7 +682,7 @@ ObjectStoreTestUnit::generic_test()
   oos::get(*item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
   oos::get(*item, "val_short", s.str_result);
-  UNIT_ASSERT_EQUAL(s.str_result, "-42", "float string is invalid");
+  UNIT_ASSERT_EQUAL(s.str_result, "-42", "short string is invalid");
 
   oos::set(*item, "val_int", i.expected);
   oos::get(*item, "val_int", i.result);
