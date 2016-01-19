@@ -13,10 +13,11 @@
 namespace oos {
 
 template < class T, template <class ...> class C >
-class has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::list>::value>::type> : public std::iterator<std::bidirectional_iterator_tag, T>
+class basic_has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::list>::value>::type>
+  : public std::iterator<std::bidirectional_iterator_tag, T>
 {
 public:
-  typedef has_many_iterator<T, C> self;
+  typedef basic_has_many_iterator<T, C> self;
   typedef object_ptr<T> value_pointer;
   typedef has_many_item<T> item_type;
   typedef has_one<item_type> value_type;
@@ -26,22 +27,21 @@ public:
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 
 public:
-  has_many_iterator() {}
-  explicit has_many_iterator(container_iterator iter)
+  basic_has_many_iterator() {}
+  explicit basic_has_many_iterator(container_iterator iter)
     : iter_(iter)
   {}
-  ~has_many_iterator() {}
 
   /**
    * @brief Compares this with another iterators.
    *
    * Compares this with another iterators. Returns true
-   * if the iterators current container iterator and
-   * others iterator are the same.
-   *
-   * @param i The iterator to compare with.
-   * @return True if the iterators are the same.
-   */
+ * if the iterators current container iterator and
+ * others iterator are the same.
+ *
+ * @param i The iterator to compare with.
+ * @return True if the iterators are the same.
+ */
   bool operator==(const self &i) const
   {
     return (iter_ == i.iter_);
@@ -92,31 +92,99 @@ public:
     return self();
   }
 
+protected:
+  friend class has_many<T, C>;
+  friend class basic_has_many<T, C>;
+
+  container_iterator iter_;
+};
+
+template < class T, template <class ...> class C >
+class has_many_iterator<T, C, typename std::enable_if<
+  is_same_container_type<C, std::list>::value &&
+  !std::is_scalar<T>::value>::type
+> : public basic_has_many_iterator<T, C>
+{
+public:
+  typedef has_many_iterator<T, C> self;
+  typedef object_ptr<T> value_pointer;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> value_type;
+  typedef object_ptr<item_type> item_ptr;
+  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
+
+public:
+  has_many_iterator() {}
+  explicit has_many_iterator(container_iterator iter)
+    : basic_has_many_iterator(iter)
+  {}
+  ~has_many_iterator() {}
+
   value_pointer operator->() const
   {
-    return *iter_;
+    return iter_->value();
   }
 
   value_pointer operator*() const
   {
-    return *iter_;
+    return iter_->value();
   }
 
   value_pointer get() const
   {
-    return *iter_;
+    return iter_->value();
   }
 
   item_ptr relation_item() const
   {
     return *iter_;
   }
+};
 
-private:
-  friend class has_many<T, C>;
-  friend class basic_has_many<T, C>;
+template < class T, template <class ...> class C >
+class has_many_iterator<T, C, typename std::enable_if<
+  is_same_container_type<C, std::list>::value &&
+  std::is_scalar<T>::value>::type
+> : public basic_has_many_iterator<T, C>
+{
+public:
+  typedef has_many_iterator<T, C> self;
+  typedef object_ptr<T> value_pointer;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> value_type;
+  typedef object_ptr<item_type> item_ptr;
+  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 
-  container_iterator iter_;
+public:
+  has_many_iterator() {}
+  explicit has_many_iterator(container_iterator iter)
+    : basic_has_many_iterator(iter)
+  {}
+  ~has_many_iterator() {}
+
+  value_pointer operator->() const
+  {
+    return iter_->value();
+  }
+
+  value_pointer operator*() const
+  {
+    return iter_->value();
+  }
+
+  value_pointer get() const
+  {
+    return iter_->value();
+  }
+
+  item_ptr relation_item() const
+  {
+    return *iter_;
+  }
 };
 
 template < class T, template <class ...> class C >
