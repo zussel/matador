@@ -94,17 +94,17 @@ public:
 
   value_pointer operator->() const
   {
-    return (*iter_)->value();
+    return *iter_;
   }
 
   value_pointer operator*() const
   {
-    return (*iter_)->value();
+    return *iter_;
   }
 
   value_pointer get() const
   {
-    return (*iter_)->value();
+    return *iter_;
   }
 
   item_ptr relation_item() const

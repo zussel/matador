@@ -54,8 +54,11 @@ public:
 class many_ints
 {
 public:
+  typedef oos::has_many<int, std::list> int_list_t;
+
+public:
   oos::identifier<unsigned long> id;
-  oos::has_many<int, std::list> ints;
+  int_list_t ints;
 
   template < class S >
   void serialize(S &s)

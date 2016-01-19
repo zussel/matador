@@ -4,8 +4,6 @@
 
 #include "HasManyListUnitTest.hpp"
 
-#include "object/object_store.hpp"
-
 using namespace oos;
 using namespace hasmanylist;
 
@@ -59,5 +57,28 @@ void HasManyListUnitTest::test_integer()
 
   object_ptr<many_ints> mi = store.insert(new many_ints);
 
-  mi->ints.push_back(7);
+  UNIT_ASSERT_EQUAL(mi->ints.size(), 0UL, "pointer vector is not empty");
+
+  for (int i = 0; i < 20; ++i) {
+    mi->ints.push_back(i);
+  }
+
+  UNIT_ASSERT_EQUAL(mi->ints.size(), 20UL, "pointer vector has invalid size");
+
+  many_ints::int_list_t::iterator i = mi->ints.begin();
+
+  UNIT_ASSERT_EQUAL(*i, 0, "item is invalid");
+
+//  i += 4;
+//  ival = 4;
+//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+//
+//  i = itemvector->erase(i);
+//
+////  cout << "\n";
+//
+////  std::for_each(itemvector->begin(), itemvector->end(), print);
+//
+//  UNIT_ASSERT_EQUAL((int)(*i)->index(), ival, "item is invalid");
+//  UNIT_ASSERT_EQUAL((int)itemvector->size(), 19, "itemvector size isn't valid");
 }
