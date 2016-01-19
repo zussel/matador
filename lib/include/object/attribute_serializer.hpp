@@ -127,7 +127,7 @@ public:
     if (id_ != id) {
       return;
     }
-    if (len < len_) {
+    if (len > len_) {
       strcpy(to, from_);
       this->success_ = true;
     }
