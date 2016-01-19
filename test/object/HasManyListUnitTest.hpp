@@ -1,9 +1,9 @@
 //
-// Created by sascha on 31.12.15.
+// Created by sascha on 1/19/16.
 //
 
-#ifndef OOS_HASMANYUNITTEST_HPP
-#define OOS_HASMANYUNITTEST_HPP
+#ifndef OOS_HASMANYLISTUNITTEST_HPP
+#define OOS_HASMANYLISTUNITTEST_HPP
 
 
 #include "unit/unit_test.hpp"
@@ -11,7 +11,7 @@
 #include "object/identifier.hpp"
 #include "object/has_many.hpp"
 
-namespace hasmanyvector {
+namespace hasmanylist {
 
 class item
 {
@@ -35,7 +35,7 @@ class owner
 public:
   oos::identifier<unsigned long> id;
   std::string name;
-  oos::has_many<item> items;
+  oos::has_many<item, std::list> items;
 
   owner() {}
   explicit owner(const std::string &n) : name(n) {}
@@ -55,7 +55,7 @@ class many_ints
 {
 public:
   oos::identifier<unsigned long> id;
-  oos::has_many<int> ints;
+  oos::has_many<int, std::list> ints;
 
   template < class S >
   void serialize(S &s)
@@ -67,11 +67,13 @@ public:
 
 }
 
-class HasManyVectorUnitTest : public oos::unit_test
+class HasManyListUnitTest : public oos::unit_test
 {
+
 public:
-  HasManyVectorUnitTest();
-  virtual ~HasManyVectorUnitTest();
+
+  HasManyListUnitTest();
+  virtual ~HasManyListUnitTest();
 
   virtual void initialize() override;
   virtual void finalize() override;
@@ -80,4 +82,5 @@ public:
   void test_integer();
 };
 
-#endif //OOS_HASMANYUNITTEST_HPP
+
+#endif //OOS_HASMANYLISTUNITTEST_HPP

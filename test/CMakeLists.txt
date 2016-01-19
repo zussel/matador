@@ -19,7 +19,7 @@ SET (TEST_TOOLS_SOURCES
   tools/StringTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp)
+SET (TEST_HEADER Item.hpp object/HasManyListUnitTest.cpp object/HasManyListUnitTest.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -57,7 +57,7 @@ SET (TEST_DATABASE_SOURCES
   database/TransactionTestUnit.hpp
         database/SQLTestUnit.cpp database/SQLTestUnit.hpp)
 
-SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
+SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp object/HasManyListUnitTest.cpp object/HasManyListUnitTest.hpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}

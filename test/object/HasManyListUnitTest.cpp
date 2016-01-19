@@ -1,28 +1,28 @@
 //
-// Created by sascha on 31.12.15.
+// Created by sascha on 1/19/16.
 //
 
-#include "HasManyVectorUnitTest.hpp"
+#include "HasManyListUnitTest.hpp"
 
 #include "object/object_store.hpp"
 
 using namespace oos;
-using namespace hasmanyvector;
+using namespace hasmanylist;
 
-HasManyVectorUnitTest::HasManyVectorUnitTest()
-  : unit_test("vector", "has many vector unit tests")
+HasManyListUnitTest::HasManyListUnitTest()
+  : unit_test("list", "has many list unit tests")
 {
-  add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
-  add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of ints");
+  add_test("join", std::bind(&HasManyListUnitTest::test_join_table, this), "test list join table");
+  add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
 }
 
-HasManyVectorUnitTest::~HasManyVectorUnitTest() { }
+HasManyListUnitTest::~HasManyListUnitTest() { }
 
-void HasManyVectorUnitTest::initialize() {}
+void HasManyListUnitTest::initialize() { }
 
-void HasManyVectorUnitTest::finalize() {}
+void HasManyListUnitTest::finalize() { }
 
-void HasManyVectorUnitTest::test_join_table()
+void HasManyListUnitTest::test_join_table()
 {
   object_store store;
 
@@ -51,7 +51,7 @@ void HasManyVectorUnitTest::test_join_table()
   UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
 }
 
-void HasManyVectorUnitTest::test_integer()
+void HasManyListUnitTest::test_integer()
 {
   object_store store;
 

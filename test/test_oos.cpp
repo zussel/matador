@@ -32,6 +32,7 @@
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"
+#include "object/HasManyListUnitTest.hpp"
 
 //#include "database/DatabaseTestUnit.hpp"
 //#include "database/SessionTestUnit.hpp"
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
 
   suite.register_unit(new DateTestUnit());
   suite.register_unit(new TimeTestUnit());
-//  suite.register_unit(new BlobTestUnit());
+  suite.register_unit(new BlobTestUnit());
   suite.register_unit(new VarCharTestUnit());
   suite.register_unit(new FactoryTestUnit());
   suite.register_unit(new StringTestUnit());
@@ -73,6 +74,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new ObjectPrototypeTestUnit());
   suite.register_unit(new ObjectStoreTestUnit());
   suite.register_unit(new HasManyVectorUnitTest());
+  suite.register_unit(new HasManyListUnitTest());
+
 //  suite.register_unit(new ObjectListTestUnit());
 //  suite.register_unit(new ObjectVectorTestUnit());
 
