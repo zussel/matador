@@ -12,23 +12,17 @@
 
 namespace oos {
 
-template < class T, template <class ...> class C >
-class basic_has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::list>::value>::type>
-  : public std::iterator<std::bidirectional_iterator_tag, T>
+template < class T, class I >
+class basic_has_many_list_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 {
 public:
-  typedef basic_has_many_iterator<T, C> self;
-  typedef object_ptr<T> value_pointer;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> value_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef C<value_type, std::allocator<value_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
+  typedef basic_has_many_list_iterator<T, I> self;
+  typedef I container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 
 public:
-  basic_has_many_iterator() {}
-  explicit basic_has_many_iterator(container_iterator iter)
+  basic_has_many_list_iterator() {}
+  explicit basic_has_many_list_iterator(container_iterator iter)
     : iter_(iter)
   {}
 
@@ -93,8 +87,6 @@ public:
   }
 
 protected:
-  friend class has_many<T, C>;
-  friend class basic_has_many<T, C>;
 
   container_iterator iter_;
 };
@@ -103,9 +95,10 @@ template < class T, template <class ...> class C >
 class has_many_iterator<T, C, typename std::enable_if<
   is_same_container_type<C, std::list>::value &&
   !std::is_scalar<T>::value>::type
-> : public basic_has_many_iterator<T, C>
+> : public basic_has_many_list_iterator<T, typename C<T, std::allocator<T>>::iterator>
 {
 public:
+  typedef basic_has_many_list_iterator<T, typename C<T, std::allocator<T>>::iterator> base;
   typedef has_many_iterator<T, C> self;
   typedef object_ptr<T> value_pointer;
   typedef has_many_item<T> item_type;
@@ -118,28 +111,28 @@ public:
 public:
   has_many_iterator() {}
   explicit has_many_iterator(container_iterator iter)
-    : basic_has_many_iterator(iter)
+    : base(iter)
   {}
   ~has_many_iterator() {}
 
   value_pointer operator->() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
   value_pointer operator*() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
   value_pointer get() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
   item_ptr relation_item() const
   {
-    return *iter_;
+    return *this->iter_;
   }
 };
 
@@ -147,14 +140,14 @@ template < class T, template <class ...> class C >
 class has_many_iterator<T, C, typename std::enable_if<
   is_same_container_type<C, std::list>::value &&
   std::is_scalar<T>::value>::type
-> : public basic_has_many_iterator<T, C>
+> : public basic_has_many_list_iterator<T, typename C<T, std::allocator<T>>::iterator>
 {
 public:
   typedef has_many_iterator<T, C> self;
-  typedef object_ptr<T> value_pointer;
+  typedef basic_has_many_list_iterator<T, typename C<T, std::allocator<T>>::iterator> base;
+  typedef T value_type;
   typedef has_many_item<T> item_type;
-  typedef has_one<item_type> value_type;
-  typedef object_ptr<item_type> item_ptr;
+  typedef object_ptr<item_type> item_pointer;
   typedef C<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
@@ -162,28 +155,28 @@ public:
 public:
   has_many_iterator() {}
   explicit has_many_iterator(container_iterator iter)
-    : basic_has_many_iterator(iter)
+    : base(iter)
   {}
   ~has_many_iterator() {}
 
-  value_pointer operator->() const
+  value_type operator->() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
-  value_pointer operator*() const
+  value_type operator*() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
-  value_pointer get() const
+  value_type get() const
   {
-    return iter_->value();
+    return this->iter_->value();
   }
 
-  item_ptr relation_item() const
+  item_pointer relation_item() const
   {
-    return *iter_;
+    return *this->iter_;
   }
 };
 
@@ -286,8 +279,7 @@ class has_many<T, C, typename std::enable_if<
 public:
 
   typedef basic_has_many<T, C> base;
-  typedef typename base::item_type item_type;
-  typedef typename base::value_type value_type;
+  typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
   typedef typename container_type::size_type size_type;
@@ -305,16 +297,12 @@ public:
 
   void push_front(const oos::object_ptr<T> &value)
   {
-    // create new has_many
-    value_type item = create_item(value);
-    this->container_.push_front(item);
+    insert(this->begin(), value);
   }
 
   void push_back(const oos::object_ptr<T> &value)
   {
-    // create new has_many
-    value_type item = create_item(value);
-    this->container_.push_back(item);
+    insert(this->end(), value);
   }
 
 private:
@@ -333,8 +321,7 @@ class has_many<T, C, typename std::enable_if<
 public:
 
   typedef basic_has_many<T, C> base;
-  typedef typename base::item_type item_type;
-  typedef typename base::value_type value_type;
+  typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
 

@@ -26,8 +26,8 @@ template < class T >
 class has_many_item<T, typename std::enable_if<!std::is_scalar<T>::value>::type >
 {
 public:
-  typedef T value_type;
-  typedef object_ptr<T> value_pointer;
+  typedef T object_type;
+  typedef object_ptr<object_type> value_type;
 
 public:
 
@@ -56,7 +56,7 @@ public:
     serializer.serialize(item_id_.c_str(), item_, cascade_type::NONE);
   }
 
-  value_pointer value() const
+  value_type value() const
   {
     return item_;
   }
@@ -161,10 +161,10 @@ class basic_has_many;
 template < class T, template <class ...> class C = std::vector, class Enable = void >
 class has_many;
 
-template < class T, template <class ...> class C = std::vector, class Enable = void >
+template < class T, template <class ...> class C, class Enable = void >
 class has_many_iterator;
 
-template < class T, template <class ...> class C = std::vector, class Enable = void >
+template < class T, template <class ...> class C, class Enable = void >
 class const_has_many_iterator;
 
 
@@ -191,17 +191,10 @@ class basic_has_many : public abstract_has_many
 {
 public:
   typedef basic_has_many<T, C> base;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> value_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef C<value_type, std::allocator<value_type>> container_type;
-  typedef has_many_iterator<T,C> iterator;
+  typedef has_many_iterator<T, C> iterator;
+  typedef typename iterator::container_type container_type;
   typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
-  typedef typename container_type::iterator container_iterator;
-
-  typedef value_type& reference;
-  typedef value_type* pointer;
 
 public:
   iterator begin() { return iterator(container_.begin()); }

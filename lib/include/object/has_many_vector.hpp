@@ -221,8 +221,7 @@ class has_many<T, C, typename std::enable_if<
 public:
 
   typedef basic_has_many<T, C> base;
-  typedef typename base::item_type item_type;
-  typedef typename base::value_type value_type;
+  typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
   typedef typename container_type::size_type size_type;
@@ -268,8 +267,7 @@ class has_many<T, C, typename std::enable_if<
 public:
 
   typedef basic_has_many<T, C> base;
-  typedef typename base::item_type item_type;
-  typedef typename base::value_type value_type;
+  typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
   typedef typename container_type::size_type size_type;
