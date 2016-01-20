@@ -148,7 +148,7 @@ public:
   typedef T value_type;
   typedef has_many_item<T> item_type;
   typedef object_ptr<item_type> item_pointer;
-  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef C<item_type, std::allocator<item_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 
