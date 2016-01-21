@@ -193,6 +193,7 @@ public:
   typedef basic_has_many<T, C> base;
   typedef has_many_iterator<T, C> iterator;
   typedef typename iterator::container_type container_type;
+  typedef typename iterator::item_ptr item_ptr;
   typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
 
