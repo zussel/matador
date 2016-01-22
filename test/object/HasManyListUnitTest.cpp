@@ -11,6 +11,7 @@ HasManyListUnitTest::HasManyListUnitTest()
   : unit_test("list", "has many list unit tests")
 {
   add_test("join", std::bind(&HasManyListUnitTest::test_join_table, this), "test list join table");
+  add_test("const_iterator", std::bind(&HasManyListUnitTest::test_const_iterator, this), "test list const iterator");
   add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
 }
 
@@ -47,6 +48,11 @@ void HasManyListUnitTest::test_join_table()
   o->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+}
+
+void HasManyListUnitTest::test_const_iterator()
+{
+
 }
 
 void HasManyListUnitTest::test_integer()
