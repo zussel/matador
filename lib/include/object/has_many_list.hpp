@@ -162,9 +162,13 @@ public:
 
 public:
   has_many_iterator() {}
-  explicit has_many_iterator(container_iterator iter)
-    : iter_(iter)
-  {}
+  has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  explicit has_many_iterator(container_iterator iter) : iter_(iter) {}
+  has_many_iterator& operator=(const self &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
   ~has_many_iterator() {}
 
   bool operator==(const self &i) const { return (iter_ == i.iter_); }
@@ -205,6 +209,7 @@ public:
 
 protected:
   friend class has_many<T, C>;
+  friend class const_has_many_iterator<T, C>;
   friend class basic_has_many<T, C>;
 
   container_iterator iter_;
@@ -228,12 +233,20 @@ public:
 
 public:
   const_has_many_iterator() {}
-  explicit const_has_many_iterator(container_iterator iter)
-    : iter_(iter)
-  {}
-  explicit const_has_many_iterator(const_container_iterator iter)
-    : iter_(iter)
-  {}
+  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  explicit const_has_many_iterator(container_iterator iter) : iter_(iter) {}
+  explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
+  const_has_many_iterator(const has_many_iterator<T, C> &iter) : iter_(iter.iter_) {}
+  const_has_many_iterator& operator=(const self &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
+  const_has_many_iterator& operator=(const has_many_iterator<T, C> &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
   ~const_has_many_iterator() {}
 
   bool operator==(const self &i) const { return (iter_ == i.iter_); }

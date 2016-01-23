@@ -52,7 +52,17 @@ void HasManyListUnitTest::test_join_table()
 
 void HasManyListUnitTest::test_const_iterator()
 {
+  many_ints mi;
 
+  mi.ints.push_back(7);
+  mi.ints.push_back(1);
+  mi.ints.insert(mi.ints.begin(), 6);
+
+  many_ints::int_list_t::const_iterator first = mi.ints.begin();
+  many_ints::int_list_t::iterator i = mi.ints.end();
+  many_ints::int_list_t::const_iterator last = i;
+
+  
 }
 
 void HasManyListUnitTest::test_integer()
