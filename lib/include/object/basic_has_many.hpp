@@ -158,7 +158,7 @@ private:
 template < class T, template <class ...> class C = std::vector >
 class basic_has_many;
 
-template < class T, template <class ...> class C = std::vector, class Enable = void >
+template < class T, template <class ...> class C = std::vector, class Enable = void  >
 class has_many;
 
 template < class T, template <class ...> class C, class Enable = void >

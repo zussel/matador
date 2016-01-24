@@ -12,16 +12,16 @@
 
 namespace oos {
 
-template < class T, template <class ...> class C >
-class has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
+template < class T >
+class has_many_iterator<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
 {
 public:
-  typedef has_many_iterator<T, C> self;
+  typedef has_many_iterator<T, std::vector> self;
   typedef object_ptr<T> value_pointer;
   typedef has_many_item<T> item_type;
   typedef has_one<item_type> value_type;
   typedef object_ptr<item_type> item_ptr;
-  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef std::vector<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
 
@@ -113,22 +113,22 @@ public:
   }
 
 private:
-  friend class has_many<T, C>;
-  friend class basic_has_many<T, C>;
+  friend class has_many<T, std::vector>;
+  friend class basic_has_many<T, std::vector>;
 
   container_iterator iter_;
 };
 
-template < class T, template <class ...> class C >
-class const_has_many_iterator<T, C, typename std::enable_if<is_same_container_type<C, std::vector>::value>::type>
+template < class T >
+class const_has_many_iterator<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
 {
 public:
-  typedef const_has_many_iterator<T, C> self;
+  typedef const_has_many_iterator<T, std::vector> self;
   typedef object_ptr<T> value_pointer;
   typedef has_many_item<T> item_type;
   typedef has_one<item_type> value_type;
-  typedef C<value_type, std::allocator<value_type>> container_type;
+  typedef std::vector<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
 public:
@@ -203,8 +203,8 @@ public:
 
 private:
 //  template < class T, template <class ...> class C >
-  friend class has_many<T, C>;
-  friend class basic_has_many<T, C>;
+  friend class has_many<T, std::vector>;
+  friend class basic_has_many<T, std::vector>;
 
   const_container_iterator iter_;
 };
@@ -212,15 +212,12 @@ private:
 /**
  * has_many with std::vector
  */
-template < class T, template <class ...> class C >
-class has_many<T, C, typename std::enable_if<
-  is_same_container_type<C, std::vector>::value &&
-  !std::is_scalar<T>::value>::type
-> : public basic_has_many<T, C>
+template < class T >
+class has_many<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type> : public basic_has_many<T, std::vector>
 {
 public:
 
-  typedef basic_has_many<T, C> base;
+  typedef basic_has_many<T, std::vector> base;
   typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
@@ -258,15 +255,155 @@ private:
   bool indexed_ = false;
 };
 
-template < class T, template <class ...> class C >
-class has_many<T, C, typename std::enable_if<
-  is_same_container_type<C, std::vector>::value &&
-  std::is_scalar<T>::value>::type
-> : public basic_has_many<T, C>
+template < class T >
+class has_many_iterator<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
+{
+public:
+  typedef has_many_iterator<T, std::vector> self;
+  typedef T value_type;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> has_value;
+  typedef object_ptr<item_type> item_ptr;
+  typedef std::vector<has_value, std::allocator<has_value>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
+
+public:
+  has_many_iterator() {}
+  has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  explicit has_many_iterator(container_iterator iter) : iter_(iter) {}
+  has_many_iterator& operator=(const self &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
+  ~has_many_iterator() {}
+
+  bool operator==(const self &i) const { return (iter_ == i.iter_); }
+  bool operator!=(const self &i) const { return !this->operator==(i); }
+
+  friend difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
+
+  self& operator++()
+  {
+    ++iter_;
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    self tmp = *this;
+    ++iter_;
+    return tmp;
+  }
+
+  self& operator--()
+  {
+    --iter_;
+    return *this;
+  }
+
+  self operator--(int)
+  {
+    self tmp = *this;
+    --iter_;
+    return tmp;
+  }
+
+  value_type operator->() const { return (*iter_)->value(); }
+  value_type operator*() const { return (*iter_)->value(); }
+  value_type get() const { return (*iter_)->value(); }
+  item_ptr relation_item() const { return *iter_; }
+
+private:
+  friend class has_many<T, std::vector>;
+  friend class const_has_many_iterator<T, std::vector>;
+  friend class basic_has_many<T, std::vector>;
+
+  container_iterator iter_;
+};
+
+template < class T >
+class const_has_many_iterator<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+{
+public:
+  typedef const_has_many_iterator<T, std::vector> self;
+  typedef T value_type;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> has_value;
+  typedef object_ptr<item_type> item_ptr;
+  typedef std::vector<has_value, std::allocator<has_value>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename container_type::const_iterator const_container_iterator;
+
+public:
+  const_has_many_iterator() {}
+  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+  explicit const_has_many_iterator(container_iterator iter) : iter_(iter) {}
+  explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
+  const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
+  const_has_many_iterator& operator=(const self &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
+  const_has_many_iterator& operator=(const has_many_iterator<T, std::vector> &iter)
+  {
+    iter_ = iter.iter_;
+    return *this;
+  }
+  ~const_has_many_iterator() {}
+
+  bool operator==(const self &i) const { return (iter_ == i.iter_); }
+  bool operator!=(const self &i) const { return !this->operator==(i); }
+
+  friend typename self::difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
+
+  self& operator++()
+  {
+    ++iter_;
+    return *this;
+  }
+
+  self operator++(int)
+  {
+    self tmp = *this;
+    ++iter_;
+    return tmp;
+  }
+
+  self& operator--()
+  {
+    --iter_;
+    return *this;
+  }
+
+  self operator--(int)
+  {
+    self tmp = *this;
+    --iter_;
+    return tmp;
+  }
+
+  value_type operator->() const { return (*iter_)->value(); }
+  value_type operator*() const { return (*iter_)->value(); }
+  value_type get() const { return (*iter_)->value(); }
+  item_ptr relation_item() const { return *iter_; }
+
+private:
+  friend class has_many<T, std::vector>;
+  friend class basic_has_many<T, std::vector>;
+
+  const_container_iterator iter_;
+};
+
+template < class T >
+class has_many<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_has_many<T, std::vector>
 {
 public:
 
-  typedef basic_has_many<T, C> base;
+  typedef basic_has_many<T, std::vector> base;
   typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;

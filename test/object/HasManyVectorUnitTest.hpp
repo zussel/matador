@@ -54,8 +54,10 @@ public:
 class many_ints
 {
 public:
+  typedef oos::has_many<int> int_vector_t;
+public:
   oos::identifier<unsigned long> id;
-  oos::has_many<int> ints;
+  int_vector_t ints;
 
   template < class S >
   void serialize(S &s)

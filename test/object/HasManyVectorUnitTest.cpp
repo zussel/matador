@@ -59,5 +59,23 @@ void HasManyVectorUnitTest::test_integer()
 
   object_ptr<many_ints> mi = store.insert(new many_ints);
 
-  mi->ints.push_back(7);
+  UNIT_ASSERT_EQUAL(mi->ints.size(), 0UL, "pointer vector is not empty");
+
+  for (int i = 0; i < 20; ++i) {
+    mi->ints.push_back(i);
+  }
+
+  UNIT_ASSERT_EQUAL(mi->ints.size(), 20UL, "pointer vector has invalid size");
+
+  many_ints::int_vector_t::iterator i = mi->ints.begin();
+
+  UNIT_ASSERT_EQUAL(*i, 0, "item is invalid");
+
+  i++;
+
+  UNIT_ASSERT_EQUAL(*i, 1, "item is invalid");
+
+  many_ints::int_vector_t::item_ptr iptr = i.relation_item();
+
+  UNIT_ASSERT_EQUAL(iptr->value(), 1, "item is invalid");
 }
