@@ -822,7 +822,7 @@ void ObjectStoreTestUnit::test_structure_container()
 
   ostore.insert(childrens);
 
-  object_ptr<child> c1 = childrens->children.begin().get();
+  object_ptr<child> c1 = *childrens->children.begin();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
   UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be zero");

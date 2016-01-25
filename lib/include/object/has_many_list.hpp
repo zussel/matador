@@ -177,6 +177,10 @@ public:
     insert(this->end(), value);
   }
 
+  iterator erase(iterator i)
+  {
+    return i;
+  }
 private:
   item_type* create_item(const object_ptr<T> &value)
   {
