@@ -62,7 +62,25 @@ void HasManyListUnitTest::test_const_iterator()
   many_ints::int_list_t::iterator i = mi.ints.end();
   many_ints::int_list_t::const_iterator last = i;
 
-  
+  UNIT_ASSERT_FALSE(first == last, "first and last must not be equal");
+  UNIT_ASSERT_TRUE(first == mi.ints.begin(), "first must be equal begin()");
+  UNIT_ASSERT_TRUE(last == mi.ints.end(), "last must be equal end()");
+
+  ++first;
+
+  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+
+  first++;
+
+  UNIT_ASSERT_EQUAL(*first, 1, "value of first must be '1'");
+
+  first--;
+
+  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+
+  --first;
+
+  UNIT_ASSERT_EQUAL(*first, 6, "value of first must be '6'");
 }
 
 void HasManyListUnitTest::test_integer()

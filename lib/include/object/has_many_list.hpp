@@ -315,16 +315,16 @@ public:
     return tmp;
   }
 
-  value_type operator->() const { return (*iter_)->value(); }
-  value_type operator*() const { return (*iter_)->value(); }
-  value_type get() const { return iter_->value(); }
-  item_ptr relation_item() const { return *iter_; }
+  const value_type operator->() const { return get(); }
+  const value_type operator*() const { return get(); }
+  const value_type get() const { return (*iter_)->value(); }
+  const item_ptr relation_item() const { return *iter_; }
 
 protected:
   friend class has_many<T, std::list>;
   friend class basic_has_many<T, std::list>;
 
-  container_iterator iter_;
+  const_container_iterator iter_;
 };
 
 template < class T >

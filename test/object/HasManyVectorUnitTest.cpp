@@ -13,6 +13,7 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
   : unit_test("vector", "has many vector unit tests")
 {
   add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
+  add_test("const_iterator", std::bind(&HasManyVectorUnitTest::test_const_iterator, this), "test vector const iterator");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of ints");
 }
 
@@ -49,6 +50,39 @@ void HasManyVectorUnitTest::test_join_table()
   o->items.push_back(new item("i2"));
 
   UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+}
+
+void HasManyVectorUnitTest::test_const_iterator()
+{
+  many_ints mi;
+
+  mi.ints.push_back(7);
+  mi.ints.push_back(1);
+  mi.ints.insert(mi.ints.begin(), 6);
+
+  many_ints::int_vector_t::const_iterator first = mi.ints.begin();
+  many_ints::int_vector_t::iterator i = mi.ints.end();
+  many_ints::int_vector_t::const_iterator last = i;
+
+  UNIT_ASSERT_FALSE(first == last, "first and last must not be equal");
+  UNIT_ASSERT_TRUE(first == mi.ints.begin(), "first must be equal begin()");
+  UNIT_ASSERT_TRUE(last == mi.ints.end(), "last must be equal end()");
+
+  ++first;
+
+  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+
+  first++;
+
+  UNIT_ASSERT_EQUAL(*first, 1, "value of first must be '1'");
+
+  first--;
+
+  UNIT_ASSERT_EQUAL(*first, 7, "value of first must be '7'");
+
+  --first;
+
+  UNIT_ASSERT_EQUAL(*first, 6, "value of first must be '6'");
 }
 
 void HasManyVectorUnitTest::test_integer()

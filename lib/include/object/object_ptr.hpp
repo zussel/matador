@@ -69,7 +69,12 @@ public:
 
   T* operator->()
   {
-    return static_cast<T*>(proxy_->obj());
+    return get();
+  }
+
+  const T* operator->() const
+  {
+    return get();
   }
 
   T* get()

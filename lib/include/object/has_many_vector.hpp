@@ -386,10 +386,10 @@ public:
     return tmp;
   }
 
-  value_type operator->() const { return (*iter_)->value(); }
-  value_type operator*() const { return (*iter_)->value(); }
-  value_type get() const { return (*iter_)->value(); }
-  item_ptr relation_item() const { return *iter_; }
+  const value_type operator->() const { return get(); }
+  const value_type operator*() const { return get(); }
+  const value_type get() const { return (*iter_)->value(); }
+  const item_ptr relation_item() const { return *iter_; }
 
 private:
   friend class has_many<T, std::vector>;

@@ -122,7 +122,12 @@ public:
     serializer.serialize(item_name_.c_str(), item_);
   }
 
-  value_type value() const
+  value_type value()
+  {
+    return item_;
+  }
+
+  const value_type value() const
   {
     return item_;
   }

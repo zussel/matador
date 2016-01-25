@@ -79,6 +79,7 @@ public:
   virtual void finalize() override;
 
   void test_join_table();
+  void test_const_iterator();
   void test_integer();
 };
 
