@@ -781,11 +781,11 @@ public:
   void serialize(SERIALIZER &w) {
     w.serialize("id", id);
     w.serialize("name", name);
-    w.serialize("cycler", cycler);
+    w.serialize("cycler", cycler, cascade_type::NONE);
   }
   oos::identifier<unsigned long> id;
   std::string name;
-  object_ptr<cyclic> cycler;
+  has_one<cyclic> cycler;
 };
 
 void ObjectStoreTestUnit::test_structure_cyclic()
@@ -804,7 +804,7 @@ void ObjectStoreTestUnit::test_structure_cyclic()
 
   cyclic_ptr cptr = ostore.insert(c1);
 
-  UNIT_ASSERT_EQUAL(cptr.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(cptr.reference_count(), 1UL, "reference count must be zero");
   UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be one");
 }
 
