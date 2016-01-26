@@ -201,6 +201,7 @@ public:
   typedef typename iterator::item_ptr item_ptr;
   typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
+  typedef typename container_type::iterator container_iterator;
 
 public:
   iterator begin() { return iterator(container_.begin()); }
@@ -212,10 +213,6 @@ public:
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
-  iterator erase(iterator i)
-  {
-    return iterator(container_.erase(i.iter_));
-  }
   iterator erase(iterator start, iterator end)
   {
     return iterator(container_.erase(start.iter_, end.iter_));

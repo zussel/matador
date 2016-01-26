@@ -33,9 +33,10 @@ public:
 class owner
 {
 public:
+  typedef oos::has_many<item> item_vector_t;
   oos::identifier<unsigned long> id;
   std::string name;
-  oos::has_many<item> items;
+  item_vector_t items;
 
   owner() {}
   explicit owner(const std::string &n) : name(n) {}
@@ -80,6 +81,7 @@ public:
 
   void test_join_table();
   void test_const_iterator();
+  void test_erase();
   void test_integer();
 };
 

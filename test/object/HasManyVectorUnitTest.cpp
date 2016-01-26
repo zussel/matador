@@ -85,6 +85,29 @@ void HasManyVectorUnitTest::test_const_iterator()
   UNIT_ASSERT_EQUAL(*first, 6, "value of first must be '6'");
 }
 
+void HasManyVectorUnitTest::test_erase()
+{
+  object_store store;
+
+  store.attach<item>("item");
+  store.attach<owner>("owner");
+
+  object_ptr<owner> o = store.insert(new owner("hans"));
+  object_ptr<item> i1 = store.insert(new item("i1"));
+
+  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+
+  o->items.push_back(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(new item("i2"));
+
+  owner::item_vector_t::iterator i = o->items.begin();
+
+  o->items.erase(i);
+}
+
 void HasManyVectorUnitTest::test_integer()
 {
   object_store store;

@@ -216,12 +216,10 @@ template < class T >
 class has_many<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type> : public basic_has_many<T, std::vector>
 {
 public:
-
   typedef basic_has_many<T, std::vector> base;
   typedef has_many_item<T> item_type;
   typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
-  typedef typename container_type::size_type size_type;
 
   has_many() {}
 
@@ -238,6 +236,15 @@ public:
 //      ostore_->mark_modified()
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
+  }
+
+  iterator erase(iterator i)
+  {
+    if (this->ostore_) {
+      this->ostore_->remove(*i);
+    }
+    typename base::container_iterator ci = container_.erase(i.iter_);
+    return iterator(ci);
   }
 
   void push_back(const oos::object_ptr<T> &value)
@@ -426,6 +433,15 @@ public:
 //      ostore_->mark_modified()
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
+  }
+
+  iterator erase(iterator i)
+  {
+    if (this->ostore_) {
+      this->ostore_->remove(*i);
+    }
+    container_iterator ci = container_.erase(i.iter_);
+    return iterator(ci);
   }
 
   void push_back(T value)
