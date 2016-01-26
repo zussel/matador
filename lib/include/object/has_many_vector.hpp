@@ -32,31 +32,11 @@ public:
   {}
   ~has_many_iterator() {}
 
-  /**
-   * @brief Compares this with another iterators.
-   *
-   * Compares this with another iterators. Returns true
-   * if the iterators current container iterator and
-   * others iterator are the same.
-   *
-   * @param i The iterator to compare with.
-   * @return True if the iterators are the same.
-   */
   bool operator==(const self &i) const
   {
     return (iter_ == i.iter_);
   }
 
-  /**
-   * @brief Compares this with another iterators.
-   *
-   * Compares this with another iterators. Returns true
-   * if the iterators current containers iterator and
-   * others iterator are not the same.
-   *
-   * @param i The iterator to compare with.
-   * @return True if the iterators are not the same.
-   */
   bool operator!=(const self &i) const
   {
     return !this->operator==(i);
@@ -90,6 +70,38 @@ public:
   self operator--(int)
   {
     return self();
+  }
+
+  self& operator+=(difference_type offset)
+  {
+    iter_ += offset;
+    return *this;
+
+  }
+
+  self& operator-=(difference_type offset)
+  {
+    iter_ -= offset;
+    return *this;
+
+  }
+
+  self operator+(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp += offset;
+  }
+
+  self operator-(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp -= offset;
+  }
+
+  friend const self operator+(difference_type offset, self out)
+  {
+    out.iter_ += offset;
+    return out;
   }
 
   value_pointer operator->() const
@@ -131,6 +143,8 @@ public:
   typedef std::vector<value_type, std::allocator<value_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
+  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
 public:
   const_has_many_iterator() {}
   explicit const_has_many_iterator(container_iterator iter)
@@ -141,31 +155,11 @@ public:
   {}
   ~const_has_many_iterator() {}
 
-  /**
-   * @brief Compares this with another iterators.
-   *
-   * Compares this with another iterators. Returns true
-   * if the iterators current container iterator and
-   * others iterator are the same.
-   *
-   * @param i The iterator to compare with.
-   * @return True if the iterators are the same.
-   */
   bool operator==(const self &i) const
   {
     return (iter_ == i.iter_);
   }
 
-  /**
-   * @brief Compares this with another iterators.
-   *
-   * Compares this with another iterators. Returns true
-   * if the iterators current containers iterator and
-   * others iterator are not the same.
-   *
-   * @param i The iterator to compare with.
-   * @return True if the iterators are not the same.
-   */
   bool operator!=(const self &i) const
   {
     return !this->operator==(i);
@@ -196,9 +190,21 @@ public:
     return self();
   }
 
+  friend const self operator+(difference_type offset, self out)
+  {
+    out.iter_ += offset;
+    return out;
+  }
+
+  friend const self operator+(self out, difference_type offset)
+  {
+    out.iter_ += offset;
+    return out;
+  }
+
   value_pointer operator->() const
   {
-    return iter_->value();
+    return (*iter_)->value();
   }
 
 private:
@@ -238,18 +244,31 @@ public:
     return iterator(this->container_.insert(pos.iter_, iptr));
   }
 
-  iterator erase(iterator i)
-  {
-    if (this->ostore_) {
-      this->ostore_->remove(*i);
-    }
-    typename base::container_iterator ci = container_.erase(i.iter_);
-    return iterator(ci);
-  }
-
   void push_back(const oos::object_ptr<T> &value)
   {
     insert(this->end(), value);
+  }
+
+  iterator erase(iterator i)
+  {
+    if (this->ostore_) {
+      typename base::item_ptr iptr = i.relation_item();
+      this->ostore_->remove(iptr);
+    }
+    typename base::container_iterator ci = this->container_.erase(i.iter_);
+    return iterator(ci);
+  }
+
+  iterator erase(iterator start, iterator end)
+  {
+    iterator i = start;
+    if (this->ostore_) {
+      while (i != end) {
+          typename base::item_ptr iptr = (i++).relation_item();
+          this->ostore_->remove(iptr);
+      }
+    }
+    return iterator(this->container_.erase(start.iter_, end.iter_));
   }
 
 private:
@@ -440,8 +459,14 @@ public:
     if (this->ostore_) {
       this->ostore_->remove(*i);
     }
-    container_iterator ci = container_.erase(i.iter_);
+    typename base::container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
+  }
+
+  iterator erase(iterator start, iterator end)
+  {
+//    return iterator(container_.erase(start.iter_, end.iter_));
+    return end();
   }
 
   void push_back(T value)

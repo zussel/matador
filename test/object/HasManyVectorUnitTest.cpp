@@ -14,6 +14,7 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
 {
   add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
   add_test("const_iterator", std::bind(&HasManyVectorUnitTest::test_const_iterator, this), "test vector const iterator");
+  add_test("erase", std::bind(&HasManyVectorUnitTest::test_erase, this), "test vector erase elements");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of ints");
 }
 
@@ -103,9 +104,24 @@ void HasManyVectorUnitTest::test_erase()
 
   o->items.push_back(new item("i2"));
 
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+
   owner::item_vector_t::iterator i = o->items.begin();
 
-  o->items.erase(i);
+  i = o->items.erase(i);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(i->name, "i2", "name must be 'i2");
+
+  o->items.push_back(new item("i3"));
+  o->items.push_back(new item("i4"));
+
+  i = o->items.begin();
+
+  i = o->items.erase(i, i+2);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+  UNIT_ASSERT_EQUAL(i->name, "i4", "name must be 'i4'");
 }
 
 void HasManyVectorUnitTest::test_integer()

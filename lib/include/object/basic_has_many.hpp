@@ -213,11 +213,6 @@ public:
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
-  iterator erase(iterator start, iterator end)
-  {
-    return iterator(container_.erase(start.iter_, end.iter_));
-  }
-
   bool has_join_table() const
   {
     return true;
