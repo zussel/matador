@@ -69,7 +69,13 @@ SET(OBJECT_HEADER
 		../include/object/has_many.hpp
 		../include/object/has_one.hpp
 		../include/object/container_type_traits.hpp
-		../include/object/basic_object_holder.hpp ../include/object/cascade_type.hpp ../include/object/basic_has_many.hpp ../include/object/has_many_vector.hpp ../include/object/has_many_list.hpp ../include/object/has_many_set.hpp)
+		../include/object/basic_object_holder.hpp
+		../include/object/cascade_type.hpp
+		../include/object/basic_has_many.hpp
+		../include/object/has_many_vector.hpp
+		../include/object/has_many_list.hpp
+		../include/object/has_many_set.hpp
+)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -117,6 +123,14 @@ SET(TOOLS_HEADER
   ../include/tools/strptime.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
+)
+
+SET(SQL_SOURCE
+	sql/connection.cpp
+)
+
+SET(SQL_HEADER
+	../include/sql/connection.hpp
 )
 
 SET(JSON_SOURCE
