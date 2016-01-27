@@ -233,13 +233,32 @@ public:
     return tmp;
   }
 
-  friend const self operator+(difference_type offset, self out)
+  self& operator+=(difference_type offset)
   {
-    out.iter_ += offset;
-    return out;
+    iter_ += offset;
+    return *this;
   }
 
-  friend const self operator+(self out, difference_type offset)
+  self& operator-=(difference_type offset)
+  {
+    iter_ -= offset;
+    return *this;
+
+  }
+
+  self operator+(difference_type offset) const
+  {
+    self tmp = *this;
+    return tmp += offset;
+  }
+
+  self operator-(difference_type offset) const
+  {
+    self tmp = *this;
+    return tmp -= offset;
+  }
+
+  friend const self operator+(difference_type offset, self out)
   {
     out.iter_ += offset;
     return out;
@@ -268,6 +287,7 @@ public:
   typedef typename base::iterator iterator;
   typedef typename base::value_type value_type;
   typedef typename base::item_type item_type;
+  typedef typename base::size_type size_type;
   typedef typename base::relation_type relation_type;
   typedef typename base::container_iterator container_iterator;
 
@@ -292,6 +312,22 @@ public:
   {
     insert(this->end(), value);
   }
+
+  value_type operator[](size_type index)
+  {
+    return this->container_[index]->value();
+  }
+
+  const value_type operator[](size_type index) const
+  {
+    return this->container_[index]->value();
+  }
+
+  value_type front() { return *this->begin(); }
+  const value_type front() const { return *this->begin(); }
+
+  value_type back() { return *(this->end() - 1); }
+  const value_type back() const { return *(this->end() - 1); }
 
   iterator erase(iterator i)
   {
