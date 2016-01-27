@@ -81,7 +81,8 @@ public:
 
   void test_join_table();
   void test_const_iterator();
-  void test_erase();
+  void test_erase_scalar();
+  void test_erase_object();
   void test_integer();
 };
 

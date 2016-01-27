@@ -1210,7 +1210,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   typename basic_has_many<T, C>::iterator last = x.end();
 
   while (first != last) {
-    typename basic_has_many<T, C>::item_ptr i = (first++).relation_item();
+    typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
     if (!i.is_inserted()) {
       // item is not in store, insert it
       ostore_.insert(i);

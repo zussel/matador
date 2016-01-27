@@ -163,13 +163,19 @@ private:
 template < class T, template <class ...> class C = std::vector >
 class basic_has_many;
 
-template < class T, template <class ...> class C = std::vector, class Enable = void  >
+template < class T, template <class ...> class C = std::vector  >
 class has_many;
 
 template < class T, template <class ...> class C, class Enable = void >
-class has_many_iterator;
+struct has_many_iterator_traits;
 
 template < class T, template <class ...> class C, class Enable = void >
+struct const_has_many_iterator_traits;
+
+template < class T, template <class ...> class C >
+class has_many_iterator;
+
+template < class T, template <class ...> class C >
 class const_has_many_iterator;
 
 
@@ -197,8 +203,10 @@ class basic_has_many : public abstract_has_many
 public:
   typedef basic_has_many<T, C> base;
   typedef has_many_iterator<T, C> iterator;
+  typedef typename iterator::value_type value_type;
+  typedef typename iterator::item_type item_type;
   typedef typename iterator::container_type container_type;
-  typedef typename iterator::item_ptr item_ptr;
+  typedef typename iterator::relation_type relation_type;
   typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
   typedef typename container_type::iterator container_iterator;

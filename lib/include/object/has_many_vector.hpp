@@ -13,286 +13,47 @@
 namespace oos {
 
 template < class T >
-class has_many_iterator<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T>
 {
-public:
-  typedef has_many_iterator<T, std::vector> self;
-  typedef object_ptr<T> value_pointer;
+  typedef has_many_iterator_traits<T, std::vector> self;
+  typedef object_ptr<T> value_type;
   typedef has_many_item<T> item_type;
-  typedef has_one<item_type> value_type;
-  typedef object_ptr<item_type> item_ptr;
-  typedef std::vector<value_type, std::allocator<value_type>> container_type;
+  typedef has_one<item_type> internal_type;
+  typedef object_ptr<item_type> relation_type;
+  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-
-public:
-  has_many_iterator() {}
-  explicit has_many_iterator(container_iterator iter)
-    : iter_(iter)
-  {}
-  ~has_many_iterator() {}
-
-  bool operator==(const self &i) const
-  {
-    return (iter_ == i.iter_);
-  }
-
-  bool operator!=(const self &i) const
-  {
-    return !this->operator==(i);
-  }
-
-  friend difference_type operator-(self a, self b)
-  {
-    return a.iter_ - b.iter_;
-  }
-
-  self& operator++()
-  {
-    ++iter_;
-    return *this;
-  }
-
-  self operator++(int)
-  {
-    self tmp = *this;
-    ++iter_;
-    return tmp;
-  }
-
-  self& operator--()
-  {
-    self tmp = *this;
-    --iter_;
-    return tmp;
-  }
-
-  self operator--(int)
-  {
-    return self();
-  }
-
-  self& operator+=(difference_type offset)
-  {
-    iter_ += offset;
-    return *this;
-
-  }
-
-  self& operator-=(difference_type offset)
-  {
-    iter_ -= offset;
-    return *this;
-
-  }
-
-  self operator+(difference_type offset)
-  {
-    self tmp = *this;
-    return tmp += offset;
-  }
-
-  self operator-(difference_type offset)
-  {
-    self tmp = *this;
-    return tmp -= offset;
-  }
-
-  friend const self operator+(difference_type offset, self out)
-  {
-    out.iter_ += offset;
-    return out;
-  }
-
-  value_pointer operator->() const
-  {
-    return (*iter_)->value();
-  }
-
-  value_pointer operator*() const
-  {
-    return (*iter_)->value();
-  }
-
-  value_pointer get() const
-  {
-    return (*iter_)->value();
-  }
-
-  item_ptr relation_item() const
-  {
-    return *iter_;
-  }
-
-private:
-  friend class has_many<T, std::vector>;
-  friend class basic_has_many<T, std::vector>;
-
-  container_iterator iter_;
 };
 
 template < class T >
-class const_has_many_iterator<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T>
 {
-public:
-  typedef const_has_many_iterator<T, std::vector> self;
-  typedef object_ptr<T> value_pointer;
-  typedef has_many_item<T> item_type;
-  typedef has_one<item_type> value_type;
-  typedef std::vector<value_type, std::allocator<value_type>> container_type;
-  typedef typename container_type::iterator container_iterator;
-  typedef typename container_type::const_iterator const_container_iterator;
-  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
-
-public:
-  const_has_many_iterator() {}
-  explicit const_has_many_iterator(container_iterator iter)
-    : iter_(iter)
-  {}
-  explicit const_has_many_iterator(const_container_iterator iter)
-    : iter_(iter)
-  {}
-  ~const_has_many_iterator() {}
-
-  bool operator==(const self &i) const
-  {
-    return (iter_ == i.iter_);
-  }
-
-  bool operator!=(const self &i) const
-  {
-    return !this->operator==(i);
-  }
-
-  self& operator++()
-  {
-    ++iter_;
-    return *this;
-  }
-
-  self operator++(int)
-  {
-    self tmp = *this;
-    ++iter_;
-    return tmp;
-  }
-
-  self& operator--()
-  {
-    self tmp = *this;
-    --iter_;
-    return tmp;
-  }
-
-  self operator--(int)
-  {
-    return self();
-  }
-
-  friend const self operator+(difference_type offset, self out)
-  {
-    out.iter_ += offset;
-    return out;
-  }
-
-  friend const self operator+(self out, difference_type offset)
-  {
-    out.iter_ += offset;
-    return out;
-  }
-
-  value_pointer operator->() const
-  {
-    return (*iter_)->value();
-  }
-
-private:
-//  template < class T, template <class ...> class C >
-  friend class has_many<T, std::vector>;
-  friend class basic_has_many<T, std::vector>;
-
-  const_container_iterator iter_;
-};
-
-/**
- * has_many with std::vector
- */
-template < class T >
-class has_many<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type> : public basic_has_many<T, std::vector>
-{
-public:
-  typedef basic_has_many<T, std::vector> base;
-  typedef has_many_item<T> item_type;
-  typedef typename base::container_type container_type;
-  typedef typename base::iterator iterator;
-
-  has_many() {}
-
-  iterator insert(iterator pos, const oos::object_ptr<T> &value)
-  {
-    // create new has_many
-    if (indexed_) {
-
-    }
-    item_type *item = this->create_item(value);
-    object_ptr<item_type> iptr(item);
-    if (this->ostore_) {
-      this->ostore_->insert(iptr);
-//      ostore_->mark_modified()
-    }
-    return iterator(this->container_.insert(pos.iter_, iptr));
-  }
-
-  void push_back(const oos::object_ptr<T> &value)
-  {
-    insert(this->end(), value);
-  }
-
-  iterator erase(iterator i)
-  {
-    if (this->ostore_) {
-      typename base::item_ptr iptr = i.relation_item();
-      this->ostore_->remove(iptr);
-    }
-    typename base::container_iterator ci = this->container_.erase(i.iter_);
-    return iterator(ci);
-  }
-
-  iterator erase(iterator start, iterator end)
-  {
-    iterator i = start;
-    if (this->ostore_) {
-      while (i != end) {
-          typename base::item_ptr iptr = (i++).relation_item();
-          this->ostore_->remove(iptr);
-      }
-    }
-    return iterator(this->container_.erase(start.iter_, end.iter_));
-  }
-
-private:
-  item_type* create_item(const object_ptr<T> &value)
-  {
-    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
-  }
-
-private:
-  bool indexed_ = false;
-};
-
-template < class T >
-class has_many_iterator<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type> : public std::iterator<std::random_access_iterator_tag, T>
-{
-public:
-  typedef has_many_iterator<T, std::vector> self;
+  typedef has_many_iterator_traits<T, std::vector> self;
   typedef T value_type;
   typedef has_many_item<T> item_type;
-  typedef has_one<item_type> has_value;
-  typedef object_ptr<item_type> item_ptr;
-  typedef std::vector<has_value, std::allocator<has_value>> container_type;
+  typedef has_one<item_type> internal_type;
+  typedef object_ptr<item_type> relation_type;
+  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
   typedef typename container_type::iterator container_iterator;
-  typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
+  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+};
+
+template < class T >
+class has_many_iterator<T, std::vector>
+  : public has_many_iterator_traits<T, std::vector>
+{
+public:
+  typedef has_many_iterator_traits<T, std::vector> traits;
+  typedef has_many_iterator<T, std::vector> self;
+  typedef typename traits::value_type value_type;
+  typedef typename traits::item_type item_type;
+  typedef typename traits::internal_type internal_type;
+  typedef typename traits::relation_type relation_type;
+  typedef typename traits::container_type container_type;
+  typedef typename traits::container_iterator container_iterator;
+  typedef typename traits::difference_type difference_type;
 
 public:
   has_many_iterator() {}
@@ -336,10 +97,41 @@ public:
     return tmp;
   }
 
+  self& operator+=(difference_type offset)
+  {
+    iter_ += offset;
+    return *this;
+  }
+
+  self& operator-=(difference_type offset)
+  {
+    iter_ -= offset;
+    return *this;
+
+  }
+
+  self operator+(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp += offset;
+  }
+
+  self operator-(difference_type offset)
+  {
+    self tmp = *this;
+    return tmp -= offset;
+  }
+
+  friend const self operator+(difference_type offset, self out)
+  {
+    out.iter_ += offset;
+    return out;
+  }
+
   value_type operator->() const { return (*iter_)->value(); }
   value_type operator*() const { return (*iter_)->value(); }
   value_type get() const { return (*iter_)->value(); }
-  item_ptr relation_item() const { return *iter_; }
+  relation_type relation_item() const { return *iter_; }
 
 private:
   friend class has_many<T, std::vector>;
@@ -350,22 +142,53 @@ private:
 };
 
 template < class T >
-class const_has_many_iterator<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
-  : public std::iterator<std::random_access_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T>
 {
-public:
-  typedef const_has_many_iterator<T, std::vector> self;
-  typedef T value_type;
+  typedef has_many_iterator_traits<T, std::vector> self;
+  typedef object_ptr<T> value_type;
   typedef has_many_item<T> item_type;
-  typedef has_one<item_type> has_value;
-  typedef object_ptr<item_type> item_ptr;
-  typedef std::vector<has_value, std::allocator<has_value>> container_type;
+  typedef has_one<item_type> internal_type;
+  typedef object_ptr<item_type> relation_type;
+  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
   typedef typename container_type::iterator container_iterator;
   typedef typename container_type::const_iterator const_container_iterator;
+  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+};
+
+template < class T >
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+  : public std::iterator<std::random_access_iterator_tag, T>
+{
+  typedef has_many_iterator_traits<T, std::vector> self;
+  typedef T value_type;
+  typedef has_many_item<T> item_type;
+  typedef has_one<item_type> internal_type;
+  typedef object_ptr<item_type> relation_type;
+  typedef std::vector<internal_type, std::allocator<internal_type>> container_type;
+  typedef typename container_type::iterator container_iterator;
+  typedef typename container_type::const_iterator const_container_iterator;
+  typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+};
+
+template < class T >
+class const_has_many_iterator<T, std::vector>
+  : public const_has_many_iterator_traits<T, std::list>
+{
+public:
+  typedef const_has_many_iterator_traits<T, std::vector> traits;
+  typedef const_has_many_iterator<T, std::vector> self;
+  typedef typename traits::value_type value_type;
+  typedef typename traits::item_type item_type;
+  typedef typename traits::internal_type internal_type;
+  typedef typename traits::relation_type relation_type;
+  typedef typename traits::difference_type difference_type;
+  typedef typename traits::container_type container_type;
+  typedef typename traits::container_iterator container_iterator;
+  typedef typename traits::const_container_iterator const_container_iterator;
 
 public:
   const_has_many_iterator() {}
-  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
   explicit const_has_many_iterator(container_iterator iter) : iter_(iter) {}
   explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
   const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
@@ -383,8 +206,6 @@ public:
 
   bool operator==(const self &i) const { return (iter_ == i.iter_); }
   bool operator!=(const self &i) const { return !this->operator==(i); }
-
-  friend typename self::difference_type operator-(self a, self b) { return a.iter_ - b.iter_; }
 
   self& operator++()
   {
@@ -412,10 +233,22 @@ public:
     return tmp;
   }
 
+  friend const self operator+(difference_type offset, self out)
+  {
+    out.iter_ += offset;
+    return out;
+  }
+
+  friend const self operator+(self out, difference_type offset)
+  {
+    out.iter_ += offset;
+    return out;
+  }
+
   const value_type operator->() const { return get(); }
   const value_type operator*() const { return get(); }
   const value_type get() const { return (*iter_)->value(); }
-  const item_ptr relation_item() const { return *iter_; }
+  const relation_type relation_item() const { return *iter_; }
 
 private:
   friend class has_many<T, std::vector>;
@@ -424,29 +257,30 @@ private:
   const_container_iterator iter_;
 };
 
+/**
+ * has_many with std::vector
+ */
 template < class T >
-class has_many<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_has_many<T, std::vector>
+class has_many<T, std::vector> : public basic_has_many<T, std::vector>
 {
 public:
-
   typedef basic_has_many<T, std::vector> base;
-  typedef has_many_item<T> item_type;
-  typedef typename base::container_type container_type;
   typedef typename base::iterator iterator;
-  typedef typename container_type::size_type size_type;
-  typedef typename container_type::iterator container_iterator;
-//  typedef typename container_type::const_iterator const_iterator;
+  typedef typename base::value_type value_type;
+  typedef typename base::item_type item_type;
+  typedef typename base::relation_type relation_type;
+  typedef typename base::container_iterator container_iterator;
 
   has_many() {}
 
-  iterator insert(iterator pos, T value)
+  iterator insert(iterator pos, const value_type &value)
   {
     // create new has_many
     if (indexed_) {
 
     }
     item_type *item = create_item(value);
-    object_ptr<item_type> iptr(item);
+    relation_type iptr(item);
     if (this->ostore_) {
       this->ostore_->insert(iptr);
 //      ostore_->mark_modified()
@@ -454,28 +288,35 @@ public:
     return iterator(this->container_.insert(pos.iter_, iptr));
   }
 
+  void push_back(const value_type &value)
+  {
+    insert(this->end(), value);
+  }
+
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      this->ostore_->remove(*i);
+      relation_type iptr = i.relation_item();
+      this->ostore_->remove(iptr);
     }
-    typename base::container_iterator ci = this->container_.erase(i.iter_);
+    container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
   }
 
   iterator erase(iterator start, iterator end)
   {
-//    return iterator(container_.erase(start.iter_, end.iter_));
-    return end();
-  }
-
-  void push_back(T value)
-  {
-    insert(this->end(), value);
+    iterator i = start;
+    if (this->ostore_) {
+      while (i != end) {
+          typename base::relation_type iptr = (i++).relation_item();
+          this->ostore_->remove(iptr);
+      }
+    }
+    return iterator(this->container_.erase(start.iter_, end.iter_));
   }
 
 private:
-  item_type* create_item(T value)
+  item_type* create_item(const value_type &value)
   {
     return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }

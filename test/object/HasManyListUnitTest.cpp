@@ -107,7 +107,7 @@ void HasManyListUnitTest::test_integer()
 
   UNIT_ASSERT_EQUAL(*i, 1, "item is invalid");
 
-  many_ints::int_list_t::item_ptr iptr = i.relation_item();
+  many_ints::int_list_t::relation_type iptr = i.relation_item();
 
   UNIT_ASSERT_EQUAL(iptr->value(), 1, "item is invalid");
 
