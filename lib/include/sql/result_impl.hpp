@@ -14,9 +14,10 @@
 #define OOS_API
 #endif
 
-#include "object/object_producer.hpp"
+#include "object/basic_object_holder.hpp"
 
 #include <memory>
+#include <object/access.hpp>
 
 namespace oos {
 
@@ -37,12 +38,16 @@ public:
   typedef unsigned long size_type;
 
 protected:
-  result_impl(std::shared_ptr<object_base_producer> producer_);
+  result_impl();
 
 public:
   virtual ~result_impl();
 
-  void get(serializable *o);
+  template < class T >
+  void get(T *o)
+  {
+    oos::access::serialize(*this, *o);
+  }
 
   virtual const char *column(size_type c) const = 0;
 
@@ -55,7 +60,19 @@ public:
    * @param o Object to be deserialized
    * @return True if serializable was successfully deserialized
    */
-  virtual bool fetch(serializable *) { return false; }
+  template < class T >
+  bool fetch(T *o)
+  {
+    if (!fetch()) {
+      return false;
+    }
+
+    prepare_fetch();
+    oos::access::serialize(*this, *o);
+    finalize_fetch();
+
+    return true;
+  }
 
   virtual size_type affected_rows() const = 0;
 
@@ -65,16 +82,11 @@ public:
 
   virtual int transform_index(int index) const = 0;
 
-  std::shared_ptr<object_base_producer> producer() const;
-
 protected:
-  void read_foreign_object(const char *id, object_base_ptr &x);
+  void read_foreign_object(const char *id, basic_object_holder &x);
 
 protected:
   int result_index;
-
-private:
-  std::shared_ptr<object_base_producer> producer_;
 };
 
 /// @endcond

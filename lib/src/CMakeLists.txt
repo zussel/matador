@@ -125,15 +125,29 @@ SET(TOOLS_HEADER
   ../include/tools/conditional.hpp
 )
 
-SET(SQL_SOURCE
+SET(SQL_SOURCES
 	sql/connection.cpp
+	sql/connection_factory.cpp
+    sql/result_impl.cpp
+    sql/sql.cpp
+    sql/statement_impl.cpp
 )
 
 SET(SQL_HEADER
 	../include/sql/connection.hpp
+	../include/sql/connection_factory.hpp
+    ../include/sql/connection_impl.hpp
+    ../include/sql/result.hpp
+    ../include/sql/result_impl.hpp
+    ../include/sql/memory_connection.hpp
+    ../include/sql/sql.hpp
+    ../include/sql/statement.hpp
+    ../include/sql/statement_impl.hpp
+    ../include/sql/types.hpp
+    ../include/sql/token.hpp
 )
 
-SET(JSON_SOURCE
+SET(JSON_SOURCES
   json/json_type.cpp
   json/json_value.cpp
   json/json_object.cpp
@@ -206,7 +220,6 @@ SET(DATABASE_SOURCES
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
-  database/result_impl.cpp
   database/row.cpp
   database/statement_creator.cpp
   database/table.cpp
@@ -230,8 +243,6 @@ SET(DATABASE_HEADER
   ../include/database/database_sequencer.hpp
   ../include/database/transaction.hpp
   ../include/database/transaction_helper.hpp
-  ../include/database/result.hpp
-  ../include/database/result_impl.hpp
   ../include/database/row.hpp
   ../include/database/value.hpp
   ../include/database/types.hpp
@@ -264,10 +275,12 @@ ADD_LIBRARY(oos SHARED
   ${OBJECT_HEADER}
   ${TOOLS_SOURCES}
   ${TOOLS_HEADER}
-#  ${JSON_SOURCE}
+#  ${JSON_SOURCES}
 #  ${JSON_HEADER}
   ${UNIT_SOURCES}
   ${UNIT_HEADER}
+  ${SQL_SOURCES}
+  ${SQL_HEADER}
 #  ${DATABASE_SOURCES}
 #  ${DATABASE_HEADER}
 )
@@ -285,11 +298,13 @@ SOURCE_GROUP("include\\object" FILES ${OBJECT_HEADER})
 SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
+SOURCE_GROUP("include\\sql" FILES ${SQL_HEADER})
 SOURCE_GROUP("include\\database" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
+SOURCE_GROUP("src\\sql" FILES ${SQL_SOURCES})
 SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
 
 #FOREACH(inc ${OBJECT_HEADER})
@@ -340,5 +355,11 @@ INSTALL(
 INSTALL(
 	FILES ${UNIT_INSTALL_HEADER}
 	DESTINATION include/oos/unit
+	COMPONENT headers
+)
+
+INSTALL(
+	FILES ${SQL_HEADER}
+	DESTINATION include/oos/sql
 	COMPONENT headers
 )

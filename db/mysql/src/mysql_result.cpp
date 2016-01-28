@@ -31,9 +31,8 @@ namespace oos {
 
 namespace mysql {
 
-mysql_result::mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c)
-  : detail::result_impl(producer)
-  , affected_rows_((size_type)mysql_affected_rows(c))
+mysql_result::mysql_result(MYSQL *c)
+  : affected_rows_((size_type)mysql_affected_rows(c))
   , rows_(0)
   , fields_(0)
   , res_(0)

@@ -21,10 +21,6 @@
 #include "mysql_types.hpp"
 #include "mysql_exception.hpp"
 
-#include "database/session.hpp"
-#include "database/database_sequencer.hpp"
-#include "database/row.hpp"
-
 #include <sstream>
 
 using namespace std::placeholders;
@@ -33,9 +29,8 @@ namespace oos {
   
 namespace mysql {
   
-mysql_database::mysql_database(session *db)
-  : database(db, new database_sequencer(*this))
-  , is_open_(false)
+mysql_database::mysql_database()
+  : is_open_(false)
 {
 }
 
@@ -45,7 +40,7 @@ mysql_database::~mysql_database()
 }
 
 
-void mysql_database::on_open(const std::string &connection)
+void mysql_database::open(const std::string &connection)
 {
   // parse user[:passwd]@host/db
   
@@ -92,7 +87,7 @@ bool mysql_database::is_open() const
   return is_open_;
 }
 
-void mysql_database::on_close()
+void mysql_database::close()
 {
   mysql_close(&mysql_);
   // tell mysql to close the library
@@ -106,34 +101,34 @@ MYSQL* mysql_database::operator()()
   return &mysql_;
 }
 
-detail::result_impl* mysql_database::on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr)
+detail::result_impl* mysql_database::execute(const std::string &sqlstr)
 {
   if (mysql_query(&mysql_, sqlstr.c_str())) {
     throw mysql_exception(&mysql_, "mysql_query", sqlstr);
   }
-  return new mysql_result(ptr, &mysql_);
+  return new mysql_result(&mysql_);
 }
 
-detail::statement_impl* mysql_database::on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr)
+detail::statement_impl* mysql_database::prepare(const oos::sql &stmt)
 {
-  return new mysql_statement(*this, stmt, ptr);
+  return new mysql_statement(*this, stmt);
 }
 
-void mysql_database::on_begin()
+void mysql_database::begin()
 {
-  auto res = execute<serializable>("START TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("START TRANSACTION;");
   // TODO: check result
 }
 
-void mysql_database::on_commit()
+void mysql_database::commit()
 {
-  auto res = execute<serializable>("COMMIT;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("COMMIT;");
   // TODO: check result
 }
 
-void mysql_database::on_rollback()
+void mysql_database::rollback()
 {
-  auto res = execute<serializable>("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
+  auto res = execute<serializable>("ROLLBACK;");
   // TODO: check result
 }
 
@@ -205,12 +200,12 @@ unsigned long mysql_database::last_inserted_id()
 
 extern "C"
 {
-  OOS_MYSQL_API oos::database* create_database(oos::session *ses)
+  OOS_MYSQL_API oos::connection_impl* create_database()
   {
-    return new oos::mysql::mysql_database(ses);
+    return new oos::mysql::mysql_database();
   }
 
-  OOS_MYSQL_API void destroy_database(oos::database *db)
+  OOS_MYSQL_API void destroy_database(oos::connection_impl *db)
   {
     delete db;
   }

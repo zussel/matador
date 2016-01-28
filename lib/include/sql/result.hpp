@@ -18,18 +18,15 @@
 #ifndef RESULT_HPP
 #define RESULT_HPP
 
-#include "database/result_impl.hpp"
+#include "sql/result_impl.hpp"
 
 #include <memory>
 #include <type_traits>
+#include <iterator>
 
 namespace oos {
 
 class database;
-
-namespace detail {
-class result_impl;
-}
 
 /// @cond OOS_DEV
 template < class T >
@@ -193,9 +190,8 @@ public:
 
 public:
   result() {}
-  result(oos::detail::result_impl *impl, database *db)
+  result(oos::detail::result_impl *impl)
     : p(impl)
-    , db_(db)
   {}
 
   ~result()
@@ -242,7 +238,6 @@ public:
 
 private:
   oos::detail::result_impl *p = nullptr;
-  database *db_ = nullptr;
 };
 
 /// @endcond

@@ -29,7 +29,8 @@
   #define OOS_MYSQL_API
 #endif
 
-#include "database/database.hpp"
+#include "sql/connection_impl.hpp"
+#include "sql/types.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -53,10 +54,10 @@ class mysql_statement;
  * This class is the sqlite database backend
  * class. It provides the mysql version 4 and higher
  */
-class OOS_MYSQL_API mysql_database : public database
+class OOS_MYSQL_API mysql_database : public connection_impl
 {
 public:
-  explicit mysql_database(session *db);
+  mysql_database();
   virtual ~mysql_database();
   
   /**
@@ -64,11 +65,11 @@ public:
    *
    * @return True on open database connection.
    */
-  virtual bool is_open() const override;
+  virtual bool is_open() const;
 
-  virtual unsigned long last_inserted_id() override;
+  virtual unsigned long last_inserted_id();
 
-  virtual const char* type_string(data_type_t type) const override;
+  virtual const char* type_string(data_type_t type) const;
 
 /**
    * Return the raw pointer to the sqlite3
@@ -78,11 +79,10 @@ public:
    */
   MYSQL* operator()();
 
-protected:
-  virtual void on_open(const std::string &db) override;
-  virtual void on_close() override;
-  detail::result_impl* on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr);
-  detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr);
+  virtual void open(const std::string &db);
+  virtual void close() override;
+  detail::result_impl* execute(const std::string &sqlstr);
+  detail::statement_impl* prepare(const oos::sql &stmt);
   virtual void on_begin() override;
   virtual void on_commit() override;
   virtual void on_rollback() override;

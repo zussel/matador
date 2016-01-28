@@ -18,7 +18,7 @@
 #ifndef MYSQL_RESULT_HPP
 #define MYSQL_RESULT_HPP
 
-#include "database/result_impl.hpp"
+#include "sql/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -46,7 +46,7 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c);
+  mysql_result(MYSQL *c);
   virtual ~mysql_result();
   
   const char* column(size_type c) const;
