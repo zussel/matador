@@ -15,9 +15,7 @@ class memory_connection : public oos::connection_impl
 {
 public:
   virtual void open() {}
-
-  virtual bool is_open() { return true; }
-
+  virtual bool is_open() const { return true; }
   virtual void close() {}
 
   virtual oos::detail::result_impl *execute(const std::string &) { return nullptr; }
