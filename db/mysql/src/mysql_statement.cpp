@@ -16,16 +16,17 @@
  */
 
 #include "mysql_statement.hpp"
-#include "mysql_database.hpp"
+#include "mysql_connection.hpp"
 #include "mysql_exception.hpp"
 #include "mysql_prepared_result.hpp"
 
 #include "object/object_ptr.hpp"
 
-#include "tools/varchar.hpp"
 #include "tools/string.hpp"
 #include "tools/date.hpp"
 #include "tools/time.hpp"
+
+#include "sql/sql.hpp"
 
 #include <cstring>
 
@@ -33,12 +34,11 @@ namespace oos {
 
 namespace mysql {
 
-mysql_statement::mysql_statement(mysql_database &db, const oos::sql &stmt, std::shared_ptr<oos::object_base_producer> producer)
+mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
   : db_(db)
   , result_size(0)
   , host_size(0)
   , stmt_(mysql_stmt_init(db()))
-  , producer_(producer)
 {
   str(stmt.prepare());
   // parse sql to create result and host arrays
@@ -100,7 +100,7 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-  return new mysql_prepared_result(stmt_, result_size, producer_);
+  return new mysql_prepared_result(stmt_, result_size);
 }
 
 void mysql_statement::write(const char *, char x)
@@ -207,20 +207,20 @@ void mysql_statement::write(const char *, const varchar_base &x)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const object_base_ptr &x)
+void mysql_statement::write(const char *, const basic_object_holder &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x.id(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const object_container &)
-{
-}
-
-void mysql_statement::write(const char *id, const basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
+//void mysql_statement::write(const char *, const object_container &)
+//{
+//}
+//
+//void mysql_statement::write(const char *id, const basic_identifier &x)
+//{
+//  x.serialize(id, *this);
+//}
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int /*index*/)
 {
@@ -291,7 +291,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const basic_object_holder &value, int index)
 {
   bind_value(bind, type, value.id(), index);
 }

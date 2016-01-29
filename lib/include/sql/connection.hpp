@@ -2,6 +2,7 @@
 #define CONNECTION_HPP
 
 #include "sql/result.hpp"
+#include "sql/statement.hpp"
 #include "sql/connection_impl.hpp"
 
 #include <string>
@@ -17,6 +18,12 @@ public:
   result<T> execute(const std::string &stmt)
   {
     return result<T>(impl_->execute(stmt));
+  }
+
+  template < class T >
+  statement<T> prepare(const oos::sql &sql)
+  {
+    return statement<T>(impl_->prepare(sql));
   }
 
 private:

@@ -8,10 +8,8 @@
 #include "tools/time.hpp"
 #include "tools/varchar.hpp"
 
-#include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
 #include "object/object_exception.hpp"
-#include "object/prototype_tree.hpp"
 
 #include <cstring>
 
@@ -19,9 +17,8 @@ namespace oos {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer)
-  : detail::result_impl(producer)
-  , affected_rows_((size_type)mysql_stmt_affected_rows(s))
+mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
+  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
@@ -92,13 +89,15 @@ bool mysql_prepared_result::fetch()
   return rows-- > 0;
 }
 
-bool mysql_prepared_result::fetch(serializable *o)
+
+bool mysql_prepared_result::prepare_fetch()
 {
   // reset result column index
   result_index = 0;
   // prepare result array
   mysql_column_binder binder;
-  binder.bind(o, info_, stmt, bind_);
+  // Todo: handle template bind
+//  binder.bind(o, info_, stmt, bind_);
 
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
@@ -106,21 +105,18 @@ bool mysql_prepared_result::fetch(serializable *o)
     return false;
   } else if (ret == 1) {
     throw_stmt_error(ret, stmt, "mysql", "");
-  } else {
-//  if (ret == MYSQL_DATA_TRUNCATED) {
-    // load data from database
-    o->deserialize(*this);
-//  }
   }
-
   return true;
+}
 
-//  return rows_-- > 0;
+bool mysql_prepared_result::finalize_fetch()
+{
+  return true;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  long ar = mysql_stmt_affected_rows(stmt);
+  size_t ar = mysql_stmt_affected_rows(stmt);
   return ar;
   //return affected_rows_;
 }
@@ -255,17 +251,17 @@ void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
   ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, object_base_ptr &x)
+void mysql_prepared_result::read(const char *id, basic_object_holder &x)
 {
     read_foreign_object(id, x);
 }
 
-void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
-
-void mysql_prepared_result::read(const char *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
-}
+//void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
+//
+//void mysql_prepared_result::read(const char *id, basic_identifier &x)
+//{
+//  x.deserialize(id, *this);
+//}
 
 }
 

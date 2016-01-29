@@ -1,5 +1,5 @@
 SET(MYSQL_DATABASE_SOURCES
-  src/mysql_database.cpp
+		src/mysql_connection.cpp
   src/mysql_exception.cpp
   src/mysql_statement.cpp
   src/mysql_result.cpp
@@ -8,7 +8,7 @@ SET(MYSQL_DATABASE_SOURCES
 )
 
 SET(MYSQL_DATABASE_HEADER
-  include/mysql_database.hpp
+		include/mysql_connection.hpp
   include/mysql_exception.hpp
   include/mysql_statement.hpp
   include/mysql_result.hpp

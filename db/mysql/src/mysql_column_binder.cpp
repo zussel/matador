@@ -22,13 +22,13 @@ mysql_column_binder::mysql_column_binder()
 mysql_column_binder::~mysql_column_binder()
 {}
 
-void mysql_column_binder::bind(serializable *o, mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind)
+void mysql_column_binder::bind(mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind)
 {
   column_index_ = 0;
   stmt_ = stmt;
   bind_ = bind;
   info_ = info;
-  o->deserialize(*this);
+//  o->deserialize(*this);
   // bind result array to statement
   mysql_stmt_bind_result(stmt, bind_);
   info_ = nullptr;
@@ -120,23 +120,23 @@ void mysql_column_binder::read(const char *, varchar_base &x)
   prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
 }
 
-void mysql_column_binder::read(const char *id, object_base_ptr &x)
+void mysql_column_binder::read(const char *id, basic_object_holder &x)
 {
-  std::shared_ptr<basic_identifier> pk(x.create_identifier());
-
-  x.reset(pk);
-
-  pk->deserialize(id, *this);
+//  std::shared_ptr<basic_identifier> pk(x.create_identifier());
+//
+//  x.reset(pk);
+//
+//  pk->deserialize(id, *this);
 }
 
-void mysql_column_binder::read(const char *, object_container &)
-{}
-
-
-void mysql_column_binder::read(const char *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
-}
+//void mysql_column_binder::read(const char *, object_container &)
+//{}
+//
+//
+//void mysql_column_binder::read(const char *id, basic_identifier &x)
+//{
+//  x.deserialize(id, *this);
+//}
 
 void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, oos::date &)
 {

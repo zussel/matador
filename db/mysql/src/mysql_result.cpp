@@ -20,7 +20,6 @@
 #include "tools/time.hpp"
 
 #include "object/identifier.hpp"
-#include "object/serializable.hpp"
 
 #include "mysql_result.hpp"
 #include "mysql_exception.hpp"
@@ -71,16 +70,18 @@ bool mysql_result::fetch()
   return rows_-- > 0;
 }
 
-bool mysql_result::fetch(serializable *obj)
+bool mysql_result::prepare_fetch()
 {
   if (!fetch()) {
     return false;
   }
 
   result_index = 0;
+  return true;
+}
 
-  obj->deserialize(*this);
-
+bool mysql_result::finalize_fetch()
+{
   return true;
 }
 
@@ -268,19 +269,19 @@ void mysql_result::read(const char *id, oos::time &x)
 #endif
 }
 
-void mysql_result::read(const char *id, object_base_ptr &x)
+void mysql_result::read(const char *id, basic_object_holder &x)
 {
   read_foreign_object(id, x);
 }
 
-void mysql_result::read(const char */*id*/, object_container &/*x*/)
-{
-}
-
-void mysql_result::read(const char *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
-}
+//void mysql_result::read(const char */*id*/, object_container &/*x*/)
+//{
+//}
+//
+//void mysql_result::read(const char *id, basic_identifier &x)
+//{
+//  x.deserialize(id, *this);
+//}
 
 }
 

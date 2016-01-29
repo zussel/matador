@@ -18,8 +18,8 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
-#include "database/sql.hpp"
-#include "database/condition.hpp"
+#include "sql/sql.hpp"
+#include "sql/condition.hpp"
 
 namespace oos {
 
@@ -39,7 +39,7 @@ struct string_token : public sql::token {
 struct result_field_token : public sql::token {
   result_field_token(sql::field_ptr f) : fld(f) {}
 
-  virtual std::string get(bool prepared) const {
+  virtual std::string get(bool /*prepared*/) const {
     return fld->name;
   }
 

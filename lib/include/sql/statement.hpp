@@ -26,10 +26,7 @@
 
 namespace oos {
 
-class serializable;
 class sql;
-class object_base_producer;
-class database;
 
 namespace detail {
   class statement_impl;
@@ -48,9 +45,8 @@ public:
     : p(nullptr)
   { }
 
-  statement(detail::statement_impl *impl, database *db)
+  statement(detail::statement_impl *impl)
     : p(impl)
-    , db_(db)
   { }
 
   ~statement()
@@ -86,7 +82,7 @@ public:
   result<T> execute()
   {
 //  std::cout << "SQL: " << p->str() << '\n';
-    return result<T>(p->execute(), db_);
+    return result<T>(p->execute());
   }
 
   void reset()
@@ -112,7 +108,6 @@ public:
 
 private:
   oos::detail::statement_impl *p = nullptr;
-  database *db_ = nullptr;
 };
 
 /// @endcond

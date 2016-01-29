@@ -31,14 +31,13 @@
   #define OOS_API
 #endif
 
-#include "database/types.hpp"
+#include "sql/types.hpp"
 
 #include <string>
 #include <map>
 #include <list>
 #include <vector>
 #include <stdexcept>
-
 #include <memory>
 
 namespace oos {

@@ -14,11 +14,18 @@ namespace memory {
 class memory_connection : public oos::connection_impl
 {
 public:
-  virtual void open() {}
+  virtual void open(const std::string &) {}
   virtual bool is_open() const { return true; }
   virtual void close() {}
 
   virtual oos::detail::result_impl *execute(const std::string &) { return nullptr; }
+  virtual detail::statement_impl *prepare(const oos::sql &) { return nullptr; };
+
+  virtual void begin() override {}
+
+  virtual void commit() override {}
+
+  virtual void rollback() override {}
 };
 
 }

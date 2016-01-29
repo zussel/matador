@@ -40,7 +40,14 @@ public:
 
   virtual void reset() = 0;
 
-  int bind(serializable *o);
+  template < class T >
+  int bind(T *o)
+  {
+    reset();
+    host_index = 0;
+    oos::access::serialize(*this, *o);
+    return host_index;
+  }
 
   template < class T >
   int bind(unsigned long i, const T &val)

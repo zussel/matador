@@ -126,6 +126,7 @@ SET(TOOLS_HEADER
 )
 
 SET(SQL_SOURCES
+	sql/condition.cpp
 	sql/connection.cpp
 	sql/connection_factory.cpp
     sql/result_impl.cpp
@@ -134,18 +135,20 @@ SET(SQL_SOURCES
 )
 
 SET(SQL_HEADER
+	../include/sql/condition.hpp
 	../include/sql/connection.hpp
 	../include/sql/connection_factory.hpp
     ../include/sql/connection_impl.hpp
     ../include/sql/result.hpp
     ../include/sql/result_impl.hpp
     ../include/sql/memory_connection.hpp
+		../include/tools/serializable.hpp
     ../include/sql/sql.hpp
     ../include/sql/statement.hpp
     ../include/sql/statement_impl.hpp
     ../include/sql/types.hpp
     ../include/sql/token.hpp
-)
+		../include/tools/serializable.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp
@@ -211,7 +214,6 @@ SET(UNIT_HEADER
 
 SET(DATABASE_SOURCES
   database/action.cpp
-  database/condition.cpp
   database/session.cpp
   database/database.cpp
   database/database_exception.cpp
@@ -224,17 +226,15 @@ SET(DATABASE_SOURCES
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
-  database/sql.cpp
   database/query_create.cpp
   database/query_select.cpp
   database/query_insert.cpp
   database/query_update.cpp
   database/identifier_binder.cpp
-  database/statement_impl.cpp)
+)
 
 SET(DATABASE_HEADER
   ../include/database/action.hpp
-  ../include/database/condition.hpp
   ../include/database/session.hpp
   ../include/database/database.hpp
   ../include/database/database_exception.hpp
@@ -245,9 +245,6 @@ SET(DATABASE_HEADER
   ../include/database/transaction_helper.hpp
   ../include/database/row.hpp
   ../include/database/value.hpp
-  ../include/database/types.hpp
-  ../include/database/sql.hpp
-  ../include/database/statement.hpp
   ../include/database/table.hpp
   ../include/database/table_reader.hpp
   ../include/database/query.hpp
@@ -255,18 +252,14 @@ SET(DATABASE_HEADER
   ../include/database/query_select.hpp
   ../include/database/query_insert.hpp
   ../include/database/query_update.hpp
-  ../include/database/token.hpp
   ../include/database/identifier_binder.hpp
-  ../include/database/statement_impl.hpp)
+)
 
 SET(DATABASE_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/database/session.hpp
   ${PROJECT_SOURCE_DIR}/include/database/database_exception.hpp
   ${PROJECT_SOURCE_DIR}/include/database/query.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/result.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/sql.hpp
   ${PROJECT_SOURCE_DIR}/include/database/condition.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/types.hpp
   ${PROJECT_SOURCE_DIR}/include/database/transaction.hpp
 )
 

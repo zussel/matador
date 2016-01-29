@@ -1,8 +1,6 @@
 #ifndef MYSQL_COLUMN_FETCHER_HPP
 #define MYSQL_COLUMN_FETCHER_HPP
 
-#include "object/serializer.hpp"
-
 #include "mysql_result_info.hpp"
 
 #ifdef WIN32
@@ -14,23 +12,25 @@
 
 #include <unordered_map>
 #include <memory>
+#include <tools/varchar.hpp>
+#include <object/basic_object_holder.hpp>
 
 namespace oos {
 
-class serializable;
 class prototype_node;
 class date;
 class time;
+class varchar_base;
 
 namespace mysql {
 
-class mysql_column_binder : public deserializer
+class mysql_column_binder
 {
 public:
   mysql_column_binder();
   virtual ~mysql_column_binder();
   
-  void bind(serializable *o, mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
+  void bind(mysql_result_info *info, MYSQL_STMT *stmt, MYSQL_BIND *bind);
 
   virtual void read(const char *id, char &x);
   virtual void read(const char *id, short &x);
@@ -48,9 +48,9 @@ public:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, basic_identifier &x);
+  virtual void read(const char *id, basic_object_holder &x);
+//  virtual void read(const char *id, object_container &x);
+//  virtual void read(const char *id, basic_identifier &x);
   
 private:
   template < class T >

@@ -40,6 +40,9 @@ public:
 protected:
   result_impl();
 
+  virtual bool prepare_fetch() = 0;
+  virtual bool finalize_fetch() = 0;
+
 public:
   virtual ~result_impl();
 
@@ -63,15 +66,11 @@ public:
   template < class T >
   bool fetch(T *o)
   {
-    if (!fetch()) {
+    if (!prepare_fetch()) {
       return false;
     }
-
-    prepare_fetch();
     oos::access::serialize(*this, *o);
-    finalize_fetch();
-
-    return true;
+    return finalize_fetch();
   }
 
   virtual size_type affected_rows() const = 0;

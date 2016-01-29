@@ -31,16 +31,11 @@
   #define OOS_API
 #endif
 
-#include "database/types.hpp"
+#include "sql/types.hpp"
 
 #include <string>
 #include <sstream>
-
-#ifdef _MSC_VER
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
 
 namespace oos {
 

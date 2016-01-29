@@ -54,11 +54,11 @@ class mysql_statement;
  * This class is the sqlite database backend
  * class. It provides the mysql version 4 and higher
  */
-class OOS_MYSQL_API mysql_database : public connection_impl
+class OOS_MYSQL_API mysql_connection : public connection_impl
 {
 public:
-  mysql_database();
-  virtual ~mysql_database();
+  mysql_connection();
+  virtual ~mysql_connection();
   
   /**
    * Returns true if the database is open
@@ -81,11 +81,11 @@ public:
 
   virtual void open(const std::string &db);
   virtual void close() override;
-  detail::result_impl* execute(const std::string &sqlstr);
+  detail::result_impl* execute(const std::string &stmt);
   detail::statement_impl* prepare(const oos::sql &stmt);
-  virtual void on_begin() override;
-  virtual void on_commit() override;
-  virtual void on_rollback() override;
+  virtual void begin() override;
+  virtual void commit() override;
+  virtual void rollback() override;
 
 private:
   MYSQL mysql_;
@@ -98,9 +98,9 @@ private:
 
 extern "C"
 {
-  OOS_MYSQL_API oos::database* create_database(oos::session *ses);
+  OOS_MYSQL_API oos::connection_impl* create_database();
 
-  OOS_MYSQL_API void destroy_database(oos::database *db);
+  OOS_MYSQL_API void destroy_database(oos::connection_impl *db);
 }
 
 #endif /* MYSQL_DATABASE_HPP */

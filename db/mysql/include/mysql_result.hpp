@@ -52,8 +52,6 @@ public:
   const char* column(size_type c) const;
   bool fetch();
   
-  bool fetch(serializable *o);
-
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
@@ -77,9 +75,13 @@ protected:
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, basic_identifier &x);
+  virtual void read(const char *id, basic_object_holder &x);
+//  virtual void read(const char *id, object_container &x);
+//  virtual void read(const char *id, basic_identifier &x);
+
+protected:
+  virtual bool prepare_fetch() override;
+  virtual bool finalize_fetch() override;
 
 private:
   struct result_deleter

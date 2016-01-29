@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mysql_database.hpp"
+#include "mysql_connection.hpp"
 #include "mysql_statement.hpp"
 #include "mysql_result.hpp"
 #include "mysql_types.hpp"
@@ -29,18 +29,18 @@ namespace oos {
   
 namespace mysql {
   
-mysql_database::mysql_database()
+mysql_connection::mysql_connection()
   : is_open_(false)
 {
 }
 
-mysql_database::~mysql_database()
+mysql_connection::~mysql_connection()
 {
   close();
 }
 
 
-void mysql_database::open(const std::string &connection)
+void mysql_connection::open(const std::string &connection)
 {
   // parse user[:passwd]@host/db
   
@@ -82,12 +82,12 @@ void mysql_database::open(const std::string &connection)
   is_open_ = true;
 }
 
-bool mysql_database::is_open() const
+bool mysql_connection::is_open() const
 {
   return is_open_;
 }
 
-void mysql_database::close()
+void mysql_connection::close()
 {
   mysql_close(&mysql_);
   // tell mysql to close the library
@@ -96,43 +96,43 @@ void mysql_database::close()
   is_open_ = false;
 }
 
-MYSQL* mysql_database::operator()()
+MYSQL*mysql_connection::operator()()
 {
   return &mysql_;
 }
 
-detail::result_impl* mysql_database::execute(const std::string &sqlstr)
+detail::result_impl*mysql_connection::execute(const std::string &stmt)
 {
-  if (mysql_query(&mysql_, sqlstr.c_str())) {
-    throw mysql_exception(&mysql_, "mysql_query", sqlstr);
+  if (mysql_query(&mysql_, stmt.c_str())) {
+    throw mysql_exception(&mysql_, "mysql_query", stmt);
   }
   return new mysql_result(&mysql_);
 }
 
-detail::statement_impl* mysql_database::prepare(const oos::sql &stmt)
+detail::statement_impl*mysql_connection::prepare(const oos::sql &stmt)
 {
   return new mysql_statement(*this, stmt);
 }
 
-void mysql_database::begin()
+void mysql_connection::begin()
 {
-  auto res = execute<serializable>("START TRANSACTION;");
+  /*auto res = */execute("START TRANSACTION;");
   // TODO: check result
 }
 
-void mysql_database::commit()
+void mysql_connection::commit()
 {
-  auto res = execute<serializable>("COMMIT;");
+  /*auto res = */execute("COMMIT;");
   // TODO: check result
 }
 
-void mysql_database::rollback()
+void mysql_connection::rollback()
 {
-  auto res = execute<serializable>("ROLLBACK;");
+  /*auto res = */execute("ROLLBACK;");
   // TODO: check result
 }
 
-const char* mysql_database::type_string(data_type_t type) const
+const char*mysql_connection::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
@@ -184,7 +184,7 @@ const char* mysql_database::type_string(data_type_t type) const
     }
 }
 
-unsigned long mysql_database::last_inserted_id()
+unsigned long mysql_connection::last_inserted_id()
 {
   if (mysql_field_count(&mysql_) == 0 &&
       mysql_insert_id(&mysql_) != 0)
@@ -202,7 +202,7 @@ extern "C"
 {
   OOS_MYSQL_API oos::connection_impl* create_database()
   {
-    return new oos::mysql::mysql_database();
+    return new oos::mysql::mysql_connection();
   }
 
   OOS_MYSQL_API void destroy_database(oos::connection_impl *db)

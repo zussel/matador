@@ -15,8 +15,10 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/sql.hpp"
-#include "database/token.hpp"
+#include "sql/sql.hpp"
+#include "sql/token.hpp"
+#include "sql/types.hpp"
+#include "sql/condition.hpp"
 
 namespace oos {
 

@@ -3,22 +3,12 @@
 //
 #include "sql/statement_impl.hpp"
 
-#include "object/serializable.hpp"
-
 namespace oos {
 
 namespace detail {
 
 statement_impl::~statement_impl()
 {}
-
-int statement_impl::bind(serializable *o)
-{
-  reset();
-  host_index = 0;
-  o->serialize(*this);
-  return host_index;
-}
 
 std::string statement_impl::str() const
 {

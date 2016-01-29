@@ -85,6 +85,7 @@ public:
    */
   virtual bool equal_to(const basic_identifier &x) const = 0;
 
+  virtual void serialize(const char*, )
   /**
    * Returns a unique hash number
    *

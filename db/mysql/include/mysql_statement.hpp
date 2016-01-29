@@ -18,7 +18,7 @@
 #ifndef MYSQL_STATEMENT_HPP
 #define MYSQL_STATEMENT_HPP
 
-#include "database/statement_impl.hpp"
+#include "sql/statement_impl.hpp"
 
 #include "object/identifier.hpp"
 
@@ -32,19 +32,22 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#include <tools/varchar.hpp>
 
 namespace oos {
 
-class database;
+class varchar_base;
+class time;
+class date;
 
 namespace mysql {
 
-class mysql_database;
+class mysql_connection;
 
 class mysql_statement : public oos::detail::statement_impl
 {
 public:
-  mysql_statement(mysql_database &db, const oos::sql &stmt, std::shared_ptr<oos::object_base_producer> producer);
+  mysql_statement(mysql_connection &db, const oos::sql &stmt);
   virtual ~mysql_statement();
 
   virtual void clear();
@@ -68,9 +71,9 @@ protected:
   virtual void write(const char *id, const std::string &x);
   virtual void write(const char *id, const oos::date &x);
   virtual void write(const char *id, const oos::time &x);
-  virtual void write(const char *id, const object_base_ptr &x);
-  virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const basic_identifier &x);
+  virtual void write(const char *id, const basic_object_holder &x);
+//  virtual void write(const char *id, const object_container &x);
+//  virtual void write(const char *id, const basic_identifier &x);
 
 //  virtual void prepare_result_column(const sql::field_ptr &fptr);
 
@@ -90,17 +93,15 @@ private:
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const basic_object_holder &value, int index);
 
 private:
-  mysql_database &db_;
+  mysql_connection &db_;
   int result_size;
   int host_size;
   std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt_ = nullptr;
   MYSQL_BIND *host_array = nullptr;
-
-  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

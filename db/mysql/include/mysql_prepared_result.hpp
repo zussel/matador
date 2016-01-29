@@ -1,7 +1,7 @@
 #ifndef MYSQL_PREPARED_RESULT_HPP
 #define MYSQL_PREPARED_RESULT_HPP
 
-#include "database/result_impl.hpp"
+#include "sql/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -20,6 +20,8 @@ namespace oos {
 class object_base_ptr;
 class varchar_base;
 class basic_identifier;
+class time;
+class date;
 
 namespace mysql {
 
@@ -36,7 +38,7 @@ public:
   typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_pk_map;
 
 public:
-  mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer);
+  mysql_prepared_result(MYSQL_STMT *s, int rs);
   ~mysql_prepared_result();
 
   const char *column(size_type c) const;
@@ -66,9 +68,13 @@ public:
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, std::string &x);
   virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, basic_identifier &x);
+  virtual void read(const char *id, basic_object_holder &x);
+//  virtual void read(const char *id, object_container &x);
+//  virtual void read(const char *id, basic_identifier &x);
+
+protected:
+  virtual bool prepare_fetch() override;
+  virtual bool finalize_fetch() override;
 
 private:
   size_type affected_rows_;
