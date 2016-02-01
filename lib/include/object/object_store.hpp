@@ -22,7 +22,7 @@
 #include "object/object_producer.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
-#include "object/identifier_setter.hpp"
+#include "tools/identifier_setter.hpp"
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
 

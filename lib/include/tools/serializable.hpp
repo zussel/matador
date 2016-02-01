@@ -5,12 +5,11 @@
 #ifndef OOS_SERIALIZABLE_HPP
 #define OOS_SERIALIZABLE_HPP
 
-#include "object/identifier.hpp"
-#include "object/object_ptr.hpp"
-
+#include "tools/basic_identifier.hpp"
 #include "tools/varchar.hpp"
 
 #include <string>
+#include <memory>
 
 namespace oos {
 
@@ -39,6 +38,7 @@ public:
   template < class T >
   void serialize(const char *id, oos::identifier<T> &x)
   {
+    x.serialize(id, *this);
     T val = x.value();
     serialize(id, val);
   }
@@ -50,8 +50,8 @@ public:
     serialize(id, val);
   }
 
-  template < class T >
-  void serialize(const char *id, oos::has_one<T> &x)
+  template < class T, template <typename> class H >
+  void serialize(const char *id, H<T> &x)
   {
     if (x.has_primary_key()) {
       std::shared_ptr<basic_identifier> bid = x.primary_key();

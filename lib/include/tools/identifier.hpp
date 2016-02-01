@@ -14,7 +14,8 @@
 #define OOS_API
 #endif
 
-#include "object/basic_identifier.hpp"
+#include "tools/basic_identifier.hpp"
+#include "tools/serializable.hpp"
 
 #include <type_traits>
 #include <stdexcept>
@@ -61,6 +62,11 @@ public:
     } else {
       throw std::logic_error("not the same type");
     }
+  }
+
+  virtual void serialize(const char *id, serializable &s)
+  {
+    s.serialize(id, *id_);
   }
 
   virtual size_t hash() const
@@ -143,6 +149,11 @@ public:
 
   virtual ~identifier()
   { };
+
+  virtual void serialize(const char *id, serializable &s) override
+  {
+    s.serialize(id, *id_);
+  }
 
   virtual bool less(const basic_identifier &x) const
   {

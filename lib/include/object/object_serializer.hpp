@@ -34,7 +34,7 @@
 #include "tools/byte_buffer.hpp"
 
 #include "object/access.hpp"
-#include "object/identifier.hpp"
+#include "tools/identifier.hpp"
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
 #include "object/object_store.hpp"

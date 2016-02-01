@@ -5,7 +5,7 @@
 #ifndef PRIMARY_KEY_READER_HPP
 #define PRIMARY_KEY_READER_HPP
 
-#include "object/identifier.hpp"
+#include "identifier.hpp"
 #include "object/has_many.hpp"
 
 namespace oos {

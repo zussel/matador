@@ -21,7 +21,7 @@
 #include "tools/byte_buffer.hpp"
 
 #include "object/object_store.hpp"
-#include "object/identifier_resolver.hpp"
+#include "tools/identifier_resolver.hpp"
 
 namespace oos {
 

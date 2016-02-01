@@ -8,7 +8,6 @@ SET(OBJECT_SOURCES
 #		object/prototype_tree.cpp
 #		object/primary_key_analyzer.cpp
 #		object/foreign_key_analyzer.cpp
-		object/basic_identifier.cpp
 		object/identifier.cpp
 		object/prototype_iterator.cpp
 		object/basic_object_holder.cpp)
@@ -57,13 +56,9 @@ SET(OBJECT_HEADER
 #		../include/object/prototype_tree.hpp
 		../include/object/object_observer.hpp
 		../include/object/object_expression.hpp
-#		../include/object/attribute_serializer.hpp
-		../include/object/identifier.hpp
+		../include/object/attribute_serializer.hpp
 #		../include/object/primary_key_analyzer.hpp
 #		../include/object/foreign_key_analyzer.hpp
-		../include/object/identifier_resolver.hpp
-		../include/object/identifier_setter.hpp
-		../include/object/basic_identifier.hpp
 		../include/object/prototype_iterator.hpp
 		../include/object/base_class.hpp
 		../include/object/has_many.hpp
@@ -88,6 +83,7 @@ SET(TOOLS_SOURCES
   tools/sequencer.cpp
   tools/string.cpp
   tools/strptime.cpp
+  tools/basic_identifier.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
@@ -105,6 +101,7 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/strptime.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/basic_identifier.hpp
 )
 
 SET(TOOLS_HEADER
@@ -123,6 +120,10 @@ SET(TOOLS_HEADER
   ../include/tools/strptime.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
+  ../include/tools/basic_identifier.hpp
+  ../include/tools/identifier.hpp
+  ../include/tools/identifier_resolver.hpp
+  ../include/tools/identifier_setter.hpp
 )
 
 SET(SQL_SOURCES

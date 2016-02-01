@@ -19,7 +19,7 @@
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 
-#include "object/identifier.hpp"
+#include "tools/identifier.hpp"
 
 #include "mysql_result.hpp"
 #include "mysql_exception.hpp"

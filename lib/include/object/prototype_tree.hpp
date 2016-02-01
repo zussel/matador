@@ -35,7 +35,7 @@
 #include "object/prototype_node.hpp"
 #include "object/prototype_iterator.hpp"
 #include "object/object_exception.hpp"
-#include "object/identifier_resolver.hpp"
+#include "tools/identifier_resolver.hpp"
 #include "object/has_one.hpp"
 #include "object/has_many.hpp"
 
