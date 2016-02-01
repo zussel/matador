@@ -90,41 +90,4 @@ void object_serializer::serialize(const char *id, time &x)
   }
 }
 
-//void object_serializer::serialize(const char *id, const object_container &x)
-//{
-  // write number of items in list
-  // for each item write id and type
-//  serialize(id, (unsigned long)x.size());
-//  x.for_each(std::bind(&object_serializer::write_object_container_item, this, _1));
-//}
-
-//void object_serializer::serialize(const char */*id*/, object_container &/*x*/)
-//{
-  // get count of backuped list item
-//  object_container::size_type s(0);
-  // Todo: correct implementation
-//  unsigned long s(0);
-//  serialize(id, s);
-//  x.reset();
-//  string type;
-//  unsigned long oid(0);
-//  for (unsigned int i = 0; i < s; ++i) {
-//    serialize(id, oid);
-//    serialize(id, type);
-//    object_proxy *oproxy = ostore_->find_proxy(oid);
-//    if (!oproxy) {
-//      oproxy = ostore_->create_proxy(oid);
-//    }
-//    x.append_proxy(oproxy);
-//  }
-//}
-
-void object_serializer::write_object_container_item(const object_proxy *proxy)
-{
-  unsigned long id(proxy->id());
-  serialize(nullptr, id);
-  std::string type(proxy->node()->type());
-  serialize(nullptr, type);
-}
-
 }

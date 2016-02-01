@@ -22,7 +22,7 @@
 
 namespace oos {
 
-class serializable;
+class serializer;
 class sql;
 
 namespace detail {

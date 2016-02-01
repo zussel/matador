@@ -15,7 +15,7 @@
 #endif
 
 #include "tools/basic_identifier.hpp"
-#include "tools/serializable.hpp"
+#include "tools/serializer.hpp"
 
 #include <type_traits>
 #include <stdexcept>
@@ -64,7 +64,7 @@ public:
     }
   }
 
-  virtual void serialize(const char *id, serializable &s)
+  virtual void serialize(const char *id, serializer &s)
   {
     s.serialize(id, *id_);
   }
@@ -150,7 +150,7 @@ public:
   virtual ~identifier()
   { };
 
-  virtual void serialize(const char *id, serializable &s) override
+  virtual void serialize(const char *id, serializer &s) override
   {
     s.serialize(id, *id_);
   }

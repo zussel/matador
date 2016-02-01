@@ -84,7 +84,7 @@ SET(TOOLS_SOURCES
   tools/string.cpp
   tools/strptime.cpp
   tools/basic_identifier.cpp
-)
+		tools/serializer.cpp)
 
 SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/algorithm.hpp
@@ -143,13 +143,13 @@ SET(SQL_HEADER
     ../include/sql/result.hpp
     ../include/sql/result_impl.hpp
     ../include/sql/memory_connection.hpp
-		../include/tools/serializable.hpp
+		../include/tools/serializer.hpp
     ../include/sql/sql.hpp
     ../include/sql/statement.hpp
     ../include/sql/statement_impl.hpp
     ../include/sql/types.hpp
     ../include/sql/token.hpp
-		../include/tools/serializable.hpp)
+		../include/tools/serializer.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp

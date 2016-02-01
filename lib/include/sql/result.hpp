@@ -101,7 +101,7 @@ template < class T, class Enable = void >
 class result_iterator {};
 
 template < class T >
-class result_iterator<T,typename std::enable_if< std::is_same<T, oos::serializable>::value >::type> : public base_result_iterator<T>
+class result_iterator<T,typename std::enable_if< std::is_same<T, oos::serializer>::value >::type> : public base_result_iterator<T>
 {
 public:
   typedef base_result_iterator<T> base;
@@ -124,7 +124,7 @@ public:
 
   self& operator++()
   {
-    serializable *obj = base::result_impl_->producer()->create();
+    serializer *obj = base::result_impl_->producer()->create();
     base::obj_.reset(obj);
     if (!base::result_impl_->fetch(base::obj_.get())) {
       base::obj_.reset();
@@ -141,7 +141,7 @@ public:
 };
 
 template < class T >
-class result_iterator<T,typename std::enable_if< !std::is_same<T, oos::serializable>::value >::type> : public base_result_iterator<T>
+class result_iterator<T,typename std::enable_if< !std::is_same<T, oos::serializer>::value >::type> : public base_result_iterator<T>
 {
 public:
   typedef base_result_iterator<T> base;

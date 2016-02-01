@@ -136,67 +136,67 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, char &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, char &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, short &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, short &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, int &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, int &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, long &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, long &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, unsigned char &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, unsigned char &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, unsigned short &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, unsigned short &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, unsigned int &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, unsigned int &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, unsigned long &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, unsigned long &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, bool &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, bool &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, float &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, float &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, double &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, double &/*x*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, char */*x*/, size_t /*s*/)
+void mysql_prepared_result::serialize(const char */*id*/, char */*x*/, size_t /*s*/)
 {
  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, oos::date &x)
+void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
 {
   if (info_[result_index].length > 0) {
     MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
@@ -205,7 +205,7 @@ void mysql_prepared_result::read(const char */*id*/, oos::date &x)
   ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, oos::time &x)
+void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
 {
   if (info_[result_index].length > 0) {
 #if MYSQL_VERSION_ID < 50604
@@ -224,7 +224,7 @@ void mysql_prepared_result::read(const char */*id*/, oos::time &x)
   ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, std::string &x)
+void mysql_prepared_result::serialize(const char */*id*/, std::string &x)
 {
   if (info_[result_index].length > 0) {
     bind_[result_index].buffer = new char[info_[result_index].length];
@@ -242,7 +242,7 @@ void mysql_prepared_result::read(const char */*id*/, std::string &x)
   ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
+void mysql_prepared_result::serialize(const char */*id*/, varchar_base &x)
 {
   char *data = (char*)bind_[result_index].buffer;
 //  unsigned long len = bind_[result_index].buffer_length;
@@ -251,14 +251,14 @@ void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
   ++result_index;
 }
 
-void mysql_prepared_result::read(const char *id, basic_object_holder &x)
+void mysql_prepared_result::serialize(const char *id, basic_object_holder &x)
 {
     read_foreign_object(id, x);
 }
 
-//void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
+//void mysql_prepared_result::serialize(const char */*id*/, object_container &/*x*/) {}
 //
-//void mysql_prepared_result::read(const char *id, basic_identifier &x)
+//void mysql_prepared_result::serialize(const char *id, basic_identifier &x)
 //{
 //  x.deserialize(id, *this);
 //}

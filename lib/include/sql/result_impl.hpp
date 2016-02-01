@@ -15,20 +15,19 @@
 #endif
 
 #include "object/basic_object_holder.hpp"
+#include "object/access.hpp"
+
+#include "tools/serializer.hpp"
 
 #include <memory>
-#include <object/access.hpp>
 
 namespace oos {
-
-class serializable;
-class object_base_ptr;
 
 namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API result_impl
+class OOS_API result_impl : public serializer
 {
 private:
   result_impl(const result_impl &) = delete;

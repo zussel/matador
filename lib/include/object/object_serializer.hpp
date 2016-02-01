@@ -139,8 +139,21 @@ public:
 
 	void serialize(const char* id, date &x);
 	void serialize(const char* id, time &x);
-  template < class T >
 
+  template < class V >
+  void serialize(const char* id, identifier<V> &x)
+  {
+    if (restore) {
+      V val;
+      serialize(id, val);
+      x.value(val);
+    } else {
+      V val(x.value());
+      serialize(id, val);
+    }
+  }
+
+  template < class T >
 	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
   {
     if (restore) {
@@ -176,21 +189,35 @@ public:
   }
 
   template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *) {
-
-  }
-
-//	void serialize(const char* id, const object_container &x);
-  template < class V >
-	void serialize(const char* id, identifier<V> &x)
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
   {
     if (restore) {
-      V val;
-      serialize(id, val);
-      x.value(val);
+      typename basic_has_many<T, C>::size_type s = 0;
+      serialize(id, s);
+
+      for (typename basic_has_many<T, C>::size_type i = 0; i < 0; ++i) {
+
+        has_one<typename basic_has_many<T, C>::item_type> ptr;
+        serialize(nullptr, ptr, cascade_type::NONE);
+
+        // Todo: add method
+//        x.insert(ptr);
+      }
+
+
     } else {
-      V val(x.value());
-      serialize(id, val);
+      typename basic_has_many<T, C>::size_type s = x.size();
+      serialize(id, s);
+
+      typename basic_has_many<T, C>::iterator first = x.begin();
+      typename basic_has_many<T, C>::iterator last = x.end();
+      while (first != last) {
+//        serialize(nullptr, first.relation_item(), cascade_type::NONE);
+        typename basic_has_many<T, C>::relation_type rptr = (first++).relation_item();
+        unsigned long oid = rptr.id();
+        serialize(nullptr, oid);
+        serialize(nullptr, const_cast<char*>(rptr.type()), strlen(rptr.type()));
+      }
     }
   }
 

@@ -29,7 +29,7 @@ namespace oos {
 template < typename T, class Enable = void >
 class identifier;
 
-class serializable;
+class serializer;
 
 /// @endcond
 
@@ -87,7 +87,7 @@ public:
    */
   virtual bool equal_to(const basic_identifier &x) const = 0;
 
-  virtual void serialize(const char*, serializable &) = 0;
+  virtual void serialize(const char*, serializer &) = 0;
   /**
    * Returns a unique hash number
    *
