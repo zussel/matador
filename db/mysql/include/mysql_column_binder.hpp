@@ -49,9 +49,7 @@ public:
   virtual void read(const char *id, oos::date &x);
   virtual void read(const char *id, oos::time &x);
   virtual void read(const char *id, basic_object_holder &x);
-//  virtual void read(const char *id, object_container &x);
-//  virtual void read(const char *id, basic_identifier &x);
-  
+
 private:
   template < class T >
   void prepare_bind_column(int index, enum_field_types type, T &value)

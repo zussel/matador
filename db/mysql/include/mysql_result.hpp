@@ -76,8 +76,6 @@ protected:
   virtual void serialize(const char *id, oos::date &x);
   virtual void serialize(const char *id, oos::time &x);
   virtual void serialize(const char *id, basic_object_holder &x);
-//  virtual void serialize(const char *id, object_container &x);
-//  virtual void serialize(const char *id, basic_identifier &x);
 
 protected:
   virtual bool prepare_fetch() override;

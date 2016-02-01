@@ -39,6 +39,7 @@ public:
 protected:
   result_impl();
 
+  virtual void prepare_bind() = 0;
   virtual bool prepare_fetch() = 0;
   virtual bool finalize_fetch() = 0;
 
@@ -62,6 +63,13 @@ public:
    * @param o Object to be deserialized
    * @return True if serializable was successfully deserialized
    */
+  template < class T >
+  void bind(T *o)
+  {
+    prepare_bind();
+    oos::access::serialize(*this, *o);
+  }
+
   template < class T >
   bool fetch(T *o)
   {

@@ -67,8 +67,6 @@ public:
   virtual void serialize(const char *id, std::string &x);
   virtual void serialize(const char *id, varchar_base &x);
   virtual void serialize(const char *id, basic_object_holder &x);
-//  virtual void serialize(const char *id, object_container &x);
-//  virtual void serialize(const char *id, basic_identifier &x);
 
 protected:
   virtual bool prepare_fetch() override;
@@ -78,14 +76,14 @@ private:
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
-//  MYSQL_ROW row;
-//  MYSQL_RES *res;
   MYSQL_STMT *stmt;
   int result_size;
   MYSQL_BIND *bind_;
   mysql_result_info *info_;
 
   t_pk_map pk_map_;
+
+  bool is_binding_ = true;
 };
 
 }

@@ -174,6 +174,7 @@ public:
   self operator++(int)
   {
     std::unique_ptr<T> obj(new T);
+    base::result_impl_->bind(obj.get());
     base::result_impl_->fetch(obj.get());
     return self(base::result_impl_, obj.release());
   }

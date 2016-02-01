@@ -256,13 +256,6 @@ void mysql_prepared_result::serialize(const char *id, basic_object_holder &x)
     read_foreign_object(id, x);
 }
 
-//void mysql_prepared_result::serialize(const char */*id*/, object_container &/*x*/) {}
-//
-//void mysql_prepared_result::serialize(const char *id, basic_identifier &x)
-//{
-//  x.deserialize(id, *this);
-//}
-
 }
 
 }

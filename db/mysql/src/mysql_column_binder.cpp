@@ -129,15 +129,6 @@ void mysql_column_binder::read(const char *id, basic_object_holder &x)
 //  pk->deserialize(id, *this);
 }
 
-//void mysql_column_binder::read(const char *, object_container &)
-//{}
-//
-//
-//void mysql_column_binder::read(const char *id, basic_identifier &x)
-//{
-//  x.deserialize(id, *this);
-//}
-
 void mysql_column_binder::prepare_bind_column(int index, enum_field_types type, oos::date &)
 {
   if (info_[index].buffer == 0) {
