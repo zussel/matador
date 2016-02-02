@@ -39,7 +39,7 @@ public:
 protected:
   result_impl();
 
-  virtual void prepare_bind() = 0;
+  virtual void needs_bind() = 0;
   virtual bool prepare_fetch() = 0;
   virtual bool finalize_fetch() = 0;
 

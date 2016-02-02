@@ -69,6 +69,8 @@ public:
   virtual void serialize(const char *id, basic_object_holder &x);
 
 protected:
+  virtual void needs_bind() override;
+
   virtual bool prepare_fetch() override;
   virtual bool finalize_fetch() override;
 
