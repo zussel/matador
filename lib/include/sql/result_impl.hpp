@@ -39,7 +39,7 @@ public:
 protected:
   result_impl();
 
-  virtual void needs_bind() = 0;
+  virtual bool needs_bind() { return false; };
   virtual bool prepare_fetch() = 0;
   virtual bool finalize_fetch() = 0;
 
@@ -66,8 +66,9 @@ public:
   template < class T >
   void bind(T *o)
   {
-    prepare_bind();
-    oos::access::serialize(*this, *o);
+    if (needs_bind()) {
+      oos::access::serialize(*this, *o);
+    }
   }
 
   template < class T >

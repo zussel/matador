@@ -6,9 +6,10 @@
 
 #include "../Item.hpp"
 
+#include "sql/statement.hpp"
+
 #include "database/session.hpp"
 #include "database/query.hpp"
-#include "database/statement.hpp"
 
 using namespace oos;
 

@@ -18,10 +18,11 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include "database/sql.hpp"
-#include "database/result.hpp"
-#include "database/statement.hpp"
+#include "sql/sql.hpp"
+#include "sql/result.hpp"
+#include "sql/statement.hpp"
 #include "database/session.hpp"
+
 #include "database/database.hpp"
 
 #include "database/query_create.hpp"

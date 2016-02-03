@@ -14,7 +14,7 @@
 #define OOS_API
 #endif
 
-#include "database/sql.hpp"
+#include "sql/sql.hpp"
 
 #include <sstream>
 
@@ -22,7 +22,7 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class OOS_API query_insert : public serializer
+class OOS_API query_insert
 {
 public:
   explicit query_insert(sql &s);

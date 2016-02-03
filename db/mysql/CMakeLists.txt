@@ -1,21 +1,19 @@
 SET(MYSQL_DATABASE_SOURCES
-		src/mysql_connection.cpp
+  src/mysql_connection.cpp
   src/mysql_exception.cpp
   src/mysql_statement.cpp
   src/mysql_result.cpp
   src/mysql_prepared_result.cpp
-  src/mysql_column_binder.cpp
 )
 
 SET(MYSQL_DATABASE_HEADER
-		include/mysql_connection.hpp
+  include/mysql_connection.hpp
   include/mysql_exception.hpp
   include/mysql_statement.hpp
   include/mysql_result.hpp
   include/mysql_prepared_result.hpp
   include/mysql_result_info.hpp
   include/mysql_types.hpp
-  include/mysql_column_binder.hpp
 )
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/db/mysql/include)

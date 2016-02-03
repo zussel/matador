@@ -37,7 +37,7 @@
 #include "tools/library.hpp"
 
 #include "database/transaction.hpp"
-#include "database/result.hpp"
+#include "sql/result.hpp"
 
 #include <string>
 #include <stack>

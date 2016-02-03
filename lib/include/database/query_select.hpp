@@ -14,9 +14,7 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-
-#include "database/types.hpp"
+#include "sql/types.hpp"
 
 namespace oos {
 

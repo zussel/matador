@@ -3,6 +3,8 @@
 
 #include "sql/result_impl.hpp"
 
+#include "mysql_result_info.hpp"
+
 #ifdef WIN32
 #include <winsock2.h>
 #include <mysql.h>
@@ -24,8 +26,6 @@ class time;
 class date;
 
 namespace mysql {
-
-struct mysql_result_info;
 
 class mysql_prepared_result : public detail::result_impl
 {
@@ -69,12 +69,32 @@ public:
   virtual void serialize(const char *id, basic_object_holder &x);
 
 protected:
-  virtual void needs_bind() override;
+  virtual bool needs_bind() override;
 
   virtual bool prepare_fetch() override;
   virtual bool finalize_fetch() override;
 
 private:
+
+  template < class T >
+  void prepare_bind_column(int index, enum_field_types type, T &value)
+  {
+    bind_[index].buffer_type = type;
+    bind_[index].buffer= (char *)&value;
+    bind_[index].buffer_length = sizeof(T);
+    bind_[index].is_null = &info_[index].is_null;
+    bind_[index].length = &info_[index].length;
+    bind_[index].error = &info_[index].error;
+  }
+
+  void prepare_bind_column(int index, enum_field_types type, oos::date &value);
+  void prepare_bind_column(int index, enum_field_types type, oos::time &value);
+  void prepare_bind_column(int index, enum_field_types type, std::string &value);
+  void prepare_bind_column(int index, enum_field_types type, char *x, size_t s);
+  void prepare_bind_column(int index, enum_field_types type, varchar_base &value);
+
+private:
+  int column_index_ = 0;
   size_type affected_rows_;
   size_type rows;
   size_type fields_;
@@ -85,7 +105,7 @@ private:
 
   t_pk_map pk_map_;
 
-  bool is_binding_ = true;
+  bool prepare_binding_ = true;
 };
 
 }

@@ -49,13 +49,15 @@ SET (TEST_JSON_SOURCES
 )
 
 SET (TEST_DATABASE_SOURCES
-  database/DatabaseTestUnit.cpp
-  database/DatabaseTestUnit.hpp
-  database/SessionTestUnit.hpp
-  database/SessionTestUnit.cpp
-  database/TransactionTestUnit.cpp
-  database/TransactionTestUnit.hpp
-        database/SQLTestUnit.cpp database/SQLTestUnit.hpp)
+#  database/DatabaseTestUnit.cpp
+#  database/DatabaseTestUnit.hpp
+#  database/SessionTestUnit.hpp
+#  database/SessionTestUnit.cpp
+#  database/TransactionTestUnit.cpp
+#  database/TransactionTestUnit.hpp
+  database/SQLTestUnit.cpp
+  database/SQLTestUnit.hpp
+)
 
 SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp object/HasManyListUnitTest.cpp object/HasManyListUnitTest.hpp)
 
@@ -66,7 +68,7 @@ ADD_EXECUTABLE(test_oos
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
 #  ${TEST_JSON_SOURCES}
-#  ${TEST_DATABASE_SOURCES}
+  ${TEST_DATABASE_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")

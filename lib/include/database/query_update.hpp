@@ -14,9 +14,7 @@
 #define OOS_API
 #endif
 
-#include "object/serializer.hpp"
-
-#include "database/sql.hpp"
+#include "sql/sql.hpp"
 
 #include <sstream>
 
@@ -24,7 +22,7 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class OOS_API query_update : public serializer
+class OOS_API query_update
 {
 public:
   explicit query_update(sql &s);
