@@ -1,4 +1,4 @@
-#include "database/query_update.hpp"
+#include "sql/query_update.hpp"
 
 #include "tools/identifier.hpp"
 #include "object/object_ptr.hpp"

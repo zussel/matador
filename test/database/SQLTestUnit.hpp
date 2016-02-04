@@ -6,11 +6,12 @@
 #define OOS_SQLTEST_HPP
 
 
-#include "object/object_store.hpp"
 #include "unit/unit_test.hpp"
 
+#include "sql/connection.hpp"
+
 namespace oos {
-class session;
+class connection;
 }
 
 class SQLTestUnit : public oos::unit_test
@@ -27,17 +28,13 @@ public:
   void test_foreign_query();
 
 protected:
-  oos::session* create_session();
-
-  oos::object_store& ostore();
-  const oos::object_store& ostore() const;
+  oos::connection* create_connection();
 
   std::string db() const;
 
 private:
-  oos::object_store ostore_;
   std::string db_;
-  std::unique_ptr<oos::session> session_;
+  std::unique_ptr<oos::connection> connection_;
 };
 
 

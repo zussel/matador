@@ -227,10 +227,10 @@ SET(DATABASE_SOURCES
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
-  database/query_create.cpp
-  database/query_select.cpp
-  database/query_insert.cpp
-  database/query_update.cpp
+		sql/query_create.cpp
+		sql/query_select.cpp
+		sql/query_insert.cpp
+		sql/query_update.cpp
   database/identifier_binder.cpp
 )
 
@@ -248,11 +248,11 @@ SET(DATABASE_HEADER
   ../include/database/value.hpp
   ../include/database/table.hpp
   ../include/database/table_reader.hpp
-  ../include/database/query.hpp
-  ../include/database/query_create.hpp
-  ../include/database/query_select.hpp
-  ../include/database/query_insert.hpp
-  ../include/database/query_update.hpp
+		../include/sql/query.hpp
+		../include/sql/query_create.hpp
+		../include/sql/query_select.hpp
+		../include/sql/query_insert.hpp
+		../include/sql/query_update.hpp
   ../include/database/identifier_binder.hpp
 )
 

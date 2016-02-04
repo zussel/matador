@@ -17,4 +17,28 @@ connection::connection(const std::string &dns)
   impl_ = df.create(type_);
 }
 
+connection::~connection()
+{
+  impl_->close();
+}
+
+void connection::open()
+{
+  if (is_open()) {
+    return;
+  } else {
+    impl_->open(dns_);
+  }
+}
+
+bool connection::is_open() const
+{
+  return impl_->is_open();
+}
+
+void connection::close()
+{
+  impl_->close();
+}
+
 }

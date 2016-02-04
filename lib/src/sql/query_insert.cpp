@@ -1,4 +1,4 @@
-#include "database/query_insert.hpp"
+#include "sql/query_insert.hpp"
 
 #include "object/object_ptr.hpp"
 

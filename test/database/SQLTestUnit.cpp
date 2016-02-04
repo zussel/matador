@@ -8,8 +8,7 @@
 
 #include "sql/statement.hpp"
 
-#include "database/session.hpp"
-#include "database/query.hpp"
+#include "sql/query.hpp"
 
 using namespace oos;
 
@@ -26,7 +25,7 @@ SQLTestUnit::~SQLTestUnit() {}
 
 void SQLTestUnit::initialize()
 {
-  session_.reset(create_session());
+  connection_.reset(create_connection());
 }
 
 void SQLTestUnit::finalize() { }
@@ -34,9 +33,9 @@ void SQLTestUnit::finalize() { }
 
 void SQLTestUnit::test_create()
 {
-  session_->open();
+  connection_->open();
 
-  query<Item> q(session_->db());
+  query<Item> q(connection_->db());
 
   result<Item> res(q.create("item").execute());
 
@@ -63,9 +62,9 @@ void SQLTestUnit::test_create()
 
 void SQLTestUnit::test_statement()
 {
-  session_->open();
+  connection_->open();
 
-  query<Item> q(session_->db());
+  query<Item> q(connection_->db());
 
   statement<Item> stmt(q.create("item").prepare());
 
@@ -100,9 +99,9 @@ void SQLTestUnit::test_statement()
 
 void SQLTestUnit::test_foreign_query()
 {
-  session_->open();
+  connection_->open();
 
-  query<Item> q(session_->db());
+  query<Item> q(connection_->db());
 
   using t_object_item = ObjectItem<Item>;
 
@@ -116,7 +115,7 @@ void SQLTestUnit::test_foreign_query()
   hans->set_time(itime);
   res = q.insert(hans, "item").execute();
 
-  query<t_object_item> object_item_query(session_->db());
+  query<t_object_item> object_item_query(connection_->db());
   result<t_object_item> ores = object_item_query.create("object_item").execute();
 
   t_object_item oitem;
@@ -144,19 +143,9 @@ void SQLTestUnit::test_foreign_query()
   q.drop("item").execute();
 }
 
-session* SQLTestUnit::create_session()
+connection* SQLTestUnit::create_connection()
 {
-  return new session(ostore_, db_);
-}
-
-oos::object_store& SQLTestUnit::ostore()
-{
-  return ostore_;
-}
-
-const oos::object_store& SQLTestUnit::ostore() const
-{
-  return ostore_;
+  return new connection(db_);
 }
 
 std::string SQLTestUnit::db() const {

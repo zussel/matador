@@ -17,7 +17,7 @@
 
 #include "database/database_sequencer.hpp"
 #include "database/database_exception.hpp"
-#include "database/query.hpp"
+#include "sql/query.hpp"
 
 #include "object/generic_access.hpp"
 

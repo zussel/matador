@@ -21,23 +21,18 @@
 #include "sql/sql.hpp"
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
-#include "database/session.hpp"
-
-#include "database/database.hpp"
-
-#include "database/query_create.hpp"
-#include "database/query_insert.hpp"
-#include "database/query_update.hpp"
-#include "database/query_select.hpp"
+#include "sql/connection.hpp"
+#include "sql/query_create.hpp"
+#include "sql/query_insert.hpp"
+#include "sql/query_update.hpp"
+#include "sql/query_select.hpp"
 
 #include <memory>
 #include <sstream>
 
 namespace oos {
 
-class serializable;
 class condition;
-class object_base_ptr;
 
 /**
  * @class query
@@ -99,26 +94,15 @@ private:
 public:
   /**
    * Create a new query for the
-   * given session.
+   * given connection.
    * 
-   * @param s The session.
+   * @param conn The connection.
    */
-  query(session &s)
+  query(connection &conn)
     : state(QUERY_BEGIN)
-    , db_(s.db())
+    , connection_(conn)
   {}
   
-  /**
-   * Create a new query for the
-   * given database.
-   * 
-   * @param db The database.
-   */
-  query(database &db)
-    : state(QUERY_BEGIN)
-    , db_(db)
-  {}
-
   ~query() {}
 
   /**
@@ -148,7 +132,7 @@ public:
     reset();
     sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
 
-    query_create s(sql_, db_);
+    query_create s(sql_, connection_);
     obj->serialize(s);
     sql_.append(")");
 
@@ -525,7 +509,7 @@ public:
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return db_.execute<T>(sql_.direct(), producer_);
+    return connection_.execute<T>(sql_.direct(), producer_);
   }
 
   /**
@@ -536,7 +520,7 @@ public:
    */
   statement<T> prepare()
   {
-    return db_.prepare<T>(sql_, producer_);
+    return connection_.prepare<T>(sql_, producer_);
   }
 
   /**
@@ -625,7 +609,7 @@ private:
 private:
   sql sql_;
   state_t state;
-  database &db_;
+  connection &connection_;
 
   std::shared_ptr <object_base_producer> producer_;
 };

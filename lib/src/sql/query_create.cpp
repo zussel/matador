@@ -1,8 +1,7 @@
-#include "database/query_create.hpp"
-#include "database/database.hpp"
+#include "sql/query_create.hpp"
+#include "sql/connection.hpp"
 
 #include "tools/basic_identifier.hpp"
-
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 
@@ -11,7 +10,7 @@
 
 namespace oos {
 
-query_create::query_create(sql &d, const database &db)
+query_create::query_create(sql &d, const connection &db)
   : dialect(d)
   , db_(db)
   , first(true)
