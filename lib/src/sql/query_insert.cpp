@@ -16,104 +16,94 @@ query_insert::query_insert(sql &s)
 {}
 query_insert::~query_insert() {}
 
-void query_insert::write(const char *id, char x)
+void query_insert::serialize(const char *id, char &x)
 {
   write_field(id, type_char, x);
 }
 
-void query_insert::write(const char *id, short x)
+void query_insert::serialize(const char *id, short &x)
 {
   write_field(id, type_short, x);
 }
 
-void query_insert::write(const char *id, int x)
+void query_insert::serialize(const char *id, int &x)
 {
   write_field(id, type_int, x);
 }
 
-void query_insert::write(const char *id, long x)
+void query_insert::serialize(const char *id, long &x)
 {
   write_field(id, type_long, x);
 }
 
-void query_insert::write(const char *id, unsigned char x)
+void query_insert::serialize(const char *id, unsigned char &x)
 {
   write_field(id, type_unsigned_char, x);
 }
 
-void query_insert::write(const char *id, unsigned short x)
+void query_insert::serialize(const char *id, unsigned short &x)
 {
   write_field(id, type_unsigned_short, x);
 }
 
-void query_insert::write(const char *id, unsigned int x)
+void query_insert::serialize(const char *id, unsigned int &x)
 {
   write_field(id, type_unsigned_int, x);
 }
 
-void query_insert::write(const char *id, unsigned long x)
+void query_insert::serialize(const char *id, unsigned long &x)
 {
   write_field(id, type_unsigned_long, x);
 }
 
-void query_insert::write(const char *id, float x)
+void query_insert::serialize(const char *id, float &x)
 {
   write_field(id, type_float, x);
 }
 
-void query_insert::write(const char *id, double x)
+void query_insert::serialize(const char *id, double &x)
 {
   write_field(id, type_double, x);
 }
 
-void query_insert::write(const char *id, bool x)
+void query_insert::serialize(const char *id, bool &x)
 {
   write_field(id, type_char_pointer, x);
 }
 
-void query_insert::write(const char *id, const char *x, size_t)
+void query_insert::serialize(const char *id, char *x, size_t)
 {
   write_field(id, type_char_pointer, x);
 }
 
-void query_insert::write(const char *id, const varchar_base &x)
+void query_insert::serialize(const char *id, varchar_base &x)
 {
   write_field(id, type_varchar, x);
 }
 
-void query_insert::write(const char *id, const std::string &x)
+void query_insert::serialize(const char *id, std::string &x)
 {
   write_field(id, type_text, x);
 }
 
-void query_insert::write(const char *id, const date &x)
+void query_insert::serialize(const char *id, date &x)
 {
   write_field(id, type_date, x);
 }
 
-void query_insert::write(const char *id, const time &x)
+void query_insert::serialize(const char *id, time &x)
 {
   write_field(id, type_time, x);
 }
 
-void query_insert::write(const char *id, const object_base_ptr &x)
+void query_insert::serialize(const char *id, basic_object_holder &x)
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
-//    write_field(id, type_long, x.id());
   } else {
     write_null(id);
   }
 }
-
-void query_insert::write(const char *, const object_container &)
-{}
-
-void query_insert::write(const char *id, const basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
 
 void query_insert::write_field(const char *id, data_type_t type, const char &x) {
   if (first) {

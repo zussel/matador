@@ -16,164 +16,131 @@ query_update::query_update(sql &s)
 
 query_update::~query_update() {}
 
-void query_update::write(const char *id, char x)
+void query_update::serialize(const char *id, char &x)
 {
   write_pair(id, type_char, x);
 }
 
-void query_update::write(const char *id, short x)
+void query_update::serialize(const char *id, short &x)
 {
   write_pair(id, type_short, x);
 }
 
-void query_update::write(const char *id, int x)
+void query_update::serialize(const char *id, int &x)
 {
   write_pair(id, type_int, x);
 }
 
-void query_update::write(const char *id, long x)
+void query_update::serialize(const char *id, long &x)
 {
   write_pair(id, type_long, x);
 }
 
-void query_update::write(const char *id, unsigned char x)
+void query_update::serialize(const char *id, unsigned char &x)
 {
   write_pair(id, type_unsigned_char, x);
 }
 
-void query_update::write(const char *id, unsigned short x)
+void query_update::serialize(const char *id, unsigned short &x)
 {
   write_pair(id, type_unsigned_short, x);
 }
 
-void query_update::write(const char *id, unsigned int x)
+void query_update::serialize(const char *id, unsigned int &x)
 {
   write_pair(id, type_unsigned_int, x);
 }
 
-void query_update::write(const char *id, unsigned long x)
+void query_update::serialize(const char *id, unsigned long &x)
 {
   write_pair(id, type_unsigned_long, x);
 }
 
-void query_update::write(const char *id, float x)
+void query_update::serialize(const char *id, float &x)
 {
   write_pair(id, type_float, x);
 }
 
-void query_update::write(const char *id, double x)
+void query_update::serialize(const char *id, double &x)
 {
   write_pair(id, type_double, x);
 }
 
-void query_update::write(const char *id, bool x)
+void query_update::serialize(const char *id, bool &x)
 {
   write_pair(id, type_char_pointer, x);
 }
 
-void query_update::write(const char *id, const char *x, size_t)
+void query_update::serialize(const char *id, char *x, size_t)
 {
-  write_pair(id, type_char_pointer, x);
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  std::stringstream valstr;
+  valstr << "'" << x << "'";
+  dialect.append(id, type_char_pointer, valstr.str());
 }
 
-void query_update::write(const char *id, const varchar_base &x)
+void query_update::serialize(const char *id, varchar_base &x)
 {
-  write_pair(id, type_varchar, x);
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  std::stringstream valstr;
+  valstr << "'" << x.str() << "'";
+  dialect.append(id, type_varchar, valstr.str());
 }
 
-void query_update::write(const char *id, const std::string &x)
+void query_update::serialize(const char *id, std::string &x)
 {
-  write_pair(id, type_text, x);
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  std::stringstream valstr;
+  valstr << "'" << x << "'";
+  dialect.append(id, type_text, valstr.str());
 }
 
-void query_update::write(const char *id, const date &x)
+void query_update::serialize(const char *id, date &x)
 {
-  write_pair(id, type_date, x);
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  // TODO: append query update part for time
+  std::stringstream valstr;
+  valstr << x;
+  dialect.append(id, type_date, valstr.str());
 }
 
-void query_update::write(const char *id, const time &x)
+void query_update::serialize(const char *id, time &x)
 {
-  write_pair(id, type_time, x);
+  if (first) {
+    first = false;
+  } else {
+    dialect.append(", ");
+  }
+  dialect.append(std::string(id) + "=");
+  // TODO: append query update part for time
+  std::stringstream valstr;
+  valstr << x;
+  dialect.append(id, type_time, valstr.str());
 }
 
-void query_update::write(const char *id, const object_base_ptr &x)
+void query_update::serialize(const char *id, basic_object_holder &x)
 {
   write_pair(id, type_long, x.id());
-}
-
-void query_update::write(const char *, const object_container &)
-{}
-
-void query_update::write(const char *id, const basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void query_update::write_pair(const char *id, data_type_t type, const oos::date &x)
-{
-  if (first) {
-    first = false;
-  } else {
-    dialect.append(", ");
-  }
-  dialect.append(std::string(id) + "=");
-  // TODO: append query update part for time
-  std::stringstream valstr;
-  valstr << x;
-  dialect.append(id, type, valstr.str());
-}
-
-void query_update::write_pair(const char *id, data_type_t type, const oos::time &x)
-{
-  if (first) {
-    first = false;
-  } else {
-    dialect.append(", ");
-  }
-  dialect.append(std::string(id) + "=");
-  // TODO: append query update part for time
-  std::stringstream valstr;
-  valstr << x;
-  dialect.append(id, type, valstr.str());
-}
-
-void query_update::write_pair(const char *id, data_type_t type, const std::string &x)
-{
-    if (first) {
-      first = false;
-    } else {
-      dialect.append(", ");
-    }
-    dialect.append(std::string(id) + "=");
-    std::stringstream valstr;
-    valstr << "'" << x << "'";
-    dialect.append(id, type, valstr.str());
-}
-
-void query_update::write_pair(const char *id, data_type_t type, const varchar_base &x)
-{
-    if (first) {
-      first = false;
-    } else {
-      dialect.append(", ");
-    }
-    dialect.append(std::string(id) + "=");
-    std::stringstream valstr;
-    valstr << "'" << x.str() << "'";
-    dialect.append(id, type, valstr.str());
-}
-
-void query_update::write_pair(const char *id, data_type_t type, const char *x)
-{
-    if (first) {
-      first = false;
-    } else {
-      dialect.append(", ");
-    }
-    dialect.append(std::string(id) + "=");
-    std::stringstream valstr;
-    valstr << "'" << x << "'";
-    dialect.append(id, type, valstr.str());
 }
 
 }

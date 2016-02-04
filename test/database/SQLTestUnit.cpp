@@ -35,7 +35,7 @@ void SQLTestUnit::test_create()
 {
   connection_->open();
 
-  query<Item> q(connection_->db());
+  query<Item> q(*connection_);
 
   result<Item> res(q.create("item").execute());
 
@@ -64,7 +64,7 @@ void SQLTestUnit::test_statement()
 {
   connection_->open();
 
-  query<Item> q(connection_->db());
+  query<Item> q(*connection_);
 
   statement<Item> stmt(q.create("item").prepare());
 
@@ -101,7 +101,7 @@ void SQLTestUnit::test_foreign_query()
 {
   connection_->open();
 
-  query<Item> q(connection_->db());
+  query<Item> q(*connection_);
 
   using t_object_item = ObjectItem<Item>;
 
@@ -115,7 +115,7 @@ void SQLTestUnit::test_foreign_query()
   hans->set_time(itime);
   res = q.insert(hans, "item").execute();
 
-  query<t_object_item> object_item_query(connection_->db());
+  query<t_object_item> object_item_query(*connection_);
   result<t_object_item> ores = object_item_query.create("object_item").execute();
 
   t_object_item oitem;

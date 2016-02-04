@@ -41,4 +41,8 @@ void connection::close()
   impl_->close();
 }
 
+const char *connection::type_string(data_type_t type) const
+{
+  return impl_->type_string(type);
+}
 }

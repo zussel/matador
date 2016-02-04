@@ -26,6 +26,8 @@ public:
   virtual void commit() override {}
 
   virtual void rollback() override {}
+
+  virtual const char *type_string(data_type_t) const { return nullptr; }
 };
 
 }

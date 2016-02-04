@@ -1,8 +1,7 @@
 #include "sql/query_select.hpp"
-#include "database/sql.hpp"
+#include "sql/sql.hpp"
 
 #include "tools/identifier.hpp"
-
 #include "tools/date.hpp"
 
 namespace oos {
@@ -14,100 +13,92 @@ query_select::query_select(sql &s)
 query_select::~query_select()
 {}
 
-void query_select::write(const char *id, char)
+void query_select::serialize(const char *id, char&)
 {
-  write(id, type_char);
+  serialize(id, type_char);
 }
 
-void query_select::write(const char *id, short)
+void query_select::serialize(const char *id, short&)
 {
-  write(id, type_short);
+  serialize(id, type_short);
 }
 
-void query_select::write(const char *id, int)
+void query_select::serialize(const char *id, int&)
 {
-  write(id, type_int);
+  serialize(id, type_int);
 }
 
-void query_select::write(const char *id, long)
+void query_select::serialize(const char *id, long&)
 {
-  write(id, type_long);
+  serialize(id, type_long);
 }
 
-void query_select::write(const char *id, unsigned char)
+void query_select::serialize(const char *id, unsigned char&)
 {
-  write(id, type_unsigned_char);
+  serialize(id, type_unsigned_char);
 }
 
-void query_select::write(const char *id, unsigned short)
+void query_select::serialize(const char *id, unsigned short&)
 {
-  write(id, type_unsigned_short);
+  serialize(id, type_unsigned_short);
 }
 
-void query_select::write(const char *id, unsigned int)
+void query_select::serialize(const char *id, unsigned int&)
 {
-  write(id, type_unsigned_int);
+  serialize(id, type_unsigned_int);
 }
 
-void query_select::write(const char *id, unsigned long)
+void query_select::serialize(const char *id, unsigned long&)
 {
-  write(id, type_unsigned_long);
+  serialize(id, type_unsigned_long);
 }
 
-void query_select::write(const char *id, float)
+void query_select::serialize(const char *id, float&)
 {
-  write(id, type_float);
+  serialize(id, type_float);
 }
 
-void query_select::write(const char *id, double)
+void query_select::serialize(const char *id, double&)
 {
-  write(id, type_double);
+  serialize(id, type_double);
 }
 
-void query_select::write(const char *id, bool)
+void query_select::serialize(const char *id, bool&)
 {
-  write(id, type_char_pointer);
+  serialize(id, type_char_pointer);
 }
 
-void query_select::write(const char *id, const char *, size_t )
+void query_select::serialize(const char *id, char *, size_t )
 {
-  write(id, type_char_pointer);
+  serialize(id, type_char_pointer);
 }
 
-void query_select::write(const char *id, const varchar_base &)
+void query_select::serialize(const char *id, varchar_base &)
 {
-  write(id, type_varchar);
+  serialize(id, type_varchar);
 }
 
-void query_select::write(const char *id, const std::string &)
+void query_select::serialize(const char *id, std::string &)
 {
-  write(id, type_text);
+  serialize(id, type_text);
 }
 
-void query_select::write(const char *id, const date &)
+void query_select::serialize(const char *id, date &)
 {
-  write(id, type_date);
+  serialize(id, type_date);
 }
 
-void query_select::write(const char *id, const time &)
+void query_select::serialize(const char *id, time &)
 {
-  write(id, type_time);
+  serialize(id, type_time);
 }
 
-void query_select::write(const char *id, const object_base_ptr &)
+void query_select::serialize(const char *id, basic_object_holder &)
 {
-  write(id, type_long);
+  serialize(id, type_long);
 }
 
-void query_select::write(const char *, const object_container &)
-{}
-
-void query_select::write(const char *id, const basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
-
-void query_select::write(const char *id, data_type_t type)
+void query_select::serialize(const char *id, data_type_t type)
 {
   if (first) {
     first = false;

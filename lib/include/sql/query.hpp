@@ -127,13 +127,14 @@ public:
    * @param obj The serializable providing the field information.
    * @return A reference to the query.
    */
-  query& create(const std::string &name, serializable *obj)
+  query& create(const std::string &name, T *obj)
   {
     reset();
     sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
 
     query_create s(sql_, connection_);
-    obj->serialize(s);
+    oos::access::serialize(s, *obj);
+//    obj->serialize(s);
     sql_.append(")");
 
 //  std::cout << sql_.str(true) << '\n';
@@ -166,28 +167,15 @@ public:
    */
   query& select()
   {
-    T obj;
-    return select(new object_producer<T>);
-  }
-
-  /**
-   * Creates a select statement based
-   * on the given object_base_produces.
-   *
-   * @return A reference to the query.
-   */
-  query& select(object_base_producer *producer)
-  {
     reset();
-    producer_.reset(producer);
-
-    std::unique_ptr<serializable> obj(producer->create());
 
     throw_invalid(QUERY_SELECT, state);
     sql_.append("SELECT ");
 
     query_select s(sql_);
-    obj->serialize(s);
+
+    T obj;
+    oos::access::serialize(s, obj);
 
     state = QUERY_SELECT;
     return *this;
@@ -209,12 +197,13 @@ public:
 
     query_insert s(sql_);
     s.fields();
-    obj->serialize(s);
+
+    oos::access::serialize(s, *obj);
 
     sql_.append(") VALUES (");
 
     s.values();
-    obj->serialize(s);
+    oos::access::serialize(s, *obj);
 
     sql_.append(")");
 
@@ -232,8 +221,12 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  template < bool TYPE >
-  query& insert(const object_holder<T, TYPE> &holder, const std::string &table)
+  query& insert(const has_one<T> &holder, const std::string &table)
+  {
+    return insert(holder.get(), table);
+  }
+
+  query& insert(const object_ptr<T> &holder, const std::string &table)
   {
     return insert(holder.get(), table);
   }
@@ -253,7 +246,7 @@ public:
     sql_.append(std::string("UPDATE ") + table + std::string(" SET "));
 
     query_update s(sql_);
-    o->serialize(s);
+    oos::access::serialize(s, *o);
 
     state = QUERY_OBJECT_UPDATE;
 
@@ -270,7 +263,7 @@ public:
    * @return A reference to the query.
    */
   template < bool TYPE >
-  query& update(object_holder<T, TYPE> &holder, const std::string &table)
+  query& update(has_one<T> &holder, const std::string &table)
   {
     return update(holder.get(), table);
   }
@@ -509,7 +502,7 @@ public:
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return connection_.execute<T>(sql_.direct(), producer_);
+    return connection_.execute<T>(sql_.direct());
   }
 
   /**
@@ -520,7 +513,7 @@ public:
    */
   statement<T> prepare()
   {
-    return connection_.prepare<T>(sql_, producer_);
+    return connection_.prepare<T>(sql_);
   }
 
   /**
@@ -610,8 +603,6 @@ private:
   sql sql_;
   state_t state;
   connection &connection_;
-
-  std::shared_ptr <object_base_producer> producer_;
 };
 
 }

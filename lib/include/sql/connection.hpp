@@ -51,6 +51,8 @@ public:
     return statement<T>(impl_->prepare(sql));
   }
 
+  const char* type_string(data_type_t type) const;
+
 private:
   std::string type_;
   std::string dns_;

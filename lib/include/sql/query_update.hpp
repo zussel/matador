@@ -14,6 +14,8 @@
 #define OOS_API
 #endif
 
+#include "tools/identifier.hpp"
+
 #include "sql/sql.hpp"
 
 #include <sstream>
@@ -22,31 +24,42 @@ namespace oos {
 
 /// @cond OOS_DEV
 
+class connection;
+class sql;
+class varchar_base;
+class date;
+class time;
+class basic_object_holder;
+
 class OOS_API query_update
 {
 public:
   explicit query_update(sql &s);
   virtual ~query_update();
-  
-  virtual void write(const char *id, char x);
-  virtual void write(const char *id, short x);
-  virtual void write(const char *id, int x);
-  virtual void write(const char *id, long x);
-  virtual void write(const char *id, unsigned char x);
-  virtual void write(const char *id, unsigned short x);
-  virtual void write(const char *id, unsigned int x);
-  virtual void write(const char *id, unsigned long x);
-  virtual void write(const char *id, float x);
-  virtual void write(const char *id, double x);
-  virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x, size_t s);
-  virtual void write(const char *id, const varchar_base &x);
-  virtual void write(const char *id, const std::string &x);
-	virtual void write(const char *id, const date &x);
-	virtual void write(const char *id, const time &x);
-	virtual void write(const char *id, const object_base_ptr &x);
-  virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const basic_identifier &x);
+
+  void serialize(const char *id, char &x);
+  void serialize(const char *id, short &x);
+  void serialize(const char *id, int &x);
+  void serialize(const char *id, long &x);
+  void serialize(const char *id, unsigned char &x);
+  void serialize(const char *id, unsigned short &x);
+  void serialize(const char *id, unsigned int &x);
+  void serialize(const char *id, unsigned long &x);
+  void serialize(const char *id, float &x);
+  void serialize(const char *id, double &x);
+  void serialize(const char *id, bool &x);
+  void serialize(const char *id, char *x, size_t s);
+  void serialize(const char *id, varchar_base &x);
+  void serialize(const char *id, std::string &x);
+  void serialize(const char *id, date &x);
+  void serialize(const char *id, time &x);
+  void serialize(const char *id, basic_object_holder &x);
+  template < class T >
+  void serialize(const char *id, identifier<T> &x)
+  {
+    T val = x.value();
+    serialize(id, val);
+  }
 
   template < class T >
   void write_pair(const char *id, data_type_t type, const T &x)

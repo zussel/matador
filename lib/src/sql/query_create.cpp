@@ -1,8 +1,7 @@
 #include "sql/query_create.hpp"
 #include "sql/connection.hpp"
+#include "sql/sql.hpp"
 
-#include "tools/basic_identifier.hpp"
-#include "tools/varchar.hpp"
 #include "tools/date.hpp"
 
 #include <sstream>
@@ -19,102 +18,92 @@ query_create::query_create(sql &d, const connection &db)
 query_create::~query_create()
 {}
 
-void query_create::write(const char *id, char)
+void query_create::serialize(const char *id, char&)
 {
-  write(id, type_char);
+  serialize(id, type_char);
 }
 
-void query_create::write(const char *id, short)
+void query_create::serialize(const char *id, short&)
 {
-  write(id, type_short);
+  serialize(id, type_short);
 }
 
-void query_create::write(const char *id, int)
+void query_create::serialize(const char *id, int&)
 {
-  write(id, type_int);
+  serialize(id, type_int);
 }
 
-void query_create::write(const char *id, long)
+void query_create::serialize(const char *id, long&)
 {
-  write(id, type_long);
+  serialize(id, type_long);
 }
 
-void query_create::write(const char *id, unsigned char)
+void query_create::serialize(const char *id, unsigned char&)
 {
-  write(id, type_unsigned_char);
+  serialize(id, type_unsigned_char);
 }
 
-void query_create::write(const char *id, unsigned short)
+void query_create::serialize(const char *id, unsigned short&)
 {
-  write(id, type_unsigned_short);
+  serialize(id, type_unsigned_short);
 }
 
-void query_create::write(const char *id, unsigned int)
+void query_create::serialize(const char *id, unsigned int&)
 {
-  write(id, type_unsigned_int);
+  serialize(id, type_unsigned_int);
 }
 
-void query_create::write(const char *id, unsigned long)
+void query_create::serialize(const char *id, unsigned long&)
 {
-  write(id, type_unsigned_long);
+  serialize(id, type_unsigned_long);
 }
 
-void query_create::write(const char *id, float)
+void query_create::serialize(const char *id, float&)
 {
-  write(id, type_float);
+  serialize(id, type_float);
 }
 
-void query_create::write(const char *id, double)
+void query_create::serialize(const char *id, double&)
 {
-  write(id, type_double);
+  serialize(id, type_double);
 }
 
-void query_create::write(const char *id, bool)
+void query_create::serialize(const char *id, bool&)
 {
-  write(id, type_bool);
+  serialize(id, type_bool);
 }
 
-void query_create::write(const char *id, const char *, size_t s)
+void query_create::serialize(const char *id, char *, size_t s)
 {
-  write(id, type_char_pointer, s);
+  serialize(id, type_char_pointer, s);
 }
 
-void query_create::write(const char *id, const varchar_base &x)
+void query_create::serialize(const char *id, varchar_base &x)
 {
-  write(id, type_varchar, x.capacity());
+  serialize(id, type_varchar, x.capacity());
 }
 
-void query_create::write(const char *id, const std::string &)
+void query_create::serialize(const char *id, std::string &)
 {
-  write(id, type_text);
+  serialize(id, type_text);
 }
 
-void query_create::write(const char *id, const date &)
+void query_create::serialize(const char *id, date &)
 {
-  write(id, type_date);
+  serialize(id, type_date);
 }
 
-void query_create::write(const char *id, const time &)
+void query_create::serialize(const char *id, time &)
 {
-  write(id, type_time);
+  serialize(id, type_time);
 }
 
-void query_create::write(const char *id, const object_base_ptr &)
+void query_create::serialize(const char *id, basic_object_holder &)
 {
-  write(id, type_long);
+  serialize(id, type_long);
 }
 
-void query_create::write(const char *, const object_container &)
-{}
-
-void query_create::write(const char *id, const basic_identifier &x)
-{
-  x.serialize(id, *this);
-//  dialect.append(" NOT NULL PRIMARY KEY AUTOINCREMENT");
-  dialect.append(" NOT NULL PRIMARY KEY");
-}
-
-void query_create::write(const char *id, data_type_t type)
+void query_create::serialize(const char *id, data_type_t type)
 {
   if (first) {
     first = false;
@@ -126,7 +115,7 @@ void query_create::write(const char *id, data_type_t type)
   dialect.append(db_.type_string(type));
 }
 
-void query_create::write(const char *id, data_type_t type, size_t size)
+void query_create::serialize(const char *id, data_type_t type, size_t size)
 {
   if (first) {
     first = false;
@@ -138,6 +127,11 @@ void query_create::write(const char *id, data_type_t type, size_t size)
   std::stringstream t;
   t << db_.type_string(type) << "(" << size << ")";
   dialect.append(t.str());
+}
+
+void query_create::append(const std::string &term)
+{
+  dialect.append(term);
 }
 
 }

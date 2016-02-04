@@ -1,75 +1,68 @@
 SET(OBJECT_SOURCES
-#		object/object_container.cpp
-#		object/object_ptr.cpp
-		object/object_store.cpp
-		object/object_proxy.cpp
-		object/object_serializer.cpp
-		object/prototype_node.cpp
-#		object/prototype_tree.cpp
-#		object/primary_key_analyzer.cpp
-#		object/foreign_key_analyzer.cpp
-		object/identifier.cpp
-		object/prototype_iterator.cpp
-		object/basic_object_holder.cpp)
+    object/object_store.cpp
+    object/object_proxy.cpp
+    object/object_serializer.cpp
+    object/prototype_node.cpp
+    object/identifier.cpp
+    object/prototype_iterator.cpp
+    object/basic_object_holder.cpp
+)
 
 SET(OBJECT_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/identifier.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/identifier.hpp
+    ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
 )
 
 SET(OBJECT_HEADER
-#		../include/object/attribute_counter.hpp
-		../include/object/attribute_serializer.hpp
-		../include/object/generic_access.hpp
-		../include/object/object_exception.hpp
-		../include/object/object_ptr.hpp
-		../include/object/object_store.hpp
-#		../include/object/object_container.hpp
-#		../include/object/object_list.hpp
-#		../include/object/object_vector.hpp
-#		../include/object/object_producer.hpp
-#		../include/object/linked_object_list.hpp
-		../include/object/object_view.hpp
-		../include/object/object_proxy.hpp
-		../include/object/object_serializer.hpp
-		../include/object/prototype_node.hpp
-#		../include/object/prototype_tree.hpp
-		../include/object/object_observer.hpp
-		../include/object/object_expression.hpp
-		../include/object/attribute_serializer.hpp
-#		../include/object/primary_key_analyzer.hpp
-#		../include/object/foreign_key_analyzer.hpp
-		../include/object/prototype_iterator.hpp
-		../include/object/base_class.hpp
-		../include/object/has_many.hpp
-		../include/object/has_one.hpp
-		../include/object/container_type_traits.hpp
-		../include/object/basic_object_holder.hpp
-		../include/object/cascade_type.hpp
-		../include/object/basic_has_many.hpp
-		../include/object/has_many_vector.hpp
-		../include/object/has_many_list.hpp
-		../include/object/has_many_set.hpp
+    #../include/object/attribute_counter.hpp
+    ../include/object/attribute_serializer.hpp
+    ../include/object/generic_access.hpp
+    ../include/object/object_exception.hpp
+    ../include/object/object_ptr.hpp
+    ../include/object/object_store.hpp
+    #../include/object/object_container.hpp
+    #../include/object/object_list.hpp
+    #../include/object/object_vector.hpp
+    #../include/object/linked_object_list.hpp
+    ../include/object/object_view.hpp
+    ../include/object/object_proxy.hpp
+    ../include/object/object_serializer.hpp
+    ../include/object/prototype_node.hpp
+    #../include/object/prototype_tree.hpp
+    ../include/object/object_observer.hpp
+    ../include/object/object_expression.hpp
+    ../include/object/attribute_serializer.hpp
+    ../include/object/prototype_iterator.hpp
+    ../include/object/base_class.hpp
+    ../include/object/has_many.hpp
+    ../include/object/has_one.hpp
+    ../include/object/container_type_traits.hpp
+    ../include/object/basic_object_holder.hpp
+    ../include/object/cascade_type.hpp
+    ../include/object/basic_has_many.hpp
+    ../include/object/has_many_vector.hpp
+    ../include/object/has_many_list.hpp
+    ../include/object/has_many_set.hpp
 )
 
 SET(TOOLS_SOURCES
@@ -84,7 +77,8 @@ SET(TOOLS_SOURCES
   tools/string.cpp
   tools/strptime.cpp
   tools/basic_identifier.cpp
-		tools/serializer.cpp)
+  tools/serializer.cpp
+)
 
 SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/algorithm.hpp
@@ -120,6 +114,7 @@ SET(TOOLS_HEADER
   ../include/tools/strptime.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
+  ../include/tools/serializer.hpp
   ../include/tools/basic_identifier.hpp
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
@@ -127,29 +122,37 @@ SET(TOOLS_HEADER
 )
 
 SET(SQL_SOURCES
-	sql/condition.cpp
-	sql/connection.cpp
-	sql/connection_factory.cpp
-    sql/result_impl.cpp
-    sql/sql.cpp
-    sql/statement_impl.cpp
+  sql/condition.cpp
+  sql/connection.cpp
+  sql/connection_factory.cpp
+  sql/result_impl.cpp
+  sql/query_create.cpp
+  sql/query_select.cpp
+  sql/query_insert.cpp
+  sql/query_update.cpp
+  sql/sql.cpp
+  sql/statement_impl.cpp
 )
 
 SET(SQL_HEADER
 	../include/sql/condition.hpp
 	../include/sql/connection.hpp
 	../include/sql/connection_factory.hpp
-    ../include/sql/connection_impl.hpp
-    ../include/sql/result.hpp
-    ../include/sql/result_impl.hpp
-    ../include/sql/memory_connection.hpp
-		../include/tools/serializer.hpp
-    ../include/sql/sql.hpp
-    ../include/sql/statement.hpp
-    ../include/sql/statement_impl.hpp
-    ../include/sql/types.hpp
-    ../include/sql/token.hpp
-		../include/tools/serializer.hpp)
+  ../include/sql/connection_impl.hpp
+  ../include/sql/result.hpp
+  ../include/sql/result_impl.hpp
+  ../include/sql/memory_connection.hpp
+  ../include/sql/query.hpp
+  ../include/sql/query_create.hpp
+  ../include/sql/query_select.hpp
+  ../include/sql/query_insert.hpp
+  ../include/sql/query_update.hpp
+  ../include/sql/sql.hpp
+  ../include/sql/statement.hpp
+  ../include/sql/statement_impl.hpp
+  ../include/sql/types.hpp
+  ../include/sql/token.hpp
+)
 
 SET(JSON_SOURCES
   json/json_type.cpp
@@ -208,10 +211,11 @@ SET(UNIT_INSTALL_HEADER
 )
 
 SET(UNIT_HEADER
-		../include/unit/test_suite.hpp
-		../include/unit/unit_exception.hpp
-		../include/unit/unit_test.hpp
-		../include/object/access.hpp)
+  ../include/unit/test_suite.hpp
+  ../include/unit/unit_exception.hpp
+  ../include/unit/unit_test.hpp
+  ../include/object/access.hpp
+)
 
 SET(DATABASE_SOURCES
   database/action.cpp
@@ -227,10 +231,6 @@ SET(DATABASE_SOURCES
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
-		sql/query_create.cpp
-		sql/query_select.cpp
-		sql/query_insert.cpp
-		sql/query_update.cpp
   database/identifier_binder.cpp
 )
 
@@ -248,11 +248,6 @@ SET(DATABASE_HEADER
   ../include/database/value.hpp
   ../include/database/table.hpp
   ../include/database/table_reader.hpp
-		../include/sql/query.hpp
-		../include/sql/query_create.hpp
-		../include/sql/query_select.hpp
-		../include/sql/query_insert.hpp
-		../include/sql/query_update.hpp
   ../include/database/identifier_binder.hpp
 )
 
