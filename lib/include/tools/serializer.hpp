@@ -29,6 +29,7 @@ public:
   virtual void serialize(const char*, unsigned short&) = 0;
   virtual void serialize(const char*, unsigned int&) = 0;
   virtual void serialize(const char*, unsigned long&) = 0;
+  virtual void serialize(const char*, bool&) = 0;
   virtual void serialize(const char*, float&) = 0;
   virtual void serialize(const char*, double&) = 0;
   virtual void serialize(const char*, std::string&) = 0;

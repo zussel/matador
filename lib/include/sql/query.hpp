@@ -190,7 +190,7 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& insert(const T *obj, const std::string &table)
+  query& insert(T *obj, const std::string &table)
   {
     reset();
     sql_.append(std::string("INSERT INTO ") + table + std::string(" ("));

@@ -16,6 +16,7 @@
 
 #include "tools/identifier.hpp"
 
+#include "object/access.hpp"
 #include "object/cascade_type.hpp"
 
 #include "sql/types.hpp"
@@ -37,6 +38,11 @@ public:
   explicit query_select(sql &s);
   virtual ~query_select();
 
+	template < class T >
+	void serialize(T &x)
+	{
+		oos::access::serialize(*this, x);
+	}
 	void serialize(const char *id, char &x);
 	void serialize(const char *id, short &x);
 	void serialize(const char *id, int &x);
@@ -53,11 +59,11 @@ public:
 	void serialize(const char *id, std::string &x);
 	void serialize(const char *id, date &x);
 	void serialize(const char *id, time &x);
-	void serialize(const char *id, basic_object_holder &x);
+	void serialize(const char *id, basic_object_holder &x, cascade_type);
 	template < class T >
 	void serialize(const char *id, identifier<T> &x)
 	{
-		T val;
+		T val = x.value();
 		serialize(id, val);
 	}
 

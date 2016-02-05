@@ -16,9 +16,12 @@
 
 #include "tools/identifier.hpp"
 
+#include "object/cascade_type.hpp"
+
 #include "sql/sql.hpp"
 
 #include <sstream>
+#include <object/access.hpp>
 
 namespace oos {
 
@@ -37,6 +40,11 @@ public:
   explicit query_insert(sql &s);
   virtual ~query_insert();
 
+  template < class T >
+  void serialize(T &x)
+  {
+    oos::access::serialize(*this, x);
+  }
   void serialize(const char *id, char &x);
   void serialize(const char *id, short &x);
   void serialize(const char *id, int &x);
@@ -53,7 +61,7 @@ public:
   void serialize(const char *id, std::string &x);
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
-  void serialize(const char *id, basic_object_holder &x);
+  void serialize(const char *id, basic_object_holder &x, cascade_type);
   template < class T >
   void serialize(const char *id, identifier<T> &x)
   {
