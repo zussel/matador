@@ -32,6 +32,7 @@ public:
   virtual void serialize(const char*, bool&) = 0;
   virtual void serialize(const char*, float&) = 0;
   virtual void serialize(const char*, double&) = 0;
+  virtual void serialize(const char*, char *, size_t) = 0;
   virtual void serialize(const char*, std::string&) = 0;
   virtual void serialize(const char*, oos::time&) = 0;
   virtual void serialize(const char*, oos::date&) = 0;
