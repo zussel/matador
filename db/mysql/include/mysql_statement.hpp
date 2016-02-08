@@ -55,25 +55,24 @@ public:
   virtual void reset();
   
 protected:
-  virtual void write(const char *id, char x);
-  virtual void write(const char *id, short x);
-  virtual void write(const char *id, int x);
-  virtual void write(const char *id, long x);
-  virtual void write(const char *id, unsigned char x);
-  virtual void write(const char *id, unsigned short x);
-  virtual void write(const char *id, unsigned int x);
-  virtual void write(const char *id, unsigned long x);
-  virtual void write(const char *id, float x);
-  virtual void write(const char *id, double x);
-  virtual void write(const char *id, bool x);
-  virtual void write(const char *id, const char *x, size_t s);
-  virtual void write(const char *id, const varchar_base &x);
-  virtual void write(const char *id, const std::string &x);
-  virtual void write(const char *id, const oos::date &x);
-  virtual void write(const char *id, const oos::time &x);
-  virtual void write(const char *id, const basic_object_holder &x);
-//  virtual void write(const char *id, const object_container &x);
-//  virtual void write(const char *id, const basic_identifier &x);
+  virtual void serialize(const char *id, char &x);
+  virtual void serialize(const char *id, short &x);
+  virtual void serialize(const char *id, int &x);
+  virtual void serialize(const char *id, long &x);
+  virtual void serialize(const char *id, unsigned char &x);
+  virtual void serialize(const char *id, unsigned short &x);
+  virtual void serialize(const char *id, unsigned int &x);
+  virtual void serialize(const char *id, unsigned long &x);
+  virtual void serialize(const char *id, float &x);
+  virtual void serialize(const char *id, double &x);
+  virtual void serialize(const char *id, bool &x);
+  virtual void serialize(const char *id, char *x, size_t s);
+  virtual void serialize(const char *id, varchar_base &x);
+  virtual void serialize(const char *id, std::string &x);
+  virtual void serialize(const char *id, oos::date &x);
+  virtual void serialize(const char *id, oos::time &x);
+  virtual void serialize(const char *id, basic_object_holder &x);
+//  virtual void serialize(const char *id, const basic_identifier &x);
 
 //  virtual void prepare_result_column(const sql::field_ptr &fptr);
 

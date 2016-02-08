@@ -103,91 +103,91 @@ detail::result_impl* mysql_statement::execute()
   return new mysql_prepared_result(stmt_, result_size);
 }
 
-void mysql_statement::write(const char *, char x)
+void mysql_statement::serialize(const char *, char &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, short x)
+void mysql_statement::serialize(const char *, short &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, int x)
+void mysql_statement::serialize(const char *, int &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, long x)
+void mysql_statement::serialize(const char *, long &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, unsigned char x)
+void mysql_statement::serialize(const char *, unsigned char &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, unsigned short x)
+void mysql_statement::serialize(const char *, unsigned short &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, unsigned int x)
+void mysql_statement::serialize(const char *, unsigned int &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, unsigned long x)
+void mysql_statement::serialize(const char *, unsigned long &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, bool x)
+void mysql_statement::serialize(const char *, bool &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, float x)
+void mysql_statement::serialize(const char *, float &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_FLOAT, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, double x)
+void mysql_statement::serialize(const char *, double &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const char *x, size_t s)
+void mysql_statement::serialize(const char *, char *x, size_t s)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const std::string &x)
+void mysql_statement::serialize(const char *, std::string &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const oos::date &x)
+void mysql_statement::serialize(const char *, oos::date &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_DATE, x, host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const oos::time &x)
+void mysql_statement::serialize(const char *, oos::time &x)
 {
 #if MYSQL_VERSION_ID < 50604
   // before mysql version 5.6.4 datetime
@@ -201,23 +201,23 @@ void mysql_statement::write(const char *, const oos::time &x)
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const varchar_base &x)
+void mysql_statement::serialize(const char *, varchar_base &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x.c_str(), x.size(), host_index);
   ++host_index;
 }
 
-void mysql_statement::write(const char *, const basic_object_holder &x)
+void mysql_statement::serialize(const char *, basic_object_holder &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x.id(), host_index);
   ++host_index;
 }
 
-//void mysql_statement::write(const char *, const object_container &)
+//void mysql_statement::serialize(const char *, const object_container &)
 //{
 //}
 //
-//void mysql_statement::write(const char *id, const basic_identifier &x)
+//void mysql_statement::serialize(const char *id, const basic_identifier &x)
 //{
 //  x.serialize(id, *this);
 //}

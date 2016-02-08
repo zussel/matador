@@ -22,14 +22,13 @@
 
 namespace oos {
 
-class serializer;
 class sql;
 
 namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API statement_impl
+class OOS_API statement_impl : public serializer
 {
 public:
   virtual ~statement_impl();
@@ -53,7 +52,7 @@ public:
   int bind(unsigned long i, const T &val)
   {
     host_index = i;
-    write("", val);
+    serialize("", val);
     return host_index;
   }
 
