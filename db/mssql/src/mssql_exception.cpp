@@ -63,18 +63,18 @@ void throw_error(const std::string &source, const std::string &sql)
 }
 
 mssql_exception::mssql_exception(const std::string &source, const std::string &what)
-  : database_exception("mssql", (source + ": " + what).c_str())
+  : sql_exception("mssql", (source + ": " + what).c_str())
 {}
 
 mssql_exception::~mssql_exception() throw()
 {}
 
 mssql_stmt_exception::mssql_stmt_exception(const std::string &what)
-  : database_exception("mssql", what.c_str())
+  : sql_exception("mssql", what.c_str())
 {}
 
 mssql_stmt_exception::mssql_stmt_exception(const std::string &source, const std::string &what)
-  : database_exception("mssql", error_message(source, what).c_str())
+  : sql_exception("mssql", error_message(source, what).c_str())
 {}
 
 mssql_stmt_exception::~mssql_stmt_exception() throw()

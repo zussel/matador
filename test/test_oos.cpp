@@ -37,11 +37,11 @@
 //#include "database/DatabaseTestUnit.hpp"
 //#include "database/SessionTestUnit.hpp"
 //#include "database/TransactionTestUnit.hpp"
-//#include "database/SQLTestUnit.hpp"
+#include "database/SQLTestUnit.hpp"
 
 //#include "json/JsonTestUnit.hpp"
 
-//#include "connections.hpp"
+#include "connections.hpp"
 
 #ifdef OOS_MYSQL
 #ifdef WIN32
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 #ifdef OOS_MYSQL
 //  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
 //  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
-//  suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
+  suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
 //  suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
 #endif
 

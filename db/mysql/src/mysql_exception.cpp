@@ -60,23 +60,23 @@ void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const
 }
 
 mysql_exception::mysql_exception(const std::string &source, const std::string &what)
-  : database_exception("mysql", (source + ": " + what).c_str())
+  : sql_exception("mysql", (source + ": " + what).c_str())
 {}
 
 
 mysql_exception::mysql_exception(MYSQL *db, const std::string &source, const std::string &what)
-  : database_exception("mysql", error_message(db, source, what).c_str())
+  : sql_exception("mysql", error_message(db, source, what).c_str())
 {}
 
 mysql_exception::~mysql_exception() throw()
 {}
 
 mysql_stmt_exception::mysql_stmt_exception(const std::string &what)
-  : database_exception("mysql", what.c_str())
+  : sql_exception("mysql", what.c_str())
 {}
 
 mysql_stmt_exception::mysql_stmt_exception(MYSQL_STMT *stmt, const std::string &source, const std::string &what)
-  : database_exception("mysql", error_message(stmt, source, what).c_str())
+  : sql_exception("mysql", error_message(stmt, source, what).c_str())
 {}
 
 mysql_stmt_exception::~mysql_stmt_exception() throw()

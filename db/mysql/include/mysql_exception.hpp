@@ -29,7 +29,7 @@
   #define OOS_MYSQL_API
 #endif
 
-#include "database/database_exception.hpp"
+#include "sql/sql_exception.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -48,7 +48,7 @@ void throw_error(int ec, MYSQL *db, const std::string &source, const std::string
 
 void throw_stmt_error(int ec, MYSQL_STMT *stmt, const std::string &source, const std::string &sql = "");
 
-class mysql_exception : public database_exception
+class mysql_exception : public sql_exception
 {
 public:
   mysql_exception(const std::string &source, const std::string &what);
@@ -57,7 +57,7 @@ public:
   virtual ~mysql_exception() throw();
 };
 
-class mysql_stmt_exception : public database_exception
+class mysql_stmt_exception : public sql_exception
 {
 public:
   explicit mysql_stmt_exception(const std::string &what);

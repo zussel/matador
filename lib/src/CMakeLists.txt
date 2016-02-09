@@ -132,7 +132,7 @@ SET(SQL_SOURCES
   sql/query_update.cpp
   sql/sql.cpp
   sql/statement_impl.cpp
-)
+	sql/sql_exception.cpp)
 
 SET(SQL_HEADER
 	../include/sql/condition.hpp
@@ -152,7 +152,7 @@ SET(SQL_HEADER
   ../include/sql/statement_impl.hpp
   ../include/sql/types.hpp
   ../include/sql/token.hpp
-)
+	../include/sql/sql_exception.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp
