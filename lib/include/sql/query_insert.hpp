@@ -65,7 +65,7 @@ public:
   void serialize(const char *id, basic_object_holder &x, cascade_type);
 
   template < class T >
-  void write_field(const char *id, data_type_t type, const T &x)
+  void write_field(const char *id, data_type_t type, T &x)
   {
     if (first) {
       first = false;
@@ -80,12 +80,12 @@ public:
       dialect.append(id, type, valstr.str());
     }
   }
-  void write_field(const char *id, data_type_t type, const char &x);
-  void write_field(const char *id, data_type_t type, const oos::date &x);
-  void write_field(const char *id, data_type_t type, const oos::time &x);
-  void write_field(const char *id, data_type_t type, const std::string &x);
-  void write_field(const char *id, data_type_t type, const varchar_base &x);
-  void write_field(const char *id, data_type_t type, const char *x);
+  void write_field(const char *id, data_type_t type, char &x);
+  void write_field(const char *id, data_type_t type, oos::date &x);
+  void write_field(const char *id, data_type_t type, oos::time &x);
+  void write_field(const char *id, data_type_t type, std::string &x);
+  void write_field(const char *id, data_type_t type, varchar_base &x);
+  void write_field(const char *id, data_type_t type, char *x, size_t);
 
   void fields();
   void values();

@@ -71,9 +71,9 @@ void query_insert::serialize(const char *id, bool &x)
   write_field(id, type_char_pointer, x);
 }
 
-void query_insert::serialize(const char *id, char *x, size_t)
+void query_insert::serialize(const char *id, char *x, size_t len)
 {
-  write_field(id, type_char_pointer, x);
+  write_field(id, type_char_pointer, x, len);
 }
 
 void query_insert::serialize(const char *id, varchar_base &x)
@@ -110,7 +110,7 @@ void query_insert::serialize(const char *id, basic_object_holder &x, cascade_typ
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const char &x) {
+void query_insert::write_field(const char *id, data_type_t type, char &x) {
   if (first) {
     first = false;
   } else {
@@ -125,7 +125,7 @@ void query_insert::write_field(const char *id, data_type_t type, const char &x) 
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const oos::date &x)
+void query_insert::write_field(const char *id, data_type_t type, oos::date &x)
 {
   if (first) {
     first = false;
@@ -142,7 +142,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::date
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const oos::time &x)
+void query_insert::write_field(const char *id, data_type_t type, oos::time &x)
 {
   if (first) {
     first = false;
@@ -159,7 +159,7 @@ void query_insert::write_field(const char *id, data_type_t type, const oos::time
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const std::string &x)
+void query_insert::write_field(const char *id, data_type_t type, std::string &x)
 {
   if (first) {
     first = false;
@@ -175,7 +175,7 @@ void query_insert::write_field(const char *id, data_type_t type, const std::stri
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const varchar_base &x)
+void query_insert::write_field(const char *id, data_type_t type, varchar_base &x)
 {
   if (first) {
     first = false;
@@ -191,7 +191,7 @@ void query_insert::write_field(const char *id, data_type_t type, const varchar_b
   }
 }
 
-void query_insert::write_field(const char *id, data_type_t type, const char *x)
+void query_insert::write_field(const char *id, data_type_t type, char *x, size_t)
 {
   if (first) {
     first = false;
