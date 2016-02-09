@@ -72,7 +72,7 @@ protected:
   virtual void serialize(const char *id, oos::date &x);
   virtual void serialize(const char *id, oos::time &x);
   virtual void serialize(const char *id, basic_object_holder &x);
-//  virtual void serialize(const char *id, const basic_identifier &x);
+  virtual void serialize(const char *id, basic_identifier &x);
 
 //  virtual void prepare_result_column(const sql::field_ptr &fptr);
 

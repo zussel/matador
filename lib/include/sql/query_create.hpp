@@ -64,7 +64,7 @@ public:
   void serialize(const char *id, identifier<T> &x)
   {
     T val = x.value();
-    x.serialize(id, val);
+    serialize(id, val);
     append(" NOT NULL PRIMARY KEY");
   }
 

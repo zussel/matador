@@ -75,7 +75,8 @@ protected:
   virtual void serialize(const char *id, std::string &x);
   virtual void serialize(const char *id, oos::date &x);
   virtual void serialize(const char *id, oos::time &x);
-  virtual void serialize(const char *id, basic_object_holder &x);
+  virtual void serialize(const char *id, oos::basic_identifier &x);
+  virtual void serialize(const char *id, basic_object_holder &x, cascade_type);
 
 protected:
   virtual bool prepare_fetch() override;

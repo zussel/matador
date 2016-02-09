@@ -27,7 +27,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API result_impl : public serializer
+class OOS_API result_impl : public oos::serializer
 {
 private:
   result_impl(const result_impl &) = delete;
@@ -51,6 +51,25 @@ public:
   {
     oos::access::serialize(*this, *o);
   }
+
+  virtual void serialize(const char*, char&) = 0;
+  virtual void serialize(const char*, short&) = 0;
+  virtual void serialize(const char*, int&) = 0;
+  virtual void serialize(const char*, long&) = 0;
+  virtual void serialize(const char*, unsigned char&) = 0;
+  virtual void serialize(const char*, unsigned short&) = 0;
+  virtual void serialize(const char*, unsigned int&) = 0;
+  virtual void serialize(const char*, unsigned long&) = 0;
+  virtual void serialize(const char*, bool&) = 0;
+  virtual void serialize(const char*, float&) = 0;
+  virtual void serialize(const char*, double&) = 0;
+  virtual void serialize(const char*, char *, size_t) = 0;
+  virtual void serialize(const char*, std::string&) = 0;
+  virtual void serialize(const char*, oos::varchar_base&) = 0;
+  virtual void serialize(const char*, oos::time&) = 0;
+  virtual void serialize(const char*, oos::date&) = 0;
+  virtual void serialize(const char *id, oos::basic_identifier &x) = 0;
+  virtual void serialize(const char *id, oos::basic_object_holder &x, cascade_type) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -79,6 +98,12 @@ public:
     }
     oos::access::serialize(*this, *o);
     return finalize_fetch();
+  }
+
+  template < class T >
+  void serialize(T &x)
+  {
+    oos::access::serialize(*this, x);
   }
 
   virtual size_type affected_rows() const = 0;

@@ -5,8 +5,10 @@
 #ifndef PRIMARY_KEY_READER_HPP
 #define PRIMARY_KEY_READER_HPP
 
-#include "identifier.hpp"
-#include "object/has_many.hpp"
+#include "tools/identifier.hpp"
+
+#include "object/cascade_type.hpp"
+#include "object/access.hpp"
 
 namespace oos {
 
@@ -47,8 +49,8 @@ public:
   template < class V >
   void serialize(const char*, V &) {}
   void serialize(const char*, char *, size_t) {}
-  template < class V >
-  void serialize(const char*, has_one<V>, cascade_type) {}
+  template < class HAS_ONE >
+  void serialize(const char*, HAS_ONE&, cascade_type) {}
 
   template < class HAS_MANY >
   void serialize(const char *, HAS_MANY &, const char *, const char *) {}

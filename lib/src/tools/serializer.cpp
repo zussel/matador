@@ -5,9 +5,9 @@
 
 namespace oos {
 
-void serializer::serialize(const char *id, oos::basic_identifier &x)
-{
-  x.serialize(id, *this);
-}
+//void serializer::serialize(const char *id, oos::basic_identifier &x)
+//{
+//  x.serialize(id, *this);
+//}
 
 }

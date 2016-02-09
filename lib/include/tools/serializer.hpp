@@ -36,8 +36,7 @@ public:
   virtual void serialize(const char*, std::string&) = 0;
   virtual void serialize(const char*, oos::time&) = 0;
   virtual void serialize(const char*, oos::date&) = 0;
-
-  void serialize(const char *id, oos::basic_identifier &x);
+  virtual void serialize(const char *id, oos::basic_identifier &x) = 0;
 
   template < unsigned int C >
   void serialize(const char *id, oos::varchar<C> &x)

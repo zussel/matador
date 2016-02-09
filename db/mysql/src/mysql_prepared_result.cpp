@@ -273,7 +273,12 @@ void mysql_prepared_result::serialize(const char */*id*/, varchar_base &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char *id, basic_object_holder &x)
+void mysql_prepared_result::serialize(const char *id, oos::basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
+void mysql_prepared_result::serialize(const char *id, basic_object_holder &x, cascade_type)
 {
   if (prepare_binding_) {
 

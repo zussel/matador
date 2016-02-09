@@ -61,13 +61,8 @@ public:
   void serialize(const char *id, std::string &x);
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
+  void serialize(const char *id, basic_identifier &x);
   void serialize(const char *id, basic_object_holder &x, cascade_type);
-  template < class T >
-  void serialize(const char *id, identifier<T> &x)
-  {
-    T val = x.value();
-    serialize(id, val);
-  }
 
   template < class T >
   void write_field(const char *id, data_type_t type, const T &x)

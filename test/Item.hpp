@@ -18,17 +18,14 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include <object/base_class.hpp>
-#include "tools/identifier.hpp"
+#include "object/base_class.hpp"
 #include "object/object_ptr.hpp"
-//#include "object/object_list.hpp"
-//#include "object/object_vector.hpp"
-//#include "object/linked_object_list.hpp"
 #include "object/has_one.hpp"
 #include "object/has_many.hpp"
 
 #include "tools/time.hpp"
 #include "tools/date.hpp"
+#include "tools/identifier.hpp"
 
 #include "tools/varchar.hpp"
 #include <ostream>

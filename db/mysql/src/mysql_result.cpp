@@ -269,7 +269,12 @@ void mysql_result::serialize(const char *id, oos::time &x)
 #endif
 }
 
-void mysql_result::serialize(const char *id, basic_object_holder &x)
+void mysql_result::serialize(const char *id, oos::basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
+void mysql_result::serialize(const char *id, basic_object_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }

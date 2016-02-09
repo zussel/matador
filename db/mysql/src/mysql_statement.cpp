@@ -213,14 +213,10 @@ void mysql_statement::serialize(const char *, basic_object_holder &x)
   ++host_index;
 }
 
-//void mysql_statement::serialize(const char *, const object_container &)
-//{
-//}
-//
-//void mysql_statement::serialize(const char *id, const basic_identifier &x)
-//{
-//  x.serialize(id, *this);
-//}
+void mysql_statement::serialize(const char *id, basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int /*index*/)
 {

@@ -96,6 +96,11 @@ void query_insert::serialize(const char *id, time &x)
   write_field(id, type_time, x);
 }
 
+void query_insert::serialize(const char *id, basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
 void query_insert::serialize(const char *id, basic_object_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
