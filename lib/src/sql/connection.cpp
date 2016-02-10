@@ -20,6 +20,7 @@ connection::connection(const std::string &dns)
 connection::~connection()
 {
   impl_->close();
+  connection_factory::instance().destroy(type_, impl_);
 }
 
 void connection::open()

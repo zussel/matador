@@ -120,7 +120,7 @@ protected:
   void read_foreign_object(const char *id, basic_object_holder &x);
 
 protected:
-  int result_index;
+  int result_index_ = 0;
 };
 
 /// @endcond

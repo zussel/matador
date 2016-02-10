@@ -55,7 +55,7 @@ bool mysql_prepared_result::fetch()
 bool mysql_prepared_result::prepare_fetch()
 {
   // reset result column index
-  result_index = 0;
+  result_index_ = 0;
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
   if (ret == MYSQL_NO_DATA) {
@@ -99,7 +99,7 @@ void mysql_prepared_result::serialize(const char */*id*/, char &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -108,7 +108,7 @@ void mysql_prepared_result::serialize(const char */*id*/, short & x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -117,7 +117,7 @@ void mysql_prepared_result::serialize(const char */*id*/, int &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -126,7 +126,7 @@ void mysql_prepared_result::serialize(const char */*id*/, long &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -135,7 +135,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned char &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -144,7 +144,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned short &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -153,7 +153,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned int &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -162,7 +162,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned long &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -171,7 +171,7 @@ void mysql_prepared_result::serialize(const char */*id*/, bool &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -180,7 +180,7 @@ void mysql_prepared_result::serialize(const char */*id*/, float &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_FLOAT, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -189,7 +189,7 @@ void mysql_prepared_result::serialize(const char */*id*/, double &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_DOUBLE, x);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -198,7 +198,7 @@ void mysql_prepared_result::serialize(const char */*id*/, char *x, size_t s)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
   } else {
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -207,11 +207,11 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_DATE, x);
   } else {
-    if (info_[result_index].length > 0) {
-      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
+    if (info_[result_index_].length > 0) {
+      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
       x.set(mtt->day, mtt->month, mtt->year);
     }
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -220,7 +220,7 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
   } else {
-    if (info_[result_index].length > 0) {
+    if (info_[result_index_].length > 0) {
 #if MYSQL_VERSION_ID < 50604
       // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds
@@ -230,11 +230,11 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
     std::string str(data,len);
     x = time::parse(str, "%F %T.%f");
 #else
-      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
+      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
       x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
 #endif
     }
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -243,20 +243,20 @@ void mysql_prepared_result::serialize(const char */*id*/, std::string &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
   } else {
-    if (info_[result_index].length > 0) {
-      bind_[result_index].buffer = new char[info_[result_index].length];
-      bind_[result_index].buffer_length = info_[result_index].length;
-      if (mysql_stmt_fetch_column(stmt, &bind_[result_index], result_index, 0) != 0) {
+    if (info_[result_index_].length > 0) {
+      bind_[result_index_].buffer = new char[info_[result_index_].length];
+      bind_[result_index_].buffer_length = info_[result_index_].length;
+      if (mysql_stmt_fetch_column(stmt, &bind_[result_index_], result_index_, 0) != 0) {
         // an error occured
       } else {
-        char *data = (char*)bind_[result_index].buffer;
-        unsigned long len = bind_[result_index].buffer_length;
+        char *data = (char*)bind_[result_index_].buffer;
+        unsigned long len = bind_[result_index_].buffer_length;
         x.assign(data, len);
       }
-      delete [] (char*)bind_[result_index].buffer;
-      bind_[result_index].buffer = 0;
+      delete [] (char*)bind_[result_index_].buffer;
+      bind_[result_index_].buffer = 0;
     }
-    ++result_index;
+    ++result_index_;
   }
 }
 
@@ -265,11 +265,11 @@ void mysql_prepared_result::serialize(const char */*id*/, varchar_base &x)
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
   } else {
-    char *data = (char*)bind_[result_index].buffer;
+    char *data = (char*)bind_[result_index_].buffer;
 //  unsigned long len = bind_[result_index].buffer_length;
-    unsigned long len = info_[result_index].length;
+    unsigned long len = info_[result_index_].length;
     x.assign(data, len);
-    ++result_index;
+    ++result_index_;
   }
 }
 
