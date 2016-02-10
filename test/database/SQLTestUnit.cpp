@@ -19,6 +19,7 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
   add_test("statement", std::bind(&SQLTestUnit::test_statement, this), "test prepared sql statement");
   add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
+  add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
 }
 
 SQLTestUnit::~SQLTestUnit() {}
@@ -35,16 +36,16 @@ void SQLTestUnit::test_create()
 {
   connection_->open();
 
-  query<Item> q(*connection_);
+  query<Item> q(*connection_, "item");
 
-  result<Item> res(q.create("item").execute());
+  result<Item> res(q.create().execute());
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
   hans.set_time(itime);
-  res = q.insert(&hans, "item").execute();
+  res = q.insert(&hans).execute();
 
-  res = q.select().from("item").execute();
+  res = q.select().from().execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -57,28 +58,28 @@ void SQLTestUnit::test_create()
     ++first;
   }
 
-  res = q.drop("item").execute();
+  res = q.drop().execute();
 }
 
 void SQLTestUnit::test_statement()
 {
   connection_->open();
 
-  query<Item> q(*connection_);
+  query<Item> q(*connection_, "item");
 
-  statement<Item> stmt(q.create("item").prepare());
+  statement<Item> stmt(q.create().prepare());
 
   result<Item> res(stmt.execute());
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
   hans.set_time(itime);
-  stmt = q.insert(&hans, "item").prepare();
+  stmt = q.insert(&hans).prepare();
 
   stmt.bind(&hans);
   res = stmt.execute();
 
-  stmt = q.select().from("item").prepare();
+  stmt = q.select().from().prepare();
   res = stmt.execute();
 
   auto first = res.begin();
@@ -92,7 +93,7 @@ void SQLTestUnit::test_statement()
     ++first;
   }
 
-  stmt = q.drop("item").prepare();
+  stmt = q.drop().prepare();
 
   res = stmt.execute();
 }
@@ -101,29 +102,29 @@ void SQLTestUnit::test_foreign_query()
 {
   connection_->open();
 
-  query<Item> q(*connection_);
+  query<Item> q(*connection_, "item");
 
   using t_object_item = ObjectItem<Item>;
 
   // create item table and insert item
-  result<Item> res(q.create("item").execute());
+  result<Item> res(q.create().execute());
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   oos::identifier<unsigned long> id(23);
   object_ptr<Item> hans(new Item("Hans", 4711));
   hans->id(id.value());
   hans->set_time(itime);
-  res = q.insert(hans, "item").execute();
+  res = q.insert(hans).execute();
 
-  query<t_object_item> object_item_query(*connection_);
-  result<t_object_item> ores = object_item_query.create("object_item").execute();
+  query<t_object_item> object_item_query(*connection_, "object_item");
+  result<t_object_item> ores = object_item_query.create().execute();
 
   t_object_item oitem;
   oitem.ptr(hans);
 
-  ores = object_item_query.insert(&oitem, "object_item").execute();
+  ores = object_item_query.insert(&oitem).execute();
 
-  ores = object_item_query.select().from("object_item").execute();
+  ores = object_item_query.select().from().execute();
 
   auto first = ores.begin();
   auto last = ores.end();
@@ -138,9 +139,45 @@ void SQLTestUnit::test_foreign_query()
     ++first;
   }
 
-  object_item_query.drop("object_item").execute();
+  object_item_query.drop().execute();
 
-  q.drop("item").execute();
+  q.drop().execute();
+}
+
+void SQLTestUnit::test_query()
+{
+  connection_->open();
+
+  query<person> q(*connection_, "person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute());
+
+  typedef object_ptr<person> person_ptr;
+  person_ptr hans(new person("Hans", oos::date(12, 3, 1980), 180));
+  hans->id(1);
+  res = q.insert(hans).execute();
+
+  res = q.select().from().where("name='hans'").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+
+    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+
+    ++first;
+  }
+
+  res = q.select().from().where("name='heinz'").execute();
+
+  UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
+
+  q.drop().execute();
 }
 
 connection* SQLTestUnit::create_connection()

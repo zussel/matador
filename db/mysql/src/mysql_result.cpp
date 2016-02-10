@@ -18,6 +18,7 @@
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 #include "tools/time.hpp"
+#include "tools/string.hpp"
 
 #include "tools/identifier.hpp"
 
@@ -247,11 +248,14 @@ void mysql_result::serialize(const char */*id*/, std::string &x)
   x.assign(val);
 }
 
-void mysql_result::serialize(const char *id, oos::date &x)
+void mysql_result::serialize(const char *, oos::date &x)
 {
-  double val = 0;
-  serialize(id, val);
-  x.set(static_cast<int>(val));
+  char *val = row_[result_index_++];
+  size_t len = strlen(val);
+  if (val == nullptr || len == 0) {
+    return;
+  }
+  x.set(val, oos::date_format::ISO8601);
 }
 
 void mysql_result::serialize(const char *id, oos::time &x)

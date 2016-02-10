@@ -613,37 +613,47 @@ private:
   oos::identifier<unsigned long> id_;
   book_list_t book_list_;
 };
-/*
-class person : public oos::serializable
+
+class person
 {
 private:
   oos::identifier<unsigned long> id_;
   std::string name_;
+  oos::date birthdate_;
+  unsigned int height_ = 0;
 
 public:
   person() {}
-  person(const std::string &name)
+  person(const std::string &name, const oos::date &birthdate, unsigned int height)
     : name_(name)
+    , birthdate_(birthdate)
+    , height_(height)
   {}
   
   virtual ~person() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class T >
+  void serialize(T &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("name", name_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("birthdate", birthdate_);
+    serializer.serialize("height", height_);
   }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("name", name_);
-  }
+
+  void id(unsigned long i) { id_.value(i); }
+  unsigned long id() const { return id_.value(); }
 
   std::string name() const { return name_; }
   void name(const std::string &name) { name_ = name; }
-  
-};
 
+  oos::date birthdate() const { return birthdate_; }
+  void birthdate(const oos::date &birthdate) { birthdate_ = birthdate; }
+
+  unsigned int height() const { return height_; }
+  void height(unsigned int height) { height_ = height; }
+};
+/*
 class department;
 
 class employee : public person

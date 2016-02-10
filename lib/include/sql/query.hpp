@@ -98,9 +98,10 @@ public:
    * 
    * @param conn The connection.
    */
-  query(connection &conn)
+  query(connection &conn, const std::string &table_name)
     : state(QUERY_BEGIN)
     , connection_(conn)
+    , table_name_(table_name)
   {}
   
   ~query() {}
@@ -112,10 +113,10 @@ public:
    * @param name The name of the table to create.
    * @return A reference to the query.
    */
-  query& create(const std::string &name)
+  query& create()
   {
     T obj;
-    return create(name, &obj);
+    return create(&obj);
   }
 
   /**
@@ -127,10 +128,10 @@ public:
    * @param obj The serializable providing the field information.
    * @return A reference to the query.
    */
-  query& create(const std::string &name, T *obj)
+  query& create(T *obj)
   {
     reset();
-    sql_.append(std::string("CREATE TABLE ") + name + std::string(" ("));
+    sql_.append(std::string("CREATE TABLE ") + table_name_ + std::string(" ("));
 
     query_create s(sql_, connection_);
     oos::access::serialize(s, *obj);
@@ -150,10 +151,10 @@ public:
    * @param name The name of the table.
    * @return A reference to the query.
    */
-  query& drop(const std::string &name)
+  query& drop()
   {
     reset();
-    sql_.append(std::string("DROP TABLE ") + name);
+    sql_.append(std::string("DROP TABLE ") + table_name_);
 
     state = QUERY_DROP;
     return *this;
@@ -190,10 +191,10 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& insert(T *obj, const std::string &table)
+  query& insert(T *obj)
   {
     reset();
-    sql_.append(std::string("INSERT INTO ") + table + std::string(" ("));
+    sql_.append(std::string("INSERT INTO ") + table_name_ + std::string(" ("));
 
     query_insert s(sql_);
     s.fields();
@@ -221,14 +222,14 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& insert(const has_one<T> &holder, const std::string &table)
+  query& insert(has_one<T> &holder)
   {
-    return insert(holder.get(), table);
+    return insert(holder.get());
   }
 
-  query& insert(const object_ptr<T> &holder, const std::string &table)
+  query& insert(const object_ptr<T> &holder)
   {
-    return insert(holder.get(), table);
+    return insert(holder.get());
   }
 
   /**
@@ -240,10 +241,10 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& update(T *o, const std::string &table)
+  query& update(T *o)
   {
     reset();
-    sql_.append(std::string("UPDATE ") + table + std::string(" SET "));
+    sql_.append(std::string("UPDATE ") + table_name_ + std::string(" SET "));
 
     query_update s(sql_);
     oos::access::serialize(s, *o);
@@ -263,9 +264,9 @@ public:
    * @return A reference to the query.
    */
   template < bool TYPE >
-  query& update(has_one<T> &holder, const std::string &table)
+  query& update(has_one<T> &holder)
   {
-    return update(holder.get(), table);
+    return update(holder.get());
   }
 
   /**
@@ -277,11 +278,11 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& update(const std::string &table)
+  query& update()
   {
     throw_invalid(QUERY_UPDATE, state);
     reset();
-    sql_.append("UPDATE " + table + " SET ");
+    sql_.append(std::string("UPDATE ") + table_name_ + " SET ");
     state = QUERY_UPDATE;
     return *this;
   }
@@ -293,11 +294,11 @@ public:
    * @param table The table name to remove from.
    * @return A reference to the query.
    */
-  query& remove(const std::string &table)
+  query& remove()
   {
     reset();
 
-    sql_.append(std::string("DELETE FROM ") + table);
+    sql_.append(std::string("DELETE FROM ") + table_name_);
 
     state = QUERY_DELETE;
 
@@ -455,10 +456,10 @@ public:
    * @param table The name of the table.
    * @return A reference to the query.
    */
-  query& from(const std::string &table)
+  query& from()
   {
     // check state (simple select)
-    sql_.append(" FROM " + table);
+    sql_.append(" FROM " + table_name_);
     return *this;
   }
 
@@ -603,6 +604,7 @@ private:
   sql sql_;
   state_t state;
   connection &connection_;
+  std::string table_name_;
 };
 
 }
