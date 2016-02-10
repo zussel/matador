@@ -88,7 +88,7 @@ public:
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
   {
-    primary_key_.reset(identifier_resolver<T>::resolve());
+    primary_key_.reset(identifier_resolver<T>::resolve(o));
   }
 
   /**
@@ -110,7 +110,7 @@ public:
     , ostore_(os)
   {
     if (obj_ != nullptr) {
-      primary_key_.reset(identifier_resolver<T>::resolve());
+      primary_key_.reset(identifier_resolver<T>::resolve(o));
     }
   }
 

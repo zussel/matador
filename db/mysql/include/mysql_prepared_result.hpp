@@ -71,6 +71,7 @@ public:
 
 protected:
   virtual bool needs_bind() override;
+  virtual bool finalize_bind() override;
 
   virtual bool prepare_fetch() override;
   virtual bool finalize_fetch() override;

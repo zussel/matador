@@ -165,6 +165,7 @@ public:
   self& operator++()
   {
     base::obj_.reset(new T);
+    base::result_impl_->bind(base::obj_.get());
     if (!base::result_impl_->fetch(base::obj_.get())) {
       base::obj_.reset();
     }

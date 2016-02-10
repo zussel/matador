@@ -40,6 +40,7 @@ protected:
   result_impl();
 
   virtual bool needs_bind() { return false; };
+  virtual bool finalize_bind() { return false; }
   virtual bool prepare_fetch() = 0;
   virtual bool finalize_fetch() = 0;
 
@@ -87,6 +88,7 @@ public:
   {
     if (needs_bind()) {
       oos::access::serialize(*this, *o);
+      finalize_bind();
     }
   }
 

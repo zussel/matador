@@ -46,6 +46,16 @@ public:
   identifier_resolver() {}
   ~identifier_resolver() {}
 
+  static basic_identifier* resolve(T *o)
+  {
+    identifier_resolver<T> resolver;
+    oos::access::serialize(resolver, *o);
+    if (!resolver.id_) {
+      return nullptr;
+    }
+    return resolver.id_;
+  }
+
   static basic_identifier* resolve()
   {
     identifier_resolver<T> resolver;

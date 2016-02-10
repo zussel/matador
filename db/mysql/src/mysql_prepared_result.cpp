@@ -294,6 +294,12 @@ bool mysql_prepared_result::needs_bind()
   return prepare_binding_;
 }
 
+bool mysql_prepared_result::finalize_bind()
+{
+  // Todo: validate result
+  return mysql_stmt_bind_result(stmt, bind_);
+}
+
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::date &)
 {
   if (info_[index].buffer == 0) {
