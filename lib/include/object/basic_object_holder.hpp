@@ -209,6 +209,13 @@ public:
    */
   std::shared_ptr<basic_identifier> primary_key() const;
 
+  /**
+   * Creates a new identifier object.
+   *
+   * @return Returns a new identifier object.
+  */
+  virtual basic_identifier* create_identifier() const = 0;
+
   unsigned long reference_count() const;
 
   /**

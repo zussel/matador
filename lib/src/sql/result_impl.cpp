@@ -20,10 +20,9 @@ void result_impl::read_foreign_object(const char *id, basic_object_holder &x)
    */
 
   std::shared_ptr<basic_identifier> pk = x.primary_key();
-//  if (!pk) {
-//    throw std::logic_error("no primary key");
-//    pk.reset(x.());
-//  }
+  if (!pk) {
+    pk.reset(x.create_identifier());
+  }
 
   pk->serialize(id, *this);
   if (!pk->is_valid()) {
@@ -32,9 +31,9 @@ void result_impl::read_foreign_object(const char *id, basic_object_holder &x)
   }
 
   // set found primary key into object_base_ptr
-//  if (!x.has_primary_key()) {
-//    x.reset(pk);
-//  }
+  if (!x.has_primary_key()) {
+    x.reset(pk);
+  }
 }
 
 }
