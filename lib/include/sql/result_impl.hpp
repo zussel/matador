@@ -70,8 +70,8 @@ public:
   virtual void serialize(const char*, oos::varchar_base&) = 0;
   virtual void serialize(const char*, oos::time&) = 0;
   virtual void serialize(const char*, oos::date&) = 0;
-  virtual void serialize(const char *id, oos::basic_identifier &x) = 0;
-  virtual void serialize(const char *id, oos::object_holder &x, cascade_type) = 0;
+  virtual void serialize(const char*, oos::basic_identifier &x) = 0;
+  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type) = 0;
 
   virtual const char *column(size_type c) const = 0;
 

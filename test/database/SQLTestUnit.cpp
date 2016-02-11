@@ -7,7 +7,6 @@
 #include "../Item.hpp"
 
 #include "sql/statement.hpp"
-
 #include "sql/query.hpp"
 
 using namespace oos;
@@ -45,7 +44,7 @@ void SQLTestUnit::test_create()
   hans.set_time(itime);
   res = q.insert(&hans).execute();
 
-  res = q.select().from().execute();
+  res = q.select().execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -79,7 +78,7 @@ void SQLTestUnit::test_statement()
   stmt.bind(&hans);
   res = stmt.execute();
 
-  stmt = q.select().from().prepare();
+  stmt = q.select().prepare();
   res = stmt.execute();
 
   auto first = res.begin();
@@ -124,7 +123,7 @@ void SQLTestUnit::test_foreign_query()
 
   ores = object_item_query.insert(&oitem).execute();
 
-  ores = object_item_query.select().from().execute();
+  ores = object_item_query.select().execute();
 
   auto first = ores.begin();
   auto last = ores.end();
@@ -157,7 +156,7 @@ void SQLTestUnit::test_query()
   hans.id(1);
   res = q.insert(&hans).execute();
 
-  res = q.select().from().where("name='hans'").execute();
+  res = q.select().where("name='hans'").execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -172,7 +171,7 @@ void SQLTestUnit::test_query()
     ++first;
   }
 
-  res = q.select().from().where("name='heinz'").execute();
+  res = q.select().where("name='heinz'").execute();
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
