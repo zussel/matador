@@ -26,7 +26,6 @@
 namespace oos {
 
 class object_proxy;
-class basic_object_holder;
 
 namespace detail {
 

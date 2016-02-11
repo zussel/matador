@@ -71,7 +71,7 @@ protected:
   virtual void serialize(const char *id, std::string &x);
   virtual void serialize(const char *id, oos::date &x);
   virtual void serialize(const char *id, oos::time &x);
-  virtual void serialize(const char *id, basic_object_holder &x);
+  virtual void serialize(const char *id, object_holder &x);
   virtual void serialize(const char *id, basic_identifier &x);
 
 //  virtual void prepare_result_column(const sql::field_ptr &fptr);
@@ -92,7 +92,7 @@ private:
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const basic_object_holder &value, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_holder &value, int index);
 
 private:
   mysql_connection &db_;

@@ -14,14 +14,15 @@
 #define OOS_API
 #endif
 
-#include "object/basic_object_holder.hpp"
-#include "object/access.hpp"
-
+#include "tools/access.hpp"
 #include "tools/serializer.hpp"
+#include "tools/cascade_type.hpp"
 
 #include <memory>
 
 namespace oos {
+
+class object_holder;
 
 namespace detail {
 
@@ -70,7 +71,7 @@ public:
   virtual void serialize(const char*, oos::time&) = 0;
   virtual void serialize(const char*, oos::date&) = 0;
   virtual void serialize(const char *id, oos::basic_identifier &x) = 0;
-  virtual void serialize(const char *id, oos::basic_object_holder &x, cascade_type) = 0;
+  virtual void serialize(const char *id, oos::object_holder &x, cascade_type) = 0;
 
   virtual const char *column(size_type c) const = 0;
 
@@ -117,7 +118,7 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  void read_foreign_object(const char *id, basic_object_holder &x);
+  void read_foreign_object(const char *id, object_holder &x);
 
 protected:
   int result_index_ = 0;

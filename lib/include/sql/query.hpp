@@ -178,6 +178,8 @@ public:
     T obj;
     oos::access::serialize(s, obj);
 
+    sql_.append(std::string(" FROM ") + table_name_);
+
     state = QUERY_SELECT;
     return *this;
   }
@@ -410,22 +412,6 @@ public:
     }
     sql_.append(field.c_str(), type);
     state = QUERY_COLUMN;
-    return *this;
-  }
-
-  /**
-   * Appends the given table name to the
-   * select query. Must only be called for a
-   * select statement and after the queried
-   * columns are appended.
-   * 
-   * @param table The name of the table.
-   * @return A reference to the query.
-   */
-  query& from()
-  {
-    // check state (simple select)
-    sql_.append(" FROM " + table_name_);
     return *this;
   }
 

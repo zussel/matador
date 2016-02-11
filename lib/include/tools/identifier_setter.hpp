@@ -7,8 +7,8 @@
 
 #include "tools/identifier.hpp"
 
-#include "object/cascade_type.hpp"
-#include "object/access.hpp"
+#include "cascade_type.hpp"
+#include "access.hpp"
 
 namespace oos {
 

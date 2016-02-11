@@ -19,7 +19,7 @@
 #define OBJECT_PTR_HPP
 
 #include "object/object_proxy.hpp"
-#include "object/basic_object_holder.hpp"
+#include "object/object_holder.hpp"
 #include "tools/identifier_resolver.hpp"
 #include "object/has_one.hpp"
 
@@ -35,20 +35,20 @@ class result_impl;
 template < class T > class object_ptr;
 
 template < class T >
-class has_one : public basic_object_holder
+class has_one : public object_holder
 {
 public:
   typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
   has_one()
-    : basic_object_holder(true)
+    : object_holder(true)
   {}
   has_one(T *o)
-    : basic_object_holder(true, new object_proxy(o))
+    : object_holder(true, new object_proxy(o))
   {}
   has_one(object_proxy *proxy)
-    : basic_object_holder(true, proxy)
+    : object_holder(true, proxy)
   {}
 
   has_one(const object_ptr <T> &x);
@@ -140,7 +140,7 @@ std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>
  * can't be directly deleted)
  */
 template < class T >
-class object_ptr : public basic_object_holder
+class object_ptr : public object_holder
 {
 public:
   typedef T object_type;                    /**< Shortcut for serializable type. */
@@ -151,7 +151,7 @@ public:
    * Create an empty object_holder
    */
   object_ptr()
-    : basic_object_holder(false)
+    : object_holder(false)
   {}
   /**
    * Copies object_ptr
@@ -159,7 +159,7 @@ public:
    * @param x The object_ptr to copy
    */
   object_ptr(const self &x)
-    : basic_object_holder(x.is_internal_, x.proxy_)
+    : object_holder(x.is_internal_, x.proxy_)
   {}
 
   /**
@@ -168,7 +168,7 @@ public:
    * @param o The serializable.
    */
   object_ptr(T *o)
-    : basic_object_holder(false, new object_proxy(o))
+    : object_holder(false, new object_proxy(o))
   {}
 
   /**
@@ -177,11 +177,11 @@ public:
    * @param proxy The object_proxy.
    */
   explicit object_ptr(object_proxy *proxy)
-  : basic_object_holder(false, proxy)
+  : object_holder(false, proxy)
   {}
 
   object_ptr(const has_one<T> &x)
-    : basic_object_holder(false, x.proxy_)
+    : object_holder(false, x.proxy_)
   {}
 
   /**
@@ -307,7 +307,7 @@ std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver
 
 template < class T >
 has_one<T>::has_one(const object_ptr<T> &x)
-  : basic_object_holder(true, x.proxy_)
+  : object_holder(true, x.proxy_)
 {}
 
 template < class T >

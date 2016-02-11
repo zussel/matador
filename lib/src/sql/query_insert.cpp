@@ -101,7 +101,7 @@ void query_insert::serialize(const char *id, basic_identifier &x)
   x.serialize(id, *this);
 }
 
-void query_insert::serialize(const char *id, basic_object_holder &x, cascade_type)
+void query_insert::serialize(const char *id, object_holder &x, cascade_type)
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);

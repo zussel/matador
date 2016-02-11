@@ -29,7 +29,7 @@ class sql;
 class varchar_base;
 class date;
 class time;
-class basic_object_holder;
+class object_holder;
 
 class OOS_API query_update
 {
@@ -53,7 +53,7 @@ public:
   void serialize(const char *id, std::string &x);
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
-  void serialize(const char *id, basic_object_holder &x);
+  void serialize(const char *id, object_holder &x);
   template < class T >
   void serialize(const char *id, identifier<T> &x)
   {

@@ -18,9 +18,9 @@
 #define OOS_API
 #endif
 
-#include "object/cascade_type.hpp"
+#include "cascade_type.hpp"
 #include "tools/basic_identifier.hpp"
-#include "object/access.hpp"
+#include "access.hpp"
 
 #include <stdexcept>
 

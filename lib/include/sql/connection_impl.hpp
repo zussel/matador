@@ -6,9 +6,9 @@
 #define OOS_CONNECTION_IMPL_HPP
 
 
-#include <string>
-
 #include "sql/types.hpp"
+
+#include <string>
 
 namespace oos {
 

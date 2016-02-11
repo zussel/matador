@@ -16,12 +16,12 @@
 
 #include "tools/identifier.hpp"
 
-#include "object/cascade_type.hpp"
+#include "tools/cascade_type.hpp"
 
 #include "sql/sql.hpp"
 
 #include <sstream>
-#include <object/access.hpp>
+#include <tools/access.hpp>
 
 namespace oos {
 
@@ -32,7 +32,7 @@ class sql;
 class varchar_base;
 class date;
 class time;
-class basic_object_holder;
+class object_holder;
 
 class OOS_API query_insert : public serializer
 {
@@ -62,7 +62,7 @@ public:
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
   void serialize(const char *id, basic_identifier &x);
-  void serialize(const char *id, basic_object_holder &x, cascade_type);
+  void serialize(const char *id, object_holder &x, cascade_type);
 
   template < class T >
   void write_field(const char *id, data_type_t type, T &x)

@@ -2,10 +2,10 @@
 // Created by sascha on 9/18/15.
 //
 
-#include "sql/result.hpp"
-
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
+
+#include "sql/result.hpp"
 
 #ifdef _MSC_VER
 #ifdef oos_EXPORTS

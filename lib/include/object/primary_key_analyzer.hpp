@@ -2,7 +2,7 @@
 #define PRIMARY_KEY_ANALYZER_HPP
 
 #include "object/serializer.hpp"
-#include "access.hpp"
+#include "tools/access.hpp"
 
 namespace oos {
 

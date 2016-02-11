@@ -729,7 +729,7 @@ private:
   friend class object_serializer;
   friend class restore_visitor;
   friend class object_container;
-  friend class basic_object_holder;
+  friend class object_holder;
   friend class prototype_node;
   friend class detail::node_analyzer;
 

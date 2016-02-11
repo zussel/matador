@@ -46,7 +46,7 @@ public:
     : constant_(c)
   {}
 
-  T operator()(const basic_object_holder&) const
+  T operator()(const object_holder &) const
   {
     return constant_;
   }
@@ -63,7 +63,7 @@ public:
 
   virtual ~variable_impl() {}
   
-  virtual return_type operator()(const basic_object_holder &optr) const = 0;
+  virtual return_type operator()(const object_holder &optr) const = 0;
 };
 
 template < class R, class O, class V >
@@ -81,7 +81,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const basic_object_holder &optr) const
+  virtual return_type operator()(const object_holder &optr) const
   {
     return (static_cast<const object_type*>(v_(optr).ptr())->*m_)();
   }
@@ -106,7 +106,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const basic_object_holder &optr) const
+  virtual return_type operator()(const object_holder &optr) const
   {
     return (static_cast<const object_type*>(optr.ptr())->*m_)();
   }
@@ -171,7 +171,7 @@ public:
    * @param optr The serializable to apply the variable to.
    * @return The value of the variable.
    */
-  return_type operator()(const basic_object_holder &optr) const
+  return_type operator()(const object_holder &optr) const
   {
     return impl_->operator()(optr);
   }
@@ -324,7 +324,7 @@ class expression
 public:
   virtual ~expression() {}
 
-  virtual bool operator()(const basic_object_holder &optr) const = 0;
+  virtual bool operator()(const object_holder &optr) const = 0;
 };
 
 template < class L, class OP >
@@ -337,7 +337,7 @@ public:
   {}
 
 
-  virtual bool operator()(const basic_object_holder &optr) const
+  virtual bool operator()(const object_holder &optr) const
   {
     return op_(left_(optr));
   }
@@ -357,7 +357,7 @@ public:
     , op_(op)
   {}
 
-  virtual bool operator()(const basic_object_holder &optr) const
+  virtual bool operator()(const object_holder &optr) const
   {
     return op_(left_(optr), right_(optr));
   }

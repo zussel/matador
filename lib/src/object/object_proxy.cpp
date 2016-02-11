@@ -164,12 +164,12 @@ unsigned long object_proxy::reference_count() const
   return reference_counter_;
 }
 
-void object_proxy::add(basic_object_holder *ptr)
+void object_proxy::add(object_holder *ptr)
 {
   ptr_set_.insert(ptr);
 }
 
-bool object_proxy::remove(basic_object_holder *ptr)
+bool object_proxy::remove(object_holder *ptr)
 {
   return ptr_set_.erase(ptr) == 1;
 }

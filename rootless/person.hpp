@@ -6,7 +6,7 @@
 #define PERSON_HPP
 
 #include "tools/identifier.hpp"
-#include "object/access.hpp"
+#include "tools/access.hpp"
 
 #include <string>
 

@@ -16,7 +16,6 @@
  */
 
 #include "object/object_store.hpp"
-#include "object/object_container.hpp"
 
 #include <iostream>
 #include <iomanip>

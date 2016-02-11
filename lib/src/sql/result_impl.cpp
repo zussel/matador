@@ -4,7 +4,7 @@
 
 #include "sql/result_impl.hpp"
 
-#include "object/basic_object_holder.hpp"
+#include "object/object_holder.hpp"
 
 namespace oos {
 namespace detail {
@@ -12,7 +12,7 @@ namespace detail {
 result_impl::result_impl() {}
 result_impl::~result_impl() {}
 
-void result_impl::read_foreign_object(const char *id, basic_object_holder &x)
+void result_impl::read_foreign_object(const char *id, object_holder &x)
 {
   /*
    * determine and create primary key of object ptr

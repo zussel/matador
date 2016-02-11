@@ -43,7 +43,7 @@
 namespace oos {
 
 class object_store;
-class basic_object_holder;
+class object_holder;
 class prototype_node;
 class basic_identifier;
 
@@ -246,27 +246,27 @@ public:
 
 
   /**
-   * @brief Add an basic_object_holder to the linked list.
+   * @brief Add an object_holder to the linked list.
    *
-   * Each basic_object_holder containing this object_proxy
+   * Each object_holder containing this object_proxy
    * calls this method. So object_proxy knows how many
-   * basic_object_holder are dealing with this object.
+   * object_holder are dealing with this object.
    *
-   * @param ptr The basic_object_holder containing this object_proxy.
+   * @param ptr The object_holder containing this object_proxy.
    */
-  void add(basic_object_holder *ptr);
+  void add(object_holder *ptr);
 
   /**
-   * @brief Remove an basic_object_holder from the linked list.
+   * @brief Remove an object_holder from the linked list.
    *
-   * Each destroying ore reseting basic_object_holder
+   * Each destroying ore reseting object_holder
    * containg this object_proxy calls this method.
-   * So object_proxy knows how many basic_object_holder
+   * So object_proxy knows how many object_holder
    * are dealing with this object.
    *
-   * @param ptr The basic_object_holder containing this object_proxy.
+   * @param ptr The object_holder containing this object_proxy.
    */
-  bool remove(basic_object_holder *ptr);
+  bool remove(object_holder *ptr);
 
   /**
    * @brief True if proxy is valid
@@ -318,7 +318,7 @@ private:
   template < class T > friend class result;
   friend class table_reader;
   friend class restore_visitor;
-  friend class basic_object_holder;
+  friend class object_holder;
   template < class T > friend class has_one;
 
   typedef void (*deleter)(void*);
@@ -350,8 +350,8 @@ private:
   object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
   prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the object. */
 
-  typedef std::set<basic_object_holder *> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
-  ptr_set_t ptr_set_;      /**< This set contains every basic_object_holder pointing to this object_proxy. */
+  typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
+  ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
   
   std::shared_ptr<basic_identifier> primary_key_ = nullptr;
 };

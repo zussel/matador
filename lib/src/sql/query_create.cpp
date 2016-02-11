@@ -98,7 +98,7 @@ void query_create::serialize(const char *id, time &)
   serialize(id, type_time);
 }
 
-void query_create::serialize(const char *id, basic_object_holder &, cascade_type)
+void query_create::serialize(const char *id, object_holder &, cascade_type)
 {
   serialize(id, type_long);
 }

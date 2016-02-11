@@ -205,7 +205,7 @@ void mysql_statement::serialize(const char *, varchar_base &x)
   ++host_index;
 }
 
-void mysql_statement::serialize(const char *, basic_object_holder &x)
+void mysql_statement::serialize(const char *, object_holder &x)
 {
   bind_value(host_array[host_index], MYSQL_TYPE_LONG, x.id(), host_index);
   ++host_index;
@@ -285,7 +285,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const basic_object_holder &value, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const object_holder &value, int index)
 {
   bind_value(bind, type, value.id(), index);
 }

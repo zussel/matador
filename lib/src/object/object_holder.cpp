@@ -2,17 +2,17 @@
 // Created by sascha on 12/10/15.
 //
 
-#include "object/basic_object_holder.hpp"
+#include "object/object_holder.hpp"
 #include "object/object_proxy.hpp"
 #include "object/object_exception.hpp"
 
 namespace oos {
 
-basic_object_holder::basic_object_holder(bool is_internal)
+object_holder::object_holder(bool is_internal)
   : is_internal_(is_internal)
 {}
 
-basic_object_holder::basic_object_holder(const basic_object_holder &x)
+object_holder::object_holder(const object_holder &x)
   : proxy_(x.proxy_)
   , oid_(x.oid_)
 {
@@ -22,8 +22,8 @@ basic_object_holder::basic_object_holder(const basic_object_holder &x)
   }
 }
 
-basic_object_holder &
-basic_object_holder::operator=(const basic_object_holder &x)
+object_holder &
+object_holder::operator=(const object_holder &x)
 {
   if (this != &x && proxy_ != x.proxy_) {
     reset(x.proxy_, cascade_type::NONE);
@@ -31,7 +31,7 @@ basic_object_holder::operator=(const basic_object_holder &x)
   return *this;
 }
 
-basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op)
+object_holder::object_holder(bool is_internal, object_proxy *op)
   : proxy_(op)
   , is_internal_(is_internal)
   , oid_(0)
@@ -42,7 +42,7 @@ basic_object_holder::basic_object_holder(bool is_internal, object_proxy *op)
   }
 }
 
-basic_object_holder::~basic_object_holder()
+object_holder::~object_holder()
 {
   if (proxy_) {
     if (is_internal_ && is_inserted_) {
@@ -59,17 +59,17 @@ basic_object_holder::~basic_object_holder()
   }
 }
 
-bool basic_object_holder::operator==(const basic_object_holder &x) const
+bool object_holder::operator==(const object_holder &x) const
 {
   return x.proxy_ == proxy_;
 }
 
-bool basic_object_holder::operator!=(const basic_object_holder &x) const
+bool object_holder::operator!=(const object_holder &x) const
 {
   return !(x == *this);
 }
 
-void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
+void object_holder::reset(object_proxy *proxy, cascade_type cascade)
 {
   if (proxy_ == proxy) {
     return;
@@ -99,7 +99,7 @@ void basic_object_holder::reset(object_proxy *proxy, cascade_type cascade)
   }
 }
 
-void basic_object_holder::reset(const std::shared_ptr<basic_identifier> &id)
+void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
 {
   if (proxy_ && !proxy_->pk()->is_same_type(*id)) {
     throw object_exception("identifier types are not equal");
@@ -108,18 +108,18 @@ void basic_object_holder::reset(const std::shared_ptr<basic_identifier> &id)
 }
 
 bool
-basic_object_holder::is_loaded() const
+object_holder::is_loaded() const
 {
   return (proxy_ && proxy_->obj());
 }
 
 unsigned long
-basic_object_holder::id() const
+object_holder::id() const
 {
   return (proxy_ ? proxy_->id() : oid_);
 }
 
-void basic_object_holder::id(unsigned long id)
+void object_holder::id(unsigned long id)
 {
   if (proxy_) {
     throw std::logic_error("proxy already set");
@@ -128,22 +128,22 @@ void basic_object_holder::id(unsigned long id)
   }
 }
 
-object_store *basic_object_holder::store() const
+object_store *object_holder::store() const
 {
   return (proxy_ ? proxy_->ostore() : nullptr);
 }
 
-void* basic_object_holder::ptr()
+void*object_holder::ptr()
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }
 
-const void*basic_object_holder::ptr() const
+const void*object_holder::ptr() const
 {
   return lookup_object();
 }
 
-void* basic_object_holder::lookup_object()
+void*object_holder::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore()) {
@@ -156,38 +156,38 @@ void* basic_object_holder::lookup_object()
   }
 }
 
-void* basic_object_holder::lookup_object() const
+void*object_holder::lookup_object() const
 {
   return proxy_ ? proxy_->obj() : nullptr;
 }
 
 bool
-basic_object_holder::is_internal() const
+object_holder::is_internal() const
 {
   return is_internal_;
 }
 
-bool basic_object_holder::is_inserted() const
+bool object_holder::is_inserted() const
 {
   return is_inserted_;
 }
 
-bool basic_object_holder::has_primary_key() const
+bool object_holder::has_primary_key() const
 {
   return (proxy_ ? proxy_->has_identifier() : false);
 }
 
-std::shared_ptr<basic_identifier> basic_object_holder::primary_key() const
+std::shared_ptr<basic_identifier> object_holder::primary_key() const
 {
   return (proxy_ ? proxy_->pk() : nullptr);
 }
 
-unsigned long basic_object_holder::reference_count() const
+unsigned long object_holder::reference_count() const
 {
   return (proxy_ ? proxy_->reference_counter_ : 0UL);
 }
 
-std::ostream& operator<<(std::ostream &out, const basic_object_holder &x)
+std::ostream& operator<<(std::ostream &out, const object_holder &x)
 {
   if (x.proxy_) {
     if (x.proxy_->obj()) {

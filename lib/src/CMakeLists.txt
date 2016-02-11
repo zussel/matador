@@ -5,7 +5,7 @@ SET(OBJECT_SOURCES
     object/prototype_node.cpp
     object/identifier.cpp
     object/prototype_iterator.cpp
-    object/basic_object_holder.cpp
+	object/object_holder.cpp
 )
 
 SET(OBJECT_INSTALL_HEADER
@@ -57,8 +57,7 @@ SET(OBJECT_HEADER
     ../include/object/has_many.hpp
     ../include/object/has_one.hpp
     ../include/object/container_type_traits.hpp
-    ../include/object/basic_object_holder.hpp
-    ../include/object/cascade_type.hpp
+	../include/object/object_holder.hpp
     ../include/object/basic_has_many.hpp
     ../include/object/has_many_vector.hpp
     ../include/object/has_many_list.hpp
@@ -81,7 +80,9 @@ SET(TOOLS_SOURCES
 )
 
 SET(TOOLS_INSTALL_HEADER
+  ${PROJECT_SOURCE_DIR}/include/tools/access.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/algorithm.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/cascade_type.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/byte_buffer.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/singleton.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/library.hpp
@@ -99,8 +100,10 @@ SET(TOOLS_INSTALL_HEADER
 )
 
 SET(TOOLS_HEADER
+	../include/tools/access.hpp
   ../include/tools/algorithm.hpp
   ../include/tools/byte_buffer.hpp
+	../include/tools/cascade_type.hpp
   ../include/tools/singleton.hpp
   ../include/tools/library.hpp
   ../include/tools/blob.hpp
@@ -119,7 +122,7 @@ SET(TOOLS_HEADER
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
-)
+	../include/tools/identifiable_holder.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp
@@ -214,7 +217,6 @@ SET(UNIT_HEADER
   ../include/unit/test_suite.hpp
   ../include/unit/unit_exception.hpp
   ../include/unit/unit_test.hpp
-  ../include/object/access.hpp
 )
 
 SET(DATABASE_SOURCES

@@ -2,8 +2,8 @@
 // Created by sascha on 12/10/15.
 //
 
-#ifndef OOS_BASIC_OBJECT_HOLDER_HPP
-#define OOS_BASIC_OBJECT_HOLDER_HPP
+#ifndef OBJECT_HOLDER_HPP
+#define OBJECT_HOLDER_HPP
 
 #ifdef _MSC_VER
 #ifdef oos_EXPORTS
@@ -18,7 +18,7 @@
 #define OOS_API
 #endif
 
-#include "object/cascade_type.hpp"
+#include "tools/cascade_type.hpp"
 
 #include <memory>
 
@@ -34,14 +34,14 @@ class object_proxy;
 class object_store;
 
 /**
- * @class basic_object_holder
+ * @class object_holder
  * @brief Base class for the serializable pointer and reference class
  *
  * This is the base class for the serializable pointer
  * and reference class. The class holds the proxy
  * of the serializable and the id of the serializable.
  */
-class OOS_API basic_object_holder
+class OOS_API object_holder
 {
 protected:
   /**
@@ -56,70 +56,70 @@ protected:
    * @param is_internal True if the pointer is used internal, which means
    *                    it is used to describe an entity.
    */
-  explicit basic_object_holder(bool is_internal);
+  explicit object_holder(bool is_internal);
 
   /**
-   * Copies from another basic_object_holder
+   * Copies from another object_holder
    * 
-   * @param x the basic_object_holder to copy from.
+   * @param x the object_holder to copy from.
    */
-  basic_object_holder(const basic_object_holder &x);
+  object_holder(const object_holder &x);
 
   /**
    * Assign operator.
    * 
-   * @param x The basic_object_holder to assign from.
+   * @param x The object_holder to assign from.
    */
-  basic_object_holder& operator=(const basic_object_holder &x);
+  object_holder & operator=(const object_holder &x);
 
   /**
-   * @brief Creates an basic_object_holder with a given object_proxy
+   * @brief Creates an object_holder with a given object_proxy
    * 
-   * Creates an basic_object_holder with a given object_proxy. The
-   * boolean tells the basic_object_holder if it should be
+   * Creates an object_holder with a given object_proxy. The
+   * boolean tells the object_holder if it should be
    * handled as a reference or a pointer.
    * 
-   * @param op The object_proxy of the basic_object_holder
+   * @param op The object_proxy of the object_holder
    * @param is_ref If true the serializable is handled as a reference.
    */
-  basic_object_holder(bool is_internal, object_proxy *op);
+  object_holder(bool is_internal, object_proxy *op);
 
   /**
-   * Destroys the basic_object_holder
+   * Destroys the object_holder
    * and decides wether the underlaying
    * object_proxy is destroyed as well.
    *
    * It is destroyed if it is not inserted
    * into any object_store.
    */
-  ~basic_object_holder();
+  virtual ~object_holder();
 
 public:
 
   /**
-   * Equal to operator for the basic_object_holder
+   * Equal to operator for the object_holder
    * 
-   * @param x The basic_object_holder to check equality with.
+   * @param x The object_holder to check equality with.
    */
-  bool operator==(const basic_object_holder &x) const;
+  bool operator==(const object_holder &x) const;
 
   /**
-   * Not equal to operator for the basic_object_holder
+   * Not equal to operator for the object_holder
    * 
-   * @param x The basic_object_holder to check unequality with.
+   * @param x The object_holder to check unequality with.
    */
-  bool operator!=(const basic_object_holder &x) const;
+  bool operator!=(const object_holder &x) const;
 
   /**
-   * Resets the basic_object_holder with the given object_proxy.
+   * Resets the object_holder with the given object_proxy.
    * 
-   * @param proxy The new object_proxy for the basic_object_holder.
+   * @param proxy The new object_proxy for the object_holder.
    * @param cascade Sets the cascadable actions for the proxy.
    */
   void reset(object_proxy *proxy, cascade_type cascade);
 
   /**
-   * Resets the basic_object_holder with the given
+   * Resets the object_holder with the given
    * identifier. If the type of identifier differs
    * from internal type an exception is thrown
    *
@@ -184,12 +184,12 @@ public:
   void* lookup_object() const;
 
   /**
-   * Returns if this basic_object_holder is inside
+   * Returns if this object_holder is inside
    * of the object_store. This is important
    * to calculate the reference and pointer
    * counter.
    * 
-   * @return True if the basic_object_holder internal
+   * @return True if the object_holder internal
    */
   bool is_internal() const;
 
@@ -207,7 +207,7 @@ public:
    *
    * @return The primary key of the foreign serializable
    */
-  std::shared_ptr<basic_identifier> primary_key() const;
+  virtual std::shared_ptr<basic_identifier> primary_key() const;
 
   /**
    * Creates a new identifier object.
@@ -225,7 +225,7 @@ public:
    * @param x The serializable pointer to print.
    * @return The output stream.
    */
-  friend OOS_API std::ostream& operator<<(std::ostream &out, const basic_object_holder &x);
+  friend OOS_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
 private:
   friend class object_serializer;
@@ -252,4 +252,4 @@ private:
 
 }
 
-#endif //OOS_BASIC_OBJECT_HOLDER_HPP
+#endif //OBJECT_HOLDER_HPP

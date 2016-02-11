@@ -33,7 +33,7 @@
 
 #include "tools/byte_buffer.hpp"
 
-#include "object/access.hpp"
+#include "tools/access.hpp"
 #include "tools/identifier.hpp"
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
@@ -44,7 +44,7 @@
 
 namespace oos {
 
-class basic_object_holder;
+class object_holder;
 class varchar_base;
 
 /**

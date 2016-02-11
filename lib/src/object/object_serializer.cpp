@@ -20,8 +20,6 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_serializer.hpp"
-#include "object/prototype_node.hpp"
-#include "object/object_container.hpp"
 
 
 using namespace std::placeholders;
