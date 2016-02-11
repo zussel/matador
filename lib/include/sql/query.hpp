@@ -214,25 +214,6 @@ public:
   }
 
   /**
-   * Creates an insert statement based
-   * on the given object_ptr and the name of the table
-   *
-   * @tparam TYPE The flag indicating if the holder represents a reference or a pointer
-   * @param holder The object_holder used for the insert statement.
-   * @param table The name of the table.
-   * @return A reference to the query.
-   */
-  query& insert(has_one<T> &holder)
-  {
-    return insert(holder.get());
-  }
-
-  query& insert(const object_ptr<T> &holder)
-  {
-    return insert(holder.get());
-  }
-
-  /**
    * Creates an update statement based
    * on the given serializable and.
    * the name of the table
@@ -252,21 +233,6 @@ public:
     state = QUERY_OBJECT_UPDATE;
 
     return *this;
-  }
-
-  /**
-   * Creates an update statement based
-   * on the given object_ptr and the name of the table
-   *
-   * @tparam TYPE The flag indicating if the holder represents a reference or a pointer
-   * @param holder The object_holder used for the insert statement.
-   * @param table The name of the table.
-   * @return A reference to the query.
-   */
-  template < bool TYPE >
-  query& update(has_one<T> &holder)
-  {
-    return update(holder.get());
   }
 
   /**

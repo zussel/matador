@@ -4,9 +4,6 @@
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 
-#include "object/object_ptr.hpp"
-#include "object/object_exception.hpp"
-
 #include <cstring>
 
 namespace oos {

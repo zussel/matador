@@ -111,7 +111,7 @@ void SQLTestUnit::test_foreign_query()
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   oos::identifier<unsigned long> id(23);
-  object_ptr<Item> hans(new Item("Hans", 4711));
+  Item *hans = new Item("Hans", 4711);
   hans->id(id.value());
   hans->set_time(itime);
   res = q.insert(hans).execute();
@@ -153,10 +153,9 @@ void SQLTestUnit::test_query()
   // create item table and insert item
   result<person> res(q.create().execute());
 
-  typedef object_ptr<person> person_ptr;
-  person_ptr hans(new person("Hans", oos::date(12, 3, 1980), 180));
-  hans->id(1);
-  res = q.insert(hans).execute();
+  person hans("Hans", oos::date(12, 3, 1980), 180);
+  hans.id(1);
+  res = q.insert(&hans).execute();
 
   res = q.select().from().where("name='hans'").execute();
 
