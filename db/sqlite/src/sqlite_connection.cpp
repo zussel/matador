@@ -21,11 +21,6 @@
 #include "sqlite_types.hpp"
 #include "sqlite_exception.hpp"
 
-#include "database/session.hpp"
-#include "database/result.hpp"
-
-#include "database/database_sequencer.hpp"
-
 #include <sqlite3.h>
 #include <sstream>
 
@@ -45,9 +40,8 @@ void throw_error(int ec, sqlite3 *db, const std::string &source)
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_connection::sqlite_connection(session *db)
-  : database(db, new database_sequencer(*this))
-  , sqlite_db_(0)
+sqlite_connection::sqlite_connection()
+  : sqlite_db_(0)
 {
 }
 
@@ -57,7 +51,7 @@ sqlite_connection::~sqlite_connection()
 }
 
 
-void sqlite_connection::on_open(const std::string &db)
+void sqlite_connection::open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &sqlite_db_);
   if (ret != SQLITE_OK) {

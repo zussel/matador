@@ -65,6 +65,14 @@ public:
 
   virtual unsigned long last_inserted_id() override;
 
+  virtual void open(const std::string &db);
+  virtual void close() override;
+  detail::result_impl* execute(const std::string &stmt);
+  detail::statement_impl* prepare(const oos::sql &stmt);
+  virtual void begin() override;
+  virtual void commit() override;
+  virtual void rollback() override;
+
   /**
    * Return the raw pointer to the sqlite3
    * database struct.
