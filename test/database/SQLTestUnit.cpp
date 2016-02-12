@@ -2,6 +2,7 @@
 // Created by sascha on 9/7/15.
 //
 
+#include <sql/condition.hpp>
 #include "SQLTestUnit.hpp"
 
 #include "../Item.hpp"
@@ -202,7 +203,7 @@ void SQLTestUnit::test_query_select()
   std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
   res = q.insert(hilde.get()).execute();
 
-  std::unique_ptr<person> trude(new person(++counter, "trude", oos::date(1, 9, 1967), 166));
+  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
   res = q.insert(trude.get()).execute();
 
   res = q.select().execute();
@@ -233,6 +234,22 @@ void SQLTestUnit::test_query_select()
 
   UNIT_ASSERT_EQUAL(item->name(), "Otto", "expected name must be 'Otto'");
   UNIT_ASSERT_EQUAL(item->height(), 159U, "expected height must be 159");
+
+  res = q.select()
+    .where("height>160")
+//    .and_("height" < 180)
+    .and_(q.cond("height").less(180))
+    .order_by("height")
+    .desc()
+    .execute();
+
+  UNIT_ASSERT_EQUAL(res.size(), 2UL, "result size must be one (2)");
+
+  first = res.begin();
+  item.reset(first.release());
+
+  UNIT_ASSERT_EQUAL(item->name(), "Hilde", "expected name must be 'Hilde'");
+  UNIT_ASSERT_EQUAL(item->height(), 175U, "expected height must be 175");
 
   q.drop().execute();
 }

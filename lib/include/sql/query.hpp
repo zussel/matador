@@ -501,6 +501,10 @@ public:
     return *this;
   }
 
+  condition cond(const std::string &c)
+  {
+    return condition(c);
+  }
 
 private:
   static void throw_invalid(state_t next, state_t current)
@@ -531,7 +535,8 @@ private:
         break;
       case query::QUERY_AND:
       case query::QUERY_OR:
-        if (current != query::QUERY_COND_WHERE &&
+        if (current != query::QUERY_WHERE &&
+            current != query::QUERY_COND_WHERE &&
             current != query::QUERY_OR &&
             current != query::QUERY_AND)
         {
@@ -565,7 +570,8 @@ private:
         if (current != query::QUERY_SELECT &&
             current != query::QUERY_WHERE &&
             current != query::QUERY_COND_WHERE &&
-            current != query::QUERY_SELECT)
+            current != query::QUERY_AND &&
+            current != query::QUERY_OR)
         {
           msg << "invalid next state: [" << next << "] (current: " << current << ")";
           throw std::logic_error(msg.str());
