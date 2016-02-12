@@ -138,9 +138,11 @@ void query_update::serialize(const char *id, time &x)
   dialect.append(id, type_time, valstr.str());
 }
 
-void query_update::serialize(const char *id, object_holder &x)
+void query_update::serialize(const char *id, identifiable_holder &x)
 {
-  write_pair(id, type_long, x.id());
+  if (x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+  }
 }
 
 }

@@ -41,22 +41,12 @@ public:
   virtual void serialize(const char*, oos::basic_identifier &x) = 0;
   virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type) = 0;
 
-//  template < unsigned int C >
-//  void serialize(const char *id, oos::varchar<C> &x)
-//  {
-//    std::string val = x.str();
-//    serialize(id, val);
-//  }
-//
-//  template < class T, template <typename> class H >
-//  void serialize(const char *id, H<T> &x)
-//  {
-//    if (x.has_primary_key()) {
-//      std::shared_ptr<basic_identifier> bid = x.primary_key();
-//      bid->serialize(id, *this);
-//      bid->is_valid();
-//    }
-//  }
+  template < unsigned int C >
+  void serialize(const char *id, oos::varchar<C> &x)
+  {
+    std::string val = x.str();
+    serialize(id, val);
+  }
 
   template < class HAS_MANY >
   void serialize(const char*, HAS_MANY&, const char*, const char*) {}

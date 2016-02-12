@@ -66,8 +66,8 @@ public:
   virtual void serialize(const char *id, oos::time &x);
   virtual void serialize(const char *id, std::string &x);
   virtual void serialize(const char *id, varchar_base &x);
-  virtual void serialize(const char *id, oos::basic_identifier &x);
-  virtual void serialize(const char *id, object_holder &x, cascade_type);
+  virtual void serialize(const char *id, basic_identifier &x);
+  virtual void serialize(const char *id, identifiable_holder &x, cascade_type);
 
 protected:
   virtual bool needs_bind() override;

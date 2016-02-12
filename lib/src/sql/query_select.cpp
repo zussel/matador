@@ -93,7 +93,7 @@ void query_select::serialize(const char *id, time &)
   serialize(id, type_time);
 }
 
-void query_select::serialize(const char *id, object_holder &, cascade_type)
+void query_select::serialize(const char *id, identifiable_holder &, cascade_type)
 {
   serialize(id, type_long);
 }

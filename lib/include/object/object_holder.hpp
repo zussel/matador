@@ -19,6 +19,7 @@
 #endif
 
 #include "tools/cascade_type.hpp"
+#include "tools/identifiable_holder.hpp"
 
 #include <memory>
 
@@ -41,7 +42,7 @@ class object_store;
  * and reference class. The class holds the proxy
  * of the serializable and the id of the serializable.
  */
-class OOS_API object_holder
+class OOS_API object_holder : public identifiable_holder
 {
 protected:
   /**
@@ -208,13 +209,6 @@ public:
    * @return The primary key of the foreign serializable
    */
   virtual std::shared_ptr<basic_identifier> primary_key() const;
-
-  /**
-   * Creates a new identifier object.
-   *
-   * @return Returns a new identifier object.
-  */
-  virtual basic_identifier* create_identifier() const = 0;
 
   unsigned long reference_count() const;
 

@@ -31,7 +31,7 @@ class date;
 class time;
 class object_holder;
 
-class OOS_API query_update
+class OOS_API query_update : public serializer
 {
 public:
   explicit query_update(sql &s);
@@ -53,7 +53,7 @@ public:
   void serialize(const char *id, std::string &x);
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
-  void serialize(const char *id, object_holder &x);
+  void serialize(const char *id, identifiable_holder &x);
   template < class T >
   void serialize(const char *id, identifier<T> &x)
   {

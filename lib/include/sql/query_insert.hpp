@@ -62,7 +62,7 @@ public:
   void serialize(const char *id, date &x);
   void serialize(const char *id, time &x);
   void serialize(const char *id, basic_identifier &x);
-  void serialize(const char *id, object_holder &x, cascade_type);
+  void serialize(const char *id, identifiable_holder &x, cascade_type);
 
   template < class T >
   void write_field(const char *id, data_type_t type, T &x)

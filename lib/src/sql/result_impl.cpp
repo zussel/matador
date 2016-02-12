@@ -12,7 +12,7 @@ namespace detail {
 result_impl::result_impl() {}
 result_impl::~result_impl() {}
 
-void result_impl::read_foreign_object(const char *id, object_holder &x)
+void result_impl::read_foreign_object(const char *id, identifiable_holder &x)
 {
   /*
    * determine and create primary key of object ptr

@@ -118,7 +118,7 @@ public:
   virtual int transform_index(int index) const = 0;
 
 protected:
-  void read_foreign_object(const char *id, object_holder &x);
+  void read_foreign_object(const char *id, identifiable_holder &x);
 
 protected:
   int result_index_ = 0;

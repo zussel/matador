@@ -59,7 +59,7 @@ public:
 	void serialize(const char *id, std::string &x);
 	void serialize(const char *id, date &x);
 	void serialize(const char *id, time &x);
-	void serialize(const char *id, object_holder &x, cascade_type);
+	void serialize(const char *id, identifiable_holder &x, cascade_type);
 	template < class T >
 	void serialize(const char *id, identifier<T> &x)
 	{
