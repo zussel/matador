@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "sqlite_database.hpp"
+#include "sqlite_connection.hpp"
 #include "sqlite_statement.hpp"
 #include "sqlite_result.hpp"
 #include "sqlite_types.hpp"
@@ -45,19 +45,19 @@ void throw_error(int ec, sqlite3 *db, const std::string &source)
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_database::sqlite_database(session *db)
+sqlite_connection::sqlite_connection(session *db)
   : database(db, new database_sequencer(*this))
   , sqlite_db_(0)
 {
 }
 
-sqlite_database::~sqlite_database()
+sqlite_connection::~sqlite_connection()
 {
   close();
 }
 
 
-void sqlite_database::on_open(const std::string &db)
+void sqlite_connection::on_open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &sqlite_db_);
   if (ret != SQLITE_OK) {
@@ -65,12 +65,12 @@ void sqlite_database::on_open(const std::string &db)
   }
 }
 
-bool sqlite_database::is_open() const
+bool sqlite_connection::is_open() const
 {
   return sqlite_db_ != 0;
 }
 
-void sqlite_database::on_close()
+void sqlite_connection::on_close()
 {
   int ret = sqlite3_close(sqlite_db_);
   
@@ -79,22 +79,22 @@ void sqlite_database::on_close()
   sqlite_db_ = 0;
 }
 
-sqlite3* sqlite_database::operator()()
+sqlite3*sqlite_connection::operator()()
 {
   return sqlite_db_;
 }
 
-void sqlite_database::on_begin()
+void sqlite_connection::on_begin()
 {
   execute<serializable>("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
 }
 
-void sqlite_database::on_commit()
+void sqlite_connection::on_commit()
 {
   execute<serializable>("COMMIT TRANSACTION;", (std::shared_ptr<object_base_producer>()));
 }
 
-oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr)
+oos::detail::result_impl*sqlite_connection::on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr)
 {
   std::unique_ptr<sqlite_result> res(new sqlite_result(ptr));
   char *errmsg = 0;
@@ -107,17 +107,17 @@ oos::detail::result_impl* sqlite_database::on_execute(const std::string &sql, st
   return res.release();
 }
 
-oos::detail::statement_impl *sqlite_database::on_prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
+oos::detail::statement_impl *sqlite_connection::on_prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
 {
   return new sqlite_statement(*this, sql.prepare(), ptr);
 }
 
-void sqlite_database::on_rollback()
+void sqlite_connection::on_rollback()
 {
   execute<serializable>("ROLLBACK TRANSACTION;", (std::shared_ptr<object_base_producer>()));
 }
 
-int sqlite_database::parse_result(void* param, int column_count, char** values, char** /*columns*/)
+int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)
 {
   sqlite_result *result = static_cast<sqlite_result*>(param);
 
@@ -135,7 +135,7 @@ int sqlite_database::parse_result(void* param, int column_count, char** values, 
   return 0;
 }
 
-const char* sqlite_database::type_string(data_type_t type) const
+const char*sqlite_connection::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
@@ -180,7 +180,7 @@ const char* sqlite_database::type_string(data_type_t type) const
   }
 }
 
-unsigned long sqlite_database::last_inserted_id()
+unsigned long sqlite_connection::last_inserted_id()
 {
     return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));
 }
@@ -193,7 +193,7 @@ extern "C"
 {
   OOS_SQLITE_API oos::database* create_database(oos::session *ses)
   {
-    return new oos::sqlite::sqlite_database(ses);
+    return new oos::sqlite::sqlite_connection(ses);
   }
 
   OOS_SQLITE_API void destroy_database(oos::database *db)

@@ -29,9 +29,9 @@
   #define OOS_SQLITE_API
 #endif
 
-#include <database/statement_impl.hpp>
-#include "database/result_impl.hpp"
-#include "database/database.hpp"
+#include "sql/statement_impl.hpp"
+#include "sql/connection_impl.hpp"
+#include "sql/result_impl.hpp"
 
 struct sqlite3;
 
@@ -50,11 +50,11 @@ class sqlite_statement;
  * This class is the sqlite database backend
  * class. It provides the sqlite version 3
  */
-class OOS_SQLITE_API sqlite_database : public database
+class OOS_SQLITE_API sqlite_connection : public connection_impl
 {
 public:
-  explicit sqlite_database(session *db);
-  virtual ~sqlite_database();
+  sqlite_connection();
+  virtual ~sqlite_connection();
   
   /**
    * Returns true if the database is open
@@ -62,7 +62,6 @@ public:
    * @return True on open database connection.
    */
   virtual bool is_open() const override;
-
 
   virtual unsigned long last_inserted_id() override;
 
@@ -98,9 +97,9 @@ private:
 
 extern "C"
 {
-  OOS_SQLITE_API oos::database* create_database(oos::session *ses);
+  OOS_SQLITE_API oos::database* create_database();
 
-  OOS_SQLITE_API void destroy_database(oos::database *db);
+  OOS_SQLITE_API void destroy_database(oos::connection_impl *db);
 }
 
 #endif /* SQLITE_DATABASE_HPP */

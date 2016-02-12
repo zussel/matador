@@ -33,12 +33,12 @@ class basic_identifier;
 
 namespace sqlite {
 
-class sqlite_database;
+class sqlite_connection;
 
 class sqlite_statement : public oos::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer);
+  sqlite_statement(sqlite_connection &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer);
   virtual ~sqlite_statement();
 
   virtual void clear();
@@ -67,7 +67,7 @@ protected:
   virtual void write(const char *id, const basic_identifier &x);
 
 private:
-  sqlite_database &db_;
+  sqlite_connection &db_;
   sqlite3_stmt *stmt_;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;

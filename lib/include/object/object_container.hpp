@@ -19,7 +19,7 @@
 #define OBJECT_CONTAINER_HPP
 
 #include "object/object_ptr.hpp"
-#include "object/base_class.hpp"
+#include "tools/base_class.hpp"
 
 #include <functional>
 

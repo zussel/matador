@@ -16,7 +16,7 @@
  */
 
 #include "sqlite_statement.hpp"
-#include "sqlite_database.hpp"
+#include "sqlite_connection.hpp"
 #include "sqlite_exception.hpp"
 #include "sqlite_prepared_result.hpp"
 
@@ -49,7 +49,7 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer)
+sqlite_statement::sqlite_statement(sqlite_connection &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer)
   : db_(db)
   , stmt_(0)
   , producer_(producer)

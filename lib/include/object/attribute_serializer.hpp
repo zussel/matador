@@ -19,8 +19,8 @@
 #define ATTRIBUTE_SERIALIZER_HPP
 
 #include "object/object_ptr.hpp"
-#include "tools/identifier.hpp"
 
+#include "tools/identifier.hpp"
 #include "tools/varchar.hpp"
 #include "tools/string.hpp"
 

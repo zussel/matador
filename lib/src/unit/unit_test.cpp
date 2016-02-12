@@ -17,8 +17,6 @@
 
 #include "unit/unit_test.hpp"
 
-#include "tools/varchar.hpp"
-
 #include <algorithm>
 #include <iostream>
 #include <iomanip>

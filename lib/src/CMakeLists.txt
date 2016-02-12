@@ -53,7 +53,6 @@ SET(OBJECT_HEADER
     ../include/object/object_expression.hpp
     ../include/object/attribute_serializer.hpp
     ../include/object/prototype_iterator.hpp
-    ../include/object/base_class.hpp
     ../include/object/has_many.hpp
     ../include/object/has_one.hpp
     ../include/object/container_type_traits.hpp
@@ -100,10 +99,11 @@ SET(TOOLS_INSTALL_HEADER
 )
 
 SET(TOOLS_HEADER
-	../include/tools/access.hpp
+  ../include/tools/access.hpp
   ../include/tools/algorithm.hpp
+  ../include/tools/base_class.hpp
   ../include/tools/byte_buffer.hpp
-	../include/tools/cascade_type.hpp
+  ../include/tools/cascade_type.hpp
   ../include/tools/singleton.hpp
   ../include/tools/library.hpp
   ../include/tools/blob.hpp
@@ -122,7 +122,7 @@ SET(TOOLS_HEADER
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
-	../include/tools/identifiable_holder.hpp)
+  ../include/tools/identifiable_holder.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp

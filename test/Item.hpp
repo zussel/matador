@@ -18,7 +18,7 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include "object/base_class.hpp"
+#include "tools/base_class.hpp"
 #include "object/object_ptr.hpp"
 #include "object/has_one.hpp"
 #include "object/has_many.hpp"

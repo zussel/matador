@@ -75,7 +75,7 @@ protected:
   virtual void read(const char *id, basic_identifier &x);
 
 private:
-  friend class sqlite_database;
+  friend class sqlite_connection;
 
 private:
 

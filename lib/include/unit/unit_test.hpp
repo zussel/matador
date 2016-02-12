@@ -35,12 +35,9 @@
 
 #include "unit/unit_exception.hpp"
 
-#include "tools/enable_if.hpp"
-
 #include <functional>
 #include <map>
 #include <vector>
-
 #include <cstring>
 #include <string>
 #include <sstream>
