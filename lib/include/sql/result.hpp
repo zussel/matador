@@ -235,7 +235,7 @@ public:
 
   std::size_t size () const
   {
-    return 0;
+    return p->result_rows();
   }
 
 private:

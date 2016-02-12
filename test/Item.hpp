@@ -624,12 +624,17 @@ private:
 
 public:
   person() {}
-  person(const std::string &name, const oos::date &birthdate, unsigned int height)
-    : name_(name)
+  person(unsigned long id, const std::string &name, const oos::date &birthdate, unsigned int height)
+    : id_(id)
+    , name_(name)
     , birthdate_(birthdate)
     , height_(height)
   {}
-  
+
+  person(const std::string &name, const oos::date &birthdate, unsigned int height)
+    : person(0, name, birthdate, height)
+  {}
+
   virtual ~person() {}
 
   template < class T >

@@ -27,6 +27,7 @@ public:
   void test_statement();
   void test_foreign_query();
   void test_query();
+  void test_query_select();
 
 protected:
   oos::connection* create_connection();

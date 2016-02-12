@@ -40,7 +40,7 @@ public:
   identifier() : id_(new T(0))
   { };
 
-  explicit identifier(T val) : id_(new T(val))
+  identifier(T val) : id_(new T(val))
   { }
 
   virtual ~identifier()

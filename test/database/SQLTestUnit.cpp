@@ -19,6 +19,7 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   add_test("statement", std::bind(&SQLTestUnit::test_statement, this), "test prepared sql statement");
   add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
+  add_test("query_select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
 }
 
 SQLTestUnit::~SQLTestUnit() {}
@@ -70,8 +71,10 @@ void SQLTestUnit::test_statement()
 
   result<Item> res(stmt.execute());
 
+  oos::identifier<unsigned long> id(23);
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
+  hans.id(id.value());
   hans.set_time(itime);
   stmt = q.insert(&hans).prepare();
 
@@ -86,6 +89,7 @@ void SQLTestUnit::test_statement()
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
     UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
     UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
@@ -174,6 +178,61 @@ void SQLTestUnit::test_query()
   res = q.select().where("name='heinz'").execute();
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
+
+  q.drop().execute();
+}
+
+void SQLTestUnit::test_query_select()
+{
+  connection_->open();
+
+  query<person> q(*connection_, "person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute());
+
+  unsigned long counter = 0;
+
+  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
+  res = q.insert(hans.get()).execute();
+
+  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
+  res = q.insert(otto.get()).execute();
+
+  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
+  res = q.insert(hilde.get()).execute();
+
+  std::unique_ptr<person> trude(new person(++counter, "trude", oos::date(1, 9, 1967), 166));
+  res = q.insert(trude.get()).execute();
+
+  res = q.select().execute();
+
+  UNIT_ASSERT_EQUAL(res.size(), 4UL, "result size must be one (1)");
+
+  res = q.select().where("name='hans'").execute();
+
+  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+
+    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+
+    ++first;
+  }
+
+  res = q.select().order_by("height").asc().execute();
+
+  first = res.begin();
+  std::unique_ptr<person> item(first.release());
+
+  UNIT_ASSERT_EQUAL(item->name(), "Otto", "expected name must be 'Otto'");
+  UNIT_ASSERT_EQUAL(item->height(), 159U, "expected height must be 159");
 
   q.drop().execute();
 }

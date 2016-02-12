@@ -70,9 +70,6 @@ private:
     QUERY_BEGIN,
     QUERY_CREATE,
     QUERY_DROP,
-    QUERY_OBJECT_SELECT,
-    QUERY_OBJECT_INSERT,
-    QUERY_OBJECT_UPDATE,
     QUERY_SELECT,
     QUERY_INSERT,
     QUERY_UPDATE,
@@ -85,6 +82,7 @@ private:
     QUERY_AND,
     QUERY_OR,
     QUERY_ORDERBY,
+    QUERY_ORDER_DIRECTION,
     QUERY_GROUPBY,
     QUERY_EXECUTED,
     QUERY_PREPARED,
@@ -210,7 +208,7 @@ public:
 
     sql_.append(")");
 
-    state = QUERY_OBJECT_INSERT;
+    state = QUERY_INSERT;
 
     return *this;
   }
@@ -232,7 +230,7 @@ public:
     query_update s(sql_);
     oos::access::serialize(s, *o);
 
-    state = QUERY_OBJECT_UPDATE;
+    state = QUERY_UPDATE;
 
     return *this;
   }
@@ -360,6 +358,28 @@ public:
     sql_.append(std::string(" ORDER BY ") + by);
 
     state = QUERY_ORDERBY;
+
+    return *this;
+  }
+
+  query& asc()
+  {
+    throw_invalid(QUERY_ORDER_DIRECTION, state);
+
+    sql_.append(" ASC ");
+
+    state = QUERY_ORDER_DIRECTION;
+
+    return *this;
+  }
+
+  query& desc()
+  {
+    throw_invalid(QUERY_ORDER_DIRECTION, state);
+
+    sql_.append(" DESC ");
+
+    state = QUERY_ORDER_DIRECTION;
 
     return *this;
   }
@@ -493,9 +513,6 @@ private:
       case query::QUERY_INSERT:
       case query::QUERY_UPDATE:
       case query::QUERY_DELETE:
-      case query::QUERY_OBJECT_SELECT:
-      case query::QUERY_OBJECT_INSERT:
-      case query::QUERY_OBJECT_UPDATE:
         if (current != QUERY_BEGIN) {
           msg << "invalid next state: [" << next << "] (current: " << current << ")";
           throw std::logic_error(msg.str());
@@ -506,9 +523,7 @@ private:
         if (current != query::QUERY_SELECT &&
             current != query::QUERY_COLUMN &&
             current != query::QUERY_SET &&
-            current != query::QUERY_DELETE &&
-            current != query::QUERY_OBJECT_SELECT &&
-            current != query::QUERY_OBJECT_UPDATE)
+            current != query::QUERY_DELETE)
         {
           msg << "invalid next state: [" << next << "] (current: " << current << ")";
           throw std::logic_error(msg.str());
@@ -542,6 +557,22 @@ private:
         if (current != query::QUERY_UPDATE &&
             current != query::QUERY_SET)
         {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case query::QUERY_ORDERBY:
+        if (current != query::QUERY_SELECT &&
+            current != query::QUERY_WHERE &&
+            current != query::QUERY_COND_WHERE &&
+            current != query::QUERY_SELECT)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case QUERY_ORDER_DIRECTION:
+        if (current != query::QUERY_ORDERBY) {
           msg << "invalid next state: [" << next << "] (current: " << current << ")";
           throw std::logic_error(msg.str());
         }
