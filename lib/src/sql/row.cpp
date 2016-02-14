@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "database/row.hpp"
+#include "sql/row.hpp"
 
 namespace oos {
 

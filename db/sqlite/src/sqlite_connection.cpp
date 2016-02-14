@@ -21,6 +21,8 @@
 #include "sqlite_types.hpp"
 #include "sqlite_exception.hpp"
 
+#include "sql/sql.hpp"
+
 #include <sqlite3.h>
 #include <sstream>
 
@@ -64,7 +66,7 @@ bool sqlite_connection::is_open() const
   return sqlite_db_ != 0;
 }
 
-void sqlite_connection::on_close()
+void sqlite_connection::close()
 {
   int ret = sqlite3_close(sqlite_db_);
   
@@ -78,19 +80,24 @@ sqlite3*sqlite_connection::operator()()
   return sqlite_db_;
 }
 
-void sqlite_connection::on_begin()
+void sqlite_connection::begin()
 {
-  execute<serializable>("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  execute("BEGIN TRANSACTION;");
 }
 
-void sqlite_connection::on_commit()
+void sqlite_connection::commit()
 {
-  execute<serializable>("COMMIT TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  execute("COMMIT TRANSACTION;");
 }
 
-oos::detail::result_impl*sqlite_connection::on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr)
+void sqlite_connection::rollback()
 {
-  std::unique_ptr<sqlite_result> res(new sqlite_result(ptr));
+  execute("ROLLBACK TRANSACTION;");
+}
+
+oos::detail::result_impl* sqlite_connection::execute(const std::string &sql)
+{
+  std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg = 0;
   int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
@@ -101,14 +108,9 @@ oos::detail::result_impl*sqlite_connection::on_execute(const std::string &sql, s
   return res.release();
 }
 
-oos::detail::statement_impl *sqlite_connection::on_prepare(const oos::sql &sql, std::shared_ptr<object_base_producer> ptr)
+oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
 {
-  return new sqlite_statement(*this, sql.prepare(), ptr);
-}
-
-void sqlite_connection::on_rollback()
-{
-  execute<serializable>("ROLLBACK TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  return new sqlite_statement(*this, sql.prepare());
 }
 
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)
@@ -167,7 +169,7 @@ const char*sqlite_connection::type_string(data_type_t type) const
     default:
       {
         std::stringstream msg;
-        msg << "mysql database: unknown type xxx [" << type << "]";
+        msg << "sqlite database: unknown type xxx [" << type << "]";
         throw std::logic_error(msg.str());
         //throw std::logic_error("mysql database: unknown type");
       }
@@ -176,7 +178,7 @@ const char*sqlite_connection::type_string(data_type_t type) const
 
 unsigned long sqlite_connection::last_inserted_id()
 {
-    return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));
+  return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));
 }
 
 }
@@ -185,12 +187,12 @@ unsigned long sqlite_connection::last_inserted_id()
 
 extern "C"
 {
-  OOS_SQLITE_API oos::database* create_database(oos::session *ses)
+  OOS_SQLITE_API oos::connection_impl* create_database()
   {
-    return new oos::sqlite::sqlite_connection(ses);
+    return new oos::sqlite::sqlite_connection();
   }
 
-  OOS_SQLITE_API void destroy_database(oos::database *db)
+  OOS_SQLITE_API void destroy_database(oos::connection_impl *db)
   {
     delete db;
   }

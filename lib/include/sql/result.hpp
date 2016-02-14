@@ -26,8 +26,6 @@
 
 namespace oos {
 
-class database;
-
 /// @cond OOS_DEV
 template < class T >
 class base_result_iterator : public std::iterator<std::forward_iterator_tag, T>

@@ -135,12 +135,14 @@ SET(SQL_SOURCES
   sql/query_update.cpp
   sql/sql.cpp
   sql/statement_impl.cpp
-	sql/sql_exception.cpp)
+  sql/row.cpp
+  sql/sql_exception.cpp
+)
 
 SET(SQL_HEADER
-	../include/sql/condition.hpp
-	../include/sql/connection.hpp
-	../include/sql/connection_factory.hpp
+  ../include/sql/condition.hpp
+  ../include/sql/connection.hpp
+  ../include/sql/connection_factory.hpp
   ../include/sql/connection_impl.hpp
   ../include/sql/result.hpp
   ../include/sql/result_impl.hpp
@@ -151,11 +153,14 @@ SET(SQL_HEADER
   ../include/sql/query_insert.hpp
   ../include/sql/query_update.hpp
   ../include/sql/sql.hpp
+  ../include/sql/row.hpp
+  ../include/sql/value.hpp
   ../include/sql/statement.hpp
   ../include/sql/statement_impl.hpp
   ../include/sql/types.hpp
   ../include/sql/token.hpp
-	../include/sql/sql_exception.hpp)
+  ../include/sql/sql_exception.hpp
+)
 
 SET(JSON_SOURCES
   json/json_type.cpp
@@ -229,7 +234,6 @@ SET(DATABASE_SOURCES
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
-  database/row.cpp
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
@@ -246,8 +250,6 @@ SET(DATABASE_HEADER
   ../include/database/database_sequencer.hpp
   ../include/database/transaction.hpp
   ../include/database/transaction_helper.hpp
-  ../include/database/row.hpp
-  ../include/database/value.hpp
   ../include/database/table.hpp
   ../include/database/table_reader.hpp
   ../include/database/identifier_binder.hpp

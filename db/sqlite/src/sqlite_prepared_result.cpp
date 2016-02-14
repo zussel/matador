@@ -14,9 +14,8 @@ namespace oos {
 
 namespace sqlite {
 
-sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret, std::shared_ptr<oos::object_base_producer> producer)
-  : result_impl(producer)
-  , ret_(ret)
+sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
+  : ret_(ret)
   , first_(true)
   , affected_rows_(0)
   , rows(0)
@@ -42,23 +41,8 @@ bool sqlite_prepared_result::fetch()
   } else {
     first_ = false;
   }
-  if (ret_ == SQLITE_DONE || ret_ == SQLITE_OK) {
-    // no further row available
-    return false;
-  }
+  return !(ret_ == SQLITE_DONE || ret_ == SQLITE_OK);
 
-  return true;
-}
-
-bool sqlite_prepared_result::fetch(serializable *o)
-{
-  if (!fetch()) {
-    return false;
-  }
-  
-  get(o);
-
-  return true;
 }
 
 sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
@@ -83,123 +67,132 @@ int sqlite_prepared_result::transform_index(int index) const
   return index;
 }
 
-void sqlite_prepared_result::read(const char *, char &x)
+void sqlite_prepared_result::serialize(const char *, char &x)
 {
-  x = (char)sqlite3_column_int(stmt_, result_index++);
+  x = (char)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, short &x)
+void sqlite_prepared_result::serialize(const char *, short &x)
 {
-  x = (short)sqlite3_column_int(stmt_, result_index++);
+  x = (short)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, int &x)
+void sqlite_prepared_result::serialize(const char *, int &x)
 {
-  x = (int)sqlite3_column_int(stmt_, result_index++);
+  x = sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, long &x)
+void sqlite_prepared_result::serialize(const char *, long &x)
 {
-  x = (long)sqlite3_column_int(stmt_, result_index++);
+  x = (long)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, unsigned char &x)
+void sqlite_prepared_result::serialize(const char *, unsigned char &x)
 {
-  x = (unsigned char)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned char)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, unsigned short &x)
+void sqlite_prepared_result::serialize(const char *, unsigned short &x)
 {
-  x = (unsigned short)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned short)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, unsigned int &x)
+void sqlite_prepared_result::serialize(const char *, unsigned int &x)
 {
-  x = (unsigned int)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned int)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, unsigned long &x)
+void sqlite_prepared_result::serialize(const char *, unsigned long &x)
 {
-  x = (unsigned long)sqlite3_column_int(stmt_, result_index++);
+  x = (unsigned long)sqlite3_column_int(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, bool &x)
+void sqlite_prepared_result::serialize(const char *, bool &x)
 {
-  x = sqlite3_column_int(stmt_, result_index++) > 0;
+  x = sqlite3_column_int(stmt_, result_index_++) > 0;
 }
 
-void sqlite_prepared_result::read(const char *, float &x)
+void sqlite_prepared_result::serialize(const char *, float &x)
 {
-  x = (float)sqlite3_column_double(stmt_, result_index++);
+  x = (float)sqlite3_column_double(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, double &x)
+void sqlite_prepared_result::serialize(const char *, double &x)
 {
-  x = sqlite3_column_double(stmt_, result_index++);
+  x = sqlite3_column_double(stmt_, result_index_++);
 }
 
-void sqlite_prepared_result::read(const char *, std::string &x)
+void sqlite_prepared_result::serialize(const char *, std::string &x)
 {
-  int s = sqlite3_column_bytes(stmt_, result_index);
-  const char *text = (const char*)sqlite3_column_text(stmt_, result_index++);
+  int s = sqlite3_column_bytes(stmt_, result_index_);
+  const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   x.assign(text, s);
 }
 
-void sqlite_prepared_result::read(const char *, varchar_base &x)
+void sqlite_prepared_result::serialize(const char *, varchar_base &x)
 {
-  int s = sqlite3_column_bytes(stmt_, result_index);
-  const char *text = (const char*)sqlite3_column_text(stmt_, result_index++);
+  int s = sqlite3_column_bytes(stmt_, result_index_);
+  const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   if (s == 0) {
   } else {
     x.assign(text, s);
   }
 }
 
-void sqlite_prepared_result::read(const char *, char *x, size_t s)
+void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
 {
-  size_t size = sqlite3_column_bytes(stmt_, result_index);
+  size_t size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   if (size < s) {
 #ifdef WIN32
-    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index++), s);
+    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s);
 #else
-    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), size);
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), size);
 #endif
     x[size] = '\0';
   } else {
 #ifdef WIN32
-    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index++), s - 1);
+    strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s - 1);
 #else
-    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index++), s - 1);
+    strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), s - 1);
 #endif
     x[s] = '\0';
   }
 }
 
-void sqlite_prepared_result::read(const char *id, oos::date &x)
+void sqlite_prepared_result::serialize(const char *id, oos::date &x)
 {
   double val = 0;
-  read(id, val);
+  serialize(id, val);
   x.set(static_cast<int>(val));
 }
 
-void sqlite_prepared_result::read(const char *id, oos::time &x)
+void sqlite_prepared_result::serialize(const char *id, oos::time &x)
 {
   std::string val;
-  read(id, val);
+  serialize(id, val);
   x = oos::time::parse(val, "%F %T.%f");
 }
 
-void sqlite_prepared_result::read(const char *id, object_base_ptr &x)
+void sqlite_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }
 
-void sqlite_prepared_result::read(const char *, object_container &) { }
-
-void sqlite_prepared_result::read(const char *id, basic_identifier &x)
+void sqlite_prepared_result::serialize(const char *id, basic_identifier &x)
 {
-  x.deserialize(id, *this);
+  x.serialize(id, *this);
 }
+
+bool sqlite_prepared_result::prepare_fetch()
+{
+  return false;
+}
+
+bool sqlite_prepared_result::finalize_fetch()
+{
+  return false;
+}
+
 }
 
 }

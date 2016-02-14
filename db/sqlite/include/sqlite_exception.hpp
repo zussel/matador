@@ -29,13 +29,13 @@
   #define OOS_SQLITE_API
 #endif
 
-#include "database/database_exception.hpp"
+#include "sql/sql_exception.hpp"
 
 namespace oos {
 
 namespace sqlite {
 
-class sqlite_exception : public database_exception
+class sqlite_exception : public sql_exception
 {
 public:
   sqlite_exception(const std::string &what);

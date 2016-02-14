@@ -22,7 +22,7 @@
 
 #include "database/session.hpp"
 #include "database/database_sequencer.hpp"
-#include "database/row.hpp"
+#include "sql/row.hpp"
 
 #include "tools/string.hpp"
 

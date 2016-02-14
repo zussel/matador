@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new SessionTestUnit("sqlite_session", "sqlite session test unit", connection::sqlite));
 //  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", connection::sqlite));
 //  suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite database test unit", connection::sqlite));
-//  suite.register_unit(new SQLTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
+  suite.register_unit(new SQLTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
 #endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

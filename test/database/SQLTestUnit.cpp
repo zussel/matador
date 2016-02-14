@@ -48,6 +48,8 @@ void SQLTestUnit::test_create()
 
   res = q.select().execute();
 
+  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+
   auto first = res.begin();
   auto last = res.end();
 

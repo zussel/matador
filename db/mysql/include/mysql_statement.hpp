@@ -74,8 +74,6 @@ protected:
   virtual void serialize(const char *id, basic_identifier &x);
   virtual void serialize(const char *id, identifiable_holder&x, cascade_type);
 
-//  virtual void prepare_result_column(const sql::field_ptr &fptr);
-
 private:
   template < class T >
   void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int /*index*/)
