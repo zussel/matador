@@ -124,14 +124,14 @@ void sqlite_prepared_result::serialize(const char *, double &x)
 
 void sqlite_prepared_result::serialize(const char *, std::string &x)
 {
-  int s = sqlite3_column_bytes(stmt_, result_index_);
+  size_t s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   x.assign(text, s);
 }
 
 void sqlite_prepared_result::serialize(const char *, varchar_base &x)
 {
-  int s = sqlite3_column_bytes(stmt_, result_index_);
+  size_t s = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   const char *text = (const char*)sqlite3_column_text(stmt_, result_index_++);
   if (s == 0) {
   } else {
@@ -185,12 +185,18 @@ void sqlite_prepared_result::serialize(const char *id, basic_identifier &x)
 
 bool sqlite_prepared_result::prepare_fetch()
 {
-  return false;
+  if (!first_) {
+    // get next row
+    ret_ = sqlite3_step(stmt_);
+  } else {
+    first_ = false;
+  }
+  return !(ret_ == SQLITE_DONE || ret_ == SQLITE_OK);
 }
 
 bool sqlite_prepared_result::finalize_fetch()
 {
-  return false;
+  return true;
 }
 
 }

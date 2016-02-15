@@ -19,6 +19,7 @@
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 #include "tools/basic_identifier.hpp"
+#include "tools/string.hpp"
 
 #include "sqlite_result.hpp"
 
@@ -249,16 +250,16 @@ void sqlite_result::serialize(const char */*id*/, std::string &x)
 
 void sqlite_result::serialize(const char *id, oos::date &x)
 {
-  double val = 0;
+  std::string val;
   serialize(id, val);
-  x.set(static_cast<int>(val));
+  x.set(val.c_str(), oos::date_format::ISO8601);
 }
 
 void sqlite_result::serialize(const char *id, oos::time &x)
 {
-std::string val;
-serialize(id, val);
-x = oos::time::parse(val, "%F %T.%f");
+  std::string val;
+  serialize(id, val);
+  x = oos::time::parse(val, "%F %T.%f");
 }
 
 void sqlite_result::serialize(const char *id, identifiable_holder &x, cascade_type)
@@ -273,11 +274,13 @@ void sqlite_result::serialize(const char *id, basic_identifier &x)
 
 bool sqlite_result::prepare_fetch()
 {
+  column_ = 0;
   return pos_ + 1 <= result_.size();
 }
 
 bool sqlite_result::finalize_fetch()
 {
+  ++pos_;
   return true;
 }
 

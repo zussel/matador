@@ -87,6 +87,8 @@ void SQLTestUnit::test_statement()
   stmt = q.select().prepare();
   res = stmt.execute();
 
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+
   auto first = res.begin();
   auto last = res.end();
 
@@ -212,7 +214,7 @@ void SQLTestUnit::test_query_select()
 
   UNIT_ASSERT_EQUAL(res.size(), 4UL, "result size must be one (1)");
 
-  res = q.select().where("name='hans'").execute();
+  res = q.select().where("name='Hans'").execute();
 
   UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
 
@@ -239,7 +241,6 @@ void SQLTestUnit::test_query_select()
 
   res = q.select()
     .where("height>160")
-//    .and_("height" < 180)
     .and_(q.cond("height").less(180))
     .order_by("height")
     .desc()
