@@ -4,8 +4,6 @@
 #include "tools/time.hpp"
 #include "tools/varchar.hpp"
 
-#include "object/object_ptr.hpp"
-
 #include <cstring>
 
 #include <sqlite3.h>
