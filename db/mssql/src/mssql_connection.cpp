@@ -20,8 +20,6 @@
 #include "mssql_result.hpp"
 #include "mssql_types.hpp"
 
-#include "sql/row.hpp"
-
 #include "tools/string.hpp"
 
 using namespace std::placeholders;

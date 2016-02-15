@@ -36,7 +36,6 @@
 namespace oos {
 
 class row;
-class serializable;
 
 namespace mssql {
 
