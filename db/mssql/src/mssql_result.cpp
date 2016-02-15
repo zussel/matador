@@ -27,17 +27,21 @@ namespace oos {
 
 namespace mssql {
 
-mssql_result::mssql_result(SQLHANDLE stmt, bool free, std::shared_ptr<oos::object_base_producer> producer)
-  : detail::result_impl(producer)
-  , affected_rows_(0)
+mssql_result::mssql_result(SQLHANDLE stmt, bool free)
+  : affected_rows_(0)
   , rows(0)
   , fields_(0)
   , free_(free)
   , stmt_(stmt)
 {
   // get row and column information
-  SQLRETURN ret = SQLRowCount(stmt, (SQLLEN*)&rows);
+  SQLLEN r(0);
+  SQLRETURN ret = SQLRowCount(stmt, (SQLLEN*)&r);
   throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't retrieve row count");
+
+  if (r != SQL_ERROR && r >= 0) {
+    rows = (unsigned long) r;
+  }
 
   SQLSMALLINT columns = 0;
   ret = SQLNumResultCols(stmt, &columns);
@@ -67,16 +71,16 @@ bool mssql_result::fetch()
   }
 }
 
-bool mssql_result::fetch(serializable *o)
-{
-  if (!fetch()) {
-    return false;
-  }
-  
-  get(o);
-
-  return true;
-}
+//bool mssql_result::fetch(serializable *o)
+//{
+//  if (!fetch()) {
+//    return false;
+//  }
+//
+//  get(o);
+//
+//  return true;
+//}
 
 mssql_result::size_type mssql_result::affected_rows() const
 {
@@ -98,65 +102,65 @@ int mssql_result::transform_index(int index) const
   return ++index;
 }
 
-void mssql_result::read(const char *id, char &x)
+void mssql_result::serialize(const char *id, char &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, short &x)
+void mssql_result::serialize(const char *id, short &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, int &x)
+void mssql_result::serialize(const char *id, int &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, long &x)
+void mssql_result::serialize(const char *id, long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, unsigned char &x)
+void mssql_result::serialize(const char *id, unsigned char &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, unsigned short &x)
+void mssql_result::serialize(const char *id, unsigned short &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, unsigned int &x)
+void mssql_result::serialize(const char *id, unsigned int &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, unsigned long &x)
+void mssql_result::serialize(const char *id, unsigned long &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, bool &x)
+void mssql_result::serialize(const char *id, bool &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, float &x)
+void mssql_result::serialize(const char *id, float &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, double &x)
+void mssql_result::serialize(const char *id, double &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char * /*id*/, char *x, size_t s)
+void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
 {
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, x, s, &info);
+  SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, x, s, &info);
   if (ret == SQL_SUCCESS) {
     return;
   } else {
@@ -164,37 +168,34 @@ void mssql_result::read(const char * /*id*/, char *x, size_t s)
   }
 }
 
-void mssql_result::read(const char *id, varchar_base &x)
+void mssql_result::serialize(const char *id, varchar_base &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, std::string &x)
+void mssql_result::serialize(const char *id, std::string &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, oos::date &x)
+void mssql_result::serialize(const char *id, oos::date &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, oos::time &x)
+void mssql_result::serialize(const char *id, oos::time &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::read(const char *id, object_base_ptr &x)
+void mssql_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }
 
-void mssql_result::read(const char * /*id*/, object_container &/*x*/)
+void mssql_result::serialize(const char *id, basic_identifier &x)
 {
-}
-
-void mssql_result::read(const char *id, basic_identifier &x) {
-  x.deserialize(id, *this);
+  x.serialize(id, *this);
 }
 
 /*
@@ -217,7 +218,7 @@ void mssql_result::read_column(const char *, std::string &val)
 {
   char buf[1024];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_CHAR, buf, 1024, &info);
+  SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, buf, 1024, &info);
   if (ret == SQL_SUCCESS) {
     val.assign(buf, info);
   } else {
@@ -229,7 +230,7 @@ void mssql_result::read_column(const char *, varchar_base &val)
 {
   char *buf = new char[val.capacity()];
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_CHAR, buf, val.capacity(), &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_CHAR, buf, val.capacity(), &info);
   if (ret == SQL_SUCCESS) {
     val.assign(buf, static_cast<size_t>(info));
     delete [] buf;
@@ -245,7 +246,7 @@ void mssql_result::read_column(char const *, date &x)
   SQL_DATE_STRUCT ds;
 
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_TYPE_DATE, &ds, 0, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_TYPE_DATE, &ds, 0, &info);
   if (ret == SQL_SUCCESS) {
     x.year(ds.year);
     x.month(ds.month);
@@ -260,12 +261,27 @@ void mssql_result::read_column(char const *, time &x)
   SQL_TIMESTAMP_STRUCT ts;
 
   SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index++), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
+  SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
   if (ret == SQL_SUCCESS) {
     x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
   } else {
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
   }
+}
+
+bool mssql_result::prepare_fetch()
+{
+  if (!fetch()) {
+    return false;
+  }
+
+  result_index_ = 0;
+  return true;
+}
+
+bool mssql_result::finalize_fetch()
+{
+  return true;
 }
 
 }

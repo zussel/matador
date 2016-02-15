@@ -1,12 +1,12 @@
 SET(MSSQL_DATABASE_SOURCES
-  src/mssql_database.cpp
+	src/mssql_connection.cpp
   src/mssql_exception.cpp
   src/mssql_statement.cpp
   src/mssql_result.cpp
 )
 
 SET(MSSQL_DATABASE_HEADER
-  include/mssql_database.hpp
+	include/mssql_connection.hpp
   include/mssql_exception.hpp
   include/mssql_statement.hpp
   include/mssql_result.hpp

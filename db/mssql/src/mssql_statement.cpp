@@ -16,7 +16,7 @@
  */
 
 #include "mssql_statement.hpp"
-#include "mssql_database.hpp"
+#include "mssql_connection.hpp"
 #include "mssql_result.hpp"
 
 #include "object/object_ptr.hpp"
@@ -32,9 +32,8 @@ namespace oos {
 
 namespace mssql {
 
-mssql_statement::mssql_statement(mssql_database &db, const sql &s, std::shared_ptr<oos::object_base_producer> producer)
+mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
   : db_(db)
-  , producer_(producer)
 {
   if (!db.handle()) {
     throw_error("mssql", "no odbc connection established");
@@ -73,99 +72,97 @@ detail::result_impl* mssql_statement::execute()
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
-  return new mssql_result(stmt_, false, producer_);
+  return new mssql_result(stmt_, false);
 }
 
-void mssql_statement::write(const char *, char x)
+void mssql_statement::serialize(const char *, char &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, short x)
+void mssql_statement::serialize(const char *, short &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, int x)
+void mssql_statement::serialize(const char *, int &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, long x)
+void mssql_statement::serialize(const char *, long &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, unsigned char x)
+void mssql_statement::serialize(const char *, unsigned char &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, unsigned short x)
+void mssql_statement::serialize(const char *, unsigned short &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, unsigned int x)
+void mssql_statement::serialize(const char *, unsigned int &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, unsigned long x)
+void mssql_statement::serialize(const char *, unsigned long &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, bool x)
+void mssql_statement::serialize(const char *, bool &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, float x)
+void mssql_statement::serialize(const char *, float &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, double x)
+void mssql_statement::serialize(const char *, double &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, const char *x, size_t s)
+void mssql_statement::serialize(const char *, char *x, size_t s)
 {
   bind_value(x, s, ++host_index);
 }
 
-void mssql_statement::write(const char *, const std::string &x)
+void mssql_statement::serialize(const char *, std::string &x)
 {
   bind_value(x.data(), x.size(), ++host_index);
 }
 
-void mssql_statement::write(const char *, const oos::date &x)
+void mssql_statement::serialize(const char *, oos::date &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, const oos::time &x)
+void mssql_statement::serialize(const char *, oos::time &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::write(const char *, const varchar_base &x)
+void mssql_statement::serialize(const char *, varchar_base &x)
 {
   bind_value(x.c_str(), x.size() + 1, ++host_index);
 }
 
-void mssql_statement::write(const char *, const object_base_ptr &x)
+void mssql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
-  bind_value(x.id(), ++host_index);
+  if (!x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+  }
 }
 
-void mssql_statement::write(const char *, const object_container &)
-{
-}
-
-void mssql_statement::write(const char *id, const basic_identifier &x)
+void mssql_statement::serialize(const char *id, basic_identifier &x)
 {
   x.serialize(id, *this);
 }
@@ -218,7 +215,7 @@ void mssql_statement::bind_value(unsigned long val, int index)
 #if defined(_MSC_VER)
   size_t size = (int)_snprintf_s(static_cast<char*>(v->data), NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
 #else
-  size_t size = (int)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
+  size_t size = (size_t)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
 #endif
 
   SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, size, 0, v->data, 0, &v->len);
@@ -237,16 +234,6 @@ void mssql_statement::bind_value(const char *val, size_t /*size*/, int index)
 
   SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
-}
-
-database& mssql_statement::db()
-{
-  return db_;
-}
-
-const database& mssql_statement::db() const
-{
-  return db_;
 }
 
 int mssql_statement::type2int(data_type_t type)

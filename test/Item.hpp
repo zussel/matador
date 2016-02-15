@@ -618,7 +618,7 @@ class person
 {
 private:
   oos::identifier<unsigned long> id_;
-  std::string name_;
+  oos::varchar<256> name_;
   oos::date birthdate_;
   unsigned int height_ = 0;
 
@@ -649,7 +649,7 @@ public:
   void id(unsigned long i) { id_.value(i); }
   unsigned long id() const { return id_.value(); }
 
-  std::string name() const { return name_; }
+  std::string name() const { return name_.str(); }
   void name(const std::string &name) { name_ = name; }
 
   oos::date birthdate() const { return birthdate_; }

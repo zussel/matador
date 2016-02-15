@@ -15,13 +15,11 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mssql_database.hpp"
+#include "mssql_connection.hpp"
 #include "mssql_statement.hpp"
 #include "mssql_result.hpp"
 #include "mssql_types.hpp"
 
-#include "database/session.hpp"
-#include "database/database_sequencer.hpp"
 #include "sql/row.hpp"
 
 #include "tools/string.hpp"
@@ -32,22 +30,21 @@ namespace oos {
   
 namespace mssql {
 
-mssql_database::mssql_database(session *db)
-  : database(db, new database_sequencer(*this))
-  , odbc_(0)
+mssql_connection::mssql_connection()
+  : odbc_(0)
   , connection_(0)
   , is_open_(false)
   , retries_(1)
 {
 }
 
-mssql_database::~mssql_database()
+mssql_connection::~mssql_connection()
 {
   close();
 }
 
 
-void mssql_database::on_open(const std::string &connection)
+void mssql_connection::open(const std::string &connection)
 {
   // parse user[:passwd]@host/db ([Drivername])
   std::string con = connection;
@@ -118,13 +115,17 @@ void mssql_database::on_open(const std::string &connection)
   is_open_ = true;
 }
 
-bool mssql_database::is_open() const
+bool mssql_connection::is_open() const
 {
   return is_open_;
 }
 
-void mssql_database::on_close()
+void mssql_connection::close()
 {
+  if (!is_open_) {
+    return;
+  }
+
   SQLRETURN ret = SQLDisconnect(connection_);
 
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on close");
@@ -132,13 +133,17 @@ void mssql_database::on_close()
   ret = SQLFreeHandle(SQL_HANDLE_DBC, connection_);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on freeing connection");
 
+  connection_ = nullptr;
+
   ret = SQLFreeHandle(SQL_HANDLE_ENV, odbc_);
   throw_error(ret, SQL_HANDLE_ENV, odbc_, "mssql", "error on freeing odbc");
+
+  odbc_ = nullptr;
 
   is_open_ = false;
 }
 
-detail::result_impl* mssql_database::on_execute(const std::string &sqlstr, std::shared_ptr<object_base_producer> ptr)
+detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
 {
   if (!connection_) {
     throw_error("mssql", "no odbc connection established");
@@ -161,33 +166,33 @@ detail::result_impl* mssql_database::on_execute(const std::string &sqlstr, std::
 
   throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
 
-  return new mssql_result(stmt, true, ptr);
+  return new mssql_result(stmt, true);
 }
 
-oos::detail::statement_impl *mssql_database::on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr)
+oos::detail::statement_impl *mssql_connection::prepare(const oos::sql &stmt)
 {
-  return new mssql_statement(*this, stmt, ptr);
+  return new mssql_statement(*this, stmt);
 }
 
-void mssql_database::on_begin()
+void mssql_connection::begin()
 {
-  auto res = execute<serializable>("BEGIN TRANSACTION;", (std::shared_ptr<object_base_producer>()));
+  /*auto res = */execute("BEGIN TRANSACTION;");
   // TODO: check result
 }
 
-void mssql_database::on_commit()
+void mssql_connection::commit()
 {
-  auto res = execute<serializable>("COMMIT;", (std::shared_ptr<object_base_producer>()));
+  /*auto res = */execute("COMMIT;");
   // TODO: check result
 }
 
-void mssql_database::on_rollback()
+void mssql_connection::rollback()
 {
-  auto res = execute<serializable>("ROLLBACK;", (std::shared_ptr<object_base_producer>()));
+  /*auto res = */execute("ROLLBACK;");
   // TODO: check result
 }
 
-const char* mssql_database::type_string(data_type_t type) const
+const char*mssql_connection::type_string(data_type_t type) const
 {
   switch(type) {
     case type_char:
@@ -225,21 +230,20 @@ const char* mssql_database::type_string(data_type_t type) const
     default:
       {
         std::stringstream msg;
-        msg << "mssql database: unknown type xxx [" << type << "]";
+        msg << "mssql connection: unknown type xxx [" << type << "]";
         throw std::logic_error(msg.str());
-        //throw std::logic_error("mssql database: unknown type");
       }
     }
 }
 
-SQLHANDLE mssql_database::handle()
+SQLHANDLE mssql_connection::handle()
 {
   return connection_;
 }
 
-unsigned long mssql_database::last_inserted_id()
+unsigned long mssql_connection::last_inserted_id()
 {
-  auto res = execute<serializable>("select scope_identity()", (std::shared_ptr<object_base_producer>()));
+  /*auto res = */execute("select scope_identity()");
   unsigned long id = 0;
 //  res.get(0, id);
   return id;
@@ -251,12 +255,12 @@ unsigned long mssql_database::last_inserted_id()
 
 extern "C"
 {
-  OOS_MSSQL_API oos::database* create_database(oos::session *ses)
+  OOS_MSSQL_API oos::connection_impl* create_database()
   {
-    return new oos::mssql::mssql_database(ses);
+    return new oos::mssql::mssql_connection();
   }
 
-  OOS_MSSQL_API void destroy_database(oos::database *db)
+  OOS_MSSQL_API void destroy_database(oos::connection_impl *db)
   {
     delete db;
   }

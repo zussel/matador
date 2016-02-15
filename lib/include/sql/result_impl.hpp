@@ -99,6 +99,7 @@ public:
     if (!prepare_fetch()) {
       return false;
     }
+    result_index_ = transform_index(0);
     oos::access::serialize(*this, *o);
     return finalize_fetch();
   }

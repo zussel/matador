@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
 #ifdef OOS_ODBC
 //  suite.register_unit(new SessionTestUnit("mssql_session", "mssql session test unit", connection::mssql));
 //  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", connection::mssql));
-//  suite.register_unit(new DatabaseTestUnit("mssql_database", "mssql database test unit", connection::mssql));
-//  suite.register_unit(new SQLTestUnit("mssql_query", "mssql query test unit", connection::mssql));
+//  suite.register_unit(new DatabaseTestUnit("mssql_connection", "mssql database test unit", connection::mssql));
+  suite.register_unit(new SQLTestUnit("mssql_query", "mssql query test unit", connection::mssql));
 #endif
 
 #ifdef OOS_SQLITE3

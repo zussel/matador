@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MSSQL_DATABASE_HPP
-#define MSSQL_DATABASE_HPP
+#ifndef MSSQL_connection_HPP
+#define MSSQL_connection_HPP
 
 #ifdef WIN32
   #ifdef oos_mssql_EXPORTS
@@ -29,11 +29,11 @@
   #define OOS_MSSQL_API
 #endif
 
-#include "database/database.hpp"
-
 #if defined(_MSC_VER)
 #include <windows.h>
 #endif
+
+#include "sql/connection_impl.hpp"
 
 #include <sqltypes.h>
 
@@ -43,40 +43,39 @@ namespace mssql {
 class mssql_statement;
 
 /**
- * @class mssql_database
- * @brief The mysql database backend
+ * @class mssql_connection
+ * @brief The mysql connection backend
  * 
- * This class is the sqlite database backend
+ * This class is the sqlite connection backend
  * class. It provides the mysql version 4 and higher
  */
-class OOS_MSSQL_API mssql_database : public database
+class OOS_MSSQL_API mssql_connection : public connection_impl
 {
 public:
-  explicit mssql_database(session *db);
-  virtual ~mssql_database();
-  
+  explicit mssql_connection();
+  virtual ~mssql_connection();
+
+  virtual void open(const std::string &db);
+  virtual void close();
+
   /**
-   * Returns true if the database is open
+   * Returns true if the connection is open
    *
-   * @return True on open database connection.
+   * @return True on open connection connection.
    */
   virtual bool is_open() const;
+
+  virtual oos::detail::result_impl* execute(const std::string &sql);
+  virtual oos::detail::statement_impl* prepare(const oos::sql &stmt);
+  virtual void begin();
+  virtual void commit();
+  virtual void rollback();
 
   virtual const char* type_string(data_type_t type) const;
 
   SQLHANDLE handle();
 
-
-  virtual unsigned long last_inserted_id() override;
-
-protected:
-  virtual void on_open(const std::string &db);
-  virtual void on_close();
-  virtual oos::detail::result_impl* on_execute(const std::string &sql, std::shared_ptr<object_base_producer> ptr);
-  virtual oos::detail::statement_impl* on_prepare(const oos::sql &stmt, std::shared_ptr<object_base_producer> ptr);
-  virtual void on_begin();
-  virtual void on_commit();
-  virtual void on_rollback();
+  virtual unsigned long last_inserted_id();
 
 private:
   SQLHANDLE odbc_;
@@ -93,9 +92,9 @@ private:
 
 extern "C"
 {
-  OOS_MSSQL_API oos::database* create_database(oos::session *ses);
+  OOS_MSSQL_API oos::connection_impl* create_connection();
 
-  OOS_MSSQL_API void destroy_database(oos::database *db);
+  OOS_MSSQL_API void destroy_connection(oos::connection_impl *db);
 }
 
-#endif /* MSSQL_DATABASE_HPP */
+#endif /* MSSQL_connection_HPP */
