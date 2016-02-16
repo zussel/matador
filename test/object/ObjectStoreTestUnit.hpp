@@ -23,7 +23,7 @@ public:
   void set_test();
   void get_test();
   void serializer();
-  void ref_ptr_counter();
+  void reference_counter();
   void simple_object();
   void object_with_sub_object();
   void multiple_simple_objects();

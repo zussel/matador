@@ -26,7 +26,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "ref and ptr counter test");
   add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub object");
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
@@ -247,7 +247,7 @@ ObjectStoreTestUnit::serializer()
 }
 
 void
-ObjectStoreTestUnit::ref_ptr_counter()
+ObjectStoreTestUnit::reference_counter()
 {
   Item *i = new Item("Item", 7);
   
@@ -255,39 +255,27 @@ ObjectStoreTestUnit::ref_ptr_counter()
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   
   item_ptr item = ostore_.insert(i);
-  
+
+  UNIT_ASSERT_EQUAL(item.reference_count(), 0UL, "reference count must be zero");
+
   object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
   object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
   object_item_1->ptr(item);
 
-  
-//  unsigned long val = 0;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
-//
-//  item_ptr a1 = item;
-//  item_ptr a2 = item;
-//
-//  val = 0;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be zero");
 
-//  typedef object_ref<Item> item_ref;
-//
-//  item_ref aref1 = a1;
-//
-//  val = 0;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
-//
-//  object_item_1->ref(a1);
-//
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  item_ptr a1 = item;
+  item_ptr a2 = item;
+
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL, "reference count must be zero");
+
+  object_item_1->ref(a1);
+
+  UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be zero");
 //
 //  a1 = object_item_2->ptr();
 //

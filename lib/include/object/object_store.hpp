@@ -505,7 +505,7 @@ public:
   }
 
   template < class T >
-  object_ptr<T> insert2(object_proxy *proxy)
+  object_ptr<T> insert_proxy2(object_proxy *proxy)
   {
     if (proxy == nullptr) {
       throw object_exception("proxy is null");
@@ -532,16 +532,16 @@ public:
     return object_ptr<T>(proxy);
   }
 
-  template < class T, std::enable_if<!std::is_same<T, object_proxy>::value>::type>
+  template < class T >
   object_ptr<T> insert2(T *o)
   {
-    return insert2(new object_proxy(o));
+    return insert_proxy2<T>(new object_proxy(o));
   }
 
   template < class T >
   object_ptr<T> insert2(const object_ptr<T> &o)
   {
-    return insert2(o.proxy_);
+    return insert_proxy2<T>(o.proxy_);
   }
 
   /**
