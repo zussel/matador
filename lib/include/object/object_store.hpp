@@ -377,7 +377,8 @@ public:
    * @return Returns a prototype iterator.
    */
   template<class T>
-  iterator find() {
+  iterator find()
+  {
     return find(typeid(T).name());
   }
 
@@ -392,7 +393,8 @@ public:
    * @return Returns a prototype iterator.
    */
   template<class T>
-  const_iterator find() const {
+  const_iterator find() const
+  {
     return find(typeid(T).name());
   }
 
@@ -449,17 +451,6 @@ public:
   void clear(const prototype_iterator &node);
 
   /**
-   * Clears a prototype_node and its
-   * cildren nodes. All object_proxy objects will be
-   * deleted.
-   *
-   * @param node The prototype_node to remove.
-   * @return The next valid prototype node.
-   * @throws oos::object_exception on error
-   */
-  prototype_node* clear(prototype_node *node);
-
-  /**
    * Return count of prototype nodes
    *
    * @return Count of prototype nodes
@@ -511,6 +502,46 @@ public:
       pred(const_prototype_iterator(node));
       node = node->next;
     }
+  }
+
+  template < class T >
+  object_ptr<T> insert2(object_proxy *proxy)
+  {
+    if (proxy == nullptr) {
+      throw object_exception("proxy is null");
+    }
+    if (proxy->obj() == nullptr) {
+      throw object_exception("object is null");
+    }
+    iterator node = find(proxy->classname());
+    if (node == end()) {
+      throw object_exception("couldn't find object type");
+    }
+    // check if proxy/object is already inserted
+    if (proxy->ostore() != nullptr && proxy->id() > 0) {
+      return object_ptr<T>(proxy);
+    }
+
+    if (proxy->id() == 0) {
+      proxy->id(seq_.next());
+    } else {
+      seq_.update(proxy->id());
+    }
+    proxy->ostore_ = this;
+
+    return object_ptr<T>(proxy);
+  }
+
+  template < class T, std::enable_if<!std::is_same<T, object_proxy>::value>::type>
+  object_ptr<T> insert2(T *o)
+  {
+    return insert2(new object_proxy(o));
+  }
+
+  template < class T >
+  object_ptr<T> insert2(const object_ptr<T> &o)
+  {
+    return insert2(o.proxy_);
   }
 
   /**
@@ -743,6 +774,18 @@ private:
     return i;
   }
 
+  /**
+   * Clears a prototype_node and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_node to remove.
+   * @return The next valid prototype node.
+   * @throws oos::object_exception on error
+   */
+  prototype_node* clear(prototype_node *node);
+
+
   void mark_modified(object_proxy *oproxy);
 
   template<class T>
@@ -946,10 +989,13 @@ prototype_iterator object_store::prepare_attach(bool abstract)
 
 template<class T>
 object_proxy *object_store::insert_object(T *o, bool notify) {
-  // find type in tree
   if (!o) {
-    throw object_exception("serializable is null");
+    throw object_exception("object is null");
   }
+
+
+
+
 
   // find prototype node
   iterator node = find(typeid(*o).name());
@@ -995,15 +1041,15 @@ object_proxy *object_store::insert_object(T *o, bool notify) {
 template<class T>
 object_proxy *object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify, bool is_new) {
   if (!oproxy->obj()) {
-    throw object_exception("serializable of proxy is null pointer");
+    throw object_exception("object of proxy is null pointer");
   }
 
   if (is_new && oproxy->ostore()) {
-    throw object_exception("serializable proxy already in serializable store");
+    throw object_exception("proxy already in store");
   }
 
   // find prototype node
-  prototype_iterator node = find(oproxy->classname());
+  iterator node = find(oproxy->classname());
   if (node == end()) {
     // raise exception
     throw object_exception("couldn't insert serializable");
@@ -1015,6 +1061,17 @@ object_proxy *object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify
     seq_.update(oproxy->id());
   }
   oproxy->ostore_ = this;
+
+
+
+
+
+
+
+
+
+
+
 
   node->insert(oproxy);
 
