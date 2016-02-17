@@ -26,7 +26,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "ref and ptr counter test");
+  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "reference counter test");
   add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub object");
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
@@ -262,20 +262,20 @@ ObjectStoreTestUnit::reference_counter()
   object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
   object_item_1->ptr(item);
 
-  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
 
   item_ptr a1 = item;
   item_ptr a2 = item;
 
-  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL, "reference count must be one");
 
   object_item_1->ref(a1);
 
-  UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be two");
 //
 //  a1 = object_item_2->ptr();
 //
@@ -851,7 +851,7 @@ void ObjectStoreTestUnit::test_transient_optr()
 
 void ObjectStoreTestUnit::test_insert()
 {
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "serializable is null", "null shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null", "null shouldn't be insertable");
 
   ItemC *ic = new ItemC;
   UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "unknown object type", "unknown serializable type shouldn't be insertable");

@@ -1248,13 +1248,16 @@ void object_inserter::serialize(T &x) {
 
 template<class T>
 void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+  if (x.is_inserted()) {
+    return;
+  }
+  x.is_inserted_ = true;
+  x.cascade_ = cascade;
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
     return;
   }
 
-  x.is_inserted_ = true;
-  x.cascade_ = cascade;
   if (!x.proxy_) {
     return;
   }
@@ -1279,7 +1282,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   // owner field name
   // item field name
   if (object_proxy_stack_.empty()) {
-    throw object_exception("no owner for has many releation");
+    throw object_exception("no owner for has many relation");
   }
 
   if (x.ostore_) {
