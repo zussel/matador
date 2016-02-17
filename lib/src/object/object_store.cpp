@@ -33,6 +33,14 @@ object_inserter::object_inserter(object_store &ostore)
 
 object_inserter::~object_inserter() { }
 
+void object_inserter::reset()
+{
+  object_proxies_.clear();
+  while (!object_proxy_stack_.empty()) {
+    object_proxy_stack_.pop();
+  }
+}
+
 }
 
 object_store::object_store()

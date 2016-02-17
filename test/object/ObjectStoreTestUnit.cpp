@@ -254,7 +254,7 @@ ObjectStoreTestUnit::reference_counter()
   typedef object_ptr<Item> item_ptr;
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   
-  item_ptr item = ostore_.insert(i);
+  item_ptr item = ostore_.insert2(i);
 
   UNIT_ASSERT_EQUAL(item.reference_count(), 0UL, "reference count must be zero");
 
@@ -785,15 +785,37 @@ void ObjectStoreTestUnit::test_structure_cyclic()
 
   cyclic_ptr c1(new cyclic("c1"));
   cyclic_ptr c2(new cyclic("c2"));
+  cyclic_ptr c3(new cyclic("c3"));
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
 
   // cycle: c1 -> c2 -> c1
   c1->cycler = c2;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
+
   c2->cycler = c1;
 
-  cyclic_ptr cptr = ostore.insert(c1);
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
 
-  UNIT_ASSERT_EQUAL(cptr.reference_count(), 1UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be one");
+  c1 = ostore.insert2(c1);
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3->cycler = c1;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3 = ostore.insert2(c3);
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 2UL, "reference count must be 2 (two)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c3.reference_count(), 0UL, "reference count must be 0 (zero)");
 }
 
 void ObjectStoreTestUnit::test_structure_container()

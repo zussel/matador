@@ -89,6 +89,8 @@ public:
   template<class T>
   void insert(object_proxy *proxy, T *o);
 
+  void reset();
+
   template<class T>
   void serialize(T &x);
 
@@ -505,7 +507,7 @@ public:
   }
 
   template < class T >
-  object_ptr<T> insert_proxy2(object_proxy *proxy)
+  object_proxy* insert2(object_proxy *proxy, bool notify)
   {
     if (proxy == nullptr) {
       throw object_exception("proxy is null");
@@ -519,29 +521,59 @@ public:
     }
     // check if proxy/object is already inserted
     if (proxy->ostore() != nullptr && proxy->id() > 0) {
-      return object_ptr<T>(proxy);
+      return proxy;
+    }
+    // check if proxy/object is already inserted
+    if (proxy->ostore() == nullptr && proxy->id() > 0) {
+      throw object_exception("object has id but doesn't belong to a store");
     }
 
-    if (proxy->id() == 0) {
-      proxy->id(seq_.next());
-    } else {
-      seq_.update(proxy->id());
-    }
+    proxy->id(seq_.next());
     proxy->ostore_ = this;
 
-    return object_ptr<T>(proxy);
+    // get object
+    T *object = static_cast<T*>(proxy->obj());
+    if (proxy->has_identifier()) {
+      // if object has primary key of type short, int or long
+      // set the id of proxy as value
+      identifier_setter<unsigned long>::assign(proxy->id(), object);
+//      identifier_setter<unsigned long> setter(proxy->id());
+//      oos::access::serialize(setter, *object);
+    }
+
+    node->insert(proxy);
+
+    // initialize object
+    object_inserter_.insert(proxy, object);
+    // set this into persistent serializable
+    // notify observer
+    if (notify) {
+      std::for_each(observer_list_.begin(), observer_list_.end(),
+                    std::bind(&object_observer::on_insert, std::placeholders::_1, proxy));
+    }
+
+    // insert element into hash map for fast lookup
+    object_map_.insert(std::make_pair(proxy->id(), proxy));
+
+    return proxy;
   }
 
   template < class T >
   object_ptr<T> insert2(T *o)
   {
-    return insert_proxy2<T>(new object_proxy(o));
+    object_inserter_.reset();
+    object_proxy *proxy = new object_proxy(o);
+    proxy = insert2<T>(proxy, true);
+
+    return object_ptr<T>(proxy);
   }
 
   template < class T >
   object_ptr<T> insert2(const object_ptr<T> &o)
   {
-    return insert_proxy2<T>(o.proxy_);
+    object_inserter_.reset();
+    insert2<T>(o.proxy_, true);
+    return o;
   }
 
   /**
@@ -1200,16 +1232,13 @@ void node_analyzer::serialize(const char *id, has_many<T, C> &x, const char *own
 
 template<class T>
 void object_inserter::insert(object_proxy *proxy, T *o) {
-  object_proxies_.clear();
-  while (!object_proxy_stack_.empty()) {
-    object_proxy_stack_.pop();
-  }
 
-  object_proxies_.insert(proxy);
+//  object_proxies_.insert(proxy);
   object_proxy_stack_.push(proxy);
   if (proxy->obj()) {
     oos::access::serialize(*this, *o);
   }
+  object_proxy_stack_.pop();
 }
 
 template<class T>
@@ -1219,30 +1248,27 @@ void object_inserter::serialize(T &x) {
 
 template<class T>
 void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+  // object was seen by inserter stop inserting
+  if (!object_proxies_.insert(x.proxy_).second) {
+    return;
+  }
+
   x.is_inserted_ = true;
+  x.cascade_ = cascade;
   if (!x.proxy_) {
     return;
   }
 
-  x.cascade_ = cascade;
-
-  if (x.get() && x.id()) {
-    ++(*x.proxy_);
+  if (x.id()) {
+    // do the pointer count
+    object_proxy_stack_.push(x.proxy_);
+    oos::access::serialize(*this, *x.get());
+    object_proxy_stack_.pop();
+  } else {
+    // new object
+    ostore_.insert2<T>(x.proxy_, true);
   }
-  if (x.get()) {
-    bool new_object = object_proxies_.insert(x.proxy_).second;
-    if (x.id()) {
-      // do the pointer count
-      if (new_object) {
-        object_proxy_stack_.push(x.proxy_);
-        oos::access::serialize(*this, *x.get());
-        object_proxy_stack_.pop();
-      }
-    } else if (new_object) {
-      // new object
-      ostore_.insert_proxy(x.proxy_, x.get());
-    }
-  }
+  ++(*x.proxy_);
 }
 
 template<class T, template<class ...> class C>

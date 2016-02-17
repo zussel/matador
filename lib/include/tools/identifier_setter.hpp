@@ -29,6 +29,13 @@ public:
 public:
 
   template < class V >
+  static void assign(T value, V *obj)
+  {
+    identifier_setter<T> setter(value);
+    oos::access::serialize(setter, *obj);
+  }
+
+  template < class V >
   void serialize(V &x)
   {
     oos::access::serialize(*this, x);
