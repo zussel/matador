@@ -1220,7 +1220,7 @@ void node_analyzer::serialize(const char *id, has_many<T, C> &x, const char *own
   // Todo: distinguish between join table and no join table
   if (x.has_join_table()) {
     // attach releation table for has many relation
-    prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id, &x);
+    prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
 //    prototype_iterator pi = node_.tree()->attach<typename has_many<T, C>::item_type>(id);
     // insert the relation
     // add container node to item node

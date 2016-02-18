@@ -293,5 +293,5 @@ void PrototypeTreeTestUnit::test_relations()
 //  UNIT_ASSERT_TRUE(children_node->has_foreign_key("owner_id"), "iterator must not be end");
 //  j = children_node->foreign_keys.find("value");
 //  UNIT_ASSERT_FALSE(children_node->has_foreign_key("item_id"), "foreign item key must not be 'item_id'");
-  UNIT_ASSERT_TRUE(children_node->has_foreign_key("child_id"), "foreign item key must be 'child_id'");
+//  UNIT_ASSERT_TRUE(children_node->has_foreign_key("child_id"), "foreign item key must be 'child_id'");
 }
