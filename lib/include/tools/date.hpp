@@ -93,7 +93,7 @@ public:
    */
   date& operator=(int julian_date);
 
-  virtual ~date();
+  ~date();
 
   /**
    * Check if two dates are equal

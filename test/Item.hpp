@@ -84,7 +84,7 @@ public:
   {
     init();
   }
-  ~Item() {}
+  virtual ~Item() {}
 
 private:
   void init() {

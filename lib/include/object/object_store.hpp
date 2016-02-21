@@ -579,10 +579,10 @@ public:
       throw object_exception("object is null");
     }
     object_inserter_.reset();
-    object_proxy *proxy = new object_proxy(o);
-    proxy = insert<T>(proxy, true);
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o));
+    insert<T>(proxy.get(), true);
 
-    return object_ptr<T>(proxy);
+    return object_ptr<T>(proxy.release());
   }
 
   /**
