@@ -506,8 +506,15 @@ public:
     }
   }
 
+  /**
+   * @brief Inserts a new proxy into the object store
+   *
+   * @param oproxy Object proxy to insert
+   * @param notify Indicates wether all observers should be notified.
+   * @param is_new Proxy is a new not inserted proxy, skip object store check
+   */
   template < class T >
-  object_proxy* insert2(object_proxy *proxy, bool notify)
+  object_proxy* insert(object_proxy *proxy, bool notify)
   {
     if (proxy == nullptr) {
       throw object_exception("proxy is null");
@@ -558,56 +565,40 @@ public:
     return proxy;
   }
 
+  /**
+   * Inserts an object of a specfic type. On successfull insertion
+   * an object_ptr element with the inserted object is returned.
+   *
+   * @param o Object to be inserted.
+   * @return Inserted object contained by an object_ptr on success.
+   */
   template < class T >
-  object_ptr<T> insert2(T *o)
+  object_ptr<T> insert(T *o)
   {
+    if (o == nullptr) {
+      throw object_exception("object is null");
+    }
     object_inserter_.reset();
     object_proxy *proxy = new object_proxy(o);
-    proxy = insert2<T>(proxy, true);
+    proxy = insert<T>(proxy, true);
 
     return object_ptr<T>(proxy);
-  }
-
-  template < class T >
-  object_ptr<T> insert2(const object_ptr<T> &o)
-  {
-    object_inserter_.reset();
-    insert2<T>(o.proxy_, true);
-    return o;
-  }
-
-  /**
-   * Inserts an serializable of a specfic type. On successfull insertion
-   * an object_ptr element with the inserted serializable is returned.
-   * 
-   * @param o Object to be inserted.
-   * @return Inserted serializable contained by an object_ptr on success.
-   */
-  template<class Y>
-  object_ptr<Y> insert(Y *o) {
-//    return insert(object_ptr<Y>(o));
-    return object_ptr<Y>(insert_object(o, true));
   }
 
   /**
    * Inserts a given object_ptr of specific type.
    * On successfull insertion an object_ptr element
-   * with the inserted serializable is returned.
+   * with the inserted object is returned.
    *
    * @param optr object_ptr to be inserted.
-   * @return Inserted serializable contained by an object_ptr on success.
+   * @return Inserted object contained by an object_ptr on success.
    */
-  template<class Y>
-  object_ptr<Y> insert(const object_ptr<Y> &optr) {
-    if (!optr.proxy_) {
-      throw object_exception("serializable pointer is null");
-    }
-    //if (optr.proxy_->id() > 0) {
-    //  throw object_exception("serializable id is greater zero");
-    //}
-
-    insert_proxy(optr.proxy_, optr.get());
-    return optr;
+  template < class T >
+  object_ptr<T> insert(const object_ptr<T> &o)
+  {
+    object_inserter_.reset();
+    insert<T>(o.proxy_, true);
+    return o;
   }
 
   /**
@@ -749,16 +740,6 @@ public:
   object_proxy *find_proxy(unsigned long id) const;
 
   /**
-   * @brief Inserts a new proxy into the object store
-   *
-   * @param oproxy Object proxy to insert
-   * @param notify Indicates wether all observers should be notified.
-   * @param is_new Proxy is a new not inserted proxy, skip object store check
-   */
-  template<class T>
-  object_proxy *insert_proxy(object_proxy *oproxy, T *o, bool notify = true, bool is_new = true);
-
-  /**
    * @brief Registers a new proxy
    *
    * Proxy will be registered in object store. It
@@ -819,9 +800,6 @@ private:
 
 
   void mark_modified(object_proxy *oproxy);
-
-  template<class T>
-  object_proxy *insert_object(T *o, bool notify);
 
   void remove_object(object_proxy *proxy, bool notify);
 
@@ -1020,108 +998,6 @@ prototype_iterator object_store::prepare_attach(bool abstract)
 }
 
 template<class T>
-object_proxy *object_store::insert_object(T *o, bool notify) {
-  if (!o) {
-    throw object_exception("object is null");
-  }
-
-
-
-
-
-  // find prototype node
-  iterator node = find(typeid(*o).name());
-  if (node == end()) {
-    // raise exception
-    throw object_exception("unknown object type");
-  }
-  // retrieve and set new unique number into serializable
-  /* object doesn't exist in map
-   * if object has a valid id, update
-   * the sequencer else assign new
-   * unique id
-   */
-  object_proxy *oproxy = create_proxy(o);
-  if (!oproxy) {
-    throw object_exception("couldn't create serializable proxy");
-  }
-
-  if (oproxy->has_identifier()) {
-    // if object has primary key of type short, int or long
-    // set the id of proxy as value
-//    identifier_assigner<unsigned long>::assign(oproxy->id(), o);
-    identifier_setter<unsigned long> setter(oproxy->id());
-    oos::access::serialize(setter, *o);
-  }
-
-  node->insert(oproxy);
-
-  // initialize object
-  object_inserter_.insert(oproxy, o);
-  // set this into persistent serializable
-  // notify observer
-  if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(),
-                  std::bind(&object_observer::on_insert, std::placeholders::_1, oproxy));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[oproxy->id()] = oproxy;
-
-  return oproxy;
-}
-
-template<class T>
-object_proxy *object_store::insert_proxy(object_proxy *oproxy, T *o, bool notify, bool is_new) {
-  if (!oproxy->obj()) {
-    throw object_exception("object of proxy is null pointer");
-  }
-
-  if (is_new && oproxy->ostore()) {
-    throw object_exception("proxy already in store");
-  }
-
-  // find prototype node
-  iterator node = find(oproxy->classname());
-  if (node == end()) {
-    // raise exception
-    throw object_exception("couldn't insert serializable");
-  }
-
-  if (oproxy->id() == 0) {
-    oproxy->id(seq_.next());
-  } else {
-    seq_.update(oproxy->id());
-  }
-  oproxy->ostore_ = this;
-
-
-
-
-
-
-
-
-
-
-
-
-  node->insert(oproxy);
-
-  // initialize object
-  object_inserter_.insert(oproxy, o);
-  // set this into persistent serializable
-  // notify observer
-  if (notify) {
-    std::for_each(observer_list_.begin(), observer_list_.end(),
-                  std::bind(&object_observer::on_insert, std::placeholders::_1, oproxy));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[oproxy->id()] = oproxy;
-
-  return oproxy;
-}
-
-template<class T>
 prototype_node *object_store::acquire(const char *type, bool abstract)
 {
   // try to find node in prepared map
@@ -1269,7 +1145,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
     object_proxy_stack_.pop();
   } else {
     // new object
-    ostore_.insert2<T>(x.proxy_, true);
+    ostore_.insert<T>(x.proxy_, true);
   }
   ++(*x.proxy_);
 }
