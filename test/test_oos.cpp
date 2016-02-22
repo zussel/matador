@@ -38,6 +38,7 @@
 //#include "sql/SessionTestUnit.hpp"
 //#include "sql/TransactionTestUnit.hpp"
 #include "sql/SQLTestUnit.hpp"
+#include "sql/ConditionUnitTest.hpp"
 
 //#include "json/JsonTestUnit.hpp"
 
@@ -79,6 +80,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new ObjectListTestUnit());
 //  suite.register_unit(new ObjectVectorTestUnit());
 
+  suite.register_unit(new ConditionUnitTest());
 
 #ifdef OOS_MYSQL
 //  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));

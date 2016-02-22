@@ -39,6 +39,18 @@
 
 namespace oos {
 
+class field
+{
+public:
+  field(const std::string &name)
+    :name_(name)
+  {}
+
+  std::string name() const { return name_; }
+
+private:
+  std::string name_;
+};
 /**
  * @class condition
  * @brief Represents a sql query condition

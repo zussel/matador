@@ -228,18 +228,18 @@ public:
   /**
    * @brief Initializes a test_unit test.
    *
-   * Called before each executed test method. Must be
+   * Called before each executed test method. Can be
    * overwritten by the derived test_unit class.
    */
-  virtual void initialize() = 0;
+  virtual void initialize() {};
 
   /**
    * @brief Cleans up a test_unit test.
    *
-   * Called after every executed test method. Must be
+   * Called after every executed test method. Can be
    * overwritten by the derived test_unit class.
    */
-  virtual void finalize() = 0;
+  virtual void finalize() {};
 
   /**
    * Returns the name of the test_unit.

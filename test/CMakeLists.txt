@@ -57,7 +57,7 @@ SET (TEST_SQL_SOURCES
 #  sql/TransactionTestUnit.hpp
   sql/SQLTestUnit.cpp
   sql/SQLTestUnit.hpp
-)
+        sql/ConditionUnitTest.cpp sql/ConditionUnitTest.hpp)
 
 SET (TEST_ORM_SOURCES
 #  sql/DatabaseTestUnit.cpp
