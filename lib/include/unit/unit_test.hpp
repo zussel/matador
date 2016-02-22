@@ -641,8 +641,16 @@ private:
     test_func_info_struct(const test_func &f, const std::string &n, const std::string &c)
       : func(f), succeeded(true), assertion_count(0), name(n), caption(c)
     {}
+    enum t_state {
+      UNKNOWN = 0,
+      SUCCEEDED,
+      ERROR,
+      FAILURE
+    };
     test_func func;
     bool succeeded;
+    t_state state = UNKNOWN;
+    long duration;
     size_t assertion_count;
     std::string name;
     std::string caption;
