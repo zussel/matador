@@ -163,6 +163,22 @@ public:
   prototype_node* node() const;
 
   /**
+   * Release the object from proxies
+   * responsibility. After release the user
+   * is responsible for object.
+   *
+   * @tparam The type of the object
+   * @return The released object
+   */
+  template < class T >
+  T* release()
+  {
+    T* tmp = obj<T>();
+    obj_ = nullptr;
+    return tmp;
+  }
+
+  /**
    * Print the object_proxy to a stream
    *
    * @param os The stream where the object_proxy is printed to

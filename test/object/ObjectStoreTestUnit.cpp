@@ -853,9 +853,8 @@ void ObjectStoreTestUnit::test_insert()
 {
   UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null", "null shouldn't be insertable");
 
-  ItemC *ic = new ItemC;
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't find object type", "unknown object type shouldn't be insertable");
-  delete ic;
+  std::unique_ptr<ItemC> ic(new ItemC);
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic.get()), object_exception, "couldn't find object type", "unknown object type shouldn't be insertable");
 
   object_ptr<Item> item = ostore_.insert(new Item("test"));
   UNIT_ASSERT_NOT_NULL(item.ptr(), "internal pointer should not be zero");

@@ -580,7 +580,12 @@ public:
     }
     object_inserter_.reset();
     std::unique_ptr<object_proxy> proxy(new object_proxy(o));
-    insert<T>(proxy.get(), true);
+    try {
+      insert<T>(proxy.get(), true);
+    } catch (object_exception &ex) {
+      proxy->release<T>();
+      throw ex;
+    }
 
     return object_ptr<T>(proxy.release());
   }
