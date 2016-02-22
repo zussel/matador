@@ -53,10 +53,10 @@ class action;
  * @brief The transaction class
  *
  * This class provides transaction functionality
- * for the object_store with a specific database.
- * If the object_store uses a database backend this
+ * for the object_store with a specific sql.
+ * If the object_store uses a sql backend this
  * transaction class handles the commit and rollback
- * behaviour of the database. On rollback it restores
+ * behaviour of the sql. On rollback it restores
  * the stored data to the objects modified within
  * the transaction.
  */
@@ -71,11 +71,11 @@ public:
   /**
    * @brief Create a transaction
    *
-   * A transaction for the given database
+   * A transaction for the given sql
    * is created. To begin the transaction
    * start must be called.
    *
-   * @param db The underlaying database.
+   * @param db The underlaying sql.
    */
   transaction(session &db);
 
@@ -101,7 +101,7 @@ public:
    *
    * Commit the started transaction. All serializable
    * insertions, modifications and deletions are
-   * written to the database.
+   * written to the sql.
    */
   void commit();
 
@@ -115,16 +115,16 @@ public:
   void rollback();
 
   /**
-   * Returns the underlaying pointer to the database.
+   * Returns the underlaying pointer to the sql.
    *
-   * @return The pointer to the database.
+   * @return The pointer to the sql.
    */
   session& db();
 
   /**
-   * Returns the underlaying pointer to the database.
+   * Returns the underlaying pointer to the sql.
    *
-   * @return The pointer to the database.
+   * @return The pointer to the sql.
    */
   const session& db() const;
 

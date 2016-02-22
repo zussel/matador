@@ -47,9 +47,9 @@ class mysql_statement;
 
 /**
  * @class mysql_database
- * @brief The mysql database backend
+ * @brief The mysql sql backend
  * 
- * This class is the sqlite database backend
+ * This class is the sqlite sql backend
  * class. It provides the mysql version 4 and higher
  */
 class OOS_MYSQL_API mysql_connection : public connection_impl
@@ -59,9 +59,9 @@ public:
   virtual ~mysql_connection();
   
   /**
-   * Returns true if the database is open
+   * Returns true if the sql is open
    *
-   * @return True on open database connection.
+   * @return True on open sql connection.
    */
   virtual bool is_open() const;
 

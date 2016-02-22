@@ -177,9 +177,9 @@ const char*mysql_connection::type_string(data_type_t type) const
     default:
       {
         std::stringstream msg;
-        msg << "mysql database: unknown type xxx [" << type << "]";
+        msg << "mysql sql: unknown type xxx [" << type << "]";
         throw std::logic_error(msg.str());
-        //throw std::logic_error("mysql database: unknown type");
+        //throw std::logic_error("mysql sql: unknown type");
       }
     }
 }

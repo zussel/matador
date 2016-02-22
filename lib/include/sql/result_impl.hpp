@@ -78,7 +78,7 @@ public:
   virtual bool fetch() = 0;
 
   /**
-   * Fetch next line from database and
+   * Fetch next line from sql and
    * deserialized the given serializable.
    *
    * @param o Object to be deserialized

@@ -44,7 +44,7 @@ bool connection_factory::destroy(const std::string &name, connection_impl* impl)
 {
   factory_t::iterator i = factory_.find(name);
   if (i == factory_.end()) {
-    // couldn't find database backend
+    // couldn't find sql backend
     return false;
   }
   connection_producer *producer = static_cast<connection_producer*>(i->second.get());
@@ -82,7 +82,7 @@ connection_factory::dynamic_connection_producer::~dynamic_connection_producer()
 
 connection_impl* connection_factory::dynamic_connection_producer::create() const
 {
-  // on each call store the created database for later
+  // on each call store the created sql for later
   // explicit destruction
   return (*create_)();
 }

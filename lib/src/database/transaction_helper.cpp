@@ -210,7 +210,7 @@ void action_remover::visit(delete_action *a)
    ***********/
   if (a->id() == id_) {
     // ERROR: serializable was deleted twice
-    throw database_exception("database", "serializable was deleted twice");
+    throw database_exception("sql", "serializable was deleted twice");
   }
 }
 

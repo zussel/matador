@@ -53,8 +53,8 @@ class database;
  * @class session
  * @brief Frontend class to make the objects persistent.
  * 
- * This class is the frontend to any database made
- * available by a concrete database implementation.
+ * This class is the frontend to any sql made
+ * available by a concrete sql implementation.
  * All objects in the given object_store will be made
  * persistent.
  */
@@ -62,43 +62,43 @@ class OOS_API session
 {
 public:
   /**
-   * @brief Creates a session frontend for an object_store and a specific database.
+   * @brief Creates a session frontend for an object_store and a specific sql.
    * 
    * This constructor creates a connection between an object_store
-   * and a specific database identified by a database connection
+   * and a specific sql identified by a sql connection
    * string.
    * 
    * @param ostore The object_store to make persistent.
-   * @param dbstring The database connection string.
+   * @param dbstring The sql connection string.
    */
   session(object_store &ostore, const std::string &dbstring = "memory://");
 
   ~session();
   
   /**
-   * @brief Opens the database.
+   * @brief Opens the sql.
    * 
-   * Opens the database. If database couldn't be opened
+   * Opens the sql. If sql couldn't be opened
    * an exception is thrown.
    */
   void open();
   
   /**
-   * @brief Returns true if database is open.
+   * @brief Returns true if sql is open.
    *
-   * Returns true if database is open
+   * Returns true if sql is open
    *
-   * @return True on open database.
+   * @return True on open sql.
    */
   bool is_open() const;
 
   /**
-   * @brief Creates the database.
+   * @brief Creates the sql.
    * 
-   * Try to create the database and all tables described
-   * in the object_store. If database already exists an
+   * Try to create the sql and all tables described
+   * in the object_store. If sql already exists an
    * exception is thrown.
-   * Once the database is created it is also opened.
+   * Once the sql is created it is also opened.
    */
   void create();
   
@@ -106,15 +106,15 @@ public:
    * @brief Drops all tables.
    *
    * When called all tables of the
-   * database are dropped and all data
+   * sql are dropped and all data
    * is lost.
    */
   void drop();
 
   /**
-   * @brief Closes the database.
+   * @brief Closes the sql.
    * 
-   * Closes the database.
+   * Closes the sql.
    */
   void close();
 
@@ -122,7 +122,7 @@ public:
    * @cond OOS_DEV
    *
    * Load a concrete serializable of a specfic type
-   * and a given id from the database. If an serializable
+   * and a given id from the sql. If an serializable
    * with the given id couldn't be found an empty
    * object_ptr is returned
    *
@@ -138,7 +138,7 @@ public:
 
   /**
    * Load all objects of the given type
-   * from the database. If the operation
+   * from the sql. If the operation
    * succeeds true is returned.
    *
    * @return Returns true on successful loading.
@@ -151,10 +151,10 @@ public:
   /// @endcond
 
   /**
-   * @brief Load all objects from the database.
+   * @brief Load all objects from the sql.
    *
    * Load all data into the object_store registered
-   * objects from the database. If the operation
+   * objects from the sql. If the operation
    * succeeds true is returned.
    * If a table layoput doesn't match to the corresponding
    * objects layout an excpetion is thrown.
@@ -164,12 +164,12 @@ public:
   bool load();
 
   /**
-   * @brief Executes a database query.
+   * @brief Executes a sql query.
    * 
-   * Executes the given query on the database and
+   * Executes the given query on the sql and
    * return the result in a query_result serializable.
    * 
-   * @param sql The database query to execute.
+   * @param sql The sql query to execute.
    * @return The result of the query.
    */
   result<serializable> execute(const std::string &sql);
@@ -180,7 +180,7 @@ public:
    * 
    * Inserts a new not inserted serializable
    * into serializable store and persists
-   * it on database
+   * it on sql
    * 
    * @param o The serializable to insert.
    * @return The inserted persistent serializable.
@@ -200,7 +200,7 @@ public:
    * @tparam T Type of serializable tp update.
    * 
    * Updates a persistent serializable in serializable store
-   * and on database.
+   * and on sql.
    * 
    * @param optr The serializable to update
    */
@@ -210,7 +210,7 @@ public:
    * @brief Deletes a given persistent serializable
    * 
    * Deletes a persistent serializable in serializable store
-   * and on database.
+   * and on sql.
    * 
    * @param optr The serializable to delete
    */
@@ -235,17 +235,17 @@ public:
 
   /**
    * Returns a constant reference to the 
-   * session underlaying database.
+   * session underlaying sql.
    *
-   * @return The underlaying database.
+   * @return The underlaying sql.
    */
   const database& db() const;
 
   /**
    * Returns a reference to the 
-   * session underlaying database.
+   * session underlaying sql.
    *
-   * @return The underlaying database.
+   * @return The underlaying sql.
    */
   database& db();
 

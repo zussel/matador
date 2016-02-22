@@ -15,10 +15,10 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   , db_(db)
   , session_(nullptr)
 {
-  add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple database test");
-  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "serializable with sub serializable database test");
-  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list database test");
-  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector database test");
+  add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple sql test");
+  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "serializable with sub serializable sql test");
+  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list sql test");
+  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
 
 
@@ -200,7 +200,7 @@ TransactionTestUnit::test_with_sub()
 
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -289,7 +289,7 @@ TransactionTestUnit::test_with_list()
 
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -378,7 +378,7 @@ TransactionTestUnit::test_with_vector()
 
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction

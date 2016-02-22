@@ -49,7 +49,7 @@ void transaction::on_insert(object_proxy *proxy)
     // ERROR: an serializable with that id already exists
     std::stringstream msg;
     msg << "an serializable with id " << proxy->id() << " already exists";
-    throw database_exception("database", msg.str().c_str());
+    throw database_exception("sql", msg.str().c_str());
   }
 }
 

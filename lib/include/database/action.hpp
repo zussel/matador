@@ -122,9 +122,9 @@ public:
 /**
  * @internal
  * @class action
- * @brief Base class for all database relevant actions
+ * @brief Base class for all sql relevant actions
  *
- * The action class is the base class for all database
+ * The action class is the base class for all sql
  * relevant actions like:
  *  - create (table)
  *  - insert

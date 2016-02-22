@@ -57,7 +57,7 @@ void sqlite_connection::open(const std::string &db)
 {
   int ret = sqlite3_open(db.c_str(), &sqlite_db_);
   if (ret != SQLITE_OK) {
-    throw sqlite_exception("couldn't open database: " + db);
+    throw sqlite_exception("couldn't open sql: " + db);
   }
 }
 
@@ -169,9 +169,9 @@ const char*sqlite_connection::type_string(data_type_t type) const
     default:
       {
         std::stringstream msg;
-        msg << "sqlite database: unknown type xxx [" << type << "]";
+        msg << "sqlite sql: unknown type xxx [" << type << "]";
         throw std::logic_error(msg.str());
-        //throw std::logic_error("mysql database: unknown type");
+        //throw std::logic_error("mysql sql: unknown type");
       }
   }
 }

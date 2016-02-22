@@ -256,11 +256,11 @@ SET(DATABASE_HEADER
 )
 
 SET(DATABASE_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/database/session.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/database_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/condition.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/transaction.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/session.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/database_exception.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/query.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/condition.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/transaction.hpp
 )
 
 ADD_LIBRARY(oos SHARED
@@ -292,13 +292,13 @@ SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
 SOURCE_GROUP("include\\sql" FILES ${SQL_HEADER})
-SOURCE_GROUP("include\\database" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
+SOURCE_GROUP("include\\sql" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
 SOURCE_GROUP("src\\sql" FILES ${SQL_SOURCES})
-SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
+SOURCE_GROUP("src\\sql" FILES ${DATABASE_SOURCES})
 
 #FOREACH(inc ${OBJECT_HEADER})
 #  MESSAGE(STATUS "object include: ${inc}")
@@ -329,7 +329,7 @@ INSTALL(
 
 INSTALL(
 	FILES ${DATABASE_INSTALL_HEADER}
-	DESTINATION include/oos/database
+	DESTINATION include/oos/sql
 	COMPONENT headers
 )
 

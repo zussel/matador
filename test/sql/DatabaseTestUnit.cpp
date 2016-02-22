@@ -36,13 +36,13 @@ DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &m
   , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&DatabaseTestUnit::test_datatypes, this), "test all supported datatypes");
-  add_test("pk", std::bind(&DatabaseTestUnit::test_primary_key, this), "test primary key serializable with database");
-  add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the database");
-  add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the database");
-  add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the database");
-  add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload database test");
-  add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload database test");
-  add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload serializable list database test");
+  add_test("pk", std::bind(&DatabaseTestUnit::test_primary_key, this), "test primary key serializable with sql");
+  add_test("insert", std::bind(&DatabaseTestUnit::test_insert, this), "insert an item into the sql");
+  add_test("update", std::bind(&DatabaseTestUnit::test_update, this), "update an item on the sql");
+  add_test("delete", std::bind(&DatabaseTestUnit::test_delete, this), "delete an item from the sql");
+  add_test("reload_simple", std::bind(&DatabaseTestUnit::test_reload_simple, this), "simple reload sql test");
+  add_test("reload", std::bind(&DatabaseTestUnit::test_reload, this), "reload sql test");
+  add_test("reload_container", std::bind(&DatabaseTestUnit::test_reload_container, this), "reload serializable list sql test");
   add_test("relation", std::bind(&DatabaseTestUnit::test_reload_relation, this), "reload relation test");
 }
 
@@ -128,7 +128,7 @@ void DatabaseTestUnit::test_datatypes()
     item_ptr item = session_->insert(i);
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_FAIL("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_FAIL("caught sql exception: " << ex.what() << " (start rollback)");
   } catch (object_exception &ex) {
     // error, abort transaction
     UNIT_FAIL("caught serializable exception: " << ex.what() << " (start rollback)");
@@ -169,7 +169,7 @@ void DatabaseTestUnit::test_datatypes()
     UNIT_ASSERT_TRUE(oview.begin() != oview.end(), "serializable view must not be empty");
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
   } catch (object_exception &ex) {
     // error, abort transaction
     UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
@@ -229,7 +229,7 @@ void DatabaseTestUnit::test_insert()
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 
   ostore_.clear();
   
@@ -262,7 +262,7 @@ void DatabaseTestUnit::test_update()
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 
   ostore_.clear();
   
@@ -288,7 +288,7 @@ void DatabaseTestUnit::test_delete()
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 
   ostore_.clear();
   
@@ -341,7 +341,7 @@ DatabaseTestUnit::test_reload_simple()
     tr.commit();
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -370,7 +370,7 @@ DatabaseTestUnit::test_reload_simple()
     UNIT_ASSERT_TRUE(oview.size() == 2, "serializable view size must be 2");
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -419,7 +419,7 @@ DatabaseTestUnit::test_reload()
     tr.commit();
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -455,7 +455,7 @@ DatabaseTestUnit::test_reload()
 
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -514,7 +514,7 @@ DatabaseTestUnit::test_reload_container()
     UNIT_ASSERT_EQUAL((int)alb1->size(), 6, "invalid album size");
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -560,7 +560,7 @@ DatabaseTestUnit::test_reload_container()
 */
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
@@ -604,7 +604,7 @@ void DatabaseTestUnit::test_reload_relation()
     tr.commit();
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught database exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction

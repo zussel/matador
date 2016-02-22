@@ -129,7 +129,7 @@ void database_sequencer::load()
     oos::get(first.get(), "number", seq);
     sequence_.seq(seq);
   } else {
-    throw database_exception("database::sequencer", "couldn't fetch sequence");
+    throw database_exception("sql::sequencer", "couldn't fetch sequence");
   }
 
 //  if (!update_) {

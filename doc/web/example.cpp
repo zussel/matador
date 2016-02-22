@@ -57,10 +57,10 @@ int main(int, char *[])
   ostore.insert_prototype<person>("person");
   
   /*
-   * create a database session
+   * create a sql session
    * with a connection string
-   * to a database (in this case
-   * to a sqlite database)
+   * to a sql (in this case
+   * to a sqlite sql)
    * 
    * then call create to setup the
    * session, object store and tables.

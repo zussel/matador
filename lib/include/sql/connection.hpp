@@ -16,26 +16,26 @@ public:
   ~connection();
 
   /**
-   * @brief Opens the database.
+   * @brief Opens the sql.
    *
-   * Opens the database. If database couldn't be opened
+   * Opens the sql. If sql couldn't be opened
    * an exception is thrown.
    */
   void open();
 
   /**
-   * @brief Returns true if database is open.
+   * @brief Returns true if sql is open.
    *
-   * Returns true if database is open
+   * Returns true if sql is open
    *
-   * @return True on open database.
+   * @return True on open sql.
    */
   bool is_open() const;
 
   /**
-   * @brief Closes the database.
+   * @brief Closes the sql.
    *
-   * Closes the database.
+   * Closes the sql.
    */
   void close();
 

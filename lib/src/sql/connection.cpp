@@ -13,7 +13,7 @@ connection::connection(const std::string &dns)
   // get driver factory singleton
   connection_factory &df = connection_factory::instance();
 
-  // try to create database implementation
+  // try to create sql implementation
   impl_ = df.create(type_);
 }
 

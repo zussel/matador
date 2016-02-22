@@ -32,10 +32,10 @@ SessionTestUnit::SessionTestUnit(const std::string &name, const std::string &msg
   , db_(db)
   , session_(nullptr)
 {
-  add_test("open_close", std::bind(&SessionTestUnit::test_open_close, this), "open database test");
-  add_test("create_drop", std::bind(&SessionTestUnit::test_create_drop, this), "create drop database test");
-  add_test("reopen", std::bind(&SessionTestUnit::test_reopen, this), "reopen database test");
-//  add_test("drop", std::bind(&SessionTestUnit::test_drop, this), "drop database test");
+  add_test("open_close", std::bind(&SessionTestUnit::test_open_close, this), "open sql test");
+  add_test("create_drop", std::bind(&SessionTestUnit::test_create_drop, this), "create drop sql test");
+  add_test("reopen", std::bind(&SessionTestUnit::test_reopen, this), "reopen sql test");
+//  add_test("drop", std::bind(&SessionTestUnit::test_drop, this), "drop sql test");
 }
 
 SessionTestUnit::~SessionTestUnit()
@@ -65,16 +65,16 @@ SessionTestUnit::finalize()
 void
 SessionTestUnit::test_open_close()
 {
-  // create database and make serializable store known to the database
+  // create sql and make serializable store known to the sql
   UNIT_ASSERT_FALSE(session_->is_open(), "session must not be open");
 
   session_->open();
 
-  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open database database");
+  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open sql sql");
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 }
 
 void
@@ -84,7 +84,7 @@ SessionTestUnit::test_create_drop()
 
   session_->open();
 
-  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open database database");
+  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open sql sql");
 
   session_->create();
 
@@ -92,7 +92,7 @@ SessionTestUnit::test_create_drop()
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 }
 
 void SessionTestUnit::test_drop()
@@ -101,13 +101,13 @@ void SessionTestUnit::test_drop()
 
   session_->open();
 
-  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open database database");
+  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open sql sql");
 
   session_->drop();
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 }
 
 void SessionTestUnit::test_reopen()
@@ -116,17 +116,17 @@ void SessionTestUnit::test_reopen()
 
   session_->open();
 
-  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open database database");
+  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open sql sql");
 
   session_->close();
 
   session_->open();
 
-  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open database database");
+  UNIT_ASSERT_TRUE(session_->is_open(), "couldn't open sql sql");
 
   session_->close();
 
-  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close database database");
+  UNIT_ASSERT_FALSE(session_->is_open(), "couldn't close sql sql");
 }
 
 session* SessionTestUnit::create_session()

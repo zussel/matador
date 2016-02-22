@@ -15,14 +15,16 @@ void test_suite::register_unit(unit_test *utest)
   unit_test_map_.insert(std::make_pair(utest->name(), unit_test_ptr(utest)));
 }
 
-test_suite::unit_executer::unit_executer()
+test_suite::unit_executer::unit_executer(summary &sum)
   : succeeded(true)
+  , summary_(sum)
 {}
 
 void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
   std::cout << "Executing test unit [" << x.second->caption() << "]\n";
   bool result = x.second->execute();
+  summary_.evaluate(result);
   if (succeeded && !result) {
     succeeded = result;
   }
@@ -120,6 +122,7 @@ bool test_suite::run()
         std::for_each(unit_test_map_.begin(), unit_test_map_.end(), unit_lister(std::cout, args_.brief));
         break;
       case EXECUTE:
+        summary_.reset();
         if (!args_.unit_args.empty()) {
           bool result = true;
           for (auto item : args_.unit_args) {
@@ -128,10 +131,12 @@ bool test_suite::run()
               result = succeeded;
             }
           }
+          std::cout << summary_;
           return result;
         } else {
-          unit_executer ue;
+          unit_executer ue(summary_);
           std::for_each(unit_test_map_.begin(), unit_test_map_.end(), ue);
+          std::cout << summary_;
           return ue.succeeded;
         }
       default:
@@ -163,6 +168,7 @@ bool test_suite::run(const test_unit_args &unit_args)
   } else {
     for (auto test : unit_args.tests) {
       bool succeeded = run(unit_args.unit, test);
+      summary_.evaluate(succeeded);
       if (result && !succeeded) {
         result = succeeded;
       }
@@ -181,5 +187,12 @@ bool test_suite::run(const std::string &unit, const std::string &test)
     return i->second->execute(test);
   }
 }
+
+std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)
+{
+  out << "summary for " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << ")\n";
+  return out;
+}
+
 
 }

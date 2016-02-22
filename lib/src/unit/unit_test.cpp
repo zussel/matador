@@ -20,6 +20,9 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+
+using namespace std::chrono;
 
 namespace oos {
 
@@ -123,24 +126,31 @@ void unit_test::info(const std::string &msg)
 
 void unit_test::execute(test_func_info &test_info)
 {
-    initialize();
-    std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
-    try {
-      current_test_func_info = &test_info;
-      test_info.func();
-    } catch (unit_exception &ex) {
-      test_info.succeeded = false;
-      test_info.message = ex.what();
-    } catch (std::exception &ex) {
-      test_info.succeeded = false;
-      test_info.message = ex.what();
-    }
-    finalize();
-    if (test_info.succeeded) {
-      std::cout << "PASS (" << test_info.assertion_count << " assertions)\n";
-    } else {
-      std::cout << "FAILED\n\t" << test_info.message << "\n";
-    }
+  initialize();
+  std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
+
+  long duration(0L);
+  try {
+    current_test_func_info = &test_info;
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    test_info.func();
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration = duration_cast<microseconds>( t2 - t1 ).count();
+
+  } catch (unit_exception &ex) {
+    test_info.succeeded = false;
+    test_info.message = ex.what();
+  } catch (std::exception &ex) {
+    test_info.succeeded = false;
+    test_info.message = ex.what();
+  }
+  finalize();
+  if (test_info.succeeded) {
+    std::cout << "PASS (" << test_info.assertion_count << " assertions) (" << (double)(duration)/1000.0 << "ms)\n";
+  } else {
+    std::cout << "FAILED\n\t" << test_info.message << "\n";
+  }
 }
 
 }
