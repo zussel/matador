@@ -18,14 +18,32 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
-#include "sql/sql.hpp"
-#include "sql/condition.hpp"
-
 namespace oos {
 
-/// @cond OOS_DEV
+namespace detail {
 
-struct string_token : public sql::token {
+struct field
+{
+  field(const char *n, data_type_t t, std::size_t i, bool h)
+    : name(n), type(t), index(i), is_host(h)
+  {}
+  std::string name;
+  data_type_t type;
+  std::size_t index;
+  bool is_host;
+};
+
+typedef std::shared_ptr<field> field_ptr;
+
+}
+/// @cond OOS_DEV
+struct token {
+  virtual ~token() {}
+
+  virtual std::string get(bool) const = 0;
+};
+
+struct string_token : public token {
   string_token() {}
   string_token(const std::string &s) : str(s) {}
 
@@ -36,32 +54,33 @@ struct string_token : public sql::token {
   std::string str;
 };
 
-struct result_field_token : public sql::token {
-  result_field_token(sql::field_ptr f) : fld(f) {}
+struct result_field_token : public token {
+  result_field_token(detail::field_ptr f) : fld(f) {}
 
   virtual std::string get(bool /*prepared*/) const {
     return fld->name;
   }
 
-  sql::field_ptr fld;
+  detail::field_ptr fld;
 };
 
-struct condition_token : public sql::token
+template < class COND >
+struct condition_token : public token
 {
-  condition_token(const condition &c)
+  condition_token(const COND &c)
     : cond(c)
   {}
   
   virtual std::string get(bool prepared) const {
-    return cond.str(prepared);
+    return cond.evaluate(prepared);
   }
 
-  condition cond;
+  COND cond;
 };
 
 struct host_field_token : public string_token {
-  host_field_token(sql::field_ptr f) : fld(f) {}
-  host_field_token(sql::field_ptr f, const std::string &s)
+  host_field_token(detail::field_ptr f) : fld(f) {}
+  host_field_token(detail::field_ptr f, const std::string &s)
     : string_token(s), fld(f)
   {}
 
@@ -73,7 +92,7 @@ struct host_field_token : public string_token {
     }
   }
 
-  sql::field_ptr fld;
+  detail::field_ptr fld;
 };
 
 /// @endcond

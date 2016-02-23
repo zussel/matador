@@ -258,7 +258,7 @@ void SQLTestUnit::test_query_select()
 
   res = q.select()
     .where("height>160")
-    .and_(q.cond("height").less(180))
+    .and_(field("height") < 180)
     .order_by("height")
     .desc()
     .execute();

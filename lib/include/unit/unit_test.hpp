@@ -192,8 +192,6 @@
 
 namespace oos {
 
-class varchar_base;
-
 /**
  * @class unit_test
  * @brief A unit_test consists of serveral tests.

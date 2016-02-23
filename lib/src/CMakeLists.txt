@@ -160,7 +160,7 @@ SET(SQL_HEADER
   ../include/sql/types.hpp
   ../include/sql/token.hpp
   ../include/sql/sql_exception.hpp
-)
+	../include/sql/field.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp

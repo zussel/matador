@@ -32,7 +32,7 @@
 
 namespace oos {
 
-class condition;
+//class condition;
 
 /**
  * @class query
@@ -297,7 +297,8 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& where(const condition &c)
+  template < class COND >
+  query& where(const COND &c)
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
@@ -315,7 +316,8 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& and_(const condition &c)
+  template < class COND >
+  query& and_(const COND &c)
   {
     throw_invalid(QUERY_AND, state);
 
@@ -333,7 +335,8 @@ public:
    * @param c The condition.
    * @return A reference to the query.
    */
-  query& or_(const condition &c)
+  template < class COND >
+  query& or_(const COND &c)
   {
     throw_invalid(QUERY_OR, state);
 
@@ -499,11 +502,6 @@ public:
     sql_.reset();
     state = QUERY_BEGIN;
     return *this;
-  }
-
-  condition cond(const std::string &c)
-  {
-    return condition(c);
   }
 
 private:

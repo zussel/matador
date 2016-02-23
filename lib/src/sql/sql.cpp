@@ -17,8 +17,7 @@
 
 #include "sql/sql.hpp"
 #include "sql/token.hpp"
-#include "sql/types.hpp"
-#include "sql/condition.hpp"
+//#include "sql/condition.hpp"
 
 namespace oos {
 
@@ -39,7 +38,7 @@ void sql::append(const char *id, data_type_t type)
    * to token list and field vector
    * and insert it into field map
    */
-  field_ptr f(new field(id, type, result_field_vector_.size(), false));
+  detail::field_ptr f(new detail::field(id, type, result_field_vector_.size(), false));
 
   token_list_.push_back(new result_field_token(f));
   result_field_map_.insert(std::make_pair(id, f));
@@ -53,21 +52,21 @@ void sql::append(const char *id, data_type_t type, const std::string &val)
    * to token list and field vector
    * and insert it into field map
    */
-  field_ptr f(new field(id, type, host_field_vector_.size(), true));
+  detail::field_ptr f(new detail::field(id, type, host_field_vector_.size(), true));
 
   token_list_.push_back(new host_field_token(f, val));
   host_field_map_.insert(std::make_pair(id, f));
   host_field_vector_.push_back(f);
 }
 
-void sql::append(const condition &c)
-{
-  field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
-
-  token_list_.push_back(new condition_token(c));
-  host_field_map_.insert(std::make_pair(c.column(), f));
-  host_field_vector_.push_back(f);
-}
+//void sql::append(const condition &c)
+//{
+//  field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
+//
+//  token_list_.push_back(new condition_token(c));
+//  host_field_map_.insert(std::make_pair(c.column(), f));
+//  host_field_vector_.push_back(f);
+//}
 
 std::string sql::prepare() const
 {

@@ -32,25 +32,38 @@
 #endif
 
 #include "sql/types.hpp"
+#include "sql/field.hpp"
 
 #include <string>
 #include <sstream>
 #include <memory>
+#include <type_traits>
 
 namespace oos {
 
-class field
+class basic_condition
 {
 public:
-  field(const std::string &name)
-    :name_(name)
-  {}
+  enum t_operand
+  {
+    EQUAL = 0,
+    NOT_EQUAL,
+    LESS,
+    LESS_EQUAL,
+    GREATER,
+    GREATER_EQUAL,
+    OR,
+    AND,
+    NOT
+  };
 
-  std::string name() const { return name_; }
-
-private:
-  std::string name_;
+  enum
+  {
+    num_operands = 9
+  };
+  static std::array<std::string, num_operands> operands;
 };
+
 /**
  * @class condition
  * @brief Represents a sql query condition
@@ -61,292 +74,141 @@ private:
  * the condition itself. That way one can
  * concatenate conditions together.
  */
-class OOS_API condition
+template<class L, class R, class Enabled = void>
+class condition;
+
+template<class T>
+class condition<field, T, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_condition
 {
 public:
-  /**
-   * Creates an empty unknown
-   * condition.
-   */
-  condition()
-    : valid_(false)
-  {}
-  /**
-   * Creates a new condition for
-   * the given column c
-   * 
-   * @param c The column name.
-   */
-  condition(const std::string &c)
-    : column_(c)
-    , valid_(false)
-  {}
+  condition(const field &fld, basic_condition::t_operand op, T val)
+    : field_(fld), operand(basic_condition::operands[op]), value(val) { }
 
-  ~condition()
-  {}
+  field field_;
+  std::string operand;
+  T value;
 
-  /**
-   * Evalutes the value of the column
-   * with the given value to equal.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& equal(const T &val)
+  std::string evaluate(bool prepared) const
   {
-    set(val, "=");
-    return *this;
+    std::stringstream str;
+    str << field_.name() << " " << operand << " " << value;
+    return str.str();
   }
-
-  /**
-   * Evalutes the value of the column
-   * with the given value to not equal.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& not_equal(const T &val)
-  {
-    set(val, "!=");
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * with the given value to greater than.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& greater(const T &val)
-  {
-    set(val, ">");
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * with the given value to equal or
-   * greater than.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& greater_equal(const T &val)
-  {
-    set(val, ">=");
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * with the given value to less than.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& less(const T &val)
-  {
-    set(val, "<");
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * with the given value to equal or
-   * less than.
-   * 
-   * @tparam T The type of the value.
-   * @param val The value to compares
-   * @return A reference to the condition.
-   */
-  template < class T >
-  condition& less_equal(const T &val)
-  {
-    set(val, "<=");
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * to not null.
-   * 
-   * @return A reference to the condition.
-   */
-  condition& not_null()
-  {
-    op_ = " IS NOT NULL";
-    valid_ = true;
-    return *this;
-  }
-
-  /**
-   * Evalutes the value of the column
-   * to null.
-   * 
-   * @return A reference to the condition.
-   */
-  condition& null()
-  {
-    op_ = " IS NULL";
-    valid_ = true;
-    return *this;
-  }
-
-  /**
-   * Concatenate to conditions with logical or.
-   * 
-   * @return A reference to the condition.
-   */
-  condition& or_(const condition &cond);
-
-  /**
-   * Concatenate to conditions with logical and.
-   * 
-   * @return A reference to the condition.
-   */
-  condition& and_(const condition &cond);
-  /*
-  condition& not_(const condition &cond);
-  */
-
-  /**
-   * Returns the string representation
-   * of the condition. With the prepared
-   * flag set to true the condition string
-   * is put together for preppared
-   * statements.
-   * 
-   * @param prepared Indicates wether the condition is
-   *        for prepared statements or not.
-   * @return A reference to the condition.
-   */
-  std::string str(bool prepared) const
-  {
-    std::stringstream c;
-    if (next_) {
-      c << "(";
-    } else {
-      c << " ";
-    }
-    print(c, prepared);
-    if (next_) {
-      c << ")";
-    }
-    return c.str();
-  }
-  
-  /**
-   * Returns the column name.
-   * 
-   * @return Returns the column name.
-   */
-  std::string column() const
-  {
-    return column_;
-  }
-  
-  /**
-   * Returns the size of the data
-   * 
-   * @return The size of the data.
-   */
-  unsigned long size() const
-  {
-    return size_;
-  }
-  
-  /**
-   * Returns the data type.
-   * 
-   * @return The data type.
-   */
-  data_type_t type() const
-  {
-    return type_;
-  }
-
-  /**
-   * Returns wether the condition
-   * is in a valid state. This means
-   * a column name, an operator and a
-   * value must be set.
-   * 
-   * @return True if the condition is in a valid state.
-   */
-  bool valid() const
-  {
-    return valid_;
-  }
-
-protected:
-
-/// @cond OOS_DEV
-  std::ostream& print(std::ostream &out, bool prepared) const;
-
-  template < class T >
-  void set(const T &val, const char *op)
-  {
-    op_ = op;
-    type_ = type_traits<T>::data_type();
-    size_ = type_traits<T>::type_size();
-    value(val);
-    valid_ = true;
-  }
-  void set(const char *val, const char *op)
-  {
-    op_ = op;
-    type_ = type_traits<const char*>::data_type();
-    size_ = type_traits<const char*>::type_size();
-    value(std::string(val));
-    valid_ = true;
-  }
-
-  template < class T >
-  void value(const T &val)
-  {
-    std::stringstream msg;
-    msg << val;
-    value_ = msg.str();
-  }
-  
-  void value(const std::string &val)
-  {
-    std::stringstream msg;
-    msg << "'" << val << "'";
-    value_ = msg.str();
-  }
-/// @endcond
-
-private:
-  std::string column_;
-  data_type_t type_;
-  unsigned long size_;
-  std::string value_;
-  std::string op_;
-  std::string logic_;
-  bool valid_;
-  std::shared_ptr<condition> next_;
 };
 
-/**
- * Creates a condition for the given
- * column name.
- * 
- * @param column The name of the column.
- * @return A new condition.
- */
-OOS_API condition cond(const std::string &column);
+template<class T>
+class condition<T, field, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_condition
+{
+public:
+  condition(T val, basic_condition::t_operand op, const field &fld)
+    : field_(fld), operand(basic_condition::operands[op]), value(val) { }
+
+  field field_;
+  std::string operand;
+  T value;
+
+  std::string evaluate(bool prepared)
+  {
+    std::stringstream str;
+    str << value << " " << operand << " " << field_.name;
+    return str.str();
+  }
+};
+
+template<class L1, class R1, class L2, class R2>
+class condition<condition<L1, R1>, condition<L2, R2>, typename std::enable_if<true>::type> : public basic_condition
+{
+public:
+  condition(const condition<L1, R1> &l, const condition<L2, R2> &r, basic_condition::t_operand op)
+    : left(l), right(r), operand(op) { }
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    if (operand == basic_condition::AND) {
+      str << "(" << left.evaluate(prepared) << " " << basic_condition::operands[operand] << " " << right.evaluate(prepared) << ")";
+    } else {
+      str << left.evaluate(prepared) << " " << basic_condition::operands[operand] << " " << right.evaluate(prepared);
+    }
+    return str.str();
+  }
+
+  condition<L1, R1> left;
+  condition<L2, R2> right;
+  basic_condition::t_operand operand;
+};
+
+template<class L, class R>
+class condition<condition<L, R>, void, typename std::enable_if<true>::type> : public basic_condition
+{
+public:
+  condition(const condition<L, R> &c, basic_condition::t_operand op)
+    : cond(c), operand(basic_condition::operands[op]) { }
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    str << operand << " (" << cond.evaluate(prepared) << ")";
+    return str.str();
+  }
+
+  condition<L, R> cond;
+  std::string operand;
+};
+
+template<class T>
+condition<field, T> operator==(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::EQUAL, val);
+}
+
+template<class T>
+condition<field, T> operator!=(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::NOT_EQUAL, val);
+}
+
+template<class T>
+condition<field, T> operator<(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::LESS, val);
+}
+
+template<class T>
+condition<field, T> operator<=(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::LESS_EQUAL, val);
+}
+
+template<class T>
+condition<field, T> operator>(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::GREATER, val);
+}
+
+template<class T>
+condition<field, T> operator>=(const field &fld, T val)
+{
+  return condition<field, T>(fld, basic_condition::GREATER_EQUAL, val);
+}
+
+template<class L1, class R1, class L2, class R2>
+condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R1> &l, const condition<L2, R2> &r)
+{
+  return condition<condition<L1, R1>, condition<L2, R2>>(l, r, basic_condition::AND);
+}
+
+template<class L1, class R1, class L2, class R2>
+condition<condition<L1, R1>, condition<L2, R2>> operator||(const condition<L1, R1> &l, const condition<L2, R2> &r)
+{
+  return condition<condition<L1, R1>, condition<L2, R2>>(l, r, basic_condition::OR);
+}
+
+template<class L, class R>
+condition<condition<L, R>, void> operator!(const condition<L, R> &c)
+{
+  return condition<condition<L, R>, void>(c, basic_condition::NOT);
+}
 
 }
 

@@ -32,6 +32,7 @@
 #endif
 
 #include "sql/types.hpp"
+#include "sql/token.hpp"
 
 #include <string>
 #include <map>
@@ -45,37 +46,18 @@ namespace oos {
 /// @cond OOS_DEV
 
 class token;
-class condition;
 
 class OOS_API sql
 {
 public:
-  struct field
-  {
-    field(const char *n, data_type_t t, std::size_t i, bool h)
-      : name(n), type(t), index(i), is_host(h)
-    {}
-    std::string name;
-    data_type_t type;
-    std::size_t index;
-    bool is_host;
-  };
-
-  typedef std::shared_ptr<field> field_ptr;
-
-  struct token {
-    virtual ~token() {}
-    
-    virtual std::string get(bool) const = 0;
-  };
 
 public:
-  typedef std::vector<field_ptr> field_vector_t;
+  typedef std::vector<detail::field_ptr> field_vector_t;
   typedef field_vector_t::size_type size_type;
   typedef field_vector_t::iterator iterator;
   typedef field_vector_t::const_iterator const_iterator;
 
-  typedef std::map<std::string, field_ptr> field_map_t;
+  typedef std::map<std::string, detail::field_ptr> field_map_t;
   
   typedef std::list<token*> token_list_t;
   
@@ -85,7 +67,8 @@ public:
   void append(const std::string &str);
   void append(const char *id, data_type_t type);
   void append(const char *id, data_type_t type, const std::string &val);
-  void append(const condition &c);
+  template < class COND >
+  void append(const COND &c);
 
   std::string prepare() const;
   std::string direct() const;
@@ -124,6 +107,19 @@ private:
   
   token_list_t token_list_;
 };
+
+template < class COND >
+void sql::append(const COND &c)
+{
+//  condition_serializer cs();
+//  c.serial
+  // TODO: fix missing data type
+  detail::field_ptr f(new detail::field(c.column().c_str(), data_type_t::type_blob , host_field_vector_.size(), true));
+
+  token_list_.push_back(new condition_token<COND>(c));
+  host_field_map_.insert(std::make_pair(c.column(), f));
+  host_field_vector_.push_back(f);
+}
 
 /// @endcond
 
