@@ -18,6 +18,8 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
+#include <memory>
+
 namespace oos {
 
 namespace detail {

@@ -109,16 +109,18 @@ private:
 };
 
 template < class COND >
-void sql::append(const COND &c)
+void sql::append(const COND &)
 {
 //  condition_serializer cs();
 //  c.serial
   // TODO: fix missing data type
-  detail::field_ptr f(new detail::field(c.column().c_str(), data_type_t::type_blob , host_field_vector_.size(), true));
 
-  token_list_.push_back(new condition_token<COND>(c));
-  host_field_map_.insert(std::make_pair(c.column(), f));
-  host_field_vector_.push_back(f);
+//  c.accept(*this);
+//  detail::field_ptr f(new detail::field(c.column().c_str(), data_type_t::type_blob , host_field_vector_.size(), true));
+//
+//  token_list_.push_back(new condition_token<COND>(c));
+//  host_field_map_.insert(std::make_pair(c.column(), f));
+//  host_field_vector_.push_back(f);
 }
 
 /// @endcond
