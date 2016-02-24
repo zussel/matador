@@ -37,14 +37,15 @@ public:
   typedef identifier<T> self;
   typedef T type;
 
-  identifier() : id_(new T(0))
-  { };
+  identifier() : id_(new T(0)) { };
+  identifier(T val) : id_(new T(val)) { }
+  virtual ~identifier() { };
 
-  identifier(T val) : id_(new T(val))
-  { }
-
-  virtual ~identifier()
-  { };
+  identifier& operator=(T val)
+  {
+    *id_ = val;
+    return *this;
+  }
 
   virtual bool less(const basic_identifier &x) const
   {
@@ -75,17 +76,16 @@ public:
     return pk_hash(*id_);
   }
 
-  virtual bool is_same_type(const basic_identifier &x) const
-  { return type_index() == x.type_index(); }
-
-  virtual const std::type_index &type_index() const
-  { return type_index_; }
+  virtual bool is_same_type(const basic_identifier &x) const { return type_index() == x.type_index(); }
+  virtual const std::type_index &type_index() const { return type_index_; }
 
   virtual std::ostream &print(std::ostream &out) const
   {
     out << *id_;
     return out;
   }
+
+  operator T() const { return *id_; }
 
   virtual basic_identifier *clone() const
   {
@@ -114,19 +114,13 @@ public:
     xid.id_ = id_;
   }
 
-  virtual bool is_valid() const {
-    return *id_ != 0;
-  }
+  virtual bool is_valid() const { return *id_ != 0; }
 
-  T value() const
-  { return *id_; }
-
-  void value(T val)
-  { *id_ = val; }
+  T value() const { return *id_; }
+  void value(T val) { *id_ = val; }
 
 private:
   std::shared_ptr<T> id_;
-
   static std::type_index type_index_;
 };
 
