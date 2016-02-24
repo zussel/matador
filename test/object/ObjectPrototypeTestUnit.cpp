@@ -23,17 +23,6 @@ ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()
   add_test("relation", std::bind(&ObjectPrototypeTestUnit::prototype_relation, this), "prototype relation");
 }
 
-ObjectPrototypeTestUnit::~ObjectPrototypeTestUnit()
-{}
-
-void
-ObjectPrototypeTestUnit::initialize()
-{}
-
-void
-ObjectPrototypeTestUnit::finalize()
-{}
-
 void
 ObjectPrototypeTestUnit::empty_store()
 {

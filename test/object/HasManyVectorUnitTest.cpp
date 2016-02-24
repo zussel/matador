@@ -19,12 +19,6 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of ints");
 }
 
-HasManyVectorUnitTest::~HasManyVectorUnitTest() { }
-
-void HasManyVectorUnitTest::initialize() {}
-
-void HasManyVectorUnitTest::finalize() {}
-
 void HasManyVectorUnitTest::test_join_table()
 {
   object_store store;

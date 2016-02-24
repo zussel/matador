@@ -15,19 +15,6 @@ PrimaryKeyUnitTest::PrimaryKeyUnitTest()
   add_test("share", std::bind(&PrimaryKeyUnitTest::test_share, this), "test share");
 }
 
-PrimaryKeyUnitTest::~PrimaryKeyUnitTest()
-{ }
-
-void PrimaryKeyUnitTest::initialize()
-{
-
-}
-
-void PrimaryKeyUnitTest::finalize()
-{
-
-}
-
 void PrimaryKeyUnitTest::test_create()
 {
   long id57(57);

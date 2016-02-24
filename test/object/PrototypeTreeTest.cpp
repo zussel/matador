@@ -26,15 +26,6 @@ PrototypeTreeTestUnit::PrototypeTreeTestUnit()
   add_test("relations", std::bind(&PrototypeTreeTestUnit::test_relations, this), "test relations");
 }
 
-PrototypeTreeTestUnit::~PrototypeTreeTestUnit()
-{}
-
-void PrototypeTreeTestUnit::initialize()
-{}
-
-void PrototypeTreeTestUnit::finalize()
-{}
-
 void PrototypeTreeTestUnit::test_empty()
 {
   object_store ptree;

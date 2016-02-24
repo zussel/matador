@@ -14,9 +14,6 @@ BlobTestUnit::BlobTestUnit()
   add_test("create", std::bind(&BlobTestUnit::create_blob, this), "create blob");
 }
 
-BlobTestUnit::~BlobTestUnit()
-{}
-
 void BlobTestUnit::create_blob()
 {
   /*

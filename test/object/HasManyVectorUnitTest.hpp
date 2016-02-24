@@ -74,10 +74,6 @@ class HasManyVectorUnitTest : public oos::unit_test
 {
 public:
   HasManyVectorUnitTest();
-  virtual ~HasManyVectorUnitTest();
-
-  virtual void initialize() override;
-  virtual void finalize() override;
 
   void test_join_table();
   void test_const_iterator();

@@ -34,8 +34,8 @@ SET (TEST_OBJECT_SOURCES
   object/PrototypeTreeTest.hpp
   object/PrimaryKeyUnitTest.cpp
   object/PrimaryKeyUnitTest.hpp
-        object/HasManyVectorUnitTest.cpp
-        object/HasManyVectorUnitTest.hpp
+  object/HasManyVectorUnitTest.cpp
+  object/HasManyVectorUnitTest.hpp
 )
 
 SET (TEST_UNIT_SOURCES
@@ -57,7 +57,9 @@ SET (TEST_SQL_SOURCES
 #  sql/TransactionTestUnit.hpp
   sql/SQLTestUnit.cpp
   sql/SQLTestUnit.hpp
-        sql/ConditionUnitTest.cpp sql/ConditionUnitTest.hpp)
+  sql/ConditionUnitTest.cpp
+  sql/ConditionUnitTest.hpp
+)
 
 SET (TEST_ORM_SOURCES
 #  sql/DatabaseTestUnit.cpp
@@ -68,7 +70,7 @@ SET (TEST_ORM_SOURCES
 #  sql/TransactionTestUnit.hpp
 )
 
-SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp object/HasManyListUnitTest.cpp object/HasManyListUnitTest.hpp)
+SET (TEST_SOURCES test_oos.cpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}

@@ -12,8 +12,7 @@ class ObjectStoreTestUnit : public oos::unit_test
 {
 public:
   ObjectStoreTestUnit();
-  virtual ~ObjectStoreTestUnit();
-  
+
   virtual void initialize();
   virtual void finalize();
   

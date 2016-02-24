@@ -8,12 +8,6 @@ class PrototypeTreeTestUnit : public oos::unit_test
 public:
   PrototypeTreeTestUnit();
 
-  virtual ~PrototypeTreeTestUnit();
-
-  virtual void initialize();
-
-  virtual void finalize();
-
   void test_empty();
   void test_insert();
   void test_find();

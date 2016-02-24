@@ -46,11 +46,6 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 }
 
-ObjectStoreTestUnit::~ObjectStoreTestUnit()
-{}
-
-//typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
-
 void
 ObjectStoreTestUnit::initialize()
 {

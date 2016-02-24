@@ -12,11 +12,6 @@ class PrimaryKeyUnitTest : public oos::unit_test
 {
 public:
   PrimaryKeyUnitTest();
-  virtual ~PrimaryKeyUnitTest();
-
-  virtual void initialize();
-
-  virtual void finalize();
 
   void test_create();
   void test_share();

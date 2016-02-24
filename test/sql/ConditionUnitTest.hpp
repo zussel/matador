@@ -12,7 +12,12 @@ class ConditionUnitTest : public oos::unit_test
 public:
   ConditionUnitTest();
 
-  void test_simple_condition();
+  void test_logical_condition();
+  void test_and_condition();
+  void test_or_condition();
+  void test_not_condition();
+  void test_in_condition();
+  void test_between_condition();
 };
 
 

@@ -15,12 +15,6 @@ HasManyListUnitTest::HasManyListUnitTest()
   add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
 }
 
-HasManyListUnitTest::~HasManyListUnitTest() { }
-
-void HasManyListUnitTest::initialize() { }
-
-void HasManyListUnitTest::finalize() { }
-
 void HasManyListUnitTest::test_join_table()
 {
   object_store store;

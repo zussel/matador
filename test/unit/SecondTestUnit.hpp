@@ -32,7 +32,6 @@ public:
     add_test("small", std::bind(&SecondTestUnit::small_test, this), "sub small");
     add_test("big", std::bind(&SecondTestUnit::big_test, this), "sub big");
   }
-  virtual ~SecondTestUnit() {}
 
   void small_test()
   {
@@ -42,9 +41,4 @@ public:
   {
     UNIT_ASSERT_TRUE(true, "test should be executed");
   }
-  /**
-   * Initializes a test unit
-   */
-  virtual void initialize() {}
-  virtual void finalize() {}
 };

@@ -34,8 +34,7 @@ public:
     add_test("sub2", std::bind(&FirstTestUnit::second_sub_test, this), "sub second");
     add_test("sub3", std::bind(&FirstTestUnit::third_sub_test, this), "sub third");
   }
-  virtual ~FirstTestUnit() {}
-  
+
   void first_sub_test()
   {
     UNIT_ASSERT_EQUAL(1, 1, "one is one");
@@ -56,9 +55,4 @@ public:
   {
     UNIT_ASSERT_TRUE(true, "test should be executed");
   }
-  /**
-   * Initializes a test unit
-   */
-  virtual void initialize() {}
-  virtual void finalize() {}
 };

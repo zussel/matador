@@ -17,9 +17,6 @@ VarCharTestUnit::VarCharTestUnit()
   add_test("init", std::bind(&VarCharTestUnit::init_varchar, this), "init varchar");
 }
 
-VarCharTestUnit::~VarCharTestUnit()
-{}
-
 void VarCharTestUnit::create_varchar()
 {
   varchar<8> str8;

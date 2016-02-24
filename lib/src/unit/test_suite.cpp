@@ -22,7 +22,7 @@ test_suite::unit_executer::unit_executer(summary &sum)
 
 void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
-  std::cout << "Executing test unit [" << x.second->caption() << "]\n";
+  std::cout << "[" << x.second->caption() << "]\n";
   bool result = x.second->execute();
   summary_.evaluate(result);
   if (succeeded && !result) {
@@ -155,7 +155,7 @@ bool test_suite::run(const std::string &unit)
     std::cout << "couldn't find test unit [" << unit << "]\n";
     return false;
   } else {
-    std::cout << "Executing test unit [" << i->second->caption() << "]\n";
+    std::cout << "[" << i->second->caption() << "]\n";
     return i->second->execute();
   }
 }
@@ -190,7 +190,7 @@ bool test_suite::run(const std::string &unit, const std::string &test)
 
 std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)
 {
-  out << "summary for " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << ")\n";
+  out << "summary for " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
   return out;
 }
 

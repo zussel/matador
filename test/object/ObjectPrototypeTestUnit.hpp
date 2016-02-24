@@ -7,11 +7,7 @@ class ObjectPrototypeTestUnit : public oos::unit_test
 {
 public:
   ObjectPrototypeTestUnit();
-  virtual ~ObjectPrototypeTestUnit();
-  
-  virtual void initialize();
-  virtual void finalize();
-  
+
   void empty_store();
   void test_find();
   void test_size();

@@ -18,10 +18,8 @@ class SQLTestUnit : public oos::unit_test
 {
 public:
   SQLTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
-  virtual ~SQLTestUnit();
 
   virtual void initialize();
-  virtual void finalize();
 
   void test_create();
   void test_statement();

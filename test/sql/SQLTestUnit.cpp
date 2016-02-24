@@ -23,15 +23,10 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   add_test("query_select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
 }
 
-SQLTestUnit::~SQLTestUnit() {}
-
 void SQLTestUnit::initialize()
 {
   connection_.reset(create_connection());
 }
-
-void SQLTestUnit::finalize() { }
-
 
 void SQLTestUnit::test_create()
 {

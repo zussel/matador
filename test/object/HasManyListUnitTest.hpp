@@ -72,14 +72,8 @@ public:
 
 class HasManyListUnitTest : public oos::unit_test
 {
-
 public:
-
   HasManyListUnitTest();
-  virtual ~HasManyListUnitTest();
-
-  virtual void initialize() override;
-  virtual void finalize() override;
 
   void test_join_table();
   void test_const_iterator();

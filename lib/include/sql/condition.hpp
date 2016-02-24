@@ -38,6 +38,8 @@
 #include <sstream>
 #include <memory>
 #include <type_traits>
+#include <vector>
+#include <utility>
 
 namespace oos {
 
@@ -78,7 +80,32 @@ template<class L, class R, class Enabled = void>
 class condition;
 
 template<class T>
-class condition<field, T, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_condition
+class condition<field, T, typename std::enable_if<
+  std::is_scalar<T>::value &&
+  !std::is_same<std::string, T>::value &&
+  !std::is_same<const char*, T>::value>::type> : public basic_condition
+{
+public:
+  condition(const field &fld, basic_condition::t_operand op, T val)
+    : field_(fld), operand(basic_condition::operands[op]), value(val) { }
+
+  field field_;
+  std::string operand;
+  T value;
+
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    str << field_.name() << " " << operand << " " << value;
+    return str.str();
+  }
+};
+
+template<class T>
+class condition<field, T, typename std::enable_if<
+  std::is_same<std::string, T>::value ||
+  std::is_same<const char*, T>::value>::type> : public basic_condition
 {
 public:
   condition(const field &fld, basic_condition::t_operand op, T val)
@@ -91,13 +118,16 @@ public:
   std::string evaluate(bool prepared) const
   {
     std::stringstream str;
-    str << field_.name() << " " << operand << " " << value;
+    str << field_.name() << " " << operand << " '" << value << "'";
     return str.str();
   }
 };
 
 template<class T>
-class condition<T, field, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_condition
+class condition<T, field, typename std::enable_if<
+  std::is_scalar<T>::value &&
+  !std::is_same<std::string, T>::value &&
+  !std::is_same<const char*, T>::value>::type> : public basic_condition
 {
 public:
   condition(T val, basic_condition::t_operand op, const field &fld)
@@ -107,12 +137,81 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(bool prepared)
+  std::string evaluate(bool prepared) const
   {
     std::stringstream str;
-    str << value << " " << operand << " " << field_.name;
+    str << value << " " << operand << " " << field_.name();
     return str.str();
   }
+};
+
+template<class T>
+class condition<T, field, typename std::enable_if<
+  std::is_same<std::string, T>::value ||
+  std::is_same<const char*, T>::value>::type> : public basic_condition
+{
+public:
+  condition(T val, basic_condition::t_operand op, const field &fld)
+    : field_(fld), operand(basic_condition::operands[op]), value(val) { }
+
+  field field_;
+  std::string operand;
+  T value;
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    str << "'" << value << "' " << operand << " " << field_.name();
+    return str.str();
+  }
+};
+
+template < class T >
+class condition<field, std::initializer_list<T>, typename std::enable_if<true>::type> : public basic_condition
+{
+public:
+  condition(const field &fld, const std::initializer_list<T> &args)
+    : field_(fld), args_(args)
+  {}
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    str << field_.name() << " IN (";
+    if (args_.size() > 1) {
+      auto first = args_.begin();
+      auto last = args_.end() - 1;
+      while (first != last) {
+        str << *first++ << ",";
+      }
+    }
+    if (!args_.empty()) {
+      str << args_.back();
+    }
+    str << ")";
+    return str.str();
+  }
+
+  field field_;
+  std::vector<T> args_;
+};
+
+template < class T >
+class condition<field, std::pair<T, T>, typename std::enable_if<true>::type> : public basic_condition
+{
+public:
+  condition(const field &fld, const std::pair<T, T> &range)
+    : field_(fld), range_(range) { }
+
+  std::string evaluate(bool prepared) const
+  {
+    std::stringstream str;
+    str << field_.name() << " BETWEEN " << range_.first << " AND " << range_.second;
+    return str.str();
+  }
+
+  field field_;
+  std::pair<T, T> range_;
 };
 
 template<class L1, class R1, class L2, class R2>
@@ -155,6 +254,18 @@ public:
   condition<L, R> cond;
   std::string operand;
 };
+
+template<class T>
+condition<field, std::initializer_list<T>> in(const oos::field &f, std::initializer_list<T> args)
+{
+  return condition<field, std::initializer_list<T>>(f, args);
+}
+
+template<class T>
+condition<field, std::pair<T, T>> between(const oos::field &f, T low, T high)
+{
+  return condition<field, std::pair<T, T>>(f, std::make_pair(low, high));
+}
 
 template<class T>
 condition<field, T> operator==(const field &fld, T val)
