@@ -70,6 +70,8 @@ public:
   template < class COND >
   void append(const COND &c);
 
+  void append(token *tok);
+
   std::string prepare() const;
   std::string direct() const;
 

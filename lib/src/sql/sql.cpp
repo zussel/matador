@@ -59,6 +59,11 @@ void sql::append(const char *id, data_type_t type, const std::string &val)
   host_field_vector_.push_back(f);
 }
 
+void sql::append(token *tok)
+{
+  token_list_.push_back(tok);
+}
+
 //void sql::append(const condition &c)
 //{
 //  field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
