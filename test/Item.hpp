@@ -570,6 +570,8 @@ public:
     serializer.serialize("author", author_);
   }
 
+  unsigned long id() const { return id_; }
+  void id(unsigned long i)  { id_ = i; }
   std::string title() const { return title_; }
   std::string isbn() const { return isbn_; }
   std::string author() const { return author_; }
@@ -581,7 +583,7 @@ public:
   typedef oos::has_many<book> book_list_t;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
-//  typedef book_list_t::const_iterator const_iterator;
+  typedef book_list_t::const_iterator const_iterator;
   
   book_list() {}
   ~book_list() {}
@@ -599,10 +601,10 @@ public:
   }
 
   iterator begin() { return book_list_.begin(); }
-//  const_iterator begin() const { return book_list_.begin(); }
+  const_iterator begin() const { return book_list_.begin(); }
 
   iterator end() { return book_list_.end(); }
-//  const_iterator end() const { return book_list_.end(); }
+  const_iterator end() const { return book_list_.end(); }
 
   iterator erase(iterator i) { return book_list_.erase(i); }
 
