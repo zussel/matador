@@ -18,12 +18,10 @@ SET(OBJECT_INSTALL_HEADER
     ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
-    ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
     ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
     ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
-    ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
     ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
     ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -48,7 +46,6 @@ SET(OBJECT_HEADER
     ../include/object/object_proxy.hpp
     ../include/object/object_serializer.hpp
     ../include/object/prototype_node.hpp
-    #../include/object/prototype_tree.hpp
     ../include/object/object_observer.hpp
     ../include/object/object_expression.hpp
     ../include/object/attribute_serializer.hpp
@@ -56,7 +53,7 @@ SET(OBJECT_HEADER
     ../include/object/has_many.hpp
     ../include/object/has_one.hpp
     ../include/object/container_type_traits.hpp
-	../include/object/object_holder.hpp
+	  ../include/object/object_holder.hpp
     ../include/object/basic_has_many.hpp
     ../include/object/has_many_vector.hpp
     ../include/object/has_many_list.hpp

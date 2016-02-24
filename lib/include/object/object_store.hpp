@@ -19,14 +19,13 @@
 #define OBJECT_STORE_HPP
 
 #include "object/prototype_iterator.hpp"
-#include "object/object_producer.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
-#include "tools/identifier_setter.hpp"
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
 
 #include "tools/sequencer.hpp"
+#include "tools/identifier_setter.hpp"
 
 #include <memory>
 #include <unordered_map>
