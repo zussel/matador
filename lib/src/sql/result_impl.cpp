@@ -4,7 +4,8 @@
 
 #include "sql/result_impl.hpp"
 
-#include "object/object_holder.hpp"
+#include "tools/identifiable_holder.hpp"
+#include "tools/basic_identifier.hpp"
 
 namespace oos {
 namespace detail {

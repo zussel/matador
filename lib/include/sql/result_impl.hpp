@@ -22,8 +22,6 @@
 
 namespace oos {
 
-class object_holder;
-
 namespace detail {
 
 /// @cond OOS_DEV

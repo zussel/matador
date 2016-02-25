@@ -23,10 +23,6 @@
 #include "sql/statement.hpp"
 #include "sql/connection.hpp"
 #include "sql/column_serializer.hpp"
-#include "sql/query_create.hpp"
-#include "sql/query_insert.hpp"
-#include "sql/query_update.hpp"
-#include "sql/query_select.hpp"
 
 #include <memory>
 #include <sstream>
@@ -137,7 +133,7 @@ public:
 //    query_create s(sql_, connection_);
     oos::access::serialize(serializer, *obj);
 //    obj->serialize(s);
-    sql_.append(")");
+//    sql_.append(")");
 
 //  std::cout << sql_.str(true) << '\n';
 
@@ -155,7 +151,7 @@ public:
   query& drop()
   {
     reset();
-    sql_.append(std::string("DROP TABLE ") + table_name_);
+    sql_.append(new detail::drop);
 
     state = QUERY_DROP;
     return *this;
@@ -172,14 +168,12 @@ public:
     reset();
 
     throw_invalid(QUERY_SELECT, state);
-    sql_.append("SELECT ");
-
-    query_select s(sql_);
+    sql_.append(new detail::select);
 
     T obj;
-    oos::access::serialize(s, obj);
+//    oos::access::serialize(s, obj);
 
-    sql_.append(std::string(" FROM ") + table_name_);
+    sql_.append(new detail::from(table_name_));
 
     state = QUERY_SELECT;
     return *this;
@@ -197,19 +191,11 @@ public:
   query& insert(T *obj)
   {
     reset();
-    sql_.append(std::string("INSERT INTO ") + table_name_ + std::string(" ("));
+    sql_.append(new detail::insert(table_name_));
 
-    query_insert s(sql_);
-    s.fields();
-
-    oos::access::serialize(s, *obj);
-
-    sql_.append(") VALUES (");
-
-    s.values();
-    oos::access::serialize(s, *obj);
-
-    sql_.append(")");
+    // insert column tokens
+//    sql_.append(") VALUES (");
+    // insert values
 
     state = QUERY_INSERT;
 
@@ -227,11 +213,12 @@ public:
    */
   query& update(T *o)
   {
+    throw_invalid(QUERY_UPDATE, state);
     reset();
-    sql_.append(std::string("UPDATE ") + table_name_ + std::string(" SET "));
+    sql_.append(new detail::update(table_name_));
+    sql_.append(new detail::set);
 
-    query_update s(sql_);
-    oos::access::serialize(s, *o);
+    // set column value pairs
 
     state = QUERY_UPDATE;
 
@@ -251,7 +238,9 @@ public:
   {
     throw_invalid(QUERY_UPDATE, state);
     reset();
-    sql_.append(std::string("UPDATE ") + table_name_ + " SET ");
+    sql_.append(new detail::update(table_name_));
+    sql_.append(new detail::set);
+
     state = QUERY_UPDATE;
     return *this;
   }
@@ -267,27 +256,9 @@ public:
   {
     reset();
 
-    sql_.append(std::string("DELETE FROM ") + table_name_);
+    sql_.append(new detail::remove(table_name_));
 
     state = QUERY_DELETE;
-
-    return *this;
-  }
-  /**
-   * Adds a where clause string to the select or
-   * update statement. For any other query an
-   * exception is thrown.
-   * 
-   * @param clause The where clause.
-   * @return A reference to the query.
-   */
-  query& where(const std::string &clause)
-  {
-    throw_invalid(QUERY_WHERE, state);
-
-    sql_.append(std::string(" WHERE ") + clause);
-
-    state = QUERY_WHERE;
 
     return *this;
   }
@@ -305,8 +276,8 @@ public:
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
-    sql_.append(std::string(" WHERE "));
-    sql_.append(c);
+    sql_.append(new detail::where);
+    sql_.append(new detail::condition_token(c));
 
     state = QUERY_COND_WHERE;
     return *this;
@@ -324,8 +295,9 @@ public:
   {
     throw_invalid(QUERY_AND, state);
 
-    sql_.append(std::string(" AND "));
-    sql_.append(c);
+    // TODO: create new condition from last condition and given condition and replace it
+//    sql_.append(std::string(" AND "));
+//    sql_.append(c);
 
     state = QUERY_AND;
     return *this;
@@ -343,8 +315,9 @@ public:
   {
     throw_invalid(QUERY_OR, state);
 
-    sql_.append(std::string(" OR "));
-    sql_.append(c);
+    // TODO: create new condition from last condition and given condition and replace it
+//    sql_.append(std::string(" OR "));
+//    sql_.append(c);
 
     state = QUERY_OR;
     return *this;
@@ -357,11 +330,11 @@ public:
    * @param by The order by clause.
    * @return A reference to the query.
    */
-  query& order_by(const std::string &by)
+  query& order_by(const std::string &column)
   {
     throw_invalid(QUERY_ORDERBY, state);
 
-    sql_.append(std::string(" ORDER BY ") + by);
+    sql_.append(new detail::order_by(column));
 
     state = QUERY_ORDERBY;
 
@@ -372,7 +345,7 @@ public:
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
 
-    sql_.append(" ASC ");
+    sql_.append(new detail::asc);
 
     state = QUERY_ORDER_DIRECTION;
 
@@ -383,7 +356,7 @@ public:
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
 
-    sql_.append(" DESC ");
+    sql_.append(new detail::desc);
 
     state = QUERY_ORDER_DIRECTION;
 
@@ -399,9 +372,7 @@ public:
    */
   query& limit(std::size_t l)
   {
-    std::stringstream limval;
-    limval << " LIMIT(" << l << ")";
-    sql_.append(limval.str());
+    sql_.append(new detail::limit(l));
     return *this;
   }
 

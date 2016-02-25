@@ -24,7 +24,6 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
-#include <mpif-sizeof.h>
 
 namespace oos {
 
@@ -41,18 +40,23 @@ struct token {
 
   explicit token(dialect::t_token tok) : type(tok) {}
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) {
+  virtual std::string compile(dialect *d, t_compile_type) {
     std::stringstream part;
     part << d->token(type) << " ";
     return part.str();
   }
 
-  dialect::t_token type;;
+  dialect::t_token type;
 };
 
 struct select : public token
 {
   select() : token(dialect::SELECT) {}
+};
+
+struct drop : public token
+{
+  drop() : token(dialect::DROP) {}
 };
 
 struct create : public token
@@ -68,14 +72,65 @@ struct create : public token
   std::string table;
 };
 
+struct insert : public token
+{
+  insert(const std::string &t) : token(dialect::INSERT), table(t) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::string result = token::compile(d, compile_type);
+    result += table + " ";
+    return result;
+  }
+  std::string table;
+};
+
 struct update : public token
 {
-  update() : token(dialect::UPDATE) {}
+  update(const std::string &t) : token(dialect::UPDATE) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::string result = token::compile(d, compile_type);
+    result += table + " ";
+    return result;
+  }
+
+  std::string table;
+};
+
+struct remove : public token
+{
+  remove(const std::string &t) : token(dialect::DELETE) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::string result = token::compile(d, compile_type);
+    result += table + " ";
+    return result;
+  }
+
+  std::string table;
 };
 
 struct distinct : public token
 {
   distinct() : token(dialect::DISTINCT) {}
+};
+
+struct set : public token
+{
+  set() : token(dialect::SET) {}
+};
+
+struct asc : public token
+{
+  asc() : token(dialect::ASC) {}
+};
+
+struct desc : public token
+{
+  desc() : token(dialect::DESC) {}
 };
 
 struct from : public token
@@ -89,6 +144,33 @@ struct from : public token
     return result;
   }
   std::string table;
+};
+
+struct limit : public token
+{
+  limit(size_t lmt) : token(dialect::LIMIT), limit_(lmt) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::stringstream str;
+    str << token::compile(d, compile_type);
+    str << " (" << limit_ << ")";
+    return str.str();
+  }
+  size_t limit_;
+};
+
+struct order_by : public token
+{
+  order_by(const std::string &col) : token(dialect::ORDER_BY), column(col) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::string result = token::compile(d, compile_type);
+    result += column + " ";
+    return result;
+  }
+  std::string column;
 };
 
 struct where : public token
