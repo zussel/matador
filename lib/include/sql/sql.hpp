@@ -52,12 +52,12 @@ class OOS_API sql
 public:
 
 public:
-  typedef std::vector<detail::field_ptr> field_vector_t;
+  typedef std::vector<detail::column_ptr> field_vector_t;
   typedef field_vector_t::size_type size_type;
   typedef field_vector_t::iterator iterator;
   typedef field_vector_t::const_iterator const_iterator;
 
-  typedef std::map<std::string, detail::field_ptr> field_map_t;
+  typedef std::map<std::string, detail::column_ptr> field_map_t;
   
   typedef std::list<token*> token_list_t;
   
@@ -118,7 +118,7 @@ void sql::append(const COND &)
   // TODO: fix missing data type
 
 //  c.accept(*this);
-//  detail::field_ptr f(new detail::field(c.column().c_str(), data_type_t::type_blob , host_field_vector_.size(), true));
+//  detail::field_ptr f(new detail::column(c.column().c_str(), data_type_t::type_blob , host_field_vector_.size(), true));
 //
 //  token_list_.push_back(new condition_token<COND>(c));
 //  host_field_map_.insert(std::make_pair(c.column(), f));

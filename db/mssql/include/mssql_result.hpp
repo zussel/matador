@@ -86,7 +86,7 @@ protected:
     if (ret == SQL_SUCCESS) {
       return;
     } else {
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
     }
   }
   

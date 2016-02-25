@@ -1094,7 +1094,7 @@ void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
 template<class T, template<class ...> class C>
 void node_analyzer::serialize(const char *id, has_many<T, C> &x, const char *owner_field, const char *item_field)
 {
-  // item field field names
+  // item column column names
   x.owner_field(owner_field);
   x.item_field(item_field);
   // Todo: distinguish between join table and no join table
@@ -1159,8 +1159,8 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   // initialize the has many relation
   // set identifier
   // relation table name
-  // owner field name
-  // item field name
+  // owner column name
+  // item column name
   if (object_proxy_stack_.empty()) {
     throw object_exception("no owner for has many relation");
   }

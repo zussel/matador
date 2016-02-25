@@ -164,7 +164,7 @@ void mssql_result::serialize(const char * /*id*/, char *x, size_t s)
   if (ret == SQL_SUCCESS) {
     return;
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 
@@ -209,7 +209,7 @@ void mssql_result::read_column(const char *, unsigned long &val)
       throw_error("mssql", strerror(errno));
     }
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 */
@@ -222,7 +222,7 @@ void mssql_result::read_column(const char *, std::string &val)
   if (ret == SQL_SUCCESS) {
     val.assign(buf, info);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 
@@ -236,7 +236,7 @@ void mssql_result::read_column(const char *, varchar_base &val)
     delete [] buf;
   } else {
     delete [] buf;
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 
@@ -252,7 +252,7 @@ void mssql_result::read_column(char const *, date &x)
     x.month(ds.month);
     x.day(ds.day);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 
@@ -265,7 +265,7 @@ void mssql_result::read_column(char const *, time &x)
   if (ret == SQL_SUCCESS) {
     x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
   } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
 }
 

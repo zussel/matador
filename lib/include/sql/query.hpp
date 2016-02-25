@@ -22,6 +22,7 @@
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
 #include "sql/connection.hpp"
+#include "sql/column_serializer.hpp"
 #include "sql/query_create.hpp"
 #include "sql/query_insert.hpp"
 #include "sql/query_update.hpp"
@@ -123,16 +124,18 @@ public:
    * class instance.
    *
    * @param name The name of the table to create.
-   * @param obj The serializable providing the field information.
+   * @param obj The serializable providing the column information.
    * @return A reference to the query.
    */
   query& create(T *obj)
   {
     reset();
-    sql_.append(std::string("CREATE TABLE ") + table_name_ + std::string(" ("));
+//    sql_.append(std::string("CREATE TABLE ") + table_name_ + std::string(" ("));
+    sql_.append(new detail::create(table_name_));
 
-    query_create s(sql_, connection_);
-    oos::access::serialize(s, *obj);
+    detail::column_serializer serializer(sql_);
+//    query_create s(sql_, connection_);
+    oos::access::serialize(serializer, *obj);
 //    obj->serialize(s);
     sql_.append(")");
 
@@ -406,7 +409,7 @@ public:
    * Adds a group by clause to a select
    * statement.
    * 
-   * @param field The group by clause.
+   * @param column The group by clause.
    * @return A reference to the query.
    */
   query& group_by(const std::string &field)
@@ -423,7 +426,7 @@ public:
   /**
    * Adds a column to a select statement.
    * 
-   * @param field The name of the column.
+   * @param column The name of the column.
    * @param type The datatype of the column,
    * @return A reference to the query.
    */

@@ -34,11 +34,11 @@ void sql::append(const std::string &str)
 void sql::append(const char *id, data_type_t type)
 {
   /*
-   * create new field, append it
-   * to token list and field vector
-   * and insert it into field map
+   * create new column, append it
+   * to token list and column vector
+   * and insert it into column map
    */
-  detail::field_ptr f(new detail::field(id, type, result_field_vector_.size(), false));
+  detail::column_ptr f(new detail::column(id, type, result_field_vector_.size(), false));
 
   token_list_.push_back(new result_field_token(f));
   result_field_map_.insert(std::make_pair(id, f));
@@ -48,11 +48,11 @@ void sql::append(const char *id, data_type_t type)
 void sql::append(const char *id, data_type_t type, const std::string &val)
 {
   /*
-   * create new field, append it
-   * to token list and field vector
-   * and insert it into field map
+   * create new column, append it
+   * to token list and column vector
+   * and insert it into column map
    */
-  detail::field_ptr f(new detail::field(id, type, host_field_vector_.size(), true));
+  detail::column_ptr f(new detail::column(id, type, host_field_vector_.size(), true));
 
   token_list_.push_back(new host_field_token(f, val));
   host_field_map_.insert(std::make_pair(id, f));
@@ -66,7 +66,7 @@ void sql::append(token *tok)
 
 //void sql::append(const condition &c)
 //{
-//  field_ptr f(new field(c.column().c_str(), c.type(), host_field_vector_.size(), true));
+//  field_ptr f(new column(c.column().c_str(), c.type(), host_field_vector_.size(), true));
 //
 //  token_list_.push_back(new condition_token(c));
 //  host_field_map_.insert(std::make_pair(c.column(), f));

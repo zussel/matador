@@ -35,7 +35,7 @@ class OOS_API query_create
 {
 public:
   explicit query_create(sql &d, const connection &db);
-  virtual ~query_create();
+  ~query_create();
 
   template < class T >
   void serialize(T &x)
