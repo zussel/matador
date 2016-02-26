@@ -23,6 +23,7 @@
 #include "tools/string.hpp"
 #include "tools/date.hpp"
 #include "tools/time.hpp"
+#include "tools/identifiable_holder.hpp"
 
 #include "sql/sql.hpp"
 

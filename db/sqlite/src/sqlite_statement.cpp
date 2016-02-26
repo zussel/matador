@@ -24,6 +24,9 @@
 
 #include "tools/string.hpp"
 #include "tools/date.hpp"
+#include "tools/varchar.hpp"
+#include "tools/identifiable_holder.hpp"
+#include "tools/basic_identifier.hpp"
 
 #include <cstring>
 

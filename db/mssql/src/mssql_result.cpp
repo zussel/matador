@@ -20,6 +20,7 @@
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 #include "tools/time.hpp"
+#include "tools/basic_identifier.hpp"
 
 #include <cstring>
 
