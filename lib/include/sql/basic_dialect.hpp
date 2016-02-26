@@ -20,6 +20,7 @@ public:
     DELETE,
     INSERT,
     VALUES,
+    VALUE,
     UPDATE,
     SELECT,
     COLUMNS,

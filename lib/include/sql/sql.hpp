@@ -45,19 +45,17 @@ namespace oos {
 
 /// @cond OOS_DEV
 
-class token;
-
 class OOS_API sql
 {
 public:
 
 public:
-  typedef std::list<token*> token_list_t;
+  typedef std::list<std::shared_ptr<detail::token>> token_list_t;
   
 public:
   ~sql();
   
-  void append(token *tok);
+  void append(detail::token *tok);
 
   std::string prepare() const;
   std::string direct() const;

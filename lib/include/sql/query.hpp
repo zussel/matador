@@ -277,7 +277,7 @@ public:
     throw_invalid(QUERY_COND_WHERE, state);
 
     sql_.append(new detail::where);
-    sql_.append(new detail::condition_token(c));
+    sql_.append(new detail::condition_token<COND>(c));
 
     state = QUERY_COND_WHERE;
     return *this;
@@ -383,11 +383,11 @@ public:
    * @param column The group by clause.
    * @return A reference to the query.
    */
-  query& group_by(const std::string &field)
+  query& group_by(const std::string &col)
   {
     throw_invalid(QUERY_GROUPBY, state);
 
-    sql_.append(std::string(" GROUP BY ") + field);
+    sql_.append(new detail::group_by(col));
 
     state = QUERY_GROUPBY;
 
@@ -401,13 +401,10 @@ public:
    * @param type The datatype of the column,
    * @return A reference to the query.
    */
-  query& column(const std::string &field, data_type_t type)
+  query& column(const std::string &field, data_type_t type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
-    if (state == QUERY_COLUMN) {
-      sql_.append(", ");
-    }
-    sql_.append(field.c_str(), type);
+    sql_.append(new detail::column(field, type, index, false));
     state = QUERY_COLUMN;
     return *this;
   }
@@ -428,14 +425,7 @@ public:
   {
     throw_invalid(QUERY_SET, state);
 
-    if (state == QUERY_SET) {
-      sql_.append(", ");
-    }
-
-    sql_.append(column + "=");
-    std::stringstream valstr;
-    valstr << val;
-    sql_.append(column.c_str(), type, valstr.str());
+    sql_.append(new detail::value<V>(column, type, val));
 
     state = QUERY_SET;
 

@@ -98,10 +98,10 @@ void column_serializer::serialize(const char *id, identifiable_holder &x, cascad
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   }
-  serialize(id, type_long);
+//  serialize(id, type_long);
 }
 
-void column_serializer::serialize(const char *id, basic_identifier &x)
+void column_serializer::serialize(const char *, basic_identifier &)
 {
   // Todo: determine identifier type
 //  new identifier_column()

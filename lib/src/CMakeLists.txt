@@ -126,10 +126,6 @@ SET(SQL_SOURCES
   sql/connection.cpp
   sql/connection_factory.cpp
   sql/result_impl.cpp
-  sql/query_create.cpp
-  sql/query_select.cpp
-  sql/query_insert.cpp
-  sql/query_update.cpp
   sql/sql.cpp
   sql/statement_impl.cpp
   sql/row.cpp
@@ -145,10 +141,6 @@ SET(SQL_HEADER
   ../include/sql/result_impl.hpp
   ../include/sql/memory_connection.hpp
   ../include/sql/query.hpp
-  ../include/sql/query_create.hpp
-  ../include/sql/query_select.hpp
-  ../include/sql/query_insert.hpp
-  ../include/sql/query_update.hpp
   ../include/sql/sql.hpp
   ../include/sql/row.hpp
   ../include/sql/value.hpp

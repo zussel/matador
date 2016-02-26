@@ -160,7 +160,8 @@ void SQLTestUnit::test_query()
   hans.id(1);
   res = q.insert(&hans).execute();
 
-  res = q.select().where("name='hans'").execute();
+  field name("name");
+  res = q.select().where(name == "hans").execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -175,7 +176,7 @@ void SQLTestUnit::test_query()
     ++first;
   }
 
-  res = q.select().where("name='heinz'").execute();
+  res = q.select().where(name == "heinz").execute();
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
@@ -217,7 +218,8 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.select().where("name='Hans'").execute();
+  field name("name");
+  res = q.select().where(name == "Hans").execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
 
@@ -251,9 +253,9 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
+  field height("height");
   res = q.select()
-    .where("height>160")
-    .and_(field("height") < 180)
+    .where(height > 160 && height < 180)
     .order_by("height")
     .desc()
     .execute();

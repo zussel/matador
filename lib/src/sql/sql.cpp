@@ -26,9 +26,10 @@ sql::~sql()
   reset();
 }
 
-void sql::append(token *tok)
+void sql::append(detail::token *tok)
 {
-  token_list_.push_back(tok);
+  std::shared_ptr<detail::token> tokptr(tok);
+  token_list_.push_back(tokptr);
 }
 
 //void sql::append(const condition &c)
@@ -52,10 +53,6 @@ std::string sql::direct() const
 
 void sql::reset()
 {
-  while (!token_list_.empty()) {
-    delete token_list_.back();
-    token_list_.pop_back();
-  }
   token_list_.clear();
 }
 
@@ -65,7 +62,8 @@ std::string sql::generate(bool prepared) const
   token_list_t::const_iterator first = token_list_.begin();
   token_list_t::const_iterator last = token_list_.end();
   while (first != last) {
-    const token *t = *first++;
+    first++;
+//    const token *t = *first++;
 //    str += t->get(prepared);
   }
   return str;

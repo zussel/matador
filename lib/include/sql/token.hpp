@@ -123,6 +123,26 @@ struct set : public token
   set() : token(dialect::SET) {}
 };
 
+template < class T >
+struct value : public token
+{
+  value(const std::string &col, data_type_t t, T val)
+    : token(dialect::VALUE)
+    , column(col)
+    , type(t)
+    , val(val)
+  { }
+
+  virtual std::string compile(dialect *d, token::t_compile_type type) override
+  {
+    return token::compile(d, type);
+  }
+
+  std::string column;
+  data_type_t type;
+  T val;
+};
+
 struct asc : public token
 {
   asc() : token(dialect::ASC) {}
@@ -173,6 +193,19 @@ struct order_by : public token
   std::string column;
 };
 
+struct group_by : public token
+{
+  group_by(const std::string &col) : token(dialect::GROUP_BY), column(col) {}
+
+  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  {
+    std::string result = token::compile(d, compile_type);
+    result += column + " ";
+    return result;
+  }
+  std::string column;
+};
+
 struct where : public token
 {
   where() : token(dialect::WHERE) {}
@@ -180,9 +213,9 @@ struct where : public token
 
 struct column : public token
 {
-  column(const char *n, data_type_t t, std::size_t idx, bool host)
+  column(const std::string &col, data_type_t t, std::size_t idx, bool host)
     : token(dialect::COLUMN)
-    , name(n), type(t), index(idx), is_host(host)
+    , name(col), type(t), index(idx), is_host(host)
   {}
 
   virtual std::string compile(dialect *d, t_compile_type compile_type) override
