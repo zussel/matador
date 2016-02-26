@@ -19,6 +19,7 @@
 #define TOKEN_HPP
 
 #include "sql/basic_dialect.hpp"
+#include "sql/types.hpp"
 
 #include <memory>
 #include <sstream>
@@ -30,112 +31,95 @@ namespace oos {
 namespace detail {
 
 /// @cond OOS_DEV
-struct token {
+struct token
+{
   enum t_compile_type {
     PREPARED,
     DIRECT
   };
 
+  explicit token(basic_dialect::t_token tok);
   virtual ~token() {}
 
-  explicit token(dialect::t_token tok) : type(tok) {}
+  virtual std::string compile(basic_dialect *d, t_compile_type);
 
-  virtual std::string compile(dialect *d, t_compile_type) {
-    std::stringstream part;
-    part << d->token(type) << " ";
-    return part.str();
-  }
-
-  dialect::t_token type;
+  basic_dialect::t_token type;
 };
 
 struct select : public token
 {
-  select() : token(dialect::SELECT) {}
+  select() : token(basic_dialect::SELECT) {}
 };
 
 struct drop : public token
 {
-  drop() : token(dialect::DROP) {}
+  drop() : token(basic_dialect::DROP) {}
 };
 
 struct create : public token
 {
-  create(const std::string &t) : token(dialect::CREATE_TABLE), table(t) {}
+  create(const std::string &t);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += " " + table + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   std::string table;
 };
 
 struct insert : public token
 {
-  insert(const std::string &t) : token(dialect::INSERT), table(t) {}
+  insert(const std::string &t);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += table + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   std::string table;
 };
 
 struct update : public token
 {
-  update(const std::string &t) : token(dialect::UPDATE) {}
+  update(const std::string &t);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += table + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
 
   std::string table;
 };
 
 struct remove : public token
 {
-  remove(const std::string &t) : token(dialect::DELETE) {}
+  remove(const std::string &t);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += table + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
 
   std::string table;
 };
 
 struct distinct : public token
 {
-  distinct() : token(dialect::DISTINCT) {}
+  distinct() : token(basic_dialect::DISTINCT) {}
 };
 
 struct set : public token
 {
-  set() : token(dialect::SET) {}
+  set() : token(basic_dialect::SET) {}
+};
+
+struct basic_value : public token
+{
+  basic_value(basic_dialect::t_token tok) : token(tok) { }
 };
 
 template < class T >
-struct value : public token
+struct value : public basic_value
 {
   value(const std::string &col, data_type_t t, T val)
-    : token(dialect::VALUE)
+    : basic_value(basic_dialect::VALUE)
     , column(col)
     , type(t)
     , val(val)
   { }
 
-  virtual std::string compile(dialect *d, token::t_compile_type type) override
+  virtual std::string compile(basic_dialect *d, token::t_compile_type type) override
   {
-    return token::compile(d, type);
+    return basic_value::compile(d, type);
   }
 
   std::string column;
@@ -145,83 +129,60 @@ struct value : public token
 
 struct asc : public token
 {
-  asc() : token(dialect::ASC) {}
+  asc() : token(basic_dialect::ASC) {}
 };
 
 struct desc : public token
 {
-  desc() : token(dialect::DESC) {}
+  desc() : token(basic_dialect::DESC) {}
 };
 
 struct from : public token
 {
-  from(const std::string &t) : token(dialect::FROM), table(t) {}
+  from(const std::string &t);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += table + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   std::string table;
 };
 
 struct limit : public token
 {
-  limit(size_t lmt) : token(dialect::LIMIT), limit_(lmt) {}
+  limit(size_t lmt);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::stringstream str;
-    str << token::compile(d, compile_type);
-    str << " (" << limit_ << ")";
-    return str.str();
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   size_t limit_;
 };
 
 struct order_by : public token
 {
-  order_by(const std::string &col) : token(dialect::ORDER_BY), column(col) {}
+  order_by(const std::string &col);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += column + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   std::string column;
 };
 
 struct group_by : public token
 {
-  group_by(const std::string &col) : token(dialect::GROUP_BY), column(col) {}
+  group_by(const std::string &col);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    std::string result = token::compile(d, compile_type);
-    result += column + " ";
-    return result;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
+
   std::string column;
 };
 
 struct where : public token
 {
-  where() : token(dialect::WHERE) {}
+  where() : token(basic_dialect::WHERE) {}
 };
 
 struct column : public token
 {
-  column(const std::string &col, data_type_t t, std::size_t idx, bool host)
-    : token(dialect::COLUMN)
-    , name(col), type(t), index(idx), is_host(host)
-  {}
+  column(const std::string &col, data_type_t t, std::size_t idx, bool host);
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
-  {
-    return name;
-  }
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override;
 
   std::string name;
   data_type_t type;
@@ -233,7 +194,7 @@ struct identifier_column : public column
 {
   identifier_column(const char *n, data_type_t t, size_t idx, bool host) : column(n, t, idx, host) { }
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override
   {
     return name;
   }
@@ -241,26 +202,26 @@ struct identifier_column : public column
 
 struct varchar_column : public column
 {
-
   varchar_column(const char *n, data_type_t t, size_t idx, bool host, size_t size)
     : column(n, t, idx, host)
     , size(size)
   { }
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override
   {
     return column::compile(d, compile_type);
   }
 
   size_t size;
 };
+
 struct columns : public token
 {
-  columns() : token(dialect::COLUMNS) {}
+  columns() : token(basic_dialect::COLUMNS) {}
 
   void push_back(const std::string &col) { columns_.push_back(col); }
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override
   {
     std::stringstream cols;
     if (columns_.size() > 1) {
@@ -274,15 +235,20 @@ struct columns : public token
   std::vector<std::string> columns_;
 };
 
+struct basic_condition_token : public token
+{
+  basic_condition_token(basic_dialect::t_token tok) : token(tok) { }
+};
+
 template < class COND >
-struct condition_token : public token
+struct condition_token : public basic_condition_token
 {
   condition_token(const COND &c)
-    : token(dialect::CLAUSE)
+    : basic_condition_token(basic_dialect::CLAUSE)
     , cond(c)
   {}
 
-  virtual std::string compile(dialect *d, t_compile_type compile_type) override
+  virtual std::string compile(basic_dialect *d, t_compile_type compile_type) override
   {
     return cond.evaluate(compile_type == t_compile_type::PREPARED);
   }

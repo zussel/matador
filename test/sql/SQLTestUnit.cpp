@@ -32,16 +32,16 @@ void SQLTestUnit::test_create()
 {
   connection_->open();
 
-  query<Item> q(*connection_, "item");
+  query<Item> q("item");
 
-  result<Item> res(q.create().execute());
+  result<Item> res(q.create().execute(*connection_));
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   Item hans("Hans", 4711);
   hans.set_time(itime);
-  res = q.insert(&hans).execute();
+  res = q.insert(&hans).execute(*connection_);
 
-  res = q.select().execute();
+  res = q.select().execute(*connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
@@ -56,16 +56,16 @@ void SQLTestUnit::test_create()
     ++first;
   }
 
-  res = q.drop().execute();
+  res = q.drop().execute(*connection_);
 }
 
 void SQLTestUnit::test_statement()
 {
   connection_->open();
 
-  query<Item> q(*connection_, "item");
+  query<Item> q("item");
 
-  statement<Item> stmt(q.create().prepare());
+  statement<Item> stmt(q.create().prepare(*connection_));
 
   result<Item> res(stmt.execute());
 
@@ -74,12 +74,12 @@ void SQLTestUnit::test_statement()
   Item hans("Hans", 4711);
   hans.id(id.value());
   hans.set_time(itime);
-  stmt = q.insert(&hans).prepare();
+  stmt = q.insert(&hans).prepare(*connection_);
 
   stmt.bind(&hans);
   res = stmt.execute();
 
-  stmt = q.select().prepare();
+  stmt = q.select().prepare(*connection_);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -96,7 +96,7 @@ void SQLTestUnit::test_statement()
     ++first;
   }
 
-  stmt = q.drop().prepare();
+  stmt = q.drop().prepare(*connection_);
 
   res = stmt.execute();
 }
@@ -105,29 +105,29 @@ void SQLTestUnit::test_foreign_query()
 {
   connection_->open();
 
-  query<Item> q(*connection_, "item");
+  query<Item> q("item");
 
   using t_object_item = ObjectItem<Item>;
 
   // create item table and insert item
-  result<Item> res(q.create().execute());
+  result<Item> res(q.create().execute(*connection_));
 
   auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
   oos::identifier<unsigned long> id(23);
   Item *hans = new Item("Hans", 4711);
   hans->id(id.value());
   hans->set_time(itime);
-  res = q.insert(hans).execute();
+  res = q.insert(hans).execute(*connection_);
 
-  query<t_object_item> object_item_query(*connection_, "object_item");
-  result<t_object_item> ores = object_item_query.create().execute();
+  query<t_object_item> object_item_query("object_item");
+  result<t_object_item> ores = object_item_query.create().execute(*connection_);
 
   t_object_item oitem;
   oitem.ptr(hans);
 
-  ores = object_item_query.insert(&oitem).execute();
+  ores = object_item_query.insert(&oitem).execute(*connection_);
 
-  ores = object_item_query.select().execute();
+  ores = object_item_query.select().execute(*connection_);
 
   auto first = ores.begin();
   auto last = ores.end();
@@ -142,26 +142,26 @@ void SQLTestUnit::test_foreign_query()
     ++first;
   }
 
-  object_item_query.drop().execute();
+  object_item_query.drop().execute(*connection_);
 
-  q.drop().execute();
+  q.drop().execute(*connection_);
 }
 
 void SQLTestUnit::test_query()
 {
   connection_->open();
 
-  query<person> q(*connection_, "person");
+  query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute());
+  result<person> res(q.create().execute(*connection_));
 
   person hans("Hans", oos::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(&hans).execute();
+  res = q.insert(&hans).execute(*connection_);
 
   field name("name");
-  res = q.select().where(name == "hans").execute();
+  res = q.select().where(name == "hans").execute(*connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -176,37 +176,37 @@ void SQLTestUnit::test_query()
     ++first;
   }
 
-  res = q.select().where(name == "heinz").execute();
+  res = q.select().where(name == "heinz").execute(*connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
-  q.drop().execute();
+  q.drop().execute(*connection_);
 }
 
 void SQLTestUnit::test_query_select()
 {
   connection_->open();
 
-  query<person> q(*connection_, "person");
+  query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute());
+  result<person> res(q.create().execute(*connection_));
 
   unsigned long counter = 0;
 
   std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
-  res = q.insert(hans.get()).execute();
+  res = q.insert(hans.get()).execute(*connection_);
 
   std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
-  res = q.insert(otto.get()).execute();
+  res = q.insert(otto.get()).execute(*connection_);
 
   std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
-  res = q.insert(hilde.get()).execute();
+  res = q.insert(hilde.get()).execute(*connection_);
 
   std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
-  res = q.insert(trude.get()).execute();
+  res = q.insert(trude.get()).execute(*connection_);
 
-  res = q.select().execute();
+  res = q.select().execute(*connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 4UL, "result size must be one (4)");
 
@@ -219,7 +219,7 @@ void SQLTestUnit::test_query_select()
   }
 
   field name("name");
-  res = q.select().where(name == "Hans").execute();
+  res = q.select().where(name == "Hans").execute(*connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
 
@@ -236,7 +236,7 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.select().order_by("height").asc().execute();
+  res = q.select().order_by("height").asc().execute(*connection_);
 
   first = res.begin();
 
@@ -258,7 +258,7 @@ void SQLTestUnit::test_query_select()
     .where(height > 160 && height < 180)
     .order_by("height")
     .desc()
-    .execute();
+    .execute(*connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 2UL, "result size must be one (2)");
 
@@ -277,7 +277,7 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.drop().execute();
+  res = q.drop().execute(*connection_);
 }
 
 connection* SQLTestUnit::create_connection()

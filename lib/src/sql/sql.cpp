@@ -108,4 +108,13 @@ std::string sql::str(bool prepared) const
   return generate(prepared);
 }
 
+std::string sql::compile(basic_dialect &dialect, detail::token::t_compile_type compile_type)
+{
+  for(auto tokptr : token_list_) {
+    tokptr->compile(&dialect, compile_type);
+  }
+  return "";
+}
+
+
 }

@@ -93,9 +93,8 @@ public:
    * 
    * @param conn The connection.
    */
-  query(connection &conn, const std::string &table_name)
+  query(const std::string &table_name)
     : state(QUERY_BEGIN)
-    , connection_(conn)
     , table_name_(table_name)
   {}
   
@@ -438,11 +437,11 @@ public:
    * 
    * @return The result serializable.
    */
-  result<T> execute()
+  result<T> execute(connection &conn)
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return connection_.execute<T>(sql_.direct());
+    return conn.execute<T>(sql_.direct());
   }
 
   /**
@@ -451,9 +450,9 @@ public:
    * 
    * @return The new prepared statement.
    */
-  statement<T> prepare()
+  statement<T> prepare(connection &conn)
   {
-    return connection_.prepare<T>(sql_);
+    return conn.prepare<T>(sql_);
   }
 
   /**
@@ -554,7 +553,6 @@ private:
 private:
   sql sql_;
   state_t state;
-  connection &connection_;
   std::string table_name_;
 };
 

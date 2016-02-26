@@ -19,7 +19,7 @@ SET (TEST_TOOLS_SOURCES
   tools/StringTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp object/HasManyListUnitTest.cpp object/HasManyListUnitTest.hpp)
+SET (TEST_HEADER Item.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp
@@ -59,6 +59,10 @@ SET (TEST_SQL_SOURCES
   sql/SQLTestUnit.hpp
   sql/ConditionUnitTest.cpp
   sql/ConditionUnitTest.hpp
+  sql/QueryTestUnit.cpp
+  sql/QueryTestUnit.hpp
+  sql/TestDialect.cpp
+  sql/TestDialect.hpp
 )
 
 SET (TEST_ORM_SOURCES
