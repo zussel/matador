@@ -4,107 +4,109 @@
 
 #include "TestDialect.hpp"
 
-std::string virtual TestDialect::compile(oos::detail::limit &limit)
+#include "sql/token.hpp"
+
+std::string TestDialect::compile(oos::detail::limit &limit)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::remove &remove1)
+std::string TestDialect::compile(oos::detail::remove &remove1)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::basic_value &value)
+std::string TestDialect::compile(oos::detail::basic_value &value)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::insert &insert)
+std::string TestDialect::compile(oos::detail::insert &insert)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::group_by &by)
+std::string TestDialect::compile(oos::detail::group_by &by)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::desc &desc)
+std::string TestDialect::compile(oos::detail::desc &desc)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::asc &asc)
+std::string TestDialect::compile(oos::detail::asc &asc)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::order_by &by)
+std::string TestDialect::compile(oos::detail::order_by &by)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::basic_condition_token &token)
+std::string TestDialect::compile(oos::detail::basic_condition &token)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::where &where)
+std::string TestDialect::compile(oos::detail::where &where)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::from &from)
+std::string TestDialect::compile(oos::detail::from &from)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::varchar_column &column)
+std::string TestDialect::compile(oos::detail::varchar_column &column)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::identifier_column &column)
+std::string TestDialect::compile(oos::detail::identifier_column &column)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::column &column)
+std::string TestDialect::compile(oos::detail::column &column)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::columns &columns)
+std::string TestDialect::compile(oos::detail::columns &columns)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::set &set)
+std::string TestDialect::compile(oos::detail::set &set)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::update &update)
+std::string TestDialect::compile(oos::detail::update &update)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::distinct &distinct)
+std::string TestDialect::compile(oos::detail::distinct &distinct)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::select &select1)
+std::string TestDialect::compile(oos::detail::select &select1)
+{
+  return token(select1.type) + " ";
+}
+
+std::string TestDialect::compile(oos::detail::drop &drop)
 {
   return "";
 }
 
-std::string virtual TestDialect::compile(oos::detail::drop &drop)
+std::string TestDialect::compile(oos::detail::create &create)
 {
-  return "";
-}
-
-std::string virtual TestDialect::compile(oos::detail::create &create)
-{
-  return "";
+  return token(create.type) + " " + create.table;
 }

@@ -12,19 +12,19 @@ using namespace oos;
 QueryTestUnit::QueryTestUnit()
   : unit_test("query", "query test unit")
 {
-  add_test("create", std::bind(&QueryTestUnit::test_create_query, *this), "test create a query");
+  add_test("create", std::bind(&QueryTestUnit::test_create_query, this), "test create a query");
 }
 
 void QueryTestUnit::test_create_query()
 {
   sql s;
 
-  s.append(new detail::select);
+  s.append(new detail::create("person"));
 
   TestDialect dialect;
   std::string result = s.compile(dialect, detail::token::DIRECT);
 
-
+  UNIT_ASSERT_EQUAL("CREATE TABLE person", result, "create statement isn't as expected");
 }
 
 

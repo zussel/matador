@@ -36,6 +36,8 @@ SET (TEST_OBJECT_SOURCES
   object/PrimaryKeyUnitTest.hpp
   object/HasManyVectorUnitTest.cpp
   object/HasManyVectorUnitTest.hpp
+  object/HasManyListUnitTest.cpp
+  object/HasManyListUnitTest.hpp
 )
 
 SET (TEST_UNIT_SOURCES

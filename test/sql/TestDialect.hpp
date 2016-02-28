@@ -36,7 +36,7 @@ public:
 
   virtual std::string compile(oos::detail::where &where);
 
-  virtual std::string compile(oos::detail::basic_condition_token &token);
+  virtual std::string compile(oos::detail::basic_condition &token);
 
   virtual std::string compile(oos::detail::order_by &by);
 

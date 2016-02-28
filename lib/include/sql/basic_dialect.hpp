@@ -20,7 +20,7 @@ struct columns;
 struct column;
 struct identifier_column;
 struct varchar_column;
-struct basic_condition_token;
+struct basic_condition;
 struct basic_value;
 struct distinct;
 struct set;
@@ -84,7 +84,7 @@ public:
   virtual std::string compile(oos::detail::varchar_column &) = 0;
   virtual std::string compile(oos::detail::from &) = 0;
   virtual std::string compile(oos::detail::where &) = 0;
-  virtual std::string compile(oos::detail::basic_condition_token &) = 0;
+  virtual std::string compile(oos::detail::basic_condition &) = 0;
   virtual std::string compile(oos::detail::order_by &) = 0;
   virtual std::string compile(oos::detail::asc &) = 0;
   virtual std::string compile(oos::detail::desc &) = 0;

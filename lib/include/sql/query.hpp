@@ -276,7 +276,7 @@ public:
     throw_invalid(QUERY_COND_WHERE, state);
 
     sql_.append(new detail::where);
-    sql_.append(new detail::condition_token<COND>(c));
+    sql_.append(new detail::condition<COND>(c));
 
     state = QUERY_COND_WHERE;
     return *this;

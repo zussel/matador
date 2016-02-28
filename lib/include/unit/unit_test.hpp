@@ -368,6 +368,15 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
+  void assert_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a, b.c_str()) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
   void assert_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
