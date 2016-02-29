@@ -150,7 +150,7 @@ public:
   query& drop()
   {
     reset();
-    sql_.append(new detail::drop);
+    sql_.append(new detail::drop(table_name_));
 
     state = QUERY_DROP;
     return *this;
@@ -403,7 +403,7 @@ public:
   query& column(const std::string &field, data_type_t type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
-    sql_.append(new detail::column(field, type, index, false));
+    sql_.append(new detail::typed_column(field, type, index, false));
     state = QUERY_COLUMN;
     return *this;
   }

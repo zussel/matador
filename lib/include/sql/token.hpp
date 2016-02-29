@@ -55,9 +55,11 @@ struct select : public token
 
 struct drop : public token
 {
-  drop() : token(basic_dialect::DROP) {}
+  drop(const std::string &t) : token(basic_dialect::DROP), table(t) {}
 
   virtual std::string compile(basic_dialect &d, t_compile_type) override;
+
+  std::string table;
 };
 
 struct create : public token
@@ -194,36 +196,45 @@ struct where : public token
 
 struct column : public token
 {
-  column(const std::string &col, data_type_t t, std::size_t idx, bool host);
+  column(const std::string &col);
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override;
 
   std::string name;
+
+};
+
+struct typed_column : public column
+{
+  typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
+
+  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override;
+
   data_type_t type;
   std::size_t index;
   bool is_host;
 };
 
-struct identifier_column : public column
+struct identifier_column : public typed_column
 {
-  identifier_column(const char *n, data_type_t t, size_t idx, bool host) : column(n, t, idx, host) { }
+  identifier_column(const char *n, data_type_t t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
   {
-    return name;
+    return d.compile(*this);
   }
 };
 
-struct varchar_column : public column
+struct varchar_column : public typed_column
 {
-  varchar_column(const char *n, data_type_t t, size_t idx, bool host, size_t size)
-    : column(n, t, idx, host)
+  varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
+    : typed_column(n, t, idx, host)
     , size(size)
   { }
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
   {
-    return column::compile(d, compile_type);
+    return d.compile(*this);
   }
 
   size_t size;
@@ -233,20 +244,13 @@ struct columns : public token
 {
   columns() : token(basic_dialect::COLUMNS) {}
 
-  void push_back(const std::string &col) { columns_.push_back(col); }
+  void push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
   {
-    std::stringstream cols;
-    if (columns_.size() > 1) {
-      std::copy(columns_.begin(), columns_.end() - 1, std::ostream_iterator<std::string>(cols, ", "));
-    }
-    if (!columns_.empty()) {
-      cols << columns_.back() << " ";
-    }
-    return cols.str();
+    return d.compile(*this);
   }
-  std::vector<std::string> columns_;
+  std::vector<std::shared_ptr<column>> columns_;
 };
 
 struct basic_condition : public token

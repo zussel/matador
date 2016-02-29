@@ -5,6 +5,8 @@
 #ifndef OOS_BASIC_DIALECT_HPP
 #define OOS_BASIC_DIALECT_HPP
 
+#include "sql/types.hpp"
+
 #include <unordered_map>
 #include <string>
 
@@ -18,6 +20,7 @@ struct update;
 struct remove;
 struct columns;
 struct column;
+struct typed_column;
 struct identifier_column;
 struct varchar_column;
 struct basic_condition;
@@ -72,6 +75,8 @@ public:
 
   std::string token(t_token tok) const { return tokens.at(tok); }
 
+  virtual const char* type_string(data_type_t type) const = 0;
+
   virtual std::string compile(oos::detail::create &) = 0;
   virtual std::string compile(oos::detail::drop &) = 0;
   virtual std::string compile(oos::detail::select &) = 0;
@@ -80,6 +85,7 @@ public:
   virtual std::string compile(oos::detail::set &) = 0;
   virtual std::string compile(oos::detail::columns &) = 0;
   virtual std::string compile(oos::detail::column &) = 0;
+  virtual std::string compile(oos::detail::typed_column &) = 0;
   virtual std::string compile(oos::detail::identifier_column &) = 0;
   virtual std::string compile(oos::detail::varchar_column &) = 0;
   virtual std::string compile(oos::detail::from &) = 0;

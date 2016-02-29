@@ -143,12 +143,22 @@ std::string where::compile(basic_dialect &d, t_compile_type compile_type)
   d.compile(*this);
 }
 
-column::column(const std::string &col, data_type_t t, std::size_t idx, bool host)
+column::column(const std::string &col)
   : token(basic_dialect::COLUMN)
-  , name(col), type(t), index(idx), is_host(host)
+  , name(col)
 {}
 
 std::string column::compile(basic_dialect &d, t_compile_type compile_type)
+{
+  return d.compile(*this);
+}
+
+typed_column::typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host)
+  : column(col)
+  , type(t), index(idx), is_host(host)
+{}
+
+std::string typed_column::compile(basic_dialect &d, t_compile_type compile_type)
   {
   return d.compile(*this);
 }

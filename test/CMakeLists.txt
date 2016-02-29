@@ -61,8 +61,8 @@ SET (TEST_SQL_SOURCES
   sql/SQLTestUnit.hpp
   sql/ConditionUnitTest.cpp
   sql/ConditionUnitTest.hpp
-  sql/QueryTestUnit.cpp
-  sql/QueryTestUnit.hpp
+  sql/DialectTestUnit.cpp
+  sql/DialectTestUnit.hpp
   sql/TestDialect.cpp
   sql/TestDialect.hpp
 )

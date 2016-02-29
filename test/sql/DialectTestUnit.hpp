@@ -8,12 +8,14 @@
 
 #include "unit/unit_test.hpp"
 
-class QueryTestUnit : public oos::unit_test
+class DialectTestUnit : public oos::unit_test
 {
 public:
-  QueryTestUnit();
+  DialectTestUnit();
 
   void test_create_query();
+  void test_drop_query();
+  void test_insert_query();
 };
 
 

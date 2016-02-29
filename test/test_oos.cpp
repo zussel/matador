@@ -37,7 +37,7 @@
 //#include "sql/DatabaseTestUnit.hpp"
 //#include "sql/SessionTestUnit.hpp"
 //#include "sql/TransactionTestUnit.hpp"
-#include "sql/QueryTestUnit.hpp"
+#include "sql/DialectTestUnit.hpp"
 #include "sql/SQLTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new HasManyListUnitTest());
 
   suite.register_unit(new ConditionUnitTest());
-  suite.register_unit(new QueryTestUnit());
+  suite.register_unit(new DialectTestUnit());
 
 #ifdef OOS_MYSQL
 //  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
