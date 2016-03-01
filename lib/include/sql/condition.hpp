@@ -33,6 +33,7 @@
 
 #include "sql/types.hpp"
 #include "sql/field.hpp"
+#include "sql/token.hpp"
 
 #include <string>
 #include <sstream>
@@ -43,9 +44,11 @@
 
 namespace oos {
 
-class basic_condition
+class basic_condition : public detail::token
 {
 public:
+  basic_condition() : token(basic_dialect::CONDITION) { }
+
   enum t_operand
   {
     EQUAL = 0,
@@ -93,6 +96,10 @@ public:
   std::string operand;
   T value;
 
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
 
   std::string evaluate(bool prepared) const
   {
@@ -114,6 +121,11 @@ public:
   field field_;
   std::string operand;
   T value;
+
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
 
   std::string evaluate(bool prepared) const
   {
@@ -137,6 +149,11 @@ public:
   std::string operand;
   T value;
 
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
+
   std::string evaluate(bool prepared) const
   {
     std::stringstream str;
@@ -158,6 +175,11 @@ public:
   std::string operand;
   T value;
 
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
+
   std::string evaluate(bool prepared) const
   {
     std::stringstream str;
@@ -173,6 +195,11 @@ public:
   condition(const field &fld, const std::initializer_list<T> &args)
     : field_(fld), args_(args)
   {}
+
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
 
   std::string evaluate(bool prepared) const
   {
@@ -203,6 +230,11 @@ public:
   condition(const field &fld, const std::pair<T, T> &range)
     : field_(fld), range_(range) { }
 
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
+
   std::string evaluate(bool prepared) const
   {
     std::stringstream str;
@@ -220,6 +252,11 @@ class condition<condition<L1, R1>, condition<L2, R2>, typename std::enable_if<tr
 public:
   condition(const condition<L1, R1> &l, const condition<L2, R2> &r, basic_condition::t_operand op)
     : left(l), right(r), operand(op) { }
+
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
 
   std::string evaluate(bool prepared) const
   {
@@ -243,6 +280,11 @@ class condition<condition<L, R>, void, typename std::enable_if<true>::type> : pu
 public:
   condition(const condition<L, R> &c, basic_condition::t_operand op)
     : cond(c), operand(basic_condition::operands[op]) { }
+
+  std::string compile(basic_dialect &d, t_compile_type)
+  {
+    return "";
+  };
 
   std::string evaluate(bool prepared) const
   {

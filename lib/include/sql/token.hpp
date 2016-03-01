@@ -323,27 +323,6 @@ struct columns : public token
   t_brackets with_brackets_;
 };
 
-struct basic_condition : public token
-{
-  basic_condition(basic_dialect::t_token tok) : token(tok) { }
-};
-
-template < class COND >
-struct condition : public basic_condition
-{
-  condition(const COND &c)
-    : basic_condition(basic_dialect::CLAUSE)
-    , cond(c)
-  {}
-
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
-  {
-    return cond.evaluate(compile_type == t_compile_type::PREPARED);
-  }
-
-  COND cond;
-};
-
 }
 
 /// @endcond

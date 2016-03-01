@@ -65,7 +65,7 @@ public:
     LIMIT,
     OFFSET,
     DISTINCT,
-    CLAUSE,
+    CONDITION,
     SET,
     NOT_NULL,
     PRIMARY_KEY
