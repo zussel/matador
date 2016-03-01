@@ -112,24 +112,71 @@ struct set : public token
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override;
 };
 
+struct values : public token
+{
+  values() : token(basic_dialect::VALUES) {}
+
+  void push_back(const std::shared_ptr<basic_value> &val) { values_.push_back(val); }
+
+  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
+  {
+    return d.compile(*this);
+  }
+
+  std::vector<std::shared_ptr<basic_value>> values_;
+};
+
 struct basic_value : public token
 {
   basic_value(basic_dialect::t_token tok) : token(tok) { }
+
+  virtual std::string compile(basic_dialect &d, token::t_compile_type type);
+
+  virtual std::string str() const = 0;
 };
 
+template < class T, class Enabled = void >
+struct value;
+
 template < class T >
-struct value : public basic_value
+struct value<T, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_value
 {
-  value(const std::string &col, data_type_t t, T val)
+  value(T val)
     : basic_value(basic_dialect::VALUE)
-    , column(col)
-    , type(t)
+//    , column(col)
+//    , type(t)
     , val(val)
   { }
 
-  virtual std::string compile(basic_dialect &d, token::t_compile_type type) override
+  std::string str() const
   {
-    return d.compile(*this);
+    std::stringstream str;
+    str << val;
+    return str.str();
+  }
+
+  std::string column;
+  data_type_t type;
+  T val;
+};
+
+template < class T >
+struct value<T, typename std::enable_if<
+  std::is_same<std::string, T>::value ||
+  std::is_same<const char*, T>::value>::type> : public basic_value
+{
+  value(T val)
+    : basic_value(basic_dialect::VALUE)
+//    , column(col)
+//    , type(t)
+    , val(val)
+  { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
   }
 
   std::string column;
@@ -187,11 +234,26 @@ struct group_by : public token
   std::string column;
 };
 
-struct where : public token
+struct basic_where : public token
 {
-  where() : token(basic_dialect::WHERE) {}
+  basic_where() : token(basic_dialect::WHERE) {}
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override;
+};
+
+template < class COND >
+struct where : public basic_where
+{
+  where(const COND &c)
+    : cond(c)
+  {}
+
+  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
+  {
+    return cond.evaluate(compile_type == t_compile_type::PREPARED);
+  }
+
+  COND cond;
 };
 
 struct column : public token
@@ -242,15 +304,23 @@ struct varchar_column : public typed_column
 
 struct columns : public token
 {
-  columns() : token(basic_dialect::COLUMNS) {}
+  enum t_brackets {
+    WITH_BRACKETS,
+    WITHOUT_BRACKETS
+  };
+
+  explicit columns(t_brackets with_brackets);
 
   void push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
+
+  bool with_brackets() const { return with_brackets_ == WITH_BRACKETS; }
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) override
   {
     return d.compile(*this);
   }
   std::vector<std::shared_ptr<column>> columns_;
+  t_brackets with_brackets_;
 };
 
 struct basic_condition : public token

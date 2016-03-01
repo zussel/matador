@@ -275,7 +275,7 @@ public:
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
-    sql_.append(new detail::where);
+    sql_.append(new detail::basic_where);
     sql_.append(new detail::condition<COND>(c));
 
     state = QUERY_COND_WHERE;

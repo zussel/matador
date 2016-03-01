@@ -66,34 +66,52 @@ std::string TestDialect::compile(oos::detail::remove &remove1)
   return "";
 }
 
+std::string TestDialect::compile(oos::detail::values &values)
+{
+  std::string result(token(values.type) + " (");
+
+  if (values.values_.size() > 1) {
+    std::for_each(values.values_.begin(), values.values_.end() - 1, [&](const std::shared_ptr<detail::basic_value> &val)
+    {
+      result += val->compile(*this, detail::token::DIRECT);
+      result += ", ";
+    });
+  }
+  if (!values.values_.empty()) {
+    result += values.values_.back()->compile(*this, detail::token::DIRECT);
+  }
+  result += ") ";
+  return result;
+}
+
 std::string TestDialect::compile(oos::detail::basic_value &value)
 {
-  return "";
+  return value.str();
 }
 
 std::string TestDialect::compile(oos::detail::insert &insert)
 {
-  return "";
+  return token(insert.type) + " " + insert.table + " ";
 }
 
 std::string TestDialect::compile(oos::detail::group_by &by)
 {
-  return "";
+  return token(by.type) + " " + by.column + " ";
 }
 
 std::string TestDialect::compile(oos::detail::desc &desc)
 {
-  return "";
+  return token(desc.type) + " ";
 }
 
 std::string TestDialect::compile(oos::detail::asc &asc)
 {
-  return "";
+  return token(asc.type) + " ";
 }
 
 std::string TestDialect::compile(oos::detail::order_by &by)
 {
-  return "";
+  return token(by.type) + " " + by.column + " ";
 }
 
 std::string TestDialect::compile(oos::detail::basic_condition &token)
@@ -101,14 +119,14 @@ std::string TestDialect::compile(oos::detail::basic_condition &token)
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::where &where)
+std::string TestDialect::compile(oos::detail::basic_where &where)
 {
   return "";
 }
 
 std::string TestDialect::compile(oos::detail::from &from)
 {
-  return "";
+  return token(from.type) + " " + from.table + " ";
 }
 
 std::string TestDialect::compile(oos::detail::varchar_column &column)
@@ -135,7 +153,10 @@ std::string TestDialect::compile(oos::detail::typed_column &column)
 
 std::string TestDialect::compile(oos::detail::columns &columns)
 {
-  std::string result("(");
+  std::string result;
+  if (columns.with_brackets()) {
+    result += "(";
+  }
 
   if (columns.columns_.size() > 1) {
     std::for_each(columns.columns_.begin(), columns.columns_.end() - 1, [&](const std::shared_ptr<detail::column> &col)
@@ -147,7 +168,12 @@ std::string TestDialect::compile(oos::detail::columns &columns)
   if (!columns.columns_.empty()) {
     result += columns.columns_.back()->compile(*this, detail::token::DIRECT);
   }
-  result += ") ";
+
+  if (columns.with_brackets()) {
+    result += ")";
+  }
+
+  result += " ";
   return result;
 }
 

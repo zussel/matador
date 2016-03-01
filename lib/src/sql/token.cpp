@@ -71,22 +71,22 @@ std::string remove::compile(basic_dialect &d, t_compile_type compile_type)
 
 std::string distinct::compile(basic_dialect &d, t_compile_type compile_type)
 {
-  d.compile(*this);
+  return d.compile(*this);
 }
 
 std::string set::compile(basic_dialect &d, t_compile_type compile_type)
 {
-  d.compile(*this);
+  return d.compile(*this);
 }
 
 std::string asc::compile(basic_dialect &d, t_compile_type compile_type)
 {
-  d.compile(*this);
+  return d.compile(*this);
 }
 
 std::string desc::compile(basic_dialect &d, t_compile_type compile_type)
 {
-  d.compile(*this);
+  return d.compile(*this);
 }
 
 from::from(const std::string &t)
@@ -121,13 +121,10 @@ order_by::order_by(const std::string &col)
 std::string order_by::compile(basic_dialect &d, t_compile_type compile_type)
 {
   return d.compile(*this);
-//  std::string result = token::compile(d, compile_type);
-//  result += column + " ";
-//  return result;
 }
 
 group_by::group_by(const std::string &col)
-  : token(basic_dialect::ORDER_BY), column(col)
+  : token(basic_dialect::GROUP_BY), column(col)
 {}
 
 std::string group_by::compile(basic_dialect &d, t_compile_type compile_type)
@@ -138,10 +135,15 @@ std::string group_by::compile(basic_dialect &d, t_compile_type compile_type)
 //  return result;
 }
 
-std::string where::compile(basic_dialect &d, t_compile_type compile_type)
+std::string basic_where::compile(basic_dialect &d, t_compile_type compile_type)
 {
   d.compile(*this);
 }
+
+columns::columns(t_brackets with_brackets)
+  : token(basic_dialect::COLUMNS)
+  , with_brackets_(with_brackets)
+{}
 
 column::column(const std::string &col)
   : token(basic_dialect::COLUMN)
@@ -160,6 +162,11 @@ typed_column::typed_column(const std::string &col, data_type_t t, std::size_t id
 
 std::string typed_column::compile(basic_dialect &d, t_compile_type compile_type)
   {
+  return d.compile(*this);
+}
+
+std::string basic_value::compile(basic_dialect &d, token::t_compile_type type)
+{
   return d.compile(*this);
 }
 

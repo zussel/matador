@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "sql/sql.hpp"
 #include "sql/token.hpp"
 //#include "sql/condition.hpp"
@@ -112,7 +113,7 @@ std::string sql::compile(basic_dialect &dialect, detail::token::t_compile_type c
 {
   std::string result;
   for(auto tokptr : token_list_) {
-    result += tokptr->compile(dialect, compile_type);
+    result.append(tokptr->compile(dialect, compile_type));
   }
   return result;
 }

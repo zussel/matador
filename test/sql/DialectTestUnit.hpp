@@ -16,6 +16,10 @@ public:
   void test_create_query();
   void test_drop_query();
   void test_insert_query();
+  void test_select_all_query();
+  void test_select_ordered_query();
+  void test_select_grouped_query();
+  void test_select_where_query();
 };
 
 
