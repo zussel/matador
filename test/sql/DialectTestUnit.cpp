@@ -63,6 +63,8 @@ void DialectTestUnit::test_insert_query()
 
   s.append(cols.release());
 
+  std::unique_ptr<oos::detail::values> vals(new detail::values);
 
+  vals->push_back(std::make_shared(detail::value<unsigned long>>))
 
 }
