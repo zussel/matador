@@ -2,6 +2,7 @@
 // Created by sascha on 2/25/16.
 //
 #include "sql/column_serializer.hpp"
+#include "sql/column.hpp"
 
 #include "tools/identifiable_holder.hpp"
 #include "tools/varchar.hpp"

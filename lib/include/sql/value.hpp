@@ -18,34 +18,25 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
 
+#include "sql/token.hpp"
+
 #include <string>
 #include <typeinfo>
 
 namespace oos {
 
+template<class T, class Enabled = void>
+struct value;
+
+namespace detail {
 /// @cond OOS_DEV
 
-template < class T >
-class value;
-
-class value_base
+struct basic_value : public token
 {
-public:
-  value_base() {}
-  value_base(const std::string &v)
-    : val_(v)
-  {}
-  virtual ~value_base() {}
+  basic_value(basic_dialect::t_token tok) : token(tok) { }
 
-  std::string val() const
-  {
-    return val_;
-  }
-
-  template < class T >
-  T get()
-  {
-    value<T> *v = dynamic_cast<value<T>* >(this);
+  template < class T > T get() const {
+    oos::value<T> *v = dynamic_cast<oos::value<T>* >(this);
     if (v) {
       return v->template get<T>();
     } else {
@@ -53,31 +44,62 @@ public:
     }
   }
 
-private:
-  template < class T >
-  T operator()();
-  
-  std::string val_;
-};
-
-template < class T >
-class value : public value_base
-{
-public:
-  value(const T &val)
-    : value_(val)
-  {}
-  virtual ~value() { /*delete value_;*/ }
-
-  template < class V >
-  V get()
+  std::string value() const
   {
-    return value_;
+    return str();
   }
 
-private:
-  T value_;
+  virtual std::string compile(basic_dialect &d, token::t_compile_type compile_type) const;
+
+  virtual std::string str() const = 0;
 };
+
+}
+
+template<class T>
+struct value<T, typename std::enable_if<std::is_scalar<T>::value>::type> : public detail::basic_value
+{
+  value(T val)
+    : basic_value(basic_dialect::VALUE)
+//    , column(col)
+//    , type(t)
+    , val(val) { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << val;
+    return str.str();
+  }
+
+  std::string column;
+  data_type_t type;
+  T val;
+};
+
+template<class T>
+struct value<T, typename std::enable_if<
+  std::is_same<std::string, T>::value ||
+  std::is_same<const char *, T>::value>::type> : public detail::basic_value
+{
+  value(T val)
+    : basic_value(basic_dialect::VALUE)
+//    , column(col)
+//    , type(t)
+    , val(val) { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  std::string column;
+  data_type_t type;
+  T val;
+};
+
 /// @endcond
 
 }

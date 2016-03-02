@@ -19,78 +19,78 @@ ConditionUnitTest::ConditionUnitTest()
 
 void ConditionUnitTest::test_logical_condition()
 {
-  oos::field name("name");
+  oos::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name(), "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
 
   auto cond1 = name != "Hans";
 
-  UNIT_ASSERT_EQUAL(cond1.evaluate(false), "name <> 'Hans'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond1.evaluate(oos::detail::token::DIRECT), "name <> 'Hans'", "expected evaluated condition is false");
 
-  oos::field age("age");
+  oos::column age("age");
 
-  UNIT_ASSERT_EQUAL(age.name(), "age", "name must be equal age");
+  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
 
   auto cond2 = age != 9;
 
-  UNIT_ASSERT_EQUAL(cond2.evaluate(false), "age <> 9", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond2.evaluate(oos::detail::token::DIRECT), "age <> 9", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_and_condition()
 {
-  oos::field name("name");
+  oos::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name(), "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
 
   auto cond = name != "Hans" && name != "Dieter";
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "(name <> 'Hans' AND name <> 'Dieter')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(name <> 'Hans' AND name <> 'Dieter')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_or_condition()
 {
-  oos::field name("name");
+  oos::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name(), "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
 
   auto cond = name == "Hans" || name == "Dieter";
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "name = 'Hans' OR name = 'Dieter'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "name = 'Hans' OR name = 'Dieter'", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_not_condition()
 {
-  oos::field name("name");
+  oos::column name("name");
 
-  UNIT_ASSERT_EQUAL(name.name(), "name", "name must be equal name");
+  UNIT_ASSERT_EQUAL(name.name, "name", "name must be equal name");
 
   auto cond = !(name != "Hans");
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "NOT (name <> 'Hans')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "NOT (name <> 'Hans')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_in_condition()
 {
-  oos::field age("age");
-  UNIT_ASSERT_EQUAL(age.name(), "age", "name must be equal age");
+  oos::column age("age");
+  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
 
   auto cond = age != 7 && oos::in(age,  {7,5,5,8});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "(age <> 7 AND age IN (7,5,5,8))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age IN (7,5,5,8))", "expected evaluated condition is false");
 
   cond = age != 7 && oos::in(age,  {7});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_between_condition()
 {
-  oos::field age("age");
-  UNIT_ASSERT_EQUAL(age.name(), "age", "name must be equal age");
+  oos::column age("age");
+  UNIT_ASSERT_EQUAL(age.name, "age", "name must be equal age");
 
   auto cond = age != 7 && oos::between(age, 21, 30);
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(false), "(age <> 7 AND age BETWEEN 21 AND 30)", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age BETWEEN 21 AND 30)", "expected evaluated condition is false");
 }
 
 

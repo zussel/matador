@@ -132,7 +132,7 @@ SET(SQL_SOURCES
   sql/sql_exception.cpp
 	sql/column_serializer.cpp
 	sql/token.cpp
-)
+	sql/column.cpp sql/dialect_token.cpp sql/value.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -154,7 +154,7 @@ SET(SQL_HEADER
 	../include/sql/field.hpp
 	../include/sql/basic_dialect.hpp
 	../include/sql/column_serializer.hpp
-)
+	../include/sql/column.hpp ../include/sql/dialect_token.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp

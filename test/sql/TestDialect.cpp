@@ -4,7 +4,9 @@
 
 #include "TestDialect.hpp"
 
-#include "sql/token.hpp"
+#include "sql/dialect_token.hpp"
+#include "sql/column.hpp"
+
 #include "sql/types.hpp"
 
 #include <algorithm>
@@ -56,17 +58,17 @@ const char* TestDialect::type_string(data_type_t type) const
   }
 }
 
-std::string TestDialect::compile(oos::detail::limit &limit)
+std::string TestDialect::compile(const oos::detail::limit &limit)
 {
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::remove &remove1)
+std::string TestDialect::compile(const oos::detail::remove &remove1)
 {
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::values &values)
+std::string TestDialect::compile(const oos::detail::values &values)
 {
   std::string result(token(values.type) + " (");
 
@@ -84,74 +86,74 @@ std::string TestDialect::compile(oos::detail::values &values)
   return result;
 }
 
-std::string TestDialect::compile(oos::detail::basic_value &value)
+std::string TestDialect::compile(const oos::detail::basic_value &value)
 {
   return value.str();
 }
 
-std::string TestDialect::compile(oos::detail::insert &insert)
+std::string TestDialect::compile(const oos::detail::insert &insert)
 {
   return token(insert.type) + " " + insert.table + " ";
 }
 
-std::string TestDialect::compile(oos::detail::group_by &by)
+std::string TestDialect::compile(const oos::detail::group_by &by)
 {
   return token(by.type) + " " + by.column + " ";
 }
 
-std::string TestDialect::compile(oos::detail::desc &desc)
+std::string TestDialect::compile(const oos::detail::desc &desc)
 {
   return token(desc.type) + " ";
 }
 
-std::string TestDialect::compile(oos::detail::asc &asc)
+std::string TestDialect::compile(const oos::detail::asc &asc)
 {
   return token(asc.type) + " ";
 }
 
-std::string TestDialect::compile(oos::detail::order_by &by)
+std::string TestDialect::compile(const oos::detail::order_by &by)
 {
   return token(by.type) + " " + by.column + " ";
 }
 
-std::string TestDialect::compile(oos::detail::basic_condition &token)
+std::string TestDialect::compile(const oos::detail::basic_condition &cond)
 {
-  return "";
+  return cond.compile(*this, detail::token::DIRECT);
 }
 
-std::string TestDialect::compile(oos::detail::basic_where &where)
+std::string TestDialect::compile(const oos::detail::where &where)
 {
-  return "";
+  return token(where.type) + " " + where.cond->compile(*this, detail::token::DIRECT) + " ";
 }
 
-std::string TestDialect::compile(oos::detail::from &from)
+std::string TestDialect::compile(const oos::detail::from &from)
 {
   return token(from.type) + " " + from.table + " ";
 }
 
-std::string TestDialect::compile(oos::detail::varchar_column &column)
+std::string TestDialect::compile(const oos::detail::varchar_column &column)
 {
   std::stringstream str;
   str << column.name << " " << type_string(column.type) << "(" << column.size << ")";
   return str.str();
 }
 
-std::string TestDialect::compile(oos::detail::identifier_column &column)
+std::string TestDialect::compile(const oos::detail::identifier_column &column)
 {
   return column.name + " " + type_string(column.type) + " NOT NULL PRIMARY KEY";
 }
 
-std::string TestDialect::compile(oos::detail::column &column)
+std::string TestDialect::compile(const oos::column &column)
 {
   return column.name;
 }
 
-std::string TestDialect::compile(oos::detail::typed_column &column)
+std::string TestDialect::compile(const oos::detail::typed_column &column)
 {
   return column.name + " " + type_string(column.type);
 }
 
-std::string TestDialect::compile(oos::detail::columns &columns)
+std::string TestDialect::compile(const oos::detail::columns &columns)
 {
   std::string result;
   if (columns.with_brackets()) {
@@ -159,7 +161,7 @@ std::string TestDialect::compile(oos::detail::columns &columns)
   }
 
   if (columns.columns_.size() > 1) {
-    std::for_each(columns.columns_.begin(), columns.columns_.end() - 1, [&](const std::shared_ptr<detail::column> &col)
+    std::for_each(columns.columns_.begin(), columns.columns_.end() - 1, [&](const std::shared_ptr<column> &col)
     {
       result += col->compile(*this, detail::token::DIRECT);
       result += ", ";
@@ -177,32 +179,32 @@ std::string TestDialect::compile(oos::detail::columns &columns)
   return result;
 }
 
-std::string TestDialect::compile(oos::detail::set &set)
+std::string TestDialect::compile(const oos::detail::set &set)
 {
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::update &update)
+std::string TestDialect::compile(const oos::detail::update &update)
 {
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::distinct &distinct)
+std::string TestDialect::compile(const oos::detail::distinct &distinct)
 {
   return "";
 }
 
-std::string TestDialect::compile(oos::detail::select &select1)
+std::string TestDialect::compile(const oos::detail::select &select1)
 {
   return token(select1.type) + " ";
 }
 
-std::string TestDialect::compile(oos::detail::drop &drop)
+std::string TestDialect::compile(const oos::detail::drop &drop)
 {
   return token(drop.type) + " " + drop.table + " ";
 }
 
-std::string TestDialect::compile(oos::detail::create &create)
+std::string TestDialect::compile(const oos::detail::create &create)
 {
   return token(create.type) + " " + create.table + " ";
 }

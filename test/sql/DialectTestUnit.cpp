@@ -7,6 +7,8 @@
 #include "TestDialect.hpp"
 
 #include "sql/sql.hpp"
+#include "sql/dialect_token.hpp"
+#include "sql/column.hpp"
 #include "sql/condition.hpp"
 
 using namespace oos;
@@ -21,6 +23,7 @@ DialectTestUnit::DialectTestUnit()
   add_test("select_ordered", std::bind(&DialectTestUnit::test_select_ordered_query, this), "test select ordered dialect");
   add_test("select_grouped", std::bind(&DialectTestUnit::test_select_grouped_query, this), "test select grouped dialect");
   add_test("select_where", std::bind(&DialectTestUnit::test_select_where_query, this), "test select where dialect");
+  add_test("update", std::bind(&DialectTestUnit::test_update_query, this), "test update dialect");
 }
 
 void DialectTestUnit::test_create_query()
@@ -63,17 +66,17 @@ void DialectTestUnit::test_insert_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITH_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::column>("id"));
-  cols->push_back(std::make_shared<detail::column>("name"));
-  cols->push_back(std::make_shared<detail::column>("age"));
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
 
   s.append(cols.release());
 
   std::unique_ptr<oos::detail::values> vals(new detail::values);
 
-  vals->push_back(std::make_shared<detail::value<unsigned long>>(8));
-  vals->push_back(std::make_shared<detail::value<std::string>>("hans"));
-  vals->push_back(std::make_shared<detail::value<unsigned int>>(25));
+  vals->push_back(std::make_shared<value<unsigned long>>(8));
+  vals->push_back(std::make_shared<value<std::string>>("hans"));
+  vals->push_back(std::make_shared<value<unsigned int>>(25));
 
   s.append(vals.release());
 
@@ -91,9 +94,9 @@ void DialectTestUnit::test_select_all_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::column>("id"));
-  cols->push_back(std::make_shared<detail::column>("name"));
-  cols->push_back(std::make_shared<detail::column>("age"));
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
 
   s.append(cols.release());
 
@@ -113,9 +116,9 @@ void DialectTestUnit::test_select_ordered_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::column>("id"));
-  cols->push_back(std::make_shared<detail::column>("name"));
-  cols->push_back(std::make_shared<detail::column>("age"));
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
 
   s.append(cols.release());
 
@@ -137,9 +140,9 @@ void DialectTestUnit::test_select_grouped_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::column>("id"));
-  cols->push_back(std::make_shared<detail::column>("name"));
-  cols->push_back(std::make_shared<detail::column>("age"));
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
 
   s.append(cols.release());
 
@@ -160,21 +163,51 @@ void DialectTestUnit::test_select_where_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::column>("id"));
-  cols->push_back(std::make_shared<detail::column>("name"));
-  cols->push_back(std::make_shared<detail::column>("age"));
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
 
   s.append(cols.release());
 
   s.append(new detail::from("person"));
 
-  oos::field name("name");
-  auto c = name != "hans";
-
-  s.append(new detail::where(c));
+  oos::column name("name");
+  s.append(new detail::where(name != "hans"));
 
   TestDialect dialect;
   std::string result = s.compile(dialect, detail::token::DIRECT);
 
-  UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE ", result, "select isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE name <> 'hans' ", result, "select isn't as expected");
+
+  s.reset();
+
+  s.append(new detail::select);
+
+  cols.reset(new detail::columns(detail::columns::WITHOUT_BRACKETS));
+
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
+
+  s.append(cols.release());
+
+  s.append(new detail::from("person"));
+
+  s.append(new detail::where(name != "Hans" && name != "Dieter"));
+
+  result = s.compile(dialect, detail::token::DIRECT);
+  UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE (name <> 'Hans' AND name <> 'Dieter') ", result, "select isn't as expected");
+}
+
+void DialectTestUnit::test_update_query()
+{
+  sql s;
+
+  s.append(new detail::update("person"));
+  s.append(new detail::set);
+
+  std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
+
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", "Dieter"));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", 54));
 }

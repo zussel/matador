@@ -160,7 +160,7 @@ void SQLTestUnit::test_query()
   hans.id(1);
   res = q.insert(&hans).execute(*connection_);
 
-  field name("name");
+  column name("name");
   res = q.select().where(name == "hans").execute(*connection_);
 
   auto first = res.begin();
@@ -218,7 +218,7 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
-  field name("name");
+  column name("name");
   res = q.select().where(name == "Hans").execute(*connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
@@ -253,7 +253,7 @@ void SQLTestUnit::test_query_select()
     ++first;
   }
 
-  field height("height");
+  column height("height");
   res = q.select()
     .where(height > 160 && height < 180)
     .order_by("height")

@@ -12,6 +12,8 @@
 
 namespace oos {
 
+struct column;
+
 namespace detail {
 
 struct select;
@@ -19,11 +21,9 @@ struct insert;
 struct update;
 struct remove;
 struct columns;
-struct column;
 struct typed_column;
 struct identifier_column;
 struct varchar_column;
-struct basic_condition;
 struct values;
 struct basic_value;
 struct distinct;
@@ -31,7 +31,8 @@ struct set;
 struct asc;
 struct desc;
 struct from;
-struct basic_where;
+struct where;
+struct basic_condition;
 struct create;
 struct drop;
 struct limit;
@@ -78,29 +79,29 @@ public:
 
   virtual const char* type_string(data_type_t type) const = 0;
 
-  virtual std::string compile(oos::detail::create &) = 0;
-  virtual std::string compile(oos::detail::drop &) = 0;
-  virtual std::string compile(oos::detail::select &) = 0;
-  virtual std::string compile(oos::detail::distinct &) = 0;
-  virtual std::string compile(oos::detail::update &) = 0;
-  virtual std::string compile(oos::detail::set &) = 0;
-  virtual std::string compile(oos::detail::columns &) = 0;
-  virtual std::string compile(oos::detail::column &) = 0;
-  virtual std::string compile(oos::detail::typed_column &) = 0;
-  virtual std::string compile(oos::detail::identifier_column &) = 0;
-  virtual std::string compile(oos::detail::varchar_column &) = 0;
-  virtual std::string compile(oos::detail::from &) = 0;
-  virtual std::string compile(oos::detail::basic_where &) = 0;
-  virtual std::string compile(oos::detail::basic_condition &) = 0;
-  virtual std::string compile(oos::detail::order_by &) = 0;
-  virtual std::string compile(oos::detail::asc &) = 0;
-  virtual std::string compile(oos::detail::desc &) = 0;
-  virtual std::string compile(oos::detail::group_by &) = 0;
-  virtual std::string compile(oos::detail::insert &) = 0;
-  virtual std::string compile(oos::detail::values &) = 0;
-  virtual std::string compile(oos::detail::basic_value &) = 0;
-  virtual std::string compile(oos::detail::remove &) = 0;
-  virtual std::string compile(oos::detail::limit &) = 0;
+  virtual std::string compile(const oos::detail::create &) = 0;
+  virtual std::string compile(const oos::detail::drop &) = 0;
+  virtual std::string compile(const oos::detail::select &) = 0;
+  virtual std::string compile(const oos::detail::distinct &) = 0;
+  virtual std::string compile(const oos::detail::update &) = 0;
+  virtual std::string compile(const oos::detail::set &) = 0;
+  virtual std::string compile(const oos::detail::columns &) = 0;
+  virtual std::string compile(const oos::column &) = 0;
+  virtual std::string compile(const oos::detail::typed_column &) = 0;
+  virtual std::string compile(const oos::detail::identifier_column &) = 0;
+  virtual std::string compile(const oos::detail::varchar_column &) = 0;
+  virtual std::string compile(const oos::detail::from &) = 0;
+  virtual std::string compile(const oos::detail::where &) = 0;
+  virtual std::string compile(const oos::detail::basic_condition &) = 0;
+  virtual std::string compile(const oos::detail::order_by &) = 0;
+  virtual std::string compile(const oos::detail::asc &) = 0;
+  virtual std::string compile(const oos::detail::desc &) = 0;
+  virtual std::string compile(const oos::detail::group_by &) = 0;
+  virtual std::string compile(const oos::detail::insert &) = 0;
+  virtual std::string compile(const oos::detail::values &) = 0;
+  virtual std::string compile(const oos::detail::basic_value &) = 0;
+  virtual std::string compile(const oos::detail::remove &) = 0;
+  virtual std::string compile(const oos::detail::limit &) = 0;
 
 private:
   typedef std::unordered_map<t_token, std::string, std::hash<int>> t_token_map;

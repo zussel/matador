@@ -31,7 +31,7 @@
   #define OOS_API
 #endif
 
-#include "value.hpp"
+#include "sql/value.hpp"
 
 #include <cstddef>
 #include <vector>
@@ -63,10 +63,10 @@ public:
     values_.push_back(value<T>(val));
   }
 
-  void push_back(const std::string &val)
-  {
-    values_.push_back(value_base(val));
-  }
+//  void push_back(const std::string &val)
+//  {
+//    values_.push_back(value<std::string>(val));
+//  }
 
   /**
    * Get value of column position
@@ -83,12 +83,12 @@ public:
 
   std::string str(size_t pos)
   {
-    return values_.at(pos).val();
+    return values_.at(pos).value();
   }
 
 private:
 
-  std::vector<value_base> values_;
+  std::vector<detail::basic_value> values_;
 };
 /// @endcond
 

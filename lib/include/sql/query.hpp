@@ -19,6 +19,8 @@
 #define QUERY_HPP
 
 #include "sql/sql.hpp"
+#include "sql/dialect_token.hpp"
+#include "sql/column.hpp"
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
 #include "sql/connection.hpp"
@@ -275,8 +277,8 @@ public:
   {
     throw_invalid(QUERY_COND_WHERE, state);
 
-    sql_.append(new detail::basic_where);
-    sql_.append(new detail::condition<COND>(c));
+    sql_.append(new detail::where(c));
+//    sql_.append(new condition<COND>(c));
 
     state = QUERY_COND_WHERE;
     return *this;
@@ -424,7 +426,7 @@ public:
   {
     throw_invalid(QUERY_SET, state);
 
-    sql_.append(new detail::value<V>(column, type, val));
+//    sql_.append(new value<V>(column, type, val));
 
     state = QUERY_SET;
 
