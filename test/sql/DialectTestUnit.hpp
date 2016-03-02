@@ -21,6 +21,8 @@ public:
   void test_select_grouped_query();
   void test_select_where_query();
   void test_update_query();
+  void test_update_where_query();
+  void test_delete_query();
 };
 
 

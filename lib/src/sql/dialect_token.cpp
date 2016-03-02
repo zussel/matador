@@ -44,6 +44,7 @@ std::string insert::compile(basic_dialect &d, t_compile_type compile_type) const
 
 update::update(const std::string &t)
   : token(basic_dialect::UPDATE)
+  , table(t)
 {}
 
 std::string update::compile(basic_dialect &d, t_compile_type compile_type) const

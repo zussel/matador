@@ -24,6 +24,8 @@ DialectTestUnit::DialectTestUnit()
   add_test("select_grouped", std::bind(&DialectTestUnit::test_select_grouped_query, this), "test select grouped dialect");
   add_test("select_where", std::bind(&DialectTestUnit::test_select_where_query, this), "test select where dialect");
   add_test("update", std::bind(&DialectTestUnit::test_update_query, this), "test update dialect");
+  add_test("update_where", std::bind(&DialectTestUnit::test_update_where_query, this), "test update where dialect");
+  add_test("delete", std::bind(&DialectTestUnit::test_delete_query, this), "test delete dialect");
 }
 
 void DialectTestUnit::test_create_query()
@@ -210,4 +212,47 @@ void DialectTestUnit::test_update_query()
 
   cols->push_back(std::make_shared<detail::value_column<std::string>>("name", "Dieter"));
   cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", 54));
+
+  s.append(cols.release());
+
+  TestDialect dialect;
+  std::string result = s.compile(dialect, detail::token::DIRECT);
+
+  UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 ", result, "update isn't as expected");
+}
+
+void DialectTestUnit::test_update_where_query()
+{
+  sql s;
+
+  s.append(new detail::update("person"));
+  s.append(new detail::set);
+
+  std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
+
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", "Dieter"));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", 54));
+
+  s.append(cols.release());
+
+  oos::column name("name");
+  oos::column age("age");
+  s.append(new detail::where(name != "Hans" && oos::in(age, {7,5,5,8})));
+
+  TestDialect dialect;
+  std::string result = s.compile(dialect, detail::token::DIRECT);
+
+  UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 WHERE (name <> 'Hans' AND age IN (7,5,5,8)) ", result, "update where isn't as expected");
+}
+
+void DialectTestUnit::test_delete_query()
+{
+  sql s;
+
+  s.append(new detail::remove("person"));
+
+  TestDialect dialect;
+  std::string result = s.compile(dialect, detail::token::DIRECT);
+
+  UNIT_ASSERT_EQUAL("DELETE FROM person ", result, "delete isn't as expected");
 }

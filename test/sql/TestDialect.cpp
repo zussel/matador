@@ -181,12 +181,12 @@ std::string TestDialect::compile(const oos::detail::columns &columns)
 
 std::string TestDialect::compile(const oos::detail::set &set)
 {
-  return "";
+  return token(set.type) + " ";
 }
 
 std::string TestDialect::compile(const oos::detail::update &update)
 {
-  return "";
+  return token(update.type) + " " + update.table + " ";
 }
 
 std::string TestDialect::compile(const oos::detail::distinct &distinct)

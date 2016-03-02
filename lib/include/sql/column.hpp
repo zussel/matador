@@ -66,6 +66,11 @@ struct value_column : public column
     , value_(val)
   { }
 
+  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override
+  {
+    return d.compile(*this) + "=" + value_.compile(d, compile_type);
+  }
+
   value<T> value_;
 };
 
