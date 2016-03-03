@@ -115,9 +115,9 @@ struct from : public token
   std::string table;
 };
 
-struct limit : public token
+struct top : public token
 {
-  limit(size_t lmt);
+  top(size_t lmt);
 
   virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override;
 

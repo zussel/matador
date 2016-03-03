@@ -58,14 +58,16 @@ const char* TestDialect::type_string(data_type_t type) const
   }
 }
 
-std::string TestDialect::compile(const oos::detail::limit &limit)
+std::string TestDialect::compile(const oos::detail::top &top)
 {
-  return "";
+  std::stringstream res;
+  res << token(top.type) << " " << top.limit_ << " ";
+  return res.str();
 }
 
 std::string TestDialect::compile(const oos::detail::remove &remove1)
 {
-  return "";
+  return token(remove1.type) + " " + remove1.table + " ";
 }
 
 std::string TestDialect::compile(const oos::detail::values &values)
@@ -191,7 +193,7 @@ std::string TestDialect::compile(const oos::detail::update &update)
 
 std::string TestDialect::compile(const oos::detail::distinct &distinct)
 {
-  return "";
+  return token(distinct.type) + " ";
 }
 
 std::string TestDialect::compile(const oos::detail::select &select1)

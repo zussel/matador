@@ -35,7 +35,7 @@ struct where;
 struct basic_condition;
 struct create;
 struct drop;
-struct limit;
+struct top;
 struct order_by;
 struct group_by;
 }
@@ -63,7 +63,7 @@ public:
     GROUP_BY,
     ASC,
     DESC,
-    LIMIT,
+    TOP,
     OFFSET,
     DISTINCT,
     CONDITION,
@@ -101,7 +101,7 @@ public:
   virtual std::string compile(const oos::detail::values &) = 0;
   virtual std::string compile(const oos::detail::basic_value &) = 0;
   virtual std::string compile(const oos::detail::remove &) = 0;
-  virtual std::string compile(const oos::detail::limit &) = 0;
+  virtual std::string compile(const oos::detail::top &) = 0;
 
 private:
   typedef std::unordered_map<t_token, std::string, std::hash<int>> t_token_map;
@@ -123,7 +123,7 @@ private:
     {basic_dialect::GROUP_BY, "GROUP BY"},
     {basic_dialect::ASC, "ASC"},
     {basic_dialect::DESC, "DESC"},
-    {basic_dialect::LIMIT, "LIMIT"},
+    {basic_dialect::TOP, "TOP"},
     {basic_dialect::OFFSET, "OFFSET"},
     {basic_dialect::DISTINCT, "DISTINCT"},
     {basic_dialect::SET, "SET"},

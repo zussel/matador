@@ -37,9 +37,6 @@ insert::insert(const std::string &t)
 std::string insert::compile(basic_dialect &d, t_compile_type compile_type) const
 {
   return d.compile(*this);
-//  std::string result = token::compile(d, compile_type);
-//  result += table + " ";
-//  return result;
 }
 
 update::update(const std::string &t)
@@ -50,21 +47,16 @@ update::update(const std::string &t)
 std::string update::compile(basic_dialect &d, t_compile_type compile_type) const
 {
   return d.compile(*this);
-//  std::string result = token::compile(d, compile_type);
-//  result += table + " ";
-//  return result;
 }
 
 remove::remove(const std::string &t)
   : token(basic_dialect::DELETE)
+  , table(t)
 {}
 
 std::string remove::compile(basic_dialect &d, t_compile_type compile_type) const
 {
   return d.compile(*this);
-//  std::string result = token::compile(d, compile_type);
-//  result += table + " ";
-//  return result;
 }
 
 std::string distinct::compile(basic_dialect &d, t_compile_type compile_type) const
@@ -96,11 +88,11 @@ std::string from::compile(basic_dialect &d, t_compile_type compile_type) const
   return d.compile(*this);
 }
 
-limit::limit(size_t lmt)
-  : token(basic_dialect::LIMIT), limit_(lmt)
+top::top(size_t lmt)
+  : token(basic_dialect::TOP), limit_(lmt)
 {}
 
-std::string limit::compile(basic_dialect &d, t_compile_type compile_type) const
+std::string top::compile(basic_dialect &d, t_compile_type compile_type) const
 {
   return d.compile(*this);
 //  std::stringstream str;

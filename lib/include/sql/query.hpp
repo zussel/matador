@@ -373,7 +373,7 @@ public:
    */
   query& limit(std::size_t l)
   {
-    sql_.append(new detail::limit(l));
+    sql_.append(new detail::top(l));
     return *this;
   }
 
