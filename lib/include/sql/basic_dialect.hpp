@@ -43,6 +43,11 @@ struct group_by;
 class basic_dialect
 {
 public:
+  enum t_compile_type {
+    PREPARED,
+    DIRECT
+  };
+
   enum t_token
   {
     CREATE_TABLE = 0,
@@ -71,6 +76,9 @@ public:
     NOT_NULL,
     PRIMARY_KEY
   };
+
+protected:
+  basic_dialect(t_compile_type compile_type) : compile_type_(compile_type) {}
 
 public:
   virtual ~basic_dialect() {}
@@ -103,7 +111,10 @@ public:
   virtual std::string compile(const oos::detail::remove &) = 0;
   virtual std::string compile(const oos::detail::top &) = 0;
 
+  t_compile_type compile_type() const { return compile_type_; }
+
 private:
+  t_compile_type compile_type_;
   typedef std::unordered_map<t_token, std::string, std::hash<int>> t_token_map;
   const t_token_map tokens {
     {basic_dialect::CREATE_TABLE, "CREATE TABLE"},

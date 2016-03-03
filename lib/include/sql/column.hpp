@@ -14,7 +14,7 @@ struct column : public detail::token
 {
   column(const std::string &col);
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override;
+  virtual std::string compile(basic_dialect &d) const override;
 
   std::string name;
 };
@@ -25,7 +25,7 @@ struct typed_column : public oos::column
 {
   typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override;
+  virtual std::string compile(basic_dialect &d) const override;
 
   data_type_t type;
   std::size_t index;
@@ -36,7 +36,7 @@ struct identifier_column : public typed_column
 {
   identifier_column(const char *n, data_type_t t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override
+  virtual std::string compile(basic_dialect &d) const override
   {
     return d.compile(*this);
   }
@@ -49,7 +49,7 @@ struct varchar_column : public typed_column
     , size(size)
   { }
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override
+  virtual std::string compile(basic_dialect &d) const override
   {
     return d.compile(*this);
   }
@@ -66,9 +66,9 @@ struct value_column : public column
     , value_(val)
   { }
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override
+  virtual std::string compile(basic_dialect &d) const override
   {
-    return d.compile(*this) + "=" + value_.compile(d, compile_type);
+    return d.compile(*this) + "=" + value_.compile(d);
   }
 
   value<T> value_;
@@ -87,7 +87,7 @@ struct columns : public token
 
   bool with_brackets() const { return with_brackets_ == WITH_BRACKETS; }
 
-  virtual std::string compile(basic_dialect &d, t_compile_type compile_type) const override
+  virtual std::string compile(basic_dialect &d) const override
   {
     return d.compile(*this);
   }

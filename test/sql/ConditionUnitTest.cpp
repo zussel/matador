@@ -5,6 +5,7 @@
 #include "ConditionUnitTest.hpp"
 
 #include "sql/condition.hpp"
+#include "sql/basic_dialect.hpp"
 
 ConditionUnitTest::ConditionUnitTest()
   : unit_test("condition", "condition test unit")
@@ -25,7 +26,7 @@ void ConditionUnitTest::test_logical_condition()
 
   auto cond1 = name != "Hans";
 
-  UNIT_ASSERT_EQUAL(cond1.evaluate(oos::detail::token::DIRECT), "name <> 'Hans'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond1.evaluate(oos::basic_dialect::DIRECT), "name <> 'Hans'", "expected evaluated condition is false");
 
   oos::column age("age");
 
@@ -33,7 +34,7 @@ void ConditionUnitTest::test_logical_condition()
 
   auto cond2 = age != 9;
 
-  UNIT_ASSERT_EQUAL(cond2.evaluate(oos::detail::token::DIRECT), "age <> 9", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond2.evaluate(oos::basic_dialect::DIRECT), "age <> 9", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_and_condition()
@@ -44,7 +45,7 @@ void ConditionUnitTest::test_and_condition()
 
   auto cond = name != "Hans" && name != "Dieter";
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(name <> 'Hans' AND name <> 'Dieter')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(name <> 'Hans' AND name <> 'Dieter')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_or_condition()
@@ -55,7 +56,7 @@ void ConditionUnitTest::test_or_condition()
 
   auto cond = name == "Hans" || name == "Dieter";
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "name = 'Hans' OR name = 'Dieter'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "name = 'Hans' OR name = 'Dieter'", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_not_condition()
@@ -66,7 +67,7 @@ void ConditionUnitTest::test_not_condition()
 
   auto cond = !(name != "Hans");
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "NOT (name <> 'Hans')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "NOT (name <> 'Hans')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_in_condition()
@@ -76,11 +77,11 @@ void ConditionUnitTest::test_in_condition()
 
   auto cond = age != 7 && oos::in(age,  {7,5,5,8});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age IN (7,5,5,8))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND age IN (7,5,5,8))", "expected evaluated condition is false");
 
   cond = age != 7 && oos::in(age,  {7});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_between_condition()
@@ -90,7 +91,7 @@ void ConditionUnitTest::test_between_condition()
 
   auto cond = age != 7 && oos::between(age, 21, 30);
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::detail::token::DIRECT), "(age <> 7 AND age BETWEEN 21 AND 30)", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND age BETWEEN 21 AND 30)", "expected evaluated condition is false");
 }
 
 

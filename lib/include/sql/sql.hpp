@@ -62,7 +62,7 @@ public:
 
   void reset();
 
-  std::string compile(basic_dialect &dialect, detail::token::t_compile_type compile_type);
+  std::string compile(basic_dialect &dialect);
 
   static unsigned int type_size(data_type_t type);
   template < class T >

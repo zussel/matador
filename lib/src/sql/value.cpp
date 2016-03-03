@@ -6,7 +6,7 @@
 namespace oos {
 namespace detail {
 
-std::string basic_value::compile(basic_dialect &d, token::t_compile_type compile_type) const
+std::string basic_value::compile(basic_dialect &d) const
 {
   return d.compile(*this);
 }

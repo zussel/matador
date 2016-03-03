@@ -69,12 +69,12 @@ public:
     num_operands = 9
   };
 
-  std::string compile(basic_dialect &d, t_compile_type compiler_type) const
+  std::string compile(basic_dialect &d) const
   {
-    return evaluate(compiler_type);
+    return evaluate(d.compile_type());
   };
 
-  virtual std::string evaluate(t_compile_type compiler_type) const = 0;
+  virtual std::string evaluate(basic_dialect::t_compile_type compiler_type) const = 0;
 
   static std::array<std::string, num_operands> operands;
 };
@@ -108,7 +108,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << field_.name << " " << operand << " " << value;
@@ -129,7 +129,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << field_.name << " " << operand << " '" << value << "'";
@@ -151,7 +151,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << value << " " << operand << " " << field_.name;
@@ -172,7 +172,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << "'" << value << "' " << operand << " " << field_.name;
@@ -188,7 +188,7 @@ public:
     : field_(fld), args_(args)
   {}
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << field_.name << " IN (";
@@ -217,7 +217,7 @@ public:
   condition(const column &fld, const std::pair<T, T> &range)
     : field_(fld), range_(range) { }
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
@@ -235,7 +235,7 @@ public:
   condition(const condition<L1, R1> &l, const condition<L2, R2> &r, detail::basic_condition::t_operand op)
     : left(l), right(r), operand(op) { }
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     if (operand == detail::basic_condition::AND) {
@@ -258,7 +258,7 @@ public:
   condition(const condition<L, R> &c, detail::basic_condition::t_operand op)
     : cond(c), operand(detail::basic_condition::operands[op]) { }
 
-  std::string evaluate(t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
     str << operand << " (" << cond.evaluate(compiler_type) << ")";

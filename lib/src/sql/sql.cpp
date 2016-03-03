@@ -109,11 +109,11 @@ std::string sql::str(bool prepared) const
   return generate(prepared);
 }
 
-std::string sql::compile(basic_dialect &dialect, detail::token::t_compile_type compile_type)
+std::string sql::compile(basic_dialect &dialect)
 {
   std::string result;
   for(auto tokptr : token_list_) {
-    result.append(tokptr->compile(dialect, compile_type));
+    result.append(tokptr->compile(dialect));
   }
   return result;
 }

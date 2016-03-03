@@ -45,8 +45,8 @@ void DialectTestUnit::test_create_query()
 
   s.append(cols.release());
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("CREATE TABLE person (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(256), age INTEGER) ", result, "create statement isn't as expected");
 }
@@ -57,8 +57,8 @@ void DialectTestUnit::test_drop_query()
 
   s.append(new detail::drop("person"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("DROP TABLE person ", result, "drop statement isn't as expected");
 }
@@ -85,8 +85,8 @@ void DialectTestUnit::test_insert_query()
 
   s.append(vals.release());
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("INSERT INTO person (id, name, age) VALUES (8, 'hans', 25) ", result, "insert statement isn't as expected");
 }
@@ -107,8 +107,8 @@ void DialectTestUnit::test_select_all_query()
 
   s.append(new detail::from("person"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person ", result, "select isn't as expected");
 }
@@ -130,8 +130,8 @@ void DialectTestUnit::test_select_distinct_query()
 
   s.append(new detail::from("person"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT DISTINCT id, name, age FROM person ", result, "select distinct isn't as expected");
 }
@@ -153,8 +153,8 @@ void DialectTestUnit::test_select_limit_query()
 
   s.append(new detail::from("person"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT TOP 10 id, name, age FROM person ", result, "select limit isn't as expected");
 }
@@ -177,8 +177,8 @@ void DialectTestUnit::test_select_ordered_query()
   s.append(new detail::order_by("name"));
   s.append(new detail::desc);
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person ORDER BY name DESC ", result, "select isn't as expected");
 }
@@ -200,8 +200,8 @@ void DialectTestUnit::test_select_grouped_query()
   s.append(new detail::from("person"));
   s.append(new detail::group_by("name"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person GROUP BY name ", result, "select isn't as expected");
 }
@@ -225,8 +225,8 @@ void DialectTestUnit::test_select_where_query()
   oos::column name("name");
   s.append(new detail::where(name != "hans"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE name <> 'hans' ", result, "select isn't as expected");
 
@@ -246,7 +246,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::where(name != "Hans" && name != "Dieter"));
 
-  result = s.compile(dialect, detail::token::DIRECT);
+  result = s.compile(dialect);
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE (name <> 'Hans' AND name <> 'Dieter') ", result, "select isn't as expected");
 }
 
@@ -264,8 +264,8 @@ void DialectTestUnit::test_update_query()
 
   s.append(cols.release());
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 ", result, "update isn't as expected");
 }
@@ -288,8 +288,8 @@ void DialectTestUnit::test_update_where_query()
   oos::column age("age");
   s.append(new detail::where(name != "Hans" && oos::in(age, {7,5,5,8})));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 WHERE (name <> 'Hans' AND age IN (7,5,5,8)) ", result, "update where isn't as expected");
 }
@@ -300,8 +300,8 @@ void DialectTestUnit::test_delete_query()
 
   s.append(new detail::remove("person"));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("DELETE FROM person ", result, "delete isn't as expected");
 }
@@ -316,8 +316,8 @@ void DialectTestUnit::test_delete_where_query()
   oos::column age("age");
   s.append(new detail::where(name != "Hans" && oos::between(age, 21, 30)));
 
-  TestDialect dialect;
-  std::string result = s.compile(dialect, detail::token::DIRECT);
+  TestDialect dialect(basic_dialect::DIRECT);
+  std::string result = s.compile(dialect);
 
   UNIT_ASSERT_EQUAL("DELETE FROM person WHERE (name <> 'Hans' AND age BETWEEN 21 AND 30) ", result, "delete where isn't as expected");
 }

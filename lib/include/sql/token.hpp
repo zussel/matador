@@ -33,15 +33,10 @@ namespace detail {
 /// @cond OOS_DEV
 struct token
 {
-  enum t_compile_type {
-    PREPARED,
-    DIRECT
-  };
-
   explicit token(basic_dialect::t_token tok);
   virtual ~token() {}
 
-  virtual std::string compile(basic_dialect &d, t_compile_type) const = 0;
+  virtual std::string compile(basic_dialect &d) const = 0;
 
   basic_dialect::t_token type;
 };

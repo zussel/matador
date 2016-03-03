@@ -49,7 +49,7 @@ struct basic_value : public token
     return str();
   }
 
-  virtual std::string compile(basic_dialect &d, token::t_compile_type compile_type) const;
+  virtual std::string compile(basic_dialect &d) const;
 
   virtual std::string str() const = 0;
 };
