@@ -33,9 +33,6 @@ public:
   virtual void begin() = 0;
   virtual void commit() = 0;
   virtual void rollback() = 0;
-
-  virtual const char* type_string(data_type_t type) const = 0;
-
 };
 
 }

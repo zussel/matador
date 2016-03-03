@@ -131,51 +131,6 @@ int sqlite_connection::parse_result(void* param, int column_count, char** values
   return 0;
 }
 
-const char*sqlite_connection::type_string(data_type_t type) const
-{
-  switch(type) {
-    case type_char:
-      return "INTEGER";
-    case type_short:
-      return "INTEGER";
-    case type_int:
-      return "INTEGER";
-    case type_long:
-      return "INTEGER";
-    case type_unsigned_char:
-      return "INTEGER";
-    case type_unsigned_short:
-      return "INTEGER";
-    case type_unsigned_int:
-      return "INTEGER";
-    case type_unsigned_long:
-      return "INTEGER";
-    case type_bool:
-      return "INTEGER";
-    case type_float:
-      return "DOUBLE";
-    case type_double:
-      return "DOUBLE";
-    case type_char_pointer:
-      return "VARCHAR";
-    case type_varchar:
-      return "VARCHAR";
-    case type_text:
-      return "TEXT";
-    case type_date:
-      return "REAL";
-    case type_time:
-      return "TEXT";
-    default:
-      {
-        std::stringstream msg;
-        msg << "sqlite sql: unknown type xxx [" << type << "]";
-        throw std::logic_error(msg.str());
-        //throw std::logic_error("mysql sql: unknown type");
-      }
-  }
-}
-
 unsigned long sqlite_connection::last_inserted_id()
 {
   return static_cast<unsigned long>(sqlite3_last_insert_rowid(sqlite_db_));

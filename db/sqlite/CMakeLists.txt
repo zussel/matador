@@ -4,7 +4,7 @@ SET(SQLITE_DATABASE_SOURCES
   src/sqlite_statement.cpp
   src/sqlite_result.cpp
   src/sqlite_prepared_result.cpp
-)
+	src/sqlite_dialect.cpp)
 
 SET(SQLITE_DATABASE_HEADER
 		include/sqlite_connection.hpp
@@ -13,7 +13,7 @@ SET(SQLITE_DATABASE_HEADER
   include/sqlite_result.hpp
   include/sqlite_prepared_result.hpp
   include/sqlite_types.hpp
-)
+	include/sqlite_dialect.hpp)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/db/sqlite/include)
 

@@ -81,8 +81,6 @@ public:
    */
   sqlite3* operator()();
 
-  virtual const char* type_string(data_type_t type) const override;
-
 private:
   static int parse_result(void* param, int column_count, char** values, char** columns);
 
