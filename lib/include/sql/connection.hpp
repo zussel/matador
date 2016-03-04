@@ -40,7 +40,7 @@ public:
   void close();
 
   template < class T >
-  result<T> execute(const std::string &stmt)
+  result<T> execute(const sql &stmt)
   {
     return result<T>(impl_->execute(stmt));
   }

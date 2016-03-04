@@ -12,6 +12,7 @@
 
 namespace oos {
 
+class sql;
 struct column;
 
 namespace detail {
@@ -77,11 +78,11 @@ public:
     PRIMARY_KEY
   };
 
-protected:
-  basic_dialect(t_compile_type compile_type) : compile_type_(compile_type) {}
-
 public:
   virtual ~basic_dialect() {}
+
+  std::string direct(const sql &s);
+  std::string prepare(const sql &s);
 
   std::string token(t_token tok) const { return tokens.at(tok); }
 

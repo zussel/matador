@@ -443,7 +443,7 @@ public:
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return conn.execute<T>(sql_.direct());
+    return conn.execute<T>(sql_);
   }
 
   /**

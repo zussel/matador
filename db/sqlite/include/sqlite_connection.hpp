@@ -29,6 +29,8 @@
   #define OOS_SQLITE_API
 #endif
 
+#include "sqlite_dialect.hpp"
+
 #include "sql/statement_impl.hpp"
 #include "sql/connection_impl.hpp"
 #include "sql/result_impl.hpp"
@@ -67,6 +69,7 @@ public:
 
   virtual void open(const std::string &db);
   virtual void close() override;
+  detail::result_impl* execute(const oos::sql &stmt);
   detail::result_impl* execute(const std::string &stmt);
   detail::statement_impl* prepare(const oos::sql &stmt);
   virtual void begin() override;
@@ -86,6 +89,7 @@ private:
 
 private:
   sqlite3 *sqlite_db_;
+  sqlite_dialect dialect_;
 };
 
 }

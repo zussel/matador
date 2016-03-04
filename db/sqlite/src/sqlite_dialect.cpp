@@ -77,12 +77,12 @@ std::string sqlite_dialect::compile(const oos::detail::values &values)
   if (values.values_.size() > 1) {
     std::for_each(values.values_.begin(), values.values_.end() - 1, [&](const std::shared_ptr<detail::basic_value> &val)
     {
-      result += val->compile(*this, detail::token::DIRECT);
+      result += val->compile(*this);
       result += ", ";
     });
   }
   if (!values.values_.empty()) {
-    result += values.values_.back()->compile(*this, detail::token::DIRECT);
+    result += values.values_.back()->compile(*this);
   }
   result += ") ";
   return result;
@@ -120,12 +120,12 @@ std::string sqlite_dialect::compile(const oos::detail::order_by &by)
 
 std::string sqlite_dialect::compile(const oos::detail::basic_condition &cond)
 {
-  return cond.compile(*this, detail::token::DIRECT);
+  return cond.compile(*this);
 }
 
 std::string sqlite_dialect::compile(const oos::detail::where &where)
 {
-  return token(where.type) + " " + where.cond->compile(*this, detail::token::DIRECT) + " ";
+  return token(where.type) + " " + where.cond->compile(*this) + " ";
 }
 
 std::string sqlite_dialect::compile(const oos::detail::from &from)
@@ -165,12 +165,12 @@ std::string sqlite_dialect::compile(const oos::detail::columns &columns)
   if (columns.columns_.size() > 1) {
     std::for_each(columns.columns_.begin(), columns.columns_.end() - 1, [&](const std::shared_ptr<column> &col)
     {
-      result += col->compile(*this, detail::token::DIRECT);
+      result += col->compile(*this);
       result += ", ";
     });
   }
   if (!columns.columns_.empty()) {
-    result += columns.columns_.back()->compile(*this, detail::token::DIRECT);
+    result += columns.columns_.back()->compile(*this);
   }
 
   if (columns.with_brackets()) {

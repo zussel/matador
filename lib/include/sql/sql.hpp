@@ -57,12 +57,9 @@ public:
   
   void append(detail::token *tok);
 
-  std::string prepare() const;
-  std::string direct() const;
-
   void reset();
 
-  std::string compile(basic_dialect &dialect);
+  std::string compile(basic_dialect &dialect) const;
 
   static unsigned int type_size(data_type_t type);
   template < class T >
@@ -72,9 +69,6 @@ public:
   }
 
   std::string str(bool prepared) const;
-
-private:
-  std::string generate(bool prepared) const;
 
 private:
   token_list_t token_list_;

@@ -18,6 +18,7 @@ public:
   virtual bool is_open() const { return true; }
   virtual void close() {}
 
+  virtual oos::detail::result_impl *execute(const oos::sql &) { return nullptr; }
   virtual oos::detail::result_impl *execute(const std::string &) { return nullptr; }
   virtual detail::statement_impl *prepare(const oos::sql &) { return nullptr; };
 

@@ -27,6 +27,7 @@ public:
   virtual bool is_open() const = 0;
   virtual void close() = 0;
 
+  virtual detail::result_impl* execute(const oos::sql &stmt) = 0;
   virtual detail::result_impl* execute(const std::string &stmt) = 0;
   virtual detail::statement_impl* prepare(const oos::sql &stmt) = 0;
 

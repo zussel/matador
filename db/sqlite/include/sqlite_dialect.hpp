@@ -39,6 +39,7 @@ public:
   virtual std::string compile(const oos::detail::remove &remove1);
   virtual std::string compile(const oos::detail::top &limit);
 };
+
 }
 }
 #endif //OOS_SQLITE_DIALECT_HPP

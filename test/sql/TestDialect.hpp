@@ -13,9 +13,7 @@ class TestDialect : public oos::basic_dialect
 {
 public:
 
-  TestDialect(basic_dialect::t_compile_type compile_type)
-    : basic_dialect(compile_type)
-  { }
+  TestDialect() { }
 
   const char* type_string(oos::data_type_t type) const;
 

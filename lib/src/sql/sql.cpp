@@ -33,41 +33,9 @@ void sql::append(detail::token *tok)
   token_list_.push_back(tokptr);
 }
 
-//void sql::append(const condition &c)
-//{
-//  field_ptr f(new column(c.column().c_str(), c.type(), host_field_vector_.size(), true));
-//
-//  token_list_.push_back(new condition_token(c));
-//  host_field_map_.insert(std::make_pair(c.column(), f));
-//  host_field_vector_.push_back(f);
-//}
-
-std::string sql::prepare() const
-{
-  return generate(true);
-}
-
-std::string sql::direct() const
-{
-  return generate(false);
-}
-
 void sql::reset()
 {
   token_list_.clear();
-}
-
-std::string sql::generate(bool prepared) const
-{
-  std::string str;
-  token_list_t::const_iterator first = token_list_.begin();
-  token_list_t::const_iterator last = token_list_.end();
-  while (first != last) {
-    first++;
-//    const token *t = *first++;
-//    str += t->get(prepared);
-  }
-  return str;
 }
 
 unsigned int sql::type_size(data_type_t type)
@@ -104,12 +72,7 @@ unsigned int sql::type_size(data_type_t type)
   }
 }
 
-std::string sql::str(bool prepared) const
-{
-  return generate(prepared);
-}
-
-std::string sql::compile(basic_dialect &dialect)
+std::string sql::compile(basic_dialect &dialect) const
 {
   std::string result;
   for(auto tokptr : token_list_) {

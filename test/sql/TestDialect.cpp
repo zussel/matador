@@ -5,9 +5,6 @@
 #include "TestDialect.hpp"
 
 #include "sql/dialect_token.hpp"
-#include "sql/column.hpp"
-
-#include "sql/types.hpp"
 
 #include <algorithm>
 

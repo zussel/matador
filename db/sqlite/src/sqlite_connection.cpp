@@ -25,6 +25,7 @@
 
 #include <sqlite3.h>
 #include <sstream>
+#include <iostream>
 
 using namespace std::placeholders;
 
@@ -95,11 +96,18 @@ void sqlite_connection::rollback()
   execute("ROLLBACK TRANSACTION;");
 }
 
-oos::detail::result_impl* sqlite_connection::execute(const std::string &sql)
+oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)
 {
+  std::string stmt = dialect_.direct(sql);
+  return execute(stmt);
+}
+
+oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
+{
+  std::cout << "sql: " << stmt << '\n';
   std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg = 0;
-  int ret = sqlite3_exec(sqlite_db_, sql.c_str(), parse_result, res.get(), &errmsg);
+  int ret = sqlite3_exec(sqlite_db_, stmt.c_str(), parse_result, res.get(), &errmsg);
   if (ret != SQLITE_OK) {
     std::string error(errmsg);
     sqlite3_free(errmsg);
@@ -110,7 +118,7 @@ oos::detail::result_impl* sqlite_connection::execute(const std::string &sql)
 
 oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
 {
-  return new sqlite_statement(*this, sql.prepare());
+  return new sqlite_statement(*this, dialect_.prepare(sql));
 }
 
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)
