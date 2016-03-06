@@ -81,18 +81,28 @@ struct columns : public token
     WITHOUT_BRACKETS
   };
 
-  explicit columns(t_brackets with_brackets);
+  explicit columns(t_brackets with_brackets = WITH_BRACKETS);
 
   void push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
 
-  bool with_brackets() const { return with_brackets_ == WITH_BRACKETS; }
+  columns& with_brackets()
+  {
+    with_brackets_ = WITH_BRACKETS;
+    return *this;
+  }
+
+  columns& without_brackets()
+  {
+    with_brackets_ = WITHOUT_BRACKETS;
+    return *this;
+  }
 
   virtual std::string compile(basic_dialect &d) const override
   {
     return d.compile(*this);
   }
   std::vector<std::shared_ptr<column>> columns_;
-  t_brackets with_brackets_;
+  t_brackets with_brackets_ = WITH_BRACKETS;
 };
 
 }

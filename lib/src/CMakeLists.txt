@@ -130,13 +130,13 @@ SET(SQL_SOURCES
   sql/statement_impl.cpp
   sql/row.cpp
   sql/sql_exception.cpp
-	sql/column_serializer.cpp
-	sql/token.cpp
-	sql/column.cpp
-	sql/dialect_token.cpp
-	sql/value.cpp
-	sql/basic_dialect.cpp
-)
+  sql/typed_column_serializer.cpp
+  sql/token.cpp
+  sql/column.cpp
+  sql/dialect_token.cpp
+  sql/value.cpp
+  sql/basic_dialect.cpp
+  sql/column_serializer.cpp sql/value_serializer.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -157,10 +157,10 @@ SET(SQL_HEADER
   ../include/sql/sql_exception.hpp
 	../include/sql/field.hpp
 	../include/sql/basic_dialect.hpp
-	../include/sql/column_serializer.hpp
+		../include/sql/typed_column_serializer.hpp
 	../include/sql/column.hpp
 	../include/sql/dialect_token.hpp
-)
+		../include/sql/column_serializer.hpp ../include/sql/value_serializer.hpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp

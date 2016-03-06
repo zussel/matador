@@ -1,9 +1,9 @@
 //
-// Created by sascha on 04.03.16.
+// Created by sascha on 2/25/16.
 //
 
-#ifndef OOS_COLUMN_SERIALIZER_HPP
-#define OOS_COLUMN_SERIALIZER_HPP
+#ifndef OOS_TYPED_COLUMN_SERIALIZER_HPP
+#define OOS_TYPED_COLUMN_SERIALIZER_HPP
 
 #include "sql/sql.hpp"
 #include "sql/column.hpp"
@@ -13,19 +13,17 @@
 #include "tools/serializer.hpp"
 
 namespace oos {
-
-class varchar_base;
-
 namespace detail {
 
-class column_serializer : public serializer {
+class typed_column_serializer : public serializer
+{
 public:
-  explicit column_serializer(sql &d);
+  explicit typed_column_serializer(sql &d);
+  ~typed_column_serializer() {}
 
-  ~column_serializer() { }
-
-  template<class T>
-  columns *serialize(T &x) {
+  template < class T >
+  columns* serialize(T &x)
+  {
     cols_.reset(new columns);
     oos::access::serialize(*this, x);
     return cols_.release();
@@ -52,10 +50,12 @@ public:
 
 private:
   std::unique_ptr<detail::columns> cols_;
+  size_t index_ = 0;
   sql &sql_;
 };
 
 }
+
 }
 
-#endif //OOS_COLUMN_SERIALIZER_HPP
+#endif //OOS_TYPED_COLUMN_SERIALIZER_HPP

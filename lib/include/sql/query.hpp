@@ -24,6 +24,7 @@
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
 #include "sql/connection.hpp"
+#include "sql/typed_column_serializer.hpp"
 #include "sql/column_serializer.hpp"
 
 #include <memory>
@@ -127,16 +128,14 @@ public:
   query& create(T *obj)
   {
     reset();
-//    sql_.append(std::string("CREATE TABLE ") + table_name_ + std::string(" ("));
+
     sql_.append(new detail::create(table_name_));
 
     detail::column_serializer serializer(sql_);
-//    query_create s(sql_, connection_);
-    oos::access::serialize(serializer, *obj);
-//    obj->serialize(s);
-//    sql_.append(")");
 
-//  std::cout << sql_.str(true) << '\n';
+    std::unique_ptr<detail::columns> cols(serializer.serialize(*obj));
+
+    sql_.append(cols.release());
 
     state = QUERY_CREATE;
     return *this;
@@ -193,6 +192,12 @@ public:
   {
     reset();
     sql_.append(new detail::insert(table_name_));
+
+    detail::column_serializer serializer(sql_);
+
+    std::unique_ptr<detail::columns> cols(serializer.serialize(*obj));
+
+    sql_.append(cols.release());
 
     // insert column tokens
 //    sql_.append(") VALUES (");

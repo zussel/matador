@@ -155,7 +155,7 @@ std::string TestDialect::compile(const oos::detail::typed_column &column)
 std::string TestDialect::compile(const oos::detail::columns &columns)
 {
   std::string result;
-  if (columns.with_brackets()) {
+  if (columns.with_brackets_ == detail::columns::WITH_BRACKETS) {
     result += "(";
   }
 
@@ -170,7 +170,7 @@ std::string TestDialect::compile(const oos::detail::columns &columns)
     result += columns.columns_.back()->compile(*this);
   }
 
-  if (columns.with_brackets()) {
+  if (columns.with_brackets_ == detail::columns::WITH_BRACKETS) {
     result += ")";
   }
 
