@@ -79,9 +79,13 @@ void DialectTestUnit::test_insert_query()
 
   std::unique_ptr<oos::detail::values> vals(new detail::values);
 
-  vals->push_back(std::make_shared<value<unsigned long>>(8));
-  vals->push_back(std::make_shared<value<std::string>>("hans"));
-  vals->push_back(std::make_shared<value<unsigned int>>(25));
+  unsigned long id(8);
+  std::string name("hans");
+  unsigned int age(25);
+
+  vals->push_back(std::make_shared<value<unsigned long>>(id));
+  vals->push_back(std::make_shared<value<std::string>>(name));
+  vals->push_back(std::make_shared<value<unsigned int>>(age));
 
   s.append(vals.release());
 

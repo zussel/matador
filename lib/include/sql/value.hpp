@@ -20,6 +20,11 @@
 
 #include "sql/token.hpp"
 
+#include "tools/varchar.hpp"
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+#include "tools/string.hpp"
+
 #include <string>
 #include <typeinfo>
 
@@ -57,12 +62,13 @@ struct basic_value : public token
 }
 
 template<class T>
-struct value<T, typename std::enable_if<std::is_scalar<T>::value>::type> : public detail::basic_value
+struct value<T, typename std::enable_if<
+  std::is_scalar<T>::value &&
+  !std::is_same<char, T>::value &&
+  !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
-  value(T val)
+  value(T &val)
     : basic_value(basic_dialect::VALUE)
-//    , column(col)
-//    , type(t)
     , val(val) { }
 
   std::string str() const
@@ -71,21 +77,16 @@ struct value<T, typename std::enable_if<std::is_scalar<T>::value>::type> : publi
     str << val;
     return str.str();
   }
-
-  std::string column;
-  data_type_t type;
-  T val;
+  T &val;
 };
 
 template<class T>
 struct value<T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
-  std::is_same<const char *, T>::value>::type> : public detail::basic_value
+  std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
 {
-  value(T val)
+  value(T &val)
     : basic_value(basic_dialect::VALUE)
-//    , column(col)
-//    , type(t)
     , val(val) { }
 
   std::string str() const
@@ -95,9 +96,78 @@ struct value<T, typename std::enable_if<
     return str.str();
   }
 
-  std::string column;
-  data_type_t type;
-  T val;
+  T &val;
+};
+
+template<>
+struct value<char, typename std::enable_if<true>::type> : public detail::basic_value
+{
+  value(char &val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val) { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  char &val;
+};
+
+template<>
+struct value<char*, typename std::enable_if<true>::type> : public detail::basic_value
+{
+  value(char *val, size_t l)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+    , len(l)
+  { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  char *val;
+  size_t len;
+};
+
+template<>
+struct value<oos::date, typename std::enable_if<true>::type> : public detail::basic_value
+{
+  value(oos::date &val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val) { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << oos::to_string(val) << "'";
+    return str.str();
+  }
+
+  oos::date &val;
+};
+
+template<>
+struct value<oos::time, typename std::enable_if<true>::type> : public detail::basic_value
+{
+  value(oos::time &val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val) { }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << oos::to_string(val) << "'";
+    return str.str();
+  }
+
+  oos::time &val;
 };
 
 /// @endcond

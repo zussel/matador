@@ -26,6 +26,7 @@
 #include "sql/connection.hpp"
 #include "sql/typed_column_serializer.hpp"
 #include "sql/column_serializer.hpp"
+#include "value_serializer.hpp"
 
 #include <memory>
 #include <sstream>
@@ -170,8 +171,12 @@ public:
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
+    detail::column_serializer serializer(sql_);
+
     T obj;
-//    oos::access::serialize(s, obj);
+    std::unique_ptr<detail::columns> cols(serializer.serialize(obj));
+
+    sql_.append(cols.release());
 
     sql_.append(new detail::from(table_name_));
 
@@ -199,9 +204,11 @@ public:
 
     sql_.append(cols.release());
 
-    // insert column tokens
-//    sql_.append(") VALUES (");
-    // insert values
+    detail::value_serializer vserializer(sql_);
+
+    std::unique_ptr<detail::values> vals(vserializer.serialize(*obj));
+
+    sql_.append(vals.release());
 
     state = QUERY_INSERT;
 
