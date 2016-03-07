@@ -52,6 +52,7 @@ private:
   std::unique_ptr<detail::columns> cols_;
   size_t index_ = 0;
   sql &sql_;
+  bool generate_pk_column_ = false;
 };
 
 }

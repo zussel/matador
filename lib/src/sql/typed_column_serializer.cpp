@@ -10,6 +10,12 @@
 namespace oos {
 namespace detail {
 
+template < class T, int type >
+std::shared_ptr<column> make_column();
+
+template < class T, int type >
+std::shared_ptr<column> make_column();
+
 typed_column_serializer::typed_column_serializer(oos::sql &d)
   : sql_(d)
 {}
@@ -102,9 +108,11 @@ void typed_column_serializer::serialize(const char *id, identifiable_holder &x, 
 //  serialize(id, type_long);
 }
 
-void typed_column_serializer::serialize(const char *, basic_identifier &)
+void typed_column_serializer::serialize(const char *id, basic_identifier &x)
 {
-  // Todo: determine identifier type
+  generate_pk_column_ = true;
+  x.serialize(id, *this);
+  generate_pk_column_ = false;
 //  new identifier_column()
 }
 

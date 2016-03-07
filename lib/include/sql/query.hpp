@@ -132,7 +132,7 @@ public:
 
     sql_.append(new detail::create(table_name_));
 
-    detail::column_serializer serializer(sql_);
+    detail::typed_column_serializer serializer(sql_);
 
     std::unique_ptr<detail::columns> cols(serializer.serialize(*obj));
 
