@@ -20,15 +20,20 @@ namespace detail {
 
 class column_serializer : public serializer {
 public:
-  explicit column_serializer(sql &d);
+  column_serializer(sql &d, columns::t_brackets brackets);
 
   ~column_serializer() { }
 
   template<class T>
-  columns *serialize(T &x) {
-    cols_.reset(new columns);
+  columns *execute(T &x) {
+    cols_.reset(new columns(brackets_));
     oos::access::serialize(*this, x);
     return cols_.release();
+  }
+
+  template<class T>
+  void serialize(T &x) {
+    oos::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x);
@@ -51,6 +56,7 @@ public:
   void serialize(const char *id, basic_identifier &x);
 
 private:
+  columns::t_brackets brackets_;
   std::unique_ptr<detail::columns> cols_;
   sql &sql_;
 };

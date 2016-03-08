@@ -25,7 +25,7 @@ public:
   virtual std::string compile(const oos::column &column);
   virtual std::string compile(const oos::detail::typed_column &column);
   virtual std::string compile(const oos::detail::identifier_column &column);
-  virtual std::string compile(const oos::detail::varchar_column &column);
+  virtual std::string compile(const oos::detail::typed_varchar_column &column);
   virtual std::string compile(const oos::detail::from &from);
   virtual std::string compile(const oos::detail::where &where);
   virtual std::string compile(const oos::detail::basic_condition &token);

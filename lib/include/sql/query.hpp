@@ -134,7 +134,7 @@ public:
 
     detail::typed_column_serializer serializer(sql_);
 
-    std::unique_ptr<detail::columns> cols(serializer.serialize(*obj));
+    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
 
@@ -171,10 +171,10 @@ public:
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
-    detail::column_serializer serializer(sql_);
+    detail::column_serializer serializer(sql_, detail::columns::WITHOUT_BRACKETS);
 
     T obj;
-    std::unique_ptr<detail::columns> cols(serializer.serialize(obj));
+    std::unique_ptr<detail::columns> cols(serializer.execute(obj));
 
     sql_.append(cols.release());
 
@@ -198,15 +198,15 @@ public:
     reset();
     sql_.append(new detail::insert(table_name_));
 
-    detail::column_serializer serializer(sql_);
+    detail::column_serializer serializer(sql_, detail::columns::WITH_BRACKETS);
 
-    std::unique_ptr<detail::columns> cols(serializer.serialize(*obj));
+    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
 
     detail::value_serializer vserializer(sql_);
 
-    std::unique_ptr<detail::values> vals(vserializer.serialize(*obj));
+    std::unique_ptr<detail::values> vals(vserializer.execute(*obj));
 
     sql_.append(vals.release());
 

@@ -163,7 +163,7 @@ struct value<oos::time, typename std::enable_if<true>::type> : public detail::ba
   std::string str() const
   {
     std::stringstream str;
-    str << "'" << oos::to_string(val) << "'";
+    str << "'" << oos::to_string(val, "%F %T.%f") << "'";
     return str.str();
   }
 

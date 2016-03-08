@@ -90,7 +90,11 @@ std::string sqlite_dialect::compile(const oos::detail::values &values)
 
 std::string sqlite_dialect::compile(const oos::detail::basic_value &value)
 {
-  return value.str();
+  if (compile_type() == DIRECT) {
+    return value.str();
+  } else {
+    return "?";
+  }
 }
 
 std::string sqlite_dialect::compile(const oos::detail::insert &insert)
@@ -133,7 +137,7 @@ std::string sqlite_dialect::compile(const oos::detail::from &from)
   return token(from.type) + " " + from.table + " ";
 }
 
-std::string sqlite_dialect::compile(const oos::detail::varchar_column &column)
+std::string sqlite_dialect::compile(const oos::detail::typed_varchar_column &column)
 {
   std::stringstream str;
   str << column.name << " " << type_string(column.type) << "(" << column.size << ")";

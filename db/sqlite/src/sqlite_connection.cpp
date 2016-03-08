@@ -118,7 +118,10 @@ oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
 
 oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
 {
-  return new sqlite_statement(*this, dialect_.prepare(sql));
+  std::string stmt(dialect_.prepare(sql));
+  std::cout << "sql: " << stmt << '\n';
+
+  return new sqlite_statement(*this, stmt);
 }
 
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)

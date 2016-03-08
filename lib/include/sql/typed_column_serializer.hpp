@@ -22,11 +22,17 @@ public:
   ~typed_column_serializer() {}
 
   template < class T >
-  columns* serialize(T &x)
+  columns* execute(T &x)
   {
     cols_.reset(new columns);
     oos::access::serialize(*this, x);
     return cols_.release();
+  }
+
+  template < class T >
+  void serialize(T &x)
+  {
+    oos::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x);
@@ -49,10 +55,14 @@ public:
   void serialize(const char *id, basic_identifier &x);
 
 private:
+private:
   std::unique_ptr<detail::columns> cols_;
   size_t index_ = 0;
   sql &sql_;
-  bool generate_pk_column_ = false;
+  typedef std::function<std::shared_ptr<column> (const char*, data_type_t, size_t)> t_create_column_func;
+  t_create_column_func create_column_func_;
+  typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type_t, size_t)> t_create_varchar_column_func;
+  t_create_varchar_column_func create_varchar_column_func_;
 };
 
 }

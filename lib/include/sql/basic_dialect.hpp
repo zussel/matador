@@ -24,7 +24,7 @@ struct remove;
 struct columns;
 struct typed_column;
 struct identifier_column;
-struct varchar_column;
+struct typed_varchar_column;
 struct values;
 struct basic_value;
 struct distinct;
@@ -98,7 +98,7 @@ public:
   virtual std::string compile(const oos::column &) = 0;
   virtual std::string compile(const oos::detail::typed_column &) = 0;
   virtual std::string compile(const oos::detail::identifier_column &) = 0;
-  virtual std::string compile(const oos::detail::varchar_column &) = 0;
+  virtual std::string compile(const oos::detail::typed_varchar_column &) = 0;
   virtual std::string compile(const oos::detail::from &) = 0;
   virtual std::string compile(const oos::detail::where &) = 0;
   virtual std::string compile(const oos::detail::basic_condition &) = 0;

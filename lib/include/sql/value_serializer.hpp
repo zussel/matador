@@ -23,10 +23,15 @@ public:
   ~value_serializer() { }
 
   template<class T>
-  values *serialize(T &x) {
+  values *execute(T &x) {
     values_.reset(new values);
     oos::access::serialize(*this, x);
     return values_.release();
+  }
+
+  template<class T>
+  void serialize(T &x) {
+    oos::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x);

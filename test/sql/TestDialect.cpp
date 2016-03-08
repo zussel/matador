@@ -130,7 +130,7 @@ std::string TestDialect::compile(const oos::detail::from &from)
   return token(from.type) + " " + from.table + " ";
 }
 
-std::string TestDialect::compile(const oos::detail::varchar_column &column)
+std::string TestDialect::compile(const oos::detail::typed_varchar_column &column)
 {
   std::stringstream str;
   str << column.name << " " << type_string(column.type) << "(" << column.size << ")";

@@ -42,9 +42,9 @@ struct identifier_column : public typed_column
   }
 };
 
-struct varchar_column : public typed_column
+struct typed_varchar_column : public typed_column
 {
-  varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
+  typed_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
     : typed_column(n, t, idx, host)
     , size(size)
   { }
@@ -55,6 +55,18 @@ struct varchar_column : public typed_column
   }
 
   size_t size;
+};
+
+struct identifier_varchar_column : public typed_varchar_column
+{
+  identifier_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
+    : typed_varchar_column(n, size, t, idx, host)
+  { }
+
+  virtual std::string compile(basic_dialect &d) const override
+  {
+    return d.compile(*this);
+  }
 };
 
 template < class T >
