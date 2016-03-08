@@ -264,8 +264,10 @@ void DialectTestUnit::test_update_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", "Dieter"));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", 54));
+  std::string dieter("Dieter");
+  unsigned int age54(54);
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
 
   s.append(cols.release());
 
@@ -284,8 +286,10 @@ void DialectTestUnit::test_update_where_query()
 
   std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", "Dieter"));
-  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", 54));
+  std::string dieter("Dieter");
+  unsigned int age54(54);
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
 
   s.append(cols.release());
 

@@ -67,9 +67,15 @@ struct value<T, typename std::enable_if<
   !std::is_same<char, T>::value &&
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
+  value(T &&val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+  { }
+
   value(T &val)
     : basic_value(basic_dialect::VALUE)
-    , val(val) { }
+    , val(val)
+  { }
 
   std::string str() const
   {
@@ -85,6 +91,11 @@ struct value<T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
   std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
 {
+  value(T &&val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+  { }
+
   value(T &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
@@ -102,6 +113,11 @@ struct value<T, typename std::enable_if<
 template<>
 struct value<char, typename std::enable_if<true>::type> : public detail::basic_value
 {
+  value(char &&val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+  { }
+
   value(char &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
@@ -139,6 +155,11 @@ struct value<char*, typename std::enable_if<true>::type> : public detail::basic_
 template<>
 struct value<oos::date, typename std::enable_if<true>::type> : public detail::basic_value
 {
+  value(oos::date &&val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+  { }
+
   value(oos::date &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
@@ -156,6 +177,11 @@ struct value<oos::date, typename std::enable_if<true>::type> : public detail::ba
 template<>
 struct value<oos::time, typename std::enable_if<true>::type> : public detail::basic_value
 {
+  value(oos::time &&val)
+    : basic_value(basic_dialect::VALUE)
+    , val(val)
+  { }
+
   value(oos::time &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }

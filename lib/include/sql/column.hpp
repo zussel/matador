@@ -73,7 +73,12 @@ template < class T >
 struct value_column : public column
 {
 
-  value_column(const std::string &col, T val)
+  value_column(const std::string &col, T&& val)
+    : column(col)
+    , value_(std::move(val))
+  { }
+
+  value_column(const std::string &col, T& val)
     : column(col)
     , value_(val)
   { }
