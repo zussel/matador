@@ -4,7 +4,7 @@ SET(MYSQL_DATABASE_SOURCES
   src/mysql_statement.cpp
   src/mysql_result.cpp
   src/mysql_prepared_result.cpp
-)
+	src/mysql_dialect.cpp)
 
 SET(MYSQL_DATABASE_HEADER
   include/mysql_connection.hpp
@@ -14,6 +14,7 @@ SET(MYSQL_DATABASE_HEADER
   include/mysql_prepared_result.hpp
   include/mysql_result_info.hpp
   include/mysql_types.hpp
+	include/mysql_dialect.hpp
 )
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/db/mysql/include)

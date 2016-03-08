@@ -39,16 +39,16 @@ mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
   , host_size(0)
   , stmt_(mysql_stmt_init(db()))
 {
-  str(stmt.prepare());
+  str(db.dialect().prepare(stmt));
   // Todo: use new sql compile style
   // parse sql to create result and host arrays
-//  result_size = stmt.result_size();
-//  host_size = stmt.host_size();
-//  if (host_size) {
-//    host_array = new MYSQL_BIND[host_size];
-//    memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
-//    length_vector.assign(host_size, 0);
-//  }
+  result_size = db.dialect().column_count();
+  host_size = db.dialect().bind_count();
+  if (host_size) {
+    host_array = new MYSQL_BIND[host_size];
+    memset(host_array, 0, host_size * sizeof(MYSQL_BIND));
+    length_vector.assign(host_size, 0);
+  }
 
   int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
   if (res > 0) {

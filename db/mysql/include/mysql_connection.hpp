@@ -32,6 +32,8 @@
 #include "sql/connection_impl.hpp"
 #include "sql/types.hpp"
 
+#include "mysql_dialect.hpp"
+
 #ifdef WIN32
 #include <winsock2.h>
 #include <mysql.h>
@@ -67,8 +69,6 @@ public:
 
   virtual unsigned long last_inserted_id();
 
-  virtual const char* type_string(data_type_t type) const;
-
   /**
    * Return the raw pointer to the sqlite3
    * database struct.
@@ -79,15 +79,19 @@ public:
 
   virtual void open(const std::string &db);
   virtual void close() override;
+  detail::result_impl* execute(const oos::sql &stmt);
   detail::result_impl* execute(const std::string &stmt);
   detail::statement_impl* prepare(const oos::sql &stmt);
   virtual void begin() override;
   virtual void commit() override;
   virtual void rollback() override;
 
+  mysql_dialect& dialect();
+
 private:
   MYSQL mysql_;
   bool is_open_;
+  mysql_dialect dialect_;
 };
 
 }

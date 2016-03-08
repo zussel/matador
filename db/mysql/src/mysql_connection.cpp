@@ -101,6 +101,12 @@ MYSQL*mysql_connection::operator()()
   return &mysql_;
 }
 
+detail::result_impl*mysql_connection::execute(const oos::sql &sql)
+{
+  std::string stmt = dialect_.direct(sql);
+  return execute(stmt);
+}
+
 detail::result_impl*mysql_connection::execute(const std::string &stmt)
 {
   if (mysql_query(&mysql_, stmt.c_str())) {
@@ -132,56 +138,9 @@ void mysql_connection::rollback()
   // TODO: check result
 }
 
-const char*mysql_connection::type_string(data_type_t type) const
+mysql_dialect &mysql_connection::dialect()
 {
-  switch(type) {
-    case type_char:
-      return "INTEGER";
-    case type_short:
-      return "INTEGER";
-    case type_int:
-      return "INTEGER";
-    case type_long:
-      return "INTEGER";
-    case type_unsigned_char:
-      return "INTEGER";
-    case type_unsigned_short:
-      return "INTEGER";
-    case type_unsigned_int:
-      return "INTEGER";
-    case type_unsigned_long:
-      return "INTEGER";
-    case type_bool:
-      return "INTEGER";
-    case type_float:
-      return "FLOAT";
-    case type_double:
-      return "DOUBLE";
-    case type_date:
-      return "DATE";
-    case type_time:
-#if MYSQL_VERSION_ID < 50604
-      // before mysql version 5.6.4 datetime
-      // doesn't support fractional seconds
-      // so we use a datetime string here
-      return "VARCHAR(256)";
-#else
-      return "DATETIME(3)";
-#endif
-    case type_char_pointer:
-      return "VARCHAR";
-    case type_varchar:
-      return "VARCHAR";
-    case type_text:
-      return "TEXT";
-    default:
-      {
-        std::stringstream msg;
-        msg << "mysql sql: unknown type xxx [" << type << "]";
-        throw std::logic_error(msg.str());
-        //throw std::logic_error("mysql sql: unknown type");
-      }
-    }
+  return dialect_;
 }
 
 unsigned long mysql_connection::last_inserted_id()

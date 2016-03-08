@@ -1,16 +1,16 @@
 //
-// Created by sascha on 3/3/16.
+// Created by sascha on 3/8/16.
 //
 
-#ifndef OOS_SQLITE_DIALECT_HPP
-#define OOS_SQLITE_DIALECT_HPP
+#ifndef OOS_MYSQL_DIALECT_HPP
+#define OOS_MYSQL_DIALECT_HPP
 
 #include "sql/basic_dialect.hpp"
 
 namespace oos {
-namespace sqlite {
+namespace mysql {
 
-class sqlite_dialect : public basic_dialect
+class mysql_dialect : public basic_dialect
 {
 public:
   const char* type_string(oos::data_type_t type) const;
@@ -38,9 +38,17 @@ public:
   virtual std::string compile(const oos::detail::basic_value &value);
   virtual std::string compile(const oos::detail::remove &remove1);
   virtual std::string compile(const oos::detail::top &limit);
+
+  void reset() { bind_count_ = 0; column_count_ = 0; };
+  int bind_count() const { return bind_count_; }
+  int column_count() const { return column_count_; }
+
+private:
+  int bind_count_ = 0;
+  int column_count_ = 0;
 };
 
 }
 }
 
-#endif //OOS_SQLITE_DIALECT_HPP
+#endif //OOS_MYSQL_DIALECT_HPP

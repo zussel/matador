@@ -68,8 +68,6 @@ public:
     return type_traits<T>::data_type();
   }
 
-  std::string str(bool prepared) const;
-
 private:
   token_list_t token_list_;
 };
