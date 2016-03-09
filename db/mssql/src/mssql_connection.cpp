@@ -15,7 +15,6 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include "mssql_connection.hpp"
 #include "mssql_statement.hpp"
 #include "mssql_result.hpp"
@@ -153,7 +152,6 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   if (!connection_) {
     throw_error("mssql", "no odbc connection established");
   }
-  std::cout << "sql: " << sqlstr << '\n';
   // create statement handle
   SQLHANDLE stmt;
 

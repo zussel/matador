@@ -24,8 +24,6 @@
 #include "sql/sql.hpp"
 
 #include <sqlite3.h>
-#include <sstream>
-#include <iostream>
 
 using namespace std::placeholders;
 
@@ -104,7 +102,6 @@ oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)
 
 oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
 {
-  std::cout << "sql: " << stmt << '\n';
   std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg = 0;
   int ret = sqlite3_exec(sqlite_db_, stmt.c_str(), parse_result, res.get(), &errmsg);
@@ -119,8 +116,6 @@ oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
 oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
 {
   std::string stmt(dialect_.prepare(sql));
-  std::cout << "sql: " << stmt << '\n';
-
   return new sqlite_statement(*this, stmt);
 }
 
