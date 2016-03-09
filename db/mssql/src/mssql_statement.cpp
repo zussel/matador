@@ -41,11 +41,12 @@ mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
   // create statement handle
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db.handle(), &stmt_);
   throw_error(ret, SQL_HANDLE_DBC, db.handle(), "mssql", "error on creating sql statement");
-  str(s.prepare());
+  str(db.dialect().prepare(s));
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }
+
 mssql_statement::~mssql_statement()
 {
   clear();

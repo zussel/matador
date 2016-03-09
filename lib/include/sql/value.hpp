@@ -61,6 +61,16 @@ struct basic_value : public token
 
 }
 
+struct null_value : public detail::basic_value
+{
+  null_value() : basic_value(basic_dialect::VALUE) { }
+
+  std::string str() const
+  {
+    return "NULL";
+  }
+};
+
 template<class T>
 struct value<T, typename std::enable_if<
   std::is_scalar<T>::value &&

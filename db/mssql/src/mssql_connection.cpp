@@ -15,6 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "mssql_connection.hpp"
 #include "mssql_statement.hpp"
 #include "mssql_result.hpp"
@@ -141,11 +142,18 @@ void mssql_connection::close()
   is_open_ = false;
 }
 
+oos::detail::result_impl *mssql_connection::execute(const oos::sql &sql)
+{
+  std::string stmt(dialect_.direct(sql));
+  return execute(stmt);
+}
+
 detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
 {
   if (!connection_) {
     throw_error("mssql", "no odbc connection established");
   }
+  std::cout << "sql: " << sqlstr << '\n';
   // create statement handle
   SQLHANDLE stmt;
 
@@ -190,50 +198,6 @@ void mssql_connection::rollback()
   // TODO: check result
 }
 
-const char*mssql_connection::type_string(data_type_t type) const
-{
-  switch(type) {
-    case type_char:
-      return "CHAR(1)";
-    case type_short:
-      return "SMALLINT";
-    case type_int:
-      return "INT";
-    case type_long:
-      return "BIGINT";
-    case type_unsigned_char:
-      return "SMALLINT";
-    case type_unsigned_short:
-      return "INT";
-    case type_unsigned_int:
-      return "BIGINT";
-    case type_unsigned_long:
-      return "NUMERIC(21,0)";
-    case type_bool:
-      return "BIT";
-    case type_float:
-      return "FLOAT";
-    case type_double:
-      return "FLOAT";
-    case type_char_pointer:
-      return "VARCHAR";
-    case type_varchar:
-      return "VARCHAR";
-    case type_text:
-      return "TEXT";
-    case type_date:
-      return "DATE";
-    case type_time:
-      return "DATETIME";
-    default:
-      {
-        std::stringstream msg;
-        msg << "mssql connection: unknown type xxx [" << type << "]";
-        throw std::logic_error(msg.str());
-      }
-    }
-}
-
 SQLHANDLE mssql_connection::handle()
 {
   return connection_;
@@ -246,6 +210,12 @@ unsigned long mssql_connection::last_inserted_id()
 //  res.get(0, id);
   return id;
 }
+
+mssql_dialect &mssql_connection::dialect()
+{
+  return dialect_;
+}
+
 
 }
 

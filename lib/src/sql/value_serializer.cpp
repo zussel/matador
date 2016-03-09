@@ -99,8 +99,7 @@ void value_serializer::serialize(const char *id, identifiable_holder &x, cascade
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   } else {
-    std::unique_ptr<basic_identifier> pk(x.create_identifier());
-    pk->serialize(id, *this);
+    values_->push_back(std::make_shared<null_value>());
   }
 }
 

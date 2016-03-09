@@ -33,6 +33,8 @@
 #include <windows.h>
 #endif
 
+#include "mssql_dialect.hpp"
+
 #include "sql/connection_impl.hpp"
 
 #include <sqltypes.h>
@@ -65,22 +67,24 @@ public:
    */
   virtual bool is_open() const;
 
-  virtual oos::detail::result_impl* execute(const std::string &sql);
+  virtual oos::detail::result_impl* execute(const oos::sql &stmt);
+  virtual oos::detail::result_impl* execute(const std::string &stmt);
   virtual oos::detail::statement_impl* prepare(const oos::sql &stmt);
   virtual void begin();
   virtual void commit();
   virtual void rollback();
 
-  virtual const char* type_string(data_type_t type) const;
-
   SQLHANDLE handle();
 
   virtual unsigned long last_inserted_id();
+
+  mssql_dialect& dialect();
 
 private:
   SQLHANDLE odbc_;
   SQLHANDLE connection_;
 
+  mssql_dialect dialect_;
   bool is_open_;
   
   int retries_;
