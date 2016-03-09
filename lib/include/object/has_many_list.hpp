@@ -249,8 +249,26 @@ public:
 
   iterator erase(iterator i)
   {
-    return i;
+    if (this->ostore_) {
+      relation_type iptr = i.relation_item();
+      this->ostore_->remove(iptr);
+    }
+    container_iterator ci = this->container_.erase(i.iter_);
+    return iterator(ci);
   }
+
+  iterator erase(iterator start, iterator end)
+  {
+    iterator i = start;
+    if (this->ostore_) {
+      while (i != end) {
+        typename base::relation_type iptr = (i++).relation_item();
+        this->ostore_->remove(iptr);
+      }
+    }
+    return iterator(this->container_.erase(start.iter_, end.iter_));
+  }
+
 private:
   item_type* create_item(const value_type &value)
   {
