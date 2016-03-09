@@ -1,4 +1,5 @@
 SET(OBJECT_SOURCES
+	object/action.cpp
 	object/object_store.cpp
 	object/object_proxy.cpp
 	object/object_serializer.cpp
@@ -9,6 +10,7 @@ SET(OBJECT_SOURCES
 	object/transaction.cpp)
 
 SET(OBJECT_INSTALL_HEADER
+	${PROJECT_SOURCE_DIR}/include/object/action.hpp
 	${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
 	${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
 	${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
@@ -33,6 +35,7 @@ SET(OBJECT_INSTALL_HEADER
 
 SET(OBJECT_HEADER
 	#../include/object/attribute_counter.hpp
+	../include/object/action.hpp
 	../include/object/attribute_serializer.hpp
 	../include/object/generic_access.hpp
 	../include/object/object_exception.hpp

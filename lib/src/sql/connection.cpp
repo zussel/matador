@@ -42,10 +42,10 @@ void connection::close()
   impl_->close();
 }
 
-const char *connection::type_string(data_type_t type) const
+const char *connection::type_string(data_type_t) const
 {
   // Todo: re-implement
-  return nullptr;
 //  return impl_->type_string(type);
+  return nullptr;
 }
 }

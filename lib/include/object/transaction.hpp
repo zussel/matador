@@ -5,7 +5,11 @@
 #ifndef OOS_TRANSACTION_HPP
 #define OOS_TRANSACTION_HPP
 
+#include "object/action.hpp"
+
 #include <iostream>
+#include <vector>
+#include <unordered_map>
 
 #ifdef _MSC_VER
 #ifdef oos_EXPORTS
@@ -43,6 +47,14 @@ public:
 
 private:
   object_store &store_;
+
+  typedef std::shared_ptr<action> action_ptr;
+  typedef std::vector<action_ptr> t_action_vactor;
+  typedef t_action_vactor::iterator action_iterator;
+  typedef std::unordered_map<unsigned long, action_iterator> t_id_action_iterator_map;
+
+  t_action_vactor actions_;
+  t_id_action_iterator_map id_map_;
 };
 
 template<class T>
