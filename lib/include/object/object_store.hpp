@@ -23,6 +23,7 @@
 #include "object/object_observer.hpp"
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
+#include "object/transaction.hpp"
 
 #include "tools/sequencer.hpp"
 #include "tools/identifier_setter.hpp"
@@ -553,10 +554,13 @@ public:
     object_inserter_.insert(proxy, object);
     // set this into persistent serializable
     // notify observer
-    if (notify) {
-      std::for_each(observer_list_.begin(), observer_list_.end(),
-                    std::bind(&object_observer::on_insert, std::placeholders::_1, proxy));
+    if (notify && transaction_) {
+      transaction_->on_insert<T>(proxy);
     }
+//    if (notify) {
+//      std::for_each(observer_list_.begin(), observer_list_.end(),
+//                    std::bind(&object_observer::on_insert, std::placeholders::_1, proxy));
+//    }
 
     // insert element into hash map for fast lookup
     object_map_.insert(std::make_pair(proxy->id(), proxy));
@@ -912,6 +916,8 @@ private:
 
   // only used when a has_many object is inserted
   abstract_has_many *temp_container_ = nullptr;
+
+  transaction *transaction_ = nullptr;
 };
 
 template<class T>

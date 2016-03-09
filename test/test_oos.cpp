@@ -27,6 +27,7 @@
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
+#include "object/ObjectTransactiontestUnit.hpp"
 //#include "object/ObjectListTestUnit.hpp"
 //#include "object/ObjectVectorTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
@@ -61,25 +62,26 @@ int main(int argc, char *argv[])
 
   suite.init(argc, argv);
 
-  suite.register_unit(new FirstTestUnit());
-  suite.register_unit(new SecondTestUnit());
+  suite.register_unit(new FirstTestUnit);
+  suite.register_unit(new SecondTestUnit);
 
-  suite.register_unit(new DateTestUnit());
-  suite.register_unit(new TimeTestUnit());
-  suite.register_unit(new BlobTestUnit());
-  suite.register_unit(new VarCharTestUnit());
-  suite.register_unit(new FactoryTestUnit());
-  suite.register_unit(new StringTestUnit());
+  suite.register_unit(new DateTestUnit);
+  suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new BlobTestUnit);
+  suite.register_unit(new VarCharTestUnit);
+  suite.register_unit(new FactoryTestUnit);
+  suite.register_unit(new StringTestUnit);
 
-  suite.register_unit(new PrimaryKeyUnitTest());
-  suite.register_unit(new PrototypeTreeTestUnit());
-  suite.register_unit(new ObjectPrototypeTestUnit());
-  suite.register_unit(new ObjectStoreTestUnit());
-  suite.register_unit(new HasManyVectorUnitTest());
-  suite.register_unit(new HasManyListUnitTest());
+  suite.register_unit(new PrimaryKeyUnitTest);
+  suite.register_unit(new PrototypeTreeTestUnit);
+  suite.register_unit(new ObjectPrototypeTestUnit);
+  suite.register_unit(new ObjectStoreTestUnit);
+  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new HasManyVectorUnitTest);
+  suite.register_unit(new HasManyListUnitTest);
 
-  suite.register_unit(new ConditionUnitTest());
-  suite.register_unit(new DialectTestUnit());
+  suite.register_unit(new ConditionUnitTest);
+  suite.register_unit(new DialectTestUnit);
 
 #ifdef OOS_MYSQL
 //  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));

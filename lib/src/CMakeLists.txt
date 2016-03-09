@@ -6,7 +6,7 @@ SET(OBJECT_SOURCES
 	object/identifier.cpp
 	object/prototype_iterator.cpp
 	object/object_holder.cpp
-)
+	object/transaction.cpp)
 
 SET(OBJECT_INSTALL_HEADER
 	${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -58,7 +58,7 @@ SET(OBJECT_HEADER
 	../include/object/has_many_vector.hpp
 	../include/object/has_many_list.hpp
 	../include/object/has_many_set.hpp
-)
+	../include/object/transaction.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

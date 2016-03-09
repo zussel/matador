@@ -108,7 +108,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << field_.name << " " << operand << " " << value;
@@ -129,7 +129,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << field_.name << " " << operand << " '" << value << "'";
@@ -172,7 +172,7 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << "'" << value << "' " << operand << " " << field_.name;
@@ -188,7 +188,7 @@ public:
     : field_(fld), args_(args)
   {}
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << field_.name << " IN (";
@@ -217,7 +217,7 @@ public:
   condition(const column &fld, const std::pair<T, T> &range)
     : field_(fld), range_(range) { }
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
@@ -235,13 +235,13 @@ public:
   condition(const condition<L1, R1> &l, const condition<L2, R2> &r, detail::basic_condition::t_operand op)
     : left(l), right(r), operand(op) { }
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
     if (operand == detail::basic_condition::AND) {
-      str << "(" << left.evaluate(compiler_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compiler_type) << ")";
+      str << "(" << left.evaluate(compile_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compile_type) << ")";
     } else {
-      str << left.evaluate(compiler_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compiler_type);
+      str << left.evaluate(compile_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compile_type);
     }
     return str.str();
   }

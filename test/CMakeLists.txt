@@ -38,7 +38,7 @@ SET (TEST_OBJECT_SOURCES
   object/HasManyVectorUnitTest.hpp
   object/HasManyListUnitTest.cpp
   object/HasManyListUnitTest.hpp
-)
+  object/ObjectTransactiontestUnit.cpp object/ObjectTransactiontestUnit.hpp)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
