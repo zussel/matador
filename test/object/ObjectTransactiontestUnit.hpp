@@ -14,7 +14,8 @@ class ObjectTransactiontestUnit : public oos::unit_test
 public:
   ObjectTransactiontestUnit();
 
-  void test_insert_transaction();
+  void test_insert();
+  void test_insert_rollback();
 };
 
 #endif //OOS_OBJECTTRANSACTIONTESTUNIT_HPP
