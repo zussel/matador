@@ -6,6 +6,10 @@
 #define OOS_TRANSACTION_HPP
 
 #include "object/action.hpp"
+#include "object/object_exception.hpp"
+#include "object/action_inserter.hpp"
+
+#include "tools/byte_buffer.hpp"
 
 #include <iostream>
 #include <vector>
@@ -38,12 +42,15 @@ public:
   void rollback();
   void abort();
 
-  template < class T >
   void on_insert(object_proxy *proxy);
-  template < class T >
   void on_update(object_proxy *proxy);
-  template < class T >
   void on_delete(object_proxy *proxy);
+
+private:
+  void backup(const action_ptr &a, const object_proxy *proxy);
+  void restore(const action_ptr &a);
+
+  void cleanup();
 
 private:
   object_store &store_;
@@ -55,31 +62,10 @@ private:
 
   t_action_vactor actions_;
   t_id_action_iterator_map id_map_;
+
+  action_inserter inserter_;
+  byte_buffer object_buffer_;
 };
-
-template<class T>
-void transaction::on_insert(object_proxy *proxy)
-{
-  // create insert action
-  T *obj = proxy->obj<T>();
-  std::cout << "obj: " << obj << '\n';
-}
-
-template<class T>
-void transaction::on_update(object_proxy *proxy)
-{
-  // create update action
-  T *obj = proxy->obj<T>();
-  std::cout << "obj: " << obj << '\n';
-}
-
-template<class T>
-void transaction::on_delete(object_proxy *proxy)
-{
-  // create delete action
-  T *obj = proxy->obj<T>();
-  std::cout << "obj: " << obj << '\n';
-}
 
 }
 #endif //OOS_TRANSACTION_HPP

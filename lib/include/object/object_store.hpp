@@ -190,15 +190,12 @@ public:
 
   template<class T>
   void serialize(const char *, T &) { }
-
   void serialize(const char *, char *, size_t) { }
 
   template<class T>
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
-
   template<class T, template<class ...> class C>
   void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
-
   template<class T>
   void serialize(const char *id, identifier<T> &x);
 
@@ -555,7 +552,7 @@ public:
     // set this into persistent serializable
     // notify observer
     if (notify && transaction_) {
-      transaction_->on_insert<T>(proxy);
+      transaction_->on_insert(proxy);
     }
 //    if (notify) {
 //      std::for_each(observer_list_.begin(), observer_list_.end(),
@@ -621,27 +618,17 @@ public:
     return object_deleter_.is_deletable(o.proxy_, o.get());
   }
 
-  /**
-   * Removes an serializable from the serializable store. After successfull
-   * removal the serializable is set to zero and isn't valid any more.
-   * 
-   * Before removal is done a reference and pointer counter check
-   * is done. If at least one counter is greater than zero the
-   * serializable can't be removed and false is returned.
-   * 
-   * @throw object_exception
-   * @param o Object to remove.
-   */
-  template<class T>
-  void remove(object_ptr<T> &o) {
-    if (o.proxy_ == nullptr) {
+  template < class T >
+  void remove(object_proxy *proxy, bool notify)
+  {
+    if (proxy == nullptr) {
       throw object_exception("object proxy is nullptr");
     }
-    if (o.proxy_->node() == nullptr) {
+    if (proxy->node() == nullptr) {
       throw object_exception("prototype node is nullptr");
     }
     // check if serializable tree is deletable
-    if (!object_deleter_.is_deletable<T>(o.proxy_, o.get())) {
+    if (!object_deleter_.is_deletable<T>(proxy, proxy->obj())) {
       throw object_exception("object is not removable");
     }
 
@@ -650,11 +637,27 @@ public:
 
     while (first != last) {
       if (!first->second.ignore) {
-        remove_object((first++)->second.proxy, true);
+        remove_proxy((first++)->second.proxy, notify);
       } else {
         ++first;
       }
     }
+  }
+  /**
+   * Removes an object from the object store. After successfull
+   * removal the object is set to zero and isn't valid any more.
+   * 
+   * Before removal is done a reference and pointer counter check
+   * is done. If at least one counter is greater than zero the
+   * object can't be removed and false is returned.
+   * 
+   * @throw object_exception
+   * @param o Object to remove.
+   */
+  template<class T>
+  void remove(object_ptr<T> &o)
+  {
+    remove<T>(o.proxy_, true);
   }
 
   /**
@@ -809,7 +812,7 @@ private:
 
   void mark_modified(object_proxy *oproxy);
 
-  void remove_object(object_proxy *proxy, bool notify);
+  void remove_proxy(object_proxy *proxy, bool notify);
 
   /**
    * @internal
@@ -1161,7 +1164,8 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
 }
 
 template<class T, template<class ...> class C>
-void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*) {
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*)
+{
   // initialize the has many relation
   // set identifier
   // relation table name
@@ -1221,7 +1225,8 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     return;
   }
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
-    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_)));
+    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_))
+  );
   --ret.first->second.reference_counter;
   if (cascade & cascade_type::DELETE) {
     ret.first->second.ignore = false;
@@ -1230,20 +1235,20 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *) {
-//  x.for_each(std::bind(&object_deleter::check_object_list_node, this, _1));
+void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
+{
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
   while (first != last) {
     // Todo: get the real holder: on join table get has_many_item
-    typename basic_has_many<T, C>::item_ptr iptr = (*first++);
+    typename basic_has_many<T, C>::relation_type iptr = (*first++);
     object_proxy *proxy = iptr.proxy_;
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
       std::make_pair(proxy->id(), t_object_count(proxy, false))
     );
     /**********
      *
-     * serializable is already in list and will
+     * object is already in list and will
      * be ignored on deletion so set
      * ignore flag to false because this
      * node must be deleted
@@ -1253,13 +1258,13 @@ void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const ch
       ret.first->second.ignore = false;
     }
 
-    T &obj = *iptr;
-    oos::access::serialize(*this, obj);
+    oos::access::serialize(*this, *iptr);
   }
 }
 
 template<class T>
-void object_deleter::serialize(const char *id, identifier<T> &x) {
+void object_deleter::serialize(const char *id, identifier<T> &x)
+{
   T val = x.value();
   serialize(id, val);
 }

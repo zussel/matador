@@ -7,7 +7,7 @@ SET(OBJECT_SOURCES
 	object/identifier.cpp
 	object/prototype_iterator.cpp
 	object/object_holder.cpp
-	object/transaction.cpp)
+	object/transaction.cpp object/action_inserter.cpp object/action_remover.cpp object/insert_action.cpp object/update_action.cpp object/delete_action.cpp)
 
 SET(OBJECT_INSTALL_HEADER
 	${PROJECT_SOURCE_DIR}/include/object/action.hpp
@@ -61,7 +61,7 @@ SET(OBJECT_HEADER
 	../include/object/has_many_vector.hpp
 	../include/object/has_many_list.hpp
 	../include/object/has_many_set.hpp
-	../include/object/transaction.hpp)
+	../include/object/transaction.hpp ../include/object/action_inserter.hpp ../include/object/action_visitor.hpp ../include/object/action_remover.hpp ../include/object/insert_action.hpp ../include/object/update_action.hpp ../include/object/delete_action.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -225,7 +225,7 @@ SET(UNIT_HEADER
   ../include/unit/test_suite.hpp
   ../include/unit/unit_exception.hpp
   ../include/unit/unit_test.hpp
-)
+		../include/object/action_inserter.hpp)
 
 SET(DATABASE_SOURCES
   database/action.cpp
