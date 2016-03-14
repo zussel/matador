@@ -184,106 +184,6 @@ void object_store::dump_objects(std::ostream &out) const
   }
 }
 
-void object_store::mark_modified(object_proxy *oproxy)
-{
-  std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_update, _1, oproxy));
-}
-
-void object_store::register_observer(object_observer *observer)
-{
-  if (std::find(observer_list_.begin(), observer_list_.end(), observer) == observer_list_.end()) {
-    observer_list_.push_back(observer);
-  }
-}
-
-void object_store::unregister_observer(object_observer *observer)
-{
-  t_observer_list::iterator i = std::find(observer_list_.begin(), observer_list_.end(), observer);
-  if (i != observer_list_.end()) {
-    observer_list_.erase(i);
-  }
-}
-
-/*
-object_proxy *object_store::initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify)
-{// insert new element node
-  node->insert(oproxy);
-
-  // initialize object
-  object_inserter_.insert(oproxy);
-  // set this into persistent serializable
-  // notify observer
-  if (notify) {
-    for_each(observer_list_.begin(), observer_list_.end(), bind(&object_observer::on_insert, _1, oproxy));
-  }
-  // insert element into hash map for fast lookup
-  object_map_[oproxy->id()] = oproxy;
-
-  return oproxy;
-}
-*/
-
-void
-object_store::remove_proxy(object_proxy *proxy, bool notify)
-{
-  // find prototype node
-  if (!proxy) {
-    throw object_exception("couldn't remove serializable, no proxy");
-  }
-  if (!proxy->node()) {
-    throw object_exception("couldn't remove serializable, no prototype");
-  }
-  
-  prototype_iterator node = find(proxy->node()->type());
-  if (node == end()) {
-    throw object_exception("couldn't find node for object");
-  }
-  
-  if (object_map_.erase(proxy->id()) != 1) {
-    // couldn't remove serializable
-    // throw exception
-    throw object_exception("couldn't remove object");
-  }
-
-  node->remove(proxy);
-
-  if (notify) {
-    // notify observer
-    std::for_each(observer_list_.begin(), observer_list_.end(), std::bind(&object_observer::on_delete, _1, proxy));
-  }
-  // set serializable in object_proxy to null
-  object_proxy *op = proxy;
-  // delete node
-  delete op;
-}
-
-//void
-//object_store::remove(object_container &oc)
-//{
-//  /**************
-//   *
-//   * remove all objects from container
-//   * and first and last sentinel
-//   *
-//   **************/
-//  // check if serializable tree is deletable
-//  if (!object_deleter_.is_deletable(oc)) {
-//    throw object_exception("couldn't remove container serializable");
-//  }
-//
-//  object_deleter::iterator first = object_deleter_.begin();
-//  object_deleter::iterator last = object_deleter_.end();
-//
-//  while (first != last) {
-//    if (!first->second.ignore) {
-//      remove_object((first++)->second.proxy, true);
-//    } else {
-//      ++first;
-//    }
-//  }
-//  oc.uninstall();
-//}
-
 object_proxy* object_store::find_proxy(unsigned long id) const
 {
   t_object_proxy_map::const_iterator i = object_map_.find(id);
@@ -294,23 +194,6 @@ object_proxy* object_store::find_proxy(unsigned long id) const
   }
 }
 
-/*
-object_proxy* object_store::create_proxy(unsigned long id)
-{
-  if (id == 0) {
-    return nullptr;
-  }
-
-  t_object_proxy_map::iterator i = object_map_.find(id);
-  if (i == object_map_.end()) {
-    std::unique_ptr<object_proxy> proxy(new object_proxy(nullptr, id, this));
-
-    return object_map_.insert(std::make_pair(id, proxy.release())).first->second;
-  } else {
-    return nullptr;
-  }
-}
-*/
 bool object_store::delete_proxy(unsigned long id)
 {
   t_object_proxy_map::iterator i = object_map_.find(id);

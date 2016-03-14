@@ -619,7 +619,7 @@ public:
   }
 
   template < class T >
-  void remove(object_proxy *proxy, bool notify)
+  void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
   {
     if (proxy == nullptr) {
       throw object_exception("object proxy is nullptr");
@@ -627,20 +627,41 @@ public:
     if (proxy->node() == nullptr) {
       throw object_exception("prototype node is nullptr");
     }
-    // check if serializable tree is deletable
-    if (!object_deleter_.is_deletable<T>(proxy, proxy->obj())) {
+    // check if object tree is deletable
+    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, proxy->obj())) {
       throw object_exception("object is not removable");
     }
 
-    detail::object_deleter::iterator first = object_deleter_.begin();
-    detail::object_deleter::iterator last = object_deleter_.end();
+    if (check_if_deletable) {
+      detail::object_deleter::iterator first = object_deleter_.begin();
+      detail::object_deleter::iterator last = object_deleter_.end();
 
-    while (first != last) {
-      if (!first->second.ignore) {
-        remove_proxy((first++)->second.proxy, notify);
-      } else {
-        ++first;
+      while (first != last) {
+        if (!first->second.ignore) {
+          remove<T>((first++)->second.proxy, notify, false);
+        } else {
+          ++first;
+        }
       }
+    } else {
+      // single deletion
+      if (object_map_.erase(proxy->id()) != 1) {
+        // couldn't remove object
+        // throw exception
+        throw object_exception("couldn't remove object");
+      }
+
+      proxy->node()->remove(proxy);
+
+      if (notify && transaction_) {
+        // notify transaction
+        transaction_->on_delete<T>(proxy);
+      }
+      // set object in object_proxy to null
+//      object_proxy *op = proxy;
+      // delete node
+//      delete op;
+      delete proxy;
     }
   }
   /**
@@ -657,40 +678,8 @@ public:
   template<class T>
   void remove(object_ptr<T> &o)
   {
-    remove<T>(o.proxy_, true);
+    remove<T>(o.proxy_, true, true);
   }
-
-  /**
-   * Removes an object_container from serializable store. All elements of the
-   * container are removed from the store after a successfull reference and
-   * pointer counter check.
-   * 
-   * @throw object_exception
-   * @param oc The serializable vector to remove.
-   */
-//  void remove(object_container &oc);
-
-  /*
-  template < class InputIterator >
-  void insert(InputIterator first, InputIterator last)
-  {
-   // std::iterator_traits<InputIterator>::value_type *o = *first;
-  }
-  */
-
-  /**
-   * @brief Register an observer with the serializable store
-   *
-   * @param observer The serializable observer to register.
-   */
-  void register_observer(object_observer *observer);
-
-  /**
-   * @brief Unregisters an observer from the serializable store
-   *
-   * @param observer The serializable observer to unregister.
-   */
-  void unregister_observer(object_observer *observer);
 
   /**
    * @brief Creates and inserts an serializable proxy serializable.
@@ -809,10 +798,13 @@ private:
    */
   prototype_node* clear(prototype_node *node);
 
-
-  void mark_modified(object_proxy *oproxy);
-
-  void remove_proxy(object_proxy *proxy, bool notify);
+  template < class T >
+  void mark_modified(object_proxy *proxy)
+  {
+    if (transaction_) {
+      transaction_->on_update<T>(proxy);
+    }
+  }
 
   /**
    * @internal

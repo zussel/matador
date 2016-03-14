@@ -6,6 +6,7 @@
 #define OOS_UPDATE_ACTION_HPP
 
 #include "object/action.hpp"
+#include "object_serializer.hpp"
 
 namespace oos {
 
@@ -27,8 +28,9 @@ public:
    *
    * @param o The updated serializable.
    */
+  template < class T >
   update_action(object_proxy *proxy)
-    : action(backup, restore)
+    : action(&backup<T>, &restore<T>)
     , proxy_(proxy)
   {}
 
@@ -49,13 +51,16 @@ public:
   template < class T >
   static void backup(byte_buffer &buffer, action *act)
   {
-//    object_serializer serializer;
-//    serializer.serialize(obj, &buffer);
+    object_serializer<T> serializer;
+    serializer.serialize(static_cast<update_action*>(act)->proxy_, &buffer);
   }
 
   template < class T >
-  static void restore(byte_buffer &, action *act)
+  static void restore(byte_buffer &buffer, action *act)
   {
+    // TODO: pass object store instance
+    object_serializer<T> serializer;
+    serializer.deserialize(static_cast<update_action*>(act)->proxy_, &buffer, nullptr);
   }
 
 private:

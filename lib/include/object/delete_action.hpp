@@ -6,6 +6,7 @@
 #define OOS_DELETE_ACTION_HPP
 
 #include "object/action.hpp"
+#include "object/object_proxy.hpp"
 
 #include "tools/basic_identifier.hpp"
 
@@ -50,6 +51,42 @@ public:
   basic_identifier * pk() const;
 
   unsigned long id() const;
+
+  template < class T >
+  static void backup(byte_buffer &buffer, action *act)
+  {
+  }
+
+  template < class T >
+  static void restore(byte_buffer &buffer, action *act, object_store *store)
+  {
+    // TODO: pass object store instance
+    // check if there is an serializable with id in
+    // serializable store
+    delete_action *da(static_cast<delete_action*>(act));
+    object_proxy *oproxy = store->find_proxy(da->id());
+    if (!oproxy) {
+      // create proxy
+      oproxy = ostore_->create_proxy(a->id());
+    }
+    if (!oproxy->obj()) {
+      // create serializable with id and deserialize
+      oproxy->reset(ostore_->create(a->classname()));
+      // data from buffer into serializable
+      serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+      // restore pk
+      if (a->pk()) {
+
+        oproxy->primary_key_.reset(a->pk()->clone());
+      }
+      // insert serializable
+      ostore_->insert_proxy(oproxy, false, false);
+//    ostore_->insert_object(oproxy->obj(), false);
+    } else {
+      // data from buffer into serializable
+      serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+    }
+  }
 
 private:
   std::string classname_;
