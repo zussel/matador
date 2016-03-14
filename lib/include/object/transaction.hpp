@@ -111,8 +111,8 @@ void transaction::on_update(object_proxy *proxy)
    *
    *****************/
   if (id_map_.find(proxy->id()) == id_map_.end()) {
-//    std::shared_ptr<update_action> ua(new update_action<T>(proxy));
-//    backup(ua, proxy);
+    std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
+    backup(ua, proxy);
   } else {
     // An serializable with that id already exists
     // do nothing because the serializable is already

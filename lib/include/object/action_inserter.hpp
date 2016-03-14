@@ -33,9 +33,7 @@ public:
   action_iterator insert(object_proxy *proxy);
 
   virtual void visit(insert_action *a);
-
   virtual void visit(update_action *a);
-
   virtual void visit(delete_action *a);
 
 private:

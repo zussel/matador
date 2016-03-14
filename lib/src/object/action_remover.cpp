@@ -45,7 +45,7 @@ void action_remover::visit(insert_action *a)
   }
 }
 
-void action_remover::visit(update_action *)
+void action_remover::visit(update_action *a)
 {
   /***********
    *
@@ -55,11 +55,11 @@ void action_remover::visit(update_action *)
    * with this given serializable.
    *
    ***********/
-//  if (a->proxy()->id() == id_) {
-//    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
-//
-//    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
-//  }
+  if (a->proxy()->id() == id_) {
+    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
+
+    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
+  }
 }
 
 void action_remover::visit(delete_action *)

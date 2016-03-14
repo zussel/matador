@@ -60,7 +60,7 @@ public:
   unsigned long id() const;
 
   template < class T >
-  static void backup(byte_buffer &buffer, action *act)
+  static void backup(byte_buffer &, action *)
   {
   }
 

@@ -107,6 +107,12 @@ public:
 
 public:
   template < class T >
+  void serialize(T &obj)
+  {
+    oos::access::serialize(*this, obj);
+  }
+
+  template < class T >
   void serialize(const char*, T &x)
   {
     if (restore) {
@@ -180,7 +186,7 @@ public:
         }
         x.reset(oproxy, cascade);
       } else {
-        x.reset(new object_proxy(new T, oid, ostore_));
+        x.reset(new object_proxy(new T, oid, ostore_), cascade);
       }
     } else {
       unsigned long oid = x.id();

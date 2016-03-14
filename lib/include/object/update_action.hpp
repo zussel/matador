@@ -29,7 +29,7 @@ public:
    * @param o The updated serializable.
    */
   template < class T >
-  update_action(object_proxy *proxy)
+  update_action(object_proxy *proxy, T*)
     : action(&backup<T>, &restore<T>)
     , proxy_(proxy)
   {}
