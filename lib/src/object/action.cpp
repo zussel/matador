@@ -20,7 +20,7 @@
 namespace oos
 {
 
-action::action(action::t_backup_func backup_func, action::t_restore_func restore_func)
+action::action(t_backup_func backup_func, t_restore_func restore_func)
   : backup_func_(backup_func)
   , restore_func_(restore_func)
 {}
@@ -30,9 +30,9 @@ void action::backup(byte_buffer &to, action *act)
   backup_func_(to, act);
 }
 
-void action::restore(byte_buffer &from, action *act)
+void action::restore(byte_buffer &from, action *act, object_store *store)
 {
-  restore_func_(from, act);
+  restore_func_(from, act, store);
 }
 
 }

@@ -2,10 +2,14 @@
 // Created by sascha on 12.03.16.
 //
 
+#include "tools/identifier_resolver.hpp"
+
 #include "object/action_remover.hpp"
+#include "object/insert_action.hpp"
+#include "object/update_action.hpp"
+#include "object/delete_action.hpp"
 
 namespace oos {
-
 
 action_remover::action_remover(t_action_vactor &actions)
   : actions_(actions)
@@ -41,7 +45,7 @@ void action_remover::visit(insert_action *a)
   }
 }
 
-void action_remover::visit(update_action *a)
+void action_remover::visit(update_action *)
 {
   /***********
    *
@@ -51,14 +55,14 @@ void action_remover::visit(update_action *a)
    * with this given serializable.
    *
    ***********/
-  if (a->proxy()->id() == id_) {
-    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
-
-    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
-  }
+//  if (a->proxy()->id() == id_) {
+//    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
+//
+//    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
+//  }
 }
 
-void action_remover::visit(delete_action *a)
+void action_remover::visit(delete_action *)
 {
 
 }

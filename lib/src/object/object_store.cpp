@@ -207,6 +207,15 @@ bool object_store::delete_proxy(unsigned long id)
   }
 }
 
+object_proxy* object_store::insert_proxy(object_proxy *proxy)
+{
+  if (proxy->id() == 0) {
+    throw_object_exception("object proxy doesn't have an id");
+  }
+
+  return object_map_.insert(std::make_pair(proxy->id(), proxy)).first->second;
+}
+
 object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
   if (oproxy->id() != 0) {
@@ -225,38 +234,6 @@ object_proxy* object_store::register_proxy(object_proxy *oproxy)
 sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &seq)
 {
   return seq_.exchange_sequencer(seq);
-}
-
-/*
- * adjust the marker of all predeccessor nodes
- * self and last marker
- */
-void object_store::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)
-{
-  // store start node
-  prototype_node *node = root->previous_node();
-  // get previous node
-  while (node) {
-    if (node->op_marker == old_proxy) {
-      node->op_marker = new_proxy;
-    }
-    if (node->depth >= root->depth && node->op_last == old_proxy) {
-      node->op_last = new_proxy;
-    }
-    node = node->previous_node();
-  }
-}
-
-void object_store::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
-{
-  // store start node
-  prototype_node *node = root->next_node();
-  while (node) {
-    if (node->op_first == old_proxy) {
-      node->op_first = new_proxy;
-    }
-    node = node->next_node();
-  }
 }
 
 prototype_node* object_store::find_prototype_node(const char *type) const {

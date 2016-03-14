@@ -5,6 +5,19 @@
 #ifndef OOS_INSERT_ACTION_HPP
 #define OOS_INSERT_ACTION_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/action.hpp"
 
 namespace oos {
@@ -27,12 +40,16 @@ public:
   typedef object_proxy_list_t::const_iterator const_iterator;
 
 public:
-/**
- * Creates an insert_action.
- *
- * @param type The type of the expected objects
- */
-  explicit insert_action(const std::string &type);
+  /**
+   * Creates an insert_action.
+   *
+   * @param type The type of the expected objects
+   */
+  template < class T >
+  explicit insert_action(const std::string &type, T*)
+    : action(&backup<T>, &restore<T>)
+    , type_(type)
+  {}
 
   virtual ~insert_action();
 
@@ -65,7 +82,7 @@ public:
   static void backup(byte_buffer &, action *) { }
 
   template < class T >
-  static void restore(byte_buffer &, action *act)
+  static void restore(byte_buffer &, action *act, object_store *)
   {
     // remove serializable from serializable store
     insert_action *ia(static_cast<insert_action*>(act));

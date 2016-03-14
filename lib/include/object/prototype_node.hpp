@@ -278,6 +278,27 @@ private:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
+  /**
+   * @internal
+   *
+   * Adjust first marker of all successor nodes with given serializable proxy.
+   *
+   * @param old_proxy The old first marker proxy.
+   * @param new_proxy The new first marker proxy.
+   */
+  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
+  /**
+   * @internal
+   *
+   * Adjusts self and last marker of all predeccessor nodes with given
+   * serializable proxy.
+   *
+   * @param old_proxy The old last marker proxy.
+   * @param new_proxy The new last marker proxy.
+   */
+  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
+
 private:
   friend class prototype_tree;
   friend class object_store;

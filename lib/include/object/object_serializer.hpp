@@ -38,7 +38,6 @@
 
 #include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
-#include "object/object_store.hpp"
 
 #include <string>
 #include <cstring>
@@ -174,9 +173,10 @@ public:
       serialize(id, type);
 
       if (oid > 0) {
-        object_proxy *oproxy = ostore_->find_proxy(oid);
+        object_proxy *oproxy = find_proxy(oid);
         if (!oproxy) {
-          oproxy = ostore_->create_proxy(new T, oid);
+          oproxy =  new object_proxy(new T, oid, ostore_);
+          insert_proxy(oproxy);
         }
         x.reset(oproxy, cascade);
       } else {
@@ -222,7 +222,9 @@ public:
     }
   }
 
-  void write_object_container_item(const object_proxy *proxy);
+private:
+  object_proxy* find_proxy(unsigned long oid);
+  void insert_proxy(object_proxy *proxy);
 
 private:
   object_store *ostore_ = nullptr;

@@ -250,8 +250,8 @@ public:
   void reset(T *o)
   {
     reference_counter_ = 0;
-    deleter_ = destroy;
-    namer_ = type_id;
+    deleter_ = &destroy<T>;
+    namer_ = &type_id<T>;
     obj_ = o;
     oid = 0;
     node_ = 0;
@@ -343,7 +343,7 @@ private:
   template <typename T>
   static void destroy(void* p)
   {
-    delete static_cast<T*>(p);
+    delete (T*)p;
   }
 
   template < class T >

@@ -7,7 +7,11 @@
 
 #include "object/action.hpp"
 #include "object/object_exception.hpp"
+#include "object/prototype_node.hpp"
 #include "object/action_inserter.hpp"
+#include "object/action_remover.hpp"
+#include "object/update_action.hpp"
+#include "object/delete_action.hpp"
 
 #include "tools/byte_buffer.hpp"
 
@@ -42,6 +46,7 @@ public:
   void rollback();
   void abort();
 
+  template < class T >
   void on_insert(object_proxy *proxy);
   template < class T >
   void on_update(object_proxy *proxy);
@@ -49,6 +54,11 @@ public:
   void on_delete(object_proxy *proxy);
 
 private:
+  typedef std::shared_ptr<action> action_ptr;
+  typedef std::vector<action_ptr> t_action_vactor;
+  typedef t_action_vactor::iterator action_iterator;
+  typedef std::unordered_map<unsigned long, action_iterator> t_id_action_iterator_map;
+
   void backup(const action_ptr &a, const object_proxy *proxy);
   void restore(const action_ptr &a);
 
@@ -57,17 +67,38 @@ private:
 private:
   object_store &store_;
 
-  typedef std::shared_ptr<action> action_ptr;
-  typedef std::vector<action_ptr> t_action_vactor;
-  typedef t_action_vactor::iterator action_iterator;
-  typedef std::unordered_map<unsigned long, action_iterator> t_id_action_iterator_map;
-
   t_action_vactor actions_;
   t_id_action_iterator_map id_map_;
 
   action_inserter inserter_;
   byte_buffer object_buffer_;
 };
+
+template < class T >
+void transaction::on_insert(object_proxy *proxy)
+{
+  /*****************
+   *
+   * backup inserted object
+   * on rollback the object is removed
+   * from object store
+   *
+   *****************/
+  t_id_action_iterator_map::iterator i = id_map_.find(proxy->id());
+  if (i == id_map_.end()) {
+    // create insert action and insert serializable
+//    action_inserter ai(actions_);
+    action_iterator j = inserter_.insert<T>(proxy);
+    if (j == actions_.end()) {
+      // should not happen
+    } else {
+      id_map_.insert(std::make_pair(proxy->id(), j));
+    }
+  } else {
+    // ERROR: an serializable with that id already exists
+    throw_object_exception("transaction: an object with id " << proxy->id() << " already exists");
+  }
+}
 
 template < class T >
 void transaction::on_update(object_proxy *proxy)
@@ -80,7 +111,8 @@ void transaction::on_update(object_proxy *proxy)
    *
    *****************/
   if (id_map_.find(proxy->id()) == id_map_.end()) {
-    backup(std::make_shared<update_action<T>>(proxy), proxy);
+//    std::shared_ptr<update_action> ua(new update_action<T>(proxy));
+//    backup(ua, proxy);
   } else {
     // An serializable with that id already exists
     // do nothing because the serializable is already
@@ -101,10 +133,10 @@ void transaction::on_delete(object_proxy *proxy)
    *****************/
   t_id_action_iterator_map::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
-    basic_identifier *pk = identifier_resolver::resolve(proxy->obj());
-    backup(std::make_shared<delete_action>(proxy->node()->type(), proxy->id(), pk), proxy);
+    basic_identifier *pk = identifier_resolver<T>::resolve((T*)proxy->obj());
+    backup(std::make_shared<delete_action>(proxy->node()->type(), proxy->id(), pk, (T*)proxy->obj()), proxy);
   } else {
-    action_remover ar(action_list_);
+    action_remover ar(actions_);
     ar.remove(i->second, proxy);
   }
 }

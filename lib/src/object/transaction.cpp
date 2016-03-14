@@ -55,31 +55,6 @@ void transaction::abort()
 
 }
 
-void transaction::on_insert(object_proxy *proxy)
-{
-  /*****************
-   *
-   * backup inserted object
-   * on rollback the object is removed
-   * from object store
-   *
-   *****************/
-  t_id_action_iterator_map::iterator i = id_map_.find(proxy->id());
-  if (i == id_map_.end()) {
-    // create insert action and insert serializable
-//    action_inserter ai(actions_);
-    action_iterator j = inserter_.insert(proxy);
-    if (j == actions_.end()) {
-      // should not happen
-    } else {
-      id_map_.insert(std::make_pair(proxy->id(), j));
-    }
-  } else {
-    // ERROR: an serializable with that id already exists
-    throw_object_exception("transaction: an object with id " << proxy->id() << " already exists");
-  }
-}
-
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 {
 

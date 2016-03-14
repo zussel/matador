@@ -20,7 +20,7 @@
 #include "tools/varchar.hpp"
 
 #include "object/object_serializer.hpp"
-
+#include "object/object_store.hpp"
 
 using namespace std::placeholders;
 using namespace std;
@@ -86,6 +86,16 @@ void object_serializer::serialize(const char *id, time &x)
     serialize(id, tv.tv_sec);
     serialize(id, tv.tv_usec);
   }
+}
+
+object_proxy *object_serializer::find_proxy(unsigned long oid)
+{
+  return ostore_->find_proxy(oid);
+}
+
+void object_serializer::insert_proxy(object_proxy *proxy)
+{
+  ostore_->insert_proxy(proxy);
 }
 
 }

@@ -39,6 +39,7 @@ namespace oos {
 
 class action_visitor;
 class byte_buffer;
+class object_store;
 /**
  * @internal
  * @class action
@@ -58,6 +59,9 @@ class byte_buffer;
 class OOS_API action
 {
 public:
+  typedef void (*t_backup_func)(byte_buffer&, action*);
+  typedef void (*t_restore_func)(byte_buffer&, action*, object_store*);
+
   action(t_backup_func backup_func, t_restore_func restore_func);
   virtual ~action() {}
   
@@ -69,10 +73,7 @@ public:
   virtual void accept(action_visitor *av) = 0;
 
   void backup(byte_buffer &to, action *act);
-  void restore(byte_buffer &from, action *act);
-
-  typedef void (*t_backup_func)(byte_buffer&, action*);
-  typedef void (*t_restore_func)(byte_buffer&, action*);
+  void restore(byte_buffer &from, action *act, object_store *store);
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

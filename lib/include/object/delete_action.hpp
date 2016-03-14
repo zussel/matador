@@ -7,6 +7,7 @@
 
 #include "object/action.hpp"
 #include "object/object_proxy.hpp"
+#include "object/object_serializer.hpp"
 
 #include "tools/basic_identifier.hpp"
 
@@ -23,32 +24,38 @@ namespace oos {
 class OOS_API delete_action : public action
 {
 public:
-/**
- * Creates an delete_action.
- *
- * @param classname The serializable type name.
- * @param id The id of the deleted serializable.
- */
-  delete_action(const char *classname, unsigned long id, basic_identifier *pk);
+  /**
+   * Creates an delete_action.
+   *
+   * @param classname The serializable type name.
+   * @param id The id of the deleted serializable.
+   */
+  template < class T >
+  delete_action(const char *classname, unsigned long id, basic_identifier *pk, T*)
+    : action(&backup<T>, &restore<T>)
+    , classname_(classname)
+    , id_(id)
+    , pk_(pk)
+  {}
 
   virtual ~delete_action();
 
   virtual void accept(action_visitor *av);
 
-/**
- * Return the class name of the
- * serializable.
- *
- * @return The class name.
- */
+  /**
+   * Return the class name of the
+   * serializable.
+   *
+   * @return The class name.
+   */
   const char* classname() const;
 
-/**
- * The primary key of the serializable of the action.
- *
- * @return The primary key of the deleted serializable.
- */
-  basic_identifier * pk() const;
+  /**
+   * The primary key of the serializable of the action.
+   *
+   * @return The primary key of the deleted serializable.
+   */
+  basic_identifier* pk() const;
 
   unsigned long id() const;
 
@@ -64,29 +71,32 @@ public:
     // check if there is an serializable with id in
     // serializable store
     delete_action *da(static_cast<delete_action*>(act));
-    object_proxy *oproxy = store->find_proxy(da->id());
-    if (!oproxy) {
+    object_proxy *proxy = delete_action::find_proxy(store, da->id());
+    if (!proxy) {
       // create proxy
-      oproxy = ostore_->create_proxy(a->id());
+      proxy = new object_proxy(new T, da->id(), store);
+      delete_action::insert_proxy(store, proxy);
     }
-    if (!oproxy->obj()) {
+    object_serializer serializer;
+    if (!proxy->obj()) {
       // create serializable with id and deserialize
-      oproxy->reset(ostore_->create(a->classname()));
+      proxy->reset(new T);
       // data from buffer into serializable
-      serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+      serializer.deserialize<T>((T*)proxy->obj(), &buffer, store);
       // restore pk
-      if (a->pk()) {
-
-        oproxy->primary_key_.reset(a->pk()->clone());
+      if (da->pk()) {
+        proxy->pk().reset(da->pk()->clone());
       }
       // insert serializable
-      ostore_->insert_proxy(oproxy, false, false);
-//    ostore_->insert_object(oproxy->obj(), false);
+//      store->insert<T>(proxy, false);
     } else {
       // data from buffer into serializable
-      serializer_.deserialize(oproxy->obj(), buffer_, ostore_);
+      serializer.deserialize<T>((T*)proxy->obj(), &buffer, store);
     }
   }
+private:
+  static object_proxy* find_proxy(object_store *store, unsigned long id);
+  static void insert_proxy(object_store *store, object_proxy *proxy);
 
 private:
   std::string classname_;

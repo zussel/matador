@@ -552,7 +552,7 @@ public:
     // set this into persistent serializable
     // notify observer
     if (notify && transaction_) {
-      transaction_->on_insert(proxy);
+      transaction_->on_insert<T>(proxy);
     }
 //    if (notify) {
 //      std::for_each(observer_list_.begin(), observer_list_.end(),
@@ -628,7 +628,7 @@ public:
       throw object_exception("prototype node is nullptr");
     }
     // check if object tree is deletable
-    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, proxy->obj())) {
+    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, (T*)proxy->obj())) {
       throw object_exception("object is not removable");
     }
 
@@ -740,6 +740,12 @@ public:
   object_proxy *find_proxy(unsigned long id) const;
 
   /**
+   * Insert object proxy into object store
+   * Object id must be set
+   */
+  object_proxy* insert_proxy(object_proxy *proxy);
+
+  /**
    * @brief Registers a new proxy
    *
    * Proxy will be registered in object store. It
@@ -805,27 +811,6 @@ private:
       transaction_->on_update<T>(proxy);
     }
   }
-
-  /**
-   * @internal
-   *
-   * Adjust first marker of all successor nodes with given serializable proxy.
-   *
-   * @param old_proxy The old first marker proxy.
-   * @param new_proxy The new first marker proxy.
-   */
-  void adjust_right_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
-
-  /**
-   * @internal
-   *
-   * Adjusts self and last marker of all predeccessor nodes with given
-   * serializable proxy.
-   *
-   * @param old_proxy The old last marker proxy.
-   * @param new_proxy The new last marker proxy.
-   */
-  void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
   /**
    * @internal

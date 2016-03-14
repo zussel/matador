@@ -12,6 +12,8 @@
 
 namespace oos {
 
+class object_proxy;
+
 class action_remover : public action_visitor
 {
 public:

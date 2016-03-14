@@ -10,11 +10,6 @@
 
 namespace oos {
 
-insert_action::insert_action(const std::string &type)
-  : action(backup, restore)
-  , type_(type)
-{}
-
 insert_action::~insert_action()
 {}
 

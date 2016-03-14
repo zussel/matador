@@ -16,7 +16,10 @@
  */
 
 #include "object/prototype_node.hpp"
-#include "object/object_store.hpp"
+#include "object/object_exception.hpp"
+#include "object/object_proxy.hpp"
+
+#include <algorithm>
 
 using namespace std;
 
@@ -135,15 +138,15 @@ void prototype_node::insert(object_proxy *proxy)
      // insert as first; adjust "left" marker
 
     proxy->link(op_marker->prev_);
-    tree_->adjust_left_marker(this, proxy->next_, proxy);
+    adjust_left_marker(this, proxy->next_, proxy);
   } else { // node->count == 0
 
      // there is no serializable in subtree
      //insert as last; adjust "right" marker
 
     proxy->link(op_marker);
-    tree_->adjust_left_marker(this, proxy->next_, proxy);
-    tree_->adjust_right_marker(this, proxy->prev_, proxy);
+    adjust_left_marker(this, proxy->next_, proxy);
+    adjust_right_marker(this, proxy->prev_, proxy);
   }
   // set prototype node
   proxy->node_ = this;
@@ -160,11 +163,11 @@ void prototype_node::remove(object_proxy *proxy)
 {
   if (proxy == op_first->next()) {
     // adjust left marker
-    tree_->adjust_left_marker(this, op_first->next_, op_first->next_->next_);
+    adjust_left_marker(this, op_first->next_, op_first->next_->next_);
   }
   if (proxy == op_marker->prev()) {
     // adjust right marker
-    tree_->adjust_right_marker(this, proxy, op_marker->prev_->prev_);
+    adjust_right_marker(this, proxy, op_marker->prev_->prev_);
   }
   // unlink object_proxy
   if (proxy->prev()) {
@@ -189,8 +192,8 @@ void prototype_node::remove(object_proxy *proxy)
 void prototype_node::clear(bool recursive)
 {
   if (!empty(true)) {
-    tree_->adjust_left_marker(this, op_first->next_, op_marker);
-    tree_->adjust_right_marker(this, op_marker->prev_, op_first);
+    adjust_left_marker(this, op_first->next_, op_marker);
+    adjust_right_marker(this, op_marker->prev_, op_first);
 
     while (op_first->next() != op_marker) {
       object_proxy *op = op_first->next_;
@@ -373,6 +376,38 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   });
 //  t_primary_key_map::iterator i = primary_key_map.find(pk);
   return (i != id_map_.end() ? i->second : nullptr);
+}
+
+/*
+ * adjust the marker of all predeccessor nodes
+ * self and last marker
+ */
+void prototype_node::adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = root->previous_node();
+  // get previous node
+  while (node) {
+    if (node->op_marker == old_proxy) {
+      node->op_marker = new_proxy;
+    }
+    if (node->depth >= root->depth && node->op_last == old_proxy) {
+      node->op_last = new_proxy;
+    }
+    node = node->previous_node();
+  }
+}
+
+void prototype_node::adjust_right_marker(prototype_node *root, object_proxy* old_proxy, object_proxy *new_proxy)
+{
+  // store start node
+  prototype_node *node = root->next_node();
+  while (node) {
+    if (node->op_first == old_proxy) {
+      node->op_first = new_proxy;
+    }
+    node = node->next_node();
+  }
 }
 
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
