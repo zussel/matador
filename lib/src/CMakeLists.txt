@@ -61,7 +61,7 @@ SET(OBJECT_HEADER
 	../include/object/has_many_vector.hpp
 	../include/object/has_many_list.hpp
 	../include/object/has_many_set.hpp
-	../include/object/transaction.hpp ../include/object/action_inserter.hpp ../include/object/action_visitor.hpp ../include/object/action_remover.hpp ../include/object/insert_action.hpp ../include/object/update_action.hpp ../include/object/delete_action.hpp)
+	../include/object/transaction.hpp ../include/object/action_inserter.hpp ../include/object/action_visitor.hpp ../include/object/action_remover.hpp ../include/object/insert_action.hpp ../include/object/update_action.hpp ../include/object/delete_action.hpp ../include/object/backup_visitor.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

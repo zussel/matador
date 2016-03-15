@@ -72,8 +72,8 @@ public:
    */
   virtual void accept(action_visitor *av) = 0;
 
-  void backup(byte_buffer &to, action *act);
-  void restore(byte_buffer &from, action *act, object_store *store);
+  void backup(byte_buffer &to);
+  void restore(byte_buffer &from, object_store *store);
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

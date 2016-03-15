@@ -216,6 +216,25 @@ object_proxy* object_store::insert_proxy(object_proxy *proxy)
   return object_map_.insert(std::make_pair(proxy->id(), proxy)).first->second;
 }
 
+void object_store::remove_proxy(object_proxy *proxy)
+{
+  if (proxy == nullptr) {
+    throw object_exception("object proxy is nullptr");
+  }
+  if (proxy->node() == nullptr) {
+    throw object_exception("prototype node is nullptr");
+  }
+  // single deletion
+  if (object_map_.erase(proxy->id()) != 1) {
+    // couldn't remove object
+    // throw exception
+    throw object_exception("couldn't remove object");
+  }
+
+  proxy->node()->remove(proxy);
+  delete proxy;
+}
+
 object_proxy* object_store::register_proxy(object_proxy *oproxy)
 {
   if (oproxy->id() != 0) {

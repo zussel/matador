@@ -22,4 +22,9 @@ const object_proxy* update_action::proxy() const
   return proxy_;
 }
 
+delete_action *update_action::release_delete_action()
+{
+  return delete_action_.release();
+}
+
 }

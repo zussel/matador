@@ -7,6 +7,7 @@
 
 #include "object/action.hpp"
 #include "object/object_serializer.hpp"
+#include "object/delete_action.hpp"
 
 namespace oos {
 
@@ -63,8 +64,11 @@ public:
     serializer.deserialize<T>(static_cast<update_action*>(act)->proxy_, &buffer, nullptr);
   }
 
+  delete_action* release_delete_action();
+
 private:
   object_proxy *proxy_;
+  std::unique_ptr<delete_action> delete_action_;
 };
 
 }

@@ -25,14 +25,14 @@ action::action(t_backup_func backup_func, t_restore_func restore_func)
   , restore_func_(restore_func)
 {}
 
-void action::backup(byte_buffer &to, action *act)
+void action::backup(byte_buffer &to)
 {
-  backup_func_(to, act);
+  backup_func_(to, this);
 }
 
-void action::restore(byte_buffer &from, action *act, object_store *store)
+void action::restore(byte_buffer &from, object_store *store)
 {
-  restore_func_(from, act, store);
+  restore_func_(from, this, store);
 }
 
 }

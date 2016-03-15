@@ -57,12 +57,12 @@ void transaction::abort()
 
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 {
-
+  a->backup(object_buffer_);
 }
 
 void transaction::restore(const action_ptr &a)
 {
-
+  a->restore(object_buffer_, &store_);
 }
 
 void transaction::cleanup()

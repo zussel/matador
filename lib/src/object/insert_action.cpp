@@ -5,6 +5,7 @@
 #include "object/insert_action.hpp"
 #include "object/action_visitor.hpp"
 #include "object/object_proxy.hpp"
+#include "object/object_store.hpp"
 
 #include <algorithm>
 
@@ -79,6 +80,11 @@ void insert_action::push_back(object_proxy *proxy)
 insert_action::iterator insert_action::erase(insert_action::iterator i)
 {
   return object_proxy_list_.erase(i);
+}
+
+void insert_action::remove_proxy(object_proxy *proxy, object_store *store)
+{
+  store->remove_proxy(proxy);
 }
 
 }

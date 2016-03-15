@@ -60,8 +60,10 @@ public:
   unsigned long id() const;
 
   template < class T >
-  static void backup(byte_buffer &, action *)
+  static void backup(byte_buffer &buffer, action *act)
   {
+    object_serializer serializer;
+    serializer.serialize<T>(static_cast<delete_action*>(act)->proxy_, &buffer);
   }
 
   template < class T >

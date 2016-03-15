@@ -82,16 +82,17 @@ public:
   static void backup(byte_buffer &, action *) { }
 
   template < class T >
-  static void restore(byte_buffer &, action *act, object_store *)
+  static void restore(byte_buffer &, action *act, object_store *store)
   {
     // remove serializable from serializable store
     insert_action *ia(static_cast<insert_action*>(act));
     for (insert_action::iterator i = ia->begin(); i != ia->end(); ++i) {
-//      ia->store()->remove()
-//      ostore_->remove_object(*i, false);
+      ia->remove_proxy(*i, store);
     }
-
   }
+
+private:
+  void remove_proxy(object_proxy *proxy, object_store *store);
 
 private:
   std::string type_;

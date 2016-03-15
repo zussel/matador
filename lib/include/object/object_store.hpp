@@ -618,6 +618,8 @@ public:
     return object_deleter_.is_deletable(o.proxy_, o.get());
   }
 
+  void remove_proxy(object_proxy *proxy);
+
   template < class T >
   void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
   {

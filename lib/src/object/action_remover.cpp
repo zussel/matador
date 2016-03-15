@@ -56,9 +56,11 @@ void action_remover::visit(update_action *a)
    *
    ***********/
   if (a->proxy()->id() == id_) {
-    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
 
-    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
+    action_iterator_->reset(a->release_delete_action());
+//    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
+//
+//    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
   }
 }
 
