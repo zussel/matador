@@ -31,6 +31,11 @@ unsigned long delete_action::id() const
   return id_;
 }
 
+object_proxy *delete_action::proxy() const
+{
+  return proxy_;
+}
+
 object_proxy* delete_action::find_proxy(object_store *store, unsigned long id)
 {
   return store->find_proxy(id);

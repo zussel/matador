@@ -7,6 +7,7 @@
 
 #include "object/action.hpp"
 #include "object/object_proxy.hpp"
+#include "object/prototype_node.hpp"
 #include "object/object_serializer.hpp"
 
 #include "tools/basic_identifier.hpp"
@@ -38,6 +39,15 @@ public:
     , pk_(pk)
   {}
 
+  template < class T >
+  delete_action(object_proxy *proxy, T *obj)
+    : action(&backup<T>, &restore<T>)
+    , classname_(proxy->node()->type())
+    , id_(proxy->id())
+    , pk_(identifier_resolver<T>::resolve(obj))
+    , proxy_(proxy)
+  {}
+
   virtual ~delete_action();
 
   virtual void accept(action_visitor *av);
@@ -58,6 +68,8 @@ public:
   basic_identifier* pk() const;
 
   unsigned long id() const;
+
+  object_proxy* proxy() const;
 
   template < class T >
   static void backup(byte_buffer &buffer, action *act)
@@ -102,8 +114,9 @@ private:
 
 private:
   std::string classname_;
-  unsigned long id_;
+  unsigned long id_ = 0;
   std::unique_ptr<basic_identifier> pk_;
+  object_proxy *proxy_ = nullptr;
 };
 
 }

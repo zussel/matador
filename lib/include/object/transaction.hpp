@@ -134,7 +134,8 @@ void transaction::on_delete(object_proxy *proxy)
   t_id_action_iterator_map::iterator i = id_map_.find(proxy->id());
   if (i == id_map_.end()) {
     basic_identifier *pk = identifier_resolver<T>::resolve((T*)proxy->obj());
-    backup(std::make_shared<delete_action>(proxy->node()->type(), proxy->id(), pk, (T*)proxy->obj()), proxy);
+    backup(std::make_shared<delete_action>(proxy, (T*)proxy->obj()), proxy);
+//    backup(std::make_shared<delete_action>(proxy->node()->type(), proxy->id(), pk, (T*)proxy->obj()), proxy);
   } else {
     action_remover ar(actions_);
     ar.remove(i->second, proxy);
