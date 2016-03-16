@@ -213,6 +213,13 @@ public:
   unsigned long reference_count() const;
 
   /**
+   * Return the type string of the object
+   *
+   * @return The type string of the object.
+   */
+  virtual const char* type() const = 0;
+
+  /**
    * Prints the underlaying serializable
    *
    * @param out The output stream to write on.

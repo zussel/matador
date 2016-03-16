@@ -16,7 +16,7 @@
  */
 
 #include "object/object_proxy.hpp"
-#include "object/object_ptr.hpp"
+#include "object/object_holder.hpp"
 
 using namespace std;
 

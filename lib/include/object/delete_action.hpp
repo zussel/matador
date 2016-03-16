@@ -32,14 +32,6 @@ public:
    * @param id The id of the deleted serializable.
    */
   template < class T >
-  delete_action(const char *classname, unsigned long id, basic_identifier *pk, T*)
-    : action(&backup<T>, &restore<T>)
-    , classname_(classname)
-    , id_(id)
-    , pk_(pk)
-  {}
-
-  template < class T >
   delete_action(object_proxy *proxy, T *obj)
     : action(&backup<T>, &restore<T>)
     , classname_(proxy->node()->type())
@@ -75,7 +67,8 @@ public:
   static void backup(byte_buffer &buffer, action *act)
   {
     object_serializer serializer;
-    serializer.serialize<T>(static_cast<delete_action*>(act)->proxy_, &buffer);
+    T* obj = (T*)(static_cast<delete_action*>(act)->proxy_);
+    serializer.serialize<T>(obj, &buffer);
   }
 
   template < class T >

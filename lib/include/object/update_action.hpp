@@ -30,9 +30,10 @@ public:
    * @param o The updated serializable.
    */
   template < class T >
-  update_action(object_proxy *proxy, T*)
+  update_action(object_proxy *proxy, T *obj)
     : action(&backup<T>, &restore<T>)
     , proxy_(proxy)
+    , delete_action_(new delete_action(proxy, obj))
   {}
 
   virtual ~update_action() {}

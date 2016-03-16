@@ -7,7 +7,6 @@
 #include "object/action_remover.hpp"
 #include "object/insert_action.hpp"
 #include "object/update_action.hpp"
-#include "object/delete_action.hpp"
 
 namespace oos {
 
@@ -56,11 +55,7 @@ void action_remover::visit(update_action *a)
    *
    ***********/
   if (a->proxy()->id() == id_) {
-
     action_iterator_->reset(a->release_delete_action());
-//    basic_identifier *pk = identifier_resolver::resolve(proxy_->obj());
-//
-//    action_iterator_->reset(new delete_action(proxy_->node()->type(), proxy_->id(), pk));
   }
 }
 

@@ -20,6 +20,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object_holder.hpp"
+#include "object/object_store.hpp"
 #include "tools/identifier_resolver.hpp"
 #include "object/has_one.hpp"
 
@@ -201,9 +202,9 @@ public:
     return *this;
   }
   /**
-   * Return the type string of the serializable
+   * Return the type string of the object
    *
-   * @return The type string of the serializable.
+   * @return The type string of the object.
    */
   const char* type() const
   {
@@ -279,7 +280,16 @@ public:
    * @return The pointer to the serializable of type T.
    */
   T* get() {
-    return static_cast<T*>(lookup_object());
+    if (proxy_ && proxy_->obj()) {
+      if (proxy_->ostore()) {
+        proxy_->ostore()->mark_modified<T>(proxy_);
+      }
+      return proxy_->obj();
+    } else {
+      return nullptr;
+    }
+
+//    return static_cast<T*>(lookup_object());
   }
 
   /**

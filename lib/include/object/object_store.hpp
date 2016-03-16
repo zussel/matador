@@ -21,7 +21,7 @@
 #include "object/prototype_iterator.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
-#include "object/has_one.hpp"
+#include "object/object_holder.hpp"
 #include "object/basic_has_many.hpp"
 #include "object/transaction.hpp"
 
@@ -101,7 +101,7 @@ public:
 //  template < class T >
 //  void serialize(const char *, object_ptr<T> &x)
   template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  void serialize(const char *, object_holder &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
@@ -193,7 +193,7 @@ public:
   void serialize(const char *, char *, size_t) { }
 
   template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  void serialize(const char *, object_holder &x, cascade_type cascade);
   template<class T, template<class ...> class C>
   void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
   template<class T>
@@ -221,7 +221,7 @@ public:
   void serialize(const char *, V &) { }
   void serialize(const char *, char *, size_t) { }
   template<class T>
-  void serialize(const char *id, has_one<T> &x, cascade_type);
+  void serialize(const char *id, object_holder &x, cascade_type);
   template<class T, template<class ...> class C>
   void serialize(const char *, has_many<T, C> &, const char *, const char *);
 
@@ -554,10 +554,6 @@ public:
     if (notify && transaction_) {
       transaction_->on_insert<T>(proxy);
     }
-//    if (notify) {
-//      std::for_each(observer_list_.begin(), observer_list_.end(),
-//                    std::bind(&object_observer::on_insert, std::placeholders::_1, proxy));
-//    }
 
     // insert element into hash map for fast lookup
     object_map_.insert(std::make_pair(proxy->id(), proxy));
@@ -784,6 +780,7 @@ private:
   friend class object_holder;
   friend class prototype_node;
   friend class detail::node_analyzer;
+  friend class transaction;
 
 private:
   template < class T, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
@@ -1058,7 +1055,7 @@ void node_analyzer::serialize(V &x) {
 }
 
 template<class T>
-void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
+void node_analyzer::serialize(const char *id, object_holder &x, cascade_type)
 {
   prototype_iterator node = node_.tree()->find(x.type());
   if (node == node_.tree()->end()) {
@@ -1115,7 +1112,7 @@ void object_inserter::serialize(T &x) {
 }
 
 template<class T>
-void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+void object_inserter::serialize(const char *, object_holder &x, cascade_type cascade) {
   if (x.is_inserted()) {
     return;
   }
@@ -1133,7 +1130,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   if (x.id()) {
     // do the pointer count
     object_proxy_stack_.push(x.proxy_);
-    oos::access::serialize(*this, *x.get());
+    oos::access::serialize(*this, *(T*)x.ptr());
     object_proxy_stack_.pop();
   } else {
     // new object
@@ -1199,7 +1196,7 @@ bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
 }
 
 template<class T>
-void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+void object_deleter::serialize(const char *, object_holder &x, cascade_type cascade) {
   if (!x.ptr()) {
     return;
   }
@@ -1209,7 +1206,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
   --ret.first->second.reference_counter;
   if (cascade & cascade_type::DELETE) {
     ret.first->second.ignore = false;
-    oos::access::serialize(*this, *x.get());
+    oos::access::serialize(*this, *(T*)x.ptr());
   }
 }
 

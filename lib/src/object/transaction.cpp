@@ -10,16 +10,19 @@ namespace oos {
 transaction::transaction(oos::object_store &store)
   : store_(store)
   , inserter_(actions_)
-{}
+{
+}
 
 void transaction::begin()
 {
-
+  store_.transaction_ = this;
+  // Todo: call database begin
 }
 
 void transaction::commit()
 {
-
+  cleanup();
+  store_.transaction_ = nullptr;
 }
 
 void transaction::rollback()
@@ -48,11 +51,7 @@ void transaction::rollback()
     // clear container
     cleanup();
 //  }
-}
-
-void transaction::abort()
-{
-
+  store_.transaction_ = nullptr;
 }
 
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
