@@ -32,6 +32,7 @@
 #endif
 
 #include "tools/identifier_resolver.hpp"
+#include "object_store.hpp"
 
 #include <ostream>
 #include <set>
@@ -178,6 +179,14 @@ public:
     return tmp;
   }
 
+  template < class T >
+  void mark_modified()
+  {
+    if (!ostore_ || !ostore_->transaction_) {
+      return;
+    }
+    ostore_->transaction_->on_update<T>(this);
+  }
   /**
    * Print the object_proxy to a stream
    *

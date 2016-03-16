@@ -20,7 +20,6 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object_holder.hpp"
-#include "object/object_store.hpp"
 #include "tools/identifier_resolver.hpp"
 #include "object/has_one.hpp"
 
@@ -282,7 +281,7 @@ public:
   T* get() {
     if (proxy_ && proxy_->obj()) {
       if (proxy_->ostore()) {
-        proxy_->ostore()->mark_modified<T>(proxy_);
+        proxy_->mark_modified<T>();
       }
       return proxy_->obj();
     } else {

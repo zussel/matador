@@ -778,6 +778,7 @@ private:
   friend class restore_visitor;
   friend class object_container;
   friend class object_holder;
+  friend class object_proxy;
   friend class prototype_node;
   friend class detail::node_analyzer;
   friend class transaction;
