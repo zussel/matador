@@ -200,10 +200,13 @@ public:
   {
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
+      // deserialize container size
       serialize(id, s);
 
       for (typename basic_has_many<T, C>::size_type i = 0; i < 0; ++i) {
 
+        // deserialize all items
+        // and append it to container
         has_one<typename basic_has_many<T, C>::item_type> ptr;
         serialize(nullptr, ptr, cascade_type::NONE);
 
