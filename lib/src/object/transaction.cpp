@@ -57,6 +57,8 @@ void transaction::rollback()
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 {
   a->backup(object_buffer_);
+  action_iterator i = actions_.insert(actions_.end(), a);
+  id_map_.insert(std::make_pair(proxy->id(), i));
 }
 
 void transaction::restore(const action_ptr &a)

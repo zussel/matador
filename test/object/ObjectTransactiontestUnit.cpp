@@ -108,6 +108,7 @@ void ObjectTransactiontestUnit::test_update_rollback()
   store.attach<person>("person");
 
   auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+  hans->id(7UL);
 
   oos::transaction tr(store);
 

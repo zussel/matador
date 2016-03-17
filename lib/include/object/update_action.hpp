@@ -54,7 +54,7 @@ public:
   static void backup(byte_buffer &buffer, action *act, S &serializer)
   {
 //    object_serializer serializer;
-    T* obj = (T*)(static_cast<update_action*>(act)->proxy_);
+    T* obj = (T*)(static_cast<update_action*>(act)->proxy_->obj());
     serializer.serialize(obj, &buffer);
   }
 
@@ -62,7 +62,7 @@ public:
   static void restore(byte_buffer &buffer, action *act, object_store *store, S &serializer)
   {
 //    object_serializer serializer;
-    T* obj = (T*)(static_cast<update_action*>(act)->proxy_);
+    T* obj = (T*)(static_cast<update_action*>(act)->proxy_->obj());
     serializer.deserialize(obj, &buffer, store);
   }
 

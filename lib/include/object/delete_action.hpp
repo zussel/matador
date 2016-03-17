@@ -69,7 +69,7 @@ public:
   static void backup(byte_buffer &buffer, action *act, S &serializer)
   {
 //    object_serializer serializer;
-    T* obj = (T*)(static_cast<delete_action*>(act)->proxy_);
+    T* obj = (T*)(static_cast<delete_action*>(act)->proxy_->obj());
     serializer.serialize<T>(obj, &buffer);
   }
 
