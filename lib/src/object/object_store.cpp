@@ -209,9 +209,21 @@ bool object_store::delete_proxy(unsigned long id)
 
 object_proxy* object_store::insert_proxy(object_proxy *proxy)
 {
+  if (proxy == nullptr) {
+    throw object_exception("proxy is null");
+  }
+  if (proxy->obj() == nullptr) {
+    throw object_exception("object is null");
+  }
   if (proxy->id() == 0) {
     throw_object_exception("object proxy doesn't have an id");
   }
+  iterator node = find(proxy->classname());
+  if (node == end()) {
+    throw object_exception("couldn't find object type");
+  }
+
+  node->insert(proxy);
 
   return object_map_.insert(std::make_pair(proxy->id(), proxy)).first->second;
 }

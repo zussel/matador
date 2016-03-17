@@ -18,6 +18,8 @@ public:
   void test_insert_rollback();
   void test_update();
   void test_update_rollback();
+  void test_delete();
+  void test_delete_rollback();
 };
 
 #endif //OOS_OBJECTTRANSACTIONTESTUNIT_HPP

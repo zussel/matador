@@ -17,6 +17,8 @@ ObjectTransactiontestUnit::ObjectTransactiontestUnit()
   add_test("insert_rollback", std::bind(&ObjectTransactiontestUnit::test_insert_rollback, this), "test transaction insert rollback");
   add_test("update", std::bind(&ObjectTransactiontestUnit::test_update, this), "test transaction update");
   add_test("update_rollback", std::bind(&ObjectTransactiontestUnit::test_update_rollback, this), "test transaction update rollback");
+  add_test("delete", std::bind(&ObjectTransactiontestUnit::test_delete, this), "test transaction delete");
+  add_test("delete_rollback", std::bind(&ObjectTransactiontestUnit::test_delete_rollback, this), "test transaction delete rollback");
 }
 
 
@@ -132,4 +134,65 @@ void ObjectTransactiontestUnit::test_update_rollback()
   oos::object_view<person> pview(store);
 
   UNIT_ASSERT_FALSE(pview.empty(), "view must not be empty");
+}
+
+void ObjectTransactiontestUnit::test_delete()
+{
+  oos::object_store store;
+  store.attach<person>("person");
+
+  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+
+  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+
+  oos::transaction tr(store);
+
+  try {
+    tr.begin();
+
+    store.remove(hans);
+
+    tr.commit();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+
+  oos::object_view<person> pview(store);
+
+  auto p = pview.front();
+
+  UNIT_ASSERT_EQUAL(p.id(), 0UL, "id must be valid");
+  UNIT_ASSERT_TRUE(p.ptr() == nullptr, "object must be nullptr");
+}
+
+void ObjectTransactiontestUnit::test_delete_rollback()
+{
+  oos::object_store store;
+  store.attach<person>("person");
+
+  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+
+  UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
+
+  oos::transaction tr(store);
+
+  try {
+    tr.begin();
+
+    store.remove(hans);
+
+    tr.rollback();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+
+  oos::object_view<person> pview(store);
+
+  auto p = pview.front();
+  UNIT_ASSERT_EQUAL(pview.size(), 1UL, "size must be one");
+
+  UNIT_ASSERT_GREATER(p.id(), 0UL, "id must be valid");
+  UNIT_ASSERT_FALSE(p.ptr() == nullptr, "object must be nullptr");
+  UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
+  UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
 }
