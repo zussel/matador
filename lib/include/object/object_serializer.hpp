@@ -36,7 +36,7 @@
 #include "tools/access.hpp"
 #include "tools/identifier.hpp"
 
-#include "object/object_holder.hpp"
+#include "object/has_one.hpp"
 #include "object/basic_has_many.hpp"
 
 #include <string>
@@ -160,7 +160,7 @@ public:
   }
 
   template < class T >
-	void serialize(const char* id, object_holder &x, cascade_type cascade)
+	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
   {
     if (restore) {
       /***************

@@ -6,6 +6,7 @@
 #define OOS_BASIC_HAS_MANY_HPP
 
 #include "object/has_one.hpp"
+#include "object/abstract_has_many.hpp"
 #include "object/container_type_traits.hpp"
 
 namespace oos {
@@ -177,25 +178,6 @@ class has_many_iterator;
 
 template < class T, template <class ...> class C >
 class const_has_many_iterator;
-
-
-class abstract_has_many
-{
-public:
-  void owner_field(const std::string &ownerfield) { owner_field_ = ownerfield; }
-  void item_field(const std::string &itemfield) { item_field_ = itemfield; }
-
-  std::string owner_field() const { return owner_field_; }
-  std::string item_field() const { return item_field_; }
-
-protected:
-  friend class detail::object_inserter;
-
-  object_store *ostore_ = nullptr;
-
-  std::string owner_field_ = "owner_id";
-  std::string item_field_ = "item_id";
-};
 
 template < class T, template <class ...> class C >
 class basic_has_many : public abstract_has_many

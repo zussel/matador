@@ -143,7 +143,7 @@ const void*object_holder::ptr() const
   return lookup_object();
 }
 
-void*object_holder::lookup_object()
+void* object_holder::lookup_object()
 {
   if (proxy_ && proxy_->obj()) {
     if (proxy_->ostore()) {

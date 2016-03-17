@@ -7,8 +7,6 @@
 
 #include "object/action_visitor.hpp"
 #include "object/action.hpp"
-#include "object/object_proxy.hpp"
-#include "object/prototype_node.hpp"
 #include "object/insert_action.hpp"
 
 #include <vector>
@@ -37,6 +35,10 @@ public:
   virtual void visit(delete_action *a);
 
 private:
+  void* object(object_proxy *proxy) const;
+  const char* type(object_proxy *proxy) const;
+
+private:
   t_action_vactor &actions_;
   object_proxy *proxy_ = nullptr;
   bool inserted_ = false;
@@ -57,7 +59,9 @@ action_inserter::action_iterator action_inserter::insert(object_proxy *proxy) {
     }
   }
   if (!inserted_) {
-    std::shared_ptr<insert_action> ia(new insert_action(proxy_->node()->type(), (T*)proxy->obj()));
+    T* obj = (T*)object(proxy);
+    const char* t = type(proxy);
+    std::shared_ptr<insert_action> ia(new insert_action(t, obj));
     ia->push_back(proxy_);
     return actions_.insert(actions_.end(), ia);
   }

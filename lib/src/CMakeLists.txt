@@ -68,7 +68,7 @@ SET(OBJECT_HEADER
 	../include/object/insert_action.hpp
     ../include/object/update_action.hpp
     ../include/object/delete_action.hpp
-)
+	../include/object/abstract_has_many.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

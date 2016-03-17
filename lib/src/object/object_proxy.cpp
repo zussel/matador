@@ -15,8 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "object/object_proxy.hpp"
-#include "object/object_holder.hpp"
+#include "object/object_store.hpp"
 
 using namespace std;
 
@@ -196,6 +195,14 @@ bool object_proxy::has_identifier() const
 std::shared_ptr<basic_identifier> object_proxy::pk() const
 {
   return primary_key_;
+}
+
+transaction *object_proxy::current_transaction() const
+{
+  if (ostore_ && ostore_->transaction_) {
+    return ostore_->transaction_;
+  }
+  return nullptr;
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

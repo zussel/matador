@@ -32,7 +32,6 @@
 #endif
 
 #include "tools/identifier_resolver.hpp"
-#include "object_store.hpp"
 
 #include <ostream>
 #include <set>
@@ -47,6 +46,7 @@ class object_store;
 class object_holder;
 class prototype_node;
 class basic_identifier;
+class transaction;
 
 /**
  * @cond OOS_DEV
@@ -179,14 +179,6 @@ public:
     return tmp;
   }
 
-  template < class T >
-  void mark_modified()
-  {
-    if (!ostore_ || !ostore_->transaction_) {
-      return;
-    }
-    ostore_->transaction_->on_update<T>(this);
-  }
   /**
    * Print the object_proxy to a stream
    *
@@ -337,6 +329,9 @@ public:
   std::shared_ptr<basic_identifier> pk() const;
 
 private:
+  transaction* current_transaction() const;
+
+private:
   friend class object_store;
   friend class prototype_node;
   friend class prototype_tree;
@@ -344,6 +339,7 @@ private:
   friend class table_reader;
   friend class restore_visitor;
   friend class object_holder;
+  template < class T > friend class object_ptr;
   template < class T > friend class has_one;
 
   typedef void (*deleter)(void*);

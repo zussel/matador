@@ -21,7 +21,8 @@
 #include "object/prototype_iterator.hpp"
 #include "object/object_exception.hpp"
 #include "object/object_observer.hpp"
-#include "object/object_holder.hpp"
+#include "object/has_one.hpp"
+#include "object/object_serializer.hpp"
 #include "object/basic_has_many.hpp"
 #include "object/transaction.hpp"
 
@@ -101,7 +102,7 @@ public:
 //  template < class T >
 //  void serialize(const char *, object_ptr<T> &x)
   template<class T>
-  void serialize(const char *, object_holder &x, cascade_type cascade);
+  void serialize(const char *, has_one<T> &x, cascade_type cascade);
 
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
@@ -193,7 +194,7 @@ public:
   void serialize(const char *, char *, size_t) { }
 
   template<class T>
-  void serialize(const char *, object_holder &x, cascade_type cascade);
+  void serialize(const char *, has_one<T> &x, cascade_type cascade);
   template<class T, template<class ...> class C>
   void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
   template<class T>
@@ -221,7 +222,7 @@ public:
   void serialize(const char *, V &) { }
   void serialize(const char *, char *, size_t) { }
   template<class T>
-  void serialize(const char *id, object_holder &x, cascade_type);
+  void serialize(const char *id, has_one<T> &x, cascade_type);
   template<class T, template<class ...> class C>
   void serialize(const char *, has_many<T, C> &, const char *, const char *);
 
@@ -1056,7 +1057,7 @@ void node_analyzer::serialize(V &x) {
 }
 
 template<class T>
-void node_analyzer::serialize(const char *id, object_holder &x, cascade_type)
+void node_analyzer::serialize(const char *id, has_one<T> &x, cascade_type)
 {
   prototype_iterator node = node_.tree()->find(x.type());
   if (node == node_.tree()->end()) {
@@ -1113,7 +1114,7 @@ void object_inserter::serialize(T &x) {
 }
 
 template<class T>
-void object_inserter::serialize(const char *, object_holder &x, cascade_type cascade) {
+void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
   if (x.is_inserted()) {
     return;
   }
@@ -1197,7 +1198,7 @@ bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
 }
 
 template<class T>
-void object_deleter::serialize(const char *, object_holder &x, cascade_type cascade) {
+void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
   if (!x.ptr()) {
     return;
   }

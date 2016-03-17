@@ -3,6 +3,8 @@
 //
 
 #include "object/action_inserter.hpp"
+#include "object/object_proxy.hpp"
+#include "object/prototype_node.hpp"
 
 namespace oos {
 
@@ -28,6 +30,16 @@ void action_inserter::visit(update_action *) {
 void action_inserter::visit(delete_action *) {
   // error: object can't be deleted before
   // it is inserted, throw error
+}
+
+void* action_inserter::object(object_proxy *proxy) const
+{
+  return proxy->obj();
+}
+
+const char* action_inserter::type(object_proxy *proxy) const
+{
+  return proxy->node()->type();
 }
 
 }

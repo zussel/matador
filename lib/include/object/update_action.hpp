@@ -6,13 +6,13 @@
 #define OOS_UPDATE_ACTION_HPP
 
 #include "object/action.hpp"
-#include "object/object_serializer.hpp"
+//#include "object/object_serializer.hpp"
 #include "object/delete_action.hpp"
 
 namespace oos {
 
 class object_proxy;
-
+class object_serializer;
 /**
  * @internal
  * @class update_action
@@ -31,7 +31,7 @@ public:
    */
   template < class T >
   update_action(object_proxy *proxy, T *obj)
-    : action(&backup<T>, &restore<T>)
+    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
     , proxy_(proxy)
     , delete_action_(new delete_action(proxy, obj))
   {}
@@ -50,19 +50,20 @@ public:
    */
   const object_proxy* proxy() const;
 
-  template < class T >
-  static void backup(byte_buffer &buffer, action *act)
+  template < class T, class S >
+  static void backup(byte_buffer &buffer, action *act, S &serializer)
   {
-    object_serializer serializer;
-    serializer.serialize<T>(static_cast<update_action*>(act)->proxy_, &buffer);
+//    object_serializer serializer;
+    T* obj = (T*)(static_cast<update_action*>(act)->proxy_);
+    serializer.serialize(obj, &buffer);
   }
 
-  template < class T >
-  static void restore(byte_buffer &buffer, action *act)
+  template < class T, class S >
+  static void restore(byte_buffer &buffer, action *act, object_store *store, S &serializer)
   {
-    // TODO: pass object store instance
-    object_serializer serializer;
-    serializer.deserialize<T>(static_cast<update_action*>(act)->proxy_, &buffer, nullptr);
+//    object_serializer serializer;
+    T* obj = (T*)(static_cast<update_action*>(act)->proxy_);
+    serializer.deserialize(obj, &buffer, store);
   }
 
   delete_action* release_delete_action();

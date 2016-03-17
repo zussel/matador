@@ -8,11 +8,13 @@
 #include "object/action.hpp"
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
-#include "object/object_serializer.hpp"
+//#include "object/object_serializer.hpp"
 
 #include "tools/basic_identifier.hpp"
 
 namespace oos {
+
+class object_serializer;
 
 /**
  * @internal
@@ -33,7 +35,7 @@ public:
    */
   template < class T >
   delete_action(object_proxy *proxy, T *obj)
-    : action(&backup<T>, &restore<T>)
+    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
     , classname_(proxy->node()->type())
     , id_(proxy->id())
     , pk_(identifier_resolver<T>::resolve(obj))
@@ -63,16 +65,16 @@ public:
 
   object_proxy* proxy() const;
 
-  template < class T >
-  static void backup(byte_buffer &buffer, action *act)
+  template < class T, class S >
+  static void backup(byte_buffer &buffer, action *act, S &serializer)
   {
-    object_serializer serializer;
+//    object_serializer serializer;
     T* obj = (T*)(static_cast<delete_action*>(act)->proxy_);
     serializer.serialize<T>(obj, &buffer);
   }
 
-  template < class T >
-  static void restore(byte_buffer &buffer, action *act, object_store *store)
+  template < class T, class S >
+  static void restore(byte_buffer &buffer, action *act, object_store *store, S &serializer)
   {
     // TODO: pass object store instance
     // check if there is an serializable with id in
@@ -84,12 +86,12 @@ public:
       proxy = new object_proxy(new T, da->id(), store);
       delete_action::insert_proxy(store, proxy);
     }
-    object_serializer serializer;
+//    object_serializer serializer;
     if (!proxy->obj()) {
       // create serializable with id and deserialize
       proxy->reset(new T);
       // data from buffer into serializable
-      serializer.deserialize<T>((T*)proxy->obj(), &buffer, store);
+      serializer.deserialize((T*)proxy->obj(), &buffer, store);
       // restore pk
       if (da->pk()) {
         proxy->pk().reset(da->pk()->clone());
@@ -98,7 +100,7 @@ public:
 //      store->insert<T>(proxy, false);
     } else {
       // data from buffer into serializable
-      serializer.deserialize<T>((T*)proxy->obj(), &buffer, store);
+      serializer.deserialize((T*)proxy->obj(), &buffer, store);
     }
   }
 private:

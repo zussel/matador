@@ -2,8 +2,8 @@
 // Created by sascha on 3/9/16.
 //
 
-#include "object/object_proxy.hpp"
 #include "object/transaction.hpp"
+#include "object/object_store.hpp"
 
 namespace oos {
 

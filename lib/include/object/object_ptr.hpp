@@ -20,6 +20,7 @@
 
 #include "object/object_proxy.hpp"
 #include "object/object_holder.hpp"
+#include "object/transaction.hpp"
 #include "tools/identifier_resolver.hpp"
 #include "object/has_one.hpp"
 
@@ -280,10 +281,11 @@ public:
    */
   T* get() {
     if (proxy_ && proxy_->obj()) {
-      if (proxy_->ostore()) {
-        proxy_->mark_modified<T>();
+      transaction *tr = proxy_->current_transaction();
+      if (tr) {
+        tr->on_update<T>(proxy_);
       }
-      return proxy_->obj();
+      return (T*)proxy_->obj();
     } else {
       return nullptr;
     }

@@ -23,7 +23,7 @@
 namespace oos {
 
 class object_proxy;
-
+class object_serializer;
 /**
  * @internal
  * @class insert_action
@@ -47,7 +47,7 @@ public:
    */
   template < class T >
   explicit insert_action(const std::string &type, T*)
-    : action(&backup<T>, &restore<T>)
+    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
     , type_(type)
   {}
 
@@ -78,11 +78,11 @@ public:
 
   iterator erase(iterator i);
 
-  template < class T >
-  static void backup(byte_buffer &, action *) { }
+  template < class T, class S >
+  static void backup(byte_buffer &, action *, S&) { }
 
-  template < class T >
-  static void restore(byte_buffer &, action *act, object_store *store)
+  template < class T, class S >
+  static void restore(byte_buffer &, action *act, object_store *store, S&)
   {
     // remove serializable from serializable store
     insert_action *ia(static_cast<insert_action*>(act));

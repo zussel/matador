@@ -7,11 +7,11 @@
 
 #include "object/action.hpp"
 #include "object/object_exception.hpp"
-#include "object/prototype_node.hpp"
 #include "object/action_inserter.hpp"
 #include "object/action_remover.hpp"
 #include "object/update_action.hpp"
 #include "object/delete_action.hpp"
+#include "object/object_proxy.hpp"
 
 #include "tools/byte_buffer.hpp"
 
