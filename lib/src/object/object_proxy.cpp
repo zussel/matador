@@ -199,8 +199,8 @@ std::shared_ptr<basic_identifier> object_proxy::pk() const
 
 transaction *object_proxy::current_transaction() const
 {
-  if (ostore_ && ostore_->transaction_) {
-    return ostore_->transaction_;
+  if (ostore_) {
+    return ostore_->current_transaction();
   }
   return nullptr;
 }

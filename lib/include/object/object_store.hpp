@@ -552,8 +552,9 @@ public:
     object_inserter_.insert(proxy, object);
     // set this into persistent serializable
     // notify observer
-    if (notify && transaction_) {
-      transaction_->on_insert<T>(proxy);
+    transaction *tr = current_transaction();
+    if (notify && tr) {
+      tr->on_insert<T>(proxy);
     }
 
     // insert element into hash map for fast lookup
@@ -652,9 +653,10 @@ public:
 
       proxy->node()->remove(proxy);
 
-      if (notify && transaction_) {
+      transaction *tr = current_transaction();
+      if (notify && tr) {
         // notify transaction
-        transaction_->on_delete<T>(proxy);
+        tr->on_delete<T>(proxy);
       }
       // set object in object_proxy to null
 //      object_proxy *op = proxy;
@@ -808,8 +810,9 @@ private:
   template < class T >
   void mark_modified(object_proxy *proxy)
   {
-    if (transaction_) {
-      transaction_->on_update<T>(proxy);
+    transaction *tr = current_transaction();
+    if (tr) {
+      tr->on_update<T>(proxy);
     }
   }
 
@@ -867,6 +870,10 @@ private:
 
   prototype_node* find_parent(const char *name) const;
 
+  void push_transaction(transaction *tr);
+  void pop_transaction();
+  transaction* current_transaction() const;
+
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
   // typeid -> [name -> prototype]
@@ -898,7 +905,7 @@ private:
   // only used when a has_many object is inserted
   abstract_has_many *temp_container_ = nullptr;
 
-  transaction *transaction_ = nullptr;
+  std::stack<transaction*> transactions_;
 };
 
 template<class T>

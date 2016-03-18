@@ -15,21 +15,21 @@ transaction::transaction(oos::object_store &store)
 
 void transaction::begin()
 {
-  store_.transaction_ = this;
+  store_.push_transaction(this);
   // Todo: call database begin
 }
 
 void transaction::commit()
 {
   cleanup();
-  store_.transaction_ = nullptr;
+  store_.pop_transaction();
 }
 
 void transaction::rollback()
 {
-//  if (!db_.current_transaction() || db_.current_transaction() != this) {
-//    throw database_exception("transaction", "transaction isn't current transaction");
-//  } else {
+  if (!store_.current_transaction() || store_.current_transaction() != this) {
+    throw object_exception("transaction: transaction isn't current transaction");
+  } else {
     /**************
      *
      * rollback transaction
@@ -50,8 +50,8 @@ void transaction::rollback()
 
     // clear container
     cleanup();
-//  }
-  store_.transaction_ = nullptr;
+  }
+  store_.pop_transaction();
 }
 
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)

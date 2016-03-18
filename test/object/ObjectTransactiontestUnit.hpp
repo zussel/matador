@@ -20,6 +20,8 @@ public:
   void test_update_rollback();
   void test_delete();
   void test_delete_rollback();
+  void test_nested();
+  void test_nested_rollback();
 };
 
 #endif //OOS_OBJECTTRANSACTIONTESTUNIT_HPP

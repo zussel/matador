@@ -352,6 +352,25 @@ prototype_node *object_store::find_parent(const char *name) const
   return parent_node;
 }
 
+void object_store::push_transaction(transaction *tr)
+{
+  transactions_.push(tr);
+}
+
+void object_store::pop_transaction()
+{
+  transactions_.pop();
+}
+
+transaction *object_store::current_transaction() const
+{
+  if (!transactions_.empty()) {
+    return transactions_.top();
+  }
+  return nullptr;
+}
+
+
 namespace detail {
 
 object_deleter::t_object_count_struct::t_object_count_struct(object_proxy *oproxy, bool ignr)
