@@ -38,8 +38,6 @@ void transaction::rollback()
      * clear insert action map
      *
      **************/
-
-    size_t s = actions_.size();
     while (!actions_.empty()) {
       action_iterator i = actions_.begin();
       action_ptr a = *i;
@@ -58,8 +56,8 @@ void transaction::rollback()
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 {
   a->backup(object_buffer_);
-  action_iterator i = actions_.insert(actions_.end(), a);
-  id_map_.insert(std::make_pair(proxy->id(), i));
+  actions_.push_back(a);
+  id_action_index_map_.insert(std::make_pair(proxy->id(), actions_.size() - 1));
 }
 
 void transaction::restore(const action_ptr &a)
@@ -71,7 +69,7 @@ void transaction::cleanup()
 {
   actions_.clear();
   object_buffer_.clear();
-  id_map_.clear();
+  id_action_index_map_.clear();
 //  db_.pop_transaction();
 }
 

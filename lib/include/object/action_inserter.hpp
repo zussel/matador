@@ -28,7 +28,7 @@ public:
   virtual ~action_inserter() { }
 
   template < class T >
-  action_iterator insert(object_proxy *proxy);
+  t_action_vactor::size_type insert(object_proxy *proxy);
 
   virtual void visit(insert_action *a);
   virtual void visit(update_action *a);
@@ -45,17 +45,17 @@ private:
 };
 
 template < class T >
-action_inserter::action_iterator action_inserter::insert(object_proxy *proxy) {
+action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy *proxy) {
   proxy_ = proxy;
   inserted_ = false;
-  action_iterator first = actions_.begin();
-  action_iterator last = actions_.end();
-  while (first != last) {
-    (*first)->accept(this);
+  t_action_vactor::size_type end = actions_.size();
+  for (t_action_vactor::size_type i = 0; i < end; ++i) {
+//  while (first != last) {
+    actions_.at(i)->accept(this);
+
+//    (*first)->accept(this);
     if (inserted_) {
-      return first;
-    } else {
-      ++first;
+      return i;
     }
   }
   if (!inserted_) {
@@ -63,9 +63,10 @@ action_inserter::action_iterator action_inserter::insert(object_proxy *proxy) {
     const char* t = type(proxy);
     std::shared_ptr<insert_action> ia(new insert_action(t, obj));
     ia->push_back(proxy_);
-    return actions_.insert(actions_.end(), ia);
+    actions_.push_back(ia);
+    return actions_.size() - 1;
   }
-  return last;
+  return actions_.size();
 }
 
 }

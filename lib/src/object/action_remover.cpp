@@ -15,13 +15,14 @@ action_remover::action_remover(t_action_vactor &actions)
 {}
 
 
-bool action_remover::remove(action_remover::action_iterator i, object_proxy *proxy)
+bool action_remover::remove(t_action_vactor::size_type index, object_proxy *proxy)
 {
   proxy_ = proxy;
-  action_iterator_ = i;
-  action_ptr aptr = *i;
+  index_ = index;
+  action_ptr aptr(actions_.at(index));
   aptr->accept(this);
   proxy_ = 0;
+  index_ = 0;
   return true;
 }
 
@@ -35,13 +36,12 @@ void action_remover::visit(insert_action *a)
    * from insert action
    *
    ***********/
-  insert_action::iterator i = a->find(id_);
+  insert_action::iterator i = a->find(proxy_->id());
   if (i != a->end()) {
     a->erase(i);
   }
   if (a->empty()) {
-//    delete a;
-    actions_.erase(action_iterator_);
+    actions_.erase(actions_.begin() + index_);
   }
 }
 
@@ -55,14 +55,12 @@ void action_remover::visit(update_action *a)
    * with this given serializable.
    *
    ***********/
-  if (a->proxy()->id() == id_) {
-    action_iterator_->reset(a->release_delete_action());
+//  if (a->proxy()->id() == id_) {
+  if (a->proxy()->id() == proxy_->id()) {
+    actions_.at(0).reset(a->release_delete_action());
   }
 }
 
-void action_remover::visit(delete_action *)
-{
-
-}
+void action_remover::visit(delete_action *) {}
 
 }
