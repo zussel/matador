@@ -28,8 +28,6 @@
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
 #include "object/ObjectTransactiontestUnit.hpp"
-//#include "object/ObjectListTestUnit.hpp"
-//#include "object/ObjectVectorTestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
 #include "object/HasManyVectorUnitTest.hpp"

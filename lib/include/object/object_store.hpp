@@ -130,13 +130,27 @@ private:
  */
 class object_deleter {
 private:
-  typedef struct t_object_count_struct {
-    t_object_count_struct(object_proxy *oproxy, bool ignr = true);
+  struct t_object_count {
+    typedef void (*t_remove_func)(object_proxy*, bool);
+    template < class T >
+    t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)
+      : proxy(oproxy)
+      , reference_counter(oproxy->reference_count())
+      , ignore(ignr)
+      , remove_func(&remove_object<T>)
+    {}
+
+    void remove(bool notify);
+
+    template <typename T>
+    static void remove_object(object_proxy *proxy, bool notify);
 
     object_proxy *proxy;
     unsigned long reference_counter;
     bool ignore;
-  } t_object_count;
+
+    t_remove_func remove_func;
+  };
 
 private:
   typedef std::map<unsigned long, t_object_count> t_object_count_map;
@@ -638,7 +652,7 @@ public:
 
       while (first != last) {
         if (!first->second.ignore) {
-          remove<T>((first++)->second.proxy, notify, false);
+          (first++)->second.remove(notify);
         } else {
           ++first;
         }
@@ -658,10 +672,6 @@ public:
         // notify transaction
         tr->on_delete<T>(proxy);
       }
-      // set object in object_proxy to null
-//      object_proxy *op = proxy;
-      // delete node
-//      delete op;
       delete proxy;
     }
   }
@@ -1193,10 +1203,16 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
 //}
 }
 
+template <typename T>
+void object_deleter::t_object_count::remove_object(object_proxy *proxy, bool notify)
+{
+  proxy->ostore()->remove<T>(proxy, notify, false);
+}
+
 template<class T>
 bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
   object_count_map.clear();
-  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false)));
+  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj())));
 
   // start collecting information
   oos::access::serialize(*this, *o);
@@ -1210,7 +1226,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     return;
   }
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
-    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_))
+    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
   );
   --ret.first->second.reference_counter;
   if (cascade & cascade_type::DELETE) {

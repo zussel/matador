@@ -89,7 +89,7 @@ void transaction::on_insert(object_proxy *proxy)
 //    action_inserter ai(actions_);
     action_iterator j = inserter_.insert<T>(proxy);
     if (j == actions_.end()) {
-      // should not happen
+      throw_object_exception("transaction: action for object with id " << proxy->id() << " couldn't be inserted");
     } else {
       id_map_.insert(std::make_pair(proxy->id(), j));
     }

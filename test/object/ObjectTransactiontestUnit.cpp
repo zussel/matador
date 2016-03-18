@@ -21,6 +21,8 @@ ObjectTransactiontestUnit::ObjectTransactiontestUnit()
   add_test("delete_rollback", std::bind(&ObjectTransactiontestUnit::test_delete_rollback, this), "test transaction delete rollback");
   add_test("nested", std::bind(&ObjectTransactiontestUnit::test_nested, this), "test nested transaction");
   add_test("nested_rollback", std::bind(&ObjectTransactiontestUnit::test_nested_rollback, this), "test nested transaction rollback");
+  add_test("foreign", std::bind(&ObjectTransactiontestUnit::test_foreign, this), "test transaction foreign object");
+  add_test("foreign_rollback", std::bind(&ObjectTransactiontestUnit::test_foreign_rollback, this), "test transaction foreign object rollback");
 }
 
 
@@ -298,4 +300,77 @@ void ObjectTransactiontestUnit::test_nested_rollback()
 
   UNIT_ASSERT_GREATER(p->id(), 0UL, "id must be valid");
   UNIT_ASSERT_EQUAL(p->name(), "Hans", "name must be 'Hans'");
+}
+
+void ObjectTransactiontestUnit::test_foreign()
+{
+  oos::object_store store;
+  store.attach<child>("child");
+  store.attach<master>("master");
+
+  auto ch1 = store.insert(new child("child 1"));
+  auto m1 = store.insert(new master("m1"));
+  m1->children = ch1;
+
+  oos::transaction tr(store);
+
+  try {
+    tr.begin();
+
+    oos::object_view<master> mview(store);
+
+    m1 = mview.front();
+
+    UNIT_ASSERT_TRUE(m1.ptr() != nullptr, "master must be valid");
+    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr, "child must be valid");
+    UNIT_ASSERT_EQUAL(m1->name, "m1", "name must be valid");
+
+    UNIT_ASSERT_TRUE(store.is_removable(m1), "m1 must be removable");
+
+    store.remove(m1);
+
+    UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
+
+    tr.commit();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+}
+
+void ObjectTransactiontestUnit::test_foreign_rollback()
+{
+  oos::object_store store;
+  store.attach<child>("child");
+  store.attach<master>("master");
+
+  auto ch1 = store.insert(new child("child 1"));
+  auto m1 = store.insert(new master("m1"));
+  m1->children = ch1;
+
+  oos::transaction tr(store);
+
+  oos::object_view<master> mview(store);
+
+  m1 = mview.front();
+
+  try {
+    tr.begin();
+
+    UNIT_ASSERT_TRUE(m1.ptr() != nullptr, "master must be valid");
+    UNIT_ASSERT_TRUE(m1->children.ptr() != nullptr, "child must be valid");
+    UNIT_ASSERT_EQUAL(m1->name, "m1", "name must be valid");
+
+    UNIT_ASSERT_TRUE(store.is_removable(m1), "m1 must be removable");
+
+    store.remove(m1);
+
+    UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
+
+    tr.rollback();
+  } catch (std::exception &ex) {
+    tr.rollback();
+  }
+
+  UNIT_ASSERT_FALSE(mview.empty(), "view must be empty");
+
 }

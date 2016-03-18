@@ -979,9 +979,14 @@ public:
 class master
 {
 public:
-    master() {}
-    master(const std::string &n) : name(n) {}
-    ~master() {}
+  oos::identifier<unsigned long> id;
+  std::string name;
+  oos::has_one<child> children;
+
+public:
+  master() {}
+  master(const std::string &n) : name(n) {}
+  ~master() {}
 
   template < class S >
   void serialize(S &serializer)
@@ -990,10 +995,6 @@ public:
     serializer.serialize("name", name);
     serializer.serialize("child", children, oos::cascade_type::DELETE);
   }
-
-    oos::identifier<unsigned long> id;
-    std::string name;
-    oos::has_one<child> children;
 };
 
 class children_list

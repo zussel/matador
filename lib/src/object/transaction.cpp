@@ -39,6 +39,7 @@ void transaction::rollback()
      *
      **************/
 
+    size_t s = actions_.size();
     while (!actions_.empty()) {
       action_iterator i = actions_.begin();
       action_ptr a = *i;

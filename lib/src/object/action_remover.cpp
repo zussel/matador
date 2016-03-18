@@ -19,7 +19,8 @@ bool action_remover::remove(action_remover::action_iterator i, object_proxy *pro
 {
   proxy_ = proxy;
   action_iterator_ = i;
-  (*i)->accept(this);
+  action_ptr aptr = *i;
+  aptr->accept(this);
   proxy_ = 0;
   return true;
 }
@@ -39,7 +40,7 @@ void action_remover::visit(insert_action *a)
     a->erase(i);
   }
   if (a->empty()) {
-    delete a;
+//    delete a;
     actions_.erase(action_iterator_);
   }
 }
