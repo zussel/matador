@@ -40,6 +40,9 @@ SET (TEST_OBJECT_SOURCES
   object/HasManyListUnitTest.hpp
   object/ObjectTransactiontestUnit.cpp object/ObjectTransactiontestUnit.hpp)
 
+SET (TEST_ORM_SOURCES
+)
+
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
   unit/SecondTestUnit.hpp
@@ -68,13 +71,13 @@ SET (TEST_SQL_SOURCES
 )
 
 SET (TEST_ORM_SOURCES
-#  sql/DatabaseTestUnit.cpp
-#  sql/DatabaseTestUnit.hpp
-#  sql/SessionTestUnit.hpp
-#  sql/SessionTestUnit.cpp
-#  sql/TransactionTestUnit.cpp
-#  sql/TransactionTestUnit.hpp
-)
+     #  sql/DatabaseTestUnit.cpp
+     #  sql/DatabaseTestUnit.hpp
+     #  sql/SessionTestUnit.hpp
+     #  sql/SessionTestUnit.cpp
+     #  sql/TransactionTestUnit.cpp
+     #  sql/TransactionTestUnit.hpp
+     orm/OrmTestUnit.cpp orm/OrmTestUnit.hpp)
 
 SET (TEST_SOURCES test_oos.cpp)
 
@@ -85,7 +88,7 @@ ADD_EXECUTABLE(test_oos
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
 #  ${TEST_JSON_SOURCES}
-#  ${TEST_ORM_SOURCES}
+  ${TEST_ORM_SOURCES}
   ${TEST_SQL_SOURCES}
 )
 
@@ -110,7 +113,7 @@ SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
-#SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
+SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
 SOURCE_GROUP("sql" FILES ${TEST_SQL_SOURCES})
 SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 

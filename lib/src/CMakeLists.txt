@@ -165,12 +165,21 @@ SET(SQL_HEADER
   ../include/sql/types.hpp
   ../include/sql/token.hpp
   ../include/sql/sql_exception.hpp
-	../include/sql/field.hpp
-	../include/sql/basic_dialect.hpp
-		../include/sql/typed_column_serializer.hpp
+  ../include/sql/field.hpp
+  ../include/sql/basic_dialect.hpp
+  ../include/sql/typed_column_serializer.hpp
 	../include/sql/column.hpp
 	../include/sql/dialect_token.hpp
-		../include/sql/column_serializer.hpp ../include/sql/value_serializer.hpp)
+	../include/sql/column_serializer.hpp
+  ../include/sql/value_serializer.hpp
+)
+
+SET(ORM_HEADERS
+  ../include/orm/persistence.hpp
+)
+
+SET(ORM_SOURCES
+    orm/persistence.cpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp
@@ -278,6 +287,8 @@ ADD_LIBRARY(oos SHARED
   ${OBJECT_HEADER}
   ${TOOLS_SOURCES}
   ${TOOLS_HEADER}
+  ${ORM_SOURCES}
+  ${ORM_HEADERS}
 #  ${JSON_SOURCES}
 #  ${JSON_HEADER}
   ${UNIT_SOURCES}
