@@ -27,6 +27,7 @@ void persistence::create()
     val.second.create(connection_);
   }
 }
+
 void persistence::drop()
 {
   for (t_table_map::value_type &val : tables_) {
@@ -36,5 +37,16 @@ void persistence::drop()
     val.second.drop(connection_);
   }
 }
+
+object_store &persistence::store()
+{
+  return store_;
+}
+
+const object_store &persistence::store() const
+{
+  return store_;
+}
+
 
 }

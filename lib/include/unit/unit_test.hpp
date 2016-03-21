@@ -42,6 +42,7 @@
 #include <string>
 #include <sstream>
 #include <type_traits>
+#include <iostream>
 
 /**
  * @file unit_test.hpp
@@ -63,7 +64,7 @@
 #define UNIT_ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
 
 /**
- * @brief Checks if a is not equal b.
+ * @brief Checks if a is not msgstrequal b.
  *
  * If a is equal b the test method throws
  * a unit_exception with the given message. The
@@ -153,6 +154,23 @@
       error(msg, __LINE__, __FILE__);                                             \
     }                                                                             \
   } while(false);
+
+
+/**
+ * @brief Checks if a is equal b.
+ *
+ * If a is not equal b the test prints
+ * the given message to stdout.
+ */
+#define UNIT_EXPECT_EQUAL(a, b, msg)     expect_equal(a, b, msg, __LINE__, __FILE__)
+
+/**
+ * @brief Checks if a is greater b.
+ *
+ * If a is not greater b the test prints
+ * the given message to stdout.
+ */
+#define UNIT_EXPECT_GREATER(a, b, msg)   expect_greater(a, b, msg, __LINE__, __FILE__)
 
 /**
  * @brief Checks if a evaluates to false.
@@ -649,6 +667,28 @@ public:
    * @param file The file where this check can be found.
    */
   void expect_false(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Checks if a is greater b.
+   *
+   * If a is not greater b the test method prints
+   * the given message to stdout.
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  template < class T >
+  void expect_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (a <= b) {
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+    }
+  }
 
   /**
    * @brief Throws an error.

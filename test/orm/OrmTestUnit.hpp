@@ -14,6 +14,7 @@ public:
   OrmTestUnit(const std::string &prefix, const std::string &dns);
 
   void test_create();
+  void test_insert();
 
 private:
   std::string dns_;

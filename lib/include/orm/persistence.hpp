@@ -78,6 +78,9 @@ public:
   void create();
   void drop();
 
+  object_store& store();
+  const object_store& store() const;
+
 private:
   connection connection_;
   object_store store_;
