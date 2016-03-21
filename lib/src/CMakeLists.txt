@@ -176,10 +176,10 @@ SET(SQL_HEADER
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
-)
+	../include/orm/table.hpp)
 
 SET(ORM_SOURCES
-    orm/persistence.cpp)
+    orm/persistence.cpp orm/table.cpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp

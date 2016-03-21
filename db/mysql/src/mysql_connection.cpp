@@ -67,13 +67,13 @@ void mysql_connection::open(const std::string &connection)
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
-  std::string db = con.substr(pos + 1);
+  db_ = con.substr(pos + 1);
 
   if (mysql_init(&mysql_) == 0) {
     throw_error("mysql", "initialization failed");
   }
   
-  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db.c_str(), 0, NULL, 0) == NULL) {
+  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db_.c_str(), 0, NULL, 0) == NULL) {
     // close all handles
     mysql_close(&mysql_);
     // throw exception
@@ -96,18 +96,18 @@ void mysql_connection::close()
   is_open_ = false;
 }
 
-MYSQL*mysql_connection::operator()()
+MYSQL*mysql_connection::handle()
 {
   return &mysql_;
 }
 
-detail::result_impl*mysql_connection::execute(const oos::sql &sql)
+detail::result_impl* mysql_connection::execute(const oos::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
   return execute(stmt);
 }
 
-detail::result_impl*mysql_connection::execute(const std::string &stmt)
+detail::result_impl* mysql_connection::execute(const std::string &stmt)
 {
   if (mysql_query(&mysql_, stmt.c_str())) {
     throw mysql_exception(&mysql_, "mysql_query", stmt);
@@ -115,27 +115,44 @@ detail::result_impl*mysql_connection::execute(const std::string &stmt)
   return new mysql_result(&mysql_);
 }
 
-detail::statement_impl*mysql_connection::prepare(const oos::sql &stmt)
+detail::statement_impl* mysql_connection::prepare(const oos::sql &stmt)
 {
   return new mysql_statement(*this, stmt);
 }
 
 void mysql_connection::begin()
 {
-  /*auto res = */execute("START TRANSACTION;");
   // TODO: check result
+  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("START TRANSACTION;")));
 }
 
 void mysql_connection::commit()
 {
-  /*auto res = */execute("COMMIT;");
   // TODO: check result
+  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("COMMIT;")));
 }
 
 void mysql_connection::rollback()
 {
-  /*auto res = */execute("ROLLBACK;");
   // TODO: check result
+  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("ROLLBACK;")));
+}
+
+bool mysql_connection::exists(const std::string &tablename)
+{
+//  SELECT *
+//  FROM information_schema.tables
+//  WHERE table_schema = 'yourdb'
+//  AND table_name = 'testtable'
+//  LIMIT 1;
+  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
+  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
+  if (!res->fetch()) {
+    return false;
+  } else {
+    char *end;
+    return strtoul(res->column(0), &end, 10) == 1;
+  }
 }
 
 mysql_dialect &mysql_connection::dialect()

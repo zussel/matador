@@ -34,6 +34,8 @@ public:
   virtual void begin() = 0;
   virtual void commit() = 0;
   virtual void rollback() = 0;
+
+  virtual bool exists(const std::string &tablename) = 0;
 };
 
 }

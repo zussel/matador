@@ -37,7 +37,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
   : db_(db)
   , result_size(0)
   , host_size(0)
-  , stmt_(mysql_stmt_init(db()))
+  , stmt_(mysql_stmt_init(db.handle()))
 {
   str(db.dialect().prepare(stmt));
   // Todo: use new sql compile style

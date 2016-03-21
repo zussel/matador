@@ -107,6 +107,22 @@ void unit_test::assert_false(bool a, const std::string &msg, int line, const cha
   }
 }
 
+void unit_test::expect_true(bool a, const std::string &msg, int line, const char *file)
+{
+  ++current_test_func_info->error_count;
+  if (!a) {
+    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false: " << msg;
+  }
+}
+
+void unit_test::expect_false(bool a, const std::string &msg, int line, const char *file)
+{
+  ++current_test_func_info->error_count;
+  if (a) {
+    std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false: " << msg;
+  }
+}
+
 void unit_test::error(const std::string &msg, int line, const char *file)
 {
   std::stringstream msgstr;

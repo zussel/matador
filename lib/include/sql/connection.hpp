@@ -53,6 +53,8 @@ public:
 
   const char* type_string(data_type_t type) const;
 
+  bool exists(const std::string &tablename) const;
+
 private:
   std::string type_;
   std::string dns_;

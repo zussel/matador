@@ -155,6 +155,22 @@
   } while(false);
 
 /**
+ * @brief Checks if a evaluates to false.
+ *
+ * If a doesn't evaluates to false the test method
+ * prints the given message to stdout.
+ */
+#define UNIT_EXPECT_FALSE(a, msg)        expect_false(a, msg, __LINE__, __FILE__)
+
+/**
+ * @brief Checks if a evaluates to true.
+ *
+ * If a doesn't evaluates to true the test method
+ * prints the given message to stdout.
+ */
+#define UNIT_EXPECT_TRUE(a, msg)         expect_true(a, msg, __LINE__, __FILE__)
+
+/**
  * @brief Throws an error.
  *
  * The test method throws an exception
@@ -605,6 +621,36 @@ public:
   void assert_false(bool a, const std::string &msg, int line, const char *file);
 
   /**
+   * @brief Checks if a evaluates to true.
+   *
+   * If a doesn't evaluates to true the test method
+   * prints the given message.
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  void expect_true(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Checks if a evaluates to false.
+   *
+   * If a doesn't evaluates to false the test method
+   * prints the given message.
+   * The exception is caught by the test_suite and the
+   * message is displayed
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  void expect_false(bool a, const std::string &msg, int line, const char *file);
+
+  /**
    * @brief Throws an error.
    *
    * The test method throws an exception
@@ -646,7 +692,7 @@ private:
   typedef struct test_func_info_struct
   {
     test_func_info_struct(const test_func &f, const std::string &n, const std::string &c)
-      : func(f), succeeded(true), assertion_count(0), name(n), caption(c)
+      : func(f), name(n), caption(c)
     {}
     enum t_state {
       UNKNOWN = 0,
@@ -655,10 +701,11 @@ private:
       FAILURE
     };
     test_func func;
-    bool succeeded;
+    bool succeeded = true;
     t_state state = UNKNOWN;
     long duration;
-    size_t assertion_count;
+    size_t assertion_count = 0;
+    size_t error_count = 0;
     std::string name;
     std::string caption;
     std::string message;

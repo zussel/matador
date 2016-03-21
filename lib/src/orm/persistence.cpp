@@ -20,11 +20,21 @@ persistence::~persistence()
 
 void persistence::create()
 {
-  // Todo: create all tables
+  for (t_table_map::value_type &val : tables_) {
+    if (connection_.exists(val.second.name())) {
+      continue;
+    }
+    val.second.create(connection_);
+  }
 }
 void persistence::drop()
 {
-  // Todo: drop all tables
+  for (t_table_map::value_type &val : tables_) {
+    if (!connection_.exists(val.second.name())) {
+      continue;
+    }
+    val.second.drop(connection_);
+  }
 }
 
 }

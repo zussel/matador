@@ -75,21 +75,26 @@ public:
    * 
    * @return The raw sqlite3 pointer.
    */
-  MYSQL* operator()();
+  MYSQL* handle();
 
   virtual void open(const std::string &db);
   virtual void close() override;
+
   detail::result_impl* execute(const oos::sql &stmt);
   detail::result_impl* execute(const std::string &stmt);
   detail::statement_impl* prepare(const oos::sql &stmt);
+
   virtual void begin() override;
   virtual void commit() override;
   virtual void rollback() override;
+
+  virtual bool exists(const std::string &tablename);
 
   mysql_dialect& dialect();
 
 private:
   MYSQL mysql_;
+  std::string db_;
   bool is_open_;
   mysql_dialect dialect_;
 };

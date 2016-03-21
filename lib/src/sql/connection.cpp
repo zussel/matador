@@ -48,4 +48,10 @@ const char *connection::type_string(data_type_t) const
 //  return impl_->type_string(type);
   return nullptr;
 }
+
+bool connection::exists(const std::string &tablename) const
+{
+  return impl_->exists(tablename);
+}
+
 }

@@ -9,6 +9,10 @@
 
 #include "object/object_store.hpp"
 
+#include "orm/table.hpp"
+
+#include <unordered_map>
+
 namespace oos {
 
 class persistence
@@ -33,6 +37,7 @@ public:
   void attach(const char *type, bool abstract = false, const char *parent = nullptr)
   {
     store_.attach<T>(type, abstract, parent);
+    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
   }
 
   /**
@@ -52,6 +57,7 @@ public:
   void attach(const char *type, bool abstract = false)
   {
     store_.attach<T,S>(type, abstract);
+    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
   }
 
   /**
@@ -64,7 +70,9 @@ public:
   template < class T >
   bool exists()
   {
-    return false;
+    t_table_map::iterator i = tables_.find(std::type_index(typeid(T)));
+
+    return connection_.exists(i->second.name());
   }
 
   void create();
@@ -73,6 +81,9 @@ public:
 private:
   connection connection_;
   object_store store_;
+
+  typedef std::unordered_map<std::type_index, table> t_table_map;
+  t_table_map tables_;
 };
 
 }
