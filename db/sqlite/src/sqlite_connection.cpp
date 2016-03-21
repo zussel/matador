@@ -74,7 +74,7 @@ void sqlite_connection::close()
   sqlite_db_ = 0;
 }
 
-sqlite3*sqlite_connection::operator()()
+sqlite3* sqlite_connection::handle()
 {
   return sqlite_db_;
 }
@@ -117,6 +117,19 @@ oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
 {
   std::string stmt(dialect_.prepare(sql));
   return new sqlite_statement(*this, stmt);
+}
+
+bool sqlite_connection::exists(const std::string &tablename)
+{
+  std::string stmt("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND tbl_name='" + tablename + "' LIMIT 1");
+  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute(stmt)));
+
+  if (res->result_rows() != 1) {
+    return false;
+  } else {
+    char *end;
+    return strtoul(res->column(0), &end, 10) == 1;
+  }
 }
 
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)

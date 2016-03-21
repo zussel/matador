@@ -69,12 +69,16 @@ public:
 
   virtual void open(const std::string &db);
   virtual void close() override;
+
   detail::result_impl* execute(const oos::sql &stmt);
   detail::result_impl* execute(const std::string &stmt);
   detail::statement_impl* prepare(const oos::sql &stmt);
+
   virtual void begin() override;
   virtual void commit() override;
   virtual void rollback() override;
+
+  virtual bool exists(const std::string &tablename) override;
 
   /**
    * Return the raw pointer to the sqlite3
@@ -82,7 +86,7 @@ public:
    * 
    * @return The raw sqlite3 pointer.
    */
-  sqlite3* operator()();
+  sqlite3* handle();
 
 private:
   static int parse_result(void* param, int column_count, char** values, char** columns);

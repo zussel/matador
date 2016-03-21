@@ -56,9 +56,9 @@ mssql_result::~mssql_result()
   }
 }
 
-const char* mssql_result::column(size_type /*c*/) const
+const char* mssql_result::column(size_type) const
 {
-  return 0;
+  return nullptr;
 }
 
 bool mssql_result::fetch()

@@ -69,14 +69,14 @@ void mssql_connection::open(const std::string &connection)
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
-  std::string db = con.substr(pos + 1);
+  db_ = con.substr(pos + 1);
 
   // get driver
-  pos = db.find('(');
+  pos = db_.find('(');
   if (pos != std::string::npos) {
-    driver = db.substr(pos+1);
-    db = db.substr(0, pos);
-    db = trim(db);
+    driver = db_.substr(pos+1);
+    db_ = db_.substr(0, pos);
+    db_ = trim(db_);
     pos = driver.find(')');
     driver = driver.substr(0, pos);
   } else {
@@ -103,7 +103,7 @@ void mssql_connection::open(const std::string &connection)
 
   SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
 
-  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ",1433;DATABASE=" + db + ";UID=" + user + ";PWD=" + passwd + ";");
+  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ",1433;DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
@@ -194,6 +194,18 @@ void mssql_connection::rollback()
 {
   /*auto res = */execute("ROLLBACK;");
   // TODO: check result
+}
+
+bool mssql_connection::exists(const std::string &tablename)
+{
+  std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + db_ + "' AND TABLE_NAME='" + tablename + "'");
+  std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
+
+  if (!res->fetch()) {
+    return false;
+  } else {
+    return res->get<int>(1) == 1;
+  }
 }
 
 SQLHANDLE mssql_connection::handle()

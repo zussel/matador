@@ -48,12 +48,25 @@ private:
 public:
   mssql_result(SQLHANDLE stmt, bool free);
   virtual ~mssql_result();
-  
+
   const char* column(size_type c) const;
   virtual bool fetch();
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
+
+  template < class T, typename = std::enable_if<std::is_integral<T>::value> >
+  T get(size_type index) const
+  {
+    T val;
+    SQLLEN info = 0;
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
+    if (ret != SQL_SUCCESS) {
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    }
+    return val;
+  }
 
   virtual int transform_index(int index) const;
 

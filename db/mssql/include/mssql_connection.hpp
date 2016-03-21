@@ -70,9 +70,12 @@ public:
   virtual oos::detail::result_impl* execute(const oos::sql &stmt);
   virtual oos::detail::result_impl* execute(const std::string &stmt);
   virtual oos::detail::statement_impl* prepare(const oos::sql &stmt);
+
   virtual void begin();
   virtual void commit();
   virtual void rollback();
+
+  virtual bool exists(const std::string &tablename) override;
 
   SQLHANDLE handle();
 
@@ -83,6 +86,8 @@ public:
 private:
   SQLHANDLE odbc_;
   SQLHANDLE connection_;
+
+  std::string db_;
 
   mssql_dialect dialect_;
   bool is_open_;
