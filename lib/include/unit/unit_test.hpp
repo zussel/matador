@@ -669,6 +669,36 @@ public:
   void expect_false(bool a, const std::string &msg, int line, const char *file);
 
   /**
+   * @brief Checks if a is equal b.
+   *
+   * If a is not equal b the test method prints
+   * the given message to stdout.
+   *
+   * @tparam X The type of the left and right hand serializable to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  template < class X >
+  void expect_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (a != b) {
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+
+  void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a, b.c_str()) != 0) {
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+
+  /**
    * @brief Checks if a is greater b.
    *
    * If a is not greater b the test method prints

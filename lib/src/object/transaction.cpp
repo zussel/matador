@@ -8,21 +8,25 @@
 namespace oos {
 
 transaction::transaction(oos::object_store &store)
+  : transaction(store, std::make_shared<null_observer>())
+{}
+
+transaction::transaction(object_store &store, const std::shared_ptr<observer> &obsvr)
   : store_(store)
   , inserter_(actions_)
-{
-}
+  , observer_(obsvr)
+{}
 
 void transaction::begin()
 {
   store_.push_transaction(this);
-  // Todo: call database begin
+  observer_->on_begin();
 }
 
 void transaction::commit()
 {
+  observer_->on_commit();
   cleanup();
-  store_.pop_transaction();
 }
 
 void transaction::rollback()
@@ -45,12 +49,11 @@ void transaction::rollback()
       restore(a);
     }
 
-//    db_.rollback();
+    observer_->on_rollback();
 
     // clear container
     cleanup();
   }
-  store_.pop_transaction();
 }
 
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
@@ -70,7 +73,7 @@ void transaction::cleanup()
   actions_.clear();
   object_buffer_.clear();
   id_action_index_map_.clear();
-//  db_.pop_transaction();
+  store_.pop_transaction();
 }
 
 

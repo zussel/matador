@@ -39,7 +39,25 @@ class object_store;
 class OOS_API transaction
 {
 public:
+  struct observer
+  {
+    virtual ~observer() {}
+
+    virtual void on_begin() = 0;
+    virtual void on_commit() = 0;
+    virtual void on_rollback() = 0;
+  };
+
+  struct null_observer : public observer
+  {
+    void on_begin() {};
+    void on_commit() {};
+    void on_rollback() {};
+  };
+
+public:
   explicit transaction(object_store &store);
+  transaction(object_store &store, const std::shared_ptr<observer> &obsvr);
 
   void begin();
   void commit();
@@ -71,6 +89,8 @@ private:
 
   action_inserter inserter_;
   byte_buffer object_buffer_;
+
+  std::shared_ptr<observer> observer_;
 };
 
 template < class T >

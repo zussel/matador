@@ -19,7 +19,7 @@ public:
   template < class T >
   object_ptr<T> insert(T *obj)
   {
-    transaction tr(persistence_.store());
+    transaction tr(persistence_.store(), observer_);
     tr.begin();
     object_ptr<T> optr(persistence_.store().insert(obj));
     tr.commit();
@@ -30,7 +30,23 @@ public:
   const object_store& store() const;
 
 private:
+  class session_observer : public transaction::observer
+  {
+  public:
+    explicit session_observer(session &s);
+    virtual void on_begin();
+    virtual void on_commit();
+    virtual void on_rollback();
+
+  private:
+    session &session_;
+  };
+
+private:
   persistence &persistence_;
+
+  std::shared_ptr<transaction::observer> observer_;
+
 };
 
 }

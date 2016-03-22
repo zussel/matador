@@ -53,7 +53,11 @@ void OrmTestUnit::test_insert()
   c.open();
   auto res = q.select().where(oos::column("name") == "hans").execute(c);
 
-  std::unique_ptr<person> p1 = res.begin().release();
+  auto first = res.begin();
+
+  UNIT_ASSERT_TRUE(first != res.end(), "first must not end");
+
+  std::unique_ptr<person> p1(first.release());
 
   UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
   
