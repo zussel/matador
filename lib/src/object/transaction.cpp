@@ -25,7 +25,7 @@ void transaction::begin()
 
 void transaction::commit()
 {
-  observer_->on_commit();
+  observer_->on_commit(actions_);
   cleanup();
 }
 

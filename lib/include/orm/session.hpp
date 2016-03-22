@@ -5,7 +5,7 @@
 #ifndef OOS_SESSION_HPP
 #define OOS_SESSION_HPP
 
-#include "object/object_ptr.hpp"
+#include "object/transaction.hpp"
 
 #include "orm/persistence.hpp"
 
@@ -35,7 +35,7 @@ private:
   public:
     explicit session_observer(session &s);
     virtual void on_begin();
-    virtual void on_commit();
+    virtual void on_commit(transaction::t_action_vactor &actions);
     virtual void on_rollback();
 
     virtual void visit(insert_action *act);

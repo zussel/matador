@@ -39,19 +39,23 @@ class object_store;
 class OOS_API transaction
 {
 public:
+  typedef std::shared_ptr<action> action_ptr;
+  typedef std::vector<action_ptr> t_action_vactor;
+
+public:
   struct observer
   {
     virtual ~observer() {}
 
     virtual void on_begin() = 0;
-    virtual void on_commit() = 0;
+    virtual void on_commit(transaction::t_action_vactor&) = 0;
     virtual void on_rollback() = 0;
   };
 
   struct null_observer : public observer
   {
     void on_begin() {};
-    void on_commit() {};
+    void on_commit(transaction::t_action_vactor&) {};
     void on_rollback() {};
   };
 
@@ -71,8 +75,6 @@ public:
   void on_delete(object_proxy *proxy);
 
 private:
-  typedef std::shared_ptr<action> action_ptr;
-  typedef std::vector<action_ptr> t_action_vactor;
   typedef t_action_vactor::iterator action_iterator;
   typedef std::unordered_map<unsigned long, t_action_vactor::size_type> t_id_action_index_map;
 

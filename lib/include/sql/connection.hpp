@@ -40,6 +40,12 @@ public:
   void close();
 
   template < class T >
+  result<T> execute(const std::string &stmt)
+  {
+    return result<T>(impl_->execute(stmt));
+  }
+
+  template < class T >
   result<T> execute(const sql &stmt)
   {
     return result<T>(impl_->execute(stmt));

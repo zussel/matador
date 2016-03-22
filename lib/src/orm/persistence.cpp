@@ -48,5 +48,14 @@ const object_store &persistence::store() const
   return store_;
 }
 
+connection &persistence::conn()
+{
+  return connection_;
+}
+
+const connection &persistence::conn() const {
+  return connection_;
+}
+
 
 }

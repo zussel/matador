@@ -81,6 +81,9 @@ public:
   object_store& store();
   const object_store& store() const;
 
+  connection& conn();
+  const connection& conn() const;
+
 private:
   connection connection_;
   object_store store_;
