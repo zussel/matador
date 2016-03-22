@@ -39,10 +39,9 @@ public:
    */
   void close();
 
-  template < class T >
-  result<T> execute(const std::string &stmt)
+  void execute(const std::string &stmt)
   {
-    return result<T>(impl_->execute(stmt));
+    std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));
   }
 
   template < class T >
