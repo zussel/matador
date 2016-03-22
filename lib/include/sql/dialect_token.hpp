@@ -19,6 +19,27 @@ struct select : public token
   virtual std::string compile(basic_dialect &d) const override;
 };
 
+struct begin : public token
+{
+  begin() : token(basic_dialect::BEGIN) {}
+
+  virtual std::string compile(basic_dialect &d) const override;
+};
+
+struct commit : public token
+{
+  commit() : token(basic_dialect::COMMIT) {}
+
+  virtual std::string compile(basic_dialect &d) const override;
+};
+
+struct rollback : public token
+{
+  rollback() : token(basic_dialect::ROLLBACK) {}
+
+  virtual std::string compile(basic_dialect &d) const override;
+};
+
 struct drop : public token
 {
   drop(const std::string &t) : token(basic_dialect::DROP), table(t) {}
@@ -151,9 +172,6 @@ struct where : public token
   {}
 
   virtual std::string compile(basic_dialect &d) const override;
-//  {
-//    return cond->compile(d, compile_type);
-//  }
 
   std::shared_ptr<basic_condition> cond;
 };

@@ -12,6 +12,13 @@ namespace oos {
 
 namespace mssql {
 
+mssql_dialect::mssql_dialect()
+{
+  replace_token(basic_dialect::BEGIN, "BEGIN TRANSACTION");
+  replace_token(basic_dialect::COMMIT, "COMMIT");
+  replace_token(basic_dialect::ROLLBACK, "ROLLBACK");
+}
+
 const char* mssql_dialect::type_string(oos::data_type_t type) const
 {
   switch(type) {
@@ -211,6 +218,21 @@ std::string mssql_dialect::compile(const oos::detail::drop &drop)
 std::string mssql_dialect::compile(const oos::detail::create &create)
 {
   return token(create.type) + " " + create.table + " ";
+}
+
+std::string mssql_dialect::compile(const oos::detail::begin &bgn)
+{
+  return token(bgn.type) + " ";
+}
+
+std::string mssql_dialect::compile(const oos::detail::commit &cmmt)
+{
+  return token(cmmt.type) + " ";
+}
+
+std::string mssql_dialect::compile(const oos::detail::rollback &rllbck)
+{
+  return token(rllbck.type) + " ";
 }
 
 }

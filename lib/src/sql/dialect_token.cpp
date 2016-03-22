@@ -13,6 +13,21 @@ std::string select::compile(basic_dialect &d) const
   return d.compile(*this);
 }
 
+std::string rollback::compile(basic_dialect &d) const
+{
+  return d.compile(*this);
+}
+
+std::string begin::compile(basic_dialect &d) const
+{
+  return d.compile(*this);
+}
+
+std::string commit::compile(basic_dialect &d) const
+{
+  return d.compile(*this);
+}
+
 std::string drop::compile(basic_dialect &d) const
 {
   return d.compile(*this);

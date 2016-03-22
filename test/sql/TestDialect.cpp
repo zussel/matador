@@ -207,3 +207,19 @@ std::string TestDialect::compile(const oos::detail::create &create)
 {
   return token(create.type) + " " + create.table + " ";
 }
+
+std::string TestDialect::compile(const oos::detail::begin &bgn)
+{
+  return token(bgn.type) + " ";
+}
+
+std::string TestDialect::compile(const oos::detail::commit &cmmt)
+{
+  return token(cmmt.type) + " ";
+}
+
+std::string TestDialect::compile(const oos::detail::rollback &rllbck)
+{
+  return token(rllbck.type) + " ";
+}
+

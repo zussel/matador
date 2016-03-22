@@ -13,6 +13,7 @@ namespace mysql {
 class mysql_dialect : public basic_dialect
 {
 public:
+  mysql_dialect();
   const char* type_string(oos::data_type_t type) const;
 
   virtual std::string compile(const oos::detail::create &create);
@@ -38,6 +39,9 @@ public:
   virtual std::string compile(const oos::detail::basic_value &value);
   virtual std::string compile(const oos::detail::remove &remove1);
   virtual std::string compile(const oos::detail::top &limit);
+  virtual std::string compile(const oos::detail::begin &bgn);
+  virtual std::string compile(const oos::detail::commit &cmmt);
+  virtual std::string compile(const oos::detail::rollback &rllbck);
 
   void reset() { bind_count_ = 0; column_count_ = 0; };
   int bind_count() const { return bind_count_; }

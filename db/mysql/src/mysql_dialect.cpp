@@ -4,15 +4,20 @@
 #include "mysql_dialect.hpp"
 
 #include "sql/dialect_token.hpp"
-#include "sql/condition.hpp"
-#include "sql/column.hpp"
 
-#include <sstream>
 #include <algorithm>
 
 namespace oos {
 
 namespace mysql {
+
+
+mysql_dialect::mysql_dialect()
+{
+  replace_token(basic_dialect::BEGIN, "START TRANSACTION");
+  replace_token(basic_dialect::COMMIT, "COMMIT");
+  replace_token(basic_dialect::ROLLBACK, "ROLLBACK");
+}
 
 const char* mysql_dialect::type_string(oos::data_type_t type) const
 {
@@ -223,6 +228,21 @@ std::string mysql_dialect::compile(const oos::detail::drop &drop)
 std::string mysql_dialect::compile(const oos::detail::create &create)
 {
   return token(create.type) + " " + create.table + " ";
+}
+
+std::string mysql_dialect::compile(const oos::detail::begin &bgn)
+{
+  return token(bgn.type) + " ";
+}
+
+std::string mysql_dialect::compile(const oos::detail::commit &cmmt)
+{
+  return token(cmmt.type) + " ";
+}
+
+std::string mysql_dialect::compile(const oos::detail::rollback &rllbck)
+{
+  return token(rllbck.type) + " ";
 }
 
 }

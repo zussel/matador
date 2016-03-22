@@ -30,7 +30,7 @@ public:
   const object_store& store() const;
 
 private:
-  class session_observer : public transaction::observer
+  class session_observer : public transaction::observer, public action_visitor
   {
   public:
     explicit session_observer(session &s);
@@ -38,6 +38,9 @@ private:
     virtual void on_commit();
     virtual void on_rollback();
 
+    virtual void visit(insert_action *act);
+    virtual void visit(update_action *act);
+    virtual void visit(delete_action *act);
   private:
     session &session_;
   };

@@ -18,4 +18,9 @@ std::string basic_dialect::prepare(const sql &s)
   return s.compile(*this);
 }
 
+void basic_dialect::replace_token(basic_dialect::t_token tkn, const std::string &value)
+{
+  tokens[tkn] = value;
+}
+
 }

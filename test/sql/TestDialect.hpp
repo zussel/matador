@@ -40,6 +40,9 @@ public:
   virtual std::string compile(const oos::detail::basic_value &value);
   virtual std::string compile(const oos::detail::remove &remove1);
   virtual std::string compile(const oos::detail::top &limit);
+  virtual std::string compile(const oos::detail::begin &bgn);
+  virtual std::string compile(const oos::detail::commit &cmmt);
+  virtual std::string compile(const oos::detail::rollback &rllbck);
 };
 
 #endif //OOS_TESTDIALECT_HPP

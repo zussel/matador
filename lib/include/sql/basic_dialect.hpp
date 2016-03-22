@@ -39,6 +39,10 @@ struct drop;
 struct top;
 struct order_by;
 struct group_by;
+struct begin;
+struct commit;
+struct rollback;
+
 }
 
 class basic_dialect
@@ -75,7 +79,10 @@ public:
     CONDITION,
     SET,
     NOT_NULL,
-    PRIMARY_KEY
+    PRIMARY_KEY,
+    BEGIN,
+    COMMIT,
+    ROLLBACK
   };
 
 public:
@@ -111,13 +118,19 @@ public:
   virtual std::string compile(const oos::detail::basic_value &) = 0;
   virtual std::string compile(const oos::detail::remove &) = 0;
   virtual std::string compile(const oos::detail::top &) = 0;
+  virtual std::string compile(const oos::detail::begin &) = 0;
+  virtual std::string compile(const oos::detail::commit &) = 0;
+  virtual std::string compile(const oos::detail::rollback &) = 0;
 
   t_compile_type compile_type() const { return compile_type_; }
+
+protected:
+  void replace_token(t_token tkn, const std::string &value);
 
 private:
   t_compile_type compile_type_;
   typedef std::unordered_map<t_token, std::string, std::hash<int>> t_token_map;
-  const t_token_map tokens {
+  t_token_map tokens {
     {basic_dialect::CREATE_TABLE, "CREATE TABLE"},
     {basic_dialect::DROP, "DROP TABLE"},
     {basic_dialect::DELETE, "DELETE FROM"},
@@ -140,7 +153,10 @@ private:
     {basic_dialect::DISTINCT, "DISTINCT"},
     {basic_dialect::SET, "SET"},
     {basic_dialect::NOT_NULL, "NOT NULL"},
-    {basic_dialect::PRIMARY_KEY, "PRIMARY KEY"}
+    {basic_dialect::PRIMARY_KEY, "PRIMARY KEY"},
+    {basic_dialect::BEGIN, "BEGIN TRANSACTION"},
+    {basic_dialect::COMMIT, "COMMIT TRANSACTION"},
+    {basic_dialect::ROLLBACK, "ROLLBACK TRANSACTION"}
   };
 };
 

@@ -43,5 +43,20 @@ void session::session_observer::on_begin()
 
 }
 
+void session::session_observer::visit(insert_action *act)
+{
+
+}
+
+void session::session_observer::visit(update_action *act)
+{
+
+}
+
+void session::session_observer::visit(delete_action *act)
+{
+
+}
+
 
 }
