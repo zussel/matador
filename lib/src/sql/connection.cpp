@@ -54,4 +54,10 @@ bool connection::exists(const std::string &tablename) const
   return impl_->exists(tablename);
 }
 
+basic_dialect *connection::dialect()
+{
+  return impl_->dialect();
+}
+
+
 }

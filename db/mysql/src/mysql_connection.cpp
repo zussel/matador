@@ -155,9 +155,9 @@ bool mysql_connection::exists(const std::string &tablename)
   }
 }
 
-mysql_dialect &mysql_connection::dialect()
+basic_dialect* mysql_connection::dialect()
 {
-  return dialect_;
+  return &dialect_;
 }
 
 unsigned long mysql_connection::last_inserted_id()

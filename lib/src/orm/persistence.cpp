@@ -38,6 +38,21 @@ void persistence::drop()
   }
 }
 
+persistence::t_table_map::iterator persistence::find_table(const std::string &type)
+{
+  return tables_.find(type);
+}
+
+persistence::t_table_map::iterator persistence::begin()
+{
+  return tables_.begin();
+}
+
+persistence::t_table_map::iterator persistence::end()
+{
+  return tables_.end();
+}
+
 object_store &persistence::store()
 {
   return store_;

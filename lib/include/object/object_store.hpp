@@ -355,6 +355,23 @@ public:
   iterator detach(const prototype_iterator &i);
 
   /**
+   * Finds the typename to the given class.
+   * If no typename is found an empty string
+   * is returned.
+   *
+   * @tparam class type to find
+   * @return The corresponding typename
+   */
+  template < class T >
+  std::string type() const {
+    const_iterator i = find<T>();
+    if (i == end()) {
+      return "";
+    }
+    return i->type();
+  }
+
+  /**
    * @brief Finds prototype node.
    *
    * Finds and returns prototype node iterator identified

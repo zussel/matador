@@ -47,20 +47,37 @@ void session::session_observer::on_begin()
 {
   // Todo: begin transaction
   connection &conn = session_.persistence_.conn();
-  basic_dialect *dialect = nullptr;
-//  basic_dialect *dialect = conn.dialect();
+  basic_dialect *dialect = conn.dialect();
+  // Todo: conn.execute(dialect->begin());
   conn.execute(dialect->token(basic_dialect::BEGIN));
   session_.persistence_.conn();
 }
 
 void session::session_observer::visit(insert_action *act)
 {
+  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->type());
+  if (i == session_.persistence_.end()) {
+    // Todo: can't find table: give warning
+    return;
+  }
+
+  insert_action::const_iterator first = act->begin();
+  insert_action::const_iterator last = act->end();
+  while (first != last) {
+    i->second.insert((*first++), session_.persistence_.conn());
+  }
 
 }
 
 void session::session_observer::visit(update_action *act)
 {
+  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
+  if (i == session_.persistence_.end()) {
+    // Todo: can't find table: give warning
+    return;
+  }
 
+//  i->second.update(act->proxy()->obj());
 }
 
 void session::session_observer::visit(delete_action *act)

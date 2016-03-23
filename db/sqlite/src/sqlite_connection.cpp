@@ -132,6 +132,11 @@ bool sqlite_connection::exists(const std::string &tablename)
   }
 }
 
+basic_dialect *sqlite_connection::dialect()
+{
+  return &dialect_;
+}
+
 int sqlite_connection::parse_result(void* param, int column_count, char** values, char** /*columns*/)
 {
   sqlite_result *result = static_cast<sqlite_result*>(param);

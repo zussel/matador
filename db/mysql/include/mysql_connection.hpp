@@ -90,7 +90,7 @@ public:
 
   virtual bool exists(const std::string &tablename);
 
-  mysql_dialect& dialect();
+  virtual basic_dialect* dialect() override;
 
 private:
   MYSQL mysql_;

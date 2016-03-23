@@ -17,6 +17,7 @@ class result_impl;
 class statement_impl;
 }
 class sql;
+class basic_dialect;
 
 class connection_impl
 {
@@ -36,6 +37,8 @@ public:
   virtual void rollback() = 0;
 
   virtual bool exists(const std::string &tablename) = 0;
+
+  virtual basic_dialect* dialect() = 0;
 };
 
 }

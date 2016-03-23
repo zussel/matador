@@ -18,6 +18,9 @@ namespace oos {
 class persistence
 {
 public:
+  typedef std::unordered_map<std::string, table> t_table_map;
+
+public:
   explicit persistence(const std::string &dns);
   ~persistence();
 
@@ -37,7 +40,8 @@ public:
   void attach(const char *type, bool abstract = false, const char *parent = nullptr)
   {
     store_.attach<T>(type, abstract, parent);
-    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
+//    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
+    tables_.insert(std::make_pair(type, std::move(table(type, (T*) nullptr))));
   }
 
   /**
@@ -57,7 +61,8 @@ public:
   void attach(const char *type, bool abstract = false)
   {
     store_.attach<T,S>(type, abstract);
-    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
+//    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
+    tables_.insert(std::make_pair(type, std::move(table(type, (T*) nullptr))));
   }
 
   /**
@@ -70,13 +75,20 @@ public:
   template < class T >
   bool exists()
   {
-    t_table_map::iterator i = tables_.find(std::type_index(typeid(T)));
+    t_table_map::iterator i = tables_.find(store_.type<T>());
 
+    if (i == tables_.end()) {
+      return false;
+    }
     return connection_.exists(i->second.name());
   }
 
   void create();
   void drop();
+
+  t_table_map::iterator find_table(const std::string &type);
+  t_table_map::iterator begin();
+  t_table_map::iterator end();
 
   object_store& store();
   const object_store& store() const;
@@ -88,7 +100,7 @@ private:
   connection connection_;
   object_store store_;
 
-  typedef std::unordered_map<std::type_index, table> t_table_map;
+//  typedef std::unordered_map<std::type_index, table> t_table_map;
   t_table_map tables_;
 };
 

@@ -80,6 +80,8 @@ public:
 
   virtual bool exists(const std::string &tablename) override;
 
+  virtual basic_dialect* dialect() override;
+
   /**
    * Return the raw pointer to the sqlite3
    * database struct.

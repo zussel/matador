@@ -31,6 +31,8 @@ public:
   virtual const char *type_string(data_type_t) const { return nullptr; }
 
   virtual bool exists(const std::string &) override { return true; }
+
+  virtual basic_dialect* dialect() override { return nullptr; }
 };
 
 }

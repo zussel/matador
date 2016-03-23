@@ -9,6 +9,8 @@
 
 namespace oos {
 
+class basic_dialect;
+
 class connection
 {
 public:
@@ -59,6 +61,8 @@ public:
   const char* type_string(data_type_t type) const;
 
   bool exists(const std::string &tablename) const;
+
+  basic_dialect* dialect();
 
 private:
   std::string type_;

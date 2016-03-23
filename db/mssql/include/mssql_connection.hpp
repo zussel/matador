@@ -81,7 +81,7 @@ public:
 
   virtual unsigned long last_inserted_id();
 
-  mssql_dialect& dialect();
+  virtual basic_dialect* dialect() override;
 
 private:
   SQLHANDLE odbc_;

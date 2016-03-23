@@ -221,9 +221,9 @@ unsigned long mssql_connection::last_inserted_id()
   return id;
 }
 
-mssql_dialect &mssql_connection::dialect()
+basic_dialect* mssql_connection::dialect()
 {
-  return dialect_;
+  return &dialect_;
 }
 
 
