@@ -22,7 +22,8 @@ public:
   virtual void initialize();
 
   void test_create();
-  void test_statement();
+  void test_statement_insert();
+  void test_statement_update();
   void test_foreign_query();
   void test_query();
   void test_query_select();

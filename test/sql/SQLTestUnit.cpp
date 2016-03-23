@@ -17,7 +17,8 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   , db_(db)
 {
   add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
-  add_test("statement", std::bind(&SQLTestUnit::test_statement, this), "test prepared sql statement");
+  add_test("statement_insert", std::bind(&SQLTestUnit::test_statement_insert, this), "test prepared sql insert statement");
+  add_test("statement_update", std::bind(&SQLTestUnit::test_statement_update, this), "test prepared sql update statement");
   add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
   add_test("query_select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
@@ -59,7 +60,7 @@ void SQLTestUnit::test_create()
   res = q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_statement()
+void SQLTestUnit::test_statement_insert()
 {
   connection_->open();
 
@@ -99,6 +100,56 @@ void SQLTestUnit::test_statement()
   stmt = q.drop().prepare(*connection_);
 
   res = stmt.execute();
+}
+
+void SQLTestUnit::test_statement_update()
+{
+  connection_->open();
+
+  query<Item> q("item");
+
+  statement<Item> stmt(q.create().prepare(*connection_));
+
+  result<Item> res(stmt.execute());
+
+  oos::identifier<unsigned long> id(23);
+  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  Item hans("Hans", 4711);
+  hans.id(id.value());
+  hans.set_time(itime);
+  stmt = q.insert(&hans).prepare(*connection_);
+
+  stmt.bind(&hans);
+  res = stmt.execute();
+
+  stmt = q.select().prepare(*connection_);
+  res = stmt.execute();
+
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    ++first;
+  }
+
+//  auto id_cond = id_condition_builder::build<person>();
+
+  stmt = q.update().where(id_cond).prepare(*connection_);
+  int pos = stmt.bind(&hans);
+//  ide
+//  stmt.bind()
+
+  stmt = q.drop().prepare(*connection_);
+
+  res = stmt.execute();
+
 }
 
 void SQLTestUnit::test_foreign_query()
