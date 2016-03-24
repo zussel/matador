@@ -64,7 +64,7 @@ void session::session_observer::visit(insert_action *act)
   insert_action::const_iterator first = act->begin();
   insert_action::const_iterator last = act->end();
   while (first != last) {
-    i->second.insert((*first++), session_.persistence_.conn());
+    i->second->insert((*first++));
   }
 
 }
@@ -77,12 +77,18 @@ void session::session_observer::visit(update_action *act)
     return;
   }
 
-//  i->second.update(act->proxy()->obj());
+  i->second->update(act->proxy());
 }
 
 void session::session_observer::visit(delete_action *act)
 {
+  persistence::t_table_map::iterator i = session_.persistence_.find_table(act->proxy()->node()->type());
+  if (i == session_.persistence_.end()) {
+    // Todo: can't find table: give warning
+    return;
+  }
 
+  i->second->remove(act->proxy());
 }
 
 

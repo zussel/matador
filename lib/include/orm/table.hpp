@@ -7,75 +7,71 @@
 
 #include "object/object_proxy.hpp"
 
+#include "orm/basic_table.hpp"
+
 #include "sql/query.hpp"
 
 namespace oos {
 
 class connection;
 
-class table
+template < class T >
+class table : public basic_table
 {
 public:
-  template < class T >
-  table(const std::string &name, T*)
-    : name_(name)
-    , create_(&create_table<T>)
-    , drop_(&drop_table<T>)
-    , insert_(&insert_object<T>)
+  table(const std::string &name, connection &conn)
+    : basic_table(name, &create_table, &drop_table,
+                  std::bind(&table<T>::insert_object, this, std::placeholders::_1),
+                  std::bind(&table<T>::update_object, this, std::placeholders::_1),
+                  std::bind(&table<T>::delete_object, this, std::placeholders::_1)
+      )
   {
+    query<T> q(name);
+    insert_ = q.insert().prepare(conn);
+    column id("id");
+    update_ = q.update().where(id == 1).prepare(conn);
+    delete_ = q.remove().where(id == 1).prepare(conn);
   }
 
-  std::string name() const;
-  void create(connection &conn);
-  void drop(connection &conn);
-  void insert(object_proxy *proxy, connection &conn)
+  void insert_object(object_proxy *proxy)
   {
-    insert_(proxy, name_, conn);
+    insert_.bind((T*)proxy->obj());
+    // Todo: check result
+    insert_.execute();
+  }
+
+  void update_object(object_proxy *proxy)
+  {
+    /*int pos = */update_.bind((T*)proxy->obj());
+    // Todo: bind primary key
+//    update_.bind();
+    // Todo: check result
+    update_.execute();
+  }
+
+  void delete_object(object_proxy */*proxy*/)
+  {
+    // Todo: bind primary key
+//    delete_.bind();
+    // Todo: check result
+    delete_.execute();
   }
 
 private:
-  template < class T >
   static void create_table(const std::string &name, connection &conn) {
     query<T> stmt(name);
     stmt.create().execute(conn);
   }
 
-  template < class T >
   static void drop_table(const std::string &name, connection &conn) {
     query<T> stmt(name);
     stmt.drop().execute(conn);
   }
 
-  template < class T >
-  static void insert_object(object_proxy *proxy, const std::string &name, connection &conn) {
-    T *obj = (T*)proxy->obj();
-    static query<T> q(name);
-    static statement<T> stmt(q.insert(obj).prepare(conn));
-    stmt.bind(obj);
-    stmt.execute();
-  }
-
-  template < class T >
-  static void update_object(object_proxy *proxy, const std::string &name, connection &conn) {
-    T *obj = (T*)proxy->obj();
-    static query<T> q(name);
-    static statement<T> stmt(q.update(obj).where().prepare(conn));
-    stmt.bind(obj);
-    stmt.execute();
-  }
-
-  typedef void(*t_create_func)(const std::string&, connection &);
-  typedef void(*t_drop_func)(const std::string&, connection &);
-  typedef void(*t_insert_object)(object_proxy *, const std::string&, connection &);
-  typedef void(*t_update_object)(object_proxy *, const std::string&, connection &);
-
 private:
-  std::string name_;
-
-  t_create_func create_;
-  t_drop_func drop_;
-  t_insert_object insert_;
-  t_update_object update_;
+  statement<T> insert_;
+  statement<T> update_;
+  statement<T> delete_;
 };
 
 }

@@ -21,20 +21,20 @@ persistence::~persistence()
 void persistence::create()
 {
   for (t_table_map::value_type &val : tables_) {
-    if (connection_.exists(val.second.name())) {
+    if (connection_.exists(val.second->name())) {
       continue;
     }
-    val.second.create(connection_);
+    val.second->create(connection_);
   }
 }
 
 void persistence::drop()
 {
   for (t_table_map::value_type &val : tables_) {
-    if (!connection_.exists(val.second.name())) {
+    if (!connection_.exists(val.second->name())) {
       continue;
     }
-    val.second.drop(connection_);
+    val.second->drop(connection_);
   }
 }
 

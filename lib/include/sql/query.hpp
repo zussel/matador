@@ -185,6 +185,16 @@ public:
   }
 
   /**
+   * Creates an insert statement
+   *
+   * @return A reference to the query.
+   */
+  query& insert()
+  {
+    return insert(&obj_);
+  }
+
+  /**
    * Creates an insert statement based
    * on the given serializable and.
    * the name of the table
@@ -293,46 +303,6 @@ public:
 //    sql_.append(new condition<COND>(c));
 
     state = QUERY_COND_WHERE;
-    return *this;
-  }
-
-  /**
-   * Adds an and clause condition to the where
-   * clause.
-   * 
-   * @param c The condition.
-   * @return A reference to the query.
-   */
-  template < class COND >
-  query& and_(const COND &c)
-  {
-    throw_invalid(QUERY_AND, state);
-
-    // TODO: create new condition from last condition and given condition and replace it
-//    sql_.append(std::string(" AND "));
-//    sql_.append(c);
-
-    state = QUERY_AND;
-    return *this;
-  }
-
-  /**
-   * Adds an or clause condition to the where
-   * clause.
-   * 
-   * @param c The condition.
-   * @return A reference to the query.
-   */
-  template < class COND >
-  query& or_(const COND &c)
-  {
-    throw_invalid(QUERY_OR, state);
-
-    // TODO: create new condition from last condition and given condition and replace it
-//    sql_.append(std::string(" OR "));
-//    sql_.append(c);
-
-    state = QUERY_OR;
     return *this;
   }
 
@@ -565,6 +535,7 @@ private:
 
 
 private:
+  T obj_;
   sql sql_;
   state_t state;
   std::string table_name_;

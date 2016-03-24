@@ -141,7 +141,8 @@ void SQLTestUnit::test_statement_update()
 
 //  auto id_cond = id_condition_builder::build<person>();
 
-  stmt = q.update().where(id_cond).prepare(*connection_);
+  oos::column idcol("id");
+  stmt = q.update().where(idcol == 7).prepare(*connection_);
   int pos = stmt.bind(&hans);
 //  ide
 //  stmt.bind()

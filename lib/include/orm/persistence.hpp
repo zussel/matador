@@ -11,6 +11,7 @@
 
 #include "orm/table.hpp"
 
+#include <memory>
 #include <unordered_map>
 
 namespace oos {
@@ -18,7 +19,8 @@ namespace oos {
 class persistence
 {
 public:
-  typedef std::unordered_map<std::string, table> t_table_map;
+  typedef std::shared_ptr<basic_table> table_ptr;
+  typedef std::unordered_map<std::string, table_ptr> t_table_map;
 
 public:
   explicit persistence(const std::string &dns);
@@ -41,7 +43,8 @@ public:
   {
     store_.attach<T>(type, abstract, parent);
 //    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
-    tables_.insert(std::make_pair(type, std::move(table(type, (T*) nullptr))));
+
+    tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
   }
 
   /**
@@ -62,7 +65,7 @@ public:
   {
     store_.attach<T,S>(type, abstract);
 //    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
-    tables_.insert(std::make_pair(type, std::move(table(type, (T*) nullptr))));
+    tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
   }
 
   /**
@@ -80,7 +83,7 @@ public:
     if (i == tables_.end()) {
       return false;
     }
-    return connection_.exists(i->second.name());
+    return connection_.exists(i->second->name());
   }
 
   void create();

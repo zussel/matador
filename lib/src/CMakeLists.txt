@@ -7,7 +7,12 @@ SET(OBJECT_SOURCES
 	object/identifier.cpp
 	object/prototype_iterator.cpp
 	object/object_holder.cpp
-	object/transaction.cpp object/action_inserter.cpp object/action_remover.cpp object/insert_action.cpp object/update_action.cpp object/delete_action.cpp)
+	object/transaction.cpp object/action_inserter.cpp
+	object/action_remover.cpp
+	object/insert_action.cpp
+	object/update_action.cpp
+	object/delete_action.cpp
+)
 
 SET(OBJECT_INSTALL_HEADER
 	${PROJECT_SOURCE_DIR}/include/object/action.hpp
@@ -66,9 +71,10 @@ SET(OBJECT_HEADER
 	../include/object/action_visitor.hpp
 	../include/object/action_remover.hpp
 	../include/object/insert_action.hpp
-    ../include/object/update_action.hpp
-    ../include/object/delete_action.hpp
-	../include/object/abstract_has_many.hpp)
+  ../include/object/update_action.hpp
+  ../include/object/delete_action.hpp
+	../include/object/abstract_has_many.hpp
+)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -129,7 +135,8 @@ SET(TOOLS_HEADER
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
-  ../include/tools/identifiable_holder.hpp)
+  ../include/tools/identifiable_holder.hpp
+)
 
 SET(SQL_SOURCES
   sql/condition.cpp
@@ -146,7 +153,9 @@ SET(SQL_SOURCES
   sql/dialect_token.cpp
   sql/value.cpp
   sql/basic_dialect.cpp
-  sql/column_serializer.cpp sql/value_serializer.cpp)
+  sql/column_serializer.cpp
+	sql/value_serializer.cpp
+)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -175,11 +184,17 @@ SET(SQL_HEADER
 )
 
 SET(ORM_HEADERS
-    ../include/orm/persistence.hpp
-    ../include/orm/table.hpp ../include/orm/session.hpp)
+  ../include/orm/persistence.hpp
+  ../include/orm/table.hpp
+	../include/orm/session.hpp
+	../include/orm/basic_table.hpp
+)
 
 SET(ORM_SOURCES
-    orm/persistence.cpp orm/table.cpp session.cpp)
+	orm/persistence.cpp
+	orm/session.cpp
+	orm/basic_table.cpp
+)
 
 SET(JSON_SOURCES
   json/json_type.cpp
