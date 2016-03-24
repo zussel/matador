@@ -19,6 +19,7 @@ DialectTestUnit::DialectTestUnit()
   add_test("create", std::bind(&DialectTestUnit::test_create_query, this), "test create dialect");
   add_test("drop", std::bind(&DialectTestUnit::test_drop_query, this), "test drop dialect");
   add_test("insert", std::bind(&DialectTestUnit::test_insert_query, this), "test insert dialect");
+  add_test("insert_prepare", std::bind(&DialectTestUnit::test_insert_prepare_query, this), "test prepared insert dialect");
   add_test("select_all", std::bind(&DialectTestUnit::test_select_all_query, this), "test select all dialect");
   add_test("select_distinct", std::bind(&DialectTestUnit::test_select_distinct_query, this), "test select distinct dialect");
   add_test("select_limit", std::bind(&DialectTestUnit::test_select_limit_query, this), "test select limit dialect");
@@ -27,6 +28,8 @@ DialectTestUnit::DialectTestUnit()
   add_test("select_where", std::bind(&DialectTestUnit::test_select_where_query, this), "test select where dialect");
   add_test("update", std::bind(&DialectTestUnit::test_update_query, this), "test update dialect");
   add_test("update_where", std::bind(&DialectTestUnit::test_update_where_query, this), "test update where dialect");
+  add_test("update_prepare", std::bind(&DialectTestUnit::test_update_prepare_query, this), "test prepared update dialect");
+  add_test("update_where_prepare", std::bind(&DialectTestUnit::test_update_where_prepare_query, this), "test prepared update where dialect");
   add_test("delete", std::bind(&DialectTestUnit::test_delete_query, this), "test delete dialect");
   add_test("delete_where", std::bind(&DialectTestUnit::test_delete_where_query, this), "test delete where dialect");
 }
@@ -93,6 +96,38 @@ void DialectTestUnit::test_insert_query()
   std::string result = dialect.direct(s);
 
   UNIT_ASSERT_EQUAL("INSERT INTO person (id, name, age) VALUES (8, 'hans', 25) ", result, "insert statement isn't as expected");
+}
+
+void DialectTestUnit::test_insert_prepare_query()
+{
+  sql s;
+
+  s.append(new detail::insert("person"));
+
+  std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITH_BRACKETS));
+
+  cols->push_back(std::make_shared<column>("id"));
+  cols->push_back(std::make_shared<column>("name"));
+  cols->push_back(std::make_shared<column>("age"));
+
+  s.append(cols.release());
+
+  std::unique_ptr<oos::detail::values> vals(new detail::values);
+
+  unsigned long id(8);
+  std::string name("hans");
+  unsigned int age(25);
+
+  vals->push_back(std::make_shared<value<unsigned long>>(id));
+  vals->push_back(std::make_shared<value<std::string>>(name));
+  vals->push_back(std::make_shared<value<unsigned int>>(age));
+
+  s.append(vals.release());
+
+  TestDialect dialect;
+  std::string result = dialect.prepare(s);
+
+  UNIT_ASSERT_EQUAL("INSERT INTO person (id, name, age) VALUES (?, ?, ?) ", result, "insert statement isn't as expected");
 }
 
 void DialectTestUnit::test_select_all_query()
@@ -301,6 +336,55 @@ void DialectTestUnit::test_update_where_query()
   std::string result = dialect.direct(s);
 
   UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 WHERE (name <> 'Hans' AND age IN (7,5,5,8)) ", result, "update where isn't as expected");
+}
+
+void DialectTestUnit::test_update_prepare_query()
+{
+  sql s;
+
+  s.append(new detail::update("person"));
+  s.append(new detail::set);
+
+  std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
+
+  std::string dieter("Dieter");
+  unsigned int age54(54);
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+
+  s.append(cols.release());
+
+  TestDialect dialect;
+  std::string result = dialect.prepare(s);
+
+  UNIT_ASSERT_EQUAL("UPDATE person SET name=?, age=? ", result, "update isn't as expected");
+}
+
+void DialectTestUnit::test_update_where_prepare_query()
+{
+  sql s;
+
+  s.append(new detail::update("person"));
+  s.append(new detail::set);
+
+  std::unique_ptr<oos::detail::columns> cols(new detail::columns(detail::columns::WITHOUT_BRACKETS));
+
+  std::string dieter("Dieter");
+  unsigned int age54(54);
+  cols->push_back(std::make_shared<detail::value_column<std::string>>("name", dieter));
+  cols->push_back(std::make_shared<detail::value_column<unsigned int>>("age", age54));
+
+  s.append(cols.release());
+
+  oos::column name("name");
+  oos::column age("age");
+  s.append(new detail::where(name != "Hans" && oos::in(age, {7,5,5,8})));
+
+  TestDialect dialect;
+  std::string result = dialect.prepare(s);
+
+  UNIT_ASSERT_EQUAL("UPDATE person SET name=?, age=? WHERE (name <> ? AND age IN (?,?,?,?)) ", result, "update where isn't as expected");
+
 }
 
 void DialectTestUnit::test_delete_query()

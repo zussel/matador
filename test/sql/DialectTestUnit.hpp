@@ -16,6 +16,7 @@ public:
   void test_create_query();
   void test_drop_query();
   void test_insert_query();
+  void test_insert_prepare_query();
   void test_select_all_query();
   void test_select_distinct_query();
   void test_select_limit_query();
@@ -24,6 +25,8 @@ public:
   void test_select_where_query();
   void test_update_query();
   void test_update_where_query();
+  void test_update_prepare_query();
+  void test_update_where_prepare_query();
   void test_delete_query();
   void test_delete_where_query();
 };

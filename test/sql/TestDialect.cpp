@@ -87,7 +87,11 @@ std::string TestDialect::compile(const oos::detail::values &values)
 
 std::string TestDialect::compile(const oos::detail::basic_value &value)
 {
-  return value.str();
+  if (is_preparing()) {
+    return "?";
+  } else {
+    return value.str();
+  }
 }
 
 std::string TestDialect::compile(const oos::detail::insert &insert)

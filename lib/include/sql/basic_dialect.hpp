@@ -124,6 +124,8 @@ public:
 
   t_compile_type compile_type() const { return compile_type_; }
 
+  bool is_preparing() const;
+
 protected:
   void replace_token(t_token tkn, const std::string &value);
 
