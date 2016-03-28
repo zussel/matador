@@ -24,7 +24,10 @@ void test_suite::unit_executer::operator()(test_suite::value_type &x)
 {
   std::cout << "[" << x.second->caption() << "]\n";
   bool result = x.second->execute();
-  summary_.evaluate(result);
+  std::for_each(x.second->test_func_infos_.begin(), x.second->test_func_infos_.end(), [this](const unit_test::test_func_info &info) {
+    summary_.evaluate(info);
+  });
+//  summary_.evaluate(result);
   if (succeeded && !result) {
     succeeded = result;
   }
@@ -156,7 +159,11 @@ bool test_suite::run(const std::string &unit)
     return false;
   } else {
     std::cout << "[" << i->second->caption() << "]\n";
-    return i->second->execute();
+    bool succeeded = i->second->execute();
+    std::for_each(i->second->test_func_infos_.begin(), i->second->test_func_infos_.end(), [this](const unit_test::test_func_info &info) {
+      summary_.evaluate(info);
+    });
+    return succeeded;
   }
 }
 
@@ -190,7 +197,7 @@ bool test_suite::run(const std::string &unit, const std::string &test)
 
 std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)
 {
-  out << "summary for " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
+  out << "summary for " << s.tests << " test with " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
   return out;
 }
 

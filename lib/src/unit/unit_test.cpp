@@ -111,6 +111,7 @@ void unit_test::expect_true(bool a, const std::string &msg, int line, const char
 {
   ++current_test_func_info->error_count;
   if (!a) {
+    ++current_test_func_info->errors;
     std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false: " << msg;
   }
 }
@@ -119,6 +120,7 @@ void unit_test::expect_false(bool a, const std::string &msg, int line, const cha
 {
   ++current_test_func_info->error_count;
   if (a) {
+    ++current_test_func_info->errors;
     std::cout << "ERROR at " << file << ":" << line << ": value " << a << " is false: " << msg;
   }
 }

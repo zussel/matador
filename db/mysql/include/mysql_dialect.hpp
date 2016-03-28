@@ -44,8 +44,8 @@ public:
   virtual std::string compile(const oos::detail::rollback &rllbck);
 
   void reset() { bind_count_ = 0; column_count_ = 0; };
-  int bind_count() const { return bind_count_; }
-  int column_count() const { return column_count_; }
+  virtual int bind_count() const override { return bind_count_; }
+  virtual int column_count() const override { return column_count_; }
 
 private:
   int bind_count_ = 0;

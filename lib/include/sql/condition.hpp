@@ -108,10 +108,14 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
-    str << field_.name << " " << operand << " " << value;
+    if (compile_type == basic_dialect::DIRECT) {
+      str << field_.name << " " << operand << " " << value;
+    } else {
+      str << field_.name << " " << operand << " " << "?";
+    }
     return str.str();
   }
 };
@@ -129,10 +133,14 @@ public:
   std::string operand;
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
-    str << field_.name << " " << operand << " '" << value << "'";
+    if (compile_type == basic_dialect::DIRECT) {
+      str << field_.name << " " << operand << " '" << value << "'";
+    } else {
+      str << field_.name << " " << operand << " " << "?";
+    }
     return str.str();
   }
 };
@@ -188,7 +196,7 @@ public:
     : field_(fld), args_(args)
   {}
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
     str << field_.name << " IN (";
@@ -196,11 +204,20 @@ public:
       auto first = args_.begin();
       auto last = args_.end() - 1;
       while (first != last) {
-        str << *first++ << ",";
+        if (compile_type == basic_dialect::DIRECT) {
+          str << *first++ << ",";
+        } else {
+          ++first;
+          str << "?,";
+        }
       }
     }
     if (!args_.empty()) {
-      str << args_.back();
+      if (compile_type == basic_dialect::DIRECT) {
+        str << args_.back();
+      } else {
+        str << "?";
+      }
     }
     str << ")";
     return str.str();

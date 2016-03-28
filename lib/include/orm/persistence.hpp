@@ -41,7 +41,7 @@ public:
   template<class T>
   void attach(const char *type, bool abstract = false, const char *parent = nullptr)
   {
-    store_.attach<T>(type, abstract, parent);
+    store_.attach<T>(type, abstract, parent, persistence_on_attach<T>());
 //    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
 
     tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
@@ -63,7 +63,7 @@ public:
   template<class T, class S>
   void attach(const char *type, bool abstract = false)
   {
-    store_.attach<T,S>(type, abstract);
+    store_.attach<T,S>(type, abstract, persistence_on_attach<T>());
 //    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
     tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
   }
@@ -100,12 +100,25 @@ public:
   const connection& conn() const;
 
 private:
+  template < class T >
+  struct persistence_on_attach : public detail::basic_on_attach
+  {
+    void operator()(const prototype_node *node);
+  };
+
+private:
   connection connection_;
   object_store store_;
 
 //  typedef std::unordered_map<std::type_index, table> t_table_map;
   t_table_map tables_;
 };
+
+template < class T >
+void persistence::persistence_on_attach<T>::operator()(const prototype_node *node)
+{
+
+}
 
 }
 

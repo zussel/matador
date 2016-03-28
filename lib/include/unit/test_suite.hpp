@@ -35,6 +35,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "unit_test.hpp"
 
 /**
  * @namespace oos
@@ -67,6 +68,18 @@ public:
       failures = 0;
       errors = 0;
     }
+
+    void evaluate(const unit_test::test_func_info &info)
+    {
+      ++tests;
+      asserts += info.assertion_count;
+      errors += info.error_count;
+      if (info.succeeded) {
+        ++succeeded;
+      } else {
+        ++failures;
+      }
+    }
     void evaluate(bool succeeded)
     {
       ++asserts;
@@ -78,6 +91,7 @@ public:
     }
     friend std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
+    unsigned tests = 0;
     unsigned asserts = 0;
     unsigned succeeded = 0;
     unsigned failures = 0;

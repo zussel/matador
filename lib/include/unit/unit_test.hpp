@@ -686,6 +686,7 @@ public:
   {
     ++current_test_func_info->error_count;
     if (a != b) {
+      ++current_test_func_info->errors;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
     }
   }
@@ -694,6 +695,7 @@ public:
   {
     ++current_test_func_info->error_count;
     if (strcmp(a, b.c_str()) != 0) {
+      ++current_test_func_info->errors;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
     }
   }
@@ -716,6 +718,7 @@ public:
   {
     ++current_test_func_info->error_count;
     if (a <= b) {
+      ++current_test_func_info->errors;
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
     }
   }
@@ -770,12 +773,17 @@ private:
       ERROR,
       FAILURE
     };
+
+    bool is_error() const { return state == ERROR; }
+    bool is_failure() const { return state == FAILURE; }
+    bool is_succeeded() const { return state == SUCCEEDED; }
     test_func func;
     bool succeeded = true;
     t_state state = UNKNOWN;
     long duration;
     size_t assertion_count = 0;
     size_t error_count = 0;
+    size_t errors = 0;
     std::string name;
     std::string caption;
     std::string message;

@@ -125,6 +125,9 @@ public:
   t_compile_type compile_type() const { return compile_type_; }
 
   bool is_preparing() const;
+  virtual int bind_count() const { return 0; }
+  virtual int column_count() const { return 0; }
+
 
 protected:
   void replace_token(t_token tkn, const std::string &value);

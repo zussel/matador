@@ -40,6 +40,7 @@ public:
   void test_remove();
   void test_primary_key();
   void test_has_many();
+  void test_on_attach();
 
 private:
   oos::object_store ostore_;

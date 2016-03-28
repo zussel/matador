@@ -44,6 +44,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
+  add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
 void
@@ -892,3 +893,27 @@ void ObjectStoreTestUnit::test_has_many()
 
   ostore_.insert(new book_list);
 }
+
+std::vector<std::string> table_names = {};
+
+template < class T >
+struct on_attach : public oos::detail::basic_on_attach
+{
+  void operator()(const prototype_node *node)
+  {
+    table_names.push_back(node->type());
+  }
+};
+
+void ObjectStoreTestUnit::test_on_attach()
+{
+  ostore_.attach<book>("book", false, nullptr, on_attach<book>());
+  ostore_.attach<book_list>("book_list", false, nullptr, on_attach<book_list>());
+
+  UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size mustbe three");
+
+  UNIT_ASSERT_EQUAL("book", table_names[0], "type must be book");
+  UNIT_ASSERT_EQUAL("book_list", table_names[1], "type must be book_list");
+  UNIT_ASSERT_EQUAL("books", table_names[2], "type must be books");
+}
+
