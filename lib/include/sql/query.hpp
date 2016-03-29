@@ -80,8 +80,6 @@ private:
     QUERY_FROM,
     QUERY_WHERE,
     QUERY_COND_WHERE,
-    QUERY_AND,
-    QUERY_OR,
     QUERY_ORDERBY,
     QUERY_ORDER_DIRECTION,
     QUERY_GROUPBY,
@@ -113,8 +111,7 @@ public:
    */
   query& create()
   {
-    T obj;
-    return create(&obj);
+    return create(&obj_);
   }
 
   /**
@@ -173,8 +170,7 @@ public:
 
     detail::column_serializer serializer(sql_, detail::columns::WITHOUT_BRACKETS);
 
-    T obj;
-    std::unique_ptr<detail::columns> cols(serializer.execute(obj));
+    std::unique_ptr<detail::columns> cols(serializer.execute(obj_));
 
     sql_.append(cols.release());
 
@@ -479,17 +475,6 @@ private:
           throw std::logic_error(msg.str());
         }
         break;
-      case query::QUERY_AND:
-      case query::QUERY_OR:
-        if (current != query::QUERY_WHERE &&
-            current != query::QUERY_COND_WHERE &&
-            current != query::QUERY_OR &&
-            current != query::QUERY_AND)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
       case query::QUERY_COLUMN:
         if (current != query::QUERY_SELECT &&
             current != query::QUERY_COLUMN)
@@ -515,9 +500,7 @@ private:
       case query::QUERY_ORDERBY:
         if (current != query::QUERY_SELECT &&
             current != query::QUERY_WHERE &&
-            current != query::QUERY_COND_WHERE &&
-            current != query::QUERY_AND &&
-            current != query::QUERY_OR)
+            current != query::QUERY_COND_WHERE)
         {
           msg << "invalid next state: [" << next << "] (current: " << current << ")";
           throw std::logic_error(msg.str());
