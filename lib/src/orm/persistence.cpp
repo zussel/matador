@@ -25,6 +25,7 @@ void persistence::create()
       continue;
     }
     val.second->create(connection_);
+    val.second->prepare(connection_);
   }
 }
 

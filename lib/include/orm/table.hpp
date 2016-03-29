@@ -19,14 +19,18 @@ template < class T >
 class table : public basic_table
 {
 public:
-  table(const std::string &name, connection &conn)
+  table(const std::string &name)
     : basic_table(name, &create_table, &drop_table,
                   std::bind(&table<T>::insert_object, this, std::placeholders::_1),
                   std::bind(&table<T>::update_object, this, std::placeholders::_1),
-                  std::bind(&table<T>::delete_object, this, std::placeholders::_1)
+                  std::bind(&table<T>::delete_object, this, std::placeholders::_1),
+                  std::bind(&table<T>::prepare_statements, this, std::placeholders::_1)
       )
+  {}
+
+  void prepare_statements(connection &conn)
   {
-    query<T> q(name);
+    query<T> q(name());
     insert_ = q.insert().prepare(conn);
     column id("id");
     update_ = q.update().where(id == 1).prepare(conn);

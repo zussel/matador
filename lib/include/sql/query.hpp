@@ -236,8 +236,8 @@ public:
    */
   query& update(T *o)
   {
-    throw_invalid(QUERY_UPDATE, state);
     reset();
+
     sql_.append(new detail::update(table_name_));
     sql_.append(new detail::set);
 
@@ -259,8 +259,8 @@ public:
    */
   query& update()
   {
-    throw_invalid(QUERY_UPDATE, state);
     reset();
+
     sql_.append(new detail::update(table_name_));
     sql_.append(new detail::set);
 
@@ -471,6 +471,7 @@ private:
       case query::QUERY_COND_WHERE:
         if (current != query::QUERY_SELECT &&
             current != query::QUERY_COLUMN &&
+            current != query::QUERY_UPDATE &&
             current != query::QUERY_SET &&
             current != query::QUERY_DELETE)
         {

@@ -899,6 +899,8 @@ std::vector<std::string> table_names = {};
 template < class T >
 struct on_attach : public oos::detail::basic_on_attach
 {
+  std::string name;
+  on_attach(const std::string &n = "") : name(n) {}
   void operator()(const prototype_node *node)
   {
     table_names.push_back(node->type());
@@ -908,7 +910,7 @@ struct on_attach : public oos::detail::basic_on_attach
 void ObjectStoreTestUnit::test_on_attach()
 {
   ostore_.attach<book>("book", false, nullptr, on_attach<book>());
-  ostore_.attach<book_list>("book_list", false, nullptr, on_attach<book_list>());
+  ostore_.attach<book_list>("book_list", false, nullptr, on_attach<book_list>("baba"));
 
   UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size mustbe three");
 
