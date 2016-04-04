@@ -42,8 +42,6 @@ public:
   void attach(const char *type, bool abstract = false, const char *parent = nullptr)
   {
     store_.attach<T>(type, abstract, parent, persistence_on_attach<T>(*this));
-//    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
-//    tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
   }
 
   /**
@@ -63,8 +61,6 @@ public:
   void attach(const char *type, bool abstract = false)
   {
     store_.attach<T,S>(type, abstract, persistence_on_attach<T>(*this));
-//    tables_.insert(std::make_pair(std::type_index(typeid(T)), std::move(table(type, (T*) nullptr))));
-//    tables_.insert(std::make_pair(type, std::make_shared<table<T>>(type, connection_)));
   }
 
   /**

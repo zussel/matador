@@ -264,6 +264,35 @@ public:
     return *this;
   }
 
+  query& set(T *obj)
+  {
+    throw_invalid(QUERY_SET, state);
+
+  }
+  /**
+   * This method must only be called for
+   * an update statement. Sets for the given
+   * column the data type and a value.
+   *
+   * @tparam T The value type.
+   * @param column The column name.
+   * @param type The data type.
+   * @param val The value to set.
+   * @return A reference to the query.
+   */
+  template < class V >
+  query& set(const std::string &column, const V &val)
+  {
+    throw_invalid(QUERY_SET, state);
+
+    sql_.append(new detail::value_column<V>(column, val));
+
+    state = QUERY_SET;
+
+    return *this;
+  }
+
+
   /**
    * Creates a delete statement based
    * on the given prototype node.
@@ -385,29 +414,6 @@ public:
     throw_invalid(QUERY_COLUMN, state);
     sql_.append(new detail::typed_column(field, type, index, false));
     state = QUERY_COLUMN;
-    return *this;
-  }
-
-  /**
-   * This method must only be called for
-   * an update statement. Sets for the given
-   * column the data type and a value.
-   * 
-   * @tparam T The value type.
-   * @param column The column name.
-   * @param type The data type.
-   * @param val The value to set.
-   * @return A reference to the query.
-   */
-  template < class V >
-  query& set(const std::string &column, data_type_t type, const V &val)
-  {
-    throw_invalid(QUERY_SET, state);
-
-//    sql_.append(new value<V>(column, type, val));
-
-    state = QUERY_SET;
-
     return *this;
   }
 

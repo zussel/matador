@@ -139,49 +139,49 @@ SET(TOOLS_HEADER
 )
 
 SET(SQL_SOURCES
-  sql/condition.cpp
-  sql/connection.cpp
-  sql/connection_factory.cpp
-  sql/result_impl.cpp
-  sql/sql.cpp
-  sql/statement_impl.cpp
-  sql/row.cpp
-  sql/sql_exception.cpp
-  sql/typed_column_serializer.cpp
-  sql/token.cpp
-  sql/column.cpp
-  sql/dialect_token.cpp
-  sql/value.cpp
-  sql/basic_dialect.cpp
-  sql/column_serializer.cpp
-	sql/value_serializer.cpp
-)
+		sql/condition.cpp
+		sql/connection.cpp
+		sql/connection_factory.cpp
+		sql/result_impl.cpp
+		sql/sql.cpp
+		sql/statement_impl.cpp
+		sql/row.cpp
+		sql/sql_exception.cpp
+		sql/typed_column_serializer.cpp
+		sql/token.cpp
+		sql/column.cpp
+		sql/dialect_token.cpp
+		sql/value.cpp
+		sql/basic_dialect.cpp
+		sql/column_serializer.cpp
+		sql/value_serializer.cpp
+		sql/value_column_serializer.cpp)
 
 SET(SQL_HEADER
-  ../include/sql/condition.hpp
-  ../include/sql/connection.hpp
-  ../include/sql/connection_factory.hpp
-  ../include/sql/connection_impl.hpp
-  ../include/sql/result.hpp
-  ../include/sql/result_impl.hpp
-  ../include/sql/memory_connection.hpp
-  ../include/sql/query.hpp
-  ../include/sql/sql.hpp
-  ../include/sql/row.hpp
-  ../include/sql/value.hpp
-  ../include/sql/statement.hpp
-  ../include/sql/statement_impl.hpp
-  ../include/sql/types.hpp
-  ../include/sql/token.hpp
-  ../include/sql/sql_exception.hpp
-  ../include/sql/field.hpp
-  ../include/sql/basic_dialect.hpp
-  ../include/sql/typed_column_serializer.hpp
-	../include/sql/column.hpp
-	../include/sql/dialect_token.hpp
-	../include/sql/column_serializer.hpp
-  ../include/sql/value_serializer.hpp
-)
+		../include/sql/condition.hpp
+		../include/sql/connection.hpp
+		../include/sql/connection_factory.hpp
+		../include/sql/connection_impl.hpp
+		../include/sql/result.hpp
+		../include/sql/result_impl.hpp
+		../include/sql/memory_connection.hpp
+		../include/sql/query.hpp
+		../include/sql/sql.hpp
+		../include/sql/row.hpp
+		../include/sql/value.hpp
+		../include/sql/statement.hpp
+		../include/sql/statement_impl.hpp
+		../include/sql/types.hpp
+		../include/sql/token.hpp
+		../include/sql/sql_exception.hpp
+		../include/sql/field.hpp
+		../include/sql/basic_dialect.hpp
+		../include/sql/typed_column_serializer.hpp
+		../include/sql/column.hpp
+		../include/sql/dialect_token.hpp
+		../include/sql/column_serializer.hpp
+		../include/sql/value_serializer.hpp
+		../include/sql/value_column_serializer.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
