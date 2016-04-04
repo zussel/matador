@@ -83,12 +83,44 @@ struct value_column : public column
     , value_(val)
   { }
 
+  value_column(const char *col, T& val)
+    : column(col)
+    , value_(val)
+  { }
+
   virtual std::string compile(basic_dialect &d) const override
   {
     return d.compile(*this) + "=" + value_.compile(d);
   }
 
   value<T> value_;
+};
+
+template <>
+struct value_column<char*> : public column
+{
+
+  value_column(const std::string &col, char*&& val, size_t s)
+    : column(col)
+    , value_(std::move(val), s)
+  { }
+
+  value_column(const std::string &col, char*& val, size_t s)
+    : column(col)
+    , value_(val, s)
+  { }
+
+  value_column(const char *col, char*& val, size_t s)
+    : column(col)
+    , value_(val, s)
+  { }
+
+  virtual std::string compile(basic_dialect &d) const override
+  {
+    return d.compile(*this) + "=" + value_.compile(d);
+  }
+
+  value<char*> value_;
 };
 
 struct columns : public token

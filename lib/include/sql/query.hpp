@@ -26,7 +26,8 @@
 #include "sql/connection.hpp"
 #include "sql/typed_column_serializer.hpp"
 #include "sql/column_serializer.hpp"
-#include "value_serializer.hpp"
+#include "sql/value_serializer.hpp"
+#include "sql/value_column_serializer.hpp"
 
 #include <memory>
 #include <sstream>
@@ -268,6 +269,15 @@ public:
   {
     throw_invalid(QUERY_SET, state);
 
+    detail::value_column_serializer serializer(sql_);
+
+    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
+
+    sql_.append(cols.release());
+
+    state = QUERY_SET;
+
+    return *this;
   }
   /**
    * This method must only be called for
