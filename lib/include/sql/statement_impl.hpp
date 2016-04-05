@@ -40,7 +40,7 @@ public:
   virtual void reset() = 0;
 
   template < class T >
-  int bind(T *o)
+  size_t bind(T *o)
   {
     reset();
     host_index = 0;
@@ -49,7 +49,7 @@ public:
   }
 
   template < class T >
-  int bind(unsigned long i, const T &val)
+  size_t bind(unsigned long i, T &val)
   {
     host_index = i;
     serialize("", val);
@@ -62,7 +62,7 @@ protected:
   void str(const std::string &s);
 
 protected:
-  int host_index;
+  size_t host_index;
 
 private:
   std::string sql_;

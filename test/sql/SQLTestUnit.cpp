@@ -141,10 +141,55 @@ void SQLTestUnit::test_statement_update()
 //  auto id_cond = id_condition_builder::build<person>();
 
   oos::column idcol("id");
-  stmt = q.update().where(idcol == 7).prepare(*connection_);
-  int pos = stmt.bind(&hans);
-//  ide
-//  stmt.bind()
+  int i815 = 815;
+  stmt = q.update().set("val_int", i815).where(idcol == 7).prepare(*connection_);
+  size_t pos = 0;
+  pos = stmt.bind(pos, i815);
+  unsigned long hid = hans.id();
+  stmt.bind(pos, hid);
+
+  stmt.execute();
+
+  stmt = q.select().prepare(*connection_);
+  res = stmt.execute();
+
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+
+  first = res.begin();
+  last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->get_int(), 815, "expected integer must be 815");
+    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    ++first;
+  }
+
+  hans.set_int(4711);
+  stmt = q.update().set(&hans).where(idcol == 7).prepare(*connection_);
+  pos = stmt.bind(&hans);
+  stmt.bind(pos, hid);
+
+  stmt.execute();
+
+  stmt = q.select().prepare(*connection_);
+  res = stmt.execute();
+
+//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
+
+  first = res.begin();
+  last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<Item> item(first.release());
+    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    ++first;
+  }
 
   stmt = q.drop().prepare(*connection_);
 

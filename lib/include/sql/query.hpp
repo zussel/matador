@@ -291,7 +291,8 @@ public:
    * @return A reference to the query.
    */
   template < class V >
-  query& set(const std::string &column, const V &val)
+//  query& set(const std::string &column, const V &val)
+  query& set(const std::string &column, V &val)
   {
     throw_invalid(QUERY_SET, state);
 

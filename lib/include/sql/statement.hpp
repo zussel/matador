@@ -90,13 +90,13 @@ public:
     p->reset();
   }
   
-  int bind(T *o)
+  size_t bind(T *o)
   {
     return p->bind(o);
   }
 
   template < class V >
-  int bind(unsigned long i, const V &val)
+  size_t bind(unsigned long i, V &val)
   {
     return p->bind(i, val);
   }
