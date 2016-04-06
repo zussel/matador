@@ -15,16 +15,16 @@ persistence::persistence(const std::string &dns)
 
 persistence::~persistence()
 {
+  tables_.clear();
   connection_.close();
 }
 
 void persistence::create()
 {
   for (t_table_map::value_type &val : tables_) {
-    if (connection_.exists(val.second->name())) {
-      continue;
+    if (!connection_.exists(val.second->name())) {
+      val.second->create(connection_);
     }
-    val.second->create(connection_);
     val.second->prepare(connection_);
   }
 }

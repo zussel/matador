@@ -265,6 +265,29 @@ public:
     return *this;
   }
 
+  /**
+   * This method must only be called for
+   * an update statement. Sets for all object
+   * attributes column and values of the internal
+   * object. To call this methods makes only sense
+   * if the query will be prepared afterwards.
+   *
+   * @return A reference to the query.
+   */
+  query& set()
+  {
+    return set(&obj_);
+  }
+
+  /**
+   * This method must only be called for
+   * an update statement. Sets for all object
+   * attributes column and values.
+   *
+   * @tparam T The object type.
+   * @param obj The object.
+   * @return A reference to the query.
+   */
   query& set(T *obj)
   {
     throw_invalid(QUERY_SET, state);
@@ -279,6 +302,7 @@ public:
 
     return *this;
   }
+
   /**
    * This method must only be called for
    * an update statement. Sets for the given

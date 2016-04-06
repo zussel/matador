@@ -20,11 +20,15 @@ public:
   typedef std::function<void(const std::string&, connection &)> t_drop_func;
   typedef std::function<void(connection &)> t_prepare_func;
   typedef std::function<void(object_proxy*)> t_object_func;
+  typedef std::function<void()> t_void_func;
 
 public:
   basic_table(const std::string &name, t_create_func create_func, t_drop_func drop_func,
               t_object_func insert_object_func, t_object_func update_object_func,
-              t_object_func delete_object_func, t_prepare_func prepare_func);
+              t_object_func delete_object_func, t_prepare_func prepare_func,
+              t_void_func destroy_func);
+
+  ~basic_table();
 
   std::string name() const;
   void create(connection &conn);
@@ -43,6 +47,7 @@ private:
   t_object_func insert_object_;
   t_object_func update_object_;
   t_object_func delete_object_;
+  t_void_func destroy_func_;
 };
 
 }

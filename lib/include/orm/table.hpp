@@ -24,7 +24,8 @@ public:
                   std::bind(&table<T>::insert_object, this, std::placeholders::_1),
                   std::bind(&table<T>::update_object, this, std::placeholders::_1),
                   std::bind(&table<T>::delete_object, this, std::placeholders::_1),
-                  std::bind(&table<T>::prepare_statements, this, std::placeholders::_1)
+                  std::bind(&table<T>::prepare_statements, this, std::placeholders::_1),
+                  std::bind(&table<T>::destroy, this)
       )
   {}
 
@@ -33,7 +34,7 @@ public:
     query<T> q(name());
     insert_ = q.insert().prepare(conn);
     column id("id");
-    update_ = q.update().where(id == 1).prepare(conn);
+    update_ = q.update().set().where(id == 1).prepare(conn);
     delete_ = q.remove().where(id == 1).prepare(conn);
   }
 
@@ -70,6 +71,14 @@ private:
   static void drop_table(const std::string &name, connection &conn) {
     query<T> stmt(name);
     stmt.drop().execute(conn);
+  }
+
+private:
+  void destroy()
+  {
+//    insert_.~statement();
+//    update_.~statement();
+//    delete_.~statement();
   }
 
 private:
