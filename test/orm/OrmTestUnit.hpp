@@ -15,6 +15,8 @@ public:
 
   void test_create();
   void test_insert();
+  void test_update();
+  void test_delete();
 
 private:
   std::string dns_;

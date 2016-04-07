@@ -119,6 +119,8 @@ public:
   T value() const { return *id_; }
   void value(T val) { *id_ = val; }
 
+  T& reference() const { return *id_; }
+
 private:
   std::shared_ptr<T> id_;
   static std::type_index type_index_;
@@ -211,15 +213,12 @@ public:
     xid.id_ = id_;
   }
 
-  virtual bool is_valid() const {
-    return !id_->empty();
-  }
+  virtual bool is_valid() const { return !id_->empty(); }
 
-  std::string value() const
-  { return *id_; }
+  std::string value() const { return *id_; }
+  void value(const std::string &val) { *id_ = val; }
 
-  void value(const std::string &val)
-  { *id_ = val; }
+  std::string& reference() const { return *id_; }
 
 private:
   std::shared_ptr<std::string> id_;

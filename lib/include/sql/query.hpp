@@ -99,6 +99,7 @@ public:
   query(const std::string &table_name)
     : state(QUERY_BEGIN)
     , table_name_(table_name)
+    , update_columns_(new detail::columns)
   {}
   
   ~query() {}
@@ -236,13 +237,11 @@ public:
     reset();
 
     sql_.append(new detail::update(table_name_));
-    sql_.append(new detail::set);
-
     // set column value pairs
 
     state = QUERY_UPDATE;
 
-    return *this;
+    return set(o);
   }
 
   /**
@@ -294,6 +293,7 @@ public:
 
     detail::value_column_serializer serializer(sql_);
 
+    // Todo: pass member update_columns_
     std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
@@ -485,6 +485,7 @@ public:
   {
     sql_.reset();
     state = QUERY_BEGIN;
+    update_columns_->columns_.clear();
     return *this;
   }
 
@@ -564,6 +565,7 @@ private:
   sql sql_;
   state_t state;
   std::string table_name_;
+  std::shared_ptr<detail::columns> update_columns_;
 };
 
 }

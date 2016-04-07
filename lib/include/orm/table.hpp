@@ -8,6 +8,8 @@
 #include "object/object_proxy.hpp"
 
 #include "orm/basic_table.hpp"
+#include "orm/identifier_binder.hpp"
+#include "orm/identifier_column_resolver.hpp"
 
 #include "sql/query.hpp"
 
@@ -32,7 +34,7 @@ public:
   {
     query<T> q(name());
     insert_ = q.insert().prepare(conn);
-    column id("id");
+    column id = detail::identifier_column_resolver::resolve<T>();
     update_ = q.update().set().where(id == 1).prepare(conn);
     delete_ = q.remove().where(id == 1).prepare(conn);
   }
@@ -46,17 +48,16 @@ public:
 
   void update_object(object_proxy *proxy)
   {
-    /*int pos = */update_.bind((T*)proxy->obj());
-    // Todo: bind primary key
-//    update_.bind();
+    T *obj = (T*)proxy->obj();
+    size_t pos = update_.bind(obj);
+    binder_.bind(obj, &update_, pos);
     // Todo: check result
     update_.execute();
   }
 
-  void delete_object(object_proxy */*proxy*/)
+  void delete_object(object_proxy *proxy)
   {
-    // Todo: bind primary key
-//    delete_.bind();
+    binder_.bind((T*)proxy->obj(), &delete_, 0);
     // Todo: check result
     delete_.execute();
   }
@@ -73,6 +74,7 @@ private:
   }
 
 private:
+  detail::identifier_binder<T> binder_;
   statement<T> insert_;
   statement<T> update_;
   statement<T> delete_;

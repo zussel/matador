@@ -18,7 +18,6 @@ basic_table::basic_table(const std::string &name, t_create_func create_func, t_d
   , delete_object_(delete_object_func)
 { }
 
-
 std::string basic_table::name() const
 {
   return name_;

@@ -26,6 +26,25 @@ public:
     return optr;
   }
 
+  template < class T >
+  object_ptr<T> update(const object_ptr<T> &optr)
+  {
+    transaction tr(persistence_.store(), observer_);
+    tr.begin();
+    tr.on_update<T>(optr.proxy_);
+    tr.commit();
+    return optr;
+  }
+
+  template < class T >
+  void remove(const object_ptr<T> &optr)
+  {
+    transaction tr(persistence_.store(), observer_);
+    tr.begin();
+    tr.on_delete<T>(optr.proxy_);
+    tr.commit();
+  }
+
   object_store& store();
   const object_store& store() const;
 
@@ -35,7 +54,7 @@ private:
   public:
     explicit session_observer(session &s);
     virtual void on_begin();
-    virtual void on_commit(transaction::t_action_vactor &actions);
+    virtual void on_commit(transaction::t_action_vector &actions);
     virtual void on_rollback();
 
     virtual void visit(insert_action *act);

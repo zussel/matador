@@ -27,6 +27,11 @@ sql::~sql()
   reset();
 }
 
+void sql::append(const std::shared_ptr<detail::token> tokptr)
+{
+  token_list_.push_back(tokptr);
+}
+
 void sql::append(detail::token *tok)
 {
   std::shared_ptr<detail::token> tokptr(tok);
