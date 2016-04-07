@@ -54,7 +54,8 @@ public:
   
 public:
   ~sql();
-  
+
+  void append(const std::shared_ptr<detail::token> tokptr);
   void append(detail::token *tok);
 
   void reset();
