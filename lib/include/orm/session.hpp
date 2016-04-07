@@ -35,7 +35,7 @@ private:
   public:
     explicit session_observer(session &s);
     virtual void on_begin();
-    virtual void on_commit(transaction::t_action_vactor &actions);
+    virtual void on_commit(transaction::t_action_vector &actions);
     virtual void on_rollback();
 
     virtual void visit(insert_action *act);

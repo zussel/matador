@@ -41,6 +41,10 @@ public:
    */
   void close();
 
+  void begin();
+  void commit();
+  void rollback();
+
   void execute(const std::string &stmt)
   {
     std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));

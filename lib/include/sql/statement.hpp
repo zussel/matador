@@ -81,7 +81,6 @@ public:
 
   result<T> execute()
   {
-//  std::cout << "SQL: " << p->str() << '\n';
     return result<T>(p->execute());
   }
 

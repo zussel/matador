@@ -31,26 +31,28 @@ session::session_observer::session_observer(session &s)
 void session::session_observer::on_rollback()
 {
   // Todo: rollback transaction
-
 }
 
-void session::session_observer::on_commit(transaction::t_action_vactor &actions)
+void session::session_observer::on_commit(transaction::t_action_vector &actions)
 {
-  for (transaction::action_ptr &actptr : actions) {
-    actptr->accept(this);
+  try {
+    session_.persistence_.conn().begin();
+    for (transaction::action_ptr &actptr : actions) {
+      actptr->accept(this);
+    }
+    session_.persistence_.conn().commit();
+  } catch (std::exception &ex) {
+    session_.persistence_.conn().rollback();
   }
-  // Todo: commit transaction
-
 }
 
 void session::session_observer::on_begin()
 {
-  // Todo: begin transaction
-  connection &conn = session_.persistence_.conn();
-  basic_dialect *dialect = conn.dialect();
-  // Todo: conn.execute(dialect->begin());
-  conn.execute(dialect->token(basic_dialect::BEGIN));
-  session_.persistence_.conn();
+//  // Todo: begin transaction
+//  connection &conn = session_.persistence_.conn();
+//  basic_dialect *dialect = conn.dialect();
+//  // Todo: conn.execute(dialect->begin());
+//  conn.execute(dialect->token(basic_dialect::BEGIN));
 }
 
 void session::session_observer::visit(insert_action *act)

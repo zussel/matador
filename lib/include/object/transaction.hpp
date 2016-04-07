@@ -40,7 +40,7 @@ class OOS_API transaction
 {
 public:
   typedef std::shared_ptr<action> action_ptr;
-  typedef std::vector<action_ptr> t_action_vactor;
+  typedef std::vector<action_ptr> t_action_vector;
 
 public:
   struct observer
@@ -48,14 +48,14 @@ public:
     virtual ~observer() {}
 
     virtual void on_begin() = 0;
-    virtual void on_commit(transaction::t_action_vactor&) = 0;
+    virtual void on_commit(transaction::t_action_vector&) = 0;
     virtual void on_rollback() = 0;
   };
 
   struct null_observer : public observer
   {
     void on_begin() {};
-    void on_commit(transaction::t_action_vactor&) {};
+    void on_commit(transaction::t_action_vector&) {};
     void on_rollback() {};
   };
 
@@ -75,8 +75,8 @@ public:
   void on_delete(object_proxy *proxy);
 
 private:
-  typedef t_action_vactor::iterator action_iterator;
-  typedef std::unordered_map<unsigned long, t_action_vactor::size_type> t_id_action_index_map;
+  typedef t_action_vector::iterator action_iterator;
+  typedef std::unordered_map<unsigned long, t_action_vector::size_type> t_id_action_index_map;
 
   void backup(const action_ptr &a, const object_proxy *proxy);
   void restore(const action_ptr &a);
@@ -86,7 +86,7 @@ private:
 private:
   object_store &store_;
 
-  t_action_vactor actions_;
+  t_action_vector actions_;
   t_id_action_index_map id_action_index_map_;
 
   action_inserter inserter_;
@@ -108,7 +108,7 @@ void transaction::on_insert(object_proxy *proxy)
   t_id_action_index_map::iterator i = id_action_index_map_.find(proxy->id());
   if (i == id_action_index_map_.end()) {
     // create insert action and insert serializable
-    t_action_vactor::size_type index = inserter_.insert<T>(proxy);
+    t_action_vector::size_type index = inserter_.insert<T>(proxy);
     if (index == actions_.size()) {
       throw_object_exception("transaction: action for object with id " << proxy->id() << " couldn't be inserted");
     } else {

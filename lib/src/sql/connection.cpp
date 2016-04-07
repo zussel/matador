@@ -42,6 +42,21 @@ void connection::close()
   impl_->close();
 }
 
+void connection::begin()
+{
+  impl_->begin();
+}
+
+void connection::commit()
+{
+  impl_->commit();
+}
+
+void connection::rollback()
+{
+  impl_->rollback();
+}
+
 const char *connection::type_string(data_type_t) const
 {
   // Todo: re-implement
