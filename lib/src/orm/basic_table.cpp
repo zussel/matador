@@ -8,7 +8,7 @@ namespace oos {
 
 basic_table::basic_table(const std::string &name, t_create_func create_func, t_drop_func drop_func,
                          t_object_func insert_object_func, t_object_func update_object_func,
-                         t_object_func delete_object_func, t_prepare_func prepare_func, t_void_func destroy_func)
+                         t_object_func delete_object_func, t_prepare_func prepare_func)
   : name_(name)
   , create_(create_func)
   , drop_(drop_func)
@@ -16,13 +16,7 @@ basic_table::basic_table(const std::string &name, t_create_func create_func, t_d
   , insert_object_(insert_object_func)
   , update_object_(update_object_func)
   , delete_object_(delete_object_func)
-  , destroy_func_(destroy_func)
 { }
-
-basic_table::~basic_table()
-{
-  destroy_func_();
-}
 
 std::string basic_table::name() const
 {

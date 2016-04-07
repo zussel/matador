@@ -188,13 +188,13 @@ SET(ORM_HEADERS
   ../include/orm/table.hpp
 	../include/orm/session.hpp
 	../include/orm/basic_table.hpp
-)
+	../include/orm/identifier_binder.hpp
+  ../include/orm/identifier_column_resolver.hpp)
 
 SET(ORM_SOURCES
 	orm/persistence.cpp
 	orm/session.cpp
-	orm/basic_table.cpp
-)
+	orm/basic_table.cpp)
 
 SET(JSON_SOURCES
   json/json_type.cpp
