@@ -21,10 +21,10 @@ public:
   value_column_serializer(sql &d);
 
   template<class T>
-  columns *execute(T &x) {
-    cols_.reset(new columns(columns::t_brackets::WITHOUT_BRACKETS));
+  void append_to(const std::shared_ptr<detail::columns> cols, T &x)
+  {
+    cols_ = cols;
     oos::access::serialize(*this, x);
-    return cols_.release();
   }
 
   template<class T>
@@ -52,7 +52,7 @@ public:
   void serialize(const char *id, basic_identifier &x);
 
 private:
-  std::unique_ptr<detail::columns> cols_;
+  std::shared_ptr<detail::columns> cols_;
   sql &sql_;
 };
 }

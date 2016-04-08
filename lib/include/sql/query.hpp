@@ -224,27 +224,6 @@ public:
   }
 
   /**
-   * Creates an update statement based
-   * on the given serializable and.
-   * the name of the table
-   * 
-   * @param o The serializable used for the update statement.
-   * @param table The name of the table.
-   * @return A reference to the query.
-   */
-  query& update(T *o)
-  {
-    reset();
-
-    sql_.append(new detail::update(table_name_));
-    // set column value pairs
-
-    state = QUERY_UPDATE;
-
-    return set(o);
-  }
-
-  /**
    * Creates an update statement without
    * any settings. All columns must be
    * added manually via the set method. Just
@@ -259,6 +238,7 @@ public:
 
     sql_.append(new detail::update(table_name_));
     sql_.append(new detail::set);
+    sql_.append(update_columns_);
 
     state = QUERY_UPDATE;
     return *this;
@@ -294,9 +274,9 @@ public:
     detail::value_column_serializer serializer(sql_);
 
     // Todo: pass member update_columns_
-    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
+    serializer.append_to(update_columns_, *obj);
 
-    sql_.append(cols.release());
+//    sql_.append(cols.release());
 
     state = QUERY_SET;
 
@@ -320,7 +300,7 @@ public:
   {
     throw_invalid(QUERY_SET, state);
 
-    sql_.append(new detail::value_column<V>(column, val));
+    update_columns_->columns_.push_back(std::make_shared<detail::value_column<V>>(column, val));
 
     state = QUERY_SET;
 
