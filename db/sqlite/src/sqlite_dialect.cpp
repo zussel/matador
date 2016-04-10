@@ -54,7 +54,7 @@ const char *sqlite_dialect::type_string(oos::data_type_t type) const
     case type_text:
       return "TEXT";
     case type_date:
-      return "REAL";
+      return "INTEGER";
     case type_time:
       return "TEXT";
     default: {

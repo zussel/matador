@@ -99,7 +99,7 @@ public:
   query(const std::string &table_name)
     : state(QUERY_BEGIN)
     , table_name_(table_name)
-    , update_columns_(new detail::columns)
+    , update_columns_(new detail::columns(detail::columns::WITHOUT_BRACKETS))
   {}
   
   ~query() {}

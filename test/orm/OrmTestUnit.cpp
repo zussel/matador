@@ -76,10 +76,12 @@ void OrmTestUnit::test_update()
 
   oos::session s(p);
 
-  auto hans = s.insert(new person("hans", oos::date(18, 5, 1980), 180));
+  oos::date birthday(18, 5, 1980);
+  auto hans = s.insert(new person("hans", birthday, 180));
 
   UNIT_EXPECT_GREATER(hans->id(), 0UL, "id must be greater zero");
   UNIT_EXPECT_EQUAL(hans->height(), 180U, "height must be 180");
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday, "birthday must be equal");
 
   hans->height(179);
 
@@ -100,6 +102,7 @@ void OrmTestUnit::test_update()
 
   UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
   UNIT_EXPECT_EQUAL(179U, p1->height(), "height must be 179");
+  UNIT_EXPECT_EQUAL(hans->birthdate(), birthday, "birthday must be equal");
 
   p.drop();
 }

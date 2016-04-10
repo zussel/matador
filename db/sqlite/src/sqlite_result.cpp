@@ -250,9 +250,9 @@ void sqlite_result::serialize(const char */*id*/, std::string &x)
 
 void sqlite_result::serialize(const char *id, oos::date &x)
 {
-  std::string val;
+  int val;
   serialize(id, val);
-  x.set(val.c_str(), oos::date_format::ISO8601);
+  x.set(val);
 }
 
 void sqlite_result::serialize(const char *id, oos::time &x)
