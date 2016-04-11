@@ -273,11 +273,15 @@ struct null_on_attach : public basic_on_attach
  * hierarchy representation including a producer class
  * serializable of all known types.
  */
-class OOS_API object_store {
+class OOS_API object_store
+{
+private:
+  object_store(const object_store&) = delete;
+  object_store& operator=(const object_store&) = delete;
+
 public:
-  typedef prototype_iterator iterator;
-  /**< Shortcut for the list iterator. */
-  typedef const_prototype_iterator const_iterator;   /**< Shortcut for the list const iterator. */
+  typedef prototype_iterator iterator;              /**< Shortcut for the list iterator. */
+  typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
 
 public:
   /**
@@ -289,6 +293,10 @@ public:
    * Destroys all prototypes, objects and observers in store.
    */
   ~object_store();
+
+  object_store(const object_store &&x);
+
+  object_store& operator=(const object_store &&x);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype

@@ -61,6 +61,19 @@ object_store::~object_store()
   delete first_;
 }
 
+object_store::object_store(const object_store &&x)
+  : first_(x.first_)
+  , last_(x.last_)
+{
+
+}
+
+object_store &object_store::operator=(const object_store &&x)
+{
+  return *this;
+}
+
+
 void object_store::detach(const char *type)
 {
   prototype_node *node = find_prototype_node(type);

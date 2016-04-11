@@ -67,7 +67,8 @@ TransactionTestUnit::test_simple()
 
       UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
     } catch (std::exception &ex) {
-      UNIT_WARN("transaction [" << tr2.id() << "] rolled back: " << ex.what());
+      UNIT_WARN("transaction rolled back: " << ex.what());
+//      UNIT_WARN("transaction [" << tr2.id() << "] rolled back: " << ex.what());
       tr2.rollback();
     }
     tr.rollback();
@@ -103,12 +104,12 @@ TransactionTestUnit::test_simple()
     UNIT_ASSERT_TRUE(view.empty(), "item view is empty");
   } catch (database_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
+    UNIT_WARN("transaction rolled back: " << ex.what());
+//    UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());
     tr.rollback();
   }
-  session_->drop();
-  // close db
-  session_->close();
+
+  p.drop();
 }
 
 //void TransactionTestUnit::test_with_sub()
