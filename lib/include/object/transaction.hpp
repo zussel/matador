@@ -38,6 +38,10 @@ class object_store;
 
 class OOS_API transaction
 {
+private:
+  transaction(const transaction&) = delete;
+  transaction& operator=(const transaction&) = delete;
+
 public:
   typedef std::shared_ptr<action> action_ptr;
   typedef std::vector<action_ptr> t_action_vector;
@@ -62,6 +66,8 @@ public:
 public:
   explicit transaction(object_store &store);
   transaction(object_store &store, const std::shared_ptr<observer> &obsvr);
+  transaction(const transaction &&x);
+  transaction& operator=(const transaction &&x);
 
   void begin();
   void commit();

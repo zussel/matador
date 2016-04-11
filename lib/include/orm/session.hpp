@@ -45,6 +45,8 @@ public:
     tr.commit();
   }
 
+  transaction begin();
+
   object_store& store();
   const object_store& store() const;
 

@@ -14,6 +14,11 @@ session::session(persistence &p)
 
 }
 
+transaction session::begin()
+{
+  return std::move(oos::transaction(persistence_.store()));
+}
+
 object_store &session::store()
 {
   return persistence_.store();

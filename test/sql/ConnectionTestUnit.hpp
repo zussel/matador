@@ -26,27 +26,20 @@ namespace oos {
 class session;
 }
 
-class SessionTestUnit : public oos::unit_test
+class ConnectionTestUnit : public oos::unit_test
 {
 public:
-  SessionTestUnit(const std::string &name, const std::string &msg, const std::string &db);
-  virtual ~SessionTestUnit();
-
-  virtual void initialize();
-  virtual void finalize();
+  ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns);
+  virtual ~ConnectionTestUnit();
 
   void test_open_close();
-  void test_create_drop();
-  void test_drop();
   void test_reopen();
 
 protected:
-  oos::session* create_session();
+  std::string connection_string();
 
 private:
-  oos::object_store ostore_;
-  std::string db_;
-  oos::session *session_;
+  std::string dns_;
 };
 
 #endif /* SESSION_TEST_UNIT_HPP */

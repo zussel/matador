@@ -17,6 +17,24 @@ transaction::transaction(object_store &store, const std::shared_ptr<observer> &o
   , observer_(obsvr)
 {}
 
+transaction::transaction(const transaction &&x)
+  : store_(x.store_)
+  , actions_(std::move(x.actions_))
+  , inserter_(actions_)
+  , observer_(x.observer_)
+{ }
+
+transaction &transaction::operator=(const transaction &&x)
+{
+  // Todo: add missing move operators
+//  store_ = x.store_;
+  actions_ = std::move(x.actions_);
+//  inserter_(actions_)
+  observer_ = x.observer_;
+  return *this;
+}
+
+
 void transaction::begin()
 {
   store_.push_transaction(this);

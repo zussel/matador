@@ -29,27 +29,19 @@ class session;
 class TransactionTestUnit : public oos::unit_test
 {
 public:
-  TransactionTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
+  TransactionTestUnit(const std::string &name, const std::string &msg, const std::string &dns = "memory");
   virtual ~TransactionTestUnit();
 
-  virtual void initialize();
-  virtual void finalize();
-
   void test_simple();
-  void test_with_sub();
-  void test_with_list();
-  void test_with_vector();
+//  void test_with_sub();
+//  void test_with_list();
+//  void test_with_vector();
+
+protected:
+  std::string connection_string();
 
 private:
-  oos::session* create_session();
-
-  oos::object_store& ostore();
-  const oos::object_store& ostore() const;
-
-private:
-  oos::object_store ostore_;
-  std::string db_;
-  oos::session *session_;
+  std::string dns_;
 
 };
 

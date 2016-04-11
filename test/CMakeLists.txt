@@ -56,10 +56,8 @@ SET (TEST_JSON_SOURCES
 SET (TEST_SQL_SOURCES
 #  sql/DatabaseTestUnit.cpp
 #  sql/DatabaseTestUnit.hpp
-#  sql/SessionTestUnit.hpp
-#  sql/SessionTestUnit.cpp
-#  sql/TransactionTestUnit.cpp
-#  sql/TransactionTestUnit.hpp
+  sql/ConnectionTestUnit.cpp
+  sql/ConnectionTestUnit.hpp
   sql/SQLTestUnit.cpp
   sql/SQLTestUnit.hpp
   sql/ConditionUnitTest.cpp
@@ -71,13 +69,13 @@ SET (TEST_SQL_SOURCES
 )
 
 SET (TEST_ORM_SOURCES
-     #  sql/DatabaseTestUnit.cpp
-     #  sql/DatabaseTestUnit.hpp
-     #  sql/SessionTestUnit.hpp
-     #  sql/SessionTestUnit.cpp
-     #  sql/TransactionTestUnit.cpp
-     #  sql/TransactionTestUnit.hpp
-     orm/OrmTestUnit.cpp orm/OrmTestUnit.hpp)
+#  sql/DatabaseTestUnit.cpp
+#  sql/DatabaseTestUnit.hpp
+  orm/TransactionTestUnit.cpp
+  orm/TransactionTestUnit.hpp
+  orm/OrmTestUnit.cpp
+  orm/OrmTestUnit.hpp
+)
 
 SET (TEST_SOURCES test_oos.cpp)
 

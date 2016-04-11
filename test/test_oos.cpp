@@ -36,7 +36,7 @@
 #include "orm/OrmTestUnit.hpp"
 
 //#include "sql/DatabaseTestUnit.hpp"
-//#include "sql/SessionTestUnit.hpp"
+#include "sql/ConnectionTestUnit.hpp"
 //#include "sql/TransactionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
 #include "sql/SQLTestUnit.hpp"
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new DialectTestUnit);
 
 #ifdef OOS_MYSQL
-//  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
+  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", connection::mysql));
 //  suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
   suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
 //  suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql sql test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef OOS_ODBC
-//  suite.register_unit(new SessionTestUnit("mssql_session", "mssql session test unit", connection::mssql));
+  suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", connection::mssql));
 //  suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", connection::mssql));
 //  suite.register_unit(new DatabaseTestUnit("mssql_connection", "mssql sql test unit", connection::mssql));
   suite.register_unit(new SQLTestUnit("mssql_query", "mssql query test unit", connection::mssql));
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef OOS_SQLITE3
-//  suite.register_unit(new SessionTestUnit("sqlite_session", "sqlite session test unit", connection::sqlite));
+  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", connection::sqlite));
 //  suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", connection::sqlite));
 //  suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite sql test unit", connection::sqlite));
   suite.register_unit(new SQLTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
