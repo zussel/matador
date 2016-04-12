@@ -34,7 +34,7 @@ public:
 
   void test_simple();
   void test_nested();
-//  void test_with_sub();
+  void test_foreign();
 //  void test_with_list();
 //  void test_with_vector();
 

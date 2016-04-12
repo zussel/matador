@@ -17,7 +17,7 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
 {
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
   add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
-//  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "serializable with sub serializable sql test");
+  add_test("foreign", std::bind(&TransactionTestUnit::test_foreign, this), "object with foreign key transaction test");
 //  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list sql test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
@@ -146,87 +146,87 @@ void TransactionTestUnit::test_nested()
   p.drop();
 }
 
-//void TransactionTestUnit::test_with_sub()
-//{
-//  // open connection
-//  session_->open();
-//
-//  // load data
-//  session_->create();
-//
-//  // load data
-//  /****************
-//  *
-//  * comment this statement and the following
-//  * will happen if data exists:
-//  * data won't be load
-//  * a car serializable with id 1 is created
-//  * and an exception on insert is thrown
-//  * because there is already a car serializable
-//  * with id 1
-//  ****************/
-////  session_->load();
-//
-//  // create new transaction
-//  transaction tr(*session_);
-//  try {
-//    // begin transaction
-//    tr.begin();
-//    // ... do some serializable modifications
-//    typedef ObjectItem<Item> object_item_t;
-//    typedef object_ptr<object_item_t> object_item_ptr;
-//    typedef object_ptr<Item> item_ptr;
-//    // insert new serializable
-//    item_ptr item = ostore_.insert(new Item("Bar", 13));
-//    object_item_ptr object_item = ostore_.insert(new object_item_t("Foo", 42));
-//    object_item->ptr(item);
-//
-//    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
-//
-//    item = object_item->ptr();
-//
-//    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-//
-//    item->set_int(120);
-//    item->set_string("Bar");
-//
-//    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-//    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
-//
-//    tr.commit();
-//
-//    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
-//    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
-//
-//    tr.begin();
-//
-//    object_view<object_item_t> oview(ostore_);
-//
-//    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
-//
-//    UNIT_ASSERT_TRUE(ostore_.is_removable(object_item), "couldn't remove serializable item");
-//
-//    ostore_.remove(object_item);
-//
-//    UNIT_ASSERT_TRUE(oview.empty(), "serializable item view must be empty");
-//
-//    tr.rollback();
-//
-//    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
-//
-//  } catch (database_exception &ex) {
-//    // error, abort transaction
-//    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-//    tr.rollback();
-//  } catch (object_exception &ex) {
-//    // error, abort transaction
-//    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
-//    tr.rollback();
-//  }
-//  session_->drop();
-//  // close db
-//  session_->close();
-//}
+void TransactionTestUnit::test_foreign()
+{
+  oos::persistence p(dns_);
+
+  p.attach<Item>("item");
+  p.attach<ObjectItem<Item>>("object_item");
+
+  p.create();
+
+  oos::session s(p);
+
+  // load data
+  /****************
+  *
+  * comment this statement and the following
+  * will happen if data exists:
+  * data won't be load
+  * a car serializable with id 1 is created
+  * and an exception on insert is thrown
+  * because there is already a car serializable
+  * with id 1
+  ****************/
+//  session_->load();
+
+  // create and begin transaction
+  transaction &tr = s.begin();
+  try {
+    // ... do some serializable modifications
+    typedef ObjectItem<Item> object_item_t;
+    typedef object_ptr<object_item_t> object_item_ptr;
+    typedef object_ptr<Item> item_ptr;
+    // insert new serializable
+    item_ptr item = s.insert(new Item("Bar", 13));
+    object_item_ptr object_item = s.insert(new object_item_t("Foo", 42));
+    object_item->ptr(item);
+
+    UNIT_ASSERT_GREATER(object_item->id(), 0UL, "invalid serializable item");
+
+    item = object_item->ptr();
+
+    UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
+
+    item->set_int(120);
+    item->set_string("Bar");
+
+    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+
+    tr.commit();
+
+    UNIT_ASSERT_EQUAL(item->get_int(), 120, "invalid item int value");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Bar", "invalid item string value");
+
+    tr.begin();
+
+    object_view<object_item_t> oview(s.store());
+
+    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
+
+    UNIT_ASSERT_TRUE(s.store().is_removable(object_item), "couldn't remove serializable item");
+
+    s.store().remove(object_item);
+
+    UNIT_ASSERT_TRUE(oview.empty(), "serializable item view must be empty");
+
+    tr.rollback();
+
+    UNIT_ASSERT_FALSE(oview.empty(), "serializable item view couldn't be empty");
+
+  } catch (sql_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+
+  p.drop();
+}
 //
 //void
 //TransactionTestUnit::test_with_list()

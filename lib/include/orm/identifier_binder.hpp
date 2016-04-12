@@ -36,6 +36,9 @@ public:
   template < class V >
   void serialize(const char *, identifier<V> &x);
 
+  template < class V >
+  void serialize(const char *, V &, cascade_type) { }
+
   void serialize(const char *, char *, size_t) { }
 
 private:

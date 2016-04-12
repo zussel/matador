@@ -5,6 +5,8 @@
 #ifndef OOS_STATEMENT_IMPL_HPP
 #define OOS_STATEMENT_IMPL_HPP
 
+#include "tools/varchar.hpp"
+
 #include "sql/result.hpp"
 
 #ifdef _MSC_VER
@@ -39,12 +41,12 @@ public:
 
   virtual void reset() = 0;
 
-  template < class T >
+    template < class T >
   size_t bind(T *o)
   {
     reset();
     host_index = 0;
-    oos::access::serialize(*this, *o);
+    oos::access::serialize(static_cast<serializer&>(*this), *o);
     return host_index;
   }
 

@@ -40,6 +40,9 @@ public:
   template < class V >
   void serialize(const char *, identifier<V> &x);
 
+  template < class HAS_ONE >
+  void serialize(const char*, HAS_ONE&, cascade_type) { }
+
 private:
   column col_;
 };
