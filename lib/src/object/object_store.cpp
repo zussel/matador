@@ -362,7 +362,7 @@ void object_store::pop_transaction()
   transactions_.pop();
 }
 
-transaction *object_store::current_transaction() const
+transaction* object_store::current_transaction() const
 {
   if (!transactions_.empty()) {
     return transactions_.top();
@@ -370,6 +370,19 @@ transaction *object_store::current_transaction() const
   return nullptr;
 }
 
+transaction &object_store::begin_transaction()
+{
+  transaction *tr = new transaction(*this);
+  transactions_.push(tr);
+  return *tr;
+}
+
+transaction &object_store::begin_transaction(const std::shared_ptr<transaction::observer> &obsvr)
+{
+  transaction *tr = new transaction(*this, obsvr);
+  tr->begin();
+  return *tr;
+}
 
 namespace detail {
 

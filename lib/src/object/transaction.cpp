@@ -17,29 +17,29 @@ transaction::transaction(object_store &store, const std::shared_ptr<observer> &o
   , observer_(obsvr)
 {}
 
-transaction::transaction(const transaction &&x)
-  : store_(x.store_)
-  , actions_(std::move(x.actions_))
-  , id_action_index_map_(x.id_action_index_map_)
-//  , id_action_index_map_(std::move(x.id_action_index_map_))
-  , inserter_(actions_)
-  , observer_(x.observer_)
-{ }
-
-action_inserter make_inserter(transaction::t_action_vector &actions)
-{
-  return std::move(action_inserter(actions));
-}
-
-transaction &transaction::operator=(const transaction &&x)
-{
-  // Todo: add missing move operators
-  store_ = x.store_;
-  actions_ = std::move(x.actions_);
-  inserter_ = make_inserter(actions_);
-  observer_ = x.observer_;
-  return *this;
-}
+//action_inserter make_inserter(transaction::t_action_vector &actions)
+//{
+//  return std::move(action_inserter(actions));
+//}
+//
+//transaction::transaction(const transaction &&x)
+//  : store_(x.store_)
+//  , actions_(std::move(x.actions_))
+//  , id_action_index_map_(x.id_action_index_map_)
+////  , id_action_index_map_(std::move(x.id_action_index_map_))
+//  , inserter_(actions_)
+//  , observer_(x.observer_)
+//{ }
+//
+//transaction &transaction::operator=(const transaction &&x)
+//{
+//  // Todo: add missing move operators
+//  store_ = x.store_;
+//  actions_ = std::move(x.actions_);
+//  inserter_ = make_inserter(actions_);
+//  observer_ = x.observer_;
+//  return *this;
+//}
 
 void transaction::begin()
 {

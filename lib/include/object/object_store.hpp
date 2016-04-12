@@ -820,6 +820,9 @@ public:
 
   transaction* current_transaction() const;
 
+  transaction& begin_transaction();
+  transaction& begin_transaction(const std::shared_ptr<transaction::observer> &obsvr);
+
 private:
   friend class object_inserter;
   friend class object_deleter;

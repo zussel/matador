@@ -35,7 +35,7 @@ void TransactionTestUnit::test_simple()
 
   oos::session s(p);
 
-  transaction tr = s.begin();
+  transaction &tr = s.begin();
 
   oos::date d1(21, 12, 1980);
   try {
@@ -72,7 +72,7 @@ void TransactionTestUnit::test_nested()
   oos::session s(p);
 
   // create and begin transaction
-  transaction tr = s.begin();
+  transaction &tr = s.begin();
 
   try {
     // ... do some serializable modifications
@@ -89,7 +89,7 @@ void TransactionTestUnit::test_nested()
     UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
 
 
-    transaction tr2 = s.begin();
+    transaction &tr2 = s.begin();
     try {
       // begin inner transaction
       tr2.begin();
