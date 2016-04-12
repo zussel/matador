@@ -18,7 +18,7 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
   add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
   add_test("foreign", std::bind(&TransactionTestUnit::test_foreign, this), "object with foreign key transaction test");
-//  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list sql test");
+  add_test("list", std::bind(&TransactionTestUnit::test_has_many_list, this), "object with object list transactionn test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
 
@@ -227,10 +227,9 @@ void TransactionTestUnit::test_foreign()
 
   p.drop();
 }
-//
-//void
-//TransactionTestUnit::test_with_list()
-//{
+
+void TransactionTestUnit::test_has_many_list()
+{
 //  typedef object_ptr<ItemPtrList> itemlist_ptr;
 //  typedef ItemPtrList::value_type item_ptr;
 //
@@ -315,7 +314,7 @@ void TransactionTestUnit::test_foreign()
 //  session_->drop();
 //  // close db
 //  session_->close();
-//}
+}
 //
 //void
 //TransactionTestUnit::test_with_vector()
