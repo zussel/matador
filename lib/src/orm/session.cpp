@@ -36,7 +36,6 @@ session::session_observer::session_observer(session &s)
 void session::session_observer::on_rollback()
 {
   // Todo: rollback transaction
-  session_.transaction_started_ = false;
 }
 
 void session::session_observer::on_commit(transaction::t_action_vector &actions)
@@ -50,7 +49,6 @@ void session::session_observer::on_commit(transaction::t_action_vector &actions)
   } catch (std::exception &ex) {
     session_.persistence_.conn().rollback();
   }
-  session_.transaction_started_ = false;
 }
 
 void session::session_observer::on_begin()
@@ -60,7 +58,6 @@ void session::session_observer::on_begin()
 //  basic_dialect *dialect = conn.dialect();
 //  // Todo: conn.execute(dialect->begin());
 //  conn.execute(dialect->token(basic_dialect::BEGIN));
-  session_.transaction_started_ = true;
 }
 
 void session::session_observer::visit(insert_action *act)

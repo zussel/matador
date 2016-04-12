@@ -89,10 +89,9 @@ void TransactionTestUnit::test_nested()
     UNIT_ASSERT_EQUAL(item->get_int(), 120, "item has invalid int value");
 
 
+    // begin inner transaction
     transaction &tr2 = s.begin();
     try {
-      // begin inner transaction
-      tr2.begin();
       // change name again
       item->set_int(170);
 
