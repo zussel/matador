@@ -20,24 +20,30 @@ transaction::transaction(object_store &store, const std::shared_ptr<observer> &o
 transaction::transaction(const transaction &&x)
   : store_(x.store_)
   , actions_(std::move(x.actions_))
+  , id_action_index_map_(x.id_action_index_map_)
+//  , id_action_index_map_(std::move(x.id_action_index_map_))
   , inserter_(actions_)
   , observer_(x.observer_)
 { }
 
+action_inserter make_inserter(transaction::t_action_vector &actions)
+{
+  return std::move(action_inserter(actions));
+}
+
 transaction &transaction::operator=(const transaction &&x)
 {
   // Todo: add missing move operators
-//  store_ = x.store_;
+  store_ = x.store_;
   actions_ = std::move(x.actions_);
-//  inserter_(actions_)
+  inserter_ = make_inserter(actions_);
   observer_ = x.observer_;
   return *this;
 }
 
-
 void transaction::begin()
 {
-  store_.push_transaction(this);
+  store_.get().push_transaction(this);
   observer_->on_begin();
 }
 
@@ -49,7 +55,7 @@ void transaction::commit()
 
 void transaction::rollback()
 {
-  if (!store_.current_transaction() || store_.current_transaction() != this) {
+  if (!store_.get().current_transaction() || store_.get().current_transaction() != this) {
     throw object_exception("transaction: transaction isn't current transaction");
   } else {
     /**************
@@ -83,7 +89,7 @@ void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 
 void transaction::restore(const action_ptr &a)
 {
-  a->restore(object_buffer_, &store_);
+  a->restore(object_buffer_, &store_.get());
 }
 
 void transaction::cleanup()
@@ -91,7 +97,7 @@ void transaction::cleanup()
   actions_.clear();
   object_buffer_.clear();
   id_action_index_map_.clear();
-  store_.pop_transaction();
+  store_.get().pop_transaction();
 }
 
 

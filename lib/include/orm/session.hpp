@@ -19,30 +19,42 @@ public:
   template < class T >
   object_ptr<T> insert(T *obj)
   {
-    transaction tr(persistence_.store(), observer_);
-    tr.begin();
-    object_ptr<T> optr(persistence_.store().insert(obj));
-    tr.commit();
-    return optr;
+    if (transaction_started_) {
+      return persistence_.store().insert(obj);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      object_ptr<T> optr(persistence_.store().insert(obj));
+      tr.commit();
+      return optr;
+    }
   }
 
   template < class T >
   object_ptr<T> update(const object_ptr<T> &optr)
   {
-    transaction tr(persistence_.store(), observer_);
-    tr.begin();
-    tr.on_update<T>(optr.proxy_);
-    tr.commit();
+    if (transaction_started_) {
+      store().current_transaction()->on_update<T>(optr.proxy_);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      tr.on_update<T>(optr.proxy_);
+      tr.commit();
+    }
     return optr;
   }
 
   template < class T >
   void remove(const object_ptr<T> &optr)
   {
-    transaction tr(persistence_.store(), observer_);
-    tr.begin();
-    tr.on_delete<T>(optr.proxy_);
-    tr.commit();
+    if (transaction_started_) {
+      store().current_transaction()->on_delete<T>(optr.proxy_);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      tr.on_delete<T>(optr.proxy_);
+      tr.commit();
+    }
   }
 
   transaction begin();
@@ -65,6 +77,9 @@ private:
   private:
     session &session_;
   };
+
+private:
+  bool transaction_started_ = false;
 
 private:
   persistence &persistence_;

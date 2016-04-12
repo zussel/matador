@@ -90,7 +90,7 @@ private:
   void cleanup();
 
 private:
-  object_store &store_;
+  std::reference_wrapper<object_store> store_;
 
   t_action_vector actions_;
   t_id_action_index_map id_action_index_map_;

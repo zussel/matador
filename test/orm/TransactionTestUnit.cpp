@@ -5,7 +5,8 @@
 #include "object/object_view.hpp"
 
 #include "orm/session.hpp"
-#include "database/database_exception.hpp"
+
+#include "sql/sql_exception.hpp"
 
 using namespace oos;
 
@@ -14,7 +15,8 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   : unit_test(name, msg)
   , dns_(dns)
 {
-  add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple sql test");
+  add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
+  add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
 //  add_test("complex", std::bind(&TransactionTestUnit::test_with_sub, this), "serializable with sub serializable sql test");
 //  add_test("list", std::bind(&TransactionTestUnit::test_with_list, this), "serializable with serializable list sql test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
@@ -23,8 +25,43 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
 
 TransactionTestUnit::~TransactionTestUnit() {}
 
-void
-TransactionTestUnit::test_simple()
+void TransactionTestUnit::test_simple()
+{
+  oos::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  oos::session s(p);
+
+  transaction tr = s.begin();
+
+  oos::date d1(21, 12, 1980);
+  try {
+    auto hans = s.insert(new person("hans", d1, 180));
+
+    tr.commit();
+  } catch (sql_exception &ex) {
+    tr.rollback();
+    UNIT_FAIL("transaction failed");
+  }
+
+  oos::object_view<person> persons(s.store());
+//  oos::object_view<person> persons = s.create_view<person>();
+
+  UNIT_ASSERT_EQUAL(1UL, persons.size(), "size must be one");
+
+  auto hans2 = persons.front();
+
+  UNIT_ASSERT_EQUAL("hans", hans2->name(), "name must be 'hans'");
+  UNIT_ASSERT_EQUAL(d1, hans2->birthdate(), "birthdate must be " + oos::to_string(d1));
+  UNIT_ASSERT_EQUAL(180U, hans2->height(), "height must be 180");
+
+  p.drop();
+}
+
+void TransactionTestUnit::test_nested()
 {
   oos::persistence p(dns_);
 
@@ -34,12 +71,10 @@ TransactionTestUnit::test_simple()
 
   oos::session s(p);
 
+  // create and begin transaction
   transaction tr = s.begin();
 
   try {
-    // begin transaction
-    tr.begin();
-
     // ... do some serializable modifications
     typedef object_ptr<Item> item_ptr;
     typedef object_view<Item> item_view;
@@ -102,7 +137,7 @@ TransactionTestUnit::test_simple()
     tr.commit();
 
     UNIT_ASSERT_TRUE(view.empty(), "item view is empty");
-  } catch (database_exception &ex) {
+  } catch (sql_exception &ex) {
     // error, abort transaction
     UNIT_WARN("transaction rolled back: " << ex.what());
 //    UNIT_WARN("transaction [" << tr.id() << "] rolled back: " << ex.what());

@@ -33,6 +33,7 @@ public:
   virtual ~TransactionTestUnit();
 
   void test_simple();
+  void test_nested();
 //  void test_with_sub();
 //  void test_with_list();
 //  void test_with_vector();

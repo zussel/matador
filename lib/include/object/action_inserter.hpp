@@ -39,7 +39,7 @@ private:
   const char* type(object_proxy *proxy) const;
 
 private:
-  t_action_vactor &actions_;
+  std::reference_wrapper<t_action_vactor> actions_;
   object_proxy *proxy_ = nullptr;
   bool inserted_ = false;
 };
@@ -48,10 +48,10 @@ template < class T >
 action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy *proxy) {
   proxy_ = proxy;
   inserted_ = false;
-  t_action_vactor::size_type end = actions_.size();
+  t_action_vactor::size_type end = actions_.get().size();
   for (t_action_vactor::size_type i = 0; i < end; ++i) {
 //  while (first != last) {
-    actions_.at(i)->accept(this);
+    actions_.get().at(i)->accept(this);
 
 //    (*first)->accept(this);
     if (inserted_) {
@@ -63,10 +63,10 @@ action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy
     const char* t = type(proxy);
     std::shared_ptr<insert_action> ia(new insert_action(t, obj));
     ia->push_back(proxy_);
-    actions_.push_back(ia);
-    return actions_.size() - 1;
+    actions_.get().push_back(ia);
+    return actions_.get().size() - 1;
   }
-  return actions_.size();
+  return actions_.get().size();
 }
 
 }

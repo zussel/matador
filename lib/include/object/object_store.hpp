@@ -114,7 +114,7 @@ private:
 
   std::stack<object_proxy *> object_proxy_stack_;
 
-  object_store &ostore_;
+  std::reference_wrapper<object_store> ostore_;
 };
 
 /**
@@ -293,10 +293,6 @@ public:
    * Destroys all prototypes, objects and observers in store.
    */
   ~object_store();
-
-  object_store(const object_store &&x);
-
-  object_store& operator=(const object_store &&x);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -822,6 +818,8 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
+  transaction* current_transaction() const;
+
 private:
   friend class object_inserter;
   friend class object_deleter;
@@ -921,7 +919,6 @@ private:
 
   void push_transaction(transaction *tr);
   void pop_transaction();
-  transaction* current_transaction() const;
 
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
@@ -1204,7 +1201,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
     object_proxy_stack_.pop();
   } else {
     // new object
-    ostore_.insert<T>(x.proxy_, true);
+    ostore_.get().insert<T>(x.proxy_, true);
   }
   ++(*x.proxy_);
 }
@@ -1226,7 +1223,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   }
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
-  x.ostore_ = &ostore_;
+  x.ostore_ = &ostore_.get();
 
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
@@ -1235,7 +1232,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
     typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
     if (!i.is_inserted()) {
       // item is not in store, insert it
-      ostore_.insert(i);
+      ostore_.get().insert(i);
     }
   }
 //
