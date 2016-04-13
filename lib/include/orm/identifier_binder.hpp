@@ -2,12 +2,13 @@
 // Created by sascha on 7/13/15.
 //
 
-#include "tools/basic_identifier.hpp"
-
-#include "sql/statement.hpp"
-
 #ifndef PRIMARY_KEY_BINDER_HPP
 #define PRIMARY_KEY_BINDER_HPP
+
+#include "tools/basic_identifier.hpp"
+#include "tools/identifiable_holder.hpp"
+
+#include "sql/statement.hpp"
 
 namespace oos {
 
@@ -36,10 +37,13 @@ public:
   template < class V >
   void serialize(const char *, identifier<V> &x);
 
-  template < class V >
+  template < class V, typename = typename std::enable_if<std::is_base_of<oos::identifiable_holder, V>::value>::type >
   void serialize(const char *, V &, cascade_type) { }
 
   void serialize(const char *, char *, size_t) { }
+
+  template < class HAS_MANY >
+  void serialize(const char*, HAS_MANY&, const char*, const char*) {}
 
 private:
   void setup(statement<T> *stmt, T *obj, size_t pos);

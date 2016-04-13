@@ -58,7 +58,7 @@ public:
   }
 
   template < class T, typename = typename std::enable_if<
-    std::is_base_of<T, basic_identifier>::value &&
+    std::is_base_of<basic_identifier, T>::value &&
     !std::is_same<T, basic_identifier>::value
   >::type >
   void serialize(const char *id, T &x)
@@ -77,7 +77,7 @@ private:
   static varchar_base& to_varchar_base(varchar<S> &x) { return x; }
 
   template < class T, typename = typename std::enable_if<
-    std::is_base_of<T, basic_identifier>::value &&
+    std::is_base_of<basic_identifier, T>::value &&
     !std::is_same<T, basic_identifier>::value
   >::type >
   static basic_identifier& to_basic_identifier(T &x) { return x; }

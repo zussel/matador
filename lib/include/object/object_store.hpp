@@ -61,6 +61,30 @@ class prototype_node;
 
 namespace detail {
 
+class modified_marker
+{
+public:
+  typedef void (*t_marker)(object_store &store, object_proxy &proxy);
+
+public:
+  template < class T >
+  modified_marker(T*)
+    : marker_(&marker_func<T>)
+  {}
+
+  void mark(object_store &store, object_proxy &proxy)
+  {
+    marker_(store, proxy);
+  }
+
+private:
+  template < class T >
+  static void marker_func(object_store &store, object_proxy &proxy);
+
+private:
+  t_marker marker_;
+};
+
 /**
  * @cond OOS_DEV
  * @class object_inserter
@@ -115,6 +139,9 @@ private:
   std::stack<object_proxy *> object_proxy_stack_;
 
   std::reference_wrapper<object_store> ostore_;
+
+  std::function<void(object_store&, object_proxy*)> modified_marker_;
+//  modified_marker modified_marker_;
 };
 
 /**
@@ -824,7 +851,8 @@ public:
   transaction& begin_transaction(const std::shared_ptr<transaction::observer> &obsvr);
 
 private:
-  friend class object_inserter;
+  friend class detail::modified_marker;
+  friend class detail::object_inserter;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
@@ -835,6 +863,9 @@ private:
   template < class ON_ATTACH >
   friend class detail::node_analyzer;
   friend class transaction;
+  template < class T, template <class ...> class C >
+  friend class has_many;
+
 
 private:
   template < class T, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
@@ -1165,11 +1196,24 @@ void node_analyzer<ON_ATTACH>::serialize(const char *id, has_many<T, C> &x, cons
   }
 }
 
+template < class T >
+void modified_marker::marker_func(object_store &store, object_proxy &proxy)
+{
+  store.mark_modified<T>(&proxy);
+}
+
 template<class T>
 void object_inserter::insert(object_proxy *proxy, T *o) {
 
 //  object_proxies_.insert(proxy);
   object_proxy_stack_.push(proxy);
+
+//  modified_marker_ = modified_marker(o);
+
+  modified_marker_ = [](object_store &store, object_proxy *oproxy) {
+    store.mark_modified<T>(oproxy);
+  };
+
   if (proxy->obj()) {
     oos::access::serialize(*this, *o);
   }
@@ -1226,7 +1270,9 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   }
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
+  x.owner_ = proxy;
   x.ostore_ = &ostore_.get();
+  x.mark_modified_owener_ = modified_marker_;
 
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();

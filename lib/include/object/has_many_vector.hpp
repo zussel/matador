@@ -329,6 +329,14 @@ public:
   value_type back() { return *(this->end() - 1); }
   const value_type back() const { return *(this->end() - 1); }
 
+  /**
+   * Clears the vector
+   */
+  virtual void clear()
+  {
+    erase(this->begin(), this->end());
+  }
+
   iterator erase(iterator i)
   {
     if (this->ostore_) {

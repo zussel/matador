@@ -20,18 +20,13 @@ class value_serializer : public serializer
 public:
   explicit value_serializer(sql &d);
 
-  ~value_serializer() { }
+  virtual ~value_serializer() { }
 
   template<class T>
   values *execute(T &x) {
     values_.reset(new values);
-    oos::access::serialize(*this, x);
+    oos::access::serialize(static_cast<serializer&>(*this), x);
     return values_.release();
-  }
-
-  template<class T>
-  void serialize(T &x) {
-    oos::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x);

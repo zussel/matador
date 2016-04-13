@@ -818,11 +818,11 @@ void ObjectStoreTestUnit::test_structure_container()
 {
   object_store ostore;
   ostore.attach<child>("cild");
-  ostore.attach<children_list>("cildren_list");
+  ostore.attach<children_vector>("children_vector");
 
-  using childrens_ptr = object_ptr<children_list>;
+  using childrens_ptr = object_ptr<children_vector>;
 
-  childrens_ptr childrens(new children_list("ch1"));
+  childrens_ptr childrens(new children_vector("ch1"));
 
   childrens->children.push_back(new child("heinz"));
 

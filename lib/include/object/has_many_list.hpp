@@ -231,7 +231,7 @@ public:
     relation_type iptr(item);
     if (this->ostore_) {
       this->ostore_->insert(iptr);
-//      ostore_->mark_modified()
+      this->mark_modified_owener_(*this->ostore_, this->owner_);
     }
     container_iterator i = pos.iter_;
     return iterator(this->container_.insert(i, iptr));
@@ -245,6 +245,14 @@ public:
   void push_back(const value_type &value)
   {
     insert(this->end(), value);
+  }
+
+  /**
+   * Clears the list
+   */
+  virtual void clear()
+  {
+    erase(this->begin(), this->end());
   }
 
   iterator erase(iterator i)
@@ -275,50 +283,6 @@ private:
     return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }
 };
-//
-//template < class T >
-//class has_many<T, std::list, typename std::enable_if<std::is_scalar<T>::value>::type> : public basic_has_many<T, std::list>
-//{
-//public:
-//
-//  typedef basic_has_many<T, std::list> base;
-//  typedef has_many_item<T> item_type;
-//  typedef typename base::container_type container_type;
-//  typedef typename base::iterator iterator;
-//  typedef typename container_type::size_type size_type;
-//  typedef typename container_type::iterator container_iterator;
-//
-//  explicit has_many() {}
-//
-//  iterator insert(iterator pos, T value)
-//  {
-//    item_type *item = this->create_item(value);
-//    object_ptr<item_type> iptr(item);
-//    if (this->ostore_) {
-//      this->ostore_->insert(iptr);
-////      ostore_->mark_modified()
-//    }
-//    container_iterator i = pos.iter_;
-//    return iterator(this->container_.insert(i, iptr));
-//  }
-//
-//  void push_front(T value)
-//  {
-//    // create new has_many
-//    insert(this->begin(), value);
-//  }
-//
-//  void push_back(T value)
-//  {
-//    insert(this->end(), value);
-//  }
-//
-//private:
-//  item_type* create_item(T value)
-//  {
-//    return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
-//  }
-//};
 
 }
 #endif //OOS_HAS_MANY_LIST_HPP

@@ -22,18 +22,13 @@ class column_serializer : public serializer {
 public:
   column_serializer(sql &d, columns::t_brackets brackets);
 
-  ~column_serializer() { }
+  virtual ~column_serializer() { }
 
   template<class T>
   columns *execute(T &x) {
     cols_.reset(new columns(brackets_));
-    oos::access::serialize(*this, x);
+    oos::access::serialize(static_cast<serializer&>(*this), x);
     return cols_.release();
-  }
-
-  template<class T>
-  void serialize(T &x) {
-    oos::access::serialize(*this, x);
   }
 
   void serialize(const char *id, char &x);

@@ -203,6 +203,8 @@ public:
       // deserialize container size
       serialize(id, s);
 
+      x.reset();
+
       for (typename basic_has_many<T, C>::size_type i = 0; i < 0; ++i) {
 
         // deserialize all items
@@ -212,6 +214,8 @@ public:
 
         // Todo: add method
 //        x.insert(ptr);
+
+        x.append(ptr);
       }
 
 

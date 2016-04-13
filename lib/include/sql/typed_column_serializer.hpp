@@ -19,21 +19,21 @@ class typed_column_serializer : public serializer
 {
 public:
   explicit typed_column_serializer(sql &d);
-  ~typed_column_serializer() {}
+  virtual ~typed_column_serializer() {}
 
   template < class T >
   columns* execute(T &x)
   {
     cols_.reset(new columns);
-    oos::access::serialize(*this, x);
+    oos::access::serialize(static_cast<serializer&>(*this), x);
     return cols_.release();
   }
 
-  template < class T >
-  void serialize(T &x)
-  {
-    oos::access::serialize(*this, x);
-  }
+//  template < class T >
+//  void serialize(T &x)
+//  {
+//    oos::access::serialize(*this, x);
+//  }
 
   void serialize(const char *id, char &x);
   void serialize(const char *id, short &x);

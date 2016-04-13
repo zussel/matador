@@ -203,6 +203,10 @@ public:
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
+  void reset() { container_.clear(); }
+
+  void append(const typename iterator::internal_type &item) { container_.push_back(item); }
+
   bool has_join_table() const
   {
     return true;
@@ -212,7 +216,12 @@ protected:
   friend class detail::object_inserter;
   friend class object_store;
 
+  object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
+
+//  detail::modified_marker mark_modified_owener_;
+
+  std::function<void(object_store&, object_proxy*)> mark_modified_owener_;
 
   container_type container_;
 };

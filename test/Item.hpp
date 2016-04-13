@@ -997,10 +997,32 @@ public:
   }
 };
 
+class children_vector
+{
+public:
+  typedef oos::has_many<child> children_vector_t;
+
+  children_vector() {}
+  children_vector(const std::string &n) : name(n) {}
+  ~children_vector() {}
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "vector_id", "child_id");
+  }
+
+  oos::identifier<unsigned long> id;
+  std::string name;
+  children_vector_t children;
+};
+
 class children_list
 {
 public:
-  typedef oos::has_many<child> children_list_t;
+  typedef oos::has_many<child, std::list> children_list_t;
 
   children_list() {}
   children_list(const std::string &n) : name(n) {}

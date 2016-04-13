@@ -28,7 +28,9 @@ public:
                   std::bind(&table<T>::delete_object, this, std::placeholders::_1),
                   std::bind(&table<T>::prepare_statements, this, std::placeholders::_1)
       )
-  {}
+  {
+    std::cout << "creating table " << name << " of type " << typeid(T).name() << '\n';
+  }
 
   void prepare_statements(connection &conn)
   {
@@ -41,6 +43,11 @@ public:
 
   void insert_object(object_proxy *proxy)
   {
+    std::cout << "inserting object (oid: " << proxy->id() << ") of type " << proxy->node()->type();
+    if (proxy->has_identifier()) {
+      std::cout << " and id " << *proxy->pk();
+    }
+    std::cout << '\n';
     insert_.bind((T*)proxy->obj());
     // Todo: check result
     insert_.execute();

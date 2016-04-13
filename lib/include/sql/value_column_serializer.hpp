@@ -24,12 +24,7 @@ public:
   void append_to(const std::shared_ptr<detail::columns> cols, T &x)
   {
     cols_ = cols;
-    oos::access::serialize(*this, x);
-  }
-
-  template<class T>
-  void serialize(T &x) {
-    oos::access::serialize(*this, x);
+    oos::access::serialize(static_cast<serializer&>(*this), x);
   }
 
   void serialize(const char *id, char &x);

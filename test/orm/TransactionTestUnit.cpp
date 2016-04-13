@@ -18,7 +18,8 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   add_test("simple", std::bind(&TransactionTestUnit::test_simple, this), "simple transaction test");
   add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
   add_test("foreign", std::bind(&TransactionTestUnit::test_foreign, this), "object with foreign key transaction test");
-  add_test("list", std::bind(&TransactionTestUnit::test_has_many_list, this), "object with object list transactionn test");
+  add_test("list_commit", std::bind(&TransactionTestUnit::test_has_many_list_commit, this), "object with object list transaction commit test");
+  add_test("list", std::bind(&TransactionTestUnit::test_has_many_list, this), "object with object list transaction test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
 
@@ -221,7 +222,60 @@ void TransactionTestUnit::test_foreign()
     tr.rollback();
   } catch (object_exception &ex) {
     // error, abort transaction
-    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+
+  p.drop();
+}
+
+void TransactionTestUnit::test_has_many_list_commit()
+{
+  oos::persistence p(dns_);
+
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
+
+  p.create();
+
+  oos::session s(p);
+
+  transaction &tr = s.begin();
+  try {
+    auto children = s.insert(new children_list);
+
+    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
+    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
+    tr.commit();
+
+    tr.begin();
+
+    for (int i = 1; i <= 2; ++i) {
+      std::stringstream name;
+      name << "child " << i;
+      auto kid = s.insert(new child(name.str()));
+
+      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+
+      children->children.push_back(kid);
+    }
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+    tr.commit();
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+  } catch(sql_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
     tr.rollback();
   }
 
@@ -230,90 +284,87 @@ void TransactionTestUnit::test_foreign()
 
 void TransactionTestUnit::test_has_many_list()
 {
-//  typedef object_ptr<ItemPtrList> itemlist_ptr;
-//  typedef ItemPtrList::value_type item_ptr;
-//
-//  // open connection
-//  session_->open();
-//
-//  // load data
-//  session_->create();
-//
-//  // create new transaction
-//  transaction tr(*session_);
-//  try {
-//    // begin transaction
-//    tr.begin();
-//    // ... do some serializable modifications
-//
-//    itemlist_ptr itemlist = ostore_.insert(new ItemPtrList("ptr_list"));
-//
-//    UNIT_ASSERT_GREATER(itemlist->id(), 0UL, "invalid item list");
-//    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-//
-//    tr.commit();
-//
-//    tr.begin();
-//    for (int i = 0; i < 2; ++i) {
-//      std::stringstream name;
-//      name << "Item " << i+1;
-//      item_ptr item = ostore_.insert(new Item(name.str()));
-//
-//      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-//
-//      itemlist->push_back(item);
-//    }
-//
-//    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-//    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-//
-//    tr.rollback();
-//
-//    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-//    UNIT_ASSERT_EQUAL((int)itemlist->size(), 0, "invalid item list size");
-//
-//    tr.begin();
-//
-//    for (int i = 0; i < 2; ++i) {
-//      std::stringstream name;
-//      name << "Item " << i+1;
-//      item_ptr item = ostore_.insert(new Item(name.str()));
-//
-//      UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
-//
-//      itemlist->push_back(item);
-//    }
-//
-//    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-//    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-//
-//    tr.commit();
-//
-//    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-//    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-//    tr.begin();
-//
-//    itemlist->clear();
-//
-//    UNIT_ASSERT_TRUE(itemlist->empty(), "item list must be empty");
-//
-//    tr.rollback();
-//
-//    UNIT_ASSERT_FALSE(itemlist->empty(), "item list couldn't be empty");
-//    UNIT_ASSERT_EQUAL((int)itemlist->size(), 2, "invalid item list size");
-//
-//  } catch (database_exception &ex) {
-//    // error, abort transaction
-//    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
-//    tr.rollback();
-//  } catch (object_exception &ex) {
-//    // error, abort transaction
-//    UNIT_WARN("caught serializable exception: " << ex.what() << " (start rollback)");
-//    tr.rollback();
-//  }
-//  session_->drop();
-//  // close db
-//  session_->close();
+  oos::persistence p(dns_);
+
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
+
+  p.create();
+
+  oos::session s(p);
+
+  transaction &tr = s.begin();
+  try {
+    auto children = s.insert(new children_list);
+
+    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
+    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
+    tr.commit();
+
+    tr.begin();
+
+    for (int i = 1; i <= 2; ++i) {
+      std::stringstream name;
+      name << "child " << i;
+      auto kid = s.insert(new child(name.str()));
+
+      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+
+      children->children.push_back(kid);
+    }
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+    tr.rollback();
+
+    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid children list size");
+
+    tr.begin();
+
+    for (int i = 1; i <= 2; ++i) {
+      std::stringstream name;
+      name << "child " << i;
+      auto kid = s.insert(new child(name.str()));
+
+      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+
+      children->children.push_back(kid);
+    }
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+    tr.commit();
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+    tr.begin();
+
+    children->children.clear();
+
+    UNIT_ASSERT_TRUE(children->children.empty(), "item list must be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid item list size");
+
+    tr.rollback();
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "item list couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid item list size");
+
+  } catch(sql_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+
+  p.drop();
 }
 //
 //void
