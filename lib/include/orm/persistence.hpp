@@ -99,6 +99,17 @@ private:
   struct persistence_on_attach : public detail::basic_on_attach
   {
     persistence_on_attach(persistence &p) : persistence_(p) {}
+
+    persistence_on_attach(const persistence_on_attach &x) : persistence_(x.persistence_) {}
+
+    template < class V >
+    persistence_on_attach(const persistence_on_attach<V> &x) : persistence_(x.persistence_) {}
+
+    persistence_on_attach& operator=(const persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
+
+    template < class V >
+    persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
+
     void operator()(const prototype_node *node);
 
     persistence &persistence_;

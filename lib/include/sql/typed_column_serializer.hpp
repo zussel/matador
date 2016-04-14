@@ -11,6 +11,7 @@
 #include "tools/access.hpp"
 #include "tools/cascade_type.hpp"
 #include "tools/serializer.hpp"
+#include "tools/identifier.hpp"
 
 namespace oos {
 namespace detail {
@@ -53,6 +54,12 @@ public:
   void serialize(const char *id, time &x);
   void serialize(const char *id, identifiable_holder &x, cascade_type);
   void serialize(const char *id, basic_identifier &x);
+
+  template < class V >
+  void serialize(const char *id, identifier<V> &x)
+  {
+    std::cout << "serializing " << id << " identifier of type " << typeid(V).name() << '\n';
+  }
 
 private:
 private:

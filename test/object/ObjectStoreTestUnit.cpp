@@ -901,16 +901,29 @@ struct on_attach : public oos::detail::basic_on_attach
 {
   std::string name;
   on_attach(const std::string &n = "") : name(n) {}
+
+  on_attach(const on_attach &x) : name(x.name) {}
+
+  template < class V >
+  on_attach(const on_attach<V> &x) : name(x.name) {}
+
+  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+
+  template < class V >
+  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+
   void operator()(const prototype_node *node)
   {
+//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+
     table_names.push_back(node->type());
   }
 };
 
 void ObjectStoreTestUnit::test_on_attach()
 {
-  ostore_.attach<book>("book", false, nullptr, on_attach<book>());
-  ostore_.attach<book_list>("book_list", false, nullptr, on_attach<book_list>("baba"));
+  ostore_.attach<book, on_attach>("book", false, nullptr);
+  ostore_.attach<book_list, on_attach>("book_list", false, nullptr);
 
   UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size mustbe three");
 
