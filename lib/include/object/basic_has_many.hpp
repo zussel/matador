@@ -15,6 +15,7 @@ namespace detail {
 class object_inserter;
 }
 
+struct abstract_has_many_item {};
 /**
  * @class has_many_item
  * @brief Holds item and owner id of a has many relation
@@ -24,7 +25,7 @@ template < class T, class Enable = void >
 class has_many_item;
 
 template < class T >
-class has_many_item<T, typename std::enable_if<!std::is_scalar<T>::value>::type >
+class has_many_item<T, typename std::enable_if<!std::is_scalar<T>::value>::type > : public abstract_has_many_item
 {
 public:
   typedef T object_type;
@@ -91,7 +92,7 @@ private:
 };
 
 template < class T >
-class has_many_item<T, typename std::enable_if<std::is_scalar<T>::value>::type >
+class has_many_item<T, typename std::enable_if<std::is_scalar<T>::value>::type > : public abstract_has_many_item
 {
 public:
   typedef T value_type;

@@ -896,8 +896,11 @@ void ObjectStoreTestUnit::test_has_many()
 
 std::vector<std::string> table_names = {};
 
+template < class T, class Enabled = void >
+struct on_attach;
+
 template < class T >
-struct on_attach : public oos::detail::basic_on_attach
+struct on_attach<T, typename std::enable_if<std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
 {
   std::string name;
   on_attach(const std::string &n = "") : name(n) {}
@@ -905,7 +908,10 @@ struct on_attach : public oos::detail::basic_on_attach
   on_attach(const on_attach &x) : name(x.name) {}
 
   template < class V >
-  on_attach(const on_attach<V> &x) : name(x.name) {}
+  on_attach(const on_attach<V> &x) : name(x.name)
+  {
+    std::cout << "creating on attach for typeid " << typeid(T).name() << " from typeid " << typeid(V).name() << '\n';
+  }
 
   on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
 
@@ -914,7 +920,38 @@ struct on_attach : public oos::detail::basic_on_attach
 
   void operator()(const prototype_node *node)
   {
-//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+
+    table_names.push_back(node->type());
+  }
+};
+
+template < class T >
+struct on_attach<T, typename std::enable_if<!std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+{
+  std::string name;
+  on_attach(const std::string &n = "") : name(n) {
+    std::cout << "nope \n";
+  }
+
+  on_attach(const on_attach &x) : name(x.name) {
+    std::cout << "nope \n";
+  }
+
+  template < class V >
+  on_attach(const on_attach<V> &x) : name(x.name)
+  {
+    std::cout << "nope \n";
+  }
+
+  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+
+  template < class V >
+  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+
+  void operator()(const prototype_node *node)
+  {
+    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
 
     table_names.push_back(node->type());
   }

@@ -103,7 +103,7 @@ private:
     persistence_on_attach(const persistence_on_attach &x) : persistence_(x.persistence_) {}
 
     template < class V >
-    persistence_on_attach(const persistence_on_attach<V> &x) : persistence_(x.persistence_) {}
+    persistence_on_attach(const persistence_on_attach<V> &x);
 
     persistence_on_attach& operator=(const persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
 
@@ -122,6 +122,14 @@ private:
 //  typedef std::unordered_map<std::type_index, table> t_table_map;
   t_table_map tables_;
 };
+
+template < class T >
+template < class V >
+persistence::persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &x)
+  : persistence_(x.persistence_)
+{
+  // Todo: determine
+}
 
 template < class T >
 void persistence::persistence_on_attach<T>::operator()(const prototype_node *node)
