@@ -16,6 +16,13 @@
 
 namespace oos {
 
+namespace detail {
+
+template < class T >
+struct persistence_on_attach;
+
+}
+
 class persistence
 {
 public:
@@ -39,10 +46,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T>
-  void attach(const char *type, bool abstract = false, const char *parent = nullptr)
-  {
-    store_.attach<T>(type, abstract, parent, persistence_on_attach<T>(*this));
-  }
+  void attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -58,10 +62,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S>
-  void attach(const char *type, bool abstract = false)
-  {
-    store_.attach<T,S>(type, abstract, persistence_on_attach<T>(*this));
-  }
+  void attach(const char *type, bool abstract = false);
 
   /**
    * Checks if the given entity as
@@ -96,24 +97,7 @@ public:
 
 private:
   template < class T >
-  struct persistence_on_attach : public detail::basic_on_attach
-  {
-    persistence_on_attach(persistence &p) : persistence_(p) {}
-
-    persistence_on_attach(const persistence_on_attach &x) : persistence_(x.persistence_) {}
-
-    template < class V >
-    persistence_on_attach(const persistence_on_attach<V> &x);
-
-    persistence_on_attach& operator=(const persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
-
-    template < class V >
-    persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
-
-    void operator()(const prototype_node *node);
-
-    persistence &persistence_;
-  };
+  friend class detail::persistence_on_attach;
 
 private:
   connection connection_;
@@ -123,19 +107,93 @@ private:
   t_table_map tables_;
 };
 
-template < class T >
-template < class V >
-persistence::persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &x)
-  : persistence_(x.persistence_)
+namespace detail {
+
+struct basic_persistence_on_attach : public detail::basic_on_attach
 {
-  // Todo: determine
-}
+  basic_persistence_on_attach(persistence &p) : persistence_(p) {}
+  basic_persistence_on_attach(const basic_persistence_on_attach &x) : persistence_(x.persistence_) {}
+  basic_persistence_on_attach& operator=(const basic_persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
+
+  std::reference_wrapper<persistence> persistence_;
+};
 
 template < class T >
-void persistence::persistence_on_attach<T>::operator()(const prototype_node *node)
+struct persistence_on_attach : public basic_persistence_on_attach
 {
-//  std::cout << "inserting table for type " << node->type() << "\n";
-  persistence_.tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type())));
+  using basic_persistence_on_attach::basic_persistence_on_attach;
+
+  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
+
+  template < class V >
+  persistence_on_attach(const persistence_on_attach<V> &x);
+
+  template < class V >
+  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
+
+  void operator()(const prototype_node *node);
+};
+
+template <>
+template < class T >
+struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_attach
+{
+  using basic_persistence_on_attach::basic_persistence_on_attach;
+
+  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
+
+  template < class V >
+  persistence_on_attach(const persistence_on_attach<V> &x);
+
+  template < class V >
+  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
+
+  void operator()(const prototype_node *node);
+};
+
+template<class T>
+template<class V>
+persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &x)
+  : basic_persistence_on_attach(x.persistence_)
+{
+  std::cout << "do nothing\n";
+}
+
+template<class T>
+void persistence_on_attach<T>::operator()(const prototype_node *node)
+{
+  std::cout << "insert table\n";
+  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type())));
+}
+
+template<class T>
+template<class V>
+persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence_on_attach<V> &x)
+  : basic_persistence_on_attach(x.persistence_)
+{
+  std::cout << "determine identifier and set relation table columns\n";
+}
+
+template <>
+template <class T>
+void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *node)
+{
+  std::cout << "insert relation table\n";
+  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type())));
+}
+
+}
+
+template<class T>
+void persistence::attach(const char *type, bool abstract, const char *parent)
+{
+  store_.attach<T, detail::persistence_on_attach>(type, abstract, parent, detail::persistence_on_attach<T>(*this));
+}
+
+template<class T, class S>
+void persistence::attach(const char *type, bool abstract)
+{
+  store_.attach<T,S, detail::persistence_on_attach>(type, abstract, detail::persistence_on_attach<T>(*this));
 }
 
 }

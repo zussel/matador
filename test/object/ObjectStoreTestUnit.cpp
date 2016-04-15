@@ -896,62 +896,126 @@ void ObjectStoreTestUnit::test_has_many()
 
 std::vector<std::string> table_names = {};
 
-template < class T, class Enabled = void >
-struct on_attach;
+//template < class T, class Enabled = void >
+//struct on_attach;
+//
+//template < class T >
+//struct on_attach<T, typename std::enable_if<std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//{
+//  std::string name;
+//  on_attach(const std::string &n = "") : name(n) {}
+//
+//  on_attach(const on_attach &x) : name(x.name) {}
+//
+//  template < class V >
+//  on_attach(const on_attach<V> &x) : name(x.name)
+//  {
+//    std::cout << "creating on attach for typeid " << typeid(T).name() << " from typeid " << typeid(V).name() << '\n';
+//  }
+//
+//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+//
+//  template < class V >
+//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+//
+//  void operator()(const prototype_node *node)
+//  {
+//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//
+//    table_names.push_back(node->type());
+//  }
+//};
+//
+//template < class T >
+//struct on_attach<T, typename std::enable_if<!std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//{
+//  std::string name;
+//  on_attach(const std::string &n = "") : name(n) {
+//    std::cout << "nope \n";
+//  }
+//
+//  on_attach(const on_attach &x) : name(x.name) {
+//    std::cout << "nope \n";
+//  }
+//
+//  template < class V >
+//  on_attach(const on_attach<V> &x) : name(x.name)
+//  {
+//    std::cout << "nope \n";
+//  }
+//
+//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+//
+//  template < class V >
+//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+//
+//  void operator()(const prototype_node *node)
+//  {
+//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//
+//    table_names.push_back(node->type());
+//  }
+//};
 
-template < class T >
-struct on_attach<T, typename std::enable_if<std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+struct on_attach_base : public oos::detail::basic_on_attach
 {
   std::string name;
-  on_attach(const std::string &n = "") : name(n) {}
+  on_attach_base() {}
+  on_attach_base(const std::string &n) : name(n) {}
+  on_attach_base& operator=(const on_attach_base &x) { name = x.name; return *this; }
 
-  on_attach(const on_attach &x) : name(x.name) {}
+};
 
-  template < class V >
-  on_attach(const on_attach<V> &x) : name(x.name)
+template < class T >
+struct on_attach : public on_attach_base
+{
+  using on_attach_base::on_attach_base;
+
+  on_attach()
   {
-    std::cout << "creating on attach for typeid " << typeid(T).name() << " from typeid " << typeid(V).name() << '\n';
+//    std::cout << "DEFAULT: nope \n";
   }
 
-  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+  template < class V >
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
+  {
+//    std::cout << "DEFAULT: nope \n";
+  }
 
   template < class V >
-  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+  on_attach& operator=(const on_attach<V> &x)
+  {
+    name = x.name; return *this;
+  }
 
   void operator()(const prototype_node *node)
   {
-    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//    std::cout << "DEFAULT: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
 
     table_names.push_back(node->type());
   }
 };
 
+template <>
 template < class T >
-struct on_attach<T, typename std::enable_if<!std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+struct on_attach<has_many_item<T>> : public on_attach_base
 {
-  std::string name;
-  on_attach(const std::string &n = "") : name(n) {
-    std::cout << "nope \n";
-  }
+  using on_attach_base::on_attach_base;
 
-  on_attach(const on_attach &x) : name(x.name) {
-    std::cout << "nope \n";
-  }
+  typedef has_many_item<T> type;
 
   template < class V >
-  on_attach(const on_attach<V> &x) : name(x.name)
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
   {
-    std::cout << "nope \n";
+//    std::cout << "HAS_MANY_ITEM: creating on attach for typeid " << typeid(type).name() << " from typeid " << typeid(V).name() << '\n';
   }
-
-  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
 
   template < class V >
   on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
 
   void operator()(const prototype_node *node)
   {
-    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//    std::cout << "HAS_MANY_ITEM: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
 
     table_names.push_back(node->type());
   }
