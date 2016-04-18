@@ -22,17 +22,14 @@ class table : public basic_table
 {
 public:
   table(const std::string &name)
-    : basic_table(name, &create_table, &drop_table,
-                  std::bind(&table<T>::insert_object, this, std::placeholders::_1),
-                  std::bind(&table<T>::update_object, this, std::placeholders::_1),
-                  std::bind(&table<T>::delete_object, this, std::placeholders::_1),
-                  std::bind(&table<T>::prepare_statements, this, std::placeholders::_1)
-      )
+    : basic_table(name)
   {
     std::cout << "creating table " << name << " of type " << typeid(T).name() << '\n';
   }
 
-  void prepare_statements(connection &conn)
+  virtual ~table() {}
+
+  virtual void prepare(connection &conn)
   {
     query<T> q(name());
     insert_ = q.insert().prepare(conn);
@@ -41,7 +38,17 @@ public:
     delete_ = q.remove().where(id == 1).prepare(conn);
   }
 
-  void insert_object(object_proxy *proxy)
+  virtual void create(connection &conn) {
+    query<T> stmt(name());
+    stmt.create().execute(conn);
+  }
+
+  virtual void drop(connection &conn) {
+    query<T> stmt(name());
+    stmt.drop().execute(conn);
+  }
+
+  virtual void insert(object_proxy *proxy)
   {
     std::cout << "inserting object (oid: " << proxy->id() << ") of type " << proxy->node()->type();
     if (proxy->has_identifier()) {
@@ -53,7 +60,7 @@ public:
     insert_.execute();
   }
 
-  void update_object(object_proxy *proxy)
+  virtual void update(object_proxy *proxy)
   {
     T *obj = (T*)proxy->obj();
     size_t pos = update_.bind(obj);
@@ -62,22 +69,11 @@ public:
     update_.execute();
   }
 
-  void delete_object(object_proxy *proxy)
+  virtual void remove(object_proxy *proxy)
   {
     binder_.bind((T*)proxy->obj(), &delete_, 0);
     // Todo: check result
     delete_.execute();
-  }
-
-private:
-  static void create_table(const std::string &name, connection &conn) {
-    query<T> stmt(name);
-    stmt.create().execute(conn);
-  }
-
-  static void drop_table(const std::string &name, connection &conn) {
-    query<T> stmt(name);
-    stmt.drop().execute(conn);
   }
 
 private:
