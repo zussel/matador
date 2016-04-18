@@ -10,6 +10,7 @@
 #include "object/object_store.hpp"
 
 #include "orm/table.hpp"
+#include "orm/relation_table.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -140,7 +141,13 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
 {
   using basic_persistence_on_attach::basic_persistence_on_attach;
 
+  typedef has_many_item<T> relation_type;
+
   persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
+
+  persistence_on_attach(persistence_on_attach &x)
+    : basic_persistence_on_attach(x)
+  {}
 
   template < class V >
   persistence_on_attach(const persistence_on_attach<V> &x);
@@ -149,6 +156,33 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
   persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
 
   void operator()(const prototype_node *node);
+
+
+  template < class V >
+  void serialize(T &obj)
+  {
+    oos::access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, identifier<V> &x)
+  {
+    relation_.owner(new identifier<V>);
+  }
+
+  template < class V >
+  void serialize(const char*, V &) {}
+
+  template < class V >
+  void serialize(const char*, V &, size_t) {}
+
+  template < class HAS_ONE >
+  void serialize(const char*, HAS_ONE &, cascade_type) {}
+
+  template < class HAS_MANY >
+  void serialize(const char*, HAS_MANY &, const char *, const char *) {}
+
+  relation_type relation_;
 };
 
 template<class T>
@@ -172,6 +206,9 @@ persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence
   : basic_persistence_on_attach(x.persistence_)
 {
   std::cout << "determine identifier and set relation table columns\n";
+
+  V owner;
+  oos::access::serialize(*this, owner);
 }
 
 template <>
@@ -179,7 +216,7 @@ template <class T>
 void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *node)
 {
   std::cout << "insert relation table\n";
-  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type())));
+  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(node->type(), relation_)));
 }
 
 }

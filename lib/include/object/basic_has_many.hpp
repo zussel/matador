@@ -63,6 +63,11 @@ public:
     return item_;
   }
 
+  void owner(basic_identifier *id)
+  {
+    owner_.reset(id);
+  }
+
   std::string owner_id() const
   {
     return owner_id_;

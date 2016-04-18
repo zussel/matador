@@ -189,7 +189,7 @@ SET(ORM_HEADERS
 	../include/orm/session.hpp
 	../include/orm/basic_table.hpp
 	../include/orm/identifier_binder.hpp
-  ../include/orm/identifier_column_resolver.hpp)
+  ../include/orm/identifier_column_resolver.hpp ../include/orm/relation_table.hpp)
 
 SET(ORM_SOURCES
 	orm/persistence.cpp
