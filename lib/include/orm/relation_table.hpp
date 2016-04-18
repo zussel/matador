@@ -44,7 +44,7 @@ public:
   virtual void prepare(connection &conn) override
   {
     query<relation_type> q(name());
-    insert_ = q.insert().prepare(conn);
+    insert_ = q.insert(&item_).prepare(conn);
 //    column id = detail::identifier_column_resolver::resolve<T>();
 //    update_ = q.update().set().where(id == 1).prepare(conn);
 //    delete_ = q.remove().where(id == 1).prepare(conn);

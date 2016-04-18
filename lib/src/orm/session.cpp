@@ -47,6 +47,7 @@ void session::session_observer::on_commit(transaction::t_action_vector &actions)
     }
     session_.persistence_.conn().commit();
   } catch (std::exception &ex) {
+    std::cout << "rollback exception: " << ex.what() << '\n';
     session_.persistence_.conn().rollback();
   }
 }

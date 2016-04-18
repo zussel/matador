@@ -242,7 +242,7 @@ void TransactionTestUnit::test_has_many_list_commit()
 
   transaction &tr = s.begin();
   try {
-    auto children = s.insert(new children_list);
+    auto children = s.insert(new children_list("children list"));
 
     UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
     UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");

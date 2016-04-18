@@ -250,7 +250,7 @@ private:
 template < class T,  template < class ... > class ON_ATTACH >
 class node_analyzer {
 public:
-  node_analyzer(prototype_node &node, ON_ATTACH<T> on_attach)
+  node_analyzer(prototype_node &node, const ON_ATTACH<T> &on_attach)
     : node_(node)
     , on_attach_(on_attach)
   { }
@@ -285,7 +285,7 @@ struct null_on_attach : public basic_on_attach
   template < class V >
   null_on_attach& operator=(const null_on_attach<V> &) { return *this; }
 
-  void operator()(const prototype_node*) {}
+  void operator()(const prototype_node*) const {}
 };
 
 }
@@ -338,7 +338,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template< class T, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
-  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, ON_ATTACH<T> on_attach = ON_ATTACH<T>());
+  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -354,7 +354,7 @@ public:
    * @return         Returns new inserted prototype iterator.
    */
   template<class T, class S, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
-  prototype_iterator attach(const char *type, bool abstract = false, ON_ATTACH<T> on_attach = ON_ATTACH<T>());
+  prototype_iterator attach(const char *type, bool abstract = false, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -949,7 +949,7 @@ private:
    * @return iterator representing the prototype node
    */
   template<class T, template < class ... > class ON_ATTACH>
-  iterator initialize(prototype_node *node, ON_ATTACH<T> on_attach);
+  iterator initialize(prototype_node *node, const ON_ATTACH<T> &on_attach);
 
 //  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
@@ -993,7 +993,7 @@ private:
 };
 
 template<class T, template < class ... > class ON_ATTACH, typename Enabled >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, ON_ATTACH<T> on_attach)
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const ON_ATTACH<T> &on_attach)
 {
   // set node to root node
   prototype_node *parent_node = find_parent(parent);
@@ -1035,7 +1035,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 }
 
 template<class T, class S, template < class ... > class ON_ATTACH, typename Enabled >
-object_store::iterator object_store::attach(const char *type, bool abstract, ON_ATTACH<T> on_attach)
+object_store::iterator object_store::attach(const char *type, bool abstract, const ON_ATTACH<T> &on_attach)
 {
   return attach<T, ON_ATTACH>(type, abstract, typeid(S).name(), on_attach);
 }
@@ -1121,14 +1121,13 @@ prototype_node *object_store::acquire(const char *type, bool abstract)
 }
 
 template<class T, template < class ... > class ON_ATTACH>
-object_store::iterator object_store::initialize(prototype_node *node, ON_ATTACH<T> on_attach)
+object_store::iterator object_store::initialize(prototype_node *node, const ON_ATTACH<T> &on_attach)
 {
   // Check if nodes serializable has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, ON_ATTACH> analyzer(*node, on_attach);
   T obj;
   oos::access::serialize(analyzer, obj);
-//  detail::node_analyzer<ON_ATTACH>::analyze(*node, on_attach);
 
   while (!node->foreign_key_ids.empty()) {
     auto i = node->foreign_key_ids.front();
@@ -1142,13 +1141,6 @@ object_store::iterator object_store::initialize(prototype_node *node, ON_ATTACH<
 }
 
 namespace detail {
-
-template<class T, template < class ... > class ON_ATTACH>
-void node_analyzer<T, ON_ATTACH>::analyze(prototype_node &node, ON_ATTACH<T> on_attach) {
-  node_analyzer<T, ON_ATTACH> analyzer(node, on_attach);
-  T obj;
-  oos::access::serialize(analyzer, obj);
-}
 
 template<class T, template < class ... > class ON_ATTACH>
 template < class V >

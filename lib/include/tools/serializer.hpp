@@ -69,8 +69,8 @@ public:
   template < class HAS_MANY >
   void serialize(const char*, HAS_MANY&, const char*, const char*) {}
 
-  template < class HAS_ONE >
-  void serialize(const char*, HAS_ONE&, cascade_type) {}
+//  template < class HAS_ONE >
+//  void serialize(const char*, HAS_ONE&, cascade_type) {}
 
 private:
   template <unsigned int S >
