@@ -5,7 +5,9 @@
 #ifndef OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 
+#include <typeindex>
 #include "tools/serializer.hpp"
+#include "tools/byte_buffer.hpp"
 
 namespace oos {
 
@@ -13,10 +15,10 @@ class byte_buffer;
 
 class basic_identifier_serializer : public serializer {
 public:
-  explicit basic_identifier_serializer(byte_buffer &buffer);
+  basic_identifier_serializer();
 
-  void serialize(basic_identifier &x);
-  void deserialize(basic_identifier &x);
+  void serialize(basic_identifier &x, byte_buffer &buffer);
+  void deserialize(basic_identifier &x, byte_buffer &buffer);
 
   virtual void serialize(const char*, char&);
   virtual void serialize(const char*, short&);
@@ -38,7 +40,19 @@ public:
   virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type);
 
 private:
-  byte_buffer &buffer_;
+  template < class T >
+  void serialize(T *x)
+  {
+    if (restore_) {
+      buffer_->release(&x, sizeof(x));
+    } else {
+      buffer_->append(&x, sizeof(x));
+    }
+  }
+
+private:
+  byte_buffer *buffer_ = nullptr;
+  std::unique_ptr<basic_identifier> basic_identifier_;
   bool restore_ = false;
 };
 

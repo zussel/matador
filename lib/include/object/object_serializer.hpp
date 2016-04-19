@@ -245,6 +245,7 @@ private:
   object_store *ostore_ = nullptr;
   byte_buffer *buffer_ = nullptr;
   bool restore = false;
+  basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond
 }

@@ -21,7 +21,8 @@ public:
   void expression_test();
   void set_test();
   void get_test();
-  void serializer();
+  void test_serializer();
+  void test_identifier_serializer();
   void reference_counter();
   void simple_object();
   void object_with_sub_object();

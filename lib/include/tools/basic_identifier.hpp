@@ -21,6 +21,7 @@
 #include <typeindex>
 #include <iosfwd>
 #include <stdexcept>
+#include <object/basic_identifier_serializer.hpp>
 
 namespace oos {
 
@@ -186,6 +187,7 @@ public:
   void as_value(bool asvalue);
 
 protected:
+  friend class basic_identifier_serializer;
   /**
    * The returns the type_index of a specific type
    *

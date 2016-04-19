@@ -13,6 +13,7 @@
 #include "version.hpp"
 
 #include <iostream>
+#include <object/basic_identifier_serializer.hpp>
 
 using namespace oos;
 using namespace std;
@@ -25,7 +26,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
   add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
-  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
+  add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
+  add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
   add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "reference counter test");
   add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
   add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
@@ -179,7 +181,7 @@ ObjectStoreTestUnit::expression_test()
 }
 
 void
-ObjectStoreTestUnit::serializer()
+ObjectStoreTestUnit::test_serializer()
 {  
   char c = 'c';
   float f = 1.55f;
@@ -242,8 +244,26 @@ ObjectStoreTestUnit::serializer()
   delete item;
 }
 
-void
-ObjectStoreTestUnit::reference_counter()
+void ObjectStoreTestUnit::test_identifier_serializer()
+{
+  byte_buffer buffer;
+
+  auto *id = new identifier<unsigned long>(8UL);
+
+  UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
+
+  basic_identifier_serializer serializer;
+
+  serializer.serialize(*id, buffer);
+
+  auto *id2 = new identifier<unsigned long>();
+
+  serializer.deserialize(*id2, buffer);
+
+  UNIT_ASSERT_EQUAL(id2->value(), 8UL, "identifier value must be 8");
+}
+
+void ObjectStoreTestUnit::reference_counter()
 {
   Item *i = new Item("Item", 7);
   
