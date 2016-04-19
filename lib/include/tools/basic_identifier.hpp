@@ -169,6 +169,22 @@ public:
 //  template<class T>
 //  T id() const;
 
+  /**
+   * Returns true if identifier should be
+   * treated as plain value (default)
+   *
+   * @return True if treated as plain value
+   */
+  bool as_value() const;
+
+  /**
+   * Sets flag indicating that identifier
+   * id treated as plain value (default)
+   *
+   * @param asvalue True if identifier should be treated as plain value.
+   */
+  void as_value(bool asvalue);
+
 protected:
   /**
    * The returns the type_index of a specific type
@@ -181,17 +197,8 @@ private:
   template < typename T, class Enable >
   friend class identifier;
 
+  bool as_value_ = false;
 };
-
-//template<class T>
-//T basic_identifier::id() const
-//{
-//  if (type_index() == std::type_index(typeid(identifier < T > ))) {
-//    return static_cast<const identifier <T> &>(*this).value();
-//  } else {
-//    throw std::logic_error("not the same type");
-//  }
-//}
 
 }
 

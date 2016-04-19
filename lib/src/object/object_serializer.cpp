@@ -88,6 +88,12 @@ void object_serializer::serialize(const char *id, time &x)
   }
 }
 
+void object_serializer::serialize(const char *id, basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
+
 object_proxy *object_serializer::find_proxy(unsigned long oid)
 {
   return ostore_->find_proxy(oid);

@@ -33,32 +33,22 @@ session::session_observer::session_observer(session &s)
   : session_(s)
 {}
 
-void session::session_observer::on_rollback()
+void session::session_observer::on_begin()
 {
-  // Todo: rollback transaction
+  session_.persistence_.conn().begin();
 }
 
 void session::session_observer::on_commit(transaction::t_action_vector &actions)
 {
-  try {
-    session_.persistence_.conn().begin();
-    for (transaction::action_ptr &actptr : actions) {
-      actptr->accept(this);
-    }
-    session_.persistence_.conn().commit();
-  } catch (std::exception &ex) {
-    std::cout << "rollback exception: " << ex.what() << '\n';
-    session_.persistence_.conn().rollback();
+  for (transaction::action_ptr &actptr : actions) {
+    actptr->accept(this);
   }
+  session_.persistence_.conn().commit();
 }
 
-void session::session_observer::on_begin()
+void session::session_observer::on_rollback()
 {
-//  // Todo: begin transaction
-//  connection &conn = session_.persistence_.conn();
-//  basic_dialect *dialect = conn.dialect();
-//  // Todo: conn.execute(dialect->begin());
-//  conn.execute(dialect->token(basic_dialect::BEGIN));
+  session_.persistence_.conn().rollback();
 }
 
 void session::session_observer::visit(insert_action *act)

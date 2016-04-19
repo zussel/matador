@@ -166,9 +166,11 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
   }
 
   template < class V >
-  void serialize(const char *, identifier<V> &x)
+  void serialize(const char *, identifier<V> &)
   {
-    relation_.owner(new identifier<V>);
+    auto id = new identifier<V>;
+    id->as_value(true);
+    relation_.owner(id);
   }
 
   template < class V >

@@ -146,6 +146,8 @@ public:
 	void serialize(const char* id, date &x);
 	void serialize(const char* id, time &x);
 
+  void serialize(const char *id, basic_identifier &x);
+
   template < class V >
   void serialize(const char* id, identifier<V> &x)
   {
