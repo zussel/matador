@@ -8,7 +8,6 @@
 #include "object/action.hpp"
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
-//#include "object/object_serializer.hpp"
 
 #include "tools/basic_identifier.hpp"
 
@@ -41,8 +40,6 @@ public:
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
   {}
-
-  virtual ~delete_action();
 
   virtual void accept(action_visitor *av);
 

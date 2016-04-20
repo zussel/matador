@@ -33,57 +33,57 @@ void basic_identifier_serializer::deserialize(basic_identifier &x, byte_buffer &
 
 void basic_identifier_serializer::serialize(const char *, char &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, short &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, int &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, long &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned char &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned short &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned int &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, unsigned long &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, bool &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, float &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, double &x)
 {
-  serialize(&x);
+  serialize_value(x);
 }
 
 void basic_identifier_serializer::serialize(const char *, char *x, size_t size)

@@ -36,8 +36,6 @@ public:
     , delete_action_(new delete_action(proxy, obj))
   {}
 
-  virtual ~update_action() {}
-
   virtual void accept(action_visitor *av);
 
   /**

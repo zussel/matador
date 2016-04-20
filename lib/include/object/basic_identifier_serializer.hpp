@@ -41,7 +41,7 @@ public:
 
 private:
   template < class T >
-  void serialize(T *x)
+  void serialize_value(T &x)
   {
     if (restore_) {
       buffer_->release(&x, sizeof(x));

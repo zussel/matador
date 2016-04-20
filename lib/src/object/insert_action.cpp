@@ -11,9 +11,6 @@
 
 namespace oos {
 
-insert_action::~insert_action()
-{}
-
 void insert_action::accept(action_visitor *av)
 {
   av->visit(this);

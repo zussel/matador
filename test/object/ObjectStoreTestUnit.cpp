@@ -247,20 +247,39 @@ ObjectStoreTestUnit::test_serializer()
 void ObjectStoreTestUnit::test_identifier_serializer()
 {
   byte_buffer buffer;
-
-  auto *id = new identifier<unsigned long>(8UL);
-
-  UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
-
   basic_identifier_serializer serializer;
 
-  serializer.serialize(*id, buffer);
+  {
+    auto *id = new identifier<unsigned long>(8UL);
 
-  auto *id2 = new identifier<unsigned long>();
+    UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
 
-  serializer.deserialize(*id2, buffer);
+    serializer.serialize(*id, buffer);
 
-  UNIT_ASSERT_EQUAL(id2->value(), 8UL, "identifier value must be 8");
+    auto *id2 = new identifier<unsigned long>();
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), 8UL, "identifier value must be 8");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
+
+  {
+    auto *id = new identifier<std::string>("hallo");
+
+    UNIT_ASSERT_EQUAL(id->value(), "hallo", "identifier value must be 'hallo'");
+
+    serializer.serialize(*id, buffer);
+
+    auto *id2 = new identifier<std::string>();
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), "hallo", "identifier value must be 'hallo'");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
 }
 
 void ObjectStoreTestUnit::reference_counter()

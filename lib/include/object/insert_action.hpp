@@ -51,8 +51,6 @@ public:
     , type_(type)
   {}
 
-  virtual ~insert_action();
-
   virtual void accept(action_visitor *av);
 
 /**

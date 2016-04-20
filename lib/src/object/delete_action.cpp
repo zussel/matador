@@ -8,9 +8,6 @@
 
 namespace oos {
 
-delete_action::~delete_action()
-{}
-
 void delete_action::accept(action_visitor *av)
 {
   av->visit(this);
