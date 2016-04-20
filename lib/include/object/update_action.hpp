@@ -21,6 +21,7 @@ class object_serializer;
  * This action is used when an objected
  * is updated on the database.
  */
+template < class T >
 class OOS_API update_action : public action
 {
 public:
@@ -29,14 +30,15 @@ public:
    *
    * @param o The updated serializable.
    */
-  template < class T >
-  update_action(object_proxy *proxy, T *obj)
-    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
-    , proxy_(proxy)
-    , delete_action_(new delete_action(proxy, obj))
+  update_action(object_proxy *proxy)
+    : proxy_(proxy)
+    , delete_action_(new delete_action(proxy))
   {}
 
-  virtual void accept(action_visitor *av);
+  virtual void accept(action_visitor *av)
+  {
+    av->visit(this);
+  }
 
   /**
    * The serializable of the action.
@@ -46,25 +48,28 @@ public:
   /**
    * The serializable of the action.
    */
-  const object_proxy* proxy() const;
-
-  template < class T, class S >
-  static void backup(byte_buffer &buffer, action *act, S &serializer)
+  const object_proxy* proxy() const
   {
-//    object_serializer serializer;
-    T* obj = (T*)(static_cast<update_action*>(act)->proxy_->obj());
-    serializer.serialize(obj, &buffer);
+    return proxy_;
   }
 
-  template < class T, class S >
-  static void restore(byte_buffer &buffer, action *act, object_store *store, S &serializer)
+  virtual void backup(byte_buffer &buffer)
   {
-//    object_serializer serializer;
-    T* obj = (T*)(static_cast<update_action*>(act)->proxy_->obj());
-    serializer.deserialize(obj, &buffer, store);
+    T* obj = (T*)(proxy_->obj());
+    serializer_.serialize(obj, &buffer);
   }
 
-  delete_action* release_delete_action();
+  virtual void restore(byte_buffer &buffer, object_store *store)
+  {
+//    object_serializer serializer;
+    T* obj = (T*)(proxy_->obj());
+    serializer_.deserialize(obj, &buffer, store);
+  }
+
+  delete_action* release_delete_action()
+  {
+    return delete_action_.release();
+  }
 
 private:
   object_proxy *proxy_;

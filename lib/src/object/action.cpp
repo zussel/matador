@@ -16,30 +16,16 @@
  */
 
 #include "object/action.hpp"
-#include "object/object_serializer.hpp"
 
 namespace oos
 {
 
-action::action(t_backup_func backup_func, t_restore_func restore_func)
-  : backup_func_(backup_func)
-  , restore_func_(restore_func)
-  , serializer_(new object_serializer)
+action::action()
 {}
 
 action::~action()
 {
   delete serializer_;
-}
-
-void action::backup(byte_buffer &to)
-{
-  backup_func_(to, this, *serializer_);
-}
-
-void action::restore(byte_buffer &from, object_store *store)
-{
-  restore_func_(from, this, store, *serializer_);
 }
 
 }

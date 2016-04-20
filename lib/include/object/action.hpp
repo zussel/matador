@@ -31,6 +31,8 @@
   #define OOS_API
 #endif
 
+#include "object/object_serializer.hpp"
+
 #include <string>
 #include <list>
 #include <memory>
@@ -40,7 +42,6 @@ namespace oos {
 class action_visitor;
 class byte_buffer;
 class object_store;
-class object_serializer;
 /**
  * @internal
  * @class action
@@ -48,11 +49,9 @@ class object_serializer;
  *
  * The action class is the base class for all sql
  * relevant actions like:
- *  - create (table)
  *  - insert
  *  - update
  *  - delete
- *  - drop (table)
  *
  * All these actions are accepted via the action_visitor
  * class, which implements the visitor pattern.
@@ -60,11 +59,7 @@ class object_serializer;
 class OOS_API action
 {
 public:
-  typedef void (*t_backup_func)(byte_buffer&, action*, object_serializer &serializer);
-  typedef void (*t_restore_func)(byte_buffer&, action*, object_store*, object_serializer &serializer);
-
-  action(t_backup_func backup_func, t_restore_func restore_func);
-
+  action();
   virtual ~action();
   
   /**
@@ -74,14 +69,11 @@ public:
    */
   virtual void accept(action_visitor *av) = 0;
 
-  void backup(byte_buffer &to);
-  void restore(byte_buffer &from, object_store *store);
+  virtual void backup(byte_buffer &to) = 0;
+  virtual void restore(byte_buffer &from, object_store *store) = 0;
 
-  t_backup_func backup_func_;
-  t_restore_func restore_func_;
-
-private:
-  object_serializer *serializer_;
+protected:
+  object_serializer serializer_;
 };
 
 /// @endcond

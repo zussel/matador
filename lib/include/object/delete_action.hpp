@@ -23,6 +23,7 @@ class object_serializer;
  * This action is used when an objected
  * is deleted from the database.
  */
+template < class T >
 class OOS_API delete_action : public action
 {
 public:
@@ -34,14 +35,16 @@ public:
    */
   template < class T >
   delete_action(object_proxy *proxy, T *obj)
-    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
-    , classname_(proxy->node()->type())
+    : classname_(proxy->node()->type())
     , id_(proxy->id())
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
   {}
 
-  virtual void accept(action_visitor *av);
+  virtual void accept(action_visitor *av)
+  {
+    av->visit(this);
+  }
 
   /**
    * Return the class name of the
@@ -62,25 +65,22 @@ public:
 
   object_proxy* proxy() const;
 
-  template < class T, class S >
-  static void backup(byte_buffer &buffer, action *act, S &serializer)
+  virtual void backup(byte_buffer &buffer)
   {
 //    object_serializer serializer;
-    T* obj = (T*)(static_cast<delete_action*>(act)->proxy_->obj());
-    serializer.serialize<T>(obj, &buffer);
+    T* obj = (T*)(proxy_->obj());
+    serializer_.serialize<T>(obj, &buffer);
   }
 
-  template < class T, class S >
-  static void restore(byte_buffer &buffer, action *act, object_store *store, S &serializer)
+  virtual void restore(byte_buffer &buffer, object_store *store)
   {
     // TODO: pass object store instance
     // check if there is an serializable with id in
     // serializable store
-    delete_action *da(static_cast<delete_action*>(act));
-    object_proxy *proxy = delete_action::find_proxy(store, da->id());
+    object_proxy *proxy = delete_action::find_proxy(store, id());
     if (!proxy) {
       // create proxy
-      proxy = new object_proxy(new T, da->id(), store);
+      proxy = new object_proxy(new T, id(), store);
       delete_action::insert_proxy(store, proxy);
     }
 //    object_serializer serializer;
@@ -88,16 +88,16 @@ public:
       // create serializable with id and deserialize
       proxy->reset(new T);
       // data from buffer into serializable
-      serializer.deserialize((T*)proxy->obj(), &buffer, store);
+      serializer_.deserialize((T*)proxy->obj(), &buffer, store);
       // restore pk
-      if (da->pk()) {
-        proxy->pk().reset(da->pk()->clone());
+      if (pk()) {
+        proxy->pk().reset(pk()->clone());
       }
       // insert serializable
 //      store->insert<T>(proxy, false);
     } else {
       // data from buffer into serializable
-      serializer.deserialize((T*)proxy->obj(), &buffer, store);
+      serializer_.deserialize((T*)proxy->obj(), &buffer, store);
     }
   }
 private:

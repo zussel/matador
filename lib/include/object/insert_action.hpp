@@ -32,6 +32,7 @@ class object_serializer;
  * This action is used when an objected
  * is inserted into the database.
  */
+template < class T >
 class OOS_API insert_action : public action
 {
 public:
@@ -46,12 +47,14 @@ public:
    * @param type The type of the expected objects
    */
   template < class T >
-  explicit insert_action(const std::string &type, T*)
-    : action(&backup<T, object_serializer>, &restore<T, object_serializer>)
-    , type_(type)
+  explicit insert_action(const std::string &type)
+    : type_(type)
   {}
 
-  virtual void accept(action_visitor *av);
+  virtual void accept(action_visitor *av)
+  {
+    av->visit(this);
+  }
 
 /**
  * Return the object type
@@ -76,16 +79,13 @@ public:
 
   iterator erase(iterator i);
 
-  template < class T, class S >
-  static void backup(byte_buffer &, action *, S&) { }
+  virtual void backup(byte_buffer &) { }
 
-  template < class T, class S >
-  static void restore(byte_buffer &, action *act, object_store *store, S&)
+  virtual void restore(byte_buffer &, object_store *store)
   {
     // remove serializable from serializable store
-    insert_action *ia(static_cast<insert_action*>(act));
-    for (insert_action::iterator i = ia->begin(); i != ia->end(); ++i) {
-      ia->remove_proxy(*i, store);
+    for (insert_action::iterator i = begin(); i != end(); ++i) {
+      remove_proxy(*i, store);
     }
   }
 
