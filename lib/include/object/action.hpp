@@ -31,8 +31,6 @@
   #define OOS_API
 #endif
 
-#include "object/object_serializer.hpp"
-
 #include <string>
 #include <list>
 #include <memory>
@@ -42,6 +40,9 @@ namespace oos {
 class action_visitor;
 class byte_buffer;
 class object_store;
+class object_proxy;
+class object_serializer;
+
 /**
  * @internal
  * @class action
@@ -59,6 +60,9 @@ class object_store;
 class OOS_API action
 {
 public:
+  typedef void (*t_backup_func)(byte_buffer&, action*, object_serializer &serializer);
+
+public:
   action();
   virtual ~action();
   
@@ -73,7 +77,12 @@ public:
   virtual void restore(byte_buffer &from, object_store *store) = 0;
 
 protected:
-  object_serializer serializer_;
+  static void remove_proxy(object_proxy *proxy, object_store *store);
+  static object_proxy* find_proxy(object_store *store, unsigned long id);
+  static void insert_proxy(object_store *store, object_proxy *proxy);
+
+protected:
+  object_serializer *serializer_;
 };
 
 /// @endcond

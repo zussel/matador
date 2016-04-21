@@ -939,7 +939,7 @@ std::vector<std::string> table_names = {};
 //struct on_attach;
 //
 //template < class T >
-//struct on_attach<T, typename std::enable_if<std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//struct on_attach<T, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
 //{
 //  std::string name;
 //  on_attach(const std::string &n = "") : name(n) {}
@@ -966,7 +966,7 @@ std::vector<std::string> table_names = {};
 //};
 //
 //template < class T >
-//struct on_attach<T, typename std::enable_if<!std::is_base_of<abstract_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//struct on_attach<T, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
 //{
 //  std::string name;
 //  on_attach(const std::string &n = "") : name(n) {

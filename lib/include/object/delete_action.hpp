@@ -8,6 +8,7 @@
 #include "object/action.hpp"
 #include "object/object_proxy.hpp"
 #include "object/prototype_node.hpp"
+#include "object/basic_has_many_item.hpp"
 
 #include "tools/basic_identifier.hpp"
 
@@ -23,9 +24,11 @@ class object_serializer;
  * This action is used when an objected
  * is deleted from the database.
  */
-template < class T >
 class OOS_API delete_action : public action
 {
+private:
+  typedef void (*t_backup_func)(byte_buffer&, delete_action*, object_serializer &serializer);
+  typedef void (*t_restore_func)(byte_buffer&, delete_action*, object_store*, object_serializer &serializer);
 public:
   /**
    * Creates an delete_action.
@@ -39,12 +42,12 @@ public:
     , id_(proxy->id())
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
+    , node_(proxy->node())
+    , backup_func_(&backup_delete<T, object_serializer>)
+    , restore_func_(&restore_delete<T, object_serializer>)
   {}
 
-  virtual void accept(action_visitor *av)
-  {
-    av->visit(this);
-  }
+  virtual void accept(action_visitor *av);
 
   /**
    * Return the class name of the
@@ -65,50 +68,72 @@ public:
 
   object_proxy* proxy() const;
 
-  virtual void backup(byte_buffer &buffer)
+  virtual void backup(byte_buffer &buffer);
+
+  virtual void restore(byte_buffer &buffer, object_store *store);
+
+private:
+  template < class T, class S >
+  static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer)
   {
-//    object_serializer serializer;
-    T* obj = (T*)(proxy_->obj());
-    serializer_.serialize<T>(obj, &buffer);
+    T* obj = (T*)(act->proxy()->obj());
+    serializer.serialize(obj, &buffer);
   }
 
-  virtual void restore(byte_buffer &buffer, object_store *store)
+  template < class T, class S >
+  static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer)
   {
     // TODO: pass object store instance
     // check if there is an serializable with id in
     // serializable store
-    object_proxy *proxy = delete_action::find_proxy(store, id());
+    object_proxy *proxy = action::find_proxy(store, act->id());
     if (!proxy) {
       // create proxy
-      proxy = new object_proxy(new T, id(), store);
-      delete_action::insert_proxy(store, proxy);
+      proxy = new object_proxy(new T, act->id(), store);
+      action::insert_proxy(store, proxy);
     }
 //    object_serializer serializer;
     if (!proxy->obj()) {
       // create serializable with id and deserialize
-      proxy->reset(new T);
+      T *obj = act->init_object(new T);
+      proxy->reset(obj);
       // data from buffer into serializable
-      serializer_.deserialize((T*)proxy->obj(), &buffer, store);
+      serializer.deserialize((T*)proxy->obj(), &buffer, store);
       // restore pk
-      if (pk()) {
-        proxy->pk().reset(pk()->clone());
+      if (act->pk()) {
+        proxy->pk().reset(act->pk()->clone());
       }
       // insert serializable
 //      store->insert<T>(proxy, false);
     } else {
       // data from buffer into serializable
-      serializer_.deserialize((T*)proxy->obj(), &buffer, store);
+      T *obj = act->init_object((T*)proxy->obj());
+      serializer.deserialize(obj, &buffer, store);
     }
   }
-private:
-  static object_proxy* find_proxy(object_store *store, unsigned long id);
-  static void insert_proxy(object_store *store, object_proxy *proxy);
+
+  template < class T >
+  T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  {
+    return obj;
+  }
+
+  template < class T >
+  T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  {
+    obj->owner(node_->id()->clone());
+    return obj;
+  }
 
 private:
   std::string classname_;
   unsigned long id_ = 0;
   std::unique_ptr<basic_identifier> pk_;
   object_proxy *proxy_ = nullptr;
+  prototype_node *node_ = nullptr;
+
+  t_backup_func backup_func_;
+  t_restore_func restore_func_;
 };
 
 }

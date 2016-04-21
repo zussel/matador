@@ -18,12 +18,15 @@
 #define OOS_API
 #endif
 
+#include <algorithm>
+
 #include "object/action.hpp"
 
 namespace oos {
 
 class object_proxy;
 class object_serializer;
+
 /**
  * @internal
  * @class insert_action
@@ -32,7 +35,6 @@ class object_serializer;
  * This action is used when an objected
  * is inserted into the database.
  */
-template < class T >
 class OOS_API insert_action : public action
 {
 public:
@@ -47,21 +49,18 @@ public:
    * @param type The type of the expected objects
    */
   template < class T >
-  explicit insert_action(const std::string &type)
+  explicit insert_action(const std::string &type, T*)
     : type_(type)
   {}
 
-  virtual void accept(action_visitor *av)
-  {
-    av->visit(this);
-  }
+  virtual void accept(action_visitor *av);
 
-/**
- * Return the object type
- * of the action.
- *
- * @return The object type of the action
- */
+  /**
+   * Return the object type
+   * of the action.
+   *
+   * @return The object type of the action
+   */
   std::string type() const;
 
   iterator begin();
@@ -81,16 +80,7 @@ public:
 
   virtual void backup(byte_buffer &) { }
 
-  virtual void restore(byte_buffer &, object_store *store)
-  {
-    // remove serializable from serializable store
-    for (insert_action::iterator i = begin(); i != end(); ++i) {
-      remove_proxy(*i, store);
-    }
-  }
-
-private:
-  void remove_proxy(object_proxy *proxy, object_store *store);
+  virtual void restore(byte_buffer &, object_store *store);
 
 private:
   std::string type_;

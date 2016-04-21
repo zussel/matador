@@ -22,6 +22,16 @@ const object_proxy* update_action::proxy() const
   return proxy_;
 }
 
+void update_action::backup(byte_buffer &buffer)
+{
+  backup_func_(buffer, this, *serializer_);
+}
+
+void update_action::restore(byte_buffer &buffer, object_store *store)
+{
+  restore_func_(buffer, this, store, *serializer_);
+}
+
 delete_action *update_action::release_delete_action()
 {
   return delete_action_.release();

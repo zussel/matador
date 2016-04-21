@@ -12,7 +12,8 @@ SET(OBJECT_SOURCES
 	object/insert_action.cpp
 	object/update_action.cpp
 	object/delete_action.cpp
-	object/basic_identifier_serializer.cpp)
+	object/basic_identifier_serializer.cpp
+  object/basic_has_many_item.cpp)
 
 SET(OBJECT_INSTALL_HEADER
 	${PROJECT_SOURCE_DIR}/include/object/action.hpp
@@ -74,7 +75,7 @@ SET(OBJECT_HEADER
   ../include/object/update_action.hpp
   ../include/object/delete_action.hpp
 	../include/object/abstract_has_many.hpp
-	../include/object/basic_identifier_serializer.hpp ../include/object/has_many_item.hpp)
+	../include/object/basic_identifier_serializer.hpp ../include/object/has_many_item.hpp ../include/object/basic_has_many_item.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

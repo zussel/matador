@@ -79,9 +79,12 @@ insert_action::iterator insert_action::erase(insert_action::iterator i)
   return object_proxy_list_.erase(i);
 }
 
-void insert_action::remove_proxy(object_proxy *proxy, object_store *store)
+void insert_action::restore(byte_buffer &, object_store *store)
 {
-  store->remove_proxy(proxy);
+  // remove objects from object store
+  for (insert_action::iterator i = begin(); i != end(); ++i) {
+    action::remove_proxy(*i, store);
+  }
 }
 
 }

@@ -33,14 +33,14 @@ object_proxy *delete_action::proxy() const
   return proxy_;
 }
 
-object_proxy* delete_action::find_proxy(object_store *store, unsigned long id)
+void delete_action::backup(byte_buffer &buffer)
 {
-  return store->find_proxy(id);
+  backup_func_(buffer, this, *serializer_);
 }
 
-void delete_action::insert_proxy(object_store *store, object_proxy *proxy)
+void delete_action::restore(byte_buffer &buffer, object_store *store)
 {
-  store->insert_proxy(proxy);
+  restore_func_(buffer, this, store, *serializer_);
 }
 
 }

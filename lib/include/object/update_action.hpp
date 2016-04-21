@@ -21,24 +21,27 @@ class object_serializer;
  * This action is used when an objected
  * is updated on the database.
  */
-template < class T >
 class OOS_API update_action : public action
 {
+private:
+  typedef void (*t_backup_func)(byte_buffer&, update_action*, object_serializer &serializer);
+  typedef void (*t_restore_func)(byte_buffer&, update_action*, object_store*, object_serializer &serializer);
+
 public:
   /**
    * Creates an update_action.
    *
    * @param o The updated serializable.
    */
-  update_action(object_proxy *proxy)
+  template < class T >
+  update_action(object_proxy *proxy, T *obj)
     : proxy_(proxy)
-    , delete_action_(new delete_action(proxy))
+    , delete_action_(new delete_action(proxy, obj))
+    , backup_func_(&backup_update<T, object_serializer>)
+    , restore_func_(&restore_update<T, object_serializer>)
   {}
 
-  virtual void accept(action_visitor *av)
-  {
-    av->visit(this);
-  }
+  virtual void accept(action_visitor *av);
 
   /**
    * The serializable of the action.
@@ -48,32 +51,35 @@ public:
   /**
    * The serializable of the action.
    */
-  const object_proxy* proxy() const
+  const object_proxy* proxy() const;
+
+  virtual void backup(byte_buffer &buffer);
+
+  virtual void restore(byte_buffer &buffer, object_store *store);
+
+  delete_action* release_delete_action();
+
+private:
+  template < class T, class S >
+  static void backup_update(byte_buffer &buffer, update_action *act, S &serializer)
   {
-    return proxy_;
+    T* obj = (T*)(act->proxy()->obj());
+    serializer.serialize(obj, &buffer);
   }
 
-  virtual void backup(byte_buffer &buffer)
+  template < class T, class S >
+  static void restore_update(byte_buffer &buffer, update_action *act, object_store *store, S &serializer)
   {
-    T* obj = (T*)(proxy_->obj());
-    serializer_.serialize(obj, &buffer);
-  }
-
-  virtual void restore(byte_buffer &buffer, object_store *store)
-  {
-//    object_serializer serializer;
-    T* obj = (T*)(proxy_->obj());
-    serializer_.deserialize(obj, &buffer, store);
-  }
-
-  delete_action* release_delete_action()
-  {
-    return delete_action_.release();
+    T* obj = (T*)(act->proxy()->obj());
+    serializer.deserialize(obj, &buffer, store);
   }
 
 private:
   object_proxy *proxy_;
   std::unique_ptr<delete_action> delete_action_;
+
+  t_backup_func backup_func_;
+  t_restore_func restore_func_;
 };
 
 }
