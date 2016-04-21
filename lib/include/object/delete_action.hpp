@@ -11,6 +11,7 @@
 #include "object/basic_has_many_item.hpp"
 
 #include "tools/basic_identifier.hpp"
+#include "abstract_has_many.hpp"
 
 namespace oos {
 
@@ -42,7 +43,6 @@ public:
     , id_(proxy->id())
     , pk_(identifier_resolver<T>::resolve(obj))
     , proxy_(proxy)
-    , node_(proxy->node())
     , backup_func_(&backup_delete<T, object_serializer>)
     , restore_func_(&restore_delete<T, object_serializer>)
   {}
@@ -77,6 +77,7 @@ private:
   static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer)
   {
     T* obj = (T*)(act->proxy()->obj());
+    act->backup_object(obj);
     serializer.serialize(obj, &buffer);
   }
 
@@ -113,6 +114,16 @@ private:
   }
 
   template < class T >
+  void backup_object(T *, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type* = 0) {}
+
+  template < class T >
+  void backup_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
+  {
+    basic_has_many_item *item = static_cast<basic_has_many_item*>(obj);
+    owner_identifier_.reset(item->owner()->clone());
+  }
+
+  template < class T >
   T* init_object(T *obj, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
   {
     return obj;
@@ -121,7 +132,7 @@ private:
   template < class T >
   T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
   {
-    obj->owner(node_->id()->clone());
+    obj->owner(owner_identifier_.release());
     return obj;
   }
 
@@ -130,7 +141,7 @@ private:
   unsigned long id_ = 0;
   std::unique_ptr<basic_identifier> pk_;
   object_proxy *proxy_ = nullptr;
-  prototype_node *node_ = nullptr;
+  std::unique_ptr<basic_identifier> owner_identifier_;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;
