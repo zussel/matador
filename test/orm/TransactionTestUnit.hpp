@@ -36,6 +36,7 @@ public:
   void test_nested();
   void test_foreign();
   void test_has_many_list_commit();
+  void test_has_many_list_rollback();
   void test_has_many_list();
 //  void test_with_vector();
 

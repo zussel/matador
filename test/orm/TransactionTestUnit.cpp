@@ -19,6 +19,7 @@ TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::str
   add_test("nested", std::bind(&TransactionTestUnit::test_nested, this), "nested transaction test");
   add_test("foreign", std::bind(&TransactionTestUnit::test_foreign, this), "object with foreign key transaction test");
   add_test("list_commit", std::bind(&TransactionTestUnit::test_has_many_list_commit, this), "object with object list transaction commit test");
+  add_test("list_rollback", std::bind(&TransactionTestUnit::test_has_many_list_rollback, this), "object with object list transaction rollback test");
   add_test("list", std::bind(&TransactionTestUnit::test_has_many_list, this), "object with object list transaction test");
 //  add_test("vector", std::bind(&TransactionTestUnit::test_with_vector, this), "serializable with serializable vector sql test");
 }
@@ -268,6 +269,59 @@ void TransactionTestUnit::test_has_many_list_commit()
 
     UNIT_ASSERT_FALSE(children->children.empty(), "item children couldn't be empty");
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+  } catch(sql_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught sql exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  } catch (object_exception &ex) {
+    // error, abort transaction
+    UNIT_WARN("caught object exception: " << ex.what() << " (start rollback)");
+    tr.rollback();
+  }
+
+  p.drop();
+}
+
+void TransactionTestUnit::test_has_many_list_rollback()
+{
+  oos::persistence p(dns_);
+
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
+
+  p.create();
+
+  oos::session s(p);
+
+  transaction &tr = s.begin();
+  try {
+    auto children = s.insert(new children_list("children list"));
+
+    UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
+    UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
+    tr.commit();
+
+    tr.begin();
+
+    for (int i = 1; i <= 2; ++i) {
+      std::stringstream name;
+      name << "child " << i;
+      auto kid = s.insert(new child(name.str()));
+
+      UNIT_ASSERT_GREATER(kid->id, 0UL, "invalid child");
+
+      children->children.push_back(kid);
+    }
+
+    UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
+
+    tr.rollback();
+
+    UNIT_ASSERT_TRUE(children->children.empty(), "item children must be empty");
+    UNIT_ASSERT_EQUAL(children->children.size(), 0UL, "invalid children list size");
 
   } catch(sql_exception &ex) {
     // error, abort transaction
