@@ -39,10 +39,8 @@ class object_store;
 class OOS_API transaction
 {
 private:
-  transaction(const transaction&) = delete;
-  transaction& operator=(const transaction&) = delete;
-  transaction(const transaction &&x) = delete;
-  transaction& operator=(const transaction &&x) = delete;
+  transaction(transaction &&x) = delete;
+  transaction& operator=(transaction &&x) = delete;
 
 public:
   typedef std::shared_ptr<action> action_ptr;
@@ -68,6 +66,9 @@ public:
 public:
   explicit transaction(object_store &store);
   transaction(object_store &store, const std::shared_ptr<observer> &obsvr);
+  transaction(const transaction&) = default;
+  transaction& operator=(const transaction&) = default;
+
 
   void begin();
   void commit();
@@ -90,15 +91,27 @@ private:
   void cleanup();
 
 private:
-  std::reference_wrapper<object_store> store_;
+  struct transaction_data
+  {
+    transaction_data(object_store &store, std::shared_ptr<observer> obsrvr)
+      : store_(store)
+      , inserter_(actions_)
+      , observer_(obsrvr)
+    {}
 
-  t_action_vector actions_;
-  t_id_action_index_map id_action_index_map_;
+    std::reference_wrapper<object_store> store_;
 
-  action_inserter inserter_;
-  byte_buffer object_buffer_;
+    t_action_vector actions_;
+    t_id_action_index_map id_action_index_map_;
 
-  std::shared_ptr<observer> observer_;
+    action_inserter inserter_;
+    byte_buffer object_buffer_;
+
+    std::shared_ptr<observer> observer_;
+  };
+
+private:
+  std::shared_ptr<transaction_data> transaction_data_;
 };
 
 template < class T >
@@ -111,14 +124,14 @@ void transaction::on_insert(object_proxy *proxy)
    * from object store
    *
    *****************/
-  t_id_action_index_map::iterator i = id_action_index_map_.find(proxy->id());
-  if (i == id_action_index_map_.end()) {
+  t_id_action_index_map::iterator i = transaction_data_->id_action_index_map_.find(proxy->id());
+  if (i == transaction_data_->id_action_index_map_.end()) {
     // create insert action and insert serializable
-    t_action_vector::size_type index = inserter_.insert<T>(proxy);
-    if (index == actions_.size()) {
+    t_action_vector::size_type index = transaction_data_->inserter_.insert<T>(proxy);
+    if (index == transaction_data_->actions_.size()) {
       throw_object_exception("transaction: action for object with id " << proxy->id() << " couldn't be inserted");
     } else {
-      id_action_index_map_.insert(std::make_pair(proxy->id(), index));
+      transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), index));
     }
   } else {
     // ERROR: an serializable with that id already exists
@@ -136,7 +149,7 @@ void transaction::on_update(object_proxy *proxy)
    * is restored to old values
    *
    *****************/
-  if (id_action_index_map_.find(proxy->id()) == id_action_index_map_.end()) {
+  if (transaction_data_->id_action_index_map_.find(proxy->id()) == transaction_data_->id_action_index_map_.end()) {
     std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
     backup(ua, proxy);
   } else {
@@ -157,11 +170,11 @@ void transaction::on_delete(object_proxy *proxy)
    * serializable store
    *
    *****************/
-  t_id_action_index_map::iterator i = id_action_index_map_.find(proxy->id());
-  if (i == id_action_index_map_.end()) {
+  t_id_action_index_map::iterator i = transaction_data_->id_action_index_map_.find(proxy->id());
+  if (i == transaction_data_->id_action_index_map_.end()) {
     backup(std::make_shared<delete_action>(proxy, (T*)proxy->obj()), proxy);
   } else {
-    action_remover ar(actions_);
+    action_remover ar(transaction_data_->actions_);
     ar.remove(i->second, proxy);
   }
 }

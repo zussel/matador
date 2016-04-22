@@ -197,12 +197,14 @@ std::shared_ptr<basic_identifier> object_proxy::pk() const
   return primary_key_;
 }
 
-transaction *object_proxy::current_transaction() const
+transaction& object_proxy::current_transaction()
 {
-  if (ostore_) {
-    return ostore_->current_transaction();
-  }
-  return nullptr;
+  return ostore_->current_transaction();
+}
+
+bool object_proxy::has_transaction() const
+{
+  return ostore_->has_transaction();
 }
 
 std::ostream& operator <<(std::ostream &os, const object_proxy &op)

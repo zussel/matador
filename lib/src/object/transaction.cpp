@@ -12,26 +12,26 @@ transaction::transaction(oos::object_store &store)
 {}
 
 transaction::transaction(object_store &store, const std::shared_ptr<observer> &obsvr)
-  : store_(store)
-  , inserter_(actions_)
-  , observer_(obsvr)
+  : transaction_data_(std::make_shared<transaction_data>(store, obsvr))
 {}
 
 void transaction::begin()
 {
-  store_.get().push_transaction(this);
-  observer_->on_begin();
+  transaction_data_->store_.get().push_transaction(*this);
+  transaction_data_->observer_->on_begin();
 }
 
 void transaction::commit()
 {
-  observer_->on_commit(actions_);
+  transaction_data_->observer_->on_commit(transaction_data_->actions_);
   cleanup();
 }
 
 void transaction::rollback()
 {
-  if (!store_.get().current_transaction() || store_.get().current_transaction() != this) {
+  if (!transaction_data_->store_.get().has_transaction() ||
+      &transaction_data_->store_.get().current_transaction() != this)
+  {
     throw object_exception("transaction: transaction isn't current transaction");
   } else {
     /**************
@@ -42,14 +42,14 @@ void transaction::rollback()
      * clear insert action map
      *
      **************/
-    while (!actions_.empty()) {
-      action_iterator i = actions_.begin();
+    while (!transaction_data_->actions_.empty()) {
+      action_iterator i = transaction_data_->actions_.begin();
       action_ptr a = *i;
-      actions_.erase(i);
+      transaction_data_->actions_.erase(i);
       restore(a);
     }
 
-    observer_->on_rollback();
+    transaction_data_->observer_->on_rollback();
 
     // clear container
     cleanup();
@@ -58,22 +58,22 @@ void transaction::rollback()
 
 void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
 {
-  a->backup(object_buffer_);
-  actions_.push_back(a);
-  id_action_index_map_.insert(std::make_pair(proxy->id(), actions_.size() - 1));
+  a->backup(transaction_data_->object_buffer_);
+  transaction_data_->actions_.push_back(a);
+  transaction_data_->id_action_index_map_.insert(std::make_pair(proxy->id(), transaction_data_->actions_.size() - 1));
 }
 
 void transaction::restore(const action_ptr &a)
 {
-  a->restore(object_buffer_, &store_.get());
+  a->restore(transaction_data_->object_buffer_, &transaction_data_->store_.get());
 }
 
 void transaction::cleanup()
 {
-  actions_.clear();
-  object_buffer_.clear();
-  id_action_index_map_.clear();
-  store_.get().pop_transaction();
+  transaction_data_->actions_.clear();
+  transaction_data_->object_buffer_.clear();
+  transaction_data_->id_action_index_map_.clear();
+  transaction_data_->store_.get().pop_transaction();
 }
 
 

@@ -281,9 +281,8 @@ public:
    */
   T* get() {
     if (proxy_ && proxy_->obj()) {
-      transaction *tr = proxy_->current_transaction();
-      if (tr) {
-        tr->on_update<T>(proxy_);
+      if (proxy_->has_transaction()) {
+        proxy_->current_transaction().on_update<T>(proxy_);
       }
       return (T*)proxy_->obj();
     } else {

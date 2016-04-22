@@ -631,9 +631,8 @@ public:
     object_inserter_.insert(proxy, object);
     // set this into persistent serializable
     // notify observer
-    transaction *tr = current_transaction();
-    if (notify && tr) {
-      tr->on_insert<T>(proxy);
+    if (notify && !transactions_.empty()) {
+      transactions_.top().on_insert<T>(proxy);
     }
 
     // insert element into hash map for fast lookup
@@ -732,10 +731,9 @@ public:
 
       proxy->node()->remove(proxy);
 
-      transaction *tr = current_transaction();
-      if (notify && tr) {
+      if (notify && !transactions_.empty()) {
         // notify transaction
-        tr->on_delete<T>(proxy);
+        transactions_.top().on_delete<T>(proxy);
       }
       delete proxy;
     }
@@ -849,9 +847,10 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  transaction* current_transaction() const;
+  transaction& current_transaction();
+  bool has_transaction() const;
 
-  transaction& begin_transaction();
+//  transaction& begin_transaction();
   transaction& begin_transaction(const std::shared_ptr<transaction::observer> &obsvr);
 
 private:
@@ -895,9 +894,8 @@ private:
   template < class T >
   void mark_modified(object_proxy *proxy)
   {
-    transaction *tr = current_transaction();
-    if (tr) {
-      tr->on_update<T>(proxy);
+    if (!transactions_.empty()) {
+      transactions_.top().on_update<T>(proxy);
     }
   }
 
@@ -955,7 +953,7 @@ private:
 
   prototype_node* find_parent(const char *name) const;
 
-  void push_transaction(transaction *tr);
+  void push_transaction(const transaction &tr);
   void pop_transaction();
 
 private:
@@ -989,7 +987,7 @@ private:
   // only used when a has_many object is inserted
   abstract_has_many *temp_container_ = nullptr;
 
-  std::stack<transaction*> transactions_;
+  std::stack<transaction> transactions_;
 };
 
 template<class T, template < class ... > class ON_ATTACH, typename Enabled >

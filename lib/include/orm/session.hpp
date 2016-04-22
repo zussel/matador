@@ -19,7 +19,7 @@ public:
   template < class T >
   object_ptr<T> insert(T *obj)
   {
-    if (store().current_transaction() != nullptr) {
+    if (store().has_transaction()) {
       return persistence_.store().insert(obj);
     } else {
       transaction tr(persistence_.store(), observer_);
@@ -33,8 +33,8 @@ public:
   template < class T >
   object_ptr<T> update(const object_ptr<T> &optr)
   {
-    if (store().current_transaction() != nullptr) {
-      store().current_transaction()->on_update<T>(optr.proxy_);
+    if (store().has_transaction()) {
+      store().current_transaction().on_update<T>(optr.proxy_);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();
@@ -47,8 +47,8 @@ public:
   template < class T >
   void remove(const object_ptr<T> &optr)
   {
-    if (store().current_transaction() != nullptr) {
-      store().current_transaction()->on_delete<T>(optr.proxy_);
+    if (store().has_transaction()) {
+      store().current_transaction().on_delete<T>(optr.proxy_);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();

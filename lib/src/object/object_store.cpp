@@ -352,7 +352,7 @@ prototype_node *object_store::find_parent(const char *name) const
   return parent_node;
 }
 
-void object_store::push_transaction(transaction *tr)
+void object_store::push_transaction(const transaction &tr)
 {
   transactions_.push(tr);
 }
@@ -362,26 +362,27 @@ void object_store::pop_transaction()
   transactions_.pop();
 }
 
-transaction* object_store::current_transaction() const
+transaction& object_store::current_transaction()
 {
-  if (!transactions_.empty()) {
-    return transactions_.top();
-  }
-  return nullptr;
+  return transactions_.top();
 }
 
-transaction &object_store::begin_transaction()
+bool object_store::has_transaction() const
 {
-  transaction *tr = new transaction(*this);
-  transactions_.push(tr);
-  return *tr;
+  return !transactions_.empty();
 }
 
-transaction &object_store::begin_transaction(const std::shared_ptr<transaction::observer> &obsvr)
+//transaction& object_store::begin_transaction()
+//{
+//  transactions_.push(transaction(*this));
+//  return transactions_.top();
+//}
+
+transaction& object_store::begin_transaction(const std::shared_ptr<transaction::observer> &obsvr)
 {
-  transaction *tr = new transaction(*this, obsvr);
-  tr->begin();
-  return *tr;
+  transaction tr(*this, obsvr);
+  tr.begin();
+  return transactions_.top();
 }
 
 namespace detail {
