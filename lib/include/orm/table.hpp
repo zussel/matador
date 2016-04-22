@@ -23,9 +23,7 @@ class table : public basic_table
 public:
   table(const std::string &name)
     : basic_table(name)
-  {
-    std::cout << "creating table " << name << " of type " << typeid(T).name() << '\n';
-  }
+  { }
 
   virtual ~table() {}
 
@@ -50,11 +48,6 @@ public:
 
   virtual void insert(object_proxy *proxy)
   {
-    std::cout << "inserting object (oid: " << proxy->id() << ") of type " << proxy->node()->type();
-    if (proxy->has_identifier()) {
-      std::cout << " and id " << *proxy->pk();
-    }
-    std::cout << '\n';
     insert_.bind((T*)proxy->obj());
     // Todo: check result
     insert_.execute();

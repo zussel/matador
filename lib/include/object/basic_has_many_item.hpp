@@ -35,9 +35,9 @@ public:
 
   void item_id(const std::string &iid);
 
-  void owner(basic_identifier *owner);
+  void owner(const std::shared_ptr<basic_identifier> &owner);
 
-  basic_identifier * owner() const;
+  std::shared_ptr<basic_identifier> owner() const;
 
 private:
   std::string owner_id_;

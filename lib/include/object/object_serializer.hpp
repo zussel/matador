@@ -113,11 +113,13 @@ public:
   }
 
   template < class T >
-  void serialize(const char*, T &x)
+  void serialize(const char *id, T &x)
   {
     if (restore) {
+      std::cout << "restore " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x) << ")\n";
       buffer_->release(&x, sizeof(x));
     } else {
+      std::cout << "backup " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x) << ")\n";
       buffer_->append(&x, sizeof(x));
     }
   }
@@ -126,9 +128,10 @@ public:
 	void serialize(const char* id, std::string &s);
 
   template < unsigned int C >
-  void serialize(const char*, varchar<C> &s)
+  void serialize(const char *id, varchar<C> &s)
   {
     if (restore) {
+      std::cout << "restore varchar " << id << " (size: " << C << ")\n";
       size_t len = 0;
       buffer_->release(&len, sizeof(len));
       char *str = new char[len];
@@ -138,6 +141,7 @@ public:
     } else {
       size_t len = s.size();
 
+      std::cout << "restore varchar " << id << " (size: " << len << ")\n";
       buffer_->append(&len, sizeof(len));
       buffer_->append(s.str().c_str(), len);
     }
@@ -153,10 +157,12 @@ public:
   {
     if (restore) {
       V val;
+      std::cout << "restore identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n";
       serialize(id, val);
       x.value(val);
     } else {
       V val(x.value());
+      std::cout << "backup identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n";
       serialize(id, val);
     }
   }
@@ -175,6 +181,8 @@ public:
        *
        ***************/
       // Todo: correct implementation
+      std::cout << "restore has_one " << id << " of type " << typeid(T).name() << "\n";
+
       unsigned long oid = 0;
       serialize(id, oid);
       std::string type;
@@ -192,6 +200,7 @@ public:
       }
     } else {
       unsigned long oid = x.id();
+      std::cout << "backup has_one " << id << " of type " << typeid(T).name() << " (oid: " << oid << ")\n";
       serialize(id, oid);
       serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
@@ -203,6 +212,7 @@ public:
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
+      std::cout << "restore has_many " << id << " of type " << typeid(T).name() << "\n";
       serialize(id, s);
 
       x.reset();
@@ -213,15 +223,12 @@ public:
         // and append it to container
         has_one<typename basic_has_many<T, C>::item_type> ptr;
         serialize(nullptr, ptr, cascade_type::NONE);
-
-        // Todo: add method
-//        x.insert(ptr);
-
         x.append(ptr);
       }
 
 
     } else {
+      std::cout << "backup has_many " << id << " of type " << typeid(T).name() << " (size: " << x.size() << ")\n";
       typename basic_has_many<T, C>::size_type s = x.size();
       serialize(id, s);
 

@@ -99,7 +99,7 @@ private:
       T *obj = act->init_object(new T);
       proxy->reset(obj);
       // data from buffer into serializable
-      serializer.deserialize((T*)proxy->obj(), &buffer, store);
+      serializer.deserialize(obj, &buffer, store);
       // restore pk
       if (act->pk()) {
         proxy->pk().reset(act->pk()->clone());
@@ -119,8 +119,7 @@ private:
   template < class T >
   void backup_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
   {
-    basic_has_many_item *item = static_cast<basic_has_many_item*>(obj);
-    owner_identifier_.reset(item->owner()->clone());
+    owner_identifier_ = obj->owner();
   }
 
   template < class T >
@@ -132,7 +131,7 @@ private:
   template < class T >
   T* init_object(T *obj, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type* = 0)
   {
-    obj->owner(owner_identifier_.release());
+    obj->owner(owner_identifier_);
     return obj;
   }
 
@@ -141,7 +140,7 @@ private:
   unsigned long id_ = 0;
   std::unique_ptr<basic_identifier> pk_;
   object_proxy *proxy_ = nullptr;
-  std::unique_ptr<basic_identifier> owner_identifier_;
+  std::shared_ptr<basic_identifier> owner_identifier_;
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;

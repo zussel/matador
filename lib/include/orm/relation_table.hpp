@@ -52,11 +52,6 @@ public:
 
   virtual void insert(object_proxy *proxy) override
   {
-    std::cout << "inserting object (oid: " << proxy->id() << ") of type " << proxy->node()->type();
-    if (proxy->has_identifier()) {
-      std::cout << " and id " << *proxy->pk();
-    }
-    std::cout << '\n';
     insert_.bind((relation_type*)proxy->obj());
     // Todo: check result
     insert_.execute();

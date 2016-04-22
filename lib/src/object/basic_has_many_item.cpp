@@ -36,14 +36,14 @@ void basic_has_many_item::item_id(const std::string &iid)
   item_id_ = iid;
 }
 
-basic_identifier *basic_has_many_item::owner() const
+std::shared_ptr<basic_identifier> basic_has_many_item::owner() const
 {
-  return owner_.get();
+  return owner_;
 }
 
-void basic_has_many_item::owner(basic_identifier *owner)
+void basic_has_many_item::owner(const std::shared_ptr<basic_identifier> &owner)
 {
-  owner_.reset(owner);
+  owner_ = owner;
 }
 
 std::string basic_has_many_item::owner_id() const
