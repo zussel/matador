@@ -197,7 +197,7 @@ std::shared_ptr<basic_identifier> object_proxy::pk() const
   return primary_key_;
 }
 
-transaction& object_proxy::current_transaction()
+transaction object_proxy::current_transaction()
 {
   return ostore_->current_transaction();
 }

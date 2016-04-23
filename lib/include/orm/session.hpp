@@ -57,7 +57,7 @@ public:
     }
   }
 
-  transaction& begin();
+  transaction begin();
 
   object_store& store();
   const object_store& store() const;

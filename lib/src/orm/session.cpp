@@ -14,9 +14,13 @@ session::session(persistence &p)
 
 }
 
-transaction& session::begin()
+transaction session::begin()
 {
-  return persistence_.store().begin_transaction(observer_);
+  transaction tr(persistence_.store(), observer_);
+  tr.begin();
+//  return transactions_.top();
+
+  return persistence_.store().current_transaction();
 }
 
 object_store &session::store()

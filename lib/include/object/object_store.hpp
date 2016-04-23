@@ -847,11 +847,8 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  transaction& current_transaction();
+  transaction current_transaction();
   bool has_transaction() const;
-
-//  transaction& begin_transaction();
-  transaction& begin_transaction(const std::shared_ptr<transaction::observer> &obsvr);
 
 private:
   friend class detail::modified_marker;

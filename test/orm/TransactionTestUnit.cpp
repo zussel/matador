@@ -37,7 +37,7 @@ void TransactionTestUnit::test_simple()
 
   oos::session s(p);
 
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
 
   oos::date d1(21, 12, 1980);
   try {
@@ -74,7 +74,7 @@ void TransactionTestUnit::test_nested()
   oos::session s(p);
 
   // create and begin transaction
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
 
   try {
     // ... do some serializable modifications
@@ -92,7 +92,7 @@ void TransactionTestUnit::test_nested()
 
 
     // begin inner transaction
-    transaction &tr2 = s.begin();
+    transaction tr2 = s.begin();
     try {
       // change name again
       item->set_int(170);
@@ -173,7 +173,7 @@ void TransactionTestUnit::test_foreign()
 //  session_->load();
 
   // create and begin transaction
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
   try {
     // ... do some serializable modifications
     typedef ObjectItem<Item> object_item_t;
@@ -241,7 +241,7 @@ void TransactionTestUnit::test_has_many_list_commit()
 
   oos::session s(p);
 
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
   try {
     auto children = s.insert(new children_list("children list"));
 
@@ -294,7 +294,7 @@ void TransactionTestUnit::test_has_many_list_rollback()
 
   oos::session s(p);
 
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
   try {
     auto children = s.insert(new children_list("children list"));
 
@@ -347,7 +347,7 @@ void TransactionTestUnit::test_has_many_list()
 
   oos::session s(p);
 
-  transaction &tr = s.begin();
+  transaction tr = s.begin();
   try {
     auto children = s.insert(new children_list("children list"));
 

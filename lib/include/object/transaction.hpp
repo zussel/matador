@@ -14,6 +14,7 @@
 #include "object/object_proxy.hpp"
 
 #include "tools/byte_buffer.hpp"
+#include "tools/sequencer.hpp"
 
 #include <iostream>
 #include <vector>
@@ -38,10 +39,6 @@ class object_store;
 
 class OOS_API transaction
 {
-private:
-  transaction(transaction &&x) = delete;
-  transaction& operator=(transaction &&x) = delete;
-
 public:
   typedef std::shared_ptr<action> action_ptr;
   typedef std::vector<action_ptr> t_action_vector;
@@ -66,9 +63,15 @@ public:
 public:
   explicit transaction(object_store &store);
   transaction(object_store &store, const std::shared_ptr<observer> &obsvr);
-  transaction(const transaction&) = default;
-  transaction& operator=(const transaction&) = default;
+  transaction(const transaction&);
+  transaction& operator=(const transaction&);
+  transaction(transaction &&x) = default;
+  transaction& operator=(transaction &&x) = default;
 
+  friend bool operator==(const transaction &a, const transaction &b);
+  friend bool operator!=(const transaction &a, const transaction &b);
+
+  unsigned long id() const;
 
   void begin();
   void commit();
@@ -97,6 +100,7 @@ private:
       : store_(store)
       , inserter_(actions_)
       , observer_(obsrvr)
+      , id_(transaction::sequencer_.next())
     {}
 
     std::reference_wrapper<object_store> store_;
@@ -108,10 +112,13 @@ private:
     byte_buffer object_buffer_;
 
     std::shared_ptr<observer> observer_;
+
+    unsigned long id_;
   };
 
 private:
   std::shared_ptr<transaction_data> transaction_data_;
+  static sequencer sequencer_;
 };
 
 template < class T >

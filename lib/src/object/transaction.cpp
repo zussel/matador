@@ -7,6 +7,8 @@
 
 namespace oos {
 
+sequencer transaction::sequencer_ = sequencer();
+
 transaction::transaction(oos::object_store &store)
   : transaction(store, std::make_shared<null_observer>())
 {}
@@ -14,6 +16,31 @@ transaction::transaction(oos::object_store &store)
 transaction::transaction(object_store &store, const std::shared_ptr<observer> &obsvr)
   : transaction_data_(std::make_shared<transaction_data>(store, obsvr))
 {}
+
+transaction::transaction(const transaction &x)
+  : transaction_data_(x.transaction_data_)
+{}
+
+transaction &transaction::operator=(const transaction &x)
+{
+  transaction_data_ = x.transaction_data_;
+  return *this;
+}
+
+unsigned long transaction::id() const
+{
+  return transaction_data_->id_;
+}
+
+bool operator==(const transaction &a, const transaction &b)
+{
+  return a.id() == b.id();
+}
+
+bool operator!=(const transaction &a, const transaction &b)
+{
+  return !(a==b);
+}
 
 void transaction::begin()
 {
@@ -30,7 +57,7 @@ void transaction::commit()
 void transaction::rollback()
 {
   if (!transaction_data_->store_.get().has_transaction() ||
-      &transaction_data_->store_.get().current_transaction() != this)
+      transaction_data_->store_.get().current_transaction() != *this)
   {
     throw object_exception("transaction: transaction isn't current transaction");
   } else {

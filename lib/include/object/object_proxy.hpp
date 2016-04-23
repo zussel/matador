@@ -329,7 +329,7 @@ public:
   std::shared_ptr<basic_identifier> pk() const;
 
 private:
-  transaction& current_transaction();
+  transaction current_transaction();
   bool has_transaction() const;
 
 private:
