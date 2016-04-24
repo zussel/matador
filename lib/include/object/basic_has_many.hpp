@@ -44,6 +44,7 @@ public:
   typedef typename iterator::item_type item_type;
   typedef typename iterator::container_type container_type;
   typedef typename iterator::relation_type relation_type;
+  typedef typename iterator::internal_type internal_type;
   typedef const_has_many_iterator<T,C> const_iterator;
   typedef typename container_type::size_type size_type;
   typedef typename container_type::iterator container_iterator;

@@ -116,10 +116,11 @@ public:
   void serialize(const char *id, T &x)
   {
     if (restore) {
-      std::cout << "restore " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x) << ")\n";
+      std::cout << "restore " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x);
       buffer_->release(&x, sizeof(x));
+      std::cout << ", value: " << x << ")\n" << std::flush;
     } else {
-      std::cout << "backup " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x) << ")\n";
+      std::cout << "backup " << id << " of type " << typeid(T).name() << " (value: " << x << ", size: " << sizeof(x) << ")\n" << std::flush;
       buffer_->append(&x, sizeof(x));
     }
   }
@@ -131,7 +132,7 @@ public:
   void serialize(const char *id, varchar<C> &s)
   {
     if (restore) {
-      std::cout << "restore varchar " << id << " (size: " << C << ")\n";
+      std::cout << "restore varchar " << id << " (size: " << C << ")\n" << std::flush;
       size_t len = 0;
       buffer_->release(&len, sizeof(len));
       char *str = new char[len];
@@ -141,7 +142,7 @@ public:
     } else {
       size_t len = s.size();
 
-      std::cout << "restore varchar " << id << " (size: " << len << ")\n";
+      std::cout << "restore varchar " << id << " (size: " << len << ")\n" << std::flush;
       buffer_->append(&len, sizeof(len));
       buffer_->append(s.str().c_str(), len);
     }
@@ -157,12 +158,12 @@ public:
   {
     if (restore) {
       V val;
-      std::cout << "restore identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n";
+      std::cout << "restore identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n" << std::flush;
       serialize(id, val);
       x.value(val);
     } else {
       V val(x.value());
-      std::cout << "backup identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n";
+      std::cout << "backup identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n" << std::flush;
       serialize(id, val);
     }
   }
@@ -181,7 +182,7 @@ public:
        *
        ***************/
       // Todo: correct implementation
-      std::cout << "restore has_one " << id << " of type " << typeid(T).name() << "\n";
+      std::cout << "restore has_one " << id << " of type " << typeid(T).name() << "\n" << std::flush;
 
       unsigned long oid = 0;
       serialize(id, oid);
@@ -200,7 +201,7 @@ public:
       }
     } else {
       unsigned long oid = x.id();
-      std::cout << "backup has_one " << id << " of type " << typeid(T).name() << " (oid: " << oid << ")\n";
+      std::cout << "backup has_one " << id << " of type " << typeid(T).name() << " (oid: " << oid << ")\n" << std::flush;
       serialize(id, oid);
       serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
@@ -209,26 +210,46 @@ public:
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
   {
+    std::string id_oid(id);
+    id_oid += ".oid";
+    std::string id_type(id);
+    id_type += ".oid";
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
-      std::cout << "restore has_many " << id << " of type " << typeid(T).name() << "\n";
+      std::cout << "restore has_many " << id << " of type " << typeid(T).name() << "\n" << std::flush;
       serialize(id, s);
 
       x.reset();
 
-      for (typename basic_has_many<T, C>::size_type i = 0; i < 0; ++i) {
+      for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
 
         // deserialize all items
-        // and append it to container
-        has_one<typename basic_has_many<T, C>::item_type> ptr;
-        serialize(nullptr, ptr, cascade_type::NONE);
+        unsigned long oid = 0;
+        serialize(id_oid.c_str(), oid);
+        std::string type;
+        serialize(id_type.c_str(), type);
+
+        // and append them to container
+        typename basic_has_many<T, C>::internal_type ptr;
+
+        if (oid > 0) {
+          object_proxy *oproxy = find_proxy(oid);
+          if (!oproxy) {
+            oproxy =  new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_);
+            insert_proxy(oproxy);
+          }
+          ptr.reset(oproxy, cascade_type::NONE);
+        } else {
+          ptr.reset(new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_), cascade_type::NONE);
+        }
+
+//        serialize("has many item.oid", oid)
+//        serialize(typeid(typename basic_has_many<T, C>::item_type).name(), ptr, cascade_type::NONE);
         x.append(ptr);
       }
-
-
     } else {
-      std::cout << "backup has_many " << id << " of type " << typeid(T).name() << " (size: " << x.size() << ")\n";
+      std::cout << "backup has_many " << id << " of type " << typeid(T).name() << " (size: " << x.size() << ")\n" << std::flush;
       typename basic_has_many<T, C>::size_type s = x.size();
       serialize(id, s);
 
@@ -238,8 +259,8 @@ public:
 //        serialize(nullptr, first.relation_item(), cascade_type::NONE);
         typename basic_has_many<T, C>::relation_type rptr = (first++).relation_item();
         unsigned long oid = rptr.id();
-        serialize(nullptr, oid);
-        serialize(nullptr, const_cast<char*>(rptr.type()), strlen(rptr.type()));
+        serialize(id_oid.c_str(), oid);
+        serialize(id_type.c_str(), const_cast<char*>(rptr.type()), strlen(rptr.type()));
       }
     }
   }
