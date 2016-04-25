@@ -41,19 +41,19 @@ public:
 
   virtual void reset() = 0;
 
-    template < class T >
-  size_t bind(T *o)
+  template < class T >
+  size_t bind(T *o, size_t pos)
   {
     reset();
-    host_index = 0;
+    host_index = pos;
     oos::access::serialize(static_cast<serializer&>(*this), *o);
     return host_index;
   }
 
   template < class T >
-  size_t bind(unsigned long i, T &val)
+  size_t bind(T &val, size_t pos)
   {
-    host_index = i;
+    host_index = pos;
     serialize("", val);
     return host_index;
   }

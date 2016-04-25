@@ -89,15 +89,15 @@ public:
     p->reset();
   }
   
-  size_t bind(T *o)
+  size_t bind(T *o, size_t pos)
   {
-    return p->bind(o);
+    return p->bind(o, pos);
   }
 
   template < class V >
-  size_t bind(unsigned long i, V &val)
+  size_t bind(V &val, size_t pos)
   {
-    return p->bind(i, val);
+    return p->bind(val, pos);
   }
 
   std::string str() const

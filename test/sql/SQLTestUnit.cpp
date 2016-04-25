@@ -76,7 +76,7 @@ void SQLTestUnit::test_statement_insert()
   hans.set_time(itime);
   stmt = q.insert(&hans).prepare(*connection_);
 
-  stmt.bind(&hans);
+  stmt.bind(&hans, 0);
   res = stmt.execute();
 
   stmt = q.select().prepare(*connection_);
@@ -118,7 +118,7 @@ void SQLTestUnit::test_statement_update()
   hans.set_time(itime);
   stmt = q.insert(&hans).prepare(*connection_);
 
-  stmt.bind(&hans);
+  stmt.bind(&hans, 0);
   res = stmt.execute();
 
   stmt = q.select().prepare(*connection_);
@@ -144,9 +144,9 @@ void SQLTestUnit::test_statement_update()
   int i815 = 815;
   stmt = q.update().set("val_int", i815).where(idcol == 7).prepare(*connection_);
   size_t pos = 0;
-  pos = stmt.bind(pos, i815);
+  pos = stmt.bind(i815, pos);
   unsigned long hid = hans.id();
-  stmt.bind(pos, hid);
+  stmt.bind(hid, pos);
 
   stmt.execute();
 
@@ -169,8 +169,8 @@ void SQLTestUnit::test_statement_update()
 
   hans.set_int(4711);
   stmt = q.update().set(&hans).where(idcol == 7).prepare(*connection_);
-  pos = stmt.bind(&hans);
-  stmt.bind(pos, hid);
+  pos = stmt.bind(&hans, pos);
+  stmt.bind(hid, pos);
 
   stmt.execute();
 

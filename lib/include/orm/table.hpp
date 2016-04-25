@@ -48,7 +48,7 @@ public:
 
   virtual void insert(object_proxy *proxy)
   {
-    insert_.bind((T*)proxy->obj());
+    insert_.bind((T*)proxy->obj(), 0);
     // Todo: check result
     insert_.execute();
   }
@@ -56,7 +56,7 @@ public:
   virtual void update(object_proxy *proxy)
   {
     T *obj = (T*)proxy->obj();
-    size_t pos = update_.bind(obj);
+    size_t pos = update_.bind(obj, 0);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
     update_.execute();

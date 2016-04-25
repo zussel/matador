@@ -183,9 +183,15 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
   void serialize(const char*, HAS_ONE &, cascade_type) {}
 
   template < class HAS_MANY >
-  void serialize(const char*, HAS_MANY &, const char *, const char *) {}
+  void serialize(const char*, HAS_MANY &, const char *owner_field, const char *item_field)
+  {
+    owner_id_column_.assign(owner_field);
+    item_id_column_.assign(item_field);
+  }
 
   relation_type relation_;
+  std::string owner_id_column_;
+  std::string item_id_column_;
 };
 
 template<class T>
@@ -213,7 +219,11 @@ template <>
 template <class T>
 void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *node) const
 {
-  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(node->type(), relation_)));
+  persistence_.get().tables_.insert(std::make_pair(node->type(),
+                                                   std::make_shared<relation_table<typename relation_type::object_type>>(node->type(),
+                                                                                                                         relation_,
+                                                                                                                         owner_id_column_,
+                                                                                                                         item_id_column_)));
 }
 
 }

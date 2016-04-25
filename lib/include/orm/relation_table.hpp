@@ -24,9 +24,12 @@ public:
 
   typedef has_many_item<T> relation_type;
 
-  relation_table(const std::string &name, const relation_type &relation)
+  relation_table(const std::string &name, const relation_type &relation,
+                 const std::string &owner_id_field, const std::string &item_id_field)
     : basic_table(name)
     , item_(relation)
+    , owner_id_column_(owner_id_field)
+    , item_id_column_(item_id_field)
   { }
 
   virtual void create(connection &conn) override
@@ -45,26 +48,40 @@ public:
   {
     query<relation_type> q(name());
     insert_ = q.insert(&item_).prepare(conn);
-//    column id = detail::identifier_column_resolver::resolve<T>();
-//    update_ = q.update().set().where(id == 1).prepare(conn);
-//    delete_ = q.remove().where(id == 1).prepare(conn);
+    // Todo: create update statement like: update 'table' where owner=? and item=? top 1
+
+    column owner_id(owner_id_column_);
+    column item_id(item_id_column_);
+
+    update_ = q.update().set(&item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    // Todo: create delete statement like: delete from 'table' where owner=? and item=? top 1
+    delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
   }
 
   virtual void insert(object_proxy *proxy) override
   {
-    insert_.bind((relation_type*)proxy->obj());
+    insert_.bind((relation_type*)proxy->obj(), 0);
     // Todo: check result
     insert_.execute();
   }
 
   virtual void update(object_proxy *proxy) override
   {
+//    unsigned long owner_id(1);
+//    unsigned long item_id(2);
+    size_t pos = update_.bind((relation_type*)proxy->obj(), 0);
+    update_.bind((relation_type*)proxy->obj(), pos);
 
+    update_.execute();
   }
 
   virtual void remove(object_proxy *proxy) override
   {
+//    unsigned long owner_id(1);
+//    unsigned long item_id(2);
+    delete_.bind((relation_type*)proxy->obj(), 0);;
 
+    delete_.execute();
   }
 
 private:
@@ -73,6 +90,9 @@ private:
   statement<relation_type> insert_;
   statement<relation_type> update_;
   statement<relation_type> delete_;
+
+  std::string owner_id_column_;
+  std::string item_id_column_;
 };
 
 }

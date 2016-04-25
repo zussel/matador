@@ -90,7 +90,7 @@ detail::result_impl* mysql_statement::execute()
       throw_stmt_error(res, stmt_, "mysql", str());
     }
   }
-//  std::cout << str() << '\n';
+  std::cout << str() << '\n';
 
   int res = mysql_stmt_execute(stmt_);
   if (res > 0) {
