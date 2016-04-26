@@ -45,6 +45,7 @@ public:
   {
     query<relation_type> q(name());
     insert_ = q.insert(&item_).prepare(conn);
+    // Todo: create
 //    column id = detail::identifier_column_resolver::resolve<T>();
 //    update_ = q.update().set().where(id == 1).prepare(conn);
 //    delete_ = q.remove().where(id == 1).prepare(conn);

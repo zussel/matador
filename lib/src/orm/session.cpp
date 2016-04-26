@@ -14,6 +14,19 @@ session::session(persistence &p)
 
 }
 
+void session::load()
+{
+  prototype_iterator first = persistence_.store().begin();
+  prototype_iterator last = persistence_.store().end();
+  while (first != last) {
+    const prototype_node &node = (*first++);
+    if (node.is_abstract()) {
+      continue;
+    }
+
+  }
+}
+
 transaction session::begin()
 {
   transaction tr(persistence_.store(), observer_);
@@ -31,6 +44,11 @@ object_store &session::store()
 const object_store &session::store() const
 {
   return persistence_.store();
+}
+
+void session::load(const persistence::table_ptr &table)
+{
+  table->load(persistence_.store());
 }
 
 session::session_observer::session_observer(session &s)
