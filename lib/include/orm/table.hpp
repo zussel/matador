@@ -34,6 +34,7 @@ public:
     column id = detail::identifier_column_resolver::resolve<T>();
     update_ = q.update().set().where(id == 1).prepare(conn);
     delete_ = q.remove().where(id == 1).prepare(conn);
+    select_ = q.select().prepare(conn);
   }
 
   virtual void create(connection &conn) {
@@ -74,6 +75,7 @@ private:
   statement<T> insert_;
   statement<T> update_;
   statement<T> delete_;
+  statement<T> select_;
 };
 
 }

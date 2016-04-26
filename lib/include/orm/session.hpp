@@ -57,10 +57,15 @@ public:
     }
   }
 
+  void load();
+
   transaction begin();
 
   object_store& store();
   const object_store& store() const;
+
+private:
+  void load(const persistence::table_ptr &table);
 
 private:
   class session_observer : public transaction::observer, public action_visitor
