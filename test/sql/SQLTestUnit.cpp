@@ -35,6 +35,8 @@ void SQLTestUnit::test_datatypes()
 
   query<Item> q("item");
 
+  q.create().execute(*connection_);
+
   float fval = 2.445566f;
   double dval = 11111.23433345;
   char cval = 'c';
@@ -51,7 +53,7 @@ void SQLTestUnit::test_datatypes()
   oos::date date_val(15, 3, 2015);
 //  oos::time time_val = time_val_;
 
-  Item *item = new Item();
+  std::unique_ptr<Item> item(new Item);
 
   // set values
   item->set_bool(bval);
@@ -70,8 +72,32 @@ void SQLTestUnit::test_datatypes()
   item->set_date(date_val);
 //  item->set_time(time_val);
 
-  
+  q.insert(item.get()).execute(*connection_);
 
+  auto res = q.select().execute(*connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+
+  item.reset((first++).release());
+
+  UNIT_ASSERT_EQUAL(item->get_char(), cval, "character is not equal");
+  UNIT_ASSERT_EQUAL(item->get_short(), sval, "short is not equal");
+  UNIT_ASSERT_EQUAL(item->get_int(), ival, "integer is not equal");
+  UNIT_ASSERT_EQUAL(item->get_long(), lval, "long is not equal");
+  UNIT_ASSERT_EQUAL(item->get_unsigned_short(), usval, "unsigned short is not equal");
+  UNIT_ASSERT_EQUAL(item->get_unsigned_int(), uival, "unsigned integer is not equal");
+  UNIT_ASSERT_EQUAL(item->get_unsigned_long(), ulval, "unsigned long is not equal");
+  UNIT_ASSERT_EQUAL(item->get_bool(), bval, "bool is not equal");
+  UNIT_ASSERT_EQUAL(item->get_cstr(), cstr, "const char pointer is not equal");
+  UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
+  UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
+  UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
+//  UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
+
+  q.drop().execute(*connection_);
 }
 
 void SQLTestUnit::test_create()

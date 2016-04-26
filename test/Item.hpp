@@ -34,53 +34,17 @@ class Item
 {
 public:
   Item()
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_("Welt")
-    , varchar_("Erde")
   {
     init();
   }
   explicit Item(const std::string &str)
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_(str)
-    , varchar_("Erde")
+    : string_(str)
   {
     init();
   }
   Item(const std::string &str, int i)
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(i)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
+    : int_(i)
     , string_(str)
-    , varchar_("Erde")
   {
     init();
   }
@@ -173,21 +137,21 @@ public:
 private:
   enum { CSTR_LEN=256 };
 
-  oos::identifier<unsigned long> id_;
+  oos::identifier<unsigned long> id_ = 0;
 
-  char char_;
-  float float_;
-  double double_;
-  short short_;
-  int int_;
-  long long_;
-  unsigned short unsigned_short_;
-  unsigned int unsigned_int_;
-  unsigned long unsigned_long_;
-  bool bool_;
+  char char_ = 'c';
+  float float_ = 3.1415f;
+  double double_ = 1.1414;
+  short short_ = -128;
+  int int_ = -65000;
+  long long_ = -128000;
+  unsigned short unsigned_short_ = 128;
+  unsigned int unsigned_int_ = 65000;
+  unsigned long unsigned_long_ = 128000;
+  bool bool_ = true;
   char cstr_[CSTR_LEN];
-  std::string string_;
-  oos::varchar<64> varchar_;
+  std::string string_ = "Welt";
+  oos::varchar<64> varchar_ = "Erde";
   oos::date date_;
   oos::time time_;
 };
