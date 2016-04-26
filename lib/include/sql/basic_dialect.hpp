@@ -153,7 +153,7 @@ private:
     {basic_dialect::GROUP_BY, "GROUP BY"},
     {basic_dialect::ASC, "ASC"},
     {basic_dialect::DESC, "DESC"},
-    {basic_dialect::TOP, "TOP"},
+    {basic_dialect::TOP, "LIMIT"},
     {basic_dialect::OFFSET, "OFFSET"},
     {basic_dialect::DISTINCT, "DISTINCT"},
     {basic_dialect::SET, "SET"},

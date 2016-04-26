@@ -6,6 +6,7 @@
 #define OOS_TABLE_HPP
 
 #include "object/object_proxy.hpp"
+#include "object/object_store.hpp"
 
 #include "orm/basic_table.hpp"
 #include "orm/identifier_binder.hpp"
@@ -37,24 +38,42 @@ public:
     select_ = q.select().prepare(conn);
   }
 
-  virtual void create(connection &conn) {
+  virtual void create(connection &conn) override
+  {
     query<T> stmt(name());
     stmt.create().execute(conn);
   }
 
-  virtual void drop(connection &conn) {
+  virtual void drop(connection &conn) override
+  {
     query<T> stmt(name());
     stmt.drop().execute(conn);
   }
 
-  virtual void insert(object_proxy *proxy)
+  virtual void load(object_store &store) override
+  {
+    auto result = select_.execute();
+
+    auto first = result.begin();
+    auto last = result.end();
+
+    while (first != last) {
+      std::unique_ptr<T> item(first.release());
+      ++first;
+
+      store.insert<T>(item.release());
+    }
+
+  }
+
+  virtual void insert(object_proxy *proxy) override
   {
     insert_.bind((T*)proxy->obj(), 0);
     // Todo: check result
     insert_.execute();
   }
 
-  virtual void update(object_proxy *proxy)
+  virtual void update(object_proxy *proxy) override
   {
     T *obj = (T*)proxy->obj();
     size_t pos = update_.bind(obj, 0);
@@ -63,7 +82,7 @@ public:
     update_.execute();
   }
 
-  virtual void remove(object_proxy *proxy)
+  virtual void remove(object_proxy *proxy) override
   {
     binder_.bind((T*)proxy->obj(), &delete_, 0);
     // Todo: check result

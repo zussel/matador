@@ -9,6 +9,8 @@
 #include "orm/persistence.hpp"
 #include "orm/session.hpp"
 
+#include "object/object_view.hpp"
+
 OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(dns)
@@ -17,6 +19,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test orm insert into table");
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test orm update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
+  add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
 }
 
 void OrmTestUnit::test_create()
@@ -142,6 +145,56 @@ void OrmTestUnit::test_delete()
 
   UNIT_EXPECT_TRUE(first == res.end(), "first must be end");
 //  UNIT_EXPECT_TRUE(res.empty(), "result set must be empty");
+
+  p.drop();
+}
+
+void OrmTestUnit::test_load()
+{
+  oos::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
+
+  {
+    // insert some persons
+    oos::session s(p);
+
+    for (std::string name : names) {
+      auto p = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+
+      UNIT_EXPECT_GREATER(p->id(), 0UL, "is must be greater zero");
+    }
+  }
+
+  p.clear();
+
+  {
+    // load persons from database
+    oos::session s(p);
+
+    s.load();
+
+    typedef oos::object_view<person> t_person_view;
+    t_person_view persons(s.store());
+
+    UNIT_ASSERT_TRUE(!persons.empty(), "person view must not be empty");
+    UNIT_ASSERT_EQUAL(persons.size(), 6UL, "thier must be 6 persons");
+
+    t_person_view::iterator first = persons.begin();
+    t_person_view::iterator last = persons.end();
+
+    while (first != last) {
+      auto p = *first++;
+      names.erase(std::remove_if(std::begin(names), std::end(names), [p](const std::string &name) {
+        return name == p->name();
+      }), names.end());
+    }
+    UNIT_ASSERT_TRUE(names.empty(), "names must be empty");
+  }
 
   p.drop();
 }

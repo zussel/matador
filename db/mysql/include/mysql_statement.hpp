@@ -76,10 +76,10 @@ protected:
 
 private:
   template < class T >
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int index)
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, size_t /*index*/)
   {
-    std::cout << "bind value " << value << " at index " << index << "\n";
-    if (bind.buffer == 0) {
+//    std::cout << "bind value " << value << " at index " << index << "\n";
+    if (bind.buffer == nullptr) {
       // allocating memory
       bind.buffer = new char[sizeof(T)];
     }
@@ -87,10 +87,10 @@ private:
     bind.buffer_type = type;
     bind.is_null = 0;
   }
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t index);
 
 private:
   mysql_connection &db_;

@@ -334,7 +334,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/)
 {
   bind_[index].buffer_type = type;
-  bind_[index].buffer = 0;
+  bind_[index].buffer = nullptr;
   bind_[index].buffer_length = 0;
   bind_[index].is_null = &info_[index].is_null;
   bind_[index].length = &info_[index].length;
@@ -353,7 +353,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
 
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &x)
 {
-  if (info_[index].buffer == 0) {
+  if (info_[index].buffer == nullptr) {
     info_[index].buffer = new char[x.capacity()];
     memset(info_[index].buffer, 0, x.capacity());
     info_[index].buffer_length = x.capacity();

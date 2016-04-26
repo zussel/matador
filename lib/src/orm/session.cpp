@@ -24,6 +24,13 @@ void session::load()
       continue;
     }
 
+    // find corresponding table and load entities
+    persistence::t_table_map::iterator i = persistence_.find_table(node.type());
+    if (i == persistence_.end()) {
+      // Todo: replace with persistence exception
+      throw object_exception("couldn't find table");
+    }
+    load(i->second);
   }
 }
 

@@ -39,6 +39,11 @@ void persistence::drop()
   }
 }
 
+void persistence::clear()
+{
+  store_.clear();
+}
+
 persistence::t_table_map::iterator persistence::find_table(const std::string &type)
 {
   return tables_.find(type);

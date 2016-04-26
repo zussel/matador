@@ -12,6 +12,7 @@ namespace oos {
 
 class connection;
 class object_proxy;
+class object_store;
 
 class basic_table
 {
@@ -23,6 +24,7 @@ public:
   std::string name() const;
   virtual void create(connection &conn) = 0;
   virtual void drop(connection &conn) = 0;
+  virtual void load(object_store &p) = 0;
   virtual void prepare(connection &conn) = 0;
   virtual void insert(object_proxy *proxy) = 0;
   virtual void update(object_proxy *proxy) = 0;

@@ -86,6 +86,11 @@ public:
   void create();
   void drop();
 
+  /**
+   * clears all objects from object store
+   */
+  void clear();
+
   t_table_map::iterator find_table(const std::string &type);
   t_table_map::iterator begin();
   t_table_map::iterator end();

@@ -90,7 +90,7 @@ detail::result_impl* mysql_statement::execute()
       throw_stmt_error(res, stmt_, "mysql", str());
     }
   }
-  std::cout << str() << '\n';
+//  std::cout << str() << '\n';
 
   int res = mysql_stmt_execute(stmt_);
   if (res > 0) {
@@ -219,7 +219,7 @@ void mysql_statement::serialize(const char *id, identifiable_holder &x, cascade_
   }
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, size_t /*index*/)
 {
   if (bind.buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);
@@ -241,9 +241,9 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
 //  mt->second_part = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, size_t /*index*/)
 {
-  if (bind.buffer == 0) {
+  if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
     bind.buffer = new char[s];
     bind.buffer_length = s;
@@ -263,26 +263,32 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, int index)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, size_t index)
 {
-  bind.buffer = 0;
+  bind.buffer = nullptr;
   bind.buffer_length = 0;
   bind.length = &length_vector.at(index);
   bind.buffer_type = type;
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t /*index*/)
 {
-  if (bind.buffer == 0) {
+  if (bind.buffer_length < size) {
+    // reallocate memory
+    delete [] static_cast<char*>(bind.buffer);
+    bind.buffer = nullptr;
+    bind.buffer_length = 0;
+  }
+  if (bind.buffer == nullptr) {
     // allocating memory
     bind.buffer = new char[size];
-    bind.buffer_length = (unsigned long)size;
   }
+  bind.buffer_length = (unsigned long)size;
 #ifdef WIN32
-    strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);
+  strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);
 #else
-    strncpy(static_cast<char*>(bind.buffer), value, size);
+  strncpy(static_cast<char*>(bind.buffer), value, size);
 #endif
   bind.buffer_type = type;
   bind.is_null = 0;

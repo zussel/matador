@@ -108,6 +108,9 @@ public:
     oos::access::serialize(*this, x);
   }
 
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+
   virtual size_type affected_rows() const = 0;
 
   virtual size_type result_rows() const = 0;

@@ -58,6 +58,10 @@ public:
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
   }
 
+  virtual void load(object_store &) override
+  {
+  }
+
   virtual void insert(object_proxy *proxy) override
   {
     insert_.bind((relation_type*)proxy->obj(), 0);
