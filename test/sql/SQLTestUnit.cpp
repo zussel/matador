@@ -15,6 +15,7 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   : unit_test(name, msg)
   , db_(db)
 {
+  add_test("datatypes", std::bind(&SQLTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
   add_test("statement_insert", std::bind(&SQLTestUnit::test_statement_insert, this), "test prepared sql insert statement");
   add_test("statement_update", std::bind(&SQLTestUnit::test_statement_update, this), "test prepared sql update statement");
@@ -26,6 +27,51 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
 void SQLTestUnit::initialize()
 {
   connection_.reset(create_connection());
+}
+
+void SQLTestUnit::test_datatypes()
+{
+  connection_->open();
+
+  query<Item> q("item");
+
+  float fval = 2.445566f;
+  double dval = 11111.23433345;
+  char cval = 'c';
+  short sval = -128;
+  int ival = -49152;
+  long lval = -123456789;
+  unsigned short usval = 255;
+  unsigned int uival = 49152;
+  unsigned long ulval = 765432182;
+  bool bval = true;
+  const char *cstr("Armer schwarzer Kater");
+  oos::varchar<32> vval("hallo welt");
+  std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+  oos::date date_val(15, 3, 2015);
+//  oos::time time_val = time_val_;
+
+  Item *item = new Item();
+
+  // set values
+  item->set_bool(bval);
+  item->set_char(cval);
+  item->set_double(dval);
+  item->set_float(fval);
+  item->set_short(sval);
+  item->set_int(ival);
+  item->set_long(lval);
+  item->set_unsigned_short(usval);
+  item->set_unsigned_int(uival);
+  item->set_unsigned_long(ulval);
+  item->set_cstr(cstr, strlen(cstr) + 1);
+  item->set_varchar(vval);
+  item->set_string(strval);
+  item->set_date(date_val);
+//  item->set_time(time_val);
+
+  
+
 }
 
 void SQLTestUnit::test_create()
