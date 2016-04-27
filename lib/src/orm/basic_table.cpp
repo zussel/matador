@@ -6,8 +6,9 @@
 
 namespace oos {
 
-basic_table::basic_table(const std::string &name)
-  : name_(name)
+basic_table::basic_table(const std::string &name, persistence &p)
+  : persistence_(p)
+  , name_(name)
 { }
 
 basic_table::~basic_table() {}

@@ -268,7 +268,6 @@ public:
    */
   friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
-private:
   /**
    * Find the underlying proxy of the given primary key.
    * If no proxy is found nullptr is returned
@@ -277,6 +276,8 @@ private:
    * @return The corresponding object_proxy or nullptr
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
+
+private:
 
   /**
    * @internal

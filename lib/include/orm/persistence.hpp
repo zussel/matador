@@ -208,7 +208,7 @@ persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &
 template<class T>
 void persistence_on_attach<T>::operator()(const prototype_node *node) const
 {
-  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type())));
+  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type(), persistence_)));
 }
 
 template<class T>
@@ -226,6 +226,7 @@ void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *n
 {
   persistence_.get().tables_.insert(std::make_pair(node->type(),
                                                    std::make_shared<relation_table<typename relation_type::object_type>>(node->type(),
+                                                                                                                         persistence_,
                                                                                                                          relation_,
                                                                                                                          owner_id_column_,
                                                                                                                          item_id_column_)));

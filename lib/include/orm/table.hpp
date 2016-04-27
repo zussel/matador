@@ -11,6 +11,7 @@
 #include "orm/basic_table.hpp"
 #include "orm/identifier_binder.hpp"
 #include "orm/identifier_column_resolver.hpp"
+#include "orm/relation_resolver.hpp"
 
 #include "sql/query.hpp"
 
@@ -22,8 +23,9 @@ template < class T >
 class table : public basic_table
 {
 public:
-  table(const std::string &name)
-    : basic_table(name)
+  table(const std::string &name, persistence &p)
+    : basic_table(name, p)
+    , resolver_(*this)
   { }
 
   virtual ~table() {}
@@ -60,7 +62,7 @@ public:
     while (first != last) {
       std::unique_ptr<T> item(first.release());
       ++first;
-
+      resolver_.resolve(item.get(), &store);
       store.insert<T>(item.release());
     }
 
@@ -95,6 +97,8 @@ private:
   statement<T> update_;
   statement<T> delete_;
   statement<T> select_;
+
+  detail::relation_resolver<T> resolver_;
 };
 
 }

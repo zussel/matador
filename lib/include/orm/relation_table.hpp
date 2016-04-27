@@ -24,9 +24,9 @@ public:
 
   typedef has_many_item<T> relation_type;
 
-  relation_table(const std::string &name, const relation_type &relation,
+  relation_table(const std::string &name, persistence &p, const relation_type &relation,
                  const std::string &owner_id_field, const std::string &item_id_field)
-    : basic_table(name)
+    : basic_table(name, p)
     , item_(relation)
     , owner_id_column_(owner_id_field)
     , item_id_column_(item_id_field)

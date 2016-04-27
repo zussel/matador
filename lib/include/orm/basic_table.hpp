@@ -13,11 +13,12 @@ namespace oos {
 class connection;
 class object_proxy;
 class object_store;
+class persistence;
 
 class basic_table
 {
 public:
-  basic_table(const std::string &name);
+  basic_table(const std::string &name, persistence &p);
 
   virtual ~basic_table();
 
@@ -29,6 +30,9 @@ public:
   virtual void insert(object_proxy *proxy) = 0;
   virtual void update(object_proxy *proxy) = 0;
   virtual void remove(object_proxy *proxy) = 0;
+
+protected:
+  persistence &persistence_;
 
 private:
   std::string name_;
