@@ -2,7 +2,6 @@
 // Created by sascha on 9/7/15.
 //
 
-#include <sql/condition.hpp>
 #include "SQLTestUnit.hpp"
 
 #include "../Item.hpp"
@@ -16,6 +15,7 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   , db_(db)
 {
   add_test("datatypes", std::bind(&SQLTestUnit::test_datatypes, this), "test sql datatypes");
+  add_test("identifier", std::bind(&SQLTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
   add_test("statement_insert", std::bind(&SQLTestUnit::test_statement_insert, this), "test prepared sql insert statement");
   add_test("statement_update", std::bind(&SQLTestUnit::test_statement_update, this), "test prepared sql update statement");
@@ -96,6 +96,55 @@ void SQLTestUnit::test_datatypes()
   UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
   UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
   UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
+
+  q.drop().execute(*connection_);
+}
+
+class pktest
+{
+public:
+  pktest() {}
+  pktest(unsigned long i, const std::string &n)
+    : id(i), name(n)
+  {}
+
+  ~pktest() {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+  }
+
+  oos::identifier<unsigned long> id;
+  std::string name;
+};
+
+void SQLTestUnit::test_identifier()
+{
+  connection_->open();
+
+  oos::query<pktest> q("pktest");
+
+  q.create().execute(*connection_);
+
+  std::unique_ptr<pktest> p(new pktest(7, "hans"));
+
+  UNIT_EXPECT_EQUAL(p->id.value(), 7UL, "identifier value should be greater zero");
+
+  q.insert(p.get()).execute(*connection_);
+
+  auto res = q.select().execute(*connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  UNIT_ASSERT_TRUE(first != last, "first must not be last");
+
+  p.reset((first++).release());
+
+  UNIT_EXPECT_GREATER(p->id.value(), 0UL, "identifier value should be greater zero");
 
   q.drop().execute(*connection_);
 }

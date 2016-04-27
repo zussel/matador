@@ -22,6 +22,7 @@ public:
   virtual void initialize();
 
   void test_datatypes();
+  void test_identifier();
   void test_create();
   void test_statement_insert();
   void test_statement_update();
