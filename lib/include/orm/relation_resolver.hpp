@@ -74,7 +74,7 @@ public:
      * add the child serializable to the serializable proxy
      * of the parent container
      */
-//    persistence::t_table_map::iterator j =
+    persistence::t_table_map::iterator j = table_.persistence_.find_table(node->type());
 //    database::table_map_t::iterator j = table_.db_.table_map_.find(node->type);
 //    prototype_node::field_prototype_map_t::const_iterator i = table_.node_.relations.find(node->type);
 //    if (i != table_.node_.relations.end()) {

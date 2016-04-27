@@ -10,6 +10,13 @@
 
 namespace oos {
 
+namespace detail {
+
+template < class T >
+class relation_resolver;
+
+}
+
 class connection;
 class object_proxy;
 class object_store;
@@ -32,8 +39,13 @@ public:
   virtual void remove(object_proxy *proxy) = 0;
 
 protected:
-  persistence &persistence_;
+  template < class T >
+  friend class detail::relation_resolver;
 
+protected:
+  void find_table(const std::string &type);
+
+  persistence &persistence_;
 private:
   std::string name_;
 };
