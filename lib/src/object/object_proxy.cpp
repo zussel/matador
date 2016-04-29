@@ -34,7 +34,7 @@ object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
 object_proxy::~object_proxy()
 {
   if (ostore_ && id() > 0) {
-    // Todo: callback to object store
+    // Todo: callback to object store?
 //    ostore_->delete_proxy(id());
   }
   if (obj_) {

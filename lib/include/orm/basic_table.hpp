@@ -25,7 +25,11 @@ class persistence;
 class basic_table
 {
 public:
-  basic_table(const std::string &name, persistence &p);
+  typedef std::shared_ptr<basic_table> table_ptr;
+  typedef std::unordered_map<std::string, table_ptr> t_table_map;
+
+public:
+  basic_table(prototype_node *node, persistence &p);
 
   virtual ~basic_table();
 
@@ -43,11 +47,12 @@ protected:
   friend class detail::relation_resolver;
 
 protected:
-  void find_table(const std::string &type);
+  t_table_map::iterator find_table(const std::string &type);
 
   persistence &persistence_;
+
 private:
-  std::string name_;
+  prototype_node *node_;
 };
 
 }

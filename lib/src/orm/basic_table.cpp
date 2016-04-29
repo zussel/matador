@@ -7,9 +7,9 @@
 
 namespace oos {
 
-basic_table::basic_table(const std::string &name, persistence &p)
+basic_table::basic_table(prototype_node *node, persistence &p)
   : persistence_(p)
-  , name_(name)
+  , node_(node)
 { }
 
 basic_table::~basic_table() {}
@@ -17,10 +17,10 @@ basic_table::~basic_table() {}
 
 std::string basic_table::name() const
 {
-  return name_;
+  return node_->type();
 }
 
-void basic_table::find_table(const std::string &type)
+basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
 {
   return persistence_.find_table(type);
 }

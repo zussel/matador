@@ -33,6 +33,7 @@
 #endif
 
 #include "tools/identifier.hpp"
+#include "object_proxy.hpp"
 
 #include <map>
 #include <list>
@@ -276,6 +277,8 @@ public:
    * @return The corresponding object_proxy or nullptr
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
+
+  void update_relation(object_proxy *proxy);
 
 private:
 

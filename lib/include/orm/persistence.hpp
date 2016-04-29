@@ -27,8 +27,8 @@ struct persistence_on_attach;
 class persistence
 {
 public:
-  typedef std::shared_ptr<basic_table> table_ptr;
-  typedef std::unordered_map<std::string, table_ptr> t_table_map;
+  typedef basic_table::table_ptr table_ptr;
+  typedef basic_table::t_table_map t_table_map;
 
 public:
   explicit persistence(const std::string &dns);
@@ -208,7 +208,7 @@ persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &
 template<class T>
 void persistence_on_attach<T>::operator()(const prototype_node *node) const
 {
-  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node->type(), persistence_)));
+  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node, persistence_)));
 }
 
 template<class T>
@@ -224,12 +224,10 @@ template <>
 template <class T>
 void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *node) const
 {
-  persistence_.get().tables_.insert(std::make_pair(node->type(),
-                                                   std::make_shared<relation_table<typename relation_type::object_type>>(node->type(),
-                                                                                                                         persistence_,
-                                                                                                                         relation_,
-                                                                                                                         owner_id_column_,
-                                                                                                                         item_id_column_)));
+  persistence_.get().tables_.insert(std::make_pair(
+    node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
+      node, persistence_, relation_, owner_id_column_, item_id_column_
+    )));
 }
 
 }

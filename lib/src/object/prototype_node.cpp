@@ -378,6 +378,11 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   return (i != id_map_.end() ? i->second : nullptr);
 }
 
+void prototype_node::update_relation(object_proxy *proxy)
+{
+
+}
+
 /*
  * adjust the marker of all predeccessor nodes
  * self and last marker

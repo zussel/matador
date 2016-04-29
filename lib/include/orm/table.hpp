@@ -23,8 +23,8 @@ template < class T >
 class table : public basic_table
 {
 public:
-  table(const std::string &name, persistence &p)
-    : basic_table(name, p)
+  table(prototype_node *node, persistence &p)
+    : basic_table(node, p)
     , resolver_(*this)
   { }
 
@@ -60,10 +60,10 @@ public:
     auto last = result.end();
 
     while (first != last) {
-      std::unique_ptr<T> item(first.release());
+      proxy_.reset(new object_proxy(first.release()));
       ++first;
-      resolver_.resolve(item.get(), &store);
-      store.insert<T>(item.release());
+      resolver_.resolve(proxy_->obj<T>(), &store);
+      store.insert<T>(proxy_.release());
     }
 
   }
@@ -99,6 +99,8 @@ private:
   statement<T> select_;
 
   detail::relation_resolver<T> resolver_;
+
+  std::unique_ptr<object_proxy> proxy_;
 };
 
 }
