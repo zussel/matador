@@ -313,6 +313,12 @@ private:
   template < class T >
   friend class object_view_iterator;
 
+  /*
+   * The field_prototype_map_t contains a map
+   * of all foreign key field relations, where each value
+   * is a pair of the foreign prototype and its
+   * corresponding field
+   */
   typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
   typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
 
@@ -327,7 +333,7 @@ private:
 
   /* this map holds information about
    * all prototypes in which this prototype
-   * is used as a child item (one to many
+   * is used as a child item (to many
    * relation). The string tells the name
    * of the attribute
    */

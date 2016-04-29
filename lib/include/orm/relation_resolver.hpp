@@ -76,9 +76,14 @@ public:
      */
 
     table_.node_->update_relation(proxy);
+
+    /*
+     * find table of node of foreign object (this has_one)
+     * try to find relations entry in containing/parent objects node
+     * if found append new proxy for containing/parent object to
+     */
     basic_table::t_table_map::iterator j = table_.find_table(node->type());
-//    database::table_map_t::iterator j = table_.db_.table_map_.find(node->type);
-    prototype_node::field_prototype_map_t::const_iterator i = table_.node_->relations.find(node->type);
+//    prototype_node::field_prototype_map_t::const_iterator i = table_.node_->relations.find(node->type);
 //    if (i != table_.node_.relations.end()) {
 //      j->second->relation_data[i->second.second][proxy->id()].push_back(new_proxy_);
 //    }

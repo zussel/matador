@@ -3,7 +3,7 @@
 #include "object/object_store.hpp"
 #include "../Item.hpp"
 
-#include <iostream>
+#include <fstream>
 
 using namespace oos;
 using namespace std;
@@ -247,7 +247,7 @@ void PrototypeTreeTestUnit::test_relations()
 {
   object_store ptree;
 
-  object_store::const_iterator children_list_node = ptree.attach<children_vector>("children_vector");
+  object_store::const_iterator children_vector_node = ptree.attach<children_vector>("children_vector");
   object_store::const_iterator master_node = ptree.attach<master>("master");
   object_store::const_iterator child_node = ptree.attach<child>("child");
 
@@ -259,8 +259,8 @@ void PrototypeTreeTestUnit::test_relations()
   UNIT_ASSERT_EQUAL(child_node->relation_count(), 0UL, "relations must be empty");
   UNIT_ASSERT_EQUAL(child_node->foreign_key_count(), 0UL, "foreign keys must be empty");
 
-  UNIT_ASSERT_EQUAL(children_list_node->relation_count(), 0UL, "relations must be empty");
-  UNIT_ASSERT_EQUAL(children_list_node->foreign_key_count(), 0UL, "foreign keys must be empty");
+  UNIT_ASSERT_EQUAL(children_vector_node->relation_count(), 0UL, "relations must be empty");
+  UNIT_ASSERT_EQUAL(children_vector_node->foreign_key_count(), 0UL, "foreign keys must be empty");
 
   UNIT_ASSERT_EQUAL(master_node->relation_count(), 0UL, "relations must be empty");
   UNIT_ASSERT_GREATER(master_node->foreign_key_count(), 0UL, "foreign key must not be empty");
@@ -285,4 +285,10 @@ void PrototypeTreeTestUnit::test_relations()
 //  j = children_node->foreign_keys.find("value");
 //  UNIT_ASSERT_FALSE(children_node->has_foreign_key("item_id"), "foreign item key must not be 'item_id'");
 //  UNIT_ASSERT_TRUE(children_node->has_foreign_key("child_id"), "foreign item key must be 'child_id'");
+
+  std::ofstream out("graph.dot", ios::out | ios::trunc);
+
+  ptree.dump(out);
+
+  out.close();
 }

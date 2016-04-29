@@ -285,7 +285,7 @@ struct null_on_attach : public basic_on_attach
   template < class V >
   null_on_attach& operator=(const null_on_attach<V> &) { return *this; }
 
-  void operator()(const prototype_node*) const {}
+  void operator()(prototype_node*) const {}
 };
 
 }
@@ -543,6 +543,10 @@ public:
    * @return True on empty object_store.
    */
   bool empty() const;
+
+  size_t depth(const prototype_node *node) const;
+
+  void dump(std::ostream &out) const;
 
   /**
    * Dump all serializable to a given stream

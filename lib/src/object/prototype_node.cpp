@@ -437,21 +437,15 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     iop = iop->next();
   }
   os << "|{size|" << i << "}";
-  /*
+
   os << "|{relations}";
   // list relations
-  prototype_node::type_map_t::const_iterator first = pn.relations.begin();
-  prototype_node::type_map_t::const_iterator last = pn.relations.end();
+  prototype_node::field_prototype_map_t::const_iterator first = pn.relations.begin();
+  prototype_node::field_prototype_map_t::const_iterator last = pn.relations.end();
   while (first != last) {
-    prototype_node::field_prototype_map_t::const_iterator ffirst = first->second.begin();
-    prototype_node::field_prototype_map_t::const_iterator llast = first->second.end();
-    while (ffirst != llast) {
-      os << "|{" << (ffirst->second ? ffirst->second->type : "null") << "|" << ffirst->first << "}";
-      ++ffirst;
-    }
+    os << "|{parent node type|" << first->first << "|node|" << first->second.first->type() << "|foreign field|" << first->second.second << "}";
     ++first;
   }
-  */
   os << "}\"]\n";
   return os;
 }

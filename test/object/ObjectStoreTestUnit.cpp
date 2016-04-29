@@ -1027,7 +1027,7 @@ struct on_attach : public on_attach_base
     name = x.name; return *this;
   }
 
-  void operator()(const prototype_node *node) const
+  void operator()(prototype_node *node) const
   {
 //    std::cout << "DEFAULT: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
 
@@ -1052,7 +1052,7 @@ struct on_attach<has_many_item<T>> : public on_attach_base
   template < class V >
   on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
 
-  void operator()(const prototype_node *node) const
+  void operator()(prototype_node *node) const
   {
 //    std::cout << "HAS_MANY_ITEM: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
 

@@ -63,7 +63,7 @@ public:
       proxy_.reset(new object_proxy(first.release()));
       ++first;
       resolver_.resolve(proxy_->obj<T>(), &store);
-      store.insert<T>(proxy_.release());
+      store.insert<T>(proxy_.release(), false);
     }
 
   }

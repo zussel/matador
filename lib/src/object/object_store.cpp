@@ -167,6 +167,41 @@ bool object_store::empty() const
   return is_empty;
 }
 
+size_t object_store::depth(const prototype_node *node) const
+{
+  size_t d = 0;
+  while (node->parent) {
+    node = node->parent;
+    ++d;
+  }
+  return d;
+}
+
+void object_store::dump(std::ostream &out) const
+{
+  const_prototype_iterator node = begin();
+  out << "digraph G {\n";
+  out << "\tgraph [fontsize=10]\n";
+  out << "\tnode [color=\"#0c0c0c\", fillcolor=\"#dd5555\", shape=record, style=\"rounded,filled\", fontname=\"Verdana-Bold\"]\n";
+  out << "\tedge [color=\"#0c0c0c\"]\n";
+  do {
+    size_t d = depth(node.get());
+    for (size_t i = 0; i < d; ++i) out << " ";
+    out << *node;
+    out.flush();
+  } while (++node != end());
+  out << "}" << std::endl;
+
+  out << "prototype map item keys\n";
+  std::for_each(prototype_map_.begin(), prototype_map_.end(), [&](const t_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
+  out << "typeid map item keys\n";
+  std::for_each(typeid_prototype_map_.begin(), typeid_prototype_map_.end(), [&](const t_typeid_prototype_map::value_type &item) {
+    out << "key: " << item.first << "\n";
+  });
+}
+
 void object_store::dump_objects(std::ostream &out) const
 {
   const_prototype_iterator root = begin();

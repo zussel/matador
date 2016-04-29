@@ -137,7 +137,7 @@ struct persistence_on_attach : public basic_persistence_on_attach
   template < class V >
   persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
 
-  void operator()(const prototype_node *node) const;
+  void operator()(prototype_node *node) const;
 };
 
 template <>
@@ -161,7 +161,7 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
   template < class V >
   persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
 
-  void operator()(const prototype_node *node) const;
+  void operator()(prototype_node *node) const;
 
 
   template < class V >
@@ -206,7 +206,7 @@ persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &
 { }
 
 template<class T>
-void persistence_on_attach<T>::operator()(const prototype_node *node) const
+void persistence_on_attach<T>::operator()(prototype_node *node) const
 {
   persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node, persistence_)));
 }
@@ -222,7 +222,7 @@ persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence
 
 template <>
 template <class T>
-void persistence_on_attach<has_many_item<T>>::operator()(const prototype_node *node) const
+void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) const
 {
   persistence_.get().tables_.insert(std::make_pair(
     node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
