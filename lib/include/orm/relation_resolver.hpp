@@ -75,7 +75,7 @@ public:
      * of the parent container
      */
 
-    table_.node_->update_relation(proxy);
+    table_.node_->update_relation(node, proxy);
 
     /*
      * find table of node of foreign object (this has_one)
