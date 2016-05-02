@@ -52,6 +52,9 @@ protected:
   persistence &persistence_;
 
 private:
+  typedef std::unordered_map<std::shared_ptr<basic_identifier>, object_proxy*> t_proxy_map;
+  t_proxy_map proxy_map_;
+
   prototype_node *node_;
 };
 
