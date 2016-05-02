@@ -73,7 +73,15 @@ public:
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk);
+  object_proxy(const std::shared_ptr<basic_identifier> &pk);
+
+  template < class T >
+  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk, T *obj)
+    : obj_(obj)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
+    , primary_key_(pk)
+  {}
 
   /**
    * @brief Create an object_proxy for a given object.

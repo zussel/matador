@@ -371,7 +371,7 @@ void prototype_node::prepare_foreign_key(prototype_node *master_node, const char
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
-  t_id_map::iterator i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const t_id_map::value_type &x) {
+  detail::t_identifier_map::iterator i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const detail::t_identifier_map::value_type &x) {
     return *pk == *(x.first);
   });
 //  t_primary_key_map::iterator i = primary_key_map.find(pk);

@@ -25,4 +25,15 @@ basic_table::t_table_map::iterator basic_table::find_table(const std::string &ty
   return persistence_.find_table(type);
 }
 
+basic_table::t_table_map::iterator basic_table::begin_table()
+{
+  return persistence_.begin();
+}
+
+basic_table::t_table_map::iterator basic_table::end_table()
+{
+  return persistence_.end();
+}
+
+
 }

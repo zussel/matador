@@ -5,6 +5,8 @@
 #ifndef OOS_BASIC_TABLE_HPP
 #define OOS_BASIC_TABLE_HPP
 
+#include "object/identifier_proxy_map.hpp"
+
 #include <string>
 #include <functional>
 
@@ -48,13 +50,15 @@ protected:
 
 protected:
   t_table_map::iterator find_table(const std::string &type);
+  t_table_map::iterator begin_table();
+  t_table_map::iterator end_table();
+
 
   persistence &persistence_;
 
-private:
-  typedef std::unordered_map<std::shared_ptr<basic_identifier>, object_proxy*> t_proxy_map;
-  t_proxy_map proxy_map_;
+  detail::t_identifier_map identifier_proxy_map_;
 
+private:
   prototype_node *node_;
 };
 

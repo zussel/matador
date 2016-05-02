@@ -60,12 +60,24 @@ public:
     auto last = result.end();
 
     while (first != last) {
-      proxy_.reset(new object_proxy(first.release()));
+      // try to find object proxy by id
+      std::shared_ptr<basic_identifier> id(identifier_resolver_.resolve_object(first.get()));
+
+      detail::t_identifier_map::iterator i = identifier_proxy_map_.find(id);
+      if (i != identifier_proxy_map_.end()) {
+        // use proxy;
+        proxy_.reset(i->second);
+        identifier_proxy_map_.erase(i);
+      } else {
+        // create new proxy
+        proxy_.reset(new object_proxy(first.release()));
+      }
+
       ++first;
       resolver_.resolve(proxy_->obj<T>(), &store);
       store.insert<T>(proxy_.release(), false);
     }
-
+    // load all relation tables belonging to this table
   }
 
   virtual void insert(object_proxy *proxy) override
@@ -101,6 +113,8 @@ private:
   detail::relation_resolver<T> resolver_;
 
   std::unique_ptr<object_proxy> proxy_;
+
+  identifier_resolver<T> identifier_resolver_;
 };
 
 }

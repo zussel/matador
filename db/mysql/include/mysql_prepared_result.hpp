@@ -108,6 +108,9 @@ private:
   t_pk_map pk_map_;
 
   bool prepare_binding_ = true;
+
+  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
+  t_foreign_key_map foreign_keys_;
 };
 
 }

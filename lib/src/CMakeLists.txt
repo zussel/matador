@@ -75,7 +75,7 @@ SET(OBJECT_HEADER
   ../include/object/update_action.hpp
   ../include/object/delete_action.hpp
 	../include/object/abstract_has_many.hpp
-	../include/object/basic_identifier_serializer.hpp ../include/object/has_many_item.hpp ../include/object/basic_has_many_item.hpp)
+	../include/object/basic_identifier_serializer.hpp ../include/object/has_many_item.hpp ../include/object/basic_has_many_item.hpp ../include/object/identifier_proxy_map.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

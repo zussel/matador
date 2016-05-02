@@ -33,7 +33,8 @@
 #endif
 
 #include "tools/identifier.hpp"
-#include "object_proxy.hpp"
+
+#include "object/identifier_proxy_map.hpp"
 
 #include <map>
 #include <list>
@@ -45,21 +46,6 @@ namespace oos {
 
 class object_store;
 class object_proxy;
-
-template<class T> class id_hash;
-
-/// @cond OOS_DEV
-template<>
-class id_hash<std::shared_ptr<basic_identifier> >
-{
-public:
-  size_t operator()(const std::shared_ptr<basic_identifier> &id) const
-  {
-    size_t h = id->hash();
-    return h;
-  }
-};
-/// @endcond
 
 /**
  * @class prototype_node
@@ -351,13 +337,10 @@ private:
 
   bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
-  typedef std::shared_ptr<basic_identifier> id_ptr; /**< Shortcut to shared identifier ptr */
-
   /**
    * Holds the primary keys of all proxies in this node
    */
-  typedef std::unordered_map<id_ptr, object_proxy*, id_hash<id_ptr> > t_id_map;
-  t_id_map id_map_; /**< The identifier to object_proxy map */
+  detail::t_identifier_map id_map_; /**< The identifier to object_proxy map */
 
   /**
    * a primary key prototype to clone from

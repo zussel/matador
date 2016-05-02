@@ -20,6 +20,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test orm update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
   add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
+  add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
 }
 
 void OrmTestUnit::test_create()
@@ -164,9 +165,9 @@ void OrmTestUnit::test_load()
     oos::session s(p);
 
     for (std::string name : names) {
-      auto p = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+      auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
 
-      UNIT_EXPECT_GREATER(p->id(), 0UL, "is must be greater zero");
+      UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
     }
   }
 
@@ -188,12 +189,53 @@ void OrmTestUnit::test_load()
     t_person_view::iterator last = persons.end();
 
     while (first != last) {
-      auto p = *first++;
-      names.erase(std::remove_if(std::begin(names), std::end(names), [p](const std::string &name) {
-        return name == p->name();
+      auto pptr = *first++;
+      names.erase(std::remove_if(std::begin(names), std::end(names), [pptr](const std::string &name) {
+        return name == pptr->name();
       }), names.end());
     }
     UNIT_ASSERT_TRUE(names.empty(), "names must be empty");
+  }
+
+  p.drop();
+}
+
+void OrmTestUnit::test_load_has_one()
+{
+  oos::persistence p(dns_);
+
+  p.attach<master>("master");
+  p.attach<child>("child");
+
+  p.create();
+
+  {
+    // insert some persons
+    oos::session s(p);
+
+    auto c = s.insert(new child("child 1"));
+
+    auto m = new master("master 1");
+    m->children = c;
+    s.insert(m);
+  }
+
+  p.clear();
+
+  {
+    // load persons from database
+    oos::session s(p);
+
+    s.load();
+
+    typedef oos::object_view<master> t_master_view;
+    t_master_view masters(s.store());
+
+    UNIT_ASSERT_TRUE(!masters.empty(), "master view must not be empty");
+    UNIT_ASSERT_EQUAL(masters.size(), 1UL, "their must be 1 master");
+
+    auto mptr = masters.front();
+    UNIT_ASSERT_NOT_NULL(mptr->children.get(), "child must be valid");
   }
 
   p.drop();

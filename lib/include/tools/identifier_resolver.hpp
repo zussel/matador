@@ -49,22 +49,23 @@ public:
   static basic_identifier* resolve(T *o)
   {
     identifier_resolver<T> resolver;
-    oos::access::serialize(resolver, *o);
-    if (!resolver.id_) {
-      return nullptr;
-    }
-    return resolver.id_;
+    return resolver.resolve_object(o);
   }
 
   static basic_identifier* resolve()
   {
     identifier_resolver<T> resolver;
     T obj;
-    oos::access::serialize(resolver, obj);
-    if (!resolver.id_) {
+    return resolver.resolve_object(&obj);
+  }
+
+  basic_identifier* resolve_object(T *o)
+  {
+    oos::access::serialize(*this, *o);
+    if (!id_) {
       return nullptr;
     }
-    return resolver.id_;
+    return id_;
   }
 
   template < class V >

@@ -5,6 +5,7 @@
 #include "tools/time.hpp"
 #include "tools/varchar.hpp"
 #include "tools/basic_identifier.hpp"
+#include "tools/identifiable_holder.hpp"
 
 #include <cstring>
 
@@ -280,9 +281,17 @@ void mysql_prepared_result::serialize(const char *id, oos::basic_identifier &x)
 void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
   if (prepare_binding_) {
-
+    std::shared_ptr<basic_identifier> pk(x.create_identifier());
+    pk->serialize(id, *this);
+    foreign_keys_.insert(std::make_pair(id, pk));
   } else {
-    read_foreign_object(id, x);
+    t_foreign_key_map::iterator i = foreign_keys_.find(id);
+    if (i != foreign_keys_.end()) {
+      if (i->second->is_valid()) {
+        x.reset(i->second);
+      }
+      foreign_keys_.erase(i);
+    }
   }
 }
 

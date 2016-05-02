@@ -112,7 +112,7 @@ public:
   ~object_inserter();
 
   template<class T>
-  void insert(object_proxy *proxy, T *o);
+  void insert(object_proxy *proxy, T *o, bool notify);
 
   void reset();
 
@@ -141,7 +141,8 @@ private:
   std::reference_wrapper<object_store> ostore_;
 
   std::function<void(object_store&, object_proxy*)> modified_marker_;
-//  modified_marker modified_marker_;
+
+  bool notify_ = false;
 };
 
 /**
@@ -600,7 +601,7 @@ public:
     if (proxy == nullptr) {
       throw object_exception("proxy is null");
     }
-    if (proxy->obj() == nullptr) {
+    if (notify && proxy->obj() == nullptr) {
       throw object_exception("object is null");
     }
     iterator node = find(proxy->classname());
@@ -621,18 +622,18 @@ public:
 
     // get object
     T *object = static_cast<T*>(proxy->obj());
-    if (proxy->has_identifier()) {
+    if (object && proxy->has_identifier()) {
       // if object has primary key of type short, int or long
       // set the id of proxy as value
       identifier_setter<unsigned long>::assign(proxy->id(), object);
-//      identifier_setter<unsigned long> setter(proxy->id());
-//      oos::access::serialize(setter, *object);
     }
 
     node->insert(proxy);
 
     // initialize object
-    object_inserter_.insert(proxy, object);
+    if (object) {
+      object_inserter_.insert(proxy, object, notify);
+    }
     // set this into persistent serializable
     // notify observer
     if (notify && !transactions_.empty()) {
@@ -1198,12 +1199,12 @@ void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 }
 
 template<class T>
-void object_inserter::insert(object_proxy *proxy, T *o) {
+void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
+{
 
-//  object_proxies_.insert(proxy);
+  notify_ = notify;
+
   object_proxy_stack_.push(proxy);
-
-//  modified_marker_ = modified_marker(o);
 
   modified_marker_ = [](object_store &store, object_proxy *oproxy) {
     store.mark_modified<T>(oproxy);
@@ -1216,7 +1217,8 @@ void object_inserter::insert(object_proxy *proxy, T *o) {
 }
 
 template<class T>
-void object_inserter::serialize(T &x) {
+void object_inserter::serialize(T &x)
+{
   oos::access::serialize(*this, x);
 }
 
@@ -1243,7 +1245,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
     object_proxy_stack_.pop();
   } else {
     // new object
-    ostore_.get().insert<T>(x.proxy_, true);
+    ostore_.get().insert<T>(x.proxy_, notify_);
   }
   ++(*x.proxy_);
 }
@@ -1279,20 +1281,6 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
       ostore_.get().insert(i);
     }
   }
-//
-//  x.for_each([this](object_proxy *proxy) {
-//    bool new_object = object_proxies_.insert(proxy).second;
-//    if (!proxy->obj()) {
-//      return;
-//    }
-//    if (new_object) {
-//      object_proxy_stack_.push(proxy);
-//      proxy->obj()->serialize(*this);
-//      object_proxy_stack_.pop();
-//    }
-//  });
-//  ostore_.insert(x);
-//}
 }
 
 template <typename T>

@@ -8,6 +8,7 @@
 #include "tools/access.hpp"
 
 #include "object/has_one.hpp"
+#include "object/object_exception.hpp"
 
 #include "orm/basic_table.hpp"
 
@@ -59,34 +60,24 @@ public:
      * find proxy in node map
      * if proxy can be found object was
      * already read - replace proxy
+     *
+     * if proxy can't be found we create
+     * a proxy and store it in tables
+     * proxy map. it will be used when
+     * table is read.
      */
     object_proxy *proxy = node->find_proxy(pk);
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      // TODO: Can we call reset instead?
-//      x.proxy_->obj_ = new V;
-//      x.proxy_->node_ = node.get();
-//      proxy = store_.register_proxy(x.proxy_);
+      proxy = new object_proxy(pk, (T*)nullptr);
+      basic_table::t_table_map::iterator j = table_.find_table(node->type());
+
+      if (j == table_.end_table()) {
+        throw_object_exception("unknown table " << node->type());
+      }
+      j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy));
     }
-
-    /*
-     * add the child serializable to the serializable proxy
-     * of the parent container
-     */
-
-    table_.node_->update_relation(node, proxy);
-
-    /*
-     * find table of node of foreign object (this has_one)
-     * try to find relations entry in containing/parent objects node
-     * if found append new proxy for containing/parent object to
-     */
-    basic_table::t_table_map::iterator j = table_.find_table(node->type());
-//    prototype_node::field_prototype_map_t::const_iterator i = table_.node_->relations.find(node->type);
-//    if (i != table_.node_.relations.end()) {
-//      j->second->relation_data[i->second.second][proxy->id()].push_back(new_proxy_);
-//    }
   }
 
   template < class HAS_MANY >
