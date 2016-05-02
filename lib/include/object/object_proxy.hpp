@@ -76,7 +76,7 @@ public:
   object_proxy(const std::shared_ptr<basic_identifier> &pk);
 
   template < class T >
-  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk, T *obj)
+  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk, T *obj, prototype_node *node)
     : obj_(obj)
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
@@ -256,7 +256,7 @@ public:
    * @param o The new object for the object_proxy
    */
   template < typename T >
-  void reset(T *o)
+  void reset(T *o, bool resolve_identifier = true)
   {
     reference_counter_ = 0;
     deleter_ = &destroy<T>;
@@ -264,7 +264,7 @@ public:
     obj_ = o;
     oid = 0;
     node_ = 0;
-    if (obj_ != nullptr) {
+    if (obj_ != nullptr && resolve_identifier) {
       primary_key_.reset(identifier_resolver<T>::resolve());
     }
   }

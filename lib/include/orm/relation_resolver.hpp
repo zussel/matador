@@ -70,7 +70,7 @@ public:
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      proxy = new object_proxy(pk, (T*)nullptr);
+      proxy = new object_proxy(pk, (T*)nullptr, *node);
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {

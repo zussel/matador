@@ -53,7 +53,6 @@ protected:
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
-
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;

@@ -67,6 +67,7 @@ public:
       if (i != identifier_proxy_map_.end()) {
         // use proxy;
         proxy_.reset(i->second);
+        proxy_->reset(first.release(), false);
         identifier_proxy_map_.erase(i);
       } else {
         // create new proxy
