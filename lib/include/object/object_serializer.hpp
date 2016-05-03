@@ -113,14 +113,11 @@ public:
   }
 
   template < class T >
-  void serialize(const char *id, T &x)
+  void serialize(const char *, T &x)
   {
     if (restore) {
-      std::cout << "restore " << id << " of type " << typeid(T).name() << " (size: " << sizeof(x);
       buffer_->release(&x, sizeof(x));
-      std::cout << ", value: " << x << ")\n" << std::flush;
     } else {
-      std::cout << "backup " << id << " of type " << typeid(T).name() << " (value: " << x << ", size: " << sizeof(x) << ")\n" << std::flush;
       buffer_->append(&x, sizeof(x));
     }
   }
@@ -129,10 +126,9 @@ public:
 	void serialize(const char* id, std::string &s);
 
   template < unsigned int C >
-  void serialize(const char *id, varchar<C> &s)
+  void serialize(const char *, varchar<C> &s)
   {
     if (restore) {
-      std::cout << "restore varchar " << id << " (size: " << C << ")\n" << std::flush;
       size_t len = 0;
       buffer_->release(&len, sizeof(len));
       char *str = new char[len];
@@ -142,7 +138,6 @@ public:
     } else {
       size_t len = s.size();
 
-      std::cout << "restore varchar " << id << " (size: " << len << ")\n" << std::flush;
       buffer_->append(&len, sizeof(len));
       buffer_->append(s.str().c_str(), len);
     }
@@ -158,12 +153,10 @@ public:
   {
     if (restore) {
       V val;
-      std::cout << "restore identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n" << std::flush;
       serialize(id, val);
       x.value(val);
     } else {
       V val(x.value());
-      std::cout << "backup identifier " << id << " of type " << typeid(V).name() << " (size: " << sizeof(V) << ")\n" << std::flush;
       serialize(id, val);
     }
   }
@@ -182,7 +175,6 @@ public:
        *
        ***************/
       // Todo: correct implementation
-      std::cout << "restore has_one " << id << " of type " << typeid(T).name() << "\n" << std::flush;
 
       unsigned long oid = 0;
       serialize(id, oid);
@@ -201,7 +193,6 @@ public:
       }
     } else {
       unsigned long oid = x.id();
-      std::cout << "backup has_one " << id << " of type " << typeid(T).name() << " (oid: " << oid << ")\n" << std::flush;
       serialize(id, oid);
       serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
@@ -217,7 +208,6 @@ public:
     if (restore) {
       typename basic_has_many<T, C>::size_type s = 0;
       // deserialize container size
-      std::cout << "restore has_many " << id << " of type " << typeid(T).name() << "\n" << std::flush;
       serialize(id, s);
 
       x.reset();
@@ -249,7 +239,6 @@ public:
         x.append(ptr);
       }
     } else {
-      std::cout << "backup has_many " << id << " of type " << typeid(T).name() << " (size: " << x.size() << ")\n" << std::flush;
       typename basic_has_many<T, C>::size_type s = x.size();
       serialize(id, s);
 

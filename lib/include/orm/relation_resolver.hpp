@@ -70,13 +70,14 @@ public:
     if (proxy) {
       x.reset(proxy, cascade);
     } else {
-      proxy = new object_proxy(pk, (T*)nullptr, *node);
+      proxy = new object_proxy(pk, (T*)nullptr, node.get());
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
       if (j == table_.end_table()) {
         throw_object_exception("unknown table " << node->type());
       }
       j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy));
+      x.reset(proxy, cascade);
     }
   }
 

@@ -250,13 +250,14 @@ void ObjectStoreTestUnit::test_identifier_serializer()
   basic_identifier_serializer serializer;
 
   {
-    auto *id = new identifier<unsigned long>(8UL);
+    typedef identifier<unsigned long> t_ul_id;
+    std::unique_ptr<t_ul_id> id(new t_ul_id(8UL));
 
     UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
 
     serializer.serialize(*id, buffer);
 
-    auto *id2 = new identifier<unsigned long>();
+    std::unique_ptr<t_ul_id> id2(new identifier<unsigned long>());
 
     serializer.deserialize(*id2, buffer);
 
@@ -266,13 +267,14 @@ void ObjectStoreTestUnit::test_identifier_serializer()
   }
 
   {
-    auto *id = new identifier<std::string>("hallo");
+    typedef identifier<std::string> t_str_id;
+    std::unique_ptr<t_str_id> id(new identifier<std::string>("hallo"));
 
     UNIT_ASSERT_EQUAL(id->value(), "hallo", "identifier value must be 'hallo'");
 
     serializer.serialize(*id, buffer);
 
-    auto *id2 = new identifier<std::string>();
+    std::unique_ptr<t_str_id> id2(new identifier<std::string>());
 
     serializer.deserialize(*id2, buffer);
 

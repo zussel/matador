@@ -33,6 +33,8 @@
 
 #include "tools/identifier_resolver.hpp"
 
+#include "object/prototype_node.hpp"
+
 #include <ostream>
 #include <set>
 #include <list>
@@ -80,6 +82,8 @@ public:
     : obj_(obj)
     , deleter_(&destroy<T>)
     , namer_(&type_id<T>)
+    , ostore_(node->tree())
+    , node_(node)
     , primary_key_(pk)
   {}
 

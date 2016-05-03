@@ -70,7 +70,7 @@ template < class T >
 template< class V >
 void identifier_binder<T>::serialize(const char *, identifier<V> &x)
 {
-  stmt_->bind(pos_, x.reference());
+  stmt_->bind(x.reference(), pos_);
 }
 
 template < class T >

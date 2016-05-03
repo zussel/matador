@@ -27,8 +27,18 @@ public:
   }
 };
 
+class identifier_equal
+{
+public:
+  bool operator()(const std::shared_ptr<basic_identifier>& lhs,
+                  const std::shared_ptr<basic_identifier>& rhs) const
+  {
+    return lhs->is_same_type(*rhs) && lhs->equal_to(*rhs);
+  }
+};
+
 typedef std::shared_ptr<basic_identifier> identifier_ptr; /**< Shortcut to shared identifier ptr */
-typedef std::unordered_map<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr> > t_identifier_map;
+typedef std::unordered_map<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_map;
 
 }
 }

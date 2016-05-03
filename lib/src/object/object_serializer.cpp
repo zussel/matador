@@ -30,39 +30,33 @@ namespace oos {
 object_serializer::~object_serializer()
 {}
 
-void object_serializer::serialize(const char *id, char *c, size_t s)
+void object_serializer::serialize(const char *, char *c, size_t s)
 {
   if (restore) {
-    std::cout << "restore char pointer " << id;
     size_t len = 0;
     buffer_->release(&len, sizeof(len));
     // TODO: check size of buffer
     buffer_->release(c, len);
-    std::cout  << " (value: " << c << ", size: " << s << ")\n" << std::flush;
   } else {
     size_t len = s;
 
-    std::cout << "backup char pointer " << id << " (value: " << c << ", size: " << s << ")\n" << std::flush;
     buffer_->append(&len, sizeof(len));
     buffer_->append(c, len);
   }
 }
 
-void object_serializer::serialize(const char *id, std::string &s)
+void object_serializer::serialize(const char *, std::string &s)
 {
   if (restore) {
-    std::cout << "restore string " << id;
     size_t len = 0;
     buffer_->release(&len, sizeof(len));
     char *str = new char[len];
     buffer_->release(str, len);
     s.assign(str, len);
-    std::cout  << " (value: " << s << ", size: " << len << ")\n" << std::flush;
     delete [] str;
   } else {
     size_t len = s.size();
 
-    std::cout << "backup string " << id << " (value: " << s << ", size: " << s.size() << ")\n" << std::flush;
     buffer_->append(&len, sizeof(len));
     buffer_->append(s.c_str(), len);
   }
@@ -72,12 +66,10 @@ void object_serializer::serialize(const char *id, date &x)
 {
   if (restore) {
     int julian_date(0);
-    std::cout << "restore date " << id << " (size: " << sizeof(julian_date) << ")\n" << std::flush;
     buffer_->release(&julian_date, sizeof(julian_date));
     x.set(julian_date);
   } else {
     int jd(x.julian_date());
-    std::cout << "backup date " << id << " (size: " << sizeof(jd) << ")\n" << std::flush;
     serialize(id, jd);
   }
 }
@@ -86,25 +78,21 @@ void object_serializer::serialize(const char *id, time &x)
 {
   if (restore) {
     struct timeval tv;
-    std::cout << "restore time " << id << " (sec size: " << sizeof(tv.tv_sec) << ", usec size " << sizeof(tv.tv_usec) << ")\n" << std::flush;
     buffer_->release(&tv.tv_sec, sizeof(tv.tv_sec));
     buffer_->release(&tv.tv_usec, sizeof(tv.tv_usec));
     x.set(tv);
   } else {
     struct timeval tv = x.get_timeval();
-    std::cout << "backup time " << id << " (sec size: " << sizeof(tv.tv_sec) << ", usec size " << sizeof(tv.tv_usec) << ")\n" << std::flush;
     serialize(id, tv.tv_sec);
     serialize(id, tv.tv_usec);
   }
 }
 
-void object_serializer::serialize(const char *id, basic_identifier &x)
+void object_serializer::serialize(const char *, basic_identifier &x)
 {
   if (restore) {
-    std::cout << "restore identifier " << id << "\n" << std::flush;
     basic_identifier_serializer_.deserialize(x, *buffer_);
   } else {
-    std::cout << "backup identifier " << id << "\n" << std::flush;
     basic_identifier_serializer_.serialize(x, *buffer_);
   }
 }

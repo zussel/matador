@@ -45,11 +45,8 @@ private:
   void serialize_value(T &x)
   {
     if (restore_) {
-      std::cout << "restore type " << typeid(T).name() << " (size: " << sizeof(x);
       buffer_->release(&x, sizeof(x));
-      std::cout << ", value: " << x << ")\n" << std::flush;
     } else {
-      std::cout << "backup type " << typeid(T).name() << " (value: " << x << ", size: " << sizeof(x) << ")\n" << std::flush;
       buffer_->append(&x, sizeof(x));
     }
   }

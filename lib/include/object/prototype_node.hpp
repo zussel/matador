@@ -264,8 +264,6 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
-  void update_relation(prototype_node *node, object_proxy *proxy);
-
 private:
 
   /**
