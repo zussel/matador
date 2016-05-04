@@ -195,7 +195,7 @@ void DialectTestUnit::test_select_limit_query()
   TestDialect dialect;
   std::string result = dialect.direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT TOP 10 id, name, age FROM person ", result, "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT LIMIT 10 id, name, age FROM person ", result, "select limit isn't as expected");
 }
 
 void DialectTestUnit::test_select_ordered_query()

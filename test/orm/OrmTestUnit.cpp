@@ -134,7 +134,7 @@ void OrmTestUnit::test_delete()
 
   UNIT_ASSERT_TRUE(first != res.end(), "first must not end");
 
-  std::unique_ptr<person> p1(first.release());
+  std::unique_ptr<person> p1((first++).release());
 
   UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
 

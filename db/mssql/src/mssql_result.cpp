@@ -51,8 +51,10 @@ mssql_result::mssql_result(SQLHANDLE stmt, bool free)
 
 mssql_result::~mssql_result()
 {
+  SQLCloseCursor(stmt_);
   if (free_) {
-    SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+  SQLFreeStmt(stmt_, SQL_CLOSE);
+//    SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
   }
 }
 
@@ -71,17 +73,6 @@ bool mssql_result::fetch()
     return false;
   }
 }
-
-//bool mssql_result::fetch(serializable *o)
-//{
-//  if (!fetch()) {
-//    return false;
-//  }
-//
-//  get(o);
-//
-//  return true;
-//}
 
 mssql_result::size_type mssql_result::affected_rows() const
 {

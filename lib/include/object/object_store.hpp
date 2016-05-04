@@ -1224,7 +1224,7 @@ void object_inserter::serialize(T &x)
 
 template<class T>
 void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
-  if (x.is_inserted()) {
+  if (x.is_inserted() || x.proxy_->obj() == nullptr) {
     return;
   }
   x.is_inserted_ = true;
