@@ -30,7 +30,10 @@ public:
     , item_(relation)
     , owner_id_column_(owner_id_field)
     , item_id_column_(item_id_field)
-  { }
+  {
+    item_.owner_id(owner_id_column_);
+    item_.item_id(item_id_column_);
+  }
 
   virtual void create(connection &conn) override
   {

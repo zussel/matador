@@ -290,6 +290,7 @@ void SQLTestUnit::test_statement_update()
 
   hans.set_int(4711);
   stmt = q.update().set(&hans).where(idcol == 7).prepare(*connection_);
+  pos = 0;
   pos = stmt.bind(&hans, pos);
   stmt.bind(hid, pos);
 
