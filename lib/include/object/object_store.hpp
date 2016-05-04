@@ -601,10 +601,8 @@ public:
     if (proxy == nullptr) {
       throw object_exception("proxy is null");
     }
-    if (notify && proxy->obj() == nullptr) {
+    if (proxy->obj() == nullptr) {
       throw object_exception("object is null");
-    } else if(!notify && proxy->obj() == nullptr) {
-      return proxy;
     }
     iterator node = find(proxy->classname());
     if (node == end()) {

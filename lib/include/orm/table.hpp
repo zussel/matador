@@ -75,8 +75,8 @@ public:
       }
 
       ++first;
-      resolver_.resolve(proxy_->obj<T>(), &store);
-      store.insert<T>(proxy_.release(), false);
+      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      resolver_.resolve(proxy->obj<T>(), &store);
     }
     // load all relation tables belonging to this table
   }
