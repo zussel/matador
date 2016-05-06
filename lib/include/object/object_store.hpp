@@ -739,8 +739,9 @@ public:
       if (notify && !transactions_.empty()) {
         // notify transaction
         transactions_.top().on_delete<T>(proxy);
+      } else {
+        delete proxy;
       }
-      delete proxy;
     }
   }
   /**

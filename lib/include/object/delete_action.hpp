@@ -47,6 +47,8 @@ public:
     , restore_func_(&restore_delete<T, object_serializer>)
   {}
 
+  virtual ~delete_action();
+
   virtual void accept(action_visitor *av);
 
   /**
@@ -72,6 +74,8 @@ public:
 
   virtual void restore(byte_buffer &buffer, object_store *store);
 
+  void mark_deleted();
+
 private:
   template < class T, class S >
   static void backup_delete(byte_buffer &buffer, delete_action *act, S &serializer)
@@ -90,8 +94,11 @@ private:
     object_proxy *proxy = action::find_proxy(store, act->id());
     if (!proxy) {
       // create proxy
-      proxy = new object_proxy(new T, act->id(), store);
+      proxy = act->proxy_;
+//      proxy = new object_proxy(new T, act->id(), store);
       action::insert_proxy(store, proxy);
+    } else {
+      act->mark_deleted();
     }
 //    object_serializer serializer;
     if (!proxy->obj()) {
@@ -144,6 +151,8 @@ private:
 
   t_backup_func backup_func_;
   t_restore_func restore_func_;
+
+  bool deleted_ = false;
 };
 
 }

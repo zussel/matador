@@ -81,17 +81,17 @@ sqlite3* sqlite_connection::handle()
 
 void sqlite_connection::begin()
 {
-  execute("BEGIN TRANSACTION;");
+  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("BEGIN TRANSACTION;")));
 }
 
 void sqlite_connection::commit()
 {
-  execute("COMMIT TRANSACTION;");
+  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("COMMIT TRANSACTION;")));
 }
 
 void sqlite_connection::rollback()
 {
-  execute("ROLLBACK TRANSACTION;");
+  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("ROLLBACK TRANSACTION;")));
 }
 
 oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)

@@ -53,11 +53,15 @@ public:
     virtual void on_rollback() = 0;
   };
 
-  struct null_observer : public observer
+  struct null_observer : public observer, public action_visitor
   {
     void on_begin() {};
-    void on_commit(transaction::t_action_vector&) {};
+    void on_commit(transaction::t_action_vector &actions);
     void on_rollback() {};
+
+    virtual void visit(insert_action *) {}
+    virtual void visit(update_action *) {}
+    virtual void visit(delete_action *act);
   };
 
 public:
@@ -119,6 +123,8 @@ private:
 private:
   std::shared_ptr<transaction_data> transaction_data_;
   static sequencer sequencer_;
+
+  bool commiting_ = false;
 };
 
 template < class T >

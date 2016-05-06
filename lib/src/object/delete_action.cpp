@@ -8,6 +8,13 @@
 
 namespace oos {
 
+delete_action::~delete_action()
+{
+  if (deleted_) {
+    delete proxy_;
+  }
+}
+
 void delete_action::accept(action_visitor *av)
 {
   av->visit(this);
@@ -41,6 +48,11 @@ void delete_action::backup(byte_buffer &buffer)
 void delete_action::restore(byte_buffer &buffer, object_store *store)
 {
   restore_func_(buffer, this, store, *serializer_);
+}
+
+void delete_action::mark_deleted()
+{
+  deleted_ = true;
 }
 
 }

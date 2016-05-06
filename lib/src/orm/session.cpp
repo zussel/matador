@@ -64,11 +64,12 @@ session::session_observer::session_observer(session &s)
 
 void session::session_observer::on_begin()
 {
-  session_.persistence_.conn().begin();
 }
 
 void session::session_observer::on_commit(transaction::t_action_vector &actions)
 {
+  session_.persistence_.conn().begin();
+
   for (transaction::action_ptr &actptr : actions) {
     actptr->accept(this);
   }
@@ -116,6 +117,8 @@ void session::session_observer::visit(delete_action *act)
   }
 
   i->second->remove(act->proxy());
+
+  act->mark_deleted();
 }
 
 

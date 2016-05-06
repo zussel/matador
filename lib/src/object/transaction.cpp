@@ -9,6 +9,18 @@ namespace oos {
 
 sequencer transaction::sequencer_ = sequencer();
 
+void transaction::null_observer::on_commit(transaction::t_action_vector &actions)
+{
+  for (transaction::action_ptr &actptr : actions) {
+    actptr->accept(this);
+  }
+}
+
+void transaction::null_observer::visit(delete_action *act)
+{
+  act->mark_deleted();
+}
+
 transaction::transaction(oos::object_store &store)
   : transaction(store, std::make_shared<null_observer>())
 {}
@@ -45,12 +57,13 @@ bool operator!=(const transaction &a, const transaction &b)
 void transaction::begin()
 {
   transaction_data_->store_.get().push_transaction(*this);
-  transaction_data_->observer_->on_begin();
 }
 
 void transaction::commit()
 {
+  commiting_ = true;
   transaction_data_->observer_->on_commit(transaction_data_->actions_);
+  commiting_ = false;
   cleanup();
 }
 
@@ -76,7 +89,10 @@ void transaction::rollback()
       restore(a);
     }
 
-    transaction_data_->observer_->on_rollback();
+    if (commiting_) {
+      transaction_data_->observer_->on_rollback();
+      commiting_ = false;
+    }
 
     // clear container
     cleanup();

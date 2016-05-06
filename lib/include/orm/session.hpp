@@ -45,14 +45,15 @@ public:
   }
 
   template < class T >
-  void remove(const object_ptr<T> &optr)
+  void remove(object_ptr<T> &optr)
   {
     if (store().has_transaction()) {
       store().current_transaction().on_delete<T>(optr.proxy_);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();
-      tr.on_delete<T>(optr.proxy_);
+      store().remove(optr);
+//      tr.on_delete<T>(optr.proxy_);
       tr.commit();
     }
   }

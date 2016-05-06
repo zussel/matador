@@ -20,6 +20,7 @@ sqlite_dialect::sqlite_dialect()
   replace_token(basic_dialect::BEGIN, "BEGIN TRANSACTION");
   replace_token(basic_dialect::COMMIT, "COMMIT TRANSACTION");
   replace_token(basic_dialect::ROLLBACK, "ROLLBACK TRANSACTION");
+  replace_token(basic_dialect::TOP, "TOP");
 }
 
 const char *sqlite_dialect::type_string(oos::data_type_t type) const
@@ -54,7 +55,7 @@ const char *sqlite_dialect::type_string(oos::data_type_t type) const
     case type_text:
       return "TEXT";
     case type_date:
-      return "INTEGER";
+      return "TEXT";
     case type_time:
       return "TEXT";
     default: {
