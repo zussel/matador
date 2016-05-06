@@ -190,7 +190,7 @@ void sqlite_statement::serialize(const char *id, oos::time &x)
 
 void sqlite_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
-  if (!x.has_primary_key()) {
+  if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   }
 }

@@ -245,20 +245,23 @@ void sqlite_result::serialize(const char */*id*/, varchar_base &x)
 void sqlite_result::serialize(const char */*id*/, std::string &x)
 {
   t_row::value_type val = result_[pos_][column_++];
-  x.assign(val);
+  x = val;
+//  x.assign(val);
 }
 
 void sqlite_result::serialize(const char *id, oos::date &x)
 {
-  int val;
-  serialize(id, val);
+  t_row::value_type val = result_[pos_][column_++];
+//  std::string val;
+//  serialize(id, val);
   x.set(val);
 }
 
 void sqlite_result::serialize(const char *id, oos::time &x)
 {
-  std::string val;
-  serialize(id, val);
+  t_row::value_type val = result_[pos_][column_++];
+//  std::string val;
+//  serialize(id, val);
   x = oos::time::parse(val, "%F %T.%f");
 }
 
