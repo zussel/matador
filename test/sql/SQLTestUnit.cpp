@@ -83,7 +83,7 @@ void SQLTestUnit::test_datatypes()
 
   item.reset((first++).release());
 
-  UNIT_ASSERT_EQUAL(item->get_char(), cval, "character is not equal");
+  UNIT_EXPECT_EQUAL(item->get_char(), cval, "character is not equal");
   UNIT_ASSERT_EQUAL(item->get_short(), sval, "short is not equal");
   UNIT_ASSERT_EQUAL(item->get_int(), ival, "integer is not equal");
   UNIT_ASSERT_EQUAL(item->get_long(), lval, "long is not equal");

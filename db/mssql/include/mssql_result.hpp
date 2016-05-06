@@ -96,13 +96,14 @@ protected:
     SQLLEN info = 0;
     SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
-    if (ret == SQL_SUCCESS) {
+    if (SQL_SUCCEEDED(ret)) {
       return;
     } else {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
     }
   }
   
+  void read_column(const char *, char &val);
   void read_column(const char *, std::string &val);
   void read_column(const char *, varchar_base &val);
   void read_column(const char *, oos::date &val);

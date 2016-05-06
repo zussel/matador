@@ -190,29 +190,24 @@ void mssql_result::serialize(const char *id, basic_identifier &x)
   x.serialize(id, *this);
 }
 
-/*
-void mssql_result::read_column(const char *, unsigned long &val)
-{
-  char buf[NUMERIC_LEN];
-  SQLLEN info = 0;
-  SQLRETURN ret = SQLGetData(stmt_, result_index++, SQL_C_ULONG, buf, NUMERIC_LEN, &info);
-  if (ret == SQL_SUCCESS) {    
-    if (sscanf(buf, "%lu", &val) != 1) {
-      throw_error("mssql", strerror(errno));
-    }
-  } else {
-    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
-  }
-}
-*/
-
 void mssql_result::read_column(const char *, std::string &val)
 {
   char buf[1024];
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, result_index_++, SQL_C_CHAR, buf, 1024, &info);
-  if (ret == SQL_SUCCESS) {
+  if (SQL_SUCCEEDED(ret)) {
     val.assign(buf, info);
+  } else {
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+  }
+}
+
+void mssql_result::read_column(const char *, char &val)
+{
+  SQLLEN info = 0;
+  SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), SQL_C_CHAR, &val, 0, &info);
+  if (SQL_SUCCEEDED(ret)) {
+    return;
   } else {
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
   }
@@ -223,7 +218,7 @@ void mssql_result::read_column(const char *, varchar_base &val)
   char *buf = new char[val.capacity()];
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_CHAR, buf, val.capacity(), &info);
-  if (ret == SQL_SUCCESS) {
+  if (SQL_SUCCEEDED(ret)) {
     val.assign(buf, static_cast<size_t>(info));
     delete [] buf;
   } else {
@@ -239,7 +234,7 @@ void mssql_result::read_column(char const *, date &x)
 
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_TYPE_DATE, &ds, 0, &info);
-  if (ret == SQL_SUCCESS) {
+  if (SQL_SUCCEEDED(ret)) {
     x.year(ds.year);
     x.month(ds.month);
     x.day(ds.day);
@@ -254,7 +249,7 @@ void mssql_result::read_column(char const *, time &x)
 
   SQLLEN info = 0;
   SQLRETURN ret = SQLGetData(stmt_, static_cast<SQLUSMALLINT>(result_index_++), SQL_C_TYPE_TIMESTAMP, &ts, 0, &info);
-  if (ret == SQL_SUCCESS) {
+  if (SQL_SUCCEEDED(ret)) {
     x.set(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.fraction / 1000 / 1000);
   } else {
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
