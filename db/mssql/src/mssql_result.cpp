@@ -52,10 +52,10 @@ mssql_result::mssql_result(SQLHANDLE stmt, bool free)
 mssql_result::~mssql_result()
 {
   SQLCloseCursor(stmt_);
-  if (free_) {
+//  if (free_) {
   SQLFreeStmt(stmt_, SQL_CLOSE);
 //    SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
-  }
+//  }
 }
 
 const char* mssql_result::column(size_type) const

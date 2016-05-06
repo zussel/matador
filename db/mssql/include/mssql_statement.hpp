@@ -78,7 +78,7 @@ protected:
   virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type);
 
   template < class T >
-  void bind_value(T val, int index)
+  void bind_value(T val, size_t index)
   {
     value_t *v = new value_t;
     v->data = new char[sizeof(T)];
@@ -87,13 +87,13 @@ protected:
     
     int ctype = mssql_statement::type2int(type_traits<T>::data_type());
     int type = mssql_statement::type2sql(type_traits<T>::data_type());
-    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, &v->len);
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
-  void bind_value(const oos::date &d, int index);
-  void bind_value(const oos::time &t, int index);
-  void bind_value(unsigned long val, int index);
-  void bind_value(const char *val, size_t size, int index);
+  void bind_value(const oos::date &d, size_t index);
+  void bind_value(const oos::time &t, size_t index);
+  void bind_value(unsigned long val, size_t index);
+  void bind_value(const char *val, size_t size, size_t index);
 
 private:
   mssql_connection &db_;
