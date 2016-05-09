@@ -158,13 +158,6 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
 
-//  ret = SQLSetStmtAttr(stmt, SQL_ROWSET_SIZE, (void *) 2, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt, SQL_ATTR_CURSOR_TYPE, (void *) SQL_CURSOR_KEYSET_DRIVEN, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
-//  ret = SQLSetStmtAttr(stmt, SQL_ATTR_CONCURRENCY, (void *) SQL_CONCUR_LOCK, SQL_NTS);
-//  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
-
   // execute statement
 //  int retry = retries_;
   ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
