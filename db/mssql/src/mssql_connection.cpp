@@ -180,20 +180,17 @@ oos::detail::statement_impl *mssql_connection::prepare(const oos::sql &stmt)
 
 void mssql_connection::begin()
 {
-  /*auto res = */execute("BEGIN TRANSACTION;");
-  // TODO: check result
+  execute_no_result("BEGIN TRANSACTION;");
 }
 
 void mssql_connection::commit()
 {
-  /*auto res = */execute("COMMIT;");
-  // TODO: check result
+  execute_no_result("COMMIT;");
 }
 
 void mssql_connection::rollback()
 {
-  /*auto res = */execute("ROLLBACK;");
-  // TODO: check result
+  execute_no_result("ROLLBACK;");
 }
 
 bool mssql_connection::exists(const std::string &tablename)
@@ -215,10 +212,8 @@ SQLHANDLE mssql_connection::handle()
 
 unsigned long mssql_connection::last_inserted_id()
 {
-  /*auto res = */execute("select scope_identity()");
-  unsigned long id = 0;
-//  res.get(0, id);
-  return id;
+  std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute("select scope_identity()")));
+  return res->get<unsigned long>(1);
 }
 
 basic_dialect* mssql_connection::dialect()
@@ -226,6 +221,29 @@ basic_dialect* mssql_connection::dialect()
   return &dialect_;
 }
 
+void mssql_connection::execute_no_result(const std::string &stmt)
+{
+  if (!connection_) {
+    throw_error("mssql", "no odbc connection established");
+  }
+  // create statement handle
+  SQLHANDLE handle;
+
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &handle);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+
+  // execute statement
+//  int retry = retries_;
+  ret = SQLExecDirectA(handle, (SQLCHAR*)stmt.c_str(), SQL_NTS);
+
+  /*
+  do {
+    ret = SQLExecDirectA(stmt, (SQLCHAR*)sqlstr.c_str(), SQL_NTS);
+  } while (retry-- && !(SQL_SUCCEEDED(ret) || SQL_NO_DATA));
+  */
+
+  throw_error(ret, SQL_HANDLE_STMT, handle, stmt, "error on query execute");
+}
 
 }
 

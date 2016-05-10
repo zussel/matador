@@ -84,6 +84,9 @@ public:
   virtual basic_dialect* dialect() override;
 
 private:
+  void execute_no_result(const std::string &stmt);
+
+private:
   SQLHANDLE odbc_;
   SQLHANDLE connection_;
 

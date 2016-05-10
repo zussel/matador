@@ -67,10 +67,10 @@ bool mssql_result::fetch()
 {
   SQLRETURN ret = SQLSetStmtAttr(stmt_, SQL_ROWSET_SIZE, (void *) 2, SQL_NTS);
   throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
-  ret = SQLSetStmtAttr(stmt, SQL_ATTR_CURSOR_TYPE, (void *) SQL_CURSOR_KEYSET_DRIVEN, SQL_NTS);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
-  ret = SQLSetStmtAttr(stmt, SQL_ATTR_CONCURRENCY, (void *) SQL_CONCUR_LOCK, SQL_NTS);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CURSOR_TYPE, (void *) SQL_CURSOR_KEYSET_DRIVEN, SQL_NTS);
+  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
+  ret = SQLSetStmtAttr(stmt_, SQL_ATTR_CONCURRENCY, (void *) SQL_CONCUR_LOCK, SQL_NTS);
+  throw_error(ret, SQL_HANDLE_DBC, stmt_, "mssql", "error on creating sql statement");
 
   ret = SQLFetch(stmt_);
   if (SQL_SUCCEEDED(ret)) {

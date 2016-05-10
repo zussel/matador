@@ -86,7 +86,7 @@ public:
   void bind(T *o)
   {
     if (needs_bind()) {
-      oos::access::serialize(*this, *o);
+      serializer::serialize(*o);
       finalize_bind();
     }
   }
@@ -98,18 +98,9 @@ public:
       return false;
     }
     result_index_ = transform_index(0);
-    oos::access::serialize(*this, *o);
+    serializer::serialize(*o);
     return finalize_fetch();
   }
-
-  template < class T >
-  void serialize(T &x)
-  {
-    oos::access::serialize(*this, x);
-  }
-
-  template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
 
   virtual size_type affected_rows() const = 0;
 
