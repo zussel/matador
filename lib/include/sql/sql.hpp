@@ -33,6 +33,7 @@
 
 #include "sql/types.hpp"
 #include "sql/token.hpp"
+#include "sql/commands.hpp"
 
 #include <string>
 #include <map>
@@ -53,12 +54,13 @@ public:
   typedef std::list<std::shared_ptr<detail::token>> token_list_t;
   
 public:
+  sql();
   ~sql();
 
   void append(const std::shared_ptr<detail::token> tokptr);
   void append(detail::token *tok);
 
-  void reset();
+  void reset(t_query_command command_type);
 
   std::string compile(basic_dialect &dialect) const;
 
@@ -70,6 +72,7 @@ public:
   }
 
 private:
+  t_query_command command_type_;
   token_list_t token_list_;
 };
 

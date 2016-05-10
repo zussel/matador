@@ -18,13 +18,18 @@
 #include <iostream>
 #include "sql/sql.hpp"
 #include "sql/token.hpp"
-//#include "sql/condition.hpp"
 
 namespace oos {
 
+sql::sql()
+  : command_type_(t_query_command::UNKNOWN)
+{
+
+}
+
 sql::~sql()
 {
-  reset();
+  reset(t_query_command::UNKNOWN);
 }
 
 void sql::append(const std::shared_ptr<detail::token> tokptr)
@@ -38,8 +43,9 @@ void sql::append(detail::token *tok)
   token_list_.push_back(tokptr);
 }
 
-void sql::reset()
+void sql::reset(t_query_command command_type)
 {
+  command_type_ = command_type;
   token_list_.clear();
 }
 

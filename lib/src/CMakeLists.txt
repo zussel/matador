@@ -75,7 +75,11 @@ SET(OBJECT_HEADER
   ../include/object/update_action.hpp
   ../include/object/delete_action.hpp
 	../include/object/abstract_has_many.hpp
-	../include/object/basic_identifier_serializer.hpp ../include/object/has_many_item.hpp ../include/object/basic_has_many_item.hpp ../include/object/identifier_proxy_map.hpp)
+	../include/object/basic_identifier_serializer.hpp
+	../include/object/has_many_item.hpp
+	../include/object/basic_has_many_item.hpp
+	../include/object/identifier_proxy_map.hpp
+)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -159,30 +163,32 @@ SET(SQL_SOURCES
 		sql/value_column_serializer.cpp)
 
 SET(SQL_HEADER
-		../include/sql/condition.hpp
-		../include/sql/connection.hpp
-		../include/sql/connection_factory.hpp
-		../include/sql/connection_impl.hpp
-		../include/sql/result.hpp
-		../include/sql/result_impl.hpp
-		../include/sql/memory_connection.hpp
-		../include/sql/query.hpp
-		../include/sql/sql.hpp
-		../include/sql/row.hpp
-		../include/sql/value.hpp
-		../include/sql/statement.hpp
-		../include/sql/statement_impl.hpp
-		../include/sql/types.hpp
-		../include/sql/token.hpp
-		../include/sql/sql_exception.hpp
-		../include/sql/field.hpp
-		../include/sql/basic_dialect.hpp
-		../include/sql/typed_column_serializer.hpp
-		../include/sql/column.hpp
-		../include/sql/dialect_token.hpp
-		../include/sql/column_serializer.hpp
-		../include/sql/value_serializer.hpp
-		../include/sql/value_column_serializer.hpp)
+	../include/sql/condition.hpp
+	../include/sql/connection.hpp
+	../include/sql/connection_factory.hpp
+	../include/sql/connection_impl.hpp
+	../include/sql/result.hpp
+	../include/sql/result_impl.hpp
+	../include/sql/memory_connection.hpp
+	../include/sql/query.hpp
+	../include/sql/sql.hpp
+	../include/sql/row.hpp
+	../include/sql/value.hpp
+	../include/sql/statement.hpp
+	../include/sql/statement_impl.hpp
+	../include/sql/types.hpp
+	../include/sql/token.hpp
+	../include/sql/sql_exception.hpp
+	../include/sql/field.hpp
+	../include/sql/basic_dialect.hpp
+	../include/sql/typed_column_serializer.hpp
+	../include/sql/column.hpp
+	../include/sql/dialect_token.hpp
+	../include/sql/column_serializer.hpp
+	../include/sql/value_serializer.hpp
+	../include/sql/value_column_serializer.hpp
+	../include/sql/commands.hpp
+)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
@@ -190,7 +196,10 @@ SET(ORM_HEADERS
 	../include/orm/session.hpp
 	../include/orm/basic_table.hpp
 	../include/orm/identifier_binder.hpp
-  ../include/orm/identifier_column_resolver.hpp ../include/orm/relation_table.hpp ../include/orm/relation_resolver.hpp)
+  ../include/orm/identifier_column_resolver.hpp
+	../include/orm/relation_table.hpp
+	../include/orm/relation_resolver.hpp
+)
 
 SET(ORM_SOURCES
 	orm/persistence.cpp

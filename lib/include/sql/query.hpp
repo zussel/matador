@@ -127,7 +127,7 @@ public:
    */
   query& create(T *obj)
   {
-    reset();
+    reset(t_query_command::CREATE);
 
     sql_.append(new detail::create(table_name_));
 
@@ -150,7 +150,7 @@ public:
    */
   query& drop()
   {
-    reset();
+    reset(t_query_command::DROP);
     sql_.append(new detail::drop(table_name_));
 
     state = QUERY_DROP;
@@ -165,7 +165,7 @@ public:
    */
   query& select()
   {
-    reset();
+    reset(t_query_command::SELECT);
 
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
@@ -203,7 +203,8 @@ public:
    */
   query& insert(T *obj)
   {
-    reset();
+    reset(t_query_command::INSERT);
+
     sql_.append(new detail::insert(table_name_));
 
     detail::column_serializer serializer(sql_, detail::columns::WITH_BRACKETS);
@@ -234,7 +235,7 @@ public:
    */
   query& update()
   {
-    reset();
+    reset(t_query_command::UPDATE);
 
     sql_.append(new detail::update(table_name_));
     sql_.append(new detail::set);
@@ -317,7 +318,7 @@ public:
    */
   query& remove()
   {
-    reset();
+    reset(t_query_command::DELETE);
 
     sql_.append(new detail::remove(table_name_));
 
@@ -461,9 +462,9 @@ public:
    * 
    * @return A reference to the query.
    */
-  query& reset()
+  query& reset(t_query_command query_command)
   {
-    sql_.reset();
+    sql_.reset(query_command);
     state = QUERY_BEGIN;
     update_columns_->columns_.clear();
     return *this;

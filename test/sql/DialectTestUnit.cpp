@@ -269,7 +269,7 @@ void DialectTestUnit::test_select_where_query()
 
   UNIT_ASSERT_EQUAL("SELECT id, name, age FROM person WHERE name <> 'hans' ", result, "select isn't as expected");
 
-  s.reset();
+  s.reset(t_query_command::SELECT);
 
   s.append(new detail::select);
 
