@@ -95,51 +95,8 @@ protected:
   oos::detail::result_impl *result_impl_ = nullptr;
 };
 
-template < class T, class Enable = void >
-class result_iterator {};
-
 template < class T >
-class result_iterator<T,typename std::enable_if< std::is_same<T, oos::serializer>::value >::type> : public base_result_iterator<T>
-{
-public:
-  typedef base_result_iterator<T> base;
-  typedef result_iterator<T> self; /**< Shortcut for this class. */
-  typedef T value_type;            /**< Shortcut for the value type. */
-  typedef value_type* pointer;     /**< Shortcut for the pointer type. */
-  typedef value_type& reference;   /**< Shortcut for the reference type */
-
-#ifdef _MSC_VER
-  result_iterator() {}
-  result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
-    : base(result_impl, obj)
-  {}
-  result_iterator(result_iterator&& x)
-    : base(x.result_impl_, x.obj_.release())
-  {}
-#else
-  using base_result_iterator<T>::base_result_iterator;
-#endif
-
-  self& operator++()
-  {
-    serializer *obj = base::result_impl_->producer()->create();
-    base::obj_.reset(obj);
-    if (!base::result_impl_->fetch(base::obj_.get())) {
-      base::obj_.reset();
-    }
-    return *this;
-  }
-
-  self operator++(int)
-  {
-    std::unique_ptr<T> obj(static_cast<T>(base::result_impl_->producer()->create()));
-    base::result_impl_->fetch(obj.get());
-    return self(base::result_impl_, obj.release());
-  }
-};
-
-template < class T >
-class result_iterator<T,typename std::enable_if< !std::is_same<T, oos::serializer>::value >::type> : public base_result_iterator<T>
+class result_iterator : public base_result_iterator<T>
 {
 public:
   typedef base_result_iterator<T> base;
