@@ -23,7 +23,7 @@ public:
   virtual std::string compile(const oos::detail::distinct &distinct);
   virtual std::string compile(const oos::detail::update &update);
   virtual std::string compile(const oos::detail::set &set);
-  virtual std::string compile(const oos::detail::columns &columns);
+  virtual std::string compile(const oos::columns &columns);
   virtual std::string compile(const oos::column &column);
   virtual std::string compile(const oos::detail::typed_column &column);
   virtual std::string compile(const oos::detail::identifier_column &column);

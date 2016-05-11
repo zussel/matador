@@ -29,6 +29,7 @@ public:
   void test_foreign_query();
   void test_query();
   void test_query_select();
+  void test_query_select_columns();
   void test_query_select_sub_select();
 
 protected:

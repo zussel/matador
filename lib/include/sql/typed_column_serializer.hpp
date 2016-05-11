@@ -63,7 +63,7 @@ public:
 
 private:
 private:
-  std::unique_ptr<detail::columns> cols_;
+  std::unique_ptr<columns> cols_;
   size_t index_ = 0;
   sql &sql_;
   typedef std::function<std::shared_ptr<column> (const char*, data_type_t, size_t)> t_create_column_func;

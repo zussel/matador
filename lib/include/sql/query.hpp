@@ -28,12 +28,136 @@
 #include "sql/column_serializer.hpp"
 #include "sql/value_serializer.hpp"
 #include "sql/value_column_serializer.hpp"
+#include "sql/row.hpp"
 
 #include <memory>
 #include <sstream>
 
 namespace oos {
 
+namespace detail {
+
+class basic_query
+{
+public:
+  basic_query(const std::string &table_name)
+      : state(QUERY_BEGIN)
+      , table_name_(table_name)
+      , update_columns_(new columns(columns::WITHOUT_BRACKETS))
+  {}
+
+  /**
+   * Resets the query.
+   *
+   * @return A reference to the query.
+   */
+  void reset_query(t_query_command query_command)
+  {
+    sql_.reset(query_command);
+    state = QUERY_BEGIN;
+    update_columns_->columns_.clear();
+  }
+
+protected:
+  enum state_t {
+    QUERY_BEGIN,
+    QUERY_CREATE,
+    QUERY_DROP,
+    QUERY_SELECT,
+    QUERY_INSERT,
+    QUERY_UPDATE,
+    QUERY_DELETE,
+    QUERY_COLUMN,
+    QUERY_SET,
+    QUERY_FROM,
+    QUERY_WHERE,
+    QUERY_COND_WHERE,
+    QUERY_ORDERBY,
+    QUERY_ORDER_DIRECTION,
+    QUERY_GROUPBY,
+    QUERY_EXECUTED,
+    QUERY_PREPARED,
+    QUERY_BOUND
+  };
+
+protected:
+  static void throw_invalid(state_t next, state_t current)
+  {
+    std::stringstream msg;
+    switch (next) {
+      case basic_query::QUERY_CREATE:
+      case basic_query::QUERY_DROP:
+      case basic_query::QUERY_SELECT:
+      case basic_query::QUERY_INSERT:
+      case basic_query::QUERY_UPDATE:
+      case basic_query::QUERY_DELETE:
+        if (current != QUERY_BEGIN) {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case basic_query::QUERY_WHERE:
+      case basic_query::QUERY_COND_WHERE:
+        if (current != basic_query::QUERY_SELECT &&
+            current != basic_query::QUERY_COLUMN &&
+            current != basic_query::QUERY_UPDATE &&
+            current != basic_query::QUERY_SET &&
+            current != basic_query::QUERY_DELETE)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case basic_query::QUERY_COLUMN:
+        if (current != basic_query::QUERY_SELECT &&
+            current != basic_query::QUERY_COLUMN)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case basic_query::QUERY_FROM:
+        if (current != basic_query::QUERY_COLUMN) {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case basic_query::QUERY_SET:
+        if (current != basic_query::QUERY_UPDATE &&
+            current != basic_query::QUERY_SET)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case basic_query::QUERY_ORDERBY:
+        if (current != basic_query::QUERY_SELECT &&
+            current != basic_query::QUERY_WHERE &&
+            current != basic_query::QUERY_COND_WHERE)
+        {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      case QUERY_ORDER_DIRECTION:
+        if (current != basic_query::QUERY_ORDERBY) {
+          msg << "invalid next state: [" << next << "] (current: " << current << ")";
+          throw std::logic_error(msg.str());
+        }
+        break;
+      default:
+        throw std::logic_error("unknown state");
+    }
+  }
+
+protected:
+  sql sql_;
+  state_t state;
+  std::string table_name_;
+  std::shared_ptr<columns> update_columns_;
+};
+
+}
 //class condition;
 
 /**
@@ -64,31 +188,9 @@ namespace oos {
  * parts by calling the methods in a chain
  * (concatenated by dots).
  */
-template < class T >
-class query
+template < class T = row >
+class query : public detail::basic_query
 {
-private:
-  enum state_t {
-    QUERY_BEGIN,
-    QUERY_CREATE,
-    QUERY_DROP,
-    QUERY_SELECT,
-    QUERY_INSERT,
-    QUERY_UPDATE,
-    QUERY_DELETE,
-    QUERY_COLUMN,
-    QUERY_SET,
-    QUERY_FROM,
-    QUERY_WHERE,
-    QUERY_COND_WHERE,
-    QUERY_ORDERBY,
-    QUERY_ORDER_DIRECTION,
-    QUERY_GROUPBY,
-    QUERY_EXECUTED,
-    QUERY_PREPARED,
-    QUERY_BOUND
-  };
-
 public:
   /**
    * Create a new query for the
@@ -97,9 +199,7 @@ public:
    * @param conn The connection.
    */
   query(const std::string &table_name)
-    : state(QUERY_BEGIN)
-    , table_name_(table_name)
-    , update_columns_(new detail::columns(detail::columns::WITHOUT_BRACKETS))
+    : basic_query(table_name)
   {}
   
   ~query() {}
@@ -133,7 +233,7 @@ public:
 
     detail::typed_column_serializer serializer(sql_);
 
-    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
+    std::unique_ptr<columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
 
@@ -170,9 +270,9 @@ public:
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
-    detail::column_serializer serializer(sql_, detail::columns::WITHOUT_BRACKETS);
+    detail::column_serializer serializer(sql_, columns::WITHOUT_BRACKETS);
 
-    std::unique_ptr<detail::columns> cols(serializer.execute(obj_));
+    std::unique_ptr<columns> cols(serializer.execute(obj_));
 
     sql_.append(cols.release());
 
@@ -207,9 +307,9 @@ public:
 
     sql_.append(new detail::insert(table_name_));
 
-    detail::column_serializer serializer(sql_, detail::columns::WITH_BRACKETS);
+    detail::column_serializer serializer(sql_, columns::WITH_BRACKETS);
 
-    std::unique_ptr<detail::columns> cols(serializer.execute(*obj));
+    std::unique_ptr<columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
 
@@ -245,6 +345,12 @@ public:
     return *this;
   }
 
+  query& from(const std::string &table)
+  {
+    sql_.append(new detail::from(table));
+
+    return *this;
+  }
   /**
    * This method must only be called for
    * an update statement. Sets for all object
@@ -433,6 +539,11 @@ public:
     return *this;
   }
 
+  query& reset(t_query_command query_command)
+  {
+    reset_query(query_command);
+    return *this;
+  }
   /**
    * Executes the current query and
    * returns a new result serializable.
@@ -457,96 +568,68 @@ public:
     return conn.prepare<T>(sql_);
   }
 
+private:
+  T obj_;
+};
+
+template <>
+class query<row> : public detail::basic_query
+{
+public:
   /**
-   * Resets the query.
-   * 
+   * Create a new query for the
+   * given connection.
+   *
+   * @param conn The connection.
+   */
+  query(const std::string &table_name)
+          : basic_query(table_name)
+  {}
+
+  ~query() {}
+
+  /**
+   * Creates a select statement based
+   * on the given serializable serializable.
+   *
    * @return A reference to the query.
    */
-  query& reset(t_query_command query_command)
+  query& select(columns cols)
   {
-    sql_.reset(query_command);
-    state = QUERY_BEGIN;
-    update_columns_->columns_.clear();
+    reset(t_query_command::SELECT);
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append(new detail::select);
+
+    sql_.append(new columns(cols));
+
+    state = QUERY_SELECT;
     return *this;
   }
 
-private:
-  static void throw_invalid(state_t next, state_t current)
+  query& from(const std::string &table)
   {
-    std::stringstream msg;
-    switch (next) {
-      case query::QUERY_CREATE:
-      case query::QUERY_DROP:
-      case query::QUERY_SELECT:
-      case query::QUERY_INSERT:
-      case query::QUERY_UPDATE:
-      case query::QUERY_DELETE:
-        if (current != QUERY_BEGIN) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case query::QUERY_WHERE:
-      case query::QUERY_COND_WHERE:
-        if (current != query::QUERY_SELECT &&
-            current != query::QUERY_COLUMN &&
-            current != query::QUERY_UPDATE &&
-            current != query::QUERY_SET &&
-            current != query::QUERY_DELETE)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case query::QUERY_COLUMN:
-        if (current != query::QUERY_SELECT &&
-            current != query::QUERY_COLUMN)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case query::QUERY_FROM:
-        if (current != query::QUERY_COLUMN) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case query::QUERY_SET:
-        if (current != query::QUERY_UPDATE &&
-            current != query::QUERY_SET)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case query::QUERY_ORDERBY:
-        if (current != query::QUERY_SELECT &&
-            current != query::QUERY_WHERE &&
-            current != query::QUERY_COND_WHERE)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case QUERY_ORDER_DIRECTION:
-        if (current != query::QUERY_ORDERBY) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      default:
-        throw std::logic_error("unknown state");
-    }
+    sql_.append(new detail::from(table));
+
+    return *this;
   }
 
+  template < class COND >
+  query& where(const COND &c)
+  {
+    throw_invalid(QUERY_COND_WHERE, state);
 
-private:
-  T obj_;
-  sql sql_;
-  state_t state;
-  std::string table_name_;
-  std::shared_ptr<detail::columns> update_columns_;
+    sql_.append(new detail::where(c));
+
+    state = QUERY_COND_WHERE;
+    return *this;
+  }
+
+  query& reset(t_query_command query_command)
+  {
+    reset_query(query_command);
+    return *this;
+  }
 };
 
 }

@@ -14,6 +14,7 @@ namespace oos {
 
 class sql;
 struct column;
+struct columns;
 
 namespace detail {
 
@@ -21,7 +22,6 @@ struct select;
 struct insert;
 struct update;
 struct remove;
-struct columns;
 struct typed_column;
 struct identifier_column;
 struct typed_varchar_column;
@@ -101,7 +101,7 @@ public:
   virtual std::string compile(const oos::detail::distinct &) = 0;
   virtual std::string compile(const oos::detail::update &) = 0;
   virtual std::string compile(const oos::detail::set &) = 0;
-  virtual std::string compile(const oos::detail::columns &) = 0;
+  virtual std::string compile(const oos::columns &) = 0;
   virtual std::string compile(const oos::column &) = 0;
   virtual std::string compile(const oos::detail::typed_column &) = 0;
   virtual std::string compile(const oos::detail::identifier_column &) = 0;

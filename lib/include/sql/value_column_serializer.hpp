@@ -21,7 +21,7 @@ public:
   value_column_serializer(sql &d);
 
   template<class T>
-  void append_to(const std::shared_ptr<detail::columns> cols, T &x)
+  void append_to(const std::shared_ptr<columns> cols, T &x)
   {
     cols_ = cols;
     oos::access::serialize(static_cast<serializer&>(*this), x);
@@ -47,7 +47,7 @@ public:
   void serialize(const char *id, basic_identifier &x);
 
 private:
-  std::shared_ptr<detail::columns> cols_;
+  std::shared_ptr<columns> cols_;
   sql &sql_;
 };
 }

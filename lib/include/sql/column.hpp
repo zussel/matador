@@ -16,7 +16,51 @@ struct column : public detail::token
 
   virtual std::string compile(basic_dialect &d) const override;
 
+//  template<class T>
+//  condition<column, std::initializer_list<T>> in(std::initializer_list<T> args)
+//  {
+//    return condition<column, std::initializer_list<T>>(*this, args);
+//  }
+
+//  template<class T>
+//  condition<column, const oos::query<T>> in(std::initializer_list<T> args)
+//  {
+//    return condition<column, std::initializer_list<T>>(*this, args);
+//  }
+
   std::string name;
+};
+
+struct columns : public detail::token
+{
+  enum t_brackets {
+    WITH_BRACKETS,
+    WITHOUT_BRACKETS
+  };
+
+  columns(std::initializer_list<column> cols, t_brackets with_brackets = WITH_BRACKETS);
+  explicit columns(t_brackets with_brackets = WITH_BRACKETS);
+
+  void push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
+
+  columns& with_brackets()
+  {
+    with_brackets_ = WITH_BRACKETS;
+    return *this;
+  }
+
+  columns& without_brackets()
+  {
+    with_brackets_ = WITHOUT_BRACKETS;
+    return *this;
+  }
+
+  virtual std::string compile(basic_dialect &d) const override
+  {
+    return d.compile(*this);
+  }
+  std::vector<std::shared_ptr<column>> columns_;
+  t_brackets with_brackets_ = WITH_BRACKETS;
 };
 
 namespace detail {
@@ -123,37 +167,7 @@ struct value_column<char*> : public column
   value<char*> value_;
 };
 
-struct columns : public token
-{
-  enum t_brackets {
-    WITH_BRACKETS,
-    WITHOUT_BRACKETS
-  };
-
-  explicit columns(t_brackets with_brackets = WITH_BRACKETS);
-
-  void push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
-
-  columns& with_brackets()
-  {
-    with_brackets_ = WITH_BRACKETS;
-    return *this;
-  }
-
-  columns& without_brackets()
-  {
-    with_brackets_ = WITHOUT_BRACKETS;
-    return *this;
-  }
-
-  virtual std::string compile(basic_dialect &d) const override
-  {
-    return d.compile(*this);
-  }
-  std::vector<std::shared_ptr<column>> columns_;
-  t_brackets with_brackets_ = WITH_BRACKETS;
-};
-
 }
+
 }
 #endif //OOS_COLUMN_HPP

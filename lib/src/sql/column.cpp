@@ -16,12 +16,20 @@ std::string column::compile(basic_dialect &d) const
   return d.compile(*this);
 }
 
-namespace detail {
+
+columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
+  : token(basic_dialect::COLUMNS)
+  , with_brackets_(with_brackets)
+{
+
+}
 
 columns::columns(t_brackets with_brackets)
   : token(basic_dialect::COLUMNS)
   , with_brackets_(with_brackets)
 {}
+
+namespace detail {
 
 typed_column::typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host)
   : column(col)
@@ -34,4 +42,5 @@ std::string typed_column::compile(basic_dialect &d) const
 }
 
 }
+
 }

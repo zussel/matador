@@ -168,10 +168,10 @@ std::string sqlite_dialect::compile(const oos::detail::typed_column &column)
   return column.name + " " + type_string(column.type);
 }
 
-std::string sqlite_dialect::compile(const oos::detail::columns &columns)
+std::string sqlite_dialect::compile(const oos::columns &columns)
 {
   std::string result;
-  if (columns.with_brackets_ == detail::columns::WITH_BRACKETS) {
+  if (columns.with_brackets_ == columns::WITH_BRACKETS) {
     result += "(";
   }
 
@@ -186,7 +186,7 @@ std::string sqlite_dialect::compile(const oos::detail::columns &columns)
     result += columns.columns_.back()->compile(*this);
   }
 
-  if (columns.with_brackets_ == detail::columns::WITH_BRACKETS) {
+  if (columns.with_brackets_ == columns::WITH_BRACKETS) {
     result += ")";
   }
 

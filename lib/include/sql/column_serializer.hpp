@@ -52,7 +52,7 @@ public:
 
 private:
   columns::t_brackets brackets_;
-  std::unique_ptr<detail::columns> cols_;
+  std::unique_ptr<columns> cols_;
   sql &sql_;
 };
 

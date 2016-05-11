@@ -22,6 +22,8 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
   add_test("query_select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
+  add_test("query_select_columns", std::bind(&SQLTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("query_sub_select", std::bind(&SQLTestUnit::test_query_select_sub_select, this), "test query sub select");
 }
 
 void SQLTestUnit::initialize()
@@ -498,6 +500,11 @@ void SQLTestUnit::test_query_select()
   res = q.drop().execute(*connection_);
 }
 
+void SQLTestUnit::test_query_select_columns()
+{
+
+}
+
 void SQLTestUnit::test_query_select_sub_select()
 {
   connection_->open();
@@ -523,7 +530,18 @@ void SQLTestUnit::test_query_select_sub_select()
 
   column id("id");
   column name("name");
-  res = q.select().where(oos::in(q.select(id).where(name == "Hans")));
+
+  query<> cols("person");
+  res = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+
+//  res = q.select().where(id.in(q.select({id, name}))).from("person").where(name == "Hans")));
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+
+  }
+
   q.drop().execute(*connection_);
 }
 
