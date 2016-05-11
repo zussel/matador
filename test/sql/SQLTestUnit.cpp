@@ -498,6 +498,35 @@ void SQLTestUnit::test_query_select()
   res = q.drop().execute(*connection_);
 }
 
+void SQLTestUnit::test_query_select_sub_select()
+{
+  connection_->open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(*connection_));
+
+  unsigned long counter = 0;
+
+  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
+  res = q.insert(hans.get()).execute(*connection_);
+
+  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
+  res = q.insert(otto.get()).execute(*connection_);
+
+  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
+  res = q.insert(hilde.get()).execute(*connection_);
+
+  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
+  res = q.insert(trude.get()).execute(*connection_);
+
+  column id("id");
+  column name("name");
+  res = q.select().where(oos::in(q.select(id).where(name == "Hans")));
+  q.drop().execute(*connection_);
+}
+
 connection* SQLTestUnit::create_connection()
 {
   return new connection(db_);
