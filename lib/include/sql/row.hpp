@@ -51,6 +51,7 @@ public:
   row();
   ~row();
 
+
   /**
    * Add a new column value.
    *
@@ -62,11 +63,6 @@ public:
   {
     values_.push_back(value<T>(val));
   }
-
-//  void push_back(const std::string &val)
-//  {
-//    values_.push_back(value<std::string>(val));
-//  }
 
   /**
    * Get value of column position
