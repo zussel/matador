@@ -19,13 +19,20 @@
 
 namespace oos {
 
-row_impl::~row_impl()
-{}
-
 row::row()
 {}
 
 row::~row()
 {}
+
+bool row::add_column(const std::string &column)
+{
+  if (values_.find(column) != values_.end()) {
+    return false;
+  }
+
+  columns_.push_back(column);
+  return values_.insert({column, std::make_shared<null_value>()}).second;
+}
 
 }

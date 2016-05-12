@@ -532,11 +532,11 @@ void SQLTestUnit::test_query_select_sub_select()
   column name("name");
 
   query<> cols("person");
-  res = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
 
 //  res = q.select().where(id.in(q.select({id, name}))).from("person").where(name == "Hans")));
-  auto first = res.begin();
-  auto last = res.end();
+  auto first = rowres.begin();
+  auto last = rowres.end();
 
   while (first != last) {
 

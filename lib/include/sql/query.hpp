@@ -630,6 +630,13 @@ public:
     reset_query(query_command);
     return *this;
   }
+
+  result<row> execute(connection &conn)
+  {
+//    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//    std::cout.flush();
+    return conn.execute<row>(sql_);
+  }
 };
 
 }
