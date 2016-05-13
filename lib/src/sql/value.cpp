@@ -12,4 +12,16 @@ std::string basic_value::compile(basic_dialect &d) const
 }
 
 }
+
+std::string null_value::NULLSTR = "NULL";
+
+void null_value::serialize(const char *id, serializer &srlzr)
+{
+  srlzr.serialize(id, NULLSTR);
+}
+
+std::string null_value::str() const
+{
+  return NULLSTR;
+}
 }

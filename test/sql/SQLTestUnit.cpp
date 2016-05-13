@@ -21,9 +21,9 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   add_test("statement_update", std::bind(&SQLTestUnit::test_statement_update, this), "test prepared sql update statement");
   add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
-  add_test("query_select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
-  add_test("query_select_columns", std::bind(&SQLTestUnit::test_query_select_columns, this), "test query select columns");
-  add_test("query_sub_select", std::bind(&SQLTestUnit::test_query_select_sub_select, this), "test query sub select");
+  add_test("select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
+  add_test("select_columns", std::bind(&SQLTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("sub_select", std::bind(&SQLTestUnit::test_query_select_sub_select, this), "test query sub select");
 }
 
 void SQLTestUnit::initialize()
@@ -502,6 +502,46 @@ void SQLTestUnit::test_query_select()
 
 void SQLTestUnit::test_query_select_columns()
 {
+  connection_->open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(*connection_));
+
+  unsigned long counter = 0;
+
+  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
+  res = q.insert(hans.get()).execute(*connection_);
+
+  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
+  res = q.insert(otto.get()).execute(*connection_);
+
+  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
+  res = q.insert(hilde.get()).execute(*connection_);
+
+  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
+  res = q.insert(trude.get()).execute(*connection_);
+
+  column id("id");
+  column name("name");
+
+  query<> cols("person");
+
+  std::string stmt = cols.select({id, name}).from("person").where(name == "Hans").str(*connection_, false);
+
+  std::cout << "\nstatement '" << stmt << "'\n";
+
+  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+
+  auto first = rowres.begin();
+  auto last = rowres.end();
+
+  while (first != last) {
+    ++first;
+  }
+
+  q.drop().execute(*connection_);
 
 }
 

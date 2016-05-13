@@ -601,6 +601,7 @@ public:
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
+    cols.without_brackets();
     sql_.append(new columns(cols));
 
     state = QUERY_SELECT;
@@ -636,6 +637,15 @@ public:
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
     return conn.execute<row>(sql_);
+  }
+
+  std::string str(connection &conn, bool prepared)
+  {
+    if (prepared) {
+      return conn.dialect()->prepare(sql_);
+    } else {
+      return conn.dialect()->direct(sql_);
+    }
   }
 };
 

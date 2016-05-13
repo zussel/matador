@@ -27,6 +27,7 @@
 
 #include <string>
 #include <typeinfo>
+#include <tools/serializer.hpp>
 
 namespace oos {
 
@@ -54,6 +55,8 @@ struct basic_value : public token
     return str();
   }
 
+  virtual void serialize(const char *id, serializer &srlzr) = 0;
+
   virtual std::string compile(basic_dialect &d) const;
 
   virtual std::string str() const = 0;
@@ -63,12 +66,13 @@ struct basic_value : public token
 
 struct null_value : public detail::basic_value
 {
+  static std::string NULLSTR;
+
   null_value() : basic_value(basic_dialect::VALUE) { }
 
-  std::string str() const
-  {
-    return "NULL";
-  }
+  virtual void serialize(const char *id, serializer &srlzr);
+
+  std::string str() const;
 };
 
 template<class T>
@@ -86,6 +90,11 @@ struct value<T, typename std::enable_if<
     : basic_value(basic_dialect::VALUE)
     , val(val)
   { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
 
   std::string str() const
   {
@@ -110,6 +119,11 @@ struct value<T, typename std::enable_if<
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
 
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
+
   std::string str() const
   {
     std::stringstream str;
@@ -121,7 +135,7 @@ struct value<T, typename std::enable_if<
 };
 
 template<>
-struct value<char, typename std::enable_if<true>::type> : public detail::basic_value
+struct value<char> : public detail::basic_value
 {
   value(char &&val)
     : basic_value(basic_dialect::VALUE)
@@ -131,6 +145,11 @@ struct value<char, typename std::enable_if<true>::type> : public detail::basic_v
   value(char &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
 
   std::string str() const
   {
@@ -143,13 +162,18 @@ struct value<char, typename std::enable_if<true>::type> : public detail::basic_v
 };
 
 template<>
-struct value<char*, typename std::enable_if<true>::type> : public detail::basic_value
+struct value<char*> : public detail::basic_value
 {
   value(char *val, size_t l)
     : basic_value(basic_dialect::VALUE)
     , val(val)
     , len(l)
   { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val, len);
+  }
 
   std::string str() const
   {
@@ -163,7 +187,7 @@ struct value<char*, typename std::enable_if<true>::type> : public detail::basic_
 };
 
 template<>
-struct value<oos::date, typename std::enable_if<true>::type> : public detail::basic_value
+struct value<oos::date> : public detail::basic_value
 {
   value(oos::date &&val)
     : basic_value(basic_dialect::VALUE)
@@ -173,6 +197,11 @@ struct value<oos::date, typename std::enable_if<true>::type> : public detail::ba
   value(oos::date &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
 
   std::string str() const
   {
@@ -185,7 +214,7 @@ struct value<oos::date, typename std::enable_if<true>::type> : public detail::ba
 };
 
 template<>
-struct value<oos::time, typename std::enable_if<true>::type> : public detail::basic_value
+struct value<oos::time> : public detail::basic_value
 {
   value(oos::time &&val)
     : basic_value(basic_dialect::VALUE)
@@ -194,7 +223,13 @@ struct value<oos::time, typename std::enable_if<true>::type> : public detail::ba
 
   value(oos::time &val)
     : basic_value(basic_dialect::VALUE)
-    , val(val) { }
+    , val(val)
+  { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
 
   std::string str() const
   {
