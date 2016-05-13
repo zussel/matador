@@ -56,6 +56,13 @@ public:
    */
   bool add_column(const std::string &column);
 
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    for (auto &&column : columns_) {
+      values_.at(column)->serialize(column.c_str(), serializer);
+    }
+  }
   /**
    * Set a value for a column at
    * given index

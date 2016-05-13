@@ -4,6 +4,7 @@
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
 #include "sql/connection_impl.hpp"
+#include "row.hpp"
 
 #include <string>
 
@@ -54,6 +55,11 @@ public:
   result<T> execute(const sql &stmt)
   {
     return result<T>(impl_->execute(stmt));
+  }
+
+  result<row> execute(const sql &stmt, const row &prototype)
+  {
+    return result<row>(impl_->execute(stmt));
   }
 
   template < class T >
