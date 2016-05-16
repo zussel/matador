@@ -52,14 +52,15 @@ public:
   }
 
   template < class T >
-  result<T> execute(const sql &stmt)
+  result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
     return result<T>(impl_->execute(stmt));
   }
 
-  result<row> execute(const sql &stmt, const row &prototype)
+  template < class T >
+  result<T> execute(const sql &stmt, const row &prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
-    return result<row>(impl_->execute(stmt));
+    return result<T>(impl_->execute(stmt), prototype);
   }
 
   template < class T >

@@ -19,12 +19,16 @@
 #define RESULT_HPP
 
 #include "sql/result_impl.hpp"
+#include "sql/row.hpp"
 
 #include <memory>
 #include <type_traits>
 #include <iterator>
 
 namespace oos {
+
+template < class T >
+class result;
 
 /// @cond OOS_DEV
 template < class T >
@@ -37,18 +41,18 @@ public:
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
   base_result_iterator() {}
-  base_result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
+  base_result_iterator(oos::result<T> *res, T *obj = nullptr)
   : obj_(obj)
-  , result_impl_(result_impl)
+  , result_(res)
   {}
   base_result_iterator(base_result_iterator&& x)
   : obj_(x.obj_.release())
-  , result_impl_(x.result_impl_)
+  , result_(x.result_)
   {}
 
   base_result_iterator& operator=(base_result_iterator&& x)
   {
-    result_impl_ = x.result_impl_;
+    result_ = x.result_;
     obj_.reset(x.obj_.release());
     return *this;
   }
@@ -92,7 +96,8 @@ public:
 
 protected:
   std::unique_ptr<T> obj_;
-  oos::detail::result_impl *result_impl_ = nullptr;
+  result<T> *result_ = nullptr;
+//  oos::detail::result_impl *result_impl_ = nullptr;
 };
 
 template < class T >
@@ -117,25 +122,8 @@ public:
   using base_result_iterator<T>::base_result_iterator;
 #endif
 
-  self& operator++()
-  {
-    base::obj_.reset(new T);
-    base::result_impl_->bind(base::obj_.get());
-    if (!base::result_impl_->fetch(base::obj_.get())) {
-      base::obj_.reset();
-    }
-    return *this;
-  }
-
-  self operator++(int)
-  {
-    std::unique_ptr<T> obj(base::obj_.release());
-    base::result_impl_->bind(base::obj_.get());
-    if (!base::result_impl_->fetch(base::obj_.get())) {
-      base::obj_.reset();
-    }
-    return self(base::result_impl_, obj.release());
-  }
+  self & operator++();
+  self operator++(int);
 };
 
 template < class T >
@@ -177,7 +165,7 @@ public:
 
   iterator begin()
   {
-    return std::move(++iterator(p));
+    return std::move(++iterator(this));
   }
 
   iterator end()
@@ -196,8 +184,111 @@ public:
   }
 
 private:
+  friend class result_iterator<T>;
+
+private:
+
+  T* create() const
+  {
+    return new T;
+  }
+private:
   oos::detail::result_impl *p = nullptr;
 };
+
+template <>
+class result<row>
+{
+public:
+  typedef result_iterator<row> iterator;
+
+  result(const result &x) = delete;
+  result& operator=(const result &x) = delete;
+
+public:
+  result() {}
+  result(oos::detail::result_impl *impl, const row &prototype)
+    : p(impl)
+    , prototype_(prototype)
+  {}
+
+  ~result()
+  {
+    if (p) {
+      delete p;
+    }
+  }
+
+  result(result &&x)
+  {
+    std::swap(p, x.p);
+  }
+
+  result& operator=(result &&x)
+  {
+    if (p) {
+      delete p;
+      p = nullptr;
+    }
+    std::swap(p, x.p);
+    return *this;
+  }
+
+  iterator begin()
+  {
+    return std::move(++iterator(this));
+  }
+
+  iterator end()
+  {
+    return iterator();
+  }
+
+  bool empty () const
+  {
+    return false;
+  }
+
+  std::size_t size () const
+  {
+    return p->result_rows();
+  }
+
+private:
+  friend class result_iterator<row>;
+
+private:
+
+  row* create() const
+  {
+    return new row(prototype_);
+  }
+private:
+  oos::detail::result_impl *p = nullptr;
+  const row prototype_;
+};
+
+template < class T >
+typename result_iterator<T>::self &result_iterator<T>::operator++()
+{
+  base::obj_.reset(base::result_->create());
+  base::result_->p->bind(base::obj_.get());
+  if (!base::result_->p->fetch(base::obj_.get())) {
+    base::obj_.reset();
+  }
+  return *this;
+}
+
+template < class T >
+typename result_iterator<T>::self result_iterator<T>::operator++(int)
+{
+  std::unique_ptr<T> obj(base::obj_.release());
+  base::result_->p->bind(base::obj_.get());
+  if (!base::result_->p->fetch(base::obj_.get())) {
+    base::obj_.reset();
+  }
+  return self(base::result_, obj.release());
+}
 
 /// @endcond
 
