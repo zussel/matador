@@ -76,6 +76,7 @@ public:
   virtual void rollback();
 
   virtual bool exists(const std::string &tablename) override;
+  virtual std::vector<field> describe(const std::string &table) override;
 
   SQLHANDLE handle();
 

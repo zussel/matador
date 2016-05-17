@@ -140,11 +140,6 @@ void mysql_connection::rollback()
 
 bool mysql_connection::exists(const std::string &tablename)
 {
-//  SELECT *
-//  FROM information_schema.tables
-//  WHERE table_schema = 'yourdb'
-//  AND table_name = 'testtable'
-//  LIMIT 1;
   std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
   std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
   if (!res->fetch()) {
@@ -153,6 +148,27 @@ bool mysql_connection::exists(const std::string &tablename)
     char *end;
     return strtoul(res->column(0), &end, 10) == 1;
   }
+}
+
+std::vector<field> mysql_connection::describe(const std::string &table)
+{
+  std::string stmt("SHOW COLUMNS FROM " + table);
+  std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
+
+  std::vector<field> fields;
+
+  while (res->fetch()) {
+    field f;
+    f.name(res->column(0));
+    f.type(dialect_.string_type(res->column(1)));
+    f.index(fields.size());
+    char *end;
+    f.not_null(strtoul(res->column(2), &end, 10) == 0);
+
+    fields.push_back(f);
+  }
+
+  return fields;
 }
 
 basic_dialect* mysql_connection::dialect()

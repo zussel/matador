@@ -55,17 +55,29 @@ public:
   size_type result_rows() const;
   size_type fields() const;
 
-  template < class T, typename = std::enable_if<std::is_integral<T>::value> >
-  T get(size_type index) const
+  template < class T >
+  T get(size_type index, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr) const
   {
     T val;
     SQLLEN info = 0;
     SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
-    if (ret != SQL_SUCCESS) {
+    if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
     }
     return val;
+  }
+
+  template < class T >
+  T get(size_type index, typename std::enable_if<std::is_same<std::string, T>::value>::type* = nullptr) const
+  {
+    char buf[1024];
+    SQLLEN info = 0;
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)index, SQL_C_CHAR, buf, 1024, &info);
+    if (!SQL_SUCCEEDED(ret)) {
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    }
+    return std::string(buf, info);
   }
 
   virtual int transform_index(int index) const;

@@ -14,7 +14,9 @@ class sqlite_dialect : public basic_dialect
 {
 public:
   sqlite_dialect();
+
   const char* type_string(oos::data_type_t type) const;
+  data_type_t string_type(const char *type) const;
 
   virtual std::string compile(const oos::detail::create &create);
   virtual std::string compile(const oos::detail::drop &drop);

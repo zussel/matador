@@ -9,6 +9,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 
 namespace oos {
 
@@ -64,6 +65,25 @@ const char *sqlite_dialect::type_string(oos::data_type_t type) const
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }
+  }
+}
+
+data_type_t sqlite_dialect::string_type(const char *type) const
+{
+  if (strcmp(type, "INTEGER") == 0) {
+    return type_long;
+  } else if (strcmp(type, "TEXT") == 0) {
+    return type_text;
+  } else if (strcmp(type, "REAL") == 0) {
+    return type_double;
+  } else if (strcmp(type, "BLOB") == 0) {
+    return type_blob;
+  } else if (strcmp(type, "NULL") == 0) {
+    return type_null;
+  } else if (strncmp(type, "VARCHAR", 7) == 0) {
+    return type_varchar;
+  } else {
+    return type_unknown;
   }
 }
 

@@ -132,6 +132,30 @@ bool sqlite_connection::exists(const std::string &tablename)
   }
 }
 
+std::vector<field> sqlite_connection::describe(const std::string &table)
+{
+  std::string stmt("PRAGMA table_info(" + table + ")");
+  std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute(stmt)));
+
+  std::vector<field> fields;
+
+  do {
+    field f;
+    char *end = nullptr;
+    f.index(strtoul(res->column(0), &end, 10));
+    f.name(res->column(1));
+    f.type(dialect_.string_type(res->column(2)));
+    end = nullptr;
+    f.not_null(strtoul(res->column(3), &end, 10) == 0);
+    f.default_value(res->column(4));
+//    end = nullptr;
+//    f.is_primary_key(strtoul(res->column(3), &end, 10) == 0);
+    fields.push_back(f);
+  } while (res->fetch());
+
+  return fields;
+}
+
 basic_dialect *sqlite_connection::dialect()
 {
   return &dialect_;

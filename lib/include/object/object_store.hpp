@@ -1317,16 +1317,17 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
 }
 
 template<class T, template<class ...> class C>
-void object_deleter::serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char *, const char *)
 {
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();
   while (first != last) {
     // Todo: get the real holder: on join table get has_many_item
-    typename basic_has_many<T, C>::relation_type iptr = (*first++);
+    typename basic_has_many<T, C>::relation_type iptr = first.relation_item();
+    ++first;
     object_proxy *proxy = iptr.proxy_;
     std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
-      std::make_pair(proxy->id(), t_object_count(proxy, false))
+      std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj()))
     );
     /**********
      *

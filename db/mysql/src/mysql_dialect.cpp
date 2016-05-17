@@ -6,6 +6,7 @@
 #include "sql/dialect_token.hpp"
 
 #include <algorithm>
+#include <cstring>
 
 namespace oos {
 
@@ -68,6 +69,19 @@ const char* mysql_dialect::type_string(oos::data_type_t type) const
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }
+  }
+}
+
+data_type_t mysql_dialect::string_type(const char *type) const
+{
+  if (strncmp(type, "int", 3) == 0) {
+    return type_long;
+  } else if (strcmp(type, "date") == 0) {
+    return type_text;
+  } else if (strncmp(type, "varchar", 7) == 0) {
+    return type_varchar;
+  } else {
+    return type_unknown;
   }
 }
 

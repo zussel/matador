@@ -69,6 +69,11 @@ bool connection::exists(const std::string &tablename) const
   return impl_->exists(tablename);
 }
 
+std::vector<field> connection::describe(const std::string &table) const
+{
+  return impl_->describe(table);
+}
+
 basic_dialect *connection::dialect()
 {
   return impl_->dialect();

@@ -39,6 +39,8 @@
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
+#include <vector>
+
 #endif
 
 namespace oos {
@@ -89,6 +91,7 @@ public:
   virtual void rollback() override;
 
   virtual bool exists(const std::string &tablename);
+  virtual std::vector<field> describe(const std::string &table) override;
 
   virtual basic_dialect* dialect() override;
 

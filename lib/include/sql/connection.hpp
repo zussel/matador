@@ -5,6 +5,7 @@
 #include "sql/statement.hpp"
 #include "sql/connection_impl.hpp"
 #include "row.hpp"
+#include "field.hpp"
 
 #include <string>
 
@@ -72,6 +73,8 @@ public:
   const char* type_string(data_type_t type) const;
 
   bool exists(const std::string &tablename) const;
+
+  std::vector<field> describe(const std::string &table) const;
 
   basic_dialect* dialect();
 

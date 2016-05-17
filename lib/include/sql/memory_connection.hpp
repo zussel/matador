@@ -32,6 +32,8 @@ public:
 
   virtual bool exists(const std::string &) override { return true; }
 
+  virtual std::vector<field> describe(const std::string &) override { return std::vector<field>(); }
+
   virtual basic_dialect* dialect() override { return nullptr; }
 };
 

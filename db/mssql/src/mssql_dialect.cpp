@@ -7,6 +7,7 @@
 #include "sql/dialect_token.hpp"
 
 #include <algorithm>
+#include <cstring>
 
 namespace oos {
 
@@ -60,6 +61,21 @@ const char* mssql_dialect::type_string(oos::data_type_t type) const
       msg << "mssql connection: unknown type xxx [" << type << "]";
       throw std::logic_error(msg.str());
     }
+  }
+}
+
+data_type_t mssql_dialect::string_type(const char *type) const
+{
+  if (strcmp(type, "numeric") == 0) {
+    return type_long;
+  } else if (strcmp(type, "bigint") == 0) {
+    return type_long;
+  } else if (strcmp(type, "date") == 0) {
+    return type_text;
+  } else if (strcmp(type, "varchar") == 0) {
+    return type_varchar;
+  } else {
+    return type_unknown;
   }
 }
 

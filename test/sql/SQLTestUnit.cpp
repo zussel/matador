@@ -15,6 +15,7 @@ SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const 
   , db_(db)
 {
   add_test("datatypes", std::bind(&SQLTestUnit::test_datatypes, this), "test sql datatypes");
+  add_test("describe", std::bind(&SQLTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&SQLTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
   add_test("statement_insert", std::bind(&SQLTestUnit::test_statement_insert, this), "test prepared sql insert statement");
@@ -98,6 +99,28 @@ void SQLTestUnit::test_datatypes()
   UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
   UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
   UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
+
+  q.drop().execute(*connection_);
+}
+
+void SQLTestUnit::test_describe()
+{
+  connection_->open();
+
+  oos::query<person> q("person");
+
+  q.create().execute(*connection_);
+
+  auto fields = connection_->describe("person");
+
+  std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
+  std::vector<data_type_t > types = { oos::type_long, oos::type_varchar, oos::type_text, oos::type_long};
+
+  for (auto &&field : fields) {
+    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
+    UNIT_ASSERT_EQUAL(field.type(), types[field.index()], "invalid column type");
+//    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
+  }
 
   q.drop().execute(*connection_);
 }

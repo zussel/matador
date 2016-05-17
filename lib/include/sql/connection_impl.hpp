@@ -7,8 +7,10 @@
 
 
 #include "sql/types.hpp"
+#include "field.hpp"
 
 #include <string>
+#include <vector>
 
 namespace oos {
 
@@ -37,6 +39,7 @@ public:
   virtual void rollback() = 0;
 
   virtual bool exists(const std::string &tablename) = 0;
+  virtual std::vector<field> describe(const std::string &table) = 0;
 
   virtual basic_dialect* dialect() = 0;
 };
