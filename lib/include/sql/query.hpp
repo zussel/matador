@@ -583,7 +583,7 @@ public:
    * @param conn The connection.
    */
   query(const std::string &table_name)
-          : basic_query(table_name)
+    : basic_query(table_name)
   {}
 
   ~query() {}
@@ -640,7 +640,7 @@ public:
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return conn.execute<row>(sql_, row_);
+    return conn.execute<row>(sql_, table_name_);
   }
 
   std::string str(connection &conn, bool prepared)

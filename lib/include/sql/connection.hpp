@@ -59,8 +59,14 @@ public:
   }
 
   template < class T >
-  result<T> execute(const sql &stmt, const row &prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  result<T> execute(const sql &stmt, const std::string &tablename, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
+    // get column descriptions
+    row prototype;
+    auto fields = impl_->describe(tablename);
+    for (auto &&f : fields) {
+      f.type();
+    }
     return result<T>(impl_->execute(stmt), prototype);
   }
 
