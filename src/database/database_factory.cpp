@@ -61,9 +61,11 @@ database_factory::database_producer::database_producer(const std::string &name)
     throw std::runtime_error("couldn't fínd library [" + name + "]");
   }
   // get create function
-  create_ = reinterpret_cast<create_func>(reinterpret_cast<long>(loader_.function("create_database")));
+//  create_ = reinterpret_cast<create_func>(reinterpret_cast<long>(loader_.function("create_database")));
+  *(void**)(&create_) = loader_.function("create_database");
   // get destroy function
-  destroy_ = reinterpret_cast<destroy_func>(reinterpret_cast<long>(loader_.function("destroy_database")));
+//  destroy_ = reinterpret_cast<destroy_func>(reinterpret_cast<long>(loader_.function("destroy_database")));
+  *(void**)(&destroy_) = loader_.function("destroy_database");
 }
 
 database_factory::database_producer::~database_producer()
