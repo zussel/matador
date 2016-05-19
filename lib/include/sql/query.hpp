@@ -471,6 +471,11 @@ public:
     return *this;
   }
 
+  /**
+   * Order result of select query ascending.
+   *
+   * @return A reference to the query.
+   */
   query& asc()
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
@@ -482,6 +487,11 @@ public:
     return *this;
   }
 
+  /**
+   * Order result of select query descending.
+   *
+   * @return A reference to the query.
+   */
   query& desc()
   {
     throw_invalid(QUERY_ORDER_DIRECTION, state);
@@ -496,7 +506,7 @@ public:
   /**
    * Adds a limit clause to a select
    * statement.
-   * 
+   *
    * @param l The limit clause.
    * @return A reference to the query.
    */
@@ -576,6 +586,10 @@ template <>
 class query<row> : public detail::basic_query
 {
 public:
+  query()
+    : basic_query("")
+  {}
+
   /**
    * Create a new query for the
    * given connection.
@@ -589,9 +603,10 @@ public:
   ~query() {}
 
   /**
-   * Creates a select statement based
-   * on the given serializable serializable.
+   * Creates a select statement with the
+   * given columns.
    *
+   * @param cols The columns to select
    * @return A reference to the query.
    */
   query& select(columns cols)
@@ -640,7 +655,14 @@ public:
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
 //    std::cout.flush();
-    return conn.execute<row>(sql_, table_name_);
+    return conn.execute<row>(sql_, table_name_, row_);
+  }
+
+  statement<row> prepare(connection &conn)
+  {
+//    std::cout << "SQL: " << sql_.prepare().c_str() << '\n';
+//    std::cout.flush();
+    return conn.prepare<row>(sql_, table_name_, row_);
   }
 
   std::string str(connection &conn, bool prepared)
@@ -652,9 +674,30 @@ public:
     }
   }
 
+  /**
+ * Adds a limit clause to a select
+ * statement.
+ *
+ * @param l The limit clause.
+ * @return A reference to the query.
+ */
+  query& limit(std::size_t l)
+  {
+    sql_.append(new detail::top(l));
+    return *this;
+  }
+
 private:
   row row_;
 };
+
+//query<row> select(columns cols);
+//
+//query<row> select(columns cols)
+//{
+//  query<row> q;
+//  return q.select(cols);
+//}
 
 }
 

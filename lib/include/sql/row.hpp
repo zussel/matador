@@ -56,6 +56,18 @@ public:
    */
   bool add_column(const std::string &column);
 
+  /**
+   * Add a column to the row. If column
+   * already exists
+   *
+   * @param column Name of the column
+   * @param value Value of the column
+   * @return True if column was added, false if column aready exists
+   */
+  bool add_column(const std::string &column, const std::shared_ptr<detail::basic_value> &value);
+
+  bool has_column(const std::string &column) const;
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -63,6 +75,7 @@ public:
       values_.at(column)->serialize(column.c_str(), serializer);
     }
   }
+
   /**
    * Set a value for a column at
    * given index
@@ -94,6 +107,8 @@ public:
   {
     values_.at(column).reset(new value<T>(val));
   }
+
+  void set(const std::string &column, const std::shared_ptr<detail::basic_value> &value);
 
   /**
    * Get value of column position

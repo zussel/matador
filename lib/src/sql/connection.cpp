@@ -1,5 +1,6 @@
 #include "sql/connection_factory.hpp"
 #include "sql/connection.hpp"
+#include "sql/value.hpp"
 
 namespace oos {
 
@@ -79,5 +80,57 @@ basic_dialect *connection::dialect()
   return impl_->dialect();
 }
 
+void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
+{
+  auto fields = impl_->describe(tablename);
+  for (auto &&f : fields) {
+    if (!prototype.has_column(f.name())) {
+      continue;
+    };
+    // generate value by type
+//    f.type();
+    std::shared_ptr<detail::basic_value> value(new null_value);
+    prototype.set(f.name(), value);
+//    prototype.set(f.name(), std::make_shared<null_value>());
+  }
+}
+
+detail::basic_value* create_default_value(data_type_t type)
+{
+  switch (type) {
+    case type_char:
+      return make_value<char>();
+    case type_short:
+      return make_value<short>();
+    case type_int:
+      return make_value<int>();
+    case type_long:
+      return make_value<long>();
+    case type_unsigned_char:
+      return make_value<unsigned char>();
+    case type_unsigned_short:
+      return make_value<unsigned short>();
+    case type_unsigned_int:
+      return make_value<unsigned int>();
+    case type_unsigned_long:
+      return make_value<unsigned long>();
+    case type_float:
+      return make_value<float>();
+    case type_double:
+      return make_value<double>();
+    case type_char_pointer:
+      return make_value<char*>();
+    case type_text:
+      return make_value<std::string>();
+    case type_date:
+      return make_value<oos::date>();
+    case type_time:
+      return make_value<oos::time>();
+    case type_varchar:
+      return make_value<std::string>();
+    default:
+      return new null_value;
+  }
+}
 
 }

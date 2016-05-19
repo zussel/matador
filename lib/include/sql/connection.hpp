@@ -59,20 +59,23 @@ public:
   }
 
   template < class T >
-  result<T> execute(const sql &stmt, const std::string &tablename, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  result<T> execute(const sql &stmt, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     // get column descriptions
-    row prototype;
-    auto fields = impl_->describe(tablename);
-    for (auto &&f : fields) {
-      f.type();
-    }
+    prepare_prototype_row(prototype, tablename);
     return result<T>(impl_->execute(stmt), prototype);
   }
 
   template < class T >
-  statement<T> prepare(const oos::sql &sql)
+  statement<T> prepare(const oos::sql &sql, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
   {
+    return statement<T>(impl_->prepare(sql));
+  }
+
+  template < class T >
+  statement<T> prepare(const oos::sql &sql, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
+  {
+    prepare_prototype_row(prototype, tablename);
     return statement<T>(impl_->prepare(sql));
   }
 
@@ -83,6 +86,9 @@ public:
   std::vector<field> describe(const std::string &table) const;
 
   basic_dialect* dialect();
+
+private:
+  void prepare_prototype_row(row &prototype, const std::string &tablename);
 
 private:
   std::string type_;

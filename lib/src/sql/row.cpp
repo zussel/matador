@@ -27,12 +27,27 @@ row::~row()
 
 bool row::add_column(const std::string &column)
 {
-  if (values_.find(column) != values_.end()) {
+  return add_column(column, std::make_shared<null_value>());
+}
+
+bool row::add_column(const std::string &column, const std::shared_ptr<detail::basic_value> &value)
+{
+  if (has_column(column)) {
     return false;
   }
 
   columns_.push_back(column);
-  return values_.insert({column, std::make_shared<null_value>()}).second;
+  return values_.insert({column, value}).second;
+}
+
+bool row::has_column(const std::string &column) const
+{
+  return values_.find(column) != values_.end();
+}
+
+void row::set(const std::string &column, const std::shared_ptr<detail::basic_value> &value)
+{
+  values_.at(column) = value;
 }
 
 }

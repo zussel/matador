@@ -595,15 +595,17 @@ void SQLTestUnit::test_query_select_sub_select()
   column name("name");
 
   query<> cols("person");
-  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
-
-//  res = q.select().where(id.in(q.select({id, name}))).from("person").where(name == "Hans")));
-  auto first = rowres.begin();
-  auto last = rowres.end();
-
-  while (first != last) {
-
-  }
+////  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+//
+//  auto subselect = oos::select({id, name}).limit(1);
+//  res = q.select().where(id.in(subselect)).from("person").where(name == "Hans").execute(*connection_);
+//
+//  auto first = res.begin();
+//  auto last = res.end();
+//
+//  while (first != last) {
+//
+//  }
 
   q.drop().execute(*connection_);
 }

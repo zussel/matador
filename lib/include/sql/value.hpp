@@ -105,6 +105,7 @@ struct value<T, typename std::enable_if<
   T &val;
 };
 
+
 template<class T>
 struct value<T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
@@ -240,6 +241,19 @@ struct value<oos::time> : public detail::basic_value
 
   oos::time &val;
 };
+
+template < class T >
+detail::basic_value* make_value()
+{
+  T val;
+  return new value<T>(val);
+}
+
+template <>
+detail::basic_value* make_value<char*>();
+
+template <>
+detail::basic_value* make_value<std::string>();
 
 /// @endcond
 
