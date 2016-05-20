@@ -549,7 +549,7 @@ void SQLTestUnit::test_query_select_columns()
   column id("id");
   column name("name");
 
-  query<> cols("person");
+  query<> cols;
 
   std::string stmt = cols.select({id, name}).from("person").where(name == "Hans").str(*connection_, false);
 
