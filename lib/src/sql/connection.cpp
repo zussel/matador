@@ -119,7 +119,7 @@ detail::basic_value* create_default_value(data_type_t type)
     case type_double:
       return make_value<double>();
     case type_char_pointer:
-      return make_value<char*>();
+      return new value<char*>((char*)nullptr, 0UL);
     case type_text:
       return make_value<std::string>();
     case type_date:

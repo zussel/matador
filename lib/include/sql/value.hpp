@@ -249,12 +249,6 @@ detail::basic_value* make_value()
   return new value<T>(val);
 }
 
-template <>
-detail::basic_value* make_value<char*>();
-
-template <>
-detail::basic_value* make_value<std::string>();
-
 /// @endcond
 
 }

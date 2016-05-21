@@ -25,14 +25,4 @@ std::string null_value::str() const
   return NULLSTR;
 }
 
-detail::basic_value *make_value<char*>()
-{
-  return new value<char*>(nullptr, 0);
-}
-
-detail::basic_value *make_value<std::string>()
-{
-  return new value<std::string>("");
-}
-
 }
