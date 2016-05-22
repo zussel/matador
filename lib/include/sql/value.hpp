@@ -243,10 +243,14 @@ struct value<oos::time> : public detail::basic_value
 };
 
 template < class T >
-detail::basic_value* make_value()
+detail::basic_value* make_value(T &val)
 {
-  T val;
   return new value<T>(val);
+}
+
+detail::basic_value* make_value(char* val, size_t len)
+{
+  return new value(val, len);
 }
 
 /// @endcond

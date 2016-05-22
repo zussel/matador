@@ -99,7 +99,7 @@ detail::basic_value* create_default_value(data_type_t type)
 {
   switch (type) {
     case type_char:
-      return make_value<char>();
+      return make_value((char)0);
     case type_short:
       return make_value<short>();
     case type_int:
