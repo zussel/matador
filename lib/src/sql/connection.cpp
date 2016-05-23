@@ -101,33 +101,33 @@ detail::basic_value* create_default_value(data_type_t type)
     case type_char:
       return make_value((char)0);
     case type_short:
-      return make_value<short>();
+      return make_value<short>(0);
     case type_int:
-      return make_value<int>();
+      return make_value<int>(0);
     case type_long:
-      return make_value<long>();
+      return make_value<long>(0);
     case type_unsigned_char:
-      return make_value<unsigned char>();
+      return make_value<unsigned char>(0);
     case type_unsigned_short:
-      return make_value<unsigned short>();
+      return make_value<unsigned short>(0);
     case type_unsigned_int:
-      return make_value<unsigned int>();
+      return make_value<unsigned int>(0);
     case type_unsigned_long:
-      return make_value<unsigned long>();
+      return make_value<unsigned long>(0);
     case type_float:
-      return make_value<float>();
+      return make_value<float>(0);
     case type_double:
-      return make_value<double>();
+      return make_value<double>(0);
     case type_char_pointer:
       return new value<char*>((char*)nullptr, 0UL);
     case type_text:
-      return make_value<std::string>();
+      return make_value<std::string>("");
     case type_date:
-      return make_value<oos::date>();
+      return make_value<oos::date>(date());
     case type_time:
-      return make_value<oos::time>();
+      return make_value<oos::time>(oos::time());
     case type_varchar:
-      return make_value<std::string>();
+      return make_value<std::string>("");
     default:
       return new null_value;
   }

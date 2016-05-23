@@ -28,6 +28,7 @@
 #include <string>
 #include <typeinfo>
 #include <tools/serializer.hpp>
+#include <cstring>
 
 namespace oos {
 
@@ -81,12 +82,7 @@ struct value<T, typename std::enable_if<
   !std::is_same<char, T>::value &&
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
-  value(T &&val)
-    : basic_value(basic_dialect::VALUE)
-    , val(val)
-  { }
-
-  value(T &val)
+  value(const T &val)
     : basic_value(basic_dialect::VALUE)
     , val(val)
   { }
@@ -102,7 +98,7 @@ struct value<T, typename std::enable_if<
     str << val;
     return str.str();
   }
-  T &val;
+  T val;
 };
 
 
@@ -111,12 +107,7 @@ struct value<T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
   std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
 {
-  value(T &&val)
-    : basic_value(basic_dialect::VALUE)
-    , val(val)
-  { }
-
-  value(T &val)
+  value(const T &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
 
@@ -132,18 +123,13 @@ struct value<T, typename std::enable_if<
     return str.str();
   }
 
-  T &val;
+  T val;
 };
 
 template<>
 struct value<char> : public detail::basic_value
 {
-  value(char &&val)
-    : basic_value(basic_dialect::VALUE)
-    , val(val)
-  { }
-
-  value(char &val)
+  value(char val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
 
@@ -159,17 +145,24 @@ struct value<char> : public detail::basic_value
     return str.str();
   }
 
-  char &val;
+  char val;
 };
 
 template<>
 struct value<char*> : public detail::basic_value
 {
-  value(char *val, size_t l)
+  value(const char *v, size_t l)
     : basic_value(basic_dialect::VALUE)
-    , val(val)
+    , val(strndup(v, l+1))
     , len(l)
-  { }
+  {
+    val[l] = '\0';
+  }
+
+  virtual ~value()
+  {
+    delete [] val;
+  }
 
   virtual void serialize(const char *id, serializer &srlzr)
   {
@@ -190,12 +183,7 @@ struct value<char*> : public detail::basic_value
 template<>
 struct value<oos::date> : public detail::basic_value
 {
-  value(oos::date &&val)
-    : basic_value(basic_dialect::VALUE)
-    , val(val)
-  { }
-
-  value(oos::date &val)
+  value(const oos::date &val)
     : basic_value(basic_dialect::VALUE)
     , val(val) { }
 
@@ -211,18 +199,13 @@ struct value<oos::date> : public detail::basic_value
     return str.str();
   }
 
-  oos::date &val;
+  oos::date val;
 };
 
 template<>
 struct value<oos::time> : public detail::basic_value
 {
-  value(oos::time &&val)
-    : basic_value(basic_dialect::VALUE)
-    , val(val)
-  { }
-
-  value(oos::time &val)
+  value(const oos::time &val)
     : basic_value(basic_dialect::VALUE)
     , val(val)
   { }
@@ -239,19 +222,16 @@ struct value<oos::time> : public detail::basic_value
     return str.str();
   }
 
-  oos::time &val;
+  oos::time val;
 };
 
 template < class T >
-detail::basic_value* make_value(T &val)
+detail::basic_value* make_value(const T &val)
 {
   return new value<T>(val);
 }
 
-detail::basic_value* make_value(char* val, size_t len)
-{
-  return new value(val, len);
-}
+detail::basic_value* make_value(const char* val, size_t len);
 
 /// @endcond
 
