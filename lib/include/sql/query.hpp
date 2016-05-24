@@ -631,6 +631,8 @@ public:
   {
     sql_.append(new detail::from(table));
 
+    table_name_ = table;
+
     return *this;
   }
 

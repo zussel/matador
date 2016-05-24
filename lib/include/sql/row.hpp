@@ -147,6 +147,17 @@ public:
     return values_.at(columns_.at(pos))->value();
   }
 
+  /**
+   * Get string value of column at position
+   *
+   * @param column Column name
+   * @return The string value of the requested column.
+   */
+  std::string str(const std::string &column)
+  {
+    return values_.at(column)->value();
+  }
+
 private:
 
 //  std::vector<detail::basic_value> values_;

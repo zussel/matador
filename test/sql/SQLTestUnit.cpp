@@ -551,16 +551,16 @@ void SQLTestUnit::test_query_select_columns()
 
   query<> cols;
 
-  std::string stmt = cols.select({id, name}).from("person").where(name == "Hans").str(*connection_, false);
-
-  std::cout << "\nstatement '" << stmt << "'\n";
-
   auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
 
   auto first = rowres.begin();
   auto last = rowres.end();
 
   while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_ASSERT_EQUAL(1L, item->at<long>(id.name), "invalid value");
+    UNIT_ASSERT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
+//    std::cout << "id " << item->str(id.name) << ", name " << item->at<std::string>(name.name) << "\n";
     ++first;
   }
 

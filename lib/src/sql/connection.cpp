@@ -80,6 +80,8 @@ basic_dialect *connection::dialect()
   return impl_->dialect();
 }
 
+detail::basic_value* create_default_value(data_type_t type);
+
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
   auto fields = impl_->describe(tablename);
@@ -89,7 +91,8 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
     };
     // generate value by type
 //    f.type();
-    std::shared_ptr<detail::basic_value> value(new null_value);
+//    std::shared_ptr<detail::basic_value> value(new null_value);
+    std::shared_ptr<detail::basic_value> value(create_default_value(f.type()));
     prototype.set(f.name(), value);
 //    prototype.set(f.name(), std::make_shared<null_value>());
   }

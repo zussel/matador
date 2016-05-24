@@ -42,10 +42,10 @@ struct basic_value : public token
 {
   basic_value(basic_dialect::t_token tok) : token(tok) { }
 
-  template < class T > T get() const {
+  template < class T > T get() {
     oos::value<T> *v = dynamic_cast<oos::value<T>* >(this);
     if (v) {
-      return v->template get<T>();
+      return v->val;
     } else {
       throw std::bad_cast();
     }
@@ -153,31 +153,26 @@ struct value<char*> : public detail::basic_value
 {
   value(const char *v, size_t l)
     : basic_value(basic_dialect::VALUE)
-    , val(strndup(v, l+1))
-    , len(l)
+    , val(v, v+l)
   {
-    val[l] = '\0';
-  }
-
-  virtual ~value()
-  {
-    delete [] val;
+    val.push_back('\0');
   }
 
   virtual void serialize(const char *id, serializer &srlzr)
   {
-    srlzr.serialize(id, val, len);
+
+    char *begin = &val.front();
+    srlzr.serialize(id, begin, val.size());
   }
 
   std::string str() const
   {
     std::stringstream str;
-    str << "'" << val << "'";
+    str << "'" << &val.front() << "'";
     return str.str();
   }
-
-  char *val;
-  size_t len;
+  
+  std::vector<char> val;
 };
 
 template<>
