@@ -34,6 +34,7 @@
 #include "sql/types.hpp"
 #include "sql/column.hpp"
 #include "sql/token.hpp"
+#include "basic_query.hpp"
 
 #include <string>
 #include <sstream>
@@ -227,11 +228,11 @@ public:
   std::vector<T> args_;
 };
 
-template < class QUERY >
-class condition<column, QUERY> : public detail::basic_condition
+template <>
+class condition<column, detail::basic_query> : public detail::basic_condition
 {
 public:
-  condition(const column &fld, const QUERY &q)
+  condition(const column &fld, const detail::basic_query &q)
           : field_(fld), query_(q)
   {}
 
@@ -240,7 +241,7 @@ public:
     std::stringstream str;
     str << field_.name << " IN (";
 
-    str << query_.sql().compile(d);
+    str << query_.stmt().compile(d);
 
     str << ")";
     return str.str();
@@ -249,7 +250,7 @@ public:
   std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
 
   column field_;
-  const QUERY &query_;
+  const detail::basic_query &query_;
 };
 
 template < class T >
@@ -317,11 +318,8 @@ condition<column, std::initializer_list<T>> in(const oos::column &f, std::initia
   return condition<column, std::initializer_list<T>>(f, args);
 }
 
-template<class QUERY>
-condition<column, QUERY> in(const oos::column &f, QUERY &q)
-{
-  return condition<column, QUERY>(f, q);
-}
+template<>
+condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q);
 
 template<class T>
 condition<column, std::pair<T, T>> between(const oos::column &f, T low, T high)

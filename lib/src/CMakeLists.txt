@@ -160,7 +160,7 @@ SET(SQL_SOURCES
 		sql/basic_dialect.cpp
 		sql/column_serializer.cpp
 		sql/value_serializer.cpp
-		sql/value_column_serializer.cpp sql/field.cpp sql/query.cpp)
+		sql/value_column_serializer.cpp sql/field.cpp sql/query.cpp sql/basic_query.cpp)
 
 SET(SQL_HEADER
 	../include/sql/condition.hpp
@@ -188,7 +188,7 @@ SET(SQL_HEADER
 	../include/sql/value_serializer.hpp
 	../include/sql/value_column_serializer.hpp
 	../include/sql/commands.hpp
-)
+		../include/sql/basic_query.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp

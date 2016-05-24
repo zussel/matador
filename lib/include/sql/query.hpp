@@ -18,7 +18,7 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include "sql/sql.hpp"
+#include "sql/basic_query.hpp"
 #include "sql/dialect_token.hpp"
 #include "sql/column.hpp"
 #include "sql/result.hpp"
@@ -35,134 +35,6 @@
 
 namespace oos {
 
-namespace detail {
-
-class basic_query
-{
-public:
-  basic_query(const std::string &table_name)
-      : state(QUERY_BEGIN)
-      , table_name_(table_name)
-      , update_columns_(new columns(columns::WITHOUT_BRACKETS))
-  {}
-
-  /**
-   * Resets the query.
-   *
-   * @return A reference to the query.
-   */
-  void reset_query(t_query_command query_command)
-  {
-    sql_.reset(query_command);
-    state = QUERY_BEGIN;
-    update_columns_->columns_.clear();
-  }
-
-protected:
-  enum state_t {
-    QUERY_BEGIN,
-    QUERY_CREATE,
-    QUERY_DROP,
-    QUERY_SELECT,
-    QUERY_INSERT,
-    QUERY_UPDATE,
-    QUERY_DELETE,
-    QUERY_COLUMN,
-    QUERY_SET,
-    QUERY_FROM,
-    QUERY_WHERE,
-    QUERY_COND_WHERE,
-    QUERY_ORDERBY,
-    QUERY_ORDER_DIRECTION,
-    QUERY_GROUPBY,
-    QUERY_EXECUTED,
-    QUERY_PREPARED,
-    QUERY_BOUND
-  };
-
-protected:
-  static void throw_invalid(state_t next, state_t current)
-  {
-    std::stringstream msg;
-    switch (next) {
-      case basic_query::QUERY_CREATE:
-      case basic_query::QUERY_DROP:
-      case basic_query::QUERY_SELECT:
-      case basic_query::QUERY_INSERT:
-      case basic_query::QUERY_UPDATE:
-      case basic_query::QUERY_DELETE:
-        if (current != QUERY_BEGIN) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case basic_query::QUERY_WHERE:
-      case basic_query::QUERY_COND_WHERE:
-        if (current != basic_query::QUERY_SELECT &&
-            current != basic_query::QUERY_COLUMN &&
-            current != basic_query::QUERY_UPDATE &&
-            current != basic_query::QUERY_SET &&
-            current != basic_query::QUERY_DELETE)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case basic_query::QUERY_COLUMN:
-        if (current != basic_query::QUERY_SELECT &&
-            current != basic_query::QUERY_COLUMN)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case basic_query::QUERY_FROM:
-        if (current != basic_query::QUERY_COLUMN) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case basic_query::QUERY_SET:
-        if (current != basic_query::QUERY_UPDATE &&
-            current != basic_query::QUERY_SET)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case basic_query::QUERY_ORDERBY:
-        if (current != basic_query::QUERY_SELECT &&
-            current != basic_query::QUERY_WHERE &&
-            current != basic_query::QUERY_COND_WHERE)
-        {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      case QUERY_ORDER_DIRECTION:
-        if (current != basic_query::QUERY_ORDERBY) {
-          msg << "invalid next state: [" << next << "] (current: " << current << ")";
-          throw std::logic_error(msg.str());
-        }
-        break;
-      default:
-        throw std::logic_error("unknown state");
-    }
-  }
-
-  const sql& s() const
-  {
-    return sql_;
-  }
-
-protected:
-  sql sql_;
-  state_t state;
-  std::string table_name_;
-  std::shared_ptr<columns> update_columns_;
-};
-
-}
 //class condition;
 
 /**
