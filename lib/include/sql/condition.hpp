@@ -227,6 +227,31 @@ public:
   std::vector<T> args_;
 };
 
+template < class QUERY >
+class condition<column, QUERY> : public detail::basic_condition
+{
+public:
+  condition(const column &fld, const QUERY &q)
+          : field_(fld), query_(q)
+  {}
+
+  virtual std::string compile(basic_dialect &d) const override
+  {
+    std::stringstream str;
+    str << field_.name << " IN (";
+
+    str << query_.sql().compile(d);
+
+    str << ")";
+    return str.str();
+  };
+
+  std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
+
+  column field_;
+  const QUERY &query_;
+};
+
 template < class T >
 class condition<column, std::pair<T, T>, typename std::enable_if<true>::type> : public detail::basic_condition
 {
@@ -290,6 +315,12 @@ template<class T>
 condition<column, std::initializer_list<T>> in(const oos::column &f, std::initializer_list<T> args)
 {
   return condition<column, std::initializer_list<T>>(f, args);
+}
+
+template<class QUERY>
+condition<column, QUERY> in(const oos::column &f, QUERY &q)
+{
+  return condition<column, QUERY>(f, q);
 }
 
 template<class T>

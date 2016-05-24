@@ -150,6 +150,11 @@ protected:
     }
   }
 
+  const sql& s() const
+  {
+    return sql_;
+  }
+
 protected:
   sql sql_;
   state_t state;
@@ -693,13 +698,7 @@ private:
   row row_;
 };
 
-//query<row> select(columns cols);
-//
-//query<row> select(columns cols)
-//{
-//  query<row> q;
-//  return q.select(cols);
-//}
+query<row> select(columns cols);
 
 }
 

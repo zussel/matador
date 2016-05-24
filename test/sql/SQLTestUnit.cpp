@@ -558,8 +558,8 @@ void SQLTestUnit::test_query_select_columns()
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_ASSERT_EQUAL(1L, item->at<long>(id.name), "invalid value");
-    UNIT_ASSERT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
+    UNIT_EXPECT_EQUAL(1L, item->at<long>(id.name), "invalid value");
+    UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
 //    std::cout << "id " << item->str(id.name) << ", name " << item->at<std::string>(name.name) << "\n";
     ++first;
   }
@@ -595,10 +595,11 @@ void SQLTestUnit::test_query_select_sub_select()
   column name("name");
 
   query<> cols("person");
-////  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+//  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
 //
-//  auto subselect = oos::select({id, name}).limit(1);
-//  res = q.select().where(id.in(subselect)).from("person").where(name == "Hans").execute(*connection_);
+  auto subselect = oos::select({id}).from("person").limit(1);
+
+  res = q.select().where(oos::in(id, subselect)).from("person").where(name == "Hans").execute(*connection_);
 //
 //  auto first = res.begin();
 //  auto last = res.end();

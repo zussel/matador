@@ -171,7 +171,7 @@ struct value<char*> : public detail::basic_value
     str << "'" << &val.front() << "'";
     return str.str();
   }
-  
+
   std::vector<char> val;
 };
 
