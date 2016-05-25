@@ -92,6 +92,13 @@ std::string mysql_dialect::compile(const oos::detail::top &top)
   return res.str();
 }
 
+std::string mysql_dialect::compile(const oos::detail::as &alias)
+{
+  std::stringstream res;
+  res << token(alias.type) << " " << alias.alias << " ";
+  return res.str();
+}
+
 std::string mysql_dialect::compile(const oos::detail::remove &remove1)
 {
   return token(remove1.type) + " " + remove1.table + " ";
@@ -257,6 +264,11 @@ std::string mysql_dialect::compile(const oos::detail::commit &cmmt)
 std::string mysql_dialect::compile(const oos::detail::rollback &rllbck)
 {
   return token(rllbck.type) + " ";
+}
+
+std::string mysql_dialect::compile(const oos::detail::sql_token &s)
+{
+  return s.compile(*this);
 }
 
 }

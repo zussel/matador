@@ -6,7 +6,7 @@
 #define OOS_DIALECT_TOKEN_HPP
 
 #include "sql/token.hpp"
-#include "condition.hpp"
+#include "sql/condition.hpp"
 
 namespace oos {
 
@@ -143,6 +143,15 @@ struct top : public token
   virtual std::string compile(basic_dialect &d) const override;
 
   size_t limit_;
+};
+
+struct as : public token
+{
+  as(const std::string &a);
+
+  virtual std::string compile(basic_dialect &d) const override;
+
+  std::string alias;
 };
 
 struct order_by : public token

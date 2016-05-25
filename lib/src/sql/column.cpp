@@ -63,4 +63,12 @@ std::string columns::compile(basic_dialect &d) const
 {
   return d.compile(*this);
 }
+
+columns columns::all()
+{
+  return all_;
+}
+
+columns columns::all_ = columns({column("*")}, WITHOUT_BRACKETS);
+
 }

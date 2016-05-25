@@ -40,9 +40,11 @@ public:
   virtual std::string compile(const oos::detail::basic_value &value);
   virtual std::string compile(const oos::detail::remove &remove1);
   virtual std::string compile(const oos::detail::top &limit);
+  virtual std::string compile(const oos::detail::as &alias);
   virtual std::string compile(const oos::detail::begin &bgn);
   virtual std::string compile(const oos::detail::commit &cmmt);
   virtual std::string compile(const oos::detail::rollback &rllbck);
+  virtual std::string compile(const oos::detail::sql_token &s);
 
   void reset() { bind_count_ = 0; column_count_ = 0; };
   virtual int bind_count() const override { return bind_count_; }

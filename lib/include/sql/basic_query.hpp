@@ -11,6 +11,9 @@
 #include <string>
 
 namespace oos {
+
+class connection;
+
 namespace detail {
 
 class basic_query
@@ -24,6 +27,9 @@ public:
    * @return A reference to the query.
    */
   void reset_query(t_query_command query_command);
+
+  std::string str(connection &conn, bool prepared);
+
 
   const sql& stmt() const;
 
@@ -51,6 +57,8 @@ protected:
 
 protected:
   static void throw_invalid(state_t next, state_t current);
+
+  static std::string state2text(state_t state);
 
 protected:
   sql sql_;

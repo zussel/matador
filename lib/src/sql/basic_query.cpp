@@ -4,6 +4,7 @@
 
 #include "sql/column.hpp"
 #include "sql/basic_query.hpp"
+#include "sql/connection.hpp"
 
 namespace oos {
 
@@ -22,6 +23,15 @@ void basic_query::reset_query(t_query_command query_command)
   update_columns_->columns_.clear();
 }
 
+std::string basic_query::str(connection &conn, bool prepared)
+{
+  if (prepared) {
+    return conn.dialect()->prepare(sql_);
+  } else {
+    return conn.dialect()->direct(sql_);
+  }
+}
+
 const sql& basic_query::stmt() const
 {
   return sql_;
@@ -38,7 +48,7 @@ void basic_query::throw_invalid(state_t next, state_t current)
     case basic_query::QUERY_UPDATE:
     case basic_query::QUERY_DELETE:
       if (current != QUERY_BEGIN) {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
@@ -48,9 +58,11 @@ void basic_query::throw_invalid(state_t next, state_t current)
           current != basic_query::QUERY_COLUMN &&
           current != basic_query::QUERY_UPDATE &&
           current != basic_query::QUERY_SET &&
-          current != basic_query::QUERY_DELETE)
+          current != basic_query::QUERY_DELETE &&
+          current != basic_query::QUERY_FROM &&
+          current != basic_query::QUERY_COND_WHERE)
       {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
@@ -58,13 +70,13 @@ void basic_query::throw_invalid(state_t next, state_t current)
       if (current != basic_query::QUERY_SELECT &&
           current != basic_query::QUERY_COLUMN)
       {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
     case basic_query::QUERY_FROM:
-      if (current != basic_query::QUERY_COLUMN) {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+      if (current != basic_query::QUERY_SELECT) {
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
@@ -72,7 +84,7 @@ void basic_query::throw_invalid(state_t next, state_t current)
       if (current != basic_query::QUERY_UPDATE &&
           current != basic_query::QUERY_SET)
       {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
@@ -81,13 +93,13 @@ void basic_query::throw_invalid(state_t next, state_t current)
           current != basic_query::QUERY_WHERE &&
           current != basic_query::QUERY_COND_WHERE)
       {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
     case QUERY_ORDER_DIRECTION:
       if (current != basic_query::QUERY_ORDERBY) {
-        msg << "invalid next state: [" << next << "] (current: " << current << ")";
+        msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";
         throw std::logic_error(msg.str());
       }
       break;
@@ -96,6 +108,43 @@ void basic_query::throw_invalid(state_t next, state_t current)
   }
 }
 
+std::string basic_query::state2text(basic_query::state_t state)
+{
+  switch (state) {
+    case QUERY_BEGIN:
+      return "begin";
+    case QUERY_CREATE:
+      return "create";
+    case QUERY_DROP:
+      return "drop";
+    case QUERY_SELECT:
+      return "select";
+    case QUERY_INSERT:
+      return "insert";
+    case QUERY_UPDATE:
+      return "update";
+    case QUERY_DELETE:
+      return "delete";
+    case QUERY_COLUMN:
+      return "column";
+    case QUERY_SET:
+      return "set";
+    case QUERY_FROM:
+      return "from";
+    case QUERY_WHERE:
+      return "where";
+    case QUERY_COND_WHERE:
+      return "condition_where";
+    case QUERY_ORDERBY:
+      return "order_by";
+    case QUERY_ORDER_DIRECTION:
+      return "order_direction";
+    case QUERY_GROUPBY:
+      return "group_by";
+    default:
+      return "unknown";
+  }
+}
 }
 
 }

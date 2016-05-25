@@ -43,6 +43,11 @@ void sql::append(detail::token *tok)
   token_list_.push_back(tokptr);
 }
 
+void sql::append(const sql &stmt)
+{
+  append(new detail::sql_token(stmt));
+}
+
 void sql::reset(t_query_command command_type)
 {
   command_type_ = command_type;
@@ -92,5 +97,16 @@ std::string sql::compile(basic_dialect &dialect) const
   return result;
 }
 
+namespace detail {
+sql_token::sql_token(const sql &s)
+  : token(basic_dialect::NONE), sql_(s)
+{ }
 
+std::string sql_token::compile(basic_dialect &d) const
+{
+  std::string result("(");
+  return result.append(sql_.compile(d)).append(")");
+}
+
+}
 }

@@ -59,6 +59,7 @@ public:
 
   void append(const std::shared_ptr<detail::token> tokptr);
   void append(detail::token *tok);
+  void append(const sql &stmt);
 
   void reset(t_query_command command_type);
 
@@ -76,6 +77,18 @@ private:
   token_list_t token_list_;
 };
 
+namespace detail {
+
+struct sql_token : public token
+{
+  sql_token(const sql &s);
+
+  virtual std::string compile(basic_dialect &d) const override;
+
+  sql sql_;
+};
+
+}
 /// @endcond
 
 }

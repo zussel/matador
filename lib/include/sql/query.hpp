@@ -155,7 +155,7 @@ public:
 
     sql_.append(new detail::from(table_name_));
 
-    state = QUERY_SELECT;
+    state = QUERY_FROM;
     return *this;
   }
 
@@ -506,9 +506,21 @@ public:
 
   query& from(const std::string &table)
   {
+    throw_invalid(QUERY_FROM, state);
+
     sql_.append(new detail::from(table));
 
     table_name_ = table;
+
+    return *this;
+  }
+
+  query& from(detail::basic_query &q)
+  {
+    throw_invalid(QUERY_FROM, state);
+
+    sql_.append(new detail::from(""));
+    sql_.append(q.stmt());
 
     return *this;
   }
@@ -544,15 +556,6 @@ public:
     return conn.prepare<row>(sql_, table_name_, row_);
   }
 
-  std::string str(connection &conn, bool prepared)
-  {
-    if (prepared) {
-      return conn.dialect()->prepare(sql_);
-    } else {
-      return conn.dialect()->direct(sql_);
-    }
-  }
-
   /**
  * Adds a limit clause to a select
  * statement.
@@ -563,6 +566,19 @@ public:
   query& limit(std::size_t l)
   {
     sql_.append(new detail::top(l));
+    return *this;
+  }
+
+  /**
+   * Specify an alias for the selection
+   * or the a table name.
+   *
+   * @param alias Alias name
+   * @return Query object reference
+   */
+  query& as(const std::string &alias)
+  {
+    sql_.append(new detail::as(alias));
     return *this;
   }
 

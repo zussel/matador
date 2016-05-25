@@ -37,11 +37,13 @@ struct basic_condition;
 struct create;
 struct drop;
 struct top;
+struct as;
 struct order_by;
 struct group_by;
 struct begin;
 struct commit;
 struct rollback;
+struct sql_token;
 
 }
 
@@ -74,6 +76,7 @@ public:
     ASC,
     DESC,
     TOP,
+    AS,
     OFFSET,
     DISTINCT,
     CONDITION,
@@ -82,7 +85,8 @@ public:
     PRIMARY_KEY,
     BEGIN,
     COMMIT,
-    ROLLBACK
+    ROLLBACK,
+    NONE
   };
 
 public:
@@ -118,9 +122,11 @@ public:
   virtual std::string compile(const oos::detail::basic_value &) = 0;
   virtual std::string compile(const oos::detail::remove &) = 0;
   virtual std::string compile(const oos::detail::top &) = 0;
+  virtual std::string compile(const oos::detail::as &) = 0;
   virtual std::string compile(const oos::detail::begin &) = 0;
   virtual std::string compile(const oos::detail::commit &) = 0;
   virtual std::string compile(const oos::detail::rollback &) = 0;
+  virtual std::string compile(const oos::detail::sql_token &) = 0;
 
   t_compile_type compile_type() const { return compile_type_; }
 
@@ -154,6 +160,7 @@ private:
     {basic_dialect::ASC, "ASC"},
     {basic_dialect::DESC, "DESC"},
     {basic_dialect::TOP, "LIMIT"},
+    {basic_dialect::AS, "AS"},
     {basic_dialect::OFFSET, "OFFSET"},
     {basic_dialect::DISTINCT, "DISTINCT"},
     {basic_dialect::SET, "SET"},
@@ -161,7 +168,8 @@ private:
     {basic_dialect::PRIMARY_KEY, "PRIMARY KEY"},
     {basic_dialect::BEGIN, "BEGIN TRANSACTION"},
     {basic_dialect::COMMIT, "COMMIT TRANSACTION"},
-    {basic_dialect::ROLLBACK, "ROLLBACK TRANSACTION"}
+    {basic_dialect::ROLLBACK, "ROLLBACK TRANSACTION"},
+    {basic_dialect::NONE, ""}
   };
 };
 

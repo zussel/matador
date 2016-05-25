@@ -34,10 +34,14 @@ struct columns : public detail::token
   columns & with_brackets();
   columns & without_brackets();
 
+  static columns all();
+
   virtual std::string compile(basic_dialect &d) const;
 
   std::vector<std::shared_ptr<column>> columns_;
   t_brackets with_brackets_ = WITH_BRACKETS;
+
+  static columns all_;
 };
 
 namespace detail {

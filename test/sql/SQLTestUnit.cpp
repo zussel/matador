@@ -592,21 +592,22 @@ void SQLTestUnit::test_query_select_sub_select()
   res = q.insert(trude.get()).execute(*connection_);
 
   column id("id");
-  column name("name");
 
-  query<> cols("person");
-//  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
-//
-  auto subselect = oos::select({id}).from("person").limit(1);
+  auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
+//  std::cout << "\nSQL: " << subselect.str(*connection_, false) << "\n";
+//  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*connection_, false) << "\n";
 
-  res = q.select().where(oos::in(id, subselect)).from("person").where(name == "Hans").execute(*connection_);
-//
-//  auto first = res.begin();
-//  auto last = res.end();
-//
-//  while (first != last) {
-//
-//  }
+  res = q.select().where(oos::in(id, subselect)).execute(*connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+    UNIT_EXPECT_EQUAL(1UL, item->id(), "invalid value");
+    UNIT_EXPECT_EQUAL("Hans", item->name(), "invalid value");
+    ++first;
+  }
 
   q.drop().execute(*connection_);
 }

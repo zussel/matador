@@ -34,7 +34,7 @@
 #include "sql/types.hpp"
 #include "sql/column.hpp"
 #include "sql/token.hpp"
-#include "basic_query.hpp"
+#include "sql/basic_query.hpp"
 
 #include <string>
 #include <sstream>
@@ -189,11 +189,12 @@ public:
   }
 };
 
-template < class T >
-class condition<column, std::initializer_list<T>, typename std::enable_if<true>::type> : public detail::basic_condition
+template <>
+template < class V >
+class condition<column, std::initializer_list<V>> : public detail::basic_condition
 {
 public:
-  condition(const column &fld, const std::initializer_list<T> &args)
+  condition(const column &fld, const std::initializer_list<V> &args)
     : field_(fld), args_(args)
   {}
 
@@ -225,7 +226,7 @@ public:
   }
 
   column field_;
-  std::vector<T> args_;
+  std::vector<V> args_;
 };
 
 template <>
@@ -254,7 +255,7 @@ public:
 };
 
 template < class T >
-class condition<column, std::pair<T, T>, typename std::enable_if<true>::type> : public detail::basic_condition
+class condition<column, std::pair<T, T>> : public detail::basic_condition
 {
 public:
   condition(const column &fld, const std::pair<T, T> &range)
@@ -272,7 +273,7 @@ public:
 };
 
 template<class L1, class R1, class L2, class R2>
-class condition<condition<L1, R1>, condition<L2, R2>, typename std::enable_if<true>::type> : public detail::basic_condition
+class condition<condition<L1, R1>, condition<L2, R2>> : public detail::basic_condition
 {
 public:
   condition(const condition<L1, R1> &l, const condition<L2, R2> &r, detail::basic_condition::t_operand op)
@@ -295,7 +296,7 @@ public:
 };
 
 template<class L, class R>
-class condition<condition<L, R>, void, typename std::enable_if<true>::type> : public detail::basic_condition
+class condition<condition<L, R>, void> : public detail::basic_condition
 {
 public:
   condition(const condition<L, R> &c, detail::basic_condition::t_operand op)
@@ -312,13 +313,12 @@ public:
   std::string operand;
 };
 
-template<class T>
-condition<column, std::initializer_list<T>> in(const oos::column &f, std::initializer_list<T> args)
+template < class V >
+condition<column, std::initializer_list<V>> in(const oos::column &f, std::initializer_list<V> args)
 {
-  return condition<column, std::initializer_list<T>>(f, args);
+  return condition<column, std::initializer_list<V>>(f, args);
 }
 
-template<>
 condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q);
 
 template<class T>

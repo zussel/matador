@@ -109,6 +109,15 @@ std::string top::compile(basic_dialect &d) const
   return d.compile(*this);
 }
 
+as::as(const std::string &a)
+  : token(basic_dialect::AS), alias(a)
+{ }
+
+std::string as::compile(basic_dialect &d) const
+{
+  return d.compile(*this);
+}
+
 order_by::order_by(const std::string &col)
   : token(basic_dialect::ORDER_BY), column(col)
 {}
