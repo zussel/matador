@@ -7,7 +7,7 @@
 namespace oos {
 
 column::column(const std::string &col)
-  : token(basic_dialect::COLUMN)
+  : token(COLUMN)
   , name(col)
 {}
 
@@ -18,7 +18,7 @@ std::string column::compile(basic_dialect &d) const
 
 
 columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
-  : token(basic_dialect::COLUMNS)
+  : token(COLUMNS)
   , with_brackets_(with_brackets)
 {
   for (auto &&col : cols) {
@@ -27,7 +27,7 @@ columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
 }
 
 columns::columns(t_brackets with_brackets)
-  : token(basic_dialect::COLUMNS)
+  : token(COLUMNS)
   , with_brackets_(with_brackets)
 {}
 

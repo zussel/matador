@@ -50,7 +50,7 @@ namespace detail {
 class basic_condition : public token
 {
 public:
-  basic_condition() : token(basic_dialect::CONDITION) { }
+  basic_condition() : token(token::CONDITION) { }
 
   enum t_operand
   {

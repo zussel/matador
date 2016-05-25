@@ -23,7 +23,7 @@ bool basic_dialect::is_preparing() const
   return compile_type_ == PREPARED;
 }
 
-void basic_dialect::replace_token(basic_dialect::t_token tkn, const std::string &value)
+void basic_dialect::replace_token(detail::token::t_token tkn, const std::string &value)
 {
   tokens[tkn] = value;
 }

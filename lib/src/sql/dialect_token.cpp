@@ -34,7 +34,7 @@ std::string drop::compile(basic_dialect &d) const
 }
 
 create::create(const std::string &t)
-  : token(basic_dialect::CREATE_TABLE), table(t)
+  : token(CREATE_TABLE), table(t)
 {}
 
 std::string create::compile(basic_dialect &d) const
@@ -43,7 +43,7 @@ std::string create::compile(basic_dialect &d) const
 }
 
 insert::insert(const std::string &t)
-  : token(basic_dialect::INSERT), table(t)
+  : token(INSERT), table(t)
 {}
 
 std::string insert::compile(basic_dialect &d) const
@@ -52,7 +52,7 @@ std::string insert::compile(basic_dialect &d) const
 }
 
 update::update(const std::string &t)
-  : token(basic_dialect::UPDATE)
+  : token(UPDATE)
   , table(t)
 {}
 
@@ -62,7 +62,7 @@ std::string update::compile(basic_dialect &d) const
 }
 
 remove::remove(const std::string &t)
-  : token(basic_dialect::DELETE)
+  : token(DELETE)
   , table(t)
 {}
 
@@ -92,7 +92,7 @@ std::string desc::compile(basic_dialect &d) const
 }
 
 from::from(const std::string &t)
-  : token(basic_dialect::FROM), table(t)
+  : token(FROM), table(t)
 {}
 
 std::string from::compile(basic_dialect &d) const
@@ -101,7 +101,7 @@ std::string from::compile(basic_dialect &d) const
 }
 
 top::top(size_t lmt)
-  : token(basic_dialect::TOP), limit_(lmt)
+  : token(TOP), limit_(lmt)
 {}
 
 std::string top::compile(basic_dialect &d) const
@@ -110,7 +110,7 @@ std::string top::compile(basic_dialect &d) const
 }
 
 as::as(const std::string &a)
-  : token(basic_dialect::AS), alias(a)
+  : token(AS), alias(a)
 { }
 
 std::string as::compile(basic_dialect &d) const
@@ -119,7 +119,7 @@ std::string as::compile(basic_dialect &d) const
 }
 
 order_by::order_by(const std::string &col)
-  : token(basic_dialect::ORDER_BY), column(col)
+  : token(ORDER_BY), column(col)
 {}
 
 std::string order_by::compile(basic_dialect &d) const
@@ -128,7 +128,7 @@ std::string order_by::compile(basic_dialect &d) const
 }
 
 group_by::group_by(const std::string &col)
-  : token(basic_dialect::GROUP_BY), column(col)
+  : token(GROUP_BY), column(col)
 {}
 
 std::string group_by::compile(basic_dialect &d) const

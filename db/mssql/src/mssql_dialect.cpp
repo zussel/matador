@@ -15,9 +15,10 @@ namespace mssql {
 
 mssql_dialect::mssql_dialect()
 {
-  replace_token(basic_dialect::BEGIN, "BEGIN TRANSACTION");
-  replace_token(basic_dialect::COMMIT, "COMMIT");
-  replace_token(basic_dialect::ROLLBACK, "ROLLBACK");
+  replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
+  replace_token(detail::token::COMMIT, "COMMIT");
+  replace_token(detail::token::ROLLBACK, "ROLLBACK");
+  replace_token(detail::token::TOP, "TOP");
 }
 
 const char* mssql_dialect::type_string(oos::data_type_t type) const

@@ -2,6 +2,7 @@
 // Created by sascha on 3/2/16.
 //
 #include "sql/value.hpp"
+#include "sql/basic_dialect.hpp"
 
 namespace oos {
 namespace detail {

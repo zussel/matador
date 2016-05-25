@@ -14,35 +14,35 @@ namespace detail {
 
 struct select : public token
 {
-  select() : token(basic_dialect::SELECT) {}
+  select() : token(SELECT) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct begin : public token
 {
-  begin() : token(basic_dialect::BEGIN) {}
+  begin() : token(BEGIN) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct commit : public token
 {
-  commit() : token(basic_dialect::COMMIT) {}
+  commit() : token(COMMIT) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct rollback : public token
 {
-  rollback() : token(basic_dialect::ROLLBACK) {}
+  rollback() : token(ROLLBACK) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct drop : public token
 {
-  drop(const std::string &t) : token(basic_dialect::DROP), table(t) {}
+  drop(const std::string &t) : token(DROP), table(t) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 
@@ -87,21 +87,21 @@ struct remove : public token
 
 struct distinct : public token
 {
-  distinct() : token(basic_dialect::DISTINCT) {}
+  distinct() : token(DISTINCT) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct set : public token
 {
-  set() : token(basic_dialect::SET) {}
+  set() : token(SET) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct values : public token
 {
-  values() : token(basic_dialect::VALUES) {}
+  values() : token(VALUES) {}
 
   void push_back(const std::shared_ptr<basic_value> &val) { values_.push_back(val); }
 
@@ -115,14 +115,14 @@ struct values : public token
 
 struct asc : public token
 {
-  asc() : token(basic_dialect::ASC) {}
+  asc() : token(ASC) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
 
 struct desc : public token
 {
-  desc() : token(basic_dialect::DESC) {}
+  desc() : token(DESC) {}
 
   virtual std::string compile(basic_dialect &d) const override;
 };
@@ -176,7 +176,7 @@ struct where : public token
 {
   template < class COND >
   where(const COND &c)
-    : token(basic_dialect::WHERE)
+    : token(WHERE)
     , cond(new COND(c))
   {}
 

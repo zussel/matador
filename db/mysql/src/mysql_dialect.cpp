@@ -15,9 +15,9 @@ namespace mysql {
 
 mysql_dialect::mysql_dialect()
 {
-  replace_token(basic_dialect::BEGIN, "START TRANSACTION");
-  replace_token(basic_dialect::COMMIT, "COMMIT");
-  replace_token(basic_dialect::ROLLBACK, "ROLLBACK");
+  replace_token(detail::token::BEGIN, "START TRANSACTION");
+  replace_token(detail::token::COMMIT, "COMMIT");
+  replace_token(detail::token::ROLLBACK, "ROLLBACK");
 }
 
 const char* mysql_dialect::type_string(oos::data_type_t type) const

@@ -7,6 +7,7 @@
 
 #include "sql/token.hpp"
 #include "sql/value.hpp"
+#include "sql/basic_dialect.hpp"
 
 namespace oos {
 

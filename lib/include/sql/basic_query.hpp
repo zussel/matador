@@ -7,6 +7,7 @@
 
 #include "sql/commands.hpp"
 #include "sql/sql.hpp"
+#include "sql/column.hpp"
 
 #include <string>
 

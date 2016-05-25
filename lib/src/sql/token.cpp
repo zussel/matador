@@ -7,7 +7,7 @@
 namespace oos {
 namespace detail {
 
-token::token(basic_dialect::t_token tok)
+token::token(t_token tok)
   : type(tok)
 {}
 

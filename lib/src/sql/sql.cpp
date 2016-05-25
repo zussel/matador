@@ -99,7 +99,7 @@ std::string sql::compile(basic_dialect &dialect) const
 
 namespace detail {
 sql_token::sql_token(const sql &s)
-  : token(basic_dialect::NONE), sql_(s)
+  : token(NONE), sql_(s)
 { }
 
 std::string sql_token::compile(basic_dialect &d) const

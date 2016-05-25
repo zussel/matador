@@ -18,7 +18,6 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
-#include "sql/basic_dialect.hpp"
 #include "sql/types.hpp"
 
 #include <memory>
@@ -28,17 +27,53 @@
 
 namespace oos {
 
+class basic_dialect;
+
 namespace detail {
 
 /// @cond OOS_DEV
 struct token
 {
-  explicit token(basic_dialect::t_token tok);
+  enum t_token
+  {
+    CREATE_TABLE = 0,
+    DROP,
+    DELETE,
+    INSERT,
+    VALUES,
+    VALUE,
+    UPDATE,
+    SELECT,
+    COLUMNS,
+    COLUMN,
+    FROM,
+    WHERE,
+    AND,
+    OR,
+    ORDER_BY,
+    GROUP_BY,
+    ASC,
+    DESC,
+    TOP,
+    AS,
+    OFFSET,
+    DISTINCT,
+    CONDITION,
+    SET,
+    NOT_NULL,
+    PRIMARY_KEY,
+    BEGIN,
+    COMMIT,
+    ROLLBACK,
+    NONE
+  };
+
+  explicit token(t_token tok);
   virtual ~token() {}
 
   virtual std::string compile(basic_dialect &d) const = 0;
 
-  basic_dialect::t_token type;
+  t_token type;
 };
 
 }

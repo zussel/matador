@@ -40,7 +40,7 @@ namespace detail {
 
 struct basic_value : public token
 {
-  basic_value(basic_dialect::t_token tok) : token(tok) { }
+  basic_value(token::t_token tok) : token(tok) { }
 
   template < class T > T get() {
     oos::value<T> *v = dynamic_cast<oos::value<T>* >(this);
@@ -69,7 +69,7 @@ struct null_value : public detail::basic_value
 {
   static std::string NULLSTR;
 
-  null_value() : basic_value(basic_dialect::VALUE) { }
+  null_value() : basic_value(detail::token::VALUE) { }
 
   virtual void serialize(const char *id, serializer &srlzr);
 
@@ -83,7 +83,7 @@ struct value<T, typename std::enable_if<
   !std::is_same<char*, T>::value>::type> : public detail::basic_value
 {
   value(const T &val)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(val)
   { }
 
@@ -108,7 +108,7 @@ struct value<T, typename std::enable_if<
   std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
 {
   value(const T &val)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(val) { }
 
   virtual void serialize(const char *id, serializer &srlzr)
@@ -130,7 +130,7 @@ template<>
 struct value<char> : public detail::basic_value
 {
   value(char val)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(val) { }
 
   virtual void serialize(const char *id, serializer &srlzr)
@@ -152,7 +152,7 @@ template<>
 struct value<char*> : public detail::basic_value
 {
   value(const char *v, size_t l)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(v, v+l)
   {
     val.push_back('\0');
@@ -179,7 +179,7 @@ template<>
 struct value<oos::date> : public detail::basic_value
 {
   value(const oos::date &val)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(val) { }
 
   virtual void serialize(const char *id, serializer &srlzr)
@@ -201,7 +201,7 @@ template<>
 struct value<oos::time> : public detail::basic_value
 {
   value(const oos::time &val)
-    : basic_value(basic_dialect::VALUE)
+    : basic_value(detail::token::VALUE)
     , val(val)
   { }
 

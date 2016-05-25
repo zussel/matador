@@ -6,9 +6,12 @@
 #define OOS_BASIC_DIALECT_HPP
 
 #include "sql/types.hpp"
+#include "sql/token.hpp"
 
 #include <unordered_map>
+#include <memory>
 #include <string>
+#include <list>
 
 namespace oos {
 
@@ -55,47 +58,13 @@ public:
     DIRECT
   };
 
-  enum t_token
-  {
-    CREATE_TABLE = 0,
-    DROP,
-    DELETE,
-    INSERT,
-    VALUES,
-    VALUE,
-    UPDATE,
-    SELECT,
-    COLUMNS,
-    COLUMN,
-    FROM,
-    WHERE,
-    AND,
-    OR,
-    ORDER_BY,
-    GROUP_BY,
-    ASC,
-    DESC,
-    TOP,
-    AS,
-    OFFSET,
-    DISTINCT,
-    CONDITION,
-    SET,
-    NOT_NULL,
-    PRIMARY_KEY,
-    BEGIN,
-    COMMIT,
-    ROLLBACK,
-    NONE
-  };
-
 public:
   virtual ~basic_dialect() {}
 
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  std::string token(t_token tok) const { return tokens.at(tok); }
+  std::string token(detail::token::t_token tok) const { return tokens.at(tok); }
 
   virtual const char* type_string(data_type_t type) const = 0;
 
@@ -136,40 +105,40 @@ public:
 
 
 protected:
-  void replace_token(t_token tkn, const std::string &value);
+  void replace_token(detail::token::t_token tkn, const std::string &value);
 
 private:
   t_compile_type compile_type_;
-  typedef std::unordered_map<t_token, std::string, std::hash<int>> t_token_map;
+  typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {
-    {basic_dialect::CREATE_TABLE, "CREATE TABLE"},
-    {basic_dialect::DROP, "DROP TABLE"},
-    {basic_dialect::DELETE, "DELETE FROM"},
-    {basic_dialect::INSERT, "INSERT INTO"},
-    {basic_dialect::VALUES, "VALUES"},
-    {basic_dialect::UPDATE, "UPDATE"},
-    {basic_dialect::SELECT, "SELECT"},
-    {basic_dialect::COLUMNS, "COLUMNS"},
-    {basic_dialect::COLUMN, "COLUMN"},
-    {basic_dialect::FROM, "FROM"},
-    {basic_dialect::WHERE, "WHERE"},
-    {basic_dialect::AND, "AND"},
-    {basic_dialect::OR, "OR"},
-    {basic_dialect::ORDER_BY, "ORDER BY"},
-    {basic_dialect::GROUP_BY, "GROUP BY"},
-    {basic_dialect::ASC, "ASC"},
-    {basic_dialect::DESC, "DESC"},
-    {basic_dialect::TOP, "LIMIT"},
-    {basic_dialect::AS, "AS"},
-    {basic_dialect::OFFSET, "OFFSET"},
-    {basic_dialect::DISTINCT, "DISTINCT"},
-    {basic_dialect::SET, "SET"},
-    {basic_dialect::NOT_NULL, "NOT NULL"},
-    {basic_dialect::PRIMARY_KEY, "PRIMARY KEY"},
-    {basic_dialect::BEGIN, "BEGIN TRANSACTION"},
-    {basic_dialect::COMMIT, "COMMIT TRANSACTION"},
-    {basic_dialect::ROLLBACK, "ROLLBACK TRANSACTION"},
-    {basic_dialect::NONE, ""}
+    {detail::token::CREATE_TABLE, "CREATE TABLE"},
+    {detail::token::DROP, "DROP TABLE"},
+    {detail::token::DELETE, "DELETE FROM"},
+    {detail::token::INSERT, "INSERT INTO"},
+    {detail::token::VALUES, "VALUES"},
+    {detail::token::UPDATE, "UPDATE"},
+    {detail::token::SELECT, "SELECT"},
+    {detail::token::COLUMNS, "COLUMNS"},
+    {detail::token::COLUMN, "COLUMN"},
+    {detail::token::FROM, "FROM"},
+    {detail::token::WHERE, "WHERE"},
+    {detail::token::AND, "AND"},
+    {detail::token::OR, "OR"},
+    {detail::token::ORDER_BY, "ORDER BY"},
+    {detail::token::GROUP_BY, "GROUP BY"},
+    {detail::token::ASC, "ASC"},
+    {detail::token::DESC, "DESC"},
+    {detail::token::TOP, "LIMIT"},
+    {detail::token::AS, "AS"},
+    {detail::token::OFFSET, "OFFSET"},
+    {detail::token::DISTINCT, "DISTINCT"},
+    {detail::token::SET, "SET"},
+    {detail::token::NOT_NULL, "NOT NULL"},
+    {detail::token::PRIMARY_KEY, "PRIMARY KEY"},
+    {detail::token::BEGIN, "BEGIN TRANSACTION"},
+    {detail::token::COMMIT, "COMMIT TRANSACTION"},
+    {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
+    {detail::token::NONE, ""}
   };
 };
 
