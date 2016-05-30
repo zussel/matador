@@ -90,6 +90,9 @@ public:
   virtual void commit() override;
   virtual void rollback() override;
 
+  virtual std::string type() const override;
+  virtual std::string version() const override;
+
   virtual bool exists(const std::string &tablename);
   virtual std::vector<field> describe(const std::string &table) override;
 

@@ -58,6 +58,16 @@ void connection::rollback()
   impl_->rollback();
 }
 
+std::string connection::type() const
+{
+  return std::__cxx11::string();
+}
+
+std::string connection::version() const
+{
+  return std::__cxx11::string();
+}
+
 const char *connection::type_string(data_type_t) const
 {
   // Todo: re-implement

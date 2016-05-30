@@ -28,6 +28,9 @@ public:
 
   virtual void rollback() override {}
 
+  virtual std::string type() const override { return "memory"; };
+  virtual std::string version() const override { return "0.5.0"; };
+
   virtual const char *type_string(data_type_t) const { return nullptr; }
 
   virtual bool exists(const std::string &) override { return true; }

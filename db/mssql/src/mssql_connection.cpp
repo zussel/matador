@@ -193,6 +193,16 @@ void mssql_connection::rollback()
   execute_no_result("ROLLBACK;");
 }
 
+std::string mssql_connection::type() const
+{
+  return "mssql";
+}
+
+std::string mssql_connection::version() const
+{
+  return "1.1.1";
+}
+
 bool mssql_connection::exists(const std::string &tablename)
 {
   std::string stmt("SELECT TOP 1 COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='" + db_ + "' AND TABLE_NAME='" + tablename + "'");

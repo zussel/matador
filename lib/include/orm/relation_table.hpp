@@ -56,8 +56,23 @@ public:
     column owner_id(owner_id_column_);
     column item_id(item_id_column_);
 
+    // Todo: get database type (i.e. "mysql", "sqlite")
+    // Todo: get database version (i.e. "5.7.1", "3.8.2")
+    /*
+     * UPDATE:
+     * mysql: update <table> set item_id=<Value> where owner_id=? and item_id=? limit 1;
+     * sqlite: update <table> set item_id=8 where owner_id in (select * from (select owner_id from owner_item where owner_id=? and item_id=? limit 1) as p)
+     * mssql: ???
+     */
     update_ = q.update().set(&item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     // Todo: create delete statement like: delete from 'table' where owner=? and item=? top 1
+
+    /*
+     * UPDATE:
+     * mysql: delete from <table> where owner_id=? and item_id=? limit 1;
+     * sqlite: delete from <table> where owner_id in (select * from (select owner_id from owner_item where owner_id=? and item_id=? limit 1) as p)
+     * mssql: ???
+     */
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
   }
 

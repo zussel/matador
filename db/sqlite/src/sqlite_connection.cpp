@@ -94,6 +94,16 @@ void sqlite_connection::rollback()
   std::unique_ptr<sqlite_result> res(static_cast<sqlite_result*>(execute("ROLLBACK TRANSACTION;")));
 }
 
+std::string sqlite_connection::type() const
+{
+  return "sqlite";
+}
+
+std::string sqlite_connection::version() const
+{
+  return SQLITE_VERSION;
+}
+
 oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);

@@ -138,6 +138,16 @@ void mysql_connection::rollback()
   std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute("ROLLBACK;")));
 }
 
+std::string mysql_connection::type() const
+{
+  return "mysql";
+}
+
+std::string mysql_connection::version() const
+{
+  return mysql_get_server_info(const_cast<MYSQL*>(&mysql_));
+}
+
 bool mysql_connection::exists(const std::string &tablename)
 {
   std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");

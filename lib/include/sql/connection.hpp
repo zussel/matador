@@ -47,6 +47,9 @@ public:
   void commit();
   void rollback();
 
+  std::string type() const;
+  std::string version() const;
+
   void execute(const std::string &stmt)
   {
     std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));

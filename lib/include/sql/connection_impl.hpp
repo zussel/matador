@@ -38,6 +38,9 @@ public:
   virtual void commit() = 0;
   virtual void rollback() = 0;
 
+  virtual std::string type() const = 0;
+  virtual std::string version() const = 0;
+
   virtual bool exists(const std::string &tablename) = 0;
   virtual std::vector<field> describe(const std::string &table) = 0;
 
