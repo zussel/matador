@@ -64,6 +64,8 @@ public:
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
+  virtual void parse() const = 0;
+
   std::string token(detail::token::t_token tok) const { return tokens.at(tok); }
 
   virtual const char* type_string(data_type_t type) const = 0;
