@@ -7,7 +7,8 @@ SET(OBJECT_SOURCES
 	object/identifier.cpp
 	object/prototype_iterator.cpp
 	object/object_holder.cpp
-	object/transaction.cpp object/action_inserter.cpp
+	object/transaction.cpp
+	object/action_inserter.cpp
 	object/action_remover.cpp
 	object/insert_action.cpp
 	object/update_action.cpp
@@ -40,17 +41,12 @@ SET(OBJECT_INSTALL_HEADER
 )
 
 SET(OBJECT_HEADER
-	#../include/object/attribute_counter.hpp
 	../include/object/action.hpp
 	../include/object/attribute_serializer.hpp
 	../include/object/generic_access.hpp
 	../include/object/object_exception.hpp
 	../include/object/object_ptr.hpp
 	../include/object/object_store.hpp
-	#../include/object/object_container.hpp
-	#../include/object/object_list.hpp
-	#../include/object/object_vector.hpp
-	#../include/object/linked_object_list.hpp
 	../include/object/object_view.hpp
 	../include/object/object_proxy.hpp
 	../include/object/object_serializer.hpp
@@ -144,23 +140,27 @@ SET(TOOLS_HEADER
 )
 
 SET(SQL_SOURCES
-		sql/condition.cpp
-		sql/connection.cpp
-		sql/connection_factory.cpp
-		sql/result_impl.cpp
-		sql/sql.cpp
-		sql/statement_impl.cpp
-		sql/row.cpp
-		sql/sql_exception.cpp
-		sql/typed_column_serializer.cpp
-		sql/token.cpp
-		sql/column.cpp
-		sql/dialect_token.cpp
-		sql/value.cpp
-		sql/basic_dialect.cpp
-		sql/column_serializer.cpp
-		sql/value_serializer.cpp
-		sql/value_column_serializer.cpp sql/field.cpp sql/query.cpp sql/basic_query.cpp)
+  sql/condition.cpp
+  sql/connection.cpp
+  sql/connection_factory.cpp
+  sql/result_impl.cpp
+  sql/sql.cpp
+  sql/statement_impl.cpp
+  sql/row.cpp
+  sql/sql_exception.cpp
+  sql/typed_column_serializer.cpp
+  sql/token.cpp
+  sql/column.cpp
+  sql/dialect_token.cpp
+  sql/value.cpp
+  sql/basic_dialect.cpp
+  sql/column_serializer.cpp
+  sql/value_serializer.cpp
+  sql/value_column_serializer.cpp
+  sql/field.cpp
+  sql/query.cpp
+  sql/basic_query.cpp
+)
 
 SET(SQL_HEADER
 	../include/sql/condition.hpp
@@ -188,7 +188,9 @@ SET(SQL_HEADER
 	../include/sql/value_serializer.hpp
 	../include/sql/value_column_serializer.hpp
 	../include/sql/commands.hpp
-		../include/sql/basic_query.hpp)
+  ../include/sql/basic_query.hpp
+  ../include/sql/token_list.hpp
+)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
@@ -266,7 +268,7 @@ SET(UNIT_HEADER
   ../include/unit/test_suite.hpp
   ../include/unit/unit_exception.hpp
   ../include/unit/unit_test.hpp
-		../include/object/action_inserter.hpp)
+  ../include/object/action_inserter.hpp)
 
 SET(DATABASE_SOURCES
   database/action.cpp
@@ -320,8 +322,6 @@ ADD_LIBRARY(oos SHARED
   ${UNIT_HEADER}
   ${SQL_SOURCES}
   ${SQL_HEADER}
-#  ${DATABASE_SOURCES}
-#  ${DATABASE_HEADER}
 )
 
 TARGET_LINK_LIBRARIES(oos ${CMAKE_DL_LIBS})

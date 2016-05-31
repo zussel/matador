@@ -271,6 +271,9 @@ std::string mysql_dialect::compile(const oos::detail::sql_token &s)
   return s.compile(*this);
 }
 
+void mysql_dialect::parse(const token_list_t &) const
+{ }
+
 }
 
 }

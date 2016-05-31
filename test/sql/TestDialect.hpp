@@ -17,6 +17,8 @@ public:
 
   const char* type_string(oos::data_type_t type) const;
 
+  virtual void parse(const oos::token_list_t &) const override { }
+
   virtual std::string compile(const oos::detail::create &create);
   virtual std::string compile(const oos::detail::drop &drop);
   virtual std::string compile(const oos::detail::select &select1);

@@ -271,6 +271,13 @@ std::string sqlite_dialect::compile(const oos::detail::sql_token &s)
   return s.compile(*this);
 }
 
+void sqlite_dialect::parse(const token_list_t &tokens) const
+{
+  // Todo: find limit for update/delete and replace it with
+  // update <table> set item_id=8 where owner_id in (select * from (select owner_id from owner_item where owner_id=? and item_id=? limit 1) as p)
+  // delete from <table> where owner_id in (select * from (select owner_id from owner_item where owner_id=? and item_id=? limit 1) as p)
+}
+
 }
 
 }
