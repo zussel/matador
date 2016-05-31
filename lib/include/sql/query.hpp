@@ -586,6 +586,13 @@ private:
   row row_;
 };
 
+template < class T >
+query<T> select(const std::string &table)
+{
+  query<T> q(table);
+  return q.select();
+}
+
 query<row> select(columns cols);
 
 }

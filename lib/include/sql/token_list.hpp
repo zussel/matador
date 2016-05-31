@@ -11,7 +11,8 @@
 
 namespace oos {
 
-typedef std::list<std::shared_ptr<detail::token>> token_list_t;
+typedef std::shared_ptr<detail::token> token_ptr;
+typedef std::list<token_ptr> token_list_t;
 
 }
 

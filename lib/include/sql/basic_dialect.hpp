@@ -67,7 +67,7 @@ public:
 
   std::string token(detail::token::t_token tok) const { return tokens.at(tok); }
 
-  virtual void parse(const token_list_t &tokens) const = 0;
+  virtual void parse(token_list_t &tokens) const = 0;
   virtual const char* type_string(data_type_t type) const = 0;
 
   virtual std::string compile(const oos::detail::create &) = 0;
