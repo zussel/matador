@@ -34,6 +34,7 @@
 #include "sql/types.hpp"
 #include "sql/token.hpp"
 #include "sql/commands.hpp"
+#include "sql/token_list.hpp"
 
 #include <string>
 #include <map>
@@ -48,11 +49,6 @@ namespace oos {
 
 class OOS_API sql
 {
-public:
-
-public:
-  typedef std::list<std::shared_ptr<detail::token>> token_list_t;
-  
 public:
   sql();
   ~sql();

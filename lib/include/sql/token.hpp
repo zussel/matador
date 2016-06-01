@@ -28,6 +28,7 @@
 namespace oos {
 
 class basic_dialect;
+class token_visitor;
 
 namespace detail {
 
@@ -71,7 +72,7 @@ struct token
   explicit token(t_token tok);
   virtual ~token() {}
 
-  virtual std::string compile(basic_dialect &d) const = 0;
+  virtual void accept(token_visitor &visitor) = 0;
 
   t_token type;
 };

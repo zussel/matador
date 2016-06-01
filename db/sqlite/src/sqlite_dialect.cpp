@@ -271,6 +271,56 @@ std::string sqlite_dialect::compile(const oos::detail::sql_token &s)
   return s.compile(*this);
 }
 
+void sqlite_dialect::parse(token_list_t &tokens) const
+{
+  if (tokens.empty()) {
+    return;
+  }
+
+  token_ptr &first = tokens.front();
+
+  if (first->type == detail::token::UPDATE || first->type == detail::token::DELETE) {
+    // check if limit exists
+    auto limit = std::find_if(tokens.begin(), tokens.end(), [](const token_ptr &item) {
+      return item->type == detail::token::TOP;
+    });
+
+    if (limit == tokens.end()) {
+      // no limit
+      return;
+    }
+
+    // replace limit with sub select
+
+  }
+  // Todo: find limit for update/delete and replace it with
+
+  /*
+   * update <table> set item_id=8 where owner_id=? and item_id=? limit 1
+   * =>
+   * update <table> set item_id=8 where
+   *   owner_id in (
+   *     select * from (
+   *       select owner_id from owner_item where owner_id=? and item_id=? limit 1
+   *     )
+   *     as p
+   *   )
+   *
+   * delete from <table> where owner_id=? and item_id=? limit 1
+   *                           ------------------------
+   * =>
+   * delete from <table> where
+   *   owner_id in (
+   *     select * from (
+   *       select owner_id from owner_item where owner_id=? and item_id=? limit 1
+   *                                             ------------------------
+   *     )
+   *     as p
+   *   )
+   */
+
+}
+
 }
 
 }

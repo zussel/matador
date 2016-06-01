@@ -7,6 +7,8 @@
 
 #include "sql/types.hpp"
 #include "sql/token.hpp"
+#include "sql/token_list.hpp"
+#include "sql/token_visitor.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -16,41 +18,8 @@
 namespace oos {
 
 class sql;
-struct column;
-struct columns;
 
-namespace detail {
-
-struct select;
-struct insert;
-struct update;
-struct remove;
-struct typed_column;
-struct identifier_column;
-struct typed_varchar_column;
-struct values;
-struct basic_value;
-struct distinct;
-struct set;
-struct asc;
-struct desc;
-struct from;
-struct where;
-struct basic_condition;
-struct create;
-struct drop;
-struct top;
-struct as;
-struct order_by;
-struct group_by;
-struct begin;
-struct commit;
-struct rollback;
-struct sql_token;
-
-}
-
-class basic_dialect
+class basic_dialect : public token_visitor
 {
 public:
   enum t_compile_type {
@@ -68,36 +37,8 @@ public:
 
   std::string token(detail::token::t_token tok) const { return tokens.at(tok); }
 
+  virtual void parse(token_list_t &tokens) const = 0;
   virtual const char* type_string(data_type_t type) const = 0;
-
-  virtual std::string compile(const oos::detail::create &) = 0;
-  virtual std::string compile(const oos::detail::drop &) = 0;
-  virtual std::string compile(const oos::detail::select &) = 0;
-  virtual std::string compile(const oos::detail::distinct &) = 0;
-  virtual std::string compile(const oos::detail::update &) = 0;
-  virtual std::string compile(const oos::detail::set &) = 0;
-  virtual std::string compile(const oos::columns &) = 0;
-  virtual std::string compile(const oos::column &) = 0;
-  virtual std::string compile(const oos::detail::typed_column &) = 0;
-  virtual std::string compile(const oos::detail::identifier_column &) = 0;
-  virtual std::string compile(const oos::detail::typed_varchar_column &) = 0;
-  virtual std::string compile(const oos::detail::from &) = 0;
-  virtual std::string compile(const oos::detail::where &) = 0;
-  virtual std::string compile(const oos::detail::basic_condition &) = 0;
-  virtual std::string compile(const oos::detail::order_by &) = 0;
-  virtual std::string compile(const oos::detail::asc &) = 0;
-  virtual std::string compile(const oos::detail::desc &) = 0;
-  virtual std::string compile(const oos::detail::group_by &) = 0;
-  virtual std::string compile(const oos::detail::insert &) = 0;
-  virtual std::string compile(const oos::detail::values &) = 0;
-  virtual std::string compile(const oos::detail::basic_value &) = 0;
-  virtual std::string compile(const oos::detail::remove &) = 0;
-  virtual std::string compile(const oos::detail::top &) = 0;
-  virtual std::string compile(const oos::detail::as &) = 0;
-  virtual std::string compile(const oos::detail::begin &) = 0;
-  virtual std::string compile(const oos::detail::commit &) = 0;
-  virtual std::string compile(const oos::detail::rollback &) = 0;
-  virtual std::string compile(const oos::detail::sql_token &) = 0;
 
   t_compile_type compile_type() const { return compile_type_; }
 

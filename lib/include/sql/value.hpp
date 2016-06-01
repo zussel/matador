@@ -58,7 +58,7 @@ struct basic_value : public token
 
   virtual void serialize(const char *id, serializer &srlzr) = 0;
 
-  virtual std::string compile(basic_dialect &d) const;
+  virtual void accept(token_visitor &visitor);
 
   virtual std::string str() const = 0;
 };

@@ -15,7 +15,7 @@ struct column : public detail::token
 {
   column(const std::string &col);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string name;
 };
@@ -37,7 +37,7 @@ struct columns : public detail::token
 
   static columns all();
 
-  virtual std::string compile(basic_dialect &d) const;
+  virtual void accept(token_visitor &visitor);
 
   std::vector<std::shared_ptr<column>> columns_;
   t_brackets with_brackets_ = WITH_BRACKETS;
@@ -51,7 +51,7 @@ struct typed_column : public oos::column
 {
   typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   data_type_t type;
   std::size_t index;
@@ -62,9 +62,9 @@ struct identifier_column : public typed_column
 {
   identifier_column(const char *n, data_type_t t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this);
+    return visitor.visit(*this);
   }
 };
 
@@ -75,9 +75,9 @@ struct typed_varchar_column : public typed_column
     , size(size)
   { }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this);
+    return visitor.visit(*this);
   }
 
   size_t size;
@@ -89,9 +89,9 @@ struct identifier_varchar_column : public typed_varchar_column
     : typed_varchar_column(n, size, t, idx, host)
   { }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this);
+    return visitor.visit(*this);
   }
 };
 
@@ -114,9 +114,11 @@ struct value_column : public column
     , value_(val)
   { }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this) + "=" + value_.compile(d);
+
+
+    return visitor.visit(*this) + "=" + value_.compile(d);
   }
 
   value<T> value_;
@@ -141,9 +143,9 @@ struct value_column<char*> : public column
     , value_(val, s)
   { }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this) + "=" + value_.compile(d);
+    return visitor.visit(*this) + "=" + value_.compile(d);
   }
 
   value<char*> value_;

@@ -16,35 +16,35 @@ struct select : public token
 {
   select() : token(SELECT) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct begin : public token
 {
   begin() : token(BEGIN) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct commit : public token
 {
   commit() : token(COMMIT) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct rollback : public token
 {
   rollback() : token(ROLLBACK) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct drop : public token
 {
   drop(const std::string &t) : token(DROP), table(t) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -53,7 +53,7 @@ struct create : public token
 {
   create(const std::string &t);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -62,7 +62,7 @@ struct insert : public token
 {
   insert(const std::string &t);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -71,7 +71,7 @@ struct update : public token
 {
   update(const std::string &t);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -80,7 +80,7 @@ struct remove : public token
 {
   remove(const std::string &t);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -89,14 +89,14 @@ struct distinct : public token
 {
   distinct() : token(DISTINCT) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct set : public token
 {
   set() : token(SET) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct values : public token
@@ -105,7 +105,7 @@ struct values : public token
 
   void push_back(const std::shared_ptr<basic_value> &val) { values_.push_back(val); }
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual void accept(token_visitor &visitor) override
   {
     return d.compile(*this);
   }
@@ -117,21 +117,21 @@ struct asc : public token
 {
   asc() : token(ASC) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct desc : public token
 {
   desc() : token(DESC) {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 };
 
 struct from : public token
 {
   from(const std::string &t);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string table;
 };
@@ -140,7 +140,7 @@ struct top : public token
 {
   top(size_t lmt);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   size_t limit_;
 };
@@ -149,7 +149,7 @@ struct as : public token
 {
   as(const std::string &a);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string alias;
 };
@@ -158,7 +158,7 @@ struct order_by : public token
 {
   order_by(const std::string &col);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string column;
 };
@@ -167,7 +167,7 @@ struct group_by : public token
 {
   group_by(const std::string &col);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::string column;
 };
@@ -180,7 +180,7 @@ struct where : public token
     , cond(new COND(c))
   {}
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   std::shared_ptr<basic_condition> cond;
 };

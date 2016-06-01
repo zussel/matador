@@ -3,52 +3,53 @@
 //
 
 #include "sql/dialect_token.hpp"
+#include "sql/token_visitor.hpp"
 
 namespace oos {
 
 namespace detail {
 
-std::string select::compile(basic_dialect &d) const
+void select::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string rollback::compile(basic_dialect &d) const
+void rollback::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string begin::compile(basic_dialect &d) const
+void begin::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string commit::compile(basic_dialect &d) const
+void commit::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string drop::compile(basic_dialect &d) const
+void drop::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 create::create(const std::string &t)
   : token(CREATE_TABLE), table(t)
 {}
 
-std::string create::compile(basic_dialect &d) const
+void create::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 insert::insert(const std::string &t)
   : token(INSERT), table(t)
 {}
 
-std::string insert::compile(basic_dialect &d) const
+void insert::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 update::update(const std::string &t)
@@ -56,9 +57,9 @@ update::update(const std::string &t)
   , table(t)
 {}
 
-std::string update::compile(basic_dialect &d) const
+void update::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 remove::remove(const std::string &t)
@@ -66,79 +67,79 @@ remove::remove(const std::string &t)
   , table(t)
 {}
 
-std::string remove::compile(basic_dialect &d) const
+void remove::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string distinct::compile(basic_dialect &d) const
+void distinct::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string set::compile(basic_dialect &d) const
+void set::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string asc::compile(basic_dialect &d) const
+void asc::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string desc::compile(basic_dialect &d) const
+void desc::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 from::from(const std::string &t)
   : token(FROM), table(t)
 {}
 
-std::string from::compile(basic_dialect &d) const
+void from::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 top::top(size_t lmt)
   : token(TOP), limit_(lmt)
 {}
 
-std::string top::compile(basic_dialect &d) const
+void top::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 as::as(const std::string &a)
   : token(AS), alias(a)
 { }
 
-std::string as::compile(basic_dialect &d) const
+void as::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 order_by::order_by(const std::string &col)
   : token(ORDER_BY), column(col)
 {}
 
-std::string order_by::compile(basic_dialect &d) const
+void order_by::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 group_by::group_by(const std::string &col)
   : token(GROUP_BY), column(col)
 {}
 
-std::string group_by::compile(basic_dialect &d) const
+void group_by::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
-std::string where::compile(basic_dialect &d) const
+void where::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 }

@@ -264,6 +264,20 @@ std::string mssql_dialect::compile(const oos::detail::sql_token &s)
   return s.compile(*this);
 }
 
+void mssql_dialect::parse(token_list_t &tokens) const
+{
+  // Todo: find limit and move it to last select/update/delete
+  if (tokens.empty()) {
+    return;
+  }
+
+  token_ptr &first = tokens.front();
+
+  if (first->type == detail::token::SELECT) {
+
+  }
+}
+
 }
 
 }

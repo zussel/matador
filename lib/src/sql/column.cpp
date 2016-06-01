@@ -3,6 +3,7 @@
 //
 
 #include "sql/column.hpp"
+#include "sql/token_visitor.hpp"
 
 namespace oos {
 
@@ -11,9 +12,9 @@ column::column(const std::string &col)
   , name(col)
 {}
 
-std::string column::compile(basic_dialect &d) const
+void column::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 
@@ -38,9 +39,9 @@ typed_column::typed_column(const std::string &col, data_type_t t, std::size_t id
   , type(t), index(idx), is_host(host)
 {}
 
-std::string typed_column::compile(basic_dialect &d) const
+void typed_column::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 }
@@ -59,9 +60,9 @@ columns &columns::without_brackets()
   return *this;
 }
 
-std::string columns::compile(basic_dialect &d) const
+void columns::accept(token_visitor &visitor)
 {
-  return d.compile(*this);
+  return visitor.visit(*this);
 }
 
 columns columns::all()
