@@ -95,60 +95,50 @@ struct identifier_varchar_column : public typed_varchar_column
   }
 };
 
-template < class T >
-struct value_column : public column
+struct basic_value_column : public column
 {
-
-  value_column(const std::string &col, T&& val)
-    : column(col)
-    , value_(std::move(val))
-  { }
-
-  value_column(const std::string &col, T& val)
+  basic_value_column(const std::string &col, basic_value *val)
     : column(col)
     , value_(val)
+  { }
+
+  basic_value_column(const char *col, basic_value *val)
+    : column(col)
+    , value_(val)
+  { }
+
+  virtual void accept(token_visitor &visitor) override
+  {
+    visitor.visit(*this);
+//    return visitor.visit(*this) + "=" + value_.compile(d);
+  }
+
+  std::unique_ptr<basic_value> value_;
+};
+
+template < class T >
+struct value_column : public basic_value_column
+{
+
+  value_column(const std::string &col, T& val)
+    : basic_value_column(col, new value<T>(val))
   { }
 
   value_column(const char *col, T& val)
-    : column(col)
-    , value_(val)
+  : basic_value_column(col, new value<T>(val))
   { }
-
-  virtual void accept(token_visitor &visitor) override
-  {
-
-
-    return visitor.visit(*this) + "=" + value_.compile(d);
-  }
-
-  value<T> value_;
 };
 
 template <>
-struct value_column<char*> : public column
+struct value_column<char*> : public basic_value_column
 {
-
-  value_column(const std::string &col, char*&& val, size_t s)
-    : column(col)
-    , value_(std::move(val), s)
-  { }
-
   value_column(const std::string &col, char*& val, size_t s)
-    : column(col)
-    , value_(val, s)
+    : basic_value_column(col, new value<char*>(val, s))
   { }
 
   value_column(const char *col, char*& val, size_t s)
-    : column(col)
-    , value_(val, s)
+  : basic_value_column(col, new value<char*>(val, s))
   { }
-
-  virtual void accept(token_visitor &visitor) override
-  {
-    return visitor.visit(*this) + "=" + value_.compile(d);
-  }
-
-  value<char*> value_;
 };
 
 }
