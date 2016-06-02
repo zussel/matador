@@ -20,6 +20,8 @@ struct remove;
 struct typed_column;
 struct identifier_column;
 struct typed_varchar_column;
+struct identifier_varchar_column;
+struct basic_value_column;
 struct values;
 struct basic_value;
 struct distinct;
@@ -58,6 +60,8 @@ public:
   virtual void visit(const oos::detail::typed_column &) = 0;
   virtual void visit(const oos::detail::identifier_column &) = 0;
   virtual void visit(const oos::detail::typed_varchar_column &) = 0;
+  virtual void visit(const oos::detail::identifier_varchar_column &) = 0;
+  virtual void visit(const oos::detail::basic_value_column &) = 0;
   virtual void visit(const oos::detail::from &) = 0;
   virtual void visit(const oos::detail::where &) = 0;
   virtual void visit(const oos::detail::basic_condition &) = 0;

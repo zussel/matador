@@ -15,9 +15,10 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include "sql/sql.hpp"
-#include "sql/token.hpp"
+#include "sql/basic_dialect.hpp"
+
+#include <iostream>
 
 namespace oos {
 
@@ -92,9 +93,10 @@ std::string sql::compile(basic_dialect &dialect) const
 {
   std::string result;
   for(auto tokptr : token_list_) {
-    result.append(tokptr->compile(dialect));
+    tokptr->accept(dialect);
+//    result.append(tokptr->accept(dialect));
   }
-  return result;
+  return dialect.result();
 }
 
 namespace detail {
@@ -102,10 +104,11 @@ sql_token::sql_token(const sql &s)
   : token(NONE), sql_(s)
 { }
 
-std::string sql_token::compile(basic_dialect &d) const
+void sql_token::accept(token_visitor &visitor)
 {
-  std::string result("(");
-  return result.append(sql_.compile(d)).append(")");
+  visitor.visit(*this);
+//  std::string result("(");
+//  return result.append(sql_.compile(d)).append(")");
 }
 
 }

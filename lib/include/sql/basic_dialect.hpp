@@ -35,7 +35,7 @@ public:
 
   virtual void parse() const = 0;
 
-  std::string token(detail::token::t_token tok) const { return tokens.at(tok); }
+  std::string token_string(detail::token::t_token tok) const { return tokens.at(tok); }
 
   virtual void parse(token_list_t &tokens) const = 0;
   virtual const char* type_string(data_type_t type) const = 0;
@@ -46,11 +46,17 @@ public:
   virtual int bind_count() const { return 0; }
   virtual int column_count() const { return 0; }
 
+  std::string result() const;
+
+  virtual void visit(const oos::detail::top &);
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);
+  void append_to_result(const std::string &part);
 
 private:
+  std::string result_;
+
   t_compile_type compile_type_;
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {
@@ -83,6 +89,8 @@ private:
     {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
     {detail::token::NONE, ""}
   };
+
+
 };
 
 }

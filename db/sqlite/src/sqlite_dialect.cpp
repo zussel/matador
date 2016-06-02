@@ -87,13 +87,6 @@ data_type_t sqlite_dialect::string_type(const char *type) const
   }
 }
 
-std::string sqlite_dialect::compile(const oos::detail::top &top)
-{
-  std::stringstream res;
-  res << token(top.type) << " " << top.limit_ << " ";
-  return res.str();
-}
-
 std::string sqlite_dialect::compile(const oos::detail::as &alias)
 {
   std::stringstream res;

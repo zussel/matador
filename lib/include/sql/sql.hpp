@@ -79,7 +79,7 @@ struct sql_token : public token
 {
   sql_token(const sql &s);
 
-  virtual std::string compile(basic_dialect &d) const override;
+  virtual void accept(token_visitor &visitor) override;
 
   sql sql_;
 };
