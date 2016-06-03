@@ -234,7 +234,7 @@ std::string TestDialect::compile(const oos::detail::rollback &rllbck)
   return token(rllbck.type) + " ";
 }
 
-std::string TestDialect::compile(const oos::detail::sql_token &s)
+std::string TestDialect::compile(const oos::detail::query &s)
 {
   return s.compile(*this);
 }

@@ -46,7 +46,7 @@ public:
   virtual std::string compile(const oos::detail::begin &bgn);
   virtual std::string compile(const oos::detail::commit &cmmt);
   virtual std::string compile(const oos::detail::rollback &rllbck);
-  virtual std::string compile(const oos::detail::sql_token &s);
+  virtual std::string compile(const oos::detail::query &s);
 
   void reset() { bind_count_ = 0; column_count_ = 0; };
   virtual int bind_count() const override { return bind_count_; }

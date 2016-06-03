@@ -34,6 +34,7 @@ public:
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
+  void build(const sql &s);
   virtual void parse() const = 0;
 
   std::string token_string(detail::token::t_token tok) const { return tokens.at(tok); }
@@ -49,8 +50,36 @@ public:
 
   std::string result() const;
 
+  virtual void visit(const oos::detail::create &);
+  virtual void visit(const oos::detail::drop &);
+  virtual void visit(const oos::detail::select &);
+  virtual void visit(const oos::detail::distinct &);
+  virtual void visit(const oos::detail::update &);
+  virtual void visit(const oos::detail::set &);
+  virtual void visit(const oos::detail::as &);
   virtual void visit(const oos::detail::top &);
   virtual void visit(const oos::detail::remove &);
+  virtual void visit(const oos::detail::values &values);
+  virtual void visit(const oos::detail::basic_value &);
+  virtual void visit(const oos::detail::order_by &);
+  virtual void visit(const oos::detail::asc &);
+  virtual void visit(const oos::detail::desc &);
+  virtual void visit(const oos::detail::group_by &);
+  virtual void visit(const oos::detail::insert &);
+  virtual void visit(const oos::detail::from &);
+  virtual void visit(const oos::detail::where &);
+  virtual void visit(const oos::detail::basic_condition &);
+  virtual void visit(const oos::columns &);
+  virtual void visit(const oos::column &);
+  virtual void visit(const oos::detail::typed_column &);
+  virtual void visit(const oos::detail::identifier_column &);
+  virtual void visit(const oos::detail::typed_varchar_column &);
+  virtual void visit(const oos::detail::identifier_varchar_column &);
+  virtual void visit(const oos::detail::basic_value_column &);
+  virtual void visit(const oos::detail::begin &);
+  virtual void visit(const oos::detail::commit &);
+  virtual void visit(const oos::detail::rollback &);
+  virtual void visit(const oos::detail::query &);
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);

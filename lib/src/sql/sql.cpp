@@ -46,7 +46,7 @@ void sql::append(detail::token *tok)
 
 void sql::append(const sql &stmt)
 {
-  append(new detail::sql_token(stmt));
+  append(new detail::query(stmt));
 }
 
 void sql::reset(t_query_command command_type)
@@ -100,11 +100,11 @@ std::string sql::compile(basic_dialect &dialect) const
 }
 
 namespace detail {
-sql_token::sql_token(const sql &s)
+query::query(const sql &s)
   : token(NONE), sql_(s)
 { }
 
-void sql_token::accept(token_visitor &visitor)
+void query::accept(token_visitor &visitor)
 {
   visitor.visit(*this);
 //  std::string result("(");

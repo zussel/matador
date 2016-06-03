@@ -107,7 +107,7 @@ struct values : public token
 
   virtual void accept(token_visitor &visitor) override
   {
-    return d.compile(*this);
+    return visitor.visit(*this);
   }
 
   std::vector<std::shared_ptr<basic_value>> values_;

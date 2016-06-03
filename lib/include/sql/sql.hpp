@@ -75,9 +75,9 @@ private:
 
 namespace detail {
 
-struct sql_token : public token
+struct query : public token
 {
-  sql_token(const sql &s);
+  query(const sql &s);
 
   virtual void accept(token_visitor &visitor) override;
 

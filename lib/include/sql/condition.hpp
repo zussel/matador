@@ -70,7 +70,12 @@ public:
     num_operands = 9
   };
 
-  std::string compile(basic_dialect &d) const
+  virtual void accept(token_visitor &visitor) override
+  {
+    visitor.visit(*this);
+  }
+
+  virtual std::string compile(basic_dialect &d) const
   {
     return evaluate(d.compile_type());
   };
@@ -237,7 +242,7 @@ public:
           : field_(fld), query_(q)
   {}
 
-  virtual std::string compile(basic_dialect &d) const override
+  virtual std::string compile(basic_dialect &d) const
   {
     std::stringstream str;
     str << field_.name << " IN (";

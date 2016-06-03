@@ -40,7 +40,7 @@ struct group_by;
 struct begin;
 struct commit;
 struct rollback;
-struct sql_token;
+struct query;
 
 }
 
@@ -78,7 +78,7 @@ public:
   virtual void visit(const oos::detail::begin &) = 0;
   virtual void visit(const oos::detail::commit &) = 0;
   virtual void visit(const oos::detail::rollback &) = 0;
-  virtual void visit(const oos::detail::sql_token &) = 0;
+  virtual void visit(const oos::detail::query &) = 0;
 
 };
 
