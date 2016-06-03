@@ -9,6 +9,7 @@
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
 #include "sql/token_visitor.hpp"
+#include "dialect_token.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -49,6 +50,7 @@ public:
   std::string result() const;
 
   virtual void visit(const oos::detail::top &);
+  virtual void visit(const oos::detail::remove &);
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);

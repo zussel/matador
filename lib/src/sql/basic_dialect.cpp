@@ -36,6 +36,11 @@ void basic_dialect::visit(const oos::detail::top &top)
   append_to_result(res.str());
 }
 
+void basic_dialect::visit(const oos::detail::remove &)
+{
+
+}
+
 void basic_dialect::replace_token(detail::token::t_token tkn, const std::string &value)
 {
   tokens[tkn] = value;
