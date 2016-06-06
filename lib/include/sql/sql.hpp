@@ -35,6 +35,7 @@
 #include "sql/token.hpp"
 #include "sql/commands.hpp"
 #include "sql/token_list.hpp"
+#include "basic_dialect.hpp"
 
 #include <string>
 #include <map>
@@ -59,8 +60,6 @@ public:
 
   void reset(t_query_command command_type);
 
-  std::string compile(basic_dialect &dialect) const;
-
   static unsigned int type_size(data_type_t type);
   template < class T >
   static unsigned int data_type()
@@ -69,6 +68,8 @@ public:
   }
 
 private:
+  friend class basic_dialect;
+
   t_query_command command_type_;
   token_list_t token_list_;
 };

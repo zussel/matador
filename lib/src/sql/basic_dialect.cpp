@@ -10,17 +10,36 @@ namespace oos {
 
 std::string basic_dialect::direct(const sql &s)
 {
-  compile_type_ = DIRECT;
-  return s.compile(*this);
+  return build(s, DIRECT);
 }
 
 std::string basic_dialect::prepare(const sql &s)
 {
-  compile_type_ = PREPARED;
-  return s.compile(*this);
+  return build(s, PREPARED);
 }
 
-void basic_dialect::build(const sql &s)
+std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
+{
+  reset();
+  compile(s);
+  link(s);
+  compile_type_ = compile_type;
+  return result_;
+}
+
+void basic_dialect::reset()
+{
+  result_ = "";
+}
+
+void basic_dialect::compile(const sql &s)
+{
+  for(auto tokptr : s.token_list_) {
+    tokptr->accept(*this);
+  }
+}
+
+void basic_dialect::link(const sql &)
 {
 
 }

@@ -89,16 +89,6 @@ unsigned int sql::type_size(data_type_t type)
   }
 }
 
-std::string sql::compile(basic_dialect &dialect) const
-{
-  std::string result;
-  for(auto tokptr : token_list_) {
-    tokptr->accept(dialect);
-//    result.append(tokptr->accept(dialect));
-  }
-  return dialect.result();
-}
-
 namespace detail {
 query::query(const sql &s)
   : token(NONE), sql_(s)

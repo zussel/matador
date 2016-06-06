@@ -9,7 +9,6 @@
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
 #include "sql/token_visitor.hpp"
-#include "dialect_token.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -34,8 +33,11 @@ public:
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  void build(const sql &s);
-  virtual void parse() const = 0;
+  std::string build(const sql &s, t_compile_type compile_type);
+
+  void reset();
+  void compile(const sql &s);
+  void link(const sql &s);
 
   std::string token_string(detail::token::t_token tok) const { return tokens.at(tok); }
 
