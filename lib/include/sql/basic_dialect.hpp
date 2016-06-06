@@ -35,7 +35,7 @@ public:
 
   std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
-  void reset();
+  virtual void reset();
   void compile(const sql &s);
   void link(const sql &s);
 

@@ -85,18 +85,27 @@ data_type_t mysql_dialect::string_type(const char *type) const
   }
 }
 
-std::string mysql_dialect::compile(const oos::detail::basic_value &value)
+void mysql_dialect::reset()
+{
+  basic_dialect::reset();
+  bind_count_ = 0; column_count_ = 0;
+}
+
+void mysql_dialect::visit(const oos::detail::basic_value &value)
 {
   if (compile_type() == DIRECT) {
-    return value.str();
+    append_to_result(value.str());
   } else {
     ++bind_count_;
-    return "?";
+    append_to_result("?");
   }
 }
 
-void mysql_dialect::parse(token_list_t &) const
-{ }
+void mysql_dialect::visit(const oos::column &col)
+{
+  ++column_count_;
+  basic_dialect::visit(col);
+}
 
 }
 
