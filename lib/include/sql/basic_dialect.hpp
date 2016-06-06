@@ -33,7 +33,7 @@ public:
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  std::string build(const sql &s, t_compile_type compile_type);
+  std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
   void reset();
   void compile(const sql &s);
@@ -41,7 +41,6 @@ public:
 
   std::string token_string(detail::token::t_token tok) const { return tokens.at(tok); }
 
-  virtual void parse(token_list_t &tokens) const = 0;
   virtual const char* type_string(data_type_t type) const = 0;
 
   t_compile_type compile_type() const { return compile_type_; }
@@ -50,6 +49,7 @@ public:
   virtual int bind_count() const { return 0; }
   virtual int column_count() const { return 0; }
 
+  void append_to_result(const std::string &part);
   std::string result() const;
 
   virtual void visit(const oos::detail::create &);
@@ -85,7 +85,6 @@ public:
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);
-  void append_to_result(const std::string &part);
 
 private:
   std::string result_;

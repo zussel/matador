@@ -10,20 +10,22 @@ namespace oos {
 
 std::string basic_dialect::direct(const sql &s)
 {
-  return build(s, DIRECT);
+  return build(s, DIRECT, true);
 }
 
 std::string basic_dialect::prepare(const sql &s)
 {
-  return build(s, PREPARED);
+  return build(s, PREPARED, true);
 }
 
-std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
+std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool reset)
 {
-  reset();
+  if (reset) {
+    this->reset();
+  }
+  compile_type_ = compile_type;
   compile(s);
   link(s);
-  compile_type_ = compile_type;
   return result_;
 }
 
@@ -249,7 +251,7 @@ void basic_dialect::visit(const oos::detail::rollback &rollback)
 
 void basic_dialect::visit(const oos::detail::query &q)
 {
-  this->build(q.sql_);
+  this->build(q.sql_, compile_type_, false);
 }
 
 void basic_dialect::append_to_result(const std::string &part)

@@ -245,11 +245,13 @@ public:
   virtual std::string compile(basic_dialect &d) const
   {
     std::stringstream str;
-    str << field_.name << " IN (";
+    d.append_to_result(field_.name + " IN (");
 
-    str << query_.stmt().compile(d);
 
-    str << ")";
+    d.build(query_.stmt(), d.compile_type(), false);
+
+    d.append_to_result(")");
+
     return str.str();
   };
 

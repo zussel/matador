@@ -17,36 +17,9 @@ public:
   const char* type_string(oos::data_type_t type) const;
   data_type_t string_type(const char *type) const;
 
-  virtual void parse(token_list_t &) const override;
+  virtual void parse(token_list_t &) const;
 
-  virtual std::string compile(const oos::detail::create &create);
-  virtual std::string compile(const oos::detail::drop &drop);
-  virtual std::string compile(const oos::detail::select &select1);
-  virtual std::string compile(const oos::detail::distinct &distinct);
-  virtual std::string compile(const oos::detail::update &update);
-  virtual std::string compile(const oos::detail::set &set);
-  virtual std::string compile(const oos::columns &columns);
-  virtual std::string compile(const oos::column &column);
-  virtual std::string compile(const oos::detail::typed_column &column);
-  virtual std::string compile(const oos::detail::identifier_column &column);
-  virtual std::string compile(const oos::detail::typed_varchar_column &column);
-  virtual std::string compile(const oos::detail::from &from);
-  virtual std::string compile(const oos::detail::where &where);
-  virtual std::string compile(const oos::detail::basic_condition &token);
-  virtual std::string compile(const oos::detail::order_by &by);
-  virtual std::string compile(const oos::detail::asc &asc);
-  virtual std::string compile(const oos::detail::desc &desc);
-  virtual std::string compile(const oos::detail::group_by &by);
-  virtual std::string compile(const oos::detail::insert &insert);
-  virtual std::string compile(const oos::detail::values &values);
   virtual std::string compile(const oos::detail::basic_value &value);
-  virtual std::string compile(const oos::detail::remove &remove1);
-  virtual std::string compile(const oos::detail::top &limit);
-  virtual std::string compile(const oos::detail::as &alias);
-  virtual std::string compile(const oos::detail::begin &bgn);
-  virtual std::string compile(const oos::detail::commit &cmmt);
-  virtual std::string compile(const oos::detail::rollback &rllbck);
-  virtual std::string compile(const oos::detail::query &s);
 
   void reset() { bind_count_ = 0; column_count_ = 0; };
   virtual int bind_count() const override { return bind_count_; }
