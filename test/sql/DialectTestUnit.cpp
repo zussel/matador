@@ -136,7 +136,7 @@ void DialectTestUnit::test_select_all_query()
 
   s.append(new detail::select);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -159,7 +159,7 @@ void DialectTestUnit::test_select_distinct_query()
   s.append(new detail::select);
   s.append(new detail::distinct);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -182,7 +182,7 @@ void DialectTestUnit::test_select_limit_query()
   s.append(new detail::select);
   s.append(new detail::top(10));
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -204,7 +204,7 @@ void DialectTestUnit::test_select_ordered_query()
 
   s.append(new detail::select);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -228,7 +228,7 @@ void DialectTestUnit::test_select_grouped_query()
 
   s.append(new detail::select);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -251,7 +251,7 @@ void DialectTestUnit::test_select_where_query()
 
   s.append(new detail::select);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -297,7 +297,7 @@ void DialectTestUnit::test_update_query()
   s.append(new detail::update("person"));
   s.append(new detail::set);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   std::string dieter("Dieter");
   unsigned int age54(54);
@@ -319,7 +319,7 @@ void DialectTestUnit::test_update_where_query()
   s.append(new detail::update("person"));
   s.append(new detail::set);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   std::string dieter("Dieter");
   unsigned int age54(54);
@@ -345,7 +345,7 @@ void DialectTestUnit::test_update_prepare_query()
   s.append(new detail::update("person"));
   s.append(new detail::set);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   std::string dieter("Dieter");
   unsigned int age54(54);
@@ -367,7 +367,7 @@ void DialectTestUnit::test_update_where_prepare_query()
   s.append(new detail::update("person"));
   s.append(new detail::set);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
+  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   std::string dieter("Dieter");
   unsigned int age54(54);

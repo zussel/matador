@@ -69,7 +69,7 @@ void mysql_statement::reset()
 
 void mysql_statement::clear()
 {
-  for (int i = 0; i < host_size; ++i) {
+  for (size_t i = 0; i < host_size; ++i) {
     if (host_array[i].buffer) {
       delete [] static_cast<char*>(host_array[i].buffer);
     }
@@ -100,7 +100,7 @@ detail::result_impl* mysql_statement::execute()
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
-  return new mysql_prepared_result(stmt_, result_size);
+  return new mysql_prepared_result(stmt_, (int)result_size);
 }
 
 void mysql_statement::serialize(const char *, char &x)

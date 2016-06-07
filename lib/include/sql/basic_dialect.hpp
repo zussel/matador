@@ -39,15 +39,15 @@ public:
   void compile(const sql &s);
   void link(const sql &s);
 
-  std::string token_string(detail::token::t_token tok) const { return tokens.at(tok); }
+  std::string token_string(detail::token::t_token tok) const;
 
   virtual const char* type_string(data_type_t type) const = 0;
 
-  t_compile_type compile_type() const { return compile_type_; }
+  t_compile_type compile_type() const;
 
   bool is_preparing() const;
-  virtual int bind_count() const { return 0; }
-  virtual int column_count() const { return 0; }
+  virtual size_t bind_count() const;
+  virtual size_t column_count() const;
 
   void append_to_result(const std::string &part);
   std::string result() const;

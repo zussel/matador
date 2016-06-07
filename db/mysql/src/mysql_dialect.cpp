@@ -107,6 +107,16 @@ void mysql_dialect::visit(const oos::column &col)
   basic_dialect::visit(col);
 }
 
+size_t mysql_dialect::bind_count() const
+{
+  return bind_count_;
+}
+
+size_t mysql_dialect::column_count() const
+{
+  return column_count_;
+}
+
 }
 
 }

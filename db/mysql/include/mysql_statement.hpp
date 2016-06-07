@@ -94,8 +94,8 @@ private:
 
 private:
   mysql_connection &db_;
-  int result_size;
-  int host_size;
+  size_t result_size;
+  size_t host_size;
   std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt_ = nullptr;
   MYSQL_BIND *host_array = nullptr;

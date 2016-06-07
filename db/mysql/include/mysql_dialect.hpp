@@ -22,12 +22,12 @@ public:
   virtual void visit(const oos::column &col) override;
 
   virtual void reset() override;
-  virtual int bind_count() const override { return bind_count_; }
-  virtual int column_count() const override { return column_count_; }
+  virtual size_t bind_count() const override;
+  virtual size_t column_count() const override;
 
 private:
-  int bind_count_ = 0;
-  int column_count_ = 0;
+  size_t bind_count_ = 0;
+  size_t column_count_ = 0;
 };
 
 }

@@ -225,9 +225,10 @@ void basic_dialect::visit(const oos::detail::identifier_varchar_column &col)
   append_to_result(str.str());
 }
 
-void basic_dialect::visit(const oos::detail::basic_value_column &)
+void basic_dialect::visit(const oos::detail::basic_value_column &col)
 {
-
+  append_to_result(col.name + "=");
+  col.value_->accept(*this);
 }
 
 void basic_dialect::replace_token(detail::token::t_token tkn, const std::string &value)
@@ -257,6 +258,26 @@ void basic_dialect::visit(const oos::detail::query &q)
 void basic_dialect::append_to_result(const std::string &part)
 {
   result_ += part;
+}
+
+size_t basic_dialect::bind_count() const
+{
+  return 0;
+}
+
+size_t basic_dialect::column_count() const
+{
+  return 0;
+}
+
+basic_dialect::t_compile_type basic_dialect::compile_type() const
+{
+  return compile_type_;
+}
+
+std::string basic_dialect::token_string(detail::token::t_token tok) const
+{
+  return tokens.at(tok);
 }
 
 }
