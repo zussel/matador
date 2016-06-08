@@ -17,17 +17,6 @@ public:
   mysql_dialect();
   const char* type_string(oos::data_type_t type) const;
   data_type_t string_type(const char *type) const;
-
-  virtual void visit(const oos::detail::basic_value &value) override;
-  virtual void visit(const oos::column &col) override;
-
-  virtual void reset() override;
-  virtual size_t bind_count() const override;
-  virtual size_t column_count() const override;
-
-private:
-  size_t bind_count_ = 0;
-  size_t column_count_ = 0;
 };
 
 }

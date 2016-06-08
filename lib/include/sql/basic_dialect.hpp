@@ -35,7 +35,7 @@ public:
 
   std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
-  virtual void reset();
+  void reset();
   void compile(const sql &s);
   void link(const sql &s);
 
@@ -46,8 +46,14 @@ public:
   t_compile_type compile_type() const;
 
   bool is_preparing() const;
-  virtual size_t bind_count() const;
-  virtual size_t column_count() const;
+  size_t bind_count() const;
+  size_t column_count() const;
+
+  size_t inc_bind_count();
+  size_t dec_bind_count();
+
+  size_t inc_column_count();
+  size_t dec_column_count();
 
   void append_to_result(const std::string &part);
   std::string result() const;
@@ -71,6 +77,8 @@ public:
   virtual void visit(const oos::detail::from &);
   virtual void visit(const oos::detail::where &);
   virtual void visit(const oos::detail::basic_condition &);
+  virtual void visit(const oos::detail::basic_column_condition &);
+  virtual void visit(const oos::detail::basic_in_condition &);
   virtual void visit(const oos::columns &);
   virtual void visit(const oos::column &);
   virtual void visit(const oos::detail::typed_column &);
@@ -88,6 +96,8 @@ protected:
 
 private:
   std::string result_;
+  size_t bind_count_ = 0;
+  size_t column_count_ = 0;
 
   t_compile_type compile_type_;
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;

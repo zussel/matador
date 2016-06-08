@@ -32,6 +32,8 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool
 void basic_dialect::reset()
 {
   result_ = "";
+  bind_count_ = 0;
+  column_count_ = 0;
 }
 
 void basic_dialect::compile(const sql &s)
@@ -126,6 +128,7 @@ void basic_dialect::visit(const oos::detail::basic_value &val)
   if (compile_type() == DIRECT) {
     append_to_result(val.str());
   } else {
+    ++bind_count_;
     append_to_result("?");
   }
 }
@@ -172,6 +175,18 @@ void basic_dialect::visit(const oos::detail::basic_condition &cond)
   append_to_result(cond.compile(*this));
 }
 
+void basic_dialect::visit(const oos::detail::basic_column_condition &cond)
+{
+  ++bind_count_;
+  append_to_result(cond.compile(*this));
+}
+
+void basic_dialect::visit(const oos::detail::basic_in_condition &cond)
+{
+  bind_count_ += cond.size();
+  append_to_result(cond.compile(*this));
+}
+
 void basic_dialect::visit(const oos::columns &cols)
 {
   if (cols.with_brackets_ == columns::WITH_BRACKETS) {
@@ -199,6 +214,7 @@ void basic_dialect::visit(const oos::columns &cols)
 void basic_dialect::visit(const oos::column &col)
 {
   append_to_result(col.name);
+  ++column_count_;
 }
 
 void basic_dialect::visit(const oos::detail::typed_column &col)
@@ -236,6 +252,26 @@ void basic_dialect::replace_token(detail::token::t_token tkn, const std::string 
   tokens[tkn] = value;
 }
 
+size_t basic_dialect::inc_bind_count()
+{
+  return ++bind_count_;
+}
+
+size_t basic_dialect::dec_bind_count()
+{
+  return --bind_count_;
+}
+
+size_t basic_dialect::inc_column_count()
+{
+  return ++column_count_;
+}
+
+size_t basic_dialect::dec_column_count()
+{
+  return --column_count_;
+}
+
 void basic_dialect::visit(const oos::detail::begin &begin)
 {
   append_to_result(token_string(begin.type) + " ");
@@ -262,12 +298,12 @@ void basic_dialect::append_to_result(const std::string &part)
 
 size_t basic_dialect::bind_count() const
 {
-  return 0;
+  return bind_count_;
 }
 
 size_t basic_dialect::column_count() const
 {
-  return 0;
+  return column_count_;
 }
 
 basic_dialect::t_compile_type basic_dialect::compile_type() const

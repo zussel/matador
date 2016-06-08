@@ -85,38 +85,6 @@ data_type_t mysql_dialect::string_type(const char *type) const
   }
 }
 
-void mysql_dialect::reset()
-{
-  basic_dialect::reset();
-  bind_count_ = 0; column_count_ = 0;
-}
-
-void mysql_dialect::visit(const oos::detail::basic_value &value)
-{
-  if (compile_type() == DIRECT) {
-    append_to_result(value.str());
-  } else {
-    ++bind_count_;
-    append_to_result("?");
-  }
-}
-
-void mysql_dialect::visit(const oos::column &col)
-{
-  ++column_count_;
-  basic_dialect::visit(col);
-}
-
-size_t mysql_dialect::bind_count() const
-{
-  return bind_count_;
-}
-
-size_t mysql_dialect::column_count() const
-{
-  return column_count_;
-}
-
 }
 
 }

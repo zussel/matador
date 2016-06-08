@@ -75,14 +75,43 @@ public:
     visitor.visit(*this);
   }
 
-  virtual std::string compile(basic_dialect &d) const
-  {
-    return evaluate(d.compile_type());
-  };
-
+  virtual std::string compile(basic_dialect &d) const = 0;
   virtual std::string evaluate(basic_dialect::t_compile_type compiler_type) const = 0;
 
   static std::array<std::string, num_operands> operands;
+};
+
+class basic_column_condition : public basic_condition
+{
+public:
+  column field_;
+  std::string operand;
+
+  basic_column_condition(const column &fld, detail::basic_condition::t_operand op)
+    : field_(fld), operand(detail::basic_condition::operands[op])
+  { }
+
+  virtual void accept(token_visitor &visitor) override
+  {
+    visitor.visit(*this);
+  }
+};
+
+class basic_in_condition : public basic_condition
+{
+public:
+  column field_;
+
+  basic_in_condition(const column &fld)
+    : field_(fld)
+  { }
+
+  virtual void accept(token_visitor &visitor) override
+  {
+    visitor.visit(*this);
+  }
+
+  virtual size_t size() const = 0;
 };
 
 }
@@ -104,14 +133,14 @@ template<class T>
 class condition<column, T, typename std::enable_if<
   std::is_scalar<T>::value &&
   !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public detail::basic_condition
+  !std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
 {
 public:
   condition(const column &fld, detail::basic_condition::t_operand op, T val)
-    : field_(fld), operand(detail::basic_condition::operands[op]), value(val) { }
+    : basic_column_condition(fld, op)
+    , value(val)
+  { }
 
-  column field_;
-  std::string operand;
   T value;
 
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
@@ -129,14 +158,14 @@ public:
 template<class T>
 class condition<column, T, typename std::enable_if<
   std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public detail::basic_condition
+  std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
 {
 public:
   condition(const column &fld, detail::basic_condition::t_operand op, T val)
-    : field_(fld), operand(detail::basic_condition::operands[op]), value(val) { }
+    : basic_column_condition(fld, op)
+    ,value(val)
+  { }
 
-  column field_;
-  std::string operand;
   T value;
 
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
@@ -155,14 +184,14 @@ template<class T>
 class condition<T, column, typename std::enable_if<
   std::is_scalar<T>::value &&
   !std::is_same<std::string, T>::value &&
-  !std::is_same<const char*, T>::value>::type> : public detail::basic_condition
+  !std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
 {
 public:
   condition(T val, detail::basic_condition::t_operand op, const column &fld)
-    : field_(fld), operand(detail::basic_condition::operands[op]), value(val) { }
+    : basic_column_condition(fld, op)
+    , value(val)
+  { }
 
-  column field_;
-  std::string operand;
   T value;
 
   std::string evaluate(basic_dialect::t_compile_type compiler_type) const
@@ -176,14 +205,14 @@ public:
 template<class T>
 class condition<T, column, typename std::enable_if<
   std::is_same<std::string, T>::value ||
-  std::is_same<const char*, T>::value>::type> : public detail::basic_condition
+  std::is_same<const char*, T>::value>::type> : public detail::basic_column_condition
 {
 public:
   condition(T val, detail::basic_condition::t_operand op, const column &fld)
-    : field_(fld), operand(detail::basic_condition::operands[op]), value(val) { }
+    : basic_column_condition(fld, op)
+    , value(val)
+  { }
 
-  column field_;
-  std::string operand;
   T value;
 
   std::string evaluate(basic_dialect::t_compile_type) const
@@ -196,11 +225,12 @@ public:
 
 template <>
 template < class V >
-class condition<column, std::initializer_list<V>> : public detail::basic_condition
+class condition<column, std::initializer_list<V>> : public detail::basic_in_condition
 {
 public:
   condition(const column &fld, const std::initializer_list<V> &args)
-    : field_(fld), args_(args)
+    : basic_in_condition(fld)
+    , args_(args)
   {}
 
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
@@ -230,7 +260,6 @@ public:
     return str.str();
   }
 
-  column field_;
   std::vector<V> args_;
 };
 
@@ -247,7 +276,6 @@ public:
     std::stringstream str;
     d.append_to_result(field_.name + " IN (");
 
-
     d.build(query_.stmt(), d.compile_type(), false);
 
     d.append_to_result(")");
@@ -255,7 +283,7 @@ public:
     return str.str();
   };
 
-  std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
+  std::string evaluate(basic_dialect &) const { return ""; }
 
   column field_;
   const detail::basic_query &query_;
@@ -268,10 +296,14 @@ public:
   condition(const column &fld, const std::pair<T, T> &range)
     : field_(fld), range_(range) { }
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
-    str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
+    if (compile_type == basic_dialect::DIRECT) {
+      str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
+    } else {
+      str << field_.name << " BETWEEN ? AND ?";
+    }
     return str.str();
   }
 

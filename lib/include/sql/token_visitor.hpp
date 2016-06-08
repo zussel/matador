@@ -31,6 +31,8 @@ struct desc;
 struct from;
 struct where;
 struct basic_condition;
+struct basic_column_condition;
+struct basic_in_condition;
 struct create;
 struct drop;
 struct top;
@@ -65,6 +67,8 @@ public:
   virtual void visit(const oos::detail::from &) = 0;
   virtual void visit(const oos::detail::where &) = 0;
   virtual void visit(const oos::detail::basic_condition &) = 0;
+  virtual void visit(const oos::detail::basic_column_condition &) = 0;
+  virtual void visit(const oos::detail::basic_in_condition &) = 0;
   virtual void visit(const oos::detail::order_by &) = 0;
   virtual void visit(const oos::detail::asc &) = 0;
   virtual void visit(const oos::detail::desc &) = 0;
