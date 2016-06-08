@@ -91,6 +91,7 @@ void basic_query::throw_invalid(state_t next, state_t current)
     case basic_query::QUERY_ORDERBY:
       if (current != basic_query::QUERY_SELECT &&
           current != basic_query::QUERY_WHERE &&
+          current != basic_query::QUERY_FROM &&
           current != basic_query::QUERY_COND_WHERE)
       {
         msg << "invalid next state: [" << state2text(next) << "] (current: " << state2text(current) << ")";

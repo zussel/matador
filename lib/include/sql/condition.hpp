@@ -75,7 +75,7 @@ public:
     visitor.visit(*this);
   }
 
-  virtual std::string compile(basic_dialect &d) const = 0;
+  virtual std::string compile(basic_dialect &d) const;
   virtual std::string evaluate(basic_dialect::t_compile_type compiler_type) const = 0;
 
   static std::array<std::string, num_operands> operands;
@@ -260,6 +260,11 @@ public:
     return str.str();
   }
 
+  virtual size_t size() const override
+  {
+    return args_.size();
+  }
+
   std::vector<V> args_;
 };
 
@@ -283,7 +288,7 @@ public:
     return str.str();
   };
 
-  std::string evaluate(basic_dialect &) const { return ""; }
+  std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
 
   column field_;
   const detail::basic_query &query_;
