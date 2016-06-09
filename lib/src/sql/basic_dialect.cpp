@@ -22,7 +22,7 @@ std::string basic_dialect::prepare(const sql &s)
   return build(s, PREPARED, true);
 }
 
-std::string basic_dialect::build(sql &s, t_compile_type compile_type, bool reset)
+std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool reset)
 {
   if (reset) {
     this->reset();

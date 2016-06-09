@@ -35,7 +35,7 @@ public:
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  std::string build(sql &s, t_compile_type compile_type, bool reset);
+  std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
   void reset();
   void compile(sql &s);
