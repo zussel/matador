@@ -2,7 +2,7 @@
 // Created by sascha on 9/7/15.
 //
 
-#include "SQLTestUnit.hpp"
+#include "QueryTestUnit.hpp"
 
 #include "../Item.hpp"
 
@@ -10,29 +10,29 @@
 
 using namespace oos;
 
-SQLTestUnit::SQLTestUnit(const std::string &name, const std::string &msg, const std::string &db)
+QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db)
   : unit_test(name, msg)
   , db_(db)
 {
-  add_test("datatypes", std::bind(&SQLTestUnit::test_datatypes, this), "test sql datatypes");
-  add_test("describe", std::bind(&SQLTestUnit::test_describe, this), "test describe table");
-  add_test("identifier", std::bind(&SQLTestUnit::test_identifier, this), "test sql identifier");
-  add_test("create", std::bind(&SQLTestUnit::test_create, this), "test direct sql create statement");
-  add_test("statement_insert", std::bind(&SQLTestUnit::test_statement_insert, this), "test prepared sql insert statement");
-  add_test("statement_update", std::bind(&SQLTestUnit::test_statement_update, this), "test prepared sql update statement");
-  add_test("foreign_query", std::bind(&SQLTestUnit::test_foreign_query, this), "test query with foreign key");
-  add_test("query", std::bind(&SQLTestUnit::test_query, this), "test query");
-  add_test("select", std::bind(&SQLTestUnit::test_query_select, this), "test query select");
-  add_test("select_columns", std::bind(&SQLTestUnit::test_query_select_columns, this), "test query select columns");
-  add_test("sub_select", std::bind(&SQLTestUnit::test_query_select_sub_select, this), "test query sub select");
+  add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
+  add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
+  add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
+  add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
+  add_test("statement_insert", std::bind(&QueryTestUnit::test_statement_insert, this), "test prepared sql insert statement");
+  add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
+  add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
+  add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
+  add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
+  add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("sub_select", std::bind(&QueryTestUnit::test_query_select_sub_select, this), "test query sub select");
 }
 
-void SQLTestUnit::initialize()
+void QueryTestUnit::initialize()
 {
   connection_.reset(create_connection());
 }
 
-void SQLTestUnit::test_datatypes()
+void QueryTestUnit::test_datatypes()
 {
   connection_->open();
 
@@ -103,7 +103,7 @@ void SQLTestUnit::test_datatypes()
   q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_describe()
+void QueryTestUnit::test_describe()
 {
   connection_->open();
 
@@ -146,7 +146,7 @@ public:
   std::string name;
 };
 
-void SQLTestUnit::test_identifier()
+void QueryTestUnit::test_identifier()
 {
   connection_->open();
 
@@ -174,7 +174,7 @@ void SQLTestUnit::test_identifier()
   q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_create()
+void QueryTestUnit::test_create()
 {
   connection_->open();
 
@@ -205,7 +205,7 @@ void SQLTestUnit::test_create()
   res = q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_statement_insert()
+void QueryTestUnit::test_statement_insert()
 {
   connection_->open();
 
@@ -247,7 +247,7 @@ void SQLTestUnit::test_statement_insert()
   res = stmt.execute();
 }
 
-void SQLTestUnit::test_statement_update()
+void QueryTestUnit::test_statement_update()
 {
   connection_->open();
 
@@ -344,7 +344,7 @@ void SQLTestUnit::test_statement_update()
 
 }
 
-void SQLTestUnit::test_foreign_query()
+void QueryTestUnit::test_foreign_query()
 {
   connection_->open();
 
@@ -390,7 +390,7 @@ void SQLTestUnit::test_foreign_query()
   q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_query()
+void QueryTestUnit::test_query()
 {
   connection_->open();
 
@@ -426,7 +426,7 @@ void SQLTestUnit::test_query()
   q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_query_select()
+void QueryTestUnit::test_query_select()
 {
   connection_->open();
 
@@ -523,7 +523,7 @@ void SQLTestUnit::test_query_select()
   res = q.drop().execute(*connection_);
 }
 
-void SQLTestUnit::test_query_select_columns()
+void QueryTestUnit::test_query_select_columns()
 {
   connection_->open();
 
@@ -568,7 +568,7 @@ void SQLTestUnit::test_query_select_columns()
 
 }
 
-void SQLTestUnit::test_query_select_sub_select()
+void QueryTestUnit::test_query_select_sub_select()
 {
   connection_->open();
 
@@ -612,11 +612,11 @@ void SQLTestUnit::test_query_select_sub_select()
   q.drop().execute(*connection_);
 }
 
-connection* SQLTestUnit::create_connection()
+connection* QueryTestUnit::create_connection()
 {
   return new connection(db_);
 }
 
-std::string SQLTestUnit::db() const {
+std::string QueryTestUnit::db() const {
   return db_;
 }

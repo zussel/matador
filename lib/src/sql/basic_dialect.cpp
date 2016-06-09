@@ -288,7 +288,9 @@ void basic_dialect::visit(const oos::detail::rollback &rollback)
 
 void basic_dialect::visit(const oos::detail::query &q)
 {
+  append_to_result("(");
   this->build(q.sql_, compile_type_, false);
+  append_to_result(") ");
 }
 
 void basic_dialect::append_to_result(const std::string &part)

@@ -14,10 +14,10 @@ namespace oos {
 class connection;
 }
 
-class SQLTestUnit : public oos::unit_test
+class QueryTestUnit : public oos::unit_test
 {
 public:
-  SQLTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
+  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
 
   virtual void initialize();
 

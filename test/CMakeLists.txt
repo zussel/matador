@@ -60,8 +60,8 @@ SET (TEST_SQL_SOURCES
 #  sql/DatabaseTestUnit.hpp
   sql/ConnectionTestUnit.cpp
   sql/ConnectionTestUnit.hpp
-  sql/SQLTestUnit.cpp
-  sql/SQLTestUnit.hpp
+  sql/QueryTestUnit.cpp
+  sql/QueryTestUnit.hpp
   sql/ConditionUnitTest.cpp
   sql/ConditionUnitTest.hpp
   sql/DialectTestUnit.cpp
