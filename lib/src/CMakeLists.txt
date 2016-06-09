@@ -137,7 +137,7 @@ SET(TOOLS_HEADER
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
   ../include/tools/identifiable_holder.hpp
-)
+  ../include/sql/basic_dialect_compiler.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp
@@ -160,6 +160,7 @@ SET(SQL_SOURCES
   sql/field.cpp
   sql/query.cpp
   sql/basic_query.cpp
+  sql/basic_dialect_compiler.cpp
 )
 
 SET(SQL_HEADER

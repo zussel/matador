@@ -9,6 +9,7 @@
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
 #include "sql/token_visitor.hpp"
+#include "sql/basic_dialect_compiler.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -28,16 +29,17 @@ public:
   };
 
 public:
+  explicit basic_dialect(detail::basic_dialect_compiler *compiler);
   virtual ~basic_dialect() {}
 
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  std::string build(const sql &s, t_compile_type compile_type, bool reset);
+  std::string build(sql &s, t_compile_type compile_type, bool reset);
 
   void reset();
-  void compile(const sql &s);
-  void link(const sql &s);
+  void compile(sql &s);
+  void link(sql &s);
 
   std::string token_string(detail::token::t_token tok) const;
 
@@ -100,6 +102,9 @@ private:
   size_t column_count_ = 0;
 
   t_compile_type compile_type_;
+
+  std::unique_ptr<detail::basic_dialect_compiler> compiler_;
+
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {
     {detail::token::CREATE_TABLE, "CREATE TABLE"},

@@ -8,6 +8,10 @@
 
 namespace oos {
 
+basic_dialect::basic_dialect(detail::basic_dialect_compiler *compiler)
+  : compiler_(compiler)
+{}
+
 std::string basic_dialect::direct(const sql &s)
 {
   return build(s, DIRECT, true);
@@ -18,7 +22,7 @@ std::string basic_dialect::prepare(const sql &s)
   return build(s, PREPARED, true);
 }
 
-std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool reset)
+std::string basic_dialect::build(sql &s, t_compile_type compile_type, bool reset)
 {
   if (reset) {
     this->reset();
@@ -36,16 +40,17 @@ void basic_dialect::reset()
   column_count_ = 0;
 }
 
-void basic_dialect::compile(const sql &s)
+void basic_dialect::compile(sql &s)
 {
+  compiler_->compile(s);
+}
+
+void basic_dialect::link(sql &s)
+{
+  // build the query
   for(auto tokptr : s.token_list_) {
     tokptr->accept(*this);
   }
-}
-
-void basic_dialect::link(const sql &)
-{
-
 }
 
 bool basic_dialect::is_preparing() const

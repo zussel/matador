@@ -24,9 +24,7 @@ namespace oos {
 
 sql::sql()
   : command_type_(t_query_command::UNKNOWN)
-{
-
-}
+{ }
 
 sql::~sql()
 {

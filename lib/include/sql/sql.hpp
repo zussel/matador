@@ -35,7 +35,6 @@
 #include "sql/token.hpp"
 #include "sql/commands.hpp"
 #include "sql/token_list.hpp"
-#include "basic_dialect.hpp"
 
 #include <string>
 #include <map>
@@ -47,6 +46,11 @@
 namespace oos {
 
 /// @cond OOS_DEV
+
+namespace detail {
+
+class basic_dialect_compiler;
+}
 
 class OOS_API sql
 {
@@ -69,6 +73,7 @@ public:
 
 private:
   friend class basic_dialect;
+  friend class detail::basic_dialect_compiler;
 
   t_query_command command_type_;
   token_list_t token_list_;
