@@ -4,6 +4,7 @@ SET(MSSQL_DATABASE_SOURCES
   src/mssql_statement.cpp
   src/mssql_result.cpp
   src/mssql_dialect.cpp
+  src/mssql_dialect_compiler.cpp
 )
 
 SET(MSSQL_DATABASE_HEADER
@@ -13,6 +14,7 @@ SET(MSSQL_DATABASE_HEADER
   include/mssql_result.hpp
   include/mssql_types.hpp
   include/mssql_dialect.hpp
+  include/mssql_dialect_compiler.hpp
 )
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/db/mssql/include)
@@ -30,14 +32,14 @@ SET_TARGET_PROPERTIES(oos-mssql
 TARGET_LINK_LIBRARIES(oos-mssql oos ${ODBC_LIBRARY})
 
 INSTALL(
-	TARGETS oos-mssql
-	ARCHIVE	DESTINATION lib
-	LIBRARY DESTINATION lib
-	COMPONENT libraries
+  TARGETS oos-mssql
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  COMPONENT libraries
 )
 
 INSTALL(
-	TARGETS oos-mssql
-	DESTINATION lib
-	COMPONENT libraries
+  TARGETS oos-mssql
+  DESTINATION lib
+  COMPONENT libraries
 )

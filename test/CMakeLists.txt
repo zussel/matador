@@ -26,10 +26,6 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.hpp
   object/ObjectStoreTestUnit.cpp
   object/ObjectStoreTestUnit.hpp
-#  object/ObjectListTestUnit.cpp
-#  object/ObjectListTestUnit.hpp
-#  object/ObjectVectorTestUnit.cpp
-#  object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
   object/PrimaryKeyUnitTest.cpp
@@ -56,8 +52,6 @@ SET (TEST_JSON_SOURCES
 )
 
 SET (TEST_SQL_SOURCES
-#  sql/DatabaseTestUnit.cpp
-#  sql/DatabaseTestUnit.hpp
   sql/ConnectionTestUnit.cpp
   sql/ConnectionTestUnit.hpp
   sql/QueryTestUnit.cpp
@@ -68,11 +62,11 @@ SET (TEST_SQL_SOURCES
   sql/DialectTestUnit.hpp
   sql/TestDialect.cpp
   sql/TestDialect.hpp
+  sql/MSSQLDialectTestUnit.cpp
+  sql/MSSQLDialectTestUnit.hpp
 )
 
 SET (TEST_ORM_SOURCES
-#  sql/DatabaseTestUnit.cpp
-#  sql/DatabaseTestUnit.hpp
   orm/TransactionTestUnit.cpp
   orm/TransactionTestUnit.hpp
   orm/OrmTestUnit.cpp

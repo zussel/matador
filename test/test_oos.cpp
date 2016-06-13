@@ -41,6 +41,7 @@
 #include "sql/DialectTestUnit.hpp"
 #include "sql/QueryTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
+#include "sql/MSSQLDialectTestUnit.hpp"
 
 //#include "json/JsonTestUnit.hpp"
 
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new DatabaseTestUnit("mssql_connection", "mssql sql test unit", connection::mssql));
   suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", connection::mssql));
+  suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
 #ifdef OOS_SQLITE3
