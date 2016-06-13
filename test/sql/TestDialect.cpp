@@ -10,6 +10,10 @@
 
 using namespace oos;
 
+TestDialect::TestDialect()
+  : basic_dialect(new detail::basic_dialect_compiler)
+{ }
+
 const char* TestDialect::type_string(data_type_t type) const
 {
   switch(type) {

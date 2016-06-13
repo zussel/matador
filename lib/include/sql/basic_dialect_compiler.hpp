@@ -15,7 +15,7 @@ namespace detail {
 class basic_dialect_compiler : public token_visitor
 {
 public:
-  void compile(const sql &s);
+  void compile(token_list_t &tokens);
 
   virtual void visit(const oos::detail::create &create1) override;
 

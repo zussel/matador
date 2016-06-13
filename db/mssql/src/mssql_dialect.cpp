@@ -14,6 +14,7 @@ namespace oos {
 namespace mssql {
 
 mssql_dialect::mssql_dialect()
+  : basic_dialect(new detail::basic_dialect_compiler)
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");

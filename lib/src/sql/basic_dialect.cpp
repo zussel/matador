@@ -28,8 +28,9 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool
     this->reset();
   }
   compile_type_ = compile_type;
-  compile(s);
-  link(s);
+  tokens_ = s.token_list_;
+  compile();
+  link();
   return result_;
 }
 
@@ -40,15 +41,15 @@ void basic_dialect::reset()
   column_count_ = 0;
 }
 
-void basic_dialect::compile(sql &s)
+void basic_dialect::compile()
 {
-  compiler_->compile(s);
+  compiler_->compile(tokens_);
 }
 
-void basic_dialect::link(sql &s)
+void basic_dialect::link()
 {
   // build the query
-  for(auto tokptr : s.token_list_) {
+  for(auto tokptr : tokens_) {
     tokptr->accept(*this);
   }
 }

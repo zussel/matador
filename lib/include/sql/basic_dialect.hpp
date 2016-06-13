@@ -38,8 +38,8 @@ public:
   std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
   void reset();
-  void compile(sql &s);
-  void link(sql &s);
+  void compile();
+  void link();
 
   std::string token_string(detail::token::t_token tok) const;
 
@@ -102,6 +102,8 @@ private:
   size_t column_count_ = 0;
 
   t_compile_type compile_type_;
+
+  token_list_t tokens_;
 
   std::unique_ptr<detail::basic_dialect_compiler> compiler_;
 
