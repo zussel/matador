@@ -11,18 +11,22 @@ namespace detail {
 
 void basic_dialect_compiler::compile(token_list_t &tokens)
 {
-  token_list_t backup;
-  backup.swap(tokens);
+  tokens_.clear();
+  tokens_.swap(tokens);
 
-  current_ = backup.begin();
-  auto last = backup.end();
+  on_compile_start();
+
+  current_ = tokens_.begin();
+  auto last = tokens_.end();
 
   while (current_ != last) {
     (*current_)->accept(*this);
     ++current_;
   }
 
-  backup.swap(tokens);
+  on_compile_finish();
+
+  tokens_.swap(tokens);
 }
 
 void basic_dialect_compiler::visit(const oos::detail::create &) { }
@@ -88,6 +92,10 @@ void basic_dialect_compiler::visit(const oos::detail::commit &) { }
 void basic_dialect_compiler::visit(const oos::detail::rollback &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::query &) { }
+
+void basic_dialect_compiler::on_compile_start() { }
+
+void basic_dialect_compiler::on_compile_finish() { }
 
 }
 

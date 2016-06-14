@@ -83,7 +83,6 @@ public:
   virtual void visit(const oos::detail::commit &) = 0;
   virtual void visit(const oos::detail::rollback &) = 0;
   virtual void visit(const oos::detail::query &) = 0;
-
 };
 
 }
