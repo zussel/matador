@@ -594,8 +594,8 @@ void QueryTestUnit::test_query_select_sub_select()
   column id("id");
 
   auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
-//  std::cout << "\nSQL: " << subselect.str(*connection_, false) << "\n";
-//  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*connection_, false) << "\n";
+  std::cout << "\nSQL: " << subselect.str(*connection_, false) << "\n";
+  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*connection_, false) << "\n";
 
   res = q.select().where(oos::in(id, subselect)).execute(*connection_);
 

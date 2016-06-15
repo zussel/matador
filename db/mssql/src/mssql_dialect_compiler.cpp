@@ -11,25 +11,35 @@ namespace mssql {
 mssql_dialect_compiler::mssql_dialect_compiler()
 { }
 
-void mssql_dialect_compiler::visit(const oos::detail::select &select1)
+void mssql_dialect_compiler::visit(const oos::detail::select &)
 {
-  current_select_ = current_;
+  selects_.push(current_);
 }
 
-void mssql_dialect_compiler::visit(const oos::detail::top &top1)
+void mssql_dialect_compiler::visit(const oos::detail::top &)
 {
-  if (current_select_ == tokens_.end()) {
+  if (selects_.empty()) {
     return;
   }
 
   // move limit behind select
-
-  current_select_ = tokens_.end();
+  auto top = *current_;
+  current_ = tokens_.erase(current_);
+  auto current_select = selects_.top();
+  selects_.pop();
+  tokens_.insert(++current_select, top);
 }
 
 void mssql_dialect_compiler::on_compile_start()
 {
-  current_select_ = tokens_.end();
+  while (!selects_.empty()) {
+    selects_.pop();
+  }
+}
+
+void mssql_dialect_compiler::visit(const oos::detail::query &query1)
+{
+  int i = 9;
 }
 
 }

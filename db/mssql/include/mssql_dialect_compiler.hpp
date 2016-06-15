@@ -5,6 +5,7 @@
 #ifndef OOS_MSSQL_DIALECT_COMPILER_HPP
 #define OOS_MSSQL_DIALECT_COMPILER_HPP
 
+#include <stack>
 #include "sql/basic_dialect_compiler.hpp"
 
 namespace oos {
@@ -18,12 +19,13 @@ public:
 
   virtual void visit(const oos::detail::select &select1) override;
   virtual void visit(const oos::detail::top &top1) override;
+  virtual void visit(const oos::detail::query &query1) override;
 
 protected:
   virtual void on_compile_start() override;
 
 private:
-  token_list_t::iterator current_select_;
+  std::stack<token_list_t::iterator> selects_;
 };
 
 }
