@@ -14,6 +14,7 @@ public:
   MSSQLDialectTestUnit();
 
   void test_limit();
+  void test_query_select_sub_select();
 };
 
 

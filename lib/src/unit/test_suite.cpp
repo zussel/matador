@@ -197,7 +197,7 @@ bool test_suite::run(const std::string &unit, const std::string &test)
 
 std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)
 {
-  out << "summary for " << s.tests << " test with " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
+  out << "summary for " << s.tests << " tests with " << s.asserts << " asserts: (succeeded: " << s.succeeded << "), (failures: " << s.failures << "), (errors: " << s.errors << ")\n";
   return out;
 }
 
