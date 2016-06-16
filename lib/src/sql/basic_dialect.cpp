@@ -28,9 +28,9 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool
     this->reset();
   }
   compile_type_ = compile_type;
-  tokens_ = s.token_list_;
+  prepare(s.token_list_);
   compile();
-  link();
+  link(s.token_list_);
   return result_;
 }
 
@@ -41,15 +41,21 @@ void basic_dialect::reset()
   column_count_ = 0;
 }
 
+void basic_dialect::prepare(const token_list_t &tokens)
+{
+//  preparator_.prepare(tokens);
+  tokens_ = tokens;
+}
+
 void basic_dialect::compile()
 {
   compiler_->compile(tokens_);
 }
 
-void basic_dialect::link()
+void basic_dialect::link(const token_list_t &tokens)
 {
   // build the query
-  for(auto tokptr : tokens_) {
+  for(auto tokptr : tokens) {
     tokptr->accept(*this);
   }
 }
@@ -292,10 +298,11 @@ void basic_dialect::visit(const oos::detail::rollback &rollback)
   append_to_result(token_string(rollback.type) + " ");
 }
 
-void basic_dialect::visit(const oos::detail::query &q)
+void basic_dialect::visit(oos::detail::query &q)
 {
   append_to_result("(");
-  this->build(q.sql_, compile_type_, false);
+  link(q.sql_.token_list_);
+//  this->build(q.sql_, compile_type_, false);
   append_to_result(") ");
 }
 

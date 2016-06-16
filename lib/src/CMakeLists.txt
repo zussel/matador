@@ -136,8 +136,7 @@ SET(TOOLS_HEADER
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
-  ../include/tools/identifiable_holder.hpp
-  ../include/sql/basic_dialect_compiler.hpp)
+  ../include/tools/identifiable_holder.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp
@@ -160,8 +159,7 @@ SET(SQL_SOURCES
   sql/field.cpp
   sql/query.cpp
   sql/basic_query.cpp
-  sql/basic_dialect_compiler.cpp
-)
+  sql/basic_dialect_compiler.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -191,7 +189,8 @@ SET(SQL_HEADER
   ../include/sql/commands.hpp
   ../include/sql/basic_query.hpp
   ../include/sql/token_list.hpp
-  ../include/sql/token_visitor.hpp)
+  ../include/sql/token_visitor.hpp
+  ../include/sql/basic_dialect_compiler.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp

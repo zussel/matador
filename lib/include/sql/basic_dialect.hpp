@@ -37,10 +37,6 @@ public:
 
   std::string build(const sql &s, t_compile_type compile_type, bool reset);
 
-  void reset();
-  void compile();
-  void link();
-
   std::string token_string(detail::token::t_token tok) const;
 
   virtual const char* type_string(data_type_t type) const = 0;
@@ -91,12 +87,17 @@ public:
   virtual void visit(const oos::detail::begin &);
   virtual void visit(const oos::detail::commit &);
   virtual void visit(const oos::detail::rollback &);
-  virtual void visit(const oos::detail::query &);
+  virtual void visit(oos::detail::query &);
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);
 
 private:
+  void reset();
+  void prepare(const token_list_t &tokens);
+  void compile();
+  void link(const token_list_t &tokens);
+
   std::string result_;
   size_t bind_count_ = 0;
   size_t column_count_ = 0;

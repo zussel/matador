@@ -5,6 +5,7 @@
 #ifndef OOS_BASIC_DIALECT_COMPILER_HPP
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 
+#include <stack>
 #include "sql/token_visitor.hpp"
 #include "sql/token_list.hpp"
 
@@ -48,15 +49,21 @@ public:
   virtual void visit(const oos::detail::begin &begin1) override;
   virtual void visit(const oos::detail::commit &commit1) override;
   virtual void visit(const oos::detail::rollback &rollback1) override;
-  virtual void visit(const oos::detail::query &query1) override;
+  virtual void visit(oos::detail::query &query1) override;
 
 protected:
   virtual void on_compile_start();
   virtual void on_compile_finish();
 
 protected:
-  token_list_t tokens_;
-  token_list_t::iterator current_;
+  struct token_data
+  {
+    token_data(token_list_t &tokens);
+    token_list_t tokens_;
+    token_list_t::iterator current_;
+  };
+
+  std::stack<token_data> token_data_stack_;
 };
 
 }

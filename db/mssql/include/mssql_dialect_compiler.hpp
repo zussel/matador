@@ -19,7 +19,6 @@ public:
 
   virtual void visit(const oos::detail::select &select1) override;
   virtual void visit(const oos::detail::top &top1) override;
-  virtual void visit(const oos::detail::query &query1) override;
 
 protected:
   virtual void on_compile_start() override;

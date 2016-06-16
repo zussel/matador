@@ -11,22 +11,21 @@ namespace detail {
 
 void basic_dialect_compiler::compile(token_list_t &tokens)
 {
-  tokens_.clear();
-  tokens_.swap(tokens);
+  token_data_stack_.push(token_data(tokens));
 
   on_compile_start();
 
-  current_ = tokens_.begin();
-  auto last = tokens_.end();
+  auto last = token_data_stack_.top().tokens_.end();
 
-  while (current_ != last) {
-    (*current_)->accept(*this);
-    ++current_;
+  while (token_data_stack_.top().current_ != last) {
+    (*token_data_stack_.top().current_)->accept(*this);
+    ++token_data_stack_.top().current_;
   }
 
   on_compile_finish();
 
-  tokens_.swap(tokens);
+  token_data_stack_.top().tokens_.swap(tokens);
+  token_data_stack_.pop();
 }
 
 void basic_dialect_compiler::visit(const oos::detail::create &) { }
@@ -91,11 +90,20 @@ void basic_dialect_compiler::visit(const oos::detail::commit &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::rollback &) { }
 
-void basic_dialect_compiler::visit(const oos::detail::query &) { }
+void basic_dialect_compiler::visit(oos::detail::query &q)
+{
+  compile(q.sql_.token_list_);
+}
 
 void basic_dialect_compiler::on_compile_start() { }
 
 void basic_dialect_compiler::on_compile_finish() { }
+
+basic_dialect_compiler::token_data::token_data(token_list_t &tokens)
+{
+  tokens_.swap(tokens);
+  current_ = tokens_.begin();
+}
 
 }
 
