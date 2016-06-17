@@ -16,6 +16,7 @@ namespace detail {
 struct select;
 struct insert;
 struct update;
+struct tablename;
 struct remove;
 struct typed_column;
 struct identifier_column;
@@ -56,6 +57,7 @@ public:
   virtual void visit(const oos::detail::select &) = 0;
   virtual void visit(const oos::detail::distinct &) = 0;
   virtual void visit(const oos::detail::update &) = 0;
+  virtual void visit(const oos::detail::tablename &) = 0;
   virtual void visit(const oos::detail::set &) = 0;
   virtual void visit(const oos::columns &) = 0;
   virtual void visit(const oos::column &) = 0;

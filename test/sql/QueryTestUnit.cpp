@@ -24,6 +24,8 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
   add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
+  add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
+  add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
 }
 
 void QueryTestUnit::initialize()
@@ -565,6 +567,92 @@ void QueryTestUnit::test_query_select_columns()
 
   q.drop().execute(*connection_);
 
+}
+
+struct relation
+{
+  typedef unsigned long t_id;
+  t_id owner = 0UL;
+  t_id item = 0UL;
+
+  relation() {}
+  relation(t_id oid, t_id iid)
+    : owner(oid), item(iid)
+  {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("owner_id", owner);
+    serializer.serialize("item_id", item);
+  }
+};
+
+void QueryTestUnit::test_select_limit()
+{
+  connection_->open();
+
+  query<relation> q("relation");
+
+  // create item table and insert item
+  result<relation> res(q.create().execute(*connection_));
+
+  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(1UL, 1UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(1UL, 2UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(2UL, 3UL));
+  res = q.insert(r1.get()).execute(*connection_);
+
+  q.select().limit(1);
+
+  res = q.execute(*connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<relation> item(first.release());
+    ++first;
+  }
+
+  q.drop().execute(*connection_);
+
+  connection_->close();
+}
+
+void QueryTestUnit::test_update_limit()
+{
+  connection_->open();
+
+  query<relation> q("relation");
+
+  // create item table and insert item
+  result<relation> res(q.create().execute(*connection_));
+
+  std::unique_ptr<relation> r1(new relation(1UL, 1UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(1UL, 1UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(1UL, 2UL));
+  res = q.insert(r1.get()).execute(*connection_);
+  r1.reset(new relation(2UL, 3UL));
+  res = q.insert(r1.get()).execute(*connection_);
+
+  oos::column owner("owner_id");
+  oos::column item("item_id");
+  relation::t_id newid(4UL);
+  q.update().set(item.name, newid).where(owner == 1 && item == 1).limit(1);
+
+  std::cout << "SQL: " << q.str(*connection_, false) << "\n";
+
+  res = q.execute(*connection_);
+
+  q.drop().execute(*connection_);
+
+  connection_->close();
 }
 
 connection* QueryTestUnit::create_connection()

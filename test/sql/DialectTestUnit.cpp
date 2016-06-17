@@ -294,7 +294,8 @@ void DialectTestUnit::test_update_query()
 {
   sql s;
 
-  s.append(new detail::update("person"));
+  s.append(new detail::update);
+  s.append(new detail::tablename("person"));
   s.append(new detail::set);
 
   std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -316,7 +317,8 @@ void DialectTestUnit::test_update_where_query()
 {
   sql s;
 
-  s.append(new detail::update("person"));
+  s.append(new detail::update);
+  s.append(new detail::tablename("person"));
   s.append(new detail::set);
 
   std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -342,7 +344,8 @@ void DialectTestUnit::test_update_prepare_query()
 {
   sql s;
 
-  s.append(new detail::update("person"));
+  s.append(new detail::update);
+  s.append(new detail::tablename("person"));
   s.append(new detail::set);
 
   std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
@@ -364,7 +367,8 @@ void DialectTestUnit::test_update_where_prepare_query()
 {
   sql s;
 
-  s.append(new detail::update("person"));
+  s.append(new detail::update);
+  s.append(new detail::tablename("person"));
   s.append(new detail::set);
 
   std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));

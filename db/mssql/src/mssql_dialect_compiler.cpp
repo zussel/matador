@@ -13,27 +13,37 @@ mssql_dialect_compiler::mssql_dialect_compiler()
 
 void mssql_dialect_compiler::visit(const oos::detail::select &)
 {
-  selects_.push(token_data_stack_.top().current_);
+  commands_.push(token_data_stack_.top().current_);
+}
+
+void mssql_dialect_compiler::visit(const oos::detail::update &)
+{
+  commands_.push(token_data_stack_.top().current_);
+}
+
+void mssql_dialect_compiler::visit(const oos::detail::remove &)
+{
+  commands_.push(token_data_stack_.top().current_);
 }
 
 void mssql_dialect_compiler::visit(const oos::detail::top &)
 {
-  if (selects_.empty()) {
+  if (commands_.empty()) {
     return;
   }
 
   // move limit behind select
   auto top = *token_data_stack_.top().current_;
-  token_data_stack_.top().current_ = token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
-  auto current_select = selects_.top();
-  selects_.pop();
-  token_data_stack_.top().tokens_.insert(++current_select, top);
+  token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
+  auto current_command = commands_.top();
+  commands_.pop();
+  token_data_stack_.top().tokens_.insert(++current_command, top);
 }
 
 void mssql_dialect_compiler::on_compile_start()
 {
-  while (!selects_.empty()) {
-    selects_.pop();
+  while (!commands_.empty()) {
+    commands_.pop();
   }
 }
 

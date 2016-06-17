@@ -65,6 +65,7 @@ struct token
     PRIMARY_KEY,
     BEGIN,
     COMMIT,
+    TABLE,
     ROLLBACK,
     NONE
   };

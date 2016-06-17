@@ -61,6 +61,7 @@ public:
   virtual void visit(const oos::detail::select &);
   virtual void visit(const oos::detail::distinct &);
   virtual void visit(const oos::detail::update &);
+  virtual void visit(const oos::detail::tablename &table) override;
   virtual void visit(const oos::detail::set &);
   virtual void visit(const oos::detail::as &);
   virtual void visit(const oos::detail::top &);

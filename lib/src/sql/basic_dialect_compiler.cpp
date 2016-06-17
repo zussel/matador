@@ -16,10 +16,13 @@ void basic_dialect_compiler::compile(token_list_t &tokens)
   on_compile_start();
 
   auto last = token_data_stack_.top().tokens_.end();
+  token_list_t::iterator next;
 
   while (token_data_stack_.top().current_ != last) {
+    (next = token_data_stack_.top().current_)++;
+    auto tok = token_data_stack_.top().current_->get();
     (*token_data_stack_.top().current_)->accept(*this);
-    ++token_data_stack_.top().current_;
+    token_data_stack_.top().current_ = next;
   }
 
   on_compile_finish();
@@ -37,6 +40,8 @@ void basic_dialect_compiler::visit(const oos::detail::select &) { }
 void basic_dialect_compiler::visit(const oos::detail::distinct &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::update &) { }
+
+void basic_dialect_compiler::visit(const oos::detail::tablename &table1) { }
 
 void basic_dialect_compiler::visit(const oos::detail::set &) { }
 

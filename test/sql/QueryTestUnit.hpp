@@ -31,7 +31,8 @@ public:
   void test_query();
   void test_query_select();
   void test_query_select_columns();
-  void test_query_select_sub_select();
+  void test_select_limit();
+  void test_update_limit();
 
 protected:
   oos::connection* create_connection();

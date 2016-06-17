@@ -214,7 +214,8 @@ public:
   {
     reset(t_query_command::UPDATE);
 
-    sql_.append(new detail::update(table_name_));
+    sql_.append(new detail::update);
+    sql_.append(new detail::tablename(table_name_));
     sql_.append(new detail::set);
     sql_.append(update_columns_);
 

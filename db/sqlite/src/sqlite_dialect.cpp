@@ -22,7 +22,6 @@ sqlite_dialect::sqlite_dialect()
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT TRANSACTION");
   replace_token(detail::token::ROLLBACK, "ROLLBACK TRANSACTION");
-  replace_token(detail::token::TOP, "TOP");
 }
 
 const char *sqlite_dialect::type_string(oos::data_type_t type) const

@@ -18,13 +18,15 @@ public:
   mssql_dialect_compiler();
 
   virtual void visit(const oos::detail::select &select1) override;
+  virtual void visit(const oos::detail::update &update1) override;
+  virtual void visit(const oos::detail::remove &remove1) override;
   virtual void visit(const oos::detail::top &top1) override;
 
 protected:
   virtual void on_compile_start() override;
 
 private:
-  std::stack<token_list_t::iterator> selects_;
+  std::stack<token_list_t::iterator> commands_;
 };
 
 }

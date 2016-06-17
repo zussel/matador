@@ -69,11 +69,18 @@ struct insert : public token
 
 struct update : public token
 {
-  update(const std::string &t);
+  update();
+
+  virtual void accept(token_visitor &visitor) override;
+};
+
+struct tablename : public token
+{
+  tablename(const std::string &t);
 
   virtual void accept(token_visitor &visitor) override;
 
-  std::string table;
+  std::string tab;
 };
 
 struct remove : public token

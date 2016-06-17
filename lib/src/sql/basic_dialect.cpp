@@ -30,7 +30,7 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type, bool
   compile_type_ = compile_type;
   prepare(s.token_list_);
   compile();
-  link(s.token_list_);
+  link(tokens_);
   return result_;
 }
 
@@ -92,7 +92,12 @@ void basic_dialect::visit(const oos::detail::distinct &distinct)
 
 void basic_dialect::visit(const oos::detail::update &update)
 {
-  append_to_result(token_string(update.type) + " " + update.table + " ");
+  append_to_result(token_string(update.type) + " ");
+}
+
+void basic_dialect::visit(const oos::detail::tablename &table)
+{
+  append_to_result(table.tab + " ");
 }
 
 void basic_dialect::visit(const oos::detail::set &set)

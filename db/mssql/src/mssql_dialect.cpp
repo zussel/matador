@@ -82,18 +82,11 @@ data_type_t mssql_dialect::string_type(const char *type) const
   }
 }
 
-void mssql_dialect::parse(token_list_t &tokens) const
+void mssql_dialect::visit(const oos::detail::top &top)
 {
-  // Todo: find limit and move it to last select/update/delete
-  if (tokens.empty()) {
-    return;
-  }
-
-  token_ptr &first = tokens.front();
-
-  if (first->type == detail::token::SELECT) {
-
-  }
+  std::stringstream res;
+  res << token_string(top.type) << " (" << top.limit_ << ") ";
+  append_to_result(res.str());
 }
 
 }

@@ -11,27 +11,27 @@ namespace detail {
 
 void select::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void rollback::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void begin::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void commit::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void drop::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 create::create(const std::string &t)
@@ -40,7 +40,7 @@ create::create(const std::string &t)
 
 void create::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 insert::insert(const std::string &t)
@@ -49,17 +49,26 @@ insert::insert(const std::string &t)
 
 void insert::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
-update::update(const std::string &t)
+update::update()
   : token(UPDATE)
-  , table(t)
 {}
 
 void update::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
+}
+
+tablename::tablename(const std::string &t)
+  : token(TABLE)
+  , tab(t)
+{}
+
+void tablename::accept(token_visitor &visitor)
+{
+  visitor.visit(*this);
 }
 
 remove::remove(const std::string &t)
@@ -69,27 +78,27 @@ remove::remove(const std::string &t)
 
 void remove::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void distinct::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void set::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void asc::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void desc::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 from::from(const std::string &t)
@@ -98,7 +107,7 @@ from::from(const std::string &t)
 
 void from::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 top::top(size_t lmt)
@@ -107,7 +116,7 @@ top::top(size_t lmt)
 
 void top::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 as::as(const std::string &a)
@@ -116,7 +125,7 @@ as::as(const std::string &a)
 
 void as::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 order_by::order_by(const std::string &col)
@@ -125,7 +134,7 @@ order_by::order_by(const std::string &col)
 
 void order_by::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 group_by::group_by(const std::string &col)
@@ -134,12 +143,12 @@ group_by::group_by(const std::string &col)
 
 void group_by::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 void where::accept(token_visitor &visitor)
 {
-  return visitor.visit(*this);
+  visitor.visit(*this);
 }
 
 }
