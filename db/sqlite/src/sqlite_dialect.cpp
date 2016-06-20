@@ -2,6 +2,7 @@
 // Created by sascha on 3/3/16.
 //
 #include "sqlite_dialect.hpp"
+#include "sqlite_dialect_compiler.hpp"
 
 #include "sql/dialect_token.hpp"
 #include "sql/condition.hpp"
@@ -17,7 +18,7 @@ namespace sqlite {
 
 
 sqlite_dialect::sqlite_dialect()
-  : basic_dialect(new detail::basic_dialect_compiler)
+  : basic_dialect(new sqlite_dialect_compiler)
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT TRANSACTION");
@@ -109,32 +110,6 @@ void sqlite_dialect::parse(token_list_t &tokens) const
     // replace limit with sub select
 
   }
-  // Todo: find limit for update/delete and replace it with
-
-  /*
-   * update <table> set item_id=8 where owner_id=? and item_id=? limit 1
-   * =>
-   * update <table> set item_id=8 where
-   *   owner_id in (
-   *     select * from (
-   *       select owner_id from owner_item where owner_id=? and item_id=? limit 1
-   *     )
-   *     as p
-   *   )
-   *
-   * delete from <table> where owner_id=? and item_id=? limit 1
-   *                           ------------------------
-   * =>
-   * delete from <table> where
-   *   owner_id in (
-   *     select * from (
-   *       select owner_id from owner_item where owner_id=? and item_id=? limit 1
-   *                                             ------------------------
-   *     )
-   *     as p
-   *   )
-   */
-
 }
 
 }

@@ -4,7 +4,7 @@ SET(SQLITE_DATABASE_SOURCES
   src/sqlite_statement.cpp
   src/sqlite_result.cpp
   src/sqlite_prepared_result.cpp
-	src/sqlite_dialect.cpp)
+	src/sqlite_dialect.cpp src/sqlite_dialect_compiler.cpp)
 
 SET(SQLITE_DATABASE_HEADER
 	include/sqlite_connection.hpp
