@@ -13,7 +13,7 @@ SET(SQLITE_DATABASE_HEADER
   include/sqlite_result.hpp
   include/sqlite_prepared_result.hpp
   include/sqlite_types.hpp
-	include/sqlite_dialect.hpp)
+	include/sqlite_dialect.hpp include/sqlite_dialect_compiler.hpp)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/db/sqlite/include)
 
