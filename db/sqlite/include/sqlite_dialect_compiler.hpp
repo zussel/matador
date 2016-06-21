@@ -18,9 +18,9 @@ public:
 
   virtual void visit(const oos::detail::update &update1) override;
   virtual void visit(const oos::detail::remove &remove1) override;
-  virtual void visit(const oos::columns &columns1) override;
+  virtual void visit(const oos::detail::tablename &table1) override;
+
   virtual void visit(const oos::detail::where &where1) override;
-  virtual void visit(const oos::detail::basic_column_condition &condition) override;
   virtual void visit(const oos::detail::top &top1) override;
 
 protected:
@@ -30,9 +30,8 @@ private:
   bool is_update = false;
   bool is_delete = false;
 
-  std::vector<std::shared_ptr<column>> columns_;
-  std::vector<std::shared_ptr<detail::basic_column_condition>> column_conditions_;
-  std::shared_ptr<detail::basic_condition> condition_;
+  std::string tablename_;
+  token_list_t::iterator where_;
 };
 
 }

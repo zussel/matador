@@ -185,7 +185,12 @@ struct where : public token
   where(const COND &c)
     : token(WHERE)
     , cond(new COND(c))
-  {}
+  { }
+
+  where(const std::shared_ptr<basic_condition> &c)
+    : token(WHERE)
+    , cond(c)
+  { }
 
   virtual void accept(token_visitor &visitor) override;
 

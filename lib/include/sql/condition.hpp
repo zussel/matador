@@ -425,6 +425,12 @@ condition<condition<L, R>, void> operator!(const condition<L, R> &c)
   return condition<condition<L, R>, void>(c, detail::basic_condition::NOT);
 }
 
+template<class L, class R>
+std::shared_ptr<detail::basic_condition> make_condition(const condition<L, R> &cond)
+{
+  return std::make_shared<condition<L, R>>(cond);
+}
+
 }
 
 #endif /* CONDITION_HPP */
