@@ -74,6 +74,8 @@ public:
 private:
   friend class basic_dialect;
   friend class detail::basic_dialect_compiler;
+  template < class L, class R, class E >
+  friend class condition;
 
   t_query_command command_type_;
   token_list_t token_list_;

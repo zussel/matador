@@ -281,6 +281,10 @@ public:
     std::stringstream str;
     d.append_to_result(field_.name + " IN (");
 
+//    for (auto &&tok  : query_.stmt().token_list_) {
+//      tok->ac
+//
+//    }
     d.build(query_.stmt(), d.compile_type(), false);
 
     d.append_to_result(")");
@@ -291,7 +295,7 @@ public:
   std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
 
   column field_;
-  const detail::basic_query &query_;
+  detail::basic_query query_;
 };
 
 template < class T >

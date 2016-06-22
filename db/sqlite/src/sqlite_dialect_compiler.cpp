@@ -51,8 +51,8 @@ void sqlite_dialect_compiler::visit(const oos::detail::top &top)
 //  auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(top.limit_);
 
   where_token->cond.reset();
-//  where_token->cond = make_condition(oos::in(rowid, {7,5,5,8}));
-  where_token->cond = make_condition(oos::in(rowid, subselect));
+  where_token->cond = make_condition(oos::in(rowid, {7,5,5,8}));
+//  where_token->cond = make_condition(oos::in(rowid, subselect));
 
   token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
 

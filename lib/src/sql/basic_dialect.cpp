@@ -44,7 +44,8 @@ void basic_dialect::reset()
 void basic_dialect::prepare(const token_list_t &tokens)
 {
 //  preparator_.prepare(tokens);
-  tokens_ = tokens;
+  tokens_.clear();
+  tokens_.assign(tokens.begin(), tokens.end());
 }
 
 void basic_dialect::compile()
