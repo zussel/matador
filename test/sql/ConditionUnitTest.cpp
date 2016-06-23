@@ -15,6 +15,7 @@ ConditionUnitTest::ConditionUnitTest()
   add_test("or", std::bind(&ConditionUnitTest::test_or_condition, this), "test an or condition");
   add_test("not", std::bind(&ConditionUnitTest::test_not_condition, this), "test a not condition");
   add_test("in", std::bind(&ConditionUnitTest::test_in_condition, this), "test an in condition");
+  add_test("in_query", std::bind(&ConditionUnitTest::test_in_query_condition, this), "test an in query condition");
   add_test("between", std::bind(&ConditionUnitTest::test_between_condition, this), "test a between condition");
 }
 
@@ -82,6 +83,11 @@ void ConditionUnitTest::test_in_condition()
   cond = age != 7 && oos::in(age,  {7});
 
   UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
+}
+
+void ConditionUnitTest::test_in_query_condition()
+{
+
 }
 
 void ConditionUnitTest::test_between_condition()

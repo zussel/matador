@@ -17,6 +17,7 @@ public:
   void test_or_condition();
   void test_not_condition();
   void test_in_condition();
+  void test_in_query_condition();
   void test_between_condition();
 };
 
