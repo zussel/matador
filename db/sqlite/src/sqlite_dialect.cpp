@@ -88,30 +88,6 @@ data_type_t sqlite_dialect::string_type(const char *type) const
   }
 }
 
-void sqlite_dialect::parse(token_list_t &tokens) const
-{
-  if (tokens.empty()) {
-    return;
-  }
-
-  token_ptr &first = tokens.front();
-
-  if (first->type == detail::token::UPDATE || first->type == detail::token::DELETE) {
-    // check if limit exists
-    auto limit = std::find_if(tokens.begin(), tokens.end(), [](const token_ptr &item) {
-      return item->type == detail::token::TOP;
-    });
-
-    if (limit == tokens.end()) {
-      // no limit
-      return;
-    }
-
-    // replace limit with sub select
-
-  }
-}
-
 }
 
 }

@@ -17,8 +17,6 @@ public:
 
   const char* type_string(oos::data_type_t type) const;
   data_type_t string_type(const char *type) const;
-
-  virtual void parse(token_list_t &tokens) const;
 };
 
 }
