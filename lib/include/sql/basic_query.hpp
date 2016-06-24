@@ -20,18 +20,37 @@ namespace detail {
 class basic_query
 {
 public:
+  /**
+   * Creates a basic query for the given
+   * table identified by table_name
+   *
+   * @param table_name The name of the table
+   */
   basic_query(const std::string &table_name);
 
   /**
    * Resets the query.
    *
-   * @return A reference to the query.
+   * @param query_command The query command to reset to
    */
   void reset_query(t_query_command query_command);
 
+  /**
+   * Get the query string build for the specific
+   * connection as prepared or direct statement
+   *
+   * @param conn The connection to build for
+   * @param prepared Indicates wether the query should
+   *                 be interpreted as prepared or direct
+   * @return The build query string
+   */
   std::string str(connection &conn, bool prepared);
 
-
+  /**
+   * Get the underlying sql object
+   *
+   * @return The underlying sql
+   */
   const sql& stmt() const;
 
 protected:
@@ -50,10 +69,7 @@ protected:
     QUERY_COND_WHERE,
     QUERY_ORDERBY,
     QUERY_ORDER_DIRECTION,
-    QUERY_GROUPBY,
-    QUERY_EXECUTED,
-    QUERY_PREPARED,
-    QUERY_BOUND
+    QUERY_GROUPBY
   };
 
 protected:

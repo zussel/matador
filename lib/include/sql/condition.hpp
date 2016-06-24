@@ -292,7 +292,10 @@ public:
     return str.str();
   };
 
-  std::string evaluate(basic_dialect::t_compile_type) const { return ""; }
+  std::string evaluate(basic_dialect::t_compile_type) const
+  {
+    return "";
+  }
 
   column field_;
   detail::basic_query query_;

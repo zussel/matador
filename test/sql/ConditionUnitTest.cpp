@@ -4,6 +4,7 @@
 
 #include "ConditionUnitTest.hpp"
 
+#include "sql/query.hpp"
 #include "sql/condition.hpp"
 #include "sql/basic_dialect.hpp"
 
@@ -87,7 +88,13 @@ void ConditionUnitTest::test_in_condition()
 
 void ConditionUnitTest::test_in_query_condition()
 {
+  oos::column age("age");
+  oos::column name("name");
+  auto q = oos::select({name}).from("test");
 
+  auto cond = age != 7 && oos::in(name, q);
+
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND name IN (SELECT name FROM test))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_between_condition()
