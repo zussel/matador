@@ -13,9 +13,9 @@ std::array<std::string, basic_condition::num_operands>
 
 }
 
-condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q)
+condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q, basic_dialect *dialect)
 {
-  return condition<column, detail::basic_query>(f, q);
+  return condition<column, detail::basic_query>(f, q, dialect);
 }
 
 }

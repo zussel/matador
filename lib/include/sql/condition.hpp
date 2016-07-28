@@ -272,8 +272,8 @@ template <>
 class condition<column, detail::basic_query> : public detail::basic_condition
 {
 public:
-  condition(const column &fld, const detail::basic_query &q)
-          : field_(fld), query_(q)
+  condition(const column &fld, const detail::basic_query &q, basic_dialect *dialect)
+          : field_(fld), query_(q), dialect_(dialect)
   {}
 
   virtual std::string compile(basic_dialect &d) const
@@ -299,6 +299,7 @@ public:
 
   column field_;
   detail::basic_query query_;
+  basic_dialect *dialect_ = nullptr;
 };
 
 template < class T >
@@ -370,7 +371,7 @@ condition<column, std::initializer_list<V>> in(const oos::column &f, std::initia
   return condition<column, std::initializer_list<V>>(f, args);
 }
 
-condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q);
+condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q, basic_dialect *dialect);
 
 template<class T>
 condition<column, std::pair<T, T>> between(const oos::column &f, T low, T high)

@@ -77,7 +77,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 //  std::cout << "\nSQL: " << subselect.str(*conn, false) << "\n";
 //  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*conn, false) << "\n";
 
-  res = q.select().where(oos::in(id, subselect)).execute(conn);
+  res = q.select().where(oos::in(id, subselect, conn.dialect())).execute(conn);
 
   auto first = res.begin();
   auto last = res.end();
