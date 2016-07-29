@@ -98,7 +98,7 @@ void ConditionUnitTest::test_in_query_condition()
 
   auto cond = age != 7 && oos::in(name, q, &dialect);
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND name IN (SELECT name FROM test))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(oos::basic_dialect::DIRECT), "(age <> 7 AND name IN (SELECT name FROM test ))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_between_condition()

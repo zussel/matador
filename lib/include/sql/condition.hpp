@@ -278,23 +278,16 @@ public:
 
   virtual std::string compile(basic_dialect &d) const
   {
-    std::stringstream str;
     d.append_to_result(field_.name + " IN (");
-
-//    for (auto &&tok  : query_.stmt().token_list_) {
-//      tok->ac
-//
-//    }
     d.build(query_.stmt(), d.compile_type(), false);
-
     d.append_to_result(")");
 
-    return str.str();
+    return d.result();
   };
 
   std::string evaluate(basic_dialect::t_compile_type) const
   {
-    return "";
+    return compile(*dialect_);
   }
 
   column field_;
