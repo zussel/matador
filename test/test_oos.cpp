@@ -42,6 +42,7 @@
 #include "sql/QueryTestUnit.hpp"
 #include "sql/ConditionUnitTest.hpp"
 #include "sql/MSSQLDialectTestUnit.hpp"
+#include "sql/SQLiteDialectTestUnit.hpp"
 
 //#include "json/JsonTestUnit.hpp"
 
@@ -107,6 +108,7 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite sql test unit", connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", connection::sqlite));
+  suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
 //  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));

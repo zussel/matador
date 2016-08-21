@@ -9,7 +9,7 @@ namespace oos {
 
 namespace detail {
 
-void basic_dialect_compiler::compile(token_list_t &tokens)
+void basic_dialect_compiler::compile(const token_list_t &tokens)
 {
   token_data_stack_.push(token_data(tokens));
 
@@ -20,14 +20,15 @@ void basic_dialect_compiler::compile(token_list_t &tokens)
 
   while (token_data_stack_.top().current_ != last) {
     (next = token_data_stack_.top().current_)++;
-    auto tok = token_data_stack_.top().current_->get();
+//    auto tok = token_data_stack_.top().current_->get();
     (*token_data_stack_.top().current_)->accept(*this);
     token_data_stack_.top().current_ = next;
   }
 
   on_compile_finish();
 
-  token_data_stack_.top().tokens_.swap(tokens);
+  token_data_stack_.top().tokens_.assign(tokens.begin(), tokens.end());
+//  token_data_stack_.top().tokens_.swap(tokens);
   token_data_stack_.pop();
 }
 
@@ -41,7 +42,7 @@ void basic_dialect_compiler::visit(const oos::detail::distinct &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::update &) { }
 
-void basic_dialect_compiler::visit(const oos::detail::tablename &table1) { }
+void basic_dialect_compiler::visit(const oos::detail::tablename &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::set &) { }
 
@@ -104,9 +105,10 @@ void basic_dialect_compiler::on_compile_start() { }
 
 void basic_dialect_compiler::on_compile_finish() { }
 
-basic_dialect_compiler::token_data::token_data(token_list_t &tokens)
+basic_dialect_compiler::token_data::token_data(const token_list_t &tokens)
 {
-  tokens_.swap(tokens);
+  tokens_.assign(tokens.begin(), tokens.end());
+//  tokens_.swap(tokens);
   current_ = tokens_.begin();
 }
 

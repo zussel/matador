@@ -10,6 +10,7 @@
 #include "sql/token_list.hpp"
 #include "sql/token_visitor.hpp"
 #include "sql/basic_dialect_compiler.hpp"
+#include "sql/basic_dialect_linker.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -19,8 +20,22 @@
 namespace oos {
 
 class sql;
+class basic_dialect;
 
-class basic_dialect : public token_visitor
+namespace detail {
+
+struct build_info {
+  build_info(const sql &s, basic_dialect *d);
+
+  const sql &stmt;
+  basic_dialect *dialect;
+  token_list_t tokens_;
+  std::string result;
+};
+
+}
+
+class basic_dialect
 {
 public:
   enum t_compile_type {
@@ -29,15 +44,15 @@ public:
   };
 
 public:
-  explicit basic_dialect(detail::basic_dialect_compiler *compiler);
+  explicit basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker);
   virtual ~basic_dialect() {}
 
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
 
-  std::string build(const sql &s, t_compile_type compile_type, bool reset);
+  std::string build(const sql &s, t_compile_type compile_type);
 
-  std::string token_string(detail::token::t_token tok) const;
+  std::string result() const;
 
   virtual const char* type_string(data_type_t type) const = 0;
 
@@ -48,56 +63,26 @@ public:
   size_t column_count() const;
 
   size_t inc_bind_count();
+  size_t inc_bind_count(size_t val);
   size_t dec_bind_count();
 
   size_t inc_column_count();
   size_t dec_column_count();
 
-  void append_to_result(const std::string &part);
-  std::string result() const;
+  std::string token_at(detail::token::t_token tok) const;
 
-  virtual void visit(const oos::detail::create &);
-  virtual void visit(const oos::detail::drop &);
-  virtual void visit(const oos::detail::select &);
-  virtual void visit(const oos::detail::distinct &);
-  virtual void visit(const oos::detail::update &);
-  virtual void visit(const oos::detail::tablename &table) override;
-  virtual void visit(const oos::detail::set &);
-  virtual void visit(const oos::detail::as &);
-  virtual void visit(const oos::detail::top &);
-  virtual void visit(const oos::detail::remove &);
-  virtual void visit(const oos::detail::values &values);
-  virtual void visit(const oos::detail::basic_value &);
-  virtual void visit(const oos::detail::order_by &);
-  virtual void visit(const oos::detail::asc &);
-  virtual void visit(const oos::detail::desc &);
-  virtual void visit(const oos::detail::group_by &);
-  virtual void visit(const oos::detail::insert &);
-  virtual void visit(const oos::detail::from &);
-  virtual void visit(const oos::detail::where &);
-  virtual void visit(const oos::detail::basic_condition &);
-  virtual void visit(const oos::detail::basic_column_condition &);
-  virtual void visit(const oos::detail::basic_in_condition &);
-  virtual void visit(const oos::columns &);
-  virtual void visit(const oos::column &);
-  virtual void visit(const oos::detail::typed_column &);
-  virtual void visit(const oos::detail::identifier_column &);
-  virtual void visit(const oos::detail::typed_varchar_column &);
-  virtual void visit(const oos::detail::identifier_varchar_column &);
-  virtual void visit(const oos::detail::basic_value_column &);
-  virtual void visit(const oos::detail::begin &);
-  virtual void visit(const oos::detail::commit &);
-  virtual void visit(const oos::detail::rollback &);
-  virtual void visit(oos::detail::query &);
+  void append_to_result(const std::string &part);
 
 protected:
   void replace_token(detail::token::t_token tkn, const std::string &value);
 
+  void push(const sql &s);
+  void pop();
+  detail::build_info& top();
+
 private:
-  void reset();
-  void prepare(const token_list_t &tokens);
   void compile();
-  void link(const token_list_t &tokens);
+  void link();
 
   std::string result_;
   size_t bind_count_ = 0;
@@ -105,9 +90,10 @@ private:
 
   t_compile_type compile_type_;
 
-  token_list_t tokens_;
-
   std::unique_ptr<detail::basic_dialect_compiler> compiler_;
+  std::unique_ptr<detail::basic_dialect_linker> linker_;
+
+  std::stack<detail::build_info> build_info_stack_;
 
   typedef std::unordered_map<detail::token::t_token, std::string, std::hash<int>> t_token_map;
   t_token_map tokens {
@@ -140,8 +126,6 @@ private:
     {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
     {detail::token::NONE, ""}
   };
-
-
 };
 
 }

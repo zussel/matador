@@ -4,8 +4,7 @@
 
 #include "mssql_dialect.hpp"
 #include "mssql_dialect_compiler.hpp"
-
-#include "sql/dialect_token.hpp"
+#include "mssql_dialect_linker.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -15,7 +14,7 @@ namespace oos {
 namespace mssql {
 
 mssql_dialect::mssql_dialect()
-  : basic_dialect(new mssql_dialect_compiler)
+  : basic_dialect(new mssql_dialect_compiler, new mssql_dialect_linker)
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");
@@ -80,13 +79,6 @@ data_type_t mssql_dialect::string_type(const char *type) const
   } else {
     return type_unknown;
   }
-}
-
-void mssql_dialect::visit(const oos::detail::top &top)
-{
-  std::stringstream res;
-  res << token_string(top.type) << " (" << top.limit_ << ") ";
-  append_to_result(res.str());
 }
 
 }

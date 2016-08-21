@@ -14,7 +14,7 @@ namespace mysql {
 
 
 mysql_dialect::mysql_dialect()
-  : basic_dialect(new detail::basic_dialect_compiler)
+  : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
 {
   replace_token(detail::token::BEGIN, "START TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");

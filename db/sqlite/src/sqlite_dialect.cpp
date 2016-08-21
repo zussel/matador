@@ -18,7 +18,7 @@ namespace sqlite {
 
 
 sqlite_dialect::sqlite_dialect()
-  : basic_dialect(new sqlite_dialect_compiler)
+  : basic_dialect(new sqlite_dialect_compiler(*this), new detail::basic_dialect_linker)
 {
   replace_token(detail::token::BEGIN, "BEGIN TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT TRANSACTION");

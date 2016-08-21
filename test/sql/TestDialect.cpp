@@ -11,7 +11,7 @@
 using namespace oos;
 
 TestDialect::TestDialect()
-  : basic_dialect(new detail::basic_dialect_compiler)
+  : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)
 { }
 
 const char* TestDialect::type_string(data_type_t type) const

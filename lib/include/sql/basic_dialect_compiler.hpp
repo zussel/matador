@@ -5,9 +5,10 @@
 #ifndef OOS_BASIC_DIALECT_COMPILER_HPP
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 
-#include <stack>
 #include "sql/token_visitor.hpp"
 #include "sql/token_list.hpp"
+
+#include <stack>
 
 namespace oos {
 
@@ -16,7 +17,7 @@ namespace detail {
 class basic_dialect_compiler : public token_visitor
 {
 public:
-  void compile(token_list_t &tokens);
+  void compile(const token_list_t &tokens);
 
   virtual void visit(const oos::detail::create &create1) override;
   virtual void visit(const oos::detail::drop &drop1) override;
@@ -59,7 +60,7 @@ protected:
 protected:
   struct token_data
   {
-    token_data(token_list_t &tokens);
+    token_data(const token_list_t &tokens);
     token_list_t tokens_;
     token_list_t::iterator current_;
   };

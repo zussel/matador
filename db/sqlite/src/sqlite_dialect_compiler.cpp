@@ -7,21 +7,32 @@
 #include "sql/dialect_token.hpp"
 #include "sql/query.hpp"
 #include "sql/column.hpp"
+#include "sqlite_dialect.hpp"
 
 namespace oos {
 
 namespace sqlite {
 
-sqlite_dialect_compiler::sqlite_dialect_compiler() { }
+sqlite_dialect_compiler::sqlite_dialect_compiler(sqlite_dialect &dialect)
+  : dialect_(dialect)
+{ }
+
+void sqlite_dialect_compiler::visit(const oos::detail::select &select1)
+{
+  is_delete = false;
+  is_update = false;
+}
 
 void sqlite_dialect_compiler::visit(const oos::detail::update &update1)
 {
   is_update = true;
+  is_delete = false;
 }
 
 void sqlite_dialect_compiler::visit(const oos::detail::remove &remove1)
 {
   is_delete = true;
+  is_update = false;
 }
 
 void sqlite_dialect_compiler::visit(const oos::detail::tablename &tablename)
@@ -47,15 +58,22 @@ void sqlite_dialect_compiler::visit(const oos::detail::top &top)
 
   column rowid("rowid");
   auto where_token = std::static_pointer_cast<detail::where>(*where_);
-  auto subselect = oos::select({rowid}).from(tablename_).where(rowid == 1).limit(top.limit_);
-//  auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(top.limit_);
+//  auto subselect = oos::select({rowid}).from(tablename_).where(rowid == 1).limit(top.limit_);
+  auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(top.limit_);
 
-  where_token->cond.reset();
-  where_token->cond = make_condition(oos::in(rowid, {7,5,5,8}));
-//  where_token->cond = make_condition(oos::in(rowid, subselect));
+//  std::cout << "SQL: " << dialect_.direct(subselect.stmt()) << "\n";
+
+//  where_token->cond.reset();
+//  where_token->cond = make_condition(oos::in(rowid, {7,5,5,8}));
+  auto cond = make_condition(oos::in(rowid, subselect, &dialect_));
+
+//  std::cout << "outer condition: " << cond->evaluate(basic_dialect::t_compile_type::DIRECT ) << "\n";
+
+  where_token->cond.swap(cond);
+
+//  std::cout << "outer condition: " << where_token->cond->evaluate(basic_dialect::t_compile_type::DIRECT ) << "\n";
 
   token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
-
 }
 
 void sqlite_dialect_compiler::on_compile_start()

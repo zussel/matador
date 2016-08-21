@@ -50,6 +50,9 @@ namespace oos {
 namespace detail {
 
 class basic_dialect_compiler;
+class basic_dialect_linker;
+struct build_info;
+
 }
 
 class OOS_API sql
@@ -73,7 +76,9 @@ public:
 
 private:
   friend class basic_dialect;
+  friend struct detail::build_info;
   friend class detail::basic_dialect_compiler;
+  friend class detail::basic_dialect_linker;
   template < class L, class R, class E >
   friend class condition;
 

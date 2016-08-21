@@ -3,10 +3,6 @@
 namespace oos {
 
 namespace detail {
-std::string basic_condition::compile(basic_dialect &d) const
-{
-  return evaluate(d.compile_type());
-}
 
 std::array<std::string, basic_condition::num_operands>
   basic_condition::operands = {"=", "<>", "<", "<=", ">", ">=", "OR", "AND", "NOT"};

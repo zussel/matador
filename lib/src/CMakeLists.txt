@@ -159,7 +159,7 @@ SET(SQL_SOURCES
   sql/field.cpp
   sql/query.cpp
   sql/basic_query.cpp
-  sql/basic_dialect_compiler.cpp)
+  sql/basic_dialect_compiler.cpp sql/basic_dialect_linker.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -190,7 +190,7 @@ SET(SQL_HEADER
   ../include/sql/basic_query.hpp
   ../include/sql/token_list.hpp
   ../include/sql/token_visitor.hpp
-  ../include/sql/basic_dialect_compiler.hpp)
+  ../include/sql/basic_dialect_compiler.hpp ../include/sql/basic_dialect_linker.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp

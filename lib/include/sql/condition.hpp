@@ -75,7 +75,6 @@ public:
     visitor.visit(*this);
   }
 
-  virtual std::string compile(basic_dialect &d) const;
   virtual std::string evaluate(basic_dialect::t_compile_type compiler_type) const = 0;
 
   static std::array<std::string, num_operands> operands;
@@ -276,18 +275,14 @@ public:
           : field_(fld), query_(q), dialect_(dialect)
   {}
 
-  virtual std::string compile(basic_dialect &d) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
-    d.append_to_result(field_.name + " IN (");
-    d.build(query_.stmt(), d.compile_type(), false);
-    d.append_to_result(")");
+    dialect_->append_to_result(field_.name + " IN (");
+    dialect_->build(query_.stmt(), compile_type);
+//    dialect_->build(query_.stmt(), dialect_->compile_type());
+    dialect_->append_to_result(")");
 
-    return d.result();
-  };
-
-  std::string evaluate(basic_dialect::t_compile_type) const
-  {
-    return compile(*dialect_);
+    return dialect_->result();
   }
 
   column field_;
