@@ -14,6 +14,8 @@
 
 namespace oos {
 
+class basic_dialect;
+
 namespace detail {
 
 struct build_info;
@@ -61,6 +63,17 @@ public:
 
 protected:
   std::stack<detail::build_info*> build_info_stack_;
+
+protected:
+  basic_dialect& dialect() const;
+  build_info& top() const;
+
+private:
+  friend class oos::basic_dialect;
+
+  void dialect(basic_dialect *d);
+
+  basic_dialect *dialect_;
 };
 
 }

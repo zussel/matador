@@ -2,6 +2,8 @@
 // Created by sascha on 3/4/16.
 //
 #include "sql/basic_dialect.hpp"
+#include "sql/basic_dialect_compiler.hpp"
+#include "sql/basic_dialect_linker.hpp"
 #include "sql/sql.hpp"
 
 namespace oos {
@@ -20,7 +22,16 @@ build_info::build_info(const sql &s, basic_dialect *d)
 basic_dialect::basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker)
   : compiler_(compiler)
   , linker_(linker)
-{}
+{
+  compiler_->dialect(this);
+  linker_->dialect(this);
+}
+
+basic_dialect::~basic_dialect()
+{
+  delete compiler_;
+  delete linker_;
+}
 
 std::string basic_dialect::direct(const sql &s)
 {

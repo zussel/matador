@@ -4,13 +4,9 @@
 #include "sqlite_dialect.hpp"
 #include "sqlite_dialect_compiler.hpp"
 
-#include "sql/dialect_token.hpp"
-#include "sql/condition.hpp"
-#include "sql/column.hpp"
+#include "sql/basic_dialect_linker.hpp"
 
-#include <sstream>
 #include <algorithm>
-#include <cstring>
 
 namespace oos {
 

@@ -12,7 +12,11 @@
 
 namespace oos {
 
+class basic_dialect;
+
 namespace detail {
+
+struct build_info;
 
 class basic_dialect_compiler : public token_visitor
 {
@@ -56,6 +60,16 @@ public:
 protected:
   virtual void on_compile_start();
   virtual void on_compile_finish();
+
+  basic_dialect& dialect() const;
+  build_info& top() const;
+
+private:
+  friend class oos::basic_dialect;
+
+  void dialect(basic_dialect *d);
+
+  basic_dialect *dialect_;
 };
 
 }

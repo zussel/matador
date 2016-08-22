@@ -163,10 +163,6 @@ void basic_dialect_linker::visit(const oos::detail::where &where)
 void basic_dialect_linker::visit(const oos::detail::basic_condition &cond)
 {
   cond.evaluate(build_info_stack_.top()->dialect->compile_type());
-
-  std::cout << "result: " << build_info_stack_.top()->dialect->result() << "\n";
-
-//  build_info_stack_.top()->dialect->append_to_result(cond.compile(*this));
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_column_condition &cond)
@@ -244,6 +240,21 @@ void basic_dialect_linker::visit(const oos::detail::basic_value_column &col)
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const
 {
   return build_info_stack_.top()->dialect->token_at(tok);
+}
+
+basic_dialect &basic_dialect_linker::dialect() const
+{
+  return *dialect_;
+}
+
+build_info &basic_dialect_linker::top() const
+{
+  return dialect_->top();
+}
+
+void basic_dialect_linker::dialect(basic_dialect *d)
+{
+  dialect_ = d;
 }
 
 }

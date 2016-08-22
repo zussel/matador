@@ -4,6 +4,8 @@
 #include "mysql_dialect.hpp"
 
 #include "sql/dialect_token.hpp"
+#include "sql/basic_dialect_compiler.hpp"
+#include "sql/basic_dialect_linker.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -11,7 +13,6 @@
 namespace oos {
 
 namespace mysql {
-
 
 mysql_dialect::mysql_dialect()
   : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)

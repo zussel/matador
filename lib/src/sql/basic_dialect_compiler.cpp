@@ -2,6 +2,7 @@
 // Created by sascha on 6/9/16.
 //
 
+#include <iostream>
 #include "sql/sql.hpp"
 #include "sql/basic_dialect_compiler.hpp"
 #include "sql/basic_dialect.hpp"
@@ -97,12 +98,29 @@ void basic_dialect_compiler::visit(const oos::detail::rollback &) { }
 
 void basic_dialect_compiler::visit(oos::detail::query &q)
 {
-  compile(q.sql_.token_list_);
+  int i = 9;
+  std::cout << "compile query\n";
+//  compile(q.sql_.token_list_);
 }
 
 void basic_dialect_compiler::on_compile_start() { }
 
 void basic_dialect_compiler::on_compile_finish() { }
+
+basic_dialect &basic_dialect_compiler::dialect() const
+{
+  return *dialect_;
+}
+
+build_info &basic_dialect_compiler::top() const
+{
+  return dialect_->top();
+}
+
+void basic_dialect_compiler::dialect(basic_dialect *d)
+{
+  dialect_ = d;
+}
 
 }
 

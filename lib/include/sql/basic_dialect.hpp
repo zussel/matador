@@ -9,13 +9,12 @@
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
 #include "sql/token_visitor.hpp"
-#include "sql/basic_dialect_compiler.hpp"
-#include "sql/basic_dialect_linker.hpp"
 
 #include <unordered_map>
 #include <memory>
 #include <string>
 #include <list>
+#include <stack>
 
 namespace oos {
 
@@ -23,6 +22,9 @@ class sql;
 class basic_dialect;
 
 namespace detail {
+
+class basic_dialect_compiler;
+class basic_dialect_linker;
 
 struct build_info {
   build_info(const sql &s, basic_dialect *d);
@@ -46,7 +48,7 @@ public:
 
 public:
   explicit basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker);
-  virtual ~basic_dialect() {}
+  virtual ~basic_dialect();
 
   std::string direct(const sql &s);
   std::string prepare(const sql &s);
@@ -94,8 +96,8 @@ private:
 
   t_compile_type compile_type_;
 
-  std::unique_ptr<detail::basic_dialect_compiler> compiler_;
-  std::unique_ptr<detail::basic_dialect_linker> linker_;
+  detail::basic_dialect_compiler* compiler_;
+  detail::basic_dialect_linker* linker_;
 
   std::stack<detail::build_info> build_info_stack_;
 

@@ -43,7 +43,7 @@ void MSSQLDialectTestUnit::test_limit()
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("SELECT TOP 10 id, name, age FROM person ", result, "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT TOP (10) id, name, age FROM person ", result, "select limit isn't as expected");
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select()

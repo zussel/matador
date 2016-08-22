@@ -5,9 +5,9 @@
 #ifndef OOS_SQLITE_DIALECT_COMPILER_HPP
 #define OOS_SQLITE_DIALECT_COMPILER_HPP
 
-#include <sql/dialect_token.hpp>
-#include "sql/basic_dialect_compiler.hpp"
+#include "sql/dialect_token.hpp"
 
+#include "sql/basic_dialect_compiler.hpp"
 
 namespace oos {
 

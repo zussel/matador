@@ -4,9 +4,7 @@
 
 #include "sqlite_dialect_compiler.hpp"
 
-#include "sql/dialect_token.hpp"
 #include "sql/query.hpp"
-#include "sql/column.hpp"
 #include "sqlite_dialect.hpp"
 
 namespace oos {
@@ -17,19 +15,19 @@ sqlite_dialect_compiler::sqlite_dialect_compiler(sqlite_dialect &dialect)
   : dialect_(dialect)
 { }
 
-void sqlite_dialect_compiler::visit(const oos::detail::select &select1)
+void sqlite_dialect_compiler::visit(const oos::detail::select &)
 {
   is_delete = false;
   is_update = false;
 }
 
-void sqlite_dialect_compiler::visit(const oos::detail::update &update1)
+void sqlite_dialect_compiler::visit(const oos::detail::update &)
 {
   is_update = true;
   is_delete = false;
 }
 
-void sqlite_dialect_compiler::visit(const oos::detail::remove &remove1)
+void sqlite_dialect_compiler::visit(const oos::detail::remove &)
 {
   is_delete = true;
   is_update = false;
@@ -40,15 +38,15 @@ void sqlite_dialect_compiler::visit(const oos::detail::tablename &tablename)
   tablename_ = tablename.tab;
 }
 
-void sqlite_dialect_compiler::visit(const oos::detail::where &where)
+void sqlite_dialect_compiler::visit(const oos::detail::where &)
 {
   // store condition
   if (is_update || is_delete) {
-    where_ = token_data_stack_.top().current_;
+    where_ = top().current;
   }
 }
 
-void sqlite_dialect_compiler::visit(const oos::detail::top &top)
+void sqlite_dialect_compiler::visit(const oos::detail::top &limit)
 {
   // if statement was a limited updated statement
   // replace the where clause with a sub select
@@ -58,31 +56,17 @@ void sqlite_dialect_compiler::visit(const oos::detail::top &top)
 
   column rowid("rowid");
   auto where_token = std::static_pointer_cast<detail::where>(*where_);
-//  auto subselect = oos::select({rowid}).from(tablename_).where(rowid == 1).limit(top.limit_);
-  auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(top.limit_);
-
-//  std::cout << "SQL: " << dialect_.direct(subselect.stmt()) << "\n";
-
-//  where_token->cond.reset();
-//  where_token->cond = make_condition(oos::in(rowid, {7,5,5,8}));
+  auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
   auto cond = make_condition(oos::in(rowid, subselect, &dialect_));
-
-//  std::cout << "outer condition: " << cond->evaluate(basic_dialect::t_compile_type::DIRECT ) << "\n";
 
   where_token->cond.swap(cond);
 
-//  std::cout << "outer condition: " << where_token->cond->evaluate(basic_dialect::t_compile_type::DIRECT ) << "\n";
-
-  std::cout << "current token: " << token_data_stack_.top().current_->get()->type << "\n";
-
-  std::cout << "tokens size: " << token_data_stack_.top().tokens_.size() << "\n";
-  token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
-  std::cout << "tokens size: " << token_data_stack_.top().tokens_.size() << "\n";
+  top().tokens_.erase(top().current);
 }
 
 void sqlite_dialect_compiler::on_compile_start()
 {
-  where_ = token_data_stack_.top().tokens_.end();
+  where_ = top().tokens_.end();
   tablename_.clear();
 }
 

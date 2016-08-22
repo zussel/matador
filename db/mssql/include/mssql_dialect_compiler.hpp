@@ -6,6 +6,7 @@
 #define OOS_MSSQL_DIALECT_COMPILER_HPP
 
 #include <stack>
+
 #include "sql/basic_dialect_compiler.hpp"
 
 namespace oos {
