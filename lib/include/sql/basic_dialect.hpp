@@ -30,6 +30,7 @@ struct build_info {
   const sql &stmt;
   basic_dialect *dialect;
   token_list_t tokens_;
+  token_list_t::iterator current;
   std::string result;
 };
 
@@ -74,6 +75,9 @@ public:
   void append_to_result(const std::string &part);
 
 protected:
+  friend class detail::basic_dialect_compiler;
+  friend class detail::basic_dialect_linker;
+
   void replace_token(detail::token::t_token tkn, const std::string &value);
 
   void push(const sql &s);

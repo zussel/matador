@@ -17,7 +17,7 @@ namespace detail {
 class basic_dialect_compiler : public token_visitor
 {
 public:
-  void compile(const token_list_t &tokens);
+  void compile(basic_dialect &dialect);
 
   virtual void visit(const oos::detail::create &create1) override;
   virtual void visit(const oos::detail::drop &drop1) override;
@@ -56,16 +56,6 @@ public:
 protected:
   virtual void on_compile_start();
   virtual void on_compile_finish();
-
-protected:
-  struct token_data
-  {
-    token_data(const token_list_t &tokens);
-    token_list_t tokens_;
-    token_list_t::iterator current_;
-  };
-
-  std::stack<token_data> token_data_stack_;
 };
 
 }

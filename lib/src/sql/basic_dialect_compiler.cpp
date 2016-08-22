@@ -4,32 +4,31 @@
 
 #include "sql/sql.hpp"
 #include "sql/basic_dialect_compiler.hpp"
+#include "sql/basic_dialect.hpp"
 
 namespace oos {
 
 namespace detail {
 
-void basic_dialect_compiler::compile(const token_list_t &tokens)
+void basic_dialect_compiler::compile(basic_dialect &dialect)
 {
-  token_data_stack_.push(token_data(tokens));
-
   on_compile_start();
 
-  auto last = token_data_stack_.top().tokens_.end();
+  auto last = dialect.top().tokens_.end();
   token_list_t::iterator next;
 
-  while (token_data_stack_.top().current_ != last) {
-    (next = token_data_stack_.top().current_)++;
+  while (dialect.top().current != last) {
+    (next = dialect.top().current)++;
 //    auto tok = token_data_stack_.top().current_->get();
-    (*token_data_stack_.top().current_)->accept(*this);
-    token_data_stack_.top().current_ = next;
+    (*dialect.top().current)->accept(*this);
+    dialect.top().current = next;
   }
 
   on_compile_finish();
 
-  token_data_stack_.top().tokens_.assign(tokens.begin(), tokens.end());
+//  token_data_stack_.top().tokens_.assign(tokens.begin(), tokens.end());
 //  token_data_stack_.top().tokens_.swap(tokens);
-  token_data_stack_.pop();
+//  token_data_stack_.pop();
 }
 
 void basic_dialect_compiler::visit(const oos::detail::create &) { }
@@ -104,13 +103,6 @@ void basic_dialect_compiler::visit(oos::detail::query &q)
 void basic_dialect_compiler::on_compile_start() { }
 
 void basic_dialect_compiler::on_compile_finish() { }
-
-basic_dialect_compiler::token_data::token_data(const token_list_t &tokens)
-{
-  tokens_.assign(tokens.begin(), tokens.end());
-//  tokens_.swap(tokens);
-  current_ = tokens_.begin();
-}
 
 }
 

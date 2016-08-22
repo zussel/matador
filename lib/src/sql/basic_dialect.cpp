@@ -12,6 +12,7 @@ build_info::build_info(const sql &s, basic_dialect *d)
   : stmt(s), dialect(d)
 {
   tokens_.assign(s.token_list_.begin(),s.token_list_.end());
+  current = tokens_.begin();
 }
 
 }
@@ -49,7 +50,7 @@ std::string basic_dialect::result() const
 
 void basic_dialect::compile()
 {
-  compiler_->compile(top().tokens_);
+  compiler_->compile(*this);
 }
 
 void basic_dialect::link()

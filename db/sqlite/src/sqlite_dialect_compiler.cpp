@@ -73,7 +73,11 @@ void sqlite_dialect_compiler::visit(const oos::detail::top &top)
 
 //  std::cout << "outer condition: " << where_token->cond->evaluate(basic_dialect::t_compile_type::DIRECT ) << "\n";
 
+  std::cout << "current token: " << token_data_stack_.top().current_->get()->type << "\n";
+
+  std::cout << "tokens size: " << token_data_stack_.top().tokens_.size() << "\n";
   token_data_stack_.top().tokens_.erase(token_data_stack_.top().current_);
+  std::cout << "tokens size: " << token_data_stack_.top().tokens_.size() << "\n";
 }
 
 void sqlite_dialect_compiler::on_compile_start()
