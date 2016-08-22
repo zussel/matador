@@ -55,8 +55,6 @@ public:
 
   std::string build(const sql &s, t_compile_type compile_type);
 
-  std::string result() const;
-
   virtual const char* type_string(data_type_t type) const = 0;
 
   t_compile_type compile_type() const;
@@ -90,7 +88,6 @@ private:
   void compile();
   void link();
 
-  std::string result_;
   size_t bind_count_ = 0;
   size_t column_count_ = 0;
 

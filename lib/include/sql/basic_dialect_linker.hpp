@@ -23,7 +23,7 @@ struct build_info;
 class basic_dialect_linker : public token_visitor
 {
 public:
-  void link(const token_list_t &tokens, detail::build_info *buildinfo);
+  void link();
 
   std::string token_string(detail::token::t_token tok) const;
 
@@ -60,9 +60,6 @@ public:
   virtual void visit(const oos::detail::commit &);
   virtual void visit(const oos::detail::rollback &);
   virtual void visit(oos::detail::query &);
-
-protected:
-  std::stack<detail::build_info*> build_info_stack_;
 
 protected:
   basic_dialect& dialect() const;

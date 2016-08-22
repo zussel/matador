@@ -50,13 +50,9 @@ std::string basic_dialect::build(const sql &s, t_compile_type compile_type)
   push(s);
   compile();
   link();
+  std::string result(top().result);
   pop();
-  return result_;
-}
-
-std::string basic_dialect::result() const
-{
-  return result_;
+  return result;
 }
 
 void basic_dialect::compile()
@@ -66,7 +62,7 @@ void basic_dialect::compile()
 
 void basic_dialect::link()
 {
-  linker_->link(top().tokens_, &top());
+  linker_->link();
 }
 
 bool basic_dialect::is_preparing() const
@@ -81,7 +77,7 @@ void basic_dialect::replace_token(detail::token::t_token tkn, const std::string 
 
 void basic_dialect::append_to_result(const std::string &part)
 {
-  result_ += part;
+  top().result += part;
 }
 
 void basic_dialect::push(const sql &s)

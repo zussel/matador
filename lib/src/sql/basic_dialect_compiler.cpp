@@ -20,16 +20,11 @@ void basic_dialect_compiler::compile(basic_dialect &dialect)
 
   while (dialect.top().current != last) {
     (next = dialect.top().current)++;
-//    auto tok = token_data_stack_.top().current_->get();
     (*dialect.top().current)->accept(*this);
-    dialect.top().current = next;
+      dialect.top().current = next;
   }
 
   on_compile_finish();
-
-//  token_data_stack_.top().tokens_.assign(tokens.begin(), tokens.end());
-//  token_data_stack_.top().tokens_.swap(tokens);
-//  token_data_stack_.pop();
 }
 
 void basic_dialect_compiler::visit(const oos::detail::create &) { }
@@ -96,10 +91,9 @@ void basic_dialect_compiler::visit(const oos::detail::commit &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::rollback &) { }
 
-void basic_dialect_compiler::visit(oos::detail::query &q)
+void basic_dialect_compiler::visit(oos::detail::query &)
 {
-  int i = 9;
-  std::cout << "compile query\n";
+  std::cout << "compile query: do we need it?\n";
 //  compile(q.sql_.token_list_);
 }
 

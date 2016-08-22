@@ -277,12 +277,10 @@ public:
 
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
-    dialect_->append_to_result(field_.name + " IN (");
-    dialect_->build(query_.stmt(), compile_type);
-//    dialect_->build(query_.stmt(), dialect_->compile_type());
-    dialect_->append_to_result(")");
-
-    return dialect_->result();
+    std::string result(field_.name + " IN (");
+    result += dialect_->build(query_.stmt(), compile_type);
+    result += (")");
+    return result;
   }
 
   column field_;
