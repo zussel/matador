@@ -59,7 +59,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
   q.select().where(oos::in(id, subselect, conn.dialect()));
 
-  UNIT_ASSERT_EQUAL("SELECT id, name, birthdate, height FROM person WHERE id IN (SELECT * FROM  (SELECT TOP (1) id FROM person ) AS p ) ", q.str(conn, true), "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT id, name, birthdate, height FROM person WHERE id IN (SELECT * FROM  (SELECT TOP (1) id FROM person ) AS p ) ", q.str(conn, false), "select limit isn't as expected");
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()
@@ -90,8 +90,6 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
   column id("id");
 
   auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
-//  std::cout << "\nSQL: " << subselect.str(*conn, false) << "\n";
-//  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*conn, false) << "\n";
 
   res = q.select().where(oos::in(id, subselect, conn.dialect())).execute(conn);
 

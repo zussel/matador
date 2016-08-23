@@ -646,8 +646,6 @@ void QueryTestUnit::test_update_limit()
   relation::t_id newid(4UL);
   q.update().set(item.name, newid).where(owner == 1 && item == 1).limit(1);
 
-  std::cout << "SQL: " << q.str(*connection_, false) << "\n";
-
   res = q.execute(*connection_);
 
   q.drop().execute(*connection_);

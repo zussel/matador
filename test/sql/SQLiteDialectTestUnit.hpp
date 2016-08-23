@@ -14,6 +14,7 @@ public:
   SQLiteDialectTestUnit();
 
   void test_update_with_limit();
+  void test_delete_with_limit();
 };
 
 

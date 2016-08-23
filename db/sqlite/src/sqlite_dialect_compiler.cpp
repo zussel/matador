@@ -27,10 +27,11 @@ void sqlite_dialect_compiler::visit(const oos::detail::update &)
   is_delete = false;
 }
 
-void sqlite_dialect_compiler::visit(const oos::detail::remove &)
+void sqlite_dialect_compiler::visit(const oos::detail::remove &r)
 {
   is_delete = true;
   is_update = false;
+  tablename_ = r.table;
 }
 
 void sqlite_dialect_compiler::visit(const oos::detail::tablename &tablename)
