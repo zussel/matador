@@ -15,7 +15,7 @@ public:
 
   void test_limit();
   void test_query_select_sub_select();
-  void test_query_select_sub_select_db();
+  void test_query_select_sub_select_result();
 };
 
 
