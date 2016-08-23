@@ -18,6 +18,9 @@
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
+#include "tools/date.hpp"
+#include "tools/time.hpp"
+
 #include <string>
 
 namespace oos {
@@ -140,6 +143,18 @@ template <> struct type_traits<std::string>
 {
   inline static data_type_t data_type() { return type_text; }
   inline static unsigned long type_size() { return 1024; }
+};
+
+template <> struct type_traits<oos::date>
+{
+  inline static data_type_t data_type() { return type_date; }
+  inline static unsigned long type_size() { return 256; }
+};
+
+template <> struct type_traits<oos::time>
+{
+  inline static data_type_t data_type() { return type_time; }
+  inline static unsigned long type_size() { return 256; }
 };
 
 /*

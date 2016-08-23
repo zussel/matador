@@ -81,8 +81,13 @@ protected:
   void bind_value(T val, size_t index)
   {
     value_t *v = new value_t;
-    v->data = new char[sizeof(T)];
-    *static_cast<T*>(v->data) = val;
+    if (bind_null_) {
+      v->data = NULL;
+      v->len = SQL_NULL_DATA;
+    } else {
+      v->data = new char[sizeof(T)];
+      *static_cast<T*>(v->data) = val;
+    }
     host_data_.push_back(v);
     
     int ctype = mssql_statement::type2int(type_traits<T>::data_type());
@@ -94,6 +99,24 @@ protected:
   void bind_value(const oos::time &t, size_t index);
   void bind_value(unsigned long val, size_t index);
   void bind_value(const char *val, size_t size, size_t index);
+
+  template < class T >
+  void bind_null(size_t index)
+  {
+    value_t *v = new value_t;
+    v->data = nullptr;
+    v->len = SQL_NULL_DATA;
+    host_data_.push_back(v);
+
+    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
+    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, &v->len);
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
+  }
+
+private:
+  void bind_null();
+  void bind_value();
 
 private:
   mssql_connection &db_;
@@ -108,6 +131,8 @@ private:
   std::vector<value_t*> host_data_;
 
   enum { NUMERIC_LEN = 21 };
+
+  bool bind_null_ = false;
 
   SQLHANDLE stmt_;
 };
