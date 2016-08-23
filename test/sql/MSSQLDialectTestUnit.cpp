@@ -93,3 +93,51 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
   conn.close();
 }
+
+void MSSQLDialectTestUnit::test_query_select_sub_select_db()
+{
+  oos::connection conn(connection::mssql);
+
+  conn.open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(conn));
+
+  unsigned long counter = 0;
+
+  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
+  res = q.insert(hans.get()).execute(conn);
+
+  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
+  res = q.insert(otto.get()).execute(conn);
+
+  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
+  res = q.insert(hilde.get()).execute(conn);
+
+  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
+  res = q.insert(trude.get()).execute(conn);
+
+  column id("id");
+
+  auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
+//  std::cout << "\nSQL: " << subselect.str(*conn, false) << "\n";
+//  std::cout << "SQL: " << q.select().where(oos::in(id, subselect)).str(*conn, false) << "\n";
+
+  res = q.select().where(oos::in(id, subselect, conn.dialect())).execute(conn);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+    UNIT_EXPECT_EQUAL(1UL, item->id(), "invalid value");
+    UNIT_EXPECT_EQUAL("Hans", item->name(), "invalid value");
+    ++first;
+  }
+
+  q.drop().execute(conn);
+
+  conn.close();
+}

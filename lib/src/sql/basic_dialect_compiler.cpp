@@ -91,11 +91,7 @@ void basic_dialect_compiler::visit(const oos::detail::commit &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::rollback &) { }
 
-void basic_dialect_compiler::visit(oos::detail::query &)
-{
-  std::cout << "compile query: do we need it?\n";
-//  compile(q.sql_.token_list_);
-}
+void basic_dialect_compiler::visit(oos::detail::query &) {}
 
 void basic_dialect_compiler::on_compile_start() { }
 

@@ -33,10 +33,10 @@ void basic_dialect_linker::visit(const oos::detail::rollback &rollback)
   dialect().append_to_result(token_string(rollback.type) + " ");
 }
 
-void basic_dialect_linker::visit(oos::detail::query &)
+void basic_dialect_linker::visit(oos::detail::query &q)
 {
   dialect().append_to_result("(");
-  link();
+  dialect().append_to_result(dialect().build(q.sql_, dialect().compile_type()));
   dialect().append_to_result(") ");
 }
 
