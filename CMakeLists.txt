@@ -41,32 +41,33 @@ ELSE()
   MESSAGE(STATUS "Current build type ${CMAKE_BUILD_TYPE}")
 ENDIF()
 
-option(COVERALLS "Enable generation and sending of coveralls data" false)
-option(COVERAGE "Enable generation of code coverage" false)
-
-SET(GCOV_BINARY "gcov" CACHE STRING "gcov binary")
-
-MESSAGE(STATUS "gcov binary: ${GCOV_BINARY}")
+OPTION(COVERALLS "Enable generation and sending of coveralls data" false)
+OPTION(COVERAGE "Enable generation of code coverage" false)
 
 if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
-  message(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
-  include(CodeCoverage)
-  include(Coveralls)
-  message(STATUS "will generate coverage data")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
-  set(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
+  MESSAGE(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
+
+  SET(GCOV_BINARY "gcov" CACHE STRING "gcov binary")
+
+  MESSAGE(STATUS "gcov binary: ${GCOV_BINARY}")
+
+  INCLUDE(CodeCoverage)
+  INCLUDE(Coveralls)
+  MESSAGE(STATUS "will generate coverage data")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
   #SET(CMAKE_SHARED_LINKER_FLAGS="-fprofile-arcs -ftest-coverage")
-  set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+  SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
   
   if (COVERAGE)
-    setup_target_for_coverage(coverage test_oos lib coverage "exec;all")
+    SETUP_TARGET_FOR_COVERAGE(coverage test_oos lib coverage "exec;all")
   endif()
   
   if (COVERALLS)
-    setup_target_for_coveralls(coveralls test_oos lib "exec;all")
+    SETUP_TARGET_FOR_COVERALLS(coveralls test_oos lib "exec;all")
   endif()
 else()
-  message(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
+  MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
 
 # Put the libaries and binaries that get built into directories at the
