@@ -42,6 +42,7 @@
 #include <type_traits>
 #include <vector>
 #include <utility>
+#include <array>
 
 namespace oos {
 
@@ -222,7 +223,7 @@ public:
   }
 };
 
-template <>
+//template <>
 template < class V >
 class condition<column, std::initializer_list<V>> : public detail::basic_in_condition
 {
