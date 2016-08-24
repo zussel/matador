@@ -108,7 +108,7 @@ public:
 
     sql_.append(new detail::create(table_name_));
 
-    detail::typed_column_serializer serializer(sql_);
+    detail::typed_column_serializer serializer;
 
     std::unique_ptr<columns> cols(serializer.execute(*obj));
 
@@ -147,7 +147,7 @@ public:
     throw_invalid(QUERY_SELECT, state);
     sql_.append(new detail::select);
 
-    detail::column_serializer serializer(sql_, columns::WITHOUT_BRACKETS);
+    detail::column_serializer serializer(columns::WITHOUT_BRACKETS);
 
     std::unique_ptr<columns> cols(serializer.execute(obj_));
 
@@ -184,13 +184,13 @@ public:
 
     sql_.append(new detail::insert(table_name_));
 
-    detail::column_serializer serializer(sql_, columns::WITH_BRACKETS);
+    detail::column_serializer serializer(columns::WITH_BRACKETS);
 
     std::unique_ptr<columns> cols(serializer.execute(*obj));
 
     sql_.append(cols.release());
 
-    detail::value_serializer vserializer(sql_);
+    detail::value_serializer vserializer;
 
     std::unique_ptr<detail::values> vals(vserializer.execute(*obj));
 
@@ -256,10 +256,10 @@ public:
   {
     throw_invalid(QUERY_SET, state);
 
-    detail::value_column_serializer serializer(sql_);
+    detail::value_column_serializer vcserializer;
 
     // Todo: pass member update_columns_
-    serializer.append_to(update_columns_, *obj);
+    vcserializer.append_to(update_columns_, *obj);
 
 //    sql_.append(cols.release());
 

@@ -32,7 +32,6 @@ mssql_connection::mssql_connection()
   : odbc_(0)
   , connection_(0)
   , is_open_(false)
-  , retries_(1)
 {
 }
 
@@ -170,7 +169,7 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
 
   throw_error(ret, SQL_HANDLE_STMT, stmt, sqlstr, "error on query execute");
 
-  return new mssql_result(stmt, true);
+  return new mssql_result(stmt);
 }
 
 oos::detail::statement_impl *mssql_connection::prepare(const oos::sql &stmt)

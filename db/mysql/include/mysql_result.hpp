@@ -48,35 +48,35 @@ public:
 public:
   mysql_result(MYSQL *c);
   virtual ~mysql_result();
-  
-  const char* column(size_type c) const;
-  bool fetch();
-  
-  size_type affected_rows() const;
-  size_type result_rows() const;
-  size_type fields() const;
 
-  virtual int transform_index(int index) const;
+  virtual const char* column(size_type c) const override;
+  virtual bool fetch() override;
+  
+  virtual size_type affected_rows() const override;
+  virtual size_type result_rows() const override;
+  virtual size_type fields() const override;
+
+  virtual int transform_index(int index) const override;
 
 protected:
-  virtual void serialize(const char *id, char &x);
-  virtual void serialize(const char *id, short &x);
-  virtual void serialize(const char *id, int &x);
-  virtual void serialize(const char *id, long &x);
-  virtual void serialize(const char *id, unsigned char &x);
-  virtual void serialize(const char *id, unsigned short &x);
-  virtual void serialize(const char *id, unsigned int &x);
-  virtual void serialize(const char *id, unsigned long &x);
-  virtual void serialize(const char *id, bool &x);
-  virtual void serialize(const char *id, float &x);
-  virtual void serialize(const char *id, double &x);
-  virtual void serialize(const char *id, char *x, size_t s);
-  virtual void serialize(const char *id, varchar_base &x);
-  virtual void serialize(const char *id, std::string &x);
-  virtual void serialize(const char *id, oos::date &x);
-  virtual void serialize(const char *id, oos::time &x);
-  virtual void serialize(const char *id, oos::basic_identifier &x);
-  virtual void serialize(const char *id, oos::identifiable_holder &x, cascade_type);
+  virtual void serialize(const char *id, char &x) override;
+  virtual void serialize(const char *id, short &x) override;
+  virtual void serialize(const char *id, int &x) override;
+  virtual void serialize(const char *id, long &x) override;
+  virtual void serialize(const char *id, unsigned char &x) override;
+  virtual void serialize(const char *id, unsigned short &x) override;
+  virtual void serialize(const char *id, unsigned int &x) override;
+  virtual void serialize(const char *id, unsigned long &x) override;
+  virtual void serialize(const char *id, bool &x) override;
+  virtual void serialize(const char *id, float &x) override;
+  virtual void serialize(const char *id, double &x) override;
+  virtual void serialize(const char *id, char *x, size_t s) override;
+  virtual void serialize(const char *id, varchar_base &x) override;
+  virtual void serialize(const char *id, std::string &x) override;
+  virtual void serialize(const char *id, oos::date &x) override;
+  virtual void serialize(const char *id, oos::time &x) override;
+  virtual void serialize(const char *id, oos::basic_identifier &x) override;
+  virtual void serialize(const char *id, oos::identifiable_holder &x, cascade_type) override;
 
 protected:
   virtual bool prepare_fetch() override;

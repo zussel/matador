@@ -34,8 +34,7 @@ namespace oos {
 namespace mysql {
 
 mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
-  : db_(db)
-  , result_size(0)
+  : result_size(0)
   , host_size(0)
   , stmt_(mysql_stmt_init(db.handle()))
 {

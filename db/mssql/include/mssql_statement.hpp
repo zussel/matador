@@ -47,9 +47,9 @@ public:
   mssql_statement(mssql_connection &db, const sql &s);
   virtual ~mssql_statement();
 
-  virtual void clear();
-  virtual detail::result_impl* execute();
-  virtual void reset();
+  virtual void clear() override;
+  virtual detail::result_impl* execute() override;
+  virtual void reset() override;
   
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
@@ -58,24 +58,24 @@ public:
   static int type2sql(data_type_t type);
 
 protected:
-  virtual void serialize(const char*, char&);
-  virtual void serialize(const char*, short&);
-  virtual void serialize(const char*, int&);
-  virtual void serialize(const char*, long&);
-  virtual void serialize(const char*, unsigned char&);
-  virtual void serialize(const char*, unsigned short&);
-  virtual void serialize(const char*, unsigned int&);
-  virtual void serialize(const char*, unsigned long&);
-  virtual void serialize(const char*, bool&);
-  virtual void serialize(const char*, float&);
-  virtual void serialize(const char*, double&);
-  virtual void serialize(const char*, char *, size_t);
-  virtual void serialize(const char*, std::string&);
-  virtual void serialize(const char*, oos::varchar_base&);
-  virtual void serialize(const char*, oos::time&);
-  virtual void serialize(const char*, oos::date&);
-  virtual void serialize(const char*, oos::basic_identifier &x);
-  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type);
+  virtual void serialize(const char*, char&) override;
+  virtual void serialize(const char*, short&) override;
+  virtual void serialize(const char*, int&) override;
+  virtual void serialize(const char*, long&) override;
+  virtual void serialize(const char*, unsigned char&) override;
+  virtual void serialize(const char*, unsigned short&) override;
+  virtual void serialize(const char*, unsigned int&) override;
+  virtual void serialize(const char*, unsigned long&) override;
+  virtual void serialize(const char*, bool&) override;
+  virtual void serialize(const char*, float&) override;
+  virtual void serialize(const char*, double&) override;
+  virtual void serialize(const char*, char *, size_t) override;
+  virtual void serialize(const char*, std::string&) override;
+  virtual void serialize(const char*, oos::varchar_base&) override;
+  virtual void serialize(const char*, oos::time&) override;
+  virtual void serialize(const char*, oos::date&) override;
+  virtual void serialize(const char*, oos::basic_identifier &x) override;
+  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type) override;
 
   template < class T >
   void bind_value(T val, size_t index)
@@ -119,8 +119,6 @@ private:
   void bind_value();
 
 private:
-  mssql_connection &db_;
-  
   struct value_t {
     explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
     ~value_t() { delete [] static_cast<char*>(data); }

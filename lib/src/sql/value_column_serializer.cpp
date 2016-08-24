@@ -9,8 +9,7 @@
 namespace oos {
 namespace detail {
 
-value_column_serializer::value_column_serializer(sql &d)
-  : sql_(d)
+value_column_serializer::value_column_serializer()
 { }
 
 template < class T >

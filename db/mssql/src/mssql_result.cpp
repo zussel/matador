@@ -28,11 +28,10 @@ namespace oos {
 
 namespace mssql {
 
-mssql_result::mssql_result(SQLHANDLE stmt, bool free)
+mssql_result::mssql_result(SQLHANDLE stmt)
   : affected_rows_(0)
   , rows(0)
   , fields_(0)
-  , free_(free)
   , stmt_(stmt)
 {
   // get row and column information

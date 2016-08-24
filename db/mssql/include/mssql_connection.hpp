@@ -57,23 +57,23 @@ public:
   explicit mssql_connection();
   virtual ~mssql_connection();
 
-  virtual void open(const std::string &db);
-  virtual void close();
+  virtual void open(const std::string &db) override;
+  virtual void close() override;
 
   /**
    * Returns true if the connection is open
    *
    * @return True on open connection connection.
    */
-  virtual bool is_open() const;
+  virtual bool is_open() const override;
 
-  virtual oos::detail::result_impl* execute(const oos::sql &stmt);
-  virtual oos::detail::result_impl* execute(const std::string &stmt);
-  virtual oos::detail::statement_impl* prepare(const oos::sql &stmt);
+  virtual oos::detail::result_impl* execute(const oos::sql &stmt) override;
+  virtual oos::detail::result_impl* execute(const std::string &stmt) override;
+  virtual oos::detail::statement_impl* prepare(const oos::sql &stmt) override;
 
-  virtual void begin();
-  virtual void commit();
-  virtual void rollback();
+  virtual void begin() override;
+  virtual void commit() override;
+  virtual void rollback() override;
 
   virtual std::string type() const override;
   virtual std::string version() const override;
@@ -98,8 +98,6 @@ private:
 
   mssql_dialect dialect_;
   bool is_open_;
-  
-  int retries_;
 };
 
 }

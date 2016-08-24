@@ -67,12 +67,12 @@ public:
 
   virtual unsigned long last_inserted_id();
 
-  virtual void open(const std::string &db);
+  virtual void open(const std::string &db) override;
   virtual void close() override;
 
-  detail::result_impl* execute(const oos::sql &stmt);
-  detail::result_impl* execute(const std::string &stmt);
-  detail::statement_impl* prepare(const oos::sql &stmt);
+  virtual detail::result_impl* execute(const oos::sql &stmt) override;
+  virtual detail::result_impl* execute(const std::string &stmt) override;
+  virtual detail::statement_impl* prepare(const oos::sql &stmt) override;
 
   virtual void begin() override;
   virtual void commit() override;

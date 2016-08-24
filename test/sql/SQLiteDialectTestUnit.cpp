@@ -21,7 +21,7 @@ SQLiteDialectTestUnit::SQLiteDialectTestUnit()
 
 void SQLiteDialectTestUnit::test_update_with_limit()
 {
-  oos::connection conn(connection::sqlite);
+  oos::connection conn(::connection::sqlite);
 
   sql s;
 
@@ -50,7 +50,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
 void SQLiteDialectTestUnit::test_delete_with_limit()
 {
-  oos::connection conn(connection::sqlite);
+  oos::connection conn(::connection::sqlite);
 
   sql s;
 

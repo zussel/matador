@@ -93,7 +93,6 @@ private:
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t index);
 
 private:
-  mysql_connection &db_;
   size_t result_size;
   size_t host_size;
   std::vector<unsigned long> length_vector;

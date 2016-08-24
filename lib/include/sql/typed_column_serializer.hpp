@@ -19,7 +19,7 @@ namespace detail {
 class typed_column_serializer : public serializer
 {
 public:
-  explicit typed_column_serializer(sql &d);
+  typed_column_serializer();
   virtual ~typed_column_serializer() {}
 
   template < class T >
@@ -29,12 +29,6 @@ public:
     oos::access::serialize(static_cast<serializer&>(*this), x);
     return cols_.release();
   }
-
-//  template < class T >
-//  void serialize(T &x)
-//  {
-//    oos::access::serialize(*this, x);
-//  }
 
   void serialize(const char *id, char &x);
   void serialize(const char *id, short &x);
@@ -62,10 +56,8 @@ public:
   }
 
 private:
-private:
   std::unique_ptr<columns> cols_;
   size_t index_ = 0;
-  sql &sql_;
   typedef std::function<std::shared_ptr<column> (const char*, data_type_t, size_t)> t_create_column_func;
   t_create_column_func create_column_func_;
   typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type_t, size_t)> t_create_varchar_column_func;

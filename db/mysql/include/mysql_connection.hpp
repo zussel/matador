@@ -67,7 +67,7 @@ public:
    *
    * @return True on open sql connection.
    */
-  virtual bool is_open() const;
+  virtual bool is_open() const override;
 
   virtual unsigned long last_inserted_id();
 
@@ -79,12 +79,12 @@ public:
    */
   MYSQL* handle();
 
-  virtual void open(const std::string &db);
+  virtual void open(const std::string &db) override;
   virtual void close() override;
 
-  detail::result_impl* execute(const oos::sql &stmt);
-  detail::result_impl* execute(const std::string &stmt);
-  detail::statement_impl* prepare(const oos::sql &stmt);
+  virtual detail::result_impl* execute(const oos::sql &stmt) override;
+  virtual detail::result_impl* execute(const std::string &stmt) override;
+  virtual detail::statement_impl* prepare(const oos::sql &stmt) override;
 
   virtual void begin() override;
   virtual void commit() override;
@@ -93,7 +93,7 @@ public:
   virtual std::string type() const override;
   virtual std::string version() const override;
 
-  virtual bool exists(const std::string &tablename);
+  virtual bool exists(const std::string &tablename) override;
   virtual std::vector<field> describe(const std::string &table) override;
 
   virtual basic_dialect* dialect() override;

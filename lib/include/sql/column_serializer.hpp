@@ -20,7 +20,7 @@ namespace detail {
 
 class column_serializer : public serializer {
 public:
-  column_serializer(sql &d, columns::t_brackets brackets);
+  explicit column_serializer(columns::t_brackets brackets);
 
   virtual ~column_serializer() { }
 
@@ -53,7 +53,6 @@ public:
 private:
   columns::t_brackets brackets_;
   std::unique_ptr<columns> cols_;
-  sql &sql_;
 };
 
 }

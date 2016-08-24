@@ -24,7 +24,7 @@ MSSQLDialectTestUnit::MSSQLDialectTestUnit()
 
 void MSSQLDialectTestUnit::test_limit()
 {
-  oos::connection conn(connection::mssql);
+  oos::connection conn(::connection::mssql);
 
   sql s;
 
@@ -49,7 +49,7 @@ void MSSQLDialectTestUnit::test_limit()
 
 void MSSQLDialectTestUnit::test_query_select_sub_select()
 {
-  oos::connection conn(connection::mssql);
+  oos::connection conn(::connection::mssql);
 
   query<person> q("person");
 
@@ -64,7 +64,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 {
-  oos::connection conn(connection::mssql);
+  oos::connection conn(::connection::mssql);
 
   conn.open();
 

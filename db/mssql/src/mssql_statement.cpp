@@ -33,7 +33,6 @@ namespace oos {
 namespace mssql {
 
 mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
-  : db_(db)
 {
   if (!db.handle()) {
     throw_error("mssql", "no odbc connection established");
@@ -73,7 +72,7 @@ detail::result_impl* mssql_statement::execute()
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
-  return new mssql_result(stmt_, false);
+  return new mssql_result(stmt_);
 }
 
 void mssql_statement::serialize(const char *, char &x)

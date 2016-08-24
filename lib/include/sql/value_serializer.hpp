@@ -18,8 +18,7 @@ namespace detail {
 class value_serializer : public serializer
 {
 public:
-  explicit value_serializer(sql &d);
-
+  value_serializer();
   virtual ~value_serializer() { }
 
   template<class T>
@@ -50,8 +49,6 @@ public:
 
 private:
   std::unique_ptr<values> values_;
-  sql &sql_;
-
 };
 
 }

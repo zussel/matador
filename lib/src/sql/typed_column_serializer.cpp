@@ -41,9 +41,8 @@ std::shared_ptr<column> make_varchar_column<identifier_varchar_column>(const cha
   return std::make_shared<identifier_varchar_column>(id, s, t, index, false);
 }
 
-typed_column_serializer::typed_column_serializer(oos::sql &d)
-  : sql_(d)
-  , create_column_func_(make_column<typed_column>)
+typed_column_serializer::typed_column_serializer()
+  : create_column_func_(make_column<typed_column>)
   , create_varchar_column_func_(make_varchar_column<typed_varchar_column>)
 {}
 

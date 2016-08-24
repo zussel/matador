@@ -7,9 +7,8 @@
 namespace oos {
 namespace detail {
 
-column_serializer::column_serializer(oos::sql &d, columns::t_brackets brackets)
+column_serializer::column_serializer(columns::t_brackets brackets)
   : brackets_(brackets)
-  , sql_(d)
 {}
 
 void column_serializer::serialize(const char *id, char&)

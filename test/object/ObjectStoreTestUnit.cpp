@@ -1037,7 +1037,7 @@ struct on_attach : public on_attach_base
   }
 };
 
-template <>
+//template <>
 template < class T >
 struct on_attach<has_many_item<T>> : public on_attach_base
 {

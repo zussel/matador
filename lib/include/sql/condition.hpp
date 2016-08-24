@@ -233,7 +233,7 @@ public:
     , args_(args)
   {}
 
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  virtual std::string evaluate(basic_dialect::t_compile_type compile_type) const override
   {
     std::stringstream str;
     str << field_.name << " IN (";

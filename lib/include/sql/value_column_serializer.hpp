@@ -18,7 +18,7 @@ namespace detail {
 
 class value_column_serializer : public serializer {
 public:
-  value_column_serializer(sql &d);
+  value_column_serializer();
 
   template<class T>
   void append_to(const std::shared_ptr<columns> cols, T &x)
@@ -48,7 +48,6 @@ public:
 
 private:
   std::shared_ptr<columns> cols_;
-  sql &sql_;
 };
 }
 }

@@ -30,7 +30,7 @@ public:
 
   virtual ~table() {}
 
-  virtual void prepare(connection &conn)
+  virtual void prepare(connection &conn) override
   {
     query<T> q(name());
     insert_ = q.insert().prepare(conn);

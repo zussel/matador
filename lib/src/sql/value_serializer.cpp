@@ -10,8 +10,7 @@
 namespace oos {
 namespace detail {
 
-value_serializer::value_serializer(oos::sql &d)
-  : sql_(d)
+value_serializer::value_serializer()
 {}
 
 void value_serializer::serialize(const char*, char &x)

@@ -16,7 +16,6 @@ namespace sqlite {
 sqlite_prepared_result::sqlite_prepared_result(sqlite3_stmt *stmt, int ret)
   : ret_(ret)
   , first_(true)
-  , affected_rows_(0)
   , rows(0)
   , fields_(0)
   , stmt_(stmt)
@@ -48,7 +47,6 @@ sqlite_prepared_result::size_type sqlite_prepared_result::affected_rows() const
 {
   sqlite3 *db = sqlite3_db_handle(stmt_);
   return (size_type)sqlite3_changes(db);
-//  return affected_rows_;
 }
 
 sqlite_prepared_result::size_type sqlite_prepared_result::result_rows() const

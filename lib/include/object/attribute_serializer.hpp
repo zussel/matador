@@ -302,12 +302,12 @@ public:
    * @param id The name of the attribute.
    * @param to The attribute value to retrieve.
    */
-  attribute_writer(const std::string &id, char *to, size_t size, size_t precision = 0)
+  attribute_writer(const std::string &id, char *to, size_t size/*, size_t precision = 0*/)
     : id_(id)
     , to_(to)
     , size_(size)
     , success_(false)
-    , precision_(precision)
+//    , precision_(precision)
   {}
 
   ~attribute_writer() {}
@@ -338,16 +338,10 @@ public:
   void serialize(const char*, date&) {}
   void serialize(const char*, time&) {}
   template < class V >
-  void serialize(const char*, has_one<V> &x, cascade_type)
-  {
-
-  }
+  void serialize(const char*, has_one<V> &, cascade_type) {}
   void serialize(const char*, abstract_has_many&, const char*, const char*) {}
   template < class V >
-  void serialize(const char*, const identifier<V> &)
-  {
-
-  }
+  void serialize(const char*, const identifier<V> &) {}
 
   void serialize(const char *id, char *from, size_t size)
   {
@@ -377,7 +371,7 @@ private:
   char *to_;
   size_t size_;
   bool success_;
-  size_t precision_;
+//  size_t precision_;
 };
 
 }
