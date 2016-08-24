@@ -295,7 +295,7 @@ void QueryTestUnit::test_statement_update()
   unsigned long hid = hans.id();
   stmt.bind(hid, pos);
 
-  stmt.execute();
+  res = stmt.execute();
 
   stmt = q.select().prepare(*connection_);
   res = stmt.execute();
@@ -320,7 +320,7 @@ void QueryTestUnit::test_statement_update()
   pos = stmt.bind(&hans, pos);
   stmt.bind(hid, pos);
 
-  stmt.execute();
+  res = stmt.execute();
 
   stmt = q.select().prepare(*connection_);
   res = stmt.execute();
