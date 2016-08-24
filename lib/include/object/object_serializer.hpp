@@ -188,8 +188,6 @@ public:
           insert_proxy(oproxy);
         }
         x.reset(oproxy, cascade);
-      } else {
-        x.reset(new object_proxy(new T, oid, ostore_), cascade);
       }
     } else {
       unsigned long oid = x.id();
