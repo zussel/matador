@@ -17,14 +17,12 @@
 
 #include "sqlite_exception.hpp"
 
-#include <string>
-
 namespace oos {
 
 namespace sqlite {
 
 sqlite_exception::sqlite_exception(const std::string &what)
-  : database_exception("sqlite", what.c_str())
+  : sql_exception("sqlite", what.c_str())
 {}
 
 sqlite_exception::~sqlite_exception() throw()

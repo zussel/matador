@@ -59,9 +59,6 @@ FactoryTestUnit::FactoryTestUnit()
   add_test("list", std::bind(&FactoryTestUnit::list_items, this), "list all items in factory");
 }
 
-FactoryTestUnit::~FactoryTestUnit()
-{}
-
 void FactoryTestUnit::create_factory()
 {
   typedef factory<std::string, Vehicle> vehicle_factory_t;

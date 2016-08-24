@@ -18,22 +18,11 @@
 #ifndef OBJECT_PTR_HPP
 #define OBJECT_PTR_HPP
 
-#ifdef _MSC_VER
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
-
 #include "object/object_proxy.hpp"
-#include "object/prototype_node.hpp"
-#include "object/identifier_resolver.hpp"
+#include "object/object_holder.hpp"
+#include "object/transaction.hpp"
+#include "tools/identifier_resolver.hpp"
+#include "object/has_one.hpp"
 
 #include <memory>
 #include <typeinfo>
@@ -44,261 +33,96 @@ namespace detail {
 class result_impl;
 }
 
-class serializable;
-class object_store;
-class prototype_node;
+template < class T > class object_ptr;
 
-/**
- * @class object_base_ptr
- * @brief Base class for the serializable pointer and reference class
- * 
- * This is the base class for the serializable pointer
- * and reference class. The class holds the proxy
- * of the serializable and the id of the serializable.
- */
-class OOS_API object_base_ptr
+template < class T >
+class has_one : public object_holder
 {
-protected:
-  /**
-   * @brief Creates and empty base pointer.
-   * 
-   * Creates and empty base pointer. The boolean
-   * tells the class if the serializable is handled
-   * as a reference or an pointer. The difference
-   * is that the reference couldn't be deleted
-   * from the object_store and the pointer can.
-   * 
-   * @param is_ref If true the serializable is handled as a reference.
-   */
-	explicit object_base_ptr(bool is_ref);
-  
-  /**
-   * Copies from another object_base_ptr
-   * 
-   * @param x the object_base_ptr to copy from.
-   */
-	object_base_ptr(const object_base_ptr &x);
-
-  /**
-   * Assign operator.
-   * 
-   * @param x The object_base_ptr to assign from.
-   */
-	object_base_ptr& operator=(const object_base_ptr &x);
-
-  /**
-   * @brief Creates an object_base_ptr with a given serializable
-   * 
-   * Creates an object_base_ptr with a given serializable. The
-   * boolean tells the object_base_ptr if it should be
-   * handled as a reference or a pointer.
-   * 
-   * @param o The serializable of the object_base_ptr
-   * @param is_ref If true the serializable is handled as a reference.
-   */
-	object_base_ptr(serializable *o, bool is_ref);
-  
-  /**
-   * @brief Creates an object_base_ptr with a given object_proxy
-   * 
-   * Creates an object_base_ptr with a given object_proxy. The
-   * boolean tells the object_base_ptr if it should be
-   * handled as a reference or a pointer.
-   * 
-   * @param op The object_proxy of the object_base_ptr
-   * @param is_ref If true the serializable is handled as a reference.
-   */
-	object_base_ptr(object_proxy *op, bool is_ref);
-
-  /**
-   * Destroys the object_base_ptr
-   * and decides wether the underlaying
-   * object_proxy is destroyed as well.
-   *
-   * It is destroyed if it is not inserted
-   * into any object_store.
-   */
-	virtual ~object_base_ptr();
+public:
+  typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
+  has_one()
+    : object_holder(true)
+  {}
+  has_one(T *o)
+    : object_holder(true, new object_proxy(o))
+  {}
+  has_one(object_proxy *proxy)
+    : object_holder(true, proxy)
+  {}
+
+  has_one(const object_ptr <T> &x);
+
+//  has_one& operator=(const has_one<T> &x)
+//  {
+//    proxy_ = x.proxy_;
+//    cascade_ = x.cascade_;
+//    is_internal_ = x.is_internal_;
+//    if (proxy_) {
+//      oid_ = proxy_->id();
+//      proxy_->add(this);
+//    }
+//    return *this;
+//  }
+
+  has_one& operator=(const object_ptr <T> &x);
+
+  T* operator->()
+  {
+    return get();
+  }
+
+  const T* operator->() const
+  {
+    return get();
+  }
+
+  T* get()
+  {
+    return static_cast<T*>(proxy_->obj());
+  }
+
+  const T* get() const
+  {
+    return static_cast<T*>(proxy_->obj());
+  }
 
   /**
-   * Equal to operator for the object_base_ptr
-   * 
-   * @param x The object_base_ptr to check equality with.
-   */
-	bool operator==(const object_base_ptr &x) const;
-
-  /**
-   * Not equal to operator for the object_base_ptr
-   * 
-   * @param x The object_base_ptr to check unequality with.
-   */
-	bool operator!=(const object_base_ptr &x) const;
-
-  /**
-   * Returns the type string of the serializable
-   * 
+   * Return the type string of the serializable
+   *
    * @return The type string of the serializable.
    */
-  virtual const char* type() const = 0;
-
-//  const char* classname() const;
-
-  /**
-   * Resets the object_base_ptr with the given object_proxy.
-   * 
-   * @param proxy The new object_proxy for the object_base_ptr.
-   * @param is_ref Indicates if the given object_proxy is a reference.
-   */
-	void reset(object_proxy *proxy = 0, bool is_ref = false);
+  const char* type() const
+  {
+    return classname_.c_str();
+  }
 
   /**
-   * Resets the object_base_ptr with the given
-   * identifier. If the type of identifier differs
-   * from internal type an exception is thrown
+   * Creates a new identifier, represented by the identifier
+   * of the underlaying type.
    *
-   * @param id The identifier to set
+   * @return A new identifier.
    */
-  void reset(const std::shared_ptr<basic_identifier> &id);
-
-  /**
-   * Returns if the serializable is loaded.
-   * 
-   * @return True if the serializable is loaded.
-   */
-	bool is_loaded() const;
-
-  /**
-   * Returns the serializable id.
-   * 
-   * @return The id of the serializable.
-   */
-	unsigned long id() const;
-
-  /**
-   * Sets the serializable id. If a proxy
-   * is set an exception is thrown.
-   * 
-   * @param i The new serializable id
-   */
-  void id(unsigned long i);
-
-  /**
-   * Returns the corresponding
-   * object_store or nullptr
-   */
-  object_store* store() const;
-
-  /**
-   * Returns the serializable
-   * 
-   * @return The serializable.
-   */
-  serializable* ptr();
-
-  /**
-   * Returns the serializable
-   *
-   * @return The serializable.
-   */
-	const serializable* ptr() const;
-
-  /**
-   * Returns the serializable
-   * 
-   * @return The serializable.
-   */
-  serializable* lookup_object();
-
-  /**
-   * Returns the serializable
-   *
-   * @return The serializable.
-   */
-	serializable* lookup_object() const;
-
-  /**
-   * Returns if the serializable is treated as a reference.
-   * 
-   * @return True if the serializable is treated like a reference.
-   */
-  virtual bool is_reference() const;
-
-  /**
-   * Returns if this object_base_ptr is inside
-   * of the object_store. This is important
-   * to calculate the reference and pointer
-   * counter.
-   * 
-   * @return True if the object_base_ptr internal
-   */
-  bool is_internal() const;
-
-  /**
-   * Returns the reference count.
-   * 
-   * @return The reference count.
-   */
-  unsigned long ref_count() const;
-
-  /**
-   * Returns the pointer count.
-   * 
-   * @return The pointer count.
-   */
-  unsigned long ptr_count() const;
-
-  /**
-   * Returns true if serializable has a primary key
-   *
-   * @return true if serializable has a primary key
-   */
-  bool has_primary_key() const;
-
-  /**
-   * Gets the primary key of the foreign serializable
-   *
-   * @return The primary key of the foreign serializable
-   */
-  std::shared_ptr<basic_identifier> primary_key() const;
-
-  /**
-   * Creates a new identifier object.
-   *
-   * @return Returns a new identifier object.
-   */
-  virtual basic_identifier* create_identifier() const = 0;
-
-  /**
-   * Prints the underlaying serializable
-   *
-   * @param out The output stream to write on.
-   * @param x The serializable pointer to print.
-   * @return The output stream.
-   */
-  friend OOS_API std::ostream& operator<<(std::ostream &out, const object_base_ptr &x);
+  basic_identifier* create_identifier() const
+  {
+    return self::identifier_->clone();
+  }
 
 private:
-  friend class object_serializer;
-  friend class object_proxy;
   friend class object_deleter;
-  friend class object_inserter;
-  friend class object_store;
-  friend class object_container;
 
-  // Todo: change interface to remove friend
-  friend class session;
-  // Todo: replace private access of proxy with call to reset
-  friend class table_reader;
-
-  template < class T, bool TYPE > friend class object_holder;
-
-  object_proxy *proxy_ = nullptr;
-  bool is_reference_ = false;
-  bool is_internal_ = false;
-  unsigned long oid_ = 0;
+private:
+  static std::string classname_;
+  static std::unique_ptr<basic_identifier> identifier_;
 };
+
+template < class T >
+std::string has_one<T>::classname_ = typeid(T).name();
+
+template < class T >
+std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>::resolve());
+
 
 /**
  * @class object_holder
@@ -316,37 +140,27 @@ private:
  * like a pointer (object can be deleted) or a reference (object
  * can't be directly deleted)
  */
-template < class T, bool TYPE >
-class object_holder : public object_base_ptr
+template < class T >
+class object_ptr : public object_holder
 {
 public:
   typedef T object_type;                    /**< Shortcut for serializable type. */
-  typedef object_holder<T, TYPE> self;      /**< Shortcut for self class. */
+  typedef object_ptr<T> self;      /**< Shortcut for self class. */
 
 public:
   /**
    * Create an empty object_holder
    */
-  object_holder()
-    : object_base_ptr(TYPE)
+  object_ptr()
+    : object_holder(false)
   {}
   /**
    * Copies object_ptr
    *
    * @param x The object_ptr to copy
    */
-  object_holder(const self &x)
-    : object_base_ptr(x.proxy_, x.is_reference_)
-  {}
-
-  /**
-   * Copies a object_ref
-   *
-   * @param x The object_ref to copy
-   */
-  template < bool TYPE2 >
-  object_holder(const object_holder<T, TYPE2> &x)
-    : object_base_ptr(x.proxy_, TYPE)
+  object_ptr(const self &x)
+    : object_holder(x.is_internal_, x.proxy_)
   {}
 
   /**
@@ -354,8 +168,8 @@ public:
    *
    * @param o The serializable.
    */
-  object_holder(serializable *o)
-    : object_base_ptr(o, TYPE)
+  object_ptr(T *o)
+    : object_holder(false, new object_proxy(o))
   {}
 
   /**
@@ -363,8 +177,12 @@ public:
    *
    * @param proxy The object_proxy.
    */
-  explicit object_holder(object_proxy *proxy)
-  : object_base_ptr(proxy, TYPE)
+  explicit object_ptr(object_proxy *proxy)
+  : object_holder(false, proxy)
+  {}
+
+  object_ptr(const has_one<T> &x)
+    : object_holder(false, x.proxy_)
   {}
 
   /**
@@ -372,19 +190,23 @@ public:
    *
    * @param x The x serializable to assign from.
    */
-  self& operator=(serializable *x)
+  self& operator=(T *x)
   {
-//    is_reference_ = TYPE;
-    reset(new object_proxy(x), is_reference_);
+    reset(new object_proxy(x), cascade_type::NONE);
     return *this;
   }
 
+  self& operator=(has_one<T> &x)
+  {
+    reset(x.proxy_);
+    return *this;
+  }
   /**
-   * Return the type string of the serializable
+   * Return the type string of the object
    *
-   * @return The type string of the serializable.
+   * @return The type string of the object.
    */
-  virtual const char* type() const
+  const char* type() const
   {
     return classname_.c_str();
   }
@@ -458,7 +280,16 @@ public:
    * @return The pointer to the serializable of type T.
    */
   T* get() {
-    return static_cast<T*>(lookup_object());
+    if (proxy_ && proxy_->obj()) {
+      if (proxy_->ostore_ && proxy_->has_transaction()) {
+        proxy_->current_transaction().on_update<T>(proxy_);
+      }
+      return (T*)proxy_->obj();
+    } else {
+      return nullptr;
+    }
+
+//    return static_cast<T*>(lookup_object());
   }
 
   /**
@@ -467,7 +298,7 @@ public:
    *
    * @return A new identifier.
    */
-  virtual basic_identifier* create_identifier() const
+  basic_identifier* create_identifier() const
   {
     return self::identifier_->clone();
   }
@@ -477,25 +308,24 @@ private:
   static std::unique_ptr<basic_identifier> identifier_;
 };
 
-template < class T, bool TYPE >
-std::string object_holder<T, TYPE>::classname_ = typeid(T).name();
+template < class T >
+std::string object_ptr<T>::classname_ = typeid(T).name();
 
-template < class T, bool TYPE >
-std::unique_ptr<basic_identifier> object_holder<T, TYPE>::identifier_(identifier_resolver::resolve<T>());
+template < class T >
+std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::resolve());
 
-/**
- * Shortcut to object_ptr
- *
- * @tparam T The type of the object_ptr
- */
-template < class T > using object_ptr = object_holder<T, false>;
 
-/**
- * Shortcut to object_ref
- *
- * @tparam T The type of the object_ref
- */
-template < class T > using object_ref = object_holder<T, true>;
+template < class T >
+has_one<T>::has_one(const object_ptr<T> &x)
+  : object_holder(true, x.proxy_)
+{}
+
+template < class T >
+has_one<T>& has_one<T>::operator=(const object_ptr <T> &x)
+{
+  reset(x.proxy_, x.cascade_);
+  return *this;
+}
 
 }
 

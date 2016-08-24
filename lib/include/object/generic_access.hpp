@@ -7,6 +7,8 @@
 
 #include "object/attribute_serializer.hpp"
 
+#include <type_traits>
+
 namespace oos {
 
 /**
@@ -21,14 +23,30 @@ namespace oos {
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
-template < typename O, class T >
+
+template < typename O, class T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr >
+bool set(O *obj, const std::string &name, const T &val)
+{
+  return set(*obj, name, val);
+}
+
+template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr >
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
-  obj->deserialize(reader);
+  oos::access::serialize(reader, obj);
   return reader.success();
 }
 
+/*
+template < typename O, class T >
+bool set(O *obj, const std::string &name, const T &val)
+{
+  attribute_reader<T> reader(name, val);
+  oos::access::deserialize(reader, *obj);
+  return reader.success();
+}
+*/
 /**
  * Sets string value of a member identified by
  * the given name. The value is passed as a
@@ -46,7 +64,7 @@ template < typename O >
 bool set(O &obj, const std::string &name, const char *val, size_t size)
 {
   attribute_reader<char*> reader(name, val, size);
-  obj->deserialize(reader);
+  oos::access::serialize(reader, obj);
   return reader.success();
 }
 
@@ -66,7 +84,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val)
 {
   attribute_writer<T> writer(name, val);
-  obj->serialize(writer);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -84,10 +102,10 @@ bool get(const O &obj, const std::string &name, T &val)
  * @return       True if the operation succeeds.
  */
 template < typename O, class T >
-bool get(const O &obj, const std::string &name, char *val, int size)
+bool get(const O &obj, const std::string &name, char *val, size_t size)
 {
   attribute_writer<T> writer(name, val, size);
-  obj->serialize(writer);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 
@@ -108,7 +126,7 @@ template < typename O, class T >
 bool get(const O &obj, const std::string &name, T &val, size_t precision)
 {
   attribute_writer<T> writer(name, val, precision);
-  obj->serialize(writer);
+  oos::access::serialize(writer, const_cast<O&>(obj));
   return writer.success();
 }
 

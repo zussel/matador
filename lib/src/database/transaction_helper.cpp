@@ -21,7 +21,7 @@
 #include "tools/byte_buffer.hpp"
 
 #include "object/object_store.hpp"
-#include "object/identifier_resolver.hpp"
+#include "tools/identifier_resolver.hpp"
 
 namespace oos {
 
@@ -31,7 +31,7 @@ bool backup_visitor::backup(action *act, const serializable *o, byte_buffer *buf
   object_ = o;
   act->accept(this);
   object_ = 0;
-  buffer_ = NULL;
+  buffer_ = nullptr;
   return true;
 }
 
@@ -57,8 +57,8 @@ bool restore_visitor::restore(action *act, byte_buffer *buffer, object_store *os
   ostore_ = ostore;
   buffer_ = buffer;
   act->accept(this);
-  buffer_ = NULL;
-  ostore_ = NULL;
+  buffer_ = nullptr;
+  ostore_ = nullptr;
   return true;
 }
 
@@ -210,7 +210,7 @@ void action_remover::visit(delete_action *a)
    ***********/
   if (a->id() == id_) {
     // ERROR: serializable was deleted twice
-    throw database_exception("database", "serializable was deleted twice");
+    throw database_exception("sql", "serializable was deleted twice");
   }
 }
 

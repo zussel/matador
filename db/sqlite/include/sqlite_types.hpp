@@ -44,7 +44,7 @@ template <> struct type_traits<double> { inline static const char* type_string()
 template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<const char*> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
-template <> struct type_traits<oos::date> { inline static const char* type_string() { return "INTEGER"; } };
+template <> struct type_traits<oos::date> { inline static const char* type_string() { return "TEXT"; } };
 template <> struct type_traits<oos::time> { inline static const char* type_string() { return "TEXT"; } };
 template <> struct type_traits<object_base_ptr> { inline static const char* type_string() { return "INTEGER"; } };
 

@@ -7,10 +7,6 @@ class StringTestUnit : public oos::unit_test
 {
 public:
   StringTestUnit();
-  virtual ~StringTestUnit();
-
-  virtual void initialize() {}
-  virtual void finalize() {}
 
   void test_split();
   void test_trim();

@@ -7,10 +7,6 @@ class TimeTestUnit : public oos::unit_test
 {
 public:
   TimeTestUnit();
-  virtual ~TimeTestUnit();
-
-  virtual void initialize() {}
-  virtual void finalize() {}
 
   void test_create();
   void test_initialize();

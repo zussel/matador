@@ -29,7 +29,7 @@
   #define OOS_MSSQL_API
 #endif
 
-#include "database/database_exception.hpp"
+#include "sql/sql_exception.hpp"
 
 #if defined(_MSC_VER)
 #include <windows.h>
@@ -51,7 +51,7 @@ void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::st
 
 void throw_error(const std::string &source, const std::string &sql = "");
 
-class mssql_exception : public database_exception
+class mssql_exception : public sql_exception
 {
 public:
   mssql_exception(const std::string &source, const std::string &what);
@@ -59,7 +59,7 @@ public:
   virtual ~mssql_exception() throw();
 };
 
-class mssql_stmt_exception : public database_exception
+class mssql_stmt_exception : public sql_exception
 {
 public:
   explicit mssql_stmt_exception(const std::string &what);

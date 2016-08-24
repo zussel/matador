@@ -151,10 +151,7 @@ bool time::is_valid_time(int hour, int min, int sec, long millis) {
   if (sec < 0 || sec > 59) {
     return false;
   }
-  if (millis < 0 || millis > 9999) {
-    return false;
-  }
-  return true;
+  return !(millis < 0 || millis > 9999);
 }
 
 time time::parse(const std::string &tstr, const char *format)
@@ -177,7 +174,7 @@ time time::parse(const std::string &tstr, const char *format)
     char *next;
     usec = std::strtoul(endptr, &next, 10);
     // calculate precision
-    unsigned digits = next - endptr;
+    unsigned digits = (unsigned int) (next - endptr);
     usec *= (unsigned long)pow(10.0, 6 - digits);
     if ((size_t)(next - format) != strlen(format)) {
       // still time string to parse

@@ -27,17 +27,24 @@
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
-#include "object/ObjectListTestUnit.hpp"
-#include "object/ObjectVectorTestUnit.hpp"
+#include "object/ObjectTransactiontestUnit.hpp"
 #include "object/PrototypeTreeTest.hpp"
 #include "object/PrimaryKeyUnitTest.hpp"
+#include "object/HasManyVectorUnitTest.hpp"
+#include "object/HasManyListUnitTest.hpp"
 
-#include "database/DatabaseTestUnit.hpp"
-#include "database/SessionTestUnit.hpp"
-#include "database/TransactionTestUnit.hpp"
-#include "database/SQLTestUnit.hpp"
+#include "orm/OrmTestUnit.hpp"
+#include "orm/TransactionTestUnit.hpp"
 
-#include "json/JsonTestUnit.hpp"
+//#include "sql/DatabaseTestUnit.hpp"
+#include "sql/ConnectionTestUnit.hpp"
+#include "sql/DialectTestUnit.hpp"
+#include "sql/QueryTestUnit.hpp"
+#include "sql/ConditionUnitTest.hpp"
+#include "sql/MSSQLDialectTestUnit.hpp"
+#include "sql/SQLiteDialectTestUnit.hpp"
+
+//#include "json/JsonTestUnit.hpp"
 
 #include "connections.hpp"
 
@@ -57,48 +64,56 @@ int main(int argc, char *argv[])
 
   suite.init(argc, argv);
 
-  suite.register_unit(new FirstTestUnit());
-  suite.register_unit(new SecondTestUnit());
+  suite.register_unit(new FirstTestUnit);
+  suite.register_unit(new SecondTestUnit);
 
-  suite.register_unit(new DateTestUnit());
-  suite.register_unit(new TimeTestUnit());
-//  suite.register_unit(new BlobTestUnit());
-  suite.register_unit(new VarCharTestUnit());
-  suite.register_unit(new FactoryTestUnit());
-  suite.register_unit(new StringTestUnit());
+  suite.register_unit(new DateTestUnit);
+  suite.register_unit(new TimeTestUnit);
+  suite.register_unit(new BlobTestUnit);
+  suite.register_unit(new VarCharTestUnit);
+  suite.register_unit(new FactoryTestUnit);
+  suite.register_unit(new StringTestUnit);
 
-  suite.register_unit(new PrimaryKeyUnitTest());
-  suite.register_unit(new PrototypeTreeTestUnit());
-  suite.register_unit(new ObjectPrototypeTestUnit());
-  suite.register_unit(new ObjectStoreTestUnit());
-  suite.register_unit(new ObjectListTestUnit());
-  suite.register_unit(new ObjectVectorTestUnit());
+  suite.register_unit(new PrimaryKeyUnitTest);
+  suite.register_unit(new PrototypeTreeTestUnit);
+  suite.register_unit(new ObjectPrototypeTestUnit);
+  suite.register_unit(new ObjectStoreTestUnit);
+  suite.register_unit(new ObjectTransactiontestUnit);
+  suite.register_unit(new HasManyVectorUnitTest);
+  suite.register_unit(new HasManyListUnitTest);
 
+  suite.register_unit(new ConditionUnitTest);
+  suite.register_unit(new DialectTestUnit);
 
 #ifdef OOS_MYSQL
-  suite.register_unit(new SessionTestUnit("mysql_session", "mysql session test unit", connection::mysql));
+  suite.register_unit(new ConnectionTestUnit("mysql_conn", "mysql connection test unit", connection::mysql));
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", connection::mysql));
-  suite.register_unit(new SQLTestUnit("mysql_query", "mysql query test unit", connection::mysql));
-  suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql database test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
+  suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", connection::mysql));
+//  suite.register_unit(new DatabaseTestUnit("mysql_database", "mysql sql test unit", connection::mysql, oos::time(2015, 3, 15, 13, 56, 23)));
+  suite.register_unit(new OrmTestUnit("mysql", connection::mysql));
 #endif
 
 #ifdef OOS_ODBC
-  suite.register_unit(new SessionTestUnit("mssql_session", "mssql session test unit", connection::mssql));
+  suite.register_unit(new ConnectionTestUnit("mssql_conn", "mssql connection test unit", connection::mssql));
   suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", connection::mssql));
-  suite.register_unit(new DatabaseTestUnit("mssql_database", "mssql database test unit", connection::mssql));
-  suite.register_unit(new SQLTestUnit("mssql_query", "mssql query test unit", connection::mssql));
+//  suite.register_unit(new DatabaseTestUnit("mssql_connection", "mssql sql test unit", connection::mssql));
+  suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", connection::mssql));
+  suite.register_unit(new OrmTestUnit("mssql", connection::mssql));
+  suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
 #ifdef OOS_SQLITE3
-  suite.register_unit(new SessionTestUnit("sqlite_session", "sqlite session test unit", connection::sqlite));
+  suite.register_unit(new ConnectionTestUnit("sqlite_conn", "sqlite connection test unit", connection::sqlite));
   suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", connection::sqlite));
-  suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite database test unit", connection::sqlite));
-  suite.register_unit(new SQLTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
+//  suite.register_unit(new DatabaseTestUnit("sqlite_database", "sqlite sql test unit", connection::sqlite));
+  suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", connection::sqlite));
+  suite.register_unit(new OrmTestUnit("sqlite", connection::sqlite));
+  suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
-  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
-
-  suite.register_unit(new JsonTestUnit());
+//  suite.register_unit(new TransactionTestUnit("memory_transaction", "memory transaction test unit"));
+//
+//  suite.register_unit(new JsonTestUnit());
 
   bool result = suite.run();
   return result ? 0 : 1;

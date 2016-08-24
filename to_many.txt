@@ -6,7 +6,7 @@ Lesen von 1-zu-1 Beziehung
 
 - Neuer object_proxy mit eindeutiger OID wird erzeugt
 - pk in object_proxy wird gelesen und gesetzt
-- object_proxy wird in object_base_ptr gesetzt
+- object_proxy wird in basic_object_holder gesetzt
 - in node des typs wird der object_proxy in eine
 -
 
@@ -15,11 +15,11 @@ Lesen von 1-zu-1 Beziehung
 ==========================================
 - 
 
-table::read(object_base_ptr)
+table::read(basic_object_holder)
 ============================
 wenn der pk im object_store existiert,
 	dann wurde das object schon gelesen und
-	kann direkt in den object_base_ptr gesetzt werden.
+	kann direkt in den basic_object_holder gesetzt werden.
 sonst
 	wird ein neuer object_proxy erzeugt und der
 	pk darin gesetzt. der neue proxy wird in entsprechende table

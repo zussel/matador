@@ -18,8 +18,8 @@
 #ifndef MSSQL_STATEMENT_HPP
 #define MSSQL_STATEMENT_HPP
 
-#include "database/statement.hpp"
-#include "database/sql.hpp"
+#include "sql/statement_impl.hpp"
+#include "sql/sql.hpp"
 
 #include "mssql_exception.hpp"
 
@@ -34,20 +34,17 @@
 #include <string>
 #include <vector>
 #include <type_traits>
-#include "object/identifier.hpp"
 
 namespace oos {
 
-class database;
-
 namespace mssql {
 
-class mssql_database;
+class mssql_connection;
 
 class mssql_statement : public detail::statement_impl
 {
 public:
-  mssql_statement(mssql_database &db, const sql &s, std::shared_ptr<oos::object_base_producer> producer);
+  mssql_statement(mssql_connection &db, const sql &s);
   virtual ~mssql_statement();
 
   virtual void clear();
@@ -57,53 +54,72 @@ public:
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
 
-  virtual database& db();
-  virtual const database& db() const;
-
   static int type2int(data_type_t type);
   static int type2sql(data_type_t type);
 
 protected:
-  virtual void write(const char *id, char x);
-  virtual void write(const char *id, short x);
-  virtual void write(const char *id, int x);
-  virtual void write(const char *id, long x);
-  virtual void write(const char *id, unsigned char x);
-  virtual void write(const char *id, unsigned short x);
-  virtual void write(const char *id, unsigned int x);
-  virtual void write(const char *id, unsigned long x);
-  virtual void write(const char *id, float x);
-  virtual void write(const char *id, double x);
-  virtual void write(const char *id, bool x);
-	virtual void write(const char *id, const char *x, size_t s);
-  virtual void write(const char *id, const varchar_base &x);
-  virtual void write(const char *id, const std::string &x);
-  virtual void write(const char *id, const oos::date &x);
-  virtual void write(const char *id, const oos::time &x);
-	virtual void write(const char *id, const object_base_ptr &x);
-  virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const basic_identifier &x);
+  virtual void serialize(const char*, char&);
+  virtual void serialize(const char*, short&);
+  virtual void serialize(const char*, int&);
+  virtual void serialize(const char*, long&);
+  virtual void serialize(const char*, unsigned char&);
+  virtual void serialize(const char*, unsigned short&);
+  virtual void serialize(const char*, unsigned int&);
+  virtual void serialize(const char*, unsigned long&);
+  virtual void serialize(const char*, bool&);
+  virtual void serialize(const char*, float&);
+  virtual void serialize(const char*, double&);
+  virtual void serialize(const char*, char *, size_t);
+  virtual void serialize(const char*, std::string&);
+  virtual void serialize(const char*, oos::varchar_base&);
+  virtual void serialize(const char*, oos::time&);
+  virtual void serialize(const char*, oos::date&);
+  virtual void serialize(const char*, oos::basic_identifier &x);
+  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type);
 
   template < class T >
-  void bind_value(T val, int index)
+  void bind_value(T val, size_t index)
   {
     value_t *v = new value_t;
-    v->data = new char[sizeof(T)];
-    *static_cast<T*>(v->data) = val;
+    if (bind_null_) {
+      v->data = NULL;
+      v->len = SQL_NULL_DATA;
+    } else {
+      v->data = new char[sizeof(T)];
+      *static_cast<T*>(v->data) = val;
+    }
     host_data_.push_back(v);
     
     int ctype = mssql_statement::type2int(type_traits<T>::data_type());
     int type = mssql_statement::type2sql(type_traits<T>::data_type());
-    SQLRETURN ret = SQLBindParameter(stmt_, index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, &v->len);
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
-  void bind_value(const oos::date &d, int index);
-  void bind_value(const oos::time &t, int index);
-  void bind_value(unsigned long val, int index);
-  void bind_value(const char *val, size_t size, int index);
+  void bind_value(const oos::date &d, size_t index);
+  void bind_value(const oos::time &t, size_t index);
+  void bind_value(unsigned long val, size_t index);
+  void bind_value(const char *val, size_t size, size_t index);
+
+  template < class T >
+  void bind_null(size_t index)
+  {
+    value_t *v = new value_t;
+    v->data = nullptr;
+    v->len = SQL_NULL_DATA;
+    host_data_.push_back(v);
+
+    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
+    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, &v->len);
+    throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
+  }
 
 private:
-  mssql_database &db_;
+  void bind_null();
+  void bind_value();
+
+private:
+  mssql_connection &db_;
   
   struct value_t {
     explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
@@ -116,9 +132,9 @@ private:
 
   enum { NUMERIC_LEN = 21 };
 
-  SQLHANDLE stmt_;
+  bool bind_null_ = false;
 
-  std::shared_ptr<oos::object_base_producer> producer_;
+  SQLHANDLE stmt_;
 };
 
 }

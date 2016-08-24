@@ -1,5 +1,5 @@
 #ADD_SUBDIRECTORY(tools)
-#ADD_SUBDIRECTORY(database)
+#ADD_SUBDIRECTORY(sql)
 #ADD_SUBDIRECTORY(serializable)
 #ADD_SUBDIRECTORY(json)
 #ADD_SUBDIRECTORY(unit)
@@ -26,13 +26,20 @@ SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.hpp
   object/ObjectStoreTestUnit.cpp
   object/ObjectStoreTestUnit.hpp
-  object/ObjectListTestUnit.cpp
-  object/ObjectListTestUnit.hpp
-  object/ObjectVectorTestUnit.cpp
-  object/ObjectVectorTestUnit.hpp
   object/PrototypeTreeTest.cpp
   object/PrototypeTreeTest.hpp
-object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
+  object/PrimaryKeyUnitTest.cpp
+  object/PrimaryKeyUnitTest.hpp
+  object/HasManyVectorUnitTest.cpp
+  object/HasManyVectorUnitTest.hpp
+  object/HasManyListUnitTest.cpp
+  object/HasManyListUnitTest.hpp
+  object/ObjectTransactiontestUnit.cpp
+  object/ObjectTransactiontestUnit.hpp
+)
+
+SET (TEST_ORM_SOURCES
+)
 
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
@@ -44,16 +51,29 @@ SET (TEST_JSON_SOURCES
   json/JsonTestUnit.cpp
 )
 
-SET (TEST_DATABASE_SOURCES
-  database/DatabaseTestUnit.cpp
-  database/DatabaseTestUnit.hpp
-  database/SessionTestUnit.hpp
-  database/SessionTestUnit.cpp
-  database/TransactionTestUnit.cpp
-  database/TransactionTestUnit.hpp
-        database/SQLTestUnit.cpp database/SQLTestUnit.hpp)
+SET (TEST_SQL_SOURCES
+  sql/ConnectionTestUnit.cpp
+  sql/ConnectionTestUnit.hpp
+  sql/QueryTestUnit.cpp
+  sql/QueryTestUnit.hpp
+  sql/ConditionUnitTest.cpp
+  sql/ConditionUnitTest.hpp
+  sql/DialectTestUnit.cpp
+  sql/DialectTestUnit.hpp
+  sql/TestDialect.cpp
+  sql/TestDialect.hpp
+  sql/MSSQLDialectTestUnit.cpp
+  sql/MSSQLDialectTestUnit.hpp
+        sql/SQLiteDialectTestUnit.cpp sql/SQLiteDialectTestUnit.hpp)
 
-SET (TEST_SOURCES test_oos.cpp object/PrimaryKeyUnitTest.cpp object/PrimaryKeyUnitTest.hpp)
+SET (TEST_ORM_SOURCES
+  orm/TransactionTestUnit.cpp
+  orm/TransactionTestUnit.hpp
+  orm/OrmTestUnit.cpp
+  orm/OrmTestUnit.hpp
+)
+
+SET (TEST_SOURCES test_oos.cpp)
 
 ADD_EXECUTABLE(test_oos
   ${TEST_SOURCES}
@@ -61,8 +81,9 @@ ADD_EXECUTABLE(test_oos
   ${TEST_TOOLS_SOURCES}
   ${TEST_OBJECT_SOURCES}
   ${TEST_UNIT_SOURCES}
-  ${TEST_JSON_SOURCES}
-  ${TEST_DATABASE_SOURCES}
+#  ${TEST_JSON_SOURCES}
+  ${TEST_ORM_SOURCES}
+  ${TEST_SQL_SOURCES}
 )
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
@@ -86,235 +107,10 @@ SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
 SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
-SOURCE_GROUP("database" FILES ${TEST_DATABASE_SOURCES})
+SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})
+SOURCE_GROUP("sql" FILES ${TEST_SQL_SOURCES})
 SOURCE_GROUP("main" FILES ${TEST_SOURCES})
 
 MESSAGE(STATUS "Current binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
-
-# string tests
-SET(string
-  split
-  trim
-)
-
-# date tests
-SET(date
-  create
-  julian
-  init
-  invalid
-  copy
-  assign
-  compare
-  set
-  modify
-  difference
-  to_string
-)
-
-# time tests
-SET(time
-  create
-  init
-  invalid
-  copy
-  assign
-  compare
-#  modify
-  parse
-  format
-)
-
-# factory tests
-SET(factory
-  create
-  insert
-  list
-  produce
-)
-
-# first tests
-SET(first
-  sub1
-  sub2
-  sub3
-)
-
-# second tests
-SET(second
-  small
-  big
-)
-
-# json tests
-SET(json
-  access
-  create
-  bool
-  number
-  parser
-  array
-  simple
-  string
-)
-
-# list tests
-SET(list
-  direct_ref
-  int
-  ptr
-  ref
-  linked_int
-  linked_ptr
-  linked_ref
-)
-
-# vector tests
-SET(vector
-  direct_ref
-  int
-  ptr
-  ref
-)
-
-# prototype tests
-SET(prototype
-  empty
-  find
-  hierarchy
-  iterator
-  one
-  relation
-  size
-  parent_of
-)
-
-# prototype tree tests
-SET(tree
-  empty
-  insert
-  insert_template
-  find
-  remove
-  erase
-  clear
-  container
-  decrement
-  child_of
-  traverse
-  const_traverse
-)
-
-# serializable store tests
-SET(store
-  version
-  clear
-  delete
-  expression
-  generic
-  get
-  hierarchy
-  multiple_object_with_sub
-  multiple_simple
-  ref_ptr_counter
-  serializer
-  set
-  simple
-#  structure
-  sub_delete
-  view
-  with_sub
-  insert
-  remove
-)
-
-# varchar tests
-SET(varchar
-  assign
-  copy
-  create
-)
-
-SET(TESTUNITS)
-
-LIST(APPEND TESTUNITS string)
-LIST(APPEND TESTUNITS date)
-LIST(APPEND TESTUNITS time)
-LIST(APPEND TESTUNITS factory)
-LIST(APPEND TESTUNITS first)
-LIST(APPEND TESTUNITS second)
-LIST(APPEND TESTUNITS json)
-LIST(APPEND TESTUNITS list)
-LIST(APPEND TESTUNITS vector)
-LIST(APPEND TESTUNITS tree)
-LIST(APPEND TESTUNITS prototype)
-LIST(APPEND TESTUNITS store)
-LIST(APPEND TESTUNITS varchar)
-
-SET(transaction
-  simple
-  complex
-  list
-  vector
-)
-
-SET(session
-  open_close
-  create_drop
-  reopen
-)
-
-SET(database
-  insert
-  update
-  delete
-  datatypes
-  reload_simple
-  reload
-  reload_container
-  relation
-)
-  
-IF(SQLITE3_FOUND AND OOS_SQLITE3)
-  SET(sqlite_database ${database})
-  SET(sqlite_transaction ${transaction})
-  SET(sqlite_session ${session})
-  LIST(APPEND TESTUNITS sqlite_database)
-  LIST(APPEND TESTUNITS sqlite_transaction)
-  LIST(APPEND TESTUNITS sqlite_session)
-ELSE()
-  MESSAGE(STATUS "skipping SQLite tests")
-ENDIF()
-
-IF(MYSQL_FOUND AND OOS_MYSQL)
-  SET(mysql_database ${database})
-  SET(mysql_transaction ${transaction})
-  SET(mysql_session ${session})
-  LIST(APPEND TESTUNITS mysql_database)
-  LIST(APPEND TESTUNITS mysql_transaction)
-  LIST(APPEND TESTUNITS mysql_session)
-ELSE()
-  MESSAGE(STATUS "skipping MySQL tests")
-ENDIF()
-
-IF(ODBC_FOUND AND OOS_ODBC)
-  SET(mssql_database ${database})
-  SET(mssql_transaction ${transaction})
-  SET(mssql_session ${session})
-  LIST(APPEND TESTUNITS mssql_database)
-  LIST(APPEND TESTUNITS mssql_transaction)
-  LIST(APPEND TESTUNITS mssql_session)
-ELSE()
-  MESSAGE(STATUS "skipping MSSQL tests")
-ENDIF()
-
-SET(memory_transaction ${transaction})
-LIST(APPEND TESTUNITS memory_transaction)
-
-FOREACH(unit ${TESTUNITS})
-  FOREACH(test ${${unit}})
-#    ADD_TEST(test_oos_${unit}_${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec ${unit}:${test})
-  ENDFOREACH(test)
-ENDFOREACH(unit)
 
 ADD_TEST(test_oos_all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_oos exec all)

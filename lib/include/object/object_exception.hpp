@@ -24,7 +24,7 @@
 
 namespace oos {
 
-class serializable;
+class serializer;
 
 /**
  * Throws an serializable exception

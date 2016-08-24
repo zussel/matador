@@ -32,10 +32,10 @@ class memory_database : public database
 {
 public:
   /**
-   * Creates an in memory database within the
+   * Creates an in memory sql within the
    * given session.
    *
-   * @param db The corresponding session for the database.
+   * @param db The corresponding session for the sql.
    */
   explicit memory_database(session *db);
   virtual ~memory_database() {}

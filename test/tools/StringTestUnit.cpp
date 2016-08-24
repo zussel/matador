@@ -13,9 +13,6 @@ StringTestUnit::StringTestUnit()
   add_test("trim", std::bind(&StringTestUnit::test_trim, this), "test trim");
 }
 
-StringTestUnit::~StringTestUnit()
-{}
-
 void StringTestUnit::test_split()
 {
   std::string str("1,2,3,5,6");

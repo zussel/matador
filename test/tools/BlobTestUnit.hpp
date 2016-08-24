@@ -7,15 +7,8 @@ class BlobTestUnit : public oos::unit_test
 {
 public:
   BlobTestUnit();
-  virtual ~BlobTestUnit();
-  
-  void create_blob();
 
-  /**
-   * Initializes a test unit
-   */
-  virtual void initialize() {}
-  virtual void finalize() {}
+  void create_blob();
 };
 
 #endif /* BLOBTESTUNIT_HPP */

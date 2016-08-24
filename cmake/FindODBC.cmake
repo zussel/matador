@@ -3,7 +3,7 @@
 # 
 # ODBC is an open standard for connecting to different databases in a
 # semi-vendor-independent fashion.  First you install the ODBC driver
-# manager.  Then you need a driver for each separate database you want
+# manager.  Then you need a driver for each separate sql you want
 # to connect to (unless a generic one works).  VTK includes neither
 # the driver manager nor the vendor-specific drivers: you have to find
 # those yourself.

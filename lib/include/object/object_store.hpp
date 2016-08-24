@@ -18,21 +18,26 @@
 #ifndef OBJECT_STORE_HPP
 #define OBJECT_STORE_HPP
 
-#include "object/object_ptr.hpp"
-#include "object/prototype_tree.hpp"
-#include "object/object_producer.hpp"
-#include "object/object_deleter.hpp"
+#include "object/prototype_iterator.hpp"
 #include "object/object_exception.hpp"
-#include "object/object_inserter.hpp"
+#include "object/object_observer.hpp"
+#include "object/has_one.hpp"
+#include "object/object_serializer.hpp"
+#include "object/basic_has_many.hpp"
+#include "object/transaction.hpp"
 
 #include "tools/sequencer.hpp"
+#include "tools/identifier_setter.hpp"
 
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
+#include <stack>
 
 #include <string>
 #include <ostream>
 #include <list>
+#include <iostream>
 
 #ifdef _MSC_VER
   #ifdef oos_EXPORTS
@@ -50,11 +55,243 @@
 
 namespace oos {
 
-class serializable;
 class object_proxy;
+
 class prototype_node;
-class object_observer;
-class object_container;
+
+namespace detail {
+
+class modified_marker
+{
+public:
+  typedef void (*t_marker)(object_store &store, object_proxy &proxy);
+
+public:
+  template < class T >
+  modified_marker(T*)
+    : marker_(&marker_func<T>)
+  {}
+
+  void mark(object_store &store, object_proxy &proxy)
+  {
+    marker_(store, proxy);
+  }
+
+private:
+  template < class T >
+  static void marker_func(object_store &store, object_proxy &proxy);
+
+private:
+  t_marker marker_;
+};
+
+/**
+ * @cond OOS_DEV
+ * @class object_inserter
+ * @brief Creates objects and object_lists
+ *
+ * When an serializable is inserted into the serializable store
+ * subsequently other serializable must be created and
+ * inserted into the serializable store.
+ * This class does these tasks.
+ */
+class object_inserter {
+public:
+  /**
+   * @brief Creates an object_inserter instance.
+   *
+   * An object_inserter instance ist created for a
+   * given object_store. The notify flag tells the
+   * object_inserter wether the observers should be
+   * notified or not.
+   *
+   * @param ostore The object_store.
+   */
+  object_inserter(object_store &ostore);
+
+  ~object_inserter();
+
+  template<class T>
+  void insert(object_proxy *proxy, T *o, bool notify);
+
+  void reset();
+
+  template<class T>
+  void serialize(T &x);
+
+  template<class T>
+  void serialize(const char *, T &) { }
+  void serialize(const char *, char *, size_t) { }
+
+//  template < class T >
+//  void serialize(const char *, object_ptr<T> &x)
+  template<class T>
+  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+
+  template<class T, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
+
+private:
+  typedef std::set<object_proxy *> t_object_proxy_set;
+
+  t_object_proxy_set object_proxies_;
+
+  std::stack<object_proxy *> object_proxy_stack_;
+
+  std::reference_wrapper<object_store> ostore_;
+
+  std::function<void(object_store&, object_proxy*)> modified_marker_;
+
+  bool notify_ = false;
+};
+
+/**
+ * @cond OOS_DEV
+ * @class object_deleter
+ * @brief Checks if an serializable could be deleted
+ *
+ * This class checks wether a given serializable or a
+ * given object_list_base and their children objects
+ * could be deleted or not.
+ * If the check was successful, all the deletable serializable
+ * can be accepted via the iterators.
+ */
+class object_deleter {
+private:
+  struct t_object_count {
+    typedef void (*t_remove_func)(object_proxy*, bool);
+    template < class T >
+    t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)
+      : proxy(oproxy)
+      , reference_counter(oproxy->reference_count())
+      , ignore(ignr)
+      , remove_func(&remove_object<T>)
+    {}
+
+    void remove(bool notify);
+
+    template <typename T>
+    static void remove_object(object_proxy *proxy, bool notify);
+
+    object_proxy *proxy;
+    unsigned long reference_counter;
+    bool ignore;
+
+    t_remove_func remove_func;
+  };
+
+private:
+  typedef std::map<unsigned long, t_object_count> t_object_count_map;
+
+public:
+  typedef t_object_count_map::iterator iterator;
+  /**< Shortcut the serializable map iterator */
+  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
+
+  /**
+   * Creates an instance of the object_deleter
+   */
+  object_deleter() { }
+
+  ~object_deleter() { }
+
+  /**
+   * Checks wether the given serializable is deletable.
+   *
+   * @param proxy The object_proxy to be checked.
+   * @return True if the serializable could be deleted.
+   */
+  template<class T>
+  bool is_deletable(object_proxy *proxy, T *o);
+
+  /**
+   * Checks wether the given object_container is deletable.
+   *
+   * @param ovector The object_container to be checked.
+   * @return True if the object_container could be deleted.
+   */
+//  bool is_deletable(object_container &oc);
+
+  /**
+   * @brief Returns the first deletable serializable.
+   *
+   * If the check was made and was successful this
+   * returns the first deletable serializable.
+   */
+  iterator begin();
+
+  /**
+   * @brief Returns the first deletable serializable.
+   *
+   * If the check was made and was successful this
+   * returns the last deletable serializable.
+   */
+  iterator end();
+
+  template<class T>
+  void serialize(T &x) { oos::access::serialize(*this, x); }
+
+  template<class T>
+  void serialize(const char *, T &) { }
+  void serialize(const char *, char *, size_t) { }
+
+  template<class T>
+  void serialize(const char *, has_one<T> &x, cascade_type cascade);
+  template<class T, template<class ...> class C>
+  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
+  template<class T>
+  void serialize(const char *id, identifier<T> &x);
+
+  bool check_object_count_map() const;
+
+private:
+  t_object_count_map object_count_map;
+};
+
+template < class T,  template < class ... > class ON_ATTACH >
+class node_analyzer {
+public:
+  node_analyzer(prototype_node &node, const ON_ATTACH<T> &on_attach)
+    : node_(node)
+    , on_attach_(on_attach)
+  { }
+
+  ~node_analyzer() { }
+
+  static void analyze(prototype_node &node, ON_ATTACH<T> on_attach);
+  template<class V>
+  void serialize(V &x);
+  template<class V>
+  void serialize(const char *, V &) { }
+  void serialize(const char *, char *, size_t) { }
+  template<class V>
+  void serialize(const char *id, has_one<V> &x, cascade_type);
+  template<class V, template<class ...> class C>
+  void serialize(const char *, has_many<V, C> &, const char *, const char *);
+
+private:
+  prototype_node &node_;
+  ON_ATTACH<T> on_attach_;
+};
+
+struct basic_on_attach {};
+
+template < class T >
+struct null_on_attach : public basic_on_attach
+{
+  null_on_attach() {}
+  template < class V >
+  null_on_attach(const null_on_attach<V> &) {}
+  null_on_attach& operator=(const null_on_attach &) { return *this; }
+  template < class V >
+  null_on_attach& operator=(const null_on_attach<V> &) { return *this; }
+
+  void operator()(prototype_node*) const {}
+};
+
+}
+
+/// @endcond
 
 /**
  * @class object_store
@@ -70,68 +307,45 @@ class object_container;
  */
 class OOS_API object_store
 {
+private:
+  object_store(const object_store&) = delete;
+  object_store& operator=(const object_store&) = delete;
+
+public:
+  typedef prototype_iterator iterator;              /**< Shortcut for the list iterator. */
+  typedef const_prototype_iterator const_iterator;  /**< Shortcut for the list const iterator. */
+
 public:
   /**
    * Create an empty serializable store.
    */
-	object_store();
+  object_store();
 
   /**
    * Destroys all prototypes, objects and observers in store.
    */
-	~object_store();
+  ~object_store();
 
   /**
-   * Returns the prototype tree
-   *
-   * @return The prototype tree
-   */
-  prototype_tree& prototypes();
-
-  /**
-   * Returns the prototype tree
-   *
-   * @return The prototype tree
-   */
-  const prototype_tree& prototypes() const;
-
-  /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    * 
-   * @param producer The producer serializable produces a new serializable of a specific type.
+   * @tparam T       The type of the prototype node
    * @param type     The unique name of the type.
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-	prototype_iterator insert_prototype(object_base_producer *producer, const char *type, bool abstract = false, const char *parent = nullptr);
+  template< class T, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
+  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
 
   /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given. The producer is automatically created via the template
-   * parameter.
-   * 
-   * @tparam T       The type of the prototype node
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @return         Returns new inserted prototype iterator.
-   */
-  template < class T >
-  prototype_iterator insert_prototype(const char *type, bool abstract = false)
-  {
-    return insert_prototype(new object_producer<T>, type, abstract);
-  }
-
-  /**
-   * Inserts a new serializable prototype into the prototype tree. The prototype
-   * constist of a producer and a unique type name. To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given. The producer is automatically created via the template
+   * node is also given.
    * parameter.
    * 
    * @tparam T       The type of the prototype node
@@ -140,11 +354,36 @@ public:
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
-  template < class T, class S >
-  prototype_iterator insert_prototype(const char *type, bool abstract = false)
-  {
-    return insert_prototype(new object_producer<T>, type, abstract, typeid(S).name());
-  }
+  template<class T, class S, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
+  prototype_iterator attach(const char *type, bool abstract = false, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name (generated from typeid). To know where the new
+   * prototype is inserted into the hierarchy the type name of the parent
+   * node is also given.
+   *
+   * @tparam T       The type of the prototype node
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param parent   The name of the parent type.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T>
+  prototype_iterator prepare_attach(bool abstract = false, const char *parent = nullptr);
+
+  /**
+   * Inserts a new object prototype into the prototype tree. The prototype
+   * constist of a unique type name (generated from typeid). To know where the new
+   * prototype is inserted into the hierarchy the typeid of the parent
+   * node is also given.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @return         Returns new inserted prototype iterator.
+   */
+  template<class T, class S>
+  prototype_iterator prepare_attach(bool abstract = false);
 
   /**
    * Removes an serializable prototype from the prototype tree. All children
@@ -152,7 +391,34 @@ public:
    * 
    * @param type The name of the type to remove.
    */
-  void remove_prototype(const char *type);
+  void detach(const char *type);
+
+  /**
+   * Erase a prototype node identified
+   * by its iterator. The successor iterator
+   * is returned.
+   *
+   * @param i The prototype iterator to be erased
+   * @return The successor of the erased iterator
+   */
+  iterator detach(const prototype_iterator &i);
+
+  /**
+   * Finds the typename to the given class.
+   * If no typename is found an empty string
+   * is returned.
+   *
+   * @tparam class type to find
+   * @return The corresponding typename
+   */
+  template < class T >
+  std::string type() const {
+    const_iterator i = find<T>();
+    if (i == end()) {
+      return "";
+    }
+    return i->type();
+  }
 
   /**
    * @brief Finds prototype node.
@@ -165,7 +431,7 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  prototype_iterator find_prototype(const char *type);
+  iterator find(const char *type);
 
   /**
    * @brief Finds prototype node.
@@ -178,7 +444,7 @@ public:
    * @param type Name or class name of the prototype
    * @return Returns a prototype iterator.
    */
-  const_prototype_iterator find_prototype(const char *type) const;
+  const_iterator find(const char *type) const;
 
   /**
    * @brief Finds prototype node by template type.
@@ -190,10 +456,10 @@ public:
    *
    * @return Returns a prototype iterator.
    */
-  template < class T >
-  prototype_iterator find_prototype()
+  template<class T>
+  iterator find()
   {
-    return find_prototype(typeid(T).name());
+    return find(typeid(T).name());
   }
 
   /**
@@ -206,10 +472,10 @@ public:
    *
    * @return Returns a prototype iterator.
    */
-  template < class T >
-  const_prototype_iterator find_prototype() const
+  template<class T>
+  const_iterator find() const
   {
-    return find_prototype(typeid(T).name());
+    return find(typeid(T).name());
   }
 
   /**
@@ -217,33 +483,59 @@ public:
    *
    * @return The first prototype node iterator.
    */
-  const_prototype_iterator begin() const;
+  const_iterator begin() const;
 
   /**
    * Return the first prototype node.
    *
    * @return The first prototype node iterator.
    */
-  prototype_iterator begin();
+  iterator begin();
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  const_prototype_iterator end() const;
+  const_iterator end() const;
 
   /**
    * Return the last prototype node.
    *
    * @return The last prototype node iterator.
    */
-  prototype_iterator end();
+  iterator end();
 
   /**
    * Removes all inserted prototypes and all inserted objects.
    */
   void clear(bool full = false);
+
+  /**
+ * Clears a prototype node and its cildren nodes.
+ * All objects will be deleted.
+ *
+ * @param type The name of the type to remove.
+ * @throws oos::object_exception on error
+ */
+  void clear(const char *type);
+
+  /**
+   * Clears a prototype node by an iterator and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_iterator to remove.
+   * @throws oos::object_exception on error
+   */
+  void clear(const prototype_iterator &node);
+
+  /**
+   * Return count of prototype nodes
+   *
+   * @return Count of prototype nodes
+   */
+  size_t size() const;
 
   /**
    * Returns true if the object_store
@@ -252,6 +544,10 @@ public:
    * @return True on empty object_store.
    */
   bool empty() const;
+
+  size_t depth(const prototype_node *node) const;
+
+  void dump(std::ostream &out) const;
 
   /**
    * Dump all serializable to a given stream
@@ -266,51 +562,131 @@ public:
    * @param type Typename of the serializable to create.
    * @return The created serializable on success or NULL if the type couldn't be found.
    */
-	serializable* create(const char *type) const;
+  template<class T>
+  T *create() const {
+    const_prototype_iterator node = find<T>();
+    if (node != end()) {
+      return new T;
+    } else {
+      throw object_exception("unknown prototype type");
+    }
+  }
 
   /**
-   * Inserts an serializable of a specfic type. On successfull insertion
-   * an object_ptr element with the inserted serializable is returned.
-   * 
-   * @param o Object to be inserted.
-   * @return Inserted serializable contained by an object_ptr on success.
+   * Executes a predicate for each root node
+   *
+   * @tparam P The type of the predicate function object
+   * @param pred The function object to be executed
    */
-  template < class Y >
-	object_ptr<Y> insert(Y *o)
+  template < typename P >
+  void for_each_root_node(P pred) const
   {
-		return object_ptr<Y>(insert_object(o, true));
-	}
+    prototype_node *node = first_->next;
+    while (node != last_) {
+      pred(const_prototype_iterator(node));
+      node = node->next;
+    }
+  }
+
+  /**
+   * @brief Inserts a new proxy into the object store
+   *
+   * @param oproxy Object proxy to insert
+   * @param notify Indicates wether all observers should be notified.
+   * @param is_new Proxy is a new not inserted proxy, skip object store check
+   */
+  template < class T >
+  object_proxy* insert(object_proxy *proxy, bool notify)
+  {
+    if (proxy == nullptr) {
+      throw object_exception("proxy is null");
+    }
+    if (proxy->obj() == nullptr) {
+      throw object_exception("object is null");
+    }
+    iterator node = find(proxy->classname());
+    if (node == end()) {
+      throw object_exception("couldn't find object type");
+    }
+    // check if proxy/object is already inserted
+    if (proxy->ostore() != nullptr && proxy->id() > 0) {
+      return proxy;
+    }
+    // check if proxy/object is already inserted
+    if (proxy->ostore() == nullptr && proxy->id() > 0) {
+      throw object_exception("object has id but doesn't belong to a store");
+    }
+
+    proxy->id(seq_.next());
+    proxy->ostore_ = this;
+
+    // get object
+    T *object = static_cast<T*>(proxy->obj());
+    if (object && proxy->has_identifier()) {
+      // if object has primary key of type short, int or long
+      // set the id of proxy as value
+      identifier_setter<unsigned long>::assign(proxy->id(), object);
+    }
+
+    node->insert(proxy);
+
+    // initialize object
+    if (object) {
+      object_inserter_.insert(proxy, object, notify);
+    }
+    // set this into persistent serializable
+    // notify observer
+    if (notify && !transactions_.empty()) {
+      transactions_.top().on_insert<T>(proxy);
+    }
+
+    // insert element into hash map for fast lookup
+    object_map_.insert(std::make_pair(proxy->id(), proxy));
+
+    return proxy;
+  }
+
+  /**
+   * Inserts an object of a specfic type. On successfull insertion
+   * an object_ptr element with the inserted object is returned.
+   *
+   * @param o Object to be inserted.
+   * @return Inserted object contained by an object_ptr on success.
+   */
+  template < class T >
+  object_ptr<T> insert(T *o)
+  {
+    if (o == nullptr) {
+      throw object_exception("object is null");
+    }
+    object_inserter_.reset();
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o));
+    try {
+      insert<T>(proxy.get(), true);
+    } catch (object_exception &ex) {
+      proxy->release<T>();
+      throw ex;
+    }
+
+    return object_ptr<T>(proxy.release());
+  }
 
   /**
    * Inserts a given object_ptr of specific type.
    * On successfull insertion an object_ptr element
-   * with the inserted serializable is returned.
+   * with the inserted object is returned.
    *
    * @param optr object_ptr to be inserted.
-   * @return Inserted serializable contained by an object_ptr on success.
+   * @return Inserted object contained by an object_ptr on success.
    */
-  template < class Y >
-  object_ptr<Y> insert(const object_ptr<Y> &optr)
+  template < class T >
+  object_ptr<T> insert(const object_ptr<T> &o)
   {
-    if (!optr.proxy_) {
-      throw object_exception("serializable pointer is null");
-    }
-    //if (optr.proxy_->id() > 0) {
-    //  throw object_exception("serializable id is greater zero");
-    //}
-
-    insert_proxy(optr.proxy_);
-    return optr;
+    object_inserter_.reset();
+    insert<T>(o.proxy_, true);
+    return o;
   }
 
-  /**
-   * Inserts an object_container into the serializable store. Subsequently the
-   * object_container is initialized.
-   * 
-   * @param oc The object_container to insert.
-   */
-  void insert(object_container &oc);
-  
   /**
    * Returns true if the underlaying
    * serializable is removable.
@@ -318,52 +694,72 @@ public:
    * @param o The serializable to check.
    * @return True if serializable is removable.
    */
-  bool is_removable(const object_base_ptr &o);
+  template<class T>
+  bool is_removable(const object_ptr<T> &o) {
+    return object_deleter_.is_deletable(o.proxy_, o.get());
+  }
 
+  void remove_proxy(object_proxy *proxy);
+
+  template < class T >
+  void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
+  {
+    if (proxy == nullptr) {
+      throw object_exception("object proxy is nullptr");
+    }
+    if (proxy->node() == nullptr) {
+      throw object_exception("prototype node is nullptr");
+    }
+    // check if object tree is deletable
+    if (check_if_deletable && !object_deleter_.is_deletable<T>(proxy, (T*)proxy->obj())) {
+      throw object_exception("object is not removable");
+    }
+
+    if (check_if_deletable) {
+      detail::object_deleter::iterator first = object_deleter_.begin();
+      detail::object_deleter::iterator last = object_deleter_.end();
+
+      while (first != last) {
+        if (!first->second.ignore) {
+          (first++)->second.remove(notify);
+        } else {
+          ++first;
+        }
+      }
+    } else {
+      // single deletion
+      if (object_map_.erase(proxy->id()) != 1) {
+        // couldn't remove object
+        // throw exception
+        throw object_exception("couldn't remove object");
+      }
+
+      proxy->node()->remove(proxy);
+
+      if (notify && !transactions_.empty()) {
+        // notify transaction
+        transactions_.top().on_delete<T>(proxy);
+      } else {
+        delete proxy;
+      }
+    }
+  }
   /**
-   * Removes an serializable from the serializable store. After successfull
-   * removal the serializable is set to zero and isn't valid any more.
+   * Removes an object from the object store. After successfull
+   * removal the object is set to zero and isn't valid any more.
    * 
    * Before removal is done a reference and pointer counter check
    * is done. If at least one counter is greater than zero the
-   * serializable can't be removed and false is returned.
+   * object can't be removed and false is returned.
    * 
    * @throw object_exception
    * @param o Object to remove.
    */
-	void remove(object_base_ptr &o);
-  
-  /**
-   * Removes an object_container from serializable store. All elements of the
-   * container are removed from the store after a successfull reference and
-   * pointer counter check.
-   * 
-   * @throw object_exception
-   * @param oc The serializable vector to remove.
-   */
-  void remove(object_container &oc);
-
-  /*
-  template < class InputIterator >
-  void insert(InputIterator first, InputIterator last)
+  template<class T>
+  void remove(object_ptr<T> &o)
   {
-   // std::iterator_traits<InputIterator>::value_type *o = *first;
+    remove<T>(o.proxy_, true, true);
   }
-  */
-  
-  /**
-   * @brief Register an observer with the serializable store
-   *
-   * @param observer The serializable observer to register.
-   */
-  void register_observer(object_observer *observer);
-
-  /**
-   * @brief Unregisters an observer from the serializable store
-   *
-   * @param observer The serializable observer to unregister.
-   */
-  void unregister_observer(object_observer *observer);
 
   /**
    * @brief Creates and inserts an serializable proxy serializable.
@@ -383,8 +779,21 @@ public:
    * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
-  object_proxy *create_proxy(serializable *o);
-  object_proxy *create_proxy(unsigned long id);
+  template<class T>
+  object_proxy *create_proxy(T *o)
+  {
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, seq_.next(), this));
+    return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
+  }
+
+  template<class T>
+  object_proxy *create_proxy(T *o, unsigned long oid)
+  {
+    std::unique_ptr<object_proxy> proxy(new object_proxy(o, oid, this));
+    return object_map_.insert(std::make_pair(oid, proxy.release())).first->second;
+  }
+
+//  object_proxy *create_proxy(unsigned long id);
 
   /**
    * @brief Delete proxy from map
@@ -411,13 +820,10 @@ public:
   object_proxy *find_proxy(unsigned long id) const;
 
   /**
-   * @brief Inserts a new proxy into the object store
-   *
-   * @param oproxy Object proxy to insert
-   * @param notify Indicates wether all observers should be notified.
-   * @param is_new Proxy is a new not inserted proxy, skip object store check
+   * Insert object proxy into object store
+   * Object id must be set
    */
-  void insert_proxy(object_proxy *oproxy, bool notify = true, bool is_new = true);
+  object_proxy* insert_proxy(object_proxy *proxy);
 
   /**
    * @brief Registers a new proxy
@@ -431,7 +837,7 @@ public:
    * @return The registered object_proxy
    * @throws object_exception
    */
-  object_proxy* register_proxy(object_proxy *oproxy);
+  object_proxy *register_proxy(object_proxy *oproxy);
 
   /**
    * @brief Exchange the sequencer strategy.
@@ -447,41 +853,506 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
+  transaction current_transaction();
+  bool has_transaction() const;
+
 private:
-  friend class object_inserter;
+  friend class detail::modified_marker;
+  friend class detail::object_inserter;
   friend class object_deleter;
   friend class object_serializer;
   friend class restore_visitor;
   friend class object_container;
-  friend class object_base_ptr;
+  friend class object_holder;
+  friend class object_proxy;
+  friend class prototype_node;
+  template < template < class ... > class ON_ATTACH >
+  friend class detail::node_analyzer;
+  friend class transaction;
+  template < class T, template <class ...> class C >
+  friend class has_many;
+
 
 private:
-  void mark_modified(object_proxy *oproxy);
+  template < class T, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
+  prototype_iterator attach(const char *id, abstract_has_many *container)
+  {
+    temp_container_ = container;
+    prototype_iterator i = attach<T>(id);
+    temp_container_ = nullptr;
+    return i;
+  }
 
-  void remove(object_proxy *proxy);
-	object_proxy* insert_object(serializable *o, bool notify);
-	void remove_object(object_proxy *proxy, bool notify);
+  /**
+   * Clears a prototype_node and its
+   * cildren nodes. All object_proxy objects will be
+   * deleted.
+   *
+   * @param node The prototype_node to remove.
+   * @return The next valid prototype node.
+   * @throws oos::object_exception on error
+   */
+  prototype_node* clear(prototype_node *node);
 
+  template < class T >
+  void mark_modified(object_proxy *proxy)
+  {
+    if (!transactions_.empty()) {
+      transactions_.top().on_update<T>(proxy);
+    }
+  }
 
-  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
+  /**
+   * @internal
+   *
+   * Searches a prototype by type
+   * which can either be a type name
+   * or a class name.
+   * Returns a valid prototype node or
+   * nullptr on unknown type
+   * or throws an exception on error
+   *
+   * @param type Type name of the prototype node to search
+   * @return The requested prototype node or nullptr
+   * @throws oos::object_exception if in error occurrs
+   */
+  prototype_node *find_prototype_node(const char *type) const;
+
+  /**
+   * @internal
+   *
+   * Removes a prototy node and
+   * return its successor node
+   *
+   * @param node The prototype node to remove
+   * @param is_root Indicates if given node is root node
+   * @return The successor node
+   * @throws oos::object_exception if in error occurrs
+   */
+  prototype_node *remove_prototype_node(prototype_node *node, bool is_root);
+
+  /**
+   * Get or create a prototype node
+   *
+   * @param producer The producer of the concrete object
+   * @param type The type name of the node
+   * @param abstract indicates wether the representing object is abstract
+   * @tparam T Type of the node
+   * @return The prototype node
+   */
+  template<class T>
+  prototype_node *acquire(const char *type, bool abstract);
+
+  /**
+   * Initializes a prototype node
+   *
+   * @param node The node to initialize
+   * @return iterator representing the prototype node
+   */
+  template<class T, template < class ... > class ON_ATTACH>
+  iterator initialize(prototype_node *node, const ON_ATTACH<T> &on_attach);
+
+//  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
+
+  prototype_node* find_parent(const char *name) const;
+
+  void push_transaction(const transaction &tr);
+  void pop_transaction();
 
 private:
-  prototype_tree prototype_tree_;
+  typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
+  // typeid -> [name -> prototype]
+  typedef std::unordered_map<std::string, t_prototype_map> t_typeid_prototype_map;
 
-  typedef std::unordered_map<serializable*, object_proxy*> t_serializable_proxy_map;
-  t_serializable_proxy_map serializable_map_;
+private:
+  prototype_node *first_;
+  prototype_node *last_;
 
-  typedef std::unordered_map<long, object_proxy*> t_object_proxy_map;
+  // name to prototype node map
+  t_prototype_map prototype_map_;
+  // typeid to prototype node map
+  t_typeid_prototype_map typeid_prototype_map_;
+
+  // prepared prototype nodes
+  t_prototype_map prepared_prototype_map_;
+
+  typedef std::unordered_map<long, object_proxy *> t_object_proxy_map;
   t_object_proxy_map object_map_;
 
   sequencer seq_;
 
-  typedef std::list<object_observer*> t_observer_list;
+  typedef std::list<object_observer *> t_observer_list;
   t_observer_list observer_list_;
 
-  object_deleter object_deleter_;
-  object_inserter object_inserter_;
+  detail::object_deleter object_deleter_;
+  detail::object_inserter object_inserter_;
+
+  // only used when a has_many object is inserted
+  abstract_has_many *temp_container_ = nullptr;
+
+  std::stack<transaction> transactions_;
 };
+
+template<class T, template < class ... > class ON_ATTACH, typename Enabled >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const ON_ATTACH<T> &on_attach)
+{
+  // set node to root node
+  prototype_node *parent_node = find_parent(parent);
+  /*
+   * try to insert new prototype node
+   */
+  const char *name = typeid(T).name();
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prepared_prototype_map_.find(name);
+  if (i != prepared_prototype_map_.end()) {
+    // found a prepared node
+    node = i->second;
+    node->type_.assign(type);
+    prepared_prototype_map_.erase(i);
+  } else {
+    node = acquire<T>(type, abstract);
+    // insert node
+    if (parent_node != nullptr) {
+      parent_node->insert(node);
+    } else {
+      last_->prev->append(node);
+    }
+    // Analyze primary and foreign keys of node
+    basic_identifier *id = identifier_resolver<T>::resolve();
+    if (id) {
+      id->isolate();
+      node->id_.reset(id);
+    }
+  }
+
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
+  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
+
+  on_attach(node);
+
+  return initialize<T, ON_ATTACH>(node, on_attach);
+}
+
+template<class T, class S, template < class ... > class ON_ATTACH, typename Enabled >
+object_store::iterator object_store::attach(const char *type, bool abstract, const ON_ATTACH<T> &on_attach)
+{
+  return attach<T, ON_ATTACH>(type, abstract, typeid(S).name(), on_attach);
+}
+
+template<class T>
+prototype_iterator object_store::prepare_attach(bool abstract, const char *parent)
+{
+  prototype_node *parent_node = find_parent(parent);
+
+  if (typeid_prototype_map_.find(typeid(T).name()) != typeid_prototype_map_.end()) {
+    throw_object_exception("attach: object type " << typeid(T).name() << " already in attached");
+  }
+
+  t_prototype_map::iterator i = prepared_prototype_map_.find(typeid(T).name());
+  if (i != prepared_prototype_map_.end()) {
+    // there is already a prepared node for this type
+    return prototype_iterator(i->second);
+  }
+
+  std::unique_ptr<prototype_node> node(new prototype_node(this, "", typeid(T).name(), abstract));
+
+  node->initialize(this, "", abstract);
+
+  if (parent_node != nullptr) {
+    parent_node->insert(node.get());
+  } else {
+    last_->prev->append(node.get());
+  }
+
+  // store only in prepared prototype map
+  // Todo: check return value
+  prepared_prototype_map_.insert(std::make_pair(typeid(T).name(), node.get()));
+  // Analyze primary and foreign keys of node
+  std::unique_ptr<basic_identifier> id(identifier_resolver<T>::resolve());
+  if (id) {
+    id->isolate();
+    node->id_.reset(id.release());
+  }
+
+  return prototype_iterator(node.release());
+}
+
+template<class T, class S>
+prototype_iterator object_store::prepare_attach(bool abstract)
+{
+  return prepare_attach<T>(abstract, typeid(T).name());
+}
+
+template<class T>
+prototype_node *object_store::acquire(const char *type, bool abstract)
+{
+  // try to find node in prepared map
+  const char *name = typeid(T).name();
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prototype_map_.find(type);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+  // try to find by typeid name
+  i = prototype_map_.find(name);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << type);
+  }
+  /*
+   * no typeid found, seems to be
+   * a new type
+   * to be sure check in typeid map
+   */
+  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
+  if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
+    /* unexpected found the
+     * typeid check for type
+     * throw exception
+     */
+    throw object_exception("unexpectly found prototype");
+  } else {
+    /* insert new prototype and add to
+     * typeid map
+     */
+    node = new prototype_node(this, type, typeid(T).name(), abstract);
+  }
+  return node;
+}
+
+template<class T, template < class ... > class ON_ATTACH>
+object_store::iterator object_store::initialize(prototype_node *node, const ON_ATTACH<T> &on_attach)
+{
+  // Check if nodes serializable has 'to-many' relations
+  // Analyze primary and foreign keys of node
+  detail::node_analyzer<T, ON_ATTACH> analyzer(*node, on_attach);
+  T obj;
+  oos::access::serialize(analyzer, obj);
+
+  while (!node->foreign_key_ids.empty()) {
+    auto i = node->foreign_key_ids.front();
+    node->foreign_key_ids.pop_front();
+    prototype_node *foreign_node = i.first;
+    std::shared_ptr<basic_identifier> fk(node->id_->clone());
+    foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
+  }
+
+  return prototype_iterator(node);
+}
+
+namespace detail {
+
+template<class T, template < class ... > class ON_ATTACH>
+template < class V >
+void node_analyzer<T, ON_ATTACH>::serialize(V &x)
+{
+  oos::access::serialize(*this, x);
+}
+
+template<class T, template < class ... > class ON_ATTACH>
+template<class V>
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_one<V> &x, cascade_type)
+{
+  prototype_iterator node = node_.tree()->find(x.type());
+  if (node == node_.tree()->end()) {
+    // if there is no such prototype node
+    // prepare insertion of new node
+    node = node_.tree()->prepare_attach<V>();
+    if (node_.tree()->temp_container_) {
+      node->prepare_foreign_key(&node_, node_.tree()->temp_container_->item_field().c_str());
+    } else {
+      node->prepare_foreign_key(&node_, id);
+    }
+  } else if (!node->has_primary_key()) {
+    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
+  } else {
+    // node is inserted/attached; store it in nodes foreign key map
+    std::shared_ptr<basic_identifier> fk(node->id()->clone());
+    node_.register_foreign_key(id, fk);
+  }
+}
+
+template<class T, template < class ... > class ON_ATTACH>
+template<class V, template<class ...> class C>
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char *owner_field, const char *item_field)
+{
+  // item column column names
+  x.owner_field(owner_field);
+  x.item_field(item_field);
+  // Todo: distinguish between join table and no join table
+  if (x.has_join_table()) {
+    // attach relation table for has many relation
+//    ON_ATTACH<V> on_attach(on_attach_);
+    prototype_iterator pi = node_.tree()->attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
+    // insert the relation
+    // add container node to item node
+    pi->register_relation(node_.type(), &node_, id);
+  } else {
+    throw object_exception("has_many without join table not supported");
+  }
+}
+
+template < class T >
+void modified_marker::marker_func(object_store &store, object_proxy &proxy)
+{
+  store.mark_modified<T>(&proxy);
+}
+
+template<class T>
+void object_inserter::insert(object_proxy *proxy, T *o, bool notify)
+{
+
+  notify_ = notify;
+
+  object_proxy_stack_.push(proxy);
+
+  modified_marker_ = [](object_store &store, object_proxy *oproxy) {
+    store.mark_modified<T>(oproxy);
+  };
+
+  if (proxy->obj()) {
+    oos::access::serialize(*this, *o);
+  }
+  object_proxy_stack_.pop();
+}
+
+template<class T>
+void object_inserter::serialize(T &x)
+{
+  oos::access::serialize(*this, x);
+}
+
+template<class T>
+void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+  if (x.is_inserted() || (x.proxy_ && x.proxy_->obj() == nullptr)) {
+    return;
+  }
+  x.is_inserted_ = true;
+  x.cascade_ = cascade;
+  // object was seen by inserter stop inserting
+  if (!object_proxies_.insert(x.proxy_).second) {
+    return;
+  }
+
+  if (!x.proxy_) {
+    return;
+  }
+
+  if (x.id()) {
+    // do the pointer count
+    object_proxy_stack_.push(x.proxy_);
+    oos::access::serialize(*this, *(T*)x.ptr());
+    object_proxy_stack_.pop();
+  } else {
+    // new object
+    ostore_.get().insert<T>(x.proxy_, notify_);
+  }
+  ++(*x.proxy_);
+}
+
+template<class T, template<class ...> class C>
+void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const char*, const char*)
+{
+  // initialize the has many relation
+  // set identifier
+  // relation table name
+  // owner column name
+  // item column name
+  if (object_proxy_stack_.empty()) {
+    throw object_exception("no owner for has many relation");
+  }
+
+  if (x.ostore_) {
+    return;
+  }
+  object_proxy *proxy = object_proxy_stack_.top();
+  x.owner_id_ = proxy->pk();
+  x.owner_ = proxy;
+  x.ostore_ = &ostore_.get();
+  x.mark_modified_owener_ = modified_marker_;
+
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+
+  while (first != last) {
+    typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
+    if (!i.is_inserted()) {
+      // item is not in store, insert it
+      ostore_.get().insert(i);
+    }
+  }
+}
+
+template <typename T>
+void object_deleter::t_object_count::remove_object(object_proxy *proxy, bool notify)
+{
+  proxy->ostore()->remove<T>(proxy, notify, false);
+}
+
+template<class T>
+bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
+  object_count_map.clear();
+  object_count_map.insert(std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj())));
+
+  // start collecting information
+  oos::access::serialize(*this, *o);
+
+  return check_object_count_map();
+}
+
+template<class T>
+void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+  if (!x.ptr()) {
+    return;
+  }
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
+    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
+  );
+  --ret.first->second.reference_counter;
+  if (cascade & cascade_type::DELETE) {
+    ret.first->second.ignore = false;
+    oos::access::serialize(*this, *(T*)x.ptr());
+  }
+}
+
+template<class T, template<class ...> class C>
+void object_deleter::serialize(const char *, basic_has_many<T, C> &x, const char *, const char *)
+{
+  typename basic_has_many<T, C>::iterator first = x.begin();
+  typename basic_has_many<T, C>::iterator last = x.end();
+  while (first != last) {
+    // Todo: get the real holder: on join table get has_many_item
+    typename basic_has_many<T, C>::relation_type iptr = first.relation_item();
+    ++first;
+    object_proxy *proxy = iptr.proxy_;
+    std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
+      std::make_pair(proxy->id(), t_object_count(proxy, false, (T*)proxy->obj()))
+    );
+    /**********
+     *
+     * object is already in list and will
+     * be ignored on deletion so set
+     * ignore flag to false because this
+     * node must be deleted
+     *
+     **********/
+    if (!ret.second && ret.first->second.ignore) {
+      ret.first->second.ignore = false;
+    }
+
+    oos::access::serialize(*this, *iptr);
+  }
+}
+
+template<class T>
+void object_deleter::serialize(const char *id, identifier<T> &x)
+{
+  T val = x.value();
+  serialize(id, val);
+}
+
+}
 
 }
 

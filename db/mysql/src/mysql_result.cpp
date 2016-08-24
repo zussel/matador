@@ -18,9 +18,9 @@
 #include "tools/varchar.hpp"
 #include "tools/date.hpp"
 #include "tools/time.hpp"
+#include "tools/string.hpp"
 
-#include "object/identifier.hpp"
-#include "object/serializable.hpp"
+#include "tools/identifier.hpp"
 
 #include "mysql_result.hpp"
 #include "mysql_exception.hpp"
@@ -31,9 +31,8 @@ namespace oos {
 
 namespace mysql {
 
-mysql_result::mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c)
-  : detail::result_impl(producer)
-  , affected_rows_((size_type)mysql_affected_rows(c))
+mysql_result::mysql_result(MYSQL *c)
+  : affected_rows_((size_type)mysql_affected_rows(c))
   , rows_(0)
   , fields_(0)
   , res_(0)
@@ -72,16 +71,18 @@ bool mysql_result::fetch()
   return rows_-- > 0;
 }
 
-bool mysql_result::fetch(serializable *obj)
+bool mysql_result::prepare_fetch()
 {
   if (!fetch()) {
     return false;
   }
 
-  result_index = 0;
+  result_index_ = 0;
+  return true;
+}
 
-  obj->deserialize(*this);
-
+bool mysql_result::finalize_fetch()
+{
   return true;
 }
 
@@ -105,17 +106,17 @@ int mysql_result::transform_index(int index) const
   return index;
 }
 
-void mysql_result::read(const char */*id*/, char &x)
+void mysql_result::serialize(const char */*id*/, char &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) > 1) {
     x = val[0];
   }
 }
 
-void mysql_result::read(const char */*id*/, short &x)
+void mysql_result::serialize(const char */*id*/, short &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -123,9 +124,9 @@ void mysql_result::read(const char */*id*/, short &x)
   x = (short)strtol(val, &end, 10);
 }
 
-void mysql_result::read(const char */*id*/, int &x)
+void mysql_result::serialize(const char */*id*/, int &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -134,9 +135,9 @@ void mysql_result::read(const char */*id*/, int &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, long &x)
+void mysql_result::serialize(const char */*id*/, long &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -145,9 +146,9 @@ void mysql_result::read(const char */*id*/, long &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, unsigned char &x)
+void mysql_result::serialize(const char */*id*/, unsigned char &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -156,9 +157,9 @@ void mysql_result::read(const char */*id*/, unsigned char &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, unsigned short &x)
+void mysql_result::serialize(const char */*id*/, unsigned short &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -167,9 +168,9 @@ void mysql_result::read(const char */*id*/, unsigned short &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, unsigned int &x)
+void mysql_result::serialize(const char */*id*/, unsigned int &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -178,9 +179,9 @@ void mysql_result::read(const char */*id*/, unsigned int &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, unsigned long &x)
+void mysql_result::serialize(const char */*id*/, unsigned long &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (!val || strlen(val) == 0) {
     return;
   }
@@ -189,9 +190,9 @@ void mysql_result::read(const char */*id*/, unsigned long &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, bool &x)
+void mysql_result::serialize(const char */*id*/, bool &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -200,9 +201,9 @@ void mysql_result::read(const char */*id*/, bool &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, float &x)
+void mysql_result::serialize(const char */*id*/, float &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -211,9 +212,9 @@ void mysql_result::read(const char */*id*/, float &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, double &x)
+void mysql_result::serialize(const char */*id*/, double &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   if (strlen(val) == 0) {
     return;
   }
@@ -222,9 +223,9 @@ void mysql_result::read(const char */*id*/, double &x)
   // Todo: check error
 }
 
-void mysql_result::read(const char */*id*/, char *x, size_t s)
+void mysql_result::serialize(const char */*id*/, char *x, size_t s)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   size_t len = strlen(val);
   if (len > (size_t)s) {
     strncpy(x, val, (size_t)s);
@@ -235,26 +236,29 @@ void mysql_result::read(const char */*id*/, char *x, size_t s)
 
 }
 
-void mysql_result::read(const char */*id*/, varchar_base &x)
+void mysql_result::serialize(const char */*id*/, varchar_base &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   x.assign(val);
 }
 
-void mysql_result::read(const char */*id*/, std::string &x)
+void mysql_result::serialize(const char */*id*/, std::string &x)
 {
-  char *val = row_[result_index++];
+  char *val = row_[result_index_++];
   x.assign(val);
 }
 
-void mysql_result::read(const char *id, oos::date &x)
+void mysql_result::serialize(const char *, oos::date &x)
 {
-  double val = 0;
-  read(id, val);
-  x.set(static_cast<int>(val));
+  char *val = row_[result_index_++];
+  size_t len = strlen(val);
+  if (val == nullptr || len == 0) {
+    return;
+  }
+  x.set(val, oos::date_format::ISO8601);
 }
 
-void mysql_result::read(const char *id, oos::time &x)
+void mysql_result::serialize(const char *id, oos::time &x)
 {
 #if MYSQL_VERSION_ID < 50604
   // before mysql version 5.6.4 datetime
@@ -264,23 +268,19 @@ void mysql_result::read(const char *id, oos::time &x)
   x = time::parse(val, "%F %T.%f");
 #else
   std::string val;
-  read(id, val);
+  serialize(id, val);
   x = oos::time::parse(val, "%F %T.%f");
 #endif
 }
 
-void mysql_result::read(const char *id, object_base_ptr &x)
+void mysql_result::serialize(const char *id, oos::basic_identifier &x)
+{
+  x.serialize(id, *this);
+}
+
+void mysql_result::serialize(const char *id, oos::identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
-}
-
-void mysql_result::read(const char */*id*/, object_container &/*x*/)
-{
-}
-
-void mysql_result::read(const char *id, basic_identifier &x)
-{
-  x.deserialize(id, *this);
 }
 
 }

@@ -20,7 +20,7 @@
 
 namespace oos {
 
-class serializable;
+class serializer;
 class object_proxy;
 
 /**

@@ -36,7 +36,7 @@ session::session(object_store &ostore, const std::string &dbstring)
   // get driver factory singleton
   database_factory &df = database_factory::instance();
 
-  // try to create database implementation
+  // try to create sql implementation
   impl_ = df.create(type_, this);
 }
 

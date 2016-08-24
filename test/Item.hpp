@@ -18,68 +18,33 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include "object/serializable.hpp"
-#include "object/identifier.hpp"
-#include "object/serializer.hpp"
-#include "object/object_list.hpp"
-#include "object/object_vector.hpp"
-#include "object/linked_object_list.hpp"
+#include "tools/base_class.hpp"
+#include "object/object_ptr.hpp"
+#include "object/has_one.hpp"
+#include "object/has_many.hpp"
 
 #include "tools/time.hpp"
 #include "tools/date.hpp"
-#include "tools/varchar.hpp"
+#include "tools/identifier.hpp"
 
-class Item : public oos::serializable
+#include "tools/varchar.hpp"
+#include <ostream>
+
+class Item
 {
 public:
   Item()
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_("Welt")
-    , varchar_("Erde")
   {
     init();
   }
   explicit Item(const std::string &str)
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(-65000)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
-    , string_(str)
-    , varchar_("Erde")
+    : string_(str)
   {
     init();
   }
   Item(const std::string &str, int i)
-    : id_(0)
-    , char_('c')
-    , float_(3.1415f)
-    , double_(1.1414)
-    , short_(-128)
-    , int_(i)
-    , long_(-1280000)
-    , unsigned_short_(128)
-    , unsigned_int_(65000)
-    , unsigned_long_(128000)
-    , bool_(true)
+    : int_(i)
     , string_(str)
-    , varchar_("Erde")
   {
     init();
   }
@@ -97,43 +62,24 @@ private:
   }
 
 public:
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("val_char", char_);
-    deserializer.read("val_float", float_);
-    deserializer.read("val_double", double_);
-    deserializer.read("val_short", short_);
-    deserializer.read("val_int", int_);
-    deserializer.read("val_long", long_);
-    deserializer.read("val_unsigned_short", unsigned_short_);
-    deserializer.read("val_unsigned_int", unsigned_int_);
-    deserializer.read("val_unsigned_long", unsigned_long_);
-    deserializer.read("val_bool", bool_);
-    deserializer.read("val_cstr", cstr_, CSTR_LEN);
-    deserializer.read("val_string", string_);
-    deserializer.read("val_varchar", varchar_);
-    deserializer.read("val_date", date_);
-    deserializer.read("val_time", time_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("val_char", char_);
-    serializer.write("val_float", float_);
-    serializer.write("val_double", double_);
-    serializer.write("val_short", short_);
-    serializer.write("val_int", int_);
-    serializer.write("val_long", long_);
-    serializer.write("val_unsigned_short", unsigned_short_);
-    serializer.write("val_unsigned_int", unsigned_int_);
-    serializer.write("val_unsigned_long", unsigned_long_);
-    serializer.write("val_bool", bool_);
-    serializer.write("val_cstr", cstr_, CSTR_LEN);
-    serializer.write("val_string", string_);
-    serializer.write("val_varchar", varchar_);
-    serializer.write("val_date", date_);
-    serializer.write("val_time", time_);
+    serializer.serialize("id", id_);
+    serializer.serialize("val_char", char_);
+    serializer.serialize("val_float", float_);
+    serializer.serialize("val_double", double_);
+    serializer.serialize("val_short", short_);
+    serializer.serialize("val_int", int_);
+    serializer.serialize("val_long", long_);
+    serializer.serialize("val_unsigned_short", unsigned_short_);
+    serializer.serialize("val_unsigned_int", unsigned_int_);
+    serializer.serialize("val_unsigned_long", unsigned_long_);
+    serializer.serialize("val_bool", bool_);
+    serializer.serialize("val_cstr", cstr_, (size_t)CSTR_LEN);
+    serializer.serialize("val_string", string_);
+    serializer.serialize("val_varchar", varchar_);
+    serializer.serialize("val_date", date_);
+    serializer.serialize("val_time", time_);
   }
 
   unsigned long id() const { return id_.value(); }
@@ -191,21 +137,21 @@ public:
 private:
   enum { CSTR_LEN=256 };
 
-  oos::identifier<unsigned long> id_;
+  oos::identifier<unsigned long> id_ = 0;
 
-  char char_;
-  float float_;
-  double double_;
-  short short_;
-  int int_;
-  long long_;
-  unsigned short unsigned_short_;
-  unsigned int unsigned_int_;
-  unsigned long unsigned_long_;
-  bool bool_;
+  char char_ = 'c';
+  float float_ = 3.1415f;
+  double double_ = 1.1414;
+  short short_ = -128;
+  int int_ = -65000;
+  long long_ = -128000;
+  unsigned short unsigned_short_ = 128;
+  unsigned int unsigned_int_ = 65000;
+  unsigned long unsigned_long_ = 128000;
+  bool bool_ = true;
   char cstr_[CSTR_LEN];
-  std::string string_;
-  oos::varchar<64> varchar_;
+  std::string string_ = "Welt";
+  oos::varchar<64> varchar_ = "Erde";
   oos::date date_;
   oos::time time_;
 };
@@ -219,31 +165,26 @@ class ObjectItem : public Item
 {
 public:
   typedef oos::object_ptr<T> value_ptr;
-  typedef oos::object_ref<T> value_ref;
 
   ObjectItem() {}
   ObjectItem(const std::string &n, int i)
     : Item(n, i)
   {}
-  virtual ~ObjectItem() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER > void serialize(SERIALIZER &serializer)
   {
-    Item::deserialize(deserializer);
-    deserializer.read("ref", ref_);
-    deserializer.read("ptr", ptr_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    Item::serialize(serializer);
-    serializer.write("ref", ref_);
-    serializer.write("ptr", ptr_);
+    serializer.serialize(*oos::base_class<Item>(this));
+    serializer.serialize("ref", ref_, oos::cascade_type::NONE);
+    serializer.serialize("ptr", ptr_, oos::cascade_type::ALL);
   }
 
-  void ref(const value_ref &r) { ref_ = r; }
+  void ref(const value_ptr &r)
+  {
+    ref_ = r;
+  }
   void ptr(const value_ptr &p) { ptr_ = p; }
 
-  value_ref ref() const { return ref_; }
+  value_ptr ref() const { return ref_; }
   value_ptr ptr() const { return ptr_; }
 
   template < class I >
@@ -254,10 +195,44 @@ public:
   }
 
 private:
-  value_ref ref_;
-  value_ptr ptr_;
+  oos::has_one<T> ref_;
+  oos::has_one<T> ptr_;
 };
 
+class ObjectItemList
+{
+public:
+  typedef oos::has_many<ObjectItem<Item>> object_item_list_t;
+  typedef typename object_item_list_t::item_type item_type;
+  typedef typename object_item_list_t::iterator iterator;
+  typedef typename object_item_list_t::const_iterator const_iterator;
+
+  oos::identifier<unsigned long> id;
+  std::string name;
+  object_item_list_t items;
+
+  ObjectItemList() {}
+  explicit ObjectItemList(const std::string &n) : name(n) {}
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("name", name);
+    //s.serialize(items); // -> should create relation as in next line
+    //s.serialize("owner_item",items); // -> should create relation as in next line
+    s.serialize("object_item_list", items, "list_id", "object_item_id");
+  }
+
+  iterator begin() { return items.begin(); }
+  iterator end() { return items.end(); }
+
+  const_iterator begin() const { return items.begin(); }
+  const_iterator end() const { return items.end(); }
+
+};
+
+/*
 template < class T >
 class List : public oos::serializable
 {
@@ -266,7 +241,6 @@ public:
   typedef List<T> self;
   typedef oos::object_list<self, T, true> list_t;
   typedef typename list_t::item_type item_type;
-/*  typedef typename list_t::item_type item_ptr;*/
   typedef typename list_t::size_type size_type;
   typedef typename list_t::iterator iterator;
   typedef typename list_t::const_iterator const_iterator;
@@ -533,8 +507,8 @@ std::string vector_object_producer<T>::classname_ = typeid(T).name();
 typedef Vector<int> IntVector;
 typedef Vector<oos::object_ptr<Item> > ItemPtrVector;
 typedef Vector<oos::object_ref<Item> > ItemRefVector;
-
-class book : public oos::serializable
+*/
+class book
 {
 private:
   oos::identifier<unsigned long> id_;
@@ -549,53 +523,43 @@ public:
     , isbn_(isbn)
     , author_(author)
   {}
-  virtual ~book() {}
+  ~book() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("title", title_);
-    deserializer.read("isbn", isbn_);
-    deserializer.read("author", author_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("title", title_);
-    serializer.write("isbn", isbn_);
-    serializer.write("author", author_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("isbn", isbn_);
+    serializer.serialize("author", author_);
   }
 
+  unsigned long id() const { return id_; }
+  void id(unsigned long i)  { id_ = i; }
   std::string title() const { return title_; }
   std::string isbn() const { return isbn_; }
   std::string author() const { return author_; }
 };
 
-class book_list : public oos::serializable
+class book_list
 {
 public:
-  typedef oos::object_ref<book> book_ref;
-  typedef oos::object_list<book_list, book_ref, true> book_list_t;
-  typedef book_list_t::item_ptr item_ptr;
+  typedef oos::has_many<book> book_list_t;
   typedef book_list_t::size_type size_type;
   typedef book_list_t::iterator iterator;
   typedef book_list_t::const_iterator const_iterator;
   
   book_list() {}
-  virtual ~book_list() {}
+  ~book_list() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("book_list", book_list_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("book_list", book_list_);
+    serializer.serialize("id", id_);
+    serializer.serialize("books", book_list_, "book_list_id", "book_id");
   }
 
-  void add(const book_ref &b)
+  void add(const oos::object_ptr<book> &b)
   {
     book_list_.push_back(b);
   }
@@ -616,36 +580,51 @@ private:
   book_list_t book_list_;
 };
 
-class person : public oos::serializable
+class person
 {
 private:
   oos::identifier<unsigned long> id_;
-  std::string name_;
+  oos::varchar<256> name_;
+  oos::date birthdate_;
+  unsigned int height_ = 0;
 
 public:
   person() {}
-  person(const std::string &name)
-    : name_(name)
+  person(unsigned long id, const std::string &name, const oos::date &birthdate, unsigned int height)
+    : id_(id)
+    , name_(name)
+    , birthdate_(birthdate)
+    , height_(height)
   {}
-  
+
+  person(const std::string &name, const oos::date &birthdate, unsigned int height)
+    : person(0, name, birthdate, height)
+  {}
+
   virtual ~person() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class T >
+  void serialize(T &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("name", name_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("name", name_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("birthdate", birthdate_);
+    serializer.serialize("height", height_);
   }
 
-  std::string name() const { return name_; }
+  void id(unsigned long i) { id_.value(i); }
+  unsigned long id() const { return id_.value(); }
+
+  std::string name() const { return name_.str(); }
   void name(const std::string &name) { name_ = name; }
-  
-};
 
+  oos::date birthdate() const { return birthdate_; }
+  void birthdate(const oos::date &birthdate) { birthdate_ = birthdate; }
+
+  unsigned int height() const { return height_; }
+  void height(unsigned int height) { height_ = height; }
+};
+/*
 class department;
 
 class employee : public person
@@ -737,66 +716,52 @@ public:
   size_type size() const { return emp_list_.size(); }
   bool empty() const { return emp_list_.empty(); }
 };
+*/
+class course;
 
-//class course;
-//
-//class student : public person
-//{
-//public:
-//  typedef oos::object_ref<course> course_ref;
-//  typedef oos::object_list<student, course_ref, false> course_list_t;
-//
-//  virtual void deserialize(oos::object_reader &deserializer)
-//  {
-//    person::deserialize(deserializer);
-//    deserializer.read("students", courses);
-//  }
-//  virtual void serialize(oos::object_writer &serializer) const
-//  {
-//    person::serialize(serializer);
-//    serializer.write("courses", courses);
-//  }
-//
-//  course_list_t courses;
-//};
-//
-//class course : public oos::serializable
-//{
-//public:
-//  typedef oos::object_ref<student> student_ref;
-//  typedef oos::object_list<course, student_ref, false> student_list_t;
-//
-//  course() : students {}
-//
-//  virtual void deserialize(oos::object_reader &deserializer)
-//  {
-//    deserializer.read("id", id_);
-//    // Todo: handle many to man relation (create table, link serializable)
-//    oos::read_many_to_many(deserializer, "student_course", "student_id", students);
-//    deserializer.read("students", students);
-//  }
-//  virtual void serialize(oos::object_writer &serializer) const
-//  {
-//    serializer.write("id", id_);
-//    serializer.write("students", students);
-//  }
-//
-//  oos::identifier<unsigned long> id_;
-//  std::string name;
-//  student_list_t students;
-//};
+class student : public person
+{
+public:
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(*oos::base_class<person>(this));
+    serializer.serialize("student_course", courses, "student", "course");
+  }
+
+  oos::has_many<course, std::list> courses;
+};
+
+class course
+{
+public:
+
+  course() {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("title", title);
+    serializer.serialize("student_course", students, "student", "course");
+  }
+
+  oos::identifier<unsigned long> id;
+  std::string title;
+  oos::has_many<student, std::list> students;
+};
 
 class album;
 
-class track : public oos::serializable
+class track
 {
 public:
-  typedef oos::object_ref<album> album_ref;
+  typedef oos::object_ptr<album> album_ptr;
 
 private:
   oos::identifier<unsigned long> id_;
   std::string title_;
-  album_ref album_;
+  oos::has_one<album> album_;
   int index_;
 
 public:
@@ -806,71 +771,60 @@ public:
     , index_(0)
   {}
   
-  virtual ~track() {}
+  ~track() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("title", title_);
-    deserializer.read("album", album_);
-    deserializer.read("track_index", index_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("title", title_);
-    serializer.write("album", album_);
-    serializer.write("track_index", index_);
+    serializer.serialize("id", id_);
+    serializer.serialize("title", title_);
+    serializer.serialize("album", album_);
+    serializer.serialize("track_index", index_);
   }
 
   unsigned long id() { return id_.value(); }
 
   std::string title() const { return title_; }
   void title(const std::string &t) { title_ = t; }
-  
-  album_ref alb() const { return album_; }
-  void alb(const album_ref &a) { album_ = a; }
+
+  album_ptr alb() const { return album_; }
+  void alb(const album_ptr &a) { album_ = a; }
   
   int index() const { return index_; }
   void index(int i) { index_ = i; }
 };
 
-class album : public oos::serializable
+class album
 {
 public:
-  typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<album, track_ref, false> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
-  typedef track_list_t::iterator iterator;
-  typedef track_list_t::const_iterator const_iterator;
+  typedef oos::object_ptr<track> track_ptr;
+  typedef oos::has_many<track> track_vector_t;
+  typedef track_vector_t::size_type size_type;
+  typedef track_vector_t::iterator iterator;
+//  typedef track_vector_t::const_iterator const_iterator;
 
 private:
   oos::identifier<unsigned long> id_;
   std::string name_;
-  track_list_t tracks_;
+  track_vector_t tracks_;
   
 public:
   album()
-    : tracks_(&track::alb, &track::index, &track::index)
+//    : tracks_(&track::alb, &track::index, &track::index)
   {}
   album(const std::string &name)
     : name_(name)
-    , tracks_(&track::alb, &track::index, &track::index)
+//    , tracks_(&track::alb, &track::index, &track::index)
   {}
   
-  virtual ~album() {}
+  ~album() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("name", name_);
-    deserializer.read("tracks", tracks_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("name", name_);
-    serializer.write("tracks", tracks_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("tracks", tracks_);
   }
 
   unsigned long id() { return id_.value(); }
@@ -878,21 +832,21 @@ public:
   std::string name() const { return name_; }
   void name(const std::string &name) { name_ = name; }
 
-  void add(const track_ref &b)
+  void add(const track_ptr &t)
   {
-    tracks_.push_back(b);
+    tracks_.push_back(t);
   }
 
-  iterator insert(iterator pos, const track_ref &b)
+  iterator insert(iterator pos, const track_ptr &b)
   {
     return tracks_.insert(pos, b);
   }
 
   iterator begin() { return tracks_.begin(); }
-  const_iterator begin() const { return tracks_.begin(); }
+//  const_iterator begin() const { return tracks_.begin(); }
 
   iterator end() { return tracks_.end(); }
-  const_iterator end() const { return tracks_.end(); }
+//  const_iterator end() const { return tracks_.end(); }
 
   iterator erase(iterator i) { return tracks_.erase(i); }
   iterator erase(iterator a, iterator b) { return tracks_.erase(a, b); }
@@ -901,14 +855,14 @@ public:
   bool empty() const { return tracks_.empty(); }
 };
 
-class playlist : public oos::serializable
+class playlist
 {
 public:
-  typedef oos::object_ref<track> track_ref;
-  typedef oos::object_vector<playlist, track_ref, true> track_list_t;
-  typedef /*typename*/ track_list_t::size_type size_type;
+  typedef oos::object_ptr<track> track_ref;
+  typedef oos::has_many<track> track_list_t;
+  typedef track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
-  typedef track_list_t::const_iterator const_iterator;
+//  typedef track_list_t::const_iterator const_iterator;
 
 private:
   oos::identifier<unsigned long> id_;
@@ -924,19 +878,13 @@ public:
   
   virtual ~playlist() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("name", name_);
-    deserializer.read("tracks", tracks_);
-    deserializer.read("backup_tracks", backup_tracks_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("name", name_);
-    serializer.write("tracks", tracks_);
-    serializer.write("backup_tracks", backup_tracks_);
+    serializer.serialize("id", id_);
+    serializer.serialize("name", name_);
+    serializer.serialize("playlist_tracks", tracks_);
+    serializer.serialize("backup_tracks", backup_tracks_);
   }
 
   std::string name() const { return name_; }
@@ -948,10 +896,10 @@ public:
   }
 
   iterator begin() { return tracks_.begin(); }
-  const_iterator begin() const { return tracks_.begin(); }
+//  const_iterator begin() const { return tracks_.begin(); }
 
   iterator end() { return tracks_.end(); }
-  const_iterator end() const { return tracks_.end(); }
+//  const_iterator end() const { return tracks_.end(); }
 
   iterator erase(iterator i) { return tracks_.erase(i); }
 
@@ -959,82 +907,87 @@ public:
   bool empty() const { return tracks_.empty(); }
 };
 
-class child : public oos::serializable
+class child
 {
 public:
-    child() {}
-    child(const std::string &n) : name(n) {}
-    virtual ~child() {}
+  child() {}
+  child(const std::string &n) : name(n) {}
+  ~child() {}
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-    }
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+  }
 
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-    }
-
-    oos::identifier<unsigned long> id;
-    std::string name;
+  oos::identifier<unsigned long> id;
+  std::string name;
 };
 
-class master : public oos::serializable
+class master
 {
 public:
-    master() {}
-    master(const std::string &n) : name(n) {}
-    virtual ~master() {}
+  oos::identifier<unsigned long> id;
+  std::string name;
+  oos::has_one<child> children;
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-        r.read("child", children);
-    }
+public:
+  master() {}
+  master(const std::string &n) : name(n) {}
+  ~master() {}
 
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-        w.write("child", children);
-    }
-
-    oos::identifier<unsigned long> id;
-    std::string name;
-    oos::object_ptr<child> children;
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("child", children, oos::cascade_type::DELETE);
+  }
 };
 
-class children_list : public oos::serializable
+class children_vector
 {
 public:
-    typedef oos::object_ref<child> child_ref;
-    typedef oos::object_list<children_list, child_ref, true> children_list_t;
+  typedef oos::has_many<child> children_vector_t;
 
-    children_list() {}
-    children_list(const std::string &n) : name(n) {}
-    virtual ~children_list() {}
+  children_vector() {}
+  children_vector(const std::string &n) : name(n) {}
+  ~children_vector() {}
 
-    virtual void deserialize(oos::deserializer &r)
-    {
-        r.read("id", id);
-        r.read("name", name);
-        r.read("children", children);
-    }
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "vector_id", "child_id");
+  }
 
-    virtual void serialize(oos::serializer &w) const
-    {
-        w.write("id", id);
-        w.write("name", name);
-        w.write("children", children);
-    }
+  oos::identifier<unsigned long> id;
+  std::string name;
+  children_vector_t children;
+};
 
-    oos::identifier<unsigned long> id;
-    std::string name;
-    children_list_t children;
+class children_list
+{
+public:
+  typedef oos::has_many<child, std::list> children_list_t;
+
+  children_list() {}
+  children_list(const std::string &n) : name(n) {}
+  ~children_list() {}
+
+  template < class S >
+  void serialize(S &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("children", children, "list_id", "child_id");
+  }
+
+  oos::identifier<unsigned long> id;
+  std::string name;
+  children_list_t children;
 };
 
 #endif /* ITEM_HPP */

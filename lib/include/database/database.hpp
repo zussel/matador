@@ -31,12 +31,13 @@
   #define OOS_API
 #endif
 
-#include "database/types.hpp"
+#include "sql/types.hpp"
+#include "sql/sql.hpp"
+#include "sql/result.hpp"
+#include "sql/statement.hpp"
+
 #include "database/action.hpp"
 #include "database/transaction.hpp"
-#include "database/sql.hpp"
-#include "database/result.hpp"
-#include "database/statement.hpp"
 
 #include "tools/sequencer.hpp"
 
@@ -55,15 +56,15 @@ class prototype_node;
 
 /// @cond OOS_DEV
 /**
- * @class database
- * @brief Base class for all database backends
+ * @class sql
+ * @brief Base class for all sql backends
  * 
- * This class must be the base class for database
- * backends used with the object_store/database module.
- * The database actions are implemented using the
+ * This class must be the base class for sql
+ * backends used with the object_store/sql module.
+ * The sql actions are implemented using the
  * visitor pattern. So every action is accepted via
  * a method which must be overwritten by the concrete
- * database implementation.
+ * sql implementation.
  */
 class OOS_API database : public action_visitor
 {
@@ -86,9 +87,9 @@ public:
   virtual ~database();
 
   /**
-   * Open the database
+   * Open the sql
    *
-   * @param connection The database connection string.
+   * @param connection The sql connection string.
    */
   void open(const std::string &connection);
 
@@ -98,9 +99,9 @@ public:
   void close();
 
   /**
-   * Returns true if the database is open
+   * Returns true if the sql is open
    *
-   * @return True on open database connection.
+   * @return True on open sql connection.
    */
   virtual bool is_open() const = 0;
 
@@ -238,10 +239,10 @@ public:
   /**
    * @brief Marks the beginning of the real transaction.
    *
-   * This method is called when the real database
+   * This method is called when the real sql
    * transaction are about to begin and a BEGIN
    * TRANSACTION kind of statement is executed on
-   * the database.
+   * the sql.
    */
   void begin();
 
@@ -250,8 +251,8 @@ public:
    *
    * This method is called when a started
    * transaction is commit to the underlaying
-   * database. All stored actions and their
-   * objects are written to the database.
+   * sql. All stored actions and their
+   * objects are written to the sql.
    */
   void commit();
 

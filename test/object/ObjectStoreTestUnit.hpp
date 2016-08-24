@@ -12,8 +12,7 @@ class ObjectStoreTestUnit : public oos::unit_test
 {
 public:
   ObjectStoreTestUnit();
-  virtual ~ObjectStoreTestUnit();
-  
+
   virtual void initialize();
   virtual void finalize();
   
@@ -22,8 +21,9 @@ public:
   void expression_test();
   void set_test();
   void get_test();
-  void serializer();
-  void ref_ptr_counter();
+  void test_serializer();
+  void test_identifier_serializer();
+  void reference_counter();
   void simple_object();
   void object_with_sub_object();
   void multiple_simple_objects();
@@ -40,7 +40,8 @@ public:
   void test_insert();
   void test_remove();
   void test_primary_key();
-  void test_to_many();
+  void test_has_many();
+  void test_on_attach();
 
 private:
   oos::object_store ostore_;

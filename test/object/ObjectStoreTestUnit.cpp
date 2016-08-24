@@ -13,6 +13,7 @@
 #include "version.hpp"
 
 #include <iostream>
+#include <object/basic_identifier_serializer.hpp>
 
 using namespace oos;
 using namespace std;
@@ -22,46 +23,43 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test serializable expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access serializable values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access serializable values via get interface");
-  add_test("serializer", std::bind(&ObjectStoreTestUnit::serializer, this), "serializer test");
-  add_test("ref_ptr_counter", std::bind(&ObjectStoreTestUnit::ref_ptr_counter, this), "ref and ptr counter test");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+  add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
+  add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
+  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "reference counter test");
   add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete serializable with sub object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
   add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
   add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "serializable deletion test");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "serializable hierarchy test");
-  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "serializable view test");
-  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "serializable store clear test");
-  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic serializable access test");
-  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "serializable transient structure test");
-  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "serializable transient cyclic structure test");
-  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "serializable transient container structure test");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
+  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
+  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
+  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
+  add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
+  add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "object transient cyclic structure test");
+  add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "object transient container structure test");
   add_test("transient_optr", std::bind(&ObjectStoreTestUnit::test_transient_optr, this), "test transient object pointer");
-  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "serializable insert test");
-  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "serializable remove test");
-  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "serializable proxy primary key test");
-//  add_test("to_many", std::bind(&ObjectStoreTestUnit::test_to_many, this), "to many test");
+  add_test("insert", std::bind(&ObjectStoreTestUnit::test_insert, this), "object insert test");
+  add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
+  add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
+  add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
+  add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
-
-ObjectStoreTestUnit::~ObjectStoreTestUnit()
-{}
-
-typedef List<oos::object_ptr<ObjectItem<Item> > > ObjectItemPtrList;
 
 void
 ObjectStoreTestUnit::initialize()
 {
-  ostore_.insert_prototype<Item>("item");
-  ostore_.insert_prototype<ObjectItem<Item> >("object_item");
-  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
-  ostore_.insert_prototype(new list_object_producer<ObjectItemPtrList>("object_ptr_list"), "object_item_ptr_list");
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
+  ostore_.attach<ObjectItemList>("object_item_ptr_list");
 
-  ostore_.insert_prototype<person>("person");
-  ostore_.insert_prototype<employee, person>("employee");
-  ostore_.insert_prototype<department>("department");
+//  ostore_.attach<person>("person");
+//  ostore_.attach<employee, person>("employee");
+//  ostore_.attach<department>("department");
 }
 
 void
@@ -97,7 +95,7 @@ void ObjectStoreTestUnit::optr_test()
 
   item_ptr item_null;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "serializable pointer is null", "shouldn't insert null serializable pointer");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(item_null), object_exception, "proxy is null", "shouldn't insert null object pointer");
 
   item_ptr item(new Item("Test"));
 
@@ -113,16 +111,16 @@ ObjectStoreTestUnit::expression_test()
 {
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
-  typedef object_ptr<ObjectItemPtrList> itemlist_ptr;
+  typedef object_ptr<ObjectItemList> itemlist_ptr;
 
-  itemlist_ptr itemlist = ostore_.insert(new ObjectItemPtrList("object_ptr_list"));
+  itemlist_ptr itemlist = ostore_.insert(new ObjectItemList("object_ptr_list"));
 
   item_ptr ii;
   for (int i = 0; i < 10; ++i) {
     object_item_ptr oi = ostore_.insert(new ObjectItem<Item>("ObjectItem", i));
     ii = ostore_.insert(new Item("Item", i));
     oi->ptr(ii);
-    itemlist->push_back(oi);
+    itemlist->items.push_back(oi);
   }
 
   variable<int> x(make_var(&ObjectItem<Item>::get_int));
@@ -136,12 +134,17 @@ ObjectStoreTestUnit::expression_test()
 
   UNIT_ASSERT_EQUAL(count, 4, "invalid number of objects found");
 
-  typedef ObjectItemPtrList::item_type ObjectItemType;
+  variable<int> z(make_var(&ObjectItem<Item>::get_int));
 
-  //Clang 3.2 needs the explicit template parameters on make_var
-  variable<int> z(make_var<int, ObjectItemType, object_item_ptr>(&ObjectItemType::value, &ObjectItem<Item>::get_int));
+  expression *exp = make_expression(z == 4);
 
-  ObjectItemPtrList::const_iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+  object_ptr<ObjectItem<Item>> optr = itemlist->begin().get();
+
+  (*exp)(optr);
+
+  delete exp;
+
+  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
   UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 
   object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
@@ -178,7 +181,7 @@ ObjectStoreTestUnit::expression_test()
 }
 
 void
-ObjectStoreTestUnit::serializer()
+ObjectStoreTestUnit::test_serializer()
 {  
   char c = 'c';
   float f = 1.55f;
@@ -241,8 +244,47 @@ ObjectStoreTestUnit::serializer()
   delete item;
 }
 
-void
-ObjectStoreTestUnit::ref_ptr_counter()
+void ObjectStoreTestUnit::test_identifier_serializer()
+{
+  byte_buffer buffer;
+  basic_identifier_serializer serializer;
+
+  {
+    typedef identifier<unsigned long> t_ul_id;
+    std::unique_ptr<t_ul_id> id(new t_ul_id(8UL));
+
+    UNIT_ASSERT_EQUAL(id->value(), 8UL, "identifier value must be 8");
+
+    serializer.serialize(*id, buffer);
+
+    std::unique_ptr<t_ul_id> id2(new identifier<unsigned long>());
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), 8UL, "identifier value must be 8");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
+
+  {
+    typedef identifier<std::string> t_str_id;
+    std::unique_ptr<t_str_id> id(new identifier<std::string>("hallo"));
+
+    UNIT_ASSERT_EQUAL(id->value(), "hallo", "identifier value must be 'hallo'");
+
+    serializer.serialize(*id, buffer);
+
+    std::unique_ptr<t_str_id> id2(new identifier<std::string>());
+
+    serializer.deserialize(*id2, buffer);
+
+    UNIT_ASSERT_EQUAL(id2->value(), "hallo", "identifier value must be 'hallo'");
+
+    UNIT_ASSERT_EXCEPTION(serializer.deserialize(*id2, buffer), std::logic_error, "invalid identifier type", "deserialize excpetion must be thrown");
+  }
+}
+
+void ObjectStoreTestUnit::reference_counter()
 {
   Item *i = new Item("Item", 7);
   
@@ -250,64 +292,52 @@ ObjectStoreTestUnit::ref_ptr_counter()
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   
   item_ptr item = ostore_.insert(i);
-  
+
+  UNIT_ASSERT_EQUAL(item.reference_count(), 0UL, "reference count must be zero");
+
   object_item_ptr object_item_1 = ostore_.insert(new ObjectItem<Item>());
   object_item_ptr object_item_2 = ostore_.insert(new ObjectItem<Item>());
   object_item_1->ptr(item);
 
-  
-  unsigned long val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
 
   item_ptr a1 = item;
   item_ptr a2 = item;
-  
-  val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
 
-  typedef object_ref<Item> item_ref;
-  
-  item_ref aref1 = a1;
-
-  val = 0;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be zero");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 1UL, "reference count must be one");
 
   object_item_1->ref(a1);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be one");
-  
-  a1 = object_item_2->ptr();
-
-  val = 0;
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
-
-  object_item_2->ptr(item);
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-  val = 2;
-  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
-  val = 0;
-  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
-
-  object_item_2->ref(item);
-  val = 2;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be two");
-
-  object_item_2->ref(a1);
-  val = 1;
-  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-  val = 0;
-  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
+  UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be two");
+  UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be two");
+//
+//  a1 = object_item_2->ptr();
+//
+//  val = 0;
+//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be zero");
+//  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
+//
+//  object_item_2->ptr(item);
+//  val = 1;
+//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
+//  val = 2;
+//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
+//  val = 0;
+//  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
+//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
+//
+//  object_item_2->ref(item);
+//  val = 2;
+//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be two");
+//
+//  object_item_2->ref(a1);
+//  val = 1;
+//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
+//  val = 0;
+//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
 }
 
 
@@ -316,7 +346,7 @@ ObjectStoreTestUnit::set_test()
 {
   Item *i = new Item("item", 4711);
   
-  oos::set(i, "val_int", 1);
+  oos::set(*i, "val_int", 1);
 
   UNIT_ASSERT_EQUAL(1, i->get_int(), "value must be one (1)");
 
@@ -331,21 +361,17 @@ ObjectStoreTestUnit::get_test()
 void
 ObjectStoreTestUnit::simple_object()
 {
-  serializable *o = ostore_.create("item");
+  Item *a = ostore_.create<Item>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
-  
-  Item *a = dynamic_cast<Item*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
+  UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
   
   typedef object_ptr<Item> item_ptr;
   
   item_ptr simple = ostore_.insert(a);
   
-  UNIT_ASSERT_NOT_NULL(simple.get(), "item serializable insertion failed");
+  UNIT_ASSERT_NOT_NULL(simple.get(), "item object insertion failed");
   
-  UNIT_ASSERT_TRUE(ostore_.is_removable(simple), "deletion of item serializable failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(simple), "deletion of item object failed");
   
   ostore_.remove(simple);
 }
@@ -353,26 +379,22 @@ ObjectStoreTestUnit::simple_object()
 void
 ObjectStoreTestUnit::object_with_sub_object()
 {
-  serializable *o = ostore_.create("object_item");
+  ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
   
-  UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem>");
-  
-  ObjectItem<Item> *s = dynamic_cast<ObjectItem<Item>*>(o);
-  
-  UNIT_ASSERT_NOT_NULL(s, "couldn't cast serializable to ObjectItem<Item>");
+  UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
   
   typedef object_ptr<ObjectItem<Item> > obj_item_ptr;
   
   obj_item_ptr ows = ostore_.insert(s);
   
-  UNIT_ASSERT_NOT_NULL(ows.get(), "serializable item serializable insertion failed");
+  UNIT_ASSERT_NOT_NULL(ows.get(), "object item object insertion failed");
   
-  // check if sub serializable exists
+  // check if sub object exists
   object_ptr<Item> simple = ows->ptr();
   
   UNIT_ASSERT_NULL(simple.get(), "item must be nullptr");
   
-  UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of serializable item failed");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(ows), "deletion of object item failed");
   
   ostore_.remove(ows);
 }
@@ -385,13 +407,9 @@ ObjectStoreTestUnit::multiple_simple_objects()
   size_t elem_size = 10;
   // create 10 objects
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("item");
+    Item *a = ostore_.create<Item>();
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <Item>");
-    
-    Item *a = dynamic_cast<Item*>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to Item");
+    UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
     
     item_ptr simple = ostore_.insert(a);
   }
@@ -410,15 +428,11 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
   // create 10 objects
   size_t elem_size = 10;
   for (size_t i = 0; i < elem_size; ++i) {
-    serializable *o = ostore_.create("object_item");
+    ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
+
+    UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
     
-    UNIT_ASSERT_NOT_NULL(o, "couldn't create serializable of type <ObjectItem<Item> >");
-    
-    ObjectItem<Item>  *a = dynamic_cast<ObjectItem<Item> *>(o);
-    
-    UNIT_ASSERT_NOT_NULL(a, "couldn't cast serializable to ObjectItem<Item> ");
-    
-    ows_ptr ows = ostore_.insert(a);
+    ows_ptr ows = ostore_.insert(s);
   }
 
   typedef object_view<ObjectItem<Item> > withsub_view_t;
@@ -434,7 +448,6 @@ ObjectStoreTestUnit::delete_object()
   typedef object_ptr<TestItem> test_item_ptr;
   typedef object_ptr<Item> item_ptr;
 
-  
   item_ptr item = ostore_.insert(new Item("item 1"));
 
   TestItem *ti = new TestItem;
@@ -442,22 +455,17 @@ ObjectStoreTestUnit::delete_object()
   
   test_item_ptr testitem = ostore_.insert(ti);
 
-  UNIT_ASSERT_EQUAL(item.ref_count(), (unsigned long)1, "reference count for item should be 1 (one)");
-  UNIT_ASSERT_EQUAL(item.ptr_count(), (unsigned long)0, "reference count for item should be 0 (zero)");
-  UNIT_ASSERT_EQUAL(testitem.ref_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
-  UNIT_ASSERT_EQUAL(testitem.ptr_count(), (unsigned long)0, "reference count for test item should be 0 (zero)");
-  
+  UNIT_ASSERT_EQUAL(item.reference_count(), 1UL, "reference count for item should be 1 (one)");
+  UNIT_ASSERT_EQUAL(testitem.reference_count(), 0UL, "reference count for test item should be 0 (zero)");
+
   typedef object_view<Item> item_view_t;
   item_view_t item_view(ostore_);
 
   UNIT_ASSERT_FALSE(ostore_.is_removable(item), "item shouldn't be removable because ref count is one");
 
-  try {
-    ostore_.remove(item);
-  } catch(object_exception &) {
-  }
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object is not removable", "item shouldn't be removed");
 
-  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test item must be removable");
+  UNIT_ASSERT_TRUE(ostore_.is_removable(testitem), "test object item must be removable");
   
   ostore_.remove(testitem);
 
@@ -469,34 +477,33 @@ ObjectStoreTestUnit::delete_object()
 void
 ObjectStoreTestUnit::hierarchy()
 {
-  ostore_.insert_prototype<ItemA, Item>("ITEM_A");
-  ostore_.insert_prototype<ItemB, Item>("ITEM_B");
-  ostore_.insert_prototype<ItemC, Item>("ITEM_C");
+  ostore_.attach<ItemA, Item>("ITEM_A");
+  ostore_.attach<ItemB, Item>("ITEM_B");
+  ostore_.attach<ItemC, Item>("ITEM_C");
   
   /* Insert 5 object of each item
    * object type
    */
 
-  Item *itm;
   for (int i = 0; i < 5; ++i) {
     std::stringstream str;
     str << "item " << i;
     ostore_.insert(new Item(str.str()));
     str.str("");
     str << "item a " << i;
-    itm = new ItemA;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemA *ia = new ItemA;
+    ia->set_string(str.str());
+    ostore_.insert(ia);
     str.str("");
     str << "item b " << i;
-    itm = new ItemB;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemB *ib = new ItemB;
+    ib->set_string(str.str());
+    ostore_.insert(ib);
     str.str("");
     str << "item c " << i;
-    itm = new ItemC;
-    itm->set_string(str.str());
-    ostore_.insert(itm);
+    ItemC *ic = new ItemC;
+    ic->set_string(str.str());
+    ostore_.insert(ic);
   }
   
   typedef object_view<Item> item_view_t;
@@ -510,7 +517,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   size_t max = 20;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 20");
   
   item_view_t::const_iterator first = item_view.begin();
   item_view_t::const_iterator last = item_view.end();
@@ -531,7 +538,7 @@ ObjectStoreTestUnit::hierarchy()
    ************************************/
 
   max = 5;
-  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 15");
+  UNIT_ASSERT_EQUAL(item_view.size(), max, "expected item view size isn't 5");
   
   first = item_view.begin();
   last = item_view.end();
@@ -603,14 +610,14 @@ ObjectStoreTestUnit::clear_test()
   item_view_t iview(ostore_);
 
   UNIT_ASSERT_EQUAL((int)iview.size(), 10, "invalid item view size");
-  UNIT_ASSERT_FALSE((int)iview.empty(), "item view shouldn't be empty");
-  UNIT_ASSERT_FALSE((int)ostore_.empty(), "serializable store shouldn't be empty");
+  UNIT_ASSERT_FALSE(iview.empty(), "item view shouldn't be empty");
+  UNIT_ASSERT_FALSE(ostore_.empty(), "object store shouldn't be empty");
 
   ostore_.clear();
 
-  UNIT_ASSERT_TRUE((int)ostore_.empty(), "serializable store must be empty");
+  UNIT_ASSERT_TRUE(ostore_.empty(), "object store must be empty");
   UNIT_ASSERT_EQUAL((int)iview.size(), 0, "invalid item view size");
-  UNIT_ASSERT_TRUE((int)iview.empty(), "item view must be empty");
+  UNIT_ASSERT_TRUE(iview.empty(), "item view must be empty");
 
   prototype_iterator first = ostore_.begin();
   prototype_iterator last = ostore_.end();
@@ -692,79 +699,79 @@ ObjectStoreTestUnit::generic_test()
 
   std::unique_ptr<Item> item(new Item());
 
-  oos::set(item, "val_char", c.expected);
-  oos::get(item, "val_char", c.result);
+  oos::set(*item, "val_char", c.expected);
+  oos::get(*item, "val_char", c.result);
   UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  oos::set(item, "val_short", s.expected);
-  oos::get(item, "val_short", s.result);
+  oos::set(*item, "val_short", s.expected);
+  oos::get(*item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
-  oos::get(item, "val_short", s.str_result);
-  UNIT_ASSERT_EQUAL(s.str_result, "-42", "float string is invalid");
+  oos::get(*item, "val_short", s.str_result);
+  UNIT_ASSERT_EQUAL(s.str_result, "-42", "short string is invalid");
 
-  oos::set(item, "val_int", i.expected);
-  oos::get(item, "val_int", i.result);
+  oos::set(*item, "val_int", i.expected);
+  oos::get(*item, "val_int", i.result);
   UNIT_ASSERT_EQUAL(i.result, i.expected, "not expected result value");
 
-  oos::set(item, "val_long", l.expected);
-  oos::get(item, "val_long", l.result);
+  oos::set(*item, "val_long", l.expected);
+  oos::get(*item, "val_long", l.result);
   UNIT_ASSERT_EQUAL(l.result, l.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_short", us.expected);
-  oos::get(item, "val_unsigned_short", us.result);
+  oos::set(*item, "val_unsigned_short", us.expected);
+  oos::get(*item, "val_unsigned_short", us.result);
   UNIT_ASSERT_EQUAL(us.result, us.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_int", ui.expected);
-  oos::get(item, "val_unsigned_int", ui.result);
+  oos::set(*item, "val_unsigned_int", ui.expected);
+  oos::get(*item, "val_unsigned_int", ui.result);
   UNIT_ASSERT_EQUAL(ui.result, ui.expected, "not expected result value");
 
-  oos::set(item, "val_unsigned_long", ul.expected);
-  oos::get(item, "val_unsigned_long", ul.result);
+  oos::set(*item, "val_unsigned_long", ul.expected);
+  oos::get(*item, "val_unsigned_long", ul.result);
   UNIT_ASSERT_EQUAL(ul.result, ul.expected, "not expected result value");
 
-  oos::set(item, "val_bool", b.expected);
-  oos::get(item, "val_bool", b.result);
+  oos::set(*item, "val_bool", b.expected);
+  oos::get(*item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
 
-  oos::set(item, "val_cstr", cstr.expected, cstr.expected_size);
-  oos::get(item, "val_cstr", cstr.result, cstr.size);
+  oos::set(*item, "val_cstr", cstr.expected, cstr.expected_size);
+  oos::get(*item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
 
-  oos::set(item, "val_string", str.expected);
-  oos::get(item, "val_string", str.result);
+  oos::set(*item, "val_string", str.expected);
+  oos::get(*item, "val_string", str.result);
   UNIT_ASSERT_EQUAL(str.result, str.expected, "not expected result value");
 
-  oos::set(item, "val_varchar", varstr.expected);
-  oos::get(item, "val_varchar", varstr.result);
+  oos::set(*item, "val_varchar", varstr.expected);
+  oos::get(*item, "val_varchar", varstr.result);
   UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "not expected result value");
 
-  oos::set(item, "val_float", f.expected);
-  oos::get(item, "val_float", f.result);
+  oos::set(*item, "val_float", f.expected);
+  oos::get(*item, "val_float", f.result);
   UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
   /* get float value into string
    * with precision 2
    */
-  oos::get(item, "val_float", f.str_result, 2);
+  oos::get(*item, "val_float", f.str_result, 2);
   UNIT_ASSERT_EQUAL(f.str_result, "1.55", "float string is invalid");
 
-  oos::set(item, "val_double", d.expected);
-  oos::get(item, "val_double", d.result);
+  oos::set(*item, "val_double", d.expected);
+  oos::get(*item, "val_double", d.result);
   UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
   /* get double value into string
    * with precision 3
    */
-  oos::get(item, "val_double", d.str_result, 3);
+  oos::get(*item, "val_double", d.str_result, 3);
   UNIT_ASSERT_EQUAL(d.str_result, "123.558", "double string is invalid");
 
-  oos::get(item, "val_int", str.result);
+  oos::get(*item, "val_int", str.result);
   UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  oos::set(item, "val_date", dateval.expected);
-  oos::get(item, "val_date", dateval.result);
+  oos::set(*item, "val_date", dateval.expected);
+  oos::get(*item, "val_date", dateval.result);
   UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "not expected result value");
 
-  oos::set(item, "val_time", timeval.expected);
-  oos::get(item, "val_time", timeval.result);
+  oos::set(*item, "val_time", timeval.expected);
+  oos::get(*item, "val_time", timeval.result);
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
 }
 
@@ -788,71 +795,84 @@ void ObjectStoreTestUnit::test_structure()
   UNIT_ASSERT_GREATER(iptr.id(), 0UL, "object id must be greater zero");
 }
 
+class cyclic
+{
+public:
+  cyclic() {}
+  cyclic(const std::string &n) : name(n) {}
+  ~cyclic() {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &w) {
+    w.serialize("id", id);
+    w.serialize("name", name);
+    w.serialize("cycler", cycler, cascade_type::NONE);
+  }
+  oos::identifier<unsigned long> id;
+  std::string name;
+  has_one<cyclic> cycler;
+};
+
 void ObjectStoreTestUnit::test_structure_cyclic()
 {
-  class cyclic : public oos::serializable
-  {
-  public:
-    cyclic() {}
-    cyclic(const std::string &n) : name(n) {}
-    virtual ~cyclic() {}
-
-    virtual void deserialize(oos::deserializer &r) {
-      r.read("id", id);
-      r.read("name", name);
-      r.read("cycler", cycler);
-    }
-    virtual void serialize(oos::serializer &w) const {
-      w.write("id", id);
-      w.write("name", name);
-      w.write("cycler", cycler);
-    }
-    oos::identifier<unsigned long> id;
-    std::string name;
-    object_ptr<cyclic> cycler;
-  };
-
   object_store ostore;
-  ostore.prototypes().insert<cyclic>("cyclic");
+  ostore.attach<cyclic>("cyclic");
 
   using cyclic_ptr = object_ptr<cyclic>;
 
   cyclic_ptr c1(new cyclic("c1"));
   cyclic_ptr c2(new cyclic("c2"));
+  cyclic_ptr c3(new cyclic("c3"));
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
 
   // cycle: c1 -> c2 -> c1
   c1->cycler = c2;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
+
   c2->cycler = c1;
 
-  cyclic_ptr cptr = ostore.insert(c1);
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 0UL, "reference count must be zero");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 0UL, "reference count must be zero");
 
-  UNIT_ASSERT_EQUAL(cptr.ref_count(), 0UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(cptr.ptr_count(), 1UL, "reference count must be one");
+  c1 = ostore.insert(c1);
 
-  UNIT_ASSERT_EQUAL(c2.ref_count(), 0UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(c2.ptr_count(), 1UL, "reference count must be one");
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3->cycler = c1;
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+
+  c3 = ostore.insert(c3);
+
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 2UL, "reference count must be 2 (two)");
+  UNIT_ASSERT_EQUAL(c2.reference_count(), 1UL, "reference count must be 1 (one)");
+  UNIT_ASSERT_EQUAL(c3.reference_count(), 0UL, "reference count must be 0 (zero)");
 }
 
 void ObjectStoreTestUnit::test_structure_container()
 {
   object_store ostore;
-  ostore.prototypes().insert<child>("cild");
-  ostore.prototypes().insert<children_list>("cildren_list");
+  ostore.attach<child>("cild");
+  ostore.attach<children_vector>("children_vector");
 
-  using childrens_ptr = object_ptr<children_list>;
+  using childrens_ptr = object_ptr<children_vector>;
 
-  childrens_ptr childrens(new children_list("ch1"));
+  childrens_ptr childrens(new children_vector("ch1"));
 
   childrens->children.push_back(new child("heinz"));
 
   ostore.insert(childrens);
 
-  object_ref<child> c1 = (*childrens->children.begin())->value();
+  object_ptr<child> c1 = *childrens->children.begin();
 
   UNIT_ASSERT_GREATER(c1.id(), 0UL, "object store must be greater zero");
-  UNIT_ASSERT_EQUAL(c1.ref_count(), 1UL, "reference count must be zero");
-  UNIT_ASSERT_EQUAL(c1.ptr_count(), 0UL, "reference count must be one");
-
+  UNIT_ASSERT_EQUAL(c1.reference_count(), 1UL, "reference count must be zero");
 }
 
 void ObjectStoreTestUnit::test_transient_optr()
@@ -863,17 +883,15 @@ void ObjectStoreTestUnit::test_transient_optr()
 
   item_ptr item_copy = item;
 
-
-  item_copy.reset();
+  item_copy.reset(nullptr, cascade_type::NONE);
 }
 
 void ObjectStoreTestUnit::test_insert()
 {
-  UNIT_ASSERT_EXCEPTION(ostore_.insert((serializable *)0), object_exception, "serializable is null", "null shouldn't be insertable");
+  UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null", "null shouldn't be insertable");
 
-  ItemC *ic = new ItemC;
-  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic), object_exception, "couldn't insert serializable", "unknown serializable type shouldn't be insertable");
-  delete ic;
+  std::unique_ptr<ItemC> ic(new ItemC);
+  UNIT_ASSERT_EXCEPTION(ostore_.insert(ic.get()), object_exception, "couldn't find object type", "unknown object type shouldn't be insertable");
 
   object_ptr<Item> item = ostore_.insert(new Item("test"));
   UNIT_ASSERT_NOT_NULL(item.ptr(), "internal pointer should not be zero");
@@ -886,12 +904,12 @@ void ObjectStoreTestUnit::test_remove()
 
   item_ptr item;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "serializable proxy is nullptr", "null shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "object proxy is nullptr", "null shouldn't be removable");
 
   Item *i = new Item;
   item = i;
 
-  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient serializable shouldn't be removable");
+  UNIT_ASSERT_EXCEPTION(ostore_.remove(item), object_exception, "prototype node is nullptr", "transient object shouldn't be removable");
 }
 
 void ObjectStoreTestUnit::test_primary_key()
@@ -907,10 +925,152 @@ void ObjectStoreTestUnit::test_primary_key()
   UNIT_ASSERT_TRUE(item.has_primary_key(), "item must have a primary key");
 }
 
-void ObjectStoreTestUnit::test_to_many()
+void ObjectStoreTestUnit::test_has_many()
 {
 //  typedef object_ptr<employee> emp_ptr;
 //  typedef object_ptr<department> dep_ptr;
+  ostore_.attach<book>("book");
+  ostore_.attach<book_list>("book_list");
 
-
+  ostore_.insert(new book_list);
 }
+
+std::vector<std::string> table_names = {};
+
+//template < class T, class Enabled = void >
+//struct on_attach;
+//
+//template < class T >
+//struct on_attach<T, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//{
+//  std::string name;
+//  on_attach(const std::string &n = "") : name(n) {}
+//
+//  on_attach(const on_attach &x) : name(x.name) {}
+//
+//  template < class V >
+//  on_attach(const on_attach<V> &x) : name(x.name)
+//  {
+//    std::cout << "creating on attach for typeid " << typeid(T).name() << " from typeid " << typeid(V).name() << '\n';
+//  }
+//
+//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+//
+//  template < class V >
+//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+//
+//  void operator()(const prototype_node *node)
+//  {
+//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//
+//    table_names.push_back(node->type());
+//  }
+//};
+//
+//template < class T >
+//struct on_attach<T, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
+//{
+//  std::string name;
+//  on_attach(const std::string &n = "") : name(n) {
+//    std::cout << "nope \n";
+//  }
+//
+//  on_attach(const on_attach &x) : name(x.name) {
+//    std::cout << "nope \n";
+//  }
+//
+//  template < class V >
+//  on_attach(const on_attach<V> &x) : name(x.name)
+//  {
+//    std::cout << "nope \n";
+//  }
+//
+//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
+//
+//  template < class V >
+//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+//
+//  void operator()(const prototype_node *node)
+//  {
+//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+//
+//    table_names.push_back(node->type());
+//  }
+//};
+
+struct on_attach_base : public oos::detail::basic_on_attach
+{
+  std::string name;
+  on_attach_base() {}
+  on_attach_base(const std::string &n) : name(n) {}
+  on_attach_base& operator=(const on_attach_base &x) { name = x.name; return *this; }
+
+};
+
+template < class T >
+struct on_attach : public on_attach_base
+{
+  using on_attach_base::on_attach_base;
+
+  on_attach()
+  {
+//    std::cout << "DEFAULT: nope \n";
+  }
+
+  template < class V >
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
+  {
+//    std::cout << "DEFAULT: nope \n";
+  }
+
+  template < class V >
+  on_attach& operator=(const on_attach<V> &x)
+  {
+    name = x.name; return *this;
+  }
+
+  void operator()(prototype_node *node) const
+  {
+//    std::cout << "DEFAULT: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+
+    table_names.push_back(node->type());
+  }
+};
+
+template <>
+template < class T >
+struct on_attach<has_many_item<T>> : public on_attach_base
+{
+  using on_attach_base::on_attach_base;
+
+  typedef has_many_item<T> type;
+
+  template < class V >
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
+  {
+//    std::cout << "HAS_MANY_ITEM: creating on attach for typeid " << typeid(type).name() << " from typeid " << typeid(V).name() << '\n';
+  }
+
+  template < class V >
+  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
+
+  void operator()(prototype_node *node) const
+  {
+//    std::cout << "HAS_MANY_ITEM: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
+
+    table_names.push_back(node->type());
+  }
+};
+
+void ObjectStoreTestUnit::test_on_attach()
+{
+  ostore_.attach<book, on_attach>("book", false, nullptr);
+  ostore_.attach<book_list, on_attach>("book_list", false, nullptr);
+
+  UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size mustbe three");
+
+  UNIT_ASSERT_EQUAL("book", table_names[0], "type must be book");
+  UNIT_ASSERT_EQUAL("book_list", table_names[1], "type must be book_list");
+  UNIT_ASSERT_EQUAL("books", table_names[2], "type must be books");
+}
+

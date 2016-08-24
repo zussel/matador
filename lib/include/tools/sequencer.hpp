@@ -128,7 +128,7 @@ private:
  *
  * This class provides an interface to create, get
  * and manage unique sequence numbers. Because it
- * is just an interface the underlaying sequencer
+ * is just an interface the underlying sequencer
  * implementation is used to do the real work implementing
  * the sequencers strategy.
  */

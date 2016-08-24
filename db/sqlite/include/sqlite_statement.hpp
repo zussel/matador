@@ -18,7 +18,7 @@
 #ifndef SQLITE_STATEMENT_HPP
 #define SQLITE_STATEMENT_HPP
 
-#include "database/statement_impl.hpp"
+#include "sql/statement_impl.hpp"
 
 #include <string>
 #include <vector>
@@ -33,12 +33,12 @@ class basic_identifier;
 
 namespace sqlite {
 
-class sqlite_database;
+class sqlite_connection;
 
 class sqlite_statement : public oos::detail::statement_impl
 {
 public:
-  sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer);
+  sqlite_statement(sqlite_connection &db, const std::string stmt);
   virtual ~sqlite_statement();
 
   virtual void clear();
@@ -46,32 +46,30 @@ public:
   virtual void reset();
 
 protected:
-  virtual void write(const char *id, char x);
-  virtual void write(const char *id, short x);
-  virtual void write(const char *id, int x);
-  virtual void write(const char *id, long x);
-  virtual void write(const char *id, unsigned char x);
-  virtual void write(const char *id, unsigned short x);
-  virtual void write(const char *id, unsigned int x);
-  virtual void write(const char *id, unsigned long x);
-  virtual void write(const char *id, float x);
-  virtual void write(const char *id, double x);
-  virtual void write(const char *id, bool x);
-  virtual void write(const char *id, const char *x, size_t s);
-  virtual void write(const char *id, const varchar_base &x);
-  virtual void write(const char *id, const std::string &x);
-  virtual void write(const char *id, const oos::date &x);
-  virtual void write(const char *id, const oos::time &x);
-  virtual void write(const char *id, const object_base_ptr &x);
-  virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const basic_identifier &x);
+  virtual void serialize(const char *id, char &x);
+  virtual void serialize(const char *id, short &x);
+  virtual void serialize(const char *id, int &x);
+  virtual void serialize(const char *id, long &x);
+  virtual void serialize(const char *id, unsigned char &x);
+  virtual void serialize(const char *id, unsigned short &x);
+  virtual void serialize(const char *id, unsigned int &x);
+  virtual void serialize(const char *id, unsigned long &x);
+  virtual void serialize(const char *id, float &x);
+  virtual void serialize(const char *id, double &x);
+  virtual void serialize(const char *id, bool &x);
+  virtual void serialize(const char *id, char *x, size_t s);
+  virtual void serialize(const char *id, varchar_base &x);
+  virtual void serialize(const char *id, std::string &x);
+  virtual void serialize(const char *id, oos::date &x);
+  virtual void serialize(const char *id, oos::time &x);
+  virtual void serialize(const char *id, basic_identifier &x);
+  virtual void serialize(const char *id, identifiable_holder&x, cascade_type);
 
 private:
-  sqlite_database &db_;
+  sqlite_connection &db_;
   sqlite3_stmt *stmt_;
 
   std::vector<std::shared_ptr<std::string> > host_strings_;
-  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

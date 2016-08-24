@@ -18,13 +18,20 @@
 #ifndef OBJECT_CONTAINER_HPP
 #define OBJECT_CONTAINER_HPP
 
-#include "object/serializable.hpp"
 #include "object/object_ptr.hpp"
+#include "tools/base_class.hpp"
 
 #include <functional>
 
 namespace oos {
 
+class object_proxy;
+
+namespace detail {
+
+class relation_resolver;
+
+}
 /**
  * @tparam T Type of value
  * @class value_item
@@ -34,7 +41,7 @@ namespace oos {
  * class and the values stored in the container.
  */
 template < class T >
-class value_item : public serializable
+class value_item
 {
 public:
   typedef T value_type; /**< Shortcut for the value type. */
@@ -49,17 +56,7 @@ public:
   value_item(const value_type &v)
     : value_(v)
   {}
-  virtual ~value_item() {}
-
-  virtual void deserialize(deserializer &deserializer)
-  {
-    deserializer.read("value", value_);
-  }
-
-  virtual void serialize(serializer &serializer) const
-  {
-    serializer.write("value", value_);
-  }
+  ~value_item() {}
 
   /**
    * Return the current value of the value_item.
@@ -80,6 +77,20 @@ public:
   {
     value_ = v;
   }
+private:
+  friend class oos::access;
+
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
+  {
+    deserializer.deserialize("value", value_);
+  }
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) const
+  {
+    serializer.serialize("value", value_);
+  }
 
 private:
   object_proxy *proxy_;
@@ -99,7 +110,6 @@ template < class T, class C >
 class container_item : public value_item<T>
 {
 public:
-  typedef oos::object_ref<C> container_ref; /**< Shortcut for the container ref type. */
   typedef C container_type;                 /**< Shortcut for the container type. */
   typedef T value_type;                     /**< Shortcut for the value type. */
 
@@ -111,7 +121,7 @@ public:
    * 
    * @param c The container reference to set.
    */
-  explicit container_item(const container_ref &c)
+  explicit container_item(const object_ptr<C> &c)
     : container_(c)
   {}
   
@@ -122,35 +132,40 @@ public:
    * @param c The container reference to set.
    * @param v The value of the container_item
    */
-  container_item(const container_ref &c, const value_type &v)
+  container_item(const object_ptr<C> &c, const value_type &v)
     : value_item<value_type>(v)
     , container_(c)
   {}
-  virtual ~container_item() {}
-
-  virtual void deserialize(deserializer &deserializer)
-  {
-    value_item<T>::deserialize(deserializer);
-    deserializer.read("container", container_);
-  }
-  virtual void serialize(serializer &serializer) const
-  {
-    value_item<T>::serialize(serializer);
-    serializer.write("container", container_);
-  }
 
   /**
    * Return a reference to the container
    *
    * @return A reference to the container
    */
-  container_ref container() const
+  object_ptr<C> container() const
   {
     return container_;
   }
+private:
+  friend class oos::access;
+
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
+  {
+    deserializer.deserialize(*oos::base_class<value_item<T>>(this));
+//    value_item<T>::deserialize(deserializer);
+    deserializer.deserialize("container", container_, cascade_type::NONE);
+  }
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(*oos::base_class<value_item<T>>(this));
+//    value_item<T>::serialize(serializer);
+    serializer.serialize("container", container_, cascade_type::NONE);
+  }
 
 private:
-  container_ref container_;
+  has_one<C> container_;
 };
 
 /**
@@ -225,7 +240,7 @@ protected:
   friend class object_serializer;
   friend class prototype_tree;
   friend class relation_handler;
-  friend class relation_resolver;
+  friend class detail::relation_resolver;
   friend class relation_filler;
   friend class table;
   friend class table_reader;
@@ -239,7 +254,7 @@ protected:
    */
   virtual void append_proxy(object_proxy *op) = 0;
 
-  object_proxy* proxy(const object_base_ptr &optr) const;
+  object_proxy* proxy(const basic_object_holder &optr) const;
 
   /**
    * Mark the list containing serializable as modified
@@ -297,13 +312,6 @@ protected:
    * @param ownr The new owner of the container
    */
   void owner(object_proxy *ownr);
-
-  /**
-   * Create a producer for the item type.
-   * 
-   * @return The producer for the item type.
-   */
-  virtual object_base_producer* create_item_producer() const = 0;
 
 private:
   virtual void reset() {}

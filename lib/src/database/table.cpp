@@ -20,7 +20,7 @@
 #include "database/table.hpp"
 #include "database/database_exception.hpp"
 #include "database/result.hpp"
-#include "database/query.hpp"
+#include "sql/query.hpp"
 #include "database/condition.hpp"
 
 namespace oos {

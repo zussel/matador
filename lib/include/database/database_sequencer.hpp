@@ -21,8 +21,6 @@
 #include "tools/sequencer.hpp"
 #include "tools/varchar.hpp"
 
-#include "object/serializable.hpp"
-
 #include "database/statement.hpp"
 
 #ifdef _MSC_VER
@@ -44,15 +42,25 @@ class database;
 
 /// @cond OOS_DEV
 
-class sequence : public serializable
+class sequence
 {
 public:
   sequence();
-  virtual ~sequence();
+  ~sequence();
 
-  virtual void deserialize(deserializer &r);
-  virtual void serialize(serializer &w) const;
+  template < class DESERIALIZER >
+  void deserialize(DESERIALIZER &deserializer)
+  {
+    deserializer.deserialize("name", name_);
+    deserializer.deserialize("number", sequence_);
 
+  }
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) const
+  {
+    serializer.serialize("name", name_);
+    serializer.serialize("number", sequence_);
+  }
 
   unsigned long seq() const;
   void seq(unsigned long sequence);

@@ -46,7 +46,7 @@ void database::open(const std::string &connection)
   if (is_open()) {
     return;
   } else {
-    // open the database backend
+    // open the sql backend
     on_open(connection);
     
     // create all tables
@@ -76,7 +76,7 @@ void database::close()
     
     table_map_.clear();
     
-    // close database backend
+    // close sql backend
     on_close();
   }
 }

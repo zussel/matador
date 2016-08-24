@@ -35,16 +35,14 @@
 
 #include "unit/unit_exception.hpp"
 
-#include "tools/enable_if.hpp"
-
 #include <functional>
 #include <map>
 #include <vector>
-
 #include <cstring>
 #include <string>
 #include <sstream>
 #include <type_traits>
+#include <iostream>
 
 /**
  * @file unit_test.hpp
@@ -66,7 +64,7 @@
 #define UNIT_ASSERT_EQUAL(a, b, msg)     assert_equal(a, b, msg, __LINE__, __FILE__)
 
 /**
- * @brief Checks if a is not equal b.
+ * @brief Checks if a is not msgstrequal b.
  *
  * If a is equal b the test method throws
  * a unit_exception with the given message. The
@@ -157,6 +155,39 @@
     }                                                                             \
   } while(false);
 
+
+/**
+ * @brief Checks if a is equal b.
+ *
+ * If a is not equal b the test prints
+ * the given message to stdout.
+ */
+#define UNIT_EXPECT_EQUAL(a, b, msg)     expect_equal(a, b, msg, __LINE__, __FILE__)
+
+/**
+ * @brief Checks if a is greater b.
+ *
+ * If a is not greater b the test prints
+ * the given message to stdout.
+ */
+#define UNIT_EXPECT_GREATER(a, b, msg)   expect_greater(a, b, msg, __LINE__, __FILE__)
+
+/**
+ * @brief Checks if a evaluates to false.
+ *
+ * If a doesn't evaluates to false the test method
+ * prints the given message to stdout.
+ */
+#define UNIT_EXPECT_FALSE(a, msg)        expect_false(a, msg, __LINE__, __FILE__)
+
+/**
+ * @brief Checks if a evaluates to true.
+ *
+ * If a doesn't evaluates to true the test method
+ * prints the given message to stdout.
+ */
+#define UNIT_EXPECT_TRUE(a, msg)         expect_true(a, msg, __LINE__, __FILE__)
+
 /**
  * @brief Throws an error.
  *
@@ -195,8 +226,6 @@
 
 namespace oos {
 
-class varchar_base;
-
 /**
  * @class unit_test
  * @brief A unit_test consists of serveral tests.
@@ -231,18 +260,18 @@ public:
   /**
    * @brief Initializes a test_unit test.
    *
-   * Called before each executed test method. Must be
+   * Called before each executed test method. Can be
    * overwritten by the derived test_unit class.
    */
-  virtual void initialize() = 0;
+  virtual void initialize() {};
 
   /**
    * @brief Cleans up a test_unit test.
    *
-   * Called after every executed test method. Must be
+   * Called after every executed test method. Can be
    * overwritten by the derived test_unit class.
    */
-  virtual void finalize() = 0;
+  virtual void finalize() {};
 
   /**
    * Returns the name of the test_unit.
@@ -368,6 +397,15 @@ public:
   {
     ++current_test_func_info->assertion_count;
     if (strcmp(a.c_str(), b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
+  }
+  void assert_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->assertion_count;
+    if (strcmp(a, b.c_str()) != 0) {
       std::stringstream msgstr;
       msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
       throw unit_exception(msgstr.str());
@@ -601,6 +639,91 @@ public:
   void assert_false(bool a, const std::string &msg, int line, const char *file);
 
   /**
+   * @brief Checks if a evaluates to true.
+   *
+   * If a doesn't evaluates to true the test method
+   * prints the given message.
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  void expect_true(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Checks if a evaluates to false.
+   *
+   * If a doesn't evaluates to false the test method
+   * prints the given message.
+   * The exception is caught by the test_suite and the
+   * message is displayed
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The value to evaluate.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  void expect_false(bool a, const std::string &msg, int line, const char *file);
+
+  /**
+   * @brief Checks if a is equal b.
+   *
+   * If a is not equal b the test method prints
+   * the given message to stdout.
+   *
+   * @tparam X The type of the left and right hand serializable to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  template < class X >
+  void expect_equal(const X &a, const X &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (a != b) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+
+  void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a, b.c_str()) != 0) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+
+  /**
+   * @brief Checks if a is greater b.
+   *
+   * If a is not greater b the test method prints
+   * the given message to stdout.
+   *
+   * @tparam T The type of the objects to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
+  template < class T >
+  void expect_greater(const T &a, const T &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (a <= b) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not greater " << b << ": " << msg;
+    }
+  }
+
+  /**
    * @brief Throws an error.
    *
    * The test method throws an exception
@@ -642,11 +765,25 @@ private:
   typedef struct test_func_info_struct
   {
     test_func_info_struct(const test_func &f, const std::string &n, const std::string &c)
-      : func(f), succeeded(true), assertion_count(0), name(n), caption(c)
+      : func(f), name(n), caption(c)
     {}
+    enum t_state {
+      UNKNOWN = 0,
+      SUCCEEDED,
+      ERROR,
+      FAILURE
+    };
+
+    bool is_error() const { return state == ERROR; }
+    bool is_failure() const { return state == FAILURE; }
+    bool is_succeeded() const { return state == SUCCEEDED; }
     test_func func;
-    bool succeeded;
-    size_t assertion_count;
+    bool succeeded = true;
+    t_state state = UNKNOWN;
+    long duration;
+    size_t assertion_count = 0;
+    size_t error_count = 0;
+    size_t errors = 0;
     std::string name;
     std::string caption;
     std::string message;

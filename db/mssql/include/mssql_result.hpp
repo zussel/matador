@@ -21,23 +21,21 @@
 #include "mssql_exception.hpp"
 #include "mssql_statement.hpp"
 
-#include "database/result.hpp"
-#include "database/types.hpp"
+#include "sql/result_impl.hpp"
+#include "sql/types.hpp"
 
 #if defined(_MSC_VER)
 #include <windows.h>
 #endif
 
+#include <vector>
+
 #include <sqltypes.h>
 #include <sql.h>
-
-#include <vector>
-#include "object/identifier.hpp"
 
 namespace oos {
 
 class row;
-class serializable;
 
 namespace mssql {
 
@@ -48,61 +46,90 @@ private:
   mssql_result& operator=(const mssql_result&) = delete;
 
 public:
-  mssql_result(SQLHANDLE stmt, bool free, std::shared_ptr<oos::object_base_producer> producer);
+  mssql_result(SQLHANDLE stmt, bool free);
   virtual ~mssql_result();
-  
+
   const char* column(size_type c) const;
   virtual bool fetch();
-  virtual bool fetch(serializable *);
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
 
+  template < class T >
+  T get(size_type index, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr) const
+  {
+    T val;
+    SQLLEN info = 0;
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
+    if (!SQL_SUCCEEDED(ret)) {
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    }
+    return val;
+  }
+
+  template < class T >
+  T get(size_type index, typename std::enable_if<std::is_same<std::string, T>::value>::type* = nullptr) const
+  {
+    char buf[1024];
+    SQLLEN info = 0;
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)index, SQL_C_CHAR, buf, 1024, &info);
+    if (!SQL_SUCCEEDED(ret)) {
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
+    }
+    return std::string(buf, info);
+  }
+
   virtual int transform_index(int index) const;
 
 protected:
-  virtual void read(const char *id, char &x);
-  virtual void read(const char *id, short &x);
-  virtual void read(const char *id, int &x);
-  virtual void read(const char *id, long &x);
-  virtual void read(const char *id, unsigned char &x);
-  virtual void read(const char *id, unsigned short &x);
-  virtual void read(const char *id, unsigned int &x);
-  virtual void read(const char *id, unsigned long &x);
-  virtual void read(const char *id, bool &x);
-  virtual void read(const char *id, float &x);
-  virtual void read(const char *id, double &x);
-  virtual void read(const char *id, char *x, size_t s);
-  virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, std::string &x);
-  virtual void read(const char *id, oos::date &x);
-  virtual void read(const char *id, oos::time &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, basic_identifier &x);
+  virtual void serialize(const char*, char&);
+  virtual void serialize(const char*, short&);
+  virtual void serialize(const char*, int&);
+  virtual void serialize(const char*, long&);
+  virtual void serialize(const char*, unsigned char&);
+  virtual void serialize(const char*, unsigned short&);
+  virtual void serialize(const char*, unsigned int&);
+  virtual void serialize(const char*, unsigned long&);
+  virtual void serialize(const char*, bool&);
+  virtual void serialize(const char*, float&);
+  virtual void serialize(const char*, double&);
+  virtual void serialize(const char*, char *, size_t);
+  virtual void serialize(const char*, std::string&);
+  virtual void serialize(const char*, oos::varchar_base&);
+  virtual void serialize(const char*, oos::time&);
+  virtual void serialize(const char*, oos::date&);
+  virtual void serialize(const char*, oos::basic_identifier &x);
+  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type);
 
   template < class T >
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
     SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
-    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index++), type, &val, sizeof(T), &info);
-    if (ret == SQL_SUCCESS) {
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
+    if (SQL_SUCCEEDED(ret)) {
       return;
     } else {
-      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving field value");
+      throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
     }
   }
   
+  void read_column(const char *, char &val);
   void read_column(const char *, std::string &val);
   void read_column(const char *, varchar_base &val);
   void read_column(const char *, oos::date &val);
   void read_column(const char *, oos::time &val);
 
+
+  virtual bool prepare_fetch() override;
+
+  virtual bool finalize_fetch() override;
+
 private:
-  size_type affected_rows_;
-  size_type rows;
-  size_type fields_;
+  size_type affected_rows_ = 0;
+  size_type rows = 0;
+  size_type fields_ = 0;
   
   bool free_;
   

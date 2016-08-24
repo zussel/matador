@@ -48,7 +48,8 @@ date::date(int day, int month, int year)
   sync_date(day_, month_, year_);
 }
 
-date::date(const char *stamp, const char *format) {
+date::date(const char *stamp, const char *format)
+{
   this->set(stamp, format);
 }
 
@@ -81,22 +82,24 @@ date &date::operator=(int julian_date)
 date::~date()
 {}
 
-bool
-operator==(const date &a, const date &b) {
+bool operator==(const date &a, const date &b)
+{
   return a.julian_date_ == b.julian_date_;
 }
 
-bool
-operator!=(const date &a, const date &b) {
+bool operator!=(const date &a, const date &b)
+{
   return a.julian_date_ != b.julian_date_;
 }
 
-date& date::operator+=(int days) {
+date& date::operator+=(int days)
+{
   sync_julian_date(julian_date_ + days);
   return *this;
 }
 
-date& date::operator-=(int days) {
+date& date::operator-=(int days)
+{
   sync_julian_date(julian_date_ - days);
   return *this;
 }
@@ -107,7 +110,8 @@ date& date::operator++()
   return *this;
 }
 
-date date::operator++(int) {
+date date::operator++(int)
+{
   date d(*this);
   ++(*this);
   return d;
@@ -119,14 +123,14 @@ date &date::operator--()
   return *this;
 }
 
-date date::operator--(int) {
+date date::operator--(int)
+{
   date d(*this);
   --(*this);
   return d;
 }
 
-date
-operator+(date a, int days)
+date operator+(date a, int days)
 {
   return a += days;
 }

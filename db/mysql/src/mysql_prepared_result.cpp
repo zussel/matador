@@ -1,17 +1,11 @@
 #include "mysql_prepared_result.hpp"
-#include "mysql_column_binder.hpp"
 #include "mysql_exception.hpp"
-#include "mysql_column_binder.hpp"
-#include "mysql_result_info.hpp"
 
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 #include "tools/varchar.hpp"
-
-#include "object/serializable.hpp"
-#include "object/object_ptr.hpp"
-#include "object/object_exception.hpp"
-#include "object/prototype_tree.hpp"
+#include "tools/basic_identifier.hpp"
+#include "tools/identifiable_holder.hpp"
 
 #include <cstring>
 
@@ -19,9 +13,8 @@ namespace oos {
 
 namespace mysql {
 
-mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs, std::shared_ptr<oos::object_base_producer> producer)
-  : detail::result_impl(producer)
-  , affected_rows_((size_type)mysql_stmt_affected_rows(s))
+mysql_prepared_result::mysql_prepared_result(MYSQL_STMT *s, int rs)
+  : affected_rows_((size_type)mysql_stmt_affected_rows(s))
   , rows((size_type)mysql_stmt_num_rows(s))
   , fields_(mysql_stmt_field_count(s))
   , stmt(s)
@@ -54,73 +47,34 @@ bool mysql_prepared_result::fetch()
   // get next row
   int ret = mysql_stmt_fetch(stmt);
   if (ret == MYSQL_DATA_TRUNCATED) {
+    // Todo: handle truncated data
   }
-/*
-      log_debug("mysql_stmt_fetch(" << stmt << ')');
-      int ret = mysql_stmt_fetch(stmt);
-
-      if (ret == MYSQL_DATA_TRUNCATED)
-      {
-        // fetch column data where truncated
-        MYSQL_FIELD* fields = mysqlStatement->getFields();
-        for (unsigned n = 0; n < row->getSize(); ++n)
-        {
-          if (*row->getMysqlBind()[n].length > row->getMysqlBind()[n].buffer_length)
-          {
-            // actual length was longer than buffer_length, so this column is truncated
-            fields[n].length = *row->getMysqlBind()[n].length;
-            row->initOutBuffer(n, fields[n]);
-
-            log_debug("mysql_stmt_fetch_column(" << stmt << ", BIND, " << n
-                << ", 0) with " << fields[n].length << " bytes");
-            if (mysql_stmt_fetch_column(stmt, row->getMysqlBind() + n, n, 0) != 0)
-              throw MysqlStmtError("mysql_stmt_fetch_column", stmt);
-          }
-        }
-      }
-      else if (ret == MYSQL_NO_DATA)
-      {
-        log_debug("MYSQL_NO_DATA");
-        row = 0;
-        return Row();
-      }
-      else if (ret == 1)
-        throw MysqlStmtError("mysql_stmt_fetch", stmt);
-
-      return Row(&*row);
-  */
   return rows-- > 0;
 }
 
-bool mysql_prepared_result::fetch(serializable *o)
+bool mysql_prepared_result::prepare_fetch()
 {
   // reset result column index
-  result_index = 0;
-  // prepare result array
-  mysql_column_binder binder;
-  binder.bind(o, info_, stmt, bind_);
-
+  result_index_ = 0;
   // fetch data
   int ret = mysql_stmt_fetch(stmt);
   if (ret == MYSQL_NO_DATA) {
     return false;
   } else if (ret == 1) {
     throw_stmt_error(ret, stmt, "mysql", "");
-  } else {
-//  if (ret == MYSQL_DATA_TRUNCATED) {
-    // load data from database
-    o->deserialize(*this);
-//  }
   }
-
+  prepare_binding_ = false;
   return true;
+}
 
-//  return rows_-- > 0;
+bool mysql_prepared_result::finalize_fetch()
+{
+  return true;
 }
 
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
-  long ar = mysql_stmt_affected_rows(stmt);
+  size_t ar = mysql_stmt_affected_rows(stmt);
   return ar;
   //return affected_rows_;
 }
@@ -140,80 +94,135 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, char &/*x*/)
+void mysql_prepared_result::serialize(const char */*id*/, char &x)
 {
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, short &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, int &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, long &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, unsigned char &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, unsigned short &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, unsigned int &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, unsigned long &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, bool &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, float &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, double &/*x*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, char */*x*/, size_t /*s*/)
-{
- ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, oos::date &x)
-{
-  if (info_[result_index].length > 0) {
-    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
-    x.set(mtt->day, mtt->month, mtt->year);
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+  } else {
+    ++result_index_;
   }
-  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, oos::time &x)
+void mysql_prepared_result::serialize(const char */*id*/, short & x)
 {
-  if (info_[result_index].length > 0) {
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, int &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, long &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, unsigned char &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, unsigned short &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, unsigned int &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, unsigned long &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, bool &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, float &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_FLOAT, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, double &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_DOUBLE, x);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, char *x, size_t s)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
+  } else {
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_DATE, x);
+  } else {
+    if (info_[result_index_].length > 0) {
+      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
+      x.set(mtt->day, mtt->month, mtt->year);
+    }
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
+  } else {
+    if (info_[result_index_].length > 0) {
 #if MYSQL_VERSION_ID < 50604
-    // before mysql version 5.6.4 datetime
+      // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds
     // so we use a datetime string here
     char *data = (char*)bind_[result_index].buffer;
@@ -221,50 +230,149 @@ void mysql_prepared_result::read(const char */*id*/, oos::time &x)
     std::string str(data,len);
     x = time::parse(str, "%F %T.%f");
 #else
-    MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index].buffer;
-    x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
+      MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
+      x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);
 #endif
-  }
-  ++result_index;
-}
-
-void mysql_prepared_result::read(const char */*id*/, std::string &x)
-{
-  if (info_[result_index].length > 0) {
-    bind_[result_index].buffer = new char[info_[result_index].length];
-    bind_[result_index].buffer_length = info_[result_index].length;
-    if (mysql_stmt_fetch_column(stmt, &bind_[result_index], result_index, 0) != 0) {
-      // an error occured
-    } else {
-      char *data = (char*)bind_[result_index].buffer;
-      unsigned long len = bind_[result_index].buffer_length;
-      x.assign(data, len);
     }
-    delete [] (char*)bind_[result_index].buffer;
-    bind_[result_index].buffer = 0;
+    ++result_index_;
   }
-  ++result_index;
 }
 
-void mysql_prepared_result::read(const char */*id*/, varchar_base &x)
+void mysql_prepared_result::serialize(const char */*id*/, std::string &x)
 {
-  char *data = (char*)bind_[result_index].buffer;
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
+  } else {
+    if (info_[result_index_].length > 0) {
+      bind_[result_index_].buffer = new char[info_[result_index_].length];
+      bind_[result_index_].buffer_length = info_[result_index_].length;
+      if (mysql_stmt_fetch_column(stmt, &bind_[result_index_], result_index_, 0) != 0) {
+        // an error occured
+      } else {
+        char *data = (char*)bind_[result_index_].buffer;
+        unsigned long len = bind_[result_index_].buffer_length;
+        x.assign(data, len);
+      }
+      delete [] (char*)bind_[result_index_].buffer;
+      bind_[result_index_].buffer = 0;
+    }
+    ++result_index_;
+  }
+}
+
+void mysql_prepared_result::serialize(const char */*id*/, varchar_base &x)
+{
+  if (prepare_binding_) {
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+  } else {
+    char *data = (char*)bind_[result_index_].buffer;
 //  unsigned long len = bind_[result_index].buffer_length;
-  unsigned long len = info_[result_index].length;
-  x.assign(data, len);
-  ++result_index;
+    unsigned long len = info_[result_index_].length;
+    x.assign(data, len);
+    ++result_index_;
+  }
 }
 
-void mysql_prepared_result::read(const char *id, object_base_ptr &x)
+void mysql_prepared_result::serialize(const char *id, oos::basic_identifier &x)
 {
-    read_foreign_object(id, x);
+  x.serialize(id, *this);
 }
 
-void mysql_prepared_result::read(const char */*id*/, object_container &/*x*/) {}
-
-void mysql_prepared_result::read(const char *id, basic_identifier &x)
+void mysql_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
-  x.deserialize(id, *this);
+  if (prepare_binding_) {
+    std::shared_ptr<basic_identifier> pk(x.create_identifier());
+    pk->serialize(id, *this);
+    foreign_keys_.insert(std::make_pair(id, pk));
+  } else {
+    t_foreign_key_map::iterator i = foreign_keys_.find(id);
+    if (i != foreign_keys_.end()) {
+      if (i->second->is_valid()) {
+        x.reset(i->second);
+      }
+      foreign_keys_.erase(i);
+    }
+  }
+}
+
+bool mysql_prepared_result::needs_bind()
+{
+  prepare_binding_ = true;
+  column_index_ = 0;
+  return prepare_binding_;
+}
+
+bool mysql_prepared_result::finalize_bind()
+{
+  // Todo: validate result
+  return mysql_stmt_bind_result(stmt, bind_);
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::date &)
+{
+  if (info_[index].buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
+    info_[index].buffer_length = s;
+  }
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::time &)
+{
+  if (info_[index].buffer == 0) {
+    size_t s = sizeof(MYSQL_TIME);
+    info_[index].buffer = new char[s];
+    memset(info_[index].buffer, 0, s);
+    info_[index].buffer_length = s;
+  }
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, std::string & /*value*/)
+{
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = nullptr;
+  bind_[index].buffer_length = 0;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, char *x, size_t s)
+{
+  bind_[index].buffer_type = type;
+  bind_[index].buffer= x;
+  bind_[index].buffer_length = (unsigned long) s;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
+}
+
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, varchar_base &x)
+{
+  if (info_[index].buffer == nullptr) {
+    info_[index].buffer = new char[x.capacity()];
+    memset(info_[index].buffer, 0, x.capacity());
+    info_[index].buffer_length = x.capacity();
+  }
+  bind_[index].buffer_type = type;
+  bind_[index].buffer = info_[index].buffer;
+  bind_[index].buffer_length = info_[index].buffer_length;
+  bind_[index].is_null = &info_[index].is_null;
+  bind_[index].length = &info_[index].length;
+  bind_[index].error = &info_[index].error;
 }
 
 }

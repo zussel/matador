@@ -18,7 +18,7 @@
 #ifndef MYSQL_RESULT_HPP
 #define MYSQL_RESULT_HPP
 
-#include "database/result_impl.hpp"
+#include "sql/result_impl.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -32,7 +32,7 @@
 namespace oos {
 
 class row;
-class serializable;
+class serializer;
 
 namespace mysql {
 
@@ -46,14 +46,12 @@ public:
   typedef detail::result_impl::size_type size_type;
 
 public:
-  mysql_result(std::shared_ptr<object_base_producer> producer, MYSQL *c);
+  mysql_result(MYSQL *c);
   virtual ~mysql_result();
   
   const char* column(size_type c) const;
   bool fetch();
   
-  bool fetch(serializable *o);
-
   size_type affected_rows() const;
   size_type result_rows() const;
   size_type fields() const;
@@ -61,25 +59,28 @@ public:
   virtual int transform_index(int index) const;
 
 protected:
-  virtual void read(const char *id, char &x);
-  virtual void read(const char *id, short &x);
-  virtual void read(const char *id, int &x);
-  virtual void read(const char *id, long &x);
-  virtual void read(const char *id, unsigned char &x);
-  virtual void read(const char *id, unsigned short &x);
-  virtual void read(const char *id, unsigned int &x);
-  virtual void read(const char *id, unsigned long &x);
-  virtual void read(const char *id, bool &x);
-  virtual void read(const char *id, float &x);
-  virtual void read(const char *id, double &x);
-  virtual void read(const char *id, char *x, size_t s);
-  virtual void read(const char *id, varchar_base &x);
-  virtual void read(const char *id, std::string &x);
-  virtual void read(const char *id, oos::date &x);
-  virtual void read(const char *id, oos::time &x);
-  virtual void read(const char *id, object_base_ptr &x);
-  virtual void read(const char *id, object_container &x);
-  virtual void read(const char *id, basic_identifier &x);
+  virtual void serialize(const char *id, char &x);
+  virtual void serialize(const char *id, short &x);
+  virtual void serialize(const char *id, int &x);
+  virtual void serialize(const char *id, long &x);
+  virtual void serialize(const char *id, unsigned char &x);
+  virtual void serialize(const char *id, unsigned short &x);
+  virtual void serialize(const char *id, unsigned int &x);
+  virtual void serialize(const char *id, unsigned long &x);
+  virtual void serialize(const char *id, bool &x);
+  virtual void serialize(const char *id, float &x);
+  virtual void serialize(const char *id, double &x);
+  virtual void serialize(const char *id, char *x, size_t s);
+  virtual void serialize(const char *id, varchar_base &x);
+  virtual void serialize(const char *id, std::string &x);
+  virtual void serialize(const char *id, oos::date &x);
+  virtual void serialize(const char *id, oos::time &x);
+  virtual void serialize(const char *id, oos::basic_identifier &x);
+  virtual void serialize(const char *id, oos::identifiable_holder &x, cascade_type);
+
+protected:
+  virtual bool prepare_fetch() override;
+  virtual bool finalize_fetch() override;
 
 private:
   struct result_deleter

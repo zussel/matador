@@ -31,97 +31,134 @@
   #define OOS_API
 #endif
 
-#include "identifier_resolver.hpp"
-#include "prototype_node.hpp"
+#include "tools/identifier_resolver.hpp"
+
+#include "object/prototype_node.hpp"
 
 #include <ostream>
 #include <set>
 #include <list>
-#include <map>
 
+#include <map>
 #include <memory>
 
 namespace oos {
 
-class serializable;
 class object_store;
-class object_base_ptr;
+class object_holder;
 class prototype_node;
 class basic_identifier;
+class transaction;
 
 /**
  * @cond OOS_DEV
  * @class object_proxy
- * @brief A proxy between the serializable and the object_store
+ * @brief A proxy between the object and the object_store
  *
- * Is a proxy between the serializable and the serializable store. It stores
- * the pointer to the serializable and the id. Once a new serializable
+ * Is a proxy between the object and the object store. It stores
+ * the pointer to the object and the id. Once a new object
  * is inserted into the 
  */
-class OOS_API object_proxy {
+class OOS_API object_proxy
+{
 public:
+
   /**
    * @brief Create an empty object_proxy
    *
    * Create an empty object_proxy
    */
-  explicit object_proxy();
+  object_proxy();
 
   /**
    * Create a new object proxy with primary key
    *
    * @param pk primary key of object
    */
-  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk);
+  object_proxy(const std::shared_ptr<basic_identifier> &pk);
+
+  template < class T >
+  explicit object_proxy(const std::shared_ptr<basic_identifier> &pk, T *obj, prototype_node *node)
+    : obj_(obj)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
+    , ostore_(node->tree())
+    , node_(node)
+    , primary_key_(pk)
+  {}
 
   /**
-   * @brief Create an object_proxy for unknown
-   *        serializable with given id.
+   * @brief Create an object_proxy for a given object.
    *
-   * Create an object_proxy for unknown serializable
+   * Create an object_proxy for unknown object
    * with given id.
    *
-   * @param i The id of the unknown serializable.
+   * @param o The valid object.
    */
-  explicit object_proxy(unsigned long i);
+  template < typename T >
+  explicit object_proxy(T *o)
+    : obj_(o)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
+  {
+    primary_key_.reset(identifier_resolver<T>::resolve(o));
+  }
 
   /**
-   * @brief Create an object_proxy for a given serializable.
+   * @brief Create an object_proxy for a given object.
    *
-   * Create an object_proxy for unknown serializable
+   * Create an object_proxy for unknown object
    * with given id.
    *
-   * @param o The valid serializable.
-   */
-  object_proxy(serializable *o);
-
-  /**
-   * @brief Create an object_proxy for a given serializable.
-   *
-   * Create an object_proxy for unknown serializable
-   * with given id.
-   *
-   * @param o The valid serializable.
+   * @param o The valid object.
    * @param id The object store id for the given object
    * @param os The object_store.
    */
-  object_proxy(serializable *o, unsigned long id, object_store *os);
+  template < typename T >
+  object_proxy(T *o, unsigned long id, object_store *os)
+    : obj_(o)
+    , deleter_(&destroy<T>)
+    , namer_(&type_id<T>)
+    , oid(id)
+    , ostore_(os)
+  {
+    if (obj_ != nullptr) {
+      primary_key_.reset(identifier_resolver<T>::resolve(o));
+    }
+  }
 
   ~object_proxy();
 
   /**
-   * Return the underlaying serializable object
+   * Return the classname/typeid of the object
    *
-   * @return The underlaying serializable
+   * @return The classname of the object
    */
-  serializable* obj();
+  const char* classname() const;
 
   /**
-   * Return the underlaying serializable object
+   * Return the underlaying object
    *
-   * @return The underlaying serializable
+   * @tparam The type of the object
+   * @return The underlaying object
    */
-  const serializable* obj() const;
+  template < typename T = void >
+  T* obj()
+  {
+    return static_cast<T*>(obj_);
+  }
+
+  /**
+   * Return the underlaying object
+   *
+   * @tparam The type of the object
+   * @return The underlaying object
+   */
+  template < typename T = void >
+  const T* obj() const
+  {
+    return static_cast<const T*>(obj_);
+  }
 
   /**
    * Return the underlaying object store
@@ -139,6 +176,22 @@ public:
   prototype_node* node() const;
 
   /**
+   * Release the object from proxies
+   * responsibility. After release the user
+   * is responsible for object.
+   *
+   * @tparam The type of the object
+   * @return The released object
+   */
+  template < class T >
+  T* release()
+  {
+    T* tmp = obj<T>();
+    obj_ = nullptr;
+    return tmp;
+  }
+
+  /**
    * Print the object_proxy to a stream
    *
    * @param os The stream where the object_proxy is printed to
@@ -148,15 +201,15 @@ public:
   friend OOS_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
   /**
-   * Link this serializable proxy before given
-   * serializable proxy next.
+   * Link this object proxy before given
+   * object proxy next.
    * 
-   * @param successor New next serializable proxy of this
+   * @param successor New next object proxy of this
    */
   void link(object_proxy *successor);
 
   /**
-   * @brief Unlink serializable proxy from list.
+   * @brief Unlink object proxy from list.
    *
    * When an object_proxy is unlinked it
    * is removed from the object_proxy list
@@ -167,37 +220,15 @@ public:
   void unlink();
 
   /**
-   * @brief Link as referenece
-   *
-   * Link as referenece incremenets
-   * the reference counter.
+   * Increment reference counter
    */
-  void link_ref();
-
+  unsigned long operator++();
+  unsigned long operator++(int);
   /**
-   * @brief Unlink as referenece
-   *
-   * Unlink as referenece decremenets
-   * the reference counter.
+   * Decrement reference counter
    */
-  void unlink_ref();
-
-  /**
-   * @brief Link as pointer
-   *
-   * Link as pointer incremenets
-   * the pointer counter.
-   */
-  void link_ptr();
-
-  /**
-   * @brief Unlink as pointer
-   *
-   * Unlink as pointer decremenets
-   * the pointer counter.
-   */
-  void unlink_ptr();
-
+  unsigned long operator--();
+  unsigned long operator--(int);
   /**
    * Return true if the object_proxy is linked.
    *
@@ -219,52 +250,52 @@ public:
    */
   object_proxy* prev() const;
 
-  /**
-   * Return the current reference count
-   * for underlaying serializable
-   *
-   * @return Current reference count
-   */
-  unsigned long ref_count() const;
+
+  unsigned long reference_count() const;
 
   /**
-   * Return the current pointer count
-   * for underlaying serializable
+   * Resets the object of the object_proxy
+   * with the given object.
    *
-   * @return Current pointer count
+   * @param o The new object for the object_proxy
    */
-  unsigned long ptr_count() const;
+  template < typename T >
+  void reset(T *o, bool resolve_identifier = true)
+  {
+    reference_counter_ = 0;
+    deleter_ = &destroy<T>;
+    namer_ = &type_id<T>;
+    obj_ = o;
+    oid = 0;
+    node_ = 0;
+    if (obj_ != nullptr && resolve_identifier) {
+      primary_key_.reset(identifier_resolver<T>::resolve());
+    }
+  }
+
 
   /**
-   * Resets the serializable of the object_proxy
-   * with the given serializable.
+   * @brief Add an object_holder to the linked list.
    *
-   * @param o The new serializable for the object_proxy
-   */
-  void reset(serializable *o);
-
-  /**
-   * @brief Add an object_base_ptr to the linked list.
-   *
-   * Each object_base_ptr containg this object_proxy
+   * Each object_holder containing this object_proxy
    * calls this method. So object_proxy knows how many
-   * object_base_ptr are dealing with this serializable.
+   * object_holder are dealing with this object.
    *
-   * @param ptr The object_base_ptr containing this object_proxy.
+   * @param ptr The object_holder containing this object_proxy.
    */
-  void add(object_base_ptr *ptr);
+  void add(object_holder *ptr);
 
   /**
-   * @brief Remove an object_base_ptr from the linked list.
+   * @brief Remove an object_holder from the linked list.
    *
-   * Each destroying ore reseting object_base_ptr
+   * Each destroying ore reseting object_holder
    * containg this object_proxy calls this method.
-   * So object_proxy knows how many object_base_ptr
-   * are dealing with this serializable.
+   * So object_proxy knows how many object_holder
+   * are dealing with this object.
    *
-   * @param ptr The object_base_ptr containing this object_proxy.
+   * @param ptr The object_holder containing this object_proxy.
    */
-  bool remove(object_base_ptr *ptr);
+  bool remove(object_holder *ptr);
 
   /**
    * @brief True if proxy is valid
@@ -278,10 +309,10 @@ public:
   bool valid() const;
 
   /**
-   * Return the id of the serializable. If no serializable is
+   * Return the id of the object. If no object is
    * set 0 (null) is returned
    *
-   * @return 0 (null) or the id of the serializable.
+   * @return 0 (null) or the id of the object.
    */
   unsigned long id() const;
 
@@ -294,20 +325,24 @@ public:
 
   /**
    * Returns true if the underlying
-   * serializable has a primary key
+   * object has a primary key
    *
-   * @return true If the serializable has a primary key
+   * @return true If the object has a primary key
    */
-  bool has_primary_key() const;
+  bool has_identifier() const;
 
   /**
-   * Return the primary key. If underlaying serializable
+   * Return the primary key. If underlaying object
    * doesn't have a primary key, an uninitialized
    * primary key shared ptr is returned
    *
-   * @return The primary key of the underlaying serializable
+   * @return The primary key of the underlaying object
    */
   std::shared_ptr<basic_identifier> pk() const;
+
+private:
+  transaction current_transaction();
+  bool has_transaction() const;
 
 private:
   friend class object_store;
@@ -316,31 +351,43 @@ private:
   template < class T > friend class result;
   friend class table_reader;
   friend class restore_visitor;
-  friend class object_base_ptr;
+  friend class object_holder;
+  template < class T > friend class object_ptr;
+  template < class T > friend class has_one;
+
+  typedef void (*deleter)(void*);
+  typedef const char* (*namer)();
+
+  template <typename T>
+  static void destroy(void* p)
+  {
+    delete (T*)p;
+  }
+
+  template < class T >
+  static const char* type_id()
+  {
+    return typeid(T).name();
+  }
 
   object_proxy *prev_ = nullptr;      /**< The previous object_proxy in the list. */
   object_proxy *next_ = nullptr;      /**< The next object_proxy in the list. */
 
-  serializable *obj_ = nullptr;        /**< The concrete serializable. */
-  unsigned long oid = 0;        /**< The id of the concrete or expected serializable. */
+  void *obj_ = nullptr;         /**< The concrete object. */
+  deleter deleter_;             /**< The object deleter function */
+  namer namer_;                 /**< The object classname function */
+  unsigned long oid = 0;        /**< The id of the concrete or expected object. */
 
-  unsigned long ref_count_ = 0; /**< The reference counter */
-  unsigned long ptr_count_ = 0; /**< The pointer counter */
+
+  unsigned long reference_counter_ = 0;
 
   object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
-  prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the serializable. */
+  prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the object. */
 
-  typedef std::set<object_base_ptr*> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
-  ptr_set_t ptr_set_;      /**< This set contains every object_base_ptr pointing to this object_proxy. */
+  typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
+  ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
   
-  typedef std::list<serializable*> object_list_t;
-  typedef std::map<std::string, object_list_t> string_object_list_map_t;
-  
-  string_object_list_map_t relations;
-
   std::shared_ptr<basic_identifier> primary_key_ = nullptr;
-
-  static identifier_resolver pk_serializer;
 };
 /// @endcond
 }

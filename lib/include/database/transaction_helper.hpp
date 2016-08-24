@@ -63,8 +63,8 @@ class restore_visitor : public action_visitor
 {
 public:
   restore_visitor()
-    : buffer_(NULL)
-    , ostore_(NULL)
+    : buffer_(nullptr)
+    , ostore_(nullptr)
   {}
   virtual ~restore_visitor() {}
 

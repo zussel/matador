@@ -1,0 +1,35 @@
+bool mysql_prepared_result::fetch()
+{
+  log_debug("mysql_stmt_fetch(" << stmt << ')');
+  int ret = mysql_stmt_fetch(stmt);
+
+  if (ret == MYSQL_DATA_TRUNCATED)
+  {
+    // fetch column data where truncated
+    MYSQL_FIELD* fields = mysqlStatement->getFields();
+    for (unsigned n = 0; n < row->getSize(); ++n)
+    {
+      if (*row->getMysqlBind()[n].length > row->getMysqlBind()[n].buffer_length)
+      {
+        // actual length was longer than buffer_length, so this column is truncated
+        fields[n].length = *row->getMysqlBind()[n].length;
+        row->initOutBuffer(n, fields[n]);
+
+        log_debug("mysql_stmt_fetch_column(" << stmt << ", BIND, " << n
+            << ", 0) with " << fields[n].length << " bytes");
+        if (mysql_stmt_fetch_column(stmt, row->getMysqlBind() + n, n, 0) != 0)
+          throw MysqlStmtError("mysql_stmt_fetch_column", stmt);
+      }
+    }
+  }
+  else if (ret == MYSQL_NO_DATA)
+  {
+    log_debug("MYSQL_NO_DATA");
+    row = 0;
+    return Row();
+  }
+  else if (ret == 1)
+    throw MysqlStmtError("mysql_stmt_fetch", stmt);
+
+  return Row(&*row);
+}

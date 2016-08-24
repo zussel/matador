@@ -46,7 +46,7 @@ bool database_factory::destroy(const std::string &name, database* impl)
 {
   factory_t::iterator i = factory_.find(name);
   if (i == factory_.end()) {
-    // couldn't find database backend
+    // couldn't find sql backend
     return false;
   }
   database_producer *producer = static_cast<database_producer*>(i->second.get());
@@ -91,7 +91,7 @@ database_factory::dynamic_database_producer::~dynamic_database_producer()
 
 database* database_factory::dynamic_database_producer::create() const
 {
-  // on each call store the created database for later
+  // on each call store the created sql for later
   // explicit destruction
   return (*create_)(db_);
 }

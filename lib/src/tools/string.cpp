@@ -90,7 +90,7 @@ std::string to_string(const oos::time &x, const char *format)
 
 std::string to_string(const oos::date &x, const char *format)
 {
-  time_t now = std::time(NULL);
+  time_t now = std::time(nullptr);
   struct tm timeinfo;
 
 #ifdef _MSC_VER

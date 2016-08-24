@@ -46,7 +46,7 @@ public:
     : constant_(c)
   {}
 
-  T operator()(const object_base_ptr&) const
+  T operator()(const object_holder &) const
   {
     return constant_;
   }
@@ -63,7 +63,7 @@ public:
 
   virtual ~variable_impl() {}
   
-  virtual return_type operator()(const object_base_ptr &optr) const = 0;
+  virtual return_type operator()(const object_holder &optr) const = 0;
 };
 
 template < class R, class O, class V >
@@ -81,7 +81,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const object_base_ptr &optr) const
+  virtual return_type operator()(const object_holder &optr) const
   {
     return (static_cast<const object_type*>(v_(optr).ptr())->*m_)();
   }
@@ -106,7 +106,7 @@ public:
   {}
   virtual ~object_variable_impl() {}
 
-  virtual return_type operator()(const object_base_ptr &optr) const
+  virtual return_type operator()(const object_holder &optr) const
   {
     return (static_cast<const object_type*>(optr.ptr())->*m_)();
   }
@@ -171,7 +171,7 @@ public:
    * @param optr The serializable to apply the variable to.
    * @return The value of the variable.
    */
-  return_type operator()(const object_base_ptr &optr) const
+  return_type operator()(const object_holder &optr) const
   {
     return impl_->operator()(optr);
   }
@@ -313,19 +313,22 @@ struct expression_traits<const char*>
 };
 
 template < class T >
-struct expression_traits<object_ptr<T> >
+struct expression_traits<oos::object_ptr<T> >
 {
-  typedef constant<object_ptr<T> > expression_type;
+  typedef oos::object_ptr<T> optr_type;
+  typedef constant<optr_type> expression_type;
 };
 
-template < class T >
-struct expression_traits<object_ref<T> >
+class expression
 {
-  typedef constant<object_ref<T> > expression_type;
+public:
+  virtual ~expression() {}
+
+  virtual bool operator()(const object_holder &optr) const = 0;
 };
 
 template < class L, class OP >
-class unary_expression
+class unary_expression : public expression
 {
 public:
   unary_expression(const L &l, OP op = OP())
@@ -334,7 +337,7 @@ public:
   {}
 
 
-  bool operator()(const object_base_ptr &optr) const
+  virtual bool operator()(const object_holder &optr) const
   {
     return op_(left_(optr));
   }
@@ -345,7 +348,7 @@ private:
 };
 
 template < class L, class R, class OP >
-class binary_expression
+class binary_expression : public expression
 {
 public:
   binary_expression(const L &l, const R &r, OP op = OP())
@@ -354,7 +357,7 @@ public:
     , op_(op)
   {}
 
-  bool operator()(const object_base_ptr &optr) const
+  virtual bool operator()(const object_holder &optr) const
   {
     return op_(left_(optr), right_(optr));
   }
@@ -364,6 +367,18 @@ private:
   typename expression_traits<R>::expression_type right_;
   OP op_;
 };
+
+template < class L, class OP >
+expression* make_expression(const unary_expression<L, OP> &ue)
+{
+  return new unary_expression<L, OP>(ue);
+}
+
+template < class L, class R, class OP >
+expression* make_expression(const binary_expression<L, R, OP> &be)
+{
+  return new binary_expression<L, R, OP>(be);
+}
 
 /**
  * this implements the greater

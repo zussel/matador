@@ -23,7 +23,6 @@
 namespace oos {
 
 class varchar_base;
-class object_base_ptr;
 
 namespace mssql {
 
@@ -46,7 +45,6 @@ template <> struct type_traits<const char*> { inline static const char* type_str
 template <> struct type_traits<std::string> { inline static const char* type_string() { return "TEXT"; } };
 template <> struct type_traits<oos::date> { inline static const char* type_string() { return "DATE"; } };
 template <> struct type_traits<oos::time> { inline static const char* type_string() { return "DATETIME"; } };
-template <> struct type_traits<object_base_ptr> { inline static const char* type_string() { return "INT"; } };
 
 class mssql_types
 {

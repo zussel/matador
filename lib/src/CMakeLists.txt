@@ -1,20 +1,23 @@
 SET(OBJECT_SOURCES
-		object/object_inserter.cpp
-		object/object_deleter.cpp
-		object/object_container.cpp
-		object/object_ptr.cpp
-		object/object_store.cpp
-		object/object_proxy.cpp
-		object/object_serializer.cpp
-		object/prototype_node.cpp
-		object/prototype_tree.cpp
-		object/primary_key_analyzer.cpp
-		object/foreign_key_analyzer.cpp
-		object/identifier_resolver.cpp
-		object/basic_identifier.cpp
-		object/identifier.cpp)
+  object/action.cpp
+  object/object_store.cpp
+  object/object_proxy.cpp
+  object/object_serializer.cpp
+  object/prototype_node.cpp
+  object/identifier.cpp
+  object/prototype_iterator.cpp
+  object/object_holder.cpp
+  object/transaction.cpp
+  object/action_inserter.cpp
+  object/action_remover.cpp
+  object/insert_action.cpp
+  object/update_action.cpp
+  object/delete_action.cpp
+  object/basic_identifier_serializer.cpp
+  object/basic_has_many_item.cpp)
 
 SET(OBJECT_INSTALL_HEADER
+  ${PROJECT_SOURCE_DIR}/include/object/action.hpp
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
   ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
@@ -24,12 +27,10 @@ SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_producer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
   ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_tree.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
   ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
   ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
@@ -40,35 +41,41 @@ SET(OBJECT_INSTALL_HEADER
 )
 
 SET(OBJECT_HEADER
-		../include/object/attribute_counter.hpp
-		../include/object/attribute_serializer.hpp
-		../include/object/generic_access.hpp
-		../include/object/object_exception.hpp
-		../include/object/object_ptr.hpp
-		../include/object/object_store.hpp
-		../include/object/object_container.hpp
-		../include/object/object_inserter.hpp
-		../include/object/object_deleter.hpp
-		../include/object/object_list.hpp
-		../include/object/object_vector.hpp
-		../include/object/object_producer.hpp
-		../include/object/linked_object_list.hpp
-		../include/object/object_view.hpp
-		../include/object/object_proxy.hpp
-		../include/object/object_serializer.hpp
-		../include/object/prototype_node.hpp
-		../include/object/prototype_tree.hpp
-		../include/object/object_observer.hpp
-		../include/object/object_expression.hpp
-		../include/object/attribute_serializer.hpp
-		../include/object/serializer.hpp
-		../include/object/serializable.hpp
-		../include/object/identifier.hpp
-		../include/object/primary_key_analyzer.hpp
-		../include/object/foreign_key_analyzer.hpp
-		../include/object/identifier_resolver.hpp
-		../include/object/primary_key_reader.hpp
-		../include/object/basic_identifier.hpp)
+  ../include/object/action.hpp
+  ../include/object/attribute_serializer.hpp
+  ../include/object/generic_access.hpp
+  ../include/object/object_exception.hpp
+  ../include/object/object_ptr.hpp
+  ../include/object/object_store.hpp
+  ../include/object/object_view.hpp
+  ../include/object/object_proxy.hpp
+  ../include/object/object_serializer.hpp
+  ../include/object/prototype_node.hpp
+  ../include/object/object_observer.hpp
+  ../include/object/object_expression.hpp
+  ../include/object/attribute_serializer.hpp
+  ../include/object/prototype_iterator.hpp
+  ../include/object/has_many.hpp
+  ../include/object/has_one.hpp
+  ../include/object/container_type_traits.hpp
+  ../include/object/object_holder.hpp
+  ../include/object/basic_has_many.hpp
+  ../include/object/has_many_vector.hpp
+  ../include/object/has_many_list.hpp
+  ../include/object/has_many_set.hpp
+  ../include/object/transaction.hpp
+  ../include/object/action_inserter.hpp
+  ../include/object/action_visitor.hpp
+  ../include/object/action_remover.hpp
+  ../include/object/insert_action.hpp
+  ../include/object/update_action.hpp
+  ../include/object/delete_action.hpp
+  ../include/object/abstract_has_many.hpp
+  ../include/object/basic_identifier_serializer.hpp
+  ../include/object/has_many_item.hpp
+  ../include/object/basic_has_many_item.hpp
+  ../include/object/identifier_proxy_map.hpp
+)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -81,10 +88,14 @@ SET(TOOLS_SOURCES
   tools/sequencer.cpp
   tools/string.cpp
   tools/strptime.cpp
+  tools/basic_identifier.cpp
+  tools/serializer.cpp
 )
 
 SET(TOOLS_INSTALL_HEADER
+  ${PROJECT_SOURCE_DIR}/include/tools/access.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/algorithm.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/cascade_type.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/byte_buffer.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/singleton.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/library.hpp
@@ -98,11 +109,15 @@ SET(TOOLS_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/tools/strptime.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
   ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
+  ${PROJECT_SOURCE_DIR}/include/tools/basic_identifier.hpp
 )
 
 SET(TOOLS_HEADER
+  ../include/tools/access.hpp
   ../include/tools/algorithm.hpp
+  ../include/tools/base_class.hpp
   ../include/tools/byte_buffer.hpp
+  ../include/tools/cascade_type.hpp
   ../include/tools/singleton.hpp
   ../include/tools/library.hpp
   ../include/tools/blob.hpp
@@ -116,9 +131,84 @@ SET(TOOLS_HEADER
   ../include/tools/strptime.hpp
   ../include/tools/enable_if.hpp
   ../include/tools/conditional.hpp
+  ../include/tools/serializer.hpp
+  ../include/tools/basic_identifier.hpp
+  ../include/tools/identifier.hpp
+  ../include/tools/identifier_resolver.hpp
+  ../include/tools/identifier_setter.hpp
+  ../include/tools/identifiable_holder.hpp)
+
+SET(SQL_SOURCES
+  sql/condition.cpp
+  sql/connection.cpp
+  sql/connection_factory.cpp
+  sql/result_impl.cpp
+  sql/sql.cpp
+  sql/statement_impl.cpp
+  sql/row.cpp
+  sql/sql_exception.cpp
+  sql/typed_column_serializer.cpp
+  sql/token.cpp
+  sql/column.cpp
+  sql/dialect_token.cpp
+  sql/value.cpp
+  sql/basic_dialect.cpp
+  sql/column_serializer.cpp
+  sql/value_serializer.cpp
+  sql/value_column_serializer.cpp
+  sql/field.cpp
+  sql/query.cpp
+  sql/basic_query.cpp
+  sql/basic_dialect_compiler.cpp sql/basic_dialect_linker.cpp)
+
+SET(SQL_HEADER
+  ../include/sql/condition.hpp
+  ../include/sql/connection.hpp
+  ../include/sql/connection_factory.hpp
+  ../include/sql/connection_impl.hpp
+  ../include/sql/result.hpp
+  ../include/sql/result_impl.hpp
+  ../include/sql/memory_connection.hpp
+  ../include/sql/query.hpp
+  ../include/sql/sql.hpp
+  ../include/sql/row.hpp
+  ../include/sql/value.hpp
+  ../include/sql/statement.hpp
+  ../include/sql/statement_impl.hpp
+  ../include/sql/types.hpp
+  ../include/sql/token.hpp
+  ../include/sql/sql_exception.hpp
+  ../include/sql/field.hpp
+  ../include/sql/basic_dialect.hpp
+  ../include/sql/typed_column_serializer.hpp
+  ../include/sql/column.hpp
+  ../include/sql/dialect_token.hpp
+  ../include/sql/column_serializer.hpp
+  ../include/sql/value_serializer.hpp
+  ../include/sql/value_column_serializer.hpp
+  ../include/sql/commands.hpp
+  ../include/sql/basic_query.hpp
+  ../include/sql/token_list.hpp
+  ../include/sql/token_visitor.hpp
+  ../include/sql/basic_dialect_compiler.hpp ../include/sql/basic_dialect_linker.hpp)
+
+SET(ORM_HEADERS
+  ../include/orm/persistence.hpp
+  ../include/orm/table.hpp
+  ../include/orm/session.hpp
+  ../include/orm/basic_table.hpp
+  ../include/orm/identifier_binder.hpp
+  ../include/orm/identifier_column_resolver.hpp
+  ../include/orm/relation_table.hpp
+  ../include/orm/relation_resolver.hpp
 )
 
-SET(JSON_SOURCE
+SET(ORM_SOURCES
+  orm/persistence.cpp
+  orm/session.cpp
+  orm/basic_table.cpp)
+
+SET(JSON_SOURCES
   json/json_type.cpp
   json/json_value.cpp
   json/json_object.cpp
@@ -178,11 +268,10 @@ SET(UNIT_HEADER
   ../include/unit/test_suite.hpp
   ../include/unit/unit_exception.hpp
   ../include/unit/unit_test.hpp
-)
+  ../include/object/action_inserter.hpp)
 
 SET(DATABASE_SOURCES
   database/action.cpp
-  database/condition.cpp
   database/session.cpp
   database/database.cpp
   database/database_exception.cpp
@@ -191,22 +280,14 @@ SET(DATABASE_SOURCES
   database/memory_database.cpp
   database/transaction.cpp
   database/transaction_helper.cpp
-  database/result_impl.cpp
-  database/row.cpp
   database/statement_creator.cpp
   database/table.cpp
   database/table_reader.cpp
-  database/sql.cpp
-  database/query_create.cpp
-  database/query_select.cpp
-  database/query_insert.cpp
-  database/query_update.cpp
   database/identifier_binder.cpp
-  database/statement_impl.cpp)
+)
 
 SET(DATABASE_HEADER
   ../include/database/action.hpp
-  ../include/database/condition.hpp
   ../include/database/session.hpp
   ../include/database/database.hpp
   ../include/database/database_exception.hpp
@@ -215,33 +296,17 @@ SET(DATABASE_HEADER
   ../include/database/database_sequencer.hpp
   ../include/database/transaction.hpp
   ../include/database/transaction_helper.hpp
-  ../include/database/result.hpp
-  ../include/database/result_impl.hpp
-  ../include/database/row.hpp
-  ../include/database/value.hpp
-  ../include/database/types.hpp
-  ../include/database/sql.hpp
-  ../include/database/statement.hpp
   ../include/database/table.hpp
   ../include/database/table_reader.hpp
-  ../include/database/query.hpp
-  ../include/database/query_create.hpp
-  ../include/database/query_select.hpp
-  ../include/database/query_insert.hpp
-  ../include/database/query_update.hpp
-  ../include/database/token.hpp
   ../include/database/identifier_binder.hpp
-  ../include/database/statement_impl.hpp object/identifier.cpp)
+)
 
 SET(DATABASE_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/database/session.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/database_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/query.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/result.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/sql.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/condition.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/types.hpp
-  ${PROJECT_SOURCE_DIR}/include/database/transaction.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/session.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/database_exception.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/query.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/condition.hpp
+  ${PROJECT_SOURCE_DIR}/include/sql/transaction.hpp
 )
 
 ADD_LIBRARY(oos SHARED
@@ -249,12 +314,14 @@ ADD_LIBRARY(oos SHARED
   ${OBJECT_HEADER}
   ${TOOLS_SOURCES}
   ${TOOLS_HEADER}
-  ${JSON_SOURCE}
-  ${JSON_HEADER}
+  ${ORM_SOURCES}
+  ${ORM_HEADERS}
+#  ${JSON_SOURCES}
+#  ${JSON_HEADER}
   ${UNIT_SOURCES}
   ${UNIT_HEADER}
-  ${DATABASE_SOURCES}
-  ${DATABASE_HEADER}
+  ${SQL_SOURCES}
+  ${SQL_HEADER}
 )
 
 TARGET_LINK_LIBRARIES(oos ${CMAKE_DL_LIBS})
@@ -270,12 +337,14 @@ SOURCE_GROUP("include\\object" FILES ${OBJECT_HEADER})
 SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
-SOURCE_GROUP("include\\database" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
+SOURCE_GROUP("include\\sql" FILES ${SQL_HEADER})
+SOURCE_GROUP("include\\sql" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
-SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
+SOURCE_GROUP("src\\sql" FILES ${SQL_SOURCES})
+SOURCE_GROUP("src\\sql" FILES ${DATABASE_SOURCES})
 
 #FOREACH(inc ${OBJECT_HEADER})
 #  MESSAGE(STATUS "object include: ${inc}")
@@ -286,44 +355,50 @@ SOURCE_GROUP("src\\database" FILES ${DATABASE_SOURCES})
 #ENDFOREACH(inc)
 
 INSTALL(
-	TARGETS oos
-	ARCHIVE	DESTINATION lib
-	LIBRARY DESTINATION lib
-	COMPONENT libraries
+  TARGETS oos
+  ARCHIVE  DESTINATION lib
+  LIBRARY DESTINATION lib
+  COMPONENT libraries
 )
 
 INSTALL(
-	TARGETS oos
-	DESTINATION lib
-	COMPONENT libraries
+  TARGETS oos
+  DESTINATION lib
+  COMPONENT libraries
 )
 
 INSTALL(
-	FILES ${OBJECT_INSTALL_HEADER}
-	DESTINATION include/oos/object
-	COMPONENT headers
+  FILES ${OBJECT_INSTALL_HEADER}
+  DESTINATION include/oos/object
+  COMPONENT headers
 )
 
 INSTALL(
-	FILES ${DATABASE_INSTALL_HEADER}
-	DESTINATION include/oos/database
-	COMPONENT headers
+  FILES ${DATABASE_INSTALL_HEADER}
+  DESTINATION include/oos/sql
+  COMPONENT headers
 )
 
 INSTALL(
-	FILES ${TOOLS_INSTALL_HEADER}
-	DESTINATION include/oos/tools
-	COMPONENT headers
+  FILES ${TOOLS_INSTALL_HEADER}
+  DESTINATION include/oos/tools
+  COMPONENT headers
 )
 
 INSTALL(
-	FILES ${JSON_INSTALL_HEADER}
-	DESTINATION include/oos/json
-	COMPONENT headers
+  FILES ${JSON_INSTALL_HEADER}
+  DESTINATION include/oos/json
+  COMPONENT headers
 )
 
 INSTALL(
-	FILES ${UNIT_INSTALL_HEADER}
-	DESTINATION include/oos/unit
-	COMPONENT headers
+  FILES ${UNIT_INSTALL_HEADER}
+  DESTINATION include/oos/unit
+  COMPONENT headers
+)
+
+INSTALL(
+  FILES ${SQL_HEADER}
+  DESTINATION include/oos/sql
+  COMPONENT headers
 )

@@ -21,9 +21,6 @@ TimeTestUnit::TimeTestUnit()
   add_test("format", std::bind(&TimeTestUnit::test_format, this), "format time");
 }
 
-TimeTestUnit::~TimeTestUnit()
-{}
-
 void TimeTestUnit::test_create()
 {
   time_t t = ::time(0);

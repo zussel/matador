@@ -17,7 +17,7 @@
 
 #include "database/database_sequencer.hpp"
 #include "database/database_exception.hpp"
-#include "database/query.hpp"
+#include "sql/query.hpp"
 
 #include "object/generic_access.hpp"
 
@@ -25,26 +25,10 @@ namespace oos {
 
 
 sequence::sequence()
-{
-
-}
+{}
 
 sequence::~sequence()
-{
-
-}
-
-void sequence::deserialize(deserializer &r)
-{
-  r.read("name", name_);
-  r.read("number", sequence_);
-}
-
-void sequence::serialize(serializer &w) const
-{
-  w.write("name", name_);
-  w.write("number", sequence_);
-}
+{}
 
 unsigned long sequence::seq() const
 {
@@ -145,7 +129,7 @@ void database_sequencer::load()
     oos::get(first.get(), "number", seq);
     sequence_.seq(seq);
   } else {
-    throw database_exception("database::sequencer", "couldn't fetch sequence");
+    throw database_exception("sql::sequencer", "couldn't fetch sequence");
   }
 
 //  if (!update_) {

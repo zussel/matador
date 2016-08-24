@@ -35,6 +35,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "unit_test.hpp"
 
 /**
  * @namespace oos
@@ -59,6 +60,44 @@ class unit_test;
  */
 class OOS_API test_suite
 {
+public:
+  struct summary {
+    void reset()
+    {
+      asserts = 0;
+      failures = 0;
+      errors = 0;
+    }
+
+    void evaluate(const unit_test::test_func_info &info)
+    {
+      ++tests;
+      asserts += (info.assertion_count + info.error_count);
+      errors += info.errors;
+      if (info.succeeded) {
+        ++succeeded;
+      } else {
+        ++failures;
+      }
+    }
+    void evaluate(bool succeeded)
+    {
+      ++asserts;
+      if (succeeded) {
+        ++this->succeeded;
+      } else {
+        ++this->failures;
+      }
+    }
+    friend std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
+
+    unsigned tests = 0;
+    unsigned asserts = 0;
+    unsigned succeeded = 0;
+    unsigned failures = 0;
+    unsigned errors = 0;
+  };
+
 private:
   /**
    * @brief test_suite commands
@@ -98,10 +137,11 @@ private:
 
   struct unit_executer : public std::unary_function<unit_test_ptr, void>
   {
-    unit_executer();
+    unit_executer(summary &s);
     void operator()(test_suite::value_type &x);
     
     bool succeeded;
+    summary &summary_;
   };
 
   struct unit_lister : public std::unary_function<unit_test_ptr, void>
@@ -197,6 +237,7 @@ public:
 private:
   test_suite_args args_;
   t_unit_test_map unit_test_map_;
+  summary summary_;
 };
 
 }

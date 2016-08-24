@@ -16,17 +16,17 @@
  */
 
 #include "sqlite_statement.hpp"
-#include "sqlite_database.hpp"
+#include "sqlite_connection.hpp"
 #include "sqlite_exception.hpp"
 #include "sqlite_prepared_result.hpp"
 
-#include "object/object_ptr.hpp"
-
-#include "database/row.hpp"
+#include "sql/row.hpp"
 
 #include "tools/string.hpp"
-#include "tools/varchar.hpp"
 #include "tools/date.hpp"
+#include "tools/varchar.hpp"
+#include "tools/identifiable_holder.hpp"
+#include "tools/basic_identifier.hpp"
 
 #include <cstring>
 
@@ -49,16 +49,14 @@ void throw_error(int ec, sqlite3 *db, const std::string &source, const std::stri
   throw sqlite_exception(msg.str()); 
 }
 
-sqlite_statement::sqlite_statement(sqlite_database &db, const std::string stmt, std::shared_ptr<oos::object_base_producer> producer)
+sqlite_statement::sqlite_statement(sqlite_connection &db, const std::string stmt)
   : db_(db)
   , stmt_(0)
-  , producer_(producer)
 {
   str(stmt);
   // prepare sqlite statement
-  int ret = sqlite3_prepare_v2(db_(), str().c_str(), str().size(), &stmt_, 0);
-  throw_error(ret, db_(), "sqlite3_prepare_v2", str());
-
+  int ret = sqlite3_prepare_v2(db_.handle(), str().c_str(), str().size(), &stmt_, 0);
+  throw_error(ret, db_.handle(), "sqlite3_prepare_v2", str());
 }
 
 sqlite_statement::~sqlite_statement()
@@ -71,7 +69,7 @@ detail::result_impl* sqlite_statement::execute()
   // get next row
   int ret = sqlite3_step(stmt_);
 
-  return new sqlite_prepared_result(stmt_, ret, producer_);
+  return new sqlite_prepared_result(stmt_, ret);
 }
 
 void sqlite_statement::reset()
@@ -88,118 +86,120 @@ void sqlite_statement::clear()
     return;
   }
   int ret = sqlite3_finalize(stmt_);
-  throw_error(ret, db_(), "sqlite3_finalize");
+  throw_error(ret, db_.handle(), "sqlite3_finalize");
   stmt_ = 0;
   return;
 }
 
-void sqlite_statement::write(const char*, bool x)
+void sqlite_statement::serialize(const char*, bool &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, char x)
+void sqlite_statement::serialize(const char*, char &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, short x)
+void sqlite_statement::serialize(const char*, short &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, int x)
+void sqlite_statement::serialize(const char*, int &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, long x)
+void sqlite_statement::serialize(const char*, long &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, unsigned char x)
+void sqlite_statement::serialize(const char*, unsigned char &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, unsigned short x)
+void sqlite_statement::serialize(const char*, unsigned short &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, unsigned int x)
+void sqlite_statement::serialize(const char*, unsigned int &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, unsigned long x)
+void sqlite_statement::serialize(const char*, unsigned long &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::write(const char*, float x)
+void sqlite_statement::serialize(const char*, float &x)
 {
-  int ret = sqlite3_bind_double(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_double");
+  int ret = sqlite3_bind_double(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::write(const char*, double x)
+void sqlite_statement::serialize(const char*, double &x)
 {
-  int ret = sqlite3_bind_double(stmt_, ++host_index, x);
-  throw_error(ret, db_(), "sqlite3_bind_double");
+  int ret = sqlite3_bind_double(stmt_, (int)++host_index, x);
+  throw_error(ret, db_.handle(), "sqlite3_bind_double");
 }
 
-void sqlite_statement::write(const char*, const char *x, size_t len)
+void sqlite_statement::serialize(const char*, char *x, size_t len)
 {
-  int ret = sqlite3_bind_text(stmt_, ++host_index, x, len, 0);
-  throw_error(ret, db_(), "sqlite3_bind_text");
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x, (int)len, 0);
+  throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::write(const char*, const std::string &x)
+void sqlite_statement::serialize(const char*, std::string &x)
 {
-  int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
-  throw_error(ret, db_(), "sqlite3_bind_text");
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), 0);
+  throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::write(const char*, const varchar_base &x)
+void sqlite_statement::serialize(const char*, varchar_base &x)
 {
-  int ret = sqlite3_bind_text(stmt_, ++host_index, x.c_str(), x.size(), 0);
-  throw_error(ret, db_(), "sqlite3_bind_text");
+  int ret = sqlite3_bind_text(stmt_, (int)++host_index, x.c_str(), (int)x.size(), 0);
+  throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::write(const char *, const oos::date &x)
+void sqlite_statement::serialize(const char *id, oos::date &x)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x.julian_date());
-  throw_error(ret, db_(), "sqlite3_bind_int");}
+  auto date_string = std::make_shared<std::string>(oos::to_string(x, date_format::ISO8601));
+  serialize(id, *date_string);
+  host_strings_.push_back(date_string);
+//  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x.julian_date());
+//  throw_error(ret, db_.handle(), "sqlite3_bind_int");
+}
 
-void sqlite_statement::write(const char *id, const oos::time &x)
+void sqlite_statement::serialize(const char *id, oos::time &x)
 {
   // format time to ISO8601
   auto time_string = std::make_shared<std::string>(oos::to_string(x, "%F %T.%f"));
-  write(id, *time_string);
+  serialize(id, *time_string);
   host_strings_.push_back(time_string);
 }
 
-void sqlite_statement::write(const char *, const object_base_ptr &x)
+void sqlite_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
-  int ret = sqlite3_bind_int(stmt_, ++host_index, x.id());
-  throw_error(ret, db_(), "sqlite3_bind_int");
+  if (x.has_primary_key()) {
+    x.primary_key()->serialize(id, *this);
+  }
 }
 
-void sqlite_statement::write(const char *, const object_container &)
-{}
-
-void sqlite_statement::write(const char *id, const basic_identifier &x)
+void sqlite_statement::serialize(const char *id, basic_identifier &x)
 {
   x.serialize(id, *this);
 }

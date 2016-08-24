@@ -32,19 +32,20 @@
 #endif
 
 #include "tools/byte_buffer.hpp"
-#include "serializer.hpp"
+#include "tools/varchar.hpp"
+#include "tools/access.hpp"
+#include "tools/identifier.hpp"
+
+#include "object/has_one.hpp"
+#include "object/basic_has_many.hpp"
 
 #include <string>
+#include <cstring>
 
 namespace oos {
 
-class serializable;
-class object_base_ptr;
-class object_store;
-class object_proxy;
-class byte_buffer;
+class object_holder;
 class varchar_base;
-class object_container;
 
 /**
  * @cond OOS_DEV
@@ -60,19 +61,12 @@ class object_container;
  * The application is responsible for this correctness.
  */
 class OOS_API object_serializer
-  : public generic_deserializer<object_serializer>
-  , public generic_serializer<object_serializer>
 {
 public:
   /**
    * Creates an object_serializer
    */
-  object_serializer()
-    : generic_deserializer<object_serializer>(this)
-    , generic_serializer<object_serializer>(this)
-    , ostore_(NULL)
-    , buffer_(NULL)
-  {}
+  object_serializer() {}
 
   virtual ~object_serializer();
 
@@ -83,7 +77,14 @@ public:
    * @param buffer The byte_buffer to serialize to.
    * @return True on success.
    */
-  bool serialize(const serializable *o, byte_buffer *buffer);
+  template < class T >
+  void serialize(T *o, byte_buffer *buffer)
+  {
+    restore = false;
+    buffer_ = buffer;
+    oos::access::serialize(*this, *o);
+    buffer_ = nullptr;
+  }
 
   /**
    * Serialize the given serializable to the given buffer
@@ -93,44 +94,173 @@ public:
    * @param ostore The object_store where the serializable resides.
    * @return True on success.
    */
-  bool deserialize(serializable *o, byte_buffer *buffer, object_store *ostore);
+  template < class T >
+  void deserialize(T *o, byte_buffer *buffer, object_store *ostore)
+  {
+    restore = true;
+    ostore_ = ostore;
+    buffer_ = buffer;
+    oos::access::serialize(*this, *o);
+    buffer_ = nullptr;
+    ostore_ = nullptr;
+  }
 
 public:
   template < class T >
-  void write_value(const char*, const T &x)
+  void serialize(T &obj)
   {
-    buffer_->append(&x, sizeof(x));
+    oos::access::serialize(*this, obj);
   }
-
-	void write_value(const char* id, const char *c, size_t s);
-	void write_value(const char* id, const std::string &s);
-  void write_value(const char*, const varchar_base &s);
-	void write_value(const char* id, const date &x);
-	void write_value(const char* id, const time &x);
-	void write_value(const char* id, const object_base_ptr &x);
-	void write_value(const char* id, const object_container &x);
-	void write_value(const char* id, const basic_identifier &);
 
   template < class T >
-  void read_value(const char*, T &x)
+  void serialize(const char *, T &x)
   {
-    buffer_->release(&x, sizeof(x));
+    if (restore) {
+      buffer_->release(&x, sizeof(x));
+    } else {
+      buffer_->append(&x, sizeof(x));
+    }
   }
 
-  void read_value(const char* id, char *&c, size_t s);
-	void read_value(const char* id, std::string &s);
-  void read_value(const char*, varchar_base &s);
-  void read_value(const char* id, date &x);
-  void read_value(const char* id, time &x);
-  void read_value(const char* id, object_base_ptr &x);
-	void read_value(const char* id, object_container &x);
-	void read_value(const char* id, basic_identifier &x);
-  
-  void write_object_container_item(const object_proxy *proxy);
+	void serialize(const char* id, char *c, size_t s);
+	void serialize(const char* id, std::string &s);
+
+  template < unsigned int C >
+  void serialize(const char *, varchar<C> &s)
+  {
+    if (restore) {
+      size_t len = 0;
+      buffer_->release(&len, sizeof(len));
+      char *str = new char[len];
+      buffer_->release(str, len);
+      s.assign(str, len);
+      delete [] str;
+    } else {
+      size_t len = s.size();
+
+      buffer_->append(&len, sizeof(len));
+      buffer_->append(s.str().c_str(), len);
+    }
+  }
+
+	void serialize(const char* id, date &x);
+	void serialize(const char* id, time &x);
+
+  void serialize(const char *id, basic_identifier &x);
+
+  template < class V >
+  void serialize(const char* id, identifier<V> &x)
+  {
+    if (restore) {
+      V val;
+      serialize(id, val);
+      x.value(val);
+    } else {
+      V val(x.value());
+      serialize(id, val);
+    }
+  }
+
+  template < class T >
+	void serialize(const char* id, has_one<T> &x, cascade_type cascade)
+  {
+    if (restore) {
+      /***************
+       *
+       * extract id and type of serializable from buffer
+       * try to find serializable on serializable store
+       * if found check type if wrong type throw error
+       * else create serializable and set extracted id
+       * insert serializable into serializable store
+       *
+       ***************/
+      // Todo: correct implementation
+
+      unsigned long oid = 0;
+      serialize(id, oid);
+      std::string type;
+      serialize(id, type);
+
+      if (oid > 0) {
+        object_proxy *oproxy = find_proxy(oid);
+        if (!oproxy) {
+          oproxy =  new object_proxy(new T, oid, ostore_);
+          insert_proxy(oproxy);
+        }
+        x.reset(oproxy, cascade);
+      }
+    } else {
+      unsigned long oid = x.id();
+      serialize(id, oid);
+      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
+    }
+  }
+
+  template<class T, template<class ...> class C>
+  void serialize(const char *id, basic_has_many<T, C> &x, const char *, const char *)
+  {
+    std::string id_oid(id);
+    id_oid += ".oid";
+    std::string id_type(id);
+    id_type += ".oid";
+    if (restore) {
+      typename basic_has_many<T, C>::size_type s = 0;
+      // deserialize container size
+      serialize(id, s);
+
+      x.reset();
+
+      for (typename basic_has_many<T, C>::size_type i = 0; i < s; ++i) {
+
+        // deserialize all items
+        unsigned long oid = 0;
+        serialize(id_oid.c_str(), oid);
+        std::string type;
+        serialize(id_type.c_str(), type);
+
+        // and append them to container
+        typename basic_has_many<T, C>::internal_type ptr;
+
+        if (oid > 0) {
+          object_proxy *oproxy = find_proxy(oid);
+          if (!oproxy) {
+            oproxy =  new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_);
+            insert_proxy(oproxy);
+          }
+          ptr.reset(oproxy, cascade_type::NONE);
+        } else {
+          ptr.reset(new object_proxy(new typename basic_has_many<T, C>::item_type, oid, ostore_), cascade_type::NONE);
+        }
+
+//        serialize("has many item.oid", oid)
+//        serialize(typeid(typename basic_has_many<T, C>::item_type).name(), ptr, cascade_type::NONE);
+        x.append(ptr);
+      }
+    } else {
+      typename basic_has_many<T, C>::size_type s = x.size();
+      serialize(id, s);
+
+      typename basic_has_many<T, C>::iterator first = x.begin();
+      typename basic_has_many<T, C>::iterator last = x.end();
+      while (first != last) {
+//        serialize(nullptr, first.relation_item(), cascade_type::NONE);
+        typename basic_has_many<T, C>::relation_type rptr = (first++).relation_item();
+        unsigned long oid = rptr.id();
+        serialize(id_oid.c_str(), oid);
+        serialize(id_type.c_str(), const_cast<char*>(rptr.type()), strlen(rptr.type()));
+      }
+    }
+  }
 
 private:
-  object_store *ostore_;
-  byte_buffer *buffer_;
+  object_proxy* find_proxy(unsigned long oid);
+  void insert_proxy(object_proxy *proxy);
+
+private:
+  object_store *ostore_ = nullptr;
+  byte_buffer *buffer_ = nullptr;
+  bool restore = false;
+  basic_identifier_serializer basic_identifier_serializer_;
 };
 /// @endcond
 }

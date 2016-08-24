@@ -18,9 +18,9 @@
 #ifndef MYSQL_STATEMENT_HPP
 #define MYSQL_STATEMENT_HPP
 
-#include "database/statement_impl.hpp"
+#include "sql/statement_impl.hpp"
 
-#include "object/identifier.hpp"
+#include "tools/identifier.hpp"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -32,19 +32,22 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#include <tools/varchar.hpp>
 
 namespace oos {
 
-class database;
+class varchar_base;
+class time;
+class date;
 
 namespace mysql {
 
-class mysql_database;
+class mysql_connection;
 
 class mysql_statement : public oos::detail::statement_impl
 {
 public:
-  mysql_statement(mysql_database &db, const oos::sql &stmt, std::shared_ptr<oos::object_base_producer> producer);
+  mysql_statement(mysql_connection &db, const oos::sql &stmt);
   virtual ~mysql_statement();
 
   virtual void clear();
@@ -52,33 +55,31 @@ public:
   virtual void reset();
   
 protected:
-  virtual void write(const char *id, char x);
-  virtual void write(const char *id, short x);
-  virtual void write(const char *id, int x);
-  virtual void write(const char *id, long x);
-  virtual void write(const char *id, unsigned char x);
-  virtual void write(const char *id, unsigned short x);
-  virtual void write(const char *id, unsigned int x);
-  virtual void write(const char *id, unsigned long x);
-  virtual void write(const char *id, float x);
-  virtual void write(const char *id, double x);
-  virtual void write(const char *id, bool x);
-  virtual void write(const char *id, const char *x, size_t s);
-  virtual void write(const char *id, const varchar_base &x);
-  virtual void write(const char *id, const std::string &x);
-  virtual void write(const char *id, const oos::date &x);
-  virtual void write(const char *id, const oos::time &x);
-  virtual void write(const char *id, const object_base_ptr &x);
-  virtual void write(const char *id, const object_container &x);
-  virtual void write(const char *id, const basic_identifier &x);
-
-//  virtual void prepare_result_column(const sql::field_ptr &fptr);
+  virtual void serialize(const char *id, char &x);
+  virtual void serialize(const char *id, short &x);
+  virtual void serialize(const char *id, int &x);
+  virtual void serialize(const char *id, long &x);
+  virtual void serialize(const char *id, unsigned char &x);
+  virtual void serialize(const char *id, unsigned short &x);
+  virtual void serialize(const char *id, unsigned int &x);
+  virtual void serialize(const char *id, unsigned long &x);
+  virtual void serialize(const char *id, float &x);
+  virtual void serialize(const char *id, double &x);
+  virtual void serialize(const char *id, bool &x);
+  virtual void serialize(const char *id, char *x, size_t s);
+  virtual void serialize(const char *id, varchar_base &x);
+  virtual void serialize(const char *id, std::string &x);
+  virtual void serialize(const char *id, oos::date &x);
+  virtual void serialize(const char *id, oos::time &x);
+  virtual void serialize(const char *id, basic_identifier &x);
+  virtual void serialize(const char *id, identifiable_holder&x, cascade_type);
 
 private:
   template < class T >
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, int /*index*/)
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value, size_t /*index*/)
   {
-    if (bind.buffer == 0) {
+//    std::cout << "bind value " << value << " at index " << index << "\n";
+    if (bind.buffer == nullptr) {
       // allocating memory
       bind.buffer = new char[sizeof(T)];
     }
@@ -86,21 +87,18 @@ private:
     bind.buffer_type = type;
     bind.is_null = 0;
   }
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, int index);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const object_base_ptr &value, int index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, size_t index);
+  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t index);
 
 private:
-  mysql_database &db_;
-  int result_size;
-  int host_size;
+  mysql_connection &db_;
+  size_t result_size;
+  size_t host_size;
   std::vector<unsigned long> length_vector;
   MYSQL_STMT *stmt_ = nullptr;
   MYSQL_BIND *host_array = nullptr;
-
-  std::shared_ptr<oos::object_base_producer> producer_;
 };
 
 }

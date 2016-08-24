@@ -26,9 +26,6 @@ DateTestUnit::DateTestUnit()
   add_test("to_string", std::bind(&DateTestUnit::test_to_string, this), "to string");
 }
 
-DateTestUnit::~DateTestUnit()
-{}
-
 void DateTestUnit::test_create()
 {
   time_t t = std::time(0);
