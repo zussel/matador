@@ -5,7 +5,7 @@
 #ifndef OOS_MYSQL_DIALECT_HPP
 #define OOS_MYSQL_DIALECT_HPP
 
-#include <sql/column.hpp>
+#include "sql/column.hpp"
 #include "sql/basic_dialect.hpp"
 
 namespace oos {

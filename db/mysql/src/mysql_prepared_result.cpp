@@ -215,20 +215,23 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
+void mysql_prepared_result::serialize(const char *id, oos::time &x)
 {
   if (prepare_binding_) {
+#if MYSQL_VERSION_ID < 50604
+    prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
+#else
     prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
+#endif
   } else {
     if (info_[result_index_].length > 0) {
 #if MYSQL_VERSION_ID < 50604
       // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds
     // so we use a datetime string here
-    char *data = (char*)bind_[result_index_].buffer;
-    unsigned long len = info_[result_index_].length;
-    std::string str(data,len);
-    x = time::parse(str, "%F %T");
+      std::string val;
+      serialize(id, val);
+      x = oos::time::parse(val, "%F %T");
 #else
       MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
       x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);

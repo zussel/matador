@@ -7,8 +7,14 @@
 #include "sql/basic_dialect_compiler.hpp"
 #include "sql/basic_dialect_linker.hpp"
 
+#ifdef WIN32
+#include <winsock2.h>
+#include <mysql.h>
+#else
+#include <mysql/mysql.h>
+#endif
+
 #include <algorithm>
-#include <cstring>
 
 namespace oos {
 
