@@ -56,7 +56,7 @@ public:
   void serialize(const char *id, basic_identifier &x);
 
   template < class V >
-  void serialize(const char *id, identifier<V> &x)
+  void serialize(const char *id, identifier<V> &)
   {
     std::cout << "serializing " << id << " identifier of type " << typeid(V).name() << '\n';
   }

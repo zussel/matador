@@ -228,7 +228,7 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
     char *data = (char*)bind_[result_index_].buffer;
     unsigned long len = info_[result_index_].length;
     std::string str(data,len);
-    x = time::parse(str, "%F %T.%f");
+    x = time::parse(str, "%F %T");
 #else
       MYSQL_TIME *mtt = (MYSQL_TIME*)info_[result_index_].buffer;
       x.set(mtt->year, mtt->month, mtt->day, mtt->hour, mtt->minute, mtt->second, mtt->second_part / 1000);

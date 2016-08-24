@@ -193,7 +193,7 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type) const
   {
     std::stringstream str;
     str << value << " " << operand << " " << field_.name;

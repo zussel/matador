@@ -103,7 +103,7 @@ public:
 
 private:
   template < class T >
-  friend class detail::persistence_on_attach;
+  friend struct detail::persistence_on_attach;
 
 private:
   connection connection_;
@@ -140,7 +140,7 @@ struct persistence_on_attach : public basic_persistence_on_attach
   void operator()(prototype_node *node) const;
 };
 
-template <>
+//template <>
 template < class T >
 struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_attach
 {
@@ -220,7 +220,7 @@ persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence
   oos::access::serialize(*this, owner);
 }
 
-template <>
+//template <>
 template <class T>
 void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) const
 {
