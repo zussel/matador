@@ -32,7 +32,7 @@ SET(SYSTEM_NAME_LOWER)
 STRING(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
 
 # add module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 IF (NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "No build type selected, default to Release")
@@ -44,6 +44,9 @@ ENDIF()
 option(COVERALLS "Enable generation and sending of coveralls data" false)
 option(COVERAGE "Enable generation of code coverage" false)
 
+SET(GCOV_BINARY "gcov" CACHE STRING "gcov binary")
+
+MESSAGE(STATUS "gcov binary: ${GCOV_BINARY}")
 
 if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   message(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")

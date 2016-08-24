@@ -77,15 +77,16 @@ before_script:
   - mysql -e 'create database oos_test;'
   - mkdir build
   - cd build
-  - cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..
+  - if [ "$GCOV" == "gcov-5" ]; then cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..; fi
+  - if [ "$GCOV" != "gcov-5" ]; then cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..; fi
 
 script:
   - make
   - make test ARGS=-V
 
 after_success:
-  - if [ "$GCOV" != "gcov-5" ]; then make coveralls; fi
-  - if [ "$GCOV" != "gcov-5" ]; then ./coveralls-upload; fi
+  - if [ "$GCOV" == "gcov-5" ]; then make coveralls; fi
+  - if [ "$GCOV" == "gcov-5" ]; then ./coveralls-upload; fi
 
 branches:
   only:

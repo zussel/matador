@@ -5,16 +5,14 @@ LIB_DIR=@COVERALLS_SOURCE_DIR@
 SOURCE_PREFIX=@CMAKE_SOURCE_DIR@
 GCOV_SOURCE_PREFIX=${SOURCE_PREFIX//\//#}\#
 
-GCOV_VERSION=$(gcov -v | head -n 1 | sed 's/^.*[^0-9]\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\).*$/\1 \2 \3/')
-
-#gcov --source-prefix @CMAKE_SOURCE_DIR@ --preserve-paths --relative-only $(find -iname *.gcda) 1>/dev/null || exit 0
+GCOV_VERSION=$(${GCOV_BIN} -v | head -n 1 | sed 's/^.*[^0-9]\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\).*$/\1 \2 \3/')
 
 echo "generating gcov files"
 
 for file in $(find ${LIB_DIR} -iname *.gcda -print)
 do
 	echo generating file $(basename $file)
-	gcov --preserve-paths -o $(dirname $file) $file 1>/dev/null || exit 0
+	${GCOV_BIN} --preserve-paths -o $(dirname $file) $file 1>/dev/null || exit 0
 done
 
 echo "done!"
