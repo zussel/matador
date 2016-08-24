@@ -17,7 +17,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8', 'valgrind']
-      env: COMPILER=g++-4.8
+      env: COMPILER=g++-4.8 GCOV=gcov-4.8
 
     - os: linux
       compiler: gcc
@@ -25,7 +25,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'valgrind']
-      env: COMPILER=g++-4.9
+      env: COMPILER=g++-4.9 GCOV=gcov-4.9
 
     - os: linux
       compiler: gcc
@@ -33,7 +33,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'valgrind']
-      env: COMPILER=g++-5
+      env: COMPILER=g++-5 GCOV=gcov-5
 
     - os: linux
       compiler: clang
@@ -81,12 +81,11 @@ before_script:
 
 script:
   - make
-#  - valgrind --leak-check=full --error-exitcode=1 ./bin/test_oos exec sqlite_database:reload
   - make test ARGS=-V
 
 after_success:
-  - make coveralls
-  - ./coveralls-upload
+  - if [ "$GCOV" != "gcov-5" ]; make coveralls; fi
+  - if [ "$GCOV" != "gcov-5" ]; ./coveralls-upload; fi
 
 branches:
   only:
