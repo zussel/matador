@@ -84,8 +84,8 @@ script:
   - make test ARGS=-V
 
 after_success:
-  - if [ "$GCOV" != "gcov-5" ]; make coveralls; fi
-  - if [ "$GCOV" != "gcov-5" ]; ./coveralls-upload; fi
+  - if [ "$GCOV" != "gcov-5" ]; then make coveralls; fi
+  - if [ "$GCOV" != "gcov-5" ]; then ./coveralls-upload; fi
 
 branches:
   only:
