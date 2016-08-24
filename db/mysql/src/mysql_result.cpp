@@ -264,8 +264,9 @@ void mysql_result::serialize(const char *id, oos::time &x)
   // before mysql version 5.6.4 datetime
   // doesn't support fractional seconds
   // so we use a datetime string here
-  char *val = row_[result_index++];
-  x = time::parse(val, "%F %T.%f");
+  std::string val;
+  serialize(id, val);
+  x = oos::time::parse(val, "%F %T.%f");
 #else
   std::string val;
   serialize(id, val);

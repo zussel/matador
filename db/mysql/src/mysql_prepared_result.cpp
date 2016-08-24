@@ -225,8 +225,8 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
       // before mysql version 5.6.4 datetime
     // doesn't support fractional seconds
     // so we use a datetime string here
-    char *data = (char*)bind_[result_index].buffer;
-    unsigned long len = info_[result_index].length;
+    char *data = (char*)bind_[result_index_].buffer;
+    unsigned long len = info_[result_index_].length;
     std::string str(data,len);
     x = time::parse(str, "%F %T.%f");
 #else
