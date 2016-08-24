@@ -183,7 +183,7 @@ void QueryTestUnit::test_create()
 
   result<Item> res(q.create().execute(*connection_));
 
-  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.set_time(itime);
   res = q.insert(&hans).execute(*connection_);
@@ -217,7 +217,7 @@ void QueryTestUnit::test_statement_insert()
   result<Item> res(stmt.execute());
 
   oos::identifier<unsigned long> id(23);
-  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.id(id.value());
   hans.set_time(itime);
@@ -259,7 +259,7 @@ void QueryTestUnit::test_statement_update()
   result<Item> res(stmt.execute());
 
   oos::identifier<unsigned long> id(23);
-  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.id(id.value());
   hans.set_time(itime);
@@ -356,7 +356,7 @@ void QueryTestUnit::test_foreign_query()
   // create item table and insert item
   result<Item> res(q.create().execute(*connection_));
 
-  auto itime = oos::time(2015, 3, 15, 13, 56, 23, 123);
+  auto itime = time_val_;
   oos::identifier<unsigned long> id(23);
   Item *hans = new Item("Hans", 4711);
   hans->id(id.value());
