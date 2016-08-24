@@ -17,7 +17,7 @@ class connection;
 class QueryTestUnit : public oos::unit_test
 {
 public:
-  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory");
+  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const oos::time &timeval = oos::time(2015, 3, 15, 13, 56, 23, 123));
 
   virtual void initialize();
 
@@ -42,6 +42,7 @@ protected:
 private:
   std::string db_;
   std::unique_ptr<oos::connection> connection_;
+  oos::time time_val_;
 };
 
 

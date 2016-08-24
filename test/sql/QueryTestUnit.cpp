@@ -10,9 +10,10 @@
 
 using namespace oos;
 
-QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db)
+QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db, const oos::time &timeval)
   : unit_test(name, msg)
   , db_(db)
+  , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
@@ -55,8 +56,7 @@ void QueryTestUnit::test_datatypes()
   oos::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   oos::date date_val(15, 3, 2015);
-  oos::time time_val(2015, 3, 15, 13, 56, 23, 123);
-
+  oos::time time_val(time_val_);
   std::unique_ptr<Item> item(new Item);
 
   // set values
