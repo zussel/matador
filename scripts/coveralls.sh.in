@@ -57,10 +57,10 @@ echo "processing source files"
 
 for file in $(find * -iname '*.gcov' -print)
 do
-  if [[ $file != $GCOV_SOURCE_PREFIX* ]]
-  then
-    continue;
-  fi
+#  if [[ $file != $GCOV_SOURCE_PREFIX* ]]
+#  then
+#    continue;
+#  fi
   echo processing file $file
   srcname=$(echo ${file} | sed -re 's%#%\/%g; s%.gcov$%%')
   cat >>coverage.json <<EOF
