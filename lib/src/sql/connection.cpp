@@ -60,19 +60,12 @@ void connection::rollback()
 
 std::string connection::type() const
 {
-  return std::__cxx11::string();
+  return type_;
 }
 
 std::string connection::version() const
 {
-  return std::__cxx11::string();
-}
-
-const char *connection::type_string(data_type_t) const
-{
-  // Todo: re-implement
-//  return impl_->type_string(type);
-  return nullptr;
+  return "";
 }
 
 bool connection::exists(const std::string &tablename) const

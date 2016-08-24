@@ -82,8 +82,6 @@ public:
     return statement<T>(impl_->prepare(sql));
   }
 
-  const char* type_string(data_type_t type) const;
-
   bool exists(const std::string &tablename) const;
 
   std::vector<field> describe(const std::string &table) const;
