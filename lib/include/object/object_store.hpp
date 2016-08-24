@@ -258,7 +258,6 @@ public:
 
   ~node_analyzer() { }
 
-  static void analyze(prototype_node &node, ON_ATTACH<T> on_attach);
   template<class V>
   void serialize(V &x);
   template<class V>
@@ -866,7 +865,7 @@ private:
   friend class object_holder;
   friend class object_proxy;
   friend class prototype_node;
-  template < template < class ... > class ON_ATTACH >
+  template < class T, template < class ... > class ON_ATTACH >
   friend class detail::node_analyzer;
   friend class transaction;
   template < class T, template <class ...> class C >
@@ -1158,7 +1157,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_one<V> &x, casca
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
     // prepare insertion of new node
-    node = node_.tree()->prepare_attach<V>();
+    node = node_.tree()->template prepare_attach<V>();
     if (node_.tree()->temp_container_) {
       node->prepare_foreign_key(&node_, node_.tree()->temp_container_->item_field().c_str());
     } else {
@@ -1184,7 +1183,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, c
   if (x.has_join_table()) {
     // attach relation table for has many relation
 //    ON_ATTACH<V> on_attach(on_attach_);
-    prototype_iterator pi = node_.tree()->attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
+    prototype_iterator pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
     // insert the relation
     // add container node to item node
     pi->register_relation(node_.type(), &node_, id);
