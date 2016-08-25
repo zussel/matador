@@ -21,6 +21,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
   add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
   add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
+  add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test orm has many delete item");
 }
 
 void OrmTestUnit::test_create()
@@ -237,6 +238,37 @@ void OrmTestUnit::test_load_has_one()
     auto mptr = masters.front();
     UNIT_ASSERT_NOT_NULL(mptr->children.get(), "child must be valid");
   }
+
+  p.drop();
+}
+
+void OrmTestUnit::test_has_many_delete()
+{
+  oos::persistence p(dns_);
+
+  p.attach<child>("child");
+  p.attach<children_list>("children_list");
+
+  p.create();
+
+  oos::session s(p);
+
+  auto children = s.insert(new children_list("children list"));
+
+  UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
+  UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
+  auto kid1 = s.insert(new child("kid 1"));
+  auto kid2 = s.insert(new child("kid 2"));
+
+  UNIT_ASSERT_GREATER(kid1->id, 0UL, "invalid child");
+  UNIT_ASSERT_GREATER(kid2->id, 0UL, "invalid child");
+
+  children->children.push_back(kid1);
+  children->children.push_back(kid2);
+
+  UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
+  UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
 
   p.drop();
 }

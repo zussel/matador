@@ -19,6 +19,7 @@ public:
   void test_delete();
   void test_load();
   void test_load_has_one();
+  void test_has_many_delete();
 
 private:
   std::string dns_;
