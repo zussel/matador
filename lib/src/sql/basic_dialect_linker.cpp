@@ -91,7 +91,7 @@ void basic_dialect_linker::visit(const oos::detail::top &top)
 
 void basic_dialect_linker::visit(const oos::detail::remove &del)
 {
-  dialect().append_to_result(token_string(del.type) + " " + del.table + " ");
+  dialect().append_to_result(token_string(del.type) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::values &values)

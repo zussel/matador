@@ -54,7 +54,8 @@ void SQLiteDialectTestUnit::test_delete_with_limit()
 
   sql s;
 
-  s.append(new detail::remove("person"));
+  s.append(new detail::remove());
+  s.append(new detail::from("person"));
 
   oos::column name("name");
   s.append(new detail::where(name != "Hans"));

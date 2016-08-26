@@ -55,7 +55,7 @@ public:
   static const char *select_postfix() { return "SELECT"; }
   static const char *insert_postfix() { return "INSERT INTO"; }
   static const char *update_postfix() { return "UPDATE"; }
-  static const char *delete_postfix() { return "DELETE FROM"; }
+  static const char *delete_postfix() { return "DELETE"; }
   static const char *drop_postfix() { return "DROP TABLE"; }
 
   static const char *primary_key_prefix() { return "PRIMARY KEY NOT NULL"; }

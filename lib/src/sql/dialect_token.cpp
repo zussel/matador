@@ -71,9 +71,8 @@ void tablename::accept(token_visitor &visitor)
   visitor.visit(*this);
 }
 
-remove::remove(const std::string &t)
+remove::remove()
   : token(DELETE)
-  , table(t)
 {}
 
 void remove::accept(token_visitor &visitor)

@@ -395,7 +395,8 @@ void DialectTestUnit::test_delete_query()
 {
   sql s;
 
-  s.append(new detail::remove("person"));
+  s.append(new detail::remove());
+  s.append(new detail::from("person"));
 
   TestDialect dialect;
   std::string result = dialect.direct(s);
@@ -407,7 +408,8 @@ void DialectTestUnit::test_delete_where_query()
 {
   sql s;
 
-  s.append(new detail::remove("person"));
+  s.append(new detail::remove());
+  s.append(new detail::from("person"));
 
   oos::column name("name");
   oos::column age("age");

@@ -85,11 +85,9 @@ struct tablename : public token
 
 struct remove : public token
 {
-  remove(const std::string &t);
+  remove();
 
   virtual void accept(token_visitor &visitor) override;
-
-  std::string table;
 };
 
 struct distinct : public token

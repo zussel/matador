@@ -304,7 +304,8 @@ public:
   {
     reset(t_query_command::DELETE);
 
-    sql_.append(new detail::remove(table_name_));
+    sql_.append(new detail::remove());
+    sql_.append(new detail::from(table_name_));
 
     state = QUERY_DELETE;
 

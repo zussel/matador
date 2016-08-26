@@ -102,7 +102,7 @@ private:
   t_token_map tokens {
     {detail::token::CREATE_TABLE, "CREATE TABLE"},
     {detail::token::DROP, "DROP TABLE"},
-    {detail::token::DELETE, "DELETE FROM"},
+    {detail::token::DELETE, "DELETE"},
     {detail::token::INSERT, "INSERT INTO"},
     {detail::token::VALUES, "VALUES"},
     {detail::token::UPDATE, "UPDATE"},
