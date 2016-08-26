@@ -5,6 +5,7 @@
 #ifndef OOS_SESSION_HPP
 #define OOS_SESSION_HPP
 
+#include <object/has_many.hpp>
 #include "object/transaction.hpp"
 
 #include "orm/persistence.hpp"
@@ -53,7 +54,58 @@ public:
       transaction tr(persistence_.store(), observer_);
       tr.begin();
       store().remove(optr);
-//      tr.on_delete<T>(optr.proxy_);
+      tr.commit();
+    }
+  }
+
+  template < template <class ...> class CONT, class T >
+  void push_back(has_many<T, CONT> &container, object_ptr<T> &optr)
+  {
+    if (store().has_transaction()) {
+      container.push_back(optr);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.push_back(optr);
+      tr.commit();
+    }
+  }
+
+  template < template <class ...> class CONT, class T >
+  void push_front(has_many<T, CONT> &container, object_ptr<T> &optr)
+  {
+    if (store().has_transaction()) {
+      container.push_front(optr);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.push_front(optr);
+      tr.commit();
+    }
+  }
+
+  template < template <class ...> class CONT, class T >
+  void erase(has_many<T, CONT> &container, const typename has_many<T, CONT>::iterator &it)
+  {
+    if (store().has_transaction()) {
+      container.erase(it);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.erase(it);
+      tr.commit();
+    }
+  }
+
+  template < template <class ...> class CONT, class T >
+  void erase(has_many<T, CONT> &container, const typename has_many<T, CONT>::iterator &first, const typename has_many<T, CONT>::iterator &last)
+  {
+    if (store().has_transaction()) {
+      container.erase(first, last);
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.erase(first, last);
       tr.commit();
     }
   }

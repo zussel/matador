@@ -215,7 +215,7 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char *id, oos::time &x)
+void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
 {
   if (prepare_binding_) {
 #if MYSQL_VERSION_ID < 50604

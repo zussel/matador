@@ -264,8 +264,14 @@ void OrmTestUnit::test_has_many_delete()
   UNIT_ASSERT_GREATER(kid1->id, 0UL, "invalid child");
   UNIT_ASSERT_GREATER(kid2->id, 0UL, "invalid child");
 
-  children->children.push_back(kid1);
-  children->children.push_back(kid2);
+  s.push_back(children->children, kid1);
+  s.push_back(children->children, kid1);
+  s.push_back(children->children, kid2);
+
+  UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
+  UNIT_ASSERT_EQUAL(children->children.size(), 3UL, "invalid children list size");
+
+  s.erase(children->children, children->children.begin());
 
   UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
   UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
