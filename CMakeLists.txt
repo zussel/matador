@@ -64,7 +64,7 @@ if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" A
   endif()
   
   if (COVERALLS)
-    SETUP_TARGET_FOR_COVERALLS(coveralls test_oos lib "exec;all")
+    SETUP_TARGET_FOR_COVERALLS(coveralls test_oos . "exec;all")
   endif()
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")

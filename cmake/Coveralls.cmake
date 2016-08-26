@@ -28,11 +28,13 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 FUNCTION(SETUP_TARGET_FOR_COVERALLS _targetname _testrunner _sourcedir)
 
-  message(STATUS "setting up coveralls target")
+  message(STATUS "Setting up coveralls target in '${_sourcedir}'")
 
   set(COVERALLS_SOURCE_DIR ${_sourcedir})
 
   configure_file(${CMAKE_SOURCE_DIR}/scripts/coveralls.sh.in ${CMAKE_BINARY_DIR}/coveralls-upload @ONLY)
+
+  message(STATUS "argv3: ${ARGV3}")
 
   # add target for coverage by gcov
   ADD_CUSTOM_TARGET(${_targetname}
