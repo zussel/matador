@@ -201,7 +201,7 @@ SET(ORM_HEADERS
   ../include/orm/identifier_column_resolver.hpp
   ../include/orm/relation_table.hpp
   ../include/orm/relation_resolver.hpp
-)
+  ../include/orm/relation_table_loader.hpp)
 
 SET(ORM_SOURCES
   orm/persistence.cpp

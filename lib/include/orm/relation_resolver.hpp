@@ -82,8 +82,18 @@ public:
   }
 
   template < class HAS_MANY >
-  void serialize(const char *, HAS_MANY &, const char *, const char *)
+  void serialize(const char *id, HAS_MANY &, const char *, const char *)
   {
+    // get node of object type
+    prototype_iterator node = store_->find(id);
+    if (node == store_->end()) {
+      throw_object_exception("couldn't find prototype node");
+    }
+//    if (!table_.db_.is_loaded(node->type())) {
+//      return;
+//    }
+    
+
 
   }
 

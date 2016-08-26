@@ -50,6 +50,8 @@ public:
   virtual void prepare(connection &conn) override
   {
     query<relation_type> q(name());
+
+    select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
     insert_ = q.insert(&item_).prepare(conn);
 
     column owner_id(owner_id_column_);
@@ -59,9 +61,7 @@ public:
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
   }
 
-  virtual void load(object_store &) override
-  {
-  }
+  virtual void load(object_store &) override { }
 
   virtual void insert(object_proxy *proxy) override
   {
@@ -87,6 +87,7 @@ public:
 private:
   relation_type item_;
 
+  statement<relation_type> select_all_;
   statement<relation_type> insert_;
   statement<relation_type> update_;
   statement<relation_type> delete_;

@@ -12,6 +12,7 @@
 #include "orm/identifier_binder.hpp"
 #include "orm/identifier_column_resolver.hpp"
 #include "orm/relation_resolver.hpp"
+#include "orm/relation_table_loader.hpp"
 
 #include "sql/query.hpp"
 
@@ -79,6 +80,7 @@ public:
       resolver_.resolve(proxy->obj<T>(), &store);
     }
     // load all relation tables belonging to this table
+    loader_.load();
   }
 
   virtual void insert(object_proxy *proxy) override
@@ -112,6 +114,7 @@ private:
   statement<T> select_;
 
   detail::relation_resolver<T> resolver_;
+  detail::relation_table_loader<T> loader_;
 
   std::unique_ptr<object_proxy> proxy_;
 

@@ -160,6 +160,33 @@ public:
   }
 
   /**
+   * Creates a select statement based
+   * on the given serializable serializable.
+   *
+   * @param column_names A list of column names to select
+   * @return A reference to the query.
+   */
+  query& select(const std::initializer_list<std::string> &column_names)
+  {
+    reset(t_query_command::SELECT);
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append(new detail::select);
+
+    std::unique_ptr<columns> cols(new columns(columns::WITHOUT_BRACKETS));
+    for (auto &&col : column_names) {
+      cols->push_back(std::make_shared<oos::column>(col));
+    }
+
+    sql_.append(cols.release());
+
+    sql_.append(new detail::from(table_name_));
+
+    state = QUERY_FROM;
+    return *this;
+  }
+
+  /**
    * Creates an insert statement
    *
    * @return A reference to the query.

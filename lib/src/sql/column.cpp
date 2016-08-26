@@ -46,7 +46,10 @@ void typed_column::accept(token_visitor &visitor)
 
 }
 
-void columns::push_back(const std::shared_ptr<column> &col) { columns_.push_back(col); }
+void columns::push_back(const std::shared_ptr<column> &col)
+{
+  columns_.push_back(col);
+}
 
 columns &columns::with_brackets()
 {
