@@ -38,7 +38,7 @@ public:
   void test_has_many_list_commit();
   void test_has_many_list_rollback();
   void test_has_many_list();
-//  void test_with_vector();
+  void test_has_many_vector();
 
 protected:
   std::string connection_string();
