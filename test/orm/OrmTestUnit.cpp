@@ -276,5 +276,10 @@ void OrmTestUnit::test_has_many_delete()
   UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
   UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
 
+  s.erase(children->children, children->children.begin(), children->children.end());
+
+  UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
+  UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
   p.drop();
 }
