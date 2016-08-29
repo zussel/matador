@@ -20,6 +20,11 @@ std::string basic_table::name() const
   return node_->type();
 }
 
+bool basic_table::is_loaded() const
+{
+  return is_loaded_;
+}
+
 basic_table::t_table_map::iterator basic_table::find_table(const std::string &type)
 {
   return persistence_.find_table(type);

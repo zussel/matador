@@ -30,6 +30,7 @@ public:
     , item_(relation)
     , owner_id_column_(owner_id_field)
     , item_id_column_(item_id_field)
+    , resolver_(*this)
   {
     item_.owner_id(owner_id_column_);
     item_.item_id(item_id_column_);
@@ -61,7 +62,26 @@ public:
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
   }
 
-  virtual void load(object_store &) override { }
+  virtual void load(object_store &store) override
+  {
+    if (is_loaded_) {
+      return;
+    }
+    auto result = select_all_.execute();
+
+    auto first = result.begin();
+    auto last = result.end();
+
+    while (first != last) {
+      // create new proxy of relation object
+      proxy_.reset(new object_proxy(first.release()));
+      ++first;
+      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      resolver_.resolve(proxy, &store);
+    }
+
+    is_loaded_ = true;
+  }
 
   virtual void insert(object_proxy *proxy) override
   {
@@ -94,6 +114,10 @@ private:
 
   std::string owner_id_column_;
   std::string item_id_column_;
+
+  detail::relation_resolver<T> resolver_;
+
+  std::unique_ptr<object_proxy> proxy_;
 };
 
 }

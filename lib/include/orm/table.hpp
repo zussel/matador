@@ -77,10 +77,13 @@ public:
 
       ++first;
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
-      resolver_.resolve(proxy->obj<T>(), &store);
+      resolver_.resolve(proxy, &store);
     }
     // load all relation tables belonging to this table
-    loader_.load();
+//    loader_.load();
+
+    // mark table as loaded
+    is_loaded_ = true;
   }
 
   virtual void insert(object_proxy *proxy) override
@@ -108,6 +111,7 @@ public:
 
 private:
   detail::identifier_binder<T> binder_;
+
   statement<T> insert_;
   statement<T> update_;
   statement<T> delete_;

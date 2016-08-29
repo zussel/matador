@@ -44,6 +44,8 @@ public:
   virtual void update(object_proxy *proxy) = 0;
   virtual void remove(object_proxy *proxy) = 0;
 
+  bool is_loaded() const;
+
 protected:
   template < class T >
   friend class detail::relation_resolver;
@@ -56,6 +58,8 @@ protected:
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;
+
+  bool is_loaded_ = false;
 
 private:
   prototype_node *node_;
