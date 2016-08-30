@@ -21,6 +21,13 @@ basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std:
   , owner_(owner)
 { }
 
+basic_has_many_item::basic_has_many_item(const std::string &owner_id, const std::string &item_id,
+                                         basic_identifier *owner)
+  : owner_id_(owner_id)
+  , item_id_(item_id)
+  , owner_(owner)
+{ }
+
 void basic_has_many_item::owner_id(const std::string &oid)
 {
   owner_id_ = oid;

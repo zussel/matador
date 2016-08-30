@@ -67,10 +67,18 @@ public:
     if (is_loaded_) {
       return;
     }
-    auto result = select_all_.execute();
+    auto res = select_all_.execute();
 
-    auto first = result.begin();
-    auto last = result.end();
+    // set explicit creator function
+    relation_type item(item_);
+    auto func = [item]() {
+      relation_type *i = new relation_type(item.owner_id(), item.item_id(), item.owner()->clone());
+      return i;
+    };
+    res.creator(func);
+
+    auto first = res.begin();
+    auto last = res.end();
 
     while (first != last) {
       // create new proxy of relation object

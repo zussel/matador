@@ -68,29 +68,27 @@ public:
 
 public:
 
+  using basic_has_many_item::basic_has_many_item;
+
   has_many_item()
-    : owner_id_("owner_id")
-    , item_name_("item")
+    : basic_has_many_item()
   { }
 
-  has_many_item(const std::string &owner_id, const std::string &item_name)
-    : owner_id_(owner_id)
-    , item_(item_name)
+  has_many_item(const std::string &owner_id, const std::string &item_id)
+    : basic_has_many_item(owner_id, item_id)
   { }
 
-  has_many_item(const std::string &owner_id, const std::string &item_name,
+  has_many_item(const std::string &owner_id, const std::string &item_id,
                 const std::shared_ptr<basic_identifier> &id, T item)
-    : owner_(id)
+    : basic_has_many_item(owner_id, item_id, id)
     , item_(item)
-    , owner_id_(owner_id)
-    , item_name_(item_name)
   { }
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize(owner_id_.c_str(), *owner_);
-    serializer.serialize(item_name_.c_str(), item_);
+    serializer.serialize(*oos::base_class<basic_has_many_item>(this));
+    serializer.serialize(item_id().c_str(), item_);
   }
 
   value_type value()
@@ -102,33 +100,8 @@ public:
   {
     return item_;
   }
-
-  std::string owner_id() const
-  {
-    return owner_id_;
-  }
-
-  void owner_id(const std::string &oid)
-  {
-    owner_id_ = oid;
-  }
-
-  std::string item_name() const
-  {
-    return item_name_;
-  }
-
-  void item_id(const std::string &item_name)
-  {
-    item_name_ = item_name;
-  }
-
 private:
-  std::shared_ptr<basic_identifier> owner_;
   T item_;
-
-  std::string owner_id_;
-  std::string item_name_;
 };
 
 }

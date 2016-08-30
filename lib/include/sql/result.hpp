@@ -24,6 +24,7 @@
 #include <memory>
 #include <type_traits>
 #include <iterator>
+#include <functional>
 
 namespace oos {
 
@@ -130,6 +131,8 @@ template < class T >
 class result
 {
 public:
+//  typedef T*(*t_creator_func)();
+  typedef std::function<T*()> t_creator_func;
   typedef result_iterator<T> iterator;
 
   result(const result &x) = delete;
@@ -183,6 +186,11 @@ public:
     return p->result_rows();
   }
 
+  void creator(const t_creator_func &creator_func)
+  {
+    creator_func_ = creator_func;
+  }
+
 private:
   friend class result_iterator<T>;
 
@@ -190,10 +198,15 @@ private:
 
   T* create() const
   {
-    return new T;
+    if (creator_func_) {
+      return creator_func_();
+    } else {
+      return new T;
+    }
   }
 private:
   oos::detail::result_impl *p = nullptr;
+  t_creator_func creator_func_;
 };
 
 template <>

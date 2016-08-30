@@ -21,7 +21,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
   add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
   add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
-//  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test orm load has many from table");
+  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test orm load has many from table");
   add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test orm has many delete item");
 }
 

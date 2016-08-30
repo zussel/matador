@@ -18,6 +18,7 @@ public:
   basic_has_many_item();
   basic_has_many_item(const std::string &owner_id_, const std::string &item_id_);
   basic_has_many_item(const std::string &owner_id_, const std::string &item_id_, const std::shared_ptr<basic_identifier> owner);
+  basic_has_many_item(const std::string &owner_id_, const std::string &item_id_, basic_identifier *owner);
 
   virtual ~basic_has_many_item() {}
 
