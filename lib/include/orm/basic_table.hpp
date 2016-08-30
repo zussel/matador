@@ -59,6 +59,8 @@ protected:
 
   detail::t_identifier_map identifier_proxy_map_;
 
+  std::shared_ptr<basic_identifier> relation_owner_id_;
+
   bool is_loaded_ = false;
 
 private:

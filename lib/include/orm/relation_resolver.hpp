@@ -42,6 +42,14 @@ namespace detail {
       oos::access::serialize(*this, obj);
     }
 
+    void serialize(const char *, basic_identifier &x)
+    {
+      if (table_.relation_owner_id_ ) {
+        table_.relation_owner_id_->share_with(x);
+        table_.relation_owner_id_.reset();
+      }
+    }
+
     template < class V >
     void serialize(const char *, V &) { }
 
@@ -96,16 +104,10 @@ namespace detail {
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
       if (j->second->is_loaded()) {
-        std::cout << "relation table '" << id << "' already loaded\n";
         return;
       }
 
-      std::cout << "found relation '" << id << "'; append object '" << *id_ << "'\n";
-
-
-//      j->second->identifier_proxy_map_.insert()
-
-
+      j->second->relation_owner_id_ = id_;
     }
 
   private:

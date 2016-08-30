@@ -84,7 +84,7 @@ public:
       // create new proxy of relation object
       proxy_.reset(new object_proxy(first.release()));
       ++first;
-      object_proxy *proxy = store.insert<T>(proxy_.release(), false);
+      object_proxy *proxy = store.insert<relation_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
 
@@ -123,7 +123,7 @@ private:
   std::string owner_id_column_;
   std::string item_id_column_;
 
-  detail::relation_resolver<T> resolver_;
+  detail::relation_resolver<relation_type> resolver_;
 
   std::unique_ptr<object_proxy> proxy_;
 };
