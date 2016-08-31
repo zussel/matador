@@ -25,11 +25,13 @@ public:
   typedef has_many_item<T> relation_type;
 
   relation_table(prototype_node *node, persistence &p, const relation_type &relation,
+                 const std::string &owner_type,
                  const std::string &owner_id_field, const std::string &item_id_field)
     : basic_table(node, p)
     , item_(relation)
     , owner_id_column_(owner_id_field)
     , item_id_column_(item_id_field)
+    , owner_type_(owner_type)
     , resolver_(*this)
   {
     item_.owner_id(owner_id_column_);
@@ -60,6 +62,14 @@ public:
 
     update_ = q.update().set(&item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+
+    // find owner table
+    auto tid = find_table(owner_type_);
+    if (tid == end_table()) {
+      // Todo: introduce throw_orm_exception
+      throw std::logic_error("no owner table " + owner_type_ + " found");
+    }
+    owner_table_ = tid->second;
   }
 
   virtual void load(object_store &store) override
@@ -86,6 +96,13 @@ public:
       ++first;
       object_proxy *proxy = store.insert<relation_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
+
+      if (owner_table_->is_loaded()) {
+        // append item to owner identified by owner id
+        //
+      } else {
+        // append item to owner table
+      }
     }
 
     is_loaded_ = true;
@@ -122,10 +139,13 @@ private:
 
   std::string owner_id_column_;
   std::string item_id_column_;
+  std::string owner_type_;
 
   detail::relation_resolver<relation_type> resolver_;
 
   std::unique_ptr<object_proxy> proxy_;
+
+  table_ptr owner_table_;
 };
 
 }

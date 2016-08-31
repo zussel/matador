@@ -195,6 +195,7 @@ struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_att
   }
 
   relation_type relation_;
+  std::string owner_type_;
   std::string owner_id_column_;
   std::string item_id_column_;
 };
@@ -217,6 +218,7 @@ persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence
   : basic_persistence_on_attach(x.persistence_)
 {
   V owner;
+  owner_type_ = persistence_.get().store().find(typeid(V).name())->type();
   oos::access::serialize(*this, owner);
 }
 
@@ -226,7 +228,7 @@ void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) c
 {
   persistence_.get().tables_.insert(std::make_pair(
     node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
-      node, persistence_, relation_, owner_id_column_, item_id_column_
+      node, persistence_, relation_, owner_type_, owner_id_column_, item_id_column_
     )));
 }
 

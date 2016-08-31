@@ -92,8 +92,8 @@ namespace detail {
       }
     }
 
-    template < class HAS_MANY >
-    void serialize(const char *id, HAS_MANY &, const char *, const char *)
+    template<class V, template<class ...> class C>
+    void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
     {
       // get node of object type
       prototype_iterator node = store_->find(id);
@@ -103,8 +103,21 @@ namespace detail {
 
       basic_table::t_table_map::iterator j = table_.find_table(node->type());
 
+      /**
+       * if relation table is loaded
+       * check this tables relation proxy list
+       * and update has many relation
+       *
+       * if relation table isn't loaded
+       * append this proxy/id to relation
+       * tables relation owner id list
+       */
       if (j->second->is_loaded()) {
+
+//        x.append()
         return;
+      } else {
+//        j->second->relation_owner_ids_.insert(std::make_pair(id_, proxy_));
       }
 
       j->second->relation_owner_id_ = id_;
