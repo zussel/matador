@@ -61,6 +61,10 @@ protected:
 
   std::shared_ptr<basic_identifier> relation_owner_id_;
 
+  typedef std::vector<object_proxy*> t_proxy_vector;
+  typedef std::unordered_map<std::string, t_proxy_vector> t_relation_item_map;
+  t_relation_item_map relations_;
+
   bool is_loaded_ = false;
 
 private:

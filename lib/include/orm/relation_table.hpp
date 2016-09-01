@@ -99,6 +99,7 @@ public:
 
       if (owner_table_->is_loaded()) {
         // append item to owner identified by owner id
+//        has_many_map_.at[owner_type_]
         //
       } else {
         // append item to owner table
@@ -145,6 +146,7 @@ private:
 
   std::unique_ptr<object_proxy> proxy_;
 
+//  typedef std::unordered_map<std::string, basic_has_many
   table_ptr owner_table_;
 };
 
