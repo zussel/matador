@@ -39,6 +39,7 @@ public:
 
 typedef std::shared_ptr<basic_identifier> identifier_ptr; /**< Shortcut to shared identifier ptr */
 typedef std::unordered_map<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_map;
+typedef std::unordered_multimap<identifier_ptr, object_proxy*, identifier_hash<identifier_ptr>, identifier_equal> t_identifier_multimap;
 
 }
 }

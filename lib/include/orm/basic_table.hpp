@@ -49,21 +49,29 @@ public:
 protected:
   template < class T >
   friend class detail::relation_resolver;
+  template < class T >
+  friend class relation_table;
 
 protected:
   t_table_map::iterator find_table(const std::string &type);
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
+  void append_item_to_relation(const std::string &id, object_proxy *proxy);
+
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;
+  // store own proxy for relation resolution of relation tables
+  // (when this table is loaded before relation table)
+  detail::t_identifier_map identifier_self_proxy_map_;
+
+  unsigned has_many_count_ = 0;
 
   std::shared_ptr<basic_identifier> relation_owner_id_;
 
-  typedef std::vector<object_proxy*> t_proxy_vector;
-  typedef std::unordered_map<std::string, t_proxy_vector> t_relation_item_map;
-  t_relation_item_map relations_;
+  typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map;
+  t_relation_item_map has_many_relations_;
 
   bool is_loaded_ = false;
 

@@ -90,6 +90,7 @@ public:
     auto first = res.begin();
     auto last = res.end();
 
+    std::vector<object_proxy*> items;
     while (first != last) {
       // create new proxy of relation object
       proxy_.reset(new object_proxy(first.release()));
@@ -99,11 +100,17 @@ public:
 
       if (owner_table_->is_loaded()) {
         // append item to owner identified by owner id
-//        has_many_map_.at[owner_type_]
-        //
+        owner_table_->append_item_to_relation(owner_type_, proxy);
       } else {
         // append item to owner table
+        auto i = owner_table_->has_many_relations_.find(owner_type_);
+        if (i == owner_table_->has_many_relations_.end()) {
+          i = owner_table_->has_many_relations_.insert(std::make_pair(owner_type_, detail::t_identifier_multimap())).first;
+        }
+        i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
       }
+
+      items.push_back(proxy);
     }
 
     is_loaded_ = true;

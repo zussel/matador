@@ -79,8 +79,6 @@ public:
       object_proxy *proxy = store.insert<T>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
     }
-    // load all relation tables belonging to this table
-//    loader_.load();
 
     // mark table as loaded
     is_loaded_ = true;

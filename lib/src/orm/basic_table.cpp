@@ -40,5 +40,9 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
+void basic_table::append_item_to_relation(const std::string &id, object_proxy *proxy)
+{
+
+}
 
 }

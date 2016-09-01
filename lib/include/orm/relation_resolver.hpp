@@ -31,7 +31,9 @@ namespace detail {
     {
       store_ = store;
       id_ = proxy->pk();
+      proxy_ = proxy;
       oos::access::serialize(*this, *proxy->obj<T>());
+      proxy_ = nullptr;
       id_.reset();
       store_ = nullptr;
     }
@@ -42,13 +44,13 @@ namespace detail {
       oos::access::serialize(*this, obj);
     }
 
-    void serialize(const char *, basic_identifier &x)
-    {
-      if (table_.relation_owner_id_ ) {
-        table_.relation_owner_id_->share_with(x);
-        table_.relation_owner_id_.reset();
-      }
-    }
+//    void serialize(const char *, basic_identifier &x)
+//    {
+//      if (table_.relation_owner_id_ ) {
+//        table_.relation_owner_id_->share_with(x);
+//        table_.relation_owner_id_.reset();
+//      }
+//    }
 
     template < class V >
     void serialize(const char *, V &) { }
@@ -113,19 +115,21 @@ namespace detail {
        * tables relation owner id list
        */
       if (j->second->is_loaded()) {
-
+          // relation table is loaded
 //        x.append()
-        return;
       } else {
 //        j->second->relation_owner_ids_.insert(std::make_pair(id_, proxy_));
+
       }
 
-      j->second->relation_owner_id_ = id_;
+      table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
+      ++table_.has_many_count_;
     }
 
   private:
     object_store *store_ = nullptr;
     basic_table &table_;
+    object_proxy *proxy_;
     std::shared_ptr<basic_identifier> id_;
   };
 
