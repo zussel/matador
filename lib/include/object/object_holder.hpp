@@ -28,6 +28,7 @@ namespace oos {
 namespace detail {
 class object_inserter;
 class object_deleter;
+class object_proxy_accessor;
 }
 
 class basic_identifier;
@@ -235,6 +236,7 @@ private:
   friend class detail::object_inserter;
   friend class object_store;
   friend class object_container;
+  friend class detail::object_proxy_accessor;
 
   // Todo: change interface to remove friend
   friend class session;

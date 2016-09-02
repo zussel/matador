@@ -14,7 +14,7 @@ SET(OBJECT_SOURCES
   object/update_action.cpp
   object/delete_action.cpp
   object/basic_identifier_serializer.cpp
-  object/basic_has_many_item.cpp)
+  object/basic_has_many_item.cpp object/object_proxy_accessor.cpp)
 
 SET(OBJECT_INSTALL_HEADER
   ${PROJECT_SOURCE_DIR}/include/object/action.hpp
@@ -75,7 +75,7 @@ SET(OBJECT_HEADER
   ../include/object/has_many_item.hpp
   ../include/object/basic_has_many_item.hpp
   ../include/object/identifier_proxy_map.hpp
-)
+        ../include/object/object_proxy_accessor.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp

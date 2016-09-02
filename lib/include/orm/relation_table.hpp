@@ -7,6 +7,7 @@
 #include "sql/query.hpp"
 
 #include "object/basic_has_many.hpp"
+#include "object/object_proxy_accessor.hpp"
 
 #include "tools/basic_identifier.hpp"
 
@@ -18,7 +19,7 @@
 namespace oos {
 
 template < class T >
-class relation_table : public basic_table
+class relation_table : public basic_table, public detail::object_proxy_accessor
 {
 public:
 
@@ -98,19 +99,19 @@ public:
       object_proxy *proxy = store.insert<relation_type>(proxy_.release(), false);
       resolver_.resolve(proxy, &store);
 
-      if (owner_table_->is_loaded()) {
-        // append item to owner identified by owner id
-        owner_table_->append_item_to_relation(owner_type_, proxy);
-      } else {
-        // append item to owner table
-        auto i = owner_table_->has_many_relations_.find(owner_type_);
-        if (i == owner_table_->has_many_relations_.end()) {
-          i = owner_table_->has_many_relations_.insert(std::make_pair(owner_type_, detail::t_identifier_multimap())).first;
-        }
-        i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
+      // append item to owner table
+      auto i = owner_table_->has_many_relations_.find(owner_type_);
+      if (i == owner_table_->has_many_relations_.end()) {
+        i = owner_table_->has_many_relations_.insert(std::make_pair(owner_type_, detail::t_identifier_multimap())).first;
       }
+      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), this->proxy(proxy->obj<relation_type>()->value())));
 
       items.push_back(proxy);
+    }
+
+    if (owner_table_->is_loaded()) {
+      // append items
+      owner_table_->append_relation_items(owner_type_);
     }
 
     is_loaded_ = true;

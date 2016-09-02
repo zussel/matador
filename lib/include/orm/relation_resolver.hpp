@@ -95,7 +95,7 @@ namespace detail {
     }
 
     template<class V, template<class ...> class C>
-    void serialize(const char *id, basic_has_many<V, C> &, const char *, const char *)
+    void serialize(const char *id, basic_has_many<V, C> &x, const char *, const char *)
     {
       // get node of object type
       prototype_iterator node = store_->find(id);
@@ -116,13 +116,26 @@ namespace detail {
        */
       if (j->second->is_loaded()) {
           // relation table is loaded
-//        x.append()
+        std::cout << "Todo: relation table [" << id << "] loaded; append all elements for owner " << *id_ << "\n";
+        auto i = table_.has_many_relations_.find(id);
+        // get relation items for id/relation
+        if (i != table_.has_many_relations_.end()) {
+          // get relation items for this owner identified by pk
+          auto items = i->second.equal_range(id_);
+          for (auto k = items.first; k != items.second; ++k) {
+            typename basic_has_many<V, C>::internal_type val(k->second);
+            x.append(val);
+          }
+        }
+        table_.append_relation_items(id);
       } else {
-//        j->second->relation_owner_ids_.insert(std::make_pair(id_, proxy_));
-
+        std::cout << "Todo: relation table [" << id << "] not loaded; store owner id " << *id_ << " and proxy\n";
+        table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
+        table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
+//        j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
       }
 
-      table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
+//      table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
       ++table_.has_many_count_;
     }
 

@@ -57,7 +57,7 @@ protected:
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
-  void append_item_to_relation(const std::string &id, object_proxy *proxy);
+  void append_relation_items(const std::string &id);
 
   persistence &persistence_;
 
