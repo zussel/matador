@@ -104,6 +104,7 @@ public:
       if (i == owner_table_->has_many_relations_.end()) {
         i = owner_table_->has_many_relations_.insert(std::make_pair(owner_type_, detail::t_identifier_multimap())).first;
       }
+      std::cout << "appending proxy " << this->proxy(proxy->obj<relation_type>()->value()) << " for owner " << *proxy->obj<relation_type>()->owner() << "\n";
       i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), this->proxy(proxy->obj<relation_type>()->value())));
 
       items.push_back(proxy);
