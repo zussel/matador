@@ -112,7 +112,7 @@ public:
 
     if (owner_table_->is_loaded()) {
       // append items
-      owner_table_->append_relation_items(owner_type_);
+      owner_table_->append_relation_items(owner_type_, identifier_proxy_map_, has_many_relations_);
     }
 
     is_loaded_ = true;

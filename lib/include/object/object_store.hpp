@@ -621,7 +621,7 @@ public:
 
     // get object
     T *object = static_cast<T*>(proxy->obj());
-    if (object && proxy->has_identifier()) {
+    if (object && proxy->has_identifier() && !proxy->pk()->is_valid()) {
       // if object has primary key of type short, int or long
       // set the id of proxy as value
       identifier_setter<unsigned long>::assign(proxy->id(), object);

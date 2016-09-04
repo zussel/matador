@@ -40,17 +40,6 @@ basic_table::t_table_map::iterator basic_table::end_table()
   return persistence_.end();
 }
 
-void basic_table::append_relation_items(const std::string &id)
-{
-  std::cout << "appending proxy for relation [" << id << "]\n";
-  for (auto owner : identifier_self_proxy_map_) {
-    std::cout << "appending items for owner " << *owner.first << "\n";
-    auto rel = has_many_relations_.find(id);
-    auto items = rel->second.equal_range(owner.first);
-    for (auto item = items.first; item != items.second; ++item) {
-      std::cout << "appending item " << *item->second->pk() << "\n";
-    }
-  }
-}
+void basic_table::append_relation_items(const std::string &, detail::t_identifier_map &, basic_table::t_relation_item_map &) { }
 
 }

@@ -12,7 +12,7 @@
 #include "orm/identifier_binder.hpp"
 #include "orm/identifier_column_resolver.hpp"
 #include "orm/relation_resolver.hpp"
-#include "orm/relation_table_loader.hpp"
+#include "orm/relation_item_appender.hpp"
 
 #include "sql/query.hpp"
 
@@ -107,6 +107,12 @@ public:
     delete_.execute();
   }
 
+protected:
+  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override {
+    std::cout << "appending proxy for relation [" << id << "]\n";
+    appender_.append(id, &identifier_proxy_map, &has_many_relations);
+  }
+
 private:
   detail::identifier_binder<T> binder_;
 
@@ -116,7 +122,7 @@ private:
   statement<T> select_;
 
   detail::relation_resolver<T> resolver_;
-  detail::relation_table_loader<T> loader_;
+  detail::relation_item_appender<T> appender_;
 
   std::unique_ptr<object_proxy> proxy_;
 

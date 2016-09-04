@@ -29,6 +29,7 @@ class basic_table
 public:
   typedef std::shared_ptr<basic_table> table_ptr;
   typedef std::unordered_map<std::string, table_ptr> t_table_map;
+  typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map;
 
 public:
   basic_table(prototype_node *node, persistence &p);
@@ -57,20 +58,12 @@ protected:
   t_table_map::iterator begin_table();
   t_table_map::iterator end_table();
 
-  void append_relation_items(const std::string &id);
+  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations);
 
   persistence &persistence_;
 
   detail::t_identifier_map identifier_proxy_map_;
-  // store own proxy for relation resolution of relation tables
-  // (when this table is loaded before relation table)
-  detail::t_identifier_map identifier_self_proxy_map_;
 
-  unsigned has_many_count_ = 0;
-
-  std::shared_ptr<basic_identifier> relation_owner_id_;
-
-  typedef std::unordered_map<std::string, detail::t_identifier_multimap> t_relation_item_map;
   t_relation_item_map has_many_relations_;
 
   bool is_loaded_ = false;

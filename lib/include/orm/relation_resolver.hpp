@@ -127,16 +127,11 @@ namespace detail {
             x.append(val);
           }
         }
-        table_.append_relation_items(id);
       } else {
         std::cout << "Todo: relation table [" << id << "] not loaded; store owner id " << *id_ << " and proxy\n";
         table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
-        table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
-//        j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
+        j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
       }
-
-//      table_.identifier_self_proxy_map_.insert(std::make_pair(id_, proxy_));
-      ++table_.has_many_count_;
     }
 
   private:
