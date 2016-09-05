@@ -5,6 +5,19 @@
 #ifndef OOS_PERSISTENCE_HPP
 #define OOS_PERSISTENCE_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "sql/connection.hpp"
 
 #include "object/object_store.hpp"
@@ -24,7 +37,7 @@ struct persistence_on_attach;
 
 }
 
-class persistence
+class OOS_API persistence
 {
 public:
   typedef basic_table::table_ptr table_ptr;

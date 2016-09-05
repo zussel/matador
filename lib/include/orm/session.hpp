@@ -5,6 +5,19 @@
 #ifndef OOS_SESSION_HPP
 #define OOS_SESSION_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include <object/has_many.hpp>
 #include "object/transaction.hpp"
 
@@ -12,7 +25,7 @@
 
 namespace oos {
 
-class session
+class OOS_API session
 {
 public:
   explicit session(persistence &p);

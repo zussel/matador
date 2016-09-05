@@ -5,6 +5,19 @@
 #ifndef OOS_IDENTIFIER_COLUMN_RESOLVER_HPP
 #define OOS_IDENTIFIER_COLUMN_RESOLVER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "tools/access.hpp"
 #include "tools/identifier.hpp"
 
@@ -16,7 +29,7 @@ namespace oos {
 
 namespace detail {
 
-class identifier_column_resolver
+class OOS_API identifier_column_resolver
 {
 public:
   identifier_column_resolver() : col_("") {}

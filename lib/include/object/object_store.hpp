@@ -61,7 +61,7 @@ class prototype_node;
 
 namespace detail {
 
-class modified_marker
+class OOS_API modified_marker
 {
 public:
   typedef void (*t_marker)(object_store &store, object_proxy &proxy);
@@ -95,7 +95,7 @@ private:
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class object_inserter {
+class OOS_API object_inserter {
 public:
   /**
    * @brief Creates an object_inserter instance.
@@ -156,7 +156,7 @@ private:
  * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
-class object_deleter {
+class OOS_API object_deleter {
 private:
   struct t_object_count {
     typedef void (*t_remove_func)(object_proxy*, bool);

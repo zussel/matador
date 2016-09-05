@@ -5,6 +5,19 @@
 #ifndef OOS_BASIC_TABLE_HPP
 #define OOS_BASIC_TABLE_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/identifier_proxy_map.hpp"
 
 #include <string>
@@ -24,7 +37,7 @@ class object_proxy;
 class object_store;
 class persistence;
 
-class basic_table
+class OOS_API basic_table
 {
 public:
   typedef std::shared_ptr<basic_table> table_ptr;
