@@ -10,10 +10,10 @@ namespace oos {
 enum cascade_type
 {
   NONE = 0,
-  DELETE = 1,
+  REMOVE = 1,
   UPDATE = 2,
   INSERT = 4,
-  ALL = DELETE | UPDATE | INSERT
+  ALL = REMOVE | UPDATE | INSERT
 };
 
 }

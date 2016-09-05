@@ -14,7 +14,7 @@ enum struct t_query_command {
   SELECT,
   INSERT,
   UPDATE,
-  DELETE
+  REMOVE
 };
 
 }

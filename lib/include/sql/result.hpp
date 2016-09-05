@@ -111,7 +111,7 @@ public:
   typedef value_type* pointer;     /**< Shortcut for the pointer type. */
   typedef value_type& reference;   /**< Shortcut for the reference type */
 
-#ifdef _MSC_VER
+/*#ifdef _MSC_VER
   result_iterator() {}
   result_iterator(oos::detail::result_impl *result_impl, T *obj = nullptr)
     : base(result_impl, obj)
@@ -119,9 +119,9 @@ public:
   result_iterator(result_iterator&& x)
     : base(x.result_impl_, x.obj_.release())
   {}
-#else
+#else*/
   using base_result_iterator<T>::base_result_iterator;
-#endif
+//#endif
 
   self & operator++();
   self operator++(int);

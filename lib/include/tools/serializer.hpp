@@ -5,6 +5,19 @@
 #ifndef OOS_SERIALIZABLE_HPP
 #define OOS_SERIALIZABLE_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "tools/cascade_type.hpp"
 #include "tools/varchar.hpp"
 #include "access.hpp"
@@ -20,7 +33,7 @@ class varchar_base;
 class identifiable_holder;
 class basic_identifier;
 
-class serializer
+class OOS_API serializer
 {
 public:
   virtual ~serializer() {}

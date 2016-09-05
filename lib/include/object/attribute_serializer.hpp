@@ -127,7 +127,11 @@ public:
       return;
     }
     if (len > len_) {
-      strcpy(to, from_);
+#ifdef _MSC_VER
+		strcpy_s(to, len_, from_);
+#else
+		strcpy(to, from_);
+#endif
       this->success_ = true;
     }
   }

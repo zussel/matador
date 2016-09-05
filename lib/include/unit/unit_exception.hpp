@@ -44,7 +44,7 @@ namespace oos {
  * to false. This exception is caugt by the main test_suite
  * serializable.
  */
-class OOS_API unit_exception : public std::exception
+class unit_exception : public std::exception
 {
 public:
   /**

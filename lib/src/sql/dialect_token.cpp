@@ -72,7 +72,7 @@ void tablename::accept(token_visitor &visitor)
 }
 
 remove::remove()
-  : token(DELETE)
+  : token(REMOVE)
 {}
 
 void remove::accept(token_visitor &visitor)

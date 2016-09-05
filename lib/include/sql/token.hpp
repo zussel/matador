@@ -39,7 +39,7 @@ struct token
   {
     CREATE_TABLE = 0,
     DROP,
-    DELETE,
+    REMOVE,
     INSERT,
     VALUES,
     VALUE,

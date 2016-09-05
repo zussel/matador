@@ -1309,7 +1309,7 @@ void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade
     std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
   );
   --ret.first->second.reference_counter;
-  if (cascade & cascade_type::DELETE) {
+  if (cascade & cascade_type::REMOVE) {
     ret.first->second.ignore = false;
     oos::access::serialize(*this, *(T*)x.ptr());
   }

@@ -219,8 +219,6 @@ public:
   {
     s.serialize("id", id);
     s.serialize("name", name);
-    //s.serialize(items); // -> should create relation as in next line
-    //s.serialize("owner_item",items); // -> should create relation as in next line
     s.serialize("object_item_list", items, "list_id", "object_item_id");
   }
 
@@ -942,7 +940,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("child", children, oos::cascade_type::DELETE);
+    serializer.serialize("child", children, oos::cascade_type::REMOVE);
   }
 };
 

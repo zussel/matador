@@ -329,7 +329,7 @@ public:
    */
   query& remove()
   {
-    reset(t_query_command::DELETE);
+    reset(t_query_command::REMOVE);
 
     sql_.append(new detail::remove());
     sql_.append(new detail::from(table_name_));
@@ -493,7 +493,7 @@ class query<row> : public detail::basic_query
 {
 public:
   query()
-    : basic_query("")
+    : detail::basic_query("")
   {}
 
   /**

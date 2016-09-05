@@ -180,13 +180,13 @@ struct group_by : public token
 struct where : public token
 {
   template < class COND >
-  where(const COND &c)
-    : token(WHERE)
+  explicit where(const COND &c)
+    : token(token::WHERE)
     , cond(new COND(c))
   { }
 
   where(const std::shared_ptr<basic_condition> &c)
-    : token(WHERE)
+    : token(token::WHERE)
     , cond(c)
   { }
 

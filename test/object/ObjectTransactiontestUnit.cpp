@@ -41,7 +41,7 @@ void ObjectTransactiontestUnit::test_insert()
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
     tr.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr.rollback();
   }
 
@@ -68,7 +68,7 @@ void ObjectTransactiontestUnit::test_insert_rollback()
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
     tr.rollback();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     UNIT_FAIL("shouldn't come here");
   }
 
@@ -96,7 +96,7 @@ void ObjectTransactiontestUnit::test_update()
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
     tr.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     UNIT_FAIL("shouldn't come here");
   }
 
@@ -128,7 +128,7 @@ void ObjectTransactiontestUnit::test_update_rollback()
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
     tr.rollback();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     UNIT_FAIL("shouldn't come here");
   }
 
@@ -157,7 +157,7 @@ void ObjectTransactiontestUnit::test_delete()
     store.remove(hans);
 
     tr.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr.rollback();
   }
 
@@ -186,7 +186,7 @@ void ObjectTransactiontestUnit::test_delete_rollback()
     store.remove(hans);
 
     tr.rollback();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr.rollback();
   }
 
@@ -233,12 +233,12 @@ void ObjectTransactiontestUnit::test_nested()
       UNIT_ASSERT_EQUAL(hans->height(), 159U, "height must be valid");
 
       tr2.commit();
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr2.rollback();
     }
 
     tr1.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr1.rollback();
   }
 
@@ -285,12 +285,12 @@ void ObjectTransactiontestUnit::test_nested_rollback()
 
       UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
 
-    } catch (std::exception &ex) {
+    } catch (std::exception &) {
       tr2.rollback();
     }
 
     tr1.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr1.rollback();
   }
 
@@ -332,7 +332,7 @@ void ObjectTransactiontestUnit::test_foreign()
     UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
 
     tr.commit();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr.rollback();
   }
 }
@@ -367,7 +367,7 @@ void ObjectTransactiontestUnit::test_foreign_rollback()
     UNIT_ASSERT_TRUE(mview.empty(), "view must be empty");
 
     tr.rollback();
-  } catch (std::exception &ex) {
+  } catch (std::exception &) {
     tr.rollback();
   }
 

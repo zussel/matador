@@ -483,12 +483,23 @@ public:
   template < class T >
   void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
-    ++current_test_func_info->assertion_count;
-    if (a == b) {
-      std::stringstream msgstr;
-      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
-      throw unit_exception(msgstr.str());
-    }
+	  ++current_test_func_info->assertion_count;
+	  if (a == b) {
+		  std::stringstream msgstr;
+		  msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+		  throw unit_exception(msgstr.str());
+	  }
+  }
+
+  template < class T, class V >
+  void assert_not_equal(const T &a, const V &b, const std::string &msg, int line, const char *file)
+  {
+	  ++current_test_func_info->assertion_count;
+	  if (a == b) {
+		  std::stringstream msgstr;
+		  msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+		  throw unit_exception(msgstr.str());
+	  }
   }
 
   /**

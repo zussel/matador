@@ -30,7 +30,7 @@ namespace oos {
  * This kind of exception is thrown, when
  * an serializable dealing error occurs.
  */
-class OOS_API sql_exception : public std::exception
+class sql_exception : public std::exception
 {
 public:
   /**

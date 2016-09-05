@@ -91,11 +91,11 @@ public:
     }
     friend std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
-    unsigned tests = 0;
-    unsigned asserts = 0;
-    unsigned succeeded = 0;
-    unsigned failures = 0;
-    unsigned errors = 0;
+	size_t tests = 0;
+    size_t asserts = 0;
+	size_t succeeded = 0;
+	size_t failures = 0;
+	size_t errors = 0;
   };
 
 private:

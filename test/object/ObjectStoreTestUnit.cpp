@@ -144,8 +144,8 @@ ObjectStoreTestUnit::expression_test()
 
   delete exp;
 
-  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
-  UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
+//  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+//  UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
 
   object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");

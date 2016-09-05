@@ -5,13 +5,26 @@
 #ifndef OOS_IDENTIFIABLE_HOLDER_HPP
 #define OOS_IDENTIFIABLE_HOLDER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include <memory>
 
 namespace oos {
 
 class basic_identifier;
 
-class identifiable_holder
+class OOS_API identifiable_holder
 {
 public:
   virtual ~identifiable_holder() {}
