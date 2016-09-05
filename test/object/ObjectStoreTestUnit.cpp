@@ -136,16 +136,16 @@ ObjectStoreTestUnit::expression_test()
 
   variable<int> z(make_var(&ObjectItem<Item>::get_int));
 
-  expression *exp = make_expression(z == 4);
+  std::unique_ptr<expression> exp(make_expression(z == 4));
 
   object_ptr<ObjectItem<Item>> optr = itemlist->begin().get();
 
   (*exp)(optr);
 
-  delete exp;
-
-//  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
-//  UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
+#ifndef _MSC_VER
+  ObjectItemList::iterator it = std::find_if(itemlist->begin(), itemlist->end(), z == 4);
+  UNIT_ASSERT_FALSE(it == itemlist->end(), "couldn't find item");
+#endif
 
   object_view<ObjectItem<Item> >::iterator j = std::find_if(oview.begin(), oview.end(), 6 > x);
   UNIT_ASSERT_EQUAL((*j)->get_int(), 1, "couldn't find item 1");
