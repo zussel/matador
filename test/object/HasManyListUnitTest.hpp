@@ -46,8 +46,6 @@ public:
   {
     s.serialize("id", id);
     s.serialize("name", name);
-    //s.serialize(items); // -> should create relation as in next line
-    //s.serialize("owner_item",items); // -> should create relation as in next line
     s.serialize("owner_item", items, "owner_id", "item_id");
   }
 };

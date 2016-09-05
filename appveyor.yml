@@ -10,9 +10,13 @@ environment:
 #    VS_PLATFORM: win32
 #  - VS_VERSION: 11
 #    VS_PLATFORM: x64
-  - VS_VERSION: 12
+#  - VS_VERSION: 12 2013
+#    VS_PLATFORM: win32
+#  - VS_VERSION: 12 2013
+#    VS_PLATFORM: x64
+  - VS_VERSION: 14 2015
     VS_PLATFORM: win32
-  - VS_VERSION: 12
+  - VS_VERSION: 14 2015
     VS_PLATFORM: x64
 
 before_build:
