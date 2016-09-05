@@ -108,9 +108,9 @@ public:
   }
 
 protected:
-  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override {
-    std::cout << "appending proxy for relation [" << id << "]\n";
-    appender_.append(id, &identifier_proxy_map, &has_many_relations);
+  virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
+  {
+    appender_.append(id, identifier_proxy_map, &has_many_relations);
   }
 
 private:

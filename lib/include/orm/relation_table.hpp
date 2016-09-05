@@ -26,13 +26,14 @@ public:
   typedef has_many_item<T> relation_type;
 
   relation_table(prototype_node *node, persistence &p, const relation_type &relation,
-                 const std::string &owner_type,
+                 const std::string &owner_type, const std::string &relation_id,
                  const std::string &owner_id_field, const std::string &item_id_field)
     : basic_table(node, p)
     , item_(relation)
     , owner_id_column_(owner_id_field)
     , item_id_column_(item_id_field)
     , owner_type_(owner_type)
+    , relation_id_(relation_id)
     , resolver_(*this)
   {
     item_.owner_id(owner_id_column_);
@@ -91,7 +92,6 @@ public:
     auto first = res.begin();
     auto last = res.end();
 
-    std::vector<object_proxy*> items;
     while (first != last) {
       // create new proxy of relation object
       proxy_.reset(new object_proxy(first.release()));
@@ -100,19 +100,17 @@ public:
       resolver_.resolve(proxy, &store);
 
       // append item to owner table
-      auto i = owner_table_->has_many_relations_.find(owner_type_);
+      auto i = owner_table_->has_many_relations_.find(relation_id_);
       if (i == owner_table_->has_many_relations_.end()) {
-        i = owner_table_->has_many_relations_.insert(std::make_pair(owner_type_, detail::t_identifier_multimap())).first;
+        i = owner_table_->has_many_relations_.insert(
+        std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
       }
-      std::cout << "appending proxy " << this->proxy(proxy->obj<relation_type>()->value()) << " for owner " << *proxy->obj<relation_type>()->owner() << "\n";
       i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), this->proxy(proxy->obj<relation_type>()->value())));
-
-      items.push_back(proxy);
     }
 
     if (owner_table_->is_loaded()) {
       // append items
-      owner_table_->append_relation_items(owner_type_, identifier_proxy_map_, has_many_relations_);
+      owner_table_->append_relation_items(relation_id_, identifier_proxy_map_, owner_table_->has_many_relations_);
     }
 
     is_loaded_ = true;
@@ -150,6 +148,7 @@ private:
   std::string owner_id_column_;
   std::string item_id_column_;
   std::string owner_type_;
+  std::string relation_id_;
 
   detail::relation_resolver<relation_type> resolver_;
 

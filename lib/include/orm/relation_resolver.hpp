@@ -116,7 +116,7 @@ namespace detail {
        */
       if (j->second->is_loaded()) {
           // relation table is loaded
-        std::cout << "Todo: relation table [" << id << "] loaded; append all elements for owner " << *id_ << "\n";
+        std::cout << "Todo: relation table [" << id << "/" << j->second->name() << "] loaded; append all elements for owner " << *id_ << "\n";
         auto i = table_.has_many_relations_.find(id);
         // get relation items for id/relation
         if (i != table_.has_many_relations_.end()) {
@@ -128,7 +128,6 @@ namespace detail {
           }
         }
       } else {
-        std::cout << "Todo: relation table [" << id << "] not loaded; store owner id " << *id_ << " and proxy\n";
         table_.has_many_relations_.insert(std::make_pair(id, detail::t_identifier_multimap()));
         j->second->identifier_proxy_map_.insert(std::make_pair(id_, proxy_));
       }

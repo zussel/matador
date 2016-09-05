@@ -245,7 +245,6 @@ void OrmTestUnit::test_load_has_one()
 
 void OrmTestUnit::test_load_has_many()
 {
-  std::cout << "\n";
   oos::persistence p(dns_);
 
   p.attach<child>("child");
@@ -272,8 +271,6 @@ void OrmTestUnit::test_load_has_many()
 
     UNIT_ASSERT_FALSE(children->children.empty(), "children list couldn't be empty");
     UNIT_ASSERT_EQUAL(children->children.size(), 2UL, "invalid children list size");
-
-    s.insert(new children_list("children list 2"));
   }
 
   p.clear();
@@ -288,12 +285,12 @@ void OrmTestUnit::test_load_has_many()
     t_children_list_view children_lists(s.store());
 
     UNIT_ASSERT_TRUE(!children_lists.empty(), "children lists view must not be empty");
-    UNIT_ASSERT_EQUAL(children_lists.size(), 2UL, "their must be 1 children list");
+    UNIT_ASSERT_EQUAL(children_lists.size(), 1UL, "their must be 1 children list");
 
-//    auto clptr = children_lists.front();
-//
-//    UNIT_ASSERT_FALSE(clptr->children.empty(), "children list couldn't be empty");
-//    UNIT_ASSERT_EQUAL(clptr->children.size(), 2UL, "invalid children list size");
+    auto clptr = children_lists.front();
+
+    UNIT_ASSERT_FALSE(clptr->children.empty(), "children list couldn't be empty");
+    UNIT_ASSERT_EQUAL(clptr->children.size(), 2UL, "invalid children list size");
   }
 
   p.drop();

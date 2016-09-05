@@ -30,7 +30,7 @@ void session::load()
       // Todo: replace with persistence exception
       throw object_exception("couldn't find table");
     }
-    std::cout << "loading table " << i->second->name() << "\n";
+//    std::cout << "loading table " << i->second->name() << "\n";
     load(i->second);
   }
 }
