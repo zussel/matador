@@ -40,7 +40,7 @@ class prototype_node;
  * nullptr is returned
  */
 template < class T >
-class OOS_API identifier_resolver
+class identifier_resolver
 {
 public:
   identifier_resolver() {}
