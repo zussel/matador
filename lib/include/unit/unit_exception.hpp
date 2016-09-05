@@ -18,19 +18,6 @@
 #ifndef UNIT_EXCEPTION_HPP
 #define UNIT_EXCEPTION_HPP
 
-#ifdef _MSC_VER
-  #ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-  #define OOS_API
-#endif
-
 #include <exception>
 #include <string>
 
@@ -55,15 +42,21 @@ public:
    * 
    * @param msg Message of the exception.
    */
-  unit_exception(const std::string &msg) throw();
-  virtual ~unit_exception() throw();
+  unit_exception(const std::string &msg) throw()
+    : what_(msg)
+  {}
+
+  virtual ~unit_exception() throw() {}
   
   /**
    * Returns the message of this exception.
    * 
    * @return The message of the exception.
    */
-  virtual const char* what() const throw();
+  virtual const char* what() const throw()
+  {
+    return what_.c_str();
+  }
 
 private:
   std::string what_;

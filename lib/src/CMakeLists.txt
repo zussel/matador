@@ -146,7 +146,6 @@ SET(SQL_SOURCES
   sql/sql.cpp
   sql/statement_impl.cpp
   sql/row.cpp
-  sql/sql_exception.cpp
   sql/typed_column_serializer.cpp
   sql/token.cpp
   sql/column.cpp
@@ -159,7 +158,8 @@ SET(SQL_SOURCES
   sql/field.cpp
   sql/query.cpp
   sql/basic_query.cpp
-  sql/basic_dialect_compiler.cpp sql/basic_dialect_linker.cpp)
+  sql/basic_dialect_compiler.cpp
+  sql/basic_dialect_linker.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -190,7 +190,8 @@ SET(SQL_HEADER
   ../include/sql/basic_query.hpp
   ../include/sql/token_list.hpp
   ../include/sql/token_visitor.hpp
-  ../include/sql/basic_dialect_compiler.hpp ../include/sql/basic_dialect_linker.hpp)
+  ../include/sql/basic_dialect_compiler.hpp
+  ../include/sql/basic_dialect_linker.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
@@ -201,7 +202,7 @@ SET(ORM_HEADERS
   ../include/orm/identifier_column_resolver.hpp
   ../include/orm/relation_table.hpp
   ../include/orm/relation_resolver.hpp
-        ../include/orm/relation_item_appender.hpp)
+  ../include/orm/relation_item_appender.hpp)
 
 SET(ORM_SOURCES
   orm/persistence.cpp
@@ -254,7 +255,6 @@ SET(JSON_HEADER
 
 SET(UNIT_SOURCES
   unit/test_suite.cpp
-  unit/unit_exception.cpp
   unit/unit_test.cpp
 )
 

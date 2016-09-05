@@ -5,19 +5,6 @@
 #ifndef OOS_SQL_EXCEPTION_HPP
 #define OOS_SQL_EXCEPTION_HPP
 
-#ifdef _MSC_VER
-#ifdef oos_EXPORTS
-    #define OOS_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
-  #else
-    #define OOS_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
-  #endif
-  #pragma warning(disable: 4251)
-#else
-#define OOS_API
-#endif
-
 #include <exception>
 #include <string>
 
@@ -39,23 +26,33 @@ public:
    * @param source The source of the exception.
    * @param what The message of the exception.
    */
-  sql_exception(const char *source, const char *what);
+  sql_exception(const char *source, const char *what)
+    : source_(source)
+    , what_(what)
+  {}
 
-  virtual ~sql_exception();
+
+  virtual ~sql_exception() {}
 
   /**
    * Returns the message of the exception
    *
    * @return The message of this exception.
    */
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept
+  {
+    return what_.c_str();
+  }
 
   /**
    * Returns the source of the exception
    *
    * @return The source of this exception.
    */
-  const char* source() const;
+  const char* source() const
+  {
+    return source_.c_str();
+  }
 
 private:
   std::string source_;
