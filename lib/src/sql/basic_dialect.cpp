@@ -17,6 +17,22 @@ build_info::build_info(const sql &s, basic_dialect *d)
   current = tokens_.begin();
 }
 
+build_info::build_info(const build_info &x)
+  : stmt(x.stmt)
+  , dialect(x.dialect)
+  , tokens_(x.tokens_)
+  , current(x.current)
+  , result(x.result)
+{ }
+
+build_info::build_info(build_info &&x)
+  : stmt(std::move(x.stmt))
+  , dialect(std::move(x.dialect))
+  , tokens_(std::move(x.tokens_))
+  , current(std::move(x.current))
+  , result(std::move(x.result))
+{ }
+
 }
 
 basic_dialect::basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker)
