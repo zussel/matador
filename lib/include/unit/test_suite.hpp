@@ -89,7 +89,7 @@ public:
         ++this->failures;
       }
     }
-    friend std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
+    friend OOS_API std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
 	size_t tests = 0;
     size_t asserts = 0;

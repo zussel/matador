@@ -18,6 +18,19 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "sql/basic_query.hpp"
 #include "sql/dialect_token.hpp"
 #include "sql/column.hpp"
@@ -622,7 +635,7 @@ query<T> select(const std::string &table)
   return q.select();
 }
 
-query<row> select(columns cols);
+OOS_API query<row> select(columns cols);
 
 }
 

@@ -358,7 +358,7 @@ condition<column, std::initializer_list<V>> in(const oos::column &f, std::initia
   return condition<column, std::initializer_list<V>>(f, args);
 }
 
-condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q, basic_dialect *dialect);
+OOS_API condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q, basic_dialect *dialect);
 
 template<class T>
 condition<column, std::pair<T, T>> between(const oos::column &f, T low, T high)

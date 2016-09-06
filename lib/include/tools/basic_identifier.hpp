@@ -149,7 +149,7 @@ public:
    * @param x The identifier to write.
    * @return Reference to the ostream.
    */
-  friend std::ostream &operator<<(std::ostream &os, const basic_identifier &x);
+  friend OOS_API std::ostream &operator<<(std::ostream &os, const basic_identifier &x);
 
   /**
    * Returns true if the identifier has a

@@ -253,7 +253,7 @@ public:
    * @param pn The prototype_node to be written.
    * @return The modified ostream.
    */
-  friend std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
+  friend OOS_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   /**
    * Find the underlying proxy of the given primary key.
