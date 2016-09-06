@@ -5,6 +5,20 @@
 #ifndef OOS_BASIC_QUERY_HPP
 #define OOS_BASIC_QUERY_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/commands.hpp"
 #include "sql/sql.hpp"
 #include "sql/column.hpp"
@@ -17,7 +31,7 @@ class connection;
 
 namespace detail {
 
-class basic_query
+class OOS_API basic_query
 {
 public:
   /**

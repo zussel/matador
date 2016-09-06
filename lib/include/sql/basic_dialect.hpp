@@ -5,6 +5,20 @@
 #ifndef OOS_BASIC_DIALECT_HPP
 #define OOS_BASIC_DIALECT_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/types.hpp"
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
@@ -26,7 +40,7 @@ namespace detail {
 class basic_dialect_compiler;
 class basic_dialect_linker;
 
-struct build_info {
+struct OOS_API build_info {
   build_info(const sql &s, basic_dialect *d);
 
   const sql &stmt;
@@ -38,7 +52,7 @@ struct build_info {
 
 }
 
-class basic_dialect
+class OOS_API basic_dialect
 {
 public:
   enum t_compile_type {

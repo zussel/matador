@@ -5,13 +5,27 @@
 #ifndef OOS_COLUMN_HPP
 #define OOS_COLUMN_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/token.hpp"
 #include "sql/value.hpp"
 #include "sql/basic_dialect.hpp"
 
 namespace oos {
 
-struct column : public detail::token
+struct OOS_API column : public detail::token
 {
   column(const std::string &col);
 
@@ -20,7 +34,7 @@ struct column : public detail::token
   std::string name;
 };
 
-struct columns : public detail::token
+struct OOS_API columns : public detail::token
 {
   enum t_brackets {
     WITH_BRACKETS,
@@ -47,7 +61,7 @@ struct columns : public detail::token
 
 namespace detail {
 
-struct typed_column : public oos::column
+struct OOS_API typed_column : public oos::column
 {
   typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
 
@@ -58,7 +72,7 @@ struct typed_column : public oos::column
   bool is_host;
 };
 
-struct identifier_column : public typed_column
+struct OOS_API identifier_column : public typed_column
 {
   identifier_column(const char *n, data_type_t t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
@@ -68,7 +82,7 @@ struct identifier_column : public typed_column
   }
 };
 
-struct typed_varchar_column : public typed_column
+struct OOS_API typed_varchar_column : public typed_column
 {
   typed_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
     : typed_column(n, t, idx, host)
@@ -83,7 +97,7 @@ struct typed_varchar_column : public typed_column
   size_t size;
 };
 
-struct identifier_varchar_column : public typed_varchar_column
+struct OOS_API identifier_varchar_column : public typed_varchar_column
 {
   identifier_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
     : typed_varchar_column(n, size, t, idx, host)
@@ -95,7 +109,7 @@ struct identifier_varchar_column : public typed_varchar_column
   }
 };
 
-struct basic_value_column : public column
+struct OOS_API basic_value_column : public column
 {
   basic_value_column(const std::string &col, basic_value *val)
     : column(col)
@@ -110,7 +124,6 @@ struct basic_value_column : public column
   virtual void accept(token_visitor &visitor) override
   {
     visitor.visit(*this);
-//    return visitor.visit(*this) + "=" + value_.compile(d);
   }
 
   std::unique_ptr<basic_value> value_;

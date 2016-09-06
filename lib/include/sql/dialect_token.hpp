@@ -5,6 +5,20 @@
 #ifndef OOS_DIALECT_TOKEN_HPP
 #define OOS_DIALECT_TOKEN_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/token.hpp"
 #include "sql/condition.hpp"
 
@@ -12,35 +26,35 @@ namespace oos {
 
 namespace detail {
 
-struct select : public token
+struct OOS_API select : public token
 {
   select() : token(SELECT) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct begin : public token
+struct OOS_API begin : public token
 {
   begin() : token(BEGIN) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct commit : public token
+struct OOS_API commit : public token
 {
   commit() : token(COMMIT) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct rollback : public token
+struct OOS_API rollback : public token
 {
   rollback() : token(ROLLBACK) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct drop : public token
+struct OOS_API drop : public token
 {
   drop(const std::string &t) : token(DROP), table(t) {}
 
@@ -49,7 +63,7 @@ struct drop : public token
   std::string table;
 };
 
-struct create : public token
+struct OOS_API create : public token
 {
   create(const std::string &t);
 
@@ -58,7 +72,7 @@ struct create : public token
   std::string table;
 };
 
-struct insert : public token
+struct OOS_API insert : public token
 {
   insert(const std::string &t);
 
@@ -67,14 +81,14 @@ struct insert : public token
   std::string table;
 };
 
-struct update : public token
+struct OOS_API update : public token
 {
   update();
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct tablename : public token
+struct OOS_API tablename : public token
 {
   tablename(const std::string &t);
 
@@ -83,28 +97,28 @@ struct tablename : public token
   std::string tab;
 };
 
-struct remove : public token
+struct OOS_API remove : public token
 {
   remove();
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct distinct : public token
+struct OOS_API distinct : public token
 {
   distinct() : token(DISTINCT) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct set : public token
+struct OOS_API set : public token
 {
   set() : token(SET) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct values : public token
+struct OOS_API values : public token
 {
   values() : token(VALUES) {}
 
@@ -118,21 +132,21 @@ struct values : public token
   std::vector<std::shared_ptr<basic_value>> values_;
 };
 
-struct asc : public token
+struct OOS_API asc : public token
 {
   asc() : token(ASC) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct desc : public token
+struct OOS_API desc : public token
 {
   desc() : token(DESC) {}
 
   virtual void accept(token_visitor &visitor) override;
 };
 
-struct from : public token
+struct OOS_API from : public token
 {
   from(const std::string &t);
 
@@ -141,7 +155,7 @@ struct from : public token
   std::string table;
 };
 
-struct top : public token
+struct OOS_API top : public token
 {
   top(size_t lmt);
 
@@ -150,7 +164,7 @@ struct top : public token
   size_t limit_;
 };
 
-struct as : public token
+struct OOS_API as : public token
 {
   as(const std::string &a);
 
@@ -159,7 +173,7 @@ struct as : public token
   std::string alias;
 };
 
-struct order_by : public token
+struct OOS_API order_by : public token
 {
   order_by(const std::string &col);
 
@@ -168,7 +182,7 @@ struct order_by : public token
   std::string column;
 };
 
-struct group_by : public token
+struct OOS_API group_by : public token
 {
   group_by(const std::string &col);
 
@@ -177,7 +191,7 @@ struct group_by : public token
   std::string column;
 };
 
-struct where : public token
+struct OOS_API where : public token
 {
   template < class COND >
   explicit where(const COND &c)

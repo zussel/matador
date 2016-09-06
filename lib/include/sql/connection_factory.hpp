@@ -41,7 +41,7 @@
 namespace oos {
 
 /// @cond OOS_DEV
-class connection_factory : public oos::singleton<connection_factory>
+class OOS_API connection_factory : public oos::singleton<connection_factory>
 {
 private:
   typedef factory<std::string, connection_impl> factory_t;

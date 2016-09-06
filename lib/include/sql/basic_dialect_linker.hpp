@@ -5,6 +5,20 @@
 #ifndef OOS_BASIC_DIALECT_LINKER_HPP
 #define OOS_BASIC_DIALECT_LINKER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/token_visitor.hpp"
 #include "sql/token.hpp"
 #include "sql/token_list.hpp"
@@ -20,7 +34,7 @@ namespace detail {
 
 struct build_info;
 
-class basic_dialect_linker : public token_visitor
+class OOS_API basic_dialect_linker : public token_visitor
 {
 public:
   void link();

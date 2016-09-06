@@ -158,7 +158,7 @@ private:
  */
 class OOS_API object_deleter {
 private:
-  struct t_object_count {
+  struct OOS_API t_object_count {
     typedef void (*t_remove_func)(object_proxy*, bool);
     template < class T >
     t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)

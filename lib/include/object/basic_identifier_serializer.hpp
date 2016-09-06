@@ -5,6 +5,20 @@
 #ifndef OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include <typeindex>
 #include <iostream>
 #include "tools/serializer.hpp"
@@ -14,7 +28,7 @@ namespace oos {
 
 class byte_buffer;
 
-class basic_identifier_serializer : public serializer {
+class OOS_API basic_identifier_serializer : public serializer {
 public:
   basic_identifier_serializer();
 

@@ -48,7 +48,7 @@ namespace oos {
 
 namespace detail {
 
-class basic_condition : public token
+class OOS_API basic_condition : public token
 {
 public:
   basic_condition() : token(token::CONDITION) { }
@@ -81,7 +81,7 @@ public:
   static std::array<std::string, num_operands> operands;
 };
 
-class basic_column_condition : public basic_condition
+class OOS_API basic_column_condition : public basic_condition
 {
 public:
   column field_;
@@ -97,7 +97,7 @@ public:
   }
 };
 
-class basic_in_condition : public basic_condition
+class OOS_API basic_in_condition : public basic_condition
 {
 public:
   column field_;

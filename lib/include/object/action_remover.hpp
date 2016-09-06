@@ -5,6 +5,19 @@
 #ifndef OOS_ACTION_REMOVER_HPP
 #define OOS_ACTION_REMOVER_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+#define OOS_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define OOS_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+#pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "object/action_visitor.hpp"
 #include "object/action.hpp"
 
@@ -14,7 +27,7 @@ namespace oos {
 
 class object_proxy;
 
-class action_remover : public action_visitor
+class OOS_API action_remover : public action_visitor
 {
 public:
   typedef std::shared_ptr<action> action_ptr;

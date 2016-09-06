@@ -18,6 +18,20 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/types.hpp"
 
 #include <memory>
@@ -33,7 +47,7 @@ class token_visitor;
 namespace detail {
 
 /// @cond OOS_DEV
-struct token
+struct OOS_API token
 {
   enum t_token
   {

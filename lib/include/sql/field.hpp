@@ -5,13 +5,27 @@
 #ifndef OOS_FIELD_HPP
 #define OOS_FIELD_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/types.hpp"
 
 #include <string>
 
 namespace oos {
 
-class field
+class OOS_API field
 {
 public:
   field();

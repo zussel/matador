@@ -1,6 +1,20 @@
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "sql/result.hpp"
 #include "sql/statement.hpp"
 #include "sql/connection_impl.hpp"
@@ -13,7 +27,7 @@ namespace oos {
 
 class basic_dialect;
 
-class connection
+class OOS_API connection
 {
 public:
   explicit connection(const std::string &dns);
