@@ -115,7 +115,7 @@ std::string to_string(T x, size_t precision = 0, typename std::enable_if<std::is
   } else {
     char format[32];
 #ifdef _MSC_VER
-    sprintf_s(format, "%%.%df", precision);
+    sprintf_s(format, "%%.%df", (int)precision);
 #else
     sprintf(format, "%%.%df", (int)precision);
 #endif

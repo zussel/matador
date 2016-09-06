@@ -128,7 +128,8 @@ public:
     }
     if (len > len_) {
 #ifdef _MSC_VER
-		strcpy_s(to, len_, from_);
+		strncpy_s(to, len, from_, len_);
+		to[len_] = '\0';
 #else
 		strcpy(to, from_);
 #endif

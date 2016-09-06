@@ -257,7 +257,11 @@ void mssql_statement::bind_value(const char *val, size_t /*size*/, size_t index)
   } else {
 
     v->data = new char[s + 1];
-    v->data = strncpy((char *) v->data, val, s);
+#ifdef _MSC_VER
+	strncpy_s((char *) v->data, s+1, val, s);
+#else
+	v->data = strncpy((char *)v->data, val, s);
+#endif
     ((char *) v->data)[s++] = '\0';
   }
 

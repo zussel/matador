@@ -138,7 +138,7 @@ private:
 
   std::stack<object_proxy *> object_proxy_stack_;
 
-  std::reference_wrapper<object_store> ostore_;
+  object_store &ostore_;
 
   std::function<void(object_store&, object_proxy*)> modified_marker_;
 
@@ -1245,7 +1245,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
     object_proxy_stack_.pop();
   } else {
     // new object
-    ostore_.get().insert<T>(x.proxy_, notify_);
+    ostore_.insert<T>(x.proxy_, notify_);
   }
   ++(*x.proxy_);
 }
@@ -1268,7 +1268,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   object_proxy *proxy = object_proxy_stack_.top();
   x.owner_id_ = proxy->pk();
   x.owner_ = proxy;
-  x.ostore_ = &ostore_.get();
+  x.ostore_ = &ostore_;
   x.mark_modified_owener_ = modified_marker_;
 
   typename basic_has_many<T, C>::iterator first = x.begin();
@@ -1278,7 +1278,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
     typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
     if (!i.is_inserted()) {
       // item is not in store, insert it
-      ostore_.get().insert(i);
+      ostore_.insert(i);
     }
   }
 }

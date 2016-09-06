@@ -63,7 +63,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(oos::type_traits<T>::data_type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
