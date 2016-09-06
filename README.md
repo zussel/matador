@@ -74,7 +74,7 @@ Create a build directory change to it and call cmake:
     $ cmake -G "Visual Studio *" ..
 
 Where __*__ is one of the *__"Visual Studio"__* strings up from *__"14"__*. See cmake
-documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators).
+documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
 After generation you find a __oos.sln__ solution file in the current directory.
 
 Contact
