@@ -18,6 +18,8 @@
 #include "sql/connection_factory.hpp"
 #include "sql/memory_connection.hpp"
 
+#include <cstdint>
+
 namespace oos {
 
 connection_factory::connection_factory()
@@ -70,9 +72,9 @@ connection_factory::dynamic_connection_producer::dynamic_connection_producer(con
     throw std::runtime_error("couldn't fínd library [" + name + "]");
   }
   // get create function
-  create_ = reinterpret_cast<create_func>(reinterpret_cast<long>(loader_.function("create_database")));
+  create_ = reinterpret_cast<create_func>(reinterpret_cast<std::uintptr_t>(loader_.function("create_database")));
   // get destroy function
-  destroy_ = reinterpret_cast<destroy_func>(reinterpret_cast<long>(loader_.function("destroy_database")));
+  destroy_ = reinterpret_cast<destroy_func>(reinterpret_cast<std::uintptr_t>(loader_.function("destroy_database")));
 }
 
 connection_factory::dynamic_connection_producer::~dynamic_connection_producer()
