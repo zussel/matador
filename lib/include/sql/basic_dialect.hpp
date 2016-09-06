@@ -32,8 +32,8 @@
 
 namespace oos {
 
-class sql;
 class basic_dialect;
+class sql;
 
 namespace detail {
 
@@ -43,12 +43,11 @@ class basic_dialect_linker;
 struct OOS_API build_info {
   build_info(const sql &s, basic_dialect *d);
 
-  build_info(const build_info&);
-  build_info(build_info&&);
-  build_info& operator=(const build_info&) = delete;
-  build_info& operator=(build_info&&) = delete;
+  build_info(const build_info&) = default;
+  build_info(build_info&&) = default;
+  build_info& operator=(const build_info&) = default;
+  build_info& operator=(build_info&&) = default;
 
-  const sql &stmt;
   basic_dialect *dialect;
   token_list_t tokens_;
   token_list_t::iterator current;
