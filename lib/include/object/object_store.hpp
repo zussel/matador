@@ -681,9 +681,7 @@ public:
   template < class T >
   object_ptr<T> insert(const object_ptr<T> &o)
   {
-    object_inserter_.reset();
-    insert<T>(o.proxy_, true);
-    return o;
+    return insert(o, true);
   }
 
   /**
@@ -899,6 +897,16 @@ private:
     if (!transactions_.empty()) {
       transactions_.top().on_update<T>(proxy);
     }
+  }
+
+  template < class T >
+  object_ptr<T> insert(const object_ptr<T> &o, bool reset)
+  {
+    if (reset) {
+      object_inserter_.reset();
+    }
+    insert<T>(o.proxy_, true);
+    return o;
   }
 
   /**
@@ -1278,7 +1286,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
     typename basic_has_many<T, C>::relation_type i = (first++).relation_item();
     if (!i.is_inserted()) {
       // item is not in store, insert it
-      ostore_.insert(i);
+      ostore_.insert(i, false);
     }
   }
 }
