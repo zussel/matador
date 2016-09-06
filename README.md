@@ -1,7 +1,7 @@
 Open Object Store (OOS)
 =======================
 
-__Verion 0.2.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
+__Version 0.5.0-alpha.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
 
 Store all kind of objects in one container.
 
@@ -11,21 +11,25 @@ Code coverage at [coveralls.io](https://coveralls.io)
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=develop)](https://coveralls.io/r/zussel/oos?branch=develop)
-[![Stories in Ready](https://badge.waffle.io/zussel/oos.png?label=ready)](https://waffle.io/zussel/oos)
 [![Ohloh](http://www.ohloh.net/p/openobjectstore/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/openobjectstore)
 
 
-OOS is a ORM framework written in C++. It aims to encapsulate all the database work (database backends, sql statements, serialization of objects) and provide the user an easy to use interface and a unique container for all objects. Given this container the user has a centralized storage point for all objects at hand but with the ability to create views on concrete object types.
+OOS is a ORM framework written in C++. It aims to encapsulate all database stuff
+(database backends, sql statements, serialization of objects) and provides the user an
+easy to use interface and a unique container for all objects. Given this container the user
+has a centralized point of storage for all objects at hand but with the ability to create views on
+concrete object types.
 
 Features:
 
  * Encapsulate database backends
  * Support for SQLite, MySQL and MS SQL Server
  * Encapsulate sql statements
+ * Fluent sql query builder
  * One to one/many relations
  * One storage container
  * Filter with simple expressions
- * Reference counting mechanism
+ * Transactions
  * STL like interface and iterators
 
 Documentation can be found [here](http://zussel.github.com/oos).
@@ -33,8 +37,11 @@ Documentation can be found [here](http://zussel.github.com/oos).
 Requirements
 ------------
 
-There are less requirements for the runtime library. At least the database library you want to use in your environments path.
-If you would like to build from the sources you need at least the [cmake](http://www.cmake.org) build system installed. If you plan to generate an install package on a windows system you need the [nullsoft scriptable install system](http://nsis.sourceforge.net).
+The library has very less dependencies. At least the database library you want to use
+in your environments path. If you would like to build from the sources you need at least the
+[cmake](http://www.cmake.org) build system installed. If you plan to generate an install
+package on a windows system you need the
+[nullsoft scriptable install system](http://nsis.sourceforge.net).
           
 Sources
 -------
@@ -66,9 +73,13 @@ Create a build directory change to it and call cmake:
     $ cd build
     $ cmake -G "Visual Studio *" ..
 
-Where __*__ is one of the *__"Visual Studio"__* strings up from *__"10"__*. See cmake documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators). After generation you find a __oos.sln__ solution file in the current directory.
+Where __*__ is one of the *__"Visual Studio"__* strings up from *__"14"__*. See cmake
+documentation [here](http://www.cmake.org/cmake/help/v2.8.10/cmake.html#section_Generators).
+After generation you find a __oos.sln__ solution file in the current directory.
 
 Contact
 -------
 
-If you have questions or issues concerning oos you can place an issue in my [oos github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or contact me via mail *__oos at zussel dot de__*.
+If you have questions or issues concerning oos you can place an issue in my
+[oos github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or
+contact me via mail *__oos at zussel dot de__*.
