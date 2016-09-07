@@ -175,7 +175,6 @@ bool test_suite::run(const test_unit_args &unit_args)
   } else {
     for (auto test : unit_args.tests) {
       bool succeeded = run(unit_args.unit, test);
-      summary_.evaluate(succeeded);
       if (result && !succeeded) {
         result = succeeded;
       }
@@ -191,7 +190,14 @@ bool test_suite::run(const std::string &unit, const std::string &test)
     std::cout << "couldn't find test unit [" << unit << "]\n";
     return false;
   } else {
-    return i->second->execute(test);
+    bool succeeded = i->second->execute(test);
+    auto j = std::find_if(i->second->test_func_infos_.begin(), i->second->test_func_infos_.end(), [test](const unit_test::t_test_func_info_vector::value_type &x) {
+      return x.name == test;
+    });
+    if (j != i->second->test_func_infos_.end()) {
+      summary_.evaluate(*j);
+    }
+    return succeeded;
   }
 }
 

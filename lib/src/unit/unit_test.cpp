@@ -165,7 +165,7 @@ void unit_test::execute(test_func_info &test_info)
   }
   finalize();
   if (test_info.succeeded) {
-    std::cout << "PASS (" << test_info.assertion_count << " assertions) (" << (double)(dur)/1000.0 << "ms)\n";
+    std::cout << "PASS (" << test_info.assertion_count + test_info.error_count << " assertions) (" << (double)(dur)/1000.0 << "ms)\n";
   } else {
     std::cout << "FAILED\n\t" << test_info.message << "\n";
   }
