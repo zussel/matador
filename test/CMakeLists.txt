@@ -19,7 +19,7 @@ SET (TEST_TOOLS_SOURCES
   tools/StringTestUnit.hpp
 )
 
-SET (TEST_HEADER Item.hpp)
+SET (TEST_HEADER Item.hpp has_many_list.hpp)
 
 SET (TEST_OBJECT_SOURCES
   object/ObjectPrototypeTestUnit.cpp

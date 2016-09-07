@@ -2,8 +2,8 @@
 // Created by sascha on 1/15/16.
 //
 
-#ifndef OOS_HAS_MANY_LIST_HPP
-#define OOS_HAS_MANY_LIST_HPP
+#ifndef OOS_TEST_HAS_MANY_LIST_HPP
+#define OOS_TEST_HAS_MANY_LIST_HPP
 
 #include "object/basic_has_many.hpp"
 #include "object/object_store.hpp"
@@ -82,9 +82,8 @@ public:
 
   self& operator--()
   {
-    self tmp = *this;
     --iter_;
-    return tmp;
+    return *this;
   }
 
   self operator--(int)

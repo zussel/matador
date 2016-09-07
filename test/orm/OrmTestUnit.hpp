@@ -20,6 +20,7 @@ public:
   void test_load();
   void test_load_has_one();
   void test_load_has_many();
+  void test_load_has_many_int();
   void test_has_many_delete();
 
 private:

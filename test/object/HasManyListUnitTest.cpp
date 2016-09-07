@@ -4,6 +4,8 @@
 
 #include "HasManyListUnitTest.hpp"
 
+#include "../has_many_list.hpp"
+
 using namespace oos;
 using namespace hasmanylist;
 

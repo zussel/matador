@@ -18,6 +18,7 @@
 
 namespace oos {
 
+
 template < class T >
 class relation_table : public basic_table, public detail::object_proxy_accessor
 {
@@ -105,7 +106,7 @@ public:
         i = owner_table_->has_many_relations_.insert(
         std::make_pair(relation_id_, detail::t_identifier_multimap())).first;
       }
-      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), this->proxy(proxy->obj<relation_type>()->value())));
+      i->second.insert(std::make_pair(proxy->obj<relation_type>()->owner(), proxy));
     }
 
     if (owner_table_->is_loaded()) {
@@ -154,7 +155,6 @@ private:
 
   std::unique_ptr<object_proxy> proxy_;
 
-//  typedef std::unordered_map<std::string, basic_has_many
   table_ptr owner_table_;
 };
 

@@ -64,6 +64,7 @@ template < class T >
 class has_many_item<T, typename std::enable_if<std::is_scalar<T>::value>::type > : public basic_has_many_item
 {
 public:
+  typedef T object_type;
   typedef T value_type;
 
 public:

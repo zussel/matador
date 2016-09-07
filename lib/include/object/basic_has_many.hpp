@@ -56,6 +56,22 @@ public:
   const_iterator begin() const { return const_iterator(container_.begin()); }
   const_iterator end() const { return const_iterator(container_.end()); }
 
+  value_type front() { return *begin(); }
+  const value_type front() const { return *begin(); }
+
+  value_type back()
+  {
+    iterator tmp = end();
+    --tmp;
+    return *tmp;
+  }
+  const value_type back() const
+  {
+    const_iterator tmp = end();
+    --tmp;
+    return *tmp;
+  }
+
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
@@ -74,8 +90,6 @@ protected:
 
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
-
-//  detail::modified_marker mark_modified_owener_;
 
   std::function<void(object_store&, object_proxy*)> mark_modified_owener_;
 

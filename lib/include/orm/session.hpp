@@ -72,27 +72,27 @@ public:
   }
 
   template < template <class ...> class CONT, class T >
-  void push_back(has_many<T, CONT> &container, object_ptr<T> &optr)
+  void push_back(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
   {
     if (store().has_transaction()) {
-      container.push_back(optr);
+      container.push_back(value);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();
-      container.push_back(optr);
+      container.push_back(value);
       tr.commit();
     }
   }
 
   template < template <class ...> class CONT, class T >
-  void push_front(has_many<T, CONT> &container, object_ptr<T> &optr)
+  void push_front(has_many<T, CONT> &container, const typename has_many<T, CONT>::value_type &value)
   {
     if (store().has_transaction()) {
-      container.push_front(optr);
+      container.push_front(value);
     } else {
       transaction tr(persistence_.store(), observer_);
       tr.begin();
-      container.push_front(optr);
+      container.push_front(value);
       tr.commit();
     }
   }

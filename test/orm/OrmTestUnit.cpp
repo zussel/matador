@@ -5,11 +5,14 @@
 #include "OrmTestUnit.hpp"
 
 #include "../Item.hpp"
+#include "../has_many_list.hpp"
 
 #include "orm/persistence.hpp"
 #include "orm/session.hpp"
 
 #include "object/object_view.hpp"
+
+using namespace hasmanylist;
 
 OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
@@ -22,6 +25,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
   add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
   add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test orm load has many from table");
+  add_test("load_has_many_int", std::bind(&OrmTestUnit::test_load_has_many_int, this), "test orm load has many int from table");
   add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test orm has many delete item");
 }
 
@@ -280,7 +284,6 @@ void OrmTestUnit::test_load_has_many()
 
     s.load();
 
-    // Todo: check children list size
     typedef oos::object_view<children_list> t_children_list_view;
     t_children_list_view children_lists(s.store());
 
@@ -291,6 +294,70 @@ void OrmTestUnit::test_load_has_many()
 
     UNIT_ASSERT_FALSE(clptr->children.empty(), "children list couldn't be empty");
     UNIT_ASSERT_EQUAL(clptr->children.size(), 2UL, "invalid children list size");
+
+    std::vector<std::string> result_names({ "kid 1", "kid 2"});
+    for (auto kid : clptr->children) {
+      auto it = std::find(result_names.begin(), result_names.end(), kid->name);
+      UNIT_EXPECT_FALSE(it == result_names.end(), "kid must be found");
+    }
+  }
+
+  p.drop();
+}
+
+void OrmTestUnit::test_load_has_many_int()
+{
+  oos::persistence p(dns_);
+
+  p.attach<many_ints>("many_ints");
+
+  p.create();
+
+  {
+    oos::session s(p);
+
+    auto intlist = s.insert(new many_ints);
+
+    UNIT_ASSERT_GREATER(intlist->id, 0UL, "invalid intlist list");
+    UNIT_ASSERT_TRUE(intlist->ints.empty(), "intlist list must be empty");
+
+    s.push_back(intlist->ints, 4);
+
+    UNIT_ASSERT_EQUAL(intlist->ints.front(), 4, "first int must be 4");
+    UNIT_ASSERT_EQUAL(intlist->ints.back(), 4, "last int must be 4");
+
+    s.push_front(intlist->ints, 7);
+
+    UNIT_ASSERT_EQUAL(intlist->ints.front(), 7, "first int must be 7");
+
+    UNIT_ASSERT_FALSE(intlist->ints.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->ints.size(), 2UL, "invalid intlist list size");
+  }
+
+  p.clear();
+
+  {
+    oos::session s(p);
+
+    s.load();
+
+    typedef oos::object_view<many_ints> t_many_ints_view;
+    t_many_ints_view ints_view(s.store());
+
+    UNIT_ASSERT_TRUE(!ints_view.empty(), "many ints view must not be empty");
+    UNIT_ASSERT_EQUAL(ints_view.size(), 1UL, "their must be 1 int in many ints list");
+
+    auto intlist = ints_view.front();
+
+    UNIT_ASSERT_FALSE(intlist->ints.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->ints.size(), 2UL, "invalid intlist list size");
+
+    std::vector<int> result_ints({ 4, 7 });
+    for (auto i : intlist->ints) {
+      auto it = std::find(result_ints.begin(), result_ints.end(), i);
+      UNIT_EXPECT_FALSE(it == result_ints.end(), "int must be found");
+    }
+
   }
 
   p.drop();
