@@ -24,6 +24,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class OOS_API basic_has_many_item
 {
 public:
@@ -59,6 +61,8 @@ private:
 
   std::shared_ptr<basic_identifier> owner_;
 };
+
+/// @endcond
 
 }
 

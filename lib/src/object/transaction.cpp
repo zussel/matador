@@ -33,12 +33,6 @@ transaction::transaction(const transaction &x)
   : transaction_data_(x.transaction_data_)
 {}
 
-transaction &transaction::operator=(const transaction &x)
-{
-  transaction_data_ = x.transaction_data_;
-  return *this;
-}
-
 unsigned long transaction::id() const
 {
   return transaction_data_->id_;

@@ -20,26 +20,34 @@ namespace oos {
 
 class connection;
 
+/**
+ * @brief Represents a database table
+ *
+ * This class represents one table on the database
+ * created by the given type.
+ * All columns are derived from the given type.
+ *
+ * @tparam T The type of the table
+ */
 template < class T >
 class table : public basic_table
 {
 public:
+  /**
+   * @brief Creates a new table
+   *
+   * Creates a new table for the given node and the
+   * given persistence object.
+   *
+   * @param node The underlying prototype_node
+   * @param p The underlying persistence object
+   */
   table(prototype_node *node, persistence &p)
     : basic_table(node, p)
     , resolver_(*this)
   { }
 
   virtual ~table() {}
-
-  virtual void prepare(connection &conn) override
-  {
-    query<T> q(name());
-    insert_ = q.insert().prepare(conn);
-    column id = detail::identifier_column_resolver::resolve<T>();
-    update_ = q.update().set().where(id == 1).prepare(conn);
-    delete_ = q.remove().where(id == 1).prepare(conn);
-    select_ = q.select().prepare(conn);
-  }
 
   virtual void create(connection &conn) override
   {
@@ -108,6 +116,31 @@ public:
   }
 
 protected:
+  /**
+   * @brief Prepares the table object
+   *
+   * Prepares the table object for the given connection.
+   * Subsequently some prepared statements are created:
+   * - select
+   * - insert
+   * - update
+   * - delete
+   *
+   * These statements will be used on the provide
+   * methods.
+   *
+   * @param conn The database connection
+   */
+  virtual void prepare(connection &conn) override
+  {
+    query<T> q(name());
+    insert_ = q.insert().prepare(conn);
+    column id = detail::identifier_column_resolver::resolve<T>();
+    update_ = q.update().set().where(id == 1).prepare(conn);
+    delete_ = q.remove().where(id == 1).prepare(conn);
+    select_ = q.select().prepare(conn);
+  }
+
   virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
   {
     appender_.append(id, identifier_proxy_map, &has_many_relations);

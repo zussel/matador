@@ -26,6 +26,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class object_proxy;
 
 class OOS_API action_inserter : public action_visitor
@@ -81,6 +83,8 @@ action_inserter::t_action_vactor::size_type action_inserter::insert(object_proxy
   }
   return actions_.get().size();
 }
+
+/// @endcond
 
 }
 

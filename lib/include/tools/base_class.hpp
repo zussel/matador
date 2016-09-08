@@ -9,6 +9,14 @@
 
 namespace oos {
 
+/**
+ * @brief Safely casts a given derived class to its base class
+ *
+ * @tparam B The base class type
+ * @tparam D The class type of the derived class
+ * @param derived The derived object
+ * @return The casted object
+ */
 template < class B, class D>
 const B* base_class(const D *derived)
 {
@@ -17,6 +25,14 @@ const B* base_class(const D *derived)
   return static_cast<const B*>(derived);
 }
 
+/**
+ * @brief Safely casts a given derived class to its base class
+ *
+ * @tparam B The base class type
+ * @tparam D The class type of the derived class
+ * @param derived The derived object
+ * @return The casted object
+ */
 template < class B, class D>
 B* base_class(D *derived)
 {

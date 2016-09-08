@@ -31,6 +31,12 @@ class connection;
 
 namespace detail {
 
+/**
+ * @brief Base class for all query implementations
+ *
+ * This class acts as a base class for all types
+ * of query implementations
+ */
 class OOS_API basic_query
 {
 public:
@@ -68,6 +74,9 @@ public:
   const sql& stmt() const;
 
 protected:
+
+  /// @cond OOS_DEV
+
   enum state_t {
     QUERY_BEGIN,
     QUERY_CREATE,
@@ -86,16 +95,25 @@ protected:
     QUERY_GROUPBY
   };
 
+  /// @endcond
+
 protected:
+
+  /// @cond OOS_DEV
+
   static void throw_invalid(state_t next, state_t current);
 
   static std::string state2text(state_t state);
 
+  /// @endcond
+
 protected:
+  /// @cond OOS_DEV
   sql sql_;
   state_t state;
   std::string table_name_;
   std::shared_ptr<columns> update_columns_;
+  /// @endcond
 };
 
 }

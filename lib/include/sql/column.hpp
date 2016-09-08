@@ -61,6 +61,8 @@ struct OOS_API columns : public detail::token
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 struct OOS_API typed_column : public oos::column
 {
   typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
@@ -153,6 +155,8 @@ struct value_column<char*> : public basic_value_column
   : basic_value_column(col, new value<char*>(val, s))
   { }
 };
+
+/// @endcond
 
 }
 

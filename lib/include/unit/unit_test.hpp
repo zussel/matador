@@ -483,23 +483,39 @@ public:
   template < class T >
   void assert_not_equal(const T &a, const T &b, const std::string &msg, int line, const char *file)
   {
-	  ++current_test_func_info->assertion_count;
-	  if (a == b) {
-		  std::stringstream msgstr;
-		  msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
-		  throw unit_exception(msgstr.str());
-	  }
+    ++current_test_func_info->assertion_count;
+    if (a == b) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
   }
 
+  /**
+   * @brief Checks if a is not equal b.
+   *
+   * If a is equal b the test method throws
+   * a unit_exception with the given message. The
+   * exception is caught by the test_suite and the
+   * message is displayed
+   *
+   * @tparam T The type of the left hand object to compare.
+   * @tparam V The type of the right hand object to compare.
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   template < class T, class V >
   void assert_not_equal(const T &a, const V &b, const std::string &msg, int line, const char *file)
   {
-	  ++current_test_func_info->assertion_count;
-	  if (a == b) {
-		  std::stringstream msgstr;
-		  msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
-		  throw unit_exception(msgstr.str());
-	  }
+    ++current_test_func_info->assertion_count;
+    if (a == b) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is equal " << b << ": " << msg;
+      throw unit_exception(msgstr.str());
+    }
   }
 
   /**

@@ -95,10 +95,8 @@ public:
   ~query() {}
 
   /**
-   * Creates a create statement based
-   * on a given name.
+   * Creates a create statement.
    * 
-   * @param name The name of the table to create.
    * @return A reference to the query.
    */
   query& create()
@@ -108,10 +106,8 @@ public:
 
   /**
    * Creates a create statement based
-   * on a given name and a serializable
-   * class instance.
+   * on a given object pointer
    *
-   * @param name The name of the table to create.
    * @param obj The serializable providing the column information.
    * @return A reference to the query.
    */
@@ -132,10 +128,8 @@ public:
   }
 
   /**
-   * Creates a drop statement based
-   * on the given table name.
+   * Creates a drop statement.
    * 
-   * @param name The name of the table.
    * @return A reference to the query.
    */
   query& drop()
@@ -148,8 +142,7 @@ public:
   }
 
   /**
-   * Creates a select statement based
-   * on the given serializable serializable.
+   * Creates a select statement.
    * 
    * @return A reference to the query.
    */
@@ -173,8 +166,7 @@ public:
   }
 
   /**
-   * Creates a select statement based
-   * on the given serializable serializable.
+   * Creates a select statement for the given columns.
    *
    * @param column_names A list of column names to select
    * @return A reference to the query.
@@ -211,11 +203,9 @@ public:
 
   /**
    * Creates an insert statement based
-   * on the given serializable and.
-   * the name of the table
+   * on the given object.
    *
    * @param obj The serializable used for the insert statement.
-   * @param table The name of the table.
    * @return A reference to the query.
    */
   query& insert(T *obj)
@@ -244,10 +234,8 @@ public:
   /**
    * Creates an update statement without
    * any settings. All columns must be
-   * added manually via the set method. Just
-   * the name of the table is given.
+   * added manually via the set method.
    * 
-   * @param table The name of the table.
    * @return A reference to the query.
    */
   query& update()
@@ -298,10 +286,7 @@ public:
 
     detail::value_column_serializer vcserializer;
 
-    // Todo: pass member update_columns_
     vcserializer.append_to(update_columns_, *obj);
-
-//    sql_.append(cols.release());
 
     state = QUERY_SET;
 
@@ -313,14 +298,12 @@ public:
    * an update statement. Sets for the given
    * column the data type and a value.
    *
-   * @tparam T The value type.
+   * @tparam V The value type.
    * @param column The column name.
-   * @param type The data type.
    * @param val The value to set.
    * @return A reference to the query.
    */
   template < class V >
-//  query& set(const std::string &column, const V &val)
   query& set(const std::string &column, V &val)
   {
     throw_invalid(QUERY_SET, state);
@@ -334,10 +317,8 @@ public:
 
 
   /**
-   * Creates a delete statement based
-   * on the given prototype node.
+   * Creates a delete statement.
    * 
-   * @param table The table name to remove from.
    * @return A reference to the query.
    */
   query& remove()
@@ -457,7 +438,8 @@ public:
    * Adds a column to a select statement.
    * 
    * @param column The name of the column.
-   * @param type The datatype of the column,
+   * @param type The datatype of the column.
+   * @param index The index of the column.
    * @return A reference to the query.
    */
   query& column(const std::string &field, data_type_t type, size_t index)
@@ -489,7 +471,8 @@ public:
   /**
    * Creates and returns a prepared
    * statement based on the current query.
-   * 
+   *
+   * @param conn The connection.
    * @return The new prepared statement.
    */
   statement<T> prepare(connection &conn)
@@ -628,6 +611,13 @@ private:
   row row_;
 };
 
+/**
+ * @brief Creates a select query for type T
+ *
+ * @tparam T The type of the query.
+ * @param table The table name
+ * @return A select query for type T.
+ */
 template < class T >
 query<T> select(const std::string &table)
 {
@@ -635,6 +625,12 @@ query<T> select(const std::string &table)
   return q.select();
 }
 
+/**
+ * @brief Creates a query for given columns
+ *
+ * @param cols The rows to select
+ * @return A select query for anonymous rows.
+ */
 OOS_API query<row> select(columns cols);
 
 }

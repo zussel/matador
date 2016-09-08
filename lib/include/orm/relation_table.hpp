@@ -18,6 +18,7 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
 
 template < class T >
 class relation_table : public basic_table, public detail::object_proxy_accessor
@@ -157,6 +158,8 @@ private:
 
   table_ptr owner_table_;
 };
+
+/// @endcond
 
 }
 #endif //OOS_RELATION_TABLE_HPP

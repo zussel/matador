@@ -32,6 +32,8 @@ class varchar_base;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API column_serializer : public serializer {
 public:
   explicit column_serializer(columns::t_brackets brackets);
@@ -68,6 +70,8 @@ private:
   columns::t_brackets brackets_;
   std::unique_ptr<columns> cols_;
 };
+
+/// @endcond
 
 }
 }

@@ -35,6 +35,17 @@ class result_impl;
 
 template < class T > class object_ptr;
 
+/**
+ * @brief The has_one holds a pointer to an serializable.
+ * @tparam T The type of the serializable.
+ *
+ * The has_one holds a pointer to an object. The
+ * has_one is a wrapper class for the object class
+ * It has a reference count mechanism.
+ * The objects inserted into the object_store are returned
+ * as a has_one and should be used through the
+ * has_one class.
+ */
 template < class T >
 class has_one : public object_holder
 {
@@ -53,18 +64,6 @@ public:
   {}
 
   has_one(const object_ptr <T> &x);
-
-//  has_one& operator=(const has_one<T> &x)
-//  {
-//    proxy_ = x.proxy_;
-//    cascade_ = x.cascade_;
-//    is_internal_ = x.is_internal_;
-//    if (proxy_) {
-//      oid_ = proxy_->id();
-//      proxy_->add(this);
-//    }
-//    return *this;
-//  }
 
   has_one& operator=(const object_ptr <T> &x);
 
@@ -125,26 +124,21 @@ std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>
 
 
 /**
- * @class object_holder
- * @brief The object_holder holds a pointer to an serializable.
+ * @brief The object_ptr holds a pointer to an serializable.
  * @tparam T The type of the serializable.
- * @tparam TYPE The type of the holder (referencer or pointer).
  *
- * The object_holder holds a pointer to an serializable. The
- * object_holder is a wrapper class for the serializable class
+ * The object_ptr holds a pointer to an object. The
+ * object_ptr is a wrapper class for the object class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
- * as a object_holder and should be used through the
- * object_holder class.
- * The TYPE template parameter indicates wether the holder acts
- * like a pointer (object can be deleted) or a reference (object
- * can't be directly deleted)
+ * as a object_ptr and should be used through the
+ * object_ptr class.
  */
 template < class T >
 class object_ptr : public object_holder
 {
 public:
-  typedef T object_type;                    /**< Shortcut for serializable type. */
+  typedef T object_type;           /**< Shortcut for serializable type. */
   typedef object_ptr<T> self;      /**< Shortcut for self class. */
 
 public:
@@ -181,6 +175,10 @@ public:
   : object_holder(false, proxy)
   {}
 
+  /**
+   * @brief Creates an object_ptr from the given has_one object
+   * @param x The has_one object to created the object_ptr from
+   */
   object_ptr(const has_one<T> &x)
     : object_holder(false, x.proxy_)
   {}
@@ -196,6 +194,11 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Copy assignes an object_ptr from the given has_one object
+   * @param x The has_one object to created the object_ptr from
+   * @return A reference to the created object_ptr
+   */
   self& operator=(has_one<T> &x)
   {
     reset(x.proxy_);

@@ -18,7 +18,12 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 void throw_invalid_date(int d, int m, int y);
+
+/// @endcond
+
 /**
  * @class date
  * @brief This class provides simple date representation

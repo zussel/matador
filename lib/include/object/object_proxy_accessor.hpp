@@ -25,11 +25,15 @@ class object_holder;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API object_proxy_accessor
 {
 public:
   oos::object_proxy* proxy(const object_holder &holder) const;
 };
+
+/// @endcond
 
 }
 }

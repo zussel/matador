@@ -15,6 +15,8 @@ namespace oos {
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 template < class OWNER >
 class relation_item_appender
 {
@@ -70,6 +72,8 @@ private:
   detail::identifier_ptr id_ptr_;
   basic_table::t_relation_item_map *has_many_relations_ = nullptr;
 };
+
+/// @endcond
 
 }
 }

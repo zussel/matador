@@ -6,6 +6,8 @@
 #include <set>
 #include <type_traits>
 
+/// @cond OOS_DEV
+
 template < template < class ... > class Container>
 struct is_container_type : std::false_type { };
 
@@ -19,6 +21,7 @@ struct is_same_container_type : std::false_type { };
 template < template < class ... > class Container >
 struct is_same_container_type<Container, Container> : std::true_type { };
 
+/// @endcond
 
 //template <typename... Ts> struct is_container<std::list<Ts...> > : std::true_type { };
 //template <typename... Ts> struct is_container<std::vector<Ts...> > : std::true_type { };

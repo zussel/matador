@@ -1277,7 +1277,7 @@ void object_inserter::serialize(const char *, basic_has_many<T, C> &x, const cha
   x.owner_id_ = proxy->pk();
   x.owner_ = proxy;
   x.ostore_ = &ostore_;
-  x.mark_modified_owener_ = modified_marker_;
+  x.mark_modified_owner_ = modified_marker_;
 
   typename basic_has_many<T, C>::iterator first = x.begin();
   typename basic_has_many<T, C>::iterator last = x.end();

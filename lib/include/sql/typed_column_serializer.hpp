@@ -30,6 +30,8 @@
 namespace oos {
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API typed_column_serializer : public serializer
 {
 public:
@@ -77,6 +79,8 @@ private:
   typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type_t, size_t)> t_create_varchar_column_func;
   t_create_varchar_column_func create_varchar_column_func_;
 };
+
+/// @endcond
 
 }
 

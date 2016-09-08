@@ -7,13 +7,16 @@
 
 namespace oos {
 
+/**
+ * @brief Cascade types for database actions
+ */
 enum cascade_type
 {
-  NONE = 0,
-  REMOVE = 1,
-  UPDATE = 2,
-  INSERT = 4,
-  ALL = REMOVE | UPDATE | INSERT
+  NONE = 0,                        /**< Cascade type none */
+  REMOVE = 1,                      /**< Cascade type remove */
+  UPDATE = 2,                      /**< Cascade type update */
+  INSERT = 4,                      /**< Cascade type insert */
+  ALL = REMOVE | UPDATE | INSERT   /**< Cascade type all */
 };
 
 }

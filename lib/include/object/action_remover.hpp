@@ -25,6 +25,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 class object_proxy;
 
 class OOS_API action_remover : public action_visitor
@@ -48,6 +50,8 @@ private:
   t_action_vactor::size_type index_;
   object_proxy *proxy_ = nullptr;
 };
+
+/// @endcond
 
 }
 

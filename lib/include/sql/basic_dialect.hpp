@@ -40,6 +40,8 @@ namespace detail {
 class basic_dialect_compiler;
 class basic_dialect_linker;
 
+/// @cond OOS_DEV
+
 struct OOS_API build_info {
   build_info(const sql &s, basic_dialect *d);
 
@@ -53,6 +55,8 @@ struct OOS_API build_info {
   token_list_t::iterator current;
   std::string result;
 };
+
+/// @endcond
 
 }
 
@@ -93,6 +97,8 @@ public:
   void append_to_result(const std::string &part);
 
 protected:
+  /// @cond OOS_DEV
+
   friend class detail::basic_dialect_compiler;
   friend class detail::basic_dialect_linker;
 
@@ -101,6 +107,8 @@ protected:
   void push(const sql &s);
   void pop();
   detail::build_info& top();
+
+  ///  @endcond
 
 private:
   void compile();

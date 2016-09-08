@@ -28,6 +28,8 @@ class sql;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API value_serializer : public serializer
 {
 public:
@@ -63,6 +65,8 @@ public:
 private:
   std::unique_ptr<values> values_;
 };
+
+/// @endcond
 
 }
 }

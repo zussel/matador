@@ -12,6 +12,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < class T >
 struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
@@ -39,6 +41,8 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<std::is_
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
 };
+
+/// @endcond
 
 template < class T >
 class has_many_iterator<T, std::vector>
@@ -141,6 +145,8 @@ private:
   container_iterator iter_;
 };
 
+/// @cond OOS_DEV
+
 template < class T >
 struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
@@ -170,6 +176,8 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<st
   typedef typename container_type::const_iterator const_container_iterator;
   typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
 };
+
+/// @endcond
 
 template < class T >
 class const_has_many_iterator<T, std::vector>
@@ -277,7 +285,26 @@ private:
 };
 
 /**
- * has_many with std::vector
+ * @brief Has many relation class using a std::vector as container
+ *
+ * The has many relation class uses a std::vector as internal
+ * container to store the objects.
+ *
+ * It provides all main interface functions std::vector provides
+ * - insert element at a iterator position
+ * - access with bracket operator []
+ * - push back an element
+ * - erase an element at iterator position
+ * - erase a range of elements within first and last iterator position
+ * - clear the container
+ *
+ * All of these methods are wrappes around the std::vector methods plus
+ * the modification in the corresponding object_store and notification
+ * of the transaction observer
+ *
+ * The relation holds object_ptr elements as well as scalar data elements.
+ *
+ * @tparam T The type of the elements
  */
 template < class T >
 class has_many<T, std::vector> : public basic_has_many<T, std::vector>
@@ -303,7 +330,7 @@ public:
     relation_type iptr(item);
     if (this->ostore_) {
       this->ostore_->insert(iptr);
-//      ostore_->mark_modified()
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
   }
@@ -323,16 +350,10 @@ public:
     return this->container_[index]->value();
   }
 
-  value_type front() { return *this->begin(); }
-  const value_type front() const { return *this->begin(); }
-
-  value_type back() { return *(this->end() - 1); }
-  const value_type back() const { return *(this->end() - 1); }
-
   /**
    * Clears the vector
    */
-  virtual void clear()
+  void clear()
   {
     erase(this->begin(), this->end());
   }

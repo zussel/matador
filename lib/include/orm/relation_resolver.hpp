@@ -19,6 +19,8 @@ class table;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 template < class T >
 class relation_resolver
 {
@@ -43,14 +45,6 @@ public:
   {
     oos::access::serialize(*this, obj);
   }
-
-//    void serialize(const char *, basic_identifier &x)
-//    {
-//      if (table_.relation_owner_id_ ) {
-//        table_.relation_owner_id_->share_with(x);
-//        table_.relation_owner_id_.reset();
-//      }
-//    }
 
   template < class V >
   void serialize(const char *, V &) { }
@@ -140,6 +134,7 @@ private:
   std::shared_ptr<basic_identifier> id_;
 };
 
+/// @endcond
 }
 
 }

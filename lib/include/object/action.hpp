@@ -60,6 +60,9 @@ class object_serializer;
 class OOS_API action
 {
 public:
+  /**
+   * @brief Function pointer to a backup function
+   */
   typedef void (*t_backup_func)(byte_buffer&, action*, object_serializer &serializer);
 
 public:
@@ -67,22 +70,36 @@ public:
   virtual ~action();
   
   /**
-   * Interface to accept the action.
+   * @brief Interface to accept the action.
    * 
    * @param av The action_visitor
    */
   virtual void accept(action_visitor *av) = 0;
 
+  /**
+   * @brief Backup the object to the given byte_buffer
+   *
+   * @param to The byte_buffer to backup to
+   */
   virtual void backup(byte_buffer &to) = 0;
+
+  /**
+   * @brief Restores an object from given byte_buffer into given object_store
+   *
+   * @param from byte_buffer to restore from
+   * @param store object_store to insert in
+   */
   virtual void restore(byte_buffer &from, object_store *store) = 0;
 
 protected:
+  /// @cond OOS_DEV
   static void remove_proxy(object_proxy *proxy, object_store *store);
   static object_proxy* find_proxy(object_store *store, unsigned long id);
   static void insert_proxy(object_store *store, object_proxy *proxy);
 
 protected:
   object_serializer *serializer_;
+  /// @endcond
 };
 
 /// @endcond

@@ -48,6 +48,8 @@ namespace oos {
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API basic_condition : public token
 {
 public:
@@ -114,18 +116,25 @@ public:
   virtual size_t size() const = 0;
 };
 
+/// @endcond
+
 }
 
 /**
  * @class condition
  * @brief Represents a sql query condition
- * 
+ *
+ * @tparam L Left hand operator type
+ * @tparam R Right hand operator type
  * This class represents a condition part
  * of a sql query or update statement.
  * Each compare method returns a reference to
  * the condition itself. That way one can
  * concatenate conditions together.
  */
+
+/// @cond OOS_DEV
+
 template<class L, class R, class Enabled = void>
 class condition;
 
@@ -223,16 +232,45 @@ public:
   }
 };
 
-//template <>
+/// @endcond
+
+/**
+ * @brief Condition class representing an IN condition
+ *
+ * This class represents an query IN condition and evaluates to
+ * this condition based on the current database dialect
+ *
+ * @code
+ * WHERE age IN (29,34,56)
+ * @endcode
+ */
 template < class V >
 class condition<column, std::initializer_list<V>> : public detail::basic_in_condition
 {
 public:
-  condition(const column &fld, const std::initializer_list<V> &args)
-    : basic_in_condition(fld)
+  /**
+   * @brief Creates an IN condition
+   *
+   * Creates an IN condition for the given column and
+   * the given list of arguments.
+   *
+   * @param col Column for the IN condition
+   * @param args List of arguments
+   */
+  condition(const column &col, const std::initializer_list<V> &args)
+    : basic_in_condition(col)
     , args_(args)
   {}
 
+  /**
+   * @brief Evaluates the condition
+   *
+   * Evaluates the condition to a part of the
+   * query string based on the given compile type
+   *
+   * @param compile_type The compile type used to evaluate
+   * @return A condition IN part of the query
+   */
   virtual std::string evaluate(basic_dialect::t_compile_type compile_type) const override
   {
     std::stringstream str;
@@ -260,11 +298,16 @@ public:
     return str.str();
   }
 
+  /**
+   * @brief Returns the number of arguments in the list
+   * @return The number of arguments in the list
+   */
   virtual size_t size() const override
   {
     return args_.size();
   }
 
+private:
   std::vector<V> args_;
 };
 
@@ -352,18 +395,62 @@ public:
   std::string operand;
 };
 
+/**
+ * @file condition.hpp
+ * @brief Contains functions to create query conditions
+ *
+ * This file contains some functions to create
+ * query conditions. These functions wrap the
+ * constructing of a concrete condition and allows
+ * expression like condition programming.
+ *
+ * @code
+ * cond1 == cond2
+ * cond1 < cond2
+ * cond2 != cond1 && cond3 < cond4
+ * @endcode
+ */
+
+/**
+ * @brief Creates an IN condition for a given column and a list of values
+ *
+ * @tparam V The type of the list arguments
+ * @param col The column to compare
+ * @param args The list of values
+ * @return The condition object
+ */
 template < class V >
-condition<column, std::initializer_list<V>> in(const oos::column &f, std::initializer_list<V> args)
+condition<column, std::initializer_list<V>> in(const oos::column &col, std::initializer_list<V> args)
 {
-  return condition<column, std::initializer_list<V>>(f, args);
+  return condition<column, std::initializer_list<V>>(col, args);
 }
 
-OOS_API condition<column, detail::basic_query> in(const oos::column &f, detail::basic_query &q, basic_dialect *dialect);
+/**
+ * @brief Creates an IN condition for a given column and a query to be executed
+ *
+ * @param col The column to compare
+ * @param q The query to be executes as sub select
+ * @param dialect A pointer to the sql dialect
+ * @return The condition object
+ */
+OOS_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q, basic_dialect *dialect);
 
+/**
+ * @brief Creates a between condition.
+ *
+ * Creates a between condition for the given column with
+ * the given range consisting of a low and high value
+ *
+ * @tparam T The type of the column and range
+ * @param col The column for the between condition
+ * @param low The low value of the range
+ * @param high The high value of the range
+ * @return The condition object
+ */
 template<class T>
-condition<column, std::pair<T, T>> between(const oos::column &f, T low, T high)
+condition<column, std::pair<T, T>> between(const oos::column &col, T low, T high)
 {
-  return condition<column, std::pair<T, T>>(f, std::make_pair(low, high));
+  return condition<column, std::pair<T, T>>(col, std::make_pair(low, high));
 }
 
 template<class T>

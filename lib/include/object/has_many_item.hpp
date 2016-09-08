@@ -15,6 +15,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 /**
  * @class has_many_item
  * @brief Holds item and owner id of a has many relation
@@ -104,6 +106,8 @@ public:
 private:
   T item_;
 };
+
+/// @endcond
 
 }
 

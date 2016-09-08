@@ -74,5 +74,7 @@ public:
   virtual void visit(delete_action *a) = 0;
 };
 
+/// @endcond
+
 }
 #endif //OOS_ACTION_VISITOR_HPP

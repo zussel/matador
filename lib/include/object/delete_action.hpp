@@ -30,6 +30,8 @@ namespace oos {
 
 class object_serializer;
 
+/// @cond OOS_DEV
+
 /**
  * @internal
  * @class delete_action
@@ -167,6 +169,8 @@ private:
 
   bool deleted_ = false;
 };
+
+/// @endcond
 
 }
 

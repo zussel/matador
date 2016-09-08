@@ -11,6 +11,8 @@ namespace oos {
 
 namespace memory {
 
+/// @cond OOS_DEV
+
 class memory_connection : public oos::connection_impl
 {
 public:
@@ -39,6 +41,8 @@ public:
 
   virtual basic_dialect* dialect() override { return nullptr; }
 };
+
+/// @endcond
 
 }
 }

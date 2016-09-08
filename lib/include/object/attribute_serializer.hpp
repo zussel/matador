@@ -56,7 +56,6 @@ protected:
  * with given name must be found and the value must
  * be convertible into the objects attribute.
  */
-
 template < class T >
 class attribute_reader : public basic_attribute_serializer
 {

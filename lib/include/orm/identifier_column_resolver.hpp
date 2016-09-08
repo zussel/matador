@@ -29,6 +29,8 @@ namespace oos {
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API identifier_column_resolver
 {
 public:
@@ -83,6 +85,8 @@ void identifier_column_resolver::serialize(const char *id, identifier<V> &)
 {
   col_.name = id;
 }
+
+/// @endcond
 
 }
 }

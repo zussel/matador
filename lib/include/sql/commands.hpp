@@ -7,14 +7,17 @@
 
 namespace oos {
 
+/**
+ * Enumeration of query command types
+ */
 enum struct t_query_command {
-  UNKNOWN,
-  CREATE,
-  DROP,
-  SELECT,
-  INSERT,
-  UPDATE,
-  REMOVE
+  UNKNOWN,   /**< Unknown query command */
+  CREATE,    /**< Create query command */
+  DROP,      /**< Drop query command */
+  SELECT,    /**< Select query command */
+  INSERT,    /**< Insert query command */
+  UPDATE,    /**< Update query command */
+  REMOVE     /**< Remove query command */
 };
 
 }

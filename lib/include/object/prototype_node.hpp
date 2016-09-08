@@ -78,10 +78,10 @@ public:
    * serializable from given object_base_producer. The node
    * gets the given type name t.
    * 
-   * @param tr The node containing tree.
-   * @param p The object_base_producer.
-   * @param t The type name of this node.
-   * @param a Tells the node if its prototype is abstract.
+   * @param tree The node containing tree.
+   * @param type The type name of the node.
+   * @param type_id The type id of this node.
+   * @param abstract Tells the node if its prototype is abstract.
    */
   prototype_node(object_store *tree, const char *type, const char *type_id = "", bool abstract = false)
     : tree_(tree)
@@ -127,7 +127,18 @@ public:
    */
   unsigned long size() const;
 
+  /**
+   * Return the type name of this node.
+   *
+   * @return The type name
+   */
   const char* type() const;
+
+  /**
+   * Return the type id of this node.
+   *
+   * @return The type id
+   */
   const char* type_id() const;
 
   /**
@@ -207,6 +218,11 @@ public:
    */
   prototype_node* previous_node(const prototype_node *root) const;
 
+  /**
+   * Returns the corresponding tree/object_store
+   *
+   * @return The corresponding object_store
+   */
   object_store* tree() const;
 
   /**
@@ -232,14 +248,50 @@ public:
    */
   bool has_primary_key() const;
 
+  /**
+   * @brief Returns a pointer to the identifier prototype
+   * @return A pointer to the identifier prototype
+   */
   basic_identifier* id() const;
 
+  /**
+   * @brief Returns the count of relations
+   * @return The count of relations
+   */
   size_t relation_count() const;
+
+  /**
+   * @brief Returns true if a relation with the given name exists
+   *
+   * Returns true if a relation with the given name exists in the
+   * object prototype.
+   *
+   * @param relation_name The name of the relation to be checked
+   * @return True if a relation with the given name exists
+   */
   bool has_relation(const std::string &relation_name) const;
 
+  /**
+   * @brief Returns the count of foreign keys
+   * @return The count of foreign keys
+   */
   size_t foreign_key_count() const;
+
+  /**
+   * @brief Returns true if a foreign key with the given name exists
+   *
+   * Returns true if a foreign key with the given name exists in the
+   * object prototype.
+   *
+   * @param foreign_key_name The name of the foreign key to be checked
+   * @return True if a relation with the given name exists
+   */
   bool has_foreign_key(const std::string &foreign_key_name) const;
 
+  /**
+   * @brief Returns true if the node represents an abstract object
+   * @return True if the node represents an abstract object
+   */
   bool is_abstract() const;
 
   void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);

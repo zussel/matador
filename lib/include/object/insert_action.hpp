@@ -27,6 +27,8 @@ namespace oos {
 class object_proxy;
 class object_serializer;
 
+/// @cond OOS_DEV
+
 /**
  * @internal
  * @class insert_action
@@ -86,6 +88,8 @@ private:
   std::string type_;
   object_proxy_list_t object_proxy_list_;
 };
+
+/// @endcond
 
 }
 

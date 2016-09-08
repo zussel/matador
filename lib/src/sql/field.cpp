@@ -39,15 +39,6 @@ void field::name(const std::string &n)
   name_ = n;
 }
 
-//std::string field::type() const
-//{
-//  return type_;
-//}
-//
-//void field::type(const std::string &t)
-//{
-//  type_ = t;
-//}
 data_type_t field::type() const
 {
   return type_;
@@ -77,15 +68,5 @@ void field::default_value(const std::string &value)
 {
   default_value_ = value;
 }
-
-//bool field::is_primary_key() const
-//{
-//  return is_primary_key_;
-//}
-//
-//void field::is_primary_key(bool is_pk)
-//{
-//  is_primary_key_ = is_pk;
-//}
 
 }

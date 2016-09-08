@@ -88,7 +88,14 @@ public:
    */
   virtual bool equal_to(const basic_identifier &x) const = 0;
 
-  virtual void serialize(const char*, serializer &) = 0;
+  /**
+   * Serializes the underlying identifier value
+   *
+   * @param id The id of the identifier value
+   * @param s The serializer to be used
+   */
+
+  virtual void serialize(const char *id, serializer &s) = 0;
   /**
    * Returns a unique hash number
    *

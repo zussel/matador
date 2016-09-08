@@ -34,6 +34,8 @@ namespace detail {
 
 struct build_info;
 
+/// @cond OOS_DEV
+
 class OOS_API basic_dialect_linker : public token_visitor
 {
 public:
@@ -86,6 +88,8 @@ private:
 
   basic_dialect *dialect_;
 };
+
+/// @endcond
 
 }
 

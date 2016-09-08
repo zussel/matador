@@ -30,6 +30,8 @@ class sql;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API value_column_serializer : public serializer {
 public:
   value_column_serializer();
@@ -63,6 +65,9 @@ public:
 private:
   std::shared_ptr<columns> cols_;
 };
+
+/// @endcond
+
 }
 }
 #endif //OOS_VALUE_COLUMN_SERIALIZER_HPP

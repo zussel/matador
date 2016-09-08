@@ -432,7 +432,7 @@ private:
 };
 /// @endcond
 
-/**
+/*
  *
  * @class generic_view
  * @brief Creates a generic view of a concrete serializable type

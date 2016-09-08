@@ -12,13 +12,13 @@
 namespace oos {
 
 /**
- * Sets a value of a member identified by
- * the given name. If the operation succeeds
- * true is returned.
+ * Sets a value of an object member identified by
+ * the given name. The object is passed as a pointer.
+ * If the operation succeeds true is returned.
  *
  * @tparam O     The object for which the value should be set.
  * @tparam T     The type of the value to set.
- * @param obj    The object to set the value into.
+ * @param obj    The pointer object to set the value into.
  * @param name   The name of the member variable.
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
@@ -30,6 +30,18 @@ bool set(O *obj, const std::string &name, const T &val)
   return set(*obj, name, val);
 }
 
+/**
+ * Sets a value of an object member identified by
+ * the given name. The object is passed by reference.
+ * If the operation succeeds true is returned.
+ *
+ * @tparam O     The object for which the value should be set.
+ * @tparam T     The type of the value to set.
+ * @param obj    The object reference to set the value into.
+ * @param name   The name of the member variable.
+ * @param val    The new value for the member.
+ * @return       True if the operation succeeds.
+ */
 template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr >
 bool set(O &obj, const std::string &name, const T &val)
 {
@@ -38,15 +50,6 @@ bool set(O &obj, const std::string &name, const T &val)
   return reader.success();
 }
 
-/*
-template < typename O, class T >
-bool set(O *obj, const std::string &name, const T &val)
-{
-  attribute_reader<T> reader(name, val);
-  oos::access::deserialize(reader, *obj);
-  return reader.success();
-}
-*/
 /**
  * Sets string value of a member identified by
  * the given name. The value is passed as a

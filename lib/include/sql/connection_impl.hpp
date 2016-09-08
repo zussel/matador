@@ -34,6 +34,8 @@ class statement_impl;
 class sql;
 class basic_dialect;
 
+/// @cond OOS_DEV
+
 class OOS_API connection_impl
 {
 public:
@@ -59,6 +61,8 @@ public:
 
   virtual basic_dialect* dialect() = 0;
 };
+
+/// @endcond
 
 }
 #endif //OOS_CONNECTION_IMPL_HPP

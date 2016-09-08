@@ -11,11 +11,19 @@
 
 namespace oos {
 
+/**
+ * @brief Detail namespace of the open object store.
+ *
+ * This is the namespace where for all function, classes
+ * and other code which is not neccessary to be public should go.
+ */
 namespace detail {
 class object_inserter;
 }
 
 class object_store;
+
+/// @cond OOS_DEV
 
 class abstract_has_many
 {
@@ -28,11 +36,6 @@ public:
   std::string owner_field() const { return owner_field_; }
   std::string item_field() const { return item_field_; }
 
-//  virtual void append(const object_holder &proxy) = 0;
-//  virtual object_holder&& create_item() const = 0;
-//  virtual size_type size() const = 0;
-//  virtual void for_each(const std::function <void (const object_holder&)> &func) const = 0;
-
 protected:
   friend class detail::object_inserter;
 
@@ -41,6 +44,8 @@ protected:
   std::string owner_field_ = "owner_id";
   std::string item_field_ = "item_id";
 };
+
+/// @endcond
 
 }
 

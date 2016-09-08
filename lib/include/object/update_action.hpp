@@ -6,13 +6,15 @@
 #define OOS_UPDATE_ACTION_HPP
 
 #include "object/action.hpp"
-//#include "object/object_serializer.hpp"
 #include "object/delete_action.hpp"
 
 namespace oos {
 
 class object_proxy;
 class object_serializer;
+
+/// @cond OOS_DEV
+
 /**
  * @internal
  * @class update_action
@@ -81,6 +83,8 @@ private:
   t_backup_func backup_func_;
   t_restore_func restore_func_;
 };
+
+/// @endcond
 
 }
 

@@ -60,6 +60,8 @@ struct query;
 
 }
 
+/// @cond OOS_DEV
+
 class OOS_API token_visitor
 {
 public:
@@ -99,6 +101,8 @@ public:
   virtual void visit(const oos::detail::rollback &) = 0;
   virtual void visit(oos::detail::query &) = 0;
 };
+
+/// @endcond
 
 }
 #endif //OOS_TOKEN_VISITOR_HPP

@@ -67,8 +67,19 @@ public:
    */
   bool add_column(const std::string &column, const std::shared_ptr<detail::basic_value> &value);
 
+  /**
+   * @brief Checks if the row has a column of the given name
+   * @param column The name of the column to be checked
+   * @return True if the column exists
+   */
   bool has_column(const std::string &column) const;
 
+  /**
+   * @brief Serializes the row with the given serializer
+   *
+   * @tparam SERIALIZER The type of the used serializer object
+   * @param serializer The serializer to be used
+   */
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -85,7 +96,7 @@ public:
    *
    * @tparam Type of value
    * @param index Index of column to set value for
-   * @param value to set
+   * @param val Value to set
    */
   template < class T >
   void set(size_t index, const T &val)
@@ -101,7 +112,7 @@ public:
    *
    * @tparam Type of value
    * @param column Name of column to set value for
-   * @param value to set
+   * @param val Value to set
    */
   template < class T >
   void set(const std::string &column, const T &val)
@@ -109,6 +120,12 @@ public:
     values_.at(column).reset(new value<T>(val));
   }
 
+  /**
+   * @brief Sets the given value to the column with given name
+   *
+   * @param column The name of the column to be set
+   * @param value  The new value of the column
+   */
   void set(const std::string &column, const std::shared_ptr<detail::basic_value> &value);
 
   /**

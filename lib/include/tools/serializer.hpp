@@ -33,43 +33,180 @@ class varchar_base;
 class identifiable_holder;
 class basic_identifier;
 
+/**
+ * @brief A base class to serialize objects
+ *
+ * This class can be used as base class to create
+ * a concrete serializer class to serialize objects.
+ *
+ * It is used if one need to pass a base class of a
+ * serializer instead a template.
+ */
 class OOS_API serializer
 {
 public:
   virtual ~serializer() {}
 
+  /**
+   * @brief Serialize an object of type T.
+   *
+   * @tparam T Type of x
+   * @param x instance of x to be serialized
+   */
   template < class T >
   void serialize(T &x)
   {
     oos::access::serialize(*this, x);
   }
 
+  /**
+   * @brief Interface to serialize a char with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, char &x) = 0;
+  /**
+   * @brief Interface to serialize a short with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, short &x) = 0;
+  /**
+   * @brief Interface to serialize a int with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, int &x) = 0;
+  /**
+   * @brief Interface to serialize a long with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, long &x) = 0;
+  /**
+   * @brief Interface to serialize a unsigned char with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, unsigned char &x) = 0;
+  /**
+   * @brief Interface to serialize a unsigned short with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, unsigned short &x) = 0;
+  /**
+   * @brief Interface to serialize a unsigned int with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, unsigned int &x) = 0;
+  /**
+   * @brief Interface to serialize a unsigned long with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, unsigned long &x) = 0;
+  /**
+   * @brief Interface to serialize a bool with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, bool &x) = 0;
+  /**
+   * @brief Interface to serialize a float with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, float &x) = 0;
+  /**
+   * @brief Interface to serialize a double with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, double &x) = 0;
+  /**
+   * @brief Interface to serialize a char string with given id
+   *
+   * @param id The id of the value
+   * @param x The string value to be serialized
+   * @param s The size of the string
+   */
+  virtual void serialize(const char *id, char *x, size_t s) = 0;
+  /**
+   * @brief Interface to serialize a string with given id
+   *
+   * @param id The id of the value
+   * @param x The string to be serialized
+   */
+  virtual void serialize(const char *id, std::string &x) = 0;
+  /**
+   * @brief Interface to serialize a varchar with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, oos::varchar_base &x) = 0;
+  /**
+   * @brief Interface to serialize a time with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, oos::time &x) = 0;
+  /**
+   * @brief Interface to serialize a date with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, oos::date &x) = 0;
+  /**
+   * @brief Interface to serialize a identifier with given id
+   *
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
+  virtual void serialize(const char *id, oos::basic_identifier &x) = 0;
+  /**
+   * @brief Interface to serialize an object with given id and cascade type
+   *
+   * @param id The id of the value
+   * @param x The object to be serialized
+   * @param cascade The cascade type
+   */
+  virtual void serialize(const char *id, oos::identifiable_holder &x, cascade_type cascade) = 0;
 
-  virtual void serialize(const char*, char&) = 0;
-  virtual void serialize(const char*, short&) = 0;
-  virtual void serialize(const char*, int&) = 0;
-  virtual void serialize(const char*, long&) = 0;
-  virtual void serialize(const char*, unsigned char&) = 0;
-  virtual void serialize(const char*, unsigned short&) = 0;
-  virtual void serialize(const char*, unsigned int&) = 0;
-  virtual void serialize(const char*, unsigned long&) = 0;
-  virtual void serialize(const char*, bool&) = 0;
-  virtual void serialize(const char*, float&) = 0;
-  virtual void serialize(const char*, double&) = 0;
-  virtual void serialize(const char*, char *, size_t) = 0;
-  virtual void serialize(const char*, std::string&) = 0;
-  virtual void serialize(const char*, oos::varchar_base&) = 0;
-  virtual void serialize(const char*, oos::time&) = 0;
-  virtual void serialize(const char*, oos::date&) = 0;
-  virtual void serialize(const char*, oos::basic_identifier &x) = 0;
-  virtual void serialize(const char*, oos::identifiable_holder &x, cascade_type) = 0;
-
+  /**
+   * @brief Interface to serialize a varchar with given id
+   *
+   * @tparam S The size of the varchar
+   * @param id The id of the value
+   * @param x The value to be serialized
+   */
   template <unsigned int S >
   void serialize(const char *id, varchar<S> &x)
   {
     serialize(id, serializer::to_varchar_base(x));
   }
 
+  /**
+   * @brief Interface to serialize a identifier with given id
+   *
+   * @param id The id of the value
+   * @param x The identifier to be serialized
+   */
   template < class T, typename = typename std::enable_if<
     std::is_base_of<basic_identifier, T>::value &&
     !std::is_same<T, basic_identifier>::value
@@ -79,11 +216,19 @@ public:
     serialize(id, serializer::to_basic_identifier(x));
   }
 
-  template < class HAS_MANY >
-  void serialize(const char*, HAS_MANY&, const char*, const char*) {}
 
-//  template < class HAS_ONE >
-//  void serialize(const char*, HAS_ONE&, cascade_type) {}
+  /**
+   * @fn template < class HAS_MANY > void serialize(const char *id, HAS_MANY &x, const char *owner_id, const char *item_id)
+   * @brief Interface to serialize a relation with given id
+   *
+   * @tparam HAS_MANY The type of the relationship object
+   * @param id The id of the value
+   * @param x The value to be serialized
+   * @param owner_id The name of the owner field
+   * @param item_id The name of the item field
+   */
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
 
 private:
   template <unsigned int S >

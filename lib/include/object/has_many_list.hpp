@@ -12,6 +12,8 @@
 
 namespace oos {
 
+/// @cond OOS_DEV
+
 template < class T >
 struct has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T>
@@ -39,6 +41,8 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<std::is_sc
   typedef typename container_type::iterator container_iterator;
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 };
+
+/// @endcond
 
 template < class T >
 class has_many_iterator<T, std::list>
@@ -105,6 +109,8 @@ private:
   container_iterator iter_;
 };
 
+/// @cond OOS_DEV
+
 template < class T >
 struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
@@ -134,6 +140,7 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<std:
   typedef typename std::iterator<std::bidirectional_iterator_tag, T>::difference_type difference_type;
 };
 
+/// @endcond
 
 template < class T >
 class const_has_many_iterator<T, std::list>
@@ -209,20 +216,52 @@ private:
   const_container_iterator iter_;
 };
 
+/**
+ * @brief Has many relation class using a std::list as container
+ *
+ * The has many relation class uses a std::list as internal
+ * container to store the objects.
+ *
+ * It provides all main interface functions std::list provides
+ * - insert element at a iterator position
+ * - push back an element
+ * - push front an element
+ * - erase an element at iterator position
+ * - erase a range of elements within first and last iterator position
+ * - clear the container
+ *
+ * All of these methods are wrappes around the std::list methods plus
+ * the modification in the corresponding object_store and notification
+ * of the transaction observer
+ *
+ * The relation holds object_ptr elements as well as scalar data elements.
+ *
+ * @tparam T The type of the elements
+ */
 template < class T >
 class has_many<T, std::list> : public basic_has_many<T, std::list>
 {
 public:
 
-  typedef basic_has_many<T, std::list> base;
-  typedef typename base::iterator iterator;
-  typedef typename base::value_type value_type;
-  typedef typename base::item_type item_type;
-  typedef typename base::relation_type relation_type;
-  typedef typename base::container_iterator container_iterator;
+  typedef basic_has_many<T, std::list> base;                    /**< Shortcut to self */
+  typedef typename base::iterator iterator;                     /**< Shortcut to iterator type */
+  typedef typename base::value_type value_type;                 /**< Shortcut to value_type */
+  typedef typename base::item_type item_type;                   /**< Shortcut to item_type */
+  typedef typename base::relation_type relation_type;           /**< Shortcut to relation_type */
+  typedef typename base::container_iterator container_iterator; /**< Shortcut to container_iterator */
 
+  /**
+   * brief Creates an empty has_many object
+   */
   explicit has_many() {}
 
+  /**
+   * @brief Inserts an element at the given position.
+   *
+   * @param pos The position to insert at
+   * @param value The element to be inserted
+   * @return The iterator at position of inserted element
+   */
   iterator insert(iterator pos, const value_type &value)
   {
     // create new has_many
@@ -230,17 +269,27 @@ public:
     relation_type iptr(item);
     if (this->ostore_) {
       this->ostore_->insert(iptr);
-      this->mark_modified_owener_(*this->ostore_, this->owner_);
+      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     container_iterator i = pos.iter_;
     return iterator(this->container_.insert(i, iptr));
   }
 
+  /**
+   * @brief Inserts an element at first position.
+   *
+   * @param value The element to be inserted
+   */
   void push_front(const value_type &value)
   {
     insert(this->begin(), value);
   }
 
+  /**
+   * @brief Inserts an element at last position.
+   *
+   * @param value The element to be inserted
+   */
   void push_back(const value_type &value)
   {
     insert(this->end(), value);
@@ -249,7 +298,7 @@ public:
   /**
    * Clears the list
    */
-  virtual void clear()
+  void clear()
   {
     erase(this->begin(), this->end());
   }

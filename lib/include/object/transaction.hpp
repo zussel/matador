@@ -37,48 +37,124 @@ namespace oos {
 
 class object_store;
 
+/**
+ * @brief This class provides the transaction mechanism
+ *
+ * This class provides the transaction mechanism. It can be used
+ * if a couple of actions (inser, update, delete) should be made
+ * at once.
+ *
+ * If one action fails all finished action we be rolled back. If
+ * all actions could be finished one can commit the changes.
+ *
+ * Therefor the interface of this class provides the main methods
+ * - begin
+ * - commit
+ * - rollback
+ *
+ * Transaction can be nested as well.
+ */
 class OOS_API transaction
 {
 public:
-  typedef std::shared_ptr<action> action_ptr;
-  typedef std::vector<action_ptr> t_action_vector;
+  typedef std::shared_ptr<action> action_ptr;      /**< Shortcut to an action shared pointer */
+  typedef std::vector<action_ptr> t_action_vector; /**< Shortcut to a vector of action shared pointer */
 
 public:
+  /**
+   * @brief Interface to an transaction observer
+   *
+   * The transaction observer will be notified on
+   * begin, commit and rollback of a transaction
+   */
   struct observer
   {
     virtual ~observer() {}
 
+    /**
+     * @brief Interface for the begin transaction event
+     */
     virtual void on_begin() = 0;
+
+    /**
+     * @fn virtual void on_commit(transaction::t_action_vector &actions)
+     * @brief Interface for the commit transaction event
+     *
+     * The interface for the commit transaction event takes
+     * a vector of all actions to be commited.
+     *
+     * @param actions Actions to be commited.
+     */
     virtual void on_commit(transaction::t_action_vector&) = 0;
+
+    /**
+     * @brief Interface for the rollback transaction event
+     */
     virtual void on_rollback() = 0;
   };
 
-  struct null_observer : public observer, public action_visitor
-  {
-    void on_begin() {};
-    void on_commit(transaction::t_action_vector &actions);
-    void on_rollback() {};
-
-    virtual void visit(insert_action *) {}
-    virtual void visit(update_action *) {}
-    virtual void visit(delete_action *act);
-  };
-
 public:
+  /**
+   * @brief Creates a transaction for the given object_store
+   *
+   * @param store The object_store the transaction is created for
+   */
   explicit transaction(object_store &store);
+
+  /**
+   * @brief Creates a transaction for the given object_store and observer
+   *
+   * @param store The object_store the transaction is created for
+   * @param obsvr The observer to be used for the transaction events
+   */
   transaction(object_store &store, const std::shared_ptr<observer> &obsvr);
+
+  /**
+   * @fn transaction(const transaction &x);
+   * @brief Copy construct a transaction
+   *
+   * @param x The transaction to be copied from
+   */
   transaction(const transaction&);
-  transaction& operator=(const transaction&);
+  transaction& operator=(const transaction&) = delete;
+
+  /**
+   * @brief Default copy move contructor for a transaction
+   * @param x The transaction to be moved
+   */
   transaction(transaction &&x) = default;
+  /**
+   * @brief Default assignment move contructor for a transaction
+   * @param x The transaction to be moved
+   * @return Reference to the transaction
+   */
   transaction& operator=(transaction &&x) = default;
 
   friend bool operator==(const transaction &a, const transaction &b);
   friend bool operator!=(const transaction &a, const transaction &b);
 
+  /**
+   * @brief Returns the unique id of the transaction
+   * @return The unique id of the transaction
+   */
   unsigned long id() const;
 
+  /**
+   * @brief Start a new transaction
+   */
   void begin();
+  /**
+   * @brief Finish transaction
+   *
+   * Finish transaction and commit all changes
+   */
   void commit();
+
+  /**
+   * @brief Rollback transaction
+   *
+   * Rollback transaction and revert all changes
+   */
   void rollback();
 
   template < class T >
@@ -98,6 +174,17 @@ private:
   void cleanup();
 
 private:
+  struct null_observer : public observer, public action_visitor
+  {
+    void on_begin() {};
+    void on_commit(transaction::t_action_vector &actions);
+    void on_rollback() {};
+
+    virtual void visit(insert_action *) {}
+    virtual void visit(update_action *) {}
+    virtual void visit(delete_action *act);
+  };
+
   struct transaction_data
   {
     transaction_data(object_store &store, std::shared_ptr<observer> obsrvr)

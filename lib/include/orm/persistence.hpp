@@ -32,18 +32,41 @@ namespace oos {
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 template < class T >
 struct persistence_on_attach;
 
+/// @endcond
+
 }
 
+/**
+ * @brief Represents the persistence layer for a database and an object_store
+ *
+ * This class acts as mediator between the database connection
+ * and the object_store.
+ * It attaches the object prototypes to the object_store and
+ * drops or creates the corresponding tables on the database.
+ *
+ * It also holds a map of all created tables, checks if a table exists
+ * and is able to clear the object store.
+ */
 class OOS_API persistence
 {
 public:
-  typedef basic_table::table_ptr table_ptr;
-  typedef basic_table::t_table_map t_table_map;
+  typedef basic_table::table_ptr table_ptr;      /**< Shortcut to the table shared pointer */
+  typedef basic_table::t_table_map t_table_map;  /**< Shortcut to map of table shared pointer */
 
 public:
+  /**
+   * @brief Creates a new persistence object
+   *
+   * Creates a new persistence object for the given
+   * database connection string.
+   *
+   * @param dns The database connection string
+   */
   explicit persistence(const std::string &dns);
   ~persistence();
 
@@ -96,7 +119,20 @@ public:
     return connection_.exists(i->second->name());
   }
 
+  /**
+   * @brief Creates all tables.
+   *
+   * Creates all tables currently attached
+   * to the persistence object.
+   */
   void create();
+
+  /**
+   * @brief Drops all tables.
+   *
+   * Drops all tables currently attached
+   * to the persistence object.
+   */
   void drop();
 
   /**
@@ -104,14 +140,57 @@ public:
    */
   void clear();
 
+  /**
+   * @brief Finds a table by its name
+   *
+   * Finds a table by its name. If the name is unknown
+   * map::end is returned.
+   *
+   * @param type The name of the table
+   * @return The iterator of the table or end
+   */
   t_table_map::iterator find_table(const std::string &type);
+
+  /**
+   * @brief Returns the begin of the table map
+   *
+   * @return The begin of the table map
+   */
   t_table_map::iterator begin();
+
+  /**
+   * @brief Returns the end of the table map
+   *
+   * @return The end of the table map
+   */
   t_table_map::iterator end();
 
+  /**
+   * @brief Return a reference to the underlaying object_store
+   *
+   * @return A reference to the object_store.
+   */
   object_store& store();
+
+  /**
+   * @brief Return a const reference to the underlaying object_store
+   *
+   * @return A const reference to the object_store.
+   */
   const object_store& store() const;
 
+  /**
+   * @brief Return a reference to the underlaying database connection
+   *
+   * @return A reference to the database connection.
+   */
   connection& conn();
+
+  /**
+   * @brief Return a const reference to the underlaying database connection
+   *
+   * @return A const reference to the database connection.
+   */
   const connection& conn() const;
 
 private:
@@ -122,11 +201,12 @@ private:
   connection connection_;
   object_store store_;
 
-//  typedef std::unordered_map<std::type_index, table> t_table_map;
   t_table_map tables_;
 };
 
 namespace detail {
+
+/// @cond OOS_DEV
 
 struct basic_persistence_on_attach : public detail::basic_on_attach
 {
@@ -246,6 +326,8 @@ void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) c
       node, persistence_, relation_, owner_type_, relation_id_, owner_id_column_, item_id_column_
     )));
 }
+
+/// @endcond
 
 }
 

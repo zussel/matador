@@ -26,6 +26,8 @@ namespace oos {
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 struct OOS_API select : public token
 {
   select() : token(SELECT) {}
@@ -208,6 +210,8 @@ struct OOS_API where : public token
 
   std::shared_ptr<basic_condition> cond;
 };
+
+/// @endcond
 
 }
 

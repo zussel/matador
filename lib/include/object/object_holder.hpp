@@ -79,10 +79,10 @@ protected:
    * 
    * Creates an object_holder with a given object_proxy. The
    * boolean tells the object_holder if it should be
-   * handled as a reference or a pointer.
+   * handled as an internal.
    * 
+   * @param is_internal If true the serializable is handled as an internal.
    * @param op The object_proxy of the object_holder
-   * @param is_ref If true the serializable is handled as a reference.
    */
   object_holder(bool is_internal, object_proxy *op);
 
@@ -195,6 +195,12 @@ public:
    */
   bool is_internal() const;
 
+  /**
+   * Returns true if the underlying object
+   * is inserted in an object_store
+   *
+   * @return True if object is inserted.
+   */
   bool is_inserted() const;
 
   /**
@@ -211,6 +217,11 @@ public:
    */
   virtual std::shared_ptr<basic_identifier> primary_key() const;
 
+  /**
+   * Returns the current reference count
+   *
+   * @return The current reference count
+   */
   unsigned long reference_count() const;
 
   /**
