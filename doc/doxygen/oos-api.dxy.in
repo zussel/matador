@@ -890,7 +890,7 @@ ALPHABETICAL_INDEX     = YES
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns 
 # in which this list will be split (can be a number in the range [1..20])
 
-COLS_IN_ALPHA_INDEX    = 5
+COLS_IN_ALPHA_INDEX    = 2
 
 # In case all classes in a project start with a common prefix, all 
 # classes will be put under the same header in the alphabetical index. 
@@ -946,7 +946,8 @@ HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/doc/doxygen/api_footer.html"
 # HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this 
 # tag will in the future become obsolete.
 
-HTML_STYLESHEET        = "@PROJECT_SOURCE_DIR@/doc/web/style.css"
+HTML_STYLESHEET        =
+#HTML_STYLESHEET        = "@PROJECT_SOURCE_DIR@/doc/web/style.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify an additional 
 # user-defined cascading style sheet that is included after the standard 

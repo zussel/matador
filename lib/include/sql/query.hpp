@@ -494,9 +494,9 @@ public:
 
   /**
    * Create a new query for the
-   * given connection.
+   * given table.
    *
-   * @param conn The connection.
+   * @param table_name The connection.
    */
   query(const std::string &table_name)
     : basic_query(table_name)
