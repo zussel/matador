@@ -24,9 +24,11 @@
 
 namespace oos {
 
-template<class T>
-identifier<T> share_identifier(const identifier<T> &id);
-
+/**
+ * @brief Identifier class for integral types
+ *
+ * @tparam T Type of the identifier
+ */
 template<typename T>
 class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> : public basic_identifier
 {

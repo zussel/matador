@@ -141,6 +141,15 @@ protected:
     select_ = q.select().prepare(conn);
   }
 
+  /**
+   * @brief Append elements to a has many relation
+   *
+   * Append elements to a has many relation identified by id
+   *
+   * @param id The identifier of the has many relation object in entity
+   * @param identifier_proxy_map The map with all relationship holding objects
+   * @param has_many_relations The relationship elements
+   */
   virtual void append_relation_items(const std::string &id, detail::t_identifier_map &identifier_proxy_map, basic_table::t_relation_item_map &has_many_relations) override
   {
     appender_.append(id, identifier_proxy_map, &has_many_relations);

@@ -27,9 +27,17 @@ namespace oos {
 
 class basic_dialect;
 
+/**
+ * @brief The connection class represents a connection to a database.
+ */
 class OOS_API connection
 {
 public:
+  /**
+   * @brief Creates a database connection from a connection string.
+   *
+   * @param dns The database connection string
+   */
   explicit connection(const std::string &dns);
   ~connection();
 
@@ -57,8 +65,19 @@ public:
    */
   void close();
 
+  /**
+   * @brief Executes the BEGIN TRANSACTION sql command
+   */
   void begin();
+
+  /**
+   * @brief Executes the COMMIT TRANSACTION sql command
+   */
   void commit();
+
+  /**
+   * @brief Executes the ROLLBACK TRANSACTION sql command
+   */
   void rollback();
 
   std::string type() const;

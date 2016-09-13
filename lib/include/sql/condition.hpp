@@ -336,8 +336,8 @@ template < class T >
 class condition<column, std::pair<T, T>> : public detail::basic_condition
 {
 public:
-  condition(const column &fld, const std::pair<T, T> &range)
-    : field_(fld), range_(range) { }
+  condition(const column &col, const std::pair<T, T> &range)
+    : field_(col), range_(range) { }
 
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
@@ -453,60 +453,164 @@ condition<column, std::pair<T, T>> between(const oos::column &col, T low, T high
   return condition<column, std::pair<T, T>>(col, std::make_pair(low, high));
 }
 
+/**
+ * @brief Condition equality operator for a column and a value
+ *
+ * Creates a condition condition object of a column and a value
+ * checked on equality.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the equality operation
+ */
 template<class T>
-condition<column, T> operator==(const column &fld, T val)
+condition<column, T> operator==(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::EQUAL, val);
+  return condition<column, T>(col, detail::basic_condition::EQUAL, val);
 }
 
+/**
+ * @brief Condition unequality operator for a column and a value
+ *
+ * Creates a condition condition object of a column and a value
+ * checked on unequality.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the unequality operation
+ */
 template<class T>
-condition<column, T> operator!=(const column &fld, T val)
+condition<column, T> operator!=(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::NOT_EQUAL, val);
+  return condition<column, T>(col, detail::basic_condition::NOT_EQUAL, val);
 }
 
+/**
+ * @brief Condition less operator for a column and a value
+ *
+ * Creates a condition object checking if the value of the given column
+ * is less than the given value.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the less operation
+ */
 template<class T>
-condition<column, T> operator<(const column &fld, T val)
+condition<column, T> operator<(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::LESS, val);
+  return condition<column, T>(col, detail::basic_condition::LESS, val);
 }
 
+/**
+ * @brief Condition less or equal operator for a column and a value
+ *
+ * Creates a condition object checking if the value of the given column
+ * is less or equal than the given value.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the less or equal operation
+ */
 template<class T>
-condition<column, T> operator<=(const column &fld, T val)
+condition<column, T> operator<=(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::LESS_EQUAL, val);
+  return condition<column, T>(col, detail::basic_condition::LESS_EQUAL, val);
 }
 
+/**
+ * @brief Condition greater operator for a column and a value
+ *
+ * Creates a condition object checking if the value of the given column
+ * is greater than the given value.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the greater operation
+ */
 template<class T>
-condition<column, T> operator>(const column &fld, T val)
+condition<column, T> operator>(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::GREATER, val);
+  return condition<column, T>(col, detail::basic_condition::GREATER, val);
 }
 
+/**
+ * @brief Condition greater or equal operator for a column and a value
+ *
+ * Creates a condition object checking if the value of the given column
+ * is greater or equal than the given value.
+ *
+ * @tparam T The type of the value
+ * @param col The column object
+ * @param val The value to compare with
+ * @return The condition object representing the greater or equal operation
+ */
 template<class T>
-condition<column, T> operator>=(const column &fld, T val)
+condition<column, T> operator>=(const column &col, T val)
 {
-  return condition<column, T>(fld, detail::basic_condition::GREATER_EQUAL, val);
+  return condition<column, T>(col, detail::basic_condition::GREATER_EQUAL, val);
 }
 
+/**
+ * @brief AND operation condition consisting of a left and rigth hand condition
+ *
+ * @tparam L1 Left hand type of left hand condition
+ * @tparam R1 Right hand type of left hand condition
+ * @tparam L2 Left hand type of right hand condition
+ * @tparam R2 Right hand type of right hand condition
+ * @param l Left hand condition
+ * @param r Right hand condition
+ * @return An condition object representing the AND operation
+ */
 template<class L1, class R1, class L2, class R2>
 condition<condition<L1, R1>, condition<L2, R2>> operator&&(const condition<L1, R1> &l, const condition<L2, R2> &r)
 {
   return condition<condition<L1, R1>, condition<L2, R2>>(l, r, detail::basic_condition::AND);
 }
 
+/**
+ * @brief OR operation condition consisting of a left and rigth hand condition
+ *
+ * @tparam L1 Left hand type of left hand condition
+ * @tparam R1 Right hand type of left hand condition
+ * @tparam L2 Left hand type of right hand condition
+ * @tparam R2 Right hand type of right hand condition
+ * @param l Left hand condition
+ * @param r Right hand condition
+ * @return An condition object representing the OR operation
+ */
 template<class L1, class R1, class L2, class R2>
 condition<condition<L1, R1>, condition<L2, R2>> operator||(const condition<L1, R1> &l, const condition<L2, R2> &r)
 {
   return condition<condition<L1, R1>, condition<L2, R2>>(l, r, detail::basic_condition::OR);
 }
 
+/**
+ * @brief Negates a given condition.
+ *
+ * @tparam L The left hand type of the condition
+ * @tparam R The right hand type of the condition
+ * @param c The condition to negated
+ * @return An condition object representing the NOT operation
+ */
 template<class L, class R>
 condition<condition<L, R>, void> operator!(const condition<L, R> &c)
 {
   return condition<condition<L, R>, void>(c, detail::basic_condition::NOT);
 }
 
+/**
+ * @brief Creates a shared condition from a given condition object
+ *
+ * @tparam L The left hand type of the condition
+ * @tparam R The right hand type of the condition
+ * @param c The condition to be copied
+ * @return A shared condition pointer representing the given condition
+ */
 template<class L, class R>
 std::shared_ptr<detail::basic_condition> make_condition(const condition<L, R> &cond)
 {

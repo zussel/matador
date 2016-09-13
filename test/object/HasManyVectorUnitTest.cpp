@@ -177,8 +177,4 @@ void HasManyVectorUnitTest::test_integer()
   i++;
 
   UNIT_ASSERT_EQUAL(*i, 1, "item is invalid");
-
-  many_ints::int_vector_t::relation_type iptr = i.relation_item();
-
-  UNIT_ASSERT_EQUAL(iptr->value(), 1, "item is invalid");
 }

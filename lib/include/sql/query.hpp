@@ -84,9 +84,9 @@ class query : public detail::basic_query
 public:
   /**
    * Create a new query for the
-   * given connection.
-   * 
-   * @param conn The connection.
+   * table.
+   *
+   * @param table_name The name of the table
    */
   query(const std::string &table_name)
     : basic_query(table_name)
@@ -251,6 +251,15 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Specfies the from token of a query
+   *
+   * Specfies the from token of a query with
+   * a table name as argument.
+   *
+   * @param table The name of the table
+   * @return A reference to the query.
+   */
   query& from(const std::string &table)
   {
     sql_.append(new detail::from(table));
@@ -357,14 +366,14 @@ public:
    * Adds an order by clause to a select
    * statement.
    * 
-   * @param by The order by clause.
+   * @param col The column for the order by clause
    * @return A reference to the query.
    */
-  query& order_by(const std::string &column)
+  query& order_by(const std::string &col)
   {
     throw_invalid(QUERY_ORDERBY, state);
 
-    sql_.append(new detail::order_by(column));
+    sql_.append(new detail::order_by(col));
 
     state = QUERY_ORDERBY;
 
@@ -420,7 +429,7 @@ public:
    * Adds a group by clause to a select
    * statement.
    * 
-   * @param column The group by clause.
+   * @param col The group by clause.
    * @return A reference to the query.
    */
   query& group_by(const std::string &col)
@@ -442,14 +451,20 @@ public:
    * @param index The index of the column.
    * @return A reference to the query.
    */
-  query& column(const std::string &field, data_type_t type, size_t index)
+  query& column(const std::string &column, data_type_t type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
-    sql_.append(new detail::typed_column(field, type, index, false));
+    sql_.append(new detail::typed_column(column, type, index, false));
     state = QUERY_COLUMN;
     return *this;
   }
 
+  /**
+   * @brief Resets the query.
+   *
+   * @param query_command The query command to which the query is resetted
+   * @return A reference to the query.
+   */
   query& reset(t_query_command query_command)
   {
     reset_query(query_command);
@@ -488,12 +503,15 @@ template <>
 class query<row> : public detail::basic_query
 {
 public:
+  /**
+   * @brief Creates q new query.
+   */
   query()
     : detail::basic_query("")
   {}
 
   /**
-   * Create a new query for the
+   * @brief Create a new query for the
    * given table.
    *
    * @param table_name The connection.
@@ -505,7 +523,7 @@ public:
   ~query() {}
 
   /**
-   * Creates a select statement with the
+   * @brief Creates a select statement with the
    * given columns.
    *
    * @param cols The columns to select
@@ -529,6 +547,15 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Specfies the from token of a query
+   *
+   * Specfies the from token of a query with
+   * a table name as argument.
+   *
+   * @param table The name of the table
+   * @return A reference to the query.
+   */
   query& from(const std::string &table)
   {
     throw_invalid(QUERY_FROM, state);
@@ -540,6 +567,15 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Specfies the from token of a query
+   *
+   * Specfies the from token of a query with
+   * a sub query as argument.
+   *
+   * @param q The sub query
+   * @return A reference to the query.
+   */
   query& from(detail::basic_query &q)
   {
     throw_invalid(QUERY_FROM, state);
@@ -550,6 +586,16 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Adds a where clause condition to the query.
+   *
+   * Adds a where clause condition to the select or
+   * update statement. For any other query an
+   * exception is thrown.
+   *
+   * @param c The condition.
+   * @return A reference to the query.
+   */
   template < class COND >
   query& where(const COND &c)
   {
@@ -561,12 +607,26 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Resets the query.
+   *
+   * @param query_command The query command to which the query is resetted
+   * @return A reference to the query.
+   */
   query& reset(t_query_command query_command)
   {
     reset_query(query_command);
     return *this;
   }
 
+  /**
+   * @brief Executes the query.
+   *
+   * Executes the query for the given connection
+   *
+   * @param conn The connection used by the query.
+   * @return The result of the query
+   */
   result<row> execute(connection &conn)
   {
 //    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
@@ -574,6 +634,14 @@ public:
     return conn.execute<row>(sql_, table_name_, row_);
   }
 
+  /**
+   * @brief Prepares the query.
+   *
+   * Prepares the query for the given connection
+   *
+   * @param conn The connection used by the query.
+   * @return The prepared statement of the query
+   */
   statement<row> prepare(connection &conn)
   {
 //    std::cout << "SQL: " << sql_.prepare().c_str() << '\n';
