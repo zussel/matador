@@ -1,28 +1,4 @@
 /**
- * @htmlonly
- * <div class="width75 float_left">
- * @endhtmlonly
- *
- * @htmlonly
- * <table id="doc_nav" cellpadding="0" cellspacing="0"><tbody><tr>
- *   <td><div class="left-arrow-top"></td>
- *   <td align="left" width="40%">Prev</td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%"></td></tr><tr>
- *   <td><div class="left-arrow-bottom"></td>
- *   <td align="left" width="40%">
- * @endhtmlonly
- * @ref expressions
- * @htmlonly
- *   </td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @htmlonly
- *   </td>
- * </tr></tbody></table>
- * @endhtmlonly
- *
  * @page database Database
  *
  * @section database_sec Persist Objects
@@ -140,65 +116,4 @@
  * in the concrete children. Furthermore temporary lists are build up holding
  * all children for each parent. When finally the parents are loaded these
  * lists are used to the concrete parent container.
- * 
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td><div class="left-arrow-top"></td>
- *   <td align="left" width="40%">Prev</td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%"></td></tr><tr>
- *   <td><div class="left-arrow-bottom"></td>
- *   <td align="left" width="40%">
- * @endhtmlonly
- * @ref expressions
- * @htmlonly
- *   </td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @htmlonly
- *   </td>
- * </tr></tbody></table>
- * @endhtmlonly
- *
- * @htmlonly
- * </div>
- * <div id="side_toc" class="width25 float_right">
- * @endhtmlonly
- * <b>Table of content</b> @n
- * <ul>
- *   <li>@ref index</li>
- *   <li>@ref objects
- *       <ul>
- *         <li>@ref step1</li>
- *         <li>@ref step2</li>
- *         <li>@ref step3</li>
- *       </ul>
- *   </li>
- *   <li>@ref store
- *     <ul>
- *       <li>@ref prototypes</li>
- *       <li>@ref add_objects</li>
- *       <li>@ref modify_objects</li>
- *       <li>@ref remove_objects</li>
- *     </ul>
- *   </li>
- *   <li>@ref relations
- *     <ul>
- *       <li>@ref one_to_one</li>
- *       <li>@ref one_to_many</li>
- *     </ul>
- *   </li>
- *   <li>@ref view</li>
- *   <li>@ref expressions</li>
- *   <li>@ref database
- *      <ul>
- *        <li>@ref support_sec</li>
- *        <li>@ref db_relation_sec</li>
- *      </ul>
- *   </li>
- * </ul>
- * @htmlonly
- * </div>
- * @endhtmlonly
  */
