@@ -2,3 +2,37 @@
 main:
   - title: "API"
     url: /api/index.html
+
+api:
+  - title: Getting Started
+    children:
+      - title: "Overview"
+        url: /api/
+      - title: "Object"
+        url: /api/objects/
+      - title: "Store"
+        url: /api/store/
+      - title: "Relations"
+        url: /api/relations/
+      - title: "Views"
+        url: /api/views/
+      - title: "Expressions"
+        url: /api/expressions/
+      - title: "Database"
+        url: /api/database/
+
+  - title: API Reference
+    children:
+      - title: "Class List"
+        url: /api/annotated/
+      - title: "Class Index"
+        url: /api/classes/
+      - title: "Class Hierachy"
+        url: /api/hierarchy/
+      - title: "Class Members"
+        url: /api/functions/
+      - title: "File List"
+        url: /api/files/
+      - title: "Namespaces"
+        url: /api/namespaces/
+        

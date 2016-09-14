@@ -78,10 +78,10 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Zussel"
   avatar           : "bio-photo.jpg"
-  bio              : "I am an amazing person."
-  location         : "Somewhere"
+  bio              : "Software developer."
+  location         : "Bonn, Germany"
   email            :
   uri              :
   bitbucket        :
@@ -107,7 +107,22 @@ author:
   xing             :
   youtube          :
 
-
+#collections:
+#  api:
+#    output: true
+#    permalink: /:collection/:path/
+    
+defaults:
+  # _api
+  -
+    scope:
+      path: "api"
+      type: pages
+    values:
+      layout: single
+      sidebar:
+        nav: "api"
+    
 # Reading Files
 include:
   - .htaccess

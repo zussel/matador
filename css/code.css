@@ -1,0 +1,272 @@
+.memname
+{
+  font-family: Courier, Monospace;
+  color: #268bd2;
+}
+
+.title
+{
+	font-size: 30%;
+	font-weight: 900;
+  visibility: hidden;
+	margin: 0;
+	/*padding: 20px 0 10px 0*/;
+  padding: 0;
+}
+
+.memberdecls h2 a,
+a.anchor
+{
+  display: block;
+  position: relative;
+  top: -80px;
+  visibility: hidden;
+}
+
+.fragment
+{
+	padding: 5px;
+	font-size: 105%;
+	color: #444;
+
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  background-color: #eee;
+}
+
+.line
+{
+  font-family: monospace, fixed;
+  font-size: 13px;
+  min-height: 13px;
+  line-height: 130%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/*
+ * table with rounded corners
+ * and blue header
+ */
+.memberdecls {
+  width: 100%;
+  *border-collapse: collapse; /* IE7 and lower */
+  border-spacing: 0;
+  border:  1px solid #ccc;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/*
+.memberdecls tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;     
+}    
+*/
+
+/*
+ * left border for header and data fields
+ */
+.memberdecls td, .memberdecls th {
+  border-left: 1px solid #ccc;
+  /*border-top: 1px solid #ccc;*/
+  padding: 5px;
+}
+
+/*
+ * background color for header
+ * no border
+ */
+.heading td {
+  background-color: #dce9f9;
+  border-top: none;
+}
+
+/*
+ * reduce the separator row fields
+ */
+.memSeparator {
+  line-height: 1px;
+  padding: 0px !important;
+}
+
+/*
+ * no left and top border for
+ * first header and data field
+ */
+.memberdecls td:first-child, .memberdecls th:first-child {
+  border-left: none;
+  border-top: none;
+}
+
+/*
+ * rounded corner for first header field
+ */
+.memberdecls th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+
+/*
+ * rounded corner for last header field
+ */
+.memberdecls th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+
+/*
+ * rounded corner on both sides of header field
+ * if header field is the only child
+ */
+.memberdecls th:only-child{
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+/*
+ * rounded corners for the first data field
+ * in the last row
+ */
+.memberdecls tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+/*
+ * rounded corners for the last data field
+ * in the last row
+ */
+.memberdecls tr:last-child td:last-child {
+  -moz-border-radius: 0 0 6px 0;
+  -webkit-border-radius: 0 0 6px 0;
+  border-radius: 0 0 6px 0;
+}
+
+.memItemLeft,
+.memTemplItemLeft,
+.memItemRight,
+.memTemplItemRight,
+.memTemplParams
+{
+  border-top: 1px solid #ccc !important;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 105%;
+}
+
+.mdescLeft,
+.memTemplItemLeft,
+.memItemLeft
+{
+  border-right: none;
+}
+
+.mdescRight,
+.memTemplItemRight,
+.memItemRight
+{
+  border-left: none !important;
+}
+
+.mdescLeft,
+.mdescRight
+{
+  border-top: none !important;
+}
+
+.memItemLeft
+{
+  text-align: right;
+}
+
+.memTemplItemLeft,
+.memTemplItemRight
+{
+  border-top: none !important;
+}
+
+.memproto
+{
+  margin-top: 10px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  background-color: #eee;
+  -moz-border-radius: 6px 6px 0 0;
+  -webkit-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
+}
+
+.memdoc
+{
+  padding: 5px;
+  border: 1px solid #ccc;
+  -moz-border-radius: 0 0 6px 6px;
+  -webkit-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
+}
+
+.memtemplate
+{
+  padding: 4px 5px 0 5px;
+  margin: 0;
+}
+
+.tparams,
+.params,
+.return
+{
+  margin: 2px 0;
+}
+
+.tparams dt,
+.params dt,
+.return dt
+{
+  font-weight: bolder;
+  font-style: italic;
+}
+
+.paramname
+{
+  font-weight: bolder;
+  font-family: monospace, courier;
+  color: #3fa6e7;
+}
+
+.comment
+{
+  color: #eab700;
+}
+
+.keywordflow,
+.keyword
+{
+  color: #8959a8;
+}
+
+.keywordtype
+{
+  color: #3fa6e7;
+}
+
+.stringliteral
+{
+  color: #718c00;
+}
+
