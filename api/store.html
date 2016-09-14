@@ -8,27 +8,7 @@ title: Object Store
 <div class="title">Object Store </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p> 
-<div class="width75 float_left">
-</p>
-<p> 
-<table id="doc_nav"><tbody><tr>
-  <td><div class="left-arrow-top"></td>
-  <td align="left" width="40%">Prev</td>
-  <td align="center" width="20%"></td>
-  <td align="right" width="40%">Next</td>
-  <td><div class="right-arrow-top"></td></tr><tr>
-  <td><div class="left-arrow-bottom"></td>
-  <td align="left" width="40%">
- <a class="el" href="objects.html">Objects</a>  
-  </td>
-  <td width="20%"></td>
-  <td align="right" width="40%">
- <a class="el" href="relations.html">Object Relations</a>  
-  </td><td><div class="right-arrow-bottom"></td>
-</tr></tbody></table>
-</p>
-<h1><a class="anchor" id="store_sec"></a>
+<div class="textblock"><h1><a class="anchor" id="store_sec"></a>
 Object Store</h1>
 <p>Now that you've written your entity classes you might want to insert them into the oos::object_store. But before doing so you have to tell the oos::object_store about your entity hierarchy once.</p>
 <h2><a class="anchor" id="prototypes"></a>
@@ -47,81 +27,11 @@ Modify objects</h2>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <a class="code" href="classoos_1_1object__ptr.html">oos::object_ptr&lt;Truck&gt;</a> truck_ptr;</div><div class="line">truck_ptr truck = ostore.insert(<span class="keyword">new</span> Truck(<span class="stringliteral">&quot;MAN&quot;</span>));</div><div class="line"></div><div class="line">truck-&gt;weight(2.5);</div><div class="line">truck-&gt;color(<span class="stringliteral">&quot;red&quot;</span>);</div></div><!-- fragment --><h2><a class="anchor" id="remove_objects"></a>
 Remove objects</h2>
 <p>Once we have an object_ptr object we can easily delete this object from the object_store by calling oos::object_store::remove()</p>
-<div class="fragment"><div class="line"><span class="keyword">typedef</span> <a class="code" href="classoos_1_1object__ptr.html">oos::object_ptr&lt;Truck&gt;</a> truck_ptr;</div><div class="line">truck_ptr truck = ostore.insert(<span class="keyword">new</span> Truck(<span class="stringliteral">&quot;MAN&quot;</span>));</div><div class="line"></div><div class="line"><span class="keywordflow">if</span> (ostore.is_removable(truck)) {</div><div class="line">  <span class="comment">// remove object</span></div><div class="line">  ostore.remove(truck);</div><div class="line">} <span class="keywordflow">else</span> {</div><div class="line">  <span class="comment">// object can&#39;t be removed</span></div><div class="line">}</div></div><!-- fragment --><p>When removing an object internally a check is done if the object (and subsequently all connected objects) can be removed. This test is done by checking the pointer and reference count of each concerning object. If the test succeeds the object is removed and true is returned. If the test fails false is returned.</p>
-<p> 
-<table id="doc_nav"><tbody><tr>
-  <td><div class="left-arrow-top"></td>
-  <td align="left" width="40%">Prev</td>
-  <td align="center" width="20%"></td>
-  <td align="right" width="40%">Next</td>
-  <td><div class="right-arrow-top"></td></tr><tr>
-  <td><div class="left-arrow-bottom"></td>
-  <td align="left" width="40%">
- <a class="el" href="objects.html">Objects</a>  
-  </td>
-  <td width="20%"></td>
-  <td align="right" width="40%">
- <a class="el" href="relations.html">Object Relations</a>  
-  </td><td><div class="right-arrow-bottom"></td>
-</tr></tbody></table>
-</p>
-<p> 
-</div>
-<div id="side_toc" class="width25 float_right">
- <b>Table of content</b> <br />
-</p><ul>
-<li>
-<a class="el" href="index.html">Overview</a> </li>
-<li>
-<a class="el" href="objects.html">Objects</a> <ul>
-<li>
-<a class="el" href="objects.html#step1">Derive from class object</a> </li>
-<li>
-<a class="el" href="objects.html#step2">Provide access methods</a> </li>
-<li>
-<a class="el" href="objects.html#step3">Make it serializable</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="store.html">Object Store</a> <ul>
-<li>
-<a class="el" href="store.html#prototypes">Setup object hierarchy</a> </li>
-<li>
-<a class="el" href="store.html#add_objects">Add objects</a> </li>
-<li>
-<a class="el" href="store.html#modify_objects">Modify objects</a> </li>
-<li>
-<a class="el" href="store.html#remove_objects">Remove objects</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="relations.html">Object Relations</a> <ul>
-<li>
-<a class="el" href="relations.html#one_to_one">OneToOne relations</a> </li>
-<li>
-<a class="el" href="relations.html#one_to_many">OneToMany relations</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="view.html">Object Views</a> </li>
-<li>
-<a class="el" href="expressions.html">Expressions</a> </li>
-<li>
-<a class="el" href="database.html">Database</a> <ul>
-<li>
-<a class="el" href="database.html#support_sec">Supported Databases</a> </li>
-<li>
-<a class="el" href="database.html#db_relation_sec">Relations on Database</a> </li>
-</ul>
-</li>
-</ul>
-<p> 
-</div>
- </p>
+<div class="fragment"><div class="line"><span class="keyword">typedef</span> <a class="code" href="classoos_1_1object__ptr.html">oos::object_ptr&lt;Truck&gt;</a> truck_ptr;</div><div class="line">truck_ptr truck = ostore.insert(<span class="keyword">new</span> Truck(<span class="stringliteral">&quot;MAN&quot;</span>));</div><div class="line"></div><div class="line"><span class="keywordflow">if</span> (ostore.is_removable(truck)) {</div><div class="line">  <span class="comment">// remove object</span></div><div class="line">  ostore.remove(truck);</div><div class="line">} <span class="keywordflow">else</span> {</div><div class="line">  <span class="comment">// object can&#39;t be removed</span></div><div class="line">}</div></div><!-- fragment --><p>When removing an object internally a check is done if the object (and subsequently all connected objects) can be removed. This test is done by checking the pointer and reference count of each concerning object. If the test succeeds the object is removed and true is returned. If the test fails false is returned. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:13:23 for Open Object Store by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:30:16 for Open Object Store by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

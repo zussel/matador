@@ -8,27 +8,7 @@ title: Object Relations
 <div class="title">Object Relations </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p> 
-<div class="width75 float_left">
-</p>
-<p> 
-<table id="doc_nav"><tbody><tr>
-  <td><div class="left-arrow-top"></td>
-  <td align="left" width="40%">Prev</td>
-  <td align="center" width="20%"></td>
-  <td align="right" width="40%">Next</td>
-  <td><div class="right-arrow-top"></td></tr><tr>
-  <td><div class="left-arrow-bottom"></td>
-  <td align="left" width="40%">
- <a class="el" href="store.html">Object Store</a>  
-  </td>
-  <td width="20%"></td>
-  <td align="right" width="40%">
- <a class="el" href="view.html">Object Views</a>  
-  </td><td><div class="right-arrow-bottom"></td>
-</tr></tbody></table>
-</p>
-<h1><a class="anchor" id="object_relations_sec"></a>
+<div class="textblock"><h1><a class="anchor" id="object_relations_sec"></a>
 Object relations</h1>
 <p>When it comes to object relations you can use one to one and one to many relations in a straight forward way.</p>
 <h2><a class="anchor" id="one_to_one"></a>
@@ -50,80 +30,10 @@ OneToMany relations</h2>
 <div class="fragment"><div class="line"><span class="keyword">class </span>person : <span class="keyword">public</span> oos::object</div><div class="line">{</div><div class="line"><span class="keyword">public</span>:</div><div class="line">  <span class="comment">// the value type of the list</span></div><div class="line">  <span class="keyword">typedef</span> oos::object_ref&lt;person&gt; person_ref;</div><div class="line">  <span class="comment">// the list definition</span></div><div class="line">  <span class="keyword">typedef</span> oos::object_list&lt;person_ref&gt; person_list_t;</div><div class="line">  <span class="comment">// shortcuts to the iterators</span></div><div class="line">  <span class="keyword">typedef</span> person_list_t::iterator iterator;</div><div class="line">  <span class="keyword">typedef</span> person_list_t::const_iterator const_iterator;</div><div class="line"></div><div class="line">  <span class="comment">// c&#39;tor for person</span></div><div class="line">  person(<span class="keyword">const</span> std::string &amp;name)</div><div class="line">    : name_(name)</div><div class="line">    <span class="comment">// the list need the person to handle the relationship</span></div><div class="line">    , friends_(this) </div><div class="line">  {}</div><div class="line"></div><div class="line">  std::string name()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> name_; }</div><div class="line"></div><div class="line">  <span class="comment">// add a friend to persons friend list</span></div><div class="line">  <span class="keywordtype">void</span> add_friend(<span class="keyword">const</span> person_ref &amp;p)</div><div class="line">  {</div><div class="line">    friends_.push_back(p);</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="comment">// STL like iterators</span></div><div class="line">  iterator begin() { <span class="keywordflow">return</span> friends_.begin(); }</div><div class="line">  iterator end() { <span class="keywordflow">return</span> friends_.end(); }</div><div class="line"></div><div class="line"><span class="keyword">private</span>:</div><div class="line">  std::string name_;</div><div class="line">  person_list_t friends_;</div><div class="line">};</div></div><!-- fragment --><p>Why declare a list if we don't use it? Next is an example howto to use our persons friend list.</p>
 <p>We insert a new person into the object_store. Than we insert and immediatily add some persons as friends to our first person.</p>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <a class="code" href="classoos_1_1object__ptr.html">oos::object_ptr&lt;person&gt;</a> person_ptr;</div><div class="line"></div><div class="line"><span class="comment">// create a new person</span></div><div class="line">person_ptr p = ostore.insert(<span class="keyword">new</span> person(<span class="stringliteral">&quot;joe&quot;</span>));</div><div class="line"></div><div class="line"><span class="comment">// add some friends</span></div><div class="line">p-&gt;add_friend(ostore.insert(<span class="keyword">new</span> person(<span class="stringliteral">&quot;walter&quot;</span>)));</div><div class="line">p-&gt;add_friend(ostore.insert(<span class="keyword">new</span> person(<span class="stringliteral">&quot;helen&quot;</span>)));</div><div class="line">p-&gt;add_friend(ostore.insert(<span class="keyword">new</span> person(<span class="stringliteral">&quot;tim&quot;</span>)));</div></div><!-- fragment --><p>Now we can simply iterate over the list like we used to do it with all STL containers. Period.</p>
-<div class="fragment"><div class="line"><span class="comment">// access all friends</span></div><div class="line">person::iterator i = p-&gt;begin();</div><div class="line"><span class="keywordflow">for</span> (i; i != p-&gt;end(); ++i) {</div><div class="line">  std::cout &lt;&lt; i-&gt;value()-&gt;name() &lt;&lt; std::endl;</div><div class="line">}</div></div><!-- fragment --><p> 
-<table id="doc_nav"><tbody><tr>
-  <td><div class="left-arrow-top"></td>
-  <td align="left" width="40%">Prev</td>
-  <td align="center" width="20%"></td>
-  <td align="right" width="40%">Next</td>
-  <td><div class="right-arrow-top"></td></tr><tr>
-  <td><div class="left-arrow-bottom"></td>
-  <td align="left" width="40%">
- <a class="el" href="store.html">Object Store</a>  
-  </td>
-  <td width="20%"></td>
-  <td align="right" width="40%">
- <a class="el" href="view.html">Object Views</a>  
-  </td><td><div class="right-arrow-bottom"></td>
-</tr></tbody></table>
-</p>
-<p> 
-</div>
-<div id="side_toc" class="width25 float_right">
- <b>Table of content</b> <br />
-</p><ul>
-<li>
-<a class="el" href="index.html">Overview</a> </li>
-<li>
-<a class="el" href="objects.html">Objects</a> <ul>
-<li>
-<a class="el" href="objects.html#step1">Derive from class object</a> </li>
-<li>
-<a class="el" href="objects.html#step2">Provide access methods</a> </li>
-<li>
-<a class="el" href="objects.html#step3">Make it serializable</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="store.html">Object Store</a> <ul>
-<li>
-<a class="el" href="store.html#prototypes">Setup object hierarchy</a> </li>
-<li>
-<a class="el" href="store.html#add_objects">Add objects</a> </li>
-<li>
-<a class="el" href="store.html#modify_objects">Modify objects</a> </li>
-<li>
-<a class="el" href="store.html#remove_objects">Remove objects</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="relations.html">Object Relations</a> <ul>
-<li>
-<a class="el" href="relations.html#one_to_one">OneToOne relations</a> </li>
-<li>
-<a class="el" href="relations.html#one_to_many">OneToMany relations</a> </li>
-</ul>
-</li>
-<li>
-<a class="el" href="view.html">Object Views</a> </li>
-<li>
-<a class="el" href="expressions.html">Expressions</a> </li>
-<li>
-<a class="el" href="database.html">Database</a> <ul>
-<li>
-<a class="el" href="database.html#support_sec">Supported Databases</a> </li>
-<li>
-<a class="el" href="database.html#db_relation_sec">Relations on Database</a> </li>
-</ul>
-</li>
-</ul>
-<p> 
-</div>
- </p>
-</div></div><!-- contents -->
+<div class="fragment"><div class="line"><span class="comment">// access all friends</span></div><div class="line">person::iterator i = p-&gt;begin();</div><div class="line"><span class="keywordflow">for</span> (i; i != p-&gt;end(); ++i) {</div><div class="line">  std::cout &lt;&lt; i-&gt;value()-&gt;name() &lt;&lt; std::endl;</div><div class="line">}</div></div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:13:23 for Open Object Store by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:30:16 for Open Object Store by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
