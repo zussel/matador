@@ -295,15 +295,53 @@ public:
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
 
 public:
+  /**
+   * @brief Creates an empty const has many iterator
+   */
   const_has_many_iterator() {}
+
+  /**
+   * @brief Creates a const has many iterator from given internal container iterator
+   *
+   * @param iter The iterator to create the const has many iterator from
+   */
   explicit const_has_many_iterator(container_iterator iter) : iter_(iter) {}
+
+  /**
+   * @brief Creates a const has many iterator from given internal const container iterator
+   *
+   * @param iter The const iterator to create the const has many iterator from
+   */
   explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
+
+  /**
+   * @brief Creates a const has many iterator from a has many iterator
+   *
+   * @param iter The iterator to create the const has many iterator from
+   */
   const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
+
+  /**
+   * @brief Copy assigns a new const has many iterator
+   *
+   * @param iter The iterator to be copy assigned from
+   * @return Reference to the created iterator
+   */
   const_has_many_iterator& operator=(const self &iter)
   {
     iter_ = iter.iter_;
     return *this;
   }
+
+  /**
+   * @brief Copy assigns a new const has many iterator
+   *
+   * Copy assigns a new const has many iterator from
+   * a non const has many iterator
+   *
+   * @param iter The iterator to be copy assigned from
+   * @return Reference to the created iterator
+   */
   const_has_many_iterator& operator=(const has_many_iterator<T, std::vector> &iter)
   {
     iter_ = iter.iter_;
@@ -311,7 +349,26 @@ public:
   }
   ~const_has_many_iterator() {}
 
+  /**
+   * @brief Compares equality iterator with another iterator.
+   *
+   * Compares iterator with another iterator. If other iterator contain
+   * the same element true es returned.
+   *
+   * @param i The iterator to compare with
+   * @return True if iterators contain the same element
+   */
   bool operator==(const self &i) const { return (iter_ == i.iter_); }
+
+  /**
+   * @brief Compares unequality iterator with another iterator.
+   *
+   * Compares iterator with another iterator. If other iterator doesn't
+   * contain the same element true es returned.
+   *
+   * @param i The iterator to compare with
+   * @return True if iterators doesn't contain the same element
+   */
   bool operator!=(const self &i) const { return !this->operator==(i); }
 
   /**
@@ -365,12 +422,24 @@ public:
     return self();
   }
 
+  /**
+   * @brief Increments iterator with offset
+   *
+   * @param offset The offset to be incremented
+   * @return Reference to incremented iterator
+   */
   self& operator+=(difference_type offset)
   {
     iter_ += offset;
     return *this;
   }
 
+  /**
+   * @brief Decrements iterator with offset
+   *
+   * @param offset The offset to be decremented
+   * @return Reference to decremented iterator
+   */
   self& operator-=(difference_type offset)
   {
     iter_ -= offset;
@@ -378,12 +447,24 @@ public:
 
   }
 
+  /**
+   * @brief Increments iterator with offset
+   *
+   * @param offset The offset to be incremented
+   * @return New incremented iterator
+   */
   self operator+(difference_type offset) const
   {
     self tmp = *this;
     return tmp += offset;
   }
 
+  /**
+   * @brief Decrements iterator with offset
+   *
+   * @param offset The offset to be decremented
+   * @return New decremented iterator
+   */
   self operator-(difference_type offset) const
   {
     self tmp = *this;

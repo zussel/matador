@@ -608,7 +608,7 @@ condition<condition<L, R>, void> operator!(const condition<L, R> &c)
  *
  * @tparam L The left hand type of the condition
  * @tparam R The right hand type of the condition
- * @param c The condition to be copied
+ * @param cond The condition to be copied
  * @return A shared condition pointer representing the given condition
  */
 template<class L, class R>

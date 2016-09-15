@@ -30,6 +30,9 @@
 
 namespace oos {
 
+/**
+ *
+ */
 class basic_attribute_serializer
 {
 public:

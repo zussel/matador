@@ -33,18 +33,32 @@ template<typename T>
 class identifier<T, typename std::enable_if<std::is_integral<T>::value>::type> : public basic_identifier
 {
 public:
-  typedef identifier<T> self;
-  typedef T type;
+  typedef identifier<T> self; /**< Shortcut to self */
+  typedef T type;             /**< Shortcut to type */
 
+  /**
+   * @brief Create an identifier
+   */
   identifier() : id_(new T(0)) { };
-  identifier(T val) : id_(new T(val)) { }
-  virtual ~identifier() { };
 
+  /**
+   * @brief Create an identifier with given value
+   * @param val Value of the identifier
+   */
+  identifier(T val) : id_(new T(val)) { }
+
+  /**
+   * @brief Copy assigns a new identifier from given value
+   * @param val Value to be assigned
+   * @return Reference to the new identfifier
+   */
   identifier& operator=(T val)
   {
     *id_ = val;
     return *this;
   }
+
+  virtual ~identifier() { };
 
   virtual bool less(const basic_identifier &x) const override
   {
@@ -242,6 +256,13 @@ private:
   static std::type_index type_index_;
 };
 
+/**
+ * @brief Shortcut to create a new identifier from value
+ *
+ * @tparam T Type of the identifier value
+ * @param id The value of the identifier
+ * @return Pointer to the new identifier object
+ */
 template<class T>
 identifier<T> *make_id(const T &id)
 {

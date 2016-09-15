@@ -62,7 +62,7 @@ public:
   void index(size_t i);
 
   /**
-   * @breif Returns the name of the field
+   * @brief Returns the name of the field
    * @return Name of the field
    */
   std::string name() const;

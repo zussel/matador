@@ -80,19 +80,62 @@ public:
    */
   void rollback();
 
+  /**
+   * @brief Return the database type of the connection.
+   *
+   * Returns the database type of the connection which is
+   * currently one of
+   * - mssql
+   * - mysql
+   * - sqlite
+   *
+   * @return The database type string
+   */
   std::string type() const;
+  /**
+   * @brief Return the version string of the current database type
+   *
+   * @return Version string of the current database type
+   */
   std::string version() const;
 
+  /**
+   * @brief Execute a sql string statement with retrieving any result
+   *
+   * @param stmt The statement to be executed
+   */
   void execute(const std::string &stmt)
   {
     std::unique_ptr<detail::result_impl> res(impl_->execute(stmt));
   }
 
+  /**
+   * @brief returns true if a table with given name exists.
+   *
+   * @param tablename Name of table to be checked
+   * @return True if table exists.
+   */
+  bool exists(const std::string &tablename) const;
+
+  /**
+   * @brief Retrieve a field description list of a table
+   * @param table The name of the requested table
+   * @return A list of fields
+   */
+  std::vector<field> describe(const std::string &table) const;
+
+  /**
+   * @brief Get the underlying sql dialect object.
+   *
+   * @return Sql dialect object.
+   */
+  basic_dialect* dialect();
+
+private:
   template < class T >
-  result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
-  {
-    return result<T>(impl_->execute(stmt));
-  }
+  friend class query;
+
+  void prepare_prototype_row(row &prototype, const std::string &tablename);
 
   template < class T >
   result<T> execute(const sql &stmt, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
@@ -100,6 +143,19 @@ public:
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
     return result<T>(impl_->execute(stmt), prototype);
+  }
+
+  /**
+   * @brief Execute a sql object representing a statement
+   *
+   * @tparam T The entity type of the query
+   * @param stmt The statement to be executed
+   * @return A result object
+   */
+  template < class T >
+  result<T> execute(const sql &stmt, typename std::enable_if< !std::is_same<T, row>::value >::type* = 0)
+  {
+    return result<T>(impl_->execute(stmt));
   }
 
   template < class T >
@@ -114,15 +170,6 @@ public:
     prepare_prototype_row(prototype, tablename);
     return statement<T>(impl_->prepare(sql));
   }
-
-  bool exists(const std::string &tablename) const;
-
-  std::vector<field> describe(const std::string &table) const;
-
-  basic_dialect* dialect();
-
-private:
-  void prepare_prototype_row(row &prototype, const std::string &tablename);
 
 private:
   std::string type_;

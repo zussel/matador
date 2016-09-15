@@ -28,6 +28,8 @@ namespace oos {
 
 class byte_buffer;
 
+/// @cond OOS_DEV
+
 class OOS_API basic_identifier_serializer : public serializer {
 public:
   basic_identifier_serializer();
@@ -70,6 +72,8 @@ private:
   std::unique_ptr<basic_identifier> basic_identifier_;
   bool restore_ = false;
 };
+
+/// @endcond
 
 }
 #endif //OOS_BASIC_IDENTIFIER_SERIALIZER_HPP

@@ -61,7 +61,13 @@ class unit_test;
 class OOS_API test_suite
 {
 public:
+  /**
+   * @brief Holds the summary result of the executed tests
+   */
   struct summary {
+    /**
+     * @brief Reset the summary data
+     */
     void reset()
     {
       asserts = 0;
@@ -69,6 +75,15 @@ public:
       errors = 0;
     }
 
+    /**
+     * @brief Evaluate the test info data
+     *
+     * Once a test was executed an info struct is filled
+     * with the result. This method syncs these infos
+     * with overall summary.
+     *
+     * @param info The test info struct
+     */
     void evaluate(const unit_test::test_func_info &info)
     {
       ++tests;
@@ -80,22 +95,23 @@ public:
         ++failures;
       }
     }
-    void evaluate(bool succeeded)
-    {
-      ++asserts;
-      if (succeeded) {
-        ++this->succeeded;
-      } else {
-        ++this->failures;
-      }
-    }
+
+    /**
+     * @brief Outputs The summary struct to on std::ostream
+     *
+     * @param out The stream to write on
+     * @param s The summary object
+     * @return Reference to the stream
+     */
     friend OOS_API std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
-	size_t tests = 0;
+    /// @cond OOS_DEV
+    size_t tests = 0;
     size_t asserts = 0;
-	size_t succeeded = 0;
-	size_t failures = 0;
-	size_t errors = 0;
+    size_t succeeded = 0;
+    size_t failures = 0;
+    size_t errors = 0;
+    /// @endcond
   };
 
 private:

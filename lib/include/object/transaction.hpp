@@ -130,7 +130,28 @@ public:
    */
   transaction& operator=(transaction &&x) = default;
 
+  /**
+   * @brief Equal operator for two transaction objects
+   *
+   * Every transaction has a unique id. This id is used
+   * for the comparation.
+   *
+   * @param a The left hand transaction to be compared
+   * @param b The right hand transaction to be compared
+   * @return True if transactions are the same
+   */
   friend bool operator==(const transaction &a, const transaction &b);
+
+  /**
+   * @brief Unequal operator for two transaction objects
+   *
+   * Every transaction has a unique id. This id is used
+   * for the comparation.
+   *
+   * @param a The left hand transaction to be compared
+   * @param b The right hand transaction to be compared
+   * @return True if transactions are not the same
+   */
   friend bool operator!=(const transaction &a, const transaction &b);
 
   /**

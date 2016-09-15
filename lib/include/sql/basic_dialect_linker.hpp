@@ -81,6 +81,8 @@ protected:
   basic_dialect& dialect() const;
   build_info& top() const;
 
+  void append_to_result(basic_dialect &dialect, const std::string &part);
+
 private:
   friend class oos::basic_dialect;
 

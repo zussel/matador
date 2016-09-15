@@ -250,6 +250,11 @@ build_info &basic_dialect_linker::top() const
   return dialect_->top();
 }
 
+void basic_dialect_linker::append_to_result(basic_dialect &dialect, const std::string &part)
+{
+  dialect.append_to_result(part);
+}
+
 void basic_dialect_linker::dialect(basic_dialect *d)
 {
   dialect_ = d;

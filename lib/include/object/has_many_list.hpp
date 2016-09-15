@@ -284,17 +284,33 @@ public:
   explicit const_has_many_iterator(const_container_iterator iter) : iter_(iter) {}
 
   /**
+   * @brief Creates a const has many iterator from a has many iterator
    *
-   * @param iter
+   * @param iter The iterator to create the const has many iterator from
    */
   const_has_many_iterator(const has_many_iterator<T, std::list> &iter) : iter_(iter.iter_) {}
 
+  /**
+   * @brief Copy assigns a new const has many iterator
+   *
+   * @param iter The iterator to be copy assigned from
+   * @return Reference to the created iterator
+   */
   const_has_many_iterator& operator=(const self &iter)
   {
     iter_ = iter.iter_;
     return *this;
   }
 
+  /**
+   * @brief Copy assigns a new const has many iterator
+   *
+   * Copy assigns a new const has many iterator from
+   * a non const has many iterator
+   *
+   * @param iter The iterator to be copy assigned from
+   * @return Reference to the created iterator
+   */
   const_has_many_iterator& operator=(const has_many_iterator<T, std::list> &iter)
   {
     iter_ = iter.iter_;

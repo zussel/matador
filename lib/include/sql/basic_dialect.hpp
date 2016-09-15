@@ -39,6 +39,7 @@ namespace detail {
 
 class basic_dialect_compiler;
 class basic_dialect_linker;
+class basic_query;
 
 /// @cond OOS_DEV
 
@@ -60,30 +61,111 @@ struct OOS_API build_info {
 
 }
 
+/**
+ * @brief Abstract base class for a concrete sql dialect.
+ *
+ * This class acts as an abstract base class for a
+ * concrete sql dialect.
+ *
+ * It is used as the statement builder to build sql
+ * statement strings from a sql object.
+ *
+ * The statement can be build for direct execution or
+ * for a prepared statement.
+ *
+ * Internaly it helds a map of all sql dialect tokens
+ * which could eventually overwritten by the concrete
+ * dialect.
+ */
 class OOS_API basic_dialect
 {
 public:
+  /**
+   * @brief Enum representing the compile type
+   */
   enum t_compile_type {
-    PREPARED,
-    DIRECT
+    PREPARED, /**< Compile type for prepared statements */
+    DIRECT    /**< Compile type for direct execute statements */
   };
 
-public:
+protected:
+  /**
+   * @brief Creates a new dialect
+   *
+   * Creates a new dialect consisting of a dialect compiler
+   * and dialect linker class.
+   * Their are default implementations of these classes, but
+   * they could be overwritten by the concrete dialect impementation
+   *
+   * @param compiler The dialect compiler object
+   * @param linker  The dialect linker object
+   */
   explicit basic_dialect(detail::basic_dialect_compiler *compiler, detail::basic_dialect_linker *linker);
+
+public:
   virtual ~basic_dialect();
 
+  /**
+   * @brief Build a sql statement for direct execution
+   *
+   * @param s The sql object to be compiled and linked
+   * @return The sql string for direct execution
+   */
   std::string direct(const sql &s);
+
+  /**
+   * @brief Build a sql statement as a prepared statement
+   *
+   * @param s The sql object to be compiled and linked
+   * @return The sql string as a prepared statement
+   */
   std::string prepare(const sql &s);
 
-  std::string build(const sql &s, t_compile_type compile_type);
+  /**
+   * @brief The count of values to be bind
+   *
+   * This function returns the count of
+   * values to be bind. The count is only
+   * valid if a prepared statement was created
+   *
+   * @return Count of values to be bind
+   */
+  size_t bind_count() const;
+
+  /**
+   * @brief The count of columns to be bind
+   *
+   * This function returns the count of
+   * columns to be bind. The count is only
+   * valid if a prepared statement was created
+   *
+   * @return Count of columns to be bind
+   */
+  size_t column_count() const;
+
+protected:
+  /// @cond OOS_DEV
+
+  friend class detail::basic_dialect_compiler;
+  friend class detail::basic_dialect_linker;
+  template < class L, class R, class E > friend class condition;
 
   virtual const char* type_string(data_type_t type) const = 0;
-
   t_compile_type compile_type() const;
 
   bool is_preparing() const;
-  size_t bind_count() const;
-  size_t column_count() const;
+
+  std::string build(const sql &s, t_compile_type compile_type);
+
+  void replace_token(detail::token::t_token tkn, const std::string &value);
+
+  std::string token_at(detail::token::t_token tok) const;
+
+  void append_to_result(const std::string &part);
+
+  void push(const sql &s);
+  void pop();
+  detail::build_info& top();
 
   size_t inc_bind_count();
   size_t inc_bind_count(size_t val);
@@ -91,22 +173,6 @@ public:
 
   size_t inc_column_count();
   size_t dec_column_count();
-
-  std::string token_at(detail::token::t_token tok) const;
-
-  void append_to_result(const std::string &part);
-
-protected:
-  /// @cond OOS_DEV
-
-  friend class detail::basic_dialect_compiler;
-  friend class detail::basic_dialect_linker;
-
-  void replace_token(detail::token::t_token tkn, const std::string &value);
-
-  void push(const sql &s);
-  void pop();
-  detail::build_info& top();
 
   ///  @endcond
 
