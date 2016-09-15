@@ -1,27 +1,4 @@
 /**
- * @htmlonly
- * <div class="width75 float_left">
- * @endhtmlonly
- *
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td align="left" width="40%"></td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%">Next</td>
- *   <td><div class="right-arrow-top"></td></tr><tr>
- *   <td align="left" width="40%">
- * @endhtmlonly
- * @htmlonly
- *   </td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @ref objects
- * @htmlonly
- *   </td><td><div class="right-arrow-bottom"></td>
- * </tr></tbody></table>
- * @endhtmlonly
- *
  * @mainpage Overview
  *
  * @section intro_sec Introduction
@@ -58,64 +35,4 @@
  * of the base class!
  *
  * Now lets start...
- *
- * @htmlonly
- * <table id="doc_nav"><tbody><tr>
- *   <td align="left" width="40%"></td>
- *   <td align="center" width="20%"></td>
- *   <td align="right" width="40%">Next</td>
- *   <td><div class="right-arrow-top"></td></tr><tr>
- *   <td align="left" width="40%">
- * @endhtmlonly
- * @htmlonly
- *   </td>
- *   <td width="20%"></td>
- *   <td align="right" width="40%">
- * @endhtmlonly
- * @ref objects_sec
- * @htmlonly
- *   </td><td><div class="right-arrow-bottom"></td>
- * </tr></tbody></table>
- * @endhtmlonly
- *
- * @htmlonly
- * </div>
- * <div id="side_toc" class="width25 float_right">
- * @endhtmlonly
- * <b>Table of content</b> @n
- * <ul>
- *   <li>@ref index</li>
- *   <li>@ref objects
- *       <ul>
- *         <li>@ref step1</li>
- *         <li>@ref step2</li>
- *         <li>@ref step3</li>
- *       </ul>
- *   </li>
- *   <li>@ref store
- *     <ul>
- *       <li>@ref prototypes</li>
- *       <li>@ref add_objects</li>
- *       <li>@ref modify_objects</li>
- *       <li>@ref remove_objects</li>
- *     </ul>
- *   </li>
- *   <li>@ref relations
- *     <ul>
- *       <li>@ref one_to_one</li>
- *       <li>@ref one_to_many</li>
- *     </ul>
- *   </li>
- *   <li>@ref view</li>
- *   <li>@ref expressions</li>
- *   <li>@ref database
- *      <ul>
- *        <li>@ref support_sec</li>
- *        <li>@ref db_relation_sec</li>
- *      </ul>
- *   </li>
- * </ul>
- * @htmlonly
- * </div>
- * @endhtmlonly
  */
