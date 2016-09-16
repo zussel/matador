@@ -1,3 +1,49 @@
+#header
+{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: #ffffff;
+  height: 65px;
+  text-align: center;
+  background-color: rgba(1, 1, 1, 0.8);
+  color: rgba(1, 1, 1, 0.8);
+}
+
+.summary
+{
+  font-size: 70%;
+  float: right;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  padding: 5px;
+}
+
+.header
+{
+  clear: both;
+}
+
+#nav-path ul
+{
+  width: 100%;
+  float: left;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
+#nav-path ul li
+{
+  float: left;
+  padding: 6px 10px 2px 0px;
+}
+
+#nav-path ul li a
+{
+  text-decoration: none;
+}
+
 .memname
 {
   font-family: Courier, Monospace;
@@ -28,11 +74,6 @@ a.anchor
 	padding: 5px;
 	font-size: 105%;
 	color: #444;
-
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -khtml-border-radius: 5px;
-  border-radius: 5px;
   border: 1px solid #ddd;
   margin: 5px 0;
   background-color: #eee;
@@ -57,9 +98,6 @@ a.anchor
   *border-collapse: collapse; /* IE7 and lower */
   border-spacing: 0;
   border:  1px solid #ccc;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
   margin-bottom: 10px;
 }
 
@@ -80,6 +118,7 @@ a.anchor
 .memberdecls td, .memberdecls th {
   border-left: 1px solid #ccc;
   /*border-top: 1px solid #ccc;*/
+  border-bottom: none;
   padding: 5px;
 }
 
@@ -107,54 +146,6 @@ a.anchor
 .memberdecls td:first-child, .memberdecls th:first-child {
   border-left: none;
   border-top: none;
-}
-
-/*
- * rounded corner for first header field
- */
-.memberdecls th:first-child {
-    -moz-border-radius: 6px 0 0 0;
-    -webkit-border-radius: 6px 0 0 0;
-    border-radius: 6px 0 0 0;
-}
-
-/*
- * rounded corner for last header field
- */
-.memberdecls th:last-child {
-    -moz-border-radius: 0 6px 0 0;
-    -webkit-border-radius: 0 6px 0 0;
-    border-radius: 0 6px 0 0;
-}
-
-/*
- * rounded corner on both sides of header field
- * if header field is the only child
- */
-.memberdecls th:only-child{
-    -moz-border-radius: 6px 6px 0 0;
-    -webkit-border-radius: 6px 6px 0 0;
-    border-radius: 6px 6px 0 0;
-}
-
-/*
- * rounded corners for the first data field
- * in the last row
- */
-.memberdecls tr:last-child td:first-child {
-    -moz-border-radius: 0 0 0 6px;
-    -webkit-border-radius: 0 0 0 6px;
-    border-radius: 0 0 0 6px;
-}
-
-/*
- * rounded corners for the last data field
- * in the last row
- */
-.memberdecls tr:last-child td:last-child {
-  -moz-border-radius: 0 0 6px 0;
-  -webkit-border-radius: 0 0 6px 0;
-  border-radius: 0 0 6px 0;
 }
 
 .memItemLeft,
@@ -207,18 +198,12 @@ a.anchor
   border: 1px solid #ccc;
   border-bottom: none;
   background-color: #eee;
-  -moz-border-radius: 6px 6px 0 0;
-  -webkit-border-radius: 6px 6px 0 0;
-  border-radius: 6px 6px 0 0;
 }
 
 .memdoc
 {
   padding: 5px;
   border: 1px solid #ccc;
-  -moz-border-radius: 0 0 6px 6px;
-  -webkit-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
 }
 
 .memtemplate

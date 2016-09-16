@@ -1,8 +1,25 @@
 # main links links
 main:
-  - title: "API"
-    url: /api/index.html
+  - title: "Getting Started"
+    url: /docs/overview
+  - title: "Reference"
+    url: /api/
 
+docs:
+  - title: Getting Started
+    children:
+      - title: Overview
+        url: /docs/overview
+      - title: Installation
+        url: /docs/installation
+  - title: Object Store
+    children:
+      - title: Prototypes
+      - url: /docs/prototypes
+    children:
+      - title: Objects
+      - url: /docs/objects
+      
 api:
   - title: Getting Started
     children:
