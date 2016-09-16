@@ -44,8 +44,9 @@
   text-decoration: none;
 }
 
-.memname
+.memname, .mlabels
 {
+  margin-bottom: none;
   font-family: Courier, Monospace;
   color: #268bd2;
 }
