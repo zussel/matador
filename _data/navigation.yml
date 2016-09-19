@@ -1,17 +1,29 @@
 # main links links
 main:
   - title: "Getting Started"
-    url: /docs/overview
+    url: /docs/installation
   - title: "Reference"
     url: /api/
 
 docs:
   - title: Getting Started
     children:
-      - title: Overview
-        url: /docs/overview
       - title: Installation
         url: /docs/installation
+      - title: Introduction
+        url: /docs/introduction
+      - title: "Object"
+        url: /api/objects/
+      - title: "Store"
+        url: /api/store/
+      - title: "Relations"
+        url: /api/relations/
+      - title: "Views"
+        url: /api/views/
+      - title: "Expressions"
+        url: /api/expressions/
+      - title: "Database"
+        url: /api/database/
   - title: Object Store
     children:
       - title: Prototypes
