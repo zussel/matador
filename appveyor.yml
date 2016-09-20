@@ -1,5 +1,8 @@
 version: 0.2.1.{build}
 
+services:
+  - mssql2008r2sp2
+
 configuration:
 - Debug
 - Release
@@ -22,7 +25,7 @@ environment:
 before_build:
 - mkdir build
 - cd build
-- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
+- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@127.0.0.1/SQL2008R2SP2" -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
 
 build:
   project: C:\projects\oos\build\oos.sln
