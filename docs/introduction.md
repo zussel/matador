@@ -1,9 +1,9 @@
 ---
 title: "Introduction"
-modified: 2016-09-16T13:33:02+02:00
 ---
 
 {% include base_path %}
+{% include toc icon="columns" title="Overview" %}
 
 The following documentation will give you an overview on Open Object Store. It will show you all main components of the library so that you can start building your own application with it.
 
@@ -76,4 +76,20 @@ If the schema already exists one can call
 
 ```cpp
 p.load();
+```
+
+Now you can create a session and insert, update, select or delete entities on the
+database.
+
+```cpp
+session s(p);
+
+auto jane = s.insert(new person("jane"));
+
+// set janes real age
+jane->age = 35;
+s.update(jane);
+
+// bye bye jane
+s.remove(jane)
 ```

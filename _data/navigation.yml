@@ -3,7 +3,11 @@ main:
   - title: "Getting Started"
     url: /docs/installation
   - title: "Reference"
-    url: /api/
+    url: /api/annotated
+  - title: "Download"
+    url: /api/download
+  - title: "About"
+    url: /api/about
 
 docs:
   - title: Getting Started
@@ -12,44 +16,34 @@ docs:
         url: /docs/installation
       - title: Introduction
         url: /docs/introduction
-      - title: "Object"
-        url: /api/objects/
-      - title: "Store"
-        url: /api/store/
-      - title: "Relations"
-        url: /api/relations/
-      - title: "Views"
-        url: /api/views/
-      - title: "Expressions"
-        url: /api/expressions/
-      - title: "Database"
-        url: /api/database/
   - title: Object Store
     children:
-      - title: Prototypes
-      - url: /docs/prototypes
-    children:
-      - title: Objects
-      - url: /docs/objects
-      
-api:
-  - title: Getting Started
-    children:
-      - title: "Overview"
-        url: /api/
-      - title: "Object"
-        url: /api/objects/
-      - title: "Store"
-        url: /api/store/
+      - title: "Prototypes"
+        url: /docs/store/
+      - title: "Objects"
+        url: /docs/objects/
       - title: "Relations"
-        url: /api/relations/
+        url: /docs/relations/
       - title: "Views"
-        url: /api/views/
+        url: /docs/views/
       - title: "Expressions"
-        url: /api/expressions/
-      - title: "Database"
-        url: /api/database/
+        url: /docs/expressions/
+      - title: "Transactions"
+        url: /docs/transactions/
+  - title: Database
+    children:
+      - title: "Databases"
+        url: /docs/databases/
+      - title: "Queries"
+        url: /docs/queries/
+  - title: ORM
+    children:
+      - title: "Persistence"
+        url: /docs/persistence/
+      - title: "Sessions"
+        url: /docs/sessions/
 
+api:
   - title: API Reference
     children:
       - title: "Class List"
