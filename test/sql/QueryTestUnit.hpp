@@ -30,6 +30,7 @@ public:
   void test_foreign_query();
   void test_query();
   void test_query_select();
+  void test_query_select_count();
   void test_query_select_columns();
   void test_select_limit();
   void test_update_limit();

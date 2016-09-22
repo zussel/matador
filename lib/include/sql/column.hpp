@@ -113,6 +113,12 @@ struct OOS_API columns : public detail::token
   static columns all();
 
   /**
+   * @brief A shortcut for a count all column
+   * @return Count all column
+   */
+  static column count_all();
+
+  /**
    * @brief Interface according to the visitor pattern.
    *
    * @param visitor The visitor obejct to be accepted
@@ -122,7 +128,9 @@ struct OOS_API columns : public detail::token
   std::vector<std::shared_ptr<column>> columns_; /**< The list of column shared pointer */
   t_brackets with_brackets_ = WITH_BRACKETS;     /**< The bracket type */
 
+private:
   static columns all_;                           /**< The all columns object */
+  static column count_all_;                      /**< An count all column object */
 };
 
 namespace detail {

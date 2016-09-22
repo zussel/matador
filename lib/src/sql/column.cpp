@@ -73,6 +73,12 @@ columns columns::all()
   return all_;
 }
 
+column columns::count_all()
+{
+  return count_all_;
+}
+
 columns columns::all_ = columns({column("*")}, WITHOUT_BRACKETS);
+column columns::count_all_ = column("COUNT(*)");
 
 }

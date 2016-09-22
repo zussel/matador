@@ -113,5 +113,4 @@ void transaction::cleanup()
   transaction_data_->store_.get().pop_transaction();
 }
 
-
 }

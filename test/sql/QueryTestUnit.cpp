@@ -24,6 +24,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
   add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
+  add_test("select_count", std::bind(&QueryTestUnit::test_query_select_count, this), "test query select count");
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
@@ -524,6 +525,47 @@ void QueryTestUnit::test_query_select()
   res = q.drop().execute(*connection_);
 }
 
+void QueryTestUnit::test_query_select_count()
+{
+  connection_->open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(*connection_));
+
+  unsigned long counter = 0;
+
+  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
+  res = q.insert(hans.get()).execute(*connection_);
+
+  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
+  res = q.insert(otto.get()).execute(*connection_);
+
+  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
+  res = q.insert(hilde.get()).execute(*connection_);
+
+  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
+  res = q.insert(trude.get()).execute(*connection_);
+
+  query<> count;
+
+  column name("name");
+  auto rowres = count.select({columns::count_all()}).from("person").where(name == "Hans" || name == "Hilde").execute(*connection_);
+
+  auto first = rowres.begin();
+  auto last = rowres.end();
+
+  while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_EXPECT_EQUAL(2, item->at<int>(0), "invalid value");
+    ++first;
+  }
+
+  q.drop().execute(*connection_);
+
+}
+
 void QueryTestUnit::test_query_select_columns()
 {
   connection_->open();
@@ -566,7 +608,6 @@ void QueryTestUnit::test_query_select_columns()
   }
 
   q.drop().execute(*connection_);
-
 }
 
 struct relation
