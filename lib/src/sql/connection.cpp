@@ -101,8 +101,10 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
 //    prototype.set(f.name(), std::make_shared<null_value>());
   }
   // default value for count(*)
-  std::shared_ptr<detail::basic_value> value(create_default_value(data_type_t::type_int));
-  prototype.set(oos::columns::count_all().name, value);
+  if (prototype.has_column(oos::columns::count_all().name)) {
+    std::shared_ptr <detail::basic_value> value(create_default_value(data_type_t::type_int));
+    prototype.set(oos::columns::count_all().name, value);
+  }
 }
 
 detail::basic_value* create_default_value(data_type_t type)

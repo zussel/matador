@@ -140,6 +140,7 @@ private:
   template < class T >
   result<T> execute(const sql &stmt, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
+//    prototype.clear();
     // get column descriptions
     prepare_prototype_row(prototype, tablename);
     return result<T>(impl_->execute(stmt), prototype);

@@ -50,4 +50,10 @@ void row::set(const std::string &column, const std::shared_ptr<detail::basic_val
   values_.at(column) = value;
 }
 
+void row::clear()
+{
+  columns_.clear();
+  values_.clear();
+}
+
 }
