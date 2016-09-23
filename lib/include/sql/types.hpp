@@ -18,6 +18,20 @@
 #ifndef OOS_DATABASE_TYPES_HPP
 #define OOS_DATABASE_TYPES_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+    #define OOS_API __declspec(dllexport)
+    #define EXPIMP_TEMPLATE
+  #else
+    #define OOS_API __declspec(dllimport)
+    #define EXPIMP_TEMPLATE extern
+  #endif
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4355)
+#else
+#define OOS_API
+#endif
+
 #include "tools/date.hpp"
 #include "tools/time.hpp"
 
@@ -51,7 +65,7 @@ enum struct data_type {
 
 };
 
-std::ostream& operator<<(std::ostream &out, const oos::data_type type);
+OOS_API std::ostream& operator<<(std::ostream &out, const oos::data_type type);
 
 /**
  * @tparam T The type of the traits
