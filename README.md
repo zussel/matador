@@ -10,7 +10,8 @@ Code coverage at [coveralls.io](https://coveralls.io)
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
-[![Coverage Status](https://coveralls.io/repos/zussel/oos/badge.png?branch=develop)](https://coveralls.io/r/zussel/oos?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/zussel/oos/badge.svg?branch=develop)](https://coveralls.io/github/zussel/oos?branch=develop)
+[![GitHub version](https://badge.fury.io/gh/zussel%2Foos.svg)](https://badge.fury.io/gh/zussel%2Foos)
 
 OOS is a ORM framework written in C++. It aims to encapsulate all database stuff
 (database backends, sql statements, serialization of objects) and provides the user an
