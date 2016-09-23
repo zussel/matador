@@ -176,6 +176,8 @@ public:
     return values_.at(column)->value();
   }
 
+  void clear();
+
 private:
 
 //  std::vector<detail::basic_value> values_;
