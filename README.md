@@ -5,9 +5,6 @@ __Version 0.5.0-alpha.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))_
 
 Store all kind of objects in one container.
 
-Build status at [travis-ci](https://travis-ci.org),
-Code coverage at [coveralls.io](https://coveralls.io)
-
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/github/zussel/oos/badge.svg?branch=develop)](https://coveralls.io/github/zussel/oos?branch=develop)
