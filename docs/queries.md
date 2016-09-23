@@ -48,9 +48,15 @@ q.create().execute(conn);
 ```
 
 When using the anonymous version you have to describe the fields of the table to create:
+
 ```cpp
 oos::query<> q;
 // Todo: implement functionality
+q.create("person").columns({
+    make_id_column<long>("id"),
+    make_column<std:.string>("name"),
+    make_column<unsigned>("age")
+}).execute(conn);
 ```
 
 #### Drop
@@ -63,6 +69,14 @@ oos::query<person> q("person");
 // create the table based on the given type
 q.drop().execute(conn);
 ```
+The anonymous version is like this:
+
+```cpp
+oos::query<> q;
+
+// create the table based on the given type
+q.drop("person").execute(conn);
+```
 
 #### Insert
 
@@ -71,5 +85,7 @@ q.drop().execute(conn);
 #### Select
 
 #### Delete
+
+#### Conditions
 
 Take a look at the [query API reference](/#) to get an overview of the provided syntax.
