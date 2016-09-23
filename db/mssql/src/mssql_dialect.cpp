@@ -22,62 +22,62 @@ mssql_dialect::mssql_dialect()
   replace_token(detail::token::TOP, "TOP");
 }
 
-const char* mssql_dialect::type_string(oos::data_type_t type) const
+const char* mssql_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return "CHAR(1)";
-    case type_short:
+    case data_type::type_short:
       return "SMALLINT";
-    case type_int:
+    case data_type::type_int:
       return "INT";
-    case type_long:
+    case data_type::type_long:
       return "BIGINT";
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return "SMALLINT";
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return "INT";
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return "BIGINT";
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return "NUMERIC(21,0)";
-    case type_bool:
+    case data_type::type_bool:
       return "BIT";
-    case type_float:
+    case data_type::type_float:
       return "FLOAT";
-    case type_double:
+    case data_type::type_double:
       return "FLOAT";
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return "VARCHAR";
-    case type_varchar:
+    case data_type::type_varchar:
       return "VARCHAR";
-    case type_text:
+    case data_type::type_text:
       return "TEXT";
-    case type_date:
+    case data_type::type_date:
       return "DATE";
-    case type_time:
+    case data_type::type_time:
       return "DATETIME";
     default:
     {
       std::stringstream msg;
-      msg << "mssql connection: unknown type xxx [" << type << "]";
+      msg << "mssql connection: unknown type [" << type << "]";
       throw std::logic_error(msg.str());
     }
   }
 }
 
-data_type_t mssql_dialect::string_type(const char *type) const
+data_type mssql_dialect::string_type(const char *type) const
 {
   if (strcmp(type, "numeric") == 0) {
-    return type_long;
+    return data_type::type_long;
   } else if (strcmp(type, "bigint") == 0) {
-    return type_long;
+    return data_type::type_long;
   } else if (strcmp(type, "date") == 0) {
-    return type_text;
+    return data_type::type_text;
   } else if (strcmp(type, "varchar") == 0) {
-    return type_varchar;
+    return data_type::type_varchar;
   } else {
-    return type_unknown;
+    return data_type::type_unknown;
   }
 }
 

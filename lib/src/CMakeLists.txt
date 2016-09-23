@@ -159,7 +159,7 @@ SET(SQL_SOURCES
   sql/query.cpp
   sql/basic_query.cpp
   sql/basic_dialect_compiler.cpp
-  sql/basic_dialect_linker.cpp)
+  sql/basic_dialect_linker.cpp sql/type.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp

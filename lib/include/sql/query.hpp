@@ -451,7 +451,7 @@ public:
    * @param index The index of the column.
    * @return A reference to the query.
    */
-  query& column(const std::string &column, data_type_t type, size_t index)
+  query& column(const std::string &column, data_type type, size_t index)
   {
     throw_invalid(QUERY_COLUMN, state);
     sql_.append(new detail::typed_column(column, type, index, false));
@@ -521,6 +521,18 @@ public:
   {}
 
   ~query() {}
+
+  /**
+   * @brief Creates a table
+   */
+  query& create(const std::string &tablename)
+  {
+    reset(t_query_command::CREATE);
+
+    sql_.append(new detail::create(tablename));
+
+    return *this;
+  }
 
   /**
    * @brief Creates a select statement with the

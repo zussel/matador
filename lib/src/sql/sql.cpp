@@ -53,34 +53,34 @@ void sql::reset(t_query_command command_type)
   token_list_.clear();
 }
 
-unsigned int sql::type_size(data_type_t type)
+unsigned int sql::type_size(data_type type)
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return sizeof(char);
-    case type_short:
+    case data_type::type_short:
       return sizeof(short);
-    case type_int:
+    case data_type::type_int:
       return sizeof(int);
-    case type_long:
+    case data_type::type_long:
       return sizeof(long);
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return sizeof(unsigned char);
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return sizeof(unsigned short);
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return sizeof(unsigned int);
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return sizeof(unsigned long);
-    case type_bool:
+    case data_type::type_bool:
       return sizeof(bool);
-    case type_float:
+    case data_type::type_float:
       return sizeof(float);
-    case type_double:
+    case data_type::type_double:
       return sizeof(double);
-    case type_char_pointer:
-    case type_varchar:
-    case type_text:
+    case data_type::type_char_pointer:
+    case data_type::type_varchar:
+    case data_type::type_text:
       return 64;
     default:
       throw std::logic_error("unknown type");

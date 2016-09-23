@@ -77,13 +77,13 @@ public:
    * @brief Returns the type of the field
    * @return Type of the field
    */
-  data_type_t type() const;
+  data_type type() const;
 
   /**
    * @brief Sets the type of the field
    * @param t Type of the field to set
    */
-  void type(data_type_t t);
+  void type(data_type t);
 
   /**
    * @brief Returns true if NULL value is not allowed
@@ -112,7 +112,7 @@ public:
 private:
   size_t index_ = 0;
   std::string name_;
-  data_type_t type_;
+  data_type type_;
   bool not_null_ = false;
   std::string default_value_;
 };

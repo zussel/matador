@@ -54,8 +54,8 @@ public:
 //  virtual int column_count() const;
 //  virtual const char* column_name(int i) const;
 
-  static int type2int(data_type_t type);
-  static int type2sql(data_type_t type);
+  static int type2int(data_type type);
+  static int type2sql(data_type type);
 
 protected:
   virtual void serialize(const char*, char&) override;
@@ -90,8 +90,8 @@ protected:
     }
     host_data_.push_back(v);
     
-    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
-    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    int ctype = mssql_statement::type2int(data_type_traits<T>::type());
+    int type = mssql_statement::type2sql(data_type_traits<T>::type());
     SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
@@ -108,8 +108,8 @@ protected:
     v->len = SQL_NULL_DATA;
     host_data_.push_back(v);
 
-    int ctype = mssql_statement::type2int(type_traits<T>::data_type());
-    int type = mssql_statement::type2sql(type_traits<T>::data_type());
+    int ctype = mssql_statement::type2int(data_type_traits<T>::type());
+    int type = mssql_statement::type2sql(data_type_traits<T>::type());
     SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, &v->len);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
   }

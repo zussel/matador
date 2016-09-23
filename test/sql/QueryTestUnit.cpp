@@ -19,6 +19,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
+  add_test("create_anonymous", std::bind(&QueryTestUnit::test_anonymous_create, this), "test direct sql create statement via row (anonymous)");
   add_test("statement_insert", std::bind(&QueryTestUnit::test_statement_insert, this), "test prepared sql insert statement");
   add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
   add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
@@ -116,7 +117,7 @@ void QueryTestUnit::test_describe()
   auto fields = connection_->describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<data_type_t > types = { oos::type_long, oos::type_varchar, oos::type_text, oos::type_long};
+  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
@@ -205,6 +206,19 @@ void QueryTestUnit::test_create()
   }
 
   res = q.drop().execute(*connection_);
+}
+
+void QueryTestUnit::test_anonymous_create()
+{
+  connection_->open();
+
+  query<> q;
+
+//  q.create("person").columns({
+//    make_id_column<long>("id"),
+//    make_column<std:.string>("name"),
+//    make_column<unsigned>("age")
+//  }).execute(*connection_);
 }
 
 void QueryTestUnit::test_statement_insert()

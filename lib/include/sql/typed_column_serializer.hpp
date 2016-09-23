@@ -74,9 +74,9 @@ public:
 private:
   std::unique_ptr<columns> cols_;
   size_t index_ = 0;
-  typedef std::function<std::shared_ptr<column> (const char*, data_type_t, size_t)> t_create_column_func;
+  typedef std::function<std::shared_ptr<column> (const char*, data_type, size_t)> t_create_column_func;
   t_create_column_func create_column_func_;
-  typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type_t, size_t)> t_create_varchar_column_func;
+  typedef std::function<std::shared_ptr<column> (const char*, size_t, data_type, size_t)> t_create_varchar_column_func;
   t_create_varchar_column_func create_varchar_column_func_;
 };
 

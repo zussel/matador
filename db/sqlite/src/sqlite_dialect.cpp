@@ -21,66 +21,66 @@ sqlite_dialect::sqlite_dialect()
   replace_token(detail::token::ROLLBACK, "ROLLBACK TRANSACTION");
 }
 
-const char *sqlite_dialect::type_string(oos::data_type_t type) const
+const char *sqlite_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return "INTEGER";
-    case type_short:
+    case data_type::type_short:
       return "INTEGER";
-    case type_int:
+    case data_type::type_int:
       return "INTEGER";
-    case type_long:
+    case data_type::type_long:
       return "INTEGER";
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return "INTEGER";
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return "INTEGER";
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return "INTEGER";
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return "INTEGER";
-    case type_bool:
+    case data_type::type_bool:
       return "INTEGER";
-    case type_float:
+    case data_type::type_float:
       return "DOUBLE";
-    case type_double:
+    case data_type::type_double:
       return "DOUBLE";
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return "VARCHAR";
-    case type_varchar:
+    case data_type::type_varchar:
       return "VARCHAR";
-    case type_text:
+    case data_type::type_text:
       return "TEXT";
-    case type_date:
+    case data_type::type_date:
       return "TEXT";
-    case type_time:
+    case data_type::type_time:
       return "TEXT";
     default: {
       std::stringstream msg;
-      msg << "sqlite sql: unknown type xxx [" << type << "]";
+      msg << "sqlite sql: unknown type [" << type << "]";
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }
   }
 }
 
-data_type_t sqlite_dialect::string_type(const char *type) const
+data_type sqlite_dialect::string_type(const char *type) const
 {
   if (strcmp(type, "INTEGER") == 0) {
-    return type_long;
+    return data_type::type_long;
   } else if (strcmp(type, "TEXT") == 0) {
-    return type_text;
+    return data_type::type_text;
   } else if (strcmp(type, "REAL") == 0) {
-    return type_double;
+    return data_type::type_double;
   } else if (strcmp(type, "BLOB") == 0) {
-    return type_blob;
+    return data_type::type_blob;
   } else if (strcmp(type, "NULL") == 0) {
-    return type_null;
+    return data_type::type_null;
   } else if (strncmp(type, "VARCHAR", 7) == 0) {
-    return type_varchar;
+    return data_type::type_varchar;
   } else {
-    return type_unknown;
+    return data_type::type_unknown;
   }
 }
 

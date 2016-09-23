@@ -15,7 +15,7 @@ public:
 
   TestDialect();
 
-  const char* type_string(oos::data_type_t type) const;
+  const char* type_string(oos::data_type type) const;
 };
 
 #endif //OOS_TESTDIALECT_HPP

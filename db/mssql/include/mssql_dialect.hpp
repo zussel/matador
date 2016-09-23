@@ -14,8 +14,8 @@ class mssql_dialect : public basic_dialect
 {
 public:
   mssql_dialect();
-  const char* type_string(oos::data_type_t type) const;
-  data_type_t string_type(const char *type) const;
+  const char* type_string(oos::data_type type) const;
+  data_type string_type(const char *type) const;
 };
 
 }

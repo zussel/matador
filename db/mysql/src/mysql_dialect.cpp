@@ -28,34 +28,34 @@ mysql_dialect::mysql_dialect()
   replace_token(detail::token::ROLLBACK, "ROLLBACK");
 }
 
-const char* mysql_dialect::type_string(oos::data_type_t type) const
+const char* mysql_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return "INTEGER";
-    case type_short:
+    case data_type::type_short:
       return "INTEGER";
-    case type_int:
+    case data_type::type_int:
       return "INTEGER";
-    case type_long:
+    case data_type::type_long:
       return "INTEGER";
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return "INTEGER";
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return "INTEGER";
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return "INTEGER";
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return "INTEGER";
-    case type_bool:
+    case data_type::type_bool:
       return "INTEGER";
-    case type_float:
+    case data_type::type_float:
       return "FLOAT";
-    case type_double:
+    case data_type::type_double:
       return "DOUBLE";
-    case type_date:
+    case data_type::type_date:
       return "DATE";
-    case type_time:
+    case data_type::type_time:
 #if MYSQL_VERSION_ID < 50604
       // before mysql version 5.6.4 datetime
       // doesn't support fractional seconds
@@ -64,11 +64,11 @@ const char* mysql_dialect::type_string(oos::data_type_t type) const
 #else
       return "DATETIME(3)";
 #endif
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return "VARCHAR";
-    case type_varchar:
+    case data_type::type_varchar:
       return "VARCHAR";
-    case type_text:
+    case data_type::type_text:
       return "TEXT";
     default:
     {
@@ -80,16 +80,16 @@ const char* mysql_dialect::type_string(oos::data_type_t type) const
   }
 }
 
-data_type_t mysql_dialect::string_type(const char *type) const
+data_type mysql_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "int", 3) == 0) {
-    return type_long;
+    return data_type::type_long;
   } else if (strcmp(type, "date") == 0) {
-    return type_text;
+    return data_type::type_text;
   } else if (strncmp(type, "varchar", 7) == 0) {
-    return type_varchar;
+    return data_type::type_varchar;
   } else {
-    return type_unknown;
+    return data_type::type_unknown;
   }
 }
 

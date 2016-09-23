@@ -34,7 +34,11 @@ columns::columns(t_brackets with_brackets)
 
 namespace detail {
 
-typed_column::typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host)
+typed_column::typed_column(const std::string &col, data_type t)
+  : typed_column(col, t, 0, false)
+{}
+
+typed_column::typed_column(const std::string &col, data_type t, std::size_t idx, bool host)
   : column(col)
   , type(t), index(idx), is_host(host)
 {}

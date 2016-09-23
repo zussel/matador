@@ -42,9 +42,9 @@ void DialectTestUnit::test_create_query()
 
   std::unique_ptr<oos::columns> cols(new columns(columns::WITH_BRACKETS));
 
-  cols->push_back(std::make_shared<detail::identifier_column>("id", data_type_t::type_unsigned_long, 0, false));
-  cols->push_back(std::make_shared<detail::typed_varchar_column>("name", 256, data_type_t::type_varchar, 1, false));
-  cols->push_back(std::make_shared<detail::typed_column>("age", data_type_t::type_unsigned_int, 2, false));
+  cols->push_back(std::make_shared<detail::identifier_column>("id", data_type::type_unsigned_long, 0, false));
+  cols->push_back(std::make_shared<detail::typed_varchar_column>("name", 256, data_type::type_varchar, 1, false));
+  cols->push_back(std::make_shared<detail::typed_column>("age", data_type::type_unsigned_int, 2, false));
 
   s.append(cols.release());
 

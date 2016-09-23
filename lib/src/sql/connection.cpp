@@ -84,7 +84,7 @@ basic_dialect *connection::dialect()
   return impl_->dialect();
 }
 
-detail::basic_value* create_default_value(data_type_t type);
+detail::basic_value* create_default_value(data_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
@@ -101,42 +101,42 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
 //    prototype.set(f.name(), std::make_shared<null_value>());
   }
   // default value for count(*)
-  std::shared_ptr<detail::basic_value> value(create_default_value(data_type_t::type_int));
+  std::shared_ptr<detail::basic_value> value(create_default_value(data_type::type_int));
   prototype.set(oos::columns::count_all().name, value);
 }
 
-detail::basic_value* create_default_value(data_type_t type)
+detail::basic_value* create_default_value(data_type type)
 {
   switch (type) {
-    case type_char:
+    case data_type::type_char:
       return make_value((char)0);
-    case type_short:
+    case data_type::type_short:
       return make_value<short>(0);
-    case type_int:
+    case data_type::type_int:
       return make_value<int>(0);
-    case type_long:
+    case data_type::type_long:
       return make_value<long>(0);
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return make_value<unsigned char>(0);
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return make_value<unsigned short>(0);
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return make_value<unsigned int>(0);
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return make_value<unsigned long>(0);
-    case type_float:
+    case data_type::type_float:
       return make_value<float>(0);
-    case type_double:
+    case data_type::type_double:
       return make_value<double>(0);
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return new value<char*>((char*)nullptr, 0UL);
-    case type_text:
+    case data_type::type_text:
       return make_value<std::string>("");
-    case type_date:
+    case data_type::type_date:
       return make_value<oos::date>(date());
-    case type_time:
+    case data_type::type_time:
       return make_value<oos::time>(oos::time());
-    case type_varchar:
+    case data_type::type_varchar:
       return make_value<std::string>("");
     default:
       return new null_value;

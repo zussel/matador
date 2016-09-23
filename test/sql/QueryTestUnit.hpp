@@ -25,6 +25,7 @@ public:
   void test_describe();
   void test_identifier();
   void test_create();
+  void test_anonymous_create();
   void test_statement_insert();
   void test_statement_update();
   void test_foreign_query();

@@ -271,40 +271,40 @@ void mssql_statement::bind_value(const char *val, size_t /*size*/, size_t index)
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
-int mssql_statement::type2int(data_type_t type)
+int mssql_statement::type2int(data_type type)
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return SQL_C_CHAR;
-    case type_short:
+    case data_type::type_short:
       return SQL_C_SSHORT;
-    case type_int:
+    case data_type::type_int:
       return SQL_C_SLONG;
-    case type_long:
+    case data_type::type_long:
       return SQL_C_SLONG;
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return SQL_C_UTINYINT;
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return SQL_C_USHORT;
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return SQL_C_ULONG;
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return SQL_C_ULONG;
-    case type_bool:
+    case data_type::type_bool:
       return SQL_C_USHORT;
-    case type_float:
+    case data_type::type_float:
       return SQL_C_FLOAT;
-    case type_double:
+    case data_type::type_double:
       return SQL_C_DOUBLE;
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return SQL_C_CHAR;
-    case type_varchar:
+    case data_type::type_varchar:
       return SQL_C_CHAR;
-    case type_text:
+    case data_type::type_text:
       return SQL_C_CHAR;
-    case type_date:
+    case data_type::type_date:
       return SQL_C_TYPE_DATE;
-    case type_time:
+    case data_type::type_time:
       return SQL_C_TYPE_TIMESTAMP;
     default:
       {
@@ -313,40 +313,40 @@ int mssql_statement::type2int(data_type_t type)
     }
 }
 
-int mssql_statement::type2sql(data_type_t type)
+int mssql_statement::type2sql(data_type type)
 {
   switch(type) {
-    case type_char:
+    case data_type::type_char:
       return SQL_CHAR;
-    case type_short:
+    case data_type::type_short:
       return SQL_SMALLINT;
-    case type_int:
+    case data_type::type_int:
       return SQL_INTEGER;
-    case type_long:
+    case data_type::type_long:
       return SQL_BIGINT;
-    case type_unsigned_char:
+    case data_type::type_unsigned_char:
       return SQL_SMALLINT;
-    case type_unsigned_short:
+    case data_type::type_unsigned_short:
       return SQL_INTEGER;
-    case type_unsigned_int:
+    case data_type::type_unsigned_int:
       return SQL_BIGINT;
-    case type_unsigned_long:
+    case data_type::type_unsigned_long:
       return SQL_NUMERIC;
-    case type_bool:
+    case data_type::type_bool:
       return SQL_INTEGER;
-    case type_float:
+    case data_type::type_float:
       return SQL_FLOAT;
-    case type_double:
+    case data_type::type_double:
       return SQL_DOUBLE;
-    case type_char_pointer:
+    case data_type::type_char_pointer:
       return SQL_VARCHAR;
-    case type_varchar:
+    case data_type::type_varchar:
       return SQL_VARCHAR;
-    case type_text:
+    case data_type::type_text:
       return SQL_VARCHAR;
-    case type_date:
+    case data_type::type_date:
       return SQL_TIMESTAMP;
-    case type_time:
+    case data_type::type_time:
       return SQL_TYPE_TIMESTAMP;
     default:
       {

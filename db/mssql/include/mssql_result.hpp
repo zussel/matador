@@ -63,7 +63,7 @@ public:
   {
     T val;
     SQLLEN info = 0;
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(oos::type_traits<T>::data_type());
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(oos::data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), type, &val, sizeof(T), &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
@@ -107,7 +107,7 @@ protected:
   void read_column(const char *, T & val)
   {
     SQLLEN info = 0;
-    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(type_traits<T>::data_type());
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
     SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(result_index_++), type, &val, sizeof(T), &info);
     if (SQL_SUCCEEDED(ret)) {
       return;

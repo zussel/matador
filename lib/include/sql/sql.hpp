@@ -67,11 +67,12 @@ public:
 
   void reset(t_query_command command_type);
 
-  static unsigned int type_size(data_type_t type);
+  static unsigned int type_size(data_type type);
+
   template < class T >
-  static unsigned int data_type()
+  static unsigned int type()
   {
-    return type_traits<T>::data_type();
+    return data_type_traits<T>::type();
   }
 
 private:

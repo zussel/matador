@@ -139,18 +139,19 @@ namespace detail {
 
 struct OOS_API typed_column : public oos::column
 {
-  typed_column(const std::string &col, data_type_t t, std::size_t idx, bool host);
+  typed_column(const std::string &col, data_type t);
+  typed_column(const std::string &col, data_type t, std::size_t idx, bool host);
 
   virtual void accept(token_visitor &visitor) override;
 
-  data_type_t type;
-  std::size_t index;
-  bool is_host;
+  data_type type;
+  std::size_t index = 0;
+  bool is_host = false;
 };
 
 struct OOS_API identifier_column : public typed_column
 {
-  identifier_column(const char *n, data_type_t t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
+  identifier_column(const char *n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
   virtual void accept(token_visitor &visitor) override
   {
@@ -160,7 +161,7 @@ struct OOS_API identifier_column : public typed_column
 
 struct OOS_API typed_varchar_column : public typed_column
 {
-  typed_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
+  typed_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
     : typed_column(n, t, idx, host)
     , size(size)
   { }
@@ -175,7 +176,7 @@ struct OOS_API typed_varchar_column : public typed_column
 
 struct OOS_API identifier_varchar_column : public typed_varchar_column
 {
-  identifier_varchar_column(const char *n, size_t size, data_type_t t, size_t idx, bool host)
+  identifier_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
     : typed_varchar_column(n, size, t, idx, host)
   { }
 
