@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: Introduction
 ---
 
 {% include base_path %}
@@ -19,7 +19,7 @@ struct person
   oos::identifier<long> id;
   std::string name;
   
-  person(const std::string &n, unsigned a) : name(n) {}
+  person(const std::string &n) : name(n) {}
   
   template < typename S >
   void serialize(S &serializer) {

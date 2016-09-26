@@ -1,22 +1,22 @@
 # main links links
 main:
   - title: "Getting Started"
-    url: /docs/installation
+    url: /docs/installation/
   - title: "Reference"
-    url: /api/annotated
+    url: /api/annotated/
   - title: "Download"
-    url: /api/download
+    url: /api/download/
   - title: "About"
-    url: /api/about
+    url: /api/about/
 
 docs:
-  - title: Getting Started
+  - title: "Getting Started"
     children:
-      - title: Installation
-        url: /docs/installation
-      - title: Introduction
-        url: /docs/introduction
-  - title: Object Store
+      - title: "Installation"
+        url: /docs/installation/
+      - title: "Introduction"
+        url: /docs/introduction/
+  - title: "Object Store"
     children:
       - title: "Prototypes"
         url: /docs/store/

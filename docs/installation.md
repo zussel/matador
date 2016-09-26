@@ -1,5 +1,5 @@
 ---
-title: "Installation"
+title: Installation
 ---
 
 {% include base_path %}
