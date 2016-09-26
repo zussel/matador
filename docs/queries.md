@@ -50,12 +50,12 @@ q.create().execute(conn);
 When using the anonymous version you have to describe the fields of the table to create:
 
 ```cpp
-oos::query<> q;
+oos::query<> q("person");
 // Todo: implement functionality
-q.create("person").columns({
-    make_id_column<long>("id"),
-    make_column<std:.string>("name"),
-    make_column<unsigned>("age")
+q.create({
+    make_typed_id_column<long>("id"),
+    make_typed_varchar_column<std::string>("name"),
+    make_typed_column<unsigned>("age")
 }).execute(conn);
 ```
 
