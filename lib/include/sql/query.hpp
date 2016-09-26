@@ -791,6 +791,11 @@ public:
     return *this;
   }
 
+  std::string str(bool prepared)
+  {
+    return detail::basic_query::str(*connection_, prepared);
+  }
+
 private:
   connection *connection_ = nullptr;
   row row_;

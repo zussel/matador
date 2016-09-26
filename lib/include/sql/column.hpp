@@ -145,6 +145,12 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
   return std::make_shared<detail::typed_column>(col, data_type_traits<T>::type());
 }
 
+template < unsigned int C >
+std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col)
+{
+  return std::make_shared<detail::typed_varchar_column>(col, C, data_type_traits<varchar<C>>::type());
+}
+
 template < class T >
 std::shared_ptr<detail::typed_column> make_typed_id_column(const std::string &col)
 {
@@ -180,7 +186,11 @@ struct OOS_API typed_identifier_column : public typed_column
 
 struct OOS_API typed_varchar_column : public typed_column
 {
-  typed_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
+  typed_varchar_column(const std::string &n, size_t size, data_type t)
+    : typed_column(n, t)
+    , size(size)
+  { }
+  typed_varchar_column(const std::string &n, size_t size, data_type t, size_t idx, bool host)
     : typed_column(n, t, idx, host)
     , size(size)
   { }

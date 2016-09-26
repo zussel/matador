@@ -218,9 +218,11 @@ void QueryTestUnit::test_anonymous_create()
 
   q.create({
     make_typed_id_column<long>("id"),
-    make_typed_column<std::string>("name"),
+    make_typed_varchar_column<32>("name"),
     make_typed_column<unsigned>("age")
   });
+
+  std::cout << "SQL: " << q.str(false) << "\n";
 
   q.execute();
 
