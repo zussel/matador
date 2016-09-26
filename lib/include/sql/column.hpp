@@ -134,6 +134,24 @@ private:
 };
 
 namespace detail {
+struct typed_column;
+struct typed_identifier_column;
+struct typed_varchar_column;
+}
+
+template < class T >
+std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
+{
+  return std::make_shared<detail::typed_column>(col, data_type_traits<T>::type());
+}
+
+template < class T >
+std::shared_ptr<detail::typed_column> make_typed_id_column(const std::string &col)
+{
+  return std::make_shared<detail::typed_identifier_column>(col, data_type_traits<T>::type());
+}
+
+namespace detail {
 
 /// @cond OOS_DEV
 
@@ -149,9 +167,10 @@ struct OOS_API typed_column : public oos::column
   bool is_host = false;
 };
 
-struct OOS_API identifier_column : public typed_column
+struct OOS_API typed_identifier_column : public typed_column
 {
-  identifier_column(const char *n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
+  typed_identifier_column(const std::string &n, data_type t) : typed_column(n, t) { }
+  typed_identifier_column(const std::string &n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
 
   virtual void accept(token_visitor &visitor) override
   {

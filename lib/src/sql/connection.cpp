@@ -88,6 +88,9 @@ detail::basic_value* create_default_value(data_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
 {
+  if (!impl_->exists(tablename)) {
+    return;
+  }
   auto fields = impl_->describe(tablename);
   for (auto &&f : fields) {
     if (!prototype.has_column(f.name())) {

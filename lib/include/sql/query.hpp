@@ -504,33 +504,102 @@ class query<row> : public detail::basic_query
 {
 public:
   /**
-   * @brief Creates q new query.
+   * @brief Create a new query.
+   *
+   * Create a new query with unset
+   * default tablename and unset
+   * default internal connection
    */
   query()
-    : detail::basic_query("")
+    : query(nullptr, "")
   {}
 
   /**
    * @brief Create a new query for the
    * given table.
    *
-   * @param table_name The connection.
+   * @param tablename The default tablename used for the query.
    */
-  query(const std::string &table_name)
-    : basic_query(table_name)
+  query(const std::string &tablename)
+    : query(nullptr, tablename)
+  {}
+
+  /**
+   * @brief Create a query with a default connection
+   *
+   * @param conn The default connection to be used
+   */
+  query(connection *conn)
+    : query(conn, "")
+  {}
+
+  /**
+   * @brief Create a query with a default connection and default tablename
+   *
+   * @param conn The default connection to be used
+   * @param tablename The default tablename used for the query.
+   */
+  query(connection *conn, const std::string &tablename)
+    : detail::basic_query(tablename)
+    , connection_(conn)
   {}
 
   ~query() {}
 
   /**
-   * @brief Creates a table
+   * @brief Start a create query for default table
+   * @param collist The columns to be created
+   * @return A reference to the query.
    */
-  query& create(const std::string &tablename)
+  query& create(const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
+  {
+    return create(table_name_, collist);
+  }
+
+  /**
+   * @brief Create a table with given name
+   *
+   * @param tablename The tablename to be used for the statement
+   * @param collist The columns to be created
+   * @return A reference to the query.
+   */
+  query& create(const std::string &tablename, const std::initializer_list<std::shared_ptr<detail::typed_column>> &collist)
   {
     reset(t_query_command::CREATE);
 
     sql_.append(new detail::create(tablename));
 
+    std::unique_ptr<oos::columns> cols(new oos::columns(oos::columns::WITH_BRACKETS));
+    for (auto &&col : collist) {
+      cols->push_back(col);
+    }
+
+    sql_.append(cols.release());
+
+    state = QUERY_CREATE;
+    return *this;
+  }
+
+  /**
+   * @brief Start a drop query for the default tablename
+   * @return A reference to the query.
+   */
+  query& drop()
+  {
+    return drop(table_name_);
+  }
+
+  /**
+   * @brief Start a drop query for the given tablename
+   * @param tablename The table to be dropped
+   * @return A reference to the query.
+   */
+  query& drop(const std::string &tablename)
+  {
+    reset(t_query_command::DROP);
+    sql_.append(new detail::drop(tablename));
+
+    state = QUERY_DROP;
     return *this;
   }
 
@@ -541,7 +610,7 @@ public:
    * @param cols The columns to select
    * @return A reference to the query.
    */
-  query& select(columns cols)
+  query& select(oos::columns cols)
   {
     reset(t_query_command::SELECT);
 
@@ -549,7 +618,7 @@ public:
     sql_.append(new detail::select);
 
     cols.without_brackets();
-    sql_.append(new columns(cols));
+    sql_.append(new oos::columns(cols));
 
     for (auto &&column : cols.columns_) {
       row_.add_column(column->name);
@@ -632,20 +701,55 @@ public:
   }
 
   /**
-   * @brief Executes the query.
+   * @brief Execute the query
    *
-   * Executes the query for the given connection
+   * Execute the query with the stored
+   * connection. If internal connection is null
+   * an exception is thrown.
+   *
+   * @throws std::logic_error
+   * @return The result of the query
+   */
+  result<row> execute()
+  {
+    if (connection_ == nullptr) {
+      throw std::logic_error("connection is nullptr");
+    }
+    return execute(*connection_);
+  }
+  /**
+   * @brief Execute the query.
+   *
+   * Execute the query for the given connection
    *
    * @param conn The connection used by the query.
    * @return The result of the query
    */
   result<row> execute(connection &conn)
   {
-//    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
 //    std::cout.flush();
     return conn.execute<row>(sql_, table_name_, row_);
   }
 
+  /**
+   * @brief Prepare the query
+   *
+   * Prepare the query with the stored
+   * connection. If internal connection is null
+   * an exception is thrown.
+   *
+   * @throws std::logic_error
+   * @return The prepared statement
+   */
+  statement<row> prepare()
+  {
+    if (connection_ == nullptr) {
+      throw std::logic_error("connection is nullptr");
+    }
+    return prepare(*connection_);
+
+  }
   /**
    * @brief Prepares the query.
    *
@@ -688,6 +792,7 @@ public:
   }
 
 private:
+  connection *connection_ = nullptr;
   row row_;
 };
 

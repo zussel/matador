@@ -47,7 +47,7 @@ void basic_dialect_compiler::visit(const oos::column &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::typed_column &) { }
 
-void basic_dialect_compiler::visit(const oos::detail::identifier_column &) { }
+void basic_dialect_compiler::visit(const oos::detail::typed_identifier_column &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::typed_varchar_column &) { }
 

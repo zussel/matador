@@ -49,7 +49,7 @@ public:
   virtual void visit(const oos::columns &columns1) override;
   virtual void visit(const oos::column &column1) override;
   virtual void visit(const oos::detail::typed_column &typedColumn) override;
-  virtual void visit(const oos::detail::identifier_column &identifierColumn) override;
+  virtual void visit(const oos::detail::typed_identifier_column &identifierColumn) override;
   virtual void visit(const oos::detail::typed_varchar_column &varchar_column) override;
   virtual void visit(const oos::detail::identifier_varchar_column &varchar_column) override;
   virtual void visit(const oos::detail::basic_value_column &value_column) override;

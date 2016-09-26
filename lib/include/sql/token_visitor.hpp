@@ -32,7 +32,7 @@ struct update;
 struct tablename;
 struct remove;
 struct typed_column;
-struct identifier_column;
+struct typed_identifier_column;
 struct typed_varchar_column;
 struct identifier_varchar_column;
 struct basic_value_column;
@@ -77,7 +77,7 @@ public:
   virtual void visit(const oos::columns &) = 0;
   virtual void visit(const oos::column &) = 0;
   virtual void visit(const oos::detail::typed_column &) = 0;
-  virtual void visit(const oos::detail::identifier_column &) = 0;
+  virtual void visit(const oos::detail::typed_identifier_column &) = 0;
   virtual void visit(const oos::detail::typed_varchar_column &) = 0;
   virtual void visit(const oos::detail::identifier_varchar_column &) = 0;
   virtual void visit(const oos::detail::basic_value_column &) = 0;

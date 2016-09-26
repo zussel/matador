@@ -107,6 +107,7 @@ std::string sqlite_connection::version() const
 oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
+//  std::cout << "SQL: '" << stmt << "'\n";
   return execute(stmt);
 }
 

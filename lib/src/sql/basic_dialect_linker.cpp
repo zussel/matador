@@ -210,7 +210,7 @@ void basic_dialect_linker::visit(const oos::detail::typed_column &col)
   dialect().append_to_result(col.name + " " + dialect().type_string(col.type));
 }
 
-void basic_dialect_linker::visit(const oos::detail::identifier_column &col)
+void basic_dialect_linker::visit(const oos::detail::typed_identifier_column &col)
 {
   dialect().append_to_result(col.name + " " + dialect().type_string(col.type) + " NOT NULL PRIMARY KEY");
 }

@@ -183,12 +183,12 @@ void QueryTestUnit::test_create()
 
   query<Item> q("item");
 
-  result<Item> res(q.create().execute(*connection_));
+  q.create().execute(*connection_);
 
   auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.set_time(itime);
-  res = q.insert(&hans).execute(*connection_);
+  result<Item> res = q.insert(&hans).execute(*connection_);
 
   res = q.select().execute(*connection_);
 
@@ -212,13 +212,26 @@ void QueryTestUnit::test_anonymous_create()
 {
   connection_->open();
 
-  query<> q;
+  query<> q(connection_.get(), "person");
 
-//  q.create("person").columns({
-//    make_id_column<long>("id"),
-//    make_column<std:.string>("name"),
-//    make_column<unsigned>("age")
-//  }).execute(*connection_);
+  auto cols = {"id", "name", "age"};
+
+  q.create({
+    make_typed_id_column<long>("id"),
+    make_typed_column<std::string>("name"),
+    make_typed_column<unsigned>("age")
+  });
+
+  q.execute();
+
+  UNIT_ASSERT_TRUE(connection_->exists("person"), "table person must exist");
+  auto fields = connection_->describe("person");
+
+  for (auto fld : fields) {
+    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
+
+  q.drop("person").execute(*connection_);
 }
 
 void QueryTestUnit::test_statement_insert()
