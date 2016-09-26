@@ -80,8 +80,29 @@ q.drop("person").execute(conn);
 
 #### Insert
 
+```cpp
+oos::query<person> q("person");
+
+person jane("jane", 35);
+
+q.insert(&jane).execute(conn);
+```
+
 #### Update
 
+```cpp
+oos::query<person> q("person");
+
+person jane("jane", 35);
+
+q.insert(&jane).execute(conn);
+
+jane.age = 47;
+
+oos::column name("name");
+
+q.update().set(&jane).where(name == "jane").execute(conn);
+```
 #### Select
 
 #### Delete
