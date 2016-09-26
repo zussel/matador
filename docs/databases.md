@@ -13,24 +13,20 @@ After created a session objects you can either create the
 database schema ...
 
 ```cpp
-// the object store
-object_store ostore;
+persistence p("sqlite://db.sqlite");
+p.attach<person>("person");
 
-// configure object store
-// ...
-
-// create and open a session
-oos::session ses(ostore, "sqlite://person.db");
+session s(p);
 
 // create the database schema
-ses.create();
+s.create();
 ```
 
 ... or load the data from database.
 
 ```cpp
 // load the data from database
-ses.load();
+s.load();
 ```
 
 Once the schema is created or the data is loaded you can start
@@ -45,16 +41,15 @@ to rollback all your modifications.
 ```cpp
 // create a transaction for session
 
-oos::transaction tr(ses);
+oos::transaction tr = s.begin();
 try {
   // begin the transaction
-  tr.begin();
 
   // insert some objects
-  ostore.insert(new person("joe", 45))
-  ostore.insert(new person("walter", 56));
-  ostore.insert(new person("helen", 37));
-  ostore.insert(new person("tim", 14));
+  s.insert(new person("joe", 45))
+  s.insert(new person("walter", 56));
+  s.insert(new person("helen", 37));
+  s.insert(new person("tim", 14));
 
   // commit the modifications
   tr.commit();
