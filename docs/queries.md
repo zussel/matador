@@ -80,6 +80,9 @@ q.drop("person").execute(conn);
 
 #### Insert
 
+Inserting an object is done as simple. Just pass the object to the ```insert``` method
+and you're done.
+
 ```cpp
 oos::query<person> q("person");
 
@@ -88,20 +91,45 @@ person jane("jane", 35);
 q.insert(&jane).execute(conn);
 ```
 
-#### Update
+When building an anonymous insert statement one has to column and value fields like that
 
 ```cpp
-oos::query<person> q("person");
+oos::query<> q("person");
 
+q.insert({"id", "name", "age"}).values({
+    make_value<long>(1),
+    make_value<varchar>("jane"),
+    make_value<unsigned>(35)
+}).execute(conn);
+```
+
+#### Update
+
+Updating an object works the same way as inserting an object. Asume there is an object
+one can modify it and pass it to the ```update``` method. Notice the where clause with
+expression to limit the update statement. These conditions are explained [condition chapter](/#) bewlow
+
+```cpp
 person jane("jane", 35);
-
-q.insert(&jane).execute(conn);
-
+oos::query<person> q("person");
+// insert ...
 jane.age = 47;
-
 oos::column name("name");
 
 q.update().set(&jane).where(name == "jane").execute(conn);
+```
+
+If you're dealing with an anonymous row query the update query looks like this:
+
+```cpp
+oos::query<> q("person");
+
+oos::column name("name");
+q.update().set({
+    make_column_value<varchar>("name", "otto"),
+    make_column_value<unsigned>("age", 47)
+}).where(name == "jane");
+
 ```
 #### Select
 
