@@ -604,6 +604,34 @@ public:
   }
 
   /**
+   * @brief Create an insert statement for given columns.
+   * @param column_names List of column to insert
+   * @return A reference to the query.
+   */
+  query& insert(const std::initializer_list<std::string> &column_names)
+  {
+    reset(t_query_command::INSERT);
+
+    sql_.append(new detail::insert(table_name_));
+
+    std::unique_ptr<columns> cols(new oos::columns);
+
+    for (auto name : column_names) {
+      cols->push_back(std::make_shared<oos::column>(name));
+    }
+
+    sql_.append(cols.release());
+
+    state = QUERY_INSERT;
+
+    return *this;
+  }
+
+  query& values()
+  {
+    return *this;
+  }
+  /**
    * @brief Creates a select statement with the
    * given columns.
    *
