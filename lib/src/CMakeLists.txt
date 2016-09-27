@@ -136,7 +136,8 @@ SET(TOOLS_HEADER
   ../include/tools/identifier.hpp
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
-  ../include/tools/identifiable_holder.hpp)
+  ../include/tools/identifiable_holder.hpp
+  ../include/tools/any.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp
