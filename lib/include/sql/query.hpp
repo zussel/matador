@@ -43,6 +43,8 @@
 #include "sql/value_column_serializer.hpp"
 #include "sql/row.hpp"
 
+#include "tools/any.hpp"
+
 #include <memory>
 #include <sstream>
 
@@ -627,8 +629,67 @@ public:
     return *this;
   }
 
-  query& values()
+  query& values(const std::initializer_list<oos::any> &values)
   {
+    std::unique_ptr<detail::values> vals(new detail::values);
+
+    // append values
+    for (auto value : values) {
+      if (value.is<int>()) {
+        vals->push_back(std::make_shared<oos::value<int>>(value._<int>()));
+      } else if (value.is<const char*>()) {
+        vals->push_back(std::make_shared<oos::value<std::string>>(value._<const char*>()));
+      }
+    }
+    sql_.append(vals.release());
+
+    return *this;
+  }
+
+  query& update(const std::initializer_list<std::pair<std::string, oos::any>> &colvalues)
+  {
+    reset(t_query_command::UPDATE);
+
+    sql_.append(new detail::update);
+    sql_.append(new detail::tablename(table_name_));
+    sql_.append(new detail::set);
+
+    for (auto &&colvalue : colvalues) {
+      rowvalues_.push_back(colvalue.second);
+      if (colvalue.second.is<int>()) {
+        std::shared_ptr<detail::value_column<int>> ival(new detail::value_column<int>(colvalue.first, rowvalues_.back()._<int>()));
+        update_columns_->push_back(ival);
+      } else if (colvalue.second.is<const char*>()) {
+        update_columns_->push_back(std::make_shared<detail::value_column<const char*>>(
+          colvalue.first,
+          rowvalues_.back()._<const char*>(),
+          strlen(rowvalues_.back()._<const char*>())
+        ));
+      }
+    }
+
+    sql_.append(update_columns_);
+
+    state = QUERY_SET;
+    return *this;
+  }
+
+  query& select(const std::initializer_list<std::string> &colnames)
+  {
+    reset(t_query_command::SELECT);
+
+    throw_invalid(QUERY_SELECT, state);
+    sql_.append(new detail::select);
+
+    std::unique_ptr<oos::columns> cols(new oos::columns(colnames, oos::columns::WITHOUT_BRACKETS));
+
+    for (auto &&column : cols->columns_) {
+      row_.add_column(column->name);
+    }
+
+    sql_.append(cols.release());
+
+    state = QUERY_SELECT;
     return *this;
   }
   /**
@@ -725,6 +786,8 @@ public:
   query& reset(t_query_command query_command)
   {
     reset_query(query_command);
+    row_.clear();
+    rowvalues_.clear();
     return *this;
   }
 
@@ -827,6 +890,8 @@ public:
 private:
   connection *connection_ = nullptr;
   row row_;
+
+  std::vector<oos::any> rowvalues_;
 };
 
 /**

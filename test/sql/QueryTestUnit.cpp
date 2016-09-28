@@ -20,6 +20,8 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
   add_test("create_anonymous", std::bind(&QueryTestUnit::test_anonymous_create, this), "test direct sql create statement via row (anonymous)");
+  add_test("insert_anonymous", std::bind(&QueryTestUnit::test_anonymous_insert, this), "test direct sql insert statement via row (anonymous)");
+  add_test("update_anonymous", std::bind(&QueryTestUnit::test_anonymous_update, this), "test direct sql update statement via row (anonymous)");
   add_test("statement_insert", std::bind(&QueryTestUnit::test_statement_insert, this), "test prepared sql insert statement");
   add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
   add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
@@ -222,8 +224,6 @@ void QueryTestUnit::test_anonymous_create()
     make_typed_column<unsigned>("age")
   });
 
-  std::cout << "SQL: " << q.str(false) << "\n";
-
   q.execute();
 
   UNIT_ASSERT_TRUE(connection_->exists("person"), "table person must exist");
@@ -231,6 +231,73 @@ void QueryTestUnit::test_anonymous_create()
 
   for (auto fld : fields) {
     UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
+
+  q.drop("person").execute(*connection_);
+}
+
+void QueryTestUnit::test_anonymous_insert()
+{
+  connection_->open();
+
+  query<> q(connection_.get(), "person");
+
+  q.create({
+     make_typed_id_column<long>("id"),
+     make_typed_varchar_column<32>("name"),
+     make_typed_column<unsigned>("age")
+   });
+
+  q.execute();
+
+  q.insert({"id", "name", "age"}).values({1, "hans", 45}).execute();
+
+  auto res = q.select({"id", "name", "age"}).from("person").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
+    UNIT_EXPECT_EQUAL("hans", item->at<std::string>("name"), "invalid value");
+    ++first;
+  }
+
+  q.drop("person").execute(*connection_);
+
+}
+
+void QueryTestUnit::test_anonymous_update()
+{
+  connection_->open();
+
+  query<> q(connection_.get(), "person");
+
+  q.create({
+     make_typed_id_column<long>("id"),
+     make_typed_varchar_column<32>("name"),
+     make_typed_column<unsigned>("age")
+   });
+
+  q.execute();
+
+  q.insert({"id", "name", "age"}).values({1, "hans", 45}).execute();
+
+  column name("name");
+
+  q.update({{"name", "jane"}, {"age", 47}}).where(name == "hans").execute();
+
+  auto res = q.select({"id", "name", "age"}).from("person").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_EXPECT_EQUAL("jane", item->at<std::string>("name"), "invalid value");
+    UNIT_EXPECT_EQUAL(47, item->at<int>("age"), "invalid value");
+    ++first;
   }
 
   q.drop("person").execute(*connection_);
@@ -618,19 +685,18 @@ void QueryTestUnit::test_query_select_columns()
   std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
   res = q.insert(trude.get()).execute(*connection_);
 
-  column id("id");
   column name("name");
 
   query<> cols;
 
-  auto rowres = cols.select({id, name}).from("person").where(name == "Hans").execute(*connection_);
+  auto rowres = cols.select({"id", "name"}).from("person").where(name == "Hans").execute(*connection_);
 
   auto first = rowres.begin();
   auto last = rowres.end();
 
   while (first != last) {
     std::unique_ptr<row> item(first.release());
-    UNIT_EXPECT_EQUAL(1L, item->at<long>(id.name), "invalid value");
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
     UNIT_EXPECT_EQUAL("Hans", item->at<std::string>(name.name), "invalid value");
 //    std::cout << "id " << item->str(id.name) << ", name " << item->at<std::string>(name.name) << "\n";
     ++first;

@@ -190,6 +190,33 @@ struct value<char*> : public detail::basic_value
 };
 
 template<>
+struct value<const char*> : public detail::basic_value
+{
+  value(const char *v, size_t l)
+    : basic_value(detail::token::VALUE)
+    , val(v, v+l)
+  {
+    val.push_back('\0');
+  }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+
+    char *begin = &val.front();
+    srlzr.serialize(id, begin, val.size());
+  }
+
+  std::string str() const
+  {
+    std::stringstream str;
+    str << "'" << &val.front() << "'";
+    return str.str();
+  }
+
+  std::vector<char> val;
+};
+
+template<>
 struct value<oos::date> : public detail::basic_value
 {
   value(const oos::date &val)

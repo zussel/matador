@@ -17,6 +17,14 @@ void column::accept(token_visitor &visitor)
   return visitor.visit(*this);
 }
 
+columns::columns(const std::initializer_list<std::string> &colnames, t_brackets with_brackets)
+  : token(COLUMNS)
+  , with_brackets_(with_brackets)
+{
+  for (auto &&colname : colnames) {
+    push_back(std::make_shared<column>(colname));
+  }
+}
 
 columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
   : token(COLUMNS)

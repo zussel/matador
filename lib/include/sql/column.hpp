@@ -67,6 +67,14 @@ struct OOS_API columns : public detail::token
   /**
    * @brief Create a list of columns containing given columns and bracket type
    *
+   * @param colnames The list of column names
+   * @param with_brackets The bracket type
+   */
+  columns(const std::initializer_list<std::string> &colnames, t_brackets with_brackets = WITH_BRACKETS);
+
+  /**
+   * @brief Create a list of columns containing given columns and bracket type
+   *
    * @param cols The list of columns
    * @param with_brackets The bracket type
    */
@@ -238,7 +246,6 @@ struct OOS_API basic_value_column : public column
 template < class T >
 struct value_column : public basic_value_column
 {
-
   value_column(const std::string &col, T& val)
     : basic_value_column(col, new value<T>(val))
   { }
@@ -256,6 +263,18 @@ struct value_column<char*> : public basic_value_column
   { }
 
   value_column(const char *col, char*& val, size_t s)
+  : basic_value_column(col, new value<char*>(val, s))
+  { }
+};
+
+template <>
+struct value_column<const char*> : public basic_value_column
+{
+  value_column(const std::string &col, const char*& val, size_t s)
+    : basic_value_column(col, new value<char*>(val, s))
+  { }
+
+  value_column(const char *col, const char*& val, size_t s)
   : basic_value_column(col, new value<char*>(val, s))
   { }
 };
