@@ -61,6 +61,7 @@ struct OOS_API basic_value : public token
     if (v) {
       return v->val;
     } else {
+      std::cout << "bad value cast: from " << type_id() << " to " << typeid(T).name() << "\n";
       throw std::bad_cast();
     }
   }
@@ -75,6 +76,8 @@ struct OOS_API basic_value : public token
   virtual void accept(token_visitor &visitor);
 
   virtual std::string str() const = 0;
+
+  virtual const char* type_id() const = 0;
 };
 
 }
@@ -88,6 +91,8 @@ struct null_value : public detail::basic_value
   virtual void serialize(const char *id, serializer &srlzr);
 
   std::string str() const;
+
+  const char* type_id() const;
 };
 
 template<class T>
@@ -112,6 +117,12 @@ struct value<T, typename std::enable_if<
     str << val;
     return str.str();
   }
+
+  const char* type_id() const
+  {
+    return typeid(T).name();
+  }
+
   T val;
 };
 
@@ -137,6 +148,10 @@ struct value<T, typename std::enable_if<
     return str.str();
   }
 
+  const char* type_id() const
+  {
+    return typeid(T).name();
+  }
   T val;
 };
 
@@ -159,6 +174,10 @@ struct value<char> : public detail::basic_value
     return str.str();
   }
 
+  const char* type_id() const
+  {
+    return typeid(char).name();
+  }
   char val;
 };
 
@@ -184,6 +203,11 @@ struct value<char*> : public detail::basic_value
     std::stringstream str;
     str << "'" << &val.front() << "'";
     return str.str();
+  }
+
+  const char* type_id() const
+  {
+    return typeid(char*).name();
   }
 
   std::vector<char> val;
@@ -213,6 +237,10 @@ struct value<const char*> : public detail::basic_value
     return str.str();
   }
 
+  const char* type_id() const
+  {
+    return typeid(const char*).name();
+  }
   std::vector<char> val;
 };
 
@@ -235,6 +263,10 @@ struct value<oos::date> : public detail::basic_value
     return str.str();
   }
 
+  const char* type_id() const
+  {
+    return typeid(oos::date).name();
+  }
   oos::date val;
 };
 
@@ -256,6 +288,11 @@ struct value<oos::time> : public detail::basic_value
     std::stringstream str;
     str << "'" << oos::to_string(val, "%F %T.%f") << "'";
     return str.str();
+  }
+
+  const char* type_id() const
+  {
+    return typeid(oos::time).name();
   }
 
   oos::time val;

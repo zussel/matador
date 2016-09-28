@@ -296,7 +296,7 @@ void QueryTestUnit::test_anonymous_update()
   while (first != last) {
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL("jane", item->at<std::string>("name"), "invalid value");
-    UNIT_EXPECT_EQUAL(47, item->at<int>("age"), "invalid value");
+    UNIT_EXPECT_EQUAL(47L, item->at<long>("age"), "invalid value");
     ++first;
   }
 

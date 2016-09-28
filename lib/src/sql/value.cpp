@@ -27,6 +27,10 @@ std::string null_value::str() const
   return NULLSTR;
 }
 
+const char *null_value::type_id() const {
+  return "null";
+}
+
 detail::basic_value* make_value(const char* val, size_t len)
 {
   return new value<char*>(val, len);
