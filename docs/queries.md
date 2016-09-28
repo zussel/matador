@@ -96,11 +96,7 @@ When building an anonymous insert statement one has to column and value fields l
 ```cpp
 oos::query<> q("person");
 
-q.insert({"id", "name", "age"}).values({
-    make_value<long>(1),
-    make_value<varchar>("jane"),
-    make_value<unsigned>(35)
-}).execute(conn);
+q.insert({"id", "name", "age"}).values({1, "jane", 35}).execute(conn);
 ```
 
 #### Update
@@ -119,15 +115,17 @@ oos::column name("name");
 q.update().set(&jane).where(name == "jane").execute(conn);
 ```
 
-If you're dealing with an anonymous row query the update query looks like this:
+If you're dealing with an anonymous row query the update query looks like the example below. As
+you can see, it is simple done with initializer list and pairs of columns and their new
+values.
 
 ```cpp
 oos::query<> q("person");
 
 oos::column name("name");
-q.update().set({
-    make_column_value<varchar>("name", "otto"),
-    make_column_value<unsigned>("age", 47)
+q.update({
+    {"name", "otto"},
+    {"age", 47}
 }).where(name == "jane");
 
 ```
