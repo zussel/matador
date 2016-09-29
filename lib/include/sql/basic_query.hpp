@@ -23,6 +23,8 @@
 #include "sql/sql.hpp"
 #include "sql/column.hpp"
 
+#include "tools/any.hpp"
+
 #include <string>
 
 namespace oos {
@@ -113,6 +115,7 @@ protected:
   state_t state;
   std::string table_name_;
   std::shared_ptr<columns> update_columns_;
+  std::vector<oos::any> rowvalues_;
   /// @endcond
 };
 

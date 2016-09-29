@@ -103,7 +103,7 @@ public:
    */
   query& create()
   {
-    return create(&obj_);
+    return create(obj_);
   }
 
   /**
@@ -113,7 +113,7 @@ public:
    * @param obj The serializable providing the column information.
    * @return A reference to the query.
    */
-  query& create(T *obj)
+  query& create(T obj)
   {
     reset(t_query_command::CREATE);
 
@@ -121,7 +121,7 @@ public:
 
     detail::typed_column_serializer serializer;
 
-    std::unique_ptr<columns> cols(serializer.execute(*obj));
+    std::unique_ptr<columns> cols(serializer.execute(obj));
 
     sql_.append(cols.release());
 
@@ -200,7 +200,7 @@ public:
    */
   query& insert()
   {
-    return insert(&obj_);
+    return insert(obj_);
   }
 
   /**
@@ -210,7 +210,7 @@ public:
    * @param obj The serializable used for the insert statement.
    * @return A reference to the query.
    */
-  query& insert(T *obj)
+  query& insert(T &obj)
   {
     reset(t_query_command::INSERT);
 
@@ -218,13 +218,13 @@ public:
 
     detail::column_serializer serializer(columns::WITH_BRACKETS);
 
-    std::unique_ptr<columns> cols(serializer.execute(*obj));
+    std::unique_ptr<columns> cols(serializer.execute(obj));
 
     sql_.append(cols.release());
 
     detail::value_serializer vserializer;
 
-    std::unique_ptr<detail::values> vals(vserializer.execute(*obj));
+    std::unique_ptr<detail::values> vals(vserializer.execute(obj));
 
     sql_.append(vals.release());
 
@@ -235,12 +235,27 @@ public:
 
   /**
    * Creates an update statement without
-   * any settings. All columns must be
-   * added manually via the set method.
+   * any settings. Sets for all object
+   * attributes column and values of the internal
+   * object. To call this methods makes only sense
+   * if the query will be prepared afterwards.
    * 
    * @return A reference to the query.
    */
   query& update()
+  {
+    return update(obj_);
+  }
+
+  /**
+   * Creates an update statement without
+   * any settings. Sets for all object
+   * attributes column and values.
+   *
+   * @param obj The object to be updated.
+   * @return A reference to the query.
+   */
+  query& update(T &obj)
   {
     reset(t_query_command::UPDATE);
 
@@ -250,6 +265,44 @@ public:
     sql_.append(update_columns_);
 
     state = QUERY_UPDATE;
+
+    detail::value_column_serializer vcserializer;
+
+    vcserializer.append_to(update_columns_, obj);
+
+    state = QUERY_SET;
+
+    return *this;
+  }
+
+  query& update(const std::initializer_list<std::pair<std::string, oos::any>> &colvalues)
+  {
+    reset(t_query_command::UPDATE);
+
+    sql_.append(new detail::update);
+    sql_.append(new detail::tablename(table_name_));
+    sql_.append(new detail::set);
+
+    for (auto &&colvalue : colvalues) {
+      rowvalues_.push_back(colvalue.second);
+      if (colvalue.second.is<int>()) {
+        std::shared_ptr<detail::value_column<int>> ival(new detail::value_column<int>(colvalue.first, rowvalues_.back()._<int>()));
+        update_columns_->push_back(ival);
+      } else if (colvalue.second.is<unsigned long>()) {
+        std::shared_ptr<detail::value_column<unsigned long>> ival(new detail::value_column<unsigned long>(colvalue.first, rowvalues_.back()._<unsigned long>()));
+        update_columns_->push_back(ival);
+      } else if (colvalue.second.is<const char*>()) {
+        update_columns_->push_back(std::make_shared<detail::value_column<const char*>>(
+          colvalue.first,
+          rowvalues_.back()._<const char*>(),
+          strlen(rowvalues_.back()._<const char*>())
+        ));
+      }
+    }
+
+    sql_.append(update_columns_);
+
+    state = QUERY_SET;
     return *this;
   }
 
@@ -268,64 +321,6 @@ public:
 
     return *this;
   }
-  /**
-   * This method must only be called for
-   * an update statement. Sets for all object
-   * attributes column and values of the internal
-   * object. To call this methods makes only sense
-   * if the query will be prepared afterwards.
-   *
-   * @return A reference to the query.
-   */
-  query& set()
-  {
-    return set(&obj_);
-  }
-
-  /**
-   * This method must only be called for
-   * an update statement. Sets for all object
-   * attributes column and values.
-   *
-   * @tparam T The object type.
-   * @param obj The object.
-   * @return A reference to the query.
-   */
-  query& set(T *obj)
-  {
-    throw_invalid(QUERY_SET, state);
-
-    detail::value_column_serializer vcserializer;
-
-    vcserializer.append_to(update_columns_, *obj);
-
-    state = QUERY_SET;
-
-    return *this;
-  }
-
-  /**
-   * This method must only be called for
-   * an update statement. Sets for the given
-   * column the data type and a value.
-   *
-   * @tparam V The value type.
-   * @param column The column name.
-   * @param val The value to set.
-   * @return A reference to the query.
-   */
-  template < class V >
-  query& set(const std::string &column, V &val)
-  {
-    throw_invalid(QUERY_SET, state);
-
-    update_columns_->columns_.push_back(std::make_shared<detail::value_column<V>>(column, val));
-
-    state = QUERY_SET;
-
-    return *this;
-  }
-
 
   /**
    * Creates a delete statement.
@@ -890,8 +885,6 @@ public:
 private:
   connection *connection_ = nullptr;
   row row_;
-
-  std::vector<oos::any> rowvalues_;
 };
 
 /**

@@ -42,7 +42,7 @@ public:
   {
     init();
   }
-  Item(const std::string &str, int i)
+  explicit Item(const std::string &str, int i)
     : int_(i)
     , string_(str)
   {

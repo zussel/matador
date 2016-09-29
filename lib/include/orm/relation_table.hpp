@@ -45,7 +45,7 @@ public:
   virtual void create(connection &conn) override
   {
     query<relation_type> stmt(name());
-    stmt.create(&item_).execute(conn);
+    stmt.create(item_).execute(conn);
   }
 
   virtual void drop(connection &conn) override
@@ -59,12 +59,12 @@ public:
     query<relation_type> q(name());
 
     select_all_ = q.select({owner_id_column_, item_id_column_}).prepare(conn);
-    insert_ = q.insert(&item_).prepare(conn);
+    insert_ = q.insert(item_).prepare(conn);
 
     column owner_id(owner_id_column_);
     column item_id(item_id_column_);
 
-    update_ = q.update().set(&item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
+    update_ = q.update(item_).where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
     delete_ = q.remove().where(owner_id == 1 && item_id == 1).limit(1).prepare(conn);
 
     // find owner table

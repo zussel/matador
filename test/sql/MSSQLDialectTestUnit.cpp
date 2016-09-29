@@ -75,17 +75,17 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 
   unsigned long counter = 0;
 
-  std::unique_ptr<person> hans(new person(++counter, "Hans", oos::date(12, 3, 1980), 180));
-  res = q.insert(hans.get()).execute(conn);
+  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  res = q.insert(hans).execute(conn);
 
-  std::unique_ptr<person> otto(new person(++counter, "Otto", oos::date(27, 11, 1954), 159));
-  res = q.insert(otto.get()).execute(conn);
+  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  res = q.insert(otto).execute(conn);
 
-  std::unique_ptr<person> hilde(new person(++counter, "Hilde", oos::date(13, 4, 1975), 175));
-  res = q.insert(hilde.get()).execute(conn);
+  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  res = q.insert(hilde).execute(conn);
 
-  std::unique_ptr<person> trude(new person(++counter, "Trude", oos::date(1, 9, 1967), 166));
-  res = q.insert(trude.get()).execute(conn);
+  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  res = q.insert(trude).execute(conn);
 
   column id("id");
 
