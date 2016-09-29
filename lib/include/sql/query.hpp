@@ -47,6 +47,7 @@
 
 #include <memory>
 #include <sstream>
+#include <tools/any_visitor.hpp>
 
 namespace oos {
 
@@ -283,6 +284,8 @@ public:
     sql_.append(new detail::tablename(table_name_));
     sql_.append(new detail::set);
 
+//    any_visitor value_column_processor;
+//    value_column_processor.register_visitor<int>([])
     for (auto &&colvalue : colvalues) {
       rowvalues_.push_back(colvalue.second);
       if (colvalue.second.is<int>()) {

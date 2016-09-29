@@ -356,6 +356,7 @@ ObjectStoreTestUnit::set_test()
 void
 ObjectStoreTestUnit::get_test()
 {
+  // Todo: write TEST!!!
 }
 
 void
