@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 #include <tuple>
+#include <typeindex>
 
 namespace oos {
 
@@ -36,6 +37,8 @@ class any
     virtual ~base() { }
     virtual bool is(id) const = 0;
     virtual base *copy() const = 0;
+    virtual std::type_index type_index() const = 0;
+
   } *p = nullptr;
 
   template<typename T>
@@ -48,6 +51,7 @@ class any
 
     bool is(id i) const override { return i == type_id<T>(); }
     base *copy()  const override { return new data{get()}; }
+    std::type_index type_index() const { return std::type_index(typeid(T)); };
   };
 
   template<typename T>
@@ -98,6 +102,21 @@ public:
    */
   any &operator=(any s) { swap(*this, s); return *this; }
 
+  /**
+   * @brief Get the type index of an any object.
+   *
+   * Get the type index of an any object. If any
+   * doesn't hold a value a logic_error is thrown.
+   *
+   * @throws std::logic_error
+   * @return The type_index of the underlying type
+   */
+  std::type_index type_index() const {
+    if (!p) {
+      throw std::logic_error("no type for any object");
+    }
+    return p->type_index();
+  }
   /**
    * @brief Allow swapping of any objects
    * @param s Right hand any to swap
