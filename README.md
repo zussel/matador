@@ -1,7 +1,7 @@
 Open Object Store (OOS)
 =======================
 
-__Version 0.5.0-alpha.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
+__Version 0.5.0-alpha.1 (License [GPLv3]__
 
 Store all kind of objects in one container.
 
