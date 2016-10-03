@@ -246,11 +246,15 @@ struct OOS_API basic_value_column : public column
 template < class T >
 struct value_column : public basic_value_column
 {
-  value_column(const std::string &col, T& val)
+  value_column(const std::string &col, basic_value *val)
+    : basic_value_column(col, val)
+  { }
+
+  value_column(const std::string &col, const T& val)
     : basic_value_column(col, new value<T>(val))
   { }
 
-  value_column(const char *col, T& val)
+  value_column(const char *col, const T& val)
   : basic_value_column(col, new value<T>(val))
   { }
 };
@@ -258,6 +262,10 @@ struct value_column : public basic_value_column
 template <>
 struct value_column<char*> : public basic_value_column
 {
+  value_column(const std::string &col, basic_value *val)
+  : basic_value_column(col, val)
+  { }
+
   value_column(const std::string &col, char*& val, size_t s)
     : basic_value_column(col, new value<char*>(val, s))
   { }
@@ -270,6 +278,10 @@ struct value_column<char*> : public basic_value_column
 template <>
 struct value_column<const char*> : public basic_value_column
 {
+  value_column(const std::string &col, basic_value *val)
+  : basic_value_column(col, val)
+  { }
+
   value_column(const std::string &col, const char*& val, size_t s)
     : basic_value_column(col, new value<char*>(val, s))
   { }

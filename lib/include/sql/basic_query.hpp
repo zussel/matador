@@ -24,6 +24,8 @@
 #include "sql/column.hpp"
 
 #include "tools/any.hpp"
+#include "query_value_column_processor.hpp"
+#include "query_value_creator.hpp"
 
 #include <string>
 
@@ -116,6 +118,8 @@ protected:
   std::string table_name_;
   std::shared_ptr<columns> update_columns_;
   std::vector<oos::any> rowvalues_;
+  detail::query_value_column_processor query_value_column_processor_;
+  detail::query_value_creator query_value_creator_;
   /// @endcond
 };
 

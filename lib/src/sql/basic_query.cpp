@@ -11,9 +11,10 @@ namespace oos {
 namespace detail {
 
 basic_query::basic_query(const std::string &table_name)
-: state(QUERY_BEGIN)
-, table_name_(table_name)
-, update_columns_(new columns(columns::WITHOUT_BRACKETS))
+  : state(QUERY_BEGIN)
+  , table_name_(table_name)
+  , update_columns_(new columns(columns::WITHOUT_BRACKETS))
+  , query_value_column_processor_(update_columns_, rowvalues_)
 {}
 
 void basic_query::reset_query(t_query_command query_command)

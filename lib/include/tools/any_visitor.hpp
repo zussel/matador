@@ -21,6 +21,7 @@ public:
     fs.insert(std::make_pair(
       std::type_index(typeid(T)),
       function([&f](oos::any & x) {
+        std::cout << "val " << x._<T>() << "\n";
         f(x._<T>());
       })
     ));

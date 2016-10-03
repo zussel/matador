@@ -284,23 +284,8 @@ public:
     sql_.append(new detail::tablename(table_name_));
     sql_.append(new detail::set);
 
-//    any_visitor value_column_processor;
-//    value_column_processor.register_visitor<int>([])
-    for (auto &&colvalue : colvalues) {
-      rowvalues_.push_back(colvalue.second);
-      if (colvalue.second.is<int>()) {
-        std::shared_ptr<detail::value_column<int>> ival(new detail::value_column<int>(colvalue.first, rowvalues_.back(). template _<int>()));
-        update_columns_->push_back(ival);
-      } else if (colvalue.second.is<unsigned long>()) {
-        std::shared_ptr<detail::value_column<unsigned long>> ival(new detail::value_column<unsigned long>(colvalue.first, rowvalues_.back(). template _<unsigned long>()));
-        update_columns_->push_back(ival);
-      } else if (colvalue.second.is<const char*>()) {
-        update_columns_->push_back(std::make_shared<detail::value_column<const char*>>(
-          colvalue.first,
-          rowvalues_.back(). template _<const char*>(),
-          strlen(rowvalues_.back(). template _<const char*>())
-        ));
-      }
+    for (auto colvalue : colvalues) {
+      query_value_column_processor_.execute(colvalue);
     }
 
     sql_.append(update_columns_);
@@ -633,11 +618,8 @@ public:
 
     // append values
     for (auto value : values) {
-      if (value.is<int>()) {
-        vals->push_back(std::make_shared<oos::value<int>>(value. template _<int>()));
-      } else if (value.is<const char*>()) {
-        vals->push_back(std::make_shared<oos::value<std::string>>(value. template _<const char*>()));
-      }
+      std::shared_ptr<oos::detail::basic_value> val(query_value_creator_.create_from_any(value));
+      vals->push_back(val);
     }
     sql_.append(vals.release());
 
@@ -652,18 +634,8 @@ public:
     sql_.append(new detail::tablename(table_name_));
     sql_.append(new detail::set);
 
-    for (auto &&colvalue : colvalues) {
-      rowvalues_.push_back(colvalue.second);
-      if (colvalue.second.is<int>()) {
-        std::shared_ptr<detail::value_column<int>> ival(new detail::value_column<int>(colvalue.first, rowvalues_.back(). template _<int>()));
-        update_columns_->push_back(ival);
-      } else if (colvalue.second.is<const char*>()) {
-        update_columns_->push_back(std::make_shared<detail::value_column<const char*>>(
-          colvalue.first,
-          rowvalues_.back(). template _<const char*>(),
-          strlen(rowvalues_.back(). template _<const char*>())
-        ));
-      }
+    for (auto colvalue : colvalues) {
+      query_value_column_processor_.execute(colvalue);
     }
 
     sql_.append(update_columns_);

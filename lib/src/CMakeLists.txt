@@ -160,7 +160,7 @@ SET(SQL_SOURCES
   sql/query.cpp
   sql/basic_query.cpp
   sql/basic_dialect_compiler.cpp
-  sql/basic_dialect_linker.cpp sql/type.cpp)
+  sql/basic_dialect_linker.cpp sql/type.cpp sql/query_value_column_processor.cpp sql/query_value_creator.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -192,7 +192,7 @@ SET(SQL_HEADER
   ../include/sql/token_list.hpp
   ../include/sql/token_visitor.hpp
   ../include/sql/basic_dialect_compiler.hpp
-  ../include/sql/basic_dialect_linker.hpp)
+  ../include/sql/basic_dialect_linker.hpp ../include/sql/query_value_column_processor.hpp ../include/sql/query_value_creator.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
