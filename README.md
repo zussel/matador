@@ -1,7 +1,7 @@
 Open Object Store (OOS)
 =======================
 
-__Version 0.5.0-alpha.1 (License [GPLv3](http://www.gnu.org/licenses/gpl.html))__
+__Version 0.5.0-alpha.1 (License [GPLv3]__
 
 Store all kind of objects in one container.
 
@@ -9,6 +9,7 @@ Store all kind of objects in one container.
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/github/zussel/oos/badge.svg?branch=develop)](https://coveralls.io/github/zussel/oos?branch=develop)
 [![GitHub version](https://badge.fury.io/gh/zussel%2Foos.svg)](https://badge.fury.io/gh/zussel%2Foos)
+[![GitHub license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/oos/develop/License)
 
 OOS is a ORM framework written in C++. It aims to encapsulate all database stuff
 (database backends, sql statements, serialization of objects) and provides the user an
