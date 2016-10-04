@@ -17,11 +17,13 @@ public:
   using function = std::function<void(oos::any&)>;
 
   template <typename T>
-  void register_visitor(std::function<void(T&)> f) {
+  void register_visitor(const std::function<void(T&)> &f) {
     fs.insert(std::make_pair(
       std::type_index(typeid(T)),
       function([&f](oos::any & x) {
-        std::cout << "val " << x._<T>() << "\n";
+//        T val = x._<T>();
+//        std::cout << "val " << x._<T>() << "\n";
+//        f(val);
         f(x._<T>());
       })
     ));

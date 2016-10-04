@@ -18,6 +18,7 @@
 #include "unit/FirstTestUnit.hpp"
 #include "unit/SecondTestUnit.hpp"
 
+#include "tools/AnyTestUnit.hpp"
 #include "tools/BlobTestUnit.hpp"
 #include "tools/DateTestUnit.hpp"
 #include "tools/TimeTestUnit.hpp"
@@ -36,7 +37,6 @@
 #include "orm/OrmTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
 
-//#include "sql/DatabaseTestUnit.hpp"
 #include "sql/ConnectionTestUnit.hpp"
 #include "sql/DialectTestUnit.hpp"
 #include "sql/QueryTestUnit.hpp"
@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new FirstTestUnit);
   suite.register_unit(new SecondTestUnit);
 
+  suite.register_unit(new AnyTestUnit);
   suite.register_unit(new DateTestUnit);
   suite.register_unit(new TimeTestUnit);
   suite.register_unit(new BlobTestUnit);

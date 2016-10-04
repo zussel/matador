@@ -16,7 +16,8 @@ oos::detail::basic_value* create_value(char *value, size_t len)
 
 query_value_creator::query_value_creator()
 {
-  visitor_.register_visitor<char>(std::bind(&query_value_creator::process_char, this, std::placeholders::_1));
+  query_value_creator &qvc = *this;
+  visitor_.register_visitor<char>([&qvc](char &val) { qvc.process_char(val); });
   visitor_.register_visitor<short>(std::bind(&query_value_creator::process_short, this, std::placeholders::_1));
   visitor_.register_visitor<int>(std::bind(&query_value_creator::process_int, this, std::placeholders::_1));
   visitor_.register_visitor<long>(std::bind(&query_value_creator::process_long, this, std::placeholders::_1));

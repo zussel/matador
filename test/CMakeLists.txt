@@ -17,7 +17,7 @@ SET (TEST_TOOLS_SOURCES
   tools/FactoryTestUnit.cpp
   tools/StringTestUnit.cpp
   tools/StringTestUnit.hpp
-)
+        tools/AnyTestUnit.cpp tools/AnyTestUnit.hpp)
 
 SET (TEST_HEADER Item.hpp has_many_list.hpp)
 
