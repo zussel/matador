@@ -14,6 +14,7 @@ public:
   AnyTestUnit();
 
   void test_any_visitor();
+  void test_any_visitor_class();
 };
 
 
