@@ -112,7 +112,7 @@ void QueryTestUnit::test_datatypes()
 void QueryTestUnit::test_query_value_creator()
 {
   connection_->open();
-  
+
   oos::detail::query_value_creator qvc;
 
   oos::any ac = 'c';
