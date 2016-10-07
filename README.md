@@ -31,6 +31,44 @@ Features:
 
 Documentation can be found [here](http://zussel.github.com/oos).
 
+Example
+-------
+
+```cpp
+// a simple person class
+struct person {
+  oos::identifier<long> id;
+  oos::varchar<256> name;
+  unsigned int age = 0;
+  
+  person(long i, const std::string n)
+    : id(i), name(n)
+  {}
+  
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("age", age);
+  }
+};
+
+// prepare the persistence layer
+oos::persistence p("sqlite://db.sqlite");
+p.attach<person>("person");
+
+// create a session
+oos::session s(p);
+
+// returns an oos::object_ptr<person>
+auto george = s.insert(new person(1, "george"));
+
+// modify george
+george->age = 35;
+s.update(george);
+// delete george
+s.remove(george);
+```
 Requirements
 ------------
 
