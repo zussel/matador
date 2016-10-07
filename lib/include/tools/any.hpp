@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <tuple>
 #include <typeindex>
+#include <stdexcept>
 
 namespace oos {
 

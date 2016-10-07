@@ -1,6 +1,19 @@
 #ifndef OOS_QUERY_VALUE_COLUMN_PROCESSOR_HPP
 #define OOS_QUERY_VALUE_COLUMN_PROCESSOR_HPP
 
+#ifdef _MSC_VER
+#ifdef oos_EXPORTS
+      #define OOS_API __declspec(dllexport)
+      #define EXPIMP_TEMPLATE
+    #else
+      #define OOS_API __declspec(dllimport)
+      #define EXPIMP_TEMPLATE extern
+    #endif
+    #pragma warning(disable: 4251)
+#else
+#define OOS_API
+#endif
+
 #include "tools/varchar.hpp"
 #include "tools/time.hpp"
 #include "tools/any_visitor.hpp"
@@ -10,7 +23,7 @@
 namespace oos {
 namespace detail {
 
-class query_value_column_processor
+class OOS_API query_value_column_processor
 {
 public:
   query_value_column_processor(const std::shared_ptr<columns> &update_columns, const std::vector<oos::any> &rowvalues);

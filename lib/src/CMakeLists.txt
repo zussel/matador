@@ -75,7 +75,7 @@ SET(OBJECT_HEADER
   ../include/object/has_many_item.hpp
   ../include/object/basic_has_many_item.hpp
   ../include/object/identifier_proxy_map.hpp
-        ../include/object/object_proxy_accessor.hpp)
+  ../include/object/object_proxy_accessor.hpp)
 
 SET(TOOLS_SOURCES
   tools/byte_buffer.cpp
@@ -160,7 +160,10 @@ SET(SQL_SOURCES
   sql/query.cpp
   sql/basic_query.cpp
   sql/basic_dialect_compiler.cpp
-  sql/basic_dialect_linker.cpp sql/type.cpp sql/query_value_column_processor.cpp sql/query_value_creator.cpp)
+  sql/basic_dialect_linker.cpp
+  sql/type.cpp
+  sql/query_value_column_processor.cpp
+  sql/query_value_creator.cpp)
 
 SET(SQL_HEADER
   ../include/sql/condition.hpp
@@ -192,7 +195,9 @@ SET(SQL_HEADER
   ../include/sql/token_list.hpp
   ../include/sql/token_visitor.hpp
   ../include/sql/basic_dialect_compiler.hpp
-  ../include/sql/basic_dialect_linker.hpp ../include/sql/query_value_column_processor.hpp ../include/sql/query_value_creator.hpp)
+  ../include/sql/basic_dialect_linker.hpp
+  ../include/sql/query_value_column_processor.hpp
+  ../include/sql/query_value_creator.hpp)
 
 SET(ORM_HEADERS
   ../include/orm/persistence.hpp
