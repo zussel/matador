@@ -33,6 +33,7 @@ public:
   void test_statement_update();
   void test_foreign_query();
   void test_query();
+  void test_query_range_loop();
   void test_query_select();
   void test_query_select_count();
   void test_query_select_columns();

@@ -27,6 +27,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
   add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
+  add_test("result_range", std::bind(&QueryTestUnit::test_query_range_loop, this), "test result range loop");
   add_test("select", std::bind(&QueryTestUnit::test_query_select, this), "test query select");
   add_test("select_count", std::bind(&QueryTestUnit::test_query_select_count, this), "test query select count");
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
@@ -536,6 +537,59 @@ void QueryTestUnit::test_query()
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
   q.drop().execute(*connection_);
+}
+
+template < class C, class T >
+bool contains(const C &container, const T &value)
+{
+  return std::find(std::begin(container), std::end(container), value) != std::end(container);
+}
+
+void QueryTestUnit::test_query_range_loop()
+{
+  connection_->open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(*connection_));
+
+  unsigned long counter = 0;
+
+  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  res = q.insert(hans).execute(*connection_);
+
+  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  res = q.insert(otto).execute(*connection_);
+
+  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  res = q.insert(hilde).execute(*connection_);
+
+  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  res = q.insert(trude).execute(*connection_);
+
+  column name("name");
+  column height("height");
+  res = q.select().where(name != "Hans" && (height > 160 && height < 180)).execute(*connection_);
+
+  std::vector<std::string> result_names({"Hilde", "Trude"});
+  unsigned size(0);
+  for (auto &item : res) {
+    ++size;
+
+     UNIT_EXPECT_TRUE(contains(result_names, item.name()), "expected name '" + item.name() + "'not found");
+//    UNIT_ASSERT_EQUAL(item.height(), 180U, "expected height must be 180");
+//    UNIT_ASSERT_EQUAL(item.birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+  }
+
+  UNIT_ASSERT_EQUAL(size, 2U, "result size must be two (2)");
+
+  res = q.select().where(name == "heinz").execute(*connection_);
+
+  UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
+
+  q.drop().execute(*connection_);
+
 }
 
 void QueryTestUnit::test_query_select()
