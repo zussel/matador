@@ -16,7 +16,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   , time_val_(timeval)
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
-  add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test sql datatypes");
+  add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
@@ -111,13 +111,15 @@ void QueryTestUnit::test_datatypes()
 
 void QueryTestUnit::test_query_value_creator()
 {
+  connection_->open();
+  
   oos::detail::query_value_creator qvc;
 
   oos::any ac = 'c';
 
   auto val = qvc.create_from_any(ac);
 
-  delete val;
+  UNIT_ASSERT_EQUAL(val->get<char>(), 'c', "values must be equal");
 }
 
 void QueryTestUnit::test_describe()

@@ -10,22 +10,23 @@ query_value_column_processor::query_value_column_processor(
   : update_columns_(update_columns)
   , rowvalues_(rowvalues)
 {
-  visitor_.register_visitor<char>(std::bind(&query_value_column_processor::process_char, this, std::placeholders::_1));
-  visitor_.register_visitor<short>(std::bind(&query_value_column_processor::process_short, this, std::placeholders::_1));
-  visitor_.register_visitor<int>(std::bind(&query_value_column_processor::process_int, this, std::placeholders::_1));
-  visitor_.register_visitor<long>(std::bind(&query_value_column_processor::process_long, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned char>(std::bind(&query_value_column_processor::process_uchar, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned short>(std::bind(&query_value_column_processor::process_ushort, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned int>(std::bind(&query_value_column_processor::process_uint, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned long>(std::bind(&query_value_column_processor::process_ulong, this, std::placeholders::_1));
-  visitor_.register_visitor<bool>(std::bind(&query_value_column_processor::process_bool, this, std::placeholders::_1));
-  visitor_.register_visitor<float>(std::bind(&query_value_column_processor::process_float, this, std::placeholders::_1));
-  visitor_.register_visitor<double>(std::bind(&query_value_column_processor::process_double, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::varchar_base>(std::bind(&query_value_column_processor::process_varchar, this, std::placeholders::_1));
-  visitor_.register_visitor<std::string>(std::bind(&query_value_column_processor::process_string, this, std::placeholders::_1));
-  visitor_.register_visitor<char*>(std::bind(&query_value_column_processor::process_charptr, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::time>(std::bind(&query_value_column_processor::process_time, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::date>(std::bind(&query_value_column_processor::process_date, this, std::placeholders::_1));
+  visitor_.register_visitor<char>([this](char &val) { this->process(val); });
+  visitor_.register_visitor<short>([this](short &val) { this->process(val); });
+  visitor_.register_visitor<int>([this](int &val) { this->process(val); });
+  visitor_.register_visitor<long>([this](long &val) { this->process(val); });
+  visitor_.register_visitor<unsigned char>([this](unsigned char &val) { this->process(val); });
+  visitor_.register_visitor<unsigned short>([this](unsigned short &val) { this->process(val); });
+  visitor_.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
+  visitor_.register_visitor<unsigned long>([this](unsigned long &val) { this->process(val); });
+  visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
+  visitor_.register_visitor<float>([this](float &val) { this->process(val); });
+  visitor_.register_visitor<double>([this](double &val) { this->process(val); });
+  visitor_.register_visitor<oos::varchar_base>([this](oos::varchar_base &val) { this->process(val); });
+  visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
+  visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
+  visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });
+  visitor_.register_visitor<oos::time>([this](oos::time &val) { this->process(val); });
+  visitor_.register_visitor<oos::date>([this](oos::date &val) { this->process(val); });
 }
 
 void query_value_column_processor::execute(std::pair<std::string, oos::any> &a)
@@ -35,97 +36,17 @@ void query_value_column_processor::execute(std::pair<std::string, oos::any> &a)
   visitor_.visit(rowvalues_.back());
 }
 
-template < class T >
-void process_value(const std::shared_ptr<oos::columns> &columns, const std::string &id, const T &val)
+void query_value_column_processor::process(char *val)
 {
-  std::shared_ptr<detail::value_column<T>> ival(new detail::value_column<T>(id, val));
-  columns->push_back(ival);
+  std::shared_ptr<detail::value_column<const char*>> ival(new detail::value_column<const char*>(current_id_, val, strlen(val)));
+  update_columns_->push_back(ival);
 }
 
-void process_value(const std::shared_ptr<oos::columns> &columns, const std::string &id, const char *val, size_t len)
+void query_value_column_processor::process(const char *val)
 {
-  std::shared_ptr<detail::value_column<const char*>> ival(new detail::value_column<const char*>(id, val, len));
-  columns->push_back(ival);
+  std::shared_ptr<detail::value_column<const char*>> ival(new detail::value_column<const char*>(current_id_, val, strlen(val)));
+  update_columns_->push_back(ival);
 }
 
-void query_value_column_processor::process_char(char &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_short(short &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_int(int &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_long(long &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_uchar(unsigned char &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_ushort(unsigned short &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_uint(unsigned int &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_ulong(unsigned long &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_bool(bool &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_float(float &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_double(double &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_charptr(char *val)
-{
-  process_value(update_columns_, current_id_, val, strlen(val));
-}
-
-void query_value_column_processor::process_string(std::string &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_varchar(oos::varchar_base &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_time(oos::time &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
-
-void query_value_column_processor::process_date(oos::date &val)
-{
-  process_value(update_columns_, current_id_, val);
-}
 }
 }

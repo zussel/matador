@@ -20,10 +20,7 @@ public:
   void register_visitor(const std::function<void(T&)> &f) {
     fs.insert(std::make_pair(
       std::type_index(typeid(T)),
-      function([&f](oos::any & x) {
-//        T val = x._<T>();
-//        std::cout << "val " << x._<T>() << "\n";
-//        f(val);
+      function([f](oos::any & x) {
         f(x._<T>());
       })
     ));

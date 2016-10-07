@@ -3,122 +3,42 @@
 namespace oos {
 namespace detail {
 
-template < class T >
-oos::detail::basic_value* create_value(T &value)
-{
-  return new oos::value<T>(value);
-}
-
-oos::detail::basic_value* create_value(char *value, size_t len)
-{
-  return new oos::value<const char*>(value, len);
-}
-
 query_value_creator::query_value_creator()
 {
-  query_value_creator &qvc = *this;
-  visitor_.register_visitor<char>([&qvc](char &val) { qvc.process_char(val); });
-  visitor_.register_visitor<short>(std::bind(&query_value_creator::process_short, this, std::placeholders::_1));
-  visitor_.register_visitor<int>(std::bind(&query_value_creator::process_int, this, std::placeholders::_1));
-  visitor_.register_visitor<long>(std::bind(&query_value_creator::process_long, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned char>(std::bind(&query_value_creator::process_uchar, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned short>(std::bind(&query_value_creator::process_ushort, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned int>(std::bind(&query_value_creator::process_uint, this, std::placeholders::_1));
-  visitor_.register_visitor<unsigned long>(std::bind(&query_value_creator::process_ulong, this, std::placeholders::_1));
-  visitor_.register_visitor<bool>(std::bind(&query_value_creator::process_bool, this, std::placeholders::_1));
-  visitor_.register_visitor<float>(std::bind(&query_value_creator::process_float, this, std::placeholders::_1));
-  visitor_.register_visitor<double>(std::bind(&query_value_creator::process_double, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::varchar_base>(std::bind(&query_value_creator::process_varchar, this, std::placeholders::_1));
-  visitor_.register_visitor<std::string>(std::bind(&query_value_creator::process_string, this, std::placeholders::_1));
-  visitor_.register_visitor<char*>(std::bind(&query_value_creator::process_charptr, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::time>(std::bind(&query_value_creator::process_time, this, std::placeholders::_1));
-  visitor_.register_visitor<oos::date>(std::bind(&query_value_creator::process_date, this, std::placeholders::_1));
+  visitor_.register_visitor<char>([this](char &val) { this->process(val); });
+  visitor_.register_visitor<short>([this](short &val) { this->process(val); });
+  visitor_.register_visitor<int>([this](int &val) { this->process(val); });
+  visitor_.register_visitor<long>([this](long &val) { this->process(val); });
+  visitor_.register_visitor<unsigned char>([this](unsigned char &val) { this->process(val); });
+  visitor_.register_visitor<unsigned short>([this](unsigned short &val) { this->process(val); });
+  visitor_.register_visitor<unsigned int>([this](unsigned int &val) { this->process(val); });
+  visitor_.register_visitor<unsigned long>([this](unsigned long &val) { this->process(val); });
+  visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
+  visitor_.register_visitor<float>([this](float &val) { this->process(val); });
+  visitor_.register_visitor<double>([this](double &val) { this->process(val); });
+  visitor_.register_visitor<oos::varchar_base>([this](oos::varchar_base &val) { this->process(val); });
+  visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
+  visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
+  visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });
+  visitor_.register_visitor<oos::time>([this](oos::time &val) { this->process(val); });
+  visitor_.register_visitor<oos::date>([this](oos::date &val) { this->process(val); });
 }
 
-oos::detail::basic_value* query_value_creator::create_from_any(any &a)
+std::shared_ptr<oos::detail::basic_value> query_value_creator::create_from_any(any &a)
 {
   visitor_.visit(a);
   return value_;
 }
 
-void query_value_creator::process_char(char &val)
+void query_value_creator::process(char *val)
 {
-  value_ = create_value(val);
+  value_ = std::make_shared<value<const char*>>(val, strlen(val));
 }
 
-void query_value_creator::process_short(short &val)
+void query_value_creator::process(const char *val)
 {
-  value_ = create_value(val);
+  value_ = std::make_shared<value<const char*>>(val, strlen(val));
 }
 
-void query_value_creator::process_int(int &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_long(long &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_uchar(unsigned char &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_ushort(unsigned short &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_uint(unsigned int &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_ulong(unsigned long &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_bool(bool &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_float(float &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_double(double &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_charptr(char *val)
-{
-  value_ = create_value(val, strlen(val));
-}
-
-void query_value_creator::process_string(std::string &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_varchar(oos::varchar_base &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_time(oos::time &val)
-{
-  value_ = create_value(val);
-}
-
-void query_value_creator::process_date(oos::date &val)
-{
-  value_ = create_value(val);
-}
 }
 }

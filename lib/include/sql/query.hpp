@@ -618,8 +618,7 @@ public:
 
     // append values
     for (auto value : values) {
-      std::shared_ptr<oos::detail::basic_value> val(query_value_creator_.create_from_any(value));
-      vals->push_back(val);
+      vals->push_back(query_value_creator_.create_from_any(value));
     }
     sql_.append(vals.release());
 

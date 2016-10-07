@@ -17,22 +17,16 @@ public:
 
   void execute(std::pair<std::string, oos::any> &a);
 
-  void process_char(char &val);
-  void process_short(short &val);
-  void process_int(int &val);
-  void process_long(long &val);
-  void process_uchar(unsigned char &val);
-  void process_ushort(unsigned short &val);
-  void process_uint(unsigned int &val);
-  void process_ulong(unsigned long &val);
-  void process_bool(bool &val);
-  void process_float(float &val);
-  void process_double(double &val);
-  void process_charptr(char *val);
-  void process_string(std::string &val);
-  void process_varchar(oos::varchar_base &val);
-  void process_time(oos::time &val);
-  void process_date(oos::date &val);
+private:
+  template < class T >
+  void process(T &val)
+  {
+    std::shared_ptr<detail::value_column<T>> ival(new detail::value_column<T>(current_id_, val));
+    update_columns_->push_back(ival);
+  }
+  void process(char *val);
+  void process(const char *val);
+
 private:
   any_visitor visitor_;
   std::shared_ptr<columns> update_columns_;
