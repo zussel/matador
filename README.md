@@ -19,10 +19,8 @@ concrete object types.
 
 Features:
 
- * Encapsulate database backends
+ * A unique fluent query interface
  * Support for SQLite, MySQL and MS SQL Server
- * Encapsulate sql statements
- * Fluent sql query builder
  * One to one/many relations
  * One storage container
  * Filter with simple expressions
@@ -72,8 +70,8 @@ s.remove(george);
 Requirements
 ------------
 
-The library has very less dependencies. At least the database library you want to use
-in your environments path. If you would like to build from the sources you need at least the
+The library has almost no dependencies. At least the database library you want to use.
+If you would like to build from the sources you need at least the
 [cmake](http://www.cmake.org) build system installed. If you plan to generate an install
 package on a windows system you need the
 [nullsoft scriptable install system](http://nsis.sourceforge.net).
