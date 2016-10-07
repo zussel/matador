@@ -20,6 +20,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
 {
   add_test("create", std::bind(&OrmTestUnit::test_create, this), "test orm create table");
   add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test orm insert into table");
+  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test orm select a table");
   add_test("update", std::bind(&OrmTestUnit::test_update, this), "test orm update on table");
   add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
   add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
@@ -73,6 +74,46 @@ void OrmTestUnit::test_insert()
 
   UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
   
+  p.drop();
+}
+
+template < class C, class T >
+bool contains(const C &container, const T &value)
+{
+  return std::find(std::begin(container), std::end(container), value) != std::end(container);
+}
+
+void OrmTestUnit::test_select()
+{
+  oos::persistence p(dns_);
+
+  p.attach<person>("person");
+
+  p.create();
+
+  oos::session s(p);
+
+  std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
+
+  {
+    // insert some persons
+    oos::session s(p);
+
+    for (std::string name : names) {
+      auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+
+      UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
+    }
+  }
+
+  auto view = s.select<person>();
+
+  UNIT_ASSERT_EQUAL(view.size(), names.size(), "unexpected size");
+
+  for (auto optr : view) {
+    UNIT_ASSERT_TRUE(contains(names, optr->name()), "unknown name from view");
+  }
+
   p.drop();
 }
 

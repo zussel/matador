@@ -19,6 +19,7 @@
 #endif
 
 #include <object/has_many.hpp>
+#include <object/object_view.hpp>
 #include "object/transaction.hpp"
 
 #include "orm/persistence.hpp"
@@ -133,6 +134,11 @@ public:
     }
   }
 
+  template < class T >
+  object_view<T> select()
+  {
+    return object_view<T>(store());
+  }
   /**
    * @brief Inserts an object at the end of a container
    *

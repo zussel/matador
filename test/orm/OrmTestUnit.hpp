@@ -15,6 +15,7 @@ public:
 
   void test_create();
   void test_insert();
+  void test_select();
   void test_update();
   void test_delete();
   void test_load();

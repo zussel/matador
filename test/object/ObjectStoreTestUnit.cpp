@@ -344,13 +344,13 @@ void ObjectStoreTestUnit::reference_counter()
 void
 ObjectStoreTestUnit::set_test()
 {
-  Item *i = new Item("item", 4711);
+  Item i("item", 4711);
   
-  oos::set(*i, "val_int", 1);
+  oos::set(i, "val_int", 1);
+  oos::set(i, "val_long", 7L);
 
-  UNIT_ASSERT_EQUAL(1, i->get_int(), "value must be one (1)");
-
-  delete i;
+  UNIT_ASSERT_EQUAL(1, i.get_int(), "value must be one (1)");
+  UNIT_ASSERT_EQUAL(7L, i.get_long(), "value must be seven (7)");
 }
 
 void

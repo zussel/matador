@@ -485,6 +485,51 @@ public:
   }
 
   /**
+   * @brief Copy construct a view
+   *
+   * @param x object_view to be copied
+   */
+  object_view(const object_view &x)
+    : skip_siblings_(x.skip_siblings_)
+    , node_(x.node_)
+  {}
+
+  /**
+   * @brief Copy move constructor
+   *
+   * @param x object_view to be moved
+   */
+  object_view(object_view &&x)
+    : skip_siblings_(std::move(x.skip_siblings_))
+    , node_(std::move(x.node_))
+  {}
+
+  /**
+   * @brief Copy assign view
+   *
+   * @param x object_view to be copied
+   * @return Reference to this object_view
+   */
+  object_view& operator=(const object_view &x)
+  {
+    skip_siblings_ = x.skip_siblings_;
+    node_ = x.node_;
+    return *this;
+  }
+
+  /**
+   * @brief Assignment move constructor
+   *
+   * @param x object_view to be moved
+   * @return Reference to this object_view
+   */
+  object_view& operator=(object_view &&x)
+  {
+    skip_siblings_ = std::move(x.skip_siblings_);
+    node_ = std::move(x.node_);
+    return *this;
+  }
+  /**
    * Return the begin of the object_view.
    * 
    * @return The begin iterator.
