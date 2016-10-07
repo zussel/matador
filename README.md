@@ -1,7 +1,7 @@
 Open Object Store (OOS)
 =======================
 
-__Version 0.5.0-alpha.1 (License [GPLv3]__
+__Version 0.5.0-alpha.1__
 
 Store all kind of objects in one container.
 
@@ -33,10 +33,13 @@ Example
 -------
 
 ```cpp
+// use oos' namespace
+using namespace oos
+
 // a simple person class
 struct person {
-  oos::identifier<long> id;
-  oos::varchar<256> name;
+  identifier<long> id;
+  varchar<256> name;
   unsigned int age = 0;
   
   person(long i, const std::string n)
@@ -52,12 +55,13 @@ struct person {
 };
 
 // prepare the persistence layer
-oos::persistence p("sqlite://db.sqlite");
+persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
 
-// create a session
-oos::session s(p);
+// create a database session
+session s(p);
 
+// insert george
 // returns an oos::object_ptr<person>
 auto george = s.insert(new person(1, "george"));
 
