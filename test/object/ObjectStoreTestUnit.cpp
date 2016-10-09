@@ -346,11 +346,30 @@ ObjectStoreTestUnit::set_test()
 {
   Item i("item", 4711);
   
-  oos::set(i, "val_int", 1);
-  oos::set(i, "val_long", 7L);
+  oos::set(i, "val_char", 'f');
+  oos::set(i, "val_short", (short)-2);
+  oos::set(i, "val_int", -1);
+  oos::set(i, "val_long", -7L);
+  oos::set(i, "val_unsigned_short", (unsigned short)2);
+  oos::set(i, "val_unsigned_int", 1U);
+  oos::set(i, "val_unsigned_long", 7UL);
+  oos::set(i, "val_bool", false);
+  oos::set(i, "val_float", 0.456f);
+  oos::set(i, "val_double", 3.1415);
+  oos::set(i, "val_string", std::string("tiger"));
 
-  UNIT_ASSERT_EQUAL(1, i.get_int(), "value must be one (1)");
-  UNIT_ASSERT_EQUAL(7L, i.get_long(), "value must be seven (7)");
+  UNIT_ASSERT_EQUAL('f', i.get_char(), "invalid value");
+  UNIT_ASSERT_EQUAL(-2, i.get_short(), "invalid value");
+  UNIT_ASSERT_EQUAL(-1, i.get_int(), "invalid value");
+  UNIT_ASSERT_EQUAL(-7L, i.get_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(2, i.get_unsigned_short(), "invalid value");
+  UNIT_ASSERT_EQUAL(1U, i.get_unsigned_int(), "invalid value");
+  UNIT_ASSERT_EQUAL(7UL, i.get_unsigned_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(7UL, i.get_unsigned_long(), "invalid value");
+  UNIT_ASSERT_EQUAL(false, i.get_bool(), "invalid value");
+  UNIT_ASSERT_EQUAL(0.456f, i.get_float(), "invalid value");
+  UNIT_ASSERT_EQUAL(3.1415, i.get_double(), "invalid value");
+  UNIT_ASSERT_EQUAL("tiger", i.get_string(), "invalid value");
 }
 
 void
