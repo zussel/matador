@@ -25,6 +25,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("update_anonymous", std::bind(&QueryTestUnit::test_anonymous_update, this), "test direct sql update statement via row (anonymous)");
   add_test("statement_insert", std::bind(&QueryTestUnit::test_statement_insert, this), "test prepared sql insert statement");
   add_test("statement_update", std::bind(&QueryTestUnit::test_statement_update, this), "test prepared sql update statement");
+  add_test("delete", std::bind(&QueryTestUnit::test_delete, this), "test query delete");
   add_test("foreign_query", std::bind(&QueryTestUnit::test_foreign_query, this), "test query with foreign key");
   add_test("query", std::bind(&QueryTestUnit::test_query, this), "test query");
   add_test("result_range", std::bind(&QueryTestUnit::test_query_range_loop, this), "test result range loop");
@@ -455,6 +456,44 @@ void QueryTestUnit::test_statement_update()
 
   res = stmt.execute();
 
+}
+
+void QueryTestUnit::test_delete()
+{
+  connection_->open();
+
+  query<person> q("person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute(*connection_));
+
+  person hans("Hans", oos::date(12, 3, 1980), 180);
+  hans.id(1);
+  res = q.insert(hans).execute(*connection_);
+
+  column name("name");
+  res = q.select().where(name == "Hans").execute(*connection_);
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+
+    UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+
+    ++first;
+  }
+
+  q.remove().where(name == "Hans").execute(*connection_);
+
+  res = q.select().where(name == "Hans").execute(*connection_);
+
+  UNIT_ASSERT_TRUE(res.begin() == res.end(), "result list must be empty");
+
+  q.drop().execute(*connection_);
 }
 
 void QueryTestUnit::test_foreign_query()
