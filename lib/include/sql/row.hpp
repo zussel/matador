@@ -176,6 +176,11 @@ public:
     return values_.at(column)->value();
   }
 
+  /**
+   * @brief Clear the row
+   *
+   * Clear the row and all its columns
+   */
   void clear();
 
 private:

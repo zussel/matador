@@ -11,7 +11,6 @@
 namespace oos {
 
 /**
- * @class database_exception
  * @brief An serializable exception class
  *
  * This kind of exception is thrown, when

@@ -311,14 +311,44 @@ private:
   std::vector<V> args_;
 };
 
+/**
+ * @brief Condition class representing an IN condition
+ *
+ * This class represents an query IN condition and evaluates to
+ * this condition based on the current database dialect
+ *
+ * @code
+ * WHERE age IN (select age_value from <table>)
+ * @endcode
+ */
 template <>
 class condition<column, detail::basic_query> : public detail::basic_condition
 {
 public:
-  condition(const column &fld, const detail::basic_query &q, basic_dialect *dialect)
-          : field_(fld), query_(q), dialect_(dialect)
+  /**
+   * @brief Create a query IN condition
+   *
+   * Create an IN condition where the argument values come from
+   * the given query. To evaluate the query a sql dialect must be
+   * given.
+   *
+   * @param col Column for the IN condition
+   * @param q The query to be evaluated to the IN arguments
+   * @param dialect The pointer to the underlying sql dialect
+   */
+  condition(const column &col, const detail::basic_query &q, basic_dialect *dialect)
+          : field_(col), query_(q), dialect_(dialect)
   {}
 
+  /**
+   * @brief Evaluates the condition
+   *
+   * Evaluates the condition to a part of the
+   * query string based on the given compile type
+   *
+   * @param compile_type The compile type used to evaluate
+   * @return A condition IN part of the query
+   */
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::string result(field_.name + " IN (");
@@ -327,18 +357,42 @@ public:
     return result;
   }
 
+private:
   column field_;
   detail::basic_query query_;
   basic_dialect *dialect_ = nullptr;
 };
 
+/**
+ * @brief Between condition.
+ *
+ * The condition represents a between where clause
+ * part.
+ *
+ * @tparam T The type of the boundary values
+ */
 template < class T >
 class condition<column, std::pair<T, T>> : public detail::basic_condition
 {
 public:
+  /**
+   * @brief Create a new between condition
+   *
+   * @param col The column for the range check
+   * @param range The boundary values defining the range
+   */
   condition(const column &col, const std::pair<T, T> &range)
     : field_(col), range_(range) { }
 
+  /**
+   * @brief Evaluates the condition
+   *
+   * Evaluates the condition to a between part
+   * based on the given compile type
+   *
+   * @param compile_type The compile type used to evaluate
+   * @return A condition BETWEEN part of the query
+   */
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
@@ -350,17 +404,42 @@ public:
     return str.str();
   }
 
+private:
   column field_;
   std::pair<T, T> range_;
 };
 
+/**
+ * @brief Logical binary condition
+ *
+ * This class represents a logical binary condition
+ * - AND
+ * - OR
+ *
+ * @tparam L1 The left hand type of the left operator
+ * @tparam R1 The right hand type of the left operator
+ * @tparam L2 The left hand type of the right operator
+ * @tparam R2 The right hand type of the right operator
+ */
 template<class L1, class R1, class L2, class R2>
 class condition<condition<L1, R1>, condition<L2, R2>> : public detail::basic_condition
 {
 public:
+  /**
+   * @brief Create a binary logical condition
+   * @param l Left hand operator of the condition
+   * @param r right hand operator of the condition
+   * @param op The operand (AND or OR)
+   */
   condition(const condition<L1, R1> &l, const condition<L2, R2> &r, detail::basic_condition::t_operand op)
     : left(l), right(r), operand(op) { }
 
+  /**
+   * @brief Evaluates the condition
+   *
+   * @param compile_type The compile type of the condition
+   * @return The exaluated string based on the compile type
+   */
   std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
@@ -372,18 +451,37 @@ public:
     return str.str();
   }
 
+private:
   condition<L1, R1> left;
   condition<L2, R2> right;
   detail::basic_condition::t_operand operand;
 };
 
+/**
+ * @brief Logical unary condition
+ *
+ * This class represents a logical unary NOT condition
+ *
+ * @tparam L Left hand type of the condition to be negated
+ * @tparam R Right hand type of the condition to be negated
+ */
 template<class L, class R>
 class condition<condition<L, R>, void> : public detail::basic_condition
 {
 public:
-  condition(const condition<L, R> &c, detail::basic_condition::t_operand op)
-    : cond(c), operand(detail::basic_condition::operands[op]) { }
+  /**
+   * @brief Create a logical unary condition
+   * @param c The condition to be negated
+   */
+  condition(const condition<L, R> &c)
+    : cond(c), operand(detail::basic_condition::operands[detail::basic_condition::NOT]) { }
 
+  /**
+   * @brief Evaluates the condition
+   *
+   * @param compile_type The compile type of the condition
+   * @return The exaluated string based on the compile type
+   */
   std::string evaluate(basic_dialect::t_compile_type compiler_type) const
   {
     std::stringstream str;
@@ -391,6 +489,7 @@ public:
     return str.str();
   }
 
+private:
   condition<L, R> cond;
   std::string operand;
 };
@@ -600,7 +699,7 @@ condition<condition<L1, R1>, condition<L2, R2>> operator||(const condition<L1, R
 template<class L, class R>
 condition<condition<L, R>, void> operator!(const condition<L, R> &c)
 {
-  return condition<condition<L, R>, void>(c, detail::basic_condition::NOT);
+  return condition<condition<L, R>, void>(c);
 }
 
 /**

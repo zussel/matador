@@ -134,6 +134,12 @@ public:
     }
   }
 
+  /**
+   * @brief Select all object of a specific type
+   *
+   * @tparam T Type of object to be selected
+   * @return object_view containing the selection
+   */
   template < class T >
   object_view<T> select()
   {

@@ -147,6 +147,16 @@ struct typed_identifier_column;
 struct typed_varchar_column;
 }
 
+/**
+ * @brief Create a typed column object
+ *
+ * Create a typed column object with the given
+ * name and data type of the column
+ *
+ * @tparam T The data type of the column
+ * @param col The name of the column
+ * @return The typed_column object.
+ */
 template < class T >
 std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
 {

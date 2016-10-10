@@ -24,6 +24,8 @@
 namespace oos {
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API query_value_creator
 {
 public:
@@ -44,6 +46,9 @@ private:
   any_visitor visitor_;
   std::shared_ptr<oos::detail::basic_value> value_;
 };
+
+/// @endcond
+
 }
 }
 #endif //OOS_QUERY_VALUE_CREATOR_HPP

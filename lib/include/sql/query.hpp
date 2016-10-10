@@ -484,6 +484,12 @@ private:
   T obj_;
 };
 
+/**
+ * @brief A row based query
+ *
+ * This query can be used for generic row
+ * based queries where now concrete type exists.
+ */
 template <>
 class query<row> : public detail::basic_query
 {

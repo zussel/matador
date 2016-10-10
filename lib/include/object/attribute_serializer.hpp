@@ -30,9 +30,8 @@
 
 namespace oos {
 
-/**
- *
- */
+/// @cond OOS_DEV
+
 class basic_attribute_serializer
 {
 public:
@@ -380,6 +379,8 @@ private:
   bool success_;
 //  size_t precision_;
 };
+
+/// @endcond
 
 }
 

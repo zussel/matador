@@ -44,7 +44,6 @@ class object_proxy;
 class object_serializer;
 
 /**
- * @internal
  * @class action
  * @brief Base class for all sql relevant actions
  *

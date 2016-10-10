@@ -23,6 +23,8 @@
 namespace oos {
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_API query_value_column_processor
 {
 public:
@@ -46,6 +48,8 @@ private:
   std::vector<oos::any> rowvalues_;
   std::string current_id_;
 };
+
+/// @endcond
 
 }
 }
