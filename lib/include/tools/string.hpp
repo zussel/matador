@@ -37,6 +37,7 @@ class date;
 OOS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
 
 /**
+ * @fn std::string trim(const std::string& str, const std::string&)
  * Trims a string by removing leading and trailing characters
  * The default characters are spaces and tabs
  *

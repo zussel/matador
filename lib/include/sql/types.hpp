@@ -66,6 +66,13 @@ enum struct data_type {
 
 };
 
+/**
+ * @brief Output operator for data types
+ *
+ * @param out The output strream to write on
+ * @param type The data ytpe to be written
+ * @return The modified output stream
+ */
 OOS_API std::ostream& operator<<(std::ostream &out, const oos::data_type type);
 
 /**

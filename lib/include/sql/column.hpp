@@ -163,6 +163,16 @@ std::shared_ptr<detail::typed_column> make_typed_column(const std::string &col)
   return std::make_shared<detail::typed_column>(col, data_type_traits<T>::type());
 }
 
+/**
+ * @brief Create a varchar typed column object
+ *
+ * Create a varchar typed column object with the given
+ * name and varchar size of the column
+ *
+ * @tparam C The size of the varchar column
+ * @param col The name of the column
+ * @return The varchar typed column
+ */
 template < unsigned int C >
 std::shared_ptr<detail::typed_column> make_typed_varchar_column(const std::string &col)
 {
