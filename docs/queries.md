@@ -129,6 +129,7 @@ q.update({
 }).where(name == "jane");
 
 ```
+
 #### Select
 
 When ```select``` from a database you can add a where clause and write your condition like
@@ -170,6 +171,9 @@ for (auto row : rowres) {
     std::cout << "name: " << row->at<std::string>("name") << "\n";
 }
 ```
+
+#### Delete
+
 The ```delete``` statement works similar to the other statements. If you want to delete an
 object the statement looks like this:
 

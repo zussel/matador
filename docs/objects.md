@@ -8,7 +8,7 @@ All kind of object up from POD can be attached to the object store. It can be a
 simple struct with publiv members or a complex class hierarchy with bases classes and virtual
 methods.
 
-The only thing that must exists is a `serialize` function.
+The only thing that must exist is a `serialize` function.
 
 ```cpp
 struct person

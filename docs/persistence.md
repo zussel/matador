@@ -3,7 +3,6 @@ title: Persistence
 ---
 
 {% include base_path %}
-{% include toc icon="columns" title="Databases" %}
 
 The ORM layer makes internally use of the fluent query interface and the object store. The
 query interface is used to define the queries for all attached entities and the object store

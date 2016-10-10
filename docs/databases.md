@@ -17,6 +17,7 @@ in an uri way:
 
 
 __Example:__
+
 ```cpp
 connection conn("mysql://test@localhost/mydb");
 
@@ -24,6 +25,7 @@ conn.open();
 // ... use connection
 conn.close();
 ```
+
 ### Supported Databases
 
 There're currently three supported databases and the in memory database.
