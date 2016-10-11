@@ -347,14 +347,14 @@ ObjectStoreTestUnit::set_test()
   Item i("item", 4711);
   
   oos::set(i, "val_char", 'f');
-  oos::set(i, "val_short", (short)-2);
+  oos::set(i, "val_short", -2);
   oos::set(i, "val_int", -1);
-  oos::set(i, "val_long", -7L);
-  oos::set(i, "val_unsigned_short", (unsigned short)2);
-  oos::set(i, "val_unsigned_int", 1U);
-  oos::set(i, "val_unsigned_long", 7UL);
+  oos::set(i, "val_long", -7);
+  oos::set(i, "val_unsigned_short", 2);
+  oos::set(i, "val_unsigned_int", 1);
+  oos::set(i, "val_unsigned_long", 7);
   oos::set(i, "val_bool", false);
-  oos::set(i, "val_float", 0.456f);
+  oos::set(i, "val_float", 0.456);
   oos::set(i, "val_double", 3.1415);
   oos::set(i, "val_string", std::string("tiger"));
 
