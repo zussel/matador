@@ -170,7 +170,17 @@ public:
   ~attribute_writer() {}
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if<std::is_same<T, V>::value>::type* = 0)
+  void serialize(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value >::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = (T)from;
+    success_ = true;
+  }
+
+  template < class V >
+  void serialize(const char *id, V &from, typename std::enable_if<!std::is_arithmetic<T>::value && std::is_same<T, V>::value >::type* = 0)
   {
     if (id_ != id) {
       return;
@@ -178,9 +188,8 @@ public:
     to_ = from;
     success_ = true;
   }
-
   template < class V >
-  void serialize(const char *, V &, typename std::enable_if<!std::is_same<T, V>::value>::type* = 0) {}
+  void serialize(const char *, V &, typename std::enable_if<(!std::is_arithmetic<T>::value || !std::is_arithmetic<V>::value) &&  !std::is_same<T, V>::value >::type* = 0) {}
 
   void serialize(const char *, char*, size_t) {}
   template < class HAS_ONE >

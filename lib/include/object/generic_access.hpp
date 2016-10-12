@@ -72,6 +72,26 @@ bool set(O &obj, const std::string &name, const char *val, size_t size)
 }
 
 /**
+ * Sets string value of a member identified by
+ * the given name. The value is passed as a
+ * character array. If the operation succeeds
+ * true is returned.
+ *
+ * @tparam O     The object for which the value should be set.
+ * @param obj    The object to set the value into.
+ * @param name   The name of the member variable.
+ * @param val    Pointer to the character array containing the new string value
+ * @return       True if the operation succeeds.
+ */
+template < typename O >
+bool set(O &obj, const std::string &name, const char *val)
+{
+  attribute_reader<char*> reader(name, val, strlen(val));
+  oos::access::serialize(reader, obj);
+  return reader.success();
+}
+
+/**
  * Gets the value of a member identified by
  * the given name. If the operation succeeds
  * true is returned.
