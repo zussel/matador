@@ -58,7 +58,7 @@ protected:
  * with given name must be found and the value must
  * be convertible into the objects attribute.
  */
-template < class T >
+template < class T, class Enable = void >
 class attribute_reader : public basic_attribute_serializer
 {
 public:
@@ -100,14 +100,34 @@ private:
   const T &from_;
 };
 
+//template < class T >
+//class attribute_reader<T, typename std::enable_if<std::is_same<T, std::string>::value || std::is_base_of<oos::varchar_base, T>::value>::type>
+//{
+//public:
+//  attribute_reader(const std::string &id, const T &from)
+//  : basic_attribute_serializer(id)
+//  , from_(from)
+//  {}
+//
+//  ~attribute_reader() {}
+//
+//  template < class V >
+//  void serialize(const char *id, )
+//  void serialize(const char *id, char *x) {
+//
+//  }
+//private:
+//  const T &from_;
+//};
+
 template <>
-class attribute_reader<char*> : public basic_attribute_serializer
+class attribute_reader<const char*> : public basic_attribute_serializer
 {
 public:
-  attribute_reader(const std::string &id, const char* from, size_t len)
+  attribute_reader(const std::string &id, const char* from)
     : basic_attribute_serializer(id)
     , from_(from)
-    , len_(len)
+    , len_(strlen(from))
   {}
 
   ~attribute_reader() {}

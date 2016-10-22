@@ -35,23 +35,6 @@ class Item
 public:
   Item()
   {
-    init();
-  }
-  explicit Item(const std::string &str)
-    : string_(str)
-  {
-    init();
-  }
-  explicit Item(const std::string &str, int i)
-    : int_(i)
-    , string_(str)
-  {
-    init();
-  }
-  virtual ~Item() {}
-
-private:
-  void init() {
     memset(cstr_, 0, CSTR_LEN);
 #ifdef _MSC_VER
     strcpy_s(cstr_, CSTR_LEN, "Hallo");
@@ -60,6 +43,9 @@ private:
 #endif
     cstr_[5] = '\0';
   }
+  Item(const std::string &str) : Item(str, -65000) {}
+  Item(const std::string &str, int i) : int_(i), string_(str) {}
+  ~Item() {}
 
 public:
   template < class SERIALIZER > void serialize(SERIALIZER &serializer)
@@ -230,282 +216,6 @@ public:
 
 };
 
-/*
-template < class T >
-class List : public oos::serializable
-{
-public:
-  typedef T value_type;
-  typedef List<T> self;
-  typedef oos::object_list<self, T, true> list_t;
-  typedef typename list_t::item_type item_type;
-  typedef typename list_t::size_type size_type;
-  typedef typename list_t::iterator iterator;
-  typedef typename list_t::const_iterator const_iterator;
-
-public:
-  List() {}
-  List(const std::string &relation_name)
-    : relation_name_(relation_name)
-  {}
-  virtual ~List() {}
-
-  virtual void deserialize(oos::deserializer &deserializer)
-  {
-    deserializer.read("id", id_);
-    deserializer.read(relation_name_.c_str(), list_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write(relation_name_.c_str(), list_);
-  }
-
-  void push_front(const value_type &i)
-  {
-    list_.push_front(i);
-  }
-
-  void push_back(const value_type &i)
-  {
-    list_.push_back(i);
-  }
-
-  unsigned long id() { return id_.value(); }
-
-  iterator begin() { return list_.begin(); }
-  const_iterator begin() const { return list_.begin(); }
-
-  iterator end() { return list_.end(); }
-  const_iterator end() const { return list_.end(); }
-
-  bool empty() const { return list_.empty(); }
-  void clear() { list_.clear(); }
-
-  size_type size() { return list_.size(); }
-
-private:
-  oos::identifier<unsigned long> id_;
-  list_t list_;
-  std::string relation_name_;
-};
-
-typedef List<oos::object_ptr<Item> > ItemPtrList;
-typedef List<oos::object_ref<Item> > ItemRefList;
-typedef List<int> IntList;
-
-template<class T>
-class list_object_producer : public oos::object_base_producer {
-public:
-  list_object_producer(const std::string &name) : name_(name) {}
-  virtual ~list_object_producer() {}
-
-  virtual oos::object_base_producer* clone() const
-  {
-    return new list_object_producer(name_);
-  }
-
-  virtual oos::serializable* create() const
-  {
-    return new T(name_);
-  }
-
-  virtual const char* classname() const
-  {
-    return classname_.c_str();
-  }
-
-private:
-  std::string name_;
-  static std::string classname_;
-};
-
-template < class T >
-std::string list_object_producer<T>::classname_ = typeid(T).name();
-
-template < class T >
-class LinkedList : public oos::serializable
-{
-public:
-  typedef T value_type;
-  typedef oos::linked_object_list<LinkedList<value_type>, value_type> item_list_t;
-  typedef typename item_list_t::iterator iterator;
-  typedef typename item_list_t::item_type item_type;
-  typedef typename item_list_t::item_ptr item_ptr;
-  typedef typename item_list_t::const_iterator const_iterator;
-  typedef typename item_list_t::size_type size_type;
-
-public:
-  LinkedList() {}
-  LinkedList(const std::string &relation_name)
-    : relation_name_(relation_name)
-  {}
-  virtual ~LinkedList() {}
-
-  virtual void deserialize(oos::deserializer &deserializer)
-  {
-    deserializer.read("id", id_);
-    deserializer.read(relation_name_.c_str(), item_list_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write(relation_name_.c_str(), item_list_);
-  }
-
-  void push_front(const value_type &i)
-  {
-    item_list_.push_front(i);
-  }
-
-  void push_back(const value_type &i)
-  {
-    item_list_.push_back(i);
-  }
-
-  iterator begin() { return item_list_.begin(); }
-  const_iterator begin() const { return item_list_.begin(); }
-
-  iterator end() { return item_list_.end(); }
-  const_iterator end() const { return item_list_.end(); }
-
-  bool empty() const { return item_list_.empty(); }
-  void clear() { item_list_.clear(); }
-
-  size_type size() const { return item_list_.size(); }
-
-  iterator erase(iterator i)
-  {
-    return item_list_.erase(i);
-  }
-private:
-  oos::identifier<unsigned long> id_;
-  item_list_t item_list_;
-  std::string relation_name_;
-};
-
-typedef LinkedList<int> LinkedIntList;
-typedef LinkedList<oos::object_ptr<Item>> LinkedItemPtrList;
-typedef LinkedList<oos::object_ref<Item>> LinkedItemRefList;
-
-//class LinkedIntList : public LinkedList<int>
-//{
-//public:
-//  LinkedIntList() : LinkedList<int>("linked_int_list") {}
-//  virtual ~LinkedIntList() {}
-//};
-
-//class LinkedItemPtrList : public LinkedList<oos::object_ptr<Item> >
-//{
-//public:
-//  LinkedItemPtrList() : LinkedList<oos::object_ptr<Item> >("linked_ptr_list") {}
-//  virtual ~LinkedItemPtrList() {}
-//};
-//
-//class LinkedItemRefList : public LinkedList<oos::object_ref<Item> >
-//{
-//public:
-//  LinkedItemRefList() : LinkedList<oos::object_ref<Item> >("linked_ref_list") {}
-//  virtual ~LinkedItemRefList() {}
-//};
-
-template < class T >
-class Vector : public oos::serializable
-{
-public:
-  typedef T value_type;
-  typedef oos::object_vector<Vector<T>, value_type, true> vector_t;
-  typedef typename vector_t::item_type item_type;
-  typedef typename vector_t::item_ptr item_ptr;
-  typedef typename vector_t::size_type size_type;
-  typedef typename vector_t::iterator iterator;
-  typedef typename vector_t::const_iterator const_iterator;
-
-public:
-  Vector() {}
-  Vector(const std::string &relation_name)
-    : relation_name_(relation_name)
-  {}
-  virtual ~Vector() {}
-
-  virtual void deserialize(oos::deserializer &deserializer)
-  {
-    deserializer.read("id", id_);
-    deserializer.read(relation_name_.c_str(), vector_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write(relation_name_.c_str(), vector_);
-  }
-
-  unsigned long id() { return id_.value(); }
-
-  void push_back(const value_type &i)
-  {
-    vector_.push_back(i);
-  }
-
-  iterator begin() { return vector_.begin(); }
-  const_iterator begin() const { return vector_.begin(); }
-
-  iterator end() { return vector_.end(); }
-  const_iterator end() const { return vector_.end(); }
-
-  bool empty() const { return vector_.empty(); }
-  void clear() { vector_.clear(); }
-
-  iterator erase(iterator i)
-  {
-    return vector_.erase(i);
-  }
-
-  iterator erase(iterator first, iterator last)
-  {
-    return vector_.erase(first, last);
-  }
-
-  size_type size() { return vector_.size(); }
-
-private:
-  oos::identifier<unsigned long> id_;
-  vector_t vector_;
-  std::string relation_name_;
-};
-
-template<class T>
-class vector_object_producer : public oos::object_base_producer {
-public:
-  vector_object_producer(const std::string &name) : name_(name) {}
-  virtual ~vector_object_producer() {}
-
-  virtual oos::object_base_producer* clone() const
-  {
-    return new vector_object_producer(name_);
-  }
-
-  virtual oos::serializable* create() const
-  {
-    return new T(name_);
-  }
-
-  virtual const char* classname() const
-  {
-    return classname_.c_str();
-  }
-
-private:
-  std::string name_;
-  static std::string classname_;
-};
-
-template < class T >
-std::string vector_object_producer<T>::classname_ = typeid(T).name();
-
-typedef Vector<int> IntVector;
-typedef Vector<oos::object_ptr<Item> > ItemPtrVector;
-typedef Vector<oos::object_ref<Item> > ItemRefVector;
-*/
 class book
 {
 private:
@@ -727,7 +437,7 @@ public:
     serializer.serialize("student_course", courses, "student", "course");
   }
 
-  oos::has_many<course, std::list> courses;
+  oos::has_many<course> courses;
 };
 
 class course
@@ -746,7 +456,7 @@ public:
 
   oos::identifier<unsigned long> id;
   std::string title;
-  oos::has_many<student, std::list> students;
+  oos::has_many<student> students;
 };
 
 class album;

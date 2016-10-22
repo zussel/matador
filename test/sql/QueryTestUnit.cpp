@@ -613,10 +613,10 @@ void QueryTestUnit::test_query_range_loop()
 
   std::vector<std::string> result_names({"Hilde", "Trude"});
   unsigned size(0);
-  for (auto &item : res) {
+  for (auto &&item : res) {
     ++size;
 
-     UNIT_EXPECT_TRUE(contains(result_names, item.name()), "expected name '" + item.name() + "'not found");
+     UNIT_EXPECT_TRUE(contains(result_names, item->name()), "expected name '" + item->name() + "'not found");
 //    UNIT_ASSERT_EQUAL(item.height(), 180U, "expected height must be 180");
 //    UNIT_ASSERT_EQUAL(item.birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
   }

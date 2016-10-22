@@ -41,6 +41,7 @@ public:
   void test_remove();
   void test_primary_key();
   void test_has_many();
+  void test_has_many_to_many();
   void test_on_attach();
 
 private:

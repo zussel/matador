@@ -83,13 +83,13 @@ public:
    * @param type_id The type id of this node.
    * @param abstract Tells the node if its prototype is abstract.
    */
-  prototype_node(object_store *tree, const char *type, const char *type_id = "", bool abstract = false)
+  prototype_node(object_store *tree, const char *type, const std::type_info &typeinfo, bool abstract = false)
     : tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
-    , typeid_(type_id)
     , abstract_(abstract)
+    , type_index_(typeinfo)
   {
     first->next = last.get();
     last->prev = first.get();
@@ -294,6 +294,13 @@ public:
    */
   bool is_abstract() const;
 
+  /**
+   * @brief Return the type index of the represented object type
+   *
+   * @return Type index of the represented object type
+   */
+  std::type_index type_index() const;
+
   /// @cond OOS_DEV
 
   void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
@@ -387,9 +394,10 @@ private:
   unsigned long count = 0; /**< The total count of elements. */
 
   std::string type_;	       /**< The type name of the prototype node */
-  std::string typeid_;	   /**< The type id of the prototype node */
 
   bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
+
+  std::type_index type_index_; /**< type index of the represented object type */
 
   /**
    * Holds the primary keys of all proxies in this node

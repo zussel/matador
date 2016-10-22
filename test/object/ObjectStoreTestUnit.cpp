@@ -46,6 +46,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
+//  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
   add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
@@ -54,12 +55,7 @@ ObjectStoreTestUnit::initialize()
 {
   ostore_.attach<Item>("item");
   ostore_.attach<ObjectItem<Item> >("object_item");
-//  ostore_.insert_prototype(new list_object_producer<ItemPtrList>("ptr_list"), "item_ptr_list");
   ostore_.attach<ObjectItemList>("object_item_ptr_list");
-
-//  ostore_.attach<person>("person");
-//  ostore_.attach<employee, person>("employee");
-//  ostore_.attach<department>("department");
 }
 
 void
@@ -313,31 +309,6 @@ void ObjectStoreTestUnit::reference_counter()
   UNIT_ASSERT_EQUAL(item.reference_count(), 2UL, "reference count must be two");
   UNIT_ASSERT_EQUAL(a1.reference_count(), 2UL, "reference count must be two");
   UNIT_ASSERT_EQUAL(a2.reference_count(), 2UL, "reference count must be two");
-//
-//  a1 = object_item_2->ptr();
-//
-//  val = 0;
-//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "reference count must be zero");
-//  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
-//
-//  object_item_2->ptr(item);
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-//  val = 2;
-//  UNIT_ASSERT_EQUAL(item.ptr_count(), val, "pointer count must be two");
-//  val = 0;
-//  UNIT_ASSERT_EQUAL(a1.ptr_count(), val, "pointer count must be zero");
-//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
-//
-//  object_item_2->ref(item);
-//  val = 2;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be two");
-//
-//  object_item_2->ref(a1);
-//  val = 1;
-//  UNIT_ASSERT_EQUAL(item.ref_count(), val, "reference count must be one");
-//  val = 0;
-//  UNIT_ASSERT_EQUAL(a1.ref_count(), val, "refernce count must be zero");
 }
 
 
@@ -370,6 +341,13 @@ ObjectStoreTestUnit::set_test()
   UNIT_ASSERT_EQUAL(0.456f, i.get_float(), "invalid value");
   UNIT_ASSERT_EQUAL(3.1415, i.get_double(), "invalid value");
   UNIT_ASSERT_EQUAL("tiger", i.get_string(), "invalid value");
+
+  oos::set(i, "val_string", "lion");
+  UNIT_ASSERT_EQUAL("lion", i.get_string(), "invalid value");
+
+//  auto vc = oos::varchar<16>("elefant");
+//  oos::set(i, "val_string", vc);
+//  UNIT_ASSERT_EQUAL("elefant", i.get_string(), "invalid value");
 }
 
 void
@@ -753,7 +731,7 @@ ObjectStoreTestUnit::generic_test()
   oos::get(*item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
 
-  oos::set(*item, "val_cstr", cstr.expected, cstr.expected_size);
+  oos::set(*item, "val_cstr", cstr.expected);
   oos::get(*item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
 
@@ -947,76 +925,22 @@ void ObjectStoreTestUnit::test_primary_key()
 
 void ObjectStoreTestUnit::test_has_many()
 {
-//  typedef object_ptr<employee> emp_ptr;
-//  typedef object_ptr<department> dep_ptr;
   ostore_.attach<book>("book");
   ostore_.attach<book_list>("book_list");
 
   ostore_.insert(new book_list);
 }
 
-std::vector<std::string> table_names = {};
+void ObjectStoreTestUnit::test_has_many_to_many()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<student, person>("student");
+  ostore_.attach<course>("course");
 
-//template < class T, class Enabled = void >
-//struct on_attach;
-//
-//template < class T >
-//struct on_attach<T, typename std::enable_if<std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
-//{
-//  std::string name;
-//  on_attach(const std::string &n = "") : name(n) {}
-//
-//  on_attach(const on_attach &x) : name(x.name) {}
-//
-//  template < class V >
-//  on_attach(const on_attach<V> &x) : name(x.name)
-//  {
-//    std::cout << "creating on attach for typeid " << typeid(T).name() << " from typeid " << typeid(V).name() << '\n';
-//  }
-//
-//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
-//
-//  template < class V >
-//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
-//
-//  void operator()(const prototype_node *node)
-//  {
-//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
-//
-//    table_names.push_back(node->type());
-//  }
-//};
-//
-//template < class T >
-//struct on_attach<T, typename std::enable_if<!std::is_base_of<basic_has_many_item, T>::value>::type> : public oos::detail::basic_on_attach
-//{
-//  std::string name;
-//  on_attach(const std::string &n = "") : name(n) {
-//    std::cout << "nope \n";
-//  }
-//
-//  on_attach(const on_attach &x) : name(x.name) {
-//    std::cout << "nope \n";
-//  }
-//
-//  template < class V >
-//  on_attach(const on_attach<V> &x) : name(x.name)
-//  {
-//    std::cout << "nope \n";
-//  }
-//
-//  on_attach& operator=(const on_attach &x) { name = x.name; return *this; }
-//
-//  template < class V >
-//  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
-//
-//  void operator()(const prototype_node *node)
-//  {
-//    std::cout << "on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
-//
-//    table_names.push_back(node->type());
-//  }
-//};
+  UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+}
+
+std::vector<std::string> table_names = {};
 
 struct on_attach_base : public oos::detail::basic_on_attach
 {
@@ -1024,7 +948,6 @@ struct on_attach_base : public oos::detail::basic_on_attach
   on_attach_base() {}
   on_attach_base(const std::string &n) : name(n) {}
   on_attach_base& operator=(const on_attach_base &x) { name = x.name; return *this; }
-
 };
 
 template < class T >
@@ -1032,16 +955,10 @@ struct on_attach : public on_attach_base
 {
   using on_attach_base::on_attach_base;
 
-  on_attach()
-  {
-//    std::cout << "DEFAULT: nope \n";
-  }
+  on_attach() {}
 
   template < class V >
-  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
-  {
-//    std::cout << "DEFAULT: nope \n";
-  }
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name) {}
 
   template < class V >
   on_attach& operator=(const on_attach<V> &x)
@@ -1051,8 +968,6 @@ struct on_attach : public on_attach_base
 
   void operator()(prototype_node *node) const
   {
-//    std::cout << "DEFAULT: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
-
     table_names.push_back(node->type());
   }
 };
@@ -1066,18 +981,13 @@ struct on_attach<has_many_item<T>> : public on_attach_base
   typedef has_many_item<T> type;
 
   template < class V >
-  on_attach(const on_attach<V> &x) : on_attach_base(x.name)
-  {
-//    std::cout << "HAS_MANY_ITEM: creating on attach for typeid " << typeid(type).name() << " from typeid " << typeid(V).name() << '\n';
-  }
+  on_attach(const on_attach<V> &x) : on_attach_base(x.name) {}
 
   template < class V >
   on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
 
   void operator()(prototype_node *node) const
   {
-//    std::cout << "HAS_MANY_ITEM: on attach (" << node->type() << ") typeid " << typeid(T).name() << '\n';
-
     table_names.push_back(node->type());
   }
 };

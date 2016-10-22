@@ -26,8 +26,8 @@ using namespace std;
 namespace oos {
 
 prototype_node::prototype_node()
-{
-}
+  : type_index_(typeid(void))
+{}
 
 prototype_node::~prototype_node()
 {}
@@ -62,7 +62,7 @@ const char *prototype_node::type() const
 
 const char *prototype_node::type_id() const
 {
-  return typeid_.c_str();
+  return type_index_.name();
 }
 
 void prototype_node::append(prototype_node *sibling)
@@ -352,6 +352,11 @@ bool prototype_node::has_foreign_key(const std::string &foreign_key_name) const
 bool prototype_node::is_abstract() const
 {
   return abstract_;
+}
+
+std::type_index prototype_node::type_index() const
+{
+  return type_index_;
 }
 
 void prototype_node::register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key)

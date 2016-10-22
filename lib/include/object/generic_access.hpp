@@ -60,13 +60,12 @@ bool set(O &obj, const std::string &name, const T &val)
  * @param obj    The object to set the value into.
  * @param name   The name of the member variable.
  * @param val    Pointer to the character array containing the new string value
- * @param size    The size of the character array.
  * @return       True if the operation succeeds.
  */
 template < typename O >
-bool set(O &obj, const std::string &name, const char *val, size_t size)
+bool set(O &obj, const std::string &name, const char *val)
 {
-  attribute_reader<char*> reader(name, val, size);
+  attribute_reader<const char*> reader(name, val);
   oos::access::serialize(reader, obj);
   return reader.success();
 }

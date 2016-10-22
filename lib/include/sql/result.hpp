@@ -36,10 +36,11 @@ template < class T >
 class base_result_iterator : public std::iterator<std::forward_iterator_tag, T>
 {
 public:
-  typedef base_result_iterator<T> self; /**< Shortcut for this class. */
-  typedef T value_type;            /**< Shortcut for the value type. */
-  typedef value_type* pointer;     /**< Shortcut for the pointer type. */
-  typedef value_type& reference;   /**< Shortcut for the reference type */
+  typedef base_result_iterator<T> self;      /**< Shortcut for this class. */
+  typedef T value_type;                      /**< Shortcut for the value type. */
+  typedef std::unique_ptr<T> value_type_ptr; /**< Shortcut for the value type pointer. */
+  typedef value_type* pointer;               /**< Shortcut for the pointer type. */
+  typedef value_type& reference;             /**< Shortcut for the reference type */
 
   base_result_iterator() {}
   base_result_iterator(oos::result<T> *res, T *obj = nullptr)
@@ -80,9 +81,9 @@ public:
     return obj_.get();
   }
 
-  reference operator*()
+  value_type_ptr operator*()
   {
-    return *obj_.get();
+    return std::move(obj_);
   }
 
   pointer get()
@@ -96,9 +97,8 @@ public:
   }
 
 protected:
-  std::unique_ptr<T> obj_;
+  value_type_ptr obj_;
   result<T> *result_ = nullptr;
-//  oos::detail::result_impl *result_impl_ = nullptr;
 };
 
 template < class T >
