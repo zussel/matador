@@ -50,6 +50,38 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
+struct basic_test_pair
+{
+  std::string str_result;
+};
+
+template < class T, class Enabled = void >
+struct test_pair;
+
+template < class T >
+struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type > : public basic_test_pair
+{
+  explicit test_pair(const T &exp) : expected(exp) {}
+  T expected;
+  T result;
+};
+
+template <>
+struct test_pair<char*> : public basic_test_pair
+{
+  explicit test_pair(const char exp[],size_t s)
+    : expected(exp)
+    , result(new char[s])
+    , expected_size(strlen(exp))
+    , size(s)
+  {}
+  ~test_pair() { delete [] result; }
+  const char* expected;
+  char* result;
+  size_t expected_size;
+  size_t size;
+};
+
 void
 ObjectStoreTestUnit::initialize()
 {
@@ -315,6 +347,11 @@ void ObjectStoreTestUnit::reference_counter()
 void
 ObjectStoreTestUnit::set_test()
 {
+  oos::date dt(15, 9, 1972);
+  oos::time t(2008, 12, 27, 13, 6, 57, 4711);
+  oos::varchar<64> varstr("The answer is 42");
+  std::string str("tiger");
+
   Item i("item", 4711);
   
   oos::set(i, "val_char", 'f');
@@ -327,7 +364,11 @@ ObjectStoreTestUnit::set_test()
   oos::set(i, "val_bool", false);
   oos::set(i, "val_float", 0.456);
   oos::set(i, "val_double", 3.1415);
-  oos::set(i, "val_string", std::string("tiger"));
+  oos::set(i, "val_cstr", "tiger");
+  oos::set(i, "val_string", str);
+  oos::set(i, "val_varchar", varstr);
+  oos::set(i, "val_date", dt);
+  oos::set(i, "val_time", t);
 
   UNIT_ASSERT_EQUAL('f', i.get_char(), "invalid value");
   UNIT_ASSERT_EQUAL(-2, i.get_short(), "invalid value");
@@ -341,6 +382,10 @@ ObjectStoreTestUnit::set_test()
   UNIT_ASSERT_EQUAL(0.456f, i.get_float(), "invalid value");
   UNIT_ASSERT_EQUAL(3.1415, i.get_double(), "invalid value");
   UNIT_ASSERT_EQUAL("tiger", i.get_string(), "invalid value");
+  UNIT_ASSERT_EQUAL(str, i.get_string(), "invalid value");
+  UNIT_ASSERT_EQUAL(varstr, i.get_varchar(), "invalid value");
+  UNIT_ASSERT_EQUAL(dt, i.get_date(), "invalid value");
+  UNIT_ASSERT_EQUAL(t, i.get_time(), "invalid value");
 
   oos::set(i, "val_string", "lion");
   UNIT_ASSERT_EQUAL("lion", i.get_string(), "invalid value");
@@ -353,7 +398,70 @@ ObjectStoreTestUnit::set_test()
 void
 ObjectStoreTestUnit::get_test()
 {
-  // Todo: write TEST!!!
+  test_pair<char> c('c');
+  test_pair<bool> b(true);
+  test_pair<float> f(1.55f);
+  test_pair<double> d(123.55789);
+  test_pair<short> s(-42);
+  test_pair<int> i(-98765);
+  test_pair<long> l(1234567890);
+  test_pair<unsigned short> us(45);
+  test_pair<unsigned int> ui(4567890);
+  test_pair<unsigned long> ul(987654321);
+  test_pair<char*> cstr("baba", 256);
+  test_pair<std::string> str("Hallo Welt");
+  test_pair<oos::varchar<64> > varstr("The answer is 42");
+  test_pair<oos::date> dateval(oos::date("29.4.1972"));
+  test_pair<oos::time > timeval(oos::time(2015, 10, 16, 8, 54, 32, 123));
+
+  Item item;
+
+  item.set_char(c.expected);
+  item.set_float(f.expected);
+  item.set_double(d.expected);
+  item.set_short(s.expected);
+  item.set_int(i.expected);
+  item.set_long(l.expected);
+  item.set_unsigned_short(us.expected);
+  item.set_unsigned_int(ui.expected);
+  item.set_unsigned_long(ul.expected);
+  item.set_bool(b.expected);
+  item.set_string(str.expected);
+  item.set_varchar(varstr.expected);
+  item.set_cstr(cstr.expected, cstr.size);
+  item.set_date(dateval.expected);
+  item.set_time(timeval.expected);
+
+  oos::get(item, "val_char", c.result);
+  UNIT_ASSERT_EQUAL(c.result, c.expected, "invalid value");
+  oos::get(item, "val_short", s.result);
+  UNIT_ASSERT_EQUAL(s.result, s.expected, "invalid value");
+  oos::get(item, "val_int", i.result);
+  UNIT_ASSERT_EQUAL(i.result, i.expected, "invalid value");
+  oos::get(item, "val_long", l.result);
+  UNIT_ASSERT_EQUAL(l.result, l.expected, "invalid value");
+  oos::get(item, "val_unsigned_short", us.result);
+  UNIT_ASSERT_EQUAL(us.result, us.expected, "invalid value");
+  oos::get(item, "val_unsigned_int", ui.result);
+  UNIT_ASSERT_EQUAL(ui.result, ui.expected, "invalid value");
+  oos::get(item, "val_unsigned_long", ul.result);
+  UNIT_ASSERT_EQUAL(ul.result, ul.expected, "invalid value");
+  oos::get(item, "val_float", f.result);
+  UNIT_ASSERT_EQUAL(f.result, f.expected, "invalid value");
+  oos::get(item, "val_double", d.result);
+  UNIT_ASSERT_EQUAL(d.result, d.expected, "invalid value");
+  oos::get(item, "val_bool", b.result);
+  UNIT_ASSERT_EQUAL(b.result, b.expected, "invalid value");
+  oos::get(item, "val_string", str.result);
+  UNIT_ASSERT_EQUAL(str.result, str.expected, "invalid value");
+  oos::get(item, "val_varchar", varstr.result);
+  UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "invalid value");
+  oos::get(item, "val_cstr", cstr.result, cstr.size);
+  UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "invalid value");
+  oos::get(item, "val_date", dateval.result);
+  UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "invalid value");
+  oos::get(item, "val_time", timeval.result);
+  UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "invalid value");
 }
 
 void
@@ -630,38 +738,6 @@ ObjectStoreTestUnit::clear_test()
   UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
-struct basic_test_pair
-{
-  std::string str_result;
-};
-
-template < class T, class Enabled = void >
-struct test_pair;
-
-template < class T >
-struct test_pair<T, typename std::enable_if< !std::is_same<T, char*>::value >::type > : public basic_test_pair
-{
-  explicit test_pair(const T &exp) : expected(exp) {}
-  T expected;
-  T result;
-};
-
-template <>
-struct test_pair<char*> : public basic_test_pair
-{
-  explicit test_pair(const char exp[],size_t s)
-    : expected(exp)
-    , result(new char[s])
-    , expected_size(strlen(exp))
-    , size(s)
-  {}
-  ~test_pair() { delete [] result; }
-  const char* expected;
-  char* result;
-  size_t expected_size;
-  size_t size;
-};
-
 void
 ObjectStoreTestUnit::generic_test()
 {
@@ -680,20 +756,6 @@ ObjectStoreTestUnit::generic_test()
   test_pair<oos::varchar<64> > varstr("The answer is 42");
   test_pair<oos::date> dateval(oos::date("29.4.1972"));
   test_pair<oos::time > timeval(oos::time(2015, 10, 16, 8, 54, 32, 123));
-
-//  char c = 'c';
-//  float f = 1.55f;
-//  double d = 123.55789;
-//  short s = -42;
-//  int i = -98765;
-//  long l = -1234567890;
-//  unsigned short us = 45;
-//  unsigned int ui = 4567890;
-//  unsigned long ul = 987654321;
-//  bool b = true;
-//  const char *cstr("baba");
-//  std::string title = "Hallo Welt";
-//  oos::varchar<64> str("The answer is 42");
 
   std::unique_ptr<Item> item(new Item());
 
@@ -927,6 +989,11 @@ void ObjectStoreTestUnit::test_has_many()
 {
   ostore_.attach<book>("book");
   ostore_.attach<book_list>("book_list");
+
+  auto prototype = ostore_.find("books");
+
+  UNIT_ASSERT_EQUAL("books", prototype->type(), "invalid type");
+  UNIT_ASSERT_FALSE(prototype->has_primary_key(), "must be false");
 
   ostore_.insert(new book_list);
 }
