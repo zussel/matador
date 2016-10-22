@@ -38,7 +38,7 @@ using namespace oos
 
 // a simple person class
 struct person {
-  identifier<long> id;
+  identifier<long> id;   // primary key
   varchar<256> name;
   unsigned int age = 0;
   
