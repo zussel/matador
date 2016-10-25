@@ -42,13 +42,13 @@ public:
   void test_update_limit();
 
 protected:
-  oos::connection* create_connection();
+  oos::connection create_connection();
 
   std::string db() const;
 
 private:
   std::string db_;
-  std::unique_ptr<oos::connection> connection_;
+  oos::connection connection_;
   oos::time time_val_;
 };
 

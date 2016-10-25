@@ -22,6 +22,7 @@
 #include "sql/commands.hpp"
 #include "sql/sql.hpp"
 #include "sql/column.hpp"
+#include "sql/connection.hpp"
 
 #include "tools/any.hpp"
 #include "query_value_column_processor.hpp"
@@ -53,11 +54,30 @@ public:
   basic_query(const std::string &table_name);
 
   /**
+   * Creates a basic query for the given
+   * table identified by table_name and the
+   * given connection
+   *
+   * @param table_name The name of the table
+   */
+  basic_query(const connection &conn, const std::string &table_name);
+
+  /**
    * Resets the query.
    *
    * @param query_command The query command to reset to
    */
   void reset_query(t_query_command query_command);
+
+  /**
+   * Get the query string build for internal
+   * connection as prepared or direct statement
+   *
+   * @param prepared Indicates wether the query should
+   *                 be interpreted as prepared or direct
+   * @return The build query string
+   */
+  std::string str(bool prepared);
 
   /**
    * Get the query string build for the specific
@@ -120,6 +140,7 @@ protected:
   std::vector<oos::any> rowvalues_;
   detail::query_value_column_processor query_value_column_processor_;
   detail::query_value_creator query_value_creator_;
+  connection conn_;
   /// @endcond
 };
 

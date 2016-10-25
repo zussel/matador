@@ -86,15 +86,44 @@ class query : public detail::basic_query
 {
 public:
   /**
-   * Create a new query for the
-   * table.
+   * @brief Create a new query.
    *
-   * @param table_name The name of the table
+   * Create a new query with unset
+   * default table name and unset
+   * default internal connection
    */
-  query(const std::string &table_name)
-    : basic_query(table_name)
+  query()
+    : basic_query("")
   {}
-  
+
+  /**
+   * @brief Create a new query for the given table.
+   *
+   * @param tablename The default tablename used for the query.
+   */
+  query(const std::string &tablename)
+    : basic_query(tablename)
+  {}
+
+  /**
+   * @brief Create a query with a default connection
+   *
+   * @param conn The default connection to be used
+   */
+  query(const connection &conn)
+    : query(conn, "")
+  {}
+
+  /**
+   * @brief Create a query with a default connection and default tablename
+   *
+   * @param conn The default connection to be used
+   * @param tablename The default tablename used for the query.
+   */
+  query(const connection &conn, const std::string &tablename)
+    : detail::basic_query(conn, tablename)
+  {}
+
   ~query() {}
 
   /**
@@ -502,7 +531,7 @@ public:
    * default internal connection
    */
   query()
-    : query(nullptr, "")
+    : basic_query("")
   {}
 
   /**
@@ -512,7 +541,7 @@ public:
    * @param tablename The default tablename used for the query.
    */
   query(const std::string &tablename)
-    : query(nullptr, tablename)
+    : basic_query(tablename)
   {}
 
   /**
@@ -520,7 +549,7 @@ public:
    *
    * @param conn The default connection to be used
    */
-  query(connection *conn)
+  query(const connection &conn)
     : query(conn, "")
   {}
 
@@ -530,9 +559,8 @@ public:
    * @param conn The default connection to be used
    * @param tablename The default tablename used for the query.
    */
-  query(connection *conn, const std::string &tablename)
-    : detail::basic_query(tablename)
-    , connection_(conn)
+  query(const connection &conn, const std::string &tablename)
+    : detail::basic_query(conn, tablename)
   {}
 
   ~query() {}
@@ -778,10 +806,10 @@ public:
    */
   result<row> execute()
   {
-    if (connection_ == nullptr) {
-      throw std::logic_error("connection is nullptr");
+    if (!conn_.is_open()) {
+      throw std::logic_error("connection is not open");
     }
-    return execute(*connection_);
+    return execute(conn_);
   }
   /**
    * @brief Execute the query.
@@ -810,10 +838,10 @@ public:
    */
   statement<row> prepare()
   {
-    if (connection_ == nullptr) {
-      throw std::logic_error("connection is nullptr");
+    if (!conn_.is_open()) {
+      throw std::logic_error("connection is not open");
     }
-    return prepare(*connection_);
+    return prepare(conn_);
 
   }
   /**
@@ -857,13 +885,7 @@ public:
     return *this;
   }
 
-  std::string str(bool prepared)
-  {
-    return detail::basic_query::str(*connection_, prepared);
-  }
-
 private:
-  connection *connection_ = nullptr;
   row row_;
 };
 

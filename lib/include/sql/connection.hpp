@@ -34,12 +34,29 @@ class OOS_API connection
 {
 public:
   /**
+   * @brief Creates an empty connection
+   */
+  connection();
+
+  /**
    * @brief Creates a database connection from a connection string.
    *
    * @param dns The database connection string
    */
   explicit connection(const std::string &dns);
+  connection(const connection &x);
+  connection(connection &&x);
+  connection& operator=(const connection &x);
+  connection& operator=(connection &&x);
   ~connection();
+
+  /**
+   * @brief Opens the sql for the given dns.
+   *
+   * Opens the sql. If sql couldn't be opened
+   * an exception is thrown.
+   */
+  void open(const std::string &dns);
 
   /**
    * @brief Opens the sql.
@@ -172,9 +189,13 @@ private:
   }
 
 private:
+  connection_impl* create_connection(const std::string &type) const;
+  void parse_dns(const std::string &dns);
+
+private:
   std::string type_;
   std::string dns_;
-  connection_impl *impl_;
+  std::unique_ptr<connection_impl> impl_;
 };
 
 }

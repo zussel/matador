@@ -5,24 +5,69 @@
 
 namespace oos {
 
+connection::connection() {}
+
 connection::connection(const std::string &dns)
 {
-  // parse dbstring
-  std::string::size_type pos = dns.find(':');
-  type_ = dns.substr(0, pos);
-  dns_ = dns.substr(pos + 3);
+  parse_dns(dns);
+  impl_.reset(create_connection(type_));
+}
 
-  // get driver factory singleton
-  connection_factory &df = connection_factory::instance();
+connection::connection(const connection &x)
+  : type_(x.type_)
+  , dns_(x.dns_)
+{
+  impl_.reset(create_connection(type_));
 
-  // try to create sql implementation
-  impl_ = df.create(type_);
+  if (x.is_open()) {
+    open();
+  }
+}
+
+connection::connection(connection &&x)
+  : type_(std::move(x.type_))
+  , dns_(std::move(x.dns_))
+  , impl_(std::move(x.impl_))
+{}
+
+connection &connection::operator=(const connection &x)
+{
+  type_ = x.type_;
+  dns_ = x.dns_;
+  impl_.reset(create_connection(type_));
+
+  if (x.is_open()) {
+    open();
+  }
+
+  return *this;
+}
+
+connection &connection::operator=(connection &&x)
+{
+  type_ = std::move(x.type_);
+  dns_ = std::move(x.dns_);
+  impl_ = std::move(x.impl_);
+  return *this;
 }
 
 connection::~connection()
 {
+  if (!impl_) {
+    return;
+  }
   impl_->close();
-  connection_factory::instance().destroy(type_, impl_);
+  connection_factory::instance().destroy(type_, impl_.release());
+}
+
+void connection::open(const std::string &dns)
+{
+  if (is_open()) {
+    return;
+  } else {
+    parse_dns(dns);
+    impl_->open(dns_);
+  }
 }
 
 void connection::open()
@@ -30,6 +75,10 @@ void connection::open()
   if (is_open()) {
     return;
   } else {
+    if (impl_) {
+      connection_factory::instance().destroy(type_, impl_.release());
+    }
+    impl_.reset(create_connection(type_));
     impl_->open(dns_);
   }
 }
@@ -146,6 +195,19 @@ detail::basic_value* create_default_value(data_type type)
     default:
       return new null_value;
   }
+}
+
+connection_impl *connection::create_connection(const std::string &type) const
+{
+  // try to create sql implementation
+  return connection_factory::instance().create(type);
+}
+
+void connection::parse_dns(const std::string &dns)
+{
+  std::string::size_type pos = dns.find(':');
+  type_ = dns.substr(0, pos);
+  dns_ = dns.substr(pos + 3);
 }
 
 }

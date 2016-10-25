@@ -38,16 +38,16 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
 
 void QueryTestUnit::initialize()
 {
-  connection_.reset(create_connection());
+  connection_ = create_connection();
 }
 
 void QueryTestUnit::test_datatypes()
 {
-  connection_->open();
+  connection_.open();
 
   query<Item> q("item");
 
-  q.create().execute(*connection_);
+  q.create().execute(connection_);
 
   float fval = 2.445566f;
   double dval = 11111.23433345;
@@ -83,9 +83,9 @@ void QueryTestUnit::test_datatypes()
   item->set_date(date_val);
   item->set_time(time_val);
 
-  q.insert(*item).execute(*connection_);
+  q.insert(*item).execute(connection_);
 
-  auto res = q.select().execute(*connection_);
+  auto res = q.select().execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -108,12 +108,12 @@ void QueryTestUnit::test_datatypes()
   UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
   UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_query_value_creator()
 {
-  connection_->open();
+  connection_.open();
 
   oos::detail::query_value_creator qvc;
 
@@ -126,13 +126,13 @@ void QueryTestUnit::test_query_value_creator()
 
 void QueryTestUnit::test_describe()
 {
-  connection_->open();
+  connection_.open();
 
   oos::query<person> q("person");
 
-  q.create().execute(*connection_);
+  q.create().execute(connection_);
 
-  auto fields = connection_->describe("person");
+  auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
   std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
@@ -143,7 +143,7 @@ void QueryTestUnit::test_describe()
 //    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
   }
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 class pktest
@@ -169,19 +169,19 @@ public:
 
 void QueryTestUnit::test_identifier()
 {
-  connection_->open();
+  connection_.open();
 
   oos::query<pktest> q("pktest");
 
-  q.create().execute(*connection_);
+  q.create().execute(connection_);
 
   std::unique_ptr<pktest> p(new pktest(7, "hans"));
 
   UNIT_EXPECT_EQUAL(p->id.value(), 7UL, "identifier value should be greater zero");
 
-  q.insert(*p).execute(*connection_);
+  q.insert(*p).execute(connection_);
 
-  auto res = q.select().execute(*connection_);
+  auto res = q.select().execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -192,23 +192,23 @@ void QueryTestUnit::test_identifier()
 
   UNIT_EXPECT_GREATER(p->id.value(), 0UL, "identifier value should be greater zero");
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_create()
 {
-  connection_->open();
+  connection_.open();
 
   query<Item> q("item");
 
-  q.create().execute(*connection_);
+  q.create().execute(connection_);
 
   auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.set_time(itime);
-  result<Item> res = q.insert(hans).execute(*connection_);
+  result<Item> res = q.insert(hans).execute(connection_);
 
-  res = q.select().execute(*connection_);
+  res = q.select().execute(connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
 
@@ -223,14 +223,14 @@ void QueryTestUnit::test_create()
     ++first;
   }
 
-  res = q.drop().execute(*connection_);
+  res = q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_anonymous_create()
 {
-  connection_->open();
+  connection_.open();
 
-  query<> q(connection_.get(), "person");
+  query<> q(connection_, "person");
 
   auto cols = {"id", "name", "age"};
 
@@ -242,21 +242,21 @@ void QueryTestUnit::test_anonymous_create()
 
   q.execute();
 
-  UNIT_ASSERT_TRUE(connection_->exists("person"), "table person must exist");
-  auto fields = connection_->describe("person");
+  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  auto fields = connection_.describe("person");
 
   for (auto fld : fields) {
     UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
   }
 
-  q.drop("person").execute(*connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_anonymous_insert()
 {
-  connection_->open();
+  connection_.open();
 
-  query<> q(connection_.get(), "person");
+  query<> q(connection_, "person");
 
   q.create({
      make_typed_id_column<long>("id"),
@@ -280,15 +280,15 @@ void QueryTestUnit::test_anonymous_insert()
     ++first;
   }
 
-  q.drop("person").execute(*connection_);
+  q.drop("person").execute(connection_);
 
 }
 
 void QueryTestUnit::test_anonymous_update()
 {
-  connection_->open();
+  connection_.open();
 
-  query<> q(connection_.get(), "person");
+  query<> q(connection_, "person");
 
   q.create({
      make_typed_id_column<long>("id"),
@@ -316,16 +316,16 @@ void QueryTestUnit::test_anonymous_update()
     ++first;
   }
 
-  q.drop("person").execute(*connection_);
+  q.drop("person").execute(connection_);
 }
 
 void QueryTestUnit::test_statement_insert()
 {
-  connection_->open();
+  connection_.open();
 
   query<Item> q("item");
 
-  statement<Item> stmt(q.create().prepare(*connection_));
+  statement<Item> stmt(q.create().prepare(connection_));
 
   result<Item> res(stmt.execute());
 
@@ -334,12 +334,12 @@ void QueryTestUnit::test_statement_insert()
   Item hans("Hans", 4711);
   hans.id(id.value());
   hans.set_time(itime);
-  stmt = q.insert(hans).prepare(*connection_);
+  stmt = q.insert(hans).prepare(connection_);
 
   stmt.bind(&hans, 0);
   res = stmt.execute();
 
-  stmt = q.select().prepare(*connection_);
+  stmt = q.select().prepare(connection_);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -356,18 +356,18 @@ void QueryTestUnit::test_statement_insert()
     ++first;
   }
 
-  stmt = q.drop().prepare(*connection_);
+  stmt = q.drop().prepare(connection_);
 
   res = stmt.execute();
 }
 
 void QueryTestUnit::test_statement_update()
 {
-  connection_->open();
+  connection_.open();
 
   query<Item> q("item");
 
-  statement<Item> stmt(q.create().prepare(*connection_));
+  statement<Item> stmt(q.create().prepare(connection_));
 
   result<Item> res(stmt.execute());
 
@@ -376,12 +376,12 @@ void QueryTestUnit::test_statement_update()
   Item hans("Hans", 4711);
   hans.id(id.value());
   hans.set_time(itime);
-  stmt = q.insert(hans).prepare(*connection_);
+  stmt = q.insert(hans).prepare(connection_);
 
   stmt.bind(&hans, 0);
   res = stmt.execute();
 
-  stmt = q.select().prepare(*connection_);
+  stmt = q.select().prepare(connection_);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -402,7 +402,7 @@ void QueryTestUnit::test_statement_update()
 
   oos::column idcol("id");
   int i815 = 815;
-  stmt = q.update({{"val_int", i815}}).where(idcol == 7).prepare(*connection_);
+  stmt = q.update({{"val_int", i815}}).where(idcol == 7).prepare(connection_);
   size_t pos = 0;
   pos = stmt.bind(i815, pos);
   unsigned long hid = hans.id();
@@ -410,7 +410,7 @@ void QueryTestUnit::test_statement_update()
 
   res = stmt.execute();
 
-  stmt = q.select().prepare(*connection_);
+  stmt = q.select().prepare(connection_);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -428,14 +428,14 @@ void QueryTestUnit::test_statement_update()
   }
 
   hans.set_int(4711);
-  stmt = q.update(hans).where(idcol == 7).prepare(*connection_);
+  stmt = q.update(hans).where(idcol == 7).prepare(connection_);
   pos = 0;
   pos = stmt.bind(&hans, pos);
   stmt.bind(hid, pos);
 
   res = stmt.execute();
 
-  stmt = q.select().prepare(*connection_);
+  stmt = q.select().prepare(connection_);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -452,7 +452,7 @@ void QueryTestUnit::test_statement_update()
     ++first;
   }
 
-  stmt = q.drop().prepare(*connection_);
+  stmt = q.drop().prepare(connection_);
 
   res = stmt.execute();
 
@@ -460,19 +460,19 @@ void QueryTestUnit::test_statement_update()
 
 void QueryTestUnit::test_delete()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   person hans("Hans", oos::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   column name("name");
-  res = q.select().where(name == "Hans").execute(*connection_);
+  res = q.select().where(name == "Hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -487,42 +487,42 @@ void QueryTestUnit::test_delete()
     ++first;
   }
 
-  q.remove().where(name == "Hans").execute(*connection_);
+  q.remove().where(name == "Hans").execute(connection_);
 
-  res = q.select().where(name == "Hans").execute(*connection_);
+  res = q.select().where(name == "Hans").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "result list must be empty");
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_foreign_query()
 {
-  connection_->open();
+  connection_.open();
 
   query<Item> q("item");
 
   using t_object_item = ObjectItem<Item>;
 
   // create item table and insert item
-  result<Item> res(q.create().execute(*connection_));
+  result<Item> res(q.create().execute(connection_));
 
   auto itime = time_val_;
   oos::identifier<unsigned long> id(23);
   Item *hans = new Item("Hans", 4711);
   hans->id(id.value());
   hans->set_time(itime);
-  res = q.insert(*hans).execute(*connection_);
+  res = q.insert(*hans).execute(connection_);
 
   query<t_object_item> object_item_query("object_item");
-  result<t_object_item> ores = object_item_query.create().execute(*connection_);
+  result<t_object_item> ores = object_item_query.create().execute(connection_);
 
   t_object_item oitem;
   oitem.ptr(hans);
 
-  ores = object_item_query.insert(oitem).execute(*connection_);
+  ores = object_item_query.insert(oitem).execute(connection_);
 
-  ores = object_item_query.select().execute(*connection_);
+  ores = object_item_query.select().execute(connection_);
 
   auto first = ores.begin();
   auto last = ores.end();
@@ -537,26 +537,26 @@ void QueryTestUnit::test_foreign_query()
     ++first;
   }
 
-  object_item_query.drop().execute(*connection_);
+  object_item_query.drop().execute(connection_);
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_query()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   person hans("Hans", oos::date(12, 3, 1980), 180);
   hans.id(1);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   column name("name");
-  res = q.select().where(name == "hans").execute(*connection_);
+  res = q.select().where(name == "hans").execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -571,11 +571,11 @@ void QueryTestUnit::test_query()
     ++first;
   }
 
-  res = q.select().where(name == "heinz").execute(*connection_);
+  res = q.select().where(name == "heinz").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 template < class C, class T >
@@ -586,30 +586,30 @@ bool contains(const C &container, const T &value)
 
 void QueryTestUnit::test_query_range_loop()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(*connection_);
+  res = q.insert(otto).execute(connection_);
 
   person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(*connection_);
+  res = q.insert(hilde).execute(connection_);
 
   person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(*connection_);
+  res = q.insert(trude).execute(connection_);
 
   column name("name");
   column height("height");
-  res = q.select().where(name != "Hans" && (height > 160 && height < 180)).execute(*connection_);
+  res = q.select().where(name != "Hans" && (height > 160 && height < 180)).execute(connection_);
 
   std::vector<std::string> result_names({"Hilde", "Trude"});
   unsigned size(0);
@@ -623,38 +623,38 @@ void QueryTestUnit::test_query_range_loop()
 
   UNIT_ASSERT_EQUAL(size, 2U, "result size must be two (2)");
 
-  res = q.select().where(name == "heinz").execute(*connection_);
+  res = q.select().where(name == "heinz").execute(connection_);
 
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 
 }
 
 void QueryTestUnit::test_query_select()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(*connection_);
+  res = q.insert(otto).execute(connection_);
 
   person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(*connection_);
+  res = q.insert(hilde).execute(connection_);
 
   person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(*connection_);
+  res = q.insert(trude).execute(connection_);
 
-  res = q.select().execute(*connection_);
+  res = q.select().execute(connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 4UL, "result size must be one (4)");
 
@@ -667,7 +667,7 @@ void QueryTestUnit::test_query_select()
   }
 
   column name("name");
-  res = q.select().where(name == "Hans").execute(*connection_);
+  res = q.select().where(name == "Hans").execute(connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "result size must be one (1)");
 
@@ -684,7 +684,7 @@ void QueryTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.select().order_by("height").asc().execute(*connection_);
+  res = q.select().order_by("height").asc().execute(connection_);
 
   first = res.begin();
 
@@ -706,7 +706,7 @@ void QueryTestUnit::test_query_select()
     .where(height > 160 && height < 180)
     .order_by("height")
     .desc()
-    .execute(*connection_);
+    .execute(connection_);
 
 //  UNIT_ASSERT_EQUAL(res.size(), 2UL, "result size must be one (2)");
 
@@ -725,36 +725,36 @@ void QueryTestUnit::test_query_select()
     ++first;
   }
 
-  res = q.drop().execute(*connection_);
+  res = q.drop().execute(connection_);
 }
 
 void QueryTestUnit::test_query_select_count()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(*connection_);
+  res = q.insert(otto).execute(connection_);
 
   person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(*connection_);
+  res = q.insert(hilde).execute(connection_);
 
   person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(*connection_);
+  res = q.insert(trude).execute(connection_);
 
   query<> count;
 
   column name("name");
-  auto rowres = count.select({columns::count_all()}).from("person").where(name == "Hans" || name == "Hilde").execute(*connection_);
+  auto rowres = count.select({columns::count_all()}).from("person").where(name == "Hans" || name == "Hilde").execute(connection_);
 
   auto first = rowres.begin();
   auto last = rowres.end();
@@ -765,38 +765,38 @@ void QueryTestUnit::test_query_select_count()
     ++first;
   }
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 
 }
 
 void QueryTestUnit::test_query_select_columns()
 {
-  connection_->open();
+  connection_.open();
 
   query<person> q("person");
 
   // create item table and insert item
-  result<person> res(q.create().execute(*connection_));
+  result<person> res(q.create().execute(connection_));
 
   unsigned long counter = 0;
 
   person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
-  res = q.insert(hans).execute(*connection_);
+  res = q.insert(hans).execute(connection_);
 
   person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
-  res = q.insert(otto).execute(*connection_);
+  res = q.insert(otto).execute(connection_);
 
   person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
-  res = q.insert(hilde).execute(*connection_);
+  res = q.insert(hilde).execute(connection_);
 
   person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
-  res = q.insert(trude).execute(*connection_);
+  res = q.insert(trude).execute(connection_);
 
   column name("name");
 
   query<> cols;
 
-  auto rowres = cols.select({"id", "name"}).from("person").where(name == "Hans").execute(*connection_);
+  auto rowres = cols.select({"id", "name"}).from("person").where(name == "Hans").execute(connection_);
 
   auto first = rowres.begin();
   auto last = rowres.end();
@@ -809,7 +809,7 @@ void QueryTestUnit::test_query_select_columns()
     ++first;
   }
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 }
 
 struct relation
@@ -833,25 +833,25 @@ struct relation
 
 void QueryTestUnit::test_select_limit()
 {
-  connection_->open();
+  connection_.open();
 
   query<relation> q("relation");
 
   // create item table and insert item
-  result<relation> res(q.create().execute(*connection_));
+  result<relation> res(q.create().execute(connection_));
 
   std::unique_ptr<relation> r1(new relation(1UL, 1UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(1UL, 1UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(1UL, 2UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(2UL, 3UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
 
   q.select().limit(1);
 
-  res = q.execute(*connection_);
+  res = q.execute(connection_);
 
   auto first = res.begin();
   auto last = res.end();
@@ -861,44 +861,44 @@ void QueryTestUnit::test_select_limit()
     ++first;
   }
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 
-  connection_->close();
+  connection_.close();
 }
 
 void QueryTestUnit::test_update_limit()
 {
-  connection_->open();
+  connection_.open();
 
   query<relation> q("relation");
 
   // create item table and insert item
-  result<relation> res(q.create().execute(*connection_));
+  result<relation> res(q.create().execute(connection_));
 
   std::unique_ptr<relation> r1(new relation(1UL, 1UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(1UL, 1UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(1UL, 2UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
   r1.reset(new relation(2UL, 3UL));
-  res = q.insert(*r1).execute(*connection_);
+  res = q.insert(*r1).execute(connection_);
 
   oos::column owner("owner_id");
   oos::column item("item_id");
   relation::t_id newid(4UL);
   q.update({{item.name, newid}}).where(owner == 1 && item == 1).limit(1);
 
-  res = q.execute(*connection_);
+  res = q.execute(connection_);
 
-  q.drop().execute(*connection_);
+  q.drop().execute(connection_);
 
-  connection_->close();
+  connection_.close();
 }
 
-connection* QueryTestUnit::create_connection()
+connection QueryTestUnit::create_connection()
 {
-  return new connection(db_);
+  return std::move(connection(db_));
 }
 
 std::string QueryTestUnit::db() const {

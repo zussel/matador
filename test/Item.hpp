@@ -509,7 +509,7 @@ public:
   typedef oos::has_many<track> track_vector_t;
   typedef track_vector_t::size_type size_type;
   typedef track_vector_t::iterator iterator;
-//  typedef track_vector_t::const_iterator const_iterator;
+  typedef track_vector_t::const_iterator const_iterator;
 
 private:
   oos::identifier<unsigned long> id_;
@@ -517,13 +517,8 @@ private:
   track_vector_t tracks_;
   
 public:
-  album()
-//    : tracks_(&track::alb, &track::index, &track::index)
-  {}
-  album(const std::string &name)
-    : name_(name)
-//    , tracks_(&track::alb, &track::index, &track::index)
-  {}
+  album() {}
+  album(const std::string &name) : name_(name) {}
   
   ~album() {}
 
@@ -551,10 +546,10 @@ public:
   }
 
   iterator begin() { return tracks_.begin(); }
-//  const_iterator begin() const { return tracks_.begin(); }
+  const_iterator begin() const { return tracks_.begin(); }
 
   iterator end() { return tracks_.end(); }
-//  const_iterator end() const { return tracks_.end(); }
+  const_iterator end() const { return tracks_.end(); }
 
   iterator erase(iterator i) { return tracks_.erase(i); }
   iterator erase(iterator a, iterator b) { return tracks_.erase(a, b); }
@@ -570,7 +565,7 @@ public:
   typedef oos::has_many<track> track_list_t;
   typedef track_list_t::size_type size_type;
   typedef track_list_t::iterator iterator;
-//  typedef track_list_t::const_iterator const_iterator;
+  typedef track_list_t::const_iterator const_iterator;
 
 private:
   oos::identifier<unsigned long> id_;
@@ -604,10 +599,10 @@ public:
   }
 
   iterator begin() { return tracks_.begin(); }
-//  const_iterator begin() const { return tracks_.begin(); }
+  const_iterator begin() const { return tracks_.begin(); }
 
   iterator end() { return tracks_.end(); }
-//  const_iterator end() const { return tracks_.end(); }
+  const_iterator end() const { return tracks_.end(); }
 
   iterator erase(iterator i) { return tracks_.erase(i); }
 
