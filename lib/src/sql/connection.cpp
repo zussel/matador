@@ -17,11 +17,7 @@ connection::connection(const connection &x)
   : type_(x.type_)
   , dns_(x.dns_)
 {
-  impl_.reset(create_connection(type_));
-
-  if (x.is_open()) {
-    open();
-  }
+  init_from_foreign_connection(x);
 }
 
 connection::connection(connection &&x)
@@ -34,11 +30,8 @@ connection &connection::operator=(const connection &x)
 {
   type_ = x.type_;
   dns_ = x.dns_;
-  impl_.reset(create_connection(type_));
 
-  if (x.is_open()) {
-    open();
-  }
+  init_from_foreign_connection(x);
 
   return *this;
 }
@@ -133,6 +126,11 @@ basic_dialect *connection::dialect()
   return impl_->dialect();
 }
 
+bool connection::is_valid() const
+{
+  return !type_.empty() && !dns_.empty();
+}
+
 detail::basic_value* create_default_value(data_type type);
 
 void connection::prepare_prototype_row(row &prototype, const std::string &tablename)
@@ -201,6 +199,17 @@ connection_impl *connection::create_connection(const std::string &type) const
 {
   // try to create sql implementation
   return connection_factory::instance().create(type);
+}
+
+void connection::init_from_foreign_connection(const connection &foreign_connection)
+{
+  if (is_valid()) {
+    impl_.reset(create_connection(type_));
+
+    if (foreign_connection.is_open()) {
+      open();
+    }
+  }
 }
 
 void connection::parse_dns(const std::string &dns)

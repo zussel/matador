@@ -148,6 +148,16 @@ public:
    */
   basic_dialect* dialect();
 
+  /**
+   * @brief Returns true if connection is valid
+   *
+   * Returns true if connection is valid, i.e. the
+   * database connection string is set correctly
+   *
+   * @return True if connection is valid
+   */
+  bool is_valid() const;
+
 private:
   template < class T >
   friend class query;
@@ -190,6 +200,7 @@ private:
 
 private:
   connection_impl* create_connection(const std::string &type) const;
+  void init_from_foreign_connection(const connection &foreign_connection);
   void parse_dns(const std::string &dns);
 
 private:

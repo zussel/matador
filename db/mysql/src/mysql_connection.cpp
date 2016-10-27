@@ -89,7 +89,9 @@ bool mysql_connection::is_open() const
 
 void mysql_connection::close()
 {
-  mysql_close(&mysql_);
+  if (is_open_) {
+    mysql_close(&mysql_);
+  }
   // tell mysql to close the library
   mysql_library_end();
 
