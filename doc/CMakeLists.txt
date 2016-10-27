@@ -13,6 +13,9 @@ IF(DOXYGEN_FOUND)
                        COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
                        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
                        COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
+
+    # Todo: replace links for jekyll
+    # sed -i 's/href="\([^"#]*\).html\(#[^"]*\)\?"/href="\/api\/\1\/index.html\2"/g' *.html
 ELSE(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen not detected - no documentation target")
 ENDIF(DOXYGEN_FOUND)
