@@ -50,10 +50,8 @@ oos::query<person> q("person");
 auto col = column("name");
 auto res = q.select().where(col == "jane" || col == "tarzan").execute();
 
-auto first = res.begin();
-auto last = res.end();
-while (first != last) {
-  std::cout << "my name is " << (*first++).name << "\n";
+for (auto p : res) {
+  std::cout << "my name is " << p->name << "\n";
 }
 ```
 
@@ -72,12 +70,6 @@ After the persistance layer is configured all the database tables can be created
 p.create();
 ```
 
-If the schema already exists one can call
-
-```cpp
-p.load();
-```
-
 Now you can create a session and insert, update, select or delete entities on the
 database.
 
@@ -92,4 +84,11 @@ s.update(jane);
 
 // bye bye jane
 s.remove(jane)
+```
+Once you have data in your database you can load it this way:
+
+```cpp
+session s(p);
+
+s.load();
 ```
