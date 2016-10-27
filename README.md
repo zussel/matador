@@ -58,6 +58,9 @@ struct person {
 persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
 
+// create tables
+p.create();
+
 // create a database session
 session s(p);
 
