@@ -102,7 +102,9 @@ void mssql_connection::open(const std::string &connection)
 
   SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
 
-  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ",1433;DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
+  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ";Protocol=TCPIP;Port=1433;DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
+
+  std::cout << "\nSQL Connection String: [" << dns << "]\n\n";
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
