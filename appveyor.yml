@@ -34,7 +34,7 @@ before_build:
 #- set MYSQL_PWD=Password12!
 #- set USER=root
 #- mysql -e "create database oos_test;" --user=root
-- sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test" -d "master"
+- sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test"
 
 build:
   project: C:\projects\oos\build\oos.sln
