@@ -43,7 +43,7 @@ mssql_connection::~mssql_connection()
 
 void mssql_connection::open(const std::string &connection)
 {
-  // parse user[:passwd]@host/db ([Drivername])
+  // parse user[:passwd]@host/instance/db ([Drivername])
   std::string con = connection;
   std::string::size_type pos = con.find('@');
   std::string user, passwd;
@@ -66,7 +66,7 @@ void mssql_connection::open(const std::string &connection)
   }
   // get connection part
   con = con.substr(pos + 1);
-  pos = con.find('/');
+  pos = con.find_last_of('/');
   std::string host = con.substr(0, pos);
   db_ = con.substr(pos + 1);
 
