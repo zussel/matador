@@ -1182,7 +1182,8 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_one<V> &x, casca
 
 template<class T, template < class ... > class ON_ATTACH>
 template<class V, template<class ...> class C>
-void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char *, const char *)
+//void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
 {
   // item column column names
 //  x.owner_field(owner_field);
