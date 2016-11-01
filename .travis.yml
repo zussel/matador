@@ -4,13 +4,14 @@ sudo: false
 
 matrix:
   include:
-#    - os: osx
-#      compiler: gcc
-#      addons:
-#        apt:
-#          sources: ['ubuntu-toolchain-r-test']
-#          packages: ['g++-4.8', 'valgrind']
-#      env: COMPILER=g++-4.8
+    - BUILD_TYPE=Debug
+      os: osx
+      osx_image: xcode8
+      compiler: clang
+    - BUILD_TYPE=Release
+      os: osx
+      osx_image: xcode8
+      compiler: clang
     - os: linux
       compiler: gcc
       addons:
@@ -18,7 +19,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8', 'valgrind']
       env: COMPILER=g++-4.8 GCOV=gcov-4.8
-
     - os: linux
       compiler: gcc
       addons:
@@ -36,19 +36,31 @@ matrix:
       env: COMPILER=g++-5 GCOV=gcov-5
 
     - os: linux
+      compiler: gcc
+      addons: &gcc6
+        apt:
+          packages: g++-6
+          sources: *sources
+      env: COMPILER=g++-6 GCOV=gcov-6 BUILD_TYPE=Debug
+
+    - os: linux
+      addons: *gcc6
+      env: GCC_VERSION=6 BUILD_TYPE=Release
+      
+    - os: linux
       compiler: clang
       env: COMPILER=clang++
       addons:
         apt:
           packages: ['valgrind']
 
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages: ['clang-3.5', 'valgrind']
-      env: COMPILER=clang++-3.5
+#    - os: linux
+#      compiler: clang
+#      addons:
+#        apt:
+#          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+#          packages: ['clang-3.5', 'valgrind']
+#      env: COMPILER=clang++-3.5
 
     - os: linux
       compiler: clang
@@ -57,21 +69,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
           packages: ['clang-3.6', 'valgrind']
       env: COMPILER=clang++-3.6
-#env:
-#  global:
-   # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-#   - secure: "alRiwZmJVN9Cdu0sPKUtt7NX72ok9R1Lg/UU6cuVmTvqezMovlP67JG9yotl0Gu7qbGcqdyGJrYtSNTndAYAh0udPAG4kvV0Bb7gdyrbcuIM6y9HYvUOKOjnxirDEvy3D16jtqw3FR88T/4fWz5iSLVwepJ2JGLcgM2Y0lHisFw="
-
-#addons:
-#  coverity_scan:
-#    project:
-#      name: "zussel/oos"
-#      description: "Store all your objects in one container"
-#    notification_email: sascha.kuehl@gmx.net
-#    build_command_prepend:
-#    build_command:
-#    branch_pattern: coverity_scan
 
 before_script:
   - mysql -e 'create database oos_test;'
