@@ -4,11 +4,11 @@ sudo: false
 
 matrix:
   include:
-    - BUILD_TYPE=Debug
+    - env: BUILD_TYPE=Debug
       os: osx
       osx_image: xcode8
       compiler: clang
-    - BUILD_TYPE=Release
+    - env: BUILD_TYPE=Release
       os: osx
       osx_image: xcode8
       compiler: clang
