@@ -137,7 +137,8 @@ SET(TOOLS_HEADER
   ../include/tools/identifier_resolver.hpp
   ../include/tools/identifier_setter.hpp
   ../include/tools/identifiable_holder.hpp
-  ../include/tools/any.hpp ../include/tools/any_visitor.hpp)
+  ../include/tools/any.hpp
+  ../include/tools/any_visitor.hpp)
 
 SET(SQL_SOURCES
   sql/condition.cpp
@@ -199,7 +200,7 @@ SET(SQL_HEADER
   ../include/sql/query_value_column_processor.hpp
   ../include/sql/query_value_creator.hpp)
 
-SET(ORM_HEADERS
+SET(ORM_HEADER
   ../include/orm/persistence.hpp
   ../include/orm/table.hpp
   ../include/orm/session.hpp
@@ -276,52 +277,13 @@ SET(UNIT_HEADER
   ../include/unit/unit_test.hpp
   ../include/object/action_inserter.hpp)
 
-SET(DATABASE_SOURCES
-  database/action.cpp
-  database/session.cpp
-  database/database.cpp
-  database/database_exception.cpp
-  database/database_factory.cpp
-  database/database_sequencer.cpp
-  database/memory_database.cpp
-  database/transaction.cpp
-  database/transaction_helper.cpp
-  database/statement_creator.cpp
-  database/table.cpp
-  database/table_reader.cpp
-  database/identifier_binder.cpp
-)
-
-SET(DATABASE_HEADER
-  ../include/database/action.hpp
-  ../include/database/session.hpp
-  ../include/database/database.hpp
-  ../include/database/database_exception.hpp
-  ../include/database/database_factory.hpp
-  ../include/database/memory_database.hpp
-  ../include/database/database_sequencer.hpp
-  ../include/database/transaction.hpp
-  ../include/database/transaction_helper.hpp
-  ../include/database/table.hpp
-  ../include/database/table_reader.hpp
-  ../include/database/identifier_binder.hpp
-)
-
-SET(DATABASE_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/sql/session.hpp
-  ${PROJECT_SOURCE_DIR}/include/sql/database_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/sql/query.hpp
-  ${PROJECT_SOURCE_DIR}/include/sql/condition.hpp
-  ${PROJECT_SOURCE_DIR}/include/sql/transaction.hpp
-)
-
 ADD_LIBRARY(oos SHARED
   ${OBJECT_SOURCES}
   ${OBJECT_HEADER}
   ${TOOLS_SOURCES}
   ${TOOLS_HEADER}
   ${ORM_SOURCES}
-  ${ORM_HEADERS}
+  ${ORM_HEADER}
 #  ${JSON_SOURCES}
 #  ${JSON_HEADER}
   ${UNIT_SOURCES}
@@ -335,7 +297,7 @@ TARGET_LINK_LIBRARIES(oos ${CMAKE_DL_LIBS})
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos
                       PROPERTIES
-                      VERSION 0.2.1
+                      VERSION 0.5.0
                       SOVERSION 0)
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
@@ -344,13 +306,13 @@ SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
 SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
 SOURCE_GROUP("include\\sql" FILES ${SQL_HEADER})
-SOURCE_GROUP("include\\sql" FILES ${DATABASE_HEADER} ${DATABASE_INSTALL_HEADER})
+SOURCE_GROUP("include\\orm" FILES ${ORM_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
-SOURCE_GROUP("src\\\\tools" FILES ${TOOLS_SOURCES})
+SOURCE_GROUP("src\\tools" FILES ${TOOLS_SOURCES})
 SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
-SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
 SOURCE_GROUP("src\\sql" FILES ${SQL_SOURCES})
-SOURCE_GROUP("src\\sql" FILES ${DATABASE_SOURCES})
+SOURCE_GROUP("src\\orm" FILES ${ORM_SOURCES})
+SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
 
 #FOREACH(inc ${OBJECT_HEADER})
 #  MESSAGE(STATUS "object include: ${inc}")
@@ -380,8 +342,14 @@ INSTALL(
 )
 
 INSTALL(
-  FILES ${DATABASE_INSTALL_HEADER}
+  FILES ${SQL_HEADER}
   DESTINATION include/oos/sql
+  COMPONENT headers
+)
+
+INSTALL(
+  FILES ${ORM_HEADER}
+  DESTINATION include/oos/orm
   COMPONENT headers
 )
 

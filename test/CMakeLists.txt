@@ -17,7 +17,9 @@ SET (TEST_TOOLS_SOURCES
   tools/FactoryTestUnit.cpp
   tools/StringTestUnit.cpp
   tools/StringTestUnit.hpp
-        tools/AnyTestUnit.cpp tools/AnyTestUnit.hpp)
+  tools/AnyTestUnit.cpp
+  tools/AnyTestUnit.hpp
+)
 
 SET (TEST_HEADER Item.hpp has_many_list.hpp)
 
@@ -36,9 +38,6 @@ SET (TEST_OBJECT_SOURCES
   object/HasManyListUnitTest.hpp
   object/ObjectTransactiontestUnit.cpp
   object/ObjectTransactiontestUnit.hpp
-)
-
-SET (TEST_ORM_SOURCES
 )
 
 SET (TEST_UNIT_SOURCES
@@ -89,7 +88,7 @@ ADD_EXECUTABLE(test_oos
 
 SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
 IF (WIN32)
-  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
+  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.27.58/test (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
