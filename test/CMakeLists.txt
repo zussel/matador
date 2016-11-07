@@ -90,7 +90,7 @@ SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING 
 IF (WIN32)
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
-  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.27.58/test (FreeTDS)" CACHE STRING "mssql connection string")
+  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_oos (FreeTDS)" CACHE STRING "mssql connection string")
 ENDIF()
 SET(SQLITE_CONNECTION_STRING "sqlite://test.sqlite" CACHE STRING "sqlite connection string")
 
