@@ -97,7 +97,7 @@ void OrmTestUnit::test_select()
 
   {
     // insert some persons
-    oos::session s(p);
+    //oos::session s(p);
 
     for (std::string name : names) {
       auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
