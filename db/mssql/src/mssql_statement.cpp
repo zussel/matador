@@ -44,10 +44,14 @@ mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
+
+  std::cout << "created statment " << this << " (handle: " << stmt_ << ")\n";
+  std::cout << "sql statment " << str() << ")\n";
 }
 
 mssql_statement::~mssql_statement()
 {
+  std::cout << "deleting statment " << this << " (handle: " << stmt_ << ")\n";
   clear();
 }
 
