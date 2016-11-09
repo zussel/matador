@@ -44,14 +44,10 @@ mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
 
   ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
-
-  std::cout << "created statment " << this << " (handle: " << stmt_ << ")\n";
-  std::cout << "sql statment " << str() << ")\n";
 }
 
 mssql_statement::~mssql_statement()
 {
-  std::cout << "deleting statment " << this << " (handle: " << stmt_ << ")\n";
   clear();
 }
 
@@ -184,7 +180,8 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-    v->data = new SQL_DATE_STRUCT;
+    v->data = new char[v->len];
+//    v->data = new SQL_DATE_STRUCT;
 
     SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT *>(v->data);
 
