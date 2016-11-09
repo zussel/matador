@@ -73,6 +73,8 @@ public:
 
   const char* c_str() const;
 
+  const char* data() const;
+
   size_type size() const;
 
   size_type capacity() const;

@@ -93,17 +93,12 @@ void OrmTestUnit::test_select()
 
   oos::session s(p);
 
-  std::vector<std::string> names({"hans", "otto", "georg", "hilde", "ute", "manfred"});
+  std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
+  //std::vector<std::string> names({ "hans", "otto", "georg", "hilde", "ute", "manfred" });
 
-  {
-    // insert some persons
-    //oos::session s(p);
-
-    for (std::string name : names) {
-      auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
-
-      UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
-    }
+  for (std::string name : names) {
+    auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
   }
 
   auto view = s.select<person>();

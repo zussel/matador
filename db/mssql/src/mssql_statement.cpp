@@ -156,7 +156,7 @@ void mssql_statement::serialize(const char *, oos::time &x)
 
 void mssql_statement::serialize(const char *, varchar_base &x)
 {
-  bind_value(x.c_str(), x.size() + 1, ++host_index);
+  bind_value(x.data(), x.size(), ++host_index);
 }
 
 void mssql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
@@ -184,7 +184,7 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-    v->data = new char[v->len];
+    v->data = new SQL_DATE_STRUCT;
 
     SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT *>(v->data);
 

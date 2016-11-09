@@ -87,7 +87,12 @@ std::string varchar_base::str() const
 
 const char* varchar_base::c_str() const
 {
-  return data_.c_str();
+	return data_.c_str();
+}
+
+const char* varchar_base::data() const
+{
+	return data_.data();
 }
 
 varchar_base::size_type varchar_base::size() const
