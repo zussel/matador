@@ -5,8 +5,8 @@ services:
   - mysql
 
 configuration:
-- Debug
-- Release
+  - Debug
+  - Release
 
 environment:
   matrix:
@@ -24,6 +24,11 @@ environment:
   - VS_VERSION: 14 2015
     VS_PLATFORM: x64
     MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+
+branches:
+  only:
+    - master
+    - develop
 
 #install:
 #  - cinst: nsis
@@ -43,4 +48,4 @@ build:
   project: C:\projects\oos\build\oos.sln
 
 test_script:
-- cd C:\projects\oos\build && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)
+  - cd C:\projects\oos\build && if %CONFIGURATION%==Debug (ctest --verbose -E perftest --build-config %CONFIGURATION%) else (ctest --verbose --build-config %CONFIGURATION%)

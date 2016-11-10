@@ -11,8 +11,7 @@ matrix:
       os: osx
       osx_image: xcode8
       compiler: clang
-      
-      
+
     # clang-3.6
     - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug
       os: linux
@@ -110,37 +109,48 @@ matrix:
       os: linux
       addons: *gcc6
 
-#    - env: COMPILER=clang++
-#      os: linux
-#      compiler: clang
-#      addons:
-#        apt:
-#          packages: ['valgrind']
-
 branches:
   only:
     - develop
     - master
 
 before_install:
-  - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; GCOV="gcov-${GCC_VERSION}"; fi
-  - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+  - |
+    if [ -n "$GCC_VERSION" ]; then
+      export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}" GCOV="gcov-${GCC_VERSION}";
+    fi
+  - |
+    if [ -n "$CLANG_VERSION" ]; then
+      export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
+    fi
 
 before_script:
   #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
-  - if [[ $TRAVIS_OS_NAME != "osx" ]]; then mysql -e 'create database oos_test;'; fi
+  - |
+    if [[ $TRAVIS_OS_NAME != "osx" ]]; then
+      mysql -e 'create database oos_test;';
+    fi
   - mkdir build
   - cd build
-  - if [ "$GCOV" == "gcov-5" ]; then cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..; fi
-  - if [ "$GCOV" != "gcov-5" ]; then cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..; fi
+  - |
+    if [ "$GCOV" == "gcov-5" ]; then
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
+    fi
+  - |
+    if [ "$GCOV" != "gcov-5" ]; then
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
+    fi
 
 script:
   - make
   - make test ARGS=-V
 
 after_success:
-  - if [ "$GCOV" == "gcov-5" ]; then make coveralls; fi
-  - if [ "$GCOV" == "gcov-5" ]; then ./coveralls-upload; fi
+  - |
+    if [ "$GCOV" == "gcov-5" ]; then
+      make coveralls;
+      /coveralls-upload;
+    fi
 
 notifications:
   email:
