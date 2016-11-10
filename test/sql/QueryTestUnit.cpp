@@ -898,7 +898,7 @@ void QueryTestUnit::test_update_limit()
 
 connection QueryTestUnit::create_connection()
 {
-  return std::move(connection(db_));
+  return connection(db_);
 }
 
 std::string QueryTestUnit::db() const {
