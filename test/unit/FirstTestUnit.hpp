@@ -19,11 +19,7 @@
 #include "unit/test_suite.hpp"
 #include "unit/unit_exception.hpp"
 
-#ifdef WIN32
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 class FirstTestUnit : public oos::unit_test
 {
