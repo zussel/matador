@@ -117,6 +117,15 @@ matrix:
 #        apt:
 #          packages: ['valgrind']
 
+branches:
+  only:
+    - develop
+    - master
+
+before_install
+  - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; GCOV="gcov-${GCC_VERSION}"; fi
+  - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+
 before_script:
   #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
   - if [[ $TRAVIS_OS_NAME != "osx" ]]; then mysql -e 'create database oos_test;'; fi
@@ -132,11 +141,6 @@ script:
 after_success:
   - if [ "$GCOV" == "gcov-5" ]; then make coveralls; fi
   - if [ "$GCOV" == "gcov-5" ]; then ./coveralls-upload; fi
-
-branches:
-  only:
-    - develop
-    - master
 
 notifications:
   email:
