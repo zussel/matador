@@ -18,11 +18,7 @@
 #include "unit/unit_test.hpp"
 #include "unit/test_suite.hpp"
 
-#ifdef WIN32
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 class SecondTestUnit : public oos::unit_test
 {
