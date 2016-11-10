@@ -1,5 +1,4 @@
 language: cpp
-
 sudo: false
 
 matrix:
@@ -12,67 +11,115 @@ matrix:
       os: osx
       osx_image: xcode8
       compiler: clang
-    - os: linux
-      compiler: gcc
-      addons:
+      
+      
+    # clang-3.6
+    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug
+      os: linux
+      addons: &clang36
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8', 'valgrind']
-      env: COMPILER=g++-4.8 GCOV=gcov-4.8
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'valgrind']
-      env: COMPILER=g++-4.9 GCOV=gcov-4.9
+          packages:
+            - clang-3.6
+            - g++-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
 
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'valgrind']
-      env: COMPILER=g++-5 GCOV=gcov-5
+    - env: CLANG_VERSION=3.6 BUILD_TYPE=Release
+      os: linux
+      addons: *clang36
 
-    - os: linux
-      compiler: gcc
+    # clang-3.7
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug
+      os: linux
+      addons: &clang37
+        apt:
+          packages:
+            - clang-3.7
+            - g++-5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release
+      os: linux
+      addons: *clang37
+      
+    # clang-3.8
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug
+      os: linux
+      addons: &clang38
+        apt:
+          packages:
+            - clang-3.8
+            - g++-5
+          sources: &sources
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+    - env: CLANG_VERSION=3.8 BUILD_TYPE=Release
+      os: linux
+      addons: *clang38
+
+    # gcc-4.9
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug
+      os: linux
+      addons: &gcc49
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - g++-4.9
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release
+      os: linux
+      addons: *gcc49
+
+    # gcc-5
+    - env: GCC_VERSION=5 BUILD_TYPE=Debug
+      os: linux
+      addons: &gcc5
+        apt:
+          packages:
+            - cmake
+            - cmake-data
+            - g++-5
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+
+    - env: GCC_VERSION=5 BUILD_TYPE=Release
+      os: linux
+      addons: *gcc5
+
+    # gcc-6
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug
+      os: linux
       addons: &gcc6
         apt:
-          packages: g++-6
-          sources: *sources
-      env: COMPILER=g++-6 GCOV=gcov-6 BUILD_TYPE=Debug
+          packages:
+            - cmake
+            - cmake-data
+            - g++-6
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
 
-    - os: linux
+    - env: GCC_VERSION=6 BUILD_TYPE=Release
+      os: linux
       addons: *gcc6
-      env: GCC_VERSION=6 BUILD_TYPE=Release
-      
-    - os: linux
-      compiler: clang
-      env: COMPILER=clang++
-      addons:
-        apt:
-          packages: ['valgrind']
 
-#    - os: linux
+#    - env: COMPILER=clang++
+#      os: linux
 #      compiler: clang
 #      addons:
 #        apt:
-#          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-#          packages: ['clang-3.5', 'valgrind']
-#      env: COMPILER=clang++-3.5
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
-          packages: ['clang-3.6', 'valgrind']
-      env: COMPILER=clang++-3.6
+#          packages: ['valgrind']
 
 before_script:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
-  - mysql -e 'create database oos_test;'
+  #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
+  - if [[ $TRAVIS_OS_NAME != "osx" ]]; then mysql -e 'create database oos_test;'; fi
   - mkdir build
   - cd build
   - if [ "$GCOV" == "gcov-5" ]; then cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..; fi
