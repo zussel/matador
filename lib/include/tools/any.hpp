@@ -52,7 +52,7 @@ class any
 
     bool is(id i) const override { return i == type_id<T>(); }
     base *copy()  const override { return new data{get()}; }
-    std::type_index type_index() const { return std::type_index(typeid(T)); };
+    std::type_index type_index() const override { return std::type_index(typeid(T)); };
   };
 
   template<typename T>
