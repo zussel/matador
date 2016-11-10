@@ -71,6 +71,7 @@ matrix:
       env: COMPILER=clang++-3.6
 
 before_script:
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
   - mysql -e 'create database oos_test;'
   - mkdir build
   - cd build
