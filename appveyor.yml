@@ -39,7 +39,7 @@ before_build:
   - cd build
   - set PATH=%PATH%;%MYSQL_DIR%\bin
   #- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
-  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2008R2SP2/oos_test" -DOOS_SQLITE3=false -DOOS_MYSQL=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
+  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=false -DOOS_MYSQL=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
   #- set MYSQL_PWD=Password12!
   #- set USER=root
   #- mysql -e "create database oos_test;" --user=root
