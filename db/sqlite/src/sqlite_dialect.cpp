@@ -58,7 +58,7 @@ const char *sqlite_dialect::type_string(oos::data_type type) const
       return "TEXT";
     default: {
       std::stringstream msg;
-      msg << "sqlite sql: unknown type [" << type << "]";
+      msg << "sqlite sql: unknown type [" << (int)type << "]";
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }

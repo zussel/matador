@@ -73,7 +73,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     default:
     {
       std::stringstream msg;
-      msg << "mysql sql: unknown type xxx [" << type << "]";
+      msg << "mysql sql: unknown type xxx [" << (int)type << "]";
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }

@@ -60,7 +60,7 @@ const char* mssql_dialect::type_string(oos::data_type type) const
     default:
     {
       std::stringstream msg;
-      msg << "mssql connection: unknown type [" << type << "]";
+      msg << "mssql connection: unknown type [" << (int)type << "]";
       throw std::logic_error(msg.str());
     }
   }
