@@ -929,7 +929,7 @@ void QueryTestUnit::test_prepared_statement()
 
 connection QueryTestUnit::create_connection()
 {
-  return std::move(connection(db_));
+  return connection(db_);
 }
 
 std::string QueryTestUnit::db() const {
