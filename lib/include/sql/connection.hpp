@@ -195,7 +195,7 @@ private:
   statement<T> prepare(const oos::sql &sql, const std::string &tablename, row prototype, typename std::enable_if< std::is_same<T, row>::value >::type* = 0)
   {
     prepare_prototype_row(prototype, tablename);
-    return statement<T>(impl_->prepare(sql));
+    return statement<T>(impl_->prepare(sql), prototype);
   }
 
 private:

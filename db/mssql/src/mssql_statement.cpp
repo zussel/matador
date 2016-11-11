@@ -33,17 +33,15 @@ namespace oos {
 namespace mssql {
 
 mssql_statement::mssql_statement(mssql_connection &db, const sql &s)
+  : db_(db.handle())
 {
-  if (!db.handle()) {
+  if (!db_) {
     throw_error("mssql", "no odbc connection established");
   }
-  // create statement handle
-  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db.handle(), &stmt_);
-  throw_error(ret, SQL_HANDLE_DBC, db.handle(), "mssql", "error on creating sql statement");
+
   str(db.dialect()->prepare(s));
 
-  ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
-  throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
+  create_statement();
 }
 
 mssql_statement::~mssql_statement()
@@ -72,7 +70,11 @@ detail::result_impl* mssql_statement::execute()
   // check result
   throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
 
-  return new mssql_result(stmt_);
+  mssql_result *res = new mssql_result(stmt_);
+
+  create_statement();
+
+  return res;
 }
 
 void mssql_statement::serialize(const char *, char &x)
@@ -364,6 +366,16 @@ void mssql_statement::bind_null()
 void mssql_statement::bind_value()
 {
   bind_null_ = false;
+}
+
+void mssql_statement::create_statement()
+{
+  // create statement handle
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, db_, &stmt_);
+  throw_error(ret, SQL_HANDLE_DBC, db_, "mssql", "error on creating sql statement");
+
+  ret = SQLPrepare(stmt_, (SQLCHAR*)str().c_str(), SQL_NTS);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, str());
 }
 
 }

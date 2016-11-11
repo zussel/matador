@@ -118,6 +118,8 @@ private:
   void bind_null();
   void bind_value();
 
+  void create_statement();
+
 private:
   struct value_t {
     explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
@@ -133,6 +135,7 @@ private:
   bool bind_null_ = false;
 
   SQLHANDLE stmt_;
+  SQLHANDLE db_;
 };
 
 }

@@ -32,7 +32,6 @@ namespace detail {
   class statement_impl;
 }
 
-/// @cond OOS_DEV
 template < class T >
 class statement
 {
@@ -52,7 +51,6 @@ public:
   ~statement()
   {
     if (p) {
-      p->clear();
       delete p;
     }
   }
@@ -109,7 +107,80 @@ private:
   oos::detail::statement_impl *p = nullptr;
 };
 
-/// @endcond
+template <>
+class statement<row>
+{
+private:
+  statement(const statement &x) = delete;
+  statement& operator=(const statement &x) = delete;
+
+public:
+  statement() {}
+  statement(detail::statement_impl *impl, const row &prototype)
+    : p(impl)
+    , prototype_(prototype)
+  { }
+
+  ~statement()
+  {
+    if (p) {
+      delete p;
+    }
+  }
+
+  statement(statement &&x)
+  {
+    std::swap(p, x.p);
+  }
+
+  statement& operator=(statement &&x)
+  {
+    if (p) {
+      delete p;
+      p = nullptr;
+    }
+    std::swap(p, x.p);
+    return *this;
+  }
+
+  void clear()
+  {
+    if (p) {
+      p->clear();
+    }
+  }
+
+  result<row> execute()
+  {
+    return result<row>(p->execute(), prototype_);
+  }
+
+  void reset()
+  {
+    p->reset();
+  }
+
+//  size_t bind(T *o, size_t pos)
+//  {
+//    return p->bind(o, pos);
+//  }
+
+  template < class V >
+  size_t bind(V &val, size_t pos)
+  {
+    return p->bind(val, pos);
+  }
+
+  std::string str() const
+  {
+    return p->str();
+  }
+
+private:
+  oos::detail::statement_impl *p = nullptr;
+  const row prototype_;
+};
+
 
 }
 

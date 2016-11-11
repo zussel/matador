@@ -1,6 +1,7 @@
 # project name
 PROJECT(oos)
 
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # project version

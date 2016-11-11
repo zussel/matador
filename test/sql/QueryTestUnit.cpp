@@ -901,28 +901,28 @@ void QueryTestUnit::test_prepared_statement()
 {
   connection_.open();
 
-  //query<> q(connection_, "person");
+  query<> q(connection_, "person");
 
-  //q.create({
-	 // make_typed_id_column<long>("id"),
-	 // make_typed_varchar_column<32>("name"),
-	 // make_typed_column<unsigned>("age")
-  //});
+  q.create({
+	  make_typed_id_column<long>("id"),
+	  make_typed_varchar_column<32>("name"),
+	  make_typed_column<unsigned>("age")
+  });
 
-  //auto stmt = q.prepare();
+  auto stmt = q.prepare();
 
-  //stmt.execute();
+  stmt.execute();
 
-  //UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
-  //auto fields = connection_.describe("person");
+  UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  auto fields = connection_.describe("person");
 
-  //auto cols = { "id", "name", "age" };
+  auto cols = { "id", "name", "age" };
 
-  //for (auto fld : fields) {
-	 // UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
-  //}
+  for (auto fld : fields) {
+	  UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
 
-  //q.drop().execute();
+  q.drop().execute();
 
   connection_.close();
 }
