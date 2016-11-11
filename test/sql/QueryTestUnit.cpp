@@ -34,6 +34,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_columns", std::bind(&QueryTestUnit::test_query_select_columns, this), "test query select columns");
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
+  add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
 }
 
 void QueryTestUnit::initialize()
@@ -892,6 +893,36 @@ void QueryTestUnit::test_update_limit()
   res = q.execute(connection_);
 
   q.drop().execute(connection_);
+
+  connection_.close();
+}
+
+void QueryTestUnit::test_prepared_statement()
+{
+  connection_.open();
+
+  //query<> q(connection_, "person");
+
+  //q.create({
+	 // make_typed_id_column<long>("id"),
+	 // make_typed_varchar_column<32>("name"),
+	 // make_typed_column<unsigned>("age")
+  //});
+
+  //auto stmt = q.prepare();
+
+  //stmt.execute();
+
+  //UNIT_ASSERT_TRUE(connection_.exists("person"), "table person must exist");
+  //auto fields = connection_.describe("person");
+
+  //auto cols = { "id", "name", "age" };
+
+  //for (auto fld : fields) {
+	 // UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  //}
+
+  //q.drop().execute();
 
   connection_.close();
 }

@@ -40,6 +40,7 @@ public:
   void test_query_select_columns();
   void test_select_limit();
   void test_update_limit();
+  void test_prepared_statement();
 
 protected:
   oos::connection create_connection();
