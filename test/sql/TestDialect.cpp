@@ -54,7 +54,7 @@ const char* TestDialect::type_string(data_type type) const
     default:
     {
       std::stringstream msg;
-      msg << "test dialect: unknown data type [" << type << "]";
+      msg << "test dialect: unknown data type [" << (int)type << "]";
       throw std::logic_error(msg.str());
       //throw std::logic_error("mysql sql: unknown type");
     }

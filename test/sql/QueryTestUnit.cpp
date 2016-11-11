@@ -140,7 +140,7 @@ void QueryTestUnit::test_describe()
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
-    UNIT_ASSERT_EQUAL(field.type(), types[field.index()], "invalid column type");
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
 //    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
   }
 
