@@ -127,6 +127,11 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
+# https://cmake.org/Wiki/CMake_RPATH_handling
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_MACOSX_RPATH TRUE)
+
 # contains the full path to the top level directory of your build tree 
 MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
 
