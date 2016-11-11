@@ -68,7 +68,7 @@ matrix:
             - g++-5
           sources: &sources
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.9
+            - llvm-toolchain-precise
     - env: CLANG_VERSION=3.9 BUILD_TYPE=Release
       os: linux
       addons: *clang39
