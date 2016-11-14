@@ -262,7 +262,7 @@ void sqlite_result::serialize(const char *, oos::time &x)
   t_row::value_type val = result_[pos_][column_++];
 //  std::string val;
 //  serialize(id, val);
-  x = oos::time::parse(val, "%F %T.%f");
+  x = oos::time::parse(val, "%FT%T.%f");
 }
 
 void sqlite_result::serialize(const char *id, identifiable_holder &x, cascade_type)

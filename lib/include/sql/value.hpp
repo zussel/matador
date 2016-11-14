@@ -286,7 +286,7 @@ struct value<oos::time> : public detail::basic_value
   std::string str() const
   {
     std::stringstream str;
-    str << "'" << oos::to_string(val, "%F %T.%f") << "'";
+    str << "'" << oos::to_string(val, "%FT%T.%f") << "'";
     return str.str();
   }
 
