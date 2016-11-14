@@ -54,7 +54,9 @@ std::string to_string(const oos::time &x, const char *format)
     d[len] = '\0';
     std::string fstr = to_string(x, d) + std::to_string(x.milli_second());
     delete[] d;
-    fstr += to_string(x, fpos+2);
+	if ((fpos + 2)[0] != '\0') {
+		fstr += to_string(x, fpos + 2);
+	}
     return fstr;
     /*
     len = strlen(format) - len - 2;
