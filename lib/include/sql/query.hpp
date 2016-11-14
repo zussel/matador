@@ -492,7 +492,7 @@ public:
    */
   result<T> execute(connection &conn)
   {
-//    std::cout << "SQL: " << sql_.direct().c_str() << '\n';
+//    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
 //    std::cout.flush();
     return conn.execute<T>(sql_);
   }

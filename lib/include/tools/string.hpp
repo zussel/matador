@@ -77,7 +77,7 @@ struct OOS_API time_format
   /**
    * time format string representing the ISO8601 format
    */
-  static constexpr const char* ISO8601 = "%F %T";
+  static constexpr const char* ISO8601 = "%FT%T";
 #endif
 };
 
