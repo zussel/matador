@@ -176,13 +176,13 @@ void mssql_statement::serialize(const char *id, basic_identifier &x)
 
 void mssql_statement::bind_value(const oos::date &d, size_t index)
 {
-  std::unique_ptr<value_t> v(new value_t(true, sizeof(SQL_DATE_STRUCT)));
+  std::unique_ptr<value_t> v(new value_t(true));
 
   if (bind_null_) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-    v->data = new char[v->len];
+    v->data = new char[sizeof(SQL_DATE_STRUCT)];
 //    v->data = new SQL_DATE_STRUCT;
 
     SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT *>(v->data);
@@ -192,7 +192,7 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
     ts->day = (SQLUSMALLINT) d.day();
   }
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TIMESTAMP, sizeof(SQL_DATE_STRUCT), 0, v->data, 0, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TIMESTAMP, 10, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 
   host_data_.push_back(v.release());
@@ -200,7 +200,7 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
 
 void mssql_statement::bind_value(const oos::time &t, size_t index)
 {
-  std::unique_ptr<value_t> v(new value_t(true, SQL_NTS));
+  std::unique_ptr<value_t> v(new value_t(true));
 
   if (bind_null_) {
     v->data = nullptr;
@@ -216,10 +216,12 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
     ts->hour = (SQLUSMALLINT) t.hour();
     ts->minute = (SQLUSMALLINT) t.minute();
     ts->second = (SQLUSMALLINT) t.second();
+    //ts->fraction = (SQLUINTEGER)t.milli_second();
     ts->fraction = (SQLUINTEGER) t.milli_second() * 1000 * 1000;
   }
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, 23, 3, v->data, 0, &v->len);
+  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 
   host_data_.push_back(v.release());
@@ -270,7 +272,8 @@ void mssql_statement::bind_value(const char *val, size_t /*size*/, size_t index)
 
   host_data_.push_back(v);
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, NULL);
+  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -278,7 +281,7 @@ int mssql_statement::type2int(data_type type)
 {
   switch(type) {
     case data_type::type_char:
-      return SQL_C_CHAR;
+      return SQL_C_STINYINT;
     case data_type::type_short:
       return SQL_C_SSHORT;
     case data_type::type_int:
@@ -320,7 +323,7 @@ int mssql_statement::type2sql(data_type type)
 {
   switch(type) {
     case data_type::type_char:
-      return SQL_CHAR;
+      return SQL_SMALLINT;
     case data_type::type_short:
       return SQL_SMALLINT;
     case data_type::type_int:
