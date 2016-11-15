@@ -37,6 +37,12 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
 }
 
+template < class C, class T >
+bool contains(const C &container, const T &value)
+{
+  return std::find(std::begin(container), std::end(container), value) != std::end(container);
+}
+
 void QueryTestUnit::initialize()
 {
   connection_ = create_connection();
@@ -139,8 +145,8 @@ void QueryTestUnit::test_describe()
   std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
 
   for (auto &&field : fields) {
-    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
-    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+    UNIT_ASSERT_EQUAL(field.name(), columns[field.index() - 1], "invalid column name");
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index() - 1], "invalid column type");
 //    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
   }
 
@@ -577,12 +583,6 @@ void QueryTestUnit::test_query()
   UNIT_ASSERT_TRUE(res.begin() == res.end(), "begin must be equal end");
 
   q.drop().execute(connection_);
-}
-
-template < class C, class T >
-bool contains(const C &container, const T &value)
-{
-  return std::find(std::begin(container), std::end(container), value) != std::end(container);
 }
 
 void QueryTestUnit::test_query_range_loop()

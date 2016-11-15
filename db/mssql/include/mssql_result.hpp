@@ -76,7 +76,7 @@ public:
   {
     char buf[1024];
     SQLLEN info = 0;
-    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)index, SQL_C_CHAR, buf, 1024, &info);
+    SQLRETURN ret = SQLGetData(stmt_, (SQLUSMALLINT)(index), SQL_C_CHAR, buf, 1024, &info);
     if (!SQL_SUCCEEDED(ret)) {
       throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "error on retrieving column value");
     }

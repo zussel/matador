@@ -19,6 +19,7 @@
 #include "mssql_statement.hpp"
 #include "mssql_result.hpp"
 #include "mssql_types.hpp"
+#include "mssql_exception.hpp"
 
 #include "tools/string.hpp"
 
@@ -216,21 +217,59 @@ bool mssql_connection::exists(const std::string &tablename)
 
 std::vector<field> mssql_connection::describe(const std::string &table)
 {
-  std::string stmt("EXEC SP_COLUMNS " + table);
-  std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
+  // create statement handle
+  SQLHANDLE stmt;
+  SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, connection_, &stmt);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on creating sql statement");
+
+  //std::string stmt("EXEC SP_COLUMNS " + table);
+
+  SQLCHAR buf[256];
+  strcpy_s((char*)buf, 256, table.c_str());
+  SQLColumns(stmt, NULL, 0, NULL, 0, buf, SQL_NTS, NULL, 0);
+  //std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
+
+  // bind to columns we need (column name, data type of column and index)
+  SQLINTEGER pos(0);
+  SQLCHAR column[64];
+  SQLCHAR type[64];
+  SQLINTEGER not_null(0);
+  SQLLEN indicator[4];
+
+  ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (column)");
+  ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[1]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (type)");
+  ret = SQLBindCol(stmt, 11, SQL_C_LONG, &not_null, 0, &indicator[2]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (not null)");
+  ret = SQLBindCol(stmt, 17, SQL_C_LONG, &pos, 0, &indicator[3]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (pos)");
 
   std::vector<field> fields;
-  while (res->fetch()) {
-    field f;
 
-    f.index(res->get<unsigned int>(17) - 1);
-    f.name(res->get<std::string>(4));
-//    f.type(res->get<std::string>(5));
-    f.type(dialect_.string_type(res->get<std::string>(6).c_str()));
-    f.not_null(res->get<int>(11) == 0);
+  /* Fetch the data */
+  while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
+    field f;
+    f.index(pos);
+    f.name(std::string((char*)column));
+    f.type(dialect_.string_type((char*)type));
+    f.not_null(not_null == 0);
 
     fields.push_back(f);
   }
+
+  SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+//  while (res->fetch()) {
+//    field f;
+//
+//    f.index(res->get<unsigned int>(17) - 1);
+//    f.name(res->get<std::string>(4));
+////    f.type(res->get<std::string>(5));
+//    f.type(dialect_.string_type(res->get<std::string>(6).c_str()));
+//    f.not_null(res->get<int>(11) == 0);
+//
+//    fields.push_back(f);
+  //}
 
   return fields;
 }
