@@ -225,7 +225,11 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   //std::string stmt("EXEC SP_COLUMNS " + table);
 
   SQLCHAR buf[256];
+#ifdef _MSC_VER
   strcpy_s((char*)buf, 256, table.c_str());
+#else
+  strcpy((char*)buf, table.c_str());
+#endif
   SQLColumns(stmt, NULL, 0, NULL, 0, buf, SQL_NTS, NULL, 0);
   //std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
