@@ -92,13 +92,16 @@ protected:
     
     int ctype = mssql_statement::type2int(data_type_traits<T>::type());
     int type = mssql_statement::type2sql(data_type_traits<T>::type());
-    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, &v->len);
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, NULL);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
+  void bind_value(char c, size_t index);
+  void bind_value(unsigned char c, size_t index);
   void bind_value(const oos::date &d, size_t index);
   void bind_value(const oos::time &t, size_t index);
   void bind_value(unsigned long val, size_t index);
   void bind_value(const char *val, size_t size, size_t index);
+  void bind_value(const std::string &str, size_t index);
 
   template < class T >
   void bind_null(size_t index)
@@ -110,7 +113,7 @@ protected:
 
     int ctype = mssql_statement::type2int(data_type_traits<T>::type());
     int type = mssql_statement::type2sql(data_type_traits<T>::type());
-    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, &v->len);
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, NULL, 0, NULL);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind null parameter");
   }
 
@@ -126,6 +129,7 @@ private:
     ~value_t() { delete [] static_cast<char*>(data); }
     bool fixed;
     SQLLEN len;
+    SQLLEN result_len = 0;
     void *data;
   };
   std::vector<value_t*> host_data_;
