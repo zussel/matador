@@ -128,7 +128,7 @@ private:
   char char_ = 'c';
   float float_ = 3.1415f;
   double double_ = 1.1414;
-  short short_ = -128;
+  short short_ = -127;
   int int_ = -65000;
   long long_ = -128000;
   unsigned short unsigned_short_ = 128;

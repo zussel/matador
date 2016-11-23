@@ -143,7 +143,7 @@ void mssql_statement::serialize(const char *, char *x, size_t s)
 
 void mssql_statement::serialize(const char *, std::string &x)
 {
-  bind_value(x.data(), x.size(), ++host_index);
+  bind_value(x, ++host_index);
 }
 
 void mssql_statement::serialize(const char *, oos::date &x)
@@ -265,6 +265,7 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
   }
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, 23, 3, v->data, 0, &v->len);
+
   //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 
@@ -273,25 +274,34 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
 
 void mssql_statement::bind_value(unsigned long val, size_t index)
 {
-  value_t *v = new value_t(true, SQL_NTS);
+  value_t *v = new value_t;
 
-  size_t size = 0;
+  //size_t size = 0;
 
+  //char num[NUMERIC_LEN];
   if (bind_null_) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-    v->data = new char[NUMERIC_LEN];
-#if defined(_MSC_VER)
-    size = (int)_snprintf_s(static_cast<char*>(v->data), NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
-#else
-    size = (size_t)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
-#endif
+    v->data = new char[sizeof(unsigned long)];
+    *static_cast<unsigned long*>(v->data) = val;
+    //v->data = new char[NUMERIC_LEN];
+//#if defined(_MSC_VER)
+//    size = (size_t)_snprintf_s(static_cast<char*>(v->data), NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
+//    size = (size_t)_snprintf_s(numeric_, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
+//    _snprintf_s(num, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
+//#else
+//    size = (size_t)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
+//#endif
   }
+
+  //std::cout << "binding unsigned long " << val << " (" << static_cast<char*>(v->data) << ", " << size << ")\n";
 
   host_data_.push_back(v);
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, size, 0, v->data, 0, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_BIGINT, 0, 0, v->data, 0, NULL);
+  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, size, 0, numeric_, 0, NULL);
+  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, size, 0, (SQLPOINTER)static_cast<char*>(v->data), 0, NULL);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -351,7 +361,7 @@ int mssql_statement::type2int(data_type type)
 {
   switch(type) {
     case data_type::type_char:
-      return SQL_C_STINYINT;
+      return SQL_C_CHAR;
     case data_type::type_short:
       return SQL_C_SSHORT;
     case data_type::type_int:
@@ -359,7 +369,7 @@ int mssql_statement::type2int(data_type type)
     case data_type::type_long:
       return SQL_C_SLONG;
     case data_type::type_unsigned_char:
-      return SQL_C_UTINYINT;
+      return SQL_C_CHAR;
     case data_type::type_unsigned_short:
       return SQL_C_USHORT;
     case data_type::type_unsigned_int:
@@ -393,19 +403,19 @@ int mssql_statement::type2sql(data_type type)
 {
   switch(type) {
     case data_type::type_char:
-      return SQL_SMALLINT;
+      return SQL_CHAR;
     case data_type::type_short:
       return SQL_SMALLINT;
     case data_type::type_int:
       return SQL_INTEGER;
     case data_type::type_long:
-      return SQL_BIGINT;
+      return SQL_INTEGER;
     case data_type::type_unsigned_char:
-      return SQL_SMALLINT;
+      return SQL_CHAR;
     case data_type::type_unsigned_short:
       return SQL_INTEGER;
     case data_type::type_unsigned_int:
-      return SQL_BIGINT;
+      return SQL_INTEGER;
     case data_type::type_unsigned_long:
       return SQL_NUMERIC;
     case data_type::type_bool:
@@ -415,11 +425,11 @@ int mssql_statement::type2sql(data_type type)
     case data_type::type_double:
       return SQL_DOUBLE;
     case data_type::type_char_pointer:
-      return SQL_VARCHAR;
+      return SQL_LONGVARCHAR;
     case data_type::type_varchar:
-      return SQL_VARCHAR;
+      return SQL_LONGVARCHAR;
     case data_type::type_text:
-      return SQL_VARCHAR;
+      return SQL_LONGVARCHAR;
     case data_type::type_date:
       return SQL_TIMESTAMP;
     case data_type::type_time:

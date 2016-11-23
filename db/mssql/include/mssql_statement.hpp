@@ -90,6 +90,8 @@ protected:
     }
     host_data_.push_back(v);
     
+    //std::cout << "binding " << data_type_traits<T>::type() << " " << val << "\n";
+
     int ctype = mssql_statement::type2int(data_type_traits<T>::type());
     int type = mssql_statement::type2sql(data_type_traits<T>::type());
     SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, NULL);

@@ -79,6 +79,8 @@ public:
 
   result<T> execute()
   {
+    //std::cout << "SQL: " << p->str() << '\n';
+    //std::cout.flush();
     return result<T>(p->execute());
   }
 

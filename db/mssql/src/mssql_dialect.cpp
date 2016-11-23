@@ -34,7 +34,7 @@ const char* mssql_dialect::type_string(oos::data_type type) const
     case data_type::type_long:
       return "BIGINT";
     case data_type::type_unsigned_char:
-      return "SMALLINT";
+      return "CHAR(1)";
     case data_type::type_unsigned_short:
       return "INT";
     case data_type::type_unsigned_int:
