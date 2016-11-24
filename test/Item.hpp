@@ -33,7 +33,9 @@
 class Item
 {
 public:
-  Item()
+  Item() : Item("") { }
+  Item(const std::string &str) : Item(str, -65000) {}
+  Item(const std::string &str, int i) : int_(i), string_(str)
   {
     memset(cstr_, 0, CSTR_LEN);
 #ifdef _MSC_VER
@@ -43,8 +45,7 @@ public:
 #endif
     cstr_[5] = '\0';
   }
-  Item(const std::string &str) : Item(str, -65000) {}
-  Item(const std::string &str, int i) : int_(i), string_(str) {}
+
   ~Item() {}
 
 public:

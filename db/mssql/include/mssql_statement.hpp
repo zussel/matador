@@ -85,16 +85,14 @@ protected:
       v->data = NULL;
       v->len = SQL_NULL_DATA;
     } else {
-      v->data = new char[sizeof(T)];
+      v->data = new T;
       *static_cast<T*>(v->data) = val;
     }
     host_data_.push_back(v);
     
-    //std::cout << "binding " << data_type_traits<T>::type() << " " << val << "\n";
-
-    int ctype = mssql_statement::type2int(data_type_traits<T>::type());
-    int type = mssql_statement::type2sql(data_type_traits<T>::type());
-    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, (SQLSMALLINT)ctype, (SQLSMALLINT)type, 0, 0, v->data, 0, NULL);
+    SQLSMALLINT ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<T>::type());
+    SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<T>::type());
+    SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, NULL);
     throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
   }
   void bind_value(char c, size_t index);
