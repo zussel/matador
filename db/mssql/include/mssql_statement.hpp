@@ -85,7 +85,7 @@ protected:
       v->data = NULL;
       v->len = SQL_NULL_DATA;
     } else {
-      v->data = new T;
+      v->data = new char[sizeof(T)];
       *static_cast<T*>(v->data) = val;
     }
     host_data_.push_back(v);
@@ -125,9 +125,8 @@ private:
 
 private:
   struct value_t {
-    explicit value_t(bool fxd = true, SQLLEN l = 0) : fixed(fxd), len(l), data(0) {}
+    explicit value_t(SQLLEN l = 0) : len(l), data(0) {}
     ~value_t() { delete [] static_cast<char*>(data); }
-    bool fixed;
     SQLLEN len;
     SQLLEN result_len = 0;
     void *data;

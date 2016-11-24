@@ -50,7 +50,9 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 
 mssql_result::~mssql_result()
 {
+  //std::cout << "closing statement handle " << stmt_ << "\n";
   SQLCloseCursor(stmt_);
+  //std::cout << "freeing statement handle " << stmt_ << "\n";
   SQLFreeStmt(stmt_, SQL_CLOSE);
 }
 

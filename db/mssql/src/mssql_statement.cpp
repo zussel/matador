@@ -186,15 +186,14 @@ void mssql_statement::bind_value(char c, size_t index)
     v->len = SQL_NULL_DATA;
   } else {
     v->len = sizeof(char);
-    v->data = new char;
+    v->data = new char[1];
     *static_cast<char*>(v->data) = c;
   }
   host_data_.push_back(v);
 
-  SQLLEN len = v->len;
   SQLUSMALLINT ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<char>::type());
   SQLUSMALLINT type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<char>::type());
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, len, &v->len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, v->len, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -206,15 +205,14 @@ void mssql_statement::bind_value(unsigned char c, size_t index)
     v->len = SQL_NULL_DATA;
   } else {
     v->len = sizeof(unsigned char);
-    v->data = new unsigned char;
+    v->data = new char[1];
     *static_cast<unsigned char*>(v->data) = c;
   }
   host_data_.push_back(v);
 
-  SQLLEN len = v->len;
   SQLUSMALLINT ctype = (SQLUSMALLINT)mssql_statement::type2int(data_type_traits<unsigned char>::type());
   SQLUSMALLINT type = (SQLUSMALLINT)mssql_statement::type2sql(data_type_traits<unsigned char>::type());
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 1, 0, v->data, v->len, &len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 1, 0, v->data, v->len, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -228,7 +226,6 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
   } else {
     v->data = new char[sizeof(SQL_DATE_STRUCT)];
     v->len = sizeof(SQL_DATE_STRUCT);
-//    v->data = new SQL_DATE_STRUCT;
 
     SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT *>(v->data);
 
@@ -267,7 +264,6 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, 23, 3, v->data, 0, &v->len);
 
-  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, sizeof(SQL_TIMESTAMP_STRUCT), 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 
   host_data_.push_back(v.release());
@@ -276,39 +272,22 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
 void mssql_statement::bind_value(unsigned long val, size_t index)
 {
   value_t *v = new value_t;
-
-  //size_t size = 0;
-
-  //char num[NUMERIC_LEN];
   if (bind_null_) {
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
     v->data = new char[sizeof(unsigned long)];
     *static_cast<unsigned long*>(v->data) = val;
-    //v->data = new char[NUMERIC_LEN];
-//#if defined(_MSC_VER)
-//    size = (size_t)_snprintf_s(static_cast<char*>(v->data), NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
-//    size = (size_t)_snprintf_s(numeric_, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
-//    _snprintf_s(num, NUMERIC_LEN, NUMERIC_LEN, "%lu", val);
-//#else
-//    size = (size_t)snprintf(static_cast<char*>(v->data), NUMERIC_LEN, "%lu", val);
-//#endif
   }
-
-  //std::cout << "binding unsigned long " << val << " (" << static_cast<char*>(v->data) << ", " << size << ")\n";
-
   host_data_.push_back(v);
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_BIGINT, 0, 0, v->data, 0, NULL);
-  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, size, 0, numeric_, 0, NULL);
-  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, size, 0, (SQLPOINTER)static_cast<char*>(v->data), 0, NULL);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
 void mssql_statement::bind_value(const char *val, size_t size, size_t index)
 {
-  value_t *v = new value_t(false, strlen(val));
+  value_t *v = new value_t(strlen(val));
 
   if (bind_null_) {
     v->data = nullptr;
@@ -321,21 +300,18 @@ void mssql_statement::bind_value(const char *val, size_t size, size_t index)
 #else
 	v->data = strcpy((char *)v->data, val);
 #endif
-    //((char *) v->data)[s++] = '\0';
-    //v->len = s;
   }
 
   host_data_.push_back(v);
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, size, 0, v->data, v->len, NULL);
-  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
 void mssql_statement::bind_value(const std::string &str, size_t index)
 {
   size_t s = str.size();
-  value_t *v = new value_t(false, SQL_NTS);
+  value_t *v = new value_t(SQL_NTS);
 
   if (bind_null_) {
     v->data = nullptr;
@@ -354,7 +330,6 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
   host_data_.push_back(v);
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, str.size(), 0, v->data, str.size(), &v->result_len);
-  //SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, s, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
