@@ -100,6 +100,7 @@ protected:
   void bind_value(const oos::date &d, size_t index);
   void bind_value(const oos::time &t, size_t index);
   void bind_value(unsigned long val, size_t index);
+  void bind_value(bool val, size_t index);
   void bind_value(const char *val, size_t size, size_t index);
   void bind_value(const std::string &str, size_t index);
 

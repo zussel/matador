@@ -216,6 +216,25 @@ void mssql_statement::bind_value(unsigned char c, size_t index)
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
+void mssql_statement::bind_value(bool val, size_t index)
+{
+  value_t *v = new value_t;
+  if (bind_null_) {
+    v->data = NULL;
+    v->len = SQL_NULL_DATA;
+  }
+  else {
+    v->data = new char[1];
+    *static_cast<bool*>(v->data) = val;
+  }
+  host_data_.push_back(v);
+
+  SQLSMALLINT ctype = (SQLSMALLINT)mssql_statement::type2int(data_type_traits<bool>::type());
+  SQLSMALLINT type = (SQLSMALLINT)mssql_statement::type2sql(data_type_traits<bool>::type());
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, ctype, type, 0, 0, v->data, 0, NULL);
+  throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+}
+
 void mssql_statement::bind_value(const oos::date &d, size_t index)
 {
   std::unique_ptr<value_t> v(new value_t(true));
