@@ -224,8 +224,8 @@ void mssql_statement::bind_value(bool val, size_t index)
     v->len = SQL_NULL_DATA;
   }
   else {
-    v->data = new char[1];
-    *static_cast<bool*>(v->data) = val;
+    v->data = new char[sizeof(unsigned short)];
+    *static_cast<unsigned short*>(v->data) = (unsigned short)val;
   }
   host_data_.push_back(v);
 
