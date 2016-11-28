@@ -863,8 +863,6 @@ void QueryTestUnit::test_select_limit()
   }
 
   q.drop().execute(connection_);
-
-  connection_.close();
 }
 
 void QueryTestUnit::test_update_limit()
@@ -893,8 +891,6 @@ void QueryTestUnit::test_update_limit()
   res = q.execute(connection_);
 
   q.drop().execute(connection_);
-
-  connection_.close();
 }
 
 void QueryTestUnit::test_prepared_statement()
@@ -923,8 +919,6 @@ void QueryTestUnit::test_prepared_statement()
   }
 
   q.drop().execute();
-
-  connection_.close();
 }
 
 connection QueryTestUnit::create_connection()
