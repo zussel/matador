@@ -295,12 +295,14 @@ void mssql_statement::bind_value(unsigned long val, size_t index)
     v->data = nullptr;
     v->len = SQL_NULL_DATA;
   } else {
-    v->data = new char[sizeof(unsigned long)];
+	v->len = sizeof(unsigned long);
+    v->data = new char[v->len];
     *static_cast<unsigned long*>(v->data) = val;
+
   }
   host_data_.push_back(v);
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_BIGINT, 0, 0, v->data, 0, NULL);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_BIGINT, 0, 0, v->data, 0, &v->len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
