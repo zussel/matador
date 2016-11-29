@@ -145,8 +145,8 @@ void QueryTestUnit::test_describe()
   std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
 
   for (auto &&field : fields) {
-    UNIT_ASSERT_EQUAL(field.name(), columns[field.index() - 1], "invalid column name");
-    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index() - 1], "invalid column type");
+    UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
+    UNIT_ASSERT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
 //    std::cout << "\n" << field.index() << " column: " << field.name() << " (type: " << field.type() << ")";
   }
 

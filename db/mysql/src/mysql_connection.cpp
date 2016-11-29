@@ -65,16 +65,14 @@ void mysql_connection::open(const std::string &connection)
     }
   }
 
-  //mysql_library_init(0, NULL, NULL);
-
-  if (mysql_init(&mysql_) == 0) {
-	  throw_error("mysql", "initialization failed");
-  }
-
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   db_ = con.substr(pos + 1);
+
+  if (mysql_init(&mysql_) == 0) {
+	  throw_error("mysql", "initialization failed");
+  }
 
   if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db_.c_str(), 0, NULL, 0) == NULL) {
     // close all handles

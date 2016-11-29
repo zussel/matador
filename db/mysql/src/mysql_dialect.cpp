@@ -32,7 +32,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
     case data_type::type_char:
-      return "INTEGER";
+      return "CHAR(1)";
     case data_type::type_short:
       return "INTEGER";
     case data_type::type_int:
@@ -40,7 +40,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_long:
       return "INTEGER";
     case data_type::type_unsigned_char:
-      return "INTEGER";
+      return "CHAR(1)";
     case data_type::type_unsigned_short:
       return "INTEGER";
     case data_type::type_unsigned_int:

@@ -266,11 +266,11 @@ void mysql_result::serialize(const char *id, oos::time &x)
   // so we use a datetime string here
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%F %T");
+  x = oos::time::parse(val, "%Y-%m-%d %T");
 #else
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%F %T.%f");
+  x = oos::time::parse(val, "%Y-%m-%d %T.%f");
 #endif
 }
 
