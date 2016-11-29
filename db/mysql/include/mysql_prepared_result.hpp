@@ -6,7 +6,7 @@
 #include "mysql_result_info.hpp"
 
 #ifdef WIN32
-#include <winsock2.h>
+//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>

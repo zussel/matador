@@ -49,7 +49,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
     length_vector.assign(host_size, 0);
   }
 
-  int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
+  int res = mysql_stmt_prepare(stmt_, str().c_str(), (unsigned long)str().size());
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -223,7 +223,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   if (bind.buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);
     bind.buffer = new char[s];
-    bind.buffer_length = s;
+    bind.buffer_length = (unsigned long)s;
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;
@@ -245,7 +245,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
     bind.buffer = new char[s];
-    bind.buffer_length = s;
+    bind.buffer_length = (unsigned long)s;
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;

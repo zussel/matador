@@ -35,12 +35,10 @@
 #include "mysql_dialect.hpp"
 
 #ifdef WIN32
-#include <winsock2.h>
+//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
-#include <vector>
-
 #endif
 
 namespace oos {

@@ -106,7 +106,7 @@ int mysql_result::transform_index(int index) const
   return index;
 }
 
-void mysql_result::serialize(const char */*id*/, char &x)
+void mysql_result::serialize(const char *, char &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) > 1) {
@@ -114,7 +114,7 @@ void mysql_result::serialize(const char */*id*/, char &x)
   }
 }
 
-void mysql_result::serialize(const char */*id*/, short &x)
+void mysql_result::serialize(const char *, short &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -124,7 +124,7 @@ void mysql_result::serialize(const char */*id*/, short &x)
   x = (short)strtol(val, &end, 10);
 }
 
-void mysql_result::serialize(const char */*id*/, int &x)
+void mysql_result::serialize(const char *, int &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -135,7 +135,7 @@ void mysql_result::serialize(const char */*id*/, int &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, long &x)
+void mysql_result::serialize(const char *, long &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -146,7 +146,7 @@ void mysql_result::serialize(const char */*id*/, long &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, unsigned char &x)
+void mysql_result::serialize(const char *, unsigned char &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -157,7 +157,7 @@ void mysql_result::serialize(const char */*id*/, unsigned char &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, unsigned short &x)
+void mysql_result::serialize(const char *, unsigned short &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -168,7 +168,7 @@ void mysql_result::serialize(const char */*id*/, unsigned short &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, unsigned int &x)
+void mysql_result::serialize(const char *, unsigned int &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -179,7 +179,7 @@ void mysql_result::serialize(const char */*id*/, unsigned int &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, unsigned long &x)
+void mysql_result::serialize(const char *, unsigned long &x)
 {
   char *val = row_[result_index_++];
   if (!val || strlen(val) == 0) {
@@ -190,7 +190,7 @@ void mysql_result::serialize(const char */*id*/, unsigned long &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, bool &x)
+void mysql_result::serialize(const char *, bool &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -201,7 +201,7 @@ void mysql_result::serialize(const char */*id*/, bool &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, float &x)
+void mysql_result::serialize(const char *, float &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -212,7 +212,7 @@ void mysql_result::serialize(const char */*id*/, float &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, double &x)
+void mysql_result::serialize(const char *, double &x)
 {
   char *val = row_[result_index_++];
   if (strlen(val) == 0) {
@@ -223,7 +223,7 @@ void mysql_result::serialize(const char */*id*/, double &x)
   // Todo: check error
 }
 
-void mysql_result::serialize(const char */*id*/, char *x, size_t s)
+void mysql_result::serialize(const char *, char *x, size_t s)
 {
   char *val = row_[result_index_++];
   size_t len = strlen(val);
@@ -236,13 +236,13 @@ void mysql_result::serialize(const char */*id*/, char *x, size_t s)
 
 }
 
-void mysql_result::serialize(const char */*id*/, varchar_base &x)
+void mysql_result::serialize(const char *, varchar_base &x)
 {
   char *val = row_[result_index_++];
   x.assign(val);
 }
 
-void mysql_result::serialize(const char */*id*/, std::string &x)
+void mysql_result::serialize(const char *, std::string &x)
 {
   char *val = row_[result_index_++];
   x.assign(val);

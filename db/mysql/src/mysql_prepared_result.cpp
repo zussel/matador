@@ -75,7 +75,7 @@ bool mysql_prepared_result::finalize_fetch()
 mysql_prepared_result::size_type mysql_prepared_result::affected_rows() const
 {
   size_t ar = mysql_stmt_affected_rows(stmt);
-  return ar;
+  return (unsigned long)ar;
   //return affected_rows_;
 }
 
@@ -94,7 +94,7 @@ int mysql_prepared_result::transform_index(int index) const
   return index;
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, char &x)
+void mysql_prepared_result::serialize(const char *, char &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
@@ -103,7 +103,7 @@ void mysql_prepared_result::serialize(const char */*id*/, char &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, short & x)
+void mysql_prepared_result::serialize(const char *, short & x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
@@ -112,7 +112,7 @@ void mysql_prepared_result::serialize(const char */*id*/, short & x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, int &x)
+void mysql_prepared_result::serialize(const char *, int &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
@@ -121,7 +121,7 @@ void mysql_prepared_result::serialize(const char */*id*/, int &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, long &x)
+void mysql_prepared_result::serialize(const char *, long &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
@@ -130,7 +130,7 @@ void mysql_prepared_result::serialize(const char */*id*/, long &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, unsigned char &x)
+void mysql_prepared_result::serialize(const char *, unsigned char &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
@@ -139,7 +139,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned char &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, unsigned short &x)
+void mysql_prepared_result::serialize(const char *, unsigned short &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_SHORT, x);
@@ -148,7 +148,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned short &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, unsigned int &x)
+void mysql_prepared_result::serialize(const char *, unsigned int &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONG, x);
@@ -157,7 +157,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned int &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, unsigned long &x)
+void mysql_prepared_result::serialize(const char *, unsigned long &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_LONGLONG, x);
@@ -166,7 +166,7 @@ void mysql_prepared_result::serialize(const char */*id*/, unsigned long &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, bool &x)
+void mysql_prepared_result::serialize(const char *, bool &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TINY, x);
@@ -175,7 +175,7 @@ void mysql_prepared_result::serialize(const char */*id*/, bool &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, float &x)
+void mysql_prepared_result::serialize(const char *, float &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_FLOAT, x);
@@ -184,7 +184,7 @@ void mysql_prepared_result::serialize(const char */*id*/, float &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, double &x)
+void mysql_prepared_result::serialize(const char *, double &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_DOUBLE, x);
@@ -193,7 +193,7 @@ void mysql_prepared_result::serialize(const char */*id*/, double &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, char *x, size_t s)
+void mysql_prepared_result::serialize(const char *, char *x, size_t s)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x, s);
@@ -202,7 +202,7 @@ void mysql_prepared_result::serialize(const char */*id*/, char *x, size_t s)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, oos::date &x)
+void mysql_prepared_result::serialize(const char *, oos::date &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_DATE, x);
@@ -233,7 +233,7 @@ void mysql_prepared_result::serialize(const char *id, oos::time &x)
   }
 }
 #else
-void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
+void mysql_prepared_result::serialize(const char *, oos::time &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
@@ -247,7 +247,7 @@ void mysql_prepared_result::serialize(const char */*id*/, oos::time &x)
 }
 #endif
 
-void mysql_prepared_result::serialize(const char */*id*/, std::string &x)
+void mysql_prepared_result::serialize(const char *, std::string &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_STRING, x);
@@ -269,7 +269,7 @@ void mysql_prepared_result::serialize(const char */*id*/, std::string &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char */*id*/, varchar_base &x)
+void mysql_prepared_result::serialize(const char *, varchar_base &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
@@ -314,7 +314,7 @@ bool mysql_prepared_result::needs_bind()
 bool mysql_prepared_result::finalize_bind()
 {
   // Todo: validate result
-  return mysql_stmt_bind_result(stmt, bind_);
+  return mysql_stmt_bind_result(stmt, bind_) > 0;
 }
 
 void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::date &)
@@ -323,7 +323,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
     size_t s = sizeof(MYSQL_TIME);
     info_[index].buffer = new char[s];
     memset(info_[index].buffer, 0, s);
-    info_[index].buffer_length = s;
+    info_[index].buffer_length = (unsigned long)s;
   }
   bind_[index].buffer_type = type;
   bind_[index].buffer = info_[index].buffer;
@@ -339,7 +339,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
     size_t s = sizeof(MYSQL_TIME);
     info_[index].buffer = new char[s];
     memset(info_[index].buffer, 0, s);
-    info_[index].buffer_length = s;
+    info_[index].buffer_length = (unsigned long)s;
   }
   bind_[index].buffer_type = type;
   bind_[index].buffer = info_[index].buffer;
@@ -374,7 +374,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   if (info_[index].buffer == nullptr) {
     info_[index].buffer = new char[x.capacity()];
     memset(info_[index].buffer, 0, x.capacity());
-    info_[index].buffer_length = x.capacity();
+    info_[index].buffer_length = (unsigned long)x.capacity();
   }
   bind_[index].buffer_type = type;
   bind_[index].buffer = info_[index].buffer;
