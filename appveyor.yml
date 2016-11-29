@@ -12,7 +12,7 @@ configuration:
 environment:
   matrix:
   - VS_VERSION: 14 2015
-    VS_PLATFORM: win32
+    VS_PLATFORM: x86
     MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
   - VS_VERSION: 14 2015
     VS_PLATFORM: x64
