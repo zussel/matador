@@ -11,14 +11,6 @@ configuration:
 
 environment:
   matrix:
-#  - VS_VERSION: 11
-#    VS_PLATFORM: win32
-#  - VS_VERSION: 11
-#    VS_PLATFORM: x64
-#  - VS_VERSION: 12 2013
-#    VS_PLATFORM: win32
-#  - VS_VERSION: 12 2013
-#    VS_PLATFORM: x64
   - VS_VERSION: 14 2015
     VS_PLATFORM: win32
     MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
@@ -37,13 +29,12 @@ branches:
 before_build:
   - mkdir build
   - cd build
-  - set PATH=%PATH%;%MYSQL_DIR%\bin
   - set PATH=%PATH%;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
   #- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
   - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=false -DOOS_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
-  #- set MYSQL_PWD=Password12!
-  #- set USER=root
-  #- mysql -e "create database oos_test;" --user=root
+  - set MYSQL_PWD=Password12!
+  - set USER=root
+  - mysql -e "create database oos_test;" --user=root
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test"
 
 build:
