@@ -38,7 +38,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-      return "INTEGER";
+      return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
     case data_type::type_unsigned_short:
@@ -46,7 +46,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_unsigned_int:
       return "INTEGER";
     case data_type::type_unsigned_long:
-      return "INTEGER";
+      return "BIGINT";
     case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
