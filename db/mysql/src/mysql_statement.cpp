@@ -192,7 +192,7 @@ void mysql_statement::serialize(const char *, oos::time &x)
   // before mysql version 5.6.4 datetime
   // doesn't support fractional seconds
   // so we use a datetime string here
-  std::string tstr = to_string(x, "%F %T");
+  std::string tstr = to_string(x, "%FT%T");
   bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_index);
 #else
   bind_value(host_array[host_index], MYSQL_TYPE_TIMESTAMP, x, host_index);

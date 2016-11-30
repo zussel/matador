@@ -270,7 +270,7 @@ void mysql_result::serialize(const char *id, oos::time &x)
 #else
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%Y-%m-%dT%T.%f");
+  x = oos::time::parse(val, "%Y-%m-%d %T.%f");
 #endif
 }
 
