@@ -89,7 +89,7 @@ detail::result_impl* mysql_statement::execute()
       throw_stmt_error(res, stmt_, "mysql", str());
     }
   }
-//  std::cout << str() << '\n';
+  //std::cout << "PREPARED SQL: " << str() << '\n';
 
   int res = mysql_stmt_execute(stmt_);
   if (res > 0) {
@@ -122,7 +122,8 @@ void mysql_statement::serialize(const char *, int &x)
 
 void mysql_statement::serialize(const char *, long &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+	//bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
@@ -146,7 +147,8 @@ void mysql_statement::serialize(const char *, unsigned int &x)
 
 void mysql_statement::serialize(const char *, unsigned long &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+	//bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
   ++host_index;
 }
 
