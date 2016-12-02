@@ -37,9 +37,9 @@ install:
 
 before_build:
   - cd C:\projects\sqlite\src
-  - mkdir build.%BDIR%
-  - cd build.%BDIR%
-  - set SQLITE_ROOT=C:\projects\sqlite\sqlite.%BDIR%
+  - mkdir build
+  - cd build
+  - set SQLITE_ROOT=C:\projects\sqlite\sqlite
   - mkdir build
   - cd build
   - set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
@@ -47,7 +47,7 @@ before_build:
   - set USER=root
   - mysql -e "create database oos_test;" --user=root
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test"
-  - cmake .. -G"Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite.%BDIR%
+  - cmake .. -G"Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
   - cmake --build . --config %PRJ_CFG% --target install
 
 build_script:
