@@ -254,7 +254,7 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   /* Fetch the data */
   while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     field f;
-    f.index(pos);
+    f.index(pos - 1);
     f.name(std::string((char*)column));
     f.type(dialect_.string_type((char*)type));
     f.not_null(not_null == 0);
