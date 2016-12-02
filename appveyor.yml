@@ -43,14 +43,17 @@ before_build:
   - mkdir build
   - cd build
   - set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
-  - echo "--- Visual Studio %VS_VERSION% ---"
-  #- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
-  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=true -DOOS_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
   - set MYSQL_PWD=Password12!
   - set USER=root
   - mysql -e "create database oos_test;" --user=root
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test"
+  - cmake .. -G"%PRJ_GEN%" -DCMAKE_BUILD_TYPE=%PRJ_CFG% -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite.%BDIR%
+  - cmake --build . --config %PRJ_CFG% --target install
 
+build_script:
+  - cd C:\projects\oos
+  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=true -DOOS_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
+  
 build:
   project: C:\projects\oos\build\oos.sln
 
