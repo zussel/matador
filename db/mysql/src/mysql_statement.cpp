@@ -260,10 +260,6 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->month = (unsigned int)x.month();
   mt->year = (unsigned int)x.year();
   mt->time_type  = MYSQL_TIMESTAMP_DATE;
-//  mt->hour = 0;
-//  mt->minute = 0;
-//  mt->second = 0;
-//  mt->second_part = 0;
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x)
@@ -286,15 +282,6 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->second = (unsigned int)x.second();
   mt->second_part = (unsigned long)x.milli_second() * 1000;
   mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
-}
-
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, size_t index)
-{
-  bind.buffer = nullptr;
-  bind.buffer_length = 0;
-  bind.length = &length_vector.at(index);
-  bind.buffer_type = type;
-  bind.is_null = 0;
 }
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size)

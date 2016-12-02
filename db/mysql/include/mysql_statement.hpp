@@ -92,7 +92,6 @@ private:
   void bind_value(MYSQL_BIND &bind, enum_field_types type, unsigned char x);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, size_t index);
   void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size);
 
 private:
