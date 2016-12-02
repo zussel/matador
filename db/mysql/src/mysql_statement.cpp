@@ -275,7 +275,8 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, size_t
 
 void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t /*index*/)
 {
-  if (bind.buffer_length < size) {
+  size_t len(strlen(value) + 1);
+  if (bind.buffer_length < len) {
     // reallocate memory
     delete [] static_cast<char*>(bind.buffer);
     bind.buffer = nullptr;
@@ -283,13 +284,14 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   }
   if (bind.buffer == nullptr) {
     // allocating memory
-    bind.buffer = new char[size];
+    bind.buffer = new char[len];
+	memset(bind.buffer, 0, len);
   }
-  bind.buffer_length = (unsigned long)size;
+  bind.buffer_length = (unsigned long)(len - 1);
 #ifdef WIN32
-  strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);
+  strncpy_s(static_cast<char*>(bind.buffer), len, value, _TRUNCATE);
 #else
-  strncpy(static_cast<char*>(bind.buffer), value, size);
+  strncpy(static_cast<char*>(bind.buffer), value, len);
 #endif
   bind.buffer_type = type;
   bind.is_null = 0;

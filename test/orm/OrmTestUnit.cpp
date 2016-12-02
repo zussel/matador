@@ -62,9 +62,7 @@ void OrmTestUnit::test_insert()
   UNIT_EXPECT_GREATER(hans->id(), 0UL, "is must be greater zero");
 
   oos::query<person> q("person");
-  oos::connection c(dns_);
-  c.open();
-  auto res = q.select().where(oos::column("name") == "hans").execute(c);
+  auto res = q.select().where(oos::column("name") == "hans").execute(p.conn());
 
   auto first = res.begin();
 

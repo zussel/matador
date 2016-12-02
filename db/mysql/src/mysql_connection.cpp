@@ -154,7 +154,8 @@ std::string mysql_connection::version() const
 
 bool mysql_connection::exists(const std::string &tablename)
 {
-  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
+	//std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
+  std::string stmt("SHOW TABLE STATUS FROM " + db_ + " WHERE Name = '" + tablename + "'");
   std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
   if (!res->fetch()) {
     return false;
