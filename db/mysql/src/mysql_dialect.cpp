@@ -8,7 +8,7 @@
 #include "sql/basic_dialect_linker.hpp"
 
 #ifdef WIN32
-#include <winsock2.h>
+//#include <winsock2.h>
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>
@@ -32,22 +32,24 @@ const char* mysql_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
     case data_type::type_char:
-      return "INTEGER";
+      return "CHAR(1)";
     case data_type::type_short:
       return "INTEGER";
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-      return "INTEGER";
+	  return "INTEGER";
+	  //return "BIGINT";
     case data_type::type_unsigned_char:
-      return "INTEGER";
+      return "CHAR(1)";
     case data_type::type_unsigned_short:
       return "INTEGER";
     case data_type::type_unsigned_int:
       return "INTEGER";
     case data_type::type_unsigned_long:
-      return "INTEGER";
-    case data_type::type_bool:
+	  return "INTEGER";
+	  //return "BIGINT";
+	case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
       return "FLOAT";

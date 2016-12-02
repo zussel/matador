@@ -3,48 +3,55 @@ version: 0.2.1.{build}
 services:
 #  - mssql2008r2sp2
   - mssql2014
-#  - mysql
+  - mysql
 
+image: Visual Studio 2015
+
+platform:
+#  - x86
+  - x64
+  
 configuration:
   - Debug
   - Release
 
 environment:
-  matrix:
-#  - VS_VERSION: 11
-#    VS_PLATFORM: win32
-#  - VS_VERSION: 11
+  MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+  VS_VERSION: 14 2015
+#  matrix:
+#  - VS_VERSION: 14 2015
+#    VS_PLATFORM: x86
+#    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+#  - VS_VERSION: 14 2015
 #    VS_PLATFORM: x64
-#  - VS_VERSION: 12 2013
-#    VS_PLATFORM: win32
-#  - VS_VERSION: 12 2013
-#    VS_PLATFORM: x64
-  - VS_VERSION: 14 2015
-    VS_PLATFORM: win32
-    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
-  - VS_VERSION: 14 2015
-    VS_PLATFORM: x64
-    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+#    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
 
 branches:
   only:
     - master
     - develop
 
-#install:
+install:
+  - git clone https://github.com/snikulov/sqlite.cmake.build.git C:\projects\sqlite\src
 #  - cinst: nsis
 
 before_build:
+  - cd C:\projects\sqlite\src
   - mkdir build
   - cd build
-  - set PATH=%PATH%;%MYSQL_DIR%\bin
-  #- cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=false -DOOS_SQLITE3=false -DOOS_MYSQL=false ..
-  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=false -DOOS_MYSQL=false -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
-  #- set MYSQL_PWD=Password12!
-  #- set USER=root
-  #- mysql -e "create database oos_test;" --user=root
+  - set SQLITE_ROOT=C:\projects\sqlite\sqlite
+  - set PATH=%PATH%;%SQLITE_ROOT%\bin;%MYSQL_DIR%\bin;%MYSQL_DIR%\lib
+  - set MYSQL_PWD=Password12!
+  - set USER=root
+  - mysql -e "create database oos_test;" --user=root
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE oos_test"
-
+  - cmake .. -G"Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DCMAKE_INSTALL_PREFIX=C:\projects\sqlite\sqlite
+  - cmake --build . --config Release --target install
+  - cd C:\projects\oos
+  - mkdir build
+  - cd build
+  - cmake -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%PLATFORM% -DOOS_ODBC=true -DMSSQL_CONNECTION_STRING:STRING="mssql://sa:Password12!@(local)\\SQL2014/oos_test" -DOOS_SQLITE3=true -DOOS_MYSQL=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root:Password12!@localhost/oos_test" ..
+  
 build:
   project: C:\projects\oos\build\oos.sln
 

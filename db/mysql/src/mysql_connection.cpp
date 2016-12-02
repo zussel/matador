@@ -64,15 +64,16 @@ void mysql_connection::open(const std::string &connection)
       has_pwd = false;
     }
   }
+
   con = con.substr(pos + 1);
   pos = con.find('/');
   std::string host = con.substr(0, pos);
   db_ = con.substr(pos + 1);
 
   if (mysql_init(&mysql_) == 0) {
-    throw_error("mysql", "initialization failed");
+	  throw_error("mysql", "initialization failed");
   }
-  
+
   if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db_.c_str(), 0, NULL, 0) == NULL) {
     // close all handles
     mysql_close(&mysql_);
@@ -92,6 +93,7 @@ void mysql_connection::close()
   if (is_open_) {
     mysql_close(&mysql_);
   }
+
   // tell mysql to close the library
   mysql_library_end();
 
@@ -193,7 +195,7 @@ unsigned long mysql_connection::last_inserted_id()
   if (mysql_field_count(&mysql_) == 0 &&
       mysql_insert_id(&mysql_) != 0)
   {
-    return mysql_insert_id(&mysql_);
+    return (unsigned long)mysql_insert_id(&mysql_);
   }
   return 0;
 }

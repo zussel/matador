@@ -263,17 +263,6 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   }
 
   SQLFreeHandle(SQL_HANDLE_STMT, stmt);
-//  while (res->fetch()) {
-//    field f;
-//
-//    f.index(res->get<unsigned int>(17) - 1);
-//    f.name(res->get<std::string>(4));
-////    f.type(res->get<std::string>(5));
-//    f.type(dialect_.string_type(res->get<std::string>(6).c_str()));
-//    f.not_null(res->get<int>(11) == 0);
-//
-//    fields.push_back(f);
-  //}
 
   return fields;
 }

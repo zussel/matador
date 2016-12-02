@@ -71,26 +71,26 @@ void QueryTestUnit::test_datatypes()
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
   oos::date date_val(15, 3, 2015);
   oos::time time_val(time_val_);
-  std::unique_ptr<Item> item(new Item);
+  Item item;
 
   // set values
-  item->set_bool(bval);
-  item->set_char(cval);
-  item->set_double(dval);
-  item->set_float(fval);
-  item->set_short(sval);
-  item->set_int(ival);
-  item->set_long(lval);
-  item->set_unsigned_short(usval);
-  item->set_unsigned_int(uival);
-  item->set_unsigned_long(ulval);
-  item->set_cstr(cstr, strlen(cstr) + 1);
-  item->set_varchar(vval);
-  item->set_string(strval);
-  item->set_date(date_val);
-  item->set_time(time_val);
+  item.set_bool(bval);
+  item.set_char(cval);
+  item.set_double(dval);
+  item.set_float(fval);
+  item.set_short(sval);
+  item.set_int(ival);
+  item.set_long(lval);
+  item.set_unsigned_short(usval);
+  item.set_unsigned_int(uival);
+  item.set_unsigned_long(ulval);
+  item.set_cstr(cstr, strlen(cstr) + 1);
+  item.set_varchar(vval);
+  item.set_string(strval);
+  item.set_date(date_val);
+  item.set_time(time_val);
 
-  q.insert(*item).execute(connection_);
+  q.insert(item).execute(connection_);
 
   auto res = q.select().execute(connection_);
 
@@ -99,21 +99,21 @@ void QueryTestUnit::test_datatypes()
 
   UNIT_ASSERT_TRUE(first != last, "first must not be last");
 
-  item.reset((first++).release());
+  std::unique_ptr<Item> it((first++).release());
 
-  UNIT_EXPECT_EQUAL(item->get_char(), cval, "character is not equal");
-  UNIT_ASSERT_EQUAL(item->get_short(), sval, "short is not equal");
-  UNIT_ASSERT_EQUAL(item->get_int(), ival, "integer is not equal");
-  UNIT_ASSERT_EQUAL(item->get_long(), lval, "long is not equal");
-  UNIT_ASSERT_EQUAL(item->get_unsigned_short(), usval, "unsigned short is not equal");
-  UNIT_ASSERT_EQUAL(item->get_unsigned_int(), uival, "unsigned integer is not equal");
-  UNIT_ASSERT_EQUAL(item->get_unsigned_long(), ulval, "unsigned long is not equal");
-  UNIT_ASSERT_EQUAL(item->get_bool(), bval, "bool is not equal");
-  UNIT_ASSERT_EQUAL(item->get_cstr(), cstr, "const char pointer is not equal");
-  UNIT_ASSERT_EQUAL(item->get_string(), strval, "strings is not equal");
-  UNIT_ASSERT_EQUAL(item->get_varchar(), vval, "varchar is not equal");
-  UNIT_ASSERT_EQUAL(item->get_date(), date_val, "date is not equal");
-  UNIT_ASSERT_EQUAL(item->get_time(), time_val, "time is not equal");
+  UNIT_EXPECT_EQUAL(it->get_char(), cval, "character is not equal");
+  UNIT_ASSERT_EQUAL(it->get_short(), sval, "short is not equal");
+  UNIT_ASSERT_EQUAL(it->get_int(), ival, "integer is not equal");
+  UNIT_ASSERT_EQUAL(it->get_long(), lval, "long is not equal");
+  UNIT_ASSERT_EQUAL(it->get_unsigned_short(), usval, "unsigned short is not equal");
+  UNIT_ASSERT_EQUAL(it->get_unsigned_int(), uival, "unsigned integer is not equal");
+  UNIT_ASSERT_EQUAL(it->get_unsigned_long(), ulval, "unsigned long is not equal");
+  UNIT_ASSERT_EQUAL(it->get_bool(), bval, "bool is not equal");
+  UNIT_ASSERT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
+  UNIT_ASSERT_EQUAL(it->get_string(), strval, "strings is not equal");
+  UNIT_ASSERT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
+  UNIT_ASSERT_EQUAL(it->get_date(), date_val, "date is not equal");
+  UNIT_ASSERT_EQUAL(it->get_time(), time_val, "time is not equal");
 
   q.drop().execute(connection_);
 }
@@ -863,8 +863,6 @@ void QueryTestUnit::test_select_limit()
   }
 
   q.drop().execute(connection_);
-
-  connection_.close();
 }
 
 void QueryTestUnit::test_update_limit()
@@ -893,8 +891,6 @@ void QueryTestUnit::test_update_limit()
   res = q.execute(connection_);
 
   q.drop().execute(connection_);
-
-  connection_.close();
 }
 
 void QueryTestUnit::test_prepared_statement()
@@ -923,8 +919,6 @@ void QueryTestUnit::test_prepared_statement()
   }
 
   q.drop().execute();
-
-  connection_.close();
 }
 
 connection QueryTestUnit::create_connection()

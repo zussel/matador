@@ -16,30 +16,6 @@ SET(OBJECT_SOURCES
   object/basic_identifier_serializer.cpp
   object/basic_has_many_item.cpp object/object_proxy_accessor.cpp)
 
-SET(OBJECT_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/object/action.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/generic_access.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_ptr.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_store.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_container.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_vector.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/linked_object_list.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_view.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_proxy.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/prototype_node.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_observer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_expression.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/attribute_serializer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/object_atomizer.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/serializable.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/identifier.hpp
-  ${PROJECT_SOURCE_DIR}/include/object/primary_key_writer.hpp
-)
-
 SET(OBJECT_HEADER
   ../include/object/action.hpp
   ../include/object/attribute_serializer.hpp
@@ -90,26 +66,6 @@ SET(TOOLS_SOURCES
   tools/strptime.cpp
   tools/basic_identifier.cpp
   tools/serializer.cpp
-)
-
-SET(TOOLS_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/tools/access.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/algorithm.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/cascade_type.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/byte_buffer.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/singleton.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/library.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/blob.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/date.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/time.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/varchar.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/sequencer.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/factory.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/string.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/strptime.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/enable_if.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/conditional.hpp
-  ${PROJECT_SOURCE_DIR}/include/tools/basic_identifier.hpp
 )
 
 SET(TOOLS_HEADER
@@ -216,66 +172,15 @@ SET(ORM_SOURCES
   orm/session.cpp
   orm/basic_table.cpp)
 
-SET(JSON_SOURCES
-  json/json_type.cpp
-  json/json_value.cpp
-  json/json_object.cpp
-  json/json_string.cpp
-  json/json_bool.cpp
-  json/json_null.cpp
-  json/json_number.cpp
-  json/json_array.cpp
-  json/json_exception.cpp
-  json/json_parser.cpp
-)
-
-SET(JSON_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/json/json.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_type.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_value.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_object.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_string.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_bool.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_null.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_number.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_array.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/json_parser.hpp
-  ${PROJECT_SOURCE_DIR}/include/json/generic_json_parser.hpp
-)
-
-SET(JSON_HEADER
-  ../include/json/json.hpp
-  ../include/json/json_type.hpp
-  ../include/json/json_value.hpp
-  ../include/json/json_object.hpp
-  ../include/json/json_string.hpp
-  ../include/json/json_bool.hpp
-  ../include/json/json_null.hpp
-  ../include/json/json_number.hpp
-  ../include/json/json_array.hpp
-  ../include/json/json_exception.hpp
-  ../include/json/json_parser.hpp
-  ../include/json/generic_json_parser.hpp
-)
-
 SET(UNIT_SOURCES
   unit/test_suite.cpp
   unit/unit_test.cpp
 )
 
-SET(UNIT_INSTALL_HEADER
-  ${PROJECT_SOURCE_DIR}/include/unit/test_suite.hpp
-  ${PROJECT_SOURCE_DIR}/include/unit/unit_exception.hpp
-  ${PROJECT_SOURCE_DIR}/include/unit/unit_test.hpp
-)
-
 SET(UNIT_HEADER
   ../include/unit/test_suite.hpp
   ../include/unit/unit_exception.hpp
-  ../include/unit/unit_test.hpp
-  ../include/object/action_inserter.hpp)
+  ../include/unit/unit_test.hpp)
 
 ADD_LIBRARY(oos SHARED
   ${OBJECT_SOURCES}
@@ -284,8 +189,6 @@ ADD_LIBRARY(oos SHARED
   ${TOOLS_HEADER}
   ${ORM_SOURCES}
   ${ORM_HEADER}
-#  ${JSON_SOURCES}
-#  ${JSON_HEADER}
   ${UNIT_SOURCES}
   ${UNIT_HEADER}
   ${SQL_SOURCES}
@@ -303,13 +206,11 @@ SET_TARGET_PROPERTIES(oos
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("include\\object" FILES ${OBJECT_HEADER})
 SOURCE_GROUP("include\\tools" FILES ${TOOLS_HEADER})
-SOURCE_GROUP("include\\json" FILES ${JSON_HEADER})
 SOURCE_GROUP("include\\unit" FILES ${UNIT_HEADER})
 SOURCE_GROUP("include\\sql" FILES ${SQL_HEADER})
 SOURCE_GROUP("include\\orm" FILES ${ORM_HEADER})
 SOURCE_GROUP("src\\object" FILES ${OBJECT_SOURCES})
 SOURCE_GROUP("src\\tools" FILES ${TOOLS_SOURCES})
-SOURCE_GROUP("src\\json" FILES ${JSON_SOURCE})
 SOURCE_GROUP("src\\sql" FILES ${SQL_SOURCES})
 SOURCE_GROUP("src\\orm" FILES ${ORM_SOURCES})
 SOURCE_GROUP("src\\unit" FILES ${UNIT_SOURCES})
@@ -336,7 +237,7 @@ INSTALL(
 )
 
 INSTALL(
-  FILES ${OBJECT_INSTALL_HEADER}
+  FILES ${OBJECT_HEADER}
   DESTINATION include/oos/object
   COMPONENT headers
 )
@@ -354,19 +255,13 @@ INSTALL(
 )
 
 INSTALL(
-  FILES ${TOOLS_INSTALL_HEADER}
+  FILES ${TOOLS_HEADER}
   DESTINATION include/oos/tools
   COMPONENT headers
 )
 
 INSTALL(
-  FILES ${JSON_INSTALL_HEADER}
-  DESTINATION include/oos/json
-  COMPONENT headers
-)
-
-INSTALL(
-  FILES ${UNIT_INSTALL_HEADER}
+  FILES ${UNIT_HEADER}
   DESTINATION include/oos/unit
   COMPONENT headers
 )

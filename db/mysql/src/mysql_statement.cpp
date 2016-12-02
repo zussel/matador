@@ -49,7 +49,7 @@ mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
     length_vector.assign(host_size, 0);
   }
 
-  int res = mysql_stmt_prepare(stmt_, str().c_str(), str().size());
+  int res = mysql_stmt_prepare(stmt_, str().c_str(), (unsigned long)str().size());
   if (res > 0) {
     throw_stmt_error(res, stmt_, "mysql", str());
   }
@@ -89,7 +89,7 @@ detail::result_impl* mysql_statement::execute()
       throw_stmt_error(res, stmt_, "mysql", str());
     }
   }
-//  std::cout << str() << '\n';
+  //std::cout << "PREPARED SQL: " << str() << '\n';
 
   int res = mysql_stmt_execute(stmt_);
   if (res > 0) {
@@ -104,85 +104,87 @@ detail::result_impl* mysql_statement::execute()
 
 void mysql_statement::serialize(const char *, char &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, short &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, int &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, long &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+	//bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, unsigned char &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, unsigned short &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_SHORT, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, unsigned int &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, unsigned long &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x, host_index);
+	//bind_value(host_array[host_index], MYSQL_TYPE_LONGLONG, x);
+  bind_value(host_array[host_index], MYSQL_TYPE_LONG, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, bool &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_TINY, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, float &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_FLOAT, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_FLOAT, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, double &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_DOUBLE, x);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, char *x, size_t s)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x, s);
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, std::string &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size(), host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_STRING, x.data(), x.size());
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, oos::date &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_DATE, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_DATE, x);
   ++host_index;
 }
 
@@ -192,17 +194,17 @@ void mysql_statement::serialize(const char *, oos::time &x)
   // before mysql version 5.6.4 datetime
   // doesn't support fractional seconds
   // so we use a datetime string here
-  std::string tstr = to_string(x, "%F %T");
-  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size(), host_index);
+  std::string tstr = to_string(x, "%FT%T");
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, tstr.c_str(), tstr.size());
 #else
-  bind_value(host_array[host_index], MYSQL_TYPE_TIMESTAMP, x, host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_TIMESTAMP, x);
 #endif
   ++host_index;
 }
 
 void mysql_statement::serialize(const char *, varchar_base &x)
 {
-  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x.c_str(), x.size(), host_index);
+  bind_value(host_array[host_index], MYSQL_TYPE_VAR_STRING, x.c_str(), x.size());
   ++host_index;
 }
 
@@ -218,12 +220,36 @@ void mysql_statement::serialize(const char *id, identifiable_holder &x, cascade_
   }
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x, size_t /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, char x)
 {
-  if (bind.buffer == 0) {
+  if (bind.buffer == nullptr) {
+    size_t s = sizeof(char);
+    bind.buffer = new char[s];
+    bind.buffer_length = (unsigned long)s;
+  }
+  *static_cast<char*>(bind.buffer) = x;
+  bind.buffer_type = MYSQL_TYPE_VAR_STRING;
+  bind.is_null = 0;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, unsigned char x)
+{
+  if (bind.buffer == nullptr) {
+    size_t s = sizeof(unsigned char);
+    bind.buffer = new unsigned char[s];
+    bind.buffer_length = (unsigned long)s;
+  }
+  *static_cast<unsigned char*>(bind.buffer) = x;
+  bind.buffer_type = MYSQL_TYPE_VAR_STRING;
+  bind.is_null = 0;
+}
+
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x)
+{
+  if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
     bind.buffer = new char[s];
-    bind.buffer_length = s;
+    bind.buffer_length = (unsigned long)s;
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;
@@ -240,12 +266,12 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
 //  mt->second_part = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x, size_t /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x)
 {
   if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
     bind.buffer = new char[s];
-    bind.buffer_length = s;
+    bind.buffer_length = (unsigned long)s;
   }
   memset(bind.buffer, 0, sizeof(MYSQL_TIME));
   bind.buffer_type = type;
@@ -271,9 +297,10 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, size_t
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size, size_t /*index*/)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size)
 {
-  if (bind.buffer_length < size) {
+  size_t len(strlen(value) + 1);
+  if (bind.buffer_length < len) {
     // reallocate memory
     delete [] static_cast<char*>(bind.buffer);
     bind.buffer = nullptr;
@@ -281,13 +308,14 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   }
   if (bind.buffer == nullptr) {
     // allocating memory
-    bind.buffer = new char[size];
+    bind.buffer = new char[len];
+	memset(bind.buffer, 0, len);
   }
-  bind.buffer_length = (unsigned long)size;
+  bind.buffer_length = (unsigned long)(len - 1);
 #ifdef WIN32
-  strncpy_s(static_cast<char*>(bind.buffer), size, value, _TRUNCATE);
+  strncpy_s(static_cast<char*>(bind.buffer), len, value, _TRUNCATE);
 #else
-  strncpy(static_cast<char*>(bind.buffer), value, size);
+  strncpy(static_cast<char*>(bind.buffer), value, len);
 #endif
   bind.buffer_type = type;
   bind.is_null = 0;
