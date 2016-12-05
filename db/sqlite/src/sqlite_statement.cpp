@@ -187,7 +187,7 @@ void sqlite_statement::serialize(const char *id, oos::date &x)
 void sqlite_statement::serialize(const char *id, oos::time &x)
 {
   // format time to ISO8601
-  auto time_string = std::make_shared<std::string>(oos::to_string(x, "%F %T.%f"));
+  auto time_string = std::make_shared<std::string>(oos::to_string(x, "%Y-%m-%dT%T.%f"));
   serialize(id, *time_string);
   host_strings_.push_back(time_string);
 }
