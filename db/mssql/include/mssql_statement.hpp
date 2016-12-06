@@ -86,7 +86,7 @@ protected:
       v->len = SQL_NULL_DATA;
     } else {
       v->data = new char[sizeof(T)];
-      *static_cast<T*>(v->data) = val;
+      *reinterpret_cast<T*>(v->data) = val;
     }
     host_data_.push_back(v);
     
@@ -127,12 +127,13 @@ private:
 private:
   struct value_t {
     explicit value_t(SQLLEN l = 0) : len(l), data(0) {}
-    ~value_t() { delete [] static_cast<char*>(data); }
+    ~value_t() { delete [] data; }
     SQLLEN len;
     SQLLEN result_len = 0;
-    void *data;
+    char *data;
   };
   std::vector<value_t*> host_data_;
+  std::unordered_map<PTR, value_t*> data_to_put_map_;
 
   enum { NUMERIC_LEN = 21 };
 

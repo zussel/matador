@@ -51,6 +51,8 @@ void throw_error(SQLRETURN ret, SQLSMALLINT htype, SQLHANDLE hndl, const std::st
 
 void throw_error(const std::string &source, const std::string &sql = "");
 
+bool is_success(SQLRETURN ret);
+
 class mssql_exception : public sql_exception
 {
 public:

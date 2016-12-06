@@ -55,6 +55,7 @@ void mssql_statement::reset()
     delete host_data_.back();
     host_data_.pop_back();
   }
+  data_to_put_map_.clear();
 }
 
 void mssql_statement::clear()
@@ -69,6 +70,38 @@ detail::result_impl* mssql_statement::execute()
   // check if data is needed
   if (ret == SQL_NEED_DATA) {
     // put needed data from host_data
+
+    // get first data to put
+    PTR pid{ nullptr };
+    ret = SQLParamData(stmt_, &pid);
+    // get data from map
+    auto it = data_to_put_map_.find(pid);
+    if (it == data_to_put_map_.end()) {
+      throw_error("mssql", "couldn't find data to put");
+    }
+    value_t *val = it->second;
+    // Todo
+    // put data as long it is requested
+    while (ret == SQL_NEED_DATA) {
+      std::cout << "need data " << val->len << "\n";
+      while (val->len > 256) {
+        ret = SQLPutData(stmt_, val->data, 256);
+        val->len -= 256;
+        val->data += 256;
+      }
+      ret = SQLPutData(stmt_, val->data, val->len);
+      if (!is_success(ret) && ret != SQL_NEED_DATA) {
+        // error
+        throw_error(ret, SQL_HANDLE_STMT, stmt_, "", "");
+      } else if (ret == SQL_NEED_DATA) {
+        // determine next column data pointer
+        it = data_to_put_map_.find(pid);
+        if (it == data_to_put_map_.end()) {
+          throw_error("mssql", "couldn't find data to put");
+        }
+        val = it->second;
+      }
+    }
   } else {
     // check result
     throw_error(ret, SQL_HANDLE_STMT, stmt_, str(), "error on query execute");
@@ -206,7 +239,7 @@ void mssql_statement::bind_value(unsigned char c, size_t index)
   } else {
     v->len = sizeof(unsigned char);
     v->data = new char[1];
-    *static_cast<unsigned char*>(v->data) = c;
+    v->data[0] = c;
   }
   host_data_.push_back(v);
 
@@ -225,7 +258,7 @@ void mssql_statement::bind_value(bool val, size_t index)
   }
   else {
     v->data = new char[sizeof(unsigned short)];
-    *static_cast<unsigned short*>(v->data) = (unsigned short)val;
+    *reinterpret_cast<unsigned short*>(v->data) = (unsigned short)val;
   }
   host_data_.push_back(v);
 
@@ -246,7 +279,7 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
     v->data = new char[sizeof(SQL_DATE_STRUCT)];
     v->len = sizeof(SQL_DATE_STRUCT);
 
-    SQL_DATE_STRUCT *ts = static_cast<SQL_DATE_STRUCT *>(v->data);
+    SQL_DATE_STRUCT *ts = reinterpret_cast<SQL_DATE_STRUCT *>(v->data);
 
     ts->year = (SQLSMALLINT) d.year();
     ts->month = (SQLUSMALLINT) d.month();
@@ -270,7 +303,7 @@ void mssql_statement::bind_value(const oos::time &t, size_t index)
     v->data = new char[sizeof(SQL_TIMESTAMP_STRUCT)];
     v->len = sizeof(SQL_TIMESTAMP_STRUCT);
 
-    SQL_TIMESTAMP_STRUCT *ts = static_cast<SQL_TIMESTAMP_STRUCT *>(v->data);
+    SQL_TIMESTAMP_STRUCT *ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(v->data);
 
     ts->year = (SQLSMALLINT) t.year();
     ts->month = (SQLUSMALLINT) t.month();
@@ -297,7 +330,7 @@ void mssql_statement::bind_value(unsigned long val, size_t index)
   } else {
 	v->len = sizeof(unsigned long);
     v->data = new char[v->len];
-    *static_cast<unsigned long*>(v->data) = val;
+    *reinterpret_cast<unsigned long*>(v->data) = val;
 
   }
   host_data_.push_back(v);
@@ -340,6 +373,7 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
   } else {
 
     v->data = new char[s + 1];
+    v->len = s;
 #ifdef _MSC_VER
     strncpy_s((char *)v->data, s + 1, str.c_str(), s);
 #else
@@ -349,6 +383,7 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
   }
 
   host_data_.push_back(v);
+  data_to_put_map_.insert(std::make_pair(v->data, v));
 
   SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, str.size(), 0, v->data, str.size(), &v->result_len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");

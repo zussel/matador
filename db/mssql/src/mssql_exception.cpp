@@ -62,6 +62,11 @@ void throw_error(const std::string &source, const std::string &sql)
   throw mssql_exception(source, sql);
 }
 
+bool is_success(SQLRETURN ret)
+{
+  return ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO;
+}
+
 mssql_exception::mssql_exception(const std::string &source, const std::string &what)
   : sql_exception("mssql", (source + ": " + what).c_str())
 {}
