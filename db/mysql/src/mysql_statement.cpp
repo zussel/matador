@@ -220,7 +220,7 @@ void mysql_statement::serialize(const char *id, identifiable_holder &x, cascade_
   }
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, char x)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types, char x)
 {
   if (bind.buffer == nullptr) {
     size_t s = sizeof(char);
@@ -232,7 +232,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, char x
   bind.is_null = 0;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, unsigned char x)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types, unsigned char x)
 {
   if (bind.buffer == nullptr) {
     size_t s = sizeof(unsigned char);
@@ -284,7 +284,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
   mt->time_type  = MYSQL_TIMESTAMP_DATETIME;
 }
 
-void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size)
+void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t)
 {
   size_t len(strlen(value) + 1);
   if (bind.buffer_length < len) {
