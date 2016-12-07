@@ -26,10 +26,12 @@ p.attach<student, person>("student");
 p.attach<course>("course");
 ```
 Now you can create the database schema simply by calling ```create```:
+
 ```cpp
 p.create();
 ```
 Or you can drop it as well:
+
 ```cpp
 p.drop();
 ```

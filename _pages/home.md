@@ -7,13 +7,6 @@ header:
   overlay_filter: 0.5
   cta_label: "<i class='fa fa-download'></i> Get it now"
   cta_url: "/docs/installation/"
-sidebar:
-  - title: "Title"
-    text: "Some text here."
-  - title: "Getting Started"
-    children:
-      - title: "Prototypes"
-        url: /docs/store/
 feature_row1:
   - title: "Easy to use"
     image_path: container.jpg
