@@ -36,7 +36,7 @@ mssql_result::mssql_result(SQLHANDLE stmt)
 {
   // get row and column information
   SQLLEN r(0);
-  SQLRETURN ret = SQLRowCount(stmt, (SQLLEN*)&r);
+  SQLRETURN ret = SQLRowCount(stmt, &r);
   throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "couldn't retrieve row count");
 
   if (r != SQL_ERROR && r >= 0) {

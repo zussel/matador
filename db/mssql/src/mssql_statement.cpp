@@ -83,13 +83,13 @@ detail::result_impl* mssql_statement::execute()
     // Todo
     // put data as long it is requested
     while (ret == SQL_NEED_DATA) {
-      std::cout << "need data " << val->len << "\n";
       while (val->len > 256) {
         ret = SQLPutData(stmt_, val->data, 256);
         val->len -= 256;
         val->data += 256;
       }
       ret = SQLPutData(stmt_, val->data, val->len);
+      ret = SQLParamData(stmt_, &pid);
       if (!is_success(ret) && ret != SQL_NEED_DATA) {
         // error
         throw_error(ret, SQL_HANDLE_STMT, stmt_, "", "");
@@ -385,8 +385,9 @@ void mssql_statement::bind_value(const std::string &str, size_t index)
   host_data_.push_back(v);
   data_to_put_map_.insert(std::make_pair(v->data, v));
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, str.size(), 0, v->data, str.size(), &v->result_len);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, v->len, 0, v->data, v->len, &v->result_len);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
+  v->result_len = SQL_LEN_DATA_AT_EXEC((SQLLEN)v->len);
 }
 
 int mssql_statement::type2int(data_type type)
