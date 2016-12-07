@@ -13,7 +13,7 @@ p.attach<person>("person");
 session s(p);
 ```
 
-If youo have already setup the persitence layer and inserted some data, just call load to
+If you have already setup the persitence layer and inserted some data, just call load to
 get it into the layer.
 
 ```cpp
