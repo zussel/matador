@@ -18,10 +18,10 @@ docs:
         url: /docs/introduction/
   - title: "Object Store"
     children:
-      - title: "Prototypes"
-        url: /docs/store/
       - title: "Objects"
         url: /docs/objects/
+      - title: "Prototypes"
+        url: /docs/store/
       - title: "Relations"
         url: /docs/relations/
       - title: "Views"
