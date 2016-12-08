@@ -85,6 +85,7 @@ public:
    * Assignment move constructor for statement
    * 
    * @param x The statement to move from
+   * @return Reference to this
    */
   statement& operator=(statement &&x)
   {
