@@ -36,7 +36,7 @@ namespace detail {
  * The statement class represents a prepared
  * sql statement.
  * 
- * @tparam The object type of the statement to work on
+ * @tparam T The object type of the statement to work on
  */
 template < class T >
 class statement
