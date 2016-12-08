@@ -105,8 +105,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9edb80962dfb1f289e03561dcd657784"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a9edb80962dfb1f289e03561dcd657784">expect_equal</a> (const X &amp;a, const X &amp;b, const std::string &amp;msg, int line, const char *file)</td></tr>
 <tr class="memdesc:a9edb80962dfb1f289e03561dcd657784"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a is equal b.  <a href="#a9edb80962dfb1f289e03561dcd657784">More...</a><br /></td></tr>
 <tr class="separator:a9edb80962dfb1f289e03561dcd657784"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c611a9c4ab96898fbc97baba1c9397f"><td class="memItemLeft" align="right" valign="top"><a id="a1c611a9c4ab96898fbc97baba1c9397f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>expect_equal</b> (const char *a, const std::string &amp;b, const std::string &amp;msg, int line, const char *file)</td></tr>
+<tr class="memitem:a1c611a9c4ab96898fbc97baba1c9397f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a1c611a9c4ab96898fbc97baba1c9397f">expect_equal</a> (const char *a, const std::string &amp;b, const std::string &amp;msg, int line, const char *file)</td></tr>
+<tr class="memdesc:a1c611a9c4ab96898fbc97baba1c9397f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a is equal b.  <a href="#a1c611a9c4ab96898fbc97baba1c9397f">More...</a><br /></td></tr>
 <tr class="separator:a1c611a9c4ab96898fbc97baba1c9397f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89034abcbd8a018f067d45d3699e13ec"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a89034abcbd8a018f067d45d3699e13ec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a89034abcbd8a018f067d45d3699e13ec">expect_greater</a> (const T &amp;a, const T &amp;b, const std::string &amp;msg, int line, const char *file)</td></tr>
@@ -1049,7 +1049,7 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <a id="a9edb80962dfb1f289e03561dcd657784"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9edb80962dfb1f289e03561dcd657784">&sect;&nbsp;</a></span>expect_equal()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9edb80962dfb1f289e03561dcd657784">&sect;&nbsp;</a></span>expect_equal() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1110,6 +1110,73 @@ template&lt;class X &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The left hand operand. </td></tr>
+    <tr><td class="paramname">b</td><td>The right hand operand. </td></tr>
+    <tr><td class="paramname">msg</td><td>The message to print if the check fails. </td></tr>
+    <tr><td class="paramname">line</td><td>The line number of this check in the source code. </td></tr>
+    <tr><td class="paramname">file</td><td>The file where this check can be found. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1c611a9c4ab96898fbc97baba1c9397f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c611a9c4ab96898fbc97baba1c9397f">&sect;&nbsp;</a></span>expect_equal() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::unit_test::expect_equal </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>file</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if a is equal b. </p>
+<p>If c string a is not equal std::string b the test method prints the given message to stdout.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">a</td><td>The left hand operand. </td></tr>

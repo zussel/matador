@@ -8,10 +8,64 @@ title: oos::result&lt; T &gt; Class Template Reference
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="/api/classoos_1_1result-members/index.html">List of all members</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">oos::result&lt; T &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a4442e231e20c2583fed8a433a0ae7186"><td class="memItemLeft" align="right" valign="top"><a id="a4442e231e20c2583fed8a433a0ae7186"></a>
+typedef std::function&lt; T *()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>t_creator_func</b></td></tr>
+<tr class="separator:a4442e231e20c2583fed8a433a0ae7186"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdd9389207c92d16ef50d51bc6adcdfd"><td class="memItemLeft" align="right" valign="top"><a id="abdd9389207c92d16ef50d51bc6adcdfd"></a>
+typedef result_iterator&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
+<tr class="separator:abdd9389207c92d16ef50d51bc6adcdfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a6b6893c53991fcd3368f4c4a45d1405c"><td class="memItemLeft" align="right" valign="top"><a id="a6b6893c53991fcd3368f4c4a45d1405c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>result</b> (const <a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;x)=delete</td></tr>
+<tr class="separator:a6b6893c53991fcd3368f4c4a45d1405c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89490d4720594bb95d93a75088c28877"><td class="memItemLeft" align="right" valign="top"><a id="a89490d4720594bb95d93a75088c28877"></a>
+<a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;x)=delete</td></tr>
+<tr class="separator:a89490d4720594bb95d93a75088c28877"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d38f2be117eb1a63a3e8fe8d851b4af"><td class="memItemLeft" align="right" valign="top"><a id="a8d38f2be117eb1a63a3e8fe8d851b4af"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>result</b> (oos::detail::result_impl *impl)</td></tr>
+<tr class="separator:a8d38f2be117eb1a63a3e8fe8d851b4af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59c20790d6223bebb1ed2abb6bd1c518"><td class="memItemLeft" align="right" valign="top"><a id="a59c20790d6223bebb1ed2abb6bd1c518"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>result</b> (<a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;&amp;x)</td></tr>
+<tr class="separator:a59c20790d6223bebb1ed2abb6bd1c518"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad17024f86a5f131f42f23999da11f2d9"><td class="memItemLeft" align="right" valign="top"><a id="ad17024f86a5f131f42f23999da11f2d9"></a>
+<a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="/api/classoos_1_1result/index.html">result</a> &amp;&amp;x)</td></tr>
+<tr class="separator:ad17024f86a5f131f42f23999da11f2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bdd69aa245d070f0114e2e1ca65f7f1"><td class="memItemLeft" align="right" valign="top"><a id="a7bdd69aa245d070f0114e2e1ca65f7f1"></a>
+iterator&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> ()</td></tr>
+<tr class="separator:a7bdd69aa245d070f0114e2e1ca65f7f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa46382a42e18a08c3ed43774e708a7d"><td class="memItemLeft" align="right" valign="top"><a id="aaa46382a42e18a08c3ed43774e708a7d"></a>
+iterator&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</td></tr>
+<tr class="separator:aaa46382a42e18a08c3ed43774e708a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a650fbcda570c5df9a8609698db7ce21c"><td class="memItemLeft" align="right" valign="top"><a id="a650fbcda570c5df9a8609698db7ce21c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const</td></tr>
+<tr class="separator:a650fbcda570c5df9a8609698db7ce21c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfb74ccfdca79ac70fe4194418a7a38e"><td class="memItemLeft" align="right" valign="top"><a id="abfb74ccfdca79ac70fe4194418a7a38e"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
+<tr class="separator:abfb74ccfdca79ac70fe4194418a7a38e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25f4ff1e18f8e25ccf560fe6d3ad44d5"><td class="memItemLeft" align="right" valign="top"><a id="a25f4ff1e18f8e25ccf560fe6d3ad44d5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>creator</b> (const t_creator_func &amp;creator_func)</td></tr>
+<tr class="separator:a25f4ff1e18f8e25ccf560fe6d3ad44d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a0dbad3cce5a4f504f018c119bd1d17f9"><td class="memItemLeft" align="right" valign="top"><a id="a0dbad3cce5a4f504f018c119bd1d17f9"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>result_iterator&lt; T &gt;</b></td></tr>
+<tr class="separator:a0dbad3cce5a4f504f018c119bd1d17f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>sql/result.hpp</li>
 </ul>
