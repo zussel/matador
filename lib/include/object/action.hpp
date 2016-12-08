@@ -43,6 +43,8 @@ class object_store;
 class object_proxy;
 class object_serializer;
 
+/// @cond OOS_DEV
+
 /**
  * @class action
  * @brief Base class for all sql relevant actions
@@ -91,14 +93,12 @@ public:
   virtual void restore(byte_buffer &from, object_store *store) = 0;
 
 protected:
-  /// @cond OOS_DEV
   static void remove_proxy(object_proxy *proxy, object_store *store);
   static object_proxy* find_proxy(object_store *store, unsigned long id);
   static void insert_proxy(object_store *store, object_proxy *proxy);
 
 protected:
   object_serializer *serializer_;
-  /// @endcond
 };
 
 /// @endcond

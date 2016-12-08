@@ -16,10 +16,21 @@ IF(DOXYGEN_FOUND)
                        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
                        COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
 
+    file(GLOB WebFiles
+      ${CMAKE_BINARY_DIR}/doc/*.css
+      ${CMAKE_BINARY_DIR}/doc/*.png
+      ${CMAKE_BINARY_DIR}/doc/*.js
+    )
+
     add_custom_target (ghdoc
                        COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
                        COMMAND ${CMAKE_BINARY_DIR}/sed4ghpages
                        COMMENT "Generating API documentation with Doxygen" VERBATIM)
+
+    foreach(WebFile ${WebFiles})
+      add_custom_command(TARGET ghdoc PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${WebFile} ${CMAKE_BINARY_DIR}/doc/gh-pages/)
+    endforeach()
+
 ELSE(DOXYGEN_FOUND)
     MESSAGE(STATUS "Doxygen not detected - no documentation target")
 ENDIF(DOXYGEN_FOUND)

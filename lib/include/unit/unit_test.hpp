@@ -718,6 +718,18 @@ public:
     }
   }
 
+  /**
+   * @brief Checks if a is equal b.
+   *
+   * If c string a is not equal std::string b the test method prints
+   * the given message to stdout.
+   * 
+   * @param a The left hand operand.
+   * @param b The right hand operand.
+   * @param msg The message to print if the check fails.
+   * @param line The line number of this check in the source code.
+   * @param file The file where this check can be found.
+   */
   void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->error_count;

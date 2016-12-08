@@ -58,6 +58,7 @@ public:
    * table identified by table_name and the
    * given connection
    *
+   * @param conn The default connection for the query
    * @param table_name The name of the table
    */
   basic_query(const connection &conn, const std::string &table_name);

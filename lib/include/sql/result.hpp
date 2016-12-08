@@ -127,6 +127,8 @@ public:
   self operator++(int);
 };
 
+/// @endcond
+
 template < class T >
 class result
 {
@@ -302,8 +304,6 @@ typename result_iterator<T>::self result_iterator<T>::operator++(int)
   }
   return self(base::result_, obj.release());
 }
-
-/// @endcond
 
 }
 
