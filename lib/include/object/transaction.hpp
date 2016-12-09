@@ -178,10 +178,25 @@ public:
    */
   void rollback();
 
+  /**
+   * Called when insertion took place.
+   * 
+   * @tparam T The type of the inserted object
+   */
   template < class T >
   void on_insert(object_proxy *proxy);
+  /**
+   * Called when update took place.
+   * 
+   * @tparam T The type of the updated object
+   */
   template < class T >
   void on_update(object_proxy *proxy);
+  /**
+   * Called when deletion took place.
+   * 
+   * @tparam T The type of the deleted object
+   */
   template < class T >
   void on_delete(object_proxy *proxy);
 

@@ -53,20 +53,55 @@ public:
   typedef has_one<T> self;      /**< Shortcut for self class. */
 
 public:
+  /**
+   * Create an empty has_one
+   */
   has_one()
     : object_holder(true)
   {}
+
+  /**
+   * Create an hs_one from an object
+   *
+   * @param o The object.
+   */
   has_one(T *o)
     : object_holder(true, new object_proxy(o))
   {}
+
+  /**
+   * Create an has_one from an object_proxy
+   *
+   * @param proxy The object_proxy.
+   */
   has_one(object_proxy *proxy)
     : object_holder(true, proxy)
   {}
 
+  /**
+   * Copies has_one from object_ptr
+   *
+   * @param x The object_ptr to copy
+   */
   has_one(const object_ptr <T> &x);
 
+  /**
+   * Assigns has_one from object_ptr
+   *
+   * @param x The object_ptr to assign
+   * @return Reference to assigned has_one
+   */
   has_one& operator=(const object_ptr <T> &x);
 
+  //@{
+  /**
+   * @brief Return the pointer to the object of type T.
+   *
+   * Return the pointer to the object of type T. If there
+   * isn't a valid object nullptr is returned.
+   *
+   * @return The pointer to the object of type T.
+   */
   T* operator->()
   {
     return get();
@@ -86,7 +121,8 @@ public:
   {
     return static_cast<T*>(proxy_->obj());
   }
-
+  //@}
+  
   /**
    * Return the type string of the serializable
    *
@@ -143,7 +179,7 @@ public:
 
 public:
   /**
-   * Create an empty object_holder
+   * Create an empty object_ptr
    */
   object_ptr()
     : object_holder(false)
@@ -158,9 +194,9 @@ public:
   {}
 
   /**
-   * Create an object_ptr from an serializable
+   * Create an object_ptr from an object
    *
-   * @param o The serializable.
+   * @param o The object.
    */
   object_ptr(T *o)
     : object_holder(false, new object_proxy(o))
@@ -214,6 +250,7 @@ public:
     return classname_.c_str();
   }
 
+  //@{
   /**
    * @brief Return the pointer to the serializable of type T.
    *
@@ -226,18 +263,27 @@ public:
     return get();
   }
 
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
   T* operator->() {
     return get();
   }
 
+  T* get() const {
+    return static_cast<T*>(lookup_object());
+  }
+  T* get() {
+    if (proxy_ && proxy_->obj()) {
+      if (proxy_->ostore_ && proxy_->has_transaction()) {
+        proxy_->current_transaction().on_update<T>(proxy_);
+      }
+      return (T*)proxy_->obj();
+    } else {
+      return nullptr;
+    }
+
+  }
+  //@}
+
+  //@{
   /**
    * @brief Return the reference to the serializable of type T.
    *
@@ -250,50 +296,10 @@ public:
     return *get();
   }
 
-  /**
-   * @brief Return the reference to the serializable of type T.
-   *
-   * Return the reference to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The reference to the serializable of type T.
-   */
   T& operator*() {
     return *get();
   }
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-  T* get() const {
-    return static_cast<T*>(lookup_object());
-  }
-
-  /**
-   * @brief Return the pointer to the serializable of type T.
-   *
-   * Return the pointer to the serializable of type T. If there
-   * isn't a valid serializable 0 (null) is returned.
-   *
-   * @return The pointer to the serializable of type T.
-   */
-  T* get() {
-    if (proxy_ && proxy_->obj()) {
-      if (proxy_->ostore_ && proxy_->has_transaction()) {
-        proxy_->current_transaction().on_update<T>(proxy_);
-      }
-      return (T*)proxy_->obj();
-    } else {
-      return nullptr;
-    }
-
-//    return static_cast<T*>(lookup_object());
-  }
+  //@}
 
   /**
    * Creates a new identifier, represented by the identifier

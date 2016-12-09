@@ -272,17 +272,38 @@ private:
   t_creator_func creator_func_;
 };
 
+/**
+ * @brief Represents a sql query result
+ * 
+ * This class is used as a iterable result
+ * of a sql select query. Once such a query is
+ * executed one can iterate the result and each
+ * row is deserialized as an anonymous row
+ */
 template <>
 class result<row>
 {
 public:
-  typedef result_iterator<row> iterator;
+  typedef result_iterator<row> iterator; /**< Shortcut to the iterator type */
 
   result(const result &x) = delete;
   result& operator=(const result &x) = delete;
 
 public:
+  /**
+   * Empty result
+   */
   result() {}
+
+  /**
+   * Creates a result initialized
+   * by the given result implementation and
+   * the given row prototype containing
+   * all expected columns.
+   * 
+   * @param impl Result implementation
+   * @param prototype The row prototype
+   */
   result(oos::detail::result_impl *impl, const row &prototype)
     : p(impl)
     , prototype_(prototype)
@@ -295,11 +316,24 @@ public:
     }
   }
 
+  /**
+   * Copy moves a result from given
+   * result
+   * 
+   * @param x The result ro move
+   */
   result(result &&x)
   {
     std::swap(p, x.p);
   }
 
+  /**
+   * Assignment move constructor for given
+   * result
+   * 
+   * @param x The result ro move
+   * @return Reference to this
+   */
   result& operator=(result &&x)
   {
     if (p) {
@@ -310,21 +344,44 @@ public:
     return *this;
   }
 
+  /**
+   * Returns the first row of the
+   * result set
+   * 
+   * @return Iterator to the first row
+   */
   iterator begin()
   {
     return std::move(++iterator(this));
   }
 
+  /**
+   * Returns the last element of the
+   * result set
+   * 
+   * @return Iterator to the last element
+   */
   iterator end()
   {
     return iterator();
   }
 
+  /**
+   * Returns true if the result set
+   * is empty
+   * 
+   * @return True on empty result set
+   */
   bool empty () const
   {
     return false;
   }
 
+  /**
+   * Returns the size of the result set
+   * 
+   * @return Size of the result set
+   */
   std::size_t size () const
   {
     return p->result_rows();
@@ -344,6 +401,7 @@ private:
   const row prototype_;
 };
 
+/// @cond OOS_DEV
 template < class T >
 typename result_iterator<T>::self &result_iterator<T>::operator++()
 {
@@ -365,7 +423,7 @@ typename result_iterator<T>::self result_iterator<T>::operator++(int)
   }
   return self(base::result_, obj.release());
 }
-
+/// @endcond
 }
 
 #endif /* RESULT_HPP */

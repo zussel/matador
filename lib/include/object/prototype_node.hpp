@@ -80,7 +80,7 @@ public:
    * 
    * @param tree The node containing tree.
    * @param type The type name of the node.
-   * @param type_id The type id of this node.
+   * @param typeinfo The typeinfo of this node.
    * @param abstract Tells the node if its prototype is abstract.
    */
   prototype_node(object_store *tree, const char *type, const std::type_info &typeinfo, bool abstract = false)

@@ -34,7 +34,7 @@ namespace detail {
 
 /**
  * The statement class represents a prepared
- * sql statement.
+ * sql statement for a concrete object type.
  * 
  * @tparam T The object type of the statement to work on
  */
@@ -135,13 +135,13 @@ public:
    * Bind an object to the statement starting
    * at the given position index.
    * 
-   * @param o The object to bind
-   * @param pos The index where to start the binding
+   * @param obj The object to bind
+   * @param index The index where to start the binding
    * @return The next index to bind
    */
-  size_t bind(T *o, size_t index)
+  size_t bind(T *obj, size_t index)
   {
-    return p->bind(o, index);
+    return p->bind(obj, index);
   }
 
   /**
@@ -174,6 +174,10 @@ private:
   oos::detail::statement_impl *p = nullptr;
 };
 
+/**
+ * The statement class represents a prepared
+ * sql statement for an anonymous row.
+ */
 template <>
 class statement<row>
 {
@@ -182,7 +186,19 @@ private:
   statement& operator=(const statement &x) = delete;
 
 public:
+  /**
+   * Creates an empty statement
+   */
   statement() {}
+
+  /**
+   * Creates a statement initialized from the
+   * given statement implementation object holding
+   * the implementation for the selected database
+   *
+   * @param impl The statement implementation object
+   * @param prototype Row object containing prototype columns
+   */
   statement(detail::statement_impl *impl, const row &prototype)
     : p(impl)
     , prototype_(prototype)
@@ -195,11 +211,22 @@ public:
     }
   }
 
+  /**
+   * Copy move constructor for statement
+   * 
+   * @param x The statement to move from
+   */
   statement(statement &&x)
   {
     std::swap(p, x.p);
   }
 
+  /**
+   * Assignment move constructor for statement
+   * 
+   * @param x The statement to move from
+   * @return Reference to this
+   */
   statement& operator=(statement &&x)
   {
     if (p) {
@@ -210,6 +237,9 @@ public:
     return *this;
   }
 
+  /**
+   * Clear the statement
+   */
   void clear()
   {
     if (p) {
@@ -217,27 +247,49 @@ public:
     }
   }
 
+  /**
+   * Executes the prepared statement and returns
+   * a result set. If the sql command was a
+   * select the result set holds the queried
+   * rows.
+   * 
+   * @return The result of the statement
+   */
   result<row> execute()
   {
     return result<row>(p->execute(), prototype_);
   }
 
+  /**
+   * Resets the statement by unbinding
+   * all bindings.
+   */
   void reset()
   {
     p->reset();
   }
 
-//  size_t bind(T *o, size_t pos)
-//  {
-//    return p->bind(o, pos);
-//  }
-
+  /**
+   * Bind single value to a specified
+   * position index of the prepared statement
+   * 
+   * @tparam The type of the value
+   * @param val The value to bind
+   * @param index The index where the value is to bind
+   * @return The next index to bind
+   */
   template < class V >
-  size_t bind(V &val, size_t pos)
+  size_t bind(V &val, size_t index)
   {
-    return p->bind(val, pos);
+    return p->bind(val, index);
   }
 
+  /**
+   * Returns the statement as string where
+   * the host values a shown as questionmarks (?)
+   * 
+   * @return The query string
+   */
   std::string str() const
   {
     return p->str();

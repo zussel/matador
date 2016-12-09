@@ -139,8 +139,9 @@ public:
    * Share identifiers id with given identifier.
    *
    * @param id The identifier to share the id with.
+   * @return True if value was successfully shared.
    */
-  virtual void share_with(basic_identifier &id) = 0;
+  virtual bool share_with(basic_identifier &id) = 0;
 
   /**
    * Prints the identifier to the given stream.

@@ -482,10 +482,10 @@ public:
    * @param compile_type The compile type of the condition
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect::t_compile_type compiler_type) const
+  std::string evaluate(basic_dialect::t_compile_type compile_type) const
   {
     std::stringstream str;
-    str << operand << " (" << cond.evaluate(compiler_type) << ")";
+    str << operand << " (" << cond.evaluate(compile_type) << ")";
     return str.str();
   }
 

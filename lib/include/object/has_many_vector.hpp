@@ -187,12 +187,24 @@ public:
     return self();
   }
 
+  /**
+   * @brief Increments iterator with offset
+   *
+   * @param offset The offset to be incremented
+   * @return Reference to incremented iterator
+   */
   self& operator+=(difference_type offset)
   {
     iter_ += offset;
     return *this;
   }
 
+  /**
+   * @brief Decrements iterator with offset
+   *
+   * @param offset The offset to be decremented
+   * @return Reference to decremented iterator
+   */
   self& operator-=(difference_type offset)
   {
     iter_ -= offset;
@@ -200,27 +212,55 @@ public:
 
   }
 
+  /**
+   * @brief Increments iterator with offset
+   *
+   * @param offset The offset to be incremented
+   * @return New incremented iterator
+   */
   self operator+(difference_type offset)
   {
     self tmp = *this;
     return tmp += offset;
   }
 
+  /**
+   * @brief Decrements iterator with offset
+   *
+   * @param offset The offset to be decremented
+   * @return New decremented iterator
+   */
   self operator-(difference_type offset)
   {
     self tmp = *this;
     return tmp -= offset;
   }
 
+  /**
+   * Increment given iterator with the given
+   * offset.
+   * 
+   * @param offset Increment offset value
+   * @param out Iterator to increment
+   * @return Incremented iterator
+   */
   friend const self operator+(difference_type offset, self out)
   {
     out.iter_ += offset;
     return out;
   }
 
+  //@{
+  /**
+   * Return the current value
+   * represented by the iterator
+   * 
+   * @return The current value
+   */
   value_type operator->() const { return (*iter_)->value(); }
   value_type operator*() const { return (*iter_)->value(); }
   value_type get() const { return (*iter_)->value(); }
+  //@}
 
 private:
   friend class has_many<T, std::vector>;
@@ -471,15 +511,32 @@ public:
     return tmp -= offset;
   }
 
+  /**
+   * Increment given iterator with the given
+   * offset.
+   * 
+   * @param offset Increment offset value
+   * @param out Iterator to increment
+   * @return Incremented iterator
+   */
   friend const self operator+(difference_type offset, self out)
   {
     out.iter_ += offset;
     return out;
   }
 
+  //@{
+  /**
+   * Return the current value
+   * represented by the iterator
+   * 
+   * @return The current value
+   */
   const value_type operator->() const { return get(); }
   const value_type operator*() const { return get(); }
   const value_type get() const { return (*iter_)->value(); }
+  //@}
+  
 private:
   friend class has_many<T, std::vector>;
   friend class basic_has_many<T, std::vector>;

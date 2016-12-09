@@ -24,6 +24,10 @@ namespace oos {
 
 class basic_identifier;
 
+/**
+ * Base class for all pointer object
+ * which can contain an identifiable
+ */
 class OOS_API identifiable_holder
 {
 public:

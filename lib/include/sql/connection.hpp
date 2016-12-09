@@ -44,10 +44,37 @@ public:
    * @param dns The database connection string
    */
   explicit connection(const std::string &dns);
+  
+  /**
+   * Copies a given connection
+   * 
+   * @param x The connection to copy
+   */
   connection(const connection &x);
+
+  /**
+   * Copy moves a given connection
+   * 
+   * @param x The connection to copy move
+   */
   connection(connection &&x);
+
+  /**
+   * Assigns from the given connection
+   * 
+   * @param x The connection to assign
+   * @return The reference to the assigned connection
+   */
   connection& operator=(const connection &x);
+
+  /**
+   * Assigns moves from the given connection
+   * 
+   * @param x The connection to assign move
+   * @return The reference to the assigned connection
+   */
   connection& operator=(connection &&x);
+
   ~connection();
 
   /**

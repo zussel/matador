@@ -305,6 +305,14 @@ public:
     return *this;
   }
 
+  /**
+   * Creates an update statement without
+   * any settings. Sets for all column value pairs
+   * attributes column and values.
+   *
+   * @param colvalues The column name and value list
+   * @return A reference to the query.
+   */
   query& update(const std::initializer_list<std::pair<std::string, oos::any>> &colvalues)
   {
     reset(t_query_command::UPDATE);
@@ -646,6 +654,14 @@ public:
     return *this;
   }
 
+  /**
+   * Initializes the values of an insert statement
+   * from the given initializer_list. The list consists
+   * of any objects representing the values.
+   * 
+   * @param values The values to set.
+   * @return A reference to the query.
+   */
   query& values(const std::initializer_list<oos::any> &values)
   {
     std::unique_ptr<detail::values> vals(new detail::values);
@@ -659,6 +675,14 @@ public:
     return *this;
   }
 
+  /**
+   * Creates an update statement without
+   * any settings. Sets for all column value pairs
+   * attributes column and values.
+   *
+   * @param colvalues The column name and value list
+   * @return A reference to the query.
+   */
   query& update(const std::initializer_list<std::pair<std::string, oos::any>> &colvalues)
   {
     reset(t_query_command::UPDATE);
@@ -677,6 +701,13 @@ public:
     return *this;
   }
 
+  /**
+   * Appends all columns from initializer_list
+   * to a select statement.
+   * 
+   * @param colnames The column list to select
+   * @return A reference to the query.
+   */
   query& select(const std::initializer_list<std::string> &colnames)
   {
     reset(t_query_command::SELECT);
@@ -695,6 +726,7 @@ public:
     state = QUERY_SELECT;
     return *this;
   }
+
   /**
    * @brief Creates a select statement with the
    * given columns.
