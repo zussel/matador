@@ -46,8 +46,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7c68884a875071f2ddf1bb4137bc5867"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28ab6e78bfd0d8033d770ba6fb539a84"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__identifier/index.html#a28ab6e78bfd0d8033d770ba6fb539a84">isolate</a> ()=0</td></tr>
 <tr class="separator:a28ab6e78bfd0d8033d770ba6fb539a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a432d01099327584c35f0c46011709e14"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__identifier/index.html#a432d01099327584c35f0c46011709e14">share_with</a> (<a class="el" href="/api/classoos_1_1basic__identifier/index.html">basic_identifier</a> &amp;id)=0</td></tr>
-<tr class="separator:a432d01099327584c35f0c46011709e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa807e724d1aef6d9f168fed6bb7e0f35"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__identifier/index.html#aa807e724d1aef6d9f168fed6bb7e0f35">share_with</a> (<a class="el" href="/api/classoos_1_1basic__identifier/index.html">basic_identifier</a> &amp;id)=0</td></tr>
+<tr class="separator:aa807e724d1aef6d9f168fed6bb7e0f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41ff297bc10543b0e509ed144a5a92b7"><td class="memItemLeft" align="right" valign="top">virtual std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__identifier/index.html#a41ff297bc10543b0e509ed144a5a92b7">print</a> (std::ostream &amp;out) const =0</td></tr>
 <tr class="separator:a41ff297bc10543b0e509ed144a5a92b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88640e53b6d019d6f979c50f556d9e15"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__identifier/index.html#a88640e53b6d019d6f979c50f556d9e15">is_valid</a> () const =0</td></tr>
@@ -540,8 +540,8 @@ True if treated as plain value </dd></dl>
 
 </div>
 </div>
-<a id="a432d01099327584c35f0c46011709e14"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a432d01099327584c35f0c46011709e14">&sect;&nbsp;</a></span>share_with()</h2>
+<a id="aa807e724d1aef6d9f168fed6bb7e0f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa807e724d1aef6d9f168fed6bb7e0f35">&sect;&nbsp;</a></span>share_with()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -550,7 +550,7 @@ True if treated as plain value </dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void oos::basic_identifier::share_with </td>
+          <td class="memname">virtual bool oos::basic_identifier::share_with </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="/api/classoos_1_1basic__identifier/index.html">basic_identifier</a> &amp;&#160;</td>
           <td class="paramname"><em>id</em></td><td>)</td>
@@ -570,8 +570,9 @@ True if treated as plain value </dd></dl>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>True if value was successfully shared. </dd></dl>
 
-<p>Implemented in <a class="el" href="/api/classoos_1_1identifier_3_01std_1_1string_01_4/index.html#a7c4c9e1e79369725020fe3e6156d28c3">oos::identifier&lt; std::string &gt;</a>, and <a class="el" href="/api/classoos_1_1identifier_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__integral_3_01_t_01_4_1_1value_01_4_1_1type_01_4/index.html#adc9b0e97404da5d84cdba5901e82f616">oos::identifier&lt; T, typename std::enable_if&lt; std::is_integral&lt; T &gt;::value &gt;::type &gt;</a>.</p>
+<p>Implemented in <a class="el" href="/api/classoos_1_1identifier_3_01std_1_1string_01_4/index.html#aa3d378e16de7ffca6681860361d991a6">oos::identifier&lt; std::string &gt;</a>, and <a class="el" href="/api/classoos_1_1identifier_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__integral_3_01_t_01_4_1_1value_01_4_1_1type_01_4/index.html#ad0be5558719435b962d147f54955db30">oos::identifier&lt; T, typename std::enable_if&lt; std::is_integral&lt; T &gt;::value &gt;::type &gt;</a>.</p>
 
 </div>
 </div>

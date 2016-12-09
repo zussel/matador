@@ -70,17 +70,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api
 <tr class="memitem:a6a782aaa33242b3212c8cff17ea52a94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1transaction/index.html#a6a782aaa33242b3212c8cff17ea52a94">rollback</a> ()</td></tr>
 <tr class="memdesc:a6a782aaa33242b3212c8cff17ea52a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rollback transaction.  <a href="#a6a782aaa33242b3212c8cff17ea52a94">More...</a><br /></td></tr>
 <tr class="separator:a6a782aaa33242b3212c8cff17ea52a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2a3fee4816ffe557e480b84d88621ea"><td class="memTemplParams" colspan="2"><a id="af2a3fee4816ffe557e480b84d88621ea"></a>
-template&lt;class T &gt; </td></tr>
-<tr class="memitem:af2a3fee4816ffe557e480b84d88621ea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>on_insert</b> (object_proxy *proxy)</td></tr>
+<tr class="memitem:af2a3fee4816ffe557e480b84d88621ea"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:af2a3fee4816ffe557e480b84d88621ea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1transaction/index.html#af2a3fee4816ffe557e480b84d88621ea">on_insert</a> (object_proxy *proxy)</td></tr>
 <tr class="separator:af2a3fee4816ffe557e480b84d88621ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b85f08847233af800230b78c27bf808"><td class="memTemplParams" colspan="2"><a id="a3b85f08847233af800230b78c27bf808"></a>
-template&lt;class T &gt; </td></tr>
-<tr class="memitem:a3b85f08847233af800230b78c27bf808"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>on_update</b> (object_proxy *proxy)</td></tr>
+<tr class="memitem:a3b85f08847233af800230b78c27bf808"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a3b85f08847233af800230b78c27bf808"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1transaction/index.html#a3b85f08847233af800230b78c27bf808">on_update</a> (object_proxy *proxy)</td></tr>
 <tr class="separator:a3b85f08847233af800230b78c27bf808"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a730393723aa47f4d8092a21dc43f3daa"><td class="memTemplParams" colspan="2"><a id="a730393723aa47f4d8092a21dc43f3daa"></a>
-template&lt;class T &gt; </td></tr>
-<tr class="memitem:a730393723aa47f4d8092a21dc43f3daa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>on_delete</b> (object_proxy *proxy)</td></tr>
+<tr class="memitem:a730393723aa47f4d8092a21dc43f3daa"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a730393723aa47f4d8092a21dc43f3daa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1transaction/index.html#a730393723aa47f4d8092a21dc43f3daa">on_delete</a> (object_proxy *proxy)</td></tr>
 <tr class="separator:a730393723aa47f4d8092a21dc43f3daa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -303,6 +300,87 @@ Friends</h2></td></tr>
 
 <p>Returns the unique id of the transaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The unique id of the transaction </dd></dl>
+
+</div>
+</div>
+<a id="a730393723aa47f4d8092a21dc43f3daa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a730393723aa47f4d8092a21dc43f3daa">&sect;&nbsp;</a></span>on_delete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::transaction::on_delete </td>
+          <td>(</td>
+          <td class="paramtype">object_proxy *&#160;</td>
+          <td class="paramname"><em>proxy</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Called when deletion took place.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the deleted object </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af2a3fee4816ffe557e480b84d88621ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2a3fee4816ffe557e480b84d88621ea">&sect;&nbsp;</a></span>on_insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::transaction::on_insert </td>
+          <td>(</td>
+          <td class="paramtype">object_proxy *&#160;</td>
+          <td class="paramname"><em>proxy</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Called when insertion took place.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the inserted object </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3b85f08847233af800230b78c27bf808"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b85f08847233af800230b78c27bf808">&sect;&nbsp;</a></span>on_update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::transaction::on_update </td>
+          <td>(</td>
+          <td class="paramtype">object_proxy *&#160;</td>
+          <td class="paramname"><em>proxy</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Called when update took place.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the updated object </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

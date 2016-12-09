@@ -34,8 +34,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3e2b6ced0d3e516379952ad77772cf5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab44b9aee5ae6b9fc45ba4d641ff92d90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1statement/index.html#ab44b9aee5ae6b9fc45ba4d641ff92d90">reset</a> ()</td></tr>
 <tr class="separator:ab44b9aee5ae6b9fc45ba4d641ff92d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e265882d89248fd722117683bb3a8a3"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1statement/index.html#a1e265882d89248fd722117683bb3a8a3">bind</a> (T *o, size_t index)</td></tr>
-<tr class="separator:a1e265882d89248fd722117683bb3a8a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65e16164b2db648742b7be8e76c78f44"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1statement/index.html#a65e16164b2db648742b7be8e76c78f44">bind</a> (T *obj, size_t index)</td></tr>
+<tr class="separator:a65e16164b2db648742b7be8e76c78f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a4d9189911cda9b70595eb118d10bd3"><td class="memTemplParams" colspan="2">template&lt;class V &gt; </td></tr>
 <tr class="memitem:a9a4d9189911cda9b70595eb118d10bd3"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1statement/index.html#a9a4d9189911cda9b70595eb118d10bd3">bind</a> (V &amp;val, size_t index)</td></tr>
 <tr class="separator:a9a4d9189911cda9b70595eb118d10bd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -46,10 +46,10 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;class T&gt;<br />
 class oos::statement&lt; T &gt;</h3>
 
-<p>The statement class represents a prepared sql statement.</p>
+<p>The statement class represents a prepared sql statement for a concrete object type.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">The</td><td>object type of the statement to work on </td></tr>
+    <tr><td class="paramname">T</td><td>The object type of the statement to work on </td></tr>
   </table>
   </dd>
 </dl>
@@ -153,8 +153,8 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1e265882d89248fd722117683bb3a8a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e265882d89248fd722117683bb3a8a3">&sect;&nbsp;</a></span>bind() <span class="overload">[1/2]</span></h2>
+<a id="a65e16164b2db648742b7be8e76c78f44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65e16164b2db648742b7be8e76c78f44">&sect;&nbsp;</a></span>bind() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +168,7 @@ template&lt;class T &gt; </div>
           <td class="memname">size_t <a class="el" href="/api/classoos_1_1statement/index.html">oos::statement</a>&lt; T &gt;::bind </td>
           <td>(</td>
           <td class="paramtype">T *&#160;</td>
-          <td class="paramname"><em>o</em>, </td>
+          <td class="paramname"><em>obj</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -191,8 +191,8 @@ template&lt;class T &gt; </div>
 <p>Bind an object to the statement starting at the given position index.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">o</td><td>The object to bind </td></tr>
-    <tr><td class="paramname">pos</td><td>The index where to start the binding </td></tr>
+    <tr><td class="paramname">obj</td><td>The object to bind </td></tr>
+    <tr><td class="paramname">index</td><td>The index where to start the binding </td></tr>
   </table>
   </dd>
 </dl>
@@ -344,6 +344,7 @@ template&lt;class T &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this </dd></dl>
 
 </div>
 </div>
