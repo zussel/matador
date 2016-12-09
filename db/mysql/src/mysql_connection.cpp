@@ -45,7 +45,7 @@ void mysql_connection::open(const std::string &connection)
 {
   // dns syntax:
   // user[:passwd]@host[:port]/db
-  static const std::regex DNS_RGX("([a-zA-Z0-9]+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?/([a-zA-Z0-9]+)");
+  static const std::regex DNS_RGX("(.+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?/(.+)");
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
