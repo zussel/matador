@@ -48,7 +48,7 @@ void mssql_connection::open(const std::string &connection)
 {
   // dns syntax:
   // user[:passwd]@host[:port]/instance/db [(Drivername)]
-  static const std::regex DNS_RGX("([a-zA-Z0-9]+?)(?::([a-zA-Z0-9]+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/([a-zA-Z0-9]+?))?/([a-zA-Z0-9]+?)(?:\\s+((?:[a-zA-Z0-9.-]|\\s)+))?");
+  static const std::regex DNS_RGX("([a-zA-Z0-9]+?)(?::(.+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/([a-zA-Z0-9]+?))?/([a-zA-Z0-9]+?)(?:\\s+((?:[a-zA-Z0-9.-]|\\s)+))?");
   std::smatch what;
 
   if (!std::regex_match(connection, what, DNS_RGX)) {
