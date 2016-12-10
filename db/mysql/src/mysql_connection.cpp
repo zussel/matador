@@ -22,6 +22,7 @@
 #include "mysql_exception.hpp"
 
 #include <sstream>
+#include <regex>
 
 using namespace std::placeholders;
 
@@ -42,39 +43,32 @@ mysql_connection::~mysql_connection()
 
 void mysql_connection::open(const std::string &connection)
 {
-  // parse user[:passwd]@host/db
-  
-  std::string con = connection;
-  std::string::size_type pos = con.find('@');
-  std::string user, passwd;
-  bool has_pwd = true;
-  if (pos == std::string::npos) {
-	  throw_error("mysql:open", "invalid dsn: " + connection);
-  } else {
-    // try to find colon (:)
-    std::string credentials = con.substr(0, pos);
-    std::string::size_type colpos = credentials.find(':');
-    if (colpos != std::string::npos) {
-      // found colon, extract user and passwd
-      user = credentials.substr(0, colpos);
-      passwd = credentials.substr(colpos + 1, pos);
-    } else {
-      // only user name given
-      user = credentials.substr(0, pos);
-      has_pwd = false;
-    }
+  // dns syntax:
+  // user[:passwd]@host[:port]/db
+  static const std::regex DNS_RGX("([a-zA-Z0-9]+?)(?::([a-zA-Z0-9]+?))?@([^:]+?)(?::([1-9][0-9]*?))?/([a-zA-Z0-9]+)");
+  std::smatch what;
+
+  if (!std::regex_match(connection, what, DNS_RGX)) {
+    throw_error("mysql:open", "invalid dns: " + connection);
   }
 
-  con = con.substr(pos + 1);
-  pos = con.find('/');
-  std::string host = con.substr(0, pos);
-  db_ = con.substr(pos + 1);
+  const std::string user = what[1].str();
+  const std::string passwd = what[2].str();
+  const std::string host = what[3].str();
 
-  if (mysql_init(&mysql_) == 0) {
-	  throw_error("mysql", "initialization failed");
+  unsigned port = 0;
+  if (what[4].matched) {
+    port = unsigned(std::stoi(what[4].str()));
   }
 
-  if (mysql_real_connect(&mysql_, host.c_str(), user.c_str(), (has_pwd ? passwd.c_str() : 0), db_.c_str(), 0, NULL, 0) == NULL) {
+  db_ = what[5].str();
+
+
+  if (!mysql_init(&mysql_)) {
+    throw_error("mysql", "initialization failed");
+  }
+
+  if (!mysql_real_connect(&mysql_, host.c_str(), user.c_str(), !passwd.empty() ? passwd.c_str() : nullptr, db_.c_str(), port, nullptr, 0)) {
     // close all handles
     mysql_close(&mysql_);
     // throw exception

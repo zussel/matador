@@ -23,6 +23,8 @@
 
 #include "tools/string.hpp"
 
+#include <regex>
+
 using namespace std::placeholders;
 
 namespace oos {
@@ -44,43 +46,33 @@ mssql_connection::~mssql_connection()
 
 void mssql_connection::open(const std::string &connection)
 {
-  // parse user[:passwd]@host/instance/db ([Drivername])
-  std::string con = connection;
-  std::string::size_type pos = con.find('@');
-  std::string user, passwd;
-  std::string driver;
-//  bool has_pwd = true;
-  if (pos == std::string::npos) {
-	  throw_error("mssql:open", "invalid dsn: " + connection);
-  } else {
-    // try to find colon (:)
-    std::string credentials = con.substr(0, pos);
-    std::string::size_type colpos = credentials.find(':');
-    if (colpos != std::string::npos) {
-      // found colon, extract user and passwd
-      user = credentials.substr(0, colpos);
-      passwd = credentials.substr(colpos + 1, pos);
-    } else {
-      // only user name given
-      user = credentials.substr(0, pos);
-    }
-  }
-  // get connection part
-  con = con.substr(pos + 1);
-  pos = con.find_last_of('/');
-  std::string host = con.substr(0, pos);
-  db_ = con.substr(pos + 1);
+  // dns syntax:
+  // user[:passwd]@host[:port]/instance/db [(Drivername)]
+  static const std::regex DNS_RGX("([a-zA-Z0-9]+?)(?::([a-zA-Z0-9]+?))?@([^:]+?)(?::([1-9][0-9]*?))?(?:/([a-zA-Z0-9]+?))?/([a-zA-Z0-9]+?)(?:\\s+((?:[a-zA-Z0-9.-]|\\s)+))?");
+  std::smatch what;
 
-  // get driver
-  pos = db_.find('(');
-  if (pos != std::string::npos) {
-    driver = db_.substr(pos+1);
-    db_ = db_.substr(0, pos);
-    db_ = trim(db_);
-    pos = driver.find(')');
-    driver = driver.substr(0, pos);
-  } else {
-    driver = "SQL Server";
+  if (!std::regex_match(connection, what, DNS_RGX)) {
+    throw_error("mssql:open", "invalid dns: " + connection);
+  }
+
+  const std::string user = what[1].str();
+  const std::string passwd = what[2].str();
+
+  // get connection part
+  const std::string host = what[3].str();
+  std::string port = "1433";
+  if (what[4].matched) {
+    port = what[4].str();
+  }
+
+  // Should we just ignore the "instance" part?
+  // const std::string instance = what[5].str();
+
+  db_ = what[6].str();
+
+  std::string driver = "SQL Server";
+  if (what[7].matched) {
+    driver = what[7].str();
   }
 
   SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &odbc_);
@@ -103,7 +95,7 @@ void mssql_connection::open(const std::string &connection)
 
   SQLSetConnectAttr(connection_, SQL_LOGIN_TIMEOUT, (SQLPOINTER *)5, 0);
 
-  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ";Protocol=TCPIP;Port=1433;DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
+  std::string dns("DRIVER={" + driver + "};SERVER=" + host + ";Protocol=TCPIP;Port=" + port + ";DATABASE=" + db_ + ";UID=" + user + ";PWD=" + passwd + ";");
 
   SQLCHAR retconstring[1024];
   ret = SQLDriverConnect(connection_, 0, (SQLCHAR*)dns.c_str(), SQL_NTS, retconstring, 1024, NULL,SQL_DRIVER_NOPROMPT);
