@@ -138,7 +138,7 @@ bool test_suite::run()
           return result;
         } else {
           unit_executer ue(summary_);
-          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), ue);
+          std::for_each(unit_test_map_.begin(), unit_test_map_.end(), std::ref(ue));
           std::cout << summary_;
           return ue.succeeded;
         }
