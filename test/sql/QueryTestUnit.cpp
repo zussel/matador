@@ -17,6 +17,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
+  add_test("quoted_columns", std::bind(&QueryTestUnit::test_quoted_columns, this), "test query value creator");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
@@ -129,6 +130,45 @@ void QueryTestUnit::test_query_value_creator()
   auto val = qvc.create_from_any(ac);
 
   UNIT_ASSERT_EQUAL(val->get<char>(), 'c', "values must be equal");
+}
+
+void QueryTestUnit::test_quoted_columns()
+{
+  connection_.open();
+
+  query<> q(connection_, "quotes");
+
+  q.create({make_typed_column<std::string>("from"), make_typed_column<std::string>("to")}).execute();
+
+  // check table description
+  std::vector<std::string> columns = { "from", "to"};
+  std::vector<data_type > types = { oos::data_type::type_text, oos::data_type::type_text};
+  auto fields = connection_.describe("quotes");
+
+  for (auto &&field : fields) {
+    UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
+    UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+  }
+
+  q.insert({"from", "to"}).values({"Berlin", "London"}).execute();
+
+  auto res = q.select({"from", "to"}).from("quotes").execute();
+
+  for (auto row : res) {
+    UNIT_EXPECT_EQUAL("Berlin", row->at<std::string>("from"), "values must be equal");
+    UNIT_EXPECT_EQUAL("London", row->at<std::string>("to"), "values must be equal");
+  }
+
+  q.update({{"from", "Hamburg"}, {"to", "New York"}}).execute();
+
+  res = q.select({"from", "to"}).from("quotes").execute();
+
+  for (auto row : res) {
+    UNIT_EXPECT_EQUAL("Hamburg", row->at<std::string>("from"), "values must be equal");
+    UNIT_EXPECT_EQUAL("New York", row->at<std::string>("to"), "values must be equal");
+  }
+
+  q.drop().execute();
 }
 
 void QueryTestUnit::test_describe()

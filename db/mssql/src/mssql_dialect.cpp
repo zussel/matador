@@ -20,6 +20,8 @@ mssql_dialect::mssql_dialect()
   replace_token(detail::token::COMMIT, "COMMIT");
   replace_token(detail::token::ROLLBACK, "ROLLBACK");
   replace_token(detail::token::TOP, "TOP");
+  replace_token(detail::token::START_QUOTE, "[");
+  replace_token(detail::token::END_QUOTE, "]");
 }
 
 const char* mssql_dialect::type_string(oos::data_type type) const
@@ -76,6 +78,8 @@ data_type mssql_dialect::string_type(const char *type) const
     return data_type::type_text;
   } else if (strcmp(type, "varchar") == 0) {
     return data_type::type_varchar;
+  } else if (strcmp(type, "text") == 0) {
+    return data_type::type_text;
   } else {
     return data_type::type_unknown;
   }

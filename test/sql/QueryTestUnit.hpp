@@ -23,6 +23,7 @@ public:
 
   void test_datatypes();
   void test_query_value_creator();
+  void test_quoted_columns();
   void test_describe();
   void test_identifier();
   void test_create();

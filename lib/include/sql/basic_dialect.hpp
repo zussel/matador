@@ -219,6 +219,8 @@ private:
     {detail::token::BEGIN, "BEGIN TRANSACTION"},
     {detail::token::COMMIT, "COMMIT TRANSACTION"},
     {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
+    {detail::token::START_QUOTE, "\""},
+    {detail::token::END_QUOTE, "\""},
     {detail::token::NONE, ""}
   };
 };

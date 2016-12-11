@@ -81,6 +81,8 @@ struct OOS_API token
     COMMIT,
     TABLE,
     ROLLBACK,
+    START_QUOTE,
+    END_QUOTE,
     NONE
   };
 
