@@ -56,6 +56,8 @@
 #endif
 #endif
 
+#include <cstdlib> // EXIT_SUCCESS
+
 using namespace oos;
 
 int main(int argc, char *argv[])
@@ -114,5 +116,5 @@ int main(int argc, char *argv[])
 //  suite.register_unit(new JsonTestUnit());
 
   bool result = suite.run();
-  return result ? 0 : 1;
+  return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }
