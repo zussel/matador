@@ -17,7 +17,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
-  add_test("quoted_columns", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test query value creator");
+  add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test query value creator");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
