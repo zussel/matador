@@ -32,7 +32,7 @@ void ConditionUnitTest::test_logical_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond1.evaluate(dialect), "name <> 'Hans'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond1.evaluate(dialect), "\"name\" <> 'Hans'", "expected evaluated condition is false");
 
   oos::column age("age");
 
@@ -40,7 +40,7 @@ void ConditionUnitTest::test_logical_condition()
 
   auto cond2 = age != 9;
 
-  UNIT_ASSERT_EQUAL(cond2.evaluate(dialect), "age <> 9", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond2.evaluate(dialect), "\"age\" <> 9", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_and_condition()
@@ -53,7 +53,7 @@ void ConditionUnitTest::test_and_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(name <> 'Hans' AND name <> 'Dieter')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"name\" <> 'Hans' AND \"name\" <> 'Dieter')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_or_condition()
@@ -66,7 +66,7 @@ void ConditionUnitTest::test_or_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "name = 'Hans' OR name = 'Dieter'", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "\"name\" = 'Hans' OR \"name\" = 'Dieter'", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_not_condition()
@@ -79,7 +79,7 @@ void ConditionUnitTest::test_not_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "NOT (name <> 'Hans')", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "NOT (\"name\" <> 'Hans')", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_in_condition()
@@ -91,11 +91,11 @@ void ConditionUnitTest::test_in_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(age <> 7 AND age IN (7,5,5,8))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7,5,5,8))", "expected evaluated condition is false");
 
   cond = age != 7 && oos::in(age,  {7});
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(age <> 7 AND age IN (7))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" IN (7))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_in_query_condition()
@@ -108,7 +108,7 @@ void ConditionUnitTest::test_in_query_condition()
 
   auto cond = age != 7 && oos::in(name, q);
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(age <> 7 AND name IN (SELECT name FROM test ))", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"name\" IN (SELECT \"name\" FROM \"test\" ))", "expected evaluated condition is false");
 }
 
 void ConditionUnitTest::test_between_condition()
@@ -120,7 +120,7 @@ void ConditionUnitTest::test_between_condition()
 
   TestDialect dialect;
 
-  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(age <> 7 AND age BETWEEN 21 AND 30)", "expected evaluated condition is false");
+  UNIT_ASSERT_EQUAL(cond.evaluate(dialect), "(\"age\" <> 7 AND \"age\" BETWEEN 21 AND 30)", "expected evaluated condition is false");
 }
 
 

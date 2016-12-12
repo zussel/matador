@@ -59,7 +59,7 @@ void MSSQLDialectTestUnit::test_query_select_sub_select()
 
   q.select().where(oos::in(id, subselect));
 
-  UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE id IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false), "select limit isn't as expected");
+  UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE [id] IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false), "select limit isn't as expected");
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()

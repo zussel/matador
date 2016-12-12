@@ -156,9 +156,9 @@ public:
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << field_.name << " " << operand << " " << value;
+      str << dialect.quote_identifier(field_.name) << " " << operand << " " << value;
     } else {
-      str << field_.name << " " << operand << " " << "?";
+      str << dialect.quote_identifier(field_.name) << " " << operand << " " << "?";
     }
     return str.str();
   }
@@ -181,9 +181,9 @@ public:
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << field_.name << " " << operand << " '" << value << "'";
+      str << dialect.quote_identifier(field_.name) << " " << operand << " '" << value << "'";
     } else {
-      str << field_.name << " " << operand << " " << "?";
+      str << dialect.quote_identifier(field_.name) << " " << operand << " " << "?";
     }
     return str.str();
   }
@@ -203,10 +203,10 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    str << value << " " << operand << " " << field_.name;
+    str << value << " " << operand << " " << dialect.quote_identifier(field_.name);
     return str.str();
   }
 };
@@ -224,10 +224,10 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    str << "'" << value << "' " << operand << " " << field_.name;
+    str << "'" << value << "' " << operand << " " << dialect.quote_identifier(field_.name);
     return str.str();
   }
 };
@@ -274,7 +274,7 @@ public:
   virtual std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
-    str << field_.name << " IN (";
+    str << dialect.quote_identifier(field_.name) << " IN (";
     if (args_.size() > 1) {
       auto first = args_.begin();
       auto last = args_.end() - 1;
@@ -351,7 +351,7 @@ public:
    */
   std::string evaluate(basic_dialect &dialect) const
   {
-    std::string result(field_.name + " IN (");
+    std::string result(dialect.quote_identifier(field_.name) + " IN (");
     result += dialect.build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
@@ -396,9 +396,9 @@ public:
   {
     std::stringstream str;
     if (dialect.compile_type() == basic_dialect::DIRECT) {
-      str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
+      str << dialect.quote_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
     } else {
-      str << field_.name << " BETWEEN ? AND ?";
+      str << dialect.quote_identifier(field_.name) << " BETWEEN ? AND ?";
     }
     return str.str();
   }
