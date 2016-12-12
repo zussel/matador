@@ -35,6 +35,13 @@ columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
   }
 }
 
+columns::columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets)
+  : token(COLUMNS)
+  , with_brackets_(with_brackets)
+{
+  columns_.assign(cols);
+}
+
 columns::columns(t_brackets with_brackets)
   : token(COLUMNS)
   , with_brackets_(with_brackets)
@@ -90,7 +97,7 @@ column columns::count_all()
   return count_all_;
 }
 
-columns columns::all_ = columns({column("*")}, WITHOUT_BRACKETS);
-column columns::count_all_ = column("COUNT(*)");
+columns columns::all_ = columns({std::make_shared<detail::unquoted_column>("*")}, WITHOUT_BRACKETS);
+column columns::count_all_ = detail::unquoted_column("COUNT(*)");
 
 }

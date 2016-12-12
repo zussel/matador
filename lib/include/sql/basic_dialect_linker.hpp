@@ -72,6 +72,7 @@ public:
   virtual void visit(const oos::detail::typed_varchar_column &) override;
   virtual void visit(const oos::detail::identifier_varchar_column &) override;
   virtual void visit(const oos::detail::basic_value_column &) override;
+  virtual void visit(const oos::detail::unquoted_column &) override;
   virtual void visit(const oos::detail::begin &) override;
   virtual void visit(const oos::detail::commit &) override;
   virtual void visit(const oos::detail::rollback &) override;

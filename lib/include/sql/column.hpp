@@ -81,6 +81,14 @@ struct OOS_API columns : public detail::token
   columns(std::initializer_list<column> cols, t_brackets with_brackets = WITH_BRACKETS);
 
   /**
+   * @brief Create a list of columns containing given columns and bracket type
+   *
+   * @param cols The list of columns
+   * @param with_brackets The bracket type
+   */
+  columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets = WITH_BRACKETS);
+
+  /**
    * @brief Creates an empty list of columns.
    *
    * @param with_brackets The bracket type
@@ -271,6 +279,16 @@ struct OOS_API basic_value_column : public column
   }
 
   std::unique_ptr<basic_value> value_;
+};
+
+struct OOS_API unquoted_column : public column
+{
+  unquoted_column(const std::string &col) : column(col) {}
+
+  virtual void accept(token_visitor &visitor) override
+  {
+    visitor.visit(*this);
+  }
 };
 
 template < class T >

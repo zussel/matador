@@ -147,7 +147,11 @@ void basic_dialect_linker::visit(const oos::detail::insert &insert)
 
 void basic_dialect_linker::visit(const oos::detail::from &from)
 {
-  dialect().append_to_result(token_string(from.type) + " " + quote_string(from.table) + " ");
+  if (from.table.empty()) {
+    dialect().append_to_result(token_string(from.type) + " ");
+  } else {
+    dialect().append_to_result(token_string(from.type) + " " + quote_string(from.table) + " ");
+  }
 }
 
 void basic_dialect_linker::visit(const oos::detail::where &where)
@@ -159,20 +163,20 @@ void basic_dialect_linker::visit(const oos::detail::where &where)
 
 void basic_dialect_linker::visit(const oos::detail::basic_condition &cond)
 {
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 //  cond.evaluate(dialect().compile_type());
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_column_condition &cond)
 {
   dialect().inc_bind_count();
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_in_condition &cond)
 {
   dialect().inc_bind_count(cond.size());
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 }
 
 void basic_dialect_linker::visit(const oos::columns &cols)
@@ -238,6 +242,11 @@ void basic_dialect_linker::visit(const oos::detail::basic_value_column &col)
   visit(static_cast<const oos::column&>(col));
   dialect().append_to_result("=");
   col.value_->accept(*this);
+}
+
+void basic_dialect_linker::visit(const oos::detail::unquoted_column &col)
+{
+  dialect().append_to_result(col.name);
 }
 
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const

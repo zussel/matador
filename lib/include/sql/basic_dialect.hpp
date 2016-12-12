@@ -183,7 +183,7 @@ private:
   size_t bind_count_ = 0;
   size_t column_count_ = 0;
 
-  t_compile_type compile_type_;
+  t_compile_type compile_type_ = DIRECT;
 
   detail::basic_dialect_compiler* compiler_;
   detail::basic_dialect_linker* linker_;

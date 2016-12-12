@@ -159,7 +159,8 @@ void QueryTestUnit::test_quoted_columns()
     UNIT_EXPECT_EQUAL("London", row->at<std::string>("to"), "values must be equal");
   }
 
-  q.update({{"from", "Hamburg"}, {"to", "New York"}}).execute();
+  column from("from");
+  q.update({{"from", "Hamburg"}, {"to", "New York"}}).where(from == "Berlin").execute();
 
   res = q.select({"from", "to"}).from("quotes").execute();
 
