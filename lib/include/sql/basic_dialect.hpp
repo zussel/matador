@@ -143,6 +143,26 @@ public:
    */
   size_t column_count() const;
 
+  /**
+   * Wrap identifier quotes around a sql identifier keyword
+   *
+   * @param str Identifier to put quotes around
+   * @return The quoted identifier string
+   */
+  std::string quote_identifier(const std::string &str);
+
+  /**
+   * Escape identifier quotes inside identifiers. If
+   * skip_first_and_last is set to true, first and last
+   * character is ommited (when identifier is already wrapped
+   * with quotes
+   *
+   * @param str Identifier to be escaped
+   * @param skip_first_and_last If true ommit first and last character
+   * @return The escaped identifier
+   */
+  std::string escape_quotes_in_identifier(const std::string &str, bool skip_first_and_last);
+
 protected:
   /// @cond OOS_DEV
 

@@ -84,7 +84,6 @@ protected:
 
   void append_to_result(basic_dialect &dialect, const std::string &part);
 
-  std::string quote_string(const std::string &tok);
 private:
   friend class oos::basic_dialect;
 

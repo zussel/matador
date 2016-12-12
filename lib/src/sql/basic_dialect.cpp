@@ -131,6 +131,17 @@ size_t basic_dialect::column_count() const
   return column_count_;
 }
 
+std::string basic_dialect::quote_identifier(const std::string &str)
+{
+  return token_at(detail::token::START_QUOTE) + str + token_at(detail::token::END_QUOTE);
+}
+
+std::string basic_dialect::escape_quotes_in_identifier(const std::string &str, bool skip_first_and_last)
+{
+  // Todo: implement
+  return str;
+}
+
 std::string basic_dialect::token_at(detail::token::t_token tok) const
 {
   return tokens.at(tok);
