@@ -146,7 +146,7 @@ struct OOS_API columns : public detail::token
 
 private:
   static columns all_;                           /**< The all columns object */
-  static column count_all_;                      /**< An count all column object */
+  static detail::unquoted_column count_all_;                      /**< An count all column object */
 };
 
 namespace detail {

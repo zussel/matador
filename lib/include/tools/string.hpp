@@ -48,6 +48,16 @@ OOS_API size_t split(const std::string &str, char delim, std::vector<std::string
 OOS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
 /**
+ * Replaces all occurences of string from in given string
+ * with string to.
+ *
+ * @param in Source string where the replacement takes place
+ * @param from The string to be replaced
+ * @param to The new string
+ */
+OOS_API void replace_all(std::string &in, const std::string &from, const std::string &to);
+
+/**
  * The date_format struct represents
  * common date format string as ISO8601
  * and the likes.

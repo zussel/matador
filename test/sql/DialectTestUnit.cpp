@@ -16,6 +16,7 @@ using namespace oos;
 DialectTestUnit::DialectTestUnit()
   : unit_test("dialect", "dialect test unit")
 {
+  add_test("escaping", std::bind(&DialectTestUnit::test_escaping_quotes, this), "test dialect escaping");
   add_test("create", std::bind(&DialectTestUnit::test_create_query, this), "test create dialect");
   add_test("drop", std::bind(&DialectTestUnit::test_drop_query, this), "test drop dialect");
   add_test("insert", std::bind(&DialectTestUnit::test_insert_query, this), "test insert dialect");
@@ -32,6 +33,17 @@ DialectTestUnit::DialectTestUnit()
   add_test("update_where_prepare", std::bind(&DialectTestUnit::test_update_where_prepare_query, this), "test prepared update where dialect");
   add_test("delete", std::bind(&DialectTestUnit::test_delete_query, this), "test delete dialect");
   add_test("delete_where", std::bind(&DialectTestUnit::test_delete_where_query, this), "test delete where dialect");
+}
+
+void DialectTestUnit::test_escaping_quotes()
+{
+  TestDialect dialect;
+
+  std::string str("baba\"gaga");
+
+  dialect.escape_quotes_in_identifier(str);
+
+  UNIT_ASSERT_EQUAL("baba\"\"gaga", str, "strings must be equal");
 }
 
 void DialectTestUnit::test_create_query()

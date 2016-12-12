@@ -98,6 +98,6 @@ column columns::count_all()
 }
 
 columns columns::all_ = columns({std::make_shared<detail::unquoted_column>("*")}, WITHOUT_BRACKETS);
-column columns::count_all_ = detail::unquoted_column("COUNT(*)");
+detail::unquoted_column columns::count_all_ = detail::unquoted_column("COUNT(*)");
 
 }

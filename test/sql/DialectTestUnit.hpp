@@ -13,6 +13,7 @@ class DialectTestUnit : public oos::unit_test
 public:
   DialectTestUnit();
 
+  void test_escaping_quotes();
   void test_create_query();
   void test_drop_query();
   void test_insert_query();

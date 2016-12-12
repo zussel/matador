@@ -42,12 +42,12 @@ void basic_dialect_linker::visit(oos::detail::query &q)
 
 void basic_dialect_linker::visit(const oos::detail::create &create)
 {
-  dialect().append_to_result(token_string(create.type) + " " + dialect_->quote_identifier(create.table) + " ");
+  dialect().append_to_result(token_string(create.type) + " " + dialect_->prepare_identifier(create.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::drop &drop)
 {
-  dialect().append_to_result(token_string(drop.type) + " " + dialect_->quote_identifier(drop.table) + " ");
+  dialect().append_to_result(token_string(drop.type) + " " + dialect_->prepare_identifier(drop.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::select &select)
@@ -67,7 +67,7 @@ void basic_dialect_linker::visit(const oos::detail::update &update)
 
 void basic_dialect_linker::visit(const oos::detail::tablename &table)
 {
-  dialect().append_to_result(dialect_->quote_identifier(table.tab) + " ");
+  dialect().append_to_result(dialect_->prepare_identifier(table.tab) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::set &set)
@@ -142,7 +142,7 @@ void basic_dialect_linker::visit(const oos::detail::group_by &by)
 
 void basic_dialect_linker::visit(const oos::detail::insert &insert)
 {
-  dialect().append_to_result(token_string(insert.type) + " " + dialect_->quote_identifier(insert.table) + " ");
+  dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::from &from)
@@ -150,7 +150,7 @@ void basic_dialect_linker::visit(const oos::detail::from &from)
   if (from.table.empty()) {
     dialect().append_to_result(token_string(from.type) + " ");
   } else {
-    dialect().append_to_result(token_string(from.type) + " " + dialect_->quote_identifier(from.table) + " ");
+    dialect().append_to_result(token_string(from.type) + " " + dialect_->prepare_identifier(from.table) + " ");
   }
 }
 
@@ -205,7 +205,7 @@ void basic_dialect_linker::visit(const oos::columns &cols)
 
 void basic_dialect_linker::visit(const oos::column &col)
 {
-  dialect().append_to_result(dialect_->quote_identifier(col.name));
+  dialect().append_to_result(dialect_->prepare_identifier(col.name));
   dialect().inc_column_count();
 }
 
