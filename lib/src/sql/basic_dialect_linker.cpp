@@ -122,7 +122,7 @@ void basic_dialect_linker::visit(const oos::detail::basic_value &val)
 
 void basic_dialect_linker::visit(const oos::detail::order_by &by)
 {
-  dialect().append_to_result(token_string(by.type) + " " + by.column + " ");
+  dialect().append_to_result(token_string(by.type) + " " + dialect().prepare_identifier(by.column) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::asc &asc)
@@ -137,7 +137,7 @@ void basic_dialect_linker::visit(const oos::detail::desc &desc)
 
 void basic_dialect_linker::visit(const oos::detail::group_by &by)
 {
-  dialect().append_to_result(token_string(by.type) + " " + by.column + " ");
+  dialect().append_to_result(token_string(by.type) + " " + dialect().prepare_identifier(by.column) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::insert &insert)
