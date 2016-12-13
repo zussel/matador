@@ -62,7 +62,7 @@ void sqlite_dialect_compiler::visit(const oos::detail::top &limit)
   column rowid("rowid");
   auto where_token = std::static_pointer_cast<detail::where>(*where_);
   auto subselect = oos::select({rowid}).from(tablename_).where(where_token->cond).limit(limit.limit_);
-  auto cond = make_condition(oos::in(rowid, subselect, &dialect_));
+  auto cond = make_condition(oos::in(rowid, subselect));
 
   where_token->cond.swap(cond);
 

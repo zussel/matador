@@ -26,6 +26,8 @@ mysql_dialect::mysql_dialect()
   replace_token(detail::token::BEGIN, "START TRANSACTION");
   replace_token(detail::token::COMMIT, "COMMIT");
   replace_token(detail::token::ROLLBACK, "ROLLBACK");
+  replace_token(detail::token::START_QUOTE, "`");
+  replace_token(detail::token::END_QUOTE, "`");
 }
 
 const char* mysql_dialect::type_string(oos::data_type type) const
@@ -90,9 +92,16 @@ data_type mysql_dialect::string_type(const char *type) const
     return data_type::type_text;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;
+  } else if (strncmp(type, "text", 0) == 0) {
+    return data_type::type_text;
   } else {
     return data_type::type_unknown;
   }
+}
+
+dialect_traits::identifier mysql_dialect::identifier_escape_type() const
+{
+  return dialect_traits::ESCAPE_BOTH_SAME;
 }
 
 }

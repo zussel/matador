@@ -42,12 +42,12 @@ void basic_dialect_linker::visit(oos::detail::query &q)
 
 void basic_dialect_linker::visit(const oos::detail::create &create)
 {
-  dialect().append_to_result(token_string(create.type) + " " + create.table + " ");
+  dialect().append_to_result(token_string(create.type) + " " + dialect_->prepare_identifier(create.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::drop &drop)
 {
-  dialect().append_to_result(token_string(drop.type) + " " + drop.table + " ");
+  dialect().append_to_result(token_string(drop.type) + " " + dialect_->prepare_identifier(drop.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::select &select)
@@ -67,7 +67,7 @@ void basic_dialect_linker::visit(const oos::detail::update &update)
 
 void basic_dialect_linker::visit(const oos::detail::tablename &table)
 {
-  dialect().append_to_result(table.tab + " ");
+  dialect().append_to_result(dialect_->prepare_identifier(table.tab) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::set &set)
@@ -142,12 +142,16 @@ void basic_dialect_linker::visit(const oos::detail::group_by &by)
 
 void basic_dialect_linker::visit(const oos::detail::insert &insert)
 {
-  dialect().append_to_result(token_string(insert.type) + " " + insert.table + " ");
+  dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table) + " ");
 }
 
 void basic_dialect_linker::visit(const oos::detail::from &from)
 {
-  dialect().append_to_result(token_string(from.type) + " " + from.table + " ");
+  if (from.table.empty()) {
+    dialect().append_to_result(token_string(from.type) + " ");
+  } else {
+    dialect().append_to_result(token_string(from.type) + " " + dialect_->prepare_identifier(from.table) + " ");
+  }
 }
 
 void basic_dialect_linker::visit(const oos::detail::where &where)
@@ -159,20 +163,20 @@ void basic_dialect_linker::visit(const oos::detail::where &where)
 
 void basic_dialect_linker::visit(const oos::detail::basic_condition &cond)
 {
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 //  cond.evaluate(dialect().compile_type());
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_column_condition &cond)
 {
   dialect().inc_bind_count();
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_in_condition &cond)
 {
   dialect().inc_bind_count(cond.size());
-  dialect().append_to_result(cond.evaluate(dialect().compile_type()));
+  dialect().append_to_result(cond.evaluate(dialect()));
 }
 
 void basic_dialect_linker::visit(const oos::columns &cols)
@@ -201,37 +205,46 @@ void basic_dialect_linker::visit(const oos::columns &cols)
 
 void basic_dialect_linker::visit(const oos::column &col)
 {
-  dialect().append_to_result(col.name);
+  if (col.skip_quotes) {
+    dialect().append_to_result(col.name);
+  } else {
+    dialect().append_to_result(dialect_->prepare_identifier(col.name));
+  }
   dialect().inc_column_count();
 }
 
 void basic_dialect_linker::visit(const oos::detail::typed_column &col)
 {
-  dialect().append_to_result(col.name + " " + dialect().type_string(col.type));
+  visit(static_cast<const oos::column&>(col));
+  dialect().append_to_result(std::string(" ") + dialect().type_string(col.type));
 }
 
 void basic_dialect_linker::visit(const oos::detail::typed_identifier_column &col)
 {
-  dialect().append_to_result(col.name + " " + dialect().type_string(col.type) + " NOT NULL PRIMARY KEY");
+  visit(static_cast<const oos::column&>(col));
+  dialect().append_to_result(std::string(" ") + dialect().type_string(col.type) + " NOT NULL PRIMARY KEY");
 }
 
 void basic_dialect_linker::visit(const oos::detail::typed_varchar_column &col)
 {
+  visit(static_cast<const oos::column&>(col));
   std::stringstream str;
-  str << col.name << " " << dialect().type_string(col.type) << "(" << col.size << ")";
+  str << " " << dialect().type_string(col.type) << "(" << col.size << ")";
   dialect().append_to_result(str.str());
 }
 
 void basic_dialect_linker::visit(const oos::detail::identifier_varchar_column &col)
 {
+  visit(static_cast<const oos::column&>(col));
   std::stringstream str;
-  str << col.name << " " << dialect().type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
+  str << " " << dialect().type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
   dialect().append_to_result(str.str());
 }
 
 void basic_dialect_linker::visit(const oos::detail::basic_value_column &col)
 {
-  dialect().append_to_result(col.name + "=");
+  visit(static_cast<const oos::column&>(col));
+  dialect().append_to_result("=");
   col.value_->accept(*this);
 }
 

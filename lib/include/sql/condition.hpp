@@ -78,7 +78,7 @@ public:
     visitor.visit(*this);
   }
 
-  virtual std::string evaluate(basic_dialect::t_compile_type compiler_type) const = 0;
+  virtual std::string evaluate(basic_dialect &dialect) const = 0;
 
   static std::array<std::string, num_operands> operands;
 };
@@ -152,13 +152,13 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    if (compile_type == basic_dialect::DIRECT) {
-      str << field_.name << " " << operand << " " << value;
+    if (dialect.compile_type() == basic_dialect::DIRECT) {
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << value;
     } else {
-      str << field_.name << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
     }
     return str.str();
   }
@@ -177,13 +177,13 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    if (compile_type == basic_dialect::DIRECT) {
-      str << field_.name << " " << operand << " '" << value << "'";
+    if (dialect.compile_type() == basic_dialect::DIRECT) {
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " '" << value << "'";
     } else {
-      str << field_.name << " " << operand << " " << "?";
+      str << dialect.prepare_identifier(field_.name) << " " << operand << " " << "?";
     }
     return str.str();
   }
@@ -203,10 +203,10 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    str << value << " " << operand << " " << field_.name;
+    str << value << " " << operand << " " << dialect.prepare_identifier(field_.name);
     return str.str();
   }
 };
@@ -224,10 +224,10 @@ public:
 
   T value;
 
-  std::string evaluate(basic_dialect::t_compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    str << "'" << value << "' " << operand << " " << field_.name;
+    str << "'" << value << "' " << operand << " " << dialect.prepare_identifier(field_.name);
     return str.str();
   }
 };
@@ -271,15 +271,15 @@ public:
    * @param compile_type The compile type used to evaluate
    * @return A condition IN part of the query
    */
-  virtual std::string evaluate(basic_dialect::t_compile_type compile_type) const override
+  virtual std::string evaluate(basic_dialect &dialect) const override
   {
     std::stringstream str;
-    str << field_.name << " IN (";
+    str << dialect.prepare_identifier(field_.name) << " IN (";
     if (args_.size() > 1) {
       auto first = args_.begin();
       auto last = args_.end() - 1;
       while (first != last) {
-        if (compile_type == basic_dialect::DIRECT) {
+        if (dialect.compile_type() == basic_dialect::DIRECT) {
           str << *first++ << ",";
         } else {
           ++first;
@@ -288,7 +288,7 @@ public:
       }
     }
     if (!args_.empty()) {
-      if (compile_type == basic_dialect::DIRECT) {
+      if (dialect.compile_type() == basic_dialect::DIRECT) {
         str << args_.back();
       } else {
         str << "?";
@@ -336,8 +336,8 @@ public:
    * @param q The query to be evaluated to the IN arguments
    * @param dialect The pointer to the underlying sql dialect
    */
-  condition(const column &col, const detail::basic_query &q, basic_dialect *dialect)
-          : field_(col), query_(q), dialect_(dialect)
+  condition(const column &col, const detail::basic_query &q)
+          : field_(col), query_(q)
   {}
 
   /**
@@ -349,10 +349,10 @@ public:
    * @param compile_type The compile type used to evaluate
    * @return A condition IN part of the query
    */
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
-    std::string result(field_.name + " IN (");
-    result += dialect_->build(query_.stmt(), compile_type);
+    std::string result(dialect.prepare_identifier(field_.name) + " IN (");
+    result += dialect.build(query_.stmt(), dialect.compile_type());
     result += (")");
     return result;
   }
@@ -360,7 +360,6 @@ public:
 private:
   column field_;
   detail::basic_query query_;
-  basic_dialect *dialect_ = nullptr;
 };
 
 /**
@@ -393,13 +392,13 @@ public:
    * @param compile_type The compile type used to evaluate
    * @return A condition BETWEEN part of the query
    */
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    if (compile_type == basic_dialect::DIRECT) {
-      str << field_.name << " BETWEEN " << range_.first << " AND " << range_.second;
+    if (dialect.compile_type() == basic_dialect::DIRECT) {
+      str << dialect.prepare_identifier(field_.name) << " BETWEEN " << range_.first << " AND " << range_.second;
     } else {
-      str << field_.name << " BETWEEN ? AND ?";
+      str << dialect.prepare_identifier(field_.name) << " BETWEEN ? AND ?";
     }
     return str.str();
   }
@@ -440,13 +439,13 @@ public:
    * @param compile_type The compile type of the condition
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
     if (operand == detail::basic_condition::AND) {
-      str << "(" << left.evaluate(compile_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compile_type) << ")";
+      str << "(" << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect) << ")";
     } else {
-      str << left.evaluate(compile_type) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(compile_type);
+      str << left.evaluate(dialect) << " " << detail::basic_condition::operands[operand] << " " << right.evaluate(dialect);
     }
     return str.str();
   }
@@ -482,10 +481,10 @@ public:
    * @param compile_type The compile type of the condition
    * @return The exaluated string based on the compile type
    */
-  std::string evaluate(basic_dialect::t_compile_type compile_type) const
+  std::string evaluate(basic_dialect &dialect) const
   {
     std::stringstream str;
-    str << operand << " (" << cond.evaluate(compile_type) << ")";
+    str << operand << " (" << cond.evaluate(dialect) << ")";
     return str.str();
   }
 
@@ -532,7 +531,7 @@ condition<column, std::initializer_list<V>> in(const oos::column &col, std::init
  * @param dialect A pointer to the sql dialect
  * @return The condition object
  */
-OOS_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q, basic_dialect *dialect);
+OOS_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q);
 
 /**
  * @brief Creates a between condition.

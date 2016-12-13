@@ -41,6 +41,14 @@ struct OOS_API column : public detail::token
   column(const std::string &col);
 
   /**
+   * @brief Creates a new column with given name
+   *
+   * @param col The name of the column
+   * @param skipquotes True if the column shouldn't get quotes
+   */
+  column(const std::string &col, bool skipquotes);
+
+  /**
    * @brief Interface according to the visitor pattern.
    *
    * @param visitor The visitor obejct to be accepted
@@ -48,6 +56,7 @@ struct OOS_API column : public detail::token
   virtual void accept(token_visitor &visitor) override;
 
   std::string name; /**< Name of the column */
+  bool skip_quotes = false;
 };
 
 /**
@@ -81,11 +90,23 @@ struct OOS_API columns : public detail::token
   columns(std::initializer_list<column> cols, t_brackets with_brackets = WITH_BRACKETS);
 
   /**
+   * @brief Create a list of columns containing given columns and bracket type
+   *
+   * @param cols The list of columns
+   * @param with_brackets The bracket type
+   */
+  columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets = WITH_BRACKETS);
+
+  /**
    * @brief Creates an empty list of columns.
    *
    * @param with_brackets The bracket type
    */
   explicit columns(t_brackets with_brackets = WITH_BRACKETS);
+
+  columns(const columns &x);
+
+  columns& operator=(const columns &x);
 
   /**
    * @brief Append a column to the list

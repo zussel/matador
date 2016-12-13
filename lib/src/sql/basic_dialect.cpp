@@ -6,6 +6,8 @@
 #include "sql/basic_dialect_linker.hpp"
 #include "sql/sql.hpp"
 
+#include "tools/string.hpp"
+
 namespace oos {
 
 namespace detail {
@@ -129,6 +131,41 @@ size_t basic_dialect::bind_count() const
 size_t basic_dialect::column_count() const
 {
   return column_count_;
+}
+
+std::string basic_dialect::prepare_identifier(const std::string &str)
+{
+  std::string result(str);
+  escape_quotes_in_identifier(result);
+  quote_identifier(result);
+  return result;
+}
+
+void basic_dialect::quote_identifier(std::string &str)
+{
+  str.insert(0, token_at(detail::token::START_QUOTE));
+  str += token_at(detail::token::END_QUOTE);
+}
+
+void basic_dialect::escape_quotes_in_identifier(std::string &str)
+{
+  const std::string open_char = token_at(detail::token::START_QUOTE);
+  std::string close_char = token_at(detail::token::END_QUOTE);
+  if (identifier_escape_type() == dialect_traits::ESCAPE_CLOSING_BRACKET) {
+    replace_all(str, close_char, close_char + close_char);
+  } else {
+    replace_all(str, open_char, open_char + open_char);
+  }
+}
+
+char basic_dialect::identifier_opening_quote() const
+{
+  return token_at(detail::token::START_QUOTE)[0];
+}
+
+char basic_dialect::identifier_closing_quote() const
+{
+  return token_at(detail::token::END_QUOTE)[0];
 }
 
 std::string basic_dialect::token_at(detail::token::t_token tok) const

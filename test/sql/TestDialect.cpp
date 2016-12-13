@@ -60,3 +60,8 @@ const char* TestDialect::type_string(data_type type) const
     }
   }
 }
+
+dialect_traits::identifier TestDialect::identifier_escape_type() const
+{
+  return dialect_traits::ESCAPE_BOTH_SAME;
+}

@@ -12,6 +12,12 @@ column::column(const std::string &col)
   , name(col)
 {}
 
+column::column(const std::string &col, bool skipquotes)
+  : token(COLUMN)
+  , name(col)
+  , skip_quotes(skipquotes)
+{}
+
 void column::accept(token_visitor &visitor)
 {
   return visitor.visit(*this);
@@ -35,10 +41,33 @@ columns::columns(std::initializer_list<column> cols, t_brackets with_brackets)
   }
 }
 
+columns::columns(std::initializer_list<std::shared_ptr<column>> cols, t_brackets with_brackets)
+  : token(COLUMNS)
+  , with_brackets_(with_brackets)
+{
+  columns_.assign(cols);
+}
+
 columns::columns(t_brackets with_brackets)
   : token(COLUMNS)
   , with_brackets_(with_brackets)
 {}
+
+columns::columns(const columns &x)
+  : token(x.type)
+  , with_brackets_(x.with_brackets_)
+{
+  columns_.assign(x.columns_.begin(), x.columns_.end());
+}
+
+columns &columns::operator=(const columns &x)
+{
+  type = x.type;
+  with_brackets_ = x.with_brackets_;
+  columns_.clear();
+  columns_.assign(x.columns_.begin(), x.columns_.end());
+  return *this;
+}
 
 namespace detail {
 
@@ -90,7 +119,7 @@ column columns::count_all()
   return count_all_;
 }
 
-columns columns::all_ = columns({column("*")}, WITHOUT_BRACKETS);
-column columns::count_all_ = column("COUNT(*)");
+columns columns::all_ = columns({column("*", true)}, WITHOUT_BRACKETS);
+column columns::count_all_ = column("COUNT(*)", true);
 
 }

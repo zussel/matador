@@ -61,6 +61,12 @@ struct OOS_API build_info {
 
 }
 
+struct dialect_traits {
+  enum identifier {
+    ESCAPE_BOTH_SAME,
+    ESCAPE_CLOSING_BRACKET
+  };
+};
 /**
  * @brief Abstract base class for a concrete sql dialect.
  *
@@ -143,6 +149,52 @@ public:
    */
   size_t column_count() const;
 
+  /**
+   * Prepare sql dialect identifier for execution
+   * and escape quotes and quote the identifier
+   * string
+   *
+   * @param str The identifier string to be prepared
+   * @return The prepared string
+   */
+  std::string prepare_identifier(const std::string &str);
+
+  /**
+   * Wrap identifier quotes around a sql identifier keyword
+   *
+   * @param str Identifier to put quotes around
+   */
+  void quote_identifier(std::string &str);
+
+  /**
+   * Escape identifier quotes inside identifiers.
+   *
+   * @param str Identifier to be escaped
+   */
+  void escape_quotes_in_identifier(std::string &str);
+
+  /**
+   * Returns how the identifier quotes should be
+   * escaped.
+   *
+   * @return How the identifier quotes should be escaped
+   */
+  virtual dialect_traits::identifier identifier_escape_type() const = 0;
+
+  /**
+   * Return the identifier opening quote
+   *
+   * @return Identifier opening quote.
+   */
+  char identifier_opening_quote() const;
+
+  /**
+   * Return the identifier closing quote
+   *
+   * @return Identifier closing quote.
+   */
+  char identifier_closing_quote() const;
+
 protected:
   /// @cond OOS_DEV
 
@@ -183,7 +235,7 @@ private:
   size_t bind_count_ = 0;
   size_t column_count_ = 0;
 
-  t_compile_type compile_type_;
+  t_compile_type compile_type_ = DIRECT;
 
   detail::basic_dialect_compiler* compiler_;
   detail::basic_dialect_linker* linker_;
@@ -219,6 +271,8 @@ private:
     {detail::token::BEGIN, "BEGIN TRANSACTION"},
     {detail::token::COMMIT, "COMMIT TRANSACTION"},
     {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
+    {detail::token::START_QUOTE, "\""},
+    {detail::token::END_QUOTE, "\""},
     {detail::token::NONE, ""}
   };
 };

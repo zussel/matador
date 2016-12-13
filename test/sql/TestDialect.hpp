@@ -16,6 +16,8 @@ public:
   TestDialect();
 
   const char* type_string(oos::data_type type) const;
+
+  oos::dialect_traits::identifier identifier_escape_type() const override;
 };
 
 #endif //OOS_TESTDIALECT_HPP

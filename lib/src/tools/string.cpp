@@ -39,6 +39,18 @@ std::string trim(const std::string& str, const std::string& whitespace)
   return str.substr(first, range);
 }
 
+void replace_all(std::string &in, const std::string &from, const std::string &to)
+{
+  if(from.empty()) {
+    return;
+  }
+  size_t start_pos = 0;
+  while((start_pos = in.find(from, start_pos)) != std::string::npos) {
+    in.replace(start_pos, from.length(), to);
+    start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+  }
+}
+
 std::string to_string(const oos::time &x, const char *format)
 {
   struct tm timeinfo = x.get_tm();

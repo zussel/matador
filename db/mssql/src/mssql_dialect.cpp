@@ -20,6 +20,8 @@ mssql_dialect::mssql_dialect()
   replace_token(detail::token::COMMIT, "COMMIT");
   replace_token(detail::token::ROLLBACK, "ROLLBACK");
   replace_token(detail::token::TOP, "TOP");
+  replace_token(detail::token::START_QUOTE, "[");
+  replace_token(detail::token::END_QUOTE, "]");
 }
 
 const char* mssql_dialect::type_string(oos::data_type type) const
@@ -52,7 +54,7 @@ const char* mssql_dialect::type_string(oos::data_type type) const
     case data_type::type_varchar:
       return "VARCHAR";
     case data_type::type_text:
-      return "TEXT";
+      return "VARCHAR(MAX)";
     case data_type::type_date:
       return "DATE";
     case data_type::type_time:
@@ -76,9 +78,16 @@ data_type mssql_dialect::string_type(const char *type) const
     return data_type::type_text;
   } else if (strcmp(type, "varchar") == 0) {
     return data_type::type_varchar;
+  } else if (strcmp(type, "text") == 0) {
+    return data_type::type_text;
   } else {
     return data_type::type_unknown;
   }
+}
+
+dialect_traits::identifier mssql_dialect::identifier_escape_type() const
+{
+  return dialect_traits::ESCAPE_CLOSING_BRACKET;
 }
 
 }
