@@ -142,6 +142,14 @@ public:
   }
 
   /**
+   * Remove all bound tablenames
+   */
+  static void clear_bound_tables()
+  {
+    tablename_map_.clear();
+  }
+
+  /**
    * Creates a create statement.
    * 
    * @return A reference to the query.

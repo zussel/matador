@@ -212,6 +212,8 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
 void QueryTestUnit::test_bind_tablename()
 {
+  oos::query<person>::clear_bound_tables();
+
   oos::query<person> q0; // tablename should be person
 
   UNIT_ASSERT_TRUE(q0.tablename().empty(), "name must be empty");
