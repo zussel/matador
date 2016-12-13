@@ -13,7 +13,7 @@
 using namespace oos;
 
 SQLiteDialectTestUnit::SQLiteDialectTestUnit()
-  : unit_test("sqlite_dialect", "sqlite dialect text")
+  : unit_test("sqlite_dialect", "sqlite dialect test")
 {
   add_test("update_limit", std::bind(&SQLiteDialectTestUnit::test_update_with_limit, this), "test sqlite update limit compile");
   add_test("delete_limit", std::bind(&SQLiteDialectTestUnit::test_delete_with_limit, this), "test sqlite delete limit compile");
@@ -45,7 +45,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("UPDATE person SET name='Dieter', age=54 WHERE rowid IN (SELECT rowid FROM person WHERE name <> 'Hans' LIMIT 1 ) ", result, "update where isn't as expected");
+  UNIT_ASSERT_EQUAL("UPDATE \"person\" SET \"name\"='Dieter', \"age\"=54 WHERE \"rowid\" IN (SELECT \"rowid\" FROM \"person\" WHERE \"name\" <> 'Hans' LIMIT 1 ) ", result, "update where isn't as expected");
 }
 
 void SQLiteDialectTestUnit::test_delete_with_limit()
@@ -64,5 +64,5 @@ void SQLiteDialectTestUnit::test_delete_with_limit()
 
   std::string result = conn.dialect()->direct(s);
 
-  UNIT_ASSERT_EQUAL("DELETE FROM person WHERE rowid IN (SELECT rowid FROM person WHERE name <> 'Hans' LIMIT 1 ) ", result, "delete where isn't as expected");
+  UNIT_ASSERT_EQUAL("DELETE FROM \"person\" WHERE \"rowid\" IN (SELECT \"rowid\" FROM \"person\" WHERE \"name\" <> 'Hans' LIMIT 1 ) ", result, "delete where isn't as expected");
 }

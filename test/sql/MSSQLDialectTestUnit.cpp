@@ -15,7 +15,7 @@
 using namespace oos;
 
 MSSQLDialectTestUnit::MSSQLDialectTestUnit()
-  : unit_test("mssql_dialect", "mssql dialect text")
+  : unit_test("mssql_dialect", "mssql dialect test")
 {
   add_test("limit", std::bind(&MSSQLDialectTestUnit::test_limit, this), "test mssql limit compile");
   add_test("sub_select", std::bind(&MSSQLDialectTestUnit::test_query_select_sub_select, this), "test query sub select");
