@@ -55,8 +55,6 @@ void basic_dialect_compiler::visit(const oos::detail::identifier_varchar_column 
 
 void basic_dialect_compiler::visit(const oos::detail::basic_value_column &) { }
 
-void basic_dialect_compiler::visit(const oos::detail::unquoted_column &) { }
-
 void basic_dialect_compiler::visit(const oos::detail::from &) { }
 
 void basic_dialect_compiler::visit(const oos::detail::where &) { }

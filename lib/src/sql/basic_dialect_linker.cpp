@@ -205,7 +205,11 @@ void basic_dialect_linker::visit(const oos::columns &cols)
 
 void basic_dialect_linker::visit(const oos::column &col)
 {
-  dialect().append_to_result(dialect_->prepare_identifier(col.name));
+  if (col.skip_quotes) {
+    dialect().append_to_result(col.name);
+  } else {
+    dialect().append_to_result(dialect_->prepare_identifier(col.name));
+  }
   dialect().inc_column_count();
 }
 
@@ -242,11 +246,6 @@ void basic_dialect_linker::visit(const oos::detail::basic_value_column &col)
   visit(static_cast<const oos::column&>(col));
   dialect().append_to_result("=");
   col.value_->accept(*this);
-}
-
-void basic_dialect_linker::visit(const oos::detail::unquoted_column &col)
-{
-  dialect().append_to_result(col.name);
 }
 
 std::string basic_dialect_linker::token_string(detail::token::t_token tok) const
