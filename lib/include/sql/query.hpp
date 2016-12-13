@@ -94,7 +94,9 @@ public:
    */
   query()
     : basic_query("")
-  {}
+  {
+    determine_tablename<T>();
+  }
 
   /**
    * @brief Create a new query for the given table.
@@ -112,7 +114,9 @@ public:
    */
   query(const connection &conn)
     : query(conn, "")
-  {}
+  {
+    determine_tablename<T>();
+  }
 
   /**
    * @brief Create a query with a default connection and default tablename
@@ -125,6 +129,17 @@ public:
   {}
 
   ~query() {}
+
+  /**
+   * Bind a tablename to a specific
+   * object type
+   *
+   * @param tablename The tablename to bind
+   */
+  static void bind_table(const std::string &tablename)
+  {
+    tablename_map_.insert(std::make_pair(std::type_index(typeid(T)), tablename));
+  }
 
   /**
    * Creates a create statement.

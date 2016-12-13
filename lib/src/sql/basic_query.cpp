@@ -51,6 +51,11 @@ const sql& basic_query::stmt() const
   return sql_;
 }
 
+std::string basic_query::tablename() const
+{
+  return table_name_;
+}
+
 void basic_query::throw_invalid(state_t next, state_t current)
 {
   std::stringstream msg;
@@ -160,6 +165,9 @@ std::string basic_query::state2text(basic_query::state_t state)
       return "unknown";
   }
 }
+
+std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = {};
+
 }
 
 }

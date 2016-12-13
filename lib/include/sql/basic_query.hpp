@@ -98,6 +98,13 @@ public:
    */
   const sql& stmt() const;
 
+  /**
+   * Return the current tablename of the query
+   *
+   * @return Current tablename of the query
+   */
+  std::string tablename() const;
+
 protected:
 
   /// @cond OOS_DEV
@@ -130,6 +137,16 @@ protected:
 
   static std::string state2text(state_t state);
 
+  template < class T >
+  bool determine_tablename()
+  {
+    auto i = basic_query::tablename_map_.find(std::type_index(typeid(T)));
+    if (i != basic_query::tablename_map_.end()) {
+      table_name_ = i->second;
+      return true;
+    }
+    return false;
+  }
   /// @endcond
 
 protected:
@@ -142,6 +159,7 @@ protected:
   detail::query_value_column_processor query_value_column_processor_;
   detail::query_value_creator query_value_creator_;
   connection conn_;
+  static std::unordered_map<std::type_index, std::string> tablename_map_;
   /// @endcond
 };
 

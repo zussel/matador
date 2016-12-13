@@ -19,6 +19,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
   add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
   add_test("columns_with_quotes", std::bind(&QueryTestUnit::test_columns_with_quotes_in_name, this), "test columns with quotes in name");
+  add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
@@ -207,6 +208,22 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     q.drop().execute();
   }
+}
+
+void QueryTestUnit::test_bind_tablename()
+{
+  oos::query<person> q0; // tablename should be person
+
+  UNIT_ASSERT_TRUE(q0.tablename().empty(), "name must be empty");
+  oos::query<person>::bind_table("person");
+
+  oos::query<person> q1; // tablename should be person
+
+  UNIT_ASSERT_EQUAL(q1.tablename(), "person", "names must be equal");
+
+  oos::query<person> q2("student"); // tablename should be student
+
+  UNIT_ASSERT_EQUAL(q2.tablename(), "student", "names must be equal");
 }
 
 void QueryTestUnit::test_describe()
