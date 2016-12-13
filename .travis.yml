@@ -140,7 +140,9 @@ matrix:
     - env: GCC_VERSION=6 BUILD_TYPE=Release
       os: linux
       addons: *gcc6
-
+  allow_failures:
+    - os: osx
+    
 branches:
   only:
     - develop
