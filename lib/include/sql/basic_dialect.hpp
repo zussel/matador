@@ -61,12 +61,19 @@ struct OOS_API build_info {
 
 }
 
+/**
+ * Struct holding sql dialect traits
+ */
 struct dialect_traits {
+  /**
+   * Holding enums concerning escaping identifiers
+   */
   enum identifier {
-    ESCAPE_BOTH_SAME,
-    ESCAPE_CLOSING_BRACKET
+    ESCAPE_BOTH_SAME,       /**< The escape quotes are the same  */
+    ESCAPE_CLOSING_BRACKET  /**< The escape quotes differ; escape the closing one */
   };
 };
+
 /**
  * @brief Abstract base class for a concrete sql dialect.
  *

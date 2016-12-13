@@ -268,7 +268,7 @@ public:
    * Evaluates the condition to a part of the
    * query string based on the given compile type
    *
-   * @param compile_type The compile type used to evaluate
+   * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
   virtual std::string evaluate(basic_dialect &dialect) const override
@@ -334,7 +334,6 @@ public:
    *
    * @param col Column for the IN condition
    * @param q The query to be evaluated to the IN arguments
-   * @param dialect The pointer to the underlying sql dialect
    */
   condition(const column &col, const detail::basic_query &q)
           : field_(col), query_(q)
@@ -346,7 +345,7 @@ public:
    * Evaluates the condition to a part of the
    * query string based on the given compile type
    *
-   * @param compile_type The compile type used to evaluate
+   * @param dialect The dialect used to evaluate
    * @return A condition IN part of the query
    */
   std::string evaluate(basic_dialect &dialect) const
@@ -389,7 +388,7 @@ public:
    * Evaluates the condition to a between part
    * based on the given compile type
    *
-   * @param compile_type The compile type used to evaluate
+   * @param dialect The dialect used to evaluate
    * @return A condition BETWEEN part of the query
    */
   std::string evaluate(basic_dialect &dialect) const
@@ -436,7 +435,7 @@ public:
   /**
    * @brief Evaluates the condition
    *
-   * @param compile_type The compile type of the condition
+   * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
   std::string evaluate(basic_dialect &dialect) const
@@ -478,7 +477,7 @@ public:
   /**
    * @brief Evaluates the condition
    *
-   * @param compile_type The compile type of the condition
+   * @param dialect The dialect used to evaluate
    * @return The exaluated string based on the compile type
    */
   std::string evaluate(basic_dialect &dialect) const
@@ -528,7 +527,6 @@ condition<column, std::initializer_list<V>> in(const oos::column &col, std::init
  *
  * @param col The column to compare
  * @param q The query to be executes as sub select
- * @param dialect A pointer to the sql dialect
  * @return The condition object
  */
 OOS_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q);

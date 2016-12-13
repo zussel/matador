@@ -55,8 +55,8 @@ struct OOS_API column : public detail::token
    */
   virtual void accept(token_visitor &visitor) override;
 
-  std::string name; /**< Name of the column */
-  bool skip_quotes = false;
+  std::string name;         /**< Name of the column */
+  bool skip_quotes = false; /**< If true skip quoting */
 };
 
 /**
@@ -104,8 +104,19 @@ struct OOS_API columns : public detail::token
    */
   explicit columns(t_brackets with_brackets = WITH_BRACKETS);
 
+  /**
+   * Copy column
+   *
+   * @param x Column to copy
+   */
   columns(const columns &x);
 
+  /**
+   * Copy assign column
+   *
+   * @param x Column to copy
+   * @return Reference to copied column
+   */
   columns& operator=(const columns &x);
 
   /**
