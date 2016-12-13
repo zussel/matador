@@ -17,8 +17,8 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
 {
   add_test("datatypes", std::bind(&QueryTestUnit::test_datatypes, this), "test sql datatypes");
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
-  add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test query value creator");
-  add_test("quoted_columns", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test query value creator");
+  add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
+  add_test("columns_with_quotes", std::bind(&QueryTestUnit::test_columns_with_quotes_in_name, this), "test columns with quotes in name");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
@@ -171,6 +171,42 @@ void QueryTestUnit::test_quoted_identifier()
   }
 
   q.drop().execute();
+}
+
+void QueryTestUnit::test_columns_with_quotes_in_name()
+{
+  connection_.open();
+
+  char opening_char = connection_.dialect()->identifier_opening_quote();
+  char closing_char = connection_.dialect()->identifier_closing_quote();
+  std::stringstream column_name;
+  column_name << "name_with_" << opening_char << "identifier_quotes" << closing_char << "_in_mssql_ctx";
+
+  std::vector<std::string> colnames = {
+    "normal_name",
+    column_name.str(),
+    "name_with_'string'_\"literal\"_quotes",
+    "name_with_`identifier_quotes`_in_mysql_ctx",
+    "from"
+  };
+
+  for (auto colname : colnames) {
+    query<> q(connection_, "quotes");
+
+    q.create({make_typed_column<std::string>(colname)}).execute();
+
+    // check table description
+    std::vector<std::string> columns = { colname };
+    std::vector<data_type > types = { oos::data_type::type_text };
+    auto fields = connection_.describe("quotes");
+
+    for (auto &&field : fields) {
+      UNIT_EXPECT_EQUAL(field.name(), columns[field.index()], "invalid column name");
+      UNIT_EXPECT_EQUAL((int)field.type(), (int)types[field.index()], "invalid column type");
+    }
+
+    q.drop().execute();
+  }
 }
 
 void QueryTestUnit::test_describe()

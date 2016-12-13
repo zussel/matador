@@ -61,6 +61,12 @@ struct OOS_API build_info {
 
 }
 
+struct dialect_traits {
+  enum identifier {
+    ESCAPE_BOTH_SAME,
+    ESCAPE_CLOSING_BRACKET
+  };
+};
 /**
  * @brief Abstract base class for a concrete sql dialect.
  *
@@ -166,6 +172,28 @@ public:
    * @param str Identifier to be escaped
    */
   void escape_quotes_in_identifier(std::string &str);
+
+  /**
+   * Returns how the identifier quotes should be
+   * escaped.
+   *
+   * @return How the identifier quotes should be escaped
+   */
+  virtual dialect_traits::identifier identifier_escape_type() const = 0;
+
+  /**
+   * Return the identifier opening quote
+   *
+   * @return Identifier opening quote.
+   */
+  char identifier_opening_quote() const;
+
+  /**
+   * Return the identifier closing quote
+   *
+   * @return Identifier closing quote.
+   */
+  char identifier_closing_quote() const;
 
 protected:
   /// @cond OOS_DEV

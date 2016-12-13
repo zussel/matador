@@ -17,6 +17,8 @@ public:
 
   const char* type_string(oos::data_type type) const;
   data_type string_type(const char *type) const;
+
+  dialect_traits::identifier identifier_escape_type() const override;
 };
 
 }

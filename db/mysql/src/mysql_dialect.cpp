@@ -99,6 +99,11 @@ data_type mysql_dialect::string_type(const char *type) const
   }
 }
 
+dialect_traits::identifier mysql_dialect::identifier_escape_type() const
+{
+  return dialect_traits::ESCAPE_BOTH_SAME;
+}
+
 }
 
 }
