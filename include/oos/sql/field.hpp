@@ -7,16 +7,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/sql/types.hpp"
@@ -28,7 +28,7 @@ namespace oos {
 /**
  * @brief Describes a database column field
  */
-class OOS_API field
+class OOS_SQL_API field
 {
 public:
   /**

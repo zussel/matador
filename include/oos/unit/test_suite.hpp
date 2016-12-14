@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_unit_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UNIT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UNIT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_UNIT_API
 #endif
 
 #include <memory>
@@ -58,7 +58,7 @@ class unit_test;
  * It also provides function listing all test_unit classes
  * and their tests.
  */
-class OOS_API test_suite
+class OOS_UNIT_API test_suite
 {
 public:
   /**
@@ -103,7 +103,7 @@ public:
      * @param s The summary object
      * @return Reference to the stream
      */
-    friend OOS_API std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
+    friend OOS_UNIT_API std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
     /// @cond OOS_DEV
     size_t tests = 0;

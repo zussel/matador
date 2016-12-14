@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_orm_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_ORM_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_ORM_API
 #endif
 
 #include "oos/sql/connection.hpp"
@@ -52,7 +52,7 @@ struct persistence_on_attach;
  * It also holds a map of all created tables, checks if a table exists
  * and is able to clear the object store.
  */
-class OOS_API persistence
+class OOS_ORM_API persistence
 {
 public:
   typedef basic_table::table_ptr table_ptr;      /**< Shortcut to the table shared pointer */

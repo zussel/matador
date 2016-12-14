@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_UTILS_API
 #endif
 
 #include <array>
@@ -48,7 +48,7 @@ namespace oos {
  * of the buffer.
  * It is used by the object_store to serialize objects.
  */
-class OOS_API byte_buffer
+class OOS_UTILS_API byte_buffer
 {
 private:
   enum { BUF_SIZE = 1 << 14 };

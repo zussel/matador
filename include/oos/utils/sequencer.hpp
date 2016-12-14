@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_UTILS_API
 #endif
 
 #include <memory>
@@ -43,7 +43,7 @@ namespace oos {
  * This class provides the implementation
  * interafce for the sequencer class.
  */
-class OOS_API sequencer_impl
+class OOS_UTILS_API sequencer_impl
 {
 public:
   virtual ~sequencer_impl() {}
@@ -101,7 +101,7 @@ typedef std::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for se
  * @cond OOS_DEV
  * @class default_sequencer
  */
-class OOS_API default_sequencer : public sequencer_impl
+class OOS_UTILS_API default_sequencer : public sequencer_impl
 {
 public:
   default_sequencer();
@@ -132,7 +132,7 @@ private:
  * implementation is used to do the real work implementing
  * the sequencers strategy.
  */
-class OOS_API sequencer
+class OOS_UTILS_API sequencer
 {
 public:
   /**

@@ -23,7 +23,7 @@ class const_prototype_iterator;
 * are stored in the object_store and must not be altered.
 * therefor the iterator is declared as const.
 */
-class OOS_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
+class OOS_OBJECT_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
 {
 public:
 typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
@@ -147,7 +147,7 @@ friend class const_prototype_iterator;
 pointer node_;
 };
 
-class OOS_API const_prototype_iterator
+class OOS_OBJECT_API const_prototype_iterator
   : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node *, const prototype_node &>
 {
 public:

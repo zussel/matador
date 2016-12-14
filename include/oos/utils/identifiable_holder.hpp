@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_utils_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_UTILS_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_UTILS_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include <memory>
@@ -28,7 +28,7 @@ class basic_identifier;
  * Base class for all pointer object
  * which can contain an identifiable
  */
-class OOS_API identifiable_holder
+class OOS_UTILS_API identifiable_holder
 {
 public:
   virtual ~identifiable_holder() {}

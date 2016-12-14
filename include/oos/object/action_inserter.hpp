@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_OBJECT_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_OBJECT_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 #include "oos/object/action_visitor.hpp"
@@ -30,7 +30,7 @@ namespace oos {
 
 class object_proxy;
 
-class OOS_API action_inserter : public action_visitor
+class OOS_OBJECT_API action_inserter : public action_visitor
 {
 public:
   typedef std::shared_ptr<action> action_ptr;

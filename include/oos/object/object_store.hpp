@@ -41,16 +41,16 @@
 
 #ifdef _MSC_VER
   #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-  #define OOS_API
+  #define OOS_OBJECT_API
 #endif
 
 namespace oos {
@@ -61,7 +61,7 @@ class prototype_node;
 
 namespace detail {
 
-class OOS_API modified_marker
+class OOS_OBJECT_API modified_marker
 {
 public:
   typedef void (*t_marker)(object_store &store, object_proxy &proxy);
@@ -95,7 +95,7 @@ private:
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class OOS_API object_inserter {
+class OOS_OBJECT_API object_inserter {
 public:
   /**
    * @brief Creates an object_inserter instance.
@@ -156,9 +156,9 @@ private:
  * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
-class OOS_API object_deleter {
+class OOS_OBJECT_API object_deleter {
 private:
-  struct OOS_API t_object_count {
+  struct OOS_OBJECT_API t_object_count {
     typedef void (*t_remove_func)(object_proxy*, bool);
     template < class T >
     t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)
@@ -304,7 +304,7 @@ struct null_on_attach : public basic_on_attach
  * hierarchy representation including a producer class
  * serializable of all known types.
  */
-class OOS_API object_store
+class OOS_OBJECT_API object_store
 {
 private:
   object_store(const object_store&) = delete;

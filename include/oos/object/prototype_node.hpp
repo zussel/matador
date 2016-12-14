@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_OBJECT_API
   #define EXPIMP_TEMPLATE
 #endif
 
@@ -61,7 +61,7 @@ class object_proxy;
  * of the list, the end of the own objects and the end of
  * the last child objects.
  */ 
-class OOS_API prototype_node
+class OOS_OBJECT_API prototype_node
 {
 private:
   // copying not permitted
@@ -316,7 +316,7 @@ public:
    * @param pn The prototype_node to be written.
    * @return The modified ostream.
    */
-  friend OOS_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
+  friend OOS_OBJECT_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   /**
    * Find the underlying proxy of the given primary key.

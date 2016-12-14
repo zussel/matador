@@ -3,15 +3,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include <sstream>
@@ -34,7 +34,7 @@ class date;
  * @param values The result vector.
  * @return The size of the vector.
  */
-OOS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
+OOS_UTILS_API size_t split(const std::string &str, char delim, std::vector<std::string> &values);
 
 /**
  * @fn std::string trim(const std::string& str, const std::string&)
@@ -45,7 +45,7 @@ OOS_API size_t split(const std::string &str, char delim, std::vector<std::string
  * @param whitespace The trimming characters
  * @return the trimmed string
  */
-OOS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
+OOS_UTILS_API std::string trim(const std::string& str, const std::string& whitespace = " \t");
 
 /**
  * Replaces all occurences of string from in given string
@@ -55,14 +55,14 @@ OOS_API std::string trim(const std::string& str, const std::string& whitespace =
  * @param from The string to be replaced
  * @param to The new string
  */
-OOS_API void replace_all(std::string &in, const std::string &from, const std::string &to);
+OOS_UTILS_API void replace_all(std::string &in, const std::string &from, const std::string &to);
 
 /**
  * The date_format struct represents
  * common date format string as ISO8601
  * and the likes.
  */
-struct OOS_API date_format
+struct OOS_UTILS_API date_format
 {
 #ifdef _MSC_VER
 	static const char* ISO8601;
@@ -79,7 +79,7 @@ struct OOS_API date_format
  * common time format string as ISO8601
  * and the likes.
  */
-struct OOS_API time_format
+struct OOS_UTILS_API time_format
 {
 #ifdef _MSC_VER
   static const char* ISO8601;
@@ -98,7 +98,7 @@ struct OOS_API time_format
  * @param x Time object to convert.
  * @param format The format string
  */
-OOS_API std::string to_string(const oos::time &x, const char *format = time_format::ISO8601);
+OOS_UTILS_API std::string to_string(const oos::time &x, const char *format = time_format::ISO8601);
 
 /**
  * Converts a date object with a given format
@@ -107,7 +107,7 @@ OOS_API std::string to_string(const oos::time &x, const char *format = time_form
  * @param x Date object to convert.
  * @param format The format string
  */
-OOS_API std::string to_string(const oos::date &x, const char *format = date_format::ISO8601);
+OOS_UTILS_API std::string to_string(const oos::date &x, const char *format = date_format::ISO8601);
 
 /**
  * Convert any floating point values

@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_utils_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_UTILS_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_UTILS_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include "oos/utils/basic_identifier_serializer.hpp"
@@ -43,7 +43,7 @@ class serializer;
  * and a generic method to retrieve the value of the
  * concrete identifier.
  */
-class OOS_API basic_identifier
+class OOS_UTILS_API basic_identifier
 {
 public:
   basic_identifier();
@@ -158,7 +158,7 @@ public:
    * @param x The identifier to write.
    * @return Reference to the ostream.
    */
-  friend OOS_API std::ostream &operator<<(std::ostream &os, const basic_identifier &x);
+  friend OOS_UTILS_API std::ostream &operator<<(std::ostream &os, const basic_identifier &x);
 
   /**
    * Returns true if the identifier has a

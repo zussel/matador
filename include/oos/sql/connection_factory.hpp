@@ -20,14 +20,14 @@
 
 #ifdef _MSC_VER
   #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
 #else
-  #define OOS_API
+  #define OOS_SQL_API
 #endif
 
 #include "oos/utils/singleton.hpp"
@@ -41,7 +41,7 @@
 namespace oos {
 
 /// @cond OOS_DEV
-class OOS_API connection_factory : public oos::singleton<connection_factory>
+class OOS_SQL_API connection_factory : public oos::singleton<connection_factory>
 {
 private:
   typedef factory<std::string, connection_impl> factory_t;

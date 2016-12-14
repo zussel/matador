@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 namespace oos {
@@ -27,7 +27,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API object_proxy_accessor
+class OOS_OBJECT_API object_proxy_accessor
 {
 public:
   oos::object_proxy* proxy(const object_holder &holder) const;

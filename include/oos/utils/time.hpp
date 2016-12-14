@@ -3,15 +3,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include "oos/utils/date.hpp"
@@ -38,7 +38,7 @@ namespace oos {
  * Addition and subtraction of times is possible
  * as well as parsing and formatting.
  */
-class OOS_API time
+class OOS_UTILS_API time
 {
 public:
   /*! timezone enum */
@@ -399,7 +399,7 @@ public:
    * @param x The time object to be printed
    * @return Reference to the passed ostream object.
    */
-  friend OOS_API std::ostream &operator<<(std::ostream &out, const time &x);
+  friend OOS_UTILS_API std::ostream &operator<<(std::ostream &out, const time &x);
 
 private:
   void sync_day(int d);

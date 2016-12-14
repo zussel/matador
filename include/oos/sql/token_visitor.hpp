@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 namespace oos {
@@ -62,7 +62,7 @@ struct query;
 
 /// @cond OOS_DEV
 
-class OOS_API token_visitor
+class OOS_SQL_API token_visitor
 {
 public:
   virtual ~token_visitor() {}

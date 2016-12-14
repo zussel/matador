@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_SQL_API
 #endif
 
 #include "oos/sql/types.hpp"
@@ -50,7 +50,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API basic_condition : public token
+class OOS_SQL_API basic_condition : public token
 {
 public:
   basic_condition() : token(token::CONDITION) { }
@@ -83,7 +83,7 @@ public:
   static std::array<std::string, num_operands> operands;
 };
 
-class OOS_API basic_column_condition : public basic_condition
+class OOS_SQL_API basic_column_condition : public basic_condition
 {
 public:
   column field_;
@@ -99,7 +99,7 @@ public:
   }
 };
 
-class OOS_API basic_in_condition : public basic_condition
+class OOS_SQL_API basic_in_condition : public basic_condition
 {
 public:
   column field_;
@@ -529,7 +529,7 @@ condition<column, std::initializer_list<V>> in(const oos::column &col, std::init
  * @param q The query to be executes as sub select
  * @return The condition object
  */
-OOS_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q);
+OOS_SQL_API condition<column, detail::basic_query> in(const oos::column &col, detail::basic_query &q);
 
 /**
  * @brief Creates a between condition.

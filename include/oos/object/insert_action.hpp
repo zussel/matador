@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 #include <algorithm>
@@ -37,7 +37,7 @@ class object_serializer;
  * This action is used when an objected
  * is inserted into the database.
  */
-class OOS_API insert_action : public action
+class OOS_OBJECT_API insert_action : public action
 {
 public:
   typedef std::list<object_proxy*> object_proxy_list_t;

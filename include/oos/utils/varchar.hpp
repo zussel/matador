@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_UTILS_API
 #endif
 
 #include <string>
@@ -37,7 +37,7 @@
 namespace oos {
 
 /// @cond OOS_DEV
-class OOS_API varchar_base
+class OOS_UTILS_API varchar_base
 {
 public:
   typedef std::string::size_type size_type;
@@ -79,7 +79,7 @@ public:
 
   size_type capacity() const;
 
-  friend OOS_API std::ostream& operator<<(std::ostream &out, const varchar_base &val);
+  friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const varchar_base &val);
 
 protected:
   void ok(const std::string &x);

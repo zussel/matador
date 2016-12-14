@@ -20,16 +20,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/utils/date.hpp"
@@ -73,7 +73,7 @@ enum struct data_type {
  * @param type The data ytpe to be written
  * @return The modified output stream
  */
-OOS_API std::ostream& operator<<(std::ostream &out, const oos::data_type type);
+OOS_SQL_API std::ostream& operator<<(std::ostream &out, const oos::data_type type);
 
 /**
  * @tparam T The type of the traits

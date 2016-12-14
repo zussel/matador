@@ -7,16 +7,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/sql/token.hpp"
@@ -31,7 +31,7 @@ namespace oos {
  * Represents a database column consisting of
  * name.
  */
-struct OOS_API column : public detail::token
+struct OOS_SQL_API column : public detail::token
 {
   /**
    * @brief Creates a new column with given name
@@ -62,7 +62,7 @@ struct OOS_API column : public detail::token
 /**
  * @brief Represents a list of database columns.
  */
-struct OOS_API columns : public detail::token
+struct OOS_SQL_API columns : public detail::token
 {
   /**
    * Enum declaring values on howto interprete
@@ -231,7 +231,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-struct OOS_API typed_column : public oos::column
+struct OOS_SQL_API typed_column : public oos::column
 {
   typed_column(const std::string &col, data_type t);
   typed_column(const std::string &col, data_type t, std::size_t idx, bool host);
@@ -243,7 +243,7 @@ struct OOS_API typed_column : public oos::column
   bool is_host = false;
 };
 
-struct OOS_API typed_identifier_column : public typed_column
+struct OOS_SQL_API typed_identifier_column : public typed_column
 {
   typed_identifier_column(const std::string &n, data_type t) : typed_column(n, t) { }
   typed_identifier_column(const std::string &n, data_type t, size_t idx, bool host) : typed_column(n, t, idx, host) { }
@@ -254,7 +254,7 @@ struct OOS_API typed_identifier_column : public typed_column
   }
 };
 
-struct OOS_API typed_varchar_column : public typed_column
+struct OOS_SQL_API typed_varchar_column : public typed_column
 {
   typed_varchar_column(const std::string &n, size_t size, data_type t)
     : typed_column(n, t)
@@ -273,7 +273,7 @@ struct OOS_API typed_varchar_column : public typed_column
   size_t size;
 };
 
-struct OOS_API identifier_varchar_column : public typed_varchar_column
+struct OOS_SQL_API identifier_varchar_column : public typed_varchar_column
 {
   identifier_varchar_column(const char *n, size_t size, data_type t, size_t idx, bool host)
     : typed_varchar_column(n, size, t, idx, host)
@@ -285,7 +285,7 @@ struct OOS_API identifier_varchar_column : public typed_varchar_column
   }
 };
 
-struct OOS_API basic_value_column : public column
+struct OOS_SQL_API basic_value_column : public column
 {
   basic_value_column(const std::string &col, basic_value *val)
     : column(col)

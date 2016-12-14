@@ -22,15 +22,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 namespace oos {
@@ -54,7 +54,7 @@ class object_store;
  *
  * Transaction can be nested as well.
  */
-class OOS_API transaction
+class OOS_OBJECT_API transaction
 {
 public:
   typedef std::shared_ptr<action> action_ptr;      /**< Shortcut to an action shared pointer */

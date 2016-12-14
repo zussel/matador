@@ -21,15 +21,15 @@
 #ifndef OOS_DOXYGEN_DOC
   #ifdef _MSC_VER
     #ifdef oos_unit_EXPORTS
-      #define OOS_API __declspec(dllexport)
+      #define OOS_UNIT_API __declspec(dllexport)
       #define EXPIMP_TEMPLATE
     #else
-      #define OOS_API __declspec(dllimport)
+      #define OOS_UNIT_API __declspec(dllimport)
       #define EXPIMP_TEMPLATE extern
     #endif
     #pragma warning(disable: 4251)
   #else
-    #define OOS_API
+    #define OOS_UNIT_API
   #endif
 #endif /* OOS_DOXYGEN_DOC */
 
@@ -238,7 +238,7 @@ namespace oos {
  * With a concrete test_unit serializable all or one test
  * method can be executed.
  */
-class OOS_API unit_test
+class OOS_UNIT_API unit_test
 {
 public:
   /**

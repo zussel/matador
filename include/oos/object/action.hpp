@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_OBJECT_API
 #endif
 
 #include <string>
@@ -58,7 +58,7 @@ class object_serializer;
  * All these actions are accepted via the action_visitor
  * class, which implements the visitor pattern.
  */
-class OOS_API action
+class OOS_OBJECT_API action
 {
 public:
   /**

@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 namespace oos {
@@ -35,7 +35,7 @@ class delete_action;
  * a concrete visitor, a class must be derived from this
  * class and implement all virtual method.
  */
-class OOS_API action_visitor
+class OOS_OBJECT_API action_visitor
 {
 public:
   virtual ~action_visitor() {}

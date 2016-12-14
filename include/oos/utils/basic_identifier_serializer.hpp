@@ -7,16 +7,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include "oos/utils/serializer.hpp"
@@ -31,7 +31,7 @@ class byte_buffer;
 
 /// @cond OOS_DEV
 
-class OOS_API basic_identifier_serializer : public serializer {
+class OOS_UTILS_API basic_identifier_serializer : public serializer {
 public:
   basic_identifier_serializer();
 

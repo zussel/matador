@@ -3,15 +3,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-      #define OOS_API __declspec(dllexport)
+      #define OOS_SQL_API __declspec(dllexport)
       #define EXPIMP_TEMPLATE
     #else
-      #define OOS_API __declspec(dllimport)
+      #define OOS_SQL_API __declspec(dllimport)
       #define EXPIMP_TEMPLATE extern
     #endif
     #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/sql/value.hpp"
@@ -26,7 +26,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API query_value_creator
+class OOS_SQL_API query_value_creator
 {
 public:
   query_value_creator();

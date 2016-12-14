@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_OBJECT_API
 #endif
 
 #include "oos/utils/cascade_type.hpp"
@@ -43,7 +43,7 @@ class object_store;
  * and reference class. The class holds the proxy
  * of the serializable and the id of the serializable.
  */
-class OOS_API object_holder : public identifiable_holder
+class OOS_OBJECT_API object_holder : public identifiable_holder
 {
 protected:
   /**
@@ -238,7 +238,7 @@ public:
    * @param x The serializable pointer to print.
    * @return The output stream.
    */
-  friend OOS_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
+  friend OOS_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
 private:
   friend class object_serializer;

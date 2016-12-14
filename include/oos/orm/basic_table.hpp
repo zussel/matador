@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_orm_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_ORM_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_ORM_API
 #endif
 
 #include "oos/object/identifier_proxy_map.hpp"
@@ -47,7 +47,7 @@ class persistence;
  * This class acts as a base class for all kind
  * of tables (common table and relation table)
  */
-class OOS_API basic_table
+class OOS_ORM_API basic_table
 {
 public:
   typedef std::shared_ptr<basic_table> table_ptr;                                             /**< Shortcut to table shared pointer */

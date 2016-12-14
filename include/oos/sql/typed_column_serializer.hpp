@@ -7,16 +7,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/sql/sql.hpp"
@@ -32,7 +32,7 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-class OOS_API typed_column_serializer : public serializer
+class OOS_SQL_API typed_column_serializer : public serializer
 {
 public:
   typed_column_serializer();

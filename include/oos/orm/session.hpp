@@ -7,15 +7,15 @@
 
 #ifdef _MSC_VER
 #ifdef oos_orm_EXPORTS
-#define OOS_API __declspec(dllexport)
+#define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_TEMPLATE
 #else
-#define OOS_API __declspec(dllimport)
+#define OOS_ORM_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_ORM_API
 #endif
 
 #include "oos/object/has_many.hpp"
@@ -53,7 +53,7 @@ namespace oos {
  * This session can also load the whole database into
  * the underlying object_store.
  */
-class OOS_API session
+class OOS_ORM_API session
 {
 public:
   /**

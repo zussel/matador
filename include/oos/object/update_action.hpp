@@ -23,7 +23,7 @@ class object_serializer;
  * This action is used when an objected
  * is updated on the database.
  */
-class OOS_API update_action : public action
+class OOS_OBJECT_API update_action : public action
 {
 private:
   typedef void (*t_backup_func)(byte_buffer&, update_action*, object_serializer &serializer);

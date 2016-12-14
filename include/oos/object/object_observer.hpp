@@ -32,7 +32,7 @@ class object_proxy;
  * registered with serializable store.
  * Use this class as base class for all observer classes.
  */
-class OOS_API object_observer
+class OOS_OBJECT_API object_observer
 {
 public:
   virtual ~object_observer() {}

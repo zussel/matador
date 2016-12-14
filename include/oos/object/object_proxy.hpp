@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_API
+  #define OOS_OBJECT_API
 #endif
 
 #include "oos/utils/identifier_resolver.hpp"
@@ -59,7 +59,7 @@ class transaction;
  * the pointer to the object and the id. Once a new object
  * is inserted into the 
  */
-class OOS_API object_proxy
+class OOS_OBJECT_API object_proxy
 {
 public:
 
@@ -198,7 +198,7 @@ public:
    * @param op The object_proxy to print
    * @return The modified stream.
    */
-  friend OOS_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
+  friend OOS_OBJECT_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
   /**
    * Link this object proxy before given

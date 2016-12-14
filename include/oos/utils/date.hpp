@@ -3,15 +3,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_utils_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_UTILS_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_API
+#define OOS_UTILS_API
 #endif
 
 #include <iostream>
@@ -37,7 +37,7 @@ void throw_invalid_date(int d, int m, int y);
  * - from a date string and its format
  * - copied from another date
  */
-class OOS_API date
+class OOS_UTILS_API date
 {
 private:
   static const unsigned char month_days[];
@@ -107,7 +107,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if the dates are equal.
    */
-  friend OOS_API bool operator==(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator==(const date &a, const date &b);
 
   /**
    * Check if two dates are not equal
@@ -116,7 +116,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if the dates are not equal.
    */
-  friend OOS_API bool operator!=(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator!=(const date &a, const date &b);
 
   /**
    * Add a given number of days.
@@ -169,7 +169,7 @@ public:
    * @param days The days to be added
    * @return a new date
    */
-  friend OOS_API date operator+(date a, int days);
+  friend OOS_UTILS_API date operator+(date a, int days);
 
   /**
    * Subtract a number of days to a given date
@@ -178,7 +178,7 @@ public:
    * @param days The days to be subtracted
    * @return a new date
    */
-  friend OOS_API date operator-(date a, int days);
+  friend OOS_UTILS_API date operator-(date a, int days);
 
   /**
    * Checks if date a is less than date b
@@ -187,7 +187,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if date a less than date b
    */
-  friend OOS_API bool operator<(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator<(const date &a, const date &b);
 
   /**
    * Checks if date a is greater than date b
@@ -196,7 +196,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if date a greater than date b
    */
-  friend OOS_API bool operator>(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator>(const date &a, const date &b);
 
   /**
    * Checks if date a is less equal than date b
@@ -205,7 +205,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if date a less equal than date b
    */
-  friend OOS_API bool operator<=(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator<=(const date &a, const date &b);
 
   /**
    * Checks if date a is greater equal than date b
@@ -214,7 +214,7 @@ public:
    * @param b The right hand date to compare.
    * @return True if date a greater equal than date b
    */
-  friend OOS_API bool operator>=(const date &a, const date &b);
+  friend OOS_UTILS_API bool operator>=(const date &a, const date &b);
 
   /**
    * Writes a date to a given ostream
@@ -223,7 +223,7 @@ public:
    * @param d The date to write
    * @return Reference to the ostream
    */
-  friend OOS_API std::ostream& operator<< (std::ostream& out, const date& d);
+  friend OOS_UTILS_API std::ostream& operator<< (std::ostream& out, const date& d);
 
   /**
    * Sets the date from a given date/time

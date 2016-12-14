@@ -7,16 +7,16 @@
 
 #ifdef _MSC_VER
 #ifdef oos_sql_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_SQL_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_API
+#define OOS_SQL_API
 #endif
 
 #include "oos/sql/types.hpp"
@@ -43,7 +43,7 @@ class basic_query;
 
 /// @cond OOS_DEV
 
-struct OOS_API build_info {
+struct OOS_SQL_API build_info {
   build_info(const sql &s, basic_dialect *d);
 
   build_info(const build_info&) = default;
@@ -90,7 +90,7 @@ struct dialect_traits {
  * which could eventually overwritten by the concrete
  * dialect.
  */
-class OOS_API basic_dialect
+class OOS_SQL_API basic_dialect
 {
 public:
   /**

@@ -20,15 +20,15 @@
 
 #ifdef _MSC_VER
   #ifdef oos_object_EXPORTS
-    #define OOS_API __declspec(dllexport)
+    #define OOS_OBJECT_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
-    #define OOS_API __declspec(dllimport)
+    #define OOS_OBJECT_API __declspec(dllimport)
     #define EXPIMP_TEMPLATE extern
   #endif
   #pragma warning(disable: 4355)
 #else
-  #define OOS_API
+  #define OOS_OBJECT_API
 #endif
 
 #include "oos/utils/byte_buffer.hpp"
@@ -60,7 +60,7 @@ class varchar_base;
  * memory the buffer points to.
  * The application is responsible for this correctness.
  */
-class OOS_API object_serializer
+class OOS_OBJECT_API object_serializer
 {
 public:
   /**
