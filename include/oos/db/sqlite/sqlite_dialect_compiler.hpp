@@ -18,8 +18,6 @@ class sqlite_dialect;
 class sqlite_dialect_compiler : public detail::basic_dialect_compiler
 {
 public:
-  sqlite_dialect_compiler(sqlite_dialect &dialect);
-
   virtual void visit(const oos::detail::select &select1) override;
   virtual void visit(const oos::detail::update &update1) override;
   virtual void visit(const oos::detail::remove &remove1) override;
@@ -38,8 +36,6 @@ private:
 
   std::string tablename_;
   token_list_t::iterator where_;
-
-  sqlite_dialect &dialect_;
 };
 
 }

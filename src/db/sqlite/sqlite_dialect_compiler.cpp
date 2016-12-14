@@ -11,10 +11,6 @@ namespace oos {
 
 namespace sqlite {
 
-sqlite_dialect_compiler::sqlite_dialect_compiler(sqlite_dialect &dialect)
-  : dialect_(dialect)
-{ }
-
 void sqlite_dialect_compiler::visit(const oos::detail::select &)
 {
   is_delete = false;
