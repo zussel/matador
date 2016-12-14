@@ -17,7 +17,7 @@
 
 #include "ConnectionTestUnit.hpp"
 
-#include "sql/connection.hpp"
+#include "oos/sql/connection.hpp"
 
 #include <fstream>
 

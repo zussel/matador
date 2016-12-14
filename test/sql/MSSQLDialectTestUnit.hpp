@@ -6,7 +6,7 @@
 #define OOS_MSSQLDIALECTTESTUNIT_HPP
 
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class MSSQLDialectTestUnit : public oos::unit_test
 {

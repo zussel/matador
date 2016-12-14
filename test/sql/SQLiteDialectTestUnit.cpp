@@ -6,9 +6,9 @@
 
 #include "connections.hpp"
 
-#include "sql/connection.hpp"
-#include "sql/column.hpp"
-#include "sql/dialect_token.hpp"
+#include "oos/sql/connection.hpp"
+#include "oos/sql/column.hpp"
+#include "oos/sql/dialect_token.hpp"
 
 using namespace oos;
 

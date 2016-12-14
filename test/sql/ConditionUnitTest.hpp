@@ -5,7 +5,7 @@
 #ifndef OOS_CONDITIONUNITTEST_HPP
 #define OOS_CONDITIONUNITTEST_HPP
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class ConditionUnitTest : public oos::unit_test
 {

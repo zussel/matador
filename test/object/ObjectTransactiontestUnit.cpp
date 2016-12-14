@@ -6,9 +6,9 @@
 
 #include "../Item.hpp"
 
-#include "object/object_store.hpp"
-#include "object/transaction.hpp"
-#include "object/object_view.hpp"
+#include "oos/object/object_store.hpp"
+#include "oos/object/transaction.hpp"
+#include "oos/object/object_view.hpp"
 
 ObjectTransactiontestUnit::ObjectTransactiontestUnit()
   : unit_test("transaction", "transaction unit test")

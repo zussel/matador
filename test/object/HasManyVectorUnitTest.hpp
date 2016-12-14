@@ -6,10 +6,10 @@
 #define OOS_HASMANYUNITTEST_HPP
 
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
-#include "tools/identifier.hpp"
-#include "object/has_many.hpp"
+#include "oos/utils/identifier.hpp"
+#include "oos/object/has_many.hpp"
 
 namespace hasmanyvector {
 

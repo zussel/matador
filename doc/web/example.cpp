@@ -1,8 +1,8 @@
-#include "object/serializable.hpp"
+#include "oos/object/serializable.hpp"
 #include "serializer.hpp"
-#include "object/object_store.hpp"
-#include "object/object_ptr.hpp"
-#include "object/object_view.hpp"
+#include "oos/object/object_store.hpp"
+#include "oos/object/object_ptr.hpp"
+#include "oos/object/object_view.hpp"
 
 #include "database/session.hpp"
 #include "database/transaction.hpp"

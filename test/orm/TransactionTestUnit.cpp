@@ -2,11 +2,11 @@
 
 #include "../Item.hpp"
 
-#include "object/object_view.hpp"
+#include "oos/object/object_view.hpp"
 
-#include "orm/session.hpp"
+#include "oos/orm/session.hpp"
 
-#include "sql/sql_exception.hpp"
+#include "oos/sql/sql_exception.hpp"
 
 using namespace oos;
 

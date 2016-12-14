@@ -1,7 +1,6 @@
 # project name
 PROJECT(oos)
 
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # project version
@@ -90,7 +89,7 @@ ENDIF()
 #
 # configure include dir
 #
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
 SET(BACKENDS
   SQLite3
@@ -144,13 +143,13 @@ MESSAGE( STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR} )
 
 ENABLE_TESTING()
 
-ADD_SUBDIRECTORY(lib)
-ADD_SUBDIRECTORY(db)
+
+ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
 
 #INSTALL(
-#	TARGETS oos-tools
+#	TARGETS oos-utils
 #	RUNTIME
 #	DESTINATION bin
 #	COMPONENT example
@@ -160,12 +159,6 @@ INSTALL(
   DIRECTORY ${PROJECT_BINARY_DIR}/doc
   DESTINATION .
   COMPONENT doc
-)
-
-INSTALL(
-	FILES ${PROJECT_BINARY_DIR}/version.hpp
-	DESTINATION include/oos
-	COMPONENT headers
 )
 
 # Basic CPack configuration   

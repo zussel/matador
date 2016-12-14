@@ -6,7 +6,7 @@
 #define OOS_SQLITEDIALECTTESTUNIT_HPP
 
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class SQLiteDialectTestUnit : public oos::unit_test
 {

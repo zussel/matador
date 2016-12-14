@@ -6,7 +6,7 @@
 
 #include "../Item.hpp"
 
-#include "sql/query.hpp"
+#include "oos/sql/query.hpp"
 
 using namespace oos;
 

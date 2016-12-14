@@ -15,8 +15,8 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unit/unit_test.hpp"
-#include "unit/test_suite.hpp"
+#include "oos/unit/unit_test.hpp"
+#include "oos/unit/test_suite.hpp"
 
 #include <functional>
 

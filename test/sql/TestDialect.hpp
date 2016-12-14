@@ -6,8 +6,8 @@
 #define OOS_TESTDIALECT_HPP
 
 
-#include "sql/types.hpp"
-#include "sql/basic_dialect.hpp"
+#include "oos/sql/types.hpp"
+#include "oos/sql/basic_dialect.hpp"
 
 class TestDialect : public oos::basic_dialect
 {

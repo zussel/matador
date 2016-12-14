@@ -4,9 +4,9 @@
 
 #include "TestDialect.hpp"
 
-#include "sql/dialect_token.hpp"
-#include "sql/basic_dialect_compiler.hpp"
-#include "sql/basic_dialect_linker.hpp"
+#include "oos/sql/dialect_token.hpp"
+#include "oos/sql/basic_dialect_compiler.hpp"
+#include "oos/sql/basic_dialect_linker.hpp"
 
 #include <algorithm>
 

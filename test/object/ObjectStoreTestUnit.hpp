@@ -1,12 +1,12 @@
 #ifndef OBJECTSTORE_TESTUNIT_HPP
 #define OBJECTSTORE_TESTUNIT_HPP
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
-#include "tools/varchar.hpp"
+#include "oos/utils/varchar.hpp"
 
-#include "object/object_ptr.hpp"
-#include "object/object_store.hpp"
+#include "oos/object/object_ptr.hpp"
+#include "oos/object/object_store.hpp"
 
 class ObjectStoreTestUnit : public oos::unit_test
 {
