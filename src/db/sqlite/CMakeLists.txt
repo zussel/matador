@@ -21,6 +21,8 @@ SET(HEADER
 
 ADD_LIBRARY(oos-sqlite SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(oos-sqlite oos-utils oos-sql ${SQLITE3_LIBRARY})
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos-sqlite
   PROPERTIES

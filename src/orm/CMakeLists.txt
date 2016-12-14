@@ -16,6 +16,8 @@ SET(HEADER
 
 ADD_LIBRARY(oos-orm SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(oos-orm oos-utils oos-sql oos-object)
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos-orm
   PROPERTIES

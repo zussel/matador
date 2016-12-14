@@ -20,6 +20,8 @@ SET(HEADER
 
 ADD_LIBRARY(oos-mysql SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(oos-mysql oos-utils oos-sql ${MYSQL_LIBRARY})
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos-mysql
   PROPERTIES

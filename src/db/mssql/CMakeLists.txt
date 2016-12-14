@@ -21,6 +21,8 @@ SET(HEADER
 
 ADD_LIBRARY(oos-mssql SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(oos-mssql oos-utils oos-sql ${ODBC_LIBRARY})
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos-mssql
   PROPERTIES
