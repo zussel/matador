@@ -13,7 +13,7 @@ IF(DOXYGEN_FOUND)
                        COMMENT "Generating API documentation with Doxygen" VERBATIM)
     add_custom_target (web
                        COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos.dxy
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/web
+                       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/doc/web ${CMAKE_BINARY_DIR}/doc/web
                        COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
 
     file(GLOB WebFiles
