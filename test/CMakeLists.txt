@@ -101,6 +101,20 @@ MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
 
+SET(DB_LIBRARIES)
+
+IF(ODBC_FOUND)
+  LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
+ENDIF()
+
+IF(MYSQL_FOUND)
+  LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
+ENDIF()
+
+IF(SQLITE3_FOUND)
+  LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
+ENDIF()
+
 TARGET_LINK_LIBRARIES(test_oos
   oos-unit
   oos-utils
@@ -108,9 +122,7 @@ TARGET_LINK_LIBRARIES(test_oos
   oos-sql
   oos-orm
   ${CMAKE_DL_LIBS}
-  ${MYSQL_LIBRARY}
-  ${ODBC_LIBRARY}
-  ${SQLITE3_LIBRARY}
+  ${DB_LIBRARIES}
 )
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
