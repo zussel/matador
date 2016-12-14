@@ -46,6 +46,8 @@ SET(HEADER
 
 ADD_LIBRARY(oos-utils SHARED ${SOURCES} ${HEADER})
 
+TARGET_LINK_LIBRARIES(oos-utils ${CMAKE_DL_LIBS})
+
 # Set the build version (VERSION) and the API version (SOVERSION)
 SET_TARGET_PROPERTIES(oos-utils
   PROPERTIES
