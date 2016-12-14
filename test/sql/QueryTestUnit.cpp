@@ -197,8 +197,8 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
     q.create({make_typed_column<std::string>(colname)}).execute();
 
     // check table description
-    std::vector<std::string> columns = { colname };
-    std::vector<data_type > types = { oos::data_type::type_text };
+    std::vector<std::string> columns({ colname });
+    std::vector<data_type > types({ oos::data_type::type_text });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {

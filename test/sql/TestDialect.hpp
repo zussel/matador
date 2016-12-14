@@ -15,7 +15,7 @@ public:
 
   TestDialect();
 
-  const char* type_string(oos::data_type type) const;
+  const char* type_string(oos::data_type type) const override;
 
   oos::dialect_traits::identifier identifier_escape_type() const override;
 };
