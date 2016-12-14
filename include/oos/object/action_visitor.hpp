@@ -6,7 +6,7 @@
 #define OOS_ACTION_VISITOR_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_EXPORTS
+#ifdef oos_object_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else

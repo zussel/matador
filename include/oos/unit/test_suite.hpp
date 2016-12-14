@@ -19,7 +19,7 @@
 #define TEST_SUITE_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_EXPORTS
+  #ifdef oos_unit_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else

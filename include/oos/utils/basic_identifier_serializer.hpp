@@ -6,7 +6,7 @@
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_EXPORTS
+#ifdef oos_utils_EXPORTS
     #define OOS_API __declspec(dllexport)
     #define EXPIMP_TEMPLATE
   #else
