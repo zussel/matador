@@ -440,7 +440,7 @@ void QueryTestUnit::test_statement_insert()
   hans.set_time(itime);
   stmt = q.insert(hans).prepare(connection_);
 
-  stmt.bind(&hans, 0);
+  stmt.bind(0, &hans);
   res = stmt.execute();
 
   stmt = q.select().prepare(connection_);
@@ -482,7 +482,7 @@ void QueryTestUnit::test_statement_update()
   hans.set_time(itime);
   stmt = q.insert(hans).prepare(connection_);
 
-  stmt.bind(&hans, 0);
+  stmt.bind(0, &hans);
   res = stmt.execute();
 
   stmt = q.select().prepare(connection_);
@@ -508,9 +508,9 @@ void QueryTestUnit::test_statement_update()
   int i815 = 815;
   stmt = q.update({{"val_int", i815}}).where(idcol == 7).prepare(connection_);
   size_t pos = 0;
-  pos = stmt.bind(i815, pos);
+  pos = stmt.bind(pos, i815);
   unsigned long hid = hans.id();
-  stmt.bind(hid, pos);
+  stmt.bind(pos, hid);
 
   res = stmt.execute();
 
@@ -534,8 +534,8 @@ void QueryTestUnit::test_statement_update()
   hans.set_int(4711);
   stmt = q.update(hans).where(idcol == 7).prepare(connection_);
   pos = 0;
-  pos = stmt.bind(&hans, pos);
-  stmt.bind(hid, pos);
+  pos = stmt.bind(pos, &hans);
+  stmt.bind(pos, hid);
 
   res = stmt.execute();
 

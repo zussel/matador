@@ -120,22 +120,22 @@ public:
 
   virtual void insert(object_proxy *proxy) override
   {
-    insert_.bind((relation_type*)proxy->obj(), 0);
+    insert_.bind(0, (relation_type*)proxy->obj());
     // Todo: check result
     insert_.execute();
   }
 
   virtual void update(object_proxy *proxy) override
   {
-    size_t pos = update_.bind((relation_type*)proxy->obj(), 0);
-    update_.bind((relation_type*)proxy->obj(), pos);
+    size_t pos = update_.bind(0, static_cast<relation_type*>(proxy->obj()));
+    update_.bind(pos, static_cast<relation_type*>(proxy->obj()));
 
     update_.execute();
   }
 
   virtual void remove(object_proxy *proxy) override
   {
-    delete_.bind((relation_type*)proxy->obj(), 0);
+    delete_.bind(0, static_cast<relation_type*>(proxy->obj()));
     delete_.execute();
   }
 

@@ -94,15 +94,15 @@ public:
 
   virtual void insert(object_proxy *proxy) override
   {
-    insert_.bind((T*)proxy->obj(), 0);
+    insert_.bind(0, static_cast<T*>(proxy->obj()));
     // Todo: check result
     insert_.execute();
   }
 
   virtual void update(object_proxy *proxy) override
   {
-    T *obj = (T*)proxy->obj();
-    size_t pos = update_.bind(obj, 0);
+    T *obj = static_cast<T*>(proxy->obj());
+    size_t pos = update_.bind(0, obj);
     binder_.bind(obj, &update_, pos);
     // Todo: check result
     update_.execute();

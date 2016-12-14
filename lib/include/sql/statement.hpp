@@ -135,11 +135,11 @@ public:
    * Bind an object to the statement starting
    * at the given position index.
    * 
-   * @param obj The object to bind
    * @param index The index where to start the binding
+   * @param obj The object to bind
    * @return The next index to bind
    */
-  size_t bind(T *obj, size_t index)
+  std::size_t bind(std::size_t index, T *obj)
   {
     return p->bind(obj, index);
   }
@@ -154,7 +154,7 @@ public:
    * @return The next index to bind
    */
   template < class V >
-  size_t bind(V &val, size_t index)
+  std::size_t bind(std::size_t index, V &val)
   {
     return p->bind(val, index);
   }
@@ -279,7 +279,7 @@ public:
    * @return The next index to bind
    */
   template < class V >
-  size_t bind(V &val, size_t index)
+  std::size_t bind(std::size_t index, V &val)
   {
     return p->bind(val, index);
   }
