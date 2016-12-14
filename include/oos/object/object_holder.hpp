@@ -8,12 +8,13 @@
 #ifdef _MSC_VER
 #ifdef oos_object_EXPORTS
     #define OOS_OBJECT_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
+    #define EXPIMP_OBJECT_TEMPLATE
   #else
     #define OOS_OBJECT_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
+    #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
+  #pragma warning(disable: 4275)
 #else
 #define OOS_OBJECT_API
 #endif

@@ -21,10 +21,10 @@
 #ifdef _MSC_VER
   #ifdef oos_unit_EXPORTS
     #define OOS_UNIT_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
+    #define EXPIMP_UNIT_TEMPLATE
   #else
     #define OOS_UNIT_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
+    #define EXPIMP_UNIT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else

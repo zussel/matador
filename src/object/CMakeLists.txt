@@ -4,7 +4,6 @@ SET(SOURCES
   object_proxy.cpp
   object_serializer.cpp
   prototype_node.cpp
-  identifier.cpp
   prototype_iterator.cpp
   object_holder.cpp
   transaction.cpp

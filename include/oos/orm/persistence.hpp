@@ -8,10 +8,10 @@
 #ifdef _MSC_VER
 #ifdef oos_orm_EXPORTS
 #define OOS_ORM_API __declspec(dllexport)
-#define EXPIMP_TEMPLATE
+#define EXPIMP_ORM_TEMPLATE
 #else
 #define OOS_ORM_API __declspec(dllimport)
-#define EXPIMP_TEMPLATE extern
+#define EXPIMP_ORM_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else

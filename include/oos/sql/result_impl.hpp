@@ -4,10 +4,10 @@
 #ifdef _MSC_VER
   #ifdef oos_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
-    #define EXPIMP_TEMPLATE
+    #define EXPIMP_SQL_TEMPLATE
   #else
     #define OOS_SQL_API __declspec(dllimport)
-    #define EXPIMP_TEMPLATE extern
+    #define EXPIMP_SQL_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else

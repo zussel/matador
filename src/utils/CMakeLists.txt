@@ -9,6 +9,7 @@ SET(SOURCES
   sequencer.cpp
   string.cpp
   strptime.cpp
+  identifier.cpp
   basic_identifier.cpp
   basic_identifier_serializer.cpp
   serializer.cpp
