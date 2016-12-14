@@ -166,7 +166,7 @@ std::string basic_query::state2text(basic_query::state_t state)
   }
 }
 
-std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = {};
+std::unordered_map<std::type_index, std::string> basic_query::tablename_map_ = std::unordered_map<std::type_index, std::string>();
 
 }
 
