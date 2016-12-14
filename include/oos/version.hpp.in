@@ -2,9 +2,9 @@
 #define APP_VERSION_HPP
 
 // the configured options and settings for Tutorial
-#define VERSION_MAJOR @oos_MAJOR_VERSION@
-#define VERSION_MINOR @oos_MINOR_VERSION@
-#define PATCH_LEVEL @oos_PATCH_LEVEL@
+#define VERSION_MAJOR @OOS_MAJOR_VERSION@
+#define VERSION_MINOR @OOS_MINOR_VERSION@
+#define PATCH_LEVEL @OOS_PATCH_LEVEL@
 
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)
