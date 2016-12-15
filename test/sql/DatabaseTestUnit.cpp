@@ -19,7 +19,7 @@
 
 #include "../Item.hpp"
 
-#include "object/object_view.hpp"
+#include "oos/object/object_view.hpp"
 
 #include "database/session.hpp"
 #include "database/database_exception.hpp"

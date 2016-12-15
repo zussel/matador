@@ -1,6 +1,6 @@
 #include "PrototypeTreeTest.hpp"
 
-#include "object/object_store.hpp"
+#include "oos/object/object_store.hpp"
 #include "../Item.hpp"
 
 #include <fstream>

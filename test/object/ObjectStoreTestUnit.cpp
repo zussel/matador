@@ -1,19 +1,14 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "../Item.hpp"
 
-#include "object/object_expression.hpp"
-#include "object/object_serializer.hpp"
-#include "object/object_view.hpp"
-#include "object/generic_access.hpp"
+#include "oos/object/object_expression.hpp"
+#include "oos/object/object_view.hpp"
+#include "oos/object/generic_access.hpp"
 
-#include "tools/algorithm.hpp"
-#include "tools/date.hpp"
-#include "tools/time.hpp"
+#include "oos/utils/algorithm.hpp"
 
 #include "version.hpp"
-
 #include <iostream>
-#include <object/basic_identifier_serializer.hpp>
 
 using namespace oos;
 using namespace std;

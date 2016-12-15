@@ -4,7 +4,7 @@
 
 #include "HasManyVectorUnitTest.hpp"
 
-#include "object/object_store.hpp"
+#include "oos/object/object_store.hpp"
 
 using namespace oos;
 using namespace hasmanyvector;

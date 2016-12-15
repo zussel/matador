@@ -6,7 +6,7 @@
 #define OOS_HASMANYLISTUNITTEST_HPP
 
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class HasManyListUnitTest : public oos::unit_test
 {

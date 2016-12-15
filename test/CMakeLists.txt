@@ -1,24 +1,24 @@
-#ADD_SUBDIRECTORY(tools)
+#ADD_SUBDIRECTORY(utils)
 #ADD_SUBDIRECTORY(sql)
 #ADD_SUBDIRECTORY(serializable)
 #ADD_SUBDIRECTORY(json)
 #ADD_SUBDIRECTORY(unit)
 
 SET (TEST_TOOLS_SOURCES
-  tools/TimeTestUnit.cpp
-  tools/TimeTestUnit.hpp
-  tools/DateTestUnit.cpp
-  tools/DateTestUnit.hpp
-  tools/BlobTestUnit.hpp
-  tools/BlobTestUnit.cpp
-  tools/VarCharTestUnit.hpp
-  tools/VarCharTestUnit.cpp
-  tools/FactoryTestUnit.hpp
-  tools/FactoryTestUnit.cpp
-  tools/StringTestUnit.cpp
-  tools/StringTestUnit.hpp
-  tools/AnyTestUnit.cpp
-  tools/AnyTestUnit.hpp
+  utils/TimeTestUnit.cpp
+  utils/TimeTestUnit.hpp
+  utils/DateTestUnit.cpp
+  utils/DateTestUnit.hpp
+  utils/BlobTestUnit.hpp
+  utils/BlobTestUnit.cpp
+  utils/VarCharTestUnit.hpp
+  utils/VarCharTestUnit.cpp
+  utils/FactoryTestUnit.hpp
+  utils/FactoryTestUnit.cpp
+  utils/StringTestUnit.cpp
+  utils/StringTestUnit.hpp
+  utils/AnyTestUnit.cpp
+  utils/AnyTestUnit.hpp
 )
 
 SET (TEST_HEADER Item.hpp has_many_list.hpp)
@@ -101,11 +101,33 @@ MESSAGE(STATUS "sqlite connection string: ${SQLITE_CONNECTION_STRING}")
 
 CONFIGURE_FILE(connections.hpp.in ${PROJECT_BINARY_DIR}/connections.hpp @ONLY IMMEDIATE)
 
-TARGET_LINK_LIBRARIES(test_oos oos ${CMAKE_DL_LIBS})
+SET(DB_LIBRARIES)
+
+IF(ODBC_FOUND)
+  LIST(APPEND DB_LIBRARIES ${ODBC_LIBRARY})
+ENDIF()
+
+IF(MYSQL_FOUND)
+  LIST(APPEND DB_LIBRARIES ${MYSQL_LIBRARY})
+ENDIF()
+
+IF(SQLITE3_FOUND)
+  LIST(APPEND DB_LIBRARIES ${SQLITE3_LIBRARY})
+ENDIF()
+
+TARGET_LINK_LIBRARIES(test_oos
+  oos-unit
+  oos-utils
+  oos-object
+  oos-sql
+  oos-orm
+  ${CMAKE_DL_LIBS}
+  ${DB_LIBRARIES}
+)
 
 # Group source files for IDE source explorers (e.g. Visual Studio)
 SOURCE_GROUP("object" FILES ${TEST_OBJECT_SOURCES})
-SOURCE_GROUP("tools" FILES ${TEST_TOOLS_SOURCES})
+SOURCE_GROUP("utils" FILES ${TEST_TOOLS_SOURCES})
 SOURCE_GROUP("json" FILES ${TEST_JSON_SOURCES})
 SOURCE_GROUP("unit" FILES ${TEST_UNIT_SOURCES})
 SOURCE_GROUP("orm" FILES ${TEST_ORM_SOURCES})

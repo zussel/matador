@@ -9,6 +9,8 @@ elif [ "$(ls -A gh-pages)" ]; then
   rm gh-pages/*
 fi
 
+cd api
+
 for file in *.html; do
-  sed 's/href="\([^"#]*\).html\(#[^"]*\)\?"/href="\/api\/\1\/index.html\2"/g' $file > gh-pages/$file
+  sed 's/href="\([^"#]*\).html\(#[^"]*\)\?"/href="\/api\/\1\/index.html\2"/g' $file > ../gh-pages/$file
 done

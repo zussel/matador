@@ -6,9 +6,9 @@
 #define OOS_SQLTEST_HPP
 
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
-#include "sql/connection.hpp"
+#include "oos/sql/connection.hpp"
 
 namespace oos {
 class connection;

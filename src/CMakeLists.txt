@@ -1,0 +1,15 @@
+CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/include/oos/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
+
+ADD_SUBDIRECTORY(object)
+ADD_SUBDIRECTORY(orm)
+ADD_SUBDIRECTORY(sql)
+ADD_SUBDIRECTORY(utils)
+ADD_SUBDIRECTORY(unit)
+
+ADD_SUBDIRECTORY(db)
+
+INSTALL(
+  FILES ${CMAKE_BINARY_DIR}/version.hpp
+  DESTINATION include/oos
+  COMPONENT headers
+)

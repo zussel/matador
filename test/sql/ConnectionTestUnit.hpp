@@ -18,9 +18,9 @@
 #ifndef SESSION_TEST_UNIT_HPP
 #define SESSION_TEST_UNIT_HPP
 
-#include "object/object_store.hpp"
+#include "oos/object/object_store.hpp"
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 namespace oos {
 class session;

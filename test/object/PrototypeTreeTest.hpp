@@ -1,7 +1,7 @@
 #ifndef PROTOTYPE_TREE_TESTUNIT_HPP
 #define PROTOTYPE_TREE_TESTUNIT_HPP
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class PrototypeTreeTestUnit : public oos::unit_test
 {

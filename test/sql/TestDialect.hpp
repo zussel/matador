@@ -6,8 +6,8 @@
 #define OOS_TESTDIALECT_HPP
 
 
-#include "sql/types.hpp"
-#include "sql/basic_dialect.hpp"
+#include "oos/sql/types.hpp"
+#include "oos/sql/basic_dialect.hpp"
 
 class TestDialect : public oos::basic_dialect
 {
@@ -15,7 +15,7 @@ public:
 
   TestDialect();
 
-  const char* type_string(oos::data_type type) const;
+  const char* type_string(oos::data_type type) const override;
 
   oos::dialect_traits::identifier identifier_escape_type() const override;
 };

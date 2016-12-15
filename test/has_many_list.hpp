@@ -5,9 +5,9 @@
 #ifndef OOS_HAS_MANY_LIST_HPP
 #define OOS_HAS_MANY_LIST_HPP
 
-#include "tools/identifier.hpp"
+#include "oos/utils/identifier.hpp"
 
-#include "object/has_many.hpp"
+#include "oos/object/has_many.hpp"
 
 namespace hasmanylist {
 

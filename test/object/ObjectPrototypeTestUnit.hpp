@@ -1,7 +1,7 @@
 #ifndef OBJECT_PROTOTYPE_TESTUNIT_HPP
 #define OBJECT_PROTOTYPE_TESTUNIT_HPP
 
-#include "unit/unit_test.hpp"
+#include "oos/unit/unit_test.hpp"
 
 class ObjectPrototypeTestUnit : public oos::unit_test
 {

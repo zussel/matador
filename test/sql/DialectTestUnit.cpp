@@ -6,10 +6,10 @@
 
 #include "TestDialect.hpp"
 
-#include "sql/sql.hpp"
-#include "sql/dialect_token.hpp"
-#include "sql/column.hpp"
-#include "sql/condition.hpp"
+#include "oos/sql/sql.hpp"
+#include "oos/sql/dialect_token.hpp"
+#include "oos/sql/column.hpp"
+#include "oos/sql/condition.hpp"
 
 using namespace oos;
 

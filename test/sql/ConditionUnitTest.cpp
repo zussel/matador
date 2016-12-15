@@ -4,9 +4,9 @@
 
 #include "ConditionUnitTest.hpp"
 
-#include "sql/query.hpp"
-#include "sql/condition.hpp"
-#include "sql/basic_dialect.hpp"
+#include "oos/sql/query.hpp"
+#include "oos/sql/condition.hpp"
+#include "oos/sql/basic_dialect.hpp"
 
 #include "TestDialect.hpp"
 

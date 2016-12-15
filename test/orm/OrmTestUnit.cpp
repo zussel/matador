@@ -7,10 +7,10 @@
 #include "../Item.hpp"
 #include "../has_many_list.hpp"
 
-#include "orm/persistence.hpp"
-#include "orm/session.hpp"
+#include "oos/orm/persistence.hpp"
+#include "oos/orm/session.hpp"
 
-#include "object/object_view.hpp"
+#include "oos/object/object_view.hpp"
 
 using namespace hasmanylist;
 

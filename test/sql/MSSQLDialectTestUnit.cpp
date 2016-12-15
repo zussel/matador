@@ -7,10 +7,10 @@
 #include "connections.hpp"
 #include "../Item.hpp"
 
-#include "sql/sql.hpp"
-#include "sql/query.hpp"
-#include "sql/dialect_token.hpp"
-#include "sql/connection.hpp"
+#include "oos/sql/sql.hpp"
+#include "oos/sql/query.hpp"
+#include "oos/sql/dialect_token.hpp"
+#include "oos/sql/connection.hpp"
 
 using namespace oos;
 
