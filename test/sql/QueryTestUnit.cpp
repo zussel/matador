@@ -114,7 +114,7 @@ void QueryTestUnit::test_datatypes()
   UNIT_EXPECT_EQUAL(it->get_bool(), bval, "bool is not equal");
   UNIT_EXPECT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
   UNIT_EXPECT_EQUAL(it->get_string(), strval, "strings is not equal");
-  UNIT_EXPECT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
+  UNIT_ASSERT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
   UNIT_EXPECT_EQUAL(it->get_date(), date_val, "date is not equal");
   UNIT_EXPECT_EQUAL(it->get_time(), time_val, "time is not equal");
 
