@@ -105,18 +105,18 @@ void QueryTestUnit::test_datatypes()
   std::unique_ptr<Item> it((first++).release());
 
   UNIT_EXPECT_EQUAL(it->get_char(), cval, "character is not equal");
-  UNIT_ASSERT_EQUAL(it->get_short(), sval, "short is not equal");
-  UNIT_ASSERT_EQUAL(it->get_int(), ival, "integer is not equal");
-  UNIT_ASSERT_EQUAL(it->get_long(), lval, "long is not equal");
-  UNIT_ASSERT_EQUAL(it->get_unsigned_short(), usval, "unsigned short is not equal");
-  UNIT_ASSERT_EQUAL(it->get_unsigned_int(), uival, "unsigned integer is not equal");
-  UNIT_ASSERT_EQUAL(it->get_unsigned_long(), ulval, "unsigned long is not equal");
-  UNIT_ASSERT_EQUAL(it->get_bool(), bval, "bool is not equal");
-  UNIT_ASSERT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
-  UNIT_ASSERT_EQUAL(it->get_string(), strval, "strings is not equal");
-  UNIT_ASSERT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
-  UNIT_ASSERT_EQUAL(it->get_date(), date_val, "date is not equal");
-  UNIT_ASSERT_EQUAL(it->get_time(), time_val, "time is not equal");
+  UNIT_EXPECT_EQUAL(it->get_short(), sval, "short is not equal");
+  UNIT_EXPECT_EQUAL(it->get_int(), ival, "integer is not equal");
+  UNIT_EXPECT_EQUAL(it->get_long(), lval, "long is not equal");
+  UNIT_EXPECT_EQUAL(it->get_unsigned_short(), usval, "unsigned short is not equal");
+  UNIT_EXPECT_EQUAL(it->get_unsigned_int(), uival, "unsigned integer is not equal");
+  UNIT_EXPECT_EQUAL(it->get_unsigned_long(), ulval, "unsigned long is not equal");
+  UNIT_EXPECT_EQUAL(it->get_bool(), bval, "bool is not equal");
+  UNIT_EXPECT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
+  UNIT_EXPECT_EQUAL(it->get_string(), strval, "strings is not equal");
+  UNIT_EXPECT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
+  UNIT_EXPECT_EQUAL(it->get_date(), date_val, "date is not equal");
+  UNIT_EXPECT_EQUAL(it->get_time(), time_val, "time is not equal");
 
   q.drop().execute(connection_);
 }
