@@ -114,7 +114,7 @@ void QueryTestUnit::test_datatypes()
   UNIT_EXPECT_EQUAL(it->get_bool(), bval, "bool is not equal");
   UNIT_EXPECT_EQUAL(it->get_cstr(), cstr, "const char pointer is not equal");
   UNIT_EXPECT_EQUAL(it->get_string(), strval, "strings is not equal");
-  UNIT_ASSERT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
+  UNIT_EXPECT_EQUAL(it->get_varchar(), vval, "varchar is not equal");
   UNIT_EXPECT_EQUAL(it->get_date(), date_val, "date is not equal");
   UNIT_EXPECT_EQUAL(it->get_time(), time_val, "time is not equal");
 
@@ -321,9 +321,9 @@ void QueryTestUnit::test_create()
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -453,10 +453,10 @@ void QueryTestUnit::test_statement_insert()
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
-    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -496,9 +496,9 @@ void QueryTestUnit::test_statement_update()
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
     UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -524,10 +524,10 @@ void QueryTestUnit::test_statement_update()
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
-    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->get_int(), 815, "expected integer must be 815");
-    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_int(), 815, "expected integer must be 815");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 
@@ -549,10 +549,10 @@ void QueryTestUnit::test_statement_update()
 
   while (first != last) {
     std::unique_ptr<Item> item(first.release());
-    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    //UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_ASSERT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_ASSERT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
+    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
+    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
+    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
     ++first;
   }
 

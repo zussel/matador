@@ -721,15 +721,27 @@ public:
   /**
    * @brief Checks if a is equal b.
    *
-   * If c string a is not equal std::string b the test method prints
+   * If a is not equal b the test method prints
    * the given message to stdout.
-   * 
+   *
+   * @tparam X The type of the left hand serializable to compare.
+   * @tparam Y The type of the right hand serializable to compare.
    * @param a The left hand operand.
    * @param b The right hand operand.
    * @param msg The message to print if the check fails.
    * @param line The line number of this check in the source code.
    * @param file The file where this check can be found.
    */
+  template < class X, class Y >
+  void expect_equal(const X &a, const Y &b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (a != b) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+#ifndef OOS_DOXYGEN_DOC
   void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->error_count;
@@ -738,7 +750,43 @@ public:
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
     }
   }
-
+  void expect_equal(const std::string &a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a.c_str(), b) != 0) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+  void expect_equal(const char *a, const char *b, const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a, b) != 0) {
+      ++current_test_func_info->errors;
+      std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+  template < int N1, int N2 >
+  void
+  expect_equal(const char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+  template < int N1, int N2 >
+  void
+  expect_equal(char (&a)[N1], const char (&b)[N2], const std::string &msg, int line, const char *file)
+  {
+    ++current_test_func_info->error_count;
+    if (strcmp(a, b) != 0) {
+      std::stringstream msgstr;
+      msgstr << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
+    }
+  }
+#endif
   /**
    * @brief Checks if a is greater b.
    *
