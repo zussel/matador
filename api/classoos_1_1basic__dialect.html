@@ -14,7 +14,7 @@ title: oos::basic_dialect Class Reference
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">oos::basic_dialect Class Reference</div>  </div>
+<div class="title">oos::basic_dialect Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -45,6 +45,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a34171002a8e8ded4dcb1ee9ee77ed01b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a34171002a8e8ded4dcb1ee9ee77ed01b">column_count</a> () const</td></tr>
 <tr class="memdesc:a34171002a8e8ded4dcb1ee9ee77ed01b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The count of columns to be bind.  <a href="#a34171002a8e8ded4dcb1ee9ee77ed01b">More...</a><br /></td></tr>
 <tr class="separator:a34171002a8e8ded4dcb1ee9ee77ed01b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79fe68b9de70787afe17097e3414f5fd"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a79fe68b9de70787afe17097e3414f5fd">prepare_identifier</a> (const std::string &amp;str)</td></tr>
+<tr class="separator:a79fe68b9de70787afe17097e3414f5fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82a9aede1e936ea6e92d51e662bebdf5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a82a9aede1e936ea6e92d51e662bebdf5">quote_identifier</a> (std::string &amp;str)</td></tr>
+<tr class="separator:a82a9aede1e936ea6e92d51e662bebdf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d0a4b36da3b3d7b64ff748c8c58ee95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a3d0a4b36da3b3d7b64ff748c8c58ee95">escape_quotes_in_identifier</a> (std::string &amp;str)</td></tr>
+<tr class="separator:a3d0a4b36da3b3d7b64ff748c8c58ee95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb84da1084bad82b4b6afdd6bfa842e4"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="/api/structoos_1_1dialect__traits/index.html#a8f183d66a00accfafc3d742c775ff381">dialect_traits::identifier</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#afb84da1084bad82b4b6afdd6bfa842e4">identifier_escape_type</a> () const =0</td></tr>
+<tr class="separator:afb84da1084bad82b4b6afdd6bfa842e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42549d9e93009b837ec259bd68beae3c"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a42549d9e93009b837ec259bd68beae3c">identifier_opening_quote</a> () const</td></tr>
+<tr class="separator:a42549d9e93009b837ec259bd68beae3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d5510ee5c2ecd2989f8050b408ad030"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a9d5510ee5c2ecd2989f8050b408ad030">identifier_closing_quote</a> () const</td></tr>
+<tr class="separator:a9d5510ee5c2ecd2989f8050b408ad030"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -198,6 +210,96 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a3d0a4b36da3b3d7b64ff748c8c58ee95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d0a4b36da3b3d7b64ff748c8c58ee95">&sect;&nbsp;</a></span>escape_quotes_in_identifier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::basic_dialect::escape_quotes_in_identifier </td>
+          <td>(</td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Escape identifier quotes inside identifiers.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>Identifier to be escaped </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9d5510ee5c2ecd2989f8050b408ad030"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d5510ee5c2ecd2989f8050b408ad030">&sect;&nbsp;</a></span>identifier_closing_quote()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char oos::basic_dialect::identifier_closing_quote </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Return the identifier closing quote</p>
+<dl class="section return"><dt>Returns</dt><dd>Identifier closing quote. </dd></dl>
+
+</div>
+</div>
+<a id="afb84da1084bad82b4b6afdd6bfa842e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb84da1084bad82b4b6afdd6bfa842e4">&sect;&nbsp;</a></span>identifier_escape_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="/api/structoos_1_1dialect__traits/index.html#a8f183d66a00accfafc3d742c775ff381">dialect_traits::identifier</a> oos::basic_dialect::identifier_escape_type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns how the identifier quotes should be escaped.</p>
+<dl class="section return"><dt>Returns</dt><dd>How the identifier quotes should be escaped </dd></dl>
+
+</div>
+</div>
+<a id="a42549d9e93009b837ec259bd68beae3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42549d9e93009b837ec259bd68beae3c">&sect;&nbsp;</a></span>identifier_opening_quote()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char oos::basic_dialect::identifier_opening_quote </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Return the identifier opening quote</p>
+<dl class="section return"><dt>Returns</dt><dd>Identifier opening quote. </dd></dl>
+
+</div>
+</div>
 <a id="a01dbe3f11078e4dbc28965f09ac5fbbe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a01dbe3f11078e4dbc28965f09ac5fbbe">&sect;&nbsp;</a></span>prepare()</h2>
 
@@ -225,7 +327,58 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a79fe68b9de70787afe17097e3414f5fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79fe68b9de70787afe17097e3414f5fd">&sect;&nbsp;</a></span>prepare_identifier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string oos::basic_dialect::prepare_identifier </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Prepare sql dialect identifier for execution and escape quotes and quote the identifier string</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>The identifier string to be prepared </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The prepared string </dd></dl>
+
+</div>
+</div>
+<a id="a82a9aede1e936ea6e92d51e662bebdf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82a9aede1e936ea6e92d51e662bebdf5">&sect;&nbsp;</a></span>quote_identifier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::basic_dialect::quote_identifier </td>
+          <td>(</td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Wrap identifier quotes around a sql identifier keyword</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>Identifier to put quotes around </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>sql/basic_dialect.hpp</li>
+<li>oos/sql/basic_dialect.hpp</li>
 </ul>
 </div><!-- contents -->

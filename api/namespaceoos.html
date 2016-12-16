@@ -84,6 +84,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/structoos_1_1date__format/index.html">date_format</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/structoos_1_1dialect__traits/index.html">dialect_traits</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1factory/index.html">factory</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A generic factory class.  <a href="/api/classoos_1_1factory/index.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -315,9 +317,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a2addb5713585025be479c9a3ecdb9820"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="/api/classcondition/index.html">condition</a>&lt; <a class="el" href="/api/structoos_1_1column/index.html">column</a>, std::initializer_list&lt; V &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a2addb5713585025be479c9a3ecdb9820">in</a> (const <a class="el" href="/api/structoos_1_1column/index.html">oos::column</a> &amp;col, std::initializer_list&lt; V &gt; args)</td></tr>
 <tr class="memdesc:a2addb5713585025be479c9a3ecdb9820"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an IN condition for a given column and a list of values.  <a href="#a2addb5713585025be479c9a3ecdb9820">More...</a><br /></td></tr>
 <tr class="separator:a2addb5713585025be479c9a3ecdb9820"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8775abf2aaa4586475cc7e86d876b98d"><td class="memItemLeft" align="right" valign="top">OOS_API <a class="el" href="/api/classcondition/index.html">condition</a>&lt; <a class="el" href="/api/structoos_1_1column/index.html">column</a>, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a8775abf2aaa4586475cc7e86d876b98d">in</a> (const <a class="el" href="/api/structoos_1_1column/index.html">oos::column</a> &amp;col, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a> &amp;q, <a class="el" href="/api/classoos_1_1basic__dialect/index.html">basic_dialect</a> *dialect)</td></tr>
-<tr class="memdesc:a8775abf2aaa4586475cc7e86d876b98d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an IN condition for a given column and a query to be executed.  <a href="#a8775abf2aaa4586475cc7e86d876b98d">More...</a><br /></td></tr>
-<tr class="separator:a8775abf2aaa4586475cc7e86d876b98d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97aa54b13ebce3393f934bef9ff20b98"><td class="memItemLeft" align="right" valign="top">OOS_SQL_API <a class="el" href="/api/classcondition/index.html">condition</a>&lt; <a class="el" href="/api/structoos_1_1column/index.html">column</a>, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a97aa54b13ebce3393f934bef9ff20b98">in</a> (const <a class="el" href="/api/structoos_1_1column/index.html">oos::column</a> &amp;col, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a> &amp;q)</td></tr>
+<tr class="memdesc:a97aa54b13ebce3393f934bef9ff20b98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an IN condition for a given column and a query to be executed.  <a href="#a97aa54b13ebce3393f934bef9ff20b98">More...</a><br /></td></tr>
+<tr class="separator:a97aa54b13ebce3393f934bef9ff20b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a67bc1a41bcf977094a497be2a183e8"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a2a67bc1a41bcf977094a497be2a183e8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="/api/classcondition/index.html">condition</a>&lt; <a class="el" href="/api/structoos_1_1column/index.html">column</a>, std::pair&lt; T, T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a2a67bc1a41bcf977094a497be2a183e8">between</a> (const <a class="el" href="/api/structoos_1_1column/index.html">oos::column</a> &amp;col, T low, T high)</td></tr>
 <tr class="memdesc:a2a67bc1a41bcf977094a497be2a183e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a between condition.  <a href="#a2a67bc1a41bcf977094a497be2a183e8">More...</a><br /></td></tr>
@@ -366,12 +368,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a82f7961a941a46947606d9832a3aafb6"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1query/index.html">query</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a82f7961a941a46947606d9832a3aafb6">select</a> (const std::string &amp;<a class="el" href="/api/classoos_1_1table/index.html">table</a>)</td></tr>
 <tr class="memdesc:a82f7961a941a46947606d9832a3aafb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a select query for type T.  <a href="#a82f7961a941a46947606d9832a3aafb6">More...</a><br /></td></tr>
 <tr class="separator:a82f7961a941a46947606d9832a3aafb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd2d455456192c529f7bb38de8c94500"><td class="memItemLeft" align="right" valign="top">OOS_API <a class="el" href="/api/classoos_1_1query/index.html">query</a>&lt; <a class="el" href="/api/classoos_1_1row/index.html">row</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#acd2d455456192c529f7bb38de8c94500">select</a> (<a class="el" href="/api/structoos_1_1columns/index.html">columns</a> cols)</td></tr>
-<tr class="memdesc:acd2d455456192c529f7bb38de8c94500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a query for given columns.  <a href="#acd2d455456192c529f7bb38de8c94500">More...</a><br /></td></tr>
-<tr class="separator:acd2d455456192c529f7bb38de8c94500"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a705d9cbf0a2e46fd30ad82a1edffd9d1"><td class="memItemLeft" align="right" valign="top">OOS_API std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a705d9cbf0a2e46fd30ad82a1edffd9d1">operator&lt;&lt;</a> (std::ostream &amp;out, const <a class="el" href="/api/namespaceoos/index.html#ac88aecfa2294421874b4a6a630234976">oos::data_type</a> type)</td></tr>
-<tr class="memdesc:a705d9cbf0a2e46fd30ad82a1edffd9d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output operator for data types.  <a href="#a705d9cbf0a2e46fd30ad82a1edffd9d1">More...</a><br /></td></tr>
-<tr class="separator:a705d9cbf0a2e46fd30ad82a1edffd9d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d16b97ac233ac1275967970a65271cb"><td class="memItemLeft" align="right" valign="top">OOS_SQL_API <a class="el" href="/api/classoos_1_1query/index.html">query</a>&lt; <a class="el" href="/api/classoos_1_1row/index.html">row</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a6d16b97ac233ac1275967970a65271cb">select</a> (<a class="el" href="/api/structoos_1_1columns/index.html">columns</a> cols)</td></tr>
+<tr class="memdesc:a6d16b97ac233ac1275967970a65271cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a query for given columns.  <a href="#a6d16b97ac233ac1275967970a65271cb">More...</a><br /></td></tr>
+<tr class="separator:a6d16b97ac233ac1275967970a65271cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97893a8cbf315f84abf91de364ed3154"><td class="memItemLeft" align="right" valign="top">OOS_SQL_API std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a97893a8cbf315f84abf91de364ed3154">operator&lt;&lt;</a> (std::ostream &amp;out, const <a class="el" href="/api/namespaceoos/index.html#ac88aecfa2294421874b4a6a630234976">oos::data_type</a> type)</td></tr>
+<tr class="memdesc:a97893a8cbf315f84abf91de364ed3154"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output operator for data types.  <a href="#a97893a8cbf315f84abf91de364ed3154">More...</a><br /></td></tr>
+<tr class="separator:a97893a8cbf315f84abf91de364ed3154"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd4f890787ea782134f637c02b1b3967"><td class="memTemplParams" colspan="2">template&lt;class InputIterator , class Function , class Predicate &gt; </td></tr>
 <tr class="memitem:acd4f890787ea782134f637c02b1b3967"><td class="memTemplItemLeft" align="right" valign="top">Function&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#acd4f890787ea782134f637c02b1b3967">for_each_if</a> (InputIterator first, InputIterator last, Predicate pred, Function f)</td></tr>
 <tr class="memdesc:acd4f890787ea782134f637c02b1b3967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a function if element is valid with given predicate.  <a href="#acd4f890787ea782134f637c02b1b3967">More...</a><br /></td></tr>
@@ -392,14 +394,16 @@ Functions</h2></td></tr>
 <tr class="memitem:a199ebb612fb2a78c874c6c2f82125609"><td class="memTemplItemLeft" align="right" valign="top">identifier&lt; T &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a199ebb612fb2a78c874c6c2f82125609">make_id</a> (const T &amp;id)</td></tr>
 <tr class="memdesc:a199ebb612fb2a78c874c6c2f82125609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shortcut to create a new identifier from value.  <a href="#a199ebb612fb2a78c874c6c2f82125609">More...</a><br /></td></tr>
 <tr class="separator:a199ebb612fb2a78c874c6c2f82125609"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57c679be73d3fd48f0439844fdba3ff7"><td class="memItemLeft" align="right" valign="top">OOS_API size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a57c679be73d3fd48f0439844fdba3ff7">split</a> (const std::string &amp;str, char delim, std::vector&lt; std::string &gt; &amp;values)</td></tr>
-<tr class="separator:a57c679be73d3fd48f0439844fdba3ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99cbfbf0fc433113a94e75c5868c39ca"><td class="memItemLeft" align="right" valign="top">OOS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a99cbfbf0fc433113a94e75c5868c39ca">trim</a> (const std::string &amp;str, const std::string &amp;whitespace=&quot; \)</td></tr>
+<tr class="memitem:a7ec501f1d4e287037757523838ccf47a"><td class="memItemLeft" align="right" valign="top">OOS_UTILS_API size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a7ec501f1d4e287037757523838ccf47a">split</a> (const std::string &amp;str, char delim, std::vector&lt; std::string &gt; &amp;values)</td></tr>
+<tr class="separator:a7ec501f1d4e287037757523838ccf47a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99cbfbf0fc433113a94e75c5868c39ca"><td class="memItemLeft" align="right" valign="top">OOS_UTILS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a99cbfbf0fc433113a94e75c5868c39ca">trim</a> (const std::string &amp;str, const std::string &amp;whitespace=&quot; \)</td></tr>
 <tr class="separator:a99cbfbf0fc433113a94e75c5868c39ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c605d23558e90cefbc8ce498a541c1d"><td class="memItemLeft" align="right" valign="top">OOS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a8c605d23558e90cefbc8ce498a541c1d">to_string</a> (const <a class="el" href="/api/classoos_1_1time/index.html">oos::time</a> &amp;x, const char *format=<a class="el" href="/api/structoos_1_1time__format/index.html#acf52810bf2fb3dd6da052f3a98830927">time_format::ISO8601</a>)</td></tr>
-<tr class="separator:a8c605d23558e90cefbc8ce498a541c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8478298a962a7d9859329d7c1bb5ddb6"><td class="memItemLeft" align="right" valign="top">OOS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a8478298a962a7d9859329d7c1bb5ddb6">to_string</a> (const <a class="el" href="/api/classoos_1_1date/index.html">oos::date</a> &amp;x, const char *format=<a class="el" href="/api/structoos_1_1date__format/index.html#a9b0c4d2a28e934ee129530750be6b737">date_format::ISO8601</a>)</td></tr>
-<tr class="separator:a8478298a962a7d9859329d7c1bb5ddb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d998bcb0343cfcb30d97b7a3c877e5c"><td class="memItemLeft" align="right" valign="top">OOS_UTILS_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a4d998bcb0343cfcb30d97b7a3c877e5c">replace_all</a> (std::string &amp;<a class="el" href="/api/namespaceoos/index.html#a2addb5713585025be479c9a3ecdb9820">in</a>, const std::string &amp;from, const std::string &amp;to)</td></tr>
+<tr class="separator:a4d998bcb0343cfcb30d97b7a3c877e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a544a7f2d0fe6ab6458bda8329ff1a510"><td class="memItemLeft" align="right" valign="top">OOS_UTILS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a544a7f2d0fe6ab6458bda8329ff1a510">to_string</a> (const <a class="el" href="/api/classoos_1_1time/index.html">oos::time</a> &amp;x, const char *format=<a class="el" href="/api/structoos_1_1time__format/index.html#acf52810bf2fb3dd6da052f3a98830927">time_format::ISO8601</a>)</td></tr>
+<tr class="separator:a544a7f2d0fe6ab6458bda8329ff1a510"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a880d19f75c3d41d36df05944fb2eb13c"><td class="memItemLeft" align="right" valign="top">OOS_UTILS_API std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a880d19f75c3d41d36df05944fb2eb13c">to_string</a> (const <a class="el" href="/api/classoos_1_1date/index.html">oos::date</a> &amp;x, const char *format=<a class="el" href="/api/structoos_1_1date__format/index.html#a9b0c4d2a28e934ee129530750be6b737">date_format::ISO8601</a>)</td></tr>
+<tr class="separator:a880d19f75c3d41d36df05944fb2eb13c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cc7d8c14c6319e94e196a436cdc6bd0"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a2cc7d8c14c6319e94e196a436cdc6bd0"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/namespaceoos/index.html#a2cc7d8c14c6319e94e196a436cdc6bd0">to_string</a> (T x, size_t precision=0, typename std::enable_if&lt; std::is_floating_point&lt; T &gt;::value &gt;::type *=0)</td></tr>
 <tr class="separator:a2cc7d8c14c6319e94e196a436cdc6bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1082,14 +1086,14 @@ template&lt;class V &gt; </div>
 
 </div>
 </div>
-<a id="a8775abf2aaa4586475cc7e86d876b98d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8775abf2aaa4586475cc7e86d876b98d">&sect;&nbsp;</a></span>in() <span class="overload">[2/2]</span></h2>
+<a id="a97aa54b13ebce3393f934bef9ff20b98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97aa54b13ebce3393f934bef9ff20b98">&sect;&nbsp;</a></span>in() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API <a class="el" href="/api/classcondition/index.html">condition</a>&lt;<a class="el" href="/api/structoos_1_1column/index.html">column</a>, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a>&gt; oos::in </td>
+          <td class="memname">OOS_SQL_API <a class="el" href="/api/classcondition/index.html">condition</a>&lt;<a class="el" href="/api/structoos_1_1column/index.html">column</a>, <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a>&gt; oos::in </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="/api/structoos_1_1column/index.html">oos::column</a> &amp;&#160;</td>
           <td class="paramname"><em>col</em>, </td>
@@ -1098,13 +1102,7 @@ template&lt;class V &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">detail::basic_query</a> &amp;&#160;</td>
-          <td class="paramname"><em>q</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="/api/classoos_1_1basic__dialect/index.html">basic_dialect</a> *&#160;</td>
-          <td class="paramname"><em>dialect</em>&#160;</td>
+          <td class="paramname"><em>q</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1119,7 +1117,6 @@ template&lt;class V &gt; </div>
   <table class="params">
     <tr><td class="paramname">col</td><td>The column to compare </td></tr>
     <tr><td class="paramname">q</td><td>The query to be executes as sub select </td></tr>
-    <tr><td class="paramname">dialect</td><td>A pointer to the sql dialect </td></tr>
   </table>
   </dd>
 </dl>
@@ -1778,14 +1775,14 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a705d9cbf0a2e46fd30ad82a1edffd9d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a705d9cbf0a2e46fd30ad82a1edffd9d1">&sect;&nbsp;</a></span>operator<<()</h2>
+<a id="a97893a8cbf315f84abf91de364ed3154"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97893a8cbf315f84abf91de364ed3154">&sect;&nbsp;</a></span>operator<<()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API std::ostream&amp; oos::operator&lt;&lt; </td>
+          <td class="memname">OOS_SQL_API std::ostream&amp; oos::operator&lt;&lt; </td>
           <td>(</td>
           <td class="paramtype">std::ostream &amp;&#160;</td>
           <td class="paramname"><em>out</em>, </td>
@@ -2142,6 +2139,49 @@ template&lt;class L1 , class R1 , class L2 , class R2 &gt; </div>
 
 </div>
 </div>
+<a id="a4d998bcb0343cfcb30d97b7a3c877e5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d998bcb0343cfcb30d97b7a3c877e5c">&sect;&nbsp;</a></span>replace_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OOS_UTILS_API void oos::replace_all </td>
+          <td>(</td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>from</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>to</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Replaces all occurences of string from in given string with string to.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>Source string where the replacement takes place </td></tr>
+    <tr><td class="paramname">from</td><td>The string to be replaced </td></tr>
+    <tr><td class="paramname">to</td><td>The new string </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a82f7961a941a46947606d9832a3aafb6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a82f7961a941a46947606d9832a3aafb6">&sect;&nbsp;</a></span>select() <span class="overload">[1/2]</span></h2>
 
@@ -2177,14 +2217,14 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="acd2d455456192c529f7bb38de8c94500"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd2d455456192c529f7bb38de8c94500">&sect;&nbsp;</a></span>select() <span class="overload">[2/2]</span></h2>
+<a id="a6d16b97ac233ac1275967970a65271cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d16b97ac233ac1275967970a65271cb">&sect;&nbsp;</a></span>select() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API <a class="el" href="/api/classoos_1_1query/index.html">query</a>&lt;<a class="el" href="/api/classoos_1_1row/index.html">row</a>&gt; oos::select </td>
+          <td class="memname">OOS_SQL_API <a class="el" href="/api/classoos_1_1query/index.html">query</a>&lt;<a class="el" href="/api/classoos_1_1row/index.html">row</a>&gt; oos::select </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="/api/structoos_1_1columns/index.html">columns</a>&#160;</td>
           <td class="paramname"><em>cols</em></td><td>)</td>
@@ -2362,14 +2402,14 @@ template&lt;typename O &gt; </div>
 
 </div>
 </div>
-<a id="a57c679be73d3fd48f0439844fdba3ff7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57c679be73d3fd48f0439844fdba3ff7">&sect;&nbsp;</a></span>split()</h2>
+<a id="a7ec501f1d4e287037757523838ccf47a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ec501f1d4e287037757523838ccf47a">&sect;&nbsp;</a></span>split()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API size_t oos::split </td>
+          <td class="memname">OOS_UTILS_API size_t oos::split </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>str</em>, </td>
@@ -2406,14 +2446,14 @@ template&lt;typename O &gt; </div>
 
 </div>
 </div>
-<a id="a8c605d23558e90cefbc8ce498a541c1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c605d23558e90cefbc8ce498a541c1d">&sect;&nbsp;</a></span>to_string() <span class="overload">[1/3]</span></h2>
+<a id="a544a7f2d0fe6ab6458bda8329ff1a510"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a544a7f2d0fe6ab6458bda8329ff1a510">&sect;&nbsp;</a></span>to_string() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API std::string oos::to_string </td>
+          <td class="memname">OOS_UTILS_API std::string oos::to_string </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="/api/classoos_1_1time/index.html">oos::time</a> &amp;&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -2442,14 +2482,14 @@ template&lt;typename O &gt; </div>
 
 </div>
 </div>
-<a id="a8478298a962a7d9859329d7c1bb5ddb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8478298a962a7d9859329d7c1bb5ddb6">&sect;&nbsp;</a></span>to_string() <span class="overload">[2/3]</span></h2>
+<a id="a880d19f75c3d41d36df05944fb2eb13c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a880d19f75c3d41d36df05944fb2eb13c">&sect;&nbsp;</a></span>to_string() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OOS_API std::string oos::to_string </td>
+          <td class="memname">OOS_UTILS_API std::string oos::to_string </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="/api/classoos_1_1date/index.html">oos::date</a> &amp;&#160;</td>
           <td class="paramname"><em>x</em>, </td>
