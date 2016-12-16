@@ -17,9 +17,9 @@ IF(DOXYGEN_FOUND)
                        COMMENT "Generating WEB documentation with Doxygen" VERBATIM)
 
     file(GLOB WebFiles
-      ${CMAKE_BINARY_DIR}/doc/*.css
-      ${CMAKE_BINARY_DIR}/doc/*.png
-      ${CMAKE_BINARY_DIR}/doc/*.js
+      ${CMAKE_BINARY_DIR}/doc/api/*.css
+      ${CMAKE_BINARY_DIR}/doc/api/*.png
+      ${CMAKE_BINARY_DIR}/doc/api/*.js
     )
 
     add_custom_target (ghdoc
