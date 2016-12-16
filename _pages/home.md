@@ -7,18 +7,17 @@ header:
   overlay_filter: 0.5
   cta_label: "<i class='fa fa-download'></i> Get it now"
   cta_url: "/docs/installation/"
-feature_row1:
+feature_row:
   - title: "Unique Object Container"
-    image_path: container.jpg
+    image_path: container400x230.png
     excerpt: |
         OOS comes with a unique kind of container where you can store all
         your objects in. Once the hierarchy is set up you can perform all
         CRUD operations on the container plus filtering and using views.
     url: "/docs/objects/"
     btn_label: "Learn More"
-feature_row2:
   - title: "Fluent Query Interface"
-    image_path: fluent-road.jpg
+    image_path: fluent-road400x230.png
     excerpt: |
         The sql query module provides simple fluent
         interface to build sql queries. Once a query
@@ -26,21 +25,18 @@ feature_row2:
         a prepared statement.
     url: "/docs/queries/"
     btn_label: "Learn More"
-feature_row3:
   - title: "ORM Layer"
-    image_path: gears.jpg
+    image_path: gears400x230.png
     excerpt: |
         The ORM layer let the user set up the object hierarchy
         and hides then all the sql query stuff behind a simple
-        ORM interface
+        ORM interface. All actions are executed in transaction
+        scope. 
     url: "/docs/persistence/"
     btn_label: "Learn More"
 ---
-{% include feature_row id="feature_row1" type="left" %}
 
-{% include feature_row id="feature_row2" type="right" %}
-
-{% include feature_row id="feature_row3" type="left" %}
+{% include feature_row id="feature_row" %}
 
 ### Getting Started
 
