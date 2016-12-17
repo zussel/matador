@@ -28,9 +28,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a88d4ccab91534bb63e0a9271f43c3c49"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1condition_3_01condition_3_01_l1_00_01_r1_01_4_00_01condition_3_01_l2_00_01_r2_01_4_01_4/index.html#a88d4ccab91534bb63e0a9271f43c3c49">condition</a> (const <a class="el" href="/api/classcondition/index.html">condition</a>&lt; L1, R1 &gt; &amp;l, const <a class="el" href="/api/classcondition/index.html">condition</a>&lt; L2, R2 &gt; &amp;r, detail::basic_condition::t_operand op)</td></tr>
 <tr class="memdesc:a88d4ccab91534bb63e0a9271f43c3c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a binary logical condition.  <a href="#a88d4ccab91534bb63e0a9271f43c3c49">More...</a><br /></td></tr>
 <tr class="separator:a88d4ccab91534bb63e0a9271f43c3c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95d1362789c030bebdc2288f56f06292"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1condition_3_01condition_3_01_l1_00_01_r1_01_4_00_01condition_3_01_l2_00_01_r2_01_4_01_4/index.html#a95d1362789c030bebdc2288f56f06292">evaluate</a> (<a class="el" href="/api/classoos_1_1basic__dialect/index.html#a2f21c7795db57772392e9fd4c6123ac1">basic_dialect::t_compile_type</a> compile_type) const</td></tr>
-<tr class="memdesc:a95d1362789c030bebdc2288f56f06292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the condition.  <a href="#a95d1362789c030bebdc2288f56f06292">More...</a><br /></td></tr>
-<tr class="separator:a95d1362789c030bebdc2288f56f06292"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fde60ceb1313f8a2a71ab4c63aa9897"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1condition_3_01condition_3_01_l1_00_01_r1_01_4_00_01condition_3_01_l2_00_01_r2_01_4_01_4/index.html#a6fde60ceb1313f8a2a71ab4c63aa9897">evaluate</a> (<a class="el" href="/api/classoos_1_1basic__dialect/index.html">basic_dialect</a> &amp;dialect) const</td></tr>
+<tr class="memdesc:a6fde60ceb1313f8a2a71ab4c63aa9897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the condition.  <a href="#a6fde60ceb1313f8a2a71ab4c63aa9897">More...</a><br /></td></tr>
+<tr class="separator:a6fde60ceb1313f8a2a71ab4c63aa9897"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class L1, class R1, class L2, class R2&gt;<br />
@@ -106,8 +106,8 @@ template&lt;class L1 , class R1 , class L2 , class R2 &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a95d1362789c030bebdc2288f56f06292"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95d1362789c030bebdc2288f56f06292">&sect;&nbsp;</a></span>evaluate()</h2>
+<a id="a6fde60ceb1313f8a2a71ab4c63aa9897"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fde60ceb1313f8a2a71ab4c63aa9897">&sect;&nbsp;</a></span>evaluate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -120,8 +120,8 @@ template&lt;class L1 , class R1 , class L2 , class R2 &gt; </div>
         <tr>
           <td class="memname">std::string oos::condition&lt; <a class="el" href="/api/classcondition/index.html">condition</a>&lt; L1, R1 &gt;, <a class="el" href="/api/classcondition/index.html">condition</a>&lt; L2, R2 &gt; &gt;::evaluate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="/api/classoos_1_1basic__dialect/index.html#a2f21c7795db57772392e9fd4c6123ac1">basic_dialect::t_compile_type</a>&#160;</td>
-          <td class="paramname"><em>compile_type</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="/api/classoos_1_1basic__dialect/index.html">basic_dialect</a> &amp;&#160;</td>
+          <td class="paramname"><em>dialect</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -135,7 +135,7 @@ template&lt;class L1 , class R1 , class L2 , class R2 &gt; </div>
 <p>Evaluates the condition. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">compile_type</td><td>The compile type of the condition </td></tr>
+    <tr><td class="paramname">dialect</td><td>The dialect used to evaluate </td></tr>
   </table>
   </dd>
 </dl>
@@ -144,6 +144,6 @@ template&lt;class L1 , class R1 , class L2 , class R2 &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>sql/<a class="el" href="/api/condition_8hpp/index.html">condition.hpp</a></li>
+<li>oos/sql/<a class="el" href="/api/condition_8hpp/index.html">condition.hpp</a></li>
 </ul>
 </div><!-- contents -->

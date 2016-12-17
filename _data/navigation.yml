@@ -5,9 +5,9 @@ main:
   - title: "Reference"
     url: /api/annotated/
   - title: "Download"
-    url: /api/download/
+    url: /download/
   - title: "About"
-    url: /api/about/
+    url: /about/
 
 docs:
   - title: "Getting Started"
