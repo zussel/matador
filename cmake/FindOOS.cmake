@@ -21,7 +21,7 @@ else(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
   )
 
   if(WIN32)
-    find_library(OOS_LIBRARIES NAMES oos-object
+    find_library(OOS_LIBRARIES NAMES oos-object oos-utils oos-unit oos-orm oos-sql
       PATHS
       $ENV{ProgramFiles}/OOS/*/lib
       $ENV{SystemDrive}/OOS/*/lib
