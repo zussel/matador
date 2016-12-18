@@ -2,6 +2,9 @@
 title: "Objects"
 ---
 
+{% include base_path %}
+{% include toc icon="columns" title="Objects" %}
+
 ### Objects
 
 All kind of object up from POD can be attached to the object store. It can be a
@@ -26,3 +29,80 @@ struct person
 ```
 
 Provide such a method for all objects to be attached to the object store and you're done.
+
+## Supported types
+
+The following types are supported and can be used within the ```serialize()``` method:
+
+### Numbers
+
+All arithmetic number types are supported (```char```, ```short```, ```int```, ```long```,
+```unsigned char```, ```unsigned short```, ```unsigned int```, ```unsigned long```,
+```float```, ```double``` and ```bool```).
+
+The ```serialize()``` method takes the name of the attribute and attribute itself.
+
+```cpp
+struct numbers
+{
+  char char_ = 'c';
+  short short_ = -127;
+  int int_ = -65000;
+  long long_ = -128000;
+  unsigned char unsigned_char_ = 'u';
+  unsigned short unsigned_short_ = 128;
+  unsigned int unsigned_int_ = 65000;
+  unsigned long unsigned_long_ = 128000;
+  bool bool_ = true;
+  float float_ = 3.1415f;
+  double double_ = 1.1414;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("val_char", char_);
+    serializer.serialize("val_short", short_);
+    serializer.serialize("val_int", int_);
+    serializer.serialize("val_long", long_);
+    serializer.serialize("val_unsigned_chr", unsigned_char_);
+    serializer.serialize("val_unsigned_short", unsigned_short_);
+    serializer.serialize("val_unsigned_int", unsigned_int_);
+    serializer.serialize("val_unsigned_long", unsigned_long_);
+    serializer.serialize("val_bool", bool_);
+    serializer.serialize("val_float", float_);
+    serializer.serialize("val_double", double_);
+  }
+
+};
+```
+
+### Strings
+
+There are three types of supported strings (```std::string```, ```const char*``` and
+```oos::varchar<S>```). The latter is a string type representing database type VARCHAR
+taking its size as the template argument.
+
+```cpp
+struct strings
+{
+  enum { CSTR_LEN=255 };
+
+  char cstr_[CSTR_LEN];
+  std::string string_ = "world";
+  oos::varchar<255> varchar_ = "earth";
+  
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("val_cstr", cstr_, (std::size_t)CSTR_LEN);
+    serializer.serialize("val_string", string_);
+    serializer.serialize("val_varchar", varchar_);
+  }
+};
+```
+
+### Time ad date
+
+### Primary keys
+
+### Relations
