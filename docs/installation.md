@@ -6,11 +6,16 @@ title: Installation
 
 ### Requirements
 
-There are almost no dependencies. At least the database library you want to use. If you wnat to build from the sources you need an appropiate compiler (gcc or clang) and the [cmake](http://www.cmake.org) build system installed. If you plan to generate an install package on a windows system you need the [nullsoft scriptable install system](http://nsis.sourceforge.net).
-          
+There are almost no dependencies. At least the database library you want to use.
+If you wnat to build from the sources you need an appropiate compiler
+(gcc or clang) and the [cmake](http://www.cmake.org) build system installed.
+If you plan to generate an install package on a windows system you need
+the [nullsoft scriptable install system](http://nsis.sourceforge.net).
+
 ### Sources
 
-Get the sources from GitHub and enter the created directory:
+Get a binary package from the [download page](/download) or
+get the sources from GitHub and enter the created directory:
 
 ```
     $ git clone https://github.com/zussel/oos.git

@@ -2,6 +2,8 @@
 main:
   - title: "Getting Started"
     url: /docs/installation/
+  - title: "Blog"
+    url: /year-archive/
   - title: "Reference"
     url: /api/annotated/
   - title: "Download"

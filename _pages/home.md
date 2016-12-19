@@ -1,6 +1,10 @@
 ---
 layout: splash
-excerpt: 'OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all the database backend stuff. You dont have to deal with database backends or sql statements neither with mapping of data types or serialization of objects. It comes with a unique container for your objects, a fluent sql query interface and on top an ORM layer.<br /> <small><a href="https://github.com/zussel/oos/releases/tag/v0.2.1">Latest release v0.2.1</a></small><br /><br /> {::nomarkdown}<iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=zussel&repo=oos&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe> <iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=zussel&repo=oos&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>{:/nomarkdown}'
+excerpt: |
+  OOS is an object-relational mapping (ORM) framework written in C++. It aims to encapsulate all database
+  backend communication. You dont have to deal with database backends or sql statements neither with mapping of data types
+  or serialization of objects. It comes with a unique container for your objects, a fluent sql query interface and on top an ORM
+  layer.<br /> <small><a href="https://github.com/zussel/oos/releases/tag/v0.2.1">Latest release v0.2.1</a></small><br /><br /> {::nomarkdown}<iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=zussel&repo=oos&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe> <iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=zussel&repo=oos&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>{:/nomarkdown}
 permalink: /
 header:
   overlay_image: library-header.png
@@ -40,3 +44,45 @@ feature_row:
 
 ### Getting Started
 
+```cpp
+// use oos' namespace
+using namespace oos
+
+// a simple person class
+struct person {
+  identifier<long> id;   // primary key
+  varchar<256> name;
+  unsigned int age = 0;
+  
+  person(long i, const std::string n)
+    : id(i), name(n)
+  {}
+  
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer) {
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("age", age);
+  }
+};
+
+// prepare the persistence layer
+persistence p("sqlite://db.sqlite");
+p.attach<person>("person");
+
+// create tables
+p.create();
+
+// create a database session
+session s(p);
+
+// insert george
+// returns an oos::object_ptr<person>
+auto george = s.insert(new person(1, "george"));
+
+// modify george
+george->age = 35;
+s.update(george);
+// delete george
+s.remove(george);
+```
