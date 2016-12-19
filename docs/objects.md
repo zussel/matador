@@ -141,3 +141,36 @@ struct identifier_type
 
 ### Relations
 
+By two relation types are supported by OOS: ```has_one<T>``` and
+```has_many<T>```. These types must also be serialized.
+
+```cpp
+struct relations
+{
+  oos::has_one<T> foreign_;         // just a foreign object
+  oos::has_many<T> collection_; // a collection with objects
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("foreign", foreign_, oos::cascade_type::ALL);
+    serializer.serialize("collection", collection_, "local_id", "foreign_id");
+  }
+};
+```
+
+```has_one<T>``` is just a link to a foreign object. With the third parameter
+in the serialize method one adjust the cascading command behavior when
+an insert, update, delete and select operation is executed on the
+containing object. ```oos::cascade_type::ALL``` means that all operations
+are also passed to the foreign object (e.g. when containing object is
+deleted the foreign is deleted as well).
+
+```has_many<T>``` describes a collection leading to a relation table between
+the containing object and the foreign object. If the foreign object is of
+a simple builtin type (e.g. ```int``` or ```oos::varchar<S>```) the value
+itself is stored in the relation table.
+
+**Note:** The obviously missing type ```belongs_to<T>``` will be introduced
+in the next release of OOS as well as _many to many_ relations.
+{: .notice--warning}
