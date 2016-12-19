@@ -32,7 +32,7 @@ docs:
         url: /docs/expressions/
       - title: "Transactions"
         url: /docs/transactions/
-  - title: Database
+  - title: Query Interface
     children:
       - title: "Databases"
         url: /docs/databases/
@@ -50,6 +50,8 @@ docs:
         url: /docs/time/
       - title: "Date"
         url: /docs/date/
+      - title: "Varchar"
+        url: /docs/varchar/
   - title: Misc
     children:
       - title: "Old 0.2.2 Docs"
