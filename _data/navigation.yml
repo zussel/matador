@@ -50,10 +50,12 @@ docs:
         url: /docs/time/
       - title: "Date"
         url: /docs/date/
-  - title: Version 0.2.1
+  - title: Misc
     children:
-      - title: "Documentation"
+      - title: "Old 0.2.2 Docs"
         url: /old-docs
+      - title: "License"
+        url: /license
 
 api:
   - title: API Reference
