@@ -42,6 +42,16 @@ docs:
         url: /docs/persistence/
       - title: "Sessions"
         url: /docs/sessions/
+  - title: Utils
+    children:
+      - title: "Time"
+        url: /docs/time/
+      - title: "Date"
+        url: /docs/date/
+  - title: Version 0.2.1
+    children:
+      - title: "Documentation"
+        url: /old-docs
 
 api:
   - title: API Reference

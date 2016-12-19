@@ -103,6 +103,41 @@ struct strings
 
 ### Time ad date
 
+OOS comes with its own [time](/docs/time) and [date](/docs/date) classes.
+The ```serialize()``` interface is also straight forward.
+
+```cpp
+struct time_and_date
+{
+  oos::date date_;
+  oos::time time_;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("val_date", date_);
+    serializer.serialize("val_time", time_);
+  }
+};
+```
+
 ### Primary keys
 
+There is also a special type ```identifier<T>``` providing primary key
+behavior. The serializer looks like this:
+
+```cpp
+struct identifier_type
+{
+  oos::identifier<unsigned long> id_ = 0;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("id", id_);
+  }
+};
+```
+
 ### Relations
+
