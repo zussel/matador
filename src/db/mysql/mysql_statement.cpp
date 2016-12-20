@@ -299,7 +299,7 @@ void mysql_statement::bind_value(MYSQL_BIND &bind, enum_field_types type, const 
 	memset(bind.buffer, 0, len);
   }
   bind.buffer_length = (unsigned long)(len - 1);
-#ifdef WIN32
+#ifdef _MSC_VER
   strncpy_s(static_cast<char*>(bind.buffer), len, value, _TRUNCATE);
 #else
   strncpy(static_cast<char*>(bind.buffer), value, len);

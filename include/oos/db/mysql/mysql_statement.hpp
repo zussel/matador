@@ -23,7 +23,7 @@
 #include "oos/utils/identifier.hpp"
 #include "oos/utils/varchar.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
 #else

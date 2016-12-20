@@ -1,7 +1,7 @@
 #ifndef MYSQL_RESULT_INFO_HPP
 #define MYSQL_RESULT_INFO_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <mysql.h>
 #else
 #include <mysql/mysql.h>

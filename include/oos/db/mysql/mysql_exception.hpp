@@ -18,7 +18,7 @@
 #ifndef MYSQL_EXCEPTION_HPP
 #define MYSQL_EXCEPTION_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_mysql_EXPORTS
     #define OOS_MYSQL_API __declspec(dllexport)
   #else
@@ -31,7 +31,7 @@
 
 #include "oos/sql/sql_exception.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
 #else

@@ -18,7 +18,7 @@
 #ifndef SQLITE_DATABASE_HPP
 #define SQLITE_DATABASE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_sqlite_EXPORTS
     #define OOS_SQLITE_API __declspec(dllexport)
   #else
