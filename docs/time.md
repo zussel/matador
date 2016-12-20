@@ -5,11 +5,12 @@ title: Time
 {% include toc icon="columns" title="Relations" %}
 
 OOS comes with its own simple time class. It represents a time with milliseconds
-precisions. Once a time object exists it can be modified, copied or assigned.
- 
+precisions. Once a time object exists it can be modified, copied or assigned. For full
+documentation see the [api](/api/classoos_1_1time/).
+
 ### Creation
 
-Time can be created from several constructors
+Time can be created from several constructors.
 
 | Constructor | purpose |
 |-------------|---------|
@@ -38,6 +39,7 @@ std::cout << t;
 ```
 
 Results in:
+
 ```bash
 2015-01-31T11:35:07
 ```
@@ -52,11 +54,12 @@ std::cout << to_string(t, "%H:%M:%S.%f %d.%m.%Y");
 ```
 
 Results in:
+
 ```bash
 11:35:07.123 31.01.2015
 ```
 
-### Modifications
+### Modify
 
 To modify a time one can use the fluent interface allowing the user to concatenate
 all parts to be modified in sequence.
@@ -68,3 +71,22 @@ t.year(2014).month(8).day(8);
 
 ```
 
+### Conversions
+
+The time can be converted into a [```oos::date``](/docs/date)
+
+
+```cpp
+oos::time t(2015, 1, 31, 11, 35, 7);
+
+oos::date d = t.to_date();
+```
+
+There are also methods to retrieve ```tm``` and ```timeval``` struct:
+
+```cpp
+oos::time t(2015, 1, 31, 11, 35, 7);
+
+struct tm ttm = t.get_tm();
+struct timeval tv = t.get_timeval();
+```
