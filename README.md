@@ -8,6 +8,7 @@ Store all kind of objects in one container.
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
 [![Coverage Status](https://coveralls.io/repos/github/zussel/oos/badge.svg?branch=develop)](https://coveralls.io/github/zussel/oos?branch=develop)
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/oos-orm/Lobby)
 [![GitHub version](https://badge.fury.io/gh/zussel%2Foos.svg)](https://badge.fury.io/gh/zussel%2Foos)
 [![GitHub license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/oos/develop/License)
 
