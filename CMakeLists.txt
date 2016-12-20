@@ -14,21 +14,33 @@ SET(OOS_VERSION "${OOS_MAJOR_VERSION}.${OOS_MINOR_VERSION}.${OOS_PATCH_LEVEL}")
 
 MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${OOS_VERSION}")
 
-IF(CMAKE_CXX_COMPILER MATCHES "clang")
-	MESSAGE(STATUS "Clang detected - Adding compiler flags")
-	SET(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -pedantic")
-ELSEIF(CMAKE_COMPILER_IS_GNUCXX)
+
+# Common compiler flags
+# These are defined for clang/gcc compatibility.
+# When non-compatible flags are implemented then we must specify them separately.
+SET(GCC_CLANG_COMMON_FLAGS "-std=c++14 -Wall -Wextra -pedantic")
+SET(GCC_CLANG_COMMON_FLAGS_DEBUG "-O0 -g -DDEBUG")
+SET(GCC_CLANG_COMMON_FLAGS_RELEASE "-O3 -DNDEBUG")
+
+IF(CMAKE_COMPILER_IS_GNUCXX)
     MESSAGE(STATUS "GCC detected - Adding compiler flags")
-    
-    EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-    if (GCC_VERSION VERSION_GREATER 4.6)
-        MESSAGE(STATUS "Version > 4.6")
-        SET(CMAKE_CXX_FLAGS "-std=c++11 -std=gnu++11 -Wextra -Wall -pedantic")
-    else ()
-        MESSAGE(STATUS "Version <= 4.6")
-        SET(CMAKE_CXX_FLAGS "-std=c++0x -std=gnu++0x -Wextra -Wall -pedantic")
-    endif()
+    SET(CMAKE_CXX_FLAGS "${GCC_CLANG_COMMON_FLAGS}")
+    SET(CMAKE_CXX_FLAGS_DEBUG "${GCC_CLANG_COMMON_FLAGS_DEBUG}")
+    SET(CMAKE_CXX_FLAGS_RELEASE "${GCC_CLANG_COMMON_FLAGS_RELEASE}")
+
+ELSEIF(CMAKE_CXX_COMPILER MATCHES "clang")
+    MESSAGE(STATUS "Clang detected - Adding compiler flags")
+    SET(CMAKE_CXX_FLAGS "${GCC_CLANG_COMMON_FLAGS}")
+    SET(CMAKE_CXX_FLAGS_DEBUG "${GCC_CLANG_COMMON_FLAGS_DEBUG}")
+    SET(CMAKE_CXX_FLAGS_RELEASE "${GCC_CLANG_COMMON_FLAGS_RELEASE}")
+
+ELSEIF(MSVC)
+    MESSAGE(STATUS "MSVC detected - Adding compiler flags")
+    SET(CMAKE_CXX_FLAGS "/std:c++14 /Wall")
+    SET(CMAKE_CXX_FLAGS_DEBUG "/Od /Zi /D_DEBUG /DDEBUG")
+    SET(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
 ENDIF()
+
 
 MESSAGE(STATUS "Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 MESSAGE(STATUS "Architecture System: ${CMAKE_SYSTEM_NAME}")
@@ -60,15 +72,17 @@ if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" A
   INCLUDE(CodeCoverage)
   INCLUDE(Coveralls)
   MESSAGE(STATUS "will generate coverage data")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
-  SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} -g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
-  #SET(CMAKE_SHARED_LINKER_FLAGS="-fprofile-arcs -ftest-coverage")
-  SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
-  
+  SET(CMAKE_BUILD_TYPE "Debug")
+  SET(GCOV_ADDITIONAL_FLAGS "-fprofile-arcs -ftest-coverage")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
+  SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
+  #SET(CMAKE_SHARED_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
+  SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
+
   if (COVERAGE)
     SETUP_TARGET_FOR_COVERAGE(coverage test_oos lib coverage "exec;all")
   endif()
-  
+
   if (COVERALLS)
     SETUP_TARGET_FOR_COVERALLS(coveralls test_oos . "exec;all")
   endif()
