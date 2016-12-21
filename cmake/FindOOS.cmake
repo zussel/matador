@@ -8,7 +8,7 @@
 if(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
    set(OOS_FOUND TRUE)
 
-else(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
+else()
 
   find_path(OOS_INCLUDE_DIR oos/object/object_store.hpp
       /usr/include/
@@ -26,7 +26,7 @@ else(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
       $ENV{ProgramFiles}/OOS/*/lib
       $ENV{SystemDrive}/OOS/*/lib
     )
-  else(WIN32)
+  else()
     find_library(OOS_LIBRARIES NAMES oos-object
       PATHS
       /usr/lib
@@ -35,20 +35,20 @@ else(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
       /usr/local/lib/oos
       /opt/oos/lib
     )
-  endif(WIN32)
+  endif()
 
   if(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
     set(OOS_FOUND TRUE)
     message(STATUS "Found OOS: ${OOS_INCLUDE_DIR}, ${OOS_LIBRARIES}")
-  else(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
+  else()
     set(OOS_FOUND FALSE)
     if (OOS_FIND_REQUIRED)
       message(FATAL_ERROR "OOS not found.")
-    else (OOS_FIND_REQUIRED)
+    else ()
       message(STATUS "OOS not found.")
-    endif (OOS_FIND_REQUIRED)
-  endif(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
+    endif ()
+  endif()
 
   mark_as_advanced(OOS_INCLUDE_DIR OOS_LIBRARIES)
 
-endif(OOS_INCLUDE_DIR AND OOS_LIBRARIES)
+endif()
