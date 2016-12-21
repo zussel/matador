@@ -140,14 +140,14 @@ void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
 {
   size_t size = (size_t)sqlite3_column_bytes(stmt_, result_index_);
   if (size < s) {
-#ifdef WIN32
+#ifdef _MSC_VER
     strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s);
 #else
     strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), size);
 #endif
     x[size] = '\0';
   } else {
-#ifdef WIN32
+#ifdef _MSC_VER
     strncpy_s(x, size, (const char*)sqlite3_column_text(stmt_, result_index_++), s - 1);
 #else
     strncpy(x, (const char*)sqlite3_column_text(stmt_, result_index_++), s - 1);

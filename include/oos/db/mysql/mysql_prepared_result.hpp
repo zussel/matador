@@ -5,7 +5,7 @@
 
 #include "oos/db/mysql/mysql_result_info.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
 #else

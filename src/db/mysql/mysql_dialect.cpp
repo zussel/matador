@@ -7,7 +7,7 @@
 #include "oos/sql/basic_dialect_compiler.hpp"
 #include "oos/sql/basic_dialect_linker.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
 #else

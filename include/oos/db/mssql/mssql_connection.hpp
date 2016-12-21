@@ -18,7 +18,7 @@
 #ifndef MSSQL_connection_HPP
 #define MSSQL_connection_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_mssql_EXPORTS
     #define OOS_MSSQL_API __declspec(dllexport)
   #else
