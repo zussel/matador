@@ -18,7 +18,7 @@
 #ifndef MYSQL_DATABASE_HPP
 #define MYSQL_DATABASE_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_mysql_EXPORTS
     #define OOS_MYSQL_API __declspec(dllexport)
   #else
@@ -34,7 +34,7 @@
 
 #include "oos/db/mysql/mysql_dialect.hpp"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 //#include <winsock2.h>
 #include <mysql.h>
 #else

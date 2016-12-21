@@ -18,7 +18,7 @@
 #ifndef MSSQL_EXCEPTION_HPP
 #define MSSQL_EXCEPTION_HPP
 
-#ifdef WIN32
+#ifdef _MSC_VER
   #ifdef oos_mssql_EXPORTS
     #define OOS_MSSQL_API __declspec(dllexport)
   #else
@@ -36,12 +36,6 @@
 #endif
 
 #include <sqltypes.h>
-
-#ifdef WIN32
-
-#else
-
-#endif
 
 namespace oos {
 
