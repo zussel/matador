@@ -435,7 +435,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*oos::base_class<person>(this));
-    serializer.serialize("student_course", courses, "student", "course");
+    serializer.serialize("student_course", courses, "student_id", "course_id");
   }
 
   oos::has_many<course> courses;
@@ -452,7 +452,7 @@ public:
   {
     serializer.serialize("id", id);
     serializer.serialize("title", title);
-    serializer.serialize("student_course", students, "student", "course");
+    serializer.serialize("student_course", students, "student_id", "course_id");
   }
 
   oos::identifier<unsigned long> id;
