@@ -143,6 +143,7 @@ before_install:
 
 install:
   # install latest LCOV (1.9 was failing)
+  - lcov --version
   - cd ${TRAVIS_BUILD_DIR}
   - wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz
   - tar xf lcov_1.11.orig.tar.gz
@@ -176,6 +177,8 @@ script:
 after_success:
   - |
     if [ "$GCOV" == "gcov-5" ]; then
+      cd ${TRAVIS_BUILD_DIR}
+      type $GCOV
       lcov --directory build/src --directory build/test --capture --output-file coverage.info
       lcov --remove coverage.info 'build/test/*' 'build/src/*' --output-file coverage.info
       lcov --list coverage.info
