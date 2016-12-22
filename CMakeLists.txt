@@ -59,7 +59,6 @@ ELSE()
   MESSAGE(STATUS "Current build type ${CMAKE_BUILD_TYPE}")
 ENDIF()
 
-OPTION(COVERALLS "Enable generation and sending of coveralls data" false)
 OPTION(COVERAGE "Enable generation of code coverage" false)
 
 if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
@@ -70,7 +69,6 @@ if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" A
   MESSAGE(STATUS "gcov binary: ${GCOV_BINARY}")
 
   INCLUDE(CodeCoverage)
-  #INCLUDE(Coveralls)
   MESSAGE(STATUS "will generate coverage data")
   SET(CMAKE_BUILD_TYPE "Debug")
   SET(GCOV_ADDITIONAL_FLAGS "-fprofile-arcs -ftest-coverage")
@@ -81,10 +79,6 @@ if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" A
   if (COVERAGE)
     SETUP_TARGET_FOR_COVERAGE(coverage test_oos src coverage "exec;all")
   endif()
-
-  #if (COVERALLS)
-  #  SETUP_TARGET_FOR_COVERALLS(coveralls test_oos . "exec;all")
-  #endif()
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
