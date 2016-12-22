@@ -141,6 +141,16 @@ before_install:
       export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
     fi
 
+install:
+  # install latest LCOV (1.9 was failing)
+  - cd ${TRAVIS_BUILD_DIR}
+  - wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz
+  - tar xf lcov_1.11.orig.tar.gz
+  - sudo make -C lcov-1.11/ install
+  - gem install coveralls-lcov
+  - lcov --version
+  - g++ --version
+
 before_script:
   #- if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update > /dev/null && brew install mariadb && mysql.server start; fi
   - |
@@ -152,6 +162,7 @@ before_script:
   - |
     if [ "$GCOV" == "gcov-5" ]; then
       cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
+      lcov --directory include --directory src --directory test --zerocounters
     fi
   - |
     if [ "$GCOV" != "gcov-5" ]; then
@@ -165,8 +176,10 @@ script:
 after_success:
   - |
     if [ "$GCOV" == "gcov-5" ]; then
-      make coveralls;
-      /coveralls-upload;
+      lcov --directory build/src --directory build/test --capture --output-file coverage.info
+      lcov --remove coverage.info 'build/test/*' 'build/src/*' --output-file coverage.info
+      lcov --list coverage.info
+      coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
     fi
 
 notifications:

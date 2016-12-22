@@ -71,7 +71,10 @@ void OrmTestUnit::test_insert()
   std::unique_ptr<person> p1(first.release());
 
   UNIT_EXPECT_EQUAL("hans", p1->name(), "invalid name");
-  
+
+  // Todo: fix open cursor with Free TDS
+  ++first;
+
   p.drop();
 }
 
