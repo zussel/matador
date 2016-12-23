@@ -25,6 +25,7 @@
 #include "utils/VarCharTestUnit.hpp"
 #include "utils/FactoryTestUnit.hpp"
 #include "utils/StringTestUnit.hpp"
+#include "utils/SequencerTestUnit.hpp"
 
 #include "object/ObjectStoreTestUnit.hpp"
 #include "object/ObjectPrototypeTestUnit.hpp"
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
   suite.register_unit(new VarCharTestUnit);
   suite.register_unit(new FactoryTestUnit);
   suite.register_unit(new StringTestUnit);
+  suite.register_unit(new SequencerTestUnit);
 
   suite.register_unit(new PrimaryKeyUnitTest);
   suite.register_unit(new PrototypeTreeTestUnit);

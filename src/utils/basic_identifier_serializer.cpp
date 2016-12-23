@@ -123,7 +123,7 @@ void basic_identifier_serializer::serialize(const char *id, oos::varchar_base &x
   std::string value;
   if (restore_) {
     serialize(id, value);
-    x = value;
+    x.assign(value);
   } else {
     value = x.str();
     serialize(id, value);

@@ -14,6 +14,7 @@ DateTestUnit::DateTestUnit()
   : unit_test("date", "date test unit")
 {
   add_test("create", std::bind(&DateTestUnit::test_create, this), "create date");
+  add_test("parse", std::bind(&DateTestUnit::test_parse, this), "parse date");
   add_test("julian", std::bind(&DateTestUnit::test_julian_date, this), "julian date");
   add_test("init", std::bind(&DateTestUnit::test_initialize, this), "initialize date");
   add_test("invalid", std::bind(&DateTestUnit::test_invalid, this), "invalid date");
@@ -41,6 +42,27 @@ void DateTestUnit::test_create()
   UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year(), "year isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month(), "month of year isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_mday, now.day(), "day of month isn't equal");
+}
+
+void DateTestUnit::test_parse()
+{
+  date d = date::parse("13-11-1979", "%d-%m-%Y");
+
+  UNIT_ASSERT_EQUAL(d.day(), 13, "invalid day");
+  UNIT_ASSERT_EQUAL(d.month(), 11, "invalid day");
+  UNIT_ASSERT_EQUAL(d.year(), 1979, "invalid day");
+
+  d = date::parse("2000-11-24", date_format::ISO8601);
+
+  UNIT_ASSERT_EQUAL(d.day(), 24, "invalid day");
+  UNIT_ASSERT_EQUAL(d.month(), 11, "invalid day");
+  UNIT_ASSERT_EQUAL(d.year(), 2000, "invalid day");
+
+  d.set("12/23/2012", "%m/%d/%Y");
+
+  UNIT_ASSERT_EQUAL(d.day(), 23, "invalid day");
+  UNIT_ASSERT_EQUAL(d.month(), 12, "invalid day");
+  UNIT_ASSERT_EQUAL(d.year(), 2012, "invalid day");
 }
 
 void DateTestUnit::test_julian_date()

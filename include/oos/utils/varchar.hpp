@@ -45,13 +45,17 @@ public:
 public:
   explicit varchar_base(size_type capacity);
 
+  explicit varchar_base(const std::string &x, size_type capacity);
+
+  explicit varchar_base(const char *x, size_type capacity);
+
   varchar_base(const varchar_base &x);
+
+  varchar_base(varchar_base &&x);
 
   varchar_base& operator=(const varchar_base &x);
 
-  varchar_base& operator=(const std::string &x);
-
-  varchar_base& operator=(const char *x);
+  varchar_base& operator=(varchar_base &&x);
 
   ~varchar_base();
   
@@ -64,6 +68,8 @@ public:
   varchar_base& operator+=(const std::string &x);
 
   varchar_base& operator+=(const char *x);
+
+  void assign(const std::string &x);
 
   void assign(const char *s, size_t n);
 
@@ -81,8 +87,8 @@ public:
 
   friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const varchar_base &val);
 
-protected:
-  void ok(const std::string &x);
+  bool valid();
+
   void trim();
 
 protected:
@@ -122,10 +128,18 @@ public:
    * @param x The varchar to copy.
    */
   varchar(const varchar &x)
-    : varchar_base(C)
-  {
-    data_ = x.data_;
-  }
+    : varchar_base(x.data_, C)
+  {}
+
+  /**
+   * Copy move the string data
+   * from the given varchar.
+   *
+   * @param x The varchar to copy.
+   */
+  varchar(varchar &&x)
+    : varchar_base(std::move(x))
+  {}
 
   /**
    * Initializes the varchar with the
@@ -134,10 +148,8 @@ public:
    * @param x The string value to set.
    */
   explicit varchar(const std::string &x)
-    : varchar_base(C)
-  {
-    data_ = x;
-  }
+    : varchar_base(x, C)
+  {}
 
   /**
    * Initializes the varchar with the
@@ -146,10 +158,8 @@ public:
    * @param x The string value to set.
    */
   varchar(const char *x)
-    : varchar_base(C)
-  {
-    data_.assign(x);
-  }
+    : varchar_base(x, C)
+  {}
 
   /**
    * Assigns a varchar.
@@ -159,9 +169,20 @@ public:
    */
   varchar& operator=(const varchar &x)
   {
-    
     capacity_ = C;
     data_ = x.data_;
+    return *this;
+  }
+
+  /**
+   * Assignment move a varchar.
+   *
+   * @param x The varchar to assign.
+   * @return Returns a reference to this class.
+   */
+  varchar& operator=(varchar &&x)
+  {
+    varchar_base::operator=(std::move(x));
     return *this;
   }
 
@@ -173,7 +194,7 @@ public:
    */
   varchar& operator=(const std::string &x)
   {
-    data_ = x;
+    assign(x);
     return *this;
   }
 
@@ -185,7 +206,7 @@ public:
    */
   varchar& operator=(const char *x)
   {
-    varchar_base::operator=(x);
+    assign(x);
     return *this;
   }
 };

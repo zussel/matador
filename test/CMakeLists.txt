@@ -19,6 +19,8 @@ SET (TEST_TOOLS_SOURCES
   utils/StringTestUnit.hpp
   utils/AnyTestUnit.cpp
   utils/AnyTestUnit.hpp
+  utils/SequencerTestUnit.cpp
+  utils/SequencerTestUnit.hpp
 )
 
 SET (TEST_HEADER Item.hpp has_many_list.hpp)

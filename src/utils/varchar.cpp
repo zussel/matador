@@ -8,10 +8,27 @@ varchar_base::varchar_base(size_type capacity)
   : capacity_(capacity)
 {}
 
+varchar_base::varchar_base(const std::string &x, varchar_base::size_type capacity)
+  : capacity_(capacity)
+  , data_(x)
+{}
+
+varchar_base::varchar_base(const char *x, varchar_base::size_type capacity)
+  : capacity_(capacity)
+  , data_(x)
+{}
+
 varchar_base::varchar_base(const varchar_base &x)
   : capacity_(x.capacity_)
   , data_(x.data_)
 {}
+
+varchar_base::varchar_base(varchar_base &&x)
+  : capacity_(x.capacity_)
+  , data_(std::move(x.data_))
+{
+  x.capacity_ = 0;
+}
 
 varchar_base& varchar_base::operator=(const varchar_base &x)
 {
@@ -20,18 +37,11 @@ varchar_base& varchar_base::operator=(const varchar_base &x)
   return *this;
 }
 
-varchar_base& varchar_base::operator=(const std::string &x)
+varchar_base &varchar_base::operator=(varchar_base &&x)
 {
-  data_ = x;
-  trim();
-  return *this;
-}
-
-varchar_base& varchar_base::operator=(const char *x)
-{
-//  ok(x);
-  data_.assign(x);
-  trim();
+  data_ = std::move(x.data_);
+  capacity_ = x.capacity_;
+  x.capacity_ = 0;
   return *this;
 }
 
@@ -69,10 +79,14 @@ varchar_base& varchar_base::operator+=(const char *x)
   return *this;
 }
 
+void varchar_base::assign(const std::string &x)
+{
+  data_ = x;
+}
+
 void varchar_base::assign(const char *s, size_t n)
 {
   data_.assign(s, n);
-  trim();
 }
 
 void varchar_base::assign(const char *s)
@@ -111,11 +125,9 @@ std::ostream& operator<<(std::ostream &out, const varchar_base &val)
   return out;
 }
 
-void varchar_base::ok(const std::string &x)
+bool varchar_base::valid()
 {
-  if (x.size() > capacity_) {
-    throw std::logic_error("string is to long");
-  }
+  return data_.size() <= capacity_;
 }
 
 void varchar_base::trim()
