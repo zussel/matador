@@ -9,6 +9,7 @@ public:
   DateTestUnit();
 
   void test_create();
+  void test_parse();
   void test_julian_date();
   void test_initialize();
   void test_invalid();

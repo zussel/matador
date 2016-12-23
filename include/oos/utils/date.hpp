@@ -83,12 +83,27 @@ public:
   date(const date &x);
 
   /**
+   * Copy move date from given date
+   *
+   * @param x Date to copy from.
+   */
+  date(date &&x) = default;
+
+  /**
    * Assign from given date
    *
    * @param x The date to assign from.
    * @return Reference to the assigned date.
    */
   date& operator=(const date &x);
+
+  /**
+   * Assignment move from given date
+   *
+   * @param x The date to assign from.
+   * @return Reference to the assigned date.
+   */
+  date& operator=(date &&x) = default;
 
   /**
    * Assign a date from julian date value
@@ -224,6 +239,16 @@ public:
    * @return Reference to the ostream
    */
   friend OOS_UTILS_API std::ostream& operator<< (std::ostream& out, const date& d);
+
+  /**
+   * Parse a given date string with a valid format
+   * and return a corresponding date object.
+   *
+   * @param dstr Date string.
+   * @param format Date strings format.
+   * @return A date object.
+   */
+  static date parse(const std::string &dstr, const char *format);
 
   /**
    * Sets the date from a given date/time

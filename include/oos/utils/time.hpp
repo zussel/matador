@@ -88,12 +88,27 @@ public:
   time(const time &x);
 
   /**
+   * Copy move from another time
+   *
+   * @param x Other time object to be move from
+   */
+  time(time &&x) = default;
+
+  /**
    * Assign time from another time object
    *
    * @param x Assign time from this time object
    * @return Return reference of this
    */
-  time &operator=(const time &x);
+  time& operator=(const time &x);
+
+  /**
+   * Assignment move from another time
+   *
+   * @param x Assign move time from this time object
+   * @return Return reference of this
+   */
+  time& operator=(time &&x) = default;
 
   /**
    * Destroy time
