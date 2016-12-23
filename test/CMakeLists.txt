@@ -45,7 +45,7 @@ SET (TEST_OBJECT_SOURCES
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
   unit/SecondTestUnit.hpp
-)
+  unit/TestSuiteTestUnit.cpp unit/TestSuiteTestUnit.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.hpp

@@ -65,6 +65,7 @@ void test_suite::init(int argc, char *argv[])
     // no arguments
     return;
   }
+  args_.initialized = true;
   std::string arg(argv[1]);
   
   if (arg == "list") {
@@ -84,6 +85,7 @@ void test_suite::init(int argc, char *argv[])
     }
 
     args_.cmd = EXECUTE;
+    args_.brief = false;
 
     std::string val(argv[2]);
     if (val == "all") {
@@ -137,6 +139,7 @@ bool test_suite::run()
           std::cout << summary_;
           return result;
         } else {
+          // execute all test units
           unit_executer ue(summary_);
           std::for_each(unit_test_map_.begin(), unit_test_map_.end(), std::ref(ue));
           std::cout << summary_;
@@ -199,6 +202,38 @@ bool test_suite::run(const std::string &unit, const std::string &test)
     }
     return succeeded;
   }
+}
+
+std::size_t test_suite::size() const
+{
+  return unit_test_map_.size();
+}
+
+bool test_suite::empty() const
+{
+  return unit_test_map_.empty();
+}
+
+test_suite::t_unit_test_map::const_iterator
+test_suite::begin() const
+{
+  return unit_test_map_.begin();
+}
+
+test_suite::t_unit_test_map::const_iterator
+test_suite::end() const
+{
+  return unit_test_map_.end();
+}
+
+const test_suite::summary& test_suite::test_summary() const
+{
+  return summary_;
+}
+
+const test_suite::test_suite_args& test_suite::test_args() const
+{
+  return args_;
 }
 
 std::ostream& operator<<(std::ostream& out, const test_suite::summary &s)

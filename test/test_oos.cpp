@@ -15,8 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "unit/FirstTestUnit.hpp"
-#include "unit/SecondTestUnit.hpp"
+#include "oos/unit/test_suite.hpp"
+
+#include "unit/TestSuiteTestUnit.hpp"
 
 #include "utils/AnyTestUnit.hpp"
 #include "utils/BlobTestUnit.hpp"
@@ -65,10 +66,19 @@ int main(int argc, char *argv[])
 {
   oos::test_suite suite;
 
-  suite.init(argc, argv);
+  TestSuiteTestUnit test_suite_test;
+  bool result = test_suite_test.test_create();
+  result &= test_suite_test.test_list();
+  result &= test_suite_test.test_init();
+  result &= test_suite_test.test_method();
+  result &= test_suite_test.test_unit();
+  result &= test_suite_test.test_suite();
 
-  suite.register_unit(new FirstTestUnit);
-  suite.register_unit(new SecondTestUnit);
+  if (!result) {
+    return EXIT_FAILURE;
+  }
+
+  suite.init(argc, argv);
 
   suite.register_unit(new AnyTestUnit);
   suite.register_unit(new DateTestUnit);
@@ -117,6 +127,6 @@ int main(int argc, char *argv[])
 //
 //  suite.register_unit(new JsonTestUnit());
 
-  bool result = suite.run();
+  result &= suite.run();
   return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

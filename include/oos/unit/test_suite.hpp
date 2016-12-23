@@ -114,38 +114,42 @@ public:
     /// @endcond
   };
 
-private:
   /**
    * @brief test_suite commands
-   * 
+   *
    * This is an enumeration for
    * all test_suite commands
    */
-  typedef enum test_suite_cmd_enum
+  enum test_suite_cmd
   {
     UNKNOWN = 0, /**<Enum type for an unknown test_suite command. */
     LIST,        /**<Enum type for the list command. */
     EXECUTE      /**<Enum type for the execute command. */
-  } test_suite_cmd;
+  };
 
-  typedef std::vector<std::string> t_string_vector;
+  typedef std::vector<std::string> t_string_vector; /**< Shortcut for a string vector */
 
-  typedef struct test_unit_args_struct
+  /**
+   * Test suite test unit arguments struct
+   */
+  struct test_unit_args
   {
-    std::string unit;
-    t_string_vector tests;
-  } test_unit_args;
+    std::string unit;       /**< Test unit name */
+    t_string_vector tests; /**< Vector of test names contained by the unit test */
+  };
 
-  typedef struct test_suite_args_struct
+  /**
+   * Test suite arguments struct
+   */
+  struct test_suite_args
   {
-    test_suite_args_struct()
-      : cmd(UNKNOWN), initialized(false), brief(false)
-    {}
-    test_suite_cmd cmd;
-    bool initialized;
-    bool brief;
-    std::vector<test_unit_args> unit_args;
-  } test_suite_args;
+    test_suite_cmd cmd = UNKNOWN; /**< Test suite command to be executed */
+    bool initialized = false;     /**< Indicates wether the suite is initialized or not */
+    bool brief = false;           /**< If true for LIST command only a brief list is printed */
+    std::vector<test_unit_args> unit_args; /**< Vector of test unit arguments */
+  };
+
+private:
 
   typedef std::shared_ptr<unit_test> unit_test_ptr;
   typedef std::map<std::string, unit_test_ptr> t_unit_test_map;
@@ -166,12 +170,6 @@ private:
     void operator()(const test_suite::value_type &x) const;
     std::ostream &out;
     bool brief;
-  };
-
-public:
-  struct suite_result
-  {
-    
   };
 
 public:
@@ -249,6 +247,48 @@ public:
    * @return True if test succeeded.
    */
   bool run(const std::string &unit, const std::string &test);
+
+  /**
+   * Returns the number of unit test classes
+   *
+   * @return Number of unit test classes
+   */
+  std::size_t size() const;
+
+  /**
+   * Returns true if test suite is empty
+   *
+   * @return True if test suite is empty
+   */
+  bool empty() const;
+
+  /**
+   * Returns the begin iterator of the unit test map
+   *
+   * @return Begin iterator of the unit test map
+   */
+  t_unit_test_map::const_iterator begin() const;
+
+  /**
+   * Returns the end iterator of the unit test map
+   *
+   * @return End iterator of the unit test map
+   */
+  t_unit_test_map::const_iterator end() const;
+
+  /**
+   * Return the current summary for the test suite
+   *
+   * @return Current summary for the test suite
+   */
+  const summary& test_summary() const;
+
+  /**
+   * Returns test suites configurated arguments
+   *
+   * @return Test suites configurated arguments
+   */
+  const test_suite_args& test_args() const;
 
 private:
   test_suite_args args_;
