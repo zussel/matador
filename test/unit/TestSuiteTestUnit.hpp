@@ -10,8 +10,8 @@ class TestSuiteTestUnit
 {
 public:
   bool test_create();
-  bool test_list();
   bool test_init();
+  bool test_list();
   bool test_method();
   bool test_unit();
   bool test_suite();
