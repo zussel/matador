@@ -180,7 +180,7 @@ after_success:
     if [ "$GCOV" == "gcov-5" ]; then
       cd ${TRAVIS_BUILD_DIR}
       type $GCOV
-      lcov --no-external --directory build/src --directory build/test --capture --gcov-tool `which $GCOV` --output-file coverage.info
+      lcov --no-external --base-directory ${TRAVIS_BUILD_DIR} --directory build/src --directory build/test --capture --gcov-tool `which $GCOV` --output-file coverage.info
       lcov --remove coverage.info 'build/test/*' 'build/src/*' --gcov-tool `which $GCOV` --output-file coverage.info
       lcov --list coverage.info
       coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
