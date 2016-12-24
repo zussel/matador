@@ -59,9 +59,11 @@ public:
    * @return True if data could be assigned.
    */
   template < typename T >
-  bool assign(const T &/*val*/)
+  bool assign(const T &val)
   {
-    return false;
+    data_.clear();
+    append(val);
+    return true;
   }
 
   /**
@@ -76,19 +78,20 @@ public:
    * @return True if data could be appended.
    */
   template < typename T >
-  bool append(const T &/*val*/)
+  bool append(const T &val)
   {
-    return false;
+    append(&val, sizeof(T));
+    return true;
   }
+
+  void append(const void *data, std::size_t len);
 
   size_type size() const;
 
-  size_type capacity() const;
-
-  const char* data() const;
+  const unsigned char* data() const;
 
 private:
-  std::vector<char> data_;
+  std::vector<unsigned char> data_;
 };
 /// @endcond
 }

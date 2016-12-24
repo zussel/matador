@@ -9,17 +9,17 @@ blob::~blob()
 {
 }
 
+void blob::append(const void *data, std::size_t len)
+{
+  data_.insert(data_.begin(), (unsigned char*)data, (unsigned char*)(data)+len);
+}
+
 blob::size_type blob::size() const
 {
   return data_.size();
 }
 
-blob::size_type blob::capacity() const
-{
-  return data_.capacity();
-}
-
-const char* blob::data() const
+const unsigned char* blob::data() const
 {
   return &data_.front();
 }

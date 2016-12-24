@@ -8,7 +8,7 @@ class BlobTestUnit : public oos::unit_test
 public:
   BlobTestUnit();
 
-  void create_blob();
+  void test_create();
 };
 
 #endif /* BLOBTESTUNIT_HPP */
