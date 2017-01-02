@@ -19,6 +19,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
   add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
   add_test("columns_with_quotes", std::bind(&QueryTestUnit::test_columns_with_quotes_in_name, this), "test columns with quotes in name");
+  add_test("quoted_literals", std::bind(&QueryTestUnit::test_quoted_literals, this), "test quoted literals");
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
@@ -208,6 +209,20 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     q.drop().execute();
   }
+}
+
+void QueryTestUnit::test_quoted_literals()
+{
+  connection_.open();
+
+  query<> q(connection_, "escapes");
+
+  q.create({make_typed_column<std::string>("name")}).execute();
+
+  q.insert({"name"}).values({"text"}).execute();
+  q.insert({"name"}).values({"text'd"}).execute();
+
+  q.drop().execute();
 }
 
 void QueryTestUnit::test_bind_tablename()

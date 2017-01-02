@@ -83,6 +83,7 @@ struct OOS_SQL_API token
     ROLLBACK,
     START_QUOTE,
     END_QUOTE,
+    STRING_QUOTE,
     NONE
   };
 
