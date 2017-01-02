@@ -220,7 +220,36 @@ void QueryTestUnit::test_quoted_literals()
   q.create({make_typed_column<std::string>("name")}).execute();
 
   q.insert({"name"}).values({"text"}).execute();
-  q.insert({"name"}).values({"text'd"}).execute();
+
+  auto res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text", "values must be equal");
+  }
+
+  q.update({{"name", "text'd"}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text'd", "values must be equal");
+  }
+
+  q.update({{"name", "text\nhello\tworld"}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text\nhello\tworld", "values must be equal");
+  }
+
+  q.update({{"name", "text \"text\""}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text \"text\"", "values must be equal");
+  }
 
   q.drop().execute();
 }
