@@ -45,6 +45,7 @@ public:
   void test_select_limit();
   void test_update_limit();
   void test_prepared_statement();
+  void test_rows();
 
 protected:
   oos::connection create_connection();

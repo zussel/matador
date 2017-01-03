@@ -39,6 +39,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
+  add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
 }
 
 template < class C, class T >
@@ -1060,6 +1061,56 @@ void QueryTestUnit::test_prepared_statement()
   }
 
   q.drop().execute();
+}
+
+void QueryTestUnit::test_rows()
+{
+  connection_.open();
+
+  query<> q(connection_, "item");
+
+  auto cols = {"id", "string", "varchar", "int", "float", "date", "time"};
+
+  q.create({
+             make_typed_id_column<long>("id"),
+             make_typed_column<std::string>("string"),
+             make_typed_varchar_column<32>("varchar"),
+             make_typed_column<int>("int"),
+             make_typed_column<float>("float"),
+             make_typed_column<oos::date>("date"),
+             make_typed_column<oos::time>("time"),
+           });
+
+  q.execute();
+
+  UNIT_ASSERT_TRUE(connection_.exists("item"), "table item must exist");
+  auto fields = connection_.describe("item");
+
+  for (auto fld : fields) {
+    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
+
+  q
+    .insert({"id", "string", "varchar", "int", "float", "date", "time"})
+    .values({1, "long text", "good day", -17, 3.1415, oos::date(), oos::time::now()})
+    .execute();
+
+  auto res = q.select({"id", "string", "varchar", "int", "float"}).from("item").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
+    UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
+//    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
+//    UNIT_EXPECT_EQUAL(3.1415, item->at<float>("float"), "invalid value");
+    ++first;
+  }
+
+  q.drop("item").execute();
+
 }
 
 connection QueryTestUnit::create_connection()

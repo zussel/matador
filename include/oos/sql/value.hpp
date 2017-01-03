@@ -230,7 +230,6 @@ struct value<char*> : public detail::basic_value
     : basic_value(detail::token::VALUE)
     , val(v)
   {
-//    val.push_back('\0');
   }
 
   virtual void serialize(const char *id, serializer &srlzr)
@@ -257,7 +256,6 @@ struct value<char*> : public detail::basic_value
     return typeid(char*).name();
   }
 
-//  std::vector<char> val;
   std::string val;
 };
 
@@ -268,14 +266,11 @@ struct value<const char*> : public detail::basic_value
     : basic_value(detail::token::VALUE)
     , val(v)
   {
-//    val.push_back('\0');
   }
 
   virtual void serialize(const char *id, serializer &srlzr)
   {
-
-    char *begin = &val.front();
-    srlzr.serialize(id, begin, val.size());
+    srlzr.serialize(id, val);
   }
 
   std::string str() const
@@ -296,7 +291,6 @@ struct value<const char*> : public detail::basic_value
   {
     return typeid(const char*).name();
   }
-//  std::vector<char> val;
   std::string val;
 };
 
