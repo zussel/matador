@@ -23,6 +23,70 @@ The obvious copy and assignment constructors exists as well.
 
 ### Display
 
+The date consists of an stream output operator which displays the date in ISO8601 format
+
+```cpp
+oos::date d(31, 1, 2015);
+
+std::cout << d;
+```
+
+Results in:
+
+```bash
+2015-01-31
+```
+
+There is also a ```to_string()``` function taking the date as first parameter and a format
+string as second parameter. It returns the formatted date as ```std::string```.
+
+```cpp
+oos::date d(31, 1, 2015);
+
+std::cout << to_string(d, "%d.%m.%Y");
+```
+
+Results in:
+
+```bash
+31.01.2015
+```
+
 ### Modify
 
+To modify a date one can use the fluent interface allowing the user to concatenate
+all parts to be modified in sequence.
+
+```cpp
+oos::date d(31, 1, 2015);
+// modification
+d.year(2014).month(8).day(8);
+```
+
+The operators ```++```, ```--```, ```+=``` and ```-=``` are also available and increase or decrease
+the date by one day or the given amount of days for the latter two operators.
+
+```cpp
+oos::date d(31, 1, 2015);
+// modification
+
+d += 4;
+
+std:cout << d;
+```
+
+Leads to
+
+```bash
+2015-02-04
+```
+
 ### Conversions
+
+The date can be retrieved as julian date value:
+
+```cpp
+oos::date d(31, 1, 2015);
+
+std::cout << "julian date: " << d.julian_date();
+```

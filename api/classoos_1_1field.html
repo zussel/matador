@@ -51,6 +51,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5968e3a3cc3ff84c17b61929a7a06435"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#a5968e3a3cc3ff84c17b61929a7a06435">type</a> (<a class="el" href="/api/namespaceoos/index.html#ac88aecfa2294421874b4a6a630234976">data_type</a> t)</td></tr>
 <tr class="memdesc:a5968e3a3cc3ff84c17b61929a7a06435"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the type of the field.  <a href="#a5968e3a3cc3ff84c17b61929a7a06435">More...</a><br /></td></tr>
 <tr class="separator:a5968e3a3cc3ff84c17b61929a7a06435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afacc8fd47949ff1691bf377d80b27cbd"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#afacc8fd47949ff1691bf377d80b27cbd">size</a> () const</td></tr>
+<tr class="memdesc:afacc8fd47949ff1691bf377d80b27cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the field.  <a href="#afacc8fd47949ff1691bf377d80b27cbd">More...</a><br /></td></tr>
+<tr class="separator:afacc8fd47949ff1691bf377d80b27cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad1952c2682979d555eb7d8f0d574e84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#aad1952c2682979d555eb7d8f0d574e84">size</a> (std::size_t s)</td></tr>
+<tr class="memdesc:aad1952c2682979d555eb7d8f0d574e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size of the field.  <a href="#aad1952c2682979d555eb7d8f0d574e84">More...</a><br /></td></tr>
+<tr class="separator:aad1952c2682979d555eb7d8f0d574e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a382eb249fce365d29a31698991fe5955"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#a382eb249fce365d29a31698991fe5955">precision</a> () const</td></tr>
+<tr class="memdesc:a382eb249fce365d29a31698991fe5955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the precision of the field.  <a href="#a382eb249fce365d29a31698991fe5955">More...</a><br /></td></tr>
+<tr class="separator:a382eb249fce365d29a31698991fe5955"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ed0c195db513a41e54174a5866c6937"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#a3ed0c195db513a41e54174a5866c6937">precision</a> (std::size_t p)</td></tr>
+<tr class="memdesc:a3ed0c195db513a41e54174a5866c6937"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the precision of the field.  <a href="#a3ed0c195db513a41e54174a5866c6937">More...</a><br /></td></tr>
+<tr class="separator:a3ed0c195db513a41e54174a5866c6937"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a498bc9bafa53e968541c97f5c05c8212"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1field/index.html#a498bc9bafa53e968541c97f5c05c8212">is_not_null</a> () const</td></tr>
 <tr class="memdesc:a498bc9bafa53e968541c97f5c05c8212"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if NULL value is not allowed.  <a href="#a498bc9bafa53e968541c97f5c05c8212">More...</a><br /></td></tr>
 <tr class="separator:a498bc9bafa53e968541c97f5c05c8212"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -298,6 +310,102 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nn</td><td>True if NULL value is not allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a382eb249fce365d29a31698991fe5955"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a382eb249fce365d29a31698991fe5955">&sect;&nbsp;</a></span>precision() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t oos::field::precision </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the precision of the field. </p>
+<p>Return the precision of the field if field is of type float or double</p>
+<dl class="section return"><dt>Returns</dt><dd>Precision of the field </dd></dl>
+
+</div>
+</div>
+<a id="a3ed0c195db513a41e54174a5866c6937"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ed0c195db513a41e54174a5866c6937">&sect;&nbsp;</a></span>precision() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::field::precision </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the precision of the field. </p>
+<p>Has only an effect if the field type is float or double.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Precision of the field to set </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="afacc8fd47949ff1691bf377d80b27cbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afacc8fd47949ff1691bf377d80b27cbd">&sect;&nbsp;</a></span>size() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t oos::field::size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the size of the field. </p>
+<p>Return the size of the field if field is a numeric or varchar type.</p>
+<dl class="section return"><dt>Returns</dt><dd>Size of the field </dd></dl>
+
+</div>
+</div>
+<a id="aad1952c2682979d555eb7d8f0d574e84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad1952c2682979d555eb7d8f0d574e84">&sect;&nbsp;</a></span>size() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::field::size </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the size of the field. </p>
+<p>Has only an effect if the type of the field is numeric or varchar.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Size of the field to set </td></tr>
   </table>
   </dd>
 </dl>
