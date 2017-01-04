@@ -285,6 +285,7 @@ data_type type2data_type(SQLSMALLINT type, SQLINTEGER size)
   case SQL_INTEGER:
     return data_type::type_int;
   case SQL_BIGINT:
+  case SQL_NUMERIC:
     return data_type::type_long;
   case SQL_DATE:
   case -9:
@@ -300,7 +301,7 @@ data_type type2data_type(SQLSMALLINT type, SQLINTEGER size)
   case SQL_BIT:
     return data_type::type_bool;
   case SQL_LONGVARCHAR:
-    return (size == 2147483647 ? data_type::type_varchar : data_type::type_text);
+    return (size != 2147483647 ? data_type::type_varchar : data_type::type_text);
   case SQL_UNKNOWN_TYPE:
   default:
     return data_type::type_unknown;

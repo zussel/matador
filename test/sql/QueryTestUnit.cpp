@@ -284,7 +284,7 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
+  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_date, oos::data_type::type_long};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
