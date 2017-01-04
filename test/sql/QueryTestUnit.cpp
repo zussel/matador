@@ -19,6 +19,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("qvc", std::bind(&QueryTestUnit::test_query_value_creator, this), "test query value creator");
   add_test("quoted_identifier", std::bind(&QueryTestUnit::test_quoted_identifier, this), "test quoted identifier");
   add_test("columns_with_quotes", std::bind(&QueryTestUnit::test_columns_with_quotes_in_name, this), "test columns with quotes in name");
+  add_test("quoted_literals", std::bind(&QueryTestUnit::test_quoted_literals, this), "test quoted literals");
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
@@ -38,6 +39,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("select_limit", std::bind(&QueryTestUnit::test_select_limit, this), "test query select limit");
   add_test("update_limit", std::bind(&QueryTestUnit::test_update_limit, this), "test query update limit");
   add_test("prepare", std::bind(&QueryTestUnit::test_prepared_statement, this), "test query prepared statement");
+  add_test("rows", std::bind(&QueryTestUnit::test_rows, this), "test row value serialization");
 }
 
 template < class C, class T >
@@ -210,6 +212,49 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
   }
 }
 
+void QueryTestUnit::test_quoted_literals()
+{
+  connection_.open();
+
+  query<> q(connection_, "escapes");
+
+  q.create({make_typed_column<std::string>("name")}).execute();
+
+  q.insert({"name"}).values({"text"}).execute();
+
+  auto res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text", "values must be equal");
+  }
+
+  q.update({{"name", "text'd"}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text'd", "values must be equal");
+  }
+
+  q.update({{"name", "text\nhello\tworld"}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text\nhello\tworld", "values must be equal");
+  }
+
+  q.update({{"name", "text \"text\""}}).execute();
+
+  res = q.select({"name"}).from("escapes").execute();
+
+  for (auto item : res) {
+    UNIT_ASSERT_EQUAL(item->at<std::string>(0), "text \"text\"", "values must be equal");
+  }
+
+  q.drop().execute();
+}
+
 void QueryTestUnit::test_bind_tablename()
 {
   oos::query<person>::clear_bound_tables();
@@ -239,7 +284,7 @@ void QueryTestUnit::test_describe()
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_text, oos::data_type::type_long};
+  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_date, oos::data_type::type_long};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
@@ -1016,6 +1061,58 @@ void QueryTestUnit::test_prepared_statement()
   }
 
   q.drop().execute();
+}
+
+void QueryTestUnit::test_rows()
+{
+  connection_.open();
+
+  query<> q(connection_, "item");
+
+  auto cols = {"id", "string", "varchar", "int", "float", "double", "date", "time"};
+
+  q.create({
+             make_typed_id_column<long>("id"),
+             make_typed_column<std::string>("string"),
+             make_typed_varchar_column<32>("varchar"),
+             make_typed_column<int>("int"),
+             make_typed_column<float>("float"),
+             make_typed_column<double>("double"),
+             make_typed_column<oos::date>("date"),
+             make_typed_column<oos::time>("time"),
+           });
+
+  q.execute();
+
+  UNIT_ASSERT_TRUE(connection_.exists("item"), "table item must exist");
+  auto fields = connection_.describe("item");
+
+  for (auto fld : fields) {
+    UNIT_EXPECT_FALSE(std::find(cols.begin(), cols.end(), fld.name()) == cols.end(), "couldn't find expected field");
+  }
+
+  q
+    .insert({"id", "string", "varchar", "int", "float", "double", "date", "time"})
+    .values({1, "long text", "good day", -17, 3.1415f, 2.71828, oos::date(), oos::time::now()})
+    .execute();
+
+  auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<row> item(first.release());
+    UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
+    UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
+    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
+    UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"), "invalid value");
+    UNIT_EXPECT_EQUAL(2.71828, item->at<double>("double"), "invalid value");
+    ++first;
+  }
+
+  q.drop("item").execute();
+
 }
 
 connection QueryTestUnit::create_connection()

@@ -46,9 +46,9 @@ const char* mssql_dialect::type_string(oos::data_type type) const
     case data_type::type_bool:
       return "BIT";
     case data_type::type_float:
-      return "FLOAT";
+      return "FLOAT(24)";
     case data_type::type_double:
-      return "FLOAT";
+      return "FLOAT(53)";
     case data_type::type_char_pointer:
       return "VARCHAR";
     case data_type::type_varchar:
@@ -74,12 +74,26 @@ data_type mssql_dialect::string_type(const char *type) const
     return data_type::type_long;
   } else if (strcmp(type, "bigint") == 0) {
     return data_type::type_long;
+  } else if (strcmp(type, "smallint") == 0) {
+    return data_type::type_short;
+  } else if (strcmp(type, "int") == 0) {
+    return data_type::type_int;
+  } else if (strcmp(type, "bit") == 0) {
+    return data_type::type_bool;
   } else if (strcmp(type, "date") == 0) {
+    return data_type::type_date;
+  } else if (strcmp(type, "datetime") == 0) {
+    return data_type::type_time;
+  } else if (strcmp(type, "float(24)") == 0) {
+    return data_type::type_float;
+  } else if (strcmp(type, "float(53)") == 0) {
+    return data_type::type_double;
+  } else if (strcmp(type, "real") == 0) {
+    return data_type::type_double;
+  } else if (strcmp(type, "varchar(max)") == 0) {
     return data_type::type_text;
   } else if (strcmp(type, "varchar") == 0) {
     return data_type::type_varchar;
-  } else if (strcmp(type, "text") == 0) {
-    return data_type::type_text;
   } else {
     return data_type::type_unknown;
   }

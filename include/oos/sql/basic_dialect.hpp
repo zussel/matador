@@ -167,6 +167,13 @@ public:
   std::string prepare_identifier(const std::string &str);
 
   /**
+   * Prepare string literal
+   *
+   * @param str String literal to be prepared
+   */
+  std::string prepare_literal(const std::string &str) const;
+
+  /**
    * Wrap identifier quotes around a sql identifier keyword
    *
    * @param str Identifier to put quotes around
@@ -179,6 +186,13 @@ public:
    * @param str Identifier to be escaped
    */
   void escape_quotes_in_identifier(std::string &str);
+
+  /**
+   * Escape quotes in string literals
+   *
+   * @param str String literal to be escaped
+   */
+  void escape_quotes_in_literals(std::string &str) const;
 
   /**
    * Returns how the identifier quotes should be
@@ -280,6 +294,7 @@ private:
     {detail::token::ROLLBACK, "ROLLBACK TRANSACTION"},
     {detail::token::START_QUOTE, "\""},
     {detail::token::END_QUOTE, "\""},
+    {detail::token::STRING_QUOTE, "'"},
     {detail::token::NONE, ""}
   };
 };

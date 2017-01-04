@@ -86,6 +86,46 @@ public:
   void type(data_type t);
 
   /**
+   * @brief Returns the size of the field
+   *
+   * Return the size of the field if
+   * field is a numeric or varchar type.
+   *
+   * @return Size of the field
+   */
+  std::size_t size() const;
+
+  /**
+   * @brief Sets the size of the field
+   *
+   * Has only an effect if the type of
+   * the field is numeric or varchar.
+   *
+   * @param s Size of the field to set
+   */
+  void size(std::size_t s);
+
+  /**
+   * @brief Returns the precision of the field
+   *
+   * Return the precision of the field if
+   * field is of type float or double
+   *
+   * @return Precision of the field
+   */
+  std::size_t precision() const;
+
+  /**
+   * @brief Sets the precision of the field
+   *
+   * Has only an effect if the field type
+   * is float or double.
+   *
+   * @param p Precision of the field to set
+   */
+  void precision(std::size_t p);
+
+  /**
    * @brief Returns true if NULL value is not allowed
    * @return True if NULL value is not allowed
    */
@@ -112,7 +152,9 @@ public:
 private:
   size_t index_ = 0;
   std::string name_;
-  data_type type_;
+  data_type type_ = data_type::type_unknown;
+  std::size_t size_ = 0;
+  std::size_t precision_ = 0;
   bool not_null_ = false;
   std::string default_value_;
 };

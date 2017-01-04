@@ -33,6 +33,7 @@
 #endif
 
 #include "oos/sql/token.hpp"
+#include "oos/sql/basic_dialect.hpp"
 
 #include "oos/utils/varchar.hpp"
 #include "oos/utils/date.hpp"
@@ -66,16 +67,12 @@ struct OOS_SQL_API basic_value : public token
     }
   }
 
-  std::string value() const
-  {
-    return str();
-  }
-
   virtual void serialize(const char *id, serializer &srlzr) = 0;
 
   virtual void accept(token_visitor &visitor);
 
   virtual std::string str() const = 0;
+  virtual std::string safe_string(const basic_dialect &) const = 0;
 
   virtual const char* type_id() const = 0;
 };
@@ -91,6 +88,7 @@ struct null_value : public detail::basic_value
   virtual void serialize(const char *id, serializer &srlzr);
 
   std::string str() const;
+  std::string safe_string(const basic_dialect &) const;
 
   const char* type_id() const;
 };
@@ -118,6 +116,13 @@ struct value<T, typename std::enable_if<
     return str.str();
   }
 
+  std::string safe_string(const basic_dialect &) const
+  {
+    std::stringstream str;
+    str << val;
+    return str.str();
+  }
+
   const char* type_id() const
   {
     return typeid(T).name();
@@ -128,9 +133,7 @@ struct value<T, typename std::enable_if<
 
 
 template<class T>
-struct value<T, typename std::enable_if<
-  std::is_same<std::string, T>::value ||
-  std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
+struct value<T, typename std::enable_if<std::is_base_of<oos::varchar_base, T>::value>::type> : public detail::basic_value
 {
   value(const T &val)
     : basic_value(detail::token::VALUE)
@@ -143,9 +146,12 @@ struct value<T, typename std::enable_if<
 
   std::string str() const
   {
-    std::stringstream str;
-    str << "'" << val << "'";
-    return str.str();
+    return "'" + val.str() + "'";
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    return "'" + dialect.prepare_literal(val.str()) + "'";
   }
 
   const char* type_id() const
@@ -153,6 +159,35 @@ struct value<T, typename std::enable_if<
     return typeid(T).name();
   }
   T val;
+};
+
+template<>
+struct value<std::string> : public detail::basic_value
+{
+  value(const std::string &val)
+    : basic_value(detail::token::VALUE)
+    , val(val) { }
+
+  virtual void serialize(const char *id, serializer &srlzr)
+  {
+    srlzr.serialize(id, val);
+  }
+
+  std::string str() const
+  {
+    return "'" + val + "'";
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    return "'" + dialect.prepare_literal(val) + "'";
+  }
+
+  const char* type_id() const
+  {
+    return typeid(std::string).name();
+  }
+  std::string val;
 };
 
 template<>
@@ -174,6 +209,13 @@ struct value<char> : public detail::basic_value
     return str.str();
   }
 
+  std::string safe_string(const basic_dialect &) const
+  {
+    std::stringstream str;
+    str << "'" << val << "'";
+    return str.str();
+  }
+
   const char* type_id() const
   {
     return typeid(char).name();
@@ -184,24 +226,28 @@ struct value<char> : public detail::basic_value
 template<>
 struct value<char*> : public detail::basic_value
 {
-  value(const char *v, size_t l)
+  value(const char *v, size_t)
     : basic_value(detail::token::VALUE)
-    , val(v, v+l)
+    , val(v)
   {
-    val.push_back('\0');
   }
 
   virtual void serialize(const char *id, serializer &srlzr)
   {
-
-    char *begin = &val.front();
-    srlzr.serialize(id, begin, val.size());
+    srlzr.serialize(id, val);
   }
 
   std::string str() const
   {
     std::stringstream str;
-    str << "'" << &val.front() << "'";
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    std::stringstream str;
+    str << "'" <<  dialect.prepare_literal(val) << "'";
     return str.str();
   }
 
@@ -210,30 +256,34 @@ struct value<char*> : public detail::basic_value
     return typeid(char*).name();
   }
 
-  std::vector<char> val;
+  std::string val;
 };
 
 template<>
 struct value<const char*> : public detail::basic_value
 {
-  value(const char *v, size_t l)
+  value(const char *v, size_t)
     : basic_value(detail::token::VALUE)
-    , val(v, v+l)
+    , val(v)
   {
-    val.push_back('\0');
   }
 
   virtual void serialize(const char *id, serializer &srlzr)
   {
-
-    char *begin = &val.front();
-    srlzr.serialize(id, begin, val.size());
+    srlzr.serialize(id, val);
   }
 
   std::string str() const
   {
     std::stringstream str;
-    str << "'" << &val.front() << "'";
+    str << "'" << val << "'";
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    std::stringstream str;
+    str << "'" << dialect.prepare_literal(val) << "'";
     return str.str();
   }
 
@@ -241,7 +291,7 @@ struct value<const char*> : public detail::basic_value
   {
     return typeid(const char*).name();
   }
-  std::vector<char> val;
+  std::string val;
 };
 
 template<>
@@ -260,6 +310,13 @@ struct value<oos::date> : public detail::basic_value
   {
     std::stringstream str;
     str << "'" << oos::to_string(val) << "'";
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    std::stringstream str;
+    str << "'" << dialect.prepare_literal(oos::to_string(val)) << "'";
     return str.str();
   }
 
@@ -287,6 +344,13 @@ struct value<oos::time> : public detail::basic_value
   {
     std::stringstream str;
     str << "'" << oos::to_string(val, "%FT%T.%f") << "'";
+    return str.str();
+  }
+
+  std::string safe_string(const basic_dialect &dialect) const
+  {
+    std::stringstream str;
+    str << "'" << dialect.prepare_literal(oos::to_string(val, "%FT%T.%f")) << "'";
     return str.str();
   }
 

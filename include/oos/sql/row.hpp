@@ -162,7 +162,7 @@ public:
    */
   std::string str(size_t pos)
   {
-    return values_.at(columns_.at(pos))->value();
+    return values_.at(columns_.at(pos))->str();
   }
 
   /**
@@ -173,7 +173,7 @@ public:
    */
   std::string str(const std::string &column)
   {
-    return values_.at(column)->value();
+    return values_.at(column)->str();
   }
 
   /**

@@ -113,7 +113,7 @@ void basic_dialect_linker::visit(const oos::detail::values &values)
 void basic_dialect_linker::visit(const oos::detail::basic_value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
-    dialect().append_to_result(val.str());
+    dialect().append_to_result(val.safe_string(dialect()));
   } else {
     dialect().inc_bind_count();
     dialect().append_to_result("?");

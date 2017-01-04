@@ -27,6 +27,11 @@ std::string null_value::str() const
   return NULLSTR;
 }
 
+std::string null_value::safe_string(const basic_dialect &) const
+{
+  return NULLSTR;
+}
+
 const char *null_value::type_id() const {
   return "null";
 }

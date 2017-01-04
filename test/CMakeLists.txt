@@ -67,7 +67,7 @@ SET (TEST_SQL_SOURCES
   sql/MSSQLDialectTestUnit.hpp
   sql/SQLiteDialectTestUnit.cpp
   sql/SQLiteDialectTestUnit.hpp
-)
+        sql/ValueUnitTest.cpp sql/ValueUnitTest.hpp)
 
 SET (TEST_ORM_SOURCES
   orm/TransactionTestUnit.cpp

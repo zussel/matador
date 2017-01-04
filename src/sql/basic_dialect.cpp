@@ -141,6 +141,13 @@ std::string basic_dialect::prepare_identifier(const std::string &str)
   return result;
 }
 
+std::string basic_dialect::prepare_literal(const std::string &str) const
+{
+  std::string result(str);
+  escape_quotes_in_literals(result);
+  return result;
+}
+
 void basic_dialect::quote_identifier(std::string &str)
 {
   str.insert(0, token_at(detail::token::START_QUOTE));
@@ -149,13 +156,20 @@ void basic_dialect::quote_identifier(std::string &str)
 
 void basic_dialect::escape_quotes_in_identifier(std::string &str)
 {
-  const std::string open_char = token_at(detail::token::START_QUOTE);
-  std::string close_char = token_at(detail::token::END_QUOTE);
+  const std::string open_char(token_at(detail::token::START_QUOTE));
+  std::string close_char(token_at(detail::token::END_QUOTE));
   if (identifier_escape_type() == dialect_traits::ESCAPE_CLOSING_BRACKET) {
     replace_all(str, close_char, close_char + close_char);
   } else {
     replace_all(str, open_char, open_char + open_char);
   }
+}
+
+void basic_dialect::escape_quotes_in_literals(std::string &str) const
+{
+  const std::string single_quote(token_at(detail::token::STRING_QUOTE));
+  const std::string double_quote(token_at(detail::token::STRING_QUOTE) + token_at(detail::token::STRING_QUOTE));
+  replace_all(str, single_quote, double_quote);
 }
 
 char basic_dialect::identifier_opening_quote() const

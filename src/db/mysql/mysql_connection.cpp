@@ -148,13 +148,15 @@ std::string mysql_connection::version() const
 
 bool mysql_connection::exists(const std::string &tablename)
 {
-  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
+  std::string stmt("SHOW TABLES LIKE '" + tablename + "'");
+//  std::string stmt("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + db_ + "' AND table_name = '" + tablename + "' LIMIT 1");
   std::unique_ptr<mysql_result> res(static_cast<mysql_result*>(execute(stmt)));
   if (!res->fetch()) {
     return false;
   } else {
-    char *end;
-    return strtoul(res->column(0), &end, 10) == 1;
+    return true;
+//    char *end;
+//    return strtoul(res->column(0), &end, 10) == 1;
   }
 }
 

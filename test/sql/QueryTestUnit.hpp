@@ -25,6 +25,7 @@ public:
   void test_query_value_creator();
   void test_quoted_identifier();
   void test_columns_with_quotes_in_name();
+  void test_quoted_literals();
   void test_bind_tablename();
   void test_describe();
   void test_identifier();
@@ -44,6 +45,7 @@ public:
   void test_select_limit();
   void test_update_limit();
   void test_prepared_statement();
+  void test_rows();
 
 protected:
   oos::connection create_connection();
