@@ -36,66 +36,210 @@
 
 namespace oos {
 
-/// @cond OOS_DEV
+/**
+ * Base class for templated varchar class
+ *
+ * It provides the interface to work with
+ * a varchar like
+ * - assign
+ * - operator +=
+ * - trim
+ *
+ * Internally varchar uses a std::string to store
+ * its value. One can use this class to create a
+ * varchar but the templated version is easier to
+ * write.
+ */
 class OOS_UTILS_API varchar_base
 {
 public:
-  typedef std::string::size_type size_type;
+  typedef std::string::size_type size_type; /**< Shortcut to varchars size type */
 
 public:
+  /**
+   * Creates a varchar with given capacity.
+   *
+   * @param capacity Capacity of varchar.
+   */
   explicit varchar_base(size_type capacity);
 
+  /**
+   * Creates a varchar with given std::string value and capacity
+   *
+   * @param x Value of the varchar
+   * @param capacity Capacity of the varchar
+   */
   explicit varchar_base(const std::string &x, size_type capacity);
 
+  /**
+   * Creates a varchar from given character pointer and capacity
+   * @param x Value of the varchar
+   * @param capacity Capacity of the varchar
+   */
   explicit varchar_base(const char *x, size_type capacity);
 
+  /**
+   * Copy construct a varchar from given varchar
+   *
+   * @param x Varchar to copy
+   */
   varchar_base(const varchar_base &x);
 
+  /**
+   * Copy move a varchar
+   *
+   * @param x Varchar to be moved
+   */
   varchar_base(varchar_base &&x);
 
+  /**
+   * Copy assign a varchar from given varchar.
+   *
+   * @param x Varchar to be assigned
+   * @return Reference of the new varchar
+   */
   varchar_base& operator=(const varchar_base &x);
 
+  /**
+   * Assign move a varchar
+   *
+   * @param x Varchar to be assign moved
+   * @return Reference of the new varchar
+   */
   varchar_base& operator=(varchar_base &&x);
 
   ~varchar_base();
-  
+
+  /**
+   * Compare varchar with the given varchar. If values
+   * are equal true is returned.
+   *
+   * @param x Varchar to be compared
+   * @return True if equal.
+   */
   bool operator==(const varchar_base &x) const;
 
+  /**
+   * Compare varchar with the given varchar. If values
+   * are not equal true is returned.
+   *
+   * @param x Varchar to be compared
+   * @return True if not equal.
+   */
   bool operator!=(const varchar_base &x) const;
 
+  /**
+   * Append given varchar to this varchar
+   *
+   * @param x Varchar to append
+   * @return Reference of the modified varchar
+   */
   varchar_base& operator+=(const varchar_base &x);
 
+  /**
+   * Append given std::string to this varchar
+   *
+   * @param x std::string to append
+   * @return Reference of the modified varchar
+   */
   varchar_base& operator+=(const std::string &x);
 
+  /**
+   * Append given character pointer to this varchar
+   *
+   * @param x Character pointer to append
+   * @return Reference of the modified varchar
+   */
   varchar_base& operator+=(const char *x);
 
+  /**
+   * Assign given std::string to this varchar
+   *
+   * @param x std::string to assign.
+   */
   void assign(const std::string &x);
 
+  /**
+   * Assign given character pointer with
+   * given length to this varchar
+   *
+   * @param s std::string to assign.
+   * @param n Length of the character pointer
+   */
   void assign(const char *s, size_t n);
 
+  /**
+   * Assign given character pointer to this varchar
+   *
+   * @param s std::string to assign.
+   */
   void assign(const char *s);
 
+  /**
+   * Returns a copy of the varchar as std::string
+   *
+   * @return Copy of the varchar as std::string
+   */
   std::string str() const;
 
+  /**
+   * Returns the underlying character pointer
+   *
+   * @return Underlying character pointer
+   */
   const char* c_str() const;
 
+  /**
+   * Returns the underlying character pointer
+   *
+   * @return Underlying character pointer
+   */
   const char* data() const;
 
+  /**
+   * Returns the current size of the varchar.
+   *
+   * @return Current size of the varchar.
+   */
   size_type size() const;
 
+  /**
+   * Returns the capacity of the varchar.
+   *
+   * @return Capacity of the varchar.
+   */
   size_type capacity() const;
 
+  /**
+   * Writes the varchar to the given std::ostream and returns the
+   * reference of the modified std::ostream
+   *
+   * @param out The stream to write to.
+   * @param val The varchar to write
+   * @return Reference of the modified stream
+   */
   friend OOS_UTILS_API std::ostream& operator<<(std::ostream &out, const varchar_base &val);
 
+  /**
+   * Checks if the varchar is valid e.g. current
+   * size is less than or equal to capacity
+   *
+   * @return True if current size is less than or equal to capacity
+   */
   bool valid();
 
+  /**
+   * Cuts the varchar if neccessary
+   * to fit to its capacity.
+   */
   void trim();
 
 protected:
+  /// @cond OOS_DEV
   size_type capacity_;
   std::string data_;
+  /// @endcond
 };
-/// @endcond
 
 /**
  * @tparam C The capacity of the varchar.
