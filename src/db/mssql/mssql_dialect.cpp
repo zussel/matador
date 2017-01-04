@@ -76,6 +76,8 @@ data_type mssql_dialect::string_type(const char *type) const
     return data_type::type_long;
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_text;
+  } else if (strcmp(type, "float") == 0) {
+    return data_type::type_double;
   } else if (strcmp(type, "varchar") == 0) {
     return data_type::type_varchar;
   } else if (strcmp(type, "text") == 0) {

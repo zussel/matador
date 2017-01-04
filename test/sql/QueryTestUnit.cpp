@@ -1104,8 +1104,8 @@ void QueryTestUnit::test_rows()
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
     UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
-//    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
-//    UNIT_EXPECT_EQUAL(3.1415, item->at<float>("float"), "invalid value");
+    UNIT_EXPECT_EQUAL(-17, item->at<long>("int"), "invalid value");
+    UNIT_EXPECT_EQUAL(3.1415, item->at<double >("float"), "invalid value");
     ++first;
   }
 

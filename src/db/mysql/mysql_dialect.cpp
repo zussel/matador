@@ -40,7 +40,7 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-	  return "INTEGER";
+	    return "INTEGER";
 	  //return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
@@ -49,9 +49,9 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_unsigned_int:
       return "INTEGER";
     case data_type::type_unsigned_long:
-	  return "INTEGER";
+	    return "INTEGER";
 	  //return "BIGINT";
-	case data_type::type_bool:
+	  case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
       return "FLOAT";
@@ -90,6 +90,10 @@ data_type mysql_dialect::string_type(const char *type) const
     return data_type::type_long;
   } else if (strcmp(type, "date") == 0) {
     return data_type::type_text;
+  } else if (strcmp(type, "float") == 0) {
+    return data_type::type_double;
+  } else if (strcmp(type, "double") == 0) {
+    return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {
     return data_type::type_varchar;
   } else if (strncmp(type, "text", 0) == 0) {

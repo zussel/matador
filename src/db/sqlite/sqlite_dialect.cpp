@@ -43,7 +43,7 @@ const char *sqlite_dialect::type_string(oos::data_type type) const
     case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
-      return "DOUBLE";
+      return "FLOAT";
     case data_type::type_double:
       return "DOUBLE";
     case data_type::type_char_pointer:
@@ -72,6 +72,10 @@ data_type sqlite_dialect::string_type(const char *type) const
   } else if (strcmp(type, "TEXT") == 0) {
     return data_type::type_text;
   } else if (strcmp(type, "REAL") == 0) {
+    return data_type::type_double;
+  } else if (strcmp(type, "FLOAT") == 0) {
+    return data_type::type_double;
+  } else if (strcmp(type, "DOUBLE") == 0) {
     return data_type::type_double;
   } else if (strcmp(type, "BLOB") == 0) {
     return data_type::type_blob;
