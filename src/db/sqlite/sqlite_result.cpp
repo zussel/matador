@@ -72,7 +72,7 @@ sqlite_result::size_type sqlite_result::affected_rows() const
 
 sqlite_result::size_type sqlite_result::result_rows() const
 {
-  return result_.size();
+  return static_cast<sqlite_result::size_type>(result_.size());
 }
 
 sqlite_result::size_type sqlite_result::fields() const
@@ -105,7 +105,7 @@ void sqlite_result::push_back(char **row_values, int column_count)
   result_.push_back(row);
 }
 
-void sqlite_result::serialize(const char */*id*/, char &x)
+void sqlite_result::serialize(const char *, char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
 
@@ -114,7 +114,7 @@ void sqlite_result::serialize(const char */*id*/, char &x)
   }
 }
 
-void sqlite_result::serialize(const char */*id*/, short &x)
+void sqlite_result::serialize(const char *, short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -125,7 +125,7 @@ void sqlite_result::serialize(const char */*id*/, short &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, int &x)
+void sqlite_result::serialize(const char *, int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -136,7 +136,7 @@ void sqlite_result::serialize(const char */*id*/, int &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, long &x)
+void sqlite_result::serialize(const char *, long &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -147,7 +147,7 @@ void sqlite_result::serialize(const char */*id*/, long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, unsigned char &x)
+void sqlite_result::serialize(const char *, unsigned char &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -158,7 +158,7 @@ void sqlite_result::serialize(const char */*id*/, unsigned char &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, unsigned short &x)
+void sqlite_result::serialize(const char *, unsigned short &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -169,7 +169,7 @@ void sqlite_result::serialize(const char */*id*/, unsigned short &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, unsigned int &x)
+void sqlite_result::serialize(const char *, unsigned int &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -180,7 +180,7 @@ void sqlite_result::serialize(const char */*id*/, unsigned int &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, unsigned long &x)
+void sqlite_result::serialize(const char *, unsigned long &x)
 {
   char *val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -191,7 +191,7 @@ void sqlite_result::serialize(const char */*id*/, unsigned long &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, bool &x)
+void sqlite_result::serialize(const char *, bool &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -202,7 +202,7 @@ void sqlite_result::serialize(const char */*id*/, bool &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, float &x)
+void sqlite_result::serialize(const char *, float &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -213,7 +213,7 @@ void sqlite_result::serialize(const char */*id*/, float &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, double &x)
+void sqlite_result::serialize(const char *, double &x)
 {
   t_row::value_type &val = result_[pos_][column_++];
   if (strlen(val) == 0) {
@@ -224,7 +224,7 @@ void sqlite_result::serialize(const char */*id*/, double &x)
   // Todo: check error
 }
 
-void sqlite_result::serialize(const char */*id*/, char *x, size_t s)
+void sqlite_result::serialize(const char *, char *x, size_t s)
 {
   t_row::value_type &val = result_[pos_][column_++];
   size_t len = strlen(val);
@@ -236,13 +236,13 @@ void sqlite_result::serialize(const char */*id*/, char *x, size_t s)
   }
 }
 
-void sqlite_result::serialize(const char */*id*/, varchar_base &x)
+void sqlite_result::serialize(const char *, varchar_base &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x.assign(val);
 }
 
-void sqlite_result::serialize(const char */*id*/, std::string &x)
+void sqlite_result::serialize(const char *, std::string &x)
 {
   t_row::value_type val = result_[pos_][column_++];
   x = val;
