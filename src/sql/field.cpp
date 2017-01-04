@@ -49,6 +49,26 @@ void field::type(data_type t)
   type_ = t;
 }
 
+std::size_t field::size() const
+{
+  return size_;
+}
+
+void field::size(std::size_t s)
+{
+  size_ = s;
+}
+
+std::size_t field::precision() const
+{
+  return precision_;
+}
+
+void field::precision(std::size_t p)
+{
+  precision_ = p;
+}
+
 bool field::is_not_null() const
 {
   return not_null_;

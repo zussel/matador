@@ -25,23 +25,23 @@ const char *sqlite_dialect::type_string(oos::data_type type) const
 {
   switch(type) {
     case data_type::type_char:
-      return "INTEGER";
+      return "TINYINT";
     case data_type::type_short:
-      return "INTEGER";
+      return "SMALLINT";
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-      return "INTEGER";
+      return "BIGINT";
     case data_type::type_unsigned_char:
-      return "INTEGER";
+      return "TINYINT";
     case data_type::type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT";
     case data_type::type_unsigned_int:
       return "INTEGER";
     case data_type::type_unsigned_long:
-      return "INTEGER";
+      return "BIGINT";
     case data_type::type_bool:
-      return "INTEGER";
+      return "BOOLEAN";
     case data_type::type_float:
       return "FLOAT";
     case data_type::type_double:
@@ -53,9 +53,9 @@ const char *sqlite_dialect::type_string(oos::data_type type) const
     case data_type::type_text:
       return "TEXT";
     case data_type::type_date:
-      return "TEXT";
+      return "DATE";
     case data_type::type_time:
-      return "TEXT";
+      return "DATETIME";
     default: {
       std::stringstream msg;
       msg << "sqlite sql: unknown type [" << (int)type << "]";
@@ -68,9 +68,13 @@ const char *sqlite_dialect::type_string(oos::data_type type) const
 data_type sqlite_dialect::string_type(const char *type) const
 {
   if (strcmp(type, "INTEGER") == 0) {
+    return data_type::type_int;
+  } else if (strcmp(type, "TINYINT") == 0) {
+    return data_type::type_char;
+  } else if (strcmp(type, "SMALLINT") == 0) {
+    return data_type::type_short;
+  } else if (strcmp(type, "BIGINT") == 0) {
     return data_type::type_long;
-  } else if (strcmp(type, "TEXT") == 0) {
-    return data_type::type_text;
   } else if (strcmp(type, "REAL") == 0) {
     return data_type::type_double;
   } else if (strcmp(type, "FLOAT") == 0) {
@@ -83,6 +87,10 @@ data_type sqlite_dialect::string_type(const char *type) const
     return data_type::type_null;
   } else if (strncmp(type, "VARCHAR", 7) == 0) {
     return data_type::type_varchar;
+  } else if (strcmp(type, "DATE") == 0) {
+    return data_type::type_date;
+  } else if (strcmp(type, "DATETIME") == 0) {
+    return data_type::type_time;
   } else {
     return data_type::type_unknown;
   }

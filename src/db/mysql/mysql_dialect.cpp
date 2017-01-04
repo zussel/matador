@@ -36,21 +36,21 @@ const char* mysql_dialect::type_string(oos::data_type type) const
     case data_type::type_char:
       return "CHAR(1)";
     case data_type::type_short:
-      return "INTEGER";
+      return "SMALLINT";
     case data_type::type_int:
       return "INTEGER";
     case data_type::type_long:
-	    return "INTEGER";
-	  //return "BIGINT";
+	    //return "INTEGER";
+	    return "BIGINT";
     case data_type::type_unsigned_char:
       return "CHAR(1)";
     case data_type::type_unsigned_short:
-      return "INTEGER";
+      return "SMALLINT";
     case data_type::type_unsigned_int:
       return "INTEGER";
     case data_type::type_unsigned_long:
-	    return "INTEGER";
-	  //return "BIGINT";
+	    //return "INTEGER";
+	    return "BIGINT";
 	  case data_type::type_bool:
       return "INTEGER";
     case data_type::type_float:
@@ -87,11 +87,15 @@ const char* mysql_dialect::type_string(oos::data_type type) const
 data_type mysql_dialect::string_type(const char *type) const
 {
   if (strncmp(type, "int", 3) == 0) {
+    return data_type::type_int;
+  } else if (strncmp(type, "bigint", 6) == 0) {
     return data_type::type_long;
   } else if (strcmp(type, "date") == 0) {
-    return data_type::type_text;
+    return data_type::type_date;
+  } else if (strncmp(type, "datetime", 8) == 0) {
+    return data_type::type_time;
   } else if (strcmp(type, "float") == 0) {
-    return data_type::type_double;
+    return data_type::type_float;
   } else if (strcmp(type, "double") == 0) {
     return data_type::type_double;
   } else if (strncmp(type, "varchar", 7) == 0) {

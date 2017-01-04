@@ -1069,7 +1069,7 @@ void QueryTestUnit::test_rows()
 
   query<> q(connection_, "item");
 
-  auto cols = {"id", "string", "varchar", "int", "float", "date", "time"};
+  auto cols = {"id", "string", "varchar", "int", "float", "double", "date", "time"};
 
   q.create({
              make_typed_id_column<long>("id"),
@@ -1077,6 +1077,7 @@ void QueryTestUnit::test_rows()
              make_typed_varchar_column<32>("varchar"),
              make_typed_column<int>("int"),
              make_typed_column<float>("float"),
+             make_typed_column<double>("double"),
              make_typed_column<oos::date>("date"),
              make_typed_column<oos::time>("time"),
            });
@@ -1091,11 +1092,11 @@ void QueryTestUnit::test_rows()
   }
 
   q
-    .insert({"id", "string", "varchar", "int", "float", "date", "time"})
-    .values({1, "long text", "good day", -17, 3.1415, oos::date(), oos::time::now()})
+    .insert({"id", "string", "varchar", "int", "float", "double", "date", "time"})
+    .values({1, "long text", "good day", -17, 3.1415f, 2.71828, oos::date(), oos::time::now()})
     .execute();
 
-  auto res = q.select({"id", "string", "varchar", "int", "float"}).from("item").execute();
+  auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute();
 
   auto first = res.begin();
   auto last = res.end();
@@ -1104,8 +1105,9 @@ void QueryTestUnit::test_rows()
     std::unique_ptr<row> item(first.release());
     UNIT_EXPECT_EQUAL(1L, item->at<long>("id"), "invalid value");
     UNIT_EXPECT_EQUAL("long text", item->at<std::string>("string"), "invalid value");
-    UNIT_EXPECT_EQUAL(-17, item->at<long>("int"), "invalid value");
-    UNIT_EXPECT_EQUAL(3.1415, item->at<double >("float"), "invalid value");
+    UNIT_EXPECT_EQUAL(-17, item->at<int>("int"), "invalid value");
+    UNIT_EXPECT_EQUAL(3.1415f, item->at<float>("float"), "invalid value");
+    UNIT_EXPECT_EQUAL(2.71828, item->at<double>("double"), "invalid value");
     ++first;
   }
 

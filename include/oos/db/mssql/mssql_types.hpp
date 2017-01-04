@@ -38,8 +38,8 @@ template <> struct type_traits<unsigned short> { inline static const char* type_
 template <> struct type_traits<unsigned int> { inline static const char* type_string() { return "BIGINT"; } };
 template <> struct type_traits<unsigned long> { inline static const char* type_string() { return "NUMERIC(21,0)"; } };
 template <> struct type_traits<bool> { inline static const char* type_string() { return "BIT"; } };
-template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT"; } };
-template <> struct type_traits<double> { inline static const char* type_string() { return "FLOAT"; } };
+template <> struct type_traits<float> { inline static const char* type_string() { return "FLOAT(24)"; } };
+template <> struct type_traits<double> { inline static const char* type_string() { return "FLOAT(53)"; } };
 template <> struct type_traits<varchar_base> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<const char*> { inline static const char* type_string() { return "VARCHAR"; } };
 template <> struct type_traits<std::string> { inline static const char* type_string() { return "VARCHAR(MAX)"; } };

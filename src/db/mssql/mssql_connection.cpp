@@ -207,6 +207,8 @@ bool mssql_connection::exists(const std::string &tablename)
   }
 }
 
+static data_type type2data_type(SQLSMALLINT type, SQLINTEGER size);
+
 std::vector<field> mssql_connection::describe(const std::string &table)
 {
   // create statement handle
@@ -228,17 +230,29 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   // bind to columns we need (column name, data type of column and index)
   SQLINTEGER pos(0);
   SQLCHAR column[64];
+  SQLSMALLINT data_type(0);
   SQLCHAR type[64];
+  SQLINTEGER size(0);
   SQLINTEGER not_null(0);
-  SQLLEN indicator[4];
+  SQLLEN indicator[6];
 
+  // column name
   ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (column)");
-  ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[1]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (type)");
-  ret = SQLBindCol(stmt, 11, SQL_C_LONG, &not_null, 0, &indicator[2]);
+  // data type
+  ret = SQLBindCol(stmt, 5, SQL_C_LONG, &data_type, sizeof(data_type), &indicator[1]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (data type)");
+  // type name
+  ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[2]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (type name)");
+  // size
+  ret = SQLBindCol(stmt, 7, SQL_C_LONG, &size, sizeof(size), &indicator[3]);
+  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (data size)");
+  // nullable
+  ret = SQLBindCol(stmt, 11, SQL_C_LONG, &not_null, 0, &indicator[4]);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (not null)");
-  ret = SQLBindCol(stmt, 17, SQL_C_LONG, &pos, 0, &indicator[3]);
+  // index (1 based)
+  ret = SQLBindCol(stmt, 17, SQL_C_LONG, &pos, 0, &indicator[5]);
   throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (pos)");
 
   std::vector<field> fields;
@@ -247,8 +261,10 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   while (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     field f;
     f.index(pos - 1);
+    f.size(size);
     f.name(std::string((char*)column));
-    f.type(dialect_.string_type((char*)type));
+    f.type(type2data_type(data_type, size));
+    //f.type(dialect_.string_type((char*)type));
     f.not_null(not_null == 0);
 
     fields.push_back(f);
@@ -257,6 +273,38 @@ std::vector<field> mssql_connection::describe(const std::string &table)
   SQLFreeHandle(SQL_HANDLE_STMT, stmt);
 
   return fields;
+}
+
+data_type type2data_type(SQLSMALLINT type, SQLINTEGER size)
+{
+  switch (type) {
+  case SQL_CHAR:
+    return data_type::type_char;
+  case SQL_SMALLINT:
+    return data_type::type_short;
+  case SQL_INTEGER:
+    return data_type::type_int;
+  case SQL_BIGINT:
+    return data_type::type_long;
+  case SQL_DATE:
+  case -9:
+    return data_type::type_date;
+  case SQL_TYPE_TIMESTAMP:
+    return data_type::type_time;
+  case SQL_VARCHAR:
+    return data_type::type_varchar;
+  case SQL_REAL:
+    return data_type::type_float;
+  case SQL_FLOAT:
+    return data_type::type_double;
+  case SQL_BIT:
+    return data_type::type_bool;
+  case SQL_LONGVARCHAR:
+    return (size == 2147483647 ? data_type::type_varchar : data_type::type_text);
+  case SQL_UNKNOWN_TYPE:
+  default:
+    return data_type::type_unknown;
+  }
 }
 
 SQLHANDLE mssql_connection::handle()
