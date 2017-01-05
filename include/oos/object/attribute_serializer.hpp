@@ -312,6 +312,11 @@ public:
   }
 
   template < class V >
+  void serialize(const char *, belongs_to<V> &, cascade_type)
+  {
+  }
+
+  template < class V >
   void serialize(const char *id, has_one<V> &x, cascade_type)
   {
     if (id_ != id) {

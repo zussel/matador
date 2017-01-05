@@ -42,6 +42,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 //  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
+//  add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
   add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
@@ -1053,6 +1054,16 @@ struct on_attach<has_many_item<T>> : public on_attach_base
     table_names.push_back(node->type());
   }
 };
+
+void ObjectStoreTestUnit::test_belongs_to()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<employee, person>("employee");
+  ostore_.attach<department>("department");
+
+  // expected prototypes
+  // person, employee and department
+}
 
 void ObjectStoreTestUnit::test_on_attach()
 {

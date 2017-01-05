@@ -158,6 +158,18 @@ std::string has_one<T>::classname_ = typeid(T).name();
 template < class T >
 std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>::resolve());
 
+template < class T >
+class belongs_to
+{
+public:
+  belongs_to() {}
+  /**
+   * Copies has_one from object_ptr
+   *
+   * @param x The object_ptr to copy
+   */
+  belongs_to(const object_ptr <T> &x);
+};
 
 /**
  * @brief The object_ptr holds a pointer to an serializable.
@@ -217,6 +229,14 @@ public:
    */
   object_ptr(const has_one<T> &x)
     : object_holder(false, x.proxy_)
+  {}
+
+  /**
+   * @brief Creates an object_ptr from the given has_one object
+   * @param x The has_one object to created the object_ptr from
+   */
+  object_ptr(const belongs_to<T> &)
+    : object_holder(false, nullptr)
   {}
 
   /**
@@ -334,6 +354,12 @@ has_one<T>& has_one<T>::operator=(const object_ptr <T> &x)
 {
   reset(x.proxy_, x.cascade_);
   return *this;
+}
+
+template < class T >
+belongs_to<T>::belongs_to(const object_ptr<T> &)
+{
+
 }
 
 }

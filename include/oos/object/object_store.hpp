@@ -264,6 +264,8 @@ public:
   void serialize(const char *, V &) { }
   void serialize(const char *, char *, size_t) { }
   template<class V>
+  void serialize(const char *id, belongs_to<V> &x, cascade_type);
+  template<class V>
   void serialize(const char *id, has_one<V> &x, cascade_type);
   template<class V, template<class ...> class C>
   void serialize(const char *, has_many<V, C> &, const char *, const char *);
@@ -1155,6 +1157,12 @@ template < class V >
 void node_analyzer<T, ON_ATTACH>::serialize(V &x)
 {
   oos::access::serialize(*this, x);
+}
+
+template<class T, template < class ... > class ON_ATTACH>
+template<class V>
+void node_analyzer<T, ON_ATTACH>::serialize(const char *, belongs_to<V> &, cascade_type)
+{
 }
 
 template<class T, template < class ... > class ON_ATTACH>
