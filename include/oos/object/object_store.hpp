@@ -1142,14 +1142,6 @@ object_store::iterator object_store::initialize(prototype_node *node, const ON_A
   T obj;
   oos::access::serialize(analyzer, obj);
 
-  while (!node->foreign_key_ids.empty()) {
-    auto i = node->foreign_key_ids.front();
-    node->foreign_key_ids.pop_front();
-    prototype_node *foreign_node = i.first;
-    std::shared_ptr<basic_identifier> fk(node->id_->clone());
-    foreign_node->foreign_keys.insert(std::make_pair(i.second, fk));
-  }
-
   return prototype_iterator(node);
 }
 
@@ -1171,56 +1163,39 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *, belongs_to<V> &, casca
 
 template<class T, template < class ... > class ON_ATTACH>
 template<class V>
-void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_one<V> &x, cascade_type)
+void node_analyzer<T, ON_ATTACH>::serialize(const char *, has_one<V> &x, cascade_type)
 {
   prototype_iterator node = node_.tree()->find(x.type());
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
     // prepare insertion of new node
     node = node_.tree()->template prepare_attach<V>();
-    if (node_.tree()->temp_container_) {
-      node->prepare_foreign_key(&node_, node_.tree()->temp_container_->item_field().c_str());
-    } else {
-      node->prepare_foreign_key(&node_, id);
-    }
   } else if (!node->has_primary_key()) {
     throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
-  } else {
-    // node is inserted/attached; store it in nodes foreign key map
-    std::shared_ptr<basic_identifier> fk(node->id()->clone());
-    node_.register_foreign_key(id, fk);
   }
 }
 
 template<class T, template < class ... > class ON_ATTACH>
 template<class V, template<class ...> class C>
-void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char *, const char *)
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &, const char *, const char *)
 //void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
 {
   // item column column names
 //  x.owner_field(owner_field);
 //  x.item_field(item_field);
-  // Todo: distinguish between join table and no join table
-  if (x.has_join_table()) {
-    // attach relation table for has many relation
-    // check if has many item is already attached
-    // true: check owner and item field
-    // false: attach it
-    prototype_iterator pi = node_.tree()->find(id);
-    if (pi == node_.tree()->end()) {
-      pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
-    } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
-      // prototype is of type has_many_item
-      throw_object_exception("many to many relations are not supported by now");
-    } else {
-      // throw exception
-      throw_object_exception("prototype already inserted: " << pi->type());
-    }
-    // insert the relation
-    // add container node to item node
-    pi->register_relation(node_.type(), &node_, id);
+  // attach relation table for has many relation
+  // check if has many item is already attached
+  // true: check owner and item field
+  // false: attach it
+  prototype_iterator pi = node_.tree()->find(id);
+  if (pi == node_.tree()->end()) {
+    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
+  } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
+    // prototype is of type has_many_item
+    throw_object_exception("many to many relations are not supported by now");
   } else {
-    throw object_exception("has_many without join table not supported");
+    // throw exception
+    throw_object_exception("prototype already inserted: " << pi->type());
   }
 }
 

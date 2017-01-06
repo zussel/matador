@@ -329,25 +329,25 @@ basic_identifier *prototype_node::id() const
   return id_.get();
 }
 
-size_t prototype_node::relation_count() const
-{
-  return relations.size();
-}
+//size_t prototype_node::relation_count() const
+//{
+//  return relations.size();
+//}
+//
+//bool prototype_node::has_relation(const std::string &relation_name) const
+//{
+//  return relations.find(relation_name) != relations.end();
+//}
 
-bool prototype_node::has_relation(const std::string &relation_name) const
-{
-  return relations.find(relation_name) != relations.end();
-}
-
-size_t prototype_node::foreign_key_count() const
-{
-  return foreign_keys.size();
-}
-
-bool prototype_node::has_foreign_key(const std::string &foreign_key_name) const
-{
-  return foreign_keys.find(foreign_key_name) != foreign_keys.end();
-}
+//size_t prototype_node::foreign_key_count() const
+//{
+//  return foreign_keys.size();
+//}
+//
+//bool prototype_node::has_foreign_key(const std::string &foreign_key_name) const
+//{
+//  return foreign_keys.find(foreign_key_name) != foreign_keys.end();
+//}
 
 bool prototype_node::is_abstract() const
 {
@@ -359,20 +359,20 @@ std::type_index prototype_node::type_index() const
   return type_index_;
 }
 
-void prototype_node::register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key)
-{
-  foreign_keys.insert(std::make_pair(id, foreign_key));
-}
+//void prototype_node::register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key)
+//{
+//  foreign_keys.insert(std::make_pair(id, foreign_key));
+//}
 
-void prototype_node::register_relation(const char *type, prototype_node *node, const char *id)
-{
-  relations.insert(std::make_pair(type, std::make_pair(node, id)));
-}
+//void prototype_node::register_relation(const char *type, prototype_node *node, const char *id)
+//{
+//  relations.insert(std::make_pair(type, std::make_pair(node, id)));
+//}
 
-void prototype_node::prepare_foreign_key(prototype_node *master_node, const char *id)
-{
-  foreign_key_ids.push_back(std::make_pair(master_node, id));
-}
+//void prototype_node::prepare_foreign_key(prototype_node *master_node, const char *id)
+//{
+//  foreign_key_ids.push_back(std::make_pair(master_node, id));
+//}
 
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
@@ -440,12 +440,12 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 
   os << "|{relations}";
   // list relations
-  prototype_node::field_prototype_map_t::const_iterator first = pn.relations.begin();
-  prototype_node::field_prototype_map_t::const_iterator last = pn.relations.end();
-  while (first != last) {
-    os << "|{parent node type|" << first->first << "|node|" << first->second.first->type() << "|foreign field|" << first->second.second << "}";
-    ++first;
-  }
+//  prototype_node::field_prototype_map_t::const_iterator first = pn.relations.begin();
+//  prototype_node::field_prototype_map_t::const_iterator last = pn.relations.end();
+//  while (first != last) {
+//    os << "|{parent node type|" << first->first << "|node|" << first->second.first->type() << "|foreign field|" << first->second.second << "}";
+//    ++first;
+//  }
   os << "}\"]\n";
   return os;
 }

@@ -255,40 +255,6 @@ public:
   basic_identifier* id() const;
 
   /**
-   * @brief Returns the count of relations
-   * @return The count of relations
-   */
-  size_t relation_count() const;
-
-  /**
-   * @brief Returns true if a relation with the given name exists
-   *
-   * Returns true if a relation with the given name exists in the
-   * object prototype.
-   *
-   * @param relation_name The name of the relation to be checked
-   * @return True if a relation with the given name exists
-   */
-  bool has_relation(const std::string &relation_name) const;
-
-  /**
-   * @brief Returns the count of foreign keys
-   * @return The count of foreign keys
-   */
-  size_t foreign_key_count() const;
-
-  /**
-   * @brief Returns true if a foreign key with the given name exists
-   *
-   * Returns true if a foreign key with the given name exists in the
-   * object prototype.
-   *
-   * @param foreign_key_name The name of the foreign key to be checked
-   * @return True if a relation with the given name exists
-   */
-  bool has_foreign_key(const std::string &foreign_key_name) const;
-
-  /**
    * @brief Returns true if the node represents an abstract object
    * @return True if the node represents an abstract object
    */
@@ -300,14 +266,6 @@ public:
    * @return Type index of the represented object type
    */
   std::type_index type_index() const;
-
-  /// @cond OOS_DEV
-
-  void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
-  void register_relation(const char *type, prototype_node *node, const char *id);
-  void prepare_foreign_key(prototype_node *master_node, const char *id);
-
-  /// @endcond
 
   /**
    * Prints the node in graphviz layout to the stream.
@@ -360,15 +318,6 @@ private:
   template < class T >
   friend class object_view_iterator;
 
-  /*
-   * The field_prototype_map_t contains a map
-   * of all foreign key field relations, where each value
-   * is a pair of the foreign prototype and its
-   * corresponding field
-   */
-  typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
-  typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
-
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
   // tree links
@@ -377,14 +326,6 @@ private:
   prototype_node *next = nullptr;         /**< The next node */
   std::unique_ptr<prototype_node> first;  /**< The first children node */
   std::unique_ptr<prototype_node> last;   /**< The last children node */
-
-  /* this map holds information about
-   * all prototypes in which this prototype
-   * is used as a child item (to many
-   * relation). The string tells the name
-   * of the attribute
-   */
-  field_prototype_map_t relations; /**< Map holding relation information for type. */
 
   object_proxy *op_first = nullptr;  /**< The marker of the first list node. */
   object_proxy *op_marker = nullptr; /**< The marker of the last list node of the own elements. */
@@ -408,21 +349,6 @@ private:
    * a primary key prototype to clone from
    */
   std::unique_ptr<basic_identifier> id_;
-
-  /**
-   * a list of prototype_node and ids for
-   * which the relation map is yet to be filled
-   * once the object type is really inserted
-   * this list is processed
-   */
-  typedef std::list<std::pair<prototype_node*, std::string> > t_node_id_list;
-  t_node_id_list foreign_key_ids; /**< The foreign key id list */
-
-  /**
-   * a list of all foreign keys inside nodes object
-   */
-  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
-  t_foreign_key_map foreign_keys; /**< The foreign key map */
 };
 
 }

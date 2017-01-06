@@ -154,13 +154,6 @@ public:
    */
   void append(const typename iterator::internal_type &item) { container_.push_back(item); }
 
-  /**
-   * @brief Returns true if the container uses a join table
-   *
-   * @return True if the container uses a join table
-   */
-  bool has_join_table() const { return true; }
-
 protected:
   /// @cond OOS_DEV
 

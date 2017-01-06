@@ -378,13 +378,12 @@ private:
   namer namer_;                 /**< The object classname function */
   unsigned long oid = 0;        /**< The id of the concrete or expected object. */
 
-
   unsigned long reference_counter_ = 0;
 
   object_store *ostore_ = nullptr;    /**< The object_store to which the object_proxy belongs. */
   prototype_node *node_ = nullptr;    /**< The prototype_node containing the type of the object. */
 
-  typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_base_ptr_set. */
+  typedef std::set<object_holder *> ptr_set_t; /**< Shortcut to the object_holder set. */
   ptr_set_t ptr_set_;      /**< This set contains every object_holder pointing to this object_proxy. */
   
   std::shared_ptr<basic_identifier> primary_key_ = nullptr;
