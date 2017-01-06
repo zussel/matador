@@ -34,6 +34,7 @@
 #include "oos/utils/identifier_resolver.hpp"
 
 #include "oos/object/prototype_node.hpp"
+#include "oos/object/object_holder_type.hpp"
 
 #include <ostream>
 #include <set>
@@ -352,8 +353,7 @@ private:
   friend class table_reader;
   friend class restore_visitor;
   friend class object_holder;
-  template < class T > friend class object_ptr;
-  template < class T > friend class has_one;
+  template < class T, object_holder_type OHT > friend class object_pointer;
 
   typedef void (*deleter)(void*);
   typedef const char* (*namer)();

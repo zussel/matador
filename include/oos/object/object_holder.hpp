@@ -22,6 +22,8 @@
 #include "oos/utils/cascade_type.hpp"
 #include "oos/utils/identifiable_holder.hpp"
 
+#include "oos/object/object_holder_type.hpp"
+
 #include <memory>
 
 namespace oos {
@@ -255,9 +257,7 @@ private:
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T > friend class object_ptr;
-  template < class T > friend class has_one;
-  template < class T > friend class belongs_to;
+  template < class T, object_holder_type OPT > friend class object_pointer;
 
   object_proxy *proxy_ = nullptr;
   cascade_type cascade_ = cascade_type::NONE;

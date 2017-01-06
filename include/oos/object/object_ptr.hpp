@@ -28,72 +28,69 @@
 
 namespace oos {
 
-template < class T > class has_one;
-template < class T > class belongs_to;
-
 /**
- * @brief The object_ptr holds a pointer to an serializable.
+ * @brief The object_pointer holds a pointer to an serializable.
  * @tparam T The type of the serializable.
  *
- * The object_ptr holds a pointer to an object. The
- * object_ptr is a wrapper class for the object class
+ * The object_pointer holds a pointer to an object. The
+ * object_pointer is a wrapper class for the object class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
- * as a object_ptr and should be used through the
- * object_ptr class.
+ * as a object_pointer and should be used through the
+ * object_pointer class.
  */
-template < class T >
-class object_ptr : public object_holder
+template < class T, object_holder_type OPT >
+class object_pointer : public object_holder
 {
 public:
   typedef T object_type;           /**< Shortcut for serializable type. */
-  typedef object_ptr<T> self;      /**< Shortcut for self class. */
+  typedef object_pointer<T, OPT> self;      /**< Shortcut for self class. */
 
 public:
   /**
-   * Create an empty object_ptr
+   * Create an empty object_pointer
    */
-  object_ptr()
-    : object_holder(false)
+  object_pointer()
+    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO)
   {}
   /**
-   * Copies object_ptr
+   * Copies object_pointer
    *
-   * @param x The object_ptr to copy
+   * @param x The object_pointer to copy
    */
-  object_ptr(const self &x)
+  object_pointer(const self &x)
     : object_holder(x.is_internal_, x.proxy_)
   {}
 
   /**
-   * Create an object_ptr from an object
+   * Create an object_pointer from an object
    *
    * @param o The object.
    */
-  object_ptr(T *o)
-    : object_holder(false, new object_proxy(o))
+  object_pointer(T *o)
+    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO, new object_proxy(o))
   {}
 
   /**
-   * Create an object_ptr from an object_proxy
+   * Create an object_pointer from an object_proxy
    *
    * @param proxy The object_proxy.
    */
-  explicit object_ptr(object_proxy *proxy)
-  : object_holder(false, proxy)
+  explicit object_pointer(object_proxy *proxy)
+  : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO, proxy)
   {}
 
   /**
-   * @brief Creates an object_ptr from the given has_one object
-   * @param x The has_one object to created the object_ptr from
+   * @brief Creates an object_pointer from the given object_pointer object
+   *
+   * @param x The object_pointer object to created the object_pointer from
    */
-  object_ptr(const has_one<T> &x);
-
-  /**
-   * @brief Creates an object_ptr from the given has_one object
-   * @param x The has_one object to created the object_ptr from
-   */
-  object_ptr(const belongs_to<T> &);
+  template < object_holder_type OOPT >
+  object_pointer(const object_pointer<T, OOPT> &x)
+    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO)
+  {
+    reset(x.proxy_, x.cascade_);
+  }
 
   /**
    * Assign operator.
@@ -107,18 +104,16 @@ public:
   }
 
   /**
-   * @brief Copy assignes an object_ptr from the given has_one object
-   * @param x The has_one object to created the object_ptr from
-   * @return A reference to the created object_ptr
+   * @brief Copy assignes an object_pointer from the given has_one object
+   * @param x The has_one object to created the object_pointer from
+   * @return A reference to the created object_pointer
    */
-  self& operator=(has_one<T> &x);
-
-  /**
-   * @brief Copy assignes an object_ptr from the given belongs_to object
-   * @param x The belongs_to object to created the object_ptr from
-   * @return A reference to the created object_ptr
-   */
-  self& operator=(belongs_to<T> &x);
+  template < object_holder_type OOPT >
+  self& operator=(object_pointer<T, OOPT> &x)
+  {
+    reset(x.proxy_, x.cascade_);
+    return *this;
+  }
 
   /**
    * Return the type string of the object
@@ -193,18 +188,18 @@ public:
   }
 
 private:
-  friend class has_one<T>;
-  friend class belongs_to<T>;
-
   static std::string classname_;
   static std::unique_ptr<basic_identifier> identifier_;
 };
 
 template < class T >
-std::string object_ptr<T>::classname_ = typeid(T).name();
+using object_ptr = object_pointer<T, object_holder_type::OBJECT_PTR>;
 
-template < class T >
-std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::resolve());
+template < class T, object_holder_type OPT >
+std::string object_pointer<T, OPT>::classname_ = typeid(T).name();
+
+template < class T, object_holder_type OPT >
+std::unique_ptr<basic_identifier> object_pointer<T, OPT>::identifier_(identifier_resolver<T>::resolve());
 
 }
 
