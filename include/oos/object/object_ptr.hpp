@@ -22,154 +22,14 @@
 #include "oos/object/object_holder.hpp"
 #include "oos/object/transaction.hpp"
 #include "oos/utils/identifier_resolver.hpp"
-#include "oos/object/has_one.hpp"
 
 #include <memory>
 #include <typeinfo>
 
 namespace oos {
 
-namespace detail {
-class result_impl;
-}
-
-template < class T > class object_ptr;
-
-/**
- * @brief The has_one holds a pointer to an serializable.
- * @tparam T The type of the serializable.
- *
- * The has_one holds a pointer to an object. The
- * has_one is a wrapper class for the object class
- * It has a reference count mechanism.
- * The objects inserted into the object_store are returned
- * as a has_one and should be used through the
- * has_one class.
- */
-template < class T >
-class has_one : public object_holder
-{
-public:
-  typedef has_one<T> self;      /**< Shortcut for self class. */
-
-public:
-  /**
-   * Create an empty has_one
-   */
-  has_one()
-    : object_holder(true)
-  {}
-
-  /**
-   * Create an hs_one from an object
-   *
-   * @param o The object.
-   */
-  has_one(T *o)
-    : object_holder(true, new object_proxy(o))
-  {}
-
-  /**
-   * Create an has_one from an object_proxy
-   *
-   * @param proxy The object_proxy.
-   */
-  has_one(object_proxy *proxy)
-    : object_holder(true, proxy)
-  {}
-
-  /**
-   * Copies has_one from object_ptr
-   *
-   * @param x The object_ptr to copy
-   */
-  has_one(const object_ptr <T> &x);
-
-  /**
-   * Assigns has_one from object_ptr
-   *
-   * @param x The object_ptr to assign
-   * @return Reference to assigned has_one
-   */
-  has_one& operator=(const object_ptr <T> &x);
-
-  //@{
-  /**
-   * @brief Return the pointer to the object of type T.
-   *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object nullptr is returned.
-   *
-   * @return The pointer to the object of type T.
-   */
-  T* operator->()
-  {
-    return get();
-  }
-
-  const T* operator->() const
-  {
-    return get();
-  }
-
-  T* get()
-  {
-    return static_cast<T*>(proxy_->obj());
-  }
-
-  const T* get() const
-  {
-    return static_cast<T*>(proxy_->obj());
-  }
-  //@}
-  
-  /**
-   * Return the type string of the serializable
-   *
-   * @return The type string of the serializable.
-   */
-  const char* type() const
-  {
-    return classname_.c_str();
-  }
-
-  /**
-   * Creates a new identifier, represented by the identifier
-   * of the underlaying type.
-   *
-   * @return A new identifier.
-   */
-  basic_identifier* create_identifier() const
-  {
-    return self::identifier_->clone();
-  }
-
-private:
-  friend class object_deleter;
-
-private:
-  static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
-};
-
-template < class T >
-std::string has_one<T>::classname_ = typeid(T).name();
-
-template < class T >
-std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>::resolve());
-
-template < class T >
-class belongs_to
-{
-public:
-  belongs_to() {}
-  /**
-   * Copies has_one from object_ptr
-   *
-   * @param x The object_ptr to copy
-   */
-  belongs_to(const object_ptr <T> &x);
-};
+template < class T > class has_one;
+template < class T > class belongs_to;
 
 /**
  * @brief The object_ptr holds a pointer to an serializable.
@@ -227,17 +87,13 @@ public:
    * @brief Creates an object_ptr from the given has_one object
    * @param x The has_one object to created the object_ptr from
    */
-  object_ptr(const has_one<T> &x)
-    : object_holder(false, x.proxy_)
-  {}
+  object_ptr(const has_one<T> &x);
 
   /**
    * @brief Creates an object_ptr from the given has_one object
    * @param x The has_one object to created the object_ptr from
    */
-  object_ptr(const belongs_to<T> &)
-    : object_holder(false, nullptr)
-  {}
+  object_ptr(const belongs_to<T> &);
 
   /**
    * Assign operator.
@@ -255,11 +111,15 @@ public:
    * @param x The has_one object to created the object_ptr from
    * @return A reference to the created object_ptr
    */
-  self& operator=(has_one<T> &x)
-  {
-    reset(x.proxy_);
-    return *this;
-  }
+  self& operator=(has_one<T> &x);
+
+  /**
+   * @brief Copy assignes an object_ptr from the given belongs_to object
+   * @param x The belongs_to object to created the object_ptr from
+   * @return A reference to the created object_ptr
+   */
+  self& operator=(belongs_to<T> &x);
+
   /**
    * Return the type string of the object
    *
@@ -333,6 +193,9 @@ public:
   }
 
 private:
+  friend class has_one<T>;
+  friend class belongs_to<T>;
+
   static std::string classname_;
   static std::unique_ptr<basic_identifier> identifier_;
 };
@@ -342,25 +205,6 @@ std::string object_ptr<T>::classname_ = typeid(T).name();
 
 template < class T >
 std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::resolve());
-
-
-template < class T >
-has_one<T>::has_one(const object_ptr<T> &x)
-  : object_holder(true, x.proxy_)
-{}
-
-template < class T >
-has_one<T>& has_one<T>::operator=(const object_ptr <T> &x)
-{
-  reset(x.proxy_, x.cascade_);
-  return *this;
-}
-
-template < class T >
-belongs_to<T>::belongs_to(const object_ptr<T> &)
-{
-
-}
 
 }
 

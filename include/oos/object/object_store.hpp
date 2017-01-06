@@ -22,6 +22,7 @@
 #include "oos/object/object_exception.hpp"
 #include "oos/object/object_observer.hpp"
 #include "oos/object/has_one.hpp"
+#include "oos/object/belongs_to.hpp"
 #include "oos/object/object_serializer.hpp"
 #include "oos/object/basic_has_many.hpp"
 #include "oos/object/transaction.hpp"
@@ -123,8 +124,8 @@ public:
   void serialize(const char *, T &) { }
   void serialize(const char *, char *, size_t) { }
 
-//  template < class T >
-//  void serialize(const char *, object_ptr<T> &x)
+  template<class T>
+  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
   template<class T>
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
 
@@ -235,6 +236,8 @@ public:
   void serialize(const char *, T &) { }
   void serialize(const char *, char *, size_t) { }
 
+  template<class T>
+  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
   template<class T>
   void serialize(const char *, has_one<T> &x, cascade_type cascade);
   template<class T, template<class ...> class C>
@@ -1251,31 +1254,59 @@ void object_inserter::serialize(T &x)
 }
 
 template<class T>
-void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
-  if (x.is_inserted() || (x.proxy_ && x.proxy_->obj() == nullptr)) {
+void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cascade) {
+  if (x.is_inserted() || (x.optr().proxy_ && x.optr().proxy_->obj() == nullptr)) {
     return;
   }
-  x.is_inserted_ = true;
-  x.cascade_ = cascade;
+  x.optr_.is_inserted_ = true;
+  x.optr_.cascade_ = cascade;
   // object was seen by inserter stop inserting
-  if (!object_proxies_.insert(x.proxy_).second) {
+  if (!object_proxies_.insert(x.optr_.proxy_).second) {
     return;
   }
 
-  if (!x.proxy_) {
+  if (!x.optr_.proxy_) {
     return;
   }
 
   if (x.id()) {
     // do the pointer count
-    object_proxy_stack_.push(x.proxy_);
+    object_proxy_stack_.push(x.optr_.proxy_);
+    oos::access::serialize(*this, *(T*)x.optr_.ptr());
+    object_proxy_stack_.pop();
+  } else {
+    // new object
+    ostore_.insert<T>(x.optr_.proxy_, notify_);
+  }
+  ++(*x.optr_.proxy_);
+}
+
+template<class T>
+void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
+  if (x.is_inserted() || (x.optr().proxy_ && x.optr().proxy_->obj() == nullptr)) {
+    return;
+  }
+  x.optr_.is_inserted_ = true;
+  x.optr_.cascade_ = cascade;
+  // object was seen by inserter stop inserting
+  if (!object_proxies_.insert(x.optr_.proxy_).second) {
+    return;
+  }
+
+  if (!x.optr_.proxy_) {
+    return;
+  }
+
+  if (x.id()) {
+    // do the pointer count
+    object_proxy_stack_.push(x.optr_.proxy_);
     oos::access::serialize(*this, *(T*)x.ptr());
     object_proxy_stack_.pop();
   } else {
     // new object
-    ostore_.insert<T>(x.proxy_, notify_);
+    ostore_.insert<T>(x.optr_.proxy_, notify_);
   }
-  ++(*x.proxy_);
+  ++(*x.optr_.proxy_);
 }
 
 template<class T, template<class ...> class C>
@@ -1329,12 +1360,27 @@ bool object_deleter::is_deletable(object_proxy *proxy, T *o) {
 }
 
 template<class T>
+void object_deleter::serialize(const char *, belongs_to<T> &x, cascade_type cascade) {
+  if (!x.optr().ptr()) {
+    return;
+  }
+  std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
+    std::make_pair(x.optr().proxy_->id(), t_object_count(x.optr().proxy_, true, (T*)x.optr().proxy_->obj()))
+  );
+  --ret.first->second.reference_counter;
+  if (cascade & cascade_type::REMOVE) {
+    ret.first->second.ignore = false;
+    oos::access::serialize(*this, *(T*)x.optr().ptr());
+  }
+}
+
+template<class T>
 void object_deleter::serialize(const char *, has_one<T> &x, cascade_type cascade) {
   if (!x.ptr()) {
     return;
   }
   std::pair<t_object_count_map::iterator, bool> ret = object_count_map.insert(
-    std::make_pair(x.proxy_->id(), t_object_count(x.proxy_, true, (T*)x.proxy_->obj()))
+    std::make_pair(x.optr().proxy_->id(), t_object_count(x.optr().proxy_, true, (T*)x.optr().proxy_->obj()))
   );
   --ret.first->second.reference_counter;
   if (cascade & cascade_type::REMOVE) {

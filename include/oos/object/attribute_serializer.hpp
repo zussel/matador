@@ -312,8 +312,19 @@ public:
   }
 
   template < class V >
-  void serialize(const char *, belongs_to<V> &, cascade_type)
+  void serialize(const char *id, belongs_to<V> &x, cascade_type)
   {
+    if (id_ != id) {
+      return;
+    }
+    std::stringstream to;
+    if (x.has_primary_key()) {
+      x.primary_key()->print(to);
+    } else {
+      to << x.id();
+    }
+    to_ = to.str();
+    success_ = true;
   }
 
   template < class V >
@@ -331,6 +342,7 @@ public:
     to_ = to.str();
     success_ = true;
   }
+
   void serialize(const char*, abstract_has_many&, const char*, const char*) {}
 
 private:
@@ -387,6 +399,8 @@ public:
 
   void serialize(const char*, date&) {}
   void serialize(const char*, time&) {}
+  template < class V >
+  void serialize(const char*, belongs_to<V> &, cascade_type) {}
   template < class V >
   void serialize(const char*, has_one<V> &, cascade_type) {}
   void serialize(const char*, abstract_has_many&, const char*, const char*) {}

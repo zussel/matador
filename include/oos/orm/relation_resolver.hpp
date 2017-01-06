@@ -52,6 +52,43 @@ public:
   void serialize(const char *, char *, size_t) { }
 
   template < class V >
+  void serialize(const char *, belongs_to<V> &x, cascade_type cascade)
+  {
+    std::shared_ptr<basic_identifier> pk = x.primary_key();
+    if (!pk) {
+      return;
+    }
+
+    // get node of object type
+    prototype_iterator node = store_->find(x.type());
+
+    object_proxy *proxy = node->find_proxy(pk);
+    if (proxy) {
+      /**
+       * find proxy in node map
+       * if proxy can be found object was
+       * already read - replace proxy
+       */
+      x.reset(proxy, cascade);
+    } else {
+      /**
+       * if proxy can't be found we create
+       * a proxy and store it in tables
+       * proxy map. it will be used when
+       * table is read.
+       */
+      proxy = new object_proxy(pk, (T*)nullptr, node.get());
+      basic_table::t_table_map::iterator j = table_.find_table(node->type());
+
+      if (j == table_.end_table()) {
+        throw_object_exception("unknown table " << node->type());
+      }
+      j->second->identifier_proxy_map_.insert(std::make_pair(pk, proxy));
+      x.reset(proxy, cascade);
+    }
+  }
+
+  template < class V >
   void serialize(const char *, has_one<V> &x, cascade_type cascade)
   {
     std::shared_ptr<basic_identifier> pk = x.primary_key();

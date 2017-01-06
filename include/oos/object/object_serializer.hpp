@@ -37,6 +37,7 @@
 #include "oos/utils/identifier.hpp"
 
 #include "oos/object/has_one.hpp"
+#include "oos/object/belongs_to.hpp"
 #include "oos/object/basic_has_many.hpp"
 
 #include <string>
@@ -158,6 +159,41 @@ public:
     } else {
       V val(x.value());
       serialize(id, val);
+    }
+  }
+
+  template < class T >
+	void serialize(const char* id, belongs_to<T> &x, cascade_type cascade)
+  {
+    if (restore) {
+      /***************
+       *
+       * extract id and type of serializable from buffer
+       * try to find serializable on serializable store
+       * if found check type if wrong type throw error
+       * else create serializable and set extracted id
+       * insert serializable into serializable store
+       *
+       ***************/
+      // Todo: correct implementation
+
+      unsigned long oid = 0;
+      serialize(id, oid);
+      std::string type;
+      serialize(id, type);
+
+      if (oid > 0) {
+        object_proxy *oproxy = find_proxy(oid);
+        if (!oproxy) {
+          oproxy =  new object_proxy(new T, oid, ostore_);
+          insert_proxy(oproxy);
+        }
+        x.reset(oproxy, cascade);
+      }
+    } else {
+      unsigned long oid = x.id();
+      serialize(id, oid);
+      serialize(id, const_cast<char*>(x.type()), strlen(x.type()));
     }
   }
 
