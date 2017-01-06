@@ -53,3 +53,16 @@ Case 2: Employee attached first
 - prototype "department" found
 - if department contains has_many for "employee" tie prototypes
 - else throw error
+
+Business phase
+==============
+
+Case 1: emplyoee sets a department
+
+- employee gets object type "department" with member name "employees" from prototype
+- employee is added to departments employees container
+
+Case 2: department adds an employee
+
+- department gets object type "employee" with member name "department" from prototype
+- department is set for employee
