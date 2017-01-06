@@ -133,6 +133,19 @@ public:
   void reset(const std::shared_ptr<basic_identifier> &id);
 
   /**
+   * Clears the currently set object
+   */
+  void clear();
+
+  /**
+   * Returns true if object_holder doesn't
+   * holds an object
+   *
+   * @return True if object_holder doesn't holds an object
+   */
+  bool empty() const;
+
+  /**
    * Returns if the object is loaded.
    * 
    * @return True if the object is loaded.

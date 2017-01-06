@@ -1166,6 +1166,7 @@ template<class T, template < class ... > class ON_ATTACH>
 template<class V>
 void node_analyzer<T, ON_ATTACH>::serialize(const char *, belongs_to<V> &, cascade_type)
 {
+  // find
 }
 
 template<class T, template < class ... > class ON_ATTACH>

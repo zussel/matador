@@ -364,7 +364,7 @@ public:
 struct department
 {
   oos::identifier<unsigned long> id;
-  std::string name;
+  oos::varchar<255> name;
   oos::has_many<employee> employees;
 
   department() {}
@@ -379,7 +379,9 @@ struct department
   {
     serializer.serialize("id", id);
     serializer.serialize("name", name);
-    serializer.serialize("employee", employees, "department", "employee_id");
+    serializer.serialize("employee"    , employees, "department", "id");
+    //                    name of table, container,  name of member
+    //                                   to serialize
   }
 };
 

@@ -99,6 +99,16 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
   }
 }
 
+void object_holder::clear()
+{
+  reset(nullptr, cascade_type::ALL);
+}
+
+bool object_holder::empty() const
+{
+  return proxy_ == nullptr;
+}
+
 void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
 {
   if (proxy_ && !proxy_->pk()->is_same_type(*id)) {

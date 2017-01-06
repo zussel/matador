@@ -42,7 +42,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 //  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
-//  add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
+  add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
   add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
@@ -1058,11 +1058,44 @@ struct on_attach<has_many_item<T>> : public on_attach_base
 void ObjectStoreTestUnit::test_belongs_to()
 {
   ostore_.attach<person>("person");
-  ostore_.attach<employee, person>("employee");
   ostore_.attach<department>("department");
+  ostore_.attach<employee, person>("employee");
 
   // expected prototypes
   // person, employee and department
+
+  auto george = ostore_.insert(new employee("george"));
+  auto jane = ostore_.insert(new employee("jane"));
+  auto dep = ostore_.insert(new department("insurance"));
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
+
+  // department is automatically set
+  dep->employees.push_back(george);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george", "expected name must be george");
+  UNIT_ASSERT_FALSE(george->dep().empty(), "department must not be empty");
+  UNIT_ASSERT_EQUAL(george->dep()->name, dep->name, "names must be equal");
+
+  // jane is automatically added to deps employee list
+  jane->dep(dep);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be one employee");
+
+  // remove george
+  auto i = dep->employees.begin();
+  i = dep->employees.erase(i);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must be no department");
+
+  jane->dep().clear();
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 }
 
 void ObjectStoreTestUnit::test_on_attach()
@@ -1070,7 +1103,7 @@ void ObjectStoreTestUnit::test_on_attach()
   ostore_.attach<book, on_attach>("book", false, nullptr);
   ostore_.attach<book_list, on_attach>("book_list", false, nullptr);
 
-  UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size mustbe three");
+  UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size must be three");
 
   UNIT_ASSERT_EQUAL("book", table_names[0], "type must be book");
   UNIT_ASSERT_EQUAL("book_list", table_names[1], "type must be book_list");
