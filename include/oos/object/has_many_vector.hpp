@@ -603,12 +603,21 @@ public:
   iterator insert(iterator pos, const value_type &value)
   {
     // create new has_many
-    if (indexed_) {
-
-    }
     item_type *item = create_item(value);
     relation_type iptr(item);
     if (this->ostore_) {
+      // if (foreign object has belongs to with owner type) {
+      prototype_node *foreign_node_;
+
+//      auto i = foreign_node_->belongs_to_map.find(this->owner_->node()->type_index());
+//      if (i != foreign_node_->belongs_to_map.end()) {
+//        prototype_node::relation_info info = i->second;
+//        this->ostore_->insert(value);
+//        oos::set(value, info->foreign_field, this->owner_);
+//      }
+      //   insert value
+      //   set owner into value
+      // } else {
       this->ostore_->insert(iptr);
       this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
@@ -709,9 +718,6 @@ private:
   {
     return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }
-
-private:
-  bool indexed_ = false;
 };
 
 }

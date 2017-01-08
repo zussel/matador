@@ -51,7 +51,7 @@ public:
    * Create an empty object_pointer
    */
   object_pointer()
-    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO)
+    : object_holder(OPT)
   {}
   /**
    * Copies object_pointer
@@ -59,7 +59,7 @@ public:
    * @param x The object_pointer to copy
    */
   object_pointer(const self &x)
-    : object_holder(x.is_internal_, x.proxy_)
+    : object_holder(x.type_, x.proxy_)
   {}
 
   /**
@@ -68,7 +68,7 @@ public:
    * @param o The object.
    */
   object_pointer(T *o)
-    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO, new object_proxy(o))
+    : object_holder(OPT, new object_proxy(o))
   {}
 
   /**
@@ -77,7 +77,7 @@ public:
    * @param proxy The object_proxy.
    */
   explicit object_pointer(object_proxy *proxy)
-  : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO, proxy)
+  : object_holder(OPT, proxy)
   {}
 
   /**
@@ -87,7 +87,7 @@ public:
    */
   template < object_holder_type OOPT >
   object_pointer(const object_pointer<T, OOPT> &x)
-    : object_holder(OPT == object_holder_type::HAS_ONE || OPT == object_holder_type::BELONGS_TO)
+    : object_holder(OPT)
   {
     reset(x.proxy_, x.cascade_);
   }

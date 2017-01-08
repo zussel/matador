@@ -61,7 +61,7 @@ protected:
    * @param is_internal True if the pointer is used internal, which means
    *                    it is used to describe an entity.
    */
-  explicit object_holder(bool is_internal);
+  explicit object_holder(object_holder_type holder_type);
 
   /**
    * Copies from another object_holder
@@ -87,7 +87,7 @@ protected:
    * @param is_internal If true the object is handled as an internal.
    * @param op The object_proxy of the object_holder
    */
-  object_holder(bool is_internal, object_proxy *op);
+  object_holder(object_holder_type holder_type, object_proxy *op);
 
   /**
    * Destroys the object_holder
@@ -211,6 +211,11 @@ public:
    */
   bool is_internal() const;
 
+  bool is_belongs_to() const;
+
+  bool is_has_one() const;
+
+  bool is_object_ptr() const;
   /**
    * Returns true if the underlying object
    * is inserted in an object_store
@@ -247,6 +252,8 @@ public:
    */
   virtual const char* type() const = 0;
 
+  object_holder_type holder_type() const;
+
   /**
    * Prints the underlaying object
    *
@@ -274,7 +281,7 @@ private:
 
   object_proxy *proxy_ = nullptr;
   cascade_type cascade_ = cascade_type::NONE;
-  bool is_internal_ = false;
+  object_holder_type type_;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 };
