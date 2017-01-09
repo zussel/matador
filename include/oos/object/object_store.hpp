@@ -21,6 +21,9 @@
 #include "oos/object/prototype_iterator.hpp"
 #include "oos/object/object_exception.hpp"
 #include "oos/object/object_observer.hpp"
+#include "oos/object/object_inserter.hpp"
+#include "oos/object/object_deleter.hpp"
+#include "oos/object/node_analyzer.hpp"
 #include "oos/object/has_one.hpp"
 #include "oos/object/belongs_to.hpp"
 #include "oos/object/object_serializer.hpp"
@@ -84,213 +87,6 @@ private:
 
 private:
   t_marker marker_;
-};
-
-/**
- * @cond OOS_DEV
- * @class object_inserter
- * @brief Creates objects and object_lists
- *
- * When an serializable is inserted into the serializable store
- * subsequently other serializable must be created and
- * inserted into the serializable store.
- * This class does these tasks.
- */
-class OOS_OBJECT_API object_inserter {
-public:
-  /**
-   * @brief Creates an object_inserter instance.
-   *
-   * An object_inserter instance ist created for a
-   * given object_store. The notify flag tells the
-   * object_inserter wether the observers should be
-   * notified or not.
-   *
-   * @param ostore The object_store.
-   */
-  object_inserter(object_store &ostore);
-
-  ~object_inserter();
-
-  template<class T>
-  void insert(object_proxy *proxy, T *o, bool notify);
-
-  void reset();
-
-  template<class T>
-  void serialize(T &x);
-
-  template<class T>
-  void serialize(const char *, T &) { }
-  void serialize(const char *, char *, size_t) { }
-
-  template<class T>
-  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
-  template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
-
-  template<class T, template<class ...> class C>
-  void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
-
-private:
-  typedef std::set<object_proxy *> t_object_proxy_set;
-
-  t_object_proxy_set object_proxies_;
-
-  std::stack<object_proxy *> object_proxy_stack_;
-
-  object_store &ostore_;
-
-  std::function<void(object_store&, object_proxy*)> modified_marker_;
-
-  bool notify_ = false;
-};
-
-/**
- * @cond OOS_DEV
- * @class object_deleter
- * @brief Checks if an serializable could be deleted
- *
- * This class checks wether a given serializable or a
- * given object_list_base and their children objects
- * could be deleted or not.
- * If the check was successful, all the deletable serializable
- * can be accepted via the iterators.
- */
-class OOS_OBJECT_API object_deleter {
-private:
-  struct OOS_OBJECT_API t_object_count {
-    typedef void (*t_remove_func)(object_proxy*, bool);
-    template < class T >
-    t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)
-      : proxy(oproxy)
-      , reference_counter(oproxy->reference_count())
-      , ignore(ignr)
-      , remove_func(&remove_object<T>)
-    {}
-
-    void remove(bool notify);
-
-    template <typename T>
-    static void remove_object(object_proxy *proxy, bool notify);
-
-    object_proxy *proxy;
-    unsigned long reference_counter;
-    bool ignore;
-
-    t_remove_func remove_func;
-  };
-
-private:
-  typedef std::map<unsigned long, t_object_count> t_object_count_map;
-
-public:
-  typedef t_object_count_map::iterator iterator;
-  /**< Shortcut the serializable map iterator */
-  typedef t_object_count_map::const_iterator const_iterator; /**< Shortcut the serializable map const_iterator */
-
-  /**
-   * Creates an instance of the object_deleter
-   */
-  object_deleter() { }
-
-  ~object_deleter() { }
-
-  /**
-   * Checks wether the given serializable is deletable.
-   *
-   * @param proxy The object_proxy to be checked.
-   * @return True if the serializable could be deleted.
-   */
-  template<class T>
-  bool is_deletable(object_proxy *proxy, T *o);
-
-  /**
-   * Checks wether the given object_container is deletable.
-   *
-   * @param ovector The object_container to be checked.
-   * @return True if the object_container could be deleted.
-   */
-//  bool is_deletable(object_container &oc);
-
-  /**
-   * @brief Returns the first deletable serializable.
-   *
-   * If the check was made and was successful this
-   * returns the first deletable serializable.
-   */
-  iterator begin();
-
-  /**
-   * @brief Returns the first deletable serializable.
-   *
-   * If the check was made and was successful this
-   * returns the last deletable serializable.
-   */
-  iterator end();
-
-  template<class T>
-  void serialize(T &x) { oos::access::serialize(*this, x); }
-
-  template<class T>
-  void serialize(const char *, T &) { }
-  void serialize(const char *, char *, size_t) { }
-
-  template<class T>
-  void serialize(const char *, belongs_to<T> &x, cascade_type cascade);
-  template<class T>
-  void serialize(const char *, has_one<T> &x, cascade_type cascade);
-  template<class T, template<class ...> class C>
-  void serialize(const char *, basic_has_many<T, C> &, const char *, const char *);
-  template<class T>
-  void serialize(const char *id, identifier<T> &x);
-
-  bool check_object_count_map() const;
-
-private:
-  t_object_count_map object_count_map;
-};
-
-template < class T,  template < class ... > class ON_ATTACH >
-class node_analyzer {
-public:
-  node_analyzer(prototype_node &node, const ON_ATTACH<T> &on_attach)
-    : node_(node)
-    , on_attach_(on_attach)
-  { }
-
-  ~node_analyzer() { }
-
-  template<class V>
-  void serialize(V &x);
-  template<class V>
-  void serialize(const char *, V &) { }
-  void serialize(const char *, char *, size_t) { }
-  template<class V>
-  void serialize(const char *id, belongs_to<V> &x, cascade_type);
-  template<class V>
-  void serialize(const char *id, has_one<V> &x, cascade_type);
-  template<class V, template<class ...> class C>
-  void serialize(const char *, has_many<V, C> &, const char *, const char *);
-
-private:
-  prototype_node &node_;
-  ON_ATTACH<T> on_attach_;
-};
-
-struct basic_on_attach {};
-
-template < class T >
-struct null_on_attach : public basic_on_attach
-{
-  null_on_attach() {}
-  template < class V >
-  null_on_attach(const null_on_attach<V> &) {}
-  null_on_attach& operator=(const null_on_attach &) { return *this; }
-  template < class V >
-  null_on_attach& operator=(const null_on_attach<V> &) { return *this; }
-
-  void operator()(prototype_node*) const {}
 };
 
 }
@@ -1156,9 +952,9 @@ void node_analyzer<T, ON_ATTACH>::serialize(V &x)
 
 template<class T, template < class ... > class ON_ATTACH>
 template<class V>
-void node_analyzer<T, ON_ATTACH>::serialize(const char *, belongs_to<V> &, cascade_type)
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to<V> &, cascade_type)
 {
-  // find
+  node_.register_belongs_to(std::type_index(typeid(V)), id);
 }
 
 template<class T, template < class ... > class ON_ATTACH>

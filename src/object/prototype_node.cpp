@@ -359,21 +359,6 @@ std::type_index prototype_node::type_index() const
   return type_index_;
 }
 
-//void prototype_node::register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key)
-//{
-//  foreign_keys.insert(std::make_pair(id, foreign_key));
-//}
-
-//void prototype_node::register_relation(const char *type, prototype_node *node, const char *id)
-//{
-//  relations.insert(std::make_pair(type, std::make_pair(node, id)));
-//}
-
-//void prototype_node::prepare_foreign_key(prototype_node *master_node, const char *id)
-//{
-//  foreign_key_ids.push_back(std::make_pair(master_node, id));
-//}
-
 object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier> &pk)
 {
   detail::t_identifier_map::iterator i = std::find_if(id_map_.begin(), id_map_.end(), [pk](const detail::t_identifier_map::value_type &x) {
@@ -381,6 +366,11 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   });
 //  t_primary_key_map::iterator i = primary_key_map.find(pk);
   return (i != id_map_.end() ? i->second : nullptr);
+}
+
+void prototype_node::register_belongs_to(const std::type_index &tindex, const std::string &field)
+{
+  belongs_to_map_.insert(std::make_pair(tindex, field));
 }
 
 /*

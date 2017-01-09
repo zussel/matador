@@ -63,6 +63,8 @@ public:
   typedef typename container_type::size_type size_type;          /**< Shortcut to size type */
   typedef typename container_type::iterator container_iterator;  /**< Shortcut to container iterator */
 
+  typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
+
 public:
   /**
    * @brief Returns the begin iterator of the container
@@ -163,7 +165,7 @@ protected:
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
 
-  std::function<void(object_store&, object_proxy*)> mark_modified_owner_;
+  mark_modified_owner_func mark_modified_owner_;
 
   container_type container_;
 

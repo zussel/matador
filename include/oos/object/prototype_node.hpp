@@ -47,6 +47,10 @@ namespace oos {
 class object_store;
 class object_proxy;
 
+namespace detail {
+template < class T, template <class ...> class C, class Enabled >
+class has_many_inserter;
+}
 /**
  * @class prototype_node
  * @brief Holds the prototype of a concrete serializable.
@@ -67,6 +71,9 @@ private:
   // copying not permitted
   prototype_node(const prototype_node&) = delete;
   prototype_node& operator=(const prototype_node&) = delete;
+
+public:
+  typedef std::unordered_map<std::type_index, std::string> relation_map;
 
 public:
   prototype_node();
@@ -285,6 +292,8 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
+  void register_belongs_to(const std::type_index &tindex, const std::string &field);
+
 private:
 
   /**
@@ -317,6 +326,10 @@ private:
   friend class const_object_view_iterator;
   template < class T >
   friend class object_view_iterator;
+  template < class T, template <class ...> class C >
+  friend class has_many;
+  template < class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_inserter;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
@@ -349,6 +362,10 @@ private:
    * a primary key prototype to clone from
    */
   std::unique_ptr<basic_identifier> id_;
+
+  relation_map belongs_to_map_;
+  relation_map has_one_map_;
+  relation_map has_many_map_;
 };
 
 }

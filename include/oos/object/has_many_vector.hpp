@@ -62,13 +62,13 @@ private:
   typedef has_many_iterator_traits<T, std::vector> traits;
   typedef typename traits::item_type item_type;
   typedef typename traits::internal_type internal_type;
-  typedef typename traits::relation_type relation_type;
   typedef typename traits::container_type container_type;
 
 public:
-  typedef has_many_iterator<T, std::vector> self;                               /**< Shortcut value self */
+  typedef has_many_iterator<T, std::vector> self;                             /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
-  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
+  typedef typename traits::relation_type relation_type;                       /**< Shortcut to the relation type */
+  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
 
@@ -548,6 +548,49 @@ private:
   const_container_iterator iter_;
 };
 
+namespace detail {
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_inserter;
+
+template<class T, template <class ...> class C>
+class has_many_inserter<T, C, typename std::enable_if<!std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+
+  void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  {
+      prototype_iterator foreign_node_ = store.find(typeid(T).name());
+
+      auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
+      if (i != foreign_node_->belongs_to_map_.end()) {
+        store.insert(rtype->value());
+      } else {
+        store.insert(rtype);
+        mark_modified_owner(store, &owner);
+      }
+
+  }
+};
+
+template<class T, template <class ...> class C>
+class has_many_inserter<T, C, typename std::enable_if<std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+
+  void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  {
+    store.insert(rtype);
+    mark_modified_owner(store, &owner);
+  }
+};
+}
+
 /**
  * @brief Has many relation class using a std::vector as container
  *
@@ -606,8 +649,17 @@ public:
     item_type *item = create_item(value);
     relation_type iptr(item);
     if (this->ostore_) {
+      inserter_.insert(*this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
       // if (foreign object has belongs to with owner type) {
-      prototype_node *foreign_node_;
+//      prototype_iterator foreign_node_ = this->ostore_->find(typeid(T).name());
+//
+//      auto i = foreign_node_->belongs_to_map_.find(this->owner_->node()->type_index());
+//      if (i != foreign_node_->belongs_to_map_.end()) {
+//        this->ostore_->insert(value);
+//      } else {
+//        this->ostore_->insert(iptr);
+//        this->mark_modified_owner_(*this->ostore_, this->owner_);
+//      }
 
 //      auto i = foreign_node_->belongs_to_map.find(this->owner_->node()->type_index());
 //      if (i != foreign_node_->belongs_to_map.end()) {
@@ -618,8 +670,8 @@ public:
       //   insert value
       //   set owner into value
       // } else {
-      this->ostore_->insert(iptr);
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
+//      this->ostore_->insert(iptr);
+//      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
   }
@@ -632,34 +684,6 @@ public:
   void push_back(const value_type &value)
   {
     insert(this->end(), value);
-  }
-
-  /**
-   * @brief Returns the element at specified location index.
-   *
-   * Returns the element at specified location index.
-   * No bounds checking is performed.
-   *
-   * @param index Indx of the element to return
-   * @return The requested element.
-   */
-  value_type operator[](size_type index)
-  {
-    return this->container_[index]->value();
-  }
-
-  /**
-   * @brief Returns the const element at specified location index.
-   *
-   * Returns the const element at specified location index.
-   * No bounds checking is performed.
-   *
-   * @param index Indx of the element to return
-   * @return The requested const element.
-   */
-  const value_type operator[](size_type index) const
-  {
-    return this->container_[index]->value();
   }
 
   /**
@@ -718,6 +742,9 @@ private:
   {
     return new item_type(this->owner_field_, this->item_field_, this->owner_id_, value);
   }
+
+private:
+  detail::has_many_inserter<T, std::vector> inserter_;
 };
 
 }

@@ -50,7 +50,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/object/has_many_item.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/basic_has_many_item.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/identifier_proxy_map.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy_accessor.hpp ../../include/oos/object/belongs_to.hpp ../../include/oos/object/object_holder_type.hpp)
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy_accessor.hpp ../../include/oos/object/belongs_to.hpp ../../include/oos/object/object_holder_type.hpp ../../include/oos/object/object_inserter.hpp ../../include/oos/object/object_deleter.hpp ../../include/oos/object/node_analyzer.hpp)
 
 ADD_LIBRARY(oos-object SHARED ${SOURCES} ${HEADER})
 
