@@ -268,6 +268,7 @@ private:
   friend class basic_has_many<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
+  friend class detail::object_deleter;
 
   relation_type relation_item() const { return *iter_; }
 
@@ -324,12 +325,12 @@ private:
   typedef const_has_many_iterator_traits<T, std::vector> traits;
   typedef typename traits::item_type item_type;
   typedef typename traits::internal_type internal_type;
-  typedef typename traits::relation_type relation_type;
   typedef typename traits::container_type container_type;
 
 public:
   typedef const_has_many_iterator<T, std::vector> self;                       /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
+  typedef typename traits::relation_type relation_type;
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */

@@ -16,7 +16,7 @@ public:
   virtual void initialize();
   virtual void finalize();
   
-  void version_test();
+  void test_version();
   void optr_test();
   void expression_test();
   void set_test();

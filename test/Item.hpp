@@ -354,7 +354,7 @@ public:
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize(*oos::base_class<person>(this));
-    serializer.serialize("department", department_);
+    serializer.serialize("department", department_, oos::cascade_type::ALL);
   }
 
   oos::object_ptr<department> dep() { return department_; }

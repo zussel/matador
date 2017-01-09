@@ -16,7 +16,7 @@ using namespace std;
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::bind(&ObjectStoreTestUnit::version_test, this), "test oos version");
+  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test oos version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
   add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
@@ -101,7 +101,7 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
 };
 
 void
-ObjectStoreTestUnit::version_test()
+ObjectStoreTestUnit::test_version()
 {
   std::string version("0.5.0");
   
