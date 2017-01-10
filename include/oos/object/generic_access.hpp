@@ -24,7 +24,7 @@ namespace oos {
  * @return       True if the operation succeeds.
  */
 
-template < typename O, class T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr >
+template < typename O, class T >
 bool set(O *obj, const std::string &name, const T &val)
 {
   return set(*obj, name, val);
@@ -42,7 +42,7 @@ bool set(O *obj, const std::string &name, const T &val)
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
-template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr >
+template < typename O, class T >
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);

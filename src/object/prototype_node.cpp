@@ -368,9 +368,14 @@ object_proxy *prototype_node::find_proxy(const std::shared_ptr<basic_identifier>
   return (i != id_map_.end() ? i->second : nullptr);
 }
 
-void prototype_node::register_belongs_to(const std::type_index &tindex, const std::string &field)
+void prototype_node::register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info)
 {
-  belongs_to_map_.insert(std::make_pair(tindex, field));
+  belongs_to_map_.insert(std::make_pair(tindex, relation_info));
+}
+
+void prototype_node::register_has_many(const std::string &field, prototype_node *node)
+{
+  has_many_map_.insert(std::make_pair(field, node));
 }
 
 /*

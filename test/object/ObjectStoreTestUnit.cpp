@@ -17,22 +17,22 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
   add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test oos version");
-  add_test("optr", std::bind(&ObjectStoreTestUnit::optr_test, this), "test optr behaviour");
-  add_test("expression", std::bind(&ObjectStoreTestUnit::expression_test, this), "test object expressions");
-  add_test("set", std::bind(&ObjectStoreTestUnit::set_test, this), "access object values via set interface");
-  add_test("get", std::bind(&ObjectStoreTestUnit::get_test, this), "access object values via get interface");
+  add_test("optr", std::bind(&ObjectStoreTestUnit::test_optr, this), "test optr behaviour");
+  add_test("expression", std::bind(&ObjectStoreTestUnit::test_expression, this), "test object expressions");
+  add_test("set", std::bind(&ObjectStoreTestUnit::test_set, this), "access object values via set interface");
+  add_test("get", std::bind(&ObjectStoreTestUnit::test_get, this), "access object values via get interface");
   add_test("serializer", std::bind(&ObjectStoreTestUnit::test_serializer, this), "serializer test");
   add_test("identifier_serializer", std::bind(&ObjectStoreTestUnit::test_identifier_serializer, this), "identifier serializer test");
-  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::reference_counter, this), "reference counter test");
-  add_test("simple", std::bind(&ObjectStoreTestUnit::simple_object, this), "create and delete one object");
-  add_test("with_sub", std::bind(&ObjectStoreTestUnit::object_with_sub_object, this), "create and delete object with sub object");
-  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::multiple_simple_objects, this), "create and delete multiple objects");
-  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
-  add_test("delete", std::bind(&ObjectStoreTestUnit::delete_object, this), "object deletion test");
-  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::hierarchy, this), "object hierarchy test");
-  add_test("view", std::bind(&ObjectStoreTestUnit::view_test, this), "object view test");
-  add_test("clear", std::bind(&ObjectStoreTestUnit::clear_test, this), "object store clear test");
-  add_test("generic", std::bind(&ObjectStoreTestUnit::generic_test, this), "generic object access test");
+  add_test("reference_counter", std::bind(&ObjectStoreTestUnit::test_reference_counter, this), "reference counter test");
+  add_test("simple", std::bind(&ObjectStoreTestUnit::test_simple_object, this), "create and delete one object");
+  add_test("with_sub", std::bind(&ObjectStoreTestUnit::test_object_with_sub_object, this), "create and delete object with sub object");
+  add_test("multiple_simple", std::bind(&ObjectStoreTestUnit::test_multiple_simple_objects, this), "create and delete multiple objects");
+  add_test("multiple_object_with_sub", std::bind(&ObjectStoreTestUnit::test_multiple_object_with_sub_objects, this), "create and delete multiple objects with sub object");
+  add_test("delete", std::bind(&ObjectStoreTestUnit::test_delete_object, this), "object deletion test");
+  add_test("hierarchy", std::bind(&ObjectStoreTestUnit::test_hierarchy, this), "object hierarchy test");
+  add_test("view", std::bind(&ObjectStoreTestUnit::test_view, this), "object view test");
+  add_test("clear", std::bind(&ObjectStoreTestUnit::test_clear, this), "object store clear test");
+  add_test("generic", std::bind(&ObjectStoreTestUnit::test_generic, this), "generic object access test");
   add_test("structure", std::bind(&ObjectStoreTestUnit::test_structure, this), "object transient structure test");
   add_test("structure_cyclic", std::bind(&ObjectStoreTestUnit::test_structure_cyclic, this), "object transient cyclic structure test");
   add_test("structure_container", std::bind(&ObjectStoreTestUnit::test_structure_container, this), "object transient container structure test");
@@ -113,7 +113,7 @@ ObjectStoreTestUnit::test_version()
 }
 
 
-void ObjectStoreTestUnit::optr_test()
+void ObjectStoreTestUnit::test_optr()
 {
   typedef object_ptr<Item> item_ptr;
 
@@ -131,7 +131,7 @@ void ObjectStoreTestUnit::optr_test()
 }
 
 void
-ObjectStoreTestUnit::expression_test()
+ObjectStoreTestUnit::test_expression()
 {
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
@@ -308,7 +308,7 @@ void ObjectStoreTestUnit::test_identifier_serializer()
   }
 }
 
-void ObjectStoreTestUnit::reference_counter()
+void ObjectStoreTestUnit::test_reference_counter()
 {
   Item *i = new Item("Item", 7);
   
@@ -341,7 +341,7 @@ void ObjectStoreTestUnit::reference_counter()
 
 
 void
-ObjectStoreTestUnit::set_test()
+ObjectStoreTestUnit::test_set()
 {
   oos::date dt(15, 9, 1972);
   oos::time t(2008, 12, 27, 13, 6, 57, 4711);
@@ -392,7 +392,7 @@ ObjectStoreTestUnit::set_test()
 }
 
 void
-ObjectStoreTestUnit::get_test()
+ObjectStoreTestUnit::test_get()
 {
   test_pair<char> c('c');
   test_pair<bool> b(true);
@@ -461,7 +461,7 @@ ObjectStoreTestUnit::get_test()
 }
 
 void
-ObjectStoreTestUnit::simple_object()
+ObjectStoreTestUnit::test_simple_object()
 {
   Item *a = ostore_.create<Item>();
   
@@ -479,7 +479,7 @@ ObjectStoreTestUnit::simple_object()
 }
 
 void
-ObjectStoreTestUnit::object_with_sub_object()
+ObjectStoreTestUnit::test_object_with_sub_object()
 {
   ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
   
@@ -502,7 +502,7 @@ ObjectStoreTestUnit::object_with_sub_object()
 }
 
 void
-ObjectStoreTestUnit::multiple_simple_objects()
+ObjectStoreTestUnit::test_multiple_simple_objects()
 {
   typedef object_ptr<Item> item_ptr;
 
@@ -523,7 +523,7 @@ ObjectStoreTestUnit::multiple_simple_objects()
 }
 
 void
-ObjectStoreTestUnit::multiple_object_with_sub_objects()
+ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 {
   typedef object_ptr<ObjectItem<Item> > ows_ptr;
     
@@ -544,7 +544,7 @@ ObjectStoreTestUnit::multiple_object_with_sub_objects()
 }
 
 void
-ObjectStoreTestUnit::delete_object()
+ObjectStoreTestUnit::test_delete_object()
 {
   typedef ObjectItem<Item> TestItem;
   typedef object_ptr<TestItem> test_item_ptr;
@@ -577,7 +577,7 @@ ObjectStoreTestUnit::delete_object()
 }
 
 void
-ObjectStoreTestUnit::hierarchy()
+ObjectStoreTestUnit::test_hierarchy()
 {
   ostore_.attach<ItemA, Item>("ITEM_A");
   ostore_.attach<ItemB, Item>("ITEM_B");
@@ -673,7 +673,7 @@ ObjectStoreTestUnit::hierarchy()
 }
 
 void
-ObjectStoreTestUnit::view_test()
+ObjectStoreTestUnit::test_view()
 {
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
@@ -699,7 +699,7 @@ ObjectStoreTestUnit::view_test()
 }
 
 void
-ObjectStoreTestUnit::clear_test()
+ObjectStoreTestUnit::test_clear()
 {
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
@@ -735,7 +735,7 @@ ObjectStoreTestUnit::clear_test()
 }
 
 void
-ObjectStoreTestUnit::generic_test()
+ObjectStoreTestUnit::test_generic()
 {
   test_pair<char> c('c');
   test_pair<bool> b(true);
@@ -829,6 +829,15 @@ ObjectStoreTestUnit::generic_test()
   oos::set(*item, "val_time", timeval.expected);
   oos::get(*item, "val_time", timeval.result);
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
+
+  master m1("master 1");
+
+  object_ptr<child> c1(new child("child 1"));
+  object_ptr<child> child_result;
+
+  oos::set(m1, "child", c1);
+  oos::get(m1, "child", child_result);
+  UNIT_ASSERT_EQUAL(c1->name, child_result->name, "not expected result value");
 }
 
 void ObjectStoreTestUnit::test_structure()

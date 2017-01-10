@@ -7,6 +7,7 @@
 
 #include "oos/object/basic_has_many.hpp"
 #include "oos/object/object_store.hpp"
+#include "oos/object/generic_access.hpp"
 
 #include <vector>
 
@@ -568,6 +569,8 @@ public:
       auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
       if (i != foreign_node_->belongs_to_map_.end()) {
         store.insert(rtype->value());
+        // set owner into value
+        i->second.set_owner(rtype->value().ptr(), i->second.name, &owner);
       } else {
         store.insert(rtype);
         mark_modified_owner(store, &owner);

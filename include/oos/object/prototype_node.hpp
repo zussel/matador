@@ -50,6 +50,8 @@ class object_proxy;
 namespace detail {
 template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
+template < class T,  template < class ... > class ON_ATTACH >
+class node_analyzer;
 }
 /**
  * @class prototype_node
@@ -73,7 +75,18 @@ private:
   prototype_node& operator=(const prototype_node&) = delete;
 
 public:
-  typedef std::unordered_map<std::type_index, std::string> relation_map;
+  struct relation_info
+  {
+    typedef std::function<void(void*, const std::string&, object_proxy*)> set_owner_func;
+    relation_info(const std::string &n, const set_owner_func &func)
+      : name(n), set_owner(func)
+    {}
+    std::string name;
+    std::function<void(void*, const std::string&, object_proxy*)> set_owner;
+  };
+
+  typedef std::unordered_map<std::type_index, relation_info> relation_map;
+  typedef std::unordered_map<std::string, prototype_node*> has_many_map;
 
 public:
   prototype_node();
@@ -292,7 +305,8 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
-  void register_belongs_to(const std::type_index &tindex, const std::string &field);
+  void register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+  void register_has_many(const std::string &field, prototype_node *node);
 
 private:
 
@@ -330,6 +344,8 @@ private:
   friend class has_many;
   template < class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_inserter;
+  template < class T,  template < class ... > class ON_ATTACH >
+  friend class detail::node_analyzer;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
@@ -365,7 +381,7 @@ private:
 
   relation_map belongs_to_map_;
   relation_map has_one_map_;
-  relation_map has_many_map_;
+  has_many_map has_many_map_;
 };
 
 }

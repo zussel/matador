@@ -67,8 +67,6 @@ public:
     , from_(from)
   {}
 
-  ~attribute_reader() {}
-
   template < class V >
   void serialize(const char *id, V &to, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value >::type* = 0)
   {
@@ -100,25 +98,42 @@ private:
   const T &from_;
 };
 
-//template < class T >
-//class attribute_reader<T, typename std::enable_if<std::is_same<T, std::string>::value || std::is_base_of<oos::varchar_base, T>::value>::type>
-//{
-//public:
-//  attribute_reader(const std::string &id, const T &from)
-//  : basic_attribute_serializer(id)
-//  , from_(from)
-//  {}
-//
-//  ~attribute_reader() {}
-//
-//  template < class V >
-//  void serialize(const char *id, )
-//  void serialize(const char *id, char *x) {
-//
-//  }
-//private:
-//  const T &from_;
-//};
+template < class T >
+class attribute_reader<object_ptr<T>> : public basic_attribute_serializer
+{
+public:
+  attribute_reader(const std::string &id, const object_ptr<T> &from)
+    : basic_attribute_serializer(id)
+    , from_(from)
+  {}
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, size_t) {}
+
+  template < class V >
+  void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  {
+    x = from_;
+  }
+  template < class V >
+  void serialize(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  {
+    x = from_;
+  }
+
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+
+private:
+  const object_ptr<T> &from_;
+};
 
 template <>
 class attribute_reader<const char*> : public basic_attribute_serializer
@@ -220,6 +235,37 @@ public:
 private:
   T &to_;
   size_t precision_;
+};
+
+template < class T >
+class attribute_writer<object_ptr<T>> : public basic_attribute_serializer
+{
+public:
+  attribute_writer(const std::string &id, object_ptr<T> &to)
+  : basic_attribute_serializer(id)
+  , to_(to)
+  {}
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, size_t) {}
+
+  template < class V >
+  void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  {
+    to_ = x;
+  }
+  template < class V >
+  void serialize(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  {
+    to_ = x;
+  }
+
+  template < class HAS_MANY >
+  void serialize(const char *, HAS_MANY &, const char *, const char *) {}
+
+private:
+  object_ptr<T> &to_;
 };
 
 template <>
