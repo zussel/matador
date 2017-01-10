@@ -17,31 +17,12 @@
 
 #include "oos/object/object_store.hpp"
 
-#include <iostream>
 #include <iomanip>
-#include <algorithm>
 
 using namespace std;
 using namespace std::placeholders;
 
 namespace oos {
-
-namespace detail {
-
-object_inserter::object_inserter(object_store &ostore)
-  : ostore_(ostore) { }
-
-object_inserter::~object_inserter() { }
-
-void object_inserter::reset()
-{
-  object_proxies_.clear();
-  while (!object_proxy_stack_.empty()) {
-    object_proxy_stack_.pop();
-  }
-}
-
-}
 
 object_store::object_store()
   : first_(new prototype_node)
@@ -407,54 +388,5 @@ bool object_store::has_transaction() const
   return !transactions_.empty();
 }
 
-//transaction& object_store::begin_transaction()
-//{
-//  transactions_.push(transaction(*this));
-//  return transactions_.top();
-//}
-
-//transaction& object_store::begin_transaction(const std::shared_ptr<transaction::observer> &obsvr)
-//{
-//  transaction tr(*this, obsvr);
-//  tr.begin();
-//  return transactions_.top();
-//}
-
-namespace detail {
-
-void object_deleter::t_object_count::remove(bool notify)
-{
-  remove_func(proxy, notify);
-}
-
-object_deleter::iterator object_deleter::begin()
-{
-  return object_count_map.begin();
-}
-
-object_deleter::iterator object_deleter::end()
-{
-  return object_count_map.end();
-}
-
-bool object_deleter::check_object_count_map() const
-{
-  // check the reference and pointer counter of collected objects
-  const_iterator first = object_count_map.begin();
-  const_iterator last = object_count_map.end();
-  while (first != last) {
-    if (first->second.ignore) {
-      ++first;
-    } else if (first->second.reference_counter == 0) {
-//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
-      ++first;
-    } else {
-      return false;
-    }
-  }
-  return true;
-}
-
-}
 
 }
