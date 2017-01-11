@@ -35,7 +35,7 @@ namespace detail {
  * This class does these tasks.
  */
 class OOS_OBJECT_API object_inserter {
-  public:
+public:
   /**
    * @brief Creates an object_inserter instance.
    *
@@ -70,7 +70,7 @@ class OOS_OBJECT_API object_inserter {
   template<class T, template<class ...> class C>
   void serialize(const char *id, basic_has_many<T, C> &x, const char *owner_field, const char *item_field);
 
-  private:
+private:
   typedef std::set<object_proxy *> t_object_proxy_set;
 
   t_object_proxy_set object_proxies_;

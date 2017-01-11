@@ -103,7 +103,6 @@ private:
   template < class T, class S >
   static void restore_delete(byte_buffer &buffer, delete_action *act, object_store *store, S &serializer)
   {
-    // TODO: pass object store instance
     // check if there is an serializable with id in
     // serializable store
     object_proxy *proxy = action::find_proxy(store, act->id());

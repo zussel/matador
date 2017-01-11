@@ -1092,7 +1092,7 @@ void ObjectStoreTestUnit::test_belongs_to()
   // jane is automatically added to deps employee list
   jane->dep(dep);
 
-  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
 
   // remove george
   auto i = dep->employees.begin();

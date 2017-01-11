@@ -64,6 +64,11 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
   if (pi == node_.tree()->end()) {
     pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
     node_.register_has_many(node_.type(), pi.get());
+
+    auto f = [](void *obj, const std::string &field, oos::object_proxy *owner) {
+      oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
+    };
+
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");

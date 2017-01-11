@@ -331,8 +331,13 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
+  void notify_delete_relation(object_proxy *owner, object_proxy *proxy);
+
+  void notify_insert_relation(object_proxy *owner, object_proxy *proxy);
+
 private:
   friend class prototype_tree;
+  friend class object_holder;
   friend class object_store;
   template < class T >
   friend class object_view;

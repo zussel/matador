@@ -573,9 +573,8 @@ public:
         i->second.set_owner(rtype->value().ptr(), i->second.name, &owner);
       } else {
         store.insert(rtype);
-        mark_modified_owner(store, &owner);
       }
-
+      mark_modified_owner(store, &owner);
   }
 };
 
@@ -654,28 +653,6 @@ public:
     relation_type iptr(item);
     if (this->ostore_) {
       inserter_.insert(*this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
-      // if (foreign object has belongs to with owner type) {
-//      prototype_iterator foreign_node_ = this->ostore_->find(typeid(T).name());
-//
-//      auto i = foreign_node_->belongs_to_map_.find(this->owner_->node()->type_index());
-//      if (i != foreign_node_->belongs_to_map_.end()) {
-//        this->ostore_->insert(value);
-//      } else {
-//        this->ostore_->insert(iptr);
-//        this->mark_modified_owner_(*this->ostore_, this->owner_);
-//      }
-
-//      auto i = foreign_node_->belongs_to_map.find(this->owner_->node()->type_index());
-//      if (i != foreign_node_->belongs_to_map.end()) {
-//        prototype_node::relation_info info = i->second;
-//        this->ostore_->insert(value);
-//        oos::set(value, info->foreign_field, this->owner_);
-//      }
-      //   insert value
-      //   set owner into value
-      // } else {
-//      this->ostore_->insert(iptr);
-//      this->mark_modified_owner_(*this->ostore_, this->owner_);
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
   }

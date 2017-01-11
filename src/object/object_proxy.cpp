@@ -38,7 +38,7 @@ object_proxy::~object_proxy()
   }
   ostore_ = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
-    (*i)->proxy_ = 0;
+    (*i)->proxy_ = nullptr;
   }
 }
 

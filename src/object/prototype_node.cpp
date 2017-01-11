@@ -445,4 +445,14 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
   return os;
 }
 
+void prototype_node::notify_delete_relation(object_proxy *owner, object_proxy *proxy)
+{
+  std::cout << "(" << type_ << ") deleting one relation [" << proxy->node()->type() << "] for owner [" << owner->node()->type() << "]\n";
+}
+
+void prototype_node::notify_insert_relation(object_proxy *owner, object_proxy *proxy)
+{
+  std::cout << "(" << type_ << ") inserting one relation [" << proxy->node()->type() << "] for owner [" << owner->node()->type() << "]\n";
+}
+
 }

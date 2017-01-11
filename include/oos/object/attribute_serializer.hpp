@@ -121,11 +121,13 @@ public:
   void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
+    this->success_ = true;
   }
   template < class V >
   void serialize(const char *, has_one<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
   {
     x = from_;
+    this->success_ = true;
   }
 
   template < class HAS_MANY >
@@ -133,6 +135,39 @@ public:
 
 private:
   const object_ptr<T> &from_;
+};
+
+template < class T >
+class has_many_attribute_reader : public basic_attribute_serializer
+{
+public:
+  has_many_attribute_reader(const std::string &id, const object_ptr<T> &from)
+    : basic_attribute_serializer(id)
+    , from_(from)
+  {}
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, size_t) {}
+
+  template < class HAS_ONE >
+  void serialize(const char *, HAS_ONE &, cascade_type) { }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+
+private:
+  const T &from_;
 };
 
 template <>

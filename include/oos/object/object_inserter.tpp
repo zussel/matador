@@ -1,4 +1,5 @@
 #include "oos/object/object_inserter.hpp"
+#include "oos/object/object_store.hpp"
 
 namespace oos {
 namespace detail {
@@ -34,6 +35,7 @@ void object_inserter::serialize(const char *, belongs_to<T> &x, cascade_type cas
   }
   x.is_inserted_ = true;
   x.cascade_ = cascade;
+  x.owner_ = object_proxy_stack_.top();
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
     return;
@@ -62,6 +64,7 @@ void object_inserter::serialize(const char *, has_one<T> &x, cascade_type cascad
   }
   x.is_inserted_ = true;
   x.cascade_ = cascade;
+  x.owner_ = object_proxy_stack_.top();
   // object was seen by inserter stop inserting
   if (!object_proxies_.insert(x.proxy_).second) {
     return;
