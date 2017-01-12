@@ -58,7 +58,7 @@ protected:
  * with given name must be found and the value must
  * be convertible into the objects attribute.
  */
-template < class T, class Enable = void >
+template < class T >
 class attribute_reader : public basic_attribute_serializer
 {
 public:
@@ -115,7 +115,7 @@ public:
 
   template < class V >
   void serialize(const char *, V &) {}
-  void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, char*, std::size_t) {}
 
   template < class V >
   void serialize(const char *, belongs_to<V> &x, cascade_type, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
@@ -137,8 +137,44 @@ private:
   const object_ptr<T> &from_;
 };
 
+template < class T, class Enabled = void >
+class has_many_attribute_reader;
+
 template < class T >
-class has_many_attribute_reader : public basic_attribute_serializer
+class has_many_attribute_reader<T, typename std::enable_if<!std::is_base_of<object_holder, T>::value>::type> : public basic_attribute_serializer
+{
+public:
+  has_many_attribute_reader(const std::string &id, const T &from)
+    : basic_attribute_serializer(id)
+    , from_(from)
+  {}
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, std::size_t) {}
+
+  template < class HAS_ONE >
+  void serialize(const char *, HAS_ONE &, cascade_type) { }
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  {
+    x.push_back(from_);
+    this->success_ = true;
+  }
+
+private:
+  const T &from_;
+};
+
+template < class T >
+class has_many_attribute_reader<object_ptr<T>> : public basic_attribute_serializer
 {
 public:
   has_many_attribute_reader(const std::string &id, const object_ptr<T> &from)
@@ -154,20 +190,20 @@ public:
 
   template < class V >
   void serialize(const char *, V &) {}
-  void serialize(const char *, char*, size_t) {}
+  void serialize(const char *, char*, std::size_t) {}
 
   template < class HAS_ONE >
   void serialize(const char *, HAS_ONE &, cascade_type) { }
 
   template<class V, template <class ...> class C>
-  void serialize(const char *, has_many<V, C> &x, const char *, const char *, typename std::enable_if<std::is_same<V, T>::value>::type* = 0)
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
   {
     x.push_back(from_);
     this->success_ = true;
   }
 
 private:
-  const T &from_;
+  const object_ptr<T> &from_;
 };
 
 template <>

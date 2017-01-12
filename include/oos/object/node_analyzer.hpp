@@ -31,7 +31,12 @@ public:
   template<class V>
   void serialize(const char *id, has_one<V> &x, cascade_type);
   template<class V, template<class ...> class C>
-  void serialize(const char *, has_many<V, C> &, const char *, const char *);
+  void serialize(const char *, has_many<V, C> &, const char *, const char *,
+                 typename std::enable_if<!std::is_scalar<V>::value>::type* = 0);
+
+  template<class V, template<class ...> class C>
+  void serialize(const char *, has_many<V, C> &, const char *, const char *,
+                 typename std::enable_if<std::is_scalar<V>::value>::type* = 0);
 
 private:
   prototype_node &node_;

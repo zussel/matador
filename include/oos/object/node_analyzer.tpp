@@ -50,7 +50,8 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *, has_one <V> &x, cascad
 
 template<class T, template<class ...> class ON_ATTACH>
 template<class V, template<class ...> class C>
-void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, const char *, const char *)
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+                                            typename std::enable_if<!std::is_scalar<V>::value>::type*)
 //void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
 {
   // item column column names
@@ -69,6 +70,31 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
     };
 
+  } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
+    // prototype is of type has_many_item
+    throw_object_exception("many to many relations are not supported by now");
+  } else {
+    // throw exception
+    throw_object_exception("prototype already inserted: " << pi->type());
+  }
+}
+
+template<class T, template<class ...> class ON_ATTACH>
+template<class V, template<class ...> class C>
+void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+                                            typename std::enable_if<std::is_scalar<V>::value>::type*)
+//void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
+{
+  // item column column names
+//  x.owner_field(owner_field);
+//  x.item_field(item_field);
+  // attach relation table for has many relation
+  // check if has many item is already attached
+  // true: check owner and item field
+  // false: attach it
+  prototype_iterator pi = node_.tree()->find(id);
+  if (pi == node_.tree()->end()) {
+    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");
