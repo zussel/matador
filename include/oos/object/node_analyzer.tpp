@@ -21,17 +21,23 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, c
   if (node != node_.tree()->end()) {
     // check if created from has_many
     // check if node has_many relation for id (id == tablename)
-    auto i = node->has_many_map_.find(id);
+    auto i = node->has_many_map_.find(node->type_index());
     if (i != node->has_many_map_.end()) {
       // yes, node found!
       // Todo: check if node is for has many item
       // detach has_many_item node
-      node_.tree()->detach(i->second);
+      node_.tree()->detach(i->second.node);
+      node = node_.tree()->template prepare_attach<V>();
     }
+  } else {
+    node = node_.tree()->template prepare_attach<V>();
+  }
+  if (!node->has_primary_key()) {
+    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
   }
   node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
     oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
-  }));
+  }, node.get()));
 }
 
 template<class T, template<class ...> class ON_ATTACH>
@@ -64,12 +70,9 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
     pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
-    node_.register_has_many(node_.type(), pi.get());
-
-    auto f = [](void *obj, const std::string &field, oos::object_proxy *owner) {
+    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-    };
-
+    }, pi.get()));
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");

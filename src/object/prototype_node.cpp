@@ -373,9 +373,9 @@ void prototype_node::register_belongs_to(const std::type_index &tindex, const pr
   belongs_to_map_.insert(std::make_pair(tindex, relation_info));
 }
 
-void prototype_node::register_has_many(const std::string &field, prototype_node *node)
+void prototype_node::register_has_many(const std::type_index &tindex, const prototype_node::relation_info &relation_info)
 {
-  has_many_map_.insert(std::make_pair(field, node));
+  has_many_map_.insert(std::make_pair(tindex, relation_info));
 }
 
 /*
@@ -432,15 +432,6 @@ std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
     iop = iop->next();
   }
   os << "|{size|" << i << "}";
-
-  os << "|{relations}";
-  // list relations
-//  prototype_node::field_prototype_map_t::const_iterator first = pn.relations.begin();
-//  prototype_node::field_prototype_map_t::const_iterator last = pn.relations.end();
-//  while (first != last) {
-//    os << "|{parent node type|" << first->first << "|node|" << first->second.first->type() << "|foreign field|" << first->second.second << "}";
-//    ++first;
-//  }
   os << "}\"]\n";
   return os;
 }
