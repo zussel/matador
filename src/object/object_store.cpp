@@ -283,6 +283,44 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
   return seq_.exchange_sequencer(seq);
 }
 
+void object_store::notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value)
+{
+  if (!is_relation_notification_enabled()) {
+    return;
+  }
+  disable_relation_notification();
+  info.insert_value(owner, info.name, value);
+  enable_relation_notification();
+}
+
+void object_store::notify_relation_insert(prototype_node &node, void *owner, object_proxy *value)
+{
+  auto i = node.has_many_map_.find(node.type_index());
+  if (i == node.has_many_map_.end()) {
+    return;
+  }
+  notify_relation_insert(i->second, owner, value);
+}
+
+void object_store::notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value)
+{
+  if (!is_relation_notification_enabled()) {
+    return;
+  }
+  disable_relation_notification();
+  info.remove_value(owner, info.name, value);
+  enable_relation_notification();
+}
+
+void object_store::notify_relation_remove(prototype_node &node, void *owner, object_proxy *value)
+{
+  auto i = node.has_many_map_.find(node.type_index());
+  if (i == node.has_many_map_.end()) {
+    return;
+  }
+  notify_relation_remove(i->second, owner, value);
+}
+
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
   if (type == 0) {
@@ -376,6 +414,21 @@ void object_store::push_transaction(const transaction &tr)
 void object_store::pop_transaction()
 {
   transactions_.pop();
+}
+
+bool object_store::is_relation_notification_enabled()
+{
+  return relation_notification_;
+}
+
+void object_store::enable_relation_notification()
+{
+  relation_notification_ = true;
+}
+
+void object_store::disable_relation_notification()
+{
+  relation_notification_ = false;
 }
 
 transaction object_store::current_transaction()

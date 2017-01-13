@@ -21,6 +21,8 @@ public:
 
   ~node_analyzer() { }
 
+  void analyze();
+
   template<class V>
   void serialize(V &x);
   template<class V>

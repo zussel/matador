@@ -651,6 +651,11 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
+  void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
+  void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
+  void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
+  void notify_relation_remove(prototype_node &node, void *owner, object_proxy *value);
+
   transaction current_transaction();
   bool has_transaction() const;
 
@@ -767,6 +772,10 @@ private:
   void push_transaction(const transaction &tr);
   void pop_transaction();
 
+  bool is_relation_notification_enabled();
+  void enable_relation_notification();
+  void disable_relation_notification();
+
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
   // typeid -> [name -> prototype]
@@ -799,6 +808,9 @@ private:
   abstract_has_many *temp_container_ = nullptr;
 
   std::stack<transaction> transactions_;
+
+  // relation notification related
+  bool relation_notification_ = true;
 };
 
 template<class T, template < class ... > class ON_ATTACH, typename Enabled >
@@ -935,8 +947,7 @@ object_store::iterator object_store::initialize(prototype_node *node, const ON_A
   // Check if nodes serializable has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, ON_ATTACH> analyzer(*node, on_attach);
-  T obj;
-  oos::access::serialize(analyzer, obj);
+  analyzer.analyze();
 
   return prototype_iterator(node);
 }

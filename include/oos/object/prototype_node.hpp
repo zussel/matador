@@ -77,12 +77,16 @@ private:
 public:
   struct relation_info
   {
-    typedef std::function<void(void*, const std::string&, object_proxy*)> set_owner_func;
-    relation_info(const std::string &n, const set_owner_func &func, prototype_node *pn)
-      : name(n), set_owner(func), node(pn)
+    typedef std::function<void(void*, const std::string&, object_proxy*)> modify_value_func;
+    relation_info(const std::string &n,
+                  const modify_value_func &insert_func,
+                  const modify_value_func &remove_func,
+                  prototype_node *pn)
+      : name(n), insert_value(insert_func), remove_value(remove_func), node(pn)
     {}
     std::string name;
-    std::function<void(void*, const std::string&, object_proxy*)> set_owner;
+    std::function<void(void*, const std::string&, object_proxy*)> insert_value;
+    std::function<void(void*, const std::string&, object_proxy*)> remove_value;
     prototype_node *node;
   };
 
@@ -330,10 +334,6 @@ private:
    * @param new_proxy The new last marker proxy.
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
-
-  void notify_delete_relation(object_proxy *owner, object_proxy *proxy);
-
-  void notify_insert_relation(object_proxy *owner, object_proxy *proxy);
 
 private:
   friend class prototype_tree;

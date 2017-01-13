@@ -838,6 +838,22 @@ ObjectStoreTestUnit::test_generic()
   oos::set(m1, "child", c1);
   oos::get(m1, "child", child_result);
   UNIT_ASSERT_EQUAL(c1->name, child_result->name, "not expected result value");
+
+  children_vector cv("children vector");
+
+  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
+  oos::append(cv, "children", c1);
+  UNIT_ASSERT_FALSE(cv.children.empty(), "vector must not be empty");
+  // Todo: oos::remove, oos::begin, oos::end, oos::size, oos::empty for generic access has_many
+  // see: https://tartanllama.github.io/c++/2017/01/03/deduction-on-the-left/ for begin and end
+//  oos::remove(cv, "children", c1);
+//  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
+//
+//  auto i = oos::begin(cv, "children");
+//  auto i = oos::end(cv, "children");
+//
+//  auto size = oos::size(cv, "children");
+//  bool is_empty = oos::empty(cv, "children");
 }
 
 void ObjectStoreTestUnit::test_structure()
@@ -1066,6 +1082,8 @@ struct on_attach<has_many_item<T>> : public on_attach_base
 
 void ObjectStoreTestUnit::test_belongs_to()
 {
+  std::cout << "\n";
+
   ostore_.attach<person>("person");
   ostore_.attach<department>("department");
   ostore_.attach<employee, person>("employee");

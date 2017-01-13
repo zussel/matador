@@ -564,17 +564,17 @@ public:
 
   void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
   {
-      prototype_iterator foreign_node_ = store.find(typeid(T).name());
+    prototype_iterator foreign_node_ = store.find(typeid(T).name());
 
-      auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
-      if (i != foreign_node_->belongs_to_map_.end()) {
-        store.insert(rtype->value());
-        // set owner into value
-        i->second.set_owner(rtype->value().ptr(), i->second.name, &owner);
-      } else {
-        store.insert(rtype);
-      }
-      mark_modified_owner(store, &owner);
+    auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->belongs_to_map_.end()) {
+      store.insert(rtype->value());
+      // set owner into value
+      store.notify_relation_insert(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
+    } else {
+      store.insert(rtype);
+    }
+    mark_modified_owner(store, &owner);
   }
 };
 

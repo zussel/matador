@@ -6,6 +6,16 @@
 namespace oos {
 namespace detail {
 
+
+template<class T, template<class ...> class ON_ATTACH>
+void node_analyzer<T, ON_ATTACH>::analyze()
+{
+//  std::cout << "START analyzing " << node_.type() << "\n";
+  T obj;
+  oos::access::serialize(*this, obj);
+//  std::cout << "FINISHED analyzing " << node_.type() << "\n";
+}
+
 template<class T, template<class ...> class ON_ATTACH>
 template<class V>
 void node_analyzer<T, ON_ATTACH>::serialize(V &x)
@@ -17,6 +27,7 @@ template<class T, template<class ...> class ON_ATTACH>
 template<class V>
 void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, cascade_type)
 {
+//  std::cout << "analyzing belongs_to field " << id << " (typeid: " << typeid(V).name() << ")\n";
   prototype_iterator node = node_.tree()->find(x.type());
   if (node != node_.tree()->end()) {
     // check if created from has_many
@@ -27,7 +38,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, c
       // Todo: check if node is for has many item
       // detach has_many_item node
       node_.tree()->detach(i->second.node);
-      node = node_.tree()->template prepare_attach<V>();
+      i->second.node = nullptr;
     }
   } else {
     node = node_.tree()->template prepare_attach<V>();
@@ -37,6 +48,8 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, c
   }
   node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
     oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
+  }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
+    std::cout << "TODO: insert value for field [" << field << "]\n";
   }, node.get()));
 }
 
@@ -44,6 +57,7 @@ template<class T, template<class ...> class ON_ATTACH>
 template<class V>
 void node_analyzer<T, ON_ATTACH>::serialize(const char *, has_one <V> &x, cascade_type)
 {
+//  std::cout << "analyzing has_one field " << id << " (typeid: " << typeid(V).name() << ")\n";
   prototype_iterator node = node_.tree()->find(x.type());
   if (node == node_.tree()->end()) {
     // if there is no such prototype node
@@ -60,6 +74,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
                                             typename std::enable_if<!std::is_scalar<V>::value>::type*)
 //void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many<V, C> &x, const char */*owner_field*/, const char */*item_field*/)
 {
+//  std::cout << "analyzing has_many field " << id << " (typeid: " << typeid(V).name() << ")\n";
   // item column column names
 //  x.owner_field(owner_field);
 //  x.item_field(item_field);
@@ -72,6 +87,8 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
     pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
+    }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
+      std::cout << "TODO: remove value for field [" << field << "]\n";
     }, pi.get()));
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
