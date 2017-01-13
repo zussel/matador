@@ -667,6 +667,17 @@ public:
     insert(this->end(), value);
   }
 
+  iterator remove(const value_type &value)
+  {
+    return std::remove(this->begin(), this->end(), value);
+  }
+
+  template < class P >
+  iterator remove_if(P predicate)
+  {
+    return std::remove_if(this->begin(), this->end(), predicate);
+  }
+
   /**
    * @brief Clears the vector
    */

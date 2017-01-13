@@ -14,6 +14,8 @@ HasManyListUnitTest::HasManyListUnitTest()
 {
   add_test("join", std::bind(&HasManyListUnitTest::test_join_table, this), "test list join table");
   add_test("const_iterator", std::bind(&HasManyListUnitTest::test_const_iterator, this), "test list const iterator");
+  add_test("remove_scalar", std::bind(&HasManyListUnitTest::test_remove_scalar, this), "test list remove scalar elements");
+  add_test("remove_object", std::bind(&HasManyListUnitTest::test_remove_object, this), "test list remove object elements");
   add_test("erase_scalar", std::bind(&HasManyListUnitTest::test_erase_scalar, this), "test list erase scalar elements");
   add_test("erase_object", std::bind(&HasManyListUnitTest::test_erase_object, this), "test list erase object elements");
   add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
@@ -162,6 +164,32 @@ void HasManyListUnitTest::test_erase_object()
   UNIT_ASSERT_EQUAL(i->name, "i4", "name must be 'i4'");
 }
 
+void HasManyListUnitTest::test_remove_scalar()
+{
+  object_store store;
+
+  store.attach<many_ints>("many_ints");
+
+  object_ptr<many_ints> mptr = store.insert(new many_ints);
+
+  mptr->ints.push_back(1);
+
+  UNIT_ASSERT_EQUAL(1U, mptr->ints.size(), "size should be 1 (one)");
+
+  mptr->ints.push_back(7);
+  mptr->ints.push_back(90);
+
+  UNIT_ASSERT_EQUAL(3U, mptr->ints.size(), "size should be 3 (three)");
+
+  mptr->ints.remove(1);
+
+  UNIT_ASSERT_EQUAL(2U, mptr->ints.size(), "size should be 3 (three)");
+}
+
+void HasManyListUnitTest::test_remove_object()
+{
+
+}
 
 void HasManyListUnitTest::test_integer()
 {
