@@ -183,7 +183,13 @@ void HasManyListUnitTest::test_remove_scalar()
 
   mptr->ints.remove(1);
 
-  UNIT_ASSERT_EQUAL(2U, mptr->ints.size(), "size should be 3 (three)");
+  UNIT_ASSERT_EQUAL(2U, mptr->ints.size(), "size should be 2 (two)");
+
+  mptr->ints.remove_if([](const int &val) {
+    return val == 90;
+  });
+
+  UNIT_ASSERT_EQUAL(1U, mptr->ints.size(), "size should be 1 (one)");
 }
 
 void HasManyListUnitTest::test_remove_object()

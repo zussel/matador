@@ -48,7 +48,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, c
   }
   node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
     oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
-  }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
+  }, [](void */*obj*/, const std::string &field, oos::object_proxy */*owner*/) {
     std::cout << "TODO: insert value for field [" << field << "]\n";
   }, node.get()));
 }
@@ -87,7 +87,7 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, has_many <V, C> &, c
     pi = node_.tree()->template attach<typename has_many<V, C>::item_type, ON_ATTACH>(id, false, nullptr, on_attach_);
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-    }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
+    }, [](void */*obj*/, const std::string &field, oos::object_proxy */*owner*/) {
       std::cout << "TODO: remove value for field [" << field << "]\n";
     }, pi.get()));
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {

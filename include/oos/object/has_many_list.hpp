@@ -85,6 +85,8 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
+  has_many_iterator(self &&iter) = default;
+  has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -298,6 +300,11 @@ public:
    */
   const_has_many_iterator(const has_many_iterator<T, std::list> &iter) : iter_(iter.iter_) {}
 
+  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+
+  const_has_many_iterator(self &&iter) = default;
+  const_has_many_iterator& operator=(self &&iter) = default;
+
   /**
    * @brief Copy assigns a new const has many iterator
    *
@@ -508,17 +515,33 @@ public:
     insert(this->end(), value);
   }
 
-  iterator remove(const value_type &value)
+  void remove(const value_type &value)
   {
-    return std::remove_if(this->begin(), this->end(), [&value](const typename base::internal_type &x) {
-      return x->value() == value;
-    });
+    iterator first = this->begin();
+    iterator last = this->end();
+    while (first != last) {
+      iterator next = first;
+      ++next;
+      if (*first == value) {
+        erase(first);
+      }
+      first = next;
+    }
   }
 
   template < class P >
-  iterator remove_if(P predicate)
+  void remove_if(P predicate)
   {
-    return std::remove_if(this->begin(), this->end(), predicate);
+    iterator first = this->begin();
+    iterator last = this->end();
+    while (first != last) {
+      iterator next = first;
+      ++next;
+      if (predicate(*first)) {
+        erase(first);
+      }
+      first = next;
+    }
   }
 
   /**
