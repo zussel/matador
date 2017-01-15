@@ -258,9 +258,8 @@ public:
    * 
    * @return The current value
    */
-  value_type operator->() const { return (*iter_)->value(); }
-  value_type operator*() const { return (*iter_)->value(); }
-  value_type get() const { return (*iter_)->value(); }
+  value_type operator->() const { return (*iter_)->item_; }
+  value_type& operator*() const { return (*iter_)->item_; }
   //@}
 
 private:
@@ -667,17 +666,6 @@ public:
     insert(this->end(), value);
   }
 
-  iterator remove(const value_type &value)
-  {
-    return std::remove(this->begin(), this->end(), value);
-  }
-
-  template < class P >
-  iterator remove_if(P predicate)
-  {
-    return std::remove_if(this->begin(), this->end(), predicate);
-  }
-
   /**
    * @brief Clears the vector
    */
@@ -686,6 +674,23 @@ public:
     erase(this->begin(), this->end());
   }
 
+  iterator remove(const value_type &value)
+  {
+    iterator first = this->begin();
+    iterator last = this->end();
+    first = std::find(first, last, value);
+    if (first != last)
+      for(iterator i = first; ++i != last; )
+        if (!(*i == value))
+          *first++ = std::move(*i);
+    return first;
+  }
+
+  template < class P >
+  void remove_if(P predicate)
+  {
+
+  }
   /**
    * @brief Remove the element at given position.
    *

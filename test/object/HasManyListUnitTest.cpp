@@ -194,7 +194,35 @@ void HasManyListUnitTest::test_remove_scalar()
 
 void HasManyListUnitTest::test_remove_object()
 {
+  object_store store;
 
+  store.attach<item>("item");
+  store.attach<owner>("owner");
+
+  object_ptr<owner> o = store.insert(new owner("hans"));
+  object_ptr<item> i1 = store.insert(new item("i1"));
+  object_ptr<item> i2 = store.insert(new item("i2"));
+
+  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+
+  o->items.push_back(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(i2);
+
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+
+  o->items.remove(i2);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.remove_if([&i1](const object_ptr<item> &x) {
+    return i1 == x;
+  });
+
+  UNIT_ASSERT_EQUAL(0U, o->items.size(), "size should be 0 (zero)");
+  UNIT_ASSERT_TRUE(o->items.empty(), "list should be empty");
 }
 
 void HasManyListUnitTest::test_integer()

@@ -194,12 +194,11 @@ public:
   /**
    * Return the current value
    * represented by the iterator
-   * 
+   *
    * @return The current value
    */
-  value_type operator->() const { return get(); }
-  value_type operator*() const { return get(); }
-  value_type get() const { return (*iter_)->value(); }
+  value_type operator->() const { return (*iter_)->item_; }
+  value_type& operator*() const { return (*iter_)->item_; }
   //@}
 
 private:

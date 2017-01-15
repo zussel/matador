@@ -162,7 +162,7 @@ ObjectStoreTestUnit::test_expression()
 
   std::unique_ptr<expression> exp(make_expression(z == 4));
 
-  object_ptr<ObjectItem<Item>> optr = itemlist->begin().get();
+  object_ptr<ObjectItem<Item>> optr = *itemlist->begin();
 
   (*exp)(optr);
 

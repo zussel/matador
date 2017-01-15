@@ -77,6 +77,8 @@ public:
   void test_const_iterator();
   void test_erase_scalar();
   void test_erase_object();
+  void test_remove_scalar();
+  void test_remove_object();
   void test_integer();
 };
 

@@ -14,6 +14,8 @@ HasManyVectorUnitTest::HasManyVectorUnitTest()
 {
   add_test("join", std::bind(&HasManyVectorUnitTest::test_join_table, this), "test vector join table");
   add_test("const_iterator", std::bind(&HasManyVectorUnitTest::test_const_iterator, this), "test vector const iterator");
+  add_test("remove_scalar", std::bind(&HasManyVectorUnitTest::test_remove_scalar, this), "test vector remove scalar elements");
+  add_test("remove_object", std::bind(&HasManyVectorUnitTest::test_remove_object, this), "test vector remove object elements");
   add_test("erase_scalar", std::bind(&HasManyVectorUnitTest::test_erase_scalar, this), "test vector erase scalar elements");
   add_test("erase_object", std::bind(&HasManyVectorUnitTest::test_erase_object, this), "test vector erase object elements");
   add_test("int", std::bind(&HasManyVectorUnitTest::test_integer, this), "test vector of ints");
@@ -152,6 +154,31 @@ void HasManyVectorUnitTest::test_erase_object()
 
   UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
   UNIT_ASSERT_EQUAL(i->name, "i4", "name must be 'i4'");
+}
+
+void HasManyVectorUnitTest::test_remove_scalar()
+{
+  object_store store;
+
+  store.attach<many_ints>("many_ints");
+
+  object_ptr<many_ints> mptr = store.insert(new many_ints);
+
+  mptr->ints.push_back(1);
+
+  UNIT_ASSERT_EQUAL(1U, mptr->ints.size(), "size should be 1 (one)");
+
+  mptr->ints.push_back(7);
+  mptr->ints.push_back(90);
+
+  UNIT_ASSERT_EQUAL(3U, mptr->ints.size(), "size should be 3 (three)");
+
+  mptr->ints.remove(7);
+}
+
+void HasManyVectorUnitTest::test_remove_object()
+{
+
 }
 
 void HasManyVectorUnitTest::test_integer()
