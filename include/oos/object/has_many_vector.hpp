@@ -270,6 +270,7 @@ private:
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
+  friend class detail::has_many_deleter<T, std::vector>;
 
   relation_type relation_item() const { return *iter_; }
 
@@ -599,6 +600,49 @@ public:
 };
 }
 
+namespace detail {
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_deleter;
+
+template<class T, template <class ...> class C>
+class has_many_deleter<T, C, typename std::enable_if<!std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+
+  void remove(object_store &store, relation_type &rtype, object_proxy &owner)
+  {
+    prototype_iterator foreign_node_ = store.find(typeid(T).name());
+
+    auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->belongs_to_map_.end()) {
+      auto val = rtype->value();
+      store.remove(val);
+      // set owner into value
+      store.notify_relation_remove(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
+    } else {
+      store.remove(rtype);
+    }
+  }
+};
+
+template<class T, template <class ...> class C>
+class has_many_deleter<T, C, typename std::enable_if<std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+
+  void remove(object_store &store, relation_type &rtype, object_proxy &owner)
+  {
+    store.remove(rtype);
+  }
+};
+}
+
 /**
  * @brief Has many relation class using a std::vector as container
  *
@@ -719,8 +763,7 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      relation_type iptr = i.relation_item();
-      this->ostore_->remove(iptr);
+      deleter_.remove(*this->ostore_, i.relation_item(), *this->owner_);
     }
     container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
@@ -758,6 +801,7 @@ private:
 
 private:
   detail::has_many_inserter<T, std::vector> inserter_;
+  detail::has_many_deleter<T, std::vector> deleter_;
 };
 
 }

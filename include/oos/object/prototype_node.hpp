@@ -50,6 +50,8 @@ class object_proxy;
 namespace detail {
 template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
+template < class T, template <class ...> class C, class Enabled >
+class has_many_deleter;
 template < class T,  template < class ... > class ON_ATTACH >
 class node_analyzer;
 }
@@ -349,6 +351,8 @@ private:
   friend class has_many;
   template < class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_inserter;
+  template < class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_deleter;
   template < class T,  template < class ... > class ON_ATTACH >
   friend class detail::node_analyzer;
 
