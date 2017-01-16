@@ -844,10 +844,10 @@ ObjectStoreTestUnit::test_generic()
   UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
   oos::append(cv, "children", c1);
   UNIT_ASSERT_FALSE(cv.children.empty(), "vector must not be empty");
+  oos::remove(cv, "children", c1);
+  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
   // Todo: oos::remove, oos::begin, oos::end, oos::size, oos::empty for generic access has_many
   // see: https://tartanllama.github.io/c++/2017/01/03/deduction-on-the-left/ for begin and end
-//  oos::remove(cv, "children", c1);
-//  UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
 //
 //  auto i = oos::begin(cv, "children");
 //  auto i = oos::end(cv, "children");

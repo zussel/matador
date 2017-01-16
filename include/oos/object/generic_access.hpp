@@ -35,6 +35,12 @@ bool append(O *obj, const std::string &name, const T &val)
   return append(*obj, name, val);
 }
 
+template < typename O, class T >
+bool remove(O *obj, const std::string &name, const T &val)
+{
+  return remove(*obj, name, val);
+}
+
 /**
  * Sets a value of an object member identified by
  * the given name. The object is passed by reference.
@@ -58,9 +64,17 @@ bool set(O &obj, const std::string &name, const T &val)
 template < typename O, class T >
 bool append(O &obj, const std::string &name, const T &val)
 {
-  has_many_attribute_reader<T> reader(name, val);
-  oos::access::serialize(reader, obj);
-  return reader.success();
+  has_many_attribute_reader<T> writer(name, val);
+  oos::access::serialize(writer, obj);
+  return writer.success();
+}
+
+template < typename O, class T >
+bool remove(O &obj, const std::string &name, const T &val)
+{
+  has_many_attribute_writer<T> writer(name, val);
+  oos::access::serialize(writer, obj);
+  return writer.success();
 }
 
 /**

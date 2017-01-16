@@ -339,6 +339,73 @@ private:
   object_ptr<T> &to_;
 };
 
+template < class T, class Enabled = void >
+class has_many_attribute_writer;
+
+template < class T >
+class has_many_attribute_writer<T, typename std::enable_if<!std::is_base_of<object_holder, T>::value>::type> : public basic_attribute_serializer
+{
+public:
+  has_many_attribute_writer(const std::string &id, const T &to)
+  : basic_attribute_serializer(id)
+  , to_(to)
+  {}
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, size_t) {}
+
+  template < class HAS_ONE >
+  void serialize(const char *, HAS_ONE &, cascade_type) {}
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+private:
+  const T &to_;
+};
+
+template < class T >
+class has_many_attribute_writer<object_ptr<T>> : public basic_attribute_serializer
+{
+public:
+  has_many_attribute_writer(const std::string &id, const object_ptr<T> &to)
+  : basic_attribute_serializer(id)
+  , to_(to)
+  {}
+
+  template < class V >
+  void serialize(V &obj)
+  {
+    access::serialize(*this, obj);
+  }
+
+  template < class V >
+  void serialize(const char *, V &) {}
+  void serialize(const char *, char*, size_t) {}
+
+  template < class HAS_ONE >
+  void serialize(const char *, HAS_ONE &, cascade_type) {}
+
+  template<class V, template <class ...> class C>
+  void serialize(const char *, has_many<V, C> &x, const char *, const char *)
+  {
+    x.remove(to_);
+    this->success_ = true;
+  }
+private:
+  const object_ptr<T> &to_;
+};
+
 template <>
 class attribute_writer<std::string> : public basic_attribute_serializer
 {
