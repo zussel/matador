@@ -14,6 +14,10 @@
 
 namespace oos {
 
+namespace detail {
+template<class T, template <class ...> class C, class Enabled >
+class has_many_deleter;
+}
 /// @cond OOS_DEV
 
 template < class T >
@@ -270,7 +274,8 @@ private:
   friend class object_serializer;
   friend class detail::object_inserter;
   friend class detail::object_deleter;
-  friend class detail::has_many_deleter<T, std::vector>;
+  template<class V, template <class ...> class C, class Enabled>
+  friend class detail::has_many_deleter;
 
   relation_type relation_item() const { return *iter_; }
 
@@ -610,7 +615,6 @@ class has_many_deleter<T, C, typename std::enable_if<!std::is_scalar<T>::value>:
 public:
   typedef T value_type;
   typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
-  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
 
   void remove(object_store &store, relation_type &rtype, object_proxy &owner)
   {
@@ -634,9 +638,8 @@ class has_many_deleter<T, C, typename std::enable_if<std::is_scalar<T>::value>::
 public:
   typedef T value_type;
   typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
-  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
 
-  void remove(object_store &store, relation_type &rtype, object_proxy &owner)
+  void remove(object_store &store, relation_type &rtype, object_proxy &)
   {
     store.remove(rtype);
   }
@@ -763,7 +766,8 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      deleter_.remove(*this->ostore_, i.relation_item(), *this->owner_);
+      relation_type iptr(*i.iter_);
+      deleter_.remove(*this->ostore_, iptr, *this->owner_);
     }
     container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);

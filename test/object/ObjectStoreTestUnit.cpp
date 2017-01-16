@@ -839,6 +839,10 @@ ObjectStoreTestUnit::test_generic()
   oos::get(m1, "child", child_result);
   UNIT_ASSERT_EQUAL(c1->name, child_result->name, "not expected result value");
 
+  oos::set(m1, "child", object_ptr<child>());
+  oos::get(m1, "child", child_result);
+  UNIT_ASSERT_TRUE(child_result.get() == nullptr, "not expected result value");
+
   children_vector cv("children vector");
 
   UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
@@ -1111,10 +1115,11 @@ void ObjectStoreTestUnit::test_belongs_to()
   UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
 
   // remove george
-//  auto i = dep->employees.begin();
-//  i = dep->employees.erase(i);
-//
-//  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  auto i = dep->employees.begin();
+  i = dep->employees.erase(i);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
 //  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
 //  UNIT_ASSERT_TRUE(george->dep().empty(), "there must be no department");
 //

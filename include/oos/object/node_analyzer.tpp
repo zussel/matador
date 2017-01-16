@@ -48,8 +48,8 @@ void node_analyzer<T, ON_ATTACH>::serialize(const char *id, belongs_to <V> &x, c
   }
   node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
     oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
-  }, [](void */*obj*/, const std::string &field, oos::object_proxy */*owner*/) {
-    std::cout << "TODO: clear value for field [" << field << "]\n";
+  }, [](void *obj, const std::string &field, oos::object_proxy *) {
+    oos::set(static_cast<T*>(obj), field, object_ptr<V>());
   }, node.get()));
 }
 
