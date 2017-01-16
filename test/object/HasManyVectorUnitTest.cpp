@@ -174,11 +174,34 @@ void HasManyVectorUnitTest::test_remove_scalar()
   UNIT_ASSERT_EQUAL(3U, mptr->ints.size(), "size should be 3 (three)");
 
   mptr->ints.remove(7);
+
+  UNIT_ASSERT_EQUAL(2U, mptr->ints.size(), "size should be 2 (two)");
 }
 
 void HasManyVectorUnitTest::test_remove_object()
 {
+  object_store store;
 
+  store.attach<item>("item");
+  store.attach<owner>("owner");
+
+  object_ptr<owner> o = store.insert(new owner("hans"));
+  object_ptr<item> i1 = store.insert(new item("i1"));
+  object_ptr<item> i2 = store.insert(new item("i2"));
+
+  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+
+  o->items.push_back(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(i2);
+
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+
+  o->items.remove(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
 }
 
 void HasManyVectorUnitTest::test_integer()

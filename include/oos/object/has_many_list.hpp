@@ -198,7 +198,7 @@ public:
    * @return The current value
    */
   value_type operator->() const { return (*iter_)->item_; }
-  value_type& operator*() const { return (*iter_)->item_; }
+  value_type operator*() const { return (*iter_)->item_; }
   //@}
 
 private:

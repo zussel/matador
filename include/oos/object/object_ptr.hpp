@@ -108,6 +108,17 @@ public:
    * @param x The has_one object to created the object_pointer from
    * @return A reference to the created object_pointer
    */
+  self& operator=(const self &x)
+  {
+    reset(x.proxy_, x.cascade_);
+    return *this;
+  }
+
+  /**
+   * @brief Copy assignes an object_pointer from the given has_one object
+   * @param x The has_one object to created the object_pointer from
+   * @return A reference to the created object_pointer
+   */
   template < object_holder_type OOPT >
   self& operator=(object_pointer<T, OOPT> &x)
   {

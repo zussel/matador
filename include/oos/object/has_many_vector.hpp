@@ -10,6 +10,7 @@
 #include "oos/object/generic_access.hpp"
 
 #include <vector>
+#include <oos/sql/result.hpp>
 
 namespace oos {
 
@@ -259,7 +260,7 @@ public:
    * @return The current value
    */
   value_type operator->() const { return (*iter_)->item_; }
-  value_type& operator*() const { return (*iter_)->item_; }
+  value_type operator*() const { return (*iter_)->item_; }
   //@}
 
 private:
@@ -271,6 +272,11 @@ private:
   friend class detail::object_deleter;
 
   relation_type relation_item() const { return *iter_; }
+
+  void move(self &i)
+  {
+    *iter_ = std::move(*i.iter_);
+  }
 
   container_iterator iter_;
 };
@@ -676,21 +682,31 @@ public:
 
   iterator remove(const value_type &value)
   {
-    iterator first = this->begin();
-    iterator last = this->end();
-    first = std::find(first, last, value);
-    if (first != last)
-      for(iterator i = first; ++i != last; )
-        if (!(*i == value))
-          *first++ = std::move(*i);
-    return first;
+    return remove_if([&value](const value_type &val) {
+      return val == value;
+    });
   }
 
   template < class P >
-  void remove_if(P predicate)
+  iterator remove_if(P predicate)
   {
-
+    iterator first = this->begin();
+    iterator last = this->end();
+    first = std::find_if(first, last, predicate);
+    if (first == last) {
+      return first;
+    } else {
+      iterator result = first;
+      for (; first != last; ++first) {
+        if (!predicate(*first)) {
+          result.move(first);
+          ++result;
+        }
+      }
+      return erase(result, this->end());
+    }
   }
+
   /**
    * @brief Remove the element at given position.
    *

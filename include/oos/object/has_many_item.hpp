@@ -115,6 +115,11 @@ public:
     return item_;
   }
 private:
+  template < class V, template <class ...> class C >
+  friend class has_many_iterator;
+  template < class V, template <class ...> class C >
+  friend class const_has_many_iterator;
+
   T item_;
 };
 
