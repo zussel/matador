@@ -80,6 +80,7 @@ bool TestSuiteTestUnit::test_list()
   };
 
   ts.init(2, argv1);
+  ts.quiet();
 
   const oos::test_suite::test_suite_args &args = ts.test_args();
 
@@ -121,6 +122,7 @@ bool TestSuiteTestUnit::test_method()
   };
 
   ts.init(3, argv);
+  ts.quiet();
 
   const oos::test_suite::test_suite_args &args = ts.test_args();
 
@@ -153,6 +155,7 @@ bool TestSuiteTestUnit::test_unit()
   };
 
   ts.init(3, argv);
+  ts.quiet();
 
   const oos::test_suite::test_suite_args &args = ts.test_args();
 
@@ -180,6 +183,7 @@ bool TestSuiteTestUnit::test_suite()
   };
 
   ts.init(3, argv);
+  ts.quiet();
 
   const oos::test_suite::test_suite_args &args = ts.test_args();
 

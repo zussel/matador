@@ -47,12 +47,12 @@ std::string unit_test::caption() const
   return caption_;
 }
 
-bool unit_test::execute()
+bool unit_test::execute(bool quiet)
 {
   // execute each test
   bool succeeded = true;
   std::for_each(test_func_infos_.begin(), test_func_infos_.end(), [&](t_test_func_info_vector::value_type &info) {
-    execute(info);
+    execute(info, quiet);
     if (succeeded && !info.succeeded) {
       succeeded = false;
     }
@@ -60,17 +60,19 @@ bool unit_test::execute()
   return succeeded;
 }
 
-bool unit_test::execute(const std::string &test)
+bool unit_test::execute(const std::string &test, bool quiet)
 {
   t_test_func_info_vector::iterator i = std::find_if(test_func_infos_.begin(), test_func_infos_.end(), [test](const t_test_func_info_vector::value_type &x) {
     return x.name == test;
   });
 
   if (i == test_func_infos_.end()) {
-    std::cout << "couldn't find test [" << test << "] of unit [" << caption_ << "]\n";
+    if (!quiet) {
+      std::cout << "couldn't find test [" << test << "] of unit [" << caption_ << "]\n";
+    }
     return false;
   } else {
-    execute(*i);
+    execute(*i, quiet);
     return i->succeeded;
   }
 }
@@ -142,10 +144,12 @@ void unit_test::info(const std::string &msg)
   std::cout << "INFO: " << msg;
 }
 
-void unit_test::execute(test_func_info &test_info)
+void unit_test::execute(test_func_info &test_info, bool quiet)
 {
   initialize();
-  std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
+  if (!quiet) {
+    std::cout << std::left << std::setw(70) << test_info.caption << " ... " << std::flush;
+  }
 
   long dur(0L);
   try {
@@ -164,6 +168,9 @@ void unit_test::execute(test_func_info &test_info)
     test_info.message = ex.what();
   }
   finalize();
+  if (quiet) {
+    return;
+  }
   if (test_info.succeeded) {
     std::cout << "PASS (" << test_info.assertion_count + test_info.error_count << " assertions) (" << (double)(dur)/1000.0 << "ms)\n";
   } else {

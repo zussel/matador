@@ -146,6 +146,7 @@ public:
     test_suite_cmd cmd = UNKNOWN; /**< Test suite command to be executed */
     bool initialized = false;     /**< Indicates wether the suite is initialized or not */
     bool brief = false;           /**< If true for LIST command only a brief list is printed */
+    bool quiet = false;           /**< If true no output is written to stdout */
     std::vector<test_unit_args> unit_args; /**< Vector of test unit arguments */
   };
 
@@ -157,10 +158,11 @@ private:
 
   struct unit_executer : public std::unary_function<unit_test_ptr, void>
   {
-    unit_executer(summary &s);
+    unit_executer(summary &s, bool q);
     void operator()(test_suite::value_type &x);
     
     bool succeeded;
+    bool quiet;
     summary &summary_;
   };
 
@@ -289,6 +291,13 @@ public:
    * @return Test suites configurated arguments
    */
   const test_suite_args& test_args() const;
+
+  /**
+   * Disables any output
+   *
+   * @param q If true a output is disabled
+   */
+  void quiet(bool q = true);
 
 private:
   test_suite_args args_;
