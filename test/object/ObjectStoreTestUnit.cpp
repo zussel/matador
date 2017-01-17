@@ -1119,13 +1119,12 @@ void ObjectStoreTestUnit::test_belongs_to()
   i = dep->employees.erase(i);
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
-  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
-//  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
-//  UNIT_ASSERT_TRUE(george->dep().empty(), "there must be no department");
-//
-//  jane->dep().clear();
-//
-//  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
+
+  jane->department_.clear();
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 }
 
 void ObjectStoreTestUnit::test_on_attach()

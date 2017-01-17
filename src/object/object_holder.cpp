@@ -79,7 +79,7 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
     oid_ = 0;
     if (is_internal() && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
-      proxy_->ostore_->notify_relation_remove(*proxy_->node_, proxy->obj_, owner_);
+      proxy_->ostore_->notify_relation_remove(*proxy_->node_, proxy_->obj_, owner_);
 //      proxy_->node_->notify_delete_relation(owner_, proxy);
     }
     proxy_->remove(this);

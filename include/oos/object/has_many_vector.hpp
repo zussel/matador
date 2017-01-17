@@ -623,7 +623,7 @@ public:
     auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
     if (i != foreign_node_->belongs_to_map_.end()) {
       auto val = rtype->value();
-      store.remove(val);
+//      store.remove(val);
       // set owner into value
       store.notify_relation_remove(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
     } else {

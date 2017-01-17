@@ -339,7 +339,7 @@ class department;
 
 class employee : public person
 {
-private:
+public:
   oos::belongs_to<department> department_;
   
 public:
