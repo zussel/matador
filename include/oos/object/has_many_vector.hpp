@@ -790,8 +790,8 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-          typename base::relation_type iptr = (i++).relation_item();
-          this->ostore_->remove(iptr);
+        relation_type iptr = (i++).relation_item();
+        deleter_.remove(*this->ostore_, iptr, *this->owner_);
       }
     }
     return iterator(this->container_.erase(start.iter_, end.iter_));

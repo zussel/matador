@@ -60,6 +60,13 @@ struct null_on_attach : public basic_on_attach
   void operator()(prototype_node*) const {}
 };
 
+struct null_on_detach : public basic_on_attach
+{
+  null_on_detach() {}
+
+  void operator()(prototype_node*) const {}
+};
+
 }
 }
 #endif //OOS_NODE_ANALYZER_HPP

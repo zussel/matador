@@ -72,7 +72,7 @@ public:
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name. To know where the new
+   * consists of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    *
@@ -87,7 +87,7 @@ public:
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name. To know where the new
+   * consists of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    * parameter.
@@ -100,6 +100,14 @@ public:
    */
   template<class T, class S>
   void attach(const char *type, bool abstract = false);
+
+  /**
+   * Removes an object prototype from the prototype tree. All children
+   * nodes and all objects are also removed.
+   *
+   * @param type The name of the type to remove.
+   */
+  void detach(const char *type);
 
   /**
    * Checks if the given entity as
@@ -304,6 +312,10 @@ persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &
 template<class T>
 void persistence_on_attach<T>::operator()(prototype_node *node) const
 {
+  if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
+    return;
+  }
+  std::cout << "node type: " << node->type() << "\n";
   persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node, persistence_)));
 }
 
@@ -324,11 +336,21 @@ void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) c
   if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
     return;
   }
+  std::cout << "node relation type: " << node->type() << "\n";
   persistence_.get().tables_.insert(std::make_pair(
     node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
       node, persistence_, relation_, owner_type_, relation_id_, owner_id_column_, item_id_column_
     )));
 }
+
+struct persistence_on_detach : public basic_persistence_on_attach
+{
+  using basic_persistence_on_attach::basic_persistence_on_attach;
+
+  persistence_on_detach(persistence &p) : basic_persistence_on_attach(p) {}
+
+  void operator()(prototype_node *node) const;
+};
 
 /// @endcond
 

@@ -19,6 +19,11 @@ persistence::~persistence()
   connection_.close();
 }
 
+void persistence::detach(const char *type)
+{
+  store_.detach(type, detail::persistence_on_detach(*this));
+}
+
 void persistence::create()
 {
   for (t_table_map::value_type &val : tables_) {
@@ -78,5 +83,11 @@ const connection &persistence::conn() const {
   return connection_;
 }
 
+namespace detail {
+void persistence_on_detach::operator()(prototype_node *node) const
+{
 
+}
+
+}
 }

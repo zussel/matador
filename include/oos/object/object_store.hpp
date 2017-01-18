@@ -143,7 +143,7 @@ public:
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name. To know where the new
+   * consists of a unique type name. To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    * parameter.
@@ -159,7 +159,7 @@ public:
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name (generated from typeid). To know where the new
+   * consists of a unique type name (generated from typeid). To know where the new
    * prototype is inserted into the hierarchy the type name of the parent
    * node is also given.
    *
@@ -173,7 +173,7 @@ public:
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name (generated from typeid). To know where the new
+   * consists of a unique type name (generated from typeid). To know where the new
    * prototype is inserted into the hierarchy the typeid of the parent
    * node is also given.
    *
@@ -186,12 +186,13 @@ public:
   prototype_iterator prepare_attach(bool abstract = false);
 
   /**
-   * Removes an serializable prototype from the prototype tree. All children
+   * Removes an object prototype from the prototype tree. All children
    * nodes and all objects are also removed.
    * 
    * @param type The name of the type to remove.
    */
-  void detach(const char *type);
+  template < class ON_DETACH = detail::null_on_detach >
+  void detach(const char *type, const ON_DETACH &on_detach = ON_DETACH());
 
   /**
    * Erase a prototype node identified
@@ -201,7 +202,8 @@ public:
    * @param i The prototype iterator to be erased
    * @return The successor of the erased iterator
    */
-  iterator detach(const prototype_iterator &i);
+  template < class ON_DETACH = detail::null_on_detach >
+  iterator detach(const prototype_iterator &i, const ON_DETACH &on_detach = ON_DETACH());
 
   /**
    * Finds the typename to the given class.
@@ -903,6 +905,27 @@ template<class T, class S>
 prototype_iterator object_store::prepare_attach(bool abstract)
 {
   return prepare_attach<T>(abstract, typeid(T).name());
+}
+
+template < class ON_DETACH >
+void object_store::detach(const char *type, const ON_DETACH &on_detach)
+{
+  prototype_node *node = find_prototype_node(type);
+  if (!node) {
+    throw object_exception("unknown prototype type");
+  }
+  on_detach(node);
+  remove_prototype_node(node, node->depth == 0);
+}
+
+template < class ON_DETACH >
+object_store::iterator object_store::detach(const prototype_iterator &i, const ON_DETACH &on_detach)
+{
+  if (i == end() || i.get() == nullptr) {
+    throw object_exception("invalid prototype iterator");
+  }
+  on_detach(i.get());
+  return remove_prototype_node(i.get(), i->depth == 0);
 }
 
 template<class T>
