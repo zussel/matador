@@ -1,7 +1,7 @@
 SET(SOURCES
   persistence.cpp
   session.cpp
-  basic_table.cpp)
+  basic_table.cpp persistence_observer.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/orm/persistence.hpp
@@ -12,7 +12,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/orm/identifier_column_resolver.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/orm/relation_table.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/orm/relation_resolver.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/orm/relation_item_appender.hpp)
+  ${CMAKE_SOURCE_DIR}/include/oos/orm/relation_item_appender.hpp ../../include/oos/orm/persistence_observer.hpp)
 
 ADD_LIBRARY(oos-orm SHARED ${SOURCES} ${HEADER})
 

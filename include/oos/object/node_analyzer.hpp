@@ -11,12 +11,11 @@ class prototype_node;
 
 namespace detail {
 
-template < class T,  template < class ... > class ON_ATTACH >
+template < class T >
 class node_analyzer {
 public:
-  node_analyzer(prototype_node &node, const ON_ATTACH<T> &on_attach)
+  explicit node_analyzer(prototype_node &node)
     : node_(node)
-    , on_attach_(on_attach)
   { }
 
   ~node_analyzer() { }
@@ -42,29 +41,6 @@ public:
 
 private:
   prototype_node &node_;
-  ON_ATTACH<T> on_attach_;
-};
-
-struct basic_on_attach {};
-
-template < class T >
-struct null_on_attach : public basic_on_attach
-{
-  null_on_attach() {}
-  template < class V >
-  null_on_attach(const null_on_attach<V> &) {}
-  null_on_attach& operator=(const null_on_attach &) { return *this; }
-  template < class V >
-  null_on_attach& operator=(const null_on_attach<V> &) { return *this; }
-
-  void operator()(prototype_node*) const {}
-};
-
-struct null_on_detach : public basic_on_attach
-{
-  null_on_detach() {}
-
-  void operator()(prototype_node*) const {}
 };
 
 }

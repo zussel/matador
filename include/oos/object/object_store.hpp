@@ -20,7 +20,7 @@
 
 #include "oos/object/prototype_iterator.hpp"
 #include "oos/object/object_exception.hpp"
-#include "oos/object/object_observer.hpp"
+#include "oos/object/object_store_observer.hpp"
 #include "oos/object/object_inserter.hpp"
 #include "oos/object/object_deleter.hpp"
 #include "oos/object/node_analyzer.hpp"
@@ -138,8 +138,8 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-  template< class T, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
-  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
+  template< class T >
+  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -154,8 +154,8 @@ public:
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
-  template<class T, class S, template < class ... > class ON_ATTACH = detail::null_on_attach, typename = typename std::enable_if<std::is_base_of<detail::basic_on_attach, ON_ATTACH<T>>::value>::type >
-  prototype_iterator attach(const char *type, bool abstract = false, const ON_ATTACH<T> &on_attach = ON_ATTACH<T>());
+  template<class T, class S >
+  prototype_iterator attach(const char *type, bool abstract = false);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -191,8 +191,7 @@ public:
    * 
    * @param type The name of the type to remove.
    */
-  template < class ON_DETACH = detail::null_on_detach >
-  void detach(const char *type, const ON_DETACH &on_detach = ON_DETACH());
+  void detach(const char *type);
 
   /**
    * Erase a prototype node identified
@@ -202,8 +201,7 @@ public:
    * @param i The prototype iterator to be erased
    * @return The successor of the erased iterator
    */
-  template < class ON_DETACH = detail::null_on_detach >
-  iterator detach(const prototype_iterator &i, const ON_DETACH &on_detach = ON_DETACH());
+  iterator detach(const prototype_iterator &i);
 
   /**
    * Finds the typename to the given class.
@@ -445,6 +443,11 @@ public:
     // insert element into hash map for fast lookup
     object_map_.insert(std::make_pair(proxy->id(), proxy));
 
+    // call observers
+    std::for_each(observers_.begin(), observers_.end(), [proxy](object_store_observer *observer) {
+      observer->on_insert(proxy);
+    });
+
     return proxy;
   }
 
@@ -535,6 +538,11 @@ public:
       }
 
       proxy->node()->remove(proxy);
+
+      // call observers
+      std::for_each(observers_.begin(), observers_.end(), [proxy](object_store_observer *observer) {
+        observer->on_delete(proxy);
+      });
 
       if (notify && !transactions_.empty()) {
         // notify transaction
@@ -653,6 +661,9 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
+  void register_observer(object_store_observer *observer);
+  void unregister_observer(object_store_observer *observer);
+
   void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
   void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
   void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
@@ -764,8 +775,8 @@ private:
    * @param node The node to initialize
    * @return iterator representing the prototype node
    */
-  template<class T, template < class ... > class ON_ATTACH>
-  iterator initialize(prototype_node *node, const ON_ATTACH<T> &on_attach);
+  template< class T >
+  iterator initialize(prototype_node *node);
 
 //  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
 
@@ -800,8 +811,8 @@ private:
 
   sequencer seq_;
 
-  typedef std::list<object_observer *> t_observer_list;
-  t_observer_list observer_list_;
+  typedef std::list<object_store_observer *> t_observer_list;
+  t_observer_list observers_;
 
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
@@ -815,8 +826,8 @@ private:
   bool relation_notification_ = true;
 };
 
-template<class T, template < class ... > class ON_ATTACH, typename Enabled >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const ON_ATTACH<T> &on_attach)
+template <class T >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
   // set node to root node
   prototype_node *parent_node = find_parent(parent);
@@ -852,15 +863,23 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
   typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
 
-  on_attach(node);
+  // call observers
+  std::for_each(observers_.begin(), observers_.end(), [node](object_store_observer *observer) {
+    observer->on_attach(node);
+  });
 
-  return initialize<T, ON_ATTACH>(node, on_attach);
+  // call observers
+  std::for_each(observers_.begin(), observers_.end(), [node](object_store_observer *observer) {
+    observer->on_attach(node);
+  });
+
+  return initialize<T>(node);
 }
 
-template<class T, class S, template < class ... > class ON_ATTACH, typename Enabled >
-object_store::iterator object_store::attach(const char *type, bool abstract, const ON_ATTACH<T> &on_attach)
+template<class T, class S >
+object_store::iterator object_store::attach(const char *type, bool abstract)
 {
-  return attach<T, ON_ATTACH>(type, abstract, typeid(S).name(), on_attach);
+  return attach<T>(type, abstract, typeid(S).name());
 }
 
 template<class T>
@@ -907,27 +926,6 @@ prototype_iterator object_store::prepare_attach(bool abstract)
   return prepare_attach<T>(abstract, typeid(T).name());
 }
 
-template < class ON_DETACH >
-void object_store::detach(const char *type, const ON_DETACH &on_detach)
-{
-  prototype_node *node = find_prototype_node(type);
-  if (!node) {
-    throw object_exception("unknown prototype type");
-  }
-  on_detach(node);
-  remove_prototype_node(node, node->depth == 0);
-}
-
-template < class ON_DETACH >
-object_store::iterator object_store::detach(const prototype_iterator &i, const ON_DETACH &on_detach)
-{
-  if (i == end() || i.get() == nullptr) {
-    throw object_exception("invalid prototype iterator");
-  }
-  on_detach(i.get());
-  return remove_prototype_node(i.get(), i->depth == 0);
-}
-
 template<class T>
 prototype_node *object_store::acquire(const char *type, bool abstract)
 {
@@ -964,12 +962,12 @@ prototype_node *object_store::acquire(const char *type, bool abstract)
   return node;
 }
 
-template<class T, template < class ... > class ON_ATTACH>
-object_store::iterator object_store::initialize(prototype_node *node, const ON_ATTACH<T> &on_attach)
+template<class T>
+object_store::iterator object_store::initialize(prototype_node *node)
 {
   // Check if nodes serializable has 'to-many' relations
   // Analyze primary and foreign keys of node
-  detail::node_analyzer<T, ON_ATTACH> analyzer(*node, on_attach);
+  detail::node_analyzer<T> analyzer(*node);
   analyzer.analyze();
 
   return prototype_iterator(node);

@@ -52,7 +52,7 @@ template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
 template < class T, template <class ...> class C, class Enabled >
 class has_many_deleter;
-template < class T,  template < class ... > class ON_ATTACH >
+template < class T >
 class node_analyzer;
 }
 /**

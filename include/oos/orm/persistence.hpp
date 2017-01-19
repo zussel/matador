@@ -359,13 +359,13 @@ struct persistence_on_detach : public basic_persistence_on_attach
 template<class T>
 void persistence::attach(const char *type, bool abstract, const char *parent)
 {
-  store_.attach<T, detail::persistence_on_attach>(type, abstract, parent, detail::persistence_on_attach<T>(*this));
+  store_.attach<T>(type, abstract, parent);
 }
 
 template<class T, class S>
 void persistence::attach(const char *type, bool abstract)
 {
-  store_.attach<T,S, detail::persistence_on_attach>(type, abstract, detail::persistence_on_attach<T>(*this));
+  store_.attach<T,S>(type, abstract);
 }
 
 }

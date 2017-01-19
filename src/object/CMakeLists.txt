@@ -29,7 +29,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/prototype_node.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/object/object_observer.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_store_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_expression.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/attribute_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/prototype_iterator.hpp
