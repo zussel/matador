@@ -35,6 +35,7 @@
 #include "oos/utils/identifier.hpp"
 
 #include "oos/object/identifier_proxy_map.hpp"
+#include "oos/object/object_store_observer.hpp"
 
 #include <map>
 #include <list>
@@ -109,13 +110,16 @@ public:
    * @param typeinfo The typeinfo of this node.
    * @param abstract Tells the node if its prototype is abstract.
    */
-  prototype_node(object_store *tree, const char *type, const std::type_info &typeinfo, bool abstract = false)
+  template < class T >
+  prototype_node(object_store *tree, const char *type, T *proto, const std::type_info &typeinfo, bool abstract = false)
     : tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
     , type_index_(typeinfo)
+    , deleter_(&destroy<T>)
+    , prototype(proto)
   {
     first->next = last.get();
     last->prev = first.get();
@@ -337,6 +341,17 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
+  typedef std::list<basic_object_store_observer*> t_observer_list;
+  typedef void (*deleter)(void*, t_observer_list&);
+
+  template <typename T>
+  static void destroy(void* p, t_observer_list &ol)
+  {
+    delete (T*)p;
+    for(auto i : ol) {
+      delete (object_store_observer<T>*)i;
+    }
+  }
 private:
   friend class prototype_tree;
   friend class object_holder;
@@ -377,6 +392,11 @@ private:
   bool abstract_ = false;        /**< Indicates whether this node holds a producer of an abstract serializable */
 
   std::type_index type_index_; /**< type index of the represented object type */
+
+  t_observer_list observer_list;
+  deleter deleter_;
+
+  void* prototype = nullptr;
 
   /**
    * Holds the primary keys of all proxies in this node

@@ -21,7 +21,7 @@ persistence::~persistence()
 
 void persistence::detach(const char *type)
 {
-  store_.detach(type, detail::persistence_on_detach(*this));
+  store_.detach(type);
 }
 
 void persistence::create()
@@ -83,11 +83,4 @@ const connection &persistence::conn() const {
   return connection_;
 }
 
-namespace detail {
-void persistence_on_detach::operator()(prototype_node *node) const
-{
-
-}
-
-}
 }

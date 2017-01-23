@@ -5,18 +5,25 @@
 
 namespace oos {
 
-class persistence_observer : public object_store_observer
+template < class T >
+class persistence_observer : public object_store_observer<T>
 {
 public:
-  void on_attach(prototype_node *node) override;
+  void on_attach(prototype_node *node, T *proto) override
+  {
 
-  void on_detach(prototype_node *node) override;
+  }
 
-  void on_insert(object_proxy *proxy) override;
+  void on_detach(prototype_node *node, T *proto) override
+  {
 
-  void on_update(object_proxy *proxy) override;
+  }
 
-  void on_delete(object_proxy *proxy) override;
+  void on_insert(object_proxy *proxy) override {}
+
+  void on_update(object_proxy *proxy) override {}
+
+  void on_delete(object_proxy *proxy) override {}
 
 };
 

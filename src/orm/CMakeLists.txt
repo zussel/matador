@@ -1,7 +1,7 @@
 SET(SOURCES
   persistence.cpp
   session.cpp
-  basic_table.cpp persistence_observer.cpp)
+  basic_table.cpp)
 
 SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/orm/persistence.hpp

@@ -285,22 +285,6 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
   return seq_.exchange_sequencer(seq);
 }
 
-void object_store::register_observer(object_store_observer *observer)
-{
-  if (std::find(observers_.begin(), observers_.end(), observer) == observers_.end()) {
-    observers_.push_back(observer);
-  }
-}
-
-void object_store::unregister_observer(object_store_observer *observer)
-{
-  auto i = std::find(observers_.begin(), observers_.end(), observer);
-  if (i != observers_.end()) {
-    delete *i;
-    observers_.erase(i);
-  }
-}
-
 void object_store::notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value)
 {
   if (!is_relation_notification_enabled()) {
@@ -378,11 +362,6 @@ prototype_node* object_store::find_prototype_node(const char *type) const {
 
 prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root)
 {
-  // call observers
-  std::for_each(observers_.begin(), observers_.end(), [node](object_store_observer *observer) {
-    observer->on_detach(node);
-  });
-
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   prototype_node *next = node->next_node(node);

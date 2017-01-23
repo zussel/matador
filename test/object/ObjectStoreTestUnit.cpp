@@ -43,7 +43,6 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 //  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
   add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
-  add_test("on_attach", std::bind(&ObjectStoreTestUnit::test_on_attach, this), "test on attach callback");
 }
 
 struct basic_test_pair
@@ -1034,56 +1033,6 @@ void ObjectStoreTestUnit::test_has_many_to_many()
 
 std::vector<std::string> table_names = {};
 
-struct on_attach_base : public oos::detail::basic_on_attach
-{
-  std::string name;
-  on_attach_base() {}
-  on_attach_base(const std::string &n) : name(n) {}
-  on_attach_base& operator=(const on_attach_base &x) { name = x.name; return *this; }
-};
-
-template < class T >
-struct on_attach : public on_attach_base
-{
-  using on_attach_base::on_attach_base;
-
-  on_attach() {}
-
-  template < class V >
-  on_attach(const on_attach<V> &x) : on_attach_base(x.name) {}
-
-  template < class V >
-  on_attach& operator=(const on_attach<V> &x)
-  {
-    name = x.name; return *this;
-  }
-
-  void operator()(prototype_node *node) const
-  {
-    table_names.push_back(node->type());
-  }
-};
-
-//template <>
-template < class T >
-struct on_attach<has_many_item<T>> : public on_attach_base
-{
-  using on_attach_base::on_attach_base;
-
-  typedef has_many_item<T> type;
-
-  template < class V >
-  on_attach(const on_attach<V> &x) : on_attach_base(x.name) {}
-
-  template < class V >
-  on_attach& operator=(const on_attach<V> &x) { name = x.name; return *this; }
-
-  void operator()(prototype_node *node) const
-  {
-    table_names.push_back(node->type());
-  }
-};
-
 void ObjectStoreTestUnit::test_belongs_to()
 {
   ostore_.attach<person>("person");
@@ -1125,17 +1074,5 @@ void ObjectStoreTestUnit::test_belongs_to()
   jane->department_.clear();
 
   UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
-}
-
-void ObjectStoreTestUnit::test_on_attach()
-{
-  ostore_.attach<book, on_attach>("book", false, nullptr);
-  ostore_.attach<book_list, on_attach>("book_list", false, nullptr);
-
-  UNIT_ASSERT_EQUAL(3UL, table_names.size(), "size must be three");
-
-  UNIT_ASSERT_EQUAL("book", table_names[0], "type must be book");
-  UNIT_ASSERT_EQUAL("book_list", table_names[1], "type must be book_list");
-  UNIT_ASSERT_EQUAL("books", table_names[2], "type must be books");
 }
 

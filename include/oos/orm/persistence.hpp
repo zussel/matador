@@ -216,141 +216,132 @@ namespace detail {
 
 /// @cond OOS_DEV
 
-struct basic_persistence_on_attach : public detail::basic_on_attach
-{
-  basic_persistence_on_attach(persistence &p) : persistence_(p) {}
-  basic_persistence_on_attach(const basic_persistence_on_attach &x) : persistence_(x.persistence_) {}
-  basic_persistence_on_attach& operator=(const basic_persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
-
-  std::reference_wrapper<persistence> persistence_;
-};
-
-template < class T >
-struct persistence_on_attach : public basic_persistence_on_attach
-{
-  using basic_persistence_on_attach::basic_persistence_on_attach;
-
-  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
-
-  template < class V >
-  persistence_on_attach(const persistence_on_attach<V> &x);
-
-  template < class V >
-  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
-
-  void operator()(prototype_node *node) const;
-};
-
-//template <>
-template < class T >
-struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_attach
-{
-  using basic_persistence_on_attach::basic_persistence_on_attach;
-
-  typedef has_many_item<T> relation_type;
-
-  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
-
-  persistence_on_attach(const persistence_on_attach &x)
-    : basic_persistence_on_attach(x)
-    , relation_(x.relation_)
-  { }
-
-  template < class V >
-  persistence_on_attach(const persistence_on_attach<V> &x);
-
-  template < class V >
-  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
-
-  void operator()(prototype_node *node) const;
-
-
-  template < class V >
-  void serialize(T &obj)
-  {
-    oos::access::serialize(*this, obj);
-  }
-
-  template < class V >
-  void serialize(const char *, identifier<V> &)
-  {
-    std::shared_ptr<basic_identifier> id(new identifier<V>);
-    id->as_value(true);
-    relation_.owner(id);
-  }
-
-  template < class V >
-  void serialize(const char*, V &) {}
-
-  template < class V >
-  void serialize(const char*, V &, size_t) {}
-
-  template < class HAS_ONE >
-  void serialize(const char*, HAS_ONE &, cascade_type) {}
-
-  template < class HAS_MANY >
-  void serialize(const char *id, HAS_MANY &, const char *owner_field, const char *item_field)
-  {
-    owner_id_column_.assign(owner_field);
-    item_id_column_.assign(item_field);
-    relation_id_.assign(id);
-  }
-
-  relation_type relation_;
-  std::string owner_type_;
-  std::string relation_id_;
-  std::string owner_id_column_;
-  std::string item_id_column_;
-};
-
-template<class T>
-template<class V>
-persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &x)
-  : basic_persistence_on_attach(x.persistence_)
-{ }
-
-template<class T>
-void persistence_on_attach<T>::operator()(prototype_node *node) const
-{
-  if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
-    return;
-  }
-  std::cout << "node type: " << node->type() << "\n";
-  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node, persistence_)));
-}
-
-template<class T>
-template<class V>
-persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence_on_attach<V> &x)
-  : basic_persistence_on_attach(x.persistence_)
-{
-  V owner;
-  owner_type_ = persistence_.get().store().find(typeid(V).name())->type();
-  oos::access::serialize(*this, owner);
-}
-
-//template <>
-template <class T>
-void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) const
-{
-  if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
-    return;
-  }
-  std::cout << "node relation type: " << node->type() << "\n";
-  persistence_.get().tables_.insert(std::make_pair(
-    node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
-      node, persistence_, relation_, owner_type_, relation_id_, owner_id_column_, item_id_column_
-    )));
-}
-
-struct persistence_on_detach : public basic_persistence_on_attach
-{
-  using basic_persistence_on_attach::basic_persistence_on_attach;
-
-  persistence_on_detach(persistence &p) : basic_persistence_on_attach(p) {}
-
-  void operator()(prototype_node *node) const;
-};
+//struct basic_persistence_on_attach : public detail::basic_on_attach
+//{
+//  basic_persistence_on_attach(persistence &p) : persistence_(p) {}
+//  basic_persistence_on_attach(const basic_persistence_on_attach &x) : persistence_(x.persistence_) {}
+//  basic_persistence_on_attach& operator=(const basic_persistence_on_attach &x) { persistence_ = x.persistence_; return *this; }
+//
+//  std::reference_wrapper<persistence> persistence_;
+//};
+//
+//template < class T >
+//struct persistence_on_attach : public basic_persistence_on_attach
+//{
+//  using basic_persistence_on_attach::basic_persistence_on_attach;
+//
+//  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
+//
+//  template < class V >
+//  persistence_on_attach(const persistence_on_attach<V> &x);
+//
+//  template < class V >
+//  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
+//
+//  void operator()(prototype_node *node) const;
+//};
+//
+////template <>
+//template < class T >
+//struct persistence_on_attach<has_many_item<T>> : public basic_persistence_on_attach
+//{
+//  using basic_persistence_on_attach::basic_persistence_on_attach;
+//
+//  typedef has_many_item<T> relation_type;
+//
+//  persistence_on_attach(persistence &p) : basic_persistence_on_attach(p) {}
+//
+//  persistence_on_attach(const persistence_on_attach &x)
+//    : basic_persistence_on_attach(x)
+//    , relation_(x.relation_)
+//  { }
+//
+//  template < class V >
+//  persistence_on_attach(const persistence_on_attach<V> &x);
+//
+//  template < class V >
+//  persistence_on_attach& operator=(const persistence_on_attach<V> &x) { persistence_ = x.persistence_; return *this; }
+//
+//  void operator()(prototype_node *node) const;
+//
+//
+//  template < class V >
+//  void serialize(T &obj)
+//  {
+//    oos::access::serialize(*this, obj);
+//  }
+//
+//  template < class V >
+//  void serialize(const char *, identifier<V> &)
+//  {
+//    std::shared_ptr<basic_identifier> id(new identifier<V>);
+//    id->as_value(true);
+//    relation_.owner(id);
+//  }
+//
+//  template < class V >
+//  void serialize(const char*, V &) {}
+//
+//  template < class V >
+//  void serialize(const char*, V &, size_t) {}
+//
+//  template < class HAS_ONE >
+//  void serialize(const char*, HAS_ONE &, cascade_type) {}
+//
+//  template < class HAS_MANY >
+//  void serialize(const char *id, HAS_MANY &, const char *owner_field, const char *item_field)
+//  {
+//    owner_id_column_.assign(owner_field);
+//    item_id_column_.assign(item_field);
+//    relation_id_.assign(id);
+//  }
+//
+//  relation_type relation_;
+//  std::string owner_type_;
+//  std::string relation_id_;
+//  std::string owner_id_column_;
+//  std::string item_id_column_;
+//};
+//
+//template<class T>
+//template<class V>
+//persistence_on_attach<T>::persistence_on_attach(const persistence_on_attach<V> &x)
+//  : basic_persistence_on_attach(x.persistence_)
+//{ }
+//
+//template<class T>
+//void persistence_on_attach<T>::operator()(prototype_node *node) const
+//{
+//  if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
+//    return;
+//  }
+//  std::cout << "node type: " << node->type() << "\n";
+//  persistence_.get().tables_.insert(std::make_pair(node->type(), std::make_shared<table<T>>(node, persistence_)));
+//}
+//
+//template<class T>
+//template<class V>
+//persistence_on_attach<has_many_item<T>>::persistence_on_attach(const persistence_on_attach<V> &x)
+//  : basic_persistence_on_attach(x.persistence_)
+//{
+//  V owner;
+//  owner_type_ = persistence_.get().store().find(typeid(V).name())->type();
+//  oos::access::serialize(*this, owner);
+//}
+//
+////template <>
+//template <class T>
+//void persistence_on_attach<has_many_item<T>>::operator()(prototype_node *node) const
+//{
+//  if (persistence_.get().tables_.find(node->type()) != persistence_.get().tables_.end()) {
+//    return;
+//  }
+//  std::cout << "node relation type: " << node->type() << "\n";
+//  persistence_.get().tables_.insert(std::make_pair(
+//    node->type(), std::make_shared<relation_table<typename relation_type::object_type>>(
+//      node, persistence_, relation_, owner_type_, relation_id_, owner_id_column_, item_id_column_
+//    )));
+//}
 
 /// @endcond
 

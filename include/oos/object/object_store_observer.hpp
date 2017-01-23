@@ -24,7 +24,16 @@ class object_proxy;
 class prototype_node;
 
 /**
+ * Base class for all object store observer
+ */
+struct basic_object_store_observer
+{
+  virtual ~basic_object_store_observer() {}
+};
+
+/**
  * @class object_store_observer
+ * @tparam T Type of the object store observer
  * @brief Base class for object observer classes
  * 
  * When interested to observe
@@ -37,10 +46,10 @@ class prototype_node;
  * registered with object store.
  * Use this class as base class for all observer classes.
  */
-class object_store_observer
+template < class T >
+class object_store_observer : public basic_object_store_observer
 {
 public:
-  virtual ~object_store_observer() {}
 
   /**
    * @brief Called on prototype_node attach
@@ -50,7 +59,7 @@ public:
    *
    * @param node The attached prototype node
    */
-  virtual void on_attach(prototype_node *node) = 0;
+  virtual void on_attach(prototype_node *node, T *prototype) = 0;
 
   /**
    * @brief Called on prototype_node detach
@@ -60,7 +69,7 @@ public:
    *
    * @param node The to be detached prototype node
    */
-  virtual void on_detach(prototype_node *node) = 0;
+  virtual void on_detach(prototype_node *node, T *prototype) = 0;
 
   /**
    * @brief Called on object insertion.

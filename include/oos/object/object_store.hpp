@@ -138,7 +138,7 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-  template< class T >
+  template< class T, template < class V = T > class ... O >
   prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   /**
@@ -154,7 +154,7 @@ public:
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
-  template<class T, class S >
+  template<class T, class S, template < class V = T > class ... O >
   prototype_iterator attach(const char *type, bool abstract = false);
 
   /**
@@ -443,11 +443,6 @@ public:
     // insert element into hash map for fast lookup
     object_map_.insert(std::make_pair(proxy->id(), proxy));
 
-    // call observers
-    std::for_each(observers_.begin(), observers_.end(), [proxy](object_store_observer *observer) {
-      observer->on_insert(proxy);
-    });
-
     return proxy;
   }
 
@@ -538,11 +533,6 @@ public:
       }
 
       proxy->node()->remove(proxy);
-
-      // call observers
-      std::for_each(observers_.begin(), observers_.end(), [proxy](object_store_observer *observer) {
-        observer->on_delete(proxy);
-      });
 
       if (notify && !transactions_.empty()) {
         // notify transaction
@@ -661,9 +651,6 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  void register_observer(object_store_observer *observer);
-  void unregister_observer(object_store_observer *observer);
-
   void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
   void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
   void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
@@ -690,14 +677,14 @@ private:
 
 
 private:
-  template < class T, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
-  prototype_iterator attach(const char *id, abstract_has_many *container)
-  {
-    temp_container_ = container;
-    prototype_iterator i = attach<T>(id);
-    temp_container_ = nullptr;
-    return i;
-  }
+//  template < class T, template < class V = T > class ... O, typename = typename std::enable_if< std::is_same<T, has_many_item<typename T::value_type>>::value >::type >
+//  prototype_iterator attach(const char *id, abstract_has_many *container)
+//  {
+//    temp_container_ = container;
+//    prototype_iterator i = attach<T, O...>(id);
+//    temp_container_ = nullptr;
+//    return i;
+//  }
 
   /**
    * Clears a prototype_node and its
@@ -811,9 +798,6 @@ private:
 
   sequencer seq_;
 
-  typedef std::list<object_store_observer *> t_observer_list;
-  t_observer_list observers_;
-
   detail::object_deleter object_deleter_;
   detail::object_inserter object_inserter_;
 
@@ -826,7 +810,7 @@ private:
   bool relation_notification_ = true;
 };
 
-template <class T >
+template <class T, template < class V = T > class ... O >
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
   // set node to root node
@@ -863,23 +847,13 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
   typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
 
-  // call observers
-  std::for_each(observers_.begin(), observers_.end(), [node](object_store_observer *observer) {
-    observer->on_attach(node);
-  });
-
-  // call observers
-  std::for_each(observers_.begin(), observers_.end(), [node](object_store_observer *observer) {
-    observer->on_attach(node);
-  });
-
   return initialize<T>(node);
 }
 
-template<class T, class S >
+template<class T, class S, template < class V = T > class ... O >
 object_store::iterator object_store::attach(const char *type, bool abstract)
 {
-  return attach<T>(type, abstract, typeid(S).name());
+  return attach<T, O...>(type, abstract, typeid(S).name());
 }
 
 template<class T>
@@ -897,7 +871,7 @@ prototype_iterator object_store::prepare_attach(bool abstract, const char *paren
     return prototype_iterator(i->second);
   }
 
-  std::unique_ptr<prototype_node> node(new prototype_node(this, "", typeid(T), abstract));
+  std::unique_ptr<prototype_node> node(new prototype_node(this, "", new T, typeid(T), abstract));
 
   node->initialize(this, "", abstract);
 
@@ -957,7 +931,7 @@ prototype_node *object_store::acquire(const char *type, bool abstract)
     /* insert new prototype and add to
      * typeid map
      */
-    node = new prototype_node(this, type, typeid(T), abstract);
+    node = new prototype_node(this, type, new T, typeid(T), abstract);
   }
   return node;
 }
