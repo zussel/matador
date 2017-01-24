@@ -26,9 +26,20 @@ class prototype_node;
 /**
  * Base class for all object store observer
  */
-struct basic_object_store_observer
+class basic_object_store_observer
 {
+protected:
+  basic_object_store_observer(const std::type_index &tindex)
+  : type_index_(tindex)
+  {}
+
+public:
   virtual ~basic_object_store_observer() {}
+
+  const std::type_index& index() const { return type_index_; }
+
+private:
+  std::type_index type_index_;
 };
 
 /**
@@ -51,6 +62,8 @@ class object_store_observer : public basic_object_store_observer
 {
 public:
 
+  object_store_observer() : basic_object_store_observer(std::type_index(typeid(T))) {}
+
   /**
    * @brief Called on prototype_node attach
    *
@@ -59,7 +72,7 @@ public:
    *
    * @param node The attached prototype node
    */
-  virtual void on_attach(prototype_node *node, T *prototype) = 0;
+  virtual void on_attach(prototype_node &node, T &prototype) = 0;
 
   /**
    * @brief Called on prototype_node detach
@@ -69,7 +82,7 @@ public:
    *
    * @param node The to be detached prototype node
    */
-  virtual void on_detach(prototype_node *node, T *prototype) = 0;
+  virtual void on_detach(prototype_node &node, T &prototype) = 0;
 
   /**
    * @brief Called on object insertion.
@@ -79,7 +92,7 @@ public:
    * 
    * @param proxy The proxy of the inserted object.
    */
-  virtual void on_insert(object_proxy *proxy) = 0;
+  virtual void on_insert(object_proxy &proxy) = 0;
 
   /**
    * @brief Called on object update.
@@ -89,7 +102,7 @@ public:
    * 
    * @param proxy The proxy of the updated object.
    */
-  virtual void on_update(object_proxy *proxy) = 0;
+  virtual void on_update(object_proxy &proxy) = 0;
 
   /**
    * @brief Called on object deletion.
@@ -99,7 +112,7 @@ public:
    * 
    * @param proxy The proxy of the deleted object.
    */
-  virtual void on_delete(object_proxy *proxy) = 0;
+  virtual void on_delete(object_proxy &proxy) = 0;
 };
 
 }

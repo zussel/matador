@@ -43,6 +43,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
 //  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
   add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
+  add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
 }
 
 struct basic_test_pair
@@ -77,16 +78,7 @@ struct test_pair<char*> : public basic_test_pair
   size_t size;
 };
 
-void
-ObjectStoreTestUnit::initialize()
-{
-  ostore_.attach<Item>("item");
-  ostore_.attach<ObjectItem<Item> >("object_item");
-  ostore_.attach<ObjectItemList>("object_item_ptr_list");
-}
-
-void
-ObjectStoreTestUnit::finalize()
+void ObjectStoreTestUnit::finalize()
 {
   ostore_.clear(true);
 }
@@ -99,8 +91,7 @@ struct item_counter : public std::unary_function<const object_ptr<ObjectItem<Ite
   int &count;
 };
 
-void
-ObjectStoreTestUnit::test_version()
+void ObjectStoreTestUnit::test_version()
 {
   std::string version("0.5.0");
   
@@ -114,6 +105,8 @@ ObjectStoreTestUnit::test_version()
 
 void ObjectStoreTestUnit::test_optr()
 {
+  ostore_.attach<Item>("item");
+
   typedef object_ptr<Item> item_ptr;
 
   item_ptr item_null;
@@ -129,9 +122,12 @@ void ObjectStoreTestUnit::test_optr()
   UNIT_ASSERT_NOT_NULL(item.store(), "item must be internal");
 }
 
-void
-ObjectStoreTestUnit::test_expression()
+void ObjectStoreTestUnit::test_expression()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+  ostore_.attach<ObjectItemList>("object_item_ptr_list");
+
   typedef object_ptr<ObjectItem<Item> > object_item_ptr;
   typedef object_ptr<Item> item_ptr;
   typedef object_ptr<ObjectItemList> itemlist_ptr;
@@ -203,8 +199,7 @@ ObjectStoreTestUnit::test_expression()
   UNIT_ASSERT_EQUAL((*j)->get_string(), "ObjectItem", "couldn't find item 'ObjectItem'");
 }
 
-void
-ObjectStoreTestUnit::test_serializer()
+void ObjectStoreTestUnit::test_serializer()
 {  
   char c = 'c';
   float f = 1.55f;
@@ -309,6 +304,9 @@ void ObjectStoreTestUnit::test_identifier_serializer()
 
 void ObjectStoreTestUnit::test_reference_counter()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   Item *i = new Item("Item", 7);
   
   typedef object_ptr<Item> item_ptr;
@@ -339,8 +337,7 @@ void ObjectStoreTestUnit::test_reference_counter()
 }
 
 
-void
-ObjectStoreTestUnit::test_set()
+void ObjectStoreTestUnit::test_set()
 {
   oos::date dt(15, 9, 1972);
   oos::time t(2008, 12, 27, 13, 6, 57, 4711);
@@ -390,8 +387,7 @@ ObjectStoreTestUnit::test_set()
 //  UNIT_ASSERT_EQUAL("elefant", i.get_string(), "invalid value");
 }
 
-void
-ObjectStoreTestUnit::test_get()
+void ObjectStoreTestUnit::test_get()
 {
   test_pair<char> c('c');
   test_pair<bool> b(true);
@@ -459,9 +455,10 @@ ObjectStoreTestUnit::test_get()
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "invalid value");
 }
 
-void
-ObjectStoreTestUnit::test_simple_object()
+void ObjectStoreTestUnit::test_simple_object()
 {
+  ostore_.attach<Item>("item");
+
   Item *a = ostore_.create<Item>();
   
   UNIT_ASSERT_NOT_NULL(a, "couldn't create object of type <Item>");
@@ -477,9 +474,11 @@ ObjectStoreTestUnit::test_simple_object()
   ostore_.remove(simple);
 }
 
-void
-ObjectStoreTestUnit::test_object_with_sub_object()
+void ObjectStoreTestUnit::test_object_with_sub_object()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   ObjectItem<Item> *s = ostore_.create<ObjectItem<Item>>();
   
   UNIT_ASSERT_NOT_NULL(s, "couldn't create object of type <ObjectItem>");
@@ -500,9 +499,10 @@ ObjectStoreTestUnit::test_object_with_sub_object()
   ostore_.remove(ows);
 }
 
-void
-ObjectStoreTestUnit::test_multiple_simple_objects()
+void ObjectStoreTestUnit::test_multiple_simple_objects()
 {
+  ostore_.attach<Item>("item");
+
   typedef object_ptr<Item> item_ptr;
 
   size_t elem_size = 10;
@@ -521,9 +521,11 @@ ObjectStoreTestUnit::test_multiple_simple_objects()
   UNIT_ASSERT_EQUAL(elem_size, simple_view.size(), "expected size of view isn't 10");
 }
 
-void
-ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
+void ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef object_ptr<ObjectItem<Item> > ows_ptr;
     
   // create 10 objects
@@ -542,9 +544,11 @@ ObjectStoreTestUnit::test_multiple_object_with_sub_objects()
   UNIT_ASSERT_EQUAL(elem_size, withsub_view.size(), "expected size of view isn't 10");
 }
 
-void
-ObjectStoreTestUnit::test_delete_object()
+void ObjectStoreTestUnit::test_delete_object()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef ObjectItem<Item> TestItem;
   typedef object_ptr<TestItem> test_item_ptr;
   typedef object_ptr<Item> item_ptr;
@@ -575,9 +579,9 @@ ObjectStoreTestUnit::test_delete_object()
   ostore_.remove(item);
 }
 
-void
-ObjectStoreTestUnit::test_hierarchy()
+void ObjectStoreTestUnit::test_hierarchy()
 {
+  ostore_.attach<Item>("item");
   ostore_.attach<ItemA, Item>("ITEM_A");
   ostore_.attach<ItemB, Item>("ITEM_B");
   ostore_.attach<ItemC, Item>("ITEM_C");
@@ -671,9 +675,10 @@ ObjectStoreTestUnit::test_hierarchy()
   }
 }
 
-void
-ObjectStoreTestUnit::test_view()
+void ObjectStoreTestUnit::test_view()
 {
+  ostore_.attach<Item>("item");
+
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
     str << "Item " << i+1;
@@ -697,9 +702,10 @@ ObjectStoreTestUnit::test_view()
   UNIT_ASSERT_GREATER(item->id(), 0UL, "invalid item");
 }
 
-void
-ObjectStoreTestUnit::test_clear()
+void ObjectStoreTestUnit::test_clear()
 {
+  ostore_.attach<Item>("item");
+
   for (int i = 0; i < 10; ++i) {
     std::stringstream str;
     str << "Item " << i+1;
@@ -733,8 +739,7 @@ ObjectStoreTestUnit::test_clear()
   UNIT_ASSERT_TRUE(first == last, "prototype iterator must be the same");
 }
 
-void
-ObjectStoreTestUnit::test_generic()
+void ObjectStoreTestUnit::test_generic()
 {
   test_pair<char> c('c');
   test_pair<bool> b(true);
@@ -861,6 +866,9 @@ ObjectStoreTestUnit::test_generic()
 
 void ObjectStoreTestUnit::test_structure()
 {
+  ostore_.attach<Item>("item");
+  ostore_.attach<ObjectItem<Item> >("object_item");
+
   typedef ObjectItem<Item> object_item_t;
   typedef object_ptr<object_item_t> object_item_ptr;
   typedef object_ptr<Item> item_ptr;
@@ -961,6 +969,8 @@ void ObjectStoreTestUnit::test_structure_container()
 
 void ObjectStoreTestUnit::test_transient_optr()
 {
+  ostore_.attach<Item>("item");
+
   typedef object_ptr<Item> item_ptr;
 
   item_ptr item(new Item("item", 5));
@@ -972,6 +982,8 @@ void ObjectStoreTestUnit::test_transient_optr()
 
 void ObjectStoreTestUnit::test_insert()
 {
+  ostore_.attach<Item>("item");
+
   UNIT_ASSERT_EXCEPTION(ostore_.insert((Item *)nullptr), object_exception, "object is null", "null shouldn't be insertable");
 
   std::unique_ptr<ItemC> ic(new ItemC);
@@ -984,6 +996,8 @@ void ObjectStoreTestUnit::test_insert()
 
 void ObjectStoreTestUnit::test_remove()
 {
+  ostore_.attach<Item>("item");
+
   typedef object_ptr<Item> item_ptr;
 
   item_ptr item;
@@ -1031,8 +1045,6 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
 }
 
-std::vector<std::string> table_names = {};
-
 void ObjectStoreTestUnit::test_belongs_to()
 {
   ostore_.attach<person>("person");
@@ -1076,3 +1088,40 @@ void ObjectStoreTestUnit::test_belongs_to()
   UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 }
 
+template < class T >
+struct logger : public object_store_observer<T>
+{
+  void on_attach(prototype_node &node, T &) override
+  {
+    std::cout << "attaching node " << node.type() << "\n";
+  }
+
+  void on_detach(prototype_node &node, T &) override
+  {
+    std::cout << "detaching node " << node.type() << "\n";
+  }
+
+  void on_insert(object_proxy &proxy) override
+  {
+    std::cout << "inserting proxy " << &proxy << "\n";
+  }
+
+  void on_update(object_proxy &proxy) override
+  {
+    std::cout << "updating proxy " << &proxy << "\n";
+  }
+
+  void on_delete(object_proxy &proxy) override
+  {
+    std::cout << "deleting proxy " << &proxy << "\n";
+  }
+};
+
+void ObjectStoreTestUnit::test_observer()
+{
+  ostore_.attach<person>("person", new logger<person>);
+  ostore_.attach<employee, person>("employee", new logger<employee>);
+  ostore_.attach<department>("department", new logger<department>);
+  ostore_.attach<book>("book", new logger<book>);
+  ostore_.attach<book_list>("book_list", new logger<book_list>);
+}

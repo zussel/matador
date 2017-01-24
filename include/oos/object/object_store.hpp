@@ -138,8 +138,14 @@ public:
    * @param parent   The name of the parent type.
    * @return         Returns new inserted prototype iterator.
    */
-  template< class T, template < class V = T > class ... O >
-  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
+//  template< class T, template < class V = T > class ... O >
+//  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
+
+  template <class T, template < class V = T > class ... O >
+  prototype_iterator attach(const char *type, O<T>*... observer);
+
+  template <class T, template < class V = T > class ... O >
+  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, O<T>*... observer);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -154,8 +160,14 @@ public:
    * @param abstract Indicates if the producers serializable is treated as an abstract node.
    * @return         Returns new inserted prototype iterator.
    */
+//  template<class T, class S, template < class V = T > class ... O >
+//  prototype_iterator attach(const char *type, bool abstract = false);
+
   template<class T, class S, template < class V = T > class ... O >
-  prototype_iterator attach(const char *type, bool abstract = false);
+  prototype_iterator attach(const char *type, O<T>*... observer);
+
+  template<class T, class S, template < class V = T > class ... O >
+  prototype_iterator attach(const char *type, bool abstract = false, O<T>*... observer);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -756,17 +768,6 @@ private:
   template<class T>
   prototype_node *acquire(const char *type, bool abstract);
 
-  /**
-   * Initializes a prototype node
-   *
-   * @param node The node to initialize
-   * @return iterator representing the prototype node
-   */
-  template< class T >
-  iterator initialize(prototype_node *node);
-
-//  object_proxy *initialze_proxy(object_proxy *oproxy, prototype_iterator &node, bool notify);
-
   prototype_node* find_parent(const char *name) const;
 
   void push_transaction(const transaction &tr);
@@ -775,6 +776,22 @@ private:
   bool is_relation_notification_enabled();
   void enable_relation_notification();
   void disable_relation_notification();
+
+  template< class T >
+  void create_observer(prototype_node *) {}
+
+  template< class T, template < class V = T > class HEAD >
+  void create_observer(prototype_node *node, HEAD<T>* observer)
+  {
+    node->register_observer(observer);
+  }
+
+  template< class T, template < class V = T > class HEAD, template < class V = T > class ... TAIL >
+  void create_observer(prototype_node *node, HEAD<T>* observer, TAIL<T>*... observer_list)
+  {
+    node->register_observer(observer);
+    create_observer<T>(node, observer_list...);
+  }
 
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
@@ -811,7 +828,13 @@ private:
 };
 
 template <class T, template < class V = T > class ... O >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
+object_store::iterator object_store::attach(const char *type, O<T>*... observer)
+{
+  return attach<T>(type, false, nullptr, observer...);
+}
+
+template <class T, template < class V = T > class ... O >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, O<T>*... observer)
 {
   // set node to root node
   prototype_node *parent_node = find_parent(parent);
@@ -842,18 +865,39 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
     }
   }
 
+  create_observer<T>(node, observer...);
+
   // store prototype in map
   // Todo: check return value
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
   typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
 
-  return initialize<T>(node);
+  // Check if nodes serializable has 'to-many' relations
+  // Analyze primary and foreign keys of node
+  detail::node_analyzer<T, O...> analyzer(*node, observer...);
+  analyzer.analyze();
+
+  node->on_attach();
+
+  return prototype_iterator(node);
+}
+
+//template<class T, class S, template < class V = T > class ... O >
+//object_store::iterator object_store::attach(const char *type, bool abstract, O<T>*... observer)
+//{
+//  return iterator();
+//}
+
+template<class T, class S, template < class V = T > class ... O >
+object_store::iterator object_store::attach(const char *type, O<T>*... observer)
+{
+  return attach<T, S>(type, false, observer...);
 }
 
 template<class T, class S, template < class V = T > class ... O >
-object_store::iterator object_store::attach(const char *type, bool abstract)
+object_store::iterator object_store::attach(const char *type, bool abstract, O<T>*... observer)
 {
-  return attach<T, O...>(type, abstract, typeid(S).name());
+  return attach<T>(type, abstract, typeid(S).name(), observer...);
 }
 
 template<class T>
@@ -934,17 +978,6 @@ prototype_node *object_store::acquire(const char *type, bool abstract)
     node = new prototype_node(this, type, new T, typeid(T), abstract);
   }
   return node;
-}
-
-template<class T>
-object_store::iterator object_store::initialize(prototype_node *node)
-{
-  // Check if nodes serializable has 'to-many' relations
-  // Analyze primary and foreign keys of node
-  detail::node_analyzer<T> analyzer(*node);
-  analyzer.analyze();
-
-  return prototype_iterator(node);
 }
 
 namespace detail {

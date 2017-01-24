@@ -31,7 +31,9 @@ prototype_node::prototype_node()
 
 prototype_node::~prototype_node()
 {
-  deleter_(prototype, observer_list);
+  if (deleter_) {
+    deleter_(prototype, observer_list);
+  }
 }
 
 void prototype_node::initialize(object_store *tree, const char *type, bool abstract)

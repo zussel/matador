@@ -49,6 +49,8 @@ void object_store::detach(const char *type)
     throw object_exception("unknown prototype type");
   }
 
+  node->on_detach();
+
   remove_prototype_node(node, node->depth == 0);
 }
 
@@ -57,6 +59,8 @@ object_store::iterator object_store::detach(const prototype_iterator &i)
   if (i == end() || i.get() == nullptr) {
     throw object_exception("invalid prototype iterator");
   }
+
+  i->on_detach();
 
   return remove_prototype_node(i.get(), i->depth == 0);
 }

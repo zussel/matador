@@ -24,22 +24,12 @@
 
 #include "oos/orm/table.hpp"
 #include "oos/orm/relation_table.hpp"
+#include "oos/orm/persistence_observer.hpp"
 
 #include <memory>
 #include <unordered_map>
 
 namespace oos {
-
-namespace detail {
-
-/// @cond OOS_DEV
-
-template < class T >
-struct persistence_on_attach;
-
-/// @endcond
-
-}
 
 /**
  * @brief Represents the persistence layer for a database and an object_store
@@ -68,6 +58,7 @@ public:
    * @param dns The database connection string
    */
   explicit persistence(const std::string &dns);
+
   ~persistence();
 
   /**
@@ -116,7 +107,7 @@ public:
    * @tparam T entity type class
    * @return True if table exists
    */
-  template < class T >
+  template<class T>
   bool exists()
   {
     t_table_map::iterator i = tables_.find(store_.type<T>());
@@ -178,32 +169,33 @@ public:
    *
    * @return A reference to the object_store.
    */
-  object_store& store();
+  object_store &store();
 
   /**
    * @brief Return a const reference to the underlaying object_store
    *
    * @return A const reference to the object_store.
    */
-  const object_store& store() const;
+  const object_store &store() const;
 
   /**
    * @brief Return a reference to the underlaying database connection
    *
    * @return A reference to the database connection.
    */
-  connection& conn();
+  connection &conn();
 
   /**
    * @brief Return a const reference to the underlaying database connection
    *
    * @return A const reference to the database connection.
    */
-  const connection& conn() const;
+  const connection &conn() const;
 
 private:
-  template < class T >
-  friend struct detail::persistence_on_attach;
+  template<class T>
+  friend
+  class persistence_observer;
 
 private:
   connection connection_;
@@ -346,17 +338,22 @@ namespace detail {
 /// @endcond
 
 }
+}
+
+#include "oos/orm/persistence_observer.tpp"
+
+namespace oos {
 
 template<class T>
 void persistence::attach(const char *type, bool abstract, const char *parent)
 {
-  store_.attach<T>(type, abstract, parent);
+  store_.attach<T>(type, abstract, parent, new persistence_observer<T>(*this));
 }
 
 template<class T, class S>
 void persistence::attach(const char *type, bool abstract)
 {
-  store_.attach<T,S>(type, abstract);
+  store_.attach<T,S>(type, abstract, new persistence_observer<T>(*this));
 }
 
 }

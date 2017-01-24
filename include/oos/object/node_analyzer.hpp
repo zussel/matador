@@ -11,11 +11,11 @@ class prototype_node;
 
 namespace detail {
 
-template < class T >
+template < class T, template < class V = T > class ... O >
 class node_analyzer {
 public:
-  explicit node_analyzer(prototype_node &node)
-    : node_(node)
+  explicit node_analyzer(prototype_node &node, O<T>*... observer)
+    : node_(node), observer_(observer...)
   { }
 
   ~node_analyzer() { }
@@ -40,7 +40,12 @@ public:
                  typename std::enable_if<std::is_scalar<V>::value>::type* = 0);
 
 private:
+  template < class IT, std::size_t... Is >
+  prototype_iterator attach(object_store &store, const char *id, const std::tuple<O<T>*...>& tuple, std::index_sequence<Is...>);
+
+private:
   prototype_node &node_;
+  std::tuple<O<T>*...> observer_;
 };
 
 }

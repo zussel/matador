@@ -13,7 +13,6 @@ class ObjectStoreTestUnit : public oos::unit_test
 public:
   ObjectStoreTestUnit();
 
-  virtual void initialize();
   virtual void finalize();
   
   void test_version();
@@ -43,7 +42,7 @@ public:
   void test_has_many();
   void test_has_many_to_many();
   void test_belongs_to();
-  void test_on_attach();
+  void test_observer();
 
 private:
   oos::object_store ostore_;
