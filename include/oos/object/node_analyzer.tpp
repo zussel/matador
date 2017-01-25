@@ -7,8 +7,8 @@ namespace oos {
 namespace detail {
 
 
-template<class T, template < class V = T > class ... O>
-void node_analyzer<T, O...>::analyze()
+template<class T, template < class U = T > class O>
+void node_analyzer<T, O>::analyze()
 {
 //  std::cout << "START analyzing " << node_.type() << "\n";
   T obj;
@@ -16,16 +16,16 @@ void node_analyzer<T, O...>::analyze()
 //  std::cout << "FINISHED analyzing " << node_.type() << "\n";
 }
 
-template<class T, template < class V = T > class ... O>
+template<class T, template < class U = T > class O>
 template<class V>
-void node_analyzer<T, O...>::serialize(V &x)
+void node_analyzer<T, O>::serialize(V &x)
 {
   oos::access::serialize(*this, x);
 }
 
-template<class T, template < class V = T > class ... O>
+template<class T, template < class U = T > class O>
 template<class V>
-void node_analyzer<T, O...>::serialize(const char *id, belongs_to <V> &x, cascade_type)
+void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_type)
 {
 //  std::cout << "analyzing belongs_to field " << id << " (typeid: " << typeid(V).name() << ")\n";
   prototype_iterator node = node_.tree()->find(x.type());
@@ -55,9 +55,9 @@ void node_analyzer<T, O...>::serialize(const char *id, belongs_to <V> &x, cascad
   }, node.get()));
 }
 
-template<class T, template < class V = T > class ... O>
+template<class T, template < class U = T > class O>
 template<class V>
-void node_analyzer<T, O...>::serialize(const char *, has_one <V> &x, cascade_type)
+void node_analyzer<T, O>::serialize(const char *, has_one <V> &x, cascade_type)
 {
 //  std::cout << "analyzing has_one field " << id << " (typeid: " << typeid(V).name() << ")\n";
   prototype_iterator node = node_.tree()->find(x.type());
@@ -70,9 +70,9 @@ void node_analyzer<T, O...>::serialize(const char *, has_one <V> &x, cascade_typ
   }
 }
 
-template<class T, template < class V = T > class ... O>
+template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
                                             typename std::enable_if<!std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -81,7 +81,7 @@ void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const 
   // false: attach it
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
-    pi = this->attach<typename has_many<V, C>::item_type>(*node_.tree(), id, observer_, std::index_sequence_for<O<T>*...>());
+    pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr, observer_);
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
@@ -103,9 +103,9 @@ void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const 
   }
 }
 
-template<class T, template < class V = T > class ... O>
+template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
                                             typename std::enable_if<std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -114,7 +114,7 @@ void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const 
   // false: attach it
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
-    pi = this->attach<typename has_many<V, C>::item_type>(*node_.tree(), id, observer_, std::index_sequence_for<O<T>*...>());
+    pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr, observer_);
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
@@ -123,13 +123,6 @@ void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const 
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());
   }
-}
-
-template<class T, template < class V = T > class ... O>
-template<class IT, std::size_t... Is>
-prototype_iterator node_analyzer<T, O...>::attach(object_store &store, const char *id, const std::tuple<O<T>*...>& observer, std::index_sequence<Is...>)
-{
-  return store.template attach<IT>(id, false, nullptr, std::get<Is>(observer)...);
 }
 
 }
