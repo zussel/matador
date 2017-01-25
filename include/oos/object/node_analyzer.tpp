@@ -37,7 +37,9 @@ void node_analyzer<T, O...>::serialize(const char *id, belongs_to <V> &x, cascad
       // yes, node found!
       // Todo: check if node is for has many item
       // detach has_many_item node
-      node_.tree()->detach(i->second.node);
+      if (i->second.node != nullptr) {
+        node_.tree()->detach(i->second.node);
+      }
       i->second.node = nullptr;
     }
   } else {
@@ -112,7 +114,8 @@ void node_analyzer<T, O...>::serialize(const char *id, has_many <V, C> &, const 
   // false: attach it
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
-    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
+    pi = this->attach<typename has_many<V, C>::item_type>(*node_.tree(), id, observer_, std::index_sequence_for<O<T>*...>());
+//    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");
@@ -126,8 +129,7 @@ template<class T, template < class V = T > class ... O>
 template<class IT, std::size_t... Is>
 prototype_iterator node_analyzer<T, O...>::attach(object_store &store, const char *id, const std::tuple<O<T>*...>& observer, std::index_sequence<Is...>)
 {
-  store.template attach<IT, O...>(id, false, nullptr, std::get<Is>(observer)...);
-  return prototype_iterator();
+  return store.template attach<IT>(id, false, nullptr, std::get<Is>(observer)...);
 }
 
 }

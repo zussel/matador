@@ -147,6 +147,9 @@ public:
   template <class T, template < class V = T > class ... O >
   prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr, O<T>*... observer);
 
+  template <class T >
+  object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::initializer_list<object_store_observer<T>*> &observer);
+
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
    * consists of a unique type name. To know where the new
@@ -836,6 +839,7 @@ object_store::iterator object_store::attach(const char *type, O<T>*... observer)
 template <class T, template < class V = T > class ... O >
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, O<T>*... observer)
 {
+  return attach<T>(type, abstract, parent, { observer... });
   // set node to root node
   prototype_node *parent_node = find_parent(parent);
   /*
@@ -881,6 +885,12 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 
   return prototype_iterator(node);
 }
+
+template <class T >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::initializer_list<object_store_observer<T>*> &observer)
+{
+  return iterator();
+};
 
 //template<class T, class S, template < class V = T > class ... O >
 //object_store::iterator object_store::attach(const char *type, bool abstract, O<T>*... observer)
