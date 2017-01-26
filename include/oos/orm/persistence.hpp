@@ -347,13 +347,13 @@ namespace oos {
 template<class T>
 void persistence::attach(const char *type, bool abstract, const char *parent)
 {
-  store_.attach<T>(type, abstract, parent, new persistence_observer<T>(*this));
+  store_.attach<T>(type, abstract, parent, { new persistence_observer<T>(*this) });
 }
 
 template<class T, class S>
 void persistence::attach(const char *type, bool abstract)
 {
-  store_.attach<T,S>(type, abstract, new persistence_observer<T>(*this));
+  store_.attach<T,S>(type, abstract, { new persistence_observer<T>(*this) });
 }
 
 }

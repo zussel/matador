@@ -142,10 +142,16 @@ public:
 //  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   template <class T, template < class V > class O >
-  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer = {});
+  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer);
+
+  template <class T >
+  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
   template <class T, template < class V = T > class O >
-  object_store::iterator attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer = {});
+  object_store::iterator attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer);
+
+  template <class T, template < class V = T > class O >
+  object_store::iterator attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -164,10 +170,13 @@ public:
 //  prototype_iterator attach(const char *type, bool abstract = false);
 
   template<class T, class S, template < class V = T > class O >
-  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer = {});
+  prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer);
+
+  template<class T, class S  >
+  prototype_iterator attach(const char *type, bool abstract = false);
 
   template<class T, class S, template < class V = T > class O >
-  prototype_iterator attach(const char *type, bool abstract = false, std::initializer_list<O<T>*> observer = {});
+  prototype_iterator attach(const char *type, bool abstract, std::initializer_list<O<T>*> observer);
 
   /**
    * Inserts a new object prototype into the prototype tree. The prototype
@@ -756,6 +765,9 @@ private:
    */
   prototype_node *remove_prototype_node(prototype_node *node, bool is_root);
 
+  template < class T >
+  prototype_node* attach_node(const char *type, bool abstract, const char *parent);
+
   /**
    * Get or create a prototype node
    *
@@ -776,22 +788,6 @@ private:
   bool is_relation_notification_enabled();
   void enable_relation_notification();
   void disable_relation_notification();
-
-  template< class T >
-  void create_observer(prototype_node *) {}
-
-  template< class T, template < class V = T > class HEAD >
-  void create_observer(prototype_node *node, HEAD<T>* observer)
-  {
-    node->register_observer(observer);
-  }
-
-  template< class T, template < class V = T > class HEAD, template < class V = T > class ... TAIL >
-  void create_observer(prototype_node *node, HEAD<T>* observer, TAIL<T>*... observer_list)
-  {
-    node->register_observer(observer);
-    create_observer<T>(node, observer_list...);
-  }
 
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
@@ -833,45 +829,40 @@ object_store::iterator object_store::attach(const char *type, std::initializer_l
   return attach<T>(type, false, nullptr, observer);
 }
 
-template <class T, template < class V = T > class O >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer)
+template <class T >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
-  // set node to root node
-  prototype_node *parent_node = find_parent(parent);
-  /*
-   * try to insert new prototype node
-   */
-  const char *name = typeid(T).name();
-  prototype_node *node = nullptr;
-  t_prototype_map::iterator i = prepared_prototype_map_.find(name);
-  if (i != prepared_prototype_map_.end()) {
-      // found a prepared node
-      node = i->second;
-      node->type_.assign(type);
-      prepared_prototype_map_.erase(i);
-  } else {
-      node = acquire<T>(type, abstract);
-      // insert node
-      if (parent_node != nullptr) {
-          parent_node->insert(node);
-      } else {
-          last_->prev->append(node);
-      }
-      // Analyze primary and foreign keys of node
-      basic_identifier *id = identifier_resolver<T>::resolve();
-      if (id) {
-          id->isolate();
-          node->id_.reset(id);
-      }
-  }
-
-//  create_observer<T>(node, observer...);
+  prototype_node *node = attach_node<T>(type, abstract, parent);
 
   // store prototype in map
   // Todo: check return value
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
   typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
 
+  // Check if nodes object has 'to-many' relations
+  // Analyze primary and foreign keys of node
+  detail::node_analyzer<T> analyzer(*node);
+  analyzer.analyze();
+
+  node->on_attach();
+
+  return prototype_iterator(node);
+}
+
+template <class T, template < class V = T > class O >
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer)
+{
+  return attach<T>(type, abstract, parent, std::vector<O<T>*>(observer));
+}
+
+template<class T, template<class V = T> class O>
+object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
+{
+  prototype_node *node = attach_node<T>(type, abstract, parent);
+
+  for(auto o : observer) {
+    node->register_observer(o);
+  }
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
   detail::node_analyzer<T, O> analyzer(*node, observer);
@@ -882,11 +873,50 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   return prototype_iterator(node);
 }
 
-//template<class T, class S, template < class V = T > class ... O >
-//object_store::iterator object_store::attach(const char *type, bool abstract, O<T>*... observer)
-//{
-//  return iterator();
-//}
+template < class T >
+prototype_node* object_store::attach_node(const char *type, bool abstract, const char *parent)
+{
+  // set node to root node
+  prototype_node *parent_node = find_parent(parent);
+  /*
+   * try to insert new prototype node
+   */
+  const char *name = typeid(T).name();
+  prototype_node *node = nullptr;
+  t_prototype_map::iterator i = prepared_prototype_map_.find(name);
+  if (i != prepared_prototype_map_.end()) {
+    // found a prepared node
+    node = i->second;
+    node->type_.assign(type);
+    prepared_prototype_map_.erase(i);
+  } else {
+    node = acquire<T>(type, abstract);
+    // insert node
+    if (parent_node != nullptr) {
+      parent_node->insert(node);
+    } else {
+      last_->prev->append(node);
+    }
+    // Analyze primary and foreign keys of node
+    basic_identifier *id = identifier_resolver<T>::resolve();
+    if (id) {
+      id->isolate();
+      node->id_.reset(id);
+    }
+  }
+  // store prototype in map
+  // Todo: check return value
+  prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
+  typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
+
+  return node;
+}
+
+template<class T, class S  >
+object_store::iterator object_store::attach(const char *type, bool abstract)
+{
+  return attach<T>(type, abstract, typeid(S).name());
+}
 
 template<class T, class S, template < class V = T > class O >
 object_store::iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)

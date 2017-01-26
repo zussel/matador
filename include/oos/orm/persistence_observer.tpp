@@ -3,7 +3,7 @@
 
 namespace oos {
 template<class T>
-void persistence_observer<T>::on_attach(prototype_node &node, T &proto)
+void persistence_observer<T>::on_attach(prototype_node &node, T &/*proto*/)
 {
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
@@ -14,13 +14,13 @@ void persistence_observer<T>::on_attach(prototype_node &node, T &proto)
 }
 
 template<class T>
-void persistence_observer<T>::on_detach(prototype_node &node, T &proto)
+void persistence_observer<T>::on_detach(prototype_node &node, T &)
 {
-
+  std::cout << "detach node type: " << node.type() << "\n";
 }
 
 template<class T>
-void persistence_observer<oos::has_many_item<T>>::on_attach(prototype_node &node, oos::has_many_item<T> &proto)
+void persistence_observer<oos::has_many_item<T>>::on_attach(prototype_node &node, oos::has_many_item<T> &)
 {
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
@@ -29,9 +29,9 @@ void persistence_observer<oos::has_many_item<T>>::on_attach(prototype_node &node
 }
 
 template<class T>
-void persistence_observer<oos::has_many_item<T>>::on_detach(prototype_node &node, oos::has_many_item<T> &proto)
+void persistence_observer<oos::has_many_item<T>>::on_detach(prototype_node &node, oos::has_many_item<T> &)
 {
-
+  std::cout << "detach node type: " << node.type() << "\n";
 }
 
 }

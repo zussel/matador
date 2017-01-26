@@ -12,6 +12,12 @@ template < class T >
 class persistence_observer : public object_store_observer<T>
 {
 public:
+
+  template < class V >
+  persistence_observer(const persistence_observer<V> *x)
+  : persistence_ (x->persistence_)
+  {}
+
   persistence_observer(persistence &p) : persistence_(p) {}
 
   void on_attach(prototype_node &node, T &proto) override;
@@ -22,6 +28,9 @@ public:
   void on_delete(object_proxy &) override {}
 
 private:
+  template < class V >
+  friend class persistence_observer;
+
   persistence& persistence_;
 };
 
@@ -29,7 +38,13 @@ template < class T >
 class persistence_observer<oos::has_many_item<T>> : public object_store_observer<oos::has_many_item<T>>
 {
 public:
+
   persistence_observer(persistence &p) : persistence_(p) {}
+
+  template < class V >
+  persistence_observer(const persistence_observer<V> *x)
+    : persistence_ (x->persistence_)
+  {}
 
   void on_attach(prototype_node &node, has_many_item<T> &proto) override;
   void on_detach(prototype_node &node, has_many_item<T> &proto) override;
@@ -39,6 +54,9 @@ public:
   void on_delete(object_proxy &) override {}
 
 private:
+  template < class V >
+  friend class persistence_observer;
+
   persistence& persistence_;
 };
 

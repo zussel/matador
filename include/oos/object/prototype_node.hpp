@@ -53,7 +53,7 @@ template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
 template < class T, template <class ...> class C, class Enabled >
 class has_many_deleter;
-template < class T, template < class U = T > class O >
+template < class T, template < class V = T > class O >
 class node_analyzer;
 }
 /**
