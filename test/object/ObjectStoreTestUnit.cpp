@@ -1091,6 +1091,9 @@ void ObjectStoreTestUnit::test_belongs_to()
 template < class T >
 struct logger : public object_store_observer<T>
 {
+  logger() {}
+  template < class V >
+  logger(const logger<V> *) {}
   void on_attach(prototype_node &node, T &) override
   {
     std::cout << "attaching node " << node.type() << "\n";

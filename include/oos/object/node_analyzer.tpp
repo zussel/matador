@@ -81,7 +81,10 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
   // false: attach it
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
-    std::initializer_list<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+    std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
+    for (auto o : observer_) {
+      has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
+    }
     pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
