@@ -72,7 +72,7 @@ void node_analyzer<T, O>::serialize(const char *, has_one <V> &x, cascade_type)
 
 template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
                                             typename std::enable_if<!std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -86,6 +86,11 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
       has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
     pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
+    pi->relation_node_info_.owner_type_.assign(node_.type());
+    pi->relation_node_info_.relation_id_.assign(id);
+    pi->relation_node_info_.owner_id_column_.assign(owner_column);
+    pi->relation_node_info_.item_id_column_.assign(item_column);
+    pi->is_relation_node_ = true;
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
     }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
@@ -108,7 +113,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
 
 template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
                                             typename std::enable_if<std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -122,6 +127,11 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
       has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
     pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
+    pi->relation_node_info_.owner_type_.assign(node_.type());
+    pi->relation_node_info_.relation_id_.assign(id);
+    pi->relation_node_info_.owner_id_column_.assign(owner_column);
+    pi->relation_node_info_.item_id_column_.assign(item_column);
+    pi->is_relation_node_ = true;
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");
@@ -199,7 +209,7 @@ void node_analyzer<T>::serialize(const char *, has_one <V> &x, cascade_type)
 
 template<class T>
 template<class V, template<class ...> class C>
-void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
                                  typename std::enable_if<!std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -209,6 +219,11 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
     pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr);
+    pi->relation_node_info_.owner_type_.assign(node_.type());
+    pi->relation_node_info_.relation_id_.assign(id);
+    pi->relation_node_info_.owner_id_column_.assign(owner_column);
+    pi->relation_node_info_.item_id_column_.assign(item_column);
+    pi->is_relation_node_ = true;
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
     node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
       oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
@@ -232,7 +247,7 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
 
 template<class T>
 template<class V, template<class ...> class C>
-void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *, const char *,
+void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
                                  typename std::enable_if<std::is_scalar<V>::value>::type*)
 {
   // attach relation table for has many relation
@@ -242,6 +257,11 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
   prototype_iterator pi = node_.tree()->find(id);
   if (pi == node_.tree()->end()) {
     pi = node_.tree()->attach<typename has_many<V, C>::item_type>(id, false, nullptr);
+    pi->relation_node_info_.owner_type_.assign(node_.type());
+    pi->relation_node_info_.relation_id_.assign(id);
+    pi->relation_node_info_.owner_id_column_.assign(owner_column);
+    pi->relation_node_info_.item_id_column_.assign(item_column);
+    pi->is_relation_node_ = true;
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item

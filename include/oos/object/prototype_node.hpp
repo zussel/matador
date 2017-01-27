@@ -95,6 +95,14 @@ public:
 
   typedef std::unordered_map<std::type_index, relation_info> relation_map;
 
+  struct relation_node_info
+  {
+    std::string owner_type_;
+    std::string relation_id_;
+    std::string owner_id_column_;
+    std::string item_id_column_;
+  };
+
 public:
   prototype_node();
 
