@@ -307,6 +307,22 @@ public:
   std::type_index type_index() const;
 
   /**
+   * Returns true if this node represents a relation
+   * node (has_many_item<T>).
+   *
+   * @return True if this node represents a relation node.
+   */
+  bool is_relation_node() const;
+
+  /**
+   * Returns the relation node info. This struct contains
+   * only valid data if this node represents a n relation
+   * node (has_many_item<T>).
+   * @return
+   */
+  const relation_node_info& node_info() const;
+
+  /**
    * Prints the node in graphviz layout to the stream.
    *
    * @param os The ostream to write to.
@@ -474,6 +490,9 @@ private:
   relation_map belongs_to_map_;
   relation_map has_one_map_;
   relation_map has_many_map_;
+
+  bool is_relation_node_ = false;
+  relation_node_info relation_node_info_;
 };
 
 }

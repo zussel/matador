@@ -41,10 +41,10 @@ public:
 
   persistence_observer(persistence &p) : persistence_(p) {}
 
+  typedef has_many_item<T> relation_type;
+
   template < class V >
-  persistence_observer(const persistence_observer<V> *x)
-    : persistence_ (x->persistence_)
-  {}
+  persistence_observer(const persistence_observer<V> *x);
 
   void on_attach(prototype_node &node, has_many_item<T> &proto) override;
   void on_detach(prototype_node &node, has_many_item<T> &proto) override;
@@ -58,6 +58,7 @@ private:
   friend class persistence_observer;
 
   persistence& persistence_;
+  relation_type relation_;
 };
 
 }

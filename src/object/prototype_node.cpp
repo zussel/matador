@@ -414,6 +414,16 @@ void prototype_node::adjust_right_marker(prototype_node *root, object_proxy* old
   }
 }
 
+bool prototype_node::is_relation_node() const
+{
+  return is_relation_node_;
+}
+
+const prototype_node::relation_node_info &prototype_node::node_info() const
+{
+  return relation_node_info_;
+}
+
 std::ostream& operator <<(std::ostream &os, const prototype_node &pn)
 {
   if (pn.parent) {
