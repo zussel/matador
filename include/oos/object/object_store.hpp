@@ -832,7 +832,8 @@ object_store::iterator object_store::attach(const char *type, std::initializer_l
 template <class T >
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
-  prototype_node *node = acquire<T>(type, abstract);
+//  prototype_node *node = acquire<T>(type, abstract);
+  prototype_node *node = new prototype_node(this, type, new T, typeid(T), abstract);
 
   // store prototype in map
   // Todo: check return value
@@ -845,6 +846,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
   analyzer.analyze();
 
   attach_node<T>(node, parent);
+
   node->on_attach();
 
   return prototype_iterator(node);
@@ -859,7 +861,8 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 template<class T, template<class V = T> class O>
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
 {
-  prototype_node *node = acquire<T>(type, abstract);
+//  prototype_node *node = acquire<T>(type, abstract);
+  prototype_node *node = new prototype_node(this, type, new T, typeid(T), abstract);
 
 
   for(auto o : observer) {

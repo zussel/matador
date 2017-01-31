@@ -154,6 +154,7 @@ void node_analyzer<T>::analyze()
 {
 //  std::cout << "START analyzing " << node_.type() << "\n";
   T obj;
+  same_node = store_.find_prototype_node(node_.type_.c_str());
   oos::access::serialize(*this, obj);
 //  std::cout << "FINISHED analyzing " << node_.type() << "\n";
 }
