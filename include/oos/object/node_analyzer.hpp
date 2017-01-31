@@ -14,12 +14,13 @@ namespace detail {
 class basic_node_analyzer
 {
 public:
-  explicit basic_node_analyzer(prototype_node &node)
-    : node_(node)
+  explicit basic_node_analyzer(prototype_node &node, object_store &store)
+    : node_(node), store_(store)
   { }
 
 protected:
   prototype_node &node_;
+  object_store &store_;
 };
 
 template < class T > struct observer_dummy {};
@@ -28,8 +29,8 @@ template < class T, template < class U = T > class O = observer_dummy >
 class node_analyzer : public basic_node_analyzer
 {
 public:
-  explicit node_analyzer(prototype_node &node, const std::vector<O<T>*> &observer)
-  : basic_node_analyzer(node), observer_(observer)
+  explicit node_analyzer(prototype_node &node, object_store &store, const std::vector<O<T>*> &observer)
+  : basic_node_analyzer(node, store), observer_(observer)
   { }
 
   ~node_analyzer() { }
@@ -62,8 +63,8 @@ template < class T >
 class node_analyzer<T> : public basic_node_analyzer
 {
 public:
-  explicit node_analyzer(prototype_node &node)
-    : basic_node_analyzer(node)
+  explicit node_analyzer(prototype_node &node, object_store &store)
+    : basic_node_analyzer(node, store)
   { }
 
   ~node_analyzer() { }
