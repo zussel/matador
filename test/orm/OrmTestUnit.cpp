@@ -454,43 +454,43 @@ void OrmTestUnit::test_belongs_to()
 
   p.create();
 
-//  oos::session s(p);
+  oos::session s(p);
+
+  auto george = s.insert(new employee("george"));
+  auto jane = s.insert(new employee("jane"));
+  auto dep = s.insert(new department("insurance"));
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
+
+  // department is automatically set
+  s.push_back(dep->employees, george);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george", "expected name must be george");
+  UNIT_ASSERT_FALSE(george->dep().empty(), "department must not be empty");
+  UNIT_ASSERT_EQUAL(george->dep()->name, dep->name, "names must be equal");
+
+  // jane is automatically added to deps employee list
+  jane->dep(dep);
+  s.update(jane);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
+
+  // remove george
+  auto i = dep->employees.begin();
+  i = dep->employees.erase(i);
+  s.update(dep);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
 //
-//  auto george = s.insert(new employee("george"));
-//  auto jane = s.insert(new employee("jane"));
-//  auto dep = s.insert(new department("insurance"));
+  jane->department_.clear();
+  s.update(jane);
 //
-//  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
-//  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
-//  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
-//
-//  // department is automatically set
-//  s.push_back(dep->employees, george);
-//
-//  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
-//  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george", "expected name must be george");
-//  UNIT_ASSERT_FALSE(george->dep().empty(), "department must not be empty");
-//  UNIT_ASSERT_EQUAL(george->dep()->name, dep->name, "names must be equal");
-//
-//  // jane is automatically added to deps employee list
-//  jane->dep(dep);
-//  s.update(jane);
-//
-//  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
-//
-//  // remove george
-//  auto i = dep->employees.begin();
-//  i = dep->employees.erase(i);
-//  s.update(dep);
-//
-//  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
-//  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
-//  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
-//
-//  jane->department_.clear();
-//  s.update(jane);
-//
-//  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 
   p.drop();
 }
