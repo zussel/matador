@@ -80,7 +80,7 @@ private:
 public:
   struct relation_info
   {
-    typedef std::function<void(void*, const std::string&, object_proxy*)> modify_value_func;
+    typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
     relation_info(const std::string &n,
                   const modify_value_func &insert_func,
                   const modify_value_func &remove_func,
@@ -88,8 +88,8 @@ public:
       : name(n), insert_value(insert_func), remove_value(remove_func), node(pn)
     {}
     std::string name;
-    std::function<void(void*, const std::string&, object_proxy*)> insert_value;
-    std::function<void(void*, const std::string&, object_proxy*)> remove_value;
+    std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
+    std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
     prototype_node *node;
   };
 

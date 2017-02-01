@@ -672,10 +672,18 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
-  void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
-  void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
-  void notify_relation_remove(prototype_node &node, void *owner, object_proxy *value);
+  void on_update_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
+
+  void on_remove_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
+
+  void on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
+
+  void on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
+
+//  void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
+//  void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
+//  void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
+//  void notify_relation_remove(prototype_node &node, void *owner, object_proxy *value);
 
   transaction current_transaction();
   bool has_transaction() const;

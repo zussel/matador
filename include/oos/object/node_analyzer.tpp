@@ -48,10 +48,13 @@ void node_analyzer<T, O>::serialize(const char *id, belongs_to <V> &x, cascade_t
 //  if (!node->has_primary_key()) {
 //    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
 //  }
-  node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-    oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
-  }, [](void *obj, const std::string &field, oos::object_proxy *) {
-    oos::set(static_cast<T*>(obj), field, object_ptr<V>());
+  object_store &store = store_;
+  node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+    store.mark_modified<T>(proxy);
+    oos::set(proxy->obj<T>(), field, object_ptr<V>(owner));
+  }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *) {
+    store.mark_modified<T>(proxy);
+    oos::set(proxy->obj<T>(), field, object_ptr<V>());
   }, node.get()));
 }
 
@@ -79,6 +82,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
+  object_store &store = store_;
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
     std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
@@ -91,10 +95,12 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     pi->relation_node_info_.owner_id_column_.assign(owner_column);
     pi->relation_node_info_.item_id_column_.assign(item_column);
     pi->is_relation_node_ = true;
-    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-      oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-    }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-      oos::remove(static_cast<T*>(obj), field, object_ptr<V>(owner));
+    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+      store.mark_modified<T>(proxy);
+      oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
+    }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+      store.mark_modified<T>(proxy);
+      oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
     }, pi.get()));
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
@@ -105,10 +111,12 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     if (j != pi->belongs_to_map_.end()) {
       // set missing node
       j->second.node = &node_;
-      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-        oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-      }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-        oos::remove(static_cast<T*>(obj), field, object_ptr<V>(owner));
+      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+        store.mark_modified<T>(proxy);
+        oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
+      }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+        store.mark_modified<T>(proxy);
+        oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
       }, pi.get()));
     } else {
       throw_object_exception("prototype already inserted: " << pi->type());
@@ -154,7 +162,6 @@ void node_analyzer<T>::analyze()
 {
 //  std::cout << "START analyzing " << node_.type() << "\n";
   T obj;
-  same_node = store_.find_prototype_node(node_.type_.c_str());
   oos::access::serialize(*this, obj);
 //  std::cout << "FINISHED analyzing " << node_.type() << "\n";
 }
@@ -191,10 +198,13 @@ void node_analyzer<T>::serialize(const char *id, belongs_to <V> &x, cascade_type
 //  if (!node->has_primary_key()) {
 //    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
 //  }
-  node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-    oos::set(static_cast<T*>(obj), field, object_ptr<V>(owner));
-  }, [](void *obj, const std::string &field, oos::object_proxy *) {
-    oos::set(static_cast<T*>(obj), field, object_ptr<V>());
+  object_store &store = store_;
+  node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+    store.mark_modified<T>(proxy);
+    oos::set(proxy->obj<T>(), field, object_ptr<V>(owner));
+  }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *) {
+    store.mark_modified<T>(proxy);
+    oos::set(proxy->obj<T>(), field, object_ptr<V>());
   }, node.get()));
 }
 
@@ -222,6 +232,7 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
+  object_store &store = store_;
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
     pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr);
@@ -231,10 +242,12 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
     pi->relation_node_info_.item_id_column_.assign(item_column);
     pi->is_relation_node_ = true;
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
-    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-      oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-    }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-      oos::remove(static_cast<T*>(obj), field, object_ptr<V>(owner));
+    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+      store.mark_modified<T>(proxy);
+      oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
+    }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+      store.mark_modified<T>(proxy);
+      oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
     }, pi.get()));
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
@@ -245,10 +258,12 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
     if (j != pi->belongs_to_map_.end()) {
       // set missing node
       j->second.node = &node_;
-      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-        oos::append(static_cast<T*>(obj), field, object_ptr<V>(owner));
-      }, [](void *obj, const std::string &field, oos::object_proxy *owner) {
-        oos::remove(static_cast<T*>(obj), field, object_ptr<V>(owner));
+      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+        store.mark_modified<T>(proxy);
+        oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
+      }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+        store.mark_modified<T>(proxy);
+        oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
       }, pi.get()));
     } else {
       throw_object_exception("prototype already inserted: " << pi->type());

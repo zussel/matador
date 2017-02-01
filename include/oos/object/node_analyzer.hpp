@@ -20,7 +20,6 @@ public:
 
 protected:
   prototype_node &node_;
-  prototype_node *same_node = nullptr;
   object_store &store_;
 };
 

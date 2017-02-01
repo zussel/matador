@@ -32,6 +32,10 @@ namespace detail {
 class object_inserter;
 class object_deleter;
 class object_proxy_accessor;
+template<class T, template <class ...> class C, class Enabled>
+class has_many_inserter;
+template<class T, template <class ...> class C, class Enabled>
+class has_many_deleter;
 }
 
 class basic_identifier;
@@ -271,6 +275,10 @@ private:
   friend class object_store;
   friend class object_container;
   friend class detail::object_proxy_accessor;
+  template<class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_inserter;
+  template<class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_deleter;
 
   // Todo: change interface to remove friend
   friend class session;

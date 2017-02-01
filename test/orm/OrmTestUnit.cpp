@@ -452,8 +452,8 @@ void OrmTestUnit::test_belongs_to()
   p.attach<department>("department");
   p.attach<employee, person>("employee");
 
-//  p.create();
-//
+  p.create();
+
 //  oos::session s(p);
 //
 //  auto george = s.insert(new employee("george"));
@@ -491,6 +491,6 @@ void OrmTestUnit::test_belongs_to()
 //  s.update(jane);
 //
 //  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
-//
-//  p.drop();
+
+  p.drop();
 }

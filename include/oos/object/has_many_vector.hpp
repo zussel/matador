@@ -579,9 +579,10 @@ public:
 
     auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
     if (i != foreign_node_->belongs_to_map_.end()) {
-      store.insert(rtype->value());
+//      store.insert(rtype->value());
       // set owner into value
-      store.notify_relation_insert(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
+      store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//      store.notify_relation_insert(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
     } else {
       store.insert(rtype);
     }
@@ -625,7 +626,7 @@ public:
       auto val = rtype->value();
 //      store.remove(val);
       // set owner into value
-      store.notify_relation_remove(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
+      store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
       store.remove(rtype);
     }

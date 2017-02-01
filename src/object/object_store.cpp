@@ -289,7 +289,7 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
   return seq_.exchange_sequencer(seq);
 }
 
-void object_store::notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value)
+void object_store::on_update_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value)
 {
   if (!is_relation_notification_enabled()) {
     return;
@@ -299,16 +299,7 @@ void object_store::notify_relation_insert(prototype_node::relation_info &info, v
   enable_relation_notification();
 }
 
-void object_store::notify_relation_insert(prototype_node &node, void *owner, object_proxy *value)
-{
-  auto i = node.has_many_map_.find(node.type_index());
-  if (i == node.has_many_map_.end()) {
-    return;
-  }
-  notify_relation_insert(i->second, owner, value);
-}
-
-void object_store::notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value)
+void object_store::on_remove_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value)
 {
   if (!is_relation_notification_enabled()) {
     return;
@@ -318,14 +309,61 @@ void object_store::notify_relation_remove(prototype_node::relation_info &info, v
   enable_relation_notification();
 }
 
-void object_store::notify_relation_remove(prototype_node &node, void *owner, object_proxy *value)
+void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
 {
   auto i = node.has_many_map_.find(node.type_index());
   if (i == node.has_many_map_.end()) {
     return;
   }
-  notify_relation_remove(i->second, owner, value);
+  on_update_relation_owner(i->second, owner, value);
 }
+
+void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+{
+  auto i = node.has_many_map_.find(node.type_index());
+  if (i == node.has_many_map_.end()) {
+    return;
+  }
+  on_remove_relation_owner(i->second, owner, value);
+}
+
+//void object_store::notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value)
+//{
+//  if (!is_relation_notification_enabled()) {
+//    return;
+//  }
+//  disable_relation_notification();
+//  info.insert_value(owner, info.name, value);
+//  enable_relation_notification();
+//}
+//
+//void object_store::notify_relation_insert(prototype_node &node, void *owner, object_proxy *value)
+//{
+//  auto i = node.has_many_map_.find(node.type_index());
+//  if (i == node.has_many_map_.end()) {
+//    return;
+//  }
+//  notify_relation_insert(i->second, owner, value);
+//}
+//
+//void object_store::notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value)
+//{
+//  if (!is_relation_notification_enabled()) {
+//    return;
+//  }
+//  disable_relation_notification();
+//  info.remove_value(owner, info.name, value);
+//  enable_relation_notification();
+//}
+//
+//void object_store::notify_relation_remove(prototype_node &node, void *owner, object_proxy *value)
+//{
+//  auto i = node.has_many_map_.find(node.type_index());
+//  if (i == node.has_many_map_.end()) {
+//    return;
+//  }
+//  notify_relation_remove(i->second, owner, value);
+//}
 
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
