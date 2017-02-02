@@ -29,9 +29,9 @@ template < class V >
 persistence_observer<oos::has_many_item<T>>::persistence_observer(const persistence_observer<V> *x)
   : persistence_ (x->persistence_)
 {
-  V owner;
-  prototype_iterator owner_node = persistence_.store().find(typeid(V).name());
-  relation_.owner(std::shared_ptr<basic_identifier>(owner_node->id()));
+  std::shared_ptr<basic_identifier> id(identifier_resolver<V>::resolve());
+  id->as_value(true);
+  relation_.owner(id);
 }
 
 template<class T>

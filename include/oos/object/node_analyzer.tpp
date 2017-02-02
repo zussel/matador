@@ -89,7 +89,15 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     for (auto o : observer_) {
       has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
-    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
+    prototype_node *node = new prototype_node(&store_, id, new typename has_many<V, C>::item_type, typeid(typename has_many<V, C>::item_type), false);
+    node->relation_node_info_.owner_type_.assign(node_.type());
+    node->relation_node_info_.relation_id_.assign(id);
+    node->relation_node_info_.owner_id_column_.assign(owner_column);
+    node->relation_node_info_.item_id_column_.assign(item_column);
+    node->is_relation_node_ = true;
+
+//    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
+
     pi->relation_node_info_.owner_type_.assign(node_.type());
     pi->relation_node_info_.relation_id_.assign(id);
     pi->relation_node_info_.owner_id_column_.assign(owner_column);
