@@ -196,6 +196,8 @@ void sqlite_statement::serialize(const char *id, identifiable_holder &x, cascade
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
+  } else {
+    sqlite3_bind_null(stmt_, (int)++host_index);
   }
 }
 

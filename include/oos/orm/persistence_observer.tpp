@@ -8,7 +8,7 @@ void persistence_observer<T>::on_attach(prototype_node &node, T &/*proto*/)
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
   }
-  std::cout << "node type: " << node.type() << "\n";
+//  std::cout << "node type: " << node.type() << "\n";
   persistence_.tables_.insert(std::make_pair(node.type(), std::make_shared<table<T>>(&node, persistence_)));
 
 }
@@ -20,7 +20,7 @@ void persistence_observer<T>::on_detach(prototype_node &node, T &)
   if (i == persistence_.tables_.end()) {
     return;
   }
-  std::cout << "detach node type: " << node.type() << "\n";
+//  std::cout << "detach node type: " << node.type() << "\n";
   persistence_.tables_.erase(i);
 }
 
@@ -40,7 +40,7 @@ void persistence_observer<oos::has_many_item<T>>::on_attach(prototype_node &node
   if (persistence_.tables_.find(node.type()) != persistence_.tables_.end()) {
     return;
   }
-  std::cout << "node relation type: " << node.type() << "\n";
+//  std::cout << "node relation type: " << node.type() << "\n";
   persistence_.tables_.insert(std::make_pair(
     node.type(), std::make_shared<relation_table<typename relation_type::object_type>>(
       &node, persistence_, relation_, node.node_info().owner_type_, node.node_info().relation_id_,
@@ -55,7 +55,7 @@ void persistence_observer<oos::has_many_item<T>>::on_detach(prototype_node &node
   if (i == persistence_.tables_.end()) {
     return;
   }
-  std::cout << "detach node type: " << node.type() << "\n";
+//  std::cout << "detach node type: " << node.type() << "\n";
   persistence_.tables_.erase(i);
 }
 

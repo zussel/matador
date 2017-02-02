@@ -18,17 +18,17 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(dns)
 {
-  add_test("create", std::bind(&OrmTestUnit::test_create, this), "test orm create table");
-  add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test orm insert into table");
-  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test orm select a table");
-  add_test("update", std::bind(&OrmTestUnit::test_update, this), "test orm update on table");
-  add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
-  add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
-  add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
-  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test orm load has many from table");
-  add_test("load_has_many_int", std::bind(&OrmTestUnit::test_load_has_many_int, this), "test orm load has many int from table");
-  add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test orm has many delete item");
-  add_test("belongs_to", std::bind(&OrmTestUnit::test_belongs_to, this), "test orm belongs to");
+  add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
+  add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test insert into table");
+  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
+  add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
+  add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
+  add_test("load", std::bind(&OrmTestUnit::test_load, this), "test load from table");
+  add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test load has one relation from table");
+  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test load has many from table");
+  add_test("load_has_many_int", std::bind(&OrmTestUnit::test_load_has_many_int, this), "test load has many int from table");
+  add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test has many delete item");
+  add_test("belongs_to", std::bind(&OrmTestUnit::test_belongs_to, this), "test belongs to");
 }
 
 void OrmTestUnit::test_create()
@@ -479,9 +479,7 @@ void OrmTestUnit::test_belongs_to()
   UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
 
   // remove george
-  auto i = dep->employees.begin();
-  i = dep->employees.erase(i);
-  s.update(dep);
+  s.erase(dep->employees, dep->employees.begin());
 
   UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
   UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
