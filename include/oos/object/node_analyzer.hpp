@@ -19,6 +19,16 @@ public:
   { }
 
 protected:
+  template < class V, class T >
+  void process_belongs_to(const char *id, belongs_to <V> &x);
+
+  template < class V, class T >
+  void process_has_one(const char *id, has_one <V> &x);
+
+  template < class V, class T >
+  void process_has_many(const char *id, has_one <V> &x);
+
+protected:
   prototype_node &node_;
   object_store &store_;
 };

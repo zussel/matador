@@ -700,6 +700,7 @@ private:
   friend class object_holder;
   friend class object_proxy;
   friend class prototype_node;
+  friend class detail::basic_node_analyzer;
   template < class T, template < class ... > class ON_ATTACH >
   friend class detail::node_analyzer;
   friend class transaction;
@@ -843,7 +844,7 @@ template <class T >
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
 //  prototype_node *node = acquire<T>(type, abstract);
-  prototype_node *node = new prototype_node(this, type, new T, typeid(T), abstract);
+  prototype_node *node = new prototype_node(this, type, new T, abstract);
 
   // Check if nodes object has 'to-many' relations
   // Analyze primary and foreign keys of node
@@ -867,7 +868,7 @@ template<class T, template<class V = T> class O>
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
 {
 //  prototype_node *node = acquire<T>(type, abstract);
-  prototype_node *node = new prototype_node(this, type, new T, typeid(T), abstract);
+  prototype_node *node = new prototype_node(this, type, new T, abstract);
 
 
   return attach<T>(node, parent, observer);
@@ -1051,7 +1052,7 @@ prototype_node *object_store::acquire(const char *type, bool abstract)
     /* insert new prototype and add to
      * typeid map
      */
-    node = new prototype_node(this, type, new T, typeid(T), abstract);
+    node = new prototype_node(this, type, new T, abstract);
   }
   return node;
 }

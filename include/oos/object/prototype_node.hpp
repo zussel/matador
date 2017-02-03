@@ -53,6 +53,7 @@ template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
 template < class T, template <class ...> class C, class Enabled >
 class has_many_deleter;
+class basic_node_analyzer;
 template < class T, template < class V = T > class O >
 class node_analyzer;
 }
@@ -104,6 +105,15 @@ public:
   };
 
 public:
+
+  template < class T >
+  prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
+
+  template < class T >
+  prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
+                                     const char *owner_type, const char *relation_id,
+                                     const char *owner_column, const char *item_column);
+
   prototype_node();
 
   /**
@@ -119,13 +129,13 @@ public:
    * @param abstract Tells the node if its prototype is abstract.
    */
   template < class T >
-  prototype_node(object_store *tree, const char *type, T *proto, const std::type_info &typeinfo, bool abstract = false)
+  prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
     : tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
-    , type_index_(typeinfo)
+    , type_index_(typeid(T))
     , deleter_(&destroy<T>)
     , notifier_(&notify_observer<T>)
     , prototype(proto)
@@ -446,6 +456,7 @@ private:
   friend class detail::has_many_inserter;
   template < class T, template <class ...> class C, class Enabled >
   friend class detail::has_many_deleter;
+  friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;
 
@@ -494,6 +505,26 @@ private:
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;
 };
+
+template<class T>
+prototype_node *prototype_node::make_node(object_store *store, const char *type, bool abstract)
+{
+  return new prototype_node(store, type, new T, abstract);
+}
+
+template<class T>
+prototype_node *prototype_node::make_relation_node(object_store *store, const char *type, bool abstract,
+                                                   const char *owner_type, const char *relation_id,
+                                                   const char *owner_column, const char *item_column)
+{
+  prototype_node *node = make_node<T>(store, type, abstract);
+  node->relation_node_info_.owner_type_.assign(owner_type);
+  node->relation_node_info_.relation_id_.assign(relation_id);
+  node->relation_node_info_.owner_id_column_.assign(owner_column);
+  node->relation_node_info_.item_id_column_.assign(item_column);
+  node->is_relation_node_ = true;
+  return node;
+}
 
 }
 
