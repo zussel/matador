@@ -846,16 +846,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 //  prototype_node *node = acquire<T>(type, abstract);
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
-  // Check if nodes object has 'to-many' relations
-  // Analyze primary and foreign keys of node
-  detail::node_analyzer<T> analyzer(*node, *this);
-  analyzer.analyze();
-
-  attach_node<T>(node, parent);
-
-  node->on_attach();
-
-  return prototype_iterator(node);
+  return attach<T>(node, parent);
 }
 
 template <class T, template < class V = T > class O >
@@ -870,21 +861,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 //  prototype_node *node = acquire<T>(type, abstract);
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
-
   return attach<T>(node, parent, observer);
-  for(auto o : observer) {
-    node->register_observer(o);
-  }
-  // Check if nodes object has 'to-many' relations
-  // Analyze primary and foreign keys of node
-  detail::node_analyzer<T, O> analyzer(*node, *this, observer);
-  analyzer.analyze();
-
-  attach_node<T>(node, parent);
-
-  node->on_attach();
-
-  return prototype_iterator(node);
 }
 
 template < class T >

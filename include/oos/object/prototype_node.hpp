@@ -107,10 +107,10 @@ public:
 public:
 
   template < class T >
-  prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
+  static prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
 
   template < class T >
-  prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
+  static prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
                                      const char *owner_type, const char *relation_id,
                                      const char *owner_column, const char *item_column);
 

@@ -23,6 +23,7 @@ QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, co
   add_test("bind_tablename", std::bind(&QueryTestUnit::test_bind_tablename, this), "test bind tablenames");
   add_test("describe", std::bind(&QueryTestUnit::test_describe, this), "test describe table");
   add_test("identifier", std::bind(&QueryTestUnit::test_identifier, this), "test sql identifier");
+  add_test("update", std::bind(&QueryTestUnit::test_update, this), "test direct sql update statement");
   add_test("create", std::bind(&QueryTestUnit::test_create, this), "test direct sql create statement");
   add_test("create_anonymous", std::bind(&QueryTestUnit::test_anonymous_create, this), "test direct sql create statement via row (anonymous)");
   add_test("insert_anonymous", std::bind(&QueryTestUnit::test_anonymous_insert, this), "test direct sql insert statement via row (anonymous)");
@@ -375,6 +376,56 @@ void QueryTestUnit::test_create()
   res = q.drop().execute(connection_);
 }
 
+void QueryTestUnit::test_update()
+{
+  connection_.open();
+
+  query<person> q(connection_, "person");
+
+  // create item table and insert item
+  result<person> res(q.create().execute());
+
+  std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
+
+  unsigned long id(0);
+  for (std::string name : names) {
+    person p(name, oos::date(12, 3, 1980), 180);
+    p.id(++id);
+    q.insert(p).execute();
+  }
+
+  column name("name");
+  res = q.select().where(name == "hans").execute();
+
+  auto first = res.begin();
+  auto last = res.end();
+
+  while (first != last) {
+    std::unique_ptr<person> item(first.release());
+
+    UNIT_ASSERT_EQUAL(item->name(), "hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+
+    ++first;
+  }
+
+  person hans("hans", oos::date(15, 6, 1990), 165);
+  hans.id(1);
+  column idcol("id");
+  q.update(hans).where(idcol == 1).execute();
+
+  res = q.select().where(name == "hans").execute();
+
+  for (auto i : res) {
+    UNIT_ASSERT_EQUAL(i->name(), "hans", "expected name must be 'Hans'");
+    UNIT_ASSERT_EQUAL(i->height(), 165U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(i->birthdate(), oos::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+  }
+
+  q.drop().execute();
+}
+
 void QueryTestUnit::test_anonymous_create()
 {
   connection_.open();
@@ -514,23 +565,27 @@ void QueryTestUnit::test_statement_update()
 {
   connection_.open();
 
-  query<Item> q("item");
+  query<person> q(connection_, "person");
 
-  statement<Item> stmt(q.create().prepare(connection_));
+  statement<person> stmt(q.create().prepare());
 
-  result<Item> res(stmt.execute());
+  result<person> res(stmt.execute());
 
-  oos::identifier<unsigned long> id(23);
-  auto itime = time_val_;
-  Item hans("Hans", 4711);
-  hans.id(id.value());
-  hans.set_time(itime);
-  stmt = q.insert(hans).prepare(connection_);
+  std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
 
-  stmt.bind(0, &hans);
-  res = stmt.execute();
+  unsigned long id(0);
+  for (std::string name : names) {
+    person p(name, oos::date(12, 3, 1980), 180);
+    p.id(++id);
+    stmt = q.insert(p).prepare();
+    stmt.bind(0, &p);
+    stmt.execute();
+  }
 
-  stmt = q.select().prepare(connection_);
+  column name("name");
+  stmt = q.select().where(name == "").prepare();
+  std::string hname("hans");
+  stmt.bind(0, hname);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -539,52 +594,30 @@ void QueryTestUnit::test_statement_update()
   auto last = res.end();
 
   while (first != last) {
-    std::unique_ptr<Item> item(first.release());
-    UNIT_ASSERT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    std::unique_ptr<person> p(first.release());
+    UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
+    UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
+    UNIT_ASSERT_EQUAL(p->height(), 180U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(p->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
     ++first;
   }
 
 //  auto id_cond = id_condition_builder::build<person>();
 
   oos::column idcol("id");
-  int i815 = 815;
-  stmt = q.update({{"val_int", i815}}).where(idcol == 7).prepare(connection_);
+  person hans("hans", oos::date(15, 6, 1990), 165);
+  hans.id(1);
+
+  stmt = q.update(hans).where(idcol == 7).prepare();
   size_t pos = 0;
-  pos = stmt.bind(pos, i815);
-  unsigned long hid = hans.id();
-  stmt.bind(pos, hid);
-
-  res = stmt.execute();
-
-  stmt = q.select().prepare(connection_);
-  res = stmt.execute();
-
-//  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
-
-  first = res.begin();
-  last = res.end();
-
-  while (first != last) {
-    std::unique_ptr<Item> item(first.release());
-    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    UNIT_ASSERT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->get_int(), 815, "expected integer must be 815");
-    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
-    ++first;
-  }
-
-  hans.set_int(4711);
-  stmt = q.update(hans).where(idcol == 7).prepare(connection_);
-  pos = 0;
   pos = stmt.bind(pos, &hans);
+  unsigned long hid = 1;
   stmt.bind(pos, hid);
 
   res = stmt.execute();
 
-  stmt = q.select().prepare(connection_);
+  stmt = q.select().where(name == "").prepare();
+  stmt.bind(0, hname);
   res = stmt.execute();
 
 //  UNIT_ASSERT_EQUAL(res.size(), 1UL, "expected size must be one (1)");
@@ -593,15 +626,15 @@ void QueryTestUnit::test_statement_update()
   last = res.end();
 
   while (first != last) {
-    std::unique_ptr<Item> item(first.release());
-    UNIT_EXPECT_EQUAL(item->id(), 23UL, "expected id must be 23");
-    UNIT_EXPECT_EQUAL(item->get_string(), "Hans", "expected name must be 'Hans'");
-    UNIT_EXPECT_EQUAL(item->get_int(), 4711, "expected integer must be 4711");
-    UNIT_EXPECT_EQUAL(item->get_time(), itime, "expected time is invalid");
+    std::unique_ptr<person> p(first.release());
+    UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
+    UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
+    UNIT_ASSERT_EQUAL(p->height(), 165U, "expected height must be 180");
+    UNIT_ASSERT_EQUAL(p->birthdate(), oos::date(15, 6, 1990), "expected birthdate is 12.3.1980");
     ++first;
   }
 
-  stmt = q.drop().prepare(connection_);
+  stmt = q.drop().prepare();
 
   res = stmt.execute();
 

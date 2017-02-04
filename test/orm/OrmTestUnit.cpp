@@ -100,7 +100,7 @@ void OrmTestUnit::test_select()
 
   for (std::string name : names) {
     auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
-	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
+  	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
   }
 
   auto view = s.select<person>();

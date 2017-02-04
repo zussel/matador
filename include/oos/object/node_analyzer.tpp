@@ -48,6 +48,19 @@ void basic_node_analyzer::process_has_one(const char *, has_one <V> &)
 //  }
 }
 
+template<class V, class T>
+void basic_node_analyzer::register_has_many(const char *id, prototype_node *node)
+{
+  object_store &store = store_;
+  node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+    store.mark_modified<T>(proxy);
+    oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
+  }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+    store.mark_modified<T>(proxy);
+    oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
+  }, node));
+}
+
 template<class T, template < class U = T > class O>
 void node_analyzer<T, O>::analyze()
 {
@@ -85,7 +98,6 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
-  object_store &store = store_;
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
     std::vector<O<typename has_many<V, C>::item_type>*> has_many_item_observer;
@@ -93,28 +105,11 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
       has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
 
-//    this->cre
-    prototype_node *node = new prototype_node(&store_, id, new typename has_many<V, C>::item_type, false);
-    node->relation_node_info_.owner_type_.assign(node_.type());
-    node->relation_node_info_.relation_id_.assign(id);
-    node->relation_node_info_.owner_id_column_.assign(owner_column);
-    node->relation_node_info_.item_id_column_.assign(item_column);
-    node->is_relation_node_ = true;
+    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
 
-//    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
+    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
 
-    pi->relation_node_info_.owner_type_.assign(node_.type());
-    pi->relation_node_info_.relation_id_.assign(id);
-    pi->relation_node_info_.owner_id_column_.assign(owner_column);
-    pi->relation_node_info_.item_id_column_.assign(item_column);
-    pi->is_relation_node_ = true;
-    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, pi.get()));
+    this->register_has_many<V, T>(id, pi.get());
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");
@@ -124,13 +119,7 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     if (j != pi->belongs_to_map_.end()) {
       // set missing node
       j->second.node = &node_;
-      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-        store.mark_modified<T>(proxy);
-        oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
-      }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-        store.mark_modified<T>(proxy);
-        oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-      }, pi.get()));
+      this->register_has_many<V, T>(id, pi.get());
     } else {
       throw_object_exception("prototype already inserted: " << pi->type());
     }
@@ -152,12 +141,10 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     for (auto o : observer_) {
       has_many_item_observer.push_back(new O<typename has_many<V, C>::item_type>(o));
     }
-    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr, has_many_item_observer);
-    pi->relation_node_info_.owner_type_.assign(node_.type());
-    pi->relation_node_info_.relation_id_.assign(id);
-    pi->relation_node_info_.owner_id_column_.assign(owner_column);
-    pi->relation_node_info_.item_id_column_.assign(item_column);
-    pi->is_relation_node_ = true;
+
+    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+
+    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr, has_many_item_observer);
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());
@@ -204,22 +191,13 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
   // check if has many item is already attached
   // true: check owner and item field
   // false: attach it
-  object_store &store = store_;
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr);
-    pi->relation_node_info_.owner_type_.assign(node_.type());
-    pi->relation_node_info_.relation_id_.assign(id);
-    pi->relation_node_info_.owner_id_column_.assign(owner_column);
-    pi->relation_node_info_.item_id_column_.assign(item_column);
-    pi->is_relation_node_ = true;
-    node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-      store.mark_modified<T>(proxy);
-      oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-    }, pi.get()));
+    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+
+    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
+
+    this->register_has_many<V, T>(id, pi.get());
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("many to many relations are not supported by now");
@@ -229,13 +207,7 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
     if (j != pi->belongs_to_map_.end()) {
       // set missing node
       j->second.node = &node_;
-      node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-        store.mark_modified<T>(proxy);
-        oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
-      }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
-        store.mark_modified<T>(proxy);
-        oos::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-      }, pi.get()));
+      this->register_has_many<V, T>(id, pi.get());
     } else {
       throw_object_exception("prototype already inserted: " << pi->type());
     }
@@ -253,12 +225,18 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
   // false: attach it
   prototype_iterator pi = store_.find(id);
   if (pi == store_.end()) {
-    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr);
-    pi->relation_node_info_.owner_type_.assign(node_.type());
-    pi->relation_node_info_.relation_id_.assign(id);
-    pi->relation_node_info_.owner_id_column_.assign(owner_column);
-    pi->relation_node_info_.item_id_column_.assign(item_column);
-    pi->is_relation_node_ = true;
+    prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
+
+    pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
+//
+//    this->register_has_many<V, T>(id, pi.get());
+
+//    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr);
+//    pi->relation_node_info_.owner_type_.assign(node_.type());
+//    pi->relation_node_info_.relation_id_.assign(id);
+//    pi->relation_node_info_.owner_id_column_.assign(owner_column);
+//    pi->relation_node_info_.item_id_column_.assign(item_column);
+//    pi->is_relation_node_ = true;
 //    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
   } else {
     // throw exception

@@ -515,6 +515,13 @@ public:
     reset_query(query_command);
     return *this;
   }
+  result<T> execute()
+  {
+    if (!conn_.is_open()) {
+      throw std::logic_error("connection is not open");
+    }
+    return execute(conn_);
+  }
   /**
    * Executes the current query and
    * returns a new result serializable.
@@ -523,9 +530,18 @@ public:
    */
   result<T> execute(connection &conn)
   {
-//    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
+    std::cout << "SQL: " << conn.dialect()->direct(sql_) << '\n';
 //    std::cout.flush();
     return conn.execute<T>(sql_);
+  }
+
+  statement<T> prepare()
+  {
+    if (!conn_.is_open()) {
+      throw std::logic_error("connection is not open");
+    }
+    return prepare(conn_);
+
   }
 
   /**
