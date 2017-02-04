@@ -215,6 +215,7 @@ void mysql_statement::serialize(const char *id, basic_identifier &x)
 
 void mysql_statement::serialize(const char *id, identifiable_holder &x, cascade_type)
 {
+//  std::cout << "binding [" << id << "] (index: " << host_index << ")\n";
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
   } else {
@@ -252,6 +253,7 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types, unsigned c
 
 void mysql_statement::bind_value(std::size_t index, enum_field_types type, const oos::date &x)
 {
+//  std::cout << "binding [" << x << "] (index: " << index << ")\n";
   MYSQL_BIND &bind = host_array[index];
   if (bind.buffer == nullptr) {
     size_t s = sizeof(MYSQL_TIME);
@@ -296,6 +298,7 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types type, const
 
 void mysql_statement::bind_value(std::size_t index, enum_field_types type, const char *value, size_t)
 {
+//  std::cout << "binding [" << value << "] (index: " << index << ")\n";
   MYSQL_BIND &bind = host_array[index];
   std::size_t len(strlen(value) + 1);
   if (bind.buffer_length < len) {
