@@ -276,12 +276,22 @@ public:
   ~attribute_writer() {}
 
   template < class V >
-  void serialize(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value >::type* = 0)
+  void serialize(const char *id, V &from, typename std::enable_if< std::is_arithmetic<T>::value && std::is_arithmetic<V>::value && !std::is_same<bool, V>::value>::type* = 0)
   {
     if (id_ != id) {
       return;
     }
     to_ = (T)from;
+    success_ = true;
+  }
+
+  template < class V >
+  void serialize(const char *id, V &from, typename std::enable_if<std::is_arithmetic<T>::value && std::is_same<bool, V>::value>::type* = 0)
+  {
+    if (id_ != id) {
+      return;
+    }
+    to_ = (from ? 1 : 0);
     success_ = true;
   }
 

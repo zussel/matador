@@ -335,7 +335,7 @@ public:
   void height(unsigned int height) { height_ = height; }
 };
 
-class department;
+struct department;
 
 class employee : public person
 {

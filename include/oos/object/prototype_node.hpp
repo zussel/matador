@@ -355,7 +355,13 @@ public:
 
 private:
 
-  enum notification_type { ATTACH, DETACH, INSERT, UPDATE, DELETE };
+  enum notification_type {
+    ATTACH,
+    DETACH,
+    INSERT,
+    UPDATE,
+    REMOVE
+  };
 
   /**
    * @internal
@@ -433,7 +439,7 @@ private:
         break;
       case UPDATE:
         break;
-      case DELETE:
+      case REMOVE:
         break;
       default:
         break;
