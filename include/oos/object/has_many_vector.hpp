@@ -134,6 +134,17 @@ public:
   bool operator!=(const self &i) const { return !this->operator==(i); }
 
   /**
+   * @brief Compares less than iterator with another iterator.
+   *
+   * Compares iterator with another iterator. If other iterator isn't
+   * less than this iterator true es returned.
+   *
+   * @param i The iterator to compare with
+   * @return True if iterators isn't less than this itertor
+   */
+  bool operator<(const self &i) const { return iter_ < i.iter_; }
+
+  /**
    * @brief Returns the difference of two iterators a and b.
    *
    * @param a The minuend iterator
@@ -423,6 +434,17 @@ public:
    * @return True if iterators doesn't contain the same element
    */
   bool operator!=(const self &i) const { return !this->operator==(i); }
+
+  /**
+  * @brief Compares less than iterator with another iterator.
+  *
+  * Compares iterator with another iterator. If other iterator isn't
+  * less than this iterator true es returned.
+  *
+  * @param i The iterator to compare with
+  * @return True if iterators isn't less than this itertor
+  */
+  bool operator<(const self &i) const { return iter_ < i.iter_; }
 
   /**
    * @brief Pre increments self
