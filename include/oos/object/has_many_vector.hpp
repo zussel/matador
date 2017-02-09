@@ -14,10 +14,6 @@
 
 namespace oos {
 
-namespace detail {
-template<class T, template <class ...> class C, class Enabled >
-class has_many_deleter;
-}
 /// @cond OOS_DEV
 
 template < class T >
@@ -91,6 +87,8 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
+  has_many_iterator(self &&iter) = default;
+  has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -385,6 +383,10 @@ public:
    */
   const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
 
+  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+
+  const_has_many_iterator(self &&iter) = default;
+  const_has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Copy assigns a new const has many iterator
    *
@@ -584,16 +586,14 @@ private:
 };
 
 namespace detail {
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_inserter;
 
-template<class T, template <class ...> class C>
-class has_many_inserter<T, C, typename std::enable_if<!std::is_scalar<T>::value>::type>
+template<class T>
+class has_many_inserter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
 {
 public:
   typedef T value_type;
-  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
-  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
 
   void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
   {
@@ -601,10 +601,8 @@ public:
 
     auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
     if (i != foreign_node_->belongs_to_map_.end()) {
-//      store.insert(rtype->value());
       // set owner into value
       store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
-//      store.notify_relation_insert(i->second, rtype->value().ptr() /*owner*/, &owner /*value*/);
     } else {
       store.insert(rtype);
     }
@@ -612,13 +610,13 @@ public:
   }
 };
 
-template<class T, template <class ...> class C>
-class has_many_inserter<T, C, typename std::enable_if<std::is_scalar<T>::value>::type>
+template<class T>
+class has_many_inserter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
 {
 public:
   typedef T value_type;
-  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
-  typedef typename basic_has_many<T, C>::mark_modified_owner_func mark_modified_owner_func;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
 
   void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
   {
@@ -626,18 +624,13 @@ public:
     mark_modified_owner(store, &owner);
   }
 };
-}
 
-namespace detail {
-template<class T, template <class ...> class C, class Enabled = void>
-class has_many_deleter;
-
-template<class T, template <class ...> class C>
-class has_many_deleter<T, C, typename std::enable_if<!std::is_scalar<T>::value>::type>
+template<class T>
+class has_many_deleter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
 {
 public:
   typedef T value_type;
-  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
 
   void remove(object_store &store, relation_type &rtype, object_proxy &owner)
   {
@@ -654,12 +647,12 @@ public:
   }
 };
 
-template<class T, template <class ...> class C>
-class has_many_deleter<T, C, typename std::enable_if<std::is_scalar<T>::value>::type>
+template<class T>
+class has_many_deleter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
 {
 public:
   typedef T value_type;
-  typedef typename has_many_iterator_traits<T, C>::relation_type relation_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
 
   void remove(object_store &store, relation_type &rtype, object_proxy &)
   {

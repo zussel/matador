@@ -14,6 +14,12 @@ namespace oos {
 
 namespace detail {
 class object_inserter;
+
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_deleter;
+
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_inserter;
 }
 
 /// @cond OOS_DEV

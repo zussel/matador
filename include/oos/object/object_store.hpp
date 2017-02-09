@@ -126,21 +126,6 @@ public:
    */
   ~object_store();
 
-  /**
-   * Inserts a new object prototype into the prototype tree. The prototype
-   * constist of a unique type name. To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given.
-   * 
-   * @tparam T       The type of the prototype node
-   * @param type     The unique name of the type.
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @param parent   The name of the parent type.
-   * @return         Returns new inserted prototype iterator.
-   */
-//  template< class T, template < class V = T > class ... O >
-//  prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
-
   template <class T, template < class V > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer);
 
@@ -180,33 +165,6 @@ public:
 
   template < class T, template < class V = T > class O >
   prototype_iterator attach(prototype_node *node, const char *parent, std::vector<O<T>*> observer);
-  /**
-   * Inserts a new object prototype into the prototype tree. The prototype
-   * consists of a unique type name (generated from typeid). To know where the new
-   * prototype is inserted into the hierarchy the type name of the parent
-   * node is also given.
-   *
-   * @tparam T       The type of the prototype node
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @param parent   The name of the parent type.
-   * @return         Returns new inserted prototype iterator.
-   */
-//  template<class T>
-//  prototype_iterator prepare_attach(bool abstract = false, const char *parent = nullptr);
-
-  /**
-   * Inserts a new object prototype into the prototype tree. The prototype
-   * consists of a unique type name (generated from typeid). To know where the new
-   * prototype is inserted into the hierarchy the typeid of the parent
-   * node is also given.
-   *
-   * @tparam T       The type of the prototype node
-   * @tparam S       The type of the parent prototype node
-   * @param abstract Indicates if the producers serializable is treated as an abstract node.
-   * @return         Returns new inserted prototype iterator.
-   */
-//  template<class T, class S>
-//  prototype_iterator prepare_attach(bool abstract = false);
 
   /**
    * Removes an object prototype from the prototype tree. All children
@@ -682,11 +640,6 @@ public:
 
   void on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
 
-//  void notify_relation_insert(prototype_node::relation_info &info, void *owner, object_proxy *value);
-//  void notify_relation_insert(prototype_node &node, void *owner, object_proxy *value);
-//  void notify_relation_remove(prototype_node::relation_info &info, void *owner, object_proxy *value);
-//  void notify_relation_remove(prototype_node &node, void *owner, object_proxy *value);
-
   transaction current_transaction();
   bool has_transaction() const;
 
@@ -800,6 +753,9 @@ private:
   void enable_relation_notification();
   void disable_relation_notification();
 
+  template < class T >
+  void validate(prototype_node *node);
+
 private:
   typedef std::unordered_map<std::string, prototype_node *> t_prototype_map;
   // typeid -> [name -> prototype]
@@ -813,9 +769,6 @@ private:
   t_prototype_map prototype_map_;
   // typeid to prototype node map
   t_typeid_prototype_map typeid_prototype_map_;
-
-  // prepared prototype nodes
-//  t_prototype_map prepared_prototype_map_;
 
   typedef std::unordered_map<long, object_proxy *> t_object_proxy_map;
   t_object_proxy_map object_map_;
@@ -833,6 +786,34 @@ private:
   // relation notification related
   bool relation_notification_ = true;
 };
+template < class T >
+void object_store::validate(prototype_node *node)
+{
+  // try to find node in prepared map
+  const char *name = typeid(T).name();
+  t_prototype_map::iterator i = prototype_map_.find(node->type_);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << node->type_.c_str());
+  }
+  // try to find by typeid name
+  i = prototype_map_.find(name);
+  if (i != prototype_map_.end()) {
+    throw_object_exception("prototype already inserted: " << node->type_.c_str());
+  }
+  /*
+   * no typeid found, seems to be
+   * a new type
+   * to be sure check in typeid map
+   */
+  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
+  if (j != typeid_prototype_map_.end() && j->second.find(node->type_) != j->second.end()) {
+    /* unexpected found the
+     * typeid check for type
+     * throw exception
+     */
+    throw object_exception("unexpectly found prototype");
+  }
+}
 
 template <class T, template < class V > class O >
 object_store::iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)
@@ -872,29 +853,18 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
   /*
    * try to insert new prototype node
    */
-//  const char *name = typeid(T).name();
-//  prototype_node *node = nullptr;
-//  t_prototype_map::iterator i = prepared_prototype_map_.find(name);
-//  if (i != prepared_prototype_map_.end()) {
-//    // found a prepared node
-//    node = i->second;
-//    node->type_.assign(type);
-//    prepared_prototype_map_.erase(i);
-//  } else {
-//    node = acquire<T>(type, abstract);
-    // insert node
-    if (parent_node != nullptr) {
-      parent_node->insert(node);
-    } else {
-      last_->prev->append(node);
-    }
-    // Analyze primary and foreign keys of node
-    basic_identifier *id = identifier_resolver<T>::resolve();
-    if (id) {
-      id->isolate();
-      node->id_.reset(id);
-    }
-//  }
+  // insert node
+  if (parent_node != nullptr) {
+    parent_node->insert(node);
+  } else {
+    last_->prev->append(node);
+  }
+  // Analyze primary and foreign keys of node
+  basic_identifier *id = identifier_resolver<T>::resolve();
+  if (id) {
+    id->isolate();
+    node->id_.reset(id);
+  }
   // store prototype in map
   // Todo: check return value
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
@@ -929,9 +899,12 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
   detail::node_analyzer<T> analyzer(*node, *this);
   analyzer.analyze();
 
+  validate<T>(node);
+
   attach_node<T>(node, parent);
 
   node->on_attach();
+
 
   return prototype_iterator(node);
 }
@@ -947,56 +920,15 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
   detail::node_analyzer<T, O> analyzer(*node, *this, observer);
   analyzer.analyze();
 
+  validate<T>(node);
+
   attach_node<T>(node, parent);
 
   node->on_attach();
 
+
   return prototype_iterator(node);
 }
-
-//template<class T>
-//prototype_iterator object_store::prepare_attach(bool abstract, const char *parent)
-//{
-//  prototype_node *parent_node = find_parent(parent);
-//
-//  if (typeid_prototype_map_.find(typeid(T).name()) != typeid_prototype_map_.end()) {
-//    throw_object_exception("attach: object type " << typeid(T).name() << " already in attached");
-//  }
-//
-//  t_prototype_map::iterator i = prepared_prototype_map_.find(typeid(T).name());
-//  if (i != prepared_prototype_map_.end()) {
-//    // there is already a prepared node for this type
-//    return prototype_iterator(i->second);
-//  }
-//
-//  std::unique_ptr<prototype_node> node(new prototype_node(this, "", new T, typeid(T), abstract));
-//
-//  node->initialize(this, "", abstract);
-//
-//  if (parent_node != nullptr) {
-//    parent_node->insert(node.get());
-//  } else {
-//    last_->prev->append(node.get());
-//  }
-//
-//  // store only in prepared prototype map
-//  // Todo: check return value
-//  prepared_prototype_map_.insert(std::make_pair(typeid(T).name(), node.get()));
-//  // Analyze primary and foreign keys of node
-//  std::unique_ptr<basic_identifier> id(identifier_resolver<T>::resolve());
-//  if (id) {
-//    id->isolate();
-//    node->id_.reset(id.release());
-//  }
-//
-//  return prototype_iterator(node.release());
-//}
-//
-//template<class T, class S>
-//prototype_iterator object_store::prepare_attach(bool abstract)
-//{
-//  return prepare_attach<T>(abstract, typeid(T).name());
-//}
 
 template<class T>
 prototype_node *object_store::acquire(const char *type, bool abstract)
