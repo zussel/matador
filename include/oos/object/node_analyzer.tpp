@@ -13,8 +13,8 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
   if (node != store_.end()) {
     // check if created from has_many
     // check if node has_many relation for id (id == tablename)
-    auto i = node->has_many_map_.find(node->type_index());
-    if (i != node->has_many_map_.end()) {
+    auto i = node->relation_info_map_.find(node->type_index());
+    if (i != node->relation_info_map_.end() && i->second.type == prototype_node::relation_info::HAS_MANY) {
       // yes, node found!
       // Todo: check if node is for has many item
       // detach has_many_item node
@@ -25,7 +25,10 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
     }
   }
   object_store &store = store_;
-  node_.register_belongs_to(std::type_index(typeid(V)), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+  node_.register_belongs_to(std::type_index(typeid(V)),
+                            prototype_node::relation_info(id,
+                                                          prototype_node::relation_info::BELONGS_TO,
+                                                          [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
     store.mark_modified<T>(proxy);
     oos::set(proxy->obj<T>(), field, object_ptr<V>(owner));
   }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *) {
@@ -52,7 +55,10 @@ template<class V, class T>
 void basic_node_analyzer::register_has_many(const char *id, prototype_node *node)
 {
   object_store &store = store_;
-  node_.register_has_many(node_.type_index(), prototype_node::relation_info(id, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+  node_.register_has_many(node_.type_index(),
+                          prototype_node::relation_info(id,
+                                                        prototype_node::relation_info::HAS_MANY,
+                                                        [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
     store.mark_modified<T>(proxy);
     oos::append(proxy->obj<T>(), field, object_ptr<V>(owner));
   }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
@@ -115,13 +121,15 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const cha
     throw_object_exception("many to many relations are not supported by now");
   } else {
     // found corresponding belongs_to
-    auto j = pi->belongs_to_map_.find(node_.type_index_);
-    if (j != pi->belongs_to_map_.end()) {
+    auto j = pi->relation_info_map_.find(node_.type_index_);
+    if (j == pi->relation_info_map_.end()) {
+      throw_object_exception("prototype already inserted: " << pi->type());
+    } else if (j->second.type == prototype_node::relation_info::BELONGS_TO) {
       // set missing node
       j->second.node = &node_;
       this->register_has_many<V, T>(id, pi.get());
-    } else {
-      throw_object_exception("prototype already inserted: " << pi->type());
+    } else if (j->second.type == prototype_node::relation_info::HAS_MANY) {
+      // handle has many
     }
   }
 }
@@ -200,16 +208,26 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
     this->register_has_many<V, T>(id, pi.get());
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
-    throw_object_exception("many to many relations are not supported by now");
+    throw_object_exception("prototype already inserted");
+  } else if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
+    // prototype is of type has_many_item
+    throw_object_exception("prototype already inserted");
   } else {
     // found corresponding belongs_to
-    auto j = pi->belongs_to_map_.find(node_.type_index_);
-    if (j != pi->belongs_to_map_.end()) {
+    auto j = pi->relation_info_map_.find(node_.type_index_);
+    if (j == pi->relation_info_map_.end()) {
+      // check for has many item
+      std::type_index ti(typeid(typename has_many<T, C>::item_type));
+      if (ti == pi->type_index()) {
+        std::cout << "serialize has many: found type " << ti.name() << "\n";
+      }
+      throw_object_exception("prototype already inserted: " << pi->type());
+    } else if (j->second.type == prototype_node::relation_info::BELONGS_TO) {
       // set missing node
       j->second.node = &node_;
       this->register_has_many<V, T>(id, pi.get());
-    } else {
-      throw_object_exception("prototype already inserted: " << pi->type());
+    } else if (j->second.type == prototype_node::relation_info::HAS_MANY) {
+      // handle has many
     }
   }
 }
@@ -228,16 +246,6 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
     prototype_node *node = prototype_node::make_relation_node<typename has_many<V, C>::item_type>(&store_, id, false, node_.type(), id, owner_column, item_column);
 
     pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
-//
-//    this->register_has_many<V, T>(id, pi.get());
-
-//    pi = store_.attach<typename has_many<V, C>::item_type>(id, false, nullptr);
-//    pi->relation_node_info_.owner_type_.assign(node_.type());
-//    pi->relation_node_info_.relation_id_.assign(id);
-//    pi->relation_node_info_.owner_id_column_.assign(owner_column);
-//    pi->relation_node_info_.item_id_column_.assign(item_column);
-//    pi->is_relation_node_ = true;
-//    pi = node_.tree()->template attach<typename has_many<V, C>::item_type, O...>(id, false, nullptr, observer_);
   } else {
     // throw exception
     throw_object_exception("prototype already inserted: " << pi->type());

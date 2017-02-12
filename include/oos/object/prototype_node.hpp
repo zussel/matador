@@ -81,14 +81,20 @@ private:
 public:
   struct relation_info
   {
+    enum relation_type {
+      BELONGS_TO, HAS_ONE, HAS_MANY
+    };
+
     typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
     relation_info(const std::string &n,
+                  relation_type t,
                   const modify_value_func &insert_func,
                   const modify_value_func &remove_func,
                   prototype_node *pn)
-      : name(n), insert_value(insert_func), remove_value(remove_func), node(pn)
+      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn)
     {}
     std::string name;
+    relation_type type;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
     prototype_node *node;
@@ -142,6 +148,7 @@ public:
   {
     first->next = last.get();
     last->prev = first.get();
+    std::cout << "creating node " << type << "/" << type_index_.name() << "\n";
   }
 
 
@@ -504,9 +511,11 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-  relation_map belongs_to_map_;
-  relation_map has_one_map_;
-  relation_map has_many_map_;
+//  relation_map belongs_to_map_;
+//  relation_map has_one_map_;
+//  relation_map has_many_map_;
+
+  relation_map relation_info_map_;
 
   bool is_relation_node_ = false;
   relation_node_info relation_node_info_;

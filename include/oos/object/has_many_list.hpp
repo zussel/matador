@@ -462,8 +462,8 @@ public:
   {
     prototype_iterator foreign_node_ = store.find(typeid(T).name());
 
-    auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
-    if (i != foreign_node_->belongs_to_map_.end()) {
+    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->relation_info_map_.end()) {
       // set owner into value
       store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
@@ -499,8 +499,9 @@ public:
   {
     prototype_iterator foreign_node_ = store.find(typeid(T).name());
 
-    auto i = foreign_node_->belongs_to_map_.find(owner.node()->type_index());
-    if (i != foreign_node_->belongs_to_map_.end()) {
+    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->relation_info_map_
+               .end()) {
 //      store.remove(val);
       // set owner into value
       store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);

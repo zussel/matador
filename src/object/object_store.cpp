@@ -310,8 +310,8 @@ void object_store::on_remove_relation_owner(prototype_node::relation_info &info,
 
 void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
 {
-  auto i = node.has_many_map_.find(node.type_index());
-  if (i == node.has_many_map_.end()) {
+  auto i = node.relation_info_map_.find(node.type_index());
+  if (i == node.relation_info_map_.end()) {
     return;
   }
   on_update_relation_owner(i->second, owner, value);
@@ -319,8 +319,8 @@ void object_store::on_append_relation_item(prototype_node &node, object_proxy *o
 
 void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
 {
-  auto i = node.has_many_map_.find(node.type_index());
-  if (i == node.has_many_map_.end()) {
+  auto i = node.relation_info_map_.find(node.type_index());
+  if (i == node.relation_info_map_.end()) {
     return;
   }
   on_remove_relation_owner(i->second, owner, value);

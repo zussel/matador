@@ -41,7 +41,7 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("remove", std::bind(&ObjectStoreTestUnit::test_remove, this), "object remove test");
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
-//  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
+  add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
   add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
   add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
 }
