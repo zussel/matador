@@ -390,6 +390,9 @@ class course;
 class student : public person
 {
 public:
+  student() {}
+  student(const std::string &name, const oos::date &bdate = oos::date(), unsigned h = 170) : person(name, bdate, h) {}
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -405,6 +408,7 @@ class course
 public:
 
   course() {}
+  course(const std::string &t) : title(t) {}
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)

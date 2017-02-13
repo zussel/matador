@@ -604,7 +604,12 @@ public:
       // set owner into value
       store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
-      store.insert(rtype);
+      i = owner.node()->relation_info_map_.find(std::type_index(typeid(relation_type)));
+      if (i != owner.node()->relation_info_map_.end()) {
+//        store.on_append_relation_item()
+      } else {
+        store.insert(rtype);
+      }
     }
     mark_modified_owner(store, &owner);
   }

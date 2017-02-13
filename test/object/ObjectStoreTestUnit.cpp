@@ -1043,6 +1043,13 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   ostore_.attach<course>("course");
 
   UNIT_ASSERT_EQUAL(4UL, ostore_.size(), "unexpected size");
+
+  auto george = ostore_.insert(new student("george"));
+  auto jane = ostore_.insert(new student("jane"));
+  auto algebra = ostore_.insert(new course("algebra"));
+  auto art = ostore_.insert(new course("art"));
+
+  art->students.push_back(jane);
 }
 
 void ObjectStoreTestUnit::test_belongs_to()

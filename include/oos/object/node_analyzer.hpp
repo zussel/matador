@@ -26,7 +26,7 @@ protected:
   void process_has_one(const char *id, has_one <V> &x);
 
   template < class V, class T >
-  void register_has_many(const char *id, prototype_node *node);
+  void register_has_many(const std::type_index &typeindex, const char *id, prototype_node *node);
 
 protected:
   prototype_node &node_;
