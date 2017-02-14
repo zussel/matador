@@ -1050,6 +1050,13 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   auto art = ostore_.insert(new course("art"));
 
   art->students.push_back(jane);
+
+  std::cout << "jane course count " << jane->courses.size() << "\n";
+
+  jane->courses.erase(jane->courses.begin());
+  
+  std::cout << "jane course count " << jane->courses.size() << "\n";
+  std::cout << "art students count " << art->students.size() << "\n";
 }
 
 void ObjectStoreTestUnit::test_belongs_to()

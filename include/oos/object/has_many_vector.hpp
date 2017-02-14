@@ -604,12 +604,13 @@ public:
       // set owner into value
       store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
-      i = owner.node()->relation_info_map_.find(std::type_index(typeid(relation_type)));
-      if (i != owner.node()->relation_info_map_.end()) {
-//        store.on_append_relation_item()
-      } else {
-        store.insert(rtype);
+      i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
+//      i = owner.node()->relation_info_map_.find(std::type_index(typeid(T)));
+//      if (i != owner.node()->relation_info_map_.end()) {
+      if (i != foreign_node_->relation_info_map_.end()) {
+        store.on_append_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
       }
+      store.insert(rtype);
     }
     mark_modified_owner(store, &owner);
   }

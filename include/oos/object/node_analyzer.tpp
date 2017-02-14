@@ -208,14 +208,16 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *
 
     pi = store_.attach<typename has_many<V, C>::item_type>(node, nullptr);
 
-    this->register_has_many<V, T>(pi->type_index(), id, pi.get());
+    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<V, C>::item_type))) {
     // prototype is of type has_many_item
     throw_object_exception("prototype already inserted");
   } else if (pi->type_index() == std::type_index(typeid(typename has_many<T, C>::item_type))) {
     // prototype is of type has_many_item
     std::cout << "serialize has many: found type " << pi->type_index().name() << "\n";
-    this->register_has_many<V, T>(std::type_index(typeid(typename has_many<T, C>::item_type)), id, pi.get());
+    this->register_has_many<V, T>(node_.type_index(), id, pi.get());
+    std::cout << "registering node type id " << typeid(typename has_many<V, C>::item_type).name() << "\n";
+    store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(std::make_pair(pi->type_, pi.get()));
   } else {
     // found corresponding belongs_to
     auto j = pi->relation_info_map_.find(node_.type_index_);

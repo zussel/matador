@@ -387,7 +387,7 @@ public:
     }
     iterator node = find(proxy->classname());
     if (node == end()) {
-      throw object_exception("couldn't find object type");
+      throw_object_exception("couldn't find object type: " << proxy->classname());
     }
     // check if proxy/object is already inserted
     if (proxy->ostore() != nullptr && proxy->id() > 0) {
