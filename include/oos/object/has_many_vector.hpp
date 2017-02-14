@@ -605,8 +605,6 @@ public:
       store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
       i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
-//      i = owner.node()->relation_info_map_.find(std::type_index(typeid(T)));
-//      if (i != owner.node()->relation_info_map_.end()) {
       if (i != foreign_node_->relation_info_map_.end()) {
         store.on_append_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
       }
@@ -644,10 +642,13 @@ public:
 
     auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
     if (i != foreign_node_->relation_info_map_.end()) {
-//      store.remove(val);
       // set owner into value
       store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
     } else {
+      i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
+      if (i != foreign_node_->relation_info_map_.end()) {
+        store.on_remove_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
+      }
       store.remove(rtype);
     }
   }
