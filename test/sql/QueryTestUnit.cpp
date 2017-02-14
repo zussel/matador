@@ -584,7 +584,7 @@ void QueryTestUnit::test_statement_update()
 
   column name("name");
   stmt = q.select().where(name == "").prepare();
-  std::string hname("hans");
+  oos::varchar<255> hname("hans");
   stmt.bind(0, hname);
   res = stmt.execute();
 
