@@ -85,8 +85,8 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
-  has_many_iterator(self &&iter) = default;
-  has_many_iterator& operator=(self &&iter) = default;
+  //has_many_iterator(self &&iter) = default;
+  //has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -311,8 +311,8 @@ public:
 
   const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
-  const_has_many_iterator(self &&iter) = default;
-  const_has_many_iterator& operator=(self &&iter) = default;
+  //const_has_many_iterator(self &&iter) = default;
+  //const_has_many_iterator& operator=(self &&iter) = default;
 
   /**
    * @brief Copy assigns a new const has many iterator
