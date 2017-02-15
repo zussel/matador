@@ -1049,14 +1049,38 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   auto algebra = ostore_.insert(new course("algebra"));
   auto art = ostore_.insert(new course("art"));
 
+  UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
+  UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
+
   art->students.push_back(jane);
 
-  std::cout << "jane course count " << jane->courses.size() << "\n";
+  UNIT_ASSERT_FALSE(art->students.empty(), "there must not be students in art");
+  UNIT_ASSERT_EQUAL(art->students.size(), 1UL, "there must be one student in art course");
+  UNIT_ASSERT_EQUAL(art->students.front()->name(), jane->name(), "arts student must be jane");
+  UNIT_ASSERT_FALSE(jane->courses.empty(), "janes courses must not be empty");
+  UNIT_ASSERT_EQUAL(jane->courses.size(), 1UL, "jane must've took one course");
+  UNIT_ASSERT_EQUAL(jane->courses.front()->title, art->title, "janes course must be art");
 
   jane->courses.erase(jane->courses.begin());
-  
-  std::cout << "jane course count " << jane->courses.size() << "\n";
-  std::cout << "art students count " << art->students.size() << "\n";
+
+  UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
+  UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
+
+  george->courses.push_back(algebra);
+
+  UNIT_ASSERT_FALSE(algebra->students.empty(), "there must not be students in algebra");
+  UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL, "there must be one student in algebra course");
+  UNIT_ASSERT_EQUAL(algebra->students.front()->name(), george->name(), "algebras student must be george");
+  UNIT_ASSERT_FALSE(george->courses.empty(), "georges courses must not be empty");
+  UNIT_ASSERT_EQUAL(george->courses.size(), 1UL, "george must've took one course");
+  UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title, "georges course must be algebra");
+
+  algebra->students.clear();
+
+  UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
 }
 
 void ObjectStoreTestUnit::test_belongs_to()
@@ -1102,51 +1126,74 @@ void ObjectStoreTestUnit::test_belongs_to()
   UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 }
 
+struct basic_logger
+{
+  static std::vector<std::string> nodes;
+};
+
+std::vector<std::string> basic_logger::nodes = std::vector<std::string>();
+
 template < class T >
-struct logger : public object_store_observer<T>
+struct logger : public object_store_observer<T>, public basic_logger
 {
   logger() {}
+
   template < class V >
   logger(const logger<V> *) {}
   void on_attach(prototype_node &node, T &) override
   {
-    std::cout << "attaching node " << node.type() << "\n";
+    nodes.push_back(node.type());
   }
 
   void on_detach(prototype_node &node, T &) override
   {
-    std::cout << "detaching node " << node.type() << "\n";
+    nodes.push_back(node.type());
   }
 
-  void on_insert(object_proxy &proxy) override
-  {
-    std::cout << "inserting proxy " << &proxy << "\n";
-  }
-
-  void on_update(object_proxy &proxy) override
-  {
-    std::cout << "updating proxy " << &proxy << "\n";
-  }
-
-  void on_delete(object_proxy &proxy) override
-  {
-    std::cout << "deleting proxy " << &proxy << "\n";
-  }
+  void on_insert(object_proxy &) override {}
+  void on_update(object_proxy &) override {}
+  void on_delete(object_proxy &) override {}
 };
 
 void ObjectStoreTestUnit::test_observer()
 {
-//  ostore_.attach<person>("person", { new logger<person> });
-//  ostore_.attach<employee, person>("employee", { new logger<employee> });
-//  ostore_.attach<department>("department", { new logger<department> });
-//  ostore_.attach<book>("book", { new logger<book> });
-//  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<person>("person", { new logger<person> });
+  ostore_.attach<employee, person>("employee", { new logger<employee> });
+  ostore_.attach<department>("department", { new logger<department> });
+  ostore_.attach<book>("book", { new logger<book> });
+  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+
+  std::vector<std::string> result({
+    "person",
+    "employee",
+    "department",
+    "book",
+    "books",
+    "book_list"
+  });
+
+  UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
+
+  basic_logger::nodes.clear();
 
   ostore_.clear(true);
 
   ostore_.attach<person>("person", { new logger<person> });
   ostore_.attach<department>("department", { new logger<department> });
   ostore_.attach<employee, person>("employee", { new logger<employee> });
-//  ostore_.attach<book>("book", { new logger<book> });
-//  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<book_list>("book_list", { new logger<book_list> });
+  ostore_.attach<book>("book", { new logger<book> });
+
+  result = {
+    "person",
+    "employee",
+    "department",
+    "employee",
+    "employee",
+    "books",
+    "book_list",
+    "book"
+  };
+
+  UNIT_ASSERT_TRUE(basic_logger::nodes == result, "vectors must be equal");
 }
