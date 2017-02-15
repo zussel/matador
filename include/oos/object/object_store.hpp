@@ -654,7 +654,7 @@ private:
   friend class object_proxy;
   friend class prototype_node;
   friend class detail::basic_node_analyzer;
-  template < class T, template < class ... > class ON_ATTACH >
+  template < class T, template < class U = T > class O >
   friend class detail::node_analyzer;
   friend class transaction;
   template < class T, template <class ...> class C >

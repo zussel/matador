@@ -171,7 +171,7 @@ date date::parse(const std::string &dstr, const char *format)
 {
   struct tm t;
   detail::strptime(dstr.c_str(), format, &t);
-  return std::move(date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900));
+  return date(t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
 }
 
 void date::set(const char *datestr, const char *format)
