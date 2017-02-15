@@ -587,8 +587,8 @@ public:
     if (this->ostore_) {
       inserter_.insert(*this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
     }
-//    container_iterator i = pos.iter_;
-    return iterator(this->container_.insert(pos.iter_, iptr));
+    container_iterator i = pos.iter_;
+    return iterator(this->container_.insert(i, iptr));
   }
 
   /**
