@@ -732,18 +732,6 @@ private:
   template < class T >
   prototype_node* attach_node(prototype_node *node, const char *parent);
 
-  /**
-   * Get or create a prototype node
-   *
-   * @param producer The producer of the concrete object
-   * @param type The type name of the node
-   * @param abstract indicates wether the representing object is abstract
-   * @tparam T Type of the node
-   * @return The prototype node
-   */
-  template<class T>
-  prototype_node *acquire(const char *type, bool abstract);
-
   prototype_node* find_parent(const char *name) const;
 
   void push_transaction(const transaction &tr);
@@ -789,6 +777,7 @@ private:
 template < class T >
 void object_store::validate(prototype_node *node)
 {
+  std::unique_ptr<prototype_node> nptr(node);
   // try to find node in prepared map
   const char *name = typeid(T).name();
   t_prototype_map::iterator i = prototype_map_.find(node->type_);
@@ -813,6 +802,7 @@ void object_store::validate(prototype_node *node)
      */
     throw object_exception("unexpectly found prototype");
   }
+  nptr.release();
 }
 
 template <class T, template < class V > class O >
@@ -824,7 +814,6 @@ object_store::iterator object_store::attach(const char *type, std::initializer_l
 template <class T >
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
-//  prototype_node *node = acquire<T>(type, abstract);
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
   return attach<T>(node, parent);
@@ -839,7 +828,6 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 template<class T, template<class V = T> class O>
 object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
 {
-//  prototype_node *node = acquire<T>(type, abstract);
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
   return attach<T>(node, parent, observer);
@@ -848,6 +836,7 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 template < class T >
 prototype_node* object_store::attach_node(prototype_node *node, const char *parent)
 {
+  std::unique_ptr<prototype_node> nptr(node);
   // set node to root node
   prototype_node *parent_node = find_parent(parent);
   /*
@@ -870,7 +859,7 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
   prototype_map_.insert(std::make_pair(node->type_, node))/*.first*/;
   typeid_prototype_map_[typeid(T).name()].insert(std::make_pair(node->type_, node));
 
-  return node;
+  return nptr.release();
 }
 
 template<class T, class S  >
@@ -928,42 +917,6 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
 
 
   return prototype_iterator(node);
-}
-
-template<class T>
-prototype_node *object_store::acquire(const char *type, bool abstract)
-{
-  // try to find node in prepared map
-  const char *name = typeid(T).name();
-  prototype_node *node = nullptr;
-  t_prototype_map::iterator i = prototype_map_.find(type);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << type);
-  }
-  // try to find by typeid name
-  i = prototype_map_.find(name);
-  if (i != prototype_map_.end()) {
-    throw_object_exception("prototype already inserted: " << type);
-  }
-  /*
-   * no typeid found, seems to be
-   * a new type
-   * to be sure check in typeid map
-   */
-  t_typeid_prototype_map::iterator j = typeid_prototype_map_.find(name);
-  if (j != typeid_prototype_map_.end() && j->second.find(type) != j->second.end()) {
-    /* unexpected found the
-     * typeid check for type
-     * throw exception
-     */
-    throw object_exception("unexpectly found prototype");
-  } else {
-    /* insert new prototype and add to
-     * typeid map
-     */
-    node = new prototype_node(this, type, new T, abstract);
-  }
-  return node;
 }
 
 namespace detail {
