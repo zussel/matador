@@ -29,12 +29,36 @@ bool set(O *obj, const std::string &name, const T &val)
   return set(*obj, name, val);
 }
 
+/**
+ * Appends a value to an object member identified by
+ * the given name. The object is passed as pointer.
+ * If the operation succeeds true is returned.
+ *
+ * @tparam O     The object for which the value should be appended.
+ * @tparam T     The type of the value to be appended.
+ * @param obj    The object pointer to append the value to.
+ * @param name   The name of the member variable.
+ * @param val    The value to append.
+ * @return       True if the operation succeeds.
+ */
 template < typename O, class T >
 bool append(O *obj, const std::string &name, const T &val)
 {
   return append(*obj, name, val);
 }
 
+/**
+ * Removes a value from an object member container identified by
+ * the given name. The object is passed as pointer.
+ * If the operation succeeds true is returned.
+ *
+ * @tparam O     The object for which the value should be removed.
+ * @tparam T     The type of the value to be removed.
+ * @param obj    The object pointer to remove the value from.
+ * @param name   The name of the member variable.
+ * @param val    The value to remove.
+ * @return       True if the operation succeeds.
+ */
 template < typename O, class T >
 bool remove(O *obj, const std::string &name, const T &val)
 {
@@ -61,6 +85,18 @@ bool set(O &obj, const std::string &name, const T &val)
   return reader.success();
 }
 
+/**
+ * Appends a value to an object member identified by
+ * the given name. The object is passed by reference.
+ * If the operation succeeds true is returned.
+ *
+ * @tparam O     The object for which the value should be appended.
+ * @tparam T     The type of the value to be appended.
+ * @param obj    The object reference to append the value to.
+ * @param name   The name of the member variable.
+ * @param val    The value to append.
+ * @return       True if the operation succeeds.
+ */
 template < typename O, class T >
 bool append(O &obj, const std::string &name, const T &val)
 {
@@ -69,6 +105,18 @@ bool append(O &obj, const std::string &name, const T &val)
   return writer.success();
 }
 
+/**
+ * Removes a value from an object member container identified by
+ * the given name. The object is passed by reference.
+ * If the operation succeeds true is returned.
+ *
+ * @tparam O     The object for which the value should be removed.
+ * @tparam T     The type of the value to be removed.
+ * @param obj    The object reference to remove the value from.
+ * @param name   The name of the member variable.
+ * @param val    The value to remove.
+ * @return       True if the operation succeeds.
+ */
 template < typename O, class T >
 bool remove(O &obj, const std::string &name, const T &val)
 {

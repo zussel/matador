@@ -79,6 +79,7 @@ private:
   prototype_node& operator=(const prototype_node&) = delete;
 
 public:
+  /// @cond OOS_DEV
   struct relation_info
   {
     enum relation_type {
@@ -110,11 +111,35 @@ public:
     std::string item_id_column_;
   };
 
+  /// @endcond
+
 public:
 
+  /**
+   * Creates a regular prototype node.
+   *
+   * @tparam T Type of the node
+   * @param store Corresponding object_store
+   * @param type Type name
+   * @param abstract Flag indicating if node is abstract.
+   * @return The created node.
+   */
   template < class T >
   static prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
 
+  /**
+   * Creates a relation prototype node.
+   *
+   * @tparam T Type of the node
+   * @param store Corresponding object_store
+   * @param type Type name
+   * @param abstract Flag indicating if node is abstract.
+   * @param owner_type Type name of the owner node
+   * @param relation_id Name of the relation in the prototype object
+   * @param owner_column Owner column name
+   * @param item_column Item (foreign) column name
+   * @return The created node.
+   */
   template < class T >
   static prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
                                      const char *owner_type, const char *relation_id,
@@ -131,7 +156,7 @@ public:
    * 
    * @param tree The node containing tree.
    * @param type The type name of the node.
-   * @param typeinfo The typeinfo of this node.
+   * @param proto Prototype object of the node
    * @param abstract Tells the node if its prototype is abstract.
    */
   template < class T >
@@ -357,7 +382,22 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
+  /**
+   * Register relation info for a belongs_to relation part
+   * identified by the given type index.
+   *
+   * @param tindex type index for identification.
+   * @param relation_info relation info object for belongs_to
+   */
   void register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+
+  /**
+   * Register relation info for a has_many relation part
+   * identified by the given type index.
+   *
+   * @param tindex type index for identification.
+   * @param relation_info relation info object for has_many
+   */
   void register_has_many(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
 
 private:

@@ -84,6 +84,8 @@ private:
   bool notify_ = false;
 };
 
+/// @endcond
+
 }
 }
 

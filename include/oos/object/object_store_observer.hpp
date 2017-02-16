@@ -29,6 +29,12 @@ class prototype_node;
 class basic_object_store_observer
 {
 protected:
+  /**
+   * Constructs a basic_object_store_observer for the
+   * give std::type_index.
+   *
+   * @param tindex type index of the observer
+   */
   basic_object_store_observer(const std::type_index &tindex)
   : type_index_(tindex)
   {}
@@ -36,6 +42,11 @@ protected:
 public:
   virtual ~basic_object_store_observer() {}
 
+  /**
+   * Return the type index of the observer.
+   *
+   * @return The type index of the observer.
+   */
   const std::type_index& index() const { return type_index_; }
 
 private:
@@ -71,6 +82,7 @@ public:
    * this is called after the attaching succeeded.
    *
    * @param node The attached prototype node
+   * @param prototype The prototype object of the attached node
    */
   virtual void on_attach(prototype_node &node, T &prototype) = 0;
 
@@ -81,6 +93,7 @@ public:
    * this is called before the detaching succeeded.
    *
    * @param node The to be detached prototype node
+   * @param prototype The prototype object of the detached node
    */
   virtual void on_detach(prototype_node &node, T &prototype) = 0;
 

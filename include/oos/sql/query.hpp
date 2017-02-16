@@ -515,6 +515,17 @@ public:
     reset_query(query_command);
     return *this;
   }
+
+  /**
+   * @brief Execute the query
+   *
+   * Execute the query with the stored
+   * connection. If internal connection is null
+   * an exception is thrown.
+   *
+   * @throws std::logic_error
+   * @return The result of the query
+   */
   result<T> execute()
   {
     if (!conn_.is_open()) {
@@ -535,6 +546,17 @@ public:
     return conn.execute<T>(sql_);
   }
 
+
+  /**
+   * @brief Prepare the query
+   *
+   * Prepare the query with the stored
+   * connection. If internal connection is null
+   * an exception is thrown.
+   *
+   * @throws std::logic_error
+   * @return The prepared statement
+   */
   statement<T> prepare()
   {
     if (!conn_.is_open()) {

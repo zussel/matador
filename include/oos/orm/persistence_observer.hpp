@@ -8,6 +8,8 @@ namespace oos {
 
 class persistence;
 
+/// @cond OOS_DEV
+
 template < class T >
 class persistence_observer : public object_store_observer<T>
 {
@@ -60,6 +62,8 @@ private:
   persistence& persistence_;
   relation_type relation_;
 };
+
+/// @endcond
 
 }
 #endif //OOS_PERSISTENCE_OBSERVER_HPP

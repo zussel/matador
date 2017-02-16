@@ -11,6 +11,8 @@ class prototype_node;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class basic_node_analyzer
 {
 public:
@@ -102,6 +104,8 @@ public:
                  typename std::enable_if<std::is_scalar<V>::value>::type* = 0);
 
 };
+
+/// @endcond
 
 }
 }

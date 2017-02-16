@@ -309,6 +309,11 @@ public:
    */
   const_has_many_iterator(const has_many_iterator<T, std::list> &iter) : iter_(iter.iter_) {}
 
+  /**
+   * @brief Copy construct a const_has_many_iterator from given iterator.
+   *
+   * @param iter Iterator to copy construct from.
+   */
   const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
   //const_has_many_iterator(self &&iter) = default;
@@ -450,6 +455,8 @@ private:
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
 {
@@ -523,6 +530,8 @@ public:
     store.remove(rtype);
   }
 };
+
+/// @endcond
 
 }
 
@@ -619,6 +628,12 @@ public:
     erase(this->begin(), this->end());
   }
 
+  /**
+   * Removes all values equal to given value
+   * from the container
+   *
+   * @param value Value to remove
+   */
   void remove(const value_type &value)
   {
     iterator first = this->begin();
@@ -633,6 +648,13 @@ public:
     }
   }
 
+  /**
+   * Removes all elements from the container for which
+   * the given predicate returns true.
+   *
+   * @tparam P Type of the predicate
+   * @param predicate Predicate to be evaluated
+   */
   template < class P >
   void remove_if(P predicate)
   {

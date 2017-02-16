@@ -9,6 +9,10 @@
 
 namespace oos {
 
+/**
+ * Shortcut to object_pointer representing a has_one
+ * relationship
+ */
 template < class T >
 using has_one = object_pointer<T, object_holder_type::HAS_ONE>;
 

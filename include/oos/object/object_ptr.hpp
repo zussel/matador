@@ -203,6 +203,10 @@ private:
   static std::unique_ptr<basic_identifier> identifier_;
 };
 
+/**
+ * Shortcut to object_pointer representing a object_ptr
+ * relationship
+ */
 template < class T >
 using object_ptr = object_pointer<T, object_holder_type::OBJECT_PTR>;
 

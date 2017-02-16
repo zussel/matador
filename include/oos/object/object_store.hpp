@@ -65,6 +65,8 @@ class prototype_node;
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 class OOS_OBJECT_API modified_marker
 {
 public:
@@ -89,9 +91,10 @@ private:
   t_marker marker_;
 };
 
+/// @endcond
+
 }
 
-/// @endcond
 
 /**
  * @class object_store

@@ -61,9 +61,8 @@ protected:
    * as a reference or an pointer. The difference
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
-   * 
-   * @param is_internal True if the pointer is used internal, which means
-   *                    it is used to describe an entity.
+   *
+   * @param holder_type Type of the object holder
    */
   explicit object_holder(object_holder_type holder_type);
 
@@ -88,7 +87,7 @@ protected:
    * boolean tells the object_holder if it should be
    * handled as an internal.
    * 
-   * @param is_internal If true the object is handled as an internal.
+   * @param holder_type Type of the object holder
    * @param op The object_proxy of the object_holder
    */
   object_holder(object_holder_type holder_type, object_proxy *op);
@@ -215,11 +214,27 @@ public:
    */
   bool is_internal() const;
 
+  /**
+   * Returns true if holder represents a belongs_to
+   *
+   * @return True if holder represents a belongs_to
+   */
   bool is_belongs_to() const;
 
+  /**
+   * Returns true if holder represents a has_one
+   *
+   * @return True if holder represents a has_one
+   */
   bool is_has_one() const;
 
+  /**
+   * Returns true if holder represents a object_ptr
+   *
+   * @return True if holder represents a object_ptr
+   */
   bool is_object_ptr() const;
+
   /**
    * Returns true if the underlying object
    * is inserted in an object_store
@@ -256,6 +271,11 @@ public:
    */
   virtual const char* type() const = 0;
 
+  /**
+   * Return the object holder type.
+   *
+   * @return The object holder type.
+   */
   object_holder_type holder_type() const;
 
   /**

@@ -130,6 +130,8 @@ class OOS_OBJECT_API object_deleter {
   t_object_count_map object_count_map;
 };
 
+/// @endcond
+
 }
 }
 #endif //OOS_OBJECT_DELETER_HPP
