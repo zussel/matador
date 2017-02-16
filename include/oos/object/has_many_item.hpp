@@ -17,6 +17,12 @@ namespace oos {
 
 /// @cond OOS_DEV
 
+template < class T, template <class ...> class C >
+class has_many_iterator;
+
+template < class T, template <class ...> class C >
+class const_has_many_iterator;
+
 /**
  * @class has_many_item
  * @brief Holds item and owner id of a has many relation
@@ -59,6 +65,11 @@ public:
   }
 
 private:
+  template < class V, template <class ...> class C >
+  friend class has_many_iterator;
+  template < class V, template <class ...> class C >
+  friend class const_has_many_iterator;
+
   has_one<T> item_;
 };
 
@@ -104,6 +115,11 @@ public:
     return item_;
   }
 private:
+  template < class V, template <class ...> class C >
+  friend class has_many_iterator;
+  template < class V, template <class ...> class C >
+  friend class const_has_many_iterator;
+
   T item_;
 };
 

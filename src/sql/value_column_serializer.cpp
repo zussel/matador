@@ -107,6 +107,8 @@ void value_column_serializer::serialize(const char *id, identifiable_holder &x, 
 {
   if (x.has_primary_key()) {
     x.primary_key()->serialize(id, *this);
+  } else {
+    cols_->push_back(std::make_shared<value_column<null_value>>(id, new null_value));
   }
 }
 

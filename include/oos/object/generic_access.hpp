@@ -23,11 +23,22 @@ namespace oos {
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
-
-template < typename O, class T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr >
+template < typename O, class T >
 bool set(O *obj, const std::string &name, const T &val)
 {
   return set(*obj, name, val);
+}
+
+template < typename O, class T >
+bool append(O *obj, const std::string &name, const T &val)
+{
+  return append(*obj, name, val);
+}
+
+template < typename O, class T >
+bool remove(O *obj, const std::string &name, const T &val)
+{
+  return remove(*obj, name, val);
 }
 
 /**
@@ -42,12 +53,28 @@ bool set(O *obj, const std::string &name, const T &val)
  * @param val    The new value for the member.
  * @return       True if the operation succeeds.
  */
-template < typename O, class T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr >
+template < typename O, class T >
 bool set(O &obj, const std::string &name, const T &val)
 {
   attribute_reader<T> reader(name, val);
   oos::access::serialize(reader, obj);
   return reader.success();
+}
+
+template < typename O, class T >
+bool append(O &obj, const std::string &name, const T &val)
+{
+  has_many_attribute_reader<T> writer(name, val);
+  oos::access::serialize(writer, obj);
+  return writer.success();
+}
+
+template < typename O, class T >
+bool remove(O &obj, const std::string &name, const T &val)
+{
+  has_many_attribute_writer<T> writer(name, val);
+  oos::access::serialize(writer, obj);
+  return writer.success();
 }
 
 /**

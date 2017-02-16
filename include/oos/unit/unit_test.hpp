@@ -292,8 +292,10 @@ public:
    *
    * Each test method of the test_unit is
    * executed.
+   *
+   * @param quiet If true no output is written to stdout
    */
-  bool execute();
+  bool execute(bool quiet = false);
 
   /**
    * @brief Executes a concrete test method.
@@ -303,8 +305,9 @@ public:
    * a warning is displayed.
    * 
    * @param test Name of the test to execute.
+   * @param quiet If true no output is written to stdout
    */
-  bool execute(const std::string &test);
+  bool execute(const std::string &test, bool quiet = false);
 
   /**
    * @brief List all tests.
@@ -877,7 +880,7 @@ private:
   } test_func_info;
 
 private:
-  void execute(test_func_info &test_info);
+  void execute(test_func_info &test_info, bool quiet);
 
 private:
   std::string name_;

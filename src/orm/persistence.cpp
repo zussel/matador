@@ -19,6 +19,11 @@ persistence::~persistence()
   connection_.close();
 }
 
+void persistence::detach(const char *type)
+{
+  store_.detach(type);
+}
+
 void persistence::create()
 {
   for (t_table_map::value_type &val : tables_) {
@@ -77,6 +82,5 @@ connection &persistence::conn()
 const connection &persistence::conn() const {
   return connection_;
 }
-
 
 }

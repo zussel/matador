@@ -27,10 +27,6 @@ object_proxy::object_proxy(const std::shared_ptr<basic_identifier> &pk)
   : primary_key_(pk)
 {}
 
-//object_proxy::object_proxy(unsigned long i)
-//  : oid(i)
-//{}
-
 object_proxy::~object_proxy()
 {
   if (ostore_ && id() > 0) {
@@ -42,7 +38,7 @@ object_proxy::~object_proxy()
   }
   ostore_ = 0;
   for (ptr_set_t::iterator i = ptr_set_.begin(); i != ptr_set_.end(); ++i) {
-    (*i)->proxy_ = 0;
+    (*i)->proxy_ = nullptr;
   }
 }
 
@@ -85,34 +81,6 @@ void object_proxy::unlink()
   node_ = 0;
 }
 
-//void object_proxy::link_ref()
-//{
-//  if (obj_) {
-//    ++ref_count_;
-//  }
-//}
-//
-//void object_proxy::unlink_ref()
-//{
-//  if (obj_) {
-//    --ref_count_;
-//  }
-//}
-//
-//void object_proxy::link_ptr()
-//{
-//  if (obj_) {
-//    ++ptr_count_;
-//  }
-//}
-//
-//void object_proxy::unlink_ptr()
-//{
-//  if (obj_) {
-//    --ptr_count_;
-//  }
-//}
-
 unsigned long object_proxy::operator++()
 {
   return ++reference_counter_;
@@ -147,16 +115,6 @@ object_proxy *object_proxy::prev() const
 {
   return prev_;
 }
-
-//unsigned long object_proxy::ref_count() const
-//{
-//  return ref_count_;
-//}
-//
-//unsigned long object_proxy::ptr_count() const
-//{
-//  return ptr_count_;
-//}
 
 unsigned long object_proxy::reference_count() const
 {

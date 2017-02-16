@@ -22,202 +22,75 @@
 #include "oos/object/object_holder.hpp"
 #include "oos/object/transaction.hpp"
 #include "oos/utils/identifier_resolver.hpp"
-#include "oos/object/has_one.hpp"
 
 #include <memory>
 #include <typeinfo>
 
 namespace oos {
 
-namespace detail {
-class result_impl;
-}
-
-template < class T > class object_ptr;
-
 /**
- * @brief The has_one holds a pointer to an serializable.
+ * @brief The object_pointer holds a pointer to an serializable.
  * @tparam T The type of the serializable.
  *
- * The has_one holds a pointer to an object. The
- * has_one is a wrapper class for the object class
+ * The object_pointer holds a pointer to an object. The
+ * object_pointer is a wrapper class for the object class
  * It has a reference count mechanism.
  * The objects inserted into the object_store are returned
- * as a has_one and should be used through the
- * has_one class.
+ * as a object_pointer and should be used through the
+ * object_pointer class.
  */
-template < class T >
-class has_one : public object_holder
-{
-public:
-  typedef has_one<T> self;      /**< Shortcut for self class. */
-
-public:
-  /**
-   * Create an empty has_one
-   */
-  has_one()
-    : object_holder(true)
-  {}
-
-  /**
-   * Create an hs_one from an object
-   *
-   * @param o The object.
-   */
-  has_one(T *o)
-    : object_holder(true, new object_proxy(o))
-  {}
-
-  /**
-   * Create an has_one from an object_proxy
-   *
-   * @param proxy The object_proxy.
-   */
-  has_one(object_proxy *proxy)
-    : object_holder(true, proxy)
-  {}
-
-  /**
-   * Copies has_one from object_ptr
-   *
-   * @param x The object_ptr to copy
-   */
-  has_one(const object_ptr <T> &x);
-
-  /**
-   * Assigns has_one from object_ptr
-   *
-   * @param x The object_ptr to assign
-   * @return Reference to assigned has_one
-   */
-  has_one& operator=(const object_ptr <T> &x);
-
-  //@{
-  /**
-   * @brief Return the pointer to the object of type T.
-   *
-   * Return the pointer to the object of type T. If there
-   * isn't a valid object nullptr is returned.
-   *
-   * @return The pointer to the object of type T.
-   */
-  T* operator->()
-  {
-    return get();
-  }
-
-  const T* operator->() const
-  {
-    return get();
-  }
-
-  T* get()
-  {
-    return static_cast<T*>(proxy_->obj());
-  }
-
-  const T* get() const
-  {
-    return static_cast<T*>(proxy_->obj());
-  }
-  //@}
-  
-  /**
-   * Return the type string of the serializable
-   *
-   * @return The type string of the serializable.
-   */
-  const char* type() const
-  {
-    return classname_.c_str();
-  }
-
-  /**
-   * Creates a new identifier, represented by the identifier
-   * of the underlaying type.
-   *
-   * @return A new identifier.
-   */
-  basic_identifier* create_identifier() const
-  {
-    return self::identifier_->clone();
-  }
-
-private:
-  friend class object_deleter;
-
-private:
-  static std::string classname_;
-  static std::unique_ptr<basic_identifier> identifier_;
-};
-
-template < class T >
-std::string has_one<T>::classname_ = typeid(T).name();
-
-template < class T >
-std::unique_ptr<basic_identifier> has_one<T>::identifier_(identifier_resolver<T>::resolve());
-
-
-/**
- * @brief The object_ptr holds a pointer to an serializable.
- * @tparam T The type of the serializable.
- *
- * The object_ptr holds a pointer to an object. The
- * object_ptr is a wrapper class for the object class
- * It has a reference count mechanism.
- * The objects inserted into the object_store are returned
- * as a object_ptr and should be used through the
- * object_ptr class.
- */
-template < class T >
-class object_ptr : public object_holder
+template < class T, object_holder_type OPT >
+class object_pointer : public object_holder
 {
 public:
   typedef T object_type;           /**< Shortcut for serializable type. */
-  typedef object_ptr<T> self;      /**< Shortcut for self class. */
+  typedef object_pointer<T, OPT> self;      /**< Shortcut for self class. */
 
 public:
   /**
-   * Create an empty object_ptr
+   * Create an empty object_pointer
    */
-  object_ptr()
-    : object_holder(false)
+  object_pointer()
+    : object_holder(OPT)
   {}
   /**
-   * Copies object_ptr
+   * Copies object_pointer
    *
-   * @param x The object_ptr to copy
+   * @param x The object_pointer to copy
    */
-  object_ptr(const self &x)
-    : object_holder(x.is_internal_, x.proxy_)
+  object_pointer(const self &x)
+    : object_holder(x.type_, x.proxy_)
   {}
 
   /**
-   * Create an object_ptr from an object
+   * Create an object_pointer from an object
    *
    * @param o The object.
    */
-  object_ptr(T *o)
-    : object_holder(false, new object_proxy(o))
+  object_pointer(T *o)
+    : object_holder(OPT, new object_proxy(o))
   {}
 
   /**
-   * Create an object_ptr from an object_proxy
+   * Create an object_pointer from an object_proxy
    *
    * @param proxy The object_proxy.
    */
-  explicit object_ptr(object_proxy *proxy)
-  : object_holder(false, proxy)
+  explicit object_pointer(object_proxy *proxy)
+  : object_holder(OPT, proxy)
   {}
 
   /**
-   * @brief Creates an object_ptr from the given has_one object
-   * @param x The has_one object to created the object_ptr from
+   * @brief Creates an object_pointer from the given object_pointer object
+   *
+   * @param x The object_pointer object to created the object_pointer from
    */
-  object_ptr(const has_one<T> &x)
-    : object_holder(false, x.proxy_)
-  {}
+  template < object_holder_type OOPT >
+  object_pointer(const object_pointer<T, OOPT> &x)
+    : object_holder(OPT)
+  {
+    reset(x.proxy_, x.cascade_);
+  }
 
   /**
    * Assign operator.
@@ -231,15 +104,28 @@ public:
   }
 
   /**
-   * @brief Copy assignes an object_ptr from the given has_one object
-   * @param x The has_one object to created the object_ptr from
-   * @return A reference to the created object_ptr
+   * @brief Copy assignes an object_pointer from the given has_one object
+   * @param x The has_one object to created the object_pointer from
+   * @return A reference to the created object_pointer
    */
-  self& operator=(has_one<T> &x)
+  self& operator=(const self &x)
   {
-    reset(x.proxy_);
+    reset(x.proxy_, x.cascade_);
     return *this;
   }
+
+  /**
+   * @brief Copy assignes an object_pointer from the given has_one object
+   * @param x The has_one object to created the object_pointer from
+   * @return A reference to the created object_pointer
+   */
+  template < object_holder_type OOPT >
+  self& operator=(object_pointer<T, OOPT> &x)
+  {
+    reset(x.proxy_, x.cascade_);
+    return *this;
+  }
+
   /**
    * Return the type string of the object
    *
@@ -318,23 +204,13 @@ private:
 };
 
 template < class T >
-std::string object_ptr<T>::classname_ = typeid(T).name();
+using object_ptr = object_pointer<T, object_holder_type::OBJECT_PTR>;
 
-template < class T >
-std::unique_ptr<basic_identifier> object_ptr<T>::identifier_(identifier_resolver<T>::resolve());
+template < class T, object_holder_type OPT >
+std::string object_pointer<T, OPT>::classname_ = typeid(T).name();
 
-
-template < class T >
-has_one<T>::has_one(const object_ptr<T> &x)
-  : object_holder(true, x.proxy_)
-{}
-
-template < class T >
-has_one<T>& has_one<T>::operator=(const object_ptr <T> &x)
-{
-  reset(x.proxy_, x.cascade_);
-  return *this;
-}
+template < class T, object_holder_type OPT >
+std::unique_ptr<basic_identifier> object_pointer<T, OPT>::identifier_(identifier_resolver<T>::resolve());
 
 }
 

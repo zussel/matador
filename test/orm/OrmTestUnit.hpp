@@ -23,6 +23,7 @@ public:
   void test_load_has_many();
   void test_load_has_many_int();
   void test_has_many_delete();
+  void test_belongs_to();
 
 private:
   std::string dns_;

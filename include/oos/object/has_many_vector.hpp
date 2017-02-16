@@ -7,8 +7,10 @@
 
 #include "oos/object/basic_has_many.hpp"
 #include "oos/object/object_store.hpp"
+#include "oos/object/generic_access.hpp"
 
 #include <vector>
+#include <oos/sql/result.hpp>
 
 namespace oos {
 
@@ -62,13 +64,13 @@ private:
   typedef has_many_iterator_traits<T, std::vector> traits;
   typedef typename traits::item_type item_type;
   typedef typename traits::internal_type internal_type;
-  typedef typename traits::relation_type relation_type;
   typedef typename traits::container_type container_type;
 
 public:
-  typedef has_many_iterator<T, std::vector> self;                               /**< Shortcut value self */
+  typedef has_many_iterator<T, std::vector> self;                             /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
-  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
+  typedef typename traits::relation_type relation_type;                       /**< Shortcut to the relation type */
+  typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type */
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
 
@@ -85,6 +87,8 @@ public:
    */
   has_many_iterator(const self &iter) : iter_(iter.iter_) {}
 
+  //has_many_iterator(self &&iter) = default;
+  //has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Creates a has many iterator from given internal container iterator
    *
@@ -126,6 +130,17 @@ public:
    * @return True if iterators doesn't contain the same element
    */
   bool operator!=(const self &i) const { return !this->operator==(i); }
+
+  /**
+   * @brief Compares less than iterator with another iterator.
+   *
+   * Compares iterator with another iterator. If other iterator isn't
+   * less than this iterator true es returned.
+   *
+   * @param i The iterator to compare with
+   * @return True if iterators isn't less than this itertor
+   */
+  bool operator<(const self &i) const { return iter_ < i.iter_; }
 
   /**
    * @brief Returns the difference of two iterators a and b.
@@ -257,9 +272,8 @@ public:
    * 
    * @return The current value
    */
-  value_type operator->() const { return (*iter_)->value(); }
-  value_type operator*() const { return (*iter_)->value(); }
-  value_type get() const { return (*iter_)->value(); }
+  value_type operator->() const { return (*iter_)->item_; }
+  value_type operator*() const { return (*iter_)->item_; }
   //@}
 
 private:
@@ -268,8 +282,16 @@ private:
   friend class basic_has_many<T, std::vector>;
   friend class object_serializer;
   friend class detail::object_inserter;
+  friend class detail::object_deleter;
+  template<class V, template <class ...> class C, class Enabled>
+  friend class detail::has_many_deleter;
 
   relation_type relation_item() const { return *iter_; }
+
+  void move(self &i)
+  {
+    *iter_ = std::move(*i.iter_);
+  }
 
   container_iterator iter_;
 };
@@ -324,12 +346,12 @@ private:
   typedef const_has_many_iterator_traits<T, std::vector> traits;
   typedef typename traits::item_type item_type;
   typedef typename traits::internal_type internal_type;
-  typedef typename traits::relation_type relation_type;
   typedef typename traits::container_type container_type;
 
 public:
   typedef const_has_many_iterator<T, std::vector> self;                       /**< Shortcut value self */
   typedef typename traits::value_type value_type;                             /**< Shortcut value type */
+  typedef typename traits::relation_type relation_type;
   typedef typename traits::difference_type difference_type;                   /**< Shortcut to the difference type*/
   typedef typename traits::container_iterator container_iterator;             /**< Shortcut to the internal container iterator */
   typedef typename traits::const_container_iterator const_container_iterator; /**< Shortcut to the internal const container iterator */
@@ -361,6 +383,10 @@ public:
    */
   const_has_many_iterator(const has_many_iterator<T, std::vector> &iter) : iter_(iter.iter_) {}
 
+  const_has_many_iterator(const self &iter) : iter_(iter.iter_) {}
+
+  //const_has_many_iterator(self &&iter) = default;
+  //const_has_many_iterator& operator=(self &&iter) = default;
   /**
    * @brief Copy assigns a new const has many iterator
    *
@@ -410,6 +436,17 @@ public:
    * @return True if iterators doesn't contain the same element
    */
   bool operator!=(const self &i) const { return !this->operator==(i); }
+
+  /**
+  * @brief Compares less than iterator with another iterator.
+  *
+  * Compares iterator with another iterator. If other iterator isn't
+  * less than this iterator true es returned.
+  *
+  * @param i The iterator to compare with
+  * @return True if iterators isn't less than this itertor
+  */
+  bool operator<(const self &i) const { return iter_ < i.iter_; }
 
   /**
    * @brief Pre increments self
@@ -548,6 +585,89 @@ private:
   const_container_iterator iter_;
 };
 
+namespace detail {
+
+template<class T>
+class has_many_inserter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
+
+  void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  {
+    prototype_iterator foreign_node_ = store.find(typeid(T).name());
+
+    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->relation_info_map_.end()) {
+      // set owner into value
+      store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+    } else {
+      i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
+      if (i != foreign_node_->relation_info_map_.end()) {
+        store.on_append_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
+      }
+      store.insert(rtype);
+    }
+    mark_modified_owner(store, &owner);
+  }
+};
+
+template<class T>
+class has_many_inserter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+  typedef typename basic_has_many<T, std::vector>::mark_modified_owner_func mark_modified_owner_func;
+
+  void insert(object_store &store, const relation_type &rtype, object_proxy &owner, const mark_modified_owner_func &mark_modified_owner)
+  {
+    store.insert(rtype);
+    mark_modified_owner(store, &owner);
+  }
+};
+
+template<class T>
+class has_many_deleter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+
+  void remove(object_store &store, relation_type &rtype, object_proxy &owner)
+  {
+    prototype_iterator foreign_node_ = store.find(typeid(T).name());
+
+    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+    if (i != foreign_node_->relation_info_map_.end()) {
+      // set owner into value
+      store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+    } else {
+      i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
+      if (i != foreign_node_->relation_info_map_.end()) {
+        store.on_remove_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
+      }
+      store.remove(rtype);
+    }
+  }
+};
+
+template<class T>
+class has_many_deleter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  typedef typename has_many_iterator_traits<T, std::vector>::relation_type relation_type;
+
+  void remove(object_store &store, relation_type &rtype, object_proxy &)
+  {
+    store.remove(rtype);
+  }
+};
+}
+
 /**
  * @brief Has many relation class using a std::vector as container
  *
@@ -603,14 +723,10 @@ public:
   iterator insert(iterator pos, const value_type &value)
   {
     // create new has_many
-    if (indexed_) {
-
-    }
     item_type *item = create_item(value);
     relation_type iptr(item);
     if (this->ostore_) {
-      this->ostore_->insert(iptr);
-      this->mark_modified_owner_(*this->ostore_, this->owner_);
+      inserter_.insert(*this->ostore_, iptr, *this->owner_, this->mark_modified_owner_);
     }
     return iterator(this->container_.insert(pos.iter_, iptr));
   }
@@ -626,39 +742,38 @@ public:
   }
 
   /**
-   * @brief Returns the element at specified location index.
-   *
-   * Returns the element at specified location index.
-   * No bounds checking is performed.
-   *
-   * @param index Indx of the element to return
-   * @return The requested element.
-   */
-  value_type operator[](size_type index)
-  {
-    return this->container_[index]->value();
-  }
-
-  /**
-   * @brief Returns the const element at specified location index.
-   *
-   * Returns the const element at specified location index.
-   * No bounds checking is performed.
-   *
-   * @param index Indx of the element to return
-   * @return The requested const element.
-   */
-  const value_type operator[](size_type index) const
-  {
-    return this->container_[index]->value();
-  }
-
-  /**
    * @brief Clears the vector
    */
   void clear()
   {
     erase(this->begin(), this->end());
+  }
+
+  iterator remove(const value_type &value)
+  {
+    return remove_if([&value](const value_type &val) {
+      return val == value;
+    });
+  }
+
+  template < class P >
+  iterator remove_if(P predicate)
+  {
+    iterator first = this->begin();
+    iterator last = this->end();
+    first = std::find_if(first, last, predicate);
+    if (first == last) {
+      return first;
+    } else {
+      iterator result = first;
+      for (; first != last; ++first) {
+        if (!predicate(*first)) {
+          result.move(first);
+          ++result;
+        }
+      }
+      return erase(result, this->end());
+    }
   }
 
   /**
@@ -673,8 +788,8 @@ public:
   iterator erase(iterator i)
   {
     if (this->ostore_) {
-      relation_type iptr = i.relation_item();
-      this->ostore_->remove(iptr);
+      relation_type iptr(*i.iter_);
+      deleter_.remove(*this->ostore_, iptr, *this->owner_);
     }
     container_iterator ci = this->container_.erase(i.iter_);
     return iterator(ci);
@@ -697,8 +812,8 @@ public:
     iterator i = start;
     if (this->ostore_) {
       while (i != end) {
-          typename base::relation_type iptr = (i++).relation_item();
-          this->ostore_->remove(iptr);
+        relation_type iptr = (i++).relation_item();
+        deleter_.remove(*this->ostore_, iptr, *this->owner_);
       }
     }
     return iterator(this->container_.erase(start.iter_, end.iter_));
@@ -711,7 +826,8 @@ private:
   }
 
 private:
-  bool indexed_ = false;
+  detail::has_many_inserter<T, std::vector> inserter_;
+  detail::has_many_deleter<T, std::vector> deleter_;
 };
 
 }

@@ -14,6 +14,12 @@ namespace oos {
 
 namespace detail {
 class object_inserter;
+
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_deleter;
+
+template<class T, template <class ...> class C, class Enabled = void>
+class has_many_inserter;
 }
 
 /// @cond OOS_DEV
@@ -62,6 +68,8 @@ public:
   typedef const_has_many_iterator<T,C> const_iterator;           /**< Shortcut to const iterator */
   typedef typename container_type::size_type size_type;          /**< Shortcut to size type */
   typedef typename container_type::iterator container_iterator;  /**< Shortcut to container iterator */
+
+  typedef std::function<void(object_store&, object_proxy*)> mark_modified_owner_func; /**< Shortcut to mark modified owner function */
 
 public:
   /**
@@ -154,13 +162,6 @@ public:
    */
   void append(const typename iterator::internal_type &item) { container_.push_back(item); }
 
-  /**
-   * @brief Returns true if the container uses a join table
-   *
-   * @return True if the container uses a join table
-   */
-  bool has_join_table() const { return true; }
-
 protected:
   /// @cond OOS_DEV
 
@@ -170,7 +171,7 @@ protected:
   object_proxy *owner_ = nullptr;
   std::shared_ptr<basic_identifier> owner_id_;
 
-  std::function<void(object_store&, object_proxy*)> mark_modified_owner_;
+  mark_modified_owner_func mark_modified_owner_;
 
   container_type container_;
 

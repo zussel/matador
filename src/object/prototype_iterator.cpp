@@ -6,7 +6,6 @@
 namespace oos {
 
 prototype_iterator::prototype_iterator()
-  : node_(0)
 {}
 
 prototype_iterator::prototype_iterator(prototype_iterator::pointer node)

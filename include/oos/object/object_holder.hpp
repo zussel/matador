@@ -22,6 +22,8 @@
 #include "oos/utils/cascade_type.hpp"
 #include "oos/utils/identifiable_holder.hpp"
 
+#include "oos/object/object_holder_type.hpp"
+
 #include <memory>
 
 namespace oos {
@@ -30,6 +32,10 @@ namespace detail {
 class object_inserter;
 class object_deleter;
 class object_proxy_accessor;
+template<class T, template <class ...> class C, class Enabled>
+class has_many_inserter;
+template<class T, template <class ...> class C, class Enabled>
+class has_many_deleter;
 }
 
 class basic_identifier;
@@ -38,11 +44,11 @@ class object_store;
 
 /**
  * @class object_holder
- * @brief Base class for the serializable pointer and reference class
+ * @brief Base class for the object pointer and reference class
  *
- * This is the base class for the serializable pointer
+ * This is the base class for the object pointer
  * and reference class. The class holds the proxy
- * of the serializable and the id of the serializable.
+ * of the object and the id of the object.
  */
 class OOS_OBJECT_API object_holder : public identifiable_holder
 {
@@ -51,7 +57,7 @@ protected:
    * @brief Creates and empty base pointer.
    * 
    * Creates and empty base pointer. The boolean
-   * tells the class if the serializable is handled
+   * tells the class if the object is handled
    * as a reference or an pointer. The difference
    * is that the reference couldn't be deleted
    * from the object_store and the pointer can.
@@ -59,7 +65,7 @@ protected:
    * @param is_internal True if the pointer is used internal, which means
    *                    it is used to describe an entity.
    */
-  explicit object_holder(bool is_internal);
+  explicit object_holder(object_holder_type holder_type);
 
   /**
    * Copies from another object_holder
@@ -82,10 +88,10 @@ protected:
    * boolean tells the object_holder if it should be
    * handled as an internal.
    * 
-   * @param is_internal If true the serializable is handled as an internal.
+   * @param is_internal If true the object is handled as an internal.
    * @param op The object_proxy of the object_holder
    */
-  object_holder(bool is_internal, object_proxy *op);
+  object_holder(object_holder_type holder_type, object_proxy *op);
 
   /**
    * Destroys the object_holder
@@ -131,24 +137,37 @@ public:
   void reset(const std::shared_ptr<basic_identifier> &id);
 
   /**
-   * Returns if the serializable is loaded.
+   * Clears the currently set object
+   */
+  void clear();
+
+  /**
+   * Returns true if object_holder doesn't
+   * holds an object
+   *
+   * @return True if object_holder doesn't holds an object
+   */
+  bool empty() const;
+
+  /**
+   * Returns if the object is loaded.
    * 
-   * @return True if the serializable is loaded.
+   * @return True if the object is loaded.
    */
   bool is_loaded() const;
 
   /**
-   * Returns the serializable id.
+   * Returns the object id.
    * 
-   * @return The id of the serializable.
+   * @return The id of the object.
    */
   unsigned long id() const;
 
   /**
-   * Sets the serializable id. If a proxy
+   * Sets the object id. If a proxy
    * is set an exception is thrown.
    * 
-   * @param i The new serializable id
+   * @param i The new object id
    */
   void id(unsigned long i);
 
@@ -159,30 +178,30 @@ public:
   object_store* store() const;
 
   /**
-   * Returns the serializable
+   * Returns the raw object pointer
    * 
-   * @return The serializable.
+   * @return The raw object pointer.
    */
   void* ptr();
 
   /**
-   * Returns the serializable
+   * Returns the raw object pointer
    *
-   * @return The serializable.
+   * @return The raw object pointer.
    */
   const void* ptr() const;
 
   /**
-   * Returns the serializable
+   * Returns the object pointer
    * 
-   * @return The serializable.
+   * @return The object pointer.
    */
   void* lookup_object();
 
   /**
-   * Returns the serializable
+   * Returns the object pointer
    *
-   * @return The serializable.
+   * @return The object pointer.
    */
   void* lookup_object() const;
 
@@ -196,6 +215,11 @@ public:
    */
   bool is_internal() const;
 
+  bool is_belongs_to() const;
+
+  bool is_has_one() const;
+
+  bool is_object_ptr() const;
   /**
    * Returns true if the underlying object
    * is inserted in an object_store
@@ -205,16 +229,16 @@ public:
   bool is_inserted() const;
 
   /**
-   * Returns true if serializable has a primary key
+   * Returns true if object has a primary key
    *
-   * @return true if serializable has a primary key
+   * @return true if object has a primary key
    */
   bool has_primary_key() const;
 
   /**
-   * Gets the primary key of the foreign serializable
+   * Gets the primary key of the foreign object
    *
-   * @return The primary key of the foreign serializable
+   * @return The primary key of the foreign object
    */
   virtual std::shared_ptr<basic_identifier> primary_key() const;
 
@@ -232,11 +256,13 @@ public:
    */
   virtual const char* type() const = 0;
 
+  object_holder_type holder_type() const;
+
   /**
-   * Prints the underlaying serializable
+   * Prints the underlaying object
    *
    * @param out The output stream to write on.
-   * @param x The serializable pointer to print.
+   * @param x The object pointer to print.
    * @return The output stream.
    */
   friend OOS_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
@@ -249,18 +275,22 @@ private:
   friend class object_store;
   friend class object_container;
   friend class detail::object_proxy_accessor;
+  template<class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_inserter;
+  template<class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_deleter;
 
   // Todo: change interface to remove friend
   friend class session;
   // Todo: replace private access of proxy with call to reset
   friend class table_reader;
 
-  template < class T > friend class object_ptr;
-  template < class T > friend class has_one;
+  template < class T, object_holder_type OPT > friend class object_pointer;
 
   object_proxy *proxy_ = nullptr;
+  object_proxy *owner_ = nullptr; // only set if holder type is BELONGS_TO or HAS_MANY
   cascade_type cascade_ = cascade_type::NONE;
-  bool is_internal_ = false;
+  object_holder_type type_;
   bool is_inserted_ = false;
   unsigned long oid_ = 0;
 };

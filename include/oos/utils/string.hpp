@@ -70,7 +70,7 @@ struct OOS_UTILS_API date_format
   /**
    * date format string representing the ISO8601 format
    */
-  static constexpr const char* ISO8601 = "%F";
+  static constexpr const char* ISO8601 = "%Y-%m-%d";
 #endif
 };
 

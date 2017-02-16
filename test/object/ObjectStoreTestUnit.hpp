@@ -13,26 +13,25 @@ class ObjectStoreTestUnit : public oos::unit_test
 public:
   ObjectStoreTestUnit();
 
-  virtual void initialize();
   virtual void finalize();
   
-  void version_test();
-  void optr_test();
-  void expression_test();
-  void set_test();
-  void get_test();
+  void test_version();
+  void test_optr();
+  void test_expression();
+  void test_set();
+  void test_get();
   void test_serializer();
   void test_identifier_serializer();
-  void reference_counter();
-  void simple_object();
-  void object_with_sub_object();
-  void multiple_simple_objects();
-  void multiple_object_with_sub_objects();
-  void delete_object();
-  void hierarchy();
-  void view_test();
-  void clear_test();
-  void generic_test();
+  void test_reference_counter();
+  void test_simple_object();
+  void test_object_with_sub_object();
+  void test_multiple_simple_objects();
+  void test_multiple_object_with_sub_objects();
+  void test_delete_object();
+  void test_hierarchy();
+  void test_view();
+  void test_clear();
+  void test_generic();
   void test_structure();
   void test_structure_cyclic();
   void test_structure_container();
@@ -42,7 +41,8 @@ public:
   void test_primary_key();
   void test_has_many();
   void test_has_many_to_many();
-  void test_on_attach();
+  void test_belongs_to();
+  void test_observer();
 
 private:
   oos::object_store ostore_;

@@ -35,6 +35,7 @@
 #include "oos/utils/identifier.hpp"
 
 #include "oos/object/identifier_proxy_map.hpp"
+#include "oos/object/object_store_observer.hpp"
 
 #include <map>
 #include <list>
@@ -47,6 +48,15 @@ namespace oos {
 class object_store;
 class object_proxy;
 
+namespace detail {
+template < class T, template <class ...> class C, class Enabled >
+class has_many_inserter;
+template < class T, template <class ...> class C, class Enabled >
+class has_many_deleter;
+class basic_node_analyzer;
+template < class T, template < class V = T > class O >
+class node_analyzer;
+}
 /**
  * @class prototype_node
  * @brief Holds the prototype of a concrete serializable.
@@ -69,6 +79,47 @@ private:
   prototype_node& operator=(const prototype_node&) = delete;
 
 public:
+  struct relation_info
+  {
+    enum relation_type {
+      BELONGS_TO, HAS_ONE, HAS_MANY
+    };
+
+    typedef std::function<void(object_proxy*, const std::string&, object_proxy*)> modify_value_func;
+    relation_info(const std::string &n,
+                  relation_type t,
+                  const modify_value_func &insert_func,
+                  const modify_value_func &remove_func,
+                  prototype_node *pn)
+      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn)
+    {}
+    std::string name;
+    relation_type type;
+    std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
+    std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
+    prototype_node *node;
+  };
+
+  typedef std::unordered_map<std::type_index, relation_info> relation_map;
+
+  struct relation_node_info
+  {
+    std::string owner_type_;
+    std::string relation_id_;
+    std::string owner_id_column_;
+    std::string item_id_column_;
+  };
+
+public:
+
+  template < class T >
+  static prototype_node* make_node(object_store *store, const char *type, bool abstract = false);
+
+  template < class T >
+  static prototype_node* make_relation_node(object_store *store, const char *type, bool abstract,
+                                     const char *owner_type, const char *relation_id,
+                                     const char *owner_column, const char *item_column);
+
   prototype_node();
 
   /**
@@ -83,16 +134,21 @@ public:
    * @param typeinfo The typeinfo of this node.
    * @param abstract Tells the node if its prototype is abstract.
    */
-  prototype_node(object_store *tree, const char *type, const std::type_info &typeinfo, bool abstract = false)
+  template < class T >
+  prototype_node(object_store *tree, const char *type, T *proto, bool abstract = false)
     : tree_(tree)
     , first(new prototype_node)
     , last(new prototype_node)
     , type_(type)
     , abstract_(abstract)
-    , type_index_(typeinfo)
+    , type_index_(typeid(T))
+    , deleter_(&destroy<T>)
+    , notifier_(&notify_observer<T>)
+    , prototype(proto)
   {
     first->next = last.get();
     last->prev = first.get();
+//    std::cout << "creating node " << type << "/" << type_index_.name() << "\n";
   }
 
 
@@ -255,40 +311,6 @@ public:
   basic_identifier* id() const;
 
   /**
-   * @brief Returns the count of relations
-   * @return The count of relations
-   */
-  size_t relation_count() const;
-
-  /**
-   * @brief Returns true if a relation with the given name exists
-   *
-   * Returns true if a relation with the given name exists in the
-   * object prototype.
-   *
-   * @param relation_name The name of the relation to be checked
-   * @return True if a relation with the given name exists
-   */
-  bool has_relation(const std::string &relation_name) const;
-
-  /**
-   * @brief Returns the count of foreign keys
-   * @return The count of foreign keys
-   */
-  size_t foreign_key_count() const;
-
-  /**
-   * @brief Returns true if a foreign key with the given name exists
-   *
-   * Returns true if a foreign key with the given name exists in the
-   * object prototype.
-   *
-   * @param foreign_key_name The name of the foreign key to be checked
-   * @return True if a relation with the given name exists
-   */
-  bool has_foreign_key(const std::string &foreign_key_name) const;
-
-  /**
    * @brief Returns true if the node represents an abstract object
    * @return True if the node represents an abstract object
    */
@@ -301,13 +323,21 @@ public:
    */
   std::type_index type_index() const;
 
-  /// @cond OOS_DEV
+  /**
+   * Returns true if this node represents a relation
+   * node (has_many_item<T>).
+   *
+   * @return True if this node represents a relation node.
+   */
+  bool is_relation_node() const;
 
-  void register_foreign_key(const char *id, const std::shared_ptr<basic_identifier> &foreign_key);
-  void register_relation(const char *type, prototype_node *node, const char *id);
-  void prepare_foreign_key(prototype_node *master_node, const char *id);
-
-  /// @endcond
+  /**
+   * Returns the relation node info. This struct contains
+   * only valid data if this node represents a n relation
+   * node (has_many_item<T>).
+   * @return
+   */
+  const relation_node_info& node_info() const;
 
   /**
    * Prints the node in graphviz layout to the stream.
@@ -327,7 +357,18 @@ public:
    */
   object_proxy* find_proxy(const std::shared_ptr<basic_identifier> &pk);
 
+  void register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+  void register_has_many(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+
 private:
+
+  enum notification_type {
+    ATTACH,
+    DETACH,
+    INSERT,
+    UPDATE,
+    REMOVE
+  };
 
   /**
    * @internal
@@ -350,8 +391,71 @@ private:
    */
   void adjust_left_marker(prototype_node *root, object_proxy *old_proxy, object_proxy *new_proxy);
 
+  void register_observer(basic_object_store_observer *obs)
+  {
+    if (type_index_ != obs->index()) {
+      std::cout << "not same type\n";
+      throw std::runtime_error("not same type");
+    }
+    observer_list.push_back(obs);
+  }
+
+  typedef std::list<basic_object_store_observer*> t_observer_list;
+  typedef void (*deleter)(void*, t_observer_list&);
+  typedef void (*notifier)(notification_type, prototype_node&, void*, basic_object_store_observer*);
+
+  template <typename T>
+  static void destroy(void* p, t_observer_list &ol)
+  {
+    delete (T*)p;
+    for(auto i : ol) {
+      delete (object_store_observer<T>*)i;
+    }
+  }
+
+  void on_attach()
+  {
+    notify(ATTACH);
+  }
+
+  void on_detach()
+  {
+    notify(DETACH);
+  }
+
+  void notify(notification_type t) {
+    if (!notifier_) {
+      return;
+    }
+    for (auto i : observer_list) {
+      notifier_(t, *this, prototype, i);
+    }
+  }
+
+  template < typename T >
+  static void notify_observer(notification_type t, prototype_node &pt, void *p, basic_object_store_observer *obs)
+  {
+    switch (t) {
+      case ATTACH:
+        static_cast<object_store_observer<T>*>(obs)->on_attach(pt, *(T*)p);
+        break;
+      case DETACH:
+        static_cast<object_store_observer<T>*>(obs)->on_detach(pt, *(T*)p);
+        break;
+      case INSERT:
+        break;
+      case UPDATE:
+        break;
+      case REMOVE:
+        break;
+      default:
+        break;
+    }
+  }
+
 private:
   friend class prototype_tree;
+  friend class object_holder;
   friend class object_store;
   template < class T >
   friend class object_view;
@@ -359,15 +463,15 @@ private:
   friend class const_object_view_iterator;
   template < class T >
   friend class object_view_iterator;
-
-  /*
-   * The field_prototype_map_t contains a map
-   * of all foreign key field relations, where each value
-   * is a pair of the foreign prototype and its
-   * corresponding field
-   */
-  typedef std::pair<prototype_node*, std::string> prototype_field_info_t;    /**< Shortcut for prototype fieldname pair. */
-  typedef std::map<std::string, prototype_field_info_t> field_prototype_map_t; /**< Holds the fieldname and the prototype_node. */
+  template < class T, template <class ...> class C >
+  friend class has_many;
+  template < class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_inserter;
+  template < class T, template <class ...> class C, class Enabled >
+  friend class detail::has_many_deleter;
+  friend class detail::basic_node_analyzer;
+  template < class T,  template < class U = T > class O >
+  friend class detail::node_analyzer;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
@@ -377,14 +481,6 @@ private:
   prototype_node *next = nullptr;         /**< The next node */
   std::unique_ptr<prototype_node> first;  /**< The first children node */
   std::unique_ptr<prototype_node> last;   /**< The last children node */
-
-  /* this map holds information about
-   * all prototypes in which this prototype
-   * is used as a child item (to many
-   * relation). The string tells the name
-   * of the attribute
-   */
-  field_prototype_map_t relations; /**< Map holding relation information for type. */
 
   object_proxy *op_first = nullptr;  /**< The marker of the first list node. */
   object_proxy *op_marker = nullptr; /**< The marker of the last list node of the own elements. */
@@ -399,6 +495,12 @@ private:
 
   std::type_index type_index_; /**< type index of the represented object type */
 
+  t_observer_list observer_list;
+  deleter deleter_ = nullptr;
+  notifier notifier_ = nullptr;
+
+  void* prototype = nullptr;
+
   /**
    * Holds the primary keys of all proxies in this node
    */
@@ -409,21 +511,35 @@ private:
    */
   std::unique_ptr<basic_identifier> id_;
 
-  /**
-   * a list of prototype_node and ids for
-   * which the relation map is yet to be filled
-   * once the object type is really inserted
-   * this list is processed
-   */
-  typedef std::list<std::pair<prototype_node*, std::string> > t_node_id_list;
-  t_node_id_list foreign_key_ids; /**< The foreign key id list */
+//  relation_map belongs_to_map_;
+//  relation_map has_one_map_;
+//  relation_map has_many_map_;
 
-  /**
-   * a list of all foreign keys inside nodes object
-   */
-  typedef std::unordered_map<std::string, std::shared_ptr<basic_identifier> > t_foreign_key_map;
-  t_foreign_key_map foreign_keys; /**< The foreign key map */
+  relation_map relation_info_map_;
+
+  bool is_relation_node_ = false;
+  relation_node_info relation_node_info_;
 };
+
+template<class T>
+prototype_node *prototype_node::make_node(object_store *store, const char *type, bool abstract)
+{
+  return new prototype_node(store, type, new T, abstract);
+}
+
+template<class T>
+prototype_node *prototype_node::make_relation_node(object_store *store, const char *type, bool abstract,
+                                                   const char *owner_type, const char *relation_id,
+                                                   const char *owner_column, const char *item_column)
+{
+  prototype_node *node = make_node<T>(store, type, abstract);
+  node->relation_node_info_.owner_type_.assign(owner_type);
+  node->relation_node_info_.relation_id_.assign(relation_id);
+  node->relation_node_info_.owner_id_column_.assign(owner_column);
+  node->relation_node_info_.item_id_column_.assign(item_column);
+  node->is_relation_node_ = true;
+  return node;
+}
 
 }
 

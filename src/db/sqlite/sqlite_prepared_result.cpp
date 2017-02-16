@@ -3,6 +3,7 @@
 #include "oos/utils/date.hpp"
 #include "oos/utils/time.hpp"
 #include "oos/utils/varchar.hpp"
+#include "oos/utils/string.hpp"
 #include "oos/utils/basic_identifier.hpp"
 
 #include <cstring>
@@ -158,9 +159,9 @@ void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
 
 void sqlite_prepared_result::serialize(const char *id, oos::date &x)
 {
-  double val = 0;
+  std::string val;
   serialize(id, val);
-  x.set(static_cast<int>(val));
+  x = oos::date::parse(val, date_format::ISO8601);
 }
 
 void sqlite_prepared_result::serialize(const char *id, oos::time &x)

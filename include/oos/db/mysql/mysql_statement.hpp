@@ -76,8 +76,10 @@ protected:
 
 private:
   template < class T >
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, T value)
+  void bind_value(std::size_t index, enum_field_types type, T value)
   {
+//    std::cout << "binding [" << value << "] (index: " << index << ")\n";
+    MYSQL_BIND &bind = host_array[index];
     if (bind.buffer == nullptr) {
       // allocating memory
       bind.buffer = new char[sizeof(T)];
@@ -85,19 +87,22 @@ private:
     *static_cast<T*>(bind.buffer) = value;
     bind.buffer_type = type;
 	  bind.buffer_length = sizeof(T);
-    bind.is_null = 0;
+    is_null_vector[index] = false;
+    bind.is_null = &is_null_vector[index];
 	  bind.is_unsigned = std::is_unsigned<T>::value;
   }
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, char x);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, unsigned char x);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::date &x);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const oos::time &x);
-  void bind_value(MYSQL_BIND &bind, enum_field_types type, const char *value, size_t size);
+  void bind_value(std::size_t index, enum_field_types type, char x);
+  void bind_value(std::size_t index, enum_field_types type, unsigned char x);
+  void bind_value(std::size_t index, enum_field_types type, const oos::date &x);
+  void bind_value(std::size_t index, enum_field_types type, const oos::time &x);
+  void bind_value(std::size_t index, enum_field_types type, const char *value, size_t size);
+
+  void bind_null(std::size_t index);
 
 private:
   size_t result_size;
   size_t host_size;
-  std::vector<unsigned long> length_vector;
+  std::vector<my_bool> is_null_vector;
   MYSQL_STMT *stmt_ = nullptr;
   MYSQL_BIND *host_array = nullptr;
 };

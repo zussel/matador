@@ -224,7 +224,8 @@ std::vector<field> mssql_connection::describe(const std::string &table)
 #else
   strcpy((char*)buf, table.c_str());
 #endif
-  SQLColumns(stmt, NULL, 0, NULL, 0, buf, SQL_NTS, NULL, 0);
+  ret = SQLColumns(stmt, NULL, 0, NULL, 0, buf, SQL_NTS, NULL, 0);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on executing column description");
   //std::unique_ptr<mssql_result> res(static_cast<mssql_result*>(execute(stmt)));
 
   // bind to columns we need (column name, data type of column and index)
@@ -238,22 +239,22 @@ std::vector<field> mssql_connection::describe(const std::string &table)
 
   // column name
   ret = SQLBindCol(stmt, 4, SQL_C_CHAR, column, sizeof(column), &indicator[0]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (column)");
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (column)");
   // data type
-  ret = SQLBindCol(stmt, 5, SQL_C_LONG, &data_type, sizeof(data_type), &indicator[1]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (data type)");
+  ret = SQLBindCol(stmt, 5, SQL_C_SSHORT, &data_type, sizeof(data_type), &indicator[1]);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (data type)");
   // type name
   ret = SQLBindCol(stmt, 6, SQL_C_CHAR, type, sizeof(type), &indicator[2]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (type name)");
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (type name)");
   // size
-  ret = SQLBindCol(stmt, 7, SQL_C_LONG, &size, sizeof(size), &indicator[3]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (data size)");
+  ret = SQLBindCol(stmt, 7, SQL_C_SLONG, &size, sizeof(size), &indicator[3]);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (data size)");
   // nullable
-  ret = SQLBindCol(stmt, 11, SQL_C_LONG, &not_null, 0, &indicator[4]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (not null)");
+  ret = SQLBindCol(stmt, 11, SQL_C_SSHORT, &not_null, 0, &indicator[4]);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (not null)");
   // index (1 based)
-  ret = SQLBindCol(stmt, 17, SQL_C_LONG, &pos, 0, &indicator[5]);
-  throw_error(ret, SQL_HANDLE_DBC, connection_, "mssql", "error on sql columns statement (pos)");
+  ret = SQLBindCol(stmt, 17, SQL_C_SLONG, &pos, 0, &indicator[5]);
+  throw_error(ret, SQL_HANDLE_STMT, stmt, "mssql", "error on sql columns statement (pos)");
 
   std::vector<field> fields;
 

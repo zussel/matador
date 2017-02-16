@@ -37,8 +37,9 @@ public:
   template < class V >
   void serialize(const char *, identifier<V> &x);
 
-  template < class V, typename = typename std::enable_if<std::is_base_of<oos::identifiable_holder, V>::value>::type >
-  void serialize(const char *, V &, cascade_type) { }
+//  template < class V, typename = typename std::enable_if<std::is_base_of<oos::identifiable_holder, V>::value>::type >
+  template < class HAS_ONE >
+  void serialize(const char *, HAS_ONE &, cascade_type) { }
 
   void serialize(const char *, char *, size_t) { }
 

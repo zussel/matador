@@ -144,7 +144,7 @@ void decrement();
 private:
 friend class const_prototype_iterator;
 
-pointer node_;
+pointer node_ = nullptr;
 };
 
 class OOS_OBJECT_API const_prototype_iterator

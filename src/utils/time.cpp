@@ -191,7 +191,7 @@ time time::parse(const std::string &tstr, const char *format)
   tv.tv_sec = mktime(&tm);
   tv.tv_usec = usec;
 #endif
-  return std::move(oos::time(tv));
+  return oos::time(tv);
 }
 
 void time::set(int year, int month, int day, int hour, int min, int sec, long millis)

@@ -358,7 +358,7 @@ void mssql_statement::bind_value(const char *val, size_t size, size_t index)
 
   host_data_.push_back(v);
 
-  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, size, 0, v->data, v->len, NULL);
+  SQLRETURN ret = SQLBindParameter(stmt_, (SQLUSMALLINT)index, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, size, 0, v->data, v->len, NULL);
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
@@ -458,9 +458,11 @@ int mssql_statement::type2sql(data_type type)
     case data_type::type_double:
       return SQL_DOUBLE;
     case data_type::type_char_pointer:
-      return SQL_LONGVARCHAR;
+      return SQL_VARCHAR;
+      //return SQL_LONGVARCHAR;
     case data_type::type_varchar:
-      return SQL_LONGVARCHAR;
+      return SQL_VARCHAR;
+      //return SQL_LONGVARCHAR;
     case data_type::type_text:
       return SQL_LONGVARCHAR;
     case data_type::type_date:

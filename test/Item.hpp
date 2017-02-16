@@ -21,6 +21,7 @@
 #include "oos/utils/base_class.hpp"
 #include "oos/object/object_ptr.hpp"
 #include "oos/object/has_one.hpp"
+#include "oos/object/belongs_to.hpp"
 #include "oos/object/has_many.hpp"
 
 #include "oos/utils/time.hpp"
@@ -293,7 +294,7 @@ class person
 {
 private:
   oos::identifier<unsigned long> id_;
-  oos::varchar<256> name_;
+  oos::varchar<255> name_;
   oos::date birthdate_;
   unsigned int height_ = 0;
 
@@ -333,104 +334,65 @@ public:
   unsigned int height() const { return height_; }
   void height(unsigned int height) { height_ = height; }
 };
-/*
-class department;
+
+struct department;
 
 class employee : public person
 {
 public:
-  typedef oos::object_ref<department> dep_ref;
-
-private:
-  dep_ref dep_;
+  oos::belongs_to<department> department_;
   
 public:
   employee() {}
-  employee(const std::string &name_) : person(name_) {}
-  employee(const std::string &name_, const dep_ref &dep)
-    : person(name_)
-    , dep_(dep)
+  employee(const std::string &name) : person(name, oos::date(17, 12, 1983), 183) {}
+  employee(const std::string &name, const oos::object_ptr<department> &dep)
+    : person(name, oos::date(17, 12, 1983), 183)
+    , department_(dep)
   {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    person::deserialize(deserializer);
-    deserializer.read("department", dep_);
-  }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    person::serialize(serializer);
-    serializer.write("department", dep_);
+    serializer.serialize(*oos::base_class<person>(this));
+    serializer.serialize("department", department_, oos::cascade_type::NONE);
   }
 
-  dep_ref dep() const { return dep_; }
-  void dep(const dep_ref &d) { dep_ = d; }
+  oos::object_ptr<department> dep() { return department_; }
+  void dep(const oos::object_ptr<department> &d) { department_ = d; }
 };
 
-class department : public oos::serializable
+struct department
 {
-public:
-  typedef oos::object_ref<employee> emp_ref;
-  typedef oos::object_list<department, emp_ref, false> emp_list_t;
-  typedef emp_list_t::size_type size_type;
-  typedef emp_list_t::iterator iterator;
-  typedef emp_list_t::const_iterator const_iterator;
+  oos::identifier<unsigned long> id;
+  oos::varchar<255> name;
+  oos::has_many<employee> employees;
 
-private:
-  oos::identifier<unsigned long> id_;
-  std::string name_;
-  emp_list_t emp_list_;
-  
-public:
-  department()
-    : emp_list_(&employee::dep)
-  {}
-  department(const std::string &name)
-    : name_(name)
-    , emp_list_(&employee::dep)
+  department() {}
+  department(const std::string &n)
+    : name(n)
   {}
   
-  virtual ~department() {}
+  ~department() {}
 
-  virtual void deserialize(oos::deserializer &deserializer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
-    deserializer.read("id", id_);
-    deserializer.read("name", name_);
-    deserializer.read("employee_department", emp_list_);
+    serializer.serialize("id", id);
+    serializer.serialize("name", name);
+    serializer.serialize("employee"    , employees, "department", "id");
+    //                    name of table, container,  name of member
+    //                                   to serialize
   }
-  virtual void serialize(oos::serializer &serializer) const
-  {
-    serializer.write("id", id_);
-    serializer.write("name", name_);
-    serializer.write("employee_department", emp_list_);
-  }
-
-  unsigned long id() const { return id_.value(); }
-  std::string name() const { return name_; }
-  void name(const std::string &name) { name_ = name; }
-
-  void add(const emp_ref &b)
-  {
-    emp_list_.push_back(b);
-  }
-
-  iterator begin() { return emp_list_.begin(); }
-  const_iterator begin() const { return emp_list_.begin(); }
-
-  iterator end() { return emp_list_.end(); }
-  const_iterator end() const { return emp_list_.end(); }
-
-  iterator erase(iterator i) { return emp_list_.erase(i); }
-
-  size_type size() const { return emp_list_.size(); }
-  bool empty() const { return emp_list_.empty(); }
 };
-*/
+
 class course;
 
 class student : public person
 {
 public:
+  student() {}
+  student(const std::string &name, const oos::date &bdate = oos::date(), unsigned h = 170) : person(name, bdate, h) {}
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -446,6 +408,7 @@ class course
 public:
 
   course() {}
+  course(const std::string &t) : title(t) {}
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)

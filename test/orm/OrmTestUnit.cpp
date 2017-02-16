@@ -18,16 +18,17 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
   : unit_test(prefix + "_orm", prefix + " orm test unit")
   , dns_(dns)
 {
-  add_test("create", std::bind(&OrmTestUnit::test_create, this), "test orm create table");
-  add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test orm insert into table");
-  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test orm select a table");
-  add_test("update", std::bind(&OrmTestUnit::test_update, this), "test orm update on table");
-  add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test orm delete from table");
-  add_test("load", std::bind(&OrmTestUnit::test_load, this), "test orm load from table");
-  add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test orm load has one relation from table");
-  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test orm load has many from table");
-  add_test("load_has_many_int", std::bind(&OrmTestUnit::test_load_has_many_int, this), "test orm load has many int from table");
-  add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test orm has many delete item");
+  add_test("create", std::bind(&OrmTestUnit::test_create, this), "test create table");
+  add_test("insert", std::bind(&OrmTestUnit::test_insert, this), "test insert into table");
+  add_test("select", std::bind(&OrmTestUnit::test_select, this), "test select a table");
+  add_test("update", std::bind(&OrmTestUnit::test_update, this), "test update on table");
+  add_test("delete", std::bind(&OrmTestUnit::test_delete, this), "test delete from table");
+  add_test("load", std::bind(&OrmTestUnit::test_load, this), "test load from table");
+  add_test("load_has_one", std::bind(&OrmTestUnit::test_load_has_one, this), "test load has one relation from table");
+  add_test("load_has_many", std::bind(&OrmTestUnit::test_load_has_many, this), "test load has many from table");
+  add_test("load_has_many_int", std::bind(&OrmTestUnit::test_load_has_many_int, this), "test load has many int from table");
+  add_test("has_many_delete", std::bind(&OrmTestUnit::test_has_many_delete, this), "test has many delete item");
+  add_test("belongs_to", std::bind(&OrmTestUnit::test_belongs_to, this), "test belongs to");
 }
 
 void OrmTestUnit::test_create()
@@ -99,7 +100,7 @@ void OrmTestUnit::test_select()
 
   for (std::string name : names) {
     auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
-	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
+  	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
   }
 
   auto view = s.select<person>();
@@ -439,6 +440,55 @@ void OrmTestUnit::test_has_many_delete()
 
   UNIT_ASSERT_GREATER(children->id, 0UL, "invalid children list");
   UNIT_ASSERT_TRUE(children->children.empty(), "children list must be empty");
+
+  p.drop();
+}
+
+void OrmTestUnit::test_belongs_to()
+{
+  oos::persistence p(dns_);
+
+  p.attach<person>("person");
+  p.attach<department>("department");
+  p.attach<employee, person>("employee");
+
+  p.create();
+
+  oos::session s(p);
+
+  auto george = s.insert(new employee("george"));
+  auto jane = s.insert(new employee("jane"));
+  auto dep = s.insert(new department("insurance"));
+
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_TRUE(jane->dep().empty(), "there must not be an department");
+
+  // department is automatically set
+  s.push_back(dep->employees, george);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "george", "expected name must be george");
+  UNIT_ASSERT_FALSE(george->dep().empty(), "department must not be empty");
+  UNIT_ASSERT_EQUAL(george->dep()->name, dep->name, "names must be equal");
+
+  // jane is automatically added to deps employee list
+  jane->dep(dep);
+  s.update(jane);
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 2UL, "there must be two employees");
+
+  // remove george
+  s.erase(dep->employees, dep->employees.begin());
+
+  UNIT_ASSERT_EQUAL(dep->employees.size(), 1UL, "there must be one employee");
+  UNIT_ASSERT_TRUE(george->dep().empty(), "there must not be an department");
+  UNIT_ASSERT_EQUAL(dep->employees.front()->name(), "jane", "expected name must be jane");
+//
+  jane->department_.clear();
+  s.update(jane);
+//
+  UNIT_ASSERT_TRUE(dep->employees.empty(), "there must be no employees");
 
   p.drop();
 }

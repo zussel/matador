@@ -14,6 +14,8 @@ HasManyListUnitTest::HasManyListUnitTest()
 {
   add_test("join", std::bind(&HasManyListUnitTest::test_join_table, this), "test list join table");
   add_test("const_iterator", std::bind(&HasManyListUnitTest::test_const_iterator, this), "test list const iterator");
+  add_test("remove_scalar", std::bind(&HasManyListUnitTest::test_remove_scalar, this), "test list remove scalar elements");
+  add_test("remove_object", std::bind(&HasManyListUnitTest::test_remove_object, this), "test list remove object elements");
   add_test("erase_scalar", std::bind(&HasManyListUnitTest::test_erase_scalar, this), "test list erase scalar elements");
   add_test("erase_object", std::bind(&HasManyListUnitTest::test_erase_object, this), "test list erase object elements");
   add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
@@ -162,6 +164,66 @@ void HasManyListUnitTest::test_erase_object()
   UNIT_ASSERT_EQUAL(i->name, "i4", "name must be 'i4'");
 }
 
+void HasManyListUnitTest::test_remove_scalar()
+{
+  object_store store;
+
+  store.attach<many_ints>("many_ints");
+
+  object_ptr<many_ints> mptr = store.insert(new many_ints);
+
+  mptr->ints.push_back(1);
+
+  UNIT_ASSERT_EQUAL(1U, mptr->ints.size(), "size should be 1 (one)");
+
+  mptr->ints.push_back(7);
+  mptr->ints.push_back(90);
+
+  UNIT_ASSERT_EQUAL(3U, mptr->ints.size(), "size should be 3 (three)");
+
+  mptr->ints.remove(1);
+
+  UNIT_ASSERT_EQUAL(2U, mptr->ints.size(), "size should be 2 (two)");
+
+  mptr->ints.remove_if([](const int &val) {
+    return val == 90;
+  });
+
+  UNIT_ASSERT_EQUAL(1U, mptr->ints.size(), "size should be 1 (one)");
+}
+
+void HasManyListUnitTest::test_remove_object()
+{
+  object_store store;
+
+  store.attach<item>("item");
+  store.attach<owner>("owner");
+
+  object_ptr<owner> o = store.insert(new owner("hans"));
+  object_ptr<item> i1 = store.insert(new item("i1"));
+  object_ptr<item> i2 = store.insert(new item("i2"));
+
+  UNIT_ASSERT_EQUAL("i1", i1->name, "name should be 'i1'");
+
+  o->items.push_back(i1);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.push_back(i2);
+
+  UNIT_ASSERT_EQUAL(2U, o->items.size(), "size should be 2 (two)");
+
+  o->items.remove(i2);
+
+  UNIT_ASSERT_EQUAL(1U, o->items.size(), "size should be 1 (one)");
+
+  o->items.remove_if([&i1](const object_ptr<item> &x) {
+    return i1 == x;
+  });
+
+  UNIT_ASSERT_EQUAL(0U, o->items.size(), "size should be 0 (zero)");
+  UNIT_ASSERT_TRUE(o->items.empty(), "list should be empty");
+}
 
 void HasManyListUnitTest::test_integer()
 {

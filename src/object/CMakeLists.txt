@@ -14,6 +14,8 @@ SET(SOURCES
   delete_action.cpp
   basic_has_many_item.cpp
   object_proxy_accessor.cpp
+  object_deleter.cpp
+  object_inserter.cpp
 )
 
 SET(HEADER
@@ -27,7 +29,7 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/prototype_node.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/object/object_observer.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_store_observer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/object_expression.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/attribute_serializer.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/prototype_iterator.hpp
@@ -50,7 +52,16 @@ SET(HEADER
   ${CMAKE_SOURCE_DIR}/include/oos/object/has_many_item.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/basic_has_many_item.hpp
   ${CMAKE_SOURCE_DIR}/include/oos/object/identifier_proxy_map.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy_accessor.hpp)
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_proxy_accessor.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/belongs_to.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_holder_type.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_inserter.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_inserter.tpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_deleter.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/object_deleter.tpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/node_analyzer.hpp
+  ${CMAKE_SOURCE_DIR}/include/oos/object/node_analyzer.tpp
+)
 
 ADD_LIBRARY(oos-object SHARED ${SOURCES} ${HEADER})
 

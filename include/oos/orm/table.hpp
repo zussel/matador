@@ -135,8 +135,10 @@ protected:
   {
     query<T> q(name());
     insert_ = q.insert().prepare(conn);
+//    std::cout << "INSERT: " << insert_.str() << "\n";
     column id = detail::identifier_column_resolver::resolve<T>();
     update_ = q.update().where(id == 1).prepare(conn);
+//    std::cout << "UPDATE: " << update_.str() << "\n";
     delete_ = q.remove().where(id == 1).prepare(conn);
     select_ = q.select().prepare(conn);
   }

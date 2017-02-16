@@ -4,12 +4,13 @@
 
 #include "oos/object/object_holder.hpp"
 #include "oos/object/object_proxy.hpp"
+#include "oos/object/object_store.hpp"
 #include "oos/object/object_exception.hpp"
 
 namespace oos {
 
-object_holder::object_holder(bool is_internal)
-  : is_internal_(is_internal)
+object_holder::object_holder(object_holder_type holder_type)
+  : type_(holder_type)
 {}
 
 object_holder::object_holder(const object_holder &x)
@@ -31,9 +32,9 @@ object_holder::operator=(const object_holder &x)
   return *this;
 }
 
-object_holder::object_holder(bool is_internal, object_proxy *op)
+object_holder::object_holder(object_holder_type holder_type, object_proxy *op)
   : proxy_(op)
-  , is_internal_(is_internal)
+  , type_(holder_type)
   , oid_(0)
 {
   if (proxy_) {
@@ -45,7 +46,7 @@ object_holder::object_holder(bool is_internal, object_proxy *op)
 object_holder::~object_holder()
 {
   if (proxy_) {
-    if (is_internal_ && is_inserted_) {
+    if (is_internal() && is_inserted_) {
       --(*proxy_);
     }
     proxy_->remove(this);
@@ -76,8 +77,10 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
   }
   if (proxy_) {
     oid_ = 0;
-    if (is_internal_ && is_inserted_ && proxy_->ostore_) {
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
       --(*proxy_);
+      proxy_->ostore_->on_remove_relation_item(*proxy_->node_, proxy_, owner_);
+//      proxy_->node_->notify_delete_relation(owner_, proxy);
     }
     proxy_->remove(this);
     /*
@@ -92,11 +95,23 @@ void object_holder::reset(object_proxy *proxy, cascade_type cascade)
   cascade_ = cascade;
   if (proxy_) {
     oid_ = proxy_->id();
-    if (is_internal_ && is_inserted_ && proxy_->ostore_) {
+    if (is_internal() && is_inserted_ && proxy_->ostore_) {
       ++(*proxy_);
+      proxy_->ostore_->on_append_relation_item(*proxy_->node_, proxy_, owner_);
+//      proxy_->node_->notify_insert_relation(owner_, proxy);
     }
     proxy_->add(this);
   }
+}
+
+void object_holder::clear()
+{
+  reset(nullptr, cascade_type::ALL);
+}
+
+bool object_holder::empty() const
+{
+  return proxy_ == nullptr;
 }
 
 void object_holder::reset(const std::shared_ptr<basic_identifier> &id)
@@ -161,10 +176,24 @@ void*object_holder::lookup_object() const
   return proxy_ ? proxy_->obj() : nullptr;
 }
 
-bool
-object_holder::is_internal() const
+bool object_holder::is_belongs_to() const
 {
-  return is_internal_;
+  return type_ == object_holder_type::BELONGS_TO;
+}
+
+bool object_holder::is_has_one() const
+{
+  return type_ == object_holder_type::HAS_ONE;
+}
+
+bool object_holder::is_object_ptr() const
+{
+  return type_ == object_holder_type::OBJECT_PTR;
+}
+
+bool object_holder::is_internal() const
+{
+  return type_ == object_holder_type::BELONGS_TO || type_ == object_holder_type::HAS_ONE;
 }
 
 bool object_holder::is_inserted() const
@@ -185,6 +214,11 @@ std::shared_ptr<basic_identifier> object_holder::primary_key() const
 unsigned long object_holder::reference_count() const
 {
   return (proxy_ ? proxy_->reference_counter_ : 0UL);
+}
+
+object_holder_type object_holder::holder_type() const
+{
+  return type_;
 }
 
 std::ostream& operator<<(std::ostream &out, const object_holder &x)

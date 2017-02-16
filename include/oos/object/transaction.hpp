@@ -289,7 +289,7 @@ void transaction::on_update(object_proxy *proxy)
     std::shared_ptr<update_action> ua(new update_action(proxy, (T*)proxy->obj()));
     backup(ua, proxy);
   } else {
-    // An serializable with that id already exists
+    // An object with that id already exists
     // do nothing because the serializable is already
     // backed up
   }

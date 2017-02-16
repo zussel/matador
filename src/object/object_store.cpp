@@ -17,31 +17,12 @@
 
 #include "oos/object/object_store.hpp"
 
-#include <iostream>
 #include <iomanip>
-#include <algorithm>
 
 using namespace std;
 using namespace std::placeholders;
 
 namespace oos {
-
-namespace detail {
-
-object_inserter::object_inserter(object_store &ostore)
-  : ostore_(ostore) { }
-
-object_inserter::~object_inserter() { }
-
-void object_inserter::reset()
-{
-  object_proxies_.clear();
-  while (!object_proxy_stack_.empty()) {
-    object_proxy_stack_.pop();
-  }
-}
-
-}
 
 object_store::object_store()
   : first_(new prototype_node)
@@ -67,6 +48,9 @@ void object_store::detach(const char *type)
   if (!node) {
     throw object_exception("unknown prototype type");
   }
+
+  node->on_detach();
+
   remove_prototype_node(node, node->depth == 0);
 }
 
@@ -75,6 +59,9 @@ object_store::iterator object_store::detach(const prototype_iterator &i)
   if (i == end() || i.get() == nullptr) {
     throw object_exception("invalid prototype iterator");
   }
+
+  i->on_detach();
+
   return remove_prototype_node(i.get(), i->depth == 0);
 }
 
@@ -128,7 +115,6 @@ void object_store::clear(bool full)
     while (first != last) {
         (first++)->clear(false);
     }
-//    prototype_tree_.begin()->clear(true);
   }
   object_map_.clear();
 }
@@ -302,6 +288,44 @@ sequencer_impl_ptr object_store::exchange_sequencer(const sequencer_impl_ptr &se
   return seq_.exchange_sequencer(seq);
 }
 
+void object_store::on_update_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value)
+{
+  if (!is_relation_notification_enabled()) {
+    return;
+  }
+  disable_relation_notification();
+  info.insert_value(owner, info.name, value);
+  enable_relation_notification();
+}
+
+void object_store::on_remove_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value)
+{
+  if (!is_relation_notification_enabled()) {
+    return;
+  }
+  disable_relation_notification();
+  info.remove_value(owner, info.name, value);
+  enable_relation_notification();
+}
+
+void object_store::on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+{
+  auto i = node.relation_info_map_.find(node.type_index());
+  if (i == node.relation_info_map_.end()) {
+    return;
+  }
+  on_update_relation_owner(i->second, owner, value);
+}
+
+void object_store::on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value)
+{
+  auto i = node.relation_info_map_.find(node.type_index());
+  if (i == node.relation_info_map_.end()) {
+    return;
+  }
+  on_remove_relation_owner(i->second, owner, value);
+}
+
 prototype_node* object_store::find_prototype_node(const char *type) const {
   // check for null
   if (type == 0) {
@@ -339,7 +363,8 @@ prototype_node* object_store::find_prototype_node(const char *type) const {
   }
 }
 
-prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root) {
+prototype_node* object_store::remove_prototype_node(prototype_node *node, bool is_root)
+{
   // remove (and delete) from tree (deletes subsequently all child nodes
   // for each child call remove_prototype(child);
   prototype_node *next = node->next_node(node);
@@ -397,6 +422,21 @@ void object_store::pop_transaction()
   transactions_.pop();
 }
 
+bool object_store::is_relation_notification_enabled()
+{
+  return relation_notification_;
+}
+
+void object_store::enable_relation_notification()
+{
+  relation_notification_ = true;
+}
+
+void object_store::disable_relation_notification()
+{
+  relation_notification_ = false;
+}
+
 transaction object_store::current_transaction()
 {
   return transactions_.top();
@@ -407,54 +447,5 @@ bool object_store::has_transaction() const
   return !transactions_.empty();
 }
 
-//transaction& object_store::begin_transaction()
-//{
-//  transactions_.push(transaction(*this));
-//  return transactions_.top();
-//}
-
-//transaction& object_store::begin_transaction(const std::shared_ptr<transaction::observer> &obsvr)
-//{
-//  transaction tr(*this, obsvr);
-//  tr.begin();
-//  return transactions_.top();
-//}
-
-namespace detail {
-
-void object_deleter::t_object_count::remove(bool notify)
-{
-  remove_func(proxy, notify);
-}
-
-object_deleter::iterator object_deleter::begin()
-{
-  return object_count_map.begin();
-}
-
-object_deleter::iterator object_deleter::end()
-{
-  return object_count_map.end();
-}
-
-bool object_deleter::check_object_count_map() const
-{
-  // check the reference and pointer counter of collected objects
-  const_iterator first = object_count_map.begin();
-  const_iterator last = object_count_map.end();
-  while (first != last) {
-    if (first->second.ignore) {
-      ++first;
-    } else if (first->second.reference_counter == 0) {
-//    } else if (first->second.ref_count == 0 && first->second.ptr_count == 0) {
-      ++first;
-    } else {
-      return false;
-    }
-  }
-  return true;
-}
-
-}
 
 }
