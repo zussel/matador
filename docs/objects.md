@@ -139,22 +139,20 @@ struct identifier_type
 };
 ```
 
-### Relations
+### Foreign Objects
 
-By two relation types are supported by OOS: ```has_one<T>``` and
-```has_many<T>```. These types must also be serialized.
+Foreign objects are supported by simply using ```has_one<T>```. This class acts as a wrapper
+around the object of type ```T```. It can be accessed like a pointer.
 
 ```cpp
-struct relations
+struct foreign_key
 {
   oos::has_one<T> foreign_;         // just a foreign object
-  oos::has_many<T> collection_; // a collection with objects
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
     serializer.serialize("foreign", foreign_, oos::cascade_type::ALL);
-    serializer.serialize("collection", collection_, "local_id", "foreign_id");
   }
 };
 ```
@@ -166,11 +164,26 @@ containing object. ```oos::cascade_type::ALL``` means that all operations
 are also passed to the foreign object (e.g. when containing object is
 deleted the foreign is deleted as well).
 
-```has_many<T>``` describes a collection leading to a relation table between
+
+### Collections
+
+Collections are supported by ```has_many<T, Container>```. By now ```has_many``` supports
+two container types ```std::vector``` (default) and ```std::list```.
+
+```cpp
+struct relations
+{
+  oos::has_many<T> collection_; // a collection with objects
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("collection", collection_, "local_id", "foreign_id");
+  }
+};
+```
+
+```has_many<T>``` describes a collection leading to a relation table/object between
 the containing object and the foreign object. If the foreign object is of
 a simple builtin type (e.g. ```int``` or ```oos::varchar<S>```) the value
 itself is stored in the relation table.
-
-**Note:** The obviously missing type ```belongs_to<T>``` will be introduced
-in the next release of OOS as well as _many to many_ relations.
-{: .notice--warning}
