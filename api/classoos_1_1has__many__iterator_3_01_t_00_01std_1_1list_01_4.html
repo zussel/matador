@@ -59,6 +59,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9e4bafd0bc0f0ff718ff156cf2f9be0c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a9e4bafd0bc0f0ff718ff156cf2f9be0c">operator!=</a> (const <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a7a6456fe66dcd733259dcbfb8a65ddff">self</a> &amp;i) const</td></tr>
 <tr class="memdesc:a9e4bafd0bc0f0ff718ff156cf2f9be0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares unequality iterator with another iterator.  <a href="#a9e4bafd0bc0f0ff718ff156cf2f9be0c">More...</a><br /></td></tr>
 <tr class="separator:a9e4bafd0bc0f0ff718ff156cf2f9be0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0176fd1e365e20d2d9e2187d92483ad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#af0176fd1e365e20d2d9e2187d92483ad">operator&lt;</a> (const <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a7a6456fe66dcd733259dcbfb8a65ddff">self</a> &amp;i) const</td></tr>
+<tr class="memdesc:af0176fd1e365e20d2d9e2187d92483ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares less than iterator with another iterator.  <a href="#af0176fd1e365e20d2d9e2187d92483ad">More...</a><br /></td></tr>
+<tr class="separator:af0176fd1e365e20d2d9e2187d92483ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a808f452f184fad347e264b07f90c22a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a7a6456fe66dcd733259dcbfb8a65ddff">self</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a808f452f184fad347e264b07f90c22a4">operator++</a> ()</td></tr>
 <tr class="memdesc:a808f452f184fad347e264b07f90c22a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pre increments self.  <a href="#a808f452f184fad347e264b07f90c22a4">More...</a><br /></td></tr>
 <tr class="separator:a808f452f184fad347e264b07f90c22a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -77,9 +80,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a481e51c25f95100d2bcf2e6ca7e4e6bb"><td class="memItemLeft" align="right" valign="top"><a id="a481e51c25f95100d2bcf2e6ca7e4e6bb"></a>
 <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a49ae4ea951dcd93885dea3fc6ef54200">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> () const</td></tr>
 <tr class="separator:a481e51c25f95100d2bcf2e6ca7e4e6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae74cf6502f07c801e83cad7fea15d745"><td class="memItemLeft" align="right" valign="top"><a id="ae74cf6502f07c801e83cad7fea15d745"></a>
-<a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a49ae4ea951dcd93885dea3fc6ef54200">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const</td></tr>
-<tr class="separator:ae74cf6502f07c801e83cad7fea15d745"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -462,6 +462,44 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 <p>Return the current value represented by the iterator</p>
 <dl class="section return"><dt>Returns</dt><dd>The current value </dd></dl>
+
+</div>
+</div>
+<a id="af0176fd1e365e20d2d9e2187d92483ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0176fd1e365e20d2d9e2187d92483ad">&sect;&nbsp;</a></span>operator<()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool oos::has_many_iterator&lt; T, std::list &gt;::operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a7a6456fe66dcd733259dcbfb8a65ddff">self</a> &amp;&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compares less than iterator with another iterator. </p>
+<p>Compares iterator with another iterator. If other iterator isn't less than this iterator true es returned.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The iterator to compare with </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if iterators isn't less than this itertor </dd></dl>
 
 </div>
 </div>

@@ -46,6 +46,8 @@ Public Types</h2></td></tr>
 <tr class="separator:a92577b318b07031cb7ce8b493c839c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68c33a0ec0c6d967106ca1c4a0dc89ca"><td class="memItemLeft" align="right" valign="top">typedef container_type::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__has__many/index.html#a68c33a0ec0c6d967106ca1c4a0dc89ca">container_iterator</a></td></tr>
 <tr class="separator:a68c33a0ec0c6d967106ca1c4a0dc89ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1135c08f02b7be0d9f59661ecdf2697c"><td class="memItemLeft" align="right" valign="top">typedef std::function&lt; void(<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> &amp;, object_proxy *)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__has__many/index.html#a1135c08f02b7be0d9f59661ecdf2697c">mark_modified_owner_func</a></td></tr>
+<tr class="separator:a1135c08f02b7be0d9f59661ecdf2697c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -86,9 +88,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api
 <tr class="memitem:abbcebe0c74c66821c413d597ba6ffabd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__has__many/index.html#abbcebe0c74c66821c413d597ba6ffabd">append</a> (const typename iterator::internal_type &amp;item)</td></tr>
 <tr class="memdesc:abbcebe0c74c66821c413d597ba6ffabd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends an item to the end of the container.  <a href="#abbcebe0c74c66821c413d597ba6ffabd">More...</a><br /></td></tr>
 <tr class="separator:abbcebe0c74c66821c413d597ba6ffabd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a934a97d8e61f5a86c36c6b89d3d16765"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1basic__has__many/index.html#a934a97d8e61f5a86c36c6b89d3d16765">has_join_table</a> () const</td></tr>
-<tr class="memdesc:a934a97d8e61f5a86c36c6b89d3d16765"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the container uses a join table.  <a href="#a934a97d8e61f5a86c36c6b89d3d16765">More...</a><br /></td></tr>
-<tr class="separator:a934a97d8e61f5a86c36c6b89d3d16765"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class T, template&lt; class ... &gt; class C&gt;<br />
@@ -220,6 +219,23 @@ template&lt;class T, template&lt; class ... &gt; class C&gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Shortcut to iterator class </p>
+
+</div>
+</div>
+<a id="a1135c08f02b7be0d9f59661ecdf2697c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1135c08f02b7be0d9f59661ecdf2697c">&sect;&nbsp;</a></span>mark_modified_owner_func</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, template&lt; class ... &gt; class C&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::function&lt;void(<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a>&amp;, object_proxy*)&gt; <a class="el" href="/api/classoos_1_1basic__has__many/index.html">oos::basic_has_many</a>&lt; T, C &gt;::<a class="el" href="/api/classoos_1_1basic__has__many/index.html#a1135c08f02b7be0d9f59661ecdf2697c">mark_modified_owner_func</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shortcut to mark modified owner function </p>
 
 </div>
 </div>
@@ -578,36 +594,6 @@ template&lt;class T, template&lt; class ... &gt; class C&gt; </div>
 
 <p>Returns a const copy of the first element. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const copy of the first element </dd></dl>
-
-</div>
-</div>
-<a id="a934a97d8e61f5a86c36c6b89d3d16765"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a934a97d8e61f5a86c36c6b89d3d16765">&sect;&nbsp;</a></span>has_join_table()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class T, template&lt; class ... &gt; class C&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="/api/classoos_1_1basic__has__many/index.html">oos::basic_has_many</a>&lt; T, C &gt;::has_join_table </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns true if the container uses a join table. </p>
-<dl class="section return"><dt>Returns</dt><dd>True if the container uses a join table </dd></dl>
 
 </div>
 </div>

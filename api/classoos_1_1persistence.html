@@ -18,7 +18,7 @@ title: oos::persistence Class Reference
 </div><!--header-->
 <div class="contents">
 
-<p>Represents the persistence layer for a database and an object_store.  
+<p>Represents the persistence layer for a database and an <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>.  
  <a href="/api/classoos_1_1persistence/index.html#details">More...</a></p>
 
 <p><code>#include &lt;persistence.hpp&gt;</code></p>
@@ -41,6 +41,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a26e4114c9821b1c845f7a082083d0683"><td class="memTemplParams" colspan="2">template&lt;class T , class S &gt; </td></tr>
 <tr class="memitem:a26e4114c9821b1c845f7a082083d0683"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a26e4114c9821b1c845f7a082083d0683">attach</a> (const char *type, bool abstract=false)</td></tr>
 <tr class="separator:a26e4114c9821b1c845f7a082083d0683"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a181bc1588f8cd285cf1e67846fdb6fd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a181bc1588f8cd285cf1e67846fdb6fd4">detach</a> (const char *type)</td></tr>
+<tr class="separator:a181bc1588f8cd285cf1e67846fdb6fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44c2177ebda83a62191d43be66396465"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a44c2177ebda83a62191d43be66396465"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a44c2177ebda83a62191d43be66396465">exists</a> ()</td></tr>
 <tr class="separator:a44c2177ebda83a62191d43be66396465"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -61,11 +63,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3313d430c75ee2ff14e2558417c5b9ef"><td class="memItemLeft" align="right" valign="top">t_table_map::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a3313d430c75ee2ff14e2558417c5b9ef">end</a> ()</td></tr>
 <tr class="memdesc:a3313d430c75ee2ff14e2558417c5b9ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the end of the table map.  <a href="#a3313d430c75ee2ff14e2558417c5b9ef">More...</a><br /></td></tr>
 <tr class="separator:a3313d430c75ee2ff14e2558417c5b9ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bfdcba4bcbd266970799ff9807facce"><td class="memItemLeft" align="right" valign="top">object_store &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a1bfdcba4bcbd266970799ff9807facce">store</a> ()</td></tr>
-<tr class="memdesc:a1bfdcba4bcbd266970799ff9807facce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a reference to the underlaying object_store.  <a href="#a1bfdcba4bcbd266970799ff9807facce">More...</a><br /></td></tr>
+<tr class="memitem:a1bfdcba4bcbd266970799ff9807facce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a1bfdcba4bcbd266970799ff9807facce">store</a> ()</td></tr>
+<tr class="memdesc:a1bfdcba4bcbd266970799ff9807facce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a reference to the underlaying <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>.  <a href="#a1bfdcba4bcbd266970799ff9807facce">More...</a><br /></td></tr>
 <tr class="separator:a1bfdcba4bcbd266970799ff9807facce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ed880b17974ddec6d34ad43fae1cb15"><td class="memItemLeft" align="right" valign="top">const object_store &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a2ed880b17974ddec6d34ad43fae1cb15">store</a> () const</td></tr>
-<tr class="memdesc:a2ed880b17974ddec6d34ad43fae1cb15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a const reference to the underlaying object_store.  <a href="#a2ed880b17974ddec6d34ad43fae1cb15">More...</a><br /></td></tr>
+<tr class="memitem:a2ed880b17974ddec6d34ad43fae1cb15"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a2ed880b17974ddec6d34ad43fae1cb15">store</a> () const</td></tr>
+<tr class="memdesc:a2ed880b17974ddec6d34ad43fae1cb15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a const reference to the underlaying <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>.  <a href="#a2ed880b17974ddec6d34ad43fae1cb15">More...</a><br /></td></tr>
 <tr class="separator:a2ed880b17974ddec6d34ad43fae1cb15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96222479a035eb07617af58692081b3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1connection/index.html">connection</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1persistence/index.html#a96222479a035eb07617af58692081b3e">conn</a> ()</td></tr>
 <tr class="memdesc:a96222479a035eb07617af58692081b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a reference to the underlaying database connection.  <a href="#a96222479a035eb07617af58692081b3e">More...</a><br /></td></tr>
@@ -76,14 +78,14 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:ade003d0704d2a9ad7bca9d4789762a39"><td class="memTemplParams" colspan="2"><a id="ade003d0704d2a9ad7bca9d4789762a39"></a>
+<tr class="memitem:af3ffdc87b42f4433ff26ebb769504056"><td class="memTemplParams" colspan="2"><a id="af3ffdc87b42f4433ff26ebb769504056"></a>
 template&lt;class T &gt; </td></tr>
-<tr class="memitem:ade003d0704d2a9ad7bca9d4789762a39"><td class="memTemplItemLeft" align="right" valign="top">struct&#160;</td><td class="memTemplItemRight" valign="bottom"><b>detail::persistence_on_attach</b></td></tr>
-<tr class="separator:ade003d0704d2a9ad7bca9d4789762a39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3ffdc87b42f4433ff26ebb769504056"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>persistence_observer</b></td></tr>
+<tr class="separator:af3ffdc87b42f4433ff26ebb769504056"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents the persistence layer for a database and an object_store. </p>
-<p>This class acts as mediator between the database connection and the object_store. It attaches the object prototypes to the object_store and drops or creates the corresponding tables on the database.</p>
+<div class="textblock"><p>Represents the persistence layer for a database and an <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. </p>
+<p>This class acts as mediator between the database connection and the <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. It attaches the object prototypes to the <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a> and drops or creates the corresponding tables on the database.</p>
 <p>It also holds a map of all created tables, checks if a table exists and is able to clear the object store. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a05aaa6bd0830bdf16ff23b4926614705"></a>
@@ -186,7 +188,7 @@ template&lt;class T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Inserts a new object prototype into the prototype tree. The prototype constist of a unique type name. To know where the new prototype is inserted into the hierarchy the type name of the parent node is also given.</p>
+<p>Inserts a new object prototype into the prototype tree. The prototype consists of a unique type name. To know where the new prototype is inserted into the hierarchy the type name of the parent node is also given.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>The type of the prototype node </td></tr>
@@ -232,7 +234,7 @@ template&lt;class T , class S &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Inserts a new object prototype into the prototype tree. The prototype constist of a unique type name. To know where the new prototype is inserted into the hierarchy the type name of the parent node is also given. parameter.</p>
+<p>Inserts a new object prototype into the prototype tree. The prototype consists of a unique type name. To know where the new prototype is inserted into the hierarchy the type name of the parent node is also given. parameter.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>The type of the prototype node </td></tr>
@@ -349,6 +351,31 @@ template&lt;class T , class S &gt; </div>
 
 </div>
 </div>
+<a id="a181bc1588f8cd285cf1e67846fdb6fd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a181bc1588f8cd285cf1e67846fdb6fd4">&sect;&nbsp;</a></span>detach()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::persistence::detach </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Removes an object prototype from the prototype tree. All children nodes and all objects are also removed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>The name of the type to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a7a50e7a5485ddf43f2e1273ac59095b9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a50e7a5485ddf43f2e1273ac59095b9">&sect;&nbsp;</a></span>drop()</h2>
 
@@ -459,7 +486,7 @@ template&lt;class T &gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">object_store&amp; oos::persistence::store </td>
+          <td class="memname"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a>&amp; oos::persistence::store </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -467,8 +494,8 @@ template&lt;class T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Return a reference to the underlaying object_store. </p>
-<dl class="section return"><dt>Returns</dt><dd>A reference to the object_store. </dd></dl>
+<p>Return a reference to the underlaying <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>A reference to the <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. </dd></dl>
 
 </div>
 </div>
@@ -479,7 +506,7 @@ template&lt;class T &gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const object_store&amp; oos::persistence::store </td>
+          <td class="memname">const <a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a>&amp; oos::persistence::store </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -487,8 +514,8 @@ template&lt;class T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Return a const reference to the underlaying object_store. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the object_store. </dd></dl>
+<p>Return a const reference to the underlaying <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>A const reference to the <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a>. </dd></dl>
 
 </div>
 </div>

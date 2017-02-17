@@ -32,6 +32,7 @@ title: Class Members - Typedefs
 <li>const_iterator
 : <a class="el" href="/api/classoos_1_1basic__has__many/index.html#a35c570706ad80479db631fe607457593">oos::basic_has_many&lt; T, C &gt;</a>
 , <a class="el" href="/api/classoos_1_1factory/index.html#aaea8beab05051fb969ab95b652ba1d11">oos::factory&lt; K, V &gt;</a>
+, <a class="el" href="/api/classoos_1_1object__store/index.html#a5858b70d2cca43723ebfa357541a4a75">oos::object_store</a>
 , <a class="el" href="/api/classoos_1_1object__view/index.html#ab7fdb8ce1bc8bbf4f66251e34d800776">oos::object_view&lt; T &gt;</a>
 </li>
 <li>container_iterator
@@ -81,6 +82,7 @@ title: Class Members - Typedefs
 , <a class="el" href="/api/classoos_1_1factory/index.html#aaf1ee76cffb87df740ec64a6b7be506f">oos::factory&lt; K, V &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many_3_01_t_00_01std_1_1list_01_4/index.html#aa9c45468f7d7d3767ea66781ab625dc9">oos::has_many&lt; T, std::list &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many_3_01_t_00_01std_1_1vector_01_4/index.html#aa5c1cb93b858bde5676c9c544018af81">oos::has_many&lt; T, std::vector &gt;</a>
+, <a class="el" href="/api/classoos_1_1object__store/index.html#a1643bc1a72d87c0b24fb2b1e0d0b6ab4">oos::object_store</a>
 , <a class="el" href="/api/classoos_1_1object__view/index.html#a25bcf1f47f68d00dd47f1243730db734">oos::object_view&lt; T &gt;</a>
 , <a class="el" href="/api/classoos_1_1result/index.html#abdd9389207c92d16ef50d51bc6adcdfd">oos::result&lt; T &gt;</a>
 , <a class="el" href="/api/classoos_1_1result_3_01row_01_4/index.html#a8e0a1e813b1b9a7ea3730e4caa48d8ae">oos::result&lt; row &gt;</a>
@@ -95,12 +97,19 @@ title: Class Members - Typedefs
 </ul>
 
 
+<h3><a id="index_m"></a>- m -</h3><ul>
+<li>mark_modified_owner_func
+: <a class="el" href="/api/classoos_1_1basic__has__many/index.html#a1135c08f02b7be0d9f59661ecdf2697c">oos::basic_has_many&lt; T, C &gt;</a>
+</li>
+</ul>
+
+
 <h3><a id="index_o"></a>- o -</h3><ul>
 <li>object_pointer
 : <a class="el" href="/api/classoos_1_1object__view/index.html#af781883e86dfbda504d47c5d634e2aba">oos::object_view&lt; T &gt;</a>
 </li>
 <li>object_type
-: <a class="el" href="/api/classoos_1_1object__ptr/index.html#a240537786fcf8aab229e9299229d047b">oos::object_ptr&lt; T &gt;</a>
+: <a class="el" href="/api/classoos_1_1object__pointer/index.html#a1d5f889e34c4ee1ebd70c69b844d1d06">oos::object_pointer&lt; T, OPT &gt;</a>
 </li>
 </ul>
 
@@ -115,8 +124,10 @@ title: Class Members - Typedefs
 <h3><a id="index_r"></a>- r -</h3><ul>
 <li>relation_type
 : <a class="el" href="/api/classoos_1_1basic__has__many/index.html#abdab3f9aad1e36df24be8bbfd3a1c46d">oos::basic_has_many&lt; T, C &gt;</a>
+, <a class="el" href="/api/classoos_1_1const__has__many__iterator_3_01_t_00_01std_1_1vector_01_4/index.html#a37529e0598115ea4432c2db0cc6e6353">oos::const_has_many_iterator&lt; T, std::vector &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many_3_01_t_00_01std_1_1list_01_4/index.html#ad763f0b17d5c0ecdf478c33a851ffc8b">oos::has_many&lt; T, std::list &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many_3_01_t_00_01std_1_1vector_01_4/index.html#a58a4d026f5a40a57a9eef15ca4eb6cb2">oos::has_many&lt; T, std::vector &gt;</a>
+, <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1vector_01_4/index.html#a0f846f4730611dd3f899a051383f7d06">oos::has_many_iterator&lt; T, std::vector &gt;</a>
 </li>
 <li>return_type
 : <a class="el" href="/api/classoos_1_1variable/index.html#a970aeb206793ff8af758ed267dfddb92">oos::variable&lt; R &gt;</a>
@@ -130,10 +141,9 @@ title: Class Members - Typedefs
 , <a class="el" href="/api/classoos_1_1const__has__many__iterator_3_01_t_00_01std_1_1vector_01_4/index.html#a230690dfa9df7ef855bf7ff01e0ad35e">oos::const_has_many_iterator&lt; T, std::vector &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1list_01_4/index.html#a7a6456fe66dcd733259dcbfb8a65ddff">oos::has_many_iterator&lt; T, std::list &gt;</a>
 , <a class="el" href="/api/classoos_1_1has__many__iterator_3_01_t_00_01std_1_1vector_01_4/index.html#af6740fec27fe2338f96c51d0ecd26eb1">oos::has_many_iterator&lt; T, std::vector &gt;</a>
-, <a class="el" href="/api/classoos_1_1has__one/index.html#a9e4619143bfca62079f31e88125a3b07">oos::has_one&lt; T &gt;</a>
 , <a class="el" href="/api/classoos_1_1identifier_3_01std_1_1string_01_4/index.html#ac04e4f304a72414e7ecb07368f606157">oos::identifier&lt; std::string &gt;</a>
 , <a class="el" href="/api/classoos_1_1identifier_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__integral_3_01_t_01_4_1_1value_01_4_1_1type_01_4/index.html#a7761c92c3121729779d7c04814903cb0">oos::identifier&lt; T, typename std::enable_if&lt; std::is_integral&lt; T &gt;::value &gt;::type &gt;</a>
-, <a class="el" href="/api/classoos_1_1object__ptr/index.html#aafef1dbc7b47d9525835d9b3b9f71129">oos::object_ptr&lt; T &gt;</a>
+, <a class="el" href="/api/classoos_1_1object__pointer/index.html#a6bec883cd897397e9a7ff2db569a6bd2">oos::object_pointer&lt; T, OPT &gt;</a>
 </li>
 <li>size_type
 : <a class="el" href="/api/classoos_1_1basic__has__many/index.html#a92577b318b07031cb7ce8b493c839c3a">oos::basic_has_many&lt; T, C &gt;</a>

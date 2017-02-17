@@ -45,12 +45,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6042dca457cd45017285429de45a9362"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17cfbb65e072a0124e6cdaba3982fc1b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a17cfbb65e072a0124e6cdaba3982fc1b">caption</a> () const</td></tr>
 <tr class="separator:a17cfbb65e072a0124e6cdaba3982fc1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f34bf3e2a786831573656f1c9cd89bc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a3f34bf3e2a786831573656f1c9cd89bc">execute</a> ()</td></tr>
-<tr class="memdesc:a3f34bf3e2a786831573656f1c9cd89bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes each test method.  <a href="#a3f34bf3e2a786831573656f1c9cd89bc">More...</a><br /></td></tr>
-<tr class="separator:a3f34bf3e2a786831573656f1c9cd89bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa053cf17881482c7923eaf57bc6c2cc6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#aa053cf17881482c7923eaf57bc6c2cc6">execute</a> (const std::string &amp;test)</td></tr>
-<tr class="memdesc:aa053cf17881482c7923eaf57bc6c2cc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes a concrete test method.  <a href="#aa053cf17881482c7923eaf57bc6c2cc6">More...</a><br /></td></tr>
-<tr class="separator:aa053cf17881482c7923eaf57bc6c2cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d040fd26a74ccd883408b62fdd45419"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a2d040fd26a74ccd883408b62fdd45419">execute</a> (bool quiet=false)</td></tr>
+<tr class="memdesc:a2d040fd26a74ccd883408b62fdd45419"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes each test method.  <a href="#a2d040fd26a74ccd883408b62fdd45419">More...</a><br /></td></tr>
+<tr class="separator:a2d040fd26a74ccd883408b62fdd45419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a073c70eb603458c946a380ab664d13aa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#a073c70eb603458c946a380ab664d13aa">execute</a> (const std::string &amp;test, bool quiet=false)</td></tr>
+<tr class="memdesc:a073c70eb603458c946a380ab664d13aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes a concrete test method.  <a href="#a073c70eb603458c946a380ab664d13aa">More...</a><br /></td></tr>
+<tr class="separator:a073c70eb603458c946a380ab664d13aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa97d2d956e6f3d937018bcd60899564d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1unit__test/index.html#aa97d2d956e6f3d937018bcd60899564d">list</a> (std::ostream &amp;out) const</td></tr>
 <tr class="memdesc:aa97d2d956e6f3d937018bcd60899564d"><td class="mdescLeft">&#160;</td><td class="mdescRight">List all tests.  <a href="#aa97d2d956e6f3d937018bcd60899564d">More...</a><br /></td></tr>
 <tr class="separator:aa97d2d956e6f3d937018bcd60899564d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1002,8 +1002,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a3f34bf3e2a786831573656f1c9cd89bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f34bf3e2a786831573656f1c9cd89bc">&sect;&nbsp;</a></span>execute() <span class="overload">[1/2]</span></h2>
+<a id="a2d040fd26a74ccd883408b62fdd45419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d040fd26a74ccd883408b62fdd45419">&sect;&nbsp;</a></span>execute() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1011,19 +1011,26 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="memname">bool oos::unit_test::execute </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>quiet</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Executes each test method. </p>
-<p>Each test method of the test_unit is executed. </p>
+<p>Each test method of the test_unit is executed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">quiet</td><td>If true no output is written to stdout </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="aa053cf17881482c7923eaf57bc6c2cc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa053cf17881482c7923eaf57bc6c2cc6">&sect;&nbsp;</a></span>execute() <span class="overload">[2/2]</span></h2>
+<a id="a073c70eb603458c946a380ab664d13aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a073c70eb603458c946a380ab664d13aa">&sect;&nbsp;</a></span>execute() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1032,8 +1039,18 @@ template&lt;class T &gt; </div>
           <td class="memname">bool oos::unit_test::execute </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>test</em></td><td>)</td>
+          <td class="paramname"><em>test</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>quiet</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1043,6 +1060,7 @@ template&lt;class T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">test</td><td>Name of the test to execute. </td></tr>
+    <tr><td class="paramname">quiet</td><td>If true no output is written to stdout </td></tr>
   </table>
   </dd>
 </dl>

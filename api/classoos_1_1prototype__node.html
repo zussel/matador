@@ -11,6 +11,7 @@ title: oos::prototype_node Class Reference
   <div class="summary">
 <a href="/api/classoos_1_1prototype__node-members/index.html">List of all members</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">oos::prototype_node Class Reference</div>  </div>
@@ -24,10 +25,11 @@ title: oos::prototype_node Class Reference
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ace22a938bf3176393f67500dd11e57fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ace22a938bf3176393f67500dd11e57fb">prototype_node</a> (object_store *<a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a>, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, const std::type_info &amp;typeinfo, bool abstract=false)</td></tr>
-<tr class="memdesc:ace22a938bf3176393f67500dd11e57fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="/api/classoos_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable. ">prototype_node</a>.  <a href="#ace22a938bf3176393f67500dd11e57fb">More...</a><br /></td></tr>
-<tr class="separator:ace22a938bf3176393f67500dd11e57fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afad780e6558769c36cbfb4827d0bab21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#afad780e6558769c36cbfb4827d0bab21">initialize</a> (object_store *<a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a>, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, bool abstract)</td></tr>
+<tr class="memitem:a162f4b5c9b8f8193dceedff4ce8c5e13"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a162f4b5c9b8f8193dceedff4ce8c5e13"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a162f4b5c9b8f8193dceedff4ce8c5e13">prototype_node</a> (<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *<a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a>, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, T *proto, bool abstract=false)</td></tr>
+<tr class="memdesc:a162f4b5c9b8f8193dceedff4ce8c5e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="/api/classoos_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable. ">prototype_node</a>.  <a href="#a162f4b5c9b8f8193dceedff4ce8c5e13">More...</a><br /></td></tr>
+<tr class="separator:a162f4b5c9b8f8193dceedff4ce8c5e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afad780e6558769c36cbfb4827d0bab21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#afad780e6558769c36cbfb4827d0bab21">initialize</a> (<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *<a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a>, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, bool abstract)</td></tr>
 <tr class="memdesc:afad780e6558769c36cbfb4827d0bab21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a <a class="el" href="/api/classoos_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable. ">prototype_node</a>.  <a href="#afad780e6558769c36cbfb4827d0bab21">More...</a><br /></td></tr>
 <tr class="separator:afad780e6558769c36cbfb4827d0bab21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3ce36586f2abdf8123ae58b836d5ed6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ad3ce36586f2abdf8123ae58b836d5ed6">empty</a> (bool self) const</td></tr>
@@ -59,7 +61,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab3e1a8d6b11e69f957aa9850e7786409"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a803046f69850ce6e144b2415e123d6a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a803046f69850ce6e144b2415e123d6a5">previous_node</a> (const <a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> *root) const</td></tr>
 <tr class="separator:a803046f69850ce6e144b2415e123d6a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae384074f4e9dd9728f45bb1c39ed878d"><td class="memItemLeft" align="right" valign="top">object_store *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a> () const</td></tr>
+<tr class="memitem:ae384074f4e9dd9728f45bb1c39ed878d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ae384074f4e9dd9728f45bb1c39ed878d">tree</a> () const</td></tr>
 <tr class="separator:ae384074f4e9dd9728f45bb1c39ed878d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3ce3cbadfc56a50a82e0dfa9837db0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ab3ce3cbadfc56a50a82e0dfa9837db0f">is_child_of</a> (const <a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> *parent) const</td></tr>
 <tr class="separator:ab3ce3cbadfc56a50a82e0dfa9837db0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -70,32 +72,42 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8fa0d21a5a87b3f290068dd49c574013"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1basic__identifier/index.html">basic_identifier</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a8fa0d21a5a87b3f290068dd49c574013">id</a> () const</td></tr>
 <tr class="memdesc:a8fa0d21a5a87b3f290068dd49c574013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the identifier prototype.  <a href="#a8fa0d21a5a87b3f290068dd49c574013">More...</a><br /></td></tr>
 <tr class="separator:a8fa0d21a5a87b3f290068dd49c574013"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76453890f99557f2df218b44b72ba172"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a76453890f99557f2df218b44b72ba172">relation_count</a> () const</td></tr>
-<tr class="memdesc:a76453890f99557f2df218b44b72ba172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the count of relations.  <a href="#a76453890f99557f2df218b44b72ba172">More...</a><br /></td></tr>
-<tr class="separator:a76453890f99557f2df218b44b72ba172"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae51b2345582bcdeea6cb9ccbc56f258a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ae51b2345582bcdeea6cb9ccbc56f258a">has_relation</a> (const std::string &amp;relation_name) const</td></tr>
-<tr class="memdesc:ae51b2345582bcdeea6cb9ccbc56f258a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if a relation with the given name exists.  <a href="#ae51b2345582bcdeea6cb9ccbc56f258a">More...</a><br /></td></tr>
-<tr class="separator:ae51b2345582bcdeea6cb9ccbc56f258a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af211c340274f188d636f38884cd396ea"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#af211c340274f188d636f38884cd396ea">foreign_key_count</a> () const</td></tr>
-<tr class="memdesc:af211c340274f188d636f38884cd396ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the count of foreign keys.  <a href="#af211c340274f188d636f38884cd396ea">More...</a><br /></td></tr>
-<tr class="separator:af211c340274f188d636f38884cd396ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad24023320ac061d1ed426548f8de9374"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#ad24023320ac061d1ed426548f8de9374">has_foreign_key</a> (const std::string &amp;foreign_key_name) const</td></tr>
-<tr class="memdesc:ad24023320ac061d1ed426548f8de9374"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if a foreign key with the given name exists.  <a href="#ad24023320ac061d1ed426548f8de9374">More...</a><br /></td></tr>
-<tr class="separator:ad24023320ac061d1ed426548f8de9374"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfe4f0226117acea44a28d8b8bdf7b50"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#acfe4f0226117acea44a28d8b8bdf7b50">is_abstract</a> () const</td></tr>
 <tr class="memdesc:acfe4f0226117acea44a28d8b8bdf7b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the node represents an abstract object.  <a href="#acfe4f0226117acea44a28d8b8bdf7b50">More...</a><br /></td></tr>
 <tr class="separator:acfe4f0226117acea44a28d8b8bdf7b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30040e4f70a10067cffaff089c874705"><td class="memItemLeft" align="right" valign="top">std::type_index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a30040e4f70a10067cffaff089c874705">type_index</a> () const</td></tr>
 <tr class="memdesc:a30040e4f70a10067cffaff089c874705"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type index of the represented object type.  <a href="#a30040e4f70a10067cffaff089c874705">More...</a><br /></td></tr>
 <tr class="separator:a30040e4f70a10067cffaff089c874705"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70a5a39c28345c6db87f4311713d1b3f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a70a5a39c28345c6db87f4311713d1b3f">is_relation_node</a> () const</td></tr>
+<tr class="separator:a70a5a39c28345c6db87f4311713d1b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec6acb12ff4f709304a3a8ddf2f7d7ad"><td class="memItemLeft" align="right" valign="top">const relation_node_info &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#aec6acb12ff4f709304a3a8ddf2f7d7ad">node_info</a> () const</td></tr>
+<tr class="separator:aec6acb12ff4f709304a3a8ddf2f7d7ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add2b57b06cd16280192e06299070c4ed"><td class="memItemLeft" align="right" valign="top">object_proxy *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#add2b57b06cd16280192e06299070c4ed">find_proxy</a> (const std::shared_ptr&lt; <a class="el" href="/api/classoos_1_1basic__identifier/index.html">basic_identifier</a> &gt; &amp;pk)</td></tr>
 <tr class="separator:add2b57b06cd16280192e06299070c4ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61a9d5bd231e7d927a7f5c147e21b065"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a61a9d5bd231e7d927a7f5c147e21b065">register_belongs_to</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
+<tr class="separator:a61a9d5bd231e7d927a7f5c147e21b065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaef843f5a5f6718f28d6eec25a190e1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#aaef843f5a5f6718f28d6eec25a190e1b">register_has_one</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
+<tr class="separator:aaef843f5a5f6718f28d6eec25a190e1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65c20fb1b45f1649cf63cb2888babc61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a65c20fb1b45f1649cf63cb2888babc61">register_has_many</a> (const std::type_index &amp;tindex, const prototype_node::relation_info &amp;relation_info)</td></tr>
+<tr class="separator:a65c20fb1b45f1649cf63cb2888babc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a4cb5f22d0ff52b30353515dce85d6fbe"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a4cb5f22d0ff52b30353515dce85d6fbe"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a4cb5f22d0ff52b30353515dce85d6fbe">make_node</a> (<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *store, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, bool abstract=false)</td></tr>
+<tr class="separator:a4cb5f22d0ff52b30353515dce85d6fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ed352de23f47080f81598cee53d3f4c"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a3ed352de23f47080f81598cee53d3f4c"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a3ed352de23f47080f81598cee53d3f4c">make_relation_node</a> (<a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *store, const char *<a class="el" href="/api/classoos_1_1prototype__node/index.html#a6c353eb5f5a085bea0989313ba0d23d9">type</a>, bool abstract, const char *owner_type, const char *relation_id, const char *owner_column, const char *item_column)</td></tr>
+<tr class="separator:a3ed352de23f47080f81598cee53d3f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:ac504e3a56c0473590ff50162c4ba09fe"><td class="memItemLeft" align="right" valign="top"><a id="ac504e3a56c0473590ff50162c4ba09fe"></a>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>prototype_tree</b></td></tr>
 <tr class="separator:ac504e3a56c0473590ff50162c4ba09fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1522209290e3b134e0489008ed3e11ea"><td class="memItemLeft" align="right" valign="top"><a id="a1522209290e3b134e0489008ed3e11ea"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>object_holder</b></td></tr>
+<tr class="separator:a1522209290e3b134e0489008ed3e11ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe5cc93b0def50a90599e534a510cc0a"><td class="memItemLeft" align="right" valign="top"><a id="abe5cc93b0def50a90599e534a510cc0a"></a>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>object_store</b></td></tr>
 <tr class="separator:abe5cc93b0def50a90599e534a510cc0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,6 +123,25 @@ template&lt;class T &gt; </td></tr>
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:a595729f8d6cf0e666d62ed0635831c3f"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>object_view_iterator</b></td></tr>
 <tr class="separator:a595729f8d6cf0e666d62ed0635831c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92a712ca8fa7a3f2a36b050281d91cb3"><td class="memTemplParams" colspan="2"><a id="a92a712ca8fa7a3f2a36b050281d91cb3"></a>
+template&lt;class T , template&lt; class ... &gt; class C&gt; </td></tr>
+<tr class="memitem:a92a712ca8fa7a3f2a36b050281d91cb3"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>has_many</b></td></tr>
+<tr class="separator:a92a712ca8fa7a3f2a36b050281d91cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94fbd9ab504a5df6e227f3d8ede900d3"><td class="memTemplParams" colspan="2"><a id="a94fbd9ab504a5df6e227f3d8ede900d3"></a>
+template&lt;class T , template&lt; class ... &gt; class C, class Enabled &gt; </td></tr>
+<tr class="memitem:a94fbd9ab504a5df6e227f3d8ede900d3"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>detail::has_many_inserter</b></td></tr>
+<tr class="separator:a94fbd9ab504a5df6e227f3d8ede900d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a226fb271c3f259fa1c343e6c3ddafc52"><td class="memTemplParams" colspan="2"><a id="a226fb271c3f259fa1c343e6c3ddafc52"></a>
+template&lt;class T , template&lt; class ... &gt; class C, class Enabled &gt; </td></tr>
+<tr class="memitem:a226fb271c3f259fa1c343e6c3ddafc52"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>detail::has_many_deleter</b></td></tr>
+<tr class="separator:a226fb271c3f259fa1c343e6c3ddafc52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad47dd8fa057d6590bbb74048537b4db1"><td class="memItemLeft" align="right" valign="top"><a id="ad47dd8fa057d6590bbb74048537b4db1"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>detail::basic_node_analyzer</b></td></tr>
+<tr class="separator:ad47dd8fa057d6590bbb74048537b4db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af46f3fa4e64fc04ae50f84e1392beb32"><td class="memTemplParams" colspan="2"><a id="af46f3fa4e64fc04ae50f84e1392beb32"></a>
+template&lt;class T , template&lt; class U=T &gt; class O&gt; </td></tr>
+<tr class="memitem:af46f3fa4e64fc04ae50f84e1392beb32"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>detail::node_analyzer</b></td></tr>
+<tr class="separator:af46f3fa4e64fc04ae50f84e1392beb32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bbadfa4cab760bcf071ba6cc2457cc5"><td class="memItemLeft" align="right" valign="top">OOS_OBJECT_API std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1prototype__node/index.html#a2bbadfa4cab760bcf071ba6cc2457cc5">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> &amp;pn)</td></tr>
 <tr class="separator:a2bbadfa4cab760bcf071ba6cc2457cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -119,11 +150,13 @@ template&lt;class T &gt; </td></tr>
 <p>The <a class="el" href="/api/classoos_1_1prototype__node/index.html" title="Holds the prototype of a concrete serializable. ">prototype_node</a> class holds the prototype of a concrete serializable inside a producer serializable. Whenever requested the class produces a new serializable.</p>
 <p>It also holds a partial list containing all objects of this and all children nodes. This list is defined by three marker: the beginning of the list, the end of the own objects and the end of the last child objects. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ace22a938bf3176393f67500dd11e57fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace22a938bf3176393f67500dd11e57fb">&sect;&nbsp;</a></span>prototype_node()</h2>
+<a id="a162f4b5c9b8f8193dceedff4ce8c5e13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a162f4b5c9b8f8193dceedff4ce8c5e13">&sect;&nbsp;</a></span>prototype_node()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -131,7 +164,7 @@ template&lt;class T &gt; </td></tr>
         <tr>
           <td class="memname">oos::prototype_node::prototype_node </td>
           <td>(</td>
-          <td class="paramtype">object_store *&#160;</td>
+          <td class="paramtype"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *&#160;</td>
           <td class="paramname"><em>tree</em>, </td>
         </tr>
         <tr>
@@ -143,8 +176,8 @@ template&lt;class T &gt; </td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::type_info &amp;&#160;</td>
-          <td class="paramname"><em>typeinfo</em>, </td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>proto</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -171,7 +204,7 @@ template&lt;class T &gt; </td></tr>
   <table class="params">
     <tr><td class="paramname">tree</td><td>The node containing tree. </td></tr>
     <tr><td class="paramname">type</td><td>The type name of the node. </td></tr>
-    <tr><td class="paramname">typeinfo</td><td>The typeinfo of this node. </td></tr>
+    <tr><td class="paramname">proto</td><td>Prototype object of the node </td></tr>
     <tr><td class="paramname">abstract</td><td>Tells the node if its prototype is abstract. </td></tr>
   </table>
   </dd>
@@ -282,26 +315,6 @@ template&lt;class T &gt; </td></tr>
 
 </div>
 </div>
-<a id="af211c340274f188d636f38884cd396ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af211c340274f188d636f38884cd396ea">&sect;&nbsp;</a></span>foreign_key_count()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t oos::prototype_node::foreign_key_count </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns the count of foreign keys. </p>
-<dl class="section return"><dt>Returns</dt><dd>The count of foreign keys </dd></dl>
-
-</div>
-</div>
 <a id="a3a43ba840067e66cadf5b2b1df0ef475"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3a43ba840067e66cadf5b2b1df0ef475">&sect;&nbsp;</a></span>has_children()</h2>
 
@@ -321,34 +334,6 @@ template&lt;class T &gt; </td></tr>
 
 </div>
 </div>
-<a id="ad24023320ac061d1ed426548f8de9374"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad24023320ac061d1ed426548f8de9374">&sect;&nbsp;</a></span>has_foreign_key()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool oos::prototype_node::has_foreign_key </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>foreign_key_name</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns true if a foreign key with the given name exists. </p>
-<p>Returns true if a foreign key with the given name exists in the object prototype.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">foreign_key_name</td><td>The name of the foreign key to be checked </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if a relation with the given name exists </dd></dl>
-
-</div>
-</div>
 <a id="abe94f67e272c888557d784b9c6a4cdf5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe94f67e272c888557d784b9c6a4cdf5">&sect;&nbsp;</a></span>has_primary_key()</h2>
 
@@ -365,34 +350,6 @@ template&lt;class T &gt; </td></tr>
 </div><div class="memdoc">
 <p>Returns true if the serializable represented by this node owns a primary key</p>
 <dl class="section return"><dt>Returns</dt><dd>True if serializable owns a primary key </dd></dl>
-
-</div>
-</div>
-<a id="ae51b2345582bcdeea6cb9ccbc56f258a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae51b2345582bcdeea6cb9ccbc56f258a">&sect;&nbsp;</a></span>has_relation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool oos::prototype_node::has_relation </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>relation_name</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns true if a relation with the given name exists. </p>
-<p>Returns true if a relation with the given name exists in the object prototype.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">relation_name</td><td>The name of the relation to be checked </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if a relation with the given name exists </dd></dl>
 
 </div>
 </div>
@@ -425,7 +382,7 @@ template&lt;class T &gt; </td></tr>
         <tr>
           <td class="memname">void oos::prototype_node::initialize </td>
           <td>(</td>
-          <td class="paramtype">object_store *&#160;</td>
+          <td class="paramtype"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *&#160;</td>
           <td class="paramname"><em>tree</em>, </td>
         </tr>
         <tr>
@@ -551,6 +508,173 @@ template&lt;class T &gt; </td></tr>
 
 </div>
 </div>
+<a id="a70a5a39c28345c6db87f4311713d1b3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70a5a39c28345c6db87f4311713d1b3f">&sect;&nbsp;</a></span>is_relation_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool oos::prototype_node::is_relation_node </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns true if this node represents a relation node (has_many_item&lt;T&gt;).</p>
+<dl class="section return"><dt>Returns</dt><dd>True if this node represents a relation node. </dd></dl>
+
+</div>
+</div>
+<a id="a4cb5f22d0ff52b30353515dce85d6fbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cb5f22d0ff52b30353515dce85d6fbe">&sect;&nbsp;</a></span>make_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> * oos::prototype_node::make_node </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *&#160;</td>
+          <td class="paramname"><em>store</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>abstract</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates a regular prototype node.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of the node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">store</td><td>Corresponding <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a> </td></tr>
+    <tr><td class="paramname">type</td><td>Type name </td></tr>
+    <tr><td class="paramname">abstract</td><td>Flag indicating if node is abstract. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The created node. </dd></dl>
+
+</div>
+</div>
+<a id="a3ed352de23f47080f81598cee53d3f4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ed352de23f47080f81598cee53d3f4c">&sect;&nbsp;</a></span>make_relation_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="/api/classoos_1_1prototype__node/index.html">prototype_node</a> * oos::prototype_node::make_relation_node </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a> *&#160;</td>
+          <td class="paramname"><em>store</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>abstract</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>owner_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>relation_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>owner_column</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>item_column</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Creates a relation prototype node.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of the node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">store</td><td>Corresponding <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a> </td></tr>
+    <tr><td class="paramname">type</td><td>Type name </td></tr>
+    <tr><td class="paramname">abstract</td><td>Flag indicating if node is abstract. </td></tr>
+    <tr><td class="paramname">owner_type</td><td>Type name of the owner node </td></tr>
+    <tr><td class="paramname">relation_id</td><td>Name of the relation in the prototype object </td></tr>
+    <tr><td class="paramname">owner_column</td><td>Owner column name </td></tr>
+    <tr><td class="paramname">item_column</td><td>Item (foreign) column name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The created node. </dd></dl>
+
+</div>
+</div>
 <a id="a1cbefe51cdaf079b1f00694da9ac62f2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1cbefe51cdaf079b1f00694da9ac62f2">&sect;&nbsp;</a></span>next_node() <span class="overload">[1/2]</span></h2>
 
@@ -593,6 +717,24 @@ template&lt;class T &gt; </td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The next node. </dd></dl>
+
+</div>
+</div>
+<a id="aec6acb12ff4f709304a3a8ddf2f7d7ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec6acb12ff4f709304a3a8ddf2f7d7ad">&sect;&nbsp;</a></span>node_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const relation_node_info&amp; oos::prototype_node::node_info </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the relation node info. This struct contains only valid data if this node represents a n relation node (has_many_item&lt;T&gt;). </p><dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
 </div>
@@ -641,23 +783,111 @@ template&lt;class T &gt; </td></tr>
 
 </div>
 </div>
-<a id="a76453890f99557f2df218b44b72ba172"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76453890f99557f2df218b44b72ba172">&sect;&nbsp;</a></span>relation_count()</h2>
+<a id="a61a9d5bd231e7d927a7f5c147e21b065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61a9d5bd231e7d927a7f5c147e21b065">&sect;&nbsp;</a></span>register_belongs_to()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t oos::prototype_node::relation_count </td>
+          <td class="memname">void oos::prototype_node::register_belongs_to </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">const std::type_index &amp;&#160;</td>
+          <td class="paramname"><em>tindex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
+          <td class="paramname"><em>relation_info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Register relation info for a belongs_to relation part identified by the given type index.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
+    <tr><td class="paramname">relation_info</td><td>relation info object for belongs_to </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Returns the count of relations. </p>
-<dl class="section return"><dt>Returns</dt><dd>The count of relations </dd></dl>
+</div>
+</div>
+<a id="a65c20fb1b45f1649cf63cb2888babc61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65c20fb1b45f1649cf63cb2888babc61">&sect;&nbsp;</a></span>register_has_many()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::prototype_node::register_has_many </td>
+          <td>(</td>
+          <td class="paramtype">const std::type_index &amp;&#160;</td>
+          <td class="paramname"><em>tindex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
+          <td class="paramname"><em>relation_info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Register relation info for a has_many relation part identified by the given type index.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
+    <tr><td class="paramname">relation_info</td><td>relation info object for has_many </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaef843f5a5f6718f28d6eec25a190e1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaef843f5a5f6718f28d6eec25a190e1b">&sect;&nbsp;</a></span>register_has_one()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void oos::prototype_node::register_has_one </td>
+          <td>(</td>
+          <td class="paramtype">const std::type_index &amp;&#160;</td>
+          <td class="paramname"><em>tindex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const prototype_node::relation_info &amp;&#160;</td>
+          <td class="paramname"><em>relation_info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Register relation info for a has_one relation part identified by the given type index.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tindex</td><td>type index for identification. </td></tr>
+    <tr><td class="paramname">relation_info</td><td>relation info object for has_one </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -713,7 +943,7 @@ template&lt;class T &gt; </td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">object_store* oos::prototype_node::tree </td>
+          <td class="memname"><a class="el" href="/api/classoos_1_1object__store/index.html">object_store</a>* oos::prototype_node::tree </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -721,7 +951,7 @@ template&lt;class T &gt; </td></tr>
       </table>
 </div><div class="memdoc">
 <p>Returns the corresponding tree/object_store</p>
-<dl class="section return"><dt>Returns</dt><dd>The corresponding object_store </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding <a class="el" href="/api/classoos_1_1object__store/index.html" title="A class that stores all kind of objects. ">object_store</a> </dd></dl>
 
 </div>
 </div>

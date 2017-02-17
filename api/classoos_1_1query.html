@@ -81,8 +81,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9f1fa9e601405e76c2422260fc7f0960"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1query/index.html">query</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1query/index.html#a9f1fa9e601405e76c2422260fc7f0960">reset</a> (<a class="el" href="/api/namespaceoos/index.html#a61a7a8a7c9bffb0f1f4cf9d30c469419">t_query_command</a> query_command)</td></tr>
 <tr class="memdesc:a9f1fa9e601405e76c2422260fc7f0960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the query.  <a href="#a9f1fa9e601405e76c2422260fc7f0960">More...</a><br /></td></tr>
 <tr class="separator:a9f1fa9e601405e76c2422260fc7f0960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3c98cc5bdc54e565122cd0924ff0c75"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1result/index.html">result</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1query/index.html#aa3c98cc5bdc54e565122cd0924ff0c75">execute</a> ()</td></tr>
+<tr class="memdesc:aa3c98cc5bdc54e565122cd0924ff0c75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the query.  <a href="#aa3c98cc5bdc54e565122cd0924ff0c75">More...</a><br /></td></tr>
+<tr class="separator:aa3c98cc5bdc54e565122cd0924ff0c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa52837a8ea539523f1f5fd4aa4c4d7d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1result/index.html">result</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1query/index.html#aa52837a8ea539523f1f5fd4aa4c4d7d4">execute</a> (<a class="el" href="/api/classoos_1_1connection/index.html">connection</a> &amp;conn)</td></tr>
 <tr class="separator:aa52837a8ea539523f1f5fd4aa4c4d7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39de5e2249d8b380ac38342f0cfe52a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1statement/index.html">statement</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1query/index.html#a39de5e2249d8b380ac38342f0cfe52a4">prepare</a> ()</td></tr>
+<tr class="memdesc:a39de5e2249d8b380ac38342f0cfe52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare the query.  <a href="#a39de5e2249d8b380ac38342f0cfe52a4">More...</a><br /></td></tr>
+<tr class="separator:a39de5e2249d8b380ac38342f0cfe52a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe5c2abb7f9e70618fa0ab9e23170960"><td class="memItemLeft" align="right" valign="top"><a class="el" href="/api/classoos_1_1statement/index.html">statement</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="/api/classoos_1_1query/index.html#afe5c2abb7f9e70618fa0ab9e23170960">prepare</a> (<a class="el" href="/api/classoos_1_1connection/index.html">connection</a> &amp;conn)</td></tr>
 <tr class="separator:afe5c2abb7f9e70618fa0ab9e23170960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classoos_1_1detail_1_1basic__query"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classoos_1_1detail_1_1basic__query')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="/api/classoos_1_1detail_1_1basic__query/index.html">oos::detail::basic_query</a></td></tr>
@@ -544,8 +550,45 @@ template&lt;class T  = row&gt; </div>
 
 </div>
 </div>
+<a id="aa3c98cc5bdc54e565122cd0924ff0c75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3c98cc5bdc54e565122cd0924ff0c75">&sect;&nbsp;</a></span>execute() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T  = row&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="/api/classoos_1_1result/index.html">result</a>&lt;T&gt; <a class="el" href="/api/classoos_1_1query/index.html">oos::query</a>&lt; T &gt;::execute </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Execute the query. </p>
+<p>Execute the query with the stored connection. If internal connection is null an exception is thrown.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::logic_error</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the query </dd></dl>
+
+</div>
+</div>
 <a id="aa52837a8ea539523f1f5fd4aa4c4d7d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa52837a8ea539523f1f5fd4aa4c4d7d4">&sect;&nbsp;</a></span>execute()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa52837a8ea539523f1f5fd4aa4c4d7d4">&sect;&nbsp;</a></span>execute() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -785,8 +828,45 @@ template&lt;class T  = row&gt; </div>
 
 </div>
 </div>
+<a id="a39de5e2249d8b380ac38342f0cfe52a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39de5e2249d8b380ac38342f0cfe52a4">&sect;&nbsp;</a></span>prepare() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T  = row&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="/api/classoos_1_1statement/index.html">statement</a>&lt;T&gt; <a class="el" href="/api/classoos_1_1query/index.html">oos::query</a>&lt; T &gt;::prepare </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prepare the query. </p>
+<p>Prepare the query with the stored connection. If internal connection is null an exception is thrown.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::logic_error</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The prepared statement </dd></dl>
+
+</div>
+</div>
 <a id="afe5c2abb7f9e70618fa0ab9e23170960"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe5c2abb7f9e70618fa0ab9e23170960">&sect;&nbsp;</a></span>prepare()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afe5c2abb7f9e70618fa0ab9e23170960">&sect;&nbsp;</a></span>prepare() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
