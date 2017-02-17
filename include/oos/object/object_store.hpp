@@ -129,18 +129,98 @@ public:
    */
   ~object_store();
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * The second template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   *
+   * @tparam T Type of the prototype
+   * @tparam O Type of the observers
+   * @param type Name of the prototype
+   * @param observer Initializer list of observers to be registered with the prototype
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T, template < class V > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T Type of the prototype
+   * @param type Name of the prototype
+   * @param abstract If true prototype is treated as abstract
+   * @param parent Name of the parent node
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T >
   prototype_iterator attach(const char *type, bool abstract = false, const char *parent = nullptr);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * The second template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T Type of the prototype
+   * @param type Name of the prototype
+   * @param abstract If true prototype is treated as abstract
+   * @param parent Name of the parent node
+   * @param observer Vector of observers to be registered with the prototype
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T, template < class V = T > class O >
   prototype_iterator attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * The second template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T Type of the prototype
+   * @param type Name of the prototype
+   * @param abstract If true prototype is treated as abstract
+   * @param parent Name of the parent node
+   * @param observer Initializer list of observers to be registered with the prototype
+   * @return Iterator representing the inserted prototype node
+   */
   template <class T, template < class V = T > class O >
   prototype_iterator attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * The second parameter is the type of the parent prototype node. New
+   * prototype node is inserted below the found parent node.
+   * The third template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   *
+   * @tparam T Type of the prototype
+   * @tparam S Type of the parent prototype node
+   * @tparam O Type of the observers
+   * @param type Name of the prototype
+   * @param observer Initializer list of observers to be registered with the prototype
+   * @return Iterator representing the inserted prototype node
+   */
   template<class T, class S, template < class V = T > class O >
   prototype_iterator attach(const char *type, std::initializer_list<O<T>*> observer);
 
@@ -160,12 +240,61 @@ public:
   template<class T, class S  >
   prototype_iterator attach(const char *type, bool abstract = false);
 
+  /**
+   * Inserts a new object prototype into the object_store. The prototype
+   * consists of a unique type name. The type of the prototype is given via
+   * template parameter T.
+   * The second parameter is the type of the parent prototype node. New
+   * prototype node is inserted below the found parent node.
+   * The third template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   *
+   * If the abstract flag is true prototype is treated as abstract. No concrete
+   * object can be inserted for this prototype.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam S       The type of the parent prototype node
+   * @tparam O       Type of the observers
+   * @param type     The unique name of the type.
+   * @param abstract Indicates if the producers serializable is treated as an abstract node.
+   * @param observer Initializer list of observers to be registered with the prototype
+   * @return         Returns new inserted prototype iterator.
+   */
   template<class T, class S, template < class V = T > class O >
   prototype_iterator attach(const char *type, bool abstract, std::initializer_list<O<T>*> observer);
 
+  /**
+   * Inserts a new object prototype into the object_store. The
+   * type of the prototype is given via template parameter T. A prepared
+   * prototype node is passed to be inserted.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   *
+   * @tparam T       The type of the prototype node
+   * @param node     The prototype node to be inserted
+   * @param parent   The name of the parent node.
+   * @return         Returns new inserted prototype iterator.
+   */
   template < class T >
   prototype_iterator attach(prototype_node *node, const char *parent = nullptr);
 
+  /**
+   * Inserts a new object prototype into the object_store. The
+   * type of the prototype is given via template parameter T.
+   * The second template parameter is the type observer which can be passed
+   * to the node. The observer must be derived from object_store_observer
+   *
+   * A prepared prototype node is passed to be inserted.
+   * If parent name is given prototype node is inserted below the found parent
+   * node.
+   *
+   * @tparam T       The type of the prototype node
+   * @tparam O       Type of the observers
+   * @param node     The prototype node to be inserted
+   * @param parent   The name of the parent node.
+   * @param observer Vector of observers to be registered with the prototype
+   * @return         Returns new inserted prototype iterator.
+   */
   template < class T, template < class V = T > class O >
   prototype_iterator attach(prototype_node *node, const char *parent, std::vector<O<T>*> observer);
 
@@ -329,9 +458,18 @@ public:
    */
   bool empty() const;
 
+  /**
+   * Return the depth of the given prototype_node
+   * in the prototype tree.
+   *
+   * @param node The prototype_node
+   * @return The depth of the node
+   */
   size_t depth(const prototype_node *node) const;
 
+  /// @cond OOS_DEV
   void dump(std::ostream &out) const;
+  /// @endcond
 
   /**
    * Dump all serializable to a given stream
@@ -343,7 +481,6 @@ public:
   /**
    * Creates an serializable of the given type name.
    * 
-   * @param type Typename of the serializable to create.
    * @return The created serializable on success or NULL if the type couldn't be found.
    */
   template<class T>
@@ -375,9 +512,8 @@ public:
   /**
    * @brief Inserts a new proxy into the object store
    *
-   * @param oproxy Object proxy to insert
+   * @param proxy Object proxy to insert
    * @param notify Indicates wether all observers should be notified.
-   * @param is_new Proxy is a new not inserted proxy, skip object store check
    */
   template < class T >
   object_proxy* insert(object_proxy *proxy, bool notify)
@@ -460,7 +596,7 @@ public:
    * On successfull insertion an object_ptr element
    * with the inserted object is returned.
    *
-   * @param optr object_ptr to be inserted.
+   * @param o object_ptr to be inserted.
    * @return Inserted object contained by an object_ptr on success.
    */
   template < class T >
@@ -481,8 +617,31 @@ public:
     return object_deleter_.is_deletable(o.proxy_, o.get());
   }
 
+  /**
+   * Remove the given object_proxy. The prototype_node
+   * id extracted from the given proxy to remove the proxy
+   * from its proxy list.
+   *
+   * @param proxy The object_proxy to be removed.
+   */
   void remove_proxy(object_proxy *proxy);
 
+  /**
+   * Remove the given object_proxy. The prototype_node
+   * id extracted from the given proxy to remove the proxy
+   * from its proxy list.
+   *
+   * If the notify flag is true all observers are notified on
+   * successfull deletion.
+   *
+   * If check_if_deletable flag is true method checks if the
+   * proxy is deletable.
+   *
+   * @tparam T Type of the object represented by the object_proxy
+   * @param proxy              The object_proxy to be removed.
+   * @param notify             If true notify observers
+   * @param check_if_deletable If true methods checks if proxy is deletable.
+   */
   template < class T >
   void remove(object_proxy *proxy, bool notify, bool check_if_deletable)
   {
@@ -526,6 +685,7 @@ public:
       }
     }
   }
+
   /**
    * Removes an object from the object store. After successfull
    * removal the object is set to zero and isn't valid any more.
@@ -546,19 +706,15 @@ public:
   /**
    * @brief Creates and inserts an serializable proxy serializable.
    * 
-   * An serializable proxy serializable is created and inserted
+   * An object_proxy object is created and inserted
    * into the internal proxy hash map. The proxy won't
    * be linked into the main serializable proxy list until
-   * it gets a valid serializable.
+   * it gets a valid object.
    *
-   * If id is zero a new id is generated.
-   *
-   * If the serializable proxy couldn't be created the method
+   * If the object_proxy couldn't be created the method
    * returns nullptr
    *
    * @param o The object set into the new object proxy.
-   * @param node Objects corresponding prototype_node.
-   * @param id Unique id of the serializable proxy.
    * @return An serializable proxy serializable or null.
    */
   template<class T>
@@ -568,6 +724,23 @@ public:
     return object_map_.insert(std::make_pair(seq_.current(), proxy.release())).first->second;
   }
 
+  /**
+   * @brief Creates and inserts an serializable proxy serializable.
+   *
+   * An object_proxy object is created and inserted
+   * into the internal proxy hash map. The proxy won't
+   * be linked into the main serializable proxy list until
+   * it gets a valid object.
+   *
+   * A unique id must be passed to the method.
+   *
+   * If the object_proxy couldn't be created the method
+   * returns nullptr
+   *
+   * @param o    The object set into the new object proxy.
+   * @param oid  Unique id of the object_proxy.
+   * @return     An object_proxy object or null.
+   */
   template<class T>
   object_proxy *create_proxy(T *o, unsigned long oid)
   {
@@ -635,6 +808,7 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
+  /// @cond OOS_DEV
   void on_update_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
 
   void on_remove_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
@@ -642,8 +816,20 @@ public:
   void on_append_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
 
   void on_remove_relation_item(prototype_node &node, object_proxy *owner, object_proxy *value);
+  /// @endcond
 
+  /**
+   * Return the current transaction in stack
+   *
+   * @return The current transaction in stack
+   */
   transaction current_transaction();
+
+  /**
+   * Returns true if there is at least one transaction on stack.
+   *
+   * @return True if there at least one transaction.
+   */
   bool has_transaction() const;
 
 private:
@@ -777,6 +963,7 @@ private:
   // relation notification related
   bool relation_notification_ = true;
 };
+
 template < class T >
 void object_store::validate(prototype_node *node)
 {
@@ -809,13 +996,13 @@ void object_store::validate(prototype_node *node)
 }
 
 template <class T, template < class V > class O >
-object_store::iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)
+prototype_iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)
 {
   return attach<T>(type, false, nullptr, observer);
 }
 
 template <class T >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent)
+prototype_iterator object_store::attach(const char *type, bool abstract, const char *parent)
 {
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
@@ -823,13 +1010,13 @@ object_store::iterator object_store::attach(const char *type, bool abstract, con
 }
 
 template <class T, template < class V = T > class O >
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer)
+prototype_iterator object_store::attach(const char *type, bool abstract, const char *parent, std::initializer_list<O<T>*> observer)
 {
   return attach<T>(type, abstract, parent, std::vector<O<T>*>(observer));
 }
 
 template<class T, template<class V = T> class O>
-object_store::iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
+prototype_iterator object_store::attach(const char *type, bool abstract, const char *parent, const std::vector<O<T>*> &observer)
 {
   prototype_node *node = new prototype_node(this, type, new T, abstract);
 
@@ -866,19 +1053,19 @@ prototype_node* object_store::attach_node(prototype_node *node, const char *pare
 }
 
 template<class T, class S  >
-object_store::iterator object_store::attach(const char *type, bool abstract)
+prototype_iterator object_store::attach(const char *type, bool abstract)
 {
   return attach<T>(type, abstract, typeid(S).name());
 }
 
 template<class T, class S, template < class V = T > class O >
-object_store::iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)
+prototype_iterator object_store::attach(const char *type, std::initializer_list<O<T>*> observer)
 {
   return attach<T, S>(type, false, observer);
 }
 
 template<class T, class S, template < class V = T > class O >
-object_store::iterator object_store::attach(const char *type, bool abstract, std::initializer_list<O<T>*> observer)
+prototype_iterator object_store::attach(const char *type, bool abstract, std::initializer_list<O<T>*> observer)
 {
   return attach<T>(type, abstract, typeid(S).name(), observer);
 }
@@ -924,11 +1111,15 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
 
 namespace detail {
 
+/// @cond OOS_DEV
+
 template < class T >
 void modified_marker::marker_func(object_store &store, object_proxy &proxy)
 {
   store.mark_modified<T>(&proxy);
 }
+
+/// @endcond
 
 }
 
