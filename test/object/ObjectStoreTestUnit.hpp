@@ -41,7 +41,8 @@ public:
   void test_primary_key();
   void test_has_many();
   void test_has_many_to_many();
-  void test_belongs_to();
+  void test_belongs_to_one();
+  void test_belongs_to_many();
   void test_observer();
 
 private:

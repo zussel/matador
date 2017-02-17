@@ -14,18 +14,24 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
     // check if created from has_many
     // check if node has_many relation for id (id == tablename)
     auto i = node->relation_info_map_.find(node->type_index());
-    if (i != node->relation_info_map_.end() && i->second.type == prototype_node::relation_info::HAS_MANY) {
-      // yes, node found!
-      // Todo: check if node is for has many item
-      // detach has_many_item node
-      if (i->second.node != nullptr) {
-        store_.detach(i->second.node);
+    if (i != node->relation_info_map_.end()) {
+      if (i->second.type == prototype_node::relation_info::HAS_MANY) {
+        // yes, node found!
+        // detach has_many_item node
+        if (i->second.node != nullptr) {
+          store_.detach(i->second.node);
+        }
+        i->second.node = nullptr;
+      } else if (i->second.type == prototype_node::relation_info::HAS_ONE) {
+        if (i->second.node == nullptr) {
+          i->second.node = &node_;
+        }
       }
-      i->second.node = nullptr;
     }
   }
   object_store &store = store_;
-  node_.register_belongs_to(std::type_index(typeid(V)),
+//  node_.register_belongs_to(std::type_index(typeid(V)),
+  node_.register_belongs_to(node_.type_index(),
                             prototype_node::relation_info(id,
                                                           prototype_node::relation_info::BELONGS_TO,
                                                           [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
@@ -38,17 +44,20 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
 }
 
 template<class V, class T>
-void basic_node_analyzer::process_has_one(const char *, has_one <V> &)
+void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
 {
-//  std::cout << "analyzing has_one field " << id << " (typeid: " << typeid(V).name() << ")\n";
-//  prototype_iterator node = node_.tree()->find(x.type());
-//  if (node == node_.tree()->end()) {
-//    // if there is no such prototype node
-//    // prepare insertion of new node
-//    node = node_.tree()->template prepare_attach<V>();
-//  } else if (!node->has_primary_key()) {
-//    throw_object_exception("serializable of type '" << x.type() << "' has no primary key");
-//  }
+  prototype_iterator node = store_.find(x.type());
+  object_store &store = store_;
+  node_.register_has_one(std::type_index(node_.type_index()),
+    prototype_node::relation_info(id,
+      prototype_node::relation_info::HAS_ONE,
+      [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *owner) {
+        store.mark_modified<T>(proxy);
+        oos::set(proxy->obj<T>(), field, object_ptr<V>(owner));
+      }, [&store](object_proxy *proxy, const std::string &field, oos::object_proxy *) {
+        store.mark_modified<T>(proxy);
+        oos::set(proxy->obj<T>(), field, object_ptr<V>());
+      }, node.get()));
 }
 
 template<class V, class T, template<class ...> class C>
@@ -59,7 +68,7 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
     this->register_has_many<V, T>(node_.type_index(), id, pi.get());
     store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(std::make_pair(pi->type_, pi.get()));
   } else {
-    // found corresponding belongs_to
+    // found corresponding belongs_to or has_many
     auto j = pi->relation_info_map_.find(node_.type_index_);
     if (j == pi->relation_info_map_.end()) {
       // check for has many item
@@ -68,8 +77,6 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
       // set missing node
       j->second.node = &node_;
       this->register_has_many<V, T>(pi->type_index(), id, pi.get());
-    } else if (j->second.type == prototype_node::relation_info::HAS_MANY) {
-      // handle has many
     }
   }
 }

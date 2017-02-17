@@ -392,6 +392,15 @@ public:
   void register_belongs_to(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
 
   /**
+   * Register relation info for a has_one relation part
+   * identified by the given type index.
+   *
+   * @param tindex type index for identification.
+   * @param relation_info relation info object for has_one
+   */
+  void register_has_one(const std::type_index &tindex, const prototype_node::relation_info &relation_info);
+
+  /**
    * Register relation info for a has_many relation part
    * identified by the given type index.
    *

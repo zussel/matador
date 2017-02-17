@@ -469,13 +469,25 @@ public:
   {
     prototype_iterator foreign_node_ = store.find(typeid(T).name());
 
-    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+    auto i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
     if (i != foreign_node_->relation_info_map_.end()) {
-      // set owner into value
-      store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+      if (i->second.type == prototype_node::relation_info::BELONGS_TO) {
+        store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+      } else if (i->second.type == prototype_node::relation_info::HAS_MANY) {
+        store.on_append_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
+        store.insert(rtype);
+      }
     } else {
       store.insert(rtype);
     }
+
+//    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+//    if (i != foreign_node_->relation_info_map_.end()) {
+//      // set owner into value
+//      store.on_update_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//    } else {
+//      store.insert(rtype);
+//    }
     mark_modified_owner(store, &owner);
   }
 };
@@ -506,15 +518,26 @@ public:
   {
     prototype_iterator foreign_node_ = store.find(typeid(T).name());
 
-    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
-    if (i != foreign_node_->relation_info_map_
-               .end()) {
-//      store.remove(val);
-      // set owner into value
-      store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+    auto i = foreign_node_->relation_info_map_.find(foreign_node_->type_index());
+    if (i != foreign_node_->relation_info_map_.end()) {
+      if (i->second.type == prototype_node::relation_info::BELONGS_TO) {
+        store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+      } else if (i->second.type == prototype_node::relation_info::HAS_MANY) {
+        store.on_remove_relation_item(*foreign_node_, rtype->value().proxy_, &owner);
+        store.remove(rtype);
+      }
     } else {
       store.remove(rtype);
     }
+
+//    auto i = foreign_node_->relation_info_map_.find(owner.node()->type_index());
+//    if (i != foreign_node_->relation_info_map_
+//               .end()) {
+//      // set owner into value
+//      store.on_remove_relation_owner(i->second, rtype->value().proxy_ /*owner*/, &owner /*value*/);
+//    } else {
+//      store.remove(rtype);
+//    }
   }
 };
 

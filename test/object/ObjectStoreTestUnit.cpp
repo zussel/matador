@@ -42,7 +42,8 @@ ObjectStoreTestUnit::ObjectStoreTestUnit()
   add_test("pk", std::bind(&ObjectStoreTestUnit::test_primary_key, this), "object proxy primary key test");
   add_test("has_many", std::bind(&ObjectStoreTestUnit::test_has_many, this), "has many test");
   add_test("has_many_to_many", std::bind(&ObjectStoreTestUnit::test_has_many_to_many, this), "has many to many test");
-  add_test("belongs_to", std::bind(&ObjectStoreTestUnit::test_belongs_to, this), "test belongs to behaviour");
+  add_test("belongs_to_one", std::bind(&ObjectStoreTestUnit::test_belongs_to_one, this), "test belongs to one behaviour");
+  add_test("belongs_to_many", std::bind(&ObjectStoreTestUnit::test_belongs_to_many, this), "test belongs to many behaviour");
   add_test("observer", std::bind(&ObjectStoreTestUnit::test_observer, this), "test observer functionality");
 }
 
@@ -1083,7 +1084,36 @@ void ObjectStoreTestUnit::test_has_many_to_many()
   UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");
 }
 
-void ObjectStoreTestUnit::test_belongs_to()
+void ObjectStoreTestUnit::test_belongs_to_one()
+{
+  ostore_.attach<person>("person");
+  ostore_.attach<address>("address");
+  ostore_.attach<citizen, person>("citizen");
+
+  auto george = ostore_.insert(new citizen("george"));
+  auto home = ostore_.insert(new address("foreststreet", "foresting"));
+
+  UNIT_ASSERT_TRUE(george->address_.empty(), "address must be empty");
+  UNIT_ASSERT_TRUE(home->citizen_.empty(), "citizen must be empty");
+
+//  george->address_ = home;
+  home->citizen_ = george;
+
+  UNIT_ASSERT_FALSE(george->address_.empty(), "address must not be empty");
+  UNIT_ASSERT_FALSE(home->citizen_.empty(), "citizen must not be empty");
+
+  george->address_.clear();
+
+  UNIT_ASSERT_TRUE(george->address_.empty(), "address must be empty");
+  UNIT_ASSERT_TRUE(home->citizen_.empty(), "citizen must be empty");
+
+  george->address_ = home;
+
+  UNIT_ASSERT_FALSE(george->address_.empty(), "address must not be empty");
+  UNIT_ASSERT_FALSE(home->citizen_.empty(), "citizen must not be empty");
+}
+
+void ObjectStoreTestUnit::test_belongs_to_many()
 {
   ostore_.attach<person>("person");
   ostore_.attach<department>("department");

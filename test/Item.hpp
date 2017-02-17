@@ -423,6 +423,45 @@ public:
   oos::has_many<student> students;
 };
 
+struct address;
+
+struct citizen : public person
+{
+  citizen() {}
+  citizen(const std::string &name, const oos::date &bdate = oos::date(), unsigned h = 170) : person(name, bdate, h) {}
+
+  oos::has_one<address> address_;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize(*oos::base_class<person>(this));
+    serializer.serialize("address", address_, oos::cascade_type::NONE);
+  }
+};
+
+struct address
+{
+  oos::identifier<unsigned long> id;
+  oos::varchar<255> street;
+  oos::varchar<255> city;
+  oos::belongs_to<citizen> citizen_;
+
+  address() {}
+  address(const std::string &str, const std::string &c)
+    : street(str), city(c)
+  {}
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    serializer.serialize("id", id);
+    serializer.serialize("street", street);
+    serializer.serialize("city", city);
+    serializer.serialize("citizen", citizen_, oos::cascade_type::NONE);
+  }
+};
+
 class album;
 
 class track
