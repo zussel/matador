@@ -69,7 +69,8 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
     store_.typeid_prototype_map_[typeid(typename has_many<V, C>::item_type).name()].insert(std::make_pair(pi->type_, pi.get()));
   } else {
     // found corresponding belongs_to or has_many
-    auto j = pi->relation_info_map_.find(node_.type_index_);
+    auto j = pi->relation_info_map_.find(pi->type_index());
+//    auto j = pi->relation_info_map_.find(node_.type_index_);
     if (j == pi->relation_info_map_.end()) {
       // check for has many item
       throw_object_exception("prototype already inserted: " << pi->type());
