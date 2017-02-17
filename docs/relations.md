@@ -4,33 +4,41 @@ title: Relations
 {% include base_path %}
 {% include toc icon="columns" title="Relations" %}
 
-When it comes to object relations you can use one to one and
-one to many relations in a straight forward way. Therefor object store provides
+When it comes to object relations you can use one to one, one to many and
+many to many relations in a straight forward way. Therefor object store provides
 easy wrapper for these relations
-
-**Node:** As you can see ```many to many``` is missing, but it is the next feature to
-be implemented.
-{: .notice--warning}
 
 ### OneToOne Relations
 
 In this example we have two object types an address class
-and a person class.
+and a person class. The address class acts as the ```belongs_to``` part
+of the relation. So we add a ```oos::belongs_to<person>``` to our address
+class. Don't forget to add the appropriate ```serialize``` to the
+serialize method.
+
+For the person in address we add the ```cascade_type::NONE```. That means if
+the address is removed the person won't be removed.
 
 ```cpp
 struct address
 {
   std::string street;
   std::string city;
+  oos::belongs_to<person> citizen;
   
-  // implement proper serializer
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    // ...
+    serialize("citizen", citizen, cascade_type::NONE);
+  }
 };
 ```
 
-Each person class should have an address, so we add an
-```oos::has_one``` of type address to the members. That's
-it. Now we have a one to one relationship beetween two
-classes.
+In the persons declaration we add an ```oos::has_one<address>``` and
+the call to ```serialize``` to the class. Here we use ```cascade_type::ALL```.
+That means if the person is removed the address is removed as well.
+That's it. Now we have a one to one relationship beetween two classes.
 
 ```cpp
 struct person
@@ -38,8 +46,8 @@ struct person
   // ...
   oos::hans_one<address> addr;
   
-  template < class SERAILIZER >
-  void serialize(SERAILIZER &serailizer)
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
   {
     // ...
     serialize("address", addr, cascade_type::ALL);
@@ -47,29 +55,31 @@ struct person
 };
 ```
 
-With this kind of relationship we have a hard linked
+**Node:** With this kind of relationship we have a hard linked
 relationship. Which means if we remove the person from
 our store the address object is removed as well. The
 ```cascade_type::ALL``` means the all operation of
 ```INSERT```, ```UPDATE``` and ```DELETE``` will take
 affect on the member address as well
+{: .notice--warning}
 
-So in case we want to keep the address object we can use
-a ```cascade_type::NONE``` in the serialize method (this
-is the default).
+When using this construct the OOS will take care of the following:
+
+- If a person object is set into address' ```citizen``` field the persons
+```address``` field is automatically updated with this address.
+- If an address object is set into persons ```address``` field the address'
+```citizen``` field is automatically updated with this person.
 
 ```cpp
-  template < class SERAILIZER >
-  void serialize(SERAILIZER &serailizer)
-  {
-    // ...
-    serialize("address", addr, cascade_type::NONE);
-  }
-```
+// setup session/object_store
+auto george = s.insert(new person("george"));
+auto home = s.insert(new address("homestreet", "homecity"));
 
-With ```cascade_type::NONE``` we have a kind of soft link to
-the address inside our person class and it won't be removed
-on a person removal. We must explicitly remove the address.
+george->addr = home;
+
+// person george will be set into address
+std::cout << "citizen: " << home->citizen->name << "\n";
+```
 
 ### OneToMany Relations
 
@@ -85,48 +95,98 @@ Because these classes are designed in the same way as
 the STL classes we can use them in the same way plus the
 benefit of the relationship.
 
-Our handy person class needs a list of friends which are also
-of type person. And because we want this list with soft linked
-person we use oos::object_ref as the type of the list.
+We change our handy ```person``` class that it has a lot of addresses.
+The ```address``` class can stay untouched because the ```belongs_to``` part
+doesn't need to change.
 
 ```cpp
 struct person
 {
   std::string name;
-  oos::has_many<person> friends;
-  
-  // c'tor for person
-  person(const std::string &n) : name(n) {}
+  oos::has_many<address> addresses;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    // ...
+    serialize("address", addresses, "person_id", "address_id");
+  }
 };
 ```
-
-Why declare a list if we don't use it? Next is an example howto
-to use our persons friend list.
-
-We insert a new person into the object_store. Than we insert and
-immediately add some persons as friends to our first person.
+Now we can add several addresses to a person object and address' ```citizen```
+field is filled again automatically.
+But it works also in the opposite way: If a person is set into an address the
+address is automatically added to persons address list.
 
 ```cpp
 // ...
 // create a new person
-auto joe = new person("joe");
+auto joe = s.insert(new person("joe"));
+auto home = s.insert(new address("homestreet", "homecity"));
+auto work = s.insert(new address("workstreet", "workcity"));
 
-// add some friends 
-joe->push_back(new person("walter"));
-joe->push_back(new person("helen"));
-joe->push_back(new person("tim"));
+joe->addresses.push_back(home);
+// homes citicen will be joe
+std::cout << "citizen: " << home->citizen->name << "\n";
 
-// insert joe
-auto joeptr = ostore.insert(joe);
+work->citizen = joe;
+// joes addresses have now increased to two
+std::cout << "joes addresses: " << joe->addresses.size() << "\n";
 ```
 
 Now we can simply iterate over the list like we used to
-do it with all STL containers. Period.
+do it with all STL containers..
 
 ```cpp
 // access all friends
-auto i = joeptr->friends->begin();
-for (i; i != p->end(); ++i) {
-  std::cout << "friend: " << i->name << std::endl;
+for (auto addr : joe->addresses) {
+  std::cout << "address street: " << addr->street << "\n";
 }
+```
+
+### ManyToMany Relations
+
+Many to many relationships can also be used straight forward. Asume we
+have a class ```student``` taking a list of courses and a class ```course```
+having a list of students.
+
+```cpp
+struct student
+{
+  oos::has_many<course> courses;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    // ...
+    serialize("student_course", courses, "student_id", "course_id");
+  }
+};
+
+struct course
+{
+  oos::has_many<student> students;
+
+  template < class SERIALIZER >
+  void serialize(SERIALIZER &serializer)
+  {
+    // ...
+    serialize("student_course", students, "student_id", "course_id");
+  }
+};
+```
+Once a student adds a course to its course list the student is added to the list
+of students of the course. And the other way around if a student is added to a course
+the course is added to the list of students course list.
+
+```cpp
+auto jane = s.insert(new student("jane"));
+auto art = s.insert(new course("art"));
+auto algebra = s.insert(new course("algebra"));
+
+jane->courses.push_back(art);
+std::cout << art->students.front()->name << "\n"; // prints out 'jane'
+
+art->students.push_back(jane);
+std::cout << jane->courses.size() << "\n"; // prints out '2'
 ```
