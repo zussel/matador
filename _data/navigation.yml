@@ -1,0 +1,77 @@
+# main links links
+main:
+  - title: "Getting Started"
+    url: /docs/installation/
+  - title: "Blog"
+    url: /year-archive/
+  - title: "Reference"
+    url: /api/annotated/
+  - title: "Download"
+    url: /download/
+  - title: "About"
+    url: /about/
+
+docs:
+  - title: "Getting Started"
+    children:
+      - title: "Installation"
+        url: /docs/installation/
+      - title: "Introduction"
+        url: /docs/introduction/
+  - title: "Object Store"
+    children:
+      - title: "Objects"
+        url: /docs/objects/
+      - title: "Prototypes"
+        url: /docs/store/
+      - title: "Relations"
+        url: /docs/relations/
+      - title: "Views"
+        url: /docs/views/
+      - title: "Expressions"
+        url: /docs/expressions/
+      - title: "Transactions"
+        url: /docs/transactions/
+  - title: Query Interface
+    children:
+      - title: "Databases"
+        url: /docs/databases/
+      - title: "Queries"
+        url: /docs/queries/
+  - title: ORM
+    children:
+      - title: "Persistence"
+        url: /docs/persistence/
+      - title: "Sessions"
+        url: /docs/sessions/
+  - title: Utils
+    children:
+      - title: "Time"
+        url: /docs/time/
+      - title: "Date"
+        url: /docs/date/
+      - title: "Varchar"
+        url: /docs/varchar/
+  - title: Misc
+    children:
+      - title: "Old 0.2.2 Docs"
+        url: /old-docs
+      - title: "License"
+        url: /license
+
+api:
+  - title: API Reference
+    children:
+      - title: "Class List"
+        url: /api/annotated/
+      - title: "Class Index"
+        url: /api/classes/
+      - title: "Class Hierachy"
+        url: /api/hierarchy/
+      - title: "Class Members"
+        url: /api/functions/
+      - title: "File List"
+        url: /api/files/
+      - title: "Namespaces"
+        url: /api/namespaces/
+        
