@@ -1,13 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
-.idea
-Gemfile.lock
-*.sublime-project
-*.sublime-workspace
-.DS_Store
-.jekyll-metadata
-.sass-cache
-_asset_bundler_cache
 _site
-codekit-config.json
-node_modules
-cmake-build-debug
+.sass-cache
+.jekyll-metadata

@@ -1,30 +1,119 @@
----
----
-
-{% include base_path %}
-
-<!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: "en" }}" class="no-js">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    {% include head.html %}
-    {% include head/custom.html %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Cover Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ "/assets/css/bootstrap.css" | relative_url }}">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link rel="stylesheet" href="{{ "/assets/css/ie10-viewport-bug-workaround.css" | relative_url }}">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ "/assets/css/cover.css" | relative_url }}">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{{ "/assets/javascript/ie-emulation-modes-warning.js"}}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
 
   <body>
-
-    {% include browser-upgrade.html %}
-    {% include masthead.html %}
-
-    {{ content }}
-
-    <div class="page__footer">
-      <footer>
-        {% include footer/custom.html %}
-        {% include footer.html %}
-      </footer>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="green-background">
+      <div class="container">
+        <!--<nav class="navbar navbar-fixed-top navbar-transparent">-->
+        <nav class="navbar navbar-default navbar-fixed-top navbar-transparent">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">matador</a>
+              <!--<a class="navbar-brand masthead-brand" href="#">matador</a>-->
+            </div>
+            <div id="navbar" class="navbar-collapse collapse pull-right">
+              <!--<ul class="nav navbar-nav masthead-nav">-->
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">Getting Started</a></li>
+                <li><a href="#contact">Api</a></li>
+                <li><a href="#contact">Blog</a></li>
+                <li><a href="#contact">Code</a></li>
+              </ul>
+            </div><!--/.navbar-collapse -->
+          </div>
+        </nav>
+        <div class="jumbotron">
+          <div class="container">
+            <h1>matador</h1>
+            <p>
+              matador is an object relational mapping (ORM) framework written in C++. It
+              aims to encapsulate all database backend communication. You dont have
+              to deal with database backends or sql statements neither with mapping of
+              data types or serialization of objects. It comes with a unique container for
+              your objects, a fluent sql query interface and on top an ORM layer.
+            </p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+          </div>
+        </div>
+      </div>
     </div>
-
-    {% include scripts.html %}
-
-  </body>
+    <div class="dark-layout">
+      <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+          <div class="col-md-4 centered">
+            <h2>Unique Container</h2>
+            <p>
+              OOS comes with a unique kind of container where you can store all your objects
+              in. Once the hierarchy is set up you can perform all CRUD operations on the
+              container plus filtering and using views.
+            </p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          </div>
+          <div class="col-md-4 centered">
+            <h2>Fluent Query</h2>
+            <p>
+              The sql query module provides simple fluent interface to build sql queries. A query
+              can be typed or just work on a row object. Once a query is finished it can be executed
+              directly or be captured in a prepared statement.
+            </p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+          <div class="col-md-4 centered">
+            <h2>ORM Layer</h2>
+            <p>
+              The ORM layer finally combines the unique container and the fluent query interface. It
+              hides all database stuff handles one to one, one to many and many to many relationships.
+              Actions are executed in transaction scope.
+            </p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {{ content }}
+    
+    <script src="{{ "/assets/javascript/jquery-3.1.1.min.js"}}"></script>
+    <script src="{{ "/assets/javascript/bootstrap.min.js"}}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{ "/assets/javascript/ie10-viewport-bug-workaround.js"}}"></script>  </body>
 </html>

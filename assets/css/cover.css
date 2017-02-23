@@ -1,0 +1,69 @@
+body {
+  background-color: #222;
+  color: #ccc;
+}
+
+.green-background {
+  background-size: cover;
+  background-image: url(../images/abstract-green.jpg);
+}
+
+.centered {
+  text-align: center;
+}
+
+.jumbotron {
+  margin-top: 50px;
+  background-color: transparent;
+  text-align: center;
+  color: seashell;
+}
+
+.jumbotron p {
+  color: linen;
+}
+.navbar-transparent {
+  color: #eee;
+  background-color:rgba(20, 20, 20, 0.4);
+  border: none;
+}
+
+.navbar-transparent a {
+  color: seashell;
+}
+
+.masthead-brand {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bolder;
+}
+
+.masthead-nav > li {
+  display: inline-block;
+}
+.masthead-nav > li + li {
+  margin-left: 20px;
+}
+.masthead-nav > li > a {
+  padding-right: 0;
+  padding-left: 0;
+  padding-top: 35px;
+  padding-bottom: 5px;
+  /*font-size: 16px;*/
+  /*font-weight: bold;*/
+  color: #fff; /* IE8 proofing */
+  color: rgba(255,255,255,.75);
+  border-bottom: 2px solid transparent;
+}
+.masthead-nav > li > a:hover,
+.masthead-nav > li > a:focus {
+  background-color: transparent;
+  border-bottom-color: #a9a9a9;
+  border-bottom-color: rgba(255,255,255,.25);
+}
+.masthead-nav > .active > a,
+.masthead-nav > .active > a:hover,
+.masthead-nav > .active > a:focus {
+  color: #fff;
+  border-bottom-color: #fff;
+}

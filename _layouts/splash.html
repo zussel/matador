@@ -1,22 +1,84 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
 
-{% include base_path %}
+    <title>Cover Template for Bootstrap</title>
 
-{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
-  {% include page__hero.html %}
-{% endif %}
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ "/assets/css/bootstrap.css" | relative_url }}">
 
-<div id="main" role="main">
-  <article class="splash" itemscope itemtype="http://schema.org/CreativeWork">
-    {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-    {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-    {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
-    {% if page.modified %}<meta itemprop="dateModified" content="{{ page.modified | date: "%B %d, %Y" }}">{% endif %}
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link rel="stylesheet" href="{{ "/assets/css/ie10-viewport-bug-workaround.css" | relative_url }}">
 
-    <section class="page__content" itemprop="text">
-      {{ content }}
-    </section>
-  </article>
-</div>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ "/assets/css/cover.css" | relative_url }}">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{{ "/assets/javascript/ie-emulation-modes-warning.js"}}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="green-background">
+      <div class="container">
+        <!--<nav class="navbar navbar-fixed-top navbar-transparent">-->
+        <nav class="navbar navbar-default navbar-fixed-top navbar-transparent">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">matador</a>
+              <!--<a class="navbar-brand masthead-brand" href="#">matador</a>-->
+            </div>
+            <div id="navbar" class="navbar-collapse collapse pull-right">
+              <!--<ul class="nav navbar-nav masthead-nav">-->
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">Getting Started</a></li>
+                <li><a href="#contact">Api</a></li>
+                <li><a href="#contact">Blog</a></li>
+                <li><a href="#contact">Code</a></li>
+              </ul>
+            </div><!--/.navbar-collapse -->
+          </div>
+        </nav>
+        <div class="jumbotron">
+          <div class="container">
+            <h1>matador</h1>
+            <p>
+              matador is an object relational mapping framework written in C++. It
+              aims to encapsulate all database backend communication. You dont have
+              to deal with database backends or sql statements neither with mapping of
+              data types or serialization of objects. It comes with relation handling out
+              of the box, brings a unique container for, a fluent sql query interface.
+              On top all features are combined to a ORM layer.
+            </p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{content}}
+    <script src="{{ "/assets/javascript/jquery-3.1.1.min.js"}}"></script>
+    <script src="{{ "/assets/javascript/bootstrap.min.js"}}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{ "/assets/javascript/ie10-viewport-bug-workaround.js"}}"></script>  </body>
+</html>
