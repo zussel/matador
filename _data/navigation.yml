@@ -1,11 +1,13 @@
 # main links links
 main:
-  - title: "Getting Started"
-    url: /docs/installation/
+  - title: "Home"
+    url: /
+  - title: "Guide"
+    url: /guide/installation.html
+  - title: "Api"
+    url: /api/annotated/
   - title: "Blog"
     url: /year-archive/
-  - title: "Reference"
-    url: /api/annotated/
   - title: "Download"
     url: /download/
   - title: "About"
@@ -15,46 +17,46 @@ guide:
   - title: "Getting Started"
     children:
       - title: "Installation"
-        url: /docs/installation/
+        url: /guide/installation/
       - title: "Introduction"
-        url: /docs/introduction/
+        url: /guide/introduction/
   - title: "Object Store"
     children:
       - title: "Objects"
-        url: /docs/objects/
+        url: /guide/objects/
       - title: "Prototypes"
-        url: /docs/store/
+        url: /guide/store/
       - title: "Relations"
-        url: /docs/relations/
+        url: /guide/relations/
       - title: "Views"
-        url: /docs/views/
+        url: /guide/views/
       - title: "Expressions"
-        url: /docs/expressions/
+        url: /guide/expressions/
       - title: "Transactions"
-        url: /docs/transactions/
+        url: /guide/transactions/
   - title: Query Interface
     children:
       - title: "Databases"
-        url: /docs/databases/
+        url: /guide/databases/
       - title: "Queries"
-        url: /docs/queries/
+        url: /guide/queries/
   - title: ORM
     children:
       - title: "Persistence"
-        url: /docs/persistence/
+        url: /guide/persistence/
       - title: "Sessions"
-        url: /docs/sessions/
+        url: /guide/sessions/
   - title: Utils
     children:
       - title: "Time"
-        url: /docs/time/
+        url: /guide/time/
       - title: "Date"
-        url: /docs/date/
+        url: /guide/date/
       - title: "Varchar"
-        url: /docs/varchar/
+        url: /guide/varchar/
   - title: Misc
     children:
-      - title: "Old 0.2.2 Docs"
+      - title: "Old 0.2.1 Docs"
         url: /old-docs
       - title: "License"
         url: /license

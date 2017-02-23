@@ -2,8 +2,7 @@
   <ul>
     {% for nav in site.data.navigation.guide %}
       {% if nav.children != null %}
-        <li>
-          <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }} ▼</a>
+        <li>{{ nav.title }}
           <ul>
           {% for child in nav.children %}
             <li><a href="{{ site.url }}{{ child.url }}">{{ child.title }}</a></li>

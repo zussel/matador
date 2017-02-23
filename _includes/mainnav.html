@@ -13,11 +13,13 @@
     <div id="navbar" class="navbar-collapse collapse pull-right">
       <!--<ul class="nav navbar-nav masthead-nav">-->
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
-        <li><a href="/guide/installation">Getting Started</a></li>
-        <li><a href="#contact">Api</a></li>
-        <li><a href="#contact">Blog</a></li>
-        <li><a href="#contact">Code</a></li>
+        {% for nav in site.data.navigation.main %}
+          {% if nav.title == "Guide" %}
+          <li{% if page.url contains "guide/" %} class="active"{% endif %}><a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a></li>
+          {% else %}
+          <li{% if page.url == nav.url %} class="active"{% endif %}><a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a></li>
+          {% endif %}
+        {% endfor %}
       </ul>
     </div><!--/.navbar-collapse -->
   </div>

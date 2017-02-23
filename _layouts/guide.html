@@ -1,27 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  {% include head.html %}
-
-  <body>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="green-background">
+---
+layout: default
+---
+<div class="green-background">
+  <div class="container">
+    <div class="jumbotron">
       <div class="container">
-
-        {% include mainnav.html %}
-
+        <h3>Getting started</h3>
       </div>
     </div>
-    <div class="dark-layout" style="margin-top: 50px">
-      <div class="container">
-        <div class="col-md-2">
-          {% include sidenav.html %}
-        </div>
-        <div class="col-md-10">
-          {{ content }}
-        </div>
-      </div>
+  </div>
+</div>
+<div class="dark-layout" style="margin-top: 50px">
+  <div class="container">
+    <div class="col-md-3">
+      {% include sidenav.html %}
     </div>
-
-    {% include footer.html %}
-</html>
+    <div class="col-md-9">
+      {{ content }}
+    </div>
+  </div>
+</div>

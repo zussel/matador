@@ -1,5 +1,4 @@
 ---
-layout: guide
 title: Installation
 ---
 
@@ -18,9 +17,9 @@ the [nullsoft scriptable install system](http://nsis.sourceforge.net).
 Get a binary package from the [download page](/download) or
 get the sources from GitHub and enter the created directory:
 
-```
-    $ git clone https://github.com/zussel/oos.git
-    $ cd oos
+```sh
+$ git clone https://github.com/zussel/oos.git
+$ cd oos
 ```
 
 ### Building under Linux
@@ -28,7 +27,7 @@ get the sources from GitHub and enter the created directory:
 
 Create a build directory change to it and call cmake:
 
-```
+```sh
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -36,7 +35,7 @@ $ cmake ..
 
 Then you can build oos from sources:
 
-```
+```sh
 $ make
 ```
 
@@ -44,7 +43,7 @@ $ make
 
 Create a build directory change to it and call cmake:
 
-```
+```sh
 $ mkdir build
 $ cd build
 $ cmake -G "Visual Studio *" ..

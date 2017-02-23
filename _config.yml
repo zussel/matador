@@ -32,6 +32,13 @@ kramdown:
     block:
       line_numbers: true
 
+defaults:
+  -
+    scope:
+      path: "guide"
+    values:
+      layout: "guide"
+
 theme: minima
 gems:
   - jekyll-feed

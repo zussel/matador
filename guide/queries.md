@@ -1,5 +1,4 @@
 ---
-layout: guide
 title: Queries
 ---
 {% include base_path %}

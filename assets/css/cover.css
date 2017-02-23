@@ -1,11 +1,11 @@
 body {
-  background-color: #222;
-  color: #ccc;
+  /*background-color: #222;*/
+  /*color: #ccc;*/
 }
 
 .green-background {
   background-size: cover;
-  background-image: url(../images/abstract-green.jpg);
+  background-image: url(../images/abstract-green-1920.jpg);
 }
 
 .centered {
