@@ -26,6 +26,12 @@ github_username:  jekyll
 
 # Build settings
 markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
 theme: minima
 gems:
   - jekyll-feed
