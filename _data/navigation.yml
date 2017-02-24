@@ -17,43 +17,43 @@ guide:
   - title: "Getting Started"
     children:
       - title: "Installation"
-        url: /guide/installation/
+        url: /guide/installation.html
       - title: "Introduction"
-        url: /guide/introduction/
+        url: /guide/introduction.html
   - title: "Object Store"
     children:
       - title: "Objects"
-        url: /guide/objects/
+        url: /guide/objects.html
       - title: "Prototypes"
-        url: /guide/store/
+        url: /guide/store.html
       - title: "Relations"
-        url: /guide/relations/
+        url: /guide/relations.html
       - title: "Views"
-        url: /guide/views/
+        url: /guide/views.html
       - title: "Expressions"
-        url: /guide/expressions/
+        url: /guide/expressions.html
       - title: "Transactions"
-        url: /guide/transactions/
+        url: /guide/transactions.html
   - title: Query Interface
     children:
       - title: "Databases"
-        url: /guide/databases/
+        url: /guide/databases.html
       - title: "Queries"
-        url: /guide/queries/
+        url: /guide/queries.html
   - title: ORM
     children:
       - title: "Persistence"
-        url: /guide/persistence/
+        url: /guide/persistence.html
       - title: "Sessions"
-        url: /guide/sessions/
+        url: /guide/sessions.html
   - title: Utils
     children:
       - title: "Time"
-        url: /guide/time/
+        url: /guide/time.html
       - title: "Date"
-        url: /guide/date/
+        url: /guide/date.html
       - title: "Varchar"
-        url: /guide/varchar/
+        url: /guide/varchar.html
   - title: Misc
     children:
       - title: "Old 0.2.1 Docs"
@@ -65,14 +65,14 @@ api:
   - title: API Reference
     children:
       - title: "Class List"
-        url: /api/annotated/
+        url: /api/annotated.html
       - title: "Class Index"
-        url: /api/classes/
+        url: /api/classes.html
       - title: "Class Hierachy"
-        url: /api/hierarchy/
+        url: /api/hierarchy.html
       - title: "Class Members"
-        url: /api/functions/
+        url: /api/functions.html
       - title: "File List"
-        url: /api/files/
+        url: /api/files.html
       - title: "Namespaces"
-        url: /api/namespaces/
+        url: /api/namespaces.html

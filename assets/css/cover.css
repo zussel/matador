@@ -22,6 +22,37 @@ body {
 .jumbotron p {
   color: linen;
 }
+
+.navbar-vertical
+{
+  list-style-type: none;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.navbar-vertical h4
+{
+  color: #777;
+  margin-top: 20px;
+  margin-right: 40px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #aaa;
+  margin-bottom: 20px;
+}
+
+.navbar-vertical ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.navbar-vertical ul li {
+  margin: 5px;
+}
+
+.navbar-vertical ul li a {
+  color: #aaa;
+}
+
 .navbar-transparent {
   color: #eee;
   background-color:rgba(20, 20, 20, 0.4);
