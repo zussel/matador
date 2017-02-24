@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+<script src="{{ "/assets/javascript/doxy-boot.js"}}"></script>
 <div class="green-background">
   <div class="container">
     <div class="jumbotron">
@@ -12,7 +13,12 @@ layout: default
 </div>
 <div class="dark-layout" style="margin-top: 50px">
   <div class="container">
-    {{ content }}
+    <div class="col-md-3">
+      {% include apinav.html %}
+    </div>
+    <div class="col-md-9">
+      <div>
+      {{ content }}
+    </div>
   </div>
 </div>
-<script src="{{ "/assets/javascript/doxy-boot.js"}}"></script>
