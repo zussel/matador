@@ -1,9 +1,6 @@
 ---
 title: Time
 ---
-{% include base_path %}
-{% include toc icon="columns" title="Relations" %}
-
 OOS comes with its own simple time class. It represents a time with milliseconds
 precisions. Once a time object exists it can be modified, copied or assigned. For full
 documentation see the [api](/api/classoos_1_1time/).
@@ -22,7 +19,7 @@ Time can be created from several constructors.
 The obvious copy and assignment constructors exists as well as a static parsing function
 
 ```cpp
-oos::time t = oos::time::parse("03.04.2015 12:55:12.123", "%d.%m.%Y %H:%M:%S.%f"); 
+oos::time t = oos::time::parse("03.04.2015 12:55:12.123", "%d.%m.%Y %H:%M:%S.%f");
 ```
 
 The parse format tokens are the same as the ones from [```strptime```](https://linux.die.net/man/3/strptime)

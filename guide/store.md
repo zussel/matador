@@ -1,10 +1,6 @@
 ---
 title: Prototypes
 ---
-
-{% include base_path %}
-{% include toc icon="columns" title="Object Store" %}
-
 Once all entities are designed you want to store them in the object store. Before this could be done
 all entities must be introduced into the object store.
 

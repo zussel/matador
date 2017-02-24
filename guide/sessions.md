@@ -1,8 +1,6 @@
 ---
 title: Sessions
 ---
-{% include base_path %}
-
 Once the database schema is set up with the ```persistence``` object you need a session
 to use the ORM layer.
 

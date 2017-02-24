@@ -1,9 +1,6 @@
 ---
 title: Queries
 ---
-{% include base_path %}
-{% include toc icon="columns" title="Query Commands" %}
-
 On the low level side of the library resides the fluent query interface. It allows you
 to write a SQL query in safe way without concerning about the current SQL dialect. There
 are two type of queries a typed one and an anonymous one dealing with a ```row``` object.

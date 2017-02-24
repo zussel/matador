@@ -1,10 +1,6 @@
 ---
 title: Introduction
 ---
-
-{% include base_path %}
-{% include toc icon="columns" title="Overview" %}
-
 The following documentation will give you an overview on Open Object Store. It will show you all main components of the library so that you can start building your own application with it.
 
 OOS consists of three main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
@@ -18,9 +14,9 @@ struct person
 {
   oos::identifier<long> id;
   std::string name;
-  
+
   person(const std::string &n) : name(n) {}
-  
+
   template < typename S >
   void serialize(S &serializer) {
     s.serialize("id", id);
@@ -32,9 +28,9 @@ int main()
 {
   oos::object_store store;
   store.attach<person>("person");
-  
+
   store.insert(new person("georg"));
-  
+
   oos::object_view<person> view(store);
 }
 ```

@@ -1,12 +1,6 @@
 ---
 title: "Objects"
 ---
-
-{% include base_path %}
-{% include toc icon="columns" title="Objects" %}
-
-### Objects
-
 All kind of object up from POD can be attached to the object store. It can be a
 simple struct with publiv members or a complex class hierarchy with bases classes and virtual
 methods.
@@ -18,7 +12,7 @@ struct person
 {
     std::string name;
     unsigned age;
-    
+
     template < class SERIALIZER >
     void serialize(SERIALIZER &serializer)
     {
@@ -90,7 +84,7 @@ struct strings
   char cstr_[CSTR_LEN];
   std::string string_ = "world";
   oos::varchar<255> varchar_ = "earth";
-  
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {

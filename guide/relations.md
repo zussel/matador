@@ -1,9 +1,6 @@
 ---
 title: Relations
 ---
-{% include base_path %}
-{% include toc icon="columns" title="Relations" %}
-
 When it comes to object relations you can use one to one, one to many and
 many to many relations in a straight forward way. Therefor object store provides
 easy wrapper for these relations
@@ -25,7 +22,7 @@ struct address
   std::string street;
   std::string city;
   oos::belongs_to<person> citizen;
-  
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
@@ -45,7 +42,7 @@ struct person
 {
   // ...
   oos::hans_one<address> addr;
-  
+
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {

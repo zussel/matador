@@ -1,8 +1,6 @@
 ---
 title: Date
 ---
-{% include base_path %}
-{% include toc icon="columns" title="Relations" %}
 
 OOS comes with its own simple date class. It represents a date consisting of year, month
 and day. The underlying calendar is a julian date calendar. Once a date object exists it

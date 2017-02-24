@@ -1,8 +1,6 @@
 ---
 title: Expressions
 ---
-{% include base_path %}
-
 When working with an ```oos::object_view``` you may want to find
 a certain object or you want to apply a function only for
 some of the objects in the view.
@@ -23,7 +21,7 @@ ostore.insert(new person("tim", 14));
 ostore.insert(new person("linda", 25));
 ostore.insert(new person("lea", 30));
 ostore.insert(new person("georg", 42));
- 
+
 typedef oos::object_view<person> person_view_t;
 typedef person_view_t::iterator iterator;
 

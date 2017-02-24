@@ -1,8 +1,6 @@
 ---
 title: Views
 ---
-{% include base_path %}
-
 In most cases we want to iterate over all objects of a certain
 type. How can we achieve this? We open a view for the type we want
 to inspect.

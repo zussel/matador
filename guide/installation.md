@@ -2,10 +2,6 @@
 title: Installation
 ---
 
-{% include base_path %}
-
-### Requirements
-
 There are almost no dependencies. At least the database library you want to use.
 If you wnat to build from the sources you need an appropiate compiler
 (gcc or clang) and the [cmake](http://www.cmake.org) build system installed.
@@ -17,17 +13,16 @@ the [nullsoft scriptable install system](http://nsis.sourceforge.net).
 Get a binary package from the [download page](/download) or
 get the sources from GitHub and enter the created directory:
 
-```sh
+```bash
 $ git clone https://github.com/zussel/oos.git
 $ cd oos
 ```
 
 ### Building under Linux
---------------------
 
 Create a build directory change to it and call cmake:
 
-```sh
+```bash
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -35,7 +30,7 @@ $ cmake ..
 
 Then you can build oos from sources:
 
-```sh
+```bash
 $ make
 ```
 
@@ -43,7 +38,7 @@ $ make
 
 Create a build directory change to it and call cmake:
 
-```sh
+```bash
 $ mkdir build
 $ cd build
 $ cmake -G "Visual Studio *" ..
