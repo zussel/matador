@@ -61,7 +61,7 @@ ENDIF()
 
 OPTION(COVERAGE "Enable generation of code coverage" false)
 
-if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
+if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   MESSAGE(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
 
   SET(GCOV_BINARY "gcov" CACHE STRING "gcov binary")
@@ -76,9 +76,7 @@ if (NOT MSVC AND (COVERALLS OR COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" A
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
 
-  if (COVERAGE)
-    SETUP_TARGET_FOR_COVERAGE(coverage test_oos src coverage "exec;all")
-  endif()
+  SETUP_TARGET_FOR_COVERAGE(coverage test_oos src coverage "exec;all")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
@@ -113,7 +111,7 @@ SET(BACKENDS
 FOREACH(backend ${BACKENDS})
   STRING(TOUPPER ${backend} BACKEND_UPPER)
   OPTION(OOS_${BACKEND_UPPER} "Enable or disable backend ${backend}" TRUE)
-  
+
   IF (OOS_${BACKEND_UPPER})
     FIND_PACKAGE(${backend})
     IF (${BACKEND_UPPER}_FOUND)
@@ -145,11 +143,11 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_MACOSX_RPATH TRUE)
 
-# contains the full path to the top level directory of your build tree 
+# contains the full path to the top level directory of your build tree
 MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
 
 # contains the full path to the root of your project source directory,
-# i.e. to the nearest directory where CMakeLists.txt contains the PROJECT() command 
+# i.e. to the nearest directory where CMakeLists.txt contains the PROJECT() command
 MESSAGE( STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
 
 MESSAGE( STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR} )
@@ -174,7 +172,7 @@ INSTALL(
   COMPONENT doc
 )
 
-# Basic CPack configuration   
+# Basic CPack configuration
 SET(CPACK_PACKAGE_NAME "oos")
 SET(CPACK_PACKAGE_VENDOR "zussel-soft")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your objects in one container")
@@ -198,16 +196,14 @@ SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
 SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "OOS Headers")
 
 # Provide descriptions for each of the components to install.
-# When the user hovers the mouse over the name of a component, 
+# When the user hovers the mouse over the name of a component,
 # the description will be shown in the "Description" box in the
-# installer. If no descriptions are provided, the "Description" 
+# installer. If no descriptions are provided, the "Description"
 # box will be removed.
-#SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION 
+#SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
 #  "Store all your objects in one container.")
-SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
-  "Store all your objects in one container.")
-SET(CPACK_COMPONENT_HEADERS_DESCRIPTION
-  "C/C++ header files for OOS")
+SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Store all your objects in one container.")
+SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for OOS")
 
 # Put the components into two different groups: "Runtime" and "Development"
 #SET(CPACK_COMPONENT_APPLICATIONS_GROUP "Runtime")

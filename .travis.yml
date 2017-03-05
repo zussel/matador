@@ -42,7 +42,7 @@ matrix:
     - env: CLANG_VERSION=3.7 BUILD_TYPE=Release
       os: linux
       addons: *clang37
-      
+
     # clang-3.8
     - env: CLANG_VERSION=3.8 BUILD_TYPE=Debug
       os: linux
@@ -125,7 +125,7 @@ matrix:
       addons: *gcc6
   allow_failures:
     - os: osx
-    
+
 branches:
   only:
     - develop
@@ -162,12 +162,10 @@ before_script:
   - mkdir build
   - cd build
   - |
-    if [ "$GCOV" == "gcov-5" ]; then
-      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
+    if [ "$GCOV" == "gcov-5" && "$BUILD_TYPE" == "Debug" ]; then
+      cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
       lcov --directory include --directory src --directory test --zerocounters
-    fi
-  - |
-    if [ "$GCOV" != "gcov-5" ]; then
+    else
       cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=Debug -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/oos_test" ..;
     fi
 

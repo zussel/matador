@@ -28,7 +28,7 @@ IF(DOXYGEN_FOUND)
                        COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
     foreach(WebFile ${WebFiles})
-      add_custom_command(TARGET ghdoc PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${WebFile} ${CMAKE_BINARY_DIR}/doc/gh-pages/)
+      add_custom_command(TARGET ghdoc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${WebFile} ${CMAKE_BINARY_DIR}/doc/gh-pages/)
     endforeach()
 
 ELSE(DOXYGEN_FOUND)
