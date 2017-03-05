@@ -3,6 +3,10 @@ body {
   /*color: #ccc;*/
 }
 
+.top-offset-50 {
+  padding-top: 50px;
+}
+
 .green-background {
   background-size: cover;
   background-image: url(../images/abstract-green-1920.jpg);

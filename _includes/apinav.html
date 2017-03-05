@@ -1,7 +1,7 @@
 <nav>
   <ul class="navbar-vertical">
     {% for nav in site.data.navigation.api %}
-      <li>{{ nav.title }}
+      <li><h4>{{ nav.title }}</h4>
         <ul>
         {% for child in nav.children %}
         <li><a href="{{ site.url }}{{ child.url }}">
