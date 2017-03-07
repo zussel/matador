@@ -1,0 +1,248 @@
+.sm-dox {
+  border: 1px solid #bbbbbb;
+  background: white;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.sm-dox a, .sm-dox a:hover, .sm-dox a:focus, .sm-dox a:active {
+  padding: 13px 20px;
+  /* make room for the toggle button (sub indicator) */
+  padding-right: 58px;
+  color: #555555;
+  font-family: "Lucida Sans Unicode", "Lucida Sans", "Lucida Grande", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 17px;
+  text-decoration: none;
+}
+.sm-dox a.current {
+  background: #555555;
+  color: white;
+}
+.sm-dox a.disabled {
+  color: #cccccc;
+}
+.sm-dox a span.sub-arrow {
+  position: absolute;
+  top: 50%;
+  margin-top: -17px;
+  left: auto;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  font: bold 14px/34px monospace !important;
+  text-align: center;
+  text-shadow: none;
+  background: rgba(0, 0, 0, 0.08);
+}
+.sm-dox a.highlighted span.sub-arrow:before {
+  display: block;
+  content: '-';
+}
+.sm-dox li {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+.sm-dox > li:first-child {
+  border-top: 0;
+}
+.sm-dox ul {
+  background: rgba(179, 179, 179, 0.1);
+}
+.sm-dox ul a, .sm-dox ul a:hover, .sm-dox ul a:focus, .sm-dox ul a:active {
+  font-size: 14px;
+  border-left: 8px solid transparent;
+}
+.sm-dox ul ul a,
+.sm-dox ul ul a:hover,
+.sm-dox ul ul a:focus,
+.sm-dox ul ul a:active {
+  border-left: 16px solid transparent;
+}
+.sm-dox ul ul ul a,
+.sm-dox ul ul ul a:hover,
+.sm-dox ul ul ul a:focus,
+.sm-dox ul ul ul a:active {
+  border-left: 24px solid transparent;
+}
+.sm-dox ul ul ul ul a,
+.sm-dox ul ul ul ul a:hover,
+.sm-dox ul ul ul ul a:focus,
+.sm-dox ul ul ul ul a:active {
+  border-left: 32px solid transparent;
+}
+.sm-dox ul ul ul ul ul a,
+.sm-dox ul ul ul ul ul a:hover,
+.sm-dox ul ul ul ul ul a:focus,
+.sm-dox ul ul ul ul ul a:active {
+  border-left: 40px solid transparent;
+}
+
+@media (min-width: 768px) {
+  /* Switch to desktop layout
+  -----------------------------------------------
+     These transform the menu tree from
+     collapsible to desktop (navbar + dropdowns)
+  -----------------------------------------------*/
+  /* start... (it's not recommended editing these rules) */
+  .sm-dox ul {
+    position: absolute;
+    width: 12em;
+  }
+
+  .sm-dox li {
+    float: left;
+  }
+
+  .sm-dox.sm-rtl li {
+    float: right;
+  }
+
+  .sm-dox ul li, .sm-dox.sm-rtl ul li, .sm-dox.sm-vertical li {
+    float: none;
+  }
+
+  .sm-dox a {
+    white-space: nowrap;
+  }
+
+  .sm-dox ul a, .sm-dox.sm-vertical a {
+    white-space: normal;
+  }
+
+  .sm-dox .sm-nowrap > li > a, .sm-dox .sm-nowrap > li > :not(ul) a {
+    white-space: nowrap;
+  }
+
+  /* ...end */
+  .sm-dox {
+    background: white;
+  }
+  .sm-dox a, .sm-dox a:hover, .sm-dox a:focus, .sm-dox a:active, .sm-dox a.highlighted {
+    padding: 11px 20px;
+    color: #555555;
+  }
+  .sm-dox a:hover, .sm-dox a:focus, .sm-dox a:active, .sm-dox a.highlighted {
+    background: #eeeeee;
+  }
+  .sm-dox a.current {
+    background: #555555;
+    color: white;
+  }
+  .sm-dox a.disabled {
+    background: white;
+    color: #cccccc;
+  }
+  .sm-dox a.has-submenu {
+    padding-right: 32px;
+  }
+  .sm-dox a span.sub-arrow {
+    top: 50%;
+    margin-top: -8px;
+    right: 20px;
+    width: 8px;
+    height: 16px;
+    font: 14px/16px monospace !important;
+    background: transparent;
+  }
+  .sm-dox a.highlighted span.sub-arrow:before {
+    display: none;
+  }
+  .sm-dox > li {
+    border-top: 0;
+    border-left: 1px solid #eeeeee;
+  }
+  .sm-dox > li:first-child {
+    border-left: 0;
+  }
+  .sm-dox ul {
+    border: 1px solid #bbbbbb;
+    background: white;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+  .sm-dox ul a {
+    border: 0 !important;
+  }
+  .sm-dox ul a.has-submenu {
+    padding-right: 20px;
+  }
+  .sm-dox ul a span.sub-arrow {
+    right: auto;
+    margin-left: -12px;
+  }
+  .sm-dox ul > li {
+    border-left: 0;
+    border-top: 1px solid #eeeeee;
+  }
+  .sm-dox ul > li:first-child {
+    border-top: 0;
+  }
+  .sm-dox span.scroll-up,
+  .sm-dox span.scroll-down {
+    position: absolute;
+    display: none;
+    visibility: hidden;
+    overflow: hidden;
+    background: white;
+    height: 20px;
+  }
+  .sm-dox span.scroll-up-arrow, .sm-dox span.scroll-down-arrow {
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    margin-left: -8px;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    border-width: 8px;
+    border-style: dashed dashed solid dashed;
+    border-color: transparent transparent #555555 transparent;
+  }
+  .sm-dox span.scroll-down-arrow {
+    top: 6px;
+    border-style: solid dashed dashed dashed;
+    border-color: #555555 transparent transparent transparent;
+  }
+  .sm-dox.sm-rtl a.has-submenu {
+    padding-right: 20px;
+    padding-left: 32px;
+  }
+  .sm-dox.sm-rtl a span.sub-arrow {
+    right: auto;
+    left: 20px;
+  }
+  .sm-dox.sm-rtl.sm-vertical a.has-submenu {
+    padding: 11px 20px;
+  }
+  .sm-dox.sm-rtl.sm-vertical a span.sub-arrow {
+    right: 20px;
+    margin-right: -12px;
+  }
+  .sm-dox.sm-rtl > li:first-child {
+    border-left: 1px solid #eeeeee;
+  }
+  .sm-dox.sm-rtl > li:last-child {
+    border-left: 0;
+  }
+  .sm-dox.sm-rtl ul a.has-submenu {
+    padding: 11px 20px;
+  }
+  .sm-dox.sm-rtl ul a span.sub-arrow {
+    right: 20px;
+    margin-right: -12px;
+  }
+  .sm-dox.sm-vertical a span.sub-arrow {
+    right: auto;
+    margin-left: -12px;
+  }
+  .sm-dox.sm-vertical li {
+    border-left: 0;
+    border-top: 1px solid #eeeeee;
+  }
+  .sm-dox.sm-vertical > li:first-child {
+    border-top: 0;
+  }
+}

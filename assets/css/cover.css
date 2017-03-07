@@ -1,4 +1,5 @@
 body {
+  margin-top: 50px;
   /*background-color: #222;*/
   /*color: #ccc;*/
 }
@@ -16,8 +17,15 @@ body {
   text-align: center;
 }
 
+pre {
+  background-color: transparent;
+}
+
+.sm {
+  z-index: 1020;
+}
+
 .jumbotron {
-  margin-top: 50px;
   background-color: transparent;
   text-align: center;
   color: seashell;
