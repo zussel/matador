@@ -19,16 +19,16 @@
 #define OBJECT_PROXY_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+  #ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_OBJECT_API
+  #define MATADOR_OBJECT_API
 #endif
 
 #include "matador/utils/identifier_resolver.hpp"
@@ -52,7 +52,7 @@ class basic_identifier;
 class transaction;
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class object_proxy
  * @brief A proxy between the object and the object_store
  *
@@ -60,7 +60,7 @@ class transaction;
  * the pointer to the object and the id. Once a new object
  * is inserted into the 
  */
-class OOS_OBJECT_API object_proxy
+class MATADOR_OBJECT_API object_proxy
 {
 public:
 
@@ -199,7 +199,7 @@ public:
    * @param op The object_proxy to print
    * @return The modified stream.
    */
-  friend OOS_OBJECT_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
+  friend MATADOR_OBJECT_API std::ostream& operator <<(std::ostream &os, const object_proxy &op);
 
   /**
    * Link this object proxy before given

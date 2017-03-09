@@ -19,7 +19,7 @@
 #define OOS_DATABASE_TYPES_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -86,7 +86,7 @@ OOS_SQL_API std::ostream& operator<<(std::ostream &out, const matador::data_type
 template < class T >
 struct data_type_traits;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 template <> struct data_type_traits<char>
 {
   inline static data_type type() { return data_type::type_char; }

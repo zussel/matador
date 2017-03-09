@@ -2,7 +2,7 @@
 #define OOS_QUERY_VALUE_CREATOR_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
       #define OOS_SQL_API __declspec(dllexport)
       #define EXPIMP_SQL_TEMPLATE
     #else
@@ -24,7 +24,7 @@
 namespace matador {
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class OOS_SQL_API query_value_creator
 {

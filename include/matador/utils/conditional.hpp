@@ -20,7 +20,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template<bool B, class T, class F>
 struct conditional { typedef T type; };
@@ -28,7 +28,7 @@ struct conditional { typedef T type; };
 template<class T, class F>
 struct conditional<false, T, F> { typedef F type; };
 
-/// @endcond OOS_DEV
+/// @endcond MATADOR_DEV
 
 }
 

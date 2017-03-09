@@ -6,7 +6,7 @@
 #define OOS_BASIC_QUERY_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -107,7 +107,7 @@ public:
 
 protected:
 
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
 
   enum state_t {
     QUERY_BEGIN,
@@ -131,7 +131,7 @@ protected:
 
 protected:
 
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
 
   static void throw_invalid(state_t next, state_t current);
 
@@ -150,7 +150,7 @@ protected:
   /// @endcond
 
 protected:
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
   sql sql_;
   state_t state;
   std::string table_name_;

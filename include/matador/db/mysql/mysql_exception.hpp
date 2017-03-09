@@ -19,7 +19,7 @@
 #define MYSQL_EXCEPTION_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_mysql_EXPORTS
+  #ifdef matador_mysql_EXPORTS
     #define OOS_MYSQL_API __declspec(dllexport)
   #else
     #define OOS_MYSQL_API __declspec(dllimport)

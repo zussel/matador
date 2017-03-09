@@ -15,7 +15,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T, template <class ...> class C >
 class has_many_iterator;

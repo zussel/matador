@@ -6,16 +6,16 @@
 #define OOS_DELETE_ACTION_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-#define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+#define MATADOR_OBJECT_API __declspec(dllexport)
 #define EXPIMP_OBJECT_TEMPLATE
 #else
-#define OOS_OBJECT_API __declspec(dllimport)
+#define MATADOR_OBJECT_API __declspec(dllimport)
 #define EXPIMP_OBJECT_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 #include "matador/object/action.hpp"
@@ -30,7 +30,7 @@ namespace matador {
 
 class object_serializer;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 /**
  * @internal
@@ -40,7 +40,7 @@ class object_serializer;
  * This action is used when an objected
  * is deleted from the database.
  */
-class OOS_OBJECT_API delete_action : public action
+class MATADOR_OBJECT_API delete_action : public action
 {
 private:
   typedef void (*t_backup_func)(byte_buffer&, delete_action*, object_serializer &serializer);

@@ -11,7 +11,7 @@ namespace matador {
 
 namespace memory {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class memory_connection : public matador::connection_impl
 {

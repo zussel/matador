@@ -6,7 +6,7 @@
 #define OOS_BASIC_DIALECT_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -41,7 +41,7 @@ class basic_dialect_compiler;
 class basic_dialect_linker;
 class basic_query;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 struct OOS_SQL_API build_info {
   build_info(const sql &s, basic_dialect *d);
@@ -217,7 +217,7 @@ public:
   char identifier_closing_quote() const;
 
 protected:
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
 
   friend class detail::basic_dialect_compiler;
   friend class detail::basic_dialect_linker;

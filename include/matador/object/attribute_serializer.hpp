@@ -30,7 +30,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class basic_attribute_serializer
 {

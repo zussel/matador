@@ -19,7 +19,7 @@
 #define TEST_SUITE_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_unit_EXPORTS
+  #ifdef matador_unit_EXPORTS
     #define OOS_UNIT_API __declspec(dllexport)
     #define EXPIMP_UNIT_TEMPLATE
   #else
@@ -105,7 +105,7 @@ public:
      */
     friend OOS_UNIT_API std::ostream& operator<<(std::ostream& out, const test_suite::summary &s);
 
-    /// @cond OOS_DEV
+    /// @cond MATADOR_DEV
     size_t tests = 0;
     size_t asserts = 0;
     size_t succeeded = 0;

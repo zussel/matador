@@ -12,7 +12,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 struct has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
@@ -223,7 +223,7 @@ private:
   container_iterator iter_;
 };
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
@@ -455,7 +455,7 @@ private:
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template<class T>
 class has_many_inserter<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>

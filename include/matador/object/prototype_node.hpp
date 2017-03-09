@@ -19,16 +19,16 @@
 #define PROTOTYPE_NODE_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+  #ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-  #define OOS_OBJECT_API
+  #define MATADOR_OBJECT_API
   #define EXPIMP_OBJECT_TEMPLATE
 #endif
 
@@ -48,6 +48,7 @@ namespace matador {
 class object_store;
 class object_proxy;
 
+/// @cond MATADOR_DEV
 namespace detail {
 template < class T, template <class ...> class C, class Enabled >
 class has_many_inserter;
@@ -57,6 +58,8 @@ class basic_node_analyzer;
 template < class T, template < class V = T > class O >
 class node_analyzer;
 }
+/// @endcond
+
 /**
  * @class prototype_node
  * @brief Holds the prototype of a concrete serializable.
@@ -71,7 +74,7 @@ class node_analyzer;
  * of the list, the end of the own objects and the end of
  * the last child objects.
  */ 
-class OOS_OBJECT_API prototype_node
+class MATADOR_OBJECT_API prototype_node
 {
 private:
   // copying not permitted
@@ -79,7 +82,7 @@ private:
   prototype_node& operator=(const prototype_node&) = delete;
 
 public:
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
   struct relation_info
   {
     enum relation_type {
@@ -371,7 +374,7 @@ public:
    * @param pn The prototype_node to be written.
    * @return The modified ostream.
    */
-  friend OOS_OBJECT_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
+  friend MATADOR_OBJECT_API std::ostream& operator <<(std::ostream &os, const prototype_node &pn);
 
   /**
    * Find the underlying proxy of the given primary key.

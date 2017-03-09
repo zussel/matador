@@ -12,7 +12,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 class identifier_setter

@@ -15,7 +15,7 @@ class object_proxy;
 class const_prototype_iterator;
 
 /**
-* @cond OOS_DEV
+* @cond MATADOR_DEV
 * @class prototype_iterator
 * @brief An iterator for traversing the prototypes
 *
@@ -23,7 +23,7 @@ class const_prototype_iterator;
 * are stored in the object_store and must not be altered.
 * therefor the iterator is declared as const.
 */
-class OOS_OBJECT_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
+class MATADOR_OBJECT_API prototype_iterator : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&>
 {
 public:
 typedef std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, prototype_node*, prototype_node&> base_iterator; /**< Shortcut to the base iterator class. */
@@ -147,7 +147,7 @@ friend class const_prototype_iterator;
 pointer node_ = nullptr;
 };
 
-class OOS_OBJECT_API const_prototype_iterator
+class MATADOR_OBJECT_API const_prototype_iterator
   : public std::iterator<std::bidirectional_iterator_tag, prototype_node, std::ptrdiff_t, const prototype_node *, const prototype_node &>
 {
 public:

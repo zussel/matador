@@ -31,7 +31,7 @@ namespace matador {
 template < class T >
 class result;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 template < class T >
 class base_result_iterator : public std::iterator<std::forward_iterator_tag, T>
 {
@@ -401,7 +401,7 @@ private:
   const row prototype_;
 };
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 template < class T >
 typename result_iterator<T>::self &result_iterator<T>::operator++()
 {

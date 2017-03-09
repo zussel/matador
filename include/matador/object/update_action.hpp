@@ -13,7 +13,7 @@ namespace matador {
 class object_proxy;
 class object_serializer;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 /**
  * @internal
@@ -23,7 +23,7 @@ class object_serializer;
  * This action is used when an objected
  * is updated on the database.
  */
-class OOS_OBJECT_API update_action : public action
+class MATADOR_OBJECT_API update_action : public action
 {
 private:
   typedef void (*t_backup_func)(byte_buffer&, update_action*, object_serializer &serializer);

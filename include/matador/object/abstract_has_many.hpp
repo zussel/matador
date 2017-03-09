@@ -23,7 +23,7 @@ class object_inserter;
 
 class object_store;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class abstract_has_many
 {

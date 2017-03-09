@@ -6,17 +6,17 @@
 #define OBJECT_HOLDER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4275)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 #include "matador/utils/cascade_type.hpp"
@@ -50,7 +50,7 @@ class object_store;
  * and reference class. The class holds the proxy
  * of the object and the id of the object.
  */
-class OOS_OBJECT_API object_holder : public identifiable_holder
+class MATADOR_OBJECT_API object_holder : public identifiable_holder
 {
 protected:
   /**
@@ -285,7 +285,7 @@ public:
    * @param x The object pointer to print.
    * @return The output stream.
    */
-  friend OOS_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
+  friend MATADOR_OBJECT_API std::ostream& operator<<(std::ostream &out, const object_holder &x);
 
 private:
   friend class object_serializer;

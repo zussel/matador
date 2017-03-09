@@ -6,16 +6,16 @@
 #define OOS_INSERT_ACTION_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 #include <algorithm>
@@ -27,7 +27,7 @@ namespace matador {
 class object_proxy;
 class object_serializer;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 /**
  * @internal
@@ -37,7 +37,7 @@ class object_serializer;
  * This action is used when an objected
  * is inserted into the database.
  */
-class OOS_OBJECT_API insert_action : public action
+class MATADOR_OBJECT_API insert_action : public action
 {
 public:
   typedef std::list<object_proxy*> object_proxy_list_t;

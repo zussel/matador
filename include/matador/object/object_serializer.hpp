@@ -19,16 +19,16 @@
 #define OBJECT_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+  #ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4355)
 #else
-  #define OOS_OBJECT_API
+  #define MATADOR_OBJECT_API
 #endif
 
 #include "matador/utils/byte_buffer.hpp"
@@ -49,7 +49,7 @@ class object_holder;
 class varchar_base;
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class object_serializer
  * @brief serialize objects to a given buffer.
  *
@@ -61,7 +61,7 @@ class varchar_base;
  * memory the buffer points to.
  * The application is responsible for this correctness.
  */
-class OOS_OBJECT_API object_serializer
+class MATADOR_OBJECT_API object_serializer
 {
 public:
   /**

@@ -6,7 +6,7 @@
 #define OOS_PERSISTENCE_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_orm_EXPORTS
+#ifdef matador_orm_EXPORTS
 #define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_ORM_TEMPLATE
 #else
@@ -206,7 +206,7 @@ private:
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 //struct basic_persistence_on_attach : public detail::basic_on_attach
 //{

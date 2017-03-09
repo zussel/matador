@@ -6,7 +6,7 @@
 #define OOS_COLUMN_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -32,7 +32,7 @@ class varchar_base;
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class OOS_SQL_API column_serializer : public serializer {
 public:

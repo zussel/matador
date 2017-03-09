@@ -14,7 +14,7 @@ class object_proxy;
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template<class T> class identifier_hash;
 

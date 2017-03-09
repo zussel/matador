@@ -6,7 +6,7 @@
 #define OOS_BASIC_IDENTIFIER_SERIALIZER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_utils_EXPORTS
+#ifdef matador_utils_EXPORTS
     #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_UTILS_TEMPLATE
   #else
@@ -29,7 +29,7 @@ namespace matador {
 
 class byte_buffer;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class OOS_UTILS_API basic_identifier_serializer : public serializer {
 public:

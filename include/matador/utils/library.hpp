@@ -19,7 +19,7 @@
 #define LIBRARY_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_utils_EXPORTS
+  #ifdef matador_utils_EXPORTS
     #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_UTILS_TEMPLATE
   #else
@@ -41,13 +41,13 @@
 
 namespace matador {
 
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
 #if defined(_MSC_VER) || defined(__MINGW32__)
 typedef FARPROC func_ptr;
 #else
 typedef void* func_ptr;
 #endif
-#endif /* OOS_DOXYGEN_DOC */
+#endif /* MATADOR_DOXYGEN_DOC */
 
 /**
  * @class library

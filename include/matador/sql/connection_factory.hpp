@@ -19,7 +19,7 @@
 #define DATABASE_FACTORY_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_sql_EXPORTS
+  #ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -40,7 +40,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 class OOS_SQL_API connection_factory : public matador::singleton<connection_factory>
 {
 private:

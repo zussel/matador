@@ -6,21 +6,21 @@
 #define OOS_ACTION_VISITOR_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class insert_action;
 class update_action;
@@ -35,7 +35,7 @@ class delete_action;
  * a concrete visitor, a class must be derived from this
  * class and implement all virtual method.
  */
-class OOS_OBJECT_API action_visitor
+class MATADOR_OBJECT_API action_visitor
 {
 public:
   virtual ~action_visitor() {}

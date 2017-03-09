@@ -12,6 +12,8 @@
 
 namespace matador {
 
+/// @cond MATADOR_DEV
+
 namespace detail {
 class object_inserter;
 
@@ -21,8 +23,6 @@ class has_many_deleter;
 template<class T, template <class ...> class C, class Enabled = void>
 class has_many_inserter;
 }
-
-/// @cond OOS_DEV
 
 template < class T, template <class ...> class C = std::vector >
 class basic_has_many;
@@ -163,7 +163,7 @@ public:
   void append(const typename iterator::internal_type &item) { container_.push_back(item); }
 
 protected:
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
 
   friend class detail::object_inserter;
   friend class object_store;

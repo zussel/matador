@@ -19,7 +19,7 @@
 #define BYTE_BUFFER_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_utils_EXPORTS
+  #ifdef matador_utils_EXPORTS
     #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_UTILS_TEMPLATE
   #else
@@ -37,7 +37,7 @@
 namespace matador {
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class byte_buffer
  * @brief A buffer for bytes.
  * 

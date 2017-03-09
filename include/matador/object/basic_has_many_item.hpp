@@ -6,16 +6,16 @@
 #define OOS_BASIC_HAS_MANY_ITEM_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-#define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+#define MATADOR_OBJECT_API __declspec(dllexport)
 #define EXPIMP_OBJECT_TEMPLATE
 #else
-#define OOS_OBJECT_API __declspec(dllimport)
+#define MATADOR_OBJECT_API __declspec(dllimport)
 #define EXPIMP_OBJECT_TEMPLATE extern
 #endif
 #pragma warning(disable: 4251)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 #include "matador/utils/basic_identifier.hpp"
@@ -24,9 +24,9 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
-class OOS_OBJECT_API basic_has_many_item
+class MATADOR_OBJECT_API basic_has_many_item
 {
 public:
 

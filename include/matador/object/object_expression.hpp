@@ -19,15 +19,15 @@
 #define OBJECT_EXPRESSION_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+  #ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
 #else
-  #define OOS_OBJECT_API
+  #define MATADOR_OBJECT_API
 #endif
 
 #include "matador/object/object_ptr.hpp"
@@ -36,7 +36,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 class constant
@@ -115,7 +115,7 @@ private:
   memfunc_type m_;
 };
 
-/// @endcond OOS_DEV
+/// @endcond MATADOR_DEV
 
 /**
  * @tparam R Type of the variable
@@ -274,7 +274,7 @@ make_var(O1 (O::*mem_func)() const, O2 (O1::object_type::*mem_func_1)() const, O
   return variable<R>(new object_variable_impl<R, typename O3::object_type, variable<O3> >(mem_func_3, make_var(mem_func, mem_func_1, mem_func_2)));
 }
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class E >
 struct expression_traits

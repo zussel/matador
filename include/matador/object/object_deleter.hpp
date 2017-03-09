@@ -6,17 +6,17 @@
 #include "matador/object/basic_has_many.hpp"
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 namespace matador {
@@ -26,7 +26,7 @@ class object_proxy;
 namespace detail {
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class object_deleter
  * @brief Checks if an serializable could be deleted
  *
@@ -36,9 +36,9 @@ namespace detail {
  * If the check was successful, all the deletable serializable
  * can be accepted via the iterators.
  */
-class OOS_OBJECT_API object_deleter {
+class MATADOR_OBJECT_API object_deleter {
   private:
-  struct OOS_OBJECT_API t_object_count {
+  struct MATADOR_OBJECT_API t_object_count {
     typedef void (*t_remove_func)(object_proxy*, bool);
     template < class T >
     t_object_count(object_proxy *oproxy, bool ignr = true, T* = nullptr)

@@ -6,7 +6,7 @@
 #define OOS_BASIC_DIALECT_COMPILER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -32,7 +32,7 @@ namespace detail {
 
 struct build_info;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class OOS_SQL_API basic_dialect_compiler : public token_visitor
 {

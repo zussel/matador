@@ -19,7 +19,7 @@
 #define ROW_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_sql_EXPORTS
+  #ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else

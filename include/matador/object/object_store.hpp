@@ -44,17 +44,17 @@
 #include <iostream>
 
 #ifdef _MSC_VER
-  #ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+  #ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-  #define OOS_OBJECT_API
+  #define MATADOR_OBJECT_API
 #endif
 
 namespace matador {
@@ -65,9 +65,9 @@ class prototype_node;
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
-class OOS_OBJECT_API modified_marker
+class MATADOR_OBJECT_API modified_marker
 {
 public:
   typedef void (*t_marker)(object_store &store, object_proxy &proxy);
@@ -108,7 +108,7 @@ private:
  * hierarchy representation including a producer class
  * serializable of all known types.
  */
-class OOS_OBJECT_API object_store
+class MATADOR_OBJECT_API object_store
 {
 private:
   object_store(const object_store&) = delete;
@@ -467,7 +467,7 @@ public:
    */
   size_t depth(const prototype_node *node) const;
 
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
   void dump(std::ostream &out) const;
   /// @endcond
 
@@ -808,7 +808,7 @@ public:
    */
   sequencer_impl_ptr exchange_sequencer(const sequencer_impl_ptr &seq);
 
-  /// @cond OOS_DEV
+  /// @cond MATADOR_DEV
   void on_update_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
 
   void on_remove_relation_owner(prototype_node::relation_info &info, object_proxy *owner, object_proxy *value);
@@ -1111,7 +1111,7 @@ prototype_iterator object_store::attach(prototype_node *node, const char *parent
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 void modified_marker::marker_func(object_store &store, object_proxy &proxy)

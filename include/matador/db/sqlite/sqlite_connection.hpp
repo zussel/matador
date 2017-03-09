@@ -19,7 +19,7 @@
 #define SQLITE_DATABASE_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_sqlite_EXPORTS
+  #ifdef matador_sqlite_EXPORTS
     #define OOS_SQLITE_API __declspec(dllexport)
   #else
     #define OOS_SQLITE_API __declspec(dllimport)

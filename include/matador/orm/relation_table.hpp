@@ -18,7 +18,7 @@
 
 namespace matador {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 class relation_table : public basic_table, public detail::object_proxy_accessor

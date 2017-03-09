@@ -18,9 +18,9 @@
 #ifndef UNIT_TEST_HPP
 #define UNIT_TEST_HPP
 
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
   #ifdef _MSC_VER
-    #ifdef oos_unit_EXPORTS
+    #ifdef matador_unit_EXPORTS
       #define OOS_UNIT_API __declspec(dllexport)
       #define EXPIMP_UNIT_TEMPLATE
     #else
@@ -31,7 +31,7 @@
   #else
     #define OOS_UNIT_API
   #endif
-#endif /* OOS_DOXYGEN_DOC */
+#endif /* MATADOR_DOXYGEN_DOC */
 
 #include "matador/unit/unit_exception.hpp"
 
@@ -385,7 +385,7 @@ public:
     }
   }
 
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
   void assert_equal(char *&a, const char* &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->assertion_count;
@@ -466,7 +466,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-#endif /* OOS_DOXYGEN_DOC */
+#endif /* MATADOR_DOXYGEN_DOC */
 
   /**
    * @brief Checks if a is not equal b.
@@ -547,7 +547,7 @@ public:
     }
   }
 
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
   template < class X, class Y >
   void assert_greater(const X &a, const Y &b, const std::string &msg, int line, const char *file)
   {
@@ -558,7 +558,7 @@ public:
       throw unit_exception(msgstr.str());
     }
   }
-#endif /* OOS_DOXYGEN_DOC */
+#endif /* MATADOR_DOXYGEN_DOC */
 
   /**
    * @brief Checks if a is less b.
@@ -744,7 +744,7 @@ public:
       std::cout << "FAILURE at " << file << ":" << line << ": value " << a << " is not equal " << b << ": " << msg;
     }
   }
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
   void expect_equal(const char *a, const std::string &b, const std::string &msg, int line, const char *file)
   {
     ++current_test_func_info->error_count;

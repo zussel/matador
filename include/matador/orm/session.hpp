@@ -6,7 +6,7 @@
 #define OOS_SESSION_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_orm_EXPORTS
+#ifdef matador_orm_EXPORTS
 #define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_ORM_TEMPLATE
 #else

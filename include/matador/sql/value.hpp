@@ -19,7 +19,7 @@
 #define VALUE_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -51,7 +51,7 @@ template<class T, class Enabled = void>
 struct value;
 
 namespace detail {
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 struct OOS_SQL_API basic_value : public token
 {

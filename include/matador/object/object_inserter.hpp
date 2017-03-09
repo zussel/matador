@@ -8,24 +8,24 @@
 #include <stack>
 
 #ifdef _MSC_VER
-#ifdef oos_object_EXPORTS
-    #define OOS_OBJECT_API __declspec(dllexport)
+#ifdef matador_object_EXPORTS
+    #define MATADOR_OBJECT_API __declspec(dllexport)
     #define EXPIMP_OBJECT_TEMPLATE
   #else
-    #define OOS_OBJECT_API __declspec(dllimport)
+    #define MATADOR_OBJECT_API __declspec(dllimport)
     #define EXPIMP_OBJECT_TEMPLATE extern
   #endif
   #pragma warning(disable: 4251)
   #pragma warning(disable: 4355)
 #else
-#define OOS_OBJECT_API
+#define MATADOR_OBJECT_API
 #endif
 
 namespace matador {
 namespace detail {
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class object_inserter
  * @brief Creates objects and object_lists
  *
@@ -34,7 +34,7 @@ namespace detail {
  * inserted into the serializable store.
  * This class does these tasks.
  */
-class OOS_OBJECT_API object_inserter {
+class MATADOR_OBJECT_API object_inserter {
 public:
   /**
    * @brief Creates an object_inserter instance.

@@ -6,7 +6,7 @@
 #include <set>
 #include <type_traits>
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < template < class ... > class Container>
 struct is_container_type : std::false_type { };

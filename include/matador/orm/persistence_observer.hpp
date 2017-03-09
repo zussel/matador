@@ -8,7 +8,7 @@ namespace matador {
 
 class persistence;
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class T >
 class persistence_observer : public object_store_observer<T>

@@ -19,7 +19,7 @@
 #define SEQUENCER_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_utils_EXPORTS
+  #ifdef matador_utils_EXPORTS
     #define OOS_UTILS_API __declspec(dllexport)
     #define EXPIMP_UTILS_TEMPLATE
   #else
@@ -36,7 +36,7 @@
 namespace matador {
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class sequencer_impl
  * @brief Sequencer implementation interface
  *
@@ -98,7 +98,7 @@ public:
 typedef std::shared_ptr<sequencer_impl> sequencer_impl_ptr; /**< Shortcut for sequencer implementation pointer */
 
 /**
- * @cond OOS_DEV
+ * @cond MATADOR_DEV
  * @class default_sequencer
  */
 class OOS_UTILS_API default_sequencer : public sequencer_impl

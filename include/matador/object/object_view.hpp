@@ -29,11 +29,11 @@
 
 namespace matador {
 
-#ifndef OOS_DOXYGEN_DOC
+#ifndef MATADOR_DOXYGEN_DOC
 template < class T > class const_object_view_iterator;
-#endif /* OOS_DOXYGEN_DOC */
+#endif /* MATADOR_DOXYGEN_DOC */
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 /**
  * @class object_view_iterator

@@ -6,7 +6,7 @@
 #define OOS_COLUMN_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_sql_EXPORTS
+#ifdef matador_sql_EXPORTS
     #define OOS_SQL_API __declspec(dllexport)
     #define EXPIMP_SQL_TEMPLATE
   #else
@@ -229,7 +229,7 @@ std::shared_ptr<detail::typed_column> make_typed_id_column(const std::string &co
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 struct OOS_SQL_API typed_column : public matador::column
 {

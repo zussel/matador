@@ -15,7 +15,7 @@ namespace matador {
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 template < class OWNER >
 class relation_item_appender

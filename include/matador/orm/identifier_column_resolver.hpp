@@ -6,7 +6,7 @@
 #define OOS_IDENTIFIER_COLUMN_RESOLVER_HPP
 
 #ifdef _MSC_VER
-#ifdef oos_orm_EXPORTS
+#ifdef matador_orm_EXPORTS
 #define OOS_ORM_API __declspec(dllexport)
 #define EXPIMP_ORM_TEMPLATE
 #else
@@ -29,7 +29,7 @@ namespace matador {
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class OOS_ORM_API identifier_column_resolver
 {

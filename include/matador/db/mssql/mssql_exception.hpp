@@ -19,7 +19,7 @@
 #define MSSQL_EXCEPTION_HPP
 
 #ifdef _MSC_VER
-  #ifdef oos_mssql_EXPORTS
+  #ifdef matador_mssql_EXPORTS
     #define OOS_MSSQL_API __declspec(dllexport)
   #else
     #define OOS_MSSQL_API __declspec(dllimport)

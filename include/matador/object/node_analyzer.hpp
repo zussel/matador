@@ -11,7 +11,7 @@ class prototype_node;
 
 namespace detail {
 
-/// @cond OOS_DEV
+/// @cond MATADOR_DEV
 
 class basic_node_analyzer
 {
