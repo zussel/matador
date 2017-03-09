@@ -6,9 +6,9 @@
 #define OOS_QUERYTESTUNIT_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class DialectTestUnit : public oos::unit_test
+class DialectTestUnit : public matador::unit_test
 {
 public:
   DialectTestUnit();

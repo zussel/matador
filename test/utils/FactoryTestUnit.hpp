@@ -1,9 +1,9 @@
 #ifndef FACTORYTESTUNIT_HPP
 #define FACTORYTESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class FactoryTestUnit : public oos::unit_test
+class FactoryTestUnit : public matador::unit_test
 {
 public:
   FactoryTestUnit();

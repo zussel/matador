@@ -2,15 +2,15 @@
 // Created by sascha on 3/18/15.
 //
 
-#include "oos/utils/string.hpp"
-#include "oos/utils/time.hpp"
+#include "matador/utils/string.hpp"
+#include "matador/utils/time.hpp"
 
 #include <stdexcept>
 #include <cstring>
 
 #include <time.h>
 
-namespace oos {
+namespace matador {
 
 size_t split(const std::string &str, char delim, std::vector<std::string> &values)
 {
@@ -51,7 +51,7 @@ void replace_all(std::string &in, const std::string &from, const std::string &to
   }
 }
 
-std::string to_string(const oos::time &x, const char *format)
+std::string to_string(const matador::time &x, const char *format)
 {
   struct tm timeinfo = x.get_tm();
 #ifdef _MSC_VER
@@ -102,7 +102,7 @@ std::string to_string(const oos::time &x, const char *format)
 #endif
 }
 
-std::string to_string(const oos::date &x, const char *format)
+std::string to_string(const matador::date &x, const char *format)
 {
   time_t now = std::time(nullptr);
   struct tm timeinfo;

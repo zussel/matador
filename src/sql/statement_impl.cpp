@@ -1,9 +1,9 @@
 //
 // Created by sascha on 18.09.15.
 //
-#include "oos/sql/statement_impl.hpp"
+#include "matador/sql/statement_impl.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 

@@ -2,9 +2,9 @@
 // Created by sascha on 21.03.16.
 //
 
-#include "oos/orm/session.hpp"
+#include "matador/orm/session.hpp"
 
-namespace oos {
+namespace matador {
 
 
 session::session(persistence &p)

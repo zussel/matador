@@ -4,13 +4,13 @@
 
 #include "TestDialect.hpp"
 
-#include "oos/sql/dialect_token.hpp"
-#include "oos/sql/basic_dialect_compiler.hpp"
-#include "oos/sql/basic_dialect_linker.hpp"
+#include "matador/sql/dialect_token.hpp"
+#include "matador/sql/basic_dialect_compiler.hpp"
+#include "matador/sql/basic_dialect_linker.hpp"
 
 #include <algorithm>
 
-using namespace oos;
+using namespace matador;
 
 TestDialect::TestDialect()
   : basic_dialect(new detail::basic_dialect_compiler, new detail::basic_dialect_linker)

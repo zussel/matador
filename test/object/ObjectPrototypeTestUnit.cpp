@@ -1,12 +1,12 @@
 #include "ObjectPrototypeTestUnit.hpp"
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
 #include "../Item.hpp"
 
 #include <iostream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
 ObjectPrototypeTestUnit::ObjectPrototypeTestUnit()

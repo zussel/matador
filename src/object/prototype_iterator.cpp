@@ -1,9 +1,9 @@
 //
 // Created by sascha on 11/30/15.
 //
-#include "oos/object/prototype_iterator.hpp"
+#include "matador/object/prototype_iterator.hpp"
 
-namespace oos {
+namespace matador {
 
 prototype_iterator::prototype_iterator()
 {}

@@ -15,20 +15,20 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mssql/mssql_statement.hpp"
-#include "oos/db/mssql/mssql_connection.hpp"
-#include "oos/db/mssql/mssql_result.hpp"
+#include "matador/db/mssql/mssql_statement.hpp"
+#include "matador/db/mssql/mssql_connection.hpp"
+#include "matador/db/mssql/mssql_result.hpp"
 
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
 #include <cstring>
 #include <sstream>
 
-namespace oos {
+namespace matador {
 
 namespace mssql {
 
@@ -179,12 +179,12 @@ void mssql_statement::serialize(const char *, std::string &x)
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::serialize(const char *, oos::date &x)
+void mssql_statement::serialize(const char *, matador::date &x)
 {
   bind_value(x, ++host_index);
 }
 
-void mssql_statement::serialize(const char *, oos::time &x)
+void mssql_statement::serialize(const char *, matador::time &x)
 {
   bind_value(x, ++host_index);
 }
@@ -268,7 +268,7 @@ void mssql_statement::bind_value(bool val, size_t index)
   throw_error(ret, SQL_HANDLE_STMT, stmt_, "mssql", "couldn't bind parameter");
 }
 
-void mssql_statement::bind_value(const oos::date &d, size_t index)
+void mssql_statement::bind_value(const matador::date &d, size_t index)
 {
   std::unique_ptr<value_t> v(new value_t(true));
 
@@ -292,7 +292,7 @@ void mssql_statement::bind_value(const oos::date &d, size_t index)
   host_data_.push_back(v.release());
 }
 
-void mssql_statement::bind_value(const oos::time &t, size_t index)
+void mssql_statement::bind_value(const matador::time &t, size_t index)
 {
   std::unique_ptr<value_t> v(new value_t(true));
 

@@ -1,4 +1,4 @@
-CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/include/oos/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
+CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/include/matador/version.hpp.in ${CMAKE_BINARY_DIR}/version.hpp)
 
 ADD_SUBDIRECTORY(object)
 ADD_SUBDIRECTORY(orm)

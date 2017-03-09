@@ -1,9 +1,9 @@
 #ifndef VARCHARTESTUNIT_HPP
 #define VARCHARTESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class VarCharTestUnit : public oos::unit_test
+class VarCharTestUnit : public matador::unit_test
 {
 public:
   VarCharTestUnit();

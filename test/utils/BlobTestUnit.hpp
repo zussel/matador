@@ -1,9 +1,9 @@
 #ifndef BLOBTESTUNIT_HPP
 #define BLOBTESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class BlobTestUnit : public oos::unit_test
+class BlobTestUnit : public matador::unit_test
 {
 public:
   BlobTestUnit();

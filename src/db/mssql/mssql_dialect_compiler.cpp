@@ -2,33 +2,33 @@
 // Created by sascha on 6/13/16.
 //
 
-#include "oos/db/mssql/mssql_dialect_compiler.hpp"
+#include "matador/db/mssql/mssql_dialect_compiler.hpp"
 
-#include "oos/sql/basic_dialect.hpp"
+#include "matador/sql/basic_dialect.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace mssql {
 
 mssql_dialect_compiler::mssql_dialect_compiler()
 { }
 
-void mssql_dialect_compiler::visit(const oos::detail::select &)
+void mssql_dialect_compiler::visit(const matador::detail::select &)
 {
   commands_.push(top().current);
 }
 
-void mssql_dialect_compiler::visit(const oos::detail::update &)
+void mssql_dialect_compiler::visit(const matador::detail::update &)
 {
   commands_.push(top().current);
 }
 
-void mssql_dialect_compiler::visit(const oos::detail::remove &)
+void mssql_dialect_compiler::visit(const matador::detail::remove &)
 {
   commands_.push(top().current);
 }
 
-void mssql_dialect_compiler::visit(const oos::detail::top &)
+void mssql_dialect_compiler::visit(const matador::detail::top &)
 {
   if (commands_.empty()) {
     return;

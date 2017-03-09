@@ -1,22 +1,22 @@
 #include "ObjectStoreTestUnit.hpp"
 #include "../Item.hpp"
 
-#include "oos/object/object_expression.hpp"
-#include "oos/object/object_view.hpp"
-#include "oos/object/generic_access.hpp"
+#include "matador/object/object_expression.hpp"
+#include "matador/object/object_view.hpp"
+#include "matador/object/generic_access.hpp"
 
-#include "oos/utils/algorithm.hpp"
+#include "matador/utils/algorithm.hpp"
 
 #include "version.hpp"
 #include <iostream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
 ObjectStoreTestUnit::ObjectStoreTestUnit()
   : unit_test("store", "ObjectStore Test Unit")
 {
-  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test oos version");
+  add_test("version", std::bind(&ObjectStoreTestUnit::test_version, this), "test matador version");
   add_test("optr", std::bind(&ObjectStoreTestUnit::test_optr, this), "test optr behaviour");
   add_test("expression", std::bind(&ObjectStoreTestUnit::test_expression, this), "test object expressions");
   add_test("set", std::bind(&ObjectStoreTestUnit::test_set, this), "access object values via set interface");
@@ -96,11 +96,11 @@ void ObjectStoreTestUnit::test_version()
 {
   std::string version("0.5.0");
   
-  UNIT_ASSERT_EQUAL(oos::version::str, version, "invalid oos version");
+  UNIT_ASSERT_EQUAL(matador::version::str, version, "invalid matador version");
 
-  UNIT_ASSERT_EQUAL(oos::version::major, 0, "invalid major version");
-  UNIT_ASSERT_EQUAL(oos::version::minor, 5, "invalid minor version");
-  UNIT_ASSERT_EQUAL(oos::version::patch_level, 0, "invalid patch level");
+  UNIT_ASSERT_EQUAL(matador::version::major, 0, "invalid major version");
+  UNIT_ASSERT_EQUAL(matador::version::minor, 5, "invalid minor version");
+  UNIT_ASSERT_EQUAL(matador::version::patch_level, 0, "invalid patch level");
 }
 
 
@@ -213,9 +213,9 @@ void ObjectStoreTestUnit::test_serializer()
   unsigned long ul = 987654321;
   bool b = true;
   std::string title = "Hallo Welt";
-  oos::varchar<64> str("The answer is 42");
-  oos::date dt(15, 9, 1972);
-  oos::time t(2008, 12, 27, 13, 6, 57, 4711);
+  matador::varchar<64> str("The answer is 42");
+  matador::date dt(15, 9, 1972);
+  matador::time t(2008, 12, 27, 13, 6, 57, 4711);
 
   Item *item = new Item();
   
@@ -340,28 +340,28 @@ void ObjectStoreTestUnit::test_reference_counter()
 
 void ObjectStoreTestUnit::test_set()
 {
-  oos::date dt(15, 9, 1972);
-  oos::time t(2008, 12, 27, 13, 6, 57, 4711);
-  oos::varchar<64> varstr("The answer is 42");
+  matador::date dt(15, 9, 1972);
+  matador::time t(2008, 12, 27, 13, 6, 57, 4711);
+  matador::varchar<64> varstr("The answer is 42");
   std::string str("tiger");
 
   Item i("item", 4711);
   
-  oos::set(i, "val_char", 'f');
-  oos::set(i, "val_short", -2);
-  oos::set(i, "val_int", -1);
-  oos::set(i, "val_long", -7);
-  oos::set(i, "val_unsigned_short", 2);
-  oos::set(i, "val_unsigned_int", 1);
-  oos::set(i, "val_unsigned_long", 7);
-  oos::set(i, "val_bool", false);
-  oos::set(i, "val_float", 0.456);
-  oos::set(i, "val_double", 3.1415);
-  oos::set(i, "val_cstr", "tiger");
-  oos::set(i, "val_string", str);
-  oos::set(i, "val_varchar", varstr);
-  oos::set(i, "val_date", dt);
-  oos::set(i, "val_time", t);
+  matador::set(i, "val_char", 'f');
+  matador::set(i, "val_short", -2);
+  matador::set(i, "val_int", -1);
+  matador::set(i, "val_long", -7);
+  matador::set(i, "val_unsigned_short", 2);
+  matador::set(i, "val_unsigned_int", 1);
+  matador::set(i, "val_unsigned_long", 7);
+  matador::set(i, "val_bool", false);
+  matador::set(i, "val_float", 0.456);
+  matador::set(i, "val_double", 3.1415);
+  matador::set(i, "val_cstr", "tiger");
+  matador::set(i, "val_string", str);
+  matador::set(i, "val_varchar", varstr);
+  matador::set(i, "val_date", dt);
+  matador::set(i, "val_time", t);
 
   UNIT_ASSERT_EQUAL('f', i.get_char(), "invalid value");
   UNIT_ASSERT_EQUAL(-2, i.get_short(), "invalid value");
@@ -380,11 +380,11 @@ void ObjectStoreTestUnit::test_set()
   UNIT_ASSERT_EQUAL(dt, i.get_date(), "invalid value");
   UNIT_ASSERT_EQUAL(t, i.get_time(), "invalid value");
 
-  oos::set(i, "val_string", "lion");
+  matador::set(i, "val_string", "lion");
   UNIT_ASSERT_EQUAL("lion", i.get_string(), "invalid value");
 
-//  auto vc = oos::varchar<16>("elefant");
-//  oos::set(i, "val_string", vc);
+//  auto vc = matador::varchar<16>("elefant");
+//  matador::set(i, "val_string", vc);
 //  UNIT_ASSERT_EQUAL("elefant", i.get_string(), "invalid value");
 }
 
@@ -402,9 +402,9 @@ void ObjectStoreTestUnit::test_get()
   test_pair<unsigned long> ul(987654321);
   test_pair<char*> cstr("baba", 256);
   test_pair<std::string> str("Hallo Welt");
-  test_pair<oos::varchar<64> > varstr("The answer is 42");
-  test_pair<oos::date> dateval(oos::date("29.4.1972"));
-  test_pair<oos::time > timeval(oos::time(2015, 10, 16, 8, 54, 32, 123));
+  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<matador::date> dateval(matador::date("29.4.1972"));
+  test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
   Item item;
 
@@ -424,35 +424,35 @@ void ObjectStoreTestUnit::test_get()
   item.set_date(dateval.expected);
   item.set_time(timeval.expected);
 
-  oos::get(item, "val_char", c.result);
+  matador::get(item, "val_char", c.result);
   UNIT_ASSERT_EQUAL(c.result, c.expected, "invalid value");
-  oos::get(item, "val_short", s.result);
+  matador::get(item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "invalid value");
-  oos::get(item, "val_int", i.result);
+  matador::get(item, "val_int", i.result);
   UNIT_ASSERT_EQUAL(i.result, i.expected, "invalid value");
-  oos::get(item, "val_long", l.result);
+  matador::get(item, "val_long", l.result);
   UNIT_ASSERT_EQUAL(l.result, l.expected, "invalid value");
-  oos::get(item, "val_unsigned_short", us.result);
+  matador::get(item, "val_unsigned_short", us.result);
   UNIT_ASSERT_EQUAL(us.result, us.expected, "invalid value");
-  oos::get(item, "val_unsigned_int", ui.result);
+  matador::get(item, "val_unsigned_int", ui.result);
   UNIT_ASSERT_EQUAL(ui.result, ui.expected, "invalid value");
-  oos::get(item, "val_unsigned_long", ul.result);
+  matador::get(item, "val_unsigned_long", ul.result);
   UNIT_ASSERT_EQUAL(ul.result, ul.expected, "invalid value");
-  oos::get(item, "val_float", f.result);
+  matador::get(item, "val_float", f.result);
   UNIT_ASSERT_EQUAL(f.result, f.expected, "invalid value");
-  oos::get(item, "val_double", d.result);
+  matador::get(item, "val_double", d.result);
   UNIT_ASSERT_EQUAL(d.result, d.expected, "invalid value");
-  oos::get(item, "val_bool", b.result);
+  matador::get(item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "invalid value");
-  oos::get(item, "val_string", str.result);
+  matador::get(item, "val_string", str.result);
   UNIT_ASSERT_EQUAL(str.result, str.expected, "invalid value");
-  oos::get(item, "val_varchar", varstr.result);
+  matador::get(item, "val_varchar", varstr.result);
   UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "invalid value");
-  oos::get(item, "val_cstr", cstr.result, cstr.size);
+  matador::get(item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "invalid value");
-  oos::get(item, "val_date", dateval.result);
+  matador::get(item, "val_date", dateval.result);
   UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "invalid value");
-  oos::get(item, "val_time", timeval.result);
+  matador::get(item, "val_time", timeval.result);
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "invalid value");
 }
 
@@ -754,85 +754,85 @@ void ObjectStoreTestUnit::test_generic()
   test_pair<unsigned long> ul(987654321);
   test_pair<char*> cstr("baba", 256);
   test_pair<std::string> str("Hallo Welt");
-  test_pair<oos::varchar<64> > varstr("The answer is 42");
-  test_pair<oos::date> dateval(oos::date("29.4.1972"));
-  test_pair<oos::time > timeval(oos::time(2015, 10, 16, 8, 54, 32, 123));
+  test_pair<matador::varchar<64> > varstr("The answer is 42");
+  test_pair<matador::date> dateval(matador::date("29.4.1972"));
+  test_pair<matador::time > timeval(matador::time(2015, 10, 16, 8, 54, 32, 123));
 
   std::unique_ptr<Item> item(new Item());
 
-  oos::set(*item, "val_char", c.expected);
-  oos::get(*item, "val_char", c.result);
+  matador::set(*item, "val_char", c.expected);
+  matador::get(*item, "val_char", c.result);
   UNIT_ASSERT_EQUAL(c.result, c.expected, "not expected result value");
 
-  oos::set(*item, "val_short", s.expected);
-  oos::get(*item, "val_short", s.result);
+  matador::set(*item, "val_short", s.expected);
+  matador::get(*item, "val_short", s.result);
   UNIT_ASSERT_EQUAL(s.result, s.expected, "not expected result value");
-  oos::get(*item, "val_short", s.str_result);
+  matador::get(*item, "val_short", s.str_result);
   UNIT_ASSERT_EQUAL(s.str_result, "-42", "short string is invalid");
 
-  oos::set(*item, "val_int", i.expected);
-  oos::get(*item, "val_int", i.result);
+  matador::set(*item, "val_int", i.expected);
+  matador::get(*item, "val_int", i.result);
   UNIT_ASSERT_EQUAL(i.result, i.expected, "not expected result value");
 
-  oos::set(*item, "val_long", l.expected);
-  oos::get(*item, "val_long", l.result);
+  matador::set(*item, "val_long", l.expected);
+  matador::get(*item, "val_long", l.result);
   UNIT_ASSERT_EQUAL(l.result, l.expected, "not expected result value");
 
-  oos::set(*item, "val_unsigned_short", us.expected);
-  oos::get(*item, "val_unsigned_short", us.result);
+  matador::set(*item, "val_unsigned_short", us.expected);
+  matador::get(*item, "val_unsigned_short", us.result);
   UNIT_ASSERT_EQUAL(us.result, us.expected, "not expected result value");
 
-  oos::set(*item, "val_unsigned_int", ui.expected);
-  oos::get(*item, "val_unsigned_int", ui.result);
+  matador::set(*item, "val_unsigned_int", ui.expected);
+  matador::get(*item, "val_unsigned_int", ui.result);
   UNIT_ASSERT_EQUAL(ui.result, ui.expected, "not expected result value");
 
-  oos::set(*item, "val_unsigned_long", ul.expected);
-  oos::get(*item, "val_unsigned_long", ul.result);
+  matador::set(*item, "val_unsigned_long", ul.expected);
+  matador::get(*item, "val_unsigned_long", ul.result);
   UNIT_ASSERT_EQUAL(ul.result, ul.expected, "not expected result value");
 
-  oos::set(*item, "val_bool", b.expected);
-  oos::get(*item, "val_bool", b.result);
+  matador::set(*item, "val_bool", b.expected);
+  matador::get(*item, "val_bool", b.result);
   UNIT_ASSERT_EQUAL(b.result, b.expected, "not expected result value");
 
-  oos::set(*item, "val_cstr", cstr.expected);
-  oos::get(*item, "val_cstr", cstr.result, cstr.size);
+  matador::set(*item, "val_cstr", cstr.expected);
+  matador::get(*item, "val_cstr", cstr.result, cstr.size);
   UNIT_ASSERT_EQUAL(cstr.result, cstr.expected, "not expected result value");
 
-  oos::set(*item, "val_string", str.expected);
-  oos::get(*item, "val_string", str.result);
+  matador::set(*item, "val_string", str.expected);
+  matador::get(*item, "val_string", str.result);
   UNIT_ASSERT_EQUAL(str.result, str.expected, "not expected result value");
 
-  oos::set(*item, "val_varchar", varstr.expected);
-  oos::get(*item, "val_varchar", varstr.result);
+  matador::set(*item, "val_varchar", varstr.expected);
+  matador::get(*item, "val_varchar", varstr.result);
   UNIT_ASSERT_EQUAL(varstr.result, varstr.expected, "not expected result value");
 
-  oos::set(*item, "val_float", f.expected);
-  oos::get(*item, "val_float", f.result);
+  matador::set(*item, "val_float", f.expected);
+  matador::get(*item, "val_float", f.result);
   UNIT_ASSERT_EQUAL(f.result, f.expected, "not expected result value");
   /* get float value into string
    * with precision 2
    */
-  oos::get(*item, "val_float", f.str_result, 2);
+  matador::get(*item, "val_float", f.str_result, 2);
   UNIT_ASSERT_EQUAL(f.str_result, "1.55", "float string is invalid");
 
-  oos::set(*item, "val_double", d.expected);
-  oos::get(*item, "val_double", d.result);
+  matador::set(*item, "val_double", d.expected);
+  matador::get(*item, "val_double", d.result);
   UNIT_ASSERT_EQUAL(d.result, d.expected, "not expected result value");
   /* get double value into string
    * with precision 3
    */
-  oos::get(*item, "val_double", d.str_result, 3);
+  matador::get(*item, "val_double", d.str_result, 3);
   UNIT_ASSERT_EQUAL(d.str_result, "123.558", "double string is invalid");
 
-  oos::get(*item, "val_int", str.result);
+  matador::get(*item, "val_int", str.result);
   UNIT_ASSERT_EQUAL(str.result, "-98765", "float string is invalid");
 
-  oos::set(*item, "val_date", dateval.expected);
-  oos::get(*item, "val_date", dateval.result);
+  matador::set(*item, "val_date", dateval.expected);
+  matador::get(*item, "val_date", dateval.result);
   UNIT_ASSERT_EQUAL(dateval.result, dateval.expected, "not expected result value");
 
-  oos::set(*item, "val_time", timeval.expected);
-  oos::get(*item, "val_time", timeval.result);
+  matador::set(*item, "val_time", timeval.expected);
+  matador::get(*item, "val_time", timeval.result);
   UNIT_ASSERT_EQUAL(timeval.result, timeval.expected, "not expected result value");
 
   master m1("master 1");
@@ -840,29 +840,29 @@ void ObjectStoreTestUnit::test_generic()
   object_ptr<child> c1(new child("child 1"));
   object_ptr<child> child_result;
 
-  oos::set(m1, "child", c1);
-  oos::get(m1, "child", child_result);
+  matador::set(m1, "child", c1);
+  matador::get(m1, "child", child_result);
   UNIT_ASSERT_EQUAL(c1->name, child_result->name, "not expected result value");
 
-  oos::set(m1, "child", object_ptr<child>());
-  oos::get(m1, "child", child_result);
+  matador::set(m1, "child", object_ptr<child>());
+  matador::get(m1, "child", child_result);
   UNIT_ASSERT_TRUE(child_result.get() == nullptr, "not expected result value");
 
   children_vector cv("children vector");
 
   UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
-  oos::append(cv, "children", c1);
+  matador::append(cv, "children", c1);
   UNIT_ASSERT_FALSE(cv.children.empty(), "vector must not be empty");
-  oos::remove(cv, "children", c1);
+  matador::remove(cv, "children", c1);
   UNIT_ASSERT_TRUE(cv.children.empty(), "vector must be empty");
-  // Todo: oos::remove, oos::begin, oos::end, oos::size, oos::empty for generic access has_many
+  // Todo: matador::remove, matador::begin, matador::end, matador::size, matador::empty for generic access has_many
   // see: https://tartanllama.github.io/c++/2017/01/03/deduction-on-the-left/ for begin and end
 //
-//  auto i = oos::begin(cv, "children");
-//  auto i = oos::end(cv, "children");
+//  auto i = matador::begin(cv, "children");
+//  auto i = matador::end(cv, "children");
 //
-//  auto size = oos::size(cv, "children");
-//  bool is_empty = oos::empty(cv, "children");
+//  auto size = matador::size(cv, "children");
+//  bool is_empty = matador::empty(cv, "children");
 }
 
 void ObjectStoreTestUnit::test_structure()
@@ -901,7 +901,7 @@ public:
     w.serialize("name", name);
     w.serialize("cycler", cycler, cascade_type::NONE);
   }
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   std::string name;
   has_one<cyclic> cycler;
 };

@@ -6,9 +6,9 @@
 #define OOS_SQLITEDIALECTTESTUNIT_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class SQLiteDialectTestUnit : public oos::unit_test
+class SQLiteDialectTestUnit : public matador::unit_test
 {
 public:
   SQLiteDialectTestUnit();

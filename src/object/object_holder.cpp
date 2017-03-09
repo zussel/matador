@@ -2,12 +2,12 @@
 // Created by sascha on 12/10/15.
 //
 
-#include "oos/object/object_holder.hpp"
-#include "oos/object/object_proxy.hpp"
-#include "oos/object/object_store.hpp"
-#include "oos/object/object_exception.hpp"
+#include "matador/object/object_holder.hpp"
+#include "matador/object/object_proxy.hpp"
+#include "matador/object/object_store.hpp"
+#include "matador/object/object_exception.hpp"
 
-namespace oos {
+namespace matador {
 
 object_holder::object_holder(object_holder_type holder_type)
   : type_(holder_type)

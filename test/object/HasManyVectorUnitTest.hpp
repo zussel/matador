@@ -6,17 +6,17 @@
 #define OOS_HASMANYUNITTEST_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-#include "oos/utils/identifier.hpp"
-#include "oos/object/has_many.hpp"
+#include "matador/utils/identifier.hpp"
+#include "matador/object/has_many.hpp"
 
 namespace hasmanyvector {
 
 class item
 {
 public:
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   std::string name;
 
   item() {}
@@ -33,8 +33,8 @@ public:
 class owner
 {
 public:
-  typedef oos::has_many<item> item_vector_t;
-  oos::identifier<unsigned long> id;
+  typedef matador::has_many<item> item_vector_t;
+  matador::identifier<unsigned long> id;
   std::string name;
   item_vector_t items;
 
@@ -53,9 +53,9 @@ public:
 class many_ints
 {
 public:
-  typedef oos::has_many<int> int_vector_t;
+  typedef matador::has_many<int> int_vector_t;
 public:
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   int_vector_t ints;
 
   template < class S >
@@ -68,7 +68,7 @@ public:
 
 }
 
-class HasManyVectorUnitTest : public oos::unit_test
+class HasManyVectorUnitTest : public matador::unit_test
 {
 public:
   HasManyVectorUnitTest();

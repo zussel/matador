@@ -6,9 +6,9 @@
 
 #include "../Item.hpp"
 
-#include "oos/object/object_store.hpp"
-#include "oos/object/transaction.hpp"
-#include "oos/object/object_view.hpp"
+#include "matador/object/object_store.hpp"
+#include "matador/object/transaction.hpp"
+#include "matador/object/object_view.hpp"
 
 ObjectTransactiontestUnit::ObjectTransactiontestUnit()
   : unit_test("transaction", "transaction unit test")
@@ -28,15 +28,15 @@ ObjectTransactiontestUnit::ObjectTransactiontestUnit()
 
 void ObjectTransactiontestUnit::test_insert()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
 
-    auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+    auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
@@ -45,7 +45,7 @@ void ObjectTransactiontestUnit::test_insert()
     tr.rollback();
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   auto p = pview.front();
 
@@ -55,15 +55,15 @@ void ObjectTransactiontestUnit::test_insert()
 
 void ObjectTransactiontestUnit::test_insert_rollback()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
 
-    auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+    auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
@@ -72,19 +72,19 @@ void ObjectTransactiontestUnit::test_insert_rollback()
     UNIT_FAIL("shouldn't come here");
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   UNIT_ASSERT_TRUE(pview.empty(), "view must be empty");
 }
 
 void ObjectTransactiontestUnit::test_update()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+  auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
@@ -103,20 +103,20 @@ void ObjectTransactiontestUnit::test_update()
   UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
   UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   UNIT_ASSERT_FALSE(pview.empty(), "view must not be empty");
 }
 
 void ObjectTransactiontestUnit::test_update_rollback()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+  auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
   hans->id(7UL);
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
@@ -135,21 +135,21 @@ void ObjectTransactiontestUnit::test_update_rollback()
   UNIT_ASSERT_EQUAL(hans->height(), 180U, "height must be valid");
   UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   UNIT_ASSERT_FALSE(pview.empty(), "view must not be empty");
 }
 
 void ObjectTransactiontestUnit::test_delete()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+  auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
   UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
@@ -161,7 +161,7 @@ void ObjectTransactiontestUnit::test_delete()
     tr.rollback();
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   auto p = pview.front();
 
@@ -171,14 +171,14 @@ void ObjectTransactiontestUnit::test_delete()
 
 void ObjectTransactiontestUnit::test_delete_rollback()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+  auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
   UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
@@ -190,7 +190,7 @@ void ObjectTransactiontestUnit::test_delete_rollback()
     tr.rollback();
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   auto p = pview.front();
   UNIT_ASSERT_EQUAL(pview.size(), 1UL, "size must be one");
@@ -203,15 +203,15 @@ void ObjectTransactiontestUnit::test_delete_rollback()
 
 void ObjectTransactiontestUnit::test_nested()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  oos::transaction tr1(store);
+  matador::transaction tr1(store);
 
   try {
     tr1.begin();
 
-    auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+    auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
@@ -223,7 +223,7 @@ void ObjectTransactiontestUnit::test_nested()
     hans->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
 
-    oos::transaction tr2(store);
+    matador::transaction tr2(store);
 
     try {
       tr2.begin();
@@ -242,7 +242,7 @@ void ObjectTransactiontestUnit::test_nested()
     tr1.rollback();
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   auto p = pview.front();
 
@@ -252,15 +252,15 @@ void ObjectTransactiontestUnit::test_nested()
 
 void ObjectTransactiontestUnit::test_nested_rollback()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
-  oos::transaction tr1(store);
+  matador::transaction tr1(store);
 
   try {
     tr1.begin();
 
-    auto hans = store.insert(new person("Hans", oos::date(12, 3, 1980), 180));
+    auto hans = store.insert(new person("Hans", matador::date(12, 3, 1980), 180));
 
     UNIT_ASSERT_GREATER(hans->id(), 0UL, "id must be valid");
 
@@ -272,7 +272,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
     hans->height(183);
     UNIT_ASSERT_EQUAL(hans->height(), 183U, "height must be valid");
 
-    oos::transaction tr2(store);
+    matador::transaction tr2(store);
 
     try {
       tr2.begin();
@@ -294,7 +294,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
     tr1.rollback();
   }
 
-  oos::object_view<person> pview(store);
+  matador::object_view<person> pview(store);
 
   auto p = pview.front();
 
@@ -304,7 +304,7 @@ void ObjectTransactiontestUnit::test_nested_rollback()
 
 void ObjectTransactiontestUnit::test_foreign()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<child>("child");
   store.attach<master>("master");
 
@@ -312,12 +312,12 @@ void ObjectTransactiontestUnit::test_foreign()
   auto m1 = store.insert(new master("m1"));
   m1->children = ch1;
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
   try {
     tr.begin();
 
-    oos::object_view<master> mview(store);
+    matador::object_view<master> mview(store);
 
     m1 = mview.front();
 
@@ -339,7 +339,7 @@ void ObjectTransactiontestUnit::test_foreign()
 
 void ObjectTransactiontestUnit::test_foreign_rollback()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<child>("child");
   store.attach<master>("master");
 
@@ -347,9 +347,9 @@ void ObjectTransactiontestUnit::test_foreign_rollback()
   auto m1 = store.insert(new master("m1"));
   m1->children = ch1;
 
-  oos::transaction tr(store);
+  matador::transaction tr(store);
 
-  oos::object_view<master> mview(store);
+  matador::object_view<master> mview(store);
 
   m1 = mview.front();
 

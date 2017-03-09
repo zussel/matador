@@ -1,10 +1,10 @@
 #include "VarCharTestUnit.hpp"
 
-#include "oos/utils/varchar.hpp"
+#include "matador/utils/varchar.hpp"
 
 #include <iostream>
 
-using oos::varchar;
+using matador::varchar;
 using std::cout;
 using std::endl;
 

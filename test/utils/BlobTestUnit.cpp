@@ -1,10 +1,10 @@
 #include "BlobTestUnit.hpp"
 
-#include "oos/utils/blob.hpp"
+#include "matador/utils/blob.hpp"
 
 #include <iostream>
 
-using namespace oos;
+using namespace matador;
 
 using std::cout;
 

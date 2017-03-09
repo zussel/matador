@@ -2,11 +2,11 @@
 // Created by sascha on 12.03.16.
 //
 
-#include "oos/object/delete_action.hpp"
-#include "oos/object/action_visitor.hpp"
-#include "oos/object/object_store.hpp"
+#include "matador/object/delete_action.hpp"
+#include "matador/object/action_visitor.hpp"
+#include "matador/object/object_store.hpp"
 
-namespace oos {
+namespace matador {
 
 delete_action::~delete_action()
 {

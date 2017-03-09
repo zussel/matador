@@ -1,9 +1,9 @@
-#include "oos/sql/connection_factory.hpp"
-#include "oos/sql/connection.hpp"
-#include "oos/sql/column.hpp"
-#include "oos/sql/value.hpp"
+#include "matador/sql/connection_factory.hpp"
+#include "matador/sql/connection.hpp"
+#include "matador/sql/column.hpp"
+#include "matador/sql/value.hpp"
 
-namespace oos {
+namespace matador {
 
 connection::connection() {}
 
@@ -151,9 +151,9 @@ void connection::prepare_prototype_row(row &prototype, const std::string &tablen
 //    prototype.set(f.name(), std::make_shared<null_value>());
   }
   // default value for count(*)
-  if (prototype.has_column(oos::columns::count_all().name)) {
+  if (prototype.has_column(matador::columns::count_all().name)) {
     std::shared_ptr<detail::basic_value> value(create_default_value(data_type::type_int));
-    prototype.set(oos::columns::count_all().name, value);
+    prototype.set(matador::columns::count_all().name, value);
   }
 }
 
@@ -185,9 +185,9 @@ detail::basic_value* create_default_value(data_type type)
     case data_type::type_text:
       return make_value<std::string>("");
     case data_type::type_date:
-      return make_value<oos::date>(date());
+      return make_value<matador::date>(date());
     case data_type::type_time:
-      return make_value<oos::time>(oos::time());
+      return make_value<matador::time>(matador::time());
     case data_type::type_varchar:
       return make_value<std::string>("");
     default:

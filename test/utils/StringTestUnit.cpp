@@ -4,7 +4,7 @@
 
 #include "StringTestUnit.hpp"
 
-#include "oos/utils/string.hpp"
+#include "matador/utils/string.hpp"
 
 StringTestUnit::StringTestUnit()
   : unit_test("string", "string test unit")
@@ -19,7 +19,7 @@ void StringTestUnit::test_split()
 
   std::vector<std::string> strvec;
 
-  size_t count = oos::split(str, ',', strvec);
+  size_t count = matador::split(str, ',', strvec);
 
   UNIT_ASSERT_EQUAL(count, (size_t)5, "expected count must be 5");
   UNIT_ASSERT_EQUAL(strvec.size(), (size_t)5, "expected vector size must be 5");
@@ -29,11 +29,11 @@ void StringTestUnit::test_trim()
 {
   std::string str("   middle     ");
 
-  std::string result = oos::trim(str);
+  std::string result = matador::trim(str);
 
   UNIT_ASSERT_EQUAL(result, "middle", "expect string must be 'middle'");
 
-  result = oos::trim(str, "-");
+  result = matador::trim(str, "-");
 
   UNIT_ASSERT_EQUAL(result, str, "expect string must be '" + str + "'");
 }

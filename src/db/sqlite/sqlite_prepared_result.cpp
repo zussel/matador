@@ -1,16 +1,16 @@
-#include "oos/db/sqlite/sqlite_prepared_result.hpp"
+#include "matador/db/sqlite/sqlite_prepared_result.hpp"
 
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/string.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/string.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
 #include <cstring>
 
 #include <sqlite3.h>
 
-namespace oos {
+namespace matador {
 
 namespace sqlite {
 
@@ -157,18 +157,18 @@ void sqlite_prepared_result::serialize(const char *, char *x, size_t s)
   }
 }
 
-void sqlite_prepared_result::serialize(const char *id, oos::date &x)
+void sqlite_prepared_result::serialize(const char *id, matador::date &x)
 {
   std::string val;
   serialize(id, val);
-  x = oos::date::parse(val, date_format::ISO8601);
+  x = matador::date::parse(val, date_format::ISO8601);
 }
 
-void sqlite_prepared_result::serialize(const char *id, oos::time &x)
+void sqlite_prepared_result::serialize(const char *id, matador::time &x)
 {
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%Y-%m-%dT%T.%f");
+  x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
 }
 
 void sqlite_prepared_result::serialize(const char *id, identifiable_holder &x, cascade_type)

@@ -18,20 +18,20 @@
 #ifndef DATABASE_TEST_UNIT_HPP
 #define DATABASE_TEST_UNIT_HPP
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
-#include "oos/utils/time.hpp"
+#include "matador/utils/time.hpp"
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-namespace oos {
+namespace matador {
 class session;
 }
 
-class DatabaseTestUnit : public oos::unit_test
+class DatabaseTestUnit : public matador::unit_test
 {
 public:
-  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const oos::time &timeval = oos::time(2015, 3, 15, 13, 56, 23, 123));
+  DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const matador::time &timeval = matador::time(2015, 3, 15, 13, 56, 23, 123));
   virtual ~DatabaseTestUnit();
 
   virtual void initialize();
@@ -48,18 +48,18 @@ public:
   void test_reload_relation();
 
 protected:
-  oos::session* create_session();
+  matador::session* create_session();
 
-  oos::object_store& ostore();
-  const oos::object_store& ostore() const;
+  matador::object_store& ostore();
+  const matador::object_store& ostore() const;
 
   std::string db() const;
 
 private:
-  oos::object_store ostore_;
+  matador::object_store ostore_;
   std::string db_;
-  oos::session *session_;
-  oos::time time_val_;
+  matador::session *session_;
+  matador::time time_val_;
 };
 
 #endif /* DATABASE_TEST_UNIT_HPP */

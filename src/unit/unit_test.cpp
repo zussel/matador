@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -24,7 +24,7 @@
 
 using namespace std::chrono;
 
-namespace oos {
+namespace matador {
 
 unit_test::unit_test(const std::string &name, const std::string &caption)
  : name_(name)

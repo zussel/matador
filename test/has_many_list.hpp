@@ -5,16 +5,16 @@
 #ifndef OOS_HAS_MANY_LIST_HPP
 #define OOS_HAS_MANY_LIST_HPP
 
-#include "oos/utils/identifier.hpp"
+#include "matador/utils/identifier.hpp"
 
-#include "oos/object/has_many.hpp"
+#include "matador/object/has_many.hpp"
 
 namespace hasmanylist {
 
 class item
 {
 public:
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   std::string name;
 
   item() {}
@@ -31,8 +31,8 @@ public:
 class owner
 {
 public:
-  typedef oos::has_many<item, std::list> item_list_t;
-  oos::identifier<unsigned long> id;
+  typedef matador::has_many<item, std::list> item_list_t;
+  matador::identifier<unsigned long> id;
   std::string name;
   item_list_t items;
 
@@ -51,10 +51,10 @@ public:
 class many_ints
 {
 public:
-  typedef oos::has_many<int, std::list> int_list_t;
+  typedef matador::has_many<int, std::list> int_list_t;
 
 public:
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   int_list_t ints;
 
   template < class S >

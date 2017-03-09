@@ -1,9 +1,9 @@
 #ifndef OBJECT_PROTOTYPE_TESTUNIT_HPP
 #define OBJECT_PROTOTYPE_TESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class ObjectPrototypeTestUnit : public oos::unit_test
+class ObjectPrototypeTestUnit : public matador::unit_test
 {
 public:
   ObjectPrototypeTestUnit();

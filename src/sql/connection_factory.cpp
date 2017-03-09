@@ -15,12 +15,12 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/sql/connection_factory.hpp"
-#include "oos/sql/memory_connection.hpp"
+#include "matador/sql/connection_factory.hpp"
+#include "matador/sql/memory_connection.hpp"
 
 #include <cstdint>
 
-namespace oos {
+namespace matador {
 
 connection_factory::connection_factory()
 {
@@ -66,9 +66,9 @@ void connection_factory::connection_producer::destroy(connection_impl* val) cons
 
 connection_factory::dynamic_connection_producer::dynamic_connection_producer(const std::string &name)
 {
-  // load oos driver library
+  // load matador driver library
   // create instance
-  if (!loader_.load(("oos-"+name).c_str())) {
+  if (!loader_.load(("matador-"+name).c_str())) {
     throw std::runtime_error("couldn't fínd library [" + name + "]");
   }
   // get create function

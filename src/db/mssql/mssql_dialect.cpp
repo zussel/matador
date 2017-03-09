@@ -2,14 +2,14 @@
 // Created by sascha on 3/9/16.
 //
 
-#include "oos/db/mssql/mssql_dialect.hpp"
-#include "oos/db/mssql/mssql_dialect_compiler.hpp"
-#include "oos/db/mssql/mssql_dialect_linker.hpp"
+#include "matador/db/mssql/mssql_dialect.hpp"
+#include "matador/db/mssql/mssql_dialect_compiler.hpp"
+#include "matador/db/mssql/mssql_dialect_linker.hpp"
 
 #include <algorithm>
 #include <cstring>
 
-namespace oos {
+namespace matador {
 
 namespace mssql {
 
@@ -24,7 +24,7 @@ mssql_dialect::mssql_dialect()
   replace_token(detail::token::END_QUOTE, "]");
 }
 
-const char* mssql_dialect::type_string(oos::data_type type) const
+const char* mssql_dialect::type_string(matador::data_type type) const
 {
   switch(type) {
     case data_type::type_char:

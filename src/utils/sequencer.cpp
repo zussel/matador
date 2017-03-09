@@ -15,9 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/sequencer.hpp"
+#include "matador/utils/sequencer.hpp"
 
-namespace oos {
+namespace matador {
 
 default_sequencer::default_sequencer()
   : number_(0)

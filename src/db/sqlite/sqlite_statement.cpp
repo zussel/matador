@@ -15,24 +15,24 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/sqlite/sqlite_statement.hpp"
-#include "oos/db/sqlite/sqlite_connection.hpp"
-#include "oos/db/sqlite/sqlite_exception.hpp"
-#include "oos/db/sqlite/sqlite_prepared_result.hpp"
+#include "matador/db/sqlite/sqlite_statement.hpp"
+#include "matador/db/sqlite/sqlite_connection.hpp"
+#include "matador/db/sqlite/sqlite_exception.hpp"
+#include "matador/db/sqlite/sqlite_prepared_result.hpp"
 
-#include "oos/sql/row.hpp"
+#include "matador/sql/row.hpp"
 
-#include "oos/utils/string.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/string.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
 #include <cstring>
 
 #include <sqlite3.h>
 
-namespace oos {
+namespace matador {
 
 namespace sqlite {
 
@@ -175,19 +175,19 @@ void sqlite_statement::serialize(const char*, varchar_base &x)
   throw_error(ret, db_.handle(), "sqlite3_bind_text");
 }
 
-void sqlite_statement::serialize(const char *id, oos::date &x)
+void sqlite_statement::serialize(const char *id, matador::date &x)
 {
-  auto date_string = std::make_shared<std::string>(oos::to_string(x, date_format::ISO8601));
+  auto date_string = std::make_shared<std::string>(matador::to_string(x, date_format::ISO8601));
   serialize(id, *date_string);
   host_strings_.push_back(date_string);
 //  int ret = sqlite3_bind_int(stmt_, (int)++host_index, x.julian_date());
 //  throw_error(ret, db_.handle(), "sqlite3_bind_int");
 }
 
-void sqlite_statement::serialize(const char *id, oos::time &x)
+void sqlite_statement::serialize(const char *id, matador::time &x)
 {
   // format time to ISO8601
-  auto time_string = std::make_shared<std::string>(oos::to_string(x, "%Y-%m-%dT%T.%f"));
+  auto time_string = std::make_shared<std::string>(matador::to_string(x, "%Y-%m-%dT%T.%f"));
   serialize(id, *time_string);
   host_strings_.push_back(time_string);
 }

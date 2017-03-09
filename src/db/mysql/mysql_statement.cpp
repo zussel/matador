@@ -15,25 +15,25 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mysql/mysql_statement.hpp"
-#include "oos/db/mysql/mysql_connection.hpp"
-#include "oos/db/mysql/mysql_exception.hpp"
-#include "oos/db/mysql/mysql_prepared_result.hpp"
+#include "matador/db/mysql/mysql_statement.hpp"
+#include "matador/db/mysql/mysql_connection.hpp"
+#include "matador/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_prepared_result.hpp"
 
-#include "oos/utils/string.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/identifiable_holder.hpp"
+#include "matador/utils/string.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/identifiable_holder.hpp"
 
-#include "oos/sql/sql.hpp"
+#include "matador/sql/sql.hpp"
 
 #include <cstring>
 
-namespace oos {
+namespace matador {
 
 namespace mysql {
 
-mysql_statement::mysql_statement(mysql_connection &db, const oos::sql &stmt)
+mysql_statement::mysql_statement(mysql_connection &db, const matador::sql &stmt)
   : result_size(0)
   , host_size(0)
   , stmt_(mysql_stmt_init(db.handle()))
@@ -182,13 +182,13 @@ void mysql_statement::serialize(const char *, std::string &x)
   ++host_index;
 }
 
-void mysql_statement::serialize(const char *, oos::date &x)
+void mysql_statement::serialize(const char *, matador::date &x)
 {
   bind_value(host_index, MYSQL_TYPE_DATE, x);
   ++host_index;
 }
 
-void mysql_statement::serialize(const char *, oos::time &x)
+void mysql_statement::serialize(const char *, matador::time &x)
 {
 #if MYSQL_VERSION_ID < 50604
   // before mysql version 5.6.4 datetime
@@ -251,7 +251,7 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types, unsigned c
   bind.is_null = &is_null_vector[index];
 }
 
-void mysql_statement::bind_value(std::size_t index, enum_field_types type, const oos::date &x)
+void mysql_statement::bind_value(std::size_t index, enum_field_types type, const matador::date &x)
 {
 //  std::cout << "binding [" << x << "] (index: " << index << ")\n";
   MYSQL_BIND &bind = host_array[index];
@@ -272,7 +272,7 @@ void mysql_statement::bind_value(std::size_t index, enum_field_types type, const
   mt->time_type  = MYSQL_TIMESTAMP_DATE;
 }
 
-void mysql_statement::bind_value(std::size_t index, enum_field_types type, const oos::time &x)
+void mysql_statement::bind_value(std::size_t index, enum_field_types type, const matador::time &x)
 {
   MYSQL_BIND &bind = host_array[index];
   if (bind.buffer == nullptr) {

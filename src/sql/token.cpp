@@ -2,9 +2,9 @@
 // Created by sascha on 2/26/16.
 //
 
-#include "oos/sql/token.hpp"
+#include "matador/sql/token.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 token::token(t_token tok)

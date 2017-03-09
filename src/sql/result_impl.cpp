@@ -2,12 +2,12 @@
 // Created by sascha on 08.04.15.
 //
 
-#include "oos/sql/result_impl.hpp"
+#include "matador/sql/result_impl.hpp"
 
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 result_impl::result_impl() {}

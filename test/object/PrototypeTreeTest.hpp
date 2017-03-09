@@ -1,9 +1,9 @@
 #ifndef PROTOTYPE_TREE_TESTUNIT_HPP
 #define PROTOTYPE_TREE_TESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class PrototypeTreeTestUnit : public oos::unit_test
+class PrototypeTreeTestUnit : public matador::unit_test
 {
 public:
   PrototypeTreeTestUnit();

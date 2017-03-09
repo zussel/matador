@@ -6,11 +6,11 @@
 
 #include "../Item.hpp"
 
-#include "oos/sql/query.hpp"
+#include "matador/sql/query.hpp"
 
-using namespace oos;
+using namespace matador;
 
-QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db, const oos::time &timeval)
+QueryTestUnit::QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db, const matador::time &timeval)
   : unit_test(name, msg)
   , db_(db)
   , time_val_(timeval)
@@ -73,10 +73,10 @@ void QueryTestUnit::test_datatypes()
   unsigned long ulval = 765432182;
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
-  oos::varchar<32> vval("hallo welt");
+  matador::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-  oos::date date_val(15, 3, 2015);
-  oos::time time_val(time_val_);
+  matador::date date_val(15, 3, 2015);
+  matador::time time_val(time_val_);
   Item item;
 
   // set values
@@ -128,9 +128,9 @@ void QueryTestUnit::test_query_value_creator()
 {
   connection_.open();
 
-  oos::detail::query_value_creator qvc;
+  matador::detail::query_value_creator qvc;
 
-  oos::any ac = 'c';
+  matador::any ac = 'c';
 
   auto val = qvc.create_from_any(ac);
 
@@ -147,7 +147,7 @@ void QueryTestUnit::test_quoted_identifier()
 
   // check table description
   std::vector<std::string> columns = { "from", "to"};
-  std::vector<data_type > types = { oos::data_type::type_text, oos::data_type::type_text};
+  std::vector<data_type > types = { matador::data_type::type_text, matador::data_type::type_text};
   auto fields = connection_.describe("quotes");
 
   for (auto &&field : fields) {
@@ -201,7 +201,7 @@ void QueryTestUnit::test_columns_with_quotes_in_name()
 
     // check table description
     std::vector<std::string> columns({ colname });
-    std::vector<data_type > types({ oos::data_type::type_text });
+    std::vector<data_type > types({ matador::data_type::type_text });
     auto fields = connection_.describe("quotes");
 
     for (auto &&field : fields) {
@@ -258,18 +258,18 @@ void QueryTestUnit::test_quoted_literals()
 
 void QueryTestUnit::test_bind_tablename()
 {
-  oos::query<person>::clear_bound_tables();
+  matador::query<person>::clear_bound_tables();
 
-  oos::query<person> q0; // tablename should be person
+  matador::query<person> q0; // tablename should be person
 
   UNIT_ASSERT_TRUE(q0.tablename().empty(), "name must be empty");
-  oos::query<person>::bind_table("person");
+  matador::query<person>::bind_table("person");
 
-  oos::query<person> q1; // tablename should be person
+  matador::query<person> q1; // tablename should be person
 
   UNIT_ASSERT_EQUAL(q1.tablename(), "person", "names must be equal");
 
-  oos::query<person> q2("student"); // tablename should be student
+  matador::query<person> q2("student"); // tablename should be student
 
   UNIT_ASSERT_EQUAL(q2.tablename(), "student", "names must be equal");
 }
@@ -278,14 +278,14 @@ void QueryTestUnit::test_describe()
 {
   connection_.open();
 
-  oos::query<person> q("person");
+  matador::query<person> q("person");
 
   q.create().execute(connection_);
 
   auto fields = connection_.describe("person");
 
   std::vector<std::string> columns = { "id", "name", "birthdate", "height"};
-  std::vector<data_type > types = { oos::data_type::type_long, oos::data_type::type_varchar, oos::data_type::type_date, oos::data_type::type_long};
+  std::vector<data_type > types = { matador::data_type::type_long, matador::data_type::type_varchar, matador::data_type::type_date, matador::data_type::type_long};
 
   for (auto &&field : fields) {
     UNIT_ASSERT_EQUAL(field.name(), columns[field.index()], "invalid column name");
@@ -313,7 +313,7 @@ public:
     s.serialize("name", name);
   }
 
-  oos::identifier<unsigned long> id;
+  matador::identifier<unsigned long> id;
   std::string name;
 };
 
@@ -321,7 +321,7 @@ void QueryTestUnit::test_identifier()
 {
   connection_.open();
 
-  oos::query<pktest> q("pktest");
+  matador::query<pktest> q("pktest");
 
   q.create().execute(connection_);
 
@@ -389,7 +389,7 @@ void QueryTestUnit::test_update()
 
   unsigned long id(0);
   for (std::string name : names) {
-    person p(name, oos::date(12, 3, 1980), 180);
+    person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
     q.insert(p).execute();
   }
@@ -405,12 +405,12 @@ void QueryTestUnit::test_update()
 
     UNIT_ASSERT_EQUAL(item->name(), "hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
     ++first;
   }
 
-  person hans("hans", oos::date(15, 6, 1990), 165);
+  person hans("hans", matador::date(15, 6, 1990), 165);
   hans.id(1);
   column idcol("id");
   q.update(hans).where(idcol == 1).execute();
@@ -420,7 +420,7 @@ void QueryTestUnit::test_update()
   for (auto i : res) {
     UNIT_ASSERT_EQUAL(i->name(), "hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(i->height(), 165U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(i->birthdate(), oos::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(i->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
   }
 
   q.drop().execute();
@@ -529,7 +529,7 @@ void QueryTestUnit::test_statement_insert()
 
   result<Item> res(stmt.execute());
 
-  oos::identifier<unsigned long> id(23);
+  matador::identifier<unsigned long> id(23);
   auto itime = time_val_;
   Item hans("Hans", 4711);
   hans.id(id.value());
@@ -575,7 +575,7 @@ void QueryTestUnit::test_statement_update()
 
   unsigned long id(0);
   for (std::string name : names) {
-    person p(name, oos::date(12, 3, 1980), 180);
+    person p(name, matador::date(12, 3, 1980), 180);
     p.id(++id);
     stmt = q.insert(p).prepare();
     stmt.bind(0, &p);
@@ -584,7 +584,7 @@ void QueryTestUnit::test_statement_update()
 
   column name("name");
   stmt = q.select().where(name == "").prepare();
-  oos::varchar<255> hname("hans");
+  matador::varchar<255> hname("hans");
   stmt.bind(0, hname);
   res = stmt.execute();
 
@@ -598,14 +598,14 @@ void QueryTestUnit::test_statement_update()
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
     UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
     UNIT_ASSERT_EQUAL(p->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(p->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(p->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
     ++first;
   }
 
 //  auto id_cond = id_condition_builder::build<person>();
 
-  oos::column idcol("id");
-  person hans("hans", oos::date(15, 6, 1990), 165);
+  matador::column idcol("id");
+  person hans("hans", matador::date(15, 6, 1990), 165);
   hans.id(1);
 
   stmt = q.update(hans).where(idcol == 7).prepare();
@@ -630,7 +630,7 @@ void QueryTestUnit::test_statement_update()
     UNIT_EXPECT_EQUAL(p->id(), 1UL, "expected id must be 1");
     UNIT_ASSERT_EQUAL(p->name(), "hans", "expected name must be 'hans'");
     UNIT_ASSERT_EQUAL(p->height(), 165U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(p->birthdate(), oos::date(15, 6, 1990), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(p->birthdate(), matador::date(15, 6, 1990), "expected birthdate is 12.3.1980");
     ++first;
   }
 
@@ -649,7 +649,7 @@ void QueryTestUnit::test_delete()
   // create item table and insert item
   result<person> res(q.create().execute(connection_));
 
-  person hans("Hans", oos::date(12, 3, 1980), 180);
+  person hans("Hans", matador::date(12, 3, 1980), 180);
   hans.id(1);
   res = q.insert(hans).execute(connection_);
 
@@ -664,7 +664,7 @@ void QueryTestUnit::test_delete()
 
     UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
     ++first;
   }
@@ -690,7 +690,7 @@ void QueryTestUnit::test_foreign_query()
   result<Item> res(q.create().execute(connection_));
 
   auto itime = time_val_;
-  oos::identifier<unsigned long> id(23);
+  matador::identifier<unsigned long> id(23);
   Item *hans = new Item("Hans", 4711);
   hans->id(id.value());
   hans->set_time(itime);
@@ -733,7 +733,7 @@ void QueryTestUnit::test_query()
   // create item table and insert item
   result<person> res(q.create().execute(connection_));
 
-  person hans("Hans", oos::date(12, 3, 1980), 180);
+  person hans("Hans", matador::date(12, 3, 1980), 180);
   hans.id(1);
   res = q.insert(hans).execute(connection_);
 
@@ -748,7 +748,7 @@ void QueryTestUnit::test_query()
 
     UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
     ++first;
   }
@@ -771,16 +771,16 @@ void QueryTestUnit::test_query_range_loop()
 
   unsigned long counter = 0;
 
-  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
   res = q.insert(hans).execute(connection_);
 
-  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
   res = q.insert(otto).execute(connection_);
 
-  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
   res = q.insert(hilde).execute(connection_);
 
-  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
   res = q.insert(trude).execute(connection_);
 
   column name("name");
@@ -794,7 +794,7 @@ void QueryTestUnit::test_query_range_loop()
 
      UNIT_EXPECT_TRUE(contains(result_names, item->name()), "expected name '" + item->name() + "'not found");
 //    UNIT_ASSERT_EQUAL(item.height(), 180U, "expected height must be 180");
-//    UNIT_ASSERT_EQUAL(item.birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+//    UNIT_ASSERT_EQUAL(item.birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
   }
 
   UNIT_ASSERT_EQUAL(size, 2U, "result size must be two (2)");
@@ -818,16 +818,16 @@ void QueryTestUnit::test_query_select()
 
   unsigned long counter = 0;
 
-  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
   res = q.insert(hans).execute(connection_);
 
-  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
   res = q.insert(otto).execute(connection_);
 
-  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
   res = q.insert(hilde).execute(connection_);
 
-  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
   res = q.insert(trude).execute(connection_);
 
   res = q.select().execute(connection_);
@@ -855,7 +855,7 @@ void QueryTestUnit::test_query_select()
 
     UNIT_ASSERT_EQUAL(item->name(), "Hans", "expected name must be 'Hans'");
     UNIT_ASSERT_EQUAL(item->height(), 180U, "expected height must be 180");
-    UNIT_ASSERT_EQUAL(item->birthdate(), oos::date(12, 3, 1980), "expected birthdate is 12.3.1980");
+    UNIT_ASSERT_EQUAL(item->birthdate(), matador::date(12, 3, 1980), "expected birthdate is 12.3.1980");
 
     ++first;
   }
@@ -915,16 +915,16 @@ void QueryTestUnit::test_query_select_count()
 
   unsigned long counter = 0;
 
-  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
   res = q.insert(hans).execute(connection_);
 
-  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
   res = q.insert(otto).execute(connection_);
 
-  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
   res = q.insert(hilde).execute(connection_);
 
-  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
   res = q.insert(trude).execute(connection_);
 
   query<> count;
@@ -956,16 +956,16 @@ void QueryTestUnit::test_query_select_columns()
 
   unsigned long counter = 0;
 
-  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
   res = q.insert(hans).execute(connection_);
 
-  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
   res = q.insert(otto).execute(connection_);
 
-  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
   res = q.insert(hilde).execute(connection_);
 
-  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
   res = q.insert(trude).execute(connection_);
 
   column name("name");
@@ -1058,8 +1058,8 @@ void QueryTestUnit::test_update_limit()
   r1.reset(new relation(2UL, 3UL));
   res = q.insert(*r1).execute(connection_);
 
-  oos::column owner("owner_id");
-  oos::column item("item_id");
+  matador::column owner("owner_id");
+  matador::column item("item_id");
   relation::t_id newid(4UL);
   q.update({{item.name, newid}}).where(owner == 1 && item == 1).limit(1);
 
@@ -1111,8 +1111,8 @@ void QueryTestUnit::test_rows()
              make_typed_column<int>("int"),
              make_typed_column<float>("float"),
              make_typed_column<double>("double"),
-             make_typed_column<oos::date>("date"),
-             make_typed_column<oos::time>("time"),
+             make_typed_column<matador::date>("date"),
+             make_typed_column<matador::time>("time"),
            });
 
   q.execute();
@@ -1126,7 +1126,7 @@ void QueryTestUnit::test_rows()
 
   q
     .insert({"id", "string", "varchar", "int", "float", "double", "date", "time"})
-    .values({1, "long text", "good day", -17, 3.1415f, 2.71828, oos::date(), oos::time::now()})
+    .values({1, "long text", "good day", -17, 3.1415f, 2.71828, matador::date(), matador::time::now()})
     .execute();
 
   auto res = q.select({"id", "string", "varchar", "int", "float", "double"}).from("item").execute();

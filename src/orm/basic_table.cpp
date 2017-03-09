@@ -2,9 +2,9 @@
 // Created by sascha on 3/24/16.
 //
 
-#include "oos/orm/persistence.hpp"
+#include "matador/orm/persistence.hpp"
 
-namespace oos {
+namespace matador {
 
 basic_table::basic_table(prototype_node *node, persistence &p)
   : persistence_(p)

@@ -2,10 +2,10 @@
 // Created by sascha on 3/2/16.
 //
 
-#include "oos/sql/dialect_token.hpp"
-#include "oos/sql/token_visitor.hpp"
+#include "matador/sql/dialect_token.hpp"
+#include "matador/sql/token_visitor.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 

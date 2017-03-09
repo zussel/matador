@@ -18,15 +18,15 @@
 #ifndef TRANSACTION_TEST_UNIT_HPP
 #define TRANSACTION_TEST_UNIT_HPP
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-namespace oos {
+namespace matador {
 class session;
 }
 
-class TransactionTestUnit : public oos::unit_test
+class TransactionTestUnit : public matador::unit_test
 {
 public:
   TransactionTestUnit(const std::string &name, const std::string &msg, const std::string &dns = "memory");

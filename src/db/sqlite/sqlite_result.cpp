@@ -15,18 +15,18 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/basic_identifier.hpp"
-#include "oos/utils/string.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/string.hpp"
 
-#include "oos/db/sqlite/sqlite_result.hpp"
+#include "matador/db/sqlite/sqlite_result.hpp"
 
 #include <cstring>
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 namespace sqlite {
 
@@ -249,7 +249,7 @@ void sqlite_result::serialize(const char *, std::string &x)
 //  x.assign(val);
 }
 
-void sqlite_result::serialize(const char *, oos::date &x)
+void sqlite_result::serialize(const char *, matador::date &x)
 {
   t_row::value_type val = result_[pos_][column_++];
 //  std::string val;
@@ -257,12 +257,12 @@ void sqlite_result::serialize(const char *, oos::date &x)
   x.set(val, date_format::ISO8601);
 }
 
-void sqlite_result::serialize(const char *, oos::time &x)
+void sqlite_result::serialize(const char *, matador::time &x)
 {
   t_row::value_type val = result_[pos_][column_++];
 //  std::string val;
 //  serialize(id, val);
-  x = oos::time::parse(val, "%Y-%m-%dT%T.%f");
+  x = matador::time::parse(val, "%Y-%m-%dT%T.%f");
 }
 
 void sqlite_result::serialize(const char *id, identifiable_holder &x, cascade_type)

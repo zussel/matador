@@ -1,6 +1,6 @@
-#include "oos/utils/time.hpp"
-#include "oos/utils/string.hpp"
-#include "oos/utils/strptime.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/string.hpp"
+#include "matador/utils/strptime.hpp"
 
 #include <stdexcept>
 #include <cstring>
@@ -11,7 +11,7 @@
 #include <sys/time.h>
 #endif
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 
@@ -191,7 +191,7 @@ time time::parse(const std::string &tstr, const char *format)
   tv.tv_sec = mktime(&tm);
   tv.tv_usec = usec;
 #endif
-  return oos::time(tv);
+  return matador::time(tv);
 }
 
 void time::set(int year, int month, int day, int hour, int min, int sec, long millis)
@@ -357,7 +357,7 @@ struct tm time::get_tm() const
 
 date time::to_date() const
 {
-  return oos::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
+  return matador::date(tm_.tm_mday, tm_.tm_mon + 1,  tm_.tm_year + 1900);
 }
 
 std::ostream& operator<<(std::ostream &out, const time &x)

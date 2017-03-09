@@ -1,11 +1,11 @@
-#include "oos/utils/date.hpp"
-#include "oos/utils/calendar.h"
-#include "oos/utils/strptime.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/calendar.h"
+#include "matador/utils/strptime.hpp"
 
 #include <ctime>
 #include <stdexcept>
 
-namespace oos {
+namespace matador {
 
 const unsigned char date::month_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 

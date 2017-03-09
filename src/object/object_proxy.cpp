@@ -15,11 +15,11 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
 using namespace std;
 
-namespace oos {
+namespace matador {
 
 object_proxy::object_proxy() {}
 

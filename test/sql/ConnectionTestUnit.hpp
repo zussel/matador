@@ -18,15 +18,15 @@
 #ifndef SESSION_TEST_UNIT_HPP
 #define SESSION_TEST_UNIT_HPP
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-namespace oos {
+namespace matador {
 class session;
 }
 
-class ConnectionTestUnit : public oos::unit_test
+class ConnectionTestUnit : public matador::unit_test
 {
 public:
   ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns);

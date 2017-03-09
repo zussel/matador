@@ -1,13 +1,13 @@
 //
 // Created by sascha on 2/25/16.
 //
-#include "oos/sql/typed_column_serializer.hpp"
+#include "matador/sql/typed_column_serializer.hpp"
 
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
-#include "oos/utils/varchar.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/varchar.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 

@@ -1,12 +1,12 @@
 #include "DateTestUnit.hpp"
 
-#include "oos/utils/date.hpp"
-#include "oos/utils/string.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/string.hpp"
 
 #include <ctime>
 #include <stdexcept>
 
-using namespace oos;
+using namespace matador;
 
 using std::cout;
 
@@ -284,7 +284,7 @@ void DateTestUnit::test_to_string()
 {
   date d1(30, 6, 2015);
 
-  std::string str = oos::to_string(d1);
+  std::string str = matador::to_string(d1);
 
   UNIT_ASSERT_EQUAL(str, "2015-06-30", "result must be '2015-06-30'");
 }

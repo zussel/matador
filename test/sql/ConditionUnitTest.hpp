@@ -5,9 +5,9 @@
 #ifndef OOS_CONDITIONUNITTEST_HPP
 #define OOS_CONDITIONUNITTEST_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class ConditionUnitTest : public oos::unit_test
+class ConditionUnitTest : public matador::unit_test
 {
 public:
   ConditionUnitTest();

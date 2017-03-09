@@ -15,12 +15,12 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/sql/sql.hpp"
-#include "oos/sql/basic_dialect.hpp"
+#include "matador/sql/sql.hpp"
+#include "matador/sql/basic_dialect.hpp"
 
 #include <iostream>
 
-namespace oos {
+namespace matador {
 
 sql::sql()
   : command_type_(t_query_command::UNKNOWN)

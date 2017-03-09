@@ -1,8 +1,8 @@
-#include "oos/utils/varchar.hpp"
+#include "matador/utils/varchar.hpp"
 
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 varchar_base::varchar_base(size_type capacity)
   : capacity_(capacity)

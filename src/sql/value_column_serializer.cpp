@@ -2,11 +2,11 @@
 // Created by sascha on 03.04.16.
 //
 
-#include "oos/sql/value_column_serializer.hpp"
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/sql/value_column_serializer.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 value_column_serializer::value_column_serializer()

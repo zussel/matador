@@ -2,14 +2,14 @@
 // Created by sascha on 12.03.16.
 //
 
-#include "oos/object/insert_action.hpp"
-#include "oos/object/action_visitor.hpp"
-#include "oos/object/object_proxy.hpp"
-#include "oos/object/object_store.hpp"
+#include "matador/object/insert_action.hpp"
+#include "matador/object/action_visitor.hpp"
+#include "matador/object/object_proxy.hpp"
+#include "matador/object/object_store.hpp"
 
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 void insert_action::accept(action_visitor *av)
 {

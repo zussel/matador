@@ -1,11 +1,11 @@
 //
 // Created by sascha on 3/8/16.
 //
-#include "oos/db/mysql/mysql_dialect.hpp"
+#include "matador/db/mysql/mysql_dialect.hpp"
 
-#include "oos/sql/dialect_token.hpp"
-#include "oos/sql/basic_dialect_compiler.hpp"
-#include "oos/sql/basic_dialect_linker.hpp"
+#include "matador/sql/dialect_token.hpp"
+#include "matador/sql/basic_dialect_compiler.hpp"
+#include "matador/sql/basic_dialect_linker.hpp"
 
 #ifdef _MSC_VER
 //#include <winsock2.h>
@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 namespace mysql {
 
@@ -30,7 +30,7 @@ mysql_dialect::mysql_dialect()
   replace_token(detail::token::END_QUOTE, "`");
 }
 
-const char* mysql_dialect::type_string(oos::data_type type) const
+const char* mysql_dialect::type_string(matador::data_type type) const
 {
   switch(type) {
     case data_type::type_char:

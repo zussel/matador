@@ -1,11 +1,11 @@
-#include "oos/sql/query_value_column_processor.hpp"
+#include "matador/sql/query_value_column_processor.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 query_value_column_processor::query_value_column_processor(
   const std::shared_ptr<columns> &update_columns,
-  const std::vector<oos::any> &rowvalues
+  const std::vector<matador::any> &rowvalues
 )
   : update_columns_(update_columns)
   , rowvalues_(rowvalues)
@@ -21,15 +21,15 @@ query_value_column_processor::query_value_column_processor(
   visitor_.register_visitor<bool>([this](bool &val) { this->process(val); });
   visitor_.register_visitor<float>([this](float &val) { this->process(val); });
   visitor_.register_visitor<double>([this](double &val) { this->process(val); });
-  visitor_.register_visitor<oos::varchar_base>([this](oos::varchar_base &val) { this->process(val); });
+  visitor_.register_visitor<matador::varchar_base>([this](matador::varchar_base &val) { this->process(val); });
   visitor_.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   visitor_.register_visitor<char*>([this](char *val) { this->process(val); });
   visitor_.register_visitor<const char*>([this](const char *val) { this->process(val); });
-  visitor_.register_visitor<oos::time>([this](oos::time &val) { this->process(val); });
-  visitor_.register_visitor<oos::date>([this](oos::date &val) { this->process(val); });
+  visitor_.register_visitor<matador::time>([this](matador::time &val) { this->process(val); });
+  visitor_.register_visitor<matador::date>([this](matador::date &val) { this->process(val); });
 }
 
-void query_value_column_processor::execute(std::pair<std::string, oos::any> &a)
+void query_value_column_processor::execute(std::pair<std::string, matador::any> &a)
 {
   current_id_ = a.first;
   rowvalues_.push_back(a.second);

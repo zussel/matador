@@ -1,11 +1,11 @@
 //
 // Created by sascha on 3/2/16.
 //
-#include "oos/sql/value.hpp"
-#include "oos/sql/token_visitor.hpp"
-#include "oos/sql/basic_dialect.hpp"
+#include "matador/sql/value.hpp"
+#include "matador/sql/token_visitor.hpp"
+#include "matador/sql/basic_dialect.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 void basic_value::accept(token_visitor &visitor)

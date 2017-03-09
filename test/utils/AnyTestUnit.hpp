@@ -6,9 +6,9 @@
 #define OOS_ANYTESTUNIT_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class AnyTestUnit : public oos::unit_test
+class AnyTestUnit : public matador::unit_test
 {
 public:
   AnyTestUnit();

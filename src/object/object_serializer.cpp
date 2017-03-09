@@ -15,17 +15,17 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/varchar.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/varchar.hpp"
 
-#include "oos/object/object_serializer.hpp"
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_serializer.hpp"
+#include "matador/object/object_store.hpp"
 
 using namespace std::placeholders;
 using namespace std;
 
-namespace oos {
+namespace matador {
 
 object_serializer::~object_serializer()
 {}

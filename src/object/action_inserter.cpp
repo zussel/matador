@@ -2,11 +2,11 @@
 // Created by sascha on 11.03.16.
 //
 
-#include "oos/object/action_inserter.hpp"
-#include "oos/object/object_proxy.hpp"
-#include "oos/object/prototype_node.hpp"
+#include "matador/object/action_inserter.hpp"
+#include "matador/object/object_proxy.hpp"
+#include "matador/object/prototype_node.hpp"
 
-namespace oos {
+namespace matador {
 
 action_inserter::action_inserter(t_action_vactor &actions)
   : actions_(actions)

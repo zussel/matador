@@ -1,11 +1,11 @@
 #include "PrototypeTreeTest.hpp"
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 #include "../Item.hpp"
 
 #include <fstream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
 PrototypeTreeTestUnit::PrototypeTreeTestUnit()

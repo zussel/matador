@@ -15,19 +15,19 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mssql/mssql_connection.hpp"
-#include "oos/db/mssql/mssql_statement.hpp"
-#include "oos/db/mssql/mssql_result.hpp"
-#include "oos/db/mssql/mssql_types.hpp"
-#include "oos/db/mssql/mssql_exception.hpp"
+#include "matador/db/mssql/mssql_connection.hpp"
+#include "matador/db/mssql/mssql_statement.hpp"
+#include "matador/db/mssql/mssql_result.hpp"
+#include "matador/db/mssql/mssql_types.hpp"
+#include "matador/db/mssql/mssql_exception.hpp"
 
-#include "oos/utils/string.hpp"
+#include "matador/utils/string.hpp"
 
 #include <regex>
 
 using namespace std::placeholders;
 
-namespace oos {
+namespace matador {
   
 namespace mssql {
 
@@ -133,7 +133,7 @@ void mssql_connection::close()
   is_open_ = false;
 }
 
-oos::detail::result_impl *mssql_connection::execute(const oos::sql &sql)
+matador::detail::result_impl *mssql_connection::execute(const matador::sql &sql)
 {
   std::string stmt(dialect_.direct(sql));
   return execute(stmt);
@@ -165,7 +165,7 @@ detail::result_impl* mssql_connection::execute(const std::string &sqlstr)
   return new mssql_result(stmt);
 }
 
-oos::detail::statement_impl *mssql_connection::prepare(const oos::sql &stmt)
+matador::detail::statement_impl *mssql_connection::prepare(const matador::sql &stmt)
 {
   return new mssql_statement(*this, stmt);
 }
@@ -355,12 +355,12 @@ void mssql_connection::execute_no_result(const std::string &stmt)
 
 extern "C"
 {
-  OOS_MSSQL_API oos::connection_impl* create_database()
+  OOS_MSSQL_API matador::connection_impl* create_database()
   {
-    return new oos::mssql::mssql_connection();
+    return new matador::mssql::mssql_connection();
   }
 
-  OOS_MSSQL_API void destroy_database(oos::connection_impl *db)
+  OOS_MSSQL_API void destroy_database(matador::connection_impl *db)
   {
     delete db;
   }

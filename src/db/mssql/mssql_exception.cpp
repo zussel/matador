@@ -15,7 +15,7 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mssql/mssql_exception.hpp"
+#include "matador/db/mssql/mssql_exception.hpp"
 
 #include <sql.h>
 #include <sqlext.h>
@@ -23,7 +23,7 @@
 #include <string>
 #include <sstream>
 
-namespace oos {
+namespace matador {
 
 namespace mssql {
 

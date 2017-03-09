@@ -2,11 +2,11 @@
 // Created by sascha on 24.05.16.
 //
 
-#include "oos/sql/column.hpp"
-#include "oos/sql/basic_query.hpp"
-#include "oos/sql/connection.hpp"
+#include "matador/sql/column.hpp"
+#include "matador/sql/basic_query.hpp"
+#include "matador/sql/connection.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 

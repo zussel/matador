@@ -1,9 +1,9 @@
 #ifndef DATETESTUNIT_HPP
 #define DATETESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class DateTestUnit : public oos::unit_test
+class DateTestUnit : public matador::unit_test
 {
 public:
   DateTestUnit();

@@ -1,11 +1,11 @@
-#include "oos/unit/test_suite.hpp"
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/test_suite.hpp"
+#include "matador/unit/unit_test.hpp"
 
 #include <algorithm>
 #include <functional>
 #include <iostream>
 
-namespace oos {
+namespace matador {
 
 test_suite::test_suite()
 {}

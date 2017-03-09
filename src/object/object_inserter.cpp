@@ -1,6 +1,6 @@
-#include "oos/object/object_inserter.hpp"
+#include "matador/object/object_inserter.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 object_inserter::object_inserter(object_store &ostore)

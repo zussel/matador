@@ -1,14 +1,14 @@
 //
 // Created by sascha on 3/4/16.
 //
-#include "oos/sql/basic_dialect.hpp"
-#include "oos/sql/basic_dialect_compiler.hpp"
-#include "oos/sql/basic_dialect_linker.hpp"
-#include "oos/sql/sql.hpp"
+#include "matador/sql/basic_dialect.hpp"
+#include "matador/sql/basic_dialect_compiler.hpp"
+#include "matador/sql/basic_dialect_linker.hpp"
+#include "matador/sql/sql.hpp"
 
-#include "oos/utils/string.hpp"
+#include "matador/utils/string.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 

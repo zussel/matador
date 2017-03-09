@@ -6,18 +6,18 @@
 #define OOS_SQLTEST_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-#include "oos/sql/connection.hpp"
+#include "matador/sql/connection.hpp"
 
-namespace oos {
+namespace matador {
 class connection;
 }
 
-class QueryTestUnit : public oos::unit_test
+class QueryTestUnit : public matador::unit_test
 {
 public:
-  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const oos::time &timeval = oos::time(2015, 3, 15, 13, 56, 23, 123));
+  QueryTestUnit(const std::string &name, const std::string &msg, const std::string &db = "memory", const matador::time &timeval = matador::time(2015, 3, 15, 13, 56, 23, 123));
 
   virtual void initialize();
 
@@ -49,14 +49,14 @@ public:
   void test_rows();
 
 protected:
-  oos::connection create_connection();
+  matador::connection create_connection();
 
   std::string db() const;
 
 private:
   std::string db_;
-  oos::connection connection_;
-  oos::time time_val_;
+  matador::connection connection_;
+  matador::time time_val_;
 };
 
 

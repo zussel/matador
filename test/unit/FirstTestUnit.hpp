@@ -15,13 +15,13 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/unit/unit_test.hpp"
-#include "oos/unit/test_suite.hpp"
-#include "oos/unit/unit_exception.hpp"
+#include "matador/unit/unit_test.hpp"
+#include "matador/unit/test_suite.hpp"
+#include "matador/unit/unit_exception.hpp"
 
 #include <functional>
 
-class FirstTestUnit : public oos::unit_test
+class FirstTestUnit : public matador::unit_test
 {
 public:
   FirstTestUnit() : unit_test("first", "First test unit")
@@ -37,7 +37,7 @@ public:
     
     try {
       UNIT_ASSERT_EQUAL(1, 0, "one is not zero");
-    } catch (oos::unit_exception &) {
+    } catch (matador::unit_exception &) {
       UNIT_ASSERT_TRUE(true, "could not happen");
     }
   }

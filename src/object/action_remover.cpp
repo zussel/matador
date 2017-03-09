@@ -2,13 +2,13 @@
 // Created by sascha on 12.03.16.
 //
 
-#include "oos/utils/identifier_resolver.hpp"
+#include "matador/utils/identifier_resolver.hpp"
 
-#include "oos/object/action_remover.hpp"
-#include "oos/object/insert_action.hpp"
-#include "oos/object/update_action.hpp"
+#include "matador/object/action_remover.hpp"
+#include "matador/object/insert_action.hpp"
+#include "matador/object/update_action.hpp"
 
-namespace oos {
+namespace matador {
 
 action_remover::action_remover(t_action_vactor &actions)
   : actions_(actions)

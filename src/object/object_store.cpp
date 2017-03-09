@@ -15,14 +15,14 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
 #include <iomanip>
 
 using namespace std;
 using namespace std::placeholders;
 
-namespace oos {
+namespace matador {
 
 object_store::object_store()
   : first_(new prototype_node)

@@ -7,10 +7,10 @@
 #include "../Item.hpp"
 #include "../has_many_list.hpp"
 
-#include "oos/orm/persistence.hpp"
-#include "oos/orm/session.hpp"
+#include "matador/orm/persistence.hpp"
+#include "matador/orm/session.hpp"
 
-#include "oos/object/object_view.hpp"
+#include "matador/object/object_view.hpp"
 
 using namespace hasmanylist;
 
@@ -33,7 +33,7 @@ OrmTestUnit::OrmTestUnit(const std::string &prefix, const std::string &dns)
 
 void OrmTestUnit::test_create()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
@@ -50,20 +50,20 @@ void OrmTestUnit::test_create()
 
 void OrmTestUnit::test_insert()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
-  auto hans = s.insert(new person("hans", oos::date(18, 5, 1980), 180));
+  auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
   UNIT_EXPECT_GREATER(hans->id(), 0UL, "is must be greater zero");
 
-  oos::query<person> q("person");
-  auto res = q.select().where(oos::column("name") == "hans").execute(p.conn());
+  matador::query<person> q("person");
+  auto res = q.select().where(matador::column("name") == "hans").execute(p.conn());
 
   auto first = res.begin();
 
@@ -87,19 +87,19 @@ bool contains(const C &container, const T &value)
 
 void OrmTestUnit::test_select()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   std::vector<std::string> names({ "hans", "otto", "georg", "hilde" });
   //std::vector<std::string> names({ "hans", "otto", "georg", "hilde", "ute", "manfred" });
 
   for (std::string name : names) {
-    auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+    auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
   	UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
   }
 
@@ -116,15 +116,15 @@ void OrmTestUnit::test_select()
 
 void OrmTestUnit::test_update()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
-  oos::date birthday(18, 5, 1980);
+  matador::date birthday(18, 5, 1980);
   auto hans = s.insert(new person("hans", birthday, 180));
 
   UNIT_EXPECT_GREATER(hans->id(), 0UL, "id must be greater zero");
@@ -137,10 +137,10 @@ void OrmTestUnit::test_update()
 
   UNIT_EXPECT_EQUAL(hans->height(), 179U, "height must be 179");
 
-  oos::query<person> q("person");
-  oos::connection c(dns_);
+  matador::query<person> q("person");
+  matador::connection c(dns_);
   c.open();
-  auto res = q.select().where(oos::column("name") == "hans").execute(c);
+  auto res = q.select().where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
 
@@ -157,22 +157,22 @@ void OrmTestUnit::test_update()
 
 void OrmTestUnit::test_delete()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
-  auto hans = s.insert(new person("hans", oos::date(18, 5, 1980), 180));
+  auto hans = s.insert(new person("hans", matador::date(18, 5, 1980), 180));
 
   UNIT_EXPECT_GREATER(hans->id(), 0UL, "is must be greater zero");
 
-  oos::query<person> q("person");
-  oos::connection c(dns_);
+  matador::query<person> q("person");
+  matador::connection c(dns_);
   c.open();
-  auto res = q.select().where(oos::column("name") == "hans").execute(c);
+  auto res = q.select().where(matador::column("name") == "hans").execute(c);
 
   auto first = res.begin();
 
@@ -184,7 +184,7 @@ void OrmTestUnit::test_delete()
 
   s.remove(hans);
 
-  res = q.select().where(oos::column("name") == "hans").execute(c);
+  res = q.select().where(matador::column("name") == "hans").execute(c);
 
   first = res.begin();
 
@@ -196,7 +196,7 @@ void OrmTestUnit::test_delete()
 
 void OrmTestUnit::test_load()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
@@ -206,10 +206,10 @@ void OrmTestUnit::test_load()
 
   {
     // insert some persons
-    oos::session s(p);
+    matador::session s(p);
 
     for (std::string name : names) {
-      auto pptr = s.insert(new person(name, oos::date(18, 5, 1980), 180));
+      auto pptr = s.insert(new person(name, matador::date(18, 5, 1980), 180));
 
       UNIT_EXPECT_GREATER(pptr->id(), 0UL, "is must be greater zero");
     }
@@ -219,11 +219,11 @@ void OrmTestUnit::test_load()
 
   {
     // load persons from database
-    oos::session s(p);
+    matador::session s(p);
 
     s.load();
 
-    typedef oos::object_view<person> t_person_view;
+    typedef matador::object_view<person> t_person_view;
     t_person_view persons(s.store());
 
     UNIT_ASSERT_TRUE(!persons.empty(), "person view must not be empty");
@@ -246,7 +246,7 @@ void OrmTestUnit::test_load()
 
 void OrmTestUnit::test_load_has_one()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<master>("master");
   p.attach<child>("child");
@@ -255,7 +255,7 @@ void OrmTestUnit::test_load_has_one()
 
   {
     // insert some persons
-    oos::session s(p);
+    matador::session s(p);
 
     auto c = s.insert(new child("child 1"));
 
@@ -268,11 +268,11 @@ void OrmTestUnit::test_load_has_one()
 
   {
     // load persons from database
-    oos::session s(p);
+    matador::session s(p);
 
     s.load();
 
-    typedef oos::object_view<master> t_master_view;
+    typedef matador::object_view<master> t_master_view;
     t_master_view masters(s.store());
 
     UNIT_ASSERT_TRUE(!masters.empty(), "master view must not be empty");
@@ -287,7 +287,7 @@ void OrmTestUnit::test_load_has_one()
 
 void OrmTestUnit::test_load_has_many()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
@@ -295,7 +295,7 @@ void OrmTestUnit::test_load_has_many()
   p.create();
 
   {
-    oos::session s(p);
+    matador::session s(p);
 
     auto children = s.insert(new children_list("children list 1"));
 
@@ -318,11 +318,11 @@ void OrmTestUnit::test_load_has_many()
   p.clear();
 
   {
-    oos::session s(p);
+    matador::session s(p);
 
     s.load();
 
-    typedef oos::object_view<children_list> t_children_list_view;
+    typedef matador::object_view<children_list> t_children_list_view;
     t_children_list_view children_lists(s.store());
 
     UNIT_ASSERT_TRUE(!children_lists.empty(), "children lists view must not be empty");
@@ -346,14 +346,14 @@ void OrmTestUnit::test_load_has_many()
 
 void OrmTestUnit::test_load_has_many_int()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<many_ints>("many_ints");
 
   p.create();
 
   {
-    oos::session s(p);
+    matador::session s(p);
 
     auto intlist = s.insert(new many_ints);
 
@@ -376,11 +376,11 @@ void OrmTestUnit::test_load_has_many_int()
   p.clear();
 
   {
-    oos::session s(p);
+    matador::session s(p);
 
     s.load();
 
-    typedef oos::object_view<many_ints> t_many_ints_view;
+    typedef matador::object_view<many_ints> t_many_ints_view;
     t_many_ints_view ints_view(s.store());
 
     UNIT_ASSERT_TRUE(!ints_view.empty(), "many ints view must not be empty");
@@ -404,14 +404,14 @@ void OrmTestUnit::test_load_has_many_int()
 
 void OrmTestUnit::test_has_many_delete()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   auto children = s.insert(new children_list("children list"));
 
@@ -446,7 +446,7 @@ void OrmTestUnit::test_has_many_delete()
 
 void OrmTestUnit::test_belongs_to()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
   p.attach<department>("department");
@@ -454,7 +454,7 @@ void OrmTestUnit::test_belongs_to()
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   auto george = s.insert(new employee("george"));
   auto jane = s.insert(new employee("jane"));

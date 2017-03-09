@@ -15,19 +15,19 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/sqlite/sqlite_connection.hpp"
-#include "oos/db/sqlite/sqlite_statement.hpp"
-#include "oos/db/sqlite/sqlite_result.hpp"
-#include "oos/db/sqlite/sqlite_types.hpp"
-#include "oos/db/sqlite/sqlite_exception.hpp"
+#include "matador/db/sqlite/sqlite_connection.hpp"
+#include "matador/db/sqlite/sqlite_statement.hpp"
+#include "matador/db/sqlite/sqlite_result.hpp"
+#include "matador/db/sqlite/sqlite_types.hpp"
+#include "matador/db/sqlite/sqlite_exception.hpp"
 
-#include "oos/sql/sql.hpp"
+#include "matador/sql/sql.hpp"
 
 #include <sqlite3.h>
 
 using namespace std::placeholders;
 
-namespace oos {
+namespace matador {
   
 namespace sqlite {
   
@@ -104,14 +104,14 @@ std::string sqlite_connection::version() const
   return SQLITE_VERSION;
 }
 
-oos::detail::result_impl* sqlite_connection::execute(const oos::sql &sql)
+matador::detail::result_impl* sqlite_connection::execute(const matador::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
 //  std::cout << "SQL: '" << stmt << "'\n";
   return execute(stmt);
 }
 
-oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
+matador::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
 {
   std::unique_ptr<sqlite_result> res(new sqlite_result);
   char *errmsg = 0;
@@ -124,7 +124,7 @@ oos::detail::result_impl* sqlite_connection::execute(const std::string &stmt)
   return res.release();
 }
 
-oos::detail::statement_impl *sqlite_connection::prepare(const oos::sql &sql)
+matador::detail::statement_impl *sqlite_connection::prepare(const matador::sql &sql)
 {
   std::string stmt(dialect_.prepare(sql));
   return new sqlite_statement(*this, stmt);
@@ -201,12 +201,12 @@ unsigned long sqlite_connection::last_inserted_id()
 
 extern "C"
 {
-  OOS_SQLITE_API oos::connection_impl* create_database()
+  OOS_SQLITE_API matador::connection_impl* create_database()
   {
-    return new oos::sqlite::sqlite_connection();
+    return new matador::sqlite::sqlite_connection();
   }
 
-  OOS_SQLITE_API void destroy_database(oos::connection_impl *db)
+  OOS_SQLITE_API void destroy_database(matador::connection_impl *db)
   {
     delete db;
   }

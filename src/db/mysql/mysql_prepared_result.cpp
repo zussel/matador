@@ -1,15 +1,15 @@
-#include "oos/db/mysql/mysql_prepared_result.hpp"
-#include "oos/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_prepared_result.hpp"
+#include "matador/db/mysql/mysql_exception.hpp"
 
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/basic_identifier.hpp"
-#include "oos/utils/identifiable_holder.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/identifiable_holder.hpp"
 
 #include <cstring>
 
-namespace oos {
+namespace matador {
 
 namespace mysql {
 
@@ -204,7 +204,7 @@ void mysql_prepared_result::serialize(const char *, char *x, size_t s)
   }
 }
 
-void mysql_prepared_result::serialize(const char *, oos::date &x)
+void mysql_prepared_result::serialize(const char *, matador::date &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_DATE, x);
@@ -218,7 +218,7 @@ void mysql_prepared_result::serialize(const char *, oos::date &x)
 }
 
 #if MYSQL_VERSION_ID < 50604
-void mysql_prepared_result::serialize(const char *id, oos::time &x)
+void mysql_prepared_result::serialize(const char *id, matador::time &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_VAR_STRING, x);
@@ -229,13 +229,13 @@ void mysql_prepared_result::serialize(const char *id, oos::time &x)
       // so we use a datetime string here
       std::string val;
       serialize(id, val);
-      x = oos::time::parse(val, "%FT%T");
+      x = matador::time::parse(val, "%FT%T");
       ++result_index_;
     }
   }
 }
 #else
-void mysql_prepared_result::serialize(const char *, oos::time &x)
+void mysql_prepared_result::serialize(const char *, matador::time &x)
 {
   if (prepare_binding_) {
     prepare_bind_column(column_index_++, MYSQL_TYPE_TIMESTAMP, x);
@@ -284,7 +284,7 @@ void mysql_prepared_result::serialize(const char *, varchar_base &x)
   }
 }
 
-void mysql_prepared_result::serialize(const char *id, oos::basic_identifier &x)
+void mysql_prepared_result::serialize(const char *id, matador::basic_identifier &x)
 {
   x.serialize(id, *this);
 }
@@ -319,7 +319,7 @@ bool mysql_prepared_result::finalize_bind()
   return mysql_stmt_bind_result(stmt, bind_) > 0;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::date &)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, matador::date &)
 {
   if (info_[index].buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);
@@ -335,7 +335,7 @@ void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type
   bind_[index].error = &info_[index].error;
 }
 
-void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, oos::time &)
+void mysql_prepared_result::prepare_bind_column(int index, enum_field_types type, matador::time &)
 {
   if (info_[index].buffer == 0) {
     size_t s = sizeof(MYSQL_TIME);

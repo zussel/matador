@@ -19,17 +19,17 @@
 
 #include "../Item.hpp"
 
-#include "oos/object/object_view.hpp"
+#include "matador/object/object_view.hpp"
 
 #include "database/session.hpp"
 #include "database/database_exception.hpp"
 
 #include <fstream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
-DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db, const oos::time &timeval)
+DatabaseTestUnit::DatabaseTestUnit(const std::string &name, const std::string &msg, const std::string &db, const matador::time &timeval)
   : unit_test(name, msg)
   , db_(db)
   , session_(nullptr)
@@ -99,10 +99,10 @@ void DatabaseTestUnit::test_datatypes()
   unsigned long ulval = 765432182;
   bool bval = true;
   const char *cstr("Armer schwarzer Kater");
-  oos::varchar<32> vval("hallo welt");
+  matador::varchar<32> vval("hallo welt");
   std::string strval = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-  oos::date date_val(15, 3, 2015);
-  oos::time time_val = time_val_;
+  matador::date date_val(15, 3, 2015);
+  matador::time time_val = time_val_;
 
   try {
 
@@ -178,21 +178,21 @@ void DatabaseTestUnit::test_datatypes()
 
 void DatabaseTestUnit::test_primary_key()
 {
-  class pktest : public oos::serializable
+  class pktest : public matador::serializable
   {
   public:
     pktest() {}
     virtual ~pktest() {}
 
-    virtual void deserialize(oos::deserializer &r) {
+    virtual void deserialize(matador::deserializer &r) {
       r.read("id", id);
       r.read("name", name);
     }
-    virtual void serialize(oos::serializer &w) const {
+    virtual void serialize(matador::serializer &w) const {
       w.write("id", id);
       w.write("name", name);
     }
-    oos::identifier<unsigned long> id;
+    matador::identifier<unsigned long> id;
     std::string name;
   };
 
@@ -571,21 +571,21 @@ DatabaseTestUnit::test_reload_container()
 
 void DatabaseTestUnit::test_reload_relation()
 {
-  oos::prototype_tree &tree = ostore_.prototypes();
+  matador::prototype_tree &tree = ostore_.prototypes();
 
   prototype_tree::const_iterator children_list_node = tree.find("children_list");
   prototype_tree::const_iterator master_node = tree.find("master");
   prototype_tree::const_iterator child_node = tree.find("child");
 
-  typedef oos::object_ptr<child> child_ptr;
-  typedef oos::object_ptr<master> master_ptr;
+  typedef matador::object_ptr<child> child_ptr;
+  typedef matador::object_ptr<master> master_ptr;
 
-  oos::transaction tr(*session_);
+  matador::transaction tr(*session_);
 
-  typedef oos::object_view<child> t_child_view;
+  typedef matador::object_view<child> t_child_view;
   t_child_view child_view(ostore_);
 
-  typedef oos::object_view<master> t_master_view;
+  typedef matador::object_view<master> t_master_view;
   t_master_view master_view(ostore_);
 
   try {
@@ -649,12 +649,12 @@ session* DatabaseTestUnit::create_session()
   return new session(ostore_, db_);
 }
 
-oos::object_store& DatabaseTestUnit::ostore()
+matador::object_store& DatabaseTestUnit::ostore()
 {
   return ostore_;
 }
 
-const oos::object_store& DatabaseTestUnit::ostore() const
+const matador::object_store& DatabaseTestUnit::ostore() const
 {
   return ostore_;
 }

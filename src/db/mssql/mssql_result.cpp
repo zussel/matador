@@ -15,16 +15,16 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mssql/mssql_result.hpp"
+#include "matador/db/mssql/mssql_result.hpp"
 
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
 #include <cstring>
 
-namespace oos {
+namespace matador {
 
 namespace mssql {
 
@@ -175,12 +175,12 @@ void mssql_result::serialize(const char *id, std::string &x)
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, oos::date &x)
+void mssql_result::serialize(const char *id, matador::date &x)
 {
   read_column(id, x);
 }
 
-void mssql_result::serialize(const char *id, oos::time &x)
+void mssql_result::serialize(const char *id, matador::time &x)
 {
   read_column(id, x);
 }

@@ -17,11 +17,11 @@
 
 #include "ConnectionTestUnit.hpp"
 
-#include "oos/sql/connection.hpp"
+#include "matador/sql/connection.hpp"
 
 #include <fstream>
 
-using namespace oos;
+using namespace matador;
 using namespace std;
 
 ConnectionTestUnit::ConnectionTestUnit(const std::string &name, const std::string &msg, const std::string &dns)
@@ -37,7 +37,7 @@ ConnectionTestUnit::~ConnectionTestUnit()
 
 void ConnectionTestUnit::test_open_close()
 {
-  oos::connection conn(connection_string());
+  matador::connection conn(connection_string());
 
   UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
 
@@ -52,7 +52,7 @@ void ConnectionTestUnit::test_open_close()
 
 void ConnectionTestUnit::test_reopen()
 {
-  oos::connection conn(connection_string());
+  matador::connection conn(connection_string());
 
   UNIT_ASSERT_FALSE(conn.is_open(), "connection must not be open");
 

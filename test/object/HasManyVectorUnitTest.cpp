@@ -4,9 +4,9 @@
 
 #include "HasManyVectorUnitTest.hpp"
 
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_store.hpp"
 
-using namespace oos;
+using namespace matador;
 using namespace hasmanyvector;
 
 HasManyVectorUnitTest::HasManyVectorUnitTest()

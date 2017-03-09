@@ -4,7 +4,7 @@
 
 #include "AnyTestUnit.hpp"
 
-#include "oos/utils/any_visitor.hpp"
+#include "matador/utils/any_visitor.hpp"
 
 AnyTestUnit::AnyTestUnit()
   : unit_test("any", "any test unit")
@@ -30,7 +30,7 @@ struct test_visitor
 
 void AnyTestUnit::test_any_visitor()
 {
-  oos::any_visitor visitor;
+  matador::any_visitor visitor;
 
   test_visitor tester;
   visitor.register_visitor<int>(test_visit);
@@ -45,10 +45,10 @@ void AnyTestUnit::test_any_visitor()
     ++val;
   });
 
-  oos::any as((short)1);
-  oos::any ai = 7;
-  oos::any al = 13L;
-  oos::any astr(std::string("hallo"));
+  matador::any as((short)1);
+  matador::any ai = 7;
+  matador::any al = 13L;
+  matador::any astr(std::string("hallo"));
 
   visitor.visit(as);
 
@@ -77,7 +77,7 @@ struct processor
     visitor.register_visitor<std::string>([this](std::string &val) { this->process(val); });
   }
 
-  void apply(oos::any &a)
+  void apply(matador::any &a)
   {
     visitor.visit(a);
   }
@@ -99,15 +99,15 @@ struct processor
     val = "world";
   }
 
-  oos::any_visitor visitor;
+  matador::any_visitor visitor;
 
 };
 void AnyTestUnit::test_any_visitor_class()
 {
-  oos::any ai = 7;
-  oos::any al = 13L;
-  oos::any af = 0.4f;
-  oos::any astr(std::string("hello"));
+  matador::any ai = 7;
+  matador::any al = 13L;
+  matador::any af = 0.4f;
+  matador::any astr(std::string("hello"));
 
   processor p;
   UNIT_ASSERT_EQUAL(7, ai._<int>(), "values must be equal");

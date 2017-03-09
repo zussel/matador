@@ -15,9 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/byte_buffer.hpp"
+#include "matador/utils/byte_buffer.hpp"
 
-namespace oos {
+namespace matador {
 
 byte_buffer::byte_buffer()
 {

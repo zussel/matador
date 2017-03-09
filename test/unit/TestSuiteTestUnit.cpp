@@ -8,9 +8,9 @@
 
 bool TestSuiteTestUnit::test_create()
 {
-  oos::test_suite ts;
+  matador::test_suite ts;
 
-  const oos::test_suite::summary &smry = ts.test_summary();
+  const matador::test_suite::summary &smry = ts.test_summary();
   bool result = smry.asserts == 0;
   result &= smry.errors == 0;
   result &= smry.failures == 0;
@@ -26,13 +26,13 @@ bool TestSuiteTestUnit::test_init()
     (char*)"list"
   };
 
-  oos::test_suite ts;
+  matador::test_suite ts;
 
   ts.init(2, argv1);
 
-  const oos::test_suite::test_suite_args &args = ts.test_args();
+  const matador::test_suite::test_suite_args &args = ts.test_args();
 
-  bool result = args.cmd == oos::test_suite::LIST;
+  bool result = args.cmd == matador::test_suite::LIST;
   result &= args.initialized;
   result &= !args.brief;
   result &= args.unit_args.empty();
@@ -45,7 +45,7 @@ bool TestSuiteTestUnit::test_init()
 
   ts.init(3, argv2);
 
-  result &= args.cmd == oos::test_suite::LIST;
+  result &= args.cmd == matador::test_suite::LIST;
   result &= args.initialized;
   result &= args.brief;
   result &= args.unit_args.empty();
@@ -58,7 +58,7 @@ bool TestSuiteTestUnit::test_init()
 
   ts.init(3, argv3);
 
-  result &= args.cmd == oos::test_suite::EXECUTE;
+  result &= args.cmd == matador::test_suite::EXECUTE;
   result &= args.initialized;
   result &= args.unit_args.empty();
 
@@ -67,7 +67,7 @@ bool TestSuiteTestUnit::test_init()
 
 bool TestSuiteTestUnit::test_list()
 {
-  oos::test_suite ts;
+  matador::test_suite ts;
   ts.register_unit(new FirstTestUnit);
   ts.register_unit(new SecondTestUnit);
 
@@ -82,9 +82,9 @@ bool TestSuiteTestUnit::test_list()
   ts.init(2, argv1);
   ts.quiet();
 
-  const oos::test_suite::test_suite_args &args = ts.test_args();
+  const matador::test_suite::test_suite_args &args = ts.test_args();
 
-  result &= args.cmd == oos::test_suite::LIST;
+  result &= args.cmd == matador::test_suite::LIST;
   result &= args.initialized;
   result &= !args.brief;
   result &= args.unit_args.empty();
@@ -99,7 +99,7 @@ bool TestSuiteTestUnit::test_list()
 
   ts.init(3, argv2);
 
-  result &= args.cmd == oos::test_suite::LIST;
+  result &= args.cmd == matador::test_suite::LIST;
   result &= args.initialized;
   result &= args.brief;
   result &= args.unit_args.empty();
@@ -111,7 +111,7 @@ bool TestSuiteTestUnit::test_list()
 
 bool TestSuiteTestUnit::test_method()
 {
-  oos::test_suite ts;
+  matador::test_suite ts;
   ts.register_unit(new FirstTestUnit);
   ts.register_unit(new SecondTestUnit);
 
@@ -124,9 +124,9 @@ bool TestSuiteTestUnit::test_method()
   ts.init(3, argv);
   ts.quiet();
 
-  const oos::test_suite::test_suite_args &args = ts.test_args();
+  const matador::test_suite::test_suite_args &args = ts.test_args();
 
-  bool result = args.cmd == oos::test_suite::EXECUTE;
+  bool result = args.cmd == matador::test_suite::EXECUTE;
   result &= args.initialized;
   result &= args.unit_args.size() == 1;
 
@@ -144,7 +144,7 @@ bool TestSuiteTestUnit::test_method()
 
 bool TestSuiteTestUnit::test_unit()
 {
-  oos::test_suite ts;
+  matador::test_suite ts;
   ts.register_unit(new FirstTestUnit);
   ts.register_unit(new SecondTestUnit);
 
@@ -157,9 +157,9 @@ bool TestSuiteTestUnit::test_unit()
   ts.init(3, argv);
   ts.quiet();
 
-  const oos::test_suite::test_suite_args &args = ts.test_args();
+  const matador::test_suite::test_suite_args &args = ts.test_args();
 
-  bool result = args.cmd == oos::test_suite::EXECUTE;
+  bool result = args.cmd == matador::test_suite::EXECUTE;
   result &= args.initialized;
   result &= args.unit_args.size() == 1;
 
@@ -172,7 +172,7 @@ bool TestSuiteTestUnit::test_unit()
 
 bool TestSuiteTestUnit::test_suite()
 {
-  oos::test_suite ts;
+  matador::test_suite ts;
   ts.register_unit(new FirstTestUnit);
   ts.register_unit(new SecondTestUnit);
 
@@ -185,9 +185,9 @@ bool TestSuiteTestUnit::test_suite()
   ts.init(3, argv);
   ts.quiet();
 
-  const oos::test_suite::test_suite_args &args = ts.test_args();
+  const matador::test_suite::test_suite_args &args = ts.test_args();
 
-  bool result = args.cmd == oos::test_suite::EXECUTE;
+  bool result = args.cmd == matador::test_suite::EXECUTE;
   result &= args.initialized;
   result &= args.unit_args.empty();
 

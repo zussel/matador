@@ -2,13 +2,13 @@
 
 #include "../Item.hpp"
 
-#include "oos/object/object_view.hpp"
+#include "matador/object/object_view.hpp"
 
-#include "oos/orm/session.hpp"
+#include "matador/orm/session.hpp"
 
-#include "oos/sql/sql_exception.hpp"
+#include "matador/sql/sql_exception.hpp"
 
-using namespace oos;
+using namespace matador;
 
 
 TransactionTestUnit::TransactionTestUnit(const std::string &name, const std::string &msg, std::string const &dns)
@@ -30,17 +30,17 @@ TransactionTestUnit::~TransactionTestUnit() {}
 
 void TransactionTestUnit::test_simple()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<person>("person");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   transaction tr = s.begin();
 
-  oos::date d1(21, 12, 1980);
+  matador::date d1(21, 12, 1980);
   try {
     auto hans = s.insert(new person("hans", d1, 180));
 
@@ -50,15 +50,15 @@ void TransactionTestUnit::test_simple()
     UNIT_FAIL("transaction failed");
   }
 
-  oos::object_view<person> persons(s.store());
-//  oos::object_view<person> persons = s.create_view<person>();
+  matador::object_view<person> persons(s.store());
+//  matador::object_view<person> persons = s.create_view<person>();
 
   UNIT_ASSERT_EQUAL(1UL, persons.size(), "size must be one");
 
   auto hans2 = persons.front();
 
   UNIT_ASSERT_EQUAL("hans", hans2->name(), "name must be 'hans'");
-  UNIT_ASSERT_EQUAL(d1, hans2->birthdate(), "birthdate must be " + oos::to_string(d1));
+  UNIT_ASSERT_EQUAL(d1, hans2->birthdate(), "birthdate must be " + matador::to_string(d1));
   UNIT_ASSERT_EQUAL(180U, hans2->height(), "height must be 180");
 
   p.drop();
@@ -66,13 +66,13 @@ void TransactionTestUnit::test_simple()
 
 void TransactionTestUnit::test_nested()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<Item>("item");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   // create and begin transaction
   transaction tr = s.begin();
@@ -149,14 +149,14 @@ void TransactionTestUnit::test_nested()
 
 void TransactionTestUnit::test_foreign()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<Item>("item");
   p.attach<ObjectItem<Item>>("object_item");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   // load data
   /****************
@@ -231,14 +231,14 @@ void TransactionTestUnit::test_foreign()
 
 void TransactionTestUnit::test_has_many_list_commit()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   transaction tr = s.begin();
   try {
@@ -284,14 +284,14 @@ void TransactionTestUnit::test_has_many_list_commit()
 
 void TransactionTestUnit::test_has_many_list_rollback()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   transaction tr = s.begin();
   try {
@@ -337,14 +337,14 @@ void TransactionTestUnit::test_has_many_list_rollback()
 
 void TransactionTestUnit::test_has_many_list()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_list>("children_list");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   transaction tr = s.begin();
   try {
@@ -422,14 +422,14 @@ void TransactionTestUnit::test_has_many_list()
 
 void TransactionTestUnit::test_has_many_vector()
 {
-  oos::persistence p(dns_);
+  matador::persistence p(dns_);
 
   p.attach<child>("child");
   p.attach<children_vector>("children_vector");
 
   p.create();
 
-  oos::session s(p);
+  matador::session s(p);
 
   transaction tr = s.begin();
   try {

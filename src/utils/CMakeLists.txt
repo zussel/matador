@@ -16,63 +16,63 @@ SET(SOURCES
 )
 
 SET(HEADER
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/access.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/algorithm.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/base_class.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/byte_buffer.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/cascade_type.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/singleton.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/library.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/blob.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/calendar.h
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/date.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/time.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/varchar.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/sequencer.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/factory.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/string.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/strptime.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/enable_if.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/conditional.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/basic_identifier.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/basic_identifier_serializer.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/identifier.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/identifier_resolver.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/identifier_setter.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/identifiable_holder.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/any.hpp
-  ${CMAKE_SOURCE_DIR}/include/oos/utils/any_visitor.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/access.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/algorithm.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/base_class.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/byte_buffer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/cascade_type.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/singleton.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/library.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/blob.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/calendar.h
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/date.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/time.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/varchar.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/sequencer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/factory.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/string.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/strptime.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/enable_if.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/conditional.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/serializer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/basic_identifier.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/basic_identifier_serializer.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/identifier.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/identifier_resolver.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/identifier_setter.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/identifiable_holder.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/any.hpp
+  ${CMAKE_SOURCE_DIR}/include/matador/utils/any_visitor.hpp
 )
 
-ADD_LIBRARY(oos-utils SHARED ${SOURCES} ${HEADER})
+ADD_LIBRARY(matador-utils SHARED ${SOURCES} ${HEADER})
 
-TARGET_LINK_LIBRARIES(oos-utils ${CMAKE_DL_LIBS})
+TARGET_LINK_LIBRARIES(matador-utils ${CMAKE_DL_LIBS})
 
 # Set the build version (VERSION) and the API version (SOVERSION)
-SET_TARGET_PROPERTIES(oos-utils
+SET_TARGET_PROPERTIES(matador-utils
   PROPERTIES
   VERSION 0.5.0
   SOVERSION 0)
 
-SOURCE_GROUP("include\\oos\\utils" FILES ${HEADER})
-SOURCE_GROUP("src\\oos\\utils" FILES ${SOURCES})
+SOURCE_GROUP("include\\matador\\utils" FILES ${HEADER})
+SOURCE_GROUP("src\\matador\\utils" FILES ${SOURCES})
 
 INSTALL(
-  TARGETS oos-utils
+  TARGETS matador-utils
   ARCHIVE  DESTINATION lib
   LIBRARY DESTINATION lib
   COMPONENT libraries
 )
 
 INSTALL(
-  TARGETS oos-utils
+  TARGETS matador-utils
   DESTINATION lib
   COMPONENT libraries
 )
 
 INSTALL(
   FILES ${HEADER}
-  DESTINATION include/oos/utils
+  DESTINATION include/matador/utils
   COMPONENT headers
 )

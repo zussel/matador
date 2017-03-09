@@ -15,18 +15,18 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mysql/mysql_connection.hpp"
-#include "oos/db/mysql/mysql_statement.hpp"
-#include "oos/db/mysql/mysql_result.hpp"
-#include "oos/db/mysql/mysql_types.hpp"
-#include "oos/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_connection.hpp"
+#include "matador/db/mysql/mysql_statement.hpp"
+#include "matador/db/mysql/mysql_result.hpp"
+#include "matador/db/mysql/mysql_types.hpp"
+#include "matador/db/mysql/mysql_exception.hpp"
 
 #include <sstream>
 #include <regex>
 
 using namespace std::placeholders;
 
-namespace oos {
+namespace matador {
   
 namespace mysql {
   
@@ -99,7 +99,7 @@ MYSQL*mysql_connection::handle()
   return &mysql_;
 }
 
-detail::result_impl* mysql_connection::execute(const oos::sql &sql)
+detail::result_impl* mysql_connection::execute(const matador::sql &sql)
 {
   std::string stmt = dialect_.direct(sql);
   return execute(stmt);
@@ -113,7 +113,7 @@ detail::result_impl* mysql_connection::execute(const std::string &stmt)
   return new mysql_result(&mysql_);
 }
 
-detail::statement_impl* mysql_connection::prepare(const oos::sql &stmt)
+detail::statement_impl* mysql_connection::prepare(const matador::sql &stmt)
 {
   return new mysql_statement(*this, stmt);
 }
@@ -202,12 +202,12 @@ unsigned long mysql_connection::last_inserted_id()
 
 extern "C"
 {
-  OOS_MYSQL_API oos::connection_impl* create_database()
+  OOS_MYSQL_API matador::connection_impl* create_database()
   {
-    return new oos::mysql::mysql_connection();
+    return new matador::mysql::mysql_connection();
   }
 
-  OOS_MYSQL_API void destroy_database(oos::connection_impl *db)
+  OOS_MYSQL_API void destroy_database(matador::connection_impl *db)
   {
     delete db;
   }

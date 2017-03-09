@@ -1,18 +1,17 @@
 # project name
-PROJECT(oos)
+PROJECT(matador)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8^)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # project version
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
+SET(APP_MAJOR_VERSION 0)
+SET(APP_MINOR_VERSION 5)
+SET(APP_PATCH_LEVEL 0)
+SET(APP_VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${APP_PATCH_LEVEL}")
 
-SET(${PROJECT_NAME_UPPER}_MAJOR_VERSION 0)
-SET(${PROJECT_NAME_UPPER}_MINOR_VERSION 5)
-SET(${PROJECT_NAME_UPPER}_PATCH_LEVEL 0)
-SET(OOS_VERSION "${OOS_MAJOR_VERSION}.${OOS_MINOR_VERSION}.${OOS_PATCH_LEVEL}")
-
-MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${OOS_VERSION}")
+MESSAGE(STATUS "${PROJECT_NAME_UPPER} ${APP_VERSION}")
 
 
 # Common compiler flags
@@ -60,6 +59,7 @@ ELSE()
 ENDIF()
 
 OPTION(COVERAGE "Enable generation of code coverage" false)
+OPTION(ARCH "Compiler architecture for Clang/GCC" "")
 
 if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CXX_COMPILER MATCHES "clang")
   MESSAGE(STATUS "coverage for compiler ${CMAKE_CXX_COMPILER}")
@@ -110,13 +110,13 @@ SET(BACKENDS
 
 FOREACH(backend ${BACKENDS})
   STRING(TOUPPER ${backend} BACKEND_UPPER)
-  OPTION(OOS_${BACKEND_UPPER} "Enable or disable backend ${backend}" TRUE)
+  OPTION(${PROJECT_NAME_UPPER}_${BACKEND_UPPER} "Enable or disable backend ${backend}" TRUE)
 
-  IF (OOS_${BACKEND_UPPER})
+  IF (${PROJECT_NAME_UPPER}_${BACKEND_UPPER})
     FIND_PACKAGE(${backend})
     IF (${BACKEND_UPPER}_FOUND)
       MESSAGE(STATUS "Found backend ${backend}")
-      ADD_DEFINITIONS(-DOOS_${BACKEND_UPPER})
+      ADD_DEFINITIONS(-D${PROJECT_NAME_UPPER}_${BACKEND_UPPER})
     ELSE()
       MESSAGE(STATUS "No backend ${backend}")
     ENDIF()
@@ -159,13 +159,6 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(test)
 
-#INSTALL(
-#	TARGETS oos-utils
-#	RUNTIME
-#	DESTINATION bin
-#	COMPONENT example
-#)
-
 INSTALL(
   DIRECTORY ${PROJECT_BINARY_DIR}/doc/web/
   DESTINATION share/doc
@@ -173,15 +166,26 @@ INSTALL(
 )
 
 # Basic CPack configuration
-SET(CPACK_PACKAGE_NAME "oos")
-SET(CPACK_PACKAGE_VENDOR "zussel-soft")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OOS Open Object Store - Store all your objects in one container")
-SET(CPACK_PACKAGE_VERSION ${OOS_VERSION})
-SET(CPACK_PACKAGE_VERSION_MAJOR ${OOS_MAJOR_VERSION})
-SET(CPACK_PACKAGE_VERSION_MINOR ${OOS_MINOR_VERSION})
-SET(CPACK_PACKAGE_VERSION_PATCH ${OOS_PATCH_LEVEL})
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "oos")
-SET(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_PROCESSOR}-${SYSTEM_NAME_LOWER}")
+SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+SET(CPACK_PACKAGE_VENDOR "zussel")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "matador - take your database by the horns")
+SET(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/License")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
+
+SET(CPACK_PACKAGE_VERSION_MAJOR ${APP_MAJOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_MINOR ${APP_MINOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_PATCH ${APP_PATCH_LEVEL})
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+  if (${ARCH} MATCHES "32")
+    SET(CPACK_SYSTEM_NAME "x86-${SYSTEM_NAME_LOWER}")
+  elseif(${ARCH} MATCHES "64")
+    SET(CPACK_SYSTEM_NAME "x86_64-${SYSTEM_NAME_LOWER}")
+  else()
+    SET(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_PROCESSOR}-${SYSTEM_NAME_LOWER}")
+  endif()
+endif()
 
 # Tell CPack all of the components to install. The "ALL"
 # refers to the fact that this is the set of components that
@@ -191,9 +195,9 @@ SET(CPACK_COMPONENTS_ALL libraries headers doc)
 
 # Set the displayed names for each of the components to install.
 # These will be displayed in the list of components inside the installer.
-SET(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "OOS")
+SET(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME ${PROJECT_NAME})
 SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
-SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "OOS Headers")
+SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "${PROJECT_NAME} Headers")
 
 # Provide descriptions for each of the components to install.
 # When the user hovers the mouse over the name of a component,
@@ -202,8 +206,8 @@ SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "OOS Headers")
 # box will be removed.
 #SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
 #  "Store all your objects in one container.")
-SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Store all your objects in one container.")
-SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for OOS")
+SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Take your database by the horns")
+SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for ${PROJECT_NAME}")
 
 # Put the components into two different groups: "Runtime" and "Development"
 #SET(CPACK_COMPONENT_APPLICATIONS_GROUP "Runtime")
@@ -213,8 +217,7 @@ SET(CPACK_COMPONENT_HEADERS_GROUP "Development")
 # Expand the "Development" group by default, since we have so few components.
 # Also, provide this group with a description.
 SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_EXPANDED ON)
-SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION
-  "All of the tools you'll ever need to develop software")
+SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you'll ever need to develop software")
 
 # It doesn't make sense to install the headers without the libraries
 # (because you could never use the headers!), so make the headers component
@@ -230,8 +233,7 @@ SET(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)
 SET(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
 #SET(CPACK_COMPONENT_APPLICATIONS_INSTALL_TYPES Full)
 
-# Set license file to add
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License")
+SET(CPACK_PACKAGE_DIRECTORY "${PROJECT_SOURCE_DIR}/Package")
 
 # Include CPack to introduce the appropriate targets
 INCLUDE(CPack)

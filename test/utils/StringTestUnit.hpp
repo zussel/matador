@@ -1,9 +1,9 @@
 #ifndef STRINGTESTUNIT_HPP
 #define STRINGTESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class StringTestUnit : public oos::unit_test
+class StringTestUnit : public matador::unit_test
 {
 public:
   StringTestUnit();

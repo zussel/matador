@@ -1,14 +1,14 @@
 #ifndef OBJECTSTORE_TESTUNIT_HPP
 #define OBJECTSTORE_TESTUNIT_HPP
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-#include "oos/utils/varchar.hpp"
+#include "matador/utils/varchar.hpp"
 
-#include "oos/object/object_ptr.hpp"
-#include "oos/object/object_store.hpp"
+#include "matador/object/object_ptr.hpp"
+#include "matador/object/object_store.hpp"
 
-class ObjectStoreTestUnit : public oos::unit_test
+class ObjectStoreTestUnit : public matador::unit_test
 {
 public:
   ObjectStoreTestUnit();
@@ -46,7 +46,7 @@ public:
   void test_observer();
 
 private:
-  oos::object_store ostore_;
+  matador::object_store ostore_;
 };
 
 #endif /* OBJECTSTORE_TESTUNIT_HPP */

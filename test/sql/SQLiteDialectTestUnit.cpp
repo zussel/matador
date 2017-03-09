@@ -6,11 +6,11 @@
 
 #include "connections.hpp"
 
-#include "oos/sql/connection.hpp"
-#include "oos/sql/column.hpp"
-#include "oos/sql/dialect_token.hpp"
+#include "matador/sql/connection.hpp"
+#include "matador/sql/column.hpp"
+#include "matador/sql/dialect_token.hpp"
 
-using namespace oos;
+using namespace matador;
 
 SQLiteDialectTestUnit::SQLiteDialectTestUnit()
   : unit_test("sqlite_dialect", "sqlite dialect test")
@@ -21,7 +21,7 @@ SQLiteDialectTestUnit::SQLiteDialectTestUnit()
 
 void SQLiteDialectTestUnit::test_update_with_limit()
 {
-  oos::connection conn(::connection::sqlite);
+  matador::connection conn(::connection::sqlite);
 
   sql s;
 
@@ -29,7 +29,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
   s.append(new detail::tablename("person"));
   s.append(new detail::set);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   std::string dieter("Dieter");
   unsigned int age54(54);
@@ -38,7 +38,7 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
   s.append(cols.release());
 
-  oos::column name("name");
+  matador::column name("name");
   s.append(new detail::where(name != "Hans"));
 
   s.append(new detail::top(1));
@@ -50,14 +50,14 @@ void SQLiteDialectTestUnit::test_update_with_limit()
 
 void SQLiteDialectTestUnit::test_delete_with_limit()
 {
-  oos::connection conn(::connection::sqlite);
+  matador::connection conn(::connection::sqlite);
 
   sql s;
 
   s.append(new detail::remove());
   s.append(new detail::from("person"));
 
-  oos::column name("name");
+  matador::column name("name");
   s.append(new detail::where(name != "Hans"));
 
   s.append(new detail::top(1));

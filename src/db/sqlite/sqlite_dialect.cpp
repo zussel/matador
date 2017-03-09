@@ -1,14 +1,14 @@
 //
 // Created by sascha on 3/3/16.
 //
-#include "oos/db/sqlite/sqlite_dialect.hpp"
-#include "oos/db/sqlite/sqlite_dialect_compiler.hpp"
+#include "matador/db/sqlite/sqlite_dialect.hpp"
+#include "matador/db/sqlite/sqlite_dialect_compiler.hpp"
 
-#include "oos/sql/basic_dialect_linker.hpp"
+#include "matador/sql/basic_dialect_linker.hpp"
 
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 namespace sqlite {
 
@@ -21,7 +21,7 @@ sqlite_dialect::sqlite_dialect()
   replace_token(detail::token::ROLLBACK, "ROLLBACK TRANSACTION");
 }
 
-const char *sqlite_dialect::type_string(oos::data_type type) const
+const char *sqlite_dialect::type_string(matador::data_type type) const
 {
   switch(type) {
     case data_type::type_char:

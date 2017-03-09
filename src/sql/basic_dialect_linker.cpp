@@ -2,12 +2,12 @@
 // Created by sascha on 17.08.16.
 //
 
-#include "oos/sql/basic_dialect_linker.hpp"
-#include "oos/sql/dialect_token.hpp"
+#include "matador/sql/basic_dialect_linker.hpp"
+#include "matador/sql/dialect_token.hpp"
 
 #include <algorithm>
 
-namespace oos {
+namespace matador {
 
 namespace detail {
 
@@ -19,82 +19,82 @@ void basic_dialect_linker::link()
   }
 }
 
-void basic_dialect_linker::visit(const oos::detail::begin &begin)
+void basic_dialect_linker::visit(const matador::detail::begin &begin)
 {
   dialect().append_to_result(token_string(begin.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::commit &commit)
+void basic_dialect_linker::visit(const matador::detail::commit &commit)
 {
   dialect().append_to_result(token_string(commit.type) + " ");}
 
-void basic_dialect_linker::visit(const oos::detail::rollback &rollback)
+void basic_dialect_linker::visit(const matador::detail::rollback &rollback)
 {
   dialect().append_to_result(token_string(rollback.type) + " ");
 }
 
-void basic_dialect_linker::visit(oos::detail::query &q)
+void basic_dialect_linker::visit(matador::detail::query &q)
 {
   dialect().append_to_result("(");
   dialect().append_to_result(dialect().build(q.sql_, dialect().compile_type()));
   dialect().append_to_result(") ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::create &create)
+void basic_dialect_linker::visit(const matador::detail::create &create)
 {
   dialect().append_to_result(token_string(create.type) + " " + dialect_->prepare_identifier(create.table) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::drop &drop)
+void basic_dialect_linker::visit(const matador::detail::drop &drop)
 {
   dialect().append_to_result(token_string(drop.type) + " " + dialect_->prepare_identifier(drop.table) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::select &select)
+void basic_dialect_linker::visit(const matador::detail::select &select)
 {
   dialect().append_to_result(token_string(select.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::distinct &distinct)
+void basic_dialect_linker::visit(const matador::detail::distinct &distinct)
 {
   dialect().append_to_result(token_string(distinct.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::update &update)
+void basic_dialect_linker::visit(const matador::detail::update &update)
 {
   dialect().append_to_result(token_string(update.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::tablename &table)
+void basic_dialect_linker::visit(const matador::detail::tablename &table)
 {
   dialect().append_to_result(dialect_->prepare_identifier(table.tab) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::set &set)
+void basic_dialect_linker::visit(const matador::detail::set &set)
 {
   dialect().append_to_result(token_string(set.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::as &alias)
+void basic_dialect_linker::visit(const matador::detail::as &alias)
 {
   std::stringstream res;
   res << token_string(alias.type) << " " << alias.alias << " ";
   dialect().append_to_result(res.str());
 }
 
-void basic_dialect_linker::visit(const oos::detail::top &top)
+void basic_dialect_linker::visit(const matador::detail::top &top)
 {
   std::stringstream res;
   res << token_string(top.type) << " " << top.limit_ << " ";
   dialect().append_to_result(res.str());
 }
 
-void basic_dialect_linker::visit(const oos::detail::remove &del)
+void basic_dialect_linker::visit(const matador::detail::remove &del)
 {
   dialect().append_to_result(token_string(del.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::values &values)
+void basic_dialect_linker::visit(const matador::detail::values &values)
 {
   dialect().append_to_result(token_string(values.type) + " (");
 
@@ -110,7 +110,7 @@ void basic_dialect_linker::visit(const oos::detail::values &values)
   dialect().append_to_result(") ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::basic_value &val)
+void basic_dialect_linker::visit(const matador::detail::basic_value &val)
 {
   if (dialect().compile_type() == basic_dialect::DIRECT) {
     dialect().append_to_result(val.safe_string(dialect()));
@@ -120,32 +120,32 @@ void basic_dialect_linker::visit(const oos::detail::basic_value &val)
   }
 }
 
-void basic_dialect_linker::visit(const oos::detail::order_by &by)
+void basic_dialect_linker::visit(const matador::detail::order_by &by)
 {
   dialect().append_to_result(token_string(by.type) + " " + dialect().prepare_identifier(by.column) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::asc &asc)
+void basic_dialect_linker::visit(const matador::detail::asc &asc)
 {
   dialect().append_to_result(token_string(asc.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::desc &desc)
+void basic_dialect_linker::visit(const matador::detail::desc &desc)
 {
   dialect().append_to_result(token_string(desc.type) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::group_by &by)
+void basic_dialect_linker::visit(const matador::detail::group_by &by)
 {
   dialect().append_to_result(token_string(by.type) + " " + dialect().prepare_identifier(by.column) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::insert &insert)
+void basic_dialect_linker::visit(const matador::detail::insert &insert)
 {
   dialect().append_to_result(token_string(insert.type) + " " + dialect_->prepare_identifier(insert.table) + " ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::from &from)
+void basic_dialect_linker::visit(const matador::detail::from &from)
 {
   if (from.table.empty()) {
     dialect().append_to_result(token_string(from.type) + " ");
@@ -154,32 +154,32 @@ void basic_dialect_linker::visit(const oos::detail::from &from)
   }
 }
 
-void basic_dialect_linker::visit(const oos::detail::where &where)
+void basic_dialect_linker::visit(const matador::detail::where &where)
 {
   dialect().append_to_result(token_string(where.type) + " ");
   where.cond->accept(*this);
   dialect().append_to_result(" ");
 }
 
-void basic_dialect_linker::visit(const oos::detail::basic_condition &cond)
+void basic_dialect_linker::visit(const matador::detail::basic_condition &cond)
 {
   dialect().append_to_result(cond.evaluate(dialect()));
 //  cond.evaluate(dialect().compile_type());
 }
 
-void basic_dialect_linker::visit(const oos::detail::basic_column_condition &cond)
+void basic_dialect_linker::visit(const matador::detail::basic_column_condition &cond)
 {
   dialect().inc_bind_count();
   dialect().append_to_result(cond.evaluate(dialect()));
 }
 
-void basic_dialect_linker::visit(const oos::detail::basic_in_condition &cond)
+void basic_dialect_linker::visit(const matador::detail::basic_in_condition &cond)
 {
   dialect().inc_bind_count(cond.size());
   dialect().append_to_result(cond.evaluate(dialect()));
 }
 
-void basic_dialect_linker::visit(const oos::columns &cols)
+void basic_dialect_linker::visit(const matador::columns &cols)
 {
   if (cols.with_brackets_ == columns::WITH_BRACKETS) {
     dialect().append_to_result("(");
@@ -203,7 +203,7 @@ void basic_dialect_linker::visit(const oos::columns &cols)
   dialect().append_to_result(" ");
 }
 
-void basic_dialect_linker::visit(const oos::column &col)
+void basic_dialect_linker::visit(const matador::column &col)
 {
   if (col.skip_quotes) {
     dialect().append_to_result(col.name);
@@ -213,37 +213,37 @@ void basic_dialect_linker::visit(const oos::column &col)
   dialect().inc_column_count();
 }
 
-void basic_dialect_linker::visit(const oos::detail::typed_column &col)
+void basic_dialect_linker::visit(const matador::detail::typed_column &col)
 {
-  visit(static_cast<const oos::column&>(col));
+  visit(static_cast<const matador::column&>(col));
   dialect().append_to_result(std::string(" ") + dialect().type_string(col.type));
 }
 
-void basic_dialect_linker::visit(const oos::detail::typed_identifier_column &col)
+void basic_dialect_linker::visit(const matador::detail::typed_identifier_column &col)
 {
-  visit(static_cast<const oos::column&>(col));
+  visit(static_cast<const matador::column&>(col));
   dialect().append_to_result(std::string(" ") + dialect().type_string(col.type) + " NOT NULL PRIMARY KEY");
 }
 
-void basic_dialect_linker::visit(const oos::detail::typed_varchar_column &col)
+void basic_dialect_linker::visit(const matador::detail::typed_varchar_column &col)
 {
-  visit(static_cast<const oos::column&>(col));
+  visit(static_cast<const matador::column&>(col));
   std::stringstream str;
   str << " " << dialect().type_string(col.type) << "(" << col.size << ")";
   dialect().append_to_result(str.str());
 }
 
-void basic_dialect_linker::visit(const oos::detail::identifier_varchar_column &col)
+void basic_dialect_linker::visit(const matador::detail::identifier_varchar_column &col)
 {
-  visit(static_cast<const oos::column&>(col));
+  visit(static_cast<const matador::column&>(col));
   std::stringstream str;
   str << " " << dialect().type_string(col.type) << "(" << col.size << ") NOT NULL PRIMARY KEY";
   dialect().append_to_result(str.str());
 }
 
-void basic_dialect_linker::visit(const oos::detail::basic_value_column &col)
+void basic_dialect_linker::visit(const matador::detail::basic_value_column &col)
 {
-  visit(static_cast<const oos::column&>(col));
+  visit(static_cast<const matador::column&>(col));
   dialect().append_to_result("=");
   col.value_->accept(*this);
 }

@@ -15,19 +15,19 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/varchar.hpp"
-#include "oos/utils/date.hpp"
-#include "oos/utils/time.hpp"
-#include "oos/utils/string.hpp"
+#include "matador/utils/varchar.hpp"
+#include "matador/utils/date.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/string.hpp"
 
-#include "oos/utils/identifier.hpp"
+#include "matador/utils/identifier.hpp"
 
-#include "oos/db/mysql/mysql_result.hpp"
-#include "oos/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_result.hpp"
+#include "matador/db/mysql/mysql_exception.hpp"
 
 #include <cstring>
 
-namespace oos {
+namespace matador {
 
 namespace mysql {
 
@@ -248,17 +248,17 @@ void mysql_result::serialize(const char *, std::string &x)
   x.assign(val);
 }
 
-void mysql_result::serialize(const char *, oos::date &x)
+void mysql_result::serialize(const char *, matador::date &x)
 {
   char *val = row_[result_index_++];
   size_t len = strlen(val);
   if (val == nullptr || len == 0) {
     return;
   }
-  x.set(val, oos::date_format::ISO8601);
+  x.set(val, matador::date_format::ISO8601);
 }
 
-void mysql_result::serialize(const char *id, oos::time &x)
+void mysql_result::serialize(const char *id, matador::time &x)
 {
 #if MYSQL_VERSION_ID < 50604
   // before mysql version 5.6.4 datetime
@@ -266,20 +266,20 @@ void mysql_result::serialize(const char *id, oos::time &x)
   // so we use a datetime string here
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%Y-%m-%dT%T");
+  x = matador::time::parse(val, "%Y-%m-%dT%T");
 #else
   std::string val;
   serialize(id, val);
-  x = oos::time::parse(val, "%Y-%m-%d %T.%f");
+  x = matador::time::parse(val, "%Y-%m-%d %T.%f");
 #endif
 }
 
-void mysql_result::serialize(const char *id, oos::basic_identifier &x)
+void mysql_result::serialize(const char *id, matador::basic_identifier &x)
 {
   x.serialize(id, *this);
 }
 
-void mysql_result::serialize(const char *id, oos::identifiable_holder &x, cascade_type)
+void mysql_result::serialize(const char *id, matador::identifiable_holder &x, cascade_type)
 {
   read_foreign_object(id, x);
 }

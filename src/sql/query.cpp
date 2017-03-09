@@ -2,9 +2,9 @@
 // Created by sascha on 5/24/16.
 //
 
-#include "oos/sql/query.hpp"
+#include "matador/sql/query.hpp"
 
-namespace oos {
+namespace matador {
 
 query<row> select(columns cols)
 {

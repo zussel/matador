@@ -2,9 +2,9 @@
 // Created by sascha on 20.03.16.
 //
 
-#include "oos/orm/persistence.hpp"
+#include "matador/orm/persistence.hpp"
 
-namespace oos {
+namespace matador {
 
 
 persistence::persistence(const std::string &dns)

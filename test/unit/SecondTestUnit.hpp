@@ -15,12 +15,12 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/unit/unit_test.hpp"
-#include "oos/unit/test_suite.hpp"
+#include "matador/unit/unit_test.hpp"
+#include "matador/unit/test_suite.hpp"
 
 #include <functional>
 
-class SecondTestUnit : public oos::unit_test
+class SecondTestUnit : public matador::unit_test
 {
 public:
   SecondTestUnit() : unit_test("second", "Second test unit")

@@ -2,12 +2,12 @@
  * @author sascha on 4/19/16.
  */
 
-#include "oos/utils/basic_identifier_serializer.hpp"
+#include "matador/utils/basic_identifier_serializer.hpp"
 
-#include "oos/utils/basic_identifier.hpp"
-#include "oos/utils/time.hpp"
+#include "matador/utils/basic_identifier.hpp"
+#include "matador/utils/time.hpp"
 
-namespace oos {
+namespace matador {
 
 basic_identifier_serializer::basic_identifier_serializer()
 { }
@@ -118,7 +118,7 @@ void basic_identifier_serializer::serialize(const char *, std::string &x)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, oos::varchar_base &x)
+void basic_identifier_serializer::serialize(const char *id, matador::varchar_base &x)
 {
   std::string value;
   if (restore_) {
@@ -130,7 +130,7 @@ void basic_identifier_serializer::serialize(const char *id, oos::varchar_base &x
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, oos::time &x)
+void basic_identifier_serializer::serialize(const char *id, matador::time &x)
 {
   if (restore_) {
     struct timeval tv;
@@ -144,7 +144,7 @@ void basic_identifier_serializer::serialize(const char *id, oos::time &x)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *id, oos::date &x)
+void basic_identifier_serializer::serialize(const char *id, matador::date &x)
 {
   if (restore_) {
     int julian_date(0);
@@ -156,8 +156,8 @@ void basic_identifier_serializer::serialize(const char *id, oos::date &x)
   }
 }
 
-void basic_identifier_serializer::serialize(const char *, oos::basic_identifier &) { }
+void basic_identifier_serializer::serialize(const char *, matador::basic_identifier &) { }
 
-void basic_identifier_serializer::serialize(const char *, oos::identifiable_holder &, cascade_type) { }
+void basic_identifier_serializer::serialize(const char *, matador::identifiable_holder &, cascade_type) { }
 
 }

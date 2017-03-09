@@ -2,11 +2,11 @@
 // @author sascha on 9/23/16.
 //
 
-#include "oos/sql/types.hpp"
+#include "matador/sql/types.hpp"
 
-namespace oos {
+namespace matador {
 
-//std::ostream& operator<<(std::ostream &out, const oos::data_type type)
+//std::ostream& operator<<(std::ostream &out, const matador::data_type type)
 //{
 //  out << type;
 //  return out;

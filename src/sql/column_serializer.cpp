@@ -2,9 +2,9 @@
 // Created by sascha on 04.03.16.
 //
 
-#include "oos/sql/column_serializer.hpp"
+#include "matador/sql/column_serializer.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 column_serializer::column_serializer(columns::t_brackets brackets)

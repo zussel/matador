@@ -1,4 +1,4 @@
-#include "oos/utils/strptime.hpp"
+#include "matador/utils/strptime.hpp"
 
 #ifdef _MSC_VER
 #include <ctype.h>
@@ -17,7 +17,7 @@
 #include <ctime>
 #endif
 
-namespace oos {
+namespace matador {
 namespace detail {
 #ifdef _MSC_VER
   static   int conv_num(const char **, int *, int, int);

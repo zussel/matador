@@ -1,7 +1,7 @@
 # - Find OOS
 # Find the OOS includes and client library
 # This module defines
-#  OOS_INCLUDE_DIR, where to find oos/object/object_store.hpp
+#  OOS_INCLUDE_DIR, where to find matador/object/object_store.hpp
 #  OOS_LIBRARIES, the libraries needed to use OOS.
 #  OOS_FOUND, If false, do not try to use OOS.
 

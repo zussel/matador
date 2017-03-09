@@ -2,10 +2,10 @@
 // Created by sascha on 12.03.16.
 //
 
-#include "oos/object/update_action.hpp"
-#include "oos/object/action_visitor.hpp"
+#include "matador/object/update_action.hpp"
+#include "matador/object/action_visitor.hpp"
 
-namespace oos {
+namespace matador {
 
 void update_action::accept(action_visitor *av)
 {

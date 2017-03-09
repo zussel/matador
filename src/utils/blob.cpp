@@ -1,6 +1,6 @@
-#include "oos/utils/blob.hpp"
+#include "matador/utils/blob.hpp"
 
-namespace oos {
+namespace matador {
 
 blob::blob()
 {}

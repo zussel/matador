@@ -15,11 +15,11 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/object/action.hpp"
-#include "oos/object/object_store.hpp"
-#include "oos/object/object_serializer.hpp"
+#include "matador/object/action.hpp"
+#include "matador/object/object_store.hpp"
+#include "matador/object/object_serializer.hpp"
 
-namespace oos
+namespace matador
 {
 
 action::action()

@@ -1,11 +1,11 @@
 #include "TimeTestUnit.hpp"
 
-#include "oos/utils/time.hpp"
-#include "oos/utils/string.hpp"
+#include "matador/utils/time.hpp"
+#include "matador/utils/string.hpp"
 
 #include <stdexcept>
 
-using namespace oos;
+using namespace matador;
 
 TimeTestUnit::TimeTestUnit()
   : unit_test("time", "time test unit")
@@ -31,7 +31,7 @@ void TimeTestUnit::test_create()
   struct tm *tt = localtime(&t);
 #endif
 
-  oos::time now;
+  matador::time now;
 
   UNIT_ASSERT_EQUAL(tt->tm_year + 1900, now.year(), "year isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_mon + 1, now.month(), "month of year isn't equal");
@@ -45,7 +45,7 @@ void TimeTestUnit::test_create()
 #else
   tt = localtime(&t);
 #endif
-  oos::time t1 = time::now();
+  matador::time t1 = time::now();
 
   UNIT_ASSERT_EQUAL(tt->tm_year + 1900, t1.year(), "year isn't equal");
   UNIT_ASSERT_EQUAL(tt->tm_mon + 1, t1.month(), "month of year isn't equal");
@@ -57,7 +57,7 @@ void TimeTestUnit::test_create()
 
 void TimeTestUnit::test_initialize()
 {
-  oos::time t1(2014, 12, 3, 20, 17, 45);
+  matador::time t1(2014, 12, 3, 20, 17, 45);
 
   UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
   UNIT_ASSERT_EQUAL(12, t1.month(), "month of year isn't equal 12");
@@ -88,7 +88,7 @@ void TimeTestUnit::test_initialize()
   tt->tm_year = 2014 - 1900;
   tt->tm_isdst = 0;
 
-  oos::time t2(mktime(tt));
+  matador::time t2(mktime(tt));
 
   UNIT_ASSERT_EQUAL(2014, t2.year(), "year isn't equal 2014");
   UNIT_ASSERT_EQUAL(12, t2.month(), "month of year isn't equal 12");
@@ -103,19 +103,19 @@ void TimeTestUnit::test_initialize()
 
 void TimeTestUnit::test_invalid()
 {
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid", "time should not be valid");
-  UNIT_ASSERT_EXCEPTION(oos::time(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 12, 42, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 13, 31, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 29, 12, 12, 12), std::logic_error, "date isn't valid", "date should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 63, 12, 12), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 63, 12), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 63), std::logic_error, "time isn't valid", "time should not be valid");
+  UNIT_ASSERT_EXCEPTION(matador::time(2015, 2, 28, 12, 12, 12, 10000), std::logic_error, "time isn't valid", "time should not be valid");
 }
 
 void TimeTestUnit::test_copy()
 {
-  oos::time t1(2014, 12, 3, 20, 17, 45);
-  oos::time t2(t1);
+  matador::time t1(2014, 12, 3, 20, 17, 45);
+  matador::time t2(t1);
 
   UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
   UNIT_ASSERT_EQUAL(12, t1.month(), "month of year isn't equal 12");
@@ -142,8 +142,8 @@ void TimeTestUnit::test_copy()
 
 void TimeTestUnit::test_assign()
 {
-  oos::time t1(2014, 12, 3, 20, 17, 45);
-  oos::time t2;
+  matador::time t1(2014, 12, 3, 20, 17, 45);
+  matador::time t2;
   t2 = t1;
 
   UNIT_ASSERT_EQUAL(2014, t1.year(), "year isn't equal 2014");
@@ -171,9 +171,9 @@ void TimeTestUnit::test_assign()
 
 void TimeTestUnit::test_compare()
 {
-  oos::time t1(2015, 1, 31, 11, 35, 7);
-  oos::time t2(2014, 12, 3, 20, 17, 45);
-  oos::time t3(t1);
+  matador::time t1(2015, 1, 31, 11, 35, 7);
+  matador::time t2(2014, 12, 3, 20, 17, 45);
+  matador::time t3(t1);
 
   UNIT_ASSERT_TRUE(t1 > t2, "t1 is greater than t2");
   UNIT_ASSERT_TRUE(t2 < t1, "t2 is less than t1");
@@ -187,7 +187,7 @@ void TimeTestUnit::test_compare()
 
 void TimeTestUnit::test_modify()
 {
-  oos::time t(2015, 1, 31, 11, 35, 7);
+  matador::time t(2015, 1, 31, 11, 35, 7);
 
   UNIT_ASSERT_EQUAL(2015, t.year(), "year isn't equal 2015");
   UNIT_ASSERT_EQUAL(1, t.month(), "month of year isn't equal 1");
@@ -240,7 +240,7 @@ void TimeTestUnit::test_parse()
 {
   std::string tstr1("03.04.2015 12:55:12.123");
 
-  oos::time t = oos::time::parse(tstr1, "%d.%m.%Y %H:%M:%S.%f");
+  matador::time t = matador::time::parse(tstr1, "%d.%m.%Y %H:%M:%S.%f");
 
   UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
   UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
@@ -252,7 +252,7 @@ void TimeTestUnit::test_parse()
 
   tstr1.assign("12:55:12.123 03.04.2015");
 
-  t = oos::time::parse(tstr1, "%H:%M:%S.%f %d.%m.%Y");
+  t = matador::time::parse(tstr1, "%H:%M:%S.%f %d.%m.%Y");
 
   UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
   UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
@@ -264,7 +264,7 @@ void TimeTestUnit::test_parse()
 
   tstr1.assign("12:55:12 03.04.2015");
 
-  t = oos::time::parse(tstr1, "%H:%M:%S %d.%m.%Y");
+  t = matador::time::parse(tstr1, "%H:%M:%S %d.%m.%Y");
 
   UNIT_ASSERT_EQUAL(2015, t.year(), "year must be 2015");
   UNIT_ASSERT_EQUAL(4, t.month(), "month must be 4");
@@ -277,7 +277,7 @@ void TimeTestUnit::test_parse()
 
 void TimeTestUnit::test_format()
 {
-  oos::time t(2015, 1, 31, 11, 35, 7, 123);
+  matador::time t(2015, 1, 31, 11, 35, 7, 123);
 
   std::string tstr(to_string(t, "%H:%M:%S.%f %d.%m.%Y"));
 

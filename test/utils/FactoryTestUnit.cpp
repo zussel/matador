@@ -1,10 +1,10 @@
 #include "FactoryTestUnit.hpp"
 
-#include "oos/utils/factory.hpp"
+#include "matador/utils/factory.hpp"
 
 #include <iostream>
 
-using namespace oos;
+using namespace matador;
 using std::cout;
 using std::endl;
 

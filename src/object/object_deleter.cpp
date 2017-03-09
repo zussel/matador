@@ -1,6 +1,6 @@
-#include "oos/object/object_deleter.hpp"
+#include "matador/object/object_deleter.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 void object_deleter::t_object_count::remove(bool notify)

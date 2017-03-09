@@ -2,12 +2,12 @@
 // Created by sascha on 06.03.16.
 //
 
-#include "oos/sql/value_serializer.hpp"
+#include "matador/sql/value_serializer.hpp"
 
-#include "oos/utils/identifiable_holder.hpp"
-#include "oos/utils/basic_identifier.hpp"
+#include "matador/utils/identifiable_holder.hpp"
+#include "matador/utils/basic_identifier.hpp"
 
-namespace oos {
+namespace matador {
 namespace detail {
 
 value_serializer::value_serializer()

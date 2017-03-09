@@ -4,7 +4,7 @@
 
 #include "PrimaryKeyUnitTest.hpp"
 
-#include "oos/utils/identifier.hpp"
+#include "matador/utils/identifier.hpp"
 
 #include <memory>
 
@@ -18,7 +18,7 @@ PrimaryKeyUnitTest::PrimaryKeyUnitTest()
 void PrimaryKeyUnitTest::test_create()
 {
   long id57(57);
-  std::unique_ptr<oos::basic_identifier> pkb(new oos::identifier<long>(id57));
+  std::unique_ptr<matador::basic_identifier> pkb(new matador::identifier<long>(id57));
 
   pkb->is_valid();
 
@@ -31,11 +31,11 @@ void PrimaryKeyUnitTest::test_share()
 {
   std::string id("max@mustermann.de");
   std::string gollum("gollum@mittelerde.to");
-  oos::identifier<std::string> email(id);
+  matador::identifier<std::string> email(id);
 
   UNIT_ASSERT_EQUAL(id, email.value(), "invalid identifier value");
 
-  oos::identifier<std::string> shared_email;
+  matador::identifier<std::string> shared_email;
 
   UNIT_ASSERT_TRUE(shared_email.value().empty(), "identifier must be empty");
 

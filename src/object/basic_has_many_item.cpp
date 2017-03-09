@@ -2,9 +2,9 @@
  * @author sascha on 4/21/16.
  */
 
-#include "oos/object/basic_has_many_item.hpp"
+#include "matador/object/basic_has_many_item.hpp"
 
-namespace oos {
+namespace matador {
 
 basic_has_many_item::basic_has_many_item()
   : basic_has_many_item("owner_id", "item_id")

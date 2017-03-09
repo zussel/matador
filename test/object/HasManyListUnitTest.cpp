@@ -6,7 +6,7 @@
 
 #include "../has_many_list.hpp"
 
-using namespace oos;
+using namespace matador;
 using namespace hasmanylist;
 
 HasManyListUnitTest::HasManyListUnitTest()

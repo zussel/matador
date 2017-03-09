@@ -6,18 +6,18 @@
 #define OOS_TESTDIALECT_HPP
 
 
-#include "oos/sql/types.hpp"
-#include "oos/sql/basic_dialect.hpp"
+#include "matador/sql/types.hpp"
+#include "matador/sql/basic_dialect.hpp"
 
-class TestDialect : public oos::basic_dialect
+class TestDialect : public matador::basic_dialect
 {
 public:
 
   TestDialect();
 
-  const char* type_string(oos::data_type type) const override;
+  const char* type_string(matador::data_type type) const override;
 
-  oos::dialect_traits::identifier identifier_escape_type() const override;
+  matador::dialect_traits::identifier identifier_escape_type() const override;
 };
 
 #endif //OOS_TESTDIALECT_HPP

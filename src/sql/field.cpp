@@ -2,9 +2,9 @@
 // Created by sascha on 5/17/16.
 //
 
-#include "oos/sql/field.hpp"
+#include "matador/sql/field.hpp"
 
-namespace oos {
+namespace matador {
 
 
 field::field() { }

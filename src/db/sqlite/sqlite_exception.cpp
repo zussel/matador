@@ -15,9 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/sqlite/sqlite_exception.hpp"
+#include "matador/db/sqlite/sqlite_exception.hpp"
 
-namespace oos {
+namespace matador {
 
 namespace sqlite {
 

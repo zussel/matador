@@ -15,15 +15,15 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/object/prototype_node.hpp"
-#include "oos/object/object_exception.hpp"
-#include "oos/object/object_proxy.hpp"
+#include "matador/object/prototype_node.hpp"
+#include "matador/object/object_exception.hpp"
+#include "matador/object/object_proxy.hpp"
 
 #include <algorithm>
 
 using namespace std;
 
-namespace oos {
+namespace matador {
 
 prototype_node::prototype_node()
   : type_index_(typeid(void))

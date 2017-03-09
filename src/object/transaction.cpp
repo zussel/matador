@@ -2,10 +2,10 @@
 // Created by sascha on 3/9/16.
 //
 
-#include "oos/object/transaction.hpp"
-#include "oos/object/object_store.hpp"
+#include "matador/object/transaction.hpp"
+#include "matador/object/object_store.hpp"
 
-namespace oos {
+namespace matador {
 
 sequencer transaction::sequencer_ = sequencer();
 
@@ -21,7 +21,7 @@ void transaction::null_observer::visit(delete_action *act)
   act->mark_deleted();
 }
 
-transaction::transaction(oos::object_store &store)
+transaction::transaction(matador::object_store &store)
   : transaction(store, std::make_shared<null_observer>())
 {}
 
@@ -93,7 +93,7 @@ void transaction::rollback()
   }
 }
 
-void transaction::backup(const action_ptr &a, const oos::object_proxy *proxy)
+void transaction::backup(const action_ptr &a, const matador::object_proxy *proxy)
 {
   a->backup(transaction_data_->object_buffer_);
   transaction_data_->actions_.push_back(a);

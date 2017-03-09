@@ -6,9 +6,9 @@
 #define OOS_OBJECTTRANSACTIONTESTUNIT_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class ObjectTransactiontestUnit : public oos::unit_test
+class ObjectTransactiontestUnit : public matador::unit_test
 {
 
 public:

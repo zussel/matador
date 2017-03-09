@@ -15,12 +15,12 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/db/mysql/mysql_exception.hpp"
+#include "matador/db/mysql/mysql_exception.hpp"
 
 #include <string>
 #include <sstream>
 
-namespace oos {
+namespace matador {
 
 namespace mysql {
 

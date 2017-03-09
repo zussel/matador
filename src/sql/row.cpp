@@ -15,9 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/sql/row.hpp"
+#include "matador/sql/row.hpp"
 
-namespace oos {
+namespace matador {
 
 row::row()
 {}

@@ -2,10 +2,10 @@
 // Created by sascha on 3/2/16.
 //
 
-#include "oos/sql/column.hpp"
-#include "oos/sql/token_visitor.hpp"
+#include "matador/sql/column.hpp"
+#include "matador/sql/token_visitor.hpp"
 
-namespace oos {
+namespace matador {
 
 column::column(const std::string &col)
   : token(COLUMN)

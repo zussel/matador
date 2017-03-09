@@ -15,9 +15,9 @@
  * along with OpenObjectStore OOS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oos/utils/library.hpp"
+#include "matador/utils/library.hpp"
 
-namespace oos {
+namespace matador {
 
 library::library()
   : handle_(0)

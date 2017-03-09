@@ -6,9 +6,9 @@
 #define OOS_ORMTESTUNIT_HPP
 
 
-#include "oos/unit/unit_test.hpp"
+#include "matador/unit/unit_test.hpp"
 
-class OrmTestUnit : public oos::unit_test
+class OrmTestUnit : public matador::unit_test
 {
 public:
   OrmTestUnit(const std::string &prefix, const std::string &dns);

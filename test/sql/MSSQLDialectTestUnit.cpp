@@ -7,12 +7,12 @@
 #include "connections.hpp"
 #include "../Item.hpp"
 
-#include "oos/sql/sql.hpp"
-#include "oos/sql/query.hpp"
-#include "oos/sql/dialect_token.hpp"
-#include "oos/sql/connection.hpp"
+#include "matador/sql/sql.hpp"
+#include "matador/sql/query.hpp"
+#include "matador/sql/dialect_token.hpp"
+#include "matador/sql/connection.hpp"
 
-using namespace oos;
+using namespace matador;
 
 MSSQLDialectTestUnit::MSSQLDialectTestUnit()
   : unit_test("mssql_dialect", "mssql dialect test")
@@ -24,13 +24,13 @@ MSSQLDialectTestUnit::MSSQLDialectTestUnit()
 
 void MSSQLDialectTestUnit::test_limit()
 {
-  oos::connection conn(::connection::mssql);
+  matador::connection conn(::connection::mssql);
 
   sql s;
 
   s.append(new detail::select);
 
-  std::unique_ptr<oos::columns> cols(new columns(columns::WITHOUT_BRACKETS));
+  std::unique_ptr<matador::columns> cols(new columns(columns::WITHOUT_BRACKETS));
 
   cols->push_back(std::make_shared<column>("id"));
   cols->push_back(std::make_shared<column>("name"));
@@ -49,22 +49,22 @@ void MSSQLDialectTestUnit::test_limit()
 
 void MSSQLDialectTestUnit::test_query_select_sub_select()
 {
-  oos::connection conn(::connection::mssql);
+  matador::connection conn(::connection::mssql);
 
   query<person> q("person");
 
   column id("id");
 
-  auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
+  auto subselect = matador::select(columns::all()).from(matador::select({id}).from("person").limit(1)).as("p");
 
-  q.select().where(oos::in(id, subselect));
+  q.select().where(matador::in(id, subselect));
 
   UNIT_ASSERT_EQUAL("SELECT [id], [name], [birthdate], [height] FROM [person] WHERE [id] IN (SELECT * FROM (SELECT TOP (1) [id] FROM [person] ) AS p ) ", q.str(conn, false), "select limit isn't as expected");
 }
 
 void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 {
-  oos::connection conn(::connection::mssql);
+  matador::connection conn(::connection::mssql);
 
   conn.open();
 
@@ -75,23 +75,23 @@ void MSSQLDialectTestUnit::test_query_select_sub_select_result()
 
   unsigned long counter = 0;
 
-  person hans(++counter, "Hans", oos::date(12, 3, 1980), 180);
+  person hans(++counter, "Hans", matador::date(12, 3, 1980), 180);
   res = q.insert(hans).execute(conn);
 
-  person otto(++counter, "Otto", oos::date(27, 11, 1954), 159);
+  person otto(++counter, "Otto", matador::date(27, 11, 1954), 159);
   res = q.insert(otto).execute(conn);
 
-  person hilde(++counter, "Hilde", oos::date(13, 4, 1975), 175);
+  person hilde(++counter, "Hilde", matador::date(13, 4, 1975), 175);
   res = q.insert(hilde).execute(conn);
 
-  person trude(++counter, "Trude", oos::date(1, 9, 1967), 166);
+  person trude(++counter, "Trude", matador::date(1, 9, 1967), 166);
   res = q.insert(trude).execute(conn);
 
   column id("id");
 
-  auto subselect = oos::select(columns::all()).from(oos::select({id}).from("person").limit(1)).as("p");
+  auto subselect = matador::select(columns::all()).from(matador::select({id}).from("person").limit(1)).as("p");
 
-  res = q.select().where(oos::in(id, subselect)).execute(conn);
+  res = q.select().where(matador::in(id, subselect)).execute(conn);
 
   auto first = res.begin();
   auto last = res.end();
