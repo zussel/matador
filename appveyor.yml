@@ -12,8 +12,8 @@ configuration:
 
 environment:
   matrix:
-  - VS_VERSION: Visual Studio 14 2015
-    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
+#  - VS_VERSION: Visual Studio 14 2015
+#    MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
   - VS_VERSION: Visual Studio 14 2015 Win64
     MYSQL_DIR: C:\Program Files\MySql\MySQL Server 5.7
 
