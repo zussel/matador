@@ -1,9 +1,9 @@
-Open Object Store (OOS)
-=======================
+matador
+=======
 
 __Version 0.5.0-alpha.1__
 
-Store all kind of objects in one container.
+Take your database by the horns.
 
 [![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/oos?svg=true)](https://ci.appveyor.com/project/zussel/oos)
@@ -12,7 +12,7 @@ Store all kind of objects in one container.
 [![GitHub version](https://badge.fury.io/gh/zussel%2Foos.svg)](https://badge.fury.io/gh/zussel%2Foos)
 [![GitHub license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://raw.githubusercontent.com/zussel/oos/develop/License)
 
-OOS is a ORM framework written in C++. It aims to encapsulate all database stuff
+matador is a ORM framework written in C++. It aims to encapsulate all database stuff
 (database backends, sql statements, serialization of objects) and provides the user an
 easy to use interface and a unique container for all objects. Given this container the user
 has a centralized point of storage for all objects at hand but with the ability to create views on
@@ -34,8 +34,8 @@ Example
 -------
 
 ```cpp
-// use oos' namespace
-using namespace oos
+// use matador' namespace
+using namespace matador
 
 // a simple person class
 struct person {
@@ -66,7 +66,7 @@ p.create();
 session s(p);
 
 // insert george
-// returns an oos::object_ptr<person>
+// returns an matador::object_ptr<person>
 auto george = s.insert(new person(1, "george"));
 
 // modify george
@@ -101,7 +101,7 @@ Create a build directory change to it and call cmake:
     $ cd build
     $ cmake ..
     
-Then you can build oos from sources:
+Then you can build matador from sources:
 
     $ make
 
@@ -116,11 +116,11 @@ Create a build directory change to it and call cmake:
 
 Where __*__ is one of the *__"Visual Studio"__* strings up from *__"14"__*. See cmake
 documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
-After generation you find a __oos.sln__ solution file in the current directory.
+After generation you find a __matador.sln__ solution file in the current directory.
 
 Contact
 -------
 
-If you have questions or issues concerning oos you can place an issue in my
-[oos github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or
-contact me via mail *__oos at zussel dot de__*.
+If you have questions or issues concerning matador you can place an issue in my
+[matador github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or
+contact me via mail *__sascha dot kuehl at gmx dot net__*.
