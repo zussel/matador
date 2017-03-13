@@ -1,0 +1,38 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">matador</a>
+      <!--<a class="navbar-brand masthead-brand" href="#">matador</a>-->
+    </div>
+    <div id="navbar" class="navbar-collapse collapse pull-right">
+      <!--<ul class="nav navbar-nav masthead-nav">-->
+      <ul class="nav navbar-nav">
+        {% for nav in site.data.navigation.main %}
+          {% if nav.title == "Guide" %}
+          <li{% if page.url contains "guide/" %} class="active"{% endif %}>
+            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+          </li>
+          {% elsif nav.title == "Api" %}
+          <li{% if page.url contains "api/" %} class="active"{% endif %}>
+            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+          </li>
+          {% elsif nav.external %}
+          <li{% if page.url == nav.url %} class="active"{% endif %}>
+            <a href="{{ nav.url }}">{{ nav.title }}</a>
+          </li>
+          {% else %}
+          <li{% if page.url == nav.url %} class="active"{% endif %}>
+            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div><!--/.navbar-collapse -->
+  </div>
+</nav>

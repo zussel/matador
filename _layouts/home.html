@@ -1,0 +1,101 @@
+---
+layout: default
+---
+<div class="green-background">
+  <div class="container">
+    <div class="jumbotron">
+      <div class="container">
+        <h1>matador</h1>
+        <p>
+          matador is an object relational mapping framework written in C++. It
+          aims to encapsulate all database backend communication. You dont have
+          to deal with database backends or sql statements neither with mapping of
+          data types or serialization of objects. It comes with relation handling out
+          of the box, brings a unique container for, a fluent sql query interface.
+          On top all features are combined to a ORM layer.
+        </p>
+        <p><a class="btn btn-primary btn-lg" href="guide/introduction.html" role="button">Learn more &raquo;</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="dark-layout top-offset-50">
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-6">
+{% highlight cpp linenos %}
+object_store store;
+
+store.attach<person>("person");
+store.attach<employee, person>("employee");
+store.attach<department>("department");
+
+auto george = store.insert(new employee("george"));
+
+auto dep = store.insert(new department("insurance"));
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <h2>Unique Container</h2>
+        <p>
+          OOS comes with a unique kind of container where you can store all your objects
+          in. Once the hierarchy is set up you can perform all CRUD operations on the
+          container plus filtering and using views.
+        </p>
+        <p><a class="btn btn-default" href="guide/objects.html" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Fluent Query</h2>
+        <p>
+          The sql query module provides simple fluent interface to build sql queries. A query
+          can be typed or just work on a row object. Once a query is finished it can be executed
+          directly or be captured in a prepared statement.
+        </p>
+        <p><a class="btn btn-default" href="guide/queries.html" role="button">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-6">
+{% highlight cpp linenos %}
+connection conn("sqlite://db.sqlite");
+query<person> q("person", conn);
+
+column name("name");
+column age("age");
+auto res = q.select().where(name != "george" && age > 35);
+
+for (auto p in res) {
+  std::cout << "name: " p->name << "\n";
+}
+{% endhighlight %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+{% highlight cpp linenos %}
+persistence p("sqlite://db.sqlite");
+
+p.attach<author>("author");
+p.attach<post>("post");
+
+// create schema
+p.create();
+
+session s(p);
+
+p.insert(new author("john irwing"));
+{% endhighlight %}
+      </div>
+      <div class="col-md-6">
+        <h2>ORM Layer</h2>
+        <p>
+          The ORM layer finally combines the unique container and the fluent query interface. It
+          hides all database stuff handles one to one, one to many and many to many relationships.
+          Actions are executed in transaction scope.
+        </p>
+        <p><a class="btn btn-default" href="guide/persistence.html" role="button">View details &raquo;</a></p>
+      </div>
+    </div>
+  </div>
+</div>

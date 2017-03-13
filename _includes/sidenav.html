@@ -1,0 +1,19 @@
+<nav>
+  <ul class="navbar-vertical">
+    {% for nav in site.data.navigation.guide %}
+      <li><h4>{{ nav.title }}</h4>
+        <ul>
+        {% for child in nav.children %}
+          <li><a href="{{ site.url }}{{ child.url }}">
+            {% if page.url == child.url %}
+            <span class="label label-default" style="font-size: 100%">{{ child.title }}</span>
+            {% else %}
+            <span style="padding: .2em .6em .3em">{{ child.title }}</span>
+            {% endif %}
+          </a></li>
+        {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
