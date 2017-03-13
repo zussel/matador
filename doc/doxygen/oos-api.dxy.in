@@ -731,7 +731,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is 
 # run.
 
-EXCLUDE                = "@PROJECT_SOURCE_DIR@/include/oos/db"
+EXCLUDE                = "@PROJECT_SOURCE_DIR@/include/matador/db"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or 
 # directories that are symbolic links (a Unix file system feature) are excluded 

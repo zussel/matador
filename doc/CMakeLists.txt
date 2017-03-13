@@ -24,7 +24,7 @@ IF(DOXYGEN_FOUND)
 
     add_custom_target (ghdoc
                        COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/oos-api.dxy
-                       COMMAND ${CMAKE_BINARY_DIR}/sed4ghpages
+                      #  COMMAND ${CMAKE_BINARY_DIR}/sed4ghpages
                        COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
     foreach(WebFile ${WebFiles})
