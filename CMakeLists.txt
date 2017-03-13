@@ -111,6 +111,7 @@ SET(BACKENDS
 FOREACH(backend ${BACKENDS})
   STRING(TOUPPER ${backend} BACKEND_UPPER)
   OPTION(${PROJECT_NAME_UPPER}_${BACKEND_UPPER} "Enable or disable backend ${backend}" TRUE)
+  OPTION(${PROJECT_NAME_UPPER}_${BACKEND_UPPER}_TEST "Enable or disable backend ${backend} tests" TRUE)
 
   IF (${PROJECT_NAME_UPPER}_${BACKEND_UPPER})
     FIND_PACKAGE(${backend})
