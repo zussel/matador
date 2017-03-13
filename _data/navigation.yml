@@ -3,9 +3,12 @@ main:
   - title: "Guide"
     url: /guide/installation.html
   - title: "Api"
-    url: /api/annotated.html
+    url: /api/classes.html
   - title: "Download"
     url: /download/
+  - title: "Code"
+    url: https://github.com/zussel/oos/
+    external: true
 
 guide:
   - title: "Getting Started"

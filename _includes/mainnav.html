@@ -22,6 +22,10 @@
           <li{% if page.url contains "api/" %} class="active"{% endif %}>
             <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
           </li>
+          {% elsif nav.external %}
+          <li{% if page.url == nav.url %} class="active"{% endif %}>
+            <a href="{{ nav.url }}">{{ nav.title }}</a>
+          </li>
           {% else %}
           <li{% if page.url == nav.url %} class="active"{% endif %}>
             <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
