@@ -68,7 +68,7 @@ truck->color = red;
 ```
 **Note:** When using the raw pointer object store can't guarantee that a change is
 properly rolled back when an exception occurs.
-{: .notice--warning}
+{: .bs-callout .bs-callout-warning}
 
 ### Deleting Objects
 

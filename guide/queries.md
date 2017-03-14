@@ -1,9 +1,14 @@
 ---
 title: Queries
 ---
+* Will be replaced with the ToC, excluding the "Contents" header
+{:toc}
+
 On the low level side of the library resides the fluent query interface. It allows you
 to write a SQL query in safe way without concerning about the current SQL dialect. There
 are two type of queries a typed one and an anonymous one dealing with a ```row``` object.
+
+#### Introdcution
 
 Once you have established a connection to yout database you can execute a query.
 
@@ -30,7 +35,7 @@ int count = res.begin()->at<int>(0);
 **Note:** The query interface represents not the full command syntax. By now it provides
 basic functionality to ```create```, ```drop```, ```insert```, ```update```, ```select```
 and ```delete``` a table.
-{: .notice--warning}
+{: .bs-callout .bs-callout-warning}
 
 #### Create
 

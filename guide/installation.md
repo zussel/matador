@@ -1,7 +1,6 @@
 ---
 title: Installation
 ---
-
 There are almost no dependencies. At least the database library you want to use.
 If you wnat to build from the sources you need an appropiate compiler
 (gcc or clang) and the [cmake](http://www.cmake.org) build system installed.
