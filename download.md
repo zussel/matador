@@ -6,7 +6,7 @@ permalink: /download/
 
 **Binary Packages**
 
-<script src="{{ "/assets/javascript/downloads.js"}}"></script>
+<script src="{{ "/assets/javascript/downloads.js" | relative_url }}"></script>
 <table class="table table-bordered table-striped" id="downloads">
   <thead>
     <tr>
