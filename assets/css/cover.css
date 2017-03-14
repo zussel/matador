@@ -8,6 +8,12 @@ body {
   padding-top: 50px;
 }
 
+.site-footer {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #404040;
+  color: #aaa;
+}
 /*.green-background {
   background-size: cover;
   background-image: url(../images/abstract-green-1920.jpg);
