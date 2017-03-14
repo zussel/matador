@@ -30,6 +30,6 @@ $ cd oos
 
 Or get the pre-packaged sources:
 
-[zip](#link){: .btn .btn-success} [tar.gz](#link){: .btn .btn-success}
+[zip](https://github.com/zussel/oos/archive/v0.2.1.zip){: .btn .btn-success} [tar.gz](https://github.com/zussel/oos/archive/v0.2.1.tar.gz){: .btn .btn-success}
 
 Then follow the instruction at the [installation guide](/docs/installation).
