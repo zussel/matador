@@ -56,13 +56,13 @@ after_build:
       }
 
 artifacts:
-  - path: Package/calc*.exe
+  - path: Package/matador*.exe
 
 deploy:
   provider: GitHub
   auth_token:
     secure: "kz/25t/c0oeOJ3Ux3r+Sy5F4G7YgPmjSrTpgZ73IQDY4N9mYNqH4kAv4+0I0oeh6"
-  artifact: /Package\/calc.*\.exe/
+  artifact: /Package\/matador.*\.exe/
   draft: false
   prerelease: false
   on:
