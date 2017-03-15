@@ -21,16 +21,16 @@ s.load();
 
 Now you can start and insert, update or delete your data. Therefor create a transaction
 object with the current session and start the transaction by calling
-```oos::transaction::begin()```. After completing your modifications call
-```oos::transaction::commit()``` to commit all your modifications to the
+```matador::transaction::begin()```. After completing your modifications call
+```matador::transaction::commit()``` to commit all your modifications to the
 database. If in error occurred while doing your modifications catch
-the exception. In the catch block you can call ```oos::transaction::rollback()```
+the exception. In the catch block you can call ```matador::transaction::rollback()```
 to rollback all your modifications.
 
 ```cpp
 // create a transaction for session
 
-oos::transaction tr = s.begin();
+matador::transaction tr = s.begin();
 try {
   // begin the transaction
 

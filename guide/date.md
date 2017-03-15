@@ -2,7 +2,7 @@
 title: Date
 ---
 
-OOS comes with its own simple date class. It represents a date consisting of year, month
+matador comes with its own simple date class. It represents a date consisting of year, month
 and day. The underlying calendar is a julian date calendar. Once a date object exists it
 can be modified, copied or assigned. For full documentation see the [api](/api/classoos_1_1date/).
 
@@ -24,7 +24,7 @@ The obvious copy and assignment constructors exists as well.
 The date consists of an stream output operator which displays the date in ISO8601 format
 
 ```cpp
-oos::date d(31, 1, 2015);
+matador::date d(31, 1, 2015);
 
 std::cout << d;
 ```
@@ -39,7 +39,7 @@ There is also a ```to_string()``` function taking the date as first parameter an
 string as second parameter. It returns the formatted date as ```std::string```.
 
 ```cpp
-oos::date d(31, 1, 2015);
+matador::date d(31, 1, 2015);
 
 std::cout << to_string(d, "%d.%m.%Y");
 ```
@@ -56,7 +56,7 @@ To modify a date one can use the fluent interface allowing the user to concatena
 all parts to be modified in sequence.
 
 ```cpp
-oos::date d(31, 1, 2015);
+matador::date d(31, 1, 2015);
 // modification
 d.year(2014).month(8).day(8);
 ```
@@ -65,7 +65,7 @@ The operators ```++```, ```--```, ```+=``` and ```-=``` are also available and i
 the date by one day or the given amount of days for the latter two operators.
 
 ```cpp
-oos::date d(31, 1, 2015);
+matador::date d(31, 1, 2015);
 // modification
 
 d += 4;
@@ -84,7 +84,7 @@ Leads to
 The date can be retrieved as julian date value:
 
 ```cpp
-oos::date d(31, 1, 2015);
+matador::date d(31, 1, 2015);
 
 std::cout << "julian date: " << d.julian_date();
 ```

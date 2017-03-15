@@ -12,10 +12,10 @@ A ```varchar``` is simply created:
 
 ```cpp
 // without value
-oos::varchar<255> name;
+matador::varchar<255> name;
 
 // with initial value
-oos::varchar<255> name("hello world");
+matador::varchar<255> name("hello world");
 ```
 
 ### Display
@@ -25,7 +25,7 @@ stream as usual
 
 ```cpp
 
-oos::varchar<255> title("My title");
+matador::varchar<255> title("My title");
 
 std::cout << "Title: " << title;
 ```
@@ -41,7 +41,7 @@ Title: My title
 There are a few modification methods and operators like
 
 ```cpp
-oos::varchar<255> title("My title");
+matador::varchar<255> title("My title");
 
 title += " is great";
 
@@ -57,8 +57,8 @@ Title: My title is great
 Assignment is available for other ```varchar<T>``` objects, std::string and character pointers.
 
 ```cpp
-oos::varchar<255> title("My title");
-oos::varchar<255> other_title("My other title");
+matador::varchar<255> title("My title");
+matador::varchar<255> other_title("My other title");
 
 title.assign(other_title);
 

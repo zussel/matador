@@ -13,8 +13,8 @@ Get a binary package from the [download page](/download) or
 get the sources from GitHub and enter the created directory:
 
 ```bash
-$ git clone https://github.com/zussel/oos.git
-$ cd oos
+$ git clone https://github.com/zussel/matador.git
+$ cd matador
 ```
 
 ### Building under Linux
@@ -27,7 +27,7 @@ $ cd build
 $ cmake ..
 ```
 
-Then you can build oos from sources:
+Then you can build matador from sources:
 
 ```bash
 $ make
@@ -45,4 +45,4 @@ $ cmake -G "Visual Studio *" ..
 
 Where `*` is one of the `Visual Studio` strings up from `14`. See cmake
 documentation [here](https://cmake.org/cmake/help/v3.6/manual/cmake-generators.7.html?#visual-studio-generators).
-After generation you find a `oos.sln` solution file in the current directory.
+After generation you find a `matador.sln` solution file in the current directory.

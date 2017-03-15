@@ -16,14 +16,14 @@ ostore.insert(new person("helen"));
 ostore.insert(new person("tim"));
 ```
 
-Than we create a view with the ```oos::object_view``` class. This class
+Than we create a view with the ```matador::object_view``` class. This class
 takes as the template parameter the desired class type. Then we can
-use the view like a STL list containing ```oos::object_ptr``` of our
+use the view like a STL list containing ```matador::object_ptr``` of our
 desired type.
 
 ```cpp
 // shortcut to the person view
-typedef oos::object_view<person> person_view_t;
+typedef matador::object_view<person> person_view_t;
 
 person_view_t pview(ostore);
 
@@ -47,12 +47,12 @@ type person including sub-types student and employee.
 class student : public person { //... };
 class employee : public person { //... };
 
-oos::object_store ostore;
+matador::object_store ostore;
 ostore.attach<person>("person");
 ostore.attach<student, person>("student");
 ostore.attach<employee, person>("employee");
 
-typedef oos::object_view<person> person_view_t;
+typedef matador::object_view<person> person_view_t;
 
 person_view_t pview(ostore);
 

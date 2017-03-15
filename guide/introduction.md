@@ -3,7 +3,7 @@ title: Introduction
 ---
 The following documentation will give you an overview on Open Object Store. It will show you all main components of the library so that you can start building your own application with it.
 
-OOS consists of three main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
+matador consists of three main parts: A container for any kind of objects, a sql query class providing a fluent interface and on top an ORM layer.
 
 ### The object store
 
@@ -12,7 +12,7 @@ The [object store](/#) is the central element. Once it is configured with an obj
 ```cpp
 struct person
 {
-  oos::identifier<long> id;
+  matador::identifier<long> id;
   std::string name;
 
   person(const std::string &n) : name(n) {}
@@ -26,12 +26,12 @@ struct person
 
 int main()
 {
-  oos::object_store store;
+  matador::object_store store;
   store.attach<person>("person");
 
   store.insert(new person("georg"));
 
-  oos::object_view<person> view(store);
+  matador::object_view<person> view(store);
 }
 ```
 
@@ -40,7 +40,7 @@ int main()
 With the [query](/#) class at hand one can write simple sql statements, prepare and execute.
 
 ```cpp
-oos::query<person> q("person");
+matador::query<person> q("person");
 
 // select all person with name 'jane' or 'tarzan' from database
 auto col = column("name");
@@ -56,7 +56,7 @@ for (auto p : res) {
 On top of the object store and the query interface comes the persistence layer. It represents the ORM mechanism provided by the library. Once a [persistence](/#) object is created one can again configure the object hierarchy in the same way it is done with the object store.
 
 ```cpp
-oos::persistence p("sqlite://db.sqlite");
+matador::persistence p("sqlite://db.sqlite");
 p.attach<person>("person");
 ```
 

@@ -6,10 +6,10 @@ object is inserted, updated or deleted the change is not reversible. If you use 
 it is. Therefor a transaction must be started:
 
 ```cpp
-oos::object_store store;
+matador::object_store store;
 store.attach<person>("person");
 
-oos::transaction tr(store);
+matador::transaction tr(store);
 
 try {
   tr.begin();
@@ -29,12 +29,12 @@ comes to rollback a transaction ```roolback``` must be called (i.e an exception 
 It is also possible to nest transaction:
 
 ```cpp
-oos::transaction outer(store);
+matador::transaction outer(store);
 
 outer.begin();
 // do something and start a second transaction
 
-oos::transaction inner(store);
+matador::transaction inner(store);
 inner.begin();
 // change stuff and commit inner transaction
 inner.commit();

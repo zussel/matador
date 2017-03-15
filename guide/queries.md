@@ -13,11 +13,11 @@ are two type of queries a typed one and an anonymous one dealing with a ```row``
 Once you have established a connection to yout database you can execute a query.
 
 ```cpp
-oos::connection conn("sqlite://test.sqlite");
+matador::connection conn("sqlite://test.sqlite");
 
 conn.open();
 // create a typed query
-oos::query<person> q("person");
+matador::query<person> q("person");
 
 // create the table based on the given type
 q.create().execute(conn);
@@ -26,7 +26,7 @@ You can use an anonymous query as well:
 
 ```cpp
 
-oos::query<> q;
+matador::query<> q;
 auto res = count.select({columns::count_all()}).from("person").execute(*conn);
 
 int count = res.begin()->at<int>(0);
@@ -43,7 +43,7 @@ The ```create``` method is used to create a database table. The typed version lo
 like this:
 
 ```cpp
-oos::query<person> q("person");
+matador::query<person> q("person");
 
 // create the table based on the given type
 q.create().execute(conn);
@@ -52,7 +52,7 @@ q.create().execute(conn);
 When using the anonymous version you have to describe the fields of the table to create:
 
 ```cpp
-oos::query<> q("person");
+matador::query<> q("person");
 // Todo: implement functionality
 q.create({
     make_typed_id_column<long>("id"),
@@ -66,7 +66,7 @@ q.create({
 The ```drop``` method is used to drop a table. The typed usage is as follows:
 
 ```cpp
-oos::query<person> q("person");
+matador::query<person> q("person");
 
 // create the table based on the given type
 q.drop().execute(conn);
@@ -74,7 +74,7 @@ q.drop().execute(conn);
 The anonymous version is like this:
 
 ```cpp
-oos::query<> q;
+matador::query<> q;
 
 // create the table based on the given type
 q.drop("person").execute(conn);
@@ -86,7 +86,7 @@ Inserting an object is done as simple. Just pass the object to the ```insert``` 
 and you're done.
 
 ```cpp
-oos::query<person> q("person");
+matador::query<person> q("person");
 
 person jane("jane", 35);
 
@@ -96,7 +96,7 @@ q.insert(jane).execute(conn);
 When building an anonymous insert statement one has to column and value fields like that
 
 ```cpp
-oos::query<> q("person");
+matador::query<> q("person");
 
 q.insert({"id", "name", "age"}).values({1, "jane", 35}).execute(conn);
 ```
@@ -109,10 +109,10 @@ expression to limit the update statement. These conditions are explained [condit
 
 ```cpp
 person jane("jane", 35);
-oos::query<person> q("person");
+matador::query<person> q("person");
 // insert ...
 jane.age = 47;
-oos::column name("name");
+matador::column name("name");
 
 q.update(jane).where(name == "jane").execute(conn);
 ```
@@ -122,9 +122,9 @@ you can see, it is simple done with initializer list and pairs of columns and th
 values.
 
 ```cpp
-oos::query<> q("person");
+matador::query<> q("person");
 
-oos::column name("name");
+matador::column name("name");
 q.update({
     {"name", "otto"},
     {"age", 47}
@@ -142,10 +142,10 @@ Once the statement is executed you get a result object. You can iterate the resu
 iterators (iterator is a ```std::forward_iterator``` so you can only use it once).
 
 ```cpp
-oos::query<person> q("person");
+matador::query<person> q("person");
 
-oos::column name("name");
-oos::column age("age");
+matador::column name("name");
+matador::column age("age");
 
 auto res = q.select()
             .where(name != "hans" && (age > 35 && age < 45))
@@ -159,10 +159,10 @@ for (auto item : res) {
 The anonymous version works in the same way:
 
 ```cpp
-oos::query<> q;
+matador::query<> q;
 
-oos::column name("name");
-oos::column age("age");
+matador::column name("name");
+matador::column age("age");
 
 auto rowres = q.select({"name", "age"})
                .from("person")
@@ -181,12 +181,12 @@ object the statement looks like this:
 
 ```cpp
 person jane("jane", 35);
-oos::query<person> q("person");
+matador::query<person> q("person");
 // insert ...
 person jane("jane", 35);
 q.insert(jane).execute(conn);
 
-oos::column name("name");
+matador::column name("name");
 q.delete().where(name == "jane").execute(conn);
 ```
 
@@ -243,9 +243,9 @@ can retrieve the dialect from the connection object.
 
 ```cpp
 column name("name");
-auto q = oos::select({name}).from("test");
+auto q = matador::select({name}).from("test");
 
-oos::in(name, q, &conn.dialect());
+matador::in(name, q, &conn.dialect());
 ```
 
 ##### Range Condition
@@ -255,7 +255,7 @@ The range condition checks if a column value is between two given boundaries.
 ```cpp
 column age("age");
 
-oos::between(age, 21, 30);
+matador::between(age, 21, 30);
 ```
 
 Take a look at the [query API reference](/#) to get an overview of the provided syntax.

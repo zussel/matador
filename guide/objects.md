@@ -73,7 +73,7 @@ struct numbers
 ### Strings
 
 There are three types of supported strings (```std::string```, ```const char*``` and
-```oos::varchar<S>```). The latter is a string type representing database type VARCHAR
+```matador::varchar<S>```). The latter is a string type representing database type VARCHAR
 taking its size as the template argument.
 
 ```cpp
@@ -83,7 +83,7 @@ struct strings
 
   char cstr_[CSTR_LEN];
   std::string string_ = "world";
-  oos::varchar<255> varchar_ = "earth";
+  matador::varchar<255> varchar_ = "earth";
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -97,14 +97,14 @@ struct strings
 
 ### Time ad date
 
-OOS comes with its own [time](/docs/time) and [date](/docs/date) classes.
+matador comes with its own [time](/docs/time) and [date](/docs/date) classes.
 The ```serialize()``` interface is also straight forward.
 
 ```cpp
 struct time_and_date
 {
-  oos::date date_;
-  oos::time time_;
+  matador::date date_;
+  matador::time time_;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -123,7 +123,7 @@ behavior. The serializer looks like this:
 ```cpp
 struct identifier_type
 {
-  oos::identifier<unsigned long> id_ = 0;
+  matador::identifier<unsigned long> id_ = 0;
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -141,12 +141,12 @@ around the object of type ```T```. It can be accessed like a pointer.
 ```cpp
 struct foreign_key
 {
-  oos::has_one<T> foreign_;         // just a foreign object
+  matador::has_one<T> foreign_;         // just a foreign object
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
   {
-    serializer.serialize("foreign", foreign_, oos::cascade_type::ALL);
+    serializer.serialize("foreign", foreign_, matador::cascade_type::ALL);
   }
 };
 ```
@@ -154,7 +154,7 @@ struct foreign_key
 ```has_one<T>``` is just a link to a foreign object. With the third parameter
 in the serialize method one adjust the cascading command behavior when
 an insert, update, delete and select operation is executed on the
-containing object. ```oos::cascade_type::ALL``` means that all operations
+containing object. ```matador::cascade_type::ALL``` means that all operations
 are also passed to the foreign object (e.g. when containing object is
 deleted the foreign is deleted as well).
 
@@ -167,7 +167,7 @@ two container types ```std::vector``` (default) and ```std::list```.
 ```cpp
 struct relations
 {
-  oos::has_many<T> collection_; // a collection with objects
+  matador::has_many<T> collection_; // a collection with objects
 
   template < class SERIALIZER >
   void serialize(SERIALIZER &serializer)
@@ -179,5 +179,5 @@ struct relations
 
 ```has_many<T>``` describes a collection leading to a relation table/object between
 the containing object and the foreign object. If the foreign object is of
-a simple builtin type (e.g. ```int``` or ```oos::varchar<S>```) the value
+a simple builtin type (e.g. ```int``` or ```matador::varchar<S>```) the value
 itself is stored in the relation table.
