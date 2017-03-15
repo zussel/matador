@@ -9,15 +9,16 @@
 #include "matador/object/object_store.hpp"
 #include "matador/object/generic_access.hpp"
 
+#include "matador/utils/is_builtin.hpp"
+
 #include <vector>
-#include <matador/sql/result.hpp>
 
 namespace matador {
 
 /// @cond MATADOR_DEV
 
 template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -32,7 +33,7 @@ struct has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is
 };
 
 template < class T >
-struct has_many_iterator_traits<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+struct has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -299,7 +300,7 @@ private:
 /// @cond MATADOR_DEV
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -314,7 +315,7 @@ struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<!s
 };
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+struct const_has_many_iterator_traits<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
   : public std::iterator<std::random_access_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::vector> self;
@@ -594,7 +595,7 @@ namespace detail {
 
 /// @cond MATADOR_DEV
 template<class T>
-class has_many_inserter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+class has_many_inserter<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -621,7 +622,7 @@ public:
 };
 
 template<class T>
-class has_many_inserter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+class has_many_inserter<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -636,7 +637,7 @@ public:
 };
 
 template<class T>
-class has_many_deleter<T, std::vector, typename std::enable_if<!std::is_scalar<T>::value>::type>
+class has_many_deleter<T, std::vector, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -661,7 +662,7 @@ public:
 };
 
 template<class T>
-class has_many_deleter<T, std::vector, typename std::enable_if<std::is_scalar<T>::value>::type>
+class has_many_deleter<T, std::vector, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;

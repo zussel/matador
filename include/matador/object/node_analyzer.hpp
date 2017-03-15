@@ -5,6 +5,8 @@
 #include "matador/object/belongs_to.hpp"
 #include "matador/object/basic_has_many.hpp"
 
+#include "matador/utils/is_builtin.hpp"
+
 namespace matador {
 
 class prototype_node;
@@ -64,11 +66,11 @@ public:
   void serialize(const char *id, has_one<V> &x, cascade_type);
   template<class V, template<class ...> class C>
   void serialize(const char *, has_many<V, C> &, const char *, const char *,
-                 typename std::enable_if<!std::is_scalar<V>::value>::type* = 0);
+                 typename std::enable_if<!is_builtin<V>::value>::type* = 0);
 
   template<class V, template<class ...> class C>
   void serialize(const char *, has_many<V, C> &, const char *, const char *,
-                 typename std::enable_if<std::is_scalar<V>::value>::type* = 0);
+                 typename std::enable_if<is_builtin<V>::value>::type* = 0);
 
 private:
   const std::vector<O<T>*> &observer_;
@@ -97,11 +99,11 @@ public:
   void serialize(const char *id, has_one<V> &x, cascade_type);
   template<class V, template<class ...> class C>
   void serialize(const char *, has_many<V, C> &, const char *, const char *,
-                 typename std::enable_if<!std::is_scalar<V>::value>::type* = 0);
+                 typename std::enable_if<!is_builtin<V>::value>::type* = 0);
 
   template<class V, template<class ...> class C>
   void serialize(const char *, has_many<V, C> &, const char *, const char *,
-                 typename std::enable_if<std::is_scalar<V>::value>::type* = 0);
+                 typename std::enable_if<is_builtin<V>::value>::type* = 0);
 
 };
 

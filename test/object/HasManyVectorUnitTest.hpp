@@ -10,6 +10,7 @@
 
 #include "matador/utils/identifier.hpp"
 #include "matador/object/has_many.hpp"
+#include "../Item.hpp"
 
 namespace hasmanyvector {
 
@@ -50,21 +51,23 @@ public:
   }
 };
 
-class many_ints
-{
-public:
-  typedef matador::has_many<int> int_vector_t;
-public:
-  matador::identifier<unsigned long> id;
-  int_vector_t ints;
-
-  template < class S >
-  void serialize(S &s)
-  {
-    s.serialize("id", id);
-    s.serialize("ints", ints, "list_id", "value");
-  }
-};
+using many_vector_ints = many_builtins<int, std::vector>;
+using many_vector_strings = many_builtins<std::string, std::vector>;
+//class many_ints
+//{
+//public:
+//  typedef matador::has_many<int> int_vector_t;
+//public:
+//  matador::identifier<unsigned long> id;
+//  int_vector_t ints;
+//
+//  template < class S >
+//  void serialize(S &s)
+//  {
+//    s.serialize("id", id);
+//    s.serialize("ints", ints, "list_id", "value");
+//  }
+//};
 
 }
 
@@ -80,6 +83,7 @@ public:
   void test_remove_scalar();
   void test_remove_object();
   void test_integer();
+  void test_string();
 };
 
 #endif //OOS_HASMANYUNITTEST_HPP
