@@ -1,11 +1,11 @@
 # main links links
 main:
   - title: "Guide"
-    url: /guide/installation.html
+    url: /guide/introduction.html
   - title: "Api"
     url: /api/classes.html
   - title: "Download"
-    url: /download/
+    url: /guide/installation.html
   - title: "Code"
     url: https://github.com/zussel/matador/
     external: true
