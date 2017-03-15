@@ -8,14 +8,17 @@
 #include "matador/object/basic_has_many.hpp"
 #include "matador/object/object_store.hpp"
 
+#include "matador/utils/is_builtin.hpp"
+
 #include <list>
 
 namespace matador {
 
 /// @cond MATADOR_DEV
 
+
 template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
+struct has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -30,7 +33,7 @@ struct has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_s
 };
 
 template < class T >
-struct has_many_iterator_traits<T, std::list, typename std::enable_if<std::is_scalar<T>::value>::type>
+struct has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -226,7 +229,7 @@ private:
 /// @cond MATADOR_DEV
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
+struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -240,7 +243,7 @@ struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<!std
 };
 
 template < class T >
-struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<std::is_scalar<T>::value>::type>
+struct const_has_many_iterator_traits<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
   : public std::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
 {
   typedef has_many_iterator_traits<T, std::list> self;
@@ -458,7 +461,7 @@ namespace detail {
 /// @cond MATADOR_DEV
 
 template<class T>
-class has_many_inserter<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
+class has_many_inserter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -493,7 +496,7 @@ public:
 };
 
 template<class T>
-class has_many_inserter<T, std::list, typename std::enable_if<std::is_scalar<T>::value>::type>
+class has_many_inserter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -508,7 +511,7 @@ public:
 };
 
 template<class T>
-class has_many_deleter<T, std::list, typename std::enable_if<!std::is_scalar<T>::value>::type>
+class has_many_deleter<T, std::list, typename std::enable_if<!is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;
@@ -542,7 +545,7 @@ public:
 };
 
 template<class T>
-class has_many_deleter<T, std::list, typename std::enable_if<std::is_scalar<T>::value>::type>
+class has_many_deleter<T, std::list, typename std::enable_if<is_builtin<T>::value>::type>
 {
 public:
   typedef T value_type;

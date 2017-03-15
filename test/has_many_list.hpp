@@ -48,22 +48,22 @@ public:
   }
 };
 
-class many_ints
-{
-public:
-  typedef matador::has_many<int, std::list> int_list_t;
-
-public:
-  matador::identifier<unsigned long> id;
-  int_list_t ints;
-
-  template < class S >
-  void serialize(S &s)
-  {
-    s.serialize("id", id);
-    s.serialize("ints", ints, "list_id", "value");
-  }
-};
+//class many_ints
+//{
+//public:
+//  typedef matador::has_many<int, std::list> int_list_t;
+//
+//public:
+//  matador::identifier<unsigned long> id;
+//  int_list_t ints;
+//
+//  template < class S >
+//  void serialize(S &s)
+//  {
+//    s.serialize("id", id);
+//    s.serialize("ints", ints, "list_id", "value");
+//  }
+//};
 
 }
 

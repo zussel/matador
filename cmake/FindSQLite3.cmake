@@ -4,8 +4,6 @@
 #  SQLITE3_INCLUDE_DIR - The SQLite3 include directories
 #  SQLITE3_LIBRARY - The libraries needed to use SQLite3
 
-MESSAGE(STATUS "$ENV{PROGRAMFILES}/SQLite/include")
-MESSAGE(STATUS "$ENV{PROGRAMFILES}/SQLite/lib")
 IF (WIN32)
 	FIND_PATH( SQLITE3_INCLUDE_DIR sqlite3.h
 		$ENV{PROGRAMFILES}/SQLite/include

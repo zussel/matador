@@ -696,4 +696,25 @@ public:
   children_list_t children;
 };
 
+template < class T, template <class ...> class C >
+class many_builtins
+{
+public:
+  typedef matador::has_many<T, C> element_list_t;
+
+public:
+  matador::identifier<unsigned long> id;
+  element_list_t elements;
+
+  template < class S >
+  void serialize(S &s)
+  {
+    s.serialize("id", id);
+    s.serialize("elements", elements, "list_id", "value");
+  }
+};
+
+using many_ints = many_builtins<int, std::list>;
+using many_strings = many_builtins<std::string, std::list>;
+
 #endif /* ITEM_HPP */

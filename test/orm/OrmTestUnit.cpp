@@ -358,19 +358,19 @@ void OrmTestUnit::test_load_has_many_int()
     auto intlist = s.insert(new many_ints);
 
     UNIT_ASSERT_GREATER(intlist->id, 0UL, "invalid intlist list");
-    UNIT_ASSERT_TRUE(intlist->ints.empty(), "intlist list must be empty");
+    UNIT_ASSERT_TRUE(intlist->elements.empty(), "intlist list must be empty");
 
-    s.push_back(intlist->ints, 4);
+    s.push_back(intlist->elements, 4);
 
-    UNIT_ASSERT_EQUAL(intlist->ints.front(), 4, "first int must be 4");
-    UNIT_ASSERT_EQUAL(intlist->ints.back(), 4, "last int must be 4");
+    UNIT_ASSERT_EQUAL(intlist->elements.front(), 4, "first int must be 4");
+    UNIT_ASSERT_EQUAL(intlist->elements.back(), 4, "last int must be 4");
 
-    s.push_front(intlist->ints, 7);
+    s.push_front(intlist->elements, 7);
 
-    UNIT_ASSERT_EQUAL(intlist->ints.front(), 7, "first int must be 7");
+    UNIT_ASSERT_EQUAL(intlist->elements.front(), 7, "first int must be 7");
 
-    UNIT_ASSERT_FALSE(intlist->ints.empty(), "intlist list couldn't be empty");
-    UNIT_ASSERT_EQUAL(intlist->ints.size(), 2UL, "invalid intlist list size");
+    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
   }
 
   p.clear();
@@ -388,11 +388,11 @@ void OrmTestUnit::test_load_has_many_int()
 
     auto intlist = ints_view.front();
 
-    UNIT_ASSERT_FALSE(intlist->ints.empty(), "intlist list couldn't be empty");
-    UNIT_ASSERT_EQUAL(intlist->ints.size(), 2UL, "invalid intlist list size");
+    UNIT_ASSERT_FALSE(intlist->elements.empty(), "intlist list couldn't be empty");
+    UNIT_ASSERT_EQUAL(intlist->elements.size(), 2UL, "invalid intlist list size");
 
     std::vector<int> result_ints({ 4, 7 });
-    for (auto i : intlist->ints) {
+    for (auto i : intlist->elements) {
       auto it = std::find(result_ints.begin(), result_ints.end(), i);
       UNIT_EXPECT_FALSE(it == result_ints.end(), "int must be found");
     }

@@ -7,6 +7,7 @@
 
 #include "matador/utils/basic_identifier.hpp"
 #include "matador/utils/base_class.hpp"
+#include "matador/utils/is_builtin.hpp"
 
 #include "matador/object/basic_has_many_item.hpp"
 #include "matador/object/object_ptr.hpp"
@@ -32,7 +33,7 @@ template < class T, class Enable = void >
 class has_many_item;
 
 template < class T >
-class has_many_item<T, typename std::enable_if<!std::is_scalar<T>::value>::type > : public basic_has_many_item
+class has_many_item<T, typename std::enable_if<!is_builtin<T>::value>::type > : public basic_has_many_item
 {
 public:
   typedef T object_type;
@@ -74,7 +75,7 @@ private:
 };
 
 template < class T >
-class has_many_item<T, typename std::enable_if<std::is_scalar<T>::value>::type > : public basic_has_many_item
+class has_many_item<T, typename std::enable_if<is_builtin<T>::value>::type > : public basic_has_many_item
 {
 public:
   typedef T object_type;

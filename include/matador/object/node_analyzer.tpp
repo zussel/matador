@@ -128,8 +128,9 @@ void node_analyzer<T, O>::serialize(const char *id, has_one <V> &x, cascade_type
 
 template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x, const char *owner_column, const char *item_column,
-                                            typename std::enable_if<!std::is_scalar<V>::value>::type*)
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x,
+                                    const char *owner_column, const char *item_column,
+                                    typename std::enable_if<!is_builtin<V>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has many item is already attached
@@ -154,8 +155,9 @@ void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &x, const ch
 
 template<class T, template < class U = T > class O>
 template<class V, template<class ...> class C>
-void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
-                                            typename std::enable_if<std::is_scalar<V>::value>::type*)
+void node_analyzer<T, O>::serialize(const char *id, has_many <V, C> &,
+                                    const char *owner_column, const char *item_column,
+                                    typename std::enable_if<is_builtin<V>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has many item is already attached
@@ -210,8 +212,9 @@ void node_analyzer<T>::serialize(const char *id, has_one <V> &x, cascade_type)
 
 template<class T>
 template<class V, template<class ...> class C>
-void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x, const char *owner_column, const char *item_column,
-                                 typename std::enable_if<!std::is_scalar<V>::value>::type*)
+void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x,
+                                 const char *owner_column, const char *item_column,
+                                 typename std::enable_if<!is_builtin<V>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has many item is already attached
@@ -231,8 +234,9 @@ void node_analyzer<T>::serialize(const char *id, has_many <V, C> &x, const char 
 
 template<class T>
 template<class V, template<class ...> class C>
-void node_analyzer<T>::serialize(const char *id, has_many <V, C> &, const char *owner_column, const char *item_column,
-                                 typename std::enable_if<std::is_scalar<V>::value>::type*)
+void node_analyzer<T>::serialize(const char *id, has_many <V, C> &,
+                                 const char *owner_column, const char *item_column,
+                                 typename std::enable_if<is_builtin<V>::value>::type*)
 {
   // attach relation table for has many relation
   // check if has many item is already attached
