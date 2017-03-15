@@ -58,7 +58,7 @@ our store the address object is removed as well. The
 ```cascade_type::ALL``` means the all operation of
 ```INSERT```, ```UPDATE``` and ```DELETE``` will take
 affect on the member address as well
-{: .notice--warning}
+{: .bs-callout .bs-callout-warning}
 
 When using this construct the OOS will take care of the following:
 
@@ -86,7 +86,7 @@ class ```std::vector``` and ```std::list```.
 
 **Node:** The STL container class ```std::set``` and ```std::unordered_set```
 will be supported soon.
-{: .notice--warning}
+{: .bs-callout .bs-callout-warning}
 
 Because these classes are designed in the same way as
 the STL classes we can use them in the same way plus the
