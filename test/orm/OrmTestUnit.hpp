@@ -5,7 +5,6 @@
 #ifndef OOS_ORMTESTUNIT_HPP
 #define OOS_ORMTESTUNIT_HPP
 
-
 #include "matador/unit/unit_test.hpp"
 
 class OrmTestUnit : public matador::unit_test
@@ -18,10 +17,6 @@ public:
   void test_select();
   void test_update();
   void test_delete();
-  void test_load();
-  void test_load_has_one();
-  void test_load_has_many();
-  void test_load_has_many_int();
   void test_has_many_delete();
   void test_belongs_to();
   void test_many_to_many();

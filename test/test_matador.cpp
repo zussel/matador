@@ -37,6 +37,8 @@
 #include "object/HasManyListUnitTest.hpp"
 
 #include "orm/OrmTestUnit.hpp"
+#include "orm/OrmReloadTestUnit.hpp"
+#include "orm/OrmRelationTestUnit.hpp"
 #include "orm/TransactionTestUnit.hpp"
 
 #include "sql/ConnectionTestUnit.hpp"
@@ -105,6 +107,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("mysql_transaction", "mysql transaction test unit", ::connection::mysql));
   suite.register_unit(new QueryTestUnit("mysql_query", "mysql query test unit", ::connection::mysql, matador::time(2015, 3, 15, 13, 56, 23)));
   suite.register_unit(new OrmTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new OrmReloadTestUnit("mysql", ::connection::mysql));
+  suite.register_unit(new OrmRelationTestUnit("mysql", ::connection::mysql));
 #endif
 
 #if defined(MATADOR_ODBC) && defined(MATADOR_ODBC_TEST)
@@ -112,6 +116,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("mssql_transaction", "mssql transaction test unit", ::connection::mssql));
   suite.register_unit(new QueryTestUnit("mssql_query", "mssql query test unit", ::connection::mssql));
   suite.register_unit(new OrmTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new OrmReloadTestUnit("mssql", ::connection::mssql));
+  suite.register_unit(new OrmRelationTestUnit("mssql", ::connection::mssql));
   suite.register_unit(new MSSQLDialectTestUnit());
 #endif
 
@@ -120,6 +126,8 @@ int main(int argc, char *argv[])
   suite.register_unit(new TransactionTestUnit("sqlite_transaction", "sqlite transaction test unit", ::connection::sqlite));
   suite.register_unit(new QueryTestUnit("sqlite_query", "sqlite query test unit", ::connection::sqlite));
   suite.register_unit(new OrmTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmReloadTestUnit("sqlite", ::connection::sqlite));
+  suite.register_unit(new OrmRelationTestUnit("sqlite", ::connection::sqlite));
   suite.register_unit(new SQLiteDialectTestUnit());
 #endif
 
