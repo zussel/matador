@@ -158,7 +158,7 @@ bool test_suite::run()
         break;
       }
   } else {
-    std::cout << "usage: test_oos [list]|[exec <val>]\n";
+    std::cout << "usage: test_matador [list]|[exec <val>]\n";
   }
   return true;
 }

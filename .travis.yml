@@ -280,7 +280,7 @@ before_script:
   - mkdir build
   - cd build
   - |
-    if [ "$GCOV" == "gcov-5" && "$BUILD_TYPE" == "Debug" ]; then
+    if [ "$GCOV" == "gcov-5" && "$BUILD_TYPE" == "Debug" && "$ARCH" == "64" ]; then
       cmake -DCMAKE_CXX_COMPILER=${COMPILER} -DARCH=${ARCH} -DGCOV_BINARY=${GCOV} -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=true -DMYSQL_CONNECTION_STRING:STRING="mysql://root@127.0.0.1/matador_test" ..;
       lcov --directory include --directory src --directory test --zerocounters
     else
@@ -293,7 +293,7 @@ script:
 
 after_success:
   - |
-    if [ "$GCOV" == "gcov-5" ]; then
+    if [ "$GCOV" == "gcov-5"  && "$BUILD_TYPE" == "Debug" && "$ARCH" == "64" ]; then
       cd ${TRAVIS_BUILD_DIR}
       type $GCOV
       lcov --no-external --base-directory ${TRAVIS_BUILD_DIR} --directory build/src --directory build/test --capture --gcov-tool `which $GCOV` --output-file coverage.info
@@ -316,7 +316,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    condition: "GCC_VERSION == 6 && BUILD_TYPE = Release"
+    condition: "$GCC_VERSION = 6 && $BUILD_TYPE = Release"
     all_branches: true
 
 notifications:

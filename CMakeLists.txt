@@ -76,7 +76,7 @@ if (NOT MSVC AND (COVERAGE) AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_
   SET(CMAKE_C_FLAGS "{CMAKE_C_FLAGS} ${GCOV_ADDITIONAL_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${GCOV_ADDITIONAL_FLAGS}")
 
-  SETUP_TARGET_FOR_COVERAGE(coverage test_oos src coverage "exec;all")
+  SETUP_TARGET_FOR_COVERAGE(coverage test_matador src coverage "exec;all")
 else()
   MESSAGE(STATUS "no coverage for compiler ${CMAKE_CXX_COMPILER}")
 endif()
