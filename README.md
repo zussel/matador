@@ -5,8 +5,8 @@ __Version 0.5.0-alpha.1__
 
 Take your database by the horns.
 
-[![Build Status](https://travis-ci.org/zussel/oos.png?branch=develop)](https://travis-ci.org/zussel/oos)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/matador?svg=true)](https://ci.appveyor.com/project/zussel/oos)
+[![Build Status](https://travis-ci.org/zussel/matador.png?branch=develop)](https://travis-ci.org/zussel/matador)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/zussel/matador?svg=true)](https://ci.appveyor.com/project/zussel/matador)
 [![Coverage Status](https://coveralls.io/repos/github/zussel/matador/badge.svg?branch=develop)](https://coveralls.io/github/zussel/matador?branch=develop)
 [![Gitter](https://img.shields.io/gitter/room/zussel/oos.svg)](https://gitter.im/oos-orm/Lobby)
 [![GitHub version](https://badge.fury.io/gh/zussel%2Fmatador.svg)](https://badge.fury.io/gh/zussel%2Fmatador)
@@ -28,7 +28,7 @@ Features:
  * Transactions
  * STL like interface and iterators
 
-Documentation can be found [here](http://zussel.github.com/oos).
+Documentation can be found [here](http://zussel.github.io/matador).
 
 Example
 -------
@@ -89,8 +89,8 @@ Sources
 
 Get the sources from GitHub and enter the created directory:
 
-    $ git clone https://github.com/zussel/oos.git
-    $ cd oos
+    $ git clone https://github.com/zussel/matador.git
+    $ cd matador
 
 Building under Linux
 --------------------
@@ -122,5 +122,5 @@ Contact
 -------
 
 If you have questions or issues concerning matador you can place an issue in my
-[matador github repository](https://github.com/zussel/oos/issues?milestone=1&state=open) or
+[matador github repository](https://github.com/zussel/matador/issues?milestone=1&state=open) or
 contact me via mail *__sascha dot kuehl at gmx dot net__*.
