@@ -21,6 +21,7 @@ HasManyListUnitTest::HasManyListUnitTest()
   add_test("erase_object", std::bind(&HasManyListUnitTest::test_erase_object, this), "test list erase object elements");
   add_test("int", std::bind(&HasManyListUnitTest::test_integer, this), "test list of ints");
   add_test("string", std::bind(&HasManyListUnitTest::test_string, this), "test list of strings");
+  add_test("varchar", std::bind(&HasManyListUnitTest::test_varchar, this), "test list of varchars");
 }
 
 void HasManyListUnitTest::test_join_table()
@@ -288,4 +289,32 @@ void HasManyListUnitTest::test_string()
   i++;
 
   UNIT_ASSERT_EQUAL(*i, "jane", "value is invalid");
+}
+
+using many_list_varchars = many_builtins<matador::varchar<255>, std::list>;
+
+void HasManyListUnitTest::test_varchar()
+{
+  object_store store;
+
+  store.attach<many_list_varchars>("many_list_varchars");
+
+  object_ptr<many_list_varchars> mi = store.insert(new many_list_varchars);
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 0UL, "has many list is not empty");
+
+  std::vector<std::string> names = { "george", "jane", "rudi", "hanna" };
+  for (auto name : names) {
+    mi->elements.push_back(name.c_str());
+  }
+
+  UNIT_ASSERT_EQUAL(mi->elements.size(), 4UL, "has many list has invalid size");
+
+  auto i = mi->elements.begin();
+
+  UNIT_ASSERT_EQUAL(*i, "george", "value is invalid");
+
+  i++;
+
+  UNIT_ASSERT_EQUAL(*i, "jane", "value is invalid");  
 }
