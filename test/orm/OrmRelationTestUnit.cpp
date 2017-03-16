@@ -152,19 +152,19 @@ void OrmRelationTestUnit::test_many_to_many()
   UNIT_ASSERT_TRUE(jane->courses.empty(), "janes courses must be empty");
   UNIT_ASSERT_TRUE(art->students.empty(), "there must be no students in art");
 
-  // s.push_back(george->courses, algebra);
+  s.push_back(george->courses, algebra);
 
-  // UNIT_ASSERT_FALSE(algebra->students.empty(), "there must not be students in algebra");
-  // UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL, "there must be one student in algebra course");
-  // UNIT_ASSERT_EQUAL(algebra->students.front()->name(), george->name(), "algebras student must be george");
-  // UNIT_ASSERT_FALSE(george->courses.empty(), "georges courses must not be empty");
-  // UNIT_ASSERT_EQUAL(george->courses.size(), 1UL, "george must've took one course");
-  // UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title, "georges course must be algebra");
+  UNIT_ASSERT_FALSE(algebra->students.empty(), "there must not be students in algebra");
+  UNIT_ASSERT_EQUAL(algebra->students.size(), 1UL, "there must be one student in algebra course");
+  UNIT_ASSERT_EQUAL(algebra->students.front()->name(), george->name(), "algebras student must be george");
+  UNIT_ASSERT_FALSE(george->courses.empty(), "georges courses must not be empty");
+  UNIT_ASSERT_EQUAL(george->courses.size(), 1UL, "george must've took one course");
+  UNIT_ASSERT_EQUAL(george->courses.front()->title, algebra->title, "georges course must be algebra");
 
-  // s.clear(algebra->students);
+  s.clear(algebra->students);
 
-  // UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
-  // UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");  
+  UNIT_ASSERT_TRUE(george->courses.empty(), "georges courses must be empty");
+  UNIT_ASSERT_TRUE(algebra->students.empty(), "there must be no students in algebra");  
 
   p.drop();
 }

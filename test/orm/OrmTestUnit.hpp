@@ -17,9 +17,6 @@ public:
   void test_select();
   void test_update();
   void test_delete();
-  void test_has_many_delete();
-  void test_belongs_to();
-  void test_many_to_many();
 
 private:
   std::string dns_;
