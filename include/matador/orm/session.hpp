@@ -237,7 +237,7 @@ public:
    *
    * @tparam CONT The type of the container
    * @tparam T The type of the object
-   * @param container The container the objects shoulb be removed from
+   * @param container The container the objects should be removed from
    * @param first The iterator representing the first object
    * @param last The iterator representing the last object
    */
@@ -250,6 +250,30 @@ public:
       transaction tr(persistence_.store(), observer_);
       tr.begin();
       container.erase(first, last);
+      tr.commit();
+    }
+  }
+
+  /**
+   * @brief Clears the complete container
+   *
+   * Deletes all elements from the given container.
+   * The same changes are made to the underlying object_store
+   * as well.
+   *
+   * @tparam CONT The type of the container
+   * @tparam T The type of the object
+   * @param container The container to be cleared
+   */
+  template < template <class ...> class CONT, class T >
+  void clear(has_many<T, CONT> &container)
+  {
+    if (store().has_transaction()) {
+      container.clear();
+    } else {
+      transaction tr(persistence_.store(), observer_);
+      tr.begin();
+      container.clear();
       tr.commit();
     }
   }
