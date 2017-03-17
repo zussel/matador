@@ -39,7 +39,8 @@ SET (TEST_OBJECT_SOURCES
 SET (TEST_UNIT_SOURCES
   unit/FirstTestUnit.hpp
   unit/SecondTestUnit.hpp
-  unit/TestSuiteTestUnit.cpp unit/TestSuiteTestUnit.hpp)
+  unit/TestSuiteTestUnit.cpp
+  unit/TestSuiteTestUnit.hpp)
 
 SET (TEST_JSON_SOURCES
   json/JsonTestUnit.hpp
@@ -87,9 +88,9 @@ ADD_EXECUTABLE(test_matador
   ${TEST_SQL_SOURCES}
 )
 
-SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/matador_test" CACHE STRING "mysql connection string")
+SET(MYSQL_CONNECTION_STRING "mysql://root:root@127.0.0.1/oos_test" CACHE STRING "mysql connection string")
 IF (WIN32)
-  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_matador (SQL Server)" CACHE STRING "mssql connection string")
+  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@(local)\\\\SQLEXPRESS/test_oos (SQL Server)" CACHE STRING "mssql connection string")
 ELSE()
   SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.27.58/test (FreeTDS)" CACHE STRING "mssql connection string")
 #  SET(MSSQL_CONNECTION_STRING "mssql://sascha:sascha@192.168.178.31\\\\SQLEXPRESS/test_matador (FreeTDS)" CACHE STRING "mssql connection string")
