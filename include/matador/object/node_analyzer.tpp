@@ -40,7 +40,7 @@ void basic_node_analyzer::process_belongs_to(const char *id, belongs_to <V> &x)
   }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *) {
     store.mark_modified<T>(proxy);
     matador::set(proxy->obj<T>(), field, object_ptr<V>());
-  }, node.get()));
+  }, node.get(), &node_));
 }
 
 template<class V, class T>
@@ -57,7 +57,7 @@ void basic_node_analyzer::process_has_one(const char *id, has_one <V> &x)
       }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *) {
         store.mark_modified<T>(proxy);
         matador::set(proxy->obj<T>(), field, object_ptr<V>());
-      }, node.get()));
+      }, node.get(), &node_));
 }
 
 template<class V, class T, template<class ...> class C>
@@ -70,7 +70,6 @@ void basic_node_analyzer::process_has_many(const prototype_iterator &pi, const c
   } else {
     // found corresponding belongs_to or has_many
     auto j = pi->relation_info_map_.find(pi->type_index());
-//    auto j = pi->relation_info_map_.find(node_.type_index_);
     if (j == pi->relation_info_map_.end()) {
       // check for has many item
       throw_object_exception("prototype already inserted: " << pi->type());
@@ -95,7 +94,7 @@ void basic_node_analyzer::register_has_many(const std::type_index &typeindex, co
   }, [&store](object_proxy *proxy, const std::string &field, matador::object_proxy *owner) {
     store.mark_modified<T>(proxy);
     matador::remove(proxy->obj<T>(), field, object_ptr<V>(owner));
-  }, node));
+  }, node, &node_));
 }
 
 template<class T, template < class U = T > class O>

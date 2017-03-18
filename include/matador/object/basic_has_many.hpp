@@ -175,6 +175,7 @@ protected:
 
   container_type container_;
 
+  prototype_node::relation_info *relation_info_ = nullptr;
   /// @endcond
 
 };

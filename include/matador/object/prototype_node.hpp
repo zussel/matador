@@ -57,6 +57,7 @@ class has_many_deleter;
 class basic_node_analyzer;
 template < class T, template < class V = T > class O >
 class node_analyzer;
+class object_inserter;
 }
 /// @endcond
 
@@ -94,14 +95,16 @@ public:
                   relation_type t,
                   const modify_value_func &insert_func,
                   const modify_value_func &remove_func,
-                  prototype_node *pn)
-      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn)
+                  prototype_node *pn,
+                  prototype_node *fn)
+      : name(n), type(t), insert_value(insert_func), remove_value(remove_func), node(pn), foreign_node(fn)
     {}
     std::string name;
     relation_type type;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> insert_value;
     std::function<void(object_proxy*, const std::string&, object_proxy*)> remove_value;
     prototype_node *node;
+    prototype_node *foreign_node;
   };
 
   typedef std::unordered_map<std::type_index, relation_info> relation_map;
@@ -524,6 +527,7 @@ private:
   friend class detail::basic_node_analyzer;
   template < class T,  template < class U = T > class O >
   friend class detail::node_analyzer;
+  friend class detail::object_inserter;
 
   object_store *tree_ = nullptr;   /**< The prototype tree to which the node belongs */
 
