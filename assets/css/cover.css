@@ -148,10 +148,10 @@ pre {
 .bs-docs-sidebar .nav>.active>a, 
 .bs-docs-sidebar .nav>li>a:hover, 
 .bs-docs-sidebar .nav>li>a:focus {
-    color: #177dfe;                 
+    color: #428bca;                 
     text-decoration: none;          
     background-color: transparent;  
-    border-left-color: #177dfe; 
+    border-left-color: #428bca; 
 }
 /* all active links */
 .bs-docs-sidebar .nav>.active>a, 
