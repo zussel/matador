@@ -33,13 +33,13 @@ can start developing your app starting with the [introduction](/docs/introductio
 Get the sources from GitHub and enter the created directory:
 
 ```bash
-$ git clone https://github.com/zussel/oos.git
-$ cd oos
+$ git clone https://github.com/zussel/matador.git
+$ cd matador
 ```
 
 Or get the pre-packaged sources:
 
-[zip](https://github.com/zussel/oos/archive/v0.2.1.zip){: .btn .btn-success} [tar.gz](https://github.com/zussel/oos/archive/v0.2.1.tar.gz){: .btn .btn-success}
+[zip](https://github.com/zussel/matador/archive/v0.2.1.zip){: .btn .btn-success} [tar.gz](https://github.com/zussel/matador/archive/v0.2.1.tar.gz){: .btn .btn-success}
 
 ### Building under Linux
 
