@@ -16,9 +16,13 @@
 title: matador - take your database by the horns
 email: sascha.kuehl@gmx.net
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  matador is an object relational mapping framework written in C++.
+  It aims to encapsulate all database backend communication. You don't
+  have to deal with database backends or sql statements neither with
+  mapping of data types or serialization of objects. It comes with
+  relation handling out of the box, brings a unique container for all
+  kind of objects, a fluent sql query interface. On top all features
+  are combined into a ORM layer.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://zussel.github.io/matador" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: zussel72
@@ -34,13 +38,6 @@ kramdown:
   syntax_highlighter_opts:
     block:
       line_numbers: true
-
-defaults:
-  -
-    scope:
-      path: "guide"
-    values:
-      layout: "guide"
 
 theme: minima
 gems:

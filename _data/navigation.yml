@@ -7,7 +7,7 @@ main:
   - title: "Download"
     url: /download/
   - title: "Code"
-    url: https://github.com/zussel/oos/
+    url: https://github.com/zussel/matador/
     external: true
 
 guide:
